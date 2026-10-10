@@ -35,11 +35,20 @@ public final class DropwizardDomainEventPublisher implements DomainEventPublishe
         this.listeners = List.copyOf(Objects.requireNonNull(listeners, "listeners must not be null"));
     }
 
+    /**
+     * 发布数据。
+     * @param <ID> 类型参数。
+     * @param event 事件消息。
+     */
     @Override
     public <ID extends EntityId> void publish(DomainEvent<ID> event) {
         publish((Object) event);
     }
 
+    /**
+     * 发布数据。
+     * @param event 事件消息。
+     */
     @Override
     public void publish(Object event) {
         if (Objects.nonNull(event)) {

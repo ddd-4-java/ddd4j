@@ -59,6 +59,9 @@ class QuarkusJpaViewManagerTest {
         return manager;
     }
 
+    /**
+     * getProjectionStatus 各分支行为的校验用例组。
+     */
     @Nested
     @DisplayName("getProjectionStatus")
     class GetProjectionStatusTests {

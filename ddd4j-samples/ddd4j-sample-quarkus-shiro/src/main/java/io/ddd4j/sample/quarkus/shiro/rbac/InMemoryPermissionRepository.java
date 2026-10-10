@@ -71,6 +71,9 @@ public class InMemoryPermissionRepository {
         return store.size();
     }
 
+    /**
+     * 清空数据。
+     */
     public void clear() {
         store.clear();
     }

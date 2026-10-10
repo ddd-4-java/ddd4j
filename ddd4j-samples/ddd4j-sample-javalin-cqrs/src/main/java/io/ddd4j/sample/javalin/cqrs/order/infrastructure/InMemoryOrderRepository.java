@@ -73,6 +73,11 @@ public class InMemoryOrderRepository implements OrderRepository, DomainObjectMap
         return rows.values().stream().map(this::toModel).toList();
     }
 
+    /**
+     * save() 方法。
+     * @param aggregate aggregate 参数。
+     * @return 方法执行结果。
+     */
     @Override
     public Order save(Order aggregate) {
         Objects.requireNonNull(aggregate, "aggregate must not be null");
@@ -80,6 +85,10 @@ public class InMemoryOrderRepository implements OrderRepository, DomainObjectMap
         return aggregate;
     }
 
+    /**
+     * 删除记录。
+     * @param id 标识值。
+     */
     @Override
     public void deleteById(String id) {
         if (StrKit.isNotBlank(id)) {
@@ -89,6 +98,11 @@ public class InMemoryOrderRepository implements OrderRepository, DomainObjectMap
 
     // ========================= DomainObjectMapper<Order, OrderPO> =========================
 
+    /**
+     * 转换表示形式。
+     * @param persistenceObject persistenceObject 参数。
+     * @return 方法执行结果。
+     */
     @Override
     public Order toModel(OrderPO persistenceObject) {
         Objects.requireNonNull(persistenceObject, "persistenceObject must not be null");
@@ -107,6 +121,11 @@ public class InMemoryOrderRepository implements OrderRepository, DomainObjectMap
         );
     }
 
+    /**
+     * 转换表示形式。
+     * @param model model 参数。
+     * @return 方法执行结果。
+     */
     @Override
     public OrderPO toPersistenceObject(Order model) {
         Objects.requireNonNull(model, "model must not be null");

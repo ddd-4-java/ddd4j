@@ -138,6 +138,7 @@ class ExcelKitTest {
         EasyExcel.write(out).head(head).sheet("S").doWrite(content);
 
         // 准备一个 Date 字段的 VO 读取
+        /** 日期字段 VO：用于触发日期列转换异常的读取场景。 */
         record DateVO(@com.alibaba.excel.annotation.ExcelProperty("日期") java.util.Date d) {}
 
         // when

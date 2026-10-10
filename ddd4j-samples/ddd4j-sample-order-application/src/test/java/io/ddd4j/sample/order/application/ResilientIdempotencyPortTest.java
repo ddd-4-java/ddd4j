@@ -24,6 +24,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 class ResilientIdempotencyPortTest {
 
     @Test
@@ -62,41 +67,79 @@ class ResilientIdempotencyPortTest {
         assertTrue(exception.getMessage().contains("Kafka is disabled"));
     }
 
+    /**
+     * 恒失败的幂等端口：每次调用都抛出异常，用于模拟主存储不可用。
+     */
     private static final class FailingIdempotencyPort implements IdempotencyPort {
 
+        /**
+         * acquire() 方法。
+         * @param key 幂等键。
+         * @param ttl 锁的有效期。
+         * @return 判断结果。
+         */
         @Override
         public boolean acquire(String key, Duration ttl) {
             throw new IllegalStateException("Redis is unavailable");
         }
 
+        /**
+         * complete() 方法。
+         * @param key 幂等键。
+         * @param result 对象参数。
+         */
         @Override
         public void complete(String key, Object result) {
             throw new IllegalStateException("Redis is unavailable");
         }
 
+        /**
+         * release() 方法。
+         * @param key 幂等键。
+         */
         @Override
         public void release(String key) {
             throw new IllegalStateException("Redis is unavailable");
         }
     }
 
+    /**
+     * 类型说明。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     private static final class RecordingIdempotencyPort implements IdempotencyPort {
 
         private final AtomicBoolean acquired = new AtomicBoolean();
         private final AtomicBoolean completed = new AtomicBoolean();
         private final AtomicBoolean released = new AtomicBoolean();
 
+        /**
+         * acquire() 方法。
+         * @param key 幂等键。
+         * @param ttl 锁的有效期。
+         * @return 判断结果。
+         */
         @Override
         public boolean acquire(String key, Duration ttl) {
             acquired.set(true);
             return true;
         }
 
+        /**
+         * complete() 方法。
+         * @param key 幂等键。
+         * @param result 对象参数。
+         */
         @Override
         public void complete(String key, Object result) {
             completed.set(true);
         }
 
+        /**
+         * release() 方法。
+         * @param key 幂等键。
+         */
         @Override
         public void release(String key) {
             released.set(true);

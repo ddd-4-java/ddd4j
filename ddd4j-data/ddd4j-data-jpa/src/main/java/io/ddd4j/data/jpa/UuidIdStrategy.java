@@ -35,6 +35,10 @@ import io.ddd4j.kit.lang.IdKit;
  */
 public class UuidIdStrategy implements IdGenerationStrategy<String> {
 
+    /**
+     * 生成下一个 UUID 主键。
+     * @return 32 位无横线 UUID 字符串。
+     */
     @Override
     public String generate() {
         return IdKit.simpleUUID();

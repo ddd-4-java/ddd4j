@@ -118,7 +118,9 @@ class KafkaMQClientRoundTripTest {
      * 测试事件：订单已支付（Jackson 需要无参构造 + 公共字段/访问器）。
      */
     public static class OrderPaidEvent extends MQEvent {
+        /** 字段说明。 */
         public String orderId;
+        /** 字段说明。 */
         public Long amount;
     }
 
@@ -129,6 +131,10 @@ class KafkaMQClientRoundTripTest {
         final CountDownLatch latch = new CountDownLatch(1);
         final AtomicReference<OrderPaidEvent> received = new AtomicReference<>();
 
+        /**
+         * onPaid() 方法。
+         * @param event 事件消息。
+         */
         @MQEventListener(topic = "ORDER", tags = "paid")
         public void onPaid(OrderPaidEvent event) {
             received.set(event);

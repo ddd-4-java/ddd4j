@@ -65,6 +65,12 @@ public final class Ddd4jVertxRuntime implements AutoCloseable {
         this.readinessRegistry = new RuntimeReadinessRegistry(readinessContributors);
     }
 
+    /**
+     * create() 方法。
+     * @param vertx vertx 参数。
+     * @param executors 集合。
+     * @return 当前对象自身，支持链式调用。
+     */
     public static Ddd4jVertxRuntime create(Vertx vertx, Collection<CommandExecutor<?>> executors) {
         VertxDomainEventPublisher publisher = new VertxDomainEventPublisher(vertx);
         SubjectProvider subjectProvider = new InMemorySubjectProvider(new InMemorySubject(publisher::publish));
@@ -72,10 +78,17 @@ public final class Ddd4jVertxRuntime implements AutoCloseable {
                 new DefaultCommandBus(executors));
     }
 
+    /**
+     * readiness() 方法。
+     * @return 方法执行结果。
+     */
     public RuntimeReadinessRegistry readiness() {
         return readinessRegistry;
     }
 
+    /**
+     * 启动。
+     */
     public void start() {
         registrations.start();
         subjectRegistration.start();
@@ -91,6 +104,9 @@ public final class Ddd4jVertxRuntime implements AutoCloseable {
         });
     }
 
+    /**
+     * 关闭并释放资源。
+     */
     @Override
     public void close() {
         subjectRegistration.close();

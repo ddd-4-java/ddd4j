@@ -62,6 +62,9 @@ public class GuicePropertyLoader extends AbstractModule {
         this.configFiles = configFiles;
     }
 
+    /**
+     * configure() 方法。
+     */
     @Override
     protected void configure() {
         Properties merged = new Properties();

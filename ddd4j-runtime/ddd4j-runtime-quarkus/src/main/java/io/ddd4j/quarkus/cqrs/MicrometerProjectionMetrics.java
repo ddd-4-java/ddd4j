@@ -72,6 +72,13 @@ public class MicrometerProjectionMetrics implements ProjectionMetrics {
         this.registry = Objects.requireNonNull(registry, "MeterRegistry must not be null");
     }
 
+    /**
+     * onRunCompleted() 方法。
+     * @param streamId 字符串参数。
+     * @param eventCount eventCount 参数。
+     * @param durationNanos durationNanos 参数。
+     * @param positionAdvance positionAdvance 参数。
+     */
     @Override
     public void onRunCompleted(String streamId, int eventCount, long durationNanos, long positionAdvance) {
         Counter.builder(ProjectionConstants.METRIC_EVENTS_TOTAL)
@@ -89,6 +96,11 @@ public class MicrometerProjectionMetrics implements ProjectionMetrics {
         runInfoMap.put(streamId, new ProjectionRunInfo(Instant.now(), eventCount, null));
     }
 
+    /**
+     * onRunFailed() 方法。
+     * @param streamId 字符串参数。
+     * @param error 根因异常。
+     */
     @Override
     public void onRunFailed(String streamId, Throwable error) {
         Counter.builder(ProjectionConstants.METRIC_ERRORS_TOTAL)

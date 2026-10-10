@@ -52,6 +52,13 @@ public final class MappingKit {
         return (Class<T>) BEAN_MAPPINGS.get(source);
     }
 
+    /**
+     * convert() 方法。
+     * @param <T> 类型参数。
+     * @param <S> 类型参数。
+     * @param source 序列化源对象。
+     * @return 结果值。
+     */
     public <T, S> T convert(S source) {
         if (Objects.isNull(source)) {
             return null;

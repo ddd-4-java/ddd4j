@@ -187,6 +187,10 @@ public abstract class AbstractCqrsRuntimeContractTest {
             this.payload = payload;
         }
 
+        /**
+         * 获取值。
+         * @return 结果字符串。
+         */
         public String getPayload() {
             return payload;
         }
@@ -200,6 +204,10 @@ public abstract class AbstractCqrsRuntimeContractTest {
             this.value = value;
         }
 
+        /**
+         * 获取值。
+         * @return 结果数值。
+         */
         public int getValue() {
             return value;
         }
@@ -220,6 +228,11 @@ public abstract class AbstractCqrsRuntimeContractTest {
         public Set<Class<? extends Command>> supportedCommands() {
             return Set.of(CmdA.class);
         }
+/**
+ * @SuppressWarnings() 方法。
+ * @param "unchecked" "unchecked" 参数。
+ * @return 方法执行结果。
+ */
 
         @Override
         @SuppressWarnings("unchecked")
@@ -228,6 +241,10 @@ public abstract class AbstractCqrsRuntimeContractTest {
             return Result.ok("executor-a:" + command.getPayload());
         }
 
+        /**
+         * wasInvoked() 方法。
+         * @return 判断结果。
+         */
         public boolean wasInvoked() {
             return invoked.get();
         }
@@ -243,6 +260,11 @@ public abstract class AbstractCqrsRuntimeContractTest {
             return Set.of(CmdB.class);
         }
 
+        /**
+         * 执行处理逻辑。
+         * @param command command 参数。
+         * @return 方法执行结果。
+         */
         @Override
         @SuppressWarnings("unchecked")
         public Result execute(CmdB command) {
@@ -250,6 +272,10 @@ public abstract class AbstractCqrsRuntimeContractTest {
             return Result.ok("executor-b:" + command.getValue());
         }
 
+        /**
+         * wasInvoked() 方法。
+         * @return 判断结果。
+         */
         public boolean wasInvoked() {
             return invoked.get();
         }

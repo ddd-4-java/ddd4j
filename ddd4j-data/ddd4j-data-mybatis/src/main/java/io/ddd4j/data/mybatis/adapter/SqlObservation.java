@@ -27,6 +27,10 @@ import java.util.List;
  */
 public record SqlObservation(String statementId, String sql, List<String> sortedParams, long elapsedNanos, Throwable error) {
 
+    /**
+     * elapsedMillis() 方法。
+     * @return 结果数值。
+     */
     public long elapsedMillis() {
         return elapsedNanos / 1_000_000L;
     }

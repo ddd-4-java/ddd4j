@@ -37,6 +37,10 @@ public class AuthUserDetails extends User {
         this.authPrincipal = Objects.requireNonNull(authPrincipal, "authPrincipal must not be null");
     }
 
+    /**
+     * 获取值。
+     * @return 方法执行结果。
+     */
     public AuthPrincipal getAuthPrincipal() {
         return authPrincipal;
     }

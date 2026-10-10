@@ -38,11 +38,21 @@ public class NoopDomainEventPublisher implements DomainEventPublisher {
      */
     public static final NoopDomainEventPublisher INSTANCE = new NoopDomainEventPublisher();
 
+    /**
+     * 发布数据。
+     * @param <ID> 类型参数。
+     * @param event 事件消息。
+     */
     @Override
     public <ID extends EntityId> void publish(DomainEvent<ID> event) {
         // 丢弃事件
     }
 
+    /**
+     * publishAll() 方法。
+     * @param <ID> 类型参数。
+     * @param events 领域事件集合。
+     */
     @Override
     public <ID extends EntityId> void publishAll(Collection<DomainEvent<ID>> events) {
         // 丢弃事件

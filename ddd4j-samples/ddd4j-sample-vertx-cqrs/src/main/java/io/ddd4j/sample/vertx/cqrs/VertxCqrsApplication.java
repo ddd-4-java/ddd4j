@@ -36,12 +36,20 @@ import java.util.List;
 public class VertxCqrsApplication {
 
     // 共享组件（手动装配，使用 core SPI）
+
+    /** 内存事件存储，示例共享组件。 */
     public static final InMemoryEventStore EVENT_STORE = new InMemoryEventStore();
+    /** 基于事件溯源的订单仓储。 */
     public static final EventSourcingOrderRepository ORDER_REPO = new EventSourcingOrderRepository(EVENT_STORE);
+    /** 创建订单命令处理器。 */
     public static final CreateOrderCommandHandler COMMAND_HANDLER = new CreateOrderCommandHandler(ORDER_REPO);
+    /** 默认命令总线，注册全部命令处理器。 */
     public static final CommandBus COMMAND_BUS = new DefaultCommandBus(List.of(COMMAND_HANDLER));
+    /** 订单摘要读视图。 */
     public static final OrderSummaryView READ_VIEW = new OrderSummaryView(ORDER_REPO);
+    /** 内存事件分块读取器，供读模型重建使用。 */
     public static final InMemoryEventChunkReader CHUNK_READER = new InMemoryEventChunkReader(EVENT_STORE);
+    /** 读模型管理器，负责注册并启动读视图的事件订阅。 */
     public static final InMemoryViewManager VIEW_MANAGER = createViewManager();
 
     private static InMemoryViewManager createViewManager() {
@@ -50,6 +58,11 @@ public class VertxCqrsApplication {
         return mgr;
     }
 
+    /**
+     * 创建对象。
+     * @param vertx vertx 参数。
+     * @return 方法执行结果。
+     */
     public static Router createRouter(Vertx vertx) {
         Router router = Router.router(vertx);
         router.route().handler(BodyHandler.create());
@@ -96,6 +109,10 @@ public class VertxCqrsApplication {
         return router;
     }
 
+    /**
+     * main() 方法。
+     * @param args 命令行参数。
+     */
     public static void main(String[] args) {
         Vertx vertx = Vertx.vertx();
         Router router = createRouter(vertx);

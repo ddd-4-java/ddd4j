@@ -75,6 +75,9 @@ public class AuthModule extends AbstractModule {
                 null);
     }
 
+    /**
+     * configure() 方法。
+     */
     @Override
     protected void configure() {
         // ========================= RBAC 模块 =========================

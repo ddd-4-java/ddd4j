@@ -37,6 +37,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 class MqttAdapterContractTest {
 
     @AfterEach
@@ -59,12 +64,30 @@ class MqttAdapterContractTest {
         MqttMQClient client = new MqttMQClient(mqttClient);
         MQProperties properties = new MQProperties();
         properties.setEnabled(true);
+        /**
+         * properties.setBroker() 方法。
+         * @param "mqtt" "mqtt" 参数。
+         */
         properties.setBroker("mqtt");
         FailingHandler handler = new FailingHandler();
         Method method = FailingHandler.class.getMethod("handle", MQEvent.class);
         MQListener listener = MQListener.of(handler, method, method.getAnnotation(MQEventListener.class));
         client.init(Collections.singletonList(listener), properties, new MQEventSerialization() {
+            /**
+             * serialize() 方法。
+             * @param <T> 类型参数。
+             * @param event 事件消息。
+             * @return 结果值。
+             */
             @Override @SuppressWarnings("unchecked") public <T> T serialize(Object event) { return (T) "{}"; }
+            /**
+             * deserialize() 方法。
+             * @param <S> 类型参数。
+             * @param <T> 类型参数。
+             * @param value 值。
+             * @param type 目标类型。
+             * @return 结果值。
+             */
             @Override public <S, T> T deserialize(S value, Class<T> type) {
                 MQEvent event = new MQEvent();
                 event.setTopic("orders");
@@ -74,6 +97,10 @@ class MqttAdapterContractTest {
         org.mockito.ArgumentCaptor<MqttCallback> callback = forClass(MqttCallback.class);
         verify(mqttClient).setCallback(callback.capture());
         MqttMessage message = new MqttMessage("{}".getBytes());
+        /**
+         * message.setQos() 方法。
+         * @param 1 1 参数。
+         */
         message.setQos(1);
 
         callback.getValue().messageArrived("orders/paid", message);
@@ -88,7 +115,14 @@ class MqttAdapterContractTest {
         verify(mqttClient, never()).close();
     }
 
+    /**
+     * 必定抛出异常的监听方法宿主，用于验证消费失败时不回执消息。
+     */
     public static final class FailingHandler {
+        /**
+         * 处理请求。
+         * @param event 事件消息。
+         */
         @MQEventListener(topic = "orders", tags = "*")
         public void handle(MQEvent event) {
             throw new IllegalStateException("handler failed");

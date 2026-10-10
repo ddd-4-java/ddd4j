@@ -143,6 +143,11 @@ class DropwizardProjectionSchedulerIT {
         volatile DropwizardProjectionScheduler scheduler;
         volatile DropwizardProjectionViewManager viewManager;
 
+        /**
+         * 执行主流程。
+         * @param configuration configuration 参数。
+         * @param environment environment 参数。
+         */
         @Override
         public void run(Configuration configuration, Environment environment) {
             Collection<ProjectionView<?>> views = List.of(
@@ -157,15 +162,30 @@ class DropwizardProjectionSchedulerIT {
         @SuppressWarnings("unchecked")
         private ProjectionRunner<Object> createTestRunner() {
             ProjectionService projectionService = new ProjectionService() {
+                /**
+                 * resetProjectionPosition() 方法。
+                 * @param streamId 字符串参数。
+                 */
                 @Override
                 public void resetProjectionPosition(String streamId) {
                 }
 
+                /**
+                 * 读取数据。
+                 * @param streamId 字符串参数。
+                 * @return 结果数值。
+                 */
                 @Override
                 public long readProjectionPosition(String streamId) {
                     return 0;
                 }
 
+                /**
+                 * 更新记录。
+                 * @param streamId 字符串参数。
+                 * @param nextEventNumber nextEventNumber 参数。
+                 * @return 方法执行结果。
+                 */
                 @Override
                 public ProjectionPosition updateProjectionPosition(String streamId, long nextEventNumber) {
                     return null;
@@ -177,6 +197,11 @@ class DropwizardProjectionSchedulerIT {
         }
     }
 
+    /**
+     * 类型说明。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     private static class ProjectionViewStub implements ProjectionView<Object> {
 
         private final String name;
@@ -187,11 +212,19 @@ class DropwizardProjectionSchedulerIT {
             this.cron = cron;
         }
 
+        /**
+         * 获取值。
+         * @return 结果字符串。
+         */
         @Override
         public String getName() {
             return name;
         }
 
+        /**
+         * 获取值。
+         * @return 结果字符串。
+         */
         @Override
         public String getCron() {
             return cron;
@@ -202,6 +235,10 @@ class DropwizardProjectionSchedulerIT {
             return Set.of("TestEvent");
         }
 
+        /**
+         * handleEvents() 方法。
+         * @param events 领域事件集合。
+         */
         @Override
         public void handleEvents(Collection<Object> events) {
         }

@@ -96,6 +96,9 @@ public class Ddd4jMybatisGuiceModule extends AbstractModule {
         return this;
     }
 
+    /**
+     * configure() 方法。
+     */
     @Override
     protected void configure() {
         for (Class<?> repositoryImpl : repositoryToMapper.keySet()) {
@@ -103,6 +106,10 @@ public class Ddd4jMybatisGuiceModule extends AbstractModule {
         }
     }
 
+    /**
+     * initRepositories() 方法。
+     * @param injector Guice 注入器。
+     */
     @SuppressWarnings({"rawtypes", "unchecked"})
     public void initRepositories(Injector injector) {
         SqlSession sqlSession = injector.getInstance(SqlSession.class);
@@ -124,6 +131,10 @@ public class Ddd4jMybatisGuiceModule extends AbstractModule {
         log.info("Repository mapper injection completed: {} repositories", repositoryToMapper.size());
     }
 
+    /**
+     * sqlSessionFactory() 方法。
+     * @return 方法执行结果。
+     */
     @Provides
     @Singleton
     public SqlSessionFactory sqlSessionFactory() {
@@ -146,6 +157,11 @@ public class Ddd4jMybatisGuiceModule extends AbstractModule {
         return factory;
     }
 
+    /**
+     * sqlSession() 方法。
+     * @param sqlSessionFactory sqlSessionFactory 参数。
+     * @return 方法执行结果。
+     */
     @Provides
     @Singleton
     public SqlSession sqlSession(SqlSessionFactory sqlSessionFactory) {

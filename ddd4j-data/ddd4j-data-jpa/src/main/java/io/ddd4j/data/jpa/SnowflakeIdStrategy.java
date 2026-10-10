@@ -44,6 +44,10 @@ import io.ddd4j.kit.lang.IdKit;
  */
 public class SnowflakeIdStrategy implements IdGenerationStrategy<Long> {
 
+    /**
+     * 生成下一个雪花主键值。
+     * @return 结果数值。
+     */
     @Override
     public Long generate() {
         // workerId 由本机 IP 末字节派生，Hutool 内部以单例持有 Snowflake，避免多实例 ID 冲突

@@ -36,14 +36,26 @@ public class WebStatusException extends RuntimeException {
         this.data = data;
     }
 
+    /**
+     * 获取值。
+     * @return 结果数值。
+     */
     public int getStatus() {
         return status;
     }
 
+    /**
+     * 获取值。
+     * @return 方法执行结果。
+     */
     public Serializable getCode() {
         return code;
     }
 
+    /**
+     * 获取值。
+     * @return 结果对象。
+     */
     public Object getData() {
         return data;
     }

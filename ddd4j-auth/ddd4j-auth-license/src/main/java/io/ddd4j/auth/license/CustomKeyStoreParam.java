@@ -27,6 +27,9 @@ import org.springframework.util.StringUtils;
  */
 public class CustomKeyStoreParam {
 
+    /**
+     * 兼容旧密钥库使用的默认签名算法标识。
+     */
     public static final String LEGACY_SIGNATURE_ALGORITHM = "SHA1withDSA";
 
     /**
@@ -56,18 +59,34 @@ public class CustomKeyStoreParam {
     }
 
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getAlias() {
         return alias;
     }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getStorePwd() {
         return storePwd;
     }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getKeyPwd() {
         return keyPwd;
     }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getSignatureAlgorithm() {
         return signatureAlgorithm;
     }

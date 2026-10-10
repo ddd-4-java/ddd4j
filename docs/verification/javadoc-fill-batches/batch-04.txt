@@ -1,0 +1,36 @@
+# modules=ddd4j-core files=30
+ddd4j-core/src/main/java/io/ddd4j/core/subject/AnonymousSubjectProvider.java	field INSTANCE
+HAZARD	ddd4j-core/src/main/java/io/ddd4j/core/subject/AnonymousSubjectProvider.java	line 27	getSubject()
+ddd4j-core/src/main/java/io/ddd4j/core/subject/Subject.java	method getPrincipal;method getPrincipalByLoginId;method getPrincipalByToken;method isPermitted;method isPermitted;method isPermitted;method isPermitted;method isPermittedAny;method isPermittedAny;method isPermittedAll;method isPermittedAll;method hasRole;method hasRole;method hasRoles;method hasRoles;method hasAnyRole;method hasAnyRole;method hasAllRole;method hasAllRole;method isAuthenticated
+HAZARD	ddd4j-core/src/main/java/io/ddd4j/core/subject/Subject.java	line 32	getPrincipal()
+HAZARD	ddd4j-core/src/main/java/io/ddd4j/core/subject/Subject.java	line 32	getLoginId()
+HAZARD	ddd4j-core/src/main/java/io/ddd4j/core/subject/Subject.java	line 32	getUserId()
+ddd4j-core/src/main/java/io/ddd4j/core/subject/SubjectDataProvider.java	method getPermissionList;method getRoleList;method isDisabled
+ddd4j-core/src/main/java/io/ddd4j/core/subject/SubjectProvider.java	method getSubject;method getSubject;method getSubject
+ddd4j-core/src/main/java/io/ddd4j/core/subject/SubjectStrategy.java	field instance;field createToken;field hasElement;field isExpired;field createSubject
+ddd4j-core/src/main/java/io/ddd4j/core/util/SubjectKit.java	field subjectProvider;field dataProvider;field strategy
+HAZARD	ddd4j-core/src/main/java/io/ddd4j/core/util/SubjectKit.java	line 32	getSubject()
+ddd4j-core/src/test/java/io/ddd4j/core/context/SpiRegistrationScopeTest.java	type record Service
+ddd4j-core/src/test/java/io/ddd4j/core/cqrs/command/CommandHandlerTest.java	type class CreateOrderCommand;type class CreateOrderCmdExe
+ddd4j-core/src/test/java/io/ddd4j/core/cqrs/command/CommandRegistryTest.java	type class CreateOrderCommand;type class CancelOrderCommand;type class ShipOrderCommand;type class TrackOrderCommand;type class CreateOrderCmdExe;type class CancelOrderCmdExe;type class OrderLifecycleCmdExe;type class OrderFulfillmentCmdExe
+ddd4j-core/src/test/java/io/ddd4j/core/cqrs/eventstore/AsyncStoredEventTest.java	type record TestAggregateRootId;type class TestEvent
+ddd4j-core/src/test/java/io/ddd4j/core/cqrs/eventstore/EventDeserializerTest.java	type class ClassNameValidation;type class DeserializeFallback;type class ClassNameFilterSPI
+ddd4j-core/src/test/java/io/ddd4j/core/cqrs/eventstore/EventStoreContractTest.java	field ORDER_TYPE;field ORDER_1;field ORDER_2;type record TestAggregateRootId;type class TestEvent
+ddd4j-core/src/test/java/io/ddd4j/core/cqrs/eventstore/StoredEventStrongTypeContractTest.java	type record TestAggregateRootId;type class TestEvent
+ddd4j-core/src/test/java/io/ddd4j/core/cqrs/eventstore/jackson/EventPayloadSerializerTest.java	type record TestAggregateRootId;type class OrderPlacedEvent
+ddd4j-core/src/test/java/io/ddd4j/core/cqrs/query/QueryConditionTest.java	type class OrderQuery;type class Order;type class OrderPO
+ddd4j-core/src/test/java/io/ddd4j/core/cqrs/query/QueryRichMethodsTest.java	type class TestAggregate;type class TestQuery
+ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/DefaultProjectionServiceTest.java	type class Constructor;type class ReadProjectionPosition;type class UpdateProjectionPosition;type class ResetProjectionPosition
+ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/EventChunkReaderContractTest.java	type class InMemoryEventChunkReader;type record Numbered
+ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/EventChunkTest.java	type class Constructor;type class EmptyFactory;type class QueryApi
+ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionMetricsTest.java	type class RecordingMetrics;type class TestView;type class RunOnceSuccessMetrics;type class RunOnceFailureMetrics;type class NoopMetricsTests
+ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunnerTest.java	type class TestView;type class Constructor;type class RunOnceHappyPath;type class RunOnceEmptyChunk;type class RunOnceNoAdvance;type class RunOnceValidation;type class RunOnceNullChunk;type class RunAll
+ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionStatusTest.java	type class RecordConstruction;type class BaselineFactory;type class Immutability;type class ViewManagerDefaultBehavior
+ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/TypedEventDispatcherTest.java	type record PersonCreatedEvent;type class PersonCreatedHandler
+ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/DomainEventJsonTest.java	type class SampleDomainEvent
+ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/DomainEventRoundTripTest.java	type class SampleEvent
+ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/EntityIdPathTest.java	type class TestOrderId;type class TestCustomerId
+ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/EventHandlerTest.java	type class SampleHandler;type class OrderCreatedEvent;type record OrderId
+ddd4j-core/src/test/java/io/ddd4j/core/ddd/model/AggregateRootApplyTest.java	type class Order;type class OrderCreatedEvent;type record OrderId;type class OrderNotifiedEvent;type class UnhandledEvent
+ddd4j-core/src/test/java/io/ddd4j/core/ddd/model/AggregateRootEventHandlerTest.java	type class Counter;type class IncrementEvent;type record CounterId;type class CountNotifiedEvent;type class UnhandledEvent
+ddd4j-core/src/test/java/io/ddd4j/core/ddd/model/AggregateRootEventSourcingTest.java	type class Order;type class OrderCreated;type class OrderPaid;type class OrderShipped;type class OrderId;type class OrderEntityType

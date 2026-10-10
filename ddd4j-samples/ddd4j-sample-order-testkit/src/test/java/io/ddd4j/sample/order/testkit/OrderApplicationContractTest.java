@@ -29,6 +29,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 class OrderApplicationContractTest {
 
     @Test

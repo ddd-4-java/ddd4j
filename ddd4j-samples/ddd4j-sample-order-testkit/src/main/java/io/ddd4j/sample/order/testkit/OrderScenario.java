@@ -22,12 +22,22 @@ import io.ddd4j.sample.order.local.InMemoryOrderAdapters;
 
 import java.math.BigDecimal;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 public final class OrderScenario {
 
     private final InMemoryOrderAdapters adapters = new InMemoryOrderAdapters();
     private final OrderApplicationService application = new OrderApplicationService(
             adapters, adapters, adapters, adapters, adapters);
 
+    /**
+     * paidOrder() 方法。
+     * @param orderNo 订单号。
+     * @return 方法执行结果。
+     */
     public Order paidOrder(String orderNo) {
         Order order = application.create(new CreateOrderCommand(orderNo, "buyer-1", "Alice"));
         application.addLine(new AddOrderLineCommand(order.id(), "goods-1", "DDD Book", 2,
@@ -35,10 +45,18 @@ public final class OrderScenario {
         return application.pay(order.id(), "payment-" + orderNo);
     }
 
+    /**
+     * application() 方法。
+     * @return 方法执行结果。
+     */
     public OrderApplicationService application() {
         return application;
     }
 
+    /**
+     * adapters() 方法。
+     * @return 方法执行结果。
+     */
     public InMemoryOrderAdapters adapters() {
         return adapters;
     }

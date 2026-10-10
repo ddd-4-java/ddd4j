@@ -38,11 +38,21 @@ public class TypedEventDispatcher {
         this.handlers = indexHandlers(handlers);
     }
 
+    /**
+     * dispatch() 方法。
+     * @param event 事件消息。
+     * @return 判断结果。
+     */
     public boolean dispatch(TypedEvent event) {
         TypedEvent typedEvent = Objects.requireNonNull(event, "event must not be null");
         return dispatch(typedEvent.getEventType(), typedEvent);
     }
 
+    /**
+     * dispatchAll() 方法。
+     * @param events 领域事件集合。
+     * @return 结果数值。
+     */
     public int dispatchAll(Collection<? extends TypedEvent> events) {
         if (CollKit.isEmpty(events)) {
             return 0;
@@ -56,6 +66,12 @@ public class TypedEventDispatcher {
         return dispatched;
     }
 
+    /**
+     * dispatch() 方法。
+     * @param eventType 字符串参数。
+     * @param event 事件消息。
+     * @return 判断结果。
+     */
     public boolean dispatch(String eventType, Object event) {
         if (StrKit.isBlank(eventType) || Objects.isNull(event)) {
             return false;
@@ -68,6 +84,10 @@ public class TypedEventDispatcher {
         return true;
     }
 
+    /**
+     * size() 方法。
+     * @return 结果数值。
+     */
     public int size() {
         return handlers.size();
     }

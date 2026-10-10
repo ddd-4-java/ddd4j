@@ -156,6 +156,9 @@ class SubjectKitTest {
         assertThat(SubjectKit.getStrategy()).isNotNull();
     }
 
+    /**
+     * 自定义主体测试夹具，用于验证按类型获取主体时类型不匹配返回空。
+     */
     static class CustomPrincipal extends AuthPrincipal {
     }
 }

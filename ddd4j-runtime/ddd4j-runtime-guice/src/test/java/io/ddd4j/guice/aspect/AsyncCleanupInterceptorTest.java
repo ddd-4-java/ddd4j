@@ -25,11 +25,19 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 class AsyncCleanupInterceptorTest {
 
     @Test
     void invokeClearsThreadContextAfterProceed() {
         Injector injector = Guice.createInjector(new AbstractModule() {
+            /**
+             * configure() 方法。
+             */
             @Override
             protected void configure() {
                 bindInterceptor(Matchers.any(), Matchers.any(), new AsyncCleanupInterceptor());
@@ -46,27 +54,47 @@ class AsyncCleanupInterceptorTest {
     @Test
     void invokeClearsThreadContextEvenWhenProceedThrows() {
         Injector injector = Guice.createInjector(new AbstractModule() {
+            /**
+             * configure() 方法。
+             */
             @Override
             protected void configure() {
                 bindInterceptor(Matchers.any(), Matchers.any(), new AsyncCleanupInterceptor());
                 bind(BoomWorker.class);
             }
         });
+/**
+ * ThreadContext.put() 方法。
+ * @param "async-key" "async-key" 参数。
+ * @param "value" "value" 参数。
+ */
 
         ThreadContext.put("async-key", "value");
         assertThrows(IllegalStateException.class, () -> injector.getInstance(BoomWorker.class).boom());
         assertNull(ThreadContext.get("async-key"));
     }
 
+    /**
+     * 正常执行的测试组件，用于验证拦截器在方法成功返回后清理线程上下文。
+     */
     public static class Worker {
 
+        /**
+         * work() 方法。
+         */
         public void work() {
             assertTrue(true);
         }
     }
 
+    /**
+     * 抛出异常的测试组件，用于验证拦截器在方法异常时仍清理线程上下文。
+     */
     public static class BoomWorker {
 
+        /**
+         * boom() 方法。
+         */
         public void boom() {
             throw new IllegalStateException("boom");
         }

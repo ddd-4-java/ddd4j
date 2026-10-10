@@ -1,0 +1,31 @@
+# modules=ddd4j-extensions files=30
+ddd4j-extensions/ddd4j-extension-monitor/src/main/java/io/ddd4j/extension/monitor/Sender.java	method send;method sendMarkdown;method sendMarkdown;method renderMessage
+ddd4j-extensions/ddd4j-extension-monitor/src/main/java/io/ddd4j/extension/monitor/channel/dingtalk/DingTalkClient.java	field BASE_URL
+ddd4j-extensions/ddd4j-extension-monitor/src/main/java/io/ddd4j/extension/monitor/channel/feishu/FeishuClient.java	field DEFAULT_BASE_URL
+ddd4j-extensions/ddd4j-extension-monitor/src/main/java/io/ddd4j/extension/monitor/channel/feishu/FeishuRobotSender.java	type class PostPayload
+ddd4j-extensions/ddd4j-extension-monitor/src/main/java/io/ddd4j/extension/monitor/channel/wecom/WeComClient.java	field BASE_URL
+ddd4j-extensions/ddd4j-extension-monitor/src/main/java/io/ddd4j/extension/monitor/config/BaseMonitorProperties.java	field PREFIX;type class Log;type class App
+ddd4j-extensions/ddd4j-extension-monitor/src/main/java/io/ddd4j/extension/monitor/runtime/ApplicationStartReporter.java	field CODE_VERSION
+ddd4j-extensions/ddd4j-extension-monitor/src/test/java/io/ddd4j/extension/monitor/channel/dingtalk/DingTalkClientTest.java	type class Recorder
+ddd4j-extensions/ddd4j-extension-monitor/src/test/java/io/ddd4j/extension/monitor/channel/feishu/FeishuClientTest.java	type class Recorder
+ddd4j-extensions/ddd4j-extension-monitor/src/test/java/io/ddd4j/extension/monitor/channel/wecom/WeComClientTest.java	type class Recorder
+ddd4j-extensions/ddd4j-extension-otel/src/main/java/io/ddd4j/extension/otel/AuthSpan.java	field ATTR_AUTH_FRAMEWORK;field ATTR_AUTH_LOGIN_ID;field ATTR_AUTH_SUCCESS;field ATTR_AUTH_OPERATION;field ATTR_AUTH_ROLE;field ATTR_AUTH_PERMISSION
+ddd4j-extensions/ddd4j-extension-otel/src/main/java/io/ddd4j/extension/otel/DataScopeSpan.java	field ATTR_DATA_SCOPE_TYPE;field ATTR_DATA_SCOPE_DECISION
+ddd4j-extensions/ddd4j-extension-otel/src/main/java/io/ddd4j/extension/otel/Ddd4jOtel.java	field TRACER_NAME;field METER_NAME;field ATTR_TENANT_ID;field ATTR_USER_ID;field ATTR_LOGIN_ID;field ATTR_USER_CODE;field ATTR_REQUEST_ID;field ATTR_DOMAIN_EVENT_TYPE;field ATTR_AGGREGATE_TYPE;field ATTR_AGGREGATE_ID;field ATTR_QUERY_TYPE;field ATTR_PROJECTION_NAME;field ATTR_CACHE_BIZ;field ATTR_CACHE_BACKEND;field ATTR_CACHE_HIT;field ATTR_MESSAGING_SYSTEM;field ATTR_MESSAGING_DESTINATION;field ATTR_MESSAGING_OPERATION;field ATTR_DB_SYSTEM;field ATTR_DB_STATEMENT
+ddd4j-extensions/ddd4j-extension-otel/src/main/java/io/ddd4j/extension/otel/HttpSpan.java	field ATTR_HTTP_METHOD;field ATTR_HTTP_ROUTE;field ATTR_HTTP_STATUS;field ATTR_URL_PATH;field ATTR_URL_SCHEME;field ATTR_USER_AGENT;field ATTR_CLIENT_IP;field ATTR_DDD4J_REQUEST_ID;field ATTR_DDD4J_TENANT_ID
+ddd4j-extensions/ddd4j-extension-otel/src/main/java/io/ddd4j/extension/otel/MqDeliveryMetrics.java	field OUTBOX_DELIVERY_METRIC;field INBOX_DELIVERY_METRIC;field ATTR_DELIVERY_OUTCOME;type record CounterHandle
+ddd4j-extensions/ddd4j-extension-pf4j/src/main/java/io/ddd4j/extension/pf4j/point/authc/AuthcExtensionPoint.java	method getToken;method handleHeader;method handleRequest;method handleResult
+ddd4j-extensions/ddd4j-extension-pf4j/src/main/java/io/ddd4j/extension/pf4j/point/authc/AuthcExtensionPointAdapter.java	field AUTHORIZATION_HEADER;field BEARER_PREFIX
+ddd4j-extensions/ddd4j-extension-pf4j/src/main/java/io/ddd4j/extension/pf4j/point/crypto/CryptoExtensionPoint.java	method encrypt;method decrypt
+ddd4j-extensions/ddd4j-extension-pf4j/src/main/java/io/ddd4j/extension/pf4j/point/web/ParamSignatureExtensionPoint.java	method sign;method getAppkey;method getAppSecret
+ddd4j-extensions/ddd4j-extension-pf4j/src/main/java/io/ddd4j/extension/pf4j/point/web/ServletRequestExtensionPoint.java	method wrap;method wrap
+ddd4j-extensions/ddd4j-extension-pf4j/src/main/java/io/ddd4j/extension/pf4j/point/web/ServletResponseExtensionPoint.java	method dewrap;method dewrap
+ddd4j-extensions/ddd4j-extension-qlexpress/src/main/java/io/ddd4j/extension/qlexpress/QLExpressEngine.java	method execute;method execute;method execute;method execute;method executeSafely;method executeSafely;method validate;method getExternalVariables;method getExternalFunctions;method registerFunction;method registerOrReplaceFunction;method removeFunction;method unwrap
+ddd4j-extensions/ddd4j-extension-qlexpress/src/main/java/io/ddd4j/extension/qlexpress/function/NamedQLFunction.java	method name
+ddd4j-extensions/ddd4j-extension-qlexpress/src/main/java/io/ddd4j/extension/qlexpress/model/QLExpressExecutionOptions.java	field DEFAULT_TIMEOUT_MILLIS;field DEFAULT_MAX_ARRAY_LENGTH
+ddd4j-extensions/ddd4j-extension-qlexpress/src/test/java/io/ddd4j/extension/qlexpress/QLExpressEngineTest.java	type class MultiplierFunction
+ddd4j-extensions/ddd4j-extension-qrcode/src/main/java/io/ddd4j/extension/qrcode/DefaultQrCodeService.java	field DEFAULT_MAX_BATCH_SIZE
+ddd4j-extensions/ddd4j-extension-qrcode/src/main/java/io/ddd4j/extension/qrcode/QrCodeService.java	method generate;method decode;method generateBatch
+ddd4j-extensions/ddd4j-extension-qrcode/src/main/java/io/ddd4j/extension/qrcode/resource/QrCodeResourceResolver.java	method resolve
+ddd4j-extensions/ddd4j-extension-qrcode/src/main/java/io/ddd4j/extension/qrcode/template/QrCodeBlockElement.java	type class Builder
+ddd4j-extensions/ddd4j-extension-qrcode/src/main/java/io/ddd4j/extension/qrcode/template/QrCodeFrame.java	type class Builder

@@ -29,6 +29,11 @@ public final class Ddd4jHelidonIllegalStateExceptionMapper implements ExceptionM
 
     private final Ddd4jHelidonExceptionMapper delegate = new Ddd4jHelidonExceptionMapper();
 
+    /**
+     * 转换表示形式。
+     * @param exception exception 参数。
+     * @return 方法执行结果。
+     */
     @Override
     public Response toResponse(IllegalStateException exception) {
         return delegate.toResponse(exception);

@@ -100,6 +100,9 @@ public class Ddd4jCacheGuiceModule extends AbstractModule {
         return this;
     }
 
+    /**
+     * configure() 方法。
+     */
     @Override
     protected void configure() {
         CacheKit.setDefaultType(defaultType);

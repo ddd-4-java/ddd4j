@@ -1,0 +1,31 @@
+# modules=ddd4j-mq files=30
+ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/delivery/MQOutboxSender.java	method send
+ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/delivery/MQOutboxStatus.java	enum-const PENDING;enum-const LEASED;enum-const PUBLISHED;enum-const DEAD
+ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/delivery/MQOutboxStore.java	method append;method claim;method markPublished;method reschedule;method replay
+ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/delivery/NoopMQDeliveryObserver.java	enum-const INSTANCE
+ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/event/MQEvent.java	field MQ_EVENT_PUBLISHER;field MQ_PROPERTIES;field msgId;field topic;field tag;field concat;field tenantId;field broker
+ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/event/MQEventSerialization.java	method deserialize;method serialize
+ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/event/MQEventStorer.java	method store
+ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/lifecycle/MQClientLifecycle.java	type class Resource
+ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/lifecycle/MQStartupState.java	enum-const NEW;enum-const STARTING;enum-const READY;enum-const DEGRADED;enum-const FAILED;enum-const STOPPED
+ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/lifecycle/MQStartupStatus.java	type class Snapshot
+ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/listener/MQListener.java	type class MQListenerBuilder
+ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/message/Acknowledgment.java	method deliveryTag;method messageId;method correlationId;method isOpen;method isAcknowledged;method brokerType;method ack;method ack;method nack;method nack;method reject;method recover;method ackSingle;method discard;method requeue;method requeueViaRecover;method unwrap
+ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/message/MessageHeaders.java	field HEADER_NATIVE_MESSAGE;field HEADER_MESSAGE_ID;field LEGACY_HEADER_MESSAGE_ID;field HEADER_CORRELATION_ID;field HEADER_CAUSATION_ID;field HEADER_TENANT_ID;field HEADER_BROKER_TYPE;field HEADER_DESTINATION_TOPIC;field HEADER_DESTINATION_TAG;field HEADER_DESTINATION_NAMESPACE
+ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/MQClientInitializationContractTest.java	type class Handler;type class TestClient
+ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/MQClientPersistenceContractTest.java	type class Handler
+ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/delivery/MQInboxProcessorTest.java	type class InMemoryInboxStore;type class RecordingObserver
+ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/delivery/MQOutboxDispatcherTest.java	type class RecordingStore;type class RecordingObserver
+ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/event/MqDomainEventPublisherTest.java	type class TestDomainEvent
+ddd4j-mq/ddd4j-mq-disruptor/src/main/java/io/ddd4j/mq/disruptor/DisruptorMQClient.java	type class RegisteredListener
+ddd4j-mq/ddd4j-mq-disruptor/src/test/java/io/ddd4j/mq/disruptor/DisruptorAdapterContractTest.java	type class RecordingListener
+ddd4j-mq/ddd4j-mq-kafka/src/main/java/io/ddd4j/mq/kafka/KafkaMQClient.java	type class BatchRetryException;type class SendCallback
+ddd4j-mq/ddd4j-mq-kafka/src/main/java/io/ddd4j/mq/kafka/KafkaMQProperties.java	field DEFAULT_TOPIC_PARTITIONS;field DEFAULT_TOPIC_REPLICATION
+ddd4j-mq/ddd4j-mq-kafka/src/main/java/io/ddd4j/mq/kafka/KafkaMessageAcknowledgment.java	field HEADER_KAFKA_CONSUMER;field HEADER_KAFKA_RECORD
+ddd4j-mq/ddd4j-mq-kafka/src/test/java/io/ddd4j/mq/kafka/KafkaMQClientDurabilityContractTest.java	type class FailingHandler
+ddd4j-mq/ddd4j-mq-kafka/src/test/java/io/ddd4j/mq/kafka/KafkaMQClientLifecycleContractTest.java	type class Handler;type class AsyncCallbackProducer;type class TrackingConsumer;type class WakeupCommitConsumer;type class RejectingExecutor
+ddd4j-mq/ddd4j-mq-kafka/src/test/java/io/ddd4j/mq/kafka/KafkaMQClientRoundTripTest.java	type class OrderPaidEvent;type class OrderListenerBean
+ddd4j-mq/ddd4j-mq-mqtt-mica/src/main/java/io/ddd4j/mq/mqttmica/MicaMqttAcknowledgment.java	field HEADER_MICA_MESSAGE_ID;field HEADER_MICA_TOPIC
+ddd4j-mq/ddd4j-mq-mqtt/src/main/java/io/ddd4j/mq/mqtt/MqttAcknowledgment.java	field HEADER_MQTT_MESSAGE;field HEADER_MQTT_TOPIC;type interface IoOperation;method run
+ddd4j-mq/ddd4j-mq-mqtt/src/test/java/io/ddd4j/mq/mqtt/MqttAdapterContractTest.java	type class FailingHandler
+ddd4j-mq/ddd4j-mq-ons/src/main/java/io/ddd4j/mq/ons/OnsAcknowledgment.java	field HEADER_ONS_MESSAGE;field HEADER_ONS_CONTEXT;type interface IoOperation;method run

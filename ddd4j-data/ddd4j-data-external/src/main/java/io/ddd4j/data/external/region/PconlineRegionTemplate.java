@@ -109,6 +109,11 @@ public class PconlineRegionTemplate {
         this.regionCache = Objects.isNull(regionCache) ? RegionCache.none() : regionCache;
     }
 
+    /**
+     * main() 方法。
+     * @param args 命令行参数。
+     * @throws IOException 打开文件流失败时抛出。
+     */
     public static void main(String[] args) throws IOException {
 
         PconlineRegionTemplate template = new PconlineRegionTemplate(HttpClient.newHttpClient());
@@ -264,11 +269,20 @@ public class PconlineRegionTemplate {
             }
             return RegionEnum.UK;
         } catch (Exception e) {
+            /**
+             * log.error() 方法。
+             * @param e.getMessage() e.getMessage() 参数。
+             */
             log.error("IP : {} >> Country/Region Parser Error：{}", ip, e.getMessage());
             return RegionEnum.UK;
         }
     }
 
+    /**
+     * 判断布尔状态。
+     * @param ip 字符串参数。
+     * @return 判断结果。
+     */
     public boolean isMainlandIp(String ip) {
         try {
             Optional<JSONObject> optional = this.getLocationByIp(ip);

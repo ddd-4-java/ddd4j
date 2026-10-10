@@ -102,9 +102,15 @@ class HelidonCommandBusIT {
         assertThat(exception.getMessage()).contains(UnknownCommand.class.getName());
     }
 
+    /**
+     * 伴随命令测试夹具：作为多类型占位执行器支持的第二类型，验证撞型时被整批拒绝。
+     */
     static class CompanionCommand implements Command {
     }
 
+    /**
+     * 未注册命令测试夹具：执行时应触发未注册命令的非法状态异常。
+     */
     static class UnknownCommand implements Command {
     }
 
@@ -121,6 +127,11 @@ class HelidonCommandBusIT {
             return Set.of(SampleCommand.class, CompanionCommand.class);
         }
 
+        /**
+         * 执行处理逻辑。
+         * @param command command 参数。
+         * @return 方法执行结果。
+         */
         @Override
         public Result execute(Command command) {
             return Result.ok();

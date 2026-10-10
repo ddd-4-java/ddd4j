@@ -35,6 +35,11 @@ public final class WebRequestContextFactory {
         this.clientIpResolver = Objects.requireNonNull(clientIpResolver, "clientIpResolver must not be null");
     }
 
+    /**
+     * create() 方法。
+     * @param data data 参数。
+     * @return 方法执行结果。
+     */
     public WebRequestContext create(WebRequestData data) {
         WebRequestData requestData = Objects.requireNonNull(data, "data must not be null");
         String requestId = StrKit.isBlank(requestData.requestId())

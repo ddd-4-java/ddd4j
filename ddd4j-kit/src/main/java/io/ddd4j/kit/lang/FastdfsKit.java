@@ -26,6 +26,7 @@ import java.security.MessageDigest;
  */
 public class FastdfsKit {
 
+    /** 文件 ID 与密钥参与计算时使用的字符集。 */
     public static String g_charset = "ISO8859-1";
 
     /**

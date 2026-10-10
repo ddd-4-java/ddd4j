@@ -33,6 +33,10 @@ package io.ddd4j.data.jpa;
  */
 public class AutoIncrementIdStrategy implements IdGenerationStrategy<Long> {
 
+    /**
+     * 生成下一个主键值；数据库自增策略返回 {@code null}。
+     * @return 固定返回 {@code null}，由数据库自增填充。
+     */
     @Override
     public Long generate() {
         // 返回 null 表示由数据库自增列填充

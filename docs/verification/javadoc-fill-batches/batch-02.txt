@@ -1,0 +1,31 @@
+# modules=ddd4j-core files=30
+ddd4j-core/src/main/java/io/ddd4j/core/api/ResultCode.java	enum-const OK;enum-const SUCCESS;enum-const FAIL;enum-const BAD_REQUEST;enum-const UNAUTHORIZED;enum-const FORBIDDEN;enum-const NO_ACCESS_TOKEN;enum-const SERVER_ERROR;enum-const PARAMETER_VALIDATION_FAILED;enum-const TIMEOUT;enum-const NO_SESSION;enum-const LOGIN_FIRST
+ddd4j-core/src/main/java/io/ddd4j/core/auth/AuthLogoutMode.java	enum-const LOGOUT;enum-const KICKOUT;enum-const REPLACED
+ddd4j-core/src/main/java/io/ddd4j/core/auth/AuthPrincipal.java	type class RolePair
+ddd4j-core/src/main/java/io/ddd4j/core/auth/AuthReplacedLoginExitMode.java	enum-const NEW_DEVICE;enum-const OLD_DEVICE
+ddd4j-core/src/main/java/io/ddd4j/core/auth/AuthReplacedRange.java	enum-const CURRENT_DEVICE_TYPE;enum-const ALL_DEVICE_TYPE
+ddd4j-core/src/main/java/io/ddd4j/core/cache/AtomicCache.java	method increment;method increment;method decrement;method incrementFloat;method decrementFloat;method stockDecrement;method stockIncrement
+ddd4j-core/src/main/java/io/ddd4j/core/cache/CASOperation.java	method apply;method maxRetries
+ddd4j-core/src/main/java/io/ddd4j/core/cache/Cache.java	method getIfPresent;method get;method getIfPresent;method get;method put;method putAll;method invalidate;method refresh;method invalidateAll;method invalidateAll;method estimatedSize;method stats;method expire;method getExpire;method persist;method compareAndSet;method compareAndSet;method asyncCompareAndSet;method compareAndSet
+ddd4j-core/src/main/java/io/ddd4j/core/cache/CacheConfig.java	field DEFAULT_MAXIMUM_SIZE;type class Builder
+ddd4j-core/src/main/java/io/ddd4j/core/cache/CacheLock.java	method tryLock;method tryLock;method tryLock;method unlock;method withLock;method withLock
+ddd4j-core/src/main/java/io/ddd4j/core/cache/CacheManager.java	method getOrCreateCache;method getCache;method getOrCreateLoadingCache;method getOrCreateCache
+ddd4j-core/src/main/java/io/ddd4j/core/cache/CacheStats.java	method hitCount;method missCount;method hitRate;method loadCount;method evictionCount
+ddd4j-core/src/main/java/io/ddd4j/core/cache/CacheType.java	enum-const LOCAL;enum-const REMOTE;enum-const BOTH
+ddd4j-core/src/main/java/io/ddd4j/core/cache/CasCache.java	method putIfAbsent;method replace;method removeIf
+ddd4j-core/src/main/java/io/ddd4j/core/cache/GetsResponse.java	method key;method value;method version
+ddd4j-core/src/main/java/io/ddd4j/core/constant/AuthConstants.java	field JWT_ISSUER;field JWT_SUBJECT;field JWT_AUDIENCE;field JWT_EXPIRES_AT;field JWT_NOT_BEFORE;field JWT_ISSUED_AT;field JWT_JWT_ID;field JWT_AUTH_TYPE;field PARAM_TEMP_TOKEN;field FIELD_TOKEN;field FIELD_DEVICE_TYPE;field FIELD_DEVICE_ID;field DEVICE_TYPE_MOBILE;field DEVICE_TYPE_PC;field FIELD_APP_ID;field FIELD_APP_CHANNEL;field FIELD_APP_VERSION;field HEADER_API_KEY;field HEADER_TIMESTAMP;field HEADER_SIGNATURE
+ddd4j-core/src/main/java/io/ddd4j/core/constant/Constants.java	field RT_SUCCESS;field RT_FAIL;field RT_ERROR;field THEME_PARAM_NAME;field THEME_PARAM_DEFAULT;field THEME_SOURCE_CLASSPATH;field LANG_PARAM_NAME;field ACCESS_MARKER;field AUTHZ_MARKER;field BIZ_MARKER
+ddd4j-core/src/main/java/io/ddd4j/core/constant/ContextConstants.java	field REQUEST_PARAMS;field REQUEST_BODY;field TENANT_ID;field PREPARING_SQL;field SQL_PARAMS;field LAST_SQL_SPENDS;field SYSTEM_ID;field SHOP_ID;field ROLE;field LOCALE;field THIRD_SESSION;field SESSION;field CLIENT_TYPE;field APP_ID;field USER_ID;field AUTHORIZATION;field PROJECT_PACKAGE
+ddd4j-core/src/main/java/io/ddd4j/core/constant/EventStoreConstants.java	field TABLE_NAME;field COLUMN_AGGREGATE_ID;field COLUMN_VERSION;field COLUMN_POSITION;field COLUMN_EVENT_TYPE;field COLUMN_EVENT_ID;field COLUMN_CORRELATION_ID;field COLUMN_CAUSATION_ID;field COLUMN_PAYLOAD;field COLUMN_TIMESTAMP;field COLUMN_AGGREGATE_TYPE;field ESDB_SYSTEM_STREAM_PREFIX;field ESDB_DEFAULT_READ_LIMIT
+ddd4j-core/src/main/java/io/ddd4j/core/constant/ProjectionConstants.java	field TABLE_NAME;field COLUMN_STREAM_ID;field COLUMN_NEXT_EVENT_NUMBER;field METRIC_EVENTS_TOTAL;field METRIC_RUN_DURATION;field METRIC_ERRORS_TOTAL;field TAG_STREAM;field OTel_METRIC_RUN_COUNT;field OTel_METRIC_EVENT_COUNT;field OTel_METRIC_RUN_DURATION;field OTel_METRIC_RUN_ERROR;field OTel_ATTR_STREAM_ID
+ddd4j-core/src/main/java/io/ddd4j/core/constant/SpiKeys.java	field PREFIX;field MQ_EVENT_PUBLISHER;field DOMAIN_EVENT_PUBLISHER;field SUBJECT_PROVIDER;field I18N_PROVIDER;field COMMAND_EXECUTOR_REGISTRY;field COMMAND_BUS;field PROJECTION_POSITION_REPOSITORY;field REPOSITORY_REGISTRY;field TRANSACTION_MANAGER;field TRANSACTION_PORT
+ddd4j-core/src/main/java/io/ddd4j/core/constant/XHeaders.java	field X_REQUEST_ID;field X_AUTHORIZATION;field X_LONGITUDE;field X_LATITUDE;field X_REGION;field X_PROVINCE;field X_CITY;field X_AREA;field X_LANGUAGE;field X_TIMEZONE;field X_SIGN;field X_ENCRYPT;field X_APP_ID;field X_APP_CHANNEL;field X_APP_VERSION;field X_DEVICE_IMEI;field X_DEVICE_IDFA;field X_DEVICE_OPENUDID;field X_DEVICE_ANDROIDID;field X_DEVICE_OAID
+ddd4j-core/src/main/java/io/ddd4j/core/context/SpiRegistrationScope.java	type class Registration
+ddd4j-core/src/main/java/io/ddd4j/core/context/ThreadContext.java	field SECURITY_MANAGER_KEY;field SUBJECT_KEY;type class Scope
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/command/CommandBus.java	method execute
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/command/CommandExecutor.java	method supportedCommands;method execute
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/command/Result.java	field SUCCESS;field FAILURE
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/eventstore/AsyncEventStore.java	method append;method read;method read;method readAll
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/eventstore/ClassNameFilter.java	method allows
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/eventstore/EventStore.java	method append;method read;method read;method readAll

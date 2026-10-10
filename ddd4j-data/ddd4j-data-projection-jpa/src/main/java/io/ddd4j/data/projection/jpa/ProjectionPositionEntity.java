@@ -70,18 +70,34 @@ public class ProjectionPositionEntity {
         return new ProjectionPositionEntity(streamId, 0L);
     }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getStreamId() {
         return streamId;
     }
 
+    /**
+     * 设置值。
+     * @param streamId 字符串参数。
+     */
     public void setStreamId(String streamId) {
         this.streamId = streamId;
     }
 
+    /**
+     * 获取值。
+     * @return 结果数值。
+     */
     public long getNextEventNumber() {
         return nextEventNumber;
     }
 
+    /**
+     * 设置值。
+     * @param nextEventNumber nextEventNumber 参数。
+     */
     public void setNextEventNumber(long nextEventNumber) {
         this.nextEventNumber = nextEventNumber;
     }

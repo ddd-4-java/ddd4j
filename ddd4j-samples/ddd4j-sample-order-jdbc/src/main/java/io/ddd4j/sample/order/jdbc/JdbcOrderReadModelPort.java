@@ -41,6 +41,10 @@ public final class JdbcOrderReadModelPort implements OrderReadModelPort {
         this.transaction = Objects.requireNonNull(transaction, "transaction must not be null");
     }
 
+    /**
+     * project() 方法。
+     * @param order order 参数。
+     */
     @Override
     public void project(OrderReadModel order) {
         OrderReadModel readModel = Objects.requireNonNull(order, "order must not be null");

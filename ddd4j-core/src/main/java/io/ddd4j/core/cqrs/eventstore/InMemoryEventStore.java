@@ -52,6 +52,13 @@ public class InMemoryEventStore implements EventStore {
 
     private final AtomicLong globalPosition = new AtomicLong(0);
 
+    /**
+     * append() 方法。
+     * @param aggregateType 字符串参数。
+     * @param aggregateId aggregateId 参数。
+     * @param events 领域事件集合。
+     * @param expectedVersion expectedVersion 参数。
+     */
     @Override
     public synchronized void append(String aggregateType, AggregateRootId aggregateId,
                                     List<? extends DomainEvent<?>> events, long expectedVersion) {

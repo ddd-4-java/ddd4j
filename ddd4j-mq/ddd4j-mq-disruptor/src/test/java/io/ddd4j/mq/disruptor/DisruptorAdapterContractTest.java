@@ -30,6 +30,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 class DisruptorAdapterContractTest {
 
     @Test
@@ -172,6 +177,10 @@ class DisruptorAdapterContractTest {
         private final AtomicInteger calls = new AtomicInteger();
         private MQEvent received;
 
+        /**
+         * onEvent() 方法。
+         * @param event 事件消息。
+         */
         public void onEvent(MQEvent event) {
             received = event;
             calls.incrementAndGet();

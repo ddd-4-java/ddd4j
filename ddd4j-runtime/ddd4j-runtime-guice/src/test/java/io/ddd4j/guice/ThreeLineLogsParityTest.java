@@ -49,6 +49,10 @@ class ThreeLineLogsParityTest {
         List<LogEvent> events = new ArrayList<>();
         AbstractAppender appender = new AbstractAppender(
                 "three-line-logs", null, PatternLayout.createDefaultLayout(), false, Property.EMPTY_ARRAY) {
+            /**
+             * append() 方法。
+             * @param event 事件消息。
+             */
             @Override
             public void append(LogEvent event) {
                 events.add(event.toImmutable());
@@ -92,7 +96,17 @@ class ThreeLineLogsParityTest {
         }
     }
 
+    /**
+     * 类型说明。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     public static class Endpoint {
+        /**
+         * 处理请求。
+         * @param value 值。
+         * @return 结果字符串。
+         */
         @Operation(summary = "parity")
         public String handle(String value) { return value; }
     }

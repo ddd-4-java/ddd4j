@@ -60,6 +60,7 @@ class JpaAggregateRepositoryTest {
                 .hasMessageContaining("PERSISTENCE", OtherOrderPO.class.getName(), OrderPO.class.getName());
     }
 
+    /** 测试用仓储实现，暴露属性翻译入口并重写领域属性映射。 */
     static final class TestRepository extends JpaAggregateRepository<Order, OrderPO, String> {
 
         TestRepository(EntityManager entityManager) {
@@ -70,6 +71,11 @@ class JpaAggregateRepositoryTest {
             return persistenceProperty(condition);
         }
 
+        /**
+         * persistenceProperty() 方法。
+         * @param domainProperty 字符串参数。
+         * @return 结果字符串。
+         */
         @Override
         protected String persistenceProperty(String domainProperty) {
             if ("status".equals(domainProperty)) {
@@ -79,14 +85,28 @@ class JpaAggregateRepositoryTest {
         }
     }
 
+    /**
+     * 类型说明。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     static final class OrderQuery extends Query<Order> {
     }
 
+    /**
+     * 类型说明。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     static final class Order extends AggregateRoot<String> {
 
         private String id;
         private String status;
 
+        /**
+         * id() 方法。
+         * @return 结果字符串。
+         */
         @Override
         public String id() {
             return id;
@@ -97,6 +117,11 @@ class JpaAggregateRepositoryTest {
         }
     }
 
+    /**
+     * 类型说明。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     static final class OrderPO {
 
         private String orderStatus;
@@ -106,6 +131,11 @@ class JpaAggregateRepositoryTest {
         }
     }
 
+    /**
+     * 类型说明。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     static final class OtherOrderPO {
 
         private String orderStatus;

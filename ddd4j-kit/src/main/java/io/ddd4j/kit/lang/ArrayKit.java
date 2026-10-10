@@ -29,6 +29,12 @@ import java.util.stream.Collectors;
 @UtilityClass
 public class ArrayKit extends ArrayUtil {
 
+    /**
+     * convert() 方法。
+     * @param <T> 类型参数。
+     * @param coll 集合。
+     * @return 结果值。
+     */
     public <T> T[] convert(Collection<T> coll) {
         if (Objects.isNull(coll) || coll.size() == 0) {
             return null;
@@ -48,10 +54,22 @@ public class ArrayKit extends ArrayUtil {
         return new ArrayList<>(Arrays.asList(array));
     }
 
+    /**
+     * append() 方法。
+     * @param <T> 类型参数。
+     * @param array array 参数。
+     * @param e 异常对象。
+     * @return 结果值。
+     */
     public <T> T[] append(T[] array, T... e) {
         return ArrayUtil.append(array, e);
     }
 
+    /**
+     * 排序数据。
+     * @param <T> 类型参数。
+     * @param array array 参数。
+     */
     public <T> void sort(T[] array) {
         if (isEmpty(array)) {
             return;
@@ -59,10 +77,22 @@ public class ArrayKit extends ArrayUtil {
         array = CollKit.convert(CollKit.convert(array).stream().sorted().collect(Collectors.toList()));
     }
 
+    /**
+     * 判断布尔状态。
+     * @param <T> 类型参数。
+     * @param array array 参数。
+     * @return 判断结果。
+     */
     public <T> boolean isNotEmpty(T[] array) {
         return Objects.nonNull(array) && array.length != 0;
     }
 
+    /**
+     * 判断布尔状态。
+     * @param <T> 类型参数。
+     * @param array array 参数。
+     * @return 判断结果。
+     */
     public <T> boolean isEmpty(T[] array) {
         return Objects.isNull(array) || array.length == 0;
     }

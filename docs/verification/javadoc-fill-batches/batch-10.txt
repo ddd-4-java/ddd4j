@@ -1,0 +1,31 @@
+# modules=ddd4j-extensions,ddd4j-kit,ddd4j-metrics,ddd4j-mq files=30
+ddd4j-extensions/ddd4j-extension-qrcode/src/main/java/io/ddd4j/extension/qrcode/template/QrCodeImageElement.java	type class Builder
+ddd4j-extensions/ddd4j-extension-qrcode/src/main/java/io/ddd4j/extension/qrcode/template/QrCodeTemplateRegistry.java	method register;method find;method remove
+ddd4j-extensions/ddd4j-extension-qrcode/src/main/java/io/ddd4j/extension/qrcode/template/QrCodeTextElement.java	type class Builder
+ddd4j-extensions/ddd4j-extension-validation/src/main/java/io/ddd4j/extension/validation/FileContentCheckProvider.java	method supports;method check
+ddd4j-extensions/ddd4j-extension-validation/src/main/java/io/ddd4j/extension/validation/FileTypeDetector.java	method detect
+ddd4j-extensions/ddd4j-extension-validation/src/main/java/io/ddd4j/extension/validation/FileValidationFailure.java	enum-const EMPTY;enum-const SIZE_EXCEEDED;enum-const EXTENSION_NOT_ALLOWED;enum-const MIME_TYPE_NOT_ALLOWED;enum-const TYPE_UNDETECTABLE;enum-const SIGNATURE_MISMATCH;enum-const CONTENT_REJECTED;enum-const READ_ERROR
+ddd4j-extensions/ddd4j-extension-validation/src/main/java/io/ddd4j/extension/validation/FileValidationPolicy.java	type class Builder
+ddd4j-extensions/ddd4j-extension-validation/src/main/java/io/ddd4j/extension/validation/FileValidationService.java	type class ListSupport
+ddd4j-extensions/ddd4j-extension-validation/src/main/java/io/ddd4j/extension/validation/InputStreamSource.java	method openStream
+ddd4j-extensions/ddd4j-extension-validation/src/main/java/io/ddd4j/extension/validation/ValidatableFile.java	method fileName;method contentType;method size;method openStream
+ddd4j-kit/src/main/java/io/ddd4j/kit/lang/FastdfsKit.java	field g_charset
+ddd4j-kit/src/main/java/io/ddd4j/kit/lang/FunctionKit.java	field TO_BOOLEAN;field TO_BIGDECIMAL;field TO_BYTE;field TO_CHARACTER;field TO_DOUBLE;field TO_FLOAT;field TO_INTEGER;field TO_LONG;field TO_SHORT;field TO_STRING
+ddd4j-kit/src/main/java/io/ddd4j/kit/lang/IdKit.java	type record SnowflakeOptions
+ddd4j-kit/src/main/java/io/ddd4j/kit/lang/JsonKit.java	field YYYYMMDDHHMMSS;field REDIS_OBJECT_MAPPER;field STRING_TYPE;field INTEGER_TYPE;field LONG_TYPE;field DOUBLE_TYPE;field DEFAULT_OBJECT_MAPPER;type class BaseSimpleDateFormat
+ddd4j-kit/src/main/java/io/ddd4j/kit/lang/LotteryKit.java	type class LotteryElement
+ddd4j-kit/src/main/java/io/ddd4j/kit/lang/NumKit.java	field ZERO
+ddd4j-kit/src/main/java/io/ddd4j/kit/lang/RankKit.java	type class RankModel
+ddd4j-kit/src/main/java/io/ddd4j/kit/lang/RankSortTypeEnum.java	enum-const SAME_NON_CONTINUOUS;enum-const SAME_CONTINUOUS;enum-const NATURAL
+ddd4j-kit/src/main/java/io/ddd4j/kit/lang/StrKit.java	field unknowChar;field CONFIG_LOCATION_DELIMITERS
+ddd4j-kit/src/main/java/io/ddd4j/kit/matcher/AntPathMatcher.java	field DEFAULT_PATH_SEPARATOR;type class AntPathStringMatcher;type class AntPatternComparator;type class PatternInfo;type class PathSeparatorPatternCache
+ddd4j-kit/src/main/java/io/ddd4j/kit/matcher/PathMatcher.java	method isPattern;method match;method matchStart;method extractPathWithinPattern;method extractUriTemplateVariables;method getPatternComparator;method combine
+ddd4j-kit/src/main/java/io/ddd4j/kit/web/IpKit.java	field HOST_ADDRESS
+ddd4j-kit/src/test/java/io/ddd4j/kit/lang/BeanKitTest.java	type class SourceBean;type class TargetBean
+ddd4j-metrics/src/test/java/io/ddd4j/metrics/OpenTelemetryProjectionMetricsTest.java	type class OnRunStartedTests;type class OnRunCompletedTests;type class OnRunFailedTests
+ddd4j-mq/ddd4j-mq-activemq/src/main/java/io/ddd4j/mq/activemq/ActiveMQAcknowledgment.java	field HEADER_AMQ_SESSION;field HEADER_AMQ_MESSAGE;field HEADER_AMQ_DELIVERY_ID;type interface IoOperation;method run
+ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/BrokerType.java	enum-const NONE;enum-const DISRUPTOR;enum-const RABBIT;enum-const KAFKA;enum-const ROCKET;enum-const PULSAR;enum-const REDIS_STREAM;enum-const ACTIVEMQ;enum-const NATS;enum-const MQTT;enum-const MQTT_MICA;enum-const ONS;enum-const TDMQ;enum-const SQS
+ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/MQClient.java	method escape;method unwrap;method impl;method init;method initProducer;method initConsumer;method start;method lifecycle;method startupStatus;method close;method failure;method initializationException;method rollback;method unregisterPublisher;method serialization;method properties;method consume;method unwrap;method consume;method logger
+ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/delivery/MQDeliveryHeaders.java	field MESSAGE_ID
+ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/delivery/MQDeliveryObserver.java	method onOutboxPublished;method onOutboxRetry;method onOutboxDead;method onOutboxFailed;method onInboxProcessed;method onInboxDuplicate;method onInboxFailed
+ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/delivery/MQInboxStore.java	method recordIfAbsent

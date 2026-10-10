@@ -46,16 +46,35 @@ public class OrderApplicationService {
         this.domainService = Objects.requireNonNull(domainService, "domainService must not be null");
     }
 
+    /**
+     * 创建对象。
+     * @param command command 参数。
+     * @return 方法执行结果。
+     */
     public Order createDraft(CreateOrderCommand command) {
         Objects.requireNonNull(command, "command must not be null");
         log.info("Creating draft order: orderNo={}, buyerId={}", command.orderNo(), command.buyerId());
         Order order = Order.draft(command.orderNo(), command.buyerId(), command.buyerName());
+        /**
+         * repository.save() 方法。
+         * @param order order 参数。
+         */
         repository.save(order);
         publishDomainEvents(order);
         return order;
     }
 
+    /**
+     * 追加元素。
+     * @param command command 参数。
+     * @return 方法执行结果。
+     */
     public Order addLine(AddOrderLineCommand command) {
+        /**
+         * Objects.requireNonNull() 方法。
+         * @param command command 参数。
+         * @param null" null" 参数。
+         */
         Objects.requireNonNull(command, "command must not be null");
         Order order = repository.findById(command.orderId())
                 .orElseThrow(() -> new IllegalArgumentException("order not found: " + command.orderId()));
@@ -66,15 +85,28 @@ public class OrderApplicationService {
         return order;
     }
 
+    /**
+     * pay() 方法。
+     * @param orderId 订单标识。
+     * @return 方法执行结果。
+     */
     public Order pay(String orderId) {
         Order order = repository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("order not found: " + orderId));
+        /**
+         * order.pay() 方法。
+         */
         order.pay();
         repository.save(order);
         publishDomainEvents(order);
         return order;
     }
 
+    /**
+     * ship() 方法。
+     * @param orderId 订单标识。
+     * @return 方法执行结果。
+     */
     public Order ship(String orderId) {
         Order order = repository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("order not found: " + orderId));
@@ -84,6 +116,11 @@ public class OrderApplicationService {
         return order;
     }
 
+    /**
+     * cancel() 方法。
+     * @param orderId 订单标识。
+     * @return 方法执行结果。
+     */
     public Order cancel(String orderId) {
         Order order = repository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("order not found: " + orderId));
@@ -93,16 +130,31 @@ public class OrderApplicationService {
         return order;
     }
 
+    /**
+     * 查询数据。
+     * @param orderId 订单标识。
+     * @return 方法执行结果。
+     */
     public Order findById(String orderId) {
         return repository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("order not found: " + orderId));
     }
 
+    /**
+     * 查询数据。
+     * @param orderNo 订单号。
+     * @return 方法执行结果。
+     */
     public Order findByOrderNo(String orderNo) {
         return repository.findByOrderNo(orderNo)
                 .orElseThrow(() -> new IllegalArgumentException("order not found by orderNo: " + orderNo));
     }
 
+    /**
+     * previewDiscount() 方法。
+     * @param orderId 订单标识。
+     * @return 方法执行结果。
+     */
     public Money previewDiscount(String orderId) {
         Order order = findById(orderId);
         return domainService.previewDiscount(order);

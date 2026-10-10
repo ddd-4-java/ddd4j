@@ -1,0 +1,31 @@
+# modules=ddd4j-samples files=30
+ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/TestSupport.java	type class NoopDomainEventPublisher;type class NoopI18nProvider;type class NoopSubjectProvider
+ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/JavalinSaTokenApplication.java	field PORT
+ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/goods/domain/GoodsRepository.java	method findByCode;method findByStatus
+ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/goods/domain/GoodsStatus.java	enum-const ON_SALE;enum-const OFF_SALE;enum-const DRAFT;enum-const DELETED
+ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/order/domain/model/OrderStatus.java	enum-const DRAFT;enum-const PAID;enum-const SHIPPED;enum-const CANCELLED
+ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/order/domain/repository/OrderRepository.java	method findByOrderNo;method findAll
+ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/order/infrastructure/InMemoryOrderRepository.java	type class OrderRow;type class OrderLineRow
+ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/order/web/OrderResource.java	type record DiscountView
+ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/order/web/dto/OrderResponse.java	type record OrderLineResponse
+ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/rbac/domain/model/Permission.java	type enum Status;enum-const ENABLED
+ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/rbac/domain/model/Role.java	type enum Status;enum-const ENABLED
+ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/rbac/domain/model/User.java	type enum Status;enum-const ENABLED
+ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/rbac/domain/repository/PermissionRepository.java	method findAll;method findByPermissionCode;method findByModule
+ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/rbac/domain/repository/RoleRepository.java	method findAll;method findByRoleCode
+ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/rbac/domain/repository/UserRepository.java	method findAll;method findByUsername;method findByStatus
+ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/rbac/infrastructure/InMemoryPermissionRepository.java	type class PermissionRow
+ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/rbac/infrastructure/InMemoryRoleRepository.java	type class RoleRow
+ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/rbac/infrastructure/InMemoryUserRepository.java	type class UserRow
+ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/rbac/web/AuthenticationController.java	type record LoginRequest;type record KickoutRequest;type record RoleCheckRequest;type record PermissionCheckRequest
+ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/rbac/web/AuthorizationController.java	type record CreateUserRequest;type record UpdateUserRequest;type record AssignRolesRequest;type record CreateRoleRequest;type record UpdateRoleRequest;type record AssignPermissionsRequest;type record CreatePermissionRequest;type record UpdatePermissionRequest
+ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/TestSupport.java	type class NoopDomainEventPublisher;type class NoopI18nProvider
+ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/JavalinShiroApplication.java	field PORT;type class NoOpDomainEventPublisher;type class DefaultI18nProvider
+ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/config/AuthConfig.java	type class RbacRealm
+ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/goods/domain/GoodsRepository.java	method findByCode;method findByStatus
+ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/goods/domain/GoodsStatus.java	enum-const ON_SALE;enum-const OFF_SALE;enum-const DRAFT;enum-const DELETED
+ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/order/domain/model/OrderStatus.java	enum-const DRAFT;enum-const PAID;enum-const SHIPPED;enum-const CANCELLED
+ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/order/domain/repository/OrderRepository.java	method findByOrderNo;method findAll
+ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/order/infrastructure/InMemoryOrderRepository.java	type class OrderRow;type class OrderLineRow
+ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/order/web/OrderResource.java	type record DiscountView
+ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/order/web/dto/OrderResponse.java	type record OrderLineResponse

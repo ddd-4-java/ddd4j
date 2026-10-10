@@ -34,7 +34,13 @@ import java.util.concurrent.ConcurrentHashMap;
 @SuppressWarnings("unchecked")
 public class ThreadContext {
 
+    /**
+     * 安全管理器在上下文中的键名。
+     */
     public static final String SECURITY_MANAGER_KEY = ThreadContext.class.getName() + "_SECURITY_MANAGER_KEY";
+    /**
+     * 认证主体在上下文中的键名。
+     */
     public static final String SUBJECT_KEY = ThreadContext.class.getName() + "_SUBJECT_KEY";
 
     /**
@@ -335,6 +341,11 @@ public class ThreadContext {
         THREAD_LOCAL_POOL.remove();
     }
 
+    /**
+     * 上下文作用域，关闭时恢复进入作用域前的资源快照。
+     *
+     * <p>实现 {@link AutoCloseable}，可配合 try-with-resources 使用，保证作用域退出即恢复。</p>
+     */
     public static final class Scope implements AutoCloseable {
 
         private final Map<Object, Object> previousResources;
@@ -344,6 +355,9 @@ public class ThreadContext {
             this.previousResources = previousResources;
         }
 
+        /**
+         * 关闭并释放资源。
+         */
         @Override
         public void close() {
             if (closed) {

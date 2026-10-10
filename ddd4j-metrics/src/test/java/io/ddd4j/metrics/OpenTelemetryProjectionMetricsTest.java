@@ -78,6 +78,9 @@ class OpenTelemetryProjectionMetricsTest {
                 .isInstanceOf(NullPointerException.class);
     }
 
+    /**
+     * onRunStarted 指标记录的嵌套测试组。
+     */
     @Nested
     @DisplayName("onRunStarted")
     class OnRunStartedTests {
@@ -124,6 +127,9 @@ class OpenTelemetryProjectionMetricsTest {
         }
     }
 
+    /**
+     * onRunCompleted 指标记录的嵌套测试组。
+     */
     @Nested
     @DisplayName("onRunCompleted")
     class OnRunCompletedTests {
@@ -172,6 +178,9 @@ class OpenTelemetryProjectionMetricsTest {
         }
     }
 
+    /**
+     * onRunFailed 指标记录的嵌套测试组。
+     */
     @Nested
     @DisplayName("onRunFailed")
     class OnRunFailedTests {

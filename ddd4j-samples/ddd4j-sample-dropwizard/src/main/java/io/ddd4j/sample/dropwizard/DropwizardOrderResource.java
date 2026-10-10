@@ -57,6 +57,11 @@ public final class DropwizardOrderResource {
         return R.ok(new TokenResponse(SubjectKit.getSubject().login(AuthRequest.of(userId))));
     }
 
+    /**
+     * create() 方法。
+     * @param request 请求对象。
+     * @return 方法执行结果。
+     */
     @POST
     @Path("/orders")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -94,6 +99,11 @@ public final class DropwizardOrderResource {
         return R.ok(applicationService.find(orderId));
     }
 
+    /**
+     * 创建订单请求参数。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     @Data
     public static class CreateOrderRequest {
 
@@ -102,6 +112,11 @@ public final class DropwizardOrderResource {
         private String buyerName;
     }
 
+    /**
+     * 订单追加明细请求参数。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     @Data
     public static class AddOrderLineRequest {
 

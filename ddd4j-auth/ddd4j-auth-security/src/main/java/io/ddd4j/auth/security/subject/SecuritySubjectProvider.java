@@ -28,6 +28,10 @@ import io.ddd4j.core.subject.SubjectProvider;
  */
 public class SecuritySubjectProvider implements SubjectProvider {
 
+    /**
+     * 获取值。
+     * @return 方法执行结果。
+     */
     @Override
     public Subject getSubject() {
         return new SecuritySubject();

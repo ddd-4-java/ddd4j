@@ -52,10 +52,20 @@ public final class DefaultProjectionPosition implements ProjectionPosition {
         this.nextEventNumber = nextEventNumber;
     }
 
+    /**
+     * zero() 方法。
+     * @param streamId 字符串参数。
+     * @return 当前对象自身，支持链式调用。
+     */
     public static DefaultProjectionPosition zero(String streamId) {
         return new DefaultProjectionPosition(streamId, 0);
     }
 
+    /**
+     * withNextEventNumber() 方法。
+     * @param nextEventNumber nextEventNumber 参数。
+     * @return 方法执行结果。
+     */
     @Override
     public ProjectionPosition withNextEventNumber(long nextEventNumber) {
         if (nextEventNumber == this.nextEventNumber) {
@@ -64,6 +74,11 @@ public final class DefaultProjectionPosition implements ProjectionPosition {
         return new DefaultProjectionPosition(streamId, nextEventNumber);
     }
 
+    /**
+     * 判断布尔状态。
+     * @param position position 参数。
+     * @return 判断结果。
+     */
     public boolean isSameStream(ProjectionPosition position) {
         return Objects.nonNull(position) && Objects.equals(streamId, position.getStreamId());
     }

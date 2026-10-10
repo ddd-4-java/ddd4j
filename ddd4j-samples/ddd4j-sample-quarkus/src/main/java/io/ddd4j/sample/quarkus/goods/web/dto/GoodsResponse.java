@@ -25,6 +25,11 @@ import java.util.Objects;
 public record GoodsResponse(Long id, String code, String name, BigDecimal price, Integer stock,
                             GoodsStatus status, LocalDateTime createTime, LocalDateTime updateTime) {
 
+    /**
+     * from() 方法。
+     * @param goods goods 参数。
+     * @return 当前对象自身，支持链式调用。
+     */
     public static GoodsResponse from(Goods goods) {
         Goods source = Objects.requireNonNull(goods, "goods must not be null");
         return new GoodsResponse(source.id(), source.getCode(), source.getName(), source.getPrice(),

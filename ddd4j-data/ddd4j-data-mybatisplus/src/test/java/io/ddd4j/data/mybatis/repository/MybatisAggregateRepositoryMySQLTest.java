@@ -157,6 +157,7 @@ class MybatisAggregateRepositoryMySQLTest {
 
     // =================== 测试夹具 ===================
 
+    /** 测试用仓储实现，绑定订单聚合根与订单持久化对象。 */
     static final class TestRepository
             extends MybatisAggregateRepository<OrderMapper, Order, OrderPO, OrderQuery, String> {
 
@@ -165,12 +166,15 @@ class MybatisAggregateRepositoryMySQLTest {
         }
     }
 
+    /** 测试用订单 Mapper 接口。 */
     interface OrderMapper extends BaseMapper<OrderPO> {
     }
 
+    /** 测试用订单查询对象。 */
     static final class OrderQuery extends Query<Order> {
     }
 
+    /** 测试用订单聚合根。 */
     static final class Order extends AggregateRoot<String> {
 
         private String id;
@@ -186,15 +190,27 @@ class MybatisAggregateRepositoryMySQLTest {
             this.deletedAt = deletedAt;
         }
 
+        /**
+         * id() 方法。
+         * @return 结果字符串。
+         */
         @Override
         public String id() {
             return id;
         }
 
+        /**
+         * 获取值。
+         * @return 结果字符串。
+         */
         public String getId() {
             return id;
         }
 
+        /**
+         * 设置值。
+         * @param id 标识值。
+         */
         public void setId(String id) {
             this.id = id;
         }
@@ -203,6 +219,10 @@ class MybatisAggregateRepositoryMySQLTest {
             return status;
         }
 
+        /**
+         * 设置值。
+         * @param status 状态。
+         */
         public void setStatus(String status) {
             this.status = status;
         }
@@ -211,11 +231,20 @@ class MybatisAggregateRepositoryMySQLTest {
             return deletedAt;
         }
 
+        /**
+         * 设置值。
+         * @param deletedAt deletedAt 参数。
+         */
         public void setDeletedAt(LocalDateTime deletedAt) {
             this.deletedAt = deletedAt;
         }
     }
 
+    /**
+     * 类型说明。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     @TableName("orders")
     static final class OrderPO {
 
@@ -231,26 +260,50 @@ class MybatisAggregateRepositoryMySQLTest {
         OrderPO() {
         }
 
+        /**
+         * 获取值。
+         * @return 结果字符串。
+         */
         public String getId() {
             return id;
         }
 
+        /**
+         * 设置值。
+         * @param id 标识值。
+         */
         public void setId(String id) {
             this.id = id;
         }
 
+        /**
+         * 获取值。
+         * @return 结果字符串。
+         */
         public String getStatus() {
             return status;
         }
 
+        /**
+         * 设置值。
+         * @param status 状态。
+         */
         public void setStatus(String status) {
             this.status = status;
         }
 
+        /**
+         * 获取值。
+         * @return 方法执行结果。
+         */
         public LocalDateTime getDeletedAt() {
             return deletedAt;
         }
 
+        /**
+         * 设置值。
+         * @param deletedAt deletedAt 参数。
+         */
         public void setDeletedAt(LocalDateTime deletedAt) {
             this.deletedAt = deletedAt;
         }

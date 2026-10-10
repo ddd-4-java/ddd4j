@@ -112,6 +112,12 @@ public final class MqSpan {
     }
 
     private static final TextMapSetter<Map<String, String>> SETTER = new TextMapSetter<Map<String, String>>() {
+        /**
+         * set() 方法。
+         * @param carrier 属性映射。
+         * @param key 幂等键。
+         * @param value 值。
+         */
         @Override
         public void set(Map<String, String> carrier, String key, String value) {
             if (Objects.nonNull(carrier)) {
@@ -126,6 +132,12 @@ public final class MqSpan {
             return Objects.isNull(carrier) ? Collections.emptyList() : carrier.keySet();
         }
 
+        /**
+         * get() 方法。
+         * @param carrier 属性映射。
+         * @param key 幂等键。
+         * @return 结果字符串。
+         */
         @Override
         public String get(Map<String, String> carrier, String key) {
             if (Objects.isNull(carrier)) {

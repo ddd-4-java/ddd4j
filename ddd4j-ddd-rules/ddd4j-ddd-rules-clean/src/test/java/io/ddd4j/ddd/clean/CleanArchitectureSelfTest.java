@@ -32,6 +32,11 @@ import io.ddd4j.ddd.clean.test.CleanArchitectureTest;
         packages = "io.ddd4j.ddd.clean",
         importOptions = ImportOption.DoNotIncludeTests.class
 )
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 public class CleanArchitectureSelfTest extends CleanArchitectureTest {
 
 }

@@ -38,6 +38,10 @@ public final class JdbcOrderRepository implements OrderRepository {
         this.transaction = Objects.requireNonNull(transaction, "transaction must not be null");
     }
 
+    /**
+     * save() 方法。
+     * @param order order 参数。
+     */
     @Override
     public void save(Order order) {
         Objects.requireNonNull(order, "order must not be null");
@@ -105,6 +109,10 @@ public final class JdbcOrderRepository implements OrderRepository {
         });
     }
 
+    /**
+     * count() 方法。
+     * @return 结果数值。
+     */
     @Override
     public long count() {
         return transaction.query(connection -> {

@@ -40,34 +40,66 @@ public record WebRequestContext(
         path = StrKit.isBlank(path) ? "/" : path;
     }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getAuthorization() {
             return authorization;
         }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getClientIp() {
             return clientIp;
         }
 
+    /**
+     * 获取值。
+     * @return 方法执行结果。
+     */
     public Locale getLocale() {
             return locale;
         }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getMethod() {
             return method;
         }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getPath() {
             return path;
         }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getRequestId() {
             return requestId;
         }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getTenantId() {
             return tenantId;
         }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getTraceId() {
             return traceId;
         }

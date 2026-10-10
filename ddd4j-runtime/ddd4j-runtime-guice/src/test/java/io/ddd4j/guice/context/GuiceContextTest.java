@@ -29,6 +29,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 class GuiceContextTest {
 
     @AfterEach
@@ -39,6 +44,9 @@ class GuiceContextTest {
 
     private Injector injector() {
         return Guice.createInjector(new AbstractModule() {
+            /**
+             * configure() 方法。
+             */
             @Override
             protected void configure() {
                 bind(String.class).annotatedWith(Names.named("greeting")).toInstance("hello");
@@ -109,8 +117,14 @@ class GuiceContextTest {
         assertNull(GuiceContext.getAttribute("k"));
     }
 
+    /**
+     * 空实现的可运行组件，用于验证子类型绑定能被正确收集。
+     */
     public static final class CountingRunnable implements Runnable {
 
+        /**
+         * 执行主流程。
+         */
         @Override
         public void run() {
         }
@@ -127,6 +141,9 @@ class GuiceContextTest {
                 captured.set(e);
             }
         });
+        /**
+         * thread.start() 方法。
+         */
         thread.start();
         thread.interrupt();
         thread.join(2000);
@@ -137,6 +154,9 @@ class GuiceContextTest {
     @Test
     void getInstancesSkipsBindingsThatFailInstantiation() {
         GuiceContext.setInjector(Guice.createInjector(new AbstractModule() {
+            /**
+             * configure() 方法。
+             */
             @Override
             protected void configure() {
                 bind(BrokenRunnable.class).in(com.google.inject.Singleton.class);
@@ -164,12 +184,18 @@ class GuiceContextTest {
         assertEquals("hello", GuiceContext.getInstance("greeting", String.class));
     }
 
+    /**
+     * 构造即抛异常的可运行组件，用于验证实例化失败的绑定会被跳过。
+     */
     public static final class BrokenRunnable implements Runnable {
 
         public BrokenRunnable() {
             throw new IllegalStateException("cannot create");
         }
 
+        /**
+         * 执行主流程。
+         */
         @Override
         public void run() {
         }

@@ -21,6 +21,11 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 //JDK动态代理实现InvocationHandler接口
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 public class JdkProxy implements InvocationHandler {
 
     private Object target;//需要代理的目标对象
@@ -29,6 +34,14 @@ public class JdkProxy implements InvocationHandler {
         this.target = target;
     }
 
+    /**
+     * 调用目标逻辑。
+     * @param proxy 代理实例。
+     * @param method 被调用的方法。
+     * @param args 命令行参数。
+     * @return 结果对象。
+     * @throws Throwable 调用过程中出现异常时抛出。
+     */
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         System.out.println("JDK动态代理，监听开始！");
@@ -39,12 +52,23 @@ public class JdkProxy implements InvocationHandler {
 
 
     //定义获取代理对象方法
+    /**
+     * 获取值。
+     * @param targetObject 对象参数。
+     * @return 结果对象。
+     */
     public static Object getJDKProxy(Object targetObject) {
         //JDK动态代理只能针对实现了接口的类进行代理，newProxyInstance 函数所需参数就可看出
         return Proxy.newProxyInstance(targetObject.getClass().getClassLoader(), targetObject.getClass().getInterfaces(), new JdkProxy(targetObject));
     }
 
     // 定义获取代理对象方法
+    /**
+     * 获取值。
+     * @param <T> 类型参数。
+     * @param className 类型字面量。
+     * @return 结果值。
+     */
     public static <T> T getJDKProxy(Class<T> className) {
         JdkProxy target = new JdkProxy(BeanUtils.instantiateClass(className));
         //JDK动态代理只能针对实现了接口的类进行代理，newProxyInstance 函数所需参数就可看出

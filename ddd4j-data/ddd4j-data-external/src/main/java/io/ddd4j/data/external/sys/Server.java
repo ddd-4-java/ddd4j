@@ -67,12 +67,22 @@ public class Server {
      */
     private List<SysFile> sysFiles = new LinkedList<>();
 
+    /**
+     * main() 方法。
+     * @param args 命令行参数。
+     */
     public static void main(String[] args) {
         Server server = new Server();
+        /**
+         * server.setValueTo() 方法。
+         */
         server.setValueTo();
         log.info("{}", server);
     }
 
+    /**
+     * 设置值。
+     */
     public void setValueTo() {
         SystemInfo systemInfo = new SystemInfo();
         HardwareAbstractionLayer hal = systemInfo.getHardware();

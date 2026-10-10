@@ -2253,7 +2253,7 @@
                 <version>${druid.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.github.hiwepy</groupId>
+                <groupId>io.github.easy4j</groupId>
                 <artifactId>druid-metrics-prometheus</artifactId>
                 <version>${druid-metrics.version}</version>
             </dependency>
@@ -3187,7 +3187,7 @@
                 <type>pom</type>
             </dependency>
             <dependency>
-                <groupId>com.github.hiwepy</groupId>
+                <groupId>io.github.easy4j</groupId>
                 <artifactId>httpconn</artifactId>
                 <version>${httpconn.version}</version>
             </dependency>
@@ -3232,7 +3232,7 @@
                 <version>${httpclient.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.github.hiwepy</groupId>
+                <groupId>io.github.easy4j</groupId>
                 <artifactId>httputils</artifactId>
                 <version>${httputils.version}</version>
             </dependency>
@@ -3677,7 +3677,7 @@
                 <version>${javassist-extension.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.github.hiwepy</groupId>
+                <groupId>io.github.easy4j</groupId>
                 <artifactId>javassist-plus</artifactId>
                 <version>${javassist-plus.version}</version>
             </dependency>
@@ -5383,7 +5383,7 @@
                 <version>${pac4j.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.github.hiwepy</groupId>
+                <groupId>io.github.easy4j</groupId>
                 <artifactId>pac4j-oauth-ext</artifactId>
                 <version>${pac4j-oauth-ext.version}</version>
             </dependency>
@@ -6271,7 +6271,7 @@
                 <version>${shedlock.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.github.hiwepy</groupId>
+                <groupId>io.github.easy4j</groupId>
                 <artifactId>shiro-biz</artifactId>
                 <version>${shiro-biz.version}</version>
             </dependency>
@@ -6506,7 +6506,7 @@
                 <version>${spring-amqp.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.github.hiwepy</groupId>
+                <groupId>io.github.easy4j</groupId>
                 <artifactId>spring-biz</artifactId>
                 <version>${spring-biz.version}</version>
             </dependency>
@@ -6988,7 +6988,7 @@
                 <version>${undertow.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.github.hiwepy</groupId>
+                <groupId>io.github.easy4j</groupId>
                 <artifactId>undertow-metrics-prometheus</artifactId>
                 <version>${undertow-metrics.version}</version>
             </dependency>

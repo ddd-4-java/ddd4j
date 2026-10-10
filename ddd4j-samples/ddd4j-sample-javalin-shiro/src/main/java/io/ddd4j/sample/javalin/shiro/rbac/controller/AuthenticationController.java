@@ -162,6 +162,12 @@ public class AuthenticationController {
 
     // ============================ DTO ============================
 
+    /**
+     * 登录请求参数：登录标识与密码。
+     *
+     * @param loginId 登录标识（账号）
+     * @param password 登录密码
+     */
     public record LoginRequest(String loginId, String password) {
     }
 

@@ -63,15 +63,22 @@ public final class HttpSpan {
 
     /** 标准化 HTTP 属性键（遵循 OTel 语义约定）。 */
     public static final AttributeKey<String> ATTR_HTTP_METHOD = AttributeKey.stringKey("http.request.method");
+    /** HTTP 路由模板属性键，记录匹配到的路由模式（如 {@code /api/users/{id}}）。 */
     public static final AttributeKey<String> ATTR_HTTP_ROUTE = AttributeKey.stringKey("http.route");
+    /** HTTP 响应状态码属性键，记录本次请求返回的状态码。 */
     public static final AttributeKey<String> ATTR_HTTP_STATUS = AttributeKey.stringKey("http.response.status_code");
+    /** URL 路径属性键，记录请求的原始路径。 */
     public static final AttributeKey<String> ATTR_URL_PATH = AttributeKey.stringKey("url.path");
+    /** URL 协议属性键，记录请求使用的协议（http / https）。 */
     public static final AttributeKey<String> ATTR_URL_SCHEME = AttributeKey.stringKey("url.scheme");
+    /** 客户端 User-Agent 属性键，记录请求方的 User-Agent 原文。 */
     public static final AttributeKey<String> ATTR_USER_AGENT = AttributeKey.stringKey("user_agent.original");
+    /** 客户端地址属性键，记录请求发起方的 IP 或主机标识。 */
     public static final AttributeKey<String> ATTR_CLIENT_IP = AttributeKey.stringKey("client.address");
 
     /** 业务级属性。 */
     public static final AttributeKey<String> ATTR_DDD4J_REQUEST_ID = AttributeKey.stringKey("ddd4j.request.id");
+    /** 业务级租户标识属性键，记录请求所属的租户 ID。 */
     public static final AttributeKey<String> ATTR_DDD4J_TENANT_ID = AttributeKey.stringKey("ddd4j.tenant.id");
 
     private HttpSpan() {
@@ -182,6 +189,12 @@ public final class HttpSpan {
     }
 
     private static final TextMapSetter<Map<String, String>> SETTER = new TextMapSetter<Map<String, String>>() {
+        /**
+         * set() 方法。
+         * @param carrier 属性映射。
+         * @param key 幂等键。
+         * @param value 值。
+         */
         @Override
         public void set(Map<String, String> carrier, String key, String value) {
             if (Objects.nonNull(carrier)) {
@@ -196,6 +209,12 @@ public final class HttpSpan {
             return Objects.isNull(carrier) ? Collections.emptyList() : carrier.keySet();
         }
 
+        /**
+         * get() 方法。
+         * @param carrier 属性映射。
+         * @param key 幂等键。
+         * @return 结果字符串。
+         */
         @Override
         public String get(Map<String, String> carrier, String key) {
             if (Objects.isNull(carrier)) {

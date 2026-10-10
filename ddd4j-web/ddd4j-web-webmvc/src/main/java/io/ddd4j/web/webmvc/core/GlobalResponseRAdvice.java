@@ -54,6 +54,12 @@ public class GlobalResponseRAdvice implements ResponseBodyAdvice<Object> {
     @Autowired
     BaseWebProperties baseWebProperties;
 
+    /**
+     * supports() 方法。
+     * @param returnType returnType 参数。
+     * @param aClass 类型字面量。
+     * @return 判断结果。
+     */
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> aClass) {
         return baseWebProperties.getMvc().getEnableRResponse()
@@ -61,6 +67,16 @@ public class GlobalResponseRAdvice implements ResponseBodyAdvice<Object> {
                 && !returnType.hasMethodAnnotation(RawResponse.class);
     }
 
+    /**
+     * beforeBodyWrite() 方法。
+     * @param data 对象参数。
+     * @param returnType returnType 参数。
+     * @param mediaType mediaType 参数。
+     * @param aClass 类型字面量。
+     * @param serverHttpRequest serverHttpRequest 参数。
+     * @param serverHttpResponse serverHttpResponse 参数。
+     * @return 结果对象。
+     */
     @Override
     public Object beforeBodyWrite(Object data, MethodParameter returnType, MediaType mediaType,
                                   Class<? extends HttpMessageConverter<?>> aClass,

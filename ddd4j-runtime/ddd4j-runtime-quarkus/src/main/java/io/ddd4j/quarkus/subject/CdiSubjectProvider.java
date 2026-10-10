@@ -41,6 +41,10 @@ public class CdiSubjectProvider implements SubjectProvider {
     @Inject
     Instance<Subject> subjectInstance;
 
+    /**
+     * 获取值。
+     * @return 方法执行结果。
+     */
     @Override
     public Subject getSubject() {
         if (subjectInstance.isUnsatisfied() || subjectInstance.isAmbiguous()) {

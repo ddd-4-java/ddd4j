@@ -80,6 +80,11 @@ public class MQListener {
      */
     private boolean required = true;
 
+    /**
+     * 监听器构建器，用于覆盖 {@link #required} 等字段的默认值。
+     *
+     * <p>Lombok {@code @Builder} 生成的构建器骨架中，本类补充了 {@code required} 的默认值。
+     */
     public static class MQListenerBuilder {
         private boolean required = true;
     }

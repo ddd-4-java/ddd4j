@@ -75,6 +75,7 @@ class MybatisAggregateRepositoryTest {
                 .hasMessageContaining("PERSISTENCE", OtherOrderPO.class.getName(), OrderPO.class.getName());
     }
 
+    /** 测试用仓储实现，暴露条件包装构造入口。 */
     static final class TestRepository
             extends MybatisAggregateRepository<OrderMapper, Order, OrderPO, OrderQuery, String> {
 
@@ -87,18 +88,25 @@ class MybatisAggregateRepositoryTest {
         }
     }
 
+    /** 测试用订单 Mapper 接口。 */
     interface OrderMapper extends BaseMapper<OrderPO> {
     }
 
+    /** 测试用订单查询对象。 */
     static final class OrderQuery extends Query<Order> {
     }
 
+    /** 测试用订单聚合根。 */
     static final class Order extends AggregateRoot<String> {
 
         private String id;
         private String status;
         private LocalDateTime deletedAt;
 
+        /**
+         * id() 方法。
+         * @return 结果字符串。
+         */
         @Override
         public String id() {
             return id;
@@ -113,6 +121,11 @@ class MybatisAggregateRepositoryTest {
         }
     }
 
+    /**
+     * 类型说明。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     @TableName("orders")
     static final class OrderPO {
 
@@ -134,6 +147,11 @@ class MybatisAggregateRepositoryTest {
         }
     }
 
+    /**
+     * 类型说明。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     static final class OtherOrderPO {
 
         private String status;

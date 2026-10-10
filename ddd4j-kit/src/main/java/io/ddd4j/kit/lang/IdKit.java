@@ -211,6 +211,15 @@ public class IdKit extends IdUtil {
                 options.timeOffset(), options.randomSequenceLimit());
     }
 
+    /**
+     * 自定义 Snowflake 生成器参数记录，用于按参数缓存对应的生成器实例。
+     *
+     * @param workerId 工作机器节点 ID
+     * @param dataCenterId 数据中心 ID
+     * @param useSystemClock 是否使用系统时钟获取时间戳
+     * @param timeOffset 允许时间回拨的毫秒数
+     * @param randomSequenceLimit 随机序号上限，0 表示不启用
+     */
     private record SnowflakeOptions(long workerId, long dataCenterId, boolean useSystemClock,
                                     long timeOffset, long randomSequenceLimit) {
     }

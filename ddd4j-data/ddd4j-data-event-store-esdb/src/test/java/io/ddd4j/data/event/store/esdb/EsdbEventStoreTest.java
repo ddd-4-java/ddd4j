@@ -94,13 +94,35 @@ class EsdbEventStoreTest {
         assertThat(new EsdbEventStore(client).read(ORDER_TYPE, new TestId("missing"))).isEmpty();
     }
 
+    /**
+     * 测试用聚合根标识记录，封装订单标识字符串并关联固定实体类型。
+     *
+     * @param value 聚合根标识的字符串值
+     */
     record TestId(String value) implements AggregateRootId {
         private static final EntityType TYPE = new StringEntityType("Order");
+        /**
+         * 获取值。
+         * @return 方法执行结果。
+         */
         @Override public EntityType getType() { return TYPE; }
+        /**
+         * asString() 方法。
+         * @return 结果字符串。
+         */
         @Override public String asString() { return value; }
+        /**
+         * asTypedString() 方法。
+         * @return 结果字符串。
+         */
         @Override public String asTypedString() { return TYPE.asString() + ":" + value; }
     }
 
+    /**
+     * 类型说明。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     static final class TestEvent extends DomainEvent<TestId> {
         TestEvent() { super(); }
         TestEvent(TestId id) { super(new EntityIdPath(id)); }

@@ -23,21 +23,52 @@ public interface RegionCache {
 
     RegionCache NONE = new RegionCache() {
 
+        /**
+         * 空实现：始终不命中，返回 {@code null}。
+         *
+         * @param key 缓存键
+         * @return 始终为 {@code null}
+         */
         @Override
         public String getString(String key) {
             return null;
         }
 
+        /**
+         * 空实现：丢弃写入，不做任何缓存。
+         *
+         * @param key   缓存键
+         * @param value 缓存值
+         * @param ttl   缓存存活时长
+         */
         @Override
         public void set(String key, String value, Duration ttl) {
         }
     };
 
+    /**
+     * 获取空实现。
+     *
+     * @return 不做任何读写缓存的实例
+     */
     static RegionCache none() {
         return NONE;
     }
 
+    /**
+     * 按键读取缓存字符串。
+     *
+     * @param key 缓存键
+     * @return 缓存值；未命中时返回 {@code null}
+     */
     String getString(String key);
 
+    /**
+     * 写入带存活时长的缓存字符串。
+     *
+     * @param key   缓存键
+     * @param value 缓存值
+     * @param ttl   缓存存活时长
+     */
     void set(String key, String value, Duration ttl);
 }

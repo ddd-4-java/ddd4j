@@ -1,0 +1,524 @@
+ddd4j-annotation/src/main/java/io/ddd4j/annotation/BusinessType.java	10	enum-const LOGIN;enum-const LOGOUT;enum-const INSERT;enum-const DELETE;enum-const UPDATE;enum-const SELECT;enum-const UPLOAD;enum-const DOWNLOAD;enum-const EMAIL;enum-const SMS
+ddd4j-annotation/src/main/java/io/ddd4j/annotation/api/ApiIdempotentType.java	2	enum-const TOKEN;enum-const ARGS
+ddd4j-annotation/src/test/java/io/ddd4j/annotation/api/ApiIdempotentTest.java	1	type class Fixture
+ddd4j-auth/ddd4j-auth-datascope/src/main/java/io/ddd4j/auth/datascope/DataScopeProvider.java	1	method hasPermissions
+ddd4j-auth/ddd4j-auth-license/src/main/java/io/ddd4j/auth/license/CustomKeyStoreParam.java	1	field LEGACY_SIGNATURE_ALGORITHM
+ddd4j-auth/ddd4j-auth-license/src/main/java/io/ddd4j/auth/license/LicenseProperties.java	1	field PREFIX
+ddd4j-auth/ddd4j-auth-license/src/main/java/io/ddd4j/auth/license/manager/CustomLicenseManager.java	1	type class PlainMessage
+ddd4j-auth/ddd4j-auth-license/src/test/java/io/ddd4j/auth/license/LicenseTestPreferencesFactory.java	5	type enum RemoveFailureMode;enum-const NONE;enum-const RUNTIME;enum-const ERROR;type class InMemoryPreferences
+ddd4j-auth/ddd4j-auth-license/src/test/java/io/ddd4j/auth/license/TrueLicenseMigrationTest.java	4	type class ExpiredFixtureManager;type class HookRejectingManager;type class RuntimeRejectingManager;type class TestMessage
+ddd4j-auth/ddd4j-auth-satoken/src/main/java/io/ddd4j/auth/satoken/SaConstants.java	5	field PAYLOAD_SCHOOL_CODE;field PAYLOAD_XQ_ORG_ID;field PAYLOAD_IDENTITY_ID;field PAYLOAD_INFO_ID;field PAYLOAD_PARENT_INFO_ID
+ddd4j-auth/ddd4j-auth-satoken/src/main/java/io/ddd4j/auth/satoken/config/Ddd4jStpLogicJwtForSimple.java	2	field ISSUER_CLAIM;field AUDIENCE_CLAIM
+ddd4j-auth/ddd4j-auth-satoken/src/main/java/io/ddd4j/auth/satoken/config/SaTokenAuthenticationMode.java	2	enum-const SESSION;enum-const JWT_SIMPLE
+ddd4j-auth/ddd4j-auth-satoken/src/main/java/io/ddd4j/auth/satoken/subject/SaTokenSubject.java	1	field PRINCIPAL_KEY
+ddd4j-auth/ddd4j-auth-satoken/src/main/java/io/ddd4j/auth/satoken/util/StpKit.java	4	field DEFAULT;field ADMIN;field USER;field XXX
+ddd4j-auth/ddd4j-auth-satoken/src/test/java/io/ddd4j/auth/satoken/handler/SaInternalCheckHandlerTest.java	2	type class TestSaInternalCheckHandler;type class Fixture
+ddd4j-auth/ddd4j-auth-satoken/src/test/java/io/ddd4j/auth/satoken/handler/SaMixCheckLoginHandlerTest.java	1	type class Fixture
+ddd4j-auth/ddd4j-auth-security/src/main/java/io/ddd4j/auth/security/subject/SecuritySubject.java	1	field PRINCIPAL_KEY
+ddd4j-auth/ddd4j-auth-shiro/src/main/java/io/ddd4j/auth/shiro/subject/ShiroSubject.java	2	field SESSION_KEY_PRINCIPAL;field SESSION_KEY_CONFIG
+ddd4j-auth/ddd4j-auth-shiro/src/test/java/io/ddd4j/auth/shiro/subject/ShiroSubjectTest.java	1	type class TestRealm
+ddd4j-cache/src/main/java/io/ddd4j/cache/CacheKit.java	4	type enum LocalCacheType;enum-const CAFFEINE;enum-const GUAVA;enum-const HUTOOL
+ddd4j-cache/src/main/java/io/ddd4j/cache/jetcache/adapter/JetCacheCacheManager.java	1	field DEFAULT_AREA
+ddd4j-cache/src/main/java/io/ddd4j/cache/subject/InMemorySubject.java	5	field PRINCIPALS_BY_TOKEN_CACHE;field PRINCIPALS_BY_LOGIN_ID_CACHE;field TOKEN_BY_LOGIN_ID_CACHE;field DISABLED_UNTIL_CACHE;field CURRENT_TOKEN_CACHE
+ddd4j-cache/src/test/java/io/ddd4j/cache/CacheKitTest.java	1	type class InMemoryCache
+ddd4j-cache/src/test/java/io/ddd4j/cache/lettuce/LettuceCacheRedisTest.java	1	type class User
+ddd4j-core/src/main/java/io/ddd4j/core/ApiCode.java	51	enum-const SC_SUCCESS;enum-const SC_BAD_REQUEST;enum-const SC_UNAUTHORIZED;enum-const SC_FORBIDDEN;enum-const SC_NOT_FOUND;enum-const SC_METHOD_NOT_ALLOWED;enum-const SC_NOT_ACCEPTABLE;enum-const SC_PROXY_AUTHENTICATION_REQUIRED;enum-const SC_REQUEST_TIMEOUT;enum-const SC_CONFLICT;enum-const SC_GONE;enum-const SC_LENGTH_REQUIRED;enum-const SC_PRECONDITION_FAILED;enum-const SC_REQUEST_TOO_LONG;enum-const SC_UNSUPPORTED_MEDIA_TYPE;enum-const SC_REQUESTED_RANGE_NOT_SATISFIABLE;enum-const SC_EXPECTATION_FAILED;enum-const SC_UNPROCESSABLE_ENTITY;enum-const SC_LOCKED;enum-const SC_FAILED_DEPENDENCY
+ddd4j-core/src/main/java/io/ddd4j/core/ApiCodeValue.java	25	field SC_SUCCESS;field SC_FAIL;field SC_AUTHC_FAIL;field SC_AUTHC_METHOD_NOT_ALLOWED;field SC_AUTHC_OVER_RETRY_REMIND;field SC_AUTHC_CAPTCHA_REQUIRED;field SC_AUTHC_CAPTCHA_EXPIRED;field SC_AUTHC_CAPTCHA_INCORRECT;field SC_AUTHC_ACCOUNT_NOT_FOUND;field SC_AUTHC_ACCOUNT_DISABLED;field SC_AUTHC_ACCOUNT_EXPIRED;field SC_AUTHC_ACCOUNT_LOCKED;field SC_AUTHC_CREDENTIALS_EXPIRED;field SC_AUTHC_BAD_CREDENTIALS;field SC_AUTHZ_FAIL;field SC_AUTHZ_TOKEN_ISSUED;field SC_AUTHZ_TOKEN_REQUIRED;field SC_AUTHZ_TOKEN_EXPIRED;field SC_AUTHZ_TOKEN_INVALID;field SC_AUTHZ_TOKEN_INCORRECT
+ddd4j-core/src/main/java/io/ddd4j/core/CustomApiCode.java	3	method getCode;method getReason;method getStatus
+ddd4j-core/src/main/java/io/ddd4j/core/HttpStatus.java	56	field SC_CONTINUE;field SC_SWITCHING_PROTOCOLS;field SC_PROCESSING;field SC_OK;field SC_CREATED;field SC_ACCEPTED;field SC_NON_AUTHORITATIVE_INFORMATION;field SC_NO_CONTENT;field SC_RESET_CONTENT;field SC_PARTIAL_CONTENT;field SC_MULTI_STATUS;field SC_MULTIPLE_CHOICES;field SC_MOVED_PERMANENTLY;field SC_MOVED_TEMPORARILY;field SC_SEE_OTHER;field SC_NOT_MODIFIED;field SC_USE_PROXY;field SC_TEMPORARY_REDIRECT;field SC_BAD_REQUEST;field SC_UNAUTHORIZED
+ddd4j-core/src/main/java/io/ddd4j/core/api/IR.java	6	method getCode;method getMsg;method getData;method isOk;method isOk;method getData
+ddd4j-core/src/main/java/io/ddd4j/core/api/R.java	3	field code;field msg;field data
+ddd4j-core/src/main/java/io/ddd4j/core/api/ResultCode.java	12	enum-const OK;enum-const SUCCESS;enum-const FAIL;enum-const BAD_REQUEST;enum-const UNAUTHORIZED;enum-const FORBIDDEN;enum-const NO_ACCESS_TOKEN;enum-const SERVER_ERROR;enum-const PARAMETER_VALIDATION_FAILED;enum-const TIMEOUT;enum-const NO_SESSION;enum-const LOGIN_FIRST
+ddd4j-core/src/main/java/io/ddd4j/core/auth/AuthLogoutMode.java	3	enum-const LOGOUT;enum-const KICKOUT;enum-const REPLACED
+ddd4j-core/src/main/java/io/ddd4j/core/auth/AuthPrincipal.java	1	type class RolePair
+ddd4j-core/src/main/java/io/ddd4j/core/auth/AuthReplacedLoginExitMode.java	2	enum-const NEW_DEVICE;enum-const OLD_DEVICE
+ddd4j-core/src/main/java/io/ddd4j/core/auth/AuthReplacedRange.java	2	enum-const CURRENT_DEVICE_TYPE;enum-const ALL_DEVICE_TYPE
+ddd4j-core/src/main/java/io/ddd4j/core/cache/AtomicCache.java	7	method increment;method increment;method decrement;method incrementFloat;method decrementFloat;method stockDecrement;method stockIncrement
+ddd4j-core/src/main/java/io/ddd4j/core/cache/CASOperation.java	2	method apply;method maxRetries
+ddd4j-core/src/main/java/io/ddd4j/core/cache/Cache.java	19	method getIfPresent;method get;method getIfPresent;method get;method put;method putAll;method invalidate;method refresh;method invalidateAll;method invalidateAll;method estimatedSize;method stats;method expire;method getExpire;method persist;method compareAndSet;method compareAndSet;method asyncCompareAndSet;method compareAndSet
+ddd4j-core/src/main/java/io/ddd4j/core/cache/CacheConfig.java	2	field DEFAULT_MAXIMUM_SIZE;type class Builder
+ddd4j-core/src/main/java/io/ddd4j/core/cache/CacheLock.java	6	method tryLock;method tryLock;method tryLock;method unlock;method withLock;method withLock
+ddd4j-core/src/main/java/io/ddd4j/core/cache/CacheManager.java	4	method getOrCreateCache;method getCache;method getOrCreateLoadingCache;method getOrCreateCache
+ddd4j-core/src/main/java/io/ddd4j/core/cache/CacheStats.java	5	method hitCount;method missCount;method hitRate;method loadCount;method evictionCount
+ddd4j-core/src/main/java/io/ddd4j/core/cache/CacheType.java	3	enum-const LOCAL;enum-const REMOTE;enum-const BOTH
+ddd4j-core/src/main/java/io/ddd4j/core/cache/CasCache.java	3	method putIfAbsent;method replace;method removeIf
+ddd4j-core/src/main/java/io/ddd4j/core/cache/GetsResponse.java	3	method key;method value;method version
+ddd4j-core/src/main/java/io/ddd4j/core/constant/AuthConstants.java	29	field JWT_ISSUER;field JWT_SUBJECT;field JWT_AUDIENCE;field JWT_EXPIRES_AT;field JWT_NOT_BEFORE;field JWT_ISSUED_AT;field JWT_JWT_ID;field JWT_AUTH_TYPE;field PARAM_TEMP_TOKEN;field FIELD_TOKEN;field FIELD_DEVICE_TYPE;field FIELD_DEVICE_ID;field DEVICE_TYPE_MOBILE;field DEVICE_TYPE_PC;field FIELD_APP_ID;field FIELD_APP_CHANNEL;field FIELD_APP_VERSION;field HEADER_API_KEY;field HEADER_TIMESTAMP;field HEADER_SIGNATURE
+ddd4j-core/src/main/java/io/ddd4j/core/constant/Constants.java	10	field RT_SUCCESS;field RT_FAIL;field RT_ERROR;field THEME_PARAM_NAME;field THEME_PARAM_DEFAULT;field THEME_SOURCE_CLASSPATH;field LANG_PARAM_NAME;field ACCESS_MARKER;field AUTHZ_MARKER;field BIZ_MARKER
+ddd4j-core/src/main/java/io/ddd4j/core/constant/ContextConstants.java	17	field REQUEST_PARAMS;field REQUEST_BODY;field TENANT_ID;field PREPARING_SQL;field SQL_PARAMS;field LAST_SQL_SPENDS;field SYSTEM_ID;field SHOP_ID;field ROLE;field LOCALE;field THIRD_SESSION;field SESSION;field CLIENT_TYPE;field APP_ID;field USER_ID;field AUTHORIZATION;field PROJECT_PACKAGE
+ddd4j-core/src/main/java/io/ddd4j/core/constant/EventStoreConstants.java	13	field TABLE_NAME;field COLUMN_AGGREGATE_ID;field COLUMN_VERSION;field COLUMN_POSITION;field COLUMN_EVENT_TYPE;field COLUMN_EVENT_ID;field COLUMN_CORRELATION_ID;field COLUMN_CAUSATION_ID;field COLUMN_PAYLOAD;field COLUMN_TIMESTAMP;field COLUMN_AGGREGATE_TYPE;field ESDB_SYSTEM_STREAM_PREFIX;field ESDB_DEFAULT_READ_LIMIT
+ddd4j-core/src/main/java/io/ddd4j/core/constant/ProjectionConstants.java	12	field TABLE_NAME;field COLUMN_STREAM_ID;field COLUMN_NEXT_EVENT_NUMBER;field METRIC_EVENTS_TOTAL;field METRIC_RUN_DURATION;field METRIC_ERRORS_TOTAL;field TAG_STREAM;field OTel_METRIC_RUN_COUNT;field OTel_METRIC_EVENT_COUNT;field OTel_METRIC_RUN_DURATION;field OTel_METRIC_RUN_ERROR;field OTel_ATTR_STREAM_ID
+ddd4j-core/src/main/java/io/ddd4j/core/constant/SpiKeys.java	11	field PREFIX;field MQ_EVENT_PUBLISHER;field DOMAIN_EVENT_PUBLISHER;field SUBJECT_PROVIDER;field I18N_PROVIDER;field COMMAND_EXECUTOR_REGISTRY;field COMMAND_BUS;field PROJECTION_POSITION_REPOSITORY;field REPOSITORY_REGISTRY;field TRANSACTION_MANAGER;field TRANSACTION_PORT
+ddd4j-core/src/main/java/io/ddd4j/core/constant/XHeaders.java	34	field X_REQUEST_ID;field X_AUTHORIZATION;field X_LONGITUDE;field X_LATITUDE;field X_REGION;field X_PROVINCE;field X_CITY;field X_AREA;field X_LANGUAGE;field X_TIMEZONE;field X_SIGN;field X_ENCRYPT;field X_APP_ID;field X_APP_CHANNEL;field X_APP_VERSION;field X_DEVICE_IMEI;field X_DEVICE_IDFA;field X_DEVICE_OPENUDID;field X_DEVICE_ANDROIDID;field X_DEVICE_OAID
+ddd4j-core/src/main/java/io/ddd4j/core/context/SpiRegistrationScope.java	1	type class Registration
+ddd4j-core/src/main/java/io/ddd4j/core/context/ThreadContext.java	3	field SECURITY_MANAGER_KEY;field SUBJECT_KEY;type class Scope
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/command/CommandBus.java	1	method execute
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/command/CommandExecutor.java	2	method supportedCommands;method execute
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/command/Result.java	2	field SUCCESS;field FAILURE
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/eventstore/AsyncEventStore.java	4	method append;method read;method read;method readAll
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/eventstore/ClassNameFilter.java	1	method allows
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/eventstore/EventStore.java	4	method append;method read;method read;method readAll
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/query/PropertySpace.java	2	enum-const DOMAIN;enum-const PERSISTENCE
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/query/Query.java	9	field current;field size;field having;field fills;field conditions;field orderByConditions;field setOperations;field selectColumns;field groupByColumns
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/query/View.java	2	method getName;method getEventTypes
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/EventChunkReader.java	1	method read
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/NoopProjectionMetrics.java	1	field INSTANCE
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ProjectionMetrics.java	5	method onRunStarted;method onRunCompleted;method onRunFailed;method getLastRunInfo;method onCircuitOpened
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ProjectionPosition.java	3	method getStreamId;method getNextEventNumber;method withNextEventNumber
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ProjectionPositionRepository.java	5	method findByStreamId;method findAll;method save;method deleteByStreamId;method resetToZero
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunner.java	1	field CONSECUTIVE_FAILURE_THRESHOLD
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ProjectionService.java	3	method resetProjectionPosition;method readProjectionPosition;method updateProjectionPosition
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ProjectionView.java	7	method getName;method getStreamId;method getName;method getCron;method getChunkSize;method getEventTypes;method handleEvents
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/TypedEvent.java	1	method getEventType
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/TypedEventHandler.java	3	method getEventType;method getEventClass;method handle
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ViewManager.java	5	method start;method stop;method isRunning;method triggerOnce;method getProjectionStatus
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ViewScheduler.java	4	method schedule;type interface ViewScheduleHandle;method cancel;method isActive
+ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/DomainEventPublisher.java	3	method publish;method publish;method publishAll
+ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/EntityId.java	3	method getType;method asString;method asTypedString
+ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/EntityIdPath.java	1	field PATH_SEPARATOR
+ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/EntityType.java	1	method asString
+ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/Event.java	5	method getEventId;method getEventType;method getEventTimestamp;method getCorrelationId;method getCausationId
+ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/NoopDomainEventPublisher.java	1	field INSTANCE
+ddd4j-core/src/main/java/io/ddd4j/core/ddd/model/DomainModel.java	1	method id
+ddd4j-core/src/main/java/io/ddd4j/core/ddd/model/DomainObjectMapper.java	2	method toModel;method toPersistenceObject
+ddd4j-core/src/main/java/io/ddd4j/core/ddd/model/Entity.java	1	method sameIdentityAs
+ddd4j-core/src/main/java/io/ddd4j/core/ddd/model/metadata/DomainModelHelper.java	1	type record ModelMappingKey
+ddd4j-core/src/main/java/io/ddd4j/core/ddd/repository/EventSourcingRepository.java	4	method read;method read;method add;method update
+ddd4j-core/src/main/java/io/ddd4j/core/ddd/repository/Repository.java	28	method findById;method save;method updateById;method save;method insertOrUpdate;method save;method existsById;method deleteById;method delete;method deleteByIds;method findByIds;method saveBatch;method updateBatchById;method insertOrUpdateBatch;method findFirst;method findAll;method count;method exists;method findFirst;method findList
+ddd4j-core/src/main/java/io/ddd4j/core/enums/IEnum.java	2	method getCode;method getDesc
+ddd4j-core/src/main/java/io/ddd4j/core/health/ReadinessContributor.java	1	method check
+ddd4j-core/src/main/java/io/ddd4j/core/i18n/I18nProvider.java	3	method formatSlfStyle;method formatSlfStyle;method getMessage
+ddd4j-core/src/main/java/io/ddd4j/core/subject/AnonymousSubjectProvider.java	1	field INSTANCE
+ddd4j-core/src/main/java/io/ddd4j/core/subject/Subject.java	70	method getPrincipal;method getPrincipalByLoginId;method getPrincipalByToken;method isPermitted;method isPermitted;method isPermitted;method isPermitted;method isPermittedAny;method isPermittedAny;method isPermittedAll;method isPermittedAll;method hasRole;method hasRole;method hasRoles;method hasRoles;method hasAnyRole;method hasAnyRole;method hasAllRole;method hasAllRole;method isAuthenticated
+ddd4j-core/src/main/java/io/ddd4j/core/subject/SubjectDataProvider.java	3	method getPermissionList;method getRoleList;method isDisabled
+ddd4j-core/src/main/java/io/ddd4j/core/subject/SubjectProvider.java	3	method getSubject;method getSubject;method getSubject
+ddd4j-core/src/main/java/io/ddd4j/core/subject/SubjectStrategy.java	5	field instance;field createToken;field hasElement;field isExpired;field createSubject
+ddd4j-core/src/main/java/io/ddd4j/core/util/SubjectKit.java	3	field subjectProvider;field dataProvider;field strategy
+ddd4j-core/src/test/java/io/ddd4j/core/context/SpiRegistrationScopeTest.java	1	type record Service
+ddd4j-core/src/test/java/io/ddd4j/core/cqrs/command/CommandHandlerTest.java	2	type class CreateOrderCommand;type class CreateOrderCmdExe
+ddd4j-core/src/test/java/io/ddd4j/core/cqrs/command/CommandRegistryTest.java	8	type class CreateOrderCommand;type class CancelOrderCommand;type class ShipOrderCommand;type class TrackOrderCommand;type class CreateOrderCmdExe;type class CancelOrderCmdExe;type class OrderLifecycleCmdExe;type class OrderFulfillmentCmdExe
+ddd4j-core/src/test/java/io/ddd4j/core/cqrs/eventstore/AsyncStoredEventTest.java	2	type record TestAggregateRootId;type class TestEvent
+ddd4j-core/src/test/java/io/ddd4j/core/cqrs/eventstore/EventDeserializerTest.java	3	type class ClassNameValidation;type class DeserializeFallback;type class ClassNameFilterSPI
+ddd4j-core/src/test/java/io/ddd4j/core/cqrs/eventstore/EventStoreContractTest.java	5	field ORDER_TYPE;field ORDER_1;field ORDER_2;type record TestAggregateRootId;type class TestEvent
+ddd4j-core/src/test/java/io/ddd4j/core/cqrs/eventstore/StoredEventStrongTypeContractTest.java	2	type record TestAggregateRootId;type class TestEvent
+ddd4j-core/src/test/java/io/ddd4j/core/cqrs/eventstore/jackson/EventPayloadSerializerTest.java	2	type record TestAggregateRootId;type class OrderPlacedEvent
+ddd4j-core/src/test/java/io/ddd4j/core/cqrs/query/QueryConditionTest.java	3	type class OrderQuery;type class Order;type class OrderPO
+ddd4j-core/src/test/java/io/ddd4j/core/cqrs/query/QueryRichMethodsTest.java	2	type class TestAggregate;type class TestQuery
+ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/DefaultProjectionServiceTest.java	4	type class Constructor;type class ReadProjectionPosition;type class UpdateProjectionPosition;type class ResetProjectionPosition
+ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/EventChunkReaderContractTest.java	2	type class InMemoryEventChunkReader;type record Numbered
+ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/EventChunkTest.java	3	type class Constructor;type class EmptyFactory;type class QueryApi
+ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionMetricsTest.java	5	type class RecordingMetrics;type class TestView;type class RunOnceSuccessMetrics;type class RunOnceFailureMetrics;type class NoopMetricsTests
+ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunnerTest.java	8	type class TestView;type class Constructor;type class RunOnceHappyPath;type class RunOnceEmptyChunk;type class RunOnceNoAdvance;type class RunOnceValidation;type class RunOnceNullChunk;type class RunAll
+ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionStatusTest.java	4	type class RecordConstruction;type class BaselineFactory;type class Immutability;type class ViewManagerDefaultBehavior
+ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/TypedEventDispatcherTest.java	2	type record PersonCreatedEvent;type class PersonCreatedHandler
+ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/DomainEventJsonTest.java	1	type class SampleDomainEvent
+ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/DomainEventRoundTripTest.java	1	type class SampleEvent
+ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/EntityIdPathTest.java	2	type class TestOrderId;type class TestCustomerId
+ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/EventHandlerTest.java	3	type class SampleHandler;type class OrderCreatedEvent;type record OrderId
+ddd4j-core/src/test/java/io/ddd4j/core/ddd/model/AggregateRootApplyTest.java	5	type class Order;type class OrderCreatedEvent;type record OrderId;type class OrderNotifiedEvent;type class UnhandledEvent
+ddd4j-core/src/test/java/io/ddd4j/core/ddd/model/AggregateRootEventHandlerTest.java	5	type class Counter;type class IncrementEvent;type record CounterId;type class CountNotifiedEvent;type class UnhandledEvent
+ddd4j-core/src/test/java/io/ddd4j/core/ddd/model/AggregateRootEventSourcingTest.java	6	type class Order;type class OrderCreated;type class OrderPaid;type class OrderShipped;type class OrderId;type class OrderEntityType
+ddd4j-core/src/test/java/io/ddd4j/core/ddd/model/AggregateRootEventsTest.java	5	type class Order;type class TestEvent;type class OrderId;type class OrderEntityType;type class RecordingRepository
+ddd4j-core/src/test/java/io/ddd4j/core/ddd/model/AggregateRootTest.java	4	type class TestAggregate;type class TestDomainEvent;type class OrderId;type class TestEntityType
+ddd4j-core/src/test/java/io/ddd4j/core/ddd/model/metadata/DomainModelHelperTest.java	3	type class Order;type class MysqlOrderPO;type class JpaOrderEntity
+ddd4j-core/src/test/java/io/ddd4j/core/ddd/repository/RepositoryRegistryTest.java	3	type class Order;type class OrderQuery;type class StubOrderRepository
+ddd4j-core/src/test/java/io/ddd4j/core/util/SubjectKitTest.java	1	type class CustomPrincipal
+ddd4j-data/ddd4j-data-cqrs-dropwizard/src/test/java/io/ddd4j/data/cqrs/dropwizard/DropwizardCommandBusIT.java	4	type class CompanionCommand;type class UnknownCommand;type class OverlappingMultiTypeHandler;type class TestApplication
+ddd4j-data/ddd4j-data-cqrs-dropwizard/src/test/java/io/ddd4j/data/cqrs/dropwizard/SampleCommandHandler.java	1	type class SampleCommandHandler
+ddd4j-data/ddd4j-data-cqrs-helidon/src/test/java/io/ddd4j/data/cqrs/helidon/HelidonCommandBusIT.java	3	type class CompanionCommand;type class UnknownCommand;type class OverlappingMultiTypeHandler
+ddd4j-data/ddd4j-data-cqrs-helidon/src/test/java/io/ddd4j/data/cqrs/helidon/SampleCommandHandler.java	1	type class SampleCommandHandler
+ddd4j-data/ddd4j-data-cqrs-javalin/src/test/java/io/ddd4j/data/cqrs/javalin/JavalinCommandBusIT.java	3	type class CompanionCommand;type class UnknownCommand;type class OverlappingMultiTypeHandler
+ddd4j-data/ddd4j-data-cqrs-javalin/src/test/java/io/ddd4j/data/cqrs/javalin/SampleCommandHandler.java	1	type class SampleCommandHandler
+ddd4j-data/ddd4j-data-cqrs-micronaut/src/test/java/io/ddd4j/data/cqrs/micronaut/MicronautCommandBusIT.java	3	type class CompanionCommand;type class UnknownCommand;type class OverlappingMultiTypeHandler
+ddd4j-data/ddd4j-data-cqrs-quarkus/src/test/java/io/ddd4j/data/cqrs/quarkus/QuarkusCommandBusIT.java	6	type class ConflictCommand;type class CompanionCommand;type class UnknownCommand;type class ExclusiveConflictHandler;type class OverlappingMultiTypeHandler;type class FixedInstance
+ddd4j-data/ddd4j-data-cqrs-spring/src/test/java/io/ddd4j/data/cqrs/sample/SampleCommandHandler.java	1	field HANDLED
+ddd4j-data/ddd4j-data-cqrs-spring/src/test/java/io/ddd4j/data/cqrs/sample/TxProbeCommandHandler.java	1	field DISPATCHED_IN_ACTIVE_TX
+ddd4j-data/ddd4j-data-cqrs-spring/src/test/java/io/ddd4j/data/cqrs/spring/SpringCommandBusIT.java	5	type class ConflictCommand;type class CompanionCommand;type class UnknownCommand;type class ExclusiveConflictHandler;type class OverlappingMultiTypeHandler
+ddd4j-data/ddd4j-data-cqrs-vertx/src/test/java/io/ddd4j/data/cqrs/vertx/SampleCommandHandler.java	1	type class SampleCommandHandler
+ddd4j-data/ddd4j-data-cqrs-vertx/src/test/java/io/ddd4j/data/cqrs/vertx/VertxCommandBusIT.java	3	type class CompanionCommand;type class UnknownCommand;type class OverlappingMultiTypeHandler
+ddd4j-data/ddd4j-data-crypto/src/main/java/io/ddd4j/data/crypto/CryptoConstant.java	2	field INPUT_DECRYPT_DATA;field INPUT_ORIGINAL_DATA
+ddd4j-data/ddd4j-data-crypto/src/main/java/io/ddd4j/data/crypto/CryptoProperties.java	1	field PREFIX
+ddd4j-data/ddd4j-data-crypto/src/main/java/io/ddd4j/data/crypto/enums/CryptoType.java	3	enum-const NOOP;enum-const INTERNAL;enum-const FLKSEC
+ddd4j-data/ddd4j-data-crypto/src/main/java/io/ddd4j/data/crypto/enums/SymmetricAlgorithmType.java	1	enum-const SM4
+ddd4j-data/ddd4j-data-crypto/src/main/java/io/ddd4j/data/crypto/provider/CryptoProvider.java	3	method encrypt;method decrypt;method hmac
+ddd4j-data/ddd4j-data-crypto/src/main/java/io/ddd4j/data/crypto/strategy/CryptoStrategy.java	4	method getType;method encrypt;method decrypt;method hmac
+ddd4j-data/ddd4j-data-crypto/src/main/java/io/ddd4j/data/crypto/strategy/FlksecCryptoStrategy.java	3	type class EncryptResponse;type class DecryptResponse;type class SignResponse
+ddd4j-data/ddd4j-data-datascope/src/main/java/io/ddd4j/data/datascope/DataScopeProvider.java	2	method nonNullAllowed;method hasPermissions
+ddd4j-data/ddd4j-data-datascope/src/test/java/io/ddd4j/data/datascope/DataScopeProviderTest.java	1	type class Sample
+ddd4j-data/ddd4j-data-event-store-esdb/src/main/java/io/ddd4j/data/event/store/esdb/EsdbEventStore.java	1	type record StringAggregateRootId
+ddd4j-data/ddd4j-data-event-store-esdb/src/test/java/io/ddd4j/data/event/store/esdb/EsdbEventStoreIT.java	2	type record TestId;type class TestEvent
+ddd4j-data/ddd4j-data-event-store-esdb/src/test/java/io/ddd4j/data/event/store/esdb/EsdbEventStoreTest.java	2	type record TestId;type class TestEvent
+ddd4j-data/ddd4j-data-event-store-jdbi/src/main/java/io/ddd4j/data/event/store/jdbi/EventStoreRetry.java	4	type interface RetryableAction;method run;type interface Sleeper;method sleep
+ddd4j-data/ddd4j-data-event-store-jdbi/src/main/java/io/ddd4j/data/event/store/jdbi/JdbiEventStore.java	1	type record StringAggregateRootId
+ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/EventStoreRetryTest.java	1	type class RecordingSleeper
+ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/JdbiEventStorePostgresIT.java	2	type record TestAggregateRootId;type class OrderCreatedEvent
+ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/JdbiEventStoreRetryTest.java	3	type class RecordingSleeper;type record TestAggregateRootId;type class TestEvent
+ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/JdbiEventStoreTest.java	2	type record TestAggregateRootId;type class OrderCreatedEvent
+ddd4j-data/ddd4j-data-event-store-jpa/src/main/java/io/ddd4j/data/event/store/jpa/JpaEventStore.java	5	type enum TransactionMode;enum-const INDEPENDENT;enum-const PARTICIPATING;enum-const MANAGED;type record StringAggregateRootId
+ddd4j-data/ddd4j-data-event-store-jpa/src/main/java/io/ddd4j/data/event/store/jpa/JpaStoredEventRepository.java	6	method findCurrentVersion;method findByAggregateTypeAndAggregateIdOrderByVersionAsc;method findByAggregateTypeAndAggregateIdAndVersionBetweenOrderByVersionAsc;method findByPositionGreaterThanEqualOrderByPositionAsc;method save;method nextPosition
+ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/event/store/jpa/JpaEventStoreIT.java	2	type record TestAggregateRootId;type class OrderCreatedEvent
+ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/event/store/jpa/JpaEventStorePostgresIT.java	2	type record TestAggregateRootId;type class OrderCreatedEvent
+ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/event/store/jpa/JpaEventStoreTest.java	2	type class TestAggregateRootId;type class OrderCreatedEvent
+ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/event/store/jpa/JpaManagedParticipationTest.java	3	type class RecordingRepository;type class TestAggregateRootId;type class TestEvent
+ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/event/store/jpa/JpaSpringParticipationIT.java	2	type class TestAggregateRootId;type class TestEvent
+ddd4j-data/ddd4j-data-event-store-panache/src/main/java/io/ddd4j/data/event/store/panache/EventStoreRetry.java	4	type interface RetryableAction;method run;type interface Sleeper;method sleep
+ddd4j-data/ddd4j-data-event-store-panache/src/main/java/io/ddd4j/data/event/store/panache/PanacheEventStore.java	1	type record StringAggregateRootId
+ddd4j-data/ddd4j-data-event-store-panache/src/main/java/io/ddd4j/data/event/store/panache/PanacheStoredEventEntity.java	10	field aggregateType;field aggregateId;field version;field position;field eventType;field eventId;field payload;field correlationId;field causationId;field timestamp
+ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/event/store/panache/EventStoreRetryTest.java	1	type class RecordingSleeper
+ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/event/store/panache/JpaManagedParticipationIT.java	4	type class JpaManagedTestProfile;type class DatabaseState;type class TestAggregateRootId;type class TestEvent
+ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/event/store/panache/PanacheEventStorePostgresIT.java	2	type record TestAggregateRootId;type class OrderCreatedEvent
+ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/event/store/panache/PanacheEventStoreRetryTest.java	4	type class CountingSleeper;type class FaultInjector;type record TestAggregateRootId;type class TestEvent
+ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/event/store/panache/PanacheEventStoreTest.java	2	type record TestAggregateRootId;type class OrderCreatedEvent
+ddd4j-data/ddd4j-data-event-store-r2dbc/src/test/java/io/ddd4j/data/event/store/r2dbc/R2dbcAsyncEventStoreTest.java	5	type class TestOrderId;type class OrderCreatedEvent;type class OrderItemAddedEvent;type class SingleConnectionFactory;type class NoCloseConnection
+ddd4j-data/ddd4j-data-event-store-r2dbc/src/test/java/io/ddd4j/data/event/store/r2dbc/R2dbcEventStorePostgresIT.java	2	type record TestAggregateRootId;type class OrderCreatedEvent
+ddd4j-data/ddd4j-data-event-store-r2dbc/src/test/java/io/ddd4j/data/event/store/r2dbc/R2dbcEventStoreTest.java	2	type class TestAggregateRootId;type class OrderCreatedEvent
+ddd4j-data/ddd4j-data-external/src/main/java/io/ddd4j/data/external/ExternalProperties.java	1	field PREFIX
+ddd4j-data/ddd4j-data-external/src/main/java/io/ddd4j/data/external/SequenceProperties.java	1	field PREFIX
+ddd4j-data/ddd4j-data-external/src/main/java/io/ddd4j/data/external/region/BaiduRegionTemplate.java	1	type class Location
+ddd4j-data/ddd4j-data-external/src/main/java/io/ddd4j/data/external/region/IpRegionTemplate.java	7	method getRegion;method getRegionAddress;method getRegionByIp;method none;method getRegion;method getRegionAddress;method getRegionByIp
+ddd4j-data/ddd4j-data-external/src/main/java/io/ddd4j/data/external/region/ProvinceEnum.java	35	enum-const P110000;enum-const P120000;enum-const P130000;enum-const P140000;enum-const P150000;enum-const P210000;enum-const P220000;enum-const P230000;enum-const P310000;enum-const P320000;enum-const P330000;enum-const P340000;enum-const P350000;enum-const P360000;enum-const P370000;enum-const P410000;enum-const P420000;enum-const P430000;enum-const P440000;enum-const P450000
+ddd4j-data/ddd4j-data-external/src/main/java/io/ddd4j/data/external/region/RegionCache.java	5	method getString;method set;method none;method getString;method set
+ddd4j-data/ddd4j-data-external/src/main/java/io/ddd4j/data/external/region/RegionEnum.java	5	field CN;field HK;field MO;field TW;field UK
+ddd4j-data/ddd4j-data-external/src/main/java/io/ddd4j/data/external/region/XdbSearcher.java	2	field NOT_MATCH;field NOT_MATCH_REGION_ADDRESS
+ddd4j-data/ddd4j-data-jpa/src/main/java/io/ddd4j/data/jpa/IdGenerationStrategy.java	1	method generate
+ddd4j-data/ddd4j-data-jpa/src/main/java/io/ddd4j/data/jpa/JpaAggregateRepository.java	3	field entityManager;field modelClass;field persistenceClass
+ddd4j-data/ddd4j-data-jpa/src/main/java/io/ddd4j/data/jpa/TenantAwareEntity.java	2	field id;field tenantId
+ddd4j-data/ddd4j-data-jpa/src/main/java/io/ddd4j/data/jpa/TenantAwareEntityBase.java	2	field createdTime;field updatedTime
+ddd4j-data/ddd4j-data-jpa/src/test/java/io/ddd4j/data/jpa/JpaAggregateRepositoryCrudTest.java	3	type class TestRepository;type class Order;type class OrderPO
+ddd4j-data/ddd4j-data-jpa/src/test/java/io/ddd4j/data/jpa/JpaAggregateRepositoryTest.java	5	type class TestRepository;type class OrderQuery;type class Order;type class OrderPO;type class OtherOrderPO
+ddd4j-data/ddd4j-data-logs/src/main/java/io/ddd4j/data/logs/ApiOperationLogProvider.java	4	method doBefore;method afterReturing;method wrapThrowing;method afterThrowing
+ddd4j-data/ddd4j-data-logs/src/main/java/io/ddd4j/data/logs/aspect/ApiOperationLogAspect.java	1	field REQUEST_ID_KEY
+ddd4j-data/ddd4j-data-mybatis/src/main/java/io/ddd4j/data/mybatis/adapter/SqlObservationSink.java	1	method accept
+ddd4j-data/ddd4j-data-mybatis/src/main/java/io/ddd4j/data/mybatis/context/Ddd4jTenantContext.java	1	type class Scope
+ddd4j-data/ddd4j-data-mybatis/src/main/java/io/ddd4j/data/mybatis/mapper/Ddd4jMapper.java	5	method insert;method updateById;method selectById;method selectBatchIds;method selectList
+ddd4j-data/ddd4j-data-mybatis/src/main/java/io/ddd4j/data/mybatis/plugins/DataScopeProvider.java	1	method dataScopeCondition
+ddd4j-data/ddd4j-data-mybatis/src/main/java/io/ddd4j/data/mybatis/plugins/handler/EncryptedFieldHandler.java	3	method encrypt;method decrypt;method hmac
+ddd4j-data/ddd4j-data-mybatis/src/main/java/io/ddd4j/data/mybatis/repository/MybatisAggregateRepository.java	5	field modelClass;field persistenceClass;field queryClass;field domainModelInfo;field baseMapper
+ddd4j-data/ddd4j-data-mybatisplus/src/main/java/io/ddd4j/data/mybatis/context/Ddd4jTenantContext.java	1	type class Scope
+ddd4j-data/ddd4j-data-mybatisplus/src/main/java/io/ddd4j/data/mybatis/plugins/DataScopeProvider.java	1	method dataScopeCondition
+ddd4j-data/ddd4j-data-mybatisplus/src/main/java/io/ddd4j/data/mybatis/plugins/handler/EncryptedFieldHandler.java	3	method encrypt;method decrypt;method hmac
+ddd4j-data/ddd4j-data-mybatisplus/src/main/java/io/ddd4j/data/mybatis/plugins/observation/SqlObservationSink.java	1	method accept
+ddd4j-data/ddd4j-data-mybatisplus/src/main/java/io/ddd4j/data/mybatis/repository/MybatisAggregateRepository.java	2	type class ApplicationLog;field baseMapper
+ddd4j-data/ddd4j-data-mybatisplus/src/test/java/io/ddd4j/data/mybatis/adapter/Ddd4jAggregateFillInnerInterceptorTest.java	2	type class TrackingQuery;type class TestAggregate
+ddd4j-data/ddd4j-data-mybatisplus/src/test/java/io/ddd4j/data/mybatis/repository/MybatisAggregateRepositoryCrudTest.java	5	type class TestRepository;type interface OrderMapper;type class OrderQuery;type class Order;type class OrderPO
+ddd4j-data/ddd4j-data-mybatisplus/src/test/java/io/ddd4j/data/mybatis/repository/MybatisAggregateRepositoryMySQLTest.java	5	type class TestRepository;type interface OrderMapper;type class OrderQuery;type class Order;type class OrderPO
+ddd4j-data/ddd4j-data-mybatisplus/src/test/java/io/ddd4j/data/mybatis/repository/MybatisAggregateRepositoryTest.java	6	type class TestRepository;type interface OrderMapper;type class OrderQuery;type class Order;type class OrderPO;type class OtherOrderPO
+ddd4j-data/ddd4j-data-mybatisplus/src/test/java/io/ddd4j/data/mybatis/repository/impl/BaseRepositoryImplGenericResolutionTest.java	5	type interface TestMapper;type class TestRepository;type class TestAggregate;type class TestPo;type class TestQuery
+ddd4j-data/ddd4j-data-projection-dropwizard/src/main/java/io/ddd4j/data/projection/dropwizard/DropwizardProjectionScheduler.java	2	type class ReschedulingHandle;type class CronExpression
+ddd4j-data/ddd4j-data-projection-dropwizard/src/test/java/io/ddd4j/data/projection/dropwizard/DropwizardProjectionSchedulerIT.java	2	type class TestApplication;type class ProjectionViewStub
+ddd4j-data/ddd4j-data-projection-helidon/src/main/java/io/ddd4j/data/projection/helidon/HelidonProjectionScheduler.java	2	type class ReschedulingHandle;type class CronExpression
+ddd4j-data/ddd4j-data-projection-javalin/src/main/java/io/ddd4j/data/projection/javalin/JavalinProjectionScheduler.java	2	type class ReschedulingHandle;type class CronExpression
+ddd4j-data/ddd4j-data-projection-micronaut/src/main/java/io/ddd4j/data/projection/micronaut/MicronautProjectionScheduler.java	2	type class ReschedulingHandle;type class CronExpression
+ddd4j-data/ddd4j-data-projection-micronaut/src/test/java/io/ddd4j/data/projection/micronaut/TestFactory.java	1	type class ProjectionViewStub
+ddd4j-data/ddd4j-data-projection-panache/src/main/java/io/ddd4j/data/projection/panache/PanacheProjectionPositionEntity.java	2	field streamId;field nextEventNumber
+ddd4j-data/ddd4j-data-projection-quarkus/src/main/java/io/ddd4j/data/projection/quarkus/QuarkusProjectionScheduler.java	2	type class ReschedulingHandle;type class CronExpression
+ddd4j-data/ddd4j-data-projection-quarkus/src/test/java/io/ddd4j/data/projection/quarkus/QuarkusProjectionSchedulerIT.java	2	type class TestProducer;type class ProjectionViewStub
+ddd4j-data/ddd4j-data-projection-spring/src/main/java/io/ddd4j/data/projection/spring/SpringProjectionScheduler.java	1	type class SpringViewScheduleHandle
+ddd4j-data/ddd4j-data-projection-spring/src/test/java/io/ddd4j/data/projection/spring/SpringProjectionSchedulerIT.java	2	type class TestConfig;type class ProjectionViewStub
+ddd4j-data/ddd4j-data-projection-vertx/src/main/java/io/ddd4j/data/projection/vertx/VertxProjectionScheduler.java	2	type class ReschedulingHandle;type class CronExpression
+ddd4j-data/ddd4j-data-projection/src/main/java/io/ddd4j/data/projection/ProjectionDispatcher.java	1	type record Cursor
+ddd4j-data/ddd4j-data-projection/src/main/java/io/ddd4j/data/projection/ProjectionHandler.java	5	method getName;method eventTypes;method handle;method getCron;method getChunkSize
+ddd4j-data/ddd4j-data-projection/src/test/java/io/ddd4j/data/projection/ProjectionDispatcherTest.java	2	type class ScriptedChunkReader;type record ReadCall
+ddd4j-data/ddd4j-data-projection/src/test/java/io/ddd4j/data/projection/ProjectionHandlerRegistryTest.java	5	type class RecordingHandler;type class OrderCreated;type class OrderPaid;type class OrderShipped;type class OrderCancelled
+ddd4j-ddd-rules/ddd4j-ddd-rules-clean/src/main/java/io/ddd4j/ddd/clean/rules/CleanDDDLayerRules.java	3	field DOMAIN_NOT_DEPEND_ON_WEB;field DOMAIN_NOT_DEPEND_ON_INFRASTRUCTURE;field DOMAIN_NOT_DEPEND_ON_FRAMEWORK
+ddd4j-ddd-rules/ddd4j-ddd-rules-clean/src/main/java/io/ddd4j/ddd/clean/test/CleanArchitectureTest.java	5	field domain_not_depend_on_web;field domain_not_depend_on_infrastructure;field domain_not_depend_on_framework;field application_not_depend_on_adapter;field adapter_persistence_should_implement_repository
+ddd4j-ddd-rules/ddd4j-ddd-rules-cola/src/main/java/io/ddd4j/ddd/cola/rules/ColaDDDLayerRules.java	3	field DOMAIN_NOT_DEPEND_ON_ADAPTER;field DOMAIN_NOT_DEPEND_ON_APPLICATION;field DOMAIN_NOT_DEPEND_ON_FRAMEWORK
+ddd4j-ddd-rules/ddd4j-ddd-rules-cola/src/main/java/io/ddd4j/ddd/cola/test/ColaArchitectureTest.java	5	field domain_not_depend_on_adapter;field domain_not_depend_on_application;field domain_not_depend_on_framework;field adapter_persistence_should_implement_gateway;field application_not_depend_on_adapter
+ddd4j-extensions/ddd4j-extension-excel/src/main/java/io/ddd4j/extension/excel/convert/BigDecimalStringConverter.java	1	field DEFAULT_PATTERN
+ddd4j-extensions/ddd4j-extension-excel/src/main/java/io/ddd4j/extension/excel/convert/LocalDateConverter.java	1	field DEFAULT_PATTERN
+ddd4j-extensions/ddd4j-extension-excel/src/main/java/io/ddd4j/extension/excel/convert/LocalDateTimeConverter.java	1	field DEFAULT_PATTERN
+ddd4j-extensions/ddd4j-extension-excel/src/main/java/io/ddd4j/extension/excel/style/DefaultRowHeightStyleStrategy.java	1	field DEFAULT_HEADER_ROW_HEIGHT
+ddd4j-extensions/ddd4j-extension-excel/src/main/java/io/ddd4j/extension/excel/style/ExcelStyleTemplate.java	5	enum-const DEFAULT;enum-const LIST;enum-const FINANCE;enum-const MINIMAL;enum-const ZEBRA
+ddd4j-extensions/ddd4j-extension-excel/src/test/java/io/ddd4j/extension/excel/ExcelKitTest.java	1	type record DateVO
+ddd4j-extensions/ddd4j-extension-excel/src/test/java/io/ddd4j/extension/excel/TestModels.java	1	type class UserVO
+ddd4j-extensions/ddd4j-extension-excel/src/test/java/io/ddd4j/extension/excel/convert/ConvertersTest.java	3	type enum TestEnum;enum-const ACTIVE;type class TestEnumConverter
+ddd4j-extensions/ddd4j-extension-license/src/main/java/io/ddd4j/extension/license/LicenseCache.java	2	field BIZ_LICENSE;field DEFAULT_TTL_SECONDS
+ddd4j-extensions/ddd4j-extension-license/src/main/java/io/ddd4j/extension/license/LicenseProperties.java	1	field PREFIX
+ddd4j-extensions/ddd4j-extension-license/src/main/java/io/ddd4j/extension/license/LicenseVerificationResult.java	6	type enum Status;enum-const VALID;enum-const DISABLED;enum-const NOT_INSTALLED;enum-const ENVIRONMENT_MISMATCH;enum-const INVALID
+ddd4j-extensions/ddd4j-extension-license/src/main/java/io/ddd4j/extension/license/keystore/LicenseKeyStoreGenerator.java	1	type class GenerateResult
+ddd4j-extensions/ddd4j-extension-license/src/main/java/io/ddd4j/extension/license/machine/DefaultLicenseMachineInfoProvider.java	5	field INSTANCE;field MACHINE_SN_PROPERTY;field MACHINE_SN_ENV;type interface NetworkInterfaceConsumer;method accept
+ddd4j-extensions/ddd4j-extension-license/src/main/java/io/ddd4j/extension/license/machine/LicenseMachineInfoProvider.java	3	method ipAddresses;method macAddresses;method serialNumber
+ddd4j-extensions/ddd4j-extension-monitor/src/main/java/io/ddd4j/extension/monitor/Sender.java	4	method send;method sendMarkdown;method sendMarkdown;method renderMessage
+ddd4j-extensions/ddd4j-extension-monitor/src/main/java/io/ddd4j/extension/monitor/channel/dingtalk/DingTalkClient.java	1	field BASE_URL
+ddd4j-extensions/ddd4j-extension-monitor/src/main/java/io/ddd4j/extension/monitor/channel/feishu/FeishuClient.java	1	field DEFAULT_BASE_URL
+ddd4j-extensions/ddd4j-extension-monitor/src/main/java/io/ddd4j/extension/monitor/channel/feishu/FeishuRobotSender.java	1	type class PostPayload
+ddd4j-extensions/ddd4j-extension-monitor/src/main/java/io/ddd4j/extension/monitor/channel/wecom/WeComClient.java	1	field BASE_URL
+ddd4j-extensions/ddd4j-extension-monitor/src/main/java/io/ddd4j/extension/monitor/config/BaseMonitorProperties.java	3	field PREFIX;type class Log;type class App
+ddd4j-extensions/ddd4j-extension-monitor/src/main/java/io/ddd4j/extension/monitor/runtime/ApplicationStartReporter.java	1	field CODE_VERSION
+ddd4j-extensions/ddd4j-extension-monitor/src/test/java/io/ddd4j/extension/monitor/channel/dingtalk/DingTalkClientTest.java	1	type class Recorder
+ddd4j-extensions/ddd4j-extension-monitor/src/test/java/io/ddd4j/extension/monitor/channel/feishu/FeishuClientTest.java	1	type class Recorder
+ddd4j-extensions/ddd4j-extension-monitor/src/test/java/io/ddd4j/extension/monitor/channel/wecom/WeComClientTest.java	1	type class Recorder
+ddd4j-extensions/ddd4j-extension-otel/src/main/java/io/ddd4j/extension/otel/AuthSpan.java	6	field ATTR_AUTH_FRAMEWORK;field ATTR_AUTH_LOGIN_ID;field ATTR_AUTH_SUCCESS;field ATTR_AUTH_OPERATION;field ATTR_AUTH_ROLE;field ATTR_AUTH_PERMISSION
+ddd4j-extensions/ddd4j-extension-otel/src/main/java/io/ddd4j/extension/otel/DataScopeSpan.java	2	field ATTR_DATA_SCOPE_TYPE;field ATTR_DATA_SCOPE_DECISION
+ddd4j-extensions/ddd4j-extension-otel/src/main/java/io/ddd4j/extension/otel/Ddd4jOtel.java	21	field TRACER_NAME;field METER_NAME;field ATTR_TENANT_ID;field ATTR_USER_ID;field ATTR_LOGIN_ID;field ATTR_USER_CODE;field ATTR_REQUEST_ID;field ATTR_DOMAIN_EVENT_TYPE;field ATTR_AGGREGATE_TYPE;field ATTR_AGGREGATE_ID;field ATTR_QUERY_TYPE;field ATTR_PROJECTION_NAME;field ATTR_CACHE_BIZ;field ATTR_CACHE_BACKEND;field ATTR_CACHE_HIT;field ATTR_MESSAGING_SYSTEM;field ATTR_MESSAGING_DESTINATION;field ATTR_MESSAGING_OPERATION;field ATTR_DB_SYSTEM;field ATTR_DB_STATEMENT
+ddd4j-extensions/ddd4j-extension-otel/src/main/java/io/ddd4j/extension/otel/HttpSpan.java	9	field ATTR_HTTP_METHOD;field ATTR_HTTP_ROUTE;field ATTR_HTTP_STATUS;field ATTR_URL_PATH;field ATTR_URL_SCHEME;field ATTR_USER_AGENT;field ATTR_CLIENT_IP;field ATTR_DDD4J_REQUEST_ID;field ATTR_DDD4J_TENANT_ID
+ddd4j-extensions/ddd4j-extension-otel/src/main/java/io/ddd4j/extension/otel/MqDeliveryMetrics.java	4	field OUTBOX_DELIVERY_METRIC;field INBOX_DELIVERY_METRIC;field ATTR_DELIVERY_OUTCOME;type record CounterHandle
+ddd4j-extensions/ddd4j-extension-pf4j/src/main/java/io/ddd4j/extension/pf4j/point/authc/AuthcExtensionPoint.java	4	method getToken;method handleHeader;method handleRequest;method handleResult
+ddd4j-extensions/ddd4j-extension-pf4j/src/main/java/io/ddd4j/extension/pf4j/point/authc/AuthcExtensionPointAdapter.java	2	field AUTHORIZATION_HEADER;field BEARER_PREFIX
+ddd4j-extensions/ddd4j-extension-pf4j/src/main/java/io/ddd4j/extension/pf4j/point/crypto/CryptoExtensionPoint.java	2	method encrypt;method decrypt
+ddd4j-extensions/ddd4j-extension-pf4j/src/main/java/io/ddd4j/extension/pf4j/point/web/ParamSignatureExtensionPoint.java	3	method sign;method getAppkey;method getAppSecret
+ddd4j-extensions/ddd4j-extension-pf4j/src/main/java/io/ddd4j/extension/pf4j/point/web/ServletRequestExtensionPoint.java	2	method wrap;method wrap
+ddd4j-extensions/ddd4j-extension-pf4j/src/main/java/io/ddd4j/extension/pf4j/point/web/ServletResponseExtensionPoint.java	2	method dewrap;method dewrap
+ddd4j-extensions/ddd4j-extension-qlexpress/src/main/java/io/ddd4j/extension/qlexpress/QLExpressEngine.java	13	method execute;method execute;method execute;method execute;method executeSafely;method executeSafely;method validate;method getExternalVariables;method getExternalFunctions;method registerFunction;method registerOrReplaceFunction;method removeFunction;method unwrap
+ddd4j-extensions/ddd4j-extension-qlexpress/src/main/java/io/ddd4j/extension/qlexpress/function/NamedQLFunction.java	1	method name
+ddd4j-extensions/ddd4j-extension-qlexpress/src/main/java/io/ddd4j/extension/qlexpress/model/QLExpressExecutionOptions.java	2	field DEFAULT_TIMEOUT_MILLIS;field DEFAULT_MAX_ARRAY_LENGTH
+ddd4j-extensions/ddd4j-extension-qlexpress/src/test/java/io/ddd4j/extension/qlexpress/QLExpressEngineTest.java	1	type class MultiplierFunction
+ddd4j-extensions/ddd4j-extension-qrcode/src/main/java/io/ddd4j/extension/qrcode/DefaultQrCodeService.java	1	field DEFAULT_MAX_BATCH_SIZE
+ddd4j-extensions/ddd4j-extension-qrcode/src/main/java/io/ddd4j/extension/qrcode/QrCodeService.java	3	method generate;method decode;method generateBatch
+ddd4j-extensions/ddd4j-extension-qrcode/src/main/java/io/ddd4j/extension/qrcode/resource/QrCodeResourceResolver.java	1	method resolve
+ddd4j-extensions/ddd4j-extension-qrcode/src/main/java/io/ddd4j/extension/qrcode/template/QrCodeBlockElement.java	1	type class Builder
+ddd4j-extensions/ddd4j-extension-qrcode/src/main/java/io/ddd4j/extension/qrcode/template/QrCodeFrame.java	1	type class Builder
+ddd4j-extensions/ddd4j-extension-qrcode/src/main/java/io/ddd4j/extension/qrcode/template/QrCodeImageElement.java	1	type class Builder
+ddd4j-extensions/ddd4j-extension-qrcode/src/main/java/io/ddd4j/extension/qrcode/template/QrCodeTemplateRegistry.java	3	method register;method find;method remove
+ddd4j-extensions/ddd4j-extension-qrcode/src/main/java/io/ddd4j/extension/qrcode/template/QrCodeTextElement.java	1	type class Builder
+ddd4j-extensions/ddd4j-extension-validation/src/main/java/io/ddd4j/extension/validation/FileContentCheckProvider.java	2	method supports;method check
+ddd4j-extensions/ddd4j-extension-validation/src/main/java/io/ddd4j/extension/validation/FileTypeDetector.java	1	method detect
+ddd4j-extensions/ddd4j-extension-validation/src/main/java/io/ddd4j/extension/validation/FileValidationFailure.java	8	enum-const EMPTY;enum-const SIZE_EXCEEDED;enum-const EXTENSION_NOT_ALLOWED;enum-const MIME_TYPE_NOT_ALLOWED;enum-const TYPE_UNDETECTABLE;enum-const SIGNATURE_MISMATCH;enum-const CONTENT_REJECTED;enum-const READ_ERROR
+ddd4j-extensions/ddd4j-extension-validation/src/main/java/io/ddd4j/extension/validation/FileValidationPolicy.java	1	type class Builder
+ddd4j-extensions/ddd4j-extension-validation/src/main/java/io/ddd4j/extension/validation/FileValidationService.java	1	type class ListSupport
+ddd4j-extensions/ddd4j-extension-validation/src/main/java/io/ddd4j/extension/validation/InputStreamSource.java	1	method openStream
+ddd4j-extensions/ddd4j-extension-validation/src/main/java/io/ddd4j/extension/validation/ValidatableFile.java	4	method fileName;method contentType;method size;method openStream
+ddd4j-kit/src/main/java/io/ddd4j/kit/lang/FastdfsKit.java	1	field g_charset
+ddd4j-kit/src/main/java/io/ddd4j/kit/lang/FunctionKit.java	10	field TO_BOOLEAN;field TO_BIGDECIMAL;field TO_BYTE;field TO_CHARACTER;field TO_DOUBLE;field TO_FLOAT;field TO_INTEGER;field TO_LONG;field TO_SHORT;field TO_STRING
+ddd4j-kit/src/main/java/io/ddd4j/kit/lang/IdKit.java	1	type record SnowflakeOptions
+ddd4j-kit/src/main/java/io/ddd4j/kit/lang/JsonKit.java	8	field YYYYMMDDHHMMSS;field REDIS_OBJECT_MAPPER;field STRING_TYPE;field INTEGER_TYPE;field LONG_TYPE;field DOUBLE_TYPE;field DEFAULT_OBJECT_MAPPER;type class BaseSimpleDateFormat
+ddd4j-kit/src/main/java/io/ddd4j/kit/lang/LotteryKit.java	1	type class LotteryElement
+ddd4j-kit/src/main/java/io/ddd4j/kit/lang/NumKit.java	1	field ZERO
+ddd4j-kit/src/main/java/io/ddd4j/kit/lang/RankKit.java	1	type class RankModel
+ddd4j-kit/src/main/java/io/ddd4j/kit/lang/RankSortTypeEnum.java	3	enum-const SAME_NON_CONTINUOUS;enum-const SAME_CONTINUOUS;enum-const NATURAL
+ddd4j-kit/src/main/java/io/ddd4j/kit/lang/StrKit.java	2	field unknowChar;field CONFIG_LOCATION_DELIMITERS
+ddd4j-kit/src/main/java/io/ddd4j/kit/matcher/AntPathMatcher.java	5	field DEFAULT_PATH_SEPARATOR;type class AntPathStringMatcher;type class AntPatternComparator;type class PatternInfo;type class PathSeparatorPatternCache
+ddd4j-kit/src/main/java/io/ddd4j/kit/matcher/PathMatcher.java	7	method isPattern;method match;method matchStart;method extractPathWithinPattern;method extractUriTemplateVariables;method getPatternComparator;method combine
+ddd4j-kit/src/main/java/io/ddd4j/kit/web/IpKit.java	1	field HOST_ADDRESS
+ddd4j-kit/src/test/java/io/ddd4j/kit/lang/BeanKitTest.java	2	type class SourceBean;type class TargetBean
+ddd4j-metrics/src/test/java/io/ddd4j/metrics/OpenTelemetryProjectionMetricsTest.java	3	type class OnRunStartedTests;type class OnRunCompletedTests;type class OnRunFailedTests
+ddd4j-mq/ddd4j-mq-activemq/src/main/java/io/ddd4j/mq/activemq/ActiveMQAcknowledgment.java	5	field HEADER_AMQ_SESSION;field HEADER_AMQ_MESSAGE;field HEADER_AMQ_DELIVERY_ID;type interface IoOperation;method run
+ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/BrokerType.java	14	enum-const NONE;enum-const DISRUPTOR;enum-const RABBIT;enum-const KAFKA;enum-const ROCKET;enum-const PULSAR;enum-const REDIS_STREAM;enum-const ACTIVEMQ;enum-const NATS;enum-const MQTT;enum-const MQTT_MICA;enum-const ONS;enum-const TDMQ;enum-const SQS
+ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/MQClient.java	36	method escape;method unwrap;method impl;method init;method initProducer;method initConsumer;method start;method lifecycle;method startupStatus;method close;method failure;method initializationException;method rollback;method unregisterPublisher;method serialization;method properties;method consume;method unwrap;method consume;method logger
+ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/delivery/MQDeliveryHeaders.java	1	field MESSAGE_ID
+ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/delivery/MQDeliveryObserver.java	7	method onOutboxPublished;method onOutboxRetry;method onOutboxDead;method onOutboxFailed;method onInboxProcessed;method onInboxDuplicate;method onInboxFailed
+ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/delivery/MQInboxStore.java	1	method recordIfAbsent
+ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/delivery/MQOutboxSender.java	1	method send
+ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/delivery/MQOutboxStatus.java	4	enum-const PENDING;enum-const LEASED;enum-const PUBLISHED;enum-const DEAD
+ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/delivery/MQOutboxStore.java	5	method append;method claim;method markPublished;method reschedule;method replay
+ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/delivery/NoopMQDeliveryObserver.java	1	enum-const INSTANCE
+ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/event/MQEvent.java	8	field MQ_EVENT_PUBLISHER;field MQ_PROPERTIES;field msgId;field topic;field tag;field concat;field tenantId;field broker
+ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/event/MQEventSerialization.java	2	method deserialize;method serialize
+ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/event/MQEventStorer.java	1	method store
+ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/lifecycle/MQClientLifecycle.java	1	type class Resource
+ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/lifecycle/MQStartupState.java	6	enum-const NEW;enum-const STARTING;enum-const READY;enum-const DEGRADED;enum-const FAILED;enum-const STOPPED
+ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/lifecycle/MQStartupStatus.java	1	type class Snapshot
+ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/listener/MQListener.java	1	type class MQListenerBuilder
+ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/message/Acknowledgment.java	17	method deliveryTag;method messageId;method correlationId;method isOpen;method isAcknowledged;method brokerType;method ack;method ack;method nack;method nack;method reject;method recover;method ackSingle;method discard;method requeue;method requeueViaRecover;method unwrap
+ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/message/MessageHeaders.java	10	field HEADER_NATIVE_MESSAGE;field HEADER_MESSAGE_ID;field LEGACY_HEADER_MESSAGE_ID;field HEADER_CORRELATION_ID;field HEADER_CAUSATION_ID;field HEADER_TENANT_ID;field HEADER_BROKER_TYPE;field HEADER_DESTINATION_TOPIC;field HEADER_DESTINATION_TAG;field HEADER_DESTINATION_NAMESPACE
+ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/MQClientInitializationContractTest.java	2	type class Handler;type class TestClient
+ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/MQClientPersistenceContractTest.java	1	type class Handler
+ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/delivery/MQInboxProcessorTest.java	2	type class InMemoryInboxStore;type class RecordingObserver
+ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/delivery/MQOutboxDispatcherTest.java	2	type class RecordingStore;type class RecordingObserver
+ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/event/MqDomainEventPublisherTest.java	1	type class TestDomainEvent
+ddd4j-mq/ddd4j-mq-disruptor/src/main/java/io/ddd4j/mq/disruptor/DisruptorMQClient.java	1	type class RegisteredListener
+ddd4j-mq/ddd4j-mq-disruptor/src/test/java/io/ddd4j/mq/disruptor/DisruptorAdapterContractTest.java	1	type class RecordingListener
+ddd4j-mq/ddd4j-mq-kafka/src/main/java/io/ddd4j/mq/kafka/KafkaMQClient.java	2	type class BatchRetryException;type class SendCallback
+ddd4j-mq/ddd4j-mq-kafka/src/main/java/io/ddd4j/mq/kafka/KafkaMQProperties.java	2	field DEFAULT_TOPIC_PARTITIONS;field DEFAULT_TOPIC_REPLICATION
+ddd4j-mq/ddd4j-mq-kafka/src/main/java/io/ddd4j/mq/kafka/KafkaMessageAcknowledgment.java	2	field HEADER_KAFKA_CONSUMER;field HEADER_KAFKA_RECORD
+ddd4j-mq/ddd4j-mq-kafka/src/test/java/io/ddd4j/mq/kafka/KafkaMQClientDurabilityContractTest.java	1	type class FailingHandler
+ddd4j-mq/ddd4j-mq-kafka/src/test/java/io/ddd4j/mq/kafka/KafkaMQClientLifecycleContractTest.java	5	type class Handler;type class AsyncCallbackProducer;type class TrackingConsumer;type class WakeupCommitConsumer;type class RejectingExecutor
+ddd4j-mq/ddd4j-mq-kafka/src/test/java/io/ddd4j/mq/kafka/KafkaMQClientRoundTripTest.java	2	type class OrderPaidEvent;type class OrderListenerBean
+ddd4j-mq/ddd4j-mq-mqtt-mica/src/main/java/io/ddd4j/mq/mqttmica/MicaMqttAcknowledgment.java	2	field HEADER_MICA_MESSAGE_ID;field HEADER_MICA_TOPIC
+ddd4j-mq/ddd4j-mq-mqtt/src/main/java/io/ddd4j/mq/mqtt/MqttAcknowledgment.java	4	field HEADER_MQTT_MESSAGE;field HEADER_MQTT_TOPIC;type interface IoOperation;method run
+ddd4j-mq/ddd4j-mq-mqtt/src/test/java/io/ddd4j/mq/mqtt/MqttAdapterContractTest.java	1	type class FailingHandler
+ddd4j-mq/ddd4j-mq-ons/src/main/java/io/ddd4j/mq/ons/OnsAcknowledgment.java	4	field HEADER_ONS_MESSAGE;field HEADER_ONS_CONTEXT;type interface IoOperation;method run
+ddd4j-mq/ddd4j-mq-pulsar/src/main/java/io/ddd4j/mq/pulsar/PulsarAcknowledgment.java	5	field HEADER_PULSAR_CONSUMER;field HEADER_PULSAR_MESSAGE;field HEADER_PULSAR_MESSAGE_ID;type interface IoOperation;method run
+ddd4j-mq/ddd4j-mq-rabbitmq/src/main/java/io/ddd4j/mq/rabbitmq/RabbitAcknowledgment.java	4	field HEADER_RABBIT_CHANNEL;field HEADER_RABBIT_DELIVERY_TAG;type interface IoOperation;method run
+ddd4j-mq/ddd4j-mq-redis-stream/src/main/java/io/ddd4j/mq/redisstream/RedisStreamAcknowledgment.java	3	field HEADER_REDIS_STREAM;field HEADER_REDIS_GROUP;field HEADER_REDIS_ENTRY_ID
+ddd4j-mq/ddd4j-mq-redis-stream/src/main/java/io/ddd4j/mq/redisstream/RedisStreamClientType.java	3	enum-const JEDIS;enum-const REDISSON;enum-const LETTUCE
+ddd4j-mq/ddd4j-mq-redis-stream/src/main/java/io/ddd4j/mq/redisstream/RedisStreamOperations.java	6	method add;method createGroup;method readGroup;method ack;method nativeClient;method close
+ddd4j-mq/ddd4j-mq-rocketmq/src/main/java/io/ddd4j/mq/rocketmq/RocketAcknowledgment.java	1	field HEADER_ROCKET_MESSAGE
+ddd4j-mq/ddd4j-mq-rocketmq/src/main/java/io/ddd4j/mq/rocketmq/RocketMQClient.java	1	type class SendLogCallback
+ddd4j-mq/ddd4j-mq-spring/src/test/java/io/ddd4j/mq/spring/registry/MQListenerLifecycleContractTest.java	2	type class StubClient;type class Serialization
+ddd4j-mq/ddd4j-mq-spring/src/test/java/io/ddd4j/mq/spring/registry/SpringMqBridgeContractTest.java	2	type class OrderListener;type class OrderPaidEvent
+ddd4j-mq/ddd4j-mq-sqs/src/main/java/io/ddd4j/mq/sqs/SqsAcknowledgment.java	5	field HEADER_SQS_CLIENT;field HEADER_SQS_MESSAGE;field HEADER_SQS_QUEUE_URL;type interface IoOperation;method run
+ddd4j-mq/ddd4j-mq-tdmq/src/main/java/io/ddd4j/mq/tdmq/TdmqMQClient.java	12	type interface BrokerPublisher;method publish;type interface BrokerSubscriber;method subscribe;type interface MessageHandler;method onMessage;type interface Subscription;method close;method DeliveredMessage;type record DeliveredMessage;type class InMemoryBrokerPublisher;type class InMemoryBrokerSubscriber
+ddd4j-runtime/ddd4j-runtime-dropwizard/src/test/java/io/ddd4j/dropwizard/Ddd4jBundleTest.java	1	type class TestConfiguration
+ddd4j-runtime/ddd4j-runtime-dropwizard/src/test/java/io/ddd4j/dropwizard/cqrs/DropwizardCqrsRuntimeContractTest.java	2	type class StubViewManager;type class NoopViewScheduler
+ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/GuiceConstants.java	2	field VIEW_MANAGER_THREAD_POOL_SIZE_KEY;field DEFAULT_THREAD_POOL_SIZE
+ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/cqrs/GuiceViewManager.java	1	type class GuiceViewScheduleHandle
+ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/guice/Ddd4jGuiceModuleTest.java	5	type class TestDomainService;type interface MapperStub;type class RepositoryStub;type class NoopDataSource;type class ExecutorStub
+ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/guice/ThreeLineLogsParityTest.java	1	type class Endpoint
+ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/guice/aspect/AsyncCleanupInterceptorTest.java	2	type class Worker;type class BoomWorker
+ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/guice/command/GuiceCommandBusTest.java	5	type class TestCommand;type class AnotherCommand;type class UnregisteredCommand;type class TestCommandExecutor;type class AnotherCommandExecutor
+ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/guice/context/GuiceContextTest.java	2	type class CountingRunnable;type class BrokenRunnable
+ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/guice/cqrs/MicrometerProjectionMetricsTest.java	3	type class OnRunCompletedTests;type class OnRunFailedTests;type class OnRunStartedTests
+ddd4j-runtime/ddd4j-runtime-helidon/src/test/java/io/ddd4j/helidon/cqrs/HelidonCqrsRuntimeContractTest.java	2	type class StubViewManager;type class NoopViewScheduler
+ddd4j-runtime/ddd4j-runtime-micronaut/src/test/java/io/ddd4j/micronaut/cqrs/MicronautCqrsRuntimeContractTest.java	2	type class StubViewManager;type class NoopViewScheduler
+ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/extension/DddCdiExtension.java	1	type class ApplicationScopedLiteral
+ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/command/QuarkusCommandBusTest.java	5	type record TestCommand;type record UnregisteredCommand;type record FailCommand;type class TestCommandExecutor;type class FailCommandExecutor
+ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/cqrs/MicrometerProjectionMetricsTest.java	3	type class OnRunCompletedTests;type class OnRunFailedTests;type class OnRunStartedTests
+ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/cqrs/QuarkusCqrsRuntimeContractTest.java	1	type class NoopViewScheduler
+ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/cqrs/QuarkusJpaViewManagerTest.java	1	type class GetProjectionStatusTests
+ddd4j-runtime/ddd4j-runtime-spring/src/main/java/io/ddd4j/spring/context/SpringContext.java	2	field APP_START_SIGNAL;field APPLICATION_CONTEXT_START_SIGNAL
+ddd4j-runtime/ddd4j-runtime-spring/src/main/java/io/ddd4j/spring/cqrs/SpringViewScheduler.java	1	type class SpringViewScheduleHandle
+ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/annotation/SpringDddAnnotationFusionTest.java	3	type class TestDomainService;type class TestDomainRepository;type class AggregateRoot
+ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/command/SpringCommandBusTest.java	6	type class TestCommand;type class AnotherCommand;type class UnknownCommand;type class TestCommandExecutor;type class AnotherCommandExecutor;type class TestConfig
+ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/cqrs/MicrometerProjectionMetricsTest.java	3	type class OnRunCompletedTests;type class OnRunFailedTests;type class OnRunStartedTests
+ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/cqrs/SpringCqrsRuntimeContractTest.java	1	type class SpringCqrsTestConfig
+ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/cqrs/SpringJpaViewManagerTest.java	1	type class GetProjectionStatusTests
+ddd4j-runtime/ddd4j-runtime-testkit/src/main/java/io/ddd4j/runtime/testkit/AbstractCqrsRuntimeContractTest.java	5	type class CmdA;type class CmdB;type class UnregisteredCmd;type class StubExecutorA;type class StubExecutorB
+ddd4j-runtime/ddd4j-runtime-testkit/src/main/java/io/ddd4j/runtime/testkit/CqrsRuntimeContract.java	6	method runtimeName;method commandBus;method viewManager;method viewScheduler;method positionRepository;method close
+ddd4j-runtime/ddd4j-runtime-testkit/src/main/java/io/ddd4j/runtime/testkit/RuntimeContract.java	4	method start;method services;method readiness;method close
+ddd4j-runtime/ddd4j-runtime-vertx/src/main/java/io/ddd4j/vertx/VertxDomainEventPublisher.java	1	field ADDRESS
+ddd4j-runtime/ddd4j-runtime-vertx/src/test/java/io/ddd4j/vertx/VertxDomainEventPublisherTest.java	1	type record LocalEvent
+ddd4j-runtime/ddd4j-runtime-vertx/src/test/java/io/ddd4j/vertx/cqrs/VertxCqrsRuntimeContractTest.java	2	type class StubViewManager;type class NoopViewScheduler
+ddd4j-samples/ddd4j-sample-dropwizard-cqrs/src/main/java/io/ddd4j/sample/dropwizard/cqrs/DropwizardCqrsApplication.java	7	field EVENT_STORE;field ORDER_REPO;field COMMAND_HANDLER;field COMMAND_BUS;field READ_VIEW;field CHUNK_READER;field VIEW_MANAGER
+ddd4j-samples/ddd4j-sample-dropwizard-cqrs/src/main/java/io/ddd4j/sample/dropwizard/cqrs/repository/EventSourcingOrderRepository.java	1	type record OrderAggregateId
+ddd4j-samples/ddd4j-sample-dropwizard-cqrs/src/main/java/io/ddd4j/sample/dropwizard/cqrs/web/OrderResource.java	1	type record CreateOrderRequest
+ddd4j-samples/ddd4j-sample-dropwizard/src/main/java/io/ddd4j/sample/dropwizard/DropwizardOrderResource.java	3	type class CreateOrderRequest;type class AddOrderLineRequest;type record TokenResponse
+ddd4j-samples/ddd4j-sample-helidon-cqrs/src/main/java/io/ddd4j/sample/helidon/cqrs/repository/EventSourcingOrderRepository.java	1	type record OrderAggregateId
+ddd4j-samples/ddd4j-sample-helidon-cqrs/src/main/java/io/ddd4j/sample/helidon/cqrs/web/OrderResource.java	1	type record CreateOrderRequest
+ddd4j-samples/ddd4j-sample-helidon/src/main/java/io/ddd4j/sample/helidon/HelidonOrderResource.java	3	type class CreateOrderRequest;type class AddOrderLineRequest;type record TokenResponse
+ddd4j-samples/ddd4j-sample-javalin-cqrs/src/main/java/io/ddd4j/sample/javalin/cqrs/JavalinCqrsApplication.java	1	field DEFAULT_PORT
+ddd4j-samples/ddd4j-sample-javalin-cqrs/src/main/java/io/ddd4j/sample/javalin/cqrs/cache/GoodsCacheService.java	2	field BIZ_GOODS_DETAIL;field BIZ_GOODS_LIST
+ddd4j-samples/ddd4j-sample-javalin-cqrs/src/main/java/io/ddd4j/sample/javalin/cqrs/cache/OrderCacheService.java	3	field BIZ_ORDER_STATS;field BIZ_BUYER_ORDER_COUNT;field BIZ_ORDER_DETAIL
+ddd4j-samples/ddd4j-sample-javalin-cqrs/src/main/java/io/ddd4j/sample/javalin/cqrs/event/OrderEventListener.java	5	type class OrderCreatedHandler;type class OrderLineAddedHandler;type class OrderPaidHandler;type class OrderShippedHandler;type class OrderCancelledHandler
+ddd4j-samples/ddd4j-sample-javalin-cqrs/src/main/java/io/ddd4j/sample/javalin/cqrs/goods/domain/GoodsRepository.java	2	method findByCode;method findByStatus
+ddd4j-samples/ddd4j-sample-javalin-cqrs/src/main/java/io/ddd4j/sample/javalin/cqrs/goods/domain/GoodsStatus.java	4	enum-const ON_SALE;enum-const OFF_SALE;enum-const DRAFT;enum-const DELETED
+ddd4j-samples/ddd4j-sample-javalin-cqrs/src/main/java/io/ddd4j/sample/javalin/cqrs/goods/web/GoodsController.java	2	type record CreateGoodsRequest;type record UpdateGoodsRequest
+ddd4j-samples/ddd4j-sample-javalin-cqrs/src/main/java/io/ddd4j/sample/javalin/cqrs/order/application/OrderApplicationService.java	2	type record CreateOrderCommand;type record AddOrderLineCommand
+ddd4j-samples/ddd4j-sample-javalin-cqrs/src/main/java/io/ddd4j/sample/javalin/cqrs/order/domain/model/OrderStatus.java	4	enum-const DRAFT;enum-const PAID;enum-const SHIPPED;enum-const CANCELLED
+ddd4j-samples/ddd4j-sample-javalin-cqrs/src/main/java/io/ddd4j/sample/javalin/cqrs/order/domain/repository/OrderRepository.java	2	method findByOrderNo;method findAll
+ddd4j-samples/ddd4j-sample-javalin-cqrs/src/main/java/io/ddd4j/sample/javalin/cqrs/order/web/OrderCQRSQueryController.java	1	type record OrderResponse
+ddd4j-samples/ddd4j-sample-javalin-cqrs/src/main/java/io/ddd4j/sample/javalin/cqrs/order/web/OrderController.java	3	type record OrderResponse;type record CreateOrderRequest;type record AddOrderLineRequest
+ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/TestSupport.java	3	type class NoopDomainEventPublisher;type class NoopI18nProvider;type class NoopSubjectProvider
+ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/JavalinSaTokenApplication.java	1	field PORT
+ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/goods/domain/GoodsRepository.java	2	method findByCode;method findByStatus
+ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/goods/domain/GoodsStatus.java	4	enum-const ON_SALE;enum-const OFF_SALE;enum-const DRAFT;enum-const DELETED
+ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/order/domain/model/OrderStatus.java	4	enum-const DRAFT;enum-const PAID;enum-const SHIPPED;enum-const CANCELLED
+ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/order/domain/repository/OrderRepository.java	2	method findByOrderNo;method findAll
+ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/order/infrastructure/InMemoryOrderRepository.java	2	type class OrderRow;type class OrderLineRow
+ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/order/web/OrderResource.java	1	type record DiscountView
+ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/order/web/dto/OrderResponse.java	1	type record OrderLineResponse
+ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/rbac/domain/model/Permission.java	2	type enum Status;enum-const ENABLED
+ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/rbac/domain/model/Role.java	2	type enum Status;enum-const ENABLED
+ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/rbac/domain/model/User.java	2	type enum Status;enum-const ENABLED
+ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/rbac/domain/repository/PermissionRepository.java	3	method findAll;method findByPermissionCode;method findByModule
+ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/rbac/domain/repository/RoleRepository.java	2	method findAll;method findByRoleCode
+ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/rbac/domain/repository/UserRepository.java	3	method findAll;method findByUsername;method findByStatus
+ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/rbac/infrastructure/InMemoryPermissionRepository.java	1	type class PermissionRow
+ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/rbac/infrastructure/InMemoryRoleRepository.java	1	type class RoleRow
+ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/rbac/infrastructure/InMemoryUserRepository.java	1	type class UserRow
+ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/rbac/web/AuthenticationController.java	4	type record LoginRequest;type record KickoutRequest;type record RoleCheckRequest;type record PermissionCheckRequest
+ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/rbac/web/AuthorizationController.java	8	type record CreateUserRequest;type record UpdateUserRequest;type record AssignRolesRequest;type record CreateRoleRequest;type record UpdateRoleRequest;type record AssignPermissionsRequest;type record CreatePermissionRequest;type record UpdatePermissionRequest
+ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/TestSupport.java	2	type class NoopDomainEventPublisher;type class NoopI18nProvider
+ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/JavalinShiroApplication.java	3	field PORT;type class NoOpDomainEventPublisher;type class DefaultI18nProvider
+ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/config/AuthConfig.java	1	type class RbacRealm
+ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/goods/domain/GoodsRepository.java	2	method findByCode;method findByStatus
+ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/goods/domain/GoodsStatus.java	4	enum-const ON_SALE;enum-const OFF_SALE;enum-const DRAFT;enum-const DELETED
+ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/order/domain/model/OrderStatus.java	4	enum-const DRAFT;enum-const PAID;enum-const SHIPPED;enum-const CANCELLED
+ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/order/domain/repository/OrderRepository.java	2	method findByOrderNo;method findAll
+ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/order/infrastructure/InMemoryOrderRepository.java	2	type class OrderRow;type class OrderLineRow
+ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/order/web/OrderResource.java	1	type record DiscountView
+ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/order/web/dto/OrderResponse.java	1	type record OrderLineResponse
+ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/rbac/controller/AuthenticationController.java	1	type record LoginRequest
+ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/rbac/controller/AuthorizationController.java	8	type record CreateUserRequest;type record UpdateUserRequest;type record CreateRoleRequest;type record UpdateRoleRequest;type record CreatePermissionRequest;type record UserView;type record RoleView;type record PermissionView
+ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/TestSupport.java	2	type class NoopDomainEventPublisher;type class NoopI18nProvider
+ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/WorkingShiroSubject.java	1	field SESSION_ATTR_PRINCIPAL
+ddd4j-samples/ddd4j-sample-javalin/src/main/java/io/ddd4j/sample/javalin/JavalinSample.java	1	type record JavalinApplication
+ddd4j-samples/ddd4j-sample-javalin/src/main/java/io/ddd4j/sample/javalin/goods/domain/GoodsRepository.java	2	method findByCode;method findByStatus
+ddd4j-samples/ddd4j-sample-javalin/src/main/java/io/ddd4j/sample/javalin/goods/domain/GoodsStatus.java	4	enum-const ON_SALE;enum-const OFF_SALE;enum-const DRAFT;enum-const DELETED
+ddd4j-samples/ddd4j-sample-javalin/src/main/java/io/ddd4j/sample/javalin/goods/web/GoodsController.java	2	type record CreateGoodsRequest;type record UpdateGoodsRequest
+ddd4j-samples/ddd4j-sample-javalin/src/main/java/io/ddd4j/sample/javalin/order/web/OrderController.java	3	type record CreateOrderRequest;type record AddOrderLineRequest;type record OrderResponse
+ddd4j-samples/ddd4j-sample-micronaut-cqrs/src/main/java/io/ddd4j/sample/micronaut/cqrs/MicronautCqrsApplication.java	2	type class CqrsConfig;type class StartupListener
+ddd4j-samples/ddd4j-sample-micronaut-cqrs/src/main/java/io/ddd4j/sample/micronaut/cqrs/repository/EventSourcingOrderRepository.java	1	type record OrderAggregateId
+ddd4j-samples/ddd4j-sample-micronaut-cqrs/src/main/java/io/ddd4j/sample/micronaut/cqrs/web/OrderController.java	1	type record CreateOrderRequest
+ddd4j-samples/ddd4j-sample-micronaut/src/main/java/io/ddd4j/sample/micronaut/AuthenticationController.java	1	type record TokenResponse
+ddd4j-samples/ddd4j-sample-micronaut/src/main/java/io/ddd4j/sample/micronaut/OrderController.java	2	type record CreateOrderRequest;type record AddOrderLineRequest
+ddd4j-samples/ddd4j-sample-order-application/src/main/java/io/ddd4j/sample/order/application/IdempotencyPort.java	3	method acquire;method complete;method release
+ddd4j-samples/ddd4j-sample-order-application/src/main/java/io/ddd4j/sample/order/application/IntegrationEventPublisher.java	1	method publish
+ddd4j-samples/ddd4j-sample-order-application/src/main/java/io/ddd4j/sample/order/application/OrderReadModelPort.java	3	method project;method findProjectionById;method query
+ddd4j-samples/ddd4j-sample-order-application/src/main/java/io/ddd4j/sample/order/application/OrderTransactionPort.java	2	method execute;method noop
+ddd4j-samples/ddd4j-sample-order-application/src/main/java/io/ddd4j/sample/order/application/OutboxPort.java	4	method append;method pending;method markPublished;method markFailed
+ddd4j-samples/ddd4j-sample-order-application/src/test/java/io/ddd4j/sample/order/application/ResilientIdempotencyPortTest.java	2	type class FailingIdempotencyPort;type class RecordingIdempotencyPort
+ddd4j-samples/ddd4j-sample-order-domain/src/main/java/io/ddd4j/sample/order/domain/OrderPersistenceMapper.java	2	method toPersistence;method toDomain
+ddd4j-samples/ddd4j-sample-order-domain/src/main/java/io/ddd4j/sample/order/domain/OrderRepository.java	5	method save;method findById;method findByOrderNo;method findAll;method count
+ddd4j-samples/ddd4j-sample-order-domain/src/main/java/io/ddd4j/sample/order/domain/OrderStatus.java	4	enum-const DRAFT;enum-const PAID;enum-const CANCELLED;enum-const SHIPPED
+ddd4j-samples/ddd4j-sample-order-jdbc/src/main/java/io/ddd4j/sample/order/jdbc/JdbcMQOutboxStore.java	2	type interface SqlOperation;method execute
+ddd4j-samples/ddd4j-sample-order-jdbc/src/main/java/io/ddd4j/sample/order/jdbc/JdbcOrderTransactionPort.java	2	type interface SqlQuery;method apply
+ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/main/java/io/ddd4j/sample/quarkus/cqrs/cache/GoodsCacheService.java	2	field BIZ_GOODS_DETAIL;field BIZ_GOODS_LIST
+ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/main/java/io/ddd4j/sample/quarkus/cqrs/cache/OrderCacheService.java	3	field BIZ_ORDER_STATS;field BIZ_BUYER_ORDER_COUNT;field BIZ_ORDER_DETAIL
+ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/main/java/io/ddd4j/sample/quarkus/cqrs/goods/domain/GoodsRepository.java	2	method findByCode;method findByStatus
+ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/main/java/io/ddd4j/sample/quarkus/cqrs/goods/domain/GoodsStatus.java	4	enum-const ON_SALE;enum-const OFF_SALE;enum-const DRAFT;enum-const DELETED
+ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/main/java/io/ddd4j/sample/quarkus/cqrs/order/domain/model/OrderStatus.java	4	enum-const DRAFT;enum-const PAID;enum-const SHIPPED;enum-const CANCELLED
+ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/main/java/io/ddd4j/sample/quarkus/cqrs/order/domain/repository/OrderRepository.java	2	method findByOrderNo;method findAll
+ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/main/java/io/ddd4j/sample/quarkus/cqrs/order/web/OrderResource.java	3	type record CreateOrderRequest;type record AddLineRequest;type record CancelAllRequest
+ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/main/java/io/ddd4j/sample/quarkus/cqrs/order/web/dto/OrderResponse.java	1	type record OrderLineResponse
+ddd4j-samples/ddd4j-sample-quarkus-satoken/src/main/java/io/ddd4j/sample/quarkus/satoken/goods/domain/GoodsRepository.java	2	method findByCode;method findByStatus
+ddd4j-samples/ddd4j-sample-quarkus-satoken/src/main/java/io/ddd4j/sample/quarkus/satoken/goods/domain/GoodsStatus.java	4	enum-const ON_SALE;enum-const OFF_SALE;enum-const DRAFT;enum-const DELETED
+ddd4j-samples/ddd4j-sample-quarkus-satoken/src/main/java/io/ddd4j/sample/quarkus/satoken/order/domain/model/OrderStatus.java	4	enum-const DRAFT;enum-const PAID;enum-const SHIPPED;enum-const CANCELLED
+ddd4j-samples/ddd4j-sample-quarkus-satoken/src/main/java/io/ddd4j/sample/quarkus/satoken/order/domain/repository/OrderRepository.java	2	method findByOrderNo;method findAll
+ddd4j-samples/ddd4j-sample-quarkus-satoken/src/main/java/io/ddd4j/sample/quarkus/satoken/order/infrastructure/InMemoryOrderRepository.java	2	type class OrderRow;type class OrderLineRow
+ddd4j-samples/ddd4j-sample-quarkus-satoken/src/main/java/io/ddd4j/sample/quarkus/satoken/order/web/OrderResource.java	1	type record DiscountView
+ddd4j-samples/ddd4j-sample-quarkus-satoken/src/main/java/io/ddd4j/sample/quarkus/satoken/order/web/dto/OrderResponse.java	1	type record OrderLineResponse
+ddd4j-samples/ddd4j-sample-quarkus-satoken/src/main/java/io/ddd4j/sample/quarkus/satoken/rbac/AuthenticationResource.java	1	type record LoginRequest
+ddd4j-samples/ddd4j-sample-quarkus-shiro/src/main/java/io/ddd4j/sample/quarkus/shiro/config/ShiroRuntimeConfig.java	1	type class RbacRealm
+ddd4j-samples/ddd4j-sample-quarkus-shiro/src/main/java/io/ddd4j/sample/quarkus/shiro/goods/domain/GoodsRepository.java	2	method findByCode;method findByStatus
+ddd4j-samples/ddd4j-sample-quarkus-shiro/src/main/java/io/ddd4j/sample/quarkus/shiro/goods/domain/GoodsStatus.java	4	enum-const ON_SALE;enum-const OFF_SALE;enum-const DRAFT;enum-const DELETED
+ddd4j-samples/ddd4j-sample-quarkus-shiro/src/main/java/io/ddd4j/sample/quarkus/shiro/order/domain/model/OrderStatus.java	4	enum-const DRAFT;enum-const PAID;enum-const SHIPPED;enum-const CANCELLED
+ddd4j-samples/ddd4j-sample-quarkus-shiro/src/main/java/io/ddd4j/sample/quarkus/shiro/order/domain/repository/OrderRepository.java	2	method findByOrderNo;method findAll
+ddd4j-samples/ddd4j-sample-quarkus-shiro/src/main/java/io/ddd4j/sample/quarkus/shiro/order/infrastructure/InMemoryOrderRepository.java	2	type class OrderRow;type class OrderLineRow
+ddd4j-samples/ddd4j-sample-quarkus-shiro/src/main/java/io/ddd4j/sample/quarkus/shiro/order/web/OrderResource.java	1	type record DiscountView
+ddd4j-samples/ddd4j-sample-quarkus-shiro/src/main/java/io/ddd4j/sample/quarkus/shiro/order/web/dto/OrderResponse.java	1	type record OrderLineResponse
+ddd4j-samples/ddd4j-sample-quarkus-shiro/src/main/java/io/ddd4j/sample/quarkus/shiro/rbac/AuthenticationResource.java	1	type record LoginRequest
+ddd4j-samples/ddd4j-sample-quarkus/src/main/java/io/ddd4j/sample/quarkus/goods/domain/GoodsRepository.java	2	method findByCode;method findByStatus
+ddd4j-samples/ddd4j-sample-quarkus/src/main/java/io/ddd4j/sample/quarkus/goods/domain/GoodsStatus.java	4	enum-const ON_SALE;enum-const OFF_SALE;enum-const DRAFT;enum-const DELETED
+ddd4j-samples/ddd4j-sample-quarkus/src/main/java/io/ddd4j/sample/quarkus/order/web/OrderResource.java	3	type record CreateOrderRequest;type record AddOrderLineRequest;type record OrderResponse
+ddd4j-samples/ddd4j-sample-vertx-cqrs/src/main/java/io/ddd4j/sample/vertx/cqrs/VertxCqrsApplication.java	7	field EVENT_STORE;field ORDER_REPO;field COMMAND_HANDLER;field COMMAND_BUS;field READ_VIEW;field CHUNK_READER;field VIEW_MANAGER
+ddd4j-samples/ddd4j-sample-vertx-cqrs/src/main/java/io/ddd4j/sample/vertx/cqrs/repository/EventSourcingOrderRepository.java	1	type record OrderAggregateId
+ddd4j-samples/ddd4j-sample-vertx/src/main/java/io/ddd4j/sample/vertx/VertxOrderRoutes.java	1	type record TokenResponse
+ddd4j-web/ddd4j-web-core/src/main/java/io/ddd4j/web/core/auth/AuthenticationMode.java	3	enum-const DISABLED;enum-const OPTIONAL;enum-const REQUIRED
+ddd4j-web/ddd4j-web-core/src/main/java/io/ddd4j/web/core/auth/BearerSubjectAuthenticator.java	1	type record Authentication
+ddd4j-web/ddd4j-web-core/src/main/java/io/ddd4j/web/core/auth/WebAccessPolicy.java	5	method authenticationMode;method disabled;method optional;method required;method requiredExcept
+ddd4j-web/ddd4j-web-core/src/main/java/io/ddd4j/web/core/context/ClientIpResolver.java	3	method resolve;method remoteAddressOnly;method trustedProxy
+ddd4j-web/ddd4j-web-core/src/main/java/io/ddd4j/web/core/context/RequestIdGenerator.java	2	method generate;method uuid
+ddd4j-web/ddd4j-web-core/src/main/java/io/ddd4j/web/core/context/WebContextScope.java	5	field REQUEST_ID;field TRACE_ID;field CLIENT_IP;field HTTP_METHOD;field HTTP_PATH
+ddd4j-web/ddd4j-web-core/src/main/java/io/ddd4j/web/core/context/WebHeaders.java	6	field AUTHORIZATION;field IDEMPOTENCY_KEY;field REQUEST_ID;field TRACE_ID;field TENANT_ID;field FORWARDED_FOR
+ddd4j-web/ddd4j-web-core/src/main/java/io/ddd4j/web/core/error/DefaultWebExceptionTranslator.java	6	field BAD_REQUEST;field UNAUTHORIZED;field FORBIDDEN;field NOT_FOUND;field CONFLICT;field INTERNAL_SERVER_ERROR
+ddd4j-web/ddd4j-web-core/src/main/java/io/ddd4j/web/core/error/WebExceptionTranslator.java	1	method translate
+ddd4j-web/ddd4j-web-core/src/main/java/io/ddd4j/web/core/health/ReadinessEndpoint.java	1	field PATH
+ddd4j-web/ddd4j-web-core/src/main/java/io/ddd4j/web/core/idempotency/CacheIdempotencyGuard.java	1	field DEFAULT_CACHE_NAME
+ddd4j-web/ddd4j-web-core/src/main/java/io/ddd4j/web/core/idempotency/IdempotencyGuard.java	6	method acquire;method acquireLease;method complete;method complete;method release;method release
+ddd4j-web/ddd4j-web-core/src/main/java/io/ddd4j/web/core/idempotency/WebIdempotencyLifecycle.java	2	field DEFAULT_TTL;type class Scope
+ddd4j-web/ddd4j-web-core/src/main/java/io/ddd4j/web/error/WebErrorResponseBuilder.java	1	field INTERNAL_ERROR_FALLBACK_JSON
+ddd4j-web/ddd4j-web-core/src/test/java/io/ddd4j/web/core/idempotency/IdempotencyGuardTest.java	1	type class RecordingGuard
+ddd4j-web/ddd4j-web-core/src/test/java/io/ddd4j/web/error/BaseErrorConfigurationTest.java	2	type class StubErrorConfiguration;type class PassThroughConfiguration
+ddd4j-web/ddd4j-web-dropwizard/src/test/java/io/ddd4j/web/dropwizard/Ddd4jDropwizardWebBundleTest.java	1	type class TestConfiguration
+ddd4j-web/ddd4j-web-dropwizard/src/test/java/io/ddd4j/web/dropwizard/Ddd4jDropwizardWebContractTest.java	2	type class DropwizardContractClient;type class ContractResource
+ddd4j-web/ddd4j-web-helidon/src/test/java/io/ddd4j/web/helidon/Ddd4jHelidonWebContractTest.java	3	type class HelidonContractClient;type class ContractApplication;type class ContractResource
+ddd4j-web/ddd4j-web-javalin/src/main/java/io/ddd4j/web/javalin/Ddd4jJavalinWeb.java	1	type class RequestState
+ddd4j-web/ddd4j-web-javalin/src/test/java/io/ddd4j/web/javalin/Ddd4jJavalinWebContractTest.java	1	type record JavalinContractClient
+ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautWebContractTest.java	1	type record MicronautContractClient
+ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebContractTest.java	1	type class QuarkusContractClient
+ddd4j-web/ddd4j-web-testkit/src/main/java/io/ddd4j/web/testkit/WebContractClient.java	1	method request
+ddd4j-web/ddd4j-web-testkit/src/main/java/io/ddd4j/web/testkit/WebContractPaths.java	14	field SUCCESS;field CREATED;field PUBLIC;field PROTECTED;field CONTEXT;field IDEMPOTENT;field BAD_REQUEST;field FORBIDDEN;field NOT_FOUND;field CONFLICT;field UNSUPPORTED_MEDIA_TYPE;field UNPROCESSABLE_ENTITY;field TOO_MANY_REQUESTS;field INTERNAL_SERVER_ERROR
+ddd4j-web/ddd4j-web-vertx/src/main/java/io/ddd4j/web/vertx/Ddd4jVertxWeb.java	2	type record AuthenticationResult;type class RequestState
+ddd4j-web/ddd4j-web-vertx/src/test/java/io/ddd4j/web/vertx/Ddd4jVertxWebContractTest.java	1	type record VertxContractClient
+ddd4j-web/ddd4j-web-webflux/src/main/java/io/ddd4j/web/webflux/config/SequenceProperties.java	1	field PREFIX
+ddd4j-web/ddd4j-web-webflux/src/main/java/io/ddd4j/web/webflux/error/GlobalErrorAttributes.java	1	field ERROR_ATTRIBUTE
+ddd4j-web/ddd4j-web-webflux/src/test/java/io/ddd4j/web/webflux/Ddd4jWebFluxHttpContractTest.java	3	type class ContractConfiguration;type class ContractController;type record WebFluxContractClient
+ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/Ddd4jWebMvcInterceptor.java	1	type class RequestState
+ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/api/CRUDController.java	1	field repository
+ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/config/BaseWebProperties.java	4	type class Log;type class Mvc;type class Auth;type class Ws
+ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/config/SequenceProperties.java	1	field PREFIX
+ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/exception/BaseExceptionHandler.java	4	field STATUS_FAIL;field STATUS_ERROR;field XML_HTTP_REQUEST;field X_REQUESTED_WITH
+ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/extension/authc/AuthcExtensionPoint.java	4	method getToken;method handleHeader;method handleRequest;method handleResult
+ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/extension/authc/AuthcExtensionPointAdapter.java	2	field AUTHORIZATION_HEADER;field BEARER_PREFIX
+ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/extension/web/ParamSignatureExtensionPoint.java	3	method sign;method getAppkey;method getAppSecret
+ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/extension/web/SpringServletRequestExtensionPoint.java	2	method wrap;method wrap
+ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/extension/web/SpringServletResponseExtensionPoint.java	2	method dewrap;method dewrap
+ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/interceptor/FeignHeaderInterceptor.java	2	field HEADER_TENANT_IDS;field HEADER_SYSTEM_IDS
+ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/interceptor/WebInterceptor.java	3	method getOrder;method preHandle;method afterCompletion
+ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/util/IdempotentKit.java	1	field expressionParser
+ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/utils/LocalDateTimeFormatter.java	1	field FORMATTER
+ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/utils/LocalTimeFormatter.java	1	field FORMATTER
+ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/Ddd4jWebMvcContractTest.java	2	type class ContractController;type record MockMvcContractClient
+ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/ThreeLineWebParityTest.java	3	type interface HeaderClient;method request;type class RecordingRegistry
+ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/util/IdempotentKitTest.java	1	type class SampleController

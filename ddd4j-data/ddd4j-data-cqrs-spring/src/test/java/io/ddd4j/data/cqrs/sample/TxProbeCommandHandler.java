@@ -51,6 +51,11 @@ public class TxProbeCommandHandler implements CommandExecutor<TxProbeCommand> {
         return Set.of(TxProbeCommand.class);
     }
 
+    /**
+     * 执行处理逻辑。
+     * @param command command 参数。
+     * @return 方法执行结果。
+     */
     @Override
     public Result execute(TxProbeCommand command) {
         DISPATCHED_IN_ACTIVE_TX.set(TransactionSynchronizationManager.isActualTransactionActive());

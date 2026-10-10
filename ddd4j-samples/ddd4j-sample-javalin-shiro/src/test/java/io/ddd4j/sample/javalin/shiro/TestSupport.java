@@ -63,6 +63,10 @@ public final class TestSupport {
     private TestSupport() {
     }
 
+    /**
+     * 启动。
+     * @return 方法执行结果。
+     */
     public static Javalin start() {
         // 0) 注入 SPI
         BaseContext.inject(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class, new NoopDomainEventPublisher());
@@ -201,13 +205,30 @@ public final class TestSupport {
         return app;
     }
 
+    /**
+     * 空实现的领域事件发布器：丢弃所有事件，避免测试对外部消息通道产生依赖。
+     */
     private static final class NoopDomainEventPublisher implements DomainEventPublisher {
+        /**
+         * 发布数据。
+         * @param <ID> 类型参数。
+         * @param event 事件消息。
+         */
         @Override
         public <ID extends EntityId> void publish(io.ddd4j.core.ddd.event.DomainEvent<ID> event) {
         }
     }
 
+    /**
+     * 空实现的国际化提供者：直接返回消息键本身，测试中不依赖真实文案资源。
+     */
     private static final class NoopI18nProvider implements I18nProvider {
+        /**
+         * 获取值。
+         * @param key 幂等键。
+         * @param args 命令行参数。
+         * @return 结果字符串。
+         */
         @Override
         public String getMessage(String key, Object... args) {
             return key;

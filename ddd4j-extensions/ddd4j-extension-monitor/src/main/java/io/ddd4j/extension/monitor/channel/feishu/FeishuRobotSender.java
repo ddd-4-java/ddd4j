@@ -59,6 +59,10 @@ public class FeishuRobotSender implements Sender {
         return client;
     }
 
+    /**
+     * send() 方法。
+     * @param msg 字符串参数。
+     */
     @Override
     public void send(String msg) {
         // 入参 msg 是 markdown 文本，这里包一层为标准 post 富文本结构：

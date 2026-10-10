@@ -24,10 +24,18 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 class IdempotencyGuardTest {
 
     private static final Duration TTL = Duration.ofMinutes(5);
 
+    /**
+     * 记录完成与释放调用的桩实现，便于断言租约到按键操作的委托行为。
+     */
     private static final class RecordingGuard implements IdempotencyGuard {
 
         private final boolean acquired;
@@ -38,16 +46,30 @@ class IdempotencyGuardTest {
             this.acquired = acquired;
         }
 
+        /**
+         * acquire() 方法。
+         * @param key 幂等键。
+         * @param ttl 锁的有效期。
+         * @return 判断结果。
+         */
         @Override
         public boolean acquire(String key, Duration ttl) {
             return acquired;
         }
 
+        /**
+         * complete() 方法。
+         * @param key 幂等键。
+         */
         @Override
         public void complete(String key) {
             this.completedKey = key;
         }
 
+        /**
+         * release() 方法。
+         * @param key 幂等键。
+         */
         @Override
         public void release(String key) {
             this.releasedKey = key;

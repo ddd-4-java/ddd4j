@@ -1,0 +1,31 @@
+# modules=ddd4j-data files=30
+ddd4j-data/ddd4j-data-event-store-jdbi/src/main/java/io/ddd4j/data/event/store/jdbi/EventStoreRetry.java	type interface RetryableAction;method run;type interface Sleeper;method sleep
+ddd4j-data/ddd4j-data-event-store-jdbi/src/main/java/io/ddd4j/data/event/store/jdbi/JdbiEventStore.java	type record StringAggregateRootId
+ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/EventStoreRetryTest.java	type class RecordingSleeper
+ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/JdbiEventStorePostgresIT.java	type record TestAggregateRootId;type class OrderCreatedEvent
+ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/JdbiEventStoreRetryTest.java	type class RecordingSleeper;type record TestAggregateRootId;type class TestEvent
+ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/JdbiEventStoreTest.java	type record TestAggregateRootId;type class OrderCreatedEvent
+ddd4j-data/ddd4j-data-event-store-jpa/src/main/java/io/ddd4j/data/event/store/jpa/JpaEventStore.java	type enum TransactionMode;enum-const INDEPENDENT;enum-const PARTICIPATING;enum-const MANAGED;type record StringAggregateRootId
+ddd4j-data/ddd4j-data-event-store-jpa/src/main/java/io/ddd4j/data/event/store/jpa/JpaStoredEventRepository.java	method findCurrentVersion;method findByAggregateTypeAndAggregateIdOrderByVersionAsc;method findByAggregateTypeAndAggregateIdAndVersionBetweenOrderByVersionAsc;method findByPositionGreaterThanEqualOrderByPositionAsc;method save;method nextPosition
+ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/event/store/jpa/JpaEventStoreIT.java	type record TestAggregateRootId;type class OrderCreatedEvent
+ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/event/store/jpa/JpaEventStorePostgresIT.java	type record TestAggregateRootId;type class OrderCreatedEvent
+ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/event/store/jpa/JpaEventStoreTest.java	type class TestAggregateRootId;type class OrderCreatedEvent
+ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/event/store/jpa/JpaManagedParticipationTest.java	type class RecordingRepository;type class TestAggregateRootId;type class TestEvent
+ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/event/store/jpa/JpaSpringParticipationIT.java	type class TestAggregateRootId;type class TestEvent
+ddd4j-data/ddd4j-data-event-store-panache/src/main/java/io/ddd4j/data/event/store/panache/EventStoreRetry.java	type interface RetryableAction;method run;type interface Sleeper;method sleep
+ddd4j-data/ddd4j-data-event-store-panache/src/main/java/io/ddd4j/data/event/store/panache/PanacheEventStore.java	type record StringAggregateRootId
+ddd4j-data/ddd4j-data-event-store-panache/src/main/java/io/ddd4j/data/event/store/panache/PanacheStoredEventEntity.java	field aggregateType;field aggregateId;field version;field position;field eventType;field eventId;field payload;field correlationId;field causationId;field timestamp
+ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/event/store/panache/EventStoreRetryTest.java	type class RecordingSleeper
+ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/event/store/panache/JpaManagedParticipationIT.java	type class JpaManagedTestProfile;type class DatabaseState;type class TestAggregateRootId;type class TestEvent
+ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/event/store/panache/PanacheEventStorePostgresIT.java	type record TestAggregateRootId;type class OrderCreatedEvent
+ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/event/store/panache/PanacheEventStoreRetryTest.java	type class CountingSleeper;type class FaultInjector;type record TestAggregateRootId;type class TestEvent
+ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/event/store/panache/PanacheEventStoreTest.java	type record TestAggregateRootId;type class OrderCreatedEvent
+ddd4j-data/ddd4j-data-event-store-r2dbc/src/test/java/io/ddd4j/data/event/store/r2dbc/R2dbcAsyncEventStoreTest.java	type class TestOrderId;type class OrderCreatedEvent;type class OrderItemAddedEvent;type class SingleConnectionFactory;type class NoCloseConnection
+ddd4j-data/ddd4j-data-event-store-r2dbc/src/test/java/io/ddd4j/data/event/store/r2dbc/R2dbcEventStorePostgresIT.java	type record TestAggregateRootId;type class OrderCreatedEvent
+ddd4j-data/ddd4j-data-event-store-r2dbc/src/test/java/io/ddd4j/data/event/store/r2dbc/R2dbcEventStoreTest.java	type class TestAggregateRootId;type class OrderCreatedEvent
+ddd4j-data/ddd4j-data-external/src/main/java/io/ddd4j/data/external/ExternalProperties.java	field PREFIX
+ddd4j-data/ddd4j-data-external/src/main/java/io/ddd4j/data/external/SequenceProperties.java	field PREFIX
+ddd4j-data/ddd4j-data-external/src/main/java/io/ddd4j/data/external/region/BaiduRegionTemplate.java	type class Location
+ddd4j-data/ddd4j-data-external/src/main/java/io/ddd4j/data/external/region/IpRegionTemplate.java	method getRegion;method getRegionAddress;method getRegionByIp;method none;method getRegion;method getRegionAddress;method getRegionByIp
+ddd4j-data/ddd4j-data-external/src/main/java/io/ddd4j/data/external/region/ProvinceEnum.java	enum-const P110000;enum-const P120000;enum-const P130000;enum-const P140000;enum-const P150000;enum-const P210000;enum-const P220000;enum-const P230000;enum-const P310000;enum-const P320000;enum-const P330000;enum-const P340000;enum-const P350000;enum-const P360000;enum-const P370000;enum-const P410000;enum-const P420000;enum-const P430000;enum-const P440000;enum-const P450000
+ddd4j-data/ddd4j-data-external/src/main/java/io/ddd4j/data/external/region/RegionCache.java	method getString;method set;method none;method getString;method set

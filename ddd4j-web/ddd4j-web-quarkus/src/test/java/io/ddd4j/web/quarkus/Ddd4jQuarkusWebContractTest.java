@@ -42,6 +42,11 @@ import java.util.Objects;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 @QuarkusTest
 class Ddd4jQuarkusWebContractTest extends AbstractWebContractTest {
 
@@ -61,10 +66,17 @@ class Ddd4jQuarkusWebContractTest extends AbstractWebContractTest {
     @AfterEach
     void tearDown() {
         ThreadContext.clear();
+        /**
+         * BaseContext.clear() 方法。
+         */
         BaseContext.clear();
         CacheKit.unregister("quarkus-contract");
     }
 
+    /**
+     * client() 方法。
+     * @return 方法执行结果。
+     */
     @Override
     protected WebContractClient client() {
         return contractClient;
@@ -72,6 +84,10 @@ class Ddd4jQuarkusWebContractTest extends AbstractWebContractTest {
 
     private SubjectProvider provider(Subject subject) {
         return new SubjectProvider() {
+            /**
+             * 获取值。
+             * @return 方法执行结果。
+             */
             @Override
             public Subject getSubject() {
                 return subject;
@@ -79,10 +95,23 @@ class Ddd4jQuarkusWebContractTest extends AbstractWebContractTest {
         };
     }
 
+    /**
+     * 类型说明。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     private final class QuarkusContractClient implements WebContractClient {
 
         private final HttpClient httpClient = HttpClient.newHttpClient();
 
+        /**
+         * request() 方法。
+         * @param method 被调用的方法。
+         * @param path 路径。
+         * @param headers 消息头。
+         * @param body 字符串参数。
+         * @return 方法执行结果。
+         */
         @Override
         public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
             HttpRequest.Builder builder = HttpRequest.newBuilder(baseUri.resolve(path));

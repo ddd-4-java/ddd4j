@@ -27,6 +27,11 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 @DisplayName("ddd4j-runtime-spring DDD 注解与 Spring 元注解融合验收")
 class SpringDddAnnotationFusionTest {
 
@@ -60,10 +65,20 @@ class SpringDddAnnotationFusionTest {
 
     @Test
     void springShouldResolveComposedAnnotations() {
+        /**
+         * 类型说明。
+         * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+         * @since 3.0.x
+         */
         @DomainService
         class TestDomainService {
         }
 
+        /**
+         * 类型说明。
+         * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+         * @since 3.0.x
+         */
         @DomainRepository
         class TestDomainRepository {
         }
@@ -75,6 +90,11 @@ class SpringDddAnnotationFusionTest {
 
     @Test
     void domainEntityShouldKeepAggregateRootAttribute() {
+        /**
+         * 类型说明。
+         * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+         * @since 3.0.x
+         */
         @DomainEntity(aggregateRoot = true)
         class AggregateRoot {
         }

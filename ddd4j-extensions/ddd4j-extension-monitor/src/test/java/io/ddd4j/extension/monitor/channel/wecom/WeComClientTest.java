@@ -92,6 +92,11 @@ class WeComClientTest {
         static volatile String lastQuery;
         static volatile String lastBody;
 
+        /**
+         * 处理请求。
+         * @param exchange exchange 参数。
+         * @throws IOException 打开文件流失败时抛出。
+         */
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             lastMethod = exchange.getRequestMethod();

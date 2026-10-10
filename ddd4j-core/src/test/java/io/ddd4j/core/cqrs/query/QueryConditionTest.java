@@ -84,6 +84,9 @@ class QueryConditionTest {
         assertThat(query.getSize()).isEqualTo(20);
     }
 
+    /**
+     * 测试用订单查询：提供领域条件的富语义链式组装入口。
+     */
     static final class OrderQuery extends Query<Order> {
 
         OrderQuery paid() {
@@ -95,6 +98,9 @@ class QueryConditionTest {
         }
     }
 
+    /**
+     * 测试用订单聚合根：提供状态与时间字段的属性访问器，供 lambda 条件引用。
+     */
     static final class Order extends AggregateRoot<String> {
 
         private final String id;
@@ -109,6 +115,10 @@ class QueryConditionTest {
             this.deletedAt = deletedAt;
         }
 
+        /**
+         * id() 方法。
+         * @return 结果字符串。
+         */
         @Override
         public String id() {
             return id;
@@ -127,6 +137,11 @@ class QueryConditionTest {
         }
     }
 
+    /**
+     * 类型说明。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     static final class OrderPO {
 
         private String orderStatus;

@@ -28,6 +28,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 class MQInboxProcessorTest {
 
     @Test
@@ -70,32 +75,69 @@ class MQInboxProcessorTest {
         assertEquals(List.of("failed"), observer.inboxOutcomes);
     }
 
+    /**
+     * 基于内存集合的去重存储，记录最后一次写入的去重键用于断言。
+     */
     private static final class InMemoryInboxStore implements MQInboxStore {
+/**
+ * HashSet<>() 方法。
+ * @return 方法执行结果。
+ */
 
         private final Set<String> records = new HashSet<>();
         private String lastKey;
 
+        /**
+         * recordIfAbsent() 方法。
+         * @param consumerId 字符串参数。
+         * @param messageId 字符串参数。
+         * @param processedAt processedAt 参数。
+         * @return 判断结果。
+         */
         @Override
         public boolean recordIfAbsent(String consumerId, String messageId, Instant processedAt) {
             lastKey = consumerId + ':' + messageId;
+            /**
+             * records.add() 方法。
+             * @param lastKey lastKey 参数。
+             * @return 方法执行结果。
+             */
             return records.add(lastKey);
         }
     }
 
+    /**
+     * 记录收件箱处理结果的观察器，把回调按顺序追加为可断言的标签序列。
+     */
     private static final class RecordingObserver implements MQDeliveryObserver {
 
         private final List<String> inboxOutcomes = new ArrayList<>();
 
+        /**
+         * onInboxProcessed() 方法。
+         * @param consumerId 字符串参数。
+         * @param messageId 字符串参数。
+         */
         @Override
         public void onInboxProcessed(String consumerId, String messageId) {
             inboxOutcomes.add("processed");
         }
 
+        /**
+         * onInboxDuplicate() 方法。
+         * @param consumerId 字符串参数。
+         * @param messageId 字符串参数。
+         */
         @Override
         public void onInboxDuplicate(String consumerId, String messageId) {
             inboxOutcomes.add("duplicate");
         }
 
+        /**
+         * onInboxFailed() 方法。
+         * @param consumerId 字符串参数。
+         * @param messageId 字符串参数。
+         */
         @Override
         public void onInboxFailed(String consumerId, String messageId) {
             inboxOutcomes.add("failed");

@@ -67,6 +67,9 @@ public class Ddd4jJdbcProjectionGuiceModule extends AbstractModule {
         this.dataSource = Objects.requireNonNull(dataSource, "dataSource must not be null");
     }
 
+    /**
+     * configure() 方法。
+     */
     @Override
     protected void configure() {
         bind(ProjectionPositionRepository.class)

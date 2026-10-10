@@ -28,11 +28,23 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 class MQListenerLifecycleContractTest {
 
     @Test
     void requiredClientInitializationFailureEscapesContextRefresh() {
         MQClient failing = new StubClient("failing", null) {
+            /**
+             * 执行初始化。
+             * @param listeners 消息监听器集合提供者。
+             * @param properties 配置属性。
+             * @param serialization 消息序列化器。
+             * @param storer 消息持久化存储器。
+             */
             @Override
             public void init(List<MQListener> listeners, MQProperties properties,
                              MQEventSerialization serialization, MQEventStorer storer) {
@@ -72,6 +84,9 @@ class MQListenerLifecycleContractTest {
         return new ContextRefreshedEvent(new GenericApplicationContext());
     }
 
+    /**
+     * 可控的 MQ 客户端桩实现，记录 close 调用顺序与次数。
+     */
     private static class StubClient implements MQClient {
         private final String impl;
         private final List<String> closed;
@@ -82,9 +97,22 @@ class MQListenerLifecycleContractTest {
             this.closed = closed;
         }
 
+        /**
+         * impl() 方法。
+         * @return 结果字符串。
+         */
         @Override public String impl() { return impl; }
         @Override public Consumer<MQEvent> initProducer(MQProperties properties) { return null; }
+        /**
+         * initConsumer() 方法。
+         * @param listener 消息监听器。
+         * @param properties 配置属性。
+         * @return 判断结果。
+         */
         @Override public boolean initConsumer(MQListener listener, MQProperties properties) { return true; }
+        /**
+         * 关闭并释放资源。
+         */
         @Override public void close() {
             if (closeCount.compareAndSet(0, 1) && closed != null) {
                 closed.add(impl);
@@ -92,8 +120,27 @@ class MQListenerLifecycleContractTest {
         }
     }
 
+    /**
+     * 类型说明。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     private static final class Serialization implements MQEventSerialization {
+        /**
+         * serialize() 方法。
+         * @param <T> 类型参数。
+         * @param event 事件消息。
+         * @return 结果值。
+         */
         @Override @SuppressWarnings("unchecked") public <T> T serialize(Object event) { return (T) "{}"; }
+        /**
+         * deserialize() 方法。
+         * @param <S> 类型参数。
+         * @param <T> 类型参数。
+         * @param value 值。
+         * @param type 目标类型。
+         * @return 结果值。
+         */
         @Override public <S, T> T deserialize(S value, Class<T> type) { return null; }
     }
 }

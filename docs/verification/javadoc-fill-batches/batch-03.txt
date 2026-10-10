@@ -1,0 +1,31 @@
+# modules=ddd4j-core files=30
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/query/PropertySpace.java	enum-const DOMAIN;enum-const PERSISTENCE
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/query/Query.java	field current;field size;field having;field fills;field conditions;field orderByConditions;field setOperations;field selectColumns;field groupByColumns
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/query/View.java	method getName;method getEventTypes
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/EventChunkReader.java	method read
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/NoopProjectionMetrics.java	field INSTANCE
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ProjectionMetrics.java	method onRunStarted;method onRunCompleted;method onRunFailed;method getLastRunInfo;method onCircuitOpened
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ProjectionPosition.java	method getStreamId;method getNextEventNumber;method withNextEventNumber
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ProjectionPositionRepository.java	method findByStreamId;method findAll;method save;method deleteByStreamId;method resetToZero
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunner.java	field CONSECUTIVE_FAILURE_THRESHOLD
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ProjectionService.java	method resetProjectionPosition;method readProjectionPosition;method updateProjectionPosition
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ProjectionView.java	method getName;method getStreamId;method getName;method getCron;method getChunkSize;method getEventTypes;method handleEvents
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/TypedEvent.java	method getEventType
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/TypedEventHandler.java	method getEventType;method getEventClass;method handle
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ViewManager.java	method start;method stop;method isRunning;method triggerOnce;method getProjectionStatus
+ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ViewScheduler.java	method schedule;type interface ViewScheduleHandle;method cancel;method isActive
+ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/DomainEventPublisher.java	method publish;method publish;method publishAll
+ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/EntityId.java	method getType;method asString;method asTypedString
+ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/EntityIdPath.java	field PATH_SEPARATOR
+ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/EntityType.java	method asString
+ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/Event.java	method getEventId;method getEventType;method getEventTimestamp;method getCorrelationId;method getCausationId
+ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/NoopDomainEventPublisher.java	field INSTANCE
+ddd4j-core/src/main/java/io/ddd4j/core/ddd/model/DomainModel.java	method id
+ddd4j-core/src/main/java/io/ddd4j/core/ddd/model/DomainObjectMapper.java	method toModel;method toPersistenceObject
+ddd4j-core/src/main/java/io/ddd4j/core/ddd/model/Entity.java	method sameIdentityAs
+ddd4j-core/src/main/java/io/ddd4j/core/ddd/model/metadata/DomainModelHelper.java	type record ModelMappingKey
+ddd4j-core/src/main/java/io/ddd4j/core/ddd/repository/EventSourcingRepository.java	method read;method read;method add;method update
+ddd4j-core/src/main/java/io/ddd4j/core/ddd/repository/Repository.java	method findById;method save;method updateById;method save;method insertOrUpdate;method save;method existsById;method deleteById;method delete;method deleteByIds;method findByIds;method saveBatch;method updateBatchById;method insertOrUpdateBatch;method findFirst;method findAll;method count;method exists;method findFirst;method findList
+ddd4j-core/src/main/java/io/ddd4j/core/enums/IEnum.java	method getCode;method getDesc
+ddd4j-core/src/main/java/io/ddd4j/core/health/ReadinessContributor.java	method check
+ddd4j-core/src/main/java/io/ddd4j/core/i18n/I18nProvider.java	method formatSlfStyle;method formatSlfStyle;method getMessage

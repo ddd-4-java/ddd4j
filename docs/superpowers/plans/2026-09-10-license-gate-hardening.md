@@ -111,9 +111,9 @@ Expected: PASS。
 - [ ] **Step 1: 在独立1.0.x checkout生成真实报告**
 
 ```bash
-JAVA_HOME=/Users/wandl/Library/Java/JavaVirtualMachines/corretto-1.8.0_504/Contents/Home \
+JAVA_HOME=/Users/redacted-legacy-family/Library/Java/JavaVirtualMachines/corretto-1.8.0_504/Contents/Home \
   ./scripts/generate-sbom.sh
-JAVA_HOME=/Users/wandl/Library/Java/JavaVirtualMachines/corretto-1.8.0_504/Contents/Home \
+JAVA_HOME=/Users/redacted-legacy-family/Library/Java/JavaVirtualMachines/corretto-1.8.0_504/Contents/Home \
   ./scripts/generate-license-report.sh
 ```
 
@@ -135,7 +135,7 @@ Expected: PASS，且 violations文件为空。
 
 - [ ] **Step 5: 完整JDK8回归**
 
-Run: `JAVA_HOME=/Users/wandl/Library/Java/JavaVirtualMachines/corretto-1.8.0_504/Contents/Home ./mvnw clean verify`
+Run: `JAVA_HOME=/Users/redacted-legacy-family/Library/Java/JavaVirtualMachines/corretto-1.8.0_504/Contents/Home ./mvnw clean verify`
 
 Expected: 103/103模块成功，零测试失败/错误/跳过。
 
@@ -156,13 +156,13 @@ Expected: 103/103模块成功，零测试失败/错误/跳过。
 - [ ] **Step 3: 生成真实SBOM和THIRD-PARTY报告**
 - [ ] **Step 4: 执行许可证门禁**
 
-Run: `JAVA_HOME=/Users/wandl/Library/Java/JavaVirtualMachines/corretto-17.0.20.1/Contents/Home ./scripts/verify-license-policy.sh`
+Run: `JAVA_HOME=/Users/redacted-legacy-family/Library/Java/JavaVirtualMachines/corretto-17.0.20.1/Contents/Home ./scripts/verify-license-policy.sh`
 
 Expected: PASS。
 
 - [ ] **Step 5: 完整JDK17回归**
 
-Run: `JAVA_HOME=/Users/wandl/Library/Java/JavaVirtualMachines/corretto-17.0.20.1/Contents/Home ./mvnw clean verify`
+Run: `JAVA_HOME=/Users/redacted-legacy-family/Library/Java/JavaVirtualMachines/corretto-17.0.20.1/Contents/Home ./mvnw clean verify`
 
 Expected: 121/121模块成功，零测试失败/错误/跳过。
 
@@ -192,7 +192,7 @@ Expected: 全部PASS。
 
 - [ ] **Step 5: 完整JDK21/Maven4回归**
 
-Run: `JAVA_HOME=/Users/wandl/Library/Java/JavaVirtualMachines/ms-21.0.12.1/Contents/Home ./mvnw clean verify`
+Run: `JAVA_HOME=/Users/redacted-legacy-family/Library/Java/JavaVirtualMachines/ms-21.0.12.1/Contents/Home ./mvnw clean verify`
 
 Expected: 121/121模块成功，零测试失败/错误/跳过，Resolver file-lock为0。
 

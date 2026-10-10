@@ -18,9 +18,17 @@ package io.ddd4j.auth.license;
 import lombok.Data;
 
 // @ConfigurationProperties(prefix = LicenseProperties.PREFIX)
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 @Data
 public class LicenseProperties {
 
+    /**
+     * 许可证配置项在配置文件中的前缀。
+     */
     public static final String PREFIX = "license";
 
     /**

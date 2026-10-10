@@ -24,6 +24,10 @@ import java.util.Objects;
  */
 public class Ddd4jSqlObservationSink implements SqlObservationSink {
 
+    /**
+     * 消费输入。
+     * @param observation observation 参数。
+     */
     @Override
     public void accept(SqlObservation observation) {
         if (Objects.isNull(observation)) {

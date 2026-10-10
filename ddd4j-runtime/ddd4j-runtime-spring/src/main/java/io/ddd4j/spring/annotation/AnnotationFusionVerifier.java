@@ -35,6 +35,10 @@ public final class AnnotationFusionVerifier {
     private AnnotationFusionVerifier() {
     }
 
+    /**
+     * main() 方法。
+     * @param args 命令行参数。
+     */
     public static void main(String[] args) {
         int passed = 0;
         int failed = 0;

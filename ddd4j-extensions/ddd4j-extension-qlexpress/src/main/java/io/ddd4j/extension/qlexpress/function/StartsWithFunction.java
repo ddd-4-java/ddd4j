@@ -24,11 +24,21 @@ import java.util.Objects;
  */
 public final class StartsWithFunction implements NamedQLFunction {
 
+    /**
+     * name() 方法。
+     * @return 结果字符串。
+     */
     @Override
     public String name() {
         return "startsWith";
     }
 
+    /**
+     * call() 方法。
+     * @param qContext qContext 参数。
+     * @param parameters parameters 参数。
+     * @return 结果对象。
+     */
     @Override
     public Object call(QContext qContext, Parameters parameters) {
         FunctionArguments.requireSize(parameters, 2, name());

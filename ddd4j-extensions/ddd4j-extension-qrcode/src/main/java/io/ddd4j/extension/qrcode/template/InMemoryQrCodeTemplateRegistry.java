@@ -27,6 +27,10 @@ public class InMemoryQrCodeTemplateRegistry implements QrCodeTemplateRegistry {
     private final ConcurrentMap<String, QrCodeTemplateDefinition> templates =
             new ConcurrentHashMap<String, QrCodeTemplateDefinition>();
 
+    /**
+     * 注册组件。
+     * @param definition definition 参数。
+     */
     @Override
     public void register(QrCodeTemplateDefinition definition) {
         Objects.requireNonNull(definition, "definition must not be null");
@@ -41,6 +45,11 @@ public class InMemoryQrCodeTemplateRegistry implements QrCodeTemplateRegistry {
         return Optional.ofNullable(templates.get(id));
     }
 
+    /**
+     * remove() 方法。
+     * @param id 标识值。
+     * @return 判断结果。
+     */
     @Override
     public boolean remove(String id) {
         return StringUtils.isNotBlank(id) && Objects.nonNull(templates.remove(id));

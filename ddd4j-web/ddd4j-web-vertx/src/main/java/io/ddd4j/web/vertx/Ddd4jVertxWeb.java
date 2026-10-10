@@ -107,6 +107,10 @@ public final class Ddd4jVertxWeb {
         this.readinessEndpoint = new ReadinessEndpoint(() -> registry.readiness().ready());
     }
 
+    /**
+     * install() 方法。
+     * @param router router 参数。
+     */
     public void install(Router router) {
         Router target = Objects.requireNonNull(router, "router must not be null");
         target.route().handler(contextHandler());
@@ -257,11 +261,20 @@ public final class Ddd4jVertxWeb {
         }
     }
 
+    /**
+     * 认证阶段的处理结果，聚合主体认证结果与幂等作用域。
+     *
+     * @param authentication 主体认证结果，未认证时为空
+     * @param idempotencyScope 本次请求持有的幂等作用域，无幂等键时为空
+     */
     private record AuthenticationResult(
             Optional<BearerSubjectAuthenticator.Authentication> authentication,
             Optional<WebIdempotencyLifecycle.Scope> idempotencyScope) {
     }
 
+    /**
+     * 单次请求的处理状态，记录失败标记与幂等作用域，请求结束时统一完成或释放。
+     */
     private static final class RequestState {
 
         private WebIdempotencyLifecycle.Scope idempotencyScope;

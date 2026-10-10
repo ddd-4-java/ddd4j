@@ -32,6 +32,10 @@ public class Ddd4jDropwizardReadinessHealthCheck extends HealthCheck {
                 "readinessRegistry must not be null");
     }
 
+    /**
+     * check() 方法。
+     * @return 方法执行结果。
+     */
     @Override
     protected Result check() {
         ReadinessReport report = readinessRegistry.readiness();

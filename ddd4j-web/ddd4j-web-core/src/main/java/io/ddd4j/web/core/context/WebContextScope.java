@@ -28,10 +28,15 @@ import java.util.Objects;
  */
 public final class WebContextScope implements AutoCloseable {
 
+    /** 请求标识在 ThreadContext 与 MDC 中的键名。 */
     public static final String REQUEST_ID = "request-id";
+    /** 链路追踪标识在 ThreadContext 与 MDC 中的键名。 */
     public static final String TRACE_ID = "trace-id";
+    /** 客户端 IP 在 ThreadContext 中的键名。 */
     public static final String CLIENT_IP = "client-ip";
+    /** HTTP 请求方法在 ThreadContext 中的键名。 */
     public static final String HTTP_METHOD = "http-method";
+    /** HTTP 请求路径在 ThreadContext 中的键名。 */
     public static final String HTTP_PATH = "http-path";
 
     private final ThreadContext.Scope threadScope;
@@ -45,10 +50,18 @@ public final class WebContextScope implements AutoCloseable {
         bind(requestContext);
     }
 
+    /**
+     * 打开资源。
+     * @param context JUnit 扩展上下文。
+     * @return 当前对象自身，支持链式调用。
+     */
     public static WebContextScope open(WebRequestContext context) {
         return new WebContextScope(context);
     }
 
+    /**
+     * 关闭并释放资源。
+     */
     @Override
     public void close() {
         if (closed) {

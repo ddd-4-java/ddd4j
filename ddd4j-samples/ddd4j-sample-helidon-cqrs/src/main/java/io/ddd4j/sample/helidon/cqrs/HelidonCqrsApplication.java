@@ -24,6 +24,10 @@ import io.helidon.microprofile.server.Server;
  */
 public class HelidonCqrsApplication {
 
+    /**
+     * main() 方法。
+     * @param args 命令行参数。
+     */
     public static void main(String[] args) {
         Server.builder()
                 .addApplication(new HelidonCqrsJaxRsApplication())

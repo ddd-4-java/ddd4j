@@ -1,0 +1,32 @@
+# modules=ddd4j-samples files=30
+ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/rbac/controller/AuthenticationController.java	type record LoginRequest
+ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/rbac/controller/AuthorizationController.java	type record CreateUserRequest;type record UpdateUserRequest;type record CreateRoleRequest;type record UpdateRoleRequest;type record CreatePermissionRequest;type record UserView;type record RoleView;type record PermissionView
+ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/TestSupport.java	type class NoopDomainEventPublisher;type class NoopI18nProvider
+ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/WorkingShiroSubject.java	field SESSION_ATTR_PRINCIPAL
+HAZARD	ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/WorkingShiroSubject.java	line 41	getPrincipal()
+ddd4j-samples/ddd4j-sample-javalin/src/main/java/io/ddd4j/sample/javalin/JavalinSample.java	type record JavalinApplication
+ddd4j-samples/ddd4j-sample-javalin/src/main/java/io/ddd4j/sample/javalin/goods/domain/GoodsRepository.java	method findByCode;method findByStatus
+ddd4j-samples/ddd4j-sample-javalin/src/main/java/io/ddd4j/sample/javalin/goods/domain/GoodsStatus.java	enum-const ON_SALE;enum-const OFF_SALE;enum-const DRAFT;enum-const DELETED
+ddd4j-samples/ddd4j-sample-javalin/src/main/java/io/ddd4j/sample/javalin/goods/web/GoodsController.java	type record CreateGoodsRequest;type record UpdateGoodsRequest
+ddd4j-samples/ddd4j-sample-javalin/src/main/java/io/ddd4j/sample/javalin/order/web/OrderController.java	type record CreateOrderRequest;type record AddOrderLineRequest;type record OrderResponse
+ddd4j-samples/ddd4j-sample-micronaut-cqrs/src/main/java/io/ddd4j/sample/micronaut/cqrs/MicronautCqrsApplication.java	type class CqrsConfig;type class StartupListener
+ddd4j-samples/ddd4j-sample-micronaut-cqrs/src/main/java/io/ddd4j/sample/micronaut/cqrs/repository/EventSourcingOrderRepository.java	type record OrderAggregateId
+ddd4j-samples/ddd4j-sample-micronaut-cqrs/src/main/java/io/ddd4j/sample/micronaut/cqrs/web/OrderController.java	type record CreateOrderRequest
+ddd4j-samples/ddd4j-sample-micronaut/src/main/java/io/ddd4j/sample/micronaut/AuthenticationController.java	type record TokenResponse
+ddd4j-samples/ddd4j-sample-micronaut/src/main/java/io/ddd4j/sample/micronaut/OrderController.java	type record CreateOrderRequest;type record AddOrderLineRequest
+ddd4j-samples/ddd4j-sample-order-application/src/main/java/io/ddd4j/sample/order/application/IdempotencyPort.java	method acquire;method complete;method release
+ddd4j-samples/ddd4j-sample-order-application/src/main/java/io/ddd4j/sample/order/application/IntegrationEventPublisher.java	method publish
+ddd4j-samples/ddd4j-sample-order-application/src/main/java/io/ddd4j/sample/order/application/OrderReadModelPort.java	method project;method findProjectionById;method query
+ddd4j-samples/ddd4j-sample-order-application/src/main/java/io/ddd4j/sample/order/application/OrderTransactionPort.java	method execute;method noop
+ddd4j-samples/ddd4j-sample-order-application/src/main/java/io/ddd4j/sample/order/application/OutboxPort.java	method append;method pending;method markPublished;method markFailed
+ddd4j-samples/ddd4j-sample-order-application/src/test/java/io/ddd4j/sample/order/application/ResilientIdempotencyPortTest.java	type class FailingIdempotencyPort;type class RecordingIdempotencyPort
+ddd4j-samples/ddd4j-sample-order-domain/src/main/java/io/ddd4j/sample/order/domain/OrderPersistenceMapper.java	method toPersistence;method toDomain
+ddd4j-samples/ddd4j-sample-order-domain/src/main/java/io/ddd4j/sample/order/domain/OrderRepository.java	method save;method findById;method findByOrderNo;method findAll;method count
+ddd4j-samples/ddd4j-sample-order-domain/src/main/java/io/ddd4j/sample/order/domain/OrderStatus.java	enum-const DRAFT;enum-const PAID;enum-const CANCELLED;enum-const SHIPPED
+ddd4j-samples/ddd4j-sample-order-jdbc/src/main/java/io/ddd4j/sample/order/jdbc/JdbcMQOutboxStore.java	type interface SqlOperation;method execute
+ddd4j-samples/ddd4j-sample-order-jdbc/src/main/java/io/ddd4j/sample/order/jdbc/JdbcOrderTransactionPort.java	type interface SqlQuery;method apply
+ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/main/java/io/ddd4j/sample/quarkus/cqrs/cache/GoodsCacheService.java	field BIZ_GOODS_DETAIL;field BIZ_GOODS_LIST
+ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/main/java/io/ddd4j/sample/quarkus/cqrs/cache/OrderCacheService.java	field BIZ_ORDER_STATS;field BIZ_BUYER_ORDER_COUNT;field BIZ_ORDER_DETAIL
+ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/main/java/io/ddd4j/sample/quarkus/cqrs/goods/domain/GoodsRepository.java	method findByCode;method findByStatus
+ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/main/java/io/ddd4j/sample/quarkus/cqrs/goods/domain/GoodsStatus.java	enum-const ON_SALE;enum-const OFF_SALE;enum-const DRAFT;enum-const DELETED
+ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/main/java/io/ddd4j/sample/quarkus/cqrs/order/domain/model/OrderStatus.java	enum-const DRAFT;enum-const PAID;enum-const SHIPPED;enum-const CANCELLED

@@ -56,11 +56,27 @@ class ThreeLineWebParityTest {
     @Test
     void nonEmptyInterceptorsAreRegisteredWithTheirPaths() throws Exception {
         BaseWebInterceptor interceptor = new BaseWebInterceptor() {
+            /**
+             * 获取值。
+             * @return 结果数值。
+             */
             @Override public int getOrder() { return 0; }
+            /**
+             * pathPatterns() 方法。
+             * @return 结果字符串。
+             */
             @Override public String[] pathPatterns() { return new String[]{"/protected/**"}; }
+            /**
+             * excludePathPatterns() 方法。
+             * @return 结果字符串。
+             */
             @Override public String[] excludePathPatterns() { return new String[]{"/protected/skipped"}; }
         };
         BaseWebInterceptor second = new BaseWebInterceptor() {
+            /**
+             * 获取值。
+             * @return 结果数值。
+             */
             @Override public int getOrder() { return 1; }
         };
         BaseWebConfig config = new BaseWebConfig(java.util.Arrays.asList(interceptor, second),
@@ -110,7 +126,18 @@ class ThreeLineWebParityTest {
     @Test
     void missingHeaderResponsePreservesStatusAndMessageWithOrWithoutI18n() throws Exception {
         GlobalExceptionHandler handler = new GlobalExceptionHandler() {
+            /**
+             * logException() 方法。
+             * @param exception exception 参数。
+             */
             @Override protected void logException(Exception exception) { }
+            /**
+             * 获取值。
+             * @param ex 异常对象。
+             * @param key 幂等键。
+             * @param fallback 字符串参数。
+             * @return 结果字符串。
+             */
             @Override protected String getLocaleMessage(Exception ex, String key, String fallback) {
                 return "localized header message";
             }
@@ -138,12 +165,22 @@ class ThreeLineWebParityTest {
         }
     }
 
+    /**
+     * 类型说明。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     interface HeaderClient {
         @RequestLine("GET /")
         @FeignHeader(autoFillTenantId = false, useWebRequestHeader = false)
         void request();
     }
 
+    /**
+     * 类型说明。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     private static class RecordingRegistry extends InterceptorRegistry {
         List<Object> entries() { return getInterceptors(); }
     }

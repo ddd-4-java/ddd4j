@@ -43,6 +43,11 @@ public class GuiceDomainEventPublisher implements DomainEventPublisher {
         this.eventBus = eventBus;
     }
 
+    /**
+     * 发布数据。
+     * @param <ID> 类型参数。
+     * @param event 事件消息。
+     */
     @Override
     public <ID extends EntityId> void publish(DomainEvent<ID> event) {
         if (Objects.isNull(event)) {

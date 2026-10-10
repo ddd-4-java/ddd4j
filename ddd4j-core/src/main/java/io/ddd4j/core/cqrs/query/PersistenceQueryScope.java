@@ -151,6 +151,10 @@ public final class PersistenceQueryScope<M extends AggregateRoot<?>, P> {
         return query.page();
     }
 
+    /**
+     * one() 方法。
+     * @return 方法执行结果。
+     */
     public M one() {
         return query.one();
     }
@@ -159,6 +163,10 @@ public final class PersistenceQueryScope<M extends AggregateRoot<?>, P> {
         return query.oneOpt();
     }
 
+    /**
+     * count() 方法。
+     * @return 结果数值。
+     */
     public long count() {
         return query.count();
     }

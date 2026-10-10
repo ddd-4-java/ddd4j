@@ -26,7 +26,7 @@ import java.util.Objects;
  * 数据权限校验
  * Data permission verification
  *
- * @author wandl
+ * @author ddd4j
  * @see RequiresDataPermissions
  */
 @Slf4j
@@ -35,12 +35,22 @@ public class RequiresDataPermissionsValidator implements ConstraintValidator<Req
     private String dataType;
     private DataScopeProvider provider;
 
+    /**
+     * initialize() 方法。
+     * @param annotation annotation 参数。
+     */
     @Override
     public void initialize(RequiresDataPermissions annotation) {
         this.dataType = annotation.dataType();
         this.provider = SpringContextUtils.getContext().getApplicationContext().getBean(DataScopeProvider.class);
     }
 
+    /**
+     * 判断布尔状态。
+     * @param data 对象参数。
+     * @param constraintValidatorContext constraintValidatorContext 参数。
+     * @return 判断结果。
+     */
     @Override
     public boolean isValid(Object data, ConstraintValidatorContext constraintValidatorContext) {
         // Check if the data has value

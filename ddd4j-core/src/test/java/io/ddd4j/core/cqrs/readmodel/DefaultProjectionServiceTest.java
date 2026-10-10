@@ -44,6 +44,9 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class DefaultProjectionServiceTest {
 
+    /**
+     * 构造器防护用例：仓储为 null 时立即抛出异常。
+     */
     @Nested
     @DisplayName("构造器")
     class Constructor {
@@ -56,6 +59,9 @@ class DefaultProjectionServiceTest {
         }
     }
 
+    /**
+     * 读取投影位置用例：位置缺失返回零、位置存在返回已保存事件号、委托仓储查询。
+     */
     @Nested
     @DisplayName("readProjectionPosition")
     class ReadProjectionPosition {
@@ -88,6 +94,9 @@ class DefaultProjectionServiceTest {
         }
     }
 
+    /**
+     * 更新投影位置用例：覆盖创建、推进、负数拒绝与零值允许等分支。
+     */
     @Nested
     @DisplayName("updateProjectionPosition")
     class UpdateProjectionPosition {
@@ -157,6 +166,9 @@ class DefaultProjectionServiceTest {
         }
     }
 
+    /**
+     * 重置投影位置用例：委托仓储归零且不产生额外保存交互。
+     */
     @Nested
     @DisplayName("resetProjectionPosition")
     class ResetProjectionPosition {

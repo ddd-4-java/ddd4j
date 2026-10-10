@@ -28,6 +28,10 @@ import io.ddd4j.core.subject.SubjectProvider;
  */
 public class AnonymousSubjectProvider implements SubjectProvider {
 
+    /**
+     * 获取值。
+     * @return 方法执行结果。
+     */
     @Override
     public Subject getSubject() {
         return null; // 匿名：未登录

@@ -33,6 +33,11 @@ public final class WebKit {
     private WebKit() {
     }
 
+    /**
+     * 获取值。
+     * @param context JUnit 扩展上下文。
+     * @return 结果字符串。
+     */
     public static String getClientIp(Context context) {
         String ip = null;
         for (String header : IP_HEADER_CANDIDATES) {
@@ -45,11 +50,23 @@ public final class WebKit {
             ip = context.ip();
         }
         if (Objects.nonNull(ip) && ip.contains(",")) {
+            /**
+             * ip.split() 方法。
+             * @param " " 参数。
+             * @param " " 参数。
+             * @param 2 2 参数。
+             * @return 方法执行结果。
+             */
             return ip.split(",", 2)[0].trim();
         }
         return ip;
     }
 
+    /**
+     * 判断布尔状态。
+     * @param context JUnit 扩展上下文。
+     * @return 判断结果。
+     */
     public static boolean isAjax(Context context) {
         return "XMLHttpRequest".equalsIgnoreCase(context.header("X-Requested-With"));
     }

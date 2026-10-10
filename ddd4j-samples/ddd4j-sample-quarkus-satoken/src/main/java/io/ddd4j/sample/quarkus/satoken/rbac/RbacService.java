@@ -135,11 +135,21 @@ public class RbacService {
         return userRepository.findAll();
     }
 
+    /**
+     * 查询数据。
+     * @param id 标识值。
+     * @return 方法执行结果。
+     */
     public User findUser(String id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("user not found: " + id));
     }
 
+    /**
+     * 创建对象。
+     * @param user user 参数。
+     * @return 方法执行结果。
+     */
     public User createUser(User user) {
         if (StrKit.isBlank(user.getId())) {
             throw new IllegalArgumentException("user.id must not be blank");
@@ -150,34 +160,65 @@ public class RbacService {
         return userRepository.save(user);
     }
 
+    /**
+     * 更新记录。
+     * @param id 标识值。
+     * @param patch patch 参数。
+     * @return 方法执行结果。
+     */
     public User updateUser(String id, User patch) {
         User existing = findUser(id);
         if (Objects.nonNull(patch.getUsername())) {
             existing.setUsername(patch.getUsername());
         }
         if (Objects.nonNull(patch.getDisplayName())) {
+            /**
+             * existing.setDisplayName() 方法。
+             * @param patch.getDisplayName() patch.getDisplayName() 参数。
+             */
             existing.setDisplayName(patch.getDisplayName());
         }
         if (Objects.nonNull(patch.getPassword())) {
             existing.setPassword(patch.getPassword());
         }
         if (Objects.nonNull(patch.getRoleCodes())) {
+            /**
+             * existing.setRoleCodes() 方法。
+             * @param HashSet<>(patch.getRoleCodes()) HashSet<>(patch.getRoleCodes()) 参数。
+             */
             existing.setRoleCodes(new HashSet<>(patch.getRoleCodes()));
         }
         existing.setDisabled(patch.isDisabled());
         return userRepository.save(existing);
     }
 
+    /**
+     * 删除记录。
+     * @param id 标识值。
+     * @return 判断结果。
+     */
     public boolean deleteUser(String id) {
         return userRepository.deleteById(id);
     }
 
+    /**
+     * assignRole() 方法。
+     * @param userId 字符串参数。
+     * @param roleCode 字符串参数。
+     * @return 方法执行结果。
+     */
     public User assignRole(String userId, String roleCode) {
         roleRepository.findByCode(roleCode)
                 .orElseThrow(() -> new IllegalArgumentException("role not found: " + roleCode));
         return userRepository.addRole(userId, roleCode);
     }
 
+    /**
+     * revokeRole() 方法。
+     * @param userId 字符串参数。
+     * @param roleCode 字符串参数。
+     * @return 方法执行结果。
+     */
     public User revokeRole(String userId, String roleCode) {
         return userRepository.removeRole(userId, roleCode);
     }
@@ -188,11 +229,21 @@ public class RbacService {
         return roleRepository.findAll();
     }
 
+    /**
+     * 查询数据。
+     * @param code 编码值。
+     * @return 方法执行结果。
+     */
     public Role findRole(String code) {
         return roleRepository.findByCode(code)
                 .orElseThrow(() -> new IllegalArgumentException("role not found: " + code));
     }
 
+    /**
+     * 创建对象。
+     * @param role role 参数。
+     * @return 方法执行结果。
+     */
     public Role createRole(Role role) {
         if (StrKit.isBlank(role.getCode())) {
             throw new IllegalArgumentException("role.code must not be blank");
@@ -203,6 +254,12 @@ public class RbacService {
         return roleRepository.save(role);
     }
 
+    /**
+     * 更新记录。
+     * @param code 编码值。
+     * @param patch patch 参数。
+     * @return 方法执行结果。
+     */
     public Role updateRole(String code, Role patch) {
         Role existing = findRole(code);
         if (Objects.nonNull(patch.getDisplayName())) {
@@ -217,16 +274,33 @@ public class RbacService {
         return roleRepository.save(existing);
     }
 
+    /**
+     * 删除记录。
+     * @param code 编码值。
+     * @return 判断结果。
+     */
     public boolean deleteRole(String code) {
         return roleRepository.deleteByCode(code);
     }
 
+    /**
+     * grantPermission() 方法。
+     * @param roleCode 字符串参数。
+     * @param permissionCode 字符串参数。
+     * @return 方法执行结果。
+     */
     public Role grantPermission(String roleCode, String permissionCode) {
         permissionRepository.findByCode(permissionCode)
                 .orElseThrow(() -> new IllegalArgumentException("permission not found: " + permissionCode));
         return roleRepository.addPermission(roleCode, permissionCode);
     }
 
+    /**
+     * revokePermission() 方法。
+     * @param roleCode 字符串参数。
+     * @param permissionCode 字符串参数。
+     * @return 方法执行结果。
+     */
     public Role revokePermission(String roleCode, String permissionCode) {
         return roleRepository.removePermission(roleCode, permissionCode);
     }
@@ -237,11 +311,21 @@ public class RbacService {
         return permissionRepository.findAll();
     }
 
+    /**
+     * 查询数据。
+     * @param code 编码值。
+     * @return 方法执行结果。
+     */
     public Permission findPermission(String code) {
         return permissionRepository.findByCode(code)
                 .orElseThrow(() -> new IllegalArgumentException("permission not found: " + code));
     }
 
+    /**
+     * 创建对象。
+     * @param permission 权限标识。
+     * @return 方法执行结果。
+     */
     public Permission createPermission(Permission permission) {
         if (StrKit.isBlank(permission.getCode())) {
             throw new IllegalArgumentException("permission.code must not be blank");
@@ -252,6 +336,12 @@ public class RbacService {
         return permissionRepository.save(permission);
     }
 
+    /**
+     * 更新记录。
+     * @param code 编码值。
+     * @param patch patch 参数。
+     * @return 方法执行结果。
+     */
     public Permission updatePermission(String code, Permission patch) {
         Permission existing = findPermission(code);
         if (Objects.nonNull(patch.getDisplayName())) {
@@ -263,6 +353,11 @@ public class RbacService {
         return permissionRepository.save(existing);
     }
 
+    /**
+     * 删除记录。
+     * @param code 编码值。
+     * @return 判断结果。
+     */
     public boolean deletePermission(String code) {
         return permissionRepository.deleteByCode(code);
     }

@@ -120,27 +120,27 @@ com.github.docker-java:docker-java,3.7.1,bytecode-pass,3.7.1,bytecode-pass,3.7.1
 com.github.dozermapper:dozer-core,6.5.2,bytecode-pass,7.0.0,bytecode-pass,7.0.0,bytecode-pass,
 com.github.dozermapper:dozer-proto3,6.5.2,bytecode-pass,6.5.2,bytecode-pass,6.5.2,bytecode-pass,
 com.github.dozermapper:dozer-spring4,6.5.2,bytecode-pass,7.0.0,bytecode-pass,7.0.0,bytecode-pass,
-com.github.hiwepy:cxf-rt-javassist,1.0.3.RELEASE,bytecode-pass,,replacement,,replacement,
-com.github.hiwepy:dozer-extra-converters,1.0.2.RELEASE,bytecode-pass,,replacement,,replacement,
-com.github.hiwepy:druid-metrics-prometheus,1.0.2.RELEASE,bytecode-pass,1.0.2.RELEASE,bytecode-pass,1.0.2.RELEASE,bytecode-pass,
-com.github.hiwepy:httpconn,1.0.1.RELEASE,bytecode-pass,1.0.1.RELEASE,bytecode-pass,1.0.1.RELEASE,bytecode-pass,
-com.github.hiwepy:httputils,1.0.0.RELEASE,bytecode-pass,1.0.0.RELEASE,bytecode-pass,1.0.0.RELEASE,bytecode-pass,
-com.github.hiwepy:ip2region-spring-boot-starter,,unsupported,,excluded,,excluded,JDK 8: 发布 JAR 的基础字节码超过 JDK 8；不能由提高构建 JVM 绕过本版本线约束
-com.github.hiwepy:javassist-plus,1.0.4.RELEASE,unverified-artifact,1.0.4.RELEASE,unverified-artifact,1.0.4.RELEASE,unverified-artifact,
-com.github.hiwepy:jwt-issuer-api,1.1.8.RELEASE,bytecode-pass,,replacement,,replacement,
-com.github.hiwepy:jwt-issuer-with-jjwt,1.1.8.RELEASE,bytecode-pass,,replacement,,replacement,
-com.github.hiwepy:jwt-issuer-with-nimbus,1.1.8.RELEASE,bytecode-pass,,replacement,,replacement,
-com.github.hiwepy:mybatis-plus-enhance,2.7.x.20260630-SNAPSHOT,bytecode-pass,,excluded,,excluded,
-com.github.hiwepy:pac4j-oauth-ext,,unsupported,6.1.x.20241003.RELEASE,bytecode-pass,6.1.x.20241003.RELEASE,bytecode-pass,JDK 8: 发布 JAR 的基础字节码超过 JDK 8；不能由提高构建 JVM 绕过本版本线约束
-com.github.hiwepy:redistpl-plus-spring-boot-starter,2.7.x.20240823.RELEASE,bytecode-pass,,manual-migration,,manual-migration,JDK 17: 已发布 starter 绑定 Spring Boot 2.7 / javax.servlet；现有新 SDK 缺少等价自动配置且仍有 javax 引用，需发布对应 Spring 6/7 适配产物; JDK 21: 已发布 starter 绑定 Spring Boot 2.7 / javax.servlet；现有新 SDK 缺少等价自动配置且仍有 javax 引用，需发布对应 Spring 6/7 适配产物
-com.github.hiwepy:security-biz-spring-boot-starter,2.7.x.20241003.RELEASE,bytecode-pass,,manual-migration,,manual-migration,JDK 17: 已发布 starter 绑定 Spring Boot 2.7 / javax.servlet；现有新 SDK 缺少等价自动配置且仍有 javax 引用，需发布对应 Spring 6/7 适配产物; JDK 21: 已发布 starter 绑定 Spring Boot 2.7 / javax.servlet；现有新 SDK 缺少等价自动配置且仍有 javax 引用，需发布对应 Spring 6/7 适配产物
-com.github.hiwepy:security-jwt-spring-boot-starter,2.7.x.20241003.RELEASE,bytecode-pass,,manual-migration,,manual-migration,JDK 17: 已发布 starter 绑定 Spring Boot 2.7 / javax.servlet；现有新 SDK 缺少等价自动配置且仍有 javax 引用，需发布对应 Spring 6/7 适配产物; JDK 21: 已发布 starter 绑定 Spring Boot 2.7 / javax.servlet；现有新 SDK 缺少等价自动配置且仍有 javax 引用，需发布对应 Spring 6/7 适配产物
-com.github.hiwepy:shiro-biz,1.2.0.RELEASE,bytecode-pass,1.2.3.RELEASE,bytecode-pass,1.2.3.RELEASE,bytecode-pass,
-com.github.hiwepy:shiro-j2cache,1.0.5.RELEASE,bytecode-pass,,replacement,,replacement,
-com.github.hiwepy:spring-biz,1.1.5.RELEASE,bytecode-pass,3.3.x.20241020.RELEASE,bytecode-pass,3.3.x.20241020.RELEASE,bytecode-pass,
-com.github.hiwepy:spring-bytebuddy,,unsupported,,replacement,,replacement,JDK 8: 发布 JAR 的基础字节码超过 JDK 8；不能由提高构建 JVM 绕过本版本线约束
-com.github.hiwepy:spring-javassist,1.0.x.20260630-SNAPSHOT,unverified-artifact,,replacement,,replacement,
-com.github.hiwepy:undertow-metrics-prometheus,1.0.0.RELEASE,bytecode-pass,1.0.0.RELEASE,bytecode-pass,1.0.0.RELEASE,bytecode-pass,
+com.github.redacted-legacy-family:cxf-rt-javassist,1.0.3.RELEASE,bytecode-pass,,replacement,,replacement,
+com.github.redacted-legacy-family:dozer-extra-converters,1.0.2.RELEASE,bytecode-pass,,replacement,,replacement,
+com.github.redacted-legacy-family:druid-metrics-prometheus,1.0.2.RELEASE,bytecode-pass,1.0.2.RELEASE,bytecode-pass,1.0.2.RELEASE,bytecode-pass,
+com.github.redacted-legacy-family:httpconn,1.0.1.RELEASE,bytecode-pass,1.0.1.RELEASE,bytecode-pass,1.0.1.RELEASE,bytecode-pass,
+com.github.redacted-legacy-family:httputils,1.0.0.RELEASE,bytecode-pass,1.0.0.RELEASE,bytecode-pass,1.0.0.RELEASE,bytecode-pass,
+com.github.redacted-legacy-family:ip2region-spring-boot-starter,,unsupported,,excluded,,excluded,JDK 8: 发布 JAR 的基础字节码超过 JDK 8；不能由提高构建 JVM 绕过本版本线约束
+com.github.redacted-legacy-family:javassist-plus,1.0.4.RELEASE,unverified-artifact,1.0.4.RELEASE,unverified-artifact,1.0.4.RELEASE,unverified-artifact,
+com.github.redacted-legacy-family:jwt-issuer-api,1.1.8.RELEASE,bytecode-pass,,replacement,,replacement,
+com.github.redacted-legacy-family:jwt-issuer-with-jjwt,1.1.8.RELEASE,bytecode-pass,,replacement,,replacement,
+com.github.redacted-legacy-family:jwt-issuer-with-nimbus,1.1.8.RELEASE,bytecode-pass,,replacement,,replacement,
+com.github.redacted-legacy-family:mybatis-plus-enhance,2.7.x.20260630-SNAPSHOT,bytecode-pass,,excluded,,excluded,
+com.github.redacted-legacy-family:pac4j-oauth-ext,,unsupported,6.1.x.20241003.RELEASE,bytecode-pass,6.1.x.20241003.RELEASE,bytecode-pass,JDK 8: 发布 JAR 的基础字节码超过 JDK 8；不能由提高构建 JVM 绕过本版本线约束
+com.github.redacted-legacy-family:redistpl-plus-spring-boot-starter,2.7.x.20240823.RELEASE,bytecode-pass,,manual-migration,,manual-migration,JDK 17: 已发布 starter 绑定 Spring Boot 2.7 / javax.servlet；现有新 SDK 缺少等价自动配置且仍有 javax 引用，需发布对应 Spring 6/7 适配产物; JDK 21: 已发布 starter 绑定 Spring Boot 2.7 / javax.servlet；现有新 SDK 缺少等价自动配置且仍有 javax 引用，需发布对应 Spring 6/7 适配产物
+com.github.redacted-legacy-family:security-biz-spring-boot-starter,2.7.x.20241003.RELEASE,bytecode-pass,,manual-migration,,manual-migration,JDK 17: 已发布 starter 绑定 Spring Boot 2.7 / javax.servlet；现有新 SDK 缺少等价自动配置且仍有 javax 引用，需发布对应 Spring 6/7 适配产物; JDK 21: 已发布 starter 绑定 Spring Boot 2.7 / javax.servlet；现有新 SDK 缺少等价自动配置且仍有 javax 引用，需发布对应 Spring 6/7 适配产物
+com.github.redacted-legacy-family:security-jwt-spring-boot-starter,2.7.x.20241003.RELEASE,bytecode-pass,,manual-migration,,manual-migration,JDK 17: 已发布 starter 绑定 Spring Boot 2.7 / javax.servlet；现有新 SDK 缺少等价自动配置且仍有 javax 引用，需发布对应 Spring 6/7 适配产物; JDK 21: 已发布 starter 绑定 Spring Boot 2.7 / javax.servlet；现有新 SDK 缺少等价自动配置且仍有 javax 引用，需发布对应 Spring 6/7 适配产物
+com.github.redacted-legacy-family:shiro-biz,1.2.0.RELEASE,bytecode-pass,1.2.3.RELEASE,bytecode-pass,1.2.3.RELEASE,bytecode-pass,
+com.github.redacted-legacy-family:shiro-j2cache,1.0.5.RELEASE,bytecode-pass,,replacement,,replacement,
+com.github.redacted-legacy-family:spring-biz,1.1.5.RELEASE,bytecode-pass,3.3.x.20241020.RELEASE,bytecode-pass,3.3.x.20241020.RELEASE,bytecode-pass,
+com.github.redacted-legacy-family:spring-bytebuddy,,unsupported,,replacement,,replacement,JDK 8: 发布 JAR 的基础字节码超过 JDK 8；不能由提高构建 JVM 绕过本版本线约束
+com.github.redacted-legacy-family:spring-javassist,1.0.x.20260630-SNAPSHOT,unverified-artifact,,replacement,,replacement,
+com.github.redacted-legacy-family:undertow-metrics-prometheus,1.0.0.RELEASE,bytecode-pass,1.0.0.RELEASE,bytecode-pass,1.0.0.RELEASE,bytecode-pass,
 com.github.jai-imageio:jai-imageio-core,1.4.0,bytecode-pass,1.4.0,bytecode-pass,1.4.0,bytecode-pass,
 com.github.java-json-tools:json-path-assert,,replacement,,replacement,,replacement,
 com.github.java-json-tools:json-schema-validator,2.2.14,bytecode-pass,2.2.14,bytecode-pass,2.2.14,bytecode-pass,
@@ -460,7 +460,7 @@ io.github.easy4j:validation-api-extension,,absent,2.0.x.20260630-SNAPSHOT,byteco
 io.github.easy4j:wkhtmltopdf-invoker,,absent,2.0.x.20260630-SNAPSHOT,bytecode-pass,3.0.x.20260630-SNAPSHOT,bytecode-pass,
 io.github.easy4j:xxljob-extension,,absent,2.0.x.20260630-SNAPSHOT,pom,3.0.x.20260630-SNAPSHOT,pom,
 io.github.easy4j:zxing-extension,1.0.x.20260630-SNAPSHOT,bytecode-pass,2.0.x.20260630-SNAPSHOT,bytecode-pass,2.0.x.20260630-SNAPSHOT,bytecode-pass,
-io.github.hiwepy:zxing-extension,,absent,,replacement,,replacement,
+io.github.redacted-legacy-family:zxing-extension,,absent,,replacement,,replacement,
 io.github.jopenlibs:vault-java-driver,,absent,6.2.2,bytecode-pass,6.2.2,bytecode-pass,
 io.github.openfeign.form:feign-form,3.8.0,bytecode-pass,,replacement,,replacement,
 io.github.openfeign.form:feign-form-spring,3.8.0,bytecode-pass,,replacement,,replacement,

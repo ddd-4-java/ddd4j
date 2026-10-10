@@ -32,7 +32,9 @@ import io.opentelemetry.context.Scope;
  */
 public final class DataScopeSpan {
 
+    /** 数据类型属性键，记录本次数据作用域评估的目标数据类型。 */
     public static final AttributeKey<String> ATTR_DATA_SCOPE_TYPE = AttributeKey.stringKey("ddd4j.datascope.type");
+    /** 数据作用域决策属性键，记录评估结果（allow / deny）。 */
     public static final AttributeKey<String> ATTR_DATA_SCOPE_DECISION = AttributeKey.stringKey("ddd4j.datascope.decision");
 
     private DataScopeSpan() {

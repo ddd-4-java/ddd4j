@@ -61,6 +61,11 @@ import java.util.NoSuchElementException;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 class Ddd4jWebMvcContractTest extends AbstractWebContractTest {
 
     private WebContractClient contractClient;
@@ -87,15 +92,27 @@ class Ddd4jWebMvcContractTest extends AbstractWebContractTest {
     @AfterEach
     void tearDown() {
         ThreadContext.clear();
+        /**
+         * BaseContext.clear() 方法。
+         */
         BaseContext.clear();
         CacheKit.unregister("webmvc-contract");
     }
 
+    /**
+     * client() 方法。
+     * @return 方法执行结果。
+     */
     @Override
     protected WebContractClient client() {
         return contractClient;
     }
 
+    /**
+     * 契约测试用控制器，提供成功、创建、上下文、幂等与各类错误场景端点。
+     *
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     */
     @RestController
     static class ContractController {
 
@@ -140,6 +157,10 @@ class Ddd4jWebMvcContractTest extends AbstractWebContractTest {
 
     private SubjectProvider provider(Subject subject) {
         return new SubjectProvider() {
+            /**
+             * 获取值。
+             * @return 方法执行结果。
+             */
             @Override
             public Subject getSubject() {
                 return subject;
@@ -147,8 +168,22 @@ class Ddd4jWebMvcContractTest extends AbstractWebContractTest {
         };
     }
 
+    /**
+     * 基于 MockMvc 的契约客户端，将契约请求转发给独立装配的 MockMvc 执行。
+     *
+     * @param mockMvc 模拟 MVC 实例
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     */
     private record MockMvcContractClient(MockMvc mockMvc) implements WebContractClient {
 
+        /**
+         * request() 方法。
+         * @param method 被调用的方法。
+         * @param path 路径。
+         * @param headers 消息头。
+         * @param body 字符串参数。
+         * @return 方法执行结果。
+         */
         @Override
         public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
             try {

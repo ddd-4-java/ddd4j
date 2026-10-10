@@ -20,5 +20,12 @@ import java.io.IOException;
 /** Framework-neutral port for resolving logos and frame images. */
 public interface QrCodeResourceResolver {
 
+    /**
+     * 按资源定位符解析出图片。
+     *
+     * @param location 资源定位符（路径、URL 或 classpath 位置）
+     * @return 解析得到的图片
+     * @throws IOException 资源不存在或读取失败时抛出
+     */
     BufferedImage resolve(String location) throws IOException;
 }

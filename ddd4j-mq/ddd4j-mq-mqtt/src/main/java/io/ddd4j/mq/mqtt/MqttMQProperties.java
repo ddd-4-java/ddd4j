@@ -56,10 +56,18 @@ public class MqttMQProperties extends MQProperties {
     private int willQos = 0;
     private boolean willRetained = false;
 
+    /**
+     * 创建对象。
+     * @return 结果字符串。
+     */
     public String newClientId() {
         return (Objects.isNull(clientIdPrefix) ? "ddd4j-mq-" : clientIdPrefix) + UUID.randomUUID();
     }
 
+    /**
+     * connectOptions() 方法。
+     * @return 方法执行结果。
+     */
     public MqttConnectOptions connectOptions() {
         MqttConnectOptions o = new MqttConnectOptions();
         o.setCleanSession(cleanSession);

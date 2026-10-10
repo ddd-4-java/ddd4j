@@ -489,18 +489,32 @@ class TrueLicenseMigrationTest {
         return new LicenseValidationException(new TestMessage(text));
     }
 
+    /**
+     * 过期许可证夹具管理器：放开签发期校验，允许生成已过期的许可证用于安装拒绝测试。
+     *
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     */
     private static final class ExpiredFixtureManager extends CustomLicenseManager {
 
         private ExpiredFixtureManager(String subject, CustomKeyStoreParam keyStoreParam, Preferences preferences) {
             super(subject, keyStoreParam, preferences);
         }
 
+        /**
+         * validateCreate() 方法。
+         * @param content content 参数。
+         */
         @Override
         protected synchronized void validateCreate(License content) {
             Objects.requireNonNull(content, "content");
         }
     }
 
+    /**
+     * 类型说明。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     private static final class HookRejectingManager extends CustomLicenseManager {
 
         private final boolean rejectConsumer;
@@ -513,6 +527,11 @@ class TrueLicenseMigrationTest {
             this.rejectConsumer = rejectConsumer;
         }
 
+        /**
+         * validateCreate() 方法。
+         * @param content content 参数。
+         * @throws LicenseValidationException 出现异常时抛出。
+         */
         @Override
         protected synchronized void validateCreate(License content) throws LicenseValidationException {
             super.validateCreate(content);
@@ -521,6 +540,11 @@ class TrueLicenseMigrationTest {
             }
         }
 
+        /**
+         * 执行校验。
+         * @param content content 参数。
+         * @throws LicenseValidationException 出现异常时抛出。
+         */
         @Override
         protected synchronized void validate(License content) throws LicenseValidationException {
             super.validate(content);
@@ -530,6 +554,11 @@ class TrueLicenseMigrationTest {
         }
     }
 
+    /**
+     * 类型说明。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     private static final class RuntimeRejectingManager extends CustomLicenseManager {
 
         private boolean rejectConsumer;
@@ -542,6 +571,11 @@ class TrueLicenseMigrationTest {
             rejectConsumer = true;
         }
 
+        /**
+         * 执行校验。
+         * @param content content 参数。
+         * @throws LicenseValidationException 出现异常时抛出。
+         */
         @Override
         protected synchronized void validate(License content) throws LicenseValidationException {
             super.validate(content);
@@ -551,6 +585,11 @@ class TrueLicenseMigrationTest {
         }
     }
 
+    /**
+     * 类型说明。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     private static final class TestMessage implements Message {
 
         private static final long serialVersionUID = 1L;
@@ -561,11 +600,20 @@ class TrueLicenseMigrationTest {
             this.text = text;
         }
 
+        /**
+         * 返回对象的字符串表示。
+         * @return 对象的字符串表示。
+         */
         @Override
         public String toString() {
             return text;
         }
 
+        /**
+         * 返回对象的字符串表示。
+         * @param locale locale 参数。
+         * @return 对象的字符串表示。
+         */
         @Override
         public String toString(Locale locale) {
             return text;

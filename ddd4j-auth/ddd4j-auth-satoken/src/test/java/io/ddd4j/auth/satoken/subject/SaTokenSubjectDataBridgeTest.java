@@ -30,6 +30,11 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 class SaTokenSubjectDataBridgeTest {
 
     private final SaTokenSubjectDataBridge bridge = new SaTokenSubjectDataBridge();
@@ -40,10 +45,24 @@ class SaTokenSubjectDataBridgeTest {
     void setUp() {
         originalProvider = SubjectKit.subjectProvider;
         originalDataProvider = SubjectKit.dataProvider;
+        /**
+         * SubjectKit.register() 方法。
+         * @param } } 参数。
+         */
         SubjectKit.register(new SubjectProvider() {
+            /**
+             * 获取值。
+             * @return 方法执行结果。
+             */
             @Override
             public Subject getSubject() {
                 return new SaTokenSubject() {
+                    /**
+                     * 获取值。
+                     * @param <T> 类型参数。
+                     * @param loginId 登录标识。
+                     * @return 结果值。
+                     */
                     @Override
                     public <T extends AuthPrincipal> T getPrincipalByLoginId(Object loginId) {
                         if ("user-1".equals(loginId)) {

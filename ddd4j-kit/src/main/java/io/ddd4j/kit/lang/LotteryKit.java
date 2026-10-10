@@ -35,6 +35,13 @@ import java.util.function.Function;
 @UtilityClass
 public class LotteryKit {
 
+    /**
+     * lottery() 方法。
+     * @param <T> 类型参数。
+     * @param elements elements 参数。
+     * @param quotaChecker quotaChecker 参数。
+     * @return 结果值。
+     */
     public static <T extends LotteryElement> T lottery(List<T> elements, Function<T, Long> quotaChecker) {
         // 1、打乱元素集合
         Collections.shuffle(elements);
@@ -45,6 +52,10 @@ public class LotteryKit {
         weightSection.add(0F);
         // 4、遍历每个元素，设置概率区间，总的概率区间为每个概率区间的总和
         for (LotteryElement element : elements) {
+            /**
+             * element.getWeight() 方法。
+             * @return 方法执行结果。
+             */
             totalWeight += element.getWeight();
             weightSection.add(totalWeight);
         }
@@ -52,6 +63,15 @@ public class LotteryKit {
         return lottery(totalWeight, weightSection, elements, quotaChecker);
     }
 
+    /**
+     * lottery() 方法。
+     * @param <T> 类型参数。
+     * @param totalWeight totalWeight 参数。
+     * @param weightSection weightSection 参数。
+     * @param elements elements 参数。
+     * @param quotaChecker quotaChecker 参数。
+     * @return 结果值。
+     */
     protected static <T extends LotteryElement> T lottery(float totalWeight, List<Float> weightSection, List<T> elements, Function<T, Long> quotaChecker) {
         // 1、获取总的概率区间中的随机数
         ThreadLocalRandom random = ThreadLocalRandom.current();
@@ -77,6 +97,9 @@ public class LotteryKit {
         return elements.stream().filter(el -> Objects.isNull(el.getQuota())).min(Comparator.comparing(LotteryElement::getAmount)).get();
     }
 
+    /**
+     * 抽奖元素模型，描述单个奖项的数量、概率与每日限额。
+     */
     @Data
     @Builder
     @NoArgsConstructor

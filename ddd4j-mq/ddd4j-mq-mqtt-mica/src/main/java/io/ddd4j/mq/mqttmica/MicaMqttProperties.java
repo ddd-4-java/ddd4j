@@ -69,10 +69,18 @@ public class MicaMqttProperties extends MQProperties {
      */
     private int maxInflight = 100;
 
+    /**
+     * 创建对象。
+     * @return 结果字符串。
+     */
     public String newClientId() {
         return (Objects.isNull(clientIdPrefix) ? "ddd4j-mica-" : clientIdPrefix) + UUID.randomUUID();
     }
 
+    /**
+     * client() 方法。
+     * @return 方法执行结果。
+     */
     public MqttClient client() {
         MqttClientCreator creator = MqttClient.create()
                 .ip(serverIp)
@@ -80,6 +88,10 @@ public class MicaMqttProperties extends MQProperties {
                 .username(getUsername())
                 .password(getPassword())
                 .clientId(newClientId())
+                /**
+                 * .keepAliveSecs() 方法。
+                 * @param keepAliveSeconds keepAliveSeconds 参数。
+                 */
                 .keepAliveSecs(keepAliveSeconds)
                 .readBufferSize(readBufferSize);
         if (useSsl) {
@@ -88,6 +100,10 @@ public class MicaMqttProperties extends MQProperties {
         return creator.connectSync();
     }
 
+    /**
+     * mqttQoS() 方法。
+     * @return 方法执行结果。
+     */
     public MqttQoS mqttQoS() {
         return switch (qos) {
             case 0 -> MqttQoS.QOS0;

@@ -949,6 +949,10 @@ public class GlobalExceptionHandler {
         return message;
     }
 
+    /**
+     * logException() 方法。
+     * @param ex 异常对象。
+     */
     protected void logException(Exception ex) {
         HttpServletRequest request = WebUtils.getHttpServletRequest();
         if (Objects.nonNull(request)) {

@@ -28,6 +28,10 @@ public class FileValidationException extends RuntimeException {
         this.failure = failure;
     }
 
+    /**
+     * 获取值。
+     * @return 方法执行结果。
+     */
     public FileValidationFailure getFailure() {
         return failure;
     }

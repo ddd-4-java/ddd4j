@@ -26,9 +26,27 @@ import io.ddd4j.extension.qrcode.result.QrCodeScanResult;
 /** Framework-neutral QR code application service. */
 public interface QrCodeService {
 
+    /**
+     * 根据生成命令生成二维码产物。
+     *
+     * @param command 生成命令（含关联标识、模板标识与生成请求）
+     * @return 生成结果产物
+     */
     QrCodeArtifact generate(GenerateQrCodeCommand command);
 
+    /**
+     * 根据解码命令识别二维码图片内容。
+     *
+     * @param command 解码命令（含关联标识与图片字节）
+     * @return 扫描识别结果
+     */
     QrCodeScanResult decode(DecodeQrCodeCommand command);
 
+    /**
+     * 批量生成二维码，结果按提交顺序返回。
+     *
+     * @param items 批量生成项列表
+     * @return 批量生成结果（逐项成功或失败）
+     */
     QrCodeBatchResult generateBatch(List<QrCodeBatchItem> items);
 }

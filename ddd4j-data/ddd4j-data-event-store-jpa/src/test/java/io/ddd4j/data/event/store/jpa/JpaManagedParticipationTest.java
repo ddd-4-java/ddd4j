@@ -206,12 +206,23 @@ class JpaManagedParticipationTest {
                 });
     }
 
+    /**
+     * 记录式仓储桩：记录保存次数并可注入读取结果或失败，用于验证事务参与行为。
+     *
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     */
     private static final class RecordingRepository implements JpaStoredEventRepository {
 
         private RuntimeException readFailure;
         private List<StoredEventEntity> readResults = Collections.emptyList();
         private int savedEvents;
 
+        /**
+         * 查询数据。
+         * @param aggregateType 字符串参数。
+         * @param aggregateId 字符串参数。
+         * @return 结果数值。
+         */
         @Override
         public long findCurrentVersion(String aggregateType, String aggregateId) {
             return 0;
@@ -238,17 +249,30 @@ class JpaManagedParticipationTest {
             return readResults;
         }
 
+        /**
+         * save() 方法。
+         * @param entity 实体对象。
+         */
         @Override
         public void save(StoredEventEntity entity) {
             savedEvents++;
         }
 
+        /**
+         * nextPosition() 方法。
+         * @return 结果数值。
+         */
         @Override
         public long nextPosition() {
             return savedEvents + 1L;
         }
     }
 
+    /**
+     * 类型说明。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     private static final class TestAggregateRootId implements AggregateRootId {
 
         private static final EntityType TYPE = new StringEntityType("Order");
@@ -258,22 +282,39 @@ class JpaManagedParticipationTest {
             this.value = value;
         }
 
+        /**
+         * 获取值。
+         * @return 方法执行结果。
+         */
         @Override
         public EntityType getType() {
             return TYPE;
         }
 
+        /**
+         * asString() 方法。
+         * @return 结果字符串。
+         */
         @Override
         public String asString() {
             return value;
         }
 
+        /**
+         * asTypedString() 方法。
+         * @return 结果字符串。
+         */
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
         }
     }
 
+    /**
+     * 类型说明。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     private static final class TestEvent extends DomainEvent<TestAggregateRootId> {
 
         private TestEvent() {

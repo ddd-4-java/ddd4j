@@ -129,18 +129,34 @@ class DomainEventRoundTripTest {
             this.amount = amount;
         }
 
+        /**
+         * 获取值。
+         * @return 结果字符串。
+         */
         public String getOrderId() {
             return orderId;
         }
 
+        /**
+         * 设置值。
+         * @param orderId 订单标识。
+         */
         public void setOrderId(String orderId) {
             this.orderId = orderId;
         }
 
+        /**
+         * 获取值。
+         * @return 结果数值。
+         */
         public long getAmount() {
             return amount;
         }
 
+        /**
+         * 设置值。
+         * @param amount 金额。
+         */
         public void setAmount(long amount) {
             this.amount = amount;
         }

@@ -103,6 +103,15 @@ public class SignKit {
         return DigestUtils.md5DigestAsHex(signOrigin.getBytes());
     }
 
+    /**
+     * 生成签名。
+     * @param token 访问令牌。
+     * @param formData formData 参数。
+     * @param body 字符串参数。
+     * @param salt 字符串参数。
+     * @return 结果字符串。
+     * @throws UnsupportedEncodingException 出现异常时抛出。
+     */
     public static String sign(String token, MultiValueMap<String, String> formData, String body, String salt) throws UnsupportedEncodingException {
 
         String originSign = signOrigin(token, formData, body, salt);
@@ -121,6 +130,18 @@ public class SignKit {
 
     }
 
+    /**
+     * 执行验证。
+     * @param token 访问令牌。
+     * @param appId 字符串参数。
+     * @param appVersion 字符串参数。
+     * @param appChannel 字符串参数。
+     * @param fixedSecret 字符串参数。
+     * @param clientSign 字符串参数。
+     * @param params 参数数组。
+     * @param body 字符串参数。
+     * @return 判断结果。
+     */
     public static boolean verify(String token, String appId, String appVersion, String appChannel,
                                  String fixedSecret, String clientSign, MultiValueMap<String, String> params, String body)
             throws UnsupportedEncodingException {
@@ -158,6 +179,10 @@ public class SignKit {
                     params.put(key, values[0]);
                 }
             });
+/**
+ * params.forEach() 方法。
+ * @param } } 参数。
+ */
 
             params.forEach((key, value) -> {
                 if (StringUtils.isEmpty(value)) {
@@ -176,9 +201,23 @@ public class SignKit {
 
         String signOrigin = URLEncoder.encode(requestData.toString(), StandardCharsets.UTF_8.name());
 
+        /**
+         * DigestUtils.md5DigestAsHex() 方法。
+         * @param signOrigin.getBytes() signOrigin.getBytes() 参数。
+         * @return 方法执行结果。
+         */
         return DigestUtils.md5DigestAsHex(signOrigin.getBytes());
     }
 
+    /**
+     * 生成签名。
+     * @param token 访问令牌。
+     * @param formData 属性映射。
+     * @param body 字符串参数。
+     * @param salt 字符串参数。
+     * @return 结果字符串。
+     * @throws UnsupportedEncodingException 出现异常时抛出。
+     */
     public static String sign(String token, Map<String, String[]> formData, String body, String salt) throws UnsupportedEncodingException {
 
         String originSign = signOrigin(token, formData, body, salt);
@@ -197,6 +236,18 @@ public class SignKit {
 
     }
 
+    /**
+     * 执行验证。
+     * @param token 访问令牌。
+     * @param appId 字符串参数。
+     * @param appVersion 字符串参数。
+     * @param appChannel 字符串参数。
+     * @param fixedSecret 字符串参数。
+     * @param clientSign 字符串参数。
+     * @param formData 属性映射。
+     * @param body 字符串参数。
+     * @return 判断结果。
+     */
     public static boolean verify(String token, String appId, String appVersion, String appChannel,
                                  String fixedSecret, String clientSign, Map<String, String[]> formData, String body)
             throws UnsupportedEncodingException {
@@ -208,6 +259,11 @@ public class SignKit {
         return sign.equals(clientSign);
     }
 
+    /**
+     * main() 方法。
+     * @param args 命令行参数。
+     * @throws Exception 执行过程中出现异常时抛出。
+     */
     public static void main(String[] args) throws Exception {
 
         String appId = "1", appVersion = "20000", appChannel = "ASO000", fixedSecret = "z2023";

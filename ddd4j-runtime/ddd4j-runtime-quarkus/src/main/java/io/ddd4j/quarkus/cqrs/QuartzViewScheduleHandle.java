@@ -52,6 +52,9 @@ class QuartzViewScheduleHandle implements ViewScheduler.ViewScheduleHandle {
         this.identity = identity;
     }
 
+    /**
+     * cancel() 方法。
+     */
     @Override
     public void cancel() {
         if (active.compareAndSet(true, false)) {
@@ -65,6 +68,10 @@ class QuartzViewScheduleHandle implements ViewScheduler.ViewScheduleHandle {
         }
     }
 
+    /**
+     * 判断布尔状态。
+     * @return 判断结果。
+     */
     @Override
     public boolean isActive() {
         return active.get();

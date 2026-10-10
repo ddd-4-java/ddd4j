@@ -47,8 +47,19 @@ import java.util.Objects;
         @Signature(type = Executor.class, method = "query", args = {
                 MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class, CacheKey.class, BoundSql.class})
 })
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 public class Ddd4jAggregateFillInnerInterceptor implements Interceptor {
 
+    /**
+     * intercept() 方法。
+     * @param invocation invocation 参数。
+     * @return 结果对象。
+     * @throws Throwable 调用过程中出现异常时抛出。
+     */
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
         Object result = invocation.proceed();
@@ -58,11 +69,21 @@ public class Ddd4jAggregateFillInnerInterceptor implements Interceptor {
         return result;
     }
 
+    /**
+     * plugin() 方法。
+     * @param target 目标对象。
+     * @return 结果对象。
+     */
     @Override
     public Object plugin(Object target) {
         return Plugin.wrap(target, this);
     }
 
+    /**
+     * afterQuery() 方法。
+     * @param parameter 对象参数。
+     * @param results results 参数。
+     */
     public void afterQuery(Object parameter, List<?> results) {
         Query query = this.findQuery(parameter);
         if (Objects.isNull(query) || Objects.isNull(results) || results.isEmpty()) {

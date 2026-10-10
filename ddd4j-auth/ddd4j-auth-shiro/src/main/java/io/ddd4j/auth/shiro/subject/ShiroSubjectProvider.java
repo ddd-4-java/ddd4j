@@ -28,11 +28,20 @@ import io.ddd4j.core.subject.SubjectProvider;
  */
 public class ShiroSubjectProvider implements SubjectProvider {
 
+    /**
+     * 获取值。
+     * @return 方法执行结果。
+     */
     @Override
     public Subject getSubject() {
         return new ShiroSubject();
     }
 
+    /**
+     * 获取值。
+     * @param realm 字符串参数。
+     * @return 方法执行结果。
+     */
     @Override
     public Subject getSubject(String realm) {
         // Shiro 多 Realm 场景由 SecurityManager 配置，此处返回默认 Subject

@@ -26,9 +26,15 @@ import lombok.Data;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 // @ConfigurationProperties(prefix = LicenseProperties.PREFIX)
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 @Data
 public class LicenseProperties {
 
+    /** 配置属性前缀 {@code license}。 */
     public static final String PREFIX = "license";
 
     /**

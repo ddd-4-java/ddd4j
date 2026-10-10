@@ -43,18 +43,35 @@ public class PanacheStoredEventId implements Serializable {
         this.version = version;
     }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getAggregateId() {
         return aggregateId;
     }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getAggregateType() {
         return aggregateType;
     }
 
+    /**
+     * 获取值。
+     * @return 结果数值。
+     */
     public long getVersion() {
         return version;
     }
 
+    /**
+     * 判断与另一对象是否相等。
+     * @param o 比较对象。
+     * @return 相等返回 {@code true}，否则返回 {@code false}。
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -65,6 +82,10 @@ public class PanacheStoredEventId implements Serializable {
                 && Objects.equals(aggregateId, that.aggregateId);
     }
 
+    /**
+     * 返回对象哈希码。
+     * @return 哈希码。
+     */
     @Override
     public int hashCode() {
         return Objects.hash(aggregateType, aggregateId, version);

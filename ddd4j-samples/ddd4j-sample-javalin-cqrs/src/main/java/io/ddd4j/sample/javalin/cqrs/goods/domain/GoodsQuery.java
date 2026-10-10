@@ -89,6 +89,11 @@ public class GoodsQuery extends Query<Goods> {
      */
     private BigDecimal priceMax;
 
+    /**
+     * 设置值。
+     * @param orderBys 字符串参数。
+     * @return 当前对象自身，支持链式调用。
+     */
     public GoodsQuery setOrderBys(String orderBys) {
         if (StrKit.isBlank(orderBys)) {
             return this;

@@ -1,0 +1,31 @@
+# modules=ddd4j-data files=30
+ddd4j-data/ddd4j-data-external/src/main/java/io/ddd4j/data/external/region/RegionEnum.java	field CN;field HK;field MO;field TW;field UK
+ddd4j-data/ddd4j-data-external/src/main/java/io/ddd4j/data/external/region/XdbSearcher.java	field NOT_MATCH;field NOT_MATCH_REGION_ADDRESS
+ddd4j-data/ddd4j-data-jpa/src/main/java/io/ddd4j/data/jpa/IdGenerationStrategy.java	method generate
+ddd4j-data/ddd4j-data-jpa/src/main/java/io/ddd4j/data/jpa/JpaAggregateRepository.java	field entityManager;field modelClass;field persistenceClass
+ddd4j-data/ddd4j-data-jpa/src/main/java/io/ddd4j/data/jpa/TenantAwareEntity.java	field id;field tenantId
+ddd4j-data/ddd4j-data-jpa/src/main/java/io/ddd4j/data/jpa/TenantAwareEntityBase.java	field createdTime;field updatedTime
+ddd4j-data/ddd4j-data-jpa/src/test/java/io/ddd4j/data/jpa/JpaAggregateRepositoryCrudTest.java	type class TestRepository;type class Order;type class OrderPO
+ddd4j-data/ddd4j-data-jpa/src/test/java/io/ddd4j/data/jpa/JpaAggregateRepositoryTest.java	type class TestRepository;type class OrderQuery;type class Order;type class OrderPO;type class OtherOrderPO
+ddd4j-data/ddd4j-data-logs/src/main/java/io/ddd4j/data/logs/ApiOperationLogProvider.java	method doBefore;method afterReturing;method wrapThrowing;method afterThrowing
+ddd4j-data/ddd4j-data-logs/src/main/java/io/ddd4j/data/logs/aspect/ApiOperationLogAspect.java	field REQUEST_ID_KEY
+ddd4j-data/ddd4j-data-mybatis/src/main/java/io/ddd4j/data/mybatis/adapter/SqlObservationSink.java	method accept
+ddd4j-data/ddd4j-data-mybatis/src/main/java/io/ddd4j/data/mybatis/context/Ddd4jTenantContext.java	type class Scope
+ddd4j-data/ddd4j-data-mybatis/src/main/java/io/ddd4j/data/mybatis/mapper/Ddd4jMapper.java	method insert;method updateById;method selectById;method selectBatchIds;method selectList
+ddd4j-data/ddd4j-data-mybatis/src/main/java/io/ddd4j/data/mybatis/plugins/DataScopeProvider.java	method dataScopeCondition
+ddd4j-data/ddd4j-data-mybatis/src/main/java/io/ddd4j/data/mybatis/plugins/handler/EncryptedFieldHandler.java	method encrypt;method decrypt;method hmac
+ddd4j-data/ddd4j-data-mybatis/src/main/java/io/ddd4j/data/mybatis/repository/MybatisAggregateRepository.java	field modelClass;field persistenceClass;field queryClass;field domainModelInfo;field baseMapper
+ddd4j-data/ddd4j-data-mybatisplus/src/main/java/io/ddd4j/data/mybatis/context/Ddd4jTenantContext.java	type class Scope
+ddd4j-data/ddd4j-data-mybatisplus/src/main/java/io/ddd4j/data/mybatis/plugins/DataScopeProvider.java	method dataScopeCondition
+ddd4j-data/ddd4j-data-mybatisplus/src/main/java/io/ddd4j/data/mybatis/plugins/handler/EncryptedFieldHandler.java	method encrypt;method decrypt;method hmac
+ddd4j-data/ddd4j-data-mybatisplus/src/main/java/io/ddd4j/data/mybatis/plugins/observation/SqlObservationSink.java	method accept
+ddd4j-data/ddd4j-data-mybatisplus/src/main/java/io/ddd4j/data/mybatis/repository/MybatisAggregateRepository.java	type class ApplicationLog;field baseMapper
+ddd4j-data/ddd4j-data-mybatisplus/src/test/java/io/ddd4j/data/mybatis/adapter/Ddd4jAggregateFillInnerInterceptorTest.java	type class TrackingQuery;type class TestAggregate
+ddd4j-data/ddd4j-data-mybatisplus/src/test/java/io/ddd4j/data/mybatis/repository/MybatisAggregateRepositoryCrudTest.java	type class TestRepository;type interface OrderMapper;type class OrderQuery;type class Order;type class OrderPO
+ddd4j-data/ddd4j-data-mybatisplus/src/test/java/io/ddd4j/data/mybatis/repository/MybatisAggregateRepositoryMySQLTest.java	type class TestRepository;type interface OrderMapper;type class OrderQuery;type class Order;type class OrderPO
+ddd4j-data/ddd4j-data-mybatisplus/src/test/java/io/ddd4j/data/mybatis/repository/MybatisAggregateRepositoryTest.java	type class TestRepository;type interface OrderMapper;type class OrderQuery;type class Order;type class OrderPO;type class OtherOrderPO
+ddd4j-data/ddd4j-data-mybatisplus/src/test/java/io/ddd4j/data/mybatis/repository/impl/BaseRepositoryImplGenericResolutionTest.java	type interface TestMapper;type class TestRepository;type class TestAggregate;type class TestPo;type class TestQuery
+ddd4j-data/ddd4j-data-projection-dropwizard/src/main/java/io/ddd4j/data/projection/dropwizard/DropwizardProjectionScheduler.java	type class ReschedulingHandle;type class CronExpression
+ddd4j-data/ddd4j-data-projection-dropwizard/src/test/java/io/ddd4j/data/projection/dropwizard/DropwizardProjectionSchedulerIT.java	type class TestApplication;type class ProjectionViewStub
+ddd4j-data/ddd4j-data-projection-helidon/src/main/java/io/ddd4j/data/projection/helidon/HelidonProjectionScheduler.java	type class ReschedulingHandle;type class CronExpression
+ddd4j-data/ddd4j-data-projection-javalin/src/main/java/io/ddd4j/data/projection/javalin/JavalinProjectionScheduler.java	type class ReschedulingHandle;type class CronExpression

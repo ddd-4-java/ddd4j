@@ -79,6 +79,9 @@ public class DddAnnotationModule extends AbstractModule {
         this.basePackages = Objects.isNull(basePackages) ? new String[0] : basePackages;
     }
 
+    /**
+     * configure() 方法。
+     */
     @Override
     protected void configure() {
         if (!enableClassGraph) {

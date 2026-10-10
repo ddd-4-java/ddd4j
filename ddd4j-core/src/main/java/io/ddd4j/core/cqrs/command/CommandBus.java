@@ -19,5 +19,12 @@ package io.ddd4j.core.cqrs.command;
  */
 public interface CommandBus {
 
+    /**
+     * 执行命令并返回执行结果。
+     *
+     * @param command 要执行的命令对象
+     * @param <R>     结果数据类型
+     * @return 命令执行结果
+     */
     <R> Result<R> execute(Command command);
 }

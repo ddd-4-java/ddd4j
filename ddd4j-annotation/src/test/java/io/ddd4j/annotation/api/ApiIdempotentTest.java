@@ -99,6 +99,11 @@ class ApiIdempotentTest {
         return annotation;
     }
 
+    /**
+     * 幂等注解声明夹具：承载各类 {@link ApiIdempotent} 配置的占位方法，供反射读取注解断言使用。
+     *
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     */
     static class Fixture {
 
         @ApiIdempotent

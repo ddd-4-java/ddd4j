@@ -16,6 +16,11 @@ package io.ddd4j.extension.pf4j.exception;
 
 import org.pf4j.PluginRuntimeException;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 @SuppressWarnings("serial")
 public class PluginInvokeException extends PluginRuntimeException {
 
@@ -34,10 +39,18 @@ public class PluginInvokeException extends PluginRuntimeException {
         this.extensionId = extensionId;
     }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getPluginId() {
         return pluginId;
     }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getExtensionId() {
         return extensionId;
     }

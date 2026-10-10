@@ -124,6 +124,10 @@ class RabbitMQContainerIntegrationTest {
         Connection connection = properties.connectionFactory().newConnection();
         try {
             RabbitMQClient client = new RabbitMQClient(connection) {
+                /**
+                 * serialization() 方法。
+                 * @return 方法执行结果。
+                 */
                 @Override
                 public io.ddd4j.mq.event.MQEventSerialization serialization() {
                     return new io.ddd4j.mq.serialization.JsonMQEventSerialization();

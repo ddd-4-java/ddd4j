@@ -46,6 +46,10 @@ public final class JdbcMQOutboxStore implements MQOutboxStore {
         this.transaction = Objects.requireNonNull(transaction, "transaction must not be null");
     }
 
+    /**
+     * append() 方法。
+     * @param record record 参数。
+     */
     @Override
     public void append(MQOutboxRecord record) {
         Objects.requireNonNull(record, "record must not be null");
@@ -83,6 +87,13 @@ public final class JdbcMQOutboxStore implements MQOutboxStore {
         return Objects.requireNonNull(claimed.get(), "claimed records must not be null");
     }
 
+    /**
+     * markPublished() 方法。
+     * @param messageId 字符串参数。
+     * @param leaseOwner 字符串参数。
+     * @param publishedAt publishedAt 参数。
+     * @return 判断结果。
+     */
     @Override
     public boolean markPublished(String messageId, String leaseOwner, Instant publishedAt) {
         return updateWithShortTransaction(() -> {
@@ -100,6 +111,15 @@ public final class JdbcMQOutboxStore implements MQOutboxStore {
         });
     }
 
+    /**
+     * reschedule() 方法。
+     * @param messageId 字符串参数。
+     * @param leaseOwner 字符串参数。
+     * @param failedAt failedAt 参数。
+     * @param lastError 字符串参数。
+     * @param policy policy 参数。
+     * @return 判断结果。
+     */
     @Override
     public boolean reschedule(String messageId, String leaseOwner, Instant failedAt, String lastError,
                               MQDeliveryPolicy policy) {
@@ -109,6 +129,12 @@ public final class JdbcMQOutboxStore implements MQOutboxStore {
                 lastError, policy));
     }
 
+    /**
+     * replay() 方法。
+     * @param messageId 字符串参数。
+     * @param availableAt availableAt 参数。
+     * @return 判断结果。
+     */
     @Override
     public boolean replay(String messageId, Instant availableAt) {
         return updateWithShortTransaction(() -> {
@@ -206,8 +232,14 @@ public final class JdbcMQOutboxStore implements MQOutboxStore {
         return Objects.nonNull(timestamp) ? timestamp.toInstant() : null;
     }
 
+    /**
+     * 类型说明。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     @FunctionalInterface
     private interface SqlOperation {
+
         boolean execute();
     }
 }

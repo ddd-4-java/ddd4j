@@ -27,6 +27,15 @@ import java.util.Objects;
  */
 public class JsonMQEventSerialization implements MQEventSerialization {
 
+    /**
+     * deserialize() 方法。
+     * @param <S> 类型参数。
+     * @param <T> 类型参数。
+     * @param src src 参数。
+     * @param dist 类型字面量。
+     * @return 结果值。
+     * @throws RuntimeException 出现异常时抛出。
+     */
     @Override
     public <S, T> T deserialize(S src, Class<T> dist) throws RuntimeException {
         if (Objects.isNull(src)) {
@@ -39,6 +48,13 @@ public class JsonMQEventSerialization implements MQEventSerialization {
         return JsonKit.toObject(text, dist);
     }
 
+    /**
+     * serialize() 方法。
+     * @param <T> 类型参数。
+     * @param src 对象参数。
+     * @return 结果值。
+     * @throws RuntimeException 出现异常时抛出。
+     */
     @Override
     @SuppressWarnings("unchecked")
     public <T> T serialize(Object src) throws RuntimeException {

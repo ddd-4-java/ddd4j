@@ -34,9 +34,18 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class EventStoreRetryTest {
 
+    /**
+     * 记录休眠调用次数的桩 Sleeper，用于断言重试退避行为而不真正等待。
+     *
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     */
     static final class RecordingSleeper implements EventStoreRetry.Sleeper {
         final List<Long> calls = new ArrayList<>();
 
+        /**
+         * sleep() 方法。
+         * @param millis millis 参数。
+         */
         @Override
         public void sleep(long millis) {
             calls.add(millis);

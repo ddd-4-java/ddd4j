@@ -21,5 +21,10 @@ import com.alibaba.qlexpress4.runtime.function.CustomFunction;
  */
 public interface NamedQLFunction extends CustomFunction {
 
+    /**
+     * 返回该函数的稳定名称，注册与替换时以此作为函数标识。
+     *
+     * @return 函数名
+     */
     String name();
 }

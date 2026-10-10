@@ -53,6 +53,13 @@ public class QuarkusViewScheduler implements ViewScheduler {
     @Inject
     Instance<Scheduler> schedulers;
 
+    /**
+     * schedule() 方法。
+     * @param viewName 字符串参数。
+     * @param cron 字符串参数。
+     * @param task task 参数。
+     * @return 方法执行结果。
+     */
     @Override
     public ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
         Scheduler scheduler = scheduler();

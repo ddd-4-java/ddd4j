@@ -167,6 +167,10 @@ class ProjectionHandlerRegistryTest {
             return handled;
         }
 
+        /**
+         * 获取值。
+         * @return 结果字符串。
+         */
         @Override
         public String getName() {
             return name;
@@ -177,6 +181,10 @@ class ProjectionHandlerRegistryTest {
             return eventTypes;
         }
 
+        /**
+         * 处理请求。
+         * @param event 事件消息。
+         */
         @Override
         public void handle(DomainEvent<?> event) {
             if (failure != null) {
@@ -186,6 +194,11 @@ class ProjectionHandlerRegistryTest {
         }
     }
 
+    /**
+     * 类型说明。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     static final class OrderCreated extends DomainEvent<StringEntityId> {
 
         OrderCreated() {
@@ -193,6 +206,11 @@ class ProjectionHandlerRegistryTest {
         }
     }
 
+    /**
+     * 类型说明。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     static final class OrderPaid extends DomainEvent<StringEntityId> {
 
         OrderPaid() {
@@ -200,6 +218,11 @@ class ProjectionHandlerRegistryTest {
         }
     }
 
+    /**
+     * 类型说明。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     static final class OrderShipped extends DomainEvent<StringEntityId> {
 
         OrderShipped() {
@@ -207,6 +230,11 @@ class ProjectionHandlerRegistryTest {
         }
     }
 
+    /**
+     * 类型说明。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     static final class OrderCancelled extends DomainEvent<StringEntityId> {
 
         OrderCancelled() {

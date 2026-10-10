@@ -63,11 +63,20 @@ public final class Ddd4jBundle<C extends Configuration> implements ConfiguredBun
                 "readinessContributors must not be null"));
     }
 
+    /**
+     * initialize() 方法。
+     * @param bootstrap bootstrap 参数。
+     */
     @Override
     public void initialize(Bootstrap<?> bootstrap) {
         Objects.requireNonNull(bootstrap, "bootstrap must not be null");
     }
 
+    /**
+     * 执行主流程。
+     * @param configuration configuration 参数。
+     * @param environment environment 参数。
+     */
     @Override
     public void run(C configuration, Environment environment) {
         Objects.requireNonNull(configuration, "configuration must not be null");

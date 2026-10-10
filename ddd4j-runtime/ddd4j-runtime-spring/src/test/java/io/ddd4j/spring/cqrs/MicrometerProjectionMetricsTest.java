@@ -51,6 +51,7 @@ class MicrometerProjectionMetricsTest {
                 .isInstanceOf(NullPointerException.class);
     }
 
+    /** 针对 {@code onRunCompleted} 指标记录行为的嵌套测试组。 */
     @Nested
     @DisplayName("onRunCompleted")
     class OnRunCompletedTests {
@@ -107,6 +108,7 @@ class MicrometerProjectionMetricsTest {
         }
     }
 
+    /** 针对 {@code onRunFailed} 错误计数指标的嵌套测试组。 */
     @Nested
     @DisplayName("onRunFailed")
     class OnRunFailedTests {
@@ -136,6 +138,7 @@ class MicrometerProjectionMetricsTest {
         }
     }
 
+    /** 针对 {@code onRunStarted} 空实现（no-op）行为的嵌套测试组。 */
     @Nested
     @DisplayName("onRunStarted")
     class OnRunStartedTests {

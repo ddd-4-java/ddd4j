@@ -1,0 +1,15 @@
+# modules=ddd4j-web files=14
+ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/exception/BaseExceptionHandler.java	field STATUS_FAIL;field STATUS_ERROR;field XML_HTTP_REQUEST;field X_REQUESTED_WITH
+ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/extension/authc/AuthcExtensionPoint.java	method getToken;method handleHeader;method handleRequest;method handleResult
+ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/extension/authc/AuthcExtensionPointAdapter.java	field AUTHORIZATION_HEADER;field BEARER_PREFIX
+ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/extension/web/ParamSignatureExtensionPoint.java	method sign;method getAppkey;method getAppSecret
+ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/extension/web/SpringServletRequestExtensionPoint.java	method wrap;method wrap
+ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/extension/web/SpringServletResponseExtensionPoint.java	method dewrap;method dewrap
+ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/interceptor/FeignHeaderInterceptor.java	field HEADER_TENANT_IDS;field HEADER_SYSTEM_IDS
+ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/interceptor/WebInterceptor.java	method getOrder;method preHandle;method afterCompletion
+ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/util/IdempotentKit.java	field expressionParser
+ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/utils/LocalDateTimeFormatter.java	field FORMATTER
+ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/utils/LocalTimeFormatter.java	field FORMATTER
+ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/Ddd4jWebMvcContractTest.java	type class ContractController;type record MockMvcContractClient
+ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/ThreeLineWebParityTest.java	type interface HeaderClient;method request;type class RecordingRegistry
+ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/util/IdempotentKitTest.java	type class SampleController

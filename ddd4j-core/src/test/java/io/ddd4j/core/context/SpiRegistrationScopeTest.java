@@ -19,6 +19,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 class SpiRegistrationScopeTest {
 
     private static final String KEY = "test.spi.lifecycle";
@@ -57,6 +62,11 @@ class SpiRegistrationScopeTest {
         assertThat(BaseContext.get(KEY, Service.class)).contains(replacement);
     }
 
+    /**
+     * 测试用的 SPI 服务载体，通过 {@code name} 区分不同注册实例。
+     *
+     * @param name 服务名称
+     */
     private record Service(String name) {
     }
 }

@@ -49,6 +49,11 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 class Ddd4jQuarkusOtelScopeTest {
 
     @Test
@@ -56,20 +61,38 @@ class Ddd4jQuarkusOtelScopeTest {
         resetOpenTelemetry();
         SdkTracerProvider tracerProvider = SdkTracerProvider.builder().build();
         OpenTelemetrySdk.builder().setTracerProvider(tracerProvider).buildAndRegisterGlobal();
+        /**
+         * Executors.newSingleThreadExecutor() 方法。
+         * @return 方法执行结果。
+         */
         ExecutorService executor = Executors.newSingleThreadExecutor();
         try {
             Future<boolean[]> result = executor.submit(() -> {
                 IdempotencyGuard guard = new IdempotencyGuard() {
+                    /**
+                     * acquire() 方法。
+                     * @param key 幂等键。
+                     * @param ttl 锁的有效期。
+                     * @return 判断结果。
+                     */
                     @Override
                     public boolean acquire(String key, Duration ttl) {
                         return true;
                     }
 
+                    /**
+                     * complete() 方法。
+                     * @param key 幂等键。
+                     */
                     @Override
                     public void complete(String key) {
                         throw new IllegalStateException("complete failed");
                     }
 
+                    /**
+                     * release() 方法。
+                     * @param key 幂等键。
+                     */
                     @Override
                     public void release(String key) {
                     }

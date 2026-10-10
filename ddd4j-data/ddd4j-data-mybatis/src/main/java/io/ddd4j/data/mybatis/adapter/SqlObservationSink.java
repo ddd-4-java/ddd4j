@@ -20,5 +20,10 @@ package io.ddd4j.data.mybatis.adapter;
 @FunctionalInterface
 public interface SqlObservationSink {
 
+    /**
+     * 消费一次 SQL 执行观测记录。
+     *
+     * @param observation 本次 SQL 执行的观测数据
+     */
     void accept(SqlObservation observation);
 }

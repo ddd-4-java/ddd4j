@@ -21,5 +21,14 @@ import java.util.Map;
  */
 public interface WebContractClient {
 
+    /**
+     * 向测试端点发起一次请求并返回响应。
+     *
+     * @param method HTTP 请求方法
+     * @param path 请求路径
+     * @param headers 附加请求头
+     * @param body 请求体，可为 {@code null}
+     * @return 响应状态、响应头与响应体的汇总
+     */
     WebContractResponse request(String method, String path, Map<String, String> headers, String body);
 }

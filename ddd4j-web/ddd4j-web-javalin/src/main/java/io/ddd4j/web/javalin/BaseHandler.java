@@ -29,12 +29,23 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public abstract class BaseHandler {
 
+    /**
+     * 获取值。
+     * @param code 编码值。
+     * @param args 命令行参数。
+     * @return 结果字符串。
+     */
     protected String getMessage(String code, Object... args) {
         return Contexts.get(SpiKeys.I18N_PROVIDER, I18nProvider.class)
                 .orElse(I18nProvider.DEFAULT)
                 .getMessage(code, args);
     }
 
+    /**
+     * logException() 方法。
+     * @param context JUnit 扩展上下文。
+     * @param exception exception 参数。
+     */
     protected void logException(Context context, Exception exception) {
         log.error("Exception in request [{} {}]", context.method(), context.path(), exception);
         Contexts.get(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class)
@@ -42,10 +53,20 @@ public abstract class BaseHandler {
                         new WebRequestFailure(context.method().name(), context.path(), exception)));
     }
 
+    /**
+     * 获取值。
+     * @param context JUnit 扩展上下文。
+     * @return 结果字符串。
+     */
     protected String getClientIp(Context context) {
         return WebKit.getClientIp(context);
     }
 
+    /**
+     * 判断布尔状态。
+     * @param context JUnit 扩展上下文。
+     * @return 判断结果。
+     */
     protected boolean isAjax(Context context) {
         return WebKit.isAjax(context);
     }

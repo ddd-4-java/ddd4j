@@ -49,10 +49,21 @@ public class InMemoryViewManager implements ViewManager {
         this.runner = new ProjectionRunner<>(projectionService, chunkReader);
     }
 
+    /**
+     * 注册组件。
+     * @param view 人员读模型视图。
+     */
     public void register(ProjectionView<Object> view) {
+        /**
+         * views.add() 方法。
+         * @param view 人员读模型视图。
+         */
         views.add(view);
     }
 
+    /**
+     * 启动。
+     */
     @Override
     public void start() {
         if (running.compareAndSet(false, true)) {
@@ -60,17 +71,31 @@ public class InMemoryViewManager implements ViewManager {
         }
     }
 
+    /**
+     * triggerOnce() 方法。
+     */
     @Override
     public void triggerOnce() {
+        /**
+         * runner.runAll() 方法。
+         * @param views views 参数。
+         */
         runner.runAll(views);
     }
 
+    /**
+     * 停止。
+     */
     @Override
     public void stop() {
         running.set(false);
         scheduler.shutdownNow();
     }
 
+    /**
+     * 判断布尔状态。
+     * @return 判断结果。
+     */
     @Override
     public boolean isRunning() {
         return running.get();

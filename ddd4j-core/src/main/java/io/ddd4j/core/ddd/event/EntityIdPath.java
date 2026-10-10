@@ -258,6 +258,11 @@ public final class EntityIdPath implements Serializable {
         return new EntityIdPath(entityIds.subList(fromIndex, toIndex));
     }
 
+    /**
+     * 判断与另一对象是否相等。
+     * @param object 待分配主键的实体对象。
+     * @return 相等返回 {@code true}，否则返回 {@code false}。
+     */
     @Override
     public boolean equals(Object object) {
         if (this == object) {
@@ -265,15 +270,29 @@ public final class EntityIdPath implements Serializable {
         }
         if (!(object instanceof EntityIdPath that)) {
             return false;
+        /**
+         * Objects.equals() 方法。
+         * @param entityIds entityIds 参数。
+         * @param that.entityIds that.entityIds 参数。
+         * @return 方法执行结果。
+         */
         }
         return Objects.equals(entityIds, that.entityIds);
     }
 
+    /**
+     * 返回对象哈希码。
+     * @return 哈希码。
+     */
     @Override
     public int hashCode() {
         return Objects.hash(entityIds);
     }
 
+    /**
+     * 返回对象的字符串表示。
+     * @return 对象的字符串表示。
+     */
     @Override
     public String toString() {
         return asString();

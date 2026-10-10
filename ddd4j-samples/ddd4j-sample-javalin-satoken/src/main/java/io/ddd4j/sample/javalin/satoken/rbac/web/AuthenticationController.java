@@ -215,15 +215,35 @@ public class AuthenticationController {
 
     // ============================ 请求 DTO ============================
 
+    /**
+     * 登录请求参数。
+     *
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     */
     public record LoginRequest(String username, String password) {
     }
 
+    /**
+     * 踢人下线请求参数。
+     *
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     */
     public record KickoutRequest(String userId) {
     }
 
+    /**
+     * 角色鉴权检查请求参数。
+     *
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     */
     public record RoleCheckRequest(String role) {
     }
 
+    /**
+     * 权限鉴权检查请求参数。
+     *
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     */
     public record PermissionCheckRequest(String permission) {
     }
 

@@ -24,6 +24,7 @@ import lombok.Data;
 @Data
 public class SequenceProperties {
 
+    /** 配置项前缀，标识发号器相关配置。 */
     public static final String PREFIX = "sequence";
 
     /**

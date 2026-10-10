@@ -36,6 +36,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 @ExtendWith(MockitoExtension.class)
 class Ddd4jHelidonExtensionTest {
 
@@ -90,6 +95,11 @@ class Ddd4jHelidonExtensionTest {
     }
 }
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 class Ddd4jHelidonExtensionBeanBranchTest {
 
     @org.junit.jupiter.api.Test

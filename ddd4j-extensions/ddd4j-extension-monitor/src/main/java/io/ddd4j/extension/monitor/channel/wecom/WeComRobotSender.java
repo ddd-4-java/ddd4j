@@ -39,6 +39,10 @@ public class WeComRobotSender implements Sender {
         return client;
     }
 
+    /**
+     * send() 方法。
+     * @param msg 字符串参数。
+     */
     @Override
     public void send(String msg) {
         client.sendMarkdown(msg);

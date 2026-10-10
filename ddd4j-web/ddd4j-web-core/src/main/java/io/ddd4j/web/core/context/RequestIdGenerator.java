@@ -22,8 +22,18 @@ import java.util.UUID;
 @FunctionalInterface
 public interface RequestIdGenerator {
 
+    /**
+     * 生成一个请求标识。
+     *
+     * @return 生成得到的请求标识字符串
+     */
     String generate();
 
+    /**
+     * 创建基于随机 UUID 的请求标识生成器。
+     *
+     * @return 以随机 UUID 作为标识的生成器实现
+     */
     static RequestIdGenerator uuid() {
         return () -> UUID.randomUUID().toString();
     }

@@ -45,6 +45,7 @@ class SpringJpaViewManagerTest {
     @Mock
     private ProjectionPositionRepository positionRepository;
 
+    /** 针对 {@code getProjectionStatus} 投影状态查询行为的嵌套测试组。 */
     @Nested
     @DisplayName("getProjectionStatus")
     class GetProjectionStatusTests {

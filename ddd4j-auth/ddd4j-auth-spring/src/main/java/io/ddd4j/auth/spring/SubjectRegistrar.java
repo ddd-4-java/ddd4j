@@ -11,11 +11,22 @@ import org.springframework.core.Ordered;
  */
 public class SubjectRegistrar implements BeanPostProcessor, Ordered {
 
+    /**
+     * 获取值。
+     * @return 结果数值。
+     */
     @Override
     public int getOrder() {
         return Ordered.HIGHEST_PRECEDENCE + 100;
     }
 
+    /**
+     * postProcessAfterInitialization() 方法。
+     * @param bean 对象参数。
+     * @param beanName 字符串参数。
+     * @return 结果对象。
+     * @throws BeansException 出现异常时抛出。
+     */
     @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         if (bean instanceof SubjectProvider) {

@@ -19,8 +19,18 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration(proxyBeanMethods = false)
 // @EnableConfigurationProperties({LicenseProperties.class})
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 public class DefaultLicenseAutoConfiguration {
 
+    /**
+     * licenseVerify() 方法。
+     * @param properties 配置属性。
+     * @return 方法执行结果。
+     */
     @Bean(initMethod = "installLicense", destroyMethod = "unInstallLicense")
     public LicenseVerify licenseVerify(LicenseProperties properties) {
         return new LicenseVerify(properties.getSubject(), properties.getPublicAlias(), properties.getStorePass(),

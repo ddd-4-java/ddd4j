@@ -38,6 +38,10 @@ public class DingTalkRobotSender implements Sender {
         this.client = new DingTalkClient(accessToken, secret);
     }
 
+    /**
+     * send() 方法。
+     * @param msg 字符串参数。
+     */
     @Override
     public void send(String msg) {
         client.sendMarkdown(msg);

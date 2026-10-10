@@ -42,6 +42,10 @@ public class GoodsQueryResource {
         this.applicationService = Objects.requireNonNull(applicationService, "applicationService must not be null");
     }
 
+    /**
+     * routes() 方法。
+     * @return 方法执行结果。
+     */
     public EndpointGroup routes() {
         return () -> {
             // GET /api/goods/page

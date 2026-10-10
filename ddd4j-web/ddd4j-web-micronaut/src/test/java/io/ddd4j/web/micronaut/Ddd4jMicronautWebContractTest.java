@@ -56,6 +56,11 @@ import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 class Ddd4jMicronautWebContractTest extends AbstractWebContractTest {
 
     private EmbeddedServer server;
@@ -89,10 +94,17 @@ class Ddd4jMicronautWebContractTest extends AbstractWebContractTest {
             server.close();
         }
         ThreadContext.clear();
+        /**
+         * BaseContext.clear() 方法。
+         */
         BaseContext.clear();
         CacheKit.unregister("micronaut-contract");
     }
 
+    /**
+     * client() 方法。
+     * @return 方法执行结果。
+     */
     @Override
     protected WebContractClient client() {
         return contractClient;
@@ -101,6 +113,11 @@ class Ddd4jMicronautWebContractTest extends AbstractWebContractTest {
     @Test
     void shouldPropagateTenantAcrossReactorScheduler() {
         WebContractResponse response = contractClient.request("GET", "/contract/async-context",
+                /**
+                 * Map.of() 方法。
+                 * @param "X-Tenant-Id" "X-Tenant-Id" 参数。
+                 * @param "tenant-async" "tenant-async" 参数。
+                 */
                 Map.of("X-Tenant-Id", "tenant-async"), null);
 
         assertEquals(200, response.status(), response.body());
@@ -109,6 +126,10 @@ class Ddd4jMicronautWebContractTest extends AbstractWebContractTest {
 
     private SubjectProvider provider(Subject subject) {
         return new SubjectProvider() {
+            /**
+             * 获取值。
+             * @return 方法执行结果。
+             */
             @Override
             public Subject getSubject() {
                 return subject;
@@ -116,8 +137,22 @@ class Ddd4jMicronautWebContractTest extends AbstractWebContractTest {
         };
     }
 
+    /**
+     * 基于 JDK HTTP 客户端的契约客户端，通过随机端口访问本地测试实例。
+     *
+     * @param httpClient 发起请求使用的 HTTP 客户端
+     * @param port 测试实例监听的端口
+     */
     private record MicronautContractClient(HttpClient httpClient, int port) implements WebContractClient {
 
+        /**
+         * request() 方法。
+         * @param method 被调用的方法。
+         * @param path 路径。
+         * @param headers 消息头。
+         * @param body 字符串参数。
+         * @return 方法执行结果。
+         */
         @Override
         public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
             try {
@@ -140,6 +175,11 @@ class Ddd4jMicronautWebContractTest extends AbstractWebContractTest {
     }
 }
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 @Controller("/contract")
 final class MicronautContractController {
 

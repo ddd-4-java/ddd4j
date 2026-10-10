@@ -37,6 +37,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 @ExtendWith(MockitoExtension.class)
 class Ddd4jBundleTest {
 
@@ -49,6 +54,11 @@ class Ddd4jBundleTest {
     @Mock
     private LifecycleEnvironment lifecycle;
 
+    /**
+     * 类型说明。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     private static final class TestConfiguration extends Configuration {
     }
 

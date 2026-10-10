@@ -35,6 +35,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 class Ddd4jWebMvcInterceptorTest {
 
     @AfterEach
@@ -61,16 +66,30 @@ class Ddd4jWebMvcInterceptorTest {
     @Test
     void shouldRestoreContextWhenIdempotencyCompletionFails() {
         IdempotencyGuard guard = new IdempotencyGuard() {
+            /**
+             * acquire() 方法。
+             * @param key 幂等键。
+             * @param ttl 锁的有效期。
+             * @return 判断结果。
+             */
             @Override
             public boolean acquire(String key, Duration ttl) {
                 return true;
             }
 
+            /**
+             * complete() 方法。
+             * @param key 幂等键。
+             */
             @Override
             public void complete(String key) {
                 throw new IllegalStateException("complete failed");
             }
 
+            /**
+             * release() 方法。
+             * @param key 幂等键。
+             */
             @Override
             public void release(String key) {
             }

@@ -43,10 +43,19 @@ public class Ddd4jHelidonWebConfiguration {
     private String idempotencyCacheName = "ddd4j-web-idempotency";
     private Duration idempotencyTtl = Duration.ofMinutes(5);
 
+    /**
+     * load() 方法。
+     * @return 当前对象自身，支持链式调用。
+     */
     public static Ddd4jHelidonWebConfiguration load() {
         return from(ConfigProvider.getConfig());
     }
 
+    /**
+     * from() 方法。
+     * @param config 二维码模块配置。
+     * @return 当前对象自身，支持链式调用。
+     */
     public static Ddd4jHelidonWebConfiguration from(Config config) {
         Config source = Objects.requireNonNull(config, "config must not be null");
         Ddd4jHelidonWebConfiguration configuration = new Ddd4jHelidonWebConfiguration();

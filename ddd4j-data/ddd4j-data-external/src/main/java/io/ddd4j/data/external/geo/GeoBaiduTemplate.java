@@ -78,6 +78,11 @@ public class GeoBaiduTemplate {
         this(HttpClient.newHttpClient(), ak);
     }
 
+    /**
+     * main() 方法。
+     * @param args 命令行参数。
+     * @throws IOException 打开文件流失败时抛出。
+     */
     public static void main(String[] args) throws IOException {
 
         GeoBaiduTemplate template = new GeoBaiduTemplate(HttpClient.newHttpClient(), "");

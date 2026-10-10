@@ -38,11 +38,20 @@ public final class Ddd4jDropwizardWebBundle<C extends Configuration> implements 
                 "configurationResolver must not be null");
     }
 
+    /**
+     * initialize() 方法。
+     * @param bootstrap bootstrap 参数。
+     */
     @Override
     public void initialize(Bootstrap<?> bootstrap) {
         // Dropwizard Web 接线只依赖 run 阶段已经构造完成的 Jersey Environment。
     }
 
+    /**
+     * 执行主流程。
+     * @param configuration configuration 参数。
+     * @param environment environment 参数。
+     */
     @Override
     public void run(C configuration, Environment environment) {
         Ddd4jDropwizardWebConfiguration webConfiguration = Objects.requireNonNull(

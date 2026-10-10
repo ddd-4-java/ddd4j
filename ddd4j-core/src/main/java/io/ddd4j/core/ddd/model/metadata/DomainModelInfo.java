@@ -45,7 +45,7 @@ import java.util.function.Function;
  * PO 字段→列名映射通过构造时传入的 {@code poProperty2ColumnProvider}（由基础设施层注入）实现。
  *
  * @param <M> Domain Model 类型
- * @author wandl
+ * @author ddd4j
  * @since 2.0.x
  */
 public class DomainModelInfo<M> {

@@ -78,11 +78,22 @@ public class LocalDateConverter implements Converter<LocalDate> {
         return LocalDate.class;
     }
 
+    /**
+     * supportExcelTypeKey() 方法。
+     * @return 方法执行结果。
+     */
     @Override
     public CellDataTypeEnum supportExcelTypeKey() {
         return CellDataTypeEnum.STRING;
     }
 
+    /**
+     * 转换类型。
+     * @param cellData cellData 参数。
+     * @param contentProperty contentProperty 参数。
+     * @param globalConfiguration globalConfiguration 参数。
+     * @return 方法执行结果。
+     */
     @Override
     public LocalDate convertToJavaData(ReadCellData<?> cellData,
                                        ExcelContentProperty contentProperty,

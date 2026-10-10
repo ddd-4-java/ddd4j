@@ -32,8 +32,11 @@ import java.util.Set;
 @Slf4j
 public final class DefaultLicenseMachineInfoProvider implements LicenseMachineInfoProvider {
 
+    /** 单例实例（无状态策略，全局共享）。 */
     public static final DefaultLicenseMachineInfoProvider INSTANCE = new DefaultLicenseMachineInfoProvider();
+    /** 机器序列号的 JVM 系统属性名，可据此显式指定机器标识。 */
     public static final String MACHINE_SN_PROPERTY = "ddd4j.license.machine-sn";
+    /** 机器序列号的环境变量名，可据此显式指定机器标识。 */
     public static final String MACHINE_SN_ENV = "DDD4J_LICENSE_MACHINE_SN";
 
     private DefaultLicenseMachineInfoProvider() {
@@ -74,6 +77,10 @@ public final class DefaultLicenseMachineInfoProvider implements LicenseMachineIn
         return addresses;
     }
 
+    /**
+     * serialNumber() 方法。
+     * @return 结果字符串。
+     */
     @Override
     public String serialNumber() {
         String serialNumber = System.getProperty(MACHINE_SN_PROPERTY);
@@ -101,6 +108,11 @@ public final class DefaultLicenseMachineInfoProvider implements LicenseMachineIn
         }
     }
 
+    /**
+     * 类型说明。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     @FunctionalInterface
     private interface NetworkInterfaceConsumer {
         void accept(NetworkInterface networkInterface) throws Exception;

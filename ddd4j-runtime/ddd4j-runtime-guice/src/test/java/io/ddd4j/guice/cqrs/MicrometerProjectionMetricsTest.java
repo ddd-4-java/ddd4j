@@ -51,6 +51,9 @@ class MicrometerProjectionMetricsTest {
                 .isInstanceOf(NullPointerException.class);
     }
 
+    /**
+     * onRunCompleted 成功场景指标校验用例组。
+     */
     @Nested
     @DisplayName("onRunCompleted")
     class OnRunCompletedTests {
@@ -107,6 +110,9 @@ class MicrometerProjectionMetricsTest {
         }
     }
 
+    /**
+     * onRunFailed 失败场景指标校验用例组。
+     */
     @Nested
     @DisplayName("onRunFailed")
     class OnRunFailedTests {
@@ -136,6 +142,9 @@ class MicrometerProjectionMetricsTest {
         }
     }
 
+    /**
+     * onRunStarted 默认不产生指标的校验用例组。
+     */
     @Nested
     @DisplayName("onRunStarted")
     class OnRunStartedTests {

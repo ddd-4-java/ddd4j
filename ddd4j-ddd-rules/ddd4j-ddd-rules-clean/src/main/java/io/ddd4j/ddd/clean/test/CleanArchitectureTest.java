@@ -50,6 +50,11 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
         packages = "..",
         importOptions = ImportOption.DoNotIncludeTests.class
 )
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 public abstract class CleanArchitectureTest {
 
     // ============ 包依赖规则（Clean 四层核心约束）============

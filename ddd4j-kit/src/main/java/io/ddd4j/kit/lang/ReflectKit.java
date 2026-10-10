@@ -56,6 +56,11 @@ public class ReflectKit extends ReflectUtil {
     }
 
     // 判断一个对象的所有字段是否为null
+    /**
+     * allFieldsNull() 方法。
+     * @param obj 对象参数。
+     * @return 判断结果。
+     */
     public static boolean allFieldsNull(@NonNull Object obj) {
         Class<?> clazz = obj.getClass();
         Field[] fields = clazz.getDeclaredFields();

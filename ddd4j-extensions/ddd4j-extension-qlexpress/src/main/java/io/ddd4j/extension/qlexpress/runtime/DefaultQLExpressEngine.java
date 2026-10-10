@@ -58,11 +58,24 @@ public final class DefaultQLExpressEngine implements QLExpressEngine {
         this.runner = createRunner();
     }
 
+    /**
+     * 执行处理逻辑。
+     * @param expression 字符串参数。
+     * @param context JUnit 扩展上下文。
+     * @return 结果对象。
+     */
     @Override
     public Object execute(String expression, Map<String, Object> context) {
         return execute(expression, context, defaultExecutionOptions);
     }
 
+    /**
+     * 执行处理逻辑。
+     * @param expression 字符串参数。
+     * @param context JUnit 扩展上下文。
+     * @param options options 参数。
+     * @return 结果对象。
+     */
     @Override
     public Object execute(String expression, Map<String, Object> context, QLExpressExecutionOptions options) {
         requireExpression(expression);
@@ -76,11 +89,28 @@ public final class DefaultQLExpressEngine implements QLExpressEngine {
         }
     }
 
+    /**
+     * 执行处理逻辑。
+     * @param <T> 类型参数。
+     * @param expression 字符串参数。
+     * @param context JUnit 扩展上下文。
+     * @param resultType 类型字面量。
+     * @return 结果值。
+     */
     @Override
     public <T> T execute(String expression, Map<String, Object> context, Class<T> resultType) {
         return execute(expression, context, defaultExecutionOptions, resultType);
     }
 
+    /**
+     * 执行处理逻辑。
+     * @param <T> 类型参数。
+     * @param expression 字符串参数。
+     * @param context JUnit 扩展上下文。
+     * @param options options 参数。
+     * @param resultType 类型字面量。
+     * @return 结果值。
+     */
     @Override
     public <T> T execute(String expression, Map<String, Object> context,
                          QLExpressExecutionOptions options, Class<T> resultType) {
@@ -114,6 +144,11 @@ public final class DefaultQLExpressEngine implements QLExpressEngine {
         }
     }
 
+    /**
+     * 执行校验。
+     * @param expression 字符串参数。
+     * @return 方法执行结果。
+     */
     @Override
     public QLExpressValidationResult validate(String expression) {
         if (!StrKit.hasText(expression)) {
@@ -139,6 +174,11 @@ public final class DefaultQLExpressEngine implements QLExpressEngine {
         return Set.copyOf(runner.getOutFunctions(expression));
     }
 
+    /**
+     * registerFunction() 方法。
+     * @param function 处理函数。
+     * @return 判断结果。
+     */
     @Override
     public boolean registerFunction(NamedQLFunction function) {
         NamedQLFunction checked = requireFunction(function);
@@ -152,6 +192,10 @@ public final class DefaultQLExpressEngine implements QLExpressEngine {
         }
     }
 
+    /**
+     * registerOrReplaceFunction() 方法。
+     * @param function 处理函数。
+     */
     @Override
     public void registerOrReplaceFunction(NamedQLFunction function) {
         NamedQLFunction checked = requireFunction(function);
@@ -161,6 +205,11 @@ public final class DefaultQLExpressEngine implements QLExpressEngine {
         }
     }
 
+    /**
+     * 移除元素。
+     * @param functionName 字符串参数。
+     * @return 判断结果。
+     */
     @Override
     public boolean removeFunction(String functionName) {
         requireFunctionName(functionName);
@@ -173,6 +222,10 @@ public final class DefaultQLExpressEngine implements QLExpressEngine {
         }
     }
 
+    /**
+     * unwrap() 方法。
+     * @return 方法执行结果。
+     */
     @Override
     public Express4Runner unwrap() {
         return runner;

@@ -41,11 +41,23 @@ public class LocalTimeFormatter implements Formatter<LocalTime> {
         FORMATTER = DateTimeFormatter.ofPattern(pattern, Locale.CHINESE);
     }
 
+    /**
+     * 解析输入。
+     * @param text 文本内容。
+     * @param locale locale 参数。
+     * @return 方法执行结果。
+     */
     @Override
     public LocalTime parse(String text, Locale locale) {
         return LocalTime.parse(text, FORMATTER);
     }
 
+    /**
+     * print() 方法。
+     * @param object 待分配主键的实体对象。
+     * @param locale locale 参数。
+     * @return 结果字符串。
+     */
     @Override
     public String print(LocalTime object, Locale locale) {
         return FORMATTER.format(object);

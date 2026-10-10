@@ -34,6 +34,13 @@ import java.util.UUID;
  */
 public class Slf4jMDCInterceptor implements HandlerInterceptor {
 
+    /**
+     * preHandle() 方法。
+     * @param request 请求对象。
+     * @param response 响应对象。
+     * @param handler 处理器。
+     * @return 判断结果。
+     */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
@@ -54,11 +61,27 @@ public class Slf4jMDCInterceptor implements HandlerInterceptor {
         return true;
     }
 
+    /**
+     * postHandle() 方法。
+     * @param request 请求对象。
+     * @param response 响应对象。
+     * @param handler 处理器。
+     * @param modelAndView modelAndView 参数。
+     * @throws Exception 执行过程中出现异常时抛出。
+     */
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
                            ModelAndView modelAndView) throws Exception {
     }
 
+    /**
+     * afterCompletion() 方法。
+     * @param request 请求对象。
+     * @param response 响应对象。
+     * @param handler 处理器。
+     * @param exception exception 参数。
+     * @throws Exception 执行过程中出现异常时抛出。
+     */
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler,
                                 Exception exception) throws Exception {

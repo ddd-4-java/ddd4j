@@ -26,9 +26,23 @@ public final class QrCodeImageElement extends QrCodeFrameElement {
         this.image = builder.image;
     }
 
+    /**
+     * 获取值。
+     * @return 方法执行结果。
+     */
     public BufferedImage getImage() { return image; }
+    /**
+     * 创建构建器。
+     * @param image image 参数。
+     * @return 方法执行结果。
+     */
     public static Builder builder(BufferedImage image) { return new Builder(image); }
 
+    /**
+     * 类型说明。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     public static final class Builder {
         private final BufferedImage image;
         private int x;
@@ -37,8 +51,25 @@ public final class QrCodeImageElement extends QrCodeFrameElement {
         private int height;
         private int zIndex;
         private Builder(BufferedImage image) { this.image = image; }
+        /**
+         * bounds() 方法。
+         * @param x x 参数。
+         * @param y y 参数。
+         * @param width width 参数。
+         * @param height height 参数。
+         * @return 方法执行结果。
+         */
         public Builder bounds(int x, int y, int width, int height) { this.x = x; this.y = y; this.width = width; this.height = height; return this; }
+        /**
+         * zIndex() 方法。
+         * @param zIndex zIndex 参数。
+         * @return 方法执行结果。
+         */
         public Builder zIndex(int zIndex) { this.zIndex = zIndex; return this; }
+        /**
+         * 构建对象。
+         * @return 当前对象自身，支持链式调用。
+         */
         public QrCodeImageElement build() { return new QrCodeImageElement(this); }
     }
 }

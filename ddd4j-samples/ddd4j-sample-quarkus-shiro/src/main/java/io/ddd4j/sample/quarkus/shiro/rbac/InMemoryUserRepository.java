@@ -132,6 +132,9 @@ public class InMemoryUserRepository {
         return store.values();
     }
 
+    /**
+     * 清空数据。
+     */
     public void clear() {
         store.clear();
     }

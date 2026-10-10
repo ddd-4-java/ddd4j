@@ -26,10 +26,19 @@ public final class MQClientLifecycle implements AutoCloseable {
         this.managed = managed;
     }
 
+    /**
+     * unmanaged() 方法。
+     * @return 当前对象自身，支持链式调用。
+     */
     public static MQClientLifecycle unmanaged() {
         return UNMANAGED;
     }
 
+    /**
+     * 注册组件。
+     * @param name 名称。
+     * @param closeAction closeAction 参数。
+     */
     public synchronized void register(String name, Runnable closeAction) {
         Objects.requireNonNull(name, "name must not be null");
         Objects.requireNonNull(closeAction, "closeAction must not be null");
@@ -43,10 +52,18 @@ public final class MQClientLifecycle implements AutoCloseable {
         resources.push(new Resource(name, closeAction));
     }
 
+    /**
+     * checkpoint() 方法。
+     * @return 结果数值。
+     */
     public synchronized int checkpoint() {
         return resources.size();
     }
 
+    /**
+     * rollback() 方法。
+     * @param checkpoint checkpoint 参数。
+     */
     public synchronized void rollback(int checkpoint) {
         if (!managed) {
             return;
@@ -57,6 +74,9 @@ public final class MQClientLifecycle implements AutoCloseable {
         closeUntil(checkpoint);
     }
 
+    /**
+     * 关闭并释放资源。
+     */
     @Override
     public synchronized void close() {
         if (!managed || !closed.compareAndSet(false, true)) {
@@ -83,6 +103,9 @@ public final class MQClientLifecycle implements AutoCloseable {
         }
     }
 
+    /**
+     * 已注册资源的内部载体，记录资源名与关闭动作，按 LIFO 顺序关闭。
+     */
     private static final class Resource {
         private final String name;
         private final Runnable closeAction;

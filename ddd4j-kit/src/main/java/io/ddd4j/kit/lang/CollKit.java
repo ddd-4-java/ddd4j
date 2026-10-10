@@ -28,6 +28,12 @@ import java.util.*;
 @UtilityClass
 public class CollKit extends CollUtil {
 
+    /**
+     * convert() 方法。
+     * @param <T> 类型参数。
+     * @param coll 集合。
+     * @return 结果值。
+     */
     public <T> T[] convert(Collection<T> coll) {
         if (Objects.isNull(coll) || coll.isEmpty()) {
             return null;
@@ -47,10 +53,22 @@ public class CollKit extends CollUtil {
         return new ArrayList<>(Arrays.asList(array));
     }
 
+    /**
+     * 判断布尔状态。
+     * @param <T> 类型参数。
+     * @param array array 参数。
+     * @return 判断结果。
+     */
     public <T> boolean isNotEmpty(T[] array) {
         return Objects.nonNull(array) && array.length != 0;
     }
 
+    /**
+     * 判断布尔状态。
+     * @param <T> 类型参数。
+     * @param array array 参数。
+     * @return 判断结果。
+     */
     public <T> boolean isEmpty(T[] array) {
         return Objects.isNull(array) || array.length == 0;
     }

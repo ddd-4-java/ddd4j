@@ -17,9 +17,15 @@ package io.ddd4j.web.webflux.config;
 import cn.hutool.core.date.SystemClock;
 import lombok.Data;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 @Data
 public class SequenceProperties {
 
+    /** 配置项前缀，标识发号器相关配置。 */
     public static final String PREFIX = "sequence";
 
     /**

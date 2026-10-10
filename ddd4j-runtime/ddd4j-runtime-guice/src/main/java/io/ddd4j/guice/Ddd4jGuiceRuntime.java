@@ -61,14 +61,27 @@ public final class Ddd4jGuiceRuntime implements AutoCloseable {
         start();
     }
 
+    /**
+     * 启动。
+     */
     public void start() {
+        /**
+         * registrations.start() 方法。
+         */
         registrations.start();
     }
 
+    /**
+     * readiness() 方法。
+     * @return 方法执行结果。
+     */
     public RuntimeReadinessRegistry readiness() {
         return readinessRegistry;
     }
 
+    /**
+     * 关闭并释放资源。
+     */
     @Override
     public void close() {
         registrations.close();

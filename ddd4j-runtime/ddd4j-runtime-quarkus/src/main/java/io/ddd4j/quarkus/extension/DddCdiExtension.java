@@ -83,6 +83,9 @@ public class DddCdiExtension implements Extension {
         return null;
     }
 
+    /**
+     * {@link ApplicationScoped} 的注解字面量实例，用于在扩展处理阶段以实例方式添加作用域注解。
+     */
     private static class ApplicationScopedLiteral extends jakarta.enterprise.util.AnnotationLiteral<ApplicationScoped>
             implements ApplicationScoped {
 

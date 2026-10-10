@@ -49,10 +49,19 @@ public class Ddd4jQuarkusWebConfiguration {
     private String idempotencyCacheName = "ddd4j-web-idempotency";
     private Duration idempotencyTtl = Duration.ofMinutes(5);
 
+    /**
+     * load() 方法。
+     * @return 当前对象自身，支持链式调用。
+     */
     public static Ddd4jQuarkusWebConfiguration load() {
         return from(ConfigProvider.getConfig());
     }
 
+    /**
+     * from() 方法。
+     * @param config 二维码模块配置。
+     * @return 当前对象自身，支持链式调用。
+     */
     public static Ddd4jQuarkusWebConfiguration from(Config config) {
         Config source = Objects.requireNonNull(config, "config must not be null");
         Ddd4jQuarkusWebConfiguration configuration = new Ddd4jQuarkusWebConfiguration();
@@ -72,6 +81,10 @@ public class Ddd4jQuarkusWebConfiguration {
         source.getOptionalValue(PREFIX + "trust-forwarded-headers", Boolean.class)
                 .ifPresent(configuration::setTrustForwardedHeaders);
         source.getOptionalValue(PREFIX + "idempotency.enabled", Boolean.class)
+                /**
+                 * .ifPresent() 方法。
+                 * @param configuration::setIdempotencyEnabled configuration::setIdempotencyEnabled 参数。
+                 */
                 .ifPresent(configuration::setIdempotencyEnabled);
         source.getOptionalValue(PREFIX + "idempotency.cache-name", String.class)
                 .ifPresent(configuration::setIdempotencyCacheName);
@@ -81,6 +94,10 @@ public class Ddd4jQuarkusWebConfiguration {
         return configuration;
     }
 
+    /**
+     * accessPolicy() 方法。
+     * @return 方法执行结果。
+     */
     public WebAccessPolicy accessPolicy() {
         if (standardAccessConfigured) {
             return new PathWebAccessPolicy(publicPaths, defaultAuthenticationMode);

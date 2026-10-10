@@ -62,6 +62,10 @@ public record ReadinessReport(boolean ready, List<ReadinessResult> results) {
             return results;
         }
 
+    /**
+     * 判断布尔状态。
+     * @return 判断结果。
+     */
     public boolean isReady() {
             return ready;
         }

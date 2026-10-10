@@ -27,6 +27,11 @@ import java.util.List;
  */
 @Data
 // @ConfigurationProperties(prefix = "base-web")
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 public class BaseWebProperties {
     /**
      * 日志拦截配置

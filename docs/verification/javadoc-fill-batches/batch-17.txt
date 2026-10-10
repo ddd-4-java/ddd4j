@@ -1,0 +1,31 @@
+# modules=ddd4j-web files=30
+ddd4j-web/ddd4j-web-core/src/main/java/io/ddd4j/web/core/context/RequestIdGenerator.java	method generate;method uuid
+ddd4j-web/ddd4j-web-core/src/main/java/io/ddd4j/web/core/context/WebContextScope.java	field REQUEST_ID;field TRACE_ID;field CLIENT_IP;field HTTP_METHOD;field HTTP_PATH
+ddd4j-web/ddd4j-web-core/src/main/java/io/ddd4j/web/core/context/WebHeaders.java	field AUTHORIZATION;field IDEMPOTENCY_KEY;field REQUEST_ID;field TRACE_ID;field TENANT_ID;field FORWARDED_FOR
+ddd4j-web/ddd4j-web-core/src/main/java/io/ddd4j/web/core/error/DefaultWebExceptionTranslator.java	field BAD_REQUEST;field UNAUTHORIZED;field FORBIDDEN;field NOT_FOUND;field CONFLICT;field INTERNAL_SERVER_ERROR
+ddd4j-web/ddd4j-web-core/src/main/java/io/ddd4j/web/core/error/WebExceptionTranslator.java	method translate
+ddd4j-web/ddd4j-web-core/src/main/java/io/ddd4j/web/core/health/ReadinessEndpoint.java	field PATH
+ddd4j-web/ddd4j-web-core/src/main/java/io/ddd4j/web/core/idempotency/CacheIdempotencyGuard.java	field DEFAULT_CACHE_NAME
+ddd4j-web/ddd4j-web-core/src/main/java/io/ddd4j/web/core/idempotency/IdempotencyGuard.java	method acquire;method acquireLease;method complete;method complete;method release;method release
+ddd4j-web/ddd4j-web-core/src/main/java/io/ddd4j/web/core/idempotency/WebIdempotencyLifecycle.java	field DEFAULT_TTL;type class Scope
+ddd4j-web/ddd4j-web-core/src/main/java/io/ddd4j/web/error/WebErrorResponseBuilder.java	field INTERNAL_ERROR_FALLBACK_JSON
+ddd4j-web/ddd4j-web-core/src/test/java/io/ddd4j/web/core/idempotency/IdempotencyGuardTest.java	type class RecordingGuard
+ddd4j-web/ddd4j-web-core/src/test/java/io/ddd4j/web/error/BaseErrorConfigurationTest.java	type class StubErrorConfiguration;type class PassThroughConfiguration
+ddd4j-web/ddd4j-web-dropwizard/src/test/java/io/ddd4j/web/dropwizard/Ddd4jDropwizardWebBundleTest.java	type class TestConfiguration
+ddd4j-web/ddd4j-web-dropwizard/src/test/java/io/ddd4j/web/dropwizard/Ddd4jDropwizardWebContractTest.java	type class DropwizardContractClient;type class ContractResource
+ddd4j-web/ddd4j-web-helidon/src/test/java/io/ddd4j/web/helidon/Ddd4jHelidonWebContractTest.java	type class HelidonContractClient;type class ContractApplication;type class ContractResource
+ddd4j-web/ddd4j-web-javalin/src/main/java/io/ddd4j/web/javalin/Ddd4jJavalinWeb.java	type class RequestState
+ddd4j-web/ddd4j-web-javalin/src/test/java/io/ddd4j/web/javalin/Ddd4jJavalinWebContractTest.java	type record JavalinContractClient
+ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautWebContractTest.java	type record MicronautContractClient
+ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebContractTest.java	type class QuarkusContractClient
+ddd4j-web/ddd4j-web-testkit/src/main/java/io/ddd4j/web/testkit/WebContractClient.java	method request
+ddd4j-web/ddd4j-web-testkit/src/main/java/io/ddd4j/web/testkit/WebContractPaths.java	field SUCCESS;field CREATED;field PUBLIC;field PROTECTED;field CONTEXT;field IDEMPOTENT;field BAD_REQUEST;field FORBIDDEN;field NOT_FOUND;field CONFLICT;field UNSUPPORTED_MEDIA_TYPE;field UNPROCESSABLE_ENTITY;field TOO_MANY_REQUESTS;field INTERNAL_SERVER_ERROR
+ddd4j-web/ddd4j-web-vertx/src/main/java/io/ddd4j/web/vertx/Ddd4jVertxWeb.java	type record AuthenticationResult;type class RequestState
+ddd4j-web/ddd4j-web-vertx/src/test/java/io/ddd4j/web/vertx/Ddd4jVertxWebContractTest.java	type record VertxContractClient
+ddd4j-web/ddd4j-web-webflux/src/main/java/io/ddd4j/web/webflux/config/SequenceProperties.java	field PREFIX
+ddd4j-web/ddd4j-web-webflux/src/main/java/io/ddd4j/web/webflux/error/GlobalErrorAttributes.java	field ERROR_ATTRIBUTE
+ddd4j-web/ddd4j-web-webflux/src/test/java/io/ddd4j/web/webflux/Ddd4jWebFluxHttpContractTest.java	type class ContractConfiguration;type class ContractController;type record WebFluxContractClient
+ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/Ddd4jWebMvcInterceptor.java	type class RequestState
+ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/api/CRUDController.java	field repository
+ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/config/BaseWebProperties.java	type class Log;type class Mvc;type class Auth;type class Ws
+ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/config/SequenceProperties.java	field PREFIX

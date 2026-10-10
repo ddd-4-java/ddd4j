@@ -77,12 +77,24 @@ public class OnsMQClient implements MQClient {
         this.producer = producer;
     }
 
+    /**
+     * impl() 方法。
+     * @return 结果字符串。
+     */
     @Override
     public String impl() {
         return "ons";
     }
 
+    /**
+     * lifecycle() 方法。
+     * @return 方法执行结果。
+     */
     @Override public MQClientLifecycle lifecycle() { return lifecycle; }
+    /**
+     * startupStatus() 方法。
+     * @return 方法执行结果。
+     */
     @Override public MQStartupStatus startupStatus() { return startupStatus; }
 
     // ========================= 生产者 =========================
@@ -124,6 +136,13 @@ public class OnsMQClient implements MQClient {
 
     // ========================= 消费者 =========================
 
+    /**
+     * initConsumer() 方法。
+     * @param listener 消息监听器。
+     * @param mqProperties MQ 连接属性。
+     * @return 判断结果。
+     * @throws Exception 执行过程中出现异常时抛出。
+     */
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
         String group = StrKit.hasText(listener.getGroup()) ? listener.getGroup() : properties.getConsumerId();
@@ -180,6 +199,9 @@ public class OnsMQClient implements MQClient {
         return true;
     }
 
+    /**
+     * 启动。
+     */
     @Override
     public void start() {
         // ONS producer/consumer 在各自创建时已启动；此方法留作 future 扩展。
@@ -187,6 +209,9 @@ public class OnsMQClient implements MQClient {
 
     // ========================= 关闭 =========================
 
+    /**
+     * 关闭并释放资源。
+     */
     @Override
     public void close() {
         try { lifecycle.close(); } finally {

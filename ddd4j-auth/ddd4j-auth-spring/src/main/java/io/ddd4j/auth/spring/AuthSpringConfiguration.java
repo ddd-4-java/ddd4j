@@ -9,6 +9,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration(proxyBeanMethods = false)
 public class AuthSpringConfiguration {
 
+    /**
+     * subjectRegistrar() 方法。
+     * @return 方法执行结果。
+     */
     @Bean
     public SubjectRegistrar subjectRegistrar() {
         return new SubjectRegistrar();

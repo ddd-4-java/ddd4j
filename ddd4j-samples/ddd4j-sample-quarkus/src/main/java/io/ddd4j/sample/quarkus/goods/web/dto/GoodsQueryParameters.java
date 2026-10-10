@@ -47,6 +47,10 @@ public class GoodsQueryParameters {
     @QueryParam("orderBys")
     private String orderBys;
 
+    /**
+     * 转换表示形式。
+     * @return 方法执行结果。
+     */
     public GoodsQuery toQuery() {
         GoodsQuery query = new GoodsQuery()
                 .setCode(code)

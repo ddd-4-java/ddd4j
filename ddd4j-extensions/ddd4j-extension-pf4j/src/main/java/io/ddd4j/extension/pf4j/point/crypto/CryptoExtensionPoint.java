@@ -16,10 +16,29 @@ package io.ddd4j.extension.pf4j.point.crypto;
 
 import org.pf4j.ExtensionPoint;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 public interface CryptoExtensionPoint extends ExtensionPoint {
 
+    /**
+     * 使用指定密钥对明文做加密。
+     *
+     * @param source    待加密的明文
+     * @param secretKey 加密密钥
+     * @return 加密后的密文
+     */
     String encrypt(String source, Object secretKey);
 
+    /**
+     * 使用指定密钥对密文做解密。
+     *
+     * @param source    待解密的密文
+     * @param secretKey 解密密钥
+     * @return 解密后的明文
+     */
     String decrypt(String source, Object secretKey);
 
 }

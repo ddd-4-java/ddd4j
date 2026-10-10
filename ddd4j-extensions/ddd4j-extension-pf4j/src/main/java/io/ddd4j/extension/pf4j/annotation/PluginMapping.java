@@ -25,8 +25,16 @@ import java.lang.annotation.*;
 @Inherited
 public @interface PluginMapping {
 
+    /**
+     * title() 方法。
+     * @return 结果字符串。
+     */
     public String title() default "";
 
+    /**
+     * detail() 方法。
+     * @return 结果字符串。
+     */
     public String detail() default "";
 
 }

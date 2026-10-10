@@ -14,6 +14,11 @@
  */
 package io.ddd4j.sample.order.domain.event;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 public final class OrderPaidEvent extends OrderDomainEvent {
     public OrderPaidEvent(String orderId) {
         super(orderId);

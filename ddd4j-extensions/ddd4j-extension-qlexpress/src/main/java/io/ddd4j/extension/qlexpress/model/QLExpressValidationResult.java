@@ -19,10 +19,19 @@ package io.ddd4j.extension.qlexpress.model;
  */
 public record QLExpressValidationResult(boolean valid, String message) {
 
+    /**
+     * success() 方法。
+     * @return 当前对象自身，支持链式调用。
+     */
     public static QLExpressValidationResult success() {
         return new QLExpressValidationResult(true, "表达式语法正确");
     }
 
+    /**
+     * invalid() 方法。
+     * @param message 异常消息。
+     * @return 当前对象自身，支持链式调用。
+     */
     public static QLExpressValidationResult invalid(String message) {
         return new QLExpressValidationResult(false, message);
     }

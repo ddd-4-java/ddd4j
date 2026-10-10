@@ -35,6 +35,11 @@ public final class OutboxPublisher {
         this.publisher = Objects.requireNonNull(publisher, "publisher must not be null");
     }
 
+    /**
+     * publishPending() 方法。
+     * @param limit 返回条数上限。
+     * @return 结果数值。
+     */
     public int publishPending(int limit) {
         return dispatchPending(limit).published();
     }

@@ -53,10 +53,15 @@ public final class AuthSpan {
 
     /** 鉴权相关标准化属性键。 */
     public static final AttributeKey<String> ATTR_AUTH_FRAMEWORK = AttributeKey.stringKey("auth.framework");
+    /** 用户登录标识属性键，记录当前操作对应的登录 ID。 */
     public static final AttributeKey<String> ATTR_AUTH_LOGIN_ID = AttributeKey.stringKey("auth.login_id");
+    /** 鉴权结果属性键，标识本次鉴权是否成功。 */
     public static final AttributeKey<Boolean> ATTR_AUTH_SUCCESS = AttributeKey.booleanKey("auth.success");
+    /** 鉴权操作类型属性键，标识 login/logout/verify/hasRole/hasPermission 等操作。 */
     public static final AttributeKey<String> ATTR_AUTH_OPERATION = AttributeKey.stringKey("auth.operation");
+    /** 角色标识属性键，记录角色校验时的目标角色。 */
     public static final AttributeKey<String> ATTR_AUTH_ROLE = AttributeKey.stringKey("auth.role");
+    /** 权限标识属性键，记录权限校验时的目标权限。 */
     public static final AttributeKey<String> ATTR_AUTH_PERMISSION = AttributeKey.stringKey("auth.permission");
 
     private static final String DEFAULT_FRAMEWORK = "ddd4j";

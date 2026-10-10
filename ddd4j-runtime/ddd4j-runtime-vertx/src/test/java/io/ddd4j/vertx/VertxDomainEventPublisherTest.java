@@ -23,6 +23,11 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 class VertxDomainEventPublisherTest {
 
     @Test
@@ -46,6 +51,7 @@ class VertxDomainEventPublisherTest {
         }
     }
 
+    /** 用于验证本地事件发布的轻量事件记录。 */
     private record LocalEvent(String name) {
     }
 }

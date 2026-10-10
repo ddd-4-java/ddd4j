@@ -219,11 +219,18 @@ public class CustomLicenseManager {
         return usage -> new Password() {
             private final char[] characters = value.toCharArray();
 
+            /**
+             * characters() 方法。
+             * @return 方法执行结果。
+             */
             @Override
             public char[] characters() {
                 return characters;
             }
 
+            /**
+             * 关闭并释放资源。
+             */
             @Override
             public void close() {
                 Arrays.fill(characters, (char) 0);
@@ -241,6 +248,11 @@ public class CustomLicenseManager {
         }
     }
 
+    /**
+     * 类型说明。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     private static final class PlainMessage implements Message {
 
         private static final long serialVersionUID = 1L;
@@ -251,11 +263,20 @@ public class CustomLicenseManager {
             this.text = text;
         }
 
+        /**
+         * 返回对象的字符串表示。
+         * @return 对象的字符串表示。
+         */
         @Override
         public String toString() {
             return text;
         }
 
+        /**
+         * 返回对象的字符串表示。
+         * @param locale locale 参数。
+         * @return 对象的字符串表示。
+         */
         @Override
         public String toString(Locale locale) {
             return text;

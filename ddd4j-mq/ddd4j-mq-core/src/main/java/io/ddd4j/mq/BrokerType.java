@@ -25,17 +25,25 @@ import java.util.Locale;
  */
 public enum BrokerType {
 
+    /** 未指定消息代理。 */
     NONE,
     /**
      * 进程内 LMAX Disruptor 本地队列（非分布式 MQ）。
      */
     DISRUPTOR,
+    /** 基于 AMQP 协议的消息代理。 */
     RABBIT,
+    /** 分布式分区日志型消息队列。 */
     KAFKA,
+    /** 分布式消息队列，支持事务消息与重试。 */
     ROCKET,
+    /** 分布式流式消息队列，支持多租户。 */
     PULSAR,
+    /** 基于内存键值流结构的队列。 */
     REDIS_STREAM,
+    /** 基于 JMS 规范的消息代理。 */
     ACTIVEMQ,
+    /** 轻量级发布订阅消息代理。 */
     NATS,
     /**
      * Eclipse Paho MQTT 客户端（连接外部 Broker，非嵌入式服务端）。
@@ -45,8 +53,11 @@ public enum BrokerType {
      * mica-mqtt AIO 客户端（sample mqtt-client2，连接外部 Broker）。
      */
     MQTT_MICA,
+    /** ONS 类型消息队列。 */
     ONS,
+    /** TDMQ 类型消息队列。 */
     TDMQ,
+    /** SQS 类型消息队列服务。 */
     SQS;
 
     /**

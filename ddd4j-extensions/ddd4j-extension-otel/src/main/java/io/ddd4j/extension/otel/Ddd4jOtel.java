@@ -60,22 +60,39 @@ public final class Ddd4jOtel {
      * 标准属性键。
      */
     public static final AttributeKey<String> ATTR_TENANT_ID = AttributeKey.stringKey("ddd4j.tenant.id");
+    /** 用户标识属性键，记录当前操作用户 ID。 */
     public static final AttributeKey<String> ATTR_USER_ID = AttributeKey.stringKey("ddd4j.user.id");
+    /** 登录标识属性键，记录当前会话的登录 ID。 */
     public static final AttributeKey<String> ATTR_LOGIN_ID = AttributeKey.stringKey("ddd4j.login.id");
+    /** 用户编码属性键，记录当前操作用户的业务编码。 */
     public static final AttributeKey<String> ATTR_USER_CODE = AttributeKey.stringKey("ddd4j.user.code");
+    /** 请求标识属性键，记录一次请求链路的唯一 ID。 */
     public static final AttributeKey<String> ATTR_REQUEST_ID = AttributeKey.stringKey("ddd4j.request.id");
+    /** 领域事件类型属性键，记录事件的类型名称。 */
     public static final AttributeKey<String> ATTR_DOMAIN_EVENT_TYPE = AttributeKey.stringKey("ddd4j.event.type");
+    /** 聚合类型属性键，记录操作涉及的聚合根类型。 */
     public static final AttributeKey<String> ATTR_AGGREGATE_TYPE = AttributeKey.stringKey("ddd4j.aggregate.type");
+    /** 聚合标识属性键，记录操作涉及的聚合根 ID。 */
     public static final AttributeKey<String> ATTR_AGGREGATE_ID = AttributeKey.stringKey("ddd4j.aggregate.id");
+    /** 查询类型属性键，记录查询操作的类型名称。 */
     public static final AttributeKey<String> ATTR_QUERY_TYPE = AttributeKey.stringKey("ddd4j.query.type");
+    /** 投影名称属性键，记录投影处理的名称。 */
     public static final AttributeKey<String> ATTR_PROJECTION_NAME = AttributeKey.stringKey("ddd4j.projection.name");
+    /** 缓存业务标识属性键，记录缓存所属的业务域。 */
     public static final AttributeKey<String> ATTR_CACHE_BIZ = AttributeKey.stringKey("ddd4j.cache.biz");
+    /** 缓存后端标识属性键，记录所使用的缓存实现类型。 */
     public static final AttributeKey<String> ATTR_CACHE_BACKEND = AttributeKey.stringKey("ddd4j.cache.backend");
+    /** 缓存命中标志属性键，标识本次缓存访问是否命中。 */
     public static final AttributeKey<Boolean> ATTR_CACHE_HIT = AttributeKey.booleanKey("ddd4j.cache.hit");
+    /** 消息系统属性键，记录消息中间件系统名称。 */
     public static final AttributeKey<String> ATTR_MESSAGING_SYSTEM = AttributeKey.stringKey("messaging.system");
+    /** 消息目标属性键，记录消息发送或消费的目的地（主题/队列）。 */
     public static final AttributeKey<String> ATTR_MESSAGING_DESTINATION = AttributeKey.stringKey("messaging.destination");
+    /** 消息操作属性键，记录消息操作类型（send/receive 等）。 */
     public static final AttributeKey<String> ATTR_MESSAGING_OPERATION = AttributeKey.stringKey("messaging.operation");
+    /** 数据库系统属性键，记录数据库系统名称。 */
     public static final AttributeKey<String> ATTR_DB_SYSTEM = AttributeKey.stringKey("db.system");
+    /** 数据库语句属性键，记录执行的语句摘要。 */
     public static final AttributeKey<String> ATTR_DB_STATEMENT = AttributeKey.stringKey("db.statement");
 
     private static final AtomicReference<Tracer> TRACER_CACHE = new AtomicReference<>();

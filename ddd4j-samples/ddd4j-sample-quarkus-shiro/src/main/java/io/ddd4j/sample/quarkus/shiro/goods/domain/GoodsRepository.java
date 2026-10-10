@@ -26,7 +26,19 @@ import java.util.Optional;
  */
 public interface GoodsRepository extends Repository<Goods, Long> {
 
+    /**
+     * 根据商品编码查询商品。
+     *
+     * @param code 商品编码
+     * @return 商品查询结果，不存在时为空
+     */
     Optional<Goods> findByCode(String code);
 
+    /**
+     * 根据商品状态查询商品列表。
+     *
+     * @param status 商品状态
+     * @return 指定状态的商品列表
+     */
     List<Goods> findByStatus(GoodsStatus status);
 }

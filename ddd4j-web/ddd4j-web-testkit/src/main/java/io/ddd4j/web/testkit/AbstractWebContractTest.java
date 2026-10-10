@@ -32,6 +32,10 @@ public abstract class AbstractWebContractTest {
     private static final String VALID_BEARER = "Bearer contract-valid-token";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
+    /**
+     * client() 方法。
+     * @return 方法执行结果。
+     */
     protected abstract WebContractClient client();
 
     @Test

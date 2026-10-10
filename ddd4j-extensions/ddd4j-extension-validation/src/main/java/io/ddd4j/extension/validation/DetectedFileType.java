@@ -22,10 +22,18 @@ package io.ddd4j.extension.validation;
  */
 public record DetectedFileType(String extension, String mimeType) {
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getExtension() {
             return extension;
         }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getMimeType() {
             return mimeType;
         }

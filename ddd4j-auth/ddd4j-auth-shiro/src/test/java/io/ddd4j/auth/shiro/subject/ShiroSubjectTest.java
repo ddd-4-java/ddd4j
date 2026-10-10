@@ -51,6 +51,11 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 class ShiroSubjectTest {
 
     private ShiroSubject shiroSubject() {
@@ -313,6 +318,11 @@ class ShiroSubjectTest {
      */
     private static final class TestRealm extends AuthorizingRealm {
 
+        /**
+         * 执行处理逻辑。
+         * @param token 访问令牌。
+         * @return 方法执行结果。
+         */
         @Override
         protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) {
             String username = (String) token.getPrincipal();
@@ -334,6 +344,11 @@ class ShiroSubjectTest {
             return new SimpleAuthenticationInfo(username, "pw", getName());
         }
 
+        /**
+         * 执行处理逻辑。
+         * @param principals principals 参数。
+         * @return 方法执行结果。
+         */
         @Override
         protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
             SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();

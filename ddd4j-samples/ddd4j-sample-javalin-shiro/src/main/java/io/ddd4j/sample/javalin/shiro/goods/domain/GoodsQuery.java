@@ -42,6 +42,11 @@ public class GoodsQuery extends Query<Goods> {
     private BigDecimal priceMin;
     private BigDecimal priceMax;
 
+    /**
+     * 设置值。
+     * @param orderBys 字符串参数。
+     * @return 当前对象自身，支持链式调用。
+     */
     public GoodsQuery setOrderBys(String orderBys) {
         if (io.ddd4j.kit.lang.StrKit.isBlank(orderBys)) {
             return this;

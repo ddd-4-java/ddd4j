@@ -42,6 +42,11 @@ import java.util.Objects;
 @Slf4j
 public class NoOpDomainEventPublisher implements DomainEventPublisher {
 
+    /**
+     * 空实现：忽略事件。
+     * @param <ID> 类型参数。
+     * @param event 事件消息。
+     */
     @Override
     public <ID extends EntityId> void publish(DomainEvent<ID> event) {
         if (Objects.isNull(event)) {
@@ -50,6 +55,11 @@ public class NoOpDomainEventPublisher implements DomainEventPublisher {
         log.info("[DomainEvent] {} -> {}", event.getClass().getSimpleName(), event.source());
     }
 
+    /**
+     * 空实现：忽略事件集合。
+     * @param <ID> 类型参数。
+     * @param events 领域事件集合。
+     */
     @Override
     public <ID extends EntityId> void publishAll(Collection<DomainEvent<ID>> events) {
         if (Objects.nonNull(events)) {

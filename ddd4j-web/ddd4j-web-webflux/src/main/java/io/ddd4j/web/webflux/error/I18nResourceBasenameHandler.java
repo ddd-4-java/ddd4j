@@ -21,8 +21,19 @@ import org.springframework.core.io.Resource;
 import java.io.IOException;
 import java.net.URL;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 public class I18nResourceBasenameHandler implements ResourceBasenameHandler {
 
+    /**
+     * 处理请求。
+     * @param resource resource 参数。
+     * @return 结果字符串。
+     * @throws IOException 打开文件流失败时抛出。
+     */
     @Override
     public String handle(Resource resource) throws IOException {
 

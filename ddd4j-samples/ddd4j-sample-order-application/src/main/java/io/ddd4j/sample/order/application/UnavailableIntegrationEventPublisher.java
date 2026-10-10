@@ -30,6 +30,10 @@ public final class UnavailableIntegrationEventPublisher implements IntegrationEv
         this.reason = Objects.requireNonNull(reason, "reason must not be null");
     }
 
+    /**
+     * 发布数据。
+     * @param message 异常消息。
+     */
     @Override
     public void publish(OutboxMessage message) {
         Objects.requireNonNull(message, "message must not be null");

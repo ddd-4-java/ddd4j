@@ -27,6 +27,13 @@ import java.util.Objects;
 @UtilityClass
 public class WebMvcClassKit {
 
+    /**
+     * 获取值。
+     * @param <A> 类型参数。
+     * @param handlerMethod handlerMethod 参数。
+     * @param annotationType 类型字面量。
+     * @return 方法执行结果。
+     */
     public <A extends Annotation> A getAnnotation(HandlerMethod handlerMethod, Class<A> annotationType) {
         Objects.requireNonNull(handlerMethod, "handlerMethod must not be null");
         Objects.requireNonNull(annotationType, "annotationType must not be null");

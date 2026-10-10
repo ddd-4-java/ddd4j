@@ -28,6 +28,10 @@ import io.ddd4j.auth.satoken.subject.SaTokenSubject;
  */
 public class TestSubject extends SaTokenSubject {
 
+    /**
+     * 获取值。
+     * @return 结果对象。
+     */
     @Override
     public Object getUserId() {
         // 回退到 Subject 接口默认实现：从 principal.getUserId() 取值

@@ -21,10 +21,23 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 public abstract class EventStoreContractTest {
 
+    /**
+     * 契约测试统一使用的聚合根类型标识。
+     */
     protected static final String ORDER_TYPE = "Order";
+    /**
+     * 第一个订单聚合根标识（order-1）。
+     */
     protected static final AggregateRootId ORDER_1 = new TestAggregateRootId("order-1");
+    /**
+     * 第二个订单聚合根标识（order-2）。
+     */
     protected static final AggregateRootId ORDER_2 = new TestAggregateRootId("order-2");
 
+    /**
+     * 创建对象。
+     * @return 方法执行结果。
+     */
     protected abstract EventStore createEventStore();
 
     @Test
@@ -82,26 +95,48 @@ public abstract class EventStoreContractTest {
         assertThat(events).extracting(StoredEvent::aggregateId).containsExactly(ORDER_1, ORDER_2);
     }
 
+    /**
+     * 契约测试用订单聚合根标识：满足 {@link AggregateRootId} 契约。
+     *
+     * @param value 聚合根标识值
+     */
     protected record TestAggregateRootId(String value) implements AggregateRootId {
 
         private static final EntityType TYPE = new StringEntityType("Order");
 
+        /**
+         * 获取值。
+         * @return 方法执行结果。
+         */
         @Override
         public EntityType getType() {
             return TYPE;
         }
 
+        /**
+         * asString() 方法。
+         * @return 结果字符串。
+         */
         @Override
         public String asString() {
             return value;
         }
 
+        /**
+         * asTypedString() 方法。
+         * @return 结果字符串。
+         */
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
         }
     }
 
+    /**
+     * 类型说明。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     protected static final class TestEvent extends DomainEvent<TestAggregateRootId> {
 
         private TestEvent(TestAggregateRootId aggregateId) {

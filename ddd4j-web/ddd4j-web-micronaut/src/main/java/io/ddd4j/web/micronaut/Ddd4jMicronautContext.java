@@ -39,6 +39,10 @@ public record Ddd4jMicronautContext(WebRequestContext requestContext, Optional<S
         return PropagatedContext.getOrEmpty().find(Ddd4jMicronautContext.class);
     }
 
+    /**
+     * 更新记录。
+     * @return 方法执行结果。
+     */
     @Override
     public WebContextScope updateThreadContext() {
         WebContextScope scope = WebContextScope.open(requestContext);
@@ -46,6 +50,10 @@ public record Ddd4jMicronautContext(WebRequestContext requestContext, Optional<S
         return scope;
     }
 
+    /**
+     * restoreThreadContext() 方法。
+     * @param oldState oldState 参数。
+     */
     @Override
     public void restoreThreadContext(WebContextScope oldState) {
         oldState.close();

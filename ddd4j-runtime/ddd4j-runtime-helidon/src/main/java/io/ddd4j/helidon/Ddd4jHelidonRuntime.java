@@ -66,15 +66,28 @@ public final class Ddd4jHelidonRuntime implements AutoCloseable {
                 "readinessRegistry must not be null");
     }
 
+    /**
+     * 启动。
+     */
     public void start() {
         registrations.start();
+        /**
+         * subjectRegistration.start() 方法。
+         */
         subjectRegistration.start();
     }
 
+    /**
+     * readiness() 方法。
+     * @return 方法执行结果。
+     */
     public RuntimeReadinessRegistry readiness() {
         return readinessRegistry;
     }
 
+    /**
+     * 关闭并释放资源。
+     */
     @Override
     public void close() {
         subjectRegistration.close();

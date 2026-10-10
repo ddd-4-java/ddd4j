@@ -14,6 +14,11 @@
  */
 package io.ddd4j.extension.pf4j.point.crypto;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 public interface DatasourceCryptoExtensionPoint extends CryptoExtensionPoint {
 
 }

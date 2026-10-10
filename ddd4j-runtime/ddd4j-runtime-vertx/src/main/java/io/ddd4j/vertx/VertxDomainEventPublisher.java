@@ -30,6 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public final class VertxDomainEventPublisher implements DomainEventPublisher {
 
+    /** 领域事件在 Vert.x EventBus 上的发布地址。 */
     public static final String ADDRESS = "ddd4j.domain.events";
     private static final String CODEC_PREFIX = "ddd4j.local-event.";
     private final Vertx vertx;
@@ -39,11 +40,20 @@ public final class VertxDomainEventPublisher implements DomainEventPublisher {
         this.vertx = Objects.requireNonNull(vertx, "vertx must not be null");
     }
 
+    /**
+     * 发布数据。
+     * @param <ID> 类型参数。
+     * @param event 事件消息。
+     */
     @Override
     public <ID extends EntityId> void publish(DomainEvent<ID> event) {
         publish((Object) event);
     }
 
+    /**
+     * 发布数据。
+     * @param event 事件消息。
+     */
     @Override
     public void publish(Object event) {
         if (Objects.nonNull(event)) {

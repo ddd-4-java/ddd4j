@@ -31,6 +31,11 @@ public final class QrCodeDecodeRequest {
         this.bytes = Arrays.copyOf(Objects.requireNonNull(bytes, "bytes must not be null"), bytes.length);
     }
 
+    /**
+     * from() 方法。
+     * @param bytes bytes 参数。
+     * @return 当前对象自身，支持链式调用。
+     */
     public static QrCodeDecodeRequest from(byte[] bytes) {
         return new QrCodeDecodeRequest(bytes);
     }

@@ -103,6 +103,10 @@ public final class Ddd4jJavalinWeb {
         this.readinessEndpoint = new ReadinessEndpoint(() -> registry.readiness().ready());
     }
 
+    /**
+     * configure() 方法。
+     * @param config 二维码模块配置。
+     */
     public void configure(JavalinConfig config) {
         JavalinConfig javalinConfig = Objects.requireNonNull(config, "config must not be null");
         javalinConfig.routes.before(this::openContext);
@@ -215,6 +219,9 @@ public final class Ddd4jJavalinWeb {
         }
     }
 
+    /**
+     * 单次请求的处理状态，聚合请求上下文作用域、追踪作用域与幂等作用域并按序关闭。
+     */
     private static final class RequestState {
 
         private final WebContextScope contextScope;

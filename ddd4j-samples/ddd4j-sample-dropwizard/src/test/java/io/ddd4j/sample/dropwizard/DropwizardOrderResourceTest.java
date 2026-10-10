@@ -46,6 +46,11 @@ import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 @ExtendWith(DropwizardExtensionsSupport.class)
 class DropwizardOrderResourceTest {
 

@@ -36,22 +36,42 @@ public record QLExpressExecutionResult<T>(boolean success, T value, String error
         return new QLExpressExecutionResult<>(false, null, errorCode, errorMessage, elapsedNanos);
     }
 
+    /**
+     * 获取值。
+     * @return 结果数值。
+     */
     public long getElapsedNanos() {
             return elapsedNanos;
         }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getErrorCode() {
             return errorCode;
         }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getErrorMessage() {
             return errorMessage;
         }
 
+    /**
+     * 获取值。
+     * @return 结果值。
+     */
     public T getValue() {
             return value;
         }
 
+    /**
+     * 判断布尔状态。
+     * @return 判断结果。
+     */
     public boolean isSuccess() {
             return success;
         }

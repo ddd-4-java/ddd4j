@@ -69,11 +69,22 @@ public class LettuceRedisStreamOperations implements RedisStreamOperations {
         return RedisClient.create(redisUrl);
     }
 
+    /**
+     * add() 方法。
+     * @param stream 字符串参数。
+     * @param fields 字段列表。
+     * @return 结果字符串。
+     */
     @Override
     public String add(String stream, Map<String, String> fields) {
         return commands.xadd(stream, new XAddArgs().id("*"), fields);
     }
 
+    /**
+     * 创建对象。
+     * @param stream 字符串参数。
+     * @param group 消费组。
+     */
     @Override
     public void createGroup(String stream, String group) {
         try {
@@ -112,16 +123,29 @@ public class LettuceRedisStreamOperations implements RedisStreamOperations {
         return result;
     }
 
+    /**
+     * ack() 方法。
+     * @param stream 字符串参数。
+     * @param group 消费组。
+     * @param entryId 字符串参数。
+     */
     @Override
     public void ack(String stream, String group, String entryId) {
         commands.xack(stream, group, entryId);
     }
 
+    /**
+     * nativeClient() 方法。
+     * @return 结果对象。
+     */
     @Override
     public Object nativeClient() {
         return nativeClient;
     }
 
+    /**
+     * 关闭并释放资源。
+     */
     @Override
     public void close() {
         if (Objects.isNull(closeTarget)) {

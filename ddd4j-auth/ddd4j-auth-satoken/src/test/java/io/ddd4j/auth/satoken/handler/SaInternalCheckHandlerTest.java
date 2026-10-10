@@ -78,6 +78,11 @@ class SaInternalCheckHandlerTest {
         assertEquals(SaInternalCheck.class, handler.getHandlerAnnotationClass());
     }
 
+    /**
+     * 内部接口校验处理器测试替身：记录校验到的 API Key 与作用域，便于断言校验结果。
+     *
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     */
     private static class TestSaInternalCheckHandler extends SaInternalCheckHandler {
 
         private final String apiKey;
@@ -88,11 +93,20 @@ class SaInternalCheckHandlerTest {
             this.apiKey = apiKey;
         }
 
+        /**
+         * 读取数据。
+         * @return 结果字符串。
+         */
         @Override
         protected String readApiKey() {
             return apiKey;
         }
 
+        /**
+         * 执行检查。
+         * @param apiKey 字符串参数。
+         * @param scopes 字符串参数。
+         */
         @Override
         protected void checkApiKey(String apiKey, String[] scopes) {
             this.checkedApiKey = apiKey;
@@ -100,6 +114,11 @@ class SaInternalCheckHandlerTest {
         }
     }
 
+    /**
+     * 类型说明。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     private static class Fixture {
 
         @SaInternalCheck

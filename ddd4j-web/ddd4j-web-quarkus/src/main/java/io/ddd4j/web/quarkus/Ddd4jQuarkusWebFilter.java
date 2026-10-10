@@ -85,6 +85,10 @@ public class Ddd4jQuarkusWebFilter {
         this.idempotencyLifecycle = idempotencyLifecycle;
     }
 
+    /**
+     * request() 方法。
+     * @param request 请求对象。
+     */
     @ServerRequestFilter(priority = Priorities.AUTHENTICATION)
     public void request(ContainerRequestContext request) {
         // OTel: 启动 SERVER span
@@ -123,6 +127,11 @@ public class Ddd4jQuarkusWebFilter {
         }
     }
 
+    /**
+     * response() 方法。
+     * @param request 请求对象。
+     * @param response 响应对象。
+     */
     @ServerResponseFilter(priority = Priorities.USER)
     public void response(ContainerRequestContext request, ContainerResponseContext response) {
         Object span = request.getProperty(OTEL_SPAN_PROPERTY);

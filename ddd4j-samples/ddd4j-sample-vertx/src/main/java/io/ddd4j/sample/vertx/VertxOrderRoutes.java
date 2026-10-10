@@ -55,6 +55,12 @@ public final class VertxOrderRoutes {
     private VertxOrderRoutes() {
     }
 
+    /**
+     * router() 方法。
+     * @param vertx vertx 参数。
+     * @param applicationService 订单应用服务。
+     * @return 方法执行结果。
+     */
     public static Router router(Vertx vertx, OrderApplicationService applicationService) {
         Vertx actualVertx = Objects.requireNonNull(vertx, "vertx must not be null");
         OrderApplicationService service = Objects.requireNonNull(applicationService,
@@ -122,6 +128,11 @@ public final class VertxOrderRoutes {
                 .end(Json.encode(response));
     }
 
+    /**
+     * 令牌签发响应体。
+     *
+     * @param token 签发的访问令牌
+     */
     public record TokenResponse(String token) {
     }
 }

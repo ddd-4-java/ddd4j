@@ -31,11 +31,27 @@ public final class MappingKit {
     // Bean容器
     private final Map<String, Map<Object, Object>> BEAN_MAPPINGS = new ConcurrentHashMap<>();
 
+    /**
+     * map() 方法。
+     * @param <K> 类型参数。
+     * @param <V> 类型参数。
+     * @param biz 字符串参数。
+     * @param key 幂等键。
+     * @param value 值。
+     */
     public <K, V> void map(String biz, K key, V value) {
         Map<Object, Object> mappings = BEAN_MAPPINGS.computeIfAbsent(biz, k -> new ConcurrentHashMap<>());
         mappings.put(key, value);
     }
 
+    /**
+     * get() 方法。
+     * @param <K> 类型参数。
+     * @param <V> 类型参数。
+     * @param field 字段名。
+     * @param source 序列化源对象。
+     * @return 方法执行结果。
+     */
     public static <K, V> V get(String field, K source) {
         Map<Object, Object> mappings = BEAN_MAPPINGS.get(field);
         if (Objects.isNull(mappings)) {

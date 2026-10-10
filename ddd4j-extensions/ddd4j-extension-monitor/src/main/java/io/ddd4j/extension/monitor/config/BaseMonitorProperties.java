@@ -54,6 +54,11 @@ import lombok.Data;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 // @ConfigurationProperties(prefix = "monitor")
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 @Data
 public class BaseMonitorProperties {
 
@@ -64,6 +69,9 @@ public class BaseMonitorProperties {
 
     private Log log = new Log();
 
+    /**
+     * 日志与消息通道的监控配置。
+     */
     @Data
     public static class Log {
         /**
@@ -94,6 +102,9 @@ public class BaseMonitorProperties {
         private App app = new App();
     }
 
+    /**
+     * 应用基础信息配置。
+     */
     @Data
     public static class App {
         /**

@@ -27,8 +27,17 @@ import io.ddd4j.spring.config.SpringCoreConfig;
 import io.ddd4j.core.health.RuntimeReadinessRegistry;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 class SpringRuntimeContractTest extends AbstractRuntimeContractTest {
 
+    /**
+     * 创建对象。
+     * @return 方法执行结果。
+     */
     @Override
     protected RuntimeContract createRuntime() {
         RuntimeFixtures fixtures = new RuntimeFixtures();

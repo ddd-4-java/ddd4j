@@ -135,6 +135,9 @@ public final class FileValidationService {
         return Objects.isNull(value) ? "" : StrKit.trim(value).toLowerCase(Locale.ROOT);
     }
 
+    /**
+     * 不可变集合拷贝辅助类，用于把可变集合复制为不可变副本。
+     */
     private static final class ListSupport {
 
         private ListSupport() {

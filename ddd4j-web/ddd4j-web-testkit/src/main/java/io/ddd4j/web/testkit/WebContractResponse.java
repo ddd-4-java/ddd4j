@@ -34,6 +34,10 @@ public record WebContractResponse(int status, Map<String, List<String>> headers,
                 .findFirst();
     }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getBody() {
             return body;
         }
@@ -42,6 +46,10 @@ public record WebContractResponse(int status, Map<String, List<String>> headers,
             return headers;
         }
 
+    /**
+     * 获取值。
+     * @return 结果数值。
+     */
     public int getStatus() {
             return status;
         }

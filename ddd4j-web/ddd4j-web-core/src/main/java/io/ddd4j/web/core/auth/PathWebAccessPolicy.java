@@ -40,6 +40,11 @@ public final class PathWebAccessPolicy implements WebAccessPolicy {
         this.defaultMode = Objects.requireNonNull(defaultMode, "defaultMode must not be null");
     }
 
+    /**
+     * authenticationMode() 方法。
+     * @param context JUnit 扩展上下文。
+     * @return 方法执行结果。
+     */
     @Override
     public AuthenticationMode authenticationMode(WebRequestContext context) {
         String path = Objects.requireNonNull(context, "context must not be null").path();

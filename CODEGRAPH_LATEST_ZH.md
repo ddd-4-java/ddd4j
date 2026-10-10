@@ -4,7 +4,7 @@
 > [`docs/architecture/current-source-architecture.md`](./docs/architecture/current-source-architecture.md)，后续请以该文档和当前源码为准。
 
 分析时间：2026-07-08  
-分析目录：`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j`  
+分析目录：`/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j`  
 CodeGraph 状态：索引最新，`1,332` 个文件、`23,405` 个节点、`46,055` 条边。  
 当前分支：`feature/2.0.x`  
 最近提交：`d9906a3b 2026-07-07 23:44:19 +0800 refactor(mq): 重构消息队列客户端实现`
@@ -146,8 +146,8 @@ Caffeine、Guava、Hutool、Jedis、Lettuce、Redisson、Memcached、JetCache，
 - `ddd4j-extension-monitor`
 
 Jackson、PF4J、Jakarta Validation 的通用增强已迁移为
-`io.github.hiwepy:jackson-extension`、`io.github.hiwepy:pf4j-extension` 和
-`io.github.hiwepy:validation-api-extension`，ddd4j 仅保留消费关系。
+`io.github.redacted-legacy-family:jackson-extension`、`io.github.redacted-legacy-family:pf4j-extension` 和
+`io.github.redacted-legacy-family:validation-api-extension`，ddd4j 仅保留消费关系。
 
 `ddd4j-samples` 是理解主线设计的最佳业务入口，覆盖：
 

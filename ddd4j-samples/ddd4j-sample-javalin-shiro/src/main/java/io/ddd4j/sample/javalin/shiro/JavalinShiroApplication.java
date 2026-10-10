@@ -80,6 +80,10 @@ public class JavalinShiroApplication {
      */
     public static final int PORT = 7000;
 
+    /**
+     * main() 方法。
+     * @param args 命令行参数。
+     */
     public static void main(String[] args) {
         // ==================== 1. 初始化 RBAC + Shiro SecurityManager ====================
         // 先构造 RBAC 仓储和种子数据（Shiro 与 Guice 共享同一份数据）
@@ -182,7 +186,17 @@ public class JavalinShiroApplication {
 
     // ==================== 示例 SPI 实现（仅本示例使用） ====================
 
+    /**
+     * 空操作的领域事件发布器：仅记录事件日志，不做真实投递（示例用）。
+     *
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     */
     private static class NoOpDomainEventPublisher implements DomainEventPublisher {
+        /**
+         * 发布数据。
+         * @param <ID> 类型参数。
+         * @param event 事件消息。
+         */
         @Override
         public <ID extends io.ddd4j.core.ddd.event.EntityId> void publish(
                 io.ddd4j.core.ddd.event.DomainEvent<ID> event) {
@@ -192,6 +206,11 @@ public class JavalinShiroApplication {
             log.info("[DomainEvent] {}", event.getClass().getSimpleName());
         }
 
+        /**
+         * publishAll() 方法。
+         * @param <ID> 类型参数。
+         * @param events 领域事件集合。
+         */
         @Override
         public <ID extends io.ddd4j.core.ddd.event.EntityId> void publishAll(
                 java.util.Collection<io.ddd4j.core.ddd.event.DomainEvent<ID>> events) {
@@ -201,7 +220,18 @@ public class JavalinShiroApplication {
         }
     }
 
+    /**
+     * 默认国际化提供者：委托给内置默认实现解析消息键。
+     *
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     */
     private static class DefaultI18nProvider implements I18nProvider {
+        /**
+         * 获取值。
+         * @param key 幂等键。
+         * @param args 命令行参数。
+         * @return 结果字符串。
+         */
         @Override
         public String getMessage(String key, Object... args) {
             return I18nProvider.DEFAULT.getMessage(key, args);

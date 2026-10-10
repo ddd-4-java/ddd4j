@@ -37,6 +37,12 @@ import org.aopalliance.intercept.MethodInvocation;
 @Slf4j
 public class AsyncCleanupInterceptor implements MethodInterceptor {
 
+    /**
+     * 调用目标逻辑。
+     * @param invocation invocation 参数。
+     * @return 结果对象。
+     * @throws Throwable 调用过程中出现异常时抛出。
+     */
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
         try {

@@ -29,6 +29,7 @@ import java.util.function.Function;
 @UtilityClass
 public class FunctionKit {
 
+    /** 将任意对象转换为布尔值的转换函数，{@code null} 返回 {@code null}。 */
     public static final Function<Object, Boolean> TO_BOOLEAN = value -> {
         if (Objects.isNull(value)) {
             return null;
@@ -36,6 +37,7 @@ public class FunctionKit {
         return value instanceof Boolean ? (Boolean) value : Boolean.valueOf(value.toString());
     };
 
+    /** 将任意对象转换为 {@link BigDecimal} 的转换函数，{@code null} 返回 {@code null}。 */
     public static final Function<Object, BigDecimal> TO_BIGDECIMAL = member -> {
         if (Objects.isNull(member)) {
             return null;
@@ -43,6 +45,7 @@ public class FunctionKit {
         return member instanceof BigDecimal ? (BigDecimal) member : new BigDecimal(member.toString());
     };
 
+    /** 将任意对象转换为字节值的转换函数，{@code null} 返回 {@code null}。 */
     public static final Function<Object, Byte> TO_BYTE = value -> {
         if (Objects.isNull(value)) {
             return null;
@@ -50,6 +53,7 @@ public class FunctionKit {
         return value instanceof Byte ? (Byte) value : Byte.valueOf(value.toString());
     };
 
+    /** 将任意对象转换为字符值的转换函数，取字符串首个字符，{@code null} 返回 {@code null}。 */
     public static final Function<Object, Character> TO_CHARACTER = value -> {
         if (Objects.isNull(value)) {
             return null;
@@ -57,6 +61,7 @@ public class FunctionKit {
         return value instanceof Character ? (Character) value : Character.valueOf(value.toString().charAt(0));
     };
 
+    /** 将任意对象转换为双精度浮点值的转换函数，{@code null} 返回 {@code null}。 */
     public static final Function<Object, Double> TO_DOUBLE = value -> {
         if (Objects.isNull(value)) {
             return null;
@@ -64,6 +69,7 @@ public class FunctionKit {
         return value instanceof Double ? (Double) value : Double.valueOf(value.toString());
     };
 
+    /** 将任意对象转换为单精度浮点值的转换函数，{@code null} 返回 {@code null}。 */
     public static final Function<Object, Float> TO_FLOAT = value -> {
         if (Objects.isNull(value)) {
             return null;
@@ -71,6 +77,7 @@ public class FunctionKit {
         return value instanceof Float ? (Float) value : Float.valueOf(value.toString());
     };
 
+    /** 将任意对象转换为整型值的转换函数，{@code null} 返回 {@code null}。 */
     public static final Function<Object, Integer> TO_INTEGER = value -> {
         if (Objects.isNull(value)) {
             return null;
@@ -78,6 +85,7 @@ public class FunctionKit {
         return value instanceof Integer ? (Integer) value : Integer.valueOf(value.toString());
     };
 
+    /** 将任意对象转换为长整型值的转换函数，{@code null} 返回 {@code null}。 */
     public static final Function<Object, Long> TO_LONG = value -> {
         if (Objects.isNull(value)) {
             return null;
@@ -85,6 +93,7 @@ public class FunctionKit {
         return value instanceof Long ? (Long) value : Long.valueOf(value.toString());
     };
 
+    /** 将任意对象转换为短整型值的转换函数，{@code null} 返回 {@code null}。 */
     public static final Function<Object, Short> TO_SHORT = value -> {
         if (Objects.isNull(value)) {
             return null;
@@ -92,6 +101,7 @@ public class FunctionKit {
         return value instanceof Short ? (Short) value : Short.valueOf(value.toString());
     };
 
+    /** 将任意对象转换为字符串的转换函数，{@code null} 返回 {@code null}。 */
     public static final Function<Object, String> TO_STRING = value -> Objects.toString(value, null);
 
 }

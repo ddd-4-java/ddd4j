@@ -44,24 +44,45 @@ public final class SignedLicense {
         this.signature = Objects.requireNonNull(signature, "signature must not be null");
     }
 
+    /**
+     * algorithm() 方法。
+     * @return 结果字符串。
+     */
     public String algorithm() {
         return algorithm;
     }
 
+    /**
+     * payload() 方法。
+     * @return 结果数值。
+     */
     public byte[] payload() {
         return payload.clone();
     }
 
+    /**
+     * signature() 方法。
+     * @return 结果数值。
+     */
     public byte[] signature() {
         return signature.clone();
     }
 
+    /**
+     * serialize() 方法。
+     * @return 结果字符串。
+     */
     public String serialize() {
         return String.join("\n", FORMAT, algorithm,
                 Base64.getEncoder().encodeToString(payload),
                 Base64.getEncoder().encodeToString(signature)) + "\n";
     }
 
+    /**
+     * 解析输入。
+     * @param bytes bytes 参数。
+     * @return 当前对象自身，支持链式调用。
+     */
     public static SignedLicense parse(byte[] bytes) {
         String[] fields = new String(bytes, StandardCharsets.UTF_8).split("\\R", -1);
         if (fields.length != FIELD_COUNT + 1 || !Objects.equals(FORMAT, fields[0])) {

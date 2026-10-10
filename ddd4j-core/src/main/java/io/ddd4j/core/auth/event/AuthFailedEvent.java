@@ -29,14 +29,26 @@ import java.time.Instant;
  */
 public record AuthFailedEvent(AuthRequest request, String reason, Instant occurredAt) {
 
+    /**
+     * 获取值。
+     * @return 方法执行结果。
+     */
     public Instant getOccurredAt() {
             return occurredAt;
         }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getReason() {
             return reason;
         }
 
+    /**
+     * 获取值。
+     * @return 方法执行结果。
+     */
     public AuthRequest getRequest() {
             return request;
         }

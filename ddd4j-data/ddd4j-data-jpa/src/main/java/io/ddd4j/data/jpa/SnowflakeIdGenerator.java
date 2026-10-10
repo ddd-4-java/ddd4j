@@ -30,6 +30,10 @@ public final class SnowflakeIdGenerator {
     private SnowflakeIdGenerator() {
     }
 
+    /**
+     * nextId() 方法。
+     * @return 结果数值。
+     */
     public static long nextId() {
         return STRATEGY.generate();
     }

@@ -142,11 +142,19 @@ class FeishuClientTest {
         return out;
     }
 
+    /**
+     * 简易请求录制器，记录最近一次请求的 method / query / body，供断言使用。
+     */
     static class Recorder implements HttpHandler {
         static volatile String lastMethod;
         static volatile String lastQuery;
         static volatile String lastBody;
 
+        /**
+         * 处理请求。
+         * @param exchange exchange 参数。
+         * @throws IOException 打开文件流失败时抛出。
+         */
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             lastMethod = exchange.getRequestMethod();

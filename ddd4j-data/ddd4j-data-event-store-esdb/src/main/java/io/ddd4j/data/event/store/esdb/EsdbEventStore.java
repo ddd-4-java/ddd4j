@@ -62,6 +62,13 @@ public class EsdbEventStore implements EventStore {
         this.serializer = Objects.requireNonNull(serializer, "serializer must not be null");
     }
 
+    /**
+     * append() 方法。
+     * @param aggregateType 字符串参数。
+     * @param aggregateId aggregateId 参数。
+     * @param events 领域事件集合。
+     * @param expectedVersion expectedVersion 参数。
+     */
     @Override
     public void append(String aggregateType, AggregateRootId aggregateId,
                        List<? extends DomainEvent<?>> events, long expectedVersion) {
@@ -164,8 +171,20 @@ public class EsdbEventStore implements EventStore {
 
     private record StringAggregateRootId(String value) implements AggregateRootId {
         private static final StringEntityType TYPE = new StringEntityType("String");
+        /**
+         * 获取值。
+         * @return 方法执行结果。
+         */
         @Override public EntityType getType() { return TYPE; }
+        /**
+         * asString() 方法。
+         * @return 结果字符串。
+         */
         @Override @JsonValue public String asString() { return value; }
+        /**
+         * asTypedString() 方法。
+         * @return 结果字符串。
+         */
         @Override public String asTypedString() { return TYPE.asString() + ":" + value; }
     }
 }

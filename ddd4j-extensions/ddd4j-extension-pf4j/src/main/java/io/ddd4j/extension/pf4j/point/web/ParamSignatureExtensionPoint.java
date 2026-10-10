@@ -20,12 +20,36 @@ import org.pf4j.PluginRuntimeException;
 
 import java.util.Map;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 public interface ParamSignatureExtensionPoint extends ExtensionPoint {
 
+    /**
+     * 为当前请求的参数计算并写入签名。
+     *
+     * @param request HTTP 请求对象
+     * @param params  请求参数上下文，签名结果写入其中
+     * @throws PluginRuntimeException 签名过程发生不可恢复错误时抛出
+     */
     void sign(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException;
 
+    /**
+     * 查询指定应用的 appkey。
+     *
+     * @param appid 应用标识
+     * @return 对应的 appkey；不存在时返回 {@code null}
+     */
     String getAppkey(String appid);
 
+    /**
+     * 查询指定应用的 appSecret。
+     *
+     * @param appid 应用标识
+     * @return 对应的 appSecret；不存在时返回 {@code null}
+     */
     String getAppSecret(String appid);
 
 }

@@ -40,6 +40,11 @@ public class AuthenticationController {
         return R.ok(new TokenResponse(token));
     }
 
+    /**
+     * 令牌发放响应：携带登录后返回的访问令牌。
+     *
+     * @param token 访问令牌
+     */
     public record TokenResponse(String token) {
     }
 }

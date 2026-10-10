@@ -90,6 +90,10 @@ public class SpringContextBridge implements ApplicationListener<ContextRefreshed
         this.commandBusProvider = commandBusProvider;
     }
 
+    /**
+     * onApplicationEvent() 方法。
+     * @param event 事件消息。
+     */
     @Override
     public synchronized void onApplicationEvent(ContextRefreshedEvent event) {
         if (Objects.nonNull(registrationScope)) {
@@ -126,6 +130,9 @@ public class SpringContextBridge implements ApplicationListener<ContextRefreshed
         log.info("Spring ddd4j SPI services initialized");
     }
 
+    /**
+     * 销毁并释放资源。
+     */
     @Override
     public synchronized void destroy() {
         if (Objects.nonNull(registrationScope)) {

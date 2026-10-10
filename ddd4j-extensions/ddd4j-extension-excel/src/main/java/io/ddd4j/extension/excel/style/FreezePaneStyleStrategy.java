@@ -56,6 +56,10 @@ public class FreezePaneStyleStrategy implements SheetWriteHandler {
         this.rowSplit = rowSplit;
     }
 
+    /**
+     * afterSheetCreate() 方法。
+     * @param context JUnit 扩展上下文。
+     */
     @Override
     public void afterSheetCreate(SheetWriteHandlerContext context) {
         context.getWriteSheetHolder().getSheet().createFreezePane(colSplit, rowSplit);

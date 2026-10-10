@@ -139,6 +139,9 @@ public final class TestSupport {
     @SuppressWarnings("unused")
     public static Injector createInjector() {
         return Guice.createInjector(new AbstractModule() {
+            /**
+             * configure() 方法。
+             */
             @Override
             protected void configure() {
                 bind(UserRepository.class).toInstance(new InMemoryUserRepository());
@@ -151,14 +154,35 @@ public final class TestSupport {
         });
     }
 
+    /**
+     * 类型说明。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     private static final class NoopDomainEventPublisher implements DomainEventPublisher {
+        /**
+         * 发布数据。
+         * @param <ID> 类型参数。
+         * @param event 事件消息。
+         */
         @Override
         public <ID extends EntityId> void publish(io.ddd4j.core.ddd.event.DomainEvent<ID> event) {
             // noop：测试不需要真实发布领域事件
         }
     }
 
+    /**
+     * 类型说明。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     private static final class NoopI18nProvider implements I18nProvider {
+        /**
+         * 获取值。
+         * @param key 幂等键。
+         * @param args 命令行参数。
+         * @return 结果字符串。
+         */
         @Override
         public String getMessage(String key, Object... args) {
             return key;

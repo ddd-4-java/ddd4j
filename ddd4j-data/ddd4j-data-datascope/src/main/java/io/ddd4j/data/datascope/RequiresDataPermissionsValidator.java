@@ -36,11 +36,21 @@ public class RequiresDataPermissionsValidator implements ConstraintValidator<Req
         this.provider = Objects.requireNonNull(provider, "provider must not be null");
     }
 
+    /**
+     * initialize() 方法。
+     * @param annotation annotation 参数。
+     */
     @Override
     public void initialize(RequiresDataPermissions annotation) {
         this.dataType = annotation.dataType();
     }
 
+    /**
+     * 判断布尔状态。
+     * @param data 对象参数。
+     * @param context JUnit 扩展上下文。
+     * @return 判断结果。
+     */
     @Override
     public boolean isValid(Object data, ConstraintValidatorContext context) {
         return Objects.nonNull(data) && provider.hasPermissions(dataType, data);

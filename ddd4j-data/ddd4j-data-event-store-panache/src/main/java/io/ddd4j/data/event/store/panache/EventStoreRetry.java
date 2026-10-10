@@ -196,13 +196,34 @@ final class EventStoreRetry {
         return false;
     }
 
+    /**
+     * 单次尝试的业务逻辑。
+     *
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     */
     @FunctionalInterface
     interface RetryableAction {
+        /**
+         * 执行一次业务逻辑。
+         *
+         * @throws Exception 执行过程中出现的异常，交由重试机制判定是否可重试
+         */
         void run() throws Exception;
     }
 
+    /**
+     * 抽象 {@code Thread.sleep} 以便测试不真正等待。
+     *
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     */
     @FunctionalInterface
     interface Sleeper {
+        /**
+         * 休眠指定时长。
+         *
+         * @param millis 休眠的毫秒数
+         * @throws InterruptedException 休眠过程中线程被中断
+         */
         void sleep(long millis) throws InterruptedException;
     }
 }

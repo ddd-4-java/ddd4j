@@ -179,28 +179,68 @@ public class AuthorizationController {
 
     // ============================ 请求/响应 DTO ============================
 
+    /**
+     * 创建用户请求参数。
+     *
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     */
     public record CreateUserRequest(String userId, String username, String password, String realName) {
     }
 
+    /**
+     * 更新用户请求参数。
+     *
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     */
     public record UpdateUserRequest(String realName, String password, User.Status status) {
     }
 
+    /**
+     * 给用户分配角色请求参数（全量替换）。
+     *
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     */
     public record AssignRolesRequest(List<String> roleIds) {
     }
 
+    /**
+     * 创建角色请求参数。
+     *
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     */
     public record CreateRoleRequest(String roleId, String roleCode, String roleName, String description) {
     }
 
+    /**
+     * 更新角色请求参数。
+     *
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     */
     public record UpdateRoleRequest(String roleName, String description, Role.Status status) {
     }
 
+    /**
+     * 给角色分配权限请求参数（全量替换）。
+     *
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     */
     public record AssignPermissionsRequest(List<String> permissionIds) {
     }
 
+    /**
+     * 创建权限请求参数。
+     *
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     */
     public record CreatePermissionRequest(String permissionId, String permissionCode, String permissionName,
                                           String module) {
     }
 
+    /**
+     * 更新权限请求参数。
+     *
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     */
     public record UpdatePermissionRequest(String permissionName, String module, Permission.Status status) {
     }
 

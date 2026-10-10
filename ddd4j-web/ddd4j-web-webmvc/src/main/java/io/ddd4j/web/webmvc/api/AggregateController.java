@@ -143,6 +143,11 @@ public interface AggregateController {
 
 }
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 @SuppressWarnings({"rawtypes", "unchecked"})
 final class AggregateControllerSupport {
 

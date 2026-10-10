@@ -36,11 +36,20 @@ import java.util.Objects;
  */
 public class BasePropertySourcePostProcessor implements BeanFactoryPostProcessor, Ordered {
 
+    /**
+     * postProcessBeanFactory() 方法。
+     * @param beanFactory beanFactory 参数。
+     */
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
         if (beanFactory instanceof ConfigurableEnvironment env) {
             env.getPropertySources()
                     .addLast(new PropertySource<>("ddd4j-app-props", System.getProperties()) {
+                        /**
+                         * 获取值。
+                         * @param name 名称。
+                         * @return 结果对象。
+                         */
                         @Override
                         public Object getProperty(String name) {
                             if (Objects.nonNull(name) && name.startsWith("ddd4j.")) {
@@ -52,6 +61,10 @@ public class BasePropertySourcePostProcessor implements BeanFactoryPostProcessor
         }
     }
 
+    /**
+     * 获取值。
+     * @return 结果数值。
+     */
     @Override
     public int getOrder() {
         return LOWEST_PRECEDENCE;

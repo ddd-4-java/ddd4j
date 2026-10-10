@@ -22,6 +22,11 @@ import org.springframework.cglib.proxy.MethodProxy;
 import java.lang.reflect.Method;
 
 //Cglib动态代理，实现MethodInterceptor接口
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 public class CglibProxy implements MethodInterceptor {
 
     private Object target;//需要代理的目标对象
@@ -31,6 +36,15 @@ public class CglibProxy implements MethodInterceptor {
     }
 
     //重写拦截方法
+    /**
+     * intercept() 方法。
+     * @param obj 对象参数。
+     * @param method 被调用的方法。
+     * @param arr 对象参数。
+     * @param proxy 代理实例。
+     * @return 结果对象。
+     * @throws Throwable 调用过程中出现异常时抛出。
+     */
     @Override
     public Object intercept(Object obj, Method method, Object[] arr, MethodProxy proxy) throws Throwable {
         System.out.println("Cglib动态代理，监听开始！");
@@ -40,6 +54,11 @@ public class CglibProxy implements MethodInterceptor {
     }
 
     // 定义获取代理对象方法
+    /**
+     * 获取值。
+     * @param objectTarget 对象参数。
+     * @return 结果对象。
+     */
     public static Object getCglibProxy(Object objectTarget) {
         //为目标对象target赋值
         CglibProxy target = new CglibProxy(objectTarget);
@@ -52,6 +71,12 @@ public class CglibProxy implements MethodInterceptor {
     }
 
     // 定义获取代理对象方法
+    /**
+     * 获取值。
+     * @param <T> 类型参数。
+     * @param className 类型字面量。
+     * @return 结果值。
+     */
     public static <T> T getCglibProxy(Class<T> className) {
         CglibProxy target = new CglibProxy(BeanUtils.instantiateClass(className));
         Enhancer enhancer = new Enhancer();

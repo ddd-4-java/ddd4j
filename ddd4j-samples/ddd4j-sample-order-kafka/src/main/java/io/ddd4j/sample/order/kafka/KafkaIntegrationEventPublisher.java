@@ -42,6 +42,10 @@ public final class KafkaIntegrationEventPublisher implements IntegrationEventPub
         this.topic = Objects.requireNonNull(topic, "topic must not be null");
     }
 
+    /**
+     * 发布数据。
+     * @param message 异常消息。
+     */
     @Override
     public void publish(OutboxMessage message) {
         Objects.requireNonNull(message, "message must not be null");

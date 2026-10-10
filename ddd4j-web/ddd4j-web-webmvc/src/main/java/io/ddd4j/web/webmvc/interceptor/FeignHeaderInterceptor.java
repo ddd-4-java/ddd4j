@@ -128,6 +128,10 @@ public class FeignHeaderInterceptor implements RequestInterceptor, Ordered {
         }
     }
 
+    /**
+     * 获取值。
+     * @return 结果数值。
+     */
     @Override
     public int getOrder() {
         return -100;

@@ -80,14 +80,26 @@ public class User {
         return new User(loginId, password, null, set, Collections.emptySet());
     }
 
+    /**
+     * loginId() 方法。
+     * @return 结果字符串。
+     */
     public String loginId() {
         return loginId;
     }
 
+    /**
+     * password() 方法。
+     * @return 结果字符串。
+     */
     public String password() {
         return password;
     }
 
+    /**
+     * displayName() 方法。
+     * @return 结果字符串。
+     */
     public String displayName() {
         return displayName;
     }
@@ -100,6 +112,11 @@ public class User {
         return permissions;
     }
 
+    /**
+     * 判断与另一对象是否相等。
+     * @param o 比较对象。
+     * @return 相等返回 {@code true}，否则返回 {@code false}。
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -112,11 +129,19 @@ public class User {
         return Objects.equals(loginId, user.loginId);
     }
 
+    /**
+     * 返回对象哈希码。
+     * @return 哈希码。
+     */
     @Override
     public int hashCode() {
         return Objects.hash(loginId);
     }
 
+    /**
+     * 返回对象的字符串表示。
+     * @return 对象的字符串表示。
+     */
     @Override
     public String toString() {
         return "User{" + loginId + ", roles=" + roles + "}";

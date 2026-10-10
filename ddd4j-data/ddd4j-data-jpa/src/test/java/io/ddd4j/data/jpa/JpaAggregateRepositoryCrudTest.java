@@ -83,6 +83,7 @@ class JpaAggregateRepositoryCrudTest {
 
     // =================== 辅助类 ===================
 
+    /** 测试用仓储实现，验证属性映射的重写与透传行为。 */
     static final class TestRepository extends JpaAggregateRepository<Order, OrderPO, String> {
 
         TestRepository(EntityManager entityManager) {
@@ -97,6 +98,11 @@ class JpaAggregateRepositoryCrudTest {
             return persistenceProperty(property);
         }
 
+        /**
+         * persistenceProperty() 方法。
+         * @param domainProperty 字符串参数。
+         * @return 结果字符串。
+         */
         @Override
         protected String persistenceProperty(String domainProperty) {
             if ("status".equals(domainProperty)) {
@@ -106,24 +112,46 @@ class JpaAggregateRepositoryCrudTest {
         }
     }
 
+    /**
+     * 类型说明。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     static final class Order extends AggregateRoot<String> {
 
         private String id;
         private String status;
 
+        /**
+         * id() 方法。
+         * @return 结果字符串。
+         */
         @Override
         public String id() {
             return id;
         }
 
+        /**
+         * status() 方法。
+         * @return 结果字符串。
+         */
         public String status() {
             return status;
         }
     }
 
+    /**
+     * 类型说明。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     static final class OrderPO {
         private String orderStatus;
 
+        /**
+         * 获取值。
+         * @return 结果字符串。
+         */
         public String getOrderStatus() {
             return orderStatus;
         }

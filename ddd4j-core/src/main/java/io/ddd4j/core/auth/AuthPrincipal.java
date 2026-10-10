@@ -143,6 +143,13 @@ public class AuthPrincipal implements Serializable {
      */
     private String userAgent;
 
+    /**
+     * 角色对（RolePair），描述用户持有的单个角色及其验证要求。
+     *
+     * <p>承载角色的标识、编码、名称以及该角色是否需要多因子验证等信息。
+     *
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     */
     @Accessors(chain = true)
     @Data
     public static class RolePair implements Serializable {

@@ -29,6 +29,11 @@ import java.util.*;
 @UtilityClass
 public class ExceptionKit {
 
+    /**
+     * 获取值。
+     * @param e 异常对象。
+     * @return 结果字符串。
+     */
     public String getProjectStackTraces(Throwable e) {
         List<StackTraceElement> stackTraceElements = new ArrayList<>(e.getStackTrace().length);
         Collections.addAll(stackTraceElements, e.getStackTrace());
@@ -39,6 +44,11 @@ public class ExceptionKit {
         return e.getLocalizedMessage();
     }
 
+    /**
+     * 获取值。
+     * @param stackTraceElements stackTraceElements 参数。
+     * @return 结果字符串。
+     */
     public String getProjectStackTraces(List<StackTraceElement> stackTraceElements) {
         if (Objects.isNull(stackTraceElements)) {
             return null;

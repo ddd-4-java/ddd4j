@@ -1,0 +1,32 @@
+# modules=ddd4j-annotation,ddd4j-auth,ddd4j-cache,ddd4j-core files=30
+ddd4j-annotation/src/main/java/io/ddd4j/annotation/BusinessType.java	enum-const LOGIN;enum-const LOGOUT;enum-const INSERT;enum-const DELETE;enum-const UPDATE;enum-const SELECT;enum-const UPLOAD;enum-const DOWNLOAD;enum-const EMAIL;enum-const SMS
+ddd4j-annotation/src/main/java/io/ddd4j/annotation/api/ApiIdempotentType.java	enum-const TOKEN;enum-const ARGS
+ddd4j-annotation/src/test/java/io/ddd4j/annotation/api/ApiIdempotentTest.java	type class Fixture
+ddd4j-auth/ddd4j-auth-datascope/src/main/java/io/ddd4j/auth/datascope/DataScopeProvider.java	method hasPermissions
+ddd4j-auth/ddd4j-auth-license/src/main/java/io/ddd4j/auth/license/CustomKeyStoreParam.java	field LEGACY_SIGNATURE_ALGORITHM
+ddd4j-auth/ddd4j-auth-license/src/main/java/io/ddd4j/auth/license/LicenseProperties.java	field PREFIX
+ddd4j-auth/ddd4j-auth-license/src/main/java/io/ddd4j/auth/license/manager/CustomLicenseManager.java	type class PlainMessage
+ddd4j-auth/ddd4j-auth-license/src/test/java/io/ddd4j/auth/license/LicenseTestPreferencesFactory.java	type enum RemoveFailureMode;enum-const NONE;enum-const RUNTIME;enum-const ERROR;type class InMemoryPreferences
+ddd4j-auth/ddd4j-auth-license/src/test/java/io/ddd4j/auth/license/TrueLicenseMigrationTest.java	type class ExpiredFixtureManager;type class HookRejectingManager;type class RuntimeRejectingManager;type class TestMessage
+ddd4j-auth/ddd4j-auth-satoken/src/main/java/io/ddd4j/auth/satoken/SaConstants.java	field PAYLOAD_SCHOOL_CODE;field PAYLOAD_XQ_ORG_ID;field PAYLOAD_IDENTITY_ID;field PAYLOAD_INFO_ID;field PAYLOAD_PARENT_INFO_ID
+ddd4j-auth/ddd4j-auth-satoken/src/main/java/io/ddd4j/auth/satoken/config/Ddd4jStpLogicJwtForSimple.java	field ISSUER_CLAIM;field AUDIENCE_CLAIM
+ddd4j-auth/ddd4j-auth-satoken/src/main/java/io/ddd4j/auth/satoken/config/SaTokenAuthenticationMode.java	enum-const SESSION;enum-const JWT_SIMPLE
+ddd4j-auth/ddd4j-auth-satoken/src/main/java/io/ddd4j/auth/satoken/subject/SaTokenSubject.java	field PRINCIPAL_KEY
+ddd4j-auth/ddd4j-auth-satoken/src/main/java/io/ddd4j/auth/satoken/util/StpKit.java	field DEFAULT;field ADMIN;field USER;field XXX
+ddd4j-auth/ddd4j-auth-satoken/src/test/java/io/ddd4j/auth/satoken/handler/SaInternalCheckHandlerTest.java	type class TestSaInternalCheckHandler;type class Fixture
+ddd4j-auth/ddd4j-auth-satoken/src/test/java/io/ddd4j/auth/satoken/handler/SaMixCheckLoginHandlerTest.java	type class Fixture
+ddd4j-auth/ddd4j-auth-security/src/main/java/io/ddd4j/auth/security/subject/SecuritySubject.java	field PRINCIPAL_KEY
+ddd4j-auth/ddd4j-auth-shiro/src/main/java/io/ddd4j/auth/shiro/subject/ShiroSubject.java	field SESSION_KEY_PRINCIPAL;field SESSION_KEY_CONFIG
+HAZARD	ddd4j-auth/ddd4j-auth-shiro/src/main/java/io/ddd4j/auth/shiro/subject/ShiroSubject.java	line 44	getPrincipal()
+ddd4j-auth/ddd4j-auth-shiro/src/test/java/io/ddd4j/auth/shiro/subject/ShiroSubjectTest.java	type class TestRealm
+ddd4j-cache/src/main/java/io/ddd4j/cache/CacheKit.java	type enum LocalCacheType;enum-const CAFFEINE;enum-const GUAVA;enum-const HUTOOL
+ddd4j-cache/src/main/java/io/ddd4j/cache/jetcache/adapter/JetCacheCacheManager.java	field DEFAULT_AREA
+ddd4j-cache/src/main/java/io/ddd4j/cache/subject/InMemorySubject.java	field PRINCIPALS_BY_TOKEN_CACHE;field PRINCIPALS_BY_LOGIN_ID_CACHE;field TOKEN_BY_LOGIN_ID_CACHE;field DISABLED_UNTIL_CACHE;field CURRENT_TOKEN_CACHE
+ddd4j-cache/src/test/java/io/ddd4j/cache/CacheKitTest.java	type class InMemoryCache
+ddd4j-cache/src/test/java/io/ddd4j/cache/lettuce/LettuceCacheRedisTest.java	type class User
+ddd4j-core/src/main/java/io/ddd4j/core/ApiCode.java	enum-const SC_SUCCESS;enum-const SC_BAD_REQUEST;enum-const SC_UNAUTHORIZED;enum-const SC_FORBIDDEN;enum-const SC_NOT_FOUND;enum-const SC_METHOD_NOT_ALLOWED;enum-const SC_NOT_ACCEPTABLE;enum-const SC_PROXY_AUTHENTICATION_REQUIRED;enum-const SC_REQUEST_TIMEOUT;enum-const SC_CONFLICT;enum-const SC_GONE;enum-const SC_LENGTH_REQUIRED;enum-const SC_PRECONDITION_FAILED;enum-const SC_REQUEST_TOO_LONG;enum-const SC_UNSUPPORTED_MEDIA_TYPE;enum-const SC_REQUESTED_RANGE_NOT_SATISFIABLE;enum-const SC_EXPECTATION_FAILED;enum-const SC_UNPROCESSABLE_ENTITY;enum-const SC_LOCKED;enum-const SC_FAILED_DEPENDENCY
+ddd4j-core/src/main/java/io/ddd4j/core/ApiCodeValue.java	field SC_SUCCESS;field SC_FAIL;field SC_AUTHC_FAIL;field SC_AUTHC_METHOD_NOT_ALLOWED;field SC_AUTHC_OVER_RETRY_REMIND;field SC_AUTHC_CAPTCHA_REQUIRED;field SC_AUTHC_CAPTCHA_EXPIRED;field SC_AUTHC_CAPTCHA_INCORRECT;field SC_AUTHC_ACCOUNT_NOT_FOUND;field SC_AUTHC_ACCOUNT_DISABLED;field SC_AUTHC_ACCOUNT_EXPIRED;field SC_AUTHC_ACCOUNT_LOCKED;field SC_AUTHC_CREDENTIALS_EXPIRED;field SC_AUTHC_BAD_CREDENTIALS;field SC_AUTHZ_FAIL;field SC_AUTHZ_TOKEN_ISSUED;field SC_AUTHZ_TOKEN_REQUIRED;field SC_AUTHZ_TOKEN_EXPIRED;field SC_AUTHZ_TOKEN_INVALID;field SC_AUTHZ_TOKEN_INCORRECT
+ddd4j-core/src/main/java/io/ddd4j/core/CustomApiCode.java	method getCode;method getReason;method getStatus
+ddd4j-core/src/main/java/io/ddd4j/core/HttpStatus.java	field SC_CONTINUE;field SC_SWITCHING_PROTOCOLS;field SC_PROCESSING;field SC_OK;field SC_CREATED;field SC_ACCEPTED;field SC_NON_AUTHORITATIVE_INFORMATION;field SC_NO_CONTENT;field SC_RESET_CONTENT;field SC_PARTIAL_CONTENT;field SC_MULTI_STATUS;field SC_MULTIPLE_CHOICES;field SC_MOVED_PERMANENTLY;field SC_MOVED_TEMPORARILY;field SC_SEE_OTHER;field SC_NOT_MODIFIED;field SC_USE_PROXY;field SC_TEMPORARY_REDIRECT;field SC_BAD_REQUEST;field SC_UNAUTHORIZED
+ddd4j-core/src/main/java/io/ddd4j/core/api/IR.java	method getCode;method getMsg;method getData;method isOk;method isOk;method getData
+ddd4j-core/src/main/java/io/ddd4j/core/api/R.java	field code;field msg;field data

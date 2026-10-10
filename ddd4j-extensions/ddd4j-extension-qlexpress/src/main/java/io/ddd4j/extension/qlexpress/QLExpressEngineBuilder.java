@@ -38,31 +38,61 @@ public final class QLExpressEngineBuilder {
     private QLExpressExecutionOptions defaultExecutionOptions = QLExpressExecutionOptions.defaults();
     private final Map<String, NamedQLFunction> functions = new LinkedHashMap<>();
 
+    /**
+     * builtInFunctions() 方法。
+     * @param enabled 是否启用。
+     * @return 当前对象自身，支持链式调用。
+     */
     public QLExpressEngineBuilder builtInFunctions(boolean enabled) {
         this.builtInFunctions = enabled;
         return this;
     }
 
+    /**
+     * allowPrivateAccess() 方法。
+     * @param allowed allowed 参数。
+     * @return 当前对象自身，支持链式调用。
+     */
     public QLExpressEngineBuilder allowPrivateAccess(boolean allowed) {
         this.allowPrivateAccess = allowed;
         return this;
     }
 
+    /**
+     * traceExpression() 方法。
+     * @param enabled 是否启用。
+     * @return 当前对象自身，支持链式调用。
+     */
     public QLExpressEngineBuilder traceExpression(boolean enabled) {
         this.traceExpression = enabled;
         return this;
     }
 
+    /**
+     * securityStrategy() 方法。
+     * @param securityStrategy securityStrategy 参数。
+     * @return 当前对象自身，支持链式调用。
+     */
     public QLExpressEngineBuilder securityStrategy(QLSecurityStrategy securityStrategy) {
         this.securityStrategy = Objects.requireNonNull(securityStrategy, "securityStrategy 不能为空");
         return this;
     }
 
+    /**
+     * defaultExecutionOptions() 方法。
+     * @param options options 参数。
+     * @return 当前对象自身，支持链式调用。
+     */
     public QLExpressEngineBuilder defaultExecutionOptions(QLExpressExecutionOptions options) {
         this.defaultExecutionOptions = Objects.requireNonNull(options, "options 不能为空");
         return this;
     }
 
+    /**
+     * function() 方法。
+     * @param function 处理函数。
+     * @return 当前对象自身，支持链式调用。
+     */
     public QLExpressEngineBuilder function(NamedQLFunction function) {
         NamedQLFunction checked = Objects.requireNonNull(function, "function 不能为空");
         if (!StrKit.hasText(checked.name())) {
@@ -72,6 +102,10 @@ public final class QLExpressEngineBuilder {
         return this;
     }
 
+    /**
+     * 构建对象。
+     * @return 方法执行结果。
+     */
     public QLExpressEngine build() {
         Map<String, NamedQLFunction> initialFunctions = new LinkedHashMap<>();
         if (builtInFunctions) {

@@ -16,6 +16,11 @@ package io.ddd4j.guice.testbeans;
 
 import io.ddd4j.guice.annotation.ddd.DomainService;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 @DomainService
 public class OrderService {
 }

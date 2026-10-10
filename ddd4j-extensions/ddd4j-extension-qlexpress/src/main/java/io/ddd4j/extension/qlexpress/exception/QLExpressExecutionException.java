@@ -26,6 +26,10 @@ public class QLExpressExecutionException extends RuntimeException {
         this.expression = expression;
     }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getExpression() {
         return expression;
     }

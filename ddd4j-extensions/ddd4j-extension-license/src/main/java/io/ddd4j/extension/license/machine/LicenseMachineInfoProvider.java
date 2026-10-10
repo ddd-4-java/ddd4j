@@ -25,9 +25,24 @@ import java.util.Set;
  */
 public interface LicenseMachineInfoProvider {
 
+    /**
+     * 采集本机 IP 地址集合（排除回环地址）。
+     *
+     * @return IP 地址集合，采集失败时为空集合
+     */
     Set<String> ipAddresses();
 
+    /**
+     * 采集本机网卡 MAC 地址集合（十六进制冒号分隔）。
+     *
+     * @return MAC 地址集合，采集失败时为空集合
+     */
     Set<String> macAddresses();
 
+    /**
+     * 采集机器序列号（可由系统属性或环境变量显式指定，缺省时退化为系统名与用户名组合）。
+     *
+     * @return 机器序列号，非空
+     */
     String serialNumber();
 }

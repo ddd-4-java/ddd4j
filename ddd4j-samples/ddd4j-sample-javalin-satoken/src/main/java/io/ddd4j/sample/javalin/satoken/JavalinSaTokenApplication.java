@@ -64,6 +64,10 @@ public class JavalinSaTokenApplication {
      */
     public static final int PORT = 8085;
 
+    /**
+     * main() 方法。
+     * @param args 命令行参数。
+     */
     public static void main(String[] args) {
         // ==================== 1. 创建 Guice 注入器 ====================
         Module authModule = new AuthModule();

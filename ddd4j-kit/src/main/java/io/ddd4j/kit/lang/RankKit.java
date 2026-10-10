@@ -134,18 +134,34 @@ public class RankKit {
             this.data = data;
         }
 
+        /**
+         * 获取值。
+         * @return 结果数值。
+         */
         public Integer getRank() {
             return rank;
         }
 
+        /**
+         * 设置值。
+         * @param rank rank 参数。
+         */
         public void setRank(Integer rank) {
             this.rank = rank;
         }
 
+        /**
+         * 获取值。
+         * @return 结果值。
+         */
         public T getData() {
             return data;
         }
 
+        /**
+         * 设置值。
+         * @param data data 参数。
+         */
         public void setData(T data) {
             this.data = data;
         }

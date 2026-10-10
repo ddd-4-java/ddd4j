@@ -42,6 +42,11 @@ public class I18nKit {
     // 国际化文件前缀
     private final String I18N_FILE_PREFIX = "i18n/messages";
 
+    /**
+     * get() 方法。
+     * @param source 序列化源对象。
+     * @return 结果字符串。
+     */
     public String get(String source) {
         if (Objects.isNull(source) || !org.springframework.util.StringUtils.hasLength(source)) {
             return source;
@@ -57,15 +62,30 @@ public class I18nKit {
                 return resourceBundle.getString(source);
             }
         } catch (Exception e) {
+            /**
+             * log.warn() 方法。
+             * @param "处理国际化异常" "处理国际化异常" 参数。
+             * @param e 异常对象。
+             */
             log.warn("处理国际化异常", e);
         }
         return source;
     }
 
+    /**
+     * get() 方法。
+     * @param source 序列化源对象。
+     * @param args 命令行参数。
+     * @return 结果字符串。
+     */
     public String get(String source, Object... args) {
         return format(get(source), args);
     }
 
+    /**
+     * 设置值。
+     * @param locale locale 参数。
+     */
     public void setLocale(Locale locale) {
         ThreadContext.set(ContextConstants.LOCALE, locale);
     }
@@ -241,14 +261,32 @@ public class I18nKit {
         return obj.toString();
     }
 
+    /**
+     * 获取值。
+     * @param key 幂等键。
+     * @return 结果字符串。
+     */
     public static String getMessage(String key) {
         return getMessage(key, null);
     }
 
+    /**
+     * 获取值。
+     * @param key 幂等键。
+     * @param args 命令行参数。
+     * @return 结果字符串。
+     */
     public static String getMessage(String key, String[] args) {
         return SpringContextUtils.getContext().getApplicationContext().getBean(NestedMessageSource.class).getMessage(key, args, LocaleContextHolder.getLocale());
     }
 
+    /**
+     * 获取值。
+     * @param key 幂等键。
+     * @param args 命令行参数。
+     * @param defaultMsg 字符串参数。
+     * @return 结果字符串。
+     */
     public static String getMessage(String key, String[] args, String defaultMsg) {
         return SpringContextUtils.getContext().getApplicationContext().getBean(NestedMessageSource.class).getMessage(key, args, defaultMsg, LocaleContextHolder.getLocale());
     }

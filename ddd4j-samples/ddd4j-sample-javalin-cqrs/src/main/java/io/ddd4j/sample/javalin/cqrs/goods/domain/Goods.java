@@ -78,6 +78,10 @@ public class Goods extends AggregateRoot<Long> implements Serializable {
      */
     private LocalDateTime updateTime;
 
+    /**
+     * id() 方法。
+     * @return 结果数值。
+     */
     @Override
     public Long id() {
         return id;

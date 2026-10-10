@@ -89,9 +89,24 @@ public class OrderController {
         return R.ok(applicationService.find(orderId));
     }
 
+    /**
+     * 创建订单请求参数：订单号与买方信息。
+     *
+     * @param orderNo 订单号
+     * @param buyerId 买方标识
+     * @param buyerName 买方名称
+     */
     public record CreateOrderRequest(String orderNo, String buyerId, String buyerName) {
     }
 
+    /**
+     * 追加订单行请求参数：商品标识、名称、数量与单价。
+     *
+     * @param goodsId 商品标识
+     * @param goodsName 商品名称
+     * @param quantity 购买数量
+     * @param unitPrice 商品单价
+     */
     public record AddOrderLineRequest(String goodsId, String goodsName, int quantity, BigDecimal unitPrice) {
     }
 }

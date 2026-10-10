@@ -30,6 +30,10 @@ public record ReadinessResponse(boolean ready) {
         return ready ? 200 : 503;
     }
 
+    /**
+     * 判断布尔状态。
+     * @return 判断结果。
+     */
     public boolean isReady() {
             return ready;
         }

@@ -33,16 +33,30 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 class GuiceCommandBusTest {
 
     @Test
     void commandBusRoutesToRegisteredExecutor() {
         AtomicBoolean executed = new AtomicBoolean(false);
         TestCommandExecutor executor = new TestCommandExecutor(executed);
+/**
+ * Guice.createInjector() 方法。
+ * @param Ddd4jCommandGuiceModule() Ddd4jCommandGuiceModule() 参数。
+ * @param } } 参数。
+ * @return 方法执行结果。
+ */
 
         Injector injector = Guice.createInjector(
                 new Ddd4jCommandGuiceModule(),
                 new AbstractModule() {
+                    /**
+                     * configure() 方法。
+                     */
                     @Override
                     protected void configure() {
                         bind(TestCommandExecutor.class).toInstance(executor);
@@ -87,6 +101,9 @@ class GuiceCommandBusTest {
         Injector injector = Guice.createInjector(
                 new Ddd4jCommandGuiceModule(),
                 new AbstractModule() {
+                    /**
+                     * configure() 方法。
+                     */
                     @Override
                     protected void configure() {
                         bind(TestCommandExecutor.class).toInstance(new TestCommandExecutor(testExecuted));
@@ -115,16 +132,30 @@ class GuiceCommandBusTest {
     }
 
     // Test command classes
+
+    /**
+     * 已注册执行器的测试命令，用于验证命令路由到对应执行器。
+     */
     private static class TestCommand implements Command {
     }
 
+    /**
+     * 第二种测试命令，用于验证多执行器并存时的分发。
+     */
     private static class AnotherCommand implements Command {
     }
 
+    /**
+     * 未注册执行器的测试命令，用于验证命令总线对未知命令的异常处理。
+     */
     private static class UnregisteredCommand implements Command {
     }
 
     // Test executor classes
+
+    /**
+     * {@link TestCommand} 的执行器桩，执行时置位标记以供断言。
+     */
     private static class TestCommandExecutor implements CommandExecutor<TestCommand> {
 
         private final AtomicBoolean executed;
@@ -138,6 +169,11 @@ class GuiceCommandBusTest {
             return Collections.singleton(TestCommand.class);
         }
 
+        /**
+         * 执行处理逻辑。
+         * @param command command 参数。
+         * @return 方法执行结果。
+         */
         @Override
         public Result execute(TestCommand command) {
             executed.set(true);
@@ -145,6 +181,9 @@ class GuiceCommandBusTest {
         }
     }
 
+    /**
+     * {@link AnotherCommand} 的执行器桩，执行时置位标记以供断言。
+     */
     private static class AnotherCommandExecutor implements CommandExecutor<AnotherCommand> {
 
         private final AtomicBoolean executed;
@@ -158,6 +197,11 @@ class GuiceCommandBusTest {
             return Collections.singleton(AnotherCommand.class);
         }
 
+        /**
+         * 执行处理逻辑。
+         * @param command command 参数。
+         * @return 方法执行结果。
+         */
         @Override
         public Result execute(AnotherCommand command) {
             executed.set(true);

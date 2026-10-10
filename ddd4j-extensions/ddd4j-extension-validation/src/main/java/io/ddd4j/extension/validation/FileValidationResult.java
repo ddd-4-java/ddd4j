@@ -44,14 +44,26 @@ public record FileValidationResult(boolean valid, FileValidationFailure failure,
         return new FileValidationResult(false, failure, detectedType);
     }
 
+    /**
+     * 获取值。
+     * @return 方法执行结果。
+     */
     public DetectedFileType getDetectedType() {
             return detectedType;
         }
 
+    /**
+     * 获取值。
+     * @return 方法执行结果。
+     */
     public FileValidationFailure getFailure() {
             return failure;
         }
 
+    /**
+     * 判断布尔状态。
+     * @return 判断结果。
+     */
     public boolean isValid() {
             return valid;
         }

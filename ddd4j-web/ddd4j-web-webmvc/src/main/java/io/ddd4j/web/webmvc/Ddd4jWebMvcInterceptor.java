@@ -67,6 +67,13 @@ public final class Ddd4jWebMvcInterceptor implements HandlerInterceptor {
         this.idempotencyLifecycle = Optional.ofNullable(idempotencyLifecycle);
     }
 
+    /**
+     * preHandle() 方法。
+     * @param request 请求对象。
+     * @param response 响应对象。
+     * @param handler 处理器。
+     * @return 判断结果。
+     */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         // OTel: 提取上游 TraceContext 并开启 SERVER span
@@ -100,6 +107,13 @@ public final class Ddd4jWebMvcInterceptor implements HandlerInterceptor {
         }
     }
 
+    /**
+     * afterCompletion() 方法。
+     * @param request 请求对象。
+     * @param response 响应对象。
+     * @param handler 处理器。
+     * @param exception exception 参数。
+     */
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler,
                                 Exception exception) {
@@ -158,6 +172,11 @@ public final class Ddd4jWebMvcInterceptor implements HandlerInterceptor {
                 request.getRequestURI()));
     }
 
+    /**
+     * 类型说明。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     private static final class RequestState {
 
         private final WebContextScope contextScope;

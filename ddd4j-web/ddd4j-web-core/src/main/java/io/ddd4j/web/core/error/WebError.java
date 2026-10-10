@@ -27,18 +27,34 @@ public record WebError(int status, Serializable code, String message, Object dat
         return R.fail(code, message, data);
     }
 
+    /**
+     * 获取值。
+     * @return 方法执行结果。
+     */
     public Serializable getCode() {
             return code;
         }
 
+    /**
+     * 获取值。
+     * @return 结果对象。
+     */
     public Object getData() {
             return data;
         }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getMessage() {
             return message;
         }
 
+    /**
+     * 获取值。
+     * @return 结果数值。
+     */
     public int getStatus() {
             return status;
         }

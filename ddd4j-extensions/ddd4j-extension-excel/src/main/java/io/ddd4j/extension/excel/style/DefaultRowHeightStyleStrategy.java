@@ -53,6 +53,11 @@ public class DefaultRowHeightStyleStrategy extends AbstractRowHeightStyleStrateg
         this.headerRowHeight = headerRowHeight;
     }
 
+    /**
+     * 设置值。
+     * @param row row 参数。
+     * @param relativeRowIndex relativeRowIndex 参数。
+     */
     @Override
     protected void setHeadColumnHeight(Row row, int relativeRowIndex) {
         if (relativeRowIndex == 0) {
@@ -60,6 +65,11 @@ public class DefaultRowHeightStyleStrategy extends AbstractRowHeightStyleStrateg
         }
     }
 
+    /**
+     * 设置值。
+     * @param row row 参数。
+     * @param relativeRowIndex relativeRowIndex 参数。
+     */
     @Override
     protected void setContentColumnHeight(Row row, int relativeRowIndex) {
         // 内容行使用 Excel 默认行高

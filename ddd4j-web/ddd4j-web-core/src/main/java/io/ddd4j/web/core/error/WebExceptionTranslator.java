@@ -20,5 +20,11 @@ package io.ddd4j.web.core.error;
 @FunctionalInterface
 public interface WebExceptionTranslator {
 
+    /**
+     * 将异常翻译为面向 Web 响应的错误描述。
+     *
+     * @param throwable 待翻译的异常
+     * @return 翻译得到的错误描述
+     */
     WebError translate(Throwable throwable);
 }

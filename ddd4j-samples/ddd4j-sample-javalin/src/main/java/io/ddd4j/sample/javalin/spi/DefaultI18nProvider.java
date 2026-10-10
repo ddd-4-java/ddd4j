@@ -24,6 +24,12 @@ import io.ddd4j.core.i18n.I18nProvider;
  */
 public class DefaultI18nProvider implements I18nProvider {
 
+    /**
+     * 获取值。
+     * @param key 幂等键。
+     * @param args 命令行参数。
+     * @return 结果字符串。
+     */
     @Override
     public String getMessage(String key, Object... args) {
         return I18nProvider.DEFAULT.getMessage(key, args);

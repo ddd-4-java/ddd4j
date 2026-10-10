@@ -35,11 +35,20 @@ public class InMemorySubjectProvider implements SubjectProvider {
         this.subject = Objects.requireNonNull(subject, "subject must not be null");
     }
 
+    /**
+     * 获取值。
+     * @return 方法执行结果。
+     */
     @Override
     public Subject getSubject() {
         return subject;
     }
 
+    /**
+     * 获取值。
+     * @param realm 字符串参数。
+     * @return 方法执行结果。
+     */
     @Override
     public Subject getSubject(String realm) {
         return subject;

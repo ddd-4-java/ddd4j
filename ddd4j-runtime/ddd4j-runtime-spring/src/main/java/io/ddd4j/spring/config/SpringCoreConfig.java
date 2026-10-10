@@ -56,11 +56,19 @@ public class SpringCoreConfig {
         return new RuntimeReadinessRegistry(readinessContributors.orderedStream().toList());
     }
 
+    /**
+     * springContext() 方法。
+     * @return 方法执行结果。
+     */
     @Bean
     public SpringContext springContext() {
         return new SpringContext();
     }
 
+    /**
+     * springContextAwareContext() 方法。
+     * @return 方法执行结果。
+     */
     @Bean
     public SpringContextAwareContext springContextAwareContext() {
         return new SpringContextAwareContext();

@@ -40,11 +40,19 @@ public class SampleSubjectProvider implements SubjectProvider {
                 .setPerms(Set.of("order:read", "order:write"))));
     }
 
+    /**
+     * 获取值。
+     * @return 方法执行结果。
+     */
     @Override
     public Subject getSubject() {
         return subject;
     }
 
+    /**
+     * token() 方法。
+     * @return 结果字符串。
+     */
     public String token() {
         return token;
     }

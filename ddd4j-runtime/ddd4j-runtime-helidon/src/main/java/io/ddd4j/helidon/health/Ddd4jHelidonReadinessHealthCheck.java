@@ -40,6 +40,10 @@ public class Ddd4jHelidonReadinessHealthCheck implements HealthCheck {
                 "readinessRegistry must not be null");
     }
 
+    /**
+     * call() 方法。
+     * @return 方法执行结果。
+     */
     @Override
     public HealthCheckResponse call() {
         ReadinessReport report = readinessRegistry.readiness();

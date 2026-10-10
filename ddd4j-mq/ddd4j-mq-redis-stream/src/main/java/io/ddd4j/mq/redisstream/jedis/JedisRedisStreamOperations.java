@@ -38,11 +38,22 @@ public class JedisRedisStreamOperations implements RedisStreamOperations {
         this.jedis = Objects.requireNonNull(jedis, "jedis");
     }
 
+    /**
+     * add() 方法。
+     * @param stream 字符串参数。
+     * @param fields 字段列表。
+     * @return 结果字符串。
+     */
     @Override
     public String add(String stream, Map<String, String> fields) {
         return jedis.xadd(stream, XAddParams.xAddParams().id(StreamEntryID.NEW_ENTRY), fields).toString();
     }
 
+    /**
+     * 创建对象。
+     * @param stream 字符串参数。
+     * @param group 消费组。
+     */
     @Override
     public void createGroup(String stream, String group) {
         try {
@@ -81,16 +92,29 @@ public class JedisRedisStreamOperations implements RedisStreamOperations {
         return result;
     }
 
+    /**
+     * ack() 方法。
+     * @param stream 字符串参数。
+     * @param group 消费组。
+     * @param entryId 字符串参数。
+     */
     @Override
     public void ack(String stream, String group, String entryId) {
         jedis.xack(stream, group, new StreamEntryID(entryId));
     }
 
+    /**
+     * nativeClient() 方法。
+     * @return 结果对象。
+     */
     @Override
     public Object nativeClient() {
         return jedis;
     }
 
+    /**
+     * 关闭并释放资源。
+     */
     @Override
     public void close() {
         jedis.close();

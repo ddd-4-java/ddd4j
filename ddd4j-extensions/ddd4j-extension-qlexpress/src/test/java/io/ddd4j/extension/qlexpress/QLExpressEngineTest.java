@@ -24,6 +24,11 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 class QLExpressEngineTest {
 
     @Test
@@ -90,6 +95,9 @@ class QLExpressEngineTest {
                 .containsExactlyInAnyOrder("price", "quantity");
     }
 
+    /**
+     * 测试用乘法函数，以 {@code multiply} 为固定函数名，将首个参数乘以指定倍数。
+     */
     private static final class MultiplierFunction implements NamedQLFunction {
 
         private final int multiplier;
@@ -98,11 +106,21 @@ class QLExpressEngineTest {
             this.multiplier = multiplier;
         }
 
+        /**
+         * name() 方法。
+         * @return 结果字符串。
+         */
         @Override
         public String name() {
             return "multiply";
         }
 
+        /**
+         * call() 方法。
+         * @param qContext qContext 参数。
+         * @param parameters parameters 参数。
+         * @return 结果对象。
+         */
         @Override
         public Object call(QContext qContext, Parameters parameters) {
             return ((Number) parameters.getValue(0)).intValue() * multiplier;

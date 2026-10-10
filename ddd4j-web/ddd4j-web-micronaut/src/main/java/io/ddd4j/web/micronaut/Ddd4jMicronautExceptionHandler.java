@@ -43,6 +43,10 @@ public final class Ddd4jMicronautExceptionHandler extends BaseErrorConfiguration
         super(translator);
     }
 
+    /**
+     * frameworkName() 方法。
+     * @return 结果字符串。
+     */
     @Override
     protected String frameworkName() {
         return "Micronaut";

@@ -129,42 +129,82 @@ public final class CacheConfig {
 
     // ==================== Getters ====================
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * 获取值。
+     * @return 结果数值。
+     */
     public long getMaximumSize() {
         return maximumSize;
     }
 
+    /**
+     * 获取值。
+     * @return 结果数值。
+     */
     public long getExpireAfterWriteSeconds() {
         return expireAfterWriteSeconds;
     }
 
+    /**
+     * 获取值。
+     * @return 结果数值。
+     */
     public long getExpireAfterAccessSeconds() {
         return expireAfterAccessSeconds;
     }
 
+    /**
+     * 获取值。
+     * @return 结果数值。
+     */
     public long getRefreshAfterWriteSeconds() {
         return refreshAfterWriteSeconds;
     }
 
+    /**
+     * 获取值。
+     * @return 结果数值。
+     */
     public int getInitialCapacity() {
         return initialCapacity;
     }
 
+    /**
+     * 判断布尔状态。
+     * @return 判断结果。
+     */
     public boolean isRecordStats() {
         return recordStats;
     }
 
+    /**
+     * 获取值。
+     * @return 方法执行结果。
+     */
     public CacheType getCacheType() {
         return cacheType;
     }
 
+    /**
+     * 获取值。
+     * @return 结果数值。
+     */
     public int getLocalLimit() {
         return localLimit;
     }
 
+    /**
+     * 判断布尔状态。
+     * @return 判断结果。
+     */
     public boolean isSyncLocal() {
         return syncLocal;
     }

@@ -19,6 +19,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 class DomainEventJsonTest {
 
     // Jackson 3 内建 JavaTimeModule（自动注册），无需手动 registerModule
@@ -38,6 +43,9 @@ class DomainEventJsonTest {
                 .contains("\"aggregate-version\":3");
     }
 
+    /**
+     * 测试用样例事件：用于验证事件元数据序列化为稳定标量值。
+     */
     private static final class SampleDomainEvent extends DomainEvent<StringEntityId> {
 
         private SampleDomainEvent(String orderId) {

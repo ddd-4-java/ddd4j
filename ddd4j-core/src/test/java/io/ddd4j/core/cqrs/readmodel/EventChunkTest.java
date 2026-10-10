@@ -34,6 +34,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @DisplayName("EventChunk")
 class EventChunkTest {
 
+    /**
+     * 构造器用例：参数校验、负数拒绝、空列表语义与防御性拷贝。
+     */
     @Nested
     @DisplayName("构造器")
     class Constructor {
@@ -89,6 +92,9 @@ class EventChunkTest {
         }
     }
 
+    /**
+     * empty 工厂方法用例：返回不含事件的 chunk 并保留传入的下一个事件号。
+     */
     @Nested
     @DisplayName("empty 工厂方法")
     class EmptyFactory {
@@ -122,6 +128,9 @@ class EventChunkTest {
         }
     }
 
+    /**
+     * 事件查询 API 用例：hasEvents 判空、getEvents 不可变视图与下一个事件号回读。
+     */
     @Nested
     @DisplayName("hasEvents / getEvents")
     class QueryApi {

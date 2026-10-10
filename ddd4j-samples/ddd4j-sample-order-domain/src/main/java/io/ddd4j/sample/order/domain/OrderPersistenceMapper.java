@@ -14,7 +14,26 @@
  */
 package io.ddd4j.sample.order.domain;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 public interface OrderPersistenceMapper<P> {
+
+    /**
+     * 将订单聚合根转换为持久化对象。
+     *
+     * @param order 订单聚合根
+     * @return 持久化对象
+     */
     P toPersistence(Order order);
+
+    /**
+     * 将持久化对象还原为订单聚合根。
+     *
+     * @param persistenceObject 持久化对象
+     * @return 订单聚合根
+     */
     Order toDomain(P persistenceObject);
 }

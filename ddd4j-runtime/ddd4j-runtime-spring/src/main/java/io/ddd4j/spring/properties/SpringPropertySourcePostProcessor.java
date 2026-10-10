@@ -32,12 +32,21 @@ import java.util.Objects;
  */
 public class SpringPropertySourcePostProcessor implements BeanFactoryPostProcessor, Ordered {
 
+    /**
+     * postProcessBeanFactory() 方法。
+     * @param beanFactory beanFactory 参数。
+     */
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
         // 将 ddd4j 配置属性源添加到 Spring Environment
         if (beanFactory instanceof ConfigurableEnvironment env) {
             env.getPropertySources()
                     .addLast(new PropertySource<>("ddd4j-defaults", System.getProperties()) {
+                        /**
+                         * 获取值。
+                         * @param name 名称。
+                         * @return 结果对象。
+                         */
                         @Override
                         public Object getProperty(String name) {
                             // 仅处理 ddd4j.* 前缀属性
@@ -50,6 +59,10 @@ public class SpringPropertySourcePostProcessor implements BeanFactoryPostProcess
         }
     }
 
+    /**
+     * 获取值。
+     * @return 结果数值。
+     */
     @Override
     public int getOrder() {
         return LOWEST_PRECEDENCE;

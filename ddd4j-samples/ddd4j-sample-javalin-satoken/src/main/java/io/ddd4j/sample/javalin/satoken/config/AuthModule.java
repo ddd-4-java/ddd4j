@@ -48,6 +48,9 @@ import io.ddd4j.sample.javalin.satoken.rbac.web.AuthorizationController;
  */
 public class AuthModule extends AbstractModule {
 
+    /**
+     * configure() 方法。
+     */
     @Override
     protected void configure() {
         // ========================= RBAC 模块 =========================

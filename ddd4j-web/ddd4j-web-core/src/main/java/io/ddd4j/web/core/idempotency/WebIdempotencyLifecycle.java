@@ -28,6 +28,7 @@ import io.ddd4j.web.core.error.WebStatusException;
  */
 public final class WebIdempotencyLifecycle {
 
+    /** 未显式指定时使用的默认幂等键存活时长。 */
     public static final Duration DEFAULT_TTL = Duration.ofMinutes(5);
 
     private final IdempotencyGuard guard;
@@ -68,6 +69,9 @@ public final class WebIdempotencyLifecycle {
         return StrKit.isBlank(value) ? "_" : value;
     }
 
+    /**
+     * 单次幂等请求的作用域：处理期间持有租约，关闭时按完成情况提交或回滚。
+     */
     public static final class Scope implements AutoCloseable {
 
         private final IdempotencyGuard guard;
@@ -80,6 +84,9 @@ public final class WebIdempotencyLifecycle {
             this.lease = lease;
         }
 
+        /**
+         * complete() 方法。
+         */
         public void complete() {
             if (closed || completed) {
                 return;
@@ -88,6 +95,9 @@ public final class WebIdempotencyLifecycle {
             completed = true;
         }
 
+        /**
+         * 关闭并释放资源。
+         */
         @Override
         public void close() {
             if (closed) {

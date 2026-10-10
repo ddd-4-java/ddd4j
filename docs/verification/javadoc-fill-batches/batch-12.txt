@@ -1,0 +1,31 @@
+# modules=ddd4j-mq,ddd4j-runtime files=30
+ddd4j-mq/ddd4j-mq-pulsar/src/main/java/io/ddd4j/mq/pulsar/PulsarAcknowledgment.java	field HEADER_PULSAR_CONSUMER;field HEADER_PULSAR_MESSAGE;field HEADER_PULSAR_MESSAGE_ID;type interface IoOperation;method run
+ddd4j-mq/ddd4j-mq-rabbitmq/src/main/java/io/ddd4j/mq/rabbitmq/RabbitAcknowledgment.java	field HEADER_RABBIT_CHANNEL;field HEADER_RABBIT_DELIVERY_TAG;type interface IoOperation;method run
+ddd4j-mq/ddd4j-mq-redis-stream/src/main/java/io/ddd4j/mq/redisstream/RedisStreamAcknowledgment.java	field HEADER_REDIS_STREAM;field HEADER_REDIS_GROUP;field HEADER_REDIS_ENTRY_ID
+ddd4j-mq/ddd4j-mq-redis-stream/src/main/java/io/ddd4j/mq/redisstream/RedisStreamClientType.java	enum-const JEDIS;enum-const REDISSON;enum-const LETTUCE
+ddd4j-mq/ddd4j-mq-redis-stream/src/main/java/io/ddd4j/mq/redisstream/RedisStreamOperations.java	method add;method createGroup;method readGroup;method ack;method nativeClient;method close
+ddd4j-mq/ddd4j-mq-rocketmq/src/main/java/io/ddd4j/mq/rocketmq/RocketAcknowledgment.java	field HEADER_ROCKET_MESSAGE
+ddd4j-mq/ddd4j-mq-rocketmq/src/main/java/io/ddd4j/mq/rocketmq/RocketMQClient.java	type class SendLogCallback
+ddd4j-mq/ddd4j-mq-spring/src/test/java/io/ddd4j/mq/spring/registry/MQListenerLifecycleContractTest.java	type class StubClient;type class Serialization
+ddd4j-mq/ddd4j-mq-spring/src/test/java/io/ddd4j/mq/spring/registry/SpringMqBridgeContractTest.java	type class OrderListener;type class OrderPaidEvent
+ddd4j-mq/ddd4j-mq-sqs/src/main/java/io/ddd4j/mq/sqs/SqsAcknowledgment.java	field HEADER_SQS_CLIENT;field HEADER_SQS_MESSAGE;field HEADER_SQS_QUEUE_URL;type interface IoOperation;method run
+ddd4j-mq/ddd4j-mq-tdmq/src/main/java/io/ddd4j/mq/tdmq/TdmqMQClient.java	type interface BrokerPublisher;method publish;type interface BrokerSubscriber;method subscribe;type interface MessageHandler;method onMessage;type interface Subscription;method close;method DeliveredMessage;type record DeliveredMessage;type class InMemoryBrokerPublisher;type class InMemoryBrokerSubscriber
+ddd4j-runtime/ddd4j-runtime-dropwizard/src/test/java/io/ddd4j/dropwizard/Ddd4jBundleTest.java	type class TestConfiguration
+ddd4j-runtime/ddd4j-runtime-dropwizard/src/test/java/io/ddd4j/dropwizard/cqrs/DropwizardCqrsRuntimeContractTest.java	type class StubViewManager;type class NoopViewScheduler
+ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/GuiceConstants.java	field VIEW_MANAGER_THREAD_POOL_SIZE_KEY;field DEFAULT_THREAD_POOL_SIZE
+ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/cqrs/GuiceViewManager.java	type class GuiceViewScheduleHandle
+ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/guice/Ddd4jGuiceModuleTest.java	type class TestDomainService;type interface MapperStub;type class RepositoryStub;type class NoopDataSource;type class ExecutorStub
+ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/guice/ThreeLineLogsParityTest.java	type class Endpoint
+ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/guice/aspect/AsyncCleanupInterceptorTest.java	type class Worker;type class BoomWorker
+ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/guice/command/GuiceCommandBusTest.java	type class TestCommand;type class AnotherCommand;type class UnregisteredCommand;type class TestCommandExecutor;type class AnotherCommandExecutor
+ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/guice/context/GuiceContextTest.java	type class CountingRunnable;type class BrokenRunnable
+ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/guice/cqrs/MicrometerProjectionMetricsTest.java	type class OnRunCompletedTests;type class OnRunFailedTests;type class OnRunStartedTests
+ddd4j-runtime/ddd4j-runtime-helidon/src/test/java/io/ddd4j/helidon/cqrs/HelidonCqrsRuntimeContractTest.java	type class StubViewManager;type class NoopViewScheduler
+ddd4j-runtime/ddd4j-runtime-micronaut/src/test/java/io/ddd4j/micronaut/cqrs/MicronautCqrsRuntimeContractTest.java	type class StubViewManager;type class NoopViewScheduler
+ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/extension/DddCdiExtension.java	type class ApplicationScopedLiteral
+ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/command/QuarkusCommandBusTest.java	type record TestCommand;type record UnregisteredCommand;type record FailCommand;type class TestCommandExecutor;type class FailCommandExecutor
+ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/cqrs/MicrometerProjectionMetricsTest.java	type class OnRunCompletedTests;type class OnRunFailedTests;type class OnRunStartedTests
+ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/cqrs/QuarkusCqrsRuntimeContractTest.java	type class NoopViewScheduler
+ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/cqrs/QuarkusJpaViewManagerTest.java	type class GetProjectionStatusTests
+ddd4j-runtime/ddd4j-runtime-spring/src/main/java/io/ddd4j/spring/context/SpringContext.java	field APP_START_SIGNAL;field APPLICATION_CONTEXT_START_SIGNAL
+ddd4j-runtime/ddd4j-runtime-spring/src/main/java/io/ddd4j/spring/cqrs/SpringViewScheduler.java	type class SpringViewScheduleHandle

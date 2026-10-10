@@ -40,6 +40,7 @@ import java.util.Objects;
  */
 public class LocalDateTimeConverter implements Converter<LocalDateTime> {
 
+    /** 默认日期时间格式 {@code yyyy-MM-dd HH:mm:ss}。 */
     public static final String DEFAULT_PATTERN = "yyyy-MM-dd HH:mm:ss";
 
     private final DateTimeFormatter formatter;
@@ -57,11 +58,22 @@ public class LocalDateTimeConverter implements Converter<LocalDateTime> {
         return LocalDateTime.class;
     }
 
+    /**
+     * supportExcelTypeKey() 方法。
+     * @return 方法执行结果。
+     */
     @Override
     public CellDataTypeEnum supportExcelTypeKey() {
         return CellDataTypeEnum.STRING;
     }
 
+    /**
+     * 转换类型。
+     * @param cellData cellData 参数。
+     * @param contentProperty contentProperty 参数。
+     * @param globalConfiguration globalConfiguration 参数。
+     * @return 方法执行结果。
+     */
     @Override
     public LocalDateTime convertToJavaData(ReadCellData<?> cellData,
                                            ExcelContentProperty contentProperty,

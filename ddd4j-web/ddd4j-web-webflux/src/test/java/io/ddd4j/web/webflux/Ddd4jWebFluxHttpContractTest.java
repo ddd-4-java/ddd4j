@@ -65,6 +65,11 @@ import java.util.Objects;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 class Ddd4jWebFluxHttpContractTest extends AbstractWebContractTest {
 
     private AnnotationConfigApplicationContext applicationContext;
@@ -86,10 +91,17 @@ class Ddd4jWebFluxHttpContractTest extends AbstractWebContractTest {
         if (Objects.nonNull(applicationContext)) {
             applicationContext.close();
         }
+        /**
+         * BaseContext.clear() 方法。
+         */
         BaseContext.clear();
         CacheKit.unregister("webflux-contract");
     }
 
+    /**
+     * client() 方法。
+     * @return 方法执行结果。
+     */
     @Override
     protected WebContractClient client() {
         return contractClient;
@@ -97,6 +109,10 @@ class Ddd4jWebFluxHttpContractTest extends AbstractWebContractTest {
 
     private SubjectProvider provider(Subject subject) {
         return new SubjectProvider() {
+            /**
+             * 获取值。
+             * @return 方法执行结果。
+             */
             @Override
             public Subject getSubject() {
                 return subject;
@@ -104,6 +120,11 @@ class Ddd4jWebFluxHttpContractTest extends AbstractWebContractTest {
         };
     }
 
+    /**
+     * 类型说明。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     @Configuration(proxyBeanMethods = false)
     @EnableWebFlux
     static class ContractConfiguration {
@@ -129,6 +150,11 @@ class Ddd4jWebFluxHttpContractTest extends AbstractWebContractTest {
         }
     }
 
+    /**
+     * 类型说明。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     @RestController
     static class ContractController {
 
@@ -176,6 +202,14 @@ class Ddd4jWebFluxHttpContractTest extends AbstractWebContractTest {
 
     private record WebFluxContractClient(WebTestClient webTestClient) implements WebContractClient {
 
+        /**
+         * request() 方法。
+         * @param method 被调用的方法。
+         * @param path 路径。
+         * @param headers 消息头。
+         * @param body 字符串参数。
+         * @return 方法执行结果。
+         */
         @Override
         public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
             WebTestClient.RequestBodySpec request = webTestClient.method(HttpMethod.valueOf(method)).uri(path);

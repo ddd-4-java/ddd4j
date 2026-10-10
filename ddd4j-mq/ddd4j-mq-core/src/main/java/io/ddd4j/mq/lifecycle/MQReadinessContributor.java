@@ -20,6 +20,10 @@ public final class MQReadinessContributor implements ReadinessContributor {
         this.status = Objects.requireNonNull(status, "status must not be null");
     }
 
+    /**
+     * check() 方法。
+     * @return 方法执行结果。
+     */
     @Override
     public ReadinessResult check() {
         MQStartupStatus.Snapshot snapshot = status.snapshot();

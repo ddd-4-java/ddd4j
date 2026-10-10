@@ -75,82 +75,162 @@ public class StoredEventEntity {
     public StoredEventEntity() {
     }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getAggregateId() {
         return aggregateId;
     }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getAggregateType() {
         return aggregateType;
     }
 
+    /**
+     * 设置值。
+     * @param aggregateType 字符串参数。
+     */
     public void setAggregateType(String aggregateType) {
         this.aggregateType = aggregateType;
     }
 
+    /**
+     * 设置值。
+     * @param aggregateId 字符串参数。
+     */
     public void setAggregateId(String aggregateId) {
         this.aggregateId = aggregateId;
     }
 
+    /**
+     * 获取值。
+     * @return 结果数值。
+     */
     public long getVersion() {
         return version;
     }
 
+    /**
+     * 设置值。
+     * @param version version 参数。
+     */
     public void setVersion(long version) {
         this.version = version;
     }
 
+    /**
+     * 获取值。
+     * @return 结果数值。
+     */
     public long getPosition() {
         return position;
     }
 
+    /**
+     * 设置值。
+     * @param position position 参数。
+     */
     public void setPosition(long position) {
         this.position = position;
     }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getEventType() {
         return eventType;
     }
 
+    /**
+     * 设置值。
+     * @param eventType 字符串参数。
+     */
     public void setEventType(String eventType) {
         this.eventType = eventType;
     }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getEventId() {
         return eventId;
     }
 
+    /**
+     * 设置值。
+     * @param eventId 字符串参数。
+     */
     public void setEventId(String eventId) {
         this.eventId = eventId;
     }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getCorrelationId() {
         return correlationId;
     }
 
+    /**
+     * 设置值。
+     * @param correlationId 字符串参数。
+     */
     public void setCorrelationId(String correlationId) {
         this.correlationId = correlationId;
     }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getCausationId() {
         return causationId;
     }
 
+    /**
+     * 设置值。
+     * @param causationId 字符串参数。
+     */
     public void setCausationId(String causationId) {
         this.causationId = causationId;
     }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getPayload() {
         return payload;
     }
 
+    /**
+     * 设置值。
+     * @param payload 消息载荷。
+     */
     public void setPayload(String payload) {
         this.payload = payload;
     }
 
+    /**
+     * 获取值。
+     * @return 方法执行结果。
+     */
     public Instant getTimestamp() {
         return timestamp;
     }
 
+    /**
+     * 设置值。
+     * @param timestamp timestamp 参数。
+     */
     public void setTimestamp(Instant timestamp) {
         this.timestamp = timestamp;
     }

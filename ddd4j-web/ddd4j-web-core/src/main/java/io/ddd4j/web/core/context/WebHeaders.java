@@ -19,11 +19,17 @@ package io.ddd4j.web.core.context;
  */
 public final class WebHeaders {
 
+    /** 授权凭证请求头名称。 */
     public static final String AUTHORIZATION = "Authorization";
+    /** 幂等键请求头名称。 */
     public static final String IDEMPOTENCY_KEY = "Idempotency-Key";
+    /** 请求标识请求头名称。 */
     public static final String REQUEST_ID = "X-Request-Id";
+    /** 链路追踪标识请求头名称。 */
     public static final String TRACE_ID = "X-Trace-Id";
+    /** 租户标识请求头名称。 */
     public static final String TENANT_ID = "X-Tenant-Id";
+    /** 经过的代理链请求头名称。 */
     public static final String FORWARDED_FOR = "X-Forwarded-For";
 
     private WebHeaders() {

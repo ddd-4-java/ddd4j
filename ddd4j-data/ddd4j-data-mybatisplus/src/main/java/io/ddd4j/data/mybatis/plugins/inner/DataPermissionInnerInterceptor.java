@@ -53,6 +53,12 @@ public class DataPermissionInnerInterceptor implements InnerInterceptor {
         this.provider = provider;
     }
 
+    /**
+     * beforePrepare() 方法。
+     * @param sh sh 参数。
+     * @param connection connection 参数。
+     * @param transactionTimeout transactionTimeout 参数。
+     */
     @Override
     public void beforePrepare(StatementHandler sh, Connection connection, Integer transactionTimeout) {
         MappedStatement ms = (MappedStatement) SystemMetaObject.forObject(sh)

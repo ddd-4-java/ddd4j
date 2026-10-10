@@ -30,6 +30,11 @@ import io.ddd4j.extension.qrcode.model.QrCodeRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 class DefaultQrCodeServiceTests {
 
     @Test

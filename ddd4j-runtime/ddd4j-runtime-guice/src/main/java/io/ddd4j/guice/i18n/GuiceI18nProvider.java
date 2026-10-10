@@ -31,6 +31,12 @@ import java.util.ResourceBundle;
  */
 public class GuiceI18nProvider implements I18nProvider {
 
+    /**
+     * 获取值。
+     * @param key 幂等键。
+     * @param args 命令行参数。
+     * @return 结果字符串。
+     */
     @Override
     public String getMessage(String key, Object... args) {
         if (Objects.isNull(key)) {

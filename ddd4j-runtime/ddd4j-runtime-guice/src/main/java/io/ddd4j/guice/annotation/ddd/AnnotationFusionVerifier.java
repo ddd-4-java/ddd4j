@@ -32,6 +32,10 @@ public final class AnnotationFusionVerifier {
     private AnnotationFusionVerifier() {
     }
 
+    /**
+     * main() 方法。
+     * @param args 命令行参数。
+     */
     public static void main(String[] args) {
         int passed = 0;
         int failed = 0;
@@ -111,8 +115,17 @@ public final class AnnotationFusionVerifier {
 
 }
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 @DomainService
 class BusinessDomainService {
+    /**
+     * hello() 方法。
+     * @return 结果字符串。
+     */
     public String hello() {
         return "hello";
     }

@@ -39,6 +39,10 @@ public class GuiceSubjectProvider implements SubjectProvider {
     @Inject
     private Injector injector;
 
+    /**
+     * 获取值。
+     * @return 方法执行结果。
+     */
     @Override
     public Subject getSubject() {
         Optional<Subject> subject = Optional.ofNullable(injector).map(inj -> {

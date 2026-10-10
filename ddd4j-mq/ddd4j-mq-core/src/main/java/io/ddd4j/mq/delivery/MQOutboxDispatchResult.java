@@ -26,22 +26,42 @@ package io.ddd4j.mq.delivery;
 public record MQOutboxDispatchResult(int claimed, int published, int rescheduled, int dead,
                                      int confirmationLost) {
 
+    /**
+     * 获取值。
+     * @return 结果数值。
+     */
     public int getClaimed() {
             return claimed;
         }
 
+    /**
+     * 获取值。
+     * @return 结果数值。
+     */
     public int getConfirmationLost() {
             return confirmationLost;
         }
 
+    /**
+     * 获取值。
+     * @return 结果数值。
+     */
     public int getDead() {
             return dead;
         }
 
+    /**
+     * 获取值。
+     * @return 结果数值。
+     */
     public int getPublished() {
             return published;
         }
 
+    /**
+     * 获取值。
+     * @return 结果数值。
+     */
     public int getRescheduled() {
             return rescheduled;
         }

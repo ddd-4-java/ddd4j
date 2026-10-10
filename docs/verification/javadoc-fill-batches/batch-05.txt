@@ -1,0 +1,31 @@
+# modules=ddd4j-core,ddd4j-data files=30
+ddd4j-core/src/test/java/io/ddd4j/core/ddd/model/AggregateRootEventsTest.java	type class Order;type class TestEvent;type class OrderId;type class OrderEntityType;type class RecordingRepository
+ddd4j-core/src/test/java/io/ddd4j/core/ddd/model/AggregateRootTest.java	type class TestAggregate;type class TestDomainEvent;type class OrderId;type class TestEntityType
+ddd4j-core/src/test/java/io/ddd4j/core/ddd/model/metadata/DomainModelHelperTest.java	type class Order;type class MysqlOrderPO;type class JpaOrderEntity
+ddd4j-core/src/test/java/io/ddd4j/core/ddd/repository/RepositoryRegistryTest.java	type class Order;type class OrderQuery;type class StubOrderRepository
+ddd4j-core/src/test/java/io/ddd4j/core/util/SubjectKitTest.java	type class CustomPrincipal
+ddd4j-data/ddd4j-data-cqrs-dropwizard/src/test/java/io/ddd4j/data/cqrs/dropwizard/DropwizardCommandBusIT.java	type class CompanionCommand;type class UnknownCommand;type class OverlappingMultiTypeHandler;type class TestApplication
+ddd4j-data/ddd4j-data-cqrs-dropwizard/src/test/java/io/ddd4j/data/cqrs/dropwizard/SampleCommandHandler.java	type class SampleCommandHandler
+ddd4j-data/ddd4j-data-cqrs-helidon/src/test/java/io/ddd4j/data/cqrs/helidon/HelidonCommandBusIT.java	type class CompanionCommand;type class UnknownCommand;type class OverlappingMultiTypeHandler
+ddd4j-data/ddd4j-data-cqrs-helidon/src/test/java/io/ddd4j/data/cqrs/helidon/SampleCommandHandler.java	type class SampleCommandHandler
+ddd4j-data/ddd4j-data-cqrs-javalin/src/test/java/io/ddd4j/data/cqrs/javalin/JavalinCommandBusIT.java	type class CompanionCommand;type class UnknownCommand;type class OverlappingMultiTypeHandler
+ddd4j-data/ddd4j-data-cqrs-javalin/src/test/java/io/ddd4j/data/cqrs/javalin/SampleCommandHandler.java	type class SampleCommandHandler
+ddd4j-data/ddd4j-data-cqrs-micronaut/src/test/java/io/ddd4j/data/cqrs/micronaut/MicronautCommandBusIT.java	type class CompanionCommand;type class UnknownCommand;type class OverlappingMultiTypeHandler
+ddd4j-data/ddd4j-data-cqrs-quarkus/src/test/java/io/ddd4j/data/cqrs/quarkus/QuarkusCommandBusIT.java	type class ConflictCommand;type class CompanionCommand;type class UnknownCommand;type class ExclusiveConflictHandler;type class OverlappingMultiTypeHandler;type class FixedInstance
+ddd4j-data/ddd4j-data-cqrs-spring/src/test/java/io/ddd4j/data/cqrs/sample/SampleCommandHandler.java	field HANDLED
+ddd4j-data/ddd4j-data-cqrs-spring/src/test/java/io/ddd4j/data/cqrs/sample/TxProbeCommandHandler.java	field DISPATCHED_IN_ACTIVE_TX
+ddd4j-data/ddd4j-data-cqrs-spring/src/test/java/io/ddd4j/data/cqrs/spring/SpringCommandBusIT.java	type class ConflictCommand;type class CompanionCommand;type class UnknownCommand;type class ExclusiveConflictHandler;type class OverlappingMultiTypeHandler
+ddd4j-data/ddd4j-data-cqrs-vertx/src/test/java/io/ddd4j/data/cqrs/vertx/SampleCommandHandler.java	type class SampleCommandHandler
+ddd4j-data/ddd4j-data-cqrs-vertx/src/test/java/io/ddd4j/data/cqrs/vertx/VertxCommandBusIT.java	type class CompanionCommand;type class UnknownCommand;type class OverlappingMultiTypeHandler
+ddd4j-data/ddd4j-data-crypto/src/main/java/io/ddd4j/data/crypto/CryptoConstant.java	field INPUT_DECRYPT_DATA;field INPUT_ORIGINAL_DATA
+ddd4j-data/ddd4j-data-crypto/src/main/java/io/ddd4j/data/crypto/CryptoProperties.java	field PREFIX
+ddd4j-data/ddd4j-data-crypto/src/main/java/io/ddd4j/data/crypto/enums/CryptoType.java	enum-const NOOP;enum-const INTERNAL;enum-const FLKSEC
+ddd4j-data/ddd4j-data-crypto/src/main/java/io/ddd4j/data/crypto/enums/SymmetricAlgorithmType.java	enum-const SM4
+ddd4j-data/ddd4j-data-crypto/src/main/java/io/ddd4j/data/crypto/provider/CryptoProvider.java	method encrypt;method decrypt;method hmac
+ddd4j-data/ddd4j-data-crypto/src/main/java/io/ddd4j/data/crypto/strategy/CryptoStrategy.java	method getType;method encrypt;method decrypt;method hmac
+ddd4j-data/ddd4j-data-crypto/src/main/java/io/ddd4j/data/crypto/strategy/FlksecCryptoStrategy.java	type class EncryptResponse;type class DecryptResponse;type class SignResponse
+ddd4j-data/ddd4j-data-datascope/src/main/java/io/ddd4j/data/datascope/DataScopeProvider.java	method nonNullAllowed;method hasPermissions
+ddd4j-data/ddd4j-data-datascope/src/test/java/io/ddd4j/data/datascope/DataScopeProviderTest.java	type class Sample
+ddd4j-data/ddd4j-data-event-store-esdb/src/main/java/io/ddd4j/data/event/store/esdb/EsdbEventStore.java	type record StringAggregateRootId
+ddd4j-data/ddd4j-data-event-store-esdb/src/test/java/io/ddd4j/data/event/store/esdb/EsdbEventStoreIT.java	type record TestId;type class TestEvent
+ddd4j-data/ddd4j-data-event-store-esdb/src/test/java/io/ddd4j/data/event/store/esdb/EsdbEventStoreTest.java	type record TestId;type class TestEvent

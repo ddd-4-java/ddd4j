@@ -36,14 +36,29 @@ public record Money(BigDecimal amount, String currency) implements ValueObject {
         currency = currency.trim().toUpperCase(Locale.ROOT);
     }
 
+    /**
+     * cny() 方法。
+     * @param amount 金额。
+     * @return 当前对象自身，支持链式调用。
+     */
     public static Money cny(BigDecimal amount) {
         return new Money(amount, "CNY");
     }
 
+    /**
+     * zero() 方法。
+     * @param currency 字符串参数。
+     * @return 当前对象自身，支持链式调用。
+     */
     public static Money zero(String currency) {
         return new Money(BigDecimal.ZERO, currency);
     }
 
+    /**
+     * add() 方法。
+     * @param other other 参数。
+     * @return 当前对象自身，支持链式调用。
+     */
     public Money add(Money other) {
         Objects.requireNonNull(other, "other must not be null");
         if (!Objects.equals(currency, other.currency())) {
@@ -52,6 +67,11 @@ public record Money(BigDecimal amount, String currency) implements ValueObject {
         return new Money(amount.add(other.amount()), currency);
     }
 
+    /**
+     * multiply() 方法。
+     * @param factor factor 参数。
+     * @return 当前对象自身，支持链式调用。
+     */
     public Money multiply(int factor) {
         if (factor < 0) {
             throw new IllegalArgumentException("factor must not be negative");

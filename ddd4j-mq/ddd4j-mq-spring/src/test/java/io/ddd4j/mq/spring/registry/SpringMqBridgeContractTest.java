@@ -41,13 +41,25 @@ class SpringMqBridgeContractTest {
         assertTrue(processor.getListeners().get(0).isRequired());
     }
 
+    /**
+     * 订单监听器示例，用于验证监听器能被发现并装配到正确 topic。
+     */
     static final class OrderListener {
 
+        /**
+         * onPaid() 方法。
+         * @param event 事件消息。
+         */
         @MQEventListener(topic = "orders", tags = "paid")
         public void onPaid(OrderPaidEvent event) {
         }
     }
 
+    /**
+     * 类型说明。
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
     static final class OrderPaidEvent extends MQEvent {
     }
 }

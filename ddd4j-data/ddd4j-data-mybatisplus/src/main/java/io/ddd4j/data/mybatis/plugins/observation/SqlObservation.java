@@ -24,22 +24,42 @@ package io.ddd4j.data.mybatis.plugins.observation;
  */
 public record SqlObservation(String statementId, String sql, long elapsedNanos, Throwable error) {
 
+    /**
+     * elapsedMillis() 方法。
+     * @return 结果数值。
+     */
     public long elapsedMillis() {
         return elapsedNanos / 1_000_000L;
     }
 
+    /**
+     * 获取值。
+     * @return 结果数值。
+     */
     public long getElapsedNanos() {
             return elapsedNanos;
         }
 
+    /**
+     * 获取值。
+     * @return 方法执行结果。
+     */
     public Throwable getError() {
             return error;
         }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getSql() {
             return sql;
         }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getStatementId() {
             return statementId;
         }

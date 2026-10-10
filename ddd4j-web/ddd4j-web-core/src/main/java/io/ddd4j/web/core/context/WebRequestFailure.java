@@ -19,14 +19,26 @@ package io.ddd4j.web.core.context;
  */
 public record WebRequestFailure(String method, String path, Throwable cause) {
 
+    /**
+     * 获取值。
+     * @return 方法执行结果。
+     */
     public Throwable getCause() {
             return cause;
         }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getMethod() {
             return method;
         }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getPath() {
             return path;
         }

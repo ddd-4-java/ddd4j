@@ -1,0 +1,31 @@
+# modules=ddd4j-samples,ddd4j-web files=30
+ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/main/java/io/ddd4j/sample/quarkus/cqrs/order/domain/repository/OrderRepository.java	method findByOrderNo;method findAll
+ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/main/java/io/ddd4j/sample/quarkus/cqrs/order/web/OrderResource.java	type record CreateOrderRequest;type record AddLineRequest;type record CancelAllRequest
+ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/main/java/io/ddd4j/sample/quarkus/cqrs/order/web/dto/OrderResponse.java	type record OrderLineResponse
+ddd4j-samples/ddd4j-sample-quarkus-satoken/src/main/java/io/ddd4j/sample/quarkus/satoken/goods/domain/GoodsRepository.java	method findByCode;method findByStatus
+ddd4j-samples/ddd4j-sample-quarkus-satoken/src/main/java/io/ddd4j/sample/quarkus/satoken/goods/domain/GoodsStatus.java	enum-const ON_SALE;enum-const OFF_SALE;enum-const DRAFT;enum-const DELETED
+ddd4j-samples/ddd4j-sample-quarkus-satoken/src/main/java/io/ddd4j/sample/quarkus/satoken/order/domain/model/OrderStatus.java	enum-const DRAFT;enum-const PAID;enum-const SHIPPED;enum-const CANCELLED
+ddd4j-samples/ddd4j-sample-quarkus-satoken/src/main/java/io/ddd4j/sample/quarkus/satoken/order/domain/repository/OrderRepository.java	method findByOrderNo;method findAll
+ddd4j-samples/ddd4j-sample-quarkus-satoken/src/main/java/io/ddd4j/sample/quarkus/satoken/order/infrastructure/InMemoryOrderRepository.java	type class OrderRow;type class OrderLineRow
+ddd4j-samples/ddd4j-sample-quarkus-satoken/src/main/java/io/ddd4j/sample/quarkus/satoken/order/web/OrderResource.java	type record DiscountView
+ddd4j-samples/ddd4j-sample-quarkus-satoken/src/main/java/io/ddd4j/sample/quarkus/satoken/order/web/dto/OrderResponse.java	type record OrderLineResponse
+ddd4j-samples/ddd4j-sample-quarkus-satoken/src/main/java/io/ddd4j/sample/quarkus/satoken/rbac/AuthenticationResource.java	type record LoginRequest
+ddd4j-samples/ddd4j-sample-quarkus-shiro/src/main/java/io/ddd4j/sample/quarkus/shiro/config/ShiroRuntimeConfig.java	type class RbacRealm
+ddd4j-samples/ddd4j-sample-quarkus-shiro/src/main/java/io/ddd4j/sample/quarkus/shiro/goods/domain/GoodsRepository.java	method findByCode;method findByStatus
+ddd4j-samples/ddd4j-sample-quarkus-shiro/src/main/java/io/ddd4j/sample/quarkus/shiro/goods/domain/GoodsStatus.java	enum-const ON_SALE;enum-const OFF_SALE;enum-const DRAFT;enum-const DELETED
+ddd4j-samples/ddd4j-sample-quarkus-shiro/src/main/java/io/ddd4j/sample/quarkus/shiro/order/domain/model/OrderStatus.java	enum-const DRAFT;enum-const PAID;enum-const SHIPPED;enum-const CANCELLED
+ddd4j-samples/ddd4j-sample-quarkus-shiro/src/main/java/io/ddd4j/sample/quarkus/shiro/order/domain/repository/OrderRepository.java	method findByOrderNo;method findAll
+ddd4j-samples/ddd4j-sample-quarkus-shiro/src/main/java/io/ddd4j/sample/quarkus/shiro/order/infrastructure/InMemoryOrderRepository.java	type class OrderRow;type class OrderLineRow
+ddd4j-samples/ddd4j-sample-quarkus-shiro/src/main/java/io/ddd4j/sample/quarkus/shiro/order/web/OrderResource.java	type record DiscountView
+ddd4j-samples/ddd4j-sample-quarkus-shiro/src/main/java/io/ddd4j/sample/quarkus/shiro/order/web/dto/OrderResponse.java	type record OrderLineResponse
+ddd4j-samples/ddd4j-sample-quarkus-shiro/src/main/java/io/ddd4j/sample/quarkus/shiro/rbac/AuthenticationResource.java	type record LoginRequest
+ddd4j-samples/ddd4j-sample-quarkus/src/main/java/io/ddd4j/sample/quarkus/goods/domain/GoodsRepository.java	method findByCode;method findByStatus
+ddd4j-samples/ddd4j-sample-quarkus/src/main/java/io/ddd4j/sample/quarkus/goods/domain/GoodsStatus.java	enum-const ON_SALE;enum-const OFF_SALE;enum-const DRAFT;enum-const DELETED
+ddd4j-samples/ddd4j-sample-quarkus/src/main/java/io/ddd4j/sample/quarkus/order/web/OrderResource.java	type record CreateOrderRequest;type record AddOrderLineRequest;type record OrderResponse
+ddd4j-samples/ddd4j-sample-vertx-cqrs/src/main/java/io/ddd4j/sample/vertx/cqrs/VertxCqrsApplication.java	field EVENT_STORE;field ORDER_REPO;field COMMAND_HANDLER;field COMMAND_BUS;field READ_VIEW;field CHUNK_READER;field VIEW_MANAGER
+ddd4j-samples/ddd4j-sample-vertx-cqrs/src/main/java/io/ddd4j/sample/vertx/cqrs/repository/EventSourcingOrderRepository.java	type record OrderAggregateId
+ddd4j-samples/ddd4j-sample-vertx/src/main/java/io/ddd4j/sample/vertx/VertxOrderRoutes.java	type record TokenResponse
+ddd4j-web/ddd4j-web-core/src/main/java/io/ddd4j/web/core/auth/AuthenticationMode.java	enum-const DISABLED;enum-const OPTIONAL;enum-const REQUIRED
+ddd4j-web/ddd4j-web-core/src/main/java/io/ddd4j/web/core/auth/BearerSubjectAuthenticator.java	type record Authentication
+ddd4j-web/ddd4j-web-core/src/main/java/io/ddd4j/web/core/auth/WebAccessPolicy.java	method authenticationMode;method disabled;method optional;method required;method requiredExcept
+ddd4j-web/ddd4j-web-core/src/main/java/io/ddd4j/web/core/context/ClientIpResolver.java	method resolve;method remoteAddressOnly;method trustedProxy

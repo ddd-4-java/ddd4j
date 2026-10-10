@@ -16,5 +16,10 @@ package io.ddd4j.kit.lang;
 
 import cn.hutool.core.io.unit.DataSizeUtil;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 public class DataSizeKit extends DataSizeUtil {
 }

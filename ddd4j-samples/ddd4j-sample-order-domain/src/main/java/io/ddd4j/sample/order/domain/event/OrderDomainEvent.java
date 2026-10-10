@@ -17,6 +17,11 @@ package io.ddd4j.sample.order.domain.event;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.StringEntityId;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 public abstract class OrderDomainEvent extends DomainEvent<StringEntityId> {
 
     private static final long serialVersionUID = 1L;

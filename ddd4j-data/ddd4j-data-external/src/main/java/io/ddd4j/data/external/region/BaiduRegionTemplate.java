@@ -88,6 +88,11 @@ public class BaiduRegionTemplate {
         this.regionCache = Objects.isNull(regionCache) ? RegionCache.none() : regionCache;
     }
 
+    /**
+     * main() 方法。
+     * @param args 命令行参数。
+     * @throws IOException 打开文件流失败时抛出。
+     */
     public static void main(String[] args) throws IOException {
 
         BaiduRegionTemplate template = new BaiduRegionTemplate("CGxeqGuAGgP7n475kMPTi58y2EqjAPTh", HttpClient.newHttpClient());
@@ -172,11 +177,20 @@ public class BaiduRegionTemplate {
             if (e instanceof InterruptedException) {
                 Thread.currentThread().interrupt();
             }
+            /**
+             * log.error() 方法。
+             * @param e.getMessage() e.getMessage() 参数。
+             */
             log.error("IP : {} >> Country/Region Parser Error：{}", ip, e.getMessage());
         }
         return Optional.empty();
     }
 
+    /**
+     * 获取值。
+     * @param ip 字符串参数。
+     * @return 方法执行结果。
+     */
     public RegionAddress getRegionAddress(String ip) {
         try {
             Optional<JSONObject> optional = this.getLocationByIp(ip);
@@ -207,6 +221,11 @@ public class BaiduRegionTemplate {
         }
     }
 
+    /**
+     * 获取值。
+     * @param ip 字符串参数。
+     * @return 方法执行结果。
+     */
     public RegionEnum getRegionByIp(String ip) {
         try {
             Optional<JSONObject> optional = this.getLocationByIp(ip);
@@ -219,6 +238,11 @@ public class BaiduRegionTemplate {
 
                     String[] addrArr = StrKit.tokenizeToStringArray(address, "|");
 
+                    /**
+                     * RegionEnum.getByCode2() 方法。
+                     * @param addrArr[0] addrArr[0] 参数。
+                     * @return 方法执行结果。
+                     */
                     RegionEnum region = RegionEnum.getByCode2(addrArr[0]);
 
                     log.info(" IP : {} >> Country/Region : {} >> {} ", ip, region.getCode2(), region.getCname());
@@ -234,12 +258,22 @@ public class BaiduRegionTemplate {
         }
     }
 
+    /**
+     * 获取值。
+     * @param ip 字符串参数。
+     * @return 方法执行结果。
+     */
     public Location getLocation(String ip) {
         try {
             Optional<JSONObject> optional = this.getLocationByIp(ip);
             if (optional.isPresent()) {
                 JSONObject regionData = optional.get();
                 if (regionData.getIntValue("status") == 0) {
+/**
+ * regionData.getJSONObject() 方法。
+ * @param "content" "content" 参数。
+ * @return 方法执行结果。
+ */
 
                     // CN|浙江省|杭州市|None|None|99|99
                     JSONObject content = regionData.getJSONObject("content");
@@ -260,6 +294,11 @@ public class BaiduRegionTemplate {
         return null;
     }
 
+    /**
+     * 判断布尔状态。
+     * @param ip 字符串参数。
+     * @return 判断结果。
+     */
     public boolean isMainlandIp(String ip) {
         try {
             Optional<JSONObject> optional = this.getLocationByIp(ip);
@@ -276,6 +315,11 @@ public class BaiduRegionTemplate {
         return true;
     }
 
+    /**
+     * 经纬度坐标：表示一次 IP 定位得到的城市中心点位置。
+     *
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     */
     @Data
     @AllArgsConstructor
     public class Location {

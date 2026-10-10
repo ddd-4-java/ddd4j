@@ -42,12 +42,27 @@ public final class JavalinSample {
     private JavalinSample() {
     }
 
+    /**
+     * main() 方法。
+     * @param args 命令行参数。
+     */
     public static void main(String[] args) {
         JavalinApplication application = start(7000);
+        /**
+         * log.info() 方法。
+         * @param {}" {}" 参数。
+         * @param application.app().port() application.app().port() 参数。
+         * @param application.token() application.token() 参数。
+         */
         log.info("Javalin Order sample started at http://localhost:{}; demo Bearer token: {}",
                 application.app().port(), application.token());
     }
 
+    /**
+     * 启动。
+     * @param port port 参数。
+     * @return 方法执行结果。
+     */
     public static JavalinApplication start(int port) {
         DomainEventPublisher eventPublisher = new NoOpDomainEventPublisher();
         InMemorySubject subject = new InMemorySubject(event -> log.debug("Authentication event: {}", event));
@@ -80,6 +95,15 @@ public final class JavalinSample {
         }
     }
 
+    /**
+     * 已启动的 Javalin 应用句柄：持有 HTTP 实例、演示用 Bearer 令牌与 SPI 注册作用域。
+     *
+     * <p>实现 {@link AutoCloseable}，关闭时先停止 HTTP 服务，再关闭 SPI 作用域。
+     *
+     * @param app 已启动的 Javalin HTTP 实例
+     * @param token 演示登录后返回的 Bearer 令牌
+     * @param spiScope 本次启动注册的 SPI 作用域
+     */
     public record JavalinApplication(Javalin app, String token, SpiRegistrationScope spiScope)
             implements AutoCloseable {
 
@@ -89,6 +113,9 @@ public final class JavalinSample {
             Objects.requireNonNull(spiScope, "spiScope must not be null");
         }
 
+        /**
+         * 关闭并释放资源。
+         */
         @Override
         public void close() {
             try {

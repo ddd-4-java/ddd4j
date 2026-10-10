@@ -83,6 +83,10 @@ public class AuthRequest {
         return new AuthRequest(loginId);
     }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getLoginIdAsString() {
         return Objects.isNull(loginId) ? null : String.valueOf(loginId);
     }
@@ -95,6 +99,11 @@ public class AuthRequest {
         return sessionConfig.getTimeout();
     }
 
+    /**
+     * 设置值。
+     * @param timeout 超时时间。
+     * @return 当前对象自身，支持链式调用。
+     */
     public AuthRequest setTimeout(long timeout) {
         sessionConfig.setTimeout(timeout);
         return this;
@@ -108,6 +117,11 @@ public class AuthRequest {
         return sessionConfig.getDeviceType();
     }
 
+    /**
+     * 设置值。
+     * @param deviceType 字符串参数。
+     * @return 当前对象自身，支持链式调用。
+     */
     public AuthRequest setDeviceType(String deviceType) {
         sessionConfig.setDeviceType(deviceType);
         return this;
@@ -124,6 +138,11 @@ public class AuthRequest {
         return this;
     }
 
+    /**
+     * 判断与另一对象是否相等。
+     * @param o 比较对象。
+     * @return 相等返回 {@code true}，否则返回 {@code false}。
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -136,11 +155,19 @@ public class AuthRequest {
         return Objects.equals(loginId, that.loginId);
     }
 
+    /**
+     * 返回对象哈希码。
+     * @return 哈希码。
+     */
     @Override
     public int hashCode() {
         return Objects.hash(loginId);
     }
 
+    /**
+     * 返回对象的字符串表示。
+     * @return 对象的字符串表示。
+     */
     @Override
     public String toString() {
         return "AuthRequest{loginId=" + loginId

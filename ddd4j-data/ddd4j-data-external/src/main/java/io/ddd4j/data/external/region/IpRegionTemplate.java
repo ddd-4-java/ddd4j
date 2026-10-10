@@ -21,16 +21,34 @@ public interface IpRegionTemplate {
 
     IpRegionTemplate NONE = new IpRegionTemplate() {
 
+        /**
+         * 空实现：始终返回“未匹配”地区信息字符串。
+         *
+         * @param ip IPv4 地址
+         * @return 未匹配的地区信息字符串
+         */
         @Override
         public String getRegion(String ip) {
             return XdbSearcher.NOT_MATCH;
         }
 
+        /**
+         * 空实现：始终返回“未匹配”地区地址。
+         *
+         * @param ip IPv4 地址
+         * @return 未匹配的地区地址
+         */
         @Override
         public RegionAddress getRegionAddress(String ip) {
             return XdbSearcher.NOT_MATCH_REGION_ADDRESS;
         }
 
+        /**
+         * 空实现：始终返回未知地区枚举。
+         *
+         * @param ip IPv4 地址
+         * @return 未知地区枚举
+         */
         @Override
         public RegionEnum getRegionByIp(String ip) {
             return RegionEnum.UK;

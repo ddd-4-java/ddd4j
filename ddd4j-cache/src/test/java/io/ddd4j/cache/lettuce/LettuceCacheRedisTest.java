@@ -125,7 +125,9 @@ class LettuceCacheRedisTest {
      * 测试值对象（Jackson 需要公共字段或 getter/setter）。
      */
     public static class User {
+        /** 字段说明。 */
         public Long id;
+        /** 字段说明。 */
         public String name;
 
         public User() {

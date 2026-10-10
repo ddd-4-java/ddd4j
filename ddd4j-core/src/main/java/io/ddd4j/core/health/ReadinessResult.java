@@ -59,7 +59,15 @@ public record ReadinessResult(String name, boolean ready, Map<String, String> de
 
     public Map<String, String> getDetails() { return details; }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getName() { return name; }
 
+    /**
+     * 判断布尔状态。
+     * @return 判断结果。
+     */
     public boolean isReady() { return ready; }
 }

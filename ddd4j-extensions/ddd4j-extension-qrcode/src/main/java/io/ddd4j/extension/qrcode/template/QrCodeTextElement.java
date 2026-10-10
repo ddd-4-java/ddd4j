@@ -35,10 +35,18 @@ public final class QrCodeTextElement extends QrCodeFrameElement {
         this.color = builder.color;
     }
 
+    /**
+     * 创建构建器。
+     * @param text 文本内容。
+     * @return 方法执行结果。
+     */
     public static Builder builder(String text) {
         return new Builder(text);
     }
 
+    /**
+     * 文本外框元素的构建器，用于链式设置文本位置、字体、颜色与层级并构建元素。
+     */
     public static final class Builder {
         private final String text;
         private int x;
@@ -55,10 +63,39 @@ public final class QrCodeTextElement extends QrCodeFrameElement {
             this.text = text;
         }
 
+        /**
+         * bounds() 方法。
+         * @param x x 参数。
+         * @param y y 参数。
+         * @param width width 参数。
+         * @param height height 参数。
+         * @return 方法执行结果。
+         */
         public Builder bounds(int x, int y, int width, int height) { this.x = x; this.y = y; this.width = width; this.height = height; return this; }
+        /**
+         * zIndex() 方法。
+         * @param zIndex zIndex 参数。
+         * @return 方法执行结果。
+         */
         public Builder zIndex(int zIndex) { this.zIndex = zIndex; return this; }
+        /**
+         * font() 方法。
+         * @param fontName 字符串参数。
+         * @param fontSize fontSize 参数。
+         * @param bold bold 参数。
+         * @return 方法执行结果。
+         */
         public Builder font(String fontName, int fontSize, boolean bold) { this.fontName = fontName; this.fontSize = fontSize; this.bold = bold; return this; }
+        /**
+         * color() 方法。
+         * @param color 字符串参数。
+         * @return 方法执行结果。
+         */
         public Builder color(String color) { this.color = color; return this; }
+        /**
+         * 构建对象。
+         * @return 当前对象自身，支持链式调用。
+         */
         public QrCodeTextElement build() { return new QrCodeTextElement(this); }
     }
 }

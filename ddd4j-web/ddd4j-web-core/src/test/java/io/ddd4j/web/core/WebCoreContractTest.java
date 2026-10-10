@@ -50,6 +50,11 @@ import io.ddd4j.web.core.idempotency.CacheIdempotencyGuard;
 import io.ddd4j.web.core.idempotency.IdempotencyLease;
 import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 class WebCoreContractTest {
 
     @AfterEach
@@ -265,6 +270,10 @@ class WebCoreContractTest {
 
     private SubjectProvider provider(Subject subject) {
         return new SubjectProvider() {
+            /**
+             * 获取值。
+             * @return 方法执行结果。
+             */
             @Override
             public Subject getSubject() {
                 return subject;

@@ -119,6 +119,12 @@ public final class AuthConfig {
             setCredentialsMatcher(new SimpleCredentialsMatcher());
         }
 
+        /**
+         * 执行处理逻辑。
+         * @param token 访问令牌。
+         * @return 方法执行结果。
+         * @throws AuthenticationException 出现异常时抛出。
+         */
         @Override
         protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
             UsernamePasswordToken upt = (UsernamePasswordToken) token;
@@ -134,6 +140,11 @@ public final class AuthConfig {
             return new SimpleAuthenticationInfo(user, user.password().toCharArray(), getName());
         }
 
+        /**
+         * 执行处理逻辑。
+         * @param principals principals 参数。
+         * @return 方法执行结果。
+         */
         @Override
         protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
             Object primary = principals.getPrimaryPrincipal();

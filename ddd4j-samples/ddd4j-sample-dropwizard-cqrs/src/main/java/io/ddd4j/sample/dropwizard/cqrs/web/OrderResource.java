@@ -37,6 +37,11 @@ import java.util.Map;
 @Consumes(MediaType.APPLICATION_JSON)
 public class OrderResource {
 
+    /**
+     * 创建对象。
+     * @param request 请求对象。
+     * @return 方法执行结果。
+     */
     @POST
     public Response createOrder(CreateOrderRequest request) {
         if (DropwizardCqrsApplication.ORDER_REPO.findByOrderNo(request.orderNo()).isPresent()) {
@@ -54,6 +59,11 @@ public class OrderResource {
                 .build();
     }
 
+    /**
+     * 获取值。
+     * @param id 标识值。
+     * @return 方法执行结果。
+     */
     @GET
     @Path("/{id}")
     public Response getOrder(@PathParam("id") String id) {

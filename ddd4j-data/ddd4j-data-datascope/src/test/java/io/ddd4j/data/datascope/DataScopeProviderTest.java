@@ -18,6 +18,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 class DataScopeProviderTest {
 
     @Test
@@ -48,6 +53,9 @@ class DataScopeProviderTest {
         assertThat(validator.isValid(null, null)).isFalse();
     }
 
+    /**
+     * 带数据权限注解的测试夹具字段宿主，用于验证校验器从注解读取数据类型。
+     */
     private static class Sample {
 
         @io.ddd4j.data.datascope.annotation.RequiresDataPermissions(dataType = "project")

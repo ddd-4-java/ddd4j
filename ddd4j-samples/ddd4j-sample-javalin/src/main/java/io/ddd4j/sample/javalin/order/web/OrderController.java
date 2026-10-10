@@ -43,6 +43,9 @@ public final class OrderController {
                 "applicationService must not be null");
     }
 
+    /**
+     * routes() 方法。
+     */
     public void routes() {
         post("/api/orders", context -> {
             CreateOrderRequest request = context.bodyAsClass(CreateOrderRequest.class);
@@ -92,12 +95,39 @@ public final class OrderController {
                 order.status(), total.amount(), total.currency(), order.lines().size());
     }
 
+    /**
+     * 创建订单请求参数：订单号与买方信息。
+     *
+     * @param orderNo 订单号
+     * @param buyerId 买方标识
+     * @param buyerName 买方名称
+     */
     public record CreateOrderRequest(String orderNo, String buyerId, String buyerName) {
     }
 
+    /**
+     * 追加订单行请求参数：商品标识、名称、数量与单价。
+     *
+     * @param goodsId 商品标识
+     * @param goodsName 商品名称
+     * @param quantity 购买数量
+     * @param unitPrice 商品单价
+     */
     public record AddOrderLineRequest(String goodsId, String goodsName, int quantity, BigDecimal unitPrice) {
     }
 
+    /**
+     * 订单响应视图：订单关键信息与金额汇总。
+     *
+     * @param id 订单标识
+     * @param orderNo 订单号
+     * @param buyerId 买方标识
+     * @param buyerName 买方名称
+     * @param status 订单状态
+     * @param totalAmount 订单总金额
+     * @param currency 金额币种
+     * @param lineCount 订单行数量
+     */
     public record OrderResponse(String id, String orderNo, String buyerId, String buyerName,
                                 OrderStatus status, BigDecimal totalAmount, String currency, int lineCount) {
     }

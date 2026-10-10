@@ -53,19 +53,37 @@ class ContextTest {
 
     private DomainEventPublisher stub(String name) {
         return new DomainEventPublisher() {
+            /**
+             * 发布数据。
+             * @param <ID> 类型参数。
+             * @param event 事件消息。
+             */
             @Override
             public <ID extends EntityId> void publish(DomainEvent<ID> event) {
 
             }
 
+            /**
+             * 发布数据。
+             * @param event 事件消息。
+             */
             @Override
             public void publish(Object event) {
             }
 
+            /**
+             * publishAll() 方法。
+             * @param <ID> 类型参数。
+             * @param domainEvents 集合。
+             */
             @Override
             public <ID extends EntityId> void publishAll(Collection<DomainEvent<ID>> domainEvents) {
             }
 
+            /**
+             * 返回对象的字符串表示。
+             * @return 对象的字符串表示。
+             */
             @Override
             public String toString() {
                 return name;

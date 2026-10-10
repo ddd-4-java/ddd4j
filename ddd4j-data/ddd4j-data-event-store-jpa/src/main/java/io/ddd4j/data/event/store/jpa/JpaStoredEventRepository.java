@@ -43,6 +43,15 @@ public interface JpaStoredEventRepository {
      */
     List<StoredEventEntity> findByAggregateTypeAndAggregateIdOrderByVersionAsc(String aggregateType, String aggregateId);
 
+    /**
+     * 按版本区间升序查询指定聚合的事件。
+     *
+     * @param aggregateType 聚合类型
+     * @param aggregateId   聚合根标识
+     * @param fromVersion    起始版本号（包含）
+     * @param toVersion      结束版本号（包含）
+     * @return 事件实体列表（版本升序）
+     */
     List<StoredEventEntity> findByAggregateTypeAndAggregateIdAndVersionBetweenOrderByVersionAsc(
             String aggregateType, String aggregateId, long fromVersion, long toVersion);
 

@@ -30,10 +30,18 @@ public final class QrCodeBatchResult {
         this.items = Collections.unmodifiableList(new ArrayList<QrCodeBatchItemResult>(items));
     }
 
+    /**
+     * successCount() 方法。
+     * @return 结果数值。
+     */
     public long successCount() {
         return items.stream().filter(QrCodeBatchItemResult::isSuccess).count();
     }
 
+    /**
+     * failureCount() 方法。
+     * @return 结果数值。
+     */
     public long failureCount() {
         return items.size() - successCount();
     }

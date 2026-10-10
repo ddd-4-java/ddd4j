@@ -36,10 +36,19 @@ public final class QrCodeFrame {
         this.elements = Collections.unmodifiableList(new ArrayList<>(builder.elements));
     }
 
+    /**
+     * 创建构建器。
+     * @param width width 参数。
+     * @param height height 参数。
+     * @return 方法执行结果。
+     */
     public static Builder builder(int width, int height) {
         return new Builder(width, height);
     }
 
+    /**
+     * {@link QrCodeFrame} 的构建器，用于设置外框尺寸、背景色并追加区域元素。
+     */
     public static final class Builder {
         private final int width;
         private final int height;
@@ -51,16 +60,30 @@ public final class QrCodeFrame {
             this.height = height;
         }
 
+        /**
+         * backgroundColor() 方法。
+         * @param backgroundColor 字符串参数。
+         * @return 方法执行结果。
+         */
         public Builder backgroundColor(String backgroundColor) {
             this.backgroundColor = backgroundColor;
             return this;
         }
 
+        /**
+         * 追加元素。
+         * @param element element 参数。
+         * @return 方法执行结果。
+         */
         public Builder addElement(QrCodeFrameElement element) {
             this.elements.add(element);
             return this;
         }
 
+        /**
+         * 构建对象。
+         * @return 当前对象自身，支持链式调用。
+         */
         public QrCodeFrame build() {
             return new QrCodeFrame(this);
         }

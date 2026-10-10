@@ -27,28 +27,55 @@ import java.util.Objects;
  */
 public class Ddd4jTenantContext {
 
+    /**
+     * 设置值。
+     * @param tenantId 租户标识。
+     */
     public void setCurrentTenantId(Object tenantId) {
 		if (Objects.isNull(tenantId)) {
 			clear();
 			return;
+		/**
+		 * }
+		ThreadContext.set() 方法。
+		 * @param ContextConstants.TENANT_ID ContextConstants.TENANT_ID 参数。
+		 * @param tenantId 租户标识。
+		 */
 		}
 		ThreadContext.set(ContextConstants.TENANT_ID, tenantId);
 	}
 
+    /**
+     * 获取值。
+     * @return 结果对象。
+     */
     public Object getCurrentTenantId() {
 		return ThreadContext.get(ContextConstants.TENANT_ID);
 	}
 
+    /**
+     * 清空数据。
+     */
     public void clear() {
         ThreadContext.remove(ContextConstants.TENANT_ID);
     }
 
+    /**
+     * 打开资源。
+     * @param tenantId 租户标识。
+     * @return 方法执行结果。
+     */
     public Scope open(Object tenantId) {
         Object previous = getCurrentTenantId();
         setCurrentTenantId(tenantId);
         return new Scope(previous);
     }
 
+    /**
+     * 租户切换作用域，关闭时恢复进入前的租户标识。
+     *
+     * <p>配合 {@code open} 方法以 try-with-resources 方式使用。</p>
+     */
     public final class Scope implements AutoCloseable {
 
         private final Object previous;
@@ -57,6 +84,9 @@ public class Ddd4jTenantContext {
             this.previous = previous;
         }
 
+        /**
+         * 关闭并释放资源。
+         */
         @Override
         public void close() {
             setCurrentTenantId(previous);

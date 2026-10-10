@@ -36,6 +36,10 @@ public class ValidateException extends BizRuntimeException {
         super(ResultCode.PARAMETER_VALIDATION_FAILED.getCode(), errorMsg);
     }
 
+    /**
+     * 返回对象的字符串表示。
+     * @return 对象的字符串表示。
+     */
     public String toString() {
         return (new StringJoiner(", ", ValidateException.class.getSimpleName() + "[", "]")).add("code=" + this.getCode()).add("msg=" + this.getMessage()).add("errorMap=" + this.errorMap).toString();
     }

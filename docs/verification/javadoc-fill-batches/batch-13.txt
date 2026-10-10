@@ -1,0 +1,31 @@
+# modules=ddd4j-runtime,ddd4j-samples files=30
+ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/annotation/SpringDddAnnotationFusionTest.java	type class TestDomainService;type class TestDomainRepository;type class AggregateRoot
+ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/command/SpringCommandBusTest.java	type class TestCommand;type class AnotherCommand;type class UnknownCommand;type class TestCommandExecutor;type class AnotherCommandExecutor;type class TestConfig
+ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/cqrs/MicrometerProjectionMetricsTest.java	type class OnRunCompletedTests;type class OnRunFailedTests;type class OnRunStartedTests
+ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/cqrs/SpringCqrsRuntimeContractTest.java	type class SpringCqrsTestConfig
+ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/cqrs/SpringJpaViewManagerTest.java	type class GetProjectionStatusTests
+ddd4j-runtime/ddd4j-runtime-testkit/src/main/java/io/ddd4j/runtime/testkit/AbstractCqrsRuntimeContractTest.java	type class CmdA;type class CmdB;type class UnregisteredCmd;type class StubExecutorA;type class StubExecutorB
+ddd4j-runtime/ddd4j-runtime-testkit/src/main/java/io/ddd4j/runtime/testkit/CqrsRuntimeContract.java	method runtimeName;method commandBus;method viewManager;method viewScheduler;method positionRepository;method close
+ddd4j-runtime/ddd4j-runtime-testkit/src/main/java/io/ddd4j/runtime/testkit/RuntimeContract.java	method start;method services;method readiness;method close
+ddd4j-runtime/ddd4j-runtime-vertx/src/main/java/io/ddd4j/vertx/VertxDomainEventPublisher.java	field ADDRESS
+ddd4j-runtime/ddd4j-runtime-vertx/src/test/java/io/ddd4j/vertx/VertxDomainEventPublisherTest.java	type record LocalEvent
+ddd4j-runtime/ddd4j-runtime-vertx/src/test/java/io/ddd4j/vertx/cqrs/VertxCqrsRuntimeContractTest.java	type class StubViewManager;type class NoopViewScheduler
+ddd4j-samples/ddd4j-sample-dropwizard-cqrs/src/main/java/io/ddd4j/sample/dropwizard/cqrs/DropwizardCqrsApplication.java	field EVENT_STORE;field ORDER_REPO;field COMMAND_HANDLER;field COMMAND_BUS;field READ_VIEW;field CHUNK_READER;field VIEW_MANAGER
+ddd4j-samples/ddd4j-sample-dropwizard-cqrs/src/main/java/io/ddd4j/sample/dropwizard/cqrs/repository/EventSourcingOrderRepository.java	type record OrderAggregateId
+ddd4j-samples/ddd4j-sample-dropwizard-cqrs/src/main/java/io/ddd4j/sample/dropwizard/cqrs/web/OrderResource.java	type record CreateOrderRequest
+ddd4j-samples/ddd4j-sample-dropwizard/src/main/java/io/ddd4j/sample/dropwizard/DropwizardOrderResource.java	type class CreateOrderRequest;type class AddOrderLineRequest;type record TokenResponse
+ddd4j-samples/ddd4j-sample-helidon-cqrs/src/main/java/io/ddd4j/sample/helidon/cqrs/repository/EventSourcingOrderRepository.java	type record OrderAggregateId
+ddd4j-samples/ddd4j-sample-helidon-cqrs/src/main/java/io/ddd4j/sample/helidon/cqrs/web/OrderResource.java	type record CreateOrderRequest
+ddd4j-samples/ddd4j-sample-helidon/src/main/java/io/ddd4j/sample/helidon/HelidonOrderResource.java	type class CreateOrderRequest;type class AddOrderLineRequest;type record TokenResponse
+ddd4j-samples/ddd4j-sample-javalin-cqrs/src/main/java/io/ddd4j/sample/javalin/cqrs/JavalinCqrsApplication.java	field DEFAULT_PORT
+ddd4j-samples/ddd4j-sample-javalin-cqrs/src/main/java/io/ddd4j/sample/javalin/cqrs/cache/GoodsCacheService.java	field BIZ_GOODS_DETAIL;field BIZ_GOODS_LIST
+ddd4j-samples/ddd4j-sample-javalin-cqrs/src/main/java/io/ddd4j/sample/javalin/cqrs/cache/OrderCacheService.java	field BIZ_ORDER_STATS;field BIZ_BUYER_ORDER_COUNT;field BIZ_ORDER_DETAIL
+ddd4j-samples/ddd4j-sample-javalin-cqrs/src/main/java/io/ddd4j/sample/javalin/cqrs/event/OrderEventListener.java	type class OrderCreatedHandler;type class OrderLineAddedHandler;type class OrderPaidHandler;type class OrderShippedHandler;type class OrderCancelledHandler
+ddd4j-samples/ddd4j-sample-javalin-cqrs/src/main/java/io/ddd4j/sample/javalin/cqrs/goods/domain/GoodsRepository.java	method findByCode;method findByStatus
+ddd4j-samples/ddd4j-sample-javalin-cqrs/src/main/java/io/ddd4j/sample/javalin/cqrs/goods/domain/GoodsStatus.java	enum-const ON_SALE;enum-const OFF_SALE;enum-const DRAFT;enum-const DELETED
+ddd4j-samples/ddd4j-sample-javalin-cqrs/src/main/java/io/ddd4j/sample/javalin/cqrs/goods/web/GoodsController.java	type record CreateGoodsRequest;type record UpdateGoodsRequest
+ddd4j-samples/ddd4j-sample-javalin-cqrs/src/main/java/io/ddd4j/sample/javalin/cqrs/order/application/OrderApplicationService.java	type record CreateOrderCommand;type record AddOrderLineCommand
+ddd4j-samples/ddd4j-sample-javalin-cqrs/src/main/java/io/ddd4j/sample/javalin/cqrs/order/domain/model/OrderStatus.java	enum-const DRAFT;enum-const PAID;enum-const SHIPPED;enum-const CANCELLED
+ddd4j-samples/ddd4j-sample-javalin-cqrs/src/main/java/io/ddd4j/sample/javalin/cqrs/order/domain/repository/OrderRepository.java	method findByOrderNo;method findAll
+ddd4j-samples/ddd4j-sample-javalin-cqrs/src/main/java/io/ddd4j/sample/javalin/cqrs/order/web/OrderCQRSQueryController.java	type record OrderResponse
+ddd4j-samples/ddd4j-sample-javalin-cqrs/src/main/java/io/ddd4j/sample/javalin/cqrs/order/web/OrderController.java	type record OrderResponse;type record CreateOrderRequest;type record AddOrderLineRequest

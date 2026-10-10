@@ -98,6 +98,10 @@ public final class ImportError {
         return new ImportError(rowIndex, -1, null, message, "ValidationFailed");
     }
 
+    /**
+     * 返回对象的字符串表示。
+     * @return 对象的字符串表示。
+     */
     @Override
     public String toString() {
         return "ImportError{row=" + rowIndex + ", col=" + columnIndex

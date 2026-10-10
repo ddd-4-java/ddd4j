@@ -1,0 +1,32 @@
+# modules=ddd4j-data,ddd4j-ddd-rules,ddd4j-extensions files=30
+ddd4j-data/ddd4j-data-projection-micronaut/src/main/java/io/ddd4j/data/projection/micronaut/MicronautProjectionScheduler.java	type class ReschedulingHandle;type class CronExpression
+ddd4j-data/ddd4j-data-projection-micronaut/src/test/java/io/ddd4j/data/projection/micronaut/TestFactory.java	type class ProjectionViewStub
+ddd4j-data/ddd4j-data-projection-panache/src/main/java/io/ddd4j/data/projection/panache/PanacheProjectionPositionEntity.java	field streamId;field nextEventNumber
+ddd4j-data/ddd4j-data-projection-quarkus/src/main/java/io/ddd4j/data/projection/quarkus/QuarkusProjectionScheduler.java	type class ReschedulingHandle;type class CronExpression
+ddd4j-data/ddd4j-data-projection-quarkus/src/test/java/io/ddd4j/data/projection/quarkus/QuarkusProjectionSchedulerIT.java	type class TestProducer;type class ProjectionViewStub
+ddd4j-data/ddd4j-data-projection-spring/src/main/java/io/ddd4j/data/projection/spring/SpringProjectionScheduler.java	type class SpringViewScheduleHandle
+ddd4j-data/ddd4j-data-projection-spring/src/test/java/io/ddd4j/data/projection/spring/SpringProjectionSchedulerIT.java	type class TestConfig;type class ProjectionViewStub
+ddd4j-data/ddd4j-data-projection-vertx/src/main/java/io/ddd4j/data/projection/vertx/VertxProjectionScheduler.java	type class ReschedulingHandle;type class CronExpression
+ddd4j-data/ddd4j-data-projection/src/main/java/io/ddd4j/data/projection/ProjectionDispatcher.java	type record Cursor
+ddd4j-data/ddd4j-data-projection/src/main/java/io/ddd4j/data/projection/ProjectionHandler.java	method getName;method eventTypes;method handle;method getCron;method getChunkSize
+HAZARD	ddd4j-data/ddd4j-data-projection/src/main/java/io/ddd4j/data/projection/ProjectionHandler.java	line 32	getCron()
+ddd4j-data/ddd4j-data-projection/src/test/java/io/ddd4j/data/projection/ProjectionDispatcherTest.java	type class ScriptedChunkReader;type record ReadCall
+ddd4j-data/ddd4j-data-projection/src/test/java/io/ddd4j/data/projection/ProjectionHandlerRegistryTest.java	type class RecordingHandler;type class OrderCreated;type class OrderPaid;type class OrderShipped;type class OrderCancelled
+ddd4j-ddd-rules/ddd4j-ddd-rules-clean/src/main/java/io/ddd4j/ddd/clean/rules/CleanDDDLayerRules.java	field DOMAIN_NOT_DEPEND_ON_WEB;field DOMAIN_NOT_DEPEND_ON_INFRASTRUCTURE;field DOMAIN_NOT_DEPEND_ON_FRAMEWORK
+ddd4j-ddd-rules/ddd4j-ddd-rules-clean/src/main/java/io/ddd4j/ddd/clean/test/CleanArchitectureTest.java	field domain_not_depend_on_web;field domain_not_depend_on_infrastructure;field domain_not_depend_on_framework;field application_not_depend_on_adapter;field adapter_persistence_should_implement_repository
+ddd4j-ddd-rules/ddd4j-ddd-rules-cola/src/main/java/io/ddd4j/ddd/cola/rules/ColaDDDLayerRules.java	field DOMAIN_NOT_DEPEND_ON_ADAPTER;field DOMAIN_NOT_DEPEND_ON_APPLICATION;field DOMAIN_NOT_DEPEND_ON_FRAMEWORK
+ddd4j-ddd-rules/ddd4j-ddd-rules-cola/src/main/java/io/ddd4j/ddd/cola/test/ColaArchitectureTest.java	field domain_not_depend_on_adapter;field domain_not_depend_on_application;field domain_not_depend_on_framework;field adapter_persistence_should_implement_gateway;field application_not_depend_on_adapter
+ddd4j-extensions/ddd4j-extension-excel/src/main/java/io/ddd4j/extension/excel/convert/BigDecimalStringConverter.java	field DEFAULT_PATTERN
+ddd4j-extensions/ddd4j-extension-excel/src/main/java/io/ddd4j/extension/excel/convert/LocalDateConverter.java	field DEFAULT_PATTERN
+ddd4j-extensions/ddd4j-extension-excel/src/main/java/io/ddd4j/extension/excel/convert/LocalDateTimeConverter.java	field DEFAULT_PATTERN
+ddd4j-extensions/ddd4j-extension-excel/src/main/java/io/ddd4j/extension/excel/style/DefaultRowHeightStyleStrategy.java	field DEFAULT_HEADER_ROW_HEIGHT
+ddd4j-extensions/ddd4j-extension-excel/src/main/java/io/ddd4j/extension/excel/style/ExcelStyleTemplate.java	enum-const DEFAULT;enum-const LIST;enum-const FINANCE;enum-const MINIMAL;enum-const ZEBRA
+ddd4j-extensions/ddd4j-extension-excel/src/test/java/io/ddd4j/extension/excel/ExcelKitTest.java	type record DateVO
+ddd4j-extensions/ddd4j-extension-excel/src/test/java/io/ddd4j/extension/excel/TestModels.java	type class UserVO
+ddd4j-extensions/ddd4j-extension-excel/src/test/java/io/ddd4j/extension/excel/convert/ConvertersTest.java	type enum TestEnum;enum-const ACTIVE;type class TestEnumConverter
+ddd4j-extensions/ddd4j-extension-license/src/main/java/io/ddd4j/extension/license/LicenseCache.java	field BIZ_LICENSE;field DEFAULT_TTL_SECONDS
+ddd4j-extensions/ddd4j-extension-license/src/main/java/io/ddd4j/extension/license/LicenseProperties.java	field PREFIX
+ddd4j-extensions/ddd4j-extension-license/src/main/java/io/ddd4j/extension/license/LicenseVerificationResult.java	type enum Status;enum-const VALID;enum-const DISABLED;enum-const NOT_INSTALLED;enum-const ENVIRONMENT_MISMATCH;enum-const INVALID
+ddd4j-extensions/ddd4j-extension-license/src/main/java/io/ddd4j/extension/license/keystore/LicenseKeyStoreGenerator.java	type class GenerateResult
+ddd4j-extensions/ddd4j-extension-license/src/main/java/io/ddd4j/extension/license/machine/DefaultLicenseMachineInfoProvider.java	field INSTANCE;field MACHINE_SN_PROPERTY;field MACHINE_SN_ENV;type interface NetworkInterfaceConsumer;method accept
+ddd4j-extensions/ddd4j-extension-license/src/main/java/io/ddd4j/extension/license/machine/LicenseMachineInfoProvider.java	method ipAddresses;method macAddresses;method serialNumber

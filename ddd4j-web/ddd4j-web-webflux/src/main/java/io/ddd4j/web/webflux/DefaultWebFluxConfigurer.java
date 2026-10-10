@@ -25,6 +25,11 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 public class DefaultWebFluxConfigurer implements WebFluxConfigurer {
 
     private final String META_INF_RESOURCES = "classpath:/META-INF/resources/";
@@ -36,6 +41,10 @@ public class DefaultWebFluxConfigurer implements WebFluxConfigurer {
         this.localResourceProperteis = localResourceProperteis;
     }
 
+    /**
+     * 追加元素。
+     * @param registry registry 参数。
+     */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // 本地资源映射

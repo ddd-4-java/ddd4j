@@ -20,21 +20,72 @@ package io.ddd4j.core.constant;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class ContextConstants {
+    /**
+     * 请求参数在上下文中的键名。
+     */
     public static final String REQUEST_PARAMS = "request-params";
+    /**
+     * 请求体在上下文中的键名。
+     */
     public static final String REQUEST_BODY = "request-body";
+    /**
+     * 租户标识在上下文中的键名。
+     */
     public static final String TENANT_ID = "tenant-id";
+    /**
+     * 待执行 SQL（预编译语句）在上下文中的键名。
+     */
     public static final String PREPARING_SQL = "preparing-sql";
+    /**
+     * SQL 绑定参数在上下文中的键名。
+     */
     public static final String SQL_PARAMS = "sql-params";
+    /**
+     * 最近一次 SQL 耗时在上下文中的键名。
+     */
     public static final String LAST_SQL_SPENDS = "last-sql-spends";
+    /**
+     * 系统标识在上下文中的键名。
+     */
     public static final String SYSTEM_ID = "system-id";
+    /**
+     * 门店标识在上下文中的键名。
+     */
     public static final String SHOP_ID = "shop-id";
+    /**
+     * 角色信息在上下文中的键名。
+     */
     public static final String ROLE = "role";
+    /**
+     * 区域设置（Locale）在上下文中的键名。
+     */
     public static final String LOCALE = "locale";
+    /**
+     * 第三方会话在上下文中的键名。
+     */
     public static final String THIRD_SESSION = "third-session";
+    /**
+     * 会话信息在上下文中的键名。
+     */
     public static final String SESSION = "session";
+    /**
+     * 客户端类型在上下文中的键名。
+     */
     public static final String CLIENT_TYPE = "client-type";
+    /**
+     * 应用标识在上下文中的键名。
+     */
     public static final String APP_ID = "app-id";
+    /**
+     * 用户标识在上下文中的键名。
+     */
     public static final String USER_ID = "user-id";
+    /**
+     * 授权请求头名称。
+     */
     public static final String AUTHORIZATION = "Authorization";
+    /**
+     * 工程包名在上下文中的键名。
+     */
     public static String PROJECT_PACKAGE = "project-package";
 }

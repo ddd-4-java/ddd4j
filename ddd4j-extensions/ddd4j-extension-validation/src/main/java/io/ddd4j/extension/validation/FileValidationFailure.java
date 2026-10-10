@@ -18,12 +18,20 @@ package io.ddd4j.extension.validation;
  * 文件校验失败类型，可由各框架转换为统一业务错误码。
  */
 public enum FileValidationFailure {
+    /** 文件为空。 */
     EMPTY,
+    /** 文件大小超出允许上限。 */
     SIZE_EXCEEDED,
+    /** 文件扩展名不在允许列表内。 */
     EXTENSION_NOT_ALLOWED,
+    /** 文件 MIME 类型不在允许列表内。 */
     MIME_TYPE_NOT_ALLOWED,
+    /** 无法从文件内容识别出类型。 */
     TYPE_UNDETECTABLE,
+    /** 文件签名与声明的类型不一致。 */
     SIGNATURE_MISMATCH,
+    /** 文件内部业务内容校验未通过。 */
     CONTENT_REJECTED,
+    /** 读取文件内容时发生错误。 */
     READ_ERROR
 }

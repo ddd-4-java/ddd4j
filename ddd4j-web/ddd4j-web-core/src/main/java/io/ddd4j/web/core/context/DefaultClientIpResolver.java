@@ -27,6 +27,13 @@ public final class DefaultClientIpResolver implements ClientIpResolver {
         this.trustForwardedHeaders = trustForwardedHeaders;
     }
 
+    /**
+     * resolve() 方法。
+     * @param forwardedFor 字符串参数。
+     * @param realIp 字符串参数。
+     * @param remoteAddress 字符串参数。
+     * @return 结果字符串。
+     */
     @Override
     public String resolve(String forwardedFor, String realIp, String remoteAddress) {
         if (trustForwardedHeaders) {

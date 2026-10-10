@@ -127,6 +127,12 @@ public final class MqDeliveryMetrics {
         );
     }
 
+    /**
+     * 计数器句柄，缓存 Meter 与其上创建的计数器，避免重复创建。
+     *
+     * @param meter   创建计数器所用的 Meter
+     * @param counter 已创建的投递结果计数器
+     */
     private record CounterHandle(Meter meter, LongCounter counter) {
     }
 }

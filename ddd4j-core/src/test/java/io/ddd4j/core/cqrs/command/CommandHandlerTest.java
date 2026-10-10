@@ -60,9 +60,16 @@ class CommandHandlerTest {
                 "value attribute should be reflectively readable and carry the handled command type");
     }
 
+    /**
+     * 测试用创建订单命令，用于校验 {@code @CommandHandler} 的 value 属性。
+     */
     static class CreateOrderCommand implements Command {
     }
 
+    /**
+     * 处理 {@link CreateOrderCommand} 的测试命令执行器，
+     * 标注 {@code @CommandHandler} 供注解契约测试反射读取。
+     */
     @CommandHandler(CreateOrderCommand.class)
     static class CreateOrderCmdExe implements CommandExecutor<CreateOrderCommand> {
 
@@ -71,6 +78,11 @@ class CommandHandlerTest {
             return Set.of(CreateOrderCommand.class);
         }
 
+        /**
+         * 执行处理逻辑。
+         * @param command command 参数。
+         * @return 方法执行结果。
+         */
         @Override
         public Result execute(CreateOrderCommand command) {
             return Result.ok();

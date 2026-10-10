@@ -44,6 +44,11 @@ public class SampleCommandHandler implements CommandExecutor<SampleCommand> {
         return Set.of(SampleCommand.class);
     }
 
+    /**
+     * 执行处理逻辑。
+     * @param command command 参数。
+     * @return 方法执行结果。
+     */
     @Override
     public Result execute(SampleCommand command) {
         return Result.ok(HANDLED);

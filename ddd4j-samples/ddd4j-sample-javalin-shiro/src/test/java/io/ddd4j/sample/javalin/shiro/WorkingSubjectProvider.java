@@ -29,11 +29,20 @@ public class WorkingSubjectProvider implements SubjectProvider {
         this.userRepository = userRepository;
     }
 
+    /**
+     * 获取值。
+     * @return 方法执行结果。
+     */
     @Override
     public Subject getSubject() {
         return new WorkingShiroSubject(userRepository);
     }
 
+    /**
+     * 获取值。
+     * @param realm 字符串参数。
+     * @return 方法执行结果。
+     */
     @Override
     public Subject getSubject(String realm) {
         return new WorkingShiroSubject(userRepository);

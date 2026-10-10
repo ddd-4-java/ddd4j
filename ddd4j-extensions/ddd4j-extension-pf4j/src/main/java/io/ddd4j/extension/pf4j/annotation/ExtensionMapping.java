@@ -25,12 +25,28 @@ import java.lang.annotation.*;
 @Inherited
 public @interface ExtensionMapping {
 
+    /**
+     * id() 方法。
+     * @return 结果字符串。
+     */
     public String id() default "";
 
+    /**
+     * title() 方法。
+     * @return 结果字符串。
+     */
     public String title() default "";
 
+    /**
+     * ver() 方法。
+     * @return 结果字符串。
+     */
     public String ver() default "1.0.0";
 
+    /**
+     * desc() 方法。
+     * @return 结果字符串。
+     */
     public String desc() default "";
 
 }

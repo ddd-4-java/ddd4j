@@ -213,6 +213,10 @@ public class LicenseKit {
         return verify.isInstallSuccess();
     }
 
+    /**
+     * 判断布尔状态。
+     * @return 判断结果。
+     */
     public boolean isCached() {
         return verify.isCached();
     }

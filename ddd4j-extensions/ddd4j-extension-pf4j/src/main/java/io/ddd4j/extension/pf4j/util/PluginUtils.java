@@ -23,8 +23,23 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 public class PluginUtils {
 
+    /**
+     * 获取值。
+     * @param <T> 类型参数。
+     * @param pluginManager pluginManager 参数。
+     * @param type 目标类型。
+     * @param pluginId 字符串参数。
+     * @param extensionId 字符串参数。
+     * @return 结果值。
+     * @throws PluginInvokeException 出现异常时抛出。
+     */
     public static <T> T getExtensionPoint(PluginManager pluginManager, Class<T> type, String pluginId,
                                           String extensionId) throws PluginInvokeException {
         if (StringUtils.hasText(pluginId) && StringUtils.hasText(extensionId)) {
@@ -39,11 +54,27 @@ public class PluginUtils {
         return null;
     }
 
+    /**
+     * 获取值。
+     * @param pluginManager pluginManager 参数。
+     * @param pluginId 字符串参数。
+     * @param extensionId 字符串参数。
+     * @return 方法执行结果。
+     * @throws PluginInvokeException 出现异常时抛出。
+     */
     public static ServletRequestExtensionPoint getRequestExtensionPoint(PluginManager pluginManager, String pluginId,
                                                                         String extensionId) throws PluginInvokeException {
         return getExtensionPoint(pluginManager, ServletRequestExtensionPoint.class, pluginId, extensionId);
     }
 
+    /**
+     * 获取值。
+     * @param pluginManager pluginManager 参数。
+     * @param pluginId 字符串参数。
+     * @param extensionId 字符串参数。
+     * @return 方法执行结果。
+     * @throws PluginInvokeException 出现异常时抛出。
+     */
     public static ServletResponseExtensionPoint getResponseExtensionPoint(PluginManager pluginManager, String pluginId,
                                                                           String extensionId) throws PluginInvokeException {
         return getExtensionPoint(pluginManager, ServletResponseExtensionPoint.class, pluginId, extensionId);

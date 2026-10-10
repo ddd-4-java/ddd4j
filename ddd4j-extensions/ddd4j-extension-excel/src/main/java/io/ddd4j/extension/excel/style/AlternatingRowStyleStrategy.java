@@ -59,6 +59,10 @@ public class AlternatingRowStyleStrategy implements CellWriteHandler {
         this.zebraStyle = style;
     }
 
+    /**
+     * afterCellDispose() 方法。
+     * @param context JUnit 扩展上下文。
+     */
     @Override
     public void afterCellDispose(CellWriteHandlerContext context) {
         // 跳过表头

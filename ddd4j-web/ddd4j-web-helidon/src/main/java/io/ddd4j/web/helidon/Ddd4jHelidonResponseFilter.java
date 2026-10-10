@@ -31,6 +31,11 @@ import jakarta.ws.rs.ext.Provider;
 @Priority(Priorities.USER)
 public final class Ddd4jHelidonResponseFilter implements ContainerResponseFilter {
 
+    /**
+     * 过滤数据。
+     * @param request 请求对象。
+     * @param response 响应对象。
+     */
     @Override
     public void filter(ContainerRequestContext request, ContainerResponseContext response) {
         Object contextValue = request.getProperty(Ddd4jHelidonRequestFilter.CONTEXT_PROPERTY);

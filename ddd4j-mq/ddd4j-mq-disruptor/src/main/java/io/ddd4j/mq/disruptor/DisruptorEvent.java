@@ -34,6 +34,10 @@ public class DisruptorEvent {
     private Object payload;
     private long sequence;
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getRouteExpression() {
         StringBuilder route = new StringBuilder();
         if (StrKit.isNotBlank(namespace)) {

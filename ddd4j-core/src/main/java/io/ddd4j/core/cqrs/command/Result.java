@@ -82,6 +82,10 @@ public final class Result<T> {
         return new Result<>(code, message, null);
     }
 
+    /**
+     * 判断布尔状态。
+     * @return 判断结果。
+     */
     public boolean isSuccess() {
         return code == SUCCESS;
     }

@@ -30,6 +30,10 @@ import java.util.Objects;
  */
 public class RunnableJob implements Job {
 
+    /**
+     * 执行处理逻辑。
+     * @param context JUnit 扩展上下文。
+     */
     @Override
     public void execute(JobExecutionContext context) {
         String identity = context.getJobDetail().getJobDataMap().getString(QuarkusViewScheduler.TASK_KEY);

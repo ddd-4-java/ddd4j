@@ -134,6 +134,12 @@ class EventChunkReaderContractTest {
             return new EventChunk<>(picked, next);
         }
 
+        /**
+         * 带事件号的载荷条目，用于按号顺序读取。
+         *
+         * @param number  事件号
+         * @param payload 事件载荷
+         */
         private record Numbered(long number, String payload) {
         }
     }

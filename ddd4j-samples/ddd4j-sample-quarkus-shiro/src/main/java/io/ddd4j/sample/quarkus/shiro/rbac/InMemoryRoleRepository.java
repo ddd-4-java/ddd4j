@@ -106,6 +106,9 @@ public class InMemoryRoleRepository {
         return new HashSet<>(store.keySet());
     }
 
+    /**
+     * 清空数据。
+     */
     public void clear() {
         store.clear();
     }

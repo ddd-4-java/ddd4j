@@ -101,17 +101,17 @@
 
     <!-- 组织信息 -->
     <organization>
-        <name>Hiwepy</name>
-        <url>https://wiki.hiwepy.com</url>
+        <name>redacted-legacy-family</name>
+        <url>https://wiki.redacted-legacy-family.com</url>
     </organization>
 
     <!-- 开发者信息 -->
     <developers>
         <developer>
-            <name>wandl</name>
-            <email>hiwepy@gmail.com</email>
-            <organization>hiwepy</organization>
-            <organizationUrl>https://wiki.hiwepy.com</organizationUrl>
+            <name>ddd4j</name>
+            <email>redacted-legacy-family@gmail.com</email>
+            <organization>redacted-legacy-family</organization>
+            <organizationUrl>https://wiki.redacted-legacy-family.com</organizationUrl>
             <roles>
                 <role>developer</role>
             </roles>

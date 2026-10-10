@@ -47,6 +47,11 @@ public class GuiceProjectionPosition implements ProjectionPosition, Serializable
      */
     private long nextEventNumber;
 
+    /**
+     * withNextEventNumber() 方法。
+     * @param nextEventNumber nextEventNumber 参数。
+     * @return 方法执行结果。
+     */
     @Override
     public ProjectionPosition withNextEventNumber(long nextEventNumber) {
         this.nextEventNumber = nextEventNumber;

@@ -20,10 +20,29 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Map;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 public interface ServletResponseExtensionPoint extends ExtensionPoint {
 
+    /**
+     * 将 HTTP 响应还原为调用方可读的结果载体。
+     *
+     * @param response   HTTP 响应对象
+     * @param realParams 实际业务参数，还原过程中可读取
+     * @return 还原后的结果载体
+     */
     String dewrap(HttpServletResponse response, Map<String, Object> realParams);
 
+    /**
+     * 将响应实体还原为调用方可读的结果载体。
+     *
+     * @param responseEntity 原始响应实体
+     * @param <T>            响应体类型
+     * @return 还原后的响应实体
+     */
     <T> ResponseEntity<T> dewrap(ResponseEntity<T> responseEntity);
 
 }

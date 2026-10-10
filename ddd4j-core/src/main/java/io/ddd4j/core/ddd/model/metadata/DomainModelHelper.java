@@ -51,7 +51,7 @@ import java.util.function.Function;
  * wrapper.eq(column, "alice");
  * }</pre>
  *
- * @author wandl
+ * @author ddd4j
  * @since 2.0.x
  */
 @SuppressWarnings("unchecked")
@@ -131,6 +131,12 @@ public final class DomainModelHelper {
         MODEL_INFO_CACHE.clear();
     }
 
+    /**
+     * 模型元数据缓存键：由领域模型类型与持久化上下文类型共同唯一确定一条缓存记录。
+     *
+     * @param modelType       领域模型类型
+     * @param persistenceType 持久化对象或映射上下文类型
+     */
     private record ModelMappingKey(Class<?> modelType, Class<?> persistenceType) {
     }
 }

@@ -32,6 +32,13 @@ import java.util.UUID;
  */
 public class MdcInterceptor implements HandlerInterceptor {
 
+    /**
+     * preHandle() 方法。
+     * @param request 请求对象。
+     * @param response 响应对象。
+     * @param handler 处理器。
+     * @return 判断结果。
+     */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         MDC.put("requestId", Objects.toString(request.getHeader(XHeaders.X_REQUEST_ID), UUID.randomUUID().toString()));
@@ -49,6 +56,13 @@ public class MdcInterceptor implements HandlerInterceptor {
         return true;
     }
 
+    /**
+     * afterCompletion() 方法。
+     * @param request 请求对象。
+     * @param response 响应对象。
+     * @param handler 处理器。
+     * @param exception exception 参数。
+     */
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception exception) {
         MDC.clear();

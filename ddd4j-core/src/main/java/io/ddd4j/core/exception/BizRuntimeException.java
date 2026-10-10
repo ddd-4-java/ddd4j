@@ -113,10 +113,21 @@ public class BizRuntimeException extends RuntimeException {
         this(e.getMessage(), e);
     }
 
+    /**
+     * e() 方法。
+     * @param message 异常消息。
+     * @return 当前对象自身，支持链式调用。
+     */
     public static BizRuntimeException e(String message) {
         return new BizRuntimeException(message);
     }
 
+    /**
+     * e() 方法。
+     * @param i18nCode 字符串参数。
+     * @param message 异常消息。
+     * @return 当前对象自身，支持链式调用。
+     */
     public static BizRuntimeException e(String i18nCode, String message) {
         return new BizRuntimeException(500, i18nCode, message);
     }

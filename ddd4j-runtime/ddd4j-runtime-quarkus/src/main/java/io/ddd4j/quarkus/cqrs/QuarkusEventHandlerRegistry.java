@@ -99,6 +99,11 @@ public class QuarkusEventHandlerRegistry {
         }
     }
 
+    /**
+     * 查询数据。
+     * @param eventType 类型字面量。
+     * @return 方法执行结果。
+     */
     public Method findHandler(Class<?> eventType) {
         return handlerTable.get(eventType);
     }

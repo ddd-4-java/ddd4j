@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 /**
  * 数据校验注解实现类
  *
- * @author hiwepy
+ * @author redacted-legacy-family
  * @since 2021-03-08
  */
 public class NumberValueValidator implements ConstraintValidator<NumberValue, String> {

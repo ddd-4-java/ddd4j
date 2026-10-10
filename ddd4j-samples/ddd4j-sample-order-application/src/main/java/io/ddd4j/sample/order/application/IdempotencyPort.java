@@ -16,8 +16,34 @@ package io.ddd4j.sample.order.application;
 
 import java.time.Duration;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 public interface IdempotencyPort {
+
+    /**
+     * 尝试获取指定幂等键的执行权（加锁）。
+     *
+     * @param key 幂等键
+     * @param ttl 锁的存活时长
+     * @return 获取成功返回 {@code true}，已被占用返回 {@code false}
+     */
     boolean acquire(String key, Duration ttl);
+
+    /**
+     * 标记幂等键对应的处理已完成，并记录处理结果。
+     *
+     * @param key 幂等键
+     * @param result 处理结果，可供后续幂等回放
+     */
     void complete(String key, Object result);
+
+    /**
+     * 释放幂等键上的执行权（解锁），通常在处理失败时调用。
+     *
+     * @param key 幂等键
+     */
     void release(String key);
 }

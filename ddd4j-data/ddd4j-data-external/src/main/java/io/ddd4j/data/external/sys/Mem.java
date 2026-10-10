@@ -39,18 +39,34 @@ public class Mem {
      */
     private double free;
 
+    /**
+     * 获取值。
+     * @return 结果数值。
+     */
     public double getTotal() {
         return ArithKit.div(total, (1024 * 1024 * 1024), 2);
     }
 
+    /**
+     * 获取值。
+     * @return 结果数值。
+     */
     public double getUsed() {
         return ArithKit.div(used, (1024 * 1024 * 1024), 2);
     }
 
+    /**
+     * 获取值。
+     * @return 结果数值。
+     */
     public double getFree() {
         return ArithKit.div(free, (1024 * 1024 * 1024), 2);
     }
 
+    /**
+     * 获取值。
+     * @return 结果数值。
+     */
     public double getUsage() {
         return ArithKit.mul(ArithKit.div(used, total, 4), 100);
     }

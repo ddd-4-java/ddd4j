@@ -56,6 +56,11 @@ public abstract class BaseClientAggregateController<V, Q, ID extends Serializabl
 
     protected abstract Page<V> clientListPage(int pageNum, int pageSize, Q query);
 
+    /**
+     * clientDetail() 方法。
+     * @param id 标识值。
+     * @return 方法执行结果。
+     */
     protected abstract V clientDetail(ID id);
 
 }

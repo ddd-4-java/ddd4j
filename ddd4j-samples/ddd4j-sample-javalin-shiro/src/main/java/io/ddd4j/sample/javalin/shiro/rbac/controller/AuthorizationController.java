@@ -266,6 +266,15 @@ public class AuthorizationController {
 
     // ============================ DTO 视图对象 ============================
 
+    /**
+     * 创建用户请求参数：账号、密码、显示名及初始角色/权限。
+     *
+     * @param loginId 登录标识（账号）
+     * @param password 登录密码
+     * @param displayName 显示名称
+     * @param roles 初始角色编码数组
+     * @param permissions 初始权限编码数组
+     */
     public record CreateUserRequest(String loginId,
                                     String password,
                                     String displayName,
@@ -273,30 +282,78 @@ public class AuthorizationController {
                                     String[] permissions) {
     }
 
+    /**
+     * 更新用户请求参数：显示名、密码及角色/权限（为 {@code null} 表示不变更）。
+     *
+     * @param displayName 新的显示名称
+     * @param password 新的登录密码
+     * @param roles 新的角色编码数组，为空表示不调整角色
+     * @param permissions 新的权限编码数组，为空表示不调整权限
+     */
     public record UpdateUserRequest(String displayName,
                                     String password,
                                     String[] roles,
                                     String[] permissions) {
     }
 
+    /**
+     * 创建角色请求参数：角色编码、名称及持有的权限。
+     *
+     * @param code 角色编码（唯一标识）
+     * @param name 角色名称
+     * @param permissions 角色持有的权限编码数组
+     */
     public record CreateRoleRequest(String code, String name, String[] permissions) {
     }
 
+    /**
+     * 更新角色请求参数：名称及权限（为 {@code null} 表示不变更）。
+     *
+     * @param name 新的角色名称
+     * @param permissions 新的权限编码数组，为空表示不调整权限
+     */
     public record UpdateRoleRequest(String name, String[] permissions) {
     }
 
+    /**
+     * 创建权限请求参数：权限编码与描述。
+     *
+     * @param code 权限编码（唯一标识）
+     * @param description 权限描述
+     */
     public record CreatePermissionRequest(String code, String description) {
     }
 
+    /**
+     * 用户视图对象：面向接口输出的用户信息（含派生角色与权限）。
+     *
+     * @param loginId 登录标识（账号）
+     * @param displayName 显示名称
+     * @param roles 角色编码集合
+     * @param permissions 权限编码集合
+     */
     public record UserView(String loginId,
                            String displayName,
                            Set<String> roles,
                            Set<String> permissions) {
     }
 
+    /**
+     * 角色视图对象：面向接口输出的角色信息及其权限。
+     *
+     * @param code 角色编码
+     * @param name 角色名称
+     * @param permissions 角色持有的权限编码集合
+     */
     public record RoleView(String code, String name, Set<String> permissions) {
     }
 
+    /**
+     * 权限视图对象：面向接口输出的权限信息。
+     *
+     * @param code 权限编码
+     * @param description 权限描述
+     */
     public record PermissionView(String code, String description) {
     }
 

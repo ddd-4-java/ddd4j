@@ -50,6 +50,11 @@ import org.springframework.util.StringValueResolver;
         @ApiResponse(responseCode = "503", description = "服务不可用", content = @Content(schema = @Schema(implementation = ApiRestResponse.class))),
         @ApiResponse(responseCode = "504", description = "网关访问超时", content = @Content(schema = @Schema(implementation = ApiRestResponse.class)))
 })
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 public class BaseController implements ApplicationEventPublisherAware, ApplicationContextAware, EmbeddedValueResolverAware {
 
     /**
@@ -113,16 +118,29 @@ public class BaseController implements ApplicationEventPublisherAware, Applicati
         return ApiRestResponse.error(getMessage(key, args));
     }
 
+    /**
+     * 设置值。
+     * @param applicationContext applicationContext 参数。
+     * @throws BeansException 出现异常时抛出。
+     */
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.context = applicationContext;
     }
 
+    /**
+     * 设置值。
+     * @param applicationEventPublisher applicationEventPublisher 参数。
+     */
     @Override
     public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
         this.eventPublisher = applicationEventPublisher;
     }
 
+    /**
+     * 设置值。
+     * @param resolver resolver 参数。
+     */
     @Override
     public void setEmbeddedValueResolver(StringValueResolver resolver) {
         this.valueResolver = resolver;

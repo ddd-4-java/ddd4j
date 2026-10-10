@@ -77,6 +77,11 @@ public interface RedisStreamOperations extends AutoCloseable {
      */
     Object nativeClient();
 
+    /**
+     * 关闭底层客户端资源。
+     *
+     * <p>默认实现为空操作，具体实现可按需释放连接等资源。
+     */
     @Override
     default void close() {
     }

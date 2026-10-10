@@ -25,6 +25,10 @@ import org.junit.jupiter.api.DisplayName;
 @DisplayName("InMemoryEventStore")
 class InMemoryEventStoreTest extends EventStoreContractTest {
 
+    /**
+     * 创建对象。
+     * @return 方法执行结果。
+     */
     @Override
     protected EventStore createEventStore() {
         return new InMemoryEventStore();

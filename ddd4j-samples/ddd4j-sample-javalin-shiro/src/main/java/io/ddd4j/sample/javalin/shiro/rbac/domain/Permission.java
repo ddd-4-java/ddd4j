@@ -47,14 +47,27 @@ public class Permission {
         this.description = description;
     }
 
+    /**
+     * code() 方法。
+     * @return 结果字符串。
+     */
     public String code() {
         return code;
     }
 
+    /**
+     * description() 方法。
+     * @return 结果字符串。
+     */
     public String description() {
         return description;
     }
 
+    /**
+     * 判断与另一对象是否相等。
+     * @param o 比较对象。
+     * @return 相等返回 {@code true}，否则返回 {@code false}。
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -67,11 +80,19 @@ public class Permission {
         return Objects.equals(code, that.code);
     }
 
+    /**
+     * 返回对象哈希码。
+     * @return 哈希码。
+     */
     @Override
     public int hashCode() {
         return Objects.hash(code);
     }
 
+    /**
+     * 返回对象的字符串表示。
+     * @return 对象的字符串表示。
+     */
     @Override
     public String toString() {
         return "Permission{" + code + "}";

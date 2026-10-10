@@ -53,6 +53,11 @@ public class QuarkusJpaProjectionPositionRepository implements ProjectionPositio
                 .toList();
     }
 
+    /**
+     * save() 方法。
+     * @param position position 参数。
+     * @return 方法执行结果。
+     */
     @Override
     @Transactional
     public ProjectionPosition save(ProjectionPosition position) {
@@ -65,6 +70,10 @@ public class QuarkusJpaProjectionPositionRepository implements ProjectionPositio
         return manager().merge(entity);
     }
 
+    /**
+     * 删除记录。
+     * @param streamId 字符串参数。
+     */
     @Override
     @Transactional
     public void deleteByStreamId(String streamId) {
@@ -74,6 +83,10 @@ public class QuarkusJpaProjectionPositionRepository implements ProjectionPositio
         }
     }
 
+    /**
+     * resetToZero() 方法。
+     * @param streamId 字符串参数。
+     */
     @Override
     @Transactional
     public void resetToZero(String streamId) {

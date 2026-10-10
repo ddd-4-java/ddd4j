@@ -74,14 +74,26 @@ public record MQOutboxRecord(
                 availableAt, null, null, 0, null, null);
     }
 
+    /**
+     * 获取值。
+     * @return 结果数值。
+     */
     public int getAttempts() {
             return attempts;
         }
 
+    /**
+     * 获取值。
+     * @return 方法执行结果。
+     */
     public Instant getAvailableAt() {
             return availableAt;
         }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getDestination() {
             return destination;
         }
@@ -90,30 +102,58 @@ public record MQOutboxRecord(
             return headers;
         }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getLastError() {
             return lastError;
         }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getLeaseOwner() {
             return leaseOwner;
         }
 
+    /**
+     * 获取值。
+     * @return 方法执行结果。
+     */
     public Instant getLeaseUntil() {
             return leaseUntil;
         }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getMessageId() {
             return messageId;
         }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getPayload() {
             return payload;
         }
 
+    /**
+     * 获取值。
+     * @return 方法执行结果。
+     */
     public Instant getPublishedAt() {
             return publishedAt;
         }
 
+    /**
+     * 获取值。
+     * @return 方法执行结果。
+     */
     public MQOutboxStatus getStatus() {
             return status;
         }

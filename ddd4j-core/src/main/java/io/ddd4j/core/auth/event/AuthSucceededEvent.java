@@ -38,18 +38,34 @@ import java.time.Instant;
  */
 public record AuthSucceededEvent(AuthRequest request, AuthPrincipal principal, String token, Instant occurredAt) {
 
+    /**
+     * 获取值。
+     * @return 方法执行结果。
+     */
     public Instant getOccurredAt() {
             return occurredAt;
         }
 
+    /**
+     * 获取值。
+     * @return 方法执行结果。
+     */
     public AuthPrincipal getPrincipal() {
             return principal;
         }
 
+    /**
+     * 获取值。
+     * @return 方法执行结果。
+     */
     public AuthRequest getRequest() {
             return request;
         }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getToken() {
             return token;
         }

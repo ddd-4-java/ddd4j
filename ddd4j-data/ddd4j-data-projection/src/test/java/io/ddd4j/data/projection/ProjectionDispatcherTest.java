@@ -200,6 +200,10 @@ class ProjectionDispatcherTest {
             return chunk != null ? chunk : EventChunk.empty(fromEventNumber);
         }
 
+        /**
+         * 一次事件块读取的参数记录：流 ID、起始事件号、块大小与事件类型名，
+         * 供测试断言读取约定。
+         */
         record ReadCall(String streamId, long fromEventNumber, int chunkSize, Collection<String> eventTypes) {
         }
     }

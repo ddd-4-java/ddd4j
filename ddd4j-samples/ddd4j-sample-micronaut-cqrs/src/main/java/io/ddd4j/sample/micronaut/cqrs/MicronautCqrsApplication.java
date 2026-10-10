@@ -36,10 +36,17 @@ import java.util.List;
  */
 public class MicronautCqrsApplication {
 
+    /**
+     * main() 方法。
+     * @param args 命令行参数。
+     */
     public static void main(String[] args) {
         Micronaut.run(MicronautCqrsApplication.class, args);
     }
 
+    /**
+     * CQRS 组件装配工厂：向容器提供事件存储、事件分块读取器、命令总线与视图管理器。
+     */
     @Factory
     public static class CqrsConfig {
 
@@ -67,6 +74,9 @@ public class MicronautCqrsApplication {
         }
     }
 
+    /**
+     * 启动监听器：在应用启动事件到达时启动读模型视图管理器。
+     */
     @Singleton
     static class StartupListener {
 

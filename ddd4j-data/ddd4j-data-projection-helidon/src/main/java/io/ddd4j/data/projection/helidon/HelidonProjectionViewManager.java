@@ -98,6 +98,9 @@ public class HelidonProjectionViewManager implements ViewManager {
         }
     }
 
+    /**
+     * 停止。
+     */
     @Override
     public void stop() {
         if (running) {
@@ -107,11 +110,18 @@ public class HelidonProjectionViewManager implements ViewManager {
         }
     }
 
+    /**
+     * 判断布尔状态。
+     * @return 判断结果。
+     */
     @Override
     public boolean isRunning() {
         return running;
     }
 
+    /**
+     * triggerOnce() 方法。
+     */
     @Override
     @SuppressWarnings("unchecked")
     public void triggerOnce() {

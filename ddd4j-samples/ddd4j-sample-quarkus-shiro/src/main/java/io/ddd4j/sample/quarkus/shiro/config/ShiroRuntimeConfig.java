@@ -53,6 +53,12 @@ public class ShiroRuntimeConfig {
         SecurityUtils.setSecurityManager(new DefaultSecurityManager(new RbacRealm(userRepository, roleRepository)));
     }
 
+    /**
+     * RBAC 授权域：认证信息由应用服务校验，授权信息从 RBAC 仓储实时解析。
+     *
+     * <p>登录时建立 Shiro 会话；授权时按用户角色查询角色与权限集合，
+     * 供 Shiro Authorizer 执行后续鉴权。
+     */
     private static final class RbacRealm extends AuthorizingRealm {
 
         private final InMemoryUserRepository userRepository;
@@ -64,6 +70,11 @@ public class ShiroRuntimeConfig {
             setName("ddd4j-quarkus-rbac");
         }
 
+        /**
+         * 执行处理逻辑。
+         * @param principals principals 参数。
+         * @return 方法执行结果。
+         */
         @Override
         protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
             String userId = String.valueOf(principals.getPrimaryPrincipal());
@@ -79,6 +90,12 @@ public class ShiroRuntimeConfig {
             return authorization;
         }
 
+        /**
+         * 执行处理逻辑。
+         * @param token 访问令牌。
+         * @return 方法执行结果。
+         * @throws AuthenticationException 出现异常时抛出。
+         */
         @Override
         protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
             return new SimpleAuthenticationInfo(token.getPrincipal(), token.getCredentials(), getName());

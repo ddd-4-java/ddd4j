@@ -30,6 +30,11 @@ public record OrderResponse(String id, String orderNo, String buyerId, String bu
                             OrderStatus status, String totalAmount, String currency,
                             List<OrderLineResponse> lines) {
 
+    /**
+     * from() 方法。
+     * @param order order 参数。
+     * @return 当前对象自身，支持链式调用。
+     */
     public static OrderResponse from(Order order) {
         Money total = order.totalAmount();
         List<OrderLineResponse> lineResponses = order.lines().stream()
@@ -50,6 +55,11 @@ public record OrderResponse(String id, String orderNo, String buyerId, String bu
     public record OrderLineResponse(String id, String goodsId, String goodsName,
                                     int quantity, String unitPrice, String currency) {
 
+        /**
+         * from() 方法。
+         * @param line line 参数。
+         * @return 方法执行结果。
+         */
         public static OrderLineResponse from(OrderLine line) {
             return new OrderLineResponse(
                     line.id(),

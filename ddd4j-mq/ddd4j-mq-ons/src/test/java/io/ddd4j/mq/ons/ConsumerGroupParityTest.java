@@ -42,6 +42,11 @@ class ConsumerGroupParityTest {
 
     private static OnsProperties guardedProperties() {
         return new OnsProperties() {
+            /**
+             * sessionProperties() 方法。
+             * @param groupName 字符串参数。
+             * @return 方法执行结果。
+             */
             @Override public Properties sessionProperties(String groupName) {
                 throw new AssertionError("Invalid input reached broker creation");
             }

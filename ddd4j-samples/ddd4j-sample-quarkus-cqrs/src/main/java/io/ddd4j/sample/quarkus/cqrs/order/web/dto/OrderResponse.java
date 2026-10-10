@@ -28,6 +28,11 @@ public record OrderResponse(String id, String orderNo, String buyerId, String bu
                             OrderStatus status, BigDecimal totalAmount, String currency,
                             List<OrderLineResponse> lines) {
 
+    /**
+     * from() 方法。
+     * @param order order 参数。
+     * @return 当前对象自身，支持链式调用。
+     */
     public static OrderResponse from(Order order) {
         Order source = Objects.requireNonNull(order, "order must not be null");
         Money total = source.totalAmount();

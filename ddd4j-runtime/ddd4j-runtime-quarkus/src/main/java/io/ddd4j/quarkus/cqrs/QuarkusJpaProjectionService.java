@@ -46,6 +46,9 @@ public class QuarkusJpaProjectionService {
         runOnce();
     }
 
+    /**
+     * runOnce() 方法。
+     */
     @Transactional
     public void runOnce() {
         if (projectionPositionRepository.isUnsatisfied()) {
@@ -66,6 +69,10 @@ public class QuarkusJpaProjectionService {
         }
     }
 
+    /**
+     * pullAndApply() 方法。
+     * @param streamId 字符串参数。
+     */
     protected void pullAndApply(String streamId) {
         log.debug("pullAndApply for stream '{}' (override me to implement actual projection)", streamId);
     }

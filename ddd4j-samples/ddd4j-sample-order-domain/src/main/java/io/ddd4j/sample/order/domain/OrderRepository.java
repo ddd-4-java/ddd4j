@@ -17,10 +17,49 @@ package io.ddd4j.sample.order.domain;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 public interface OrderRepository {
+
+    /**
+     * 保存订单聚合根（新增或更新）。
+     *
+     * @param order 订单聚合根
+     */
     void save(Order order);
+
+    /**
+     * 按订单标识查询订单。
+     *
+     * @param orderId 订单标识
+     * @return 订单（不存在时返回 {@link Optional#empty()}）
+     */
     Optional<Order> findById(String orderId);
+
+    /**
+     * 按订单号查询订单。
+     *
+     * @param orderNo 订单号
+     * @return 订单（不存在时返回 {@link Optional#empty()}）
+     */
     Optional<Order> findByOrderNo(String orderNo);
+
+    /**
+     * 分页查询全部订单。
+     *
+     * @param offset 起始偏移量
+     * @param limit 单页最大记录数
+     * @return 订单列表
+     */
     List<Order> findAll(int offset, int limit);
+
+    /**
+     * 统计订单总数。
+     *
+     * @return 订单总数
+     */
     long count();
 }

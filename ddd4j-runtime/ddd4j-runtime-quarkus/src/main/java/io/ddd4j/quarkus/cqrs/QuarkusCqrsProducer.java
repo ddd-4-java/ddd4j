@@ -30,6 +30,10 @@ import jakarta.inject.Singleton;
 @ApplicationScoped
 public class QuarkusCqrsProducer {
 
+    /**
+     * projectionPositionRepository() 方法。
+     * @return 方法执行结果。
+     */
     @Produces
     @DefaultBean
     @Singleton
@@ -37,6 +41,11 @@ public class QuarkusCqrsProducer {
         return new InMemoryProjectionPositionRepository();
     }
 
+    /**
+     * projectionService() 方法。
+     * @param repository 仓储实例。
+     * @return 方法执行结果。
+     */
     @Produces
     @DefaultBean
     @Singleton

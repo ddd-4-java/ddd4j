@@ -29,6 +29,12 @@ import jakarta.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class DefaultI18nProvider implements I18nProvider {
 
+    /**
+     * 获取值。
+     * @param key 幂等键。
+     * @param args 命令行参数。
+     * @return 结果字符串。
+     */
     @Override
     public String getMessage(String key, Object... args) {
         // 委托给 ddd4j-core 自带的 DEFAULT 实现（基于 i18n/messages ResourceBundle）

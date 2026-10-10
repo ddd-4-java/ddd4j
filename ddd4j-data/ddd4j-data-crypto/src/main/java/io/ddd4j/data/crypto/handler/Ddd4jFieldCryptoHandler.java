@@ -38,15 +38,38 @@ public class Ddd4jFieldCryptoHandler {
         this.cryptoStrategy = Objects.requireNonNull(cryptoStrategy, "cryptoStrategy must not be null");
     }
 
+    /**
+     * 加密数据。
+     * @param <T> 类型参数。
+     * @param value 值。
+     * @return 结果值。
+     */
     public <T> T encrypt(T value) {
         if (Objects.isNull(value)) {
             return null;
+        /**
+         * cryptoStrategy.encrypt() 方法。
+         * @param value 值。
+         * @param null null 参数。
+         * @param null null 参数。
+         * @param null null 参数。
+         * @param null null 参数。
+         * @param null null 参数。
+         * @param false false 参数。
+         * @return 方法执行结果。
+         */
         }
         String encrypted = cryptoStrategy.encrypt(value, null, null, null, null, null, false);
         log.debug("Field encrypted: {}", value.getClass().getSimpleName());
         return (T) encrypted;
     }
 
+    /**
+     * 解密数据。
+     * @param <T> 类型参数。
+     * @param value 值。
+     * @return 结果值。
+     */
     public <T> T decrypt(T value) {
         if (!(value instanceof String encrypted) || StrKit.isEmpty(encrypted)) {
             return value;
@@ -60,6 +83,10 @@ public class Ddd4jFieldCryptoHandler {
         }
     }
 
+    /**
+     * 获取值。
+     * @return 方法执行结果。
+     */
     public CryptoStrategy getCryptoStrategy() {
         return cryptoStrategy;
     }

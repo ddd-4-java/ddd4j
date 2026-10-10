@@ -46,6 +46,10 @@ public class EventChunk<E> {
         return new EventChunk<>(List.of(), nextEventNumber);
     }
 
+    /**
+     * 判断是否存在。
+     * @return 判断结果。
+     */
     public boolean hasEvents() {
         return CollKit.isNotEmpty(events);
     }

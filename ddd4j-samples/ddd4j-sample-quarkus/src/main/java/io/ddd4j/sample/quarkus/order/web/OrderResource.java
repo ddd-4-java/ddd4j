@@ -56,6 +56,11 @@ public class OrderResource {
                 "applicationService must not be null");
     }
 
+    /**
+     * create() 方法。
+     * @param request 请求对象。
+     * @return 方法执行结果。
+     */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response create(CreateOrderRequest request) {

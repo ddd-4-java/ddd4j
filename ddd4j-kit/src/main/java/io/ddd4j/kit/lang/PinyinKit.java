@@ -35,6 +35,11 @@ public class PinyinKit {
         format.setToneType(HanyuPinyinToneType.WITHOUT_TONE);
     }
 
+    /**
+     * 转换表示形式。
+     * @param hanyu 字符串参数。
+     * @return 结果字符串。
+     */
     public String toPinyin(String hanyu) {
         try {
             return PinyinHelper.toHanYuPinyinString(hanyu, format, "", true);
@@ -45,6 +50,11 @@ public class PinyinKit {
     }
 
 
+    /**
+     * 转换表示形式。
+     * @param hanyu 字符串参数。
+     * @return 结果字符串。
+     */
     public String toPINYIN(String hanyu) {
         try {
             return PinyinHelper.toHanYuPinyinString(hanyu, format, "", true).toUpperCase();

@@ -38,6 +38,11 @@ public class ShiroRequestFilter implements ContainerRequestFilter, ContainerResp
 
     private static final String BEARER_PREFIX = "Bearer ";
 
+    /**
+     * 过滤数据。
+     * @param requestContext requestContext 参数。
+     * @throws IOException 打开文件流失败时抛出。
+     */
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
         ThreadContext.unbindSubject();
@@ -53,6 +58,12 @@ public class ShiroRequestFilter implements ContainerRequestFilter, ContainerResp
         ThreadContext.bind(builder.buildSubject());
     }
 
+    /**
+     * 过滤数据。
+     * @param requestContext requestContext 参数。
+     * @param responseContext responseContext 参数。
+     * @throws IOException 打开文件流失败时抛出。
+     */
     @Override
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
         ThreadContext.unbindSubject();

@@ -54,22 +54,42 @@ public class Cpu {
      */
     private double free;
 
+    /**
+     * 获取值。
+     * @return 结果数值。
+     */
     public double getTotal() {
         return ArithKit.round(ArithKit.mul(total, 100), 2);
     }
 
+    /**
+     * 获取值。
+     * @return 结果数值。
+     */
     public double getSys() {
         return ArithKit.round(ArithKit.mul(sys / total, 100), 2);
     }
 
+    /**
+     * 获取值。
+     * @return 结果数值。
+     */
     public double getUsed() {
         return ArithKit.round(ArithKit.mul(used / total, 100), 2);
     }
 
+    /**
+     * 获取值。
+     * @return 结果数值。
+     */
     public double getWait() {
         return ArithKit.round(ArithKit.mul(wait / total, 100), 2);
     }
 
+    /**
+     * 获取值。
+     * @return 结果数值。
+     */
     public double getFree() {
         return ArithKit.round(ArithKit.mul(free / total, 100), 2);
     }

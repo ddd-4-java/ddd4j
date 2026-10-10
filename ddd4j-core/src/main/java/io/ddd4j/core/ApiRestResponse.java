@@ -230,6 +230,10 @@ public class ApiRestResponse<T> {
         return error;
     }
 
+    /**
+     * 判断布尔状态。
+     * @return 判断结果。
+     */
     @JsonIgnore
     public boolean isSuccess() {
         return code == ApiCodeValue.SC_SUCCESS;

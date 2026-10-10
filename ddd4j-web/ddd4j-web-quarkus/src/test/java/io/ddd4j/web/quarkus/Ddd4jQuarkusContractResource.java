@@ -32,6 +32,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 @Path("/contract")
 @Produces(MediaType.APPLICATION_JSON)
 public class Ddd4jQuarkusContractResource {
@@ -54,6 +59,11 @@ public class Ddd4jQuarkusContractResource {
         return R.ok(Map.of("result", "ok"));
     }
 
+    /**
+     * created() 方法。
+     * @param ignoredBody 字符串参数。
+     * @return 方法执行结果。
+     */
     @POST
     @Path("/created")
     @Consumes(MediaType.APPLICATION_JSON)

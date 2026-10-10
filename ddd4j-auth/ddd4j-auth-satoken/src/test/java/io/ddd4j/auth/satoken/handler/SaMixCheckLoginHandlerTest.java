@@ -42,6 +42,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 class SaMixCheckLoginHandlerTest {
 
     private final SaMixCheckLoginHandler handler = new SaMixCheckLoginHandler();
@@ -184,20 +189,37 @@ class SaMixCheckLoginHandlerTest {
     }
 
     @SuppressWarnings("unused")
+    /**
+     * 混合登录校验注解声明夹具：承载不同登录/用后即弃组合的占位端点，供反射读取注解使用。
+     *
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     */
     private static class Fixture {
 
+        /**
+         * mixLoginOnly() 方法。
+         */
         @SaMixCheckLogin
         public void mixLoginOnly() {
         }
 
+        /**
+         * mixLoginThrowaway() 方法。
+         */
         @SaMixCheckLogin(login = true, throwaway = true)
         public void mixLoginThrowaway() {
         }
 
+        /**
+         * mixLoginPersistent() 方法。
+         */
         @SaMixCheckLogin(login = true, throwaway = false)
         public void mixLoginPersistent() {
         }
 
+        /**
+         * mixLoginDisabled() 方法。
+         */
         @SaMixCheckLogin(login = false, throwaway = false)
         public void mixLoginDisabled() {
         }

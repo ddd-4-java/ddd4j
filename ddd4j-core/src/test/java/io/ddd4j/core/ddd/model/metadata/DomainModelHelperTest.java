@@ -56,6 +56,9 @@ class DomainModelHelperTest {
         assertThat(properties).containsExactly("status");
     }
 
+    /**
+     * 订单领域模型测试夹具，包含静态、瞬态与普通字段以验证元数据过滤。
+     */
     static final class Order {
 
         private static final String TYPE = "ORDER";
@@ -63,9 +66,15 @@ class DomainModelHelperTest {
         private String status;
     }
 
+    /**
+     * 关系型持久化对象测试夹具，用于区分按持久化类型隔离的映射缓存。
+     */
     static final class MysqlOrderPO {
     }
 
+    /**
+     * 对象关系映射实体测试夹具，用于区分按持久化类型隔离的映射缓存。
+     */
     static final class JpaOrderEntity {
     }
 }

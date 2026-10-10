@@ -109,22 +109,42 @@ public record MQDeliveryPolicy(
         return Math.min(initialMillis * multiplier, maxMillis);
     }
 
+    /**
+     * 获取值。
+     * @return 方法执行结果。
+     */
     public Duration getInitialBackoff() {
             return initialBackoff;
         }
 
+    /**
+     * 获取值。
+     * @return 结果数值。
+     */
     public double getJitterFactor() {
             return jitterFactor;
         }
 
+    /**
+     * 获取值。
+     * @return 方法执行结果。
+     */
     public Duration getLeaseDuration() {
             return leaseDuration;
         }
 
+    /**
+     * 获取值。
+     * @return 结果数值。
+     */
     public int getMaxAttempts() {
             return maxAttempts;
         }
 
+    /**
+     * 获取值。
+     * @return 方法执行结果。
+     */
     public Duration getMaxBackoff() {
             return maxBackoff;
         }

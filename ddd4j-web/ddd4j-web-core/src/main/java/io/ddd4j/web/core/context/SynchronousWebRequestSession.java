@@ -41,6 +41,14 @@ public final class SynchronousWebRequestSession implements AutoCloseable {
         this.idempotencyScope = idempotencyScope;
     }
 
+    /**
+     * 打开资源。
+     * @param requestContext requestContext 参数。
+     * @param requestLifecycle requestLifecycle 参数。
+     * @param idempotencyLifecycle idempotencyLifecycle 参数。
+     * @param idempotencyKey 字符串参数。
+     * @return 当前对象自身，支持链式调用。
+     */
     public static SynchronousWebRequestSession open(WebRequestContext requestContext,
                                                     WebRequestLifecycle requestLifecycle,
                                                     WebIdempotencyLifecycle idempotencyLifecycle,
@@ -53,6 +61,10 @@ public final class SynchronousWebRequestSession implements AutoCloseable {
             Optional<Authentication> authentication = lifecycle.authenticate(context);
             authentication.ifPresent(result -> ThreadContext.bind(result.subject()));
             Optional<WebIdempotencyLifecycle.Scope> idempotencyScope = Objects.isNull(idempotencyLifecycle)
+                    /**
+                     * Optional.empty() 方法。
+                     * @return 方法执行结果。
+                     */
                     ? Optional.empty() : idempotencyLifecycle.open(context, idempotencyKey);
             return new SynchronousWebRequestSession(context, contextScope, idempotencyScope);
         } catch (RuntimeException exception) {
@@ -61,10 +73,18 @@ public final class SynchronousWebRequestSession implements AutoCloseable {
         }
     }
 
+    /**
+     * requestContext() 方法。
+     * @return 方法执行结果。
+     */
     public WebRequestContext requestContext() {
         return requestContext;
     }
 
+    /**
+     * complete() 方法。
+     * @param successful successful 参数。
+     */
     public void complete(boolean successful) {
         try {
             if (successful) {
@@ -75,6 +95,9 @@ public final class SynchronousWebRequestSession implements AutoCloseable {
         }
     }
 
+    /**
+     * 关闭并释放资源。
+     */
     @Override
     public void close() {
         if (closed) {

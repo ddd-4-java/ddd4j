@@ -48,6 +48,11 @@ import java.util.Objects;
 @Configuration
 @Slf4j(topic = "### BASE-WEB : BaseWebConfig ###")
 // @EnableConfigurationProperties(BaseWebProperties.class)
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
 @RequiredArgsConstructor
 public class BaseWebConfig implements WebMvcConfigurer {
     /**
@@ -131,10 +136,17 @@ public class BaseWebConfig implements WebMvcConfigurer {
                 registry.addInterceptor(baseInterceptor).addPathPatterns(baseInterceptor.pathPatterns()).excludePathPatterns(baseInterceptor.excludePathPatterns());
             });
         } else {
+            /**
+             * log.warn() 方法。
+             * @param empty!" empty!" 参数。
+             */
             log.warn("baseWebInterceptors is empty!");
         }
     }
 
+    /**
+     * 执行初始化。
+     */
     @PostConstruct
     public void init() {
         // 启动WebSocket服务端

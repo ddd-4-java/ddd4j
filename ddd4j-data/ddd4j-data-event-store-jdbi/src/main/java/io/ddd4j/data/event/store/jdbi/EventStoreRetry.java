@@ -196,6 +196,12 @@ final class EventStoreRetry {
      */
     @FunctionalInterface
     interface RetryableAction<T> {
+        /**
+         * 执行一次业务逻辑。
+         *
+         * @return 业务逻辑的返回值
+         * @throws Exception 执行过程中出现的异常，交由重试机制判定是否可重试
+         */
         T run() throws Exception;
     }
 
@@ -204,6 +210,12 @@ final class EventStoreRetry {
      */
     @FunctionalInterface
     interface Sleeper {
+        /**
+         * 休眠指定时长。
+         *
+         * @param millis 休眠的毫秒数
+         * @throws InterruptedException 休眠过程中线程被中断
+         */
         void sleep(long millis) throws InterruptedException;
     }
 }

@@ -34,6 +34,11 @@ public final class Ddd4jDropwizardIllegalStateExceptionMapper implements Excepti
         this.delegate = Objects.requireNonNull(delegate, "delegate must not be null");
     }
 
+    /**
+     * 转换表示形式。
+     * @param exception exception 参数。
+     * @return 方法执行结果。
+     */
     @Override
     public Response toResponse(IllegalStateException exception) {
         return delegate.toResponse(exception);
