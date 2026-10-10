@@ -1,5 +1,11 @@
 package io.ddd4j.core.cqrs.readmodel;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Objects;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -120,7 +126,54 @@ class EventChunkReaderContractTest {
             return new EventChunk<>(picked, next);
         }
 
-        private record Numbered(long number, String payload) {
+        private final static class Numbered {
+
+            private static final long serialVersionUID = 0L;
+
+            private final long number;
+
+            private final String payload;
+
+            @JsonCreator()
+            private Numbered(@JsonProperty("number") long number, @JsonProperty("payload") String payload) {
+                this.number = number;
+                this.payload = payload;
+            }
+
+            @JsonProperty("number")
+            public long number() {
+                return number;
+            }
+
+            @JsonProperty("payload")
+            public String payload() {
+                return payload;
+            }
+
+            @Override
+            public boolean equals(Object obj) {
+                if (this == obj) {
+                    return true;
+                }
+                if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                    return false;
+                }
+                Numbered other = (Numbered) obj;
+                return this.number == other.number && Objects.equals(this.payload, other.payload);
+            }
+
+            @Override
+            public int hashCode() {
+                int result = 0;
+                result = 31 * result + Long.hashCode(number);
+                result = 31 * result + Objects.hashCode(payload);
+                return result;
+            }
+
+            @Override
+            public String toString() {
+                return "Numbered[number=" + number + ", payload=" + payload + "]";
+            }
         }
     }
 }

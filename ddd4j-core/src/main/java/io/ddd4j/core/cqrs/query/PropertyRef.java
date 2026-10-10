@@ -14,6 +14,14 @@
  */
 package io.ddd4j.core.cqrs.query;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.io.InvalidObjectException;
+
+import java.io.ObjectStreamException;
+
 import io.ddd4j.core.util.LambdaKit;
 import io.ddd4j.core.util.SFunction;
 import io.ddd4j.kit.lang.StrKit;
@@ -24,20 +32,36 @@ import java.util.Objects;
 /**
  * ORM 无关的类型安全属性引用。
  *
- * @param space     属性空间
- * @param ownerType 声明属性方法的类型
- * @param property  Java 属性名
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 4.0.0
  */
-public record PropertyRef(PropertySpace space, Class<?> ownerType, String property) implements Serializable {
 
-    public PropertyRef {
+public final class PropertyRef implements Serializable {
+
+    private static final long serialVersionUID = 0L;
+
+    private final PropertySpace space;
+
+    private final Class<?> ownerType;
+
+    private final String property;
+
+    /**
+ * @param space 属性空间
+ * @param ownerType 声明属性方法的类型
+ * @param property Java 属性名
+ */
+
+    @JsonCreator()
+    public PropertyRef(@JsonProperty("space") PropertySpace space, @JsonProperty("ownerType") Class<?> ownerType, @JsonProperty("property") String property) {
         Objects.requireNonNull(space, "space must not be null");
         Objects.requireNonNull(ownerType, "ownerType must not be null");
         if (StrKit.isEmpty(property)) {
             throw new IllegalArgumentException("property must not be empty");
         }
+        this.space = space;
+        this.ownerType = ownerType;
+        this.property = property;
     }
 
     public static <M> PropertyRef domain(SFunction<M, ?> function) {
@@ -75,9 +99,58 @@ public record PropertyRef(PropertySpace space, Class<?> ownerType, String proper
         return Objects.equals(PropertySpace.PERSISTENCE, space);
     }
 
-    private static IllegalArgumentException incompatible(PropertySpace space, Class<?> ownerType,
-                                                         Class<?> expectedType) {
-        return new IllegalArgumentException("Query " + space + " property owner " + ownerType.getName()
-                + " is incompatible with repository type " + expectedType.getName());
+    private static IllegalArgumentException incompatible(PropertySpace space, Class<?> ownerType, Class<?> expectedType) {
+        return new IllegalArgumentException("Query " + space + " property owner " + ownerType.getName() + " is incompatible with repository type " + expectedType.getName());
+    }
+
+    @JsonProperty("space")
+    public PropertySpace space() {
+        return space;
+    }
+
+    @JsonProperty("ownerType")
+    public Class<?> ownerType() {
+        return ownerType;
+    }
+
+    @JsonProperty("property")
+    public String property() {
+        return property;
+    }
+
+    private Object readResolve() throws ObjectStreamException {
+        try {
+            return new PropertyRef(space, ownerType, property);
+        } catch (RuntimeException cause) {
+            InvalidObjectException failure = new InvalidObjectException(cause.getMessage());
+            failure.initCause(cause);
+            throw failure;
+        }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+            return false;
+        }
+        PropertyRef other = (PropertyRef) obj;
+        return Objects.equals(this.space, other.space) && Objects.equals(this.ownerType, other.ownerType) && Objects.equals(this.property, other.property);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 0;
+        result = 31 * result + Objects.hashCode(space);
+        result = 31 * result + Objects.hashCode(ownerType);
+        result = 31 * result + Objects.hashCode(property);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "PropertyRef[space=" + space + ", ownerType=" + ownerType + ", property=" + property + "]";
     }
 }

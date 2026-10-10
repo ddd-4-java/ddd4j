@@ -1,5 +1,11 @@
 package io.ddd4j.data.event.store.esdb;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Objects;
+
 import com.eventstore.dbclient.AppendToStreamOptions;
 import com.eventstore.dbclient.EventData;
 import com.eventstore.dbclient.EventStoreDBClient;
@@ -84,7 +90,12 @@ class EsdbEventStoreTest {
         assertThat(new EsdbEventStore(client).read(ORDER_TYPE, new TestId("missing"))).isEmpty();
     }
 
-    record TestId(String value) implements AggregateRootId {
+    final static class TestId implements AggregateRootId {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String value;
+
         private static final EntityType TYPE = new StringEntityType("Order");
 
         @Override
@@ -100,6 +111,40 @@ class EsdbEventStoreTest {
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
+        }
+
+        @JsonCreator()
+        TestId(@JsonProperty("value") String value) {
+            this.value = value;
+        }
+
+        @JsonProperty("value")
+        public String value() {
+            return value;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            TestId other = (TestId) obj;
+            return Objects.equals(this.value, other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(value);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "TestId[value=" + value + "]";
         }
     }
 
