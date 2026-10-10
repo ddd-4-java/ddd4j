@@ -14,6 +14,14 @@
  */
 package io.ddd4j.sample.javalin;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.io.InvalidObjectException;
+
+import java.io.ObjectStreamException;
+
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.ddd4j.cache.subject.InMemorySubject;
 import io.ddd4j.cache.subject.InMemorySubjectProvider;
@@ -83,13 +91,24 @@ public final class JavalinSample {
         }
     }
 
-    public record JavalinApplication(Javalin app, String token, SpiRegistrationScope spiScope)
-            implements AutoCloseable {
+    public final static class JavalinApplication implements AutoCloseable {
 
-        public JavalinApplication {
+        private static final long serialVersionUID = 0L;
+
+        private final Javalin app;
+
+        private final String token;
+
+        private final SpiRegistrationScope spiScope;
+
+        @JsonCreator()
+        public JavalinApplication(@JsonProperty("app") Javalin app, @JsonProperty("token") String token, @JsonProperty("spiScope") SpiRegistrationScope spiScope) {
             Objects.requireNonNull(app, "app must not be null");
             Objects.requireNonNull(token, "token must not be null");
             Objects.requireNonNull(spiScope, "spiScope must not be null");
+            this.app = app;
+            this.token = token;
+            this.spiScope = spiScope;
         }
 
         @Override
@@ -99,6 +118,57 @@ public final class JavalinSample {
             } finally {
                 spiScope.close();
             }
+        }
+
+        @JsonProperty("app")
+        public Javalin app() {
+            return app;
+        }
+
+        @JsonProperty("token")
+        public String token() {
+            return token;
+        }
+
+        @JsonProperty("spiScope")
+        public SpiRegistrationScope spiScope() {
+            return spiScope;
+        }
+
+        private Object readResolve() throws ObjectStreamException {
+            try {
+                return new JavalinApplication(app, token, spiScope);
+            } catch (RuntimeException cause) {
+                InvalidObjectException failure = new InvalidObjectException(cause.getMessage());
+                failure.initCause(cause);
+                throw failure;
+            }
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            JavalinApplication other = (JavalinApplication) obj;
+            return Objects.equals(this.app, other.app) && Objects.equals(this.token, other.token) && Objects.equals(this.spiScope, other.spiScope);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(app);
+            result = 31 * result + Objects.hashCode(token);
+            result = 31 * result + Objects.hashCode(spiScope);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "JavalinApplication[app=" + app + ", token=" + token + ", spiScope=" + spiScope + "]";
         }
     }
 }

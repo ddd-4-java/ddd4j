@@ -14,6 +14,12 @@
  */
 package io.ddd4j.sample.quarkus.satoken.rbac;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Objects;
+
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaCheckRole;
@@ -168,7 +174,54 @@ public class AuthenticationResource {
     /**
      * 登录请求体。
      */
-    public record LoginRequest(String username, String password) {
+    public final static class LoginRequest {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String username;
+
+        private final String password;
+
+        @JsonCreator()
+        public LoginRequest(@JsonProperty("username") String username, @JsonProperty("password") String password) {
+            this.username = username;
+            this.password = password;
+        }
+
+        @JsonProperty("username")
+        public String username() {
+            return username;
+        }
+
+        @JsonProperty("password")
+        public String password() {
+            return password;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            LoginRequest other = (LoginRequest) obj;
+            return Objects.equals(this.username, other.username) && Objects.equals(this.password, other.password);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(username);
+            result = 31 * result + Objects.hashCode(password);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "LoginRequest[username=" + username + ", password=" + password + "]";
+        }
     }
 
 }

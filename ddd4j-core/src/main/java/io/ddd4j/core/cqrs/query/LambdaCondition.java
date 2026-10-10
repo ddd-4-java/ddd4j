@@ -14,6 +14,14 @@
  */
 package io.ddd4j.core.cqrs.query;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.io.InvalidObjectException;
+
+import java.io.ObjectStreamException;
+
 import io.ddd4j.kit.text.StrPool;
 
 import java.io.Serializable;
@@ -25,17 +33,33 @@ import java.util.Objects;
  * <p>存储从 {@link io.ddd4j.core.util.SFunction} 方法引用中解析出的属性名、操作符和值，
  * 由各 ORM 模块的 Repository 转换为原生查询条件。
  *
- * @param propertyRef 类型安全属性引用
- * @param operator    操作符（如 {@code "="}、{@code "LIKE"}、{@code ">"}）
- * @param value       条件值
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
-public record LambdaCondition(PropertyRef propertyRef, String operator, Object value) implements Serializable {
 
-    public LambdaCondition {
+public final class LambdaCondition implements Serializable {
+
+    private static final long serialVersionUID = 0L;
+
+    private final PropertyRef propertyRef;
+
+    private final String operator;
+
+    private final Object value;
+
+    /**
+ * @param propertyRef 类型安全属性引用
+ * @param operator 操作符（如 {@code "="}、{@code "LIKE"}、{@code ">"}）
+ * @param value 条件值
+ */
+
+    @JsonCreator()
+    public LambdaCondition(@JsonProperty("propertyRef") PropertyRef propertyRef, @JsonProperty("operator") String operator, @JsonProperty("value") Object value) {
         Objects.requireNonNull(propertyRef, "propertyRef must not be null");
         Objects.requireNonNull(operator, "operator must not be null");
+        this.propertyRef = propertyRef;
+        this.operator = operator;
+        this.value = value;
     }
 
     public String property() {
@@ -70,5 +94,56 @@ public record LambdaCondition(PropertyRef propertyRef, String operator, Object v
 
     public Object getValue() {
         return value;
+    }
+
+    @JsonProperty("propertyRef")
+    public PropertyRef propertyRef() {
+        return propertyRef;
+    }
+
+    @JsonProperty("operator")
+    public String operator() {
+        return operator;
+    }
+
+    @JsonProperty("value")
+    public Object value() {
+        return value;
+    }
+
+    private Object readResolve() throws ObjectStreamException {
+        try {
+            return new LambdaCondition(propertyRef, operator, value);
+        } catch (RuntimeException cause) {
+            InvalidObjectException failure = new InvalidObjectException(cause.getMessage());
+            failure.initCause(cause);
+            throw failure;
+        }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+            return false;
+        }
+        LambdaCondition other = (LambdaCondition) obj;
+        return Objects.equals(this.propertyRef, other.propertyRef) && Objects.equals(this.operator, other.operator) && Objects.equals(this.value, other.value);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 0;
+        result = 31 * result + Objects.hashCode(propertyRef);
+        result = 31 * result + Objects.hashCode(operator);
+        result = 31 * result + Objects.hashCode(value);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "LambdaCondition[propertyRef=" + propertyRef + ", operator=" + operator + ", value=" + value + "]";
     }
 }
