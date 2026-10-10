@@ -185,7 +185,9 @@ public class NatsMQClient implements MQClient {
                     .build();
             io.nats.client.Subscription subscription =
                     jetStream.subscribe(subject, dispatcher, msg -> onMessage(msg, listener), false, options);
-            lifecycle.register("nats-subscription-" + subject, subscription::unsubscribe);
+            // 必须经 dispatcher 退订：仅 subscription.unsubscribe() 不会把订阅从 dispatcher
+            // 的订阅表移除，重订阅时会命中 "already subscribed" 或继续向旧订阅投递
+            lifecycle.register("nats-subscription-" + subject, () -> dispatcher.unsubscribe(subscription));
             log.info("Registered NATS JetStream listener: subject={}, durable={}", subject, listener.getGroup());
         } catch (Exception ex) {
             lifecycle.rollback(checkpoint);
