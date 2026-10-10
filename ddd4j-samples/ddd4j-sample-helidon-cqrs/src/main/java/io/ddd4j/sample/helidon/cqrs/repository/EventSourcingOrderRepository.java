@@ -14,6 +14,10 @@
  */
 package io.ddd4j.sample.helidon.cqrs.repository;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.cqrs.eventstore.InMemoryEventStore;
 import io.ddd4j.core.ddd.event.AggregateRootId;
@@ -98,7 +102,11 @@ public class EventSourcingOrderRepository implements OrderRepository {
      * 字符串聚合根标识适配器：core EventStore SPI 以 {@link AggregateRootId} 定位流，
      * 样例订单以字符串为 ID（与 2.0.x 旧 r2dbc StringAggregateRootId 同构）。
      */
-    private record OrderAggregateId(String value) implements AggregateRootId {
+    private final static class OrderAggregateId implements AggregateRootId {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String value;
 
         private static final EntityType TYPE = new StringEntityType("Order");
 
@@ -115,6 +123,40 @@ public class EventSourcingOrderRepository implements OrderRepository {
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
+        }
+
+        @JsonCreator()
+        private OrderAggregateId(@JsonProperty("value") String value) {
+            this.value = value;
+        }
+
+        @JsonProperty("value")
+        public String value() {
+            return value;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            OrderAggregateId other = (OrderAggregateId) obj;
+            return Objects.equals(this.value, other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(value);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "OrderAggregateId[value=" + value + "]";
         }
     }
 
