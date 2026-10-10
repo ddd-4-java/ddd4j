@@ -1,5 +1,9 @@
 package io.ddd4j.sample.javalin.cqrs.order.application;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import io.ddd4j.sample.javalin.cqrs.order.domain.model.Money;
 import io.ddd4j.sample.javalin.cqrs.order.domain.model.Order;
 import io.ddd4j.sample.javalin.cqrs.order.domain.repository.OrderRepository;
@@ -119,25 +123,160 @@ public class OrderApplicationService {
     }
 
     /**
-     * 创建订单命令。
-     *
-     * @param orderNo   订单编号
-     * @param buyerId   买家 ID
-     * @param buyerName 买家显示名称
-     */
-    public record CreateOrderCommand(String orderNo, String buyerId, String buyerName) {
+ * 创建订单命令。
+ */
+
+    public final static class CreateOrderCommand {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String orderNo;
+
+        private final String buyerId;
+
+        private final String buyerName;
+
+        /**
+ * @param orderNo 订单编号
+ * @param buyerId 买家 ID
+ * @param buyerName 买家显示名称
+ */
+
+        @JsonCreator()
+        public CreateOrderCommand(@JsonProperty("orderNo") String orderNo, @JsonProperty("buyerId") String buyerId, @JsonProperty("buyerName") String buyerName) {
+            this.orderNo = orderNo;
+            this.buyerId = buyerId;
+            this.buyerName = buyerName;
+        }
+
+        @JsonProperty("orderNo")
+        public String orderNo() {
+            return orderNo;
+        }
+
+        @JsonProperty("buyerId")
+        public String buyerId() {
+            return buyerId;
+        }
+
+        @JsonProperty("buyerName")
+        public String buyerName() {
+            return buyerName;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            CreateOrderCommand other = (CreateOrderCommand) obj;
+            return Objects.equals(this.orderNo, other.orderNo) && Objects.equals(this.buyerId, other.buyerId) && Objects.equals(this.buyerName, other.buyerName);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(orderNo);
+            result = 31 * result + Objects.hashCode(buyerId);
+            result = 31 * result + Objects.hashCode(buyerName);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "CreateOrderCommand[orderNo=" + orderNo + ", buyerId=" + buyerId + ", buyerName=" + buyerName + "]";
+        }
     }
 
     /**
-     * 添加订单行命令。
-     *
-     * @param orderId   订单 ID
-     * @param goodsId   商品 ID
-     * @param goodsName 商品名称
-     * @param quantity  购买数量
-     * @param unitPrice 单价
-     */
-    public record AddOrderLineCommand(String orderId, String goodsId, String goodsName, int quantity,
-                                      BigDecimal unitPrice) {
+ * 添加订单行命令。
+ */
+
+    public final static class AddOrderLineCommand {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String orderId;
+
+        private final String goodsId;
+
+        private final String goodsName;
+
+        private final int quantity;
+
+        private final BigDecimal unitPrice;
+
+        /**
+ * @param orderId 订单 ID
+ * @param goodsId 商品 ID
+ * @param goodsName 商品名称
+ * @param quantity 购买数量
+ * @param unitPrice 单价
+ */
+
+        @JsonCreator()
+        public AddOrderLineCommand(@JsonProperty("orderId") String orderId, @JsonProperty("goodsId") String goodsId, @JsonProperty("goodsName") String goodsName, @JsonProperty("quantity") int quantity, @JsonProperty("unitPrice") BigDecimal unitPrice) {
+            this.orderId = orderId;
+            this.goodsId = goodsId;
+            this.goodsName = goodsName;
+            this.quantity = quantity;
+            this.unitPrice = unitPrice;
+        }
+
+        @JsonProperty("orderId")
+        public String orderId() {
+            return orderId;
+        }
+
+        @JsonProperty("goodsId")
+        public String goodsId() {
+            return goodsId;
+        }
+
+        @JsonProperty("goodsName")
+        public String goodsName() {
+            return goodsName;
+        }
+
+        @JsonProperty("quantity")
+        public int quantity() {
+            return quantity;
+        }
+
+        @JsonProperty("unitPrice")
+        public BigDecimal unitPrice() {
+            return unitPrice;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            AddOrderLineCommand other = (AddOrderLineCommand) obj;
+            return Objects.equals(this.orderId, other.orderId) && Objects.equals(this.goodsId, other.goodsId) && Objects.equals(this.goodsName, other.goodsName) && this.quantity == other.quantity && Objects.equals(this.unitPrice, other.unitPrice);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(orderId);
+            result = 31 * result + Objects.hashCode(goodsId);
+            result = 31 * result + Objects.hashCode(goodsName);
+            result = 31 * result + Integer.hashCode(quantity);
+            result = 31 * result + Objects.hashCode(unitPrice);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "AddOrderLineCommand[orderId=" + orderId + ", goodsId=" + goodsId + ", goodsName=" + goodsName + ", quantity=" + quantity + ", unitPrice=" + unitPrice + "]";
+        }
     }
 }

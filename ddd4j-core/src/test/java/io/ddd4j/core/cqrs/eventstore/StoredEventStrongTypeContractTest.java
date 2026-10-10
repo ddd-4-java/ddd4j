@@ -1,5 +1,11 @@
 package io.ddd4j.core.cqrs.eventstore;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Objects;
+
 import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityIdPath;
@@ -98,7 +104,11 @@ class StoredEventStrongTypeContractTest {
     /**
      * 测试聚合根标识：满足 {@link AggregateRootId} 契约。
      */
-    record TestAggregateRootId(String value) implements AggregateRootId {
+    final static class TestAggregateRootId implements AggregateRootId {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String value;
 
         private static final EntityType TYPE = new StringEntityType("TestAggregate");
 
@@ -115,6 +125,40 @@ class StoredEventStrongTypeContractTest {
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
+        }
+
+        @JsonCreator()
+        TestAggregateRootId(@JsonProperty("value") String value) {
+            this.value = value;
+        }
+
+        @JsonProperty("value")
+        public String value() {
+            return value;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            TestAggregateRootId other = (TestAggregateRootId) obj;
+            return Objects.equals(this.value, other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(value);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "TestAggregateRootId[value=" + value + "]";
         }
     }
 

@@ -1,5 +1,11 @@
 package io.ddd4j.core.ddd.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Objects;
+
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityId;
 import io.ddd4j.core.ddd.event.EntityIdPath;
@@ -171,7 +177,11 @@ class AggregateRootEventHandlerTest {
             super(new EntityIdPath(new CounterId("counter-1")));
         }
 
-        record CounterId(String value) implements EntityId {
+        final static class CounterId implements EntityId {
+
+            private static final long serialVersionUID = 0L;
+
+            private final String value;
 
             private static final EntityType TYPE = new StringEntityType("Counter");
 
@@ -188,6 +198,40 @@ class AggregateRootEventHandlerTest {
             @Override
             public String asTypedString() {
                 return TYPE.asString() + ":" + value;
+            }
+
+            @JsonCreator()
+            CounterId(@JsonProperty("value") String value) {
+                this.value = value;
+            }
+
+            @JsonProperty("value")
+            public String value() {
+                return value;
+            }
+
+            @Override
+            public boolean equals(Object obj) {
+                if (this == obj) {
+                    return true;
+                }
+                if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                    return false;
+                }
+                CounterId other = (CounterId) obj;
+                return Objects.equals(this.value, other.value);
+            }
+
+            @Override
+            public int hashCode() {
+                int result = 0;
+                result = 31 * result + Objects.hashCode(value);
+                return result;
+            }
+
+            @Override
+            public String toString() {
+                return "CounterId[value=" + value + "]";
             }
         }
     }

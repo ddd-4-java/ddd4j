@@ -1,5 +1,11 @@
 package io.ddd4j.core.ddd.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Objects;
+
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityId;
 import io.ddd4j.core.ddd.event.EntityIdPath;
@@ -122,7 +128,11 @@ class AggregateRootApplyTest {
             super(new EntityIdPath(new OrderId("order-1")));
         }
 
-        record OrderId(String value) implements EntityId {
+        final static class OrderId implements EntityId {
+
+            private static final long serialVersionUID = 0L;
+
+            private final String value;
 
             private static final EntityType TYPE = new StringEntityType("Order");
 
@@ -139,6 +149,40 @@ class AggregateRootApplyTest {
             @Override
             public String asTypedString() {
                 return TYPE.asString() + ":" + value;
+            }
+
+            @JsonCreator()
+            OrderId(@JsonProperty("value") String value) {
+                this.value = value;
+            }
+
+            @JsonProperty("value")
+            public String value() {
+                return value;
+            }
+
+            @Override
+            public boolean equals(Object obj) {
+                if (this == obj) {
+                    return true;
+                }
+                if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                    return false;
+                }
+                OrderId other = (OrderId) obj;
+                return Objects.equals(this.value, other.value);
+            }
+
+            @Override
+            public int hashCode() {
+                int result = 0;
+                result = 31 * result + Objects.hashCode(value);
+                return result;
+            }
+
+            @Override
+            public String toString() {
+                return "OrderId[value=" + value + "]";
             }
         }
     }
