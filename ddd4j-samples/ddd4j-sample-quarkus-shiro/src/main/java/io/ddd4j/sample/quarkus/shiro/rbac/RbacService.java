@@ -55,7 +55,7 @@ public class RbacService {
 
     private static WebApplicationException forbidden(String reason) {
         return new WebApplicationException(Response.status(Response.Status.FORBIDDEN)
-                .entity(R.fail(403, reason)).build());
+                .entity(R.of(403, reason)).build());
     }
 
     /**
@@ -317,7 +317,7 @@ public class RbacService {
     public void requireLogin() {
         if (!SubjectKit.isLogin()) {
             throw new WebApplicationException(Response.status(Response.Status.UNAUTHORIZED)
-                    .entity(R.fail(401, "unauthenticated")).build());
+                    .entity(R.of(401, "unauthenticated")).build());
         }
     }
 

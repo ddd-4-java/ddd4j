@@ -93,7 +93,7 @@ public class AuthorizationController {
      */
     public void listUsers(Context ctx) {
         if (!SubjectKit.hasPermission("user:list")) {
-            ctx.status(403).json(R.fail(403, "forbidden: requires user:list"));
+            ctx.status(403).json(R.of(403, "forbidden: requires user:list"));
             return;
         }
         Collection<User> users = rbacService.listUsers();
@@ -107,7 +107,7 @@ public class AuthorizationController {
      */
     public void getUser(Context ctx) {
         if (!SubjectKit.hasPermission("user:list")) {
-            ctx.status(403).json(R.fail(403, "forbidden: requires user:list"));
+            ctx.status(403).json(R.of(403, "forbidden: requires user:list"));
             return;
         }
         String loginId = ctx.pathParam("id");
@@ -156,7 +156,7 @@ public class AuthorizationController {
     public void deleteUser(Context ctx) {
         // 组合校验：必须同时拥有 admin 角色 + user:delete 权限
         if (!SubjectKit.hasRole("admin") || !SubjectKit.hasPermission("user:delete")) {
-            ctx.status(403).json(R.fail(403, "forbidden: requires admin role and user:delete permission"));
+            ctx.status(403).json(R.of(403, "forbidden: requires admin role and user:delete permission"));
             return;
         }
         String loginId = ctx.pathParam("id");
@@ -171,7 +171,7 @@ public class AuthorizationController {
      */
     public void listRoles(Context ctx) {
         if (!SubjectKit.hasPermission("role:list")) {
-            ctx.status(403).json(R.fail(403, "forbidden: requires role:list"));
+            ctx.status(403).json(R.of(403, "forbidden: requires role:list"));
             return;
         }
         Collection<Role> roles = rbacService.listRoles();
@@ -223,7 +223,7 @@ public class AuthorizationController {
      */
     public void listPermissions(Context ctx) {
         if (!SubjectKit.hasPermission("permission:list")) {
-            ctx.status(403).json(R.fail(403, "forbidden: requires permission:list"));
+            ctx.status(403).json(R.of(403, "forbidden: requires permission:list"));
             return;
         }
         Collection<Permission> perms = rbacService.listPermissions();
@@ -259,7 +259,7 @@ public class AuthorizationController {
      */
     private boolean requireAdmin(Context ctx) {
         if (!SubjectKit.hasRole("admin")) {
-            ctx.status(403).json(R.fail(403, "forbidden: requires admin role"));
+            ctx.status(403).json(R.of(403, "forbidden: requires admin role"));
             return false;
         }
         return true;

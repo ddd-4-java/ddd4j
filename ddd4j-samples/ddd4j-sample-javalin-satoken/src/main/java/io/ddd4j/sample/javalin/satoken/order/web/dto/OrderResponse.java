@@ -21,6 +21,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Objects;
 
 import io.ddd4j.sample.javalin.satoken.order.domain.model.Money;
+import io.ddd4j.sample.javalin.satoken.order.domain.model.Order;
+import io.ddd4j.sample.javalin.satoken.order.domain.model.OrderLine;
 import io.ddd4j.sample.javalin.satoken.order.domain.model.OrderStatus;
 
 import java.util.List;

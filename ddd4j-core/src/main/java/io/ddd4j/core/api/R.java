@@ -74,151 +74,73 @@ public class R<T> implements IR {
         this.error = error;
     }
 
+    // ok -----------------------------------------------------------------
+
+    /**
+     * 请求/操作成功（code=0），不携带数据。
+     */
     public static <T> R<T> ok() {
         return new R<>();
     }
 
+    /**
+     * 请求/操作成功（code=0），携带数据。
+     */
     public static <T> R<T> ok(T payload) {
         return new R<>(payload);
     }
 
+    /**
+     * 请求/操作成功（code=0），携带自定义消息与数据。
+     */
     public static <T> R<T> ok(String msg, T data) {
-        return new R(ApiCode.OK.getCode(), msg, data);
+        return of(ApiCode.OK.getCode(), msg, data);
     }
-
-    public static <T> R<T> fail(Serializable code, String msg) {
-        return new R(code, msg);
-    }
-
-    public static <T> R<T> fail(Serializable code, String msg, T data) {
-        return new R(code, msg, data);
-    }
-
-    public static <T> R<T> fail() {
-        return fail(ApiCode.FAIL.getCode());
-    }
-
-    public static <T> R<T> fail(Serializable code) {
-        return fail(code, ApiCode.FAIL.getDesc());
-    }
-
-    public static <T> R<T> fail(String msg) {
-        return fail(ApiCode.FAIL.getCode(), msg);
-    }
-
-    // === cloud 兼容别名（failed = fail，isOk 语义对齐 cloud SUCCESS=0） ===
-
-    /**
-     * 失败响应（cloud 兼容别名，等价于 {@link #fail()}）。
-     */
-    public static <T> R<T> failed() {
-        return fail();
-    }
-
-    /**
-     * 失败响应（cloud 兼容别名，等价于 {@link #fail(String)}）。
-     */
-    public static <T> R<T> failed(String msg) {
-        return fail(msg);
-    }
-
-    /**
-     * 失败响应（cloud 兼容别名，等价于 {@link #fail(T)}）。
-     */
-    public static <T> R<T> failed(T data) {
-        return fail(ApiCode.FAIL.getCode(), ApiCode.FAIL.getDesc(), data);
-    }
-
-    /**
-     * 失败响应（cloud 兼容别名，等价于 {@link #fail(Serializable, String)}）。
-     */
-    public static <T> R<T> failed(Serializable code, String msg) {
-        return fail(code, msg);
-    }
-
-    /**
-     * 失败响应（cloud 兼容别名，等价于 {@link #fail(Serializable, String, T)}）。
-     */
-    public static <T> R<T> failed(T data, String msg) {
-        return fail(ApiCode.FAIL.getCode(), msg, data);
-    }
-
-    /**
-     * 失败响应（cloud 兼容别名，带 data + code + msg）。
-     */
-    public static <T> R<T> failed(T data, Serializable code, String msg) {
-        return fail(code, msg, data);
-    }
-
-    // === CustomApiCode 工厂（承接原 ApiRestResponse 能力） ===
-
-    /**
-     * 按 {@link CustomApiCode} 构建响应（code 与描述取自定义码）。
-     */
-    public static <T> R<T> of(CustomApiCode code) {
-        return new R(code.getCode(), code.getReason(), null);
-    }
-
-    /**
-     * 按 {@link CustomApiCode} 构建响应并携带数据。
-     */
-    public static <T> R<T> of(CustomApiCode code, T data) {
-        return new R(code.getCode(), code.getReason(), data);
-    }
-
-    // === ApiRestResponse 收编（原 ApiRestResponse 静态工厂/实例方法，合并后唯一入口仍是 R） ===
 
     // success -----------------------------------------------------------------
 
     /**
-     * 成功响应（code=200），携带自定义消息。
+     * 请求/操作成功（code=200），不携带数据。
      */
-    public static <T> R<T> success(final String message) {
-        return new R(ApiCode.SUCCESS.getCode(), ApiCode.SUCCESS.getReason(), null);
+    public static <T> R<T> success() {
+        return of(ApiCode.SUCCESS);
     }
 
     /**
-     * 成功响应（code=200），携带数据。
+     * 请求/操作成功（code=200），携带自定义消息。
      */
-    public static <T> R<T> success(final T data) {
-        return new R(ApiCode.SUCCESS.getCode(), ApiCode.SUCCESS.getReason(), data);
+    public static <T> R<T> success(String message) {
+        return new R<>(ApiCode.SUCCESS.getCode(), message, null);
     }
 
     /**
-     * 成功响应（按自定义码），携带数据。
+     * 请求/操作成功（code=200），携带数据。
      */
-    public static <T> R<T> success(final CustomApiCode code, final T data) {
-        return of(code, data);
+    public static <T> R<T> success(T data) {
+        return of(ApiCode.SUCCESS.getCode(), ApiCode.SUCCESS.getReason(), data);
+    }
+
+    // fail -----------------------------------------------------------------
+
+    /**
+     * 请求/操作失败（code=400），不携带数据。
+     */
+    public static <T> R<T> fail() {
+        return fail(ApiCode.FAIL.getCode());
     }
 
     /**
-     * 成功响应（指定 code），携带自定义消息。
+     * 请求/操作失败（code=400），携带自定义消息。
      */
-    public static <T> R<T> success(final int code, final String message) {
-        return new R(code, message, null);
+    public static <T> R<T> fail(Serializable code) {
+        return of(code, ApiCode.FAIL.getDesc());
     }
 
     /**
-     * 成功响应（按自定义码），携带自定义消息。
+     * 请求/操作失败（code=400），携带数据。
      */
-    public static <T> R<T> success(final CustomApiCode code, final String message) {
-        return new R(code.getCode(), message, null);
-    }
-
-    // fail 补充（fail(String)/fail(Serializable, String) 等 R 原有语义不变） -----
-
-    /**
-     * 失败响应（按自定义码），携带数据。
-     */
-    public static <T> R<T> fail(final CustomApiCode code, final T data) {
-        return of(code, data);
-    }
-
-    /**
-     * 失败响应（按自定义码），携带自定义消息。
-     */
-    public static <T> R<T> fail(final CustomApiCode code, final String message) {
-        return new R(code.getCode(), message, null);
+    public static <T> R<T> fail(String message) {
+        return of(ApiCode.FAIL.getCode(), message);
     }
 
     // error -----------------------------------------------------------------
@@ -226,73 +148,66 @@ public class R<T> implements IR {
     /**
      * 错误响应（code=500），携带自定义消息。
      */
-    public static <T> R<T> error(final String message) {
-        return new R(ApiCode.SERVER_ERROR.getCode(), message, null);
+    public static <T> R<T> error(String message) {
+        return new R<>(ApiCode.SERVER_ERROR.getCode(), message, null);
     }
 
     /**
      * 错误响应（code=500），携带数据。
      */
-    public static <T> R<T> error(final T data) {
-        return new R(ApiCode.SERVER_ERROR.getCode(), ApiCode.SERVER_ERROR.getReason(), data);
+    public static <T> R<T> error(T data) {
+        return new R<>(ApiCode.SERVER_ERROR.getCode(), ApiCode.SERVER_ERROR.getReason(), data);
+    }
+
+    // CustomApiCode -----------------------------------------------------------------
+
+    /**
+     * 按 {@link CustomApiCode} 构建响应（code 与描述取自定义码）。
+     */
+    public static <T> R<T> of(CustomApiCode code) {
+        return new R<>(code.getCode(), code.getReason(), null);
     }
 
     /**
-     * 错误响应（按自定义码），携带数据。
+     * 按 {@link CustomApiCode} 构建响应并携带自定义消息。
      */
-    public static <T> R<T> error(final CustomApiCode code, final T data) {
-        return of(code, data);
+    public static <T> R<T> of(CustomApiCode code, String message) {
+        return new R<>(code.getCode(), message, null);
     }
 
     /**
-     * 错误响应（指定 code），携带自定义消息。
+     * 按 {@link CustomApiCode} 构建响应，并携带数据。
      */
-    public static <T> R<T> error(final int code, final String message) {
-        return new R(code, message, null);
+    public static <T> R<T> of(CustomApiCode code, T data) {
+        return new R<>(code.getCode(), code.getReason(), data);
     }
 
     /**
-     * 错误响应（按自定义码），携带自定义消息。
+     * 按 {@link CustomApiCode} 构建响应，并携带自定义消息与校验失败信息。
      */
-    public static <T> R<T> error(final CustomApiCode code, final String message) {
-        return new R(code.getCode(), message, null);
-    }
-
-    /**
-     * 错误响应（按自定义码），携带自定义消息与校验失败信息。
-     */
-    public static <T> R<T> error(final CustomApiCode code, final String message, List<Map<String, String>> error) {
-        return new R(code.getCode(), message, null, error);
-    }
-
-    // of 补充（of(CustomApiCode) / of(CustomApiCode, T) 见上） ---------------
-
-    /**
-     * 按数字 code 构建响应。
-     */
-    public static <T> R<T> of(final int code, final String message) {
-        return new R(code, message, null);
+    public static <T> R<T> of(CustomApiCode code, String message, List<Map<String, String>> error) {
+        return new R<>(code.getCode(), message, null, error);
     }
 
     /**
      * 按字符串 code 构建响应（内部转数字）。
      */
-    public static <T> R<T> of(final String code, final String message) {
+    public static <T> R<T> of(String code, String message) {
         return of(Integer.parseInt(code), message);
     }
 
     /**
-     * 按数字 code 构建响应（status 参数为原 ApiRestResponse 兼容占位，R 已无 status 字段）。
+     * 按数字 code 构建响应。
      */
-    public static <T> R<T> of(final int code, final String status, final String message) {
-        return of(code, message);
+    public static <T> R<T> of(Serializable code, String message) {
+        return new R<>(code, message, null);
     }
 
     /**
      * 按数字 code 构建响应并携带数据（status 参数为兼容占位）。
      */
-    public static <T> R<T> of(final int code, final String status, final String message, final T data) {
-        return new R(code, message, data);
+    public static <T> R<T> of(Serializable code, String message, T data) {
+        return new R<>(code, message, data);
     }
 
     public static boolean empty(R<?> r) {

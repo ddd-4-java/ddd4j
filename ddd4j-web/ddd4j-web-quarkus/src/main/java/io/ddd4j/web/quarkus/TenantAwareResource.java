@@ -160,10 +160,10 @@ public class TenantAwareResource {
     }
 
     /**
-     * HTTP 200 + R.fail(code, message)
+     * HTTP 200 + R.of(code, message)
      */
     protected Response fail(int code, String message) {
-        return Response.ok(R.fail(code, message)).build();
+        return Response.ok(R.of(code, message)).build();
     }
 
     /**
@@ -177,28 +177,28 @@ public class TenantAwareResource {
      * HTTP 200 + 404 语义
      */
     protected Response notFound(String message) {
-        return Response.ok(R.fail(404, message)).build();
+        return Response.ok(R.of(404, message)).build();
     }
 
     /**
      * HTTP 200 + 401 语义
      */
     protected Response unauthorized(String message) {
-        return Response.ok(R.fail(401, message)).build();
+        return Response.ok(R.of(401, message)).build();
     }
 
     /**
      * HTTP 200 + 400 语义
      */
     protected Response badRequest(String message) {
-        return Response.ok(R.fail(400, message)).build();
+        return Response.ok(R.of(400, message)).build();
     }
 
     /**
      * HTTP 200 + 500 语义
      */
     protected Response serverError(String message) {
-        return Response.ok(R.fail(500, message)).build();
+        return Response.ok(R.of(500, message)).build();
     }
 
     // ========== 分页便捷方法 ==========

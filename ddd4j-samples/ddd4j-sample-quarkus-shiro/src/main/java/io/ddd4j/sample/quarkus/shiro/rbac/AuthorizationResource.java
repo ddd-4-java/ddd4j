@@ -70,12 +70,12 @@ public class AuthorizationResource {
      */
     static WebApplicationException unauthorized() {
         return new WebApplicationException(Response.status(Response.Status.UNAUTHORIZED)
-                .entity(R.fail(401, "unauthenticated")).build());
+                .entity(R.of(401, "unauthenticated")).build());
     }
 
     static WebApplicationException forbidden(String reason) {
         return new WebApplicationException(Response.status(Response.Status.FORBIDDEN)
-                .entity(R.fail(403, reason)).build());
+                .entity(R.of(403, reason)).build());
     }
 
     @GET

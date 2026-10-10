@@ -54,7 +54,7 @@ public class SecurityExceptionHandler {
             AccountExpiredException.class})
     public ResponseEntity<R<String>> authenticationException(Exception ex) {
         log.warn("Spring Security 认证异常：{}", ex.getMessage());
-        return new ResponseEntity<>(R.fail(401, "未登录或登录已过期"), HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(R.of(401, "未登录或登录已过期"), HttpStatus.UNAUTHORIZED);
     }
 
     /**
@@ -63,7 +63,7 @@ public class SecurityExceptionHandler {
     @ExceptionHandler({LockedException.class, DisabledException.class})
     public ResponseEntity<R<String>> lockedException(Exception ex) {
         log.warn("Spring Security 账号状态异常：{}", ex.getMessage());
-        return new ResponseEntity<>(R.fail(403, "账号已被锁定或禁用"), HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(R.of(403, "账号已被锁定或禁用"), HttpStatus.FORBIDDEN);
     }
 
     /**
@@ -77,7 +77,7 @@ public class SecurityExceptionHandler {
                 || authentication instanceof AnonymousAuthenticationToken
                 || !authentication.isAuthenticated();
         HttpStatus status = unauthenticated ? HttpStatus.UNAUTHORIZED : HttpStatus.FORBIDDEN;
-        return new ResponseEntity<>(R.fail(status.value(), "无权限访问"), status);
+        return new ResponseEntity<>(R.of(status.value(), "无权限访问"), status);
     }
 
 }

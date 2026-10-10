@@ -667,9 +667,9 @@ public class GlobalExceptionHandler {
         this.logException(ex);
         if (serverI18NProperties.isEnabled()) {
             String message = this.getLocaleMessage(ex, "sys.runtime.error", ex.getMessage());
-            return R.fail(ex.getCode(), message);
+            return R.of(ex.getCode(), message);
         }
-        return R.fail(ex.getCode(), ex.getMessage());
+        return R.of(ex.getCode(), ex.getMessage());
     }
 
     /**
@@ -681,9 +681,9 @@ public class GlobalExceptionHandler {
         this.logException(ex);
         if (serverI18NProperties.isEnabled()) {
             String message = this.getLocaleMessage(ex, "sys.checked.error", ex.getMessage());
-            return R.fail(ex.getCode(), message);
+            return R.of(ex.getCode(), message);
         }
-        return R.fail(ex.getCode(), ex.getMessage());
+        return R.of(ex.getCode(), ex.getMessage());
     }
 
     /**
@@ -695,9 +695,9 @@ public class GlobalExceptionHandler {
         this.logException(ex);
         if (serverI18NProperties.isEnabled()) {
             String message = this.getLocaleMessage(ex, "sys.io.error", ex.getMessage());
-            return R.fail(ex.getCode(), message);
+            return R.of(ex.getCode(), message);
         }
-        return R.fail(ex.getCode(), ex.getMessage());
+        return R.of(ex.getCode(), ex.getMessage());
     }
 
     /**
@@ -709,9 +709,9 @@ public class GlobalExceptionHandler {
         this.logException(ex);
         if (serverI18NProperties.isEnabled()) {
             String message = this.getLocaleMessage(ex, "sys.idempotent.error", ex.getMessage());
-            return R.fail(ex.getCode(), message);
+            return R.of(ex.getCode(), message);
         }
-        return R.fail(ex.getCode(), ex.getMessage());
+        return R.of(ex.getCode(), ex.getMessage());
     }
 
     /*---------------------JDBC异常----------------------------*/

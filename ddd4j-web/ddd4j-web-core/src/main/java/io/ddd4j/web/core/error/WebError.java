@@ -40,7 +40,7 @@ public final class WebError {
     private final Object data;
 
     public R<Object> toResponse() {
-        return R.fail(code, message, data);
+        return R.of(code, message, data);
     }
 
     public Serializable getCode() {

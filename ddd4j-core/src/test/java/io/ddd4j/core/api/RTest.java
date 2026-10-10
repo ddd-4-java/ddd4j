@@ -15,6 +15,13 @@
 package io.ddd4j.core.api;
 
 import org.junit.jupiter.api.Test;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -26,25 +33,25 @@ import static org.assertj.core.api.Assertions.assertThat;
 class RTest {
 
     @Test
-    void failed_withString_shouldTreatArgumentAsMessage() {
-        R<Object> response = R.failed("quota exceeded");
+    void fail_withString_shouldTreatArgumentAsMessage() {
+        R<Object> response = R.fail("quota exceeded");
         assertThat(response.getMsg()).isEqualTo("quota exceeded");
         assertThat(response.getData()).isNull();
         assertThat(response.getCode()).isEqualTo(ApiCode.FAIL.getCode());
     }
 
     @Test
-    void failed_withNullObject_shouldKeepFailureMetadata() {
-        R<Object> response = R.failed((Object) null);
+    void fail_withNullObject_shouldKeepFailureMetadata() {
+        R<Object> response = R.of(ApiCode.FAIL.getCode(), ApiCode.FAIL.getDesc(), (Object) null);
         assertThat(response.getData()).isNull();
         assertThat(response.getCode()).isEqualTo(ApiCode.FAIL.getCode());
         assertThat(response.getMsg()).isEqualTo(ApiCode.FAIL.getDesc());
     }
 
     @Test
-    void failed_withObjectData_shouldPreservePayload() {
-        java.util.Map<String, String> payload = java.util.Collections.singletonMap("reason", "quota");
-        R<java.util.Map<String, String>> response = R.failed(payload);
+    void fail_withObjectData_shouldPreservePayload() {
+        Map<String, String> payload = Collections.singletonMap("reason", "quota");
+        R<Map<String, String>> response = R.of(ApiCode.FAIL.getCode(), ApiCode.FAIL.getDesc(), payload);
         assertThat(response.getData()).isSameAs(payload);
         assertThat(response.getCode()).isEqualTo(ApiCode.FAIL.getCode());
         assertThat(response.getMsg()).isEqualTo(ApiCode.FAIL.getDesc());
@@ -100,17 +107,11 @@ class RTest {
 
     @Test
     void fail_withCodeAndMsg_shouldCarryBoth() {
-        R<String> r = R.fail(403, "forbidden");
+        R<String> r = R.of(403, "forbidden");
 
         assertThat(r.getCode()).isEqualTo(403);
         assertThat(r.getMsg()).isEqualTo("forbidden");
         assertThat(r.isOk()).isFalse();
-    }
-
-    @Test
-    void failed_aliases_shouldMatchFail() {
-        assertThat(R.failed().getCode()).isEqualTo(R.fail().getCode());
-        assertThat(R.failed("err").getMsg()).isEqualTo(R.fail("err").getMsg());
     }
 
     @Test
@@ -137,4 +138,38 @@ class RTest {
         assertThat(target.getMsg()).isEqualTo(source.getMsg());
         assertThat(target.getData()).isNull();
     }
+
+    @Test
+    void success_shouldDistinguishCustomMessageAndPayload() {
+        R<Object> messageResponse = R.success("created");
+        assertThat(messageResponse.getCode()).isEqualTo(200);
+        assertThat(messageResponse.getMsg()).isEqualTo("created");
+        assertThat(messageResponse.getData()).isNull();
+        R<Object> payloadResponse = R.success((Object) "payload");
+        assertThat(payloadResponse.getCode()).isEqualTo(200);
+        assertThat(payloadResponse.getData()).isEqualTo("payload");
+        assertThat(payloadResponse.getMsg()).isEqualTo(ApiCode.SUCCESS.getReason());
+    }
+
+    @Test
+    void validationResponse_shouldKeepUnifiedJsonFields() throws Exception {
+        List<Map<String, String>> errors = List.of(Map.of("field", "email"));
+        R<Object> response = R.of((CustomApiCode) ApiCode.BAD_REQUEST, "invalid input", errors);
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode json = mapper.readTree(mapper.writeValueAsString(response));
+        assertThat(json.get("code").asInt()).isEqualTo(400);
+        assertThat(json.get("msg").asText()).isEqualTo("invalid input");
+        assertThat(json.get("error").get(0).get("field").asText()).isEqualTo("email");
+        assertThat(json.has("message")).isFalse();
+        assertThat(mapper.readTree(mapper.writeValueAsString(R.ok("payload"))).has("error")).isFalse();
+    }
+
+    @Test
+    void explicitSerializableCode_shouldPreserveStringCode() {
+        R<Object> response = R.of((Serializable) "404", "not found");
+        assertThat(response.getCode()).isEqualTo("404");
+        assertThat(response.getMsg()).isEqualTo("not found");
+        assertThat(response.getData()).isNull();
+    }
+
 }

@@ -67,7 +67,7 @@ public class SaTokenRequestFilter implements ContainerRequestFilter, ContainerRe
     private static Response failure(Response.Status status, String message) {
         return Response.status(status)
                 .type(MediaType.APPLICATION_JSON_TYPE)
-                .entity(R.fail(status.getStatusCode(), message))
+                .entity(R.of(status.getStatusCode(), message))
                 .build();
     }
 

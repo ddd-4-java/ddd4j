@@ -62,10 +62,10 @@ public class AuthenticationController {
         try {
             user = rbacService.authenticate(req.loginId(), req.password());
         } catch (NoSuchElementException e) {
-            ctx.status(401).json(R.fail(401, "user not found"));
+            ctx.status(401).json(R.of(401, "user not found"));
             return;
         } catch (IllegalArgumentException e) {
-            ctx.status(401).json(R.fail(401, "invalid credentials"));
+            ctx.status(401).json(R.of(401, "invalid credentials"));
             return;
         }
 
