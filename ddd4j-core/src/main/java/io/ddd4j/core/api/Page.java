@@ -35,15 +35,26 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Page<T> implements Iterable<T> {
-    // 列表数据
+
+    /**
+     * 回写当前页数据列表
+     */
     private List<T> records;
-    // 总记录数
+    /**
+     * 回写总记录数
+     */
     private long total;
-    // 回写当前页
+    /**
+     * 回写当前页码，默认 1 代表第一页
+     */
     private long current = 1L;
-    // 回写每页大小
+    /**
+     * 回写每页大小，默认 10 条每页
+     */
     private long size = 10L;
-    // 扩展字段
+    /**
+     * 扩展字段
+     */
     private Map<String, Object> extras;
 
     /**

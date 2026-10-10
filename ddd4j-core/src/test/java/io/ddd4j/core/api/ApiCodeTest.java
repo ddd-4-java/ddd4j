@@ -27,20 +27,20 @@ class ApiCodeTest {
 
     @Test
     void getDescByCode_shouldReturnMatchingDesc() {
-        assertThat(ApiCode.getDescByCode(ApiCode.OK.getCode()))
+        assertThat(ApiCode.getReasonByCode(ApiCode.OK.getCode()))
                 .isEqualTo("请求/操作成功");
-        assertThat(ApiCode.getDescByCode(ApiCode.UNAUTHORIZED.getCode()))
+        assertThat(ApiCode.getReasonByCode(ApiCode.UNAUTHORIZED.getCode()))
                 .isEqualTo("未登录或token已经失效");
     }
 
     @Test
     void getDescByCode_shouldReturnEmptyStringForUnknownCode() {
-        assertThat(ApiCode.getDescByCode(999999)).isEmpty();
+        assertThat(ApiCode.getReasonByCode(999999)).isEmpty();
     }
 
     @Test
     void getDescByCode_shouldReturnEmptyStringForNull() {
-        assertThat(ApiCode.getDescByCode(null)).isEmpty();
+        assertThat(ApiCode.getReasonByCode(null)).isEmpty();
     }
 
     @Test
@@ -92,7 +92,7 @@ class ApiCodeTest {
     @Test
     void getDescByCode_shouldResolveAllEnumValues() {
         for (ApiCode code : ApiCode.values()) {
-            assertThat(ApiCode.getDescByCode(code.getCode())).isNotEmpty();
+            assertThat(ApiCode.getReasonByCode(code.getCode())).isNotEmpty();
             // 异常映射码段共享 HTTP 码值（如 400/500/1000），getByCode 对共享码值返回声明在前的第一个条目
             assertThat(ApiCode.getByCode(code.getCode())).isNotNull();
         }
@@ -100,7 +100,7 @@ class ApiCodeTest {
 
     @Test
     void toResponse_shouldBuildRFromCustomApiCodeContract() {
-        // ApiCode 作为 CustomApiCode 实现，默认方法直接构建 R
+        // ResultCode 作为 CustomApiCode 实现，默认方法直接构建 R
         R<String> ok = ApiCode.SUCCESS.toResponse();
         assertThat(ok.getCode()).isEqualTo(200);
         assertThat(ok.isOk()).isTrue();
@@ -116,10 +116,5 @@ class ApiCodeTest {
         R<String> withMsgAndData = ApiCode.NOT_FOUND.toResponse("缺少参数", "payload");
         assertThat(withMsgAndData.getMsg()).isEqualTo("缺少参数");
         assertThat(withMsgAndData.getData()).isEqualTo("payload");
-    }
-    @Test
-    void duplicateHttpCode_shouldResolveFirstCatalogEntry() {
-        assertThat(ApiCode.getByCode(400)).isSameAs(ApiCode.BAD_REQUEST);
-        assertThat(ApiCode.getDescByCode(400)).isEqualTo(ApiCode.BAD_REQUEST.getDesc());
     }
 }

@@ -74,96 +74,73 @@ public class R<T> implements IR {
         this.error = error;
     }
 
+    // ok -----------------------------------------------------------------
+
+    /**
+     * 请求/操作成功（code=0），不携带数据。
+     */
     public static <T> R<T> ok() {
         return new R<>();
     }
 
+    /**
+     * 请求/操作成功（code=0），携带数据。
+     */
     public static <T> R<T> ok(T payload) {
         return new R<>(payload);
     }
 
+    /**
+     * 请求/操作成功（code=0），携带自定义消息与数据。
+     */
     public static <T> R<T> ok(String msg, T data) {
-        return new R<>(ApiCode.OK.getCode(), msg, data);
-    }
-
-    public static <T> R<T> fail(Serializable code, String msg) {
-        return new R<>(code, msg);
-    }
-
-    public static <T> R<T> fail(Serializable code, String msg, T data) {
-        return new R<>(code, msg, data);
-    }
-
-    public static <T> R<T> fail() {
-        return fail(ApiCode.FAIL.getCode());
-    }
-
-    public static <T> R<T> fail(Serializable code) {
-        return fail(code, ApiCode.FAIL.getDesc());
-    }
-
-    public static <T> R<T> fail(String msg) {
-        return fail(ApiCode.FAIL.getCode(), msg);
-    }
-
-    // === cloud 兼容别名（failed = fail，isOk 语义对齐 cloud SUCCESS=0） ===
-
-    /**
-     * 失败响应（cloud 兼容别名，等价于 {@link #fail()}）。
-     */
-    public static <T> R<T> failed() {
-        return fail();
-    }
-
-    /**
-     * 失败响应（cloud 兼容别名，等价于 {@link #fail(String)}）。
-     */
-    public static <T> R<T> failed(String msg) {
-        return fail(msg);
-    }
-
-    /**
-     * 失败响应（cloud 兼容别名，等价于 {@link #fail(T)}）。
-     */
-    public static <T> R<T> failed(T data) {
-        return fail(ApiCode.FAIL.getCode(), ApiCode.FAIL.getDesc(), data);
-    }
-
-    /**
-     * 失败响应（cloud 兼容别名，等价于 {@link #fail(Serializable, String)}）。
-     */
-    public static <T> R<T> failed(Serializable code, String msg) {
-        return fail(code, msg);
-    }
-
-    /**
-     * 失败响应（cloud 兼容别名，等价于 {@link #fail(Serializable, String, T)}）。
-     */
-    public static <T> R<T> failed(T data, String msg) {
-        return fail(ApiCode.FAIL.getCode(), msg, data);
-    }
-
-    /**
-     * 失败响应（cloud 兼容别名，带 data + code + msg）。
-     */
-    public static <T> R<T> failed(T data, Serializable code, String msg) {
-        return fail(code, msg, data);
+        return of(ApiCode.OK.getCode(), msg, data);
     }
 
     // success -----------------------------------------------------------------
 
     /**
-     * 成功响应（code=200），携带自定义消息。
+     * 请求/操作成功（code=200），不携带数据。
+     */
+    public static <T> R<T> success() {
+        return of(ApiCode.SUCCESS);
+    }
+
+    /**
+     * 请求/操作成功（code=200），携带自定义消息。
      */
     public static <T> R<T> success(String message) {
         return new R<>(ApiCode.SUCCESS.getCode(), message, null);
     }
 
     /**
-     * 成功响应（code=200），携带数据。
+     * 请求/操作成功（code=200），携带数据。
      */
     public static <T> R<T> success(T data) {
-        return new R<>(ApiCode.SUCCESS.getCode(), ApiCode.SUCCESS.getReason(), data);
+        return of(ApiCode.SUCCESS.getCode(), ApiCode.SUCCESS.getReason(), data);
+    }
+
+    // fail -----------------------------------------------------------------
+
+    /**
+     * 请求/操作失败（code=400），不携带数据。
+     */
+    public static <T> R<T> fail() {
+        return fail(ApiCode.FAIL);
+    }
+
+    /**
+     * 请求/操作失败（code=400），携带自定义消息。
+     */
+    public static <T> R<T> fail(Serializable code) {
+        return of(code, ApiCode.FAIL.getDesc());
+    }
+
+    /**
+     * 请求/操作失败（code=400），携带数据。
+     */
+    public static <T> R<T> fail(String message) {
+        return of(ApiCode.FAIL.getCode(), message);
     }
 
     // error -----------------------------------------------------------------
@@ -222,14 +199,14 @@ public class R<T> implements IR {
     /**
      * 按数字 code 构建响应。
      */
-    public static <T> R<T> of(int code, String message) {
+    public static <T> R<T> of(Serializable code, String message) {
         return new R<>(code, message, null);
     }
 
     /**
      * 按数字 code 构建响应并携带数据（status 参数为兼容占位）。
      */
-    public static <T> R<T> of(int code, String message, T data) {
+    public static <T> R<T> of(Serializable code, String message, T data) {
         return new R<>(code, message, data);
     }
 
