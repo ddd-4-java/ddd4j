@@ -14,6 +14,8 @@
  */
 package io.ddd4j.web.core.context;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.junit.jupiter.api.Test;
 
 import java.util.Locale;

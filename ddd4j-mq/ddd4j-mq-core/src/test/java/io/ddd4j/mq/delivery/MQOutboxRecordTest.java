@@ -14,6 +14,8 @@
  */
 package io.ddd4j.mq.delivery;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;

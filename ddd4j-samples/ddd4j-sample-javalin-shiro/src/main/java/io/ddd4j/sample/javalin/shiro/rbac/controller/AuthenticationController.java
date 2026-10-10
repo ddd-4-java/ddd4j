@@ -14,6 +14,12 @@
  */
 package io.ddd4j.sample.javalin.shiro.rbac.controller;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Objects;
+
 import com.google.inject.Inject;
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.auth.AuthPrincipal;
@@ -160,7 +166,54 @@ public class AuthenticationController {
 
     // ============================ DTO ============================
 
-    public record LoginRequest(String loginId, String password) {
+    public final static class LoginRequest {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String loginId;
+
+        private final String password;
+
+        @JsonCreator()
+        public LoginRequest(@JsonProperty("loginId") String loginId, @JsonProperty("password") String password) {
+            this.loginId = loginId;
+            this.password = password;
+        }
+
+        @JsonProperty("loginId")
+        public String loginId() {
+            return loginId;
+        }
+
+        @JsonProperty("password")
+        public String password() {
+            return password;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            LoginRequest other = (LoginRequest) obj;
+            return Objects.equals(this.loginId, other.loginId) && Objects.equals(this.password, other.password);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(loginId);
+            result = 31 * result + Objects.hashCode(password);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "LoginRequest[loginId=" + loginId + ", password=" + password + "]";
+        }
     }
 
 }
