@@ -31,25 +31,25 @@ import static org.assertj.core.api.Assertions.assertThat;
 class RTest {
 
     @Test
-    void failed_withString_shouldTreatArgumentAsMessage() {
-        R<Object> response = R.failed("quota exceeded");
+    void fail_withString_shouldTreatArgumentAsMessage() {
+        R<Object> response = R.fail("quota exceeded");
         assertThat(response.getMsg()).isEqualTo("quota exceeded");
         assertThat(response.getData()).isNull();
         assertThat(response.getCode()).isEqualTo(ApiCode.FAIL.getCode());
     }
 
     @Test
-    void failed_withNullObject_shouldKeepFailureMetadata() {
-        R<Object> response = R.failed((Object) null);
+    void fail_withNullObject_shouldKeepFailureMetadata() {
+        R<Object> response = R.fail((Object) null);
         assertThat(response.getData()).isNull();
         assertThat(response.getCode()).isEqualTo(ApiCode.FAIL.getCode());
         assertThat(response.getMsg()).isEqualTo(ApiCode.FAIL.getDesc());
     }
 
     @Test
-    void failed_withObjectData_shouldPreservePayload() {
+    void fail_withObjectData_shouldPreservePayload() {
         java.util.Map<String, String> payload = java.util.Collections.singletonMap("reason", "quota");
-        R<java.util.Map<String, String>> response = R.failed(payload);
+        R<java.util.Map<String, String>> response = R.fail(payload);
         assertThat(response.getData()).isSameAs(payload);
         assertThat(response.getCode()).isEqualTo(ApiCode.FAIL.getCode());
         assertThat(response.getMsg()).isEqualTo(ApiCode.FAIL.getDesc());
@@ -105,7 +105,7 @@ class RTest {
 
     @Test
     void fail_withCodeAndMsg_shouldCarryBoth() {
-        R<String> r = R.fail(403, "forbidden");
+        R<String> r = R.fail(ApiCode.FORBIDDEN, "forbidden");
 
         assertThat(r.getCode()).isEqualTo(403);
         assertThat(r.getMsg()).isEqualTo("forbidden");
@@ -113,9 +113,9 @@ class RTest {
     }
 
     @Test
-    void failed_aliases_shouldMatchFail() {
-        assertThat(R.failed().getCode()).isEqualTo(R.fail().getCode());
-        assertThat(R.failed("err").getMsg()).isEqualTo(R.fail("err").getMsg());
+    void fail_aliases_shouldMatchFail() {
+        assertThat(R.fail().getCode()).isEqualTo(R.fail().getCode());
+        assertThat(R.fail("err").getMsg()).isEqualTo(R.fail("err").getMsg());
     }
 
     @Test
