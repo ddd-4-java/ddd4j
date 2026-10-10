@@ -53,7 +53,7 @@ public class GlobalRestExceptionAdvice {
         String projectStackTrace = ExceptionKit.getProjectStackTraces(e);
         List<String> errList = e.getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.toList());
         log.error("请求参数校验失败：{} {}\n**StackTraces:** {}", errList, model, projectStackTrace);
-        return R.fail(ApiCode.BAD_REQUEST.getCode(), String.join(",", errList));
+        return R.of(ApiCode.BAD_REQUEST.getCode(), String.join(",", errList));
     }
 
     /**
@@ -63,7 +63,7 @@ public class GlobalRestExceptionAdvice {
     public R<String> validatorException(HttpServletRequest request, ValidateException e) {
         String projectStackTrace = ExceptionKit.getProjectStackTraces(e);
         log.error("请求参数校验失败：{}\n**StackTraces:** {}", e.getMessage(), projectStackTrace);
-        return R.fail(ApiCode.BAD_REQUEST.getCode(), e.getMessage());
+        return R.of(ApiCode.BAD_REQUEST.getCode(), e.getMessage());
     }
 
     /**
@@ -74,7 +74,7 @@ public class GlobalRestExceptionAdvice {
         FieldError fieldError = e.getBindingResult().getFieldError();
         String projectStackTrace = ExceptionKit.getProjectStackTraces(e);
         log.error("请求参数校验失败：{}\n**StackTraces:** {}", fieldError.getDefaultMessage(), projectStackTrace);
-        return R.fail(ApiCode.BAD_REQUEST.getCode(), fieldError.getDefaultMessage());
+        return R.of(ApiCode.BAD_REQUEST.getCode(), fieldError.getDefaultMessage());
     }
 
     /**
@@ -84,7 +84,7 @@ public class GlobalRestExceptionAdvice {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public R<String> handle(HttpServletRequest request, NoHandlerFoundException e) {
         log.error("", e);
-        return R.fail(404, "地址错误！！！" + request.getRequestURI() + "非法访问!");
+        return R.of(404, "地址错误！！！" + request.getRequestURI() + "非法访问!");
     }
 
     /**
@@ -103,7 +103,7 @@ public class GlobalRestExceptionAdvice {
     public R<String> nullPointerException(HttpServletRequest request, NullPointerException e) {
         String projectStackTrace = ExceptionKit.getProjectStackTraces(e);
         log.error("空指针异常\n**StackTraces:** {}", projectStackTrace);
-        return R.fail(ApiCode.FAIL.getCode(), e.getMessage());
+        return R.of(ApiCode.FAIL.getCode(), e.getMessage());
     }
 
     /**
@@ -113,7 +113,7 @@ public class GlobalRestExceptionAdvice {
     public R<String> runTimeException(HttpServletRequest request, RuntimeException e) {
         String projectStackTrace = ExceptionKit.getProjectStackTraces(e);
         log.error("运行时异常\n**StackTraces:** {}", projectStackTrace);
-        return R.fail(ApiCode.FAIL.getCode(), e.getMessage());
+        return R.of(ApiCode.FAIL.getCode(), e.getMessage());
     }
 
 }

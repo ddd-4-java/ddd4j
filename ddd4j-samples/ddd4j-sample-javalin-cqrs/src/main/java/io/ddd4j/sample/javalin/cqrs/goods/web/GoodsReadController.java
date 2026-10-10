@@ -56,7 +56,7 @@ public class GoodsReadController {
             try {
                 ctx.json(R.ok(goodsCacheService.getById(id)));
             } catch (IllegalArgumentException e) {
-                ctx.status(404).json(R.fail("404", e.getMessage()));
+                ctx.status(404).json(R.of("404", e.getMessage()));
             }
         });
 
@@ -65,7 +65,7 @@ public class GoodsReadController {
             String code = ctx.pathParam("code");
             ctx.json(goodsRepository.findByCode(code)
                     .<io.ddd4j.core.api.R<Goods>>map(R::ok)
-                    .orElse(R.fail("404", "goods not found: " + code)));
+                    .orElse(R.of("404", "goods not found: " + code)));
         });
 
         // GET /api/goods/query/list

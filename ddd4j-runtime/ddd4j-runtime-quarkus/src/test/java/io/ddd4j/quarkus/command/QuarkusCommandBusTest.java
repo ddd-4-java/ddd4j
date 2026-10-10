@@ -14,6 +14,12 @@
  */
 package io.ddd4j.quarkus.command;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Objects;
+
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.Result;
@@ -105,13 +111,109 @@ class QuarkusCommandBusTest {
 
     // --- 测试用命令和执行器 ---
 
-    record TestCommand(String payload) implements Command {
+    final static class TestCommand implements Command {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String payload;
+
+        @JsonCreator()
+        TestCommand(@JsonProperty("payload") String payload) {
+            this.payload = payload;
+        }
+
+        @JsonProperty("payload")
+        public String payload() {
+            return payload;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            TestCommand other = (TestCommand) obj;
+            return Objects.equals(this.payload, other.payload);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(payload);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "TestCommand[payload=" + payload + "]";
+        }
     }
 
-    record UnregisteredCommand() implements Command {
+    final static class UnregisteredCommand implements Command {
+
+        private static final long serialVersionUID = 0L;
+
+        @JsonCreator()
+        UnregisteredCommand() {
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            UnregisteredCommand other = (UnregisteredCommand) obj;
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "UnregisteredCommand[]";
+        }
     }
 
-    record FailCommand() implements Command {
+    final static class FailCommand implements Command {
+
+        private static final long serialVersionUID = 0L;
+
+        @JsonCreator()
+        FailCommand() {
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            FailCommand other = (FailCommand) obj;
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "FailCommand[]";
+        }
     }
 
     static class TestCommandExecutor implements CommandExecutor<TestCommand> {

@@ -14,6 +14,14 @@
  */
 package io.ddd4j.data.event.store.r2dbc;
 
+import io.ddd4j.core.ddd.event.AggregateRootId;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Objects;
+
 import io.ddd4j.core.ddd.event.*;
 import io.r2dbc.postgresql.PostgresqlConnectionConfiguration;
 import io.r2dbc.postgresql.PostgresqlConnectionFactory;
@@ -42,23 +50,61 @@ class R2dbcEventStorePostgresIT {
     private PostgresqlConnectionFactory connectionFactory;
     private R2dbcEventStore eventStore;
 
-    AggregateRootId {
+    private final static class TestAggregateRootId implements AggregateRootId {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String value;
 
         private static final EntityType TYPE = new StringEntityType("Order");
 
         @Override
-        public EntityType getType () {
+        public EntityType getType() {
             return TYPE;
         }
 
         @Override
-        public String asString () {
+        public String asString() {
             return value;
         }
 
         @Override
-        public String asTypedString () {
+        public String asTypedString() {
             return TYPE.asString() + ":" + value;
+        }
+
+        @JsonCreator()
+        private TestAggregateRootId(@JsonProperty("value") String value) {
+            this.value = value;
+        }
+
+        @JsonProperty("value")
+        public String value() {
+            return value;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            TestAggregateRootId other = (TestAggregateRootId) obj;
+            return Objects.equals(this.value, other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(value);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "TestAggregateRootId[value=" + value + "]";
         }
     }
 
@@ -97,11 +143,7 @@ class R2dbcEventStorePostgresIT {
                 .isEqualTo(orderId.asString());
         assertThat(eventStore.read(ORDER_TYPE, orderId).get(0).payload())
                 .isInstanceOf(OrderCreatedEvent.class);
-    } implements
-
-private record TestAggregateRootId(String value)
-
-    static final class OrderCreatedEvent extends DomainEvent<TestAggregateRootId> {
+    } static final class OrderCreatedEvent extends DomainEvent<TestAggregateRootId> {
 
         OrderCreatedEvent() {
             super();

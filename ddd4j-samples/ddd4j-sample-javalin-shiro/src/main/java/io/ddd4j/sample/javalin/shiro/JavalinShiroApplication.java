@@ -158,7 +158,7 @@ public class JavalinShiroApplication {
                 // POST /auth/orders/{id}/pay —— 业务接口 + 鉴权（order:pay 权限）
                 ApiBuilder.post("/auth/orders/{id}/pay", ctx -> {
                     if (!SubjectKit.hasPermission("order:pay")) {
-                        ctx.status(403).json(R.fail(403, "forbidden: requires order:pay permission"));
+                        ctx.status(403).json(R.of(403, "forbidden: requires order:pay permission"));
                         return;
                     }
                     String id = ctx.pathParam("id");

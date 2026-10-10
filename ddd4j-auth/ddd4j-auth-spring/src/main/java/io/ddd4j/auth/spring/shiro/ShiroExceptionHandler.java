@@ -26,18 +26,18 @@ public class ShiroExceptionHandler {
             AuthenticationException.class})
     public ResponseEntity<R<String>> authenticationException(Exception exception) {
         log.warn("Shiro 认证异常：{}", exception.getMessage());
-        return new ResponseEntity<>(R.fail(401, "未登录或登录已过期"), HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(R.of(401, "未登录或登录已过期"), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(LockedAccountException.class)
     public ResponseEntity<R<String>> lockedAccountException(LockedAccountException exception) {
         log.warn("Shiro 账号锁定：{}", exception.getMessage());
-        return new ResponseEntity<>(R.fail(403, "账号已被锁定"), HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(R.of(403, "账号已被锁定"), HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler({UnauthorizedException.class, AuthorizationException.class})
     public ResponseEntity<R<String>> authorizationException(Exception exception) {
         log.warn("Shiro 授权异常：{}", exception.getMessage());
-        return new ResponseEntity<>(R.fail(403, "无权限访问"), HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(R.of(403, "无权限访问"), HttpStatus.FORBIDDEN);
     }
 }

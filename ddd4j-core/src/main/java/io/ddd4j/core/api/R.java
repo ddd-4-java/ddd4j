@@ -126,7 +126,7 @@ public class R<T> implements IR {
      * 请求/操作失败（code=400），不携带数据。
      */
     public static <T> R<T> fail() {
-        return fail(ApiCode.FAIL);
+        return fail(ApiCode.FAIL.getCode());
     }
 
     /**

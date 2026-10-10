@@ -14,6 +14,12 @@
  */
 package io.ddd4j.sample.javalin.shiro.rbac.controller;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Objects;
+
 import com.google.inject.Inject;
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.util.SubjectKit;
@@ -87,7 +93,7 @@ public class AuthorizationController {
      */
     public void listUsers(Context ctx) {
         if (!SubjectKit.hasPermission("user:list")) {
-            ctx.status(403).json(R.fail(403, "forbidden: requires user:list"));
+            ctx.status(403).json(R.of(403, "forbidden: requires user:list"));
             return;
         }
         Collection<User> users = rbacService.listUsers();
@@ -101,7 +107,7 @@ public class AuthorizationController {
      */
     public void getUser(Context ctx) {
         if (!SubjectKit.hasPermission("user:list")) {
-            ctx.status(403).json(R.fail(403, "forbidden: requires user:list"));
+            ctx.status(403).json(R.of(403, "forbidden: requires user:list"));
             return;
         }
         String loginId = ctx.pathParam("id");
@@ -150,7 +156,7 @@ public class AuthorizationController {
     public void deleteUser(Context ctx) {
         // 组合校验：必须同时拥有 admin 角色 + user:delete 权限
         if (!SubjectKit.hasRole("admin") || !SubjectKit.hasPermission("user:delete")) {
-            ctx.status(403).json(R.fail(403, "forbidden: requires admin role and user:delete permission"));
+            ctx.status(403).json(R.of(403, "forbidden: requires admin role and user:delete permission"));
             return;
         }
         String loginId = ctx.pathParam("id");
@@ -165,7 +171,7 @@ public class AuthorizationController {
      */
     public void listRoles(Context ctx) {
         if (!SubjectKit.hasPermission("role:list")) {
-            ctx.status(403).json(R.fail(403, "forbidden: requires role:list"));
+            ctx.status(403).json(R.of(403, "forbidden: requires role:list"));
             return;
         }
         Collection<Role> roles = rbacService.listRoles();
@@ -217,7 +223,7 @@ public class AuthorizationController {
      */
     public void listPermissions(Context ctx) {
         if (!SubjectKit.hasPermission("permission:list")) {
-            ctx.status(403).json(R.fail(403, "forbidden: requires permission:list"));
+            ctx.status(403).json(R.of(403, "forbidden: requires permission:list"));
             return;
         }
         Collection<Permission> perms = rbacService.listPermissions();
@@ -253,7 +259,7 @@ public class AuthorizationController {
      */
     private boolean requireAdmin(Context ctx) {
         if (!SubjectKit.hasRole("admin")) {
-            ctx.status(403).json(R.fail(403, "forbidden: requires admin role"));
+            ctx.status(403).json(R.of(403, "forbidden: requires admin role"));
             return false;
         }
         return true;
@@ -261,38 +267,485 @@ public class AuthorizationController {
 
     // ============================ DTO 视图对象 ============================
 
-    public record CreateUserRequest(String loginId,
-                                    String password,
-                                    String displayName,
-                                    String[] roles,
-                                    String[] permissions) {
+    public final static class CreateUserRequest {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String loginId;
+
+        private final String password;
+
+        private final String displayName;
+
+        private final String[] roles;
+
+        private final String[] permissions;
+
+        @JsonCreator()
+        public CreateUserRequest(@JsonProperty("loginId") String loginId, @JsonProperty("password") String password, @JsonProperty("displayName") String displayName, @JsonProperty("roles") String[] roles, @JsonProperty("permissions") String[] permissions) {
+            this.loginId = loginId;
+            this.password = password;
+            this.displayName = displayName;
+            this.roles = roles;
+            this.permissions = permissions;
+        }
+
+        @JsonProperty("loginId")
+        public String loginId() {
+            return loginId;
+        }
+
+        @JsonProperty("password")
+        public String password() {
+            return password;
+        }
+
+        @JsonProperty("displayName")
+        public String displayName() {
+            return displayName;
+        }
+
+        @JsonProperty("roles")
+        public String[] roles() {
+            return roles;
+        }
+
+        @JsonProperty("permissions")
+        public String[] permissions() {
+            return permissions;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            CreateUserRequest other = (CreateUserRequest) obj;
+            return Objects.equals(this.loginId, other.loginId) && Objects.equals(this.password, other.password) && Objects.equals(this.displayName, other.displayName) && Objects.equals(this.roles, other.roles) && Objects.equals(this.permissions, other.permissions);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(loginId);
+            result = 31 * result + Objects.hashCode(password);
+            result = 31 * result + Objects.hashCode(displayName);
+            result = 31 * result + Objects.hashCode(roles);
+            result = 31 * result + Objects.hashCode(permissions);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "CreateUserRequest[loginId=" + loginId + ", password=" + password + ", displayName=" + displayName + ", roles=" + roles + ", permissions=" + permissions + "]";
+        }
     }
 
-    public record UpdateUserRequest(String displayName,
-                                    String password,
-                                    String[] roles,
-                                    String[] permissions) {
+    public final static class UpdateUserRequest {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String displayName;
+
+        private final String password;
+
+        private final String[] roles;
+
+        private final String[] permissions;
+
+        @JsonCreator()
+        public UpdateUserRequest(@JsonProperty("displayName") String displayName, @JsonProperty("password") String password, @JsonProperty("roles") String[] roles, @JsonProperty("permissions") String[] permissions) {
+            this.displayName = displayName;
+            this.password = password;
+            this.roles = roles;
+            this.permissions = permissions;
+        }
+
+        @JsonProperty("displayName")
+        public String displayName() {
+            return displayName;
+        }
+
+        @JsonProperty("password")
+        public String password() {
+            return password;
+        }
+
+        @JsonProperty("roles")
+        public String[] roles() {
+            return roles;
+        }
+
+        @JsonProperty("permissions")
+        public String[] permissions() {
+            return permissions;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            UpdateUserRequest other = (UpdateUserRequest) obj;
+            return Objects.equals(this.displayName, other.displayName) && Objects.equals(this.password, other.password) && Objects.equals(this.roles, other.roles) && Objects.equals(this.permissions, other.permissions);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(displayName);
+            result = 31 * result + Objects.hashCode(password);
+            result = 31 * result + Objects.hashCode(roles);
+            result = 31 * result + Objects.hashCode(permissions);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "UpdateUserRequest[displayName=" + displayName + ", password=" + password + ", roles=" + roles + ", permissions=" + permissions + "]";
+        }
     }
 
-    public record CreateRoleRequest(String code, String name, String[] permissions) {
+    public final static class CreateRoleRequest {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String code;
+
+        private final String name;
+
+        private final String[] permissions;
+
+        @JsonCreator()
+        public CreateRoleRequest(@JsonProperty("code") String code, @JsonProperty("name") String name, @JsonProperty("permissions") String[] permissions) {
+            this.code = code;
+            this.name = name;
+            this.permissions = permissions;
+        }
+
+        @JsonProperty("code")
+        public String code() {
+            return code;
+        }
+
+        @JsonProperty("name")
+        public String name() {
+            return name;
+        }
+
+        @JsonProperty("permissions")
+        public String[] permissions() {
+            return permissions;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            CreateRoleRequest other = (CreateRoleRequest) obj;
+            return Objects.equals(this.code, other.code) && Objects.equals(this.name, other.name) && Objects.equals(this.permissions, other.permissions);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(code);
+            result = 31 * result + Objects.hashCode(name);
+            result = 31 * result + Objects.hashCode(permissions);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "CreateRoleRequest[code=" + code + ", name=" + name + ", permissions=" + permissions + "]";
+        }
     }
 
-    public record UpdateRoleRequest(String name, String[] permissions) {
+    public final static class UpdateRoleRequest {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String name;
+
+        private final String[] permissions;
+
+        @JsonCreator()
+        public UpdateRoleRequest(@JsonProperty("name") String name, @JsonProperty("permissions") String[] permissions) {
+            this.name = name;
+            this.permissions = permissions;
+        }
+
+        @JsonProperty("name")
+        public String name() {
+            return name;
+        }
+
+        @JsonProperty("permissions")
+        public String[] permissions() {
+            return permissions;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            UpdateRoleRequest other = (UpdateRoleRequest) obj;
+            return Objects.equals(this.name, other.name) && Objects.equals(this.permissions, other.permissions);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(name);
+            result = 31 * result + Objects.hashCode(permissions);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "UpdateRoleRequest[name=" + name + ", permissions=" + permissions + "]";
+        }
     }
 
-    public record CreatePermissionRequest(String code, String description) {
+    public final static class CreatePermissionRequest {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String code;
+
+        private final String description;
+
+        @JsonCreator()
+        public CreatePermissionRequest(@JsonProperty("code") String code, @JsonProperty("description") String description) {
+            this.code = code;
+            this.description = description;
+        }
+
+        @JsonProperty("code")
+        public String code() {
+            return code;
+        }
+
+        @JsonProperty("description")
+        public String description() {
+            return description;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            CreatePermissionRequest other = (CreatePermissionRequest) obj;
+            return Objects.equals(this.code, other.code) && Objects.equals(this.description, other.description);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(code);
+            result = 31 * result + Objects.hashCode(description);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "CreatePermissionRequest[code=" + code + ", description=" + description + "]";
+        }
     }
 
-    public record UserView(String loginId,
-                           String displayName,
-                           Set<String> roles,
-                           Set<String> permissions) {
+    public final static class UserView {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String loginId;
+
+        private final String displayName;
+
+        private final Set<String> roles;
+
+        private final Set<String> permissions;
+
+        @JsonCreator()
+        public UserView(@JsonProperty("loginId") String loginId, @JsonProperty("displayName") String displayName, @JsonProperty("roles") Set<String> roles, @JsonProperty("permissions") Set<String> permissions) {
+            this.loginId = loginId;
+            this.displayName = displayName;
+            this.roles = roles;
+            this.permissions = permissions;
+        }
+
+        @JsonProperty("loginId")
+        public String loginId() {
+            return loginId;
+        }
+
+        @JsonProperty("displayName")
+        public String displayName() {
+            return displayName;
+        }
+
+        @JsonProperty("roles")
+        public Set<String> roles() {
+            return roles;
+        }
+
+        @JsonProperty("permissions")
+        public Set<String> permissions() {
+            return permissions;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            UserView other = (UserView) obj;
+            return Objects.equals(this.loginId, other.loginId) && Objects.equals(this.displayName, other.displayName) && Objects.equals(this.roles, other.roles) && Objects.equals(this.permissions, other.permissions);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(loginId);
+            result = 31 * result + Objects.hashCode(displayName);
+            result = 31 * result + Objects.hashCode(roles);
+            result = 31 * result + Objects.hashCode(permissions);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "UserView[loginId=" + loginId + ", displayName=" + displayName + ", roles=" + roles + ", permissions=" + permissions + "]";
+        }
     }
 
-    public record RoleView(String code, String name, Set<String> permissions) {
+    public final static class RoleView {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String code;
+
+        private final String name;
+
+        private final Set<String> permissions;
+
+        @JsonCreator()
+        public RoleView(@JsonProperty("code") String code, @JsonProperty("name") String name, @JsonProperty("permissions") Set<String> permissions) {
+            this.code = code;
+            this.name = name;
+            this.permissions = permissions;
+        }
+
+        @JsonProperty("code")
+        public String code() {
+            return code;
+        }
+
+        @JsonProperty("name")
+        public String name() {
+            return name;
+        }
+
+        @JsonProperty("permissions")
+        public Set<String> permissions() {
+            return permissions;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            RoleView other = (RoleView) obj;
+            return Objects.equals(this.code, other.code) && Objects.equals(this.name, other.name) && Objects.equals(this.permissions, other.permissions);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(code);
+            result = 31 * result + Objects.hashCode(name);
+            result = 31 * result + Objects.hashCode(permissions);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "RoleView[code=" + code + ", name=" + name + ", permissions=" + permissions + "]";
+        }
     }
 
-    public record PermissionView(String code, String description) {
+    public final static class PermissionView {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String code;
+
+        private final String description;
+
+        @JsonCreator()
+        public PermissionView(@JsonProperty("code") String code, @JsonProperty("description") String description) {
+            this.code = code;
+            this.description = description;
+        }
+
+        @JsonProperty("code")
+        public String code() {
+            return code;
+        }
+
+        @JsonProperty("description")
+        public String description() {
+            return description;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            PermissionView other = (PermissionView) obj;
+            return Objects.equals(this.code, other.code) && Objects.equals(this.description, other.description);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(code);
+            result = 31 * result + Objects.hashCode(description);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "PermissionView[code=" + code + ", description=" + description + "]";
+        }
     }
 
 }

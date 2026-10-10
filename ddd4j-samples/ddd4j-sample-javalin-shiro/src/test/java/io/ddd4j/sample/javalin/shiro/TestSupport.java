@@ -171,7 +171,7 @@ public final class TestSupport {
                 // Business auth
                 ApiBuilder.post("/auth/orders/{id}/pay", c -> {
                     if (!SubjectKit.hasPermission("order:pay")) {
-                        c.status(403).json(io.ddd4j.core.api.R.fail(403, "forbidden: requires order:pay"));
+                        c.status(403).json(io.ddd4j.core.api.R.of(403, "forbidden: requires order:pay"));
                         return;
                     }
                     String id = c.pathParam("id");

@@ -4,6 +4,14 @@
  */
 package io.ddd4j.data.event.store.jdbi;
 
+import io.ddd4j.core.ddd.event.AggregateRootId;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Objects;
+
 import io.ddd4j.core.constant.EventStoreConstants;
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
@@ -35,22 +43,61 @@ class JdbiEventStoreRetryTest {
     private RecordingSleeper sleeper;
     private EventStore eventStore;
 
-    AggregateRootId {
+    final static class TestAggregateRootId implements AggregateRootId {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String value;
+
         private static final EntityType TYPE = new StringEntityType("Order");
 
         @Override
-        public EntityType getType () {
+        public EntityType getType() {
             return TYPE;
         }
 
         @Override
-        public String asString () {
+        public String asString() {
             return value;
         }
 
         @Override
-        public String asTypedString () {
+        public String asTypedString() {
             return TYPE.asString() + ":" + value;
+        }
+
+        @JsonCreator()
+        TestAggregateRootId(@JsonProperty("value") String value) {
+            this.value = value;
+        }
+
+        @JsonProperty("value")
+        public String value() {
+            return value;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            TestAggregateRootId other = (TestAggregateRootId) obj;
+            return Objects.equals(this.value, other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(value);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "TestAggregateRootId[value=" + value + "]";
         }
     }
 
@@ -96,10 +143,7 @@ class JdbiEventStoreRetryTest {
         assertThat(sleeper.calls.get()).isGreaterThanOrEqualTo(1);
         assertThat(eventStore.read(ORDER_TYPE, orderId)).hasSize(1);
     }
-
-    record TestAggregateRootId(String value) implements
-
-    static final class RecordingSleeper implements EventStoreRetry.Sleeper {
+static final class RecordingSleeper implements EventStoreRetry.Sleeper {
         private final AtomicInteger calls = new AtomicInteger();
 
         @Override

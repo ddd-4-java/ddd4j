@@ -14,6 +14,12 @@
  */
 package io.ddd4j.web.micronaut;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Objects;
+
 import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.auth.AuthPrincipal;
@@ -47,6 +53,8 @@ import java.net.http.HttpRequest;
 import java.time.Duration;
 import java.util.*;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -55,19 +63,21 @@ class Ddd4jMicronautWebContractTest extends AbstractWebContractTest {
     private EmbeddedServer server;
     private WebContractClient contractClient;
 
-    WebContractClient {
+    private final static class MicronautContractClient implements WebContractClient {
+
+        private static final long serialVersionUID = 0L;
+
+        private final HttpClient httpClient;
+
+        private final int port;
 
         @Override
-        public WebContractResponse request (String method, String path, Map < String, String > headers, String body){
+        public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
             try {
-                HttpRequest.Builder builder = HttpRequest.newBuilder()
-                        .uri(URI.create("http://127.0.0.1:" + port + path));
+                HttpRequest.Builder builder = HttpRequest.newBuilder().uri(URI.create("http://127.0.0.1:" + port + path));
                 headers.forEach(builder::header);
-                HttpRequest.BodyPublisher publisher = Objects.isNull(body)
-                        ? HttpRequest.BodyPublishers.noBody() : HttpRequest.BodyPublishers.ofString(body);
-                java.net.http.HttpResponse<String> response = httpClient.send(
-                        builder.method(method, publisher).build(),
-                        java.net.http.HttpResponse.BodyHandlers.ofString());
+                HttpRequest.BodyPublisher publisher = Objects.isNull(body) ? HttpRequest.BodyPublishers.noBody() : HttpRequest.BodyPublishers.ofString(body);
+                java.net.http.HttpResponse<String> response = httpClient.send(builder.method(method, publisher).build(), java.net.http.HttpResponse.BodyHandlers.ofString());
                 return new WebContractResponse(response.statusCode(), response.headers().map(), response.body());
             } catch (InterruptedException exception) {
                 Thread.currentThread().interrupt();
@@ -75,6 +85,47 @@ class Ddd4jMicronautWebContractTest extends AbstractWebContractTest {
             } catch (Exception exception) {
                 throw new IllegalStateException("Micronaut contract request failed", exception);
             }
+        }
+
+        @JsonCreator()
+        private MicronautContractClient(@JsonProperty("httpClient") HttpClient httpClient, @JsonProperty("port") int port) {
+            this.httpClient = httpClient;
+            this.port = port;
+        }
+
+        @JsonProperty("httpClient")
+        public HttpClient httpClient() {
+            return httpClient;
+        }
+
+        @JsonProperty("port")
+        public int port() {
+            return port;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            MicronautContractClient other = (MicronautContractClient) obj;
+            return Objects.equals(this.httpClient, other.httpClient) && this.port == other.port;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(httpClient);
+            result = 31 * result + Integer.hashCode(port);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "MicronautContractClient[httpClient=" + httpClient + ", port=" + port + "]";
         }
     }
 
@@ -131,10 +182,7 @@ class Ddd4jMicronautWebContractTest extends AbstractWebContractTest {
                 return subject;
             }
         };
-    } implements
-
-private record MicronautContractClient(HttpClient httpClient, int port)
-}
+    } }
 
 @Controller("/contract")
 final class MicronautContractController {

@@ -40,7 +40,7 @@ class RTest {
 
     @Test
     void fail_withNullObject_shouldKeepFailureMetadata() {
-        R<Object> response = R.fail((Object) null);
+        R<Object> response = ApiCode.FAIL.toResponse((Object) null);
         assertThat(response.getData()).isNull();
         assertThat(response.getCode()).isEqualTo(ApiCode.FAIL.getCode());
         assertThat(response.getMsg()).isEqualTo(ApiCode.FAIL.getDesc());
@@ -49,7 +49,7 @@ class RTest {
     @Test
     void fail_withObjectData_shouldPreservePayload() {
         java.util.Map<String, String> payload = java.util.Collections.singletonMap("reason", "quota");
-        R<java.util.Map<String, String>> response = R.fail(payload);
+        R<java.util.Map<String, String>> response = ApiCode.FAIL.toResponse(payload);
         assertThat(response.getData()).isSameAs(payload);
         assertThat(response.getCode()).isEqualTo(ApiCode.FAIL.getCode());
         assertThat(response.getMsg()).isEqualTo(ApiCode.FAIL.getDesc());
@@ -105,7 +105,7 @@ class RTest {
 
     @Test
     void fail_withCodeAndMsg_shouldCarryBoth() {
-        R<String> r = R.fail(ApiCode.FORBIDDEN, "forbidden");
+        R<String> r = R.of((CustomApiCode) ApiCode.FORBIDDEN, "forbidden");
 
         assertThat(r.getCode()).isEqualTo(403);
         assertThat(r.getMsg()).isEqualTo("forbidden");
@@ -175,7 +175,7 @@ class RTest {
     @Test
     void jackson3_shouldSerializeUnifiedResponseFieldsAndValidationErrors() {
         List<Map<String, String>> errors = List.of(Map.of("field", "email", "message", "invalid"));
-        R<Object> response = R.of(ApiCode.BAD_REQUEST, "invalid input", errors);
+        R<Object> response = R.of((CustomApiCode) ApiCode.BAD_REQUEST, "invalid input", errors);
         JsonMapper mapper = JsonMapper.builder().build();
         var json = mapper.readTree(mapper.writeValueAsString(response));
 
