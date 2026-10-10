@@ -16,7 +16,7 @@ package io.ddd4j.data.crypto.strategy;
 
 import cn.hutool.crypto.digest.HmacAlgorithm;
 import tools.jackson.databind.ObjectMapper;
-import io.ddd4j.core.ApiCode;
+import io.ddd4j.core.api.ApiCode;
 import io.ddd4j.core.exception.BizRuntimeException;
 import io.ddd4j.data.crypto.enums.CryptoType;
 import io.ddd4j.data.crypto.enums.SymmetricAlgorithmType;
@@ -75,7 +75,7 @@ public class NoOpCryptoStrategy implements CryptoStrategy {
             return getObjectMapper().writeValueAsString(value);
         } catch (Exception ex) {
             log.error("Json Processing Error : {}", ex.getMessage());
-            throw new BizRuntimeException(ApiCode.SC_INTERNAL_SERVER_ERROR, "Json Processing Error");
+            throw new BizRuntimeException(ApiCode.SERVER_ERROR, "Json Processing Error");
         }
     }
 
@@ -99,7 +99,7 @@ public class NoOpCryptoStrategy implements CryptoStrategy {
             return getObjectMapper().readValue(value, rtType);
         } catch (Exception ex) {
             log.error("Json Processing Error : {}", ex.getMessage());
-            throw new BizRuntimeException(ApiCode.SC_INTERNAL_SERVER_ERROR, "Json Processing Error");
+            throw new BizRuntimeException(ApiCode.SERVER_ERROR, "Json Processing Error");
         }
     }
 

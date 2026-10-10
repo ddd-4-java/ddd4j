@@ -19,7 +19,7 @@ import cn.hutool.crypto.digest.HMac;
 import cn.hutool.crypto.digest.HmacAlgorithm;
 import cn.hutool.crypto.symmetric.SymmetricCrypto;
 import tools.jackson.databind.ObjectMapper;
-import io.ddd4j.core.ApiCode;
+import io.ddd4j.core.api.ApiCode;
 import io.ddd4j.core.exception.BizRuntimeException;
 import io.ddd4j.data.crypto.enums.CryptoType;
 import io.ddd4j.data.crypto.enums.SymmetricAlgorithmType;
@@ -96,7 +96,7 @@ public class DefaultCryptoStrategy implements CryptoStrategy {
             return valueAsString;
         } catch (Exception ex) {
             log.error("{} Encrypt Error : {}", algorithmType.getName(), ex.getMessage());
-            throw new BizRuntimeException(ApiCode.SC_INTERNAL_SERVER_ERROR, algorithmType.getName() + " Encrypt Error");
+            throw new BizRuntimeException(ApiCode.SERVER_ERROR, algorithmType.getName() + " Encrypt Error");
         }
     }
 
@@ -126,7 +126,7 @@ public class DefaultCryptoStrategy implements CryptoStrategy {
             return getObjectMapper().readValue(decryptStr, rtType);
         } catch (Exception ex) {
             log.error("{} Decrypt Error : {}", algorithmType.getName(), ex.getMessage());
-            throw new BizRuntimeException(ApiCode.SC_INTERNAL_SERVER_ERROR, algorithmType.getName() + " Decrypt Error");
+            throw new BizRuntimeException(ApiCode.SERVER_ERROR, algorithmType.getName() + " Decrypt Error");
         }
     }
 
@@ -156,7 +156,7 @@ public class DefaultCryptoStrategy implements CryptoStrategy {
             return hmacValue;
         } catch (Exception ex) {
             log.error("HMAC Digest Error : {}", ex.getMessage());
-            throw new BizRuntimeException(ApiCode.SC_INTERNAL_SERVER_ERROR, "HMAC Digest Error");
+            throw new BizRuntimeException(ApiCode.SERVER_ERROR, "HMAC Digest Error");
         }
     }
 

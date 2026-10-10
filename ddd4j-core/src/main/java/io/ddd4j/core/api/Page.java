@@ -85,12 +85,12 @@ public class Page<T> implements Iterable<T> {
 
     @Override
     public Iterator<T> iterator() {
-        return Objects.nonNull(this.records) && !this.records.isEmpty() ? this.records.iterator() : null;
+        return Objects.nonNull(this.records) && !this.records.isEmpty() ? this.records.iterator() : Collections.emptyIterator();
     }
 
     @Override
     public Spliterator<T> spliterator() {
-        return Objects.nonNull(this.records) ? this.records.spliterator() : null;
+        return Objects.nonNull(this.records) ? this.records.spliterator() : Spliterators.emptySpliterator();
     }
 
     @Override
@@ -179,7 +179,7 @@ public class Page<T> implements Iterable<T> {
      * 获取当前页数据的流。
      */
     public Stream<T> stream() {
-        return Objects.nonNull(this.records) ? this.records.stream() : new ArrayList<T>().stream();
+        return Objects.nonNull(this.records) ? this.records.stream() : Stream.empty();
     }
 
     public Page<T> peek(Consumer<? super T> action) {
