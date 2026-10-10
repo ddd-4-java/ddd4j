@@ -23,7 +23,7 @@ import java.util.Objects;
 /**
  * Lambda 查询条件记录（ORM 无关）。
  *
- * <p>存储从 {@link io.ddd4j.core.util.SFunction} 方法引用中解析出的属性名、操作符和值，
+ * <p>存储从 {@link io.ddd4j.kit.lang.SFunction} 方法引用中解析出的属性名、操作符和值，
  * 由各 ORM 模块的 Repository 转换为原生查询条件。
  *
  * <p>{@code propertyRef} — 类型安全属性引用
@@ -41,7 +41,7 @@ public final class LambdaCondition implements Serializable {
 /**
  * Lambda 查询条件记录（ORM 无关）。
  *
- * <p>存储从 {@link io.ddd4j.core.util.SFunction} 方法引用中解析出的属性名、操作符和值，
+ * <p>存储从 {@link io.ddd4j.kit.lang.SFunction} 方法引用中解析出的属性名、操作符和值，
  * 由各 ORM 模块的 Repository 转换为原生查询条件。
  *
  * @param propertyRef 类型安全属性引用
