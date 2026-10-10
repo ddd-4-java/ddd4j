@@ -25,6 +25,11 @@ class WebRequestContextFactoryTest {
 
     private static final RequestIdGenerator FIXED_ID = () -> "generated-request";
 
+    private static WebRequestData requestData(String requestId) {
+        return new WebRequestData(requestId, "t-1", "tenant-a", "Bearer x", Locale.CHINA,
+                "1.2.3.4", null, "10.0.0.1", "GET", "/api");
+    }
+
     @Test
     void createUsesRequestIdWhenProvided() {
         WebRequestContextFactory factory = new WebRequestContextFactory(FIXED_ID,
@@ -62,10 +67,5 @@ class WebRequestContextFactoryTest {
         WebRequestContextFactory factory = new WebRequestContextFactory();
         WebRequestContext context = factory.create(requestData(null));
         org.junit.jupiter.api.Assertions.assertFalse(context.requestId().trim().isEmpty());
-    }
-
-    private static WebRequestData requestData(String requestId) {
-        return new WebRequestData(requestId, "t-1", "tenant-a", "Bearer x", Locale.CHINA,
-                "1.2.3.4", null, "10.0.0.1", "GET", "/api");
     }
 }

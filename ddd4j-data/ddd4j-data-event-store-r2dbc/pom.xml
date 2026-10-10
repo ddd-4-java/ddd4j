@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -14,7 +14,9 @@
     <packaging>jar</packaging>
 
     <name>ddd4j-data-event-store-r2dbc</name>
-    <description>AsyncEventStore 的 R2DBC SPI + Reactor 响应式适配器：TEXT payload schema、事务内乐观锁校验、懒建表，无框架绑定（JDK8）</description>
+    <description>AsyncEventStore 的 R2DBC SPI + Reactor 响应式适配器：TEXT payload
+        schema、事务内乐观锁校验、懒建表，无框架绑定（JDK8）
+    </description>
 
     <dependencies>
         <dependency>

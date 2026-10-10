@@ -14,23 +14,21 @@
  */
 package io.ddd4j.data.projection.dropwizard;
 
-import java.util.Collections;
-import java.util.Arrays;
 import io.ddd4j.core.cqrs.readmodel.*;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
+import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.server.DefaultServerFactory;
 import io.dropwizard.setup.Environment;
-import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.testing.DropwizardTestSupport;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -84,10 +82,27 @@ class DropwizardProjectionSchedulerIT {
         }
     }
 
+    /**
+     * 随机端口配置（application/admin 连接器 port 0 → 内核分配空闲端口），
+     * 避免真实 Jetty 启动撞固定 8080/8081。
+     */
+    private static Configuration randomPortConfiguration() {
+        Configuration configuration = new Configuration();
+        DefaultServerFactory serverFactory = (DefaultServerFactory) configuration.getServerFactory();
+        HttpConnectorFactory applicationConnector = new HttpConnectorFactory();
+        applicationConnector.setPort(0);
+        serverFactory.setApplicationConnectors(Collections.singletonList(applicationConnector));
+        HttpConnectorFactory adminConnector = new HttpConnectorFactory();
+        adminConnector.setPort(0);
+        serverFactory.setAdminConnectors(Collections.singletonList(adminConnector));
+        return configuration;
+    }
+
     @Test
     void scheduler_schedule_应返回activeHandle_cancel后应inactive() {
         ViewScheduler.ViewScheduleHandle handle = scheduler.schedule(
-                "direct-view", "0/1 * * * * *", () -> {});
+                "direct-view", "0/1 * * * * *", () -> {
+                });
 
         assertThat(handle.isActive()).isTrue();
 
@@ -116,22 +131,6 @@ class DropwizardProjectionSchedulerIT {
         viewManager.triggerOnce();
         assertThat(viewManager.isRunning()).isTrue();
         viewManager.stop();
-    }
-
-    /**
-     * 随机端口配置（application/admin 连接器 port 0 → 内核分配空闲端口），
-     * 避免真实 Jetty 启动撞固定 8080/8081。
-     */
-    private static Configuration randomPortConfiguration() {
-        Configuration configuration = new Configuration();
-        DefaultServerFactory serverFactory = (DefaultServerFactory) configuration.getServerFactory();
-        HttpConnectorFactory applicationConnector = new HttpConnectorFactory();
-        applicationConnector.setPort(0);
-        serverFactory.setApplicationConnectors(Collections.singletonList(applicationConnector));
-        HttpConnectorFactory adminConnector = new HttpConnectorFactory();
-        adminConnector.setPort(0);
-        serverFactory.setAdminConnectors(Collections.singletonList(adminConnector));
-        return configuration;
     }
 
     /**

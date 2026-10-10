@@ -18,11 +18,7 @@ import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.sample.javalin.shiro.order.domain.event.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * 订单聚合根（充血模型）。

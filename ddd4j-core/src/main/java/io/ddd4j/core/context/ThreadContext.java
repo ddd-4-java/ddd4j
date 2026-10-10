@@ -337,25 +337,6 @@ public class ThreadContext {
         THREAD_LOCAL_POOL.remove();
     }
 
-    public static final class Scope implements AutoCloseable {
-
-        private final Map<Object, Object> previousResources;
-        private boolean closed;
-
-        private Scope(Map<Object, Object> previousResources) {
-            this.previousResources = previousResources;
-        }
-
-        @Override
-        public void close() {
-            if (closed) {
-                return;
-            }
-            replaceResources(previousResources);
-            closed = true;
-        }
-    }
-
     private static void ensureResourcesInitialized() {
         if (Objects.isNull(THREAD_LOCAL_POOL.get())) {
             THREAD_LOCAL_POOL.set(new ConcurrentHashMap<>(4));
@@ -376,5 +357,24 @@ public class ThreadContext {
             return;
         }
         THREAD_LOCAL_POOL.set(copyResources(resources));
+    }
+
+    public static final class Scope implements AutoCloseable {
+
+        private final Map<Object, Object> previousResources;
+        private boolean closed;
+
+        private Scope(Map<Object, Object> previousResources) {
+            this.previousResources = previousResources;
+        }
+
+        @Override
+        public void close() {
+            if (closed) {
+                return;
+            }
+            replaceResources(previousResources);
+            closed = true;
+        }
     }
 }

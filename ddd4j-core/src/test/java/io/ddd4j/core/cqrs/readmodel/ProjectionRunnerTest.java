@@ -34,6 +34,7 @@ class ProjectionRunnerTest {
         assertEquals(1, view.handled.get());
         assertEquals(1L, service.readProjectionPosition("orders"));
     }
+
     @Test
     void shouldPropagateRunAllFailureButIsolateRunAllIsolatedFailures() {
         ProjectionService service = new DefaultProjectionService(new InMemoryProjectionPositionRepository());
@@ -48,21 +49,52 @@ class ProjectionRunnerTest {
         assertEquals(ProjectionRunner.CONSECUTIVE_FAILURE_THRESHOLD, metrics.circuitOpened.get());
         assertEquals(ProjectionRunner.CONSECUTIVE_FAILURE_THRESHOLD, succeeding.handled.get());
     }
+
     private static final class FixedReader implements EventChunkReader<String> {
-        @Override public EventChunk<String> read(String streamId, long from, int size, Collection<String> types) {
+        @Override
+        public EventChunk<String> read(String streamId, long from, int size, Collection<String> types) {
             return new EventChunk<String>(Collections.singletonList(streamId), from + 1L);
         }
     }
+
     private static final class RecordingView implements ProjectionView<String> {
-        private final String name; private final boolean fail; private final AtomicInteger handled = new AtomicInteger();
-        private RecordingView(String name, boolean fail) { this.name = name; this.fail = fail; }
-        @Override public String getName() { return name; }
-        @Override public String getCron() { return "* * * * *"; }
-        @Override public Collection<String> getEventTypes() { return Collections.emptyList(); }
-        @Override public void handleEvents(Collection<String> events) { if (fail) throw new IllegalStateException("expected"); handled.incrementAndGet(); }
+        private final String name;
+        private final boolean fail;
+        private final AtomicInteger handled = new AtomicInteger();
+
+        private RecordingView(String name, boolean fail) {
+            this.name = name;
+            this.fail = fail;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public String getCron() {
+            return "* * * * *";
+        }
+
+        @Override
+        public Collection<String> getEventTypes() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public void handleEvents(Collection<String> events) {
+            if (fail) throw new IllegalStateException("expected");
+            handled.incrementAndGet();
+        }
     }
+
     private static final class RecordingMetrics implements ProjectionMetrics {
         private final AtomicInteger circuitOpened = new AtomicInteger();
-        @Override public void onCircuitOpened(String viewName, int consecutiveFailures) { circuitOpened.set(consecutiveFailures); }
+
+        @Override
+        public void onCircuitOpened(String viewName, int consecutiveFailures) {
+            circuitOpened.set(consecutiveFailures);
+        }
     }
 }

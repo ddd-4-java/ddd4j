@@ -20,11 +20,7 @@ import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.AsyncEventStore;
 import io.ddd4j.core.cqrs.eventstore.AsyncStoredEvent;
 import io.ddd4j.core.cqrs.eventstore.jackson.EventPayloadSerializer;
-import io.ddd4j.core.ddd.event.AggregateRootId;
-import io.ddd4j.core.ddd.event.DomainEvent;
-import io.ddd4j.core.ddd.event.EntityId;
-import io.ddd4j.core.ddd.event.EntityIdRegistry;
-import io.ddd4j.core.ddd.event.EventId;
+import io.ddd4j.core.ddd.event.*;
 import io.ddd4j.kit.text.StrPool;
 import io.r2dbc.spi.Connection;
 import io.r2dbc.spi.ConnectionFactory;
@@ -264,13 +260,13 @@ public class R2dbcAsyncEventStore implements AsyncEventStore {
             return Mono.empty();
         }
         return Mono.usingWhen(
-                connectionFactory.create(),
-                connection -> Mono.from(connection.createStatement(CREATE_TABLE_SQL).execute())
-                        .flatMap(result -> Mono.from(result.getRowsUpdated()))
-                        .then(),
-                connection -> Mono.from(connection.close()),
-                (connection, error) -> Mono.from(connection.close()),
-                connection -> Mono.from(connection.close()))
+                        connectionFactory.create(),
+                        connection -> Mono.from(connection.createStatement(CREATE_TABLE_SQL).execute())
+                                .flatMap(result -> Mono.from(result.getRowsUpdated()))
+                                .then(),
+                        connection -> Mono.from(connection.close()),
+                        (connection, error) -> Mono.from(connection.close()),
+                        connection -> Mono.from(connection.close()))
                 .doOnSuccess(v -> initialized.set(true));
     }
 

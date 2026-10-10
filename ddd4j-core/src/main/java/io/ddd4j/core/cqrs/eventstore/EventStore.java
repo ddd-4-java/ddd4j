@@ -17,6 +17,7 @@ package io.ddd4j.core.cqrs.eventstore;
 
 import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.DomainEvent;
+
 import java.util.List;
 
 /**
@@ -86,6 +87,7 @@ public interface EventStore {
      * @return 版本区间内的持久化事件，按版本升序
      */
     List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId, long fromVersion, long toVersion);
+
     /**
      * 读取全局事件流（用于 projection）。
      *

@@ -14,16 +14,12 @@
  */
 package io.ddd4j.extension.monitor.channel.feishu;
 
-import java.util.Collections;
 import io.ddd4j.extension.monitor.Sender;
 import io.ddd4j.kit.lang.JsonKit;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Arrays;
+import java.util.*;
 
 /**
  * 飞书群机器人 {@link Sender} 适配器。
@@ -35,20 +31,11 @@ import java.util.Arrays;
  */
 public class FeishuRobotSender implements Sender {
 
-    /**
-     * 飞书 post 富文本消息 JSON 字符串构造辅助结构，仅本类使用。
-     */
-    @Data
-    @NoArgsConstructor
-    static class PostPayload {
-        private Map<String, Object> post;
-    }
-
     private final FeishuClient client;
 
     /**
      * @param webhookUrl 飞书机器人 webhook 完整地址（含 hook token）
-     * @param secret      加签密钥（无则置 null 或空字符串）
+     * @param secret     加签密钥（无则置 null 或空字符串）
      */
     public FeishuRobotSender(String webhookUrl, String secret) {
         this.client = new FeishuClient(webhookUrl, secret);
@@ -83,5 +70,14 @@ public class FeishuRobotSender implements Sender {
         root.put("content", postNode);
 
         client.send(JsonKit.toJson(root));
+    }
+
+    /**
+     * 飞书 post 富文本消息 JSON 字符串构造辅助结构，仅本类使用。
+     */
+    @Data
+    @NoArgsConstructor
+    static class PostPayload {
+        private Map<String, Object> post;
     }
 }

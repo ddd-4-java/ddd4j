@@ -15,15 +15,7 @@
 package io.ddd4j.auth.license.manager;
 
 import global.namespace.fun.io.api.Source;
-import global.namespace.truelicense.api.ConsumerLicenseManager;
-import global.namespace.truelicense.api.ConsumerLicenseManagerBuilder;
-import global.namespace.truelicense.api.License;
-import global.namespace.truelicense.api.LicenseFunctionComposition;
-import global.namespace.truelicense.api.LicenseManagementContext;
-import global.namespace.truelicense.api.LicenseManagementException;
-import global.namespace.truelicense.api.LicenseValidationException;
-import global.namespace.truelicense.api.VendorLicenseManager;
-import global.namespace.truelicense.api.VendorLicenseManagerBuilder;
+import global.namespace.truelicense.api.*;
 import global.namespace.truelicense.api.auth.AuthenticationChildBuilder;
 import global.namespace.truelicense.api.crypto.EncryptionChildBuilder;
 import global.namespace.truelicense.api.i18n.Message;
@@ -60,6 +52,42 @@ public class CustomLicenseManager {
         this.userPreferences = preferences.isUserNode();
         this.vendor = vendor(subject, keyStoreParam);
         this.consumer = consumer(subject, keyStoreParam, preferences);
+    }
+
+    private static Source keyStoreSource(CustomKeyStoreParam keyStoreParam) {
+        return () -> keyStoreParam::getStream;
+    }
+
+    private static LicenseManagementException invalidatedException() {
+        return new LicenseManagementException(
+                new IllegalStateException("license manager verification state has been invalidated"));
+    }
+
+    private static PasswordProtection passwordProtection(String value) {
+        Objects.requireNonNull(value, "password");
+        return usage -> new Password() {
+            private final char[] characters = value.toCharArray();
+
+            @Override
+            public char[] characters() {
+                return characters;
+            }
+
+            @Override
+            public void close() {
+                Arrays.fill(characters, (char) 0);
+            }
+        };
+    }
+
+    private static LicenseValidationException validationException(String text) {
+        return new LicenseValidationException(new PlainMessage(text));
+    }
+
+    private static void requireText(String value, String name) {
+        if (!StringUtils.hasText(value)) {
+            throw new IllegalArgumentException(name + " must not be blank");
+        }
     }
 
     /**
@@ -188,10 +216,6 @@ public class CustomLicenseManager {
         return encryption.up().storeIn(preferences(preferencesNode, subject)).build();
     }
 
-    private static Source keyStoreSource(CustomKeyStoreParam keyStoreParam) {
-        return () -> keyStoreParam::getStream;
-    }
-
     private void validateConsumer(License content) throws LicenseValidationException {
         Objects.requireNonNull(content, "content");
         String consumerType = content.getConsumerType();
@@ -219,38 +243,6 @@ public class CustomLicenseManager {
             consumer.uninstall();
         } catch (LicenseManagementException | RuntimeException | Error cleanupException) {
             primary.addSuppressed(cleanupException);
-        }
-    }
-
-    private static LicenseManagementException invalidatedException() {
-        return new LicenseManagementException(
-                new IllegalStateException("license manager verification state has been invalidated"));
-    }
-
-    private static PasswordProtection passwordProtection(String value) {
-        Objects.requireNonNull(value, "password");
-        return usage -> new Password() {
-            private final char[] characters = value.toCharArray();
-
-            @Override
-            public char[] characters() {
-                return characters;
-            }
-
-            @Override
-            public void close() {
-                Arrays.fill(characters, (char) 0);
-            }
-        };
-    }
-
-    private static LicenseValidationException validationException(String text) {
-        return new LicenseValidationException(new PlainMessage(text));
-    }
-
-    private static void requireText(String value, String name) {
-        if (!StringUtils.hasText(value)) {
-            throw new IllegalArgumentException(name + " must not be blank");
         }
     }
 

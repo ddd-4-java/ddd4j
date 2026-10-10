@@ -19,12 +19,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.redis.testcontainers.RedisContainer;
 import io.ddd4j.mq.delivery.MQDeliveryPolicy;
 import io.ddd4j.mq.delivery.MQOutboxRecord;
-import io.ddd4j.sample.order.application.AddOrderLineCommand;
-import io.ddd4j.sample.order.application.CreateOrderCommand;
-import io.ddd4j.sample.order.application.OrderApplicationService;
-import io.ddd4j.sample.order.application.OrderReadModel;
-import io.ddd4j.sample.order.application.OutboxDispatchResult;
-import io.ddd4j.sample.order.application.OutboxPublisher;
+import io.ddd4j.sample.order.application.*;
 import io.ddd4j.sample.order.domain.Order;
 import io.ddd4j.sample.order.domain.OrderQuery;
 import io.ddd4j.sample.order.domain.OrderStatus;
@@ -58,13 +53,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.UUID;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

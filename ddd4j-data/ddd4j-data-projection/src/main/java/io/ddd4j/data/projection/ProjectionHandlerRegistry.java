@@ -16,13 +16,7 @@ package io.ddd4j.data.projection;
 
 import io.ddd4j.core.ddd.event.DomainEvent;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -106,7 +100,7 @@ public class ProjectionHandlerRegistry {
      * @param eventType 事件类型，非空
      * @param <E>       事件类型泛型
      * @return 订阅该类型的 handler；未注册返回 {@link Optional#empty()}
-     *         （兜底策略由 {@link ProjectionDispatcher} 决定）
+     * （兜底策略由 {@link ProjectionDispatcher} 决定）
      * @throws NullPointerException eventType 为 null
      */
     public <E extends DomainEvent<?>> Optional<ProjectionHandler> findHandler(Class<E> eventType) {

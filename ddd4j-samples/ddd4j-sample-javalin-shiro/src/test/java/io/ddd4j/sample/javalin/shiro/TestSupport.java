@@ -14,8 +14,6 @@
  */
 package io.ddd4j.sample.javalin.shiro;
 
-import java.util.Objects;
-
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
@@ -51,6 +49,8 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
+
+import java.util.Objects;
 
 /**
  * 测试基础设施：手动构造 Shiro SecurityManager + Javalin 应用。
@@ -113,75 +113,75 @@ public final class TestSupport {
 
         // Shiro 是线程级 Subject；每个请求进入前按 token 恢复并绑定 Subject。
         app.before(ctx -> {
-                ThreadContext.remove();
-                String token = ctx.header("Authorization");
-                if (Objects.nonNull(token) && token.startsWith("Bearer ")) {
-                    String sessionId = token.substring("Bearer ".length()).trim();
-                    try {
-                        org.apache.shiro.session.mgt.SessionKey key =
-                                new org.apache.shiro.session.mgt.DefaultSessionKey(sessionId);
-                        org.apache.shiro.session.Session session =
-                                SecurityUtils.getSecurityManager().getSession(key);
-                        if (Objects.nonNull(session)) {
-                            Object user = session.getAttribute("user");
-                            org.apache.shiro.subject.PrincipalCollection principals =
-                                    Objects.nonNull(user)
-                                            ? new org.apache.shiro.subject.SimplePrincipalCollection(user, "rbacRealm")
-                                            : null;
-                            org.apache.shiro.subject.Subject shiroSubject =
-                                    new org.apache.shiro.subject.Subject.Builder(SecurityUtils.getSecurityManager())
-                                            .session(session)
-                                            .principals(principals)
-                                            .authenticated(Objects.nonNull(principals))
-                                            .sessionCreationEnabled(false)
-                                            .buildSubject();
-                            ThreadContext.bind(shiroSubject);
-                        }
-                    } catch (Exception ignored) {
+            ThreadContext.remove();
+            String token = ctx.header("Authorization");
+            if (Objects.nonNull(token) && token.startsWith("Bearer ")) {
+                String sessionId = token.substring("Bearer ".length()).trim();
+                try {
+                    org.apache.shiro.session.mgt.SessionKey key =
+                            new org.apache.shiro.session.mgt.DefaultSessionKey(sessionId);
+                    org.apache.shiro.session.Session session =
+                            SecurityUtils.getSecurityManager().getSession(key);
+                    if (Objects.nonNull(session)) {
+                        Object user = session.getAttribute("user");
+                        org.apache.shiro.subject.PrincipalCollection principals =
+                                Objects.nonNull(user)
+                                        ? new org.apache.shiro.subject.SimplePrincipalCollection(user, "rbacRealm")
+                                        : null;
+                        org.apache.shiro.subject.Subject shiroSubject =
+                                new org.apache.shiro.subject.Subject.Builder(SecurityUtils.getSecurityManager())
+                                        .session(session)
+                                        .principals(principals)
+                                        .authenticated(Objects.nonNull(principals))
+                                        .sessionCreationEnabled(false)
+                                        .buildSubject();
+                        ThreadContext.bind(shiroSubject);
                     }
+                } catch (Exception ignored) {
                 }
+            }
         });
         app.after(ctx -> ThreadContext.remove());
 
         app.routes(() -> {
-                // Authentication
-                ApiBuilder.post("/auth/login", authController::login);
-                ApiBuilder.post("/auth/logout", authController::logout);
-                ApiBuilder.get("/auth/me", authController::me);
-                ApiBuilder.get("/auth/check/permission", authController::checkPermission);
-                ApiBuilder.get("/auth/check/role", authController::checkRole);
-                ApiBuilder.post("/auth/kickout", authController::kickout);
-                ApiBuilder.get("/auth/status", authController::status);
+            // Authentication
+            ApiBuilder.post("/auth/login", authController::login);
+            ApiBuilder.post("/auth/logout", authController::logout);
+            ApiBuilder.get("/auth/me", authController::me);
+            ApiBuilder.get("/auth/check/permission", authController::checkPermission);
+            ApiBuilder.get("/auth/check/role", authController::checkRole);
+            ApiBuilder.post("/auth/kickout", authController::kickout);
+            ApiBuilder.get("/auth/status", authController::status);
 
-                // Authorization
-                ApiBuilder.get("/auth/users", authzController::listUsers);
-                ApiBuilder.get("/auth/users/{id}", authzController::getUser);
-                ApiBuilder.post("/auth/users", authzController::createUser);
-                ApiBuilder.put("/auth/users/{id}", authzController::updateUser);
-                ApiBuilder.delete("/auth/users/{id}", authzController::deleteUser);
-                ApiBuilder.get("/auth/roles", authzController::listRoles);
-                ApiBuilder.post("/auth/roles", authzController::createRole);
-                ApiBuilder.put("/auth/roles/{code}", authzController::updateRole);
-                ApiBuilder.delete("/auth/roles/{code}", authzController::deleteRole);
-                ApiBuilder.get("/auth/permissions", authzController::listPermissions);
-                ApiBuilder.post("/auth/permissions", authzController::createPermission);
-                ApiBuilder.delete("/auth/permissions/{code}", authzController::deletePermission);
+            // Authorization
+            ApiBuilder.get("/auth/users", authzController::listUsers);
+            ApiBuilder.get("/auth/users/{id}", authzController::getUser);
+            ApiBuilder.post("/auth/users", authzController::createUser);
+            ApiBuilder.put("/auth/users/{id}", authzController::updateUser);
+            ApiBuilder.delete("/auth/users/{id}", authzController::deleteUser);
+            ApiBuilder.get("/auth/roles", authzController::listRoles);
+            ApiBuilder.post("/auth/roles", authzController::createRole);
+            ApiBuilder.put("/auth/roles/{code}", authzController::updateRole);
+            ApiBuilder.delete("/auth/roles/{code}", authzController::deleteRole);
+            ApiBuilder.get("/auth/permissions", authzController::listPermissions);
+            ApiBuilder.post("/auth/permissions", authzController::createPermission);
+            ApiBuilder.delete("/auth/permissions/{code}", authzController::deletePermission);
 
-                // Business auth
-                ApiBuilder.post("/auth/orders/{id}/pay", c -> {
-                    if (!SubjectKit.hasPermission("order:pay")) {
-                        c.status(403).json(io.ddd4j.core.api.R.fail(403, "forbidden: requires order:pay"));
-                        return;
-                    }
-                    String id = c.pathParam("id");
-                    c.json(io.ddd4j.core.api.R.ok(Java8Maps.of(
-                            "orderId", id,
-                            "byUser", String.valueOf(SubjectKit.getLoginId()))));
-                });
+            // Business auth
+            ApiBuilder.post("/auth/orders/{id}/pay", c -> {
+                if (!SubjectKit.hasPermission("order:pay")) {
+                    c.status(403).json(io.ddd4j.core.api.R.fail(403, "forbidden: requires order:pay"));
+                    return;
+                }
+                String id = c.pathParam("id");
+                c.json(io.ddd4j.core.api.R.ok(Java8Maps.of(
+                        "orderId", id,
+                        "byUser", String.valueOf(SubjectKit.getLoginId()))));
+            });
 
-                orderResource.routes().addEndpoints();
-                goodsQueryResource.routes().addEndpoints();
-                goodsResource.routes().addEndpoints();
+            orderResource.routes().addEndpoints();
+            goodsQueryResource.routes().addEndpoints();
+            goodsResource.routes().addEndpoints();
         });
 
         // 启动前清理任何残留 Shiro 状态

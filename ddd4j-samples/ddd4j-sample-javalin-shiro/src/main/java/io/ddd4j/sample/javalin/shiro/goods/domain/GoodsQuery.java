@@ -17,7 +17,7 @@ package io.ddd4j.sample.javalin.shiro.goods.domain;
 import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
-import io.ddd4j.kit.lang.StrKit;
+import io.ddd4j.kit.lang.SFunction;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -53,17 +53,26 @@ public class GoodsQuery extends Query<Goods> {
             }
             boolean desc = "DESC".equalsIgnoreCase(tokens[1]);
             switch (tokens[0]) {
-                case "id": applyOrder(desc, Goods::id); break;
-                case "createTime": applyOrder(desc, Goods::getCreateTime); break;
-                case "updateTime": applyOrder(desc, Goods::getUpdateTime); break;
-                case "price": applyOrder(desc, Goods::getPrice); break;
-                default: break;
+                case "id":
+                    applyOrder(desc, Goods::id);
+                    break;
+                case "createTime":
+                    applyOrder(desc, Goods::getCreateTime);
+                    break;
+                case "updateTime":
+                    applyOrder(desc, Goods::getUpdateTime);
+                    break;
+                case "price":
+                    applyOrder(desc, Goods::getPrice);
+                    break;
+                default:
+                    break;
             }
         }
         return this;
     }
 
-    private void applyOrder(boolean desc, io.ddd4j.core.util.SFunction<Goods, ?> property) {
+    private void applyOrder(boolean desc, SFunction<Goods, ?> property) {
         if (desc) {
             orderByDesc(property);
             return;

@@ -14,7 +14,6 @@
  */
 package io.ddd4j.micronaut.health;
 
-import java.util.Collections;
 import io.ddd4j.core.health.ReadinessReport;
 import io.ddd4j.core.health.RuntimeReadinessRegistry;
 import io.micronaut.context.annotation.Requires;
@@ -25,7 +24,7 @@ import io.micronaut.management.health.indicator.HealthResult;
 import jakarta.inject.Singleton;
 import org.reactivestreams.Publisher;
 
-import java.util.Map;
+import java.util.Collections;
 import java.util.Objects;
 
 /**

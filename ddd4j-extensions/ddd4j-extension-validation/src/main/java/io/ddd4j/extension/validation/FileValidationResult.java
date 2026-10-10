@@ -25,19 +25,40 @@ public final class FileValidationResult {
     private final FileValidationFailure failure;
     private final DetectedFileType detectedType;
 
-/**
- * 文件校验结果。
- *
- * @param valid 是否通过
- * @param failure 失败原因，通过时为空
- * @param detectedType 内容检测结果，可以为空
- */
+    /**
+     * 文件校验结果。
+     *
+     * @param valid        是否通过
+     * @param failure      失败原因，通过时为空
+     * @param detectedType 内容检测结果，可以为空
+     */
 
     public FileValidationResult(boolean valid, FileValidationFailure failure, DetectedFileType detectedType) {
 
         this.valid = valid;
         this.failure = failure;
         this.detectedType = detectedType;
+    }
+
+    /**
+     * 创建成功结果。
+     *
+     * @param detectedType 检测类型
+     * @return 成功结果
+     */
+    public static FileValidationResult valid(DetectedFileType detectedType) {
+        return new FileValidationResult(true, null, detectedType);
+    }
+
+    /**
+     * 创建失败结果。
+     *
+     * @param failure      失败原因
+     * @param detectedType 已检测类型
+     * @return 失败结果
+     */
+    public static FileValidationResult invalid(FileValidationFailure failure, DetectedFileType detectedType) {
+        return new FileValidationResult(false, failure, detectedType);
     }
 
     public boolean valid() {
@@ -72,29 +93,6 @@ public final class FileValidationResult {
     public String toString() {
         return "FileValidationResult{" + valid + ", " + failure + ", " + detectedType + '}';
     }
-
-
-    /**
-     * 创建成功结果。
-     *
-     * @param detectedType 检测类型
-     * @return 成功结果
-     */
-    public static FileValidationResult valid(DetectedFileType detectedType) {
-        return new FileValidationResult(true, null, detectedType);
-    }
-
-    /**
-     * 创建失败结果。
-     *
-     * @param failure 失败原因
-     * @param detectedType 已检测类型
-     * @return 失败结果
-     */
-    public static FileValidationResult invalid(FileValidationFailure failure, DetectedFileType detectedType) {
-        return new FileValidationResult(false, failure, detectedType);
-    }
-
 
     public boolean isValid() {
         return valid;

@@ -11,12 +11,19 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.Objects;
 
-/** HttpURLConnection-backed JDK 8 facade for sample integration tests. */
+/**
+ * HttpURLConnection-backed JDK 8 facade for sample integration tests.
+ */
 public final class HttpClient {
     private final int connectTimeoutMillis;
 
-    private HttpClient(int connectTimeoutMillis) { this.connectTimeoutMillis = connectTimeoutMillis; }
-    public static Builder newBuilder() { return new Builder(); }
+    private HttpClient(int connectTimeoutMillis) {
+        this.connectTimeoutMillis = connectTimeoutMillis;
+    }
+
+    public static Builder newBuilder() {
+        return new Builder();
+    }
 
     public <T> HttpResponse<T> send(HttpRequest request, HttpResponse.BodyHandler<T> ignored) throws Exception {
         HttpURLConnection connection = (HttpURLConnection) request.uri().toURL().openConnection();
@@ -30,7 +37,9 @@ public final class HttpClient {
             byte[] payload = request.body().getBytes(StandardCharsets.UTF_8);
             connection.setDoOutput(true);
             connection.setFixedLengthStreamingMode(payload.length);
-            try (OutputStream output = connection.getOutputStream()) { output.write(payload); }
+            try (OutputStream output = connection.getOutputStream()) {
+                output.write(payload);
+            }
         }
         int statusCode = connection.getResponseCode();
         InputStream input = statusCode >= 400 ? connection.getErrorStream() : connection.getInputStream();
@@ -38,7 +47,9 @@ public final class HttpClient {
         if (Objects.nonNull(input)) {
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8))) {
                 String line;
-                while (Objects.nonNull(line = reader.readLine())) { body.append(line); }
+                while (Objects.nonNull(line = reader.readLine())) {
+                    body.append(line);
+                }
             }
         }
         @SuppressWarnings("unchecked") T typedBody = (T) body.toString();
@@ -47,7 +58,14 @@ public final class HttpClient {
 
     public static final class Builder {
         private int timeoutMillis = 5000;
-        public Builder connectTimeout(Duration duration) { timeoutMillis = (int) duration.toMillis(); return this; }
-        public HttpClient build() { return new HttpClient(timeoutMillis); }
+
+        public Builder connectTimeout(Duration duration) {
+            timeoutMillis = (int) duration.toMillis();
+            return this;
+        }
+
+        public HttpClient build() {
+            return new HttpClient(timeoutMillis);
+        }
     }
 }

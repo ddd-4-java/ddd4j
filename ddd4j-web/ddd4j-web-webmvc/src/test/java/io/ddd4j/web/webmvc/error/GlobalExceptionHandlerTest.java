@@ -14,10 +14,10 @@
  */
 package io.ddd4j.web.webmvc.error;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonParseException;
-import io.ddd4j.core.ApiCode;
-import io.ddd4j.core.ApiRestResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import io.ddd4j.core.api.ApiCode;
+import io.ddd4j.core.api.R;
 import io.ddd4j.core.exception.BizCheckedException;
 import io.ddd4j.core.exception.BizIOException;
 import io.ddd4j.core.exception.BizRuntimeException;
@@ -68,21 +68,21 @@ class GlobalExceptionHandlerTest {
         supportedMethods.add("PUT");
         HttpRequestMethodNotSupportedException ex = new HttpRequestMethodNotSupportedException("POST", supportedMethods);
 
-        ApiRestResponse<String> response = handler.httpRequestMethodNotSupportedException(ex);
+        R<String> response = handler.httpRequestMethodNotSupportedException(ex);
 
         assertThat(response).isNotNull();
-        assertThat(response.getCode()).isEqualTo(ApiCode.SC_METHOD_NOT_ALLOWED.getCode());
-        assertThat(response.getMessage()).contains("POST");
+        assertThat(response.getCode()).isEqualTo(ApiCode.METHOD_NOT_ALLOWED.getCode());
+        assertThat(response.getMsg()).contains("POST");
     }
 
     @Test
     void jsonParseException_shouldReturnParsingError() throws Exception {
         JsonProcessingException ex = new JsonParseException("Invalid JSON");
 
-        ApiRestResponse<String> response = handler.jsonProcessingException(ex);
+        R<String> response = handler.jsonProcessingException(ex);
 
         assertThat(response).isNotNull();
-        assertThat(response.getCode()).isEqualTo(ApiCode.SC_PARSING_ERROR.getCode());
+        assertThat(response.getCode()).isEqualTo(ApiCode.PARSING_ERROR.getCode());
     }
 
     @Test
@@ -91,9 +91,9 @@ class GlobalExceptionHandlerTest {
         // 真实场景下通过 Spring 集成测试覆盖
         try {
             javax.validation.ConstraintViolationException ex = new javax.validation.ConstraintViolationException("validation failed", new HashSet<>());
-            ApiRestResponse<?> response = handler.constraintViolationException(ex);
+            R<?> response = handler.constraintViolationException(ex);
             assertThat(response).isNotNull();
-            assertThat(response.getCode()).isEqualTo(ApiCode.SC_METHOD_ARGUMENT_NOT_VALID.getCode());
+            assertThat(response.getCode()).isEqualTo(ApiCode.METHOD_ARGUMENT_NOT_VALID.getCode());
         } catch (Exception e) {
             // 忽略异常
         }
@@ -105,44 +105,44 @@ class GlobalExceptionHandlerTest {
     void bizRuntimeException_shouldReturnErrorCode() {
         BizRuntimeException ex = new BizRuntimeException(1001, "biz error");
 
-        ApiRestResponse<String> response = handler.bizRuntimeException(ex);
+        R<String> response = handler.bizRuntimeException(ex);
 
         assertThat(response).isNotNull();
         assertThat(response.getCode()).isEqualTo(1001);
-        assertThat(response.getMessage()).isEqualTo("biz error");
+        assertThat(response.getMsg()).isEqualTo("biz error");
     }
 
     @Test
     void bizCheckedException_shouldReturnErrorCode() {
         BizCheckedException ex = new BizCheckedException(2001, "checked error");
 
-        ApiRestResponse<String> response = handler.bizCheckedException(ex);
+        R<String> response = handler.bizCheckedException(ex);
 
         assertThat(response).isNotNull();
         assertThat(response.getCode()).isEqualTo(2001);
-        assertThat(response.getMessage()).isEqualTo("checked error");
+        assertThat(response.getMsg()).isEqualTo("checked error");
     }
 
     @Test
     void bizIOException_shouldReturnErrorCode() {
         BizIOException ex = new BizIOException(3001, "io error");
 
-        ApiRestResponse<String> response = handler.bizIOException(ex);
+        R<String> response = handler.bizIOException(ex);
 
         assertThat(response).isNotNull();
         assertThat(response.getCode()).isEqualTo(3001);
-        assertThat(response.getMessage()).isEqualTo("io error");
+        assertThat(response.getMsg()).isEqualTo("io error");
     }
 
     @Test
     void idempotentException_shouldReturnErrorCode() {
         IdempotentException ex = new IdempotentException(4001, "request already processed");
 
-        ApiRestResponse<String> response = handler.idempotentException(ex);
+        R<String> response = handler.idempotentException(ex);
 
         assertThat(response).isNotNull();
         assertThat(response.getCode()).isEqualTo(ex.getCode());
-        assertThat(response.getMessage()).isEqualTo("request already processed");
+        assertThat(response.getMsg()).isEqualTo("request already processed");
     }
 
     // =================== 5xx 服务器错误 ===================
@@ -151,40 +151,40 @@ class GlobalExceptionHandlerTest {
     void nullPointerException_shouldReturnInternalServerError() {
         NullPointerException ex = new NullPointerException("null reference");
 
-        ApiRestResponse<String> response = handler.nullPointerException(ex);
+        R<String> response = handler.nullPointerException(ex);
 
         assertThat(response).isNotNull();
-        assertThat(response.getCode()).isEqualTo(ApiCode.SC_INTERNAL_SERVER_ERROR.getCode());
+        assertThat(response.getCode()).isEqualTo(ApiCode.SERVER_ERROR.getCode());
     }
 
     @Test
     void classCastException_shouldReturnInternalServerError() {
         ClassCastException ex = new ClassCastException("cannot cast");
 
-        ApiRestResponse<String> response = handler.classCastException(ex);
+        R<String> response = handler.classCastException(ex);
 
         assertThat(response).isNotNull();
-        assertThat(response.getCode()).isEqualTo(ApiCode.SC_INTERNAL_SERVER_ERROR.getCode());
+        assertThat(response.getCode()).isEqualTo(ApiCode.SERVER_ERROR.getCode());
     }
 
     @Test
     void indexOutOfBoundsException_shouldReturnInternalServerError() {
         IndexOutOfBoundsException ex = new IndexOutOfBoundsException("index out of range");
 
-        ApiRestResponse<String> response = handler.indexOutOfBoundsException(ex);
+        R<String> response = handler.indexOutOfBoundsException(ex);
 
         assertThat(response).isNotNull();
-        assertThat(response.getCode()).isEqualTo(ApiCode.SC_INTERNAL_SERVER_ERROR.getCode());
+        assertThat(response.getCode()).isEqualTo(ApiCode.SERVER_ERROR.getCode());
     }
 
     @Test
     void illegalArgumentException_shouldReturnInternalServerError() {
         IllegalArgumentException ex = new IllegalArgumentException("illegal argument");
 
-        ApiRestResponse<String> response = handler.illegalArgumentException(ex);
+        R<String> response = handler.illegalArgumentException(ex);
 
         assertThat(response).isNotNull();
-        assertThat(response.getCode()).isEqualTo(ApiCode.SC_INTERNAL_SERVER_ERROR.getCode());
+        assertThat(response.getCode()).isEqualTo(ApiCode.SERVER_ERROR.getCode());
     }
 
     // =================== 默认全局异常 ===================
@@ -193,29 +193,29 @@ class GlobalExceptionHandlerTest {
     void defaultExceptionHandler_shouldReturnInternalServerError() throws Exception {
         Exception ex = new Exception("unexpected error");
 
-        ApiRestResponse<String> response = handler.defaultExceptionHandler(ex);
+        R<String> response = handler.defaultExceptionHandler(ex);
 
         assertThat(response).isNotNull();
-        assertThat(response.getCode()).isEqualTo(ApiCode.SC_INTERNAL_SERVER_ERROR.getCode());
+        assertThat(response.getCode()).isEqualTo(ApiCode.SERVER_ERROR.getCode());
     }
 
     @Test
     void defaultExceptionHandler_withRuntimeException_shouldHandle() throws Exception {
         RuntimeException ex = new RuntimeException("unexpected runtime");
 
-        ApiRestResponse<String> response = handler.defaultExceptionHandler(ex);
+        R<String> response = handler.defaultExceptionHandler(ex);
 
         assertThat(response).isNotNull();
-        assertThat(response.getCode()).isEqualTo(ApiCode.SC_INTERNAL_SERVER_ERROR.getCode());
+        assertThat(response.getCode()).isEqualTo(ApiCode.SERVER_ERROR.getCode());
     }
 
     // =================== ApiCode 验证 ===================
 
     @Test
-    void apiCode_constants_shouldHaveCorrectStatusCodes() {
-        assertThat(ApiCode.SC_NOT_FOUND.getCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
-        assertThat(ApiCode.SC_METHOD_NOT_ALLOWED.getCode()).isEqualTo(HttpStatus.METHOD_NOT_ALLOWED.value());
-        assertThat(ApiCode.SC_BAD_REQUEST.getCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-        assertThat(ApiCode.SC_INTERNAL_SERVER_ERROR.getCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
+    void resultCode_constants_shouldHaveCorrectStatusCodes() {
+        assertThat(ApiCode.NOT_FOUND.getCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
+        assertThat(ApiCode.METHOD_NOT_ALLOWED.getCode()).isEqualTo(HttpStatus.METHOD_NOT_ALLOWED.value());
+        assertThat(ApiCode.BAD_REQUEST.getCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        assertThat(ApiCode.SERVER_ERROR.getCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
 }

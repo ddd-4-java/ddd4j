@@ -51,7 +51,15 @@ public class ApplicationStartReporter {
         this.appName = appName;
     }
 
-    /** @return 注入的应用名称（用于启动通告文案） */
+    private static void markdownAppend(StringBuilder sb, String key, String value) {
+        if (Objects.nonNull(value) && StrKit.isNotBlank(value)) {
+            sb.append("**").append(key).append(":** ").append(value).append("\n");
+        }
+    }
+
+    /**
+     * @return 注入的应用名称（用于启动通告文案）
+     */
     public String appName() {
         return appName;
     }
@@ -94,11 +102,5 @@ public class ApplicationStartReporter {
         markdownAppend(sb, "提交信息", v.getCommitMessage());
         markdownAppend(sb, "提交时间", v.getCommitTime());
         return sb.toString();
-    }
-
-    private static void markdownAppend(StringBuilder sb, String key, String value) {
-        if (Objects.nonNull(value) && StrKit.isNotBlank(value)) {
-            sb.append("**").append(key).append(":** ").append(value).append("\n");
-        }
     }
 }

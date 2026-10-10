@@ -14,21 +14,16 @@
  */
 package io.ddd4j.sample.vertx.cqrs.repository;
 
-import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.cqrs.eventstore.InMemoryEventStore;
 import io.ddd4j.core.ddd.event.AggregateRootId;
+import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityType;
 import io.ddd4j.core.ddd.event.StringEntityType;
 import io.ddd4j.sample.order.domain.Order;
 import io.ddd4j.sample.order.domain.OrderRepository;
 import lombok.Value;
 
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -40,19 +35,29 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class EventSourcingOrderRepository implements OrderRepository {
 
-    /** 聚合类型（当前 core EventStore SPI 需显式 aggregateType 定位流）。 */
+    /**
+     * 聚合类型（当前 core EventStore SPI 需显式 aggregateType 定位流）。
+     */
     private static final String AGGREGATE_TYPE = "Order";
 
     private final InMemoryEventStore eventStore;
 
-    /** orderNo -> aggregateId 映射（幂等性检查）。 */
+    /**
+     * orderNo -> aggregateId 映射（幂等性检查）。
+     */
     private final Map<String, String> orderNoIndex = new ConcurrentHashMap<>();
 
-    /** orderId -> Order 缓存（简化实现，避免从事件重建）。 */
+    /**
+     * orderId -> Order 缓存（简化实现，避免从事件重建）。
+     */
     private final Map<String, Order> orderCache = new ConcurrentHashMap<>();
 
     public EventSourcingOrderRepository(InMemoryEventStore eventStore) {
         this.eventStore = Objects.requireNonNull(eventStore, "eventStore must not be null");
+    }
+
+    private static AggregateRootId aggregateId(String value) {
+        return new OrderAggregateId(value);
     }
 
     @Override
@@ -96,9 +101,8 @@ public class EventSourcingOrderRepository implements OrderRepository {
     @Value
     private static class OrderAggregateId implements AggregateRootId {
 
-        String value;
-
         private static final EntityType TYPE = new StringEntityType("Order");
+        String value;
 
         @Override
         public EntityType getType() {
@@ -114,9 +118,5 @@ public class EventSourcingOrderRepository implements OrderRepository {
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
         }
-    }
-
-    private static AggregateRootId aggregateId(String value) {
-        return new OrderAggregateId(value);
     }
 }

@@ -15,12 +15,13 @@
 
 package io.ddd4j.web.core.context;
 
-import java.util.Objects;
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * Web 框架采集到的原始请求元数据。
- */public final class WebRequestData {
+ */
+public final class WebRequestData {
 
     private final String requestId;
     private final String traceId;
@@ -33,8 +34,8 @@ import java.util.Locale;
     private final String method;
     private final String path;
 
-/**
- * Web 框架采集到的原始请求元数据。
+    /**
+     * Web 框架采集到的原始请求元数据。
  * @param requestId 请求标识
  * @param traceId 链路追踪标识
  * @param tenantId 租户标识
@@ -45,7 +46,7 @@ import java.util.Locale;
  * @param remoteAddress 远程地址
  * @param method 方法
  * @param path 路径
- */
+     */
 
     public WebRequestData(String requestId, String traceId, String tenantId, String authorization,
                           Locale locale, String forwardedFor, String realIp, String remoteAddress,
@@ -62,16 +63,45 @@ import java.util.Locale;
         this.path = path;
     }
 
-    public String requestId() { return requestId; }
-    public String traceId() { return traceId; }
-    public String tenantId() { return tenantId; }
-    public String authorization() { return authorization; }
-    public Locale locale() { return locale; }
-    public String forwardedFor() { return forwardedFor; }
-    public String realIp() { return realIp; }
-    public String remoteAddress() { return remoteAddress; }
-    public String method() { return method; }
-    public String path() { return path; }
+    public String requestId() {
+        return requestId;
+    }
+
+    public String traceId() {
+        return traceId;
+    }
+
+    public String tenantId() {
+        return tenantId;
+    }
+
+    public String authorization() {
+        return authorization;
+    }
+
+    public Locale locale() {
+        return locale;
+    }
+
+    public String forwardedFor() {
+        return forwardedFor;
+    }
+
+    public String realIp() {
+        return realIp;
+    }
+
+    public String remoteAddress() {
+        return remoteAddress;
+    }
+
+    public String method() {
+        return method;
+    }
+
+    public String path() {
+        return path;
+    }
 
     public String getRequestId() {
         return requestId;
@@ -112,6 +142,7 @@ import java.util.Locale;
     public String getPath() {
         return path;
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

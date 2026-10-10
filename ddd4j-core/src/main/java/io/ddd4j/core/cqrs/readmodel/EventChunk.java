@@ -14,10 +14,10 @@
  */
 package io.ddd4j.core.cqrs.readmodel;
 
-import java.util.ArrayList;
 import io.ddd4j.kit.lang.CollKit;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;

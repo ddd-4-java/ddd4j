@@ -14,20 +14,18 @@
  */
 package io.ddd4j.data.external.geo;
 
+import cn.hutool.http.HttpRequest;
+import cn.hutool.http.HttpResponse;
 import com.alibaba.fastjson2.JSONObject;
 import io.ddd4j.kit.lang.StrKit;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import cn.hutool.http.HttpRequest;
-import cn.hutool.http.HttpResponse;
 
 /**
  * 地址获取经纬度： http://lbsyun.baidu.com/index.php?title=webapi/guide/webservice-geocoding
@@ -69,7 +67,7 @@ public class GeoBaiduTemplate {
 
     public static void main(String[] args) throws IOException {
 
-        GeoBaiduTemplate template = new GeoBaiduTemplate( "");
+        GeoBaiduTemplate template = new GeoBaiduTemplate("");
 
         Map<String, BigDecimal> mapLL = template.getLatAndLngByAddress("浙江省杭州市西湖区"); // lng：116.86380647644208  lat：38.297615350325717
         mapLL.get("lat");

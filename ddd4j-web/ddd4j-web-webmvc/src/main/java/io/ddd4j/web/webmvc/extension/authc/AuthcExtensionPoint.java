@@ -14,10 +14,10 @@
  */
 package io.ddd4j.web.webmvc.extension.authc;
 
-import javax.servlet.http.HttpServletRequest;
 import org.pf4j.ExtensionPoint;
 import org.pf4j.PluginRuntimeException;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
@@ -28,7 +28,8 @@ import java.util.Map;
  * 通用 PF4J 插件体系请使用 io.github.redacted-legacy-family:pf4j-extension。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- */public interface AuthcExtensionPoint extends ExtensionPoint {
+ */
+public interface AuthcExtensionPoint extends ExtensionPoint {
 
     String getToken(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException;
 

@@ -14,11 +14,8 @@
  */
 package io.ddd4j.sample.javalin.cqrs.cache;
 
-import io.ddd4j.kit.lang.StrKit;
-
-import java.util.Objects;
-
 import io.ddd4j.cache.CacheKit;
+import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.sample.javalin.cqrs.order.domain.model.Order;
 import io.ddd4j.sample.javalin.cqrs.order.domain.repository.OrderRepository;
 import lombok.extern.slf4j.Slf4j;

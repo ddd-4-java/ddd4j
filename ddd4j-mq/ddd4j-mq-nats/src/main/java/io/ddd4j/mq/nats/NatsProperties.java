@@ -46,7 +46,9 @@ public class NatsProperties extends MQProperties {
      */
     private String connectionName = "ddd4j-nats";
 
-    /** 是否要求 JetStream 持久化与发布确认；默认禁止静默回退到 core NATS。 */
+    /**
+     * 是否要求 JetStream 持久化与发布确认；默认禁止静默回退到 core NATS。
+     */
     private boolean jetStreamRequired = true;
     /**
      * 连接超时（毫秒）

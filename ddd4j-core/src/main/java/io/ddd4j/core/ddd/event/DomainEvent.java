@@ -14,13 +14,12 @@
  */
 package io.ddd4j.core.ddd.event;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.Contexts;
 import io.ddd4j.core.context.ThreadContext;
-import io.ddd4j.kit.lang.StrKit;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -254,6 +253,15 @@ public abstract class DomainEvent<ID extends EntityId> implements Event, Seriali
     }
 
     /**
+     * 为事件回放设置聚合版本。
+     *
+     * @param aggregateVersion 聚合版本
+     */
+    public void setAggregateVersion(AggregateVersion aggregateVersion) {
+        this.aggregateVersion = aggregateVersion;
+    }
+
+    /**
      * 返回聚合版本整数。
      *
      * @return 聚合版本；未设置时返回 {@code null}
@@ -261,15 +269,6 @@ public abstract class DomainEvent<ID extends EntityId> implements Event, Seriali
     @JsonIgnore
     public Long getAggregateVersionInteger() {
         return Objects.nonNull(aggregateVersion) ? aggregateVersion.asInt() : null;
-    }
-
-    /**
-     * 为事件回放设置聚合版本。
-     *
-     * @param aggregateVersion 聚合版本
-     */
-    public void setAggregateVersion(AggregateVersion aggregateVersion) {
-        this.aggregateVersion = aggregateVersion;
     }
 
     /**

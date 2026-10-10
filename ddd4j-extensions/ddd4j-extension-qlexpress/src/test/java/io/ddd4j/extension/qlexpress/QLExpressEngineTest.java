@@ -14,14 +14,13 @@
  */
 package io.ddd4j.extension.qlexpress;
 
-import java.util.Collections;
 import com.alibaba.qlexpress4.runtime.Parameters;
 import com.alibaba.qlexpress4.runtime.QContext;
 import io.ddd4j.extension.qlexpress.function.NamedQLFunction;
 import io.ddd4j.extension.qlexpress.model.QLExpressExecutionResult;
 import org.junit.jupiter.api.Test;
 
-import java.util.Map;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -31,7 +30,10 @@ class QLExpressEngineTest {
     void executeShouldReturnExpressionValueInsteadOfNativeWrapper() {
         QLExpressEngine engine = QLExpress.create();
 
-        Object result = engine.execute("price * quantity", new java.util.LinkedHashMap<String, Object>() {{ put("price", 20); put("quantity", 3); }});
+        Object result = engine.execute("price * quantity", new java.util.LinkedHashMap<String, Object>() {{
+            put("price", 20);
+            put("quantity", 3);
+        }});
 
         assertThat(result).isEqualTo(60);
     }
@@ -52,7 +54,7 @@ class QLExpressEngineTest {
     void invalidExpressionShouldReturnValidationFailure() {
         QLExpressEngine engine = QLExpress.create();
 
-assertThat(engine.validate("if (").valid()).isFalse();
+        assertThat(engine.validate("if (").valid()).isFalse();
         assertThat(engine.validate(" ").message()).isEqualTo("表达式不能为空");
     }
 

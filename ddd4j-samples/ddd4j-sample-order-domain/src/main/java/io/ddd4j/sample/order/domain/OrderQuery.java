@@ -16,7 +16,9 @@ package io.ddd4j.sample.order.domain;
 
 import lombok.Value;
 
-/** 订单查询条件，Java 8 等价实现保留 record 的值语义与组件访问器。 */
+/**
+ * 订单查询条件，Java 8 等价实现保留 record 的值语义与组件访问器。
+ */
 @Value
 public class OrderQuery {
 

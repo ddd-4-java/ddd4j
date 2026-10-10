@@ -20,8 +20,8 @@ import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
 import io.ddd4j.core.exception.BizRuntimeException;
-import io.ddd4j.core.util.MappingKit;
 import io.ddd4j.kit.lang.BeanKit;
+import io.ddd4j.kit.lang.MappingKit;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;

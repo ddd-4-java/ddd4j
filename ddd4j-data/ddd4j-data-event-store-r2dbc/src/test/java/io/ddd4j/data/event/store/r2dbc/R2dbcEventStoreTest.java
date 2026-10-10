@@ -7,12 +7,7 @@ package io.ddd4j.data.event.store.r2dbc;
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
 import io.ddd4j.core.cqrs.eventstore.StoredEvent;
-import io.ddd4j.core.ddd.event.AggregateRootId;
-import io.ddd4j.core.ddd.event.DomainEvent;
-import io.ddd4j.core.ddd.event.EntityIdPath;
-import io.ddd4j.core.ddd.event.EntityIdRegistry;
-import io.ddd4j.core.ddd.event.EntityType;
-import io.ddd4j.core.ddd.event.StringEntityType;
+import io.ddd4j.core.ddd.event.*;
 import io.r2dbc.h2.CloseableConnectionFactory;
 import io.r2dbc.h2.H2ConnectionFactory;
 import io.r2dbc.h2.H2ConnectionOption;
@@ -23,7 +18,6 @@ import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

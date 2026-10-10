@@ -19,16 +19,16 @@ import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
 import io.ddd4j.web.core.auth.WebAccessPolicy;
 import io.ddd4j.web.core.context.WebRequestContextFactory;
 import io.ddd4j.web.core.context.WebRequestLifecycle;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerResponseContext;
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.UriInfo;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.trace.SdkTracerProvider;
 import org.junit.jupiter.api.Test;
 
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerResponseContext;
+import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.UriInfo;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.util.HashMap;
@@ -41,11 +41,50 @@ import java.util.concurrent.atomic.AtomicReference;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class Ddd4jDropwizardOtelScopeTest {
+
+    private static ContainerRequestContext request() {
+        ContainerRequestContext request = mock(ContainerRequestContext.class);
+        UriInfo uriInfo = mock(UriInfo.class);
+        Map<String, Object> properties = new HashMap<>();
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getUriInfo()).thenReturn(uriInfo);
+        when(uriInfo.getRequestUri()).thenReturn(URI.create("http://localhost/test"));
+        when(request.getHeaders()).thenReturn(new MultivaluedHashMap<>());
+        when(request.getHeaderString(anyString())).thenReturn(null);
+        when(request.getProperty(anyString())).thenAnswer(invocation ->
+                properties.get(invocation.getArgument(0)));
+        doAnswer(invocation -> {
+            properties.put(invocation.getArgument(0), invocation.getArgument(1));
+            return null;
+        }).when(request).setProperty(anyString(), org.mockito.ArgumentMatchers.any());
+        doAnswer(invocation -> {
+            properties.remove(invocation.getArgument(0));
+            return null;
+        }).when(request).removeProperty(anyString());
+        return request;
+    }
+
+    private static ContainerResponseContext response() {
+        ContainerResponseContext response = mock(ContainerResponseContext.class);
+        when(response.getStatus()).thenReturn(200);
+        when(response.getHeaders()).thenReturn(new MultivaluedHashMap<>());
+        return response;
+    }
+
+    private static void resetOpenTelemetry() throws Exception {
+        GlobalOpenTelemetry.resetForTest();
+        for (String fieldName : new String[]{"TRACER_CACHE", "METER_CACHE"}) {
+            Field field = Ddd4jOtel.class.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            ((AtomicReference<?>) field.get(null)).set(null);
+        }
+        Field available = Ddd4jOtel.class.getDeclaredField("available");
+        available.setAccessible(true);
+        available.setBoolean(null, false);
+    }
 
     @Test
     void responseFilterMustCloseRequestOtelScope() throws Exception {
@@ -76,47 +115,5 @@ class Ddd4jDropwizardOtelScopeTest {
             tracerProvider.close();
             resetOpenTelemetry();
         }
-    }
-
-    private static ContainerRequestContext request() {
-        ContainerRequestContext request = mock(ContainerRequestContext.class);
-        UriInfo uriInfo = mock(UriInfo.class);
-        Map<String, Object> properties = new HashMap<>();
-        when(request.getMethod()).thenReturn("GET");
-        when(request.getUriInfo()).thenReturn(uriInfo);
-        when(uriInfo.getRequestUri()).thenReturn(URI.create("http://localhost/test"));
-        when(request.getHeaders()).thenReturn(new MultivaluedHashMap<>());
-        when(request.getHeaderString(anyString())).thenReturn(null);
-        when(request.getProperty(anyString())).thenAnswer(invocation ->
-                properties.get(invocation.getArgument(0)));
-        doAnswer(invocation -> {
-            properties.put(invocation.getArgument(0), invocation.getArgument(1));
-            return null;
-        }).when(request).setProperty(anyString(), org.mockito.ArgumentMatchers.any());
-        doAnswer(invocation -> {
-            properties.remove(invocation.getArgument(0));
-            return null;
-        }).when(request).removeProperty(anyString());
-        return request;
-    }
-
-
-    private static ContainerResponseContext response() {
-        ContainerResponseContext response = mock(ContainerResponseContext.class);
-        when(response.getStatus()).thenReturn(200);
-        when(response.getHeaders()).thenReturn(new MultivaluedHashMap<>());
-        return response;
-    }
-
-    private static void resetOpenTelemetry() throws Exception {
-        GlobalOpenTelemetry.resetForTest();
-        for (String fieldName : new String[]{"TRACER_CACHE", "METER_CACHE"}) {
-            Field field = Ddd4jOtel.class.getDeclaredField(fieldName);
-            field.setAccessible(true);
-            ((AtomicReference<?>) field.get(null)).set(null);
-        }
-        Field available = Ddd4jOtel.class.getDeclaredField("available");
-        available.setAccessible(true);
-        available.setBoolean(null, false);
     }
 }

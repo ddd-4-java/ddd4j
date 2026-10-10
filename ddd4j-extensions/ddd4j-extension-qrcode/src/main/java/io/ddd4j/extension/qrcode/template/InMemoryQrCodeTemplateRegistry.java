@@ -14,14 +14,16 @@
  */
 package io.ddd4j.extension.qrcode.template;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.apache.commons.lang3.StringUtils;
-
-/** Thread-safe in-memory QR template registry. */
+/**
+ * Thread-safe in-memory QR template registry.
+ */
 public class InMemoryQrCodeTemplateRegistry implements QrCodeTemplateRegistry {
 
     private final ConcurrentMap<String, QrCodeTemplateDefinition> templates =

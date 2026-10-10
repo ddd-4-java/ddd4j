@@ -22,8 +22,6 @@ import java.util.UUID;
 @FunctionalInterface
 public interface RequestIdGenerator {
 
-    String generate();
-
     static RequestIdGenerator uuid() {
         // 预热 SecureRandom 熵源播种：JVM 内首次 UUID.randomUUID() 会触发 SeederHolder
         // 类初始化，Windows 下需枚举网卡收集熵，实测（JDK 8）可达 8 秒以上；若落在
@@ -32,4 +30,6 @@ public interface RequestIdGenerator {
         UUID.randomUUID();
         return () -> UUID.randomUUID().toString();
     }
+
+    String generate();
 }

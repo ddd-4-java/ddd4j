@@ -16,36 +16,35 @@ package io.ddd4j.web.webmvc;
 
 import io.ddd4j.core.ProfileManager;
 import io.ddd4j.core.constant.Constants;
-import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
-import io.ddd4j.web.core.idempotency.CacheIdempotencyGuard;
-import io.ddd4j.web.core.context.ClientIpResolver;
-import io.ddd4j.web.core.auth.PathWebAccessPolicy;
-import io.ddd4j.web.core.context.RequestIdGenerator;
-import io.ddd4j.web.core.health.ReadinessEndpoint;
+import io.ddd4j.core.health.RuntimeReadinessRegistry;
 import io.ddd4j.web.core.auth.AuthenticationMode;
+import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
+import io.ddd4j.web.core.auth.PathWebAccessPolicy;
 import io.ddd4j.web.core.auth.WebAccessPolicy;
-import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
-import io.ddd4j.web.core.error.WebExceptionTranslator;
-import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
+import io.ddd4j.web.core.context.ClientIpResolver;
+import io.ddd4j.web.core.context.RequestIdGenerator;
 import io.ddd4j.web.core.context.WebRequestContextFactory;
 import io.ddd4j.web.core.context.WebRequestLifecycle;
+import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
+import io.ddd4j.web.core.error.WebExceptionTranslator;
+import io.ddd4j.web.core.health.ReadinessEndpoint;
+import io.ddd4j.web.core.idempotency.CacheIdempotencyGuard;
+import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.web.webmvc.config.LocalResourceProperteis;
-import io.ddd4j.core.health.RuntimeReadinessRegistry;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.extension.context.NestedMessageSource;
-import org.springframework.extension.web.servlet.i18n.XHeaderLocaleResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Role;
 import org.springframework.core.env.Environment;
+import org.springframework.extension.context.NestedMessageSource;
+import org.springframework.extension.web.servlet.i18n.XHeaderLocaleResolver;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.filter.RequestContextFilter;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
 import java.util.Locale;
-import java.util.List;
 import java.util.TimeZone;
 
 /**

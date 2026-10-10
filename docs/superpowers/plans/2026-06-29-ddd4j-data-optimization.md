@@ -1,12 +1,17 @@
 # ddd4j-data 模块优化实施计划
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:
+> executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** 将 ddd4j-data 通用层中错误混入的 Spring Boot auto-config 代码迁移到 `ddd4j-boot-data`，实现三层范式（纯 Java SPI → Spring 桥接 → Spring Boot auto-config），对齐 ddd4j-mq 的标准分层。
+**Goal:** 将 ddd4j-data 通用层中错误混入的 Spring Boot auto-config 代码迁移到 `ddd4j-boot-data`，实现三层范式（纯 Java
+SPI → Spring 桥接 → Spring Boot auto-config），对齐 ddd4j-mq 的标准分层。
 
-**Architecture:** 以 ddd4j-mq 为标准范本：`ddd4j-data-mybatis`（纯 Java SPI）→ `ddd4j-data-spring`（Spring 桥接）→ `ddd4j-boot-data`（Spring Boot auto-config）。核心问题：data 模块当前第一层和第二层混在一起，且混入了本该在第三层的 Spring Boot auto-config。
+**Architecture:** 以 ddd4j-mq 为标准范本：`ddd4j-data-mybatis`（纯 Java SPI）→ `ddd4j-data-spring`（Spring 桥接）→
+`ddd4j-boot-data`（Spring Boot auto-config）。核心问题：data 模块当前第一层和第二层混在一起，且混入了本该在第三层的 Spring
+Boot auto-config。
 
 **Tech Stack:**
+
 - Java 17、Maven 多模块
 - MyBatis-Plus、Spring Framework 6.x
 
@@ -23,11 +28,11 @@
 
 ## 实施阶段总览
 
-| Stage | 目标 | 预期 Task 数 |
-|-------|------|-------------|
-| 1 | 审计 ddd4j-data 各子模块的 Spring Boot auto-config 现状 | 1 |
-| 2 | 将错误放置的 auto-config 迁移到 ddd4j-boot-data | 3 |
-| 3 | ddd4j-data-spring 桥接层清理 | 1 |
+| Stage | 目标                                                    | 预期 Task 数 |
+|-------|---------------------------------------------------------|--------------|
+| 1     | 审计 ddd4j-data 各子模块的 Spring Boot auto-config 现状 | 1            |
+| 2     | 将错误放置的 auto-config 迁移到 ddd4j-boot-data         | 3            |
+| 3     | ddd4j-data-spring 桥接层清理                            | 1            |
 
 ---
 

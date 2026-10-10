@@ -21,9 +21,9 @@ import lombok.Setter;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.Arrays;
 
 /**
  * Micronaut Web 适配配置。

@@ -34,8 +34,19 @@ public class AddOrderLineRequest {
     private int quantity;
     private BigDecimal unitPrice;
 
-    public String goodsId() { return goodsId; }
-    public String goodsName() { return goodsName; }
-    public int quantity() { return quantity; }
-    public BigDecimal unitPrice() { return unitPrice; }
+    public String goodsId() {
+        return goodsId;
+    }
+
+    public String goodsName() {
+        return goodsName;
+    }
+
+    public int quantity() {
+        return quantity;
+    }
+
+    public BigDecimal unitPrice() {
+        return unitPrice;
+    }
 }

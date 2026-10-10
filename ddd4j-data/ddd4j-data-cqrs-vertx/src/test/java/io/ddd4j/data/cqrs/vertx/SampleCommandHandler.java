@@ -14,12 +14,12 @@
  */
 package io.ddd4j.data.cqrs.vertx;
 
-import java.util.Collections;
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
-import io.ddd4j.core.cqrs.command.Result;
 import io.ddd4j.core.cqrs.command.CommandHandler;
+import io.ddd4j.core.cqrs.command.Result;
 
+import java.util.Collections;
 import java.util.Set;
 
 /**

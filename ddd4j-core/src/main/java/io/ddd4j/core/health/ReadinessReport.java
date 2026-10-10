@@ -15,11 +15,12 @@
 
 package io.ddd4j.core.health;
 
+import lombok.Getter;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * 多个 {@link ReadinessContributor} 的聚合结果。
@@ -30,43 +31,34 @@ import java.util.Objects;
  * <p>{@code ready} — 是否可接收流量
  * <p>{@code results} — 每个已执行 Contributor 的结果
  */
+@Getter
 public final class ReadinessReport {
 
     private final boolean ready;
     private final List<ReadinessResult> results;
 
-/**
- * 多个 {@link ReadinessContributor} 的聚合结果。
- *
- * <p>任一关键依赖未就绪或检查异常时，报告均为未就绪。检查异常只转换为安全的状态原因，
- * 原始异常应由 Runtime 的日志或观测系统记录。
- *
- * @param ready   是否可接收流量
- * @param results 每个已执行 Contributor 的结果
- */
-
+    /**
+     * 多个 {@link ReadinessContributor} 的聚合结果。
+     *
+     * <p>任一关键依赖未就绪或检查异常时，报告均为未就绪。检查异常只转换为安全的状态原因，
+     * 原始异常应由 Runtime 的日志或观测系统记录。
+     *
+     * @param ready   是否可接收流量
+     * @param results 每个已执行 Contributor 的结果
+     */
     public ReadinessReport(boolean ready, List<ReadinessResult> results) {
         this.ready = ready;
         this.results = Collections.unmodifiableList(new ArrayList<>(
                 results != null ? results : Collections.<ReadinessResult>emptyList()));
     }
 
-    public boolean ready() {
-        return ready;
-    }
-
-    public List<ReadinessResult> results() {
-        return results;
-    }
-
-        /**
+    /**
      * 执行并汇总贡献者。
      *
      * @param contributors 依赖检查器集合
      * @return 聚合就绪报告
      */
-
-public static ReadinessReport check(Collection<? extends ReadinessContributor> contributors) {
+    public static ReadinessReport check(Collection<? extends ReadinessContributor> contributors) {
         List<ReadinessResult> results = new ArrayList<>();
         Collection<? extends ReadinessContributor> safe = contributors != null
                 ? contributors : Collections.<ReadinessContributor>emptyList();
@@ -97,6 +89,14 @@ public static ReadinessReport check(Collection<? extends ReadinessContributor> c
         }
     }
 
+    public boolean ready() {
+        return ready;
+    }
+
+    public List<ReadinessResult> results() {
+        return results;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -117,11 +117,4 @@ public static ReadinessReport check(Collection<? extends ReadinessContributor> c
         return "ReadinessReport{ready=" + ready + ", results=" + results + '}';
     }
 
-    public boolean isReady() {
-        return ready;
-    }
-
-    public List<ReadinessResult> getResults() {
-        return results;
-    }
 }

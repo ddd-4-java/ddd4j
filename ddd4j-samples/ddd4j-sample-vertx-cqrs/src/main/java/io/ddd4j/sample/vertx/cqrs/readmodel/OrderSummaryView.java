@@ -15,17 +15,12 @@
 package io.ddd4j.sample.vertx.cqrs.readmodel;
 
 import io.ddd4j.core.cqrs.readmodel.ProjectionView;
-import io.ddd4j.sample.vertx.cqrs.repository.EventSourcingOrderRepository;
 import io.ddd4j.sample.order.domain.Order;
 import io.ddd4j.sample.order.domain.event.OrderCreatedEvent;
 import io.ddd4j.sample.order.domain.event.OrderPaidEvent;
+import io.ddd4j.sample.vertx.cqrs.repository.EventSourcingOrderRepository;
 
-import java.util.Collection;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**

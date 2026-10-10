@@ -25,11 +25,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * traceId 写入 TTL ThreadContext 桥接点行为测试。
@@ -42,15 +38,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class TraceContextBridgeMustTest {
 
+    private static void enableTracing() {
+        System.setProperty(TraceContextBridge.TRACING_ENABLED_PROPERTY, "true");
+    }
+
     @AfterEach
     void tearDown() {
         System.clearProperty(TraceContextBridge.TRACING_ENABLED_PROPERTY);
         ThreadContext.clear();
         MDC.clear();
-    }
-
-    private static void enableTracing() {
-        System.setProperty(TraceContextBridge.TRACING_ENABLED_PROPERTY, "true");
     }
 
     // ========================= Scenario: 默认关闭零影响 =========================

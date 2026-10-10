@@ -4,45 +4,25 @@
  */
 package io.ddd4j.data.event.store.esdb;
 
-import com.eventstore.dbclient.AppendToStreamOptions;
-import com.eventstore.dbclient.EventData;
-import com.eventstore.dbclient.EventDataBuilder;
-import com.eventstore.dbclient.EventStoreDBClient;
-import com.eventstore.dbclient.ExpectedRevision;
-import com.eventstore.dbclient.Position;
-import com.eventstore.dbclient.ReadAllOptions;
-import com.eventstore.dbclient.ReadResult;
-import com.eventstore.dbclient.ReadStreamOptions;
-import com.eventstore.dbclient.RecordedEvent;
-import com.eventstore.dbclient.ResolvedEvent;
-import com.eventstore.dbclient.StreamNotFoundException;
-import com.eventstore.dbclient.WrongExpectedVersionException;
+import com.eventstore.dbclient.*;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.ddd4j.core.constant.EventStoreConstants;
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
 import io.ddd4j.core.cqrs.eventstore.StoredEvent;
 import io.ddd4j.core.cqrs.eventstore.jackson.EventPayloadSerializer;
-import io.ddd4j.core.ddd.event.AggregateRootId;
-import io.ddd4j.core.ddd.event.DomainEvent;
-import io.ddd4j.core.ddd.event.EntityType;
-import io.ddd4j.core.ddd.event.EventId;
-import io.ddd4j.core.ddd.event.StringEntityType;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
+import io.ddd4j.core.ddd.event.*;
 
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.CompletionException;
 
-/** EventStoreDB 的强类型 EventStore adapter。 */
+/**
+ * EventStoreDB 的强类型 EventStore adapter。
+ */
 public class EsdbEventStore implements EventStore {
 
     private final EventStoreDBClient client;
@@ -61,6 +41,14 @@ public class EsdbEventStore implements EventStore {
         this.client = Objects.requireNonNull(client, "client must not be null");
         this.streamPrefix = Objects.requireNonNull(streamPrefix, "streamPrefix must not be null");
         this.serializer = Objects.requireNonNull(serializer, "serializer must not be null");
+    }
+
+    static ExpectedRevision toExpectedRevision(long expectedVersion) {
+        return expectedVersion == 0 ? ExpectedRevision.noStream() : ExpectedRevision.expectedRevision(expectedVersion - 1);
+    }
+
+    private static long toEventCount(ExpectedRevision revision) {
+        return revision.toRawLong() < 0 ? 0L : revision.toRawLong() + 1L;
     }
 
     @Override
@@ -124,14 +112,6 @@ public class EsdbEventStore implements EventStore {
         }
     }
 
-    static ExpectedRevision toExpectedRevision(long expectedVersion) {
-        return expectedVersion == 0 ? ExpectedRevision.noStream() : ExpectedRevision.expectedRevision(expectedVersion - 1);
-    }
-
-    private static long toEventCount(ExpectedRevision revision) {
-        return revision.toRawLong() < 0 ? 0L : revision.toRawLong() + 1L;
-    }
-
     private String streamName(String aggregateType, AggregateRootId aggregateId) {
         return streamPrefix + aggregateType + "::" + aggregateId.asString();
     }
@@ -151,8 +131,9 @@ public class EsdbEventStore implements EventStore {
         Map<String, Object> metadata;
         try {
             metadata = new com.fasterxml.jackson.databind.ObjectMapper().readValue(
-                new String(recorded.getUserMetadata(), StandardCharsets.UTF_8),
-                new com.fasterxml.jackson.core.type.TypeReference<java.util.Map<String, Object>>() {});
+                    new String(recorded.getUserMetadata(), StandardCharsets.UTF_8),
+                    new com.fasterxml.jackson.core.type.TypeReference<java.util.Map<String, Object>>() {
+                    });
         } catch (Exception e) {
             throw new RuntimeException("Failed to parse ESDB event metadata", e);
         }
@@ -167,19 +148,50 @@ public class EsdbEventStore implements EventStore {
 
     @SuppressWarnings("unchecked")
     private Class<? extends DomainEvent<?>> resolveEventType(String eventType) {
-        try { return (Class<? extends DomainEvent<?>>) Class.forName(eventType); }
-        catch (ClassNotFoundException exception) { throw new IllegalStateException("Unknown event type: " + eventType, exception); }
+        try {
+            return (Class<? extends DomainEvent<?>>) Class.forName(eventType);
+        } catch (ClassNotFoundException exception) {
+            throw new IllegalStateException("Unknown event type: " + eventType, exception);
+        }
     }
 
     private static final class StringAggregateRootId implements AggregateRootId {
         private static final StringEntityType TYPE = new StringEntityType("String");
         private final String value;
-        StringAggregateRootId(String value) { this.value = value; }
-        @Override public EntityType getType() { return TYPE; }
-        @Override @JsonValue public String asString() { return value; }
-        @Override public String asTypedString() { return TYPE.asString() + ":" + value; }
-        @Override public boolean equals(Object o) { return this == o || (o instanceof StringAggregateRootId && java.util.Objects.equals(value, ((StringAggregateRootId)o).value)); }
-        @Override public int hashCode() { return java.util.Objects.hashCode(value); }
-        @Override public String toString() { return "StringAggregateRootId{" + value + "}"; }
+
+        StringAggregateRootId(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public EntityType getType() {
+            return TYPE;
+        }
+
+        @Override
+        @JsonValue
+        public String asString() {
+            return value;
+        }
+
+        @Override
+        public String asTypedString() {
+            return TYPE.asString() + ":" + value;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || (o instanceof StringAggregateRootId && java.util.Objects.equals(value, ((StringAggregateRootId) o).value));
+        }
+
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hashCode(value);
+        }
+
+        @Override
+        public String toString() {
+            return "StringAggregateRootId{" + value + "}";
+        }
     }
 }

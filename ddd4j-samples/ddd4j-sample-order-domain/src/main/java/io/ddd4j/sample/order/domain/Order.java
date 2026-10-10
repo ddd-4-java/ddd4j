@@ -16,17 +16,9 @@ package io.ddd4j.sample.order.domain;
 
 import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.kit.lang.StrKit;
-import io.ddd4j.sample.order.domain.event.OrderCancelledEvent;
-import io.ddd4j.sample.order.domain.event.OrderCreatedEvent;
-import io.ddd4j.sample.order.domain.event.OrderLineAddedEvent;
-import io.ddd4j.sample.order.domain.event.OrderPaidEvent;
-import io.ddd4j.sample.order.domain.event.OrderShippedEvent;
+import io.ddd4j.sample.order.domain.event.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 public final class Order extends AggregateRoot<String> {
 

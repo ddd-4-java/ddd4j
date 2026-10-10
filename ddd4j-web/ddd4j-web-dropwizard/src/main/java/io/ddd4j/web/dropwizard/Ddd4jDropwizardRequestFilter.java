@@ -15,31 +15,20 @@
 package io.ddd4j.web.dropwizard;
 
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
-import io.ddd4j.web.core.idempotency.CacheIdempotencyGuard;
-import io.ddd4j.web.core.context.ClientIpResolver;
 import io.ddd4j.web.core.auth.PathWebAccessPolicy;
-import io.ddd4j.web.core.context.RequestIdGenerator;
-import io.ddd4j.web.core.context.SynchronousWebRequestSession;
-import io.ddd4j.web.core.context.WebHeaders;
+import io.ddd4j.web.core.context.*;
+import io.ddd4j.web.core.idempotency.CacheIdempotencyGuard;
 import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.web.core.observability.WebOtelSupport;
-import io.ddd4j.web.core.context.WebRequestContext;
-import io.ddd4j.web.core.context.WebRequestContextFactory;
-import io.ddd4j.web.core.context.WebRequestData;
-import io.ddd4j.web.core.context.WebRequestLifecycle;
+
 import javax.annotation.Priority;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.Context;
-
 import java.net.InetSocketAddress;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Dropwizard Jersey 请求上下文、Bearer Subject 与幂等过滤器。
@@ -75,7 +64,7 @@ public final class Ddd4jDropwizardRequestFilter implements ContainerRequestFilte
                 new PathWebAccessPolicy(config.getPublicPaths(), config.getDefaultAuthenticationMode()));
         this.idempotencyLifecycle = config.isIdempotencyEnabled()
                 ? new WebIdempotencyLifecycle(new CacheIdempotencyGuard(config.getIdempotencyCacheName()),
-                        config.getIdempotencyTtl()) : null;
+                config.getIdempotencyTtl()) : null;
     }
 
     public Ddd4jDropwizardRequestFilter(WebRequestContextFactory contextFactory,
@@ -84,6 +73,16 @@ public final class Ddd4jDropwizardRequestFilter implements ContainerRequestFilte
         this.contextFactory = Objects.requireNonNull(contextFactory, "contextFactory must not be null");
         this.requestLifecycle = Objects.requireNonNull(requestLifecycle, "requestLifecycle must not be null");
         this.idempotencyLifecycle = idempotencyLifecycle;
+    }
+
+    private static Map<String, String> extractRequestHeaders(ContainerRequestContext request) {
+        Map<String, String> headers = new HashMap<>();
+        request.getHeaders().forEach((k, v) -> {
+            if (Objects.nonNull(v) && !v.isEmpty()) {
+                headers.put(k, v.get(0));
+            }
+        });
+        return headers;
     }
 
     @Override
@@ -107,16 +106,6 @@ public final class Ddd4jDropwizardRequestFilter implements ContainerRequestFilte
             WebOtelSupport.recordError(span, exception);
             throw exception;
         }
-    }
-
-    private static Map<String, String> extractRequestHeaders(ContainerRequestContext request) {
-        Map<String, String> headers = new HashMap<>();
-        request.getHeaders().forEach((k, v) -> {
-            if (Objects.nonNull(v) && !v.isEmpty()) {
-                headers.put(k, v.get(0));
-            }
-        });
-        return headers;
     }
 
     private WebRequestContext createContext(ContainerRequestContext request) {

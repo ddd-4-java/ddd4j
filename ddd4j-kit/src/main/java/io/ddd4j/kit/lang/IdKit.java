@@ -65,8 +65,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @UtilityClass
 public class IdKit extends IdUtil {
 
-    private static byte LAST_IP = 0;
     private static final Map<SnowflakeOptions, Snowflake> CUSTOM_SNOWFLAKES = new ConcurrentHashMap<>();
+    private static byte LAST_IP = 0;
 
     /**
      * 获取单例的Twitter的Snowflake 算法生成器对象<br>
@@ -216,49 +216,6 @@ public class IdKit extends IdUtil {
                 options.timeOffset, options.randomSequenceLimit);
     }
 
-    private static final class SnowflakeOptions {
-        private final long workerId;
-        private final long dataCenterId;
-        private final boolean useSystemClock;
-        private final long timeOffset;
-        private final long randomSequenceLimit;
-
-        private SnowflakeOptions(long workerId, long dataCenterId, boolean useSystemClock,
-                                 long timeOffset, long randomSequenceLimit) {
-            this.workerId = workerId;
-            this.dataCenterId = dataCenterId;
-            this.useSystemClock = useSystemClock;
-            this.timeOffset = timeOffset;
-            this.randomSequenceLimit = randomSequenceLimit;
-        }
-
-        @Override
-        public boolean equals(Object object) {
-            if (this == object) {
-                return true;
-            }
-            if (!(object instanceof SnowflakeOptions)) {
-                return false;
-            }
-            SnowflakeOptions that = (SnowflakeOptions) object;
-            return workerId == that.workerId
-                    && dataCenterId == that.dataCenterId
-                    && useSystemClock == that.useSystemClock
-                    && timeOffset == that.timeOffset
-                    && randomSequenceLimit == that.randomSequenceLimit;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = (int) (workerId ^ (workerId >>> 32));
-            result = 31 * result + (int) (dataCenterId ^ (dataCenterId >>> 32));
-            result = 31 * result + (useSystemClock ? 1231 : 1237);
-            result = 31 * result + (int) (timeOffset ^ (timeOffset >>> 32));
-            result = 31 * result + (int) (randomSequenceLimit ^ (randomSequenceLimit >>> 32));
-            return result;
-        }
-    }
-
     /**
      * 获取 Snowflake 分布式 ID（使用自定义 workerId 和 dataCenterId）
      *
@@ -405,5 +362,48 @@ public class IdKit extends IdUtil {
         }
 
         return LAST_IP;
+    }
+
+    private static final class SnowflakeOptions {
+        private final long workerId;
+        private final long dataCenterId;
+        private final boolean useSystemClock;
+        private final long timeOffset;
+        private final long randomSequenceLimit;
+
+        private SnowflakeOptions(long workerId, long dataCenterId, boolean useSystemClock,
+                                 long timeOffset, long randomSequenceLimit) {
+            this.workerId = workerId;
+            this.dataCenterId = dataCenterId;
+            this.useSystemClock = useSystemClock;
+            this.timeOffset = timeOffset;
+            this.randomSequenceLimit = randomSequenceLimit;
+        }
+
+        @Override
+        public boolean equals(Object object) {
+            if (this == object) {
+                return true;
+            }
+            if (!(object instanceof SnowflakeOptions)) {
+                return false;
+            }
+            SnowflakeOptions that = (SnowflakeOptions) object;
+            return workerId == that.workerId
+                    && dataCenterId == that.dataCenterId
+                    && useSystemClock == that.useSystemClock
+                    && timeOffset == that.timeOffset
+                    && randomSequenceLimit == that.randomSequenceLimit;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = (int) (workerId ^ (workerId >>> 32));
+            result = 31 * result + (int) (dataCenterId ^ (dataCenterId >>> 32));
+            result = 31 * result + (useSystemClock ? 1231 : 1237);
+            result = 31 * result + (int) (timeOffset ^ (timeOffset >>> 32));
+            result = 31 * result + (int) (randomSequenceLimit ^ (randomSequenceLimit >>> 32));
+            return result;
+        }
     }
 }

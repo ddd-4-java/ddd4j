@@ -18,7 +18,9 @@ import lombok.Value;
 
 import java.math.BigDecimal;
 
-/** 添加订单行命令，Java 8 等价实现保留 record 值语义。 */
+/**
+ * 添加订单行命令，Java 8 等价实现保留 record 值语义。
+ */
 @Value
 public class AddOrderLineCommand {
     String orderId;
@@ -27,9 +29,23 @@ public class AddOrderLineCommand {
     int quantity;
     BigDecimal unitPrice;
 
-    public String orderId() { return orderId; }
-    public String goodsId() { return goodsId; }
-    public String goodsName() { return goodsName; }
-    public int quantity() { return quantity; }
-    public BigDecimal unitPrice() { return unitPrice; }
+    public String orderId() {
+        return orderId;
+    }
+
+    public String goodsId() {
+        return goodsId;
+    }
+
+    public String goodsName() {
+        return goodsName;
+    }
+
+    public int quantity() {
+        return quantity;
+    }
+
+    public BigDecimal unitPrice() {
+        return unitPrice;
+    }
 }

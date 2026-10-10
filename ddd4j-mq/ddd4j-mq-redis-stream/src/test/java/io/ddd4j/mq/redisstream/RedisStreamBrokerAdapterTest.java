@@ -14,7 +14,6 @@
  */
 package io.ddd4j.mq.redisstream;
 
-import java.util.Collections;
 import io.ddd4j.mq.redisstream.lettuce.LettuceRedisStreamOperations;
 import io.ddd4j.mq.redisstream.redisson.RedissonRedisStreamOperations;
 import io.lettuce.core.XAddArgs;
@@ -30,7 +29,7 @@ import org.redisson.api.stream.StreamCreateGroupArgs;
 import redis.clients.jedis.StreamEntryID;
 import redis.clients.jedis.UnifiedJedis;
 
-import java.util.Map;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

@@ -14,15 +14,10 @@
  */
 package io.ddd4j.core.cqrs.readmodel;
 
-import java.util.Collections;
-import java.util.HashMap;
 import io.ddd4j.kit.lang.CollKit;
 import io.ddd4j.kit.lang.StrKit;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * 轻量类型事件分发器。

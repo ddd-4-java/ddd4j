@@ -31,16 +31,6 @@ public final class LicenseTestPreferencesFactory implements PreferencesFactory {
     private static final InMemoryPreferences USER_ROOT = new InMemoryPreferences(null, "");
     private static volatile RemoveFailureMode removeFailureMode = RemoveFailureMode.NONE;
 
-    @Override
-    public Preferences systemRoot() {
-        return SYSTEM_ROOT;
-    }
-
-    @Override
-    public Preferences userRoot() {
-        return USER_ROOT;
-    }
-
     static boolean isUserRoot(Preferences preferences) {
         return Objects.equals(USER_ROOT, preferences);
     }
@@ -57,6 +47,16 @@ public final class LicenseTestPreferencesFactory implements PreferencesFactory {
         removeFailureMode = RemoveFailureMode.NONE;
         SYSTEM_ROOT.clearAll();
         USER_ROOT.clearAll();
+    }
+
+    @Override
+    public Preferences systemRoot() {
+        return SYSTEM_ROOT;
+    }
+
+    @Override
+    public Preferences userRoot() {
+        return USER_ROOT;
     }
 
     enum RemoveFailureMode {

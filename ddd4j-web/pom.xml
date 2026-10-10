@@ -13,7 +13,9 @@
     <artifactId>ddd4j-web</artifactId>
     <packaging>pom</packaging>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>Ddd4j Web 抽象聚合：core（基础 Controller/Advice/Utils） + JDK8 兼容框架桥接（Javalin/Spring WebFlux/WebMVC/Vertx/Micronaut/Dropwizard）+ validation/testkit。</description>
+    <description>Ddd4j Web 抽象聚合：core（基础 Controller/Advice/Utils） + JDK8 兼容框架桥接（Javalin/Spring
+        WebFlux/WebMVC/Vertx/Micronaut/Dropwizard）+ validation/testkit。
+    </description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <!--

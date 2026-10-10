@@ -31,30 +31,39 @@ public interface ProjectionView<E> {
      */
 
     String getName();
+
     /**
      * 投影流 ID。默认使用视图名称。
      * @return 获取的字符串内容
      */
 
-    default String getStreamId() { return getName(); }
+    default String getStreamId() {
+        return getName();
+    }
+
     /**
      * 定时调度 CRON 表达式。
      * @return 获取的字符串内容
      */
 
     String getCron();
+
     /**
      * 单次读取事件数量。
      * @return 获取的整型数值
      */
 
-    default int getChunkSize() { return 100; }
+    default int getChunkSize() {
+        return 100;
+    }
+
     /**
      * 本视图关注的事件类型。
      * @return 获取的Collection
      */
 
     Collection<String> getEventTypes();
+
     /**
      * 处理一批事件。
      *

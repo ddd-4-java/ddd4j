@@ -23,9 +23,13 @@
 - `ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunInfo.java`
 - `ddd4j-data/ddd4j-data-mybatis/src/main/java/io/ddd4j/data/mybatis/adapter/SqlObservation.java`
 - `ddd4j-mq/ddd4j-mq-redis-stream/src/main/java/io/ddd4j/mq/redisstream/RedisStreamRecord.java`
-- `ddd4j-extensions/ddd4j-extension-qlexpress/src/main/java/io/ddd4j/extension/qlexpress/model/QLExpressValidationResult.java`
+-
 
-所有构造参数与顺序以现有 record 组件为准，公开构造器一致；同时保留 bean getter 与组件访问器。相同全部字段应值相等，hashCode 一致；不同字段应不等。RedisStreamRecord 的 nativeMessage 必须参与 equals/hashCode。引用字段为 null 时 equals/hashCode 不得抛异常。toString 采用现有 record 格式，业务字段全部列出。集合字段本批不改变现有快照/引用语义。
+`ddd4j-extensions/ddd4j-extension-qlexpress/src/main/java/io/ddd4j/extension/qlexpress/model/QLExpressValidationResult.java`
+
+所有构造参数与顺序以现有 record 组件为准，公开构造器一致；同时保留 bean getter 与组件访问器。相同全部字段应值相等，hashCode
+一致；不同字段应不等。RedisStreamRecord 的 nativeMessage 必须参与 equals/hashCode。引用字段为 null 时 equals/hashCode
+不得抛异常。toString 采用现有 record 格式，业务字段全部列出。集合字段本批不改变现有快照/引用语义。
 
 ### W1：Web 拦截器
 
@@ -35,23 +39,29 @@
 
 MissingRequestHeaderException 在国际化开启/关闭两条路径均返回 SC_MISSING_REQUEST_HEADER；不能直接沿用任一分支非国际化路径的旧错误码。
 
-开启 autoFillSystemId 且无 Web 请求覆盖值时，ThreadContext 中 null/空串统一写入三个系统 ID header 为 "0"；非空值原样保留。空白串策略本批沿用已有 2.0/3.0 的 hasLength 语义，不擅自扩展到 trim。
+开启 autoFillSystemId 且无 Web 请求覆盖值时，ThreadContext 中 null/空串统一写入三个系统 ID header 为
+"0"；非空值原样保留。空白串策略本批沿用已有 2.0/3.0 的 hasLength 语义，不擅自扩展到 trim。
 
 ### L1：默认操作日志
 
-三个版本提供相同 DefaultApiOperationLogProvider 对象和方法；Guice 默认绑定真实实现。成功/失败回调进入 doApiOperationLog，保留 saveLog 扩展点及 Hidden 处理。1.0 只做 javax 等依赖适配，禁止用空接口实例代替。恢复实现不得建立新的循环依赖。
+三个版本提供相同 DefaultApiOperationLogProvider 对象和方法；Guice 默认绑定真实实现。成功/失败回调进入 doApiOperationLog，保留
+saveLog 扩展点及 Hidden 处理。1.0 只做 javax 等依赖适配，禁止用空接口实例代替。恢复实现不得建立新的循环依赖。
 
 ### M1：MQ 空白参数
 
-ONS consumer group/topic 使用 hasText：空白监听器值回退配置值，最终仍为空白时在创建 Broker 连接之前拒绝。TDMQ 空白监听器 group 回退 defaultGroup；可通过注入 BrokerSubscriber 检验，不连接生产 Broker。
+ONS consumer group/topic 使用 hasText：空白监听器值回退配置值，最终仍为空白时在创建 Broker 连接之前拒绝。TDMQ 空白监听器
+group 回退 defaultGroup；可通过注入 BrokerSubscriber 检验，不连接生产 Broker。
 
 ## 后续批次（不在本批完成声明范围）
 
-第二批：EventStore 同步/异步对象拓扑、四方法签名、事件时间与版本副作用、payload 未知字段、分页与事务边界。第三批：非豁免缺失对象、外部 HTTP 参数以及框架上下文传播；禁止直接删除 HttpClient 参数以实现 JDK8 适配。第四批：剩余 record、集合 null/复制/可变性、字符编码与规则返回值。第五批：全目录/API/行为差分门禁。
+第二批：EventStore 同步/异步对象拓扑、四方法签名、事件时间与版本副作用、payload 未知字段、分页与事务边界。第三批：非豁免缺失对象、外部
+HTTP 参数以及框架上下文传播；禁止直接删除 HttpClient 参数以实现 JDK8 适配。第四批：剩余 record、集合
+null/复制/可变性、字符编码与规则返回值。第五批：全目录/API/行为差分门禁。
 
 ## 验证标准
 
-每个修复先有真实失败证据，再修改实现并复测；测试与目标源码按版本匹配编译，禁止复用旧 target 类冒充新源码。验收记录明确区分值对象隔离测试、目标模块 JUnit、受影响模块回归、全量 reactor。没有执行的门禁不得标通过。
+每个修复先有真实失败证据，再修改实现并复测；测试与目标源码按版本匹配编译，禁止复用旧 target 类冒充新源码。验收记录明确区分值对象隔离测试、目标模块
+JUnit、受影响模块回归、全量 reactor。没有执行的门禁不得标通过。
 
 ## D1：三线依赖组件清单与 JDK 基线（2026-09-08 用户批准）
 
@@ -61,5 +71,6 @@ ONS consumer group/topic 使用 hasText：空白监听器值回退配置值，�
 - 使用 Maven effective POM 判定 BOM 覆盖，不以文本中没有直接声明判定缺失；上游 BOM 间接导出的历史组件单独统计，不机械复制已废弃模块。
 - 版本按 JDK 8/17/21 及 Spring 5/6/7、Jackson 2/2/3 兼容组合确定。普通库无兼容原因时保持同版；不凭版本号大小推定 JDK 兼容。
 - 没有适用发行版的组件必须给出具体 JDK/生态限制，不添加不可用版本冒充对齐。旧坐标改名、模块合并和 BOM 管理须显式说明。
-- 验证至少包括：清单覆盖、属性解析、重复坐标、产物可解析性、JDK 字节码基线，以及受影响模块的真实回归。多版本 JAR 的高版本目录不作为基础 JDK 违规；可选高版本实现需逐项核查。
+- 验证至少包括：清单覆盖、属性解析、重复坐标、产物可解析性、JDK 字节码基线，以及受影响模块的真实回归。多版本 JAR 的高版本目录不作为基础
+  JDK 违规；可选高版本实现需逐项核查。
 - 保留当前 checkout、未提交修改及各线 Maven 模型；本次不提交、推送、发布，不初始化新规格体系。

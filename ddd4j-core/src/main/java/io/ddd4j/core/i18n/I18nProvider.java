@@ -114,7 +114,7 @@ public interface I18nProvider {
             result = result.substring(0, idx) + Objects.toString(arg, "null") + result.substring(idx + 2);
         }
         return result;
-    
+
     }
 
 

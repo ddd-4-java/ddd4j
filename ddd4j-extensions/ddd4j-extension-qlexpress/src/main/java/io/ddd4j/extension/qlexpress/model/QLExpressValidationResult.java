@@ -25,11 +25,11 @@ public final class QLExpressValidationResult {
     private final boolean valid;
     private final String message;
 
-/**
- * 表达式语法校验结果。
+    /**
+     * 表达式语法校验结果。
  * @param valid 是否有效
  * @param message 消息内容
- */
+     */
 
     public QLExpressValidationResult(boolean valid, String message) {
         this.valid = valid;
@@ -44,8 +44,13 @@ public final class QLExpressValidationResult {
         return new QLExpressValidationResult(false, message);
     }
 
-    public boolean valid() { return valid; }
-    public String message() { return message; }
+    public boolean valid() {
+        return valid;
+    }
+
+    public String message() {
+        return message;
+    }
 
     public boolean isValid() {
         return valid;
@@ -55,7 +60,9 @@ public final class QLExpressValidationResult {
         return message;
     }
 
-    /** 按校验状态与消息比较结果，匹配 record 的值语义。 */
+    /**
+     * 按校验状态与消息比较结果，匹配 record 的值语义。
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -68,13 +75,17 @@ public final class QLExpressValidationResult {
         return valid == that.valid && Objects.equals(message, that.message);
     }
 
-    /** 返回与 record 组件顺序一致的哈希。 */
+    /**
+     * 返回与 record 组件顺序一致的哈希。
+     */
     @Override
     public int hashCode() {
         return 31 * Boolean.hashCode(valid) + Objects.hashCode(message);
     }
 
-    /** 返回跨版本一致的校验结果文本。 */
+    /**
+     * 返回跨版本一致的校验结果文本。
+     */
     @Override
     public String toString() {
         return "QLExpressValidationResult[valid=" + valid + ", message=" + message + ']';

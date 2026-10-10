@@ -14,12 +14,7 @@
  */
 package io.ddd4j.guice.cqrs;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import io.ddd4j.core.cqrs.command.CommandBus;
-import io.ddd4j.core.cqrs.command.CommandExecutor;
-import io.ddd4j.core.cqrs.readmodel.InMemoryProjectionPositionRepository;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
 import io.ddd4j.core.cqrs.readmodel.ViewManager;
 import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
@@ -27,7 +22,6 @@ import io.ddd4j.guice.command.GuiceCommandBus;
 import io.ddd4j.runtime.testkit.AbstractCqrsRuntimeContractTest;
 import io.ddd4j.runtime.testkit.CqrsRuntimeContract;
 
-import java.util.List;
 import java.util.Arrays;
 
 /**

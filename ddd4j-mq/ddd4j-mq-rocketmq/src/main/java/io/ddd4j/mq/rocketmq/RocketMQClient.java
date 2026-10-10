@@ -18,9 +18,9 @@ import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
-import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.lifecycle.MQClientLifecycle;
 import io.ddd4j.mq.lifecycle.MQStartupStatus;
+import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.extern.slf4j.Slf4j;
@@ -78,6 +78,8 @@ public class RocketMQClient implements MQClient {
      * 懒构造使用的配置（构造方法 2 传入）
      */
     private final RocketMQProperties properties;
+    private final MQClientLifecycle lifecycle = new MQClientLifecycle();
+    private final MQStartupStatus startupStatus = new MQStartupStatus("rocket");
     /**
      * 已注入或懒构造的 RocketMQ producer
      */
@@ -86,8 +88,6 @@ public class RocketMQClient implements MQClient {
      * 异步发送回调（可为 null，则用内置兜底）。
      */
     private SendCallback callback;
-    private final MQClientLifecycle lifecycle = new MQClientLifecycle();
-    private final MQStartupStatus startupStatus = new MQStartupStatus("rocket");
 
     /**
      * 构造方法 1：注入原生 producer（runtime 自动装配用）。
@@ -130,6 +130,13 @@ public class RocketMQClient implements MQClient {
     }
 
     // ========================= 生产者 =========================
+
+    static String messageId(MessageExt message) {
+        String messageId = message.getUserProperty(MessageHeaders.HEADER_MESSAGE_ID);
+        return StrKit.isNotEmpty(messageId)
+                ? messageId
+                : message.getUserProperty(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
+    }
 
     @Override
     public String impl() {
@@ -312,6 +319,8 @@ public class RocketMQClient implements MQClient {
         return true;
     }
 
+    // ========================= 消费者 =========================
+
     @Override
     public void close() {
         try {
@@ -320,8 +329,6 @@ public class RocketMQClient implements MQClient {
             startupStatus.stopped();
         }
     }
-
-    // ========================= 消费者 =========================
 
     /**
      * 异步发送回调（统一收口，不阻塞 producer.send()）。
@@ -347,12 +354,5 @@ public class RocketMQClient implements MQClient {
         public void onException(Throwable e) {
             log.error("RocketMQ send failed: topic={}, payload={}", topic, payload, e);
         }
-    }
-
-    static String messageId(MessageExt message) {
-        String messageId = message.getUserProperty(MessageHeaders.HEADER_MESSAGE_ID);
-        return StrKit.isNotEmpty(messageId)
-                ? messageId
-                : message.getUserProperty(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
     }
 }

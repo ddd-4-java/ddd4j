@@ -34,8 +34,19 @@ public class CreateGoodsRequest {
     private BigDecimal price;
     private Integer stock;
 
-    public String code() { return code; }
-    public String name() { return name; }
-    public BigDecimal price() { return price; }
-    public Integer stock() { return stock; }
+    public String code() {
+        return code;
+    }
+
+    public String name() {
+        return name;
+    }
+
+    public BigDecimal price() {
+        return price;
+    }
+
+    public Integer stock() {
+        return stock;
+    }
 }

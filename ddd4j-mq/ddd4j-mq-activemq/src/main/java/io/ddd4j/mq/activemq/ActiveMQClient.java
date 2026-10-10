@@ -19,14 +19,14 @@ import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.activemq.util.ActivemqKit;
 import io.ddd4j.mq.event.MQEvent;
-import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.lifecycle.MQClientLifecycle;
 import io.ddd4j.mq.lifecycle.MQStartupStatus;
+import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.message.MessageHeaders;
-import javax.jms.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 
+import javax.jms.*;
 import java.lang.IllegalStateException;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
@@ -95,6 +95,53 @@ public class ActiveMQClient implements MQClient {
 
     // ========================= 生产者 =========================
 
+    private static void closeConsumer(MessageConsumer consumer) {
+        try {
+            consumer.close();
+        } catch (JMSException exception) {
+            throw new IllegalStateException("Close ActiveMQ consumer failed", exception);
+        }
+    }
+
+    private static void closeSession(Session session) {
+        try {
+            session.close();
+        } catch (JMSException exception) {
+            throw new IllegalStateException("Close ActiveMQ session failed", exception);
+        }
+    }
+
+    private static void closeConnection(Connection connection) {
+        try {
+            connection.close();
+        } catch (JMSException exception) {
+            throw new IllegalStateException("Close ActiveMQ connection failed", exception);
+        }
+    }
+
+    // ========================= 消费者 =========================
+
+    /**
+     * 优先读取 ddd4j 标准消息 ID，兼容升级期旧键并最终回退到 JMS 原生 ID。
+     */
+    static String messageId(Message message) throws JMSException {
+        String messageId = message.getStringProperty(jmsProperty(MessageHeaders.HEADER_MESSAGE_ID));
+        if (Objects.isNull(messageId)) {
+            messageId = message.getStringProperty(jmsProperty(MessageHeaders.LEGACY_HEADER_MESSAGE_ID));
+        }
+        return Objects.nonNull(messageId) ? messageId : ActivemqKit.messageIdOf(message);
+    }
+
+    // ========================= 连接管理（双构造共享的最小辅助）=========================
+
+    /**
+     * ddd4j 消息头统一使用 {@code ddd4j.xxx.yyy} 命名，JMS 场景需替换为 '_'。
+     */
+    static String jmsProperty(String name) {
+        // JMS 属性名必须是合法 Java 标识符：'.' 与 '-' 均非法，统一替换为 '_'
+        return name.replace('.', '_').replace('-', '_');
+    }
+
     @Override
     public String impl() {
         return "activemq";
@@ -109,8 +156,6 @@ public class ActiveMQClient implements MQClient {
     public MQStartupStatus startupStatus() {
         return startupStatus;
     }
-
-    // ========================= 消费者 =========================
 
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
@@ -150,8 +195,6 @@ public class ActiveMQClient implements MQClient {
             throw new IllegalStateException("Init ActiveMQ producer failed", ex);
         }
     }
-
-    // ========================= 连接管理（双构造共享的最小辅助）=========================
 
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
@@ -218,47 +261,5 @@ public class ActiveMQClient implements MQClient {
         } finally {
             startupStatus.stopped();
         }
-    }
-
-    private static void closeConsumer(MessageConsumer consumer) {
-        try {
-            consumer.close();
-        } catch (JMSException exception) {
-            throw new IllegalStateException("Close ActiveMQ consumer failed", exception);
-        }
-    }
-
-    private static void closeSession(Session session) {
-        try {
-            session.close();
-        } catch (JMSException exception) {
-            throw new IllegalStateException("Close ActiveMQ session failed", exception);
-        }
-    }
-
-    private static void closeConnection(Connection connection) {
-        try {
-            connection.close();
-        } catch (JMSException exception) {
-            throw new IllegalStateException("Close ActiveMQ connection failed", exception);
-        }
-    }
-
-    /**
-     * 优先读取 ddd4j 标准消息 ID，兼容升级期旧键并最终回退到 JMS 原生 ID。
-     */
-    static String messageId(Message message) throws JMSException {
-        String messageId = message.getStringProperty(jmsProperty(MessageHeaders.HEADER_MESSAGE_ID));
-        if (Objects.isNull(messageId)) {
-            messageId = message.getStringProperty(jmsProperty(MessageHeaders.LEGACY_HEADER_MESSAGE_ID));
-        }
-        return Objects.nonNull(messageId) ? messageId : ActivemqKit.messageIdOf(message);
-    }
-    /**
-     * ddd4j 消息头统一使用 {@code ddd4j.xxx.yyy} 命名，JMS 场景需替换为 '_'。
-     */
-    static String jmsProperty(String name) {
-        // JMS 属性名必须是合法 Java 标识符：'.' 与 '-' 均非法，统一替换为 '_'
-        return name.replace('.', '_').replace('-', '_');
     }
 }

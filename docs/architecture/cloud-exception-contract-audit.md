@@ -4,14 +4,16 @@
 
 ## 结论
 
-Cloud 当前引用的 io.ddd4j.boot.core.ApiCode、CustomApiCode、BizCheckedException、BizRuntimeException 在 Boot 13 条维护分支和本地已构建的 Boot Core JAR 中都不存在。新底座提供同名语义类型，但包名位于 io.ddd4j.core 和 io.ddd4j.core.exception。
+Cloud 当前引用的 io.ddd4j.boot.core.ApiCode、CustomApiCode、BizCheckedException、BizRuntimeException 在 Boot 13
+条维护分支和本地已构建的 Boot Core JAR 中都不存在。新底座提供同名语义类型，但包名位于 io.ddd4j.core 和
+io.ddd4j.core.exception。
 
 对两个 Cloud 异常类完整保留构造器、工厂方法和继承关系，仅把四个 import 指向新 Core 后，临时探针在三线全部编译成功：
 
-| 类型 | 保留的公开入口 | JDK8 | JDK17 | JDK21 |
-|---|---:|---:|---:|---:|
-| CheckedException extends BizRuntimeException | 9构造器+2静态工厂 | 通过 | 通过 | 通过 |
-| ValidateCodeException extends BizCheckedException | 9构造器 | 通过 | 通过 | 通过 |
+| 类型                                              |    保留的公开入口 | JDK8 | JDK17 | JDK21 |
+|---------------------------------------------------|------------------:|-----:|------:|------:|
+| CheckedException extends BizRuntimeException      | 9构造器+2静态工厂 | 通过 |  通过 |  通过 |
+| ValidateCodeException extends BizCheckedException |           9构造器 | 通过 |  通过 |  通过 |
 
 这证明“异常对象源码适配”可行，不证明 HTTP 契约等价，也不授权直接修改 Cloud。
 
@@ -22,9 +24,11 @@ Cloud 两类异常的原始路径：
 - ddd4j-cloud-cmpt-core/.../exception/CheckedException.java
 - ddd4j-cloud-cmpt-core/.../exception/ValidateCodeException.java
 
-新 Core 的 BizCheckedException/BizRuntimeException具备它们调用的全部构造器，且三条 ddd4j 线的新 API 相同。原因链构造器已保留 cause。
+新 Core 的 BizCheckedException/BizRuntimeException具备它们调用的全部构造器，且三条 ddd4j 线的新 API 相同。原因链构造器已保留
+cause。
 
-Cloud 自身 R.failed(CheckedException) 对空 code 输出 -1；消息为空时输出“服务器异常！”。新 DefaultWebExceptionTranslator 的规则不同：
+Cloud 自身 R.failed (CheckedException) 对空 code 输出 -1；消息为空时输出“服务器异常！”。新 DefaultWebExceptionTranslator
+的规则不同：
 
 - BizRuntimeException code位于400–599时：HTTP status等于code；
 - 业务码超出该范围时：HTTP status=500，但响应code保留业务码；

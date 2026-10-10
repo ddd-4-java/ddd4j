@@ -23,9 +23,23 @@ import lombok.NoArgsConstructor;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-@Data @NoArgsConstructor @AllArgsConstructor
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class CreateOrderRequest {
-    private String orderNo; private String buyerId; private String buyerName;
-    public String orderNo() { return orderNo; } public String buyerId() { return buyerId; }
-    public String buyerName() { return buyerName; }
+    private String orderNo;
+    private String buyerId;
+    private String buyerName;
+
+    public String orderNo() {
+        return orderNo;
+    }
+
+    public String buyerId() {
+        return buyerId;
+    }
+
+    public String buyerName() {
+        return buyerName;
+    }
 }

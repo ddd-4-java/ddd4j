@@ -219,30 +219,53 @@ public class AuthenticationController {
 
     // ============================ 请求 DTO ============================
 
-    @Data @NoArgsConstructor @AllArgsConstructor
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class LoginRequest {
         private String username;
         private String password;
-        public String username() { return username; }
-        public String password() { return password; }
+
+        public String username() {
+            return username;
+        }
+
+        public String password() {
+            return password;
+        }
     }
 
-    @Data @NoArgsConstructor @AllArgsConstructor
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class KickoutRequest {
         private String userId;
-        public String userId() { return userId; }
+
+        public String userId() {
+            return userId;
+        }
     }
 
-    @Data @NoArgsConstructor @AllArgsConstructor
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class RoleCheckRequest {
         private String role;
-        public String role() { return role; }
+
+        public String role() {
+            return role;
+        }
     }
 
-    @Data @NoArgsConstructor @AllArgsConstructor
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class PermissionCheckRequest {
         private String permission;
-        public String permission() { return permission; }
+
+        public String permission() {
+            return permission;
+        }
     }
 
 }

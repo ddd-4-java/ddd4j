@@ -25,7 +25,6 @@ import io.ddd4j.sample.javalin.satoken.rbac.domain.repository.UserRepository;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 
 /**
  * RBAC 演示数据初始化：与外部 Boot 示例 {@code ddd4j-boot-sample-auth-satoken} 使用同一 Subject 鉴权语义。

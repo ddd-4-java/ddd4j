@@ -24,20 +24,25 @@ public final class DetectedFileType {
     private final String extension;
     private final String mimeType;
 
-/**
- * 根据文件内容识别出的真实文件类型。
- *
- * @param extension 真实扩展名，不含点号
- * @param mimeType 真实 MIME 类型
- */
+    /**
+     * 根据文件内容识别出的真实文件类型。
+     *
+     * @param extension 真实扩展名，不含点号
+     * @param mimeType  真实 MIME 类型
+     */
 
     public DetectedFileType(String extension, String mimeType) {
         this.extension = extension;
         this.mimeType = mimeType;
     }
 
-    public String extension() { return extension; }
-    public String mimeType() { return mimeType; }
+    public String extension() {
+        return extension;
+    }
+
+    public String mimeType() {
+        return mimeType;
+    }
 
     @Override
     public boolean equals(Object o) {

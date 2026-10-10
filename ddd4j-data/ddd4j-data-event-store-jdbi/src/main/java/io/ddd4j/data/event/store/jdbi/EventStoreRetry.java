@@ -17,7 +17,6 @@ package io.ddd4j.data.event.store.jdbi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -29,18 +28,19 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 final class EventStoreRetry {
 
-    private static final Logger LOG = LoggerFactory.getLogger(EventStoreRetry.class);
-
     static final int DEFAULT_MAX_ATTEMPTS = 5;
     static final long BASE_DELAY_MILLIS = 10L;
-
+    private static final Logger LOG = LoggerFactory.getLogger(EventStoreRetry.class);
     private final int maxAttempts;
     private final long baseDelayMillis;
     private final Sleeper sleeper;
 
     EventStoreRetry() {
         this(DEFAULT_MAX_ATTEMPTS, BASE_DELAY_MILLIS, new Sleeper() {
-            @Override public void sleep(long millis) throws InterruptedException { Thread.sleep(millis); }
+            @Override
+            public void sleep(long millis) throws InterruptedException {
+                Thread.sleep(millis);
+            }
         });
     }
 
@@ -54,45 +54,6 @@ final class EventStoreRetry {
         this.maxAttempts = maxAttempts;
         this.baseDelayMillis = baseDelayMillis;
         this.sleeper = sleeper;
-    }
-
-    /**
-     * 执行可重试操作。
-     *
-     * @param operation 描述（用于日志）
-     * @param action    单次尝试的业务逻辑；必须抛出与 {@link #isRetriable} 匹配的异常以触发重试
-     * @param <T>       返回值类型
-     * @return 首次成功或最终一次尝试的返回值
-     * @throws Exception 最终一次仍失败时抛出最后一次的异常
-     */
-    <T> T execute(String operation, RetryableAction<T> action) throws Exception {
-        Exception lastException = null;
-        for (int attempt = 1; attempt <= maxAttempts; attempt++) {
-            try {
-                return action.run();
-            } catch (Exception e) {
-                lastException = e;
-                if (!isRetriable(e)) {
-                    throw e;
-                }
-                if (attempt >= maxAttempts) {
-                    LOG.warn("EventStore {} exhausted {} attempts due to retriable exception",
-                            operation, maxAttempts);
-                    throw e;
-                }
-                long delay = computeDelay(attempt);
-                LOG.debug("EventStore {} attempt {}/{} failed retriably, retrying after {}ms",
-                        operation, attempt, maxAttempts, delay);
-                try {
-                    sleeper.sleep(delay);
-                } catch (InterruptedException ie) {
-                    Thread.currentThread().interrupt();
-                    throw new RuntimeException("EventStore retry sleep interrupted", ie);
-                }
-            }
-        }
-        // 不应到达，但编译器要求
-        throw lastException != null ? lastException : new IllegalStateException("unreachable");
     }
 
     static long computeDelay(int attempt) {
@@ -162,7 +123,9 @@ final class EventStoreRetry {
         return false;
     }
 
-    /** 通过类名匹配识别 cause 链中的特定异常（避免硬依赖 Hibernate）。 */
+    /**
+     * 通过类名匹配识别 cause 链中的特定异常（避免硬依赖 Hibernate）。
+     */
     private static boolean containsCauseByName(Throwable t, String simpleClassName) {
         Throwable current = t;
         while (current != null) {
@@ -177,13 +140,56 @@ final class EventStoreRetry {
         return false;
     }
 
-    /** 单次尝试的业务逻辑。 */
+    /**
+     * 执行可重试操作。
+     *
+     * @param operation 描述（用于日志）
+     * @param action    单次尝试的业务逻辑；必须抛出与 {@link #isRetriable} 匹配的异常以触发重试
+     * @param <T>       返回值类型
+     * @return 首次成功或最终一次尝试的返回值
+     * @throws Exception 最终一次仍失败时抛出最后一次的异常
+     */
+    <T> T execute(String operation, RetryableAction<T> action) throws Exception {
+        Exception lastException = null;
+        for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+            try {
+                return action.run();
+            } catch (Exception e) {
+                lastException = e;
+                if (!isRetriable(e)) {
+                    throw e;
+                }
+                if (attempt >= maxAttempts) {
+                    LOG.warn("EventStore {} exhausted {} attempts due to retriable exception",
+                            operation, maxAttempts);
+                    throw e;
+                }
+                long delay = computeDelay(attempt);
+                LOG.debug("EventStore {} attempt {}/{} failed retriably, retrying after {}ms",
+                        operation, attempt, maxAttempts, delay);
+                try {
+                    sleeper.sleep(delay);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    throw new RuntimeException("EventStore retry sleep interrupted", ie);
+                }
+            }
+        }
+        // 不应到达，但编译器要求
+        throw lastException != null ? lastException : new IllegalStateException("unreachable");
+    }
+
+    /**
+     * 单次尝试的业务逻辑。
+     */
     @FunctionalInterface
     interface RetryableAction<T> {
         T run() throws Exception;
     }
 
-    /** 睡眠抽象（测试注入用）。 */
+    /**
+     * 睡眠抽象（测试注入用）。
+     */
     interface Sleeper {
         void sleep(long millis) throws InterruptedException;
     }

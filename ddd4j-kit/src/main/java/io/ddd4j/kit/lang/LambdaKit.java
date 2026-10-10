@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.ddd4j.core.util;
+package io.ddd4j.kit.lang;
 
 import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;
@@ -99,8 +99,7 @@ public final class LambdaKit {
             method.setAccessible(true);
             Object lambdaObj = method.invoke(func);
             if (lambdaObj instanceof SerializedLambda) {
-                SerializedLambda lambda = (SerializedLambda) lambdaObj;
-                return lambda;
+                return (SerializedLambda) lambdaObj;
             }
             throw new IllegalArgumentException("无法解析 Lambda 表达式，writeReplace 返回非 SerializedLambda: " + lambdaObj);
         } catch (ReflectiveOperationException e) {

@@ -83,8 +83,8 @@ public class VertxProjectionScheduler implements ViewScheduler {
      * @return 调度器实例
      */
     public static VertxProjectionScheduler create(Vertx vertx,
-                                                   Collection<ProjectionView<?>> views,
-                                                   ProjectionRunner<?> runner) {
+                                                  Collection<ProjectionView<?>> views,
+                                                  ProjectionRunner<?> runner) {
         Objects.requireNonNull(vertx, "vertx must not be null");
         Objects.requireNonNull(views, "views must not be null");
         Objects.requireNonNull(runner, "runner must not be null");
@@ -119,8 +119,8 @@ public class VertxProjectionScheduler implements ViewScheduler {
         private final java.util.concurrent.ScheduledExecutorService executor;
         private final CronExpression cron;
         private final Runnable task;
-        private volatile java.util.concurrent.ScheduledFuture<?> future;
         private final AtomicBoolean cancelled = new AtomicBoolean(false);
+        private volatile java.util.concurrent.ScheduledFuture<?> future;
 
         ReschedulingHandle(java.util.concurrent.ScheduledExecutorService executor,
                            CronExpression cron, Runnable task) {
@@ -219,31 +219,6 @@ public class VertxProjectionScheduler implements ViewScheduler {
             );
         }
 
-        LocalDateTime next(LocalDateTime from) {
-            LocalDateTime candidate = from.plusSeconds(1).withNano(0);
-            for (int i = 0; i < 1_000_000; i++) {
-                if (matches(candidate)) {
-                    return candidate;
-                }
-                candidate = candidate.plusSeconds(1);
-            }
-            return null;
-        }
-
-        private boolean matches(LocalDateTime dt) {
-            return contains(seconds, dt.getSecond())
-                    && contains(minutes, dt.getMinute())
-                    && contains(hours, dt.getHour())
-                    && contains(daysOfMonth, dt.getDayOfMonth())
-                    && contains(months, dt.getMonthValue())
-                    && matchesDayOfWeek(dt);
-        }
-
-        private boolean matchesDayOfWeek(LocalDateTime dt) {
-            int dow = dt.getDayOfWeek().getValue() % 7; // Monday=1 -> 1, Sunday=7 -> 0
-            return contains(daysOfWeek, dow) || contains(daysOfWeek, dt.getDayOfWeek().getValue());
-        }
-
         private static boolean contains(int[] values, int v) {
             for (int val : values) {
                 if (val == v) {
@@ -282,6 +257,31 @@ public class VertxProjectionScheduler implements ViewScheduler {
                 }
             }
             return values.stream().mapToInt(Integer::intValue).toArray();
+        }
+
+        LocalDateTime next(LocalDateTime from) {
+            LocalDateTime candidate = from.plusSeconds(1).withNano(0);
+            for (int i = 0; i < 1_000_000; i++) {
+                if (matches(candidate)) {
+                    return candidate;
+                }
+                candidate = candidate.plusSeconds(1);
+            }
+            return null;
+        }
+
+        private boolean matches(LocalDateTime dt) {
+            return contains(seconds, dt.getSecond())
+                    && contains(minutes, dt.getMinute())
+                    && contains(hours, dt.getHour())
+                    && contains(daysOfMonth, dt.getDayOfMonth())
+                    && contains(months, dt.getMonthValue())
+                    && matchesDayOfWeek(dt);
+        }
+
+        private boolean matchesDayOfWeek(LocalDateTime dt) {
+            int dow = dt.getDayOfWeek().getValue() % 7; // Monday=1 -> 1, Sunday=7 -> 0
+            return contains(daysOfWeek, dow) || contains(daysOfWeek, dt.getDayOfWeek().getValue());
         }
     }
 }

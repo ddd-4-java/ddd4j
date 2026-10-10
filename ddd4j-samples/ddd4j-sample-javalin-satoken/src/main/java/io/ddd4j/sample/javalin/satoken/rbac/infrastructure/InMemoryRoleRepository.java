@@ -14,8 +14,6 @@
  */
 package io.ddd4j.sample.javalin.satoken.rbac.infrastructure;
 
-import java.util.Objects;
-
 import io.ddd4j.kit.lang.CollKit;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.sample.javalin.satoken.rbac.domain.model.Role;

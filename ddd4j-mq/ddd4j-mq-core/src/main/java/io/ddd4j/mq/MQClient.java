@@ -23,18 +23,17 @@ import io.ddd4j.mq.annotation.MQEventListener;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.event.MQEventSerialization;
 import io.ddd4j.mq.event.MQEventStorer;
-import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.lifecycle.MQClientLifecycle;
 import io.ddd4j.mq.lifecycle.MQInitializationException;
 import io.ddd4j.mq.lifecycle.MQListenerInitializationFailure;
 import io.ddd4j.mq.lifecycle.MQStartupStatus;
+import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.message.Acknowledgment;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 
 import java.util.*;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
@@ -69,33 +68,6 @@ public interface MQClient extends AutoCloseable {
      * {@link BaseContext} key：MQ 事件持久化器
      */
     String MQ_STORER = MQEvent.MQ_EVENT_PUBLISHER + ".storer";
-
-    /**
-     * JDK8 兼容工具（接口私有静态方法为 JDK9+ 特性，收敛到嵌套类）。
-     */
-    final class Internals {
-
-        private Internals() {
-        }
-
-        /**
-         * 简单转义单引号（防止 tags 内含单引号破坏 selector 解析）。
-         */
-        static String escape(String s) {
-            return s.replace("'", "''");
-        }
-
-        /**
-         * 反射调用异常解包（对齐 base-mq）。
-         */
-        static Throwable unwrap(Exception ex) {
-            Throwable cause = ex.getCause();
-            if (Objects.nonNull(cause) && Objects.nonNull(cause.getCause())) {
-                return cause.getCause();
-            }
-            return Objects.nonNull(cause) ? cause : ex;
-        }
-    }
 
     /**
      * @return MQ 实现标识（如 {@code "kafka"} / {@code "rocket"} / {@code "rabbit"} / {@code "redis"} / {@code "redisStream"}）
@@ -325,8 +297,6 @@ public interface MQClient extends AutoCloseable {
         }
     }
 
-    // ========================= 物理地址拼接（生产者和消费者侧共享）=========================
-
     /**
      * 便捷重载：无 Acknowledgment 的消费（ack 能力由 broker 内部处理，如 RocketMQ 返回值语义）。
      * @param listener 监听器
@@ -336,6 +306,8 @@ public interface MQClient extends AutoCloseable {
     default void consume(MQListener listener, MQEvent event) throws Throwable {
         consume(listener, event, null);
     }
+
+    // ========================= 物理地址拼接（生产者和消费者侧共享）=========================
 
     /**
      * 日志器（各实现可覆写自定义 topic）。
@@ -560,7 +532,7 @@ public interface MQClient extends AutoCloseable {
         StringBuilder sb = new StringBuilder();
         if (!includes.isEmpty()) {
             // includes: tag IN (...) OR tag IS NULL（与 TagMatcher 一致：tag 为空时也算匹配）
-sb.append("(");
+            sb.append("(");
             boolean first = true;
             for (String i : includes) {
                 if (!first) {
@@ -600,24 +572,6 @@ sb.append("(");
     }
 
     /**
-     * 兼容 {@link #logger()} 的共享 SLF4J 日志持有器。
-     */
-    @Slf4j(topic = "### DDD4J-MQ ###")
-    final class LogHolder {
-
-        private LogHolder() {
-        }
-
-/**
-     * 兼容 {@link #logger()} 的共享 SLF4J 日志持有器。
-     */
-
-        private static Logger logger() {
-            return log;
-        }
-    }
-
-    /**
      * Partition/路由策略枚举（broker 可读取此枚举决定 partitionKey 取值）。
      *
      * <p>NONE：不设 key（轮询路由，性能最佳但无顺序保证）。
@@ -628,5 +582,50 @@ sb.append("(");
      */
     enum PartitionKeyStrategy {
         NONE, TAG, TENANT, TAG_TENANT, CUSTOM
+    }
+
+    /**
+     * JDK8 兼容工具（接口私有静态方法为 JDK9+ 特性，收敛到嵌套类）。
+     */
+    final class Internals {
+
+        private Internals() {
+        }
+
+        /**
+         * 简单转义单引号（防止 tags 内含单引号破坏 selector 解析）。
+         */
+        static String escape(String s) {
+            return s.replace("'", "''");
+        }
+
+        /**
+         * 反射调用异常解包（对齐 base-mq）。
+         */
+        static Throwable unwrap(Exception ex) {
+            Throwable cause = ex.getCause();
+            if (Objects.nonNull(cause) && Objects.nonNull(cause.getCause())) {
+                return cause.getCause();
+            }
+            return Objects.nonNull(cause) ? cause : ex;
+        }
+    }
+
+    /**
+     * 兼容 {@link #logger()} 的共享 SLF4J 日志持有器。
+     */
+    @Slf4j(topic = "### DDD4J-MQ ###")
+    final class LogHolder {
+
+        private LogHolder() {
+        }
+
+        /**
+         * 兼容 {@link #logger()} 的共享 SLF4J 日志持有器。
+         */
+
+        private static Logger logger() {
+            return log;
+        }
     }
 }

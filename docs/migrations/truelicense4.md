@@ -39,27 +39,27 @@ TrueLicense 4.x 运行库使用 Apache License 2.0。这里选择 `truelicense-v
 
 ## 公开 API 迁移表
 
-| 旧 API | 4.x 迁移结果 | 兼容性与替代方式 |
-|---|---|---|
-| `LicenseVerify(String,String,String,String,String)` | 保留 | 源码/二进制签名保留；默认 `SHA1withDSA`。 |
-| `LicenseVerify(...,String signatureAlgorithm)` | 新增 | 新许可证显式选择签名算法。 |
-| `installLicense()` / `unInstallLicense()` / `verify()` | 保留 | 高层返回/参数不变；安装内部现在执行 install → verify → load，失败会清理状态。 |
-| `LicenseCreator(LicenseCreatorParam)` / `generateLicense()` | 保留 | 高层签名不变；内部改用 4.x `License` 和 `VendorLicenseManager`。 |
-| `LicenseCreatorParam` 原有 Bean 属性 | 保留 | Bean 属性及源码/二进制调用签名保持；这不是任意历史 Java 序列化 DTO 数据兼容证明。新增 `signatureAlgorithm`；显式 `toString()` 不输出 `storePass`/`keyPass`。 |
-| `CustomKeyStoreParam(Class,String,String,String,String)` | 保留 | 不再继承 GPL 时代的 `AbstractKeyStoreParam`，因此类层次存在源码/二进制断点；默认 `SHA1withDSA`。 |
-| `CustomKeyStoreParam(...,String signatureAlgorithm)` | 新增 | 用于显式算法配置；`getAlias/getStorePwd/getKeyPwd/getStream` 保留。 |
-| 继承的 `AbstractKeyStoreParam.equals/hashCode` | 删除 | 新类使用普通对象身份语义；不复制旧父类实现。依赖旧值相等语义的调用方需自行按配置字段比较。 |
-| `CustomLicenseManager(LicenseParam)` | 删除 | 替换为 `CustomLicenseManager(String,CustomKeyStoreParam,Preferences)`；固定 `license` 槽位迁移为 subject 槽位，旧安装状态不自动延续，需重新 `install` 已有文件；旧 `LicenseParam` 类型不再存在。 |
-| `store(LicenseContent,File)` | 类型改变 | 替换为 `store(global.namespace.truelicense.api.License,File)`。 |
-| `install(File)` / `verify()` | 返回类型改变 | 返回 4.x `License`，抛出 4.x `LicenseManagementException`。 |
-| `uninstall()` | 保留卸载职责，存储键范围及异常类型改变 | 仅删除新 subject 槽位，不自动删除旧 `license` 槽位；使用 4.x `LicenseManagementException`。 |
-| `LICENSE_SUFFIX` | 删除 | UI/文件选择调用方自行声明所需扩展名，不再从管理器继承 Swing 常量。 |
-| `getLicenseParam/setLicenseParam` | 删除 | 管理器构造后配置不可变；通过新构造器创建不同 subject/key store/preferences 的实例。 |
-| `create(LicenseContent): byte[]` | 删除 | 使用 `store(License,File)`；直接使用上游时调用 `VendorLicenseManager.generateKeyFrom`。 |
-| `verify(byte[])` | 删除 | 使用 `ConsumerLicenseManager` 和 FunIO `Source/Store`；预览场景可配置 `BIOS.memory()` 临时存储。 |
-| `getFileFilter()` | 删除 | UI 层自行配置文件过滤器；核心许可证模块不再暴露 Swing API。 |
-| 继承的 `create/install/verify(...,LicenseNotary)` 钩子 | 删除 | 旧 GPL 父类扩展点不再二进制兼容，也不提供 shim。 |
-| `validateCreate/validate` | 以 4.x 类型保留 | 参数改为 4.x `License`，异常改为 `LicenseValidationException`；高层消费者不应依赖内部钩子。 |
+| 旧 API                                                      | 4.x 迁移结果                           | 兼容性与替代方式                                                                                                                                                                                 |
+|-------------------------------------------------------------|----------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `LicenseVerify(String,String,String,String,String)`         | 保留                                   | 源码/二进制签名保留；默认 `SHA1withDSA`。                                                                                                                                                        |
+| `LicenseVerify(...,String signatureAlgorithm)`              | 新增                                   | 新许可证显式选择签名算法。                                                                                                                                                                       |
+| `installLicense()` / `unInstallLicense()` / `verify()`      | 保留                                   | 高层返回/参数不变；安装内部现在执行 install → verify → load，失败会清理状态。                                                                                                                    |
+| `LicenseCreator(LicenseCreatorParam)` / `generateLicense()` | 保留                                   | 高层签名不变；内部改用 4.x `License` 和 `VendorLicenseManager`。                                                                                                                                 |
+| `LicenseCreatorParam` 原有 Bean 属性                        | 保留                                   | Bean 属性及源码/二进制调用签名保持；这不是任意历史 Java 序列化 DTO 数据兼容证明。新增 `signatureAlgorithm`；显式 `toString()` 不输出 `storePass`/`keyPass`。                                     |
+| `CustomKeyStoreParam(Class,String,String,String,String)`    | 保留                                   | 不再继承 GPL 时代的 `AbstractKeyStoreParam`，因此类层次存在源码/二进制断点；默认 `SHA1withDSA`。                                                                                                 |
+| `CustomKeyStoreParam(...,String signatureAlgorithm)`        | 新增                                   | 用于显式算法配置；`getAlias/getStorePwd/getKeyPwd/getStream` 保留。                                                                                                                              |
+| 继承的 `AbstractKeyStoreParam.equals/hashCode`              | 删除                                   | 新类使用普通对象身份语义；不复制旧父类实现。依赖旧值相等语义的调用方需自行按配置字段比较。                                                                                                       |
+| `CustomLicenseManager(LicenseParam)`                        | 删除                                   | 替换为 `CustomLicenseManager(String,CustomKeyStoreParam,Preferences)`；固定 `license` 槽位迁移为 subject 槽位，旧安装状态不自动延续，需重新 `install` 已有文件；旧 `LicenseParam` 类型不再存在。 |
+| `store(LicenseContent,File)`                                | 类型改变                               | 替换为 `store(global.namespace.truelicense.api.License,File)`。                                                                                                                                  |
+| `install(File)` / `verify()`                                | 返回类型改变                           | 返回 4.x `License`，抛出 4.x `LicenseManagementException`。                                                                                                                                      |
+| `uninstall()`                                               | 保留卸载职责，存储键范围及异常类型改变 | 仅删除新 subject 槽位，不自动删除旧 `license` 槽位；使用 4.x `LicenseManagementException`。                                                                                                      |
+| `LICENSE_SUFFIX`                                            | 删除                                   | UI/文件选择调用方自行声明所需扩展名，不再从管理器继承 Swing 常量。                                                                                                                               |
+| `getLicenseParam/setLicenseParam`                           | 删除                                   | 管理器构造后配置不可变；通过新构造器创建不同 subject/key store/preferences 的实例。                                                                                                              |
+| `create(LicenseContent): byte[]`                            | 删除                                   | 使用 `store(License,File)`；直接使用上游时调用 `VendorLicenseManager.generateKeyFrom`。                                                                                                          |
+| `verify(byte[])`                                            | 删除                                   | 使用 `ConsumerLicenseManager` 和 FunIO `Source/Store`；预览场景可配置 `BIOS.memory()` 临时存储。                                                                                                 |
+| `getFileFilter()`                                           | 删除                                   | UI 层自行配置文件过滤器；核心许可证模块不再暴露 Swing API。                                                                                                                                      |
+| 继承的 `create/install/verify(...,LicenseNotary)` 钩子      | 删除                                   | 旧 GPL 父类扩展点不再二进制兼容，也不提供 shim。                                                                                                                                                 |
+| `validateCreate/validate`                                   | 以 4.x 类型保留                        | 参数改为 4.x `License`，异常改为 `LicenseValidationException`；高层消费者不应依赖内部钩子。                                                                                                      |
 
 ## 行为边界
 
@@ -119,11 +119,11 @@ mvn -B -ntp -Pparity-verification \
   -Dsurefire.failIfNoSpecifiedTests=false test
 ```
 
-| 版本线 | JDK / Maven | 结果 | 原始证据 |
-|---|---|---|---|
-| 1.0.x | Corretto 8u504 / Maven 3.9.16 | 20 tests，0 failure/error/skipped | `.superpowers/sdd/2026-09-08-truelicense4-migration/task-1-logs/green-review-round1-main-raw.log`、`surefire-review-round1-main.xml` |
-| 2.0.x | Corretto 17.0.20 / Maven 3.9.16 | 20 tests，0 failure/error/skipped | 同目录 `green-review-round1-v2-raw.log`、`surefire-review-round1-v2.xml` |
-| 3.0.x | Microsoft JDK 21.0.12.1 / Maven 4.0.0-rc-6 | 20 tests，0 failure/error/skipped | 同目录 `green-review-round1-v3-raw.log`、`surefire-review-round1-v3.xml` |
+| 版本线 | JDK / Maven                                | 结果                              | 原始证据                                                                                                                             |
+|--------|--------------------------------------------|-----------------------------------|--------------------------------------------------------------------------------------------------------------------------------------|
+| 1.0.x  | Corretto 8u504 / Maven 3.9.16              | 20 tests，0 failure/error/skipped | `.superpowers/sdd/2026-09-08-truelicense4-migration/task-1-logs/green-review-round1-main-raw.log`、`surefire-review-round1-main.xml` |
+| 2.0.x  | Corretto 17.0.20 / Maven 3.9.16            | 20 tests，0 failure/error/skipped | 同目录 `green-review-round1-v2-raw.log`、`surefire-review-round1-v2.xml`                                                             |
+| 3.0.x  | Microsoft JDK 21.0.12.1 / Maven 4.0.0-rc-6 | 20 tests，0 failure/error/skipped | 同目录 `green-review-round1-v3-raw.log`、`surefire-review-round1-v3.xml`                                                             |
 
 测试 fork 在 JVM 启动时通过 `java.util.prefs.PreferencesFactory` 装载纯内存
 `LicenseTestPreferencesFactory`，`BeforeAll` 在任何许可证操作前验证实际 user root 就是该工厂产物。
@@ -166,11 +166,11 @@ mvn -B -ntp -Pparity-verification \
   -am -Dsurefire.reportNameSuffix=t2-20260908T182602 package
 ```
 
-| 版本线 | 工具链 | `TrueLicenseMigrationTest` | extension 既有测试 | 结果 |
-|---|---|---:|---:|---|
-| 1.0.x | JDK 8u504 / Maven 3.9.16 | 20 | `LicenseInfoTest` 3 + `LicenseKitTest` 4 | 27 项均无 failure/error/skipped |
-| 2.0.x | JDK 17.0.20.1 / Maven 3.9.16 | 20 | 3 + 4 | 27 项均无 failure/error/skipped |
-| 3.0.x | JDK 21.0.12.1 / Maven 4.0.0-rc-6 | 20 | 3 + 4 | 27 项均无 failure/error/skipped |
+| 版本线 | 工具链                           | `TrueLicenseMigrationTest` |                       extension 既有测试 | 结果                            |
+|--------|----------------------------------|---------------------------:|-----------------------------------------:|---------------------------------|
+| 1.0.x  | JDK 8u504 / Maven 3.9.16         |                         20 | `LicenseInfoTest` 3 + `LicenseKitTest` 4 | 27 项均无 failure/error/skipped |
+| 2.0.x  | JDK 17.0.20.1 / Maven 3.9.16     |                         20 |                                    3 + 4 | 27 项均无 failure/error/skipped |
+| 3.0.x  | JDK 21.0.12.1 / Maven 4.0.0-rc-6 |                         20 |                                    3 + 4 | 27 项均无 failure/error/skipped |
 
 三线运行时依赖树的 `ddd4j-auth-license` 均解析为
 `global.namespace.truelicense:{truelicense-v1,truelicense-core,truelicense-spi,truelicense-api,truelicense-obfuscate}:4.1.4`
@@ -196,7 +196,8 @@ Apache-2.0。上游依据限定为发布元数据，不构成更广泛的法律�
   与 [v4.1.4 LICENSE](https://github.com/christian-schlichtherle/truelicense/blob/v4.1.4/LICENSE)。
 - [TrueLicense 4.1.4 根 POM](https://repo.maven.apache.org/maven2/global/namespace/truelicense/truelicense/4.1.4/truelicense-4.1.4.pom)
   声明 Apache License, Version 2.0；`truelicense-v1` 通过父 POM 继承。
-- Fun I/O 2.4.1 的实际 [API POM](https://repo.maven.apache.org/maven2/global/namespace/fun-io/fun-io-api/2.4.1/fun-io-api-2.4.1.pom)、
+- Fun I/O 2.4.1
+  的实际 [API POM](https://repo.maven.apache.org/maven2/global/namespace/fun-io/fun-io-api/2.4.1/fun-io-api-2.4.1.pom)、
   [BIOS POM](https://repo.maven.apache.org/maven2/global/namespace/fun-io/fun-io-bios/2.4.1/fun-io-bios-2.4.1.pom)
   和 [SPI POM](https://repo.maven.apache.org/maven2/global/namespace/fun-io/fun-io-spi/2.4.1/fun-io-spi-2.4.1.pom)
   分别声明 Apache License, Version 2.0。

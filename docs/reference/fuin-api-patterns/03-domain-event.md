@@ -7,18 +7,22 @@
 - 仓库：https://github.com/fuinorg/ddd-4-java
 - 版本：0.7.0（本地快照：`workspace-ddd4j-boot/ddd-4-java`，tag `0.7.0`）
 - 文件：
-  - `core/src/main/java/org/fuin/ddd4j/core/DomainEvent.java:29-63`（领域事件接口）、`Event.java:29-71`（事件元数据契约）、`EventType.java:32-63`（事件类型值对象）
-  - `jackson/src/main/java/org/fuin/ddd4j/jackson/AbstractDomainEvent.java:40-204`（事件基类 + Builder；core 主源码无此类，仅 jackson/jaxb/jsonb 三模块各一份）
+    - `core/src/main/java/org/fuin/ddd4j/core/DomainEvent.java:29-63`（领域事件接口）、`Event.java:29-71`（事件元数据契约）、
+      `EventType.java:32-63`（事件类型值对象）
+    - `jackson/src/main/java/org/fuin/ddd4j/jackson/AbstractDomainEvent.java:40-204`（事件基类 + Builder；core 主源码无此类，仅
+      jackson/jaxb/jsonb 三模块各一份）
 - 关键 API：
-  - `DomainEvent<ID extends EntityId> extends Event`（接口）：getEntityIdPath/getEntityId/getAggregateVersion/getAggregateVersionInteger。
-  - `Event extends Serializable`：eventId/eventType/eventTimestamp/correlationId/causationId 五个元数据方法。
-  - `EventType`：不可变字符串值对象（≤255 字符）。
-  - `AbstractDomainEvent`（jackson 模块）：字段基类 + 泛型 Builder。
-  - 注意：fuin **没有** `DomainEventPublisher`——全仓库无任何事件分发 SPI。
+    - `DomainEvent<ID extends EntityId> extends Event`
+      （接口）：getEntityIdPath/getEntityId/getAggregateVersion/getAggregateVersionInteger。
+    - `Event extends Serializable`：eventId/eventType/eventTimestamp/correlationId/causationId 五个元数据方法。
+    - `EventType`：不可变字符串值对象（≤255 字符）。
+    - `AbstractDomainEvent`（jackson 模块）：字段基类 + 泛型 Builder。
+    - 注意：fuin **没有** `DomainEventPublisher`——全仓库无任何事件分发 SPI。
 
 ## fuin 的设计
 
-契约分两层：`Event` 承载全部元数据（标识/类型/时间戳/关联/因果），`DomainEvent` 叠加聚合定位（实体路径 + 版本）；`EventType` 是 ≤255 字符的不可变字符串值对象。
+契约分两层：`Event` 承载全部元数据（标识/类型/时间戳/关联/因果），`DomainEvent` 叠加聚合定位（实体路径 + 版本）；`EventType` 是
+≤255 字符的不可变字符串值对象。
 
 **1）事件元数据契约——Event（Event.java:29-69，含 correlationId/causationId/eventTimestamp）**
 
@@ -47,7 +51,7 @@ public interface DomainEvent<ID extends EntityId> extends Event {
 }
 ```
 
-**3）基类与因果链——AbstractEvent(Event respondTo)（jackson AbstractEvent.java:81-83）**
+**3）基类与因果链——AbstractEvent (Event respondTo)（jackson AbstractEvent.java:81-83）**
 
 ```java
 public AbstractEvent(@NotNull final Event respondTo) {
@@ -55,7 +59,9 @@ public AbstractEvent(@NotNull final Event respondTo) {
 }
 ```
 
-`AbstractDomainEvent` 持有 entityIdPath（:47）、aggregateVersion（:51）及父类四元元数据；`respondTo` 构造器直接透传前置事件的 correlationId——若其为 `null`，追踪链中途断链。每个具体事件还需手写 `static final EventType EVENT_TYPE` 常量（core 测试 ACreatedEvent.java:44 模式）。
+`AbstractDomainEvent` 持有 entityIdPath（:47）、aggregateVersion（:51）及父类四元元数据；`respondTo` 构造器直接透传前置事件的
+correlationId——若其为 `null`，追踪链中途断链。每个具体事件还需手写 `static final EventType EVENT_TYPE` 常量（core 测试
+ACreatedEvent.java:44 模式）。
 
 ## 优点（值得借鉴的）
 
@@ -70,7 +76,8 @@ public AbstractEvent(@NotNull final Event respondTo) {
 - **core 完全没有分发机制**：全仓库无 DomainEventPublisher/EventPublisher，进程内订阅无 SPI，事件只能经 Repository 落库或外部总线。
 - `AbstractDomainEvent` 不在 core：jackson/jaxb/jsonb 三模块各一份拷贝（Builder 也三份），基类与序列化格式耦合。
 - `respondTo` 构造器直接透传 `getCorrelationId()`（jackson AbstractEvent.java:82），前置事件未携带时链路静默断链，无兜底。
-- 核心契约绑第三方：接口标 `jakarta.validation` 注解、`EventType` 继承 objects4j `AbstractStringValueObject`（EventType.java:22-32）。
+- 核心契约绑第三方：接口标 `jakarta.validation` 注解、`EventType` 继承 objects4j `AbstractStringValueObject`
+  （EventType.java:22-32）。
 - 事件类型靠每事件手写 `EVENT_TYPE` 常量返回（ACreatedEvent.java:44），无框架级自动派生/缓存，样板多。
 
 ## ddd4j 自研决策
@@ -79,18 +86,24 @@ public AbstractEvent(@NotNull final Event respondTo) {
 
 - **借鉴（新增）**：无——fuin 的 API 形态 ddd4j 已全部覆盖。
 - **已对齐（对等）**：
-  - 元数据五件套：ddd4j `Event`（`io/ddd4j/core/ddd/event/Event.java:9-36`）与 fuin Event.java:29-69 逐方法对等，correlationId/causationId/eventTimestamp 均在（fuin 并不缺这三个字段）；
-  - 聚合定位：entityIdPath/aggregateVersion/getAggregateVersionInteger（ddd4j DomainEvent.java:97-101、:236-249 ↔ fuin DomainEvent.java:37-61）；
-  - 因果构造器 `DomainEvent(EntityIdPath, Event respondTo)`（ddd4j DomainEvent.java:139-145 ↔ fuin jackson AbstractDomainEvent.java:77-80）。
+    - 元数据五件套：ddd4j `Event`（`io/ddd4j/core/ddd/event/Event.java:9-36`）与 fuin Event.java:29-69
+      逐方法对等，correlationId/causationId/eventTimestamp 均在（fuin 并不缺这三个字段）；
+    - 聚合定位：entityIdPath/aggregateVersion/getAggregateVersionInteger（ddd4j DomainEvent.java:97-101、:236-249 ↔ fuin
+      DomainEvent.java:37-61）；
+    - 因果构造器 `DomainEvent(EntityIdPath, Event respondTo)`（ddd4j DomainEvent.java:139-145 ↔ fuin jackson
+      AbstractDomainEvent.java:77-80）。
 - **超出**：
-  - **分发 SPI 整套**：`publish()`（DomainEvent.java:318-322，经 `Contexts` 查找注入）+ `DomainEventPublisher`（publish/publish(Object)/publishAll，DomainEventPublisher.java:18-48）+ `NoopDomainEventPublisher` 单例兜底（NoopDomainEventPublisher.java:20-35）——fuin 一样都没有；
-  - **EventType 自动派生 + ClassValue 缓存**（DomainEvent.java:54-59、:163-165）：零手写常量、零重复分配；fuin 每事件手写 `EVENT_TYPE`；
-  - **因果兜底**：correlationId 为 null 时复制前置事件 eventId（DomainEvent.java:142-143），链条永不断；fuin 直接透传；
-  - **多租户/策略过滤**：`tenantIn`/`supports`（DomainEvent.java:279-306），fuin 无对应物。
+    - **分发 SPI 整套**：`publish()`（DomainEvent.java:318-322，经 `Contexts` 查找注入）+ `DomainEventPublisher`
+      （publish/publish (Object)/publishAll，DomainEventPublisher.java:18-48）+ `NoopDomainEventPublisher`
+      单例兜底（NoopDomainEventPublisher.java:20-35）——fuin 一样都没有；
+    - **EventType 自动派生 + ClassValue 缓存**（DomainEvent.java:54-59、:163-165）：零手写常量、零重复分配；fuin 每事件手写
+      `EVENT_TYPE`；
+    - **因果兜底**：correlationId 为 null 时复制前置事件 eventId（DomainEvent.java:142-143），链条永不断；fuin 直接透传；
+    - **多租户/策略过滤**：`tenantIn`/`supports`（DomainEvent.java:279-306），fuin 无对应物。
 - **不借鉴**：
-  - `AbstractDomainEvent` 三模块拷贝模式——ddd4j 单一抽象基类（DomainEvent.java:49），Jackson 注解内联，无 Builder 样板；
-  - `jakarta.validation`/objects4j 依赖——违背 ddd4j-core 零第三方依赖（ADR-0002）；
-  - 手写 `EVENT_TYPE` 常量模式——ClassValue 已替代。
+    - `AbstractDomainEvent` 三模块拷贝模式——ddd4j 单一抽象基类（DomainEvent.java:49），Jackson 注解内联，无 Builder 样板；
+    - `jakarta.validation`/objects4j 依赖——违背 ddd4j-core 零第三方依赖（ADR-0002）；
+    - 手写 `EVENT_TYPE` 常量模式——ClassValue 已替代。
 
 ## 落地计划
 

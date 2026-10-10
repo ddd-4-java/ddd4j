@@ -40,14 +40,6 @@ public final class Ddd4jMicronautContext {
         this.subject = Objects.requireNonNull(subject, "subject must not be null");
     }
 
-    public WebRequestContext requestContext() {
-        return requestContext;
-    }
-
-    public Optional<Subject> subject() {
-        return subject;
-    }
-
     public static Optional<Ddd4jMicronautContext> current() {
         Ddd4jMicronautContext current = CURRENT.get();
         if (Objects.nonNull(current)) {
@@ -75,6 +67,14 @@ public final class Ddd4jMicronautContext {
         } else {
             set(previous);
         }
+    }
+
+    public WebRequestContext requestContext() {
+        return requestContext;
+    }
+
+    public Optional<Subject> subject() {
+        return subject;
     }
 
     public WebContextScope openContext() {

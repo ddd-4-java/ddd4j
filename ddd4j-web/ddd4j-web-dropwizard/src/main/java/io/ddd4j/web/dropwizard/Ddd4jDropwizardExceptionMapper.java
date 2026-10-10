@@ -17,6 +17,7 @@ package io.ddd4j.web.dropwizard;
 import io.ddd4j.web.core.error.WebError;
 import io.ddd4j.web.core.error.WebExceptionTranslator;
 import io.ddd4j.web.error.BaseErrorConfiguration;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;

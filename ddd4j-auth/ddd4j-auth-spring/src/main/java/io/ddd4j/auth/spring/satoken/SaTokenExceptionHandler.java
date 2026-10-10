@@ -1,7 +1,7 @@
 package io.ddd4j.auth.spring.satoken;
 
 import cn.dev33.satoken.exception.SaTokenException;
-import io.ddd4j.core.ApiRestResponse;
+import io.ddd4j.core.api.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class SaTokenExceptionHandler {
 
     @ExceptionHandler(SaTokenException.class)
-    public ResponseEntity<ApiRestResponse<String>> accessDeniedException(SaTokenException exception) {
+    public ResponseEntity<R<String>> accessDeniedException(SaTokenException exception) {
         log.warn("Sa-Token 鉴权异常：code={}, msg={}", exception.getCode(), exception.getMessage());
-        return new ResponseEntity<>(ApiRestResponse.of(exception.getCode(), exception.getMessage()),
+        return new ResponseEntity<>(R.fail(exception.getCode(), exception.getMessage()),
                 HttpStatus.UNAUTHORIZED);
     }
 }

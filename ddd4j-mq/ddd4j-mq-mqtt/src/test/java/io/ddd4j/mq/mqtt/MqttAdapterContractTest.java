@@ -31,11 +31,9 @@ import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentCaptor.forClass;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.*;
 
 class MqttAdapterContractTest {
 
@@ -64,8 +62,14 @@ class MqttAdapterContractTest {
         Method method = FailingHandler.class.getMethod("handle", MQEvent.class);
         MQListener listener = MQListener.of(handler, method, method.getAnnotation(MQEventListener.class));
         client.init(Collections.singletonList(listener), properties, new MQEventSerialization() {
-            @Override @SuppressWarnings("unchecked") public <T> T serialize(Object event) { return (T) "{}"; }
-            @Override public <S, T> T deserialize(S value, Class<T> type) {
+            @Override
+            @SuppressWarnings("unchecked")
+            public <T> T serialize(Object event) {
+                return (T) "{}";
+            }
+
+            @Override
+            public <S, T> T deserialize(S value, Class<T> type) {
                 MQEvent event = new MQEvent();
                 event.setTopic("orders");
                 return type.cast(event);

@@ -14,18 +14,9 @@
  */
 package io.ddd4j.data.event.store.esdb;
 
-import com.eventstore.dbclient.AppendToStreamOptions;
-import com.eventstore.dbclient.EventData;
-import com.eventstore.dbclient.EventStoreDBClient;
-import com.eventstore.dbclient.ExpectedRevision;
-import com.eventstore.dbclient.StreamNotFoundException;
-import com.eventstore.dbclient.WrongExpectedVersionException;
+import com.eventstore.dbclient.*;
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
-import io.ddd4j.core.ddd.event.AggregateRootId;
-import io.ddd4j.core.ddd.event.DomainEvent;
-import io.ddd4j.core.ddd.event.EntityIdPath;
-import io.ddd4j.core.ddd.event.EntityType;
-import io.ddd4j.core.ddd.event.StringEntityType;
+import io.ddd4j.core.ddd.event.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -33,24 +24,30 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-/** ESDB 强类型 EventStore 的单元契约。 */
+/**
+ * ESDB 强类型 EventStore 的单元契约。
+ */
 @ExtendWith(MockitoExtension.class)
 class EsdbEventStoreTest {
     private static final String ORDER_TYPE = "Order";
-    @Mock EventStoreDBClient client;
-    @Captor ArgumentCaptor<String> streamCaptor;
+    @Mock
+    EventStoreDBClient client;
+    @Captor
+    ArgumentCaptor<String> streamCaptor;
+
+    private static <T> java.util.concurrent.CompletableFuture<T> failedFuture(Throwable ex) {
+        java.util.concurrent.CompletableFuture<T> f = new java.util.concurrent.CompletableFuture<>();
+        f.completeExceptionally(ex);
+        return f;
+    }
 
     @Test
     void expectedRevisionShouldFollowCoreCurrentVersionContract() {
@@ -58,12 +55,6 @@ class EsdbEventStoreTest {
         assertThat(EsdbEventStore.toExpectedRevision(3)).isEqualTo(ExpectedRevision.expectedRevision(2));
     }
 
-
-    private static <T> java.util.concurrent.CompletableFuture<T> failedFuture(Throwable ex) {
-        java.util.concurrent.CompletableFuture<T> f = new java.util.concurrent.CompletableFuture<>();
-        f.completeExceptionally(ex);
-        return f;
-    }
     @Test
     void appendShouldUseAggregateTypeInStreamAndPreserveCoreEventIdentity() {
         TestId id = new TestId("order-1");
@@ -104,17 +95,49 @@ class EsdbEventStoreTest {
     static final class TestId implements AggregateRootId {
         private static final EntityType TYPE = new StringEntityType("Order");
         private final String value;
-        TestId(String value) { this.value = value; }
-        @Override public EntityType getType() { return TYPE; }
-        @Override public String asString() { return value; }
-        @Override public String asTypedString() { return TYPE.asString() + ":" + value; }
-        @Override public boolean equals(Object o) { return this == o || (o instanceof TestId && java.util.Objects.equals(value, ((TestId)o).value)); }
-        @Override public int hashCode() { return java.util.Objects.hashCode(value); }
-        @Override public String toString() { return "TestId{" + value + "}"; }
+
+        TestId(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public EntityType getType() {
+            return TYPE;
+        }
+
+        @Override
+        public String asString() {
+            return value;
+        }
+
+        @Override
+        public String asTypedString() {
+            return TYPE.asString() + ":" + value;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || (o instanceof TestId && java.util.Objects.equals(value, ((TestId) o).value));
+        }
+
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hashCode(value);
+        }
+
+        @Override
+        public String toString() {
+            return "TestId{" + value + "}";
+        }
     }
 
     static final class TestEvent extends DomainEvent<TestId> {
-        TestEvent() { super(); }
-        TestEvent(TestId id) { super(new EntityIdPath(id)); }
+        TestEvent() {
+            super();
+        }
+
+        TestEvent(TestId id) {
+            super(new EntityIdPath(id));
+        }
     }
 }

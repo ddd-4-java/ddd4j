@@ -16,6 +16,7 @@ package io.ddd4j.core.auth.event;
 
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.auth.AuthRequest;
+import lombok.Getter;
 
 import java.time.Instant;
 import java.util.Objects;
@@ -37,34 +38,46 @@ import java.util.Objects;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.0.0
  */
+@Getter
 public final class AuthSucceededEvent {
+    /**
+     * 登录请求。
+     */
     private final AuthRequest request;
+    /**
+     * 登录凭证。
+     */
     private final AuthPrincipal principal;
+    /**
+     * 登录令牌。
+     */
     private final String token;
+    /**
+     * 登录时间。
+     */
     private final Instant occurredAt;
 
-/**
- * 登录成功事件（通用鉴权事件）。
- *
- * <p>由具体 {@link io.ddd4j.core.subject.Subject} 实现在建立会话时发布。
- * 业务方可通过 {@link io.ddd4j.core.ddd.event.DomainEventPublisher} 订阅。
- *
- * <p>各框架适配层应负责把 ddd4j 通用事件桥接到本地事件总线：
- * <ul>
- *   <li>Spring：{@code SpringDomainEventPublisher} 解包 DomainEvent 后 publishEvent</li>
- *   <li>Quarkus：CDI {@code Event<LoginSucceededEvent>}</li>
- *   <li>Guice：Guava EventBus</li>
- *   <li>Javalin：业务方自定义</li>
- * </ul>
- *
+    /**
+     * 登录成功事件（通用鉴权事件）。
+     *
+     * <p>由具体 {@link io.ddd4j.core.subject.Subject} 实现在建立会话时发布。
+     * 业务方可通过 {@link io.ddd4j.core.ddd.event.DomainEventPublisher} 订阅。
+     *
+     * <p>各框架适配层应负责把 ddd4j 通用事件桥接到本地事件总线：
+     * <ul>
+     *   <li>Spring：{@code SpringDomainEventPublisher} 解包 DomainEvent 后 publishEvent</li>
+     *   <li>Quarkus：CDI {@code Event<LoginSucceededEvent>}</li>
+     *   <li>Guice：Guava EventBus</li>
+     *   <li>Javalin：业务方自定义</li>
+     * </ul>
+     *
  * @param request 请求对象
  * @param principal 认证主体
  * @param token 令牌
  * @param occurredAt 发生时间
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.0.0
- */
-
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.0
+     */
     public AuthSucceededEvent(AuthRequest request, AuthPrincipal principal, String token, Instant occurredAt) {
 
         this.request = request;
@@ -108,23 +121,7 @@ public final class AuthSucceededEvent {
 
     @Override
     public String toString() {
-        return "AuthSucceededEvent[request=" + request + ", principal=" + principal
-                + ", token=" + token + ", occurredAt=" + occurredAt + ']';
+        return "AuthSucceededEvent[request=" + request + ", principal=" + principal + ", token=" + token + ", occurredAt=" + occurredAt + ']';
     }
 
-    public AuthRequest getRequest() {
-        return request;
-    }
-
-    public AuthPrincipal getPrincipal() {
-        return principal;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public Instant getOccurredAt() {
-        return occurredAt;
-    }
 }

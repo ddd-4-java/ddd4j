@@ -14,13 +14,9 @@
  */
 package io.ddd4j.extension.monitor.channel.wecom;
 
-import io.ddd4j.kit.lang.JsonKit;
 import io.ddd4j.extension.monitor.message.Message;
+import io.ddd4j.kit.lang.JsonKit;
 import lombok.extern.slf4j.Slf4j;
-
-import java.net.URI;
-import java.nio.charset.StandardCharsets;
-import java.time.Duration;
 
 /**
  * 企业微信群机器人 Webhook 客户端。
@@ -64,12 +60,16 @@ public class WeComClient {
         this.baseUrl = baseUrl;
     }
 
-    /** @return 配置的企业微信 webhook key */
+    /**
+     * @return 配置的企业微信 webhook key
+     */
     public String key() {
         return key;
     }
 
-    /** @return 当前生效的 webhook 基础地址（含 {@code ?key=}） */
+    /**
+     * @return 当前生效的 webhook 基础地址（含 {@code ?key=}）
+     */
     public String baseUrl() {
         return baseUrl;
     }

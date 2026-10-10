@@ -21,15 +21,11 @@ import io.ddd4j.cache.subject.InMemorySubject;
 import io.ddd4j.cache.subject.InMemorySubjectProvider;
 import io.ddd4j.core.cqrs.command.DefaultCommandBus;
 import io.ddd4j.core.i18n.I18nProvider;
-import io.ddd4j.dropwizard.DropwizardDomainEventPublisher;
 import io.ddd4j.dropwizard.Ddd4jDropwizardRuntime;
+import io.ddd4j.dropwizard.DropwizardDomainEventPublisher;
 import io.ddd4j.sample.order.application.OrderApplicationService;
 import io.ddd4j.sample.order.local.InMemoryOrderAdapters;
-import io.ddd4j.web.dropwizard.Ddd4jDropwizardExceptionMapper;
-import io.ddd4j.web.dropwizard.Ddd4jDropwizardIllegalStateExceptionMapper;
-import io.ddd4j.web.dropwizard.Ddd4jDropwizardRequestFilter;
-import io.ddd4j.web.dropwizard.Ddd4jDropwizardResponseFilter;
-import io.ddd4j.web.dropwizard.Ddd4jDropwizardWebConfiguration;
+import io.ddd4j.web.dropwizard.*;
 import io.dropwizard.testing.junit5.ResourceExtension;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -49,11 +45,9 @@ class DropwizardOrderResourceTest {
 
     private static final String IDEMPOTENCY_CACHE_NAME = "ddd4j-web-idempotency";
     private static final long IDEMPOTENCY_CACHE_TTL_SECONDS = 300L;
-    private static boolean resourcesStarted;
-
     private static final InMemorySubjectProvider SUBJECT_PROVIDER = new InMemorySubjectProvider(
             new InMemorySubject(event -> {
-    }));
+            }));
     private static final Ddd4jDropwizardRuntime RUNTIME = new Ddd4jDropwizardRuntime(
             new DropwizardDomainEventPublisher(Collections.emptyList()), SUBJECT_PROVIDER, I18nProvider.DEFAULT,
             new DefaultCommandBus(Collections.emptyList()));
@@ -67,7 +61,7 @@ class DropwizardOrderResourceTest {
             .addProvider(new Ddd4jDropwizardExceptionMapper())
             .addProvider(new Ddd4jDropwizardIllegalStateExceptionMapper())
             .build();
-
+    private static boolean resourcesStarted;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeAll
@@ -88,6 +82,12 @@ class DropwizardOrderResourceTest {
                 RESOURCES.after();
             }
         }
+    }
+
+    private static Ddd4jDropwizardWebConfiguration webConfiguration() {
+        Ddd4jDropwizardWebConfiguration configuration = new Ddd4jDropwizardWebConfiguration();
+        configuration.setPublicPaths(Arrays.asList("/health", "/healthcheck/**", "/api/auth/**"));
+        return configuration;
     }
 
     @Test
@@ -117,12 +117,6 @@ class DropwizardOrderResourceTest {
         String paidBody = readAndClose(paid);
         assertThat(paid.getStatus()).withFailMessage(paidBody).isEqualTo(200);
         assertThat(objectMapper.readTree(paidBody).path("data").path("status").asText()).isEqualTo("PAID");
-    }
-
-    private static Ddd4jDropwizardWebConfiguration webConfiguration() {
-        Ddd4jDropwizardWebConfiguration configuration = new Ddd4jDropwizardWebConfiguration();
-        configuration.setPublicPaths(Arrays.asList("/health", "/healthcheck/**", "/api/auth/**"));
-        return configuration;
     }
 
     private String issueToken() throws Exception {

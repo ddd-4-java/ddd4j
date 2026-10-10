@@ -15,36 +15,25 @@
 package io.ddd4j.web.javalin;
 
 import io.ddd4j.core.context.ThreadContext;
-import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.core.health.RuntimeReadinessRegistry;
+import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.web.core.auth.AuthenticationMode;
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
-import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
 import io.ddd4j.web.core.auth.PathWebAccessPolicy;
-import io.ddd4j.web.core.health.ReadinessEndpoint;
-import io.ddd4j.web.core.health.ReadinessResponse;
-import io.ddd4j.web.core.context.WebContextScope;
+import io.ddd4j.web.core.context.*;
+import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
 import io.ddd4j.web.core.error.WebError;
 import io.ddd4j.web.core.error.WebExceptionTranslator;
-import io.ddd4j.web.core.context.WebHeaders;
+import io.ddd4j.web.core.health.ReadinessEndpoint;
+import io.ddd4j.web.core.health.ReadinessResponse;
 import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.web.core.observability.WebOtelSupport;
-import io.ddd4j.web.core.context.WebRequestContext;
-import io.ddd4j.web.core.context.WebRequestContextFactory;
-import io.ddd4j.web.core.context.WebRequestData;
-import io.ddd4j.web.core.context.WebRequestLifecycle;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * 在 Javalin 创建阶段安装统一请求上下文、Bearer Subject、异常与幂等处理链。
@@ -67,7 +56,7 @@ public final class Ddd4jJavalinWeb {
     public Ddd4jJavalinWeb() {
         this(new WebRequestContextFactory(), new WebRequestLifecycle(new BearerSubjectAuthenticator(),
                         new PathWebAccessPolicy(Arrays.asList("/health", "/health/readiness", "/health/liveness",
-                                        ReadinessEndpoint.PATH),
+                                ReadinessEndpoint.PATH),
                                 AuthenticationMode.REQUIRED)),
                 new DefaultWebExceptionTranslator(), null, new RuntimeReadinessRegistry());
     }
@@ -80,7 +69,7 @@ public final class Ddd4jJavalinWeb {
     public Ddd4jJavalinWeb(RuntimeReadinessRegistry readinessRegistry) {
         this(new WebRequestContextFactory(), new WebRequestLifecycle(new BearerSubjectAuthenticator(),
                         new PathWebAccessPolicy(Arrays.asList("/health", "/health/readiness", "/health/liveness",
-                                        ReadinessEndpoint.PATH),
+                                ReadinessEndpoint.PATH),
                                 AuthenticationMode.REQUIRED)),
                 new DefaultWebExceptionTranslator(), null, readinessRegistry);
     }
@@ -104,6 +93,23 @@ public final class Ddd4jJavalinWeb {
         RuntimeReadinessRegistry registry = Objects.requireNonNull(readinessRegistry,
                 "readinessRegistry must not be null");
         this.readinessEndpoint = new ReadinessEndpoint(() -> registry.readiness().ready());
+    }
+
+    private static Map<String, String> extractHeaders(Context context) {
+        Map<String, String> headers = new HashMap<>();
+        context.headerMap().forEach((k, v) -> {
+            if (Objects.nonNull(v)) {
+                headers.put(k, v);
+            }
+        });
+        return headers;
+    }
+
+    private static void closeScope(AutoCloseable scope) {
+        try {
+            scope.close();
+        } catch (Throwable ignored) {
+        }
     }
 
     public void configure(Javalin config) {
@@ -137,7 +143,7 @@ public final class Ddd4jJavalinWeb {
                     .ifPresent(authentication -> ThreadContext.bind(authentication.subject()));
             RequestState activeState = state;
             idempotencyLifecycle.flatMap(lifecycle -> lifecycle.open(requestContext,
-                        context.header(WebHeaders.IDEMPOTENCY_KEY))).ifPresent(activeState::idempotencyScope);
+                    context.header(WebHeaders.IDEMPOTENCY_KEY))).ifPresent(activeState::idempotencyScope);
         } catch (RuntimeException exception) {
             WebOtelSupport.recordError(span, exception);
             if (Objects.nonNull(state)) {
@@ -175,16 +181,6 @@ public final class Ddd4jJavalinWeb {
         closeContext(context, false);
     }
 
-    private static Map<String, String> extractHeaders(Context context) {
-        Map<String, String> headers = new HashMap<>();
-        context.headerMap().forEach((k, v) -> {
-            if (Objects.nonNull(v)) {
-                headers.put(k, v);
-            }
-        });
-        return headers;
-    }
-
     private WebRequestContext createContext(Context context) {
         return contextFactory.create(new WebRequestData(
                 context.header(WebHeaders.REQUEST_ID),
@@ -210,13 +206,6 @@ public final class Ddd4jJavalinWeb {
     private Locale resolveLocale(Context context) {
         String language = context.header("Accept-Language");
         return StrKit.isBlank(language) ? Locale.getDefault() : Locale.forLanguageTag(language.split(",", 2)[0]);
-    }
-
-    private static void closeScope(AutoCloseable scope) {
-        try {
-            scope.close();
-        } catch (Throwable ignored) {
-        }
     }
 
     private static final class RequestState {

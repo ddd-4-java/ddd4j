@@ -6,7 +6,9 @@ package io.ddd4j.mq.lifecycle;
 
 import java.util.Objects;
 
-/** MQ监听器初始化失败的安全诊断信息。 */
+/**
+ * MQ监听器初始化失败的安全诊断信息。
+ */
 public final class MQListenerInitializationFailure {
 
     private final String broker;
@@ -26,16 +28,51 @@ public final class MQListenerInitializationFailure {
         this.reason = Objects.requireNonNull(reason, "reason must not be null");
     }
 
-    public String broker() { return broker; }
-    public String topic() { return topic; }
-    public String group() { return group; }
-    public String listenerMethod() { return listenerMethod; }
-    public boolean required() { return required; }
-    public String reason() { return reason; }
-    public String getBroker() { return broker; }
-    public String getTopic() { return topic; }
-    public String getGroup() { return group; }
-    public String getListenerMethod() { return listenerMethod; }
-    public boolean isRequired() { return required; }
-    public String getReason() { return reason; }
+    public String broker() {
+        return broker;
+    }
+
+    public String topic() {
+        return topic;
+    }
+
+    public String group() {
+        return group;
+    }
+
+    public String listenerMethod() {
+        return listenerMethod;
+    }
+
+    public boolean required() {
+        return required;
+    }
+
+    public String reason() {
+        return reason;
+    }
+
+    public String getBroker() {
+        return broker;
+    }
+
+    public String getTopic() {
+        return topic;
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
+    public String getListenerMethod() {
+        return listenerMethod;
+    }
+
+    public boolean isRequired() {
+        return required;
+    }
+
+    public String getReason() {
+        return reason;
+    }
 }

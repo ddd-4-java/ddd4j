@@ -29,7 +29,15 @@ public class OutboxDispatchResult {
     int published;
     int failed;
 
-    public int attempted() { return attempted; }
-    public int published() { return published; }
-    public int failed() { return failed; }
+    public int attempted() {
+        return attempted;
+    }
+
+    public int published() {
+        return published;
+    }
+
+    public int failed() {
+        return failed;
+    }
 }

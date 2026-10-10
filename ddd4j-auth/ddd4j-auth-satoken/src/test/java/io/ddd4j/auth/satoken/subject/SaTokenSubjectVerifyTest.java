@@ -14,7 +14,6 @@
  */
 package io.ddd4j.auth.satoken.subject;
 
-import java.util.Collections;
 import cn.dev33.satoken.SaManager;
 import cn.dev33.satoken.config.SaTokenConfig;
 import cn.dev33.satoken.dao.SaTokenDao;
@@ -34,11 +33,11 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Verifies that {@link SaTokenSubject} authenticates the supplied token rather than request state.
@@ -173,7 +172,10 @@ class SaTokenSubjectVerifyTest {
         AuthPrincipal principal = principal("jwt-user");
         login(logic, principal);
         String forgedToken = cn.dev33.satoken.jwt.SaJwtUtil.createToken(logic.getLoginType(), principal.getLoginId(),
-                "default-device", 60L, new java.util.LinkedHashMap<String, Object>() {{ put("iss", "ddd4j-test"); put("aud", "unexpected"); }},
+                "default-device", 60L, new java.util.LinkedHashMap<String, Object>() {{
+                    put("iss", "ddd4j-test");
+                    put("aud", "unexpected");
+                }},
                 "ddd4j-satoken-subject-test-secret-32bytes");
         logic.saveTokenToIdMapping(forgedToken, principal.getLoginId(), 60L);
 

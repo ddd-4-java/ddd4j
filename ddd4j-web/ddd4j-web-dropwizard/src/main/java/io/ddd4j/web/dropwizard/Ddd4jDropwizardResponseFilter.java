@@ -18,6 +18,7 @@ import io.ddd4j.web.core.context.SynchronousWebRequestSession;
 import io.ddd4j.web.core.context.WebHeaders;
 import io.ddd4j.web.core.context.WebRequestContext;
 import io.ddd4j.web.core.observability.WebOtelSupport;
+
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
@@ -28,6 +29,15 @@ import java.util.Objects;
  * 回传请求标识，并按响应状态提交或释放幂等请求会话。
  */
 public final class Ddd4jDropwizardResponseFilter implements ContainerResponseFilter {
+
+    private static void closeScope(Object scope) {
+        if (scope instanceof AutoCloseable) {
+            try {
+                ((AutoCloseable) scope).close();
+            } catch (Throwable ignored) {
+            }
+        }
+    }
 
     @Override
     public void filter(ContainerRequestContext request, ContainerResponseContext response) {
@@ -54,15 +64,6 @@ public final class Ddd4jDropwizardResponseFilter implements ContainerResponseFil
             closeScope(scope);
             request.removeProperty(Ddd4jDropwizardRequestFilter.OTEL_SPAN_PROPERTY);
             request.removeProperty(Ddd4jDropwizardRequestFilter.OTEL_SCOPE_PROPERTY);
-        }
-    }
-
-    private static void closeScope(Object scope) {
-        if (scope instanceof AutoCloseable) {
-            try {
-                ((AutoCloseable) scope).close();
-            } catch (Throwable ignored) {
-            }
         }
     }
 }

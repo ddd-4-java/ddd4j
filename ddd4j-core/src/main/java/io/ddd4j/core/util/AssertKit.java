@@ -15,7 +15,7 @@
 package io.ddd4j.core.util;
 
 import io.ddd4j.core.api.IR;
-import io.ddd4j.core.api.ResultCode;
+import io.ddd4j.core.api.ApiCode;
 import io.ddd4j.core.exception.BizRuntimeException;
 import lombok.experimental.UtilityClass;
 
@@ -46,6 +46,7 @@ import java.util.function.Supplier;
  */
 @UtilityClass
 public class AssertKit {
+
     /**
      * 断言是否为真，如果为 {@code false} 抛出给定的异常<br>
      *
@@ -302,11 +303,11 @@ public class AssertKit {
     }
 
     public void hasValue(Object object, String ifEmpty, Object... params) {
-        hasValue(object, ResultCode.FAIL.getCode(), ifEmpty, params);
+        hasValue(object, ApiCode.FAIL.getCode(), ifEmpty, params);
     }
 
     public void hasValue(Object dontEmpty) {
-        hasValue(dontEmpty, ResultCode.FAIL.getCode(), "this object missing value");
+        hasValue(dontEmpty, ApiCode.FAIL.getCode(), "this object missing value");
     }
 
     public void mustEmpty(Object object, Integer code, String hasValue, Object... params) {
@@ -316,11 +317,11 @@ public class AssertKit {
     }
 
     public void mustEmpty(Object object, String hasValue, Object... params) {
-        mustEmpty(object, ResultCode.FAIL.getCode(), hasValue, params);
+        mustEmpty(object, ApiCode.FAIL.getCode(), hasValue, params);
     }
 
     public void mustEmpty(Object object) {
-        mustEmpty(object, ResultCode.FAIL.getCode(), "this object has value");
+        mustEmpty(object, ApiCode.FAIL.getCode(), "this object has value");
     }
 
     public <T> T isOk(IR r, Integer code, String ifNotOk, Object... params) {
@@ -331,11 +332,11 @@ public class AssertKit {
     }
 
     public <T> T isOk(IR r, String ifNotOk, Object... params) {
-        return isOk(r, ResultCode.FAIL.getCode(), ifNotOk, params);
+        return isOk(r, ApiCode.FAIL.getCode(), ifNotOk, params);
     }
 
     public <T> T isOk(IR r) {
-        return isOk(r, ResultCode.FAIL.getCode(), Objects.isNull(r) ? "this result missing value" : r.getMsg());
+        return isOk(r, ApiCode.FAIL.getCode(), Objects.isNull(r) ? "this result missing value" : r.getMsg());
     }
 
     public <T> T isOk(IR r, Supplier<String> notOk) {

@@ -14,11 +14,7 @@
  */
 package io.ddd4j.sample.javalin;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -26,10 +22,30 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
-/** JDK 8 compatible HTTP client used by the Javalin integration tests. */
+/**
+ * JDK 8 compatible HTTP client used by the Javalin integration tests.
+ */
 public final class TestHttpClient {
 
     private static final int TIMEOUT_MILLIS = 5000;
+
+    private static String read(InputStream input) throws IOException {
+        if (Objects.isNull(input)) {
+            return "";
+        }
+        StringBuilder body = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8))) {
+            String line;
+            while (Objects.nonNull(line = reader.readLine())) {
+                body.append(line);
+            }
+        }
+        return body.toString();
+    }
+
+    public static Map<String, String> noHeaders() {
+        return Collections.emptyMap();
+    }
 
     public HttpResponse<String> get(String url, Map<String, String> headers) throws IOException {
         return execute("GET", url, null, headers);
@@ -75,20 +91,6 @@ public final class TestHttpClient {
         return new HttpResponse<>(statusCode, responseBody, connection);
     }
 
-    private static String read(InputStream input) throws IOException {
-        if (Objects.isNull(input)) {
-            return "";
-        }
-        StringBuilder body = new StringBuilder();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8))) {
-            String line;
-            while (Objects.nonNull(line = reader.readLine())) {
-                body.append(line);
-            }
-        }
-        return body.toString();
-    }
-
     public static final class HttpResponse<T> {
 
         private final int statusCode;
@@ -112,9 +114,5 @@ public final class TestHttpClient {
         public String header(String name) {
             return connection.getHeaderField(name);
         }
-    }
-
-    public static Map<String, String> noHeaders() {
-        return Collections.emptyMap();
     }
 }

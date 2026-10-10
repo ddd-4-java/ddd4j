@@ -16,12 +16,7 @@ package io.ddd4j.extension.validation;
 
 import io.ddd4j.kit.lang.StrKit;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -47,6 +42,15 @@ public final class FileValidationPolicy {
         return new Builder();
     }
 
+    private static Set<String> immutableNormalized(Set<String> values) {
+        LinkedHashSet<String> normalized = values.stream()
+                .filter(Objects::nonNull)
+                .filter(StrKit::isNotBlank)
+                .map(value -> StrKit.trim(value).toLowerCase(Locale.ROOT))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+        return Collections.unmodifiableSet(normalized);
+    }
+
     public boolean isRequired() {
         return required;
     }
@@ -65,15 +69,6 @@ public final class FileValidationPolicy {
 
     public Set<String> getAllowedMimeTypes() {
         return allowedMimeTypes;
-    }
-
-    private static Set<String> immutableNormalized(Set<String> values) {
-        LinkedHashSet<String> normalized = values.stream()
-                .filter(Objects::nonNull)
-                .filter(StrKit::isNotBlank)
-                .map(value -> StrKit.trim(value).toLowerCase(Locale.ROOT))
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-        return Collections.unmodifiableSet(normalized);
     }
 
     /**

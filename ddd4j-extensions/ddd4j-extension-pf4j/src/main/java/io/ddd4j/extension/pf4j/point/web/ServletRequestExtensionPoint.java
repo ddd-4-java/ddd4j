@@ -14,10 +14,10 @@
  */
 package io.ddd4j.extension.pf4j.point.web;
 
-import javax.servlet.http.HttpServletRequest;
 import org.pf4j.ExtensionPoint;
 import org.springframework.http.RequestEntity;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 public interface ServletRequestExtensionPoint extends ExtensionPoint {

@@ -14,10 +14,9 @@
  */
 package io.ddd4j.core.health;
 
-import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
+import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

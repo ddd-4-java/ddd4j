@@ -14,14 +14,13 @@
  */
 package io.ddd4j.mq.delivery;
 
-import java.util.Collections;
-import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -29,6 +28,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class MQOutboxDispatcherTest {
 
     private static final Instant NOW = Instant.parse("2026-08-03T00:00:00Z");
+
+    private static MQOutboxRecord record(String messageId, int attempts) {
+        return new MQOutboxRecord(messageId, "orders.created", "{}", Collections.emptyMap(), MQOutboxStatus.LEASED,
+                NOW, "instance-a", NOW.plusSeconds(60), attempts, null, null);
+    }
 
     @Test
     void dispatch_shouldPublishOutsideStoreAndConfirmWithLeaseOwner() {
@@ -132,11 +136,6 @@ class MQOutboxDispatcherTest {
 
         assertThrows(IllegalArgumentException.class, () -> dispatcher.dispatch("", 1, NOW));
         assertThrows(IllegalArgumentException.class, () -> dispatcher.dispatch("instance-a", 0, NOW));
-    }
-
-    private static MQOutboxRecord record(String messageId, int attempts) {
-        return new MQOutboxRecord(messageId, "orders.created", "{}", Collections.emptyMap(), MQOutboxStatus.LEASED,
-                NOW, "instance-a", NOW.plusSeconds(60), attempts, null, null);
     }
 
     private static final class RecordingStore implements MQOutboxStore {

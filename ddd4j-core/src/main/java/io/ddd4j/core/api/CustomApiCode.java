@@ -12,21 +12,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.ddd4j.core;
-
-import io.ddd4j.core.constant.Constants;
+package io.ddd4j.core.api;
 
 /**
- * 自定义 API 错误码接口。
+ * 自定义 API 错误码接口（业务扩展点）。
  * <p>
- * 业务方可通过实现此接口定义自己的业务错误码枚举，
+ * 专门预留给下游业务使用：业务方可通过实现此接口定义自己的业务错误码枚举，
  * 与 {@link ApiCode} 标准错误码共同构成统一的错误码体系。
  * <p>
- * 所有错误码包含三个属性：
+ * 实现方只需提供两个属性：
  * <ul>
  *   <li>{@code code} — 数字错误码</li>
  *   <li>{@code reason} — 错误原因描述</li>
- *   <li>{@code status} — 响应状态标识（默认 success）</li>
+ * </ul>
+ * 即默认获得全部集成能力：
+ * <ul>
+ *   <li>{@code toResponse()} 系列 — 直接构建统一响应 {@link R}</li>
+ *   <li>可直接传入 BizRuntimeException 等核心异常的构造器</li>
  * </ul>
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
@@ -38,7 +40,7 @@ public interface CustomApiCode {
      *
      * @return 数字错误码
      */
-    int getCode();
+    Integer getCode();
 
     /**
      * 获取错误原因描述。
@@ -48,12 +50,31 @@ public interface CustomApiCode {
     String getReason();
 
     /**
-     * 获取响应状态标识。
-     *
-     * @return 状态标识（success / fail / error），默认 success
+     * 构建统一响应（code/reason 取自定义码）。
      */
-    default String getStatus() {
-        return Constants.RT_SUCCESS;
+    default <T> R<T> toResponse() {
+        return R.of(this);
+    }
+
+    /**
+     * 构建统一响应，覆盖消息。
+     */
+    default <T> R<T> toResponse(String message) {
+        return new R<>(getCode(), message, null);
+    }
+
+    /**
+     * 构建统一响应，携带数据。
+     */
+    default <T> R<T> toResponse(T data) {
+        return R.of(this, data);
+    }
+
+    /**
+     * 构建统一响应，覆盖消息并携带数据。
+     */
+    default <T> R<T> toResponse(String message, T data) {
+        return new R<>(getCode(), message, data);
     }
 
 }

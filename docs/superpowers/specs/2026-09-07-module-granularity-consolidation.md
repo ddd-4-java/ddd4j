@@ -55,17 +55,17 @@ flowchart LR
 
 对象数量只是筛选条件，不是删除条件。对 1.0.x 全部 0–3 个生产对象模块逐个检查后，分类如下：
 
-| 类型 | 代表模块 | 决策 | 依据 |
-|---|---|---|---|
-| 框架/厂商适配器 | `ddd4j-data-cqrs-*`、`ddd4j-data-projection-*`、`ddd4j-auth-shiro`、`ddd4j-mq-*` | 保留 | 隔离第三方依赖、框架版本和可选能力；对象少但边界真实 |
-| 持久化适配器 | `ddd4j-data-event-store-*`、`ddd4j-data-projection-jdbi/jpa/r2dbc` | 保留 | 隔离数据库驱动、ORM/响应式栈和事务语义 |
-| 可复用测试边界 | `ddd4j-sample-order-testkit` | 保留 | 发布可复用契约测试，不属于生产 core |
-| 框架无关 CQRS 注册能力 | `ddd4j-data-cqrs` | 合并到 core | 无独立依赖、生命周期或发布价值，且仅两个对象 |
-| 框架无关 runtime readiness | `ddd4j-runtime-support` | 合并到 core | 无外部依赖或独立生命周期，20 个调用点均可直接复用 core |
-| 响应式投影核心 | `ddd4j-data-projection` | 保留 | 独立隔离 Reactor API；合并到 core 会反向污染 core |
-| 日志切面 | `ddd4j-data-logs` | 保留 | 隔离 AspectJ、Servlet/Web 等横切依赖 |
-| 数据权限契约 | `ddd4j-data-datascope` | 保留 | 隔离 Bean Validation API，并被 MyBatis 插件等数据层消费者复用 |
-| 指标适配 | `ddd4j-metrics` | 保留 | `OpenTelemetryProjectionMetrics` 是 OTel 厂商适配器，隔离可选 OTel API |
+| 类型                       | 代表模块                                                                         | 决策        | 依据                                                                   |
+|----------------------------|----------------------------------------------------------------------------------|-------------|------------------------------------------------------------------------|
+| 框架/厂商适配器            | `ddd4j-data-cqrs-*`、`ddd4j-data-projection-*`、`ddd4j-auth-shiro`、`ddd4j-mq-*` | 保留        | 隔离第三方依赖、框架版本和可选能力；对象少但边界真实                   |
+| 持久化适配器               | `ddd4j-data-event-store-*`、`ddd4j-data-projection-jdbi/jpa/r2dbc`               | 保留        | 隔离数据库驱动、ORM/响应式栈和事务语义                                 |
+| 可复用测试边界             | `ddd4j-sample-order-testkit`                                                     | 保留        | 发布可复用契约测试，不属于生产 core                                    |
+| 框架无关 CQRS 注册能力     | `ddd4j-data-cqrs`                                                                | 合并到 core | 无独立依赖、生命周期或发布价值，且仅两个对象                           |
+| 框架无关 runtime readiness | `ddd4j-runtime-support`                                                          | 合并到 core | 无外部依赖或独立生命周期，20 个调用点均可直接复用 core                 |
+| 响应式投影核心             | `ddd4j-data-projection`                                                          | 保留        | 独立隔离 Reactor API；合并到 core 会反向污染 core                      |
+| 日志切面                   | `ddd4j-data-logs`                                                                | 保留        | 隔离 AspectJ、Servlet/Web 等横切依赖                                   |
+| 数据权限契约               | `ddd4j-data-datascope`                                                           | 保留        | 隔离 Bean Validation API，并被 MyBatis 插件等数据层消费者复用          |
+| 指标适配                   | `ddd4j-metrics`                                                                  | 保留        | `OpenTelemetryProjectionMetrics` 是 OTel 厂商适配器，隔离可选 OTel API |
 
 ## 版本边界
 

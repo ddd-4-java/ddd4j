@@ -146,9 +146,17 @@ public class OrderApplicationService {
         String buyerId;
         String buyerName;
 
-        public String orderNo() { return orderNo; }
-        public String buyerId() { return buyerId; }
-        public String buyerName() { return buyerName; }
+        public String orderNo() {
+            return orderNo;
+        }
+
+        public String buyerId() {
+            return buyerId;
+        }
+
+        public String buyerName() {
+            return buyerName;
+        }
     }
 
     /**
@@ -168,10 +176,24 @@ public class OrderApplicationService {
         int quantity;
         BigDecimal unitPrice;
 
-        public String orderId() { return orderId; }
-        public String goodsId() { return goodsId; }
-        public String goodsName() { return goodsName; }
-        public int quantity() { return quantity; }
-        public BigDecimal unitPrice() { return unitPrice; }
+        public String orderId() {
+            return orderId;
+        }
+
+        public String goodsId() {
+            return goodsId;
+        }
+
+        public String goodsName() {
+            return goodsName;
+        }
+
+        public int quantity() {
+            return quantity;
+        }
+
+        public BigDecimal unitPrice() {
+            return unitPrice;
+        }
     }
 }

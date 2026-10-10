@@ -14,10 +14,10 @@
  */
 package io.ddd4j.runtime.testkit;
 
-import java.util.Collections;
-import java.util.HashMap;
 import io.ddd4j.core.health.ReadinessReport;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;

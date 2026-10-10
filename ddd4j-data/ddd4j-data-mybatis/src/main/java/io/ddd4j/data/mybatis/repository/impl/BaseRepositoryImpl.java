@@ -14,8 +14,8 @@
  */
 package io.ddd4j.data.mybatis.repository.impl;
 
-import io.ddd4j.data.mybatis.repository.MybatisAggregateRepository;
 import io.ddd4j.data.mybatis.mapper.Ddd4jMapper;
+import io.ddd4j.data.mybatis.repository.MybatisAggregateRepository;
 
 /**
  * 业务方入口基类（对齐 mybatisplus 模块的 BaseRepositoryImpl）。

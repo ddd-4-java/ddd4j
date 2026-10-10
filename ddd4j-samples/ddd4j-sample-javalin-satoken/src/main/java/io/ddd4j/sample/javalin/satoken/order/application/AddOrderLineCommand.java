@@ -36,9 +36,23 @@ public class AddOrderLineCommand {
     int quantity;
     BigDecimal unitPrice;
 
-    public String orderId() { return orderId; }
-    public String goodsId() { return goodsId; }
-    public String goodsName() { return goodsName; }
-    public int quantity() { return quantity; }
-    public BigDecimal unitPrice() { return unitPrice; }
+    public String orderId() {
+        return orderId;
+    }
+
+    public String goodsId() {
+        return goodsId;
+    }
+
+    public String goodsName() {
+        return goodsName;
+    }
+
+    public int quantity() {
+        return quantity;
+    }
+
+    public BigDecimal unitPrice() {
+        return unitPrice;
+    }
 }

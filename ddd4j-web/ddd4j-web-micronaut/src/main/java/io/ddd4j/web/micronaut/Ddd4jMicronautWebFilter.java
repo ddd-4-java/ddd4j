@@ -16,24 +16,17 @@ package io.ddd4j.web.micronaut;
 
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator.Authentication;
-import io.ddd4j.web.core.idempotency.CacheIdempotencyGuard;
-import io.ddd4j.web.core.context.ClientIpResolver;
 import io.ddd4j.web.core.auth.PathWebAccessPolicy;
-import io.ddd4j.web.core.context.RequestIdGenerator;
-import io.ddd4j.web.core.context.WebHeaders;
+import io.ddd4j.web.core.context.*;
+import io.ddd4j.web.core.idempotency.CacheIdempotencyGuard;
 import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.web.core.observability.WebOtelSupport;
-import io.ddd4j.web.core.context.WebRequestContext;
-import io.ddd4j.web.core.context.WebRequestContextFactory;
-import io.ddd4j.web.core.context.WebRequestData;
-import io.ddd4j.web.core.context.WebRequestLifecycle;
-import io.ddd4j.web.core.context.WebContextScope;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.Filter;
-import io.micronaut.http.filter.HttpFilter;
 import io.micronaut.http.filter.FilterChain;
+import io.micronaut.http.filter.HttpFilter;
 import io.micronaut.scheduling.instrument.Instrumentation;
 import io.micronaut.scheduling.instrument.InvocationInstrumenter;
 import io.micronaut.scheduling.instrument.ReactiveInvocationInstrumenterFactory;
@@ -43,17 +36,14 @@ import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 
 import java.net.InetSocketAddress;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Micronaut 4 Filter Method 请求上下文、Bearer Subject 与幂等适配器。
  *
  * <p>集成 OTel 分布式追踪：通过 {@link WebOtelSupport} 反射调用 WebOtelIntegration。
- */@Filter("/**")
+ */
+@Filter("/**")
 public final class Ddd4jMicronautWebFilter implements HttpFilter {
 
     private final WebRequestContextFactory contextFactory;
@@ -71,7 +61,7 @@ public final class Ddd4jMicronautWebFilter implements HttpFilter {
                 new PathWebAccessPolicy(config.getPublicPaths(), config.getDefaultAuthenticationMode()));
         this.idempotencyLifecycle = config.isIdempotencyEnabled()
                 ? Optional.of(new WebIdempotencyLifecycle(
-                        new CacheIdempotencyGuard(config.getIdempotencyCacheName()), config.getIdempotencyTtl()))
+                new CacheIdempotencyGuard(config.getIdempotencyCacheName()), config.getIdempotencyTtl()))
                 : Optional.empty();
     }
 
@@ -80,6 +70,23 @@ public final class Ddd4jMicronautWebFilter implements HttpFilter {
         this.contextFactory = Objects.requireNonNull(contextFactory, "contextFactory must not be null");
         this.requestLifecycle = Objects.requireNonNull(requestLifecycle, "requestLifecycle must not be null");
         this.idempotencyLifecycle = Optional.ofNullable(idempotencyLifecycle);
+    }
+
+    private static void closeScope(AutoCloseable scope) {
+        try {
+            scope.close();
+        } catch (Throwable ignored) {
+        }
+    }
+
+    private static Map<String, String> extractRequestHeaders(HttpRequest<?> request) {
+        Map<String, String> headers = new HashMap<>();
+        request.getHeaders().forEach((k, v) -> {
+            if (Objects.nonNull(v) && !v.isEmpty()) {
+                headers.put(k, v.get(0));
+            }
+        });
+        return headers;
     }
 
     @Override
@@ -137,23 +144,6 @@ public final class Ddd4jMicronautWebFilter implements HttpFilter {
             Ddd4jMicronautContext.clear();
             throw exception;
         }
-    }
-
-    private static void closeScope(AutoCloseable scope) {
-        try {
-            scope.close();
-        } catch (Throwable ignored) {
-        }
-    }
-
-    private static Map<String, String> extractRequestHeaders(HttpRequest<?> request) {
-        Map<String, String> headers = new HashMap<>();
-        request.getHeaders().forEach((k, v) -> {
-            if (Objects.nonNull(v) && !v.isEmpty()) {
-                headers.put(k, v.get(0));
-            }
-        });
-        return headers;
     }
 
     private WebRequestContext createContext(HttpRequest<?> request) {

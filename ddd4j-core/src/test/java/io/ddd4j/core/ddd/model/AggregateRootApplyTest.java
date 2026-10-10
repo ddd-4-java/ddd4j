@@ -174,7 +174,7 @@ class AggregateRootApplyTest {
             public String asTypedString() {
                 return TYPE.asString() + ":" + value;
             }
-        
+
     }
     }
 

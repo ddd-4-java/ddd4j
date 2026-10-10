@@ -16,6 +16,7 @@
 package io.ddd4j.extension.qlexpress.model;
 
 import java.util.Objects;
+
 /**
  * 不抛出异常的表达式执行结果。
  *
@@ -24,7 +25,7 @@ import java.util.Objects;
  * <p>{@code errorCode} — 异常类型
  * <p>{@code errorMessage} — 异常消息
  * <p>{@code elapsedNanos} — 执行耗时，单位纳秒
- * @param <T>           结果类型
+ * @param <T>          结果类型
  */
 public final class QLExpressExecutionResult<T> {
 
@@ -35,7 +36,7 @@ public final class QLExpressExecutionResult<T> {
     private final long elapsedNanos;
 
     public QLExpressExecutionResult(boolean success, T value, String errorCode,
-                                     String errorMessage, long elapsedNanos) {
+                                    String errorMessage, long elapsedNanos) {
         this.success = success;
         this.value = value;
         this.errorCode = errorCode;
@@ -52,11 +53,25 @@ public final class QLExpressExecutionResult<T> {
         return new QLExpressExecutionResult<T>(false, null, errorCode, errorMessage, elapsedNanos);
     }
 
-    public boolean success() { return success; }
-    public T value() { return value; }
-    public String errorCode() { return errorCode; }
-    public String errorMessage() { return errorMessage; }
-    public long elapsedNanos() { return elapsedNanos; }
+    public boolean success() {
+        return success;
+    }
+
+    public T value() {
+        return value;
+    }
+
+    public String errorCode() {
+        return errorCode;
+    }
+
+    public String errorMessage() {
+        return errorMessage;
+    }
+
+    public long elapsedNanos() {
+        return elapsedNanos;
+    }
 
     public boolean isSuccess() {
         return success;
@@ -77,6 +92,7 @@ public final class QLExpressExecutionResult<T> {
     public long getElapsedNanos() {
         return elapsedNanos;
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

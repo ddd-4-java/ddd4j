@@ -18,12 +18,12 @@ import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.web.webmvc.annotation.FeignHeader;
-import javax.servlet.http.HttpServletRequest;
 import org.springframework.core.Ordered;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
 
 import static io.ddd4j.core.constant.ContextConstants.SYSTEM_ID;

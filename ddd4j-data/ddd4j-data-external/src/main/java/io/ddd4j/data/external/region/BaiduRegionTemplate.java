@@ -14,6 +14,8 @@
  */
 package io.ddd4j.data.external.region;
 
+import cn.hutool.http.HttpRequest;
+import cn.hutool.http.HttpResponse;
 import com.alibaba.fastjson2.JSONObject;
 import io.ddd4j.kit.lang.StrKit;
 import lombok.AllArgsConstructor;
@@ -21,14 +23,11 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
-import java.net.URI;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
-import cn.hutool.http.HttpRequest;
-import cn.hutool.http.HttpResponse;
 
 /**
  * 百度地图 IP 定位模板

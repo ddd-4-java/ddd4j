@@ -134,8 +134,7 @@ public class DefaultEventSourcingRepository<M extends AggregateRoot<ID>, ID exte
      * 更新聚合：以本实例跟踪的流版本为期望版本追加未提交事件（append-only）。
      *
      * @param aggregate 携带未提交事件的聚合根
-     * @throws io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException
-     *         期望版本与事件流实际版本不一致（并发更新者已推进流版本）
+     * @throws io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException 期望版本与事件流实际版本不一致（并发更新者已推进流版本）
      */
     @Override
     public void update(M aggregate) {

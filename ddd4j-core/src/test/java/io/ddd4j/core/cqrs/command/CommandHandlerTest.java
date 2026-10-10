@@ -23,9 +23,7 @@ import java.lang.annotation.Target;
 import java.util.Collections;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * {@link CommandHandler} 注解契约测试：守护发现机制赖以成立的元注解配置。

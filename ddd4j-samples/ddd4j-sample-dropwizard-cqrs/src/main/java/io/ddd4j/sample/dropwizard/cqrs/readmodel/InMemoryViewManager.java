@@ -14,11 +14,7 @@
  */
 package io.ddd4j.sample.dropwizard.cqrs.readmodel;
 
-import io.ddd4j.core.cqrs.readmodel.InMemoryProjectionPositionRepository;
-import io.ddd4j.core.cqrs.readmodel.DefaultProjectionService;
-import io.ddd4j.core.cqrs.readmodel.ProjectionRunner;
-import io.ddd4j.core.cqrs.readmodel.ProjectionView;
-import io.ddd4j.core.cqrs.readmodel.ViewManager;
+import io.ddd4j.core.cqrs.readmodel.*;
 
 import java.util.ArrayList;
 import java.util.List;

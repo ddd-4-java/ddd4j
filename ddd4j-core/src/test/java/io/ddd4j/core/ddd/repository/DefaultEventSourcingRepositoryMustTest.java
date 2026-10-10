@@ -8,11 +8,7 @@ import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
 import io.ddd4j.core.cqrs.eventstore.InMemoryEventStore;
 import io.ddd4j.core.cqrs.eventstore.StoredEvent;
-import io.ddd4j.core.ddd.event.AggregateRootId;
-import io.ddd4j.core.ddd.event.DomainEvent;
-import io.ddd4j.core.ddd.event.EntityIdPath;
-import io.ddd4j.core.ddd.event.EntityType;
-import io.ddd4j.core.ddd.event.StringEntityType;
+import io.ddd4j.core.ddd.event.*;
 import io.ddd4j.core.ddd.model.AggregateRoot;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -141,7 +137,9 @@ class DefaultEventSourcingRepositoryMustTest {
         return order;
     }
 
-    /** 测试聚合根标识。 */
+    /**
+     * 测试聚合根标识。
+     */
     static final class TestOrderId implements AggregateRootId, Serializable {
 
         private static final EntityType TYPE = new StringEntityType("TestOrder");
@@ -178,7 +176,9 @@ class DefaultEventSourcingRepositoryMustTest {
         }
     }
 
-    /** 测试聚合根：create → rename → archive 三个业务动作各产生一个事件。 */
+    /**
+     * 测试聚合根：create → rename → archive 三个业务动作各产生一个事件。
+     */
     static final class TestOrder extends AggregateRoot<String> {
 
         private String id;
@@ -227,7 +227,9 @@ class DefaultEventSourcingRepositoryMustTest {
         }
     }
 
-    /** 事件样例：订单已创建。 */
+    /**
+     * 事件样例：订单已创建。
+     */
     public static final class OrderCreated extends DomainEvent<TestOrderId> {
 
         public OrderCreated() {
@@ -239,7 +241,9 @@ class DefaultEventSourcingRepositoryMustTest {
         }
     }
 
-    /** 事件样例：订单已重命名。 */
+    /**
+     * 事件样例：订单已重命名。
+     */
     public static final class OrderRenamed extends DomainEvent<TestOrderId> {
 
         private String name;
@@ -262,7 +266,9 @@ class DefaultEventSourcingRepositoryMustTest {
         }
     }
 
-    /** 事件样例：订单已归档。 */
+    /**
+     * 事件样例：订单已归档。
+     */
     public static final class OrderArchived extends DomainEvent<TestOrderId> {
 
         public OrderArchived() {

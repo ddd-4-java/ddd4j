@@ -18,7 +18,9 @@ import lombok.Value;
 
 import java.time.Instant;
 
-/** Outbox 消息，Java 8 等价实现保留 record 值语义。 */
+/**
+ * Outbox 消息，Java 8 等价实现保留 record 值语义。
+ */
 @Value
 public class OutboxMessage {
     String id;
@@ -27,9 +29,23 @@ public class OutboxMessage {
     Object payload;
     Instant occurredAt;
 
-    public String id() { return id; }
-    public String aggregateId() { return aggregateId; }
-    public String eventType() { return eventType; }
-    public Object payload() { return payload; }
-    public Instant occurredAt() { return occurredAt; }
+    public String id() {
+        return id;
+    }
+
+    public String aggregateId() {
+        return aggregateId;
+    }
+
+    public String eventType() {
+        return eventType;
+    }
+
+    public Object payload() {
+        return payload;
+    }
+
+    public Instant occurredAt() {
+        return occurredAt;
+    }
 }

@@ -14,8 +14,6 @@
  */
 package io.ddd4j.sample.javalin.cqrs.cache;
 
-import java.util.Objects;
-
 import io.ddd4j.cache.CacheKit;
 import io.ddd4j.sample.javalin.cqrs.goods.domain.Goods;
 import io.ddd4j.sample.javalin.cqrs.goods.domain.GoodsId;

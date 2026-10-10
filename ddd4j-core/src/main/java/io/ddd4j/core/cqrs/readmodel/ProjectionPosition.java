@@ -45,12 +45,14 @@ public interface ProjectionPosition extends Serializable {
      */
 
     String getStreamId();
+
     /**
      * 下一个待处理事件号（0-based）。
      * @return 获取的长整型数值
      */
 
     long getNextEventNumber();
+
     /**
      * 推进到下一个位置。
      *

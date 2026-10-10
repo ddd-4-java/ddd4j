@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -13,7 +13,9 @@
     <artifactId>ddd4j-data</artifactId>
     <packaging>pom</packaging>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>ddd4j 数据层聚合根：cqrs/projection/event-store 各框架实现 + crypto/external/logs/mybatis/mybatisplus/jpa/datascope 扩展（与 2.0.x/3.0.x 拓扑对齐）。</description>
+    <description>ddd4j 数据层聚合根：cqrs/projection/event-store 各框架实现 +
+        crypto/external/logs/mybatis/mybatisplus/jpa/datascope 扩展（与 2.0.x/3.0.x 拓扑对齐）。
+    </description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <!--

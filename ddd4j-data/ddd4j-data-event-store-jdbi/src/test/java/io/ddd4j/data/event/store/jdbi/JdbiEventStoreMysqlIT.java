@@ -14,23 +14,14 @@
  */
 package io.ddd4j.data.event.store.jdbi;
 
+import io.ddd4j.core.constant.EventStoreConstants;
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
 import io.ddd4j.core.cqrs.eventstore.StoredEvent;
-import io.ddd4j.core.constant.EventStoreConstants;
-import io.ddd4j.core.ddd.event.AggregateRootId;
-import io.ddd4j.core.ddd.event.DomainEvent;
-import io.ddd4j.core.ddd.event.EntityIdPath;
-import io.ddd4j.core.ddd.event.EntityType;
-import io.ddd4j.core.ddd.event.StringEntityType;
+import io.ddd4j.core.ddd.event.*;
 import org.jdbi.v3.core.Jdbi;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.testcontainers.DockerClientFactory;
-import org.testcontainers.containers.MySQLContainer;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -40,10 +31,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
@@ -57,6 +45,8 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 class JdbiEventStoreMysqlIT {
 
     private static final String ORDER_TYPE = "Order";
+    private Jdbi jdbi;
+    private EventStore eventStore;
 
     @BeforeAll
     static void ensureContainerStarted() {
@@ -71,9 +61,6 @@ class JdbiEventStoreMysqlIT {
     static void noteSingletonLifecycle() {
         // 进程级单例容器不在此关闭：同一 JVM 内可能还有其它 IT 复用（JVM 退出时由 Ryuk 回收）
     }
-
-    private Jdbi jdbi;
-    private EventStore eventStore;
 
     @BeforeEach
     void setUp() {
@@ -178,7 +165,9 @@ class JdbiEventStoreMysqlIT {
         }
     }
 
-    /** 业务事件样例：无参构造 + JavaBean 属性（Jackson payload 序列化约定）。 */
+    /**
+     * 业务事件样例：无参构造 + JavaBean 属性（Jackson payload 序列化约定）。
+     */
     public static final class OrderCreatedEvent extends DomainEvent<TestAggregateRootId> {
 
         private String fact;

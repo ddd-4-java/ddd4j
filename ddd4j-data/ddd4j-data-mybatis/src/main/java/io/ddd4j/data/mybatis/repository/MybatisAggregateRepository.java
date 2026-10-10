@@ -25,6 +25,7 @@ import io.ddd4j.core.ddd.model.metadata.DomainModelHelper;
 import io.ddd4j.core.ddd.model.metadata.DomainModelInfo;
 import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
+import io.ddd4j.data.mybatis.mapper.Ddd4jMapper;
 import io.ddd4j.kit.lang.BeanKit;
 import io.ddd4j.kit.lang.StrKit;
 import lombok.Getter;
@@ -32,7 +33,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
-import io.ddd4j.data.mybatis.mapper.Ddd4jMapper;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -40,7 +40,6 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.Objects;
 
 /**
  * 原生 MyBatis 轨道的聚合仓储基类（五泛型，对齐 mybatisplus 模块）。

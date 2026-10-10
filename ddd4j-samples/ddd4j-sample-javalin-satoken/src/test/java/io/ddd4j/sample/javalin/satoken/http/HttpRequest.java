@@ -5,7 +5,9 @@ import java.net.URI;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/** JDK 8 facade matching the subset of java.net.http.HttpRequest used by sample tests. */
+/**
+ * JDK 8 facade matching the subset of java.net.http.HttpRequest used by sample tests.
+ */
 public final class HttpRequest {
     private final URI uri;
     private final String method;
@@ -19,30 +21,81 @@ public final class HttpRequest {
         this.headers = headers;
     }
 
-    public static Builder newBuilder(URI uri) { return new Builder().uri(uri); }
-    URI uri() { return uri; }
-    String method() { return method; }
-    String body() { return body; }
-    Map<String, String> headers() { return headers; }
+    public static Builder newBuilder(URI uri) {
+        return new Builder().uri(uri);
+    }
+
+    URI uri() {
+        return uri;
+    }
+
+    String method() {
+        return method;
+    }
+
+    String body() {
+        return body;
+    }
+
+    Map<String, String> headers() {
+        return headers;
+    }
 
     public static final class BodyPublishers {
-        private BodyPublishers() { }
-        public static String ofString(String body) { return body; }
-        public static String noBody() { return null; }
+        private BodyPublishers() {
+        }
+
+        public static String ofString(String body) {
+            return body;
+        }
+
+        public static String noBody() {
+            return null;
+        }
     }
 
     public static final class Builder {
+        private final Map<String, String> headers = new LinkedHashMap<>();
         private URI uri;
         private String method = "GET";
         private String body;
-        private final Map<String, String> headers = new LinkedHashMap<>();
 
-        public Builder uri(URI uri) { this.uri = uri; return this; }
-        public Builder header(String name, String value) { headers.put(name, value); return this; }
-        public Builder GET() { method = "GET"; body = null; return this; }
-        public Builder POST(String body) { method = "POST"; this.body = body; return this; }
-        public Builder PUT(String body) { method = "PUT"; this.body = body; return this; }
-        public Builder DELETE() { method = "DELETE"; body = null; return this; }
-        public HttpRequest build() { return new HttpRequest(uri, method, body, new LinkedHashMap<>(headers)); }
+        public Builder uri(URI uri) {
+            this.uri = uri;
+            return this;
+        }
+
+        public Builder header(String name, String value) {
+            headers.put(name, value);
+            return this;
+        }
+
+        public Builder GET() {
+            method = "GET";
+            body = null;
+            return this;
+        }
+
+        public Builder POST(String body) {
+            method = "POST";
+            this.body = body;
+            return this;
+        }
+
+        public Builder PUT(String body) {
+            method = "PUT";
+            this.body = body;
+            return this;
+        }
+
+        public Builder DELETE() {
+            method = "DELETE";
+            body = null;
+            return this;
+        }
+
+        public HttpRequest build() {
+            return new HttpRequest(uri, method, body, new LinkedHashMap<>(headers));
+        }
     }
 }

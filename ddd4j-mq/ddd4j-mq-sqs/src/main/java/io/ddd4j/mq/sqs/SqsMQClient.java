@@ -17,9 +17,9 @@ package io.ddd4j.mq.sqs;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
-import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.lifecycle.MQClientLifecycle;
 import io.ddd4j.mq.lifecycle.MQStartupStatus;
+import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.extern.slf4j.Slf4j;
@@ -56,9 +56,9 @@ public class SqsMQClient implements MQClient {
 
     private final SqsProperties properties;
     private final List<ScheduledExecutorService> pollers = new CopyOnWriteArrayList<>();
-    private SqsClient client;
     private final MQClientLifecycle lifecycle = new MQClientLifecycle();
     private final MQStartupStatus startupStatus = new MQStartupStatus("sqs");
+    private SqsClient client;
 
     /**
      * 构造 1：传入配置，{@link #initProducer} 时 lazy 创建 SqsClient。
@@ -104,8 +104,15 @@ public class SqsMQClient implements MQClient {
         return "sqs";
     }
 
-    @Override public MQClientLifecycle lifecycle() { return lifecycle; }
-    @Override public MQStartupStatus startupStatus() { return startupStatus; }
+    @Override
+    public MQClientLifecycle lifecycle() {
+        return lifecycle;
+    }
+
+    @Override
+    public MQStartupStatus startupStatus() {
+        return startupStatus;
+    }
 
     /**
      * SQS 无原生 tag selector 机制，tag 过滤只能在应用层用 {@link TagMatcher#match} 完成
@@ -253,7 +260,9 @@ public class SqsMQClient implements MQClient {
 
     @Override
     public void close() {
-        try { lifecycle.close(); } finally {
+        try {
+            lifecycle.close();
+        } finally {
             pollers.clear();
             startupStatus.stopped();
         }

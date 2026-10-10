@@ -15,6 +15,7 @@
 package io.ddd4j.core.cqrs.eventstore.jackson;
 
 import com.fasterxml.jackson.core.JacksonException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.ddd4j.core.ddd.event.DomainEvent;
 
@@ -64,7 +65,7 @@ public class EventPayloadSerializer {
     public EventPayloadSerializer(ObjectMapper source) {
         this.objectMapper = Objects.requireNonNull(source, "source must not be null").copy();
         // 对齐 2.0.x/Jackson3 语义：反序列化忽略未知字段（事件载荷向前兼容）
-        this.objectMapper.configure(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        this.objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     /**
@@ -97,7 +98,6 @@ public class EventPayloadSerializer {
      * @return 还原的领域事件
      * @throws IllegalStateException 反序列化失败
      */
-    @SuppressWarnings("unchecked")
     public DomainEvent<?> deserialize(String json, Class<? extends DomainEvent<?>> eventType) {
         try {
             return objectMapper.readValue(json, eventType);

@@ -16,8 +16,8 @@ package io.ddd4j.core.ddd.model;
 
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.context.ThreadContext;
-import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.AggregateRootId;
+import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityIdPath;
 import io.ddd4j.core.ddd.event.EntityType;
 import io.ddd4j.core.ddd.repository.Repository;

@@ -21,23 +21,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class QueryBusMustTest {
 
-    /** 只读查询对象：订单数统计。 */
-    static final class CountOrdersQuery {
-    }
-
-    /** 只读查询对象：订单明细。 */
-    static final class FindOrderQuery {
-        private final String orderId;
-
-        FindOrderQuery(String orderId) {
-            this.orderId = orderId;
-        }
-
-        String orderId() {
-            return orderId;
-        }
-    }
-
     @Test
     void askMustRouteByQueryTypeAndReturnHandlerResult() {
         List<String> readModel = Arrays.asList("order-1", "order-2", "order-3");
@@ -116,5 +99,26 @@ class QueryBusMustTest {
                 .hasMessageContaining("FindOrderQuery");
         // 拒绝路径不产生任何副作用
         assertThat(readModel).hasSize(1);
+    }
+
+    /**
+     * 只读查询对象：订单数统计。
+     */
+    static final class CountOrdersQuery {
+    }
+
+    /**
+     * 只读查询对象：订单明细。
+     */
+    static final class FindOrderQuery {
+        private final String orderId;
+
+        FindOrderQuery(String orderId) {
+            this.orderId = orderId;
+        }
+
+        String orderId() {
+            return orderId;
+        }
     }
 }

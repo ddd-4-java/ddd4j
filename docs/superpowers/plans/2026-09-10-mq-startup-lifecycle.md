@@ -1,10 +1,12 @@
 # MQ Startup and Lifecycle Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:
+> executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** 使必选MQ消费者初始化失败时阻断应用启动、可选消费者失败时进入不可就绪状态，并确保所有MQ适配器幂等释放其拥有的连接、消费者和线程资源。
 
-**Architecture:** `ddd4j-mq-core`提供启动状态、结构化失败、初始化异常和LIFO生命周期组合器；`MQClient`保持现有签名并统一失败传播/回滚。内置适配器覆盖默认生命周期访问器并登记自建资源，Spring桥接负责启动异常传播、Readiness注册和容器销毁。
+**Architecture:** `ddd4j-mq-core`提供启动状态、结构化失败、初始化异常和LIFO生命周期组合器；`MQClient`
+保持现有签名并统一失败传播/回滚。内置适配器覆盖默认生命周期访问器并登记自建资源，Spring桥接负责启动异常传播、Readiness注册和容器销毁。
 
 **Tech Stack:** Java 8/17/21、JUnit 5、Mockito、Spring Framework、各MQ客户端SDK、Testcontainers。
 
@@ -25,6 +27,7 @@
 ### Task 1: 核心生命周期与状态对象
 
 **Files:**
+
 - Create: `ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/lifecycle/MQClientLifecycle.java`
 - Create: `ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/lifecycle/MQStartupState.java`
 - Create: `ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/lifecycle/MQStartupStatus.java`
@@ -34,6 +37,7 @@
 - Test: matching files under `ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/lifecycle/`
 
 **Interfaces:**
+
 - `MQClientLifecycle.register(String, Runnable) -> void`
 - `MQClientLifecycle.checkpoint() -> int`
 - `MQClientLifecycle.rollback(int) -> void`
@@ -50,6 +54,7 @@
 ### Task 2: Listener required与MQClient初始化语义
 
 **Files:**
+
 - Modify: `ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/annotation/MQEventListener.java`
 - Modify: `ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/listener/MQListener.java`
 - Modify: `ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/MQClient.java`
@@ -57,6 +62,7 @@
 - Modify: `ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/MQClientPersistenceContractTest.java`
 
 **Interfaces:**
+
 - Add: `MQEventListener.required() -> boolean`, default true。
 - Add: `MQClient.lifecycle() -> MQClientLifecycle`, default unmanaged。
 - Add: `MQClient.startupStatus() -> MQStartupStatus`, default unmanaged。
@@ -70,12 +76,14 @@
 ### Task 3: Spring启动传播与容器关闭
 
 **Files:**
+
 - Modify: `ddd4j-mq/ddd4j-mq-spring/src/main/java/io/ddd4j/mq/spring/registry/MQListenerBeanPostProcessor.java`
 - Modify: `ddd4j-mq/ddd4j-mq-spring/src/main/java/io/ddd4j/mq/spring/registry/MQListenerRegistrar.java`
 - Modify: `ddd4j-mq/ddd4j-mq-spring/src/main/java/io/ddd4j/mq/spring/config/Ddd4jMQRegistrarConfiguration.java`
 - Create: `ddd4j-mq/ddd4j-mq-spring/src/test/java/io/ddd4j/mq/spring/registry/MQListenerLifecycleContractTest.java`
 
 **Interfaces:**
+
 - `MQListenerBeanPostProcessor`把annotation.required映射到listener.required。
 - `MQListenerRegistrar`实现 `DisposableBean.destroy()`。
 - Spring容器提供 `MQReadinessContributor` bean并注册到 `RuntimeReadinessRegistry`。
@@ -88,10 +96,12 @@
 ### Task 4: Kafka、RabbitMQ、RocketMQ、ActiveMQ生命周期
 
 **Files:**
+
 - Modify: four adapter `*MQClient.java`/`ActiveMQClient.java` files。
 - Modify/Create: corresponding adapter contract tests。
 
 **Interfaces:**
+
 - 每个内置client持有实例级 `MQClientLifecycle` 和 `MQStartupStatus`。
 - 覆盖 `lifecycle()`、`startupStatus()`、`close()`。
 
@@ -104,6 +114,7 @@
 ### Task 5: MQTT、Mica MQTT、NATS、Pulsar生命周期
 
 **Files:**
+
 - Modify: corresponding four client files and contract tests。
 
 - [ ] MQTT/Mica测试unsubscribe、disconnect、close和executor shutdown顺序。【待办】
@@ -114,7 +125,9 @@
 ### Task 6: Redis、SQS、ONS、TDMQ、Disruptor生命周期
 
 **Files:**
-- Modify: `RedisStreamMQClient.java`、`RedisMQClient.java`、`SqsMQClient.java`、`OnsMQClient.java`、`TdmqMQClient.java`、`DisruptorMQClient.java`。
+
+- Modify: `RedisStreamMQClient.java`、`RedisMQClient.java`、`SqsMQClient.java`、`OnsMQClient.java`、`TdmqMQClient.java`、
+  `DisruptorMQClient.java`。
 - Modify/Create: corresponding contract tests。
 
 - [ ] Redis测试polling task/executor停止及operations ownership。【待办】
@@ -126,6 +139,7 @@
 ### Task 7: 三线同步与API一致性
 
 **Files:**
+
 - Synchronize: Task 1–6相同路径文件到1.0.x、2.0.x。
 
 - [ ] 以3.0.x验证实现为源同步生产源码和测试结构。【外部阻塞: 3.0.x 线 checkout 不在本环境】
@@ -136,6 +150,7 @@
 ### Task 8: 完整验证与交付
 
 **Files:**
+
 - Verify: `.github/workflows/verify.yml` and existing MQ/Testcontainers verification scripts。
 
 - [ ] JDK8运行1.0.x完整 `clean verify`和samples。【外部阻塞: 需 JDK8 环境执行（本任务禁跑 Maven）】

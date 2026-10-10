@@ -22,57 +22,9 @@ import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class BaseErrorConfigurationTest {
-
-    /**
-     * 固定翻译结果的桩基类，便于断言模板方法管线。
-     */
-    private static final class StubErrorConfiguration extends BaseErrorConfiguration {
-
-        private final WebError stubbed;
-
-        StubErrorConfiguration(WebError stubbed, WebExceptionTranslator translator,
-                               WebErrorResponseBuilder responseBuilder) {
-            super(translator, responseBuilder);
-            this.stubbed = stubbed;
-        }
-
-        StubErrorConfiguration(WebError stubbed) {
-            this(stubbed, new DefaultWebExceptionTranslator(), WebErrorResponseBuilder.defaults());
-        }
-
-        @Override
-        protected String frameworkName() {
-            return "Stub";
-        }
-
-        @Override
-        protected WebError doTranslate(Throwable throwable) {
-            return stubbed;
-        }
-    }
-
-    /**
-     * 不覆盖 {@code doTranslate} 的桩基类，验证默认翻译策略接线。
-     */
-    private static final class PassThroughConfiguration extends BaseErrorConfiguration {
-
-        PassThroughConfiguration() {
-            super();
-        }
-
-        @Override
-        protected String frameworkName() {
-            return "Stub";
-        }
-    }
 
     @Test
     void defaultConstructorUsesDefaultTranslator() {
@@ -162,5 +114,48 @@ class BaseErrorConfigurationTest {
         assertEquals(500, builder.toResponse(new WebError(500, 500, "boom", null)).getCode());
         assertTrue(builder.isServerError(new WebError(503, 503, "unavailable", null)));
         assertFalse(builder.isServerError(new WebError(404, 404, "missing", null)));
+    }
+
+    /**
+     * 固定翻译结果的桩基类，便于断言模板方法管线。
+     */
+    private static final class StubErrorConfiguration extends BaseErrorConfiguration {
+
+        private final WebError stubbed;
+
+        StubErrorConfiguration(WebError stubbed, WebExceptionTranslator translator,
+                               WebErrorResponseBuilder responseBuilder) {
+            super(translator, responseBuilder);
+            this.stubbed = stubbed;
+        }
+
+        StubErrorConfiguration(WebError stubbed) {
+            this(stubbed, new DefaultWebExceptionTranslator(), WebErrorResponseBuilder.defaults());
+        }
+
+        @Override
+        protected String frameworkName() {
+            return "Stub";
+        }
+
+        @Override
+        protected WebError doTranslate(Throwable throwable) {
+            return stubbed;
+        }
+    }
+
+    /**
+     * 不覆盖 {@code doTranslate} 的桩基类，验证默认翻译策略接线。
+     */
+    private static final class PassThroughConfiguration extends BaseErrorConfiguration {
+
+        PassThroughConfiguration() {
+            super();
+        }
+
+        @Override
+        protected String frameworkName() {
+            return "Stub";
+        }
     }
 }

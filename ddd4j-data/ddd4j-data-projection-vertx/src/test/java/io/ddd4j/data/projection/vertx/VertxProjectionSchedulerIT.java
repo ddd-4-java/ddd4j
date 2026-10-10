@@ -14,8 +14,6 @@
  */
 package io.ddd4j.data.projection.vertx;
 
-import java.util.Collections;
-import java.util.Arrays;
 import io.ddd4j.core.cqrs.readmodel.*;
 import io.vertx.core.Vertx;
 import org.junit.jupiter.api.AfterEach;
@@ -23,9 +21,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -120,7 +118,8 @@ class VertxProjectionSchedulerIT {
                 VertxProjectionScheduler.create(vertx, Arrays.asList(), createRunner());
 
         ViewScheduler.ViewScheduleHandle handle = scheduler.schedule(
-                "direct-view", "0/1 * * * * *", () -> {});
+                "direct-view", "0/1 * * * * *", () -> {
+                });
 
         assertThat(handle.isActive()).isTrue();
 

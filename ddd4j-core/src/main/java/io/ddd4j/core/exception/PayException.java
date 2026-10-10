@@ -14,8 +14,7 @@
  */
 package io.ddd4j.core.exception;
 
-import io.ddd4j.core.ApiCode;
-import io.ddd4j.core.CustomApiCode;
+import io.ddd4j.core.api.CustomApiCode;
 
 
 /**
@@ -48,7 +47,7 @@ public class PayException extends BizRuntimeException {
         super(message, cause);
     }
 
-    public PayException(ApiCode code, String i18nCode) {
+    public PayException(CustomApiCode code, String i18nCode) {
         super(code, i18nCode);
     }
 

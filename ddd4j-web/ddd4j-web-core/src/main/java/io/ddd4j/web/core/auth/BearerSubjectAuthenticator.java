@@ -15,15 +15,15 @@
 
 package io.ddd4j.web.core.auth;
 
+import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.Contexts;
-import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.subject.Subject;
 import io.ddd4j.core.subject.SubjectProvider;
+import io.ddd4j.web.core.error.WebStatusException;
 
 import java.util.Objects;
 import java.util.Optional;
-import io.ddd4j.web.core.error.WebStatusException;
 
 /**
  * 将标准 Bearer Token 委托给当前运行时注册的 Subject SPI。
@@ -77,24 +77,40 @@ public final class BearerSubjectAuthenticator {
             this.subject = subject;
         }
 
-        public String token() { return token; }
-        public AuthPrincipal principal() { return principal; }
-        public Subject subject() { return subject; }
+        public String token() {
+            return token;
+        }
+
+        public AuthPrincipal principal() {
+            return principal;
+        }
+
+        public Subject subject() {
+            return subject;
+        }
 
         // === bean-style getters（与 record-style 共存，调用方任选）） ===
-        public String getToken() { return token; }
-        public AuthPrincipal getPrincipal() { return principal; }
-        public Subject getSubject() { return subject; }
+        public String getToken() {
+            return token;
+        }
+
+        public AuthPrincipal getPrincipal() {
+            return principal;
+        }
+
+        public Subject getSubject() {
+            return subject;
+        }
 
         @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+        public boolean equals(Object o) {
+            if (this == o) {
                 return true;
             }
-        if (!(o instanceof Authentication)) {
+            if (!(o instanceof Authentication)) {
                 return false;
             }
-        Authentication that = (Authentication) o;
+            Authentication that = (Authentication) o;
             return Objects.equals(token, that.token)
                     && Objects.equals(principal, that.principal)
                     && Objects.equals(subject, that.subject);

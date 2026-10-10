@@ -14,8 +14,6 @@
  */
 package io.ddd4j.core.ddd.model;
 
-import java.util.Collections;
-import java.util.ArrayList;
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.event.AggregateRootId;
@@ -121,6 +119,7 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
             };
         }
     };
+    private transient List<DomainEvent<?>> domainEvents = new ArrayList<>();
 
     /**
      * 解析事件处理器：优先 {@code @EventHandler} 注解方法（沿继承链，参数可接收该事件类型），
@@ -131,8 +130,8 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
      * @return 处理器方法；两者均未命中时返回 {@code null}
      */
     private static Method resolveHandler(Class<?> aggregateClass, Class<?> eventClass) {
-for (Class<?> current = aggregateClass; current != null && current != Object.class;
-                    current = current.getSuperclass()) {
+        for (Class<?> current = aggregateClass; current != null && current != Object.class;
+             current = current.getSuperclass()) {
             for (Method method : current.getDeclaredMethods()) {
                 if (method.isAnnotationPresent(EventHandler.class)) {
                     Class<?>[] parameterTypes = method.getParameterTypes();
@@ -152,8 +151,6 @@ for (Class<?> current = aggregateClass; current != null && current != Object.cla
             return null;
         }
     }
-
-    private transient List<DomainEvent<?>> domainEvents = new ArrayList<>();
 
     // ========================= 充血持久化（实例方法） =========================
 
@@ -444,7 +441,7 @@ for (Class<?> current = aggregateClass; current != null && current != Object.cla
      * AbstractAggregateRoot 路由入口的首段断言）。首段不是聚合根标识时立即抛
      * {@link IllegalStateException}，错误路径早失败。
      *
-     * @param event 领域事件
+     * @param event  领域事件
      * @param replay 是否处于历史回放（{@code loadFromHistory}）
      * @return 传入的事件
      * @throws IllegalStateException 路径首段不是 {@link AggregateRootId}、找不到对应事件类型的处理器，或反射调用失败

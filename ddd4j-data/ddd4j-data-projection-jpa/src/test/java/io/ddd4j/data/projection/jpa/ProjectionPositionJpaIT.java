@@ -16,14 +16,15 @@ package io.ddd4j.data.projection.jpa;
 
 import io.ddd4j.core.cqrs.readmodel.DefaultProjectionPosition;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -46,7 +47,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("test")
 class ProjectionPositionJpaIT {
 
-    /** 投影流 ID＝handler 名（ProjectionHandler#getName 约定）。 */
+    /**
+     * 投影流 ID＝handler 名（ProjectionHandler#getName 约定）。
+     */
     private static final String ORDER_SUMMARY = "order-summary";
 
     private static final String INVENTORY_SNAPSHOT = "inventory-snapshot";

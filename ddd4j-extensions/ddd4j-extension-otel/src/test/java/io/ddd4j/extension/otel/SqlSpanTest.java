@@ -31,6 +31,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class SqlSpanTest {
 
+    private static String replicate(String s, int times) {
+        StringBuilder sb = new StringBuilder(s.length() * times);
+        for (int i = 0; i < times; i++) {
+            sb.append(s);
+        }
+        return sb.toString();
+    }
+
     @BeforeEach
     void setUp() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
@@ -63,14 +71,6 @@ class SqlSpanTest {
         SqlSpan.execute("mybatis", null, () -> {
         });
         assertThat(true).isTrue();
-    }
-
-    private static String replicate(String s, int times) {
-        StringBuilder sb = new StringBuilder(s.length() * times);
-        for (int i = 0; i < times; i++) {
-            sb.append(s);
-        }
-        return sb.toString();
     }
 
     @Test
