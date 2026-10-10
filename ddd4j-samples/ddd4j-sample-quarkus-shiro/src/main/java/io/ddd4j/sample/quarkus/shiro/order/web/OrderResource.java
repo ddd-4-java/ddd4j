@@ -1,5 +1,11 @@
 package io.ddd4j.sample.quarkus.shiro.order.web;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Objects;
+
 import io.ddd4j.core.api.R;
 import io.ddd4j.sample.quarkus.shiro.order.application.AddOrderLineCommand;
 import io.ddd4j.sample.quarkus.shiro.order.application.CreateOrderCommand;
@@ -118,6 +124,53 @@ public class OrderResource {
     /**
      * 折扣预览响应。
      */
-    public record DiscountView(String amount, String currency) {
+    public final static class DiscountView {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String amount;
+
+        private final String currency;
+
+        @JsonCreator()
+        public DiscountView(@JsonProperty("amount") String amount, @JsonProperty("currency") String currency) {
+            this.amount = amount;
+            this.currency = currency;
+        }
+
+        @JsonProperty("amount")
+        public String amount() {
+            return amount;
+        }
+
+        @JsonProperty("currency")
+        public String currency() {
+            return currency;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            DiscountView other = (DiscountView) obj;
+            return Objects.equals(this.amount, other.amount) && Objects.equals(this.currency, other.currency);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(amount);
+            result = 31 * result + Objects.hashCode(currency);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "DiscountView[amount=" + amount + ", currency=" + currency + "]";
+        }
     }
 }

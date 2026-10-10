@@ -1,5 +1,9 @@
 package io.ddd4j.sample.javalin.cqrs.order.web;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import io.ddd4j.core.api.R;
 import io.ddd4j.sample.javalin.cqrs.cache.OrderCacheService;
 import io.ddd4j.sample.javalin.cqrs.order.domain.model.Money;
@@ -69,13 +73,98 @@ public class OrderCQRSQueryController {
     /**
      * 订单响应 record。
      */
-    public record OrderResponse(
-            String id,
-            String orderNo,
-            String buyerId,
-            String buyerName,
-            String status,
-            Money totalAmount,
-            int lineCount) {
+    public final static class OrderResponse {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String id;
+
+        private final String orderNo;
+
+        private final String buyerId;
+
+        private final String buyerName;
+
+        private final String status;
+
+        private final Money totalAmount;
+
+        private final int lineCount;
+
+        @JsonCreator()
+        public OrderResponse(@JsonProperty("id") String id, @JsonProperty("orderNo") String orderNo, @JsonProperty("buyerId") String buyerId, @JsonProperty("buyerName") String buyerName, @JsonProperty("status") String status, @JsonProperty("totalAmount") Money totalAmount, @JsonProperty("lineCount") int lineCount) {
+            this.id = id;
+            this.orderNo = orderNo;
+            this.buyerId = buyerId;
+            this.buyerName = buyerName;
+            this.status = status;
+            this.totalAmount = totalAmount;
+            this.lineCount = lineCount;
+        }
+
+        @JsonProperty("id")
+        public String id() {
+            return id;
+        }
+
+        @JsonProperty("orderNo")
+        public String orderNo() {
+            return orderNo;
+        }
+
+        @JsonProperty("buyerId")
+        public String buyerId() {
+            return buyerId;
+        }
+
+        @JsonProperty("buyerName")
+        public String buyerName() {
+            return buyerName;
+        }
+
+        @JsonProperty("status")
+        public String status() {
+            return status;
+        }
+
+        @JsonProperty("totalAmount")
+        public Money totalAmount() {
+            return totalAmount;
+        }
+
+        @JsonProperty("lineCount")
+        public int lineCount() {
+            return lineCount;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            OrderResponse other = (OrderResponse) obj;
+            return Objects.equals(this.id, other.id) && Objects.equals(this.orderNo, other.orderNo) && Objects.equals(this.buyerId, other.buyerId) && Objects.equals(this.buyerName, other.buyerName) && Objects.equals(this.status, other.status) && Objects.equals(this.totalAmount, other.totalAmount) && this.lineCount == other.lineCount;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(id);
+            result = 31 * result + Objects.hashCode(orderNo);
+            result = 31 * result + Objects.hashCode(buyerId);
+            result = 31 * result + Objects.hashCode(buyerName);
+            result = 31 * result + Objects.hashCode(status);
+            result = 31 * result + Objects.hashCode(totalAmount);
+            result = 31 * result + Integer.hashCode(lineCount);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "OrderResponse[id=" + id + ", orderNo=" + orderNo + ", buyerId=" + buyerId + ", buyerName=" + buyerName + ", status=" + status + ", totalAmount=" + totalAmount + ", lineCount=" + lineCount + "]";
+        }
     }
 }

@@ -1,5 +1,11 @@
 package io.ddd4j.kit.lang;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Objects;
+
 import cn.hutool.core.lang.Singleton;
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
@@ -197,8 +203,81 @@ public class IdKit extends IdUtil {
                 options.timeOffset(), options.randomSequenceLimit());
     }
 
-    private record SnowflakeOptions(long workerId, long dataCenterId, boolean useSystemClock,
-                                    long timeOffset, long randomSequenceLimit) {
+    private final static class SnowflakeOptions {
+
+        private static final long serialVersionUID = 0L;
+
+        private final long workerId;
+
+        private final long dataCenterId;
+
+        private final boolean useSystemClock;
+
+        private final long timeOffset;
+
+        private final long randomSequenceLimit;
+
+        @JsonCreator()
+        private SnowflakeOptions(@JsonProperty("workerId") long workerId, @JsonProperty("dataCenterId") long dataCenterId, @JsonProperty("useSystemClock") boolean useSystemClock, @JsonProperty("timeOffset") long timeOffset, @JsonProperty("randomSequenceLimit") long randomSequenceLimit) {
+            this.workerId = workerId;
+            this.dataCenterId = dataCenterId;
+            this.useSystemClock = useSystemClock;
+            this.timeOffset = timeOffset;
+            this.randomSequenceLimit = randomSequenceLimit;
+        }
+
+        @JsonProperty("workerId")
+        public long workerId() {
+            return workerId;
+        }
+
+        @JsonProperty("dataCenterId")
+        public long dataCenterId() {
+            return dataCenterId;
+        }
+
+        @JsonProperty("useSystemClock")
+        public boolean useSystemClock() {
+            return useSystemClock;
+        }
+
+        @JsonProperty("timeOffset")
+        public long timeOffset() {
+            return timeOffset;
+        }
+
+        @JsonProperty("randomSequenceLimit")
+        public long randomSequenceLimit() {
+            return randomSequenceLimit;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            SnowflakeOptions other = (SnowflakeOptions) obj;
+            return this.workerId == other.workerId && this.dataCenterId == other.dataCenterId && this.useSystemClock == other.useSystemClock && this.timeOffset == other.timeOffset && this.randomSequenceLimit == other.randomSequenceLimit;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Long.hashCode(workerId);
+            result = 31 * result + Long.hashCode(dataCenterId);
+            result = 31 * result + Boolean.hashCode(useSystemClock);
+            result = 31 * result + Long.hashCode(timeOffset);
+            result = 31 * result + Long.hashCode(randomSequenceLimit);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "SnowflakeOptions[workerId=" + workerId + ", dataCenterId=" + dataCenterId + ", useSystemClock=" + useSystemClock + ", timeOffset=" + timeOffset + ", randomSequenceLimit=" + randomSequenceLimit + "]";
+        }
     }
 
     /**

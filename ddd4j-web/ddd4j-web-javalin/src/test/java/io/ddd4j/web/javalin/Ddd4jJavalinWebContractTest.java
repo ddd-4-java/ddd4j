@@ -1,5 +1,9 @@
 package io.ddd4j.web.javalin;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.auth.AuthPrincipal;
@@ -119,18 +123,21 @@ class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
         };
     }
 
-    private record JavalinContractClient(HttpClient httpClient, int port) implements WebContractClient {
+    private final static class JavalinContractClient implements WebContractClient {
+
+        private static final long serialVersionUID = 0L;
+
+        private final HttpClient httpClient;
+
+        private final int port;
 
         @Override
         public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
             try {
-                HttpRequest.Builder builder = HttpRequest.newBuilder()
-                        .uri(URI.create("http://127.0.0.1:" + port + path));
+                HttpRequest.Builder builder = HttpRequest.newBuilder().uri(URI.create("http://127.0.0.1:" + port + path));
                 headers.forEach(builder::header);
-                HttpRequest.BodyPublisher publisher = Objects.isNull(body)
-                        ? HttpRequest.BodyPublishers.noBody() : HttpRequest.BodyPublishers.ofString(body);
-                HttpResponse<String> response = httpClient.send(builder.method(method, publisher).build(),
-                        HttpResponse.BodyHandlers.ofString());
+                HttpRequest.BodyPublisher publisher = Objects.isNull(body) ? HttpRequest.BodyPublishers.noBody() : HttpRequest.BodyPublishers.ofString(body);
+                HttpResponse<String> response = httpClient.send(builder.method(method, publisher).build(), HttpResponse.BodyHandlers.ofString());
                 return new WebContractResponse(response.statusCode(), response.headers().map(), response.body());
             } catch (InterruptedException exception) {
                 Thread.currentThread().interrupt();
@@ -138,6 +145,47 @@ class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
             } catch (Exception exception) {
                 throw new IllegalStateException("Javalin contract request failed", exception);
             }
+        }
+
+        @JsonCreator()
+        private JavalinContractClient(@JsonProperty("httpClient") HttpClient httpClient, @JsonProperty("port") int port) {
+            this.httpClient = httpClient;
+            this.port = port;
+        }
+
+        @JsonProperty("httpClient")
+        public HttpClient httpClient() {
+            return httpClient;
+        }
+
+        @JsonProperty("port")
+        public int port() {
+            return port;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            JavalinContractClient other = (JavalinContractClient) obj;
+            return Objects.equals(this.httpClient, other.httpClient) && this.port == other.port;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(httpClient);
+            result = 31 * result + Integer.hashCode(port);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "JavalinContractClient[httpClient=" + httpClient + ", port=" + port + "]";
         }
     }
 }
