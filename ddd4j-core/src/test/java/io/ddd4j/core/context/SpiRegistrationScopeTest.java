@@ -1,5 +1,11 @@
 package io.ddd4j.core.context;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Objects;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -43,6 +49,44 @@ class SpiRegistrationScopeTest {
         assertThat(BaseContext.get(KEY, Service.class)).contains(replacement);
     }
 
-    private record Service(String name) {
+    private final static class Service {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String name;
+
+        @JsonCreator()
+        private Service(@JsonProperty("name") String name) {
+            this.name = name;
+        }
+
+        @JsonProperty("name")
+        public String name() {
+            return name;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            Service other = (Service) obj;
+            return Objects.equals(this.name, other.name);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(name);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "Service[name=" + name + "]";
+        }
     }
 }
