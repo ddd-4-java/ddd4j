@@ -21,12 +21,28 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * 方法参数注解：按名称绑定 HTTP 请求头（Header）到控制器方法参数。
+ *
+ * @since 2.0.x
+ */
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
 public @interface HeaderParam {
+
+    /**
+     * 请求头名称。
+     *
+     * @return 请求头名称
+     */
     String value();
 
+    /**
+     * 请求头缺失时使用的缺省值。
+     *
+     * @return 缺省值
+     */
     String defaultValue() default "";
 }

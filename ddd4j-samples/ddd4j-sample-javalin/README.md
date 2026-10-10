@@ -258,7 +258,7 @@ ddd4j-sample-javalin/
 
 ## 📄 相关文档
 
-- [ddd4j 主仓库](https://github.com/hiwepy/ddd4j)
+- [ddd4j 主仓库](https://github.com/redacted-legacy-family/ddd4j)
 - [`BaseContext` SPI 注入文档](../../ddd4j-core/src/main/java/io/ddd4j/core/context/BaseContext.java)
 - [`Contexts` 门面查找文档](../../ddd4j-core/src/main/java/io/ddd4j/core/context/Contexts.java)
 - [`SpiKeys` SPI 约定 key](../../ddd4j-core/src/main/java/io/ddd4j/core/constant/SpiKeys.java)

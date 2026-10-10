@@ -143,6 +143,11 @@ public class AuthPrincipal implements Serializable {
      */
     private String userAgent;
 
+    /**
+     * 角色标识对。
+     *
+     * <p>封装角色的 Id、唯一编码、名称以及是否需要多因子验证等标识信息。
+     */
     @Accessors(chain = true)
     @Data
     public static class RolePair implements Serializable {

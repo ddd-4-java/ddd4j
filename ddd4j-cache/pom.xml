@@ -92,7 +92,7 @@
         <!-- Testcontainers：Redis 集成测试（镜像清单来源 https://testcontainers.com/modules/ ） -->
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>testcontainers-junit-jupiter</artifactId>
+            <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

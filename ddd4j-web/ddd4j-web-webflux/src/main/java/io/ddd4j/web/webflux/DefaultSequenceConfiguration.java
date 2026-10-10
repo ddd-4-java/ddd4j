@@ -23,9 +23,22 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.Objects;
 
+/**
+ * 雪花序列生成器的默认装配配置。
+ *
+ * <p>按 {@link SequenceProperties} 提供的参数构建 Hutool {@link Snowflake} Bean。
+ *
+ * @since 2.0.x
+ */
 @Configuration(proxyBeanMethods = false)
 public class DefaultSequenceConfiguration {
 
+    /**
+     * 构建雪花 ID 生成器 Bean。
+     *
+     * @param properties 序列生成配置（时间回拨、随机上限、系统时钟开关）
+     * @return 雪花序列生成器
+     */
     @Bean
     public Snowflake sequence(SequenceProperties properties) {
         long dataCenterId = IdUtil.getDataCenterId(31);

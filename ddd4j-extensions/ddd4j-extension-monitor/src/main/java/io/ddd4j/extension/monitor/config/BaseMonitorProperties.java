@@ -64,6 +64,9 @@ public class BaseMonitorProperties {
 
     private Log log = new Log();
 
+    /**
+     * 监控模块日志告警配置。
+     */
     @Data
     public static class Log {
         /**
@@ -94,6 +97,9 @@ public class BaseMonitorProperties {
         private App app = new App();
     }
 
+    /**
+     * 应用基本信息（项目、环境、应用名），用于告警内容上下文。
+     */
     @Data
     public static class App {
         /**

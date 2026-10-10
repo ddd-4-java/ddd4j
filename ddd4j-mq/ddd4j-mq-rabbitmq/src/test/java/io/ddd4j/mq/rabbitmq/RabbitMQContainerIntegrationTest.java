@@ -19,9 +19,9 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.GetResponse;
 import org.junit.jupiter.api.Test;
+import org.testcontainers.containers.RabbitMQContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.rabbitmq.RabbitMQContainer;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;

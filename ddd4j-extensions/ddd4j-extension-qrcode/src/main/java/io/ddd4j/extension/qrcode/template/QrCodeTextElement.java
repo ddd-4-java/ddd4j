@@ -35,10 +35,21 @@ public final class QrCodeTextElement extends QrCodeFrameElement {
         this.color = builder.color;
     }
 
+    /**
+     * 创建文本外框元素构建器。
+     *
+     * @param text 待绘制的文本
+     * @return 新的构建器实例
+     */
     public static Builder builder(String text) {
         return new Builder(text);
     }
 
+    /**
+     * {@link QrCodeTextElement} 构建器。
+     *
+     * <p>设置文本边界、字体与颜色后构建不可变元素。
+     */
     public static final class Builder {
         private final String text;
         private int x;
@@ -55,10 +66,48 @@ public final class QrCodeTextElement extends QrCodeFrameElement {
             this.text = text;
         }
 
+        /**
+         * 设置文本显示边界。
+         *
+         * @param x      左上角 X 坐标
+         * @param y      左上角 Y 坐标
+         * @param width  显示宽度（像素）
+         * @param height 显示高度（像素）
+         * @return 当前构建器
+         */
         public Builder bounds(int x, int y, int width, int height) { this.x = x; this.y = y; this.width = width; this.height = height; return this; }
+
+        /**
+         * 设置绘制层级（值越大越靠上）。
+         *
+         * @param zIndex 层级值
+         * @return 当前构建器
+         */
         public Builder zIndex(int zIndex) { this.zIndex = zIndex; return this; }
+
+        /**
+         * 设置字体名称、字号与是否加粗。
+         *
+         * @param fontName 字体名称（如 {@code SansSerif}）
+         * @param fontSize 字号
+         * @param bold     是否加粗
+         * @return 当前构建器
+         */
         public Builder font(String fontName, int fontSize, boolean bold) { this.fontName = fontName; this.fontSize = fontSize; this.bold = bold; return this; }
+
+        /**
+         * 设置文本颜色（CSS 颜色值，默认 {@code #000000}）。
+         *
+         * @param color 文本颜色
+         * @return 当前构建器
+         */
         public Builder color(String color) { this.color = color; return this; }
+
+        /**
+         * 构建不可变的文本外框元素。
+         *
+         * @return 构建完成的元素实例
+         */
         public QrCodeTextElement build() { return new QrCodeTextElement(this); }
     }
 }

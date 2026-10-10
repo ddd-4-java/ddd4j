@@ -675,7 +675,7 @@
         <tencentcloud-sdk-java-sms.version>3.1.1451</tencentcloud-sdk-java-sms.version>
         <tencentcloud-sdk-java.version>3.1.1492</tencentcloud-sdk-java.version>
         <tencentcloud-tls-sig-api-v2.version>2.0</tencentcloud-tls-sig-api-v2.version>
-        <testcontainers-bom.version>2.0.5</testcontainers-bom.version>
+        <testcontainers-bom.version>1.21.4</testcontainers-bom.version>
         <testcontainers-redis.version>2.2.4</testcontainers-redis.version>
         <thumbnailator.version>0.4.21</thumbnailator.version>
         <thymeleaf-extras-conditionalcomments.version>2.1.2.RELEASE</thymeleaf-extras-conditionalcomments.version>
@@ -2480,7 +2480,7 @@
                 <artifactId>cxf-rt-javassist</artifactId>
                 <version>${cxf-rt-javassist.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.github.hiwepy/cxf-rt-javassist -->
+            <!-- Source: https://mvnrepository.com/artifact/com.github.redacted-legacy-family/cxf-rt-javassist -->
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-rs-client -->
             <!-- Apache CXF JAX-RS Client：CXF 的 JAX-RS REST 客户端实现。 -->
             <dependency>
@@ -2864,10 +2864,10 @@
                 <artifactId>docx4j-openxml-objects-sml</artifactId>
                 <version>${docx4j.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.github.hiwepy/docx4j-template-bom -->
+            <!-- Source: https://mvnrepository.com/artifact/com.github.redacted-legacy-family/docx4j-template-bom -->
             <!-- docx4j Template BOM：docx4j 模板引擎的 BOM，提供 Word 模板填充生成工具。 -->
             <dependency>
-                <groupId>com.github.hiwepy</groupId>
+                <groupId>io.github.easy4j</groupId>
                 <artifactId>docx4j-template-bom</artifactId>
                 <version>${docx4j-template.version}</version>
                 <type>pom</type>
@@ -2901,7 +2901,7 @@
                 <artifactId>dozer-extra-converters</artifactId>
                 <version>${dozer-extra-converters.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.github.hiwepy/dozer-extra-converters -->
+            <!-- Source: https://mvnrepository.com/artifact/com.github.redacted-legacy-family/dozer-extra-converters -->
             <!-- https://mvnrepository.com/artifact/com.github.dozermapper/dozer-proto3 -->
             <!-- Dozer Proto3：Dozer 对 Protocol Buffers v3 的支持模块。 -->
             <dependency>
@@ -2939,10 +2939,10 @@
                 <artifactId>druid</artifactId>
                 <version>${druid.version}</version>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/com.github.hiwepy/druid-metrics-prometheus -->
+            <!-- https://mvnrepository.com/artifact/com.github.redacted-legacy-family/druid-metrics-prometheus -->
             <!-- Druid Metrics Prometheus：将 Druid 监控指标推送到 Prometheus 的桥接模块。 -->
             <dependency>
-                <groupId>com.github.hiwepy</groupId>
+                <groupId>io.github.easy4j</groupId>
                 <artifactId>druid-metrics-prometheus</artifactId>
                 <version>${druid-metrics.version}</version>
             </dependency>
@@ -4312,10 +4312,10 @@
                 <version>${httpcore.version}</version>
                 <type>pom</type>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/com.github.hiwepy/httpconn -->
+            <!-- https://mvnrepository.com/artifact/com.github.redacted-legacy-family/httpconn -->
             <!-- HttpConn：基于 Apache HttpClient 的 HTTP 连接工具库（简化 HTTP 调用封装）。 -->
             <dependency>
-                <groupId>com.github.hiwepy</groupId>
+                <groupId>io.github.easy4j</groupId>
                 <artifactId>httpconn</artifactId>
                 <version>${httpconn.version}</version>
             </dependency>
@@ -4375,10 +4375,10 @@
                 <artifactId>httpmime</artifactId>
                 <version>${httpclient.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.github.hiwepy/httputils -->
+            <!-- Source: https://mvnrepository.com/artifact/com.github.redacted-legacy-family/httputils -->
             <!-- HttpUtils（旧坐标）：旧坐标下的 HTTP 工具库（已迁至 io.github.easy4j）。 -->
             <dependency>
-                <groupId>com.github.hiwepy</groupId>
+                <groupId>io.github.easy4j</groupId>
                 <artifactId>httputils</artifactId>
                 <version>${httputils.version}</version>
             </dependency>
@@ -5069,10 +5069,10 @@
                 <artifactId>javassist-extension</artifactId>
                 <version>${javassist-extension.version}</version>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/com.github.hiwepy/javassist-plus -->
+            <!-- https://mvnrepository.com/artifact/com.github.redacted-legacy-family/javassist-plus -->
             <!-- Javassist Plus：旧坐标下的 Javassist 扩展（已迁至 io.github.easy4j）。 -->
             <dependency>
-                <groupId>com.github.hiwepy</groupId>
+                <groupId>io.github.easy4j</groupId>
                 <artifactId>javassist-plus</artifactId>
                 <version>${javassist-plus.version}</version>
             </dependency>
@@ -5736,9 +5736,9 @@
                 <version>${jwt-issuer.version}</version>
                 <type>pom</type>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/com.github.hiwepy/jwt-issuer-api -->
-            <!-- https://mvnrepository.com/artifact/com.github.hiwepy/jwt-issuer-with-jjwt -->
-            <!-- https://mvnrepository.com/artifact/com.github.hiwepy/jwt-issuer-with-nimbus -->
+            <!-- https://mvnrepository.com/artifact/com.github.redacted-legacy-family/jwt-issuer-api -->
+            <!-- https://mvnrepository.com/artifact/com.github.redacted-legacy-family/jwt-issuer-with-jjwt -->
+            <!-- https://mvnrepository.com/artifact/com.github.redacted-legacy-family/jwt-issuer-with-nimbus -->
             <!-- https://mvnrepository.com/artifact/net.sourceforge.jexcelapi/jxl -->
             <!-- JExcelAPI：纯 Java 的 Excel 读写库（.xls 格式，不支持 .xlsx）。 -->
             <dependency>
@@ -7594,10 +7594,10 @@
                 <artifactId>pac4j-oauth</artifactId>
                 <version>${pac4j.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.github.hiwepy/pac4j-oauth-ext -->
+            <!-- Source: https://mvnrepository.com/artifact/com.github.redacted-legacy-family/pac4j-oauth-ext -->
             <!-- Pac4j OAuth Ext：旧坐标下的 Pac4j OAuth 扩展（已迁至 io.github.easy4j）。 -->
             <dependency>
-                <groupId>com.github.hiwepy</groupId>
+                <groupId>io.github.easy4j</groupId>
                 <artifactId>pac4j-oauth-ext</artifactId>
                 <version>${pac4j-oauth-ext.version}</version>
             </dependency>
@@ -8955,10 +8955,10 @@
                 <artifactId>shedlock-spring</artifactId>
                 <version>${shedlock.version}</version>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/com.github.hiwepy/shiro-biz -->
+            <!-- https://mvnrepository.com/artifact/com.github.redacted-legacy-family/shiro-biz -->
             <!-- Shiro Biz：旧坐标下的 Apache Shiro 企业级安全增强库（已迁至 io.github.easy4j）。 -->
             <dependency>
-                <groupId>com.github.hiwepy</groupId>
+                <groupId>io.github.easy4j</groupId>
                 <artifactId>shiro-biz</artifactId>
                 <version>${shiro-biz.version}</version>
             </dependency>
@@ -9053,7 +9053,7 @@
                 <artifactId>shiro-j2cache</artifactId>
                 <version>${shiro-j2cache.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.github.hiwepy/shiro-j2cache -->
+            <!-- Source: https://mvnrepository.com/artifact/com.github.redacted-legacy-family/shiro-j2cache -->
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/shiro-jwt-core -->
             <!-- Easy4J Shiro JWT Core：Easy4J 的 Shiro JWT 认证核心模块。 -->
             <dependency>
@@ -9315,10 +9315,10 @@
                 <artifactId>spring-amqp</artifactId>
                 <version>${spring-amqp.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.github.hiwepy/spring-biz -->
+            <!-- Source: https://mvnrepository.com/artifact/com.github.redacted-legacy-family/spring-biz -->
             <!-- Spring Biz：旧坐标下的 Spring 业务增强库（已迁至 io.github.easy4j）。 -->
             <dependency>
-                <groupId>com.github.hiwepy</groupId>
+                <groupId>io.github.easy4j</groupId>
                 <artifactId>spring-biz</artifactId>
                 <version>${spring-biz.version}</version>
             </dependency>
@@ -9329,7 +9329,7 @@
                 <artifactId>spring-bytebuddy</artifactId>
                 <version>${spring-bytebuddy.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.github.hiwepy/spring-bytebuddy -->
+            <!-- Source: https://mvnrepository.com/artifact/com.github.redacted-legacy-family/spring-bytebuddy -->
             <!-- Source: https://mvnrepository.com/artifact/org.springframework.data/spring-data-bom -->
             <!-- Spring Data BOM：Spring Data 各模块（JPA/Redis/MongoDB 等）的版本清单。 -->
             <dependency>
@@ -10019,10 +10019,10 @@
                 <artifactId>undertow-core</artifactId>
                 <version>${undertow.version}</version>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/com.github.hiwepy/undertow-metrics-prometheus -->
+            <!-- https://mvnrepository.com/artifact/com.github.redacted-legacy-family/undertow-metrics-prometheus -->
             <!-- Undertow Metrics Prometheus：Undertow Web 服务器的 Prometheus 指标监控模块。 -->
             <dependency>
-                <groupId>com.github.hiwepy</groupId>
+                <groupId>io.github.easy4j</groupId>
                 <artifactId>undertow-metrics-prometheus</artifactId>
                 <version>${undertow-metrics.version}</version>
             </dependency>

@@ -262,7 +262,7 @@ mvn -B -ntp clean verify
 | 层 | 代表 | 仓库 | 关系 |
 |:---|:---|:---|:---|
 | **核心层（本仓库 ddd4j）** | ddd4j-core / ddd4j-data / ddd4j-mq / ddd4j-web / ddd4j-runtime / ddd4j-auth / ddd4j-extensions | `partme-ai/ddd4j` | Apache-2.0，框架无关 |
-| **脚手架层** | ddd4j-boot / ddd4j-quarkus / ddd4j-javalin | `hiwepy/ddd4j-{boot,quarkus,javalin}` | Apache-2.0，框架特定 starter |
+| **脚手架层** | ddd4j-boot / ddd4j-quarkus / ddd4j-javalin | `redacted-legacy-family/ddd4j-{boot,quarkus,javalin}` | Apache-2.0，框架特定 starter |
 | **应用层（业务工程）** | 用户自定义业务项目 | 用户自有仓库 | 消费前两层 |
 
 ### 7.2 商业模式与定价（⚠️ 见 §11 决策点 #5）
@@ -330,7 +330,7 @@ mvn -B -ntp clean verify
 
 | 角色 | 责任 |
 |:---|:---|
-| **项目维护者（@loong10k / @partme-ai / @hiwepy）** | 版本节奏、GA 决策、商业支持政策、商标 |
+| **项目维护者（@loong10k / @partme-ai / @redacted-legacy-family）** | 版本节奏、GA 决策、商业支持政策、商标 |
 | **架构师** | 三轨 SPI 一致性、ArchUnit 边界、新适配器选型审批 |
 | **业务工程 Owner** | 选轨、升级计划、兼容性回归测试 |
 | **生态贡献者** | 适配器 / Extension / Sample PR |

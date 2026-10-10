@@ -14,6 +14,13 @@
  */
 package io.ddd4j.extension.pf4j.point.crypto;
 
+/**
+ * 数据源配置加解密扩展点。
+ *
+ * <p>继承 {@link CryptoExtensionPoint}，用于对数据源连接串、账号密码等敏感配置做加解密。
+ *
+ * @since 2.0.x
+ */
 public interface DatasourceCryptoExtensionPoint extends CryptoExtensionPoint {
 
 }

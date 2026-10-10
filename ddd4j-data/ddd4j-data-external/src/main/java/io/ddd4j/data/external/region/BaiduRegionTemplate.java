@@ -67,10 +67,21 @@ public class BaiduRegionTemplate {
         this(ak, httpClient, RegionCache.none());
     }
 
+    /**
+     * 构造函数（无缓存）。
+     *
+     * @param ak 百度地图AK密钥
+     */
     public BaiduRegionTemplate(String ak) {
         this(ak, HttpClient.newHttpClient(), RegionCache.none());
     }
 
+    /**
+     * 构造函数（使用默认 HTTP 客户端）。
+     *
+     * @param ak          百度地图AK密钥
+     * @param regionCache 缓存服务
+     */
     public BaiduRegionTemplate(String ak, RegionCache regionCache) {
         this(ak, HttpClient.newHttpClient(), regionCache);
     }
@@ -88,6 +99,12 @@ public class BaiduRegionTemplate {
         this.regionCache = Objects.isNull(regionCache) ? RegionCache.none() : regionCache;
     }
 
+    /**
+     * 本地调试入口：查询指定 IP 的经纬度并打印结果。
+     *
+     * @param args 命令行参数（未使用）
+     * @throws IOException HTTP 请求或 JSON 解析异常
+     */
     public static void main(String[] args) throws IOException {
 
         BaiduRegionTemplate template = new BaiduRegionTemplate("CGxeqGuAGgP7n475kMPTi58y2EqjAPTh", HttpClient.newHttpClient());
@@ -177,6 +194,12 @@ public class BaiduRegionTemplate {
         return Optional.empty();
     }
 
+    /**
+     * 解析指定 IP 对应的行政区划地址（省份/城市/运营商等）。
+     *
+     * @param ip ipv4 地址
+     * @return 行政区划地址；解析失败返回未匹配的占位地址
+     */
     public RegionAddress getRegionAddress(String ip) {
         try {
             Optional<JSONObject> optional = this.getLocationByIp(ip);
@@ -207,6 +230,12 @@ public class BaiduRegionTemplate {
         }
     }
 
+    /**
+     * 解析指定 IP 对应的国家区域枚举。
+     *
+     * @param ip ipv4 地址
+     * @return 国家区域枚举；解析失败返回 {@link RegionEnum#UK}
+     */
     public RegionEnum getRegionByIp(String ip) {
         try {
             Optional<JSONObject> optional = this.getLocationByIp(ip);
@@ -234,6 +263,12 @@ public class BaiduRegionTemplate {
         }
     }
 
+    /**
+     * 解析指定 IP 对应的城市中心点经纬度。
+     *
+     * @param ip ipv4 地址
+     * @return 经纬度位置；解析失败返回 {@code null}
+     */
     public Location getLocation(String ip) {
         try {
             Optional<JSONObject> optional = this.getLocationByIp(ip);
@@ -260,6 +295,12 @@ public class BaiduRegionTemplate {
         return null;
     }
 
+    /**
+     * 判断指定 IP 是否属于中国大陆（当前实现查询失败时按大陆处理）。
+     *
+     * @param ip ipv4 地址
+     * @return {@code true} 表示按大陆 IP 处理
+     */
     public boolean isMainlandIp(String ip) {
         try {
             Optional<JSONObject> optional = this.getLocationByIp(ip);
@@ -276,6 +317,9 @@ public class BaiduRegionTemplate {
         return true;
     }
 
+    /**
+     * 城市中心点经纬度。
+     */
     @Data
     @AllArgsConstructor
     public class Location {

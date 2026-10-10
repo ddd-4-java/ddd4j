@@ -20,17 +20,42 @@ import javax.validation.Payload;
 
 import java.lang.annotation.*;
 
+/**
+ * 日期字符串校验注解：字符串日期必须匹配指定的日期模式。
+ *
+ * @since 2.0.x
+ */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.CONSTRUCTOR, ElementType.PARAMETER, ElementType.TYPE_USE})
 @Constraint(validatedBy = {StringDateValueValidator.class})
 public @interface StringDateValue {
 
+    /**
+     * 日期模式，默认 {@code yyyy-MM-dd}。
+     *
+     * @return 日期格式
+     */
     String pattern() default "yyyy-MM-dd";
 
+    /**
+     * 校验失败时的提示消息。
+     *
+     * @return 提示消息
+     */
     String message();
 
+    /**
+     * 分组校验约束集。
+     *
+     * @return 分组类型数组
+     */
     Class<?>[] groups() default {};
 
+    /**
+     * 负载元数据约束集。
+     *
+     * @return 负载类型数组
+     */
     Class<? extends Payload>[] payload() default {};
 }

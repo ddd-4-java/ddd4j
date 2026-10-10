@@ -21,8 +21,20 @@ import org.springframework.core.io.Resource;
 import java.io.IOException;
 import java.net.URL;
 
+/**
+ * 国际化资源基名处理器：从资源路径中截取 {@code i18n} 片段并拼接基名。
+ *
+ * @since 2.0.x
+ */
 public class I18nResourceBasenameHandler implements ResourceBasenameHandler {
 
+    /**
+     * 解析国际化资源的基名。
+     *
+     * @param resource 待解析的资源
+     * @return 形如 {@code i18n/<目录>/<文件名>} 的基名
+     * @throws IOException 读取资源 URL 失败时抛出
+     */
     @Override
     public String handle(Resource resource) throws IOException {
 

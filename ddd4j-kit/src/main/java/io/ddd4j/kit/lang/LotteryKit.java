@@ -35,6 +35,14 @@ import java.util.function.Function;
 @UtilityClass
 public class LotteryKit {
 
+    /**
+     * 按权重随机抽取一个元素。
+     *
+     * @param <T> 参与抽取的元素类型
+     * @param elements 参与抽取的元素集合（内部会先打乱顺序）
+     * @param quotaChecker 限额检查器：返回元素剩余可用数量，负数表示库存不足
+     * @return 抽中的元素
+     */
     public static <T extends LotteryElement> T lottery(List<T> elements, Function<T, Long> quotaChecker) {
         // 1、打乱元素集合
         Collections.shuffle(elements);
@@ -52,6 +60,16 @@ public class LotteryKit {
         return lottery(totalWeight, weightSection, elements, quotaChecker);
     }
 
+    /**
+     * 在累积概率区间内定位抽中元素，限额不足时递归重抽。
+     *
+     * @param <T> 参与抽取的元素类型
+     * @param totalWeight 权重总和（概率区间总量）
+     * @param weightSection 各元素的累积概率区间边界（升序）
+     * @param elements 参与抽取的元素集合
+     * @param quotaChecker 限额检查器：返回元素剩余可用数量，负数表示库存不足
+     * @return 抽中的元素
+     */
     protected static <T extends LotteryElement> T lottery(float totalWeight, List<Float> weightSection, List<T> elements, Function<T, Long> quotaChecker) {
         // 1、获取总的概率区间中的随机数
         ThreadLocalRandom random = ThreadLocalRandom.current();
@@ -77,6 +95,11 @@ public class LotteryKit {
         return elements.stream().filter(el -> Objects.isNull(el.getQuota())).min(Comparator.comparing(LotteryElement::getAmount)).get();
     }
 
+    /**
+     * 可参与加权随机抽取的元素模型。
+     *
+     * <p>携带奖励数量、出现权重与每日限额三类信息，由抽取方通过 {@code lottery} 方法定位中奖元素。
+     */
     @Data
     @Builder
     @NoArgsConstructor

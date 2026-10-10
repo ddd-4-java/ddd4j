@@ -23,8 +23,26 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 
+/**
+ * 插件扩展点查询工具。
+ *
+ * <p>按插件 ID 与扩展点 ID 从 {@link PluginManager} 中定位扩展实例。
+ *
+ * @since 2.0.x
+ */
 public class PluginUtils {
 
+    /**
+     * 按插件 ID 与扩展点 ID 查询指定类型的扩展实例。
+     *
+     * @param <T>          扩展点类型
+     * @param pluginManager 插件管理器
+     * @param type         扩展点类型
+     * @param pluginId     插件 ID
+     * @param extensionId  扩展点 ID（{@link ExtensionMapping#id()}）
+     * @return 匹配的扩展实例，未匹配时返回 {@code null}
+     * @throws PluginInvokeException 查询过程发生插件调用异常时抛出
+     */
     public static <T> T getExtensionPoint(PluginManager pluginManager, Class<T> type, String pluginId,
                                           String extensionId) throws PluginInvokeException {
         if (StringUtils.hasText(pluginId) && StringUtils.hasText(extensionId)) {
@@ -39,11 +57,29 @@ public class PluginUtils {
         return null;
     }
 
+    /**
+     * 查询 Servlet 请求包装扩展点实例。
+     *
+     * @param pluginManager 插件管理器
+     * @param pluginId      插件 ID
+     * @param extensionId   扩展点 ID
+     * @return 匹配的扩展实例，未匹配时返回 {@code null}
+     * @throws PluginInvokeException 查询过程发生插件调用异常时抛出
+     */
     public static ServletRequestExtensionPoint getRequestExtensionPoint(PluginManager pluginManager, String pluginId,
                                                                         String extensionId) throws PluginInvokeException {
         return getExtensionPoint(pluginManager, ServletRequestExtensionPoint.class, pluginId, extensionId);
     }
 
+    /**
+     * 查询 Servlet 响应拆包扩展点实例。
+     *
+     * @param pluginManager 插件管理器
+     * @param pluginId      插件 ID
+     * @param extensionId   扩展点 ID
+     * @return 匹配的扩展实例，未匹配时返回 {@code null}
+     * @throws PluginInvokeException 查询过程发生插件调用异常时抛出
+     */
     public static ServletResponseExtensionPoint getResponseExtensionPoint(PluginManager pluginManager, String pluginId,
                                                                           String extensionId) throws PluginInvokeException {
         return getExtensionPoint(pluginManager, ServletResponseExtensionPoint.class, pluginId, extensionId);

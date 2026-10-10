@@ -29,6 +29,9 @@ import lombok.Data;
 @Data
 public class LicenseProperties {
 
+    /**
+     * 配置项前缀（{@code @ConfigurationProperties} 绑定使用）。
+     */
     public static final String PREFIX = "license";
 
     /**

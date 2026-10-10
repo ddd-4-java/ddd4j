@@ -31,24 +31,53 @@ public final class BearerSubjectAuthenticator {
 
     private final BearerTokenResolver tokenResolver;
 
+    /**
+     * 使用默认 {@link BearerTokenResolver} 构造认证器。
+     */
     public BearerSubjectAuthenticator() {
         this(new BearerTokenResolver());
     }
 
+    /**
+     * 使用指定的 Bearer Token 解析器构造认证器。
+     *
+     * @param tokenResolver Bearer Token 解析器，不可为 {@code null}
+     */
     public BearerSubjectAuthenticator(BearerTokenResolver tokenResolver) {
         this.tokenResolver = Objects.requireNonNull(tokenResolver, "tokenResolver must not be null");
     }
 
+    /**
+     * 认证 {@code Authorization} 头并返回认证主体。
+     *
+     * @param authorization 原始 Authorization 头值
+     * @return 认证通过的主体
+     * @throws WebStatusException 缺少 Bearer Token、Subject SPI 不可用或令牌无效时抛出
+     */
     public AuthPrincipal authenticate(String authorization) {
         return authenticateSubject(authorization).principal();
     }
 
+    /**
+     * 认证 {@code Authorization} 头并返回完整认证结果。
+     *
+     * @param authorization 原始 Authorization 头值
+     * @return 包含令牌、主体与 Subject SPI 的认证结果
+     * @throws WebStatusException 缺少 Bearer Token、Subject SPI 不可用或令牌无效时抛出
+     */
     public Authentication authenticateSubject(String authorization) {
         String token = tokenResolver.resolve(authorization)
                 .orElseThrow(() -> new WebStatusException(401, "Bearer token is required"));
         return authenticateToken(token);
     }
 
+    /**
+     * 尽力认证：无法解析出令牌时返回 {@link Optional#empty()}，不抛出异常。
+     *
+     * @param authorization 原始 Authorization 头值
+     * @return 认证结果；令牌缺失或认证失败时为空
+     * @throws WebStatusException Subject SPI 不可用或令牌无效时抛出
+     */
     public Optional<Authentication> authenticateOptional(String authorization) {
         return tokenResolver.resolve(authorization).map(this::authenticateToken);
     }
@@ -64,10 +93,34 @@ public final class BearerSubjectAuthenticator {
         return new Authentication(token, principal, subject);
     }
 
+    /**
+     * 认证结果：令牌、认证主体与签发该主体的 Subject SPI。
+     *
+     * @param token     通过校验的 Bearer Token
+     * @param principal 认证通过的主体
+     * @param subject   完成校验的 Subject SPI
+     */
     public record Authentication(String token, AuthPrincipal principal, Subject subject) {
 
+        /**
+         * 获取通过校验的 Bearer Token。
+         *
+         * @return 令牌值
+         */
         public String getToken() { return token; }
+
+        /**
+         * 获取认证通过的主体。
+         *
+         * @return 认证主体
+         */
         public AuthPrincipal getPrincipal() { return principal; }
+
+        /**
+         * 获取完成校验的 Subject SPI。
+         *
+         * @return Subject 实例
+         */
         public Subject getSubject() { return subject; }
     }
 }

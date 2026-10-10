@@ -20,12 +20,38 @@ import org.pf4j.PluginRuntimeException;
 
 import java.util.Map;
 
+/**
+ * 请求参数签名扩展点。
+ *
+ * <p>插件实现该接口，为主控提供参数签名与密钥（appkey/appSecret）查询能力。
+ *
+ * @since 2.0.x
+ */
 public interface ParamSignatureExtensionPoint extends ExtensionPoint {
 
+    /**
+     * 对请求参数进行签名。
+     *
+     * @param request HTTP 请求
+     * @param params  待签名的请求参数集合
+     * @throws PluginRuntimeException 签名失败时抛出
+     */
     void sign(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException;
 
+    /**
+     * 按应用 ID 查询签名使用的 appkey。
+     *
+     * @param appid 应用 ID
+     * @return appkey
+     */
     String getAppkey(String appid);
 
+    /**
+     * 按应用 ID 查询签名使用的 appSecret。
+     *
+     * @param appid 应用 ID
+     * @return appSecret
+     */
     String getAppSecret(String appid);
 
 }

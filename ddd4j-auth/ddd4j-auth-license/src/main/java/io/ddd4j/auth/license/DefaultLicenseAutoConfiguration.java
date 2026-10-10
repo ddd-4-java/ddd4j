@@ -17,10 +17,23 @@ package io.ddd4j.auth.license;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * 许可证（License）默认自动配置。
+ *
+ * <p>注册 {@link LicenseVerify} Bean：容器启动时安装许可证，容器关闭时卸载许可证。
+ *
+ * @since 2.0.x
+ */
 @Configuration(proxyBeanMethods = false)
 // @EnableConfigurationProperties({LicenseProperties.class})
 public class DefaultLicenseAutoConfiguration {
 
+    /**
+     * 创建许可证校验 Bean。
+     *
+     * @param properties 许可证配置属性（subject、公钥别称、密码、签名算法等）
+     * @return 按配置装配完成的 {@link LicenseVerify} 实例
+     */
     @Bean(initMethod = "installLicense", destroyMethod = "unInstallLicense")
     public LicenseVerify licenseVerify(LicenseProperties properties) {
         return new LicenseVerify(properties.getSubject(), properties.getPublicAlias(), properties.getStorePass(),

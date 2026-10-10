@@ -21,12 +21,28 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * 方法参数注解：按名称绑定 HTTP Cookie 值到控制器方法参数。
+ *
+ * @since 2.0.x
+ */
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
 public @interface CookieParam {
+
+    /**
+     * Cookie 名称。
+     *
+     * @return Cookie 名称
+     */
     String value();
 
+    /**
+     * Cookie 缺失时使用的缺省值。
+     *
+     * @return 缺省值
+     */
     String defaultValue() default "";
 }

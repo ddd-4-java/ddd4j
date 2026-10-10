@@ -41,19 +41,43 @@ import java.util.Locale;
 import java.util.List;
 import java.util.TimeZone;
 
+/**
+ * WebFlux（响应式 Web）环境的默认 Bean 装配配置。
+ *
+ * <p>注册请求上下文过滤器、区域解析、认证、异常翻译、访问策略、
+ * 幂等生命周期与静态资源映射等 ddd4j Web 核心组件。
+ *
+ * @since 2.0.x
+ */
 @Configuration(proxyBeanMethods = false)
 public class DefaultWebFluxConfiguration {
 
+    /**
+     * 注册 Profile 管理器。
+     *
+     * @param environment Spring 环境
+     * @return Profile 管理器
+     */
     @Bean
     public ProfileManager profileManager(Environment environment) {
         return new ProfileManager(environment::getActiveProfiles);
     }
 
+    /**
+     * 注册请求上下文过滤器（绑定 requestId/租户等请求级上下文）。
+     *
+     * @return 响应式请求上下文过滤器
+     */
     @Bean(name = "ddd4jReactiveRequestContextFilter")
     public ReactiveRequestContextFilter requestContextFilter() {
         return new ReactiveRequestContextFilter();
     }
 
+    /**
+     * 注册基于 X 头的区域（Locale）上下文解析器。
+     *
+     * @return 区域上下文解析器
+     */
     @Bean
     public LocaleContextResolver localeContextResolver() {
 
@@ -63,16 +87,32 @@ public class DefaultWebFluxConfiguration {
         return localeContextResolver;
     }
 
+    /**
+     * 注册 Bearer Token 主体认证器。
+     *
+     * @return 认证器实例
+     */
     @Bean
     public BearerSubjectAuthenticator bearerSubjectAuthenticator() {
         return new BearerSubjectAuthenticator();
     }
 
+    /**
+     * 注册 Web 异常翻译器。
+     *
+     * @return 异常翻译器实例
+     */
     @Bean
     public WebExceptionTranslator webExceptionTranslator() {
         return new DefaultWebExceptionTranslator();
     }
 
+    /**
+     * 注册基于路径的访问策略（默认放行健康检查与静态资源路径）。
+     *
+     * @param environment Spring 环境（读取 {@code ddd4j.web.public-paths}）
+     * @return 访问策略实例
+     */
     @Bean
     public WebAccessPolicy webAccessPolicy(Environment environment) {
         String[] publicPaths = environment.getProperty("ddd4j.web.public-paths", String[].class,
@@ -81,6 +121,12 @@ public class DefaultWebFluxConfiguration {
         return new PathWebAccessPolicy(List.of(publicPaths), AuthenticationMode.REQUIRED);
     }
 
+    /**
+     * 注册请求上下文工厂（生成请求 ID、解析客户端 IP）。
+     *
+     * @param environment Spring 环境（读取 {@code ddd4j.web.trust-forwarded-headers}）
+     * @return 请求上下文工厂
+     */
     @Bean
     public WebRequestContextFactory webRequestContextFactory(Environment environment) {
         boolean trustForwardedHeaders = environment.getProperty("ddd4j.web.trust-forwarded-headers",
@@ -90,17 +136,37 @@ public class DefaultWebFluxConfiguration {
         return new WebRequestContextFactory(RequestIdGenerator.uuid(), clientIpResolver);
     }
 
+    /**
+     * 注册请求生命周期管理器（认证与访问策略编排）。
+     *
+     * @param authenticator Bearer Token 主体认证器
+     * @param accessPolicy  路径访问策略
+     * @return 请求生命周期管理器
+     */
     @Bean
     public WebRequestLifecycle webRequestLifecycle(BearerSubjectAuthenticator authenticator,
                                                    WebAccessPolicy accessPolicy) {
         return new WebRequestLifecycle(authenticator, accessPolicy);
     }
 
+    /**
+     * 注册幂等生命周期管理器（基于缓存租约）。
+     *
+     * @return 幂等生命周期管理器
+     */
     @Bean
     public WebIdempotencyLifecycle webIdempotencyLifecycle() {
         return new WebIdempotencyLifecycle(new CacheIdempotencyGuard());
     }
 
+    /**
+     * 注册 ddd4j WebFlux 核心过滤器（串联上下文、生命周期与幂等）。
+     *
+     * @param contextFactory     请求上下文工厂
+     * @param requestLifecycle   请求生命周期管理器
+     * @param idempotencyLifecycle 幂等生命周期管理器
+     * @return 核心过滤器实例
+     */
     @Bean
     public Ddd4jWebFluxFilter ddd4jWebFluxFilter(WebRequestContextFactory contextFactory,
                                                  WebRequestLifecycle requestLifecycle,
@@ -110,6 +176,9 @@ public class DefaultWebFluxConfiguration {
 
     /**
      * 注册不依赖 Spring Boot Actuator 的显式 readiness 端点。
+     *
+     * @param readinessRegistry 运行时就绪状态注册表
+     * @return readiness 控制器
      */
     @Bean
     public Ddd4jWebFluxReadinessController ddd4jWebFluxReadinessController(
@@ -117,6 +186,12 @@ public class DefaultWebFluxConfiguration {
         return new Ddd4jWebFluxReadinessController(readinessRegistry);
     }
 
+    /**
+     * 注册默认静态资源映射配置器。
+     *
+     * @param localResourceProperteis 本地静态资源映射配置
+     * @return 资源映射配置器
+     */
     @Bean
     public DefaultWebFluxConfigurer defaultWebFluxConfigurer(LocalResourceProperteis localResourceProperteis) {
         return new DefaultWebFluxConfigurer(localResourceProperteis);

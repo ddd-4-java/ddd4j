@@ -20,15 +20,35 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
-//JDK动态代理实现InvocationHandler接口
+/**
+ * JDK 动态代理（基于 {@link InvocationHandler}）。
+ *
+ * <p>拦截目标对象的方法调用并打印监听日志，用于插件调用链路的演示与调试。
+ *
+ * @since 2.0.x
+ */
 public class JdkProxy implements InvocationHandler {
 
     private Object target;//需要代理的目标对象
 
+    /**
+     * 构造调用处理器。
+     *
+     * @param target 需要代理的目标对象
+     */
     public JdkProxy(Object target) {
         this.target = target;
     }
 
+    /**
+     * 拦截代理对象的方法调用，执行前后打印监听日志。
+     *
+     * @param proxy  代理对象
+     * @param method 被调用的方法
+     * @param args   方法参数数组
+     * @return 方法调用的返回值
+     * @throws Throwable 反射调用或代理逻辑抛出的异常
+     */
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         System.out.println("JDK动态代理，监听开始！");
@@ -38,13 +58,24 @@ public class JdkProxy implements InvocationHandler {
     }
 
 
-    //定义获取代理对象方法
+    /**
+     * 为目标实例创建 JDK 动态代理对象（要求目标实现接口）。
+     *
+     * @param targetObject 目标实例
+     * @return JDK 动态代理对象
+     */
     public static Object getJDKProxy(Object targetObject) {
         //JDK动态代理只能针对实现了接口的类进行代理，newProxyInstance 函数所需参数就可看出
         return Proxy.newProxyInstance(targetObject.getClass().getClassLoader(), targetObject.getClass().getInterfaces(), new JdkProxy(targetObject));
     }
 
-    // 定义获取代理对象方法
+    /**
+     * 按目标类型实例化并创建 JDK 动态代理对象（要求目标类型实现接口）。
+     *
+     * @param <T>         目标类型
+     * @param className 目标类型
+     * @return 目标类型的 JDK 动态代理对象
+     */
     public static <T> T getJDKProxy(Class<T> className) {
         JdkProxy target = new JdkProxy(BeanUtils.instantiateClass(className));
         //JDK动态代理只能针对实现了接口的类进行代理，newProxyInstance 函数所需参数就可看出

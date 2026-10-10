@@ -16,10 +16,31 @@ package io.ddd4j.extension.pf4j.point.crypto;
 
 import org.pf4j.ExtensionPoint;
 
+/**
+ * 加解密（Crypto）扩展点。
+ *
+ * <p>插件实现该接口，为主控提供明文加密与密文解密能力。
+ *
+ * @since 2.0.x
+ */
 public interface CryptoExtensionPoint extends ExtensionPoint {
 
+    /**
+     * 加密明文。
+     *
+     * @param source    待加密明文
+     * @param secretKey 密钥
+     * @return 密文
+     */
     String encrypt(String source, Object secretKey);
 
+    /**
+     * 解密密文。
+     *
+     * @param source    待解密密文
+     * @param secretKey 密钥
+     * @return 明文
+     */
     String decrypt(String source, Object secretKey);
 
 }

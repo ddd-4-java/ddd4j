@@ -91,17 +91,17 @@
             <artifactId>assertj-core</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- Testcontainers PostgreSQL（PG 容器 CI 轨；版本由 testcontainers-bom 管理，
-             2.x 新命名 testcontainers-postgresql/testcontainers-junit-jupiter；
+        <!-- Testcontainers PostgreSQL（PG 容器 CI 轨；统一 1.21.4，版本由 testcontainers-bom 管理，
+             1.x 标准命名 postgresql/junit-jupiter；
              @Testcontainers(disabledWithoutDocker=true) 在 Docker 缺席时自动跳过） -->
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>testcontainers-postgresql</artifactId>
+            <artifactId>postgresql</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>testcontainers-junit-jupiter</artifactId>
+            <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
         <!-- PostgreSQL JDBC 驱动（Testcontainers 容器连接用） -->

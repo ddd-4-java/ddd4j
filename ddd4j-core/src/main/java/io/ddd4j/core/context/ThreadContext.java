@@ -34,7 +34,13 @@ import java.util.concurrent.ConcurrentHashMap;
 @SuppressWarnings("unchecked")
 public class ThreadContext {
 
+    /**
+     * 安全管理器在上下文中的绑定 key。
+     */
     public static final String SECURITY_MANAGER_KEY = ThreadContext.class.getName() + "_SECURITY_MANAGER_KEY";
+    /**
+     * 认证主体（Subject）在上下文中的绑定 key。
+     */
     public static final String SUBJECT_KEY = ThreadContext.class.getName() + "_SUBJECT_KEY";
 
     /**
@@ -42,6 +48,12 @@ public class ThreadContext {
      */
     private static final TransmittableThreadLocal<Map<Object, Object>> THREAD_LOCAL_POOL =
             new TransmittableThreadLocal<>() {
+                /**
+                 * 线程池任务透传时复制父线程资源 Map，避免父子线程共享同一可变容器。
+                 *
+                 * @param parentValue 父线程的资源 Map
+                 * @return 复制后的资源 Map
+                 */
                 @Override
                 public Map<Object, Object> copy(Map<Object, Object> parentValue) {
                     return copyResources(parentValue);
@@ -148,6 +160,8 @@ public class ThreadContext {
 
     /**
      * 获取当前线程绑定的全部键值对。
+     *
+     * @return 全部键值对的副本
      */
     public static Map<Object, Object> getValues() {
         return getResources();
@@ -155,6 +169,8 @@ public class ThreadContext {
 
     /**
      * 设置当前线程绑定的全部键值对。
+     *
+     * @param values 需要绑定的全部键值对；为 null 或空 Map 时清空当前上下文
      */
     public static void setValues(Map<Object, Object> values) {
         setResources(values);
@@ -335,6 +351,11 @@ public class ThreadContext {
         THREAD_LOCAL_POOL.remove();
     }
 
+    /**
+     * 上下文作用域，配合 try-with-resources 使用。
+     *
+     * <p>close 时恢复进入作用域前的资源快照（幂等，重复关闭不生效）。
+     */
     public static final class Scope implements AutoCloseable {
 
         private final Map<Object, Object> previousResources;
@@ -344,6 +365,9 @@ public class ThreadContext {
             this.previousResources = previousResources;
         }
 
+        /**
+         * 恢复进入作用域前的资源快照。
+         */
         @Override
         public void close() {
             if (closed) {

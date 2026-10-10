@@ -16,5 +16,12 @@ package io.ddd4j.kit.lang;
 
 import cn.hutool.core.io.unit.DataSizeUtil;
 
+/**
+ * 数据容量（DataSize）解析工具类。
+ *
+ * <p>继承 Hutool {@code DataSizeUtil}，提供如 {@code 10MB}、{@code 512kb} 等容量字符串与字节数之间的互转能力。
+ *
+ * @since 2.0.x
+ */
 public class DataSizeKit extends DataSizeUtil {
 }

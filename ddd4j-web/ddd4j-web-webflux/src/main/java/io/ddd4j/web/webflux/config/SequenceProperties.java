@@ -17,9 +17,17 @@ package io.ddd4j.web.webflux.config;
 import cn.hutool.core.date.SystemClock;
 import lombok.Data;
 
+/**
+ * 雪花序列生成配置属性。
+ *
+ * @since 2.0.x
+ */
 @Data
 public class SequenceProperties {
 
+    /**
+     * 配置项前缀（{@code @ConfigurationProperties} 绑定使用）。
+     */
     public static final String PREFIX = "sequence";
 
     /**

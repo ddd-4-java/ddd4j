@@ -39,7 +39,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * {@link KafkaMQClient} 的 Kafka 集成测试。
  *
- * <p>使用 Testcontainers Kafka 模块（org.testcontainers:testcontainers-kafka，
+ * <p>使用 Testcontainers Kafka 模块（org.testcontainers:kafka，
  * 模块清单来源 <a href="https://testcontainers.com/modules/">testcontainers.com/modules</a>）
  * 启动真实 Kafka broker，验证"生产 → 序列化 → broker → 消费 → 反序列化 → 监听器回调"全链路。
  *

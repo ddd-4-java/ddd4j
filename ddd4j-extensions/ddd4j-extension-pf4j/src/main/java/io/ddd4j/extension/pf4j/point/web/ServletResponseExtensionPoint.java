@@ -20,10 +20,31 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Map;
 
+/**
+ * Servlet 响应拆包扩展点。
+ *
+ * <p>插件实现该接口，为主控提供对 HTTP 响应的还原（dewrap）能力。
+ *
+ * @since 2.0.x
+ */
 public interface ServletResponseExtensionPoint extends ExtensionPoint {
 
+    /**
+     * 按真实业务参数还原 HTTP 响应。
+     *
+     * @param response   HTTP 响应
+     * @param realParams 真实业务参数集合
+     * @return 还原后的响应描述
+     */
     String dewrap(HttpServletResponse response, Map<String, Object> realParams);
 
+    /**
+     * 还原 {@link ResponseEntity} 形式的响应。
+     *
+     * @param <T>            响应体类型
+     * @param responseEntity 原始响应实体
+     * @return 还原后的响应实体
+     */
     <T> ResponseEntity<T> dewrap(ResponseEntity<T> responseEntity);
 
 }

@@ -21,16 +21,36 @@ import org.springframework.cglib.proxy.MethodProxy;
 
 import java.lang.reflect.Method;
 
-//Cglib动态代理，实现MethodInterceptor接口
+/**
+ * CGLIB 动态代理（基于 {@link MethodInterceptor}）。
+ *
+ * <p>拦截目标对象的方法调用并打印监听日志，用于插件调用链路的演示与调试。
+ *
+ * @since 2.0.x
+ */
 public class CglibProxy implements MethodInterceptor {
 
     private Object target;//需要代理的目标对象
 
+    /**
+     * 构造代理拦截器。
+     *
+     * @param target 需要代理的目标对象
+     */
     public CglibProxy(Object target) {
         this.target = target;
     }
 
-    //重写拦截方法
+    /**
+     * 拦截目标对象的方法调用，执行前后打印监听日志。
+     *
+     * @param obj    代理对象
+     * @param method 被调用的方法
+     * @param arr    方法参数数组
+     * @param proxy  方法代理，用于调用父类实现
+     * @return 方法调用的返回值
+     * @throws Throwable 反射调用或代理逻辑抛出的异常
+     */
     @Override
     public Object intercept(Object obj, Method method, Object[] arr, MethodProxy proxy) throws Throwable {
         System.out.println("Cglib动态代理，监听开始！");
@@ -39,7 +59,12 @@ public class CglibProxy implements MethodInterceptor {
         return invoke;
     }
 
-    // 定义获取代理对象方法
+    /**
+     * 为目标实例创建 CGLIB 代理对象。
+     *
+     * @param objectTarget 目标实例
+     * @return CGLIB 代理对象
+     */
     public static Object getCglibProxy(Object objectTarget) {
         //为目标对象target赋值
         CglibProxy target = new CglibProxy(objectTarget);
@@ -51,7 +76,13 @@ public class CglibProxy implements MethodInterceptor {
         return result;
     }
 
-    // 定义获取代理对象方法
+    /**
+     * 按目标类型实例化并创建 CGLIB 代理对象。
+     *
+     * @param <T>         目标类型
+     * @param className 目标类型
+     * @return 目标类型的 CGLIB 代理对象
+     */
     public static <T> T getCglibProxy(Class<T> className) {
         CglibProxy target = new CglibProxy(BeanUtils.instantiateClass(className));
         Enhancer enhancer = new Enhancer();

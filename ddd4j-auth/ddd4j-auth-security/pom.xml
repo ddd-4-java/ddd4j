@@ -22,7 +22,7 @@
             <artifactId>ddd4j-core</artifactId>
             <version>${revision}</version>
         </dependency>
-        <!-- Spring Security（公开坐标，替代原 hiwepy 安全启动器） -->
+        <!-- Spring Security（公开坐标，替代原 redacted-legacy-family 安全启动器） -->
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-core</artifactId>

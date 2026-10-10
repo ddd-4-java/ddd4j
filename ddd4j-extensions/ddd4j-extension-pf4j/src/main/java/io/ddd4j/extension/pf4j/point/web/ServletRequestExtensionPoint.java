@@ -20,10 +20,31 @@ import org.springframework.http.RequestEntity;
 
 import java.util.Map;
 
+/**
+ * Servlet 请求包装扩展点。
+ *
+ * <p>插件实现该接口，为主控提供对 HTTP 请求的改写（wrap）能力。
+ *
+ * @since 2.0.x
+ */
 public interface ServletRequestExtensionPoint extends ExtensionPoint {
 
+    /**
+     * 按真实业务参数改写 HTTP 请求。
+     *
+     * @param request    HTTP 请求
+     * @param realParams 真实业务参数集合
+     * @return 改写后的请求描述
+     */
     String wrap(HttpServletRequest request, Map<String, Object> realParams);
 
+    /**
+     * 改写 {@link RequestEntity} 形式的请求。
+     *
+     * @param <T>           请求体类型
+     * @param requestEntity 原始请求实体
+     * @return 改写后的请求实体
+     */
     <T> RequestEntity<T> wrap(RequestEntity<T> requestEntity);
 
 }

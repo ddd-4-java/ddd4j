@@ -27,7 +27,7 @@ import java.text.SimpleDateFormat;
 /**
  * 字符串日期格式校验器
  *
- * @author hiwepy
+ * @author redacted-legacy-family
  * @since 2021-03-08
  */
 public class StringDateValueValidator implements ConstraintValidator<StringDateValue, String> {

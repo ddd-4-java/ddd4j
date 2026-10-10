@@ -80,17 +80,44 @@ public class MQListener {
      */
     private boolean required = true;
 
+    /**
+     * {@link MQListener} 构建器（Lombok {@code @Builder} 生成的骨架，此处显式声明
+     * 以固定 {@code required} 默认值为 {@code true}）。
+     */
     public static class MQListenerBuilder {
         private boolean required = true;
     }
 
-    /** 保留历史八参数构造器。 */
+    /**
+     * 保留历史八参数构造器（默认 {@code required = true}）。
+     *
+     * @param bean      目标 Bean
+     * @param method    监听方法
+     * @param group     消费者组
+     * @param namespace 命名空间
+     * @param topic     主题
+     * @param tags      标签表达式
+     * @param supports  策略过滤列表
+     * @param separator namespace/topic/tag 拼接符
+     */
     public MQListener(Object bean, Method method, String group, String namespace, String topic,
                       String tags, List<String> supports, String separator) {
         this(bean, method, group, namespace, topic, tags, supports, separator, true);
     }
 
-    /** 包含启动必要性的完整构造器。 */
+    /**
+     * 包含启动必要性的完整构造器（Lombok {@code @Builder} 入口）。
+     *
+     * @param bean      目标 Bean
+     * @param method    监听方法
+     * @param group     消费者组
+     * @param namespace 命名空间
+     * @param topic     主题
+     * @param tags      标签表达式
+     * @param supports  策略过滤列表
+     * @param separator namespace/topic/tag 拼接符
+     * @param required  是否为应用启动所必需的消费者
+     */
     @Builder
     public MQListener(Object bean, Method method, String group, String namespace, String topic,
                       String tags, List<String> supports, String separator, boolean required) {
@@ -107,6 +134,11 @@ public class MQListener {
 
     /**
      * 从注解与方法元数据构建监听器定义。
+     *
+     * @param bean   目标 Bean
+     * @param method 被 {@link MQEventListener} 标注的监听方法
+     * @param ann    方法上的 {@link MQEventListener} 注解
+     * @return 构建完成的监听器定义
      */
     public static MQListener of(Object bean, Method method, MQEventListener ann) {
         return MQListener.builder()
@@ -124,6 +156,8 @@ public class MQListener {
 
     /**
      * 返回监听方法首个参数类型（约定为 {@link MQEvent} 子类），用于反序列化。
+     *
+     * @return 消息载荷类型，方法无参数或首参非 {@link MQEvent} 时返回 {@code MQEvent.class}
      */
     public Class<? extends MQEvent> payloadType() {
         if (Objects.isNull(method) || method.getParameterCount() == 0) {
@@ -135,6 +169,8 @@ public class MQListener {
 
     /**
      * 返回策略匹配支持列表。
+     *
+     * @return 支持列表，未配置时返回空列表
      */
     public List<String> supports() {
         return Objects.isNull(supports) ? List.of() : supports;
@@ -160,6 +196,7 @@ public class MQListener {
      * 与 event 端单 tag 对齐。tag 为 null/空/通配 {@code "*"} 时不追加第三段。
      *
      * @param separator 拼接符（由 {@link io.ddd4j.mq.MQClient#defaultConcat()} 传入，确保 listener 与 event 同规则）
+     * @return 物理路由键表达式
      */
     public String getRouteExpression(String separator) {
         String sep = StrKit.isEmpty(separator) ? "." : separator;

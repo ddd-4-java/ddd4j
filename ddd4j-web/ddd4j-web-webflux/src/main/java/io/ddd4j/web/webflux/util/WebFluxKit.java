@@ -28,6 +28,11 @@ import reactor.core.publisher.Mono;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
+/**
+ * WebFlux 请求处理工具：AJAX 判定、请求体读取、客户端 IP 解析与设备标识提取。
+ *
+ * @since 2.0.x
+ */
 @Slf4j
 public class WebFluxKit {
 
@@ -41,44 +46,101 @@ public class WebFluxKit {
     private static final String LOCAL_IP = "127.0.0.1";
     private static final String UNKNOWN = "unknown";
 
+    /**
+     * 判断是否为 AJAX 风格请求（AJAX 头、JSON 内容类型或 POST 任一命中）。
+     *
+     * @param request 服务端请求
+     * @return {@code true} 表示 AJAX 风格请求
+     */
     public static boolean isAjaxResponse(ServerHttpRequest request) {
         return isAjaxRequest(request) || isContentTypeJson(request) || isPostRequest(request);
     }
 
+    /**
+     * 判断是否为 JSON 对象提交请求（POST + JSON 内容类型）。
+     *
+     * @param request 服务端请求
+     * @return {@code true} 表示对象提交请求
+     */
     public static boolean isObjectRequest(ServerHttpRequest request) {
         return isPostRequest(request) && isContentTypeJson(request);
     }
 
+    /**
+     * 判断是否为 JSON 对象提交请求（POST + JSON 内容类型）。
+     *
+     * @param request 通用 HTTP 请求
+     * @return {@code true} 表示对象提交请求
+     */
     public static boolean isObjectRequest(HttpRequest request) {
         return isPostRequest(request) && isContentTypeJson(request);
     }
 
+    /**
+     * 依据 {@code X-Requested-With} 头判断是否为 AJAX 请求。
+     *
+     * @param request 服务端请求
+     * @return {@code true} 表示 AJAX 请求
+     */
     public static boolean isAjaxRequest(ServerHttpRequest request) {
         return XML_HTTP_REQUEST.equals(request.getHeaders().getFirst(X_REQUESTED_WITH));
     }
 
+    /**
+     * 依据 {@code X-Requested-With} 头判断是否为 AJAX 请求。
+     *
+     * @param request 通用 HTTP 请求
+     * @return {@code true} 表示 AJAX 请求
+     */
     public static boolean isAjaxRequest(HttpRequest request) {
         return Objects.requireNonNull(request.getHeaders().get(X_REQUESTED_WITH)).contains(XML_HTTP_REQUEST);
     }
 
+    /**
+     * 判断内容类型是否包含 JSON。
+     *
+     * @param request 服务端请求
+     * @return {@code true} 表示内容类型为 JSON
+     */
     public static boolean isContentTypeJson(ServerHttpRequest request) {
         return Objects.requireNonNull(request.getHeaders().get(HttpHeaders.CONTENT_TYPE)).contains(CONTENT_TYPE_JSON);
     }
 
+    /**
+     * 判断内容类型是否包含 JSON。
+     *
+     * @param request 通用 HTTP 请求
+     * @return {@code true} 表示内容类型为 JSON
+     */
     public static boolean isContentTypeJson(HttpRequest request) {
         return Objects.requireNonNull(request.getHeaders().get(HttpHeaders.CONTENT_TYPE)).contains(CONTENT_TYPE_JSON);
     }
 
+    /**
+     * 判断是否为 POST 请求。
+     *
+     * @param request 服务端请求
+     * @return {@code true} 表示 POST 请求
+     */
     public static boolean isPostRequest(ServerHttpRequest request) {
         return HttpMethod.POST.compareTo(request.getMethod()) == 0;
     }
 
+    /**
+     * 判断是否为 POST 请求。
+     *
+     * @param request 通用 HTTP 请求
+     * @return {@code true} 表示 POST 请求
+     */
     public static boolean isPostRequest(HttpRequest request) {
         return HttpMethod.POST.compareTo(request.getMethod()) == 0;
     }
 
     /**
-     * 从 Flux<DataBuffer> 中获取请求体字符串。
+     * 从 Flux&lt;DataBuffer&gt; 中获取请求体字符串。
+     *
+     * @param serverHttpRequest 服务端请求
+     * @return 请求体 UTF-8 字符串，空请求体时为空串
      */
     public static Mono<String> resolveBodyFromRequest(ServerHttpRequest serverHttpRequest) {
         if (serverHttpRequest.getHeaders().getContentLength() == 0) {
@@ -99,6 +161,9 @@ public class WebFluxKit {
 
     /**
      * 获取请求客户端 IP 地址，支持代理服务器。
+     *
+     * @param request 服务端请求
+     * @return 客户端 IP 地址（代理头优先，回环地址归一为 {@code 127.0.0.1}）
      */
     public static String getRemoteAddr(ServerHttpRequest request) {
         String remoteAddr = UNKNOWN;
@@ -132,6 +197,12 @@ public class WebFluxKit {
         return remoteAddr;
     }
 
+    /**
+     * 判断远端客户端与本机是否处于同一 /24 网段。
+     *
+     * @param request 服务端请求
+     * @return {@code true} 表示同一网段
+     */
     public static boolean isSameSegment(ServerHttpRequest request) {
         String localIp = Objects.requireNonNull(request.getLocalAddress()).getAddress().getHostAddress();
         String remoteIp = getRemoteAddr(request);
@@ -140,6 +211,12 @@ public class WebFluxKit {
         return (mask & getIpV4Value(localIp)) == (mask & getIpV4Value(remoteIp));
     }
 
+    /**
+     * 将点分十进制 IPv4 地址/掩码转换为 32 位整数值。
+     *
+     * @param ipOrMask IPv4 地址或掩码字符串
+     * @return 32 位整数值，解析失败时按各字节零值组合返回
+     */
     public static int getIpV4Value(String ipOrMask) {
         byte[] addr = getIpV4Bytes(ipOrMask);
         int address1 = addr[3] & 0xFF;
@@ -149,6 +226,12 @@ public class WebFluxKit {
         return address1;
     }
 
+    /**
+     * 将点分十进制 IPv4 地址/掩码拆分为 4 字节数组。
+     *
+     * @param ipOrMask IPv4 地址或掩码字符串
+     * @return 4 字节数组，解析失败时返回全零数组
+     */
     public static byte[] getIpV4Bytes(String ipOrMask) {
         try {
             String[] addrs = ipOrMask.split("\\.");
@@ -163,6 +246,12 @@ public class WebFluxKit {
         return new byte[4];
     }
 
+    /**
+     * 按设备标识头优先级（IDFA/OAID/OpenUDID/IMEI/AndroidId）提取设备 ID。
+     *
+     * @param request 服务端请求
+     * @return 设备 ID，未携带任何标识头时为 {@code null}
+     */
     public static String getDeviceId(ServerHttpRequest request) {
         HttpHeaders headers = request.getHeaders();
         String deviceId = headers.getFirst(XHeaders.X_DEVICE_IDFA);

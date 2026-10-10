@@ -31,9 +31,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.mysql.MySQLContainer;
 
 import java.sql.Connection;
 import java.sql.Statement;
@@ -45,7 +45,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * {@link MybatisAggregateRepository} 的 MySQL 集成测试。
  *
- * <p>使用 Testcontainers MySQL 模块（org.testcontainers:testcontainers-mysql，
+ * <p>使用 Testcontainers MySQL 模块（org.testcontainers:mysql，
  * 模块清单来源 <a href="https://testcontainers.com/modules/">testcontainers.com/modules</a>）
  * 启动真实 MySQL 8 容器，以独立（无 Spring）方式自举 MyBatis-Plus，
  * 验证仓储 CRUD 与充血模型的真实写语义。

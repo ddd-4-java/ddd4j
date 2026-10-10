@@ -33,6 +33,12 @@ public class LicenseVerificationResult {
     private final String message;
     private final LicenseInfo licenseInfo;
 
+    /**
+     * 构造校验通过的结果。
+     *
+     * @param licenseInfo 解析出的许可证信息
+     * @return 校验通过的结果（valid=true）
+     */
     public static LicenseVerificationResult success(LicenseInfo licenseInfo) {
         return LicenseVerificationResult.builder()
                 .valid(true)
@@ -42,6 +48,11 @@ public class LicenseVerificationResult {
                 .build();
     }
 
+    /**
+     * 构造许可证校验关闭时的结果。
+     *
+     * @return 校验已关闭的结果（valid=true，状态 DISABLED）
+     */
     public static LicenseVerificationResult disabled() {
         return LicenseVerificationResult.builder()
                 .valid(true)
@@ -50,6 +61,13 @@ public class LicenseVerificationResult {
                 .build();
     }
 
+    /**
+     * 构造校验失败的结果。
+     *
+     * @param status  失败状态
+     * @param message 失败描述信息
+     * @return 校验失败的结果（valid=false）
+     */
     public static LicenseVerificationResult failure(Status status, String message) {
         Objects.requireNonNull(status, "status 不能为空");
         return LicenseVerificationResult.builder()
@@ -59,11 +77,29 @@ public class LicenseVerificationResult {
                 .build();
     }
 
+    /**
+     * 许可证校验状态。
+     */
     public enum Status {
+        /**
+         * 校验通过。
+         */
         VALID,
+        /**
+         * 许可证校验已关闭。
+         */
         DISABLED,
+        /**
+         * 尚未安装许可证。
+         */
         NOT_INSTALLED,
+        /**
+         * 运行环境与许可证不匹配。
+         */
         ENVIRONMENT_MISMATCH,
+        /**
+         * 许可证无效。
+         */
         INVALID
     }
 }

@@ -17,10 +17,20 @@ package io.ddd4j.auth.license;
 
 import lombok.Data;
 
+/**
+ * 许可证配置属性。
+ *
+ * <p>承载证书 subject、公钥别称、密钥库密码、证书生成路径与签名算法等许可证校验所需配置项。
+ *
+ * @since 2.0.x
+ */
 // @ConfigurationProperties(prefix = LicenseProperties.PREFIX)
 @Data
 public class LicenseProperties {
 
+    /**
+     * 许可证配置属性前缀。
+     */
     public static final String PREFIX = "license";
 
     /**

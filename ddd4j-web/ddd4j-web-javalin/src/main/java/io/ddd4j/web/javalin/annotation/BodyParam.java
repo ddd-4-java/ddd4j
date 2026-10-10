@@ -21,12 +21,30 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * 方法参数注解：将请求体（Body）绑定到控制器方法参数。
+ *
+ * <p>配合参数名解析，将原始请求体或反序列化结果注入标注了本注解的参数。
+ *
+ * @since 2.0.x
+ */
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited
 public @interface BodyParam {
+
+    /**
+     * 参数名（为空时使用方法参数名）。
+     *
+     * @return 参数名
+     */
     String value() default "";
 
+    /**
+     * 是否为必填参数。
+     *
+     * @return {@code true} 表示缺少请求体时抛出异常
+     */
     boolean required() default true;
 }
