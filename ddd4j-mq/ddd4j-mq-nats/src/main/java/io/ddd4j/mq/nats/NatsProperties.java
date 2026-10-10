@@ -38,6 +38,12 @@ import java.util.Objects;
 public class NatsProperties extends MQProperties {
 
     /**
+     * 构造 NATS 配置（各字段带默认值，可经配置绑定覆盖）。
+     */
+    public NatsProperties() {
+    }
+
+    /**
      * NATS 服务器地址列表（逗号分隔，如 {@code nats://host1:4222,nats://host2:4222}）
      */
     private String servers = "nats://localhost:4222";
@@ -55,6 +61,8 @@ public class NatsProperties extends MQProperties {
 
     /**
      * 创建并打开 NATS {@link Connection}。
+     *
+     * @return 已建立的 NATS 连接
      */
     public Connection connect() {
         try {
