@@ -55,6 +55,8 @@ public class NatsProperties extends MQProperties {
 
     /**
      * 创建并打开 NATS {@link Connection}。
+     *
+     * @return 已建立的 NATS 连接
      */
     public Connection connect() {
         try {
