@@ -14,11 +14,7 @@
  */
 package io.ddd4j.sample.order.jdbc;
 
-import io.ddd4j.sample.order.domain.Money;
-import io.ddd4j.sample.order.domain.Order;
-import io.ddd4j.sample.order.domain.OrderLine;
-import io.ddd4j.sample.order.domain.OrderRepository;
-import io.ddd4j.sample.order.domain.OrderStatus;
+import io.ddd4j.sample.order.domain.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

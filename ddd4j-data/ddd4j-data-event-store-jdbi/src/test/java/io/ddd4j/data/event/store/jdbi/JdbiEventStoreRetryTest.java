@@ -7,7 +7,6 @@ package io.ddd4j.data.event.store.jdbi;
 import io.ddd4j.core.constant.EventStoreConstants;
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
-import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityIdPath;
 import io.ddd4j.core.ddd.event.EntityType;
@@ -35,6 +34,25 @@ class JdbiEventStoreRetryTest {
     private Jdbi jdbi;
     private RecordingSleeper sleeper;
     private EventStore eventStore;
+
+    AggregateRootId {
+        private static final EntityType TYPE = new StringEntityType("Order");
+
+        @Override
+        public EntityType getType () {
+            return TYPE;
+        }
+
+        @Override
+        public String asString () {
+            return value;
+        }
+
+        @Override
+        public String asTypedString () {
+            return TYPE.asString() + ":" + value;
+        }
+    }
 
     @BeforeEach
     void setUp() {
@@ -79,31 +97,14 @@ class JdbiEventStoreRetryTest {
         assertThat(eventStore.read(ORDER_TYPE, orderId)).hasSize(1);
     }
 
+    record TestAggregateRootId(String value) implements
+
     static final class RecordingSleeper implements EventStoreRetry.Sleeper {
         private final AtomicInteger calls = new AtomicInteger();
 
         @Override
         public void sleep(long millis) {
             calls.incrementAndGet();
-        }
-    }
-
-    record TestAggregateRootId(String value) implements AggregateRootId {
-        private static final EntityType TYPE = new StringEntityType("Order");
-
-        @Override
-        public EntityType getType() {
-            return TYPE;
-        }
-
-        @Override
-        public String asString() {
-            return value;
-        }
-
-        @Override
-        public String asTypedString() {
-            return TYPE.asString() + ":" + value;
         }
     }
 

@@ -14,9 +14,9 @@
  */
 package io.ddd4j.sample.javalin.satoken;
 
-import java.util.Objects;
-
 import io.ddd4j.auth.satoken.subject.SaTokenSubject;
+
+import java.util.Objects;
 
 /**
  * 测试用 Subject：覆盖 {@link #getUserId()}，从 principal 取值而非走 sa-token extra 通道。

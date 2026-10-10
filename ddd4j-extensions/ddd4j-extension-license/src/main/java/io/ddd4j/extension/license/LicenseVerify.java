@@ -70,6 +70,12 @@ public class LicenseVerify {
         this.cacheKey = buildCacheKey();
     }
 
+    private static void requireText(String value, String field) {
+        if (StrKit.isBlank(value)) {
+            throw new IllegalArgumentException(field + " 不能为空");
+        }
+    }
+
     /**
      * 设置验证结果缓存 TTL。
      *
@@ -218,12 +224,6 @@ public class LicenseVerify {
         String normalizedLicensePath = Paths.get(licensePath).toAbsolutePath().normalize().toString();
         String normalizedKeyStorePath = Paths.get(publicKeysStorePath).toAbsolutePath().normalize().toString();
         return subject + ":" + Integer.toHexString(Objects.hash(publicAlias, normalizedLicensePath, normalizedKeyStorePath));
-    }
-
-    private static void requireText(String value, String field) {
-        if (StrKit.isBlank(value)) {
-            throw new IllegalArgumentException(field + " 不能为空");
-        }
     }
 
 }

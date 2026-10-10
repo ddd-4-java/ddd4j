@@ -19,8 +19,6 @@ import com.google.inject.Guice;
 import io.ddd4j.core.constant.Constants;
 import io.ddd4j.data.logs.ApiOperationLogProvider;
 import io.swagger.v3.oas.annotations.Operation;
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.reflect.MethodSignature;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LogEvent;
@@ -28,6 +26,8 @@ import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.config.Property;
 import org.apache.logging.log4j.core.layout.PatternLayout;
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;

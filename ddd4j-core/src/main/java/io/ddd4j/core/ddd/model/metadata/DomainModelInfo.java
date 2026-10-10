@@ -66,6 +66,22 @@ public class DomainModelInfo<M> {
         build(poProperty2ColumnProvider);
     }
 
+    /**
+     * 获取指定类及其所有父类声明的全部字段（等价于 commons-lang3 {@code FieldUtils.getAllFieldsList}）。
+     *
+     * @param clazz 目标类
+     * @return 全部字段列表（包含父类私有字段）
+     */
+    private static List<Field> getAllFields(Class<?> clazz) {
+        List<Field> fields = new ArrayList<>();
+        Class<?> current = clazz;
+        while (Objects.nonNull(current) && current != Object.class) {
+            fields.addAll(Arrays.asList(current.getDeclaredFields()));
+            current = current.getSuperclass();
+        }
+        return fields;
+    }
+
     private void build(Function<String, String> poProperty2ColumnProvider) {
         Function<String, String> provider = Objects.nonNull(poProperty2ColumnProvider)
                 ? poProperty2ColumnProvider
@@ -138,21 +154,5 @@ public class DomainModelInfo<M> {
     public String getPoColumn(String property) {
         DomainFieldInfo info = findField(property);
         return Objects.nonNull(info) ? info.getPoColumn() : null;
-    }
-
-    /**
-     * 获取指定类及其所有父类声明的全部字段（等价于 commons-lang3 {@code FieldUtils.getAllFieldsList}）。
-     *
-     * @param clazz 目标类
-     * @return 全部字段列表（包含父类私有字段）
-     */
-    private static List<Field> getAllFields(Class<?> clazz) {
-        List<Field> fields = new ArrayList<>();
-        Class<?> current = clazz;
-        while (Objects.nonNull(current) && current != Object.class) {
-            fields.addAll(Arrays.asList(current.getDeclaredFields()));
-            current = current.getSuperclass();
-        }
-        return fields;
     }
 }

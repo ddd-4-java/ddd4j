@@ -18,9 +18,9 @@ import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
-import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.lifecycle.MQClientLifecycle;
 import io.ddd4j.mq.lifecycle.MQStartupStatus;
+import io.ddd4j.mq.listener.MQListener;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
@@ -50,10 +50,10 @@ public class TdmqMQClient implements MQClient {
     private final List<Subscription> subscriptions = new CopyOnWriteArrayList<>();
     private final java.util.Map<String, java.util.List<Consumer<DeliveredMessage>>> topicSubscribers =
             new java.util.concurrent.ConcurrentHashMap<>();
-    private BrokerPublisher brokerPublisher;
-    private BrokerSubscriber brokerSubscriber;
     private final MQClientLifecycle lifecycle = new MQClientLifecycle();
     private final MQStartupStatus startupStatus = new MQStartupStatus("tdmq");
+    private BrokerPublisher brokerPublisher;
+    private BrokerSubscriber brokerSubscriber;
 
     /**
      * 构造 1：仅 properties（业务可在 initProducer/initConsumer 之前注入 BrokerPublisher/BrokerSubscriber）。
@@ -202,6 +202,13 @@ public class TdmqMQClient implements MQClient {
     // ========================= 业务侧适配接口 =========================
 
     /**
+     * 默认内存发布器（本地联调/测试）：把消息路由到同进程内订阅者。
+     */
+    public record DeliveredMessage(String messageId, String correlationId, byte[] payload,
+                                   java.util.function.Consumer<Boolean> ackCallback) {
+    }
+
+    /**
      * TDMQ 业务侧发布器，由 {@link TdmqMQClient} 通过 {@link #setBrokerPublisher} 注入。
      */
     @FunctionalInterface
@@ -256,13 +263,6 @@ public class TdmqMQClient implements MQClient {
 
         @Override
         void close();
-    }
-
-    /**
-     * 默认内存发布器（本地联调/测试）：把消息路由到同进程内订阅者。
-     */
-    public record DeliveredMessage(String messageId, String correlationId, byte[] payload,
-                                   java.util.function.Consumer<Boolean> ackCallback) {
     }
 
     /**

@@ -16,7 +16,6 @@ package io.ddd4j.core.cqrs.eventstore;
 
 import io.ddd4j.kit.lang.JsonKit;
 
-import java.util.Map;
 import java.util.regex.Pattern;
 
 /**

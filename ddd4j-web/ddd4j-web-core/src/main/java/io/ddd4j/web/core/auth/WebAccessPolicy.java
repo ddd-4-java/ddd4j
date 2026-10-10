@@ -14,18 +14,16 @@
  */
 package io.ddd4j.web.core.auth;
 
+import io.ddd4j.web.core.context.WebRequestContext;
+
 import java.util.Objects;
 import java.util.function.Predicate;
-
-import io.ddd4j.web.core.context.WebRequestContext;
 
 /**
  * 决定一次 HTTP 请求采用何种认证模式。
  */
 @FunctionalInterface
 public interface WebAccessPolicy {
-
-    AuthenticationMode authenticationMode(WebRequestContext context);
 
     static WebAccessPolicy disabled() {
         return context -> AuthenticationMode.DISABLED;
@@ -44,4 +42,6 @@ public interface WebAccessPolicy {
         return context -> pathPredicate.test(context.path())
                 ? AuthenticationMode.DISABLED : AuthenticationMode.REQUIRED;
     }
+
+    AuthenticationMode authenticationMode(WebRequestContext context);
 }

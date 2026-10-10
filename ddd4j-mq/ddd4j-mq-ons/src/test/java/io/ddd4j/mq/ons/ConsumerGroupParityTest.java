@@ -26,6 +26,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * 参数必须在任何 ONS 客户端创建之前完成校验。
  */
 class ConsumerGroupParityTest {
+    private static OnsProperties guardedProperties() {
+        return new OnsProperties() {
+            @Override
+            public Properties sessionProperties(String groupName) {
+                throw new AssertionError("Invalid input reached broker creation");
+            }
+        };
+    }
+
     @Test
     void whitespaceGroupIsRejectedBeforeCreatingBroker() {
         OnsProperties properties = guardedProperties();
@@ -42,14 +51,5 @@ class ConsumerGroupParityTest {
         properties.setTopic(" \t");
         MQListener listener = MQListener.builder().group("group").topic(" \t").tags("*").build();
         assertThrows(IllegalStateException.class, () -> new OnsMQClient(properties).initConsumer(listener, new MQProperties()));
-    }
-
-    private static OnsProperties guardedProperties() {
-        return new OnsProperties() {
-            @Override
-            public Properties sessionProperties(String groupName) {
-                throw new AssertionError("Invalid input reached broker creation");
-            }
-        };
     }
 }

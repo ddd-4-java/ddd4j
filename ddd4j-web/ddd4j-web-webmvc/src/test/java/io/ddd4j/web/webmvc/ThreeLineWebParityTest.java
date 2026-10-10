@@ -30,8 +30,8 @@ import io.ddd4j.web.webmvc.interceptor.FeignHeaderInterceptor;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.MethodParameter;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -49,6 +49,15 @@ import static org.junit.jupiter.api.Assertions.*;
  * 同输入验证跨版本 Web 注册与出站 header；不启动外部服务。
  */
 class ThreeLineWebParityTest {
+    private static String[] includedPatterns(MappedInterceptor interceptor) throws Exception {
+        // Spring 7 移除了旧 getter，测试观察同一注册结果。
+        try {
+            return (String[]) MappedInterceptor.class.getMethod("getIncludePathPatterns").invoke(interceptor);
+        } catch (NoSuchMethodException exception) {
+            return (String[]) MappedInterceptor.class.getMethod("getPathPatterns").invoke(interceptor);
+        }
+    }
+
     @AfterEach
     void clearContext() {
         ThreadContext.clear();
@@ -148,15 +157,6 @@ class ThreeLineWebParityTest {
     }
 
     private void headerEndpoint(String value) {
-    }
-
-    private static String[] includedPatterns(MappedInterceptor interceptor) throws Exception {
-        // Spring 7 移除了旧 getter，测试观察同一注册结果。
-        try {
-            return (String[]) MappedInterceptor.class.getMethod("getIncludePathPatterns").invoke(interceptor);
-        } catch (NoSuchMethodException exception) {
-            return (String[]) MappedInterceptor.class.getMethod("getPathPatterns").invoke(interceptor);
-        }
     }
 
     interface HeaderClient {

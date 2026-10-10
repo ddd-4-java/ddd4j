@@ -15,7 +15,6 @@
 package io.ddd4j.sample.vertx.cqrs;
 
 import io.vertx.core.Vertx;
-import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.junit5.VertxExtension;
@@ -39,8 +38,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("Vert.x Order CQRS 集成测试")
 class VertxOrderCqrsIT {
 
-    private int port;
     private final HttpClient httpClient = HttpClient.newHttpClient();
+    private int port;
 
     @BeforeEach
     void setUp(Vertx vertx, VertxTestContext testContext) {

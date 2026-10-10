@@ -27,9 +27,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * RabbitMQ testcontainers 集成测试：使用官方 {@link RabbitMQContainer} 启动真实 broker，
@@ -50,11 +48,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Testcontainers(disabledWithoutDocker = true)
 class RabbitMQContainerIntegrationTest {
 
+    @Container
+    static final RabbitMQContainer RABBIT = new RabbitMQContainer("rabbitmq:4.1.8-management");
     private static final String EXCHANGE = "ddd4j.it.rabbit";
     private static final String QUEUE = "ddd4j.it.rabbit.verify";
 
-    @Container
-    static final RabbitMQContainer RABBIT = new RabbitMQContainer("rabbitmq:4.1.8-management");
+    private static RabbitMQProperties brokerProperties() {
+        RabbitMQProperties properties = new RabbitMQProperties();
+        properties.setHost(RABBIT.getHost());
+        properties.setPort(RABBIT.getAmqpPort());
+        properties.setUsername(RABBIT.getAdminUsername());
+        properties.setPassword(RABBIT.getAdminPassword());
+        properties.setVirtualHost("/");
+        return properties;
+    }
 
     @Test
     void rabbitMQPropertiesConnectsToContainerBroker() throws Exception {
@@ -105,16 +112,6 @@ class RabbitMQContainerIntegrationTest {
         assertNotNull(RABBIT.getHost(), "AMQP 主机应就绪");
         // 验证容器确实启动（默认端口 5672 或映射到随机端口）
         assertTrue(RABBIT.getAmqpPort() > 0);
-    }
-
-    private static RabbitMQProperties brokerProperties() {
-        RabbitMQProperties properties = new RabbitMQProperties();
-        properties.setHost(RABBIT.getHost());
-        properties.setPort(RABBIT.getAmqpPort());
-        properties.setUsername(RABBIT.getAdminUsername());
-        properties.setPassword(RABBIT.getAdminPassword());
-        properties.setVirtualHost("/");
-        return properties;
     }
 
     @Test

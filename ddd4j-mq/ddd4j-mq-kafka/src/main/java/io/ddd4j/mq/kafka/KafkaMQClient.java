@@ -18,9 +18,9 @@ import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
-import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.lifecycle.MQClientLifecycle;
 import io.ddd4j.mq.lifecycle.MQStartupStatus;
+import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.extern.slf4j.Slf4j;
@@ -38,8 +38,8 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Properties;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
@@ -64,28 +64,18 @@ import java.util.function.Consumer;
 public class KafkaMQClient implements MQClient {
 
     private static final long DEFAULT_PUBLISH_ACK_TIMEOUT_MILLIS = 30_000L;
-
-    /**
-     * 发布确认超时（ms），优先取 {@link KafkaMQProperties#getPublishAckTimeoutMillis()}，
-     * 无 properties 时回落到默认 30s。
-     */
-    private long publishAckTimeoutMillis() {
-        return Objects.nonNull(properties) ? properties.getPublishAckTimeoutMillis() : DEFAULT_PUBLISH_ACK_TIMEOUT_MILLIS;
-    }
-
     /**
      * KafkaMQProperties 用于懒构造
      */
     private final KafkaMQProperties properties;
+    private final MQClientLifecycle lifecycle = new MQClientLifecycle();
+    private final MQStartupStatus startupStatus = new MQStartupStatus("kafka");
+    private final AtomicBoolean closed = new AtomicBoolean();
     /**
      * 已注入或懒构造的 Kafka producer
      */
     private Producer<String, String> producer;
     private Callback callback;
-    private final MQClientLifecycle lifecycle = new MQClientLifecycle();
-    private final MQStartupStatus startupStatus = new MQStartupStatus("kafka");
-    private final AtomicBoolean closed = new AtomicBoolean();
-
     /**
      * 构造方法 1：注入原生 producer（runtime 自动装配用）。
      */
@@ -102,6 +92,14 @@ public class KafkaMQClient implements MQClient {
         this.properties = Objects.requireNonNull(properties, "KafkaMQ Properties is required");
         this.producer = null;
         this.callback = callback;
+    }
+
+    /**
+     * 发布确认超时（ms），优先取 {@link KafkaMQProperties#getPublishAckTimeoutMillis()}，
+     * 无 properties 时回落到默认 30s。
+     */
+    private long publishAckTimeoutMillis() {
+        return Objects.nonNull(properties) ? properties.getPublishAckTimeoutMillis() : DEFAULT_PUBLISH_ACK_TIMEOUT_MILLIS;
     }
 
     @Override

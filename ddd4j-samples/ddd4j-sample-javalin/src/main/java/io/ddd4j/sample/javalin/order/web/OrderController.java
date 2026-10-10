@@ -45,6 +45,16 @@ public final class OrderController {
                 "applicationService must not be null");
     }
 
+    private static int integer(String value, int defaultValue) {
+        return StrKit.isBlank(value) ? defaultValue : Integer.parseInt(value);
+    }
+
+    private static OrderResponse toResponse(Order order) {
+        Money total = order.totalAmount();
+        return new OrderResponse(order.id(), order.orderNo(), order.buyerId(), order.buyerName(),
+                order.status(), total.amount(), total.currency(), order.lines().size());
+    }
+
     public void routes() {
         post("/api/orders", context -> {
             CreateOrderRequest request = context.bodyAsClass(CreateOrderRequest.class);
@@ -82,16 +92,6 @@ public final class OrderController {
                 applicationService.ship(context.pathParam("id"))))));
         post("/api/orders/{id}/cancel", context -> context.json(R.ok(toResponse(
                 applicationService.cancel(context.pathParam("id"))))));
-    }
-
-    private static int integer(String value, int defaultValue) {
-        return StrKit.isBlank(value) ? defaultValue : Integer.parseInt(value);
-    }
-
-    private static OrderResponse toResponse(Order order) {
-        Money total = order.totalAmount();
-        return new OrderResponse(order.id(), order.orderNo(), order.buyerId(), order.buyerName(),
-                order.status(), total.amount(), total.currency(), order.lines().size());
     }
 
     public record CreateOrderRequest(String orderNo, String buyerId, String buyerName) {

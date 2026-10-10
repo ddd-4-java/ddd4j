@@ -123,6 +123,7 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
             };
         }
     };
+    private transient List<DomainEvent<?>> domainEvents = new ArrayList<>();
 
     /**
      * 解析事件处理器：优先 {@code @EventHandler} 注解方法（沿继承链，参数可接收该事件类型），
@@ -154,8 +155,6 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
             return null;
         }
     }
-
-    private transient List<DomainEvent<?>> domainEvents = new ArrayList<>();
 
     // ========================= 充血持久化（实例方法） =========================
 

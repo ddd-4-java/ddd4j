@@ -36,11 +36,7 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.AnnotatedElement;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class SaMixCheckLoginHandlerTest {
 
@@ -49,6 +45,14 @@ class SaMixCheckLoginHandlerTest {
     private SaTokenConfig originalConfig;
     private SaTokenDao originalDao;
     private StpLogic originalLogic;
+
+    private static SaMixCheckLogin annotation(String methodName) throws NoSuchMethodException {
+        return Fixture.class.getDeclaredMethod(methodName).getAnnotation(SaMixCheckLogin.class);
+    }
+
+    private static AnnotatedElement element(String methodName) throws NoSuchMethodException {
+        return Fixture.class.getDeclaredMethod(methodName);
+    }
 
     @BeforeEach
     void setUp() {
@@ -78,14 +82,6 @@ class SaMixCheckLoginHandlerTest {
         token.setAppChannel("appstore");
         token.setAppVersion("1.2.3");
         return token;
-    }
-
-    private static SaMixCheckLogin annotation(String methodName) throws NoSuchMethodException {
-        return Fixture.class.getDeclaredMethod(methodName).getAnnotation(SaMixCheckLogin.class);
-    }
-
-    private static AnnotatedElement element(String methodName) throws NoSuchMethodException {
-        return Fixture.class.getDeclaredMethod(methodName);
     }
 
     @Test

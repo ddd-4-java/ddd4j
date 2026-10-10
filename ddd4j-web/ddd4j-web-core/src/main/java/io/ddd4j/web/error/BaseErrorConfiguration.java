@@ -60,6 +60,13 @@ public abstract class BaseErrorConfiguration {
     }
 
     /**
+     * 框架已给出 HTTP 状态时的兜底错误表示：消息为空时回退到状态短语。
+     */
+    protected static WebError httpStatusError(int status, String fallbackMessage, String message) {
+        return new WebError(status, status, StrKit.isBlank(message) ? fallbackMessage : message, null);
+    }
+
+    /**
      * 统一异常翻译入口：框架特定异常归一后交给 {@link WebExceptionTranslator} 翻译。
      */
     public final WebError translate(Throwable throwable) {
@@ -102,13 +109,6 @@ public abstract class BaseErrorConfiguration {
         if (isServerError(error)) {
             LOG.error("Unhandled {} request failure", frameworkName(), throwable);
         }
-    }
-
-    /**
-     * 框架已给出 HTTP 状态时的兜底错误表示：消息为空时回退到状态短语。
-     */
-    protected static WebError httpStatusError(int status, String fallbackMessage, String message) {
-        return new WebError(status, status, StrKit.isBlank(message) ? fallbackMessage : message, null);
     }
 
     /**

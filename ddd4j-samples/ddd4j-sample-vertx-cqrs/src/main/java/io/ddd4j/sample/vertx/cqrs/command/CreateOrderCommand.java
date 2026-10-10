@@ -14,7 +14,8 @@
  */
 package io.ddd4j.sample.vertx.cqrs.command;
 
-import io.ddd4j.core.cqrs.command.Command;
+Command {
+} implements
 
 /**
  * 创建订单命令（CQRS 写侧）。
@@ -23,5 +24,4 @@ import io.ddd4j.core.cqrs.command.Command;
  * @param buyerId   买家 ID
  * @param buyerName 买家名称
  */
-public record CreateOrderCommand(String orderNo, String buyerId, String buyerName) implements Command {
-}
+public record CreateOrderCommand(String orderNo, String buyerId, String buyerName)

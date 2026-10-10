@@ -65,6 +65,20 @@ class JpaManagedParticipationIT {
     @Inject
     TransactionManager transactionManager;
 
+    private static boolean hasCause(Throwable failure, Class<? extends Throwable> expectedType) {
+        Throwable current = failure;
+        while (Objects.nonNull(current)) {
+            if (expectedType.isInstance(current)) {
+                return true;
+            }
+            if (current == current.getCause()) {
+                return false;
+            }
+            current = current.getCause();
+        }
+        return false;
+    }
+
     @Test
     void managedParticipationShouldCommitAllRowsAndKeepBusinessEntityManaged() {
         String id = "quarkus-commit";
@@ -166,20 +180,6 @@ class JpaManagedParticipationIT {
             assertTrue(hasCause(completionFailure, RollbackException.class),
                     "Only a rollback-only completion failure may be tolerated");
         }
-    }
-
-    private static boolean hasCause(Throwable failure, Class<? extends Throwable> expectedType) {
-        Throwable current = failure;
-        while (Objects.nonNull(current)) {
-            if (expectedType.isInstance(current)) {
-                return true;
-            }
-            if (current == current.getCause()) {
-                return false;
-            }
-            current = current.getCause();
-        }
-        return false;
     }
 
     private void assertCommitted(String id, String expectedBusinessValue) {

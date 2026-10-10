@@ -58,6 +58,12 @@ public class OrderResource {
                 "applicationService must not be null");
     }
 
+    private static OrderResponse toResponse(Order order) {
+        Money total = order.totalAmount();
+        return new OrderResponse(order.id(), order.orderNo(), order.buyerId(), order.buyerName(),
+                order.status(), total.amount(), total.currency(), order.lines().size());
+    }
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response create(CreateOrderRequest request) {
@@ -118,12 +124,6 @@ public class OrderResource {
     @Path("/{id}/cancel")
     public R<OrderResponse> cancel(@PathParam("id") String id) {
         return R.ok(toResponse(applicationService.cancel(id)));
-    }
-
-    private static OrderResponse toResponse(Order order) {
-        Money total = order.totalAmount();
-        return new OrderResponse(order.id(), order.orderNo(), order.buyerId(), order.buyerName(),
-                order.status(), total.amount(), total.currency(), order.lines().size());
     }
 
     public record CreateOrderRequest(String orderNo, String buyerId, String buyerName) {

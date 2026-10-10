@@ -18,9 +18,9 @@ import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
-import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.lifecycle.MQClientLifecycle;
 import io.ddd4j.mq.lifecycle.MQStartupStatus;
+import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.util.TagMatcher;
 import io.nats.client.*;
@@ -73,6 +73,51 @@ public class NatsMQClient implements MQClient {
         this.properties = Objects.requireNonNull(properties, "properties");
     }
 
+    private static void drainConnection(Connection connection) {
+        try {
+            connection.drain(Duration.ofSeconds(5)).get();
+        } catch (Exception exception) {
+            throw new IllegalStateException("Drain NATS connection failed", exception);
+        }
+    }
+
+    private static void closeConnection(Connection connection) {
+        try {
+            connection.close();
+        } catch (InterruptedException exception) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Close NATS connection interrupted", exception);
+        }
+    }
+
+    static Headers messageHeaders(MQEvent event) {
+        Headers headers = new Headers();
+        if (StrKit.isNotEmpty(event.getMsgId())) {
+            headers.put(MessageHeaders.HEADER_MESSAGE_ID, event.getMsgId());
+        }
+        return headers;
+    }
+
+    static String messageId(Headers headers) {
+        if (Objects.isNull(headers)) {
+            return null;
+        }
+        String messageId = headers.getFirst(MessageHeaders.HEADER_MESSAGE_ID);
+        return StrKit.isNotEmpty(messageId)
+                ? messageId
+                : headers.getFirst(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
+    }
+
+    // ========================= 生产者 =========================
+
+    private static void restoreMessageId(MQEvent event, String messageId) {
+        if (StrKit.isNotEmpty(messageId)) {
+            event.setMsgId(messageId);
+        }
+    }
+
+    // ========================= 消费者 =========================
+
     @Override
     public String impl() {
         return "nats";
@@ -82,6 +127,8 @@ public class NatsMQClient implements MQClient {
     public MQClientLifecycle lifecycle() {
         return lifecycle;
     }
+
+    // ========================= 连接管理 =========================
 
     @Override
     public MQStartupStatus startupStatus() {
@@ -95,8 +142,6 @@ public class NatsMQClient implements MQClient {
     public boolean supportsBrokerTagFilter() {
         return false;
     }
-
-    // ========================= 生产者 =========================
 
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
@@ -124,8 +169,6 @@ public class NatsMQClient implements MQClient {
             log.info("Publish MQ [{}]: {}", subject, payload);
         };
     }
-
-    // ========================= 消费者 =========================
 
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
@@ -195,8 +238,6 @@ public class NatsMQClient implements MQClient {
         }
     }
 
-    // ========================= 连接管理 =========================
-
     private synchronized Connection connection() {
         Connection c = connectionRef.get();
         if (Objects.isNull(c)) {
@@ -215,47 +256,6 @@ public class NatsMQClient implements MQClient {
             lifecycle.close();
         } finally {
             startupStatus.stopped();
-        }
-    }
-
-    private static void drainConnection(Connection connection) {
-        try {
-            connection.drain(Duration.ofSeconds(5)).get();
-        } catch (Exception exception) {
-            throw new IllegalStateException("Drain NATS connection failed", exception);
-        }
-    }
-
-    private static void closeConnection(Connection connection) {
-        try {
-            connection.close();
-        } catch (InterruptedException exception) {
-            Thread.currentThread().interrupt();
-            throw new IllegalStateException("Close NATS connection interrupted", exception);
-        }
-    }
-
-    static Headers messageHeaders(MQEvent event) {
-        Headers headers = new Headers();
-        if (StrKit.isNotEmpty(event.getMsgId())) {
-            headers.put(MessageHeaders.HEADER_MESSAGE_ID, event.getMsgId());
-        }
-        return headers;
-    }
-
-    static String messageId(Headers headers) {
-        if (Objects.isNull(headers)) {
-            return null;
-        }
-        String messageId = headers.getFirst(MessageHeaders.HEADER_MESSAGE_ID);
-        return StrKit.isNotEmpty(messageId)
-                ? messageId
-                : headers.getFirst(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
-    }
-
-    private static void restoreMessageId(MQEvent event, String messageId) {
-        if (StrKit.isNotEmpty(messageId)) {
-            event.setMsgId(messageId);
         }
     }
 }

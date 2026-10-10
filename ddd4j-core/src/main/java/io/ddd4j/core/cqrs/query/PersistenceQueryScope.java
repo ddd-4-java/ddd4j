@@ -20,11 +20,7 @@ import io.ddd4j.core.util.SFunction;
 import io.ddd4j.kit.lang.CollKit;
 import io.ddd4j.kit.text.StrPool;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * 显式持久化对象查询作用域。

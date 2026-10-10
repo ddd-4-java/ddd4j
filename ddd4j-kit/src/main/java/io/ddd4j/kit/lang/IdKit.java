@@ -65,8 +65,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @UtilityClass
 public class IdKit extends IdUtil {
 
-    private static byte LAST_IP = 0;
     private static final Map<SnowflakeOptions, Snowflake> CUSTOM_SNOWFLAKES = new ConcurrentHashMap<>();
+    private static byte LAST_IP = 0;
 
     /**
      * 获取单例的Twitter的Snowflake 算法生成器对象<br>

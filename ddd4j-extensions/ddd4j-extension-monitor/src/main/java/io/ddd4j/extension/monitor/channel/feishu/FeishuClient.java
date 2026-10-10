@@ -14,7 +14,6 @@
  */
 package io.ddd4j.extension.monitor.channel.feishu;
 
-import io.ddd4j.kit.lang.JsonKit;
 import io.ddd4j.kit.lang.StrKit;
 import lombok.extern.slf4j.Slf4j;
 

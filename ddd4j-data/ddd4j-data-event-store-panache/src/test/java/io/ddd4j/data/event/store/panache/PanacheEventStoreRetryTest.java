@@ -56,40 +56,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class PanacheEventStoreRetryTest {
 
     private static final String ORDER_TYPE = "Order";
-
-    static final class CountingSleeper implements EventStoreRetry.Sleeper {
-        final AtomicInteger calls = new AtomicInteger();
-        final List<Long> delays = new ArrayList<>();
-
-        @Override
-        public void sleep(long millis) {
-            calls.incrementAndGet();
-            delays.add(millis);
-        }
-    }
-
-    /**
-     * Hibernate 6 的 SQL 拦截器：第一次 INSERT 调用抛 PersistenceException（模拟
-     * uk_position 冲突），第二次正常透传。等价于生产中"两个事务并发争抢 uk_position
-     * → 第一个回滚 → 第二个重试成功"的场景。
-     */
-    public static final class FaultInjector implements StatementInspector {
-        public FaultInjector() {
-        }
-
-        final AtomicInteger insertCount = new AtomicInteger();
-
-        @Override
-        public String inspect(String sql) {
-            if (sql != null && sql.trim().toUpperCase().startsWith("INSERT")
-                    && insertCount.incrementAndGet() == 1) {
-                throw new PersistenceException(
-                        "could not execute statement: Unique index uk_position violation");
-            }
-            return sql;
-        }
-    }
-
     private EntityManagerFactory emf;
     private EntityManager em;
     private EventStore eventStore;
@@ -190,6 +156,39 @@ class PanacheEventStoreRetryTest {
 
         assertThat(sleeper.calls.get()).isZero();
         assertThat(eventStore.read(ORDER_TYPE, orderId)).isEmpty();
+    }
+
+    static final class CountingSleeper implements EventStoreRetry.Sleeper {
+        final AtomicInteger calls = new AtomicInteger();
+        final List<Long> delays = new ArrayList<>();
+
+        @Override
+        public void sleep(long millis) {
+            calls.incrementAndGet();
+            delays.add(millis);
+        }
+    }
+
+    /**
+     * Hibernate 6 的 SQL 拦截器：第一次 INSERT 调用抛 PersistenceException（模拟
+     * uk_position 冲突），第二次正常透传。等价于生产中"两个事务并发争抢 uk_position
+     * → 第一个回滚 → 第二个重试成功"的场景。
+     */
+    public static final class FaultInjector implements StatementInspector {
+        final AtomicInteger insertCount = new AtomicInteger();
+
+        public FaultInjector() {
+        }
+
+        @Override
+        public String inspect(String sql) {
+            if (sql != null && sql.trim().toUpperCase().startsWith("INSERT")
+                    && insertCount.incrementAndGet() == 1) {
+                throw new PersistenceException(
+                        "could not execute statement: Unique index uk_position violation");
+            }
+            return sql;
+        }
     }
 
     record TestAggregateRootId(String value) implements AggregateRootId {

@@ -14,12 +14,8 @@
  */
 package io.ddd4j.sample.order.jdbc;
 
-import io.ddd4j.mq.delivery.MQDeliveryHeaders;
-import io.ddd4j.mq.delivery.MQDeliveryPolicy;
-import io.ddd4j.mq.delivery.MQOutboxRecord;
-import io.ddd4j.mq.delivery.MQOutboxStatus;
-import io.ddd4j.mq.delivery.MQOutboxStore;
 import io.ddd4j.kit.lang.StrKit;
+import io.ddd4j.mq.delivery.*;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

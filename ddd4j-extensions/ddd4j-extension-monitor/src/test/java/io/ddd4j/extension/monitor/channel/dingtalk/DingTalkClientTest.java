@@ -21,6 +21,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
@@ -30,10 +32,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -55,6 +53,32 @@ class DingTalkClientTest {
 
     private HttpServer server;
     private int port;
+
+    /**
+     * 期望签名（与 {@code DingTalkClient#getSign} 等价）。
+     */
+    private static String expectedSign(long timestamp, String secret) throws Exception {
+        Mac mac = Mac.getInstance("HmacSHA256");
+        mac.init(new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
+        byte[] signData = mac.doFinal((timestamp + "\n" + secret).getBytes(StandardCharsets.UTF_8));
+        String b64 = java.util.Base64.getEncoder().encodeToString(signData);
+        return java.net.URLEncoder.encode(b64, "UTF-8");
+    }
+
+    private static Map<String, String> parseQuery(String query) {
+        Map<String, String> out = new HashMap<>();
+        if (Objects.isNull(query)) {
+            return out;
+        }
+        for (String pair : query.split("&")) {
+            int idx = pair.indexOf('=');
+            if (idx > 0) {
+                out.put(URLDecoder.decode(pair.substring(0, idx), StandardCharsets.UTF_8),
+                        URLDecoder.decode(pair.substring(idx + 1), StandardCharsets.UTF_8));
+            }
+        }
+        return out;
+    }
 
     @BeforeEach
     void startServer() throws IOException {
@@ -102,32 +126,6 @@ class DingTalkClientTest {
         // 我们在服务端解析时已经 URLDecoder 一次恢复为裸 b64，所以期望签名同样做"先 URL 编再解"。
         String expected = java.net.URLDecoder.decode(expectedSign(ts, SECRET), "UTF-8");
         assertThat(q.get("sign")).isEqualTo(expected);
-    }
-
-    /**
-     * 期望签名（与 {@code DingTalkClient#getSign} 等价）。
-     */
-    private static String expectedSign(long timestamp, String secret) throws Exception {
-        Mac mac = Mac.getInstance("HmacSHA256");
-        mac.init(new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
-        byte[] signData = mac.doFinal((timestamp + "\n" + secret).getBytes(StandardCharsets.UTF_8));
-        String b64 = java.util.Base64.getEncoder().encodeToString(signData);
-        return java.net.URLEncoder.encode(b64, "UTF-8");
-    }
-
-    private static Map<String, String> parseQuery(String query) {
-        Map<String, String> out = new HashMap<>();
-        if (Objects.isNull(query)) {
-            return out;
-        }
-        for (String pair : query.split("&")) {
-            int idx = pair.indexOf('=');
-            if (idx > 0) {
-                out.put(URLDecoder.decode(pair.substring(0, idx), StandardCharsets.UTF_8),
-                        URLDecoder.decode(pair.substring(idx + 1), StandardCharsets.UTF_8));
-            }
-        }
-        return out;
     }
 
     /**

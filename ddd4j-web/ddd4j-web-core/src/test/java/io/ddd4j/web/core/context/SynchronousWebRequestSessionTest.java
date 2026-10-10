@@ -22,8 +22,8 @@ import io.ddd4j.web.core.error.WebStatusException;
 import io.ddd4j.web.core.idempotency.IdempotencyGuard;
 import io.ddd4j.web.core.idempotency.IdempotencyLease;
 import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -32,9 +32,7 @@ import java.time.Duration;
 import java.util.Locale;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
@@ -45,11 +43,6 @@ class SynchronousWebRequestSessionTest {
     @Mock
     private IdempotencyGuard guard;
 
-    @AfterEach
-    void clearContext() {
-        ThreadContext.clear();
-    }
-
     private static WebRequestContext request() {
         return new WebRequestContext("r-1", "t-1", "tenant-a", "Bearer token",
                 Locale.CHINA, "127.0.0.1", "POST", "/api/orders");
@@ -57,6 +50,11 @@ class SynchronousWebRequestSessionTest {
 
     private static WebRequestLifecycle lifecycle() {
         return new WebRequestLifecycle(new BearerSubjectAuthenticator(), WebAccessPolicy.disabled());
+    }
+
+    @AfterEach
+    void clearContext() {
+        ThreadContext.clear();
     }
 
     @Test

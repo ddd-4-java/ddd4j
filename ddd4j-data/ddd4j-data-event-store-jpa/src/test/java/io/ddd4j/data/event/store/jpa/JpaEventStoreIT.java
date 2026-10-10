@@ -7,7 +7,6 @@ package io.ddd4j.data.event.store.jpa;
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
 import io.ddd4j.core.cqrs.eventstore.StoredEvent;
-import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityIdPath;
 import io.ddd4j.core.ddd.event.EntityType;
@@ -16,11 +15,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import org.hibernate.cfg.Configuration;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.util.List;
 
@@ -37,6 +32,26 @@ class JpaEventStoreIT {
 
     private EntityManager entityManager;
     private EventStore eventStore;
+
+    AggregateRootId {
+
+        private static final EntityType TYPE = new StringEntityType("Order");
+
+        @Override
+        public EntityType getType () {
+            return TYPE;
+        }
+
+        @Override
+        public String asString () {
+            return value;
+        }
+
+        @Override
+        public String asTypedString () {
+            return TYPE.asString() + ":" + value;
+        }
+    }
 
     @BeforeAll
     static void createEntityManagerFactory() {
@@ -99,7 +114,7 @@ class JpaEventStoreIT {
         assertThat(eventStore.read(ORDER_TYPE, orderId)).hasSize(1);
     }
 
-    @Test
+        @Test
     void readWithVersionRangeShouldReturnInclusiveEvents() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-3");
         eventStore.append(ORDER_TYPE, orderId,
@@ -108,27 +123,9 @@ class JpaEventStoreIT {
         assertThat(eventStore.read(ORDER_TYPE, orderId, 1, 2))
                 .extracting(StoredEvent::version)
                 .containsExactly(1L, 2L);
-    }
+    } implements
 
-    record TestAggregateRootId(String value) implements AggregateRootId {
-
-        private static final EntityType TYPE = new StringEntityType("Order");
-
-        @Override
-        public EntityType getType() {
-            return TYPE;
-        }
-
-        @Override
-        public String asString() {
-            return value;
-        }
-
-        @Override
-        public String asTypedString() {
-            return TYPE.asString() + ":" + value;
-        }
-    }
+record TestAggregateRootId(String value)
 
     static final class OrderCreatedEvent extends DomainEvent<TestAggregateRootId> {
 

@@ -19,25 +19,19 @@ package io.ddd4j.extension.qlexpress.model;
  */
 public record QLExpressValidationResult(boolean valid, String message) {
 
-    public static QLExpressValidationResult success() {
+    public static QLExpressValidationResult success () {
         return new QLExpressValidationResult(true, "表达式语法正确");
     }
 
-    public static QLExpressValidationResult invalid(String message) {
+    public static QLExpressValidationResult invalid (String message){
         return new QLExpressValidationResult(false, message);
     }
-
-    /**
-     * 返回校验状态，兼容 bean 调用方。
-     */
-    public boolean isValid() {
+    /** 返回校验状态，兼容 bean 调用方。 */
+    public boolean isValid () {
         return valid;
     }
-
-    /**
-     * 返回校验消息。
-     */
-    public String getMessage() {
+    /** 返回校验消息。 */
+    public String getMessage () {
         return message;
     }
 }

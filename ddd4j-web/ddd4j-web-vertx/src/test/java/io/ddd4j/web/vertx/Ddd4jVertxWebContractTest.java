@@ -22,13 +22,13 @@ import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.subject.Subject;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
-import io.ddd4j.web.core.idempotency.CacheIdempotencyGuard;
-import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
 import io.ddd4j.web.core.auth.WebAccessPolicy;
-import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.web.core.context.WebRequestContextFactory;
 import io.ddd4j.web.core.context.WebRequestLifecycle;
+import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
 import io.ddd4j.web.core.error.WebStatusException;
+import io.ddd4j.web.core.idempotency.CacheIdempotencyGuard;
+import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.web.testkit.AbstractWebContractTest;
 import io.ddd4j.web.testkit.WebContractClient;
 import io.ddd4j.web.testkit.WebContractPaths;
@@ -57,6 +57,35 @@ class Ddd4jVertxWebContractTest extends AbstractWebContractTest {
     private Vertx vertx;
     private HttpServer server;
     private WebContractClient contractClient;
+
+    WebContractClient {
+
+        @Override
+        public WebContractResponse request (String method, String path, Map < String, String > headers, String body){
+            try {
+                HttpRequest.Builder builder = HttpRequest.newBuilder()
+                        .uri(URI.create("http://127.0.0.1:" + port + path));
+                headers.forEach(builder::header);
+                HttpRequest.BodyPublisher publisher = Objects.isNull(body)
+                        ? HttpRequest.BodyPublishers.noBody() : HttpRequest.BodyPublishers.ofString(body);
+                HttpResponse<String> response = send(builder.method(method, publisher).build());
+                return new WebContractResponse(response.statusCode(), response.headers().map(), response.body());
+            } catch (InterruptedException exception) {
+                Thread.currentThread().interrupt();
+                throw new IllegalStateException("Vert.x contract request interrupted", exception);
+            } catch (Exception exception) {
+                throw new IllegalStateException("Vert.x contract request failed", exception);
+            }
+        }
+
+        private HttpResponse<String> send (HttpRequest request) throws IOException, InterruptedException {
+            try {
+                return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            } catch (IOException firstFailure) {
+                return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            }
+        }
+    }
 
     @BeforeEach
     void setUp() {
@@ -131,41 +160,14 @@ class Ddd4jVertxWebContractTest extends AbstractWebContractTest {
         };
     }
 
-    private SubjectProvider provider(Subject subject) {
+        private SubjectProvider provider(Subject subject) {
         return new SubjectProvider() {
             @Override
             public Subject getSubject() {
                 return subject;
             }
         };
-    }
+    } implements
 
-    private record VertxContractClient(HttpClient httpClient, int port) implements WebContractClient {
-
-        @Override
-        public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
-            try {
-                HttpRequest.Builder builder = HttpRequest.newBuilder()
-                        .uri(URI.create("http://127.0.0.1:" + port + path));
-                headers.forEach(builder::header);
-                HttpRequest.BodyPublisher publisher = Objects.isNull(body)
-                        ? HttpRequest.BodyPublishers.noBody() : HttpRequest.BodyPublishers.ofString(body);
-                HttpResponse<String> response = send(builder.method(method, publisher).build());
-                return new WebContractResponse(response.statusCode(), response.headers().map(), response.body());
-            } catch (InterruptedException exception) {
-                Thread.currentThread().interrupt();
-                throw new IllegalStateException("Vert.x contract request interrupted", exception);
-            } catch (Exception exception) {
-                throw new IllegalStateException("Vert.x contract request failed", exception);
-            }
-        }
-
-        private HttpResponse<String> send(HttpRequest request) throws IOException, InterruptedException {
-            try {
-                return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            } catch (IOException firstFailure) {
-                return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            }
-        }
-    }
+private record VertxContractClient(HttpClient httpClient, int port)
 }

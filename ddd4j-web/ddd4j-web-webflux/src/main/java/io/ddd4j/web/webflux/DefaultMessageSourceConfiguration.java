@@ -19,13 +19,13 @@ import io.ddd4j.web.webflux.config.MessageSourceConfigurationProperties;
 import io.ddd4j.web.webflux.error.I18nResourceBasenameHandler;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.extension.context.NestedMessageSource;
-import org.springframework.extension.context.support.MultiResourceBundleMessageSource;
-import org.springframework.extension.context.support.ResourceBasenameHandler;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.extension.context.NestedMessageSource;
+import org.springframework.extension.context.support.MultiResourceBundleMessageSource;
+import org.springframework.extension.context.support.ResourceBasenameHandler;
 import org.springframework.util.CollectionUtils;
 
 import java.time.Duration;

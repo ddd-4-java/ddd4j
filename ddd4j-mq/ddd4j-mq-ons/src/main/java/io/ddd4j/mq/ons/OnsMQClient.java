@@ -21,15 +21,14 @@ import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
-import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.lifecycle.MQClientLifecycle;
 import io.ddd4j.mq.lifecycle.MQStartupStatus;
+import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -50,10 +49,10 @@ public class OnsMQClient implements MQClient {
 
     private final OnsProperties properties;
     private final List<com.aliyun.openservices.ons.api.Consumer> consumers = new CopyOnWriteArrayList<>();
-    private volatile Producer producer;
-    private volatile boolean producerStarted;
     private final MQClientLifecycle lifecycle = new MQClientLifecycle();
     private final MQStartupStatus startupStatus = new MQStartupStatus("ons");
+    private volatile Producer producer;
+    private volatile boolean producerStarted;
 
     /**
      * 构造 1：传入配置，{@link #initProducer}/{@link #initConsumer} 中通过 ONSFactory 创建原生客户端。
@@ -77,6 +76,13 @@ public class OnsMQClient implements MQClient {
         this.producer = producer;
     }
 
+    static String messageId(Message message) {
+        String messageId = message.getUserProperties(MessageHeaders.HEADER_MESSAGE_ID);
+        return StrKit.isNotEmpty(messageId)
+                ? messageId
+                : message.getUserProperties(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
+    }
+
     @Override
     public String impl() {
         return "ons";
@@ -87,12 +93,14 @@ public class OnsMQClient implements MQClient {
         return lifecycle;
     }
 
+    // ========================= 生产者 =========================
+
     @Override
     public MQStartupStatus startupStatus() {
         return startupStatus;
     }
 
-    // ========================= 生产者 =========================
+    // ========================= 消费者 =========================
 
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
@@ -128,8 +136,6 @@ public class OnsMQClient implements MQClient {
             throw new IllegalStateException("Init ONS producer failed", ex);
         }
     }
-
-    // ========================= 消费者 =========================
 
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
@@ -187,12 +193,12 @@ public class OnsMQClient implements MQClient {
         return true;
     }
 
+    // ========================= 关闭 =========================
+
     @Override
     public void start() {
         // ONS producer/consumer 在各自创建时已启动；此方法留作 future 扩展。
     }
-
-    // ========================= 关闭 =========================
 
     @Override
     public void close() {
@@ -203,12 +209,5 @@ public class OnsMQClient implements MQClient {
             producerStarted = false;
             startupStatus.stopped();
         }
-    }
-
-    static String messageId(Message message) {
-        String messageId = message.getUserProperties(MessageHeaders.HEADER_MESSAGE_ID);
-        return StrKit.isNotEmpty(messageId)
-                ? messageId
-                : message.getUserProperties(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
     }
 }

@@ -14,8 +14,6 @@
  */
 package io.ddd4j.sample.javalin.shiro.rbac.controller;
 
-import java.util.Objects;
-
 import com.google.inject.Inject;
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.auth.AuthPrincipal;

@@ -14,8 +14,8 @@
  */
 package io.ddd4j.extension.monitor.channel.wecom;
 
-import io.ddd4j.kit.lang.JsonKit;
 import io.ddd4j.extension.monitor.message.Message;
+import io.ddd4j.kit.lang.JsonKit;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;

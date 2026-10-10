@@ -41,11 +41,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Testcontainers(disabledWithoutDocker = true)
 class PanacheEventStorePostgresIT {
 
-    private static final String ORDER_TYPE = "Order";
-
     @Container
     static final PostgreSQLContainer POSTGRES = new PostgreSQLContainer("postgres:16-alpine");
-
+    private static final String ORDER_TYPE = "Order";
     private EntityManagerFactory entityManagerFactory;
     private EntityManager entityManager;
     private EventStore eventStore;

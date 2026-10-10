@@ -14,34 +14,6 @@
  */
 package io.ddd4j.extension.qrcode;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
-import org.apache.commons.lang3.StringUtils;
-
-import io.ddd4j.extension.qrcode.batch.QrCodeBatchItem;
-import io.ddd4j.extension.qrcode.batch.QrCodeBatchItemResult;
-import io.ddd4j.extension.qrcode.batch.QrCodeBatchResult;
-import io.ddd4j.extension.qrcode.command.DecodeQrCodeCommand;
-import io.ddd4j.extension.qrcode.command.GenerateQrCodeCommand;
-import io.ddd4j.extension.qrcode.model.QrCodeDecodeResult;
-import io.ddd4j.extension.qrcode.model.QrCodeOutput;
-import io.ddd4j.extension.qrcode.result.QrCodeArtifact;
-import io.ddd4j.extension.qrcode.result.QrCodeScanResult;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.MultiFormatReader;
@@ -51,6 +23,26 @@ import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeWriter;
+import io.ddd4j.extension.qrcode.batch.QrCodeBatchItem;
+import io.ddd4j.extension.qrcode.batch.QrCodeBatchItemResult;
+import io.ddd4j.extension.qrcode.batch.QrCodeBatchResult;
+import io.ddd4j.extension.qrcode.command.DecodeQrCodeCommand;
+import io.ddd4j.extension.qrcode.command.GenerateQrCodeCommand;
+import io.ddd4j.extension.qrcode.model.QrCodeDecodeResult;
+import io.ddd4j.extension.qrcode.model.QrCodeOutput;
+import io.ddd4j.extension.qrcode.result.QrCodeArtifact;
+import io.ddd4j.extension.qrcode.result.QrCodeScanResult;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Default QR code service with bounded, order-preserving batch execution.

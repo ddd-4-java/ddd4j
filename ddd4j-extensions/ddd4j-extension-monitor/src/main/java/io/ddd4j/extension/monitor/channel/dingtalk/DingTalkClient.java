@@ -84,6 +84,17 @@ public class DingTalkClient {
     }
 
     /**
+     * 计算钉钉机器人加签。
+     */
+    private static String getSign(long timestamp, String secret) throws Exception {
+        String stringToSign = timestamp + "\n" + secret;
+        Mac mac = Mac.getInstance("HmacSHA256");
+        mac.init(new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
+        byte[] signData = mac.doFinal(stringToSign.getBytes(StandardCharsets.UTF_8));
+        return URLEncoder.encode(new String(Base64.getEncoder().encode(signData)), "UTF-8");
+    }
+
+    /**
      * @return 配置的 access_token
      */
     public String accessToken() {
@@ -126,16 +137,5 @@ public class DingTalkClient {
         } catch (Exception e) {
             log.error("【发送钉钉群消息】error: {}", e.getMessage(), e);
         }
-    }
-
-    /**
-     * 计算钉钉机器人加签。
-     */
-    private static String getSign(long timestamp, String secret) throws Exception {
-        String stringToSign = timestamp + "\n" + secret;
-        Mac mac = Mac.getInstance("HmacSHA256");
-        mac.init(new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
-        byte[] signData = mac.doFinal(stringToSign.getBytes(StandardCharsets.UTF_8));
-        return URLEncoder.encode(new String(Base64.getEncoder().encode(signData)), "UTF-8");
     }
 }

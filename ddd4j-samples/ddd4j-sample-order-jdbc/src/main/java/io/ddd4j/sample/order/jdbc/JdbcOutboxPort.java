@@ -14,16 +14,15 @@
  */
 package io.ddd4j.sample.order.jdbc;
 
-import tools.jackson.core.JacksonException;
-import tools.jackson.databind.ObjectMapper;
 import io.ddd4j.sample.order.application.OutboxMessage;
 import io.ddd4j.sample.order.application.OutboxPort;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;

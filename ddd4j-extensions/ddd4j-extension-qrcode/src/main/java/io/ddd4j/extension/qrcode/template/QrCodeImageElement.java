@@ -28,12 +28,12 @@ public final class QrCodeImageElement extends QrCodeFrameElement {
         this.image = builder.image;
     }
 
-    public BufferedImage getImage() {
-        return image;
-    }
-
     public static Builder builder(BufferedImage image) {
         return new Builder(image);
+    }
+
+    public BufferedImage getImage() {
+        return image;
     }
 
     public static final class Builder {

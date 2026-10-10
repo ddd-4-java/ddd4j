@@ -22,9 +22,9 @@ import com.lmax.disruptor.util.DaemonThreadFactory;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
-import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.lifecycle.MQClientLifecycle;
 import io.ddd4j.mq.lifecycle.MQStartupStatus;
+import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -68,20 +68,9 @@ public class DisruptorMQClient implements MQClient {
      * 已注册监听器列表（{@link #initConsumer} 时累加，{@link #onEvent} 在 RingBuffer 回调里遍历）。
      */
     private final List<RegisteredListener> listeners = new CopyOnWriteArrayList<>();
-
-    /**
-     * 保留原监听器和注册时按配置解析的有效路由，避免修改共享监听器对象。
-     */
-    @RequiredArgsConstructor
-    private static final class RegisteredListener {
-        private final MQListener listener;
-        private final String routeKey;
-    }
-
-    private Disruptor<DisruptorEvent> disruptor;
     private final MQClientLifecycle lifecycle = new MQClientLifecycle();
     private final MQStartupStatus startupStatus = new MQStartupStatus("disruptor");
-
+    private Disruptor<DisruptorEvent> disruptor;
     @Getter
     private RingBuffer<DisruptorEvent> ringBuffer;
 
@@ -108,6 +97,15 @@ public class DisruptorMQClient implements MQClient {
             size <<= 1;
         }
         return size;
+    }
+
+    private static void shutdown(Disruptor<DisruptorEvent> disruptor) {
+        try {
+            disruptor.shutdown();
+        } catch (RuntimeException exception) {
+            disruptor.halt();
+            throw exception;
+        }
     }
 
     // ========================= 生产者 =========================
@@ -238,12 +236,12 @@ public class DisruptorMQClient implements MQClient {
         }
     }
 
-    private static void shutdown(Disruptor<DisruptorEvent> disruptor) {
-        try {
-            disruptor.shutdown();
-        } catch (RuntimeException exception) {
-            disruptor.halt();
-            throw exception;
-        }
+    /**
+     * 保留原监听器和注册时按配置解析的有效路由，避免修改共享监听器对象。
+     */
+    @RequiredArgsConstructor
+    private static final class RegisteredListener {
+        private final MQListener listener;
+        private final String routeKey;
     }
 }

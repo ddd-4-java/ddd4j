@@ -77,6 +77,36 @@ public final class HttpSpan {
      */
     public static final AttributeKey<String> ATTR_DDD4J_REQUEST_ID = AttributeKey.stringKey("ddd4j.request.id");
     public static final AttributeKey<String> ATTR_DDD4J_TENANT_ID = AttributeKey.stringKey("ddd4j.tenant.id");
+    private static final TextMapSetter<Map<String, String>> SETTER = new TextMapSetter<Map<String, String>>() {
+        @Override
+        public void set(Map<String, String> carrier, String key, String value) {
+            if (Objects.nonNull(carrier)) {
+                carrier.put(key, value);
+            }
+        }
+    };
+    private static final TextMapGetter<Map<String, String>> GETTER = new TextMapGetter<Map<String, String>>() {
+        @Override
+        public Iterable<String> keys(Map<String, String> carrier) {
+            return Objects.isNull(carrier) ? Collections.emptyList() : carrier.keySet();
+        }
+
+        @Override
+        public String get(Map<String, String> carrier, String key) {
+            if (Objects.isNull(carrier)) {
+                return null;
+            }
+            String value = carrier.get(key);
+            if (Objects.isNull(value)) {
+                for (Map.Entry<String, String> entry : carrier.entrySet()) {
+                    if (Objects.nonNull(entry.getKey()) && entry.getKey().equalsIgnoreCase(key)) {
+                        return entry.getValue();
+                    }
+                }
+            }
+            return value;
+        }
+    };
 
     private HttpSpan() {
     }
@@ -184,36 +214,4 @@ public final class HttpSpan {
         }
         return span.makeCurrent();
     }
-
-    private static final TextMapSetter<Map<String, String>> SETTER = new TextMapSetter<Map<String, String>>() {
-        @Override
-        public void set(Map<String, String> carrier, String key, String value) {
-            if (Objects.nonNull(carrier)) {
-                carrier.put(key, value);
-            }
-        }
-    };
-
-    private static final TextMapGetter<Map<String, String>> GETTER = new TextMapGetter<Map<String, String>>() {
-        @Override
-        public Iterable<String> keys(Map<String, String> carrier) {
-            return Objects.isNull(carrier) ? Collections.emptyList() : carrier.keySet();
-        }
-
-        @Override
-        public String get(Map<String, String> carrier, String key) {
-            if (Objects.isNull(carrier)) {
-                return null;
-            }
-            String value = carrier.get(key);
-            if (Objects.isNull(value)) {
-                for (Map.Entry<String, String> entry : carrier.entrySet()) {
-                    if (Objects.nonNull(entry.getKey()) && entry.getKey().equalsIgnoreCase(key)) {
-                        return entry.getValue();
-                    }
-                }
-            }
-            return value;
-        }
-    };
 }

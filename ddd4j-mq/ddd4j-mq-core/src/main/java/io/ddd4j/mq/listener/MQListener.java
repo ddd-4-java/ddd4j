@@ -14,10 +14,10 @@
  */
 package io.ddd4j.mq.listener;
 
+import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.annotation.MQEventListener;
 import io.ddd4j.mq.event.MQEvent;
-import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.Builder;
 import lombok.Data;
@@ -79,10 +79,6 @@ public class MQListener {
      * 是否为应用启动所必需的消费者。
      */
     private boolean required = true;
-
-    public static class MQListenerBuilder {
-        private boolean required = true;
-    }
 
     /**
      * 保留历史八参数构造器。
@@ -178,6 +174,10 @@ public class MQListener {
             return base;
         }
         return base + sep + firstTag;
+    }
+
+    public static class MQListenerBuilder {
+        private boolean required = true;
     }
 
 }

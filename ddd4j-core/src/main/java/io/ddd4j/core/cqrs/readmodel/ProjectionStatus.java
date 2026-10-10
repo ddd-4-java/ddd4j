@@ -66,31 +66,31 @@ public record ProjectionStatus(
      * @param running  是否处于运行状态
      * @return 基线状态
      */
-    public static ProjectionStatus baseline(String streamId, boolean running) {
+    public static ProjectionStatus baseline (String streamId,boolean running){
         return new ProjectionStatus(streamId, 0, running, null, 0, null);
     }
 
-    public String getLastError() {
+    public String getLastError () {
         return lastError;
     }
 
-    public int getLastEventCount() {
+    public int getLastEventCount () {
         return lastEventCount;
     }
 
-    public Instant getLastRunAt() {
+    public Instant getLastRunAt () {
         return lastRunAt;
     }
 
-    public long getNextEventNumber() {
+    public long getNextEventNumber () {
         return nextEventNumber;
     }
 
-    public String getStreamId() {
+    public String getStreamId () {
         return streamId;
     }
 
-    public boolean isRunning() {
+    public boolean isRunning () {
         return running;
     }
 }

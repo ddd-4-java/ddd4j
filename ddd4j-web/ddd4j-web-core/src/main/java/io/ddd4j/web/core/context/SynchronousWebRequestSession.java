@@ -16,12 +16,10 @@ package io.ddd4j.web.core.context;
 
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator.Authentication;
+import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 
 import java.util.Objects;
 import java.util.Optional;
-
-import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
-import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 
 /**
  * 同步 Web 请求的上下文、认证与幂等事务边界。

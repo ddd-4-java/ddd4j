@@ -23,11 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class GuiceContextTest {
 
@@ -109,13 +105,6 @@ class GuiceContextTest {
         assertNull(GuiceContext.getAttribute("k"));
     }
 
-    public static final class CountingRunnable implements Runnable {
-
-        @Override
-        public void run() {
-        }
-    }
-
     @Test
     void getInjectorInterruptedWhileWaitingThrows() throws Exception {
         GuiceContext.clear();
@@ -163,6 +152,13 @@ class GuiceContextTest {
         GuiceContext.setInjector(injector());
 
         assertEquals("hello", GuiceContext.getInstance("greeting", String.class));
+    }
+
+    public static final class CountingRunnable implements Runnable {
+
+        @Override
+        public void run() {
+        }
     }
 
     public static final class BrokenRunnable implements Runnable {

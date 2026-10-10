@@ -34,15 +34,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class EventStoreRetryTest {
 
-    static final class RecordingSleeper implements EventStoreRetry.Sleeper {
-        final List<Long> calls = new ArrayList<>();
-
-        @Override
-        public void sleep(long millis) {
-            calls.add(millis);
-        }
-    }
-
     @Test
     void 首次成功_不调用Sleeper() throws Exception {
         RecordingSleeper sleeper = new RecordingSleeper();
@@ -143,5 +134,14 @@ class EventStoreRetryTest {
         }))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("baseDelayMillis");
+    }
+
+    static final class RecordingSleeper implements EventStoreRetry.Sleeper {
+        final List<Long> calls = new ArrayList<>();
+
+        @Override
+        public void sleep(long millis) {
+            calls.add(millis);
+        }
     }
 }

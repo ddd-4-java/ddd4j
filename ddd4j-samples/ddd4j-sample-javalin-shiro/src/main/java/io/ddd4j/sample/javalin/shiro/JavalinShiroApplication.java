@@ -14,8 +14,6 @@
  */
 package io.ddd4j.sample.javalin.shiro;
 
-import java.util.Objects;
-
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -47,6 +45,8 @@ import io.ddd4j.sample.javalin.shiro.rbac.service.RbacService;
 import io.javalin.Javalin;
 import io.javalin.apibuilder.ApiBuilder;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.Objects;
 
 /**
  * Javalin + Guice + Apache Shiro + RBAC 鉴权 + DDD 业务示例启动类。

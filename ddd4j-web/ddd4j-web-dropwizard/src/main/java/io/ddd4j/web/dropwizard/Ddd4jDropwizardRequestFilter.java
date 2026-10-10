@@ -15,18 +15,11 @@
 package io.ddd4j.web.dropwizard;
 
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
-import io.ddd4j.web.core.idempotency.CacheIdempotencyGuard;
-import io.ddd4j.web.core.context.ClientIpResolver;
 import io.ddd4j.web.core.auth.PathWebAccessPolicy;
-import io.ddd4j.web.core.context.RequestIdGenerator;
-import io.ddd4j.web.core.context.SynchronousWebRequestSession;
-import io.ddd4j.web.core.context.WebHeaders;
+import io.ddd4j.web.core.context.*;
+import io.ddd4j.web.core.idempotency.CacheIdempotencyGuard;
 import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.web.core.observability.WebOtelSupport;
-import io.ddd4j.web.core.context.WebRequestContext;
-import io.ddd4j.web.core.context.WebRequestContextFactory;
-import io.ddd4j.web.core.context.WebRequestData;
-import io.ddd4j.web.core.context.WebRequestLifecycle;
 import jakarta.annotation.Priority;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.ws.rs.Priorities;
@@ -35,11 +28,7 @@ import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.core.Context;
 
 import java.net.InetSocketAddress;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Dropwizard Jersey 请求上下文、Bearer Subject 与幂等过滤器。
@@ -86,6 +75,16 @@ public final class Ddd4jDropwizardRequestFilter implements ContainerRequestFilte
         this.idempotencyLifecycle = idempotencyLifecycle;
     }
 
+    private static Map<String, String> extractRequestHeaders(ContainerRequestContext request) {
+        Map<String, String> headers = new HashMap<>();
+        request.getHeaders().forEach((k, v) -> {
+            if (Objects.nonNull(v) && !v.isEmpty()) {
+                headers.put(k, v.get(0));
+            }
+        });
+        return headers;
+    }
+
     @Override
     public void filter(ContainerRequestContext request) {
         // OTel: 提取上游 TraceContext 并开启 SERVER span
@@ -107,16 +106,6 @@ public final class Ddd4jDropwizardRequestFilter implements ContainerRequestFilte
             WebOtelSupport.recordError(span, exception);
             throw exception;
         }
-    }
-
-    private static Map<String, String> extractRequestHeaders(ContainerRequestContext request) {
-        Map<String, String> headers = new HashMap<>();
-        request.getHeaders().forEach((k, v) -> {
-            if (Objects.nonNull(v) && !v.isEmpty()) {
-                headers.put(k, v.get(0));
-            }
-        });
-        return headers;
     }
 
     private WebRequestContext createContext(ContainerRequestContext request) {

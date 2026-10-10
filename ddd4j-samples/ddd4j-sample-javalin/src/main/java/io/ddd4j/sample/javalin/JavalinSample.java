@@ -44,6 +44,24 @@ public final class JavalinSample {
     private JavalinSample() {
     }
 
+    AutoCloseable {
+
+        public JavalinApplication {
+            Objects.requireNonNull(app, "app must not be null");
+            Objects.requireNonNull(token, "token must not be null");
+            Objects.requireNonNull(spiScope, "spiScope must not be null");
+        }
+
+        @Override
+        public void close () {
+            try {
+                app.stop();
+            } finally {
+                spiScope.close();
+            }
+        }
+    }
+
     public static void main(String[] args) {
         JavalinApplication application = start(7000);
         log.info("Javalin Order sample started at http://localhost:{}; demo Bearer token: {}",
@@ -81,23 +99,7 @@ public final class JavalinSample {
             throw exception;
         }
     }
+            implements
 
     public record JavalinApplication(Javalin app, String token, SpiRegistrationScope spiScope)
-            implements AutoCloseable {
-
-        public JavalinApplication {
-            Objects.requireNonNull(app, "app must not be null");
-            Objects.requireNonNull(token, "token must not be null");
-            Objects.requireNonNull(spiScope, "spiScope must not be null");
-        }
-
-        @Override
-        public void close() {
-            try {
-                app.stop();
-            } finally {
-                spiScope.close();
-            }
-        }
-    }
 }

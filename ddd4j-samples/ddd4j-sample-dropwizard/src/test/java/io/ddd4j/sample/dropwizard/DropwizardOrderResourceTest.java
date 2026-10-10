@@ -14,22 +14,16 @@
  */
 package io.ddd4j.sample.dropwizard;
 
-import tools.jackson.databind.JsonNode;
-import tools.jackson.databind.ObjectMapper;
 import io.ddd4j.cache.CacheKit;
 import io.ddd4j.cache.subject.InMemorySubject;
 import io.ddd4j.cache.subject.InMemorySubjectProvider;
 import io.ddd4j.core.cqrs.command.DefaultCommandBus;
 import io.ddd4j.core.i18n.I18nProvider;
-import io.ddd4j.dropwizard.DropwizardDomainEventPublisher;
 import io.ddd4j.dropwizard.Ddd4jDropwizardRuntime;
+import io.ddd4j.dropwizard.DropwizardDomainEventPublisher;
 import io.ddd4j.sample.order.application.OrderApplicationService;
 import io.ddd4j.sample.order.local.InMemoryOrderAdapters;
-import io.ddd4j.web.dropwizard.Ddd4jDropwizardExceptionMapper;
-import io.ddd4j.web.dropwizard.Ddd4jDropwizardIllegalStateExceptionMapper;
-import io.ddd4j.web.dropwizard.Ddd4jDropwizardRequestFilter;
-import io.ddd4j.web.dropwizard.Ddd4jDropwizardResponseFilter;
-import io.ddd4j.web.dropwizard.Ddd4jDropwizardWebConfiguration;
+import io.ddd4j.web.dropwizard.*;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 import io.dropwizard.testing.junit5.ResourceExtension;
 import jakarta.ws.rs.client.Entity;
@@ -40,6 +34,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
 import java.util.Objects;
@@ -83,6 +79,12 @@ class DropwizardOrderResourceTest {
         CacheKit.unregister(IDEMPOTENCY_CACHE_NAME);
     }
 
+    private static Ddd4jDropwizardWebConfiguration webConfiguration() {
+        Ddd4jDropwizardWebConfiguration configuration = new Ddd4jDropwizardWebConfiguration();
+        configuration.setPublicPaths(List.of("/health", "/healthcheck/**", "/api/auth/**"));
+        return configuration;
+    }
+
     @Test
     void shouldRunSharedOrderUseCasesThroughDropwizardHttp() throws Exception {
         String token = issueToken();
@@ -110,12 +112,6 @@ class DropwizardOrderResourceTest {
         String paidBody = readAndClose(paid);
         assertThat(paid.getStatus()).withFailMessage(paidBody).isEqualTo(200);
         assertThat(objectMapper.readTree(paidBody).path("data").path("status").asText()).isEqualTo("PAID");
-    }
-
-    private static Ddd4jDropwizardWebConfiguration webConfiguration() {
-        Ddd4jDropwizardWebConfiguration configuration = new Ddd4jDropwizardWebConfiguration();
-        configuration.setPublicPaths(List.of("/health", "/healthcheck/**", "/api/auth/**"));
-        return configuration;
     }
 
     private String issueToken() throws Exception {

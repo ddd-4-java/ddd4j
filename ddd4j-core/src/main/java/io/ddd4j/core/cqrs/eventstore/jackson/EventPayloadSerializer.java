@@ -14,9 +14,9 @@
  */
 package io.ddd4j.core.cqrs.eventstore.jackson;
 
+import io.ddd4j.core.ddd.event.DomainEvent;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
-import io.ddd4j.core.ddd.event.DomainEvent;
 
 import java.util.Objects;
 

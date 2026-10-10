@@ -14,20 +14,15 @@
  */
 package io.ddd4j.sample.dropwizard.cqrs.repository;
 
-import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.cqrs.eventstore.InMemoryEventStore;
 import io.ddd4j.core.ddd.event.AggregateRootId;
+import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityType;
 import io.ddd4j.core.ddd.event.StringEntityType;
 import io.ddd4j.sample.order.domain.Order;
 import io.ddd4j.sample.order.domain.OrderRepository;
 
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -60,6 +55,30 @@ public class EventSourcingOrderRepository implements OrderRepository {
         this.eventStore = Objects.requireNonNull(eventStore, "eventStore must not be null");
     }
 
+    AggregateRootId {
+
+        private static final EntityType TYPE = new StringEntityType("Order");
+
+        @Override
+        public EntityType getType () {
+            return TYPE;
+        }
+
+        @Override
+        public String asString () {
+            return value;
+        }
+
+        @Override
+        public String asTypedString () {
+            return TYPE.asString() + ":" + value;
+        }
+    }
+
+    private static AggregateRootId aggregateId(String value) {
+        return new OrderAggregateId(value);
+    }
+
     @Override
     public void save(Order order) {
         if (!order.domainEvents().isEmpty()) {
@@ -84,41 +103,19 @@ public class EventSourcingOrderRepository implements OrderRepository {
                 .flatMap(this::findById);
     }
 
-    @Override
+        @Override
     public List<Order> findAll(int offset, int limit) {
         throw new UnsupportedOperationException("findAll not supported in event sourcing repository");
-    }
+    } implements
 
     @Override
     public long count() {
         return orderNoIndex.size();
     }
 
-    /**
+/**
      * 字符串聚合根标识适配器：core EventStore SPI 以 {@link AggregateRootId} 定位流，
      * 样例订单以字符串为 ID（与 2.0.x 旧 r2dbc StringAggregateRootId 同构）。
      */
-    private record OrderAggregateId(String value) implements AggregateRootId {
-
-        private static final EntityType TYPE = new StringEntityType("Order");
-
-        @Override
-        public EntityType getType() {
-            return TYPE;
-        }
-
-        @Override
-        public String asString() {
-            return value;
-        }
-
-        @Override
-        public String asTypedString() {
-            return TYPE.asString() + ":" + value;
-        }
-    }
-
-    private static AggregateRootId aggregateId(String value) {
-        return new OrderAggregateId(value);
-    }
+    private record OrderAggregateId(String value)
 }

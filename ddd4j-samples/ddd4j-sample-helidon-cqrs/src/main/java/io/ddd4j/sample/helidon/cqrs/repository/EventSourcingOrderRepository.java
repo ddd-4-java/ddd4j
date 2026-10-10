@@ -60,6 +60,10 @@ public class EventSourcingOrderRepository implements OrderRepository {
         this.eventStore = Objects.requireNonNull(eventStore, "eventStore must not be null");
     }
 
+    private static AggregateRootId aggregateId(String value) {
+        return new OrderAggregateId(value);
+    }
+
     @Override
     public void save(Order order) {
         if (!order.domainEvents().isEmpty()) {
@@ -116,9 +120,5 @@ public class EventSourcingOrderRepository implements OrderRepository {
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
         }
-    }
-
-    private static AggregateRootId aggregateId(String value) {
-        return new OrderAggregateId(value);
     }
 }

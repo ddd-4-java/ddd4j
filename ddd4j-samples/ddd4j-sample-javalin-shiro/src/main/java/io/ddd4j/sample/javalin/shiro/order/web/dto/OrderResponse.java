@@ -15,8 +15,6 @@
 package io.ddd4j.sample.javalin.shiro.order.web.dto;
 
 import io.ddd4j.sample.javalin.shiro.order.domain.model.Money;
-import io.ddd4j.sample.javalin.shiro.order.domain.model.Order;
-import io.ddd4j.sample.javalin.shiro.order.domain.model.OrderLine;
 import io.ddd4j.sample.javalin.shiro.order.domain.model.OrderStatus;
 
 import java.util.List;
@@ -30,7 +28,7 @@ public record OrderResponse(String id, String orderNo, String buyerId, String bu
                             OrderStatus status, String totalAmount, String currency,
                             List<OrderLineResponse> lines) {
 
-    public static OrderResponse from(Order order) {
+    public static OrderResponse from (Order order){
         Money total = order.totalAmount();
         List<OrderLineResponse> lineResponses = order.lines().stream()
                 .map(OrderLineResponse::from)
@@ -47,10 +45,10 @@ public record OrderResponse(String id, String orderNo, String buyerId, String bu
         );
     }
 
-    public record OrderLineResponse(String id, String goodsId, String goodsName,
-                                    int quantity, String unitPrice, String currency) {
+    public record OrderLineResponse (String id, String goodsId, String goodsName,
+    int quantity, String unitPrice, String currency){
 
-        public static OrderLineResponse from(OrderLine line) {
+        public static OrderLineResponse from (OrderLine line){
             return new OrderLineResponse(
                     line.id(),
                     line.goodsId(),

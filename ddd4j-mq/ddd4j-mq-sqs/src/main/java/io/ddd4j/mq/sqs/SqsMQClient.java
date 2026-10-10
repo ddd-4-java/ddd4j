@@ -17,9 +17,9 @@ package io.ddd4j.mq.sqs;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
-import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.lifecycle.MQClientLifecycle;
 import io.ddd4j.mq.lifecycle.MQStartupStatus;
+import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.extern.slf4j.Slf4j;
@@ -56,9 +56,9 @@ public class SqsMQClient implements MQClient {
 
     private final SqsProperties properties;
     private final List<ScheduledExecutorService> pollers = new CopyOnWriteArrayList<>();
-    private SqsClient client;
     private final MQClientLifecycle lifecycle = new MQClientLifecycle();
     private final MQStartupStatus startupStatus = new MQStartupStatus("sqs");
+    private SqsClient client;
 
     /**
      * 构造 1：传入配置，{@link #initProducer} 时 lazy 创建 SqsClient。

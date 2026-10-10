@@ -23,23 +23,23 @@ import java.io.Serializable;
  */
 public record WebError(int status, Serializable code, String message, Object data) {
 
-    public R<Object> toResponse() {
+    public R<Object> toResponse () {
         return R.fail(code, message, data);
     }
 
-    public Serializable getCode() {
+    public Serializable getCode () {
         return code;
     }
 
-    public Object getData() {
+    public Object getData () {
         return data;
     }
 
-    public String getMessage() {
+    public String getMessage () {
         return message;
     }
 
-    public int getStatus() {
+    public int getStatus () {
         return status;
     }
 }

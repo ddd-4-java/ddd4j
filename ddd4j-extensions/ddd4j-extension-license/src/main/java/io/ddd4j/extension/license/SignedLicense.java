@@ -44,6 +44,18 @@ public final class SignedLicense {
         this.signature = Objects.requireNonNull(signature, "signature must not be null");
     }
 
+    public static SignedLicense parse(byte[] bytes) {
+        String[] fields = new String(bytes, StandardCharsets.UTF_8).split("\\R", -1);
+        if (fields.length != FIELD_COUNT + 1 || !Objects.equals(FORMAT, fields[0])) {
+            throw new IllegalArgumentException("Unsupported ddd4j license format");
+        }
+        try {
+            return new SignedLicense(fields[1], Base64.getDecoder().decode(fields[2]), Base64.getDecoder().decode(fields[3]));
+        } catch (IllegalArgumentException exception) {
+            throw new IllegalArgumentException("Invalid ddd4j license encoding", exception);
+        }
+    }
+
     public String algorithm() {
         return algorithm;
     }
@@ -60,18 +72,6 @@ public final class SignedLicense {
         return String.join("\n", FORMAT, algorithm,
                 Base64.getEncoder().encodeToString(payload),
                 Base64.getEncoder().encodeToString(signature)) + "\n";
-    }
-
-    public static SignedLicense parse(byte[] bytes) {
-        String[] fields = new String(bytes, StandardCharsets.UTF_8).split("\\R", -1);
-        if (fields.length != FIELD_COUNT + 1 || !Objects.equals(FORMAT, fields[0])) {
-            throw new IllegalArgumentException("Unsupported ddd4j license format");
-        }
-        try {
-            return new SignedLicense(fields[1], Base64.getDecoder().decode(fields[2]), Base64.getDecoder().decode(fields[3]));
-        } catch (IllegalArgumentException exception) {
-            throw new IllegalArgumentException("Invalid ddd4j license encoding", exception);
-        }
     }
 
 }

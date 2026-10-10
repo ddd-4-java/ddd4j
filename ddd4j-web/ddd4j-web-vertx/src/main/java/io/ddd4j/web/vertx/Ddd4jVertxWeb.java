@@ -17,31 +17,22 @@ package io.ddd4j.web.vertx;
 import io.ddd4j.core.health.RuntimeReadinessRegistry;
 import io.ddd4j.web.core.auth.AuthenticationMode;
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
-import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
 import io.ddd4j.web.core.auth.PathWebAccessPolicy;
-import io.ddd4j.web.core.health.ReadinessEndpoint;
-import io.ddd4j.web.core.health.ReadinessResponse;
+import io.ddd4j.web.core.context.*;
+import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
 import io.ddd4j.web.core.error.WebError;
 import io.ddd4j.web.core.error.WebExceptionTranslator;
-import io.ddd4j.web.core.context.WebHeaders;
+import io.ddd4j.web.core.health.ReadinessEndpoint;
+import io.ddd4j.web.core.health.ReadinessResponse;
 import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.web.core.observability.WebOtelSupport;
-import io.ddd4j.web.core.context.WebRequestContext;
-import io.ddd4j.web.core.context.WebRequestContextFactory;
-import io.ddd4j.web.core.context.WebRequestData;
-import io.ddd4j.web.core.context.WebRequestLifecycle;
 import io.vertx.core.Handler;
 import io.vertx.core.json.Json;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -105,6 +96,30 @@ public final class Ddd4jVertxWeb {
         RuntimeReadinessRegistry registry = Objects.requireNonNull(readinessRegistry,
                 "readinessRegistry must not be null");
         this.readinessEndpoint = new ReadinessEndpoint(() -> registry.readiness().ready());
+    }
+
+    private static Map<String, String> extractHeaders(RoutingContext context) {
+        Map<String, String> headers = new HashMap<>();
+        context.request().headers().forEach(entry -> {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            if (Objects.nonNull(key) && Objects.nonNull(value)) {
+                headers.put(key, value);
+            }
+        });
+        return headers;
+    }
+
+    private static void runWithSpan(Object span, Runnable action) {
+        AutoCloseable scope = WebOtelSupport.activate(span);
+        try {
+            action.run();
+        } finally {
+            try {
+                scope.close();
+            } catch (Throwable ignored) {
+            }
+        }
     }
 
     public void install(Router router) {
@@ -190,18 +205,6 @@ public final class Ddd4jVertxWeb {
         };
     }
 
-    private static Map<String, String> extractHeaders(RoutingContext context) {
-        Map<String, String> headers = new HashMap<>();
-        context.request().headers().forEach(entry -> {
-            String key = entry.getKey();
-            String value = entry.getValue();
-            if (Objects.nonNull(key) && Objects.nonNull(value)) {
-                headers.put(key, value);
-            }
-        });
-        return headers;
-    }
-
     private AuthenticationResult authenticate(RoutingContext routingContext, WebRequestContext requestContext) {
         Optional<BearerSubjectAuthenticator.Authentication> authentication = requestLifecycle
                 .authenticate(requestContext);
@@ -243,18 +246,6 @@ public final class Ddd4jVertxWeb {
             state.close(successful);
             return null;
         }).onFailure(exception -> log.error("Unable to close Vert.x request state", exception));
-    }
-
-    private static void runWithSpan(Object span, Runnable action) {
-        AutoCloseable scope = WebOtelSupport.activate(span);
-        try {
-            action.run();
-        } finally {
-            try {
-                scope.close();
-            } catch (Throwable ignored) {
-            }
-        }
     }
 
     private record AuthenticationResult(

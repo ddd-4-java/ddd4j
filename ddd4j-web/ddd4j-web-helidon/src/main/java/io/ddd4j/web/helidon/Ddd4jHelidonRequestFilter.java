@@ -82,6 +82,16 @@ public final class Ddd4jHelidonRequestFilter implements ContainerRequestFilter {
         this.idempotencyLifecycle = idempotencyLifecycle;
     }
 
+    private static Map<String, String> extractRequestHeaders(ContainerRequestContext request) {
+        Map<String, String> headers = new HashMap<>();
+        request.getHeaders().forEach((k, v) -> {
+            if (Objects.nonNull(v) && !v.isEmpty()) {
+                headers.put(k, v.get(0));
+            }
+        });
+        return headers;
+    }
+
     @Override
     public void filter(ContainerRequestContext request) {
         // OTel: 提取上游 TraceContext 并开启 SERVER span
@@ -103,16 +113,6 @@ public final class Ddd4jHelidonRequestFilter implements ContainerRequestFilter {
             WebOtelSupport.recordError(span, exception);
             throw exception;
         }
-    }
-
-    private static Map<String, String> extractRequestHeaders(ContainerRequestContext request) {
-        Map<String, String> headers = new HashMap<>();
-        request.getHeaders().forEach((k, v) -> {
-            if (Objects.nonNull(v) && !v.isEmpty()) {
-                headers.put(k, v.get(0));
-            }
-        });
-        return headers;
     }
 
     private WebRequestContext createContext(ContainerRequestContext request) {

@@ -41,7 +41,7 @@ public record ReadinessResult(String name, boolean ready, Map<String, String> de
      * @param name 依赖标识
      * @return 就绪结果
      */
-    public static ReadinessResult ready(String name) {
+    public static ReadinessResult ready (String name){
         return new ReadinessResult(name, true, Map.of());
     }
 
@@ -52,20 +52,20 @@ public record ReadinessResult(String name, boolean ready, Map<String, String> de
      * @param reason 可安全暴露的失败原因
      * @return 未就绪结果
      */
-    public static ReadinessResult unavailable(String name, String reason) {
+    public static ReadinessResult unavailable (String name, String reason){
         return new ReadinessResult(name, false,
                 StrKit.isBlank(reason) ? Map.of() : Map.of("reason", reason));
     }
 
-    public Map<String, String> getDetails() {
+    public Map<String, String> getDetails () {
         return details;
     }
 
-    public String getName() {
+    public String getName () {
         return name;
     }
 
-    public boolean isReady() {
+    public boolean isReady () {
         return ready;
     }
 }

@@ -14,13 +14,13 @@
  */
 package io.ddd4j.auth.license;
 
+import org.springframework.util.StringUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
-
-import org.springframework.util.StringUtils;
 
 /**
  * 自定义KeyStoreParam，用于将公私钥存储文件存放到其他磁盘位置而不是项目中。现场使用的时候公钥大部分都不会放在项目中的

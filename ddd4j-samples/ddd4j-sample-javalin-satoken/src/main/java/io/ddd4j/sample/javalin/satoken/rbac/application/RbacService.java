@@ -14,8 +14,6 @@
  */
 package io.ddd4j.sample.javalin.satoken.rbac.application;
 
-import java.util.Objects;
-
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.auth.AuthRequest;
 import io.ddd4j.core.subject.SubjectDataProvider;

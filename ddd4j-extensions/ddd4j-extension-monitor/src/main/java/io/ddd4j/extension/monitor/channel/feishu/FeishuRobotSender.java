@@ -33,15 +33,6 @@ import java.util.Map;
  */
 public class FeishuRobotSender implements Sender {
 
-    /**
-     * 飞书 post 富文本消息 JSON 字符串构造辅助结构，仅本类使用。
-     */
-    @Data
-    @NoArgsConstructor
-    static class PostPayload {
-        private Map<String, Object> post;
-    }
-
     private final FeishuClient client;
 
     /**
@@ -80,5 +71,14 @@ public class FeishuRobotSender implements Sender {
         root.put("content", postNode);
 
         client.send(JsonKit.toJson(root));
+    }
+
+    /**
+     * 飞书 post 富文本消息 JSON 字符串构造辅助结构，仅本类使用。
+     */
+    @Data
+    @NoArgsConstructor
+    static class PostPayload {
+        private Map<String, Object> post;
     }
 }

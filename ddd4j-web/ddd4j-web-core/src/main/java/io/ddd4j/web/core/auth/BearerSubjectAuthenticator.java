@@ -14,16 +14,15 @@
  */
 package io.ddd4j.web.core.auth;
 
+import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.Contexts;
-import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.subject.Subject;
 import io.ddd4j.core.subject.SubjectProvider;
+import io.ddd4j.web.core.error.WebStatusException;
 
 import java.util.Objects;
 import java.util.Optional;
-
-import io.ddd4j.web.core.error.WebStatusException;
 
 /**
  * 将标准 Bearer Token 委托给当前运行时注册的 Subject SPI。
@@ -67,15 +66,13 @@ public final class BearerSubjectAuthenticator {
 
     public record Authentication(String token, AuthPrincipal principal, Subject subject) {
 
-        public String getToken() {
+        public String getToken () {
             return token;
         }
-
-        public AuthPrincipal getPrincipal() {
+        public AuthPrincipal getPrincipal () {
             return principal;
         }
-
-        public Subject getSubject() {
+        public Subject getSubject () {
             return subject;
         }
     }
