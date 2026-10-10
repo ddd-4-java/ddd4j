@@ -14,6 +14,7 @@
  */
 package io.ddd4j.sample.javalin.cqrs.order.web;
 
+import java.io.Serializable;
 import io.ddd4j.core.api.R;
 import io.ddd4j.sample.javalin.cqrs.cache.OrderCacheService;
 import io.ddd4j.sample.javalin.cqrs.order.domain.model.Money;
@@ -73,7 +74,7 @@ public class OrderCQRSQueryController {
             String id = ctx.pathParam("id");
             R<OrderResponse> body = orderCacheService.getOrderDetail(id)
                     .map(this::toResponse)
-                    .orElseGet(() -> R.fail("404", "order not found: " + id));
+                    .orElseGet(() -> R.of((Serializable) "404", "order not found: " + id));
             ctx.json(body);
         });
     }

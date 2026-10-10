@@ -28,27 +28,28 @@ import java.util.stream.Stream;
  * 分页数据对象
  * 实现集合接口，集合操作的是records对象
  *
- * @param <T> 元素类型
+ * @param <T>
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class Page<T> implements Iterable<T> {
+
     /**
-     * 列表数据
+     * 回写当前页数据列表
      */
     private List<T> records;
     /**
-     * 总记录数
+     * 回写总记录数
      */
     private long total;
     /**
-     * 回写当前页
+     * 回写当前页码，默认 1 代表第一页
      */
     private long current = 1L;
     /**
-     * 回写每页大小
+     * 回写每页大小，默认 10 条每页
      */
     private long size = 10L;
     /**
@@ -137,9 +138,7 @@ public class Page<T> implements Iterable<T> {
      * @return true 表示添加成功
      */
     public boolean add(T t) {
-        if (Objects.isNull(this.records)) return false;
-        this.records.add(t);
-        return true;
+        return Objects.nonNull(this.records) && this.records.add(t);
     }
 
     /**
@@ -149,14 +148,11 @@ public class Page<T> implements Iterable<T> {
      * @return true 表示移除成功
      */
     public boolean remove(Object o) {
-        if (Objects.isNull(this.records)) return false;
-        return this.records.remove(o);
+        return Objects.nonNull(this.records) && this.records.remove(o);
     }
 
     /**
      * 判断当前页是否包含指定集合中的所有元素。
-     * @param c 目标对象
-     * @return 满足条件时返回 true，否则返回 false
      */
     public boolean containsAll(Collection<?> c) {
         return Objects.nonNull(this.records) && this.records.containsAll(c);
@@ -164,47 +160,34 @@ public class Page<T> implements Iterable<T> {
 
     /**
      * 向当前页添加指定集合中的所有元素。
-     * @param c 目标对象
-     * @return 操作成功返回 true，否则返回 false
      */
     public boolean addAll(Collection<? extends T> c) {
-        if (Objects.isNull(this.records)) return false;
-        return this.records.addAll(c);
+        return Objects.nonNull(this.records) && this.records.addAll(c);
     }
 
     /**
      * 从当前页移除指定集合中的所有元素。
-     * @param c 目标对象
-     * @return 操作成功返回 true，否则返回 false
      */
     public boolean removeAll(Collection<?> c) {
-        if (Objects.isNull(this.records)) return false;
-        return this.records.removeAll(c);
+        return Objects.nonNull(this.records) && this.records.removeAll(c);
     }
 
     /**
      * 按条件移除当前页中的元素。
-     * @param filter 过滤条件
-     * @return 操作成功返回 true，否则返回 false
      */
     public boolean removeIf(Predicate<? super T> filter) {
-        if (Objects.isNull(this.records)) return false;
-        return this.records.removeIf(filter);
+        return Objects.nonNull(this.records) && this.records.removeIf(filter);
     }
 
     /**
      * 仅保留当前页中包含在指定集合中的元素。
-     * @param c 目标对象
-     * @return 条件成立（或操作成功）返回 true，否则返回 false
      */
     public boolean retainAll(Collection<?> c) {
-        if (Objects.isNull(this.records)) return false;
-        return this.records.retainAll(c);
+        return Objects.nonNull(this.records) && this.records.retainAll(c);
     }
 
     /**
      * 获取当前页数据的流。
-     * @return 对应的数据流
      */
     public Stream<T> stream() {
         return Objects.nonNull(this.records) ? this.records.stream() : Stream.empty();

@@ -70,7 +70,7 @@ public class AuthenticationController {
                 LoginRequest req = ctx.bodyAsClass(LoginRequest.class);
                 String token = rbacService.login(req.username(), req.password());
                 if (Objects.isNull(token)) {
-                    ctx.status(401).json(R.fail(401, "invalid credentials or user disabled"));
+                    ctx.status(401).json(R.of(401, "invalid credentials or user disabled"));
                     return;
                 }
                 Map<String, Object> data = new HashMap<>();
@@ -82,7 +82,7 @@ public class AuthenticationController {
             // POST /auth/logout —— 登出
             post("/auth/logout", ctx -> {
                 if (!SubjectKit.isLogin()) {
-                    ctx.status(401).json(R.fail(401, "not login"));
+                    ctx.status(401).json(R.of(401, "not login"));
                     return;
                 }
                 rbacService.logout();
@@ -121,7 +121,7 @@ public class AuthenticationController {
             // POST /auth/check/role —— 编程式鉴权：检查是否拥有某个角色（要求已登录）
             post("/auth/check/role", ctx -> {
                 if (!SubjectKit.isLogin()) {
-                    ctx.status(401).json(R.fail(401, "not login"));
+                    ctx.status(401).json(R.of(401, "not login"));
                     return;
                 }
                 RoleCheckRequest req = ctx.bodyAsClass(RoleCheckRequest.class);
@@ -132,11 +132,11 @@ public class AuthenticationController {
             // GET /auth/admin —— 仅 admin 角色可访问（演示后端强制角色权限拦截）
             get("/auth/admin", ctx -> {
                 if (!SubjectKit.isLogin()) {
-                    ctx.status(401).json(R.fail(401, "not login"));
+                    ctx.status(401).json(R.of(401, "not login"));
                     return;
                 }
                 if (!SubjectKit.hasRole("admin")) {
-                    ctx.status(403).json(R.fail(403, "no role: admin"));
+                    ctx.status(403).json(R.of(403, "no role: admin"));
                     return;
                 }
                 ctx.json(R.ok(Java8Maps.of("message", "admin area accessed", "userId", SubjectKit.getUserId())));
@@ -145,11 +145,11 @@ public class AuthenticationController {
             // GET /auth/manager —— 仅 manager 角色可访问
             get("/auth/manager", ctx -> {
                 if (!SubjectKit.isLogin()) {
-                    ctx.status(401).json(R.fail(401, "not login"));
+                    ctx.status(401).json(R.of(401, "not login"));
                     return;
                 }
                 if (!SubjectKit.hasRole("manager")) {
-                    ctx.status(403).json(R.fail(403, "no role: manager"));
+                    ctx.status(403).json(R.of(403, "no role: manager"));
                     return;
                 }
                 ctx.json(R.ok(Java8Maps.of("message", "manager area accessed", "userId", SubjectKit.getUserId())));
@@ -160,7 +160,7 @@ public class AuthenticationController {
             // POST /auth/check/permission —— 编程式鉴权：检查是否拥有某权限（要求已登录）
             post("/auth/check/permission", ctx -> {
                 if (!SubjectKit.isLogin()) {
-                    ctx.status(401).json(R.fail(401, "not login"));
+                    ctx.status(401).json(R.of(401, "not login"));
                     return;
                 }
                 PermissionCheckRequest req = ctx.bodyAsClass(PermissionCheckRequest.class);
@@ -171,11 +171,11 @@ public class AuthenticationController {
             // GET /auth/users —— 需要 user:list 权限
             get("/auth/users", ctx -> {
                 if (!SubjectKit.isLogin()) {
-                    ctx.status(401).json(R.fail(401, "not login"));
+                    ctx.status(401).json(R.of(401, "not login"));
                     return;
                 }
                 if (!SubjectKit.hasPermission("user:list")) {
-                    ctx.status(403).json(R.fail(403, "no permission: user:list"));
+                    ctx.status(403).json(R.of(403, "no permission: user:list"));
                     return;
                 }
                 ctx.json(R.ok(Java8Maps.of("message", "user list accessed with permission", "userId", SubjectKit.getUserId())));
@@ -184,11 +184,11 @@ public class AuthenticationController {
             // POST /auth/orders/{id}/pay —— 业务接口鉴权：订单支付需要 order:pay 权限
             post("/auth/orders/{id}/pay", ctx -> {
                 if (!SubjectKit.isLogin()) {
-                    ctx.status(401).json(R.fail(401, "not login"));
+                    ctx.status(401).json(R.of(401, "not login"));
                     return;
                 }
                 if (!SubjectKit.hasPermission("order:pay")) {
-                    ctx.status(403).json(R.fail(403, "no permission: order:pay"));
+                    ctx.status(403).json(R.of(403, "no permission: order:pay"));
                     return;
                 }
                 String id = ctx.pathParam("id");
@@ -200,15 +200,15 @@ public class AuthenticationController {
             // DELETE /auth/users/{id} —— 组合鉴权：admin 角色 + user:delete 权限
             delete("/auth/users/{id}", ctx -> {
                 if (!SubjectKit.isLogin()) {
-                    ctx.status(401).json(R.fail(401, "not login"));
+                    ctx.status(401).json(R.of(401, "not login"));
                     return;
                 }
                 if (!SubjectKit.hasRole("admin")) {
-                    ctx.status(403).json(R.fail(403, "no role: admin"));
+                    ctx.status(403).json(R.of(403, "no role: admin"));
                     return;
                 }
                 if (!SubjectKit.hasPermission("user:delete")) {
-                    ctx.status(403).json(R.fail(403, "no permission: user:delete"));
+                    ctx.status(403).json(R.of(403, "no permission: user:delete"));
                     return;
                 }
                 String id = ctx.pathParam("id");

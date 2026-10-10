@@ -23,24 +23,24 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-class ResultCodeTest {
+class ApiCodeTest {
 
     @Test
-    void getDescByCode_shouldReturnMatchingDesc() {
-        assertThat(ApiCode.getDescByCode(ApiCode.OK.getCode()))
+    void getReasonByCode_shouldReturnMatchingDesc() {
+        assertThat(ApiCode.getReasonByCode(ApiCode.OK.getCode()))
                 .isEqualTo("请求/操作成功");
-        assertThat(ApiCode.getDescByCode(ApiCode.UNAUTHORIZED.getCode()))
+        assertThat(ApiCode.getReasonByCode(ApiCode.UNAUTHORIZED.getCode()))
                 .isEqualTo("未登录或token已经失效");
     }
 
     @Test
-    void getDescByCode_shouldReturnEmptyStringForUnknownCode() {
-        assertThat(ApiCode.getDescByCode(999999)).isEmpty();
+    void getReasonByCode_shouldReturnEmptyStringForUnknownCode() {
+        assertThat(ApiCode.getReasonByCode(999999)).isEmpty();
     }
 
     @Test
-    void getDescByCode_shouldReturnEmptyStringForNull() {
-        assertThat(ApiCode.getDescByCode(null)).isEmpty();
+    void getReasonByCode_shouldReturnEmptyStringForNull() {
+        assertThat(ApiCode.getReasonByCode(null)).isEmpty();
     }
 
     @Test
@@ -90,9 +90,9 @@ class ResultCodeTest {
     }
 
     @Test
-    void getDescByCode_shouldResolveAllEnumValues() {
+    void getReasonByCode_shouldResolveAllEnumValues() {
         for (ApiCode code : ApiCode.values()) {
-            assertThat(ApiCode.getDescByCode(code.getCode())).isNotEmpty();
+            assertThat(ApiCode.getReasonByCode(code.getCode())).isNotEmpty();
             // 异常映射码段共享 HTTP 码值（如 400/500/1000），getByCode 对共享码值返回声明在前的第一个条目
             assertThat(ApiCode.getByCode(code.getCode())).isNotNull();
         }

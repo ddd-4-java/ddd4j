@@ -46,7 +46,7 @@ public final class WebError {
     }
 
     public R<Object> toResponse() {
-        return R.fail(code, message, data);
+        return R.of(code, message, data);
     }
 
     public int status() {

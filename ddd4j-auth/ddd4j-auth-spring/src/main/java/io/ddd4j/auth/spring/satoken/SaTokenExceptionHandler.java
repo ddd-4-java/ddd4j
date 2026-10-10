@@ -20,7 +20,7 @@ public class SaTokenExceptionHandler {
     @ExceptionHandler(SaTokenException.class)
     public ResponseEntity<R<String>> accessDeniedException(SaTokenException exception) {
         log.warn("Sa-Token 鉴权异常：code={}, msg={}", exception.getCode(), exception.getMessage());
-        return new ResponseEntity<>(R.fail(exception.getCode(), exception.getMessage()),
+        return new ResponseEntity<>(R.of(exception.getCode(), exception.getMessage()),
                 HttpStatus.UNAUTHORIZED);
     }
 }

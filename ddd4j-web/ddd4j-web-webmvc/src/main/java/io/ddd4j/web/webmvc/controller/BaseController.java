@@ -125,7 +125,7 @@ public class BaseController implements ApplicationEventPublisherAware, Applicati
     }
 
     protected <T> R<T> error(String key, Object... args) {
-        return R.fail(ApiCode.SERVER_ERROR.getCode(), getMessage(key, args));
+        return R.of(ApiCode.SERVER_ERROR.getCode(), getMessage(key, args));
     }
 
     @Override
