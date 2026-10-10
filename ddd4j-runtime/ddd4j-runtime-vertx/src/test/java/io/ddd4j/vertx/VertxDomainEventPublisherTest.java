@@ -1,5 +1,11 @@
 package io.ddd4j.vertx;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Objects;
+
 import io.vertx.core.Vertx;
 import org.junit.jupiter.api.Test;
 
@@ -32,6 +38,44 @@ class VertxDomainEventPublisherTest {
         }
     }
 
-    private record LocalEvent(String name) {
+    private final static class LocalEvent {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String name;
+
+        @JsonCreator()
+        private LocalEvent(@JsonProperty("name") String name) {
+            this.name = name;
+        }
+
+        @JsonProperty("name")
+        public String name() {
+            return name;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            LocalEvent other = (LocalEvent) obj;
+            return Objects.equals(this.name, other.name);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(name);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "LocalEvent[name=" + name + "]";
+        }
     }
 }

@@ -1,5 +1,9 @@
 package io.ddd4j.core.ddd.model.metadata;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
@@ -122,6 +126,53 @@ public final class DomainModelHelper {
         MODEL_INFO_CACHE.clear();
     }
 
-    private record ModelMappingKey(Class<?> modelType, Class<?> persistenceType) {
+    private final static class ModelMappingKey {
+
+        private static final long serialVersionUID = 0L;
+
+        private final Class<?> modelType;
+
+        private final Class<?> persistenceType;
+
+        @JsonCreator()
+        private ModelMappingKey(@JsonProperty("modelType") Class<?> modelType, @JsonProperty("persistenceType") Class<?> persistenceType) {
+            this.modelType = modelType;
+            this.persistenceType = persistenceType;
+        }
+
+        @JsonProperty("modelType")
+        public Class<?> modelType() {
+            return modelType;
+        }
+
+        @JsonProperty("persistenceType")
+        public Class<?> persistenceType() {
+            return persistenceType;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            ModelMappingKey other = (ModelMappingKey) obj;
+            return Objects.equals(this.modelType, other.modelType) && Objects.equals(this.persistenceType, other.persistenceType);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(modelType);
+            result = 31 * result + Objects.hashCode(persistenceType);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "ModelMappingKey[modelType=" + modelType + ", persistenceType=" + persistenceType + "]";
+        }
     }
 }

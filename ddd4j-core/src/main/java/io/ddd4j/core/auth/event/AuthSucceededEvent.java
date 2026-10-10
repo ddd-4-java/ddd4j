@@ -1,5 +1,11 @@
 package io.ddd4j.core.auth.event;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Objects;
+
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.auth.AuthRequest;
 
@@ -22,5 +28,70 @@ import java.time.Instant;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.0.0
  */
-public record AuthSucceededEvent(AuthRequest request, AuthPrincipal principal, String token, Instant occurredAt) {
+public final class AuthSucceededEvent {
+
+    private static final long serialVersionUID = 0L;
+
+    private final AuthRequest request;
+
+    private final AuthPrincipal principal;
+
+    private final String token;
+
+    private final Instant occurredAt;
+
+    @JsonCreator()
+    public AuthSucceededEvent(@JsonProperty("request") AuthRequest request, @JsonProperty("principal") AuthPrincipal principal, @JsonProperty("token") String token, @JsonProperty("occurredAt") Instant occurredAt) {
+        this.request = request;
+        this.principal = principal;
+        this.token = token;
+        this.occurredAt = occurredAt;
+    }
+
+    @JsonProperty("request")
+    public AuthRequest request() {
+        return request;
+    }
+
+    @JsonProperty("principal")
+    public AuthPrincipal principal() {
+        return principal;
+    }
+
+    @JsonProperty("token")
+    public String token() {
+        return token;
+    }
+
+    @JsonProperty("occurredAt")
+    public Instant occurredAt() {
+        return occurredAt;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+            return false;
+        }
+        AuthSucceededEvent other = (AuthSucceededEvent) obj;
+        return Objects.equals(this.request, other.request) && Objects.equals(this.principal, other.principal) && Objects.equals(this.token, other.token) && Objects.equals(this.occurredAt, other.occurredAt);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 0;
+        result = 31 * result + Objects.hashCode(request);
+        result = 31 * result + Objects.hashCode(principal);
+        result = 31 * result + Objects.hashCode(token);
+        result = 31 * result + Objects.hashCode(occurredAt);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "AuthSucceededEvent[request=" + request + ", principal=" + principal + ", token=" + token + ", occurredAt=" + occurredAt + "]";
+    }
 }

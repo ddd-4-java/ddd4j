@@ -1,5 +1,11 @@
 package io.ddd4j.sample.quarkus.cqrs.order.web;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Objects;
+
 import io.ddd4j.sample.quarkus.cqrs.order.application.AddOrderLineCommand;
 import io.ddd4j.sample.quarkus.cqrs.order.application.CreateOrderCommand;
 import io.ddd4j.sample.quarkus.cqrs.order.application.OrderApplicationService;
@@ -152,18 +158,177 @@ public class OrderResource extends TenantAwareResource {
     /**
      * 创建订单请求。
      */
-    public record CreateOrderRequest(String orderNo, String buyerId, String buyerName) {
+    public final static class CreateOrderRequest {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String orderNo;
+
+        private final String buyerId;
+
+        private final String buyerName;
+
+        @JsonCreator()
+        public CreateOrderRequest(@JsonProperty("orderNo") String orderNo, @JsonProperty("buyerId") String buyerId, @JsonProperty("buyerName") String buyerName) {
+            this.orderNo = orderNo;
+            this.buyerId = buyerId;
+            this.buyerName = buyerName;
+        }
+
+        @JsonProperty("orderNo")
+        public String orderNo() {
+            return orderNo;
+        }
+
+        @JsonProperty("buyerId")
+        public String buyerId() {
+            return buyerId;
+        }
+
+        @JsonProperty("buyerName")
+        public String buyerName() {
+            return buyerName;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            CreateOrderRequest other = (CreateOrderRequest) obj;
+            return Objects.equals(this.orderNo, other.orderNo) && Objects.equals(this.buyerId, other.buyerId) && Objects.equals(this.buyerName, other.buyerName);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(orderNo);
+            result = 31 * result + Objects.hashCode(buyerId);
+            result = 31 * result + Objects.hashCode(buyerName);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "CreateOrderRequest[orderNo=" + orderNo + ", buyerId=" + buyerId + ", buyerName=" + buyerName + "]";
+        }
     }
 
     /**
      * 添加订单行请求。
      */
-    public record AddLineRequest(String goodsId, String goodsName, int quantity, BigDecimal unitPrice) {
+    public final static class AddLineRequest {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String goodsId;
+
+        private final String goodsName;
+
+        private final int quantity;
+
+        private final BigDecimal unitPrice;
+
+        @JsonCreator()
+        public AddLineRequest(@JsonProperty("goodsId") String goodsId, @JsonProperty("goodsName") String goodsName, @JsonProperty("quantity") int quantity, @JsonProperty("unitPrice") BigDecimal unitPrice) {
+            this.goodsId = goodsId;
+            this.goodsName = goodsName;
+            this.quantity = quantity;
+            this.unitPrice = unitPrice;
+        }
+
+        @JsonProperty("goodsId")
+        public String goodsId() {
+            return goodsId;
+        }
+
+        @JsonProperty("goodsName")
+        public String goodsName() {
+            return goodsName;
+        }
+
+        @JsonProperty("quantity")
+        public int quantity() {
+            return quantity;
+        }
+
+        @JsonProperty("unitPrice")
+        public BigDecimal unitPrice() {
+            return unitPrice;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            AddLineRequest other = (AddLineRequest) obj;
+            return Objects.equals(this.goodsId, other.goodsId) && Objects.equals(this.goodsName, other.goodsName) && this.quantity == other.quantity && Objects.equals(this.unitPrice, other.unitPrice);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(goodsId);
+            result = 31 * result + Objects.hashCode(goodsName);
+            result = 31 * result + Integer.hashCode(quantity);
+            result = 31 * result + Objects.hashCode(unitPrice);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "AddLineRequest[goodsId=" + goodsId + ", goodsName=" + goodsName + ", quantity=" + quantity + ", unitPrice=" + unitPrice + "]";
+        }
     }
 
     /**
      * 批量取消请求。
      */
-    public record CancelAllRequest(String buyerId) {
+    public final static class CancelAllRequest {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String buyerId;
+
+        @JsonCreator()
+        public CancelAllRequest(@JsonProperty("buyerId") String buyerId) {
+            this.buyerId = buyerId;
+        }
+
+        @JsonProperty("buyerId")
+        public String buyerId() {
+            return buyerId;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            CancelAllRequest other = (CancelAllRequest) obj;
+            return Objects.equals(this.buyerId, other.buyerId);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(buyerId);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "CancelAllRequest[buyerId=" + buyerId + "]";
+        }
     }
 }

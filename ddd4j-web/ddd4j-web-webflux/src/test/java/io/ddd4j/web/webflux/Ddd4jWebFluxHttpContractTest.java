@@ -1,5 +1,9 @@
 package io.ddd4j.web.webflux;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.api.R;
@@ -160,7 +164,11 @@ class Ddd4jWebFluxHttpContractTest extends AbstractWebContractTest {
         }
     }
 
-    private record WebFluxContractClient(WebTestClient webTestClient) implements WebContractClient {
+    private final static class WebFluxContractClient implements WebContractClient {
+
+        private static final long serialVersionUID = 0L;
+
+        private final WebTestClient webTestClient;
 
         @Override
         public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
@@ -173,9 +181,42 @@ class Ddd4jWebFluxHttpContractTest extends AbstractWebContractTest {
             Map<String, List<String>> responseHeaders = new LinkedHashMap<>();
             result.getResponseHeaders().forEach(responseHeaders::put);
             byte[] responseBody = result.getResponseBody();
-            String responseText = Objects.isNull(responseBody)
-                    ? "" : new String(responseBody, StandardCharsets.UTF_8);
+            String responseText = Objects.isNull(responseBody) ? "" : new String(responseBody, StandardCharsets.UTF_8);
             return new WebContractResponse(result.getStatus().value(), responseHeaders, responseText);
+        }
+
+        @JsonCreator()
+        private WebFluxContractClient(@JsonProperty("webTestClient") WebTestClient webTestClient) {
+            this.webTestClient = webTestClient;
+        }
+
+        @JsonProperty("webTestClient")
+        public WebTestClient webTestClient() {
+            return webTestClient;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            WebFluxContractClient other = (WebFluxContractClient) obj;
+            return Objects.equals(this.webTestClient, other.webTestClient);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(webTestClient);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "WebFluxContractClient[webTestClient=" + webTestClient + "]";
         }
     }
 }
