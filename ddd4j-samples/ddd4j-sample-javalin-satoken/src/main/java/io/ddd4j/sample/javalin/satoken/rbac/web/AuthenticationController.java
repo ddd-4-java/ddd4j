@@ -14,6 +14,10 @@
  */
 package io.ddd4j.sample.javalin.satoken.rbac.web;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.util.SubjectKit;
@@ -215,16 +219,177 @@ public class AuthenticationController {
 
     // ============================ 请求 DTO ============================
 
-    public record LoginRequest(String username, String password) {
+    public final static class LoginRequest {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String username;
+
+        private final String password;
+
+        @JsonCreator()
+        public LoginRequest(@JsonProperty("username") String username, @JsonProperty("password") String password) {
+            this.username = username;
+            this.password = password;
+        }
+
+        @JsonProperty("username")
+        public String username() {
+            return username;
+        }
+
+        @JsonProperty("password")
+        public String password() {
+            return password;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            LoginRequest other = (LoginRequest) obj;
+            return Objects.equals(this.username, other.username) && Objects.equals(this.password, other.password);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(username);
+            result = 31 * result + Objects.hashCode(password);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "LoginRequest[username=" + username + ", password=" + password + "]";
+        }
     }
 
-    public record KickoutRequest(String userId) {
+    public final static class KickoutRequest {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String userId;
+
+        @JsonCreator()
+        public KickoutRequest(@JsonProperty("userId") String userId) {
+            this.userId = userId;
+        }
+
+        @JsonProperty("userId")
+        public String userId() {
+            return userId;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            KickoutRequest other = (KickoutRequest) obj;
+            return Objects.equals(this.userId, other.userId);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(userId);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "KickoutRequest[userId=" + userId + "]";
+        }
     }
 
-    public record RoleCheckRequest(String role) {
+    public final static class RoleCheckRequest {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String role;
+
+        @JsonCreator()
+        public RoleCheckRequest(@JsonProperty("role") String role) {
+            this.role = role;
+        }
+
+        @JsonProperty("role")
+        public String role() {
+            return role;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            RoleCheckRequest other = (RoleCheckRequest) obj;
+            return Objects.equals(this.role, other.role);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(role);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "RoleCheckRequest[role=" + role + "]";
+        }
     }
 
-    public record PermissionCheckRequest(String permission) {
+    public final static class PermissionCheckRequest {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String permission;
+
+        @JsonCreator()
+        public PermissionCheckRequest(@JsonProperty("permission") String permission) {
+            this.permission = permission;
+        }
+
+        @JsonProperty("permission")
+        public String permission() {
+            return permission;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            PermissionCheckRequest other = (PermissionCheckRequest) obj;
+            return Objects.equals(this.permission, other.permission);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(permission);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "PermissionCheckRequest[permission=" + permission + "]";
+        }
     }
 
 }
