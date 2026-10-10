@@ -133,6 +133,8 @@ public final class NatsAcknowledgment implements Acknowledgment {
 
     /**
      * 返回底层 NATS 消息。
+     *
+     * @return 底层 NATS {@link Message} 实例
      */
     public Message message() {
         return message;

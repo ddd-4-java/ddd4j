@@ -91,6 +91,8 @@ public class RocketMQClient implements MQClient {
 
     /**
      * 构造方法 1：注入原生 producer（runtime 自动装配用）。
+     *
+     * @param producer 已初始化的原生生产者，不可为空
      */
     public RocketMQClient(DefaultMQProducer producer) {
         this.producer = Objects.requireNonNull(producer, "RocketMQ Producer is required");
@@ -99,6 +101,9 @@ public class RocketMQClient implements MQClient {
 
     /**
      * 构造方法 1'：注入原生 producer + 异步发送回调。
+     *
+     * @param producer 已初始化的原生生产者，不可为空
+     * @param callback 异步发送回调，可为空（为空时仅记录发送结果日志）
      */
     public RocketMQClient(DefaultMQProducer producer, SendCallback callback) {
         this.producer = Objects.requireNonNull(producer, "RocketMQ Producer is required");
@@ -108,6 +113,8 @@ public class RocketMQClient implements MQClient {
 
     /**
      * 构造方法 2：自行根据 properties 构造 producer（lazy）。
+     *
+     * @param properties 驱动懒构造的配置，不可为空
      */
     public RocketMQClient(RocketMQProperties properties) {
         this.producer = null;
@@ -116,6 +123,9 @@ public class RocketMQClient implements MQClient {
 
     /**
      * 构造方法 2'：自行根据 properties 构造 producer + 异步发送回调（lazy）。
+     *
+     * @param properties 驱动懒构造的配置，不可为空
+     * @param callback 异步发送回调，可为空（为空时仅记录发送结果日志）
      */
     public RocketMQClient(RocketMQProperties properties, SendCallback callback) {
         this.producer = null;
@@ -163,6 +173,10 @@ public class RocketMQClient implements MQClient {
                 if (StrKit.isNotEmpty(this.properties.getNameServer())) {
                     p.setNamesrvAddr(this.properties.getNameServer());
                 }
+                // 自建 producer 路径补齐配置：send 超时与 invokeSync 预算（含建连耗时，见
+                // RocketMQProperties#mqClientApiTimeoutMillis 注释），否则回落上游默认值
+                p.setSendMsgTimeout(this.properties.getSendMsgTimeoutMillis());
+                p.setMqClientApiTimeout(this.properties.getMqClientApiTimeoutMillis());
                 p.start();
                 this.producer = p;
                 lifecycle.register("rocket-producer", p::shutdown);
@@ -244,6 +258,8 @@ public class RocketMQClient implements MQClient {
                 if (StrKit.isNotEmpty(this.properties.getNameServer())) {
                     consumer.setNamesrvAddr(this.properties.getNameServer());
                 }
+                // ACL 分支重新 new 了 consumer，需重新应用 invokeSync 预算（含建连耗时）
+                consumer.setMqClientApiTimeout(this.properties.getMqClientApiTimeoutMillis());
             }
         } else {
             consumer = new DefaultMQPushConsumer(listener.getGroup());
