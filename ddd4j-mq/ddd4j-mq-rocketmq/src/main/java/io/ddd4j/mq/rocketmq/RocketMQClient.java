@@ -162,6 +162,10 @@ public class RocketMQClient implements MQClient {
                 if (StrKit.isNotEmpty(this.properties.getNameServer())) {
                     p.setNamesrvAddr(this.properties.getNameServer());
                 }
+                // 自建 producer 路径补齐配置：send 超时与 invokeSync 预算（含建连耗时，见
+                // RocketMQProperties#mqClientApiTimeoutMillis 注释），否则回落上游默认值
+                p.setSendMsgTimeout(this.properties.getSendMsgTimeoutMillis());
+                p.setMqClientApiTimeout(this.properties.getMqClientApiTimeoutMillis());
                 p.start();
                 this.producer = p;
                 lifecycle.register("rocket-producer", p::shutdown);
@@ -248,6 +252,8 @@ public class RocketMQClient implements MQClient {
                 if (StrKit.isNotEmpty(this.properties.getNameServer())) {
                     consumer.setNamesrvAddr(this.properties.getNameServer());
                 }
+                // ACL 分支重新 new 了 consumer，需重新应用 invokeSync 预算（含建连耗时）
+                consumer.setMqClientApiTimeout(this.properties.getMqClientApiTimeoutMillis());
             }
         } else {
             consumer = new DefaultMQPushConsumer(listener.getGroup());

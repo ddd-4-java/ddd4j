@@ -55,6 +55,15 @@ public class RocketMQProperties extends MQProperties {
      * 默认 10s 与 RocketMQ 客户端默认一致。
      */
     private int sendMsgTimeoutMillis = 10_000;
+    /**
+     * 客户端同步 API 超时（ms）。rocketmq-client 5.x 的 {@code invokeSync} 预算包含 TCP 建连耗时
+     * （{@code NettyRemotingClient#invokeSync} 先 {@code getAndCreateChannel} 建连，再按剩余时间等待响应），
+     * 而经容器端口映射 / 代理 / VPN 的冷建连实测可达 7~17 秒；上游默认 3s 会在建连阶段就耗尽预算，
+     * 抛出 {@code RemotingTimeoutException}（此时请求尚未发出）。且 5.5.0 起该异常会在
+     * {@code MQClientInstance#updateTopicRouteInfoFromNameServer} 被包装为 {@code IllegalStateException}
+     * 硬失败，直接中断 consumer 启动。默认放大到 30s 以吞下冷建连。
+     */
+    private int mqClientApiTimeoutMillis = 30_000;
 
     /**
      * 基于本配置创建原生生产者（含 nameServer）。
@@ -66,6 +75,7 @@ public class RocketMQProperties extends MQProperties {
             producer.setNamesrvAddr(nameServer);
         }
         producer.setSendMsgTimeout(sendMsgTimeoutMillis);
+        producer.setMqClientApiTimeout(mqClientApiTimeoutMillis);
         return producer;
     }
 
@@ -79,6 +89,7 @@ public class RocketMQProperties extends MQProperties {
         if (StrKit.isNotEmpty(nameServer)) {
             consumer.setNamesrvAddr(nameServer);
         }
+        consumer.setMqClientApiTimeout(mqClientApiTimeoutMillis);
         return consumer;
     }
 }

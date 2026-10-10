@@ -32,12 +32,20 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class RocketAcknowledgment implements Acknowledgment {
 
+    /**
+     * 原生 {@link MessageExt} 在 unwrap 时使用的类型标识头键。
+     */
     public static final String HEADER_ROCKET_MESSAGE = "ddd4j.rocket.message";
 
     private final MessageExt message;
     private final AtomicBoolean acknowledged = new AtomicBoolean(false);
     private volatile boolean reconsume;
 
+    /**
+     * 基于原生消息构造 ack 状态适配器。
+     *
+     * @param message 原生 RocketMQ 消息，不可为空
+     */
     public RocketAcknowledgment(MessageExt message) {
         this.message = Objects.requireNonNull(message, "message");
     }
@@ -116,6 +124,11 @@ public class RocketAcknowledgment implements Acknowledgment {
         return Optional.empty();
     }
 
+    /**
+     * 是否要求稍后重新消费（{@code nack}/{@code reject}/{@code recover} 且 {@code requeue=true} 时置位）。
+     *
+     * @return 需要重新消费返回 {@code true}
+     */
     public boolean shouldReconsume() {
         return reconsume;
     }
