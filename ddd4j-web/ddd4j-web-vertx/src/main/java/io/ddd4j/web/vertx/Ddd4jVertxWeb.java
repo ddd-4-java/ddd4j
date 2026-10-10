@@ -14,6 +14,10 @@
  */
 package io.ddd4j.web.vertx;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import io.ddd4j.core.health.RuntimeReadinessRegistry;
 import io.ddd4j.web.core.auth.AuthenticationMode;
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
@@ -257,9 +261,54 @@ public final class Ddd4jVertxWeb {
         }
     }
 
-    private record AuthenticationResult(
-            Optional<BearerSubjectAuthenticator.Authentication> authentication,
-            Optional<WebIdempotencyLifecycle.Scope> idempotencyScope) {
+    private final static class AuthenticationResult {
+
+        private static final long serialVersionUID = 0L;
+
+        private final Optional<BearerSubjectAuthenticator.Authentication> authentication;
+
+        private final Optional<WebIdempotencyLifecycle.Scope> idempotencyScope;
+
+        @JsonCreator()
+        private AuthenticationResult(@JsonProperty("authentication") Optional<BearerSubjectAuthenticator.Authentication> authentication, @JsonProperty("idempotencyScope") Optional<WebIdempotencyLifecycle.Scope> idempotencyScope) {
+            this.authentication = authentication;
+            this.idempotencyScope = idempotencyScope;
+        }
+
+        @JsonProperty("authentication")
+        public Optional<BearerSubjectAuthenticator.Authentication> authentication() {
+            return authentication;
+        }
+
+        @JsonProperty("idempotencyScope")
+        public Optional<WebIdempotencyLifecycle.Scope> idempotencyScope() {
+            return idempotencyScope;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            AuthenticationResult other = (AuthenticationResult) obj;
+            return Objects.equals(this.authentication, other.authentication) && Objects.equals(this.idempotencyScope, other.idempotencyScope);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(authentication);
+            result = 31 * result + Objects.hashCode(idempotencyScope);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "AuthenticationResult[authentication=" + authentication + ", idempotencyScope=" + idempotencyScope + "]";
+        }
     }
 
     private static final class RequestState {

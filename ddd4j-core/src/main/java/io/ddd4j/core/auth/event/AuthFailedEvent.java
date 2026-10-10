@@ -14,6 +14,12 @@
  */
 package io.ddd4j.core.auth.event;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Objects;
+
 import io.ddd4j.core.auth.AuthRequest;
 
 import java.time.Instant;
@@ -27,7 +33,15 @@ import java.time.Instant;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.0.0
  */
-public record AuthFailedEvent(AuthRequest request, String reason, Instant occurredAt) {
+public final class AuthFailedEvent {
+
+    private static final long serialVersionUID = 0L;
+
+    private final AuthRequest request;
+
+    private final String reason;
+
+    private final Instant occurredAt;
 
     public Instant getOccurredAt() {
         return occurredAt;
@@ -39,5 +53,53 @@ public record AuthFailedEvent(AuthRequest request, String reason, Instant occurr
 
     public AuthRequest getRequest() {
         return request;
+    }
+
+    @JsonCreator()
+    public AuthFailedEvent(@JsonProperty("request") AuthRequest request, @JsonProperty("reason") String reason, @JsonProperty("occurredAt") Instant occurredAt) {
+        this.request = request;
+        this.reason = reason;
+        this.occurredAt = occurredAt;
+    }
+
+    @JsonProperty("request")
+    public AuthRequest request() {
+        return request;
+    }
+
+    @JsonProperty("reason")
+    public String reason() {
+        return reason;
+    }
+
+    @JsonProperty("occurredAt")
+    public Instant occurredAt() {
+        return occurredAt;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+            return false;
+        }
+        AuthFailedEvent other = (AuthFailedEvent) obj;
+        return Objects.equals(this.request, other.request) && Objects.equals(this.reason, other.reason) && Objects.equals(this.occurredAt, other.occurredAt);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 0;
+        result = 31 * result + Objects.hashCode(request);
+        result = 31 * result + Objects.hashCode(reason);
+        result = 31 * result + Objects.hashCode(occurredAt);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "AuthFailedEvent[request=" + request + ", reason=" + reason + ", occurredAt=" + occurredAt + "]";
     }
 }
