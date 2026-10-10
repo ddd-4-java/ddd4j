@@ -46,9 +46,6 @@ public class FlksecCryptoStrategy implements CryptoStrategy {
      */
     private final ObjectMapper objectMapper;
     /**
-     * HTTP 客户端
-     */
-    /**
      * 远程服务地址
      */
     private final String address;
@@ -61,7 +58,6 @@ public class FlksecCryptoStrategy implements CryptoStrategy {
      * 构造函数
      *
      * @param objectMapper JSON 对象映射器
-     * @param httpClient   HTTP 客户端
      * @param address      远程服务地址
      * @param port         远程服务端口
      */

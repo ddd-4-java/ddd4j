@@ -25,7 +25,7 @@ import java.util.*;
  * 飞书群机器人 {@link Sender} 适配器。
  *
  * <p>{@link #send(String)} 默认走 {@code msg_type=post}（富文本，能近似渲染 markdown）；
- * 如需文本/消息卡片等更丰富的协议层，请调用 {@link #send(Map)} 直接传完整 JSON payload。
+ * 如需文本/消息卡片等更丰富的协议层，请自行组装完整 JSON payload 后调用 {@link #send(String)}。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
@@ -43,6 +43,7 @@ public class FeishuRobotSender implements Sender {
 
     /**
      * 暴露底层 HTTP 客户端，便于高级场景直接复用。
+     * @return 获取的FeishuClient
      */
     public FeishuClient getClient() {
         return client;

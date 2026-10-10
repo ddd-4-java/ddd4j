@@ -124,6 +124,9 @@ public class JedisCache<V> implements CasCache<String, V>, AtomicCache<String, V
 
     /**
      * 构造 Jedis 缓存（默认 ObjectMapper）。
+     * @param jedis 参数 jedis
+     * @param config 配置对象
+     * @param valueType 值类型
      */
     public JedisCache(UnifiedJedis jedis, CacheConfig config, Class<V> valueType) {
         this(jedis, config, valueType, JsonMapper.builder().build());

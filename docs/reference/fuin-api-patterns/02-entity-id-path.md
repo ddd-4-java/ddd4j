@@ -160,10 +160,8 @@ return new EntityIdPath(ids);
 
 ## 落地计划
 
-- [ ] Task 2.2：`AggregateRoot.apply()` 子实体路由取 `entityIdPath.first()`，断言首段为 `AggregateRootId` 后再转型（fail-fast）。
-- [ ] Task 2.3：单测覆盖路径导航（first/last/rest/parent/size）、单元素路径 null 语义、首段类型断言的异常路径。
-- [ ] 伴随阶段 2 落地 `EntityIdPath` 补 `static isValid(String)`/`valueOf(String)`（README 索引第 02 项的 ddd4j 落地列）：
-  `Type:id/Type:id` 格式，坏输入抛 `IllegalArgumentException`。
-- [ ] Task 3.2/3.3：`StoredEvent` 与 EventPayloadSerializer 以 `asString()` 文本为持久化/JSON 表示，读取侧回解统一走新
-  parse API。
-- [ ] Task 1.10：ADR-0002（core 零依赖）引用本文档「不借鉴 EntityIdFactory/jakarta.validation」结论。
+- [x] Task 2.2：`AggregateRoot.apply()` 子实体路由取 `entityIdPath.first()`，断言首段为 `AggregateRootId` 后再转型（fail-fast）。（证据: AggregateRoot.java apply(E,boolean) 入口断言落地（!AggregateRootId.class.isInstance(rootSegment) 即抛 IllegalStateException 并携带 asTypedString/路径/事件/聚合诊断）；AggregateRootRoutingFailFastTest 5 例 RED→GREEN——routing_red.log「Expected IllegalStateException ... nothing was thrown」3/5 红 → core_green_task22.log Tests run: 315, Failures: 0 全绿；3 个夹具 id 类重锚 AggregateRootId，AggregateRootTest.TestEvent 由 StringEntityId 重锚 TestRootId）
+- [x] Task 2.3：单测覆盖路径导航（first/last/rest/parent/size）、单元素路径 null 语义、首段类型断言的异常路径。（证据: 导航代数与单元素 null 语义由 EntityIdPathTest.navigationAlgebraFollowsEventRoutingContract / singleElementPathReturnsNullForRestAndParent 覆盖（eip_green.log 6/6）；首段类型断言异常路径由 AggregateRootRoutingFailFastTest.applyRejectsPlainEntityIdRootSegment / applyRejectsStringEntityIdRootSegment / loadFromHistoryRejectsNonAggregateRootIdRootSegment 覆盖（routing_red.log 3 红 → core_green_task22.log 315/0/0 绿），含 loadFromHistory 回放路径同款 fail-fast）
+- [x] 伴随阶段 2 落地 `EntityIdPath` 补 `static isValid(String)`/`valueOf(String)`（README 索引第 02 项的 ddd4j 落地列）：`Type:id/Type:id` 格式，坏输入抛 `IllegalArgumentException`。（证据: EntityIdPath.java isValid/valueOf 三件套落地，isValid 不抛异常且与 valueOf 判定一致；EntityIdPathTest 6/6 RED→GREEN——eip_red.log「找不到符号」→ eip_green.log 全绿，含乱输入用例）
+- [x] Task 3.2/3.3：`StoredEvent` 与 EventPayloadSerializer 以 `asString()` 文本为持久化/JSON 表示，读取侧回解统一走新 parse API。（证据: ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/EntityIdPath.java（@JsonValue asString、@JsonCreator valueOf）及 DomainEventRoundTripTest 回读断言）
+- [x] Task 1.10：ADR-0002（core 零依赖）引用本文档「不借鉴 EntityIdFactory/jakarta.validation」结论。（证据: adr/0002-core-zero-deps.md Context「fuin 是反面教材」清单新增第 4 条，引用 02 篇「不借鉴」节的 EntityIdFactory 注册表与 ExpectedEntityIdPathValidator（jakarta.validation+objects4j）结论，并注明 parse 收敛为 isValid/valueOf 纯静态方法）

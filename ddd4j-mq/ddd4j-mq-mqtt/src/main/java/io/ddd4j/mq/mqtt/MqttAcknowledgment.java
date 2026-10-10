@@ -145,6 +145,7 @@ public class MqttAcknowledgment implements Acknowledgment {
 
     /**
      * 返回 Paho MQTT 主题。
+     * @return 返回的字符串内容
      */
     public String topic() {
         return topic;

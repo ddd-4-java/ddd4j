@@ -32,7 +32,7 @@ package io.ddd4j.core.cache;
  * <ul>
  *   <li>{@code >= 0} — 操作成功，返回操作后的剩余值</li>
  *   <li>{@code -1} — 库存为零（已售罄）</li>
- *   <li>{@code -2} — 库存不足（请求扣减量 > 剩余量）</li>
+ *   <li>{@code -2} — 库存不足（请求扣减量 {@code >} 剩余量）</li>
  *   <li>{@code -3} — 库存未初始化（key 不存在）</li>
  *   <li>{@code -4} — 参数非法（扣减量为负数或零）</li>
  * </ul>
@@ -64,7 +64,7 @@ public interface AtomicCache<K, V> extends Cache<K, V> {
      * 原子递增（整数）。
      *
      * @param key   缓存键
-     * @param delta 增量（必须 >= 0）
+     * @param delta 增量（必须 {@code >= 0}）
      * @return 递增后的值
      */
     long increment(K key, long delta);
@@ -73,7 +73,7 @@ public interface AtomicCache<K, V> extends Cache<K, V> {
      * 原子递增（整数），并设置过期时间。
      *
      * @param key     缓存键
-     * @param delta   增量（必须 >= 0）
+     * @param delta   增量（必须 {@code >= 0}）
      * @param seconds 过期时间（秒），仅对首次创建有效
      * @return 递增后的值
      */
@@ -89,7 +89,7 @@ public interface AtomicCache<K, V> extends Cache<K, V> {
      * 原子递减（整数）。
      *
      * @param key   缓存键
-     * @param delta 减量（必须 >= 0）
+     * @param delta 减量（必须 {@code >= 0}）
      * @return 递减后的值（可为负数）
      */
     long decrement(K key, long delta);
@@ -98,7 +98,7 @@ public interface AtomicCache<K, V> extends Cache<K, V> {
      * 原子递增（浮点数）。
      *
      * @param key   缓存键
-     * @param delta 增量（必须 >= 0）
+     * @param delta 增量（必须 {@code >= 0}）
      * @return 递增后的值
      */
     double incrementFloat(K key, double delta);
@@ -107,7 +107,7 @@ public interface AtomicCache<K, V> extends Cache<K, V> {
      * 原子递减（浮点数）。
      *
      * @param key   缓存键
-     * @param delta 减量（必须 >= 0）
+     * @param delta 减量（必须 {@code >= 0}）
      * @return 递减后的值
      */
     double decrementFloat(K key, double delta);
@@ -119,7 +119,7 @@ public interface AtomicCache<K, V> extends Cache<K, V> {
      * 不会扣到负数，保证库存安全。
      *
      * @param key      缓存键
-     * @param quantity 扣减数量（必须 > 0）
+     * @param quantity 扣减数量（必须 {@code > 0}）
      * @return {@code >= 0} 剩余库存；负数表示失败（见返回值约定）
      */
     long stockDecrement(K key, long quantity);
@@ -128,7 +128,7 @@ public interface AtomicCache<K, V> extends Cache<K, V> {
      * 库存原子回补。
      *
      * @param key      缓存键
-     * @param quantity 回补数量（必须 > 0）
+     * @param quantity 回补数量（必须 {@code > 0}）
      * @return {@code >= 0} 回补后的库存；负数表示失败
      */
     long stockIncrement(K key, long quantity);

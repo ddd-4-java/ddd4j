@@ -45,6 +45,9 @@ public class OrderDomainService {
      *   <li>订单总额 ≥ 500 元：95 折</li>
      *   <li>历史订单数 ≥ 10：额外 98 折</li>
      * </ul>
+     * @param buyerId 买家标识
+     * @param total 总数
+     * @return 计算的Money
      */
     public Money calculateDiscount(String buyerId, Money total) {
         Objects.requireNonNull(buyerId, "buyerId must not be null");
@@ -64,6 +67,8 @@ public class OrderDomainService {
 
     /**
      * 预览订单折扣。
+     * @param order 顺序值
+     * @return 返回的 Money 结果
      */
     public Money previewDiscount(Order order) {
         Objects.requireNonNull(order, "order must not be null");

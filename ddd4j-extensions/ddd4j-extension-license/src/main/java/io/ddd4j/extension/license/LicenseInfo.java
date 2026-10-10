@@ -69,7 +69,7 @@ public class LicenseInfo implements Serializable {
     private LicenseExtraModel extra;
 
     /**
-     * 判断证书当前是否仍在有效期内（notBefore <= now < notAfter）。
+     * 判断证书当前是否仍在有效期内（notBefore &lt;= now &lt; notAfter）。
      *
      * @return true 表示仍在有效期内
      */

@@ -3,9 +3,9 @@
 事实源：`../specs/2026-09-06-three-line-parity.md` 的 D1；用户已批准实施。
 
 - [x] 保存直接管理清单与 Maven effective POM 基线，建立能检出真实遗漏及 JDK 违规的门禁并运行 RED。
-- [ ] 核验差异组件的 BOM 覆盖、替代坐标和发行版 JDK 要求，形成逐项清单。
-- [ ] 修改三线 POM，统一普通组件，按 JDK 和框架保留必要差异。
-- [ ] 运行清单、模型、产物/JDK 门禁及受影响模块回归，记录未验证项与剩余风险。
+- [ ] 核验差异组件的 BOM 覆盖、替代坐标和发行版 JDK 要求，形成逐项清单。【待办】
+- [ ] 修改三线 POM，统一普通组件，按 JDK 和框架保留必要差异。【待办】
+- [x] 运行清单、模型、产物/JDK 门禁及受影响模块回归，记录未验证项与剩余风险。（证据: docs/superpowers/plans/2026-09-08-dependency-alignment-results.md、config/dependencies/unverified-artifacts.csv）
 
 初始状态：JDK8 checkout `6d217054` detached HEAD，已有 `docs/migrations/truelicense4.md` 修改；JDK17 `90ab6cc3`
 feature/2.0.x；JDK21 `2e730fb4` feature/3.0.x。保留所有状态，不切换分支。

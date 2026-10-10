@@ -32,6 +32,10 @@ public final class WebError {
 
     /**
      * HTTP 状态与 ddd4j 响应体之间的统一错误表示。
+ * @param status 状态
+ * @param code 编码值
+ * @param message 消息内容
+ * @param data 数据内容
      */
 
     public WebError(int status, Serializable code, String message, Object data) {

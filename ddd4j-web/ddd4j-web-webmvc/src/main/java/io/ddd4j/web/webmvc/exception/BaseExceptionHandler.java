@@ -59,6 +59,7 @@ public abstract class BaseExceptionHandler {
      */
     /**
      * 获取当前请求
+     * @return 获取的HttpServletRequest
      */
 
     protected static HttpServletRequest getCurrentRequest() {
@@ -70,6 +71,7 @@ public abstract class BaseExceptionHandler {
      */
     /**
      * 设置当前请求（由框架适配层调用）
+     * @param request 请求对象
      */
 
     public static void setCurrentRequest(HttpServletRequest request) {

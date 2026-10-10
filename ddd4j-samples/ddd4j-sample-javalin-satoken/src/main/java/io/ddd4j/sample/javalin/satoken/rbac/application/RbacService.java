@@ -106,6 +106,7 @@ public class RbacService implements SubjectDataProvider {
 
     /**
      * 当前用户信息（认证主体）。
+     * @return 返回的 AuthPrincipal 结果
      */
     public AuthPrincipal me() {
         return SubjectKit.getPrincipal();
@@ -113,6 +114,7 @@ public class RbacService implements SubjectDataProvider {
 
     /**
      * 是否已登录。
+     * @return 满足条件时返回 true，否则返回 false
      */
     public boolean isLogin() {
         return SubjectKit.isLogin();
@@ -120,6 +122,7 @@ public class RbacService implements SubjectDataProvider {
 
     /**
      * 踢人下线。
+     * @param userId 用户标识
      */
     public void kickout(String userId) {
         SubjectKit.kickout(userId);
@@ -165,6 +168,9 @@ public class RbacService implements SubjectDataProvider {
 
     /**
      * 给用户分配角色（按角色 ID 全量替换）。
+     * @param userId 用户标识
+     * @param roleIds 集合数据
+     * @return 返回的 User 结果
      */
     public User assignRolesToUser(String userId, Set<String> roleIds) {
         User user = userRepository.findById(userId)
@@ -175,6 +181,8 @@ public class RbacService implements SubjectDataProvider {
 
     /**
      * 查询用户拥有的所有角色编码。
+     * @param userId 用户标识
+     * @return 列出的Set
      */
     public Set<String> listRoleCodesOfUser(String userId) {
         return userRepository.findById(userId)
@@ -190,6 +198,8 @@ public class RbacService implements SubjectDataProvider {
 
     /**
      * 查询用户拥有的所有权限编码（含角色继承）。
+     * @param userId 用户标识
+     * @return 列出的Set
      */
     public Set<String> listPermissionCodesOfUser(String userId) {
         Set<String> perms = new LinkedHashSet<>();
@@ -244,6 +254,9 @@ public class RbacService implements SubjectDataProvider {
 
     /**
      * 给角色分配权限（按权限 ID 全量替换）。
+     * @param roleId 角色标识
+     * @param permissionIds 集合数据
+     * @return 返回的 Role 结果
      */
     public Role assignPermissionsToRole(String roleId, Set<String> permissionIds) {
         Role role = roleRepository.findById(roleId)
@@ -254,6 +267,8 @@ public class RbacService implements SubjectDataProvider {
 
     /**
      * 查询某个角色的所有权限编码。
+     * @param roleId 角色标识
+     * @return 列出的Set
      */
     public Set<String> listPermissionCodesOfRole(String roleId) {
         return roleRepository.findById(roleId)

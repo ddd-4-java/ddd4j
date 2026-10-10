@@ -135,6 +135,7 @@ public final class AuthSpan {
 
     /**
      * 包装 {@link SubjectKit#logout(Object)}（按 loginId 登出）。
+     * @param loginId 登录用户标识
      */
     public static void logout(Object loginId) {
         if (!Ddd4jOtel.isAvailable()) {
@@ -164,6 +165,9 @@ public final class AuthSpan {
 
     /**
      * 包装 {@link SubjectKit#verify(String)}。
+     * @param <T> 数据元素类型
+     * @param token 令牌
+     * @return 验签得到的T
      */
     public static <T extends AuthPrincipal> T verify(String token) {
         if (!Ddd4jOtel.isAvailable()) {
@@ -199,6 +203,8 @@ public final class AuthSpan {
 
     /**
      * 包装 {@link SubjectKit#hasRole(String)}。
+     * @param roleIdentifier 字符串参数
+     * @return 满足条件时返回 true，否则返回 false
      */
     public static boolean hasRole(String roleIdentifier) {
         if (!Ddd4jOtel.isAvailable()) {
@@ -223,6 +229,8 @@ public final class AuthSpan {
 
     /**
      * 包装 {@link SubjectKit#hasPermission(String)}。
+     * @param permission 权限
+     * @return 满足条件时返回 true，否则返回 false
      */
     public static boolean hasPermission(String permission) {
         if (!Ddd4jOtel.isAvailable()) {
@@ -247,6 +255,7 @@ public final class AuthSpan {
 
     /**
      * 包装 {@link SubjectKit#isLogin()}。
+     * @return 满足条件时返回 true，否则返回 false
      */
     public static boolean isLogin() {
         if (!Ddd4jOtel.isAvailable()) {
@@ -269,6 +278,7 @@ public final class AuthSpan {
 
     /**
      * 包装 {@link SubjectKit#kickout(Object)}。
+     * @param loginId 登录用户标识
      */
     public static void kickout(Object loginId) {
         if (!Ddd4jOtel.isAvailable()) {

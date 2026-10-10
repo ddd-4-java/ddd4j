@@ -71,9 +71,6 @@ public class PconlineRegionTemplate {
     }
 
     /**
-     * HTTP 客户端
-     */
-    /**
      * 缓存服务
      */
     private RegionCache regionCache;
@@ -81,7 +78,6 @@ public class PconlineRegionTemplate {
     /**
      * 构造函数（无缓存）
      *
-     * @param httpClient HTTP 客户端
      */
     public PconlineRegionTemplate() {
         this(RegionCache.none());
@@ -90,7 +86,6 @@ public class PconlineRegionTemplate {
     /**
      * 构造函数
      *
-     * @param httpClient  HTTP 客户端
      * @param regionCache 缓存服务
      */
     public PconlineRegionTemplate(RegionCache regionCache) {
@@ -110,11 +105,12 @@ public class PconlineRegionTemplate {
     }
 
     /**
-     * IP地址解析：http://whois.pconline.com.cn/ipJson.jsp?json=true&ip=183.128.136.82
+     * IP地址解析：http://whois.pconline.com.cn/ipJson.jsp?json=true&amp;ip=183.128.136.82
      *
-     * @param ip
+     * @param ip 字符串参数
      * @return {"ip":"110.137.48.237","pro":"","proCode":"999999","city":"","cityCode":"0","region":"","regionCode":"0","addr":" 印度尼西亚","regionNames":"","err":"noprovince"}
-     * @throws ExecutionException
+     * @throws NullPointerException ip 为 null 时抛出
+     * @throws IllegalArgumentException ip 不是合法 IPv4 地址时抛出
      */
     public Optional<JSONObject> getLocationByIp(String ip) {
         // 1、检查ip有效性

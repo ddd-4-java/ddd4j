@@ -78,6 +78,8 @@ public class AuthRequest {
 
     /**
      * 快速构造登录请求。
+     * @param loginId 登录用户标识
+     * @return 对应的AuthRequest
      */
     public static AuthRequest of(Object loginId) {
         return new AuthRequest(loginId);
@@ -90,6 +92,7 @@ public class AuthRequest {
     /**
      * Token 有效期（秒），-1 表示永久。
      * <p>便捷访问器，转发到 {@link #sessionConfig}。
+     * @return 获取的长整型数值
      */
     public long getTimeout() {
         return sessionConfig.getTimeout();
@@ -103,6 +106,7 @@ public class AuthRequest {
     /**
      * 设备类型（多端登录隔离用）。
      * <p>便捷访问器，转发到 {@code sessionConfig.deviceType}。
+     * @return 获取的字符串内容
      */
     public String getDeviceType() {
         return sessionConfig.getDeviceType();
@@ -115,6 +119,9 @@ public class AuthRequest {
 
     /**
      * 添加扩展信息。
+     * @param key 键
+     * @param value 值
+     * @return 返回的 AuthRequest 结果
      */
     public AuthRequest extra(String key, Object value) {
         if (Objects.isNull(extra)) {

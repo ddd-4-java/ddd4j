@@ -23,7 +23,7 @@ import java.util.Set;
  * RBAC 用户聚合根。
  *
  * <p>用户通过 {@link #roles()} 持有的角色集合间接获得权限码集合（{@link #permissions()}）。
- * 权限码集合是 {@link RbacService} 派生计算的缓存视图，便于 {@link io.ddd4j.core.subject.SubjectDataProvider}
+ * 权限码集合是 {@link io.ddd4j.sample.javalin.shiro.rbac.service.RbacService} 派生计算的缓存视图，便于 {@link io.ddd4j.core.subject.SubjectDataProvider}
  * 直接读取。
  *
  * <p>本类在所有 7 个示例（Spring/Quarkus/Javalin × Sa-Token/Shiro/Security）中<b>完全一致</b>，

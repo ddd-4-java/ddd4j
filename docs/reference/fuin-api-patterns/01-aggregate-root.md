@@ -154,10 +154,9 @@ protected final void apply(@NotNull final DomainEvent<?> event) {
 
 ## 落地计划
 
-- [ ] Task 2.1：新增 `@EventHandler` 注解（含 `ignoreOnReplay()` 属性）——替代 `@ApplyEvent` + 修复 `getIgnoredEvents()`
-  缺陷的方法级方案。
-- [ ] Task 2.2：扩展 ddd4j-core `AggregateRoot`，实现 `apply()`/`loadFromHistory()` + `ClassValue` 处理器方法缓存。
-- [ ] Task 2.3：`AggregateRootApplyTest` 覆盖：新事件登记、回放不产生未提交事件、`ignoreOnReplay` 跳过、找不到处理器异常。
-- [ ] Task 2.4：写 ADR-0006（反射事件应用机制），引用本文档的借鉴/改写/不借鉴结论。
-- [ ] Task 2.5：ArchUnit 强化——保证 ddd4j-core 不引入 `objects4j`/`jakarta.validation` 等第三方契约依赖。
-- [ ] Task 2.6：阶段 2 全量验证（`./mvnw verify -pl ddd4j-core`）。
+- [x] Task 2.1：新增 `@EventHandler` 注解（含 `ignoreOnReplay()` 属性）——替代 `@ApplyEvent` + 修复 `getIgnoredEvents()` 缺陷的方法级方案。（证据: ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/EventHandler.java）
+- [x] Task 2.2：扩展 ddd4j-core `AggregateRoot`，实现 `apply()`/`loadFromHistory()` + `ClassValue` 处理器方法缓存。（证据: ddd4j-core/src/main/java/io/ddd4j/core/ddd/model/AggregateRoot.java）
+- [x] Task 2.3：`AggregateRootApplyTest` 覆盖：新事件登记、回放不产生未提交事件、`ignoreOnReplay` 跳过、找不到处理器异常。（证据: ddd4j-core/src/test/java/io/ddd4j/core/ddd/model/AggregateRootApplyTest.java）
+- [x] Task 2.4：写 ADR-0006（反射事件应用机制），引用本文档的借鉴/改写/不借鉴结论。（证据: docs/adr/0006-apply-reflection-mechanism.md）
+- [ ] Task 2.5：ArchUnit 强化——保证 ddd4j-core 不引入 `objects4j`/`jakarta.validation` 等第三方契约依赖。【待办】
+- [ ] Task 2.6：阶段 2 全量验证（`./mvnw verify -pl ddd4j-core`）。【外部阻塞: 需执行 ./mvnw verify -pl ddd4j-core 构建验证，本任务禁跑 Maven】

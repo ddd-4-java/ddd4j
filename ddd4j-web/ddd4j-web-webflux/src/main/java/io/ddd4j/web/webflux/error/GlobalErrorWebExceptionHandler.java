@@ -48,6 +48,7 @@ public class GlobalErrorWebExceptionHandler extends BaseErrorConfiguration imple
     private final ObjectMapper objectMapper;
 
     /**
+     * @param exceptionTranslator 参数 exceptionTranslator
      * @param errorAttributes 错误属性组装器
      * @param objectMapper    JSON 序列化
      */

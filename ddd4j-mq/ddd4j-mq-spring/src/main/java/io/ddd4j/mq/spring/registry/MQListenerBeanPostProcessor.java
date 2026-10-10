@@ -84,6 +84,7 @@ public class MQListenerBeanPostProcessor implements BeanPostProcessor, Ordered, 
 
     /**
      * 返回已登记的监听器定义（不可变快照）。
+     * @return 获取的List
      */
     public List<MQListener> getListeners() {
         return Collections.unmodifiableList(new ArrayList<>(listeners));

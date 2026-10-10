@@ -148,6 +148,7 @@ public class ThreadContext {
 
     /**
      * 获取当前线程绑定的全部键值对。
+     * @return 获取的Map
      */
     public static Map<Object, Object> getValues() {
         return getResources();
@@ -155,6 +156,7 @@ public class ThreadContext {
 
     /**
      * 设置当前线程绑定的全部键值对。
+     * @param values 映射数据
      */
     public static void setValues(Map<Object, Object> values) {
         setResources(values);

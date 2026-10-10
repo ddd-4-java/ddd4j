@@ -62,6 +62,8 @@ public final class ExceptionSpan {
 
     /**
      * 在指定 Span 上记录异常。
+     * @param span 链路 Span 对象
+     * @param throwable 异常对象
      */
     public static void record(Span span, Throwable throwable) {
         if (Objects.isNull(throwable) || Objects.isNull(span)) {

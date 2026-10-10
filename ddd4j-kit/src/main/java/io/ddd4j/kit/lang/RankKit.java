@@ -38,6 +38,8 @@ public class RankKit {
      * @param sortedList   已排序数据列表
      * @param type         分数相同时排名策略
      * @param keyExtractor 键提取器, 计算排名的字段
+     * @param <T> 数据元素类型
+     * @param <U> 键提取器产生的键类型
      * @return 排名后的列表
      */
     public static <T, U> List<RankModel<T>> rank(RankSortTypeEnum type, List<T> sortedList, Function<? super T, ? extends U>
@@ -52,6 +54,8 @@ public class RankKit {
      * @param type         分数相同时排名策略
      * @param top          取前top名数据
      * @param keyExtractor 键提取器, 计算排名的字段
+     * @param <T> 数据元素类型
+     * @param <U> 键提取器产生的键类型
      * @return 排名后的列表
      */
     public static <T, U> List<RankModel<T>> rank(RankSortTypeEnum type, Integer top, List<T> sortedList, Function<? super T, ? extends U> keyExtractor) {

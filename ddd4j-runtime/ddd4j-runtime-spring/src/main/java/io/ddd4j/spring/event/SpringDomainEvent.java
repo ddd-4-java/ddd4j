@@ -57,8 +57,8 @@ public abstract class SpringDomainEvent<T> extends ApplicationEvent {
     /**
      * 领域事件构造器
      *
+     * @param supportKeys 集合数据
      * @param source   事件内容
-     * @param supports 支持执行的条件，配合supports方法使用
      */
     public SpringDomainEvent(T source, Collection<?> supportKeys) {
         super(source);
@@ -71,8 +71,8 @@ public abstract class SpringDomainEvent<T> extends ApplicationEvent {
     /**
      * 领域事件构造器
      *
+     * @param supportKey 支持键
      * @param source  事件内容
-     * @param support 支持执行的条件，配合supports方法使用
      */
     public SpringDomainEvent(T source, Object supportKey) {
         super(source);
@@ -82,6 +82,7 @@ public abstract class SpringDomainEvent<T> extends ApplicationEvent {
     /**
      * 获取事件源
      *
+     * @param <S> 泛型类型参数
      * @return 事件内容
      */
     @Deprecated
@@ -107,6 +108,8 @@ public abstract class SpringDomainEvent<T> extends ApplicationEvent {
 
     /**
      * 立即发布事件
+     * @param <R> 数据元素类型
+     * @return 返回的 R 结果
      */
     @SuppressWarnings("unchecked")
     public <R> R publish() {

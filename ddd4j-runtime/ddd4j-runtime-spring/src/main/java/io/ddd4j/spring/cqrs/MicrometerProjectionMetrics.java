@@ -40,13 +40,14 @@ import java.util.concurrent.TimeUnit;
  * </ul>
  *
  * <p>使用方式：
- * <pre>{@code
+ * <!-- 样例行首 @ 会被解析为 doc 块标签，必须转义为 &#64; -->
+ * <pre>
  * // Spring Bean 配置
- * @Bean
+ * &#64;Bean
  * public ProjectionMetrics projectionMetrics(MeterRegistry registry) {
  *     return new MicrometerProjectionMetrics(registry);
  * }
- * }</pre>
+ * </pre>
  *
  * <p>依赖 {@code io.micrometer:micrometer-core}（版本由 ddd4j-dependencies BOM 管理）。
  * 该依赖声明为 {@code optional}，不会传递到业务项目。

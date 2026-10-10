@@ -116,17 +116,17 @@
 
     <!-- 组织信息 -->
     <organization>
-        <name>Hiwepy</name>
-        <url>https://wiki.hiwepy.com</url>
+        <name>redacted-legacy-family</name>
+        <url>https://wiki.redacted-legacy-family.com</url>
     </organization>
 
     <!-- 开发者信息 -->
     <developers>
         <developer>
             <name>wandl</name>
-            <email>hiwepy@gmail.com</email>
-            <organization>hiwepy</organization>
-            <organizationUrl>https://wiki.hiwepy.com</organizationUrl>
+            <email>redacted-legacy-family@gmail.com</email>
+            <organization>redacted-legacy-family</organization>
+            <organizationUrl>https://wiki.redacted-legacy-family.com</organizationUrl>
             <roles>
                 <role>developer</role>
             </roles>
@@ -430,8 +430,18 @@
                         <charset>${project.build.sourceEncoding}</charset>
                         <encoding>${project.build.sourceEncoding}</encoding>
                         <docencoding>${project.build.sourceEncoding}</docencoding>
-                        <!-- 历史模块的文档链接不得阻断 SNAPSHOT 发布附件。 -->
-                        <failOnError>false</failOnError>
+                        <!-- Javadoc 零告警门禁：告警或错误一律中断构建，禁止任何形式的放宽档。 -->
+                        <failOnWarnings>true</failOnWarnings>
+                        <failOnError>true</failOnError>
+                        <!-- 全量 doclint（accessibility/html/missing/reference/syntax）。 -->
+                        <doclint>all</doclint>
+                        <!-- 告警/错误上限抬到 999，避免计数达到默认上限后被截断造成假绿。 -->
+                        <additionalOptions>
+                            <additionalOption>-Xmaxwarns</additionalOption>
+                            <additionalOption>999</additionalOption>
+                            <additionalOption>-Xmaxerrs</additionalOption>
+                            <additionalOption>999</additionalOption>
+                        </additionalOptions>
                     </configuration>
                     <executions>
                         <execution>
@@ -515,15 +525,6 @@
     </build>
 
     <profiles>
-        <profile>
-            <id>disable-javadoc-doclint</id>
-            <activation>
-                <jdk>[1.8,)</jdk>
-            </activation>
-            <properties>
-                <additionalparam>-Xdoclint:none</additionalparam>
-            </properties>
-        </profile>
         <profile>
             <id>release</id>
             <build>

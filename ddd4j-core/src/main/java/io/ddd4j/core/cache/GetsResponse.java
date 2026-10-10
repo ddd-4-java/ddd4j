@@ -37,12 +37,14 @@ public interface GetsResponse<V> {
 
     /**
      * 缓存 key。
+     * @return 返回的字符串内容
      */
     String key();
 
     /**
      * 缓存当前值。
      * <p>首次写入（key 不存在）时为 {@code null}。
+     * @return 返回的 V 结果
      */
     V value();
 

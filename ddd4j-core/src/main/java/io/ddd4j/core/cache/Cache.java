@@ -258,8 +258,8 @@ public interface Cache<K, V> {
      * <p><b>注意</b>：此方法仅在 Memcached 后端有真实版本号语义（返回原生 cas 版本号）。
      * 其他后端（Redis/Caffeine 等）没有原生版本号概念，抛 {@link UnsupportedOperationException}。
      *
-     * <p>推荐优先使用 {@link #compareAndSet(K, long, CASOperation)} 或
-     * {@link #compareAndSet(K, V, V)}——它们在所有后端上都有严谨实现。
+     * <p>推荐优先使用 {@link #compareAndSet(Object, long, CASOperation)} 或
+     * {@link #compareAndSet(Object, Object, Object)}——它们在所有后端上都有严谨实现。
      *
      * @param key             缓存键
      * @param newValue        新值

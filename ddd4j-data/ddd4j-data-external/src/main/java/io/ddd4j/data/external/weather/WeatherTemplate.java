@@ -61,13 +61,8 @@ public class WeatherTemplate {
     }
 
     /**
-     * HTTP 客户端
-     */
-
-    /**
      * 构造函数
      *
-     * @param httpClient HTTP 客户端
      */
     public WeatherTemplate() {
     }

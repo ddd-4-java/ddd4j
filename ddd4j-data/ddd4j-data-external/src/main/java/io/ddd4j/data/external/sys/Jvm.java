@@ -78,6 +78,7 @@ public class Jvm {
 
     /**
      * 获取JDK名称
+     * @return 获取的字符串内容
      */
     public String getName() {
         return ManagementFactory.getRuntimeMXBean().getVmName();
@@ -85,6 +86,7 @@ public class Jvm {
 
     /**
      * JDK启动时间
+     * @return 获取的字符串内容
      */
     public String getStartTime() {
         long time = ManagementFactory.getRuntimeMXBean().getStartTime();
@@ -94,6 +96,7 @@ public class Jvm {
 
     /**
      * JDK运行时间
+     * @return 获取的字符串内容
      */
     public String getRunTime() {
         long time = ManagementFactory.getRuntimeMXBean().getStartTime();
@@ -103,6 +106,7 @@ public class Jvm {
 
     /**
      * 运行参数
+     * @return 获取的字符串内容
      */
     public String getInputArgs() {
         return ManagementFactory.getRuntimeMXBean().getInputArguments().toString();

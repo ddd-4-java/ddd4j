@@ -19,10 +19,11 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @ 通知配置。was {@code AtVO}。
+ * 通知（@）配置。
  *
  * <p>传入机器人消息体时使用，控制消息是否 @ 一些用户或 @ 全体。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Data
 public class At {
@@ -38,6 +39,7 @@ public class At {
 
     /**
      * 创建一个空 @（不 @ 任何用户）。
+     * @return 返回的 At 结果
      */
     public static At none() {
         return new At();
@@ -45,6 +47,7 @@ public class At {
 
     /**
      * 创建一个 @ 全体。
+     * @return 返回的 At 结果
      */
     public static At all() {
         At at = new At();
@@ -55,6 +58,7 @@ public class At {
     /**
      * 创建一个针对指定手机号列表的 @。
      *
+     * @return 对应的At
      * @param mobiles 手机号列表
      */
     public static At ofMobiles(List<String> mobiles) {

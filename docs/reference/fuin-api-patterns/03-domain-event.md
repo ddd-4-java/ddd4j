@@ -107,8 +107,7 @@ ACreatedEvent.java:44 模式）。
 
 ## 落地计划
 
-- [ ] 阶段 2：验证 DomainEvent
-  六字段（event-id/event-timestamp/correlation-id/causation-id/entity-id-path/aggregate-version）在 ES JSON 序列化/反序列化往返无损。
-- [ ] 阶段 2：为 `EventType` ClassValue 缓存（DomainEvent.java:54-59）补单测/基准，防回归。
-- [ ] 阶段 3（event-store SPI）：`StoredEvent.payload` 必须保留 correlationId/causationId/eventTimestamp 三元追踪字段。
-- [ ] Task 1.10：ADR 引用本文档「分发侧超出 fuin」结论（`NoopDomainEventPublisher` 为 ddd4j 独有）。
+- [x] 阶段 2：验证 DomainEvent 六字段（event-id/event-timestamp/correlation-id/causation-id/entity-id-path/aggregate-version）在 ES JSON 序列化/反序列化往返无损。（证据: ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/DomainEventRoundTripTest.java、ddd4j-core/src/test/java/io/ddd4j/core/cqrs/eventstore/ReplayCausalityPreservedMustTest.java）
+- [ ] 阶段 2：为 `EventType` ClassValue 缓存（DomainEvent.java:54-59）补单测/基准，防回归。【待办】
+- [x] 阶段 3（event-store SPI）：`StoredEvent.payload` 必须保留 correlationId/causationId/eventTimestamp 三元追踪字段。（证据: ddd4j-core/src/main/java/io/ddd4j/core/cqrs/eventstore/StoredEvent.java）
+- [x] Task 1.10：ADR 引用本文档「分发侧超出 fuin」结论（`NoopDomainEventPublisher` 为 ddd4j 独有）。（证据: docs/adr/0001-no-fork-strategy.md（对照行「03-domain-event…已在分发侧超出」））

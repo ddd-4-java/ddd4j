@@ -725,7 +725,7 @@ ddd4j-javalin/.../ddd4j-javalin-auth-satoken/← Javalin + sa-token 整合
         <artifactId>shiro-web</artifactId>
     </dependency>
     <dependency>
-        <groupId>com.github.hiwepy</groupId>
+        <groupId>com.github.redacted-legacy-family</groupId>
         <artifactId>shiro-biz</artifactId>
     </dependency>
 </dependencies>

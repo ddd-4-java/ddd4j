@@ -57,6 +57,8 @@ public class TdmqMQClient implements MQClient {
 
     /**
      * 构造 1：仅 properties（业务可在 initProducer/initConsumer 之前注入 BrokerPublisher/BrokerSubscriber）。
+     *
+     * @param properties TDMQ 配置
      */
     public TdmqMQClient(TdmqProperties properties) {
         this.properties = Objects.requireNonNull(properties, "properties");
@@ -64,6 +66,10 @@ public class TdmqMQClient implements MQClient {
 
     /**
      * 构造 2：注入外部 BrokerPublisher / BrokerSubscriber（runtime 集成时由业务 SDK 包装传入）。
+     *
+     * @param publisher   业务侧发布器
+     * @param subscriber  业务侧订阅器
+     * @param properties  TDMQ 配置
      */
     public TdmqMQClient(BrokerPublisher publisher, BrokerSubscriber subscriber, TdmqProperties properties) {
         this.brokerPublisher = publisher;
@@ -73,6 +79,8 @@ public class TdmqMQClient implements MQClient {
 
     /**
      * 注入 TDMQ 业务侧发布器（如腾讯云 SDK 包装）。
+     *
+     * @param publisher 业务侧发布器
      */
     public void setBrokerPublisher(BrokerPublisher publisher) {
         this.brokerPublisher = publisher;
@@ -80,6 +88,8 @@ public class TdmqMQClient implements MQClient {
 
     /**
      * 注入 TDMQ 业务侧订阅器（如腾讯云 SDK 包装）。
+     *
+     * @param subscriber 业务侧订阅器
      */
     public void setBrokerSubscriber(BrokerSubscriber subscriber) {
         this.brokerSubscriber = subscriber;
@@ -259,7 +269,7 @@ public class TdmqMQClient implements MQClient {
     }
 
     /**
-     * 默认内存发布器（本地联调/测试）：把消息路由到同进程内订阅者。
+     * 内存总线投递的消息载体（本地联调/测试）。
      */
     public static final class DeliveredMessage {
         private final String messageId;
@@ -268,9 +278,13 @@ public class TdmqMQClient implements MQClient {
         private final java.util.function.Consumer<Boolean> ackCallback;
 
         /**
-         * 默认内存发布器（本地联调/测试）：把消息路由到同进程内订阅者。
+         * 构造投递消息。
+         *
+         * @param messageId    消息 ID
+         * @param correlationId 关联 ID
+         * @param payload      序列化字节流
+         * @param ackCallback  确认回调（true=消费成功）
          */
-
         public DeliveredMessage(String messageId, String correlationId, byte[] payload,
                                 java.util.function.Consumer<Boolean> ackCallback) {
             this.messageId = messageId;

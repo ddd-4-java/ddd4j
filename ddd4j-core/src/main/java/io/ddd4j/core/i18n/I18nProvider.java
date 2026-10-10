@@ -53,48 +53,37 @@ public interface I18nProvider {
      */
     I18nProvider DEFAULT = new I18nProvider() {
         @Override
-        /**
-         * 获取国际化消息
-         *
-         * @param key  消息 key
-         * @param args 格式化参数
-         * @return 国际化后的消息
-         */
+    /**
+     * 获取国际化消息
+     *
+     * @param key  消息 key
+     * @param args 格式化参数
+     * @return 国际化后的消息
+     */
 
         public String getMessage(String key, Object... args) {
-            if (StrKit.isBlank(key)) {
-                return null;
+        if (StrKit.isBlank(key)) {
+            return null;
+        }
+        // 1. 先尝试从 i18n 资源加载（资源文件使用 {0} 风格）
+        String pattern = null;
+        try {
+            ResourceBundle bundle = ResourceBundle.getBundle("i18n/messages", Locale.getDefault());
+            pattern = bundle.getString(key);
+        } catch (MissingResourceException e) {
+            // 找不到资源文件或 key，pattern 保持 null
+        }
+        // 2. 命中资源：走 MessageFormat（{0} 风格）
+        if (Objects.nonNull(pattern)) {
+            if (Objects.isNull(args) || args.length == 0) {
+                return pattern;
             }
-            // 1. 先尝试从 i18n 资源加载（资源文件使用 {0} 风格）
-            String pattern = null;
-            try {
-                ResourceBundle bundle = ResourceBundle.getBundle("i18n/messages", Locale.getDefault());
-                pattern = bundle.getString(key);
-            } catch (MissingResourceException e) {
-                // 找不到资源文件或 key，pattern 保持 null
-            }
-            // 2. 命中资源：走 MessageFormat（{0} 风格）
-            if (Objects.nonNull(pattern)) {
-                if (Objects.isNull(args) || args.length == 0) {
-                    return pattern;
-                }
-                return MessageFormat.format(pattern, args);
-            }
-            // 3. 未命中资源：把原始 key 当作纯文本，按 SLF4J {} 风格按序替换
+            return MessageFormat.format(pattern, args);
+        }
+        // 3. 未命中资源：把原始 key 当作纯文本，按 SLF4J {} 风格按序替换
             return Internals.formatSlfStyle(key, args);
         }
     };
-
-    /**
-     * 按 SLF4J 风格 {@code {}} 占位符按出现顺序替换参数。
-     * <p>当 args 为空或 null 时原样返回 message。
-     *
-     * @param message 原始消息（可能含 {@code {}} 占位符）
-     * @param args    替换参数
-     * @return 替换后的消息
-     */
-
-    String getMessage(String key, Object... args);
 
     /**
      * JDK8 兼容：接口私有静态方法收敛到嵌套类。
@@ -103,38 +92,40 @@ public interface I18nProvider {
         private Internals() {
         }
 
-        /**
-         * 按 SLF4J 风格 {@code {}} 占位符按出现顺序替换参数。
-         * <p>当 args 为空或 null 时原样返回 message。
-         *
-         * @param message 原始消息（可能含 {@code {}} 占位符）
-         * @param args    替换参数
-         * @return 替换后的消息
-         */
+/**
+     * 按 SLF4J 风格 {@code {}} 占位符按出现顺序替换参数。
+     * <p>当 args 为空或 null 时原样返回 message。
+     *
+     * @param message 原始消息（可能含 {@code {}} 占位符）
+     * @param args    替换参数
+     * @return 替换后的消息
+     */
 
         static String formatSlfStyle(String message, Object... args) {
-            if (Objects.isNull(args) || args.length == 0) {
-                return message;
-            }
-            String result = message;
-            for (Object arg : args) {
-                int idx = result.indexOf("{}");
-                if (idx < 0) {
-                    break;
-                }
-                result = result.substring(0, idx) + Objects.toString(arg, "null") + result.substring(idx + 2);
-            }
-            return result;
-
+        if (Objects.isNull(args) || args.length == 0) {
+            return message;
         }
+        String result = message;
+        for (Object arg : args) {
+            int idx = result.indexOf("{}");
+            if (idx < 0) {
+                break;
+            }
+            result = result.substring(0, idx) + Objects.toString(arg, "null") + result.substring(idx + 2);
+        }
+        return result;
 
-
-        /**
-         * 获取国际化消息
-         *
-         * @param key  消息 key
-         * @param args 格式化参数
-         * @return 国际化后的消息
-         */
     }
+
+
+    /**
+     * 获取国际化消息
+     *
+     * @param key  消息 key
+     * @param args 格式化参数
+     * @return 国际化后的消息
+     */
+    }
+
+    String getMessage(String key, Object... args);
 }

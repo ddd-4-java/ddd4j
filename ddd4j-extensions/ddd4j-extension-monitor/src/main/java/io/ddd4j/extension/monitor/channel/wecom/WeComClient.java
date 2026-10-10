@@ -19,9 +19,9 @@ import io.ddd4j.kit.lang.JsonKit;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 企业微信群机器人 Webhook 客户端。was {@code QiWeiService}。
+ * 企业微信群机器人 Webhook 客户端。
  *
- * <p>纯 Java，使用 JDK {@link HttpClient} 推送 markdown 格式消息。
+ * <p>纯 Java，使用 JDK {@code HttpClient} 推送 markdown 格式消息。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
@@ -44,6 +44,7 @@ public class WeComClient {
 
     /**
      * 默认构造函数，使用 {@link #BASE_URL}。
+     * @param key 键
      */
     public WeComClient(String key) {
         this(key, BASE_URL);
@@ -51,6 +52,8 @@ public class WeComClient {
 
     /**
      * 可注入 baseUrl 的构造函数（用于测试或企业内代理场景）。
+     * @param key 键
+     * @param baseUrl 基础URL
      */
     public WeComClient(String key, String baseUrl) {
         this.key = key;

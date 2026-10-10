@@ -92,6 +92,7 @@ public class AuthorizationController {
 
     /**
      * GET /auth/users —— 查询用户列表（需要 user:list 权限）。
+     * @param ctx 上下文对象
      */
     public void listUsers(Context ctx) {
         if (!SubjectKit.hasPermission("user:list")) {
@@ -106,6 +107,7 @@ public class AuthorizationController {
 
     /**
      * GET /auth/users/{id} —— 查询单个用户。
+     * @param ctx 上下文对象
      */
     public void getUser(Context ctx) {
         if (!SubjectKit.hasPermission("user:list")) {
@@ -119,6 +121,7 @@ public class AuthorizationController {
 
     /**
      * POST /auth/users —— 创建用户（需要 admin 角色）。
+     * @param ctx 上下文对象
      */
     public void createUser(Context ctx) {
         if (!requireAdmin(ctx)) {
@@ -136,6 +139,7 @@ public class AuthorizationController {
 
     /**
      * PUT /auth/users/{id} —— 更新用户（需要 admin 角色）。
+     * @param ctx 上下文对象
      */
     public void updateUser(Context ctx) {
         if (!requireAdmin(ctx)) {
@@ -154,6 +158,7 @@ public class AuthorizationController {
 
     /**
      * DELETE /auth/users/{id} —— 删除用户（需要 admin 角色 + user:delete 权限组合）。
+     * @param ctx 上下文对象
      */
     public void deleteUser(Context ctx) {
         // 组合校验：必须同时拥有 admin 角色 + user:delete 权限
@@ -170,6 +175,7 @@ public class AuthorizationController {
 
     /**
      * GET /auth/roles —— 查询角色列表（需要 role:list 权限）。
+     * @param ctx 上下文对象
      */
     public void listRoles(Context ctx) {
         if (!SubjectKit.hasPermission("role:list")) {
@@ -182,6 +188,7 @@ public class AuthorizationController {
 
     /**
      * POST /auth/roles —— 创建角色（需要 admin 角色）。
+     * @param ctx 上下文对象
      */
     public void createRole(Context ctx) {
         if (!requireAdmin(ctx)) {
@@ -194,6 +201,7 @@ public class AuthorizationController {
 
     /**
      * PUT /auth/roles/{code} —— 更新角色（需要 admin 角色）。
+     * @param ctx 上下文对象
      */
     public void updateRole(Context ctx) {
         if (!requireAdmin(ctx)) {
@@ -210,6 +218,7 @@ public class AuthorizationController {
 
     /**
      * DELETE /auth/roles/{code} —— 删除角色（需要 admin 角色）。
+     * @param ctx 上下文对象
      */
     public void deleteRole(Context ctx) {
         if (!requireAdmin(ctx)) {
@@ -222,6 +231,7 @@ public class AuthorizationController {
 
     /**
      * GET /auth/permissions —— 查询权限列表（需要 permission:list 权限）。
+     * @param ctx 上下文对象
      */
     public void listPermissions(Context ctx) {
         if (!SubjectKit.hasPermission("permission:list")) {
@@ -234,6 +244,7 @@ public class AuthorizationController {
 
     /**
      * POST /auth/permissions —— 创建权限（需要 admin 角色）。
+     * @param ctx 上下文对象
      */
     public void createPermission(Context ctx) {
         if (!requireAdmin(ctx)) {
@@ -246,6 +257,7 @@ public class AuthorizationController {
 
     /**
      * DELETE /auth/permissions/{code} —— 删除权限（需要 admin 角色）。
+     * @param ctx 上下文对象
      */
     public void deletePermission(Context ctx) {
         if (!requireAdmin(ctx)) {

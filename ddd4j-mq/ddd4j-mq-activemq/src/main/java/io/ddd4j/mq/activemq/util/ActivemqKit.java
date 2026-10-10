@@ -36,6 +36,10 @@ public final class ActivemqKit {
     /**
      * 拼接物理地址：{@code namespace.topic[.tag]}，
      * 支持 {@code queue:} / {@code topic:} 前缀强制类型。
+     * @param namespace 命名空间
+     * @param topic 消息主题
+     * @param tag 标签
+     * @return 解析的字符串内容
      */
     public static String resolvePhysical(String namespace, String topic, String tag) {
         String base = hasText(topic) ? topic : "ddd4j.default.topic";
@@ -47,6 +51,10 @@ public final class ActivemqKit {
 
     /**
      * 根据物理地址前缀创建 JMS Destination。
+     * @param session 会话
+     * @param physical 字符串参数
+     * @return 创建的Destination
+     * @throws javax.jms.JMSException 执行对应操作失败时抛出
      */
     public static Destination createDestination(Session session, String physical) throws JMSException {
         if (physical.startsWith("queue:")) {
@@ -60,6 +68,9 @@ public final class ActivemqKit {
 
     /**
      * 从 JMS Message 提取 payload 字符串（兼容 BytesMessage / TextMessage）。
+     * @param message 消息内容
+     * @return 提取的字符串内容
+     * @throws javax.jms.JMSException 执行对应操作失败时抛出
      */
     public static String extractPayload(Message message) throws JMSException {
         if (message instanceof BytesMessage) {
@@ -78,6 +89,9 @@ public final class ActivemqKit {
 
     /**
      * 安全读取 JMS String 属性（异常返回 null）。
+     * @param message 消息内容
+     * @param key 键
+     * @return 字符串形式的字符串内容
      */
     public static String stringProperty(Message message, String key) {
         try {
@@ -89,6 +103,8 @@ public final class ActivemqKit {
 
     /**
      * 读取 JMS MessageID，异常返回 null。
+     * @param message 消息内容
+     * @return 返回的字符串内容
      */
     public static String messageIdOf(Message message) {
         try {
@@ -100,6 +116,8 @@ public final class ActivemqKit {
 
     /**
      * 读取 JMS CorrelationID，异常返回 null。
+     * @param message 消息内容
+     * @return 返回的字符串内容
      */
     public static String correlationIdOf(Message message) {
         try {
@@ -111,6 +129,8 @@ public final class ActivemqKit {
 
     /**
      * 把 JMS MessageID 哈希为 long 投递标签，异常返回 0。
+     * @param message 消息内容
+     * @return 对应的长整型数值
      */
     public static long messageIdHash(Message message) {
         try {

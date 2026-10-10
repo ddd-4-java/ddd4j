@@ -76,6 +76,8 @@ public class Permission extends AggregateRoot<String> {
 
     /**
      * 重命名。
+     * @param permissionName 权限名称
+     * @param module 模块
      */
     public void rename(String permissionName, String module) {
         if (StrKit.isNotBlank(permissionName)) {

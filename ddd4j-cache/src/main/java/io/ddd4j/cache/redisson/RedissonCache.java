@@ -117,6 +117,9 @@ public class RedissonCache<V> implements CasCache<String, V>, CacheLock, AtomicC
 
     /**
      * 构造 Redisson 缓存（默认 ObjectMapper）。
+     * @param redissonClient 参数 redissonClient
+     * @param config 配置对象
+     * @param valueType 值类型
      */
     public RedissonCache(RedissonClient redissonClient, CacheConfig config, Class<V> valueType) {
         this(redissonClient, config, valueType, JsonMapper.builder().build());

@@ -535,8 +535,8 @@ SNAPSHOT、其他版本线、事务回滚或并发 SqlSession 安全。Javalin �
 三条 20260630 版本线的最终 cloud 组件。已有 `.codegraph`，本次用其追踪 Feign/租户符号；未修改 cloud 源码或其未跟踪文件。
 
 | 链路         | 当前源码证据                                                                                                                                                           | 对迁移的影响                                                                                            |
-|--------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------|
-| 自动装配发现 | data 的 `META-INF/spring.factories` 仍注册 `com.qushiyun.cloud.common.data.*`；实际对应源码包为 `io.ddd4j.cloud.cmpt.data.*`，仓库 Java 搜索未发现旧包定义             | 当前注册表不能证明这些配置能从新包自动加载；需要打包及上下文启动验证，不能只改包名前缀后就宣称解决      |
+|---|---|---|
+| 自动装配发现 | data 的 `META-INF/spring.factories` 仍注册 `com.redacted-legacy.cloud.common.data.*`；实际对应源码包为 `io.ddd4j.cloud.cmpt.data.*`，仓库 Java 搜索未发现旧包定义 | 当前注册表不能证明这些配置能从新包自动加载；需要打包及上下文启动验证，不能只改包名前缀后就宣称解决 |
 | 租户状态来源 | `BaseFeignTenantInterceptor` 只读取 `TenantContextHolder.getTenantId()`；holder 使用独立 TTL，并同步 SysContentHolder；本次 cmpt Java 搜索未见 core ThreadContext 引用 | core Web 上下文与 cloud 出站 Feign 状态没有直接接通的源码证据，仍可能依赖外部桥接                       |
 | 请求异常退出 | `TenantContextHolderFilter` 在 `filterChain.doFilter` 后清理，没有 finally；无效 token 分支可在设置 shop/system 后直接返回                                             | 异常及提前返回时清理路径不完整，需同线程连续请求测试；不能以正常响应测试代表隔离安全                    |
 | 异步任务退出 | `MallCompletableFuture` 两条执行路径设置租户、系统、SecurityContext、RequestAttributes 后运行 Runnable，没有恢复/清理                                                  | 不能保证复用执行线程上的上下文生命周期；需要指定可复用执行器的异常及嵌套任务测试，不能假定 TTL 自动补足 |
@@ -575,10 +575,7 @@ Boot 4.1 检出直接替换到 Cloud 2020，或通过忽略父模型错误宣称
 2.4.x.20260630-SNAPSHOT 父 POM 在 JDK8 下独立 validate 成功（`/tmp/ddd4j-boot24-parent-model.log`）。因此仅将当前 Cloud 根
 parent 日期改为 20260630，未切换版本线、未改 Cloud 自身 revision、未提交或发布。
 
-该修复消除了根父坐标解析失败，但完整 Reactor 仍失败（`/tmp/ddd4j-cloud-parent-aligned-validate.log`）：暴露旧
-`ddd4j-boot-cmpt-*` 坐标、ddd4j-boot-core 以及多个 hiwepy starter、MyBatis/Druid/Springfox
-依赖的版本管理缺失。不能把这些项简单填入模块级数字版本；应先区分已迁移坐标与 BOM 管理缺口，再逐项验证源 API
-和装配行为。当前修改是构建基线修复的中间状态，不是 cloud 构建通过或迁移完成。
+该修复消除了根父坐标解析失败，但完整 Reactor 仍失败（`/tmp/ddd4j-cloud-parent-aligned-validate.log`）：暴露旧 `ddd4j-boot-cmpt-*` 坐标、ddd4j-boot-core 以及多个 redacted-legacy-family starter、MyBatis/Druid/Springfox 依赖的版本管理缺失。不能把这些项简单填入模块级数字版本；应先区分已迁移坐标与 BOM 管理缺口，再逐项验证源 API 和装配行为。当前修改是构建基线修复的中间状态，不是 cloud 构建通过或迁移完成。
 
 进一步核对继承链：cloud-dependencies 继承 cloud 根，根继承 Boot parent；Boot parent 已 import Boot BOM，并非 cloud 完全没有继承
 BOM。实际 2.4.x 源码 BOM 与本地 20260630 BOM 均未声明 ddd4j-boot-core，故这一项属于上游 BOM 漏项，不应与旧坐标缺失混为一谈。

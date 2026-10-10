@@ -30,6 +30,9 @@ public final class WebContractResponse {
 
     /**
      * Web 契约测试使用的最小响应快照。
+ * @param status 状态
+ * @param headers 消息头集合
+ * @param body 请求体
      */
 
     public WebContractResponse(int status, Map<String, List<String>> headers, String body) {

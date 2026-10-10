@@ -36,7 +36,17 @@ public class FastdfsKit {
      * @param secret_key the secret key
      * @return token string
      */
-    public static String getToken(String file_id, long ts, String secret_key) throws Exception {
+        /**
+     * get token for file URL
+     *
+     * @param file_id    the file id return by FastDFS server
+     * @param ts         unix timestamp, unit: second
+     * @param secret_key the secret key
+     * @return token string
+     * @throws Exception 计算下载 token 失败
+     */
+
+public static String getToken(String file_id, long ts, String secret_key) throws Exception {
         byte[] bsFileId = file_id.getBytes(g_charset);
         byte[] bsKey = secret_key.getBytes(g_charset);
         byte[] bsTimestamp = Long.valueOf(ts).toString().getBytes(g_charset);
@@ -54,6 +64,7 @@ public class FastdfsKit {
      *
      * @param source the input buffer
      * @return md5 string
+     * @throws java.security.NoSuchAlgorithmException 摘要算法不可用
      */
     public static String md5(byte[] source) throws java.security.NoSuchAlgorithmException {
         char[] hexDigits = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};

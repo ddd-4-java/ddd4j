@@ -114,11 +114,7 @@ ddd4j 自有；Task 2.5 再补允许清单与 8 运行时维度；fuin 的复制
 
 ## 落地计划
 
-- [ ] Task 2.5：CoreIndependenceTest 追加 5
-  条规则（noFuInReference／coreHasZeroExternalDependencies／noSpringDependencyInCore／noQuarkusDependencyInCore／noMicronautDependencyInCore）；注意
-  noSpringDependencyInCore 与现存 no_spring_in_core（:37-40）语义重合，落地时去重。
-- [ ] ddd4j-data 各模块：按全局约束「每个新模块必须有独立 ArchUnit 测试，禁止反向依赖核心」，各建一份测试类（借 fuin
-  每模块一份的组织方式＋允许清单写法）。
-- [ ] 共性规则沉淀：参照 Ddd4JConditions 思路建 ddd4j 共享 ArchUnit 规则常量，避免 fuin 式逐字复制（注解规则仅
-  jsonb-testmodel 一处改用共享库，core／jackson／jaxb／jsonb 四处仍内联；允许清单骨架 14 份全为手抄）。
-- [ ] ADR-0002（docs/adr/0002-core-zero-deps.md，Task 1.10）：引用本文档「core 允许清单只含 jackson／lang3／TTL」与「ban＋白名单互补」结论。
+- [ ] Task 2.5：CoreIndependenceTest 追加 5 条规则（noFuInReference／coreHasZeroExternalDependencies／noSpringDependencyInCore／noQuarkusDependencyInCore／noMicronautDependencyInCore）；注意 noSpringDependencyInCore 与现存 no_spring_in_core（:37-40）语义重合，落地时去重。【待办】
+- [ ] ddd4j-data 各模块：按全局约束「每个新模块必须有独立 ArchUnit 测试，禁止反向依赖核心」，各建一份测试类（借 fuin 每模块一份的组织方式＋允许清单写法）。【待办】
+- [ ] 共性规则沉淀：参照 Ddd4JConditions 思路建 ddd4j 共享 ArchUnit 规则常量，避免 fuin 式逐字复制（注解规则仅 jsonb-testmodel 一处改用共享库，core／jackson／jaxb／jsonb 四处仍内联；允许清单骨架 14 份全为手抄）。【待办】
+- [x] ADR-0002（docs/adr/0002-core-zero-deps.md，Task 1.10）：引用本文档「core 允许清单只含 jackson／lang3／TTL」与「ban＋白名单互补」结论。（证据: docs/adr/0002-core-zero-deps.md（三项白名单＋ban/白名单双风格互补））

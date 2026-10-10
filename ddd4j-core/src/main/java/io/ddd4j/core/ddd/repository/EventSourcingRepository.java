@@ -21,7 +21,6 @@ import java.io.Serializable;
 
 /**
  * 事件溯源仓储接口（ddd4j 推荐用于 ES 场景）。
- * <p>
  *
  * <h3>与普通 {@link Repository} 的区别</h3>
  * <ul>
@@ -51,6 +50,14 @@ public interface EventSourcingRepository<M extends AggregateRoot<ID>, ID extends
 
     /**
      * 读取聚合根指定历史版本。
+     *
+     * @param aggregateId 聚合根标识
+     * @return 聚合根
+     */
+    M read(ID aggregateId);
+
+    /**
+     * 读取聚合根当前状态。
      *
      * @param aggregateId 聚合根标识
      * @return 聚合根

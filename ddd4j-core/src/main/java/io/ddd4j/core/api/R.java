@@ -27,7 +27,7 @@ import java.util.Objects;
 /**
  * 统一接口响应，标准的响应数据结构
  *
- * @param <T>
+ * @param <T> 元素类型
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Data
@@ -110,6 +110,8 @@ public class R<T> implements IR {
 
     /**
      * 失败响应（cloud 兼容别名，等价于 {@link #fail()}）。
+     * @param <T> 数据元素类型
+     * @return 返回的 {@code R<T>} 结果
      */
     public static <T> R<T> failed() {
         return fail();
@@ -117,13 +119,19 @@ public class R<T> implements IR {
 
     /**
      * 失败响应（cloud 兼容别名，等价于 {@link #fail(String)}）。
+     * @param <T> 数据元素类型
+     * @param msg 消息内容
+     * @return 返回的 {@code R<T>} 结果
      */
     public static <T> R<T> failed(String msg) {
         return fail(msg);
     }
 
     /**
-     * 失败响应（cloud 兼容别名，等价于 {@link #fail(T)}）。
+     * 失败响应（cloud 兼容别名，等价于 {@link #fail(Serializable, String, Object)}）。
+     * @param <T> 数据元素类型
+     * @param data 数据内容
+     * @return 返回的 {@code R<T>} 结果
      */
     public static <T> R<T> failed(T data) {
         return fail(ApiCode.FAIL.getCode(), ApiCode.FAIL.getDesc(), data);
@@ -131,13 +139,21 @@ public class R<T> implements IR {
 
     /**
      * 失败响应（cloud 兼容别名，等价于 {@link #fail(Serializable, String)}）。
+     * @param <T> 数据元素类型
+     * @param code 编码值
+     * @param msg 消息内容
+     * @return 返回的 {@code R<T>} 结果
      */
     public static <T> R<T> failed(Serializable code, String msg) {
         return fail(code, msg);
     }
 
     /**
-     * 失败响应（cloud 兼容别名，等价于 {@link #fail(Serializable, String, T)}）。
+     * 失败响应（cloud 兼容别名，等价于 {@link #fail(Serializable, String, Object)}）。
+     * @param <T> 数据元素类型
+     * @param data 数据内容
+     * @param msg 消息内容
+     * @return 返回的 {@code R<T>} 结果
      */
     public static <T> R<T> failed(T data, String msg) {
         return fail(ApiCode.FAIL.getCode(), msg, data);
@@ -145,6 +161,11 @@ public class R<T> implements IR {
 
     /**
      * 失败响应（cloud 兼容别名，带 data + code + msg）。
+     * @param <T> 数据元素类型
+     * @param data 数据内容
+     * @param code 编码值
+     * @param msg 消息内容
+     * @return 返回的 {@code R<T>} 结果
      */
     public static <T> R<T> failed(T data, Serializable code, String msg) {
         return fail(code, msg, data);

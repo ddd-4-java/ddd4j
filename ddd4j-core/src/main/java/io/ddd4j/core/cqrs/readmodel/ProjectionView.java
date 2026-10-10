@@ -27,12 +27,14 @@ import java.util.Collection;
 public interface ProjectionView<E> {
     /**
      * 视图名称。
+     * @return 获取的字符串内容
      */
 
     String getName();
 
     /**
      * 投影流 ID。默认使用视图名称。
+     * @return 获取的字符串内容
      */
 
     default String getStreamId() {
@@ -41,12 +43,14 @@ public interface ProjectionView<E> {
 
     /**
      * 定时调度 CRON 表达式。
+     * @return 获取的字符串内容
      */
 
     String getCron();
 
     /**
      * 单次读取事件数量。
+     * @return 获取的整型数值
      */
 
     default int getChunkSize() {
@@ -55,6 +59,7 @@ public interface ProjectionView<E> {
 
     /**
      * 本视图关注的事件类型。
+     * @return 获取的Collection
      */
 
     Collection<String> getEventTypes();

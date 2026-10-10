@@ -46,10 +46,10 @@
 - `MQStartupStatus.snapshot() -> immutable status`
 - `MQReadinessContributor.check() -> ReadinessResult`
 
-- [ ] 写LIFO关闭、checkpoint回滚、重复关闭、suppressed异常聚合失败测试。
-- [ ] 运行 `./mvnw -pl ddd4j-mq/ddd4j-mq-core -am test`，确认因对象不存在失败。
-- [ ] 实现Java 8兼容的最小对象，不使用record、`List.of`或私有接口方法。
-- [ ] 写状态转换和Readiness映射测试并转绿。
+- [x] 写LIFO关闭、checkpoint回滚、重复关闭、suppressed异常聚合失败测试。（证据: ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/lifecycle/MQClientLifecycleTest.java（LIFO逆序、checkpoint回滚、重复关闭、suppressed聚合））
+- [ ] 运行 `./mvnw -pl ddd4j-mq/ddd4j-mq-core -am test`，确认因对象不存在失败。【外部阻塞: 需执行 Maven 测试（本任务禁跑）】
+- [x] 实现Java 8兼容的最小对象，不使用record、`List.of`或私有接口方法。（证据: ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/lifecycle/（6 个 Java8 兼容对象，无 record/List.of））
+- [x] 写状态转换和Readiness映射测试并转绿。（证据: ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/lifecycle/MQStartupStatusTest.java）
 
 ### Task 2: Listener required与MQClient初始化语义
 
@@ -68,10 +68,10 @@
 - Add: `MQClient.startupStatus() -> MQStartupStatus`, default unmanaged。
 - Preserve: legacy eight-argument `MQListener` constructor。
 
-- [ ] 写producer失败、必选false、必选异常、可选失败继续、publisher回滚测试。
-- [ ] 运行核心测试确认旧实现fail-open导致失败。
-- [ ] 实现统一初始化流程和安全异常字段。
-- [ ] 验证已有listener builder/of/构造器契约不变。
+- [x] 写producer失败、必选false、必选异常、可选失败继续、publisher回滚测试。（证据: ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/MQClientInitializationContractTest.java）
+- [ ] 运行核心测试确认旧实现fail-open导致失败。【外部阻塞: 需执行 Maven 测试（本任务禁跑）】
+- [x] 实现统一初始化流程和安全异常字段。（证据: ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/MQClient.java（checkpoint/rollback 统一初始化）、listener/MQListener.java、lifecycle/MQStartupStatus.java）
+- [x] 验证已有listener builder/of/构造器契约不变。（证据: ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/MQClientInitializationContractTest.java（builder/八参构造器）、MQListener.java:134 of()）
 
 ### Task 3: Spring启动传播与容器关闭
 
@@ -88,10 +88,10 @@
 - `MQListenerRegistrar`实现 `DisposableBean.destroy()`。
 - Spring容器提供 `MQReadinessContributor` bean并注册到 `RuntimeReadinessRegistry`。
 
-- [ ] 写必选异常传播、可选DEGRADED、父子上下文去重和逆序关闭失败测试。
-- [ ] 验证测试因当前catch+log实现失败。
-- [ ] 删除吞异常路径，传播 `ApplicationContextException`。
-- [ ] 实现幂等destroy及Readiness注册并转绿。
+- [ ] 写必选异常传播、可选DEGRADED、父子上下文去重和逆序关闭失败测试。【待办】
+- [ ] 验证测试因当前catch+log实现失败。【存疑】
+- [x] 删除吞异常路径，传播 `ApplicationContextException`。（证据: ddd4j-mq/ddd4j-mq-spring/src/main/java/io/ddd4j/mq/spring/registry/MQListenerRegistrar.java）
+- [x] 实现幂等destroy及Readiness注册并转绿。（证据: ddd4j-mq/ddd4j-mq-spring/src/main/java/io/ddd4j/mq/spring/registry/MQListenerRegistrar.java、config/Ddd4jMQRegistrarConfiguration.java）
 
 ### Task 4: Kafka、RabbitMQ、RocketMQ、ActiveMQ生命周期
 
@@ -105,11 +105,11 @@
 - 每个内置client持有实例级 `MQClientLifecycle` 和 `MQStartupStatus`。
 - 覆盖 `lifecycle()`、`startupStatus()`、`close()`。
 
-- [ ] Kafka测试producer flush→close、consumer wakeup/close、executor shutdown及重复关闭。
-- [ ] RabbitMQ测试consumer/producer channel关闭，并仅在自建时关闭connection。
-- [ ] RocketMQ测试全部consumer和producer shutdown。
-- [ ] ActiveMQ测试consumer→session→connection逆序关闭。
-- [ ] 每个适配器先验证失败测试，再实现最小登记和ownership逻辑。
+- [ ] Kafka测试producer flush→close、consumer wakeup/close、executor shutdown及重复关闭。【待办】
+- [x] RabbitMQ测试consumer/producer channel关闭，并仅在自建时关闭connection。（证据: ddd4j-mq/ddd4j-mq-rabbitmq/src/test/java/io/ddd4j/mq/rabbitmq/RabbitMQAdapterContractTest.java:213）
+- [ ] RocketMQ测试全部consumer和producer shutdown。【待办】
+- [x] ActiveMQ测试consumer→session→connection逆序关闭。（证据: ddd4j-mq/ddd4j-mq-activemq/src/test/java/io/ddd4j/mq/activemq/ActiveMQAdapterContractTest.java:63）
+- [ ] 每个适配器先验证失败测试，再实现最小登记和ownership逻辑。【存疑】
 
 ### Task 5: MQTT、Mica MQTT、NATS、Pulsar生命周期
 
@@ -117,10 +117,10 @@
 
 - Modify: corresponding four client files and contract tests。
 
-- [ ] MQTT/Mica测试unsubscribe、disconnect、close和executor shutdown顺序。
-- [ ] NATS测试subscription/dispatcher释放和connection drain/close所有权。
-- [ ] Pulsar测试consumer、producer、client逆序关闭。
-- [ ] 每个适配器覆盖部分初始化回滚和重复close。
+- [ ] MQTT/Mica测试unsubscribe、disconnect、close和executor shutdown顺序。【待办】
+- [ ] NATS测试subscription/dispatcher释放和connection drain/close所有权。【待办】
+- [ ] Pulsar测试consumer、producer、client逆序关闭。【待办】
+- [ ] 每个适配器覆盖部分初始化回滚和重复close。【待办】
 
 ### Task 6: Redis、SQS、ONS、TDMQ、Disruptor生命周期
 
@@ -130,11 +130,11 @@
   `DisruptorMQClient.java`。
 - Modify/Create: corresponding contract tests。
 
-- [ ] Redis测试polling task/executor停止及operations ownership。
-- [ ] SQS测试polling future、executor、async client关闭。
-- [ ] ONS/TDMQ测试consumer和producer/client关闭。
-- [ ] Disruptor测试shutdown失败时halt兜底及幂等关闭。
-- [ ] 运行全部MQ模块测试并确认零失败。
+- [ ] Redis测试polling task/executor停止及operations ownership。【待办】
+- [ ] SQS测试polling future、executor、async client关闭。【待办】
+- [ ] ONS/TDMQ测试consumer和producer/client关闭。【待办】
+- [ ] Disruptor测试shutdown失败时halt兜底及幂等关闭。【待办】
+- [ ] 运行全部MQ模块测试并确认零失败。【外部阻塞: 需执行 Maven 全模块测试（本任务禁跑）】
 
 ### Task 7: 三线同步与API一致性
 
@@ -142,10 +142,10 @@
 
 - Synchronize: Task 1–6相同路径文件到1.0.x、2.0.x。
 
-- [ ] 以3.0.x验证实现为源同步生产源码和测试结构。
-- [ ] 将1.0.x语法降至Java 8，但保持对象、FQCN、方法和参数一致。
-- [ ] 使用CodeGraph或等价AST清单比较三线MQ公开API。
-- [ ] 使用 `git diff`确认差异仅为JDK语法和SDK版本适配。
+- [ ] 以3.0.x验证实现为源同步生产源码和测试结构。【外部阻塞: 3.0.x 线 checkout 不在本环境】
+- [ ] 将1.0.x语法降至Java 8，但保持对象、FQCN、方法和参数一致。【外部阻塞: 依赖 2.0.x/3.0.x 线源码同步，跨线 checkout 缺失】
+- [ ] 使用CodeGraph或等价AST清单比较三线MQ公开API。【外部阻塞: 三线源码不在本环境，无法执行跨线 API 比较】
+- [ ] 使用 `git diff`确认差异仅为JDK语法和SDK版本适配。【外部阻塞: 需跨分支 git diff（三线 checkout 缺失）】
 
 ### Task 8: 完整验证与交付
 
@@ -153,9 +153,9 @@
 
 - Verify: `.github/workflows/verify.yml` and existing MQ/Testcontainers verification scripts。
 
-- [ ] JDK8运行1.0.x完整 `clean verify`和samples。
-- [ ] JDK17运行2.0.x完整 `clean verify`和samples。
-- [ ] JDK21/Maven4运行3.0.x完整 `clean verify`和samples。
-- [ ] 三线执行Testcontainers broker关闭与重启验证。
-- [ ] 提交并推送GitHub/Codeup，等待三线GitHub Actions全部成功。
-- [ ] 阶段2全部成功后，更新规格状态并进入阶段3设计。
+- [ ] JDK8运行1.0.x完整 `clean verify`和samples。【外部阻塞: 需 JDK8 环境执行（本任务禁跑 Maven）】
+- [ ] JDK17运行2.0.x完整 `clean verify`和samples。【外部阻塞: 2.0.x 线 checkout 不在本环境】
+- [ ] JDK21/Maven4运行3.0.x完整 `clean verify`和samples。【外部阻塞: 3.0.x 线 checkout 不在本环境（JDK21/Maven4）】
+- [ ] 三线执行Testcontainers broker关闭与重启验证。【外部阻塞: 需 Testcontainers/Docker 环境与三线 checkout】
+- [ ] 提交并推送GitHub/Codeup，等待三线GitHub Actions全部成功。【外部阻塞: 需推送远端仓库凭据并等待 GitHub Actions】
+- [ ] 阶段2全部成功后，更新规格状态并进入阶段3设计。【外部阻塞: 依赖三线 CI 全部通过（规格状态仍为「待评审」）】

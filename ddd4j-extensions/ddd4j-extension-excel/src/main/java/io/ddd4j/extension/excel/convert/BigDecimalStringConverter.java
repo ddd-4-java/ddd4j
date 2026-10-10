@@ -37,10 +37,11 @@ import java.util.Objects;
  *   <li>写入：按指定格式输出（默认保留 2 位小数、千分位）</li>
  * </ul>
  *
- * <pre>{@code
- * @ExcelProperty(value = "金额", converter = BigDecimalStringConverter.class)
+ * <!-- 样例行首 @ 会被解析为 doc 块标签，必须转义为 &#64; -->
+ * <pre>
+ * &#64;ExcelProperty(value = "金额", converter = BigDecimalStringConverter.class)
  * private BigDecimal amount;
- * }</pre>
+ * </pre>
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */

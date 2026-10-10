@@ -67,6 +67,7 @@ public enum ExcelStyleTemplate {
 
     /**
      * 表头底色（POI IndexedColors 索引）。
+     * @return 对应的短整型数值
      */
     public short headerColor() {
         return headerColor;
@@ -74,6 +75,7 @@ public enum ExcelStyleTemplate {
 
     /**
      * 内容对齐方式。
+     * @return 返回的 HorizontalAlignment 结果
      */
     public HorizontalAlignment contentAlign() {
         return contentAlign;
@@ -81,6 +83,7 @@ public enum ExcelStyleTemplate {
 
     /**
      * 是否启用斑马线（偶数行底色）。
+     * @return 条件成立（或操作成功）返回 true，否则返回 false
      */
     public boolean zebraRow() {
         return zebraRow;

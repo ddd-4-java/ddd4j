@@ -51,9 +51,6 @@ public class GeoBaiduTemplate {
     private static String highacciploc = "https://api.map.baidu.com/highacciploc/v1?qcip=220.181.38.113&qterm=pc&ak=%s&coord=bd09ll";
 
     /**
-     * HTTP 客户端
-     */
-    /**
      * 百度地图AK密钥
      */
     private final String ak;
@@ -61,7 +58,6 @@ public class GeoBaiduTemplate {
     /**
      * 构造函数
      *
-     * @param httpClient HTTP 客户端
      * @param ak         百度地图AK密钥
      */
     public GeoBaiduTemplate(String ak) {
@@ -85,9 +81,9 @@ public class GeoBaiduTemplate {
     /**
      * 调用百度API
      *
-     * @param addr
-     * @return
-     * @throws IOException
+     * @param addr 字符串参数
+     * @return 获取的Map
+     * @throws IOException 发生输入输出错误时抛出
      */
     public Map<String, BigDecimal> getLatAndLngByAddress(String addr) throws IOException {
 
@@ -105,9 +101,9 @@ public class GeoBaiduTemplate {
     /**
      * 调用百度API
      *
-     * @param addr
-     * @return
-     * @throws IOException
+     * @param addr 字符串参数
+     * @return 获取的Optional
+     * @throws IOException 发生输入输出错误时抛出
      */
     public Optional<JSONObject> getLocationByAddress(String addr) throws IOException {
         String address = java.net.URLEncoder.encode(addr, "UTF-8");
@@ -157,8 +153,8 @@ public class GeoBaiduTemplate {
      * status: 0    #结果状态返回码
      * }
      *
-     * @param ip
-     * @return
+     * @param ip 字符串参数
+     * @return 获取的Optional
      */
     public Optional<JSONObject> getLocationByIp(String ip) {
         if (Objects.isNull(ip)) {

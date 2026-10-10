@@ -269,7 +269,8 @@ python3 scripts/verify-three-line-structure-api-parity.py --compile \
 `JpaEventStorePostgresIT`、`JpaSpringParticipationIT`。首次未收集 IT 的成功记录保留为范围不完整；修正规则后先执行无
 `-Dtest` 的默认 JPA 测试，再以新报告后缀运行最终完整 reactor。
 
-- [ ] **Step 4: 最终独立审查及 git diff --check。** 只审查本次增量，保留基线未提交改动；修复重要问题后执行相应回归。
+必须核对默认收集清单，不能仅检查 skipped=0：JPA 至少包含 `JpaEventStoreTest`、`JpaManagedParticipationTest`、`JpaEventStorePostgresIT`、`JpaSpringParticipationIT`。首次未收集 IT 的成功记录保留为范围不完整；修正规则后先执行无 `-Dtest` 的默认 JPA 测试，再以新报告后缀运行最终完整 reactor。
+- [ ] **Step 4: 最终独立审查及 git diff --check。** 只审查本次增量，保留基线未提交改动；修复重要问题后执行相应回归。【外部阻塞: 整体回归 Important I1（1.0 Shiro 404、2.0 Shiro EOF）未关闭，文档明确保留未勾；审查产物 final-review.md/final-fix-review.md 已存在】
 
 独立源码审查与 M1/M2 定点修复复审已通过；三线 diff 检查通过。此项保留未勾选，因为整体回归 Important I1 尚未关闭：1.0 Shiro
 404、2.0 Shiro EOF；不得把局部源码通过当成整体放行。见

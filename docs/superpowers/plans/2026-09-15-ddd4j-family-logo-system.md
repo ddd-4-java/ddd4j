@@ -60,12 +60,12 @@ PNG exports.
 
   Expected: every approved token and all six project names are present.
 
-- [ ] **Step 3: Render and visually inspect desktop and mobile**
+- [ ] **Step 3: Render and visually inspect desktop and mobile**【存疑】
 
   Open the local HTML at 1280×1024 and 390×884. Verify no clipping, horizontal overflow, illegible text, broken SVG, or
   theme-color substitution.
 
-- [ ] **Step 4: Check the task**
+- [ ] **Step 4: Check the task**【存疑】
 
   Confirm the page clearly communicates one family before any project-specific symbol is read.
 
@@ -83,22 +83,22 @@ PNG exports.
 - Consumes: one shared cube/COLA SVG template plus a project descriptor `{id, suffix, accent, dark, soft, glyph}`.
 - Produces: standalone icon and horizontal lockup SVG files with exact project names and theme colors.
 
-- [ ] **Step 1: Add generator contract checks**
+- [ ] **Step 1: Add generator contract checks**【待办】
 
   The generator must fail if a project lacks an exact name, accent, glyph, or output mapping; it must reject duplicate
   accent colors and any viewBox other than `0 0 512 512` for icons.
 
-- [ ] **Step 2: Implement the shared mother geometry**
+- [ ] **Step 2: Implement the shared mother geometry**【待办】
 
   Create three solid isometric planes with a single Y-shaped COLA gap and fixed avatar safe area. Keep geometry
   identical across all six descriptors. Do not add an orbit, nested aperture, nodes, pedestal, gradient, or shadow.
 
-- [ ] **Step 3: Implement six glyphs**
+- [ ] **Step 3: Implement six glyphs**【待办】
 
   Add one concise glyph per project: Java cup/steam on one foundation line; Spring leaf with one start point; Javalin
   sail with one tail line; Quarkus Q cut; Web3 coin with an embedded lock; Cloud outline with an embedded Spring leaf.
 
-- [ ] **Step 4: Generate review SVGs**
+- [ ] **Step 4: Generate review SVGs**【待办】
 
   Run:
 
@@ -108,7 +108,7 @@ PNG exports.
 
   Expected: twelve SVG files, six icons and six horizontal lockups.
 
-- [ ] **Step 5: Validate SVG consistency**
+- [ ] **Step 5: Validate SVG consistency**【待办】
 
   Parse every SVG as XML; compare the shared mother-geometry checksum; verify exact names, approved accent values,
   viewBoxes, and absence of embedded raster images.
@@ -125,21 +125,21 @@ PNG exports.
 - Consumes: approved standalone SVG masters from Task 2.
 - Produces: transparent 1024×1024 icon PNGs, horizontal transparent logo PNGs, and a six-logo gallery.
 
-- [ ] **Step 1: Export PNG variants**
+- [ ] **Step 1: Export PNG variants**【待办】
 
   Render every icon at 1024×1024 with alpha and every lockup at a consistent horizontal size. Do not use image
   resampling from unrelated existing PNGs.
 
-- [ ] **Step 2: Copy only new `-v2` files to target repositories**
+- [ ] **Step 2: Copy only new `-v2` files to target repositories**【待办】
 
   Preserve all existing files and dirty worktrees. Use the exact per-repository paths from the spec.
 
-- [ ] **Step 3: Run visual gates**
+- [ ] **Step 3: Run visual gates**【待办】
 
   Produce a gallery at 128px, 48px, 24px, light, dark, and grayscale. Reject any icon whose technology glyph disappears
   or whose outer silhouette no longer resembles the family.
 
-- [ ] **Step 4: Verify Git boundaries**
+- [ ] **Step 4: Verify Git boundaries**【待办】
 
   For every repository, list the exact new files and prove no pre-existing file changed. Commit only files created by
   this plan after user approval of the gallery.

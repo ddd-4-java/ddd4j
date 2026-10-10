@@ -38,9 +38,9 @@ class DependencyPropertyLayoutTest(unittest.TestCase):
         errors = self.check(pom(("", "        <easy4j-hitool.version>2</easy4j-hitool.version>", "")))
         self.assertTrue(any("easy4j-prefixed" in error for error in errors))
 
-    def test_hiwepy_conflict_prefix_fails(self):
-        errors = self.check(pom(("", "        <hiwepy-hitool.version>1</hiwepy-hitool.version>", "")))
-        self.assertTrue(any("conflicting hiwepy" in error for error in errors))
+    def test_redacted_legacy_family_conflict_prefix_fails(self):
+        errors = self.check(pom(("", "        <redacted-legacy-family-hitool.version>1</redacted-legacy-family-hitool.version>", "")))
+        self.assertTrue(any("conflicting redacted-legacy-family" in error for error in errors))
 
     def test_alignment_prefix_fails(self):
         errors = self.check(pom(("", "        <alignment.hitool.version>1</alignment.hitool.version>", "")))
@@ -55,7 +55,7 @@ class DependencyPropertyLayoutTest(unittest.TestCase):
     <dependencyManagement><dependencies>
         <!-- old component -->
         <dependency>
-            <groupId>com.github.hiwepy</groupId>
+            <groupId>com.github.redacted-legacy-family</groupId>
             <artifactId>component</artifactId>
             <version>${component.version}</version>
         </dependency>
@@ -68,22 +68,22 @@ class DependencyPropertyLayoutTest(unittest.TestCase):
     </dependencies></dependencyManagement>
 </project>'''
         changed, _ = rename_easy4j_properties(source)
-        self.assertNotIn("com.github.hiwepy", changed)
+        self.assertNotIn("com.github.redacted-legacy-family", changed)
         self.assertNotIn("easy4j-component.version", changed)
         self.assertIn("io.github.easy4j", changed)
         self.assertIn("${component.version}", changed)
 
-    def test_existing_hiwepy_property_removes_old_dependency(self):
+    def test_existing_redacted_legacy_family_property_removes_old_dependency(self):
         source = '''<project xmlns="http://maven.apache.org/POM/4.0.0">
     <properties>
         <component.version>2</component.version>
-        <hiwepy-component.version>1</hiwepy-component.version>
+        <redacted-legacy-family-component.version>1</redacted-legacy-family-component.version>
     </properties>
     <dependencyManagement><dependencies>
         <dependency>
-            <groupId>com.github.hiwepy</groupId>
+            <groupId>com.github.redacted-legacy-family</groupId>
             <artifactId>component</artifactId>
-            <version>${hiwepy-component.version}</version>
+            <version>${redacted-legacy-family-component.version}</version>
         </dependency>
         <dependency>
             <groupId>io.github.easy4j</groupId>
@@ -93,8 +93,8 @@ class DependencyPropertyLayoutTest(unittest.TestCase):
     </dependencies></dependencyManagement>
 </project>'''
         changed, _ = rename_easy4j_properties(source)
-        self.assertNotIn("hiwepy-component.version", changed)
-        self.assertNotIn("com.github.hiwepy", changed)
+        self.assertNotIn("redacted-legacy-family-component.version", changed)
+        self.assertNotIn("com.github.redacted-legacy-family", changed)
         self.assertIn("io.github.easy4j", changed)
 
     def test_wrong_section_and_order_fail(self):

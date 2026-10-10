@@ -24,9 +24,9 @@ import java.util.Objects;
 /**
  * ORM 无关的类型安全属性引用。
  *
- * @param space     属性空间
- * @param ownerType 声明属性方法的类型
- * @param property  Java 属性名
+ * <p>{@code space} — 属性空间
+ * <p>{@code ownerType} — 声明属性方法的类型
+ * <p>{@code property} — Java 属性名
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 4.0.0
  */
@@ -79,6 +79,8 @@ public final class PropertyRef implements Serializable {
 
     /**
      * 验证属性引用与当前 Repository 的 Domain/PO 类型一致。
+     * @param domainType 领域类型
+     * @param persistenceType 类型对象
      */
     public void requireCompatible(Class<?> domainType, Class<?> persistenceType) {
         Objects.requireNonNull(domainType, "domainType must not be null");

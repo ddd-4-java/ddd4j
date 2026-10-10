@@ -49,6 +49,8 @@ public final class WebErrorResponseBuilder {
 
     /**
      * 将统一错误表示转换为 {@link R} 响应体。
+     * @param error 错误对象
+     * @return 转换得到的R
      */
     public R<Object> toResponse(WebError error) {
         return Objects.requireNonNull(error, "error must not be null").toResponse();
@@ -56,6 +58,8 @@ public final class WebErrorResponseBuilder {
 
     /**
      * status &gt;= 500 视为未处理的服务端错误，应按 error 级别记录日志。
+     * @param error 错误对象
+     * @return 满足条件时返回 true，否则返回 false
      */
     public boolean isServerError(WebError error) {
         return Objects.requireNonNull(error, "error must not be null").status() >= 500;

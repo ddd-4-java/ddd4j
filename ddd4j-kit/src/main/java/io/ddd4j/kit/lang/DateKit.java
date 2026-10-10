@@ -47,6 +47,9 @@ public class DateKit extends DateUtil {
 
     /**
      * 获取前一个分钟值以 0 或者 5 结尾的时间点（单位：毫秒）
+     *
+     * @param baseTime 基准时间
+     * @return 前一个分钟值以 0 或 5 结尾的时间点，单位毫秒
      */
     public static long getPreviousMillisEndWithMinute0or5(Date baseTime) {
         Calendar calendar = Calendar.getInstance();
@@ -69,6 +72,9 @@ public class DateKit extends DateUtil {
 
     /**
      * 获取下一个分钟值以 0 或者 5 结尾的时间点（单位：毫秒）
+     *
+     * @param baseTime 基准时间
+     * @return 下一个分钟值以 0 或 5 结尾的时间点，单位毫秒
      */
     public static long getNextMillisEndWithMinute0or5(Date baseTime) {
         Calendar calendar = Calendar.getInstance();
@@ -91,6 +97,9 @@ public class DateKit extends DateUtil {
 
     /**
      * 获取前一个分钟值以 0 结尾的时间点（单位：毫秒）
+     *
+     * @param baseTime 基准时间
+     * @return 前一个分钟值以 0 结尾的时间点，单位毫秒
      */
     public static long getPreviousMillisEndWithMinute0(Date baseTime) {
         Calendar calendar = Calendar.getInstance();
@@ -113,6 +122,9 @@ public class DateKit extends DateUtil {
 
     /**
      * 获取下一个分钟值以 0 结尾的时间点（单位：毫秒）
+     *
+     * @param baseTime 基准时间
+     * @return 下一个分钟值以 0 结尾的时间点，单位毫秒
      */
     public static long getNextMillisEndWithMinute0(Date baseTime) {
         Calendar calendar = Calendar.getInstance();
@@ -135,6 +147,10 @@ public class DateKit extends DateUtil {
 
     /**
      * 计算两个时间差（Date 重载）："X天Y小时Z分钟"
+     *
+     * @param startDate 起始时间
+     * @param endDate 结束时间
+     * @return 格式化后的时间差字符串
      */
     public static String getDatePoor(Date startDate, Date endDate) {
         long nd = 1000L * 24 * 60 * 60;
@@ -149,6 +165,10 @@ public class DateKit extends DateUtil {
 
     /**
      * 计算两个时间差（LocalDate 重载）："X天Y小时Z分钟W秒"
+     *
+     * @param startDateTime 起始日期
+     * @param endDateTime 结束日期
+     * @return 格式化后的时间差字符串
      */
     public static String getDatePoor(LocalDate startDateTime, LocalDate endDateTime) {
         Duration duration = Duration.between(startDateTime, endDateTime);
@@ -160,6 +180,10 @@ public class DateKit extends DateUtil {
 
     /**
      * 计算两个时间差（LocalDateTime 重载）："X天Y小时Z分钟W秒"
+     *
+     * @param startDateTime 起始日期时间
+     * @param endDateTime 结束日期时间
+     * @return 格式化后的时间差字符串
      */
     public static String getDatePoor(LocalDateTime startDateTime, LocalDateTime endDateTime) {
         Duration duration = Duration.between(startDateTime, endDateTime);
@@ -171,6 +195,9 @@ public class DateKit extends DateUtil {
 
     /**
      * LocalDateTime → Date
+     *
+     * @param temporalAccessor 本地日期时间
+     * @return 按系统时区转换后的日期对象
      */
     public static Date toDate(LocalDateTime temporalAccessor) {
         ZonedDateTime zdt = temporalAccessor.atZone(ZoneId.systemDefault());
@@ -179,6 +206,9 @@ public class DateKit extends DateUtil {
 
     /**
      * LocalDate → Date
+     *
+     * @param temporalAccessor 本地日期
+     * @return 当天零点按系统时区转换后的日期对象
      */
     public static Date toDate(LocalDate temporalAccessor) {
         LocalDateTime localDateTime = LocalDateTime.of(temporalAccessor, LocalTime.of(0, 0, 0));
@@ -188,6 +218,9 @@ public class DateKit extends DateUtil {
 
     /**
      * 毫秒 → LocalDateTime
+     *
+     * @param time 毫秒时间戳
+     * @return 按系统时区转换后的本地日期时间
      */
     public static LocalDateTime millsToLocalDateTime(long time) {
         return LocalDateTime.ofInstant(new Date(time).toInstant(), ZoneId.systemDefault());

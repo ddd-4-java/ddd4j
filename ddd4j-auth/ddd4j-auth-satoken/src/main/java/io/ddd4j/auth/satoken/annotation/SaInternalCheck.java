@@ -30,6 +30,7 @@ public @interface SaInternalCheck {
 
     /**
      * Required API Key scopes.
+     * @return 返回的字符串内容
      */
     String[] scope() default "internal";
 }

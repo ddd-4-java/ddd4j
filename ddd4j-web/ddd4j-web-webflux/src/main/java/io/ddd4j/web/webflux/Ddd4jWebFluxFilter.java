@@ -17,9 +17,14 @@ package io.ddd4j.web.webflux;
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator.Authentication;
 import io.ddd4j.web.core.auth.WebAccessPolicy;
-import io.ddd4j.web.core.context.*;
+import io.ddd4j.web.core.context.WebHeaders;
 import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.web.core.observability.WebOtelSupport;
+import io.ddd4j.web.core.context.WebRequestContext;
+import io.ddd4j.web.core.context.WebRequestContextFactory;
+import io.ddd4j.web.core.context.WebRequestData;
+import io.ddd4j.web.core.context.WebRequestLifecycle;
+import io.ddd4j.web.core.version.ApiVersion;
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.server.ServerWebExchange;
@@ -30,7 +35,12 @@ import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
 import java.net.InetSocketAddress;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 /**
@@ -69,23 +79,6 @@ public final class Ddd4jWebFluxFilter implements WebFilter {
         this.blockingScheduler = Objects.requireNonNull(blockingScheduler, "blockingScheduler must not be null");
     }
 
-    private static Map<String, String> extractHeaders(ServerWebExchange exchange) {
-        Map<String, String> headers = new HashMap<>();
-        exchange.getRequest().getHeaders().forEach((k, v) -> {
-            if (Objects.nonNull(v) && !v.isEmpty()) {
-                headers.put(k, v.get(0));
-            }
-        });
-        return headers;
-    }
-
-    private static void closeScope(AutoCloseable scope) {
-        try {
-            scope.close();
-        } catch (Throwable ignored) {
-        }
-    }
-
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         return Mono.defer(() -> {
@@ -116,6 +109,16 @@ public final class Ddd4jWebFluxFilter implements WebFilter {
         });
     }
 
+    private static Map<String, String> extractHeaders(ServerWebExchange exchange) {
+        Map<String, String> headers = new HashMap<>();
+        exchange.getRequest().getHeaders().forEach((k, v) -> {
+            if (Objects.nonNull(v) && !v.isEmpty()) {
+                headers.put(k, v.get(0));
+            }
+        });
+        return headers;
+    }
+
     private Mono<Void> invoke(ServerWebExchange exchange, WebFilterChain chain, WebRequestContext requestContext,
                               Optional<Authentication> authentication,
                               Optional<WebIdempotencyLifecycle.Scope> idempotencyScope, Object span) {
@@ -142,8 +145,15 @@ public final class Ddd4jWebFluxFilter implements WebFilter {
                 ignored -> release(scope));
     }
 
+    private static void closeScope(AutoCloseable scope) {
+        try {
+            scope.close();
+        } catch (Throwable ignored) {
+        }
+    }
+
     private Optional<WebIdempotencyLifecycle.Scope> openIdempotency(WebRequestContext context,
-                                                                    ServerWebExchange exchange) {
+                                                                     ServerWebExchange exchange) {
         return idempotencyLifecycle.flatMap(lifecycle -> lifecycle.open(context,
                 exchange.getRequest().getHeaders().getFirst(WebHeaders.IDEMPOTENCY_KEY)));
     }
@@ -171,7 +181,19 @@ public final class Ddd4jWebFluxFilter implements WebFilter {
                 headers.getFirst("X-Real-IP"),
                 remoteAddress(exchange),
                 exchange.getRequest().getMethod().name(),
-                exchange.getRequest().getPath().value()));
+                exchange.getRequest().getPath().value()), resolveApiVersion(exchange));
+    }
+
+    /**
+     * 读取 {@link ApiVersionWebFilter} 先行挂载的解析结果。
+     * 未启用版本解析（或版本过滤器未注册）时属性缺失，返回 null，行为与接线前一致。
+     *
+     * @param exchange 当前交换对象
+     * @return 解析出的 API 版本，可为 null
+     */
+    private ApiVersion resolveApiVersion(ServerWebExchange exchange) {
+        Object attribute = exchange.getAttributes().get(ApiVersionWebFilter.API_VERSION_ATTRIBUTE);
+        return attribute instanceof ApiVersion ? (ApiVersion) attribute : null;
     }
 
     private Locale resolveLocale(HttpHeaders headers) {

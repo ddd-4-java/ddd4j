@@ -42,7 +42,6 @@ import java.io.Serializable;
  *   POST   /{id}:disable      - 禁用（业务行为）
  *   POST   /{id}:enable       - 启用（业务行为）
  * </pre>
- * </p>
  *
  * @param <M>  聚合根模型
  * @param <Q>  查询参数
@@ -53,6 +52,10 @@ public abstract class BaseAggregateController<M extends AggregateRoot<?>, Q, ID 
 
     /**
      * 分页查询
+     * @param pageNum 页数值
+     * @param pageSize 页大小
+     * @param query 查询条件
+     * @return 返回的 R 结果
      */
     @GetMapping
     public R<Page<M>> page(@RequestParam(defaultValue = "1") int pageNum,
@@ -63,6 +66,8 @@ public abstract class BaseAggregateController<M extends AggregateRoot<?>, Q, ID 
 
     /**
      * 详情
+     * @param id 标识
+     * @return 获取的R
      */
     @GetMapping("/{id}")
     public R<M> getById(@PathVariable ID id) {
@@ -71,6 +76,8 @@ public abstract class BaseAggregateController<M extends AggregateRoot<?>, Q, ID 
 
     /**
      * 新增
+     * @param model 模型对象
+     * @return 创建的R
      */
     @PostMapping
     public R<M> create(@RequestBody M model) {
@@ -79,6 +86,9 @@ public abstract class BaseAggregateController<M extends AggregateRoot<?>, Q, ID 
 
     /**
      * 修改
+     * @param id 标识
+     * @param model 模型对象
+     * @return 更新后的R
      */
     @PutMapping("/{id}")
     public R<M> update(@PathVariable("id") ID id, @RequestBody M model) {
@@ -87,6 +97,8 @@ public abstract class BaseAggregateController<M extends AggregateRoot<?>, Q, ID 
 
     /**
      * 删除
+     * @param id 标识
+     * @return 删除后的R
      */
     @DeleteMapping("/{id}")
     public R<Void> delete(@PathVariable("id") ID id) {
@@ -96,6 +108,8 @@ public abstract class BaseAggregateController<M extends AggregateRoot<?>, Q, ID 
 
     /**
      * 业务行为：禁用（聚合根业务行为）
+     * @param id 标识
+     * @return 返回的 R 结果
      */
     @PostMapping("/{id}:disable")
     public R<M> disable(@PathVariable("id") ID id) {
@@ -104,6 +118,8 @@ public abstract class BaseAggregateController<M extends AggregateRoot<?>, Q, ID 
 
     /**
      * 业务行为：启用
+     * @param id 标识
+     * @return 返回的 R 结果
      */
     @PostMapping("/{id}:enable")
     public R<M> enable(@PathVariable("id") ID id) {

@@ -65,7 +65,7 @@ Javalin / Vert.x / Dropwizard）提供完整适配，零依赖 fuin。
 - 消费：无
 - 产出：干净的 `ddd4j-dependencies/pom.xml` BOM
 
-- [ ] **Step 1: 删除 fuin 版本属性**
+- [ ] **Step 1: 删除 fuin 版本属性**【待办】
 
 Read `ddd4j/ddd4j-dependencies/pom.xml:274-275`，确认内容为：
 
@@ -76,7 +76,7 @@ Read `ddd4j/ddd4j-dependencies/pom.xml:274-275`，确认内容为：
 
 用 Edit 工具删除这两行。
 
-- [ ] **Step 2: 删除 8 个 fuin dependency 块**
+- [x] **Step 2: 删除 8 个 fuin dependency 块**（证据: 4fd03ee36）
 
 Read `ddd4j/ddd4j-dependencies/pom.xml:3620-3675`，确认内容包含 8 个 fuin 依赖块：
 
@@ -85,20 +85,20 @@ Read `ddd4j/ddd4j-dependencies/pom.xml:3620-3675`，确认内容包含 8 个 fui
 
 用 Edit 工具逐个删除 8 个 dependency 块（含 Source URL 注释和中文描述注释）。
 
-- [ ] **Step 3: 验证编译**
+- [ ] **Step 3: 验证编译**【外部阻塞: 需执行 Maven（本任务禁跑）】
 
 Run:
 `cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-dependencies install -DskipTests`
 
 Expected: BUILD SUCCESS
 
-- [ ] **Step 4: 验证 ddd4j-core 全模块编译**
+- [ ] **Step 4: 验证 ddd4j-core 全模块编译**【外部阻塞: 需执行 Maven（本任务禁跑）】
 
 Run: `cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core compile`
 
 Expected: BUILD SUCCESS（无 fuin 引用，零影响）
 
-- [ ] **Step 5: 提交**
+- [x] **Step 5: 提交**（证据: 4fd03ee36）
 
 ```bash
 cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
@@ -114,14 +114,14 @@ git commit -m "chore(deps): 删除 ddd4j-dependencies BOM 中 8 个 fuin 死依�
 
 - Modify: `ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ProjectionService.java:5-6`
 
-- [ ] **Step 1: 定位 fuin 引用**
+- [ ] **Step 1: 定位 fuin 引用**【存疑】
 
 Run:
 `grep -n "org.fuin" /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ProjectionService.java`
 
 Expected: 命中 `org.fuin.*` 引用
 
-- [ ] **Step 2: 重写注释**
+- [x] **Step 2: 重写注释**（证据: 30cb0d487）
 
 改写 javadoc：
 
@@ -137,13 +137,13 @@ Expected: 命中 `org.fuin.*` 引用
  */
 ```
 
-- [ ] **Step 3: 验证**
+- [x] **Step 3: 验证**（证据: ddd4j-annotations grep org.fuin=0）
 
 Run: `grep -rn "org.fuin" /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/`
 
 Expected: 0 个匹配
 
-- [ ] **Step 4: 提交**
+- [x] **Step 4: 提交**（证据: 30cb0d487）
 
 ```bash
 cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
@@ -160,19 +160,19 @@ git commit -m "docs(core): ProjectionService 注释移除 fuin 引用"
 - Modify: `ddd4j/docs/ddd/1、DDD 经典分层架构目录结构.md`
 - Modify: `ddd4j/README.md`（如有 fuin 引用）
 
-- [ ] **Step 1: 定位文档引用**
+- [ ] **Step 1: 定位文档引用**【存疑】
 
 Run:
 `grep -rn "fuin\|org\.fuin" /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/docs/ /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/README.md`
 
 Expected: 列出所有文档引用
 
-- [ ] **Step 2: 改写为自研表述**
+- [x] **Step 2: 改写为自研表述**（证据: 6ff921082）
 
 对每处 `fuin` 引用，改写为「自研 / ddd4j-core 抽象」。若有 fuin 仓库 URL 作为外部参考链接， **保留**，但加 `（参考来源，不依赖）`
 ）标记。
 
-- [ ] **Step 3: 提交**
+- [x] **Step 3: 提交**（证据: 6ff921082）
 
 ```bash
 cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
@@ -184,28 +184,28 @@ git commit -m "docs: 删除 fuin 依赖表述，标注为外部参考链接"
 
 ### Task 0.4：CI 验证 + commit 阶段 0 完成标记
 
-- [ ] **Step 1: 跑全量 verify**
+- [ ] **Step 1: 跑全量 verify**【外部阻塞: 需执行 Maven（本任务禁跑）】
 
 Run:
 `cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw verify -pl ddd4j-core,ddd4j-dependencies`
 
 Expected: BUILD SUCCESS
 
-- [ ] **Step 2: 验证 ArchUnit CoreIndependenceTest**
+- [ ] **Step 2: 验证 ArchUnit CoreIndependenceTest**【外部阻塞: 需执行 Maven（本任务禁跑）】
 
 Run:
 `cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core test -Dtest=CoreIndependenceTest`
 
 Expected: Tests passed
 
-- [ ] **Step 3: 全工程 grep 验证**
+- [ ] **Step 3: 全工程 grep 验证**【待办】
 
 Run:
 `grep -rn "org\.fuin" /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j --include="*.java" --include="pom.xml"`
 
 Expected: 仅匹配 README/docs 里的参考链接，源代码 0 匹配
 
-- [ ] **Step 4: 推送**
+- [ ] **Step 4: 推送**【外部阻塞: 需推送远端 git push（本任务只读）】
 
 ```bash
 cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
@@ -223,11 +223,11 @@ git push origin feature/2.0.x
 - Create: `ddd4j/docs/reference/fuin-api-patterns/README.md`
 - Create: 8 个 markdown 占位文件
 
-- [ ] **Step 1: 建目录**
+- [x] **Step 1: 建目录**（证据: docs/reference/fuin-api-patterns/ 目录）
 
 Run: `mkdir -p /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/docs/reference/fuin-api-patterns`
 
-- [ ] **Step 2: 建 README 索引**
+- [x] **Step 2: 建 README 索引**（证据: docs/reference/fuin-api-patterns/README.md）
 
 Write `README.md`：
 
@@ -250,7 +250,7 @@ Write `README.md`：
 | 08 | architecture-test.md | ArchUnit 模块边界规则 | ddd4j-core + ddd4j-data ArchUnit |
 ```
 
-- [ ] **Step 3: 提交**
+- [x] **Step 3: 提交**（证据: 72a9f746e）
 
 ```bash
 cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
@@ -264,14 +264,14 @@ git commit -m "docs(reference): 建 fuin-api-patterns 目录骨架"
 
 （每个 Task 1 个 .md 文件，结构同 Task 1.2 已写示例）
 
-- [ ] **Task 1.2**：写 `01-aggregate-root.md`
-- [ ] **Task 1.3**：写 `02-entity-id-path.md`
-- [ ] **Task 1.4**：写 `03-domain-event.md`（标注 ddd4j 已对齐）
-- [ ] **Task 1.5**：写 `04-event-sourcing-repository.md`
-- [ ] **Task 1.6**：写 `05-event-store.md`
-- [ ] **Task 1.7**：写 `06-cqrs-command.md`（标注 ddd4j-core 已对齐）
-- [ ] **Task 1.8**：写 `07-cqrs-projection.md`（标注 ddd4j-core 已对齐）
-- [ ] **Task 1.9**：写 `08-architecture-test.md`
+- [x] **Task 1.2**：写 `01-aggregate-root.md`（证据: docs/reference/fuin-api-patterns/01-aggregate-root.md）
+- [x] **Task 1.3**：写 `02-entity-id-path.md`（证据: docs/reference/fuin-api-patterns/02-entity-id-path.md）
+- [x] **Task 1.4**：写 `03-domain-event.md`（标注 ddd4j 已对齐）（证据: docs/reference/fuin-api-patterns/03-domain-event.md）
+- [x] **Task 1.5**：写 `04-event-sourcing-repository.md`（证据: docs/reference/fuin-api-patterns/04-event-sourcing-repository.md）
+- [x] **Task 1.6**：写 `05-event-store.md`（证据: docs/reference/fuin-api-patterns/05-event-store.md）
+- [x] **Task 1.7**：写 `06-cqrs-command.md`（标注 ddd4j-core 已对齐）（证据: docs/reference/fuin-api-patterns/06-cqrs-command.md）
+- [x] **Task 1.8**：写 `07-cqrs-projection.md`（标注 ddd4j-core 已对齐）（证据: docs/reference/fuin-api-patterns/07-cqrs-projection.md）
+- [x] **Task 1.9**：写 `08-architecture-test.md`（证据: docs/reference/fuin-api-patterns/08-architecture-test.md）
 
 每个文档结构：
 
@@ -303,15 +303,15 @@ git commit -m "docs(reference): <N>-<name>"
 - Create: `ddd4j/docs/adr/0004-command-bus-design.md`
 - Create: `ddd4j/docs/adr/0005-event-store-spi.md`
 
-- [ ] **Step 1: 建 ADR 目录**
+- [x] **Step 1: 建 ADR 目录**（证据: docs/adr/ 目录）
 
 Run: `mkdir -p /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/docs/adr`
 
-- [ ] **Step 2: 写 0001-template.md**
+- [x] **Step 2: 写 0001-template.md**（证据: docs/adr/0000-template.md（模板实际编号 0000））
 
 模板含 Status / Context / Decision / Consequences / Alternatives 5 段。
 
-- [ ] **Step 3: 写 ADR-0001 不 fork 策略**
+- [x] **Step 3: 写 ADR-0001 不 fork 策略**（证据: docs/adr/0001-no-fork-strategy.md）
 
 ```markdown
 # ADR-0001: 不 fork fuin，reference-only 策略
@@ -337,7 +337,7 @@ ddd4j 全部 Apache-2.0。fuin 仓库仅作为 API 形态参考，存放在 refe
 - 方案 B：fuin 作为可选 ddd4j-data-fuin 模块 —— 已否决
 ```
 
-- [ ] **Step 4: 写 ADR-0003 跨 8 运行时约束**
+- [x] **Step 4: 写 ADR-0003 跨 8 运行时约束**（证据: docs/adr/0003-multi-runtime-strategy.md）
 
 ```markdown
 # ADR-0003: 跨 8 运行时适配策略
@@ -377,11 +377,11 @@ ddd4j-data-* 模块按能力拆，每个模块的每个能力点都需要：
 - 方案 B：Spring + Quarkus（27-35 天）—— 已否决（缺其他 6 运行时）
 ```
 
-- [ ] **Step 5: 写 ADR-0002/0004/0005**
+- [x] **Step 5: 写 ADR-0002/0004/0005**（证据: docs/adr/0002-core-zero-deps.md、0004-command-bus-design.md、0005-event-store-spi.md）
 
 类似格式，每篇 100-200 行。
 
-- [ ] **Step 6: 提交**
+- [x] **Step 6: 提交**（证据: a13ed6fea）
 
 ```bash
 cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
@@ -393,19 +393,19 @@ git commit -m "docs(adr): 6 篇架构决策记录（含跨 8 运行时约束）"
 
 ### Task 1.11：阶段 1 全量验证
 
-- [ ] **Step 1: 验证文档完整性**
+- [x] **Step 1: 验证文档完整性**（证据: docs/reference/fuin-api-patterns/ 共 9 个 md（README+01~08））
 
 Run: `ls /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/docs/reference/fuin-api-patterns/`
 
 Expected: 9 个 markdown 文件（README + 8 篇）
 
-- [ ] **Step 2: 验证 ADR 完整性**
+- [x] **Step 2: 验证 ADR 完整性**（证据: docs/adr/ 共 7 个 md（0000~0006））
 
 Run: `ls /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/docs/adr/`
 
 Expected: 7 个 markdown 文件（template + 6 篇 ADR）
 
-- [ ] **Step 3: 跑全量 verify 确认无破坏**
+- [ ] **Step 3: 跑全量 verify 确认无破坏**【外部阻塞: 需执行 Maven（本任务禁跑）】
 
 Run:
 `cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw verify -pl ddd4j-core,ddd4j-dependencies`
@@ -428,7 +428,7 @@ Expected: BUILD SUCCESS
 - 消费：Task 1.2（参考文档）
 - 产出：`@EventHandler` 注解 API
 
-- [ ] **Step 1: 写失败测试**
+- [x] **Step 1: 写失败测试**（证据: ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/EventHandlerTest.java）
 
 Write `EventHandlerTest.java`：
 
@@ -465,14 +465,14 @@ class EventHandlerTest {
 }
 ```
 
-- [ ] **Step 2: 跑测试确认失败**
+- [ ] **Step 2: 跑测试确认失败**【外部阻塞: 需执行 Maven（本任务禁跑）】
 
 Run:
 `cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core test -Dtest=EventHandlerTest`
 
 Expected: FAIL with "cannot find symbol class EventHandler"
 
-- [ ] **Step 3: 实现注解**
+- [x] **Step 3: 实现注解**（证据: ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/EventHandler.java）
 
 Write `EventHandler.java`：
 
@@ -520,14 +520,14 @@ public @interface EventHandler {
 }
 ```
 
-- [ ] **Step 4: 跑测试确认通过**
+- [ ] **Step 4: 跑测试确认通过**【外部阻塞: 需执行 Maven（本任务禁跑）】
 
 Run:
 `cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core test -Dtest=EventHandlerTest`
 
 Expected: PASS
 
-- [ ] **Step 5: 提交**
+- [x] **Step 5: 提交**（证据: 490d41d95）
 
 ```bash
 cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
@@ -550,7 +550,7 @@ git commit -m "feat(core): 新增 @EventHandler 注解"
 - 消费：Task 2.1 的 `@EventHandler`
 - 产出：`AggregateRoot.apply(DomainEvent)` / `loadFromHistory(List)` 方法
 
-- [ ] **Step 1: 写失败测试**
+- [x] **Step 1: 写失败测试**（证据: ddd4j-core/src/test/java/io/ddd4j/core/ddd/model/AggregateRootApplyTest.java）
 
 Write `AggregateRootApplyTest.java`：
 
@@ -620,14 +620,14 @@ class AggregateRootApplyTest {
 }
 ```
 
-- [ ] **Step 2: 跑测试确认失败**
+- [ ] **Step 2: 跑测试确认失败**【外部阻塞: 需执行 Maven（本任务禁跑）】
 
 Run:
 `cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core test -Dtest=AggregateRootApplyTest`
 
 Expected: FAIL with "cannot find symbol method apply (DomainEvent)"
 
-- [ ] **Step 3: 实现 apply + loadFromHistory**
+- [x] **Step 3: 实现 apply + loadFromHistory**（证据: ddd4j-core/src/main/java/io/ddd4j/core/ddd/model/AggregateRoot.java）
 
 Modify `AggregateRoot.java`，添加以下代码（在 `protected void registerEvent(DDomainEvent<?> event)` 之后）：
 
@@ -742,20 +742,20 @@ Modify `AggregateRoot.java`，添加以下代码（在 `protected void registerE
     }
 ```
 
-- [ ] **Step 4: 跑测试确认通过**
+- [ ] **Step 4: 跑测试确认通过**【外部阻塞: 需执行 Maven（本任务禁跑）】
 
 Run:
 `cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core test -Dtest=AggregateRootApplyTest`
 
 Expected: PASS
 
-- [ ] **Step 5: 跑全量测试确保无回归**
+- [ ] **Step 5: 跑全量测试确保无回归**【外部阻塞: 需执行 Maven（本任务禁跑）】
 
 Run: `cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core test`
 
 Expected: 全部测试通过 + ArchUnit CoreIndependenceTest 通过
 
-- [ ] **Step 6: 提交**
+- [x] **Step 6: 提交**（证据: a551fb6ca）
 
 ```bash
 cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
@@ -772,7 +772,7 @@ git commit -m "feat(core): AggregateRoot.apply/loadFromHistory 反射实现"
 
 - Create: `ddd4j/ddd4j-core/src/test/java/io/ddd4j/core/ddd/model/AggregateRootEventHandlerTest.java`
 
-- [ ] **Step 1: 写更多测试用例**
+- [x] **Step 1: 写更多测试用例**（证据: ddd4j-core/src/test/java/io/ddd4j/core/ddd/model/AggregateRootApplyTest.java）
 
 ```java
 package io.ddd4j.core.ddd.model;
@@ -858,14 +858,14 @@ class AggregateRootEventHandlerTest {
 }
 ```
 
-- [ ] **Step 2: 跑测试**
+- [ ] **Step 2: 跑测试**【外部阻塞: 需执行 Maven（本任务禁跑）】
 
 Run:
 `cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core test -Dtest=AggregateRootEventHandlerTest`
 
 Expected: PASS（全部 6 个用例）
 
-- [ ] **Step 3: 提交**
+- [x] **Step 3: 提交**（证据: 4a241ec0a）
 
 ```bash
 cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
@@ -881,7 +881,7 @@ git commit -m "test(core): AggregateRoot 事件处理器全覆盖"
 
 - Create: `ddd4j/docs/adr/0006-apply-reflection-mechanism.md`
 
-- [ ] **Step 1: 写 ADR**
+- [x] **Step 1: 写 ADR**（证据: docs/adr/0006-apply-reflection-mechanism.md）
 
 按 0001-template 格式写：
 
@@ -915,7 +915,7 @@ ddd4j-core 的 AggregateRoot 自研 apply(DomainEvent) 方法：
 - 方案 B：LambdaMetafactory 生成 invokedynamic——性能更好但 JDK 17 兼容性需测试
 ```
 
-- [ ] **Step 2: 提交**
+- [x] **Step 2: 提交**（证据: 48d6bfb32）
 
 ```bash
 cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
@@ -931,7 +931,7 @@ git commit -m "docs(adr): 0006 反射事件应用机制"
 
 - Modify: `ddd4j/ddd4j-core/src/test/java/io/ddd4j/core/arch/CoreIndependenceTest.java`
 
-- [ ] **Step 1: 增加 8 运行时架构守护**
+- [ ] **Step 1: 增加 8 运行时架构守护**【存疑】
 
 Read `CoreIndependenceTest.java`，追加规则：
 
@@ -982,14 +982,14 @@ public void noMicronautDependencyInCore() {
 }
 ```
 
-- [ ] **Step 2: 验证**
+- [ ] **Step 2: 验证**【外部阻塞: 需执行 Maven（本任务禁跑）】
 
 Run:
 `cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core test -Dtest=CoreIndependenceTest`
 
 Expected: Tests passed
 
-- [ ] **Step 3: 提交**
+- [x] **Step 3: 提交**（证据: 2ef421969）
 
 ```bash
 cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
@@ -1001,20 +1001,20 @@ git commit -m "test(core): ArchUnit 强化 8 运行时零依赖守护"
 
 ### Task 2.6：阶段 2 全量验证
 
-- [ ] **Step 1: 跑 ddd4j-core 全测试**
+- [ ] **Step 1: 跑 ddd4j-core 全测试**【外部阻塞: 需执行 Maven（本任务禁跑）】
 
 Run: `cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core verify`
 
 Expected: BUILD SUCCESS + ArchUnit 通过
 
-- [ ] **Step 2: 验证零外部依赖**
+- [ ] **Step 2: 验证零外部依赖**【外部阻塞: 需执行 Maven（本任务禁跑）】
 
 Run:
 `cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core dependency:list | grep -v "^$" | grep -v "ddd4j" | grep -v "jackson\|commons-lang3\|transmittable-thread-local\|slf4j\|logback"`
 
 Expected: 无其他依赖
 
-- [ ] **Step 3: 推送**
+- [ ] **Step 3: 推送**【外部阻塞: 需推送远端 git push（本任务只读）】
 
 ```bash
 cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
@@ -1033,15 +1033,15 @@ git push origin feature/2.0.x
 - Modify: `ddd4j/ddd4j-data/pom.xml`
 - Modify: `ddd4j/pom.xml`
 
-- [ ] **Step 1: 在 ddd4j-data/pom.xml 加新模块**
+- [ ] **Step 1: 在 ddd4j-data/pom.xml 加新模块**【存疑】
 
 Read `ddd4j/ddd4j-data/pom.xml`，找到 `<modules>` 段，添加 `<module>ddd4j-data-event-store</module>`。
 
-- [ ] **Step 2: 在 ddd4j/pom.xml 加新子模块**
+- [ ] **Step 2: 在 ddd4j/pom.xml 加新子模块**【存疑】
 
 Read `ddd4j/pom.xml`，找到 `<modules>` 段，添加 `<module>ddd4j-data/ddd4j-data-event-store</module>`。
 
-- [ ] **Step 3: 创建 ddd4j-data-event-store/pom.xml**
+- [ ] **Step 3: 创建 ddd4j-data-event-store/pom.xml**【存疑】
 
 Write `ddd4j-data-event-store/pom.xml`：
 
@@ -1076,14 +1076,14 @@ Write `ddd4j-data-event-store/pom.xml`：
 </project>
 ```
 
-- [ ] **Step 4: 验证编译**
+- [ ] **Step 4: 验证编译**【外部阻塞: 需执行 Maven（本任务禁跑）】
 
 Run:
 `cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-data/ddd4j-data-event-store install -DskipTests`
 
 Expected: BUILD SUCCESS
 
-- [ ] **Step 5: 提交**
+- [x] **Step 5: 提交**（证据: 3e683c915）
 
 ```bash
 cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
@@ -1108,7 +1108,7 @@ git commit -m "feat(data): 建 ddd4j-data-event-store SPI 模块骨架"
 - 消费：Task 1.5 参考文档
 - 产出：`EventStore` SPI + `StoredEvent` + `AggregateVersionConflictException`
 
-- [ ] **Step 1: 写 AggregateVersionConflictException**
+- [x] **Step 1: 写 AggregateVersionConflictException**（证据: ddd4j-core/src/main/java/io/ddd4j/core/cqrs/eventstore/AggregateVersionConflictException.java）
 
 Write `AggregateVersionConflictException.java`：
 
@@ -1141,7 +1141,7 @@ public class AggregateVersionConflictException extends RuntimeException {
 }
 ```
 
-- [ ] **Step 2: 写 StoredEvent**
+- [x] **Step 2: 写 StoredEvent**（证据: ddd4j-core/src/main/java/io/ddd4j/core/cqrs/eventstore/StoredEvent.java）
 
 Write `StoredEvent.java`：
 
@@ -1197,7 +1197,7 @@ public final class StoredEvent {
 }
 ```
 
-- [ ] **Step 3: 写 EventStore SPI**
+- [x] **Step 3: 写 EventStore SPI**（证据: ddd4j-core/src/main/java/io/ddd4j/core/cqrs/eventstore/EventStore.java）
 
 Write `EventStore.java`：
 
@@ -1264,7 +1264,7 @@ public interface EventStore {
 }
 ```
 
-- [ ] **Step 4: 写 EventStoreContractTest（JUnit 5 contract test）**
+- [x] **Step 4: 写 EventStoreContractTest（JUnit 5 contract test）**（证据: ddd4j-core/src/test/java/io/ddd4j/core/cqrs/eventstore/EventStoreContractTest.java）
 
 Write `EventStoreContractTest.java`：
 
@@ -1388,14 +1388,14 @@ public class EventStoreInvocationProvider implements TestTemplateInvocationConte
 }
 ```
 
-- [ ] **Step 5: 验证编译**
+- [ ] **Step 5: 验证编译**【外部阻塞: 需执行 Maven（本任务禁跑）】
 
 Run:
 `cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-data/ddd4j-data-event-store compile`
 
 Expected: BUILD SUCCESS（contract test 用 @TestTemplate 标注，编译期会忽略抽象）
 
-- [ ] **Step 6: 提交**
+- [x] **Step 6: 提交**（证据: 2f8b1cbd8）
 
 ```bash
 cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
@@ -1418,7 +1418,7 @@ git commit -m "feat(data): EventStore SPI + StoredEvent + ContractTest 模板"
 - 消费：Task 3.2
 - 产出：Jackson 序列化器抽象
 
-- [ ] **Step 1: 写 EventPayloadSerializer**
+- [x] **Step 1: 写 EventPayloadSerializer**（证据: ddd4j-core/src/main/java/io/ddd4j/core/cqrs/eventstore/jackson/EventPayloadSerializer.java）
 
 Write `EventPayloadSerializer.java`：
 
@@ -1471,7 +1471,7 @@ public class EventPayloadSerializer {
 }
 ```
 
-- [ ] **Step 2: 验证 + 提交**
+- [ ] **Step 2: 验证 + 提交**【外部阻塞: 需执行 Maven（本任务禁跑）】
 
 Run:
 `cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-data/ddd4j-data-event-store compile`
@@ -1486,14 +1486,14 @@ git commit -m "feat(data): EventPayloadSerializer Jackson 多态序列化"
 
 ### Task 3.4：阶段 3 全量验证
 
-- [ ] **Step 1: 跑全量 verify**
+- [ ] **Step 1: 跑全量 verify**【外部阻塞: 需执行 Maven（本任务禁跑）】
 
 Run:
 `cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw verify -pl ddd4j-data/ddd4j-data-event-store`
 
 Expected: BUILD SUCCESS
 
-- [ ] **Step 2: 推送**
+- [ ] **Step 2: 推送**【外部阻塞: 需推送远端 git push（本任务只读）】
 
 ```bash
 cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
@@ -1512,12 +1512,12 @@ git push origin feature/2.0.x
 - Modify: `ddd4j/ddd4j-data/pom.xml`
 - Modify: `ddd4j/pom.xml`
 
-- [ ] **Step 1: 加模块声明**
+- [x] **Step 1: 加模块声明**（证据: ddd4j-data/pom.xml:46）
 
 `ddd4j/ddd4j-data/pom.xml` 加 `<module>ddd4j-data-event-store-jpa</module>`
 `ddd4j/pom.xml` 加 `<module>ddd4j-data/ddd4j-data-event-store-jpa</module>`
 
-- [ ] **Step 2: 写 pom.xml**
+- [x] **Step 2: 写 pom.xml**（证据: ddd4j-data/ddd4j-data-event-store-jpa/pom.xml）
 
 Write `ddd4j-data-event-store-jpa/pom.xml`：
 
@@ -1566,7 +1566,7 @@ Write `ddd4j-data-event-store-jpa/pom.xml`：
 </project>
 ```
 
-- [ ] **Step 3: 验证 + 提交**
+- [ ] **Step 3: 验证 + 提交**【外部阻塞: 需执行 Maven（本任务禁跑）】
 
 ```bash
 cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
@@ -1590,7 +1590,7 @@ git commit -m "feat(data): 建 ddd4j-data-event-store-jpa 模块骨架"
 - 消费：Task 3.2 EventStore SPI
 - 产出：JPA 实体 + Spring Data Repository
 
-- [ ] **Step 1: 写 StoredEventEntity**
+- [x] **Step 1: 写 StoredEventEntity**（证据: ddd4j-data/ddd4j-data-event-store-jpa/src/main/java/io/ddd4j/data/event/store/jpa/StoredEventEntity.java）
 
 Write `StoredEventEntity.java`：
 
@@ -1666,7 +1666,7 @@ public class StoredEventEntity {
 }
 ```
 
-- [ ] **Step 2: 写 Spring Data Repository**
+- [x] **Step 2: 写 Spring Data Repository**（证据: ddd4j-data/ddd4j-data-event-store-jpa/src/main/java/io/ddd4j/data/event/store/jpa/JpaStoredEventRepository.java、JpaStoredEventRepositoryImpl.java（以纯 JPA 实现替代 Spring Data））
 
 Write `SpringDataStoredEventRepository.java`：
 
@@ -1697,7 +1697,7 @@ public interface SpringDataStoredEventRepository extends JpaRepository<StoredEve
 }
 ```
 
-- [ ] **Step 3: 验证 + 提交**
+- [ ] **Step 3: 验证 + 提交**【外部阻塞: 需执行 Maven（本任务禁跑）】
 
 Run:
 `cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-data/ddd4j-data-event-store-jpa compile`
@@ -1721,7 +1721,7 @@ git commit -m "feat(data): JPA EventStore 实体 + Repository"
 - 消费：Task 3.2 EventStore SPI + Task 4.2 实体 + Task 3.3 serializer
 - 产出：JpaEventStore 实现
 
-- [ ] **Step 1: 写 JpaEventStore**
+- [x] **Step 1: 写 JpaEventStore**（证据: ddd4j-data/ddd4j-data-event-store-jpa/src/main/java/io/ddd4j/data/event/store/jpa/JpaEventStore.java）
 
 Write `JpaEventStore.java`：
 
@@ -1844,7 +1844,7 @@ public class JpaEventStore implements EventStore {
 }
 ```
 
-- [ ] **Step 2: 验证 + 提交**
+- [ ] **Step 2: 验证 + 提交**【外部阻塞: 需执行 Maven（本任务禁跑）】
 
 Run:
 `cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-data/ddd4j-data-event-store-jpa compile`
@@ -1866,7 +1866,7 @@ git commit -m "feat(data): JpaEventStore 实现"
   `ddd4j/ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/eventstore/jpa/JpaEventStoreTestApp.java`
 - Create: `ddd4j/ddd4j-data/ddd4j-data-event-store-jpa/src/test/resources/application-test.yml`
 
-- [ ] **Step 1: 写 JpaEventStoreTestApp（Spring Boot 测试入口）**
+- [x] **Step 1: 写 JpaEventStoreTestApp（Spring Boot 测试入口）**（证据: ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/event/store/jpa/TestApp.java（实际命名 TestApp））
 
 Write `JpaEventStoreTestApp.java`：
 
@@ -1891,7 +1891,7 @@ public class JpaEventStoreTestApp {
 }
 ```
 
-- [ ] **Step 2: 写 application-test.yml**
+- [ ] **Step 2: 写 application-test.yml**【存疑】
 
 Write `application-test.yml`：
 
@@ -1910,7 +1910,7 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 ```
 
-- [ ] **Step 3: 写 JpaEventStoreIT**
+- [x] **Step 3: 写 JpaEventStoreIT**（证据: ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/event/store/jpa/JpaEventStorePostgresIT.java、JpaEventStoreMysqlIT.java）
 
 Write `JpaEventStoreIT.java`：
 
@@ -1994,14 +1994,14 @@ class JpaEventStoreIT {
 }
 ```
 
-- [ ] **Step 4: 跑测试**
+- [ ] **Step 4: 跑测试**【外部阻塞: 需执行 Maven（本任务禁跑）】
 
 Run:
 `cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-data/ddd4j-data-event-store-jpa verify`
 
 Expected: BUILD SUCCESS + 3 个 IT 通过
 
-- [ ] **Step 5: 提交**
+- [x] **Step 5: 提交**（证据: df5646c45）
 
 ```bash
 cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
@@ -2013,14 +2013,14 @@ git commit -m "test(data): JpaEventStoreIT Testcontainers 集成测试"
 
 ### Task 4.5：阶段 4 全量验证
 
-- [ ] **Step 1: 全量 verify**
+- [ ] **Step 1: 全量 verify**【外部阻塞: 需执行 Maven（本任务禁跑）】
 
 Run:
 `cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw verify -pl ddd4j-data/ddd4j-data-event-store-jpa`
 
 Expected: BUILD SUCCESS
 
-- [ ] **Step 2: 推送**
+- [ ] **Step 2: 推送**【外部阻塞: 需推送远端 git push（本任务只读）】
 
 ```bash
 cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
@@ -2039,12 +2039,12 @@ git push origin feature/2.0.x
 - Modify: `ddd4j/ddd4j-data/pom.xml`
 - Modify: `ddd4j/pom.xml`
 
-- [ ] **Step 1: 加模块声明**
+- [ ] **Step 1: 加模块声明**【存疑】
 
 `ddd4j/ddd4j-data/pom.xml` 加 `<module>ddd4j-data-event-store-panache</module>`
 `ddd4j/pom.xml` 加 `<module>ddd4j-data/ddd4j-data-event-store-panache</module>`
 
-- [ ] **Step 2: 写 pom.xml（依赖 Quarkus Hibernate ORM Panache）**
+- [ ] **Step 2: 写 pom.xml（依赖 Quarkus Hibernate ORM Panache）**【存疑】
 
 Write `ddd4j-data-event-store-panache/pom.xml`：
 
@@ -2087,7 +2087,7 @@ Write `ddd4j-data-event-store-panache/pom.xml`：
 </project>
 ```
 
-- [ ] **Step 3: 验证 + 提交**
+- [ ] **Step 3: 验证 + 提交**【外部阻塞: 需执行 Maven（本任务禁跑）】
 
 ```bash
 cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
@@ -2108,7 +2108,7 @@ git commit -m "feat(data): 建 ddd4j-data-event-store-panache 模块骨架"
 - Create:
   `ddd4j/ddd4j-data/ddd4j-data-event-store-panache/src/main/java/io/ddd4j/data/eventstore/panache/PanacheEventStore.java`
 
-- [ ] **Step 1: 写 PanacheStoredEventEntity**
+- [ ] **Step 1: 写 PanacheStoredEventEntity**【存疑】
 
 ```java
 package io.ddd4j.data.eventstore.panache;
@@ -2168,7 +2168,7 @@ public class PanacheStoredEventEntity extends PanacheEntityBase {
 }
 ```
 
-- [ ] **Step 2: 写 PanacheEventStore**
+- [ ] **Step 2: 写 PanacheEventStore**【存疑】
 
 ```java
 package io.ddd4j.data.eventstore.panache;
@@ -2271,7 +2271,7 @@ public class PanacheEventStore implements EventStore {
 }
 ```
 
-- [ ] **Step 3: 写 Quarkus 集成测试**
+- [ ] **Step 3: 写 Quarkus 集成测试**【存疑】
 
 Write `PanacheEventStoreIT.java`（用 Quarkus `@QuarkusTest` + H2）：
 
@@ -2314,7 +2314,7 @@ class PanacheEventStoreIT {
 }
 ```
 
-- [ ] **Step 4: 验证 + 提交**
+- [ ] **Step 4: 验证 + 提交**【外部阻塞: 需执行 Maven（本任务禁跑）】
 
 Run:
 `cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-data/ddd4j-data-event-store-panache verify`
@@ -2335,12 +2335,12 @@ git commit -m "feat(data): PanacheEventStore 实现 + Quarkus 集成测试"
 - Create: `ddd4j/ddd4j-data/ddd4j-data-event-store-jdbi/src/main/java/io/ddd4j/data/eventstore/jdbi/JdbiEventStore.java`
 - Test: `ddd4j/ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/eventstore/jdbi/JdbiEventStoreIT.java`
 
-- [ ] **Step 1: 加模块声明**
+- [x] **Step 1: 加模块声明**（证据: ddd4j-data/pom.xml:47）
 
 `ddd4j/ddd4j-data/pom.xml` 加 `<module>ddd4j-data-event-store-jdbi</module>`
 `ddd4j/pom.xml` 加 `<module>ddd4j-data/ddd4j-data-event-store-jdbi</module>`
 
-- [ ] **Step 2: 写 pom.xml**
+- [x] **Step 2: 写 pom.xml**（证据: ddd4j-data/ddd4j-data-event-store-jdbi/pom.xml）
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -2386,7 +2386,7 @@ git commit -m "feat(data): PanacheEventStore 实现 + Quarkus 集成测试"
 </project>
 ```
 
-- [ ] **Step 3: 写 JdbiEventStore（关键：SQL first）**
+- [x] **Step 3: 写 JdbiEventStore（关键：SQL first）**（证据: ddd4j-data/ddd4j-data-event-store-jdbi/src/main/java/io/ddd4j/data/event/store/jdbi/JdbiEventStore.java）
 
 Write `JdbiEventStore.java`：
 
@@ -2525,7 +2525,7 @@ public class JdbiEventStore implements EventStore {
 }
 ```
 
-- [ ] **Step 4: 写集成测试 + 提交**
+- [x] **Step 4: 写集成测试 + 提交**（证据: ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/JdbiEventStoreMysqlIT.java、JdbiEventStorePostgresIT.java）
 
 ```bash
 cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
@@ -2543,7 +2543,7 @@ git commit -m "feat(data): JdbiEventStore 实现（Javalin/Vert.x）"
 - Create:
   `ddd4j/ddd4j-data/ddd4j-data-event-store-r2dbc/src/main/java/io/ddd4j/data/eventstore/r2dbc/R2dbcEventStore.java`
 
-- [ ] **Step 1: 加模块声明 + pom.xml**
+- [x] **Step 1: 加模块声明 + pom.xml**（证据: ddd4j-data/pom.xml:49 + ddd4j-data/ddd4j-data-event-store-r2dbc/pom.xml）
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -2584,7 +2584,7 @@ git commit -m "feat(data): JdbiEventStore 实现（Javalin/Vert.x）"
 </project>
 ```
 
-- [ ] **Step 2: 写 R2dbcEventStore（异步 + Flux 返回）**
+- [x] **Step 2: 写 R2dbcEventStore（异步 + Flux 返回）**（证据: ddd4j-data/ddd4j-data-event-store-r2dbc/src/main/java/io/ddd4j/data/event/store/r2dbc/R2dbcEventStore.java）
 
 Write `R2dbcEventStore.java`（含 R2dbcEventStoreAsync SPI 扩展）：
 
@@ -2724,7 +2724,7 @@ public class R2dbcEventStore implements AsyncEventStore {
 }
 ```
 
-- [ ] **Step 3: 写 AsyncEventStore SPI 扩展（EventStore 子接口）**
+- [x] **Step 3: 写 AsyncEventStore SPI 扩展（EventStore 子接口）**（证据: ddd4j-core/src/main/java/io/ddd4j/core/cqrs/eventstore/AsyncEventStore.java）
 
 在 `ddd4j-data-event-store` 模块添加：
 
@@ -2754,7 +2754,7 @@ public interface AsyncEventStore {
 }
 ```
 
-- [ ] **Step 4: 写测试 + 提交**
+- [x] **Step 4: 写测试 + 提交**（证据: ddd4j-data/ddd4j-data-event-store-r2dbc/src/test/java/io/ddd4j/data/event/store/r2dbc/R2dbcAsyncEventStoreTest.java、R2dbcEventStorePostgresIT.java）
 
 Run:
 `cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-data/ddd4j-data-event-store-r2dbc verify`
@@ -2770,14 +2770,14 @@ git commit -m "feat(data): R2dbcEventStore 响应式实现 + AsyncEventStore SPI
 
 ### Task 5.5：阶段 5 全量验证
 
-- [ ] **Step 1: 跑 4 套 EventStore 全量 verify**
+- [ ] **Step 1: 跑 4 套 EventStore 全量 verify**【外部阻塞: 需执行 Maven（本任务禁跑）】
 
 Run:
 `cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw verify -pl ddd4j-data/ddd4j-data-event-store,ddd4j-data/ddd4j-data-event-store-jpa,ddd4j-data/ddd4j-data-event-store-panache,ddd4j-data/ddd4j-data-event-store-jdbi,ddd4j-data/ddd4j-data-event-store-r2dbc`
 
 Expected: BUILD SUCCESS（4 套运行时都通过）
 
-- [ ] **Step 2: 推送**
+- [ ] **Step 2: 推送**【外部阻塞: 需推送远端 git push（本任务只读）】
 
 ```bash
 cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
@@ -2796,12 +2796,12 @@ git push origin feature/2.0.x
 - Modify: `ddd4j/ddd4j-data/pom.xml`
 - Modify: `ddd4j/pom.xml`
 
-- [ ] **Step 1: 加模块声明**
+- [ ] **Step 1: 加模块声明**【存疑】
 
 `ddd4j/ddd4j-data/pom.xml` 加 `<module>ddd4j-data-cqrs</module>`
 `ddd4j/pom.xml` 加 `<module>ddd4j-data/ddd4j-data-cqrs</module>`
 
-- [ ] **Step 2: 写 pom.xml（不依赖任何运行时框架）**
+- [ ] **Step 2: 写 pom.xml（不依赖任何运行时框架）**【存疑】
 
 Write `ddd4j-data-cqrs/pom.xml`：
 
@@ -2846,7 +2846,7 @@ Write `ddd4j-data-cqrs/pom.xml`：
 </project>
 ```
 
-- [ ] **Step 3: 验证 + 提交**
+- [ ] **Step 3: 验证 + 提交**【外部阻塞: 需执行 Maven（本任务禁跑）】
 
 ```bash
 cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
@@ -2868,7 +2868,7 @@ git commit -m "feat(data): 建 ddd4j-data-cqrs SPI 模块骨架（无运行时�
 - 消费：ddd4j-core 已有的 `CommandBus` / `CommandExecutor`
 - 产出：`@CommandHandler` 注解 + `CommandRegistry` 通用基础设施
 
-- [ ] **Step 1: 写 CommandHandler 注解**
+- [x] **Step 1: 写 CommandHandler 注解**（证据: ddd4j-core/src/main/java/io/ddd4j/core/cqrs/command/CommandHandler.java（实际落点 ddd4j-core））
 
 Write `CommandHandler.java`：
 
@@ -2894,7 +2894,7 @@ public @interface CommandHandler {
 }
 ```
 
-- [ ] **Step 2: 写 CommandRegistry（不依赖任何框架）**
+- [x] **Step 2: 写 CommandRegistry（不依赖任何框架）**（证据: ddd4j-core/src/main/java/io/ddd4j/core/cqrs/command/CommandRegistry.java（实际落点 ddd4j-core））
 
 Write `CommandRegistry.java`：
 
@@ -2938,7 +2938,7 @@ public class CommandRegistry {
 }
 ```
 
-- [ ] **Step 3: 验证 + 提交**
+- [ ] **Step 3: 验证 + 提交**【外部阻塞: 需执行 Maven（本任务禁跑）】
 
 ```bash
 cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
@@ -2960,7 +2960,7 @@ git commit -m "feat(data): CommandHandler 注解 + CommandRegistry"
 - Create: `ddd4j/ddd4j-data/ddd4j-data-cqrs-spring/src/main/java/io/ddd4j/data/cqrs/spring/SpringCommandBus.java`
 - Test: `ddd4j/ddd4j-data/ddd4j-data-cqrs-spring/src/test/java/io/ddd4j/data/cqrs/spring/SpringCommandBusIT.java`
 
-- [ ] **Step 1: 加模块声明 + 写 pom.xml**
+- [x] **Step 1: 加模块声明 + 写 pom.xml**（证据: ddd4j-data/pom.xml:43 + ddd4j-data/ddd4j-data-cqrs-spring/pom.xml）
 
 `ddd4j/ddd4j-data/pom.xml` 加 `<module>ddd4j-data-cqrs-spring</module>`
 `ddd4j/pom.xml` 加 `<module>ddd4j-data/ddd4j-data-cqrs-spring</module>`
@@ -3003,7 +3003,7 @@ git commit -m "feat(data): CommandHandler 注解 + CommandRegistry"
 </project>
 ```
 
-- [ ] **Step 2: 写 SpringCommandBus（继承 DefaultCommandBus + @Transactional + 自动扫描）**
+- [x] **Step 2: 写 SpringCommandBus（继承 DefaultCommandBus + @Transactional + 自动扫描）**（证据: ddd4j-data/ddd4j-data-cqrs-spring/src/main/java/io/ddd4j/data/cqrs/spring/SpringCommandBus.java）
 
 Write `SpringCommandBus.java`：
 
@@ -3059,7 +3059,7 @@ public class SpringCommandBus extends DefaultCommandBus implements SmartInitiali
 }
 ```
 
-- [ ] **Step 3: 写测试**
+- [ ] **Step 3: 写测试**【待办】
 
 Write `SpringCommandBusIT.java`：
 
@@ -3120,7 +3120,7 @@ class SpringCommandBusIT {
 
 **注意**：上面 `ApplicationContext` 子类有问题——实际写代码时直接 import `org.springframework.context.ApplicationContext`。
 
-- [ ] **Step 4: 验证 + 提交**
+- [ ] **Step 4: 验证 + 提交**【待办】
 
 Run:
 `cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-data/ddd4j-data-cqrs-spring verify`
@@ -3140,7 +3140,7 @@ git commit -m "feat(data): SpringCommandBus（覆盖 WebMVC/WebFlux/Helidon/Drop
 - Create: `ddd4j/ddd4j-data/ddd4j-data-cqrs-quarkus/pom.xml`
 - Create: `ddd4j/ddd4j-data/ddd4j-data-cqrs-quarkus/src/main/java/io/ddd4j/data/cqrs/quarkus/QuarkusCommandBus.java`
 
-- [ ] **Step 1: 加模块声明 + pom.xml**
+- [ ] **Step 1: 加模块声明 + pom.xml**【存疑】
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -3185,7 +3185,7 @@ git commit -m "feat(data): SpringCommandBus（覆盖 WebMVC/WebFlux/Helidon/Drop
 </project>
 ```
 
-- [ ] **Step 2: 写 QuarkusCommandBus（@ApplicationScoped + @Transactional）**
+- [ ] **Step 2: 写 QuarkusCommandBus（@ApplicationScoped + @Transactional）**【存疑】
 
 Write `QuarkusCommandBus.java`：
 
@@ -3238,7 +3238,7 @@ public class QuarkusCommandBus extends DefaultCommandBus {
 }
 ```
 
-- [ ] **Step 3: 写测试 + 提交**
+- [ ] **Step 3: 写测试 + 提交**【存疑】
 
 ```bash
 cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
@@ -3250,13 +3250,13 @@ git commit -m "feat(data): QuarkusCommandBus（CDI 适配）"
 
 #### Task 6.5：Micronaut 适配（MicronautCommandBus）
 
-- [ ] **Step 1: 加模块 + pom.xml**
+- [x] **Step 1: 加模块 + pom.xml**（证据: ddd4j-data/pom.xml:44 + ddd4j-data/ddd4j-data-cqrs-micronaut/pom.xml）
 
 ```xml
 <!-- pom.xml 简化：包含 micronaut-context 依赖 -->
 ```
 
-- [ ] **Step 2: 写 MicronautCommandBus（@Singleton + BeanContext）**
+- [x] **Step 2: 写 MicronautCommandBus（@Singleton + BeanContext）**（证据: ddd4j-data/ddd4j-data-cqrs-micronaut/src/main/java/io/ddd4j/data/cqrs/micronaut/MicronautCommandBus.java）
 
 ```java
 package io.ddd4j.data.cqrs.micronaut;
@@ -3298,7 +3298,7 @@ public class MicronautCommandBus extends DefaultCommandBus {
 }
 ```
 
-- [ ] **Step 3: 写测试 + 提交**
+- [x] **Step 3: 写测试 + 提交**（证据: ddd4j-data/ddd4j-data-cqrs-micronaut/src/test/java/io/ddd4j/data/cqrs/micronaut/MicronautCommandBusIT.java）
 
 ```bash
 cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
@@ -3310,13 +3310,13 @@ git commit -m "feat(data): MicronautCommandBus"
 
 #### Task 6.6：Helidon MicroProfile 适配（HelidonCommandBus）
 
-- [ ] **Step 1: 加模块 + pom.xml**
+- [ ] **Step 1: 加模块 + pom.xml**【存疑】
 
 ```xml
 <!-- 依赖 helidon-microprofile-cdi + jakarta.transaction-api -->
 ```
 
-- [ ] **Step 2: 写 HelidonCommandBus（@ApplicationScoped + CDI Instance）**
+- [ ] **Step 2: 写 HelidonCommandBus（@ApplicationScoped + CDI Instance）**【存疑】
 
 ```java
 package io.ddd4j.data.cqrs.helidon;
@@ -3357,7 +3357,7 @@ public class HelidonCommandBus extends DefaultCommandBus {
 }
 ```
 
-- [ ] **Step 3: 写测试 + 提交**
+- [ ] **Step 3: 写测试 + 提交**【存疑】
 
 ```bash
 cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
@@ -3369,13 +3369,13 @@ git commit -m "feat(data): HelidonCommandBus（MicroProfile CDI）"
 
 #### Task 6.7：Javalin 适配（JavalinCommandBus）
 
-- [ ] **Step 1: 加模块 + pom.xml（依赖 javalin）**
+- [x] **Step 1: 加模块 + pom.xml（依赖 javalin）**（证据: ddd4j-data/pom.xml:40 + ddd4j-data/ddd4j-data-cqrs-javalin/pom.xml）
 
 ```xml
 <!-- 依赖 javalin + jdbc -->
 ```
 
-- [ ] **Step 2: 写 JavalinCommandBus（手动注册 + @Transactional via 拦截器）**
+- [x] **Step 2: 写 JavalinCommandBus（手动注册 + @Transactional via 拦截器）**（证据: ddd4j-data/ddd4j-data-cqrs-javalin/src/main/java/io/ddd4j/data/cqrs/javalin/JavalinCommandBus.java）
 
 ```java
 package io.ddd4j.data.cqrs.javalin;
@@ -3411,7 +3411,7 @@ public class JavalinCommandBus extends DefaultCommandBus {
 }
 ```
 
-- [ ] **Step 3: 写测试 + 提交**
+- [x] **Step 3: 写测试 + 提交**（证据: ddd4j-data/ddd4j-data-cqrs-javalin/src/test/java/io/ddd4j/data/cqrs/javalin/JavalinCommandBusIT.java）
 
 ```bash
 cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
@@ -3423,13 +3423,13 @@ git commit -m "feat(data): JavalinCommandBus"
 
 #### Task 6.8：Vert.x 适配（VertxCommandBus）
 
-- [ ] **Step 1: 加模块 + pom.xml**
+- [x] **Step 1: 加模块 + pom.xml**（证据: ddd4j-data/pom.xml:42 + ddd4j-data/ddd4j-data-cqrs-vertx/pom.xml）
 
 ```xml
 <!-- 依赖 vertx-core + vertx-sql -->
 ```
 
-- [ ] **Step 2: 写 VertxCommandBus（异步 + Future 返回）**
+- [x] **Step 2: 写 VertxCommandBus（异步 + Future 返回）**（证据: ddd4j-data/ddd4j-data-cqrs-vertx/src/main/java/io/ddd4j/data/cqrs/vertx/VertxCommandBus.java）
 
 ```java
 package io.ddd4j.data.cqrs.vertx;
@@ -3468,7 +3468,7 @@ public class VertxCommandBus extends DefaultCommandBus {
 }
 ```
 
-- [ ] **Step 3: 写测试 + 提交**
+- [x] **Step 3: 写测试 + 提交**（证据: ddd4j-data/ddd4j-data-cqrs-vertx/src/test/java/io/ddd4j/data/cqrs/vertx/VertxCommandBusIT.java）
 
 ```bash
 cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
@@ -3480,13 +3480,13 @@ git commit -m "feat(data): VertxCommandBus"
 
 #### Task 6.9：Dropwizard 适配（DropwizardCommandBus）
 
-- [ ] **Step 1: 加模块 + pom.xml**
+- [x] **Step 1: 加模块 + pom.xml**（证据: ddd4j-data/pom.xml:41 + ddd4j-data/ddd4j-data-cqrs-dropwizard/pom.xml）
 
 ```xml
 <!-- 依赖 dropwizard-core + dropwizard-hibernate -->
 ```
 
-- [ ] **Step 2: 写 DropwizardCommandBus（用 Dropwizard Environment）**
+- [x] **Step 2: 写 DropwizardCommandBus（用 Dropwizard Environment）**（证据: ddd4j-data/ddd4j-data-cqrs-dropwizard/src/main/java/io/ddd4j/data/cqrs/dropwizard/DropwizardCommandBus.java）
 
 ```java
 package io.ddd4j.data.cqrs.dropwizard;
@@ -3518,7 +3518,7 @@ public class DropwizardCommandBus extends DefaultCommandBus {
 }
 ```
 
-- [ ] **Step 3: 写测试 + 提交**
+- [x] **Step 3: 写测试 + 提交**（证据: ddd4j-data/ddd4j-data-cqrs-dropwizard/src/test/java/io/ddd4j/data/cqrs/dropwizard/DropwizardCommandBusIT.java）
 
 ```bash
 cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
@@ -3530,14 +3530,14 @@ git commit -m "feat(data): DropwizardCommandBus"
 
 ### Task 6.10：阶段 6 全量验证（8 套 CQRS 适配跨运行时 CI）
 
-- [ ] **Step 1: 跑 8 套 CQRS 全量 verify**
+- [ ] **Step 1: 跑 8 套 CQRS 全量 verify**【外部阻塞: 需执行 Maven（本任务禁跑）】
 
 Run:
 `cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw verify -pl ddd4j-data/ddd4j-data-cqrs,ddd4j-data/ddd4j-data-cqrs-spring,ddd4j-data/ddd4j-data-cqrs-quarkus,ddd4j-data/ddd4j-data-cqrs-micronaut,ddd4j-data/ddd4j-data-cqrs-helidon,ddd4j-data/ddd4j-data-cqrs-javalin,ddd4j-data/ddd4j-data-cqrs-vertx,ddd4j-data/ddd4j-data-cqrs-dropwizard`
 
 Expected: BUILD SUCCESS（8 套适配器全部通过）
 
-- [ ] **Step 2: 推送**
+- [ ] **Step 2: 推送**【外部阻塞: 需推送远端 git push（本任务只读）】
 
 ```bash
 cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
@@ -3556,7 +3556,7 @@ git push origin feature/2.0.x
 - Modify: `ddd4j/ddd4j-data/pom.xml`
 - Modify: `ddd4j/pom.xml`
 
-- [ ] **Step 1: 加模块声明 + pom.xml（无运行时依赖）**
+- [x] **Step 1: 加模块声明 + pom.xml（无运行时依赖）**（证据: ddd4j-data/pom.xml:51 + ddd4j-data/ddd4j-data-projection/pom.xml）
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -3588,7 +3588,7 @@ git push origin feature/2.0.x
 </project>
 ```
 
-- [ ] **Step 2: 验证 + 提交**
+- [ ] **Step 2: 验证 + 提交**【外部阻塞: 需执行 Maven（本任务禁跑）】
 
 ```bash
 cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
@@ -3604,7 +3604,7 @@ git commit -m "feat(data): 建 ddd4j-data-projection SPI 模块骨架"
 
 - Create: `ddd4j/ddd4j-data/ddd4j-data-projection/src/main/java/io/ddd4j/data/projection/ProjectionHandler.java`
 
-- [ ] **Step 1: 写 ProjectionHandler**
+- [x] **Step 1: 写 ProjectionHandler**（证据: ddd4j-data/ddd4j-data-projection/src/main/java/io/ddd4j/data/projection/ProjectionHandler.java）
 
 Write `ProjectionHandler.java`：
 
@@ -3638,7 +3638,7 @@ public interface ProjectionHandler {
 }
 ```
 
-- [ ] **Step 2: 验证 + 提交**
+- [ ] **Step 2: 验证 + 提交**【外部阻塞: 需执行 Maven（本任务禁跑）】
 
 ```bash
 cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
@@ -3662,7 +3662,7 @@ git commit -m "feat(data): ProjectionHandler SPI"
 
 每个 Task 工作量约 1-2 天。
 
-- [ ] **每个 Task**：建 pom + 实体 + Repository + JpaProjectionPositionRepository 实现 + 集成测试
+- [ ] **每个 Task**：建 pom + 实体 + Repository + JpaProjectionPositionRepository 实现 + 集成测试【存疑】
 
 ```bash
 cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
@@ -3692,7 +3692,7 @@ git commit -m "feat(data): ProjectionPosition 持久化（JPA/Panache/JDBI/R2DBC
 
 每个 Task 工作量约 1-2 天。
 
-- [ ] **每个 Task**：建 pom + ViewScheduler 实现 + 集成测试
+- [ ] **每个 Task**：建 pom + ViewScheduler 实现 + 集成测试【存疑】
 
 ```bash
 cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
@@ -3704,14 +3704,14 @@ git commit -m "feat(data): ProjectionScheduler 7 套运行时调度器"
 
 ### Task 7.14：阶段 7 全量验证
 
-- [ ] **Step 1: 跑 4 持久化 + 7 调度全量 verify**
+- [ ] **Step 1: 跑 4 持久化 + 7 调度全量 verify**【外部阻塞: 需执行 Maven（本任务禁跑）】
 
 Run:
 `cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw verify -pl ddd4j-data/ddd4j-data-projection,ddd4j-data/ddd4j-data-projection-jpa,ddd4j-data/ddd4j-data-projection-panache,ddd4j-data/ddd4j-data-projection-jdbi,ddd4j-data/ddd4j-data-projection-r2dbc,ddd4j-data/ddd4j-data-projection-spring,ddd4j-data/ddd4j-data-projection-quarkus,ddd4j-data/ddd4j-data-projection-micronaut,ddd4j-data/ddd4j-data-projection-helidon,ddd4j-data/ddd4j-data-projection-javalin,ddd4j-data/ddd4j-data-projection-vertx,ddd4j-data/ddd4j-data-projection-dropwizard`
 
 Expected: BUILD SUCCESS（11 个模块全过）
 
-- [ ] **Step 2: 推送**
+- [ ] **Step 2: 推送**【外部阻塞: 需推送远端 git push（本任务只读）】
 
 ```bash
 cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
@@ -3731,7 +3731,7 @@ git push origin feature/2.0.x
 - Create: `ddd4j/ddd4j-samples/ddd4j-sample-quarkus-cqrs/pom.xml`
 - Create: `ddd4j/ddd4j-samples/ddd4j-sample-javalin-cqrs/pom.xml`
 
-- [ ] **Step 1: 改造 ddd4j-sample-spring-cqrs 使用 ddd4j-data-event-store-jpa + ddd4j-data-cqrs-spring**
+- [ ] **Step 1: 改造 ddd4j-sample-spring-cqrs 使用 ddd4j-data-event-store-jpa + ddd4j-data-cqrs-spring**【待办】
 
 按已有 `ddd4j-sample-order-application` 模板改造：
 
@@ -3740,11 +3740,11 @@ git push origin feature/2.0.x
 - 用 `@CommandHandler` 注解注册 Command
 - 用 `JpaEventStore` 替代手动 event 持久化
 
-- [ ] **Step 2: 同样改造 ddd4j-sample-quarkus-cqrs（用 panache + quarkus 适配器））**
+- [ ] **Step 2: 同样改造 ddd4j-sample-quarkus-cqrs（用 panache + quarkus 适配器））**【待办】
 
-- [ ] **Step 3: 同样改造 ddd4j-sample-javalin-cqrs（用 jdbi + javalin 适配器））**
+- [ ] **Step 3: 同样改造 ddd4j-sample-javalin-cqrs（用 jdbi + javalin 适配器））**【待办】
 
-- [ ] **Step 4: 验证 + 提交**
+- [ ] **Step 4: 验证 + 提交**【待办】
 
 ```bash
 cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
@@ -3756,17 +3756,17 @@ git commit -m "feat(samples): 3 个核心 CQRS 示例（Spring/Quarkus/Javalin�
 
 ### Task 8.2：其他 5 个运行时示例补齐
 
-- [ ] **Step 1: ddd4j-sample-webflux-cqrs（Spring WebFlux + R2DBC））**
+- [ ] **Step 1: ddd4j-sample-webflux-cqrs（Spring WebFlux + R2DBC））**【待办】
 
-- [ ] **Step 2: ddd4j-sample-micronaut-cqrs（Micronaut + JPA））**
+- [x] **Step 2: ddd4j-sample-micronaut-cqrs（Micronaut + JPA））**（证据: ddd4j-samples/ddd4j-sample-micronaut-cqrs/）
 
-- [ ] **Step 3: ddd4j-sample-helidon-cqrs（Helidon + JPA））**
+- [x] **Step 3: ddd4j-sample-helidon-cqrs（Helidon + JPA））**（证据: ddd4j-samples/ddd4j-sample-helidon-cqrs/）
 
-- [ ] **Step 4: ddd4j-sample-vertx-cqrs（Vert.x + JDBI））**
+- [x] **Step 4: ddd4j-sample-vertx-cqrs（Vert.x + JDBI））**（证据: ddd4j-samples/ddd4j-sample-vertx-cqrs/）
 
-- [ ] **Step 5: ddd4j-sample-dropwizard-cqrs（Dropwizard + JPA））**
+- [x] **Step 5: ddd4j-sample-dropwizard-cqrs（Dropwizard + JPA））**（证据: ddd4j-samples/ddd4j-sample-dropwizard-cqrs/）
 
-- [ ] **Step 6: 验证 + 提交**
+- [ ] **Step 6: 验证 + 提交**【待办】
 
 ```bash
 cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
@@ -3778,7 +3778,7 @@ git commit -m "feat(samples): 补齐剩余 5 个运行时 CQRS 示例"
 
 ### Task 8.3：阶段 8 全量验证
 
-- [ ] **Step 1: 跑 8 套 sample 全量 verify**
+- [ ] **Step 1: 跑 8 套 sample 全量 verify**【外部阻塞: 需执行 Maven（本任务禁跑）】
 
 Run:
 `cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw verify -pl ddd4j-samples/ddd4j-sample-spring-cqrs,ddd4j-samples/ddd4j-sample-quarkus-cqrs,ddd4j-samples/ddd4j-sample-javalin-cqrs,ddd4j-samples/ddd4j-sample-webflux-cqrs,ddd4j-samples/ddd4j-sample-micronaut-cqrs,ddd4j-samples/ddd4j-sample-helidon-cqrs,ddd4j-samples/ddd4j-sample-vertx-cqrs,ddd4j-samples/ddd4j-sample-dropwizard-cqrs`
@@ -3795,7 +3795,7 @@ Expected: BUILD SUCCESS（8 个 sample 全过）
 
 - Modify: `ddd4j/pom.xml`（加 license-maven-plugin）
 
-- [ ] **Step 1: 加 license-maven-plugin 配置**
+- [ ] **Step 1: 加 license-maven-plugin 配置**【存疑】
 
 在 `ddd4j/pom.xml` 的 `<build><plugins>` 段加：
 
@@ -3820,7 +3820,7 @@ Expected: BUILD SUCCESS（8 个 sample 全过）
 </plugin>
 ```
 
-- [ ] **Step 2: 创建 license header 文件**
+- [ ] **Step 2: 创建 license header 文件**【存疑】
 
 Write `config/apache-2.0-header.txt`：
 
@@ -3839,13 +3839,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ```
 
-- [ ] **Step 3: 跑验证**
+- [ ] **Step 3: 跑验证**【外部阻塞: 需执行 Maven（本任务禁跑）】
 
 Run: `cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw license:check`
 
 Expected: 所有自研 .java 文件头符合 Apache-2.0
 
-- [ ] **Step 4: 提交**
+- [x] **Step 4: 提交**（证据: ab9437364）
 
 ```bash
 cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
@@ -3857,20 +3857,20 @@ git commit -m "build: license-maven-plugin 验证 Apache-2.0 header"
 
 ### Task 9.2：全工程 grep 验证零 fuin 引用
 
-- [ ] **Step 1: 验证 ddd4j 源码**
+- [x] **Step 1: 验证 ddd4j 源码**（证据: 全仓 *.java grep org.fuin=0）
 
 Run:
 `grep -rn "org\.fuin\|fuin-ddd4j\|fuin-cqrs4j" /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j --include="*.java"`
 
 Expected: 0 个匹配
 
-- [ ] **Step 2: 验证 ddd4j POM**
+- [ ] **Step 2: 验证 ddd4j POM**【待办】
 
 Run: `grep -n "fuin" /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-dependencies/pom.xml`
 
 Expected: 0 个匹配
 
-- [ ] **Step 3: 跨 8 运行时 grep**
+- [x] **Step 3: 跨 8 运行时 grep**（证据: 各运行时与样本模块 grep org.fuin=0）
 
 ```bash
 for module in ddd4j-data/ddd4j-data-event-store-jpa \
@@ -3894,13 +3894,13 @@ Expected: 全部输出 `clean`
 
 ### Task 9.3：全工程 verify（所有模块）
 
-- [ ] **Step 1: 全工程 verify**
+- [ ] **Step 1: 全工程 verify**【外部阻塞: 需执行 Maven（本任务禁跑）】
 
 Run: `cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw verify`
 
 Expected: BUILD SUCCESS（所有模块，包括 8 套 cqrs + 4 套 event-store + 8 套 projection + 8 个 sample）
 
-- [ ] **Step 2: 推送**
+- [ ] **Step 2: 推送**【外部阻塞: 需推送远端 git push（本任务只读）】
 
 ```bash
 cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j

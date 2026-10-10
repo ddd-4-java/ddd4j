@@ -26,7 +26,7 @@ import java.util.function.Supplier;
 /**
  * 缓存操作的 OTel Span 辅助工具。
  *
- * <p>为 {@link io.ddd4j.cache.CacheKit} 提供零侵入式 span 包装。
+ * <p>为 {@code io.ddd4j.cache.CacheKit} 提供零侵入式 span 包装。
  * 无 OTel 时所有方法为 noop，零开销。
  *
  * <h3>使用示例</h3>
@@ -46,9 +46,10 @@ public final class CacheSpan {
     /**
      * 包装缓存读操作。
      *
-     * @param biz       业务标识（如 "userCache"）
-     * @param backend   后端标识（如 "redis"、"caffeine"）
-     * @param supplier  缓存读操作
+     * @param <T> 数据元素类型
+     * @param biz      业务标识（如 "userCache"）
+     * @param backend  后端标识（如 "redis"、"caffeine"）
+     * @param supplier 缓存读操作
      * @param missCheck 未命中检查（true 表示 cache miss）
      * @return supplier 的返回值
      */

@@ -61,7 +61,7 @@
             <artifactId>shiro-lang</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.github.hiwepy</groupId>
+            <groupId>io.github.easy4j</groupId>
             <artifactId>shiro-biz</artifactId>
         </dependency>
         <dependency>

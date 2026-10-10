@@ -147,8 +147,8 @@ Caffeine、Guava、Hutool、Jedis、Lettuce、Redisson、Memcached、JetCache，
 - `ddd4j-extension-monitor`
 
 Jackson、PF4J、Jakarta Validation 的通用增强已迁移为
-`io.github.hiwepy:jackson-extension`、`io.github.hiwepy:pf4j-extension` 和
-`io.github.hiwepy:validation-api-extension`，ddd4j 仅保留消费关系。
+`io.github.redacted-legacy-family:jackson-extension`、`io.github.redacted-legacy-family:pf4j-extension` 和
+`io.github.redacted-legacy-family:validation-api-extension`，ddd4j 仅保留消费关系。
 
 `ddd4j-samples` 是理解主线设计的最佳业务入口，覆盖：
 

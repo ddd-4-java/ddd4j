@@ -80,10 +80,7 @@ git commit -m "test(core): ArchUnit 强化 8 运行时零依赖守护"
 ### A. SLF4J 迁移义务①（ADR-0002 前置）——core 主源码字节码级清零 org.slf4j
 
 已核实 6 处引用：
-
-1. `constant/Constants.java:9-10,53,57,61` — 3 个 Marker 常量 **全仓 0 使用**。改为
-   `public static final String ACCESS_MARKER = "io.hiwepy.access"`（AUTHZ_MARKER/BIZ_MARKER 同理），javadoc 注明
-   Marker→String 属 2.0.x 破坏性变更（ADR-0002 迁移义务①），删 2 个 org.slf4j import。
+1. `constant/Constants.java:9-10,53,57,61` — 3 个 Marker 常量**全仓 0 使用**。改为 `public static final String ACCESS_MARKER = "io.redacted-legacy-family.access"`（AUTHZ_MARKER/BIZ_MARKER 同理），javadoc 注明 Marker→String 属 2.0.x 破坏性变更（ADR-0002 迁移义务①），删 2 个 org.slf4j import。
 2. `ddd/event/DomainEvent.java:12,47` — @Slf4j 但 `log.` **零使用**（死注解）：删注解+import。
 3. `cqrs/query/Query.java:14,67` — 同上死注解：删。
 4. `context/ThreadContext.java:7,20` — log **有真实使用**（:73-74/:97-98/:115 等多段 trace 日志，纯诊断）。按 ADR-0002「core

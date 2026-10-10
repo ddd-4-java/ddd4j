@@ -20,9 +20,9 @@ import lombok.Value;
 /**
  * 创建订单命令（CQRS 写侧）。
  *
- * @param orderNo   订单编号
- * @param buyerId   买家 ID
- * @param buyerName 买家名称
+ * <p>{@code orderNo} — 订单编号
+ * <p>{@code buyerId} — 买家 ID
+ * <p>{@code buyerName} — 买家名称
  */
 @Value
 public class CreateOrderCommand implements Command {

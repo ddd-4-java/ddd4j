@@ -59,6 +59,7 @@ public class AuthenticationController {
 
     /**
      * 注册 {@code /auth/*} 路由。
+     * @return 返回的 EndpointGroup 结果
      */
     public EndpointGroup routes() {
         return () -> {

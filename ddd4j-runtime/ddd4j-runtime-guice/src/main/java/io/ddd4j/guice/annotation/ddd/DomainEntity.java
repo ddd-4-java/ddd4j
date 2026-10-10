@@ -35,6 +35,7 @@ public @interface DomainEntity {
 
     /**
      * 是否是聚合根
+     * @return 条件成立（或操作成功）返回 true，否则返回 false
      */
     boolean aggregateRoot() default false;
 }

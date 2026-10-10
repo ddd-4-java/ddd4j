@@ -14,10 +14,10 @@
  */
 package io.ddd4j.mq.listener;
 
-import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.annotation.MQEventListener;
 import io.ddd4j.mq.event.MQEvent;
+import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.Builder;
 import lombok.Data;
@@ -80,16 +80,35 @@ public class MQListener {
      */
     private boolean required = true;
 
-    /**
-     * 保留历史八参数构造器。
+    public static class MQListenerBuilder {
+        private boolean required = true;
+    }
+
+    /** 保留历史八参数构造器。
+    * @param bean Bean 实例
+    * @param method 方法
+    * @param group 分组
+    * @param namespace 命名空间
+    * @param topic 消息主题
+    * @param tags 标签集合
+    * @param supports 是否支持的开关
+    * @param separator 分隔符
      */
     public MQListener(Object bean, Method method, String group, String namespace, String topic,
                       String tags, List<String> supports, String separator) {
         this(bean, method, group, namespace, topic, tags, supports, separator, true);
     }
 
-    /**
-     * 包含启动必要性的完整构造器。
+    /** 包含启动必要性的完整构造器。
+    * @param bean Bean 实例
+    * @param method 方法
+    * @param group 分组
+    * @param namespace 命名空间
+    * @param topic 消息主题
+    * @param tags 标签集合
+    * @param supports 是否支持的开关
+    * @param separator 分隔符
+    * @param required 是否必需
      */
     @Builder
     public MQListener(Object bean, Method method, String group, String namespace, String topic,
@@ -107,6 +126,10 @@ public class MQListener {
 
     /**
      * 从注解与方法元数据构建监听器定义。
+     * @param bean Bean 实例
+     * @param method 方法
+     * @param ann 参数 ann
+     * @return 对应的MQListener
      */
     public static MQListener of(Object bean, Method method, MQEventListener ann) {
         return MQListener.builder()
@@ -124,6 +147,7 @@ public class MQListener {
 
     /**
      * 返回监听方法首个参数类型（约定为 {@link MQEvent} 子类），用于反序列化。
+     * @return 对应的类型对象
      */
     public Class<? extends MQEvent> payloadType() {
         if (Objects.isNull(method) || method.getParameterCount() == 0) {
@@ -135,6 +159,7 @@ public class MQListener {
 
     /**
      * 返回策略匹配支持列表。
+     * @return 对应的列表数据
      */
     public List<String> supports() {
         return Objects.isNull(supports) ? java.util.Collections.emptyList() : supports;
@@ -159,6 +184,7 @@ public class MQListener {
      * <p>tag 取 {@code tags} 表达式中第一个正向 include（如 {@code "paid || shipped"} → {@code "paid"}），
      * 与 event 端单 tag 对齐。tag 为 null/空/通配 {@code "*"} 时不追加第三段。
      *
+     * @return 获取的字符串内容
      * @param separator 拼接符（由 {@link io.ddd4j.mq.MQClient#defaultConcat()} 传入，确保 listener 与 event 同规则）
      */
     public String getRouteExpression(String separator) {
@@ -174,10 +200,6 @@ public class MQListener {
             return base;
         }
         return base + sep + firstTag;
-    }
-
-    public static class MQListenerBuilder {
-        private boolean required = true;
     }
 
 }

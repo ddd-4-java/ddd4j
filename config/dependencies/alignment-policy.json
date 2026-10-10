@@ -324,7 +324,7 @@
         "reason": "Spring Core 7.0.8 发布 POM 直接使用 commons-logging 1.3.5；不再发布 spring-jcl 7.x"
       }
     },
-    "io.github.hiwepy:zxing-extension": {
+    "io.github.redacted-legacy-family:zxing-extension": {
       "17": {
         "coordinates": [
           "io.github.easy4j:zxing-extension"
@@ -338,7 +338,7 @@
         "reason": "39个公开类/API描述符相同；JDK17/21中英文QR编码解码一致；选用实际发布且兼容两线的2.0.x产物"
       }
     },
-    "com.github.hiwepy:cxf-rt-javassist": {
+    "com.github.redacted-legacy-family:cxf-rt-javassist": {
       "17": {
         "coordinates": [
           "io.github.easy4j:cxf-rt-javassist"
@@ -352,7 +352,7 @@
         "reason": "删除重复旧坐标，仅保留当前 easy4j 组件"
       }
     },
-    "com.github.hiwepy:dozer-extra-converters": {
+    "com.github.redacted-legacy-family:dozer-extra-converters": {
       "17": {
         "coordinates": [
           "io.github.easy4j:dozer-extra-converters"
@@ -366,7 +366,7 @@
         "reason": "删除重复旧坐标，仅保留当前 easy4j 组件"
       }
     },
-    "com.github.hiwepy:jwt-issuer-api": {
+    "com.github.redacted-legacy-family:jwt-issuer-api": {
       "17": {
         "coordinates": [
           "io.github.easy4j:jwt-issuer"
@@ -380,7 +380,7 @@
         "reason": "旧拆分模块由当前 easy4j 聚合组件替代"
       }
     },
-    "com.github.hiwepy:jwt-issuer-with-jjwt": {
+    "com.github.redacted-legacy-family:jwt-issuer-with-jjwt": {
       "17": {
         "coordinates": [
           "io.github.easy4j:jwt-issuer"
@@ -394,7 +394,7 @@
         "reason": "旧拆分模块由当前 easy4j 聚合组件替代"
       }
     },
-    "com.github.hiwepy:jwt-issuer-with-nimbus": {
+    "com.github.redacted-legacy-family:jwt-issuer-with-nimbus": {
       "17": {
         "coordinates": [
           "io.github.easy4j:jwt-issuer"
@@ -408,7 +408,7 @@
         "reason": "旧拆分模块由当前 easy4j 聚合组件替代"
       }
     },
-    "com.github.hiwepy:shiro-j2cache": {
+    "com.github.redacted-legacy-family:shiro-j2cache": {
       "17": {
         "coordinates": [
           "io.github.easy4j:shiro-j2cache"
@@ -422,7 +422,7 @@
         "reason": "删除重复旧坐标，仅保留当前 easy4j 组件"
       }
     },
-    "com.github.hiwepy:spring-bytebuddy": {
+    "com.github.redacted-legacy-family:spring-bytebuddy": {
       "17": {
         "coordinates": [
           "io.github.easy4j:spring-bytebuddy"
@@ -436,7 +436,7 @@
         "reason": "删除重复旧坐标，仅保留当前 easy4j 组件"
       }
     },
-    "com.github.hiwepy:spring-javassist": {
+    "com.github.redacted-legacy-family:spring-javassist": {
       "17": {
         "coordinates": [
           "io.github.easy4j:spring-javassist"
@@ -469,11 +469,11 @@
       "17": "Spring Boot starter 由 ddd4j-boot 版本线管理，ddd4j 仅保留 MyBatis/MyBatis-Spring",
       "21": "Spring Boot starter 由 ddd4j-boot 版本线管理，ddd4j 仅保留 MyBatis/MyBatis-Spring"
     },
-    "com.github.hiwepy:mybatis-plus-enhance": {
+    "com.github.redacted-legacy-family:mybatis-plus-enhance": {
       "17": "旧厂商扩展不属于 ddd4j 通用依赖",
       "21": "旧厂商扩展不属于 ddd4j 通用依赖"
     },
-    "com.github.hiwepy:ip2region-spring-boot-starter": {
+    "com.github.redacted-legacy-family:ip2region-spring-boot-starter": {
       "17": "Spring Boot starter 不属于 ddd4j 通用依赖",
       "21": "Spring Boot starter 不属于 ddd4j 通用依赖"
     }
@@ -521,7 +521,7 @@
         "requires_jdk": 11
       }
     },
-    "com.github.hiwepy:pac4j-oauth-ext": {
+    "com.github.redacted-legacy-family:pac4j-oauth-ext": {
       "8": {
         "reason": "发布 JAR 的基础字节码超过 JDK 8；不能由提高构建 JVM 绕过本版本线约束",
         "requires_jdk": 17
@@ -551,7 +551,7 @@
         "requires_jdk": 17
       }
     },
-    "com.github.hiwepy:spring-bytebuddy": {
+    "com.github.redacted-legacy-family:spring-bytebuddy": {
       "8": {
         "reason": "发布 JAR 的基础字节码超过 JDK 8；不能由提高构建 JVM 绕过本版本线约束",
         "requires_jdk": 17
@@ -563,7 +563,7 @@
         "requires_jdk": 17
       }
     },
-    "com.github.hiwepy:ip2region-spring-boot-starter": {
+    "com.github.redacted-legacy-family:ip2region-spring-boot-starter": {
       "8": {
         "reason": "发布 JAR 的基础字节码超过 JDK 8；不能由提高构建 JVM 绕过本版本线约束",
         "requires_jdk": 17
@@ -597,7 +597,7 @@
         "requires_jdk": 25
       }
     },
-    "com.github.hiwepy:redistpl-plus-spring-boot-starter": {
+    "com.github.redacted-legacy-family:redistpl-plus-spring-boot-starter": {
       "17": {
         "reason": "已发布 starter 绑定 Spring Boot 2.7 / javax.servlet；现有新 SDK 缺少等价自动配置且仍有 javax 引用，需发布对应 Spring 6/7 适配产物",
         "status": "manual-migration"
@@ -607,7 +607,7 @@
         "status": "manual-migration"
       }
     },
-    "com.github.hiwepy:security-biz-spring-boot-starter": {
+    "com.github.redacted-legacy-family:security-biz-spring-boot-starter": {
       "17": {
         "reason": "已发布 starter 绑定 Spring Boot 2.7 / javax.servlet；现有新 SDK 缺少等价自动配置且仍有 javax 引用，需发布对应 Spring 6/7 适配产物",
         "status": "manual-migration"
@@ -617,7 +617,7 @@
         "status": "manual-migration"
       }
     },
-    "com.github.hiwepy:security-jwt-spring-boot-starter": {
+    "com.github.redacted-legacy-family:security-jwt-spring-boot-starter": {
       "17": {
         "reason": "已发布 starter 绑定 Spring Boot 2.7 / javax.servlet；现有新 SDK 缺少等价自动配置且仍有 javax 引用，需发布对应 Spring 6/7 适配产物",
         "status": "manual-migration"
@@ -748,27 +748,27 @@
     "com.github.dozermapper:dozer-core": 8,
     "com.github.dozermapper:dozer-proto3": 8,
     "com.github.dozermapper:dozer-spring4": 8,
-    "com.github.hiwepy:cxf-rt-javassist": 8,
-    "com.github.hiwepy:dozer-extra-converters": 8,
-    "com.github.hiwepy:druid-metrics-prometheus": 8,
-    "com.github.hiwepy:httpconn": 8,
-    "com.github.hiwepy:httputils": 8,
-    "com.github.hiwepy:ip2region-spring-boot-starter": 8,
-    "com.github.hiwepy:javassist-plus": 8,
-    "com.github.hiwepy:jwt-issuer-api": 8,
-    "com.github.hiwepy:jwt-issuer-with-jjwt": 8,
-    "com.github.hiwepy:jwt-issuer-with-nimbus": 8,
-    "com.github.hiwepy:mybatis-plus-enhance": 8,
-    "com.github.hiwepy:pac4j-oauth-ext": 8,
-    "com.github.hiwepy:redistpl-plus-spring-boot-starter": 8,
-    "com.github.hiwepy:security-biz-spring-boot-starter": 8,
-    "com.github.hiwepy:security-jwt-spring-boot-starter": 8,
-    "com.github.hiwepy:shiro-biz": 8,
-    "com.github.hiwepy:shiro-j2cache": 8,
-    "com.github.hiwepy:spring-biz": 8,
-    "com.github.hiwepy:spring-bytebuddy": 8,
-    "com.github.hiwepy:spring-javassist": 8,
-    "com.github.hiwepy:undertow-metrics-prometheus": 8,
+    "com.github.redacted-legacy-family:cxf-rt-javassist": 8,
+    "com.github.redacted-legacy-family:dozer-extra-converters": 8,
+    "com.github.redacted-legacy-family:druid-metrics-prometheus": 8,
+    "com.github.redacted-legacy-family:httpconn": 8,
+    "com.github.redacted-legacy-family:httputils": 8,
+    "com.github.redacted-legacy-family:ip2region-spring-boot-starter": 8,
+    "com.github.redacted-legacy-family:javassist-plus": 8,
+    "com.github.redacted-legacy-family:jwt-issuer-api": 8,
+    "com.github.redacted-legacy-family:jwt-issuer-with-jjwt": 8,
+    "com.github.redacted-legacy-family:jwt-issuer-with-nimbus": 8,
+    "com.github.redacted-legacy-family:mybatis-plus-enhance": 8,
+    "com.github.redacted-legacy-family:pac4j-oauth-ext": 8,
+    "com.github.redacted-legacy-family:redistpl-plus-spring-boot-starter": 8,
+    "com.github.redacted-legacy-family:security-biz-spring-boot-starter": 8,
+    "com.github.redacted-legacy-family:security-jwt-spring-boot-starter": 8,
+    "com.github.redacted-legacy-family:shiro-biz": 8,
+    "com.github.redacted-legacy-family:shiro-j2cache": 8,
+    "com.github.redacted-legacy-family:spring-biz": 8,
+    "com.github.redacted-legacy-family:spring-bytebuddy": 8,
+    "com.github.redacted-legacy-family:spring-javassist": 8,
+    "com.github.redacted-legacy-family:undertow-metrics-prometheus": 8,
     "com.github.jai-imageio:jai-imageio-core": 8,
     "com.github.java-json-tools:json-path-assert": 17,
     "com.github.java-json-tools:json-schema-validator": 8,
@@ -1088,7 +1088,7 @@
     "io.github.easy4j:wkhtmltopdf-invoker": 17,
     "io.github.easy4j:xxljob-extension": 17,
     "io.github.easy4j:zxing-extension": 17,
-    "io.github.hiwepy:zxing-extension": 17,
+    "io.github.redacted-legacy-family:zxing-extension": 17,
     "io.github.jopenlibs:vault-java-driver": 17,
     "io.github.openfeign:feign-core": 8,
     "io.github.openfeign:feign-form": 8,
@@ -2159,7 +2159,7 @@
     "org.apache.cxf:cxf-rt-rs-security-oauth2:jar:": 8,
     "org.apache.cxf:cxf-rt-rs-security-sso-oidc:jar:": 8,
     "org.apache.cxf:cxf-rt-rs-security-sso-saml:jar:": 8,
-    "com.github.hiwepy:cxf-rt-javassist:jar:": 8,
+    "com.github.redacted-legacy-family:cxf-rt-javassist:jar:": 8,
     "com.ibm.db2:jcc:jar:": 8,
     "org.clojars.xumh:db-meta:jar:": 8,
     "org.apache.derby:derby:jar:": 8,
@@ -2186,9 +2186,9 @@
     "com.github.dozermapper:dozer-core:jar:": 8,
     "com.github.dozermapper:dozer-proto3:jar:": 8,
     "com.github.dozermapper:dozer-spring4:jar:": 8,
-    "com.github.hiwepy:dozer-extra-converters:jar:": 8,
+    "com.github.redacted-legacy-family:dozer-extra-converters:jar:": 8,
     "com.alibaba:druid:jar:": 8,
-    "com.github.hiwepy:druid-metrics-prometheus:jar:": 8,
+    "com.github.redacted-legacy-family:druid-metrics-prometheus:jar:": 8,
     "com.aliyun:alibaba-dingtalk-service-sdk:jar:": 8,
     "com.aliyun:dingtalk:jar:": 8,
     "com.lmax:disruptor:jar:": 8,
@@ -2264,7 +2264,7 @@
     "org.apache.httpcomponents:httpcore-ab:jar:": 8,
     "org.apache.httpcomponents:httpcore-osgi:jar:": 8,
     "org.apache.httpcomponents:httpcomponents-core:jar:": 8,
-    "com.github.hiwepy:httputils:jar:": 8,
+    "com.github.redacted-legacy-family:httputils:jar:": 8,
     "org.apache.hadoop:hadoop-client:jar:": 8,
     "org.apache.hadoop:hadoop-yarn-client:jar:": 8,
     "org.apache.hadoop:hadoop-mapreduce-client-jobclient:jar:": 8,
@@ -2276,7 +2276,7 @@
     "org.apache.hbase:hbase-protocol:jar:": 8,
     "org.hdrhistogram:HdrHistogram:jar:": 8,
     "org.htmlparser:htmlparser:jar:": 8,
-    "com.github.hiwepy:httpconn:jar:": 8,
+    "com.github.redacted-legacy-family:httpconn:jar:": 8,
     "com.h2database:h2:jar:": 8,
     "jakarta.persistence:jakarta.persistence-api:jar:": 8,
     "jakarta.servlet:jakarta.servlet-api:jar:": 8,
@@ -2348,7 +2348,7 @@
     "javax.el:javax.el-api:jar:": 8,
     "javax.jws:javax.jws-api:jar:": 8,
     "org.javassist:javassist:jar:": 8,
-    "com.github.hiwepy:javassist-plus:jar:": 8,
+    "com.github.redacted-legacy-family:javassist-plus:jar:": 8,
     "com.fasterxml.uuid:java-uuid-generator:jar:": 8,
     "com.github.axet:java-unrar:jar:": 8,
     "org.java-websocket:Java-WebSocket:jar:": 8,
@@ -2418,9 +2418,9 @@
     "me.zhyd.oauth:JustAuth:jar:": 8,
     "net.sourceforge.jexcelapi:jxl:jar:": 8,
     "net.sourceforge.jtds:jtds:jar:": 8,
-    "com.github.hiwepy:jwt-issuer-api:jar:": 8,
-    "com.github.hiwepy:jwt-issuer-with-jjwt:jar:": 8,
-    "com.github.hiwepy:jwt-issuer-with-nimbus:jar:": 8,
+    "com.github.redacted-legacy-family:jwt-issuer-api:jar:": 8,
+    "com.github.redacted-legacy-family:jwt-issuer-with-jjwt:jar:": 8,
+    "com.github.redacted-legacy-family:jwt-issuer-with-nimbus:jar:": 8,
     "com.github.axet:kaptcha:jar:": 8,
     "org.apache.kafka:kafka-clients:jar:": 8,
     "com.github.xiaoymin:knife4j-core:jar:": 8,
@@ -2517,7 +2517,7 @@
     "com.baomidou:mybatis-plus-generator:jar:": 8,
     "org.mybatis.spring.boot:mybatis-spring-boot-starter:jar:": 8,
     "com.baomidou:mybatis-plus-spring-boot3-starter:jar:": 8,
-    "com.github.hiwepy:mybatis-plus-enhance:jar:": 8,
+    "com.github.redacted-legacy-family:mybatis-plus-enhance:jar:": 8,
     "com.github.jeffreyning:mybatisplus-plus:jar:": 8,
     "com.baomidou:mybatis-mate-starter:jar:": 8,
     "com.baomidou:mybatis-mate-annotation:jar:": 8,
@@ -2604,7 +2604,7 @@
     "org.pac4j:pac4j-cas:jar:": 8,
     "org.pac4j:pac4j-http:jar:": 8,
     "org.pac4j:pac4j-oauth:jar:": 8,
-    "com.github.hiwepy:pac4j-oauth-ext:jar:": 8,
+    "com.github.redacted-legacy-family:pac4j-oauth-ext:jar:": 8,
     "org.pac4j:pac4j-openid:jar:": 8,
     "org.pac4j:pac4j-oidc:jar:": 8,
     "org.pac4j:pac4j-saml:jar:": 8,
@@ -2758,13 +2758,13 @@
     "org.apache.shiro:shiro-cache:jar:": 8,
     "org.apache.shiro:shiro-quartz:jar:": 8,
     "org.apache.shiro:shiro-lang:jar:": 8,
-    "com.github.hiwepy:shiro-biz:jar:": 8,
+    "com.github.redacted-legacy-family:shiro-biz:jar:": 8,
     "org.apache.shiro:shiro-config-core:jar:": 8,
     "org.apache.shiro:shiro-crypto-core:jar:": 8,
     "org.apache.shiro:shiro-crypto-hash:jar:": 8,
     "net.mingsoft:shiro-freemarker-tags:jar:": 8,
     "org.apache.shiro:shiro-hazelcast:jar:": 8,
-    "com.github.hiwepy:shiro-j2cache:jar:": 8,
+    "com.github.redacted-legacy-family:shiro-j2cache:jar:": 8,
     "org.crazycake:shiro-redis:jar:": 8,
     "org.iherus.shiro:shiro-redis:jar:": 8,
     "com.github.streamone:shiro-redisson:jar:": 8,
@@ -2775,9 +2775,9 @@
     "org.snmp4j:snmp4j-agent-db:jar:": 8,
     "io.socket:socket.io-client:jar:": 8,
     "javax.xml.stream:stax-api:jar:": 8,
-    "com.github.hiwepy:spring-biz:jar:": 8,
-    "com.github.hiwepy:spring-bytebuddy:jar:": 8,
-    "com.github.hiwepy:spring-javassist:jar:": 8,
+    "com.github.redacted-legacy-family:spring-biz:jar:": 8,
+    "com.github.redacted-legacy-family:spring-bytebuddy:jar:": 8,
+    "com.github.redacted-legacy-family:spring-javassist:jar:": 8,
     "org.springframework:spring-webflux:jar:": 8,
     "org.springframework:spring-webmvc:jar:": 8,
     "org.springframework.amqp:spring-amqp:jar:": 8,
@@ -2791,10 +2791,10 @@
     "org.springframework:spring-jms:jar:": 8,
     "org.springframework.kafka:spring-kafka:jar:": 8,
     "org.springframework.integration:spring-integration-mqtt:jar:": 8,
-    "com.github.hiwepy:ip2region-spring-boot-starter:jar:": 8,
-    "com.github.hiwepy:redistpl-plus-spring-boot-starter:jar:": 8,
-    "com.github.hiwepy:security-biz-spring-boot-starter:jar:": 8,
-    "com.github.hiwepy:security-jwt-spring-boot-starter:jar:": 8,
+    "com.github.redacted-legacy-family:ip2region-spring-boot-starter:jar:": 8,
+    "com.github.redacted-legacy-family:redistpl-plus-spring-boot-starter:jar:": 8,
+    "com.github.redacted-legacy-family:security-biz-spring-boot-starter:jar:": 8,
+    "com.github.redacted-legacy-family:security-jwt-spring-boot-starter:jar:": 8,
     "org.springframework.plugin:spring-plugin-core:jar:": 8,
     "org.apache.sshd:sshd-core:jar:": 8,
     "org.apache.sshd:sshd-scp:jar:": 8,
@@ -2858,7 +2858,7 @@
     "global.namespace.truelicense:truelicense-core:jar:": 8,
     "global.namespace.truelicense:truelicense-v1:jar:": 8,
     "eu.bitwalker:UserAgentUtils:jar:": 8,
-    "com.github.hiwepy:undertow-metrics-prometheus:jar:": 8,
+    "com.github.redacted-legacy-family:undertow-metrics-prometheus:jar:": 8,
     "com.konghq:unirest-java-core:jar:": 8,
     "com.konghq:unirest-modules-jackson:jar:": 8,
     "org.apache.velocity:velocity-engine-core:jar:": 8,
@@ -3265,7 +3265,7 @@
     "io.github.easy4j:xxljob-extension:jar:": 17,
     "io.github.easy4j:zxing-extension:jar:": 17,
     "com.baomidou:mybatis-plus-spring:jar:": 17,
-    "io.github.hiwepy:zxing-extension:jar:": 17,
+    "io.github.redacted-legacy-family:zxing-extension:jar:": 17,
     "io.github.easy4j:claudecode-java-sdk:jar:": 21,
     "io.github.easy4j:codex-java-sdk:jar:": 21,
     "io.github.easy4j:dreamina-java-sdk:jar:": 21,

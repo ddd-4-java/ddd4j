@@ -56,6 +56,7 @@ public final class Result<T> {
 
     /**
      * 成功结果（无数据）。
+     * @return 返回的 Result 结果
      */
     public static Result<Void> ok() {
         return new Result<>(SUCCESS, "ok", null);
@@ -63,6 +64,9 @@ public final class Result<T> {
 
     /**
      * 成功结果（带数据）。
+     * @param <T> 数据元素类型
+     * @param data 数据内容
+     * @return 返回的 {@code Result<T>} 结果
      */
     public static <T> Result<T> ok(T data) {
         return new Result<>(SUCCESS, "ok", data);
@@ -70,6 +74,9 @@ public final class Result<T> {
 
     /**
      * 失败结果。
+     * @param <T> 数据元素类型
+     * @param message 消息内容
+     * @return 返回的 {@code Result<T>} 结果
      */
     public static <T> Result<T> fail(String message) {
         return new Result<>(FAILURE, message, null);
@@ -77,6 +84,10 @@ public final class Result<T> {
 
     /**
      * 失败结果（带错误码）。
+     * @param <T> 数据元素类型
+     * @param code 编码值
+     * @param message 消息内容
+     * @return 返回的 {@code Result<T>} 结果
      */
     public static <T> Result<T> fail(int code, String message) {
         return new Result<>(code, message, null);

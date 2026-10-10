@@ -39,12 +39,14 @@ public class GlobalErrorAttributes {
     /**
      * 从 {@link ServerRequest} 读取已存储的异常。
      */
-    /**
+        /**
      * 从 {@link ServerRequest} 读取已存储的异常。
      */
 
-    /**
+/**
      * 与 Boot {@code DefaultErrorAttributes.ERROR_ATTRIBUTE} 语义一致，便于 Router 与 {@link ServerWebExchange} 共用
+     * @param request 请求对象
+     * @return 获取的Throwable
      */
 
     public Throwable getError(ServerRequest request) {
@@ -56,44 +58,53 @@ public class GlobalErrorAttributes {
     /**
      * 从 {@link ServerWebExchange} 读取已存储的异常。
      */
-    /**
+        /**
      * 从 {@link ServerWebExchange} 读取已存储的异常。
+     * @param exchange 交换对象
+     * @return 获取的Throwable
      */
 
-    public Throwable getError(ServerWebExchange exchange) {
+public Throwable getError(ServerWebExchange exchange) {
         return exchange.getAttribute(ERROR_ATTRIBUTE);
     }
 
     /**
      * 将异常写入 exchange，供后续错误处理链读取。
      */
-    /**
+        /**
      * 将异常写入 exchange，供后续错误处理链读取。
+     * @param exchange 交换对象
+     * @param error 错误对象
      */
 
-    public void storeError(ServerWebExchange exchange, Throwable error) {
+public void storeError(ServerWebExchange exchange, Throwable error) {
         exchange.getAttributes().put(ERROR_ATTRIBUTE, error);
     }
 
     /**
      * 按 Router 风格请求组装错误 JSON 字段（兼容历史 API）。
      */
-    /**
+        /**
      * 按 Router 风格请求组装错误 JSON 字段（兼容历史 API）。
+     * @param request 请求对象
+     * @param includeStackTrace 布尔值
+     * @return 获取的Map
      */
 
-    public Map<String, Object> getErrorAttributes(ServerRequest request, boolean includeStackTrace) {
+public Map<String, Object> getErrorAttributes(ServerRequest request, boolean includeStackTrace) {
         return assembleError(getError(request));
     }
 
     /**
      * 按异常实例组装错误 JSON 字段。
      */
-    /**
+        /**
      * 按异常实例组装错误 JSON 字段。
+     * @param error 错误对象
+     * @return 对应的映射数据
      */
 
-    public Map<String, Object> assembleError(Throwable error) {
+public Map<String, Object> assembleError(Throwable error) {
         Map<String, Object> errorAttributes = new LinkedHashMap<>();
         if (error instanceof ServerException) {
             errorAttributes.put("data", error.getMessage());

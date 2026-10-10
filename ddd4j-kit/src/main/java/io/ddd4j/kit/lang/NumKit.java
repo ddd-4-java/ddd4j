@@ -86,6 +86,7 @@ public class NumKit extends NumberUtil {
     /**
      * 四舍五入（保留两位小数）
      *
+     * @param value 待四舍五入的数值
      * @return 新值（如果 value 为空返回 BigDecimal.ZERO）
      */
     public BigDecimal round2(BigDecimal value) {
@@ -119,7 +120,7 @@ public class NumKit extends NumberUtil {
     }
 
     /**
-     * 清除末尾多余的0（如: 1.010 -> 1.01）
+     * 清除末尾多余的 0（如 1.010 变为 1.01）
      *
      * @param value 数字
      * @return 当 value 为 null 时默认返回 0

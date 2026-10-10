@@ -70,6 +70,10 @@ public final class MQListenerClasspathScanner {
 
     /**
      * 扫描单个类上的 {@link MQEventListener} 方法。
+     * @param beanName Bean 名称
+     * @param beanClass Bean类
+     * @param consumer 消费逻辑
+     * @return 对应的列表数据
      */
     public static List<Method> scanClass(String beanName, Class<?> beanClass, BiConsumer<String, Method> consumer) {
         List<Method> found = new ArrayList<>();
@@ -88,6 +92,9 @@ public final class MQListenerClasspathScanner {
 
     /**
      * 从 BeanDefinition 解析 Class。
+     * @param beanDefinition Bean相关参数
+     * @param classLoader 类加载器
+     * @return 解析的Class
      */
     public static Class<?> resolveBeanClass(BeanDefinition beanDefinition, ClassLoader classLoader) {
         String className = beanDefinition.getBeanClassName();

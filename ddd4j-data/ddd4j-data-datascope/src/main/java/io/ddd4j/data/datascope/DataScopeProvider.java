@@ -24,6 +24,7 @@ public interface DataScopeProvider {
 
     /**
      * Default provider: preserves legacy behavior by accepting non-null values.
+     * @return 返回的 DataScopeProvider 结果
      */
     static DataScopeProvider nonNullAllowed() {
         return (dataType, data) -> Objects.nonNull(data);

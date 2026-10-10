@@ -58,6 +58,7 @@ public class RocketMQProperties extends MQProperties {
 
     /**
      * 基于本配置创建原生生产者（含 nameServer）。
+     * @return 新建的DefaultMQProducer
      */
     public DefaultMQProducer newProducer() {
         DefaultMQProducer producer = new DefaultMQProducer(getProducerGroup());
@@ -70,6 +71,8 @@ public class RocketMQProperties extends MQProperties {
 
     /**
      * 基于本配置创建原生消费者（含 nameServer）。
+     * @param group 分组
+     * @return 新建的DefaultMQPushConsumer
      */
     public DefaultMQPushConsumer newConsumer(String group) {
         DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(group);

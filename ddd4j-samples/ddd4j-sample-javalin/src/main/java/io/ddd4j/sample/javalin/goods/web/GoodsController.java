@@ -42,6 +42,7 @@ import static io.javalin.apibuilder.ApiBuilder.*;
  *
  * <h3>路由列表</h3>
  * <table border="1">
+ * <caption>商品管理 REST 接口一览</caption>
  *   <tr><th>HTTP</th><th>路径</th><th>用途</th></tr>
  *   <tr><td>POST</td><td>/api/goods</td><td>创建商品</td></tr>
  *   <tr><td>PUT</td><td>/api/goods/{id}</td><td>更新商品</td></tr>

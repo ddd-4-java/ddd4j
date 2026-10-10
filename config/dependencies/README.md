@@ -41,7 +41,7 @@ python3 -m unittest discover -s ddd4j/scripts -p test_dependency_alignment.py -v
 依赖属性固定为三个分区：`Global Properties`、`Third-Party Dependencies`、
 `Maven Dependencies`。每段按属性名进行大小写不敏感的自然字母排序。
 `io.github.easy4j` 组件的版本属性不保留 `easy4j-` 前缀。发生名称冲突时，
-删除重复的 `com.github.hiwepy` 旧坐标和旧版本属性，只保留当前 easy4j 组件。
+删除重复的 `com.github.redacted-legacy-family` 旧坐标和旧版本属性，只保留当前 easy4j 组件。
 
 检查与重新格式化：
 

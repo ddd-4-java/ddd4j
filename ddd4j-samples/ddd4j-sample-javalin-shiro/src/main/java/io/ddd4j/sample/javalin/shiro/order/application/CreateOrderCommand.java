@@ -19,9 +19,9 @@ import lombok.Value;
 /**
  * 创建订单命令。
  *
- * @param orderNo   订单编号
- * @param buyerId   买家 ID
- * @param buyerName 买家显示名称
+ * <p>{@code orderNo} — 订单编号
+ * <p>{@code buyerId} — 买家 ID
+ * <p>{@code buyerName} — 买家显示名称
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Value

@@ -49,6 +49,8 @@ public class GoodsCacheService {
 
     /**
      * 按 ID 读取商品（缓存优先）。
+     * @param id 标识
+     * @return 获取的Goods
      */
     public Goods getById(Long id) {
         String cacheKey = String.valueOf(id);
@@ -66,6 +68,7 @@ public class GoodsCacheService {
 
     /**
      * 列表（缓存优先）。
+     * @return 列出的List
      */
     @SuppressWarnings("unchecked")
     public List<Goods> listAll() {
@@ -82,6 +85,8 @@ public class GoodsCacheService {
 
     /**
      * 按状态过滤（缓存优先）。
+     * @param status 状态
+     * @return 列出的List
      */
     @SuppressWarnings("unchecked")
     public List<Goods> listByStatus(String status) {
@@ -104,6 +109,7 @@ public class GoodsCacheService {
 
     /**
      * 写时清除缓存。
+     * @param id 标识
      */
     public void evictOnWrite(GoodsId id) {
         CacheKit.invalidate(BIZ_GOODS_DETAIL, String.valueOf(id.value()));
@@ -112,6 +118,7 @@ public class GoodsCacheService {
 
     /**
      * 缓存统计快照。
+     * @return 对应的映射数据
      */
     public Map<String, Object> stats() {
         Map<String, Object> snapshot = new HashMap<>();

@@ -19,9 +19,10 @@ package io.ddd4j.data.jpa;
  *
  * <p>对标 cloud-das 的 {@code IdGenerator}（数据库自增场景）。
  * 使用此策略时，实体主键应标注：
+ * <!-- 样例行首 @ 会被解析为 doc 块标签，必须转义为 &#64; -->
  * <pre>
- *   @Id
- *   @GeneratedValue(strategy = GenerationType.IDENTITY)
+ *   &#64;Id
+ *   &#64;GeneratedValue(strategy = GenerationType.IDENTITY)
  *   public Long id;
  * </pre>
  *

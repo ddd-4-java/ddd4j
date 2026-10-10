@@ -359,26 +359,26 @@ void testPermissionAcrossFrameworks() {
 
 ### 阶段 1 接入
 
-- [ ] 添加 `ddd4j-core` + 对应鉴权适配依赖
-- [ ] 实现 `SubjectDataProvider` 权限数据源
-- [ ] 业务代码改为调 `SubjectKit.xxx()`
-- [ ] 验证 `SubjectKit.getSubject()` 不抛异常
-- [ ] 验证旧鉴权 API 仍可用
+- [ ] 添加 `ddd4j-core` + 对应鉴权适配依赖【规范条目·非工作项】
+- [ ] 实现 `SubjectDataProvider` 权限数据源【规范条目·非工作项】
+- [ ] 业务代码改为调 `SubjectKit.xxx()`【规范条目·非工作项】
+- [ ] 验证 `SubjectKit.getSubject()` 不抛异常【规范条目·非工作项】
+- [ ] 验证旧鉴权 API 仍可用【规范条目·非工作项】
 
 ### 阶段 2 双写
 
-- [ ] 新旧鉴权 API 并存运行
-- [ ] 监控无异常
-- [ ] 逐步替换所有旧 API 调用点
+- [ ] 新旧鉴权 API 并存运行【规范条目·非工作项】
+- [ ] 监控无异常【规范条目·非工作项】
+- [ ] 逐步替换所有旧 API 调用点【规范条目·非工作项】
 
 ### 阶段 3 灰度
 
-- [ ] 试点服务引入 sa-token
-- [ ] 验证 `SubjectKit` 行为一致
-- [ ] 提供旧 Token 换新 Token 接口
+- [ ] 试点服务引入 sa-token【规范条目·非工作项】
+- [ ] 验证 `SubjectKit` 行为一致【规范条目·非工作项】
+- [ ] 提供旧 Token 换新 Token 接口【规范条目·非工作项】
 
 ### 阶段 4 全量
 
-- [ ] 移除旧鉴权依赖（Shiro / Spring Security）
-- [ ] 统一 sa-token 配置
-- [ ] 更新部署文档与监控告警
+- [ ] 移除旧鉴权依赖（Shiro / Spring Security）【规范条目·非工作项】
+- [ ] 统一 sa-token 配置【规范条目·非工作项】
+- [ ] 更新部署文档与监控告警【规范条目·非工作项】

@@ -158,6 +158,7 @@ public class SpringContext implements ApplicationContextAware {
 
     /**
      * 应用上下文刷新完成后释放启动等待信号。
+     * @param event 事件
      */
     @EventListener
     public void onContextRefreshed(ContextRefreshedEvent event) {

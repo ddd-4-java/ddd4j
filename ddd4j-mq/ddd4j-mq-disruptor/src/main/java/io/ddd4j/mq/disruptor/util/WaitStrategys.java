@@ -20,7 +20,7 @@ import com.lmax.disruptor.*;
  * LMAX Disruptor 等待策略枚举。
  *
  * <p>每个枚举值封装对应的 {@link WaitStrategy} 实例（按需 new，单例复用 OK），同时作为
- * {@link io.ddd4j.mq.disruptor.DisruptorMQProperties#setWaitStrategy} 字段类型，
+ * {@code io.ddd4j.mq.disruptor.DisruptorMQProperties} 的 {@code waitStrategy} 字段类型，
  * Spring Boot 配置反序列化时按枚举名（{@code blocking} / {@code yielding} / {@code busyspin} / {@code sleeping}）匹配。
  *
  * <p>各策略特性：
@@ -63,7 +63,7 @@ public enum WaitStrategys {
         }
     },
     /**
-     * 性能最高，CPU 消耗最大，建议消费者线程数 < 物理核数时使用。
+     * 性能最高，CPU 消耗最大，建议消费者线程数 &lt; 物理核数时使用。
      */
     busy_spin {
         @Override
@@ -74,6 +74,7 @@ public enum WaitStrategys {
 
     /**
      * 获取对应的 {@link WaitStrategy} 实例。
+     * @return 返回的 WaitStrategy 结果
      */
     public abstract WaitStrategy instance();
 }

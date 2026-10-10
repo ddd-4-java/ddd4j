@@ -54,6 +54,7 @@ public class Message {
      *
      * <p>同时填充 {@code text}（钉钉）与 {@code content}（企微）字段，两端兼容。
      *
+     * @return 返回的 Message 结果
      * @param title     标题
      * @param text      正文
      * @param atMobiles 被 @ 的手机号列表（null 表示不 @ 任何人）
@@ -68,6 +69,8 @@ public class Message {
 
     /**
      * 构造一条纯文本消息。
+     * @param content 内容
+     * @return 返回的 Message 结果
      */
     public static Message text(String content) {
         Message m = new Message();

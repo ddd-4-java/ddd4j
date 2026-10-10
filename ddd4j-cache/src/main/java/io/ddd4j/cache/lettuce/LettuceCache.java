@@ -92,6 +92,9 @@ public class LettuceCache<V> implements Cache<String, V> {
 
     /**
      * 构造 Lettuce 缓存（默认 ObjectMapper）。
+     * @param commands 参数 commands
+     * @param config 配置对象
+     * @param valueType 值类型
      */
     public LettuceCache(RedisCommands<String, String> commands, CacheConfig config, Class<V> valueType) {
         this(commands, config, valueType, JsonMapper.builder().build());

@@ -51,6 +51,8 @@ public enum BrokerType {
 
     /**
      * 解析配置字符串为 Broker 类型（兼容 redisStream 等历史命名）。
+     * @param raw 原始数据
+     * @return 返回的 BrokerType 结果
      */
     public static BrokerType from(String raw) {
         if (!StrKit.isNotEmpty(raw) || "none".equalsIgnoreCase(raw.trim())) {
@@ -101,6 +103,7 @@ public enum BrokerType {
 
     /**
      * 转为 kebab-case 配置值（如 {@code redis-stream}）。
+     * @return 转换得到的字符串内容
      */
     public String toConfigValue() {
         return name().toLowerCase(Locale.ROOT).replace('_', '-');

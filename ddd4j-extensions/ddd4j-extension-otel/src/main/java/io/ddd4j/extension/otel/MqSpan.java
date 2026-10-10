@@ -75,6 +75,10 @@ public final class MqSpan {
 
     /**
      * 创建 PRODUCER span 并将 TraceContext 注入消息 headers。
+     * @param broker 消息中间件连接地址
+     * @param topic 消息主题
+     * @param headers 消息头集合
+     * @param runnable 待执行任务
      */
     public static void producer(String broker, String topic, Map<String, String> headers, Runnable runnable) {
         if (!Ddd4jOtel.isAvailable()) {
@@ -103,6 +107,10 @@ public final class MqSpan {
 
     /**
      * 从消息 headers 提取 W3C TraceContext，并创建 CONSUMER span。
+     * @param broker 消息中间件连接地址
+     * @param topic 消息主题
+     * @param headers 消息头集合
+     * @return 返回的 Scope 结果
      */
     public static Scope consumer(String broker, String topic, Map<String, String> headers) {
         if (!Ddd4jOtel.isAvailable()) {
@@ -123,6 +131,8 @@ public final class MqSpan {
 
     /**
      * 完成 CONSUMER span（异常标记）。
+     * @param span 链路 Span 对象
+     * @param error 错误对象
      */
     public static void endConsumer(Span span, Throwable error) {
         if (Objects.isNull(span)) {
@@ -137,6 +147,7 @@ public final class MqSpan {
 
     /**
      * 完成 CONSUMER span（正常）。
+     * @param span 链路 Span 对象
      */
     public static void endConsumer(Span span) {
         endConsumer(span, null);

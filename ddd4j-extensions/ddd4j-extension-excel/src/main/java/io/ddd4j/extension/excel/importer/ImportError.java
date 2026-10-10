@@ -25,7 +25,7 @@ import java.util.Optional;
  * <p>对应 easyexcel 监听器 {@code onException(Exception, AnalysisContext)} 中捕获的异常，
  * 提取关键信息（行号、列号、原始值、错误类型）封装为可读结构。
  *
- * <p>设计原则：导入永远不抛异常到调用方，错误统一通过 {@link ImportResult#getErrors()} 返回。
+ * <p>设计原则：导入永远不抛异常到调用方，错误统一通过 {@code ImportResult#getErrors()} 返回。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */

@@ -23,7 +23,7 @@ import java.util.Map;
 /**
  * Spring HTTP Servlet 请求扩展点。
  *
- * <p>从 io.github.hiwepy:pf4j-extension 迁入至 ddd4j-web-webmvc 模块，
+ * <p>从 io.github.redacted-legacy-family:pf4j-extension 迁入至 ddd4j-web-webmvc 模块，
  * 因为它强依赖 Spring {@link RequestEntity}，属于 Spring Web 适配层职责。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>

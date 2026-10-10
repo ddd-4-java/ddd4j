@@ -108,8 +108,7 @@ To https://codeup.aliyun.com/5fdc0afd99b59ba3c5ead757/ddd4j/ddd4j.git
 push exit code: 0
 ```
 
-**Remote URL:** `origin` = `https://wandl-6A72h:***@codeup.aliyun.com/5fdc0afd99b59ba3c5ead757/ddd4j/ddd4j.git` (Aliyun
-codeup; credentials embedded in URL, push authenticated automatically — credential redacted in this report)
+**Remote URL:** `origin` = `https://wandl-redacted-acct:***@codeup.aliyun.com/5fdc0afd99b59ba3c5ead757/ddd4j/ddd4j.git` (Aliyun codeup; credentials embedded in URL, push authenticated automatically — credential redacted in this report)
 
 **Remote HEAD after push** (verified via `git ls-remote origin refs/heads/feature/2.0.x`):
 

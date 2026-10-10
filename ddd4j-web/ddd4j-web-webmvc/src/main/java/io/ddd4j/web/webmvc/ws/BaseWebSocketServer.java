@@ -29,6 +29,7 @@ public abstract class BaseWebSocketServer {
 
     /**
      * WebSocket 路径（默认 {@code "/ws"}）。
+     * @return 获取的字符串内容
      */
     public String getPath() {
         return "/ws";

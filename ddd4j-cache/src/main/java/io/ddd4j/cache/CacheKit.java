@@ -413,7 +413,7 @@ public final class CacheKit {
      *
      * @param biz   业务标识
      * @param key   缓存键
-     * @param delta 增量（>= 0）
+     * @param delta 增量（&gt;= 0）
      * @return 递增后的值
      */
     public long increment(String biz, String key, long delta) {
@@ -431,7 +431,7 @@ public final class CacheKit {
      *
      * @param biz   业务标识
      * @param key   缓存键
-     * @param delta 减量（>= 0）
+     * @param delta 减量（&gt;= 0）
      * @return 递减后的值
      */
     public long decrement(String biz, String key, long delta) {
@@ -449,8 +449,8 @@ public final class CacheKit {
      *
      * @param biz      业务标识
      * @param key      缓存键
-     * @param quantity 扣减数量（> 0）
-     * @return 剩余库存（>= 0）或错误码（< 0）
+     * @param quantity 扣减数量（&gt; 0）
+     * @return 剩余库存（&gt;= 0）或错误码（&lt; 0）
      */
     public long stockDecrement(String biz, String key, long quantity) {
         Cache<String, Object> cache = getEffectiveCache(biz);
@@ -465,8 +465,8 @@ public final class CacheKit {
      *
      * @param biz      业务标识
      * @param key      缓存键
-     * @param quantity 回补数量（> 0）
-     * @return 回补后的库存（>= 0）或错误码（< 0）
+     * @param quantity 回补数量（&gt; 0）
+     * @return 回补后的库存（&gt;= 0）或错误码（&lt; 0）
      */
     public long stockIncrement(String biz, String key, long quantity) {
         Cache<String, Object> cache = getEffectiveCache(biz);

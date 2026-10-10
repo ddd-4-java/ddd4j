@@ -52,6 +52,7 @@ public class SaTokenSecurityProperties {
 
     /**
      * 返回 Sa-Token 的 token 名称，同时也是分布式存储 key 的命名空间前缀。
+     * @return 返回的字符串内容
      */
     public String tokenName() {
         return tokenNamespace + "-token";

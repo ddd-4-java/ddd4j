@@ -50,6 +50,11 @@ public class SM4Kit {
 
     /**
      * SM4-cbc加密
+     *
+     * @param key 密钥
+     * @param iv 初始化向量
+     * @param plainTxt 待加密明文
+     * @return Base64 编码的密文
      */
     public static String encrypt(String key, String iv, String plainTxt) {
         SymmetricCrypto sm4 = getSm4(key, iv);
@@ -59,6 +64,11 @@ public class SM4Kit {
 
     /**
      * SM4-cbc解密
+     *
+     * @param key 密钥
+     * @param iv 初始化向量
+     * @param cipherTxt Base64 编码的密文
+     * @return 解密后的明文
      */
     public static String decrypt(String key, String iv, String cipherTxt) {
         SymmetricCrypto sm4 = getSm4(key, iv);

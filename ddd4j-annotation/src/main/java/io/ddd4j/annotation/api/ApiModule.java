@@ -20,8 +20,6 @@ import java.lang.annotation.*;
 
 /**
  * Api模块注解
- *
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Contract
 @Retention(RetentionPolicy.RUNTIME)
@@ -32,11 +30,15 @@ public @interface ApiModule {
 
     /**
      * 操作模块
+     *
+     * @return 归属的操作模块名称，默认空串
      */
     String module() default "";
 
     /**
      * 业务名称
+     *
+     * @return 归属的业务名称，默认空串
      */
     String business() default "";
 

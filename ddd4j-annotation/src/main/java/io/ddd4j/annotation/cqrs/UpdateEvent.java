@@ -27,17 +27,16 @@ import java.lang.annotation.Target;
  * <p>标注于 CQRS 读侧投影的方法，标识该方法处理"实体被更新"类型的事件。
  *
  * <p>典型用法：
- * <pre>{@code
+ * <pre>
  * public class OrderListView extends DddJpaView {
- *     @UpdateEvent(OrderUpdatedEvent.class)
+ *     {@literal @}UpdateEvent(OrderUpdatedEvent.class)
  *     public void onOrderUpdated(EntityManager em, OrderUpdatedEvent event) {
  *         OrderListEntry entry = em.find(OrderListEntry.class, event.getEntityId());
  *         entry.updateFrom(event);
  *     }
  * }
- * }</pre>
+ * </pre>
  *
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -47,6 +46,8 @@ public @interface UpdateEvent {
 
     /**
      * 要处理的事件类型。
+     *
+     * @return 需要监听并处理的领域事件类型
      */
     Class<?> value();
 }

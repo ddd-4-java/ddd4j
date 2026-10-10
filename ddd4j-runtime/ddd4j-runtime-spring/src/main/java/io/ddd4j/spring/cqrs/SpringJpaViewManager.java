@@ -154,6 +154,10 @@ public class SpringJpaViewManager implements ViewManager {
      * <pre>{@code
      * springJpaViewManager.schedule("order-list-view", "0/5 * * * * ?", () -> view.update());
      * }</pre>
+     * @param viewName 字符串参数
+     * @param cron Cron 表达式
+     * @param task 待执行任务
+     * @return 返回的 ViewScheduler.ViewScheduleHandle 结果
      */
     public ViewScheduler.ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
         ViewScheduler.ViewScheduleHandle handle = scheduler.schedule(viewName, cron, task);

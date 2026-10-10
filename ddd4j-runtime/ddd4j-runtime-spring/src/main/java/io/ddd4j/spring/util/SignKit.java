@@ -64,7 +64,7 @@ public class SignKit {
      * @param body     方法体
      * @param salt     密钥
      * @return 签名原文
-     * @throws UnsupportedEncodingException
+     * @throws UnsupportedEncodingException 执行对应操作失败时抛出
      */
     protected static String signOrigin(String token, MultiValueMap<String, String> formData, String body, String salt) throws UnsupportedEncodingException {
 
@@ -140,7 +140,7 @@ public class SignKit {
      * @param body     方法体
      * @param salt     密钥
      * @return 签名原文
-     * @throws UnsupportedEncodingException
+     * @throws UnsupportedEncodingException 执行对应操作失败时抛出
      */
     protected static String signOrigin(String token, Map<String, String[]> formData, String body, String salt) throws UnsupportedEncodingException {
 

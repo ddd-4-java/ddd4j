@@ -38,7 +38,7 @@ public class FeishuClient {
 
     /**
      * 飞书默认 webhook 基础地址（占位。实际每个机器人 webhook URL 不同，
-     * 由 {@link FeishuProperties#getWebhookUrl()} 注入）。
+     * 由 {@code FeishuProperties#getWebhookUrl()} 注入）。
      */
     public static final String DEFAULT_BASE_URL = "https://open.feishu.cn/open-apis/bot/v2/hook/";
 

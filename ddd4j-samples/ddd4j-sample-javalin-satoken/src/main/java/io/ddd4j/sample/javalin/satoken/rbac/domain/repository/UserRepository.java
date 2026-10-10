@@ -34,11 +34,15 @@ public interface UserRepository extends Repository<User, String> {
 
     /**
      * 按用户名查找。
+     * @param username 用户名
+     * @return 查找的Optional
      */
     Optional<User> findByUsername(String username);
 
     /**
      * 按状态过滤查询用户列表。
+     * @param status 状态
+     * @return 查找的List
      */
     List<User> findByStatus(User.Status status);
 }

@@ -23,8 +23,6 @@ import java.lang.annotation.*;
  *
  * <p>用于标注 Controller 方法或类，启用接口幂等性保护。
  * 支持基于请求参数（ARGS）或 Token 的幂等控制策略，可配置过期时间、重试次数等参数。
- *
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Contract
 @Documented
@@ -37,42 +35,56 @@ public @interface ApiIdempotent {
      * type为Args时自动获取 @RequestMapping、@PostMapping、@GetMapping、@PutMapping、@DeleteMapping、@PatchMapping 的 value 值；
      * type为Token时该值用于告诉拦截器取值的参数名
      *
-     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @return 幂等 Key 表达式；策略为 ARGS 时按接口映射取值，否则作为取值参数名
      */
     String value() default "";
 
     /**
      * 幂等方式
+     *
+     * @return 幂等性判定策略，默认基于请求参数
      */
     ApiIdempotentType type() default ApiIdempotentType.ARGS;
 
     /**
      * 是否启用 Spring Expression Language(SpEL) 表达式解析value值
+     *
+     * @return 是否启用 SpEL 解析，默认 false
      */
     boolean spel() default false;
 
     /**
      * 是否将参数作为幂等key的一部分
+     *
+     * @return 是否把请求参数纳入幂等 Key，默认 false
      */
     boolean withArgs() default false;
 
     /**
      * 幂等过期时间，默认 2000 毫秒，即：在此时间段内，对API进行幂等处理。
+     *
+     * @return 幂等保护的过期时间，单位毫秒，默认 2000
      */
     long expireMillis() default 2000;
 
     /**
      * 重试次数，默认0
+     *
+     * @return 幂等冲突时的重试次数，默认 0
      */
     int retryTimes() default 0;
 
     /**
      * 重试间隔时间，单位：ms，默认100
+     *
+     * @return 两次重试之间的间隔，单位毫秒，默认 100
      */
     long retryInterval() default 100;
 
     /**
      * 是否自动进行解锁操作，默认：false, 等待key过期
+     *
+     * @return 是否自动解锁，默认 false，即等待 Key 自然过期
      */
     boolean unlock() default false;
 

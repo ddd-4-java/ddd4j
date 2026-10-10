@@ -42,10 +42,10 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
  *
  * <h3>规则清单</h3>
  * <ul>
- *   <li>{@link #DOMAIN_ENTITY_IN_DOMAIN} — @DomainEntity 标记的类必须在 domain 包</li>
- *   <li>{@link #DOMAIN_SERVICE_IN_DOMAIN} — @DomainService 标记的类必须在 domain 包</li>
- *   <li>{@link #APPLICATION_SERVICE_IN_APP} — @ApplicationService 标记的类必须在 app 包</li>
- *   <li>{@link #REPOSITORY_IMPL_IN_INFRASTRUCTURE} — @DomainRepository 标记的类必须在 infrastructure 包</li>
+ *   <li>{@link #domainEntityInDomain(Class)} — @DomainEntity 标记的类必须在 domain 包</li>
+ *   <li>{@link #domainServiceInDomain(Class)} — @DomainService 标记的类必须在 domain 包</li>
+ *   <li>{@link #applicationServiceInApp(Class)} — @ApplicationService 标记的类必须在 app 包</li>
+ *   <li>{@link #repositoryImplInInfrastructure(Class)} — @DomainRepository 标记的类必须在 infrastructure 包</li>
  *   <li>{@link #DOMAIN_NOT_DEPEND_ON_WEB} — domain 包不得依赖 web/controller/adapter 包</li>
  *   <li>{@link #DOMAIN_NOT_DEPEND_ON_INFRASTRUCTURE} — domain 包不得依赖 infrastructure 包</li>
  *   <li>{@link #DOMAIN_NOT_DEPEND_ON_FRAMEWORK} — domain 包不得依赖 Spring/MyBatis 等框架</li>
@@ -89,6 +89,8 @@ public final class CleanDDDLayerRules {
 
     /**
      * 规则1：标了 {@code @DomainEntity} 的类必须在 {@code ..domain..} 包。
+     * @param domainEntityAnnotation 领域实体注解类型
+     * @return 返回的 ArchRule 结果
      */
     public static ArchRule domainEntityInDomain(Class<? extends Annotation> domainEntityAnnotation) {
         return classes()
@@ -99,6 +101,8 @@ public final class CleanDDDLayerRules {
 
     /**
      * 规则2：标了 {@code @DomainService} 的类必须在 {@code ..domain..} 包。
+     * @param domainServiceAnnotation 领域服务注解类型
+     * @return 返回的 ArchRule 结果
      */
     public static ArchRule domainServiceInDomain(Class<? extends Annotation> domainServiceAnnotation) {
         return classes()
@@ -109,6 +113,8 @@ public final class CleanDDDLayerRules {
 
     /**
      * 规则3：标了 {@code @ApplicationService} 的类必须在 {@code ..app..} 或 {@code ..application..} 包。
+     * @param applicationServiceAnnotation 应用服务注解类型
+     * @return 返回的 ArchRule 结果
      */
     public static ArchRule applicationServiceInApp(Class<? extends Annotation> applicationServiceAnnotation) {
         return classes()
@@ -119,6 +125,8 @@ public final class CleanDDDLayerRules {
 
     /**
      * 规则4：标了 {@code @DomainRepository} 的类必须在 {@code ..infrastructure..} 或 {@code ..infras..} 包。
+     * @param domainRepositoryAnnotation 领域仓储注解类型
+     * @return 返回的 ArchRule 结果
      */
     public static ArchRule repositoryImplInInfrastructure(Class<? extends Annotation> domainRepositoryAnnotation) {
         return classes()
@@ -129,6 +137,8 @@ public final class CleanDDDLayerRules {
 
     /**
      * 规则8：标了 {@code @DomainGateway} 的接口必须在 {@code ..domain..} 包。
+     * @param domainGatewayAnnotation 领域网关注解类型
+     * @return 返回的 ArchRule 结果
      */
     public static ArchRule domainGatewayInDomain(Class<? extends Annotation> domainGatewayAnnotation) {
         return classes()
@@ -139,6 +149,8 @@ public final class CleanDDDLayerRules {
 
     /**
      * 规则9：标了 {@code @CommandExecutor} 的类必须在 {@code ..app..} 或 {@code ..application..} 包。
+     * @param commandExecutorAnnotation 命令执行器注解类型
+     * @return 返回的 ArchRule 结果
      */
     public static ArchRule commandExecutorInApp(Class<? extends Annotation> commandExecutorAnnotation) {
         return classes()
@@ -149,6 +161,8 @@ public final class CleanDDDLayerRules {
 
     /**
      * 规则10：标了 {@code @QueryService} 的类必须在 {@code ..app..} 或 {@code ..application..} 包。
+     * @param queryServiceAnnotation 查询服务注解类型
+     * @return 查询的ArchRule
      */
     public static ArchRule queryServiceInApp(Class<? extends Annotation> queryServiceAnnotation) {
         return classes()

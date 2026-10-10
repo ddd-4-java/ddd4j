@@ -37,13 +37,6 @@ import java.util.List;
 public interface Sender {
 
     /**
-     * 将 {@link Message} 序列化为通道通用的 JSON 字符串。
-     */
-    static String renderMessage(Message message) {
-        return JsonKit.toJson(message);
-    }
-
-    /**
      * 发送一条消息（具体内容格式由实现决定）。
      *
      * @param msg 已格式化为通道要求的字符串（通常为 markdown 或 JSON payload）
@@ -79,5 +72,14 @@ public interface Sender {
     default void sendMarkdown(String title, String markdown, List<String> atMobiles) {
         Message m = Message.markdown(title, markdown, atMobiles);
         send(renderMessage(m));
+    }
+
+    /**
+     * 将 {@link Message} 序列化为通道通用的 JSON 字符串。
+     * @param message 消息内容
+     * @return 返回的字符串内容
+     */
+    static String renderMessage(Message message) {
+        return JsonKit.toJson(message);
     }
 }

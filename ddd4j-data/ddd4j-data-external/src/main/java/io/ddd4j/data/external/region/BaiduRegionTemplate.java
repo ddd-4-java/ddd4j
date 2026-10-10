@@ -47,9 +47,6 @@ public class BaiduRegionTemplate {
      */
     private final String ak;
     /**
-     * HTTP 客户端
-     */
-    /**
      * 缓存服务
      */
     private RegionCache regionCache;
@@ -58,7 +55,6 @@ public class BaiduRegionTemplate {
      * 构造函数（无缓存）
      *
      * @param ak         百度地图AK密钥
-     * @param httpClient HTTP 客户端
      */
     public BaiduRegionTemplate(String ak) {
         this(ak, RegionCache.none());
@@ -68,7 +64,6 @@ public class BaiduRegionTemplate {
      * 构造函数
      *
      * @param ak          百度地图AK密钥
-     * @param httpClient  HTTP 客户端
      * @param regionCache 缓存服务
      */
     public BaiduRegionTemplate(String ak, RegionCache regionCache) {

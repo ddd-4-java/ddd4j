@@ -33,16 +33,27 @@ public interface WebInterceptor {
 
     /**
      * 拦截器顺序（数字越小越先执行）。
+     * @return 获取的整型数值
      */
     int getOrder();
 
     /**
      * 请求预处理。
+     * @param request 请求对象
+     * @param response 响应对象
+     * @param handler 处理器
+     * @return 条件成立（或操作成功）返回 true，否则返回 false
+     * @throws java.lang.Exception 执行对应操作失败时抛出
      */
     boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception;
 
     /**
      * 请求完成后清理（默认空实现）。
+     * @param request 请求对象
+     * @param response 响应对象
+     * @param handler 处理器
+     * @param ex 异常对象
+     * @throws java.lang.Exception 执行对应操作失败时抛出
      */
     default void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
     }

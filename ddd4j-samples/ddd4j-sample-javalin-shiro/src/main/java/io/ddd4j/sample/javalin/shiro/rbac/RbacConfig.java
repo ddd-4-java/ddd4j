@@ -28,7 +28,7 @@ import java.util.*;
  * RBAC 初始化配置：演示账号/角色/权限种子数据 + 注册 SubjectDataProvider。
  *
  * <p>本类与 {@code ddd4j-sample-javalin-satoken} 的 RBAC 业务代码<b>完全一致</b>，
- * 唯一区别是：本类在 {@link #createSubjectDataProvider()} 中返回的是基于 {@link RbacService} 派生的
+ * 唯一区别是：本类在 {@link #createSubjectDataProvider(InMemoryUserRepository, InMemoryRoleRepository)} 中返回的是基于 {@link RbacService} 派生的
  * SubjectDataProvider（业务实现细节对所有示例相同）；不同框架（Sa-Token/Shiro）的差异在于
  * 启动器调用方式，不在本类中体现。
  *
@@ -50,6 +50,7 @@ public final class RbacConfig {
      * 初始化 RBAC 内存数据：种子账号 / 角色 / 权限。
      *
      * <p>业务侧启动时调用本方法，完成种子数据落库。
+     * @param rbacService RBAC 服务
      */
     public static void initSeedData(RbacService rbacService) {
         // ==================== 种子角色 ====================
@@ -79,6 +80,9 @@ public final class RbacConfig {
      *
      * <p>本方法是 RBAC 业务侧与鉴权框架的桥梁：
      * ddd4j-auth-shiro 的 {@code ShiroSubject.isPermitted/hasRole} 会委托此 SPI。
+     * @param userRepository 用户仓储
+     * @param roleRepository 角色仓储
+     * @return 创建的SubjectDataProvider
      */
     public static SubjectDataProvider createSubjectDataProvider(
             InMemoryUserRepository userRepository,

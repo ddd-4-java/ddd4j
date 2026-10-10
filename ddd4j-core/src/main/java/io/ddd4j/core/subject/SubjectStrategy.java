@@ -25,9 +25,9 @@ import java.util.function.Function;
  * 核心行为策略集（对齐 Sa-Token 的 {@code SaStrategy}）。
  *
  * <p>所有核心行为做成 {@link Function} 字段，业务可热替换：
- * <pre>
- * SubjectKit.getStrategy().hasElement = (list, perm) -> list.stream().anyMatch(perm::matches);
- * </pre>
+ * <pre>{@code
+ * SubjectKit.getStrategy().hasElement = (list, perm) -&gt; list.stream().anyMatch(perm::matches);
+ * }</pre>
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x

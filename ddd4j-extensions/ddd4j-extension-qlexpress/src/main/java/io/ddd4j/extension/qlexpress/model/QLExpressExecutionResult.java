@@ -20,11 +20,11 @@ import java.util.Objects;
 /**
  * 不抛出异常的表达式执行结果。
  *
- * @param success      是否成功
- * @param value        表达式原始结果值
- * @param errorCode    异常类型
- * @param errorMessage 异常消息
- * @param elapsedNanos 执行耗时，单位纳秒
+ * <p>{@code success} — 是否成功
+ * <p>{@code value} — 表达式原始结果值
+ * <p>{@code errorCode} — 异常类型
+ * <p>{@code errorMessage} — 异常消息
+ * <p>{@code elapsedNanos} — 执行耗时，单位纳秒
  * @param <T>          结果类型
  */
 public final class QLExpressExecutionResult<T> {

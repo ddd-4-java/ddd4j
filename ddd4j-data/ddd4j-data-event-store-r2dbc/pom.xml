@@ -29,7 +29,7 @@
                     <artifactId>mybatis-plus</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>com.github.hiwepy</groupId>
+                    <groupId>io.github.easy4j</groupId>
                     <artifactId>mybatis-plus-enhance</artifactId>
                 </exclusion>
             </exclusions>
