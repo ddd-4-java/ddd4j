@@ -655,6 +655,26 @@ public class AuthorizationController {
             this.permissions = permissions;
         }
 
+        /** @return 登录标识 */
+        public String getLoginId() {
+            return loginId;
+        }
+
+        /** @return 显示名称 */
+        public String getDisplayName() {
+            return displayName;
+        }
+
+        /** @return 角色编码集合 */
+        public Set<String> getRoles() {
+            return roles;
+        }
+
+        /** @return 权限编码集合 */
+        public Set<String> getPermissions() {
+            return permissions;
+        }
+
         /**
          * 读取登录标识。
          *
@@ -750,6 +770,21 @@ public class AuthorizationController {
             this.permissions = permissions;
         }
 
+        /** @return 角色编码 */
+        public String getCode() {
+            return code;
+        }
+
+        /** @return 角色名称 */
+        public String getName() {
+            return name;
+        }
+
+        /** @return 权限编码集合 */
+        public Set<String> getPermissions() {
+            return permissions;
+        }
+
         /**
          * 读取编码。
          *
@@ -828,6 +863,16 @@ public class AuthorizationController {
         public PermissionView(@JsonProperty("code") String code, @JsonProperty("description") String description) {
             this.code = code;
             this.description = description;
+        }
+
+        /** @return 权限编码 */
+        public String getCode() {
+            return code;
+        }
+
+        /** @return 权限描述 */
+        public String getDescription() {
+            return description;
         }
 
         /**
