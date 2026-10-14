@@ -16,6 +16,7 @@ package io.ddd4j.mq.nats;
 
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.mq.MQProperties;
+import io.ddd4j.mq.delivery.MQDeliveryHeaders;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.event.MQEventSerialization;
 import io.ddd4j.mq.listener.MQListener;
@@ -29,6 +30,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.Collections;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -51,6 +53,20 @@ class NatsAcknowledgmentContractTest {
 
         verify(message).nak();
         assertTrue(acknowledgment.isAcknowledged());
+    }
+
+    @Test
+    void shouldPreferNativeCorrelationHeaderInAcknowledgment() {
+        Message message = mock(Message.class);
+        Headers headers = new Headers();
+        headers.put(MQDeliveryHeaders.CORRELATION_ID, "native-correlation");
+        when(message.getHeaders()).thenReturn(headers);
+        when(message.getReplyTo()).thenReturn("legacy-reply");
+
+        assertEquals("native-correlation", new NatsAcknowledgment(message).correlationId());
+
+        when(message.getHeaders()).thenReturn(null);
+        assertEquals("legacy-reply", new NatsAcknowledgment(message).correlationId());
     }
 
     @Test
