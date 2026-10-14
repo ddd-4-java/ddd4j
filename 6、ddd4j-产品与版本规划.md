@@ -152,7 +152,7 @@ gantt
 2. ✅ License Gate 1.0.x / 2.0.x / 3.0.x 三线全过。
 3. ✅ MQ 启动生命周期 8 Task 全部转绿 + 三线同步。
 4. ✅ CodeGraph 严格门禁 + 结构门禁零差异（1.0.x → 2.0.x 的允许差异必须显式记录）。
-5. ✅ 三线双远端推送（github + origin / codeup）。
+5. ✅ 三线双远端推送（github + origin / 内网平台）。
 6. ⚠️ Release notes / 公告（见 §11 决策点 #5）。
 
 ---

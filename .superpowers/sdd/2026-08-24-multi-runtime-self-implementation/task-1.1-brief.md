@@ -7,7 +7,7 @@
 
 - [ ] **Step 1: 建目录**
 
-Run: `mkdir -p /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/docs/reference/fuin-api-patterns`
+Run: `mkdir -p /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/docs/reference/fuin-api-patterns`
 
 - [ ] **Step 2: 建 README 索引**
 
@@ -35,7 +35,7 @@ Write `README.md`：
 - [ ] **Step 3: 提交**
 
 ```bash
-cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add docs/reference/
 git commit -m "docs(reference): 建 fuin-api-patterns 目录骨架"
 ```

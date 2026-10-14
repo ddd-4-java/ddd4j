@@ -21,10 +21,10 @@
 
 1.
 
-`grep -rn "org\.fuin" /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j --include="*.java" --include="*.xml"` —
+`grep -rn "org\.fuin" /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j --include="*.java" --include="*.xml"` —
 期望 0 匹配（仅 README/docs 里的参考链接允许）
 
-2. `grep -rn "fuin" /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j --include="*.java"` — 期望 0 匹配
+2. `grep -rn "fuin" /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j --include="*.java"` — 期望 0 匹配
 3. 如有残留，逐个修复（参考链接加 `（参考来源，不依赖）`）
 
 ### C. Task 9.3: 全工程 verify + push（最终发布）

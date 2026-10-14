@@ -14,10 +14,10 @@ Command: `./mvnw -pl ddd4j-core -am test-compile`（`-am` 必需：rebase 后 re
 
 ```
 [ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.15.0:testCompile (default-testCompile) on project ddd4j-core: Compilation failure: Compilation failure:
-[ERROR] /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/EventHandlerTest.java:[52,10] 找不到符号
+[ERROR] /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/EventHandlerTest.java:[52,10] 找不到符号
 [ERROR]   符号:   类 EventHandler
 [ERROR]   位置: 类 io.ddd4j.core.ddd.event.EventHandlerTest.SampleHandler
-[ERROR] /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/EventHandlerTest.java:[56,10] 找不到符号
+[ERROR] /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/EventHandlerTest.java:[56,10] 找不到符号
 [ERROR]   符号:   类 EventHandler
 [ERROR]   位置: 类 io.ddd4j.core.ddd.event.EventHandlerTest.SampleHandler
 [INFO] BUILD FAILURE

@@ -52,14 +52,14 @@ Write `ddd4j-data-event-store/pom.xml`：
 - [ ] **Step 4: 验证编译**
 
 Run:
-`cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-data/ddd4j-data-event-store install -DskipTests`
+`cd /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-data/ddd4j-data-event-store install -DskipTests`
 
 Expected: BUILD SUCCESS
 
 - [ ] **Step 5: 提交**
 
 ```bash
-cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add ddd4j-data/ddd4j-data-event-store/pom.xml ddd4j-data/pom.xml pom.xml
 git commit -m "feat(data): 建 ddd4j-data-event-store SPI 模块骨架"
 ```

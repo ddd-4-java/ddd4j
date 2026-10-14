@@ -14,11 +14,11 @@
     <description>Ddd4j For Java Projects</description>
 
     <scm>
-        <connection>scm:git:https:codeup.aliyun.com/5fdc0afd99b59ba3c5ead757/ddd4j/${project.artifactId}.git
+        <connection>scm:git:https:internal/5fdc0afd99b59ba3c5ead757/ddd4j/${project.artifactId}.git
         </connection>
-        <developerConnection>scm:git:https:codeup.aliyun.com/5fdc0afd99b59ba3c5ead757/ddd4j/${project.artifactId}.git
+        <developerConnection>scm:git:https:internal/5fdc0afd99b59ba3c5ead757/ddd4j/${project.artifactId}.git
         </developerConnection>
-        <url>https://codeup.aliyun.com/5fdc0afd99b59ba3c5ead757/ddd4j/${project.artifactId}</url>
+        <url>https://github.com/ddd-4-java/ddd4j.git</url>
         <tag>${project.artifactId}</tag>
     </scm>
 
@@ -123,7 +123,7 @@
     <!-- 开发者信息 -->
     <developers>
         <developer>
-            <name>wandl</name>
+            <name>ddd4j</name>
             <email>redacted-legacy-family@gmail.com</email>
             <organization>redacted-legacy-family</organization>
             <organizationUrl>https://wiki.redacted-legacy-family.com</organizationUrl>

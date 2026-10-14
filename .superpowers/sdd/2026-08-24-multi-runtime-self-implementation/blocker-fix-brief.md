@@ -8,7 +8,7 @@ succeed. These blockers are **not introduced by Task 0.1** — they exist at the
 
 ## Blocker 1: Maven wrapper version is broken
 
-**File:** `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/.mvn/wrapper/maven-wrapper.properties`
+**File:** `/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/.mvn/wrapper/maven-wrapper.properties`
 
 **Current content (3 lines):**
 
@@ -32,7 +32,7 @@ distributionUrl=https://repo.maven.apache.org/maven2/org/apache/maven/apache-mav
 ## Blocker 2: JsonKit uses Jackson-3 packages that don't exist in Jackson 2
 
 **File:**
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-kit/src/main/java/io/ddd4j/kit/lang/JsonKit.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-kit/src/main/java/io/ddd4j/kit/lang/JsonKit.java`
 
 **Problem:** Lines 67-74 (in `defaultObjectMapper()`) and lines 105-116 (in `buildObjectMapper()`) reference
 `com.fasterxml.jackson.databind.ext.javatime.ser.*` and `com.fasterxml.jackson.databind.ext.javatime.deser.*`. These
@@ -98,7 +98,7 @@ return JsonMapper.builder()
 
 ## Acceptance criteria (BOTH must pass before this brief is DONE)
 
-Run from `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j`:
+Run from `/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j`:
 
 ```bash
 # 1. Wrapper uses rc-6
@@ -149,7 +149,7 @@ The two blockers identified by Task 0.1 implementer + reviewer:
 ## Report
 
 Write full report to:
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/.superpowers/sdd/2026-08-24-multi-runtime-self-implementation/blocker-fix-report.md`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/.superpowers/sdd/2026-08-24-multi-runtime-self-implementation/blocker-fix-report.md`
 
 Reply with ONLY:
 

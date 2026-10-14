@@ -58,14 +58,14 @@ public void noMicronautDependencyInCore() {
 - [ ] **Step 2: 验证**
 
 Run:
-`cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core test -Dtest=CoreIndependenceTest`
+`cd /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core test -Dtest=CoreIndependenceTest`
 
 Expected: Tests passed
 
 - [ ] **Step 3: 提交**
 
 ```bash
-cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add ddd4j-core/src/test/java/io/ddd4j/core/arch/CoreIndependenceTest.java
 git commit -m "test(core): ArchUnit 强化 8 运行时零依赖守护"
 ```

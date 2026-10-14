@@ -12,13 +12,13 @@
 
 -
 
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-metrics/src/main/java/io/ddd4j/metrics/OpenTelemetryProjectionMetrics.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-metrics/src/main/java/io/ddd4j/metrics/OpenTelemetryProjectionMetrics.java`
 -
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-metrics/src/test/java/io/ddd4j/metrics/OpenTelemetryProjectionMetricsTest.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-metrics/src/test/java/io/ddd4j/metrics/OpenTelemetryProjectionMetricsTest.java`
 
 ### Files Modified
 
-- `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-metrics/pom.xml` -- added
+- `/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-metrics/pom.xml` -- added
   `opentelemetry-sdk-testing` test dependency
 
 ### Design
@@ -47,13 +47,13 @@
 
 -
 
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/cqrs/MicrometerProjectionMetrics.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/cqrs/MicrometerProjectionMetrics.java`
 -
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/guice/cqrs/MicrometerProjectionMetricsTest.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/guice/cqrs/MicrometerProjectionMetricsTest.java`
 
 ### Files Modified
 
-- `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-runtime/ddd4j-runtime-guice/pom.xml` --
+- `/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-runtime/ddd4j-runtime-guice/pom.xml` --
   added `micrometer-core` optional dependency
 
 ### Design

@@ -34,8 +34,8 @@ JAR。各线编译和运行均退出0。
 ```text
 LINE=1 COMPILE_EXIT=0
 
-PRODUCTION_CLASS_SOURCE=file:/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-auth/ddd4j-auth-shiro/target/classes/
-FIXTURE_CLASS_SOURCE=file:/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-samples/ddd4j-sample-javalin-shiro/target/test-classes/
+PRODUCTION_CLASS_SOURCE=file:/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-auth/ddd4j-auth-shiro/target/classes/
+FIXTURE_CLASS_SOURCE=file:/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-samples/ddd4j-sample-javalin-shiro/target/test-classes/
 RBAC_PREAUTH=PASS
 PRODUCTION_WITH_CONTROLLER_REQUEST=NotLoggedInException
 TEST_REPLACEMENT_WITH_SAME_REQUEST=PASS
@@ -45,8 +45,8 @@ UNRELATED_TOKEN_RETURNS_CURRENT_PRINCIPAL=true
 PROBE_EXIT=0
 LINE=2 COMPILE_EXIT=0
 
-PRODUCTION_CLASS_SOURCE=file:/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j-v2.0.x/ddd4j-auth/ddd4j-auth-shiro/target/classes/
-FIXTURE_CLASS_SOURCE=file:/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j-v2.0.x/ddd4j-samples/ddd4j-sample-javalin-shiro/target/test-classes/
+PRODUCTION_CLASS_SOURCE=file:/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j-v2.0.x/ddd4j-auth/ddd4j-auth-shiro/target/classes/
+FIXTURE_CLASS_SOURCE=file:/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j-v2.0.x/ddd4j-samples/ddd4j-sample-javalin-shiro/target/test-classes/
 RBAC_PREAUTH=PASS
 PRODUCTION_WITH_CONTROLLER_REQUEST=NotLoggedInException
 TEST_REPLACEMENT_WITH_SAME_REQUEST=PASS
@@ -56,8 +56,8 @@ UNRELATED_TOKEN_RETURNS_CURRENT_PRINCIPAL=true
 PROBE_EXIT=0
 LINE=3 COMPILE_EXIT=0
 
-PRODUCTION_CLASS_SOURCE=file:/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j-v3.0.x/ddd4j-auth/ddd4j-auth-shiro/target/classes/
-FIXTURE_CLASS_SOURCE=file:/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j-v3.0.x/ddd4j-samples/ddd4j-sample-javalin-shiro/target/test-classes/
+PRODUCTION_CLASS_SOURCE=file:/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j-v3.0.x/ddd4j-auth/ddd4j-auth-shiro/target/classes/
+FIXTURE_CLASS_SOURCE=file:/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j-v3.0.x/ddd4j-samples/ddd4j-sample-javalin-shiro/target/test-classes/
 RBAC_PREAUTH=PASS
 PRODUCTION_WITH_CONTROLLER_REQUEST=NotLoggedInException
 TEST_REPLACEMENT_WITH_SAME_REQUEST=PASS

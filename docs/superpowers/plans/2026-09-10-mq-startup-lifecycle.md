@@ -157,5 +157,5 @@
 - [ ] JDK17运行2.0.x完整 `clean verify`和samples。【外部阻塞: 2.0.x 线 checkout 不在本环境】
 - [ ] JDK21/Maven4运行3.0.x完整 `clean verify`和samples。【外部阻塞: 3.0.x 线 checkout 不在本环境（JDK21/Maven4）】
 - [ ] 三线执行Testcontainers broker关闭与重启验证。【外部阻塞: 需 Testcontainers/Docker 环境与三线 checkout】
-- [ ] 提交并推送GitHub/Codeup，等待三线GitHub Actions全部成功。【外部阻塞: 需推送远端仓库凭据并等待 GitHub Actions】
+- [ ] 提交并推送GitHub/内网平台，等待三线GitHub Actions全部成功。【外部阻塞: 需推送远端仓库凭据并等待 GitHub Actions】
 - [ ] 阶段2全部成功后，更新规格状态并进入阶段3设计。【外部阻塞: 依赖三线 CI 全部通过（规格状态仍为「待评审」）】

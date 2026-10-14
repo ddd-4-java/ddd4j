@@ -22,31 +22,31 @@ fuin source files first:
 
 -
 
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/core/src/main/java/org/fuin/ddd4j/core/AbstractAggregateRoot.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/core/src/main/java/org/fuin/ddd4j/core/AbstractAggregateRoot.java`
 (primary source — 238 lines, all methods)
 
 -
 
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/core/src/main/java/org/fuin/ddd4j/core/AggregateRoot.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/core/src/main/java/org/fuin/ddd4j/core/AggregateRoot.java`
 (interface)
 
 -
 
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/core/src/main/java/org/fuin/ddd4j/core/AbstractEntity.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/core/src/main/java/org/fuin/ddd4j/core/AbstractEntity.java`
 (companion abstract)
 
 -
 
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/core/src/main/java/org/fuin/ddd4j/core/DomainEvent.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/core/src/main/java/org/fuin/ddd4j/core/DomainEvent.java`
 (interface)
 
 Reference for ddd4j's existing self-developed contract (to align the "借鉴/改写/不借鉴" decision):
 
 -
 
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/ddd/model/AggregateRoot.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/ddd/model/AggregateRoot.java`
 -
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/DomainEvent.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/DomainEvent.java`
 
 ## Document structure (mandatory 6 sections)
 
@@ -116,14 +116,14 @@ Use full-width：`（`、`）`、`，`、`。`、`：`、`；`. Keep English cod
 After writing the file, single commit:
 
 ```bash
-cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add docs/reference/fuin-api-patterns/01-aggregate-root.md
 git commit -m "docs(reference): 01-aggregate-root API 模式参考"
 ```
 
 ## Context
 
-- Working directory: `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j`
+- Working directory: `/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j`
 - Branch: `feature/2.0.x`
 - Latest commit: `72a9f746` (Task 1.1 — README index skeleton)
 - ddd4j-build is unblocked (`./mvnw verify -pl ddd4j-core,ddd4j-dependencies` passes)
@@ -153,7 +153,7 @@ matches expectations, STOP and report BLOCKED with specifics.
 ## Report Format
 
 Write full report to:
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/.superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.2-report.md`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/.superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.2-report.md`
 
 - File created (path + line count)
 - Number of sections (must be 6)

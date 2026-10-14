@@ -66,10 +66,10 @@ public class EventPayloadSerializer {
 - [ ] **Step 2: 验证 + 提交**
 
 Run:
-`cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-data/ddd4j-data-event-store compile`
+`cd /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-data/ddd4j-data-event-store compile`
 
 ```bash
-cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add ddd4j-data/ddd4j-data-event-store/src/main/java/io/ddd4j/data/eventstore/jackson/
 git commit -m "feat(data): EventPayloadSerializer Jackson 多态序列化"
 ```

@@ -8,7 +8,7 @@ Commit: `4fd03ee3` `chore(deps): 删除 ddd4j-dependencies BOM 中 8 个 fuin �
 ## What Was Implemented
 
 Exactly per the task brief, two Edit-tool edits on
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-dependencies/pom.xml`:
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-dependencies/pom.xml`:
 
 1. **Step 1** — deleted the 2 version properties (was at lines 274-275):
     - `<fuin-ddd4j.version>0.7.0</fuin-ddd4j.version>`

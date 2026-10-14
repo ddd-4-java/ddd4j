@@ -3,7 +3,7 @@
 ## 交付物
 
 - 文件：
-  `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/docs/reference/fuin-api-patterns/03-domain-event.md`
+  `/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/docs/reference/fuin-api-patterns/03-domain-event.md`
 - 行数：100（上限 100，符合 60-100 指引）
 - Commit：`9b8cfcf9` — `docs(reference): 03-domain-event API 模式参考`（单 commit，仅含新文件，100 insertions）
 

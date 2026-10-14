@@ -21,38 +21,38 @@ Primary (fuin):
 
 -
 
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/core/src/main/java/org/fuin/ddd4j/core/EntityIdPath.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/core/src/main/java/org/fuin/ddd4j/core/EntityIdPath.java`
 -
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/core/src/main/java/org/fuin/ddd4j/core/EntityId.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/core/src/main/java/org/fuin/ddd4j/core/EntityId.java`
 -
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/core/src/main/java/org/fuin/ddd4j/core/AggregateRootId.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/core/src/main/java/org/fuin/ddd4j/core/AggregateRootId.java`
 -
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/core/src/main/java/org/fuin/ddd4j/core/IntegerEntityId.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/core/src/main/java/org/fuin/ddd4j/core/IntegerEntityId.java`
 -
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/core/src/main/java/org/fuin/ddd4j/core/StringBasedEntityType.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/core/src/main/java/org/fuin/ddd4j/core/StringBasedEntityType.java`
 -
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/core/src/main/java/org/fuin/ddd4j/core/ExpectedEntityIdPathValidator.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/core/src/main/java/org/fuin/ddd4j/core/ExpectedEntityIdPathValidator.java`
 (annotation validator)
 
 -
 
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/core/src/main/java/org/fuin/ddd4j/core/HasEntityTypeConstant.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/core/src/main/java/org/fuin/ddd4j/core/HasEntityTypeConstant.java`
 
 Reference (ddd4j-core existing):
 
 -
 
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/EntityIdPath.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/EntityIdPath.java`
 -
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/EntityId.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/EntityId.java`
 -
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/AggregateRootId.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/AggregateRootId.java`
 -
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/StringEntityId.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/StringEntityId.java`
 -
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/EntityType.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/EntityType.java`
 -
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/AggregateVersion.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/AggregateVersion.java`
 
 ## Document structure (mandatory 6 sections)
 
@@ -144,19 +144,19 @@ Use full-width：`（`、`）`、`，`、`。`、`：`、`；`. Keep English cod
 After writing the file, single commit:
 
 ```bash
-cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add docs/reference/fuin-api-patterns/02-entity-id-path.md
 git commit -m "docs(reference): 02-entity-id-path API 模式参考"
 ```
 
 ## Context
 
-- Working directory: `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j`
+- Working directory: `/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j`
 - Branch: `feature/2.0.x`
 - Latest commit: `789760fb` (Task 1.2 — 01-aggregate-root.md)
 - ddd4j-build is unblocked
 - Task 1.2 report (the previous task's report) is at
-  `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/.superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.2-report.md` —
+  `/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/.superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.2-report.md` —
   useful as a style/model reference for tone and depth
 
 ## Out of scope
@@ -185,7 +185,7 @@ If the fuin source files don't exist or have been substantially refactored, STOP
 ## Report Format
 
 Write full report to:
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/.superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.3-report.md`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/.superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.3-report.md`
 
 - File path + line count
 - Section count (6) + section titles (verbatim)

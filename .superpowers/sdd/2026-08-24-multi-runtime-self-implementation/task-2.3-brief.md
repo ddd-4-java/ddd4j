@@ -93,14 +93,14 @@ class AggregateRootEventHandlerTest {
 - [ ] **Step 2: 跑测试**
 
 Run:
-`cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core test -Dtest=AggregateRootEventHandlerTest`
+`cd /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core test -Dtest=AggregateRootEventHandlerTest`
 
 Expected: PASS（全部 6 个用例）
 
 - [ ] **Step 3: 提交**
 
 ```bash
-cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add ddd4j-core/src/test/java/io/ddd4j/core/ddd/model/AggregateRootEventHandlerTest.java
 git commit -m "test(core): AggregateRoot 事件处理器全覆盖"
 ```

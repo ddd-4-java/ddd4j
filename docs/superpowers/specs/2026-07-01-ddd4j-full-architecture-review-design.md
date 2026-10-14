@@ -11,8 +11,8 @@
 
 **对标项目**：
 
-- `workspace-bmgw/codeup/ddd4j`（v1.x，com.dddframework，Spring 强绑定，Java 8）
-- `workspace-bmgw/codeup/cloud-agents`（基于 v1.x 的智能体服务集群）
+- `workspace-legacy/legacy/ddd4j`（v1.x，com.dddframework，Spring 强绑定，Java 8）
+- `workspace-legacy/legacy/cloud-agents`（基于 v1.x 的智能体服务集群）
 
 ## 2. 四象限定位
 

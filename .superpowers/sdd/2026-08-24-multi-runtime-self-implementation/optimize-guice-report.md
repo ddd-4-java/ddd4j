@@ -29,9 +29,9 @@ seconds for all other cron expressions, including invalid ones.
 
 -
 
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/cqrs/GuiceViewManager.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/cqrs/GuiceViewManager.java`
 -
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/guice/cqrs/GuiceViewManagerTest.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/guice/cqrs/GuiceViewManagerTest.java`
 
 ### T2: GuiceCommandBus Implementation (P0-2) - COMPLETED
 
@@ -56,17 +56,17 @@ etc.).
 
 -
 
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/command/GuiceCommandBus.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/command/GuiceCommandBus.java`
 -
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/Ddd4jCommandGuiceModule.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/Ddd4jCommandGuiceModule.java`
 -
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/guice/command/GuiceCommandBusTest.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/guice/command/GuiceCommandBusTest.java`
 
 **Files Modified**:
 
 -
 
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/Ddd4jGuiceModule.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/Ddd4jGuiceModule.java`
 (added thread pool size binding)
 
 ### T3: Thread Pool Configuration - COMPLETED
@@ -85,9 +85,9 @@ etc.).
 
 -
 
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/cqrs/GuiceViewManager.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/cqrs/GuiceViewManager.java`
 -
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/Ddd4jGuiceModule.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/Ddd4jGuiceModule.java`
 
 ## Verification Results
 

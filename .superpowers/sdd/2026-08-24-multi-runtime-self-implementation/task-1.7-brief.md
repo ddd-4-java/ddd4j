@@ -13,7 +13,7 @@ doc documents parity + deltas rather than proposing new design.
 
 -
 
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/cqrs-4-java/core/src/main/java/org/fuin/cqrs4j/core/Command.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/cqrs-4-java/core/src/main/java/org/fuin/cqrs4j/core/Command.java`
 
 - `.../core/src/main/java/org/fuin/cqrs4j/core/CommandExecutor.java` (generic `<CONTEXT, RESULT, CMD>`,
   `getCommandTypes()` returns `Set<EventType>`, `execute(ctx, cmd)` throws 5 aggregate exceptions +
@@ -58,7 +58,7 @@ Content requirements:
 ## Commit
 
 ```bash
-cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add docs/reference/fuin-api-patterns/06-cqrs-command.md
 git commit -m "docs(reference): 06-cqrs-command API 模式参考（ddd4j-core 已对齐）"
 ```

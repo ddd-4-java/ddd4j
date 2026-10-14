@@ -31,7 +31,7 @@ Task 1.5 review already verified `WritableEventStore.java:181` contains the
 
 -
 
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/EventChunkReader.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/EventChunkReader.java`
 (ddd4j's read-side SPI)
 
 - Plan's stage-3 design: `docs/superpowers/plans/2026-08-24-multi-runtime-self-implementation.md` Task 3.2 defines
@@ -67,7 +67,7 @@ Requirements:
 ## Commit
 
 ```bash
-cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add docs/reference/fuin-api-patterns/05-event-store.md
 git commit -m "docs(reference): 05-event-store API 模式参考"
 ```

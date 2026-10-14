@@ -41,7 +41,7 @@ ddd4j-core 的 AggregateRoot 自研 apply(DomainEvent) 方法：
 - [ ] **Step 2: 提交**
 
 ```bash
-cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add docs/adr/0006-apply-reflection-mechanism.md
 git commit -m "docs(adr): 0006 反射事件应用机制"
 ```

@@ -33,20 +33,20 @@ Read `ddd4j/ddd4j-dependencies/pom.xml:3620-3675`，确认内容包含 8 个 fui
 - [ ] **Step 3: 验证编译**
 
 Run:
-`cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-dependencies install -DskipTests`
+`cd /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-dependencies install -DskipTests`
 
 Expected: BUILD SUCCESS
 
 - [ ] **Step 4: 验证 ddd4j-core 全模块编译**
 
-Run: `cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core compile`
+Run: `cd /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core compile`
 
 Expected: BUILD SUCCESS（无 fuin 引用，零影响）
 
 - [ ] **Step 5: 提交**
 
 ```bash
-cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add ddd4j-dependencies/pom.xml
 git commit -m "chore(deps): 删除 ddd4j-dependencies BOM 中 8 个 fuin 死依赖"
 ```

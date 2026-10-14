@@ -296,14 +296,14 @@ public class EventStoreInvocationProvider implements TestTemplateInvocationConte
 - [ ] **Step 5: 验证编译**
 
 Run:
-`cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-data/ddd4j-data-event-store compile`
+`cd /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-data/ddd4j-data-event-store compile`
 
 Expected: BUILD SUCCESS（contract test 用 @TestTemplate 标注，编译期会忽略抽象）
 
 - [ ] **Step 6: 提交**
 
 ```bash
-cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add ddd4j-data/ddd4j-data-event-store/src/main/java/
 git add ddd4j-data/ddd4j-data-event-store/src/test/java/
 git commit -m "feat(data): EventStore SPI + StoredEvent + ContractTest 模板"

@@ -29,7 +29,7 @@ Output (tail, verbatim):
 [INFO] Tests run: 237, Failures: 0, Errors: 0, Skipped: 0
 [INFO]
 [INFO] --- jar:3.5.0:jar (default-jar) @ ddd4j-core ---
-[INFO] Building jar: /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/target/ddd4j-core-2.0.x.20260630-SNAPSHOT.jar
+[INFO] Building jar: /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/target/ddd4j-core-2.0.x.20260630-SNAPSHOT.jar
 [INFO]
 [INFO] --- source:3.4.0:jar-no-fork (attach-sources) @ ddd4j-core ---
 [INFO] --- jacoco:0.8.15:report (report) @ ddd4j-core ---
@@ -79,7 +79,7 @@ Output (tail, verbatim):
 ## Step 3: grep for `org.fuin` — PASS
 
 Command:
-`grep -rn "org\.fuin" /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j --include="*.java" --include="pom.xml"`
+`grep -rn "org\.fuin" /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j --include="*.java" --include="pom.xml"`
 
 Output: (empty — no matches)
 
@@ -103,12 +103,12 @@ Command: `git push origin feature/2.0.x`
 Output (verbatim):
 
 ```
-To https://codeup.aliyun.com/5fdc0afd99b59ba3c5ead757/ddd4j/ddd4j.git
+To [REMOTE-URL-REDACTED]
    c5d9308b..939eaa6d  feature/2.0.x -> feature/2.0.x
 push exit code: 0
 ```
 
-**Remote URL:** `origin` = `https://wandl-redacted-acct:***@codeup.aliyun.com/5fdc0afd99b59ba3c5ead757/ddd4j/ddd4j.git` (Aliyun codeup; credentials embedded in URL, push authenticated automatically — credential redacted in this report)
+**Remote URL:** `origin` = [REMOTE-URL-REDACTED] (private self-hosted Git platform; the historical URL embedded credentials and is fully redacted per compliance policy)
 
 **Remote HEAD after push** (verified via `git ls-remote origin refs/heads/feature/2.0.x`):
 

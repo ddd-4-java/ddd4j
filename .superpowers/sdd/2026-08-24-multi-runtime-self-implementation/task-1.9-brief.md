@@ -12,8 +12,8 @@ Task 2.5 will strengthen it with 8-runtime zero-dependency rules — this doc su
 **Primary (fuin — find and read ALL ArchitectureTest files):**
 
 ```bash
-find /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java -name "ArchitectureTest.java" -o -name "*Architecture*Test*.java" | sort
-find /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/cqrs-4-java -name "ArchitectureTest.java" -o -name "*Architecture*Test*.java" | sort
+find /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java -name "ArchitectureTest.java" -o -name "*Architecture*Test*.java" | sort
+find /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/cqrs-4-java -name "ArchitectureTest.java" -o -name "*Architecture*Test*.java" | sort
 ```
 
 Read every hit (expect at least ddd-4-java/core and esc, plus cqrs-4-java/core). Typical fuin pattern: ArchUnit
@@ -51,7 +51,7 @@ Content requirements:
 ## Commit
 
 ```bash
-cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add docs/reference/fuin-api-patterns/08-architecture-test.md
 git commit -m "docs(reference): 08-architecture-test API 模式参考"
 ```

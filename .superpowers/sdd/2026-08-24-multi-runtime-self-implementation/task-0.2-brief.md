@@ -7,7 +7,7 @@
 - [ ] **Step 1: 定位 fuin 引用**
 
 Run:
-`grep -n "org.fuin" /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ProjectionService.java`
+`grep -n "org.fuin" /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ProjectionService.java`
 
 Expected: 命中 `org.fuin.*` 引用
 
@@ -29,14 +29,14 @@ Expected: 命中 `org.fuin.*` 引用
 
 - [ ] **Step 3: 验证**
 
-Run: `grep -rn "org.fuin" /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/`
+Run: `grep -rn "org.fuin" /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/`
 
 Expected: 0 个匹配
 
 - [ ] **Step 4: 提交**
 
 ```bash
-cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ProjectionService.java
 git commit -m "docs(core): ProjectionService 注释移除 fuin 引用"
 ```

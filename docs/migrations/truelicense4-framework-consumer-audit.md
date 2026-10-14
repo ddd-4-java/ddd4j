@@ -82,10 +82,10 @@ tree也仅解析该模块，没有旧TrueLicense坐标。master仍可搜索到�
 Cloud 2020.0.x的当前源码/POM没有auth-license、extension-license或TrueLicense匹配。它不需要直接改许可证模块，但若组合使用Boot
 auth-license，仍会继承Boot消费侧未闭合的问题。
 
-旧目标仓库 `/Users/wandl/workspaces/workspace-bmgw/codeup/ddd4j` 与实际迁移参照
-`/Users/wandl/workspaces/workspace-bmgw/codeup/cloud-agents` 当前也没有许可证、LicenseVerify、
+旧目标仓库 `/Users/dev//workspaces/workspace-legacy/legacy/ddd4j` 与实际迁移参照
+`/Users/dev//workspaces/workspace-legacy/legacy/cloud-agents` 当前也没有许可证、LicenseVerify、
 auth-license、extension-license 或 TrueLicense 的源码/POM/配置匹配。因此 TrueLicense 4迁移不是
-“替代旧BMGW能力”的行为对等前置条件，而是新底座新增能力的依赖合规与框架集成问题。
+“替代旧组件库能力”的行为对等前置条件，而是新底座新增能力的依赖合规与框架集成问题。
 这两个仓库没有 `.codegraph`，遵循项目指令未擅自初始化索引；结论来自当前checkout的受限文本审计。
 
 Boot首次CodeGraph查询返回了当前文件树已不存在的ddd4j-boot-extensions旧许可证源码。同步前状态只报告一个POM修改，却实际同步出Added18/Modified103/Removed19，共1197节点。同步后查询只返回当前ddd4j-boot-auth-license自动配置，和文件树一致。因此这里的CodeGraph结论来自同步后的图谱；分支POM矩阵使用git
