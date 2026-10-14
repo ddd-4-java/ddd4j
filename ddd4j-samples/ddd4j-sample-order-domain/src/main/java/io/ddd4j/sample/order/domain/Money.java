@@ -113,6 +113,16 @@ public final class Money implements ValueObject {
         return currency;
     }
 
+    /** @return 金额 */
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    /** @return 币种 */
+    public String getCurrency() {
+        return currency;
+    }
+
     /**
      * 反序列化时重新校验金额约束。
      *
@@ -151,6 +161,6 @@ public final class Money implements ValueObject {
 
     @Override
     public String toString() {
-        return "Money[amount=" + amount + ", currency=" + currency + "]";
+        return "Money(amount=" + amount + ", currency=" + currency + ")";
     }
 }

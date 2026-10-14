@@ -80,6 +80,26 @@ public final class OrderQuery {
         return size;
     }
 
+    /** @return 买家标识 */
+    public String getBuyerId() {
+        return buyerId;
+    }
+
+    /** @return 订单状态 */
+    public OrderStatus getStatus() {
+        return status;
+    }
+
+    /** @return 从一开始的页码 */
+    public int getPage() {
+        return page;
+    }
+
+    /** @return 每页数量 */
+    public int getSize() {
+        return size;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -104,6 +124,6 @@ public final class OrderQuery {
 
     @Override
     public String toString() {
-        return "OrderQuery[buyerId=" + buyerId + ", status=" + status + ", page=" + page + ", size=" + size + "]";
+        return "OrderQuery(buyerId=" + buyerId + ", status=" + status + ", page=" + page + ", size=" + size + ")";
     }
 }
