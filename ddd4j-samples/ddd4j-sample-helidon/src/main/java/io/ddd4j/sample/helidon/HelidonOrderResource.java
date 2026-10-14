@@ -1,0 +1,168 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.ddd4j.sample.helidon;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import io.ddd4j.core.api.R;
+import io.ddd4j.core.auth.AuthRequest;
+import io.ddd4j.core.util.SubjectKit;
+import io.ddd4j.kit.lang.StrKit;
+import io.ddd4j.sample.order.application.AddOrderLineCommand;
+import io.ddd4j.sample.order.application.CreateOrderCommand;
+import io.ddd4j.sample.order.application.OrderApplicationService;
+import io.ddd4j.sample.order.application.OrderReadModel;
+import io.ddd4j.web.core.context.WebHeaders;
+import io.ddd4j.web.core.error.WebStatusException;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.json.bind.annotation.JsonbProperty;
+import lombok.Data;
+
+import java.math.BigDecimal;
+import java.util.Objects;
+
+/**
+ * Helidon JAX-RS 到共享 Order Application 的协议适配层。
+ */
+@Path("/api")
+@Produces(MediaType.APPLICATION_JSON)
+@ApplicationScoped
+public class HelidonOrderResource {
+
+    private final OrderApplicationService applicationService;
+
+    @Inject
+    public HelidonOrderResource(OrderApplicationService applicationService) {
+        this.applicationService = Objects.requireNonNull(applicationService, "applicationService must not be null");
+    }
+
+    @POST
+    @Path("/auth/tokens/{userId}")
+    public R<TokenResponse> issueToken(@PathParam("userId") String userId) {
+        return R.ok(new TokenResponse(SubjectKit.getSubject().login(AuthRequest.of(userId))));
+    }
+
+    @POST
+    @Path("/orders")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response create(CreateOrderRequest request) {
+        CreateOrderRequest actual = Objects.requireNonNull(request, "request must not be null");
+        OrderReadModel order = applicationService.find(applicationService.create(new CreateOrderCommand(
+                actual.getOrderNo(), actual.getBuyerId(), actual.getBuyerName())).id());
+        return Response.status(Response.Status.CREATED).entity(R.ok(order)).build();
+    }
+
+    @GET
+    @Path("/orders/{orderId}")
+    public R<OrderReadModel> find(@PathParam("orderId") String orderId) {
+        return R.ok(applicationService.find(orderId));
+    }
+
+    @POST
+    @Path("/orders/{orderId}/lines")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public R<OrderReadModel> addLine(@PathParam("orderId") String orderId, AddOrderLineRequest request) {
+        AddOrderLineRequest actual = Objects.requireNonNull(request, "request must not be null");
+        applicationService.addLine(new AddOrderLineCommand(orderId, actual.getGoodsId(), actual.getGoodsName(),
+                actual.getQuantity(), actual.getUnitPrice()));
+        return R.ok(applicationService.find(orderId));
+    }
+
+    @POST
+    @Path("/orders/{orderId}/pay")
+    public R<OrderReadModel> pay(@PathParam("orderId") String orderId,
+                                 @HeaderParam(WebHeaders.IDEMPOTENCY_KEY) String idempotencyKey) {
+        if (StrKit.isBlank(idempotencyKey)) {
+            throw new WebStatusException(400, "Idempotency-Key is required");
+        }
+        applicationService.pay(orderId, idempotencyKey);
+        return R.ok(applicationService.find(orderId));
+    }
+
+    @Data
+    public static class CreateOrderRequest {
+
+        private String orderNo;
+        private String buyerId;
+        private String buyerName;
+    }
+
+    @Data
+    public static class AddOrderLineRequest {
+
+        private String goodsId;
+        private String goodsName;
+        private int quantity;
+        private BigDecimal unitPrice;
+    }
+
+    public final static class TokenResponse {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String token;
+
+        @JsonCreator()
+        public TokenResponse(@JsonProperty("token") String token) {
+            this.token = token;
+        }
+
+        @JsonProperty("token")
+        public String token() {
+            return token;
+        }
+
+        @JsonbProperty("token")
+        public String getToken() {
+            return token;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            TokenResponse other = (TokenResponse) obj;
+            return Objects.equals(this.token, other.token);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(token);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "TokenResponse[token=" + token + "]";
+        }
+    }
+}

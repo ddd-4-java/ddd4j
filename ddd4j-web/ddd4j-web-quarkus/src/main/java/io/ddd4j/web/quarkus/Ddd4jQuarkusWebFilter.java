@@ -1,0 +1,204 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.ddd4j.web.quarkus;
+
+import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
+import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
+import io.ddd4j.web.core.idempotency.CacheIdempotencyGuard;
+import io.ddd4j.web.core.context.ClientIpResolver;
+import io.ddd4j.web.core.context.RequestIdGenerator;
+import io.ddd4j.web.core.context.SynchronousWebRequestSession;
+import io.ddd4j.web.core.context.WebHeaders;
+import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
+import io.ddd4j.web.core.observability.WebOtelSupport;
+import io.ddd4j.web.core.context.WebRequestContext;
+import io.ddd4j.web.core.context.WebRequestContextFactory;
+import io.ddd4j.web.core.context.WebRequestData;
+import io.ddd4j.web.core.context.WebRequestLifecycle;
+import io.vertx.ext.web.RoutingContext;
+import javax.annotation.Priority;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.ws.rs.Priorities;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.container.ContainerResponseContext;
+import javax.ws.rs.ext.Provider;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+
+/**
+ * Quarkus REST 同步请求上下文、Bearer Subject 与幂等过滤器。
+ *
+ * <p>同时集成 OTel 分布式追踪：通过 {@link WebOtelSupport} 反射调用
+ * WebOtelIntegration（OTel 集成可选，无依赖时不生效）。
+ */
+@Provider
+@ApplicationScoped
+@Priority(Priorities.AUTHENTICATION)
+public class Ddd4jQuarkusWebFilter implements ContainerRequestFilter {
+
+    static final String SESSION_PROPERTY = Ddd4jQuarkusWebFilter.class.getName() + ".session";
+    static final String CONTEXT_PROPERTY = Ddd4jQuarkusWebFilter.class.getName() + ".context";
+    static final String OTEL_SPAN_PROPERTY = Ddd4jQuarkusWebFilter.class.getName() + ".otelSpan";
+    static final String OTEL_SCOPE_PROPERTY = Ddd4jQuarkusWebFilter.class.getName() + ".otelScope";
+
+    private final WebRequestContextFactory contextFactory;
+    private final WebRequestLifecycle requestLifecycle;
+    private final WebIdempotencyLifecycle idempotencyLifecycle;
+
+    @Inject
+    RoutingContext routingContext;
+
+    public Ddd4jQuarkusWebFilter() {
+        this(Ddd4jQuarkusWebConfiguration.load());
+    }
+
+    public Ddd4jQuarkusWebFilter(Ddd4jQuarkusWebConfiguration configuration) {
+        Ddd4jQuarkusWebConfiguration config = Objects.requireNonNull(configuration,
+                "configuration must not be null");
+        ClientIpResolver clientIpResolver = config.isTrustForwardedHeaders()
+                ? ClientIpResolver.trustedProxy() : ClientIpResolver.remoteAddressOnly();
+        this.contextFactory = new WebRequestContextFactory(RequestIdGenerator.uuid(), clientIpResolver);
+        this.requestLifecycle = new WebRequestLifecycle(new BearerSubjectAuthenticator(), config.accessPolicy());
+        this.idempotencyLifecycle = config.isIdempotencyEnabled()
+                ? new WebIdempotencyLifecycle(new CacheIdempotencyGuard(config.getIdempotencyCacheName()),
+                config.getIdempotencyTtl()) : null;
+    }
+
+    Ddd4jQuarkusWebFilter(WebRequestContextFactory contextFactory,
+                          WebRequestLifecycle requestLifecycle,
+                          WebIdempotencyLifecycle idempotencyLifecycle) {
+        this.contextFactory = Objects.requireNonNull(contextFactory, "contextFactory must not be null");
+        this.requestLifecycle = Objects.requireNonNull(requestLifecycle, "requestLifecycle must not be null");
+        this.idempotencyLifecycle = idempotencyLifecycle;
+    }
+
+    private static void closeScope(Object scope) {
+        if (scope instanceof AutoCloseable) {
+            try {
+                ((AutoCloseable) scope).close();
+            } catch (Throwable ignored) {
+            }
+        }
+    }
+
+    private static Map<String, String> extractRequestHeaders(ContainerRequestContext request) {
+        Map<String, String> headers = new HashMap<>();
+        for (Map.Entry<String, List<String>> entry : request.getHeaders().entrySet()) {
+            String value = request.getHeaderString(entry.getKey());
+            if (Objects.nonNull(value)) {
+                headers.put(entry.getKey(), value);
+            }
+        }
+        return headers;
+    }
+
+    @Override
+    public void filter(ContainerRequestContext request) {
+        request(request);
+    }
+
+    public void request(ContainerRequestContext request) {
+        // OTel: 启动 SERVER span
+        Object span = WebOtelSupport.startServerSpan(
+                request.getMethod(),
+                request.getUriInfo().getRequestUri().getPath(),
+                extractRequestHeaders(request));
+        AutoCloseable scope = WebOtelSupport.activate(span);
+        request.setProperty(OTEL_SPAN_PROPERTY, span);
+        request.setProperty(OTEL_SCOPE_PROPERTY, scope);
+
+        SynchronousWebRequestSession session = null;
+        try {
+            WebRequestContext context = createContext(request);
+            session = SynchronousWebRequestSession.open(context, requestLifecycle,
+                    idempotencyLifecycle, request.getHeaderString(WebHeaders.IDEMPOTENCY_KEY));
+            request.setProperty(CONTEXT_PROPERTY, context);
+            request.setProperty(SESSION_PROPERTY, session);
+        } catch (RuntimeException exception) {
+            WebOtelSupport.recordError(span, exception);
+            if (Objects.nonNull(session)) {
+                try {
+                    session.complete(false);
+                } catch (RuntimeException cleanupFailure) {
+                    exception.addSuppressed(cleanupFailure);
+                }
+            }
+            int status = new DefaultWebExceptionTranslator().translate(exception).status();
+            WebOtelSupport.endServerSpan(span, status);
+            closeScope(scope);
+            request.removeProperty(OTEL_SPAN_PROPERTY);
+            request.removeProperty(OTEL_SCOPE_PROPERTY);
+            request.removeProperty(CONTEXT_PROPERTY);
+            request.removeProperty(SESSION_PROPERTY);
+            throw exception;
+        }
+    }
+
+    public void response(ContainerRequestContext request, ContainerResponseContext response) {
+        Object span = request.getProperty(OTEL_SPAN_PROPERTY);
+        Object scope = request.getProperty(OTEL_SCOPE_PROPERTY);
+        try {
+            Object contextValue = request.getProperty(CONTEXT_PROPERTY);
+            if (contextValue instanceof WebRequestContext) {
+                WebRequestContext context = (WebRequestContext) contextValue;
+                response.getHeaders().putSingle(WebHeaders.REQUEST_ID, context.requestId());
+                response.getHeaders().putSingle(WebHeaders.TRACE_ID, context.traceId());
+            }
+            Object sessionValue = request.getProperty(SESSION_PROPERTY);
+            boolean successful = response.getStatus() < 400;
+            if (sessionValue instanceof SynchronousWebRequestSession) {
+                SynchronousWebRequestSession session = (SynchronousWebRequestSession) sessionValue;
+                session.complete(successful);
+            }
+        } finally {
+            if (Objects.nonNull(span)) {
+                WebOtelSupport.endServerSpan(span, response.getStatus());
+            }
+            closeScope(scope);
+            request.removeProperty(OTEL_SPAN_PROPERTY);
+            request.removeProperty(OTEL_SCOPE_PROPERTY);
+            request.removeProperty(CONTEXT_PROPERTY);
+            request.removeProperty(SESSION_PROPERTY);
+        }
+    }
+
+    private WebRequestContext createContext(ContainerRequestContext request) {
+        return contextFactory.create(new WebRequestData(
+                request.getHeaderString(WebHeaders.REQUEST_ID),
+                request.getHeaderString(WebHeaders.TRACE_ID),
+                request.getHeaderString(WebHeaders.TENANT_ID),
+                request.getHeaderString(WebHeaders.AUTHORIZATION),
+                Optional.ofNullable(request.getLanguage()).orElse(Locale.getDefault()),
+                request.getHeaderString(WebHeaders.FORWARDED_FOR),
+                request.getHeaderString("X-Real-IP"),
+                remoteAddress(),
+                request.getMethod(),
+                request.getUriInfo().getRequestUri().getPath()));
+    }
+
+    private String remoteAddress() {
+        if (Objects.isNull(routingContext) || Objects.isNull(routingContext.request().remoteAddress())) {
+            return null;
+        }
+        return routingContext.request().remoteAddress().host();
+    }
+}

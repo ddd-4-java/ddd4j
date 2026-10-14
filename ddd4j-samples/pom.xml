@@ -14,7 +14,7 @@
     <packaging>pom</packaging>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>ddd4j framework-agnostic business kernel and runtime examples for the Java 8 compatible 1.0.x line.
-        Helidon 3, Quarkus and Micronaut samples are excluded because their runtimes require newer JDKs.
+        Micronaut 3 and Helidon 1 samples are included; Quarkus samples are being adapted for Quarkus 1.
     </description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
@@ -36,13 +36,21 @@
         <module>ddd4j-sample-javalin</module>
         <module>ddd4j-sample-vertx</module>
         <module>ddd4j-sample-dropwizard</module>
+        <module>ddd4j-sample-micronaut</module>
+        <module>ddd4j-sample-quarkus</module>
 
         <!-- CQRS/ES examples: read-write separation + caching -->
         <module>ddd4j-sample-javalin-cqrs</module>
         <module>ddd4j-sample-vertx-cqrs</module>
         <module>ddd4j-sample-dropwizard-cqrs</module>
+        <module>ddd4j-sample-micronaut-cqrs</module>
+        <module>ddd4j-sample-helidon-cqrs</module>
+        <module>ddd4j-sample-quarkus-cqrs</module>
+        <module>ddd4j-sample-helidon</module>
 
         <!-- Auth examples: satoken/shiro integrations -->
+        <module>ddd4j-sample-quarkus-satoken</module>
+        <module>ddd4j-sample-quarkus-shiro</module>
         <module>ddd4j-sample-javalin-satoken</module>
         <module>ddd4j-sample-javalin-shiro</module>
     </modules>

@@ -22,14 +22,15 @@
         ddd4j-web 子模块：
         2026-09-04 把根目录的 ddd4j-web-{javalin,vertx,micronaut,dropwizard,testkit}
         真实代码模块迁入 ddd4j-web/ 聚合根（parent 改 ddd4j-web），与 2.0.x/3.0.x 拓扑对齐。
-        ddd4j-web-quarkus 删除（仅 .flattened-pom.xml 残留，无用户代码）；
-        1.0.x 行不启用 Quarkus / Helidon 集成（目标版本需要更高 JDK）。
+        Quarkus / Helidon 桥接使用各自在 JDK 8 可运行的版本。
     -->
     <modules>
         <module>ddd4j-web-core</module>
         <module>ddd4j-web-javalin</module>
         <module>ddd4j-web-vertx</module>
         <module>ddd4j-web-micronaut</module>
+        <module>ddd4j-web-helidon</module>
+        <module>ddd4j-web-quarkus</module>
         <module>ddd4j-web-dropwizard</module>
         <module>ddd4j-web-webflux</module>
         <module>ddd4j-web-webmvc</module>

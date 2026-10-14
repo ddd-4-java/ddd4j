@@ -1,0 +1,147 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.ddd4j.sample.quarkus.shiro.goods.web;
+
+import io.ddd4j.kit.lang.StrKit;
+
+import java.util.Objects;
+
+import io.ddd4j.core.api.Page;
+import io.ddd4j.core.api.R;
+import io.ddd4j.sample.quarkus.shiro.goods.application.GoodsApplicationService;
+import io.ddd4j.sample.quarkus.shiro.goods.domain.Goods;
+import io.ddd4j.sample.quarkus.shiro.goods.domain.GoodsQuery;
+import javax.inject.Inject;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+/**
+ * 商品充血查询资源（读侧）。
+ *
+ * <p>接收查询参数并构造 {@link GoodsQuery}，调用充血查询方法。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
+@javax.enterprise.context.ApplicationScoped
+@Path("/api/goods")
+@Produces(MediaType.APPLICATION_JSON)
+public class GoodsQueryResource {
+
+    private final GoodsApplicationService applicationService;
+
+    @Inject
+    public GoodsQueryResource(GoodsApplicationService applicationService) {
+        this.applicationService = applicationService;
+    }
+
+    /**
+     * 充血分页查询。
+     * @param current 当前页
+     * @param size 每页大小
+     * @param code 业务编码
+     * @param nameLike 名称过滤条件
+     * @param status 状态
+     * @param priceMin 最低价格
+     * @param priceMax 最高价格
+     * @param orderBys 排序条件
+     * @return 分页结果
+     */
+    @GET
+    @Path("/page")
+    public R<Page<Goods>> page(
+            @QueryParam("current") Long current,
+            @QueryParam("size") Long size,
+            @QueryParam("code") String code,
+            @QueryParam("nameLike") String nameLike,
+            @QueryParam("status") String status,
+            @QueryParam("priceMin") BigDecimal priceMin,
+            @QueryParam("priceMax") BigDecimal priceMax,
+            @QueryParam("orderBys") String orderBys) {
+        return R.ok(applicationService.pageQuery(buildQuery(current, size, code, nameLike, status, priceMin, priceMax, orderBys)));
+    }
+
+    /**
+     * 充血列表查询。
+     * @param code 业务编码
+     * @param nameLike 名称过滤条件
+     * @param status 状态
+     * @param priceMin 最低价格
+     * @param priceMax 最高价格
+     * @param orderBys 排序条件
+     * @return 结果列表
+     */
+    @GET
+    @Path("/list")
+    public R<List<Goods>> list(
+            @QueryParam("code") String code,
+            @QueryParam("nameLike") String nameLike,
+            @QueryParam("status") String status,
+            @QueryParam("priceMin") BigDecimal priceMin,
+            @QueryParam("priceMax") BigDecimal priceMax,
+            @QueryParam("orderBys") String orderBys) {
+        return R.ok(applicationService.listQuery(buildQuery(1L, 0L, code, nameLike, status, priceMin, priceMax, orderBys)));
+    }
+
+    /**
+     * 充血计数。
+     * @param code 业务编码
+     * @param nameLike 名称过滤条件
+     * @param status 状态
+     * @param priceMin 最低价格
+     * @param priceMax 最高价格
+     * @return API 响应
+     */
+    @GET
+    @Path("/count")
+    public R<Long> count(
+            @QueryParam("code") String code,
+            @QueryParam("nameLike") String nameLike,
+            @QueryParam("status") String status,
+            @QueryParam("priceMin") BigDecimal priceMin,
+            @QueryParam("priceMax") BigDecimal priceMax) {
+        return R.ok(applicationService.countQuery(buildQuery(1L, 0L, code, nameLike, status, priceMin, priceMax, null)));
+    }
+
+    private GoodsQuery buildQuery(Long current, Long size, String code, String nameLike, String status,
+                                  BigDecimal priceMin, BigDecimal priceMax, String orderBys) {
+        GoodsQuery query = new GoodsQuery();
+        if (Objects.nonNull(current)) {
+            query.setCurrent(current);
+        }
+        if (Objects.nonNull(size)) {
+            query.setSize(size);
+        }
+        query.setCode(code);
+        query.setNameLike(nameLike);
+        query.setStatus(parseStatus(status));
+        query.setPriceMin(priceMin);
+        query.setPriceMax(priceMax);
+        query.setOrderBys(orderBys);
+        return query;
+    }
+
+    private io.ddd4j.sample.quarkus.shiro.goods.domain.GoodsStatus parseStatus(String status) {
+        if (StrKit.isBlank(status)) {
+            return null;
+        }
+        return io.ddd4j.sample.quarkus.shiro.goods.domain.GoodsStatus.valueOf(status.toUpperCase());
+    }
+}

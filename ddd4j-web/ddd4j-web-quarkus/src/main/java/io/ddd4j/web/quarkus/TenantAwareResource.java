@@ -1,0 +1,239 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.ddd4j.web.quarkus;
+
+import io.ddd4j.core.api.Page;
+import io.ddd4j.core.api.R;
+import io.ddd4j.kit.lang.StrKit;
+import io.vertx.core.http.HttpServerRequest;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+
+import java.util.List;
+import java.util.function.Function;
+
+/**
+ * Quarkus JAX-RS 资源基类：从 Vert.x {@link HttpServerRequest} 解析租户、用户、语言、店铺等请求头。
+ * <p>
+ * 对标 ddd4j-web 的 {@code BaseResource}（Spring 拦截器方案），Quarkus 轨道采用 JAX-RS + Vert.x 方案。
+ * </p>
+ *
+ * <h2>使用示例</h2>
+ * <pre>
+ * &#64;Path("/api/users")
+ * public class UserResource extends TenantAwareResource {
+ *
+ *     &#64;GET
+ *     public R&lt;Page&lt;UserVo&gt;&gt; list() {
+ *         String tenantId = getTenantId();
+ *         String lang = getLang();
+ *         return R.ok(userService.list(tenantId, lang));
+ *     }
+ * }
+ * </pre>
+ */
+public class TenantAwareResource {
+
+    /**
+     * Vert.x HTTP 服务端请求（由 JAX-RS 注入）
+     */
+    @Context
+    HttpServerRequest request;
+
+    /**
+     * 当前请求用户 ID：优先 {@code uid}，否则 {@code admin-id}（后台场景）。
+     *
+     * @return 用户 ID，可能为空
+     */
+    protected String getUid() {
+        String uid = request.getHeader("uid");
+        if (StrKit.isEmpty(uid)) {
+            uid = request.getHeader("admin-id");
+        }
+        return uid;
+    }
+
+    /**
+     * 解析路径或业务中的「当前用户」：当 default 为空或为 {@code me} 时使用请求头 {@code uid}。
+     *
+     * @param defaultUid 默认 uid，可为 {@code me} 表示当前登录用户
+     * @return 用户 ID
+     */
+    protected String getUid(String defaultUid) {
+        if (StrKit.isEmpty(defaultUid) || "me".equals(defaultUid)) {
+            return request.getHeader("uid");
+        }
+        return defaultUid;
+    }
+
+    /**
+     * 从请求头解析租户 ID：依次尝试 {@code site}、{@code tenant-id}、{@code tenant_id}、{@code tenantId}。
+     *
+     * @return 租户 ID，可能为空
+     */
+    protected String getTenantId() {
+        String site = request.getHeader("site");
+        if (StrKit.isEmpty(site)) {
+            site = request.getHeader("tenant-id");
+        }
+        if (StrKit.isEmpty(site)) {
+            site = request.getHeader("tenant_id");
+        }
+        if (StrKit.isEmpty(site)) {
+            site = request.getHeader("tenantId");
+        }
+        return site;
+    }
+
+    /**
+     * 租户 ID：若 default 非空则直接返回，否则从请求头解析。
+     *
+     * @param defaultId 显式指定的租户 ID，可为空
+     * @return 租户 ID
+     */
+    protected String getTenantId(String defaultId) {
+        return StrKit.isEmpty(defaultId) ? getTenantId() : defaultId;
+    }
+
+    /**
+     * 当前店铺 ID：支持 {@code shop-id} / {@code shopId}，过滤 null、-1 等无效值。
+     *
+     * @return 店铺 ID，无则空字符串
+     */
+    protected String getShopId() {
+        String shopId = request.getHeader("shop-id");
+        if (StrKit.isEmpty(shopId)) {
+            shopId = request.getHeader("shopId");
+        }
+        if ("null".equalsIgnoreCase(shopId)) {
+            return "";
+        }
+        return StrKit.isEmpty(shopId) || "-1".equals(shopId) ? "" : shopId;
+    }
+
+    /**
+     * 从 Accept-Language 解析当前语言代码。
+     *
+     * @return 语言标识（经 {@link WebUtils#getLang} 归一化）
+     */
+    protected String getLang() {
+        return WebUtils.getLang(request);
+    }
+
+    /**
+     * 按当前请求语言对文案 key 做国际化。
+     *
+     * @param key        文案 key
+     * @param parameters 占位参数
+     * @return 翻译后的字符串
+     */
+    protected String i18n(String key, Object... parameters) {
+        return WebUtils.i18n(getLang(), key, parameters);
+    }
+
+    // ========== Response 构建快捷方法 ==========
+
+    /**
+     * HTTP 200 + R.ok(data)
+     * @param data 响应数据
+     * @return HTTP 响应
+     */
+    protected Response ok(Object data) {
+        return Response.ok(R.ok(data)).build();
+    }
+
+    /**
+     * HTTP 200 + R.ok()
+     * @return HTTP 响应
+     */
+    protected Response ok() {
+        return Response.ok(R.ok()).build();
+    }
+
+    /**
+     * HTTP 200 + R.of(code, message)
+     * @param code 响应码
+     * @param message 响应消息
+     * @return HTTP 响应
+     */
+    protected Response fail(int code, String message) {
+        return Response.ok(R.of(code, message)).build();
+    }
+
+    /**
+     * HTTP 200 + R.fail(message)
+     * @param message 响应消息
+     * @return HTTP 响应
+     */
+    protected Response fail(String message) {
+        return Response.ok(R.fail(message)).build();
+    }
+
+    /**
+     * HTTP 200 + 404 语义
+     * @param message 响应消息
+     * @return HTTP 响应
+     */
+    protected Response notFound(String message) {
+        return Response.ok(R.of(404, message)).build();
+    }
+
+    /**
+     * HTTP 200 + 401 语义
+     * @param message 响应消息
+     * @return HTTP 响应
+     */
+    protected Response unauthorized(String message) {
+        return Response.ok(R.of(401, message)).build();
+    }
+
+    /**
+     * HTTP 200 + 400 语义
+     * @param message 响应消息
+     * @return HTTP 响应
+     */
+    protected Response badRequest(String message) {
+        return Response.ok(R.of(400, message)).build();
+    }
+
+    /**
+     * HTTP 200 + 500 语义
+     * @param message 响应消息
+     * @return HTTP 响应
+     */
+    protected Response serverError(String message) {
+        return Response.ok(R.of(500, message)).build();
+    }
+
+    // ========== 分页便捷方法 ==========
+
+    /**
+     * 将分页记录映射转换
+     * @param <T> 源记录类型
+     * @param <R> 目标记录类型
+     * @param page 源分页对象
+     * @param func 记录映射函数
+     * @return 转换后的分页对象
+     */
+    protected <T, R> Page<R> transfer(Page<T> page, Function<T, R> func) {
+        List<R> results = page.getRecords().stream().map(func).collect(java.util.stream.Collectors.toList());
+        Page<R> p = new Page<>();
+        p.setRecords(results);
+        p.setTotal(page.getTotal());
+        p.setCurrent(page.getCurrent());
+        p.setSize(page.getSize());
+        return p;
+    }
+}

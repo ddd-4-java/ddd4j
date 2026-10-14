@@ -1,0 +1,96 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.ddd4j.web.quarkus;
+
+import io.ddd4j.core.api.R;
+import io.ddd4j.core.constant.ContextConstants;
+import io.ddd4j.core.context.ThreadContext;
+import io.ddd4j.web.core.context.WebContextScope;
+import io.ddd4j.web.core.error.WebStatusException;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.NoSuchElementException;
+
+@Path("/contract")
+@Produces(MediaType.APPLICATION_JSON)
+public class Ddd4jQuarkusContractResource {
+
+    @GET
+    @Path("/success")
+    public R<Map<String, String>> success() {
+        return R.ok(java.util.Collections.singletonMap("result", "ok"));
+    }
+
+    @GET
+    @Path("/public")
+    public R<Map<String, String>> publicEndpoint() {
+        return R.ok(java.util.Collections.singletonMap("result", "ok"));
+    }
+
+    @GET
+    @Path("/protected")
+    public R<Map<String, String>> protectedEndpoint() {
+        return R.ok(java.util.Collections.singletonMap("result", "ok"));
+    }
+
+    @POST
+    @Path("/created")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response created(String ignoredBody) {
+        return Response.status(Response.Status.CREATED)
+                .entity(R.ok(java.util.Collections.singletonMap("result", "created"))).build();
+    }
+
+    @GET
+    @Path("/context")
+    public R<Map<String, Object>> context() {
+        Map<String, Object> data = new LinkedHashMap<>();
+        data.put("requestId", ThreadContext.get(WebContextScope.REQUEST_ID));
+        data.put("traceId", ThreadContext.get(WebContextScope.TRACE_ID));
+        data.put("tenantId", ThreadContext.get(ContextConstants.TENANT_ID));
+        return R.ok(data);
+    }
+
+    @POST
+    @Path("/idempotent")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public R<Map<String, String>> idempotent(String ignoredBody) {
+        return R.ok(java.util.Collections.singletonMap("result", "accepted"));
+    }
+
+    @GET
+    @Path("/errors/{type}")
+    public R<Void> error(@PathParam("type") String type) {
+        switch (type) {
+            case "bad-request": throw new IllegalArgumentException("bad request");
+            case "forbidden": throw new SecurityException("forbidden");
+            case "not-found": throw new NoSuchElementException("not found");
+            case "conflict": throw new IllegalStateException("conflict");
+            case "unsupported-media-type": throw new WebStatusException(415, "unsupported media type");
+            case "unprocessable-entity": throw new WebStatusException(422, "unprocessable entity");
+            case "too-many-requests": throw new WebStatusException(429, "too many requests");
+            default: throw new RuntimeException("internal failure");
+        }
+    }
+}

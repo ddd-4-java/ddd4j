@@ -1,0 +1,128 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.ddd4j.sample.quarkus.shiro.rbac;
+
+import java.util.Objects;
+
+import javax.enterprise.context.ApplicationScoped;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+
+/**
+ * 角色内存仓储。
+ *
+ * <p>使用 {@link ApplicationScoped} 暴露为 CDI 单例 Bean；底层为 {@link ConcurrentHashMap}。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
+@ApplicationScoped
+public class InMemoryRoleRepository {
+
+    private final ConcurrentHashMap<String, Role> store = new ConcurrentHashMap<>();
+
+    /**
+     * 保存或覆盖角色。
+     * @param role 角色
+     * @return 操作结果
+     */
+    public Role save(Role role) {
+        Objects.requireNonNull(role, "role");
+        store.put(role.getCode(), role);
+        return role;
+    }
+
+    /**
+     * 按编码查询。
+     * @param code 业务编码
+     * @return 可选的查询结果
+     */
+    public Optional<Role> findByCode(String code) {
+        return Optional.ofNullable(store.get(code));
+    }
+
+    /**
+     * 查询全部。
+     * @return 结果列表
+     */
+    public List<Role> findAll() {
+        return new ArrayList<>(store.values());
+    }
+
+    /**
+     * 删除角色。
+     * @param code 业务编码
+     * @return 判断结果
+     */
+    public boolean deleteByCode(String code) {
+        return Objects.nonNull(store.remove(code));
+    }
+
+    /**
+     * 为角色绑定权限编码。
+     * @param roleCode 角色编码
+     * @param permissionCode 权限编码
+     * @return 操作结果
+     */
+    public Role addPermission(String roleCode, String permissionCode) {
+        Role role = store.get(roleCode);
+        if (Objects.isNull(role)) {
+            throw new IllegalArgumentException("role not found: " + roleCode);
+        }
+        if (Objects.isNull(role.getPermissionCodes())) {
+            role.setPermissionCodes(new HashSet<>());
+        }
+        role.getPermissionCodes().add(permissionCode);
+        return role;
+    }
+
+    /**
+     * 为角色解除权限。
+     * @param roleCode 角色编码
+     * @param permissionCode 权限编码
+     * @return 操作结果
+     */
+    public Role removePermission(String roleCode, String permissionCode) {
+        Role role = store.get(roleCode);
+        if (Objects.isNull(role)) {
+            throw new IllegalArgumentException("role not found: " + roleCode);
+        }
+        if (Objects.nonNull(role.getPermissionCodes())) {
+            role.getPermissionCodes().remove(permissionCode);
+        }
+        return role;
+    }
+
+    /**
+     * 当前存储的角色数量。
+     * @return 操作结果
+     */
+    public int size() {
+        return store.size();
+    }
+
+    /**
+     * 全部角色编码集合（用于 SubjectDataProvider 角色回填）。
+     * @return 结果集合
+     */
+    public Set<String> codes() {
+        return new HashSet<>(store.keySet());
+    }
+
+    public void clear() {
+        store.clear();
+    }
+
+}
