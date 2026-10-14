@@ -15,6 +15,9 @@
 
 package io.ddd4j.extension.validation;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Objects;
 
 /**
@@ -31,15 +34,19 @@ public final class DetectedFileType {
      * @param mimeType  真实 MIME 类型
      */
 
-    public DetectedFileType(String extension, String mimeType) {
+    @JsonCreator
+    public DetectedFileType(@JsonProperty("extension") String extension,
+                            @JsonProperty("mimeType") String mimeType) {
         this.extension = extension;
         this.mimeType = mimeType;
     }
 
+    @JsonProperty("extension")
     public String extension() {
         return extension;
     }
 
+    @JsonProperty("mimeType")
     public String mimeType() {
         return mimeType;
     }
@@ -54,12 +61,15 @@ public final class DetectedFileType {
 
     @Override
     public int hashCode() {
-        return Objects.hash(extension, mimeType);
+        int result = 0;
+        result = 31 * result + Objects.hashCode(extension);
+        result = 31 * result + Objects.hashCode(mimeType);
+        return result;
     }
 
     @Override
     public String toString() {
-        return "DetectedFileType{extension=" + extension + ", mimeType=" + mimeType + '}';
+        return "DetectedFileType[extension=" + extension + ", mimeType=" + mimeType + ']';
     }
 
     public String getExtension() {
