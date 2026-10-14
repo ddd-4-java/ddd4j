@@ -1,0 +1,86 @@
+name: Weekly three-line dependency audit
+
+on:
+  schedule:
+    - cron: '17 2 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  versions:
+    name: Latest stable versions (${{ matrix.line }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        line: ['1.0.x', '2.0.x', '3.0.x']
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/${{ matrix.line }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Test policy and checker
+        run: python3 scripts/test_weekly_dependency_versions.py -q
+      - name: Check managed versions
+        run: >-
+          python3 scripts/check_weekly_dependency_versions.py
+          --pom ddd4j-dependencies/pom.xml
+          --policy config/dependencies/weekly-update-policy.json
+          --line '${{ matrix.line }}'
+          --output target/dependency-audit/version-report.json
+      - name: Upload version report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-versions-${{ matrix.line }}-${{ github.run_id }}
+          path: target/dependency-audit/version-report.json
+          if-no-files-found: warn
+          retention-days: 30
+
+  vulnerabilities:
+    name: Dependency vulnerabilities (${{ matrix.line }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        line: ['1.0.x', '2.0.x', '3.0.x']
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/${{ matrix.line }}
+      - name: Test report coverage gate
+        run: python3 scripts/test_weekly_vulnerability_report.py -q
+      - name: Create report directory
+        run: mkdir -p target/dependency-audit
+      - name: Scan Maven POMs without an NVD key
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: vuln
+          vuln-type: library
+          severity: HIGH,CRITICAL
+          format: json
+          output: target/dependency-audit/trivy.json
+          exit-code: '1'
+      - name: Check scanner produced Maven findings
+        if: always()
+        run: >-
+          python3 scripts/verify_weekly_vulnerability_report.py
+          target/dependency-audit/trivy.json
+      - name: Upload vulnerability report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-vulnerabilities-${{ matrix.line }}-${{ github.run_id }}
+          path: target/dependency-audit/trivy.json
+          if-no-files-found: warn
+          retention-days: 30
