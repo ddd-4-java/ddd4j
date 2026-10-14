@@ -35,6 +35,8 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.json.bind.annotation.JsonbCreator;
+import jakarta.json.bind.annotation.JsonbProperty;
 
 import java.util.Map;
 import java.util.Objects;
@@ -54,6 +56,13 @@ public class OrderResource {
     private final CommandBus commandBus;
     private final OrderSummaryView readView;
 
+    /**
+     * 创建订单资源。
+     *
+     * @param orderRepository 事件溯源订单仓储
+     * @param commandBus 命令总线
+     * @param readView 订单摘要视图
+     */
     @Inject
     public OrderResource(EventSourcingOrderRepository orderRepository,
                          CommandBus commandBus,
@@ -63,6 +72,12 @@ public class OrderResource {
         this.readView = Objects.requireNonNull(readView, "readView must not be null");
     }
 
+    /**
+     * 接收创建订单请求并分发命令。
+     *
+     * @param request 创建订单请求
+     * @return 创建结果
+     */
     @POST
     public Response createOrder(CreateOrderRequest request) {
         if (orderRepository.findByOrderNo(request.orderNo()).isPresent()) {
@@ -80,6 +95,12 @@ public class OrderResource {
                 .build();
     }
 
+    /**
+     * 读取订单。
+     *
+     * @param id 订单标识
+     * @return 查询结果
+     */
     @GET
     @Path("/{id}")
     public Response getOrder(@PathParam("id") String id) {
@@ -90,6 +111,9 @@ public class OrderResource {
         return Response.ok(entity).build();
     }
 
+    /**
+     * 订单创建请求数据。
+     */
     public final static class CreateOrderRequest {
 
         private static final long serialVersionUID = 0L;
@@ -100,23 +124,48 @@ public class OrderResource {
 
         private final String buyerName;
 
+        /**
+         * 创建订单创建请求。
+         *
+         * @param orderNo 订单编号
+         * @param buyerId 买家标识
+         * @param buyerName 买家名称
+         */
         @JsonCreator()
-        public CreateOrderRequest(@JsonProperty("orderNo") String orderNo, @JsonProperty("buyerId") String buyerId, @JsonProperty("buyerName") String buyerName) {
+        @JsonbCreator
+        public CreateOrderRequest(@JsonProperty("orderNo") @JsonbProperty("orderNo") String orderNo,
+                                  @JsonProperty("buyerId") @JsonbProperty("buyerId") String buyerId,
+                                  @JsonProperty("buyerName") @JsonbProperty("buyerName") String buyerName) {
             this.orderNo = orderNo;
             this.buyerId = buyerId;
             this.buyerName = buyerName;
         }
 
+        /**
+         * 读取订单编号。
+         *
+         * @return 订单编号
+         */
         @JsonProperty("orderNo")
         public String orderNo() {
             return orderNo;
         }
 
+        /**
+         * 读取买家标识。
+         *
+         * @return 买家标识
+         */
         @JsonProperty("buyerId")
         public String buyerId() {
             return buyerId;
         }
 
+        /**
+         * 读取买家名称。
+         *
+         * @return 买家名称
+         */
         @JsonProperty("buyerName")
         public String buyerName() {
             return buyerName;

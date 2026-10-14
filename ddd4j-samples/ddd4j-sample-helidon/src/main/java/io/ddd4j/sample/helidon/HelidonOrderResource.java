@@ -54,17 +54,26 @@ public class HelidonOrderResource {
 
     private final OrderApplicationService applicationService;
 
+    /** @param applicationService 订单应用服务 */
     @Inject
     public HelidonOrderResource(OrderApplicationService applicationService) {
         this.applicationService = Objects.requireNonNull(applicationService, "applicationService must not be null");
     }
 
+    /**
+     * @param userId 演示用户标识
+     * @return 登录令牌响应
+     */
     @POST
     @Path("/auth/tokens/{userId}")
     public R<TokenResponse> issueToken(@PathParam("userId") String userId) {
         return R.ok(new TokenResponse(SubjectKit.getSubject().login(AuthRequest.of(userId))));
     }
 
+    /**
+     * @param request 创建订单请求
+     * @return 新订单响应
+     */
     @POST
     @Path("/orders")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -75,12 +84,21 @@ public class HelidonOrderResource {
         return Response.status(Response.Status.CREATED).entity(R.ok(order)).build();
     }
 
+    /**
+     * @param orderId 订单标识
+     * @return 订单查询模型
+     */
     @GET
     @Path("/orders/{orderId}")
     public R<OrderReadModel> find(@PathParam("orderId") String orderId) {
         return R.ok(applicationService.find(orderId));
     }
 
+    /**
+     * @param orderId 订单标识
+     * @param request 添加明细请求
+     * @return 更新后的订单查询模型
+     */
     @POST
     @Path("/orders/{orderId}/lines")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -91,6 +109,11 @@ public class HelidonOrderResource {
         return R.ok(applicationService.find(orderId));
     }
 
+    /**
+     * @param orderId 订单标识
+     * @param idempotencyKey 支付幂等键
+     * @return 支付后的订单查询模型
+     */
     @POST
     @Path("/orders/{orderId}/pay")
     public R<OrderReadModel> pay(@PathParam("orderId") String orderId,
@@ -102,6 +125,7 @@ public class HelidonOrderResource {
         return R.ok(applicationService.find(orderId));
     }
 
+    /** 创建订单的 HTTP 请求。 */
     @Data
     public static class CreateOrderRequest {
 
@@ -110,6 +134,7 @@ public class HelidonOrderResource {
         private String buyerName;
     }
 
+    /** 添加订单明细的 HTTP 请求。 */
     @Data
     public static class AddOrderLineRequest {
 
@@ -119,19 +144,27 @@ public class HelidonOrderResource {
         private BigDecimal unitPrice;
     }
 
+    /** 登录令牌响应。 */
     public final static class TokenResponse {
 
         private static final long serialVersionUID = 0L;
 
         private final String token;
 
+        /** @param token 登录令牌 */
         @JsonCreator()
         public TokenResponse(@JsonProperty("token") String token) {
             this.token = token;
         }
 
+        /** @return 登录令牌 */
         @JsonProperty("token")
         public String token() {
+            return token;
+        }
+
+        /** @return 登录令牌，供 JSON-B 按 Bean 属性序列化 */
+        public String getToken() {
             return token;
         }
 
