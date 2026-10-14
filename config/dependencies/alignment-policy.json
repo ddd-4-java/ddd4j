@@ -1,5 +1,35 @@
 {
   "replacements": {
+    "io.github.easy4j:disruptor-biz": {
+      "17": {
+        "coordinates": [
+          "io.github.easy4j:disruptor-extension"
+        ],
+        "reason": "用户确认旧 disruptor-biz 坐标归并到 JDK 17 本线 disruptor-extension 构件"
+      },
+      "21": {
+        "coordinates": [
+          "io.github.easy4j:disruptor-extension"
+        ],
+        "reason": "用户确认旧 disruptor-biz 坐标归并到 JDK 21 本线 disruptor-extension 构件"
+      }
+    },
+    "io.github.easy4j:shiro-biz-sdk": {
+      "17": {
+        "coordinates": [
+          "io.github.easy4j:shiro-extension-core",
+          "io.github.easy4j:shiro-extension-spring"
+        ],
+        "reason": "组件源码归属 shiro-extension；原 Shiro Biz 实现拆分为 core/spring 两个 JDK 17 构件"
+      },
+      "21": {
+        "coordinates": [
+          "io.github.easy4j:shiro-extension-core",
+          "io.github.easy4j:shiro-extension-spring"
+        ],
+        "reason": "组件源码归属 shiro-extension；原 Shiro Biz 实现拆分为 core/spring 两个 JDK 21 构件"
+      }
+    },
     "javax.el:javax.el-api": {
       "17": {
         "coordinates": [
