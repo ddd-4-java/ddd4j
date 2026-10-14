@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "repository": "https://repo.maven.apache.org/maven2",
+  "fixed": [
+    {
+      "pattern": "com.lmax:disruptor",
+      "versions": {
+        "1.0.x": "3.4.4",
+        "2.0.x": "4.0.0",
+        "3.0.x": "4.0.0"
+      },
+      "reason": "JDK 8 uses the compatible Disruptor 3 line; each branch keeps its tested major version"
+    }
+  ],
+  "excluded": [
+    {
+      "pattern": "org.springframework*:*",
+      "reason": "Spring Framework, Boot and Security follow each line's platform compatibility matrix"
+    },
+    {
+      "pattern": "com.fasterxml.jackson*:*",
+      "reason": "Jackson 2 versions are managed with the JDK 8/17 platform line"
+    },
+    {
+      "pattern": "tools.jackson*:*",
+      "reason": "Jackson 3 versions are managed with the JDK 21 platform line"
+    },
+    {
+      "pattern": "io.ddd4j:*",
+      "reason": "Current reactor artifacts are verified by the three-line convergence workflow"
+    },
+    {
+      "pattern": "io.github.easy4j:*",
+      "reason": "Easy4J snapshots are aligned to each branch's separately validated release line"
+    },
+    {
+      "pattern": "*:*",
+      "versionRegex": ".*-SNAPSHOT",
+      "reason": "Snapshot coordinates have no comparable latest stable release"
+    }
+  ]
+}
