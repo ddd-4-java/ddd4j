@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class UserRequestContractTest {
 
@@ -28,6 +29,7 @@ class UserRequestContractTest {
                 new String[]{"admin"}, new String[]{"goods:read"});
         assertEquals(same, request);
         assertEquals(same.hashCode(), request.hashCode());
+        assertFalse(request.toString().contains("secret"));
         assertEquals(request, new CreateUserRequest("alice", "secret", "Alice",
                 new String[]{"admin"}, new String[]{"goods:read"}) { });
     }
@@ -49,6 +51,7 @@ class UserRequestContractTest {
                 new String[]{"admin"}, new String[]{"goods:read"});
         assertEquals(same, request);
         assertEquals(same.hashCode(), request.hashCode());
+        assertFalse(request.toString().contains("secret"));
         assertEquals(request, new UpdateUserRequest("Alice", "secret",
                 new String[]{"admin"}, new String[]{"goods:read"}) { });
     }

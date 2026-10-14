@@ -25,6 +25,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.Value;
 
 import com.google.inject.Inject;
@@ -291,6 +292,7 @@ public class AuthorizationController {
 
         private String loginId;
 
+        @ToString.Exclude
         private String password;
 
         private String displayName;
@@ -351,6 +353,7 @@ public class AuthorizationController {
 
         private String displayName;
 
+        @ToString.Exclude
         private String password;
 
         private String[] roles;
