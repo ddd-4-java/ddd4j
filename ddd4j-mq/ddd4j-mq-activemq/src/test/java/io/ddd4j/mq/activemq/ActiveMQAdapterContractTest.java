@@ -21,11 +21,14 @@ import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.junit.jupiter.api.Test;
 
 import javax.jms.Connection;
+import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.Session;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.*;
@@ -55,6 +58,24 @@ class ActiveMQAdapterContractTest {
         when(message.getStringProperty(sanitizedKey)).thenReturn("legacy-id");
 
         assertEquals("legacy-id", ActiveMQClient.messageId(message));
+    }
+
+    @Test
+    void shouldCloseConnectionWhenStartFails() throws Exception {
+        ActiveMQConnectionFactory factory = mock(ActiveMQConnectionFactory.class);
+        Connection connection = mock(Connection.class);
+        JMSException startFailure = new JMSException("start failed");
+        when(factory.createConnection()).thenReturn(connection);
+        doThrow(startFailure).when(connection).start();
+
+        ActiveMQClient client = new ActiveMQClient(factory);
+        IllegalStateException failure = assertThrows(IllegalStateException.class,
+                () -> client.initProducer(new MQProperties()));
+
+        assertSame(startFailure, failure.getCause());
+        verify(connection).close();
+        client.close();
+        verify(connection, times(1)).close();
     }
 
     @Test
