@@ -83,6 +83,31 @@ public final class AddOrderLineCommand {
         return unitPrice;
     }
 
+    /** @return 订单标识 */
+    public String getOrderId() {
+        return orderId;
+    }
+
+    /** @return 商品标识 */
+    public String getGoodsId() {
+        return goodsId;
+    }
+
+    /** @return 商品名称 */
+    public String getGoodsName() {
+        return goodsName;
+    }
+
+    /** @return 数量 */
+    public int getQuantity() {
+        return quantity;
+    }
+
+    /** @return 单价 */
+    public BigDecimal getUnitPrice() {
+        return unitPrice;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {

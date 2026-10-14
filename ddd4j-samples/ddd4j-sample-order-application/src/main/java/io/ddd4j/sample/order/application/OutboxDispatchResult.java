@@ -65,6 +65,21 @@ public final class OutboxDispatchResult {
         return failed;
     }
 
+    /** @return 尝试数量 */
+    public int getAttempted() {
+        return attempted;
+    }
+
+    /** @return 已发布数量 */
+    public int getPublished() {
+        return published;
+    }
+
+    /** @return 失败数量 */
+    public int getFailed() {
+        return failed;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {

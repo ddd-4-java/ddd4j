@@ -83,6 +83,31 @@ public final class OutboxMessage {
         return occurredAt;
     }
 
+    /** @return 消息标识 */
+    public String getId() {
+        return id;
+    }
+
+    /** @return 订单聚合标识 */
+    public String getAggregateId() {
+        return aggregateId;
+    }
+
+    /** @return 事件类型 */
+    public String getEventType() {
+        return eventType;
+    }
+
+    /** @return 事件内容 */
+    public Object getPayload() {
+        return payload;
+    }
+
+    /** @return 事件发生时间 */
+    public Instant getOccurredAt() {
+        return occurredAt;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
