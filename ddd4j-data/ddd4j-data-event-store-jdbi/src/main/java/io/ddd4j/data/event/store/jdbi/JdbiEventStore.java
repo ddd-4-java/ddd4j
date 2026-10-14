@@ -48,12 +48,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * {@code ddd4j-data-event-store-jpa}，Quarkus 请用 {@code ddd4j-data-event-store-panache}，
  * 响应式请用 {@code ddd4j-data-event-store-r2dbc}。
  *
- * <h3>集成方装配</h3>
+ * <p><b>集成方装配</b></p>
  * <p>本类为纯类（零容器注解、非容器托管）：Javalin/Vert.x 集成方在应用装配代码中
  * 手动 {@code new JdbiEventStore(jdbi)} 并自行管理其生命周期——{@code Jdbi}
  * 实例（可包连接池 DataSource）由集成方提供。
  *
- * <h3>表契约</h3>
+ * <p><b>表契约</b></p>
  * <p>目标表 {@code DDD4J_EVENT_STORE} 与 -jpa/-r2dbc/-esdb 模块同构：
  * {@code aggregate_id} VARCHAR(255)、{@code aggregate_type} VARCHAR(255)（可空）、
  * {@code version} BIGINT、{@code position} BIGINT（UNIQUE）、
@@ -62,7 +62,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * 主键 {@code (aggregate_id, version)}，{@code position} 唯一索引。
  * 表在首次操作时通过 {@code CREATE TABLE IF NOT EXISTS} 懒创建。
  *
- * <h3>乐观锁与 position 生成</h3>
+ * <p><b>乐观锁与 position 生成</b></p>
  * <p>append 在事务内以 {@code SELECT COUNT(*)} 读取当前事件数
  * （即当前版本），与 {@code expectedVersion} 不一致即抛 {@link IllegalStateException}
  * 并回滚。全局 position 在事务内逐条以 {@code COALESCE(MAX(position), 0) + 1} 生成，
@@ -76,9 +76,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * 若重试后版本号已变化则回到 {@link IllegalStateException} 乐观锁失败分支。
  * 高并发多实例场景建议改用数据库序列（如 PostgreSQL {@code nextval}）。
  *
- * <h3>payload 序列化</h3>
- * <p>事件载荷通过 {@link JsonKit#toJson} 序列化为 JSON 文本存储，
- * 读取时通过 {@link EventDeserializer#deserialize} 按 {@code event_type} 反序列化。
+ * <p><b>payload 序列化</b></p>
+ * <p>事件载荷通过 {@link EventPayloadSerializer} 序列化为 JSON 文本存储，
+ * 读取时通过同一序列化器按 {@code event_type} 反序列化。
  * 若事件类已被删除或重命名（{@code Class.forName} 失败），回退为 {@code Map}，
  * 此时丢失类型信息，javadoc 已说明此限制。
  *
@@ -174,6 +174,13 @@ public class JdbiEventStore implements EventStore {
         this(jdbi, retry, new EventPayloadSerializer(com.fasterxml.jackson.databind.json.JsonMapper.builder().findAndAddModules().build()));
     }
 
+    /**
+     * 创建使用指定重试策略和载荷序列化器的事件存储。
+     *
+     * @param jdbi JDBI 实例
+     * @param retry 重试策略
+     * @param serializer 事件载荷序列化器
+     */
     public JdbiEventStore(Jdbi jdbi, EventStoreRetry retry, EventPayloadSerializer serializer) {
         this.jdbi = Objects.requireNonNull(jdbi, "jdbi must not be null");
         this.retry = Objects.requireNonNull(retry, "retry must not be null");
@@ -253,7 +260,7 @@ public class JdbiEventStore implements EventStore {
      * {@inheritDoc}
      *
      * <p>按版本升序读取指定聚合的全部事件。
-     * 事件载荷通过 {@link EventDeserializer} 反序列化，类型无法还原时回退为 {@code Map}。
+     * 事件载荷通过 {@link EventPayloadSerializer} 反序列化，类型无法还原时回退为 {@code Map}。
      */
     @Override
     public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId) {

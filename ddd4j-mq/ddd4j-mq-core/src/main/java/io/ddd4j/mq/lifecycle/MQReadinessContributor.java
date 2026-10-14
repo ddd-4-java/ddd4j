@@ -18,6 +18,11 @@ public final class MQReadinessContributor implements ReadinessContributor {
 
     private final MQStartupStatus status;
 
+    /**
+     * 创建基于 MQ 启动状态的就绪检查贡献者。
+     *
+     * @param status MQ 启动状态
+     */
     public MQReadinessContributor(MQStartupStatus status) {
         this.status = Objects.requireNonNull(status, "status must not be null");
     }

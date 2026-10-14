@@ -36,7 +36,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *       使用无类型校验的 {@link #inject}/{@link #get}/{@link #contains} 通用 KV API。</li>
  * </ul>
  *
- * <h3>推荐用法（SPI 服务，类型安全）</h3>
+ * <p><b>推荐用法（SPI 服务，类型安全）</b></p>
  * <pre>{@code
  * // 1. 框架适配层启动期注入（类型校验版本）
  * BaseContext.inject(SpiKeys.MQ_EVENT_PUBLISHER, MQEventPublisher.class, kafkaPublisher);
@@ -45,13 +45,13 @@ import java.util.concurrent.ConcurrentHashMap;
  * MQEventPublisher publisher = Contexts.getOrThrow(SpiKeys.MQ_EVENT_PUBLISHER, MQEventPublisher.class);
  * }</pre>
  *
- * <h3>查找优先级</h3>
+ * <p><b>查找优先级</b></p>
  * <ol>
  *   <li>{@link ThreadContext}（线程级，请求级 SPI 可覆盖全局默认）</li>
  *   <li>{@link BaseContext}（JVM 级，全局默认 SPI）</li>
  * </ol>
  *
- * <h3>API 索引</h3>
+ * <p><b>API 索引</b></p>
  * <ul>
  *   <li><b>SPI 类型安全 API</b>（3.0.0+ 推荐）：
  *       {@link #inject(String, Class, Object)} · {@link #get(String, Class)} ·

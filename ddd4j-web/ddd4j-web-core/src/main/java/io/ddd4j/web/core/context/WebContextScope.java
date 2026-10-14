@@ -27,10 +27,15 @@ import java.util.Objects;
  */
 public final class WebContextScope implements AutoCloseable {
 
+    /** 常量值 {@code "request-id"}。 */
     public static final String REQUEST_ID = "request-id";
+    /** 常量值 {@code "trace-id"}。 */
     public static final String TRACE_ID = "trace-id";
+    /** 常量值 {@code "client-ip"}。 */
     public static final String CLIENT_IP = "client-ip";
+    /** 常量值 {@code "http-method"}。 */
     public static final String HTTP_METHOD = "http-method";
+    /** 常量值 {@code "http-path"}。 */
     public static final String HTTP_PATH = "http-path";
 
     private final ThreadContext.Scope threadScope;
@@ -44,6 +49,12 @@ public final class WebContextScope implements AutoCloseable {
         bind(requestContext);
     }
 
+    /**
+     * 将请求上下文绑定到当前线程，并返回可关闭作用域。
+     *
+     * @param context 请求上下文
+     * @return 可关闭的请求作用域
+     */
     public static WebContextScope open(WebRequestContext context) {
         return new WebContextScope(context);
     }

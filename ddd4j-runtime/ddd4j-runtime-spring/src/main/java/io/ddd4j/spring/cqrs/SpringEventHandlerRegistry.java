@@ -55,6 +55,11 @@ public class SpringEventHandlerRegistry implements SmartInitializingSingleton {
      */
     private final ConcurrentMap<Class<?>, Method> handlerTable = new ConcurrentHashMap<>();
 
+    /**
+     * 创建 Spring 事件处理器注册表。
+     *
+     * @param applicationContext Spring 应用上下文
+     */
     public SpringEventHandlerRegistry(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
@@ -116,7 +121,9 @@ public class SpringEventHandlerRegistry implements SmartInitializingSingleton {
     }
 
     /**
-     * 获取已注册的全部事件类型。
+     * 获取已注册的事件类型与处理器方法。
+     *
+     * @return 事件处理器映射的副本
      */
     public Map<Class<?>, Method> getHandlerTable() {
         return new HashMap<>(handlerTable);

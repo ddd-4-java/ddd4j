@@ -43,12 +43,12 @@ import java.util.Set;
  *       {@code correlationId} / {@code causationId} 完整元数据，可序列化持久化到 EventStore</li>
  * </ul>
  *
- * <h3>框架适配层注入 publisher</h3>
+ * <p><b>框架适配层注入 publisher</b></p>
  * <pre>{@code
  * Contexts.register(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class, publisher);
  * }</pre>
  *
- * <h3>业务方发布事件</h3>
+ * <p><b>业务方发布事件</b></p>
  * <pre>{@code
  * new OrderCreatedEvent(orderId, amount).publish();
  * }</pre>
@@ -81,7 +81,7 @@ public abstract class DomainEvent<ID extends EntityId> implements Event, Seriali
     /**
      * 事件支持的策略键集合（策略模式）。
      *
-     * <p>监听器通过 {@link @EventListener#supports()} 声明它处理哪些策略键，
+     * <p>监听条件可调用 {@link #supports(String...)} 判断事件是否支持指定策略键，
      * 消费时框架检查事件持有的 {@code supportKeys} 与监听器声明的键是否有交集。
      * 为 {@code null} 或空时不做策略过滤。
      */
@@ -95,21 +95,39 @@ public abstract class DomainEvent<ID extends EntityId> implements Event, Seriali
     @Setter
     private Object result;
 
+    /**
+     * 事件唯一标识。
+     */
     @JsonProperty("event-id")
     private EventId eventId;
 
+    /**
+     * 事件发生时间。
+     */
     @JsonProperty("event-timestamp")
     private ZonedDateTime eventTimestamp;
 
+    /**
+     * 关联事件标识。
+     */
     @JsonProperty("correlation-id")
     private EventId correlationId;
 
+    /**
+     * 因果来源事件标识。
+     */
     @JsonProperty("causation-id")
     private EventId causationId;
 
+    /**
+     * 实体标识路径。
+     */
     @JsonProperty("entity-id-path")
     private EntityIdPath entityIdPath;
 
+    /**
+     * 聚合版本。
+     */
     @JsonProperty("aggregate-version")
     private AggregateVersion aggregateVersion;
 

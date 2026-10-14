@@ -56,10 +56,20 @@ public class MqttMQProperties extends MQProperties {
     private int willQos = 0;
     private boolean willRetained = false;
 
+    /**
+     * 为新连接生成唯一客户端标识。
+     *
+     * @return 新客户端标识
+     */
     public String newClientId() {
         return (Objects.isNull(clientIdPrefix) ? "ddd4j-mq-" : clientIdPrefix) + UUID.randomUUID();
     }
 
+    /**
+     * 将配置转换为 Paho MQTT 连接选项。
+     *
+     * @return MQTT 连接选项
+     */
     public MqttConnectOptions connectOptions() {
         MqttConnectOptions o = new MqttConnectOptions();
         o.setCleanSession(cleanSession);

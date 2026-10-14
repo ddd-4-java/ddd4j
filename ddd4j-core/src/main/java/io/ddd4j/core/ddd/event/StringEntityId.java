@@ -31,6 +31,9 @@ public final class StringEntityId implements EntityId {
     static final EntityType TYPE = new StringEntityType("String");
     @Serial
     private static final long serialVersionUID = 1L;
+    /**
+     * 字符串实体标识值。
+     */
     private final String value;
 
     /**

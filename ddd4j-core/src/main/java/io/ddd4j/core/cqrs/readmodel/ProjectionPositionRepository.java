@@ -44,6 +44,7 @@ public interface ProjectionPositionRepository {
 
     /**
      * 列出全部投影位置。
+     * @return 全部投影位置
      */
     List<ProjectionPosition> findAll();
 

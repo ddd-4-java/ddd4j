@@ -42,6 +42,12 @@ public class DomainFieldInfo {
     private final String property;
     private final String poColumn;
 
+    /**
+     * 建立领域字段与持久化列名的映射。
+     *
+     * @param field 领域模型字段
+     * @param poColumn 持久化列名，未解析时可为 null
+     */
     public DomainFieldInfo(Field field, String poColumn) {
         this.field = field;
         this.property = field.getName();

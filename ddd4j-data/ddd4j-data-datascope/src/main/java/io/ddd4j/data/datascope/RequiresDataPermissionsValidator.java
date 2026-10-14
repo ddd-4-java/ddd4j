@@ -28,10 +28,18 @@ public class RequiresDataPermissionsValidator implements ConstraintValidator<Req
     private final DataScopeProvider provider;
     private String dataType;
 
+    /**
+     * Creates a validator using the default non-null policy.
+     */
     public RequiresDataPermissionsValidator() {
         this(DataScopeProvider.nonNullAllowed());
     }
 
+    /**
+     * Creates a validator using the supplied permission provider.
+     *
+     * @param provider permission provider
+     */
     public RequiresDataPermissionsValidator(DataScopeProvider provider) {
         this.provider = Objects.requireNonNull(provider, "provider must not be null");
     }

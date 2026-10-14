@@ -20,5 +20,11 @@ package io.ddd4j.web.core.error;
 @FunctionalInterface
 public interface WebExceptionTranslator {
 
+    /**
+     * 将异常转换为框架无关的 Web 错误。
+     *
+     * @param throwable 原始异常
+     * @return Web 错误
+     */
     WebError translate(Throwable throwable);
 }

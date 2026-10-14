@@ -40,10 +40,19 @@ public final class PropertyRef implements Serializable {
 
     private static final long serialVersionUID = 0L;
 
+    /**
+     * 属性所属空间。
+     */
     private final PropertySpace space;
 
+    /**
+     * 声明属性方法的类型。
+     */
     private final Class<?> ownerType;
 
+    /**
+     * Java 属性名。
+     */
     private final String property;
 
     /**
@@ -64,11 +73,26 @@ public final class PropertyRef implements Serializable {
         this.property = property;
     }
 
+    /**
+     * 从领域模型属性方法引用创建属性标识。
+     *
+     * @param <M> 领域模型类型
+     * @param function 领域模型属性方法引用
+     * @return 领域属性标识
+     */
     public static <M> PropertyRef domain(SFunction<M, ?> function) {
         Objects.requireNonNull(function, "function must not be null");
         return new PropertyRef(PropertySpace.DOMAIN, LambdaKit.resolveType(function), LambdaKit.resolve(function));
     }
 
+    /**
+     * 从持久化对象属性方法引用创建属性标识，并验证声明类型。
+     *
+     * @param <P> 持久化对象类型
+     * @param persistenceType 持久化对象类型
+     * @param function 持久化对象属性方法引用
+     * @return 持久化属性标识
+     */
     public static <P> PropertyRef persistence(Class<P> persistenceType, SFunction<P, ?> function) {
         Objects.requireNonNull(persistenceType, "persistenceType must not be null");
         Objects.requireNonNull(function, "function must not be null");
@@ -81,6 +105,9 @@ public final class PropertyRef implements Serializable {
 
     /**
      * 验证属性引用与当前 Repository 的 Domain/PO 类型一致。
+     *
+     * @param domainType 仓储的领域模型类型
+     * @param persistenceType 仓储的持久化对象类型
      */
     public void requireCompatible(Class<?> domainType, Class<?> persistenceType) {
         Objects.requireNonNull(domainType, "domainType must not be null");
@@ -91,10 +118,20 @@ public final class PropertyRef implements Serializable {
         }
     }
 
+    /**
+     * 判断属性是否属于领域模型空间。
+     *
+     * @return 属于领域空间时为 true
+     */
     public boolean isDomain() {
         return Objects.equals(PropertySpace.DOMAIN, space);
     }
 
+    /**
+     * 判断属性是否属于持久化对象空间。
+     *
+     * @return 属于持久化空间时为 true
+     */
     public boolean isPersistence() {
         return Objects.equals(PropertySpace.PERSISTENCE, space);
     }
@@ -103,33 +140,69 @@ public final class PropertyRef implements Serializable {
         return new IllegalArgumentException("Query " + space + " property owner " + ownerType.getName() + " is incompatible with repository type " + expectedType.getName());
     }
 
+    /**
+     * 获取属性声明类型。
+     *
+     * @return 属性声明类型
+     */
     public Class<?> getOwnerType() {
         return ownerType;
     }
 
+    /**
+     * 获取 Java 属性名。
+     *
+     * @return Java 属性名
+     */
     public String getProperty() {
         return property;
     }
 
+    /**
+     * 获取属性空间。
+     *
+     * @return 属性空间
+     */
     public PropertySpace getSpace() {
         return space;
     }
 
+    /**
+     * 获取用于 JSON 的属性空间。
+     *
+     * @return 属性空间
+     */
     @JsonProperty("space")
     public PropertySpace space() {
         return space;
     }
 
+    /**
+     * 获取用于 JSON 的属性声明类型。
+     *
+     * @return 属性声明类型
+     */
     @JsonProperty("ownerType")
     public Class<?> ownerType() {
         return ownerType;
     }
 
+    /**
+     * 获取用于 JSON 的属性名。
+     *
+     * @return Java 属性名
+     */
     @JsonProperty("property")
     public String property() {
         return property;
     }
 
+    /**
+     * 反序列化时重新校验属性空间、声明类型和属性名。
+     *
+     * @return 校验后的属性引用
+     * @throws ObjectStreamException 属性引用无效时
+     */
     private Object readResolve() throws ObjectStreamException {
         try {
             return new PropertyRef(space, ownerType, property);

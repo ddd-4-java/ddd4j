@@ -35,6 +35,13 @@ public final class CreateOrderRequest {
 
     private final String buyerName;
 
+    /**
+     * 创建订单请求。
+     *
+     * @param orderNo 订单编号
+     * @param buyerId 买家标识
+     * @param buyerName 买家名称
+     */
     @JsonCreator()
     public CreateOrderRequest(@JsonProperty("orderNo") String orderNo, @JsonProperty("buyerId") String buyerId, @JsonProperty("buyerName") String buyerName) {
         this.orderNo = orderNo;
@@ -42,16 +49,31 @@ public final class CreateOrderRequest {
         this.buyerName = buyerName;
     }
 
+    /**
+     * 读取订单编号。
+     *
+     * @return 订单编号
+     */
     @JsonProperty("orderNo")
     public String orderNo() {
         return orderNo;
     }
 
+    /**
+     * 读取买家标识。
+     *
+     * @return 买家标识
+     */
     @JsonProperty("buyerId")
     public String buyerId() {
         return buyerId;
     }
 
+    /**
+     * 读取买家名称。
+     *
+     * @return 买家名称
+     */
     @JsonProperty("buyerName")
     public String buyerName() {
         return buyerName;

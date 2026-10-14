@@ -26,6 +26,7 @@ public final class UnavailableIntegrationEventPublisher implements IntegrationEv
 
     private final String reason;
 
+    /** @param reason 传输不可用的原因 */
     public UnavailableIntegrationEventPublisher(String reason) {
         this.reason = Objects.requireNonNull(reason, "reason must not be null");
     }

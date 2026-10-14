@@ -27,6 +27,12 @@ import java.util.Optional;
  */
 public interface OrderRepository extends Repository<Order, String> {
 
+    /**
+     * 按编号查询订单。
+     *
+     * @param orderNo 订单编号
+     * @return 匹配的订单，不存在时为空
+     */
     Optional<Order> findByOrderNo(String orderNo);
 
     List<Order> findAll();

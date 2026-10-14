@@ -43,10 +43,21 @@ public class Ddd4jHelidonWebConfiguration {
     private String idempotencyCacheName = "ddd4j-web-idempotency";
     private Duration idempotencyTtl = Duration.ofMinutes(5);
 
+    /**
+     * 从当前 MicroProfile 配置加载 Web 属性。
+     *
+     * @return Web 配置
+     */
     public static Ddd4jHelidonWebConfiguration load() {
         return from(ConfigProvider.getConfig());
     }
 
+    /**
+     * 从指定配置源加载 Web 属性。
+     *
+     * @param config MicroProfile 配置源
+     * @return Web 配置
+     */
     public static Ddd4jHelidonWebConfiguration from(Config config) {
         Config source = Objects.requireNonNull(config, "config must not be null");
         Ddd4jHelidonWebConfiguration configuration = new Ddd4jHelidonWebConfiguration();

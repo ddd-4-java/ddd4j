@@ -42,6 +42,12 @@ public class GoodsReadController {
     private final GoodsCacheService goodsCacheService;
     private final GoodsRepository goodsRepository;
 
+    /**
+     * 创建商品读取控制器。
+     *
+     * @param goodsCacheService 商品缓存服务
+     * @param goodsRepository 商品仓储
+     */
     public GoodsReadController(GoodsCacheService goodsCacheService, GoodsRepository goodsRepository) {
         this.goodsCacheService = Objects.requireNonNull(goodsCacheService, "goodsCacheService must not be null");
         this.goodsRepository = Objects.requireNonNull(goodsRepository, "goodsRepository must not be null");

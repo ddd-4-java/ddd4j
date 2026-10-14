@@ -55,14 +55,17 @@ public final class FileValidationResult {
         return new FileValidationResult(false, failure, detectedType);
     }
 
+    /** @return 检测到的文件类型，可以为空 */
     public DetectedFileType getDetectedType() {
         return detectedType;
     }
 
+    /** @return 校验失败原因，通过时为空 */
     public FileValidationFailure getFailure() {
         return failure;
     }
 
+    /** @return 文件是否通过校验 */
     public boolean isValid() {
         return valid;
     }
@@ -80,16 +83,19 @@ public final class FileValidationResult {
         this.detectedType = detectedType;
     }
 
+    /** @return 文件是否通过校验 */
     @JsonProperty("valid")
     public boolean valid() {
         return valid;
     }
 
+    /** @return 校验失败原因，通过时为空 */
     @JsonProperty("failure")
     public FileValidationFailure failure() {
         return failure;
     }
 
+    /** @return 检测到的文件类型，可以为空 */
     @JsonProperty("detectedType")
     public DetectedFileType detectedType() {
         return detectedType;

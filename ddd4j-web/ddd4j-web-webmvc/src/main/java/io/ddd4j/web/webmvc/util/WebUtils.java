@@ -36,6 +36,7 @@ public final class WebUtils {
 
     /**
      * 获取当前 HttpServletRequest
+     * @return 当前 HTTP 请求
      */
     public static HttpServletRequest getHttpServletRequest() {
         ServletRequestAttributes attrs = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
@@ -44,6 +45,8 @@ public final class WebUtils {
 
     /**
      * 获取客户端真实 IP
+     * @return 请求的远端地址
+     * @param request HTTP 请求
      */
     public static String getRemoteAddr(HttpServletRequest request) {
         if (Objects.isNull(request)) {

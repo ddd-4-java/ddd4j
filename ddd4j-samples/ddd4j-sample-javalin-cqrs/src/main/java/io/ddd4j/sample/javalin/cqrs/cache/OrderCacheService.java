@@ -57,12 +57,19 @@ public class OrderCacheService {
 
     private final OrderRepository repository;
 
+    /**
+     * 创建订单缓存服务。
+     *
+     * @param repository 仓储实现
+     */
     public OrderCacheService(OrderRepository repository) {
         this.repository = Objects.requireNonNull(repository, "repository must not be null");
     }
 
     /**
      * 订单统计（缓存优先）。
+     *
+     * @return 查询结果
      */
     @SuppressWarnings("unchecked")
     public Map<String, Object> getOrderStats() {
@@ -86,6 +93,9 @@ public class OrderCacheService {
 
     /**
      * 买家订单计数（缓存优先）。
+     *
+     * @param buyerId 买家标识
+     * @return 数量
      */
     public long getBuyerOrderCount(String buyerId) {
         String cacheKey = "buyer:" + buyerId;
@@ -104,6 +114,9 @@ public class OrderCacheService {
 
     /**
      * 订单详情（缓存优先）。
+     *
+     * @param orderId 订单标识
+     * @return 查询结果
      */
     public Optional<Order> getOrderDetail(String orderId) {
         if (Objects.isNull(orderId) || StrKit.isBlank(orderId)) {
@@ -122,6 +135,8 @@ public class OrderCacheService {
 
     /**
      * 写入订单后更新缓存与失效统计。
+     *
+     * @param order order参数
      */
     public void putOrder(Order order) {
         if (Objects.isNull(order)) {

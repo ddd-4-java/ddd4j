@@ -25,7 +25,7 @@ import java.util.Objects;
  * <p>为 {@code GlobalExceptionHandler.logException()} 提供标准化错误事件。
  * 无 OTel 时为 noop。
  *
- * <h3>使用示例</h3>
+ * <p><b>使用示例</b></p>
  * <pre>{@code
  * // 在 GlobalExceptionHandler.logException() 中
  * ExceptionSpan.record(ex);
@@ -62,6 +62,9 @@ public final class ExceptionSpan {
 
     /**
      * 在指定 Span 上记录异常。
+     *
+     * @param span 追踪片段
+     * @param throwable 异常
      */
     public static void record(Span span, Throwable throwable) {
         if (Objects.isNull(throwable) || Objects.isNull(span)) {

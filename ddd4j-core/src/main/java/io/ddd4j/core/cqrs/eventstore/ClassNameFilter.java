@@ -21,14 +21,14 @@ package io.ddd4j.core.cqrs.eventstore;
  * 业务方可通过实现该接口限制允许加载的根包前缀，超出范围的类名视为不可信，
  * 由 {@link EventDeserializer} 回退为 {@code Map} 反序列化（保留数据可读性）。
  *
- * <h3>实现约定</h3>
+ * <p><b>实现约定</b></p>
  * <ul>
  *   <li>实现必须是线程安全的——{@link EventDeserializer} 在反序列化热路径调用</li>
  *   <li>不允许返回 {@code null}；拒绝类名时返回 {@code false}</li>
  *   <li>默认实现见 {@link EventDeserializer#defaultFilter()}</li>
  * </ul>
  *
- * <h3>注册方式</h3>
+ * <p><b>注册方式</b></p>
  * <p>通过 {@link EventDeserializer#setFilter(ClassNameFilter)} 设置进程级过滤器；
  * 单 JVM 仅允许一个过滤器，后注册覆盖前注册。
  *

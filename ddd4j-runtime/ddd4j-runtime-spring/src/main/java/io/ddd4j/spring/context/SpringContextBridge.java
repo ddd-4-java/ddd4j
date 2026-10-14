@@ -78,6 +78,15 @@ public class SpringContextBridge implements ApplicationListener<ContextRefreshed
     private SubjectProvider previousSubjectProvider;
     private SubjectDataProvider previousSubjectDataProvider;
 
+    /**
+     * 创建 Spring 服务到框架上下文的桥接器。
+     *
+     * @param domainEventPublisherProvider 领域事件发布器提供者
+     * @param subjectProviderProvider 主体提供者
+     * @param subjectDataProviderProvider 主体数据提供者
+     * @param i18nProviderProvider 国际化提供者
+     * @param commandBusProvider 命令总线提供者
+     */
     public SpringContextBridge(
             ObjectProvider<DomainEventPublisher> domainEventPublisherProvider,
             ObjectProvider<SubjectProvider> subjectProviderProvider,

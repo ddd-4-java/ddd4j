@@ -39,6 +39,11 @@ public class GuiceDomainEventPublisher implements DomainEventPublisher {
      */
     private final EventBus eventBus;
 
+    /**
+     * 使用 Guava EventBus 创建领域事件发布器。
+     *
+     * @param eventBus Guava 事件总线
+     */
     @Inject
     public GuiceDomainEventPublisher(EventBus eventBus) {
         this.eventBus = eventBus;

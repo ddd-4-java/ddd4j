@@ -35,15 +35,35 @@ public class Ddd4jVertxContext {
     private static final String REQUEST_CONTEXT_KEY = Ddd4jVertxContext.class.getName() + ".request";
     private static final String SUBJECT_KEY = Ddd4jVertxContext.class.getName() + ".subject";
 
+    /**
+     * 获取路由上下文绑定的 Web 请求状态。
+     *
+     * @param context Vert.x 路由上下文
+     * @return 可选的 Web 请求状态
+     */
     public Optional<WebRequestContext> request(RoutingContext context) {
         return Optional.ofNullable(Objects.requireNonNull(context, "context must not be null")
                 .get(REQUEST_CONTEXT_KEY));
     }
 
+    /**
+     * 获取路由上下文绑定的主体。
+     *
+     * @param context Vert.x 路由上下文
+     * @return 可选主体
+     */
     public Optional<Subject> subject(RoutingContext context) {
         return Optional.ofNullable(Objects.requireNonNull(context, "context must not be null").get(SUBJECT_KEY));
     }
 
+    /**
+     * 将请求状态与主体传播到阻塞任务。
+     *
+     * @param <T> 任务结果类型
+     * @param context Vert.x 路由上下文
+     * @param task 待执行任务
+     * @return 异步任务结果
+     */
     public <T> Future<T> executeBlocking(RoutingContext context, Callable<T> task) {
         RoutingContext routingContext = Objects.requireNonNull(context, "context must not be null");
         Callable<T> actualTask = Objects.requireNonNull(task, "task must not be null");

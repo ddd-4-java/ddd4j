@@ -42,6 +42,11 @@ public class InMemoryViewManager implements ViewManager {
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     private final AtomicBoolean running = new AtomicBoolean(false);
 
+    /**
+     * 创建InMemoryViewManager。
+     *
+     * @param chunkReader 事件块读取器
+     */
     public InMemoryViewManager(InMemoryEventChunkReader chunkReader) {
         Objects.requireNonNull(chunkReader, "chunkReader must not be null");
         InMemoryProjectionPositionRepository positionRepo = new InMemoryProjectionPositionRepository();
@@ -49,6 +54,11 @@ public class InMemoryViewManager implements ViewManager {
         this.runner = new ProjectionRunner<>(projectionService, chunkReader);
     }
 
+    /**
+     * 注册投影视图。
+     *
+     * @param view 投影视图
+     */
     public void register(ProjectionView<Object> view) {
         views.add(view);
     }

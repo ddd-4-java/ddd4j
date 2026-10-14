@@ -38,8 +38,10 @@ import java.lang.annotation.*;
 @Inherited
 public @interface DomainEntity {
 
+    /** @return 是否标记聚合根 */
     boolean aggregateRoot() default false;
 
+    /** @return Spring 组件名称；空字符串表示使用默认名称 */
     @AliasFor(annotation = Component.class, attribute = "value")
     String value() default "";
 }

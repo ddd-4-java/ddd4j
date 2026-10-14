@@ -51,8 +51,8 @@ import java.util.function.Consumer;
  *
  * <p>双构造：
  * <ul>
- *   <li>{@link #KafkaMQClient(Producer<String, String>)} —— 注入已初始化的原生 Kafka producer（runtime 自动装配用）</li>
- *   <li>{@link #KafkaMQClient(KafkaMQProperties)} —— 自行根据 properties 构造 producer</li>
+ *   <li>{@code KafkaMQClient(Producer, Callback)} —— 注入已初始化的原生 Kafka producer（runtime 自动装配用）</li>
+ *   <li>{@code KafkaMQClient(KafkaMQProperties, Callback)} —— 自行根据 properties 构造 producer</li>
  * </ul>
  *
  * <p>借鉴 1：分区 key（producer 按 tag/tenantId 路由，同 key 进同 partition 保证顺序）
@@ -85,6 +85,9 @@ public class KafkaMQClient implements MQClient {
 
     /**
      * 构造方法 1：注入原生 producer（runtime 自动装配用）。
+     *
+     * @param producer 已初始化的 Kafka producer
+     * @param callback 发送回调
      */
     public KafkaMQClient(Producer<String, String> producer, Callback callback) {
         this.properties = null;
@@ -94,6 +97,9 @@ public class KafkaMQClient implements MQClient {
 
     /**
      * 构造方法 2：自行根据 properties 构造 producer（lazy）。
+     *
+     * @param properties Kafka 连接配置
+     * @param callback 发送回调
      */
     public KafkaMQClient(KafkaMQProperties properties, Callback callback) {
         this.properties = Objects.requireNonNull(properties, "KafkaMQ Properties is required");

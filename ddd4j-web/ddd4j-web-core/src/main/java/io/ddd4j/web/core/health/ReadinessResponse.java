@@ -39,6 +39,12 @@ public final class ReadinessResponse {
         return ready ? 200 : 503;
     }
 
+    /**
+     * 返回就绪状态。
+     *
+     * @return 就绪状态
+     */
+
     public boolean isReady() {
         return ready;
     }
@@ -52,6 +58,11 @@ public final class ReadinessResponse {
         this.ready = ready;
     }
 
+    /**
+     * 返回就绪状态。
+     *
+     * @return 就绪状态
+     */
     @JsonProperty("ready")
     public boolean ready() {
         return ready;

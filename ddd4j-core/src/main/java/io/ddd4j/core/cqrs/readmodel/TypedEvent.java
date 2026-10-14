@@ -24,6 +24,7 @@ public interface TypedEvent {
 
     /**
      * 事件类型名称。
+     * @return 事件类型名称
      */
     String getEventType();
 }

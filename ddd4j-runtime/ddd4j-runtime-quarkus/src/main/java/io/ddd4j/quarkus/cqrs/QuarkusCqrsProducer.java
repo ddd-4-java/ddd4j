@@ -30,6 +30,11 @@ import jakarta.inject.Singleton;
 @ApplicationScoped
 public class QuarkusCqrsProducer {
 
+    /**
+     * 创建默认的内存投影位置仓库。
+     *
+     * @return 投影位置仓库
+     */
     @Produces
     @DefaultBean
     @Singleton
@@ -37,6 +42,12 @@ public class QuarkusCqrsProducer {
         return new InMemoryProjectionPositionRepository();
     }
 
+    /**
+     * 创建投影服务。
+     *
+     * @param repository 投影位置仓库
+     * @return 投影服务
+     */
     @Produces
     @DefaultBean
     @Singleton
@@ -44,6 +55,13 @@ public class QuarkusCqrsProducer {
         return new DefaultProjectionService(repository);
     }
 
+    /**
+     * 创建投影执行器。
+     *
+     * @param projectionService 投影服务
+     * @param chunkReaders 事件块读取器
+     * @return 投影执行器
+     */
     @Produces
     @DefaultBean
     @Singleton

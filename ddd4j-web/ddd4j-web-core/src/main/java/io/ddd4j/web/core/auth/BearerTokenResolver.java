@@ -25,6 +25,12 @@ public final class BearerTokenResolver {
 
     private static final String PREFIX = "Bearer ";
 
+    /**
+     * 从标准 Authorization Bearer 请求头解析令牌。
+     *
+     * @param authorization Authorization 请求头
+     * @return 非空 Bearer 令牌；格式不合法时为空
+     */
     public Optional<String> resolve(String authorization) {
         if (StrKit.isBlank(authorization) || !authorization.regionMatches(true, 0, PREFIX, 0, PREFIX.length())) {
             return Optional.empty();

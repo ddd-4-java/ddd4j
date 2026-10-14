@@ -45,14 +45,32 @@ public class Role {
      */
     private final Set<String> permissions;
 
+    /**
+     * 创建角色。
+     *
+     * @param code 编码
+     */
     public Role(String code) {
         this(code, null, Collections.emptySet());
     }
 
+    /**
+     * 创建角色。
+     *
+     * @param code 编码
+     * @param name 名称
+     */
     public Role(String code, String name) {
         this(code, name, Collections.emptySet());
     }
 
+    /**
+     * 创建角色。
+     *
+     * @param code 编码
+     * @param name 名称
+     * @param permissions 权限编码集合
+     */
     public Role(String code, String name, Set<String> permissions) {
         this.code = Objects.requireNonNull(code, "code must not be null");
         this.name = name;
@@ -72,14 +90,29 @@ public class Role {
         return new Role(code, null, set);
     }
 
+    /**
+     * 读取编码。
+     *
+     * @return 编码
+     */
     public String code() {
         return code;
     }
 
+    /**
+     * 读取名称。
+     *
+     * @return 名称
+     */
     public String name() {
         return name;
     }
 
+    /**
+     * 读取权限编码集合。
+     *
+     * @return 权限编码集合
+     */
     public Set<String> permissions() {
         return permissions;
     }

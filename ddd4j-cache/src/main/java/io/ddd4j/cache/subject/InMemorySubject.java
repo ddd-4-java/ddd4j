@@ -40,10 +40,15 @@ import java.util.*;
 @SuppressWarnings("unchecked")
 public class InMemorySubject implements Subject {
 
+    /** Token 到身份主体的缓存业务名。 */
     public static final String PRINCIPALS_BY_TOKEN_CACHE = "ddd4j:subject:principals-by-token";
+    /** 登录标识到身份主体的缓存业务名。 */
     public static final String PRINCIPALS_BY_LOGIN_ID_CACHE = "ddd4j:subject:principals-by-login-id";
+    /** 登录标识到 Token 的缓存业务名。 */
     public static final String TOKEN_BY_LOGIN_ID_CACHE = "ddd4j:subject:token-by-login-id";
+    /** 账号禁用截止时间的缓存业务名。 */
     public static final String DISABLED_UNTIL_CACHE = "ddd4j:subject:disabled-until";
+    /** 当前 Token 的缓存业务名。 */
     public static final String CURRENT_TOKEN_CACHE = "ddd4j:subject:current-token";
     private static final long PERMANENT_DISABLE = -1L;
     private static final long NO_EXPIRE_SECONDS = 0L;

@@ -21,14 +21,14 @@ import java.util.Set;
  * <p>
  * 取代旧命令执行器实现，保持 ddd4j-core 的纯 Java 边界。
  *
- * <h3>执行器契约</h3>
+ * <p><b>执行器契约</b></p>
  * <ul>
  *   <li><b>{@code supportedCommands}</b>：返回本执行器支持的命令类型集合，用于命令路由</li>
  *   <li><b>{@code execute}</b>：执行命令，返回 {@link Result}</li>
  *   <li><b>线程模型</b>：执行器本身无状态，多实例可并行执行</li>
  * </ul>
  *
- * <h3>注册与路由</h3>
+ * <p><b>注册与路由</b></p>
  * <p>
  * 业务方实现 {@code CommandExecutor}，由框架适配层扫描并注册到
  * {@code io.ddd4j.core.cqrs.command.CommandRegistry}：

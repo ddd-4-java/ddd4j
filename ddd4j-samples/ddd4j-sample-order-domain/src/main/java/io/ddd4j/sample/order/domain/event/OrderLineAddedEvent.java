@@ -14,7 +14,9 @@
  */
 package io.ddd4j.sample.order.domain.event;
 
+/** 订单明细已添加事件。 */
 public final class OrderLineAddedEvent extends OrderDomainEvent {
+    /** @param orderId 明细所属的订单标识 */
     public OrderLineAddedEvent(String orderId) {
         super(orderId);
     }

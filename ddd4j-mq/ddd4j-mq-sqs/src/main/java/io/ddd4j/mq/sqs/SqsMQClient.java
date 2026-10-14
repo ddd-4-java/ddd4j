@@ -62,6 +62,8 @@ public class SqsMQClient implements MQClient {
 
     /**
      * 构造 1：传入配置，{@link #initProducer} 时 lazy 创建 SqsClient。
+     *
+     * @param properties SQS 连接配置
      */
     public SqsMQClient(SqsProperties properties) {
         this.properties = Objects.requireNonNull(properties, "properties");
@@ -69,6 +71,8 @@ public class SqsMQClient implements MQClient {
 
     /**
      * 构造 2：注入已初始化的原生 {@link SqsClient}（用于 runtime 集成自动注入）。
+     *
+     * @param client 已初始化的 SQS 客户端
      */
     public SqsMQClient(SqsClient client) {
         this.client = Objects.requireNonNull(client, "SqsClient");

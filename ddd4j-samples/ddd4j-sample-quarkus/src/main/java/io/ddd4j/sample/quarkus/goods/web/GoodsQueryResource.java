@@ -40,14 +40,14 @@ import java.util.List;
  *   <li>查询端（本类）：基于 {@link GoodsQuery} 充血查询做分页/列表/统计</li>
  * </ul>
  *
- * <h3>端点</h3>
+ * <h2>端点</h2>
  * <ul>
  *   <li>{@code GET /query/goods/page}  - 充血分页查询（绑定 GoodsQuery 字段）</li>
  *   <li>{@code GET /query/goods/list}  - 充血列表查询</li>
  *   <li>{@code GET /query/goods/count} - 充血计数查询</li>
  * </ul>
  *
- * <h3>设计原则</h3>
+ * <h2>设计原则</h2>
  * <p>查询端不修改商品状态，只读取数据。通过 {@link GoodsQuery} 的充血方法
  * （{@code page()} / {@code list()} / {@code count()}）实现无模板 CRUD 查询，
  * 展示 ddd4j Query 在 Quarkus JAX-RS 下的集成方式。
@@ -60,6 +60,7 @@ public class GoodsQueryResource extends TenantAwareResource {
 
     private final GoodsApplicationService applicationService;
 
+    /** @param applicationService 商品应用服务 */
     @Inject
     public GoodsQueryResource(GoodsApplicationService applicationService) {
         this.applicationService = applicationService;
@@ -74,10 +75,10 @@ public class GoodsQueryResource extends TenantAwareResource {
      * {@code size} / {@code orderBys} 等条件。
      *
      * <pre>
-     * GET /query/goods/page?status=ON_SALE&current=1&size=20&orderBys=createTime_DESC
+     * GET /query/goods/page?status=ON_SALE&amp;current=1&amp;size=20&amp;orderBys=createTime_DESC
      * </pre>
      *
-     * @param query 商品查询对象（由 JAX-RS 自动绑定）
+     * @param parameters 由 JAX-RS 绑定的查询参数
      * @return 分页结果
      */
     @GET
@@ -94,7 +95,7 @@ public class GoodsQueryResource extends TenantAwareResource {
      * GET /query/goods/list?nameLike=iPhone
      * </pre>
      *
-     * @param query 商品查询对象
+     * @param parameters 由 JAX-RS 绑定的查询参数
      * @return 商品列表
      */
     @GET
@@ -113,7 +114,7 @@ public class GoodsQueryResource extends TenantAwareResource {
      * GET /query/goods/count?status=ON_SALE
      * </pre>
      *
-     * @param query 商品查询对象
+     * @param parameters 由 JAX-RS 绑定的查询参数
      * @return 总数
      */
     @GET

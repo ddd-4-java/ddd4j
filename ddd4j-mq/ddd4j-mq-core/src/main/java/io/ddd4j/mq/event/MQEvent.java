@@ -40,10 +40,10 @@ import java.util.function.Consumer;
  *
  * <p>发布机制（多 broker 路由）：{@link #publish(String, String, String)} 从 {@link BaseContext}
  * 查找 key 为 {@link #MQ_EVENT_PUBLISHER} 的 {@code Map<String, Consumer<MQEvent>>}，
- * 按 {@link #broker} 字段（或全局 {@link MQProperties#getBroker()} 配置）匹配对应的 broker 生产者。
+ * 按 {@link #broker} 字段（或全局 {@code MQProperties.getBroker()} 配置）匹配对应的 broker 生产者。
  * 每个 {@link MQClient} 在 {@code initProducer} 后以 {@link MQClient#impl()} 为 key 注册。
  *
- * <h3>使用示例</h3>
+ * <p><b>使用示例</b></p>
  * <pre>{@code
  * public class OrderCreatedEvent extends MQEvent {
  *     private String orderId;
@@ -101,7 +101,7 @@ public class MQEvent implements Serializable {
     protected String tenantId;
     /**
      * 目标 broker 标识（如 {@code "kafka"} / {@code "rocket"} / {@code "redisStream"}）。
-     * <p>为空时走全局默认 broker（{@link MQProperties#getBroker()} 配置）。
+     * <p>为空时走全局默认 broker（{@code MQProperties.getBroker()} 配置）。
      */
     protected String broker;
     /**
@@ -111,6 +111,9 @@ public class MQEvent implements Serializable {
 
     /**
      * 策略匹配：supports 参数来源于 {@code @MQEventListener.supports}。
+     *
+     * @param supports 监听器支持的事件匹配项
+     * @return 当前事件匹配时为 true
      */
     public boolean supports(List<String> supports) {
         return supports.contains(match());
@@ -118,6 +121,8 @@ public class MQEvent implements Serializable {
 
     /**
      * 策略匹配项，默认 {@code "*"}（匹配所有监听器），子类可覆写。
+     *
+     * @return 当前事件的匹配项
      */
     public String match() {
         return "*";
@@ -125,14 +130,26 @@ public class MQEvent implements Serializable {
 
     // ========================= 发布 =========================
 
+    /**
+     * 按事件自身的主题、标签和租户发布。
+     */
     public void publish() {
         publish(getTopic(), getTag(), getTenantId());
     }
 
+    /**
+     * 发布到指定主题。
+     * @param topic 发布主题
+     */
     public void publish(String topic) {
         publish(topic, getTag(), getTenantId());
     }
 
+    /**
+     * 发布到指定主题和标签。
+     * @param topic 发布主题
+     * @param tag 消息标签
+     */
     public void publish(String topic, String tag) {
         publish(topic, tag, getTenantId());
     }
@@ -140,11 +157,15 @@ public class MQEvent implements Serializable {
     /**
      * 发布 MQ 事件。
      *
+     * @param topic 发布主题
+     * @param tag 消息标签
+     * @param tenantId 租户标识
+     *
      * <p>从 {@link BaseContext} 查找 {@code Map<String, Consumer<MQEvent>>}（由各 {@link MQClient} 注册），
      * 按以下优先级匹配目标 broker 生产者：
      * <ol>
      *   <li>{@link #broker} 字段非空 → 用此值作 key 查找</li>
-     *   <li>{@link MQProperties#getBroker()} 全局配置非空且非 {@code "none"} → 用此值作 key 查找</li>
+     *   <li>{@code MQProperties.getBroker()} 全局配置非空且非 {@code "none"} → 用此值作 key 查找</li>
      *   <li>仅注册了一个 broker → 直接用（便捷场景）</li>
      *   <li>都找不到 → warn 日志，事件不发布</li>
      * </ol>
@@ -188,6 +209,10 @@ public class MQEvent implements Serializable {
 
     /**
      * 链式设置租户 ID。
+     *
+     * @param <T> 事件子类型
+     * @param tenantId 租户标识
+     * @return 当前事件实例
      */
     public <T extends MQEvent> T tenantId(String tenantId) {
         this.tenantId = tenantId;
@@ -196,6 +221,8 @@ public class MQEvent implements Serializable {
 
     /**
      * 链式设置目标 broker。
+     *
+     * @param <T> 事件子类型
      *
      * @param broker broker 标识（如 {@code "kafka"} / {@code "rocket"} / {@code "redisStream"}）
      * @return this

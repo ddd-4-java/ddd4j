@@ -20,7 +20,7 @@ import java.util.List;
 
 /**
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @ 通知配置。was {@code AtVO}。
+ * 通知配置，原名称为 {@code AtVO}。
  *
  * <p>传入机器人消息体时使用，控制消息是否 @ 一些用户或 @ 全体。
  */
@@ -38,6 +38,8 @@ public class At {
 
     /**
      * 创建一个空 @（不 @ 任何用户）。
+     *
+     * @return 空通知配置
      */
     public static At none() {
         return new At();
@@ -45,6 +47,8 @@ public class At {
 
     /**
      * 创建一个 @ 全体。
+     *
+     * @return 全体通知配置
      */
     public static At all() {
         At at = new At();
@@ -56,6 +60,7 @@ public class At {
      * 创建一个针对指定手机号列表的 @。
      *
      * @param mobiles 手机号列表
+     * @return 针对手机号列表的通知配置
      */
     public static At ofMobiles(List<String> mobiles) {
         At at = new At();

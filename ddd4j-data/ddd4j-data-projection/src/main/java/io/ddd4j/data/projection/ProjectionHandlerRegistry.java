@@ -34,7 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 交给 {@link ProjectionDispatcher} 拉块分发。本类只维护「事件类型 → handler」
  * 映射，不执行事件、不感知任何运行时框架。
  *
- * <h3>注册语义（与 CommandRegistry 同源）</h3>
+ * <h2>注册语义（与 CommandRegistry 同源）</h2>
  * <p>
  * {@link #register} 采用 <b>先校验全部订阅类型无冲突、再统一落库</b> 的整批拒绝
  * （all-or-nothing）语义：任一事件类型已被其他 handler 注册即抛
@@ -44,7 +44,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * {@code CommandRegistry}（ADR-0004 对 fuin 先例的保留决策）同源：
  * 冲突在装配期暴露，注册中心保持长生命周期共享组件的一致性。
  *
- * <h3>线程模型</h3>
+ * <h2>线程模型</h2>
  * <p>
  * 注册发生在装配期（单线程或已外部同步）；内部使用 {@link ConcurrentHashMap}
  * 保证 {@link #findHandler} 无锁读。并发的重复注册属契约外用法，落库阶段的

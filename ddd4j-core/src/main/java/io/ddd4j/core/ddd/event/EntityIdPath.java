@@ -43,6 +43,9 @@ public final class EntityIdPath implements Serializable {
      */
     private static final String TYPE_SEPARATOR = ":";
 
+    /**
+     * 从聚合根到实体的标识路径。
+     */
     private final List<EntityId> entityIds;
 
     /**

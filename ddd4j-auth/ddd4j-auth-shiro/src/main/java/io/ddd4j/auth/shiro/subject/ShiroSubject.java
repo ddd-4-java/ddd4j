@@ -31,7 +31,7 @@ import java.util.Objects;
 /**
  * 基于 Apache Shiro 的 {@link io.ddd4j.core.subject.Subject} 实现。
  *
- * <h3>设计原则</h3>
+ * <h2>设计原则</h2>
  * <p><b>绝大多数方法直接调用 Shiro 原生 API</b>（{@code subject.isPermitted/isPermittedAll/hasRole/...}），
  * Shiro 的 {@link org.apache.shiro.realm.Realm} 体系负责实际的"账号→权限/角色"映射。
  * 这样做的好处是：业务方继续用 Shiro 的标准 {@code @RequiresPermissions}/{@code @RequiresRoles} 即可生效，

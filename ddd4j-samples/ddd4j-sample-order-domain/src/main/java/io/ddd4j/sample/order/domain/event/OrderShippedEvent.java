@@ -14,7 +14,9 @@
  */
 package io.ddd4j.sample.order.domain.event;
 
+/** 订单已发货事件。 */
 public final class OrderShippedEvent extends OrderDomainEvent {
+    /** @param orderId 已发货的订单标识 */
     public OrderShippedEvent(String orderId) {
         super(orderId);
     }

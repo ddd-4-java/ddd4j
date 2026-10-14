@@ -14,9 +14,14 @@
  */
 package io.ddd4j.sample.order.domain;
 
+/** 订单生命周期状态。 */
 public enum OrderStatus {
+    /** 草稿。 */
     DRAFT,
+    /** 已支付。 */
     PAID,
+    /** 已取消。 */
     CANCELLED,
+    /** 已发货。 */
     SHIPPED
 }

@@ -67,12 +67,20 @@ public class Server {
      */
     private List<SysFile> sysFiles = new LinkedList<>();
 
+    /**
+     * 演示服务器运行状态采集。
+     *
+     * @param args 命令行参数
+     */
     public static void main(String[] args) {
         Server server = new Server();
         server.setValueTo();
         log.info("{}", server);
     }
 
+    /**
+     * 采集 CPU、内存、JVM、系统和磁盘信息。
+     */
     public void setValueTo() {
         SystemInfo systemInfo = new SystemInfo();
         HardwareAbstractionLayer hal = systemInfo.getHardware();

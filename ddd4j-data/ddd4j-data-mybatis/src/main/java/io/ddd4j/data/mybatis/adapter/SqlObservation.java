@@ -40,12 +40,15 @@ public final class SqlObservation {
 
     private final Throwable error;
 
+    /** @return SQL 执行耗时，单位为毫秒 */
     public long elapsedMillis() {
         return elapsedNanos / 1_000_000L;
     }
 
     /**
      * 返回语句标识，兼容 bean 调用方。
+     *
+     * @return MyBatis 语句标识
      */
     public String getStatementId() {
         return statementId;
@@ -53,6 +56,8 @@ public final class SqlObservation {
 
     /**
      * 返回 SQL。
+     *
+     * @return 已执行的 SQL
      */
     public String getSql() {
         return sql;
@@ -60,6 +65,8 @@ public final class SqlObservation {
 
     /**
      * 返回参数快照。
+     *
+     * @return 已排序的参数快照
      */
     public List<String> getSortedParams() {
         return sortedParams;
@@ -67,6 +74,8 @@ public final class SqlObservation {
 
     /**
      * 返回执行耗时（纳秒）。
+     *
+     * @return 执行耗时，单位为纳秒
      */
     public long getElapsedNanos() {
         return elapsedNanos;
@@ -74,6 +83,8 @@ public final class SqlObservation {
 
     /**
      * 返回执行异常。
+     *
+     * @return 执行异常；成功时为空
      */
     public Throwable getError() {
         return error;
@@ -96,26 +107,31 @@ public final class SqlObservation {
         this.error = error;
     }
 
+    /** @return MyBatis 语句标识 */
     @JsonProperty("statementId")
     public String statementId() {
         return statementId;
     }
 
+    /** @return 已执行的 SQL */
     @JsonProperty("sql")
     public String sql() {
         return sql;
     }
 
+    /** @return 已排序的参数快照 */
     @JsonProperty("sortedParams")
     public List<String> sortedParams() {
         return sortedParams;
     }
 
+    /** @return 执行耗时，单位为纳秒 */
     @JsonProperty("elapsedNanos")
     public long elapsedNanos() {
         return elapsedNanos;
     }
 
+    /** @return 执行异常；成功时为空 */
     @JsonProperty("error")
     public Throwable error() {
         return error;

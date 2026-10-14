@@ -52,6 +52,7 @@ public interface ViewScheduler {
 
         /**
          * 判断任务是否仍处于活跃状态。
+     * @return 调度器正在运行时为 true
          */
         boolean isActive();
     }

@@ -26,8 +26,10 @@ import org.pf4j.PluginRuntimeException;
 @SuppressWarnings("serial")
 public class PluginInvokeException extends PluginRuntimeException {
 
+    /** 出错的插件 ID。 */
     private String pluginId;
 
+    /** 出错的扩展点 ID。 */
     private String extensionId;
 
     /**

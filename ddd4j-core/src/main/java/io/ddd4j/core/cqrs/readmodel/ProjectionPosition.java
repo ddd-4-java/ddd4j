@@ -41,11 +41,13 @@ public interface ProjectionPosition extends Serializable {
 
     /**
      * 投影流 ID（EventStore 中标识该视图对应的流）。
+     * @return 投影流标识
      */
     String getStreamId();
 
     /**
      * 下一个待处理事件号（0-based）。
+     * @return 下一待处理事件号
      */
     long getNextEventNumber();
 

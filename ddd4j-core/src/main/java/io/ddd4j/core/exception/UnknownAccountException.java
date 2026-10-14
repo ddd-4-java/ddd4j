@@ -34,10 +34,21 @@ public class UnknownAccountException extends AuthenticationException {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 使用错误消息创建未知账号异常。
+     *
+     * @param message 错误消息
+     */
     public UnknownAccountException(String message) {
         super(message);
     }
 
+    /**
+     * 使用错误消息创建未知账号异常。
+     *
+     * @param message 错误消息
+     * @param cause 原始异常
+     */
     public UnknownAccountException(String message, Throwable cause) {
         super(message, cause);
     }

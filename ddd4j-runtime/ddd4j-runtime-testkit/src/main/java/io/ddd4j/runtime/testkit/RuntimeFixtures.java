@@ -46,26 +46,32 @@ public final class RuntimeFixtures {
     private final I18nProvider i18nProvider = I18nProvider.DEFAULT;
     private final CommandBus commandBus = new DefaultCommandBus(List.of());
 
+    /** @return 用于契约测试的领域事件发布器 */
     public DomainEventPublisher publisher() {
         return publisher;
     }
 
+    /** @return 用于契约测试的主体提供者 */
     public SubjectProvider subjectProvider() {
         return subjectProvider;
     }
 
+    /** @return 用于契约测试的国际化提供者 */
     public I18nProvider i18nProvider() {
         return i18nProvider;
     }
 
+    /** @return 用于契约测试的命令总线 */
     public CommandBus commandBus() {
         return commandBus;
     }
 
+    /** @return 用于契约测试的就绪检查项 */
     public List<ReadinessContributor> readinessContributors() {
         return List.of(() -> ReadinessResult.ready("runtime-fixture"));
     }
 
+    /** @return 注册的服务键与接口类型 */
     public Map<String, Class<?>> services() {
         return Map.of(
                 SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class,

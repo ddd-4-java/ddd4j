@@ -61,6 +61,8 @@ public class TdmqMQClient implements MQClient {
 
     /**
      * 构造 1：仅 properties（业务可在 initProducer/initConsumer 之前注入 BrokerPublisher/BrokerSubscriber）。
+     *
+     * @param properties TDMQ 连接配置
      */
     public TdmqMQClient(TdmqProperties properties) {
         this.properties = Objects.requireNonNull(properties, "properties");
@@ -68,6 +70,10 @@ public class TdmqMQClient implements MQClient {
 
     /**
      * 构造 2：注入外部 BrokerPublisher / BrokerSubscriber（runtime 集成时由业务 SDK 包装传入）。
+     *
+     * @param publisher 业务侧发布器
+     * @param subscriber 业务侧订阅器
+     * @param properties TDMQ 连接配置
      */
     public TdmqMQClient(BrokerPublisher publisher, BrokerSubscriber subscriber, TdmqProperties properties) {
         this.brokerPublisher = publisher;
@@ -77,6 +83,8 @@ public class TdmqMQClient implements MQClient {
 
     /**
      * 注入 TDMQ 业务侧发布器（如腾讯云 SDK 包装）。
+     *
+     * @param publisher 业务侧发布器
      */
     public void setBrokerPublisher(BrokerPublisher publisher) {
         this.brokerPublisher = publisher;
@@ -84,6 +92,8 @@ public class TdmqMQClient implements MQClient {
 
     /**
      * 注入 TDMQ 业务侧订阅器（如腾讯云 SDK 包装）。
+     *
+     * @param subscriber 业务侧订阅器
      */
     public void setBrokerSubscriber(BrokerSubscriber subscriber) {
         this.brokerSubscriber = subscriber;
@@ -220,6 +230,14 @@ public class TdmqMQClient implements MQClient {
 
         private final java.util.function.Consumer<Boolean> ackCallback;
 
+        /**
+         * 创建 TDMQ 已投递消息快照。
+         *
+         * @param messageId 消息标识
+         * @param correlationId 关联标识
+         * @param payload 消息内容
+         * @param ackCallback 确认结果回调
+         */
         @JsonCreator()
         public DeliveredMessage(@JsonProperty("messageId") String messageId, @JsonProperty("correlationId") String correlationId, @JsonProperty("payload") byte[] payload, @JsonProperty("ackCallback") java.util.function.Consumer<Boolean> ackCallback) {
             this.messageId = messageId;
@@ -228,21 +246,25 @@ public class TdmqMQClient implements MQClient {
             this.ackCallback = ackCallback;
         }
 
+        /** @return 消息标识 */
         @JsonProperty("messageId")
         public String messageId() {
             return messageId;
         }
 
+        /** @return 关联标识 */
         @JsonProperty("correlationId")
         public String correlationId() {
             return correlationId;
         }
 
+        /** @return 消息内容 */
         @JsonProperty("payload")
         public byte[] payload() {
             return payload;
         }
 
+        /** @return 确认结果回调 */
         @JsonProperty("ackCallback")
         public java.util.function.Consumer<Boolean> ackCallback() {
             return ackCallback;
@@ -319,6 +341,14 @@ public class TdmqMQClient implements MQClient {
     @FunctionalInterface
     public interface MessageHandler {
 
+        /**
+         * 处理一条已投递消息。
+         *
+         * @param messageId 消息标识
+         * @param correlationId 关联标识
+         * @param payload 消息内容
+         * @param ackCallback 确认结果回调
+         */
         void onMessage(String messageId, String correlationId, byte[] payload,
                        java.util.function.Consumer<Boolean> ackCallback);
     }

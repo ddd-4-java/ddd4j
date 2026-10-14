@@ -191,6 +191,7 @@ public enum ApiCode implements IEnum<Integer>, CustomApiCode {
      */
     METHOD_ARGUMENT_NOT_VALID(HttpStatus.SC_BAD_REQUEST, "错误请求参数"),
 
+    /** 功能未授权，拒绝访问。 */
     ACCESS_DENIED(HttpStatus.SC_UNAUTHORIZED, "不允许访问（功能未授权）"),
 
     /**

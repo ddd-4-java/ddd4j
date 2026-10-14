@@ -19,6 +19,7 @@ package io.ddd4j.data.external.region;
  */
 public interface IpRegionTemplate {
 
+    /** 未匹配地区时使用的空查询实现。 */
     IpRegionTemplate NONE = new IpRegionTemplate() {
 
         @Override

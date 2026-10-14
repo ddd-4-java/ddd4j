@@ -19,10 +19,20 @@ import io.ddd4j.sample.order.domain.OrderQuery;
 import java.util.List;
 import java.util.Optional;
 
+/** 订单查询模型的投影与读取端口。 */
 public interface OrderReadModelPort {
+    /** @param order 待更新的订单投影 */
     void project(OrderReadModel order);
 
+    /**
+     * @param orderId 订单标识
+     * @return 找到的订单投影
+     */
     Optional<OrderReadModel> findProjectionById(String orderId);
 
+    /**
+     * @param query 查询条件
+     * @return 匹配的订单投影
+     */
     List<OrderReadModel> query(OrderQuery query);
 }

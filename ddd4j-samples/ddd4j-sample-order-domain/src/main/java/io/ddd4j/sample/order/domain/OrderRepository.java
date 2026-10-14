@@ -17,14 +17,30 @@ package io.ddd4j.sample.order.domain;
 import java.util.List;
 import java.util.Optional;
 
+/** 订单聚合的存储接口。 */
 public interface OrderRepository {
+    /** @param order 待保存的订单 */
     void save(Order order);
 
+    /**
+     * @param orderId 订单标识
+     * @return 找到的订单
+     */
     Optional<Order> findById(String orderId);
 
+    /**
+     * @param orderNo 订单号
+     * @return 找到的订单
+     */
     Optional<Order> findByOrderNo(String orderNo);
 
+    /**
+     * @param offset 起始偏移量
+     * @param limit 最大返回数量
+     * @return 订单列表
+     */
     List<Order> findAll(int offset, int limit);
 
+    /** @return 订单总数 */
     long count();
 }

@@ -41,6 +41,15 @@ public final class SynchronousWebRequestSession implements AutoCloseable {
         this.idempotencyScope = idempotencyScope;
     }
 
+    /**
+     * 打开同步请求会话，完成上下文绑定、认证和幂等租约获取。
+     *
+     * @param requestContext 请求上下文
+     * @param requestLifecycle 请求认证生命周期
+     * @param idempotencyLifecycle 幂等生命周期；可为空
+     * @param idempotencyKey 幂等键
+     * @return 已打开的请求会话
+     */
     public static SynchronousWebRequestSession open(WebRequestContext requestContext,
                                                     WebRequestLifecycle requestLifecycle,
                                                     WebIdempotencyLifecycle idempotencyLifecycle,
@@ -61,10 +70,21 @@ public final class SynchronousWebRequestSession implements AutoCloseable {
         }
     }
 
+    /**
+     * 返回请求上下文。
+     *
+     * @return 请求上下文
+     */
+
     public WebRequestContext requestContext() {
         return requestContext;
     }
 
+    /**
+     * 完成请求处理并关闭会话。
+     *
+     * @param successful 业务处理是否成功
+     */
     public void complete(boolean successful) {
         try {
             if (successful) {

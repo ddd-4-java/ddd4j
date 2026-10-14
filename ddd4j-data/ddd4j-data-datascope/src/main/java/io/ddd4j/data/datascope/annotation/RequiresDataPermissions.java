@@ -38,12 +38,29 @@ public @interface RequiresDataPermissions {
 
     /**
      * Business data type, such as dept, tenant, region, or project.
+     *
+     * @return business data type
      */
     String dataType();
 
+    /**
+     * Validation failure message.
+     *
+     * @return failure message
+     */
     String message() default "数据未授权";
 
+    /**
+     * Validation groups.
+     *
+     * @return validation groups
+     */
     Class<?>[] groups() default {};
 
+    /**
+     * Validation payload types.
+     *
+     * @return payload types
+     */
     Class<? extends Payload>[] payload() default {};
 }

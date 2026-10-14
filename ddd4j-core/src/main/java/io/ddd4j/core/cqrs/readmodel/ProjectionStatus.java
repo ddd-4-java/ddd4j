@@ -91,55 +91,115 @@ public final class ProjectionStatus {
         return new ProjectionStatus(streamId, 0, running, null, 0, null);
     }
 
+    /**
+     * 获取上次运行失败信息。
+     *
+     * @return 上次运行失败信息
+     */
     public String getLastError() {
         return lastError;
     }
 
+    /**
+     * 获取上次运行处理的事件数。
+     *
+     * @return 上次运行处理的事件数
+     */
     public int getLastEventCount() {
         return lastEventCount;
     }
 
+    /**
+     * 获取上次运行完成时间。
+     *
+     * @return 上次运行完成时间
+     */
     public Instant getLastRunAt() {
         return lastRunAt;
     }
 
+    /**
+     * 获取下一个待处理事件号。
+     *
+     * @return 下一个待处理事件号
+     */
     public long getNextEventNumber() {
         return nextEventNumber;
     }
 
+    /**
+     * 获取投影流标识。
+     *
+     * @return 投影流标识
+     */
     public String getStreamId() {
         return streamId;
     }
 
+    /**
+     * 获取视图管理器运行状态。
+     *
+     * @return 视图管理器运行状态
+     */
     public boolean isRunning() {
         return running;
     }
 
+    /**
+     * 获取用于 JSON 的投影流标识。
+     *
+     * @return 用于 JSON 的投影流标识
+     */
     @JsonProperty("streamId")
     public String streamId() {
         return streamId;
     }
 
+    /**
+     * 获取用于 JSON 的下一个待处理事件号。
+     *
+     * @return 用于 JSON 的下一个待处理事件号
+     */
     @JsonProperty("nextEventNumber")
     public long nextEventNumber() {
         return nextEventNumber;
     }
 
+    /**
+     * 获取用于 JSON 的运行状态。
+     *
+     * @return 用于 JSON 的运行状态
+     */
     @JsonProperty("running")
     public boolean running() {
         return running;
     }
 
+    /**
+     * 获取用于 JSON 的上次运行完成时间。
+     *
+     * @return 用于 JSON 的上次运行完成时间
+     */
     @JsonProperty("lastRunAt")
     public Instant lastRunAt() {
         return lastRunAt;
     }
 
+    /**
+     * 获取用于 JSON 的上次运行处理事件数。
+     *
+     * @return 用于 JSON 的上次运行处理事件数
+     */
     @JsonProperty("lastEventCount")
     public int lastEventCount() {
         return lastEventCount;
     }
 
+    /**
+     * 获取用于 JSON 的上次运行失败信息。
+     *
+     * @return 用于 JSON 的上次运行失败信息
+     */
     @JsonProperty("lastError")
     public String lastError() {
         return lastError;

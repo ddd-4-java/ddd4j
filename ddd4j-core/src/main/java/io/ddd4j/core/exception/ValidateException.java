@@ -25,13 +25,26 @@ import java.util.StringJoiner;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class ValidateException extends BizRuntimeException {
+    /**
+     * 字段到校验错误消息的映射。
+     */
     private Map<String, String> errorMap;
 
+    /**
+     * 使用字段校验错误映射创建异常。
+     *
+     * @param errorMap 字段到错误消息的映射
+     */
     public ValidateException(Map<String, String> errorMap) {
         super(ApiCode.BAD_REQUEST.getCode(), ApiCode.BAD_REQUEST.getDesc());
         this.errorMap = errorMap;
     }
 
+    /**
+     * 使用错误消息创建异常。
+     *
+     * @param errorMsg 错误消息
+     */
     public ValidateException(String errorMsg) {
         super(ApiCode.BAD_REQUEST.getCode(), errorMsg);
     }
@@ -40,6 +53,11 @@ public class ValidateException extends BizRuntimeException {
         return (new StringJoiner(", ", ValidateException.class.getSimpleName() + "[", "]")).add("code=" + this.getCode()).add("msg=" + this.getMessage()).add("errorMap=" + this.errorMap).toString();
     }
 
+    /**
+     * 获取字段校验错误映射。
+     *
+     * @return 字段到错误消息的映射
+     */
     public Map<String, String> getErrorMap() {
         return this.errorMap;
     }

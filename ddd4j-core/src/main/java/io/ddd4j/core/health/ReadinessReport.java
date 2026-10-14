@@ -69,19 +69,39 @@ public final class ReadinessReport {
         }
     }
 
+    /**
+     * 获取各依赖的就绪结果。
+     *
+     * @return 不可变就绪结果列表
+     */
     public List<ReadinessResult> getResults() {
         return results;
     }
 
+    /**
+     * 判断整体是否可接收流量。
+     *
+     * @return 全部必需依赖就绪时为 true
+     */
     public boolean isReady() {
         return ready;
     }
 
+    /**
+     * 获取用于 JSON 的整体就绪状态。
+     *
+     * @return 就绪时为 true
+     */
     @JsonProperty("ready")
     public boolean ready() {
         return ready;
     }
 
+    /**
+     * 获取用于 JSON 的就绪结果。
+     *
+     * @return 不可变就绪结果列表
+     */
     @JsonProperty("results")
     public List<ReadinessResult> results() {
         return results;

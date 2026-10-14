@@ -59,6 +59,11 @@ public final class VertxOrderRoutes {
     private VertxOrderRoutes() {
     }
 
+    /**
+     * @param vertx Vert.x 实例
+     * @param applicationService 订单应用服务
+     * @return 已注册订单路由的 Router
+     */
     public static Router router(Vertx vertx, OrderApplicationService applicationService) {
         Vertx actualVertx = Objects.requireNonNull(vertx, "vertx must not be null");
         OrderApplicationService service = Objects.requireNonNull(applicationService,
@@ -126,17 +131,20 @@ public final class VertxOrderRoutes {
                 .end(Json.encode(response));
     }
 
+    /** 登录令牌响应。 */
     public final static class TokenResponse {
 
         private static final long serialVersionUID = 0L;
 
         private final String token;
 
+        /** @param token 登录令牌 */
         @JsonCreator()
         public TokenResponse(@JsonProperty("token") String token) {
             this.token = token;
         }
 
+        /** @return 登录令牌 */
         @JsonProperty("token")
         public String token() {
             return token;

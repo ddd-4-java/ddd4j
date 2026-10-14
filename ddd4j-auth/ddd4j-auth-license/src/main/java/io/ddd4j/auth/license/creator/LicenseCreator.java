@@ -36,12 +36,19 @@ public class LicenseCreator {
 
     private final LicenseCreatorParam param;
 
+    /**
+     * 使用许可证生成参数创建生成器。
+     *
+     * @param param 许可证生成参数
+     */
     public LicenseCreator(LicenseCreatorParam param) {
         this.param = Objects.requireNonNull(param, "param");
     }
 
     /**
      * 生成License证书。
+     *
+     * @return 生成成功时为 true
      */
     public boolean generateLicense() {
         try {

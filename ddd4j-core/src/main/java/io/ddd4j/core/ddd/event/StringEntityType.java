@@ -28,6 +28,9 @@ public final class StringEntityType implements EntityType {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 字符串实体类型值。
+     */
     private final String value;
 
     /**

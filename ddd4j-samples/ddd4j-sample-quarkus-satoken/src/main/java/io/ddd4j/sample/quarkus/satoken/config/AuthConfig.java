@@ -37,6 +37,8 @@ public class AuthConfig {
 
     /**
      * 将纯 Java Sa-Token Subject 暴露给 Quarkus 的 CDI SubjectProvider。
+     *
+     * @return 主体实例
      */
     @Produces
     @Singleton
@@ -47,6 +49,8 @@ public class AuthConfig {
     /**
      * 注册权限数据源。
      * <p>实际项目中从数据库/缓存查询，此处用 Mock 数据演示。
+     *
+     * @return 主体数据提供者
      */
     @Produces
     @Singleton

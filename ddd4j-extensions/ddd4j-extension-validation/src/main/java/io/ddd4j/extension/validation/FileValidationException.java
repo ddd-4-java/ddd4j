@@ -21,13 +21,20 @@ import java.util.Objects;
  */
 public class FileValidationException extends RuntimeException {
 
+    /** 校验失败原因。 */
     private final FileValidationFailure failure;
 
+    /**
+     * 根据失败原因创建异常。
+     *
+     * @param failure 校验失败原因
+     */
     public FileValidationException(FileValidationFailure failure) {
         super("Uploaded file validation failed: " + Objects.requireNonNull(failure, "failure must not be null"));
         this.failure = failure;
     }
 
+    /** @return 校验失败原因 */
     public FileValidationFailure getFailure() {
         return failure;
     }

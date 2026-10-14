@@ -56,6 +56,13 @@ public class QuarkusProjectionViewManager implements ViewManager {
 
     private volatile boolean running = false;
 
+    /**
+     * 从 Quarkus 容器装配投影视图管理器。
+     *
+     * @param scheduler 视图调度器
+     * @param runner 投影执行器
+     * @param views 可用的投影视图
+     */
     @Inject
     public QuarkusProjectionViewManager(ViewScheduler scheduler,
                                         ProjectionRunner<?> runner,

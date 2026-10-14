@@ -21,9 +21,26 @@ import java.util.Optional;
  */
 public interface QrCodeTemplateRegistry {
 
+    /**
+     * 注册二维码外框模板。
+     *
+     * @param definition 模板定义
+     */
     void register(QrCodeTemplateDefinition definition);
 
+    /**
+     * 按 ID 查找外框模板。
+     *
+     * @param id 模板 ID
+     * @return 可选模板定义
+     */
     Optional<QrCodeTemplateDefinition> find(String id);
 
+    /**
+     * 移除外框模板。
+     *
+     * @param id 模板 ID
+     * @return 移除成功时为 true
+     */
     boolean remove(String id);
 }

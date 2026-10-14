@@ -28,6 +28,10 @@ public final class ResilientIdempotencyPort implements IdempotencyPort {
     private final IdempotencyPort primary;
     private final IdempotencyPort fallback;
 
+    /**
+     * @param primary 首选幂等存储
+     * @param fallback 首选存储异常时使用的降级存储
+     */
     public ResilientIdempotencyPort(IdempotencyPort primary, IdempotencyPort fallback) {
         this.primary = Objects.requireNonNull(primary, "primary must not be null");
         this.fallback = Objects.requireNonNull(fallback, "fallback must not be null");

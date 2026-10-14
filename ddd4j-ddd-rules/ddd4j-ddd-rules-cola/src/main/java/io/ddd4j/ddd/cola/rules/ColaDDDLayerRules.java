@@ -31,13 +31,13 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
  * <p><b>框架无关性说明</b>：本模块不依赖任何具体注解实现类。注解类作为 {@link Class} 参数
  * 由调用方传入（通常为业务项目使用的某个框架适配注解包中的具体注解）。
  *
- * <h3>COLA vs Clean 命名差异</h3>
+ * <p><b>COLA vs Clean 命名差异</b></p>
  * <ul>
  *   <li>Clean: domain / application / adapter / infrastructure</li>
  *   <li>COLA: domain / adapter / application / infrastructure（注意 adapter 和 application 顺序）</li>
  * </ul>
  *
- * <h3>规则清单</h3>
+ * <p><b>规则清单</b></p>
  * <ul>
  *   <li>{@link #domainEntityInDomain} — @DomainEntity 必须在 domain.model 包</li>
  *   <li>{@link #domainServiceInDomain} — @DomainService 必须在 domain 包</li>
@@ -84,6 +84,9 @@ public final class ColaDDDLayerRules {
 
     /**
      * 规则1：标了 {@code @DomainEntity} 的类必须在 {@code ..domain..} 包（COLA 中通常在 domain.model）。
+     *
+     * @param domainEntityAnnotation 领域实体注解类型
+     * @return 领域实体所属包规则
      */
     public static ArchRule domainEntityInDomain(Class<? extends Annotation> domainEntityAnnotation) {
         return classes()
@@ -94,6 +97,9 @@ public final class ColaDDDLayerRules {
 
     /**
      * 规则2：标了 {@code @DomainService} 的类必须在 {@code ..domain..} 包。
+     *
+     * @param domainServiceAnnotation 领域服务注解类型
+     * @return 领域服务所属包规则
      */
     public static ArchRule domainServiceInDomain(Class<? extends Annotation> domainServiceAnnotation) {
         return classes()
@@ -106,6 +112,9 @@ public final class ColaDDDLayerRules {
      * 规则3：标了 {@code @ApplicationService} 的类必须在 application.executor / application.query 包。
      *
      * <p>COLA 特有：应用层按 CQS 分为 executor（命令）和 query（查询）。
+     *
+     * @param applicationServiceAnnotation 应用服务注解类型
+     * @return 应用服务所属包规则
      */
     public static ArchRule applicationServiceInApp(Class<? extends Annotation> applicationServiceAnnotation) {
         return classes()
@@ -119,6 +128,9 @@ public final class ColaDDDLayerRules {
      * 规则4：标了 {@code @DomainRepository} 的类必须在 {@code ..adapter.persistence..} 包。
      *
      * <p>COLA 中 Repository 实现放在 adapter 层（Clean 中放在 infrastructure 层）。
+     *
+     * @param domainRepositoryAnnotation 仓储实现注解类型
+     * @return 仓储实现所属包规则
      */
     public static ArchRule repositoryImplInAdapter(Class<? extends Annotation> domainRepositoryAnnotation) {
         return classes()
@@ -129,6 +141,9 @@ public final class ColaDDDLayerRules {
 
     /**
      * 规则8：标了 {@code @DomainGateway} 的接口必须在 {@code ..domain.gateway..} 包。
+     *
+     * @param domainGatewayAnnotation 领域网关注解类型
+     * @return 领域网关所属包规则
      */
     public static ArchRule domainGatewayInDomain(Class<? extends Annotation> domainGatewayAnnotation) {
         return classes()
@@ -139,6 +154,9 @@ public final class ColaDDDLayerRules {
 
     /**
      * 规则9：标了 {@code @CommandExecutor} 的类必须在 {@code ..application.executor..} 包。
+     *
+     * @param commandExecutorAnnotation 命令执行器注解类型
+     * @return 命令执行器所属包规则
      */
     public static ArchRule commandExecutorInApp(Class<? extends Annotation> commandExecutorAnnotation) {
         return classes()
@@ -149,6 +167,9 @@ public final class ColaDDDLayerRules {
 
     /**
      * 规则10：标了 {@code @QueryService} 的类必须在 {@code ..application.query..} 包。
+     *
+     * @param queryServiceAnnotation 查询服务注解类型
+     * @return 查询服务所属包规则
      */
     public static ArchRule queryServiceInApp(Class<? extends Annotation> queryServiceAnnotation) {
         return classes()

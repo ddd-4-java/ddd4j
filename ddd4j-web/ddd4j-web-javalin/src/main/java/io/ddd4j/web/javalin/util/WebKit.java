@@ -33,6 +33,12 @@ public final class WebKit {
     private WebKit() {
     }
 
+    /**
+     * 解析请求的客户端地址。
+     *
+     * @param context Javalin 请求上下文
+     * @return 客户端地址
+     */
     public static String getClientIp(Context context) {
         String ip = null;
         for (String header : IP_HEADER_CANDIDATES) {
@@ -50,6 +56,12 @@ public final class WebKit {
         return ip;
     }
 
+    /**
+     * 判断请求是否为 AJAX 请求。
+     *
+     * @param context Javalin 请求上下文
+     * @return 是否为 AJAX 请求
+     */
     public static boolean isAjax(Context context) {
         return "XMLHttpRequest".equalsIgnoreCase(context.header("X-Requested-With"));
     }

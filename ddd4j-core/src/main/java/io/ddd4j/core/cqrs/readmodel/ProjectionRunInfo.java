@@ -41,6 +41,7 @@ public final class ProjectionRunInfo {
 
     /**
      * 返回最近运行时间，兼容 bean 调用方。
+     * @return 上次运行完成时间
      */
     public Instant getLastRunAt() {
         return lastRunAt;
@@ -48,6 +49,8 @@ public final class ProjectionRunInfo {
 
     /**
      * 返回最近处理事件数。
+     *
+     * @return 上次运行处理的事件数量
      */
     public int getLastEventCount() {
         return lastEventCount;
@@ -55,6 +58,8 @@ public final class ProjectionRunInfo {
 
     /**
      * 返回最近错误信息。
+     *
+     * @return 上次运行失败信息
      */
     public String getLastError() {
         return lastError;
@@ -73,16 +78,31 @@ public final class ProjectionRunInfo {
         this.lastError = lastError;
     }
 
+    /**
+     * 获取用于 JSON 的上次运行完成时间。
+     *
+     * @return 上次运行完成时间
+     */
     @JsonProperty("lastRunAt")
     public Instant lastRunAt() {
         return lastRunAt;
     }
 
+    /**
+     * 获取用于 JSON 的上次处理事件数。
+     *
+     * @return 上次处理事件数
+     */
     @JsonProperty("lastEventCount")
     public int lastEventCount() {
         return lastEventCount;
     }
 
+    /**
+     * 获取用于 JSON 的上次运行失败信息。
+     *
+     * @return 上次失败信息
+     */
     @JsonProperty("lastError")
     public String lastError() {
         return lastError;

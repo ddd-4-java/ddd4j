@@ -37,12 +37,16 @@ public @interface SaMixCheckLogin {
     String type() default "";
 
     /**
-     * 临时Token是否是一次性使用的；用完即弃的
+     * 临时Token是否是一次性使用的；用完即弃的。
+     *
+     * @return 是否一次性使用
      */
     boolean throwaway() default false;
 
     /**
-     * 是否使用临时Token的信息进行登录，仅当 throwaway=false 时有效
+     * 是否使用临时Token的信息进行登录，仅当 throwaway=false 时有效。
+     *
+     * @return 是否使用临时 Token 登录
      */
     boolean login() default true;
 

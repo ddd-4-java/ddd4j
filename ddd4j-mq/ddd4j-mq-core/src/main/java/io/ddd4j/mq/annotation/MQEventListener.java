@@ -22,7 +22,7 @@ import java.lang.annotation.*;
  * <p>标注在 Bean 的方法上，声明该方法为 MQ 消费端点。方法的首个参数类型即为
  * 消息反序列化目标类型（通常为 {@code io.ddd4j.core.event.Event} 的子类）。
  *
- * <h3>路由模型</h3>
+ * <p><b>路由模型</b></p>
  * <pre>
  *   namespace.topic.tag
  *   └───┬───┘ └─┬─┘ └┬┘
@@ -34,7 +34,7 @@ import java.lang.annotation.*;
  *   <li>{@code tag} —— 同 topic 下共享消费线程，做消息过滤</li>
  * </ul>
  *
- * <h3>使用示例</h3>
+ * <p><b>使用示例</b></p>
  * <pre>{@code
  * @MQEventListener(topic = "order", tags = "paid")
  * public void onOrderPaid(OrderPaidEvent event) {

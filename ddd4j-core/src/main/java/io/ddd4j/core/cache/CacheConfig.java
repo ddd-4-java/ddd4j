@@ -129,46 +129,101 @@ public final class CacheConfig {
 
     // ==================== Getters ====================
 
+    /**
+     * 获取缓存名称。
+     *
+     * @return 缓存名称
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * 获取最大容量。
+     *
+     * @return 最大容量
+     */
     public long getMaximumSize() {
         return maximumSize;
     }
 
+    /**
+     * 获取写后过期秒数。
+     *
+     * @return 写后过期秒数
+     */
     public long getExpireAfterWriteSeconds() {
         return expireAfterWriteSeconds;
     }
 
+    /**
+     * 获取访问后过期秒数。
+     *
+     * @return 访问后过期秒数
+     */
     public long getExpireAfterAccessSeconds() {
         return expireAfterAccessSeconds;
     }
 
+    /**
+     * 获取写后刷新秒数。
+     *
+     * @return 写后刷新秒数
+     */
     public long getRefreshAfterWriteSeconds() {
         return refreshAfterWriteSeconds;
     }
 
+    /**
+     * 获取初始容量。
+     *
+     * @return 初始容量
+     */
     public int getInitialCapacity() {
         return initialCapacity;
     }
 
+    /**
+     * 获取是否记录统计信息。
+     *
+     * @return 是否记录统计信息
+     */
     public boolean isRecordStats() {
         return recordStats;
     }
 
+    /**
+     * 获取缓存类型。
+     *
+     * @return 缓存类型
+     */
     public CacheType getCacheType() {
         return cacheType;
     }
 
+    /**
+     * 获取本地缓存最大条目数。
+     *
+     * @return 本地缓存最大条目数
+     */
     public int getLocalLimit() {
         return localLimit;
     }
 
+    /**
+     * 获取是否同步本地缓存。
+     *
+     * @return 是否同步本地缓存
+     */
     public boolean isSyncLocal() {
         return syncLocal;
     }
 
+    /**
+     * 获取移除监听器。
+     *
+     * @return 移除监听器
+     */
     public Consumer<String> getRemovalListener() {
         return removalListener;
     }
@@ -225,6 +280,8 @@ public final class CacheConfig {
 
         /**
          * 设置最大容量。
+         * @param maximumSize 最大条目数
+         * @return 当前构建器，供链式配置
          */
         public Builder maximumSize(long maximumSize) {
             this.maximumSize = maximumSize;
@@ -233,6 +290,8 @@ public final class CacheConfig {
 
         /**
          * 设置写后过期时间（秒）。
+         * @param seconds 时长，单位为秒；0 表示禁用相应过期或刷新
+         * @return 当前构建器，供链式配置
          */
         public Builder expireAfterWriteSeconds(long seconds) {
             this.expireAfterWriteSeconds = seconds;
@@ -241,6 +300,8 @@ public final class CacheConfig {
 
         /**
          * 设置访问后过期时间（秒）。
+         * @param seconds 时长，单位为秒；0 表示禁用相应过期或刷新
+         * @return 当前构建器，供链式配置
          */
         public Builder expireAfterAccessSeconds(long seconds) {
             this.expireAfterAccessSeconds = seconds;
@@ -249,6 +310,8 @@ public final class CacheConfig {
 
         /**
          * 设置写后刷新时间（秒）。
+         * @param seconds 时长，单位为秒；0 表示禁用相应过期或刷新
+         * @return 当前构建器，供链式配置
          */
         public Builder refreshAfterWriteSeconds(long seconds) {
             this.refreshAfterWriteSeconds = seconds;
@@ -257,6 +320,8 @@ public final class CacheConfig {
 
         /**
          * 设置初始容量。
+         * @param initialCapacity 初始容量
+         * @return 当前构建器，供链式配置
          */
         public Builder initialCapacity(int initialCapacity) {
             this.initialCapacity = initialCapacity;
@@ -265,6 +330,8 @@ public final class CacheConfig {
 
         /**
          * 设置是否记录统计信息。
+         * @param recordStats 是否记录统计信息
+         * @return 当前构建器，供链式配置
          */
         public Builder recordStats(boolean recordStats) {
             this.recordStats = recordStats;
@@ -273,6 +340,8 @@ public final class CacheConfig {
 
         /**
          * 设置缓存类型。
+         * @param cacheType 缓存类型
+         * @return 当前构建器，供链式配置
          */
         public Builder cacheType(CacheType cacheType) {
             this.cacheType = cacheType;
@@ -281,6 +350,8 @@ public final class CacheConfig {
 
         /**
          * 设置本地缓存限制（多级缓存时本地缓存最大条目数）。
+         * @param localLimit 本地缓存最大条目数
+         * @return 当前构建器，供链式配置
          */
         public Builder localLimit(int localLimit) {
             this.localLimit = localLimit;
@@ -289,6 +360,8 @@ public final class CacheConfig {
 
         /**
          * 设置是否同步本地缓存（多级缓存时远程变更是否广播同步本地）。
+         * @param syncLocal 是否广播同步本地缓存
+         * @return 当前构建器，供链式配置
          */
         public Builder syncLocal(boolean syncLocal) {
             this.syncLocal = syncLocal;
@@ -297,6 +370,8 @@ public final class CacheConfig {
 
         /**
          * 设置移除监听器。
+         * @param removalListener 键级移除监听器
+         * @return 当前构建器，供链式配置
          */
         public Builder removalListener(Consumer<String> removalListener) {
             this.removalListener = removalListener;

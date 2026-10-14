@@ -21,5 +21,14 @@ import java.util.Map;
  */
 public interface WebContractClient {
 
+    /**
+     * 发起契约测试请求。
+     *
+     * @param method HTTP 方法
+     * @param path 请求路径
+     * @param headers 请求头
+     * @param body 请求体
+     * @return 响应快照
+     */
     WebContractResponse request(String method, String path, Map<String, String> headers, String body);
 }

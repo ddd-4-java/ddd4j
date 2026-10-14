@@ -36,6 +36,11 @@ public final class KafkaIntegrationEventPublisher implements IntegrationEventPub
     private final ObjectMapper objectMapper;
     private final String topic;
 
+    /**
+     * @param producer Kafka 生产者
+     * @param objectMapper 消息序列化器
+     * @param topic 目标主题
+     */
     public KafkaIntegrationEventPublisher(Producer<String, String> producer, ObjectMapper objectMapper, String topic) {
         this.producer = Objects.requireNonNull(producer, "producer must not be null");
         this.objectMapper = Objects.requireNonNull(objectMapper, "objectMapper must not be null");

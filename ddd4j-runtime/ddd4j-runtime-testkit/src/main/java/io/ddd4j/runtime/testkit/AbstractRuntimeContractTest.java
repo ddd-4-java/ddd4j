@@ -31,6 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public abstract class AbstractRuntimeContractTest {
 
+    /** @return 待验证的运行时适配器 */
     protected abstract RuntimeContract createRuntime();
 
     @BeforeEach

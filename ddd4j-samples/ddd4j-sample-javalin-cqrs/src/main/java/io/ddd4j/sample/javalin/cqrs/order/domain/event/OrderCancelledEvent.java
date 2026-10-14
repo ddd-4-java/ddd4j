@@ -28,6 +28,11 @@ public class OrderCancelledEvent extends DomainEvent<StringEntityId> {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 执行OrderCancelledEvent操作。
+     *
+     * @param orderId 订单标识
+     */
     public OrderCancelledEvent(String orderId) {
         super(orderId);
     }

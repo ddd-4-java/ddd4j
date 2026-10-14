@@ -37,6 +37,9 @@ public class GlobalErrorAttributes {
 
     /**
      * 从 {@link ServerRequest} 读取已存储的异常。
+     *
+     * @param request Router 请求
+     * @return 已存储异常，未存储时为空
      */
     public Throwable getError(ServerRequest request) {
         return request.attribute(ERROR_ATTRIBUTE)
@@ -46,6 +49,9 @@ public class GlobalErrorAttributes {
 
     /**
      * 从 {@link ServerWebExchange} 读取已存储的异常。
+     *
+     * @param exchange Web 交换上下文
+     * @return 已存储异常，未存储时为空
      */
     public Throwable getError(ServerWebExchange exchange) {
         return exchange.getAttribute(ERROR_ATTRIBUTE);
@@ -53,6 +59,9 @@ public class GlobalErrorAttributes {
 
     /**
      * 将异常写入 exchange，供后续错误处理链读取。
+     *
+     * @param exchange Web 交换上下文
+     * @param error 待存储异常
      */
     public void storeError(ServerWebExchange exchange, Throwable error) {
         exchange.getAttributes().put(ERROR_ATTRIBUTE, error);
@@ -60,6 +69,10 @@ public class GlobalErrorAttributes {
 
     /**
      * 按 Router 风格请求组装错误 JSON 字段（兼容历史 API）。
+     *
+     * @param request Router 请求
+     * @param includeStackTrace 是否包含堆栈信息；兼容参数，当前错误字段不包含堆栈
+     * @return 错误 JSON 字段
      */
     public Map<String, Object> getErrorAttributes(ServerRequest request, boolean includeStackTrace) {
         return assembleError(getError(request));
@@ -67,6 +80,9 @@ public class GlobalErrorAttributes {
 
     /**
      * 按异常实例组装错误 JSON 字段。
+     *
+     * @param error 异常实例，可为空
+     * @return 错误 JSON 字段
      */
     public Map<String, Object> assembleError(Throwable error) {
         Map<String, Object> errorAttributes = new LinkedHashMap<>();

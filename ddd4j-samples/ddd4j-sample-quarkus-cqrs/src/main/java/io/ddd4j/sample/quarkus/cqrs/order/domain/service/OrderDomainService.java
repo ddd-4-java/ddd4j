@@ -61,6 +61,7 @@ public class OrderDomainService {
     @Inject
     SubjectProvider subjectProvider;
 
+    /** @param repository 订单仓储 */
     @Inject
     public OrderDomainService(OrderRepository repository) {
         this.repository = Objects.requireNonNull(repository, "repository must not be null");

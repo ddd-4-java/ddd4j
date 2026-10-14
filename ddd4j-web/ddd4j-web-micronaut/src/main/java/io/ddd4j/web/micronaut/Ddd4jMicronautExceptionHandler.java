@@ -34,11 +34,19 @@ import lombok.extern.slf4j.Slf4j;
 @Singleton
 public final class Ddd4jMicronautExceptionHandler extends BaseErrorConfiguration implements ExceptionHandler<Throwable, HttpResponse<?>> {
 
+    /**
+     * 使用默认异常翻译器创建处理器。
+     */
     @Inject
     public Ddd4jMicronautExceptionHandler() {
         super();
     }
 
+    /**
+     * 使用指定异常翻译器创建处理器。
+     *
+     * @param translator 异常翻译器
+     */
     public Ddd4jMicronautExceptionHandler(WebExceptionTranslator translator) {
         super(translator);
     }

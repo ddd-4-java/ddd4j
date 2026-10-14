@@ -26,6 +26,11 @@ public class OrderShippedEvent extends DomainEvent<StringEntityId> {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 创建订单发货事件。
+     *
+     * @param orderId 订单标识
+     */
     public OrderShippedEvent(String orderId) {
         super(orderId);
     }

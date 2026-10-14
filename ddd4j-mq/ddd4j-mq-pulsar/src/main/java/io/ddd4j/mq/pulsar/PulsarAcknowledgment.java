@@ -69,6 +69,14 @@ public class PulsarAcknowledgment implements Acknowledgment {
     private final long deliveryId;
     private final AtomicBoolean acknowledged = new AtomicBoolean(false);
 
+    /**
+     * 创建 Pulsar 消息确认句柄。
+     *
+     * @param consumer Pulsar 消费者
+     * @param message 待确认的消息
+     * @param messageId 消息标识
+     * @param correlationId 关联标识
+     */
     public PulsarAcknowledgment(Consumer<?> consumer, Message<?> message,
                                 String messageId, String correlationId) {
         this.consumer = consumer;

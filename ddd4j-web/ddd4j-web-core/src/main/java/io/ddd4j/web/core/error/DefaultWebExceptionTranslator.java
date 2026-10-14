@@ -28,11 +28,17 @@ import java.util.Objects;
  */
 public final class DefaultWebExceptionTranslator implements WebExceptionTranslator {
 
+    /** HTTP 状态码 {@code 400}。 */
     public static final int BAD_REQUEST = 400;
+    /** HTTP 状态码 {@code 401}。 */
     public static final int UNAUTHORIZED = 401;
+    /** HTTP 状态码 {@code 403}。 */
     public static final int FORBIDDEN = 403;
+    /** HTTP 状态码 {@code 404}。 */
     public static final int NOT_FOUND = 404;
+    /** HTTP 状态码 {@code 409}。 */
     public static final int CONFLICT = 409;
+    /** HTTP 状态码 {@code 500}。 */
     public static final int INTERNAL_SERVER_ERROR = 500;
 
     @Override

@@ -55,15 +55,23 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class DefaultQrCodeService implements QrCodeService, AutoCloseable {
 
+    /** 默认允许的最大批量数量。 */
     public static final int DEFAULT_MAX_BATCH_SIZE = 100;
 
     private final ExecutorService executorService;
     private final int maxBatchSize;
 
+    /** 使用默认并发度和批量上限创建二维码服务。 */
     public DefaultQrCodeService() {
         this(Math.min(Runtime.getRuntime().availableProcessors(), 8), DEFAULT_MAX_BATCH_SIZE);
     }
 
+    /**
+     * 使用指定并发度和批量上限创建二维码服务。
+     *
+     * @param concurrency 工作线程数量
+     * @param maxBatchSize 最大批量数量
+     */
     public DefaultQrCodeService(int concurrency, int maxBatchSize) {
         if (concurrency <= 0 || maxBatchSize <= 0) {
             throw new IllegalArgumentException("concurrency and maxBatchSize must be positive");

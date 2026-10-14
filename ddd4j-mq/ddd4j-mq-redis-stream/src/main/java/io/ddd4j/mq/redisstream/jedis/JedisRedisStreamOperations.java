@@ -34,6 +34,11 @@ public class JedisRedisStreamOperations implements RedisStreamOperations {
 
     private final UnifiedJedis jedis;
 
+    /**
+     * 创建 Jedis Stream 操作适配器。
+     *
+     * @param jedis Jedis 客户端
+     */
     public JedisRedisStreamOperations(UnifiedJedis jedis) {
         this.jedis = Objects.requireNonNull(jedis, "jedis");
     }

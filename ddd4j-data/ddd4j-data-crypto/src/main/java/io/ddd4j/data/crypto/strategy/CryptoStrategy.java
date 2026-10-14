@@ -67,6 +67,7 @@ public interface CryptoStrategy {
      * hmac 签名
      *
      * @param value         待签名的值
+     * @param hmacAlgorithm HMAC 算法
      * @param key           Base64 格式的密钥字符串【必须】
      * @param iv            Base64 格式的初始向量，加密模式为 cbc,cfb,ofb 时该参数不能为空，解码后长度 为 16 位，可自定义【非必须】
      * @param plainIsEncode 明文是否进行了 base64 编码 true/false 【非必须】

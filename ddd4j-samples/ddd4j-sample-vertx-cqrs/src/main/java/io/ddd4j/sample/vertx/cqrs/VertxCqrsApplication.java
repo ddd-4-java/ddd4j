@@ -36,12 +36,33 @@ import java.util.List;
 public class VertxCqrsApplication {
 
     // 共享组件（手动装配，使用 core SPI）
+    /**
+     * 事件存储。
+     */
     public static final InMemoryEventStore EVENT_STORE = new InMemoryEventStore();
+    /**
+     * 订单仓储。
+     */
     public static final EventSourcingOrderRepository ORDER_REPO = new EventSourcingOrderRepository(EVENT_STORE);
+    /**
+     * 创建订单命令处理器。
+     */
     public static final CreateOrderCommandHandler COMMAND_HANDLER = new CreateOrderCommandHandler(ORDER_REPO);
+    /**
+     * 命令总线。
+     */
     public static final CommandBus COMMAND_BUS = new DefaultCommandBus(List.of(COMMAND_HANDLER));
+    /**
+     * 订单读取视图。
+     */
     public static final OrderSummaryView READ_VIEW = new OrderSummaryView(ORDER_REPO);
+    /**
+     * 事件块读取器。
+     */
     public static final InMemoryEventChunkReader CHUNK_READER = new InMemoryEventChunkReader(EVENT_STORE);
+    /**
+     * 投影视图管理器。
+     */
     public static final InMemoryViewManager VIEW_MANAGER = createViewManager();
 
     private static InMemoryViewManager createViewManager() {
@@ -50,6 +71,12 @@ public class VertxCqrsApplication {
         return mgr;
     }
 
+    /**
+     * 创建 CQRS HTTP 路由。
+     *
+     * @param vertx Vert.x 实例
+     * @return 已注册的 HTTP 路由
+     */
     public static Router createRouter(Vertx vertx) {
         Router router = Router.router(vertx);
         router.route().handler(BodyHandler.create());
@@ -96,6 +123,11 @@ public class VertxCqrsApplication {
         return router;
     }
 
+    /**
+     * 启动 Vert.x CQRS 示例应用。
+     *
+     * @param args 命令行参数
+     */
     public static void main(String[] args) {
         Vertx vertx = Vertx.vertx();
         Router router = createRouter(vertx);

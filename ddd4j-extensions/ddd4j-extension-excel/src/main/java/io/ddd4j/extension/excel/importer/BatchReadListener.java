@@ -31,7 +31,7 @@ import java.util.function.Consumer;
  *
  * <p>官方推荐：mybatis 应使用 {@code batchInsert}，而非循环 {@code insert}。
  *
- * <h3>注意：监听器不能被 Spring 单例管理</h3>
+ * <h2>注意：监听器不能被 Spring 单例管理</h2>
  * <p>每次导入必须 new 一个，否则 {@code cached} 会跨任务污染。如需注入 Spring Bean，
  * 通过构造参数传入 batchConsumer 即可（lambda 中可引用 Spring Service）。
  *

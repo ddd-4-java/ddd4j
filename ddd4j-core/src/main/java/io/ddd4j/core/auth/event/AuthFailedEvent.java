@@ -43,18 +43,40 @@ public final class AuthFailedEvent {
 
     private final Instant occurredAt;
 
+    /**
+     * 获取事件发生时间。
+     *
+     * @return 事件发生时间
+     */
     public Instant getOccurredAt() {
         return occurredAt;
     }
 
+    /**
+     * 获取登录失败原因。
+     *
+     * @return 登录失败原因
+     */
     public String getReason() {
         return reason;
     }
 
+    /**
+     * 获取登录请求。
+     *
+     * @return 登录请求
+     */
     public AuthRequest getRequest() {
         return request;
     }
 
+    /**
+     * 创建AuthFailedEvent事件。
+     *
+     * @param request 登录请求
+     * @param reason 登录失败原因
+     * @param occurredAt 事件发生时间
+     */
     @JsonCreator()
     public AuthFailedEvent(@JsonProperty("request") AuthRequest request, @JsonProperty("reason") String reason, @JsonProperty("occurredAt") Instant occurredAt) {
         this.request = request;
@@ -62,16 +84,31 @@ public final class AuthFailedEvent {
         this.occurredAt = occurredAt;
     }
 
+    /**
+     * 获取用于 JSON 的登录请求。
+     *
+     * @return 用于 JSON 的登录请求
+     */
     @JsonProperty("request")
     public AuthRequest request() {
         return request;
     }
 
+    /**
+     * 获取用于 JSON 的登录失败原因。
+     *
+     * @return 用于 JSON 的登录失败原因
+     */
     @JsonProperty("reason")
     public String reason() {
         return reason;
     }
 
+    /**
+     * 获取用于 JSON 的事件发生时间。
+     *
+     * @return 用于 JSON 的事件发生时间
+     */
     @JsonProperty("occurredAt")
     public Instant occurredAt() {
         return occurredAt;

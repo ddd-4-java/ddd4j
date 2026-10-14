@@ -19,7 +19,7 @@ package io.ddd4j.core.cqrs.command;
  * <p>
  * 取代 {@code io.ddd4j.core.ddd.command.DddAggregateCommand} 的 marker 接口语义。
  *
- * <h3>命令设计原则</h3>
+ * <p><b>命令设计原则</b></p>
  * <ul>
  *   <li><b>不可变</b>：命令对象一旦创建不应修改</li>
  *   <li><b>意图载体</b>：命令表达"用户想做什么"，而非"如何做"</li>
@@ -27,7 +27,7 @@ package io.ddd4j.core.cqrs.command;
  *   <li><b>可序列化</b>：可跨进程传输（同步 HTTP / 异步 MQ）</li>
  * </ul>
  *
- * <h3>使用示例</h3>
+ * <p><b>使用示例</b></p>
  * <pre>{@code
  * public class CreateOrderCommand implements Command {
  *     private final OrderId orderId;

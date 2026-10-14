@@ -41,7 +41,7 @@ import static io.javalin.apibuilder.ApiBuilder.post;
  * <p>通过 {@link EndpointGroup} 暴露路由注册入口，调用方在 Javalin 启动时通过
  * {@code javalinConfig.routes.apiBuilder(orderResource.routes())} 注册。
  *
- * <h3>REST 端点</h3>
+ * <h2>REST 端点</h2>
  * <ul>
  *   <li>POST /orders                    创建订单</li>
  *   <li>GET  /orders                    列表查询</li>
@@ -60,12 +60,19 @@ public class OrderResource {
 
     private final OrderApplicationService orderApplicationService;
 
+    /**
+     * 创建订单资源。
+     *
+     * @param orderApplicationService 订单应用服务
+     */
     public OrderResource(OrderApplicationService orderApplicationService) {
         this.orderApplicationService = Objects.requireNonNull(orderApplicationService, "orderApplicationService must not be null");
     }
 
     /**
      * 以 {@link EndpointGroup} 形式暴露本资源的全部路由。
+     *
+     * @return 订单路由组
      */
     public EndpointGroup routes() {
         return () -> {
@@ -150,17 +157,33 @@ public class OrderResource {
 
         private final String currency;
 
+        /**
+         * 创建折扣金额视图。
+         *
+         * @param amount 金额数值
+         * @param currency 币种
+         */
         @JsonCreator()
         public DiscountView(@JsonProperty("amount") String amount, @JsonProperty("currency") String currency) {
             this.amount = amount;
             this.currency = currency;
         }
 
+        /**
+         * 读取金额数值。
+         *
+         * @return 金额数值
+         */
         @JsonProperty("amount")
         public String amount() {
             return amount;
         }
 
+        /**
+         * 读取币种。
+         *
+         * @return 币种
+         */
         @JsonProperty("currency")
         public String currency() {
             return currency;

@@ -54,22 +54,47 @@ public class Cpu {
      */
     private double free;
 
+    /**
+     * 返回CPU 总使用率（百分比）。
+     *
+     * @return CPU 总使用率（百分比）
+     */
     public double getTotal() {
         return ArithKit.round(ArithKit.mul(total, 100), 2);
     }
 
+    /**
+     * 返回CPU 系统使用率（百分比）。
+     *
+     * @return CPU 系统使用率（百分比）
+     */
     public double getSys() {
         return ArithKit.round(ArithKit.mul(sys / total, 100), 2);
     }
 
+    /**
+     * 返回CPU 用户使用率（百分比）。
+     *
+     * @return CPU 用户使用率（百分比）
+     */
     public double getUsed() {
         return ArithKit.round(ArithKit.mul(used / total, 100), 2);
     }
 
+    /**
+     * 返回CPU 等待率（百分比）。
+     *
+     * @return CPU 等待率（百分比）
+     */
     public double getWait() {
         return ArithKit.round(ArithKit.mul(wait / total, 100), 2);
     }
 
+    /**
+     * 返回CPU 空闲率（百分比）。
+     *
+     * @return CPU 空闲率（百分比）
+     */
     public double getFree() {
         return ArithKit.round(ArithKit.mul(free / total, 100), 2);
     }

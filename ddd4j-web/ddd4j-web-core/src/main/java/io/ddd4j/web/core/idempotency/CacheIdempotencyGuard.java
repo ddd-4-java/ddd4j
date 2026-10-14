@@ -32,15 +32,22 @@ import java.util.UUID;
  */
 public final class CacheIdempotencyGuard implements IdempotencyGuard {
 
+    /** 常量值 {@code "ddd4j-web-idempotency"}。 */
     public static final String DEFAULT_CACHE_NAME = "ddd4j-web-idempotency";
     private static final String PROCESSING = "PROCESSING";
     private static final String COMPLETED = "COMPLETED";
     private final String cacheName;
 
+    /** 使用默认缓存业务名创建幂等守卫。 */
     public CacheIdempotencyGuard() {
         this(DEFAULT_CACHE_NAME);
     }
 
+    /**
+     * 使用指定缓存业务名创建幂等守卫。
+     *
+     * @param cacheName 缓存业务名
+     */
     public CacheIdempotencyGuard(String cacheName) {
         if (StrKit.isBlank(cacheName)) {
             throw new IllegalArgumentException("cacheName must not be blank");

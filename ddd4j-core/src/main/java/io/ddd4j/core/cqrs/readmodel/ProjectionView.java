@@ -27,11 +27,13 @@ public interface ProjectionView<E> {
 
     /**
      * 视图名称。
+     * @return 视图名称
      */
     String getName();
 
     /**
      * 投影流 ID。默认使用视图名称。
+     * @return 投影流标识
      */
     default String getStreamId() {
         return getName();
@@ -39,11 +41,13 @@ public interface ProjectionView<E> {
 
     /**
      * 定时调度 CRON 表达式。
+     * @return 定时调度表达式
      */
     String getCron();
 
     /**
      * 单次读取事件数量。
+     * @return 单次读取的事件数量
      */
     default int getChunkSize() {
         return 100;
@@ -51,6 +55,7 @@ public interface ProjectionView<E> {
 
     /**
      * 本视图关注的事件类型。
+     * @return 视图关注的事件类型集合
      */
     Collection<String> getEventTypes();
 

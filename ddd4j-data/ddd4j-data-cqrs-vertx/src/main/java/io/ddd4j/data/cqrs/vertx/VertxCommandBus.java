@@ -35,7 +35,7 @@ import java.util.Objects;
  * Helidon SE 用 {@code ddd4j-data-cqrs-helidon}，Javalin 用
  * {@code ddd4j-data-cqrs-javalin}。
  *
- * <h3>装配语义（静态工厂，构造即快照，顺序不可变）</h3>
+ * <p><b>装配语义（静态工厂，构造即快照，顺序不可变）</b></p>
  * <p>
  * {@link #create} 工厂内先把集成方供入的 {@link CommandExecutor} 集合逐个
  * {@link CommandRegistry#register}（整批拒绝语义），再以
@@ -51,7 +51,7 @@ import java.util.Objects;
  * 的整批拒绝（all-or-nothing）{@link IllegalStateException} 在装配期立即暴露
  * ——工厂调用失败即整体丢弃，不会留下半注册总线。
  *
- * <h3>{@link CommandHandler @CommandHandler} 发现（ServiceLoader 风格）</h3>
+ * <p><b>{@link CommandHandler @CommandHandler} 发现（ServiceLoader 风格）</b></p>
  * <p>
  * 发现机制为 <b>ServiceLoader 风格</b>（Vert.x 无容器扫描，JDK SPI 是其
  * 生态的标准装配原语）：执行器实现类以 {@code public} 无参构造注册进集成方
@@ -65,7 +65,7 @@ import java.util.Objects;
  * 的 {@code HelidonServiceLoader} 均为「执行器集合的容器原生枚举」等价物，
  * 差异只在发现键。
  *
- * <h3>同步 execute 刻意不暴露 Vert.x 异步回路</h3>
+ * <p><b>同步 execute 刻意不暴露 Vert.x 异步回路</b></p>
  * <p>
  * {@code execute} 继承 {@link DefaultCommandBus} 的<b>同步</b>签名（返回
  * {@code Result}，不包 {@code Future}）：总线内部对执行器的调用是同步分发，
@@ -73,7 +73,7 @@ import java.util.Objects;
  * 委托给 worker 线程（{@code vertx.executeBlocking(...)} 或 Verticle 的
  * worker 部署）自行包装即可，总线不为包装再立抽象（ADR-0004：零新框架抽象）。
  *
- * <h3>事务边界刻意不在本层（纯分发路由）</h3>
+ * <p><b>事务边界刻意不在本层（纯分发路由）</b></p>
  * <p>
  * Vert.x 没有事务管理栈——本模块<b>零事务依赖</b>：事务由集成方在<b>自己的
  * 执行器实现／worker 回调</b>上自管（如经 Vert.x SQL client 的

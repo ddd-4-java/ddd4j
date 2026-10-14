@@ -103,6 +103,11 @@ public class Ddd4jMybatisGuiceModule extends AbstractModule {
         }
     }
 
+    /**
+     * 将已注册 Mapper 注入对应 Repository。
+     *
+     * @param injector Guice 注入器
+     */
     @SuppressWarnings({"rawtypes", "unchecked"})
     public void initRepositories(Injector injector) {
         SqlSession sqlSession = injector.getInstance(SqlSession.class);
@@ -124,6 +129,11 @@ public class Ddd4jMybatisGuiceModule extends AbstractModule {
         log.info("Repository mapper injection completed: {} repositories", repositoryToMapper.size());
     }
 
+    /**
+     * 创建包含已注册 Mapper 与拦截器的会话工厂。
+     *
+     * @return MyBatis 会话工厂
+     */
     @Provides
     @Singleton
     public SqlSessionFactory sqlSessionFactory() {
@@ -146,6 +156,12 @@ public class Ddd4jMybatisGuiceModule extends AbstractModule {
         return factory;
     }
 
+    /**
+     * 从会话工厂创建自动提交会话。
+     *
+     * @param sqlSessionFactory MyBatis 会话工厂
+     * @return MyBatis 会话
+     */
     @Provides
     @Singleton
     public SqlSession sqlSession(SqlSessionFactory sqlSessionFactory) {

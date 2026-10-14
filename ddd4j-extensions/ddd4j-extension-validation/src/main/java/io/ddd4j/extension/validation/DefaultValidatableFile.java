@@ -28,6 +28,14 @@ public final class DefaultValidatableFile implements ValidatableFile {
     private final long size;
     private final InputStreamSource inputStreamSource;
 
+    /**
+     * 创建文件对象。
+     *
+     * @param fileName 文件名
+     * @param contentType 声明的内容类型
+     * @param size 文件大小
+     * @param inputStreamSource 文件流来源
+     */
     public DefaultValidatableFile(String fileName, String contentType, long size,
                                   InputStreamSource inputStreamSource) {
         this.fileName = fileName;

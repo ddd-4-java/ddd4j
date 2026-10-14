@@ -22,7 +22,17 @@ import java.io.Serializable;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public interface IEnum<T extends Serializable> {
+    /**
+     * 获取枚举编码。
+     *
+     * @return 枚举编码
+     */
     T getCode();
 
+    /**
+     * 获取枚举说明。
+     *
+     * @return 枚举说明
+     */
     String getDesc();
 }

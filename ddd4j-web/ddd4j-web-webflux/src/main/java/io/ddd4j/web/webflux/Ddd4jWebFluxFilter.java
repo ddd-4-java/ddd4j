@@ -58,20 +58,46 @@ public final class Ddd4jWebFluxFilter implements WebFilter {
     private final Optional<WebIdempotencyLifecycle> idempotencyLifecycle;
     private final Scheduler blockingScheduler;
 
+    /**
+     * 使用全部路径需要认证的默认策略创建过滤器。
+     *
+     * @param authenticator Bearer 主体认证器
+     */
     public Ddd4jWebFluxFilter(BearerSubjectAuthenticator authenticator) {
         this(new WebRequestContextFactory(), new WebRequestLifecycle(authenticator, WebAccessPolicy.required()), null);
     }
 
+    /**
+     * 使用指定公开路径策略创建过滤器。
+     *
+     * @param authenticator Bearer 主体认证器
+     * @param publicPath 公开路径判定器
+     */
     public Ddd4jWebFluxFilter(BearerSubjectAuthenticator authenticator, Predicate<String> publicPath) {
         this(new WebRequestContextFactory(), new WebRequestLifecycle(authenticator,
                 WebAccessPolicy.requiredExcept(publicPath)), null);
     }
 
+    /**
+     * 使用默认阻塞任务调度器创建过滤器。
+     *
+     * @param contextFactory 请求上下文工厂
+     * @param requestLifecycle 请求生命周期
+     * @param idempotencyLifecycle 幂等生命周期，可为空
+     */
     public Ddd4jWebFluxFilter(WebRequestContextFactory contextFactory, WebRequestLifecycle requestLifecycle,
                               WebIdempotencyLifecycle idempotencyLifecycle) {
         this(contextFactory, requestLifecycle, idempotencyLifecycle, Schedulers.boundedElastic());
     }
 
+    /**
+     * 使用指定阻塞任务调度器创建过滤器。
+     *
+     * @param contextFactory 请求上下文工厂
+     * @param requestLifecycle 请求生命周期
+     * @param idempotencyLifecycle 幂等生命周期，可为空
+     * @param blockingScheduler 阻塞任务调度器
+     */
     public Ddd4jWebFluxFilter(WebRequestContextFactory contextFactory, WebRequestLifecycle requestLifecycle,
                               WebIdempotencyLifecycle idempotencyLifecycle, Scheduler blockingScheduler) {
         this.contextFactory = Objects.requireNonNull(contextFactory, "contextFactory must not be null");

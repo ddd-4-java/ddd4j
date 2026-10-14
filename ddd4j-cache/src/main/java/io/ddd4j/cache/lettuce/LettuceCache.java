@@ -86,12 +86,24 @@ public class LettuceCache<V> implements Cache<String, V> {
                 .build();
     }
 
+    /**
+     * 使用指定 ObjectMapper 工厂创建 Lettuce 缓存。
+     *
+     * @param commands Redis 命令接口
+     * @param config 缓存配置
+     * @param valueType 缓存值类型
+     * @param objectMapperFactory ObjectMapper 工厂
+     */
     public LettuceCache(RedisCommands<String, String> commands, CacheConfig config, Class<V> valueType, Function<String, ObjectMapper> objectMapperFactory) {
         this(commands, config, valueType, objectMapperFactory.apply(valueType.getName()));
     }
 
     /**
      * 构造 Lettuce 缓存（默认 ObjectMapper）。
+     *
+     * @param commands Redis 命令接口
+     * @param config 缓存配置
+     * @param valueType 缓存值类型
      */
     public LettuceCache(RedisCommands<String, String> commands, CacheConfig config, Class<V> valueType) {
         this(commands, config, valueType, JsonMapper.builder().build());

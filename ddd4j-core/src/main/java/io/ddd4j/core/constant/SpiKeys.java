@@ -23,20 +23,20 @@ import io.ddd4j.core.context.ThreadContext;
  * 业务方通过 {@link BaseContext#get(String, Class)} 或
  * {@link ThreadContext#get(String, Class)} 按这些 key 查找 SPI 服务实例。
  *
- * <h3>使用约定</h3>
+ * <p><b>使用约定</b></p>
  * <ul>
  *   <li><b>框架适配层</b>：在启动期按这些 key 注入 SPI 服务实例（Kafka / RabbitMQ / CDI Bean / Guice Provider）</li>
  *   <li><b>业务代码</b>：通过 key 查找 SPI 服务，零框架耦合</li>
  *   <li><b>单测</b>：直接 {@code BaseContext.inject(KEY, type, mockImpl)} 注入 mock</li>
  * </ul>
  *
- * <h3>查找优先级</h3>
+ * <p><b>查找优先级</b></p>
  * <ol>
  *   <li>{@link ThreadContext}（线程级，请求级 SPI 覆盖）</li>
  *   <li>{@link BaseContext}（JVM 级，全局默认 SPI）</li>
  * </ol>
  *
- * <h3>命名规范</h3>
+ * <p><b>命名规范</b></p>
  * key 统一以 {@code ddd4j.spi.&lt;领域&gt;.&lt;服务名&gt;} 格式命名，避免冲突。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>

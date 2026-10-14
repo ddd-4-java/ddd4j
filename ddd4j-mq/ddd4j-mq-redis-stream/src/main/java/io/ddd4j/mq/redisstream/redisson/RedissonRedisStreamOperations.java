@@ -39,14 +39,30 @@ public class RedissonRedisStreamOperations implements RedisStreamOperations {
     private final RedissonClient redisson;
     private final boolean closeClient;
 
+    /**
+     * 从 Redis 地址创建 Redisson Stream 操作适配器。
+     *
+     * @param redisUrl Redis 连接地址
+     */
     public RedissonRedisStreamOperations(String redisUrl) {
         this(createClient(redisUrl), true);
     }
 
+    /**
+     * 复用已有 Redisson 客户端。
+     *
+     * @param redisson Redisson 客户端
+     */
     public RedissonRedisStreamOperations(RedissonClient redisson) {
         this(redisson, false);
     }
 
+    /**
+     * 指定客户端生命周期归属后创建操作适配器。
+     *
+     * @param redisson Redisson 客户端
+     * @param closeClient 关闭适配器时是否关闭客户端
+     */
     public RedissonRedisStreamOperations(RedissonClient redisson, boolean closeClient) {
         this.redisson = Objects.requireNonNull(redisson, "redisson");
         this.closeClient = closeClient;

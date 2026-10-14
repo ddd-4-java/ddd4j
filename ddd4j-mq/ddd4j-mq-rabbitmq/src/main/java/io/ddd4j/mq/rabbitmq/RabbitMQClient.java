@@ -88,6 +88,8 @@ public class RabbitMQClient implements MQClient {
 
     /**
      * 构造方法 1：注入原生 connection（runtime 自动装配用）。
+     *
+     * @param connection 已创建的 RabbitMQ 连接
      */
     public RabbitMQClient(Connection connection) {
         this.connectionRef.set(Objects.requireNonNull(connection, "RabbitMQ Connection is required"));
@@ -96,6 +98,8 @@ public class RabbitMQClient implements MQClient {
 
     /**
      * 构造方法 2：自行根据 properties 构造 connection（lazy）。
+     *
+     * @param properties RabbitMQ 连接配置
      */
     public RabbitMQClient(RabbitMQProperties properties) {
         this.connectionRef.set(null);

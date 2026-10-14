@@ -37,6 +37,11 @@ public class SpringViewScheduler implements ViewScheduler {
      */
     private final TaskScheduler taskScheduler;
 
+    /**
+     * 创建 Spring 任务调度适配器。
+     *
+     * @param taskScheduler Spring 任务调度器
+     */
     public SpringViewScheduler(TaskScheduler taskScheduler) {
         this.taskScheduler = taskScheduler;
     }

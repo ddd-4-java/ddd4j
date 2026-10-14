@@ -43,6 +43,12 @@ public final class Ddd4jMicronautContext implements ThreadPropagatedContextEleme
 
     private final Optional<Subject> subject;
 
+    /**
+     * 构造可传播的请求上下文。
+     *
+     * @param requestContext Web 请求上下文
+     * @param subject 当前主体，可为空
+     */
     @JsonCreator()
     public Ddd4jMicronautContext(@JsonProperty("requestContext") WebRequestContext requestContext, @JsonProperty("subject") Optional<Subject> subject) {
         Objects.requireNonNull(requestContext, "requestContext must not be null");
@@ -51,6 +57,11 @@ public final class Ddd4jMicronautContext implements ThreadPropagatedContextEleme
         this.subject = subject;
     }
 
+    /**
+     * 获取当前 Micronaut 传播上下文中的请求上下文。
+     *
+     * @return 当前请求上下文，可为空
+     */
     public static Optional<Ddd4jMicronautContext> current() {
         return PropagatedContext.getOrEmpty().find(Ddd4jMicronautContext.class);
     }
@@ -67,11 +78,21 @@ public final class Ddd4jMicronautContext implements ThreadPropagatedContextEleme
         oldState.close();
     }
 
+    /**
+     * 获取 Web 请求上下文。
+     *
+     * @return Web 请求上下文
+     */
     @JsonProperty("requestContext")
     public WebRequestContext requestContext() {
         return requestContext;
     }
 
+    /**
+     * 获取当前主体。
+     *
+     * @return 可选主体
+     */
     @JsonProperty("subject")
     public Optional<Subject> subject() {
         return subject;

@@ -39,18 +39,38 @@ public class Mem {
      */
     private double free;
 
+    /**
+     * 返回总内存（GB）。
+     *
+     * @return 总内存（GB）
+     */
     public double getTotal() {
         return ArithKit.div(total, (1024 * 1024 * 1024), 2);
     }
 
+    /**
+     * 返回已用内存（GB）。
+     *
+     * @return 已用内存（GB）
+     */
     public double getUsed() {
         return ArithKit.div(used, (1024 * 1024 * 1024), 2);
     }
 
+    /**
+     * 返回空闲内存（GB）。
+     *
+     * @return 空闲内存（GB）
+     */
     public double getFree() {
         return ArithKit.div(free, (1024 * 1024 * 1024), 2);
     }
 
+    /**
+     * 返回内存使用率（百分比）。
+     *
+     * @return 内存使用率（百分比）
+     */
     public double getUsage() {
         return ArithKit.mul(ArithKit.div(used, total, 4), 100);
     }

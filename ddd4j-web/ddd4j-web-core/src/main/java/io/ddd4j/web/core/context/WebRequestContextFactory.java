@@ -26,15 +26,28 @@ public final class WebRequestContextFactory {
     private final RequestIdGenerator requestIdGenerator;
     private final ClientIpResolver clientIpResolver;
 
+    /** 使用 UUID 请求标识与远端地址解析器创建工厂。 */
     public WebRequestContextFactory() {
         this(RequestIdGenerator.uuid(), ClientIpResolver.remoteAddressOnly());
     }
 
+    /**
+     * 使用指定请求标识和客户端 IP 解析器创建工厂。
+     *
+     * @param requestIdGenerator 请求标识生成器
+     * @param clientIpResolver 客户端 IP 解析器
+     */
     public WebRequestContextFactory(RequestIdGenerator requestIdGenerator, ClientIpResolver clientIpResolver) {
         this.requestIdGenerator = Objects.requireNonNull(requestIdGenerator, "requestIdGenerator must not be null");
         this.clientIpResolver = Objects.requireNonNull(clientIpResolver, "clientIpResolver must not be null");
     }
 
+    /**
+     * 将原始请求数据规范化为请求上下文。
+     *
+     * @param data 原始请求数据
+     * @return 规范化后的请求上下文
+     */
     public WebRequestContext create(WebRequestData data) {
         WebRequestData requestData = Objects.requireNonNull(data, "data must not be null");
         String requestId = StrKit.isBlank(requestData.requestId())

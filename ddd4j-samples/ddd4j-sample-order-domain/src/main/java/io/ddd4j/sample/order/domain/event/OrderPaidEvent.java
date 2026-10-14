@@ -14,7 +14,9 @@
  */
 package io.ddd4j.sample.order.domain.event;
 
+/** 订单已支付事件。 */
 public final class OrderPaidEvent extends OrderDomainEvent {
+    /** @param orderId 已支付的订单标识 */
     public OrderPaidEvent(String orderId) {
         super(orderId);
     }

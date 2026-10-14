@@ -34,15 +34,32 @@ public class TypedEventDispatcher {
 
     private final Map<String, TypedEventHandler<?>> handlers;
 
+    /**
+     * 建立事件类型到处理器的索引。
+     *
+     * @param handlers 待注册的类型化事件处理器
+     */
     public TypedEventDispatcher(Collection<? extends TypedEventHandler<?>> handlers) {
         this.handlers = indexHandlers(handlers);
     }
 
+    /**
+     * 将事件交给匹配类型的处理器。
+     *
+     * @param event 待派发事件
+     * @return 找到并调用处理器时为 true
+     */
     public boolean dispatch(TypedEvent event) {
         TypedEvent typedEvent = Objects.requireNonNull(event, "event must not be null");
         return dispatch(typedEvent.getEventType(), typedEvent);
     }
 
+    /**
+     * 逐个派发事件集合。
+     *
+     * @param events 待派发事件集合
+     * @return 实际派发的事件数
+     */
     public int dispatchAll(Collection<? extends TypedEvent> events) {
         if (CollKit.isEmpty(events)) {
             return 0;
@@ -56,6 +73,13 @@ public class TypedEventDispatcher {
         return dispatched;
     }
 
+    /**
+     * 将事件交给匹配类型的处理器。
+     *
+     * @param eventType 事件类型
+     * @param event 事件载荷
+     * @return 找到并调用处理器时为 true
+     */
     public boolean dispatch(String eventType, Object event) {
         if (StrKit.isBlank(eventType) || Objects.isNull(event)) {
             return false;
@@ -68,6 +92,11 @@ public class TypedEventDispatcher {
         return true;
     }
 
+    /**
+     * 统计已注册的处理器数。
+     *
+     * @return 处理器数量
+     */
     public int size() {
         return handlers.size();
     }

@@ -27,38 +27,96 @@ import io.ddd4j.core.api.ApiCode;
  */
 public class PayException extends BizRuntimeException {
 
+    /**
+     * 创建可国际化的支付业务异常。
+     *
+     * @param code 业务错误码
+     * @param message 错误消息或国际化资源键
+     */
     public PayException(Integer code, String message) {
         super(code, message);
     }
 
+    /**
+     * 按国际化资源键创建支付业务异常。
+     *
+     * @param code 业务错误码
+     * @param i18nCode 国际化资源键
+     * @param message 错误消息或国际化资源键
+     */
     public PayException(Integer code, String i18nCode, String message) {
         super(code, i18nCode, message);
     }
 
+    /**
+     * 按国际化资源键创建支付业务异常。
+     *
+     * @param code 业务错误码
+     * @param i18nCode 国际化资源键
+     * @param args 消息格式化参数
+     * @param message 错误消息或国际化资源键
+     */
     public PayException(Integer code, String i18nCode, Object[] args, String message) {
         super(code, i18nCode, args, message);
     }
 
+    /**
+     * 创建可国际化的支付业务异常。
+     *
+     * @param message 错误消息或国际化资源键
+     */
     public PayException(String message) {
         super(message);
     }
 
+    /**
+     * 创建可国际化的支付业务异常。
+     *
+     * @param message 错误消息或国际化资源键
+     * @param cause 原始异常
+     */
     public PayException(String message, Throwable cause) {
         super(message, cause);
     }
 
+    /**
+     * 按预定义业务码和国际化键创建支付业务异常。
+     *
+     * @param code 业务错误码
+     * @param i18nCode 国际化资源键
+     */
     public PayException(ApiCode code, String i18nCode) {
         super(code, i18nCode);
     }
 
+    /**
+     * 创建可国际化的支付业务异常。
+     *
+     * @param code 业务错误码
+     * @param message 错误消息或国际化资源键
+     * @param cause 原始异常
+     */
     public PayException(Integer code, String message, Throwable cause) {
         super(code, message, cause);
     }
 
+    /**
+     * 按国际化资源键创建支付业务异常。
+     *
+     * @param code 业务错误码
+     * @param i18nCode 国际化资源键
+     * @param defMsg 资源缺失时的默认消息
+     * @param cause 原始异常
+     */
     public PayException(Integer code, String i18nCode, String defMsg, Throwable cause) {
         super(code, i18nCode, defMsg, cause);
     }
 
+    /**
+     * 按自定义业务码创建支付业务异常。
+     *
+     * @param code 业务错误码
+     */
     public PayException(CustomApiCode code) {
         super(code);
     }

@@ -39,13 +39,13 @@ import reactor.core.publisher.Mono;
  * 轨道只有本接口这一份 Reactor 签名，不做同步签名的 CompletableFuture 复刻；
  * 需要阻塞语义的运行时直接用 {@link EventStore}。
  *
- * <h3>乐观锁</h3>
+ * <p><b>乐观锁</b></p>
  * <p>语义与同步 {@link EventStore} 完全一致：append 校验 {@code expectedVersion}
  * （期望的流当前版本号，空流为 0），不一致时以
  * {@link AggregateVersionConflictException} 错误信号终止（{@link Mono#error}）。
  * 实现须保证 append 的版本校验与写入在同一数据库事务内原子完成。
  *
- * <h3>实现</h3>
+ * <p><b>实现</b></p>
  * <ul>
  *   <li>同步轨道：-jpa / -r2dbc / -esdb 三个实现模块（{@link EventStore}）</li>
  *   <li>响应式轨道：具体实现（纯 {@code io.r2dbc.spi} 真响应式事务）为后续演进</li>

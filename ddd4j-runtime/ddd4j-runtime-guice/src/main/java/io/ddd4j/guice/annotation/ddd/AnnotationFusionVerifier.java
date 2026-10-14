@@ -32,6 +32,11 @@ public final class AnnotationFusionVerifier {
     private AnnotationFusionVerifier() {
     }
 
+    /**
+     * 验证 Guice DDD 注解的元注解组合。
+     *
+     * @param args 命令行参数，当前未使用
+     */
     public static void main(String[] args) {
         int passed = 0;
         int failed = 0;

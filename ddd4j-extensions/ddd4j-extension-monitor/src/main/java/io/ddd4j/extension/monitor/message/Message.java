@@ -57,6 +57,7 @@ public class Message {
      * @param title     标题
      * @param text      正文
      * @param atMobiles 被 @ 的手机号列表（null 表示不 @ 任何人）
+     * @return Markdown 消息
      */
     public static Message markdown(String title, String text, List<String> atMobiles) {
         Message m = new Message();
@@ -68,6 +69,9 @@ public class Message {
 
     /**
      * 构造一条纯文本消息。
+     *
+     * @param content 文本内容
+     * @return 纯文本消息
      */
     public static Message text(String content) {
         Message m = new Message();

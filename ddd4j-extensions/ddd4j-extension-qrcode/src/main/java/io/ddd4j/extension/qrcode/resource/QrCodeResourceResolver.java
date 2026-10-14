@@ -22,5 +22,12 @@ import java.io.IOException;
  */
 public interface QrCodeResourceResolver {
 
+    /**
+     * 解析外框图像或 Logo 资源。
+     *
+     * @param location 资源位置
+     * @return 已解析图像
+     * @throws IOException 资源读取失败时
+     */
     BufferedImage resolve(String location) throws IOException;
 }

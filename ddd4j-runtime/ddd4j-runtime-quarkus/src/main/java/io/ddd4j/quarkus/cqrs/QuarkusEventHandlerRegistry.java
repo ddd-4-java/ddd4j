@@ -99,10 +99,17 @@ public class QuarkusEventHandlerRegistry {
         }
     }
 
+    /**
+     * 按事件类型查找处理器方法。
+     *
+     * @param eventType 事件类型
+     * @return 匹配的处理器方法
+     */
     public Method findHandler(Class<?> eventType) {
         return handlerTable.get(eventType);
     }
 
+    /** @return 已注册的事件处理器映射副本 */
     public Map<Class<?>, Method> getHandlerTable() {
         return new HashMap<>(handlerTable);
     }

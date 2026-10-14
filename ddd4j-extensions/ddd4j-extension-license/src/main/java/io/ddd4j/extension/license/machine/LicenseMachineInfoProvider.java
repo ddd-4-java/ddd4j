@@ -25,9 +25,24 @@ import java.util.Set;
  */
 public interface LicenseMachineInfoProvider {
 
+    /**
+     * 获取当前机器的 IP 地址。
+     *
+     * @return IP 地址集合
+     */
     Set<String> ipAddresses();
 
+    /**
+     * 获取当前机器的 MAC 地址。
+     *
+     * @return MAC 地址集合
+     */
     Set<String> macAddresses();
 
+    /**
+     * 获取机器序列号。
+     *
+     * @return 机器序列号
+     */
     String serialNumber();
 }

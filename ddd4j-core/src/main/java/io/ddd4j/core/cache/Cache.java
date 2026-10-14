@@ -191,7 +191,7 @@ public interface Cache<K, V> {
      * <p>业务方传一个 {@link CASOperation} 描述"如何基于当前值计算新值"，
      * CAS 引擎在并发冲突时自动用最新的当前值重新调用回调（最多 {@link CASOperation#maxRetries()} 次）。
      *
-     * <h3>各后端的底层 CAS 原语</h3>
+     * <p><b>各后端的底层 CAS 原语</b></p>
      * <ul>
      *   <li><b>Caffeine</b>：{@code asMap().compute(K, BiFunction)} — JVM 内原子回调，天然无冲突</li>
      *   <li><b>Guava</b>：{@code asMap().replace(K, oldV, newV)} + 重试</li>
@@ -222,7 +222,7 @@ public interface Cache<K, V> {
      *
      * <p>仅当缓存中的当前值 equals {@code expectedOldValue} 时才写入 {@code newValue}。
      *
-     * <h3>各后端的底层实现</h3>
+     * <p><b>各后端的底层实现</b></p>
      * <ul>
      *   <li><b>Caffeine/Guava</b>：{@code asMap().replace(K, oldV, newV)}</li>
      *   <li><b>Jedis/Lettuce</b>：Lua 脚本 {@code if redis.call("get")==old then set end}</li>
@@ -258,7 +258,7 @@ public interface Cache<K, V> {
      * <p><b>注意</b>：此方法仅在 Memcached 后端有真实版本号语义（返回原生 cas 版本号）。
      * 其他后端（Redis/Caffeine 等）没有原生版本号概念，抛 {@link UnsupportedOperationException}。
      *
-     * <p>推荐优先使用 {@link #compareAndSet(K, long, CASOperation)} 或
+     * <p>推荐优先使用带过期时间和操作回调的 {@code compareAndSet} 或
      * {@link #compareAndSet(K, V, V)}——它们在所有后端上都有严谨实现。
      *
      * @param key             缓存键

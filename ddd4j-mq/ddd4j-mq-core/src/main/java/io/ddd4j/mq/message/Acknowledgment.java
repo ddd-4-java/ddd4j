@@ -27,31 +27,43 @@ public interface Acknowledgment {
 
     /**
      * 返回当前消息的投递标签。
+     *
+     * @return 投递标签
      */
     long deliveryTag();
 
     /**
      * 返回消息 ID（若 Broker 提供）。
+     *
+     * @return 消息 ID，Broker 未提供时可能为空
      */
     String messageId();
 
     /**
      * 返回关联 ID（若 Broker 提供）。
+     *
+     * @return 关联 ID，Broker 未提供时可能为空
      */
     String correlationId();
 
     /**
      * 底层连接/通道是否仍可用。
+     *
+     * @return 连接或通道可用时为 true
      */
     boolean isOpen();
 
     /**
      * 当前消息是否已被确认。
+     *
+     * @return 已确认时为 true
      */
     boolean isAcknowledged();
 
     /**
      * 当前确认实现对应的 Broker 类型。
+     *
+     * @return Broker 类型
      */
     BrokerType brokerType();
 
@@ -90,7 +102,7 @@ public interface Acknowledgment {
     void reject(boolean requeue);
 
     /**
-     * 恢复消息投递（Rabbit 专属语义，其他 Broker 可抛 {@link UnsupportedAckOperationException}）。
+     * 恢复消息投递（Rabbit 专属语义，其他 Broker 可抛 {@code UnsupportedAckOperationException}）。
      *
      * @param requeue 是否重新入队
      */

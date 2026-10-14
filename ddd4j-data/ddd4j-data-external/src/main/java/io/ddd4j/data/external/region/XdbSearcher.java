@@ -19,7 +19,9 @@ package io.ddd4j.data.external.region;
  */
 public final class XdbSearcher {
 
+    /** 未匹配地区时的原始数据。 */
     public static final String NOT_MATCH = "0|0|0|内网IP|内网IP";
+    /** 未匹配地区时的结构化地址。 */
     public static final RegionAddress NOT_MATCH_REGION_ADDRESS = new RegionAddress(NOT_MATCH.split("\\|"));
 
     private XdbSearcher() {

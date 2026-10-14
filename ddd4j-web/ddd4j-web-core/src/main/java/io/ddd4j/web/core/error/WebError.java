@@ -39,26 +39,63 @@ public final class WebError {
 
     private final Object data;
 
+    /**
+     * 将错误转换为统一响应对象。
+     *
+     * @return 统一错误响应
+     */
     public R<Object> toResponse() {
         return R.of(code, message, data);
     }
+
+    /**
+     * 返回错误码。
+     *
+     * @return 错误码
+     */
 
     public Serializable getCode() {
         return code;
     }
 
+    /**
+     * 返回错误数据。
+     *
+     * @return 错误数据
+     */
+
     public Object getData() {
         return data;
     }
+
+    /**
+     * 返回错误消息。
+     *
+     * @return 错误消息
+     */
 
     public String getMessage() {
         return message;
     }
 
+    /**
+     * 返回HTTP 状态码。
+     *
+     * @return HTTP 状态码
+     */
+
     public int getStatus() {
         return status;
     }
 
+    /**
+     * 创建 Web 错误值对象。
+     *
+     * @param status HTTP 状态码
+     * @param code 业务错误码
+     * @param message 错误消息
+     * @param data 错误数据
+     */
     @JsonCreator()
     public WebError(@JsonProperty("status") int status, @JsonProperty("code") Serializable code, @JsonProperty("message") String message, @JsonProperty("data") Object data) {
         this.status = status;
@@ -67,21 +104,41 @@ public final class WebError {
         this.data = data;
     }
 
+    /**
+     * 返回HTTP 状态码。
+     *
+     * @return HTTP 状态码
+     */
     @JsonProperty("status")
     public int status() {
         return status;
     }
 
+    /**
+     * 返回错误码。
+     *
+     * @return 错误码
+     */
     @JsonProperty("code")
     public Serializable code() {
         return code;
     }
 
+    /**
+     * 返回错误消息。
+     *
+     * @return 错误消息
+     */
     @JsonProperty("message")
     public String message() {
         return message;
     }
 
+    /**
+     * 返回错误数据。
+     *
+     * @return 错误数据
+     */
     @JsonProperty("data")
     public Object data() {
         return data;

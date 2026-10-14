@@ -25,17 +25,35 @@ import java.util.Objects;
  */
 public class TenantAwareId implements Serializable {
 
+    /** 实体主键。 */
     private Long id;
+    /** 租户标识。 */
     private String tenantId;
 
+    /**
+     * 创建空的复合主键，供 JPA 使用。
+     */
     public TenantAwareId() {
     }
 
+    /**
+     * 创建租户复合主键。
+     *
+     * @param id 实体主键
+     * @param tenantId 租户标识
+     */
     public TenantAwareId(Long id, String tenantId) {
         this.id = id;
         this.tenantId = tenantId;
     }
 
+    /**
+     * 创建租户复合主键。
+     *
+     * @param id 实体主键
+     * @param tenantId 租户标识
+     * @return 租户复合主键
+     */
     public static TenantAwareId of(Long id, String tenantId) {
         return new TenantAwareId(id, tenantId);
     }

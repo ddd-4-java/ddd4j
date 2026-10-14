@@ -32,10 +32,12 @@ public final class DetectedFileType {
 
     private final String mimeType;
 
+    /** @return 真实扩展名 */
     public String getExtension() {
         return extension;
     }
 
+    /** @return 真实 MIME 类型 */
     public String getMimeType() {
         return mimeType;
     }
@@ -51,11 +53,13 @@ public final class DetectedFileType {
         this.mimeType = mimeType;
     }
 
+    /** @return 真实扩展名 */
     @JsonProperty("extension")
     public String extension() {
         return extension;
     }
 
+    /** @return 真实 MIME 类型 */
     @JsonProperty("mimeType")
     public String mimeType() {
         return mimeType;

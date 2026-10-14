@@ -28,6 +28,12 @@ public final class QrCodeTemplateDefinition {
     private final String id;
     private final QrCodeFrame frame;
 
+    /**
+     * 创建命名的外框模板。
+     *
+     * @param id 模板 ID
+     * @param frame 外框定义
+     */
     public QrCodeTemplateDefinition(String id, QrCodeFrame frame) {
         if (StringUtils.isBlank(id)) {
             throw new IllegalArgumentException("template id must not be blank");

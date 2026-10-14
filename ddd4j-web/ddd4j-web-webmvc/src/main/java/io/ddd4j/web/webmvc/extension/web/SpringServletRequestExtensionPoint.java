@@ -30,8 +30,22 @@ import java.util.Map;
  */
 public interface SpringServletRequestExtensionPoint extends ExtensionPoint {
 
+    /**
+     * 包装外部请求。
+     *
+     * @param request HTTP 请求
+     * @param realParams 原始请求参数
+     * @return 包装后的请求
+     */
     String wrap(HttpServletRequest request, Map<String, Object> realParams);
 
+    /**
+     * 包装外部请求。
+     *
+     * @param requestEntity 请求实体
+     * @param <T> 请求体类型
+     * @return 包装后的请求
+     */
     <T> RequestEntity<T> wrap(RequestEntity<T> requestEntity);
 
 }

@@ -38,22 +38,47 @@ public final class MQOutboxDispatchResult {
 
     private final int confirmationLost;
 
+    /**
+     * 返回已领取消息数。
+     *
+     * @return 已领取消息数
+     */
     public int getClaimed() {
         return claimed;
     }
 
+    /**
+     * 返回确认丢失消息数。
+     *
+     * @return 确认丢失消息数
+     */
     public int getConfirmationLost() {
         return confirmationLost;
     }
 
+    /**
+     * 返回死信消息数。
+     *
+     * @return 死信消息数
+     */
     public int getDead() {
         return dead;
     }
 
+    /**
+     * 返回已发布消息数。
+     *
+     * @return 已发布消息数
+     */
     public int getPublished() {
         return published;
     }
 
+    /**
+     * 返回已安排重试消息数。
+     *
+     * @return 已安排重试消息数
+     */
     public int getRescheduled() {
         return rescheduled;
     }
@@ -75,26 +100,51 @@ public final class MQOutboxDispatchResult {
         this.confirmationLost = confirmationLost;
     }
 
+    /**
+     * 返回已领取消息数。
+     *
+     * @return 已领取消息数
+     */
     @JsonProperty("claimed")
     public int claimed() {
         return claimed;
     }
 
+    /**
+     * 返回已发布消息数。
+     *
+     * @return 已发布消息数
+     */
     @JsonProperty("published")
     public int published() {
         return published;
     }
 
+    /**
+     * 返回已安排重试消息数。
+     *
+     * @return 已安排重试消息数
+     */
     @JsonProperty("rescheduled")
     public int rescheduled() {
         return rescheduled;
     }
 
+    /**
+     * 返回死信消息数。
+     *
+     * @return 死信消息数
+     */
     @JsonProperty("dead")
     public int dead() {
         return dead;
     }
 
+    /**
+     * 返回确认丢失消息数。
+     *
+     * @return 确认丢失消息数
+     */
     @JsonProperty("confirmationLost")
     public int confirmationLost() {
         return confirmationLost;

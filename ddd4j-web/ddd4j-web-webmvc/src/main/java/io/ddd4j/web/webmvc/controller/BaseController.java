@@ -79,6 +79,12 @@ public class BaseController implements ApplicationEventPublisherAware, Applicati
     @Getter
     private ApplicationContext context;
 
+    /**
+     * 创建 BaseController 实例。
+     *
+     * @param messageSource 消息源
+     * @param beanMapper Bean 映射器
+     */
     public BaseController(NestedMessageSource messageSource, Mapper beanMapper) {
         this.messageSource = messageSource;
         this.beanMapper = beanMapper;
@@ -86,6 +92,8 @@ public class BaseController implements ApplicationEventPublisherAware, Applicati
 
     /**
      * 统一处理异常，并抛出异常事件方便进行统一的日志实现
+     * @param source 源对象
+     * @param ex 捕获的异常
      */
     protected void logException(Object source, Exception ex) {
         getEventPublisher().publishEvent(new AppExceptionEvent(source, ex));
@@ -102,14 +110,38 @@ public class BaseController implements ApplicationEventPublisherAware, Applicati
         return getMessageSource().getMessage(key, args, LocaleContextHolder.getLocale());
     }
 
+    /**
+     * 创建成功响应。
+     *
+     * @param <T> 返回或请求的类型
+     * @param key 消息键
+     * @param args 消息参数
+     * @return 成功响应
+     */
     protected <T> R<T> success(String key, Object... args) {
         return R.ok(getMessage(key, args), null);
     }
 
+    /**
+     * 创建失败响应。
+     *
+     * @param <T> 返回或请求的类型
+     * @param key 消息键
+     * @param args 消息参数
+     * @return 失败响应
+     */
     protected <T> R<T> fail(String key, Object... args) {
         return R.fail(getMessage(key, args));
     }
 
+    /**
+     * 创建错误响应。
+     *
+     * @param <T> 返回或请求的类型
+     * @param key 消息键
+     * @param args 消息参数
+     * @return 错误响应
+     */
     protected <T> R<T> error(String key, Object... args) {
         return R.of(ApiCode.SERVER_ERROR.getCode(), getMessage(key, args));
     }

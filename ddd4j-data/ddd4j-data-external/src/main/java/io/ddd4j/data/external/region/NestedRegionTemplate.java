@@ -246,10 +246,20 @@ public class NestedRegionTemplate {
         return regionEnum.isChinaMainland();
     }
 
+    /**
+     * 返回 IP 地区查询实现。
+     *
+     * @return IP 地区查询实现
+     */
     public IpRegionTemplate getIp2RegionTemplate() {
         return ipRegionTemplate;
     }
 
+    /**
+     * 返回太平洋网络地区查询实现。
+     *
+     * @return 太平洋网络地区查询实现
+     */
     public PconlineRegionTemplate getPconlineRegionTemplate() {
         return pconlineRegionTemplate;
     }

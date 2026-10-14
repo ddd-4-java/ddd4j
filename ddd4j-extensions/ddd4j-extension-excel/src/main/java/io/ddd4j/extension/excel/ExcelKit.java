@@ -33,7 +33,7 @@ import java.util.Map;
  * {@code .registerWriteHandler(...)} 这种细节。直接复用 easyexcel 原生注解
  * （{@code @ExcelProperty} / {@code @ExcelIgnore} / {@code @ColumnWidth} / {@code @DateTimeFormat}）。
  *
- * <h3>典型用法</h3>
+ * <h2>典型用法</h2>
  * <pre>{@code
  * // 1. 一行导出
  * byte[] bytes = ExcelKit.export(OrderVO.class, orderService.listAll());
@@ -57,12 +57,12 @@ import java.util.Map;
  * );
  * }</pre>
  *
- * <h3>Web 下载/上传</h3>
+ * <h2>Web 下载/上传</h2>
  * <p>本类为纯 Java，不依赖 Servlet/Spring；HTTP 场景的下载（{@code HttpServletResponse}）
  * 与上传（{@code MultipartFile}）请使用 {@code ddd4j-boot-extension-excel} 模块的
  * {@code io.ddd4j.boot.excel.web.ExcelHttpKit}。
  *
- * <h3>容量建议</h3>
+ * <h2>容量建议</h2>
  * <ul>
  *   <li>{@link #export}：单次 ≤ 5000 行；超出请用 {@code ExcelWriter} 分页写入</li>
  *   <li>{@link #readAll}：仅用于小数据量；大数据量用 {@link #importExcel(InputStream, Class, ReadListener)}</li>
@@ -173,7 +173,7 @@ public final class ExcelKit {
     }
 
     /**
-     * 默认 listener 导入（错误自动收集到 {@link ImportResult#getErrors()}）。
+     * 默认 listener 导入（错误自动收集到 {@code ImportResult.getErrors()}）。
      *
      * @param in   输入流
      * @param head 表头类

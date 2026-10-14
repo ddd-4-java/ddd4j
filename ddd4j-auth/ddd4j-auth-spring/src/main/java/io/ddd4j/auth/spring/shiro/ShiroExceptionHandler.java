@@ -22,6 +22,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Slf4j(topic = "### DDD4J-AUTH : ShiroExceptionHandler ###")
 public class ShiroExceptionHandler {
 
+    /**
+     * 将 Shiro 认证异常映射为未认证响应。
+     *
+     * @param exception Shiro 认证异常
+     * @return 未认证响应
+     */
     @ExceptionHandler({UnknownAccountException.class, IncorrectCredentialsException.class,
             AuthenticationException.class})
     public ResponseEntity<R<String>> authenticationException(Exception exception) {
@@ -29,12 +35,24 @@ public class ShiroExceptionHandler {
         return new ResponseEntity<>(R.of(401, "未登录或登录已过期"), HttpStatus.UNAUTHORIZED);
     }
 
+    /**
+     * 将账号锁定异常映射为禁止访问响应。
+     *
+     * @param exception 账号锁定异常
+     * @return 禁止访问响应
+     */
     @ExceptionHandler(LockedAccountException.class)
     public ResponseEntity<R<String>> lockedAccountException(LockedAccountException exception) {
         log.warn("Shiro 账号锁定：{}", exception.getMessage());
         return new ResponseEntity<>(R.of(403, "账号已被锁定"), HttpStatus.FORBIDDEN);
     }
 
+    /**
+     * 将 Shiro 授权异常映射为禁止访问响应。
+     *
+     * @param exception Shiro 授权异常
+     * @return 禁止访问响应
+     */
     @ExceptionHandler({UnauthorizedException.class, AuthorizationException.class})
     public ResponseEntity<R<String>> authorizationException(Exception exception) {
         log.warn("Shiro 授权异常：{}", exception.getMessage());

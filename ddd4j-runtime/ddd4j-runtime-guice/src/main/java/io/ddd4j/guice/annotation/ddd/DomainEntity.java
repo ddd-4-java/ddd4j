@@ -34,7 +34,9 @@ import java.lang.annotation.*;
 public @interface DomainEntity {
 
     /**
-     * 是否是聚合根
+     * 是否是聚合根。
+     *
+     * @return 是聚合根时为 true
      */
     boolean aggregateRoot() default false;
 }

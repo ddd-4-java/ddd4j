@@ -70,6 +70,8 @@ public class RabbitMQProperties extends MQProperties {
 
     /**
      * 基于本配置（含父类 username/password）创建原生 {@link ConnectionFactory}。
+     *
+     * @return 配置完成的 RabbitMQ 连接工厂
      */
     public ConnectionFactory connectionFactory() {
         ConnectionFactory factory = new ConnectionFactory();

@@ -68,6 +68,8 @@ public final class MqDeliveryMetrics {
 
     /**
      * 记录一条成功确认发布的 Outbox 消息。
+     *
+     * @param broker Broker 标识
      */
     public static void outboxPublished(String broker) {
         recordOutbox(broker, OUTCOME_PUBLISHED);
@@ -75,6 +77,8 @@ public final class MqDeliveryMetrics {
 
     /**
      * 记录一条等待后续重试的 Outbox 消息。
+     *
+     * @param broker Broker 标识
      */
     public static void outboxRetry(String broker) {
         recordOutbox(broker, OUTCOME_RETRY);
@@ -82,6 +86,8 @@ public final class MqDeliveryMetrics {
 
     /**
      * 记录一条已进入死信状态的 Outbox 消息。
+     *
+     * @param broker Broker 标识
      */
     public static void outboxDead(String broker) {
         recordOutbox(broker, OUTCOME_DEAD);
@@ -89,6 +95,8 @@ public final class MqDeliveryMetrics {
 
     /**
      * 记录一条发送或确认失败、最终状态尚未确定的 Outbox 消息。
+     *
+     * @param broker Broker 标识
      */
     public static void outboxFailed(String broker) {
         recordOutbox(broker, OUTCOME_FAILED);
@@ -96,6 +104,8 @@ public final class MqDeliveryMetrics {
 
     /**
      * 记录一条成功处理的 Inbox 消息。
+     *
+     * @param broker Broker 标识
      */
     public static void inboxProcessed(String broker) {
         recordInbox(broker, OUTCOME_PROCESSED);
@@ -103,6 +113,8 @@ public final class MqDeliveryMetrics {
 
     /**
      * 记录一条被持久 Inbox 去重的重复消息。
+     *
+     * @param broker Broker 标识
      */
     public static void inboxDuplicate(String broker) {
         recordInbox(broker, OUTCOME_DUPLICATE);
@@ -110,6 +122,8 @@ public final class MqDeliveryMetrics {
 
     /**
      * 记录一条业务处理失败、应由 broker 重投的 Inbox 消息。
+     *
+     * @param broker Broker 标识
      */
     public static void inboxFailed(String broker) {
         recordInbox(broker, OUTCOME_FAILED);

@@ -26,7 +26,7 @@ package io.ddd4j.core.cache;
  * });
  * }</pre>
  *
- * <h3>跨后端兼容性</h3>
+ * <p><b>跨后端兼容性</b></p>
  * <p>回调只使用 {@link GetsResponse#value()}——不依赖 {@link GetsResponse#version()}。
  * 这让所有缓存后端都能实现 CAS：
  * <ul>
@@ -63,6 +63,7 @@ public interface CASOperation<R, V> {
      *   <li>-1 = 使用引擎默认（16 次）</li>
      *   <li>N = 最多重试 N 次</li>
      * </ul>
+     * @return 最大重试次数，-1 表示使用引擎默认值
      */
     default int maxRetries() {
         return -1;

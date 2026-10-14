@@ -28,6 +28,15 @@ public abstract class QrCodeFrameElement {
     private final int height;
     private final int zIndex;
 
+    /**
+     * 创建外框元素的坐标及层级属性。
+     *
+     * @param x 水平坐标
+     * @param y 垂直坐标
+     * @param width 宽度
+     * @param height 高度
+     * @param zIndex 层级
+     */
     protected QrCodeFrameElement(int x, int y, int width, int height, int zIndex) {
         this.x = x;
         this.y = y;

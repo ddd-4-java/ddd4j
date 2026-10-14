@@ -34,6 +34,11 @@ public class DisruptorEvent {
     private Object payload;
     private long sequence;
 
+    /**
+     * 拼接消息的路由表达式。
+     *
+     * @return 由命名空间、主题和标签组成的路由表达式
+     */
     public String getRouteExpression() {
         StringBuilder route = new StringBuilder();
         if (StrKit.isNotBlank(namespace)) {

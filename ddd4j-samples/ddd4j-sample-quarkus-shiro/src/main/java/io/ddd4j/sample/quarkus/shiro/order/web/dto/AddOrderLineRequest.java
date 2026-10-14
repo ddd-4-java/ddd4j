@@ -39,6 +39,14 @@ public final class AddOrderLineRequest {
 
     private final BigDecimal unitPrice;
 
+    /**
+     * 创建添加订单行请求。
+     *
+     * @param goodsId 商品标识
+     * @param goodsName 商品名称
+     * @param quantity 数量
+     * @param unitPrice 商品单价
+     */
     @JsonCreator()
     public AddOrderLineRequest(@JsonProperty("goodsId") String goodsId, @JsonProperty("goodsName") String goodsName, @JsonProperty("quantity") int quantity, @JsonProperty("unitPrice") BigDecimal unitPrice) {
         this.goodsId = goodsId;
@@ -47,21 +55,41 @@ public final class AddOrderLineRequest {
         this.unitPrice = unitPrice;
     }
 
+    /**
+     * 读取商品标识。
+     *
+     * @return 商品标识
+     */
     @JsonProperty("goodsId")
     public String goodsId() {
         return goodsId;
     }
 
+    /**
+     * 读取商品名称。
+     *
+     * @return 商品名称
+     */
     @JsonProperty("goodsName")
     public String goodsName() {
         return goodsName;
     }
 
+    /**
+     * 读取数量。
+     *
+     * @return 数量
+     */
     @JsonProperty("quantity")
     public int quantity() {
         return quantity;
     }
 
+    /**
+     * 读取商品单价。
+     *
+     * @return 商品单价
+     */
     @JsonProperty("unitPrice")
     public BigDecimal unitPrice() {
         return unitPrice;

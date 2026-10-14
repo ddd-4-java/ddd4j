@@ -34,27 +34,35 @@ public class AuthenticationController {
 
     private final SubjectProvider subjectProvider;
 
+    /** @param subjectProvider 主体访问端口 */
     public AuthenticationController(SubjectProvider subjectProvider) {
         this.subjectProvider = Objects.requireNonNull(subjectProvider, "subjectProvider must not be null");
     }
 
+    /**
+     * @param userId 演示用户标识
+     * @return 登录令牌响应
+     */
     @Post("/tokens/{userId}")
     public R<TokenResponse> issueToken(String userId) {
         String token = subjectProvider.getSubject().login(AuthRequest.of(userId));
         return R.ok(new TokenResponse(token));
     }
 
+    /** 登录令牌响应。 */
     public final static class TokenResponse {
 
         private static final long serialVersionUID = 0L;
 
         private final String token;
 
+        /** @param token 登录令牌 */
         @JsonCreator()
         public TokenResponse(@JsonProperty("token") String token) {
             this.token = token;
         }
 
+        /** @return 登录令牌 */
         @JsonProperty("token")
         public String token() {
             return token;

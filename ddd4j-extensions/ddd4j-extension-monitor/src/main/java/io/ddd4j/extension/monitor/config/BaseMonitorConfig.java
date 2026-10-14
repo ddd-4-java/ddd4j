@@ -30,6 +30,11 @@ import io.ddd4j.extension.monitor.runtime.ApplicationStartReporter;
  */
 public class BaseMonitorConfig {
 
+    /**
+     * 创建基础监控配置属性。
+     *
+     * @return 基础监控配置属性
+     */
     public BaseMonitorProperties baseMonitorProperties() {
         return new BaseMonitorProperties();
     }

@@ -35,9 +35,21 @@ public class AggregateVersionConflictException extends RuntimeException {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 发生冲突的聚合类型。
+     */
     private final String aggregateType;
+    /**
+     * 发生冲突的聚合标识。
+     */
     private final String aggregateId;
+    /**
+     * 写入方预期版本。
+     */
     private final long expectedVersion;
+    /**
+     * 存储中的实际版本。
+     */
     private final long actualVersion;
 
     /**

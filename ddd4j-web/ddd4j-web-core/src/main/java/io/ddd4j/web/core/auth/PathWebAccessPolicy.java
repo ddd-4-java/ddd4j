@@ -30,6 +30,12 @@ public final class PathWebAccessPolicy implements WebAccessPolicy {
     private final List<String> disabledPatterns;
     private final AuthenticationMode defaultMode;
 
+    /**
+     * 创建基于路径模式的访问策略。
+     *
+     * @param disabledPatterns 免认证路径模式
+     * @param defaultMode 其他路径的默认认证模式
+     */
     public PathWebAccessPolicy(Collection<String> disabledPatterns, AuthenticationMode defaultMode) {
         Objects.requireNonNull(disabledPatterns, "disabledPatterns must not be null");
         this.disabledPatterns = disabledPatterns.stream()

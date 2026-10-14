@@ -51,11 +51,11 @@ import java.util.Objects;
 /**
  * Javalin + Guice + Apache Shiro + RBAC 鉴权 + DDD 业务示例启动类。
  *
- * <h3>核心要点</h3>
+ * <h2>核心要点</h2>
  * <p>Javalin 本身<b>没有 DI 容器</b>，使用 Google Guice 注入业务服务。
  * 同时，ddd4j 的 4 个核心 SPI（DomainEventPublisher / MQEventPublisher /
  * SubjectProvider / I18nProvider）需要手动注册到 {@link BaseContext} 才能被
- * 业务代码通过 {@link io.ddd4j.core.context.Contexts#inject} 查找到。
+ * 业务代码通过 {@code Contexts.inject} 查找到。
  *
  * <h3>Shiro 适配的特殊性</h3>
  * <p>Shiro 不同于 Sa-Token，它依赖一个<b>JVM 级 SecurityManager</b>（通过
@@ -80,6 +80,11 @@ public class JavalinShiroApplication {
      */
     public static final int PORT = 7000;
 
+    /**
+     * 启动 Javalin Shiro 示例。
+     *
+     * @param args 命令行参数
+     */
     public static void main(String[] args) {
         // ==================== 1. 初始化 RBAC + Shiro SecurityManager ====================
         // 先构造 RBAC 仓储和种子数据（Shiro 与 Guice 共享同一份数据）

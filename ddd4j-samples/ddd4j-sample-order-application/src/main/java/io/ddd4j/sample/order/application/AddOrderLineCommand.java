@@ -22,6 +22,7 @@ import java.util.Objects;
 
 import java.math.BigDecimal;
 
+/** 向指定订单添加商品明细的命令。 */
 public final class AddOrderLineCommand {
 
     private static final long serialVersionUID = 0L;
@@ -36,6 +37,13 @@ public final class AddOrderLineCommand {
 
     private final BigDecimal unitPrice;
 
+    /**
+     * @param orderId 订单标识
+     * @param goodsId 商品标识
+     * @param goodsName 商品名称
+     * @param quantity 商品数量
+     * @param unitPrice 商品单价
+     */
     @JsonCreator()
     public AddOrderLineCommand(@JsonProperty("orderId") String orderId, @JsonProperty("goodsId") String goodsId, @JsonProperty("goodsName") String goodsName, @JsonProperty("quantity") int quantity, @JsonProperty("unitPrice") BigDecimal unitPrice) {
         this.orderId = orderId;
@@ -45,26 +53,31 @@ public final class AddOrderLineCommand {
         this.unitPrice = unitPrice;
     }
 
+    /** @return 订单标识 */
     @JsonProperty("orderId")
     public String orderId() {
         return orderId;
     }
 
+    /** @return 商品标识 */
     @JsonProperty("goodsId")
     public String goodsId() {
         return goodsId;
     }
 
+    /** @return 商品名称 */
     @JsonProperty("goodsName")
     public String goodsName() {
         return goodsName;
     }
 
+    /** @return 商品数量 */
     @JsonProperty("quantity")
     public int quantity() {
         return quantity;
     }
 
+    /** @return 商品单价 */
     @JsonProperty("unitPrice")
     public BigDecimal unitPrice() {
         return unitPrice;

@@ -35,7 +35,7 @@ import java.util.Objects;
  * 的 {@code SpringCommandBus}，Quarkus 用 {@code ddd4j-data-cqrs-quarkus} 的
  * {@code QuarkusCommandBus}。
  *
- * <h3>装配语义（构造即快照，顺序不可变）</h3>
+ * <p><b>装配语义（构造即快照，顺序不可变）</b></p>
  * <p>
  * 构造器内先经 {@link BeanContext#getBeansOfType(Class)} 收集容器中全部
  * {@link CommandExecutor} Bean 并逐个 {@link CommandRegistry#register}（整批拒绝
@@ -51,7 +51,7 @@ import java.util.Objects;
  * 的整批拒绝（all-or-nothing）{@link IllegalStateException} 在装配期立即暴露
  * ——Bean 创建失败＝容器启动失败，不会留下半注册总线。
  *
- * <h3>{@link CommandHandler @CommandHandler} 发现</h3>
+ * <p><b>{@link CommandHandler @CommandHandler} 发现</b></p>
  * <p>
  * 发现完全依赖 Micronaut 编译期 Bean 定义：执行器类带 {@code @Singleton} 等
  * 刻板（由 {@code micronaut-inject-java} 注解处理器在编译期生成 {@code $Definition}
@@ -61,7 +61,7 @@ import java.util.Objects;
  * 由 SPI 侧约定，不参与发现（真要让注解成为发现键需自定义注解处理器，违反
  * 本阶段「零新框架抽象」约束）。
  *
- * <h3>事务边界刻意不在本层（纯分发路由）</h3>
+ * <p><b>事务边界刻意不在本层（纯分发路由）</b></p>
  * <p>
  * Micronaut 的事务注解是 <b>{@code io.micronaut.transaction.annotation.Transactional}</b>
  * （micronaut-data 提供，并非 jakarta.transaction 同名注解——后者对 Micronaut

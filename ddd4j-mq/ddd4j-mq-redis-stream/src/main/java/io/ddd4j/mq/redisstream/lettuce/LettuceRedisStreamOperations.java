@@ -34,14 +34,29 @@ public class LettuceRedisStreamOperations implements RedisStreamOperations {
     private final AutoCloseable closeTarget;
     private final Object nativeClient;
 
+    /**
+     * 从 Redis 地址创建 Lettuce Stream 操作适配器。
+     *
+     * @param redisUrl Redis 连接地址
+     */
     public LettuceRedisStreamOperations(String redisUrl) {
         this(createClient(redisUrl));
     }
 
+    /**
+     * 复用已有 Lettuce 同步命令接口。
+     *
+     * @param commands Lettuce 同步命令接口
+     */
     public LettuceRedisStreamOperations(RedisCommands<String, String> commands) {
         this(commands, null, commands);
     }
 
+    /**
+     * 复用已有 Lettuce 连接。
+     *
+     * @param connection Lettuce 连接
+     */
     public LettuceRedisStreamOperations(StatefulRedisConnection<String, String> connection) {
         this(connection.sync(), connection, connection);
     }

@@ -33,6 +33,11 @@ public final class AnnotationFusionVerifier {
     private AnnotationFusionVerifier() {
     }
 
+    /**
+     * 验证 Quarkus 领域注解与 CDI 注解的融合关系。
+     *
+     * @param args 命令行参数
+     */
     public static void main(String[] args) {
         int passed = 0;
         int failed = 0;

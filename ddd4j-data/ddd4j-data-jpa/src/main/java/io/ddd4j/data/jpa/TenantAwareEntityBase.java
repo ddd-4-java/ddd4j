@@ -34,12 +34,17 @@ import java.util.Objects;
 @MappedSuperclass
 public abstract class TenantAwareEntityBase {
 
+    /** 创建时间。 */
     @Column(name = "created_time", updatable = false)
     protected LocalDateTime createdTime;
 
+    /** 最后更新时间。 */
     @Column(name = "updated_time")
     protected LocalDateTime updatedTime;
 
+    /**
+     * 首次持久化时写入审计时间。
+     */
     @PrePersist
     protected void onCreate() {
         LocalDateTime now = LocalDateTime.now();
@@ -49,15 +54,28 @@ public abstract class TenantAwareEntityBase {
         updatedTime = now;
     }
 
+    /**
+     * 更新实体时刷新审计时间。
+     */
     @PreUpdate
     protected void onUpdate() {
         updatedTime = LocalDateTime.now();
     }
 
+    /**
+     * 返回创建时间。
+     *
+     * @return 创建时间
+     */
     public LocalDateTime getCreatedTime() {
         return createdTime;
     }
 
+    /**
+     * 返回最后更新时间。
+     *
+     * @return 最后更新时间
+     */
     public LocalDateTime getUpdatedTime() {
         return updatedTime;
     }

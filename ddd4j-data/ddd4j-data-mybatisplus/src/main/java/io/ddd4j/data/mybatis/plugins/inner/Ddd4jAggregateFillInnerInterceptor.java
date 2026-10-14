@@ -63,6 +63,12 @@ public class Ddd4jAggregateFillInnerInterceptor implements Interceptor {
         return Plugin.wrap(target, this);
     }
 
+    /**
+     * 查询完成后处理聚合根字段。
+     *
+     * @param parameter 查询参数
+     * @param results 查询结果
+     */
     public void afterQuery(Object parameter, List<?> results) {
         Query query = this.findQuery(parameter);
         if (Objects.isNull(query) || Objects.isNull(results) || results.isEmpty()) {

@@ -20,13 +20,31 @@ package io.ddd4j.web.core.context;
 @FunctionalInterface
 public interface ClientIpResolver {
 
+    /**
+     * 仅信任连接的远端地址。
+     *
+     * @return 远端地址解析器
+     */
     static ClientIpResolver remoteAddressOnly() {
         return new DefaultClientIpResolver(false);
     }
 
+    /**
+     * 信任代理转发头的地址解析器。
+     *
+     * @return 可信代理地址解析器
+     */
     static ClientIpResolver trustedProxy() {
         return new DefaultClientIpResolver(true);
     }
 
+    /**
+     * 结合代理头与远端地址解析客户端 IP。
+     *
+     * @param forwardedFor 代理转发地址
+     * @param realIp 真实 IP 请求头
+     * @param remoteAddress 连接远端地址
+     * @return 客户端 IP 地址
+     */
     String resolve(String forwardedFor, String realIp, String remoteAddress);
 }

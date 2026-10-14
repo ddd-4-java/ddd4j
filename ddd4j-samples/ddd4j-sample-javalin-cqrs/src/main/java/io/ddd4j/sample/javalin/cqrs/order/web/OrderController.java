@@ -39,8 +39,9 @@ import static io.javalin.apibuilder.ApiBuilder.post;
  * {@code javalinConfig.routes.apiBuilder(() -> orderController.routes())} 注册。
  * 控制器只做"HTTP 协议层 → 应用服务"的翻译，业务规则全部下沉到 {@link Order} 聚合内。
  *
- * <h3>路由列表</h3>
+ * <h2>路由列表</h2>
  * <table border="1">
+ *   <caption>订单路由</caption>
  *   <tr><th>HTTP</th><th>路径</th><th>用途</th></tr>
  *   <tr><td>POST</td><td>/api/orders</td><td>创建草稿订单</td></tr>
  *   <tr><td>POST</td><td>/api/orders/{id}/lines</td><td>添加订单行</td></tr>
@@ -57,6 +58,11 @@ public class OrderController {
 
     private final OrderApplicationService applicationService;
 
+    /**
+     * 创建订单控制器。
+     *
+     * @param applicationService 应用服务
+     */
     public OrderController(OrderApplicationService applicationService) {
         this.applicationService = Objects.requireNonNull(applicationService, "applicationService must not be null");
     }
@@ -160,6 +166,17 @@ public class OrderController {
 
         private final int lineCount;
 
+        /**
+         * 创建订单响应数据。
+         *
+         * @param id 标识
+         * @param orderNo 订单编号
+         * @param buyerId 买家标识
+         * @param buyerName 买家名称
+         * @param status 状态
+         * @param totalAmount 订单总金额
+         * @param lineCount 订单行数
+         */
         @JsonCreator()
         public OrderResponse(@JsonProperty("id") String id, @JsonProperty("orderNo") String orderNo, @JsonProperty("buyerId") String buyerId, @JsonProperty("buyerName") String buyerName, @JsonProperty("status") String status, @JsonProperty("totalAmount") Money totalAmount, @JsonProperty("lineCount") int lineCount) {
             this.id = id;
@@ -171,36 +188,71 @@ public class OrderController {
             this.lineCount = lineCount;
         }
 
+        /**
+         * 读取标识。
+         *
+         * @return 标识
+         */
         @JsonProperty("id")
         public String id() {
             return id;
         }
 
+        /**
+         * 读取订单编号。
+         *
+         * @return 订单编号
+         */
         @JsonProperty("orderNo")
         public String orderNo() {
             return orderNo;
         }
 
+        /**
+         * 读取买家标识。
+         *
+         * @return 买家标识
+         */
         @JsonProperty("buyerId")
         public String buyerId() {
             return buyerId;
         }
 
+        /**
+         * 读取买家名称。
+         *
+         * @return 买家名称
+         */
         @JsonProperty("buyerName")
         public String buyerName() {
             return buyerName;
         }
 
+        /**
+         * 读取状态。
+         *
+         * @return 订单状态
+         */
         @JsonProperty("status")
         public String status() {
             return status;
         }
 
+        /**
+         * 读取订单总金额。
+         *
+         * @return 订单总金额
+         */
         @JsonProperty("totalAmount")
         public Money totalAmount() {
             return totalAmount;
         }
 
+        /**
+         * 读取订单行数。
+         *
+         * @return 订单行数
+         */
         @JsonProperty("lineCount")
         public int lineCount() {
             return lineCount;
@@ -250,6 +302,13 @@ public class OrderController {
 
         private final String buyerName;
 
+        /**
+         * 创建订单请求数据。
+         *
+         * @param orderNo 订单编号
+         * @param buyerId 买家标识
+         * @param buyerName 买家名称
+         */
         @JsonCreator()
         public CreateOrderRequest(@JsonProperty("orderNo") String orderNo, @JsonProperty("buyerId") String buyerId, @JsonProperty("buyerName") String buyerName) {
             this.orderNo = orderNo;
@@ -257,16 +316,31 @@ public class OrderController {
             this.buyerName = buyerName;
         }
 
+        /**
+         * 读取订单编号。
+         *
+         * @return 订单编号
+         */
         @JsonProperty("orderNo")
         public String orderNo() {
             return orderNo;
         }
 
+        /**
+         * 读取买家标识。
+         *
+         * @return 买家标识
+         */
         @JsonProperty("buyerId")
         public String buyerId() {
             return buyerId;
         }
 
+        /**
+         * 读取买家名称。
+         *
+         * @return 买家名称
+         */
         @JsonProperty("buyerName")
         public String buyerName() {
             return buyerName;
@@ -316,6 +390,14 @@ public class OrderController {
 
         private final BigDecimal unitPrice;
 
+        /**
+         * 创建添加订单行请求数据。
+         *
+         * @param goodsId 商品标识
+         * @param goodsName 商品名称
+         * @param quantity 购买数量
+         * @param unitPrice 商品单价
+         */
         @JsonCreator()
         public AddOrderLineRequest(@JsonProperty("goodsId") String goodsId, @JsonProperty("goodsName") String goodsName, @JsonProperty("quantity") int quantity, @JsonProperty("unitPrice") BigDecimal unitPrice) {
             this.goodsId = goodsId;
@@ -324,21 +406,41 @@ public class OrderController {
             this.unitPrice = unitPrice;
         }
 
+        /**
+         * 读取商品标识。
+         *
+         * @return 商品标识
+         */
         @JsonProperty("goodsId")
         public String goodsId() {
             return goodsId;
         }
 
+        /**
+         * 读取商品名称。
+         *
+         * @return 商品名称
+         */
         @JsonProperty("goodsName")
         public String goodsName() {
             return goodsName;
         }
 
+        /**
+         * 读取购买数量。
+         *
+         * @return 购买数量
+         */
         @JsonProperty("quantity")
         public int quantity() {
             return quantity;
         }
 
+        /**
+         * 读取商品单价。
+         *
+         * @return 商品单价
+         */
         @JsonProperty("unitPrice")
         public BigDecimal unitPrice() {
             return unitPrice;

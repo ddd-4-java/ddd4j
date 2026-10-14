@@ -55,7 +55,12 @@ import java.io.Serializable;
 public abstract class QuarkusAggregateController<M extends AggregateRoot<?>, Q extends Serializable, ID extends Serializable> extends TenantAwareResource {
 
     /**
-     * 分页查询
+     * 分页查询。
+     *
+     * @param pageNum 页码
+     * @param pageSize 每页记录数
+     * @param query 查询条件
+     * @return 分页查询结果
      */
     @GET
     public R<Page<M>> page(@QueryParam("pageNum") @DefaultValue("1") int pageNum,
@@ -65,7 +70,10 @@ public abstract class QuarkusAggregateController<M extends AggregateRoot<?>, Q e
     }
 
     /**
-     * 详情
+     * 查询聚合根详情。
+     *
+     * @param id 聚合根主键
+     * @return 聚合根详情
      */
     @GET
     @Path("/{id}")
@@ -74,7 +82,10 @@ public abstract class QuarkusAggregateController<M extends AggregateRoot<?>, Q e
     }
 
     /**
-     * 新增
+     * 新增聚合根。
+     *
+     * @param model 待保存的聚合根
+     * @return 保存后的聚合根
      */
     @POST
     public R<M> create(M model) {
@@ -82,7 +93,11 @@ public abstract class QuarkusAggregateController<M extends AggregateRoot<?>, Q e
     }
 
     /**
-     * 修改
+     * 修改聚合根。
+     *
+     * @param id 聚合根主键
+     * @param model 修改后的聚合根
+     * @return 修改后的聚合根
      */
     @PUT
     @Path("/{id}")
@@ -91,7 +106,10 @@ public abstract class QuarkusAggregateController<M extends AggregateRoot<?>, Q e
     }
 
     /**
-     * 删除
+     * 删除聚合根。
+     *
+     * @param id 聚合根主键
+     * @return 操作结果
      */
     @DELETE
     @Path("/{id}")
@@ -101,7 +119,10 @@ public abstract class QuarkusAggregateController<M extends AggregateRoot<?>, Q e
     }
 
     /**
-     * 禁用（业务行为）
+     * 禁用聚合根（业务行为）。
+     *
+     * @param id 聚合根主键
+     * @return 操作结果
      */
     @POST
     @Path("/{id}:disable")
@@ -111,7 +132,10 @@ public abstract class QuarkusAggregateController<M extends AggregateRoot<?>, Q e
     }
 
     /**
-     * 启用（业务行为）
+     * 启用聚合根（业务行为）。
+     *
+     * @param id 聚合根主键
+     * @return 操作结果
      */
     @POST
     @Path("/{id}:enable")
@@ -123,39 +147,60 @@ public abstract class QuarkusAggregateController<M extends AggregateRoot<?>, Q e
     // ========== 抽象方法：业务项目必须实现 ==========
 
     /**
-     * 分页查询（业务实现）
+     * 分页查询（业务实现）。
+     *
+     * @param pageNum 页码
+     * @param pageSize 每页记录数
+     * @param query 查询条件
+     * @return 分页查询结果
      */
     protected abstract Page<M> listPage(int pageNum, int pageSize, Q query);
 
     /**
-     * 详情查询（业务实现）
+     * 详情查询（业务实现）。
+     *
+     * @param id 聚合根主键
+     * @return 聚合根详情
      */
     protected abstract M detail(ID id);
 
     /**
-     * 新增（业务实现）
+     * 新增（业务实现）。
+     *
+     * @param model 待保存的聚合根
+     * @return 保存后的聚合根
      */
     protected abstract M save(M model);
 
     /**
-     * 修改（业务实现）
+     * 修改（业务实现）。
+     *
+     * @param id 聚合根主键
+     * @param model 修改后的聚合根
+     * @return 修改后的聚合根
      */
     protected abstract M modify(ID id, M model);
 
     /**
-     * 删除（业务实现）
+     * 删除（业务实现）。
+     *
+     * @param id 聚合根主键
      */
     protected abstract void remove(ID id);
 
     /**
-     * 禁用（业务实现，默认空操作）
+     * 禁用（业务实现，默认空操作）。
+     *
+     * @param id 聚合根主键
      */
     protected void doDisable(ID id) {
         // 业务项目按需覆盖
     }
 
     /**
-     * 启用（业务实现，默认空操作）
+     * 启用（业务实现，默认空操作）。
+     *
+     * @param id 聚合根主键
      */
     protected void doEnable(ID id) {
         // 业务项目按需覆盖

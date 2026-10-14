@@ -52,6 +52,11 @@ public class SpringProjectionScheduler implements ViewScheduler, SmartLifecycle 
 
     private volatile boolean running = false;
 
+    /**
+     * 创建 Spring 投影调度适配器。
+     *
+     * @param taskScheduler Spring 任务调度器
+     */
     @Autowired
     public SpringProjectionScheduler(TaskScheduler taskScheduler) {
         this.taskScheduler = Objects.requireNonNull(taskScheduler, "taskScheduler must not be null");

@@ -16,10 +16,21 @@ package io.ddd4j.sample.order.application;
 
 import java.time.Duration;
 
+/** 订单操作的幂等记录端口。 */
 public interface IdempotencyPort {
+    /**
+     * @param key 幂等键
+     * @param ttl 占用有效期
+     * @return 是否成功占用该键
+     */
     boolean acquire(String key, Duration ttl);
 
+    /**
+     * @param key 幂等键
+     * @param result 操作结果
+     */
     void complete(String key, Object result);
 
+    /** @param key 待释放的幂等键 */
     void release(String key);
 }

@@ -22,12 +22,17 @@ import io.ddd4j.sample.order.local.InMemoryOrderAdapters;
 
 import java.math.BigDecimal;
 
+/** 使用内存适配器构造订单测试场景。 */
 public final class OrderScenario {
 
     private final InMemoryOrderAdapters adapters = new InMemoryOrderAdapters();
     private final OrderApplicationService application = new OrderApplicationService(
             adapters, adapters, adapters, adapters, adapters);
 
+    /**
+     * @param orderNo 测试订单号
+     * @return 包含明细且已支付的订单
+     */
     public Order paidOrder(String orderNo) {
         Order order = application.create(new CreateOrderCommand(orderNo, "buyer-1", "Alice"));
         application.addLine(new AddOrderLineCommand(order.id(), "goods-1", "DDD Book", 2,
@@ -35,10 +40,12 @@ public final class OrderScenario {
         return application.pay(order.id(), "payment-" + orderNo);
     }
 
+    /** @return 测试场景中的订单应用服务 */
     public OrderApplicationService application() {
         return application;
     }
 
+    /** @return 测试场景中的内存适配器 */
     public InMemoryOrderAdapters adapters() {
         return adapters;
     }

@@ -46,7 +46,7 @@ import java.util.Set;
  * │   ├── persistence/     ← 持久化适配器（Repository 实现）
  * │   ├── web/             ← Web 适配器（Controller）
  * │   └── messaging/       ← 消息适配器
- * └── infrastructure/      ← 框架层（Frameworks & Drivers）
+ * └── infrastructure/      ← 框架层（Frameworks &amp; Drivers）
  *     ├── config/
  *     └── external/
  * </pre>
@@ -119,6 +119,8 @@ public class CleanArchitectureChecker {
 
     /**
      * 构造器（向后兼容）：仅做目录结构检查，不应用注解驱动规则。
+     *
+     * @param basePackage 业务代码根包名
      */
     public CleanArchitectureChecker(String basePackage) {
         this(basePackage, null, null, null, null);
@@ -268,6 +270,8 @@ public class CleanArchitectureChecker {
 
     /**
      * 获取规范要求的目录结构描述。
+     *
+     * @return Clean Architecture 目录结构说明
      */
     public String getExpectedStructure() {
         return """

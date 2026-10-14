@@ -28,9 +28,27 @@ import java.util.List;
  */
 public interface QrCodeService {
 
+    /**
+     * 生成二维码。
+     *
+     * @param command 生成命令
+     * @return 二维码产物
+     */
     QrCodeArtifact generate(GenerateQrCodeCommand command);
 
+    /**
+     * 识别二维码。
+     *
+     * @param command 解码命令
+     * @return 识别结果
+     */
     QrCodeScanResult decode(DecodeQrCodeCommand command);
 
+    /**
+     * 按输入顺序批量生成二维码。
+     *
+     * @param items 批量项目
+     * @return 批量结果
+     */
     QrCodeBatchResult generateBatch(List<QrCodeBatchItem> items);
 }

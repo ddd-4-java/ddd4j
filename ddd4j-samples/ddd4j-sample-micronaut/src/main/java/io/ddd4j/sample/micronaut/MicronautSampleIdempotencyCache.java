@@ -31,6 +31,7 @@ public class MicronautSampleIdempotencyCache {
     private static final String CACHE_NAME = "ddd4j-web-idempotency";
     private static final long CACHE_TTL_SECONDS = 300L;
 
+    /** 初始化示例幂等缓存。 */
     public MicronautSampleIdempotencyCache() {
         CacheKit.build(CACHE_NAME, CACHE_TTL_SECONDS);
     }

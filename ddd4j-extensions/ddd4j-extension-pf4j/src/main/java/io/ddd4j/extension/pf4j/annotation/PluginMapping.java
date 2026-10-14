@@ -25,8 +25,10 @@ import java.lang.annotation.*;
 @Inherited
 public @interface PluginMapping {
 
+    /** @return 插件标题 */
     public String title() default "";
 
+    /** @return 插件详情 */
     public String detail() default "";
 
 }

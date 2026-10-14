@@ -37,10 +37,22 @@ public final class DefaultProjectionPosition implements ProjectionPosition {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 投影流标识。
+     */
     private final String streamId;
 
+    /**
+     * 下一个待处理事件号。
+     */
     private final long nextEventNumber;
 
+    /**
+     * 创建投影位置，并校验流标识与事件号。
+     *
+     * @param streamId 投影流标识
+     * @param nextEventNumber 下一个待处理事件号，不可为负数
+     */
     public DefaultProjectionPosition(String streamId, long nextEventNumber) {
         if (StrKit.isBlank(streamId)) {
             throw new IllegalArgumentException("streamId must not be blank");
@@ -52,6 +64,12 @@ public final class DefaultProjectionPosition implements ProjectionPosition {
         this.nextEventNumber = nextEventNumber;
     }
 
+    /**
+     * 创建从事件号 0 开始的投影位置。
+     *
+     * @param streamId 投影流标识
+     * @return 初始投影位置
+     */
     public static DefaultProjectionPosition zero(String streamId) {
         return new DefaultProjectionPosition(streamId, 0);
     }
@@ -64,6 +82,12 @@ public final class DefaultProjectionPosition implements ProjectionPosition {
         return new DefaultProjectionPosition(streamId, nextEventNumber);
     }
 
+    /**
+     * 判断另一个投影位置是否属于同一流。
+     *
+     * @param position 待比较位置
+     * @return 流标识相同时为 true
+     */
     public boolean isSameStream(ProjectionPosition position) {
         return Objects.nonNull(position) && Objects.equals(streamId, position.getStreamId());
     }

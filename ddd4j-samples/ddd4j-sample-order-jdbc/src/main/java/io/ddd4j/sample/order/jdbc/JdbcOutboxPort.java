@@ -38,6 +38,10 @@ public final class JdbcOutboxPort implements OutboxPort {
     private final JdbcOrderTransactionPort transaction;
     private final ObjectMapper objectMapper;
 
+    /**
+     * @param transaction JDBC 事务边界
+     * @param objectMapper 事件序列化器
+     */
     public JdbcOutboxPort(JdbcOrderTransactionPort transaction, ObjectMapper objectMapper) {
         this.transaction = Objects.requireNonNull(transaction, "transaction must not be null");
         this.objectMapper = Objects.requireNonNull(objectMapper, "objectMapper must not be null");

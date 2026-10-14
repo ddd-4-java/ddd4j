@@ -30,27 +30,55 @@ public class PanacheStoredEventId implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    /** 聚合类型。 */
     private String aggregateType;
+    /** 聚合标识。 */
     private String aggregateId;
+    /** 事件版本。 */
     private long version;
 
+    /**
+     * 创建空的复合主键，供 JPA 使用。
+     */
     public PanacheStoredEventId() {
     }
 
+    /**
+     * 创建事件复合主键。
+     *
+     * @param aggregateType 聚合类型
+     * @param aggregateId 聚合标识
+     * @param version 事件版本
+     */
     public PanacheStoredEventId(String aggregateType, String aggregateId, long version) {
         this.aggregateType = aggregateType;
         this.aggregateId = aggregateId;
         this.version = version;
     }
 
+    /**
+     * 返回聚合标识。
+     *
+     * @return 聚合标识
+     */
     public String getAggregateId() {
         return aggregateId;
     }
 
+    /**
+     * 返回聚合类型。
+     *
+     * @return 聚合类型
+     */
     public String getAggregateType() {
         return aggregateType;
     }
 
+    /**
+     * 返回事件版本。
+     *
+     * @return 事件版本
+     */
     public long getVersion() {
         return version;
     }

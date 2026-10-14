@@ -30,9 +30,21 @@ public class OrderSummaryViewEntity {
     private String status;
     private LocalDateTime createdAt;
 
+    /**
+     * 创建订单视图实体。
+     */
     public OrderSummaryViewEntity() {
     }
 
+    /**
+     * 创建订单视图实体。
+     *
+     * @param orderId 订单标识
+     * @param orderNo 订单编号
+     * @param buyerId 买家标识
+     * @param buyerName 买家名称
+     * @param status 订单状态
+     */
     public OrderSummaryViewEntity(String orderId, String orderNo, String buyerId, String buyerName, String status) {
         this.orderId = orderId;
         this.orderNo = orderNo;
@@ -42,50 +54,110 @@ public class OrderSummaryViewEntity {
         this.createdAt = LocalDateTime.now();
     }
 
+    /**
+     * 读取订单标识。
+     *
+     * @return 订单标识
+     */
     public String getOrderId() {
         return orderId;
     }
 
+    /**
+     * 设置订单标识。
+     *
+     * @param orderId 订单标识
+     */
     public void setOrderId(String orderId) {
         this.orderId = orderId;
     }
 
+    /**
+     * 读取订单编号。
+     *
+     * @return 订单编号
+     */
     public String getOrderNo() {
         return orderNo;
     }
 
+    /**
+     * 设置订单编号。
+     *
+     * @param orderNo 订单编号
+     */
     public void setOrderNo(String orderNo) {
         this.orderNo = orderNo;
     }
 
+    /**
+     * 读取买家标识。
+     *
+     * @return 买家标识
+     */
     public String getBuyerId() {
         return buyerId;
     }
 
+    /**
+     * 设置买家标识。
+     *
+     * @param buyerId 买家标识
+     */
     public void setBuyerId(String buyerId) {
         this.buyerId = buyerId;
     }
 
+    /**
+     * 读取买家名称。
+     *
+     * @return 买家名称
+     */
     public String getBuyerName() {
         return buyerName;
     }
 
+    /**
+     * 设置买家名称。
+     *
+     * @param buyerName 买家名称
+     */
     public void setBuyerName(String buyerName) {
         this.buyerName = buyerName;
     }
 
+    /**
+     * 读取订单状态。
+     *
+     * @return 订单状态
+     */
     public String getStatus() {
         return status;
     }
 
+    /**
+     * 设置订单状态。
+     *
+     * @param status 订单状态
+     */
     public void setStatus(String status) {
         this.status = status;
     }
 
+    /**
+     * 读取创建时间。
+     *
+     * @return 创建时间
+     */
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
+    /**
+     * 设置创建时间。
+     *
+     * @param createdAt 创建时间
+     */
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }

@@ -22,9 +22,19 @@ import java.util.UUID;
 @FunctionalInterface
 public interface RequestIdGenerator {
 
+    /**
+     * 返回 UUID 请求标识生成器。
+     *
+     * @return UUID 请求标识生成器
+     */
     static RequestIdGenerator uuid() {
         return () -> UUID.randomUUID().toString();
     }
 
+    /**
+     * 生成请求标识。
+     *
+     * @return 请求标识
+     */
     String generate();
 }

@@ -36,7 +36,7 @@ import lombok.extern.slf4j.Slf4j;
  *   <li>记录审计日志</li>
  * </ul>
  *
- * <h3>与 Spring 版对照</h3>
+ * <h2>与 Spring 版对照</h2>
  * <p>Spring 使用 {@code @EventListener} 或 {@code ApplicationEventPublisher}；
  * Quarkus 使用 {@code @Observes}，业务逻辑完全相同，仅注解不同。
  *

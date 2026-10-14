@@ -90,10 +90,18 @@ public class PconlineRegionTemplate {
         this(httpClient, RegionCache.none());
     }
 
+    /**
+     * 使用默认 HTTP 客户端且不启用缓存。
+     */
     public PconlineRegionTemplate() {
         this(HttpClient.newHttpClient(), RegionCache.none());
     }
 
+    /**
+     * 使用默认 HTTP 客户端及指定缓存。
+     *
+     * @param regionCache 地区查询缓存
+     */
     public PconlineRegionTemplate(RegionCache regionCache) {
         this(HttpClient.newHttpClient(), regionCache);
     }
@@ -109,6 +117,12 @@ public class PconlineRegionTemplate {
         this.regionCache = Objects.isNull(regionCache) ? RegionCache.none() : regionCache;
     }
 
+    /**
+     * 演示 IP 地区查询。
+     *
+     * @param args 命令行参数
+     * @throws IOException 查询失败时抛出
+     */
     public static void main(String[] args) throws IOException {
 
         PconlineRegionTemplate template = new PconlineRegionTemplate(HttpClient.newHttpClient());
@@ -122,11 +136,10 @@ public class PconlineRegionTemplate {
     }
 
     /**
-     * IP地址解析：http://whois.pconline.com.cn/ipJson.jsp?json=true&ip=183.128.136.82
+     * IP 地址解析，例如 {@code http://whois.pconline.com.cn/ipJson.jsp?json=true&amp;ip=183.128.136.82}。
      *
-     * @param ip
-     * @return {"ip":"110.137.48.237","pro":"","proCode":"999999","city":"","cityCode":"0","region":"","regionCode":"0","addr":" 印度尼西亚","regionNames":"","err":"noprovince"}
-     * @throws ExecutionException
+     * @param ip 待查询的 IPv4 地址
+     * @return 地区数据；无结果时为空
      */
     public Optional<JSONObject> getLocationByIp(String ip) {
         // 1、检查ip有效性
@@ -269,6 +282,12 @@ public class PconlineRegionTemplate {
         }
     }
 
+    /**
+     * 判断指定 IP 是否属于中国大陆。
+     *
+     * @param ip 待查询的 IP 地址
+     * @return 属于中国大陆时为 true
+     */
     public boolean isMainlandIp(String ip) {
         try {
             Optional<JSONObject> optional = this.getLocationByIp(ip);

@@ -36,6 +36,7 @@ import io.quarkus.runtime.annotations.QuarkusMain;
 @QuarkusMain
 public class QuarkusCqrsApplication {
 
+    /** @param args 启动参数 */
     public static void main(String[] args) {
         Quarkus.run(args);
     }

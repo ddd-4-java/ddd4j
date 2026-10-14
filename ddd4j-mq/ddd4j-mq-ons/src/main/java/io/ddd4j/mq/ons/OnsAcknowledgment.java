@@ -175,6 +175,7 @@ public class OnsAcknowledgment implements Acknowledgment {
         op.run();
     }
 
+    /** @return ONS 消费确认动作 */
     public Action action() {
         return action;
     }

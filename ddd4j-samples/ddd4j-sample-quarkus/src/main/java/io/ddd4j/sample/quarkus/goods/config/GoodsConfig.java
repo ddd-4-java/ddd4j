@@ -46,6 +46,7 @@ public class GoodsConfig {
 
     private final InMemoryGoodsRepository productRepository;
 
+    /** @param productRepository 启动时注册的商品仓储 */
     @Inject
     public GoodsConfig(InMemoryGoodsRepository productRepository) {
         this.productRepository = productRepository;

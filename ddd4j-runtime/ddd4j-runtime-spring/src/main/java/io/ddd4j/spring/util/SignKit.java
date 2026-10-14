@@ -64,7 +64,7 @@ public class SignKit {
      * @param body     方法体
      * @param salt     密钥
      * @return 签名原文
-     * @throws UnsupportedEncodingException
+     * @throws UnsupportedEncodingException 请求参数编码失败时抛出
      */
     protected static String signOrigin(String token, MultiValueMap<String, String> formData, String body, String salt) throws UnsupportedEncodingException {
 
@@ -103,6 +103,16 @@ public class SignKit {
         return DigestUtils.md5DigestAsHex(signOrigin.getBytes());
     }
 
+    /**
+     * 对多值表单请求计算签名。
+     *
+     * @param token 请求令牌
+     * @param formData 表单参数
+     * @param body 请求体
+     * @param salt 签名盐值
+     * @return 请求签名
+     * @throws UnsupportedEncodingException 请求参数编码失败时抛出
+     */
     public static String sign(String token, MultiValueMap<String, String> formData, String body, String salt) throws UnsupportedEncodingException {
 
         String originSign = signOrigin(token, formData, body, salt);
@@ -121,6 +131,20 @@ public class SignKit {
 
     }
 
+    /**
+     * 校验多值表单请求的客户端签名。
+     *
+     * @param token 请求令牌
+     * @param appId 应用标识
+     * @param appVersion 应用版本
+     * @param appChannel 应用渠道
+     * @param fixedSecret 固定密钥
+     * @param clientSign 客户端签名
+     * @param params 表单参数
+     * @param body 请求体
+     * @return 签名是否匹配
+     * @throws UnsupportedEncodingException 请求参数编码失败时抛出
+     */
     public static boolean verify(String token, String appId, String appVersion, String appChannel,
                                  String fixedSecret, String clientSign, MultiValueMap<String, String> params, String body)
             throws UnsupportedEncodingException {
@@ -140,7 +164,7 @@ public class SignKit {
      * @param body     方法体
      * @param salt     密钥
      * @return 签名原文
-     * @throws UnsupportedEncodingException
+     * @throws UnsupportedEncodingException 请求参数编码失败时抛出
      */
     protected static String signOrigin(String token, Map<String, String[]> formData, String body, String salt) throws UnsupportedEncodingException {
 
@@ -179,6 +203,16 @@ public class SignKit {
         return DigestUtils.md5DigestAsHex(signOrigin.getBytes());
     }
 
+    /**
+     * 对数组值表单请求计算签名。
+     *
+     * @param token 请求令牌
+     * @param formData 表单参数
+     * @param body 请求体
+     * @param salt 签名盐值
+     * @return 请求签名
+     * @throws UnsupportedEncodingException 请求参数编码失败时抛出
+     */
     public static String sign(String token, Map<String, String[]> formData, String body, String salt) throws UnsupportedEncodingException {
 
         String originSign = signOrigin(token, formData, body, salt);
@@ -197,6 +231,20 @@ public class SignKit {
 
     }
 
+    /**
+     * 校验数组值表单请求的客户端签名。
+     *
+     * @param token 请求令牌
+     * @param appId 应用标识
+     * @param appVersion 应用版本
+     * @param appChannel 应用渠道
+     * @param fixedSecret 固定密钥
+     * @param clientSign 客户端签名
+     * @param formData 表单参数
+     * @param body 请求体
+     * @return 签名是否匹配
+     * @throws UnsupportedEncodingException 请求参数编码失败时抛出
+     */
     public static boolean verify(String token, String appId, String appVersion, String appChannel,
                                  String fixedSecret, String clientSign, Map<String, String[]> formData, String body)
             throws UnsupportedEncodingException {
@@ -208,6 +256,12 @@ public class SignKit {
         return sign.equals(clientSign);
     }
 
+    /**
+     * 输出签名与校验示例。
+     *
+     * @param args 命令行参数
+     * @throws Exception 示例执行失败时抛出
+     */
     public static void main(String[] args) throws Exception {
 
         String appId = "1", appVersion = "20000", appChannel = "ASO000", fixedSecret = "z2023";

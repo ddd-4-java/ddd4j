@@ -22,6 +22,7 @@ import java.util.Objects;
 
 import java.time.Instant;
 
+/** 等待可靠发布的订单集成事件消息。 */
 public final class OutboxMessage {
 
     private static final long serialVersionUID = 0L;
@@ -36,6 +37,13 @@ public final class OutboxMessage {
 
     private final Instant occurredAt;
 
+    /**
+     * @param id 消息标识
+     * @param aggregateId 订单聚合标识
+     * @param eventType 事件类型
+     * @param payload 事件内容
+     * @param occurredAt 事件发生时间
+     */
     @JsonCreator()
     public OutboxMessage(@JsonProperty("id") String id, @JsonProperty("aggregateId") String aggregateId, @JsonProperty("eventType") String eventType, @JsonProperty("payload") Object payload, @JsonProperty("occurredAt") Instant occurredAt) {
         this.id = id;
@@ -45,26 +53,31 @@ public final class OutboxMessage {
         this.occurredAt = occurredAt;
     }
 
+    /** @return 消息标识 */
     @JsonProperty("id")
     public String id() {
         return id;
     }
 
+    /** @return 订单聚合标识 */
     @JsonProperty("aggregateId")
     public String aggregateId() {
         return aggregateId;
     }
 
+    /** @return 事件类型 */
     @JsonProperty("eventType")
     public String eventType() {
         return eventType;
     }
 
+    /** @return 事件内容 */
     @JsonProperty("payload")
     public Object payload() {
         return payload;
     }
 
+    /** @return 事件发生时间 */
     @JsonProperty("occurredAt")
     public Instant occurredAt() {
         return occurredAt;

@@ -27,6 +27,10 @@ public class QrCodeTemplateBinder {
 
     /**
      * Creates a new immutable frame and leaves the registered template unchanged.
+     *
+     * @param definition template definition
+     * @param variables placeholder values
+     * @return bound immutable frame
      */
     public QrCodeFrame bind(QrCodeTemplateDefinition definition, Map<String, ?> variables) {
         Objects.requireNonNull(definition, "definition must not be null");

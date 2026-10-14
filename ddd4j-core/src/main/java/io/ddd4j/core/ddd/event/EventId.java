@@ -30,6 +30,9 @@ public final class EventId implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 事件 UUID。
+     */
     private final UUID value;
 
     /**

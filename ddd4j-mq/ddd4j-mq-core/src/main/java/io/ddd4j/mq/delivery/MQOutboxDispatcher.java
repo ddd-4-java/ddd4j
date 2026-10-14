@@ -36,6 +36,13 @@ public final class MQOutboxDispatcher {
     private final MQDeliveryPolicy policy;
     private final MQDeliveryObserver observer;
 
+    /**
+     * 创建可靠消息调度器。
+     *
+     * @param store Outbox 持久化端口
+     * @param sender 消息发送端口
+     * @param policy 投递策略
+     */
     public MQOutboxDispatcher(MQOutboxStore store, MQOutboxSender sender, MQDeliveryPolicy policy) {
         this(store, sender, policy, NoopMQDeliveryObserver.INSTANCE);
     }

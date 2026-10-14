@@ -17,10 +17,12 @@ package io.ddd4j.sample.order.domain.event;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.StringEntityId;
 
+/** 以订单标识为主体的领域事件基类。 */
 public abstract class OrderDomainEvent extends DomainEvent<StringEntityId> {
 
     private static final long serialVersionUID = 1L;
 
+    /** @param orderId 发生事件的订单标识 */
     protected OrderDomainEvent(String orderId) {
         super(orderId);
     }

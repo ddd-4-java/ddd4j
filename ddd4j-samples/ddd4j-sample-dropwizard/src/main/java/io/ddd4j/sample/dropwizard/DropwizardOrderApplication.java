@@ -36,6 +36,10 @@ public final class DropwizardOrderApplication extends Application<DropwizardOrde
     private final OrderApplicationService applicationService = new OrderApplicationService(adapters, adapters, adapters,
             adapters, adapters);
 
+    /**
+     * @param args 启动参数
+     * @throws Exception 启动失败时抛出
+     */
     public static void main(String[] args) throws Exception {
         new DropwizardOrderApplication().run(args);
     }

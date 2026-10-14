@@ -35,7 +35,7 @@ import java.util.Objects;
  * <p><b>仅服务 Quarkus 运行时</b>；Spring 系运行时（WebMVC/WebFlux/Helidon-Spring）
  * 用 {@code ddd4j-data-cqrs-spring} 的 {@code SpringCommandBus}。
  *
- * <h3>装配语义（构造即快照，顺序不可变）</h3>
+ * <p><b>装配语义（构造即快照，顺序不可变）</b></p>
  * <p>
  * 构造器内先经 CDI {@link Instance}&lt;{@link CommandExecutor}&gt; 流式收集容器中全部
  * 执行器 Bean 并逐个 {@link CommandRegistry#register}（整批拒绝语义），再以
@@ -48,7 +48,7 @@ import java.util.Objects;
  * 的整批拒绝（all-or-nothing）{@link IllegalStateException} 在装配期立即暴露
  * ——Bean 创建失败，首次解析即抛出。
  *
- * <h3>{@link CommandHandler @CommandHandler} 发现</h3>
+ * <p><b>{@link CommandHandler @CommandHandler} 发现</b></p>
  * <p>
  * 发现机制与 {@code SpringCommandBus} 的显式
  * {@code ApplicationContext.getBeansOfType(CommandExecutor.class)} <b>等价</b>：
@@ -58,7 +58,7 @@ import java.util.Objects;
  * 扩展构建步骤，违反本阶段「零新框架抽象」约束；若 Task 6.5 Micronaut 适配
  * 引入 {@code BeanContext} 等价枚举，此等价性须重新讨论）。
  *
- * <h3>上下文与代理</h3>
+ * <p><b>上下文与代理</b></p>
  * <p>
  * 类级 {@link ActivateRequestContext @ActivateRequestContext} 包 {@code execute}：
  * 每次分发激活 CDI Request Context（执行器内的 request-scoped 依赖可解析；Quarkus

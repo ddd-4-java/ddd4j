@@ -9,6 +9,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration(proxyBeanMethods = false)
 public class AuthSpringConfiguration {
 
+    /**
+     * 注册认证主体到 Spring 运行时。
+     *
+     * @return 主体注册器
+     */
     @Bean
     public SubjectRegistrar subjectRegistrar() {
         return new SubjectRegistrar();

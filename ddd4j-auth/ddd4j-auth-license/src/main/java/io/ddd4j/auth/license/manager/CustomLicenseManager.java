@@ -54,6 +54,13 @@ public class CustomLicenseManager {
     private final VendorLicenseManager vendor;
     private boolean verificationInvalidated;
 
+    /**
+     * 使用许可证主题、密钥库和存储节点创建管理器。
+     *
+     * @param subject 许可证主题
+     * @param keyStoreParam 密钥库参数
+     * @param preferences 许可证存储节点
+     */
     public CustomLicenseManager(String subject, CustomKeyStoreParam keyStoreParam, Preferences preferences) {
         requireText(subject, "subject");
         Objects.requireNonNull(keyStoreParam, "keyStoreParam");
@@ -101,6 +108,10 @@ public class CustomLicenseManager {
 
     /**
      * 生成许可证并写入指定文件。
+     *
+     * @param content 许可证正文
+     * @param target 输出文件
+     * @throws LicenseManagementException 生成或写入失败时
      */
     public synchronized void store(License content, File target) throws LicenseManagementException {
         vendor.generateKeyFrom(Objects.requireNonNull(content, "content"))
@@ -109,6 +120,10 @@ public class CustomLicenseManager {
 
     /**
      * 安装许可证，随后立即执行业务校验并加载许可证正文。
+     *
+     * @param source 许可证文件
+     * @return 已安装的许可证正文
+     * @throws LicenseManagementException 安装或校验失败时
      */
     public synchronized License install(File source) throws LicenseManagementException {
         verificationInvalidated = true;
@@ -129,6 +144,9 @@ public class CustomLicenseManager {
 
     /**
      * 校验并返回当前已安装的许可证正文。
+     *
+     * @return 已安装的许可证正文
+     * @throws LicenseManagementException 校验或读取失败时
      */
     public synchronized License verify() throws LicenseManagementException {
         if (verificationInvalidated) {
@@ -140,6 +158,8 @@ public class CustomLicenseManager {
 
     /**
      * 卸载当前许可证。
+     *
+     * @throws LicenseManagementException 卸载失败时
      */
     public synchronized void uninstall() throws LicenseManagementException {
         verificationInvalidated = true;
@@ -148,6 +168,9 @@ public class CustomLicenseManager {
 
     /**
      * 保留旧生成端的时间约束：允许签发尚未生效的许可证，但拒绝已过期或反向时间区间。
+     *
+     * @param content 待签发许可证正文
+     * @throws LicenseValidationException 许可证正文无效时
      */
     protected synchronized void validateCreate(License content) throws LicenseValidationException {
         Objects.requireNonNull(content, "content");
@@ -167,6 +190,9 @@ public class CustomLicenseManager {
 
     /**
      * 消费端扩展校验钩子。当前无额外硬件约束。
+     *
+     * @param content 待校验许可证正文
+     * @throws LicenseValidationException 许可证正文无效时
      */
     protected synchronized void validate(License content) throws LicenseValidationException {
         Objects.requireNonNull(content, "content");

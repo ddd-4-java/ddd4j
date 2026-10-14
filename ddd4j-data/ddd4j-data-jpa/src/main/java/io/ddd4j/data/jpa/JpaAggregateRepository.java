@@ -66,10 +66,20 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
 
     private static final long serialVersionUID = 1L;
 
+    /** JPA 实体管理器。 */
     protected final EntityManager entityManager;
+    /** 领域模型类型。 */
     protected final Class<M> modelClass;
+    /** 持久化对象类型。 */
     protected final Class<P> persistenceClass;
 
+    /**
+     * 创建聚合仓储并注册领域模型类型。
+     *
+     * @param entityManager JPA 实体管理器
+     * @param modelClass 领域模型类型
+     * @param persistenceClass 持久化对象类型
+     */
     protected JpaAggregateRepository(EntityManager entityManager, Class<M> modelClass, Class<P> persistenceClass) {
         this.entityManager = Objects.requireNonNull(entityManager, "entityManager must not be null");
         this.modelClass = Objects.requireNonNull(modelClass, "modelClass must not be null");
@@ -287,6 +297,9 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
      *
      * <p>默认同名；当 Domain 与 PO 命名不同时由具体仓储覆盖。本方法返回
      * JPA property，而不是数据库 column。
+     *
+     * @param domainProperty 领域属性名
+     * @return 对应的持久化属性名
      */
     protected String persistenceProperty(String domainProperty) {
         return domainProperty;
@@ -294,6 +307,9 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
 
     /**
      * 根据 Query 属性空间选择领域映射或 PO 直接属性，并校验类型边界。
+     *
+     * @param condition 查询条件
+     * @return 对应的持久化属性名
      */
     protected String persistenceProperty(LambdaCondition condition) {
         Objects.requireNonNull(condition, "condition must not be null");
@@ -304,6 +320,14 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
         return persistenceProperty(condition.property());
     }
 
+    /**
+     * 构造租户、系统和查询条件对应的 JPA 谓词。
+     *
+     * @param criteriaBuilder JPA 条件构造器
+     * @param root 持久化对象查询根
+     * @param query 领域查询
+     * @return JPA 谓词列表
+     */
     protected List<Predicate> buildPredicates(CriteriaBuilder criteriaBuilder, Root<P> root, Query<M> query) {
         List<Predicate> predicates = new ArrayList<>();
         if (!query.isIgnoreTenantId()) {

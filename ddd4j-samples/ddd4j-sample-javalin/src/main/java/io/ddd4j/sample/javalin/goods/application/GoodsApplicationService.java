@@ -50,12 +50,19 @@ public class GoodsApplicationService {
     private static final AtomicLong ID_GENERATOR = new AtomicLong(1000L);
     private final GoodsRepository repository;
 
+    /** @param repository 商品仓储 */
     public GoodsApplicationService(GoodsRepository repository) {
         this.repository = Objects.requireNonNull(repository, "repository must not be null");
     }
 
     /**
      * 创建商品。
+     *
+     * @param code 商品编码
+     * @param name 商品名称
+     * @param price 商品价格
+     * @param stock 库存数量
+     * @return 创建的商品
      */
     public Goods create(String code, String name, BigDecimal price, Integer stock) {
         validateCode(code);
@@ -84,6 +91,11 @@ public class GoodsApplicationService {
 
     /**
      * 更新商品基本信息。
+     *
+     * @param id 商品标识
+     * @param name 新商品名称
+     * @param price 新商品价格
+     * @return 更新后的商品
      */
     public Goods update(GoodsId id, String name, BigDecimal price) {
         Goods goods = repository.findById(id.value())
@@ -101,6 +113,10 @@ public class GoodsApplicationService {
 
     /**
      * 调整商品状态。
+     *
+     * @param id 商品标识
+     * @param status 新商品状态
+     * @return 更新后的商品
      */
     public Goods changeStatus(GoodsId id, GoodsStatus status) {
         Objects.requireNonNull(status, "status must not be null");
@@ -116,6 +132,8 @@ public class GoodsApplicationService {
 
     /**
      * 软删除商品。
+     *
+     * @param id 待删除的商品标识
      */
     public void delete(GoodsId id) {
         Goods goods = repository.findById(id.value())
@@ -127,6 +145,9 @@ public class GoodsApplicationService {
 
     /**
      * 按 ID 查询商品。
+     *
+     * @param id 商品标识
+     * @return 找到的商品
      */
     public Goods getById(GoodsId id) {
         return repository.findById(id.value())
@@ -135,6 +156,9 @@ public class GoodsApplicationService {
 
     /**
      * 按编码查询商品。
+     *
+     * @param code 商品编码
+     * @return 找到的商品
      */
     public Goods getByCode(String code) {
         return repository.findByCode(code)
@@ -146,6 +170,9 @@ public class GoodsApplicationService {
      *
      * <p>直接使用 {@link GoodsQuery#page()} 触发仓储查询，演示 ddd4j 的"Query 充血"能力。
      * 业务侧无需关心底层是 MyBatis、JPA 还是内存。
+     *
+     * @param query 分页查询条件
+     * @return 商品分页结果
      */
     public Page<Goods> pageQuery(GoodsQuery query) {
         Objects.requireNonNull(query, "query must not be null");
@@ -154,6 +181,9 @@ public class GoodsApplicationService {
 
     /**
      * 充血查询：按条件列表查询。
+     *
+     * @param query 查询条件
+     * @return 商品列表
      */
     public List<Goods> listQuery(GoodsQuery query) {
         Objects.requireNonNull(query, "query must not be null");
@@ -164,6 +194,9 @@ public class GoodsApplicationService {
 
     /**
      * 充血查询：按条件统计。
+     *
+     * @param query 查询条件
+     * @return 匹配的商品数量
      */
     public long countQuery(GoodsQuery query) {
         Objects.requireNonNull(query, "query must not be null");

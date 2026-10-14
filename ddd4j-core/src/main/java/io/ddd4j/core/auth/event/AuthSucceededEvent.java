@@ -54,22 +54,50 @@ public final class AuthSucceededEvent {
 
     private final Instant occurredAt;
 
+    /**
+     * 获取事件发生时间。
+     *
+     * @return 事件发生时间
+     */
     public Instant getOccurredAt() {
         return occurredAt;
     }
 
+    /**
+     * 获取认证主体。
+     *
+     * @return 认证主体
+     */
     public AuthPrincipal getPrincipal() {
         return principal;
     }
 
+    /**
+     * 获取登录请求。
+     *
+     * @return 登录请求
+     */
     public AuthRequest getRequest() {
         return request;
     }
 
+    /**
+     * 获取会话凭证。
+     *
+     * @return 会话凭证
+     */
     public String getToken() {
         return token;
     }
 
+    /**
+     * 创建AuthSucceededEvent事件。
+     *
+     * @param request 登录请求
+     * @param principal 认证主体
+     * @param token 会话凭证
+     * @param occurredAt 事件发生时间
+     */
     @JsonCreator()
     public AuthSucceededEvent(@JsonProperty("request") AuthRequest request, @JsonProperty("principal") AuthPrincipal principal, @JsonProperty("token") String token, @JsonProperty("occurredAt") Instant occurredAt) {
         this.request = request;
@@ -78,21 +106,41 @@ public final class AuthSucceededEvent {
         this.occurredAt = occurredAt;
     }
 
+    /**
+     * 获取用于 JSON 的登录请求。
+     *
+     * @return 用于 JSON 的登录请求
+     */
     @JsonProperty("request")
     public AuthRequest request() {
         return request;
     }
 
+    /**
+     * 获取用于 JSON 的认证主体。
+     *
+     * @return 用于 JSON 的认证主体
+     */
     @JsonProperty("principal")
     public AuthPrincipal principal() {
         return principal;
     }
 
+    /**
+     * 获取用于 JSON 的会话凭证。
+     *
+     * @return 用于 JSON 的会话凭证
+     */
     @JsonProperty("token")
     public String token() {
         return token;
     }
 
+    /**
+     * 获取用于 JSON 的事件发生时间。
+     *
+     * @return 用于 JSON 的事件发生时间
+     */
     @JsonProperty("occurredAt")
     public Instant occurredAt() {
         return occurredAt;

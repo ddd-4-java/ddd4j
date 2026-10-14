@@ -29,12 +29,36 @@ public final class OrderLine implements Entity<String> {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 订单标识。
+     */
     private final String id;
+    /**
+     * 商品标识。
+     */
     private final String goodsId;
+    /**
+     * 商品名称。
+     */
     private final String goodsName;
+    /**
+     * 商品单价。
+     */
     private final Money unitPrice;
+    /**
+     * 数量。
+     */
     private int quantity;
 
+    /**
+     * 创建订单行。
+     *
+     * @param id 订单标识
+     * @param goodsId 商品标识
+     * @param goodsName 商品名称
+     * @param quantity 数量
+     * @param unitPrice 商品单价
+     */
     public OrderLine(String id, String goodsId, String goodsName, int quantity, Money unitPrice) {
         if (StrKit.isBlank(id)) {
             throw new IllegalArgumentException("id must not be blank");
@@ -52,6 +76,15 @@ public final class OrderLine implements Entity<String> {
         changeQuantity(quantity);
     }
 
+    /**
+     * 创建订单行。
+     *
+     * @param goodsId 商品标识
+     * @param goodsName 商品名称
+     * @param quantity 数量
+     * @param unitPrice 商品单价
+     * @return 订单行
+     */
     public static OrderLine create(String goodsId, String goodsName, int quantity, Money unitPrice) {
         return new OrderLine(UUID.randomUUID().toString(), goodsId, goodsName, quantity, unitPrice);
     }
@@ -61,26 +94,56 @@ public final class OrderLine implements Entity<String> {
         return id;
     }
 
+    /**
+     * 读取商品标识。
+     *
+     * @return 商品标识
+     */
     public String goodsId() {
         return goodsId;
     }
 
+    /**
+     * 读取商品名称。
+     *
+     * @return 商品名称
+     */
     public String goodsName() {
         return goodsName;
     }
 
+    /**
+     * 读取数量。
+     *
+     * @return 数量
+     */
     public int quantity() {
         return quantity;
     }
 
+    /**
+     * 读取商品单价。
+     *
+     * @return 商品单价
+     */
     public Money unitPrice() {
         return unitPrice;
     }
 
+    /**
+     * 计算订单行小计。
+     *
+     * @return 订单行小计
+     */
     public Money subtotal() {
         return unitPrice.multiply(quantity);
     }
 
+    /**
+     * 调整订单行数量。
+     *
+     * @param quantity 数量
+     */
     public void changeQuantity(int quantity) {
         if (quantity <= 0) {
             throw new IllegalArgumentException("quantity must be positive");

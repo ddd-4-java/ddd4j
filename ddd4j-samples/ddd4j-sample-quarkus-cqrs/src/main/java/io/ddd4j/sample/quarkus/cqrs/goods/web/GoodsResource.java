@@ -37,7 +37,7 @@ import jakarta.ws.rs.core.Response;
  * {@code getLang()} / {@code ok(data)} / {@code fail(msg)} 等辅助方法，
  * 同时复用 ddd4j 的统一响应包装 {@link R}。
  *
- * <h3>端点</h3>
+ * <h2>端点</h2>
  * <ul>
  *   <li>{@code POST   /goods}                 - 创建商品</li>
  *   <li>{@code PUT    /goods/{id}}             - 更新商品</li>
@@ -47,7 +47,7 @@ import jakarta.ws.rs.core.Response;
  *   <li>{@code GET    /goods/by-code}          - 按编码查询</li>
  * </ul>
  *
- * <h3>设计原则</h3>
+ * <h2>设计原则</h2>
  * <p>Resource 层只做协议适配（HTTP ↔ 应用服务入参 / 响应），不包含业务规则。
  * 所有业务方法都委托给 {@link GoodsApplicationService}。
  *
@@ -59,6 +59,7 @@ public class GoodsResource extends TenantAwareResource {
 
     private final GoodsApplicationService applicationService;
 
+    /** @param applicationService 商品应用服务 */
     @Inject
     public GoodsResource(GoodsApplicationService applicationService) {
         this.applicationService = applicationService;

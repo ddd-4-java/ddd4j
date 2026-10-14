@@ -42,6 +42,8 @@ public final class RedisStreamRecord {
 
     /**
      * 返回流名称，兼容 bean 调用方。
+     *
+     * @return Stream 名称
      */
     public String getStream() {
         return stream;
@@ -49,6 +51,8 @@ public final class RedisStreamRecord {
 
     /**
      * 返回条目标识。
+     *
+     * @return 条目标识
      */
     public String getId() {
         return id;
@@ -56,6 +60,8 @@ public final class RedisStreamRecord {
 
     /**
      * 返回消息字段。
+     *
+     * @return 消息字段
      */
     public Map<String, String> getFields() {
         return fields;
@@ -63,6 +69,8 @@ public final class RedisStreamRecord {
 
     /**
      * 返回底层消息对象。
+     *
+     * @return 底层客户端消息对象
      */
     public Object getNativeMessage() {
         return nativeMessage;
@@ -83,21 +91,25 @@ public final class RedisStreamRecord {
         this.nativeMessage = nativeMessage;
     }
 
+    /** @return Stream 名称 */
     @JsonProperty("stream")
     public String stream() {
         return stream;
     }
 
+    /** @return 条目标识 */
     @JsonProperty("id")
     public String id() {
         return id;
     }
 
+    /** @return 消息字段 */
     @JsonProperty("fields")
     public Map<String, String> fields() {
         return fields;
     }
 
+    /** @return 底层客户端消息对象 */
     @JsonProperty("nativeMessage")
     public Object nativeMessage() {
         return nativeMessage;

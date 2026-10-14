@@ -60,6 +60,11 @@ public class EventSourcingOrderRepository implements OrderRepository {
      */
     private final Map<String, Order> orderCache = new ConcurrentHashMap<>();
 
+    /**
+     * 创建EventSourcingOrderRepository。
+     *
+     * @param eventStore 内存事件存储
+     */
     public EventSourcingOrderRepository(InMemoryEventStore eventStore) {
         this.eventStore = Objects.requireNonNull(eventStore, "eventStore must not be null");
     }

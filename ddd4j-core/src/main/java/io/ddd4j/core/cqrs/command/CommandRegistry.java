@@ -32,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 组装命令总线（ADR-0004：命令分发唯一入口，适配器不复制路由逻辑）。
  * 本类只维护「命令类型 → 执行器」映射，不执行命令、不感知任何运行时框架。
  *
- * <h3>与 DefaultCommandBus 注册语义的差异（有意为之）</h3>
+ * <p><b>与 DefaultCommandBus 注册语义的差异（有意为之）</b></p>
  * <p>
  * {@link io.ddd4j.core.cqrs.command.DefaultCommandBus} 构造时对执行器集合
  * <b>逐个</b> {@code putIfAbsent}，检测到重复才抛 {@link IllegalStateException}——
@@ -45,7 +45,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 增量 putIfAbsent 更严谨。两处的重复检测语义（冲突在装配期暴露）均出自
  * ADR-0004 对 fuin 先例的保留决策。
  *
- * <h3>线程模型</h3>
+ * <p><b>线程模型</b></p>
  * <p>
  * 注册发生在装配期（单线程或已外部同步）；内部使用 {@link ConcurrentHashMap}
  * 保证 {@link #findExecutor} 无锁读。并发的重复注册属契约外用法，落库阶段的

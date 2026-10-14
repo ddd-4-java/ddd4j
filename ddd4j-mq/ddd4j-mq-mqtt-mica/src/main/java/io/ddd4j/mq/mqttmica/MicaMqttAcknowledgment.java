@@ -143,6 +143,8 @@ public class MicaMqttAcknowledgment implements Acknowledgment {
 
     /**
      * 返回 mica-mqtt 主题。
+     *
+     * @return 消息主题
      */
     public String topic() {
         return topic;

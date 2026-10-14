@@ -54,10 +54,21 @@ public class EsdbEventStore implements EventStore {
     private final String streamPrefix;
     private final EventPayloadSerializer serializer;
 
+    /**
+     * 创建不带流前缀的事件存储适配器。
+     *
+     * @param client EventStoreDB 客户端
+     */
     public EsdbEventStore(EventStoreDBClient client) {
         this(client, "");
     }
 
+    /**
+     * 创建带流前缀的事件存储适配器。
+     *
+     * @param client EventStoreDB 客户端
+     * @param streamPrefix 事件流名称前缀
+     */
     public EsdbEventStore(EventStoreDBClient client, String streamPrefix) {
         this(client, streamPrefix, new EventPayloadSerializer(JsonMapper.builder().findAndAddModules().build()));
     }

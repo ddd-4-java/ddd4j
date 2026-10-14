@@ -53,12 +53,17 @@ public final class JavalinSample {
     private JavalinSample() {
     }
 
+    /** @param args 启动参数 */
     public static void main(String[] args) {
         JavalinApplication application = start(7000);
         log.info("Javalin Order sample started at http://localhost:{}; demo Bearer token: {}",
                 application.app().port(), application.token());
     }
 
+    /**
+     * @param port HTTP 监听端口
+     * @return 已启动的 Javalin 应用
+     */
     public static JavalinApplication start(int port) {
         DomainEventPublisher eventPublisher = new NoOpDomainEventPublisher();
         InMemorySubject subject = new InMemorySubject(event -> log.debug("Authentication event: {}", event));
@@ -91,6 +96,7 @@ public final class JavalinSample {
         }
     }
 
+    /** 可关闭的 Javalin 示例运行实例。 */
     public final static class JavalinApplication implements AutoCloseable {
 
         private static final long serialVersionUID = 0L;
@@ -101,6 +107,11 @@ public final class JavalinSample {
 
         private final SpiRegistrationScope spiScope;
 
+        /**
+         * @param app Javalin 服务实例
+         * @param token 演示登录令牌
+         * @param spiScope SPI 注册作用域
+         */
         @JsonCreator()
         public JavalinApplication(@JsonProperty("app") Javalin app, @JsonProperty("token") String token, @JsonProperty("spiScope") SpiRegistrationScope spiScope) {
             Objects.requireNonNull(app, "app must not be null");
@@ -120,16 +131,19 @@ public final class JavalinSample {
             }
         }
 
+        /** @return Javalin 服务实例 */
         @JsonProperty("app")
         public Javalin app() {
             return app;
         }
 
+        /** @return 演示登录令牌 */
         @JsonProperty("token")
         public String token() {
             return token;
         }
 
+        /** @return SPI 注册作用域 */
         @JsonProperty("spiScope")
         public SpiRegistrationScope spiScope() {
             return spiScope;

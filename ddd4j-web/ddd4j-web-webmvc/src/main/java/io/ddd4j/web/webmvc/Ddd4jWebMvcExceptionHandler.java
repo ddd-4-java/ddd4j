@@ -36,6 +36,11 @@ import java.util.Objects;
 @RestControllerAdvice
 public class Ddd4jWebMvcExceptionHandler extends BaseErrorConfiguration {
 
+    /**
+     * 创建 Ddd4jWebMvcExceptionHandler 实例。
+     *
+     * @param exceptionTranslator 异常转换器
+     */
     public Ddd4jWebMvcExceptionHandler(WebExceptionTranslator exceptionTranslator) {
         super(Objects.requireNonNull(exceptionTranslator, "exceptionTranslator must not be null"));
     }
@@ -45,6 +50,12 @@ public class Ddd4jWebMvcExceptionHandler extends BaseErrorConfiguration {
         return "WebMVC";
     }
 
+    /**
+     * 将异常转换为 HTTP 响应。
+     *
+     * @param throwable 捕获的异常
+     * @return HTTP 错误响应
+     */
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<R<Object>> handle(Throwable throwable) {
         WebError error = translate(throwable);

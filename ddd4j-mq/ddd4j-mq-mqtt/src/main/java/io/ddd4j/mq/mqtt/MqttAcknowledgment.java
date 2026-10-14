@@ -60,6 +60,12 @@ public class MqttAcknowledgment implements Acknowledgment {
      */
     private final AtomicBoolean acknowledged = new AtomicBoolean(false);
 
+    /**
+     * 创建 MQTT 消息确认句柄。
+     *
+     * @param message MQTT 消息
+     * @param topic 消息主题
+     */
     public MqttAcknowledgment(MqttMessage message, String topic) {
         this.message = message;
         this.topic = topic;
@@ -145,6 +151,8 @@ public class MqttAcknowledgment implements Acknowledgment {
 
     /**
      * 返回 Paho MQTT 主题。
+     *
+     * @return 消息主题
      */
     public String topic() {
         return topic;

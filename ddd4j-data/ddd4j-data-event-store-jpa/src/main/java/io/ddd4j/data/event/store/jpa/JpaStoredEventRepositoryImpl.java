@@ -27,7 +27,7 @@ import java.util.Objects;
  * <p>纯 JPA 实现，不依赖 Spring Data 或任何特定 JPA 提供者。
  * 所有查询均使用 JPQL，保持框架无关性。
  *
- * <h3>position 生成策略</h3>
+ * <p><b>position 生成策略</b></p>
  * <p>使用 {@code SELECT COALESCE(MAX(position), 0) + 1} 生成全局单调 position。
  * 此策略在单实例部署下保证严格递增；在多实例高并发场景下，
  * 建议切换为数据库序列（如 PostgreSQL 的 {@code NEXTVAL}）以避免争用。

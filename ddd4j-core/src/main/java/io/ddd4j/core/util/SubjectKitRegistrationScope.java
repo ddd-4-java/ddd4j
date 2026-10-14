@@ -31,6 +31,11 @@ public final class SubjectKitRegistrationScope implements AutoCloseable {
     private SubjectProvider previousSubjectProvider;
     private boolean started;
 
+    /**
+     * 创建持有指定 SubjectProvider 的登记作用域。
+     *
+     * @param subjectProvider 本运行时的主体提供者
+     */
     public SubjectKitRegistrationScope(SubjectProvider subjectProvider) {
         this.subjectProvider = Objects.requireNonNull(subjectProvider, "subjectProvider must not be null");
     }

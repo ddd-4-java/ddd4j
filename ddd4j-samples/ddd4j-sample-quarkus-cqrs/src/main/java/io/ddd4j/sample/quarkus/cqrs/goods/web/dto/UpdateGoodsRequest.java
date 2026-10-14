@@ -38,17 +38,23 @@ public final class UpdateGoodsRequest {
 
     private final BigDecimal price;
 
+    /**
+     * @param name 新商品名称
+     * @param price 新商品价格
+     */
     @JsonCreator()
     public UpdateGoodsRequest(@JsonProperty("name") String name, @JsonProperty("price") BigDecimal price) {
         this.name = name;
         this.price = price;
     }
 
+    /** @return 新商品名称 */
     @JsonProperty("name")
     public String name() {
         return name;
     }
 
+    /** @return 新商品价格 */
     @JsonProperty("price")
     public BigDecimal price() {
         return price;

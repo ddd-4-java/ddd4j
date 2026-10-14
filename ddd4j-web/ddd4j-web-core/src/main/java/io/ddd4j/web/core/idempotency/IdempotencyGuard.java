@@ -22,30 +22,55 @@ import java.util.Optional;
  */
 public interface IdempotencyGuard {
 
+    /**
+     * 尝试获取幂等键。
+     *
+     * @param key 幂等键
+     * @param ttl 有效期
+     * @return 获取成功时为 true
+     */
     boolean acquire(String key, Duration ttl);
 
     /**
      * 获取带所有者标识的幂等租约。
      *
      * <p>默认实现保留旧 Guard 的兼容语义；生产 Guard 应覆盖此方法并提供唯一 owner token。
+     *
+     * @param key 幂等键
+     * @param ttl 有效期
+     * @return 可用的幂等租约
      */
     default Optional<IdempotencyLease> acquireLease(String key, Duration ttl) {
         return acquire(key, ttl) ? Optional.of(new IdempotencyLease(key, null, ttl)) : Optional.empty();
     }
 
+    /**
+     * 标记指定幂等键的业务处理已完成。
+     *
+     * @param key 幂等键
+     */
     void complete(String key);
 
     /**
      * 完成指定租约。默认实现兼容旧的按 key 完成语义。
+     *
+     * @param lease 幂等租约
      */
     default void complete(IdempotencyLease lease) {
         complete(lease.key());
     }
 
+    /**
+     * 释放指定幂等键，允许重试。
+     *
+     * @param key 幂等键
+     */
     void release(String key);
 
     /**
      * 释放指定租约。默认实现兼容旧的按 key 释放语义。
+     *
+     * @param lease 幂等租约
      */
     default void release(IdempotencyLease lease) {
         release(lease.key());

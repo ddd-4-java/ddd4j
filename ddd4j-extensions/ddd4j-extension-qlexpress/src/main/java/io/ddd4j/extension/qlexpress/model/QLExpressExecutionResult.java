@@ -40,30 +40,72 @@ public final class QLExpressExecutionResult<T> {
 
     private final long elapsedNanos;
 
+    /**
+     * 创建成功执行结果。
+     *
+     * @param <T> 结果类型
+     * @param value 表达式结果
+     * @param elapsedNanos 执行耗时（纳秒）
+     * @return 成功结果
+     */
     public static <T> QLExpressExecutionResult<T> success(T value, long elapsedNanos) {
         return new QLExpressExecutionResult<>(true, value, null, null, elapsedNanos);
     }
 
+    /**
+     * 创建失败执行结果。
+     *
+     * @param <T> 结果类型
+     * @param errorCode 错误码
+     * @param errorMessage 错误消息
+     * @param elapsedNanos 执行耗时（纳秒）
+     * @return 失败结果
+     */
     public static <T> QLExpressExecutionResult<T> failure(String errorCode, String errorMessage, long elapsedNanos) {
         return new QLExpressExecutionResult<>(false, null, errorCode, errorMessage, elapsedNanos);
     }
 
+    /**
+     * 获取执行耗时。
+     *
+     * @return 执行耗时（纳秒）
+     */
     public long getElapsedNanos() {
         return elapsedNanos;
     }
 
+    /**
+     * 获取错误码。
+     *
+     * @return 错误码
+     */
     public String getErrorCode() {
         return errorCode;
     }
 
+    /**
+     * 获取错误消息。
+     *
+     * @return 错误消息
+     */
     public String getErrorMessage() {
         return errorMessage;
     }
 
+    /**
+     * 获取表达式结果。
+     *
+     * @return 表达式结果
+     */
     public T getValue() {
         return value;
     }
 
+    /**
+     * 判断执行是否成功。
+     *
+     * @return 成功时为 true
+     */
     public boolean isSuccess() {
         return success;
     }
@@ -85,26 +127,51 @@ public final class QLExpressExecutionResult<T> {
         this.elapsedNanos = elapsedNanos;
     }
 
+    /**
+     * 读取成功标记。
+     *
+     * @return 成功时为 true
+     */
     @JsonProperty("success")
     public boolean success() {
         return success;
     }
 
+    /**
+     * 读取表达式结果。
+     *
+     * @return 表达式结果
+     */
     @JsonProperty("value")
     public T value() {
         return value;
     }
 
+    /**
+     * 读取错误码。
+     *
+     * @return 错误码
+     */
     @JsonProperty("errorCode")
     public String errorCode() {
         return errorCode;
     }
 
+    /**
+     * 读取错误消息。
+     *
+     * @return 错误消息
+     */
     @JsonProperty("errorMessage")
     public String errorMessage() {
         return errorMessage;
     }
 
+    /**
+     * 读取执行耗时。
+     *
+     * @return 执行耗时（纳秒）
+     */
     @JsonProperty("elapsedNanos")
     public long elapsedNanos() {
         return elapsedNanos;

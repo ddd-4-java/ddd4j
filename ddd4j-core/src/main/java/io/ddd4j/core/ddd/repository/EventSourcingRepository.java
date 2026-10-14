@@ -20,9 +20,7 @@ import java.io.Serializable;
 
 /**
  * 事件溯源仓储接口（ddd4j 推荐用于 ES 场景）。
- * <p>
- *
- * <h3>与普通 {@link Repository} 的区别</h3>
+ * <p><b>与普通 {@link Repository} 的区别</b></p>
  * <ul>
  *   <li><b>状态不落库</b>：聚合根的状态仅来自事件流，仓储只追加事件</li>
  *   <li><b>{@code add} 而非 save</b>：新建聚合根（add），更新事件流（update）</li>
@@ -30,7 +28,7 @@ import java.io.Serializable;
  *   <li><b>{@code read} 可指定版本</b>：支持从历史版本重建</li>
  * </ul>
  *
- * <h3>事件溯源工作流</h3>
+ * <p><b>事件溯源工作流</b></p>
  * <pre>{@code
  * // 1. 创建
  * Order order = repository.read(orderId).orElseThrow(); // 重建

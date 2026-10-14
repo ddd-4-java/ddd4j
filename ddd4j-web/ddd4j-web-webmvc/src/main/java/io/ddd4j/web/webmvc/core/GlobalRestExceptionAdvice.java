@@ -47,6 +47,10 @@ public class GlobalRestExceptionAdvice {
 
     /**
      * 处理参数绑定异常。
+     * @return 标准错误响应
+     * @param request HTTP 请求
+     * @param model 视图模型
+     * @param e 捕获的异常
      */
     @ExceptionHandler({BindException.class})
     public R<String> bindException(HttpServletRequest request, Model model, BindException e) {
@@ -58,6 +62,9 @@ public class GlobalRestExceptionAdvice {
 
     /**
      * 处理参数校验异常。
+     * @return 标准错误响应
+     * @param request HTTP 请求
+     * @param e 捕获的异常
      */
     @ExceptionHandler({ValidateException.class})
     public R<String> validatorException(HttpServletRequest request, ValidateException e) {
@@ -68,6 +75,9 @@ public class GlobalRestExceptionAdvice {
 
     /**
      * 处理方法参数无效异常。
+     * @return 标准错误响应
+     * @param request HTTP 请求
+     * @param e 捕获的异常
      */
     @ExceptionHandler({MethodArgumentNotValidException.class})
     public R<String> methodArgumentNotValidExceptionHandler(HttpServletRequest request, MethodArgumentNotValidException e) {
@@ -79,6 +89,9 @@ public class GlobalRestExceptionAdvice {
 
     /**
      * 处理 404 地址未找到异常。
+     * @return 标准错误响应
+     * @param request HTTP 请求
+     * @param e 捕获的异常
      */
     @ExceptionHandler(NoHandlerFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -89,6 +102,9 @@ public class GlobalRestExceptionAdvice {
 
     /**
      * 处理业务运行时异常。
+     * @return 标准错误响应
+     * @param request HTTP 请求
+     * @param e 捕获的异常
      */
     @ExceptionHandler({BizRuntimeException.class})
     public R<String> serviceException(HttpServletRequest request, BizRuntimeException e) {
@@ -98,6 +114,9 @@ public class GlobalRestExceptionAdvice {
 
     /**
      * 处理空指针异常。
+     * @return 标准错误响应
+     * @param request HTTP 请求
+     * @param e 捕获的异常
      */
     @ExceptionHandler({NullPointerException.class})
     public R<String> nullPointerException(HttpServletRequest request, NullPointerException e) {
@@ -108,6 +127,9 @@ public class GlobalRestExceptionAdvice {
 
     /**
      * 处理通用运行时异常。
+     * @return 标准错误响应
+     * @param request HTTP 请求
+     * @param e 捕获的异常
      */
     @ExceptionHandler({RuntimeException.class})
     public R<String> runTimeException(HttpServletRequest request, RuntimeException e) {

@@ -69,10 +69,20 @@ public class MicaMqttProperties extends MQProperties {
      */
     private int maxInflight = 100;
 
+    /**
+     * 为新连接生成唯一客户端标识。
+     *
+     * @return 新客户端标识
+     */
     public String newClientId() {
         return (Objects.isNull(clientIdPrefix) ? "ddd4j-mica-" : clientIdPrefix) + UUID.randomUUID();
     }
 
+    /**
+     * 根据当前配置建立 mica-mqtt 客户端连接。
+     *
+     * @return 已连接的 MQTT 客户端
+     */
     public MqttClient client() {
         MqttClientCreator creator = MqttClient.create()
                 .ip(serverIp)
@@ -88,6 +98,11 @@ public class MicaMqttProperties extends MQProperties {
         return creator.connectSync();
     }
 
+    /**
+     * 将数字服务质量级别转换为 mica-mqtt 枚举。
+     *
+     * @return MQTT 服务质量级别
+     */
     public MqttQoS mqttQoS() {
         return switch (qos) {
             case 0 -> MqttQoS.QOS0;

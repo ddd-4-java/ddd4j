@@ -28,7 +28,7 @@ import java.util.stream.Stream;
  * 分页数据对象
  * 实现集合接口，集合操作的是records对象
  *
- * @param <T>
+ * @param <T> 当前页记录类型
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Data
@@ -153,6 +153,9 @@ public class Page<T> implements Iterable<T> {
 
     /**
      * 判断当前页是否包含指定集合中的所有元素。
+     *
+     * @param c 待检查集合
+     * @return 全部元素都在当前页时为 true
      */
     public boolean containsAll(Collection<?> c) {
         return Objects.nonNull(this.records) && this.records.containsAll(c);
@@ -160,6 +163,9 @@ public class Page<T> implements Iterable<T> {
 
     /**
      * 向当前页添加指定集合中的所有元素。
+     *
+     * @param c 待添加集合
+     * @return 当前页记录发生变化时为 true
      */
     public boolean addAll(Collection<? extends T> c) {
         return Objects.nonNull(this.records) && this.records.addAll(c);
@@ -167,6 +173,9 @@ public class Page<T> implements Iterable<T> {
 
     /**
      * 从当前页移除指定集合中的所有元素。
+     *
+     * @param c 待移除集合
+     * @return 当前页记录发生变化时为 true
      */
     public boolean removeAll(Collection<?> c) {
         return Objects.nonNull(this.records) && this.records.removeAll(c);
@@ -174,6 +183,9 @@ public class Page<T> implements Iterable<T> {
 
     /**
      * 按条件移除当前页中的元素。
+     *
+     * @param filter 元素筛选条件
+     * @return 当前页记录发生变化时为 true
      */
     public boolean removeIf(Predicate<? super T> filter) {
         return Objects.nonNull(this.records) && this.records.removeIf(filter);
@@ -181,6 +193,9 @@ public class Page<T> implements Iterable<T> {
 
     /**
      * 仅保留当前页中包含在指定集合中的元素。
+     *
+     * @param c 要保留的元素集合
+     * @return 当前页记录发生变化时为 true
      */
     public boolean retainAll(Collection<?> c) {
         return Objects.nonNull(this.records) && this.records.retainAll(c);
@@ -188,11 +203,19 @@ public class Page<T> implements Iterable<T> {
 
     /**
      * 获取当前页数据的流。
+     *
+     * @return 当前页数据的流；记录为空时为空流
      */
     public Stream<T> stream() {
         return Objects.nonNull(this.records) ? this.records.stream() : Stream.empty();
     }
 
+    /**
+     * 对当前页各条记录执行回调，并返回当前页供链式调用。
+     *
+     * @param action 记录处理回调
+     * @return 当前页对象
+     */
     public Page<T> peek(Consumer<? super T> action) {
         if (Objects.nonNull(this.records)) {
             this.records.forEach(action);
@@ -200,26 +223,55 @@ public class Page<T> implements Iterable<T> {
         return this;
     }
 
+    /**
+     * 设置当前页记录。
+     *
+     * @param records 当前页记录
+     * @return 当前页对象
+     */
     public Page<T> setRecords(List<T> records) {
         this.records = records;
         return this;
     }
 
+    /**
+     * 设置总记录数。
+     *
+     * @param total 总记录数
+     * @return 当前页对象
+     */
     public Page<T> setTotal(long total) {
         this.total = total;
         return this;
     }
 
+    /**
+     * 设置每页大小。
+     *
+     * @param size 每页大小
+     * @return 当前页对象
+     */
     public Page<T> setSize(long size) {
         this.size = size;
         return this;
     }
 
+    /**
+     * 设置当前页码。
+     *
+     * @param current 当前页码
+     * @return 当前页对象
+     */
     public Page<T> setCurrent(long current) {
         this.current = current;
         return this;
     }
 
+    /**
+     * 获取扩展字段映射，首次访问时创建空映射。
+     *
+     * @return 可写的扩展字段映射
+     */
     public Map<String, Object> extras() {
         if (Objects.isNull(extras)) {
             extras = new HashMap<>();

@@ -21,6 +21,7 @@ import java.time.Duration;
  */
 public interface RegionCache {
 
+    /** 不执行缓存操作的实现。 */
     RegionCache NONE = new RegionCache() {
 
         @Override
@@ -33,11 +34,29 @@ public interface RegionCache {
         }
     };
 
+    /**
+     * 返回不执行缓存操作的实现。
+     *
+     * @return 空缓存实现
+     */
     static RegionCache none() {
         return NONE;
     }
 
+    /**
+     * 读取缓存字符串。
+     *
+     * @param key 缓存键
+     * @return 缓存值；未命中时为 null
+     */
     String getString(String key);
 
+    /**
+     * 写入带有效期的缓存字符串。
+     *
+     * @param key 缓存键
+     * @param value 缓存值
+     * @param ttl 有效期
+     */
     void set(String key, String value, Duration ttl);
 }

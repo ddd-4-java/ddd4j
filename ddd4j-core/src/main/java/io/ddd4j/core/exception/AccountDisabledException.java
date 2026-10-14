@@ -34,10 +34,21 @@ public class AccountDisabledException extends AuthenticationException {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 使用错误消息创建账号停用异常。
+     *
+     * @param message 错误消息
+     */
     public AccountDisabledException(String message) {
         super(message);
     }
 
+    /**
+     * 使用错误消息创建账号停用异常。
+     *
+     * @param message 错误消息
+     * @param cause 原始异常
+     */
     public AccountDisabledException(String message, Throwable cause) {
         super(message, cause);
     }

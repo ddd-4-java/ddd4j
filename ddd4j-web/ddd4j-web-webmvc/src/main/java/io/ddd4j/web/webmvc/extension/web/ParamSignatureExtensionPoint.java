@@ -30,10 +30,29 @@ import java.util.Map;
  */
 public interface ParamSignatureExtensionPoint extends ExtensionPoint {
 
+    /**
+     * 计算请求参数签名。
+     *
+     * @param request HTTP 请求
+     * @param params 请求参数
+     * @throws PluginRuntimeException 插件处理失败时抛出
+     */
     void sign(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException;
 
+    /**
+     * 查询应用密钥标识。
+     *
+     * @param appid 应用标识
+     * @return 应用密钥标识
+     */
     String getAppkey(String appid);
 
+    /**
+     * 查询应用密钥。
+     *
+     * @param appid 应用标识
+     * @return 应用密钥
+     */
     String getAppSecret(String appid);
 
 }

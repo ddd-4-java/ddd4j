@@ -34,6 +34,11 @@ public class Ddd4jQuarkusReadinessHealthCheck implements HealthCheck {
 
     private final RuntimeReadinessRegistry readinessRegistry;
 
+    /**
+     * 创建 Quarkus 就绪健康检查。
+     *
+     * @param readinessRegistry 运行时就绪注册表
+     */
     @Inject
     public Ddd4jQuarkusReadinessHealthCheck(RuntimeReadinessRegistry readinessRegistry) {
         this.readinessRegistry = Objects.requireNonNull(readinessRegistry,

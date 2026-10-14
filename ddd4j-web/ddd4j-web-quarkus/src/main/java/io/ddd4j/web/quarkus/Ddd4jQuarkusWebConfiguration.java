@@ -49,10 +49,21 @@ public class Ddd4jQuarkusWebConfiguration {
     private String idempotencyCacheName = "ddd4j-web-idempotency";
     private Duration idempotencyTtl = Duration.ofMinutes(5);
 
+    /**
+     * 从当前 MicroProfile 配置加载 Web 配置。
+     *
+     * @return Web 配置
+     */
     public static Ddd4jQuarkusWebConfiguration load() {
         return from(ConfigProvider.getConfig());
     }
 
+    /**
+     * 从指定配置源读取标准属性与兼容属性。
+     *
+     * @param config MicroProfile 配置源
+     * @return Web 配置
+     */
     public static Ddd4jQuarkusWebConfiguration from(Config config) {
         Config source = Objects.requireNonNull(config, "config must not be null");
         Ddd4jQuarkusWebConfiguration configuration = new Ddd4jQuarkusWebConfiguration();
@@ -81,6 +92,11 @@ public class Ddd4jQuarkusWebConfiguration {
         return configuration;
     }
 
+    /**
+     * 根据标准属性或旧版 Bearer 属性创建访问策略。
+     *
+     * @return 当前配置对应的访问策略
+     */
     public WebAccessPolicy accessPolicy() {
         if (standardAccessConfigured) {
             return new PathWebAccessPolicy(publicPaths, defaultAuthenticationMode);

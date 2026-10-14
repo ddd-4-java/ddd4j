@@ -26,6 +26,7 @@ public class OrderCancelledEvent extends DomainEvent<StringEntityId> {
 
     private static final long serialVersionUID = 1L;
 
+    /** @param orderId 发生取消事件的订单标识 */
     public OrderCancelledEvent(String orderId) {
         super(orderId);
     }

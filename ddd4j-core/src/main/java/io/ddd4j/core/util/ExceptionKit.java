@@ -29,6 +29,12 @@ import java.util.*;
 @UtilityClass
 public class ExceptionKit {
 
+    /**
+     * 提取异常中属于当前项目的堆栈；未匹配时返回异常消息。
+     *
+     * @param e 待分析异常
+     * @return 项目堆栈或异常消息
+     */
     public String getProjectStackTraces(Throwable e) {
         List<StackTraceElement> stackTraceElements = new ArrayList<>(e.getStackTrace().length);
         Collections.addAll(stackTraceElements, e.getStackTrace());
@@ -39,6 +45,12 @@ public class ExceptionKit {
         return e.getLocalizedMessage();
     }
 
+    /**
+     * 提取堆栈列表中属于当前项目的调用帧。
+     *
+     * @param stackTraceElements 待筛选调用帧
+     * @return 项目调用帧描述，未匹配时为 null
+     */
     public String getProjectStackTraces(List<StackTraceElement> stackTraceElements) {
         if (Objects.isNull(stackTraceElements)) {
             return null;

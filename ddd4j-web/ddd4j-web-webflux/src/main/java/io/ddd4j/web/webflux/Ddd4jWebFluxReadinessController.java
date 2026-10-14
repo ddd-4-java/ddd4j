@@ -32,6 +32,11 @@ public final class Ddd4jWebFluxReadinessController {
 
     private final ReadinessEndpoint readinessEndpoint;
 
+    /**
+     * 使用运行时就绪注册表创建 HTTP 端点。
+     *
+     * @param readinessRegistry 就绪注册表
+     */
     public Ddd4jWebFluxReadinessController(RuntimeReadinessRegistry readinessRegistry) {
         RuntimeReadinessRegistry registry = Objects.requireNonNull(readinessRegistry,
                 "readinessRegistry must not be null");

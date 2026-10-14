@@ -24,6 +24,7 @@ public final class MicronautOrderApplication {
     private MicronautOrderApplication() {
     }
 
+    /** @param args 启动参数 */
     public static void main(String[] args) {
         Micronaut.run(MicronautOrderApplication.class, args);
     }

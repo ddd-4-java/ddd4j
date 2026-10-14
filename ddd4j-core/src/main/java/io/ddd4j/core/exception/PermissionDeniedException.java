@@ -34,10 +34,21 @@ public class PermissionDeniedException extends AuthorizationException {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 使用错误消息创建权限不足异常。
+     *
+     * @param message 错误消息
+     */
     public PermissionDeniedException(String message) {
         super(message);
     }
 
+    /**
+     * 使用错误消息创建权限不足异常。
+     *
+     * @param message 错误消息
+     * @param cause 原始异常
+     */
     public PermissionDeniedException(String message, Throwable cause) {
         super(message, cause);
     }

@@ -31,7 +31,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 /**
- * 自定义 Jackson 2 {@link HttpMessageConverter}。
+ * 自定义 Jackson 2 {@link org.springframework.http.converter.HttpMessageConverter}。
  *
  * <p>2.0.x 使用 Jackson 2 {@link ObjectMapper}；本类避免将 MVC 转换器实现
  * 与 Spring 默认转换器的内部配置耦合。</p>
@@ -40,6 +40,11 @@ public class CustomHttpMessageConverter extends AbstractGenericHttpMessageConver
 
     private final ObjectMapper objectMapper;
 
+    /**
+     * 创建使用指定 Jackson 映射器的 HTTP 消息转换器。
+     *
+     * @param objectMapper Jackson 映射器
+     */
     public CustomHttpMessageConverter(ObjectMapper objectMapper) {
         super(MediaType.APPLICATION_JSON, new MediaType("application", "*+json"));
         this.objectMapper = objectMapper;

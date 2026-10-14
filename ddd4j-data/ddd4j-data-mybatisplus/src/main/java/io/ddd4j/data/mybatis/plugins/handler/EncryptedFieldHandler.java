@@ -21,9 +21,31 @@ package io.ddd4j.data.mybatis.plugins.handler;
  */
 public interface EncryptedFieldHandler {
 
+    /**
+     * 加密字段值。
+     *
+     * @param value 原始值
+     * @param <T> 原始值类型
+     * @return 加密后的文本
+     */
     <T> String encrypt(T value);
 
+    /**
+     * 解密字段值并转换为指定类型。
+     *
+     * @param value 加密文本
+     * @param resultType 目标类型
+     * @param <T> 目标类型
+     * @return 解密后的值
+     */
     <T> T decrypt(String value, Class<T> resultType);
 
+    /**
+     * 计算字段值的消息认证码。
+     *
+     * @param value 原始值
+     * @param <T> 原始值类型
+     * @return 消息认证码
+     */
     <T> String hmac(T value);
 }

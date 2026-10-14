@@ -35,6 +35,9 @@ public class InMemoryRoleRepository {
 
     /**
      * 保存或覆盖角色。
+     *
+     * @param role 角色
+     * @return 已保存的角色
      */
     public Role save(Role role) {
         Objects.requireNonNull(role, "role");
@@ -44,6 +47,9 @@ public class InMemoryRoleRepository {
 
     /**
      * 按编码查询。
+     *
+     * @param code 业务编码
+     * @return 匹配的角色，不存在时为空
      */
     public Optional<Role> findByCode(String code) {
         return Optional.ofNullable(store.get(code));
@@ -51,6 +57,8 @@ public class InMemoryRoleRepository {
 
     /**
      * 查询全部。
+     *
+     * @return 角色列表
      */
     public List<Role> findAll() {
         return new ArrayList<>(store.values());
@@ -58,6 +66,9 @@ public class InMemoryRoleRepository {
 
     /**
      * 删除角色。
+     *
+     * @param code 业务编码
+     * @return 删除成功时为 true
      */
     public boolean deleteByCode(String code) {
         return Objects.nonNull(store.remove(code));
@@ -65,6 +76,10 @@ public class InMemoryRoleRepository {
 
     /**
      * 为角色绑定权限编码。
+     *
+     * @param roleCode 角色编码
+     * @param permissionCode 权限编码
+     * @return 已更新的角色
      */
     public Role addPermission(String roleCode, String permissionCode) {
         Role role = store.get(roleCode);
@@ -80,6 +95,10 @@ public class InMemoryRoleRepository {
 
     /**
      * 为角色解除权限。
+     *
+     * @param roleCode 角色编码
+     * @param permissionCode 权限编码
+     * @return 已更新的角色
      */
     public Role removePermission(String roleCode, String permissionCode) {
         Role role = store.get(roleCode);
@@ -94,6 +113,8 @@ public class InMemoryRoleRepository {
 
     /**
      * 当前存储的角色数量。
+     *
+     * @return 角色数量
      */
     public int size() {
         return store.size();
@@ -101,11 +122,16 @@ public class InMemoryRoleRepository {
 
     /**
      * 全部角色编码集合（用于 SubjectDataProvider 角色回填）。
+     *
+     * @return 角色编码集合
      */
     public Set<String> codes() {
         return new HashSet<>(store.keySet());
     }
 
+    /**
+     * 清空内存角色仓储。
+     */
     public void clear() {
         store.clear();
     }

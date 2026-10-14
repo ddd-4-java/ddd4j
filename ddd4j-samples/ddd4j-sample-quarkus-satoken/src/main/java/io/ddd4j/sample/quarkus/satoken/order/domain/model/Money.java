@@ -46,8 +46,14 @@ public final class Money implements ValueObject {
 
     private static final long serialVersionUID = 0L;
 
+    /**
+     * 金额数值。
+     */
     private final BigDecimal amount;
 
+    /**
+     * 币种。
+     */
     private final String currency;
 
     /**
@@ -72,6 +78,9 @@ public final class Money implements ValueObject {
 
     /**
      * 创建人民币金额。
+     *
+     * @param amount 金额数值
+     * @return 人民币金额
      */
     public static Money cny(String amount) {
         return new Money(new BigDecimal(Objects.requireNonNull(amount, "amount must not be null")), "CNY");
@@ -79,6 +88,9 @@ public final class Money implements ValueObject {
 
     /**
      * 创建指定货币的零金额。
+     *
+     * @param currency 币种
+     * @return 零金额
      */
     public static Money zero(String currency) {
         return new Money(BigDecimal.ZERO, currency);
@@ -86,6 +98,9 @@ public final class Money implements ValueObject {
 
     /**
      * 金额相加（币种必须一致）。
+     *
+     * @param other 另一金额
+     * @return 相加后的金额
      */
     public Money add(Money other) {
         Objects.requireNonNull(other, "other must not be null");
@@ -97,6 +112,9 @@ public final class Money implements ValueObject {
 
     /**
      * 金额乘以整数因子。
+     *
+     * @param factor 倍数
+     * @return 计算后的金额
      */
     public Money multiply(int factor) {
         if (factor < 0) {
@@ -107,6 +125,9 @@ public final class Money implements ValueObject {
 
     /**
      * 应用折扣（百分比）。
+     *
+     * @param percent 折扣百分比
+     * @return 折扣金额
      */
     public Money discount(int percent) {
         if (percent < 0 || percent > 100) {
@@ -116,16 +137,32 @@ public final class Money implements ValueObject {
         return new Money(amount.multiply(factor), currency);
     }
 
+    /**
+     * 读取金额数值。
+     *
+     * @return 金额数值
+     */
     @JsonProperty("amount")
     public BigDecimal amount() {
         return amount;
     }
 
+    /**
+     * 读取币种。
+     *
+     * @return 币种
+     */
     @JsonProperty("currency")
     public String currency() {
         return currency;
     }
 
+    /**
+     * 反序列化后恢复规范化金额对象。
+     *
+     * @return 规范化金额对象
+     * @throws ObjectStreamException 反序列化对象恢复失败时
+     */
     private Object readResolve() throws ObjectStreamException {
         try {
             return new Money(amount, currency);

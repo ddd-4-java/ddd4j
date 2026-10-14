@@ -28,10 +28,20 @@ public class Ddd4jWebFluxContext {
     static final Class<WebRequestContext> REQUEST_CONTEXT_KEY = WebRequestContext.class;
     static final Class<Subject> SUBJECT_KEY = Subject.class;
 
+    /**
+     * 读取当前 Reactor 上下文中的 Web 请求状态。
+     *
+     * @return 请求状态，未绑定时为空流
+     */
     public Mono<WebRequestContext> currentRequest() {
         return Mono.deferContextual(context -> Mono.justOrEmpty(context.getOrEmpty(REQUEST_CONTEXT_KEY)));
     }
 
+    /**
+     * 读取当前 Reactor 上下文中的主体。
+     *
+     * @return 主体，未绑定时为空流
+     */
     public Mono<Subject> currentSubject() {
         return Mono.deferContextual(context -> Mono.justOrEmpty(context.getOrEmpty(SUBJECT_KEY)));
     }

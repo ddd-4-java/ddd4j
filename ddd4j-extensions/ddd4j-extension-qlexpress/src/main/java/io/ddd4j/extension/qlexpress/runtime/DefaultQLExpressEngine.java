@@ -45,6 +45,13 @@ public final class DefaultQLExpressEngine implements QLExpressEngine {
     private final Map<String, NamedQLFunction> functions;
     private volatile Express4Runner runner;
 
+    /**
+     * 根据初始化选项和函数快照创建表达式引擎。
+     *
+     * @param initOptions 引擎初始化选项
+     * @param defaultExecutionOptions 默认执行选项
+     * @param initialFunctions 初始函数集合
+     */
     public DefaultQLExpressEngine(InitOptions initOptions,
                                   QLExpressExecutionOptions defaultExecutionOptions,
                                   Map<String, NamedQLFunction> initialFunctions) {

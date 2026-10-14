@@ -31,11 +31,17 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public final class VertxDomainEventPublisher implements DomainEventPublisher {
 
+    /** 本地领域事件总线地址。 */
     public static final String ADDRESS = "ddd4j.domain.events";
     private static final String CODEC_PREFIX = "ddd4j.local-event.";
     private final Vertx vertx;
     private final Map<Class<?>, String> codecNames = new ConcurrentHashMap<>();
 
+    /**
+     * 使用指定 Vertx 实例创建事件发布器。
+     *
+     * @param vertx Vertx 实例
+     */
     public VertxDomainEventPublisher(Vertx vertx) {
         this.vertx = Objects.requireNonNull(vertx, "vertx must not be null");
     }

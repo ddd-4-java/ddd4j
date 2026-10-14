@@ -27,7 +27,7 @@ import java.util.Objects;
 /**
  * 统一接口响应，标准的响应数据结构
  *
- * @param <T>
+ * @param <T> 响应数据类型
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Data
@@ -51,22 +51,51 @@ public class R<T> implements IR {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     protected List<Map<String, String>> error;
 
+    /**
+     * 创建响应对象。
+     */
     public R() {
         this(ApiCode.OK.getCode(), ApiCode.OK.getDesc());
     }
 
+    /**
+     * 创建响应对象。
+     *
+     * @param code 响应码
+     * @param msg 响应消息
+     */
     public R(Serializable code, String msg) {
         this(code, msg, null);
     }
 
+    /**
+     * 创建响应对象。
+     *
+     * @param data 响应数据
+     */
     public R(T data) {
         this(ApiCode.OK.getCode(), ApiCode.OK.getDesc(), data);
     }
 
+    /**
+     * 创建响应对象。
+     *
+     * @param code 响应码
+     * @param msg 响应消息
+     * @param data 响应数据
+     */
     public R(Serializable code, String msg, T data) {
         this(code, msg, data, null);
     }
 
+    /**
+     * 创建响应对象。
+     *
+     * @param code 响应码
+     * @param msg 响应消息
+     * @param data 响应数据
+     * @param error 校验失败信息
+     */
     public R(Serializable code, String msg, T data, List<Map<String, String>> error) {
         this.code = code;
         this.msg = msg;
@@ -78,6 +107,8 @@ public class R<T> implements IR {
 
     /**
      * 请求/操作成功（code=0），不携带数据。
+     * @param <T> 响应数据类型
+     * @return 响应对象
      */
     public static <T> R<T> ok() {
         return new R<>();
@@ -85,6 +116,9 @@ public class R<T> implements IR {
 
     /**
      * 请求/操作成功（code=0），携带数据。
+     * @param <T> 响应数据类型
+     * @param payload 响应数据
+     * @return 响应对象
      */
     public static <T> R<T> ok(T payload) {
         return new R<>(payload);
@@ -92,6 +126,10 @@ public class R<T> implements IR {
 
     /**
      * 请求/操作成功（code=0），携带自定义消息与数据。
+     * @param <T> 响应数据类型
+     * @param msg 响应消息
+     * @param data 响应数据
+     * @return 响应对象
      */
     public static <T> R<T> ok(String msg, T data) {
         return of(ApiCode.OK.getCode(), msg, data);
@@ -101,6 +139,8 @@ public class R<T> implements IR {
 
     /**
      * 请求/操作成功（code=200），不携带数据。
+     * @param <T> 响应数据类型
+     * @return 响应对象
      */
     public static <T> R<T> success() {
         return of(ApiCode.SUCCESS);
@@ -108,6 +148,9 @@ public class R<T> implements IR {
 
     /**
      * 请求/操作成功（code=200），携带自定义消息。
+     * @param <T> 响应数据类型
+     * @param message 响应消息
+     * @return 响应对象
      */
     public static <T> R<T> success(String message) {
         return new R<>(ApiCode.SUCCESS.getCode(), message, null);
@@ -115,6 +158,9 @@ public class R<T> implements IR {
 
     /**
      * 请求/操作成功（code=200），携带数据。
+     * @param <T> 响应数据类型
+     * @param data 响应数据
+     * @return 响应对象
      */
     public static <T> R<T> success(T data) {
         return of(ApiCode.SUCCESS.getCode(), ApiCode.SUCCESS.getReason(), data);
@@ -124,20 +170,28 @@ public class R<T> implements IR {
 
     /**
      * 请求/操作失败（code=400），不携带数据。
+     * @param <T> 响应数据类型
+     * @return 响应对象
      */
     public static <T> R<T> fail() {
         return fail(ApiCode.FAIL.getCode());
     }
 
     /**
-     * 请求/操作失败（code=400），携带自定义消息。
+     * 请求/操作失败，使用指定响应码和默认失败消息。
+     * @param <T> 响应数据类型
+     * @param code 响应码
+     * @return 响应对象
      */
     public static <T> R<T> fail(Serializable code) {
         return of(code, ApiCode.FAIL.getDesc());
     }
 
     /**
-     * 请求/操作失败（code=400），携带数据。
+     * 请求/操作失败（code=400），携带自定义消息。
+     * @param <T> 响应数据类型
+     * @param message 响应消息
+     * @return 响应对象
      */
     public static <T> R<T> fail(String message) {
         return of(ApiCode.FAIL.getCode(), message);
@@ -147,6 +201,9 @@ public class R<T> implements IR {
 
     /**
      * 错误响应（code=500），携带自定义消息。
+     * @param <T> 响应数据类型
+     * @param message 响应消息
+     * @return 响应对象
      */
     public static <T> R<T> error(String message) {
         return new R<>(ApiCode.SERVER_ERROR.getCode(), message, null);
@@ -154,6 +211,9 @@ public class R<T> implements IR {
 
     /**
      * 错误响应（code=500），携带数据。
+     * @param <T> 响应数据类型
+     * @param data 响应数据
+     * @return 响应对象
      */
     public static <T> R<T> error(T data) {
         return new R<>(ApiCode.SERVER_ERROR.getCode(), ApiCode.SERVER_ERROR.getReason(), data);
@@ -163,6 +223,9 @@ public class R<T> implements IR {
 
     /**
      * 按 {@link CustomApiCode} 构建响应（code 与描述取自定义码）。
+     * @param <T> 响应数据类型
+     * @param code 响应码
+     * @return 响应对象
      */
     public static <T> R<T> of(CustomApiCode code) {
         return new R<>(code.getCode(), code.getReason(), null);
@@ -170,6 +233,10 @@ public class R<T> implements IR {
 
     /**
      * 按 {@link CustomApiCode} 构建响应并携带自定义消息。
+     * @param <T> 响应数据类型
+     * @param code 响应码
+     * @param message 响应消息
+     * @return 响应对象
      */
     public static <T> R<T> of(CustomApiCode code, String message) {
         return new R<>(code.getCode(), message, null);
@@ -177,6 +244,10 @@ public class R<T> implements IR {
 
     /**
      * 按 {@link CustomApiCode} 构建响应，并携带数据。
+     * @param <T> 响应数据类型
+     * @param code 响应码
+     * @param data 响应数据
+     * @return 响应对象
      */
     public static <T> R<T> of(CustomApiCode code, T data) {
         return new R<>(code.getCode(), code.getReason(), data);
@@ -184,6 +255,11 @@ public class R<T> implements IR {
 
     /**
      * 按 {@link CustomApiCode} 构建响应，并携带自定义消息与校验失败信息。
+     * @param <T> 响应数据类型
+     * @param code 响应码
+     * @param message 响应消息
+     * @param error 校验失败信息
+     * @return 响应对象
      */
     public static <T> R<T> of(CustomApiCode code, String message, List<Map<String, String>> error) {
         return new R<>(code.getCode(), message, null, error);
@@ -191,6 +267,10 @@ public class R<T> implements IR {
 
     /**
      * 按字符串 code 构建响应（内部转数字）。
+     * @param <T> 响应数据类型
+     * @param code 响应码
+     * @param message 响应消息
+     * @return 响应对象
      */
     public static <T> R<T> of(String code, String message) {
         return of(Integer.parseInt(code), message);
@@ -198,22 +278,44 @@ public class R<T> implements IR {
 
     /**
      * 按数字 code 构建响应。
+     * @param <T> 响应数据类型
+     * @param code 响应码
+     * @param message 响应消息
+     * @return 响应对象
      */
     public static <T> R<T> of(Serializable code, String message) {
         return new R<>(code, message, null);
     }
 
     /**
-     * 按数字 code 构建响应并携带数据（status 参数为兼容占位）。
+     * 按指定响应码和消息构建带数据的响应。
+     * @param <T> 响应数据类型
+     * @param code 响应码
+     * @param message 响应消息
+     * @param data 响应数据
+     * @return 响应对象
      */
     public static <T> R<T> of(Serializable code, String message, T data) {
         return new R<>(code, message, data);
     }
 
+    /**
+     * 检查响应是否为空。
+     *
+     * @param r 待检查响应
+     * @return 响应缺失、失败或数据为空时为 true
+     */
     public static boolean empty(R<?> r) {
         return Objects.isNull(r) || !Objects.equals(r.getCode(), ApiCode.OK.getCode()) || Objects.isNull(r.getData());
     }
 
+    /**
+     * 复制响应码和消息到新响应。
+     *
+     * @param <T> 响应数据类型
+     * @param source 待转换响应
+     * @return 保留响应码和消息的新响应
+     */
     public static <T> R<T> transform(R<?> source) {
         R<T> target = new R<>();
         target.setCode(source.getCode());
@@ -221,10 +323,20 @@ public class R<T> implements IR {
         return target;
     }
 
+    /**
+     * 判断响应码是否表示成功。
+     *
+     * @return 响应码表示成功时为 true
+     */
     public Boolean isOk() {
         return Objects.equals(this.getCode(), ApiCode.OK.getCode()) || Objects.equals(this.getCode(), ApiCode.SUCCESS.getCode());
     }
 
+    /**
+     * 判断响应是否失败或无数据。
+     *
+     * @return 响应失败或数据为空时为 true
+     */
     public Boolean isEmpty() {
         return !isOk() || Objects.isNull(data);
     }
@@ -233,6 +345,7 @@ public class R<T> implements IR {
 
     /**
      * 是否成功（原 ApiRestResponse 语义：code == 200）。
+     * @return 响应码为成功码时为 true
      */
     public boolean isSuccess() {
         return Objects.equals(this.getCode(), ApiCode.SUCCESS.getCode());
@@ -241,6 +354,7 @@ public class R<T> implements IR {
     /**
      * 原.ApiRestResponse#getMessage 兼容别名，等价于 {@link #getMsg()}。
      * <p>加 {@code @JsonIgnore} 是为了避免 Jackson 把同一字段序列化成 msg/message 两份。
+     * @return 响应消息
      */
     @JsonIgnore
     public String getMessage() {
@@ -249,6 +363,7 @@ public class R<T> implements IR {
 
     /**
      * 转换为 Map（key：code / msg / data）。
+     * @return 包含 code、msg、data 的映射
      */
     public Map<String, Object> toMap() {
         Map<String, Object> rtMap = new HashMap<String, Object>();

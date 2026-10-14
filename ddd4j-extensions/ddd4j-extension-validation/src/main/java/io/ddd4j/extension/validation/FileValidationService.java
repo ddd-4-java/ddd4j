@@ -32,10 +32,17 @@ public final class FileValidationService {
     private final FileTypeDetector fileTypeDetector;
     private final Collection<FileContentCheckProvider> contentCheckProviders;
 
+    /** 使用默认文件类型检测器创建校验服务。 */
     public FileValidationService() {
         this(new OfficeFileTypeDetector(), Collections.emptyList());
     }
 
+    /**
+     * 使用指定检测器和内容检查器创建校验服务。
+     *
+     * @param fileTypeDetector 文件类型检测器
+     * @param contentCheckProviders 文件内容检查器
+     */
     public FileValidationService(FileTypeDetector fileTypeDetector,
                                  Collection<FileContentCheckProvider> contentCheckProviders) {
         this.fileTypeDetector = Objects.requireNonNull(fileTypeDetector, "fileTypeDetector must not be null");

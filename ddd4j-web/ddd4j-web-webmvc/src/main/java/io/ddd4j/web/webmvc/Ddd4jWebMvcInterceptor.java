@@ -53,15 +53,33 @@ public final class Ddd4jWebMvcInterceptor implements HandlerInterceptor {
     private final WebRequestLifecycle requestLifecycle;
     private final Optional<WebIdempotencyLifecycle> idempotencyLifecycle;
 
+    /**
+     * 创建 Ddd4jWebMvcInterceptor 实例。
+     *
+     * @param authenticator Bearer 认证器
+     */
     public Ddd4jWebMvcInterceptor(BearerSubjectAuthenticator authenticator) {
         this(new WebRequestContextFactory(), new WebRequestLifecycle(authenticator, WebAccessPolicy.required()), null);
     }
 
+    /**
+     * 创建 Ddd4jWebMvcInterceptor 实例。
+     *
+     * @param authenticator Bearer 认证器
+     * @param publicPath 公开路径判断器
+     */
     public Ddd4jWebMvcInterceptor(BearerSubjectAuthenticator authenticator, Predicate<String> publicPath) {
         this(new WebRequestContextFactory(), new WebRequestLifecycle(authenticator,
                 WebAccessPolicy.requiredExcept(publicPath)), null);
     }
 
+    /**
+     * 创建 Ddd4jWebMvcInterceptor 实例。
+     *
+     * @param contextFactory 请求上下文工厂
+     * @param requestLifecycle 请求生命周期
+     * @param idempotencyLifecycle 方法参数
+     */
     public Ddd4jWebMvcInterceptor(WebRequestContextFactory contextFactory, WebRequestLifecycle requestLifecycle,
                                   WebIdempotencyLifecycle idempotencyLifecycle) {
         this.contextFactory = Objects.requireNonNull(contextFactory, "contextFactory must not be null");

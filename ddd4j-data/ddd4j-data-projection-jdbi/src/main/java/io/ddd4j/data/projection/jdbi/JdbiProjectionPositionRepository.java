@@ -33,14 +33,14 @@ import java.util.Optional;
  * {@code ddd4j-data-projection-jpa}，Quarkus 请用 {@code ddd4j-data-projection-panache}，
  * 响应式请用 {@code ddd4j-data-projection-r2dbc}。
  *
- * <h3>集成方装配</h3>
+ * <h2>集成方装配</h2>
  * <p>本类为纯类（零容器注解、非容器托管）：Javalin／Vert.x 集成方在应用装配代码中
  * 手动 {@code new JdbiProjectionPositionRepository(jdbi)} 并自行管理其生命周期——
  * {@code Jdbi} 实例（可包连接池 DataSource）由集成方提供。生命周期不入 SPI
  * （ADR-0003）：连接资源由 {@code Jdbi} 底层 DataSource 管理，每方法一次
  * {@link Jdbi#withHandle}／{@link Jdbi#useHandle}，无隐式 open/close。
  *
- * <h3>表契约</h3>
+ * <h2>表契约</h2>
  * <p>目标表 {@code ddd4j_projection_position} 与 -jpa/-panache 模块同构
  * （{@code stream_id VARCHAR(250)} 自然主键＋{@code next_event_number BIGINT}），
  * DDL 由集成方负责建表。save 的 upsert 用 H2 原生 {@code MERGE INTO ... KEY}

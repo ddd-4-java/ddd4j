@@ -33,18 +33,43 @@ public final class WebRequestFailure {
 
     private final Throwable cause;
 
+    /**
+     * 返回异常原因。
+     *
+     * @return 异常原因
+     */
+
     public Throwable getCause() {
         return cause;
     }
+
+    /**
+     * 返回HTTP 方法。
+     *
+     * @return HTTP 方法
+     */
 
     public String getMethod() {
         return method;
     }
 
+    /**
+     * 返回请求路径。
+     *
+     * @return 请求路径
+     */
+
     public String getPath() {
         return path;
     }
 
+    /**
+     * 创建请求失败记录。
+     *
+     * @param method HTTP 方法
+     * @param path 请求路径
+     * @param cause 原始异常
+     */
     @JsonCreator()
     public WebRequestFailure(@JsonProperty("method") String method, @JsonProperty("path") String path, @JsonProperty("cause") Throwable cause) {
         this.method = method;
@@ -52,16 +77,31 @@ public final class WebRequestFailure {
         this.cause = cause;
     }
 
+    /**
+     * 返回HTTP 方法。
+     *
+     * @return HTTP 方法
+     */
     @JsonProperty("method")
     public String method() {
         return method;
     }
 
+    /**
+     * 返回请求路径。
+     *
+     * @return 请求路径
+     */
     @JsonProperty("path")
     public String path() {
         return path;
     }
 
+    /**
+     * 返回异常原因。
+     *
+     * @return 异常原因
+     */
     @JsonProperty("cause")
     public Throwable cause() {
         return cause;

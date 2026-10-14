@@ -50,6 +50,11 @@ public class DataPermissionInnerInterceptor implements InnerInterceptor {
 
     private final DataScopeProvider provider;
 
+    /**
+     * 创建数据权限拦截器。
+     *
+     * @param provider 数据范围提供者
+     */
     public DataPermissionInnerInterceptor(DataScopeProvider provider) {
         this.provider = provider;
     }

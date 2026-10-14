@@ -51,6 +51,15 @@ public final class MQDeliveryPolicy {
 
     private static final double DEFAULT_JITTER_FACTOR = 0.20D;
 
+    /**
+     * 创建带租约和退避参数的投递策略。
+     *
+     * @param leaseDuration 投递租约时长
+     * @param maxAttempts 最多投递尝试次数
+     * @param initialBackoff 初始退避时长
+     * @param maxBackoff 最大退避时长
+     * @param jitterFactor 退避抖动系数
+     */
     @JsonCreator()
     public MQDeliveryPolicy(@JsonProperty("leaseDuration") Duration leaseDuration, @JsonProperty("maxAttempts") int maxAttempts, @JsonProperty("initialBackoff") Duration initialBackoff, @JsonProperty("maxBackoff") Duration maxBackoff, @JsonProperty("jitterFactor") double jitterFactor) {
         Objects.requireNonNull(leaseDuration, "leaseDuration must not be null");
@@ -129,46 +138,96 @@ public final class MQDeliveryPolicy {
         return Math.min(initialMillis * multiplier, maxMillis);
     }
 
+    /**
+     * 返回初始退避时长。
+     *
+     * @return 初始退避时长
+     */
     public Duration getInitialBackoff() {
         return initialBackoff;
     }
 
+    /**
+     * 返回退避抖动系数。
+     *
+     * @return 退避抖动系数
+     */
     public double getJitterFactor() {
         return jitterFactor;
     }
 
+    /**
+     * 返回投递租约时长。
+     *
+     * @return 投递租约时长
+     */
     public Duration getLeaseDuration() {
         return leaseDuration;
     }
 
+    /**
+     * 返回最多投递尝试次数。
+     *
+     * @return 最多投递尝试次数
+     */
     public int getMaxAttempts() {
         return maxAttempts;
     }
 
+    /**
+     * 返回最大退避时长。
+     *
+     * @return 最大退避时长
+     */
     public Duration getMaxBackoff() {
         return maxBackoff;
     }
 
+    /**
+     * 返回投递租约时长。
+     *
+     * @return 投递租约时长
+     */
     @JsonProperty("leaseDuration")
     public Duration leaseDuration() {
         return leaseDuration;
     }
 
+    /**
+     * 返回最多投递尝试次数。
+     *
+     * @return 最多投递尝试次数
+     */
     @JsonProperty("maxAttempts")
     public int maxAttempts() {
         return maxAttempts;
     }
 
+    /**
+     * 返回初始退避时长。
+     *
+     * @return 初始退避时长
+     */
     @JsonProperty("initialBackoff")
     public Duration initialBackoff() {
         return initialBackoff;
     }
 
+    /**
+     * 返回最大退避时长。
+     *
+     * @return 最大退避时长
+     */
     @JsonProperty("maxBackoff")
     public Duration maxBackoff() {
         return maxBackoff;
     }
 
+    /**
+     * 返回退避抖动系数。
+     *
+     * @return 退避抖动系数
+     */
     @JsonProperty("jitterFactor")
     public double jitterFactor() {
         return jitterFactor;

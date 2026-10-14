@@ -66,6 +66,7 @@ public class SpringContext implements ApplicationContextAware {
      */
     private static ApplicationContext APPLICATION_CONTEXT;
 
+    /** 初始化 Spring 上下文桥接器。 */
     public SpringContext() {
         log.debug("Loading SpringContext");
         StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
@@ -83,6 +84,11 @@ public class SpringContext implements ApplicationContextAware {
         }
     }
 
+    /**
+     * 在应用启动后异步执行回调。
+     *
+     * @param then 接收应用上下文的回调
+     */
     public static void onAppStarted(Consumer<ApplicationContext> then) {
         EXECUTOR_SERVICE.submit(() -> {
             try {
@@ -98,6 +104,11 @@ public class SpringContext implements ApplicationContextAware {
     }
 
     // 获取ApplicationContext，需等待ApplicationContext初始化完成
+    /**
+     * 等待并获取已初始化的应用上下文。
+     *
+     * @return Spring 应用上下文
+     */
     @SneakyThrows
     public static ApplicationContext getApplicationContext() {
         // 阻塞等待初始化完成
@@ -113,6 +124,13 @@ public class SpringContext implements ApplicationContextAware {
         APPLICATION_CONTEXT_START_SIGNAL.countDown();
     }
 
+    /**
+     * 按名称获取 Bean。
+     *
+     * @param name Bean 名称
+     * @param <T> Bean 类型
+     * @return 对应的 Bean
+     */
     @SuppressWarnings("unchecked")
     public static <T> T getBean(@NonNull String name) {
         if (!StringUtils.hasText(name)) {
@@ -121,6 +139,14 @@ public class SpringContext implements ApplicationContextAware {
         return (T) getApplicationContext().getBean(name);
     }
 
+    /**
+     * 按名称和类型获取 Bean。
+     *
+     * @param name Bean 名称
+     * @param clazz Bean 类型
+     * @param <T> Bean 类型
+     * @return 对应的 Bean
+     */
     public static <T> T getBean(@NonNull String name, @NonNull Class<T> clazz) {
         if (!StringUtils.hasText(name)) {
             throw new IllegalArgumentException("获取的Bean名称不能为空");
@@ -128,11 +154,25 @@ public class SpringContext implements ApplicationContextAware {
         return getApplicationContext().getBean(name, clazz);
     }
 
+    /**
+     * 按类型获取 Bean。
+     *
+     * @param clazz Bean 类型
+     * @param <T> Bean 类型
+     * @return 对应的 Bean
+     */
     public static <T> T getBean(@NonNull Class<T> clazz) {
         return getApplicationContext().getBean(clazz);
     }
 
     // 获取Bean，需等待应用完全启动
+    /**
+     * 等待应用启动后按类型获取 Bean。
+     *
+     * @param clazz Bean 类型
+     * @param <T> Bean 类型
+     * @return 对应的 Bean
+     */
     @SneakyThrows
     public static <T> T getBeanAwait(@NonNull Class<T> clazz) {
         APP_START_SIGNAL.await();
@@ -140,10 +180,24 @@ public class SpringContext implements ApplicationContextAware {
     }
 
     // 获取Bean，需等待应用完全启动
+    /**
+     * 等待应用启动后将 Bean 传给回调。
+     *
+     * @param beanClazz Bean 类型
+     * @param then 接收 Bean 的回调
+     * @param <T> Bean 类型
+     */
     public static <T> void getBean(@NonNull Class<T> beanClazz, Consumer<T> then) {
         then.accept(getBeanAwait(beanClazz));
     }
 
+    /**
+     * 按类型获取全部 Bean。
+     *
+     * @param clazz Bean 类型
+     * @param <T> Bean 类型
+     * @return 匹配的 Bean 集合
+     */
     public static <T> Collection<T> getBeans(@NonNull Class<T> clazz) {
         Map<String, T> beansOfType = getApplicationContext().getBeansOfType(clazz);
         if (CollectionUtils.isEmpty(beansOfType)) {
@@ -152,12 +206,19 @@ public class SpringContext implements ApplicationContextAware {
         return beansOfType.values();
     }
 
+    /**
+     * 获取 Spring 环境。
+     *
+     * @return 当前应用的环境
+     */
     public static Environment getEnv() {
         return getApplicationContext().getEnvironment();
     }
 
     /**
      * 应用上下文刷新完成后释放启动等待信号。
+     *
+     * @param event 上下文刷新事件
      */
     @EventListener
     public void onContextRefreshed(ContextRefreshedEvent event) {

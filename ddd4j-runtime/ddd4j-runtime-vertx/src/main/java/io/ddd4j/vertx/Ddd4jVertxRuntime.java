@@ -47,11 +47,30 @@ public final class Ddd4jVertxRuntime implements AutoCloseable {
     private final SubjectKitRegistrationScope subjectRegistration;
     private final RuntimeReadinessRegistry readinessRegistry;
 
+    /**
+     * 使用默认就绪检查集合创建显式运行时。
+     *
+     * @param vertx 调用方持有的 Vertx 实例
+     * @param publisher 领域事件发布器
+     * @param subjectProvider 主体提供器
+     * @param i18nProvider 国际化提供器
+     * @param commandBus 命令总线
+     */
     public Ddd4jVertxRuntime(Vertx vertx, DomainEventPublisher publisher, SubjectProvider subjectProvider,
                              I18nProvider i18nProvider, CommandBus commandBus) {
         this(vertx, publisher, subjectProvider, i18nProvider, commandBus, List.of());
     }
 
+    /**
+     * 创建带就绪检查的显式运行时。
+     *
+     * @param vertx 调用方持有的 Vertx 实例
+     * @param publisher 领域事件发布器
+     * @param subjectProvider 主体提供器
+     * @param i18nProvider 国际化提供器
+     * @param commandBus 命令总线
+     * @param readinessContributors 就绪检查贡献者
+     */
     public Ddd4jVertxRuntime(Vertx vertx, DomainEventPublisher publisher, SubjectProvider subjectProvider,
                              I18nProvider i18nProvider, CommandBus commandBus,
                              Collection<? extends ReadinessContributor> readinessContributors) {
@@ -65,6 +84,13 @@ public final class Ddd4jVertxRuntime implements AutoCloseable {
         this.readinessRegistry = new RuntimeReadinessRegistry(readinessContributors);
     }
 
+    /**
+     * 使用默认事件、主体与国际化实现创建运行时。
+     *
+     * @param vertx 调用方持有的 Vertx 实例
+     * @param executors 命令执行器
+     * @return 显式运行时
+     */
     public static Ddd4jVertxRuntime create(Vertx vertx, Collection<CommandExecutor<?>> executors) {
         VertxDomainEventPublisher publisher = new VertxDomainEventPublisher(vertx);
         SubjectProvider subjectProvider = new InMemorySubjectProvider(new InMemorySubject(publisher::publish));
@@ -72,15 +98,30 @@ public final class Ddd4jVertxRuntime implements AutoCloseable {
                 new DefaultCommandBus(executors));
     }
 
+    /**
+     * 获取运行时就绪注册表。
+     *
+     * @return 就绪注册表
+     */
     public RuntimeReadinessRegistry readiness() {
         return readinessRegistry;
     }
 
+    /**
+     * 启动全局 SPI 与主体注册。
+     */
     public void start() {
         registrations.start();
         subjectRegistration.start();
     }
 
+    /**
+     * 将当前线程上下文传播到 Vert.x 阻塞任务。
+     *
+     * @param <T> 任务结果类型
+     * @param task 待执行任务
+     * @return 异步任务结果
+     */
     public <T> Future<T> executeBlocking(Callable<T> task) {
         Callable<T> actual = Objects.requireNonNull(task, "task must not be null");
         Map<Object, Object> captured = ThreadContext.getResources();

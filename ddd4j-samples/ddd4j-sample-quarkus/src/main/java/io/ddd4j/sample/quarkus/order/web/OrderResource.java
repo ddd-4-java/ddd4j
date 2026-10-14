@@ -56,6 +56,7 @@ public class OrderResource {
 
     private final OrderApplicationService applicationService;
 
+    /** @param applicationService 订单应用服务 */
     @Inject
     public OrderResource(OrderApplicationService applicationService) {
         this.applicationService = Objects.requireNonNull(applicationService,
@@ -68,6 +69,10 @@ public class OrderResource {
                 order.status(), total.amount(), total.currency(), order.lines().size());
     }
 
+    /**
+     * @param request 创建订单请求
+     * @return 创建后的订单响应
+     */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response create(CreateOrderRequest request) {
@@ -76,12 +81,23 @@ public class OrderResource {
         return Response.status(Response.Status.CREATED).entity(R.ok(toResponse(order))).build();
     }
 
+    /**
+     * @param orderNo 订单号
+     * @return 订单查询模型
+     */
     @GET
     @Path("/by-no")
     public R<OrderReadModel> findByOrderNo(@QueryParam("orderNo") String orderNo) {
         return R.ok(applicationService.findByOrderNo(orderNo));
     }
 
+    /**
+     * @param buyerId 可选买家标识
+     * @param status 可选订单状态
+     * @param page 页码
+     * @param size 每页数量
+     * @return 订单查询模型列表
+     */
     @GET
     public R<List<OrderReadModel>> query(@QueryParam("buyerId") String buyerId,
                                          @QueryParam("status") String status,
@@ -93,12 +109,21 @@ public class OrderResource {
                 Objects.isNull(page) ? 1 : page, Objects.isNull(size) ? 20 : size)));
     }
 
+    /**
+     * @param id 订单标识
+     * @return 订单查询模型
+     */
     @GET
     @Path("/{id}")
     public R<OrderReadModel> find(@PathParam("id") String id) {
         return R.ok(applicationService.find(id));
     }
 
+    /**
+     * @param id 订单标识
+     * @param request 添加明细请求
+     * @return 更新后的订单响应
+     */
     @POST
     @Path("/{id}/lines")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -108,6 +133,11 @@ public class OrderResource {
         return R.ok(toResponse(order));
     }
 
+    /**
+     * @param id 订单标识
+     * @param idempotencyKey 支付幂等键
+     * @return 支付后的订单响应
+     */
     @POST
     @Path("/{id}/pay")
     public R<OrderResponse> pay(@PathParam("id") String id,
@@ -118,18 +148,27 @@ public class OrderResource {
         return R.ok(toResponse(applicationService.pay(id, idempotencyKey)));
     }
 
+    /**
+     * @param id 订单标识
+     * @return 发货后的订单响应
+     */
     @POST
     @Path("/{id}/ship")
     public R<OrderResponse> ship(@PathParam("id") String id) {
         return R.ok(toResponse(applicationService.ship(id)));
     }
 
+    /**
+     * @param id 订单标识
+     * @return 取消后的订单响应
+     */
     @POST
     @Path("/{id}/cancel")
     public R<OrderResponse> cancel(@PathParam("id") String id) {
         return R.ok(toResponse(applicationService.cancel(id)));
     }
 
+    /** 创建订单的 HTTP 请求。 */
     public final static class CreateOrderRequest {
 
         private static final long serialVersionUID = 0L;
@@ -140,6 +179,11 @@ public class OrderResource {
 
         private final String buyerName;
 
+        /**
+         * @param orderNo 订单号
+         * @param buyerId 买家标识
+         * @param buyerName 买家姓名
+         */
         @JsonCreator()
         public CreateOrderRequest(@JsonProperty("orderNo") String orderNo, @JsonProperty("buyerId") String buyerId, @JsonProperty("buyerName") String buyerName) {
             this.orderNo = orderNo;
@@ -147,16 +191,19 @@ public class OrderResource {
             this.buyerName = buyerName;
         }
 
+        /** @return 订单号 */
         @JsonProperty("orderNo")
         public String orderNo() {
             return orderNo;
         }
 
+        /** @return 买家标识 */
         @JsonProperty("buyerId")
         public String buyerId() {
             return buyerId;
         }
 
+        /** @return 买家姓名 */
         @JsonProperty("buyerName")
         public String buyerName() {
             return buyerName;
@@ -189,6 +236,7 @@ public class OrderResource {
         }
     }
 
+    /** 添加订单明细的 HTTP 请求。 */
     public final static class AddOrderLineRequest {
 
         private static final long serialVersionUID = 0L;
@@ -201,6 +249,12 @@ public class OrderResource {
 
         private final BigDecimal unitPrice;
 
+        /**
+         * @param goodsId 商品标识
+         * @param goodsName 商品名称
+         * @param quantity 商品数量
+         * @param unitPrice 商品单价
+         */
         @JsonCreator()
         public AddOrderLineRequest(@JsonProperty("goodsId") String goodsId, @JsonProperty("goodsName") String goodsName, @JsonProperty("quantity") int quantity, @JsonProperty("unitPrice") BigDecimal unitPrice) {
             this.goodsId = goodsId;
@@ -209,21 +263,25 @@ public class OrderResource {
             this.unitPrice = unitPrice;
         }
 
+        /** @return 商品标识 */
         @JsonProperty("goodsId")
         public String goodsId() {
             return goodsId;
         }
 
+        /** @return 商品名称 */
         @JsonProperty("goodsName")
         public String goodsName() {
             return goodsName;
         }
 
+        /** @return 商品数量 */
         @JsonProperty("quantity")
         public int quantity() {
             return quantity;
         }
 
+        /** @return 商品单价 */
         @JsonProperty("unitPrice")
         public BigDecimal unitPrice() {
             return unitPrice;
@@ -257,6 +315,7 @@ public class OrderResource {
         }
     }
 
+    /** 订单 HTTP 响应。 */
     public final static class OrderResponse {
 
         private static final long serialVersionUID = 0L;
@@ -277,6 +336,16 @@ public class OrderResource {
 
         private final int lineCount;
 
+        /**
+         * @param id 订单标识
+         * @param orderNo 订单号
+         * @param buyerId 买家标识
+         * @param buyerName 买家姓名
+         * @param status 订单状态
+         * @param totalAmount 订单总金额
+         * @param currency 币种
+         * @param lineCount 明细数量
+         */
         @JsonCreator()
         public OrderResponse(@JsonProperty("id") String id, @JsonProperty("orderNo") String orderNo, @JsonProperty("buyerId") String buyerId, @JsonProperty("buyerName") String buyerName, @JsonProperty("status") OrderStatus status, @JsonProperty("totalAmount") BigDecimal totalAmount, @JsonProperty("currency") String currency, @JsonProperty("lineCount") int lineCount) {
             this.id = id;
@@ -289,41 +358,49 @@ public class OrderResource {
             this.lineCount = lineCount;
         }
 
+        /** @return 订单标识 */
         @JsonProperty("id")
         public String id() {
             return id;
         }
 
+        /** @return 订单号 */
         @JsonProperty("orderNo")
         public String orderNo() {
             return orderNo;
         }
 
+        /** @return 买家标识 */
         @JsonProperty("buyerId")
         public String buyerId() {
             return buyerId;
         }
 
+        /** @return 买家姓名 */
         @JsonProperty("buyerName")
         public String buyerName() {
             return buyerName;
         }
 
+        /** @return 订单状态 */
         @JsonProperty("status")
         public OrderStatus status() {
             return status;
         }
 
+        /** @return 订单总金额 */
         @JsonProperty("totalAmount")
         public BigDecimal totalAmount() {
             return totalAmount;
         }
 
+        /** @return 币种 */
         @JsonProperty("currency")
         public String currency() {
             return currency;
         }
 
+        /** @return 明细数量 */
         @JsonProperty("lineCount")
         public int lineCount() {
             return lineCount;

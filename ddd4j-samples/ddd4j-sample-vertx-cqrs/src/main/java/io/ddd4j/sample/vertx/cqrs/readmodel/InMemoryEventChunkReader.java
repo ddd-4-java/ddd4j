@@ -33,6 +33,11 @@ public class InMemoryEventChunkReader implements EventChunkReader<Object> {
 
     private final InMemoryEventStore eventStore;
 
+    /**
+     * 创建InMemoryEventChunkReader。
+     *
+     * @param eventStore 内存事件存储
+     */
     public InMemoryEventChunkReader(InMemoryEventStore eventStore) {
         this.eventStore = Objects.requireNonNull(eventStore, "eventStore must not be null");
     }

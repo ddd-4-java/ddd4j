@@ -31,12 +31,41 @@ import java.util.Map;
  */
 public interface AuthcExtensionPoint extends ExtensionPoint {
 
+    /**
+     * 从请求中获取认证令牌。
+     *
+     * @param request HTTP 请求
+     * @param params 请求参数
+     * @return 认证令牌
+     * @throws PluginRuntimeException 插件处理失败时抛出
+     */
     String getToken(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException;
 
+    /**
+     * 处理认证请求头。
+     *
+     * @param request HTTP 请求
+     * @param params 请求参数
+     * @throws PluginRuntimeException 插件处理失败时抛出
+     */
     void handleHeader(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException;
 
+    /**
+     * 处理认证请求。
+     *
+     * @param request HTTP 请求
+     * @param params 请求参数
+     * @throws PluginRuntimeException 插件处理失败时抛出
+     */
     void handleRequest(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException;
 
+    /**
+     * 处理认证结果。
+     *
+     * @param res 处理结果
+     * @return 处理后的结果
+     * @throws PluginRuntimeException 插件处理失败时抛出
+     */
     Object handleResult(Object res) throws PluginRuntimeException;
 
 }

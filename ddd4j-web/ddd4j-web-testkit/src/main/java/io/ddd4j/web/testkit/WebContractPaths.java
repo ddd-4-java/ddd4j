@@ -19,19 +19,33 @@ package io.ddd4j.web.testkit;
  */
 public final class WebContractPaths {
 
+    /** 成功响应契约端点路径。 */
     public static final String SUCCESS = "/contract/success";
+    /** 资源创建响应契约端点路径。 */
     public static final String CREATED = "/contract/created";
+    /** 公开端点契约端点路径。 */
     public static final String PUBLIC = "/contract/public";
+    /** 受保护端点契约端点路径。 */
     public static final String PROTECTED = "/contract/protected";
+    /** 上下文传递契约端点路径。 */
     public static final String CONTEXT = "/contract/context";
+    /** 幂等请求契约端点路径。 */
     public static final String IDEMPOTENT = "/contract/idempotent";
+    /** 参数错误契约端点路径。 */
     public static final String BAD_REQUEST = "/contract/errors/bad-request";
+    /** 禁止访问契约端点路径。 */
     public static final String FORBIDDEN = "/contract/errors/forbidden";
+    /** 资源不存在契约端点路径。 */
     public static final String NOT_FOUND = "/contract/errors/not-found";
+    /** 资源冲突契约端点路径。 */
     public static final String CONFLICT = "/contract/errors/conflict";
+    /** 媒体类型不支持契约端点路径。 */
     public static final String UNSUPPORTED_MEDIA_TYPE = "/contract/errors/unsupported-media-type";
+    /** 实体无法处理契约端点路径。 */
     public static final String UNPROCESSABLE_ENTITY = "/contract/errors/unprocessable-entity";
+    /** 请求过多契约端点路径。 */
     public static final String TOO_MANY_REQUESTS = "/contract/errors/too-many-requests";
+    /** 服务端错误契约端点路径。 */
     public static final String INTERNAL_SERVER_ERROR = "/contract/errors/internal-server-error";
 
     private WebContractPaths() {

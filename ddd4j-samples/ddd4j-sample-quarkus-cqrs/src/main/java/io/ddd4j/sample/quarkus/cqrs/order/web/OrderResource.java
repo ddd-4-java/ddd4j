@@ -43,7 +43,7 @@ import java.util.Optional;
  * {@code getLang()} / {@code ok(data)} / {@code fail(msg)} 等辅助方法，
  * 同时复用 ddd4j 的统一响应包装 {@link io.ddd4j.core.api.R}。
  *
- * <h3>端点</h3>
+ * <h2>端点</h2>
  * <ul>
  *   <li>{@code GET    /orders/{id}}          - 查询订单</li>
  *   <li>{@code GET    /orders/orderNo/{no}}  - 按订单编号查询</li>
@@ -55,7 +55,7 @@ import java.util.Optional;
  *   <li>{@code POST   /orders/cancel-all}    - 批量取消买家草稿订单</li>
  * </ul>
  *
- * <h3>设计原则</h3>
+ * <h2>设计原则</h2>
  * <p>Resource 层只做协议适配（HTTP ↔ 应用服务入参 / 响应），不包含业务规则。
  * 所有业务方法都委托给 {@link OrderApplicationService} 与 {@link OrderDomainService}。
  *
@@ -69,6 +69,11 @@ public class OrderResource extends TenantAwareResource {
     private final OrderDomainService domainService;
     private final OrderRepository repository;
 
+    /**
+     * @param applicationService 订单应用服务
+     * @param domainService 订单领域服务
+     * @param repository 订单仓储
+     */
     @Inject
     public OrderResource(OrderApplicationService applicationService,
                          OrderDomainService domainService,
@@ -95,6 +100,9 @@ public class OrderResource extends TenantAwareResource {
 
     /**
      * 按订单编号查询订单。
+     *
+     * @param orderNo 订单号
+     * @return 订单响应
      */
     @GET
     @Path("/orderNo/{orderNo}")
@@ -107,6 +115,9 @@ public class OrderResource extends TenantAwareResource {
 
     /**
      * 创建草稿订单。
+     *
+     * @param request 创建订单请求
+     * @return 新订单响应
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -118,6 +129,10 @@ public class OrderResource extends TenantAwareResource {
 
     /**
      * 添加订单行。
+     *
+     * @param id 订单标识
+     * @param request 添加明细请求
+     * @return 更新后的订单响应
      */
     @POST
     @Path("/{id}/lines")
@@ -131,6 +146,9 @@ public class OrderResource extends TenantAwareResource {
 
     /**
      * 支付订单。
+     *
+     * @param id 订单标识
+     * @return 支付后的订单响应
      */
     @POST
     @Path("/{id}:pay")
@@ -140,6 +158,9 @@ public class OrderResource extends TenantAwareResource {
 
     /**
      * 发货订单。
+     *
+     * @param id 订单标识
+     * @return 发货后的订单响应
      */
     @POST
     @Path("/{id}:ship")
@@ -149,6 +170,9 @@ public class OrderResource extends TenantAwareResource {
 
     /**
      * 取消订单。
+     *
+     * @param id 订单标识
+     * @return 取消后的订单响应
      */
     @POST
     @Path("/{id}:cancel")
@@ -158,6 +182,9 @@ public class OrderResource extends TenantAwareResource {
 
     /**
      * 批量取消买家草稿订单（演示领域服务与 SPI）。
+     *
+     * @param request 批量取消请求
+     * @return 取消数量响应
      */
     @POST
     @Path("/cancel-all")
@@ -167,7 +194,7 @@ public class OrderResource extends TenantAwareResource {
         return ok(cancelled);
     }
 
-    // ========== 请求 DTO（record） ==========
+    // ========== 请求 DTO ==========
 
     /**
      * 创建订单请求。
@@ -182,6 +209,11 @@ public class OrderResource extends TenantAwareResource {
 
         private final String buyerName;
 
+        /**
+         * @param orderNo 订单号
+         * @param buyerId 买家标识
+         * @param buyerName 买家姓名
+         */
         @JsonCreator()
         public CreateOrderRequest(@JsonProperty("orderNo") String orderNo, @JsonProperty("buyerId") String buyerId, @JsonProperty("buyerName") String buyerName) {
             this.orderNo = orderNo;
@@ -189,16 +221,19 @@ public class OrderResource extends TenantAwareResource {
             this.buyerName = buyerName;
         }
 
+        /** @return 订单号 */
         @JsonProperty("orderNo")
         public String orderNo() {
             return orderNo;
         }
 
+        /** @return 买家标识 */
         @JsonProperty("buyerId")
         public String buyerId() {
             return buyerId;
         }
 
+        /** @return 买家姓名 */
         @JsonProperty("buyerName")
         public String buyerName() {
             return buyerName;
@@ -246,6 +281,12 @@ public class OrderResource extends TenantAwareResource {
 
         private final BigDecimal unitPrice;
 
+        /**
+         * @param goodsId 商品标识
+         * @param goodsName 商品名称
+         * @param quantity 商品数量
+         * @param unitPrice 商品单价
+         */
         @JsonCreator()
         public AddLineRequest(@JsonProperty("goodsId") String goodsId, @JsonProperty("goodsName") String goodsName, @JsonProperty("quantity") int quantity, @JsonProperty("unitPrice") BigDecimal unitPrice) {
             this.goodsId = goodsId;
@@ -254,21 +295,25 @@ public class OrderResource extends TenantAwareResource {
             this.unitPrice = unitPrice;
         }
 
+        /** @return 商品标识 */
         @JsonProperty("goodsId")
         public String goodsId() {
             return goodsId;
         }
 
+        /** @return 商品名称 */
         @JsonProperty("goodsName")
         public String goodsName() {
             return goodsName;
         }
 
+        /** @return 商品数量 */
         @JsonProperty("quantity")
         public int quantity() {
             return quantity;
         }
 
+        /** @return 商品单价 */
         @JsonProperty("unitPrice")
         public BigDecimal unitPrice() {
             return unitPrice;
@@ -311,11 +356,13 @@ public class OrderResource extends TenantAwareResource {
 
         private final String buyerId;
 
+        /** @param buyerId 买家标识 */
         @JsonCreator()
         public CancelAllRequest(@JsonProperty("buyerId") String buyerId) {
             this.buyerId = buyerId;
         }
 
+        /** @return 买家标识 */
         @JsonProperty("buyerId")
         public String buyerId() {
             return buyerId;

@@ -29,6 +29,11 @@ public final class ReadinessEndpoint {
 
     private final BooleanSupplier readinessSupplier;
 
+    /**
+     * 创建基于就绪状态供应器的端点。
+     *
+     * @param readinessSupplier 就绪状态供应器
+     */
     public ReadinessEndpoint(BooleanSupplier readinessSupplier) {
         this.readinessSupplier = Objects.requireNonNull(readinessSupplier,
                 "readinessSupplier must not be null");

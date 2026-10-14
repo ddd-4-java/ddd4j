@@ -63,10 +63,16 @@ public final class Ddd4jDropwizardRequestFilter implements ContainerRequestFilte
     @Context
     private HttpServletRequest servletRequest;
 
+    /** 使用默认 Web 配置创建请求过滤器。 */
     public Ddd4jDropwizardRequestFilter() {
         this(new Ddd4jDropwizardWebConfiguration());
     }
 
+    /**
+     * 使用指定 Web 配置创建请求过滤器。
+     *
+     * @param configuration Web 配置
+     */
     public Ddd4jDropwizardRequestFilter(Ddd4jDropwizardWebConfiguration configuration) {
         Ddd4jDropwizardWebConfiguration config = Objects.requireNonNull(configuration,
                 "configuration must not be null");
@@ -80,6 +86,13 @@ public final class Ddd4jDropwizardRequestFilter implements ContainerRequestFilte
                 config.getIdempotencyTtl()) : null;
     }
 
+    /**
+     * 使用指定请求组件创建过滤器。
+     *
+     * @param contextFactory 请求上下文工厂
+     * @param requestLifecycle 请求生命周期
+     * @param idempotencyLifecycle 幂等生命周期，可为空
+     */
     public Ddd4jDropwizardRequestFilter(WebRequestContextFactory contextFactory,
                                         WebRequestLifecycle requestLifecycle,
                                         WebIdempotencyLifecycle idempotencyLifecycle) {

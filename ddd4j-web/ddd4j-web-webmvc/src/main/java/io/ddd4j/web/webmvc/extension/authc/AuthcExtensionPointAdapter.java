@@ -39,7 +39,9 @@ import java.util.Objects;
 @Slf4j
 public class AuthcExtensionPointAdapter implements AuthcExtensionPoint {
 
+    /** Authorization 请求头名称。 */
     public static final String AUTHORIZATION_HEADER = "Authorization";
+    /** Bearer 令牌前缀。 */
     public static final String BEARER_PREFIX = "Bearer ";
 
     @Override

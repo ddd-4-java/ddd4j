@@ -32,6 +32,7 @@ public final class RedisIdempotencyPort implements IdempotencyPort {
 
     private final UnifiedJedis jedis;
 
+    /** @param jedis Redis 客户端 */
     public RedisIdempotencyPort(UnifiedJedis jedis) {
         this.jedis = Objects.requireNonNull(jedis, "jedis must not be null");
     }

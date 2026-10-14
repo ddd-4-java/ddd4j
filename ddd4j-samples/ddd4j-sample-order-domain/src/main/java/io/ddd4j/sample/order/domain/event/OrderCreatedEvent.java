@@ -14,7 +14,9 @@
  */
 package io.ddd4j.sample.order.domain.event;
 
+/** 订单已创建事件。 */
 public final class OrderCreatedEvent extends OrderDomainEvent {
+    /** @param orderId 已创建的订单标识 */
     public OrderCreatedEvent(String orderId) {
         super(orderId);
     }

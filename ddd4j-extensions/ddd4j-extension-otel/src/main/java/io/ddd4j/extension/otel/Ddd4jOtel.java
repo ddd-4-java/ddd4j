@@ -56,26 +56,41 @@ public final class Ddd4jOtel {
      */
     public static final String METER_NAME = TRACER_NAME;
 
-    /**
-     * 标准属性键。
-     */
+    /** Span 属性键 {@code ddd4j.tenant.id}。 */
     public static final AttributeKey<String> ATTR_TENANT_ID = AttributeKey.stringKey("ddd4j.tenant.id");
+    /** Span 属性键 {@code ddd4j.user.id}。 */
     public static final AttributeKey<String> ATTR_USER_ID = AttributeKey.stringKey("ddd4j.user.id");
+    /** Span 属性键 {@code ddd4j.login.id}。 */
     public static final AttributeKey<String> ATTR_LOGIN_ID = AttributeKey.stringKey("ddd4j.login.id");
+    /** Span 属性键 {@code ddd4j.user.code}。 */
     public static final AttributeKey<String> ATTR_USER_CODE = AttributeKey.stringKey("ddd4j.user.code");
+    /** Span 属性键 {@code ddd4j.request.id}。 */
     public static final AttributeKey<String> ATTR_REQUEST_ID = AttributeKey.stringKey("ddd4j.request.id");
+    /** Span 属性键 {@code ddd4j.event.type}。 */
     public static final AttributeKey<String> ATTR_DOMAIN_EVENT_TYPE = AttributeKey.stringKey("ddd4j.event.type");
+    /** Span 属性键 {@code ddd4j.aggregate.type}。 */
     public static final AttributeKey<String> ATTR_AGGREGATE_TYPE = AttributeKey.stringKey("ddd4j.aggregate.type");
+    /** Span 属性键 {@code ddd4j.aggregate.id}。 */
     public static final AttributeKey<String> ATTR_AGGREGATE_ID = AttributeKey.stringKey("ddd4j.aggregate.id");
+    /** Span 属性键 {@code ddd4j.query.type}。 */
     public static final AttributeKey<String> ATTR_QUERY_TYPE = AttributeKey.stringKey("ddd4j.query.type");
+    /** Span 属性键 {@code ddd4j.projection.name}。 */
     public static final AttributeKey<String> ATTR_PROJECTION_NAME = AttributeKey.stringKey("ddd4j.projection.name");
+    /** Span 属性键 {@code ddd4j.cache.biz}。 */
     public static final AttributeKey<String> ATTR_CACHE_BIZ = AttributeKey.stringKey("ddd4j.cache.biz");
+    /** Span 属性键 {@code ddd4j.cache.backend}。 */
     public static final AttributeKey<String> ATTR_CACHE_BACKEND = AttributeKey.stringKey("ddd4j.cache.backend");
+    /** Span 属性键 {@code ddd4j.cache.hit}。 */
     public static final AttributeKey<Boolean> ATTR_CACHE_HIT = AttributeKey.booleanKey("ddd4j.cache.hit");
+    /** Span 属性键 {@code messaging.system}。 */
     public static final AttributeKey<String> ATTR_MESSAGING_SYSTEM = AttributeKey.stringKey("messaging.system");
+    /** Span 属性键 {@code messaging.destination}。 */
     public static final AttributeKey<String> ATTR_MESSAGING_DESTINATION = AttributeKey.stringKey("messaging.destination");
+    /** Span 属性键 {@code messaging.operation}。 */
     public static final AttributeKey<String> ATTR_MESSAGING_OPERATION = AttributeKey.stringKey("messaging.operation");
+    /** Span 属性键 {@code db.system}。 */
     public static final AttributeKey<String> ATTR_DB_SYSTEM = AttributeKey.stringKey("db.system");
+    /** Span 属性键 {@code db.statement}。 */
     public static final AttributeKey<String> ATTR_DB_STATEMENT = AttributeKey.stringKey("db.statement");
 
     private static final AtomicReference<Tracer> TRACER_CACHE = new AtomicReference<>();

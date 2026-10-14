@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 
 import java.util.Objects;
 
+/** 创建订单的命令。 */
 public final class CreateOrderCommand {
 
     private static final long serialVersionUID = 0L;
@@ -30,6 +31,11 @@ public final class CreateOrderCommand {
 
     private final String buyerName;
 
+    /**
+     * @param orderNo 订单号
+     * @param buyerId 买家标识
+     * @param buyerName 买家姓名
+     */
     @JsonCreator()
     public CreateOrderCommand(@JsonProperty("orderNo") String orderNo, @JsonProperty("buyerId") String buyerId, @JsonProperty("buyerName") String buyerName) {
         this.orderNo = orderNo;
@@ -37,16 +43,19 @@ public final class CreateOrderCommand {
         this.buyerName = buyerName;
     }
 
+    /** @return 订单号 */
     @JsonProperty("orderNo")
     public String orderNo() {
         return orderNo;
     }
 
+    /** @return 买家标识 */
     @JsonProperty("buyerId")
     public String buyerId() {
         return buyerId;
     }
 
+    /** @return 买家姓名 */
     @JsonProperty("buyerName")
     public String buyerName() {
         return buyerName;

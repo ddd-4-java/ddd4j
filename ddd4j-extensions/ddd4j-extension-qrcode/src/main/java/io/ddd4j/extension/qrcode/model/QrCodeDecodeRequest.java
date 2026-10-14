@@ -28,11 +28,22 @@ public final class QrCodeDecodeRequest {
 
     private final byte[] bytes;
 
+    /**
+     * 从图像字节创建解码请求。
+     *
+     * @param bytes 图像字节
+     */
     @Builder
     public QrCodeDecodeRequest(byte[] bytes) {
         this.bytes = Arrays.copyOf(Objects.requireNonNull(bytes, "bytes must not be null"), bytes.length);
     }
 
+    /**
+     * 从图像字节创建解码请求。
+     *
+     * @param bytes 图像字节
+     * @return 解码请求
+     */
     public static QrCodeDecodeRequest from(byte[] bytes) {
         return new QrCodeDecodeRequest(bytes);
     }

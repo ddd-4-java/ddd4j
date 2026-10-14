@@ -47,7 +47,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * 在同一事务内原子完成（{@code beginTransaction → 校验 → 写入 → commit}，失败整体回滚
  * 不留半截流）；读侧以 {@link Flux} 流式输出，{@code limit} 下推为 SQL 分页。
  *
- * <h3>与同步轨道的关系</h3>
+ * <p><b>与同步轨道的关系</b></p>
  * <ul>
  *   <li>共享同一张表 {@code DDD4J_EVENT_STORE}（建表语句与同步实现一致，含
  *       {@code aggregate_type} 列）；position 全局递增，跨两轨单调不冲突</li>
@@ -58,13 +58,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *       未注册类型在 {@link #readAll(long, int)} 中显式报错而非静默降级</li>
  * </ul>
  *
- * <h3>payload</h3>
+ * <p><b>payload</b></p>
  * <p>经 {@link EventPayloadSerializer}（Jackson 2，无多态标记的安全序列化契约——
  * 2.0.x 主线版本；3.0.x 已迁 Jackson 3，签名相同实现切换）序列化/还原；事件类缺失
  * （被删除/重命名）时以明确错误信号失败——异步轨道的
  * {@link AsyncStoredEvent#payload()} 要求类型化 {@link DomainEvent}，不做 Map 回退。
  *
- * <h3>时间戳</h3>
+ * <p><b>时间戳</b></p>
  * <p>写入 {@code LocalDateTime.now()}，读取以系统时区还原 {@link ZonedDateTime}
  * （instant 语义不变）。
  *

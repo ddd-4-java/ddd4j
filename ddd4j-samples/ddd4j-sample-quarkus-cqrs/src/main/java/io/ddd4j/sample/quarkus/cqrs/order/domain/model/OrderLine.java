@@ -53,6 +53,14 @@ public final class OrderLine implements Entity<String> {
      */
     private int quantity;
 
+    /**
+     * 创建订单明细。
+     *
+     * @param goodsId 商品标识
+     * @param goodsName 商品名称
+     * @param quantity 正数数量
+     * @param unitPrice 商品单价
+     */
     public OrderLine(String goodsId, String goodsName, int quantity, Money unitPrice) {
         if (StrKit.isBlank(goodsId)) {
             throw new IllegalArgumentException("goodsId must not be blank");
@@ -72,18 +80,22 @@ public final class OrderLine implements Entity<String> {
         return id;
     }
 
+    /** @return 商品标识 */
     public String goodsId() {
         return goodsId;
     }
 
+    /** @return 商品名称 */
     public String goodsName() {
         return goodsName;
     }
 
+    /** @return 商品数量 */
     public int quantity() {
         return quantity;
     }
 
+    /** @return 商品单价 */
     public Money unitPrice() {
         return unitPrice;
     }

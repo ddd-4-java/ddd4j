@@ -29,7 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * {@code super(registry.executors())} 传入本类；适配器不复制路由逻辑，
  * 也不应 override {@link #execute}（事务等横切用类级注解让容器代理处理）。
  *
- * <h3>构造即快照（适配器装配顺序约束）</h3>
+ * <p><b>构造即快照（适配器装配顺序约束）</b></p>
  * <p>
  * 本类构造时对执行器集合<b>一次性快照</b>（逐个 {@code putIfAbsent}，
  * 冲突即抛 {@link IllegalStateException}），之后对传入集合的任何变更都不会
@@ -43,6 +43,11 @@ public class DefaultCommandBus implements CommandBus {
 
     private final Map<Class<? extends Command>, CommandExecutor<?>> executors = new ConcurrentHashMap<>();
 
+    /**
+     * 建立命令类型到执行器的索引；重复注册同一命令类型会失败。
+     *
+     * @param commandExecutors 命令执行器集合
+     */
     public DefaultCommandBus(Collection<? extends CommandExecutor<?>> commandExecutors) {
         Objects.requireNonNull(commandExecutors, "commandExecutors must not be null").forEach(this::register);
     }

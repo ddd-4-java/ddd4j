@@ -38,19 +38,40 @@ public class Permission {
      */
     private final String description;
 
+    /**
+     * 创建权限。
+     *
+     * @param code 编码
+     */
     public Permission(String code) {
         this(code, null);
     }
 
+    /**
+     * 创建权限。
+     *
+     * @param code 编码
+     * @param description 描述
+     */
     public Permission(String code, String description) {
         this.code = Objects.requireNonNull(code, "code must not be null");
         this.description = description;
     }
 
+    /**
+     * 读取编码。
+     *
+     * @return 编码
+     */
     public String code() {
         return code;
     }
 
+    /**
+     * 读取描述。
+     *
+     * @return 描述
+     */
     public String description() {
         return description;
     }

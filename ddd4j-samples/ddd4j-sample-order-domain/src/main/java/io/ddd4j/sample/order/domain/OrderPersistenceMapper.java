@@ -14,8 +14,17 @@
  */
 package io.ddd4j.sample.order.domain;
 
+/** 将订单聚合与持久化对象相互转换的映射器。 */
 public interface OrderPersistenceMapper<P> {
+    /**
+     * @param order 订单聚合
+     * @return 持久化对象
+     */
     P toPersistence(Order order);
 
+    /**
+     * @param persistenceObject 持久化对象
+     * @return 订单聚合
+     */
     Order toDomain(P persistenceObject);
 }

@@ -62,26 +62,31 @@ public final class AddOrderLineCommand {
         this.unitPrice = unitPrice;
     }
 
+    /** @return 订单标识 */
     @JsonProperty("orderId")
     public String orderId() {
         return orderId;
     }
 
+    /** @return 商品标识 */
     @JsonProperty("goodsId")
     public String goodsId() {
         return goodsId;
     }
 
+    /** @return 商品名称 */
     @JsonProperty("goodsName")
     public String goodsName() {
         return goodsName;
     }
 
+    /** @return 商品数量 */
     @JsonProperty("quantity")
     public int quantity() {
         return quantity;
     }
 
+    /** @return 商品单价 */
     @JsonProperty("unitPrice")
     public BigDecimal unitPrice() {
         return unitPrice;

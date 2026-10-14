@@ -42,7 +42,7 @@ import java.util.function.UnaryOperator;
  *       每方法恰一条原子语句，无跨语句事务需求（见下），桥接无一致性代价。</li>
  * </ul>
  *
- * <h3>集成方装配</h3>
+ * <h2>集成方装配</h2>
  * <p>本类为纯类（零容器注解、非容器托管）：集成方在应用装配代码中手动
  * {@code new R2dbcProjectionPositionRepository(connectionFactory)} 并自行管理生命周期——
  * 构造参数取 {@link ConnectionFactory}（SPI 接口）而非 r2dbc-pool 的
@@ -50,7 +50,7 @@ import java.util.function.UnaryOperator;
  * 直接可传，且本模块保持零 r2dbc-pool 依赖。生命周期不入 SPI（ADR-0003）：
  * 连接按操作粒度 create／close，无隐式全局状态。
  *
- * <h3>表契约</h3>
+ * <h2>表契约</h2>
  * <p>目标表 {@code ddd4j_projection_position} 与 -jpa/-panache/-jdbi 模块同构
  * （{@code stream_id VARCHAR(250)} 自然主键＋{@code next_event_number BIGINT}，
  * 无时间戳列——5.4 事件存储的 {@code created_at} OffsetDateTime 行类型实证课题

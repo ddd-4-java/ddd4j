@@ -23,6 +23,11 @@ public final class MQStartupStatus {
     private final AtomicReference<MQStartupState> state = new AtomicReference<>(MQStartupState.NEW);
     private final List<MQListenerInitializationFailure> failures = new CopyOnWriteArrayList<>();
 
+    /**
+     * 创建受管理的 MQ 启动状态。
+     *
+     * @param broker Broker 标识
+     */
     public MQStartupStatus(String broker) {
         this(broker, true);
     }
@@ -32,10 +37,18 @@ public final class MQStartupStatus {
         this.managed = managed;
     }
 
+    /**
+     * 返回非托管的启动状态实例。
+     *
+     * @return 非托管实例
+     */
     public static MQStartupStatus unmanaged() {
         return UNMANAGED;
     }
 
+    /**
+     * 标记 MQ 正在启动，并清除旧失败记录。
+     */
     public void starting() {
         if (managed) {
             failures.clear();
@@ -43,12 +56,20 @@ public final class MQStartupStatus {
         }
     }
 
+    /**
+     * 根据失败记录将 MQ 标记为就绪或降级。
+     */
     public void ready() {
         if (managed) {
             state.set(failures.isEmpty() ? MQStartupState.READY : MQStartupState.DEGRADED);
         }
     }
 
+    /**
+     * 记录监听器失败并将 MQ 标记为降级。
+     *
+     * @param failure 监听器初始化失败信息
+     */
     public void degraded(MQListenerInitializationFailure failure) {
         if (managed) {
             failures.add(Objects.requireNonNull(failure, "failure must not be null"));
@@ -56,6 +77,11 @@ public final class MQStartupStatus {
         }
     }
 
+    /**
+     * 记录监听器失败并将 MQ 标记为失败。
+     *
+     * @param failure 监听器初始化失败信息
+     */
     public void failed(MQListenerInitializationFailure failure) {
         if (managed) {
             failures.add(Objects.requireNonNull(failure, "failure must not be null"));
@@ -63,12 +89,20 @@ public final class MQStartupStatus {
         }
     }
 
+    /**
+     * 将 MQ 标记为已停止。
+     */
     public void stopped() {
         if (managed) {
             state.set(MQStartupState.STOPPED);
         }
     }
 
+    /**
+     * 生成当前启动状态的不可变快照。
+     *
+     * @return 启动状态快照
+     */
     public Snapshot snapshot() {
         return new Snapshot(broker, state.get(), failures);
     }
@@ -88,26 +122,56 @@ public final class MQStartupStatus {
             this.failures = Collections.unmodifiableList(new ArrayList<>(failures));
         }
 
+        /**
+         * 返回Broker 标识。
+         *
+         * @return Broker 标识
+         */
         public String broker() {
             return broker;
         }
 
+        /**
+         * 返回启动状态。
+         *
+         * @return 启动状态
+         */
         public MQStartupState state() {
             return state;
         }
 
+        /**
+         * 返回监听器初始化失败列表。
+         *
+         * @return 监听器初始化失败列表
+         */
         public List<MQListenerInitializationFailure> failures() {
             return failures;
         }
 
+        /**
+         * 返回Broker 标识。
+         *
+         * @return Broker 标识
+         */
         public String getBroker() {
             return broker;
         }
 
+        /**
+         * 返回启动状态。
+         *
+         * @return 启动状态
+         */
         public MQStartupState getState() {
             return state;
         }
 
+        /**
+         * 返回监听器初始化失败列表。
+         *
+         * @return 监听器初始化失败列表
+         */
         public List<MQListenerInitializationFailure> getFailures() {
             return failures;
         }

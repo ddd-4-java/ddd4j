@@ -46,6 +46,7 @@ public class QuarkusJpaProjectionService {
         runOnce();
     }
 
+    /** 在事务中执行一次待处理投影拉取。 */
     @Transactional
     public void runOnce() {
         if (projectionPositionRepository.isUnsatisfied()) {
@@ -66,6 +67,11 @@ public class QuarkusJpaProjectionService {
         }
     }
 
+    /**
+     * 拉取并应用指定流的事件。
+     *
+     * @param streamId 投影流标识
+     */
     protected void pullAndApply(String streamId) {
         log.debug("pullAndApply for stream '{}' (override me to implement actual projection)", streamId);
     }

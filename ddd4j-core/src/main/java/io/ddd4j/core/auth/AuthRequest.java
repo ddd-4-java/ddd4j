@@ -29,7 +29,7 @@ import java.util.Objects;
  * <p>承载登录所需的全部信息，由业务构造，由 {@link Subject} 实现消费。
  * 对齐 Sa-Token 的 {@code SaLoginParameter}，覆盖完整登录场景（多端挤占、Cookie 配置、活跃检查等）。
  *
- * <h3>结构</h3>
+ * <p><b>结构</b></p>
  * <ul>
  *   <li>身份：{@link #loginId} / {@link #principal} / {@link #realm}</li>
  *   <li>会话策略：{@link #sessionConfig}（嵌入 {@link AuthSessionConfig}，含全部高级参数）</li>
@@ -69,20 +69,36 @@ public class AuthRequest {
      */
     private Map<String, Object> extra = new HashMap<>();
 
+    /**
+     * 创建使用默认会话配置的登录请求。
+     */
     public AuthRequest() {
     }
 
+    /**
+     * 创建指定登录标识的请求。
+     *
+     * @param loginId 登录标识
+     */
     public AuthRequest(Object loginId) {
         this.loginId = loginId;
     }
 
     /**
      * 快速构造登录请求。
+     *
+     * @param loginId 登录标识
+     * @return 登录请求
      */
     public static AuthRequest of(Object loginId) {
         return new AuthRequest(loginId);
     }
 
+    /**
+     * 以字符串读取登录标识。
+     *
+     * @return 登录标识的字符串形式，未设置时为 null
+     */
     public String getLoginIdAsString() {
         return Objects.isNull(loginId) ? null : String.valueOf(loginId);
     }
@@ -90,11 +106,19 @@ public class AuthRequest {
     /**
      * Token 有效期（秒），-1 表示永久。
      * <p>便捷访问器，转发到 {@link #sessionConfig}。
+     *
+     * @return Token 有效期，单位为秒
      */
     public long getTimeout() {
         return sessionConfig.getTimeout();
     }
 
+    /**
+     * 设置 Token 有效期。
+     *
+     * @param timeout 有效期秒数，-1 表示永久
+     * @return 当前登录请求
+     */
     public AuthRequest setTimeout(long timeout) {
         sessionConfig.setTimeout(timeout);
         return this;
@@ -103,11 +127,19 @@ public class AuthRequest {
     /**
      * 设备类型（多端登录隔离用）。
      * <p>便捷访问器，转发到 {@code sessionConfig.deviceType}。
+     *
+     * @return 设备类型
      */
     public String getDeviceType() {
         return sessionConfig.getDeviceType();
     }
 
+    /**
+     * 设置多端登录隔离使用的设备类型。
+     *
+     * @param deviceType 设备类型
+     * @return 当前登录请求
+     */
     public AuthRequest setDeviceType(String deviceType) {
         sessionConfig.setDeviceType(deviceType);
         return this;
@@ -115,6 +147,10 @@ public class AuthRequest {
 
     /**
      * 添加扩展信息。
+     *
+     * @param key 扩展信息键，不可为 null
+     * @param value 扩展信息值
+     * @return 当前登录请求
      */
     public AuthRequest extra(String key, Object value) {
         if (Objects.isNull(extra)) {

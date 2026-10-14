@@ -47,7 +47,7 @@ import java.util.Objects;
 /**
  * ddd4j Javalin 平台的 Order/Goods CQRS 启动入口。
  *
- * <h3>核心要点</h3>
+ * <h2>核心要点</h2>
  * <p>Javalin 无 DI 容器，业务方在 main 中手动完成：
  * <ol>
  *   <li>注入 4 个核心 SPI（{@link BaseContext#inject}）</li>
@@ -58,7 +58,7 @@ import java.util.Objects;
  *   <li>启动 Javalin，注入路由</li>
  * </ol>
  *
- * <h3>REST 端点（CQRS）</h3>
+ * <h2>REST 端点（CQRS）</h2>
  * <ul>
  *   <li>POST /api/orders, POST /api/orders/{id}/lines, /pay, /ship, /cancel — Order 命令端</li>
  *   <li>GET  /api/orders/query/list, /stats, /buyer/{buyerId}/count, /detail/{id} — Order 查询端（缓存）</li>
@@ -66,7 +66,7 @@ import java.util.Objects;
  *   <li>GET  /api/goods/query/by-id/{id}, /by-code, /list, /by-status, /count, /cache-stats — Goods 查询端（缓存）</li>
  * </ul>
  *
- * <h3>运行</h3>
+ * <h2>运行</h2>
  * <pre>{@code
  * mvn -pl ddd4j-samples/ddd4j-sample-javalin-cqrs exec:java
  * }</pre>

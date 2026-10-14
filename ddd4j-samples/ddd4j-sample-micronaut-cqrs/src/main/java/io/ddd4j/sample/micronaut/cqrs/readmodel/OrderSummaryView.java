@@ -43,6 +43,11 @@ public class OrderSummaryView implements ProjectionView<Object> {
     private final Map<String, OrderSummaryViewEntity> store = new ConcurrentHashMap<>();
     private final EventSourcingOrderRepository orderRepository;
 
+    /**
+     * 创建订单摘要视图。
+     *
+     * @param orderRepository 事件溯源订单仓储
+     */
     public OrderSummaryView(EventSourcingOrderRepository orderRepository) {
         this.orderRepository = Objects.requireNonNull(orderRepository, "orderRepository must not be null");
     }
@@ -102,10 +107,19 @@ public class OrderSummaryView implements ProjectionView<Object> {
         }
     }
 
+    /**
+     * 按订单标识读取视图。
+     *
+     * @param orderId 订单标识
+     * @return 订单摘要视图实体
+     */
     public OrderSummaryViewEntity findById(String orderId) {
         return store.get(orderId);
     }
 
+    /**
+     * 清空订单摘要视图。
+     */
     public void clear() {
         store.clear();
     }

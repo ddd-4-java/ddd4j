@@ -30,7 +30,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class RabbitAcknowledgment implements Acknowledgment {
 
+    /** RabbitMQ 通道请求头名称。 */
     public static final String HEADER_RABBIT_CHANNEL = "ddd4j.rabbit.channel";
+    /** RabbitMQ 投递标签请求头名称。 */
     public static final String HEADER_RABBIT_DELIVERY_TAG = "ddd4j.rabbit.deliveryTag";
 
     private final Channel channel;
@@ -39,6 +41,14 @@ public class RabbitAcknowledgment implements Acknowledgment {
     private final String correlationId;
     private final AtomicBoolean acknowledged = new AtomicBoolean(false);
 
+    /**
+     * 创建 RabbitMQ 消息确认句柄。
+     *
+     * @param channel RabbitMQ 通道
+     * @param deliveryTag 投递标签
+     * @param messageId 消息标识
+     * @param correlationId 关联标识
+     */
     public RabbitAcknowledgment(Channel channel, long deliveryTag, String messageId, String correlationId) {
         this.channel = Objects.requireNonNull(channel, "channel");
         this.deliveryTag = deliveryTag;

@@ -32,10 +32,16 @@ import jakarta.ws.rs.ext.Provider;
 @Provider
 public final class Ddd4jHelidonExceptionMapper extends BaseErrorConfiguration implements ExceptionMapper<RuntimeException> {
 
+    /** 使用默认异常翻译器创建映射器。 */
     public Ddd4jHelidonExceptionMapper() {
         super();
     }
 
+    /**
+     * 使用指定异常翻译器创建映射器。
+     *
+     * @param translator 异常翻译器
+     */
     public Ddd4jHelidonExceptionMapper(WebExceptionTranslator translator) {
         super(translator);
     }

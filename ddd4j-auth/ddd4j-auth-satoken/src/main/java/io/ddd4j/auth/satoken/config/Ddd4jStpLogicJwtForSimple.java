@@ -36,12 +36,19 @@ import java.util.Objects;
 @Getter
 public class Ddd4jStpLogicJwtForSimple extends StpLogicJwtForSimple {
 
+    /** JWT 签发方声明名称。 */
     public static final String ISSUER_CLAIM = "iss";
+    /** JWT 受众声明名称。 */
     public static final String AUDIENCE_CLAIM = "aud";
 
     private final String issuer;
     private final String audience;
 
+    /**
+     * 使用安全配置创建 JWT Simple 账号逻辑。
+     *
+     * @param properties Sa-Token 安全配置
+     */
     public Ddd4jStpLogicJwtForSimple(SaTokenSecurityProperties properties) {
         super(properties.getLoginType());
         this.issuer = properties.getJwtIssuer();
@@ -61,6 +68,9 @@ public class Ddd4jStpLogicJwtForSimple extends StpLogicJwtForSimple {
 
     /**
      * 校验签名、账号体系和 ddd4j 附加的 issuer/audience 声明。
+     *
+     * @param token 待校验的 Token
+     * @return 声明与当前配置一致时为 true
      */
     public boolean hasExpectedClaims(String token) {
         if (StrKit.isBlank(token)) {

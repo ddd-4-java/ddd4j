@@ -53,28 +53,61 @@ public final class IdempotencyLease {
         this.ttl = ttl;
     }
 
+    /**
+     * 返回幂等键。
+     *
+     * @return 幂等键
+     */
+
     public String getKey() {
         return key;
     }
+
+    /**
+     * 返回租约所有者令牌。
+     *
+     * @return 租约所有者令牌
+     */
 
     public String getOwnerToken() {
         return ownerToken;
     }
 
+    /**
+     * 返回租约有效期。
+     *
+     * @return 租约有效期
+     */
+
     public Duration getTtl() {
         return ttl;
     }
 
+    /**
+     * 返回幂等键。
+     *
+     * @return 幂等键
+     */
     @JsonProperty("key")
     public String key() {
         return key;
     }
 
+    /**
+     * 返回租约所有者令牌。
+     *
+     * @return 租约所有者令牌
+     */
     @JsonProperty("ownerToken")
     public String ownerToken() {
         return ownerToken;
     }
 
+    /**
+     * 返回租约有效期。
+     *
+     * @return 租约有效期
+     */
     @JsonProperty("ttl")
     public Duration ttl() {
         return ttl;

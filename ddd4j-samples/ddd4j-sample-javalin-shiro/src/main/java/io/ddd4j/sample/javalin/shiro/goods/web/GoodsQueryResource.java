@@ -37,10 +37,20 @@ public class GoodsQueryResource {
 
     private final GoodsApplicationService applicationService;
 
+    /**
+     * 创建商品查询资源。
+     *
+     * @param applicationService 商品应用服务
+     */
     public GoodsQueryResource(GoodsApplicationService applicationService) {
         this.applicationService = Objects.requireNonNull(applicationService, "applicationService must not be null");
     }
 
+    /**
+     * 构建商品 HTTP 路由。
+     *
+     * @return 商品路由组
+     */
     public EndpointGroup routes() {
         return () -> {
             // GET /api/goods/page

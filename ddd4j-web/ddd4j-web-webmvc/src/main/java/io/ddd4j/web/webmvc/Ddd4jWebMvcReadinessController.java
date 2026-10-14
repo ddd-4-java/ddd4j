@@ -31,6 +31,11 @@ public final class Ddd4jWebMvcReadinessController {
 
     private final ReadinessEndpoint readinessEndpoint;
 
+    /**
+     * 创建 Ddd4jWebMvcReadinessController 实例。
+     *
+     * @param readinessRegistry 就绪状态注册表
+     */
     public Ddd4jWebMvcReadinessController(RuntimeReadinessRegistry readinessRegistry) {
         RuntimeReadinessRegistry registry = Objects.requireNonNull(readinessRegistry,
                 "readinessRegistry must not be null");

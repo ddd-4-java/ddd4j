@@ -48,11 +48,25 @@ public final class GoodsResponse {
 
     private final LocalDateTime updateTime;
 
+    /**
+     * @param goods 商品领域对象
+     * @return 商品 HTTP 响应
+     */
     public static GoodsResponse from(Goods goods) {
         Goods source = Objects.requireNonNull(goods, "goods must not be null");
         return new GoodsResponse(source.id(), source.getCode(), source.getName(), source.getPrice(), source.getStock(), source.getStatus(), source.getCreateTime(), source.getUpdateTime());
     }
 
+    /**
+     * @param id 商品标识
+     * @param code 商品编码
+     * @param name 商品名称
+     * @param price 商品价格
+     * @param stock 库存数量
+     * @param status 商品状态
+     * @param createTime 创建时间
+     * @param updateTime 更新时间
+     */
     @JsonCreator()
     public GoodsResponse(@JsonProperty("id") Long id, @JsonProperty("code") String code, @JsonProperty("name") String name, @JsonProperty("price") BigDecimal price, @JsonProperty("stock") Integer stock, @JsonProperty("status") GoodsStatus status, @JsonProperty("createTime") LocalDateTime createTime, @JsonProperty("updateTime") LocalDateTime updateTime) {
         this.id = id;
@@ -65,41 +79,49 @@ public final class GoodsResponse {
         this.updateTime = updateTime;
     }
 
+    /** @return 商品标识 */
     @JsonProperty("id")
     public Long id() {
         return id;
     }
 
+    /** @return 商品编码 */
     @JsonProperty("code")
     public String code() {
         return code;
     }
 
+    /** @return 商品名称 */
     @JsonProperty("name")
     public String name() {
         return name;
     }
 
+    /** @return 商品价格 */
     @JsonProperty("price")
     public BigDecimal price() {
         return price;
     }
 
+    /** @return 库存数量 */
     @JsonProperty("stock")
     public Integer stock() {
         return stock;
     }
 
+    /** @return 商品状态 */
     @JsonProperty("status")
     public GoodsStatus status() {
         return status;
     }
 
+    /** @return 创建时间 */
     @JsonProperty("createTime")
     public LocalDateTime createTime() {
         return createTime;
     }
 
+    /** @return 更新时间 */
     @JsonProperty("updateTime")
     public LocalDateTime updateTime() {
         return updateTime;

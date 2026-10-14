@@ -80,6 +80,8 @@ public class KafkaMQProperties extends MQProperties {
 
     /**
      * Producer 配置（对齐 ProducerConfig 常量名）
+     *
+     * @return Kafka producer 配置
      */
     public Properties producerProperties() {
         Properties properties = new Properties();
@@ -96,6 +98,8 @@ public class KafkaMQProperties extends MQProperties {
 
     /**
      * AdminClient 配置
+     *
+     * @return Kafka 管理客户端配置
      */
     public Properties adminProperties() {
         Properties properties = new Properties();
@@ -106,6 +110,9 @@ public class KafkaMQProperties extends MQProperties {
 
     /**
      * Consumer 配置
+     *
+     * @param groupId 消费者组标识
+     * @return Kafka consumer 配置
      */
     public Properties consumerProperties(String groupId) {
         Properties properties = new Properties();

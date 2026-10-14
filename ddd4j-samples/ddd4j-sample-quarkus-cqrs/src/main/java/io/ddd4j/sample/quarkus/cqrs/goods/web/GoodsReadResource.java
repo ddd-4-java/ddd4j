@@ -54,6 +54,10 @@ public class GoodsReadResource extends TenantAwareResource {
     private final GoodsCacheService goodsCacheService;
     private final GoodsRepository goodsRepository;
 
+    /**
+     * @param goodsCacheService 商品查询缓存
+     * @param goodsRepository 商品仓储
+     */
     @Inject
     public GoodsReadResource(GoodsCacheService goodsCacheService, GoodsRepository goodsRepository) {
         this.goodsCacheService = goodsCacheService;
@@ -62,6 +66,9 @@ public class GoodsReadResource extends TenantAwareResource {
 
     /**
      * 按 ID 查询（缓存优先）。
+     *
+     * @param id 商品标识
+     * @return 商品响应
      */
     @GET
     @Path("/by-id/{id}")
@@ -75,6 +82,9 @@ public class GoodsReadResource extends TenantAwareResource {
 
     /**
      * 按编码查询（仓储直查）。
+     *
+     * @param code 商品编码
+     * @return 商品响应
      */
     @GET
     @Path("/by-code/{code}")
@@ -86,6 +96,8 @@ public class GoodsReadResource extends TenantAwareResource {
 
     /**
      * 列表（缓存优先）。
+     *
+     * @return 商品列表响应
      */
     @GET
     @Path("/list")
@@ -95,6 +107,9 @@ public class GoodsReadResource extends TenantAwareResource {
 
     /**
      * 按状态过滤（缓存优先）。
+     *
+     * @param status 商品状态
+     * @return 匹配的商品列表响应
      */
     @GET
     @Path("/by-status")
@@ -104,6 +119,8 @@ public class GoodsReadResource extends TenantAwareResource {
 
     /**
      * 计数（基于缓存列表）。
+     *
+     * @return 商品数量响应
      */
     @GET
     @Path("/count")
@@ -113,6 +130,8 @@ public class GoodsReadResource extends TenantAwareResource {
 
     /**
      * 缓存统计（CQRS 监控）。
+     *
+     * @return 缓存统计响应
      */
     @GET
     @Path("/cache-stats")

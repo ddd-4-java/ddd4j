@@ -37,6 +37,11 @@ public class GoodsResource {
 
     private final GoodsApplicationService applicationService;
 
+    /**
+     * 创建商品写入资源。
+     *
+     * @param applicationService 商品应用服务
+     */
     @Inject
     public GoodsResource(GoodsApplicationService applicationService) {
         this.applicationService = applicationService;
@@ -44,6 +49,9 @@ public class GoodsResource {
 
     /**
      * 创建商品。
+     *
+     * @param request 请求数据
+     * @return 创建后的商品
      */
     @POST
     public R<Goods> create(CreateGoodsRequest request) {
@@ -54,6 +62,10 @@ public class GoodsResource {
 
     /**
      * 更新商品。
+     *
+     * @param id 商品标识
+     * @param request 请求数据
+     * @return 更新后的商品
      */
     @PUT
     @Path("/{id}")
@@ -65,6 +77,10 @@ public class GoodsResource {
 
     /**
      * 调整商品状态。
+     *
+     * @param id 商品标识
+     * @param status 商品状态
+     * @return 更新后的商品
      */
     @PUT
     @Path("/{id}/status")
@@ -75,6 +91,9 @@ public class GoodsResource {
 
     /**
      * 删除商品（软删）。
+     *
+     * @param id 商品标识
+     * @return 响应结果
      */
     @DELETE
     @Path("/{id}")
@@ -85,6 +104,9 @@ public class GoodsResource {
 
     /**
      * 按 ID 查询商品。
+     *
+     * @param id 商品标识
+     * @return 商品
      */
     @GET
     @Path("/{id}")
@@ -94,6 +116,9 @@ public class GoodsResource {
 
     /**
      * 按编码查询商品。
+     *
+     * @param code 商品编码
+     * @return 商品
      */
     @GET
     @Path("/by-code")

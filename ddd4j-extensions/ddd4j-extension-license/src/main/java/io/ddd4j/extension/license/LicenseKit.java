@@ -28,14 +28,14 @@ import java.util.Objects;
  * <p>聚合签发（{@link LicenseCreator}）、校验（{@link LicenseVerify}）、缓存（{@link LicenseCache}）三段，
  * 对外提供完整的 License 生命周期 API。是业务代码与底层签名校验 / CacheKit 之间的唯一入口。
  *
- * <h3>两种使用模式</h3>
+ * <h2>两种使用模式</h2>
  * <ol>
  *   <li><b>发证方</b>（厂商）：{@link #generate(LicenseCreatorParam)} 生成 {@code .lic} 文件；</li>
  *   <li><b>校验方</b>（部署方）：{@link #install()} → {@link #verify()} → {@link #uninstall()}，
  *       验证结果自动缓存到 {@link LicenseCache}（CacheKit）。</li>
  * </ol>
  *
- * <h3>基于 {@link LicenseProperties} 的快速装配</h3>
+ * <h2>基于 {@link LicenseProperties} 的快速装配</h2>
  * <pre>{@code
  *   LicenseProperties props = ...; // 来自配置
  *   LicenseKit manager = LicenseKit.from(props);
@@ -169,7 +169,7 @@ public class LicenseKit {
     /**
      * 运行期校验证书是否有效。
      *
-     * <p>当 {@link LicenseProperties#isEnabled()} 为 false 时恒返回 true（旁路）。
+     * <p>当 {@code LicenseProperties.isEnabled()} 为 false 时恒返回 true（旁路）。
      * 否则先查 {@link LicenseCache}，命中且未过期直接通过；未命中重新验签并回填缓存。
      *
      * @return true 表示校验通过
@@ -213,6 +213,11 @@ public class LicenseKit {
         return verify.isInstallSuccess();
     }
 
+    /**
+     * 判断许可证是否已缓存。
+     *
+     * @return 已缓存时为 true
+     */
     public boolean isCached() {
         return verify.isCached();
     }

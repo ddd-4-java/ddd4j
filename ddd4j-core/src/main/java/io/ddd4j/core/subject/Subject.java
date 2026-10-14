@@ -39,7 +39,7 @@ import java.util.function.Function;
  * <p>各鉴权框架（Sa-Token / Shiro / Spring Security）提供各自的实现，
  * 业务代码统一通过 {@link SubjectKit} 门面调用。
  *
- * <h3>使用示例</h3>
+ * <p><b>使用示例</b></p>
  * <pre>{@code
  * // 获取当前登录用户 ID
  * Object loginId = SubjectKit.getLoginId();

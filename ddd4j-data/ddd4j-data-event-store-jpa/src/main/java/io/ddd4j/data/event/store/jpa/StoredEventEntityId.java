@@ -29,27 +29,55 @@ public class StoredEventEntityId implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    /** 聚合标识。 */
     private String aggregateId;
+    /** 聚合类型。 */
     private String aggregateType;
+    /** 事件版本。 */
     private long version;
 
+    /**
+     * 创建空的StoredEventEntityId实例，供 JPA 或序列化框架使用。
+     */
     public StoredEventEntityId() {
     }
 
+    /**
+     * 创建事件复合主键。
+     *
+     * @param aggregateType 聚合类型
+     * @param aggregateId 聚合标识
+     * @param version 事件版本
+     */
     public StoredEventEntityId(String aggregateType, String aggregateId, long version) {
         this.aggregateType = aggregateType;
         this.aggregateId = aggregateId;
         this.version = version;
     }
 
+    /**
+     * 返回聚合标识。
+     *
+     * @return 聚合标识
+     */
     public String getAggregateId() {
         return aggregateId;
     }
 
+    /**
+     * 返回聚合类型。
+     *
+     * @return 聚合类型
+     */
     public String getAggregateType() {
         return aggregateType;
     }
 
+    /**
+     * 返回事件版本。
+     *
+     * @return 事件版本
+     */
     public long getVersion() {
         return version;
     }

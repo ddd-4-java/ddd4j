@@ -21,7 +21,10 @@ package io.ddd4j.mq.redisstream;
  */
 public enum RedisStreamClientType {
 
+    /** Jedis 客户端。 */
     JEDIS,
+    /** Redisson 客户端。 */
     REDISSON,
+    /** Lettuce 客户端。 */
     LETTUCE
 }

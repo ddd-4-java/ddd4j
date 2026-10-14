@@ -56,28 +56,55 @@ public class Jvm {
      */
     private String home;
 
+    /**
+     * 返回JVM 总内存（MB）。
+     *
+     * @return JVM 总内存（MB）
+     */
     public double getTotal() {
         return ArithKit.div(total, (1024 * 1024), 2);
     }
 
+    /**
+     * 返回JVM 最大内存（MB）。
+     *
+     * @return JVM 最大内存（MB）
+     */
     public double getMax() {
         return ArithKit.div(max, (1024 * 1024), 2);
     }
 
+    /**
+     * 返回JVM 空闲内存（MB）。
+     *
+     * @return JVM 空闲内存（MB）
+     */
     public double getFree() {
         return ArithKit.div(free, (1024 * 1024), 2);
     }
 
+    /**
+     * 返回JVM 已用内存（MB）。
+     *
+     * @return JVM 已用内存（MB）
+     */
     public double getUsed() {
         return ArithKit.div(total - free, (1024 * 1024), 2);
     }
 
+    /**
+     * 返回JVM 内存使用率（百分比）。
+     *
+     * @return JVM 内存使用率（百分比）
+     */
     public double getUsage() {
         return ArithKit.mul(ArithKit.div(total - free, total, 4), 100);
     }
 
     /**
      * 获取JDK名称
+     *
+     * @return JVM 名称
      */
     public String getName() {
         return ManagementFactory.getRuntimeMXBean().getVmName();
@@ -85,6 +112,8 @@ public class Jvm {
 
     /**
      * JDK启动时间
+     *
+     * @return JVM 启动时间
      */
     public String getStartTime() {
         long time = ManagementFactory.getRuntimeMXBean().getStartTime();
@@ -94,6 +123,8 @@ public class Jvm {
 
     /**
      * JDK运行时间
+     *
+     * @return JVM 运行时间
      */
     public String getRunTime() {
         long time = ManagementFactory.getRuntimeMXBean().getStartTime();
@@ -103,6 +134,8 @@ public class Jvm {
 
     /**
      * 运行参数
+     *
+     * @return JVM 启动参数
      */
     public String getInputArgs() {
         return ManagementFactory.getRuntimeMXBean().getInputArguments().toString();

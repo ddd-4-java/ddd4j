@@ -26,6 +26,9 @@ public class GoodsId implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 标识数值。
+     */
     private final Long value;
 
     private GoodsId(Long value) {
@@ -35,10 +38,21 @@ public class GoodsId implements Serializable {
         this.value = value;
     }
 
+    /**
+     * 从数值创建商品标识。
+     *
+     * @param value 标识数值
+     * @return 商品标识
+     */
     public static GoodsId of(Long value) {
         return new GoodsId(value);
     }
 
+    /**
+     * 读取商品标识数值。
+     *
+     * @return 标识数值
+     */
     public Long value() {
         return value;
     }

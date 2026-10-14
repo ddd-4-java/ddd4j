@@ -35,6 +35,13 @@ public final class SignedLicense {
     private final byte[] payload;
     private final byte[] signature;
 
+    /**
+     * 创建签名许可证。
+     *
+     * @param algorithm 签名算法
+     * @param payload 许可证负载
+     * @param signature 签名字节
+     */
     public SignedLicense(String algorithm, byte[] payload, byte[] signature) {
         if (StrKit.isBlank(algorithm)) {
             throw new IllegalArgumentException("license signature algorithm must not be blank");
@@ -44,6 +51,12 @@ public final class SignedLicense {
         this.signature = Objects.requireNonNull(signature, "signature must not be null");
     }
 
+    /**
+     * 从文本格式解析签名许可证。
+     *
+     * @param bytes 文本格式字节
+     * @return 签名许可证
+     */
     public static SignedLicense parse(byte[] bytes) {
         String[] fields = new String(bytes, StandardCharsets.UTF_8).split("\\R", -1);
         if (fields.length != FIELD_COUNT + 1 || !Objects.equals(FORMAT, fields[0])) {
@@ -56,18 +69,38 @@ public final class SignedLicense {
         }
     }
 
+    /**
+     * 获取签名算法。
+     *
+     * @return 签名算法
+     */
     public String algorithm() {
         return algorithm;
     }
 
+    /**
+     * 获取许可证负载副本。
+     *
+     * @return 许可证负载副本
+     */
     public byte[] payload() {
         return payload.clone();
     }
 
+    /**
+     * 获取签名字节副本。
+     *
+     * @return 签名字节副本
+     */
     public byte[] signature() {
         return signature.clone();
     }
 
+    /**
+     * 序列化签名许可证为文本格式。
+     *
+     * @return 文本格式许可证
+     */
     public String serialize() {
         return String.join("\n", FORMAT, algorithm,
                 Base64.getEncoder().encodeToString(payload),

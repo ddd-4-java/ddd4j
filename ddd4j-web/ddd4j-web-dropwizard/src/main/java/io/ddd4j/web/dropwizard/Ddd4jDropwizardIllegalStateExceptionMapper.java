@@ -26,10 +26,16 @@ public final class Ddd4jDropwizardIllegalStateExceptionMapper implements Excepti
 
     private final Ddd4jDropwizardExceptionMapper delegate;
 
+    /** 使用默认 ddd4j 异常映射器。 */
     public Ddd4jDropwizardIllegalStateExceptionMapper() {
         this(new Ddd4jDropwizardExceptionMapper());
     }
 
+    /**
+     * 使用指定委托处理非法状态异常。
+     *
+     * @param delegate ddd4j 异常映射器
+     */
     public Ddd4jDropwizardIllegalStateExceptionMapper(Ddd4jDropwizardExceptionMapper delegate) {
         this.delegate = Objects.requireNonNull(delegate, "delegate must not be null");
     }

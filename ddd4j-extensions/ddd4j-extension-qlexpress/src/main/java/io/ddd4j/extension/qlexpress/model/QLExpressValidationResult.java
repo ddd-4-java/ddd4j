@@ -31,16 +31,29 @@ public final class QLExpressValidationResult {
 
     private final String message;
 
+    /**
+     * 创建语法校验成功结果。
+     *
+     * @return 成功结果
+     */
     public static QLExpressValidationResult success() {
         return new QLExpressValidationResult(true, "表达式语法正确");
     }
 
+    /**
+     * 创建语法校验失败结果。
+     *
+     * @param message 错误消息
+     * @return 失败结果
+     */
     public static QLExpressValidationResult invalid(String message) {
         return new QLExpressValidationResult(false, message);
     }
 
     /**
      * 返回校验状态，兼容 bean 调用方。
+     *
+     * @return 有效时为 true
      */
     public boolean isValid() {
         return valid;
@@ -48,22 +61,40 @@ public final class QLExpressValidationResult {
 
     /**
      * 返回校验消息。
+     *
+     * @return 校验消息
      */
     public String getMessage() {
         return message;
     }
 
+    /**
+     * 创建语法校验结果。
+     *
+     * @param valid 是否有效
+     * @param message 校验消息
+     */
     @JsonCreator()
     public QLExpressValidationResult(@JsonProperty("valid") boolean valid, @JsonProperty("message") String message) {
         this.valid = valid;
         this.message = message;
     }
 
+    /**
+     * 读取校验状态。
+     *
+     * @return 有效时为 true
+     */
     @JsonProperty("valid")
     public boolean valid() {
         return valid;
     }
 
+    /**
+     * 读取校验消息。
+     *
+     * @return 校验消息
+     */
     @JsonProperty("message")
     public String message() {
         return message;

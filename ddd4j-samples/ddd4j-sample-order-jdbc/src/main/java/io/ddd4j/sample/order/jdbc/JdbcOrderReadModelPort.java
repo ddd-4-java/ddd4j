@@ -37,6 +37,7 @@ public final class JdbcOrderReadModelPort implements OrderReadModelPort {
 
     private final JdbcOrderTransactionPort transaction;
 
+    /** @param transaction JDBC 事务边界 */
     public JdbcOrderReadModelPort(JdbcOrderTransactionPort transaction) {
         this.transaction = Objects.requireNonNull(transaction, "transaction must not be null");
     }

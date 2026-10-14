@@ -38,31 +38,67 @@ public final class QLExpressEngineBuilder {
     private QLSecurityStrategy securityStrategy = QLSecurityStrategy.isolation();
     private QLExpressExecutionOptions defaultExecutionOptions = QLExpressExecutionOptions.defaults();
 
+    /**
+     * 启用或禁用内置函数。
+     *
+     * @param enabled 是否启用
+     * @return 当前构建器
+     */
     public QLExpressEngineBuilder builtInFunctions(boolean enabled) {
         this.builtInFunctions = enabled;
         return this;
     }
 
+    /**
+     * 配置私有成员访问。
+     *
+     * @param allowed 是否允许
+     * @return 当前构建器
+     */
     public QLExpressEngineBuilder allowPrivateAccess(boolean allowed) {
         this.allowPrivateAccess = allowed;
         return this;
     }
 
+    /**
+     * 配置表达式追踪。
+     *
+     * @param enabled 是否启用
+     * @return 当前构建器
+     */
     public QLExpressEngineBuilder traceExpression(boolean enabled) {
         this.traceExpression = enabled;
         return this;
     }
 
+    /**
+     * 配置执行安全策略。
+     *
+     * @param securityStrategy 安全策略
+     * @return 当前构建器
+     */
     public QLExpressEngineBuilder securityStrategy(QLSecurityStrategy securityStrategy) {
         this.securityStrategy = Objects.requireNonNull(securityStrategy, "securityStrategy 不能为空");
         return this;
     }
 
+    /**
+     * 配置默认执行选项。
+     *
+     * @param options 执行选项
+     * @return 当前构建器
+     */
     public QLExpressEngineBuilder defaultExecutionOptions(QLExpressExecutionOptions options) {
         this.defaultExecutionOptions = Objects.requireNonNull(options, "options 不能为空");
         return this;
     }
 
+    /**
+     * 注册构建时可用的自定义函数。
+     *
+     * @param function 自定义函数
+     * @return 当前构建器
+     */
     public QLExpressEngineBuilder function(NamedQLFunction function) {
         NamedQLFunction checked = Objects.requireNonNull(function, "function 不能为空");
         if (!StrKit.hasText(checked.name())) {
@@ -72,6 +108,11 @@ public final class QLExpressEngineBuilder {
         return this;
     }
 
+    /**
+     * 创建 QLExpress 引擎。
+     *
+     * @return QLExpress 引擎
+     */
     public QLExpressEngine build() {
         Map<String, NamedQLFunction> initialFunctions = new LinkedHashMap<>();
         if (builtInFunctions) {

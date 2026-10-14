@@ -41,6 +41,14 @@ import java.io.Serializable;
  */
 public abstract class BaseClientAggregateController<V, Q, ID extends Serializable> {
 
+    /**
+     * 分页查询聚合根。
+     *
+     * @param pageNum 页码
+     * @param pageSize 每页数量
+     * @param query 查询条件
+     * @return 聚合根分页结果
+     */
     @GetMapping
     public R<Page<V>> page(@RequestParam(defaultValue = "1") int pageNum,
                            @RequestParam(defaultValue = "20") int pageSize,
@@ -48,6 +56,12 @@ public abstract class BaseClientAggregateController<V, Q, ID extends Serializabl
         return R.ok(clientListPage(pageNum, pageSize, query));
     }
 
+    /**
+     * 按标识查询聚合根详情。
+     *
+     * @param id 聚合根标识
+     * @return 聚合根详情响应
+     */
     @GetMapping("/{id}")
     public R<V> getById(@PathVariable ID id) {
         return R.ok(clientDetail(id));
@@ -55,8 +69,22 @@ public abstract class BaseClientAggregateController<V, Q, ID extends Serializabl
 
     // ------- 业务项目实现以下方法（只读） -------
 
+    /**
+     * 分页查询客户端视图。
+     *
+     * @param pageNum 页码
+     * @param pageSize 每页数量
+     * @param query 查询条件
+     * @return 客户端视图分页结果
+     */
     protected abstract Page<V> clientListPage(int pageNum, int pageSize, Q query);
 
+    /**
+     * 查询客户端视图详情。
+     *
+     * @param id 聚合根标识
+     * @return 客户端视图详情
+     */
     protected abstract V clientDetail(ID id);
 
 }

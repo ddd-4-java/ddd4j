@@ -37,6 +37,7 @@ import java.lang.annotation.*;
 @Inherited
 public @interface DomainRepository {
 
+    /** @return Spring 组件名称；空字符串表示使用默认名称 */
     @AliasFor(annotation = Repository.class, attribute = "value")
     String value() default "";
 }

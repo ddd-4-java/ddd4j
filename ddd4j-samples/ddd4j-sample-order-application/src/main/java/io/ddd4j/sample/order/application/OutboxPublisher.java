@@ -30,11 +30,19 @@ public final class OutboxPublisher {
     private final OutboxPort outbox;
     private final IntegrationEventPublisher publisher;
 
+    /**
+     * @param outbox 消息持久化端口
+     * @param publisher 消息传输端口
+     */
     public OutboxPublisher(OutboxPort outbox, IntegrationEventPublisher publisher) {
         this.outbox = Objects.requireNonNull(outbox, "outbox must not be null");
         this.publisher = Objects.requireNonNull(publisher, "publisher must not be null");
     }
 
+    /**
+     * @param limit 本轮最多处理数量
+     * @return 成功发布的消息数
+     */
     public int publishPending(int limit) {
         return dispatchPending(limit).published();
     }

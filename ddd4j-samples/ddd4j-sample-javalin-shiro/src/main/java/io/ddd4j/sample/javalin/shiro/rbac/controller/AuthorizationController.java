@@ -57,6 +57,11 @@ public class AuthorizationController {
 
     private final RbacService rbacService;
 
+    /**
+     * 创建授权控制器。
+     *
+     * @param rbacService RBAC 服务
+     */
     @Inject
     public AuthorizationController(RbacService rbacService) {
         this.rbacService = rbacService;
@@ -94,6 +99,8 @@ public class AuthorizationController {
 
     /**
      * GET /auth/users —— 查询用户列表（需要 user:list 权限）。
+     *
+     * @param ctx Javalin 请求上下文
      */
     public void listUsers(Context ctx) {
         if (!SubjectKit.hasPermission("user:list")) {
@@ -108,6 +115,8 @@ public class AuthorizationController {
 
     /**
      * GET /auth/users/{id} —— 查询单个用户。
+     *
+     * @param ctx Javalin 请求上下文
      */
     public void getUser(Context ctx) {
         if (!SubjectKit.hasPermission("user:list")) {
@@ -121,6 +130,8 @@ public class AuthorizationController {
 
     /**
      * POST /auth/users —— 创建用户（需要 admin 角色）。
+     *
+     * @param ctx Javalin 请求上下文
      */
     public void createUser(Context ctx) {
         if (!requireAdmin(ctx)) {
@@ -138,6 +149,8 @@ public class AuthorizationController {
 
     /**
      * PUT /auth/users/{id} —— 更新用户（需要 admin 角色）。
+     *
+     * @param ctx Javalin 请求上下文
      */
     public void updateUser(Context ctx) {
         if (!requireAdmin(ctx)) {
@@ -156,6 +169,8 @@ public class AuthorizationController {
 
     /**
      * DELETE /auth/users/{id} —— 删除用户（需要 admin 角色 + user:delete 权限组合）。
+     *
+     * @param ctx Javalin 请求上下文
      */
     public void deleteUser(Context ctx) {
         // 组合校验：必须同时拥有 admin 角色 + user:delete 权限
@@ -172,6 +187,8 @@ public class AuthorizationController {
 
     /**
      * GET /auth/roles —— 查询角色列表（需要 role:list 权限）。
+     *
+     * @param ctx Javalin 请求上下文
      */
     public void listRoles(Context ctx) {
         if (!SubjectKit.hasPermission("role:list")) {
@@ -184,6 +201,8 @@ public class AuthorizationController {
 
     /**
      * POST /auth/roles —— 创建角色（需要 admin 角色）。
+     *
+     * @param ctx Javalin 请求上下文
      */
     public void createRole(Context ctx) {
         if (!requireAdmin(ctx)) {
@@ -196,6 +215,8 @@ public class AuthorizationController {
 
     /**
      * PUT /auth/roles/{code} —— 更新角色（需要 admin 角色）。
+     *
+     * @param ctx Javalin 请求上下文
      */
     public void updateRole(Context ctx) {
         if (!requireAdmin(ctx)) {
@@ -212,6 +233,8 @@ public class AuthorizationController {
 
     /**
      * DELETE /auth/roles/{code} —— 删除角色（需要 admin 角色）。
+     *
+     * @param ctx Javalin 请求上下文
      */
     public void deleteRole(Context ctx) {
         if (!requireAdmin(ctx)) {
@@ -224,6 +247,8 @@ public class AuthorizationController {
 
     /**
      * GET /auth/permissions —— 查询权限列表（需要 permission:list 权限）。
+     *
+     * @param ctx Javalin 请求上下文
      */
     public void listPermissions(Context ctx) {
         if (!SubjectKit.hasPermission("permission:list")) {
@@ -236,6 +261,8 @@ public class AuthorizationController {
 
     /**
      * POST /auth/permissions —— 创建权限（需要 admin 角色）。
+     *
+     * @param ctx Javalin 请求上下文
      */
     public void createPermission(Context ctx) {
         if (!requireAdmin(ctx)) {
@@ -248,6 +275,8 @@ public class AuthorizationController {
 
     /**
      * DELETE /auth/permissions/{code} —— 删除权限（需要 admin 角色）。
+     *
+     * @param ctx Javalin 请求上下文
      */
     public void deletePermission(Context ctx) {
         if (!requireAdmin(ctx)) {
@@ -271,6 +300,9 @@ public class AuthorizationController {
 
     // ============================ DTO 视图对象 ============================
 
+    /**
+     * 创建用户请求。
+     */
     public final static class CreateUserRequest {
 
         private static final long serialVersionUID = 0L;
@@ -285,6 +317,15 @@ public class AuthorizationController {
 
         private final String[] permissions;
 
+        /**
+         * 创建创建用户请求。
+         *
+         * @param loginId 登录标识
+         * @param password 密码
+         * @param displayName 显示名称
+         * @param roles 角色编码集合
+         * @param permissions 权限编码集合
+         */
         @JsonCreator()
         public CreateUserRequest(@JsonProperty("loginId") String loginId, @JsonProperty("password") String password, @JsonProperty("displayName") String displayName, @JsonProperty("roles") String[] roles, @JsonProperty("permissions") String[] permissions) {
             this.loginId = loginId;
@@ -294,26 +335,51 @@ public class AuthorizationController {
             this.permissions = permissions;
         }
 
+        /**
+         * 读取登录标识。
+         *
+         * @return 登录标识
+         */
         @JsonProperty("loginId")
         public String loginId() {
             return loginId;
         }
 
+        /**
+         * 读取密码。
+         *
+         * @return 密码
+         */
         @JsonProperty("password")
         public String password() {
             return password;
         }
 
+        /**
+         * 读取显示名称。
+         *
+         * @return 显示名称
+         */
         @JsonProperty("displayName")
         public String displayName() {
             return displayName;
         }
 
+        /**
+         * 读取角色编码集合。
+         *
+         * @return 角色编码集合
+         */
         @JsonProperty("roles")
         public String[] roles() {
             return roles;
         }
 
+        /**
+         * 读取权限编码集合。
+         *
+         * @return 权限编码集合
+         */
         @JsonProperty("permissions")
         public String[] permissions() {
             return permissions;
@@ -348,6 +414,9 @@ public class AuthorizationController {
         }
     }
 
+    /**
+     * 更新用户请求。
+     */
     public final static class UpdateUserRequest {
 
         private static final long serialVersionUID = 0L;
@@ -360,6 +429,14 @@ public class AuthorizationController {
 
         private final String[] permissions;
 
+        /**
+         * 创建更新用户请求。
+         *
+         * @param displayName 显示名称
+         * @param password 密码
+         * @param roles 角色编码集合
+         * @param permissions 权限编码集合
+         */
         @JsonCreator()
         public UpdateUserRequest(@JsonProperty("displayName") String displayName, @JsonProperty("password") String password, @JsonProperty("roles") String[] roles, @JsonProperty("permissions") String[] permissions) {
             this.displayName = displayName;
@@ -368,21 +445,41 @@ public class AuthorizationController {
             this.permissions = permissions;
         }
 
+        /**
+         * 读取显示名称。
+         *
+         * @return 显示名称
+         */
         @JsonProperty("displayName")
         public String displayName() {
             return displayName;
         }
 
+        /**
+         * 读取密码。
+         *
+         * @return 密码
+         */
         @JsonProperty("password")
         public String password() {
             return password;
         }
 
+        /**
+         * 读取角色编码集合。
+         *
+         * @return 角色编码集合
+         */
         @JsonProperty("roles")
         public String[] roles() {
             return roles;
         }
 
+        /**
+         * 读取权限编码集合。
+         *
+         * @return 权限编码集合
+         */
         @JsonProperty("permissions")
         public String[] permissions() {
             return permissions;
@@ -416,6 +513,9 @@ public class AuthorizationController {
         }
     }
 
+    /**
+     * 创建角色请求。
+     */
     public final static class CreateRoleRequest {
 
         private static final long serialVersionUID = 0L;
@@ -426,6 +526,13 @@ public class AuthorizationController {
 
         private final String[] permissions;
 
+        /**
+         * 创建创建角色请求。
+         *
+         * @param code 编码
+         * @param name 名称
+         * @param permissions 权限编码集合
+         */
         @JsonCreator()
         public CreateRoleRequest(@JsonProperty("code") String code, @JsonProperty("name") String name, @JsonProperty("permissions") String[] permissions) {
             this.code = code;
@@ -433,16 +540,31 @@ public class AuthorizationController {
             this.permissions = permissions;
         }
 
+        /**
+         * 读取编码。
+         *
+         * @return 编码
+         */
         @JsonProperty("code")
         public String code() {
             return code;
         }
 
+        /**
+         * 读取名称。
+         *
+         * @return 名称
+         */
         @JsonProperty("name")
         public String name() {
             return name;
         }
 
+        /**
+         * 读取权限编码集合。
+         *
+         * @return 权限编码集合
+         */
         @JsonProperty("permissions")
         public String[] permissions() {
             return permissions;
@@ -475,6 +597,9 @@ public class AuthorizationController {
         }
     }
 
+    /**
+     * 更新角色请求。
+     */
     public final static class UpdateRoleRequest {
 
         private static final long serialVersionUID = 0L;
@@ -483,17 +608,33 @@ public class AuthorizationController {
 
         private final String[] permissions;
 
+        /**
+         * 创建更新角色请求。
+         *
+         * @param name 名称
+         * @param permissions 权限编码集合
+         */
         @JsonCreator()
         public UpdateRoleRequest(@JsonProperty("name") String name, @JsonProperty("permissions") String[] permissions) {
             this.name = name;
             this.permissions = permissions;
         }
 
+        /**
+         * 读取名称。
+         *
+         * @return 名称
+         */
         @JsonProperty("name")
         public String name() {
             return name;
         }
 
+        /**
+         * 读取权限编码集合。
+         *
+         * @return 权限编码集合
+         */
         @JsonProperty("permissions")
         public String[] permissions() {
             return permissions;
@@ -525,6 +666,9 @@ public class AuthorizationController {
         }
     }
 
+    /**
+     * 创建权限请求。
+     */
     public final static class CreatePermissionRequest {
 
         private static final long serialVersionUID = 0L;
@@ -533,17 +677,33 @@ public class AuthorizationController {
 
         private final String description;
 
+        /**
+         * 创建创建权限请求。
+         *
+         * @param code 编码
+         * @param description 描述
+         */
         @JsonCreator()
         public CreatePermissionRequest(@JsonProperty("code") String code, @JsonProperty("description") String description) {
             this.code = code;
             this.description = description;
         }
 
+        /**
+         * 读取编码。
+         *
+         * @return 编码
+         */
         @JsonProperty("code")
         public String code() {
             return code;
         }
 
+        /**
+         * 读取描述。
+         *
+         * @return 描述
+         */
         @JsonProperty("description")
         public String description() {
             return description;
@@ -575,6 +735,9 @@ public class AuthorizationController {
         }
     }
 
+    /**
+     * 用户视图。
+     */
     public final static class UserView {
 
         private static final long serialVersionUID = 0L;
@@ -587,6 +750,14 @@ public class AuthorizationController {
 
         private final Set<String> permissions;
 
+        /**
+         * 创建用户视图。
+         *
+         * @param loginId 登录标识
+         * @param displayName 显示名称
+         * @param roles 角色编码集合
+         * @param permissions 权限编码集合
+         */
         @JsonCreator()
         public UserView(@JsonProperty("loginId") String loginId, @JsonProperty("displayName") String displayName, @JsonProperty("roles") Set<String> roles, @JsonProperty("permissions") Set<String> permissions) {
             this.loginId = loginId;
@@ -595,21 +766,41 @@ public class AuthorizationController {
             this.permissions = permissions;
         }
 
+        /**
+         * 读取登录标识。
+         *
+         * @return 登录标识
+         */
         @JsonProperty("loginId")
         public String loginId() {
             return loginId;
         }
 
+        /**
+         * 读取显示名称。
+         *
+         * @return 显示名称
+         */
         @JsonProperty("displayName")
         public String displayName() {
             return displayName;
         }
 
+        /**
+         * 读取角色编码集合。
+         *
+         * @return 角色编码集合
+         */
         @JsonProperty("roles")
         public Set<String> roles() {
             return roles;
         }
 
+        /**
+         * 读取权限编码集合。
+         *
+         * @return 权限编码集合
+         */
         @JsonProperty("permissions")
         public Set<String> permissions() {
             return permissions;
@@ -643,6 +834,9 @@ public class AuthorizationController {
         }
     }
 
+    /**
+     * 角色视图。
+     */
     public final static class RoleView {
 
         private static final long serialVersionUID = 0L;
@@ -653,6 +847,13 @@ public class AuthorizationController {
 
         private final Set<String> permissions;
 
+        /**
+         * 创建角色视图。
+         *
+         * @param code 编码
+         * @param name 名称
+         * @param permissions 权限编码集合
+         */
         @JsonCreator()
         public RoleView(@JsonProperty("code") String code, @JsonProperty("name") String name, @JsonProperty("permissions") Set<String> permissions) {
             this.code = code;
@@ -660,16 +861,31 @@ public class AuthorizationController {
             this.permissions = permissions;
         }
 
+        /**
+         * 读取编码。
+         *
+         * @return 编码
+         */
         @JsonProperty("code")
         public String code() {
             return code;
         }
 
+        /**
+         * 读取名称。
+         *
+         * @return 名称
+         */
         @JsonProperty("name")
         public String name() {
             return name;
         }
 
+        /**
+         * 读取权限编码集合。
+         *
+         * @return 权限编码集合
+         */
         @JsonProperty("permissions")
         public Set<String> permissions() {
             return permissions;
@@ -702,6 +918,9 @@ public class AuthorizationController {
         }
     }
 
+    /**
+     * 权限视图。
+     */
     public final static class PermissionView {
 
         private static final long serialVersionUID = 0L;
@@ -710,17 +929,33 @@ public class AuthorizationController {
 
         private final String description;
 
+        /**
+         * 创建权限视图。
+         *
+         * @param code 编码
+         * @param description 描述
+         */
         @JsonCreator()
         public PermissionView(@JsonProperty("code") String code, @JsonProperty("description") String description) {
             this.code = code;
             this.description = description;
         }
 
+        /**
+         * 读取编码。
+         *
+         * @return 编码
+         */
         @JsonProperty("code")
         public String code() {
             return code;
         }
 
+        /**
+         * 读取描述。
+         *
+         * @return 描述
+         */
         @JsonProperty("description")
         public String description() {
             return description;

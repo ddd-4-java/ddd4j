@@ -41,8 +41,9 @@ import static io.javalin.apibuilder.ApiBuilder.*;
  * {@code javalinConfig.routes.apiBuilder(() -> goodsController.routes())} 注册。
  * 响应统一使用 ddd4j 的 {@link R}{@code <T>} 包装。
  *
- * <h3>路由列表</h3>
+ * <h2>路由列表</h2>
  * <table border="1">
+ *   <caption>商品 REST 路由</caption>
  *   <tr><th>HTTP</th><th>路径</th><th>用途</th></tr>
  *   <tr><td>POST</td><td>/api/goods</td><td>创建商品</td></tr>
  *   <tr><td>PUT</td><td>/api/goods/{id}</td><td>更新商品</td></tr>
@@ -61,6 +62,7 @@ public class GoodsController {
 
     private final GoodsApplicationService applicationService;
 
+    /** @param applicationService 商品应用服务 */
     public GoodsController(GoodsApplicationService applicationService) {
         this.applicationService = Objects.requireNonNull(applicationService, "applicationService must not be null");
     }
@@ -207,6 +209,12 @@ public class GoodsController {
 
         private final Integer stock;
 
+        /**
+         * @param code 商品编码
+         * @param name 商品名称
+         * @param price 商品价格
+         * @param stock 库存数量
+         */
         @JsonCreator()
         public CreateGoodsRequest(@JsonProperty("code") String code, @JsonProperty("name") String name, @JsonProperty("price") BigDecimal price, @JsonProperty("stock") Integer stock) {
             this.code = code;
@@ -215,21 +223,25 @@ public class GoodsController {
             this.stock = stock;
         }
 
+        /** @return 商品编码 */
         @JsonProperty("code")
         public String code() {
             return code;
         }
 
+        /** @return 商品名称 */
         @JsonProperty("name")
         public String name() {
             return name;
         }
 
+        /** @return 商品价格 */
         @JsonProperty("price")
         public BigDecimal price() {
             return price;
         }
 
+        /** @return 库存数量 */
         @JsonProperty("stock")
         public Integer stock() {
             return stock;
@@ -274,17 +286,23 @@ public class GoodsController {
 
         private final BigDecimal price;
 
+        /**
+         * @param name 新商品名称
+         * @param price 新商品价格
+         */
         @JsonCreator()
         public UpdateGoodsRequest(@JsonProperty("name") String name, @JsonProperty("price") BigDecimal price) {
             this.name = name;
             this.price = price;
         }
 
+        /** @return 新商品名称 */
         @JsonProperty("name")
         public String name() {
             return name;
         }
 
+        /** @return 新商品价格 */
         @JsonProperty("price")
         public BigDecimal price() {
             return price;

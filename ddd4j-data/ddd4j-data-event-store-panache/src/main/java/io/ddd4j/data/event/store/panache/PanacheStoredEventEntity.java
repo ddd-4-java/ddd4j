@@ -35,10 +35,10 @@ import java.time.Instant;
  * <p><b>公有字段风格是 Panache 的刻意约定</b>：Quarkus Panache active record 模式
  * （继承 {@link PanacheEntityBase}）以公有字段直接承载列映射，省去 getter/setter 样板。
  *
- * <h3>主键设计</h3>
+ * <p><b>主键设计</b></p>
  * <p>复合主键 {@code (aggregate_type, aggregate_id, version)} 通过 {@link IdClass} 实现，
  * 保证同一聚合内的版本号唯一。{@code position} 为全局单调递增列（带唯一约束），
- * 由应用层分配（{@link #nextPosition}），用于全局分页读取。
+ * 由 {@link PanacheEventStore} 分配，用于全局分页读取。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @see PanacheEventStore

@@ -151,16 +151,31 @@ public final class BearerSubjectAuthenticator {
             this.subject = subject;
         }
 
+        /**
+         * 返回身份令牌。
+         *
+         * @return 身份令牌
+         */
         @JsonProperty("token")
         public String token() {
             return token;
         }
 
+        /**
+         * 返回认证主体。
+         *
+         * @return 认证主体
+         */
         @JsonProperty("principal")
         public AuthPrincipal principal() {
             return principal;
         }
 
+        /**
+         * 返回Subject 实例。
+         *
+         * @return Subject 实例
+         */
         @JsonProperty("subject")
         public Subject subject() {
             return subject;

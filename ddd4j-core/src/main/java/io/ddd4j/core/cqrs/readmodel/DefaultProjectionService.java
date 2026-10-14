@@ -26,6 +26,11 @@ public class DefaultProjectionService implements ProjectionService {
 
     private final ProjectionPositionRepository repository;
 
+    /**
+     * 使用投影位置仓储创建服务。
+     *
+     * @param repository 投影位置仓储
+     */
     public DefaultProjectionService(ProjectionPositionRepository repository) {
         this.repository = Objects.requireNonNull(repository, "repository must not be null");
     }

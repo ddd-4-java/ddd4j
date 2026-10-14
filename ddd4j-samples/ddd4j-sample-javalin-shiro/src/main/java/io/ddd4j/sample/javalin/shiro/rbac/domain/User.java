@@ -23,7 +23,7 @@ import java.util.Set;
  * RBAC 用户聚合根。
  *
  * <p>用户通过 {@link #roles()} 持有的角色集合间接获得权限码集合（{@link #permissions()}）。
- * 权限码集合是 {@link RbacService} 派生计算的缓存视图，便于 {@link io.ddd4j.core.subject.SubjectDataProvider}
+ * 权限码集合是 {@code RbacService} 派生计算的缓存视图，便于 {@code SubjectDataProvider}
  * 直接读取。
  *
  * <p>本类在所有 7 个示例（Spring/Quarkus/Javalin × Sa-Token/Shiro/Security）中<b>完全一致</b>，
@@ -54,10 +54,25 @@ public class User {
      */
     private final Set<String> permissions;
 
+    /**
+     * 创建用户。
+     *
+     * @param loginId 登录标识
+     * @param password 密码
+     */
     public User(String loginId, String password) {
         this(loginId, password, null, Collections.emptySet(), Collections.emptySet());
     }
 
+    /**
+     * 创建用户。
+     *
+     * @param loginId 登录标识
+     * @param password 密码
+     * @param displayName 显示名称
+     * @param roles 角色编码集合
+     * @param permissions 权限编码集合
+     */
     public User(String loginId, String password, String displayName, Set<String> roles, Set<String> permissions) {
         this.loginId = Objects.requireNonNull(loginId, "loginId must not be null");
         this.password = Objects.requireNonNull(password, "password must not be null");
@@ -80,22 +95,47 @@ public class User {
         return new User(loginId, password, null, set, Collections.emptySet());
     }
 
+    /**
+     * 读取登录标识。
+     *
+     * @return 登录标识
+     */
     public String loginId() {
         return loginId;
     }
 
+    /**
+     * 读取密码。
+     *
+     * @return 密码
+     */
     public String password() {
         return password;
     }
 
+    /**
+     * 读取显示名称。
+     *
+     * @return 显示名称
+     */
     public String displayName() {
         return displayName;
     }
 
+    /**
+     * 读取角色编码集合。
+     *
+     * @return 角色编码集合
+     */
     public Set<String> roles() {
         return roles;
     }
 
+    /**
+     * 读取权限编码集合。
+     *
+     * @return 权限编码集合
+     */
     public Set<String> permissions() {
         return permissions;
     }

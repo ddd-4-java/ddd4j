@@ -79,6 +79,8 @@ public final class AuthConfig {
 
     /**
      * 创建简单凭据匹配器（明文密码比对，仅供演示）。
+     *
+     * @return 凭据匹配器
      */
     public static CredentialsMatcher createSimpleCredentialsMatcher() {
         return new SimpleCredentialsMatcher();
@@ -86,6 +88,8 @@ public final class AuthConfig {
 
     /**
      * 获取当前线程的 Shiro Subject（辅助方法）。
+     *
+     * @return 当前主体
      */
     public static Subject currentSubject() {
         return SecurityUtils.getSubject();
@@ -109,6 +113,13 @@ public final class AuthConfig {
         private final InMemoryRoleRepository roleRepository;
         private final RbacService rbacService;
 
+        /**
+         * 创建 RBAC Realm。
+         *
+         * @param userRepository 用户仓储
+         * @param roleRepository 角色仓储
+         * @param rbacService RBAC 服务
+         */
         public RbacRealm(InMemoryUserRepository userRepository,
                          InMemoryRoleRepository roleRepository,
                          RbacService rbacService) {

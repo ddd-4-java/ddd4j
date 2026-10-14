@@ -41,6 +41,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 public abstract class BaseAdminAggregateController<V, Q> {
 
+    /**
+     * 分页查询聚合根。
+     *
+     * @param pageNum 页码
+     * @param pageSize 每页数量
+     * @param query 查询条件
+     * @return 聚合根分页结果
+     */
     @GetMapping
     @ResponseBody
     public R<Page<V>> page(@RequestParam(defaultValue = "1") int pageNum, @RequestParam(defaultValue = "20") int pageSize, Q query) {
@@ -49,6 +57,14 @@ public abstract class BaseAdminAggregateController<V, Q> {
 
     // ------- 业务项目实现以下方法 -------
 
+    /**
+     * 分页查询管理视图。
+     *
+     * @param pageNum 页码
+     * @param pageSize 每页数量
+     * @param query 查询条件
+     * @return 管理视图分页结果
+     */
     protected abstract Page<V> adminListPage(int pageNum, int pageSize, Q query);
 
 }

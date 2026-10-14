@@ -56,6 +56,13 @@ public class MicronautProjectionViewManager implements ViewManager {
 
     private volatile boolean running = false;
 
+    /**
+     * 从 Micronaut 容器装配投影视图管理器。
+     *
+     * @param scheduler 视图调度器
+     * @param runner 投影执行器
+     * @param context Micronaut Bean 上下文
+     */
     @Inject
     @SuppressWarnings("unchecked")
     public MicronautProjectionViewManager(ViewScheduler scheduler,

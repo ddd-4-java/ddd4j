@@ -22,7 +22,7 @@ import java.util.Optional;
  * <p>所有方法均提供 {@code default} 空实现（no-op），实现方可按需覆盖。
  * 运行时适配层（如 Micrometer / OpenTelemetry）通过实现本接口注入指标采集逻辑。
  *
- * <h3>对接示例（Micrometer）</h3>
+ * <p><b>对接示例（Micrometer）</b></p>
  * <pre>{@code
  * public class MicrometerProjectionMetrics implements ProjectionMetrics {
  *     private final MeterRegistry registry;

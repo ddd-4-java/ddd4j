@@ -42,6 +42,11 @@ public class SpringJpaProjectionPositionRepository
      */
     private final JpaRepository<SpringJpaProjectionPosition, String> jpaRepository;
 
+    /**
+     * 创建基于 Spring Data JPA 的投影位置仓库。
+     *
+     * @param jpaRepository Spring Data JPA 仓库
+     */
     public SpringJpaProjectionPositionRepository(JpaRepository<SpringJpaProjectionPosition, String> jpaRepository) {
         this.jpaRepository = jpaRepository;
     }

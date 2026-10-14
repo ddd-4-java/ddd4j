@@ -43,15 +43,33 @@ public final class Ddd4jBundle<C extends Configuration> implements ConfiguredBun
     private final I18nProvider i18nProvider;
     private final Collection<ReadinessContributor> readinessContributors;
 
+    /** 使用默认服务集合创建 Dropwizard Bundle。 */
     public Ddd4jBundle() {
         this(List.of(), List.of(), null, I18nProvider.DEFAULT, List.of());
     }
 
+    /**
+     * 使用指定服务集合创建 Bundle。
+     *
+     * @param executors 命令执行器
+     * @param listeners 事件监听器
+     * @param subjectProvider 主体提供器，可为空
+     * @param i18nProvider 国际化提供器
+     */
     public Ddd4jBundle(Collection<CommandExecutor<?>> executors, Collection<Consumer<Object>> listeners,
                        SubjectProvider subjectProvider, I18nProvider i18nProvider) {
         this(executors, listeners, subjectProvider, i18nProvider, List.of());
     }
 
+    /**
+     * 使用指定服务与就绪检查创建 Bundle。
+     *
+     * @param executors 命令执行器
+     * @param listeners 事件监听器
+     * @param subjectProvider 主体提供器，可为空
+     * @param i18nProvider 国际化提供器
+     * @param readinessContributors 就绪检查贡献者
+     */
     public Ddd4jBundle(Collection<CommandExecutor<?>> executors, Collection<Consumer<Object>> listeners,
                        SubjectProvider subjectProvider, I18nProvider i18nProvider,
                        Collection<? extends ReadinessContributor> readinessContributors) {

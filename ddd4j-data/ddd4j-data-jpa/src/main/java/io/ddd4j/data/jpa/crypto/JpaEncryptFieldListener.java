@@ -34,7 +34,7 @@ import java.util.ServiceLoader;
  *
  * <p>满足等保数据加密要求：SM4 对称加密 + SM3 摘要签名。</p>
  *
- * <h3>加解密 Handler 的获取</h3>
+ * <p><b>加解密 Handler 的获取</b></p>
  * <p>JPA 规范要求 {@code @EntityListeners} 监听器由 ORM 以<b>无参构造</b>实例化，
  * 无法通过构造器注入 {@link CryptoStrategy}。本监听器在无参构造时通过
  * {@link ServiceLoader} 延迟发现 {@link CryptoStrategy} 实现；若发现多个则取第一个，
@@ -63,28 +63,56 @@ public class JpaEncryptFieldListener {
 
     private final Ddd4jFieldCryptoHandler fieldCryptoHandler;
 
+    /**
+     * 通过 ServiceLoader 发现加解密策略。
+     */
     public JpaEncryptFieldListener() {
         this.fieldCryptoHandler = resolveHandler();
     }
 
+    /**
+     * 使用指定加解密策略创建监听器。
+     *
+     * @param cryptoStrategy 加解密策略
+     */
     public JpaEncryptFieldListener(CryptoStrategy cryptoStrategy) {
         this.fieldCryptoHandler = new Ddd4jFieldCryptoHandler(cryptoStrategy);
     }
 
+    /**
+     * 使用指定字段加解密处理器创建监听器。
+     *
+     * @param fieldCryptoHandler 字段加解密处理器
+     */
     public JpaEncryptFieldListener(Ddd4jFieldCryptoHandler fieldCryptoHandler) {
         this.fieldCryptoHandler = fieldCryptoHandler;
     }
 
+    /**
+     * 持久化前加密已标注的字段。
+     *
+     * @param entity 待持久化实体
+     */
     @PrePersist
     public void prePersist(Object entity) {
         encryptFields(entity);
     }
 
+    /**
+     * 更新前加密已标注的字段。
+     *
+     * @param entity 待更新实体
+     */
     @PreUpdate
     public void preUpdate(Object entity) {
         encryptFields(entity);
     }
 
+    /**
+     * 加载后解密已标注的字段。
+     *
+     * @param entity 已加载实体
+     */
     @PostLoad
     public void postLoad(Object entity) {
         decryptFields(entity);

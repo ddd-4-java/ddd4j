@@ -34,10 +34,22 @@ public class Ddd4jFieldCryptoHandler {
 
     private final CryptoStrategy cryptoStrategy;
 
+    /**
+     * 创建共享的字段加解密处理器。
+     *
+     * @param cryptoStrategy 加解密策略
+     */
     public Ddd4jFieldCryptoHandler(CryptoStrategy cryptoStrategy) {
         this.cryptoStrategy = Objects.requireNonNull(cryptoStrategy, "cryptoStrategy must not be null");
     }
 
+    /**
+     * 加密字段值；空值原样返回。
+     *
+     * @param value 原始字段值
+     * @param <T> 字段类型
+     * @return 加密后的字段值
+     */
     public <T> T encrypt(T value) {
         if (Objects.isNull(value)) {
             return null;
@@ -47,6 +59,13 @@ public class Ddd4jFieldCryptoHandler {
         return (T) encrypted;
     }
 
+    /**
+     * 解密字段值；解密失败时返回原值。
+     *
+     * @param value 加密后的字段值
+     * @param <T> 字段类型
+     * @return 解密后的字段值或原值
+     */
     public <T> T decrypt(T value) {
         if (!(value instanceof String encrypted) || StrKit.isEmpty(encrypted)) {
             return value;
@@ -60,6 +79,11 @@ public class Ddd4jFieldCryptoHandler {
         }
     }
 
+    /**
+     * 返回当前加解密策略。
+     *
+     * @return 加解密策略
+     */
     public CryptoStrategy getCryptoStrategy() {
         return cryptoStrategy;
     }

@@ -38,7 +38,7 @@ import static io.javalin.apibuilder.ApiBuilder.*;
  * {@link RbacService} 实现业务侧鉴权判断，与 Spring Sa-Token 注解示例
  * （{@code @SaCheckLogin} / {@code @SaCheckRole} / {@code @SaCheckPermission}）行为完全一致。
  *
- * <h3>3 种鉴权控制</h3>
+ * <h2>3 种鉴权控制</h2>
  * <ol>
  *   <li><b>登录鉴权</b>：{@code SubjectKit.isLogin()}，仅登录用户可访问</li>
  *   <li><b>角色鉴权</b>：{@code SubjectKit.hasRole("admin")}，指定角色可访问</li>
@@ -54,12 +54,19 @@ public class AuthenticationController {
 
     private final RbacService rbacService;
 
+    /**
+     * 创建认证控制器。
+     *
+     * @param rbacService RBAC 服务
+     */
     public AuthenticationController(RbacService rbacService) {
         this.rbacService = Objects.requireNonNull(rbacService, "rbacService must not be null");
     }
 
     /**
      * 注册 {@code /auth/*} 路由。
+     *
+     * @return 路由组
      */
     public EndpointGroup routes() {
         return () -> {
@@ -219,6 +226,9 @@ public class AuthenticationController {
 
     // ============================ 请求 DTO ============================
 
+    /**
+     * 登录请求。
+     */
     public final static class LoginRequest {
 
         private static final long serialVersionUID = 0L;
@@ -227,17 +237,33 @@ public class AuthenticationController {
 
         private final String password;
 
+        /**
+         * 创建登录请求。
+         *
+         * @param username 用户名
+         * @param password 密码
+         */
         @JsonCreator()
         public LoginRequest(@JsonProperty("username") String username, @JsonProperty("password") String password) {
             this.username = username;
             this.password = password;
         }
 
+        /**
+         * 读取用户名。
+         *
+         * @return 用户名
+         */
         @JsonProperty("username")
         public String username() {
             return username;
         }
 
+        /**
+         * 读取密码。
+         *
+         * @return 密码
+         */
         @JsonProperty("password")
         public String password() {
             return password;
@@ -269,17 +295,30 @@ public class AuthenticationController {
         }
     }
 
+    /**
+     * 用户下线请求。
+     */
     public final static class KickoutRequest {
 
         private static final long serialVersionUID = 0L;
 
         private final String userId;
 
+        /**
+         * 创建用户下线请求。
+         *
+         * @param userId 用户标识
+         */
         @JsonCreator()
         public KickoutRequest(@JsonProperty("userId") String userId) {
             this.userId = userId;
         }
 
+        /**
+         * 读取用户标识。
+         *
+         * @return 用户标识
+         */
         @JsonProperty("userId")
         public String userId() {
             return userId;
@@ -310,17 +349,30 @@ public class AuthenticationController {
         }
     }
 
+    /**
+     * 角色校验请求。
+     */
     public final static class RoleCheckRequest {
 
         private static final long serialVersionUID = 0L;
 
         private final String role;
 
+        /**
+         * 创建角色校验请求。
+         *
+         * @param role 角色编码
+         */
         @JsonCreator()
         public RoleCheckRequest(@JsonProperty("role") String role) {
             this.role = role;
         }
 
+        /**
+         * 读取角色编码。
+         *
+         * @return 角色编码
+         */
         @JsonProperty("role")
         public String role() {
             return role;
@@ -351,17 +403,30 @@ public class AuthenticationController {
         }
     }
 
+    /**
+     * 权限校验请求。
+     */
     public final static class PermissionCheckRequest {
 
         private static final long serialVersionUID = 0L;
 
         private final String permission;
 
+        /**
+         * 创建权限校验请求。
+         *
+         * @param permission 权限编码
+         */
         @JsonCreator()
         public PermissionCheckRequest(@JsonProperty("permission") String permission) {
             this.permission = permission;
         }
 
+        /**
+         * 读取权限编码。
+         *
+         * @return 权限编码
+         */
         @JsonProperty("permission")
         public String permission() {
             return permission;

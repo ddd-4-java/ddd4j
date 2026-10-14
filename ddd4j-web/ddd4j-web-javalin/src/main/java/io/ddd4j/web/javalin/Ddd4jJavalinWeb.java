@@ -63,6 +63,7 @@ public final class Ddd4jJavalinWeb {
     private final Optional<WebIdempotencyLifecycle> idempotencyLifecycle;
     private final ReadinessEndpoint readinessEndpoint;
 
+    /** 使用默认请求生命周期和就绪注册表创建 Web 适配器。 */
     public Ddd4jJavalinWeb() {
         this(new WebRequestContextFactory(), new WebRequestLifecycle(new BearerSubjectAuthenticator(),
                         new PathWebAccessPolicy(List.of("/health", "/health/readiness", "/health/liveness",
@@ -84,6 +85,14 @@ public final class Ddd4jJavalinWeb {
                 new DefaultWebExceptionTranslator(), null, readinessRegistry);
     }
 
+    /**
+     * 使用指定请求生命周期和异常转换器创建 Web 适配器。
+     *
+     * @param contextFactory 请求上下文工厂
+     * @param requestLifecycle 请求生命周期
+     * @param exceptionTranslator 异常转换器
+     * @param idempotencyLifecycle 幂等请求生命周期
+     */
     public Ddd4jJavalinWeb(WebRequestContextFactory contextFactory, WebRequestLifecycle requestLifecycle,
                            WebExceptionTranslator exceptionTranslator,
                            WebIdempotencyLifecycle idempotencyLifecycle) {
@@ -91,6 +100,15 @@ public final class Ddd4jJavalinWeb {
                 new RuntimeReadinessRegistry());
     }
 
+    /**
+     * 使用指定依赖和就绪注册表创建 Web 适配器。
+     *
+     * @param contextFactory 请求上下文工厂
+     * @param requestLifecycle 请求生命周期
+     * @param exceptionTranslator 异常转换器
+     * @param idempotencyLifecycle 幂等请求生命周期
+     * @param readinessRegistry 就绪状态注册表
+     */
     public Ddd4jJavalinWeb(WebRequestContextFactory contextFactory, WebRequestLifecycle requestLifecycle,
                            WebExceptionTranslator exceptionTranslator,
                            WebIdempotencyLifecycle idempotencyLifecycle,
@@ -122,6 +140,11 @@ public final class Ddd4jJavalinWeb {
         }
     }
 
+    /**
+     * 注册请求上下文、异常处理和就绪端点。
+     *
+     * @param config Javalin 配置
+     */
     public void configure(JavalinConfig config) {
         JavalinConfig javalinConfig = Objects.requireNonNull(config, "config must not be null");
         javalinConfig.routes.before(this::openContext);

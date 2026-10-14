@@ -28,13 +28,42 @@ import java.util.List;
  */
 public interface Ddd4jMapper<P> {
 
+    /**
+     * 插入持久化对象。
+     *
+     * @param entity 待插入对象
+     * @return 受影响行数
+     */
     int insert(P entity);
 
+    /**
+     * 按标识更新持久化对象。
+     *
+     * @param entity 待更新对象
+     * @return 受影响行数
+     */
     int updateById(P entity);
 
+    /**
+     * 按标识查询持久化对象。
+     *
+     * @param id 对象标识
+     * @return 匹配的对象
+     */
     P selectById(Serializable id);
 
+    /**
+     * 批量按标识查询持久化对象。
+     *
+     * @param ids 对象标识集合
+     * @return 匹配的对象列表
+     */
     List<P> selectBatchIds(Collection<? extends Serializable> ids);
 
+    /**
+     * 查询全部持久化对象。
+     *
+     * @return 对象列表
+     */
     List<P> selectList();
 }

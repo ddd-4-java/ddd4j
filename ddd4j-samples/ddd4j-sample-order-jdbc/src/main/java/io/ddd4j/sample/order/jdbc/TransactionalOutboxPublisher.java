@@ -31,6 +31,10 @@ public final class TransactionalOutboxPublisher {
     private final JdbcOrderTransactionPort transaction;
     private final OutboxPublisher publisher;
 
+    /**
+     * @param transaction JDBC 事务边界
+     * @param publisher Outbox 发布协调器
+     */
     public TransactionalOutboxPublisher(JdbcOrderTransactionPort transaction, OutboxPublisher publisher) {
         this.transaction = Objects.requireNonNull(transaction, "transaction must not be null");
         this.publisher = Objects.requireNonNull(publisher, "publisher must not be null");

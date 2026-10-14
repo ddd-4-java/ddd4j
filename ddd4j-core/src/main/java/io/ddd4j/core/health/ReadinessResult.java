@@ -75,28 +75,58 @@ public final class ReadinessResult {
         return new ReadinessResult(name, false, StrKit.isBlank(reason) ? Map.of() : Map.of("reason", reason));
     }
 
+    /**
+     * 获取诊断详情。
+     *
+     * @return 不可变诊断详情
+     */
     public Map<String, String> getDetails() {
         return details;
     }
 
+    /**
+     * 获取依赖名称。
+     *
+     * @return 依赖名称
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * 判断该依赖是否可接收流量。
+     *
+     * @return 就绪时为 true
+     */
     public boolean isReady() {
         return ready;
     }
 
+    /**
+     * 获取用于 JSON 的依赖名称。
+     *
+     * @return 依赖名称
+     */
     @JsonProperty("name")
     public String name() {
         return name;
     }
 
+    /**
+     * 获取用于 JSON 的就绪状态。
+     *
+     * @return 就绪时为 true
+     */
     @JsonProperty("ready")
     public boolean ready() {
         return ready;
     }
 
+    /**
+     * 获取用于 JSON 的诊断详情。
+     *
+     * @return 不可变诊断详情
+     */
     @JsonProperty("details")
     public Map<String, String> details() {
         return details;

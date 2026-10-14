@@ -38,7 +38,7 @@ import java.math.BigDecimal;
  * 即可享受充血查询。所有条件通过显式 getter/setter 暴露，
  * 业务侧可直接以链式或传统方式构造查询条件。
  *
- * <h3>使用示例</h3>
+ * <h2>使用示例</h2>
  * <pre>{@code
  * // 1. 链式构建
  * Page<Goods> page = new GoodsQuery()
@@ -97,46 +97,71 @@ public class GoodsQuery extends Query<Goods> {
         return RepositoryRegistry.repository(Goods.class);
     }
 
+    /** @return 商品编码 */
     public String getCode() {
         return code;
     }
 
+    /**
+     * @param code 商品编码
+     * @return 当前查询对象
+     */
     public GoodsQuery setCode(String code) {
         this.code = code;
         return this;
     }
 
+    /** @return 模糊匹配的商品名称 */
     public String getNameLike() {
         return nameLike;
     }
 
+    /**
+     * @param nameLike 模糊匹配的商品名称
+     * @return 当前查询对象
+     */
     public GoodsQuery setNameLike(String nameLike) {
         this.nameLike = nameLike;
         return this;
     }
 
+    /** @return 商品状态 */
     public GoodsStatus getStatus() {
         return status;
     }
 
+    /**
+     * @param status 商品状态
+     * @return 当前查询对象
+     */
     public GoodsQuery setStatus(GoodsStatus status) {
         this.status = status;
         return this;
     }
 
+    /** @return 最低价格 */
     public BigDecimal getPriceMin() {
         return priceMin;
     }
 
+    /**
+     * @param priceMin 最低价格
+     * @return 当前查询对象
+     */
     public GoodsQuery setPriceMin(BigDecimal priceMin) {
         this.priceMin = priceMin;
         return this;
     }
 
+    /** @return 最高价格 */
     public BigDecimal getPriceMax() {
         return priceMax;
     }
 
+    /**
+     * @param priceMax 最高价格
+     * @return 当前查询对象
+     */
     public GoodsQuery setPriceMax(BigDecimal priceMax) {
         this.priceMax = priceMax;
         return this;

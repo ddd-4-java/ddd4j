@@ -33,7 +33,7 @@ import java.util.Objects;
  *   <li>{@link #injectResponseContext} - 注入 traceparent 到响应头</li>
  * </ul>
  *
- * <h3>框架适配器使用示例</h3>
+ * <p><b>框架适配器使用示例</b></p>
  * <pre>{@code
  * // Spring WebMVC / Dropwizard / Vertx / Helidon（Servlet API）
  * Map<String, String> headers = new HashMap<>();
@@ -80,6 +80,9 @@ public final class WebOtelIntegration {
 
     /**
      * 激活 Span 为当前 Context，返回 Scope（try-with-resources）。
+     *
+     * @param span 追踪片段
+     * @return 激活的追踪作用域
      */
     public static Scope activate(Span span) {
         return HttpSpan.makeCurrent(span);
@@ -87,6 +90,9 @@ public final class WebOtelIntegration {
 
     /**
      * 记录异常。
+     *
+     * @param span 追踪片段
+     * @param t 异常
      */
     public static void recordError(Span span, Throwable t) {
         HttpSpan.recordError(span, t);
@@ -94,6 +100,9 @@ public final class WebOtelIntegration {
 
     /**
      * 结束 span 并记录 HTTP 状态码。
+     *
+     * @param span 追踪片段
+     * @param status HTTP 状态码
      */
     public static void endServerSpan(Span span, int status) {
         HttpSpan.endServerSpan(span, status);
@@ -101,6 +110,8 @@ public final class WebOtelIntegration {
 
     /**
      * 注入 traceparent 到响应头。
+     *
+     * @param responseHeaders 响应头
      */
     public static void injectResponseContext(Map<String, String> responseHeaders) {
         HttpSpan.injectContext(responseHeaders);
@@ -117,6 +128,9 @@ public final class WebOtelIntegration {
 
     /**
      * 通用 helper：从 HttpHeaders 风格（Map）提取。
+     *
+     * @param headers 消息头
+     * @return 消息头映射
      */
     public static Map<String, String> asHeaders(Map<String, String> headers) {
         return Objects.isNull(headers) ? new HashMap<>() : new HashMap<>(headers);

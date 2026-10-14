@@ -38,29 +38,33 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 @EnableAspectJAutoProxy(exposeProxy = true)
 public class SpringCoreConfig {
 
-    @Bean
     /**
-     * Spring 核心配置
-     * <p>
-     * 注册 {@link SpringContext} 为 Spring Bean，使其不依赖 web 模块也能激活。
+     * 汇集 Spring 容器中的就绪检查项。
      *
-     * <p>迁移说明：原 ddd4j-core 模块中的 {@code io.ddd4j.core.config.BaseCoreConfig}
-     * 已废弃，请使用本类。
-     *
-     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
-     * @since 2.0.x
+     * @param readinessContributors 就绪检查项提供者
+     * @return 运行时就绪注册表
      */
-
+    @Bean
     public RuntimeReadinessRegistry runtimeReadinessRegistry(
             ObjectProvider<ReadinessContributor> readinessContributors) {
         return new RuntimeReadinessRegistry(readinessContributors.orderedStream().toList());
     }
 
+    /**
+     * 创建 Spring 上下文桥接器。
+     *
+     * @return Spring 上下文桥接器
+     */
     @Bean
     public SpringContext springContext() {
         return new SpringContext();
     }
 
+    /**
+     * 创建可感知 Spring 上下文的框架上下文。
+     *
+     * @return Spring 上下文适配器
+     */
     @Bean
     public SpringContextAwareContext springContextAwareContext() {
         return new SpringContextAwareContext();

@@ -61,10 +61,18 @@ public class Ddd4jQuarkusWebFilter {
     @Inject
     RoutingContext routingContext;
 
+    /**
+     * 使用当前 MicroProfile 配置创建过滤器。
+     */
     public Ddd4jQuarkusWebFilter() {
         this(Ddd4jQuarkusWebConfiguration.load());
     }
 
+    /**
+     * 使用指定 Web 配置创建过滤器。
+     *
+     * @param configuration Web 配置
+     */
     public Ddd4jQuarkusWebFilter(Ddd4jQuarkusWebConfiguration configuration) {
         Ddd4jQuarkusWebConfiguration config = Objects.requireNonNull(configuration,
                 "configuration must not be null");
@@ -105,6 +113,11 @@ public class Ddd4jQuarkusWebFilter {
         return headers;
     }
 
+    /**
+     * 初始化请求上下文、认证与幂等会话，并启动追踪。
+     *
+     * @param request JAX-RS 请求上下文
+     */
     @ServerRequestFilter(priority = Priorities.AUTHENTICATION)
     public void request(ContainerRequestContext request) {
         // OTel: 启动 SERVER span
@@ -143,6 +156,12 @@ public class Ddd4jQuarkusWebFilter {
         }
     }
 
+    /**
+     * 完成请求会话与追踪，并写入关联标识响应头。
+     *
+     * @param request JAX-RS 请求上下文
+     * @param response JAX-RS 响应上下文
+     */
     @ServerResponseFilter(priority = Priorities.USER)
     public void response(ContainerRequestContext request, ContainerResponseContext response) {
         Object span = request.getProperty(OTEL_SPAN_PROPERTY);

@@ -35,6 +35,11 @@ public final class ActivemqKit {
     /**
      * 拼接物理地址：{@code namespace.topic[.tag]}，
      * 支持 {@code queue:} / {@code topic:} 前缀强制类型。
+     *
+     * @param namespace 消息命名空间
+     * @param topic 主题名称
+     * @param tag 消息标签
+     * @return 物理目的地名称
      */
     public static String resolvePhysical(String namespace, String topic, String tag) {
         String base = hasText(topic) ? topic : "ddd4j.default.topic";
@@ -46,6 +51,11 @@ public final class ActivemqKit {
 
     /**
      * 根据物理地址前缀创建 JMS Destination。
+     *
+     * @param session JMS 会话
+     * @param physical 物理目的地名称
+     * @return JMS 目的地
+     * @throws JMSException 创建目的地失败时抛出
      */
     public static Destination createDestination(Session session, String physical) throws JMSException {
         if (physical.startsWith("queue:")) {
@@ -59,6 +69,10 @@ public final class ActivemqKit {
 
     /**
      * 从 JMS Message 提取 payload 字符串（兼容 BytesMessage / TextMessage）。
+     *
+     * @param message JMS 消息
+     * @return 消息文本
+     * @throws JMSException 读取消息失败时抛出
      */
     public static String extractPayload(Message message) throws JMSException {
         if (message instanceof BytesMessage bm) {
@@ -75,6 +89,10 @@ public final class ActivemqKit {
 
     /**
      * 安全读取 JMS String 属性（异常返回 null）。
+     *
+     * @param message JMS 消息
+     * @param key 属性名
+     * @return 属性值；读取失败时返回 {@code null}
      */
     public static String stringProperty(Message message, String key) {
         try {
@@ -86,6 +104,9 @@ public final class ActivemqKit {
 
     /**
      * 读取 JMS MessageID，异常返回 null。
+     *
+     * @param message JMS 消息
+     * @return 消息标识；读取失败时返回 {@code null}
      */
     public static String messageIdOf(Message message) {
         try {
@@ -97,6 +118,9 @@ public final class ActivemqKit {
 
     /**
      * 读取 JMS CorrelationID，异常返回 null。
+     *
+     * @param message JMS 消息
+     * @return 关联标识；读取失败时返回 {@code null}
      */
     public static String correlationIdOf(Message message) {
         try {
@@ -108,6 +132,9 @@ public final class ActivemqKit {
 
     /**
      * 把 JMS MessageID 哈希为 long 投递标签，异常返回 0。
+     *
+     * @param message JMS 消息
+     * @return 消息标识的哈希值；读取失败时返回 0
      */
     public static long messageIdHash(Message message) {
         try {

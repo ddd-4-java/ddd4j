@@ -30,6 +30,11 @@ public final class MicronautDomainEventPublisher implements DomainEventPublisher
 
     private final ApplicationEventPublisher<Object> publisher;
 
+    /**
+     * 使用 Micronaut 事件发布器创建领域事件适配器。
+     *
+     * @param publisher Micronaut 事件发布器
+     */
     public MicronautDomainEventPublisher(ApplicationEventPublisher<Object> publisher) {
         this.publisher = Objects.requireNonNull(publisher, "publisher must not be null");
     }

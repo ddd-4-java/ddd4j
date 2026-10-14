@@ -76,6 +76,9 @@ public class WeatherTemplate {
         this.httpClient = httpClient;
     }
 
+    /**
+     * 使用默认 HTTP 客户端创建天气查询器。
+     */
     public WeatherTemplate() {
         this(HttpClient.newHttpClient());
     }

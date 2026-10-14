@@ -39,6 +39,14 @@ public final class CreateGoodsRequest {
 
     private final Integer stock;
 
+    /**
+     * 创建商品请求。
+     *
+     * @param code 商品编码
+     * @param name 商品名称
+     * @param price 商品价格
+     * @param stock 库存数量
+     */
     @JsonCreator()
     public CreateGoodsRequest(@JsonProperty("code") String code, @JsonProperty("name") String name, @JsonProperty("price") BigDecimal price, @JsonProperty("stock") Integer stock) {
         this.code = code;
@@ -47,21 +55,41 @@ public final class CreateGoodsRequest {
         this.stock = stock;
     }
 
+    /**
+     * 读取商品编码。
+     *
+     * @return 商品编码
+     */
     @JsonProperty("code")
     public String code() {
         return code;
     }
 
+    /**
+     * 读取商品名称。
+     *
+     * @return 商品名称
+     */
     @JsonProperty("name")
     public String name() {
         return name;
     }
 
+    /**
+     * 读取商品价格。
+     *
+     * @return 商品价格
+     */
     @JsonProperty("price")
     public BigDecimal price() {
         return price;
     }
 
+    /**
+     * 读取库存数量。
+     *
+     * @return 库存数量
+     */
     @JsonProperty("stock")
     public Integer stock() {
         return stock;

@@ -89,11 +89,21 @@ public class RedisStreamMQClient implements MQClient {
      */
     private volatile UnifiedJedis lazyJedis;
 
+    /**
+     * 使用已有 Jedis 客户端创建 Stream 消息客户端。
+     *
+     * @param jedis Jedis 客户端
+     */
     public RedisStreamMQClient(UnifiedJedis jedis) {
         this.injectedJedis = jedis;
         this.properties = null;
     }
 
+    /**
+     * 根据连接配置创建 Stream 消息客户端。
+     *
+     * @param properties Redis Stream 配置
+     */
     public RedisStreamMQClient(RedisStreamMQProperties properties) {
         this.injectedJedis = null;
         this.properties = properties;

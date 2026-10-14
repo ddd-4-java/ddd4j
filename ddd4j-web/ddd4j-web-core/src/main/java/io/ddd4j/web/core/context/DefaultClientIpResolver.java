@@ -23,6 +23,11 @@ public final class DefaultClientIpResolver implements ClientIpResolver {
 
     private final boolean trustForwardedHeaders;
 
+    /**
+     * 创建客户端 IP 解析器。
+     *
+     * @param trustForwardedHeaders 是否信任代理转发头
+     */
     public DefaultClientIpResolver(boolean trustForwardedHeaders) {
         this.trustForwardedHeaders = trustForwardedHeaders;
     }

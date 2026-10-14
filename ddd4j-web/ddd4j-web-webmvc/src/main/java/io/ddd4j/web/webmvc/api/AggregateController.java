@@ -40,54 +40,117 @@ import java.util.Objects;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public interface AggregateController {
 
+    /**
+     * 按请求体分页查询聚合根。
+     *
+     * @param model 聚合根名称或模型
+     * @param body 请求体参数
+     * @return 聚合根分页结果
+     */
     @PostMapping("/{model}/page")
     default Page<? extends AggregateRoot<?>> postPage(@PathVariable("model") String model,
                                                       @RequestBody Map<String, Object> body) {
         return AggregateControllerSupport.query(model, body).page();
     }
 
+    /**
+     * 按查询参数分页查询聚合根。
+     *
+     * @param model 聚合根名称或模型
+     * @param params 请求参数
+     * @return 聚合根分页结果
+     */
     @GetMapping("/{model}/page")
     default Page<? extends AggregateRoot<?>> getPage(@PathVariable("model") String model,
                                                      @RequestParam Map<String, Object> params) {
         return AggregateControllerSupport.query(model, params).page();
     }
 
+    /**
+     * 按请求体查询聚合根列表。
+     *
+     * @param model 聚合根名称或模型
+     * @param body 请求体参数
+     * @return 聚合根列表
+     */
     @PostMapping("/{model}/list")
     default List<? extends AggregateRoot<?>> postList(@PathVariable("model") String model,
                                                       @RequestBody Map<String, Object> body) {
         return AggregateControllerSupport.query(model, body).list();
     }
 
+    /**
+     * 按查询参数查询聚合根列表。
+     *
+     * @param model 聚合根名称或模型
+     * @param params 请求参数
+     * @return 聚合根列表
+     */
     @GetMapping("/{model}/list")
     default List<? extends AggregateRoot<?>> getList(@PathVariable("model") String model,
                                                      @RequestParam Map<String, Object> params) {
         return AggregateControllerSupport.query(model, params).list();
     }
 
+    /**
+     * 查询聚合根详情。
+     *
+     * @param model 聚合根名称或模型
+     * @param params 请求参数
+     * @return 聚合根详情
+     */
     @GetMapping("/{model}/detail")
     default AggregateRoot<?> detail(@PathVariable("model") String model,
                                     @RequestParam Map<String, Object> params) {
         return AggregateControllerSupport.query(model, params).first();
     }
 
+    /**
+     * 查询聚合根详情。
+     *
+     * @param model 聚合根名称或模型
+     * @param id 聚合根标识
+     * @return 聚合根详情
+     */
     @GetMapping("/{model}/detail/{id}")
     default AggregateRoot<?> detail(@PathVariable("model") String model,
                                     @PathVariable("id") String id) {
         return (AggregateRoot<?>) AggregateControllerSupport.repository(model).findById(id).orElse(null);
     }
 
+    /**
+     * 检查聚合根是否存在。
+     *
+     * @param model 聚合根名称或模型
+     * @param params 请求参数
+     * @return 聚合根是否存在
+     */
     @GetMapping("/{model}/exist")
     default Boolean exist(@PathVariable("model") String model,
                           @RequestParam Map<String, Object> params) {
         return AggregateControllerSupport.query(model, params).exist();
     }
 
+    /**
+     * 统计符合条件的聚合根。
+     *
+     * @param model 聚合根名称或模型
+     * @param params 请求参数
+     * @return 聚合根数量
+     */
     @GetMapping("/{model}/count")
     default Long count(@PathVariable("model") String model,
                        @RequestParam Map<String, Object> params) {
         return AggregateControllerSupport.query(model, params).count();
     }
 
+    /**
+     * 创建聚合根。
+     *
+     * @param model 聚合根名称或模型
+     * @param body 请求体参数
+     * @return 创建后的聚合根
+     */
     @PostMapping("/{model}/create")
     default AggregateRoot<?> create(@PathVariable("model") String model,
                                     @RequestBody Map<String, Object> body) {
@@ -95,6 +158,12 @@ public interface AggregateController {
         return (AggregateRoot<?>) AggregateControllerSupport.repository(model).save(aggregate);
     }
 
+    /**
+     * 批量保存聚合根。
+     *
+     * @param model 聚合根名称或模型
+     * @param body 请求体参数
+     */
     @PostMapping("/{model}/saveBatch")
     default void saveBatch(@PathVariable("model") String model,
                            @RequestBody List<Map<String, Object>> body) {
@@ -104,6 +173,12 @@ public interface AggregateController {
         }
     }
 
+    /**
+     * 更新聚合根。
+     *
+     * @param model 聚合根名称或模型
+     * @param body 请求体参数
+     */
     @PostMapping({"/{model}/update", "/{model}/modify"})
     default void update(@PathVariable("model") String model,
                         @RequestBody Map<String, Object> body) {
@@ -111,6 +186,12 @@ public interface AggregateController {
         AggregateControllerSupport.repository(model).save(aggregate);
     }
 
+    /**
+     * 批量更新聚合根。
+     *
+     * @param model 聚合根名称或模型
+     * @param body 请求体参数
+     */
     @PostMapping({"/{model}/updateBatch", "/{model}/modifyBatch"})
     default void updateBatch(@PathVariable("model") String model,
                              @RequestBody List<Map<String, Object>> body) {
@@ -120,6 +201,13 @@ public interface AggregateController {
         }
     }
 
+    /**
+     * 保存聚合根。
+     *
+     * @param model 聚合根名称或模型
+     * @param body 请求体参数
+     * @return 保存后的聚合根
+     */
     @PostMapping("/{model}/save")
     default AggregateRoot<?> save(@PathVariable("model") String model,
                                   @RequestBody Map<String, Object> body) {
@@ -127,12 +215,24 @@ public interface AggregateController {
         return (AggregateRoot<?>) AggregateControllerSupport.repository(model).save(aggregate);
     }
 
+    /**
+     * 删除聚合根。
+     *
+     * @param model 聚合根名称或模型
+     * @param id 聚合根标识
+     */
     @PostMapping({"/{model}/delete/{id}", "/{model}/remove/{id}"})
     default void delete(@PathVariable("model") String model,
                         @PathVariable("id") String id) {
         AggregateControllerSupport.repository(model).deleteById(id);
     }
 
+    /**
+     * 按查询条件删除聚合根。
+     *
+     * @param model 聚合根名称或模型
+     * @param body 请求体参数
+     */
     @PostMapping("/{model}/remove")
     default void removeByQuery(@PathVariable("model") String model,
                                @RequestBody Map<String, Object> body) {

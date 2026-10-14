@@ -31,6 +31,7 @@ public final class JdbcOrderTransactionPort implements OrderTransactionPort {
     private final DataSource dataSource;
     private final ThreadLocal<Connection> currentConnection = new ThreadLocal<>();
 
+    /** @param dataSource 订单数据库连接来源 */
     public JdbcOrderTransactionPort(DataSource dataSource) {
         this.dataSource = Objects.requireNonNull(dataSource, "dataSource must not be null");
     }
@@ -117,8 +118,14 @@ public final class JdbcOrderTransactionPort implements OrderTransactionPort {
         }
     }
 
+    /** 允许在 JDBC 连接上执行并返回结果的查询操作。 */
     @FunctionalInterface
     public interface SqlQuery<T> {
+        /**
+         * @param connection 本次查询使用的连接
+         * @return 查询结果
+         * @throws SQLException JDBC 查询失败时抛出
+         */
         T apply(Connection connection) throws SQLException;
     }
 }

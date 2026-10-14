@@ -21,14 +21,14 @@ package io.ddd4j.core.cache;
  * 支持此接口的缓存实现（Caffeine/Jedis/Redisson 等）可提供原子计数语义，
  * 不支持的实现抛出 {@link UnsupportedOperationException}。
  *
- * <h3>典型场景</h3>
+ * <p><b>典型场景</b></p>
  * <ul>
  *   <li><b>限流</b> — {@code increment(key, 1)} 后判断是否超过阈值</li>
  *   <li><b>计数</b> — 页面浏览量、点赞数等</li>
  *   <li><b>库存</b> — {@link #stockDecrement} 提供带库存校验的原子扣减</li>
  * </ul>
  *
- * <h3>库存操作返回值约定</h3>
+ * <p><b>库存操作返回值约定</b></p>
  * <ul>
  *   <li>{@code >= 0} — 操作成功，返回操作后的剩余值</li>
  *   <li>{@code -1} — 库存为零（已售罄）</li>

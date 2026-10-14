@@ -39,7 +39,7 @@ import java.util.Objects;
  *   <li>{@code auth.operation} - 操作类型（login/logout/verify/hasRole/hasPermission）</li>
  * </ul>
  *
- * <h3>使用示例</h3>
+ * <p><b>使用示例</b></p>
  * <pre>{@code
  * String token = AuthSpan.login(authRequest);
  * boolean allowed = AuthSpan.hasPermission("user:delete");
@@ -51,14 +51,17 @@ import java.util.Objects;
  */
 public final class AuthSpan {
 
-    /**
-     * 鉴权相关标准化属性键。
-     */
+    /** Span 属性键 {@code auth.framework}。 */
     public static final AttributeKey<String> ATTR_AUTH_FRAMEWORK = AttributeKey.stringKey("auth.framework");
+    /** Span 属性键 {@code auth.login_id}。 */
     public static final AttributeKey<String> ATTR_AUTH_LOGIN_ID = AttributeKey.stringKey("auth.login_id");
+    /** Span 属性键 {@code auth.success}。 */
     public static final AttributeKey<Boolean> ATTR_AUTH_SUCCESS = AttributeKey.booleanKey("auth.success");
+    /** Span 属性键 {@code auth.operation}。 */
     public static final AttributeKey<String> ATTR_AUTH_OPERATION = AttributeKey.stringKey("auth.operation");
+    /** Span 属性键 {@code auth.role}。 */
     public static final AttributeKey<String> ATTR_AUTH_ROLE = AttributeKey.stringKey("auth.role");
+    /** Span 属性键 {@code auth.permission}。 */
     public static final AttributeKey<String> ATTR_AUTH_PERMISSION = AttributeKey.stringKey("auth.permission");
 
     private static final String DEFAULT_FRAMEWORK = "ddd4j";
@@ -135,6 +138,8 @@ public final class AuthSpan {
 
     /**
      * 包装 {@link SubjectKit#logout(Object)}（按 loginId 登出）。
+     *
+     * @param loginId 登录标识
      */
     public static void logout(Object loginId) {
         if (!Ddd4jOtel.isAvailable()) {
@@ -164,6 +169,10 @@ public final class AuthSpan {
 
     /**
      * 包装 {@link SubjectKit#verify(String)}。
+     *
+     * @param <T> 返回值类型
+     * @param token 身份令牌
+     * @return 已验证身份主体
      */
     public static <T extends AuthPrincipal> T verify(String token) {
         if (!Ddd4jOtel.isAvailable()) {
@@ -199,6 +208,9 @@ public final class AuthSpan {
 
     /**
      * 包装 {@link SubjectKit#hasRole(String)}。
+     *
+     * @param roleIdentifier 角色标识
+     * @return 具有指定角色时为 true
      */
     public static boolean hasRole(String roleIdentifier) {
         if (!Ddd4jOtel.isAvailable()) {
@@ -223,6 +235,9 @@ public final class AuthSpan {
 
     /**
      * 包装 {@link SubjectKit#hasPermission(String)}。
+     *
+     * @param permission 权限标识
+     * @return 具有指定权限时为 true
      */
     public static boolean hasPermission(String permission) {
         if (!Ddd4jOtel.isAvailable()) {
@@ -247,6 +262,8 @@ public final class AuthSpan {
 
     /**
      * 包装 {@link SubjectKit#isLogin()}。
+     *
+     * @return 已登录时为 true
      */
     public static boolean isLogin() {
         if (!Ddd4jOtel.isAvailable()) {
@@ -269,6 +286,8 @@ public final class AuthSpan {
 
     /**
      * 包装 {@link SubjectKit#kickout(Object)}。
+     *
+     * @param loginId 登录标识
      */
     public static void kickout(Object loginId) {
         if (!Ddd4jOtel.isAvailable()) {

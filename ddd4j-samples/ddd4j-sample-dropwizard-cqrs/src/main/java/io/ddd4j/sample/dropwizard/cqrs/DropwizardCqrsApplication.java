@@ -35,12 +35,33 @@ import java.util.List;
 public class DropwizardCqrsApplication extends Application<DropwizardCqrsConfiguration> {
 
     // 共享组件（手动装配，使用 core SPI）
+    /**
+     * 事件存储。
+     */
     public static final InMemoryEventStore EVENT_STORE = new InMemoryEventStore();
+    /**
+     * 订单仓储。
+     */
     public static final EventSourcingOrderRepository ORDER_REPO = new EventSourcingOrderRepository(EVENT_STORE);
+    /**
+     * 创建订单命令处理器。
+     */
     public static final CreateOrderCommandHandler COMMAND_HANDLER = new CreateOrderCommandHandler(ORDER_REPO);
+    /**
+     * 命令总线。
+     */
     public static final CommandBus COMMAND_BUS = new DefaultCommandBus(List.of(COMMAND_HANDLER));
+    /**
+     * 订单读取视图。
+     */
     public static final OrderSummaryView READ_VIEW = new OrderSummaryView(ORDER_REPO);
+    /**
+     * 事件块读取器。
+     */
     public static final InMemoryEventChunkReader CHUNK_READER = new InMemoryEventChunkReader(EVENT_STORE);
+    /**
+     * 投影视图管理器。
+     */
     public static final InMemoryViewManager VIEW_MANAGER = createViewManager();
 
     private static InMemoryViewManager createViewManager() {
@@ -49,6 +70,12 @@ public class DropwizardCqrsApplication extends Application<DropwizardCqrsConfigu
         return mgr;
     }
 
+    /**
+     * 启动 Dropwizard CQRS 示例应用。
+     *
+     * @param args 命令行参数
+     * @throws Exception 应用启动失败时
+     */
     public static void main(String[] args) throws Exception {
         new DropwizardCqrsApplication().run(args);
     }

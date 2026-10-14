@@ -28,31 +28,120 @@ import java.util.Set;
  */
 public interface QLExpressEngine {
 
+    /**
+     * 执行表达式。
+     *
+     * @param expression 表达式
+     * @param context 输入上下文
+     * @return 表达式结果
+     */
     Object execute(String expression, Map<String, Object> context);
 
+    /**
+     * 使用指定选项执行表达式。
+     *
+     * @param expression 表达式
+     * @param context 输入上下文
+     * @param options 执行选项
+     * @return 表达式结果
+     */
     Object execute(String expression, Map<String, Object> context, QLExpressExecutionOptions options);
 
+    /**
+     * 执行表达式并转换结果类型。
+     *
+     * @param <T> 结果类型
+     * @param expression 表达式
+     * @param context 输入上下文
+     * @param resultType 目标类型
+     * @return 转换后的结果
+     */
     <T> T execute(String expression, Map<String, Object> context, Class<T> resultType);
 
+    /**
+     * 使用指定选项执行表达式并转换结果类型。
+     *
+     * @param <T> 结果类型
+     * @param expression 表达式
+     * @param context 输入上下文
+     * @param options 执行选项
+     * @param resultType 目标类型
+     * @return 转换后的结果
+     */
     <T> T execute(String expression, Map<String, Object> context,
                   QLExpressExecutionOptions options, Class<T> resultType);
 
+    /**
+     * 执行表达式并将异常封装为结果。
+     *
+     * @param expression 表达式
+     * @param context 输入上下文
+     * @return 包含成功或失败信息的执行结果
+     */
     QLExpressExecutionResult<Object> executeSafely(String expression, Map<String, Object> context);
 
+    /**
+     * 使用指定选项执行表达式并封装异常。
+     *
+     * @param expression 表达式
+     * @param context 输入上下文
+     * @param options 执行选项
+     * @return 包含成功或失败信息的执行结果
+     */
     QLExpressExecutionResult<Object> executeSafely(String expression, Map<String, Object> context,
                                                    QLExpressExecutionOptions options);
 
+    /**
+     * 校验表达式语法。
+     *
+     * @param expression 表达式
+     * @return 语法校验结果
+     */
     QLExpressValidationResult validate(String expression);
 
+    /**
+     * 获取表达式引用的外部变量。
+     *
+     * @param expression 表达式
+     * @return 外部变量名称
+     */
     Set<String> getExternalVariables(String expression);
 
+    /**
+     * 获取表达式引用的外部函数。
+     *
+     * @param expression 表达式
+     * @return 外部函数名称
+     */
     Set<String> getExternalFunctions(String expression);
 
+    /**
+     * 注册自定义函数。
+     *
+     * @param function 自定义函数
+     * @return 注册成功时为 true
+     */
     boolean registerFunction(NamedQLFunction function);
 
+    /**
+     * 注册或替换自定义函数。
+     *
+     * @param function 自定义函数
+     */
     void registerOrReplaceFunction(NamedQLFunction function);
 
+    /**
+     * 移除自定义函数。
+     *
+     * @param functionName 函数名称
+     * @return 移除成功时为 true
+     */
     boolean removeFunction(String functionName);
 
+    /**
+     * 获取底层 QLExpress Runner。
+     *
+     * @return 底层 Runner
+     */
     Express4Runner unwrap();
 }

@@ -30,6 +30,11 @@ public final class SnowflakeIdGenerator {
     private SnowflakeIdGenerator() {
     }
 
+    /**
+     * 生成下一个雪花标识。
+     *
+     * @return 雪花标识
+     */
     public static long nextId() {
         return STRATEGY.generate();
     }

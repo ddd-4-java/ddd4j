@@ -16,12 +16,23 @@ package io.ddd4j.sample.order.application;
 
 import java.util.List;
 
+/** 待发布消息的持久化端口。 */
 public interface OutboxPort {
+    /** @param messages 待追加的消息 */
     void append(List<OutboxMessage> messages);
 
+    /**
+     * @param limit 最大返回数量
+     * @return 待发布消息
+     */
     List<OutboxMessage> pending(int limit);
 
+    /** @param messageId 已成功发布的消息标识 */
     void markPublished(String messageId);
 
+    /**
+     * @param messageId 发布失败的消息标识
+     * @param reason 失败原因
+     */
     void markFailed(String messageId, String reason);
 }

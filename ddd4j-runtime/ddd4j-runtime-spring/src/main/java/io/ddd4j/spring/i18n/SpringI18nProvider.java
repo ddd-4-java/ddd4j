@@ -39,6 +39,11 @@ public class SpringI18nProvider implements I18nProvider {
      */
     private final MessageSource messageSource;
 
+    /**
+     * 创建使用嵌套消息源的国际化提供者。
+     *
+     * @param messageSource 嵌套消息源
+     */
     public SpringI18nProvider(NestedMessageSource messageSource) {
         this.messageSource = messageSource;
     }

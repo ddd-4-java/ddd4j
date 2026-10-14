@@ -27,6 +27,11 @@ public final class QrCodeOutput {
 
     private final byte[] bytes;
 
+    /**
+     * 保存 PNG 输出字节的副本。
+     *
+     * @param bytes PNG 字节
+     */
     public QrCodeOutput(byte[] bytes) {
         this.bytes = Arrays.copyOf(Objects.requireNonNull(bytes, "bytes must not be null"), bytes.length);
     }

@@ -28,14 +28,29 @@ public final class QrCodeBatchResult {
 
     private final List<QrCodeBatchItemResult> items;
 
+    /**
+     * 按输入顺序保存批量项目结果。
+     *
+     * @param items 批量项目结果
+     */
     public QrCodeBatchResult(List<QrCodeBatchItemResult> items) {
         this.items = Collections.unmodifiableList(new ArrayList<QrCodeBatchItemResult>(items));
     }
 
+    /**
+     * 统计成功项目。
+     *
+     * @return 成功数量
+     */
     public long successCount() {
         return items.stream().filter(QrCodeBatchItemResult::isSuccess).count();
     }
 
+    /**
+     * 统计失败项目。
+     *
+     * @return 失败数量
+     */
     public long failureCount() {
         return items.size() - successCount();
     }

@@ -34,10 +34,21 @@ public class RoleDeniedException extends AuthorizationException {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 使用错误消息创建角色不足异常。
+     *
+     * @param message 错误消息
+     */
     public RoleDeniedException(String message) {
         super(message);
     }
 
+    /**
+     * 使用错误消息创建角色不足异常。
+     *
+     * @param message 错误消息
+     * @param cause 原始异常
+     */
     public RoleDeniedException(String message, Throwable cause) {
         super(message, cause);
     }

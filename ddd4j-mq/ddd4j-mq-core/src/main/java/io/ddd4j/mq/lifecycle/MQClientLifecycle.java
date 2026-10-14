@@ -20,6 +20,7 @@ public final class MQClientLifecycle implements AutoCloseable {
     private final AtomicBoolean closed = new AtomicBoolean();
     private final boolean managed;
 
+    /** 创建负责关闭已注册资源的生命周期管理器。 */
     public MQClientLifecycle() {
         this(true);
     }
@@ -28,10 +29,21 @@ public final class MQClientLifecycle implements AutoCloseable {
         this.managed = managed;
     }
 
+    /**
+     * 返回不管理资源的生命周期实例。
+     *
+     * @return 非托管生命周期实例
+     */
     public static MQClientLifecycle unmanaged() {
         return UNMANAGED;
     }
 
+    /**
+     * 注册关闭动作；若已关闭则立即执行。
+     *
+     * @param name 资源名称
+     * @param closeAction 关闭动作
+     */
     public synchronized void register(String name, Runnable closeAction) {
         Objects.requireNonNull(name, "name must not be null");
         Objects.requireNonNull(closeAction, "closeAction must not be null");
@@ -45,10 +57,20 @@ public final class MQClientLifecycle implements AutoCloseable {
         resources.push(new Resource(name, closeAction));
     }
 
+    /**
+     * 记录当前资源数量作为回滚点。
+     *
+     * @return 当前回滚点
+     */
     public synchronized int checkpoint() {
         return resources.size();
     }
 
+    /**
+     * 关闭回滚点之后注册的资源。
+     *
+     * @param checkpoint 先前取得的回滚点
+     */
     public synchronized void rollback(int checkpoint) {
         if (!managed) {
             return;

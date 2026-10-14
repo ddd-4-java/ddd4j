@@ -30,6 +30,11 @@ public final class HelidonDomainEventPublisher implements DomainEventPublisher {
 
     private final BeanManager beanManager;
 
+    /**
+     * 使用 CDI BeanManager 创建领域事件发布器。
+     *
+     * @param beanManager CDI BeanManager
+     */
     public HelidonDomainEventPublisher(BeanManager beanManager) {
         this.beanManager = Objects.requireNonNull(beanManager, "beanManager must not be null");
     }

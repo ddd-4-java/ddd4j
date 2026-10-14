@@ -39,6 +39,11 @@ public class DefaultEncryptedFieldHandler implements EncryptedFieldHandler {
 
     private final CryptoStrategy cryptoStrategy;
 
+    /**
+     * 创建加密字段处理器。
+     *
+     * @param cryptoStrategy 字段加密策略
+     */
     public DefaultEncryptedFieldHandler(CryptoStrategy cryptoStrategy) {
         this.cryptoStrategy = Objects.requireNonNull(cryptoStrategy, "cryptoStrategy must not be null");
     }

@@ -41,7 +41,7 @@ import java.util.Objects;
  *   <li>可选：注入下游 traceparent 到响应头</li>
  * </ul>
  *
- * <h3>使用示例</h3>
+ * <p><b>使用示例</b></p>
  * <pre>{@code
  * // 提取上游 context 并开启 span
  * Context parent = HttpSpan.extractContext(requestHeaders);
@@ -61,21 +61,24 @@ import java.util.Objects;
  */
 public final class HttpSpan {
 
-    /**
-     * 标准化 HTTP 属性键（遵循 OTel 语义约定）。
-     */
+    /** Span 属性键 {@code http.request.method}。 */
     public static final AttributeKey<String> ATTR_HTTP_METHOD = AttributeKey.stringKey("http.request.method");
+    /** Span 属性键 {@code http.route}。 */
     public static final AttributeKey<String> ATTR_HTTP_ROUTE = AttributeKey.stringKey("http.route");
+    /** Span 属性键 {@code http.response.status_code}。 */
     public static final AttributeKey<String> ATTR_HTTP_STATUS = AttributeKey.stringKey("http.response.status_code");
+    /** Span 属性键 {@code url.path}。 */
     public static final AttributeKey<String> ATTR_URL_PATH = AttributeKey.stringKey("url.path");
+    /** Span 属性键 {@code url.scheme}。 */
     public static final AttributeKey<String> ATTR_URL_SCHEME = AttributeKey.stringKey("url.scheme");
+    /** Span 属性键 {@code user_agent.original}。 */
     public static final AttributeKey<String> ATTR_USER_AGENT = AttributeKey.stringKey("user_agent.original");
+    /** Span 属性键 {@code client.address}。 */
     public static final AttributeKey<String> ATTR_CLIENT_IP = AttributeKey.stringKey("client.address");
 
-    /**
-     * 业务级属性。
-     */
+    /** Span 属性键 {@code ddd4j.request.id}。 */
     public static final AttributeKey<String> ATTR_DDD4J_REQUEST_ID = AttributeKey.stringKey("ddd4j.request.id");
+    /** Span 属性键 {@code ddd4j.tenant.id}。 */
     public static final AttributeKey<String> ATTR_DDD4J_TENANT_ID = AttributeKey.stringKey("ddd4j.tenant.id");
     private static final TextMapSetter<Map<String, String>> SETTER = new TextMapSetter<Map<String, String>>() {
         @Override
@@ -176,6 +179,9 @@ public final class HttpSpan {
 
     /**
      * 在 span 上记录异常并标记 ERROR。
+     *
+     * @param span 追踪片段
+     * @param t 异常
      */
     public static void recordError(Span span, Throwable t) {
         if (Objects.isNull(span) || Objects.isNull(t)) {
@@ -207,6 +213,9 @@ public final class HttpSpan {
 
     /**
      * 安全获取当前 Context 的 Scope（noop fallback）。
+     *
+     * @param span 追踪片段
+     * @return 当前作用域
      */
     public static Scope makeCurrent(Span span) {
         if (Objects.isNull(span) || !span.getSpanContext().isValid()) {

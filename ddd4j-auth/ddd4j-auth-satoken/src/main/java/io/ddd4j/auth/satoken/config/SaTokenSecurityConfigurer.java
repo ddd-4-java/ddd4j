@@ -37,6 +37,9 @@ public final class SaTokenSecurityConfigurer {
 
     /**
      * 校验并安装安全配置，返回当前默认账号体系的 StpLogic。
+     *
+     * @param properties Sa-Token 安全配置
+     * @return 当前默认账号体系的 StpLogic
      */
     public static StpLogic configure(SaTokenSecurityProperties properties) {
         Objects.requireNonNull(properties, "properties must not be null");

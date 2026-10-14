@@ -37,7 +37,7 @@ import java.util.ServiceLoader;
  * {@code ddd4j-data-cqrs-spring}，Quarkus 用 {@code ddd4j-data-cqrs-quarkus}，
  * Micronaut 用 {@code ddd4j-data-cqrs-micronaut}。
  *
- * <h3>装配语义（构造即快照，顺序不可变）</h3>
+ * <p><b>装配语义（构造即快照，顺序不可变）</b></p>
  * <p>
  * 构造器内先经 {@link HelidonServiceLoader}（Helidon SE 对 JDK
  * {@link java.util.ServiceLoader} 的官方包装：优先级排序＋系统属性排除）迭代
@@ -52,7 +52,7 @@ import java.util.ServiceLoader;
  * 的整批拒绝（all-or-nothing）{@link IllegalStateException} 在装配期立即暴露
  * ——构造失败即整体丢弃，不会留下半注册总线。
  *
- * <h3>{@link CommandHandler @CommandHandler} 发现</h3>
+ * <p><b>{@link CommandHandler @CommandHandler} 发现</b></p>
  * <p>
  * 发现机制为 <b>ServiceLoader 风格</b>（Helidon SE 的服务装配原语）：执行器实现类
  * 以 {@code public} 无参构造注册进集成方应用的
@@ -63,7 +63,7 @@ import java.util.ServiceLoader;
  * {@code getBeansOfType}／{@code MicronautCommandBus} 的编译期 Bean 定义
  * 均为「执行器集合的容器原生枚举」等价物，差异只在发现键。
  *
- * <h3>事务边界刻意不在本层（纯分发路由）</h3>
+ * <p><b>事务边界刻意不在本层（纯分发路由）</b></p>
  * <p>
  * Helidon 的事务栈是 {@code helidon-data-tx-jpa}（Helidon 4 线）等持久化集成，
  * 与本模块完全解耦——本模块<b>零事务依赖</b>：事务由集成方标注在<b>自己的

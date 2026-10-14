@@ -28,7 +28,7 @@ import java.util.Objects;
  * 构造此事件并发布到 {@link DomainEventPublisher}，供业务侧监听做告警、
  * 审计、错误统计等横切处理。
  *
- * <h3>使用示例</h3>
+ * <h2>使用示例</h2>
  * <pre>{@code
  * @EventListener
  * public void onException(ExceptionEvent event) {

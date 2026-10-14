@@ -17,6 +17,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Slf4j(topic = "### DDD4J-AUTH : SaTokenExceptionHandler ###")
 public class SaTokenExceptionHandler {
 
+    /**
+     * 将 Sa-Token 鉴权异常映射为未认证响应。
+     *
+     * @param exception Sa-Token 异常
+     * @return 未认证响应
+     */
     @ExceptionHandler(SaTokenException.class)
     public ResponseEntity<R<String>> accessDeniedException(SaTokenException exception) {
         log.warn("Sa-Token 鉴权异常：code={}, msg={}", exception.getCode(), exception.getMessage());

@@ -27,15 +27,15 @@ import java.util.function.Function;
  * 未注册的 {@code EntityType} 一律回退为 {@link StringEntityId}（保持与历史行为一致，
  * 序列化端只输出原始 value，类型在自定义场景下默认丢失）。
  *
- * <h3>注册时机</h3>
+ * <p><b>注册时机</b></p>
  * <p>建议在框架适配层（如 Spring {@code @PostConstruct}、Quarkus {@code @Startup}）
  * 注册；并发安全由 {@link ConcurrentHashMap} 保证。
  *
- * <h3>内置类型</h3>
+ * <p><b>内置类型</b></p>
  * <p>{@link StringEntityId}（type 名称 {@code "String"}）启动期自动注册，
  * 无需业务方重复注册。
  *
- * <h3>示例</h3>
+ * <p><b>示例</b></p>
  * <pre>{@code
  * // 启动期注册
  * EntityIdRegistry.register("OrderId", value -> new OrderId(OrderIdType.INSTANCE, value));

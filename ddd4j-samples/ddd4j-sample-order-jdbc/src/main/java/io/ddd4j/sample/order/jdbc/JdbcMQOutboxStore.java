@@ -43,6 +43,7 @@ public final class JdbcMQOutboxStore implements MQOutboxStore {
 
     private final JdbcOrderTransactionPort transaction;
 
+    /** @param transaction JDBC 事务边界 */
     public JdbcMQOutboxStore(JdbcOrderTransactionPort transaction) {
         this.transaction = Objects.requireNonNull(transaction, "transaction must not be null");
     }

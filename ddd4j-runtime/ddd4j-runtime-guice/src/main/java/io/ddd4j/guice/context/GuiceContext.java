@@ -60,7 +60,9 @@ public class GuiceContext {
     }
 
     /**
-     * 获取 Injector（阻塞等待初始化完成）
+     * 获取 Injector（阻塞等待初始化完成）。
+     *
+     * @return 已初始化的 Guice Injector
      */
     public static Injector getInjector() {
         if (Objects.isNull(injector)) {
@@ -75,7 +77,9 @@ public class GuiceContext {
     }
 
     /**
-     * 设置 Injector（应用启动时调用一次）
+     * 设置 Injector（应用启动时调用一次）。
+     *
+     * @param inj Guice Injector
      */
     public static void setInjector(Injector inj) {
         if (Objects.nonNull(injector)) {
@@ -87,28 +91,46 @@ public class GuiceContext {
     }
 
     /**
-     * 按类型获取实例
+     * 按类型获取实例。
+     *
+     * @param <T> 实例类型
+     * @param clazz 实例类型
+     * @return 容器中的实例
      */
     public static <T> T getInstance(Class<T> clazz) {
         return getInjector().getInstance(clazz);
     }
 
     /**
-     * 按名称获取实例
+     * 按名称获取实例。
+     *
+     * @param <T> 实例类型
+     * @param name 绑定名称
+     * @param clazz 实例类型
+     * @return 容器中的实例
      */
     public static <T> T getInstance(String name, Class<T> clazz) {
         return getInjector().getInstance(Key.get(clazz, Names.named(name)));
     }
 
     /**
-     * 按注解获取实例
+     * 按注解获取实例。
+     *
+     * @param <T> 实例类型
+     * @param clazz 实例类型
+     * @param annotationType 绑定注解类型
+     * @return 容器中的实例
      */
     public static <T> T getInstance(Class<T> clazz, Class<? extends Annotation> annotationType) {
         return getInjector().getInstance(Key.get(clazz, annotationType));
     }
 
     /**
-     * 获取某类型的所有绑定实例
+     * 获取某类型的所有绑定实例。
+     *
+     * @param <T> 实例类型
+     * @param clazz 实例类型
+     * @return 可实例化的绑定集合
      */
     public static <T> Collection<T> getInstances(Class<T> clazz) {
         List<T> instances = new ArrayList<>();
@@ -129,14 +151,21 @@ public class GuiceContext {
     }
 
     /**
-     * 获取环境属性
+     * 获取环境属性。
+     *
+     * @param key 属性名称
+     * @return 属性值，缺失时为空
      */
     public static String getProperty(String key) {
         return getProperty(key, null);
     }
 
     /**
-     * 获取环境属性（带默认值）
+     * 获取环境属性（带默认值）。
+     *
+     * @param key 属性名称
+     * @param defaultValue 缺失时的默认值
+     * @return 属性值或默认值
      */
     public static String getProperty(String key, String defaultValue) {
         // 优先从系统属性获取
@@ -158,21 +187,29 @@ public class GuiceContext {
     }
 
     /**
-     * 设置自定义属性
+     * 设置自定义属性。
+     *
+     * @param key 属性名称
+     * @param value 属性值
      */
     public static void setAttribute(String key, Object value) {
         ATTRIBUTES.put(key, value);
     }
 
     /**
-     * 获取自定义属性
+     * 获取自定义属性。
+     *
+     * @param key 属性名称
+     * @return 属性值，缺失时为空
      */
     public static Object getAttribute(String key) {
         return ATTRIBUTES.get(key);
     }
 
     /**
-     * 判断 Injector 是否已初始化
+     * 判断 Injector 是否已初始化。
+     *
+     * @return 已初始化时为 true
      */
     public static boolean isInitialized() {
         return Objects.nonNull(injector);
@@ -188,7 +225,9 @@ public class GuiceContext {
     }
 
     /**
-     * 获取注入器中所有绑定的类型
+     * 获取注入器中所有绑定的类型。
+     *
+     * @return 所有绑定类型
      */
     public static Set<Class<?>> getBoundTypes() {
         Set<Class<?>> types = new HashSet<>();

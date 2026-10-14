@@ -53,7 +53,10 @@ import java.util.Objects;
 public class SecurityExceptionHandler {
 
     /**
-     * 401：未认证（凭证错误 / 账号过期）
+     * 401：未认证（凭证错误 / 账号过期）。
+     *
+     * @param ex 认证异常
+     * @return 未认证响应
      */
     @ExceptionHandler({BadCredentialsException.class, AuthenticationException.class,
             AccountExpiredException.class})
@@ -63,7 +66,10 @@ public class SecurityExceptionHandler {
     }
 
     /**
-     * 403：账号锁定 / 禁用
+     * 403：账号锁定 / 禁用。
+     *
+     * @param ex 账号状态异常
+     * @return 禁止访问响应
      */
     @ExceptionHandler({LockedException.class, DisabledException.class})
     public ResponseEntity<R<String>> lockedException(Exception ex) {
@@ -72,7 +78,10 @@ public class SecurityExceptionHandler {
     }
 
     /**
-     * 403：无权限访问
+     * 403：无权限访问。
+     *
+     * @param ex 授权异常
+     * @return 未认证或禁止访问响应
      */
     @ExceptionHandler({AccessDeniedException.class})
     public ResponseEntity<R<String>> accessDeniedException(AccessDeniedException ex) {

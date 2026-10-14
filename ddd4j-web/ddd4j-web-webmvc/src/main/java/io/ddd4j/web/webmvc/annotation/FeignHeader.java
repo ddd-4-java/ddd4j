@@ -33,12 +33,14 @@ public @interface FeignHeader {
     /**
      * 是否自动从上下文 TenantContextHolder 读取系统id sysem-id；
      * 如果方法入参已经传递了；该方法也会覆盖入参请求头
+     * @return 是否自动填充系统标识
      */
     boolean autoFillSystemId() default true;
 
     /**
      * 是否自动从上下文 TenantContextHolder 读取系统tenant-id;
      * 如果方法入参已经传递了；该方法也会覆盖入参请求头
+     * @return 是否自动填充租户标识
      */
     boolean autoFillTenantId() default true;
 
@@ -49,6 +51,7 @@ public @interface FeignHeader {
      * "client-type", "own-language"};
      * <p>
      * 当同一个认证体系的时候 可以开启；比如： mall-admin 调用 upms 的时候
+     * @return 是否读取 Web 请求头
      */
     boolean useWebRequestHeader() default false;
 }

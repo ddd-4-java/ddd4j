@@ -33,11 +33,11 @@ import java.util.List;
  *   <li>{@code readAll} 按全局 {@code position} 读取，补齐 esc-api 缺失的全局顺序</li>
  * </ul>
  *
- * <h3>乐观锁</h3>
+ * <p><b>乐观锁</b></p>
  * <p>append 时校验 {@code expectedVersion}（期望的流当前版本号，空流为 0），
  * 与实际版本不一致时抛 {@link AggregateVersionConflictException}。
  *
- * <h3>实现</h3>
+ * <p><b>实现</b></p>
  * <ul>
  *   <li>JPA：{@code ddd4j-data-event-store-jpa}</li>
  *   <li>Quarkus Panache：{@code ddd4j-data-event-store-panache}</li>

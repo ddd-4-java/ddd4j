@@ -30,6 +30,12 @@ public final class QrCodeScanResult {
     private final String correlationId;
     private final List<QrCodeDecodeResult> results;
 
+    /**
+     * 创建带关联标识的二维码识别结果。
+     *
+     * @param correlationId 关联标识
+     * @param results 解码结果
+     */
     public QrCodeScanResult(String correlationId, List<QrCodeDecodeResult> results) {
         this.correlationId = correlationId;
         this.results = Collections.unmodifiableList(new ArrayList<QrCodeDecodeResult>(results));

@@ -28,7 +28,7 @@ import java.util.Objects;
  * （eventId／correlationId／causationId）之上，补充聚合定位（aggregateType／aggregateId／version）
  * 与全局顺序。
  *
- * <h3>全局 position</h3>
+ * <p><b>全局 position</b></p>
  * <p>{@code position} 是跨所有聚合流全局递增的事件序号，由存储实现分配——这是 esc-api
  * 缺失而投影断线续传必需的基石能力（docs/reference/fuin-api-patterns/05-event-store.md）。
  * 与流内 {@code version}（聚合内递增）语义不同，勿混用。

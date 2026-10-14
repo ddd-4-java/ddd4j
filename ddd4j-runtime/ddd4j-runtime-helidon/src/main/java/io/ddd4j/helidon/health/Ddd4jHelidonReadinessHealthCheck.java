@@ -34,6 +34,11 @@ public class Ddd4jHelidonReadinessHealthCheck implements HealthCheck {
 
     private final RuntimeReadinessRegistry readinessRegistry;
 
+    /**
+     * 使用 ddd4j 就绪注册表创建健康检查。
+     *
+     * @param readinessRegistry 就绪注册表
+     */
     @Inject
     public Ddd4jHelidonReadinessHealthCheck(RuntimeReadinessRegistry readinessRegistry) {
         this.readinessRegistry = Objects.requireNonNull(readinessRegistry,

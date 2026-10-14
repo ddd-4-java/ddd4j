@@ -52,16 +52,19 @@ public final class CreateOrderCommand {
         this.buyerName = buyerName;
     }
 
+    /** @return 订单号 */
     @JsonProperty("orderNo")
     public String orderNo() {
         return orderNo;
     }
 
+    /** @return 买家标识 */
     @JsonProperty("buyerId")
     public String buyerId() {
         return buyerId;
     }
 
+    /** @return 买家姓名 */
     @JsonProperty("buyerName")
     public String buyerName() {
         return buyerName;

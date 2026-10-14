@@ -29,8 +29,9 @@ import java.util.function.Function;
  * <p>充血查询链路中，业务方用 Domain Model 字段引用 Lambda，本类缓存
  * {@link DomainModelInfo}（包含字段→PO 列名映射）以加速翻译。
  *
- * <h3>与 {@code TableInfoHelper} 的对偶关系</h3>
+ * <p><b>与 {@code TableInfoHelper} 的对偶关系</b></p>
  * <table border="1">
+ *   <caption>PO 与 Domain Model 元数据的对应关系</caption>
  *   <tr><th>维度</th><th>PO（MP 原生）</th><th>Domain（本类）</th></tr>
  *   <tr><td>元数据</td><td>{@code TableInfo}</td><td>{@code DomainModelInfo}</td></tr>
  *   <tr><td>字段</td><td>{@code TableFieldInfo}</td><td>{@code DomainFieldInfo}</td></tr>
@@ -43,7 +44,7 @@ import java.util.function.Function;
  * 无 MP 的 ibatis-logging 依赖。
  * PO 字段→列名映射通过 {@code poProperty2ColumnProvider} 由基础设施层注入。
  *
- * <h3>充血查询翻译链路</h3>
+ * <p><b>充血查询翻译链路</b></p>
  * <pre>{@code
  * // Domain 层（业务方）
  * new UserQuery().eq(User::getUserName, "alice");
@@ -116,6 +117,9 @@ public final class DomainModelHelper {
 
     /**
      * 仅用 Domain Model 构建（PO provider 不传，列名全部走 fallback）。
+     * @param <M> 领域模型类型
+     * @param modelClass 领域模型类型
+     * @return 领域模型元数据
      */
     public static <M> DomainModelInfo<M> getModelInfo(Class<M> modelClass) {
         return getModelInfo(modelClass, null);
@@ -123,6 +127,7 @@ public final class DomainModelHelper {
 
     /**
      * 移除 Domain Model 缓存（用于测试或热加载）。
+     * @param modelClass 领域模型类型
      */
     public static void remove(Class<?> modelClass) {
         MODEL_INFO_CACHE.keySet().removeIf(key -> Objects.equals(key.modelType(), modelClass));

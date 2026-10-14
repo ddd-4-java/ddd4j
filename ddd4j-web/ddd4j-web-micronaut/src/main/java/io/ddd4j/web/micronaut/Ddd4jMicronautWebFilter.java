@@ -60,6 +60,11 @@ public final class Ddd4jMicronautWebFilter {
     private final WebRequestLifecycle requestLifecycle;
     private final Optional<WebIdempotencyLifecycle> idempotencyLifecycle;
 
+    /**
+     * 根据 Micronaut Web 配置创建请求过滤器。
+     *
+     * @param configuration Web 配置
+     */
     @Inject
     public Ddd4jMicronautWebFilter(Ddd4jMicronautWebConfiguration configuration) {
         Ddd4jMicronautWebConfiguration config = Objects.requireNonNull(configuration,
@@ -75,6 +80,13 @@ public final class Ddd4jMicronautWebFilter {
                 : Optional.empty();
     }
 
+    /**
+     * 使用指定上下文、认证及幂等组件创建过滤器。
+     *
+     * @param contextFactory 请求上下文工厂
+     * @param requestLifecycle 请求生命周期
+     * @param idempotencyLifecycle 幂等生命周期，可为空
+     */
     public Ddd4jMicronautWebFilter(WebRequestContextFactory contextFactory, WebRequestLifecycle requestLifecycle,
                                    WebIdempotencyLifecycle idempotencyLifecycle) {
         this.contextFactory = Objects.requireNonNull(contextFactory, "contextFactory must not be null");
@@ -99,6 +111,14 @@ public final class Ddd4jMicronautWebFilter {
         return headers;
     }
 
+    /**
+     * 建立请求上下文并在响应或异常后结束会话与追踪。
+     *
+     * @param request Micronaut 请求
+     * @param continuation 下游过滤链
+     * @param propagatedContext 可传播上下文
+     * @return 下游响应流
+     */
     @RequestFilter
     @ExecuteOn(TaskExecutors.BLOCKING)
     public Publisher<MutableHttpResponse<?>> filter(HttpRequest<?> request,

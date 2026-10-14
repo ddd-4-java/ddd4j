@@ -24,6 +24,11 @@ public final class BuiltInFunctions {
     private BuiltInFunctions() {
     }
 
+    /**
+     * 获取全部无状态内置函数。
+     *
+     * @return 内置函数列表
+     */
     public static List<NamedQLFunction> all() {
         return List.of(
                 new ContainsFunction(),

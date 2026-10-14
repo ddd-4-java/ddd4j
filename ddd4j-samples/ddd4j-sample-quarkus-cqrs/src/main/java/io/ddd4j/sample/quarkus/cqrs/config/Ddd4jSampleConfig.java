@@ -41,7 +41,7 @@ import java.util.Optional;
  *   <li>如何利用 {@link ApplicationScoped} Bean 暴露给其他业务 Bean 注入</li>
  * </ol>
  *
- * <h3>运行效果</h3>
+ * <h2>运行效果</h2>
  * <p>应用启动后日志中会输出类似：
  * <pre>
  * [Ddd4jSampleConfig] DomainEventPublisher = NoOpDomainEventPublisher
@@ -49,7 +49,7 @@ import java.util.Optional;
  * [Ddd4jSampleConfig] I18nProvider           = DefaultI18nProvider
  * </pre>
  *
- * <h3>扩展建议</h3>
+ * <h2>扩展建议</h2>
  * <p>真实项目可在本类中加入：
  * <ul>
  *   <li>Quarkus 配置项绑定（{@code @ConfigProperty}）</li>

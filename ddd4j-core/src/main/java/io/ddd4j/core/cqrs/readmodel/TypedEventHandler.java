@@ -25,11 +25,13 @@ public interface TypedEventHandler<E> {
 
     /**
      * 支持的事件类型名称。
+     * @return 事件类型名称
      */
     String getEventType();
 
     /**
      * 支持的事件 Java 类型。
+     * @return 事件 Java 类型
      */
     Class<E> getEventClass();
 

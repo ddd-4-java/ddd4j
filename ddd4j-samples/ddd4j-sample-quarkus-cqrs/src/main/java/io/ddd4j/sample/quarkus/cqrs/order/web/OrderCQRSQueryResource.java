@@ -52,6 +52,7 @@ public class OrderCQRSQueryResource extends TenantAwareResource {
 
     private final OrderCacheService orderCacheService;
 
+    /** @param orderCacheService 订单查询缓存 */
     @Inject
     public OrderCQRSQueryResource(OrderCacheService orderCacheService) {
         this.orderCacheService = orderCacheService;
@@ -59,6 +60,10 @@ public class OrderCQRSQueryResource extends TenantAwareResource {
 
     /**
      * 分页列表（CQRS 读侧，缓存优先）。
+     *
+     * @param page 页码
+     * @param pageSize 每页数量
+     * @return 分页信息响应
      */
     @GET
     @Path("/list")
@@ -71,6 +76,8 @@ public class OrderCQRSQueryResource extends TenantAwareResource {
 
     /**
      * 订单统计（缓存优先）。
+     *
+     * @return 订单统计响应
      */
     @GET
     @Path("/stats")
@@ -80,6 +87,9 @@ public class OrderCQRSQueryResource extends TenantAwareResource {
 
     /**
      * 买家订单计数（缓存优先）。
+     *
+     * @param buyerId 买家标识
+     * @return 买家订单计数响应
      */
     @GET
     @Path("/buyer/{buyerId}/count")
@@ -90,6 +100,9 @@ public class OrderCQRSQueryResource extends TenantAwareResource {
 
     /**
      * 订单详情（缓存优先）。
+     *
+     * @param id 订单标识
+     * @return 订单详情响应
      */
     @GET
     @Path("/detail/{id}")

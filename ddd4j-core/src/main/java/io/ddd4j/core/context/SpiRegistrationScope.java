@@ -28,6 +28,15 @@ public final class SpiRegistrationScope implements AutoCloseable {
     private final List<Registration<?>> installed = new ArrayList<>();
     private boolean started;
 
+    /**
+     * 登记作用域启动时要安装的服务。
+     *
+     * @param <T> 服务类型
+     * @param key 服务标识
+     * @param type 服务接口类型
+     * @param service 服务实例
+     * @return 当前登记作用域
+     */
     public synchronized <T> SpiRegistrationScope register(String key, Class<T> type, T service) {
         if (started) {
             throw new IllegalStateException("SPI scope has already started");
@@ -36,6 +45,9 @@ public final class SpiRegistrationScope implements AutoCloseable {
         return this;
     }
 
+    /**
+     * 安装已登记的服务；重复调用不再安装。
+     */
     public synchronized void start() {
         if (started) {
             return;

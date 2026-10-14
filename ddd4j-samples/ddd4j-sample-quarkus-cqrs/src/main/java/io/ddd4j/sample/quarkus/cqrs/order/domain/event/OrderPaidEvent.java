@@ -26,6 +26,7 @@ public class OrderPaidEvent extends DomainEvent<StringEntityId> {
 
     private static final long serialVersionUID = 1L;
 
+    /** @param orderId 发生支付事件的订单标识 */
     public OrderPaidEvent(String orderId) {
         super(orderId);
     }

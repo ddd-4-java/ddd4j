@@ -26,10 +26,15 @@ import java.util.*;
  */
 public final class RegionEnum implements Comparable<RegionEnum> {
 
+    /** 中国地区。 */
     public static final RegionEnum CN;
+    /** 中国香港地区。 */
     public static final RegionEnum HK;
+    /** 中国澳门地区。 */
     public static final RegionEnum MO;
+    /** 中国台湾地区。 */
     public static final RegionEnum TW;
+    /** 未知地区地区。 */
     public static final RegionEnum UK;
     private static final Map<String, RegionEnum> BY_NAME = new LinkedHashMap<>();
     private static final Map<String, RegionEnum> BY_CODE2 = new LinkedHashMap<>();
@@ -80,27 +85,62 @@ public final class RegionEnum implements Comparable<RegionEnum> {
         }
     }
 
+    /**
+     * 返回已注册的所有地区。
+     *
+     * @return 地区数组
+     */
     public static RegionEnum[] values() {
         Collection<RegionEnum> values = BY_NAME.values();
         return values.toArray(new RegionEnum[0]);
     }
 
+    /**
+     * 按名称查找地区。
+     *
+     * @param name 地区名称
+     * @return 匹配的地区
+     */
     public static RegionEnum valueOf(String name) {
         return get(BY_NAME, name);
     }
 
+    /**
+     * 按二位代码查找地区。
+     *
+     * @param code2 二位地区代码
+     * @return 匹配的地区
+     */
     public static RegionEnum getByCode2(String code2) {
         return get(BY_CODE2, code2);
     }
 
+    /**
+     * 按三位代码查找地区。
+     *
+     * @param code3 三位地区代码
+     * @return 匹配的地区
+     */
     public static RegionEnum getByCode3(String code3) {
         return get(BY_CODE3, code3);
     }
 
+    /**
+     * 按中文名称查找地区。
+     *
+     * @param cname 地区中文名称
+     * @return 匹配的地区
+     */
     public static RegionEnum getByCnName(String cname) {
         return get(BY_CNAME, cname);
     }
 
+    /**
+     * 从地址信息查找地区。
+     *
+     * @param address 地区地址
+     * @return 匹配的地区
+     */
     public static RegionEnum getByRegionAddress(RegionAddress address) {
         if (Objects.isNull(address)) {
             return UK;
@@ -117,6 +157,12 @@ public final class RegionEnum implements Comparable<RegionEnum> {
         return UK;
     }
 
+    /**
+     * 判断地区是否有效。
+     *
+     * @param region 待判断的地区
+     * @return 地区有效时为 true
+     */
     public static boolean isValidRegion(RegionEnum region) {
         return Objects.nonNull(region) && region.isValidRegion();
     }
@@ -128,34 +174,74 @@ public final class RegionEnum implements Comparable<RegionEnum> {
         return map.getOrDefault(key.trim().toUpperCase(Locale.ROOT), UK);
     }
 
+    /**
+     * 判断当前地区是否有效。
+     *
+     * @return 当前地区不是未知地区时为 true
+     */
     public boolean isValidRegion() {
         return this != UK;
     }
 
+    /**
+     * 判断当前地区是否属于中国。
+     *
+     * @return 属于中国时为 true
+     */
     public boolean isChinaRegion() {
         return this == CN || this == HK || this == MO || this == TW;
     }
 
+    /**
+     * 判断当前地区是否属于中国大陆。
+     *
+     * @return 属于中国大陆时为 true
+     */
     public boolean isChinaMainland() {
         return this == CN;
     }
 
+    /**
+     * 返回地区名称。
+     *
+     * @return 地区名称
+     */
     public String name() {
         return name;
     }
 
+    /**
+     * 返回二位地区代码。
+     *
+     * @return 二位地区代码
+     */
     public String getCode2() {
         return code2;
     }
 
+    /**
+     * 返回三位地区代码。
+     *
+     * @return 三位地区代码
+     */
     public String getCode3() {
         return code3;
     }
 
+    /**
+     * 返回 ISO 英文名称。
+     *
+     * @return ISO 英文名称
+     */
     public String getIsoName() {
         return isoName;
     }
 
+    /**
+     * 返回地区中文名称。
+     *
+     * @return 地区中文名称
+     */
     public String getCname() {
         return cname;
     }

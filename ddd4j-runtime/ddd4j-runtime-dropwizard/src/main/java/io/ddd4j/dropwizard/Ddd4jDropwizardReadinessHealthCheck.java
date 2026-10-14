@@ -27,6 +27,11 @@ public class Ddd4jDropwizardReadinessHealthCheck extends HealthCheck {
 
     private final RuntimeReadinessRegistry readinessRegistry;
 
+    /**
+     * 使用 ddd4j 就绪注册表创建健康检查。
+     *
+     * @param readinessRegistry 就绪注册表
+     */
     public Ddd4jDropwizardReadinessHealthCheck(RuntimeReadinessRegistry readinessRegistry) {
         this.readinessRegistry = Objects.requireNonNull(readinessRegistry,
                 "readinessRegistry must not be null");

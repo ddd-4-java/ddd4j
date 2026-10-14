@@ -29,6 +29,9 @@ public final class EventType implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 事件类型值。
+     */
     private final String value;
 
     /**

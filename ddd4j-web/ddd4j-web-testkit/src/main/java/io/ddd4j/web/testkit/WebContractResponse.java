@@ -36,23 +36,39 @@ public final class WebContractResponse {
 
     private final String body;
 
+    /**
+     * 按名称查询首个响应头值，忽略名称大小写。
+     *
+     * @param name 响应头名称
+     * @return 首个值；不存在时为空
+     */
     public Optional<String> firstHeader(String name) {
         Objects.requireNonNull(name, "name must not be null");
         return headers.entrySet().stream().filter(entry -> entry.getKey().equalsIgnoreCase(name)).map(Map.Entry::getValue).filter(values -> Objects.nonNull(values) && !values.isEmpty()).map(values -> values.get(0)).findFirst();
     }
 
+    /** @return 响应体 */
     public String getBody() {
         return body;
     }
 
+    /** @return 响应头 */
     public Map<String, List<String>> getHeaders() {
         return headers;
     }
 
+    /** @return HTTP 状态码 */
     public int getStatus() {
         return status;
     }
 
+    /**
+     * 创建 Web 契约响应快照。
+     *
+     * @param status HTTP 状态码
+     * @param headers 响应头
+     * @param body 响应体
+     */
     @JsonCreator()
     public WebContractResponse(@JsonProperty("status") int status, @JsonProperty("headers") Map<String, List<String>> headers, @JsonProperty("body") String body) {
         this.status = status;
@@ -60,16 +76,19 @@ public final class WebContractResponse {
         this.body = body;
     }
 
+    /** @return HTTP 状态码 */
     @JsonProperty("status")
     public int status() {
         return status;
     }
 
+    /** @return 响应头 */
     @JsonProperty("headers")
     public Map<String, List<String>> headers() {
         return headers;
     }
 
+    /** @return 响应体 */
     @JsonProperty("body")
     public String body() {
         return body;

@@ -36,10 +36,18 @@ import java.util.List;
  */
 public class MicronautCqrsApplication {
 
+    /**
+     * 启动 Micronaut CQRS 示例应用。
+     *
+     * @param args 命令行参数
+     */
     public static void main(String[] args) {
         Micronaut.run(MicronautCqrsApplication.class, args);
     }
 
+    /**
+     * 注册 CQRS 示例的命令、事件和投影视图组件。
+     */
     @Factory
     public static class CqrsConfig {
 

@@ -34,6 +34,12 @@ public final class MQInboxProcessor {
     private final String consumerId;
     private final MQDeliveryObserver observer;
 
+    /**
+     * 创建使用默认观察器的 Inbox 处理器。
+     *
+     * @param store Inbox 持久化端口
+     * @param consumerId 稳定消费者标识
+     */
     public MQInboxProcessor(MQInboxStore store, String consumerId) {
         this(store, consumerId, NoopMQDeliveryObserver.INSTANCE);
     }

@@ -34,14 +34,14 @@ import java.util.concurrent.ConcurrentHashMap;
  * 基于框架中立的 ddd4j 命令 SPI 实现，在容器刷新后扫描所有 {@link CommandExecutor} Bean
  * 并构建命令类型到执行器的路由表。与 Quarkus {@code QuarkusCommandBus} 行为对齐。
  *
- * <h3>发现机制</h3>
+ * <h2>发现机制</h2>
  * <ul>
  *   <li>扫描容器中所有实现 {@link CommandExecutor} 接口的 Bean</li>
  *   <li>兼容 {@code @io.ddd4j.spring.annotation.CommandExecutor} 注解标记的 Bean
  *       （该注解融合了 {@code @Component}，被扫描的 Bean 同时实现接口即可自动注册）</li>
  * </ul>
  *
- * <h3>事务策略</h3>
+ * <h2>事务策略</h2>
  * <p>
  * {@link #execute(Command)} 采用<b>方法级</b> {@link Transactional @Transactional}：
  * Spring 事务切面的属性查找先查被调方法自身、再查其声明类——继承自父类的方法其声明类在父类上，
@@ -69,6 +69,11 @@ public class SpringCommandBus implements CommandBus, SmartInitializingSingleton 
      */
     private final ApplicationContext applicationContext;
 
+    /**
+     * 创建通过 Spring 上下文查找执行器的命令总线。
+     *
+     * @param applicationContext Spring 应用上下文
+     */
     public SpringCommandBus(ApplicationContext applicationContext) {
         Objects.requireNonNull(applicationContext, "applicationContext must not be null");
         this.applicationContext = applicationContext;

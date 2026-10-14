@@ -43,7 +43,7 @@ import java.util.function.Consumer;
  * <p>接入新的 MQ 只需实现本接口，每个 broker 模块最终 3 个文件：
  * {@code XxxClient}（impl MQClient）+ {@code XxxAcknowledgment} + {@code XxxProperties}。
  *
- * <h3>核心流程</h3>
+ * <p><b>核心流程</b></p>
  * <ol>
  *   <li><b>发布</b>：{@link #initProducer(MQProperties)} 返回 {@link Consumer<MQEvent>}，
  *       由 {@link #init(List, MQProperties, MQEventSerialization, MQEventStorer)} 注册到 {@link BaseContext}
@@ -276,6 +276,8 @@ public interface MQClient extends AutoCloseable {
 
     /**
      * 序列化器（从 {@link BaseContext} 查找，由 {@link #init} 注册）。
+     *
+     * @return 当前注册的 MQ 事件序列化器
      */
     default MQEventSerialization serialization() {
         return BaseContext.<String, MQEventSerialization>get(MQ_SERIALIZATION);
@@ -283,6 +285,8 @@ public interface MQClient extends AutoCloseable {
 
     /**
      * MQ 配置（从 {@link BaseContext} 查找）。
+     *
+     * @return 当前 MQ 配置
      */
     default MQProperties properties() {
         return BaseContext.<String, MQProperties>get(MQEvent.MQ_PROPERTIES);
@@ -331,6 +335,10 @@ public interface MQClient extends AutoCloseable {
 
     /**
      * 便捷重载：无 Acknowledgment 的消费（ack 能力由 broker 内部处理，如 RocketMQ 返回值语义）。
+     *
+     * @param listener 监听器定义
+     * @param event 已反序列化的 MQ 事件
+     * @throws Throwable 已解包的业务异常
      */
     default void consume(MQListener listener, MQEvent event) throws Throwable {
         consume(listener, event, null);
@@ -338,6 +346,8 @@ public interface MQClient extends AutoCloseable {
 
     /**
      * 日志器（各实现可覆写自定义 topic）。
+     *
+     * @return 当前 Client 的日志器
      */
     default Logger logger() {
         return LogHolder.logger();
@@ -346,7 +356,7 @@ public interface MQClient extends AutoCloseable {
     /**
      * 解析最终的拼接符（concat）。
      *
-     * <p>优先级：{@link MQEvent#getConcat()} &gt; 当前 Client 默认值（{@link #defaultConcat()}）。
+     * <p>优先级：{@code MQEvent.getConcat()} &gt; 当前 Client 默认值（{@link #defaultConcat()}）。
      * 注：不在 properties 层暴露 concat —— 避免全局配置覆盖 broker 惯例（Kafka 习惯 {@code "_"}、
      * Redis 习惯 {@code ":"}、MQTT 习惯 {@code "/"}）。如需差异化，由各 broker 自己的 Properties 类覆写。
      *
@@ -373,7 +383,7 @@ public interface MQClient extends AutoCloseable {
     }
 
     /**
-     * 解析命名空间：{@link MQEvent#getNamespace()} 优先，回落到 {@link MQProperties#getNamespace()}。
+     * 解析命名空间：{@code MQEvent.getNamespace()} 优先，回落到 {@code MQProperties.getNamespace()}。
      *
      * @param event      MQ 事件（可为 null）
      * @param properties MQ 配置（不可为 null）
@@ -387,7 +397,7 @@ public interface MQClient extends AutoCloseable {
     }
 
     /**
-     * 字符串版命名空间解析（{@link MQListener#getNamespace()} 直接传入）。
+     * 字符串版命名空间解析（{@code MQListener.getNamespace()} 直接传入）。
      *
      * @param namespace  显式命名空间（可为 null）
      * @param properties MQ 配置（可为 null）
@@ -428,6 +438,10 @@ public interface MQClient extends AutoCloseable {
 
     /**
      * 便捷重载：从 {@link MQEvent} + {@link MQProperties} 解析物理地址（生产者侧）。
+     *
+     * @param event 待发布事件
+     * @param properties MQ 配置
+     * @return 生产者侧物理地址
      */
     default String resolveTopic(MQEvent event, MQProperties properties) {
         return resolveTopic(namespace(event, properties), event.getTopic(), event.getTag(), concat(event));
@@ -436,6 +450,10 @@ public interface MQClient extends AutoCloseable {
     /**
      * 便捷重载：从 {@link MQListener} + {@link MQProperties} 解析物理目的地（消费者侧，
      * tag 取监听器声明的 tags 首个正向 tag，保持订阅定位一致）。
+     *
+     * @param listener 监听器定义
+     * @param properties MQ 配置
+     * @return 消费者侧物理地址
      */
     default String resolveTopic(MQListener listener, MQProperties properties) {
         return resolveTopic(namespace(listener.getNamespace(), properties),
@@ -489,6 +507,8 @@ public interface MQClient extends AutoCloseable {
      *
      * <p>应用层读 header 仍可读 {@link io.ddd4j.mq.message.MessageHeaders#HEADER_DESTINATION_TAG}
      * 作为兼容，但 selector 必须用此 key。
+     *
+     * @return tag 消息头名称
      */
     default String tagHeaderKey() {
         return "ddd4jTag";
@@ -584,6 +604,8 @@ public interface MQClient extends AutoCloseable {
      *
      * <p>默认 true 表示「我会用 tagsToSelector 传给 broker」。子 broker 可覆写返回 false 强制应用层过滤
      * （如 Redis Stream / MQTT 等无 selector 机制的 broker）。
+     *
+     * @return 支持 broker 端 tag 过滤时为 true
      */
     default boolean supportsBrokerTagFilter() {
         return true;
@@ -599,7 +621,16 @@ public interface MQClient extends AutoCloseable {
      * <p>CUSTOM：业务子类覆写 {@link #partitionKey(MQEvent)}，本枚举不适用。
      */
     enum PartitionKeyStrategy {
-        NONE, TAG, TENANT, TAG_TENANT, CUSTOM
+        /** 不设置分区键。 */
+        NONE,
+        /** 按消息标签分区。 */
+        TAG,
+        /** 按租户标识分区。 */
+        TENANT,
+        /** 按标签和租户复合分区。 */
+        TAG_TENANT,
+        /** 由业务实现自定义分区键。 */
+        CUSTOM
     }
 
     /**

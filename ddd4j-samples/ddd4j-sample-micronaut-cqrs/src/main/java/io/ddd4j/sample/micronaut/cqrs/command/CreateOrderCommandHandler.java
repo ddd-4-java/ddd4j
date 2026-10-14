@@ -36,6 +36,11 @@ public class CreateOrderCommandHandler implements CommandExecutor<CreateOrderCom
 
     private final EventSourcingOrderRepository orderRepository;
 
+    /**
+     * 创建CreateOrderCommandHandler。
+     *
+     * @param orderRepository 事件溯源订单仓储
+     */
     public CreateOrderCommandHandler(EventSourcingOrderRepository orderRepository) {
         this.orderRepository = Objects.requireNonNull(orderRepository, "orderRepository must not be null");
     }

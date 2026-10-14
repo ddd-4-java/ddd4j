@@ -14,7 +14,9 @@
  */
 package io.ddd4j.sample.order.domain.event;
 
+/** 订单已取消事件。 */
 public final class OrderCancelledEvent extends OrderDomainEvent {
+    /** @param orderId 已取消的订单标识 */
     public OrderCancelledEvent(String orderId) {
         super(orderId);
     }

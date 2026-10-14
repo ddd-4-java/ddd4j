@@ -34,13 +34,13 @@ import java.util.Collection;
  * 再由 {@link ProjectionDispatcher} 拉块、逐事件回调 {@link #handle(DomainEvent)}
  * 并推进投影位置。
  *
- * <h3>与 core ProjectionView 的关系</h3>
+ * <h2>与 core ProjectionView 的关系</h2>
  * <p>core 的 {@code ProjectionView} 面向「框架适配层装配的视图对象」（事件类型用字符串声明）；
  * 本接口面向「业务 bean」（事件类型用 {@link Class} 声明，编译期即可校验）。
  * 调度器适配层负责把本接口适配为 core 的 {@code ProjectionView}／
  * {@code ProjectionRunner} 所需形态，业务代码不需要感知两者差异。
  *
- * <h3>使用示例（业务实现，阶段 8 sample 将给出完整版）</h3>
+ * <h2>使用示例（业务实现，阶段 8 sample 将给出完整版）</h2>
  * <pre>{@code
  * public class OrderSummaryHandler implements ProjectionHandler {
  *     &#64;Override

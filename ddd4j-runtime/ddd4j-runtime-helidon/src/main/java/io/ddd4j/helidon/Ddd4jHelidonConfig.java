@@ -27,14 +27,28 @@ public final class Ddd4jHelidonConfig {
 
     private final Config config;
 
+    /** 使用当前 MicroProfile 配置创建访问器。 */
     public Ddd4jHelidonConfig() {
         this(ConfigProvider.getConfig());
     }
 
+    /**
+     * 使用指定配置源创建访问器。
+     *
+     * @param config MicroProfile 配置源
+     */
     public Ddd4jHelidonConfig(Config config) {
         this.config = Objects.requireNonNull(config, "config must not be null");
     }
 
+    /**
+     * 读取可选配置值。
+     *
+     * @param <T> 配置值类型
+     * @param name 配置名称
+     * @param type 配置值类型
+     * @return 可选配置值
+     */
     public <T> Optional<T> value(String name, Class<T> type) {
         return config.getOptionalValue(name, type);
     }

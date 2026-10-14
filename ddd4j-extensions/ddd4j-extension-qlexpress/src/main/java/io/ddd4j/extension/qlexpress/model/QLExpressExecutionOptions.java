@@ -30,7 +30,9 @@ import java.util.Objects;
 @Builder(toBuilder = true)
 public final class QLExpressExecutionOptions {
 
+    /** 默认执行超时时间（毫秒）。 */
     public static final long DEFAULT_TIMEOUT_MILLIS = 3000L;
+    /** 默认数组长度上限。 */
     public static final int DEFAULT_MAX_ARRAY_LENGTH = 10000;
 
     @Builder.Default
@@ -52,10 +54,20 @@ public final class QLExpressExecutionOptions {
     @Builder.Default
     private final boolean shortCircuitDisabled = false;
 
+    /**
+     * 创建默认执行选项。
+     *
+     * @return 默认执行选项
+     */
     public static QLExpressExecutionOptions defaults() {
         return QLExpressExecutionOptions.builder().build();
     }
 
+    /**
+     * 转换为 QLExpress 原生执行选项。
+     *
+     * @return 原生执行选项
+     */
     public QLOptions toNativeOptions() {
         Map<String, Object> safeAttachments = Objects.isNull(attachments) ? Map.of() : Map.copyOf(attachments);
         return QLOptions.builder()

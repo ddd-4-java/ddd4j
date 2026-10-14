@@ -47,16 +47,19 @@ public final class OutboxDispatchResult {
         this.failed = failed;
     }
 
+    /** @return 本轮尝试发送的消息数 */
     @JsonProperty("attempted")
     public int attempted() {
         return attempted;
     }
 
+    /** @return 本轮确认发送的消息数 */
     @JsonProperty("published")
     public int published() {
         return published;
     }
 
+    /** @return 本轮保留重试的消息数 */
     @JsonProperty("failed")
     public int failed() {
         return failed;

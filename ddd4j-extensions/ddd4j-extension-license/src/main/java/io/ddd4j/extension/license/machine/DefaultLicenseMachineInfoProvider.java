@@ -32,8 +32,11 @@ import java.util.Set;
 @Slf4j
 public final class DefaultLicenseMachineInfoProvider implements LicenseMachineInfoProvider {
 
+    /** 默认机器信息提供器实例。 */
     public static final DefaultLicenseMachineInfoProvider INSTANCE = new DefaultLicenseMachineInfoProvider();
+    /** 机器序列号系统属性名称。 */
     public static final String MACHINE_SN_PROPERTY = "ddd4j.license.machine-sn";
+    /** 机器序列号环境变量名称。 */
     public static final String MACHINE_SN_ENV = "DDD4J_LICENSE_MACHINE_SN";
 
     private DefaultLicenseMachineInfoProvider() {

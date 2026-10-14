@@ -34,6 +34,11 @@ public class OrderDomainService {
 
     private final OrderRepository orderRepository;
 
+    /**
+     * 创建订单领域服务。
+     *
+     * @param orderRepository 订单仓储
+     */
     public OrderDomainService(OrderRepository orderRepository) {
         this.orderRepository = Objects.requireNonNull(orderRepository, "orderRepository must not be null");
     }
@@ -47,6 +52,10 @@ public class OrderDomainService {
      *   <li>订单总额 ≥ 500 元：95 折</li>
      *   <li>历史订单数 ≥ 10：额外 98 折</li>
      * </ul>
+     *
+     * @param buyerId 买家标识
+     * @param total 订单总金额
+     * @return 折扣金额
      */
     public Money calculateDiscount(String buyerId, Money total) {
         Objects.requireNonNull(buyerId, "buyerId must not be null");
@@ -66,6 +75,9 @@ public class OrderDomainService {
 
     /**
      * 预览订单折扣。
+     *
+     * @param order 订单聚合
+     * @return 折扣金额
      */
     public Money previewDiscount(Order order) {
         Objects.requireNonNull(order, "order must not be null");

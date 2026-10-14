@@ -44,6 +44,7 @@ public final class FileValidationPolicy {
         this.allowedMimeTypes = immutableNormalized(builder.allowedMimeTypes);
     }
 
+    /** @return 新的策略构建器 */
     public static Builder builder() {
         return new Builder();
     }
@@ -57,22 +58,27 @@ public final class FileValidationPolicy {
         return Collections.unmodifiableSet(normalized);
     }
 
+    /** @return 是否要求文件非空 */
     public boolean isRequired() {
         return required;
     }
 
+    /** @return 是否检查文件实际类型 */
     public boolean isStrict() {
         return strict;
     }
 
+    /** @return 最大文件字节数，零表示不限制 */
     public long getMaxSizeBytes() {
         return maxSizeBytes;
     }
 
+    /** @return 允许的扩展名集合 */
     public Set<String> getAllowedExtensions() {
         return allowedExtensions;
     }
 
+    /** @return 允许的 MIME 类型集合 */
     public Set<String> getAllowedMimeTypes() {
         return allowedMimeTypes;
     }
@@ -88,16 +94,28 @@ public final class FileValidationPolicy {
         private Set<String> allowedExtensions = new LinkedHashSet<>();
         private Set<String> allowedMimeTypes = new LinkedHashSet<>();
 
+        /**
+         * @param required 是否要求文件非空
+         * @return 当前构建器
+         */
         public Builder required(boolean required) {
             this.required = required;
             return this;
         }
 
+        /**
+         * @param strict 是否检查文件实际类型
+         * @return 当前构建器
+         */
         public Builder strict(boolean strict) {
             this.strict = strict;
             return this;
         }
 
+        /**
+         * @param maxSizeBytes 最大文件字节数，零表示不限制
+         * @return 当前构建器
+         */
         public Builder maxSizeBytes(long maxSizeBytes) {
             if (maxSizeBytes < 0) {
                 throw new IllegalArgumentException("maxSizeBytes must be greater than or equal to zero");
@@ -106,16 +124,25 @@ public final class FileValidationPolicy {
             return this;
         }
 
+        /**
+         * @param allowedExtensions 允许的扩展名
+         * @return 当前构建器
+         */
         public Builder allowedExtensions(String... allowedExtensions) {
             this.allowedExtensions = new LinkedHashSet<>(Arrays.asList(allowedExtensions));
             return this;
         }
 
+        /**
+         * @param allowedMimeTypes 允许的 MIME 类型
+         * @return 当前构建器
+         */
         public Builder allowedMimeTypes(String... allowedMimeTypes) {
             this.allowedMimeTypes = new LinkedHashSet<>(Arrays.asList(allowedMimeTypes));
             return this;
         }
 
+        /** @return 不可变文件校验策略 */
         public FileValidationPolicy build() {
             return new FileValidationPolicy(this);
         }

@@ -26,7 +26,7 @@ import java.util.Collection;
  *   <li>{@code io.ddd4j.core.cqrs.readmodel.ProjectionView}（ddd4j 框架无关投影）</li>
  * </ul>
  *
- * <h3>统一抽象</h3>
+ * <p><b>统一抽象</b></p>
  * <p>
  * 本接口同时承担：
  * <ul>
@@ -34,14 +34,14 @@ import java.util.Collection;
  *   <li><b>JPA 实体</b>（与 {@code @Entity} 共存，由业务方决定持久化方式）</li>
  * </ul>
  *
- * <h3>与 {@code ProjectionView} 的关系</h3>
+ * <p><b>与 {@code ProjectionView} 的关系</b></p>
  * <p>
  * 本接口是 {@link io.ddd4j.core.cqrs.readmodel.ProjectionView} 的业务层别名，
  * 提供一致的 DDD 战术命名（{@code View} vs 技术命名 {@code ProjectionView}）。
  * 框架无关投影使用 {@code ProjectionView}，业务侧视图使用本接口。
  * </p>
  *
- * <h3>使用示例</h3>
+ * <p><b>使用示例</b></p>
  * <pre>{@code
  * &#64;Entity
  * &#64;Table(name = "order_list_view")
@@ -69,6 +69,7 @@ public interface View {
 
     /**
      * 视图名称。
+     * @return 视图名称
      */
     String getName();
 

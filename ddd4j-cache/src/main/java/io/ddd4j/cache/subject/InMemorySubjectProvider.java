@@ -31,6 +31,11 @@ public class InMemorySubjectProvider implements SubjectProvider {
 
     private final InMemorySubject subject;
 
+    /**
+     * 创建共享内存主体提供者。
+     *
+     * @param subject 共享主体实例
+     */
     public InMemorySubjectProvider(InMemorySubject subject) {
         this.subject = Objects.requireNonNull(subject, "subject must not be null");
     }

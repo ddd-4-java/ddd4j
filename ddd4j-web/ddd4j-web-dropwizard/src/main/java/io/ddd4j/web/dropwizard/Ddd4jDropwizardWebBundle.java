@@ -29,10 +29,16 @@ public final class Ddd4jDropwizardWebBundle<C extends Configuration> implements 
 
     private final Function<C, Ddd4jDropwizardWebConfiguration> configurationResolver;
 
+    /** 使用默认 Web 配置解析器创建 Bundle。 */
     public Ddd4jDropwizardWebBundle() {
         this(configuration -> new Ddd4jDropwizardWebConfiguration());
     }
 
+    /**
+     * 使用指定 Web 配置解析器创建 Bundle。
+     *
+     * @param configurationResolver 从应用配置获取 Web 配置的函数
+     */
     public Ddd4jDropwizardWebBundle(Function<C, Ddd4jDropwizardWebConfiguration> configurationResolver) {
         this.configurationResolver = Objects.requireNonNull(configurationResolver,
                 "configurationResolver must not be null");

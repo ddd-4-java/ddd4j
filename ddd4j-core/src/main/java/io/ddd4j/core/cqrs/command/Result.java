@@ -56,6 +56,8 @@ public final class Result<T> {
 
     /**
      * 成功结果（无数据）。
+     *
+     * @return 不带业务数据的成功结果
      */
     public static Result<Void> ok() {
         return new Result<>(SUCCESS, "ok", null);
@@ -63,6 +65,10 @@ public final class Result<T> {
 
     /**
      * 成功结果（带数据）。
+     *
+     * @param <T> 业务数据类型
+     * @param data 业务数据
+     * @return 携带数据的成功结果
      */
     public static <T> Result<T> ok(T data) {
         return new Result<>(SUCCESS, "ok", data);
@@ -70,6 +76,10 @@ public final class Result<T> {
 
     /**
      * 失败结果。
+     *
+     * @param <T> 业务数据类型
+     * @param message 失败消息
+     * @return 不带业务数据的失败结果
      */
     public static <T> Result<T> fail(String message) {
         return new Result<>(FAILURE, message, null);
@@ -77,15 +87,30 @@ public final class Result<T> {
 
     /**
      * 失败结果（带错误码）。
+     *
+     * @param <T> 业务数据类型
+     * @param code 错误码
+     * @param message 失败消息
+     * @return 带指定错误码的失败结果
      */
     public static <T> Result<T> fail(int code, String message) {
         return new Result<>(code, message, null);
     }
 
+    /**
+     * 判断命令是否执行成功。
+     *
+     * @return 错误码为成功码时为 true
+     */
     public boolean isSuccess() {
         return code == SUCCESS;
     }
 
+    /**
+     * 以 Optional 返回业务数据。
+     *
+     * @return 业务数据的 Optional
+     */
     public Optional<T> data() {
         return Optional.ofNullable(data);
     }

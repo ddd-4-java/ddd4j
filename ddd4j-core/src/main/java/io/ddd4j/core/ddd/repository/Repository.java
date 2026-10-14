@@ -27,8 +27,9 @@ import java.util.*;
  * <p>合并了旧 {@code Repository}（基础 CRUD）和 {@code RichRepository}（充血查询），
  * 因为 Lambda 改造后 {@link Query} 已绑定 PO 类型，无需区分两个接口。
  *
- * <h3>方法对照 BaseMapper</h3>
+ * <p><b>方法对照 BaseMapper</b></p>
  * <table border="1">
+ *   <caption>BaseMapper 与 Repository 的方法映射</caption>
  *   <tr><th>BaseMapper</th><th>Repository</th><th>说明</th></tr>
  *   <tr><td colspan="3"><b>单条 CRUD</b></td></tr>
  *   <tr><td>selectById(id)</td><td>findById(ID)</td><td>按 ID 查询</td></tr>
@@ -66,6 +67,8 @@ public interface Repository<M extends AggregateRoot<?>, ID extends Serializable>
 
     /**
      * 按标识查找聚合根（对应 {@code selectById}）。
+     * @param id 聚合根标识
+     * @return 指定标识的聚合根
      */
     Optional<M> findById(ID id);
 
@@ -73,11 +76,14 @@ public interface Repository<M extends AggregateRoot<?>, ID extends Serializable>
      * 保存聚合根（新建或更新，对应 {@code insert} + {@code updateById}）。
      *
      * @return 保存后的聚合根（包含自增字段）
+     * @param aggregate 待处理聚合根
      */
     M save(M aggregate);
 
     /**
      * 按主键更新（对应 {@code updateById}）。
+     * @param aggregate 待处理聚合根
+     * @return 更新后的聚合根
      */
     default M updateById(M aggregate) {
         return save(aggregate);
@@ -85,6 +91,8 @@ public interface Repository<M extends AggregateRoot<?>, ID extends Serializable>
 
     /**
      * 主键存在更新，否插入（对应 {@code insertOrUpdate}）。
+     * @param aggregate 待处理聚合根
+     * @return 保存或更新后的聚合根
      */
     default M insertOrUpdate(M aggregate) {
         return save(aggregate);
@@ -92,6 +100,8 @@ public interface Repository<M extends AggregateRoot<?>, ID extends Serializable>
 
     /**
      * 检查标识是否存在。
+     * @param id 聚合根标识
+     * @return 标识存在时为 true
      */
     default boolean existsById(ID id) {
         return findById(id).isPresent();
@@ -99,6 +109,7 @@ public interface Repository<M extends AggregateRoot<?>, ID extends Serializable>
 
     /**
      * 按标识删除聚合根（对应 {@code deleteById}）。
+     * @param id 聚合根标识
      */
     default void deleteById(ID id) {
         throw new UnsupportedOperationException("deleteById is not supported by this repository");
@@ -106,6 +117,7 @@ public interface Repository<M extends AggregateRoot<?>, ID extends Serializable>
 
     /**
      * 删除聚合根（对应 {@code deleteById(T)}）。
+     * @param aggregate 待处理聚合根
      */
     default void delete(M aggregate) {
         if (Objects.nonNull(aggregate)) {
@@ -117,6 +129,8 @@ public interface Repository<M extends AggregateRoot<?>, ID extends Serializable>
 
     /**
      * 按主键批量删除（对应 {@code deleteByIds}）。
+     * @param ids 聚合根标识集合
+     * @return 删除的记录数
      */
     default int deleteByIds(Collection<ID> ids) {
         throw new UnsupportedOperationException("deleteByIds is not supported by this repository");
@@ -124,6 +138,8 @@ public interface Repository<M extends AggregateRoot<?>, ID extends Serializable>
 
     /**
      * 按主键批量查询（对应 {@code selectByIds}）。
+     * @param ids 聚合根标识集合
+     * @return 匹配的聚合根列表
      */
     default List<M> findByIds(Collection<ID> ids) {
         throw new UnsupportedOperationException("findByIds is not supported by this repository");
@@ -131,6 +147,8 @@ public interface Repository<M extends AggregateRoot<?>, ID extends Serializable>
 
     /**
      * 批量保存（对应 {@code insert(Collection)}）。
+     * @param aggregates 待处理聚合根集合
+     * @return 保存后的聚合根列表
      */
     default List<M> saveBatch(Collection<M> aggregates) {
         throw new UnsupportedOperationException("saveBatch is not supported by this repository");
@@ -138,6 +156,8 @@ public interface Repository<M extends AggregateRoot<?>, ID extends Serializable>
 
     /**
      * 批量更新（对应 {@code updateById(Collection)}）。
+     * @param aggregates 待处理聚合根集合
+     * @return 更新的记录数
      */
     default int updateBatchById(Collection<M> aggregates) {
         throw new UnsupportedOperationException("updateBatchById is not supported by this repository");
@@ -145,6 +165,8 @@ public interface Repository<M extends AggregateRoot<?>, ID extends Serializable>
 
     /**
      * 批量保存或更新（对应 {@code insertOrUpdate(Collection)}）。
+     * @param aggregates 待处理聚合根集合
+     * @return 保存或更新的记录数
      */
     default int insertOrUpdateBatch(Collection<M> aggregates) {
         throw new UnsupportedOperationException("insertOrUpdateBatch is not supported by this repository");
@@ -154,6 +176,7 @@ public interface Repository<M extends AggregateRoot<?>, ID extends Serializable>
 
     /**
      * 查找第一个聚合根。
+     * @return 第一条聚合根
      */
     default Optional<M> findFirst() {
         List<M> all = findAll();
@@ -162,6 +185,7 @@ public interface Repository<M extends AggregateRoot<?>, ID extends Serializable>
 
     /**
      * 查找全部聚合根。
+     * @return 全部聚合根
      */
     default List<M> findAll() {
         throw new UnsupportedOperationException("findAll is not supported by this repository");
@@ -169,6 +193,7 @@ public interface Repository<M extends AggregateRoot<?>, ID extends Serializable>
 
     /**
      * 统计总数。
+     * @return 记录数
      */
     default long count() {
         return findAll().size();
@@ -176,6 +201,7 @@ public interface Repository<M extends AggregateRoot<?>, ID extends Serializable>
 
     /**
      * 是否存在记录。
+     * @return 存在记录时为 true
      */
     default boolean exists() {
         return count() > 0;
@@ -247,6 +273,9 @@ public interface Repository<M extends AggregateRoot<?>, ID extends Serializable>
 
     /**
      * 按条件更新（对应 {@code update(T, Wrapper)}）。
+     * @param aggregate 待处理聚合根
+     * @param query 查询条件
+     * @return 至少更新一条记录时为 true
      */
     default boolean update(AggregateRoot<?> aggregate, Query<M> query) {
         throw new UnsupportedOperationException("update(aggregate, query) is not supported by this repository");
@@ -254,6 +283,8 @@ public interface Repository<M extends AggregateRoot<?>, ID extends Serializable>
 
     /**
      * 按条件删除（对应 {@code delete(Wrapper)}）。
+     * @param query 查询条件
+     * @return 至少删除一条记录时为 true
      */
     default boolean deleteByQuery(Query<M> query) {
         throw new UnsupportedOperationException("deleteByQuery(query) is not supported by this repository");
@@ -263,6 +294,8 @@ public interface Repository<M extends AggregateRoot<?>, ID extends Serializable>
 
     /**
      * 数据聚合填充（从其他聚合补充数据到当前聚合根）。
+     * @param query 查询条件
+     * @param model 待填充聚合根
      */
     default void fill(Query<M> query, AggregateRoot<?> model) {
         // 默认空实现，业务方按需覆盖
@@ -270,6 +303,8 @@ public interface Repository<M extends AggregateRoot<?>, ID extends Serializable>
 
     /**
      * 数据批量聚合填充。
+     * @param query 查询条件
+     * @param models 聚合根列表
      */
     default void fill(Query<M> query, List<M> models) {
         for (M model : models) {

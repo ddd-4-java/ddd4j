@@ -39,6 +39,7 @@ public class DefaultMessageSourceConfiguration {
 
     /**
      * 属性源后置处理器。
+     * @return 配置或处理后的组件
      */
     @Bean
     public BasePropertySourcePostProcessor bladePropertySourcePostProcessor() {
@@ -47,6 +48,7 @@ public class DefaultMessageSourceConfiguration {
 
     /**
      * 国际化配置属性 Bean。
+     * @return 配置或处理后的组件
      */
     @Bean
     @Primary
@@ -56,6 +58,7 @@ public class DefaultMessageSourceConfiguration {
 
     /**
      * 资源 bundle 基名解析器。
+     * @return 配置或处理后的组件
      */
     @Bean
     public ResourceBasenameHandler resourceBasenameHandler() {
@@ -64,6 +67,9 @@ public class DefaultMessageSourceConfiguration {
 
     /**
      * 主 MessageSource：支持多 bundle 与 basename 动态解析。
+     * @return 配置或处理后的组件
+     * @param resourceBasenameHandler 资源文件名处理器
+     * @param properties 配置属性
      */
     @Bean
     @Primary
@@ -90,6 +96,8 @@ public class DefaultMessageSourceConfiguration {
 
     /**
      * 嵌套 MessageSource，聚合容器内全部 MessageSource 实现。
+     * @return 配置或处理后的组件
+     * @param messageSourceProvider 消息源提供者
      */
     @Bean
     public NestedMessageSource nestedMessageSource(ObjectProvider<MessageSource> messageSourceProvider) {

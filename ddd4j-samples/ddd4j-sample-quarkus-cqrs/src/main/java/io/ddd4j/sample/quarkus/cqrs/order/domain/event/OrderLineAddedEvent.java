@@ -28,6 +28,7 @@ public class OrderLineAddedEvent extends DomainEvent<StringEntityId> {
 
     private static final long serialVersionUID = 1L;
 
+    /** @param orderId 发生添加明细事件的订单标识 */
     public OrderLineAddedEvent(String orderId) {
         super(orderId);
     }

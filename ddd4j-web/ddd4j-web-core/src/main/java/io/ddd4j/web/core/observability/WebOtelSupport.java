@@ -26,7 +26,7 @@ import java.util.Objects;
  * <p>8 个 web 框架的拦截器/过滤器通过此类集成 WebOtelIntegration。
  * 若 ddd4j-extension-otel 不在 classpath 上，所有方法为 noop（反射失败 → 安全降级）。
  *
- * <h3>GraalVM native-image 注意事项</h3>
+ * <p><b>GraalVM native-image 注意事项</b></p>
  * <p>本类在运行时通过 {@code Class.forName} + {@code getMethod} 反射调用
  * {@code io.ddd4j.extension.otel.WebOtelIntegration} 的 6 个静态方法
  * （{@code startServerSpan} / {@code activate} / {@code recordError} /
@@ -87,6 +87,11 @@ public final class WebOtelSupport {
 
     /**
      * 启动 SERVER span，返回 span 对象（OTel 未就绪时返回 null）。
+     *
+     * @param method HTTP 方法
+     * @param path 请求路径
+     * @param headers 请求头
+     * @return 服务端追踪片段
      */
     public static Object startServerSpan(String method, String path, Map<String, String> headers) {
         if (Objects.isNull(START_SERVER_SPAN)) {
@@ -101,6 +106,9 @@ public final class WebOtelSupport {
 
     /**
      * 激活 span 为当前 Context，返回 Scope（try-with-resources 可关闭）。
+     *
+     * @param span 追踪片段
+     * @return 追踪作用域
      */
     public static AutoCloseable activate(Object span) {
         if (Objects.isNull(ACTIVATE) || Objects.isNull(span)) {
@@ -122,6 +130,9 @@ public final class WebOtelSupport {
 
     /**
      * 记录异常到 span。
+     *
+     * @param span 追踪片段
+     * @param error Web 错误
      */
     public static void recordError(Object span, Throwable error) {
         if (Objects.isNull(RECORD_ERROR) || Objects.isNull(span) || Objects.isNull(error)) {
@@ -136,6 +147,9 @@ public final class WebOtelSupport {
 
     /**
      * 结束 span 并记录 HTTP 状态码。
+     *
+     * @param span 追踪片段
+     * @param status HTTP 状态码
      */
     public static void endServerSpan(Object span, int status) {
         if (Objects.isNull(END_SERVER_SPAN) || Objects.isNull(span)) {
@@ -150,6 +164,8 @@ public final class WebOtelSupport {
 
     /**
      * 注入 traceparent 到响应头。
+     *
+     * @param responseHeaders 响应头
      */
     public static void injectResponseContext(Map<String, String> responseHeaders) {
         if (Objects.isNull(INJECT_RESPONSE_CONTEXT) || Objects.isNull(responseHeaders)) {
@@ -164,6 +180,8 @@ public final class WebOtelSupport {
 
     /**
      * 检查 OTel 集成是否可用。
+     *
+     * @return OTel 可用时为 true
      */
     public static boolean isAvailable() {
         if (Objects.isNull(IS_AVAILABLE)) {

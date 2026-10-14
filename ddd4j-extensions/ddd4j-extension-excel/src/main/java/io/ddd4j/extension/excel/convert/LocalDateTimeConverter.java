@@ -40,14 +40,21 @@ import java.util.Objects;
  */
 public class LocalDateTimeConverter implements Converter<LocalDateTime> {
 
+    /** 默认日期时间格式。 */
     public static final String DEFAULT_PATTERN = "yyyy-MM-dd HH:mm:ss";
 
     private final DateTimeFormatter formatter;
 
+    /** 使用默认日期时间格式创建转换器。 */
     public LocalDateTimeConverter() {
         this(DEFAULT_PATTERN);
     }
 
+    /**
+     * 使用指定日期时间格式创建转换器。
+     *
+     * @param pattern 日期时间格式
+     */
     public LocalDateTimeConverter(String pattern) {
         this.formatter = DateTimeFormatter.ofPattern(pattern);
     }

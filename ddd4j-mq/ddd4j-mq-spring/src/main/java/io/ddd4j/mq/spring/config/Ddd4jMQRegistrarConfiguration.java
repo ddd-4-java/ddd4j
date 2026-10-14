@@ -86,6 +86,10 @@ public class Ddd4jMQRegistrarConfiguration {
 
     /**
      * 将当前启用的 MQ 客户端状态接入框架统一 Readiness。
+     *
+     * @param mqClients 已注册的消息客户端
+     * @param properties 消息模块配置
+     * @return 消息模块就绪检查项
      */
     @Bean
     public ReadinessContributor mqReadinessContributor(List<MQClient> mqClients, MQProperties properties) {
