@@ -101,6 +101,74 @@ class PulsarAdapterContractTest {
 
     @Test
     @SuppressWarnings("unchecked")
+    void shouldPublishCausalityAsNativePulsarProperties() throws Exception {
+        PulsarClient pulsarClient = mock(PulsarClient.class);
+        ProducerBuilder<byte[]> producerBuilder = mock(ProducerBuilder.class);
+        Producer<byte[]> producer = mock(Producer.class);
+        TypedMessageBuilder<byte[]> messageBuilder = mock(TypedMessageBuilder.class);
+        when(pulsarClient.newProducer(Schema.BYTES)).thenReturn(producerBuilder);
+        when(producerBuilder.topic(anyString())).thenReturn(producerBuilder);
+        when(producerBuilder.batchingMaxPublishDelay(anyLong(), any())).thenReturn(producerBuilder);
+        when(producerBuilder.create()).thenReturn(producer);
+        when(producer.newMessage()).thenReturn(messageBuilder);
+        when(messageBuilder.value(any(byte[].class))).thenReturn(messageBuilder);
+        when(messageBuilder.property(anyString(), anyString())).thenReturn(messageBuilder);
+        when(messageBuilder.sendAsync()).thenReturn(CompletableFuture.completedFuture(mock(MessageId.class)));
+
+        PulsarProperties pulsarProperties = new PulsarProperties();
+        PulsarMQClient client = new PulsarMQClient(pulsarClient, pulsarProperties);
+        MQProperties properties = new MQProperties();
+        properties.setEnabled(true);
+        properties.setBroker("pulsar");
+        client.init(Collections.<MQListener>emptyList(), properties, new MQEventSerialization() {
+            @Override
+            public <T> T serialize(Object event) {
+                return (T) "{}";
+            }
+
+            @Override
+            public <S, T> T deserialize(S value, Class<T> type) {
+                return null;
+            }
+        }, null);
+        MQEvent withoutCausality = new MQEvent();
+        withoutCausality.setTopic("orders");
+        withoutCausality.setMsgId("plain-id");
+        withoutCausality.publish();
+        verify(messageBuilder).property(MQDeliveryHeaders.MESSAGE_ID, "plain-id");
+        verify(messageBuilder, never()).property(eq(MQDeliveryHeaders.CORRELATION_ID), anyString());
+        verify(messageBuilder, never()).property(eq(MQDeliveryHeaders.CAUSATION_ID), anyString());
+        clearInvocations(messageBuilder);
+
+        MQEvent correlationOnly = new MQEvent();
+        correlationOnly.setTopic("orders");
+        correlationOnly.setMsgId("single-id");
+        correlationOnly.setCorrelationId("correlation-only");
+        correlationOnly.publish();
+        verify(messageBuilder).property(MQDeliveryHeaders.CORRELATION_ID, "correlation-only");
+        verify(messageBuilder, never()).property(eq(MQDeliveryHeaders.CAUSATION_ID), anyString());
+        clearInvocations(messageBuilder);
+
+        MQEvent event = new MQEvent();
+        event.setTopic("orders");
+        event.setTag("priority");
+        event.setMsgId("stable-id");
+        event.setCorrelationId("correlation-id");
+        event.setCausationId("causation-id");
+
+        event.publish();
+
+        verify(messageBuilder).property(MQDeliveryHeaders.MESSAGE_ID, "stable-id");
+        verify(messageBuilder).property(MQDeliveryHeaders.CORRELATION_ID, "correlation-id");
+        verify(messageBuilder).property(MQDeliveryHeaders.CAUSATION_ID, "causation-id");
+        // 消费者按逻辑 topic 订阅，tag 只作为消息属性过滤。
+        verify(producerBuilder).topic(pulsarProperties.physicalTopic("orders", null));
+        verify(producerBuilder, never()).topic(pulsarProperties.physicalTopic("orders", "priority"));
+        client.close();
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
     void shouldRestoreCausalityFromNativePulsarProperties() throws Exception {
         PulsarClient pulsarClient = mock(PulsarClient.class);
         ConsumerBuilder<byte[]> consumerBuilder = mock(ConsumerBuilder.class);

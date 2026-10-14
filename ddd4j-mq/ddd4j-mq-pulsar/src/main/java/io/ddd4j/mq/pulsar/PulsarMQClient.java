@@ -28,6 +28,7 @@ import org.apache.pulsar.client.api.*;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -190,8 +191,8 @@ public class PulsarMQClient implements MQClient {
                     if (Objects.nonNull(routingKey)) {
                         builder.key(routingKey); // Pulsar partition routing：同 key 进同 partition
                     }
-                    if (Objects.nonNull(event.getMsgId())) {
-                        builder.property(MessageHeaders.HEADER_MESSAGE_ID, event.getMsgId());
+                    for (Map.Entry<String, String> header : event.headerMap().entrySet()) {
+                        builder.property(header.getKey(), header.getValue());
                     }
                     if (Objects.nonNull(event.getTenantId())) {
                         builder.property(MessageHeaders.HEADER_TENANT_ID, event.getTenantId());
