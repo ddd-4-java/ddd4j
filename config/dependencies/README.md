@@ -5,6 +5,7 @@
 
 - `alignment-policy.json`：原始组件基线、已核验坐标替代，以及明确未完成的兼容/迁移项。固定基线避免通过删除声明或移入 profile
   缩小检查范围。
+- 第三方库版本不从 DDD4J 分支号推导；只有 `dependency_versions` 中显式配置的坐标才校验指定版本（字符串表示三线共享版本，JDK 键表示明确的平台版本）。EasyExcel 五个发布模块统一固定为正式版 `5.0.1`。构件解析、JAR 字节码、组件覆盖和漏洞扫描门禁继续执行。
 - `version-evidence.json`：部分兼容发行版的发布 JAR 字节码证据。
 - `component-matrix.csv`：历史清单快照，用于比较；其中状态可能已过期。当前三线有效版本与检查状态以本次严格检查输出的 `components.csv` 和 `result.json` 为准。
 - SOAP 工具库实际制品为 `io.github.easy4j:soap-utils`；旧 BOM 中的 `soaputils` 是错误坐标。三线分别使用 1.0.x、2.0.x、3.0.x 构件，并由本线 JDK 验证字节码和单元测试。

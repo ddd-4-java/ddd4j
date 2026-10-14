@@ -3561,5 +3561,12 @@
     "8": "6d217054",
     "17": "90ab6cc3",
     "21": "2e730fb4"
+  },
+  "dependency_versions": {
+    "io.github.easy4j:easyexcel": "5.0.1",
+    "io.github.easy4j:easyexcel-parent": "5.0.1",
+    "io.github.easy4j:easyexcel-core": "5.0.1",
+    "io.github.easy4j:easyexcel-support": "5.0.1",
+    "io.github.easy4j:easyexcel-markdown": "5.0.1"
   }
 }

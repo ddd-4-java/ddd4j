@@ -94,7 +94,7 @@ JUnit、受影响模块回归、全量 reactor。没有执行的门禁不得标�
 - Micronaut 3 的手动 `Ddd4jMicronautContext.set/clear/openContext` 与 `HttpFilter.doFilter`，和 Micronaut 4 的 `ThreadPropagatedContextElement.updateThreadContext/restoreThreadContext`、`@RequestFilter.filter`，只按七个显式源码方法及完整 JVM 签名登记平台入口差异。三线上下文生命周期测试和 HTTP/OTel 契约证明对应行为；高线两个编译器 bridge 方法仅在完整 JVM 签名、关联显式方法及两线 `ACC_BRIDGE, ACC_SYNTHETIC` 标记均匹配时登记，任一漂移即恢复未解决状态。低线 Quarkus 响应过滤器构造器另以显式声明和精确签名登记；原始差异继续输出，其他源码/行为差异不获豁免。
 - Micronaut 三线采集远端地址时，缺失或 `InetSocketAddress` 未解析均写入共同的 `unknown` 客户端地址，不因高线 `getHostString()` 有值而把未解析主机名当 IP；已解析地址仍使用数值地址。
 - Micronaut 3/4 过滤器入口依框架版本保持不同；下游在创建 Publisher 时同步抛出运行时异常，三线必须原样传播异常、标记 HTTP 500 并结束 OTel Span、关闭调用线程 Scope 和失败的幂等 Scope。正常响应、异步错误和取消路径继续接受各线的真实 Web 契约验证，不因同步失败测试通过而自动豁免其余 Micronaut API 差异。
-- `io.github.easy4j` 组件沿各自版本线引用：1.0.x、2.0.x、3.0.x 分别使用同前缀的 `20260630-SNAPSHOT` 版本。必要的上游修复只覆盖实际阻塞的坐标，不改变其他组件发布范围。
+- 第三方组件版本由其真实发布与 JDK/框架兼容性决定，不从 DDD4J 分支号推导。EasyExcel 三线统一使用 `io.github.easy4j` 正式版 `5.0.1`；显式版本配置仍严格校验，构件缺失、字节码不兼容、组件覆盖缺失和漏洞门禁失败继续阻断验收。其他组件保持已有版本，必要的上游修复只覆盖实际阻塞的坐标，不改变其他组件发布范围。
 - `*-spring-boot-starter` 按 Spring Boot 版本线管理，不建立组件式三线分支：Boot 2.3.x/2.7.x 的 starter 依赖 Easy4J 1.0.x，Boot 3.0.x—3.5.x 依赖 2.0.x，Boot 4.0.x/4.1.x 依赖 3.0.x；starter 自身快照版本为相应 Boot 线的 `.20260630-SNAPSHOT`。待发布版本将快照后缀去掉并按相应 Boot 线建立 tag；本轮本地验证不创建 tag 或发布构件。
 - 三线自有公共 API 以兼容并集为准，保留构造器重载、Lombok/编译器生成的可观察成员、组件访问器与 JavaBean getter、值相等、异常和 JSON 契约。所有受 Git 管理的 Java 源及文档示例继续禁止声明 `record` 类型。
 
