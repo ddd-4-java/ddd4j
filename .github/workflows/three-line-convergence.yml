@@ -22,7 +22,7 @@ jobs:
           - 16379:6379
     steps:
       - name: Check out workflow driver
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           path: driver
 
@@ -56,23 +56,23 @@ jobs:
           done
 
       - name: Check out JDK 8 line at fixed SHA
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ steps.revisions.outputs.sha_1 }}
           path: line-8
       - name: Check out JDK 17 line at fixed SHA
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ steps.revisions.outputs.sha_2 }}
           path: line-17
       - name: Check out JDK 21 line at fixed SHA
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ steps.revisions.outputs.sha_3 }}
           path: line-21
 
       - name: Set up all line JDKs
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
         with:
           distribution: temurin
           java-version: |
@@ -80,7 +80,7 @@ jobs:
             17
             21
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.11'
 
@@ -97,6 +97,11 @@ jobs:
           install -d -m 700 "$HOME/.m2"
           umask 077
           printf '%s' "$MAVEN_SETTINGS_XML" | base64 --decode > "$HOME/.m2/settings.xml"
+
+      - name: Test and bootstrap cold-runner value probe classpath
+        run: |
+          python3 -m unittest discover -s driver/scripts -p test_bootstrap_three_line_classpath.py
+          python3 driver/scripts/bootstrap-three-line-classpath.py
 
       - name: Verify three-line convergence
         shell: bash
@@ -116,7 +121,7 @@ jobs:
 
       - name: Upload convergence evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: three-line-convergence-${{ github.run_id }}
           path: target/three-line-convergence/

@@ -12,6 +12,10 @@ BASE = ROOT / "ddd4j-web/ddd4j-web-core/src"
 M2 = Path.home() / ".m2/repository"
 DEPENDENCIES = [
     M2 / "com/fasterxml/jackson/core/jackson-annotations/2.22/jackson-annotations-2.22.jar",
+    M2 / "tools/jackson/core/jackson-core/3.2.1/jackson-core-3.2.1.jar",
+    M2 / "tools/jackson/core/jackson-databind/3.2.1/jackson-databind-3.2.1.jar",
+    M2 / "org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar",
+    M2 / "org/slf4j/slf4j-api/2.0.18/slf4j-api-2.0.18.jar",
     M2 / "org/junit/jupiter/junit-jupiter-api/5.8.2/junit-jupiter-api-5.8.2.jar",
     M2 / "org/opentest4j/opentest4j/1.2.0/opentest4j-1.2.0.jar",
     M2 / "org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar",
@@ -35,11 +39,6 @@ class WebApiVersionSuiteTest(unittest.TestCase):
             stub = root / "io/ddd4j/kit/lang/StrKit.java"
             stub.parent.mkdir(parents=True)
             stub.write_text('package io.ddd4j.kit.lang; public final class StrKit { public static boolean isBlank(String s){return s==null||s.trim().isEmpty();} public static boolean isNotBlank(String s){return !isBlank(s);} public static boolean isEmpty(String s){return s==null||s.isEmpty();} public static boolean isNotEmpty(String s){return !isEmpty(s);} }')
-            logger = root / "org/slf4j/Logger.java"
-            logger.parent.mkdir(parents=True)
-            logger.write_text('package org.slf4j; public interface Logger { void warn(String s,Object... v); void debug(String s,Object... v); }')
-            factory = root / "org/slf4j/LoggerFactory.java"
-            factory.write_text('package org.slf4j; public final class LoggerFactory { public static Logger getLogger(Class<?> c){return new Logger(){public void warn(String s,Object... v){} public void debug(String s,Object... v){}};} }')
             runner = root / "WebVersionSuiteRunner.java"
             runner.write_text('''import java.lang.reflect.*;
 import org.junit.jupiter.api.Test;
@@ -67,7 +66,8 @@ public class WebVersionSuiteRunner {
             tests = BASE / "test/java/io/ddd4j/web/core"
             context = ["ClientIpResolver", "DefaultClientIpResolver", "RequestIdGenerator", "WebRequestData",
                        "WebRequestContext", "WebRequestContextFactory"]
-            sources = [stub, logger, factory, runner, main / "error/WebStatusException.java",
+            sources = [stub, runner, ROOT / "ddd4j-kit/src/main/java/io/ddd4j/kit/lang/JsonKit.java",
+                       main / "error/WebStatusException.java",
                        *(main / "context" / (name + ".java") for name in context),
                        *sorted((main / "version").glob("*.java")),
                        *sorted((tests / "version").glob("*Test.java")),
@@ -76,7 +76,8 @@ public class WebVersionSuiteRunner {
             classes.mkdir()
             classpath = ":".join(map(str, DEPENDENCIES))
             jdk = current_jdk()
-            compiled = subprocess.run([str(jdk / "bin/javac"), "-classpath", classpath, "-d", str(classes),
+            compiled = subprocess.run([str(jdk / "bin/javac"), "-classpath", classpath, "-processorpath", str(DEPENDENCIES[3]),
+                                       "-processor", "lombok.launch.AnnotationProcessorHider$AnnotationProcessor", "-d", str(classes),
                                        *map(str, sources)], capture_output=True, text=True)
             self.assertEqual(0, compiled.returncode, compiled.stderr)
             test_types = ["io.ddd4j.web.core.version." + path.stem for path in sorted((tests / "version").glob("*Test.java"))]
@@ -84,7 +85,7 @@ public class WebVersionSuiteRunner {
             execution = subprocess.run([str(jdk / "bin/java"), "-classpath", str(classes) + ":" + classpath,
                                         "WebVersionSuiteRunner", *test_types], capture_output=True, text=True)
             self.assertEqual(0, execution.returncode, execution.stderr)
-            self.assertIn("web version tests=27", execution.stdout)
+            self.assertIn("web version tests=28", execution.stdout)
 
 
 if __name__ == "__main__":
