@@ -15,6 +15,9 @@
 
 package io.ddd4j.data.mybatis.adapter;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -45,7 +48,12 @@ public final class SqlObservation {
      * @param error        执行异常，可为空
      */
 
-    public SqlObservation(String statementId, String sql, List<String> sortedParams, long elapsedNanos, Throwable error) {
+    @JsonCreator
+    public SqlObservation(@JsonProperty("statementId") String statementId,
+                          @JsonProperty("sql") String sql,
+                          @JsonProperty("sortedParams") List<String> sortedParams,
+                          @JsonProperty("elapsedNanos") long elapsedNanos,
+                          @JsonProperty("error") Throwable error) {
         this.statementId = statementId;
         this.sql = sql;
         this.sortedParams = sortedParams;
@@ -57,22 +65,27 @@ public final class SqlObservation {
         return elapsedNanos / 1_000_000L;
     }
 
+    @JsonProperty("statementId")
     public String statementId() {
         return statementId;
     }
 
+    @JsonProperty("sql")
     public String sql() {
         return sql;
     }
 
+    @JsonProperty("sortedParams")
     public List<String> sortedParams() {
         return sortedParams;
     }
 
+    @JsonProperty("elapsedNanos")
     public long elapsedNanos() {
         return elapsedNanos;
     }
 
+    @JsonProperty("error")
     public Throwable error() {
         return error;
     }
@@ -121,7 +134,8 @@ public final class SqlObservation {
      */
     @Override
     public int hashCode() {
-        int result = Objects.hashCode(statementId);
+        int result = 0;
+        result = 31 * result + Objects.hashCode(statementId);
         result = 31 * result + Objects.hashCode(sql);
         result = 31 * result + Objects.hashCode(sortedParams);
         result = 31 * result + Long.hashCode(elapsedNanos);
