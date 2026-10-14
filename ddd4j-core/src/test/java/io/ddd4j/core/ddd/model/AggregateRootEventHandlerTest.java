@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Objects;
 
 import io.ddd4j.core.ddd.event.DomainEvent;
-import io.ddd4j.core.ddd.event.EntityId;
+import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.EntityIdPath;
 import io.ddd4j.core.ddd.event.EntityType;
 import io.ddd4j.core.ddd.event.EventHandler;
@@ -191,7 +191,7 @@ class AggregateRootEventHandlerTest {
             super(new EntityIdPath(new CounterId("counter-1")));
         }
 
-        final static class CounterId implements EntityId {
+        final static class CounterId implements AggregateRootId {
 
             private static final long serialVersionUID = 0L;
 

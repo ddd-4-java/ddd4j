@@ -16,7 +16,9 @@ package io.ddd4j.core.ddd.model;
 
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.cqrs.query.Query;
+import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.DomainEvent;
+import io.ddd4j.core.ddd.event.EntityId;
 import io.ddd4j.core.ddd.event.EventHandler;
 import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
@@ -447,11 +449,20 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
      */
     private <E extends DomainEvent<?>> E apply(E event, boolean replay) {
         Objects.requireNonNull(event, "event must not be null");
+        EntityId rootSegment = event.getEntityIdPath().first();
+        if (!AggregateRootId.class.isInstance(rootSegment)) {
+            throw new IllegalStateException("Event path root segment must be an AggregateRootId: "
+                    + rootSegment.asTypedString() + " (path: " + event.getEntityIdPath().asString()
+                    + ", event: " + event.getClass().getName()
+                    + ", aggregate: " + this.getClass().getName() + ")");
+        }
+        AggregateRootId aggregateRootId = (AggregateRootId) rootSegment;
         ClassValue<Method> handlerCache = EVENT_HANDLER_CACHE.get(this.getClass());
         Method handler = handlerCache.get(event.getClass());
         if (Objects.isNull(handler)) {
             throw new IllegalStateException("No @EventHandler method found for event type: "
-                    + event.getClass().getName() + " on aggregate " + this.getClass().getName());
+                    + event.getClass().getName() + " rooted at " + aggregateRootId.asTypedString()
+                    + " on aggregate " + this.getClass().getName());
         }
         if (replay && handler.isAnnotationPresent(EventHandler.class)
                 && handler.getAnnotation(EventHandler.class).ignoreOnReplay()) {
