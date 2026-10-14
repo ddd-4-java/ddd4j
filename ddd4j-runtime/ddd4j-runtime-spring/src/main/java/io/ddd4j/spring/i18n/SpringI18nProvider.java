@@ -16,15 +16,12 @@ package io.ddd4j.spring.i18n;
 
 import io.ddd4j.core.i18n.I18nProvider;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.biz.context.NestedMessageSource;
+import org.springframework.extension.context.NestedMessageSource;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.Locale;
-import java.util.Objects;
 
 /**
  * Spring 实现的国际化提供者
@@ -42,29 +39,9 @@ public class SpringI18nProvider implements I18nProvider {
      */
     private final MessageSource messageSource;
 
-    /** 保留旧 spring-biz 构造入口，供已有调用方继续使用。 */
+    /** 使用当前 WebMVC 配置提供的 Easy4J 嵌套消息源。 */
     public SpringI18nProvider(NestedMessageSource messageSource) {
         this.messageSource = messageSource;
-    }
-
-    /** 使用当前 WebMVC 配置提供的 Easy4J 嵌套消息源。 */
-    public SpringI18nProvider(org.springframework.extension.context.NestedMessageSource messageSource) {
-        this.messageSource = messageSource;
-    }
-
-    /** Spring 容器优先接入当前扩展消息源，同时兼容旧 spring-biz Bean。 */
-    @Autowired
-    public SpringI18nProvider(
-            ObjectProvider<org.springframework.extension.context.NestedMessageSource> extensionSources,
-            ObjectProvider<NestedMessageSource> legacySources) {
-        MessageSource selected = extensionSources.getIfAvailable();
-        if (Objects.isNull(selected)) {
-            selected = legacySources.getIfAvailable();
-        }
-        if (Objects.isNull(selected)) {
-            throw new IllegalStateException("No NestedMessageSource bean available");
-        }
-        this.messageSource = selected;
     }
 
     /**

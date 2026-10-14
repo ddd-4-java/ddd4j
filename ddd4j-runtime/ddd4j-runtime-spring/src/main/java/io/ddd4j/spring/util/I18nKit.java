@@ -18,8 +18,8 @@ import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.context.ThreadContext;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.biz.context.NestedMessageSource;
-import org.springframework.biz.utils.SpringContextUtils;
+import org.springframework.extension.context.NestedMessageSource;
+import org.springframework.extension.utils.SpringContextUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -295,11 +295,6 @@ public class I18nKit {
 
     private static MessageSource messageSource() {
         ApplicationContext context = SpringContextUtils.getContext().getApplicationContext();
-        MessageSource extensionSource = context.getBeanProvider(
-                org.springframework.extension.context.NestedMessageSource.class).getIfAvailable();
-        if (Objects.nonNull(extensionSource)) {
-            return extensionSource;
-        }
         return context.getBean(NestedMessageSource.class);
     }
 }

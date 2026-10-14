@@ -599,7 +599,6 @@
         <shardingsphere-jdbc.version>5.5.3</shardingsphere-jdbc.version>
         <shardingsphere-parser.version>${shardingsphere-jdbc.version}</shardingsphere-parser.version>
         <shedlock.version>7.2.1</shedlock.version>
-        <shiro-biz.version>1.2.3.RELEASE</shiro-biz.version>
         <shiro-dingtalk.version>3.0.x.20260630-SNAPSHOT</shiro-dingtalk.version>
         <shiro-extension.version>3.0.x.20260630-SNAPSHOT</shiro-extension.version>
         <shiro-freemarker.version>1.0.3</shiro-freemarker.version>
@@ -634,7 +633,6 @@
         <spring-amqp.version>3.2.5</spring-amqp.version>
         <spring-authorization-server.version>1.4.3</spring-authorization-server.version>
         <spring-batch.version>6.0.4</spring-batch.version>
-        <spring-biz.version>3.3.x.20241020.RELEASE</spring-biz.version>
         <spring-boot3-it.version>3.4.4</spring-boot3-it.version>
         <spring-boot4-it.version>4.0.8</spring-boot4-it.version>
         <spring-bytebuddy.version>3.0.x.20260630-SNAPSHOT</spring-bytebuddy.version>
@@ -6335,11 +6333,6 @@
                 <version>${shedlock.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.github.easy4j</groupId>
-                <artifactId>shiro-biz</artifactId>
-                <version>${shiro-biz.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.apache.shiro</groupId>
                 <artifactId>shiro-cache</artifactId>
                 <version>${shiro.version}</version>
@@ -6563,11 +6556,6 @@
                 <groupId>org.springframework.amqp</groupId>
                 <artifactId>spring-amqp</artifactId>
                 <version>${spring-amqp.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.easy4j</groupId>
-                <artifactId>spring-biz</artifactId>
-                <version>${spring-biz.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.easy4j</groupId>

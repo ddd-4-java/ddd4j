@@ -25,16 +25,4 @@ class SpringI18nProviderWiringTest {
         }
     }
 
-    @Test
-    void keepsLegacySpringBizMessageSourceWiring() {
-        try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext()) {
-            StaticMessageSource delegate = new StaticMessageSource();
-            delegate.addMessage("welcome", Locale.getDefault(), "欢迎");
-            context.registerBean(org.springframework.biz.context.NestedMessageSource.class,
-                    () -> new org.springframework.biz.context.NestedMessageSource(delegate));
-            context.registerBean(SpringI18nProvider.class);
-            context.refresh();
-            assertEquals("欢迎", context.getBean(SpringI18nProvider.class).getMessage("welcome"));
-        }
-    }
 }

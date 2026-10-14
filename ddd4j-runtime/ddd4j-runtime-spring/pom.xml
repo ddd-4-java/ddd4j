@@ -73,11 +73,6 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-context-support</artifactId>
         </dependency>
-        <!-- For Spring Biz（从 ddd4j-core 迁入的 SpringContext 等类需要） -->
-        <dependency>
-            <groupId>io.github.easy4j</groupId>
-            <artifactId>spring-biz</artifactId>
-        </dependency>
         <dependency>
             <groupId>io.github.easy4j</groupId>
             <artifactId>spring-extension</artifactId>
