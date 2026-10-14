@@ -33,6 +33,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -84,6 +86,7 @@ public class JsonKit {
     public static ObjectMapper defaultObjectMapper() {
         // Jackson 2: java.time 序列化通过 SimpleModule + JsonSerializer/JsonDeserializer 注册（jsr310 未在 classpath）
         SimpleModule customDateModule = new SimpleModule();
+        registerIsoTimeTypes(customDateModule);
         customDateModule.addSerializer(LocalDate.class, localDateSerializer(DateTimeFormatter.ofPattern(DATE_PATTERN)));
         customDateModule.addDeserializer(LocalDate.class, localDateDeserializer(DateTimeFormatter.ofPattern(DATE_PATTERN)));
         customDateModule.addSerializer(LocalDateTime.class, localDateTimeSerializer(DateTimeFormatter.ofPattern(TIME_PATTERN)));
@@ -123,6 +126,7 @@ public class JsonKit {
      */
     public static ObjectMapper buildObjectMapper(String datePattern, String dateTimePattern, String timePattern) {
         SimpleModule customDateModule = new SimpleModule();
+        registerIsoTimeTypes(customDateModule);
         customDateModule.addSerializer(LocalDate.class, localDateSerializer(DateTimeFormatter.ofPattern(datePattern)));
         customDateModule.addDeserializer(LocalDate.class, localDateDeserializer(DateTimeFormatter.ofPattern(datePattern)));
         customDateModule.addSerializer(LocalDateTime.class, localDateTimeSerializer(DateTimeFormatter.ofPattern(dateTimePattern)));
@@ -443,6 +447,29 @@ public class JsonKit {
         return childNode.isBigDecimal() ? childNode.decimalValue() : childNode.isDouble() ? childNode.asDouble() :
                 childNode.isFloat() ? childNode.floatValue() : childNode.isLong() ? childNode.asLong() :
                         childNode.isInt() ? childNode.asInt() : childNode.isBoolean() ? childNode.asBoolean() : childNode.asText();
+    }
+
+    private static void registerIsoTimeTypes(SimpleModule module) {
+        module.addSerializer(Instant.class, new JsonSerializer<Instant>() {
+            public void serialize(Instant value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+                gen.writeString(value.toString());
+            }
+        });
+        module.addDeserializer(Instant.class, new JsonDeserializer<Instant>() {
+            public Instant deserialize(JsonParser parser, DeserializationContext ctxt) throws IOException {
+                return Instant.parse(parser.getText());
+            }
+        });
+        module.addSerializer(Duration.class, new JsonSerializer<Duration>() {
+            public void serialize(Duration value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+                gen.writeString(value.toString());
+            }
+        });
+        module.addDeserializer(Duration.class, new JsonDeserializer<Duration>() {
+            public Duration deserialize(JsonParser parser, DeserializationContext ctxt) throws IOException {
+                return Duration.parse(parser.getText());
+            }
+        });
     }
 
     private static JsonSerializer<LocalDate> localDateSerializer(DateTimeFormatter formatter) {
