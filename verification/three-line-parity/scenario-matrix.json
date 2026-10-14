@@ -1,0 +1,3656 @@
+{
+  "schemaVersion": 1,
+  "scope": "partial-inventory",
+  "scenarios": [
+    {
+      "id": "AUTH-DATASCOPE-VALIDATION-DISCOVERY",
+      "description": "各线 Bean Validation 提供者能发现数据权限注解约束；JDK 8 适配 javax，JDK 17/21 适配 jakarta，不混同实际权限判定",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-datascope-validation-aligned/report.json",
+      "lastEvidenceSha256": "8d00312f3ccb4792e0a77847c924ac40513e1ad3d76663a1668a5b50b9d69494",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-auth/ddd4j-auth-datascope/src/test/java/io/ddd4j/auth/datascope/RequiresDataPermissionsValidationTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-auth/ddd4j-auth-datascope/src/test/java/io/ddd4j/auth/datascope/RequiresDataPermissionsValidationTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-auth/ddd4j-auth-datascope/src/test/java/io/ddd4j/auth/datascope/RequiresDataPermissionsValidationTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "AUTH-SUBJECT-ADAPTER-COMPAT",
+      "description": "Shiro 与 Spring Security Subject 行为及 Sa-Token 权限/角色桥接在三线一致；JDK 8 与高两线的语法和空集合表达差异由源码/测试哈希锁定",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-14-auth-subject-syntax/report.json",
+      "lastEvidenceSha256": "01d94ec0a1c262491d1b128d0ffb57ced079ccd196dfbc1110ef13d90449e4c0",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-auth/ddd4j-auth-shiro/src/test/java/io/ddd4j/auth/shiro/subject/ShiroSubjectTest.java",
+            "ddd4j-auth/ddd4j-auth-security/src/test/java/io/ddd4j/auth/security/subject/SecuritySubjectTest.java",
+            "ddd4j-auth/ddd4j-auth-satoken/src/test/java/io/ddd4j/auth/satoken/subject/SaTokenSubjectDataBridgeTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-auth/ddd4j-auth-shiro/src/test/java/io/ddd4j/auth/shiro/subject/ShiroSubjectTest.java",
+            "ddd4j-auth/ddd4j-auth-security/src/test/java/io/ddd4j/auth/security/subject/SecuritySubjectTest.java",
+            "ddd4j-auth/ddd4j-auth-satoken/src/test/java/io/ddd4j/auth/satoken/subject/SaTokenSubjectDataBridgeTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-auth/ddd4j-auth-shiro/src/test/java/io/ddd4j/auth/shiro/subject/ShiroSubjectTest.java",
+            "ddd4j-auth/ddd4j-auth-security/src/test/java/io/ddd4j/auth/security/subject/SecuritySubjectTest.java",
+            "ddd4j-auth/ddd4j-auth-satoken/src/test/java/io/ddd4j/auth/satoken/subject/SaTokenSubjectDataBridgeTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "BROKER-ADAPTER-CONTRACTS",
+      "description": "12 个 MQ 适配模块的本地路由、Header、确认与消费组契约；原生 Broker 集成单独由 BROKER-ADAPTERS 验收",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-broker-adapter-contracts/report.json",
+      "lastEvidenceSha256": "31f853776688b350b50a7b1a636a1488bdb354190f957d69a916567d13b8fe91",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-activemq/src/test/java/io/ddd4j/mq/activemq/ActiveMQAdapterContractTest.java",
+            "ddd4j-mq/ddd4j-mq-disruptor/src/test/java/io/ddd4j/mq/disruptor/DisruptorAdapterContractTest.java",
+            "ddd4j-mq/ddd4j-mq-mqtt/src/test/java/io/ddd4j/mq/mqtt/MqttAdapterContractTest.java",
+            "ddd4j-mq/ddd4j-mq-mqtt-mica/src/test/java/io/ddd4j/mq/mqttmica/MicaMqttAcknowledgmentContractTest.java",
+            "ddd4j-mq/ddd4j-mq-mqtt-mica/src/test/java/io/ddd4j/mq/mqttmica/MicaMqttMessageHeaderTest.java",
+            "ddd4j-mq/ddd4j-mq-nats/src/test/java/io/ddd4j/mq/nats/NatsAcknowledgmentContractTest.java",
+            "ddd4j-mq/ddd4j-mq-nats/src/test/java/io/ddd4j/mq/nats/NatsMessageHeaderTest.java",
+            "ddd4j-mq/ddd4j-mq-ons/src/test/java/io/ddd4j/mq/ons/ConsumerGroupParityTest.java",
+            "ddd4j-mq/ddd4j-mq-ons/src/test/java/io/ddd4j/mq/ons/OnsAcknowledgmentContractTest.java",
+            "ddd4j-mq/ddd4j-mq-ons/src/test/java/io/ddd4j/mq/ons/OnsMessageHeaderTest.java",
+            "ddd4j-mq/ddd4j-mq-pulsar/src/test/java/io/ddd4j/mq/pulsar/PulsarAdapterContractTest.java",
+            "ddd4j-mq/ddd4j-mq-rabbitmq/src/test/java/io/ddd4j/mq/rabbitmq/RabbitMQAdapterContractTest.java",
+            "ddd4j-mq/ddd4j-mq-redis-stream/src/test/java/io/ddd4j/mq/redisstream/RedisStreamBrokerAdapterTest.java",
+            "ddd4j-mq/ddd4j-mq-rocketmq/src/test/java/io/ddd4j/mq/rocketmq/RocketAcknowledgmentContractTest.java",
+            "ddd4j-mq/ddd4j-mq-rocketmq/src/test/java/io/ddd4j/mq/rocketmq/RocketMessageHeaderTest.java",
+            "ddd4j-mq/ddd4j-mq-sqs/src/test/java/io/ddd4j/mq/sqs/SqsAdapterContractTest.java",
+            "ddd4j-mq/ddd4j-mq-tdmq/src/test/java/io/ddd4j/mq/tdmq/ConsumerGroupParityTest.java",
+            "ddd4j-mq/ddd4j-mq-tdmq/src/test/java/io/ddd4j/mq/tdmq/TdmqAcknowledgmentContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-activemq/src/test/java/io/ddd4j/mq/activemq/ActiveMQAdapterContractTest.java",
+            "ddd4j-mq/ddd4j-mq-disruptor/src/test/java/io/ddd4j/mq/disruptor/DisruptorAdapterContractTest.java",
+            "ddd4j-mq/ddd4j-mq-mqtt/src/test/java/io/ddd4j/mq/mqtt/MqttAdapterContractTest.java",
+            "ddd4j-mq/ddd4j-mq-mqtt-mica/src/test/java/io/ddd4j/mq/mqttmica/MicaMqttAcknowledgmentContractTest.java",
+            "ddd4j-mq/ddd4j-mq-mqtt-mica/src/test/java/io/ddd4j/mq/mqttmica/MicaMqttMessageHeaderTest.java",
+            "ddd4j-mq/ddd4j-mq-nats/src/test/java/io/ddd4j/mq/nats/NatsAcknowledgmentContractTest.java",
+            "ddd4j-mq/ddd4j-mq-nats/src/test/java/io/ddd4j/mq/nats/NatsMessageHeaderTest.java",
+            "ddd4j-mq/ddd4j-mq-ons/src/test/java/io/ddd4j/mq/ons/ConsumerGroupParityTest.java",
+            "ddd4j-mq/ddd4j-mq-ons/src/test/java/io/ddd4j/mq/ons/OnsAcknowledgmentContractTest.java",
+            "ddd4j-mq/ddd4j-mq-ons/src/test/java/io/ddd4j/mq/ons/OnsMessageHeaderTest.java",
+            "ddd4j-mq/ddd4j-mq-pulsar/src/test/java/io/ddd4j/mq/pulsar/PulsarAdapterContractTest.java",
+            "ddd4j-mq/ddd4j-mq-rabbitmq/src/test/java/io/ddd4j/mq/rabbitmq/RabbitMQAdapterContractTest.java",
+            "ddd4j-mq/ddd4j-mq-redis-stream/src/test/java/io/ddd4j/mq/redisstream/RedisStreamBrokerAdapterTest.java",
+            "ddd4j-mq/ddd4j-mq-rocketmq/src/test/java/io/ddd4j/mq/rocketmq/RocketAcknowledgmentContractTest.java",
+            "ddd4j-mq/ddd4j-mq-rocketmq/src/test/java/io/ddd4j/mq/rocketmq/RocketMessageHeaderTest.java",
+            "ddd4j-mq/ddd4j-mq-sqs/src/test/java/io/ddd4j/mq/sqs/SqsAdapterContractTest.java",
+            "ddd4j-mq/ddd4j-mq-tdmq/src/test/java/io/ddd4j/mq/tdmq/ConsumerGroupParityTest.java",
+            "ddd4j-mq/ddd4j-mq-tdmq/src/test/java/io/ddd4j/mq/tdmq/TdmqAcknowledgmentContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-activemq/src/test/java/io/ddd4j/mq/activemq/ActiveMQAdapterContractTest.java",
+            "ddd4j-mq/ddd4j-mq-disruptor/src/test/java/io/ddd4j/mq/disruptor/DisruptorAdapterContractTest.java",
+            "ddd4j-mq/ddd4j-mq-mqtt/src/test/java/io/ddd4j/mq/mqtt/MqttAdapterContractTest.java",
+            "ddd4j-mq/ddd4j-mq-mqtt-mica/src/test/java/io/ddd4j/mq/mqttmica/MicaMqttAcknowledgmentContractTest.java",
+            "ddd4j-mq/ddd4j-mq-mqtt-mica/src/test/java/io/ddd4j/mq/mqttmica/MicaMqttMessageHeaderTest.java",
+            "ddd4j-mq/ddd4j-mq-nats/src/test/java/io/ddd4j/mq/nats/NatsAcknowledgmentContractTest.java",
+            "ddd4j-mq/ddd4j-mq-nats/src/test/java/io/ddd4j/mq/nats/NatsMessageHeaderTest.java",
+            "ddd4j-mq/ddd4j-mq-ons/src/test/java/io/ddd4j/mq/ons/ConsumerGroupParityTest.java",
+            "ddd4j-mq/ddd4j-mq-ons/src/test/java/io/ddd4j/mq/ons/OnsAcknowledgmentContractTest.java",
+            "ddd4j-mq/ddd4j-mq-ons/src/test/java/io/ddd4j/mq/ons/OnsMessageHeaderTest.java",
+            "ddd4j-mq/ddd4j-mq-pulsar/src/test/java/io/ddd4j/mq/pulsar/PulsarAdapterContractTest.java",
+            "ddd4j-mq/ddd4j-mq-rabbitmq/src/test/java/io/ddd4j/mq/rabbitmq/RabbitMQAdapterContractTest.java",
+            "ddd4j-mq/ddd4j-mq-redis-stream/src/test/java/io/ddd4j/mq/redisstream/RedisStreamBrokerAdapterTest.java",
+            "ddd4j-mq/ddd4j-mq-rocketmq/src/test/java/io/ddd4j/mq/rocketmq/RocketAcknowledgmentContractTest.java",
+            "ddd4j-mq/ddd4j-mq-rocketmq/src/test/java/io/ddd4j/mq/rocketmq/RocketMessageHeaderTest.java",
+            "ddd4j-mq/ddd4j-mq-sqs/src/test/java/io/ddd4j/mq/sqs/SqsAdapterContractTest.java",
+            "ddd4j-mq/ddd4j-mq-tdmq/src/test/java/io/ddd4j/mq/tdmq/ConsumerGroupParityTest.java",
+            "ddd4j-mq/ddd4j-mq-tdmq/src/test/java/io/ddd4j/mq/tdmq/TdmqAcknowledgmentContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "BROKER-ADAPTERS",
+      "description": "声明支持的 Broker 适配器生命周期",
+      "lines": {
+        "1.0.x": {
+          "status": "pending",
+          "reason": "RabbitMQ、NATS、两种 MQTT、Artemis、Pulsar 与 RocketMQ 已有部分原生场景，Disruptor 已有进程内场景；ONS/TDMQ 云端适配器及其余故障/竞争路径仍须逐项验证"
+        },
+        "2.0.x": {
+          "status": "pending",
+          "reason": "RabbitMQ、NATS、两种 MQTT、Artemis、Pulsar 与 RocketMQ 已有部分原生场景，Disruptor 已有进程内场景；ONS/TDMQ 云端适配器及其余故障/竞争路径仍须逐项验证"
+        },
+        "3.0.x": {
+          "status": "pending",
+          "reason": "RabbitMQ、NATS、两种 MQTT、Artemis、Pulsar 与 RocketMQ 已有部分原生场景，Disruptor 已有进程内场景；ONS/TDMQ 云端适配器及其余故障/竞争路径仍须逐项验证"
+        }
+      }
+    },
+    {
+      "id": "BROKER-ARTEMIS-NATIVE",
+      "description": "真实 Artemis JMS 的消息 ID 与因果属性往返、原生关联 ID 确认、失败后重投、消费成功及关闭后发布失败；JDK 8 使用 javax，JDK 17/21 使用 jakarta",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-14-artemis-native-causality/report.json",
+      "lastEvidenceSha256": "372a24f7eef7d1b622cf6b25f68639c5267d55d3bc37233217c70cf56cddb1cd",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-activemq/src/test/java/io/ddd4j/mq/activemq/ArtemisContainerIntegrationTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-activemq/src/test/java/io/ddd4j/mq/activemq/ArtemisContainerIntegrationTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-activemq/src/test/java/io/ddd4j/mq/activemq/ArtemisContainerIntegrationTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "BROKER-ARTEMIS-START-FAILURE",
+      "description": "Artemis JMS 连接启动失败后保留原始异常并立即释放已创建的连接；JDK 8 与高两线使用各自 JMS API 验证相同资源归属",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-13-artemis-start-failure/report.json",
+      "lastEvidenceSha256": "97c3ed95fd20db89d681542d960a2bc021d94e9e160194557ac563e83e59b6b8",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-activemq/src/test/java/io/ddd4j/mq/activemq/ActiveMQAdapterContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-activemq/src/test/java/io/ddd4j/mq/activemq/ActiveMQAdapterContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-activemq/src/test/java/io/ddd4j/mq/activemq/ActiveMQAdapterContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "BROKER-DISRUPTOR-INPROCESS-ROUTING-REQUEUE",
+      "description": "真实进程内 LMAX RingBuffer 上路由只组合一次、稳定消息 ID、配置命名空间回退、nack 本地重入队与重复关闭；不代表外部 Broker 持久化",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-disruptor-contract/report.json",
+      "lastEvidenceSha256": "1507fddd225e45020a160923c81b59d68e34b279fad97e0a4eb80262bb0712eb",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-disruptor/src/test/java/io/ddd4j/mq/disruptor/DisruptorAdapterContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-disruptor/src/test/java/io/ddd4j/mq/disruptor/DisruptorAdapterContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-disruptor/src/test/java/io/ddd4j/mq/disruptor/DisruptorAdapterContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "BROKER-KAFKA-CLOSE-DURING-INIT",
+      "description": "Kafka 消费者初始化中 close 与 createConsumer 竞争：关闭等待初始化资源登记后释放一次，关闭返回后不留下可用消费者；MockConsumer 局部契约，不代表原生 Broker 全部故障路径",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-13-kafka-lifecycle/kafka-lifecycle-convergence-report.json",
+      "lastEvidenceSha256": "f3f46a2d8ce1452d24507e127b5022d90a4e6dbe7028bde52367f2f00aa06a2b",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-kafka/src/test/java/io/ddd4j/mq/kafka/KafkaMQClientLifecycleContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-kafka/src/test/java/io/ddd4j/mq/kafka/KafkaMQClientLifecycleContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-kafka/src/test/java/io/ddd4j/mq/kafka/KafkaMQClientLifecycleContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "BROKER-KAFKA-NATIVE-LIFECYCLE",
+      "description": "真实 Kafka Broker 的消息往返、消费组身份、重复关闭与离组；三线保留各自第三方依赖与 JDK 适配",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-13-kafka-lifecycle/kafka-lifecycle-convergence-report.json",
+      "lastEvidenceSha256": "f3f46a2d8ce1452d24507e127b5022d90a4e6dbe7028bde52367f2f00aa06a2b",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-kafka/src/test/java/io/ddd4j/mq/kafka/KafkaMQClientRoundTripTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-kafka/src/test/java/io/ddd4j/mq/kafka/KafkaMQClientRoundTripTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-kafka/src/test/java/io/ddd4j/mq/kafka/KafkaMQClientRoundTripTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "BROKER-MQTT-MICA-NATIVE",
+      "description": "真实 Mosquitto 上 mica MQTT 5 适配器的原生 User Properties 关联/因果 ID 往返、载荷消息 ID 发布与消费及注入连接归属；覆盖无因果字段、仅关联 ID 和双字段",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-14-mica-mqtt-native-causality/report.json",
+      "lastEvidenceSha256": "fe30a3cfe7a714cc7caba87fc44141031e0193979851ede16520dd589d8f9a45",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-mqtt-mica/src/test/java/io/ddd4j/mq/mqttmica/MicaMqttContainerIntegrationTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-mqtt-mica/src/test/java/io/ddd4j/mq/mqttmica/MicaMqttContainerIntegrationTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-mqtt-mica/src/test/java/io/ddd4j/mq/mqttmica/MicaMqttContainerIntegrationTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "BROKER-MQTT-PAHO-NATIVE",
+      "description": "真实 Mosquitto 上 Paho MQTT v3 的 QoS 1 发布与失败重投、载荷消息 ID 消费及注入连接归属",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-mqtt/src/test/java/io/ddd4j/mq/mqtt/MqttContainerIntegrationTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-mqtt/src/test/java/io/ddd4j/mq/mqtt/MqttContainerIntegrationTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-mqtt/src/test/java/io/ddd4j/mq/mqtt/MqttContainerIntegrationTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "BROKER-NATS-NATIVE",
+      "description": "真实 NATS JetStream 的文件存储发布、Header、消费确认及注入连接归属",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-nats/src/test/java/io/ddd4j/mq/nats/NatsJetStreamIntegrationTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-nats/src/test/java/io/ddd4j/mq/nats/NatsJetStreamIntegrationTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-nats/src/test/java/io/ddd4j/mq/nats/NatsJetStreamIntegrationTest.java"
+          ]
+        }
+      },
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-13-nats-jetstream-native/retry/report.json",
+      "lastEvidenceSha256": "d24b1ebd9f17d2424eec441ea39f5be0442affb5a17013cd92586de5fb1e3f07"
+    },
+    {
+      "id": "BROKER-NATS-NATIVE-CAUSALITY",
+      "description": "真实 NATS JetStream 发布的原生 Header 承载 correlationId/causationId，消费时 Header 优先于 payload 镜像；确认对象优先返回原生关联 ID，并保留无 Header 时的旧 replyTo 回退",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-13-nats-jetstream-native/retry/report.json",
+      "lastEvidenceSha256": "d24b1ebd9f17d2424eec441ea39f5be0442affb5a17013cd92586de5fb1e3f07",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-nats/src/test/java/io/ddd4j/mq/nats/NatsJetStreamIntegrationTest.java",
+            "ddd4j-mq/ddd4j-mq-nats/src/test/java/io/ddd4j/mq/nats/NatsAcknowledgmentContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-nats/src/test/java/io/ddd4j/mq/nats/NatsJetStreamIntegrationTest.java",
+            "ddd4j-mq/ddd4j-mq-nats/src/test/java/io/ddd4j/mq/nats/NatsAcknowledgmentContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-nats/src/test/java/io/ddd4j/mq/nats/NatsJetStreamIntegrationTest.java",
+            "ddd4j-mq/ddd4j-mq-nats/src/test/java/io/ddd4j/mq/nats/NatsAcknowledgmentContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "BROKER-NATS-NATIVE-NAK-REDELIVERY",
+      "description": "真实 NATS JetStream 监听器首次抛错后 NAK 重投同一业务消息；第二次成功处理并确认，稳定消息 ID 与关联 ID 保持一致，消费者确认序号推进到 2",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-13-nats-jetstream-native/retry/report.json",
+      "lastEvidenceSha256": "d24b1ebd9f17d2424eec441ea39f5be0442affb5a17013cd92586de5fb1e3f07",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-nats/src/test/java/io/ddd4j/mq/nats/NatsJetStreamIntegrationTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-nats/src/test/java/io/ddd4j/mq/nats/NatsJetStreamIntegrationTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-nats/src/test/java/io/ddd4j/mq/nats/NatsJetStreamIntegrationTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "BROKER-NATS-NATIVE-TAG-CAUSALITY",
+      "description": "真实 NATS JetStream 上带 tag/无 tag 消息共用逻辑 subject；原生 tag 头优先于 payload，排除项不调用业务监听器且消息被确认",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-13-ons-tdmq-root-regression/nats-native-tag-report.json",
+      "lastEvidenceSha256": "e414a6da800942636049561f20dd457e1e4a380b29bb7bc39fd7903bb7ff4643",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-nats/src/test/java/io/ddd4j/mq/nats/NatsJetStreamIntegrationTest.java",
+            "ddd4j-mq/ddd4j-mq-nats/src/test/java/io/ddd4j/mq/nats/NatsMessageHeaderTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-nats/src/test/java/io/ddd4j/mq/nats/NatsJetStreamIntegrationTest.java",
+            "ddd4j-mq/ddd4j-mq-nats/src/test/java/io/ddd4j/mq/nats/NatsMessageHeaderTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-nats/src/test/java/io/ddd4j/mq/nats/NatsJetStreamIntegrationTest.java",
+            "ddd4j-mq/ddd4j-mq-nats/src/test/java/io/ddd4j/mq/nats/NatsMessageHeaderTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "BROKER-PULSAR-NATIVE-NEGACK-RETRY",
+      "description": "真实 Pulsar Broker 消费者首次处理失败后 negative acknowledgment 触发第二次投递，同一逻辑 topic 上的带 tag 消息仍可完成确认；各线保留自身版本",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-post-final/pulsar-native-tag/report.json",
+      "lastEvidenceSha256": "97592baca3367b77b246645b08f4d48dd963ff9a65f4bc455c0e65851d4fced9",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-pulsar/src/test/java/io/ddd4j/mq/pulsar/PulsarContainerIntegrationTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-pulsar/src/test/java/io/ddd4j/mq/pulsar/PulsarContainerIntegrationTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-pulsar/src/test/java/io/ddd4j/mq/pulsar/PulsarContainerIntegrationTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "BROKER-PULSAR-NATIVE-TAG-CAUSALITY",
+      "description": "真实 Pulsar Broker 上带 tag 的消息进入同一逻辑 topic 订阅，恢复稳定消息 ID、tag、correlationId 与 causationId；各线保留自身客户端与 Broker 版本",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-post-final/pulsar-native-tag/report.json",
+      "lastEvidenceSha256": "97592baca3367b77b246645b08f4d48dd963ff9a65f4bc455c0e65851d4fced9",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-pulsar/src/test/java/io/ddd4j/mq/pulsar/PulsarContainerIntegrationTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-pulsar/src/test/java/io/ddd4j/mq/pulsar/PulsarContainerIntegrationTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-pulsar/src/test/java/io/ddd4j/mq/pulsar/PulsarContainerIntegrationTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "BROKER-RABBITMQ-NATIVE",
+      "description": "真实 RabbitMQ 的原生 AMQP 消息 ID/因果 Header 往返、确认关联 ID、失败重投、关闭后发布和适配器生命周期",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-14-rabbit-native-causality/report.json",
+      "lastEvidenceSha256": "25f58ee3a4104df808fc0b44b1cfa10d0375a088f852994d8375cb9475a8cb9e",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-rabbitmq/src/test/java/io/ddd4j/mq/rabbitmq/RabbitMQContainerIntegrationTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-rabbitmq/src/test/java/io/ddd4j/mq/rabbitmq/RabbitMQContainerIntegrationTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-rabbitmq/src/test/java/io/ddd4j/mq/rabbitmq/RabbitMQContainerIntegrationTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "CORE-AGGREGATE-ROUTING",
+      "description": "聚合根事件路径首段必须为 AggregateRootId，非法首段在应用与回放时失败",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/ddd/model/AggregateRootRoutingFailFastTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/ddd/model/AggregateRootRoutingFailFastTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/ddd/model/AggregateRootRoutingFailFastTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "CORE-AGGREGATE-UNHANDLED-ROOT-MESSAGE",
+      "description": "三线对未处理领域事件的异常消息同时保留事件类型、聚合根路径首段和聚合类型",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-aggregate-unhandled-root-message/report.json",
+      "lastEvidenceSha256": "b9899cb96b59d41bbc6a7c48d5607b5232a827ce054baf7ae31cabaad5051817",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/ddd/model/AggregateRootApplyTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/ddd/model/AggregateRootApplyTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/ddd/model/AggregateRootApplyTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "CORE-AUTH-EVENT-JSON",
+      "description": "认证事件 Bean 访问器、Jackson 构造器与字段往返",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/auth/event/AuthEventValueContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/auth/event/AuthEventValueContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/auth/event/AuthEventValueContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "CORE-DOMAIN-EVENT-CONTRACT",
+      "description": "领域事件类名类型缓存、实体源、链式因果关系和策略键交集的三线共同契约；JDK 语法分别适配",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-14-domain-event-contract/contract-report.json",
+      "lastEvidenceSha256": "b248127fd5c130fe9d1e5a1c46ab230a54683da632ddfc9a068726c728dd9da2",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/DomainEventContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/DomainEventContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/DomainEventContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "CORE-ENTITY-ID-PATH-NULL-ELEMENT",
+      "description": "三线 EntityIdPath 对包含 null 的路径段统一抛出带稳定提示的 IllegalArgumentException，保留各线集合实现",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-entity-id-path-null-element/report.json",
+      "lastEvidenceSha256": "613e95665f2535c94c4e1e7124a2af21cfa4bf2dfe241ce46cc03f306c9aa9c3",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/EntityIdPathValidationTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/EntityIdPathValidationTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/EntityIdPathValidationTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "CORE-ES-MEMORY",
+      "description": "内存事件仓储版本与回放",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/ddd/repository/DefaultEventSourcingRepositoryMustTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/ddd/repository/DefaultEventSourcingRepositoryMustTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/ddd/repository/DefaultEventSourcingRepositoryMustTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "CORE-EVENT-CHUNK-NULL-EVENT",
+      "description": "事件块拒绝 null 事件，保持不可变快照及位置语义",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-projection-core-batch/report.json",
+      "lastEvidenceSha256": "8db2a5e7849910e887e4da9ee02e21826292d148e625d647134308e68c65abd6",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/EventChunkTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/EventChunkTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/EventChunkTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "CORE-EVENT-IDENTIFIER-VALUE",
+      "description": "AggregateVersion、EventType、StringEntityType 与 EventId 在三线具有相同的值、校验、相等性、hashCode、文本与 Java 序列化契约；JDK 8 的显式 instanceof/cast 与 JDK 17/21 的模式匹配和 @Serial 属于精确锁定的语法适配",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-13-event-identifier-syntax/report.json",
+      "lastEvidenceSha256": "be078863196582278cef5238da952eb691353386560bd526fda296b8efedb626",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/EventIdentifierValueContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/EventIdentifierValueContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/EventIdentifierValueContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "CORE-EVENT-PAYLOAD-STRONG-ROUNDTRIP",
+      "description": "三线按本线 Jackson 版本保留事件 ID、时间、实体路径和因果元数据；不接受 @class 选择目标类型，坏 JSON 保留原异常",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-14-event-payload-test-strengthening/report.json",
+      "lastEvidenceSha256": "84daf4c41e3eb43f3255bb9f9505c61636d6afccba9389ec3bb34e8b0c491970",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/eventstore/jackson/EventPayloadSerializerTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/eventstore/jackson/EventPayloadSerializerTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/eventstore/jackson/EventPayloadSerializerTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "CORE-EVENTSTORE-APPEND-CAPACITY",
+      "description": "内存事件追加、批量追加和事件溯源仓储追加的三线容量基线报告",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/eventstore/EventStoreAppendCapacityBaselineIT.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/eventstore/EventStoreAppendCapacityBaselineIT.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/eventstore/EventStoreAppendCapacityBaselineIT.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "CORE-EXCEPTION-CODE-OVERLOADS",
+      "description": "七类业务异常同时发布 ApiCode 与 CustomApiCode 二进制构造器并保持错误码/i18n 契约",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/exception/ExceptionCodeOverloadContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/exception/ExceptionCodeOverloadContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/exception/ExceptionCodeOverloadContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "CORE-IDPATH",
+      "description": "路径解析、校验、导航、转义与输入列表/返回迭代器的防御性快照",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-14-core-platform-adapt/report.json",
+      "lastEvidenceSha256": "b24fe4a10adb75554d6b14874fa7781fbc72e0920daa2bc34b057598bfe30228",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/EntityIdPathTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/EntityIdPathTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/EntityIdPathTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "CORE-JSONKIT-DATE-TIME-CONTRACT",
+      "description": "Jackson 2/3 各自适配下，JsonKit 的 LocalDate、LocalDateTime、Instant、Duration JSON 字符串格式与往返值一致；仅覆盖这些日期时间类型",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-13-jsonkit-date-contract/report.json",
+      "lastEvidenceSha256": "1ffc2105fa848d44840b910878e56a3a0d22c396c5b1e0353a581a3287d97494",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-kit/src/test/java/io/ddd4j/kit/lang/JsonKitDateTimeContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-kit/src/test/java/io/ddd4j/kit/lang/JsonKitDateTimeContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-kit/src/test/java/io/ddd4j/kit/lang/JsonKitDateTimeContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "CORE-LAMBDA-CONDITION-VALUE",
+      "description": "LambdaCondition 与 PropertyRef 三线 JSON 字段、值描述、反序列化校验和查询条件契约",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-lambda-condition-value/report.json",
+      "lastEvidenceSha256": "6f4447c3956ad2c9019a30eff3934e6480856f3c483eae6d784ffe08dbc7c45a",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/query/LambdaConditionValueContractTest.java",
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/query/QueryConditionTest.java",
+            "ddd4j-core/src/test/java/io/ddd4j/core/health/PlainValueContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/query/LambdaConditionValueContractTest.java",
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/query/QueryConditionTest.java",
+            "ddd4j-core/src/test/java/io/ddd4j/core/health/PlainValueContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/query/LambdaConditionValueContractTest.java",
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/query/QueryConditionTest.java",
+            "ddd4j-core/src/test/java/io/ddd4j/core/health/PlainValueContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "CORE-LAMBDAKIT-SERIALIZED-CONTRACT",
+      "description": "三线可序列化方法引用解析相同的属性名、声明类型和错误行为；JDK 8 使用显式类型转换，高线使用模式匹配",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-14-lambdakit-adaptation/report.json",
+      "lastEvidenceSha256": "bb3a225685c4cc65a4145877520012277b44fe9cb6b00aa632f6684280b4be51",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-kit/src/test/java/io/ddd4j/kit/lang/LambdaKitContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-kit/src/test/java/io/ddd4j/kit/lang/LambdaKitContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-kit/src/test/java/io/ddd4j/kit/lang/LambdaKitContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "CORE-PLAIN-VALUE-CONTRACT",
+      "description": "ReadinessResult/ReadinessReport 和 PropertyRef 的防御性复制、空值、JSON、Java 序列化与值契约",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/health/PlainValueContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/health/PlainValueContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/health/PlainValueContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "CORE-PROJECTION-FAILURE-METRICS",
+      "description": "投影位置读取与事件处理失败必须上报指标且不推进位点",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-projection-runner-failure/report.json",
+      "lastEvidenceSha256": "6687de3b06fcbf1309755edc910b35fc9e9a5e6786a51afffb345e850aae3391",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunnerFailureContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunnerFailureContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunnerFailureContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "CORE-PROJECTION-NULL-METRICS",
+      "description": "三线传入 null 投影指标时使用无操作指标，事件处理与位点推进仍执行；JDK 8 与高线分别使用本线 null 回退语法",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-14-core-platform-adapt/report.json",
+      "lastEvidenceSha256": "b24fe4a10adb75554d6b14874fa7781fbc72e0920daa2bc34b057598bfe30228",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunnerNullMetricsParityTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunnerNullMetricsParityTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunnerNullMetricsParityTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "CORE-PROJECTION-RUN-INFO-JSON",
+      "description": "投影运行信息三字段 JSON 回读，含非空时间戳与可空错误",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-projection-core-batch/report.json",
+      "lastEvidenceSha256": "8db2a5e7849910e887e4da9ee02e21826292d148e625d647134308e68c65abd6",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunInfoValueContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunInfoValueContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunInfoValueContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "CORE-PROJECTION-RUNNER-BEHAVIOR",
+      "description": "单次投影处理、空块位点推进、非法输入和多视图失败隔离在三条线保持相同可观察行为",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-14-projection-runner-test-union/report.json",
+      "lastEvidenceSha256": "dbefa6e572e4c13ab1032c144bad7fa3971bbd4c8d78c0fda9b76e13baa1bbdb",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunnerTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunnerTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunnerTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "CORE-PROJECTION-STATUS-VALUE",
+      "description": "投影状态六字段 JSON、时间戳、值哈希与描述及默认状态三线契约",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-projection-status/report.json",
+      "lastEvidenceSha256": "adf799327baa8dbf0e783cce114926c498f58588bff6e4a3f0245e4cd6b8918c",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionStatusValueContractTest.java",
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionStatusTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionStatusValueContractTest.java",
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionStatusTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionStatusValueContractTest.java",
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionStatusTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "CORE-QUERYBUS",
+      "description": "查询路由与未知查询",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/query/QueryBusMustTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/query/QueryBusMustTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/query/QueryBusMustTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "CORE-REPLAY-CAUSALITY",
+      "description": "事件重放派生事件保留 correlationId 并指向重放源 causationId",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/eventstore/ReplayCausalityPreservedMustTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/eventstore/ReplayCausalityPreservedMustTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/eventstore/ReplayCausalityPreservedMustTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "CORE-REPOSITORY-REGISTRY",
+      "description": "三线相同的注册表仓储优先级、查询映射、撤销/清空、缺失错误与内存仓储读写契约",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-14-repository-registry-alignment/contract-report.json",
+      "lastEvidenceSha256": "ae02e8136dee07e4679a4fbba8259823f483e058bf05dd795aa29d70efd9d34f",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/ddd/repository/RepositoryRegistryTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/ddd/repository/RepositoryRegistryTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/ddd/repository/RepositoryRegistryTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "CORE-TRACE-CONTEXT",
+      "description": "默认关闭、TTL 跟踪透传及 MDC 双写",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/context/TraceContextBridgeMustTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/context/TraceContextBridgeMustTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/context/TraceContextBridgeMustTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "CORE-TYPED-EVENT-DISPATCHER",
+      "description": "三线相同类型事件分发契约：空输入、后项覆盖、批量计数、无效处理器和类型不匹配；JDK 8 与高线分别使用本线不可变 Map 实现",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-14-typed-dispatcher/report.json",
+      "lastEvidenceSha256": "6b1a21b737ddd2bb282039a43bd52b3851a3681b253a854e5681fbf6668c92e0",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/TypedEventDispatcherParityTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/TypedEventDispatcherParityTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/TypedEventDispatcherParityTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "CORE-UOW-FAILURE-OWNERSHIP",
+      "description": "工作单元嵌套边界独立，回滚回调失败不阻断后续回调或覆盖业务原始异常",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/uow/UnitOfWorkMustTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/uow/UnitOfWorkMustTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/uow/UnitOfWorkMustTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "DATA-BAIDU-REGION-HTTP-CONTRACT",
+      "description": "百度区域适配器三线本地 HTTP、缓存、上游业务错误及非法 IP 契约；不代表远端百度服务",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-baidu-region-http-contract/report.json",
+      "lastEvidenceSha256": "4f514fe52b3fe58b2d0c90015713af0fa70cbc8e4298698a376536c5342ceddd",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-external/src/test/java/io/ddd4j/data/external/region/BaiduRegionHttpContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-external/src/test/java/io/ddd4j/data/external/region/BaiduRegionHttpContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-external/src/test/java/io/ddd4j/data/external/region/BaiduRegionHttpContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "DATA-CQRS-SPRING",
+      "description": "Spring 命令路由、冲突装配、未知命令与事务代理以及模块独立性",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-spring-test-lines/report.json",
+      "lastEvidenceSha256": "f1b4ebbd7b66bc18fedcfd90e07d0b1fd309b2b93a72feb83979bcfa308e48ea",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-cqrs-spring/src/test/java/io/ddd4j/data/cqrs/spring/SpringCommandBusIT.java",
+            "ddd4j-data/ddd4j-data-cqrs-spring/src/test/java/io/ddd4j/data/cqrs/spring/arch/CqrsSpringModuleIndependenceTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-cqrs-spring/src/test/java/io/ddd4j/data/cqrs/spring/SpringCommandBusIT.java",
+            "ddd4j-data/ddd4j-data-cqrs-spring/src/test/java/io/ddd4j/data/cqrs/spring/arch/CqrsSpringModuleIndependenceTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-cqrs-spring/src/test/java/io/ddd4j/data/cqrs/spring/SpringCommandBusIT.java",
+            "ddd4j-data/ddd4j-data-cqrs-spring/src/test/java/io/ddd4j/data/cqrs/spring/arch/CqrsSpringModuleIndependenceTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "DATA-MYBATIS-SQL-OBSERVATION-JSON",
+      "description": "三线按各自 Jackson 版本将 SQL 观测值写入 JSON 并还原全部观测字段；不涉及数据库或远端服务",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-14-sql-observation-json/report.json",
+      "lastEvidenceSha256": "290e6a2b7f4f795821d521da8b0eba03f702c43229243f8ba7ba29aadf6a6d45",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-mybatis/src/test/java/io/ddd4j/data/mybatis/adapter/SqlObservationJsonContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-mybatis/src/test/java/io/ddd4j/data/mybatis/adapter/SqlObservationJsonContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-mybatis/src/test/java/io/ddd4j/data/mybatis/adapter/SqlObservationJsonContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "DATA-MYBATISPLUS-SQL-OBSERVATION-JSON",
+      "description": "三线按各自 Jackson 版本将 MyBatis-Plus SQL 观测值写入 JSON 并还原语句、SQL、耗时与空异常；不涉及数据库或远端服务",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-14-mybatisplus-sql-observation-json/report.json",
+      "lastEvidenceSha256": "4704e33f8f03ac89560e3664311493e3b1bd9a68431ba5d130c5e30f84967004",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-mybatisplus/src/test/java/io/ddd4j/data/mybatis/plugins/observation/SqlObservationJsonContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-mybatisplus/src/test/java/io/ddd4j/data/mybatis/plugins/observation/SqlObservationJsonContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-mybatisplus/src/test/java/io/ddd4j/data/mybatis/plugins/observation/SqlObservationJsonContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "DATA-FLKSEC-CRYPTO-HTTP-CONTRACT",
+      "description": "三线各自 HTTP/Jackson 依赖下的本地加解密、签名、远端业务错误契约；不代表真实加密服务",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-flksec-crypto-http-contract/report.json",
+      "lastEvidenceSha256": "52e8cdc4d866e603293fb90a085a90747d691abf0160dd354f809362da74b010",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-crypto/src/test/java/io/ddd4j/data/crypto/strategy/FlksecCryptoHttpContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-crypto/src/test/java/io/ddd4j/data/crypto/strategy/FlksecCryptoHttpContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-crypto/src/test/java/io/ddd4j/data/crypto/strategy/FlksecCryptoHttpContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "DATA-GEO-HTTP-CONTRACT",
+      "description": "三线分别使用本线 HTTP 实现验证百度地理编码本地协议、地址编码、JSON 结果与失败语义；不代表远端百度服务",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-geo-http-contract/report.json",
+      "lastEvidenceSha256": "95318b731e4dedb7b5feda1a3d4f9ce915032693b4623a9133084025493b1061",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-external/src/test/java/io/ddd4j/data/external/geo/GeoBaiduHttpContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-external/src/test/java/io/ddd4j/data/external/geo/GeoBaiduHttpContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-external/src/test/java/io/ddd4j/data/external/geo/GeoBaiduHttpContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "DATA-HELIDON-COMMAND-BUS",
+      "description": "Helidon SE ServiceLoader 命令发现、路由与冲突拒绝",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-cqrs-helidon/src/test/java/io/ddd4j/data/cqrs/helidon/HelidonCommandBusIT.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-cqrs-helidon/src/test/java/io/ddd4j/data/cqrs/helidon/HelidonCommandBusIT.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-cqrs-helidon/src/test/java/io/ddd4j/data/cqrs/helidon/HelidonCommandBusIT.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "DATA-HELIDON-PROJECTION",
+      "description": "Helidon SE 投影调度句柄与 ViewManager 生命周期",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-projection-helidon/src/test/java/io/ddd4j/data/projection/helidon/HelidonProjectionSchedulerIT.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-projection-helidon/src/test/java/io/ddd4j/data/projection/helidon/HelidonProjectionSchedulerIT.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-projection-helidon/src/test/java/io/ddd4j/data/projection/helidon/HelidonProjectionSchedulerIT.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "DATA-JDBI-EVENTSTORE-H2-CONTRACT",
+      "description": "JDBI/H2 追加与强类型业务载荷回读、版本冲突、全局 position、因果列、空流及 payload 字符列三线对齐；回读聚合根 ID 按值相等且哈希一致；H2/PostgreSQL 新建表的 position 唯一约束名为 uk_position",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-14-jdbi-position-schema/report.json",
+      "lastEvidenceSha256": "cfbd9dbf03b5c5829723bb79160b2e11495187369f3b06b2ed6d12e64375d3aa",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/JdbiEventStoreTest.java",
+            "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/JdbiEventStorePostgresIT.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/JdbiEventStoreTest.java",
+            "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/JdbiEventStorePostgresIT.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/JdbiEventStoreTest.java",
+            "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/JdbiEventStorePostgresIT.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "DATA-JDBI-RETRY",
+      "description": "JDBI 事件存储版本冲突不重试，position 冲突重试后保留强类型事件",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/JdbiEventStoreRetryTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/JdbiEventStoreRetryTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/JdbiEventStoreRetryTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "DATA-JDBI-RETRY-CLASSIFICATION",
+      "description": "JDBI 位置冲突可重试、普通 SQL 错误和乐观锁不重试、耗尽与中断传播，以及不含关键字时按异常类名识别",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-14-jdbi-retry-test-union/report.json",
+      "lastEvidenceSha256": "b78b9ced0fe757954e10158fcd890ac941f3cf7c4c1136bdab4184d1a473f447",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/EventStoreRetryTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/EventStoreRetryTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/EventStoreRetryTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "DATA-JPA-EVENTSTORE-H2-ID-VALUE",
+      "description": "JPA/H2 事件存储回读的聚合根 ID 按值相等、哈希一致，并可在集合中去重",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-14-jdbi-id-value/jpa-report.json",
+      "lastEvidenceSha256": "09ac16b990c7f53c2fec60140a19fe2e483a21b49aeddfd16aa9c66529963cc0",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/event/store/jpa/JpaEventStoreTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/event/store/jpa/JpaEventStoreTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/event/store/jpa/JpaEventStoreTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "DATA-PCONLINE-HTTP-CONTRACT",
+      "description": "太平洋网络 IP 适配器三线本地 HTTP、缓存 TTL、失败及非法 IP 契约；不代表远端服务",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-pconline-http-contract/report.json",
+      "lastEvidenceSha256": "4399d75e0f434b452d6348449aa452f340775e28c51468dd6a1a3e627369b478",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-external/src/test/java/io/ddd4j/data/external/region/PconlineRegionHttpContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-external/src/test/java/io/ddd4j/data/external/region/PconlineRegionHttpContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-external/src/test/java/io/ddd4j/data/external/region/PconlineRegionHttpContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "DATA-PROJECTION-IMMUTABLE-READER-EVENT-TYPES",
+      "description": "投影读取器收到不可变的事件类型名快照，不能通过修改读取参数改变后续过滤",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-projection/src/test/java/io/ddd4j/data/projection/ProjectionDispatcherTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-projection/src/test/java/io/ddd4j/data/projection/ProjectionDispatcherTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-projection/src/test/java/io/ddd4j/data/projection/ProjectionDispatcherTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "DATA-PROJECTION-JPA",
+      "description": "Spring Data JPA 投影位点持久化与模块独立性",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-spring-test-lines/report.json",
+      "lastEvidenceSha256": "f1b4ebbd7b66bc18fedcfd90e07d0b1fd309b2b93a72feb83979bcfa308e48ea",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/ProjectionPositionJpaIT.java",
+            "ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/arch/ProjectionJpaModuleIndependenceTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/ProjectionPositionJpaIT.java",
+            "ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/arch/ProjectionJpaModuleIndependenceTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/ProjectionPositionJpaIT.java",
+            "ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/arch/ProjectionJpaModuleIndependenceTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "DATA-PROJECTION-SPI",
+      "description": "投影处理器注册整批拒绝、按类型路由、块读取与处理后位置推进契约",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-projection/src/test/java/io/ddd4j/data/projection/ProjectionHandlerRegistryTest.java",
+            "ddd4j-data/ddd4j-data-projection/src/test/java/io/ddd4j/data/projection/ProjectionDispatcherTest.java",
+            "ddd4j-data/ddd4j-data-projection/src/test/java/io/ddd4j/data/projection/arch/ProjectionModuleIndependenceTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-projection/src/test/java/io/ddd4j/data/projection/ProjectionHandlerRegistryTest.java",
+            "ddd4j-data/ddd4j-data-projection/src/test/java/io/ddd4j/data/projection/ProjectionDispatcherTest.java",
+            "ddd4j-data/ddd4j-data-projection/src/test/java/io/ddd4j/data/projection/arch/ProjectionModuleIndependenceTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-projection/src/test/java/io/ddd4j/data/projection/ProjectionHandlerRegistryTest.java",
+            "ddd4j-data/ddd4j-data-projection/src/test/java/io/ddd4j/data/projection/ProjectionDispatcherTest.java",
+            "ddd4j-data/ddd4j-data-projection/src/test/java/io/ddd4j/data/projection/arch/ProjectionModuleIndependenceTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "DATA-PROJECTION-SPRING",
+      "description": "Spring 投影调度与生命周期以及模块独立性",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-spring-test-lines/report.json",
+      "lastEvidenceSha256": "f1b4ebbd7b66bc18fedcfd90e07d0b1fd309b2b93a72feb83979bcfa308e48ea",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-projection-spring/src/test/java/io/ddd4j/data/projection/spring/SpringProjectionSchedulerIT.java",
+            "ddd4j-data/ddd4j-data-projection-spring/src/test/java/io/ddd4j/data/projection/spring/arch/ProjectionSpringModuleIndependenceTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-projection-spring/src/test/java/io/ddd4j/data/projection/spring/SpringProjectionSchedulerIT.java",
+            "ddd4j-data/ddd4j-data-projection-spring/src/test/java/io/ddd4j/data/projection/spring/arch/ProjectionSpringModuleIndependenceTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-projection-spring/src/test/java/io/ddd4j/data/projection/spring/SpringProjectionSchedulerIT.java",
+            "ddd4j-data/ddd4j-data-projection-spring/src/test/java/io/ddd4j/data/projection/spring/arch/ProjectionSpringModuleIndependenceTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "DATA-QUARKUS-COMMAND-BUS",
+      "description": "Quarkus ArC 命令执行器发现、路由及冲突拒绝",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-cqrs-quarkus/src/test/java/io/ddd4j/data/cqrs/quarkus/QuarkusCommandBusIT.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-cqrs-quarkus/src/test/java/io/ddd4j/data/cqrs/quarkus/QuarkusCommandBusIT.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-cqrs-quarkus/src/test/java/io/ddd4j/data/cqrs/quarkus/QuarkusCommandBusIT.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "DATA-QUARKUS-PANACHE-EVENT-STORE",
+      "description": "Panache 事件存储版本冲突、重试、JTA 原子性及 PostgreSQL 类型往返",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/event/store/panache/PanacheEventStoreTest.java",
+            "ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/event/store/panache/PanacheEventStoreRetryTest.java",
+            "ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/event/store/panache/EventStoreRetryTest.java",
+            "ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/event/store/panache/JpaManagedParticipationIT.java",
+            "ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/event/store/panache/PanacheEventStorePostgresIT.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/event/store/panache/PanacheEventStoreTest.java",
+            "ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/event/store/panache/PanacheEventStoreRetryTest.java",
+            "ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/event/store/panache/EventStoreRetryTest.java",
+            "ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/event/store/panache/JpaManagedParticipationIT.java",
+            "ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/event/store/panache/PanacheEventStorePostgresIT.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/event/store/panache/PanacheEventStoreTest.java",
+            "ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/event/store/panache/PanacheEventStoreRetryTest.java",
+            "ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/event/store/panache/EventStoreRetryTest.java",
+            "ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/event/store/panache/JpaManagedParticipationIT.java",
+            "ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/event/store/panache/PanacheEventStorePostgresIT.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "DATA-QUARKUS-PANACHE-POSITION",
+      "description": "Panache 投影位置持久化、推进、重置与视图隔离",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-projection-panache/src/test/java/io/ddd4j/data/projection/panache/QuarkusProjectionPositionRepositoryIT.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-projection-panache/src/test/java/io/ddd4j/data/projection/panache/QuarkusProjectionPositionRepositoryIT.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-projection-panache/src/test/java/io/ddd4j/data/projection/panache/QuarkusProjectionPositionRepositoryIT.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "DATA-QUARKUS-PROJECTION",
+      "description": "Quarkus 投影调度、启动关闭事件与 ViewManager 生命周期",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-projection-quarkus/src/test/java/io/ddd4j/data/projection/quarkus/QuarkusProjectionSchedulerIT.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-projection-quarkus/src/test/java/io/ddd4j/data/projection/quarkus/QuarkusProjectionSchedulerIT.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-projection-quarkus/src/test/java/io/ddd4j/data/projection/quarkus/QuarkusProjectionSchedulerIT.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "EVENT-PAYLOAD-CLASS-MARKER-IGNORED",
+      "description": "历史事件载荷含 @class 时三线只按显式传入的事件类型回读，未知标记不能改选或实例化对象类型；与未知字段前向兼容同时成立",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-13-event-payload-class-marker/report.json",
+      "lastEvidenceSha256": "685c871db6f91584c3883b37ee2e69296fe39219471a1ca66ad7dfa57e42d983",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/eventstore/jackson/EventPayloadSerializerTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/eventstore/jackson/EventPayloadSerializerTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/eventstore/jackson/EventPayloadSerializerTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "EVENT-PAYLOAD-UNKNOWN-FIELD-FORWARD-COMPAT",
+      "description": "事件载荷新增未知字段时三线按显式事件类型回读已知字段，内部 mapper 忽略未知字段，传入 source mapper 保持原配置；不启用多态 @class",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-13-event-payload-unknown/report.json",
+      "lastEvidenceSha256": "90401bc3f4a732bb1315e5ba7bd148525551ac4422243e778573e084a811ec91",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/eventstore/jackson/EventPayloadSerializerTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/eventstore/jackson/EventPayloadSerializerTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/eventstore/jackson/EventPayloadSerializerTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "EVENTSTORE-ESDB-MALFORMED-METADATA",
+      "description": "ESDB 元数据损坏时读取应在载荷反序列化前以一致的 Invalid ESDB event metadata 错误失败；Jackson 版本由各线自行适配",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-event-store-esdb/src/test/java/io/ddd4j/data/event/store/esdb/EsdbEventStoreTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-event-store-esdb/src/test/java/io/ddd4j/data/event/store/esdb/EsdbEventStoreTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-event-store-esdb/src/test/java/io/ddd4j/data/event/store/esdb/EsdbEventStoreTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "EVENTSTORE-ESDB-NATIVE-CAUSALITY",
+      "description": "真实 EventStoreDB 存储后 correlationId 与 causationId 回读一致；三线按自身客户端依赖执行",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-post-pulsar-clean-verify/report.json",
+      "lastEvidenceSha256": "53fc2d03d7112f03c958c5d68bf1ce6bd34973d729fde40b9708e3c97f95765f",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-event-store-esdb/src/test/java/io/ddd4j/data/event/store/esdb/EsdbEventStoreContainerIT.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-event-store-esdb/src/test/java/io/ddd4j/data/event/store/esdb/EsdbEventStoreIT.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-event-store-esdb/src/test/java/io/ddd4j/data/event/store/esdb/EsdbEventStoreIT.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "EVENTSTORE-ESDB-NATIVE-READ-RANGE-GLOBAL",
+      "description": "真实 EventStoreDB 中事件追加、版本区间读取及全局顺序读取；三线按自身客户端依赖执行",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-post-pulsar-clean-verify/report.json",
+      "lastEvidenceSha256": "53fc2d03d7112f03c958c5d68bf1ce6bd34973d729fde40b9708e3c97f95765f",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-event-store-esdb/src/test/java/io/ddd4j/data/event/store/esdb/EsdbEventStoreIT.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-event-store-esdb/src/test/java/io/ddd4j/data/event/store/esdb/EsdbEventStoreIT.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-event-store-esdb/src/test/java/io/ddd4j/data/event/store/esdb/EsdbEventStoreIT.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "EVENTSTORE-ESDB-NATIVE-VERSION-CONFLICT",
+      "description": "真实 EventStoreDB 上过期 expectedVersion 被拒绝且不产生部分写入；三线按自身客户端依赖执行",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-post-pulsar-clean-verify/report.json",
+      "lastEvidenceSha256": "53fc2d03d7112f03c958c5d68bf1ce6bd34973d729fde40b9708e3c97f95765f",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-event-store-esdb/src/test/java/io/ddd4j/data/event/store/esdb/EsdbEventStoreContainerIT.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-event-store-esdb/src/test/java/io/ddd4j/data/event/store/esdb/EsdbEventStoreIT.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-event-store-esdb/src/test/java/io/ddd4j/data/event/store/esdb/EsdbEventStoreIT.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "EVENTSTORE-JDBI-UTC-TIMESTAMP",
+      "description": "JDBI 在 H2、PostgreSQL、MySQL 中跨写入/读取进程默认时区持久化 UTC TIMESTAMP，并读回同一事件 Instant",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-13-jdbi-native-timezone/native-report.json",
+      "lastEvidenceSha256": "c8713b7d2d6f66f3daa06f2d82f96c0f11be2c2bd15ce0485ec266ab169717dd",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/JdbiTimestampTimezoneContractTest.java",
+            "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/JdbiEventStorePostgresIT.java",
+            "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/JdbiEventStoreMysqlIT.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/JdbiTimestampTimezoneContractTest.java",
+            "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/JdbiEventStorePostgresIT.java",
+            "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/JdbiEventStoreMysqlIT.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/JdbiTimestampTimezoneContractTest.java",
+            "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/JdbiEventStorePostgresIT.java",
+            "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/JdbiEventStoreMysqlIT.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "KIT-JSON-TYPE",
+      "description": "Jackson 2/3 的集合、Map 与 TypeReference 类型构造和读取行为一致",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-kit/src/test/java/io/ddd4j/kit/lang/JsonKitTypeContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-kit/src/test/java/io/ddd4j/kit/lang/JsonKitTypeContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-kit/src/test/java/io/ddd4j/kit/lang/JsonKitTypeContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "KIT-STR-SPLIT-CHAR",
+      "description": "StrKit 按字符切分 Unicode 文本，保留末段和空片段，并对 null 返回空数组；三线第三方依赖独立",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-strkit-character-split/report.json",
+      "lastEvidenceSha256": "9d2eadb8fd5c5c6285479bf758d7954ef4698371ca776f1d5131943ca3a20412",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-kit/src/test/java/io/ddd4j/kit/lang/StrKitTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-kit/src/test/java/io/ddd4j/kit/lang/StrKitTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-kit/src/test/java/io/ddd4j/kit/lang/StrKitTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "MQ-KAFKA-COMMIT-FAILURE-REDELIVERY",
+      "description": "Kafka offset 提交失败后不标记已确认，消费处理回退当前 offset 并中断本批次；再次确认成功才标记完成",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-13-kafka-lifecycle/kafka-lifecycle-convergence-report.json",
+      "lastEvidenceSha256": "f3f46a2d8ce1452d24507e127b5022d90a4e6dbe7028bde52367f2f00aa06a2b",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-kafka/src/test/java/io/ddd4j/mq/kafka/KafkaAcknowledgmentContractTest.java",
+            "ddd4j-mq/ddd4j-mq-kafka/src/test/java/io/ddd4j/mq/kafka/KafkaMQClientDurabilityContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-kafka/src/test/java/io/ddd4j/mq/kafka/KafkaAcknowledgmentContractTest.java",
+            "ddd4j-mq/ddd4j-mq-kafka/src/test/java/io/ddd4j/mq/kafka/KafkaMQClientDurabilityContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-kafka/src/test/java/io/ddd4j/mq/kafka/KafkaAcknowledgmentContractTest.java",
+            "ddd4j-mq/ddd4j-mq-kafka/src/test/java/io/ddd4j/mq/kafka/KafkaMQClientDurabilityContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "MQ-KAFKA-EXECUTOR-INIT-CLEANUP",
+      "description": "Kafka 消费者已创建、执行器创建失败时释放原生 Consumer",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-kafka/src/test/java/io/ddd4j/mq/kafka/KafkaMQClientLifecycleContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-kafka/src/test/java/io/ddd4j/mq/kafka/KafkaMQClientLifecycleContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-kafka/src/test/java/io/ddd4j/mq/kafka/KafkaMQClientLifecycleContractTest.java"
+          ]
+        }
+      },
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-13-kafka-lifecycle/kafka-lifecycle-convergence-report.json",
+      "lastEvidenceSha256": "f3f46a2d8ce1452d24507e127b5022d90a4e6dbe7028bde52367f2f00aa06a2b"
+    },
+    {
+      "id": "MQ-KAFKA-HEADER",
+      "description": "Kafka 因果头原生传递",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-kafka/src/test/java/io/ddd4j/mq/kafka/KafkaCausalityBrokerHeaderMustTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-kafka/src/test/java/io/ddd4j/mq/kafka/KafkaCausalityBrokerHeaderMustTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-kafka/src/test/java/io/ddd4j/mq/kafka/KafkaCausalityBrokerHeaderMustTest.java"
+          ]
+        }
+      },
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-13-kafka-lifecycle/kafka-lifecycle-convergence-report.json",
+      "lastEvidenceSha256": "f3f46a2d8ce1452d24507e127b5022d90a4e6dbe7028bde52367f2f00aa06a2b"
+    },
+    {
+      "id": "MQ-KAFKA-POLL-FAILURE-CLEANUP",
+      "description": "Kafka 消费线程的 poll 异常退出时释放原生 Consumer，不等待客户端显式关闭",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-kafka/src/test/java/io/ddd4j/mq/kafka/KafkaMQClientLifecycleContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-kafka/src/test/java/io/ddd4j/mq/kafka/KafkaMQClientLifecycleContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-kafka/src/test/java/io/ddd4j/mq/kafka/KafkaMQClientLifecycleContractTest.java"
+          ]
+        }
+      },
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-13-kafka-lifecycle/kafka-lifecycle-convergence-report.json",
+      "lastEvidenceSha256": "f3f46a2d8ce1452d24507e127b5022d90a4e6dbe7028bde52367f2f00aa06a2b"
+    },
+    {
+      "id": "MQ-ONS-SDK-HEADER-CONTRACT",
+      "description": "ONS SDK 原生用户属性中的稳定消息 ID、冻结因果头写入与消费覆盖、确认对象映射；使用真实 ONS Message 和 mocked Producer，不代表阿里云服务验收",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-13-ons-header-contract/report.json",
+      "lastEvidenceSha256": "e512160efb2d84ab235784a8b0bb0d53ae13d6fb18c7405ca8f6746af31ed709",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-ons/src/test/java/io/ddd4j/mq/ons/OnsMessageHeaderTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-ons/src/test/java/io/ddd4j/mq/ons/OnsMessageHeaderTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-ons/src/test/java/io/ddd4j/mq/ons/OnsMessageHeaderTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "MQ-DELIVERY-POLICY-NONFINITE-JITTER",
+      "description": "三线可靠投递策略在构造和调度时拒绝 NaN 抖动值，避免无效重试时间；仅为本地策略契约，不代表 Broker 重投验收",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-14-mq-policy-nan/report.json",
+      "lastEvidenceSha256": "b5197fdd40a613b6aef0be86b726bfd7e91100622d8ff17ca9e1e93ad9a0aed1",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/delivery/MQDeliveryPolicyTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/delivery/MQDeliveryPolicyTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/delivery/MQDeliveryPolicyTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "MQ-OUTBOX-DISPATCH-RESULT-JSON",
+      "description": "三线 Outbox 派发结果的五个计数含确认丢失字段经 Jackson JSON 往返保持一致；JDK8/17 使用 Jackson2，JDK21 使用 Jackson3",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-14-mq-outbox-result-json/report.json",
+      "lastEvidenceSha256": "d074fb8e3b25a2638eb8453dd049af98c87778cc0a6278bc0888e80c38cb58e6",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/delivery/MQOutboxDispatchResultJsonContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/delivery/MQOutboxDispatchResultJsonContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/delivery/MQOutboxDispatchResultJsonContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "MQ-OUTBOX-HEADER-VALUE-PARITY",
+      "description": "三线 Outbox 消息头保留输入顺序与不可变快照，固定消息 ID，并一致拒绝空键或空值；不统一第三方依赖",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-post-kafka-full-verify/outbox-header-parity-report.json",
+      "lastEvidenceSha256": "19decdfc00cb74c6e2a96c4c58f29e05f5ba324ee300a9c1a9a60d6f38e188db",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/delivery/MQOutboxRecordTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/delivery/MQOutboxRecordTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/delivery/MQOutboxRecordTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "MQ-OUTBOX-RECORD-JSON",
+      "description": "三线 Outbox 快照保留租约、重试次数及原生消息头的 Jackson JSON 往返；JDK8/17 使用 Jackson2，JDK21 使用 Jackson3",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-14-mq-outbox-record-json/report.json",
+      "lastEvidenceSha256": "cc956bd07d04c6c36d7ad9e80b398a18103ce5426dbc8da04e7f88746e17b302",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/delivery/MQOutboxRecordJsonContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/delivery/MQOutboxRecordJsonContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/delivery/MQOutboxRecordJsonContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "MQ-PULSAR-PROPERTY-CONTRACT",
+      "description": "Pulsar SDK 属性映射覆盖无因果字段、仅关联 ID、两字段；消费端从原生属性恢复并传给确认对象。当前为 mock SDK 契约，真实 Broker 往返仍待验",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-pulsar-causality/report.json",
+      "lastEvidenceSha256": "cd15eef9a1638010f0801102fd90c09db26880c2714ad7007e08e441c2a8ae93",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-pulsar/src/test/java/io/ddd4j/mq/pulsar/PulsarAdapterContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-pulsar/src/test/java/io/ddd4j/mq/pulsar/PulsarAdapterContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-pulsar/src/test/java/io/ddd4j/mq/pulsar/PulsarAdapterContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "MQ-REDIS-STREAM-ACK-RETRY",
+      "description": "真实 Redis Stream 消费中确认对象保留关联 ID，首次业务失败留在 PEL，重试成功后确认归零且重复关闭安全",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-14-redis-stream-current-native/report.json",
+      "lastEvidenceSha256": "87c70381b5c98f32d14cf984e9adc1a1fc1481cfd1f1374c48e5b1efaf5bbc11",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-redis-stream/src/test/java/io/ddd4j/mq/redisstream/RedisStreamNativeCausalityIT.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-redis-stream/src/test/java/io/ddd4j/mq/redisstream/RedisStreamNativeCausalityIT.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-redis-stream/src/test/java/io/ddd4j/mq/redisstream/RedisStreamNativeCausalityIT.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "MQ-REDIS-STREAM-NATIVE-CAUSALITY",
+      "description": "Redis Stream 原生字段发布无因果值、仅关联 ID、两个 ID，并在真实消费监听中恢复因果值；确认重试与其他 Broker 另行验收",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-14-redis-stream-current-native/report.json",
+      "lastEvidenceSha256": "87c70381b5c98f32d14cf984e9adc1a1fc1481cfd1f1374c48e5b1efaf5bbc11",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-redis-stream/src/test/java/io/ddd4j/mq/redisstream/RedisStreamMQClientTest.java",
+            "ddd4j-mq/ddd4j-mq-redis-stream/src/test/java/io/ddd4j/mq/redisstream/RedisStreamNativeCausalityIT.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-redis-stream/src/test/java/io/ddd4j/mq/redisstream/RedisStreamMQClientTest.java",
+            "ddd4j-mq/ddd4j-mq-redis-stream/src/test/java/io/ddd4j/mq/redisstream/RedisStreamNativeCausalityIT.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-redis-stream/src/test/java/io/ddd4j/mq/redisstream/RedisStreamMQClientTest.java",
+            "ddd4j-mq/ddd4j-mq-redis-stream/src/test/java/io/ddd4j/mq/redisstream/RedisStreamNativeCausalityIT.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "MQ-REDIS-STREAM-PEL-TAKEOVER",
+      "description": "配置不同消费者名称，Redis 6.2+ 显式启用 XAUTOCLAIM 后接管空闲 PEL 并完成确认；默认协议要求不变",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-14-redis-stream-current-native/report.json",
+      "lastEvidenceSha256": "87c70381b5c98f32d14cf984e9adc1a1fc1481cfd1f1374c48e5b1efaf5bbc11",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-redis-stream/src/test/java/io/ddd4j/mq/redisstream/RedisStreamNativeCausalityIT.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-redis-stream/src/test/java/io/ddd4j/mq/redisstream/RedisStreamNativeCausalityIT.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-redis-stream/src/test/java/io/ddd4j/mq/redisstream/RedisStreamNativeCausalityIT.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "MQ-REDIS-STREAM-XACK-FAILURE",
+      "description": "Redis XACK 抛错时确认对象保持未确认，同一对象可重试；不将 mock 验证当作网络确认丢失的原生证明",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-redis-stream-pel-takeover/report.json",
+      "lastEvidenceSha256": "568c57ad3cce92363b78b30e88b7390c7fd6de354a377f5287d3ce3734a726a5",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-redis-stream/src/test/java/io/ddd4j/mq/redisstream/RedisStreamBrokerAdapterTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-redis-stream/src/test/java/io/ddd4j/mq/redisstream/RedisStreamBrokerAdapterTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-redis-stream/src/test/java/io/ddd4j/mq/redisstream/RedisStreamBrokerAdapterTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "MQ-ROCKETMQ-NAMESPACED-NATIVE-TAG-ROUTE",
+      "description": "RocketMQ SDK 发送与订阅均使用合法物理 topic namespace_topic，tag 保留在原生属性与订阅表达式；本项为 mock SDK 参数契约",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-13-rocketmq-native/rocket-module-report.json",
+      "lastEvidenceSha256": "d13bbd980a06967c75665d25d32dd784ce5b290668b4cae59a258a5e9e8374cb",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-rocketmq/src/test/java/io/ddd4j/mq/rocketmq/RocketMessageHeaderTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-rocketmq/src/test/java/io/ddd4j/mq/rocketmq/RocketMessageHeaderTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-rocketmq/src/test/java/io/ddd4j/mq/rocketmq/RocketMessageHeaderTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "MQ-ROCKETMQ-NATIVE-ROUTE-CAUSALITY-RETRY",
+      "description": "真实 RocketMQ NameServer/Broker 验证合法 namespace_topic 与原生 tag/因果属性回读，以及监听首次失败后的 Broker 重投",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-13-rocketmq-native/rocket-module-report.json",
+      "lastEvidenceSha256": "d13bbd980a06967c75665d25d32dd784ce5b290668b4cae59a258a5e9e8374cb",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-rocketmq/src/test/java/io/ddd4j/mq/rocketmq/RocketMQNativeIntegrationTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-rocketmq/src/test/java/io/ddd4j/mq/rocketmq/RocketMQNativeIntegrationTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-rocketmq/src/test/java/io/ddd4j/mq/rocketmq/RocketMQNativeIntegrationTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "MQ-ROCKETMQ-PROPERTY-CONTRACT",
+      "description": "RocketMQ SDK 消息属性承载稳定消息 ID 与因果 ID，消费恢复及确认关联 ID；不代表真实 Broker 往返",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-rocketmq-namespaced-route/report.json",
+      "lastEvidenceSha256": "f2aaf0a914972677898c5deda585ec0bcc3c2bdec847f02612ba1c8300bf012f",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-rocketmq/src/test/java/io/ddd4j/mq/rocketmq/RocketMessageHeaderTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-rocketmq/src/test/java/io/ddd4j/mq/rocketmq/RocketMessageHeaderTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-rocketmq/src/test/java/io/ddd4j/mq/rocketmq/RocketMessageHeaderTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "MQ-SPRING-BRIDGE",
+      "description": "Spring MQ 监听器发现、必需客户端初始化失败传播、逆序释放与重复关闭本地契约；不替代原生 Broker 集成",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-mq-spring-bridge/report.json",
+      "lastEvidenceSha256": "49d4de577accde5a86b9988fbe637b2f4121ced02f2b49b1a48091aef55c0317",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-spring/src/test/java/io/ddd4j/mq/spring/registry/MQListenerLifecycleContractTest.java",
+            "ddd4j-mq/ddd4j-mq-spring/src/test/java/io/ddd4j/mq/spring/registry/SpringMqBridgeContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-spring/src/test/java/io/ddd4j/mq/spring/registry/MQListenerLifecycleContractTest.java",
+            "ddd4j-mq/ddd4j-mq-spring/src/test/java/io/ddd4j/mq/spring/registry/SpringMqBridgeContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-spring/src/test/java/io/ddd4j/mq/spring/registry/MQListenerLifecycleContractTest.java",
+            "ddd4j-mq/ddd4j-mq-spring/src/test/java/io/ddd4j/mq/spring/registry/SpringMqBridgeContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "MQ-SQS-SDK-HEADER-CONTRACT",
+      "description": "SQS SDK 请求/消息属性中稳定消息 ID 与两个冻结因果 header 的写入、消费优先级和确认对象映射；本项使用 mocked SqsClient，不代表真实 SQS 服务验收",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-13-sqs-header-contract/report.json",
+      "lastEvidenceSha256": "92b70182393ca15db1819f9943dc6b94f5af8c253861009a1f45aecbfc4056ed",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-sqs/src/test/java/io/ddd4j/mq/sqs/SqsAdapterContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-sqs/src/test/java/io/ddd4j/mq/sqs/SqsAdapterContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-sqs/src/test/java/io/ddd4j/mq/sqs/SqsAdapterContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "MQ-TDMQ-SPI-HEADER-CONTRACT",
+      "description": "TDMQ 业务注入 SPI 的冻结头传递、内存链路原生头优先级和旧函数式发布器因果头 fail-fast；无腾讯云 SDK 或云端认证证据",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-13-tdmq-header-spi/report.json",
+      "lastEvidenceSha256": "eda5b796d91ee29df5050375a3e7670cc13fc873ca2dac7f51a1b48be4e0717a",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-tdmq/src/test/java/io/ddd4j/mq/tdmq/TdmqHeaderContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-tdmq/src/test/java/io/ddd4j/mq/tdmq/TdmqHeaderContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-tdmq/src/test/java/io/ddd4j/mq/tdmq/TdmqHeaderContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "ORDER-APPLICATION-VALUE-JSON",
+      "description": "订单应用命令、读模型、Outbox 结果与消息的 JSON 往返及 UTC 时间字段",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-order-application/src/test/java/io/ddd4j/sample/order/application/OrderApplicationValueContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-order-application/src/test/java/io/ddd4j/sample/order/application/OrderApplicationValueContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-order-application/src/test/java/io/ddd4j/sample/order/application/OrderApplicationValueContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "ORDER-JDBC-SCHEDULED-OUTBOX",
+      "description": "三线在各自 JDK 下定时运行可靠 Outbox 工作器，发布失败后继续调度并可关闭；真实 PostgreSQL/Redis/Kafka 订单闭环由工作器触发投递",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-order-jdbc/src/test/java/io/ddd4j/sample/order/jdbc/ReliableOrderOutboxWorkerTest.java",
+            "ddd4j-samples/ddd4j-sample-order-jdbc/src/test/java/io/ddd4j/sample/order/jdbc/OrderInfrastructureRoundTripTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-order-jdbc/src/test/java/io/ddd4j/sample/order/jdbc/ReliableOrderOutboxWorkerTest.java",
+            "ddd4j-samples/ddd4j-sample-order-jdbc/src/test/java/io/ddd4j/sample/order/jdbc/OrderInfrastructureRoundTripTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-order-jdbc/src/test/java/io/ddd4j/sample/order/jdbc/ReliableOrderOutboxWorkerTest.java",
+            "ddd4j-samples/ddd4j-sample-order-jdbc/src/test/java/io/ddd4j/sample/order/jdbc/OrderInfrastructureRoundTripTest.java"
+          ]
+        }
+      },
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-14-order-outbox-worker/report.json",
+      "lastEvidenceSha256": "4aba8fa83543f8b64e9a3dd99cbcafca0ecc1cde41625bf4505afab3032d1f1d"
+    },
+
+    {
+      "id": "ORDER-JDBC-ATOMICITY",
+      "description": "真实 PostgreSQL 事务中订单写入后、Outbox 写入后或读模型写入后故障，订单、Outbox 与读模型一起回滚",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-order-jdbc/src/test/java/io/ddd4j/sample/order/jdbc/JdbcOrderAtomicityTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-order-jdbc/src/test/java/io/ddd4j/sample/order/jdbc/JdbcOrderAtomicityTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-order-jdbc/src/test/java/io/ddd4j/sample/order/jdbc/JdbcOrderAtomicityTest.java"
+          ]
+        }
+      },
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-14-order-write-rollback/report.json",
+      "lastEvidenceSha256": "f088da21ca071170b331c70ae136593ed956cc2e9079204308e57b48f198fd60"
+    },
+    {
+      "id": "ORDER-PAYMENT-COMPLETION-FAILURE",
+      "description": "支付已提交但幂等完成失败时保留键，同键重试不产生重复支付事件；提交前失败可释放重试",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-order-testkit/src/test/java/io/ddd4j/sample/order/testkit/OrderApplicationContractTest.java",
+            "ddd4j-samples/ddd4j-sample-order-jdbc/src/test/java/io/ddd4j/sample/order/jdbc/OrderInfrastructureRoundTripTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-order-testkit/src/test/java/io/ddd4j/sample/order/testkit/OrderApplicationContractTest.java",
+            "ddd4j-samples/ddd4j-sample-order-jdbc/src/test/java/io/ddd4j/sample/order/jdbc/OrderInfrastructureRoundTripTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-order-testkit/src/test/java/io/ddd4j/sample/order/testkit/OrderApplicationContractTest.java",
+            "ddd4j-samples/ddd4j-sample-order-jdbc/src/test/java/io/ddd4j/sample/order/jdbc/OrderInfrastructureRoundTripTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "ORDER-QUERY-FALLBACK",
+      "description": "读模型缺失订单时按 ID 回退写模型，返回支付状态、金额、订单号和标识的共同契约",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-14-order-query-fallback/report.json",
+      "lastEvidenceSha256": "0b86098b97d8d1c492869c75ddc9afb4d35dcb58c0cc51dcf5d784a735f21ae4",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-order-testkit/src/test/java/io/ddd4j/sample/order/testkit/OrderApplicationContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-order-testkit/src/test/java/io/ddd4j/sample/order/testkit/OrderApplicationContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-order-testkit/src/test/java/io/ddd4j/sample/order/testkit/OrderApplicationContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "OUTBOX-CONFIRMATION-EXCEPTION",
+      "description": "Broker 已发送后确认抛错保留租约、到期接管并按至少一次语义重投",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/delivery/MQOutboxDispatcherTest.java",
+            "ddd4j-samples/ddd4j-sample-order-jdbc/src/test/java/io/ddd4j/sample/order/jdbc/OrderInfrastructureRoundTripTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/delivery/MQOutboxDispatcherTest.java",
+            "ddd4j-samples/ddd4j-sample-order-jdbc/src/test/java/io/ddd4j/sample/order/jdbc/OrderInfrastructureRoundTripTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/delivery/MQOutboxDispatcherTest.java",
+            "ddd4j-samples/ddd4j-sample-order-jdbc/src/test/java/io/ddd4j/sample/order/jdbc/OrderInfrastructureRoundTripTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "OUTBOX-JDBC-CAUSAL-HEADERS",
+      "description": "真实 PostgreSQL 持久化与重新领取 Outbox 消息后保留 correlationId 和 causationId 原生消息头；三线分别使用本线 Jackson 依赖",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-order-jdbc/src/test/java/io/ddd4j/sample/order/jdbc/OrderInfrastructureRoundTripTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-order-jdbc/src/test/java/io/ddd4j/sample/order/jdbc/OrderInfrastructureRoundTripTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-order-jdbc/src/test/java/io/ddd4j/sample/order/jdbc/OrderInfrastructureRoundTripTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "OUTBOX-JDBC-CONCURRENT-LEASE",
+      "description": "真实 PostgreSQL 上两个实例并发领取同一待发消息，仅一个获得有效租约，非持有者不可确认",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-order-jdbc/src/test/java/io/ddd4j/sample/order/jdbc/OrderInfrastructureRoundTripTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-order-jdbc/src/test/java/io/ddd4j/sample/order/jdbc/OrderInfrastructureRoundTripTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-order-jdbc/src/test/java/io/ddd4j/sample/order/jdbc/OrderInfrastructureRoundTripTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "OUTBOX-REDELIVERY",
+      "description": "租约接管、发送重试与确认丢失",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-order-jdbc/src/test/java/io/ddd4j/sample/order/jdbc/OrderInfrastructureRoundTripTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-order-jdbc/src/test/java/io/ddd4j/sample/order/jdbc/OrderInfrastructureRoundTripTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-order-jdbc/src/test/java/io/ddd4j/sample/order/jdbc/OrderInfrastructureRoundTripTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "PLATFORM-QUARKUS-METRICS",
+      "description": "Quarkus 投影 Micrometer 指标",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/cqrs/MicrometerProjectionMetricsTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/cqrs/MicrometerProjectionMetricsTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/cqrs/MicrometerProjectionMetricsTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "PROJECTION-JPA-IMMUTABLE-SNAPSHOT",
+      "description": "JPA 投影位置 findAll 返回不可修改的值对象快照；各线保留自身 JDK 与 JPA 依赖",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-projection-jpa-convergence/report.json",
+      "lastEvidenceSha256": "913f193c4cc6e54acb61f3243aa0d4150398c101912fa68f7894e23c598b8797",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/ProjectionPositionJpaIT.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/ProjectionPositionJpaIT.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/ProjectionPositionJpaIT.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "PROJECTION-JPA-INCREMENT-RELOAD-RACE",
+      "description": "JPA 投影位置原子自增成功后若读回行消失，三线均以含流 ID 的 IllegalStateException 报告竞争",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-projection-jpa-convergence/report.json",
+      "lastEvidenceSha256": "913f193c4cc6e54acb61f3243aa0d4150398c101912fa68f7894e23c598b8797",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/JpaProjectionPositionRepositoryTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/JpaProjectionPositionRepositoryTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/JpaProjectionPositionRepositoryTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "PROJECTION-SPRING-JPA-RESET-DATABASE",
+      "description": "Spring 运行时 JPA 投影位置重置后数据库值为零，缺失流创建零位置；三线分别使用自身 Boot/JPA 测试栈",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/cqrs/SpringJpaProjectionPositionDatabaseTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/cqrs/SpringJpaProjectionPositionDatabaseTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/cqrs/SpringJpaProjectionPositionDatabaseTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "RUNTIME-HELIDON-BOOT",
+      "description": "Helidon Server 启动、CDI 扩展注册与就绪注册表可读取",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-runtime/ddd4j-runtime-helidon/src/test/java/io/ddd4j/helidon/HelidonServerBootTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-runtime/ddd4j-runtime-helidon/src/test/java/io/ddd4j/helidon/HelidonServerBootTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-runtime/ddd4j-runtime-helidon/src/test/java/io/ddd4j/helidon/HelidonServerBootTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "RUNTIME-QUARKUS-LIFECYCLE",
+      "description": "Quarkus 真实容器启动和关闭事件驱动 ViewManager 生命周期",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/cqrs/QuarkusRuntimeLifecycleIT.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/cqrs/QuarkusRuntimeLifecycleIT.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/cqrs/QuarkusRuntimeLifecycleIT.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-HELIDON-CQRS",
+      "description": "Helidon 订单 CQRS 真实 HTTP 创建、投影查询与重复编号冲突",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-helidon-cqrs/src/test/java/io/ddd4j/sample/helidon/cqrs/HelidonOrderCqrsIT.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-helidon-cqrs/src/test/java/io/ddd4j/sample/helidon/cqrs/HelidonOrderCqrsIT.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-helidon-cqrs/src/test/java/io/ddd4j/sample/helidon/cqrs/HelidonOrderCqrsIT.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-HELIDON-ORDER",
+      "description": "Helidon 订单资源主路径",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-helidon/src/test/java/io/ddd4j/sample/helidon/HelidonOrderResourceTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-helidon/src/test/java/io/ddd4j/sample/helidon/HelidonOrderResourceTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-helidon/src/test/java/io/ddd4j/sample/helidon/HelidonOrderResourceTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-JAVALIN-DTO-GETTER-VALUE",
+      "description": "Javalin Sa-Token/Shiro CreateOrderRequest 与 UpdateGoodsRequest 的三线可继承、对称 canEqual 相等、覆写 getter 影响 equals/hashCode，保持本线依赖和 Jackson 适配",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-13-javalin-dto-getter-report.json",
+      "lastEvidenceSha256": "1c430d1022917d9327ccab769da829d6cbb0f3a43f82403338da7d33fa85a1e5",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/goods/web/dto/UpdateGoodsRequestContractTest.java",
+            "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/order/web/dto/CreateOrderRequestContractTest.java",
+            "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/goods/web/dto/UpdateGoodsRequestContractTest.java",
+            "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/order/web/dto/CreateOrderRequestContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/goods/web/dto/UpdateGoodsRequestContractTest.java",
+            "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/order/web/dto/CreateOrderRequestContractTest.java",
+            "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/goods/web/dto/UpdateGoodsRequestContractTest.java",
+            "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/order/web/dto/CreateOrderRequestContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/goods/web/dto/UpdateGoodsRequestContractTest.java",
+            "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/order/web/dto/CreateOrderRequestContractTest.java",
+            "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/goods/web/dto/UpdateGoodsRequestContractTest.java",
+            "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/order/web/dto/CreateOrderRequestContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-JAVALIN-DTO-SUBCLASS-VALUE",
+      "description": "Javalin Sa-Token/Shiro 公开请求 DTO 三线可继承；基类/子类双向值相等、覆写 getter 影响 equals/hashCode 且本线 JSON 可往返，保留各线 Jackson/JDK 适配",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-13-javalin-dto-subclass-report.json",
+      "lastEvidenceSha256": "9a16bf2e1e508269ea3f1f623d4ea06ff0e3e2e0ec1d7bf28147e38e0302c1ed",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/goods/web/dto/CreateGoodsRequestContractTest.java",
+            "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/order/web/dto/AddOrderLineRequestContractTest.java",
+            "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/goods/web/dto/CreateGoodsRequestContractTest.java",
+            "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/order/web/dto/AddOrderLineRequestContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/goods/web/dto/CreateGoodsRequestContractTest.java",
+            "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/order/web/dto/AddOrderLineRequestContractTest.java",
+            "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/goods/web/dto/CreateGoodsRequestContractTest.java",
+            "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/order/web/dto/AddOrderLineRequestContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/goods/web/dto/CreateGoodsRequestContractTest.java",
+            "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/order/web/dto/AddOrderLineRequestContractTest.java",
+            "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/goods/web/dto/CreateGoodsRequestContractTest.java",
+            "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/order/web/dto/AddOrderLineRequestContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-JAVALIN-ERROR",
+      "description": "Javalin 缺失查询错误码",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/MissingQueryCodeContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/MissingQueryCodeContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/MissingQueryCodeContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-JAVALIN-GOODS-DTO",
+      "description": "Javalin 商品请求的 Bean 与组件访问器、可变操作、值语义及 JSON 往返",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/goods/web/GoodsRequestContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/goods/web/GoodsRequestContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/goods/web/GoodsRequestContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-JAVALIN-MAP-CONTRACT",
+      "description": "JDK 8 样例兼容 helper 与 JDK 17/21 Map.of 的空值、重复键和不可变结果契约；JDK 8 奇数参数运行时拒绝",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-14-jdk8-map-adaptation/report.json",
+      "lastEvidenceSha256": "3788900b58c3e9f99fabfda0365f4bf8036a20409ba6c474a740398957140bb8",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/rbac/controller/Java8MapsContractTest.java",
+            "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/rbac/web/Java8MapsContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/rbac/controller/Java8MapsContractTest.java",
+            "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/rbac/web/Java8MapsContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/rbac/controller/Java8MapsContractTest.java",
+            "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/rbac/web/Java8MapsContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-JAVALIN-MONEY",
+      "description": "Javalin 订单金额归一化、币种约束、值语义、JSON 与 Java 序列化",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/order/domain/model/MoneyContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/order/domain/model/MoneyContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/order/domain/model/MoneyContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-JAVALIN-ORDER-COMMAND",
+      "description": "Javalin 订单创建与加行命令的 Bean/组件访问器、值语义及 JSON 往返",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/order/application/OrderCommandContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/order/application/OrderCommandContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/order/application/OrderCommandContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-JAVALIN-ORDER-DTO",
+      "description": "Javalin 订单响应与请求 DTO 的 Bean/组件访问器、值语义及 JSON 往返",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/order/web/OrderDtoContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/order/web/OrderDtoContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/order/web/OrderDtoContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-JAVALIN-ORDER-QUERY-DTO",
+      "description": "Javalin 订单查询响应 DTO 的 Bean/组件访问器、值语义及 JSON 往返",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/order/web/OrderQueryResponseContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/order/web/OrderQueryResponseContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/order/web/OrderQueryResponseContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-MICRONAUT-CQRS",
+      "description": "Micronaut 命令创建、事件投影、读模型查询及重复订单冲突",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-micronaut-cqrs/src/test/java/io/ddd4j/sample/micronaut/cqrs/MicronautOrderCqrsIT.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-micronaut-cqrs/src/test/java/io/ddd4j/sample/micronaut/cqrs/MicronautOrderCqrsIT.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-micronaut-cqrs/src/test/java/io/ddd4j/sample/micronaut/cqrs/MicronautOrderCqrsIT.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-MICRONAUT-ORDER",
+      "description": "Micronaut 订单 HTTP 创建、加行、认证与幂等支付",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-micronaut/src/test/java/io/ddd4j/sample/micronaut/MicronautOrderControllerTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-micronaut/src/test/java/io/ddd4j/sample/micronaut/MicronautOrderControllerTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-micronaut/src/test/java/io/ddd4j/sample/micronaut/MicronautOrderControllerTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-QUARKUS-CQRS",
+      "description": "Quarkus CQRS 样例的订单事件、Goods 查询、Order 读模型和缓存 HTTP 流程",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/test/java/io/ddd4j/sample/quarkus/cqrs/event/OrderEventTest.java",
+            "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/test/java/io/ddd4j/sample/quarkus/cqrs/goods/GoodsQueryTest.java",
+            "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/test/java/io/ddd4j/sample/quarkus/cqrs/order/OrderCQRSQueryTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/test/java/io/ddd4j/sample/quarkus/cqrs/event/OrderEventTest.java",
+            "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/test/java/io/ddd4j/sample/quarkus/cqrs/goods/GoodsQueryTest.java",
+            "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/test/java/io/ddd4j/sample/quarkus/cqrs/order/OrderCQRSQueryTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/test/java/io/ddd4j/sample/quarkus/cqrs/event/OrderEventTest.java",
+            "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/test/java/io/ddd4j/sample/quarkus/cqrs/goods/GoodsQueryTest.java",
+            "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/test/java/io/ddd4j/sample/quarkus/cqrs/order/OrderCQRSQueryTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-QUARKUS-ORDINARY",
+      "description": "Quarkus 普通样例的 Order 业务流、Goods CRUD/CQRS HTTP 及 SPI 装配",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-quarkus/src/test/java/io/ddd4j/sample/quarkus/OrderResourceTest.java",
+            "ddd4j-samples/ddd4j-sample-quarkus/src/test/java/io/ddd4j/sample/quarkus/goods/GoodsResourceTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-quarkus/src/test/java/io/ddd4j/sample/quarkus/OrderResourceTest.java",
+            "ddd4j-samples/ddd4j-sample-quarkus/src/test/java/io/ddd4j/sample/quarkus/goods/GoodsResourceTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-quarkus/src/test/java/io/ddd4j/sample/quarkus/OrderResourceTest.java",
+            "ddd4j-samples/ddd4j-sample-quarkus/src/test/java/io/ddd4j/sample/quarkus/goods/GoodsResourceTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-QUARKUS-SATOKEN",
+      "description": "Quarkus Sa-Token 鉴权样例的 HTTP 登录、角色权限与业务资源访问",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-quarkus-satoken/src/test/java/io/ddd4j/sample/quarkus/satoken/RbacResourceTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-quarkus-satoken/src/test/java/io/ddd4j/sample/quarkus/satoken/RbacResourceTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-quarkus-satoken/src/test/java/io/ddd4j/sample/quarkus/satoken/RbacResourceTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-QUARKUS-SHIRO",
+      "description": "Quarkus Apache Shiro 鉴权样例的 HTTP 登录、角色权限与业务资源访问",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/test/java/io/ddd4j/sample/quarkus/shiro/RbacResourceTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/test/java/io/ddd4j/sample/quarkus/shiro/RbacResourceTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/test/java/io/ddd4j/sample/quarkus/shiro/RbacResourceTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "WEB-API-VERSION",
+      "description": "WebMVC 请求 API 版本选择",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/ApiVersionWebInterceptorTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/ApiVersionWebInterceptorTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/ApiVersionWebInterceptorTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "WEB-AUTH-ASYNC",
+      "description": "WebFlux 异步取消后租户与认证上下文清理",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-webflux/src/test/java/io/ddd4j/web/webflux/Ddd4jWebFluxContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-webflux/src/test/java/io/ddd4j/web/webflux/Ddd4jWebFluxContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-webflux/src/test/java/io/ddd4j/web/webflux/Ddd4jWebFluxContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "WEB-HELIDON-CONTRACT",
+      "description": "Helidon Web 请求上下文、认证、幂等与 OpenTelemetry 契约",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-helidon/src/test/java/io/ddd4j/web/helidon/Ddd4jHelidonWebContractTest.java",
+            "ddd4j-web/ddd4j-web-helidon/src/test/java/io/ddd4j/web/helidon/Ddd4jHelidonOtelIntegrationTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-helidon/src/test/java/io/ddd4j/web/helidon/Ddd4jHelidonWebContractTest.java",
+            "ddd4j-web/ddd4j-web-helidon/src/test/java/io/ddd4j/web/helidon/Ddd4jHelidonOtelIntegrationTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-helidon/src/test/java/io/ddd4j/web/helidon/Ddd4jHelidonWebContractTest.java",
+            "ddd4j-web/ddd4j-web-helidon/src/test/java/io/ddd4j/web/helidon/Ddd4jHelidonOtelIntegrationTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "WEB-JAVALIN-CONFIG-CONTRACT",
+      "description": "三线各自 Javalin 版本入口注册相同请求上下文、认证、异常、幂等与 readiness 本地 HTTP 契约；不代表生产部署",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-javalin-platform-config/report.json",
+      "lastEvidenceSha256": "fdbd2c58fbf3b5888729595dfaaf9a8317014259cf2e6269329f93175fdfdde1",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-javalin/src/test/java/io/ddd4j/web/javalin/Ddd4jJavalinWebContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-javalin/src/test/java/io/ddd4j/web/javalin/Ddd4jJavalinWebContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-javalin/src/test/java/io/ddd4j/web/javalin/Ddd4jJavalinWebContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "WEB-MICRONAUT-CONTEXT-LIFECYCLE",
+      "description": "Micronaut 3 手动 ThreadLocal 与 Micronaut 4 PropagatedContext 的请求作用域创建、恢复和当前上下文契约",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-micronaut-explicit-apis/report.json",
+      "lastEvidenceSha256": "5803b0f6ea81116302152a5339f1aef4a2ac1627b61b11effc8526d42b985cb2",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautContextTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautContextTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautContextTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "WEB-MICRONAUT-REMOTE-ADDRESS",
+      "description": "三线 Micronaut 缺失或未解析远端地址归一化为 unknown 的共同请求上下文契约",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-micronaut-remote-address/report.json",
+      "lastEvidenceSha256": "c59f11a36e5be3ae749a851d38caef21c752698c747353ee104607d3863c96d0",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautRemoteAddressContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautRemoteAddressContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautRemoteAddressContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "WEB-MICRONAUT-SYNC-FAILURE",
+      "description": "Micronaut 3/4 下游同步异常原样传播、结束 OTel Span、关闭调用线程 Scope 的共同契约",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-micronaut-sync-failure/report.json",
+      "lastEvidenceSha256": "f70a1114ac1f48fb542879cb4b4c031c1559c91c544fbc6895ecf785281a7bfc",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautOtelScopeTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautOtelScopeTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautOtelScopeTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "WEB-PUBLIC-PATH-NULL-FILTER",
+      "description": "WebMVC 与 WebFlux 公共路径数组含 null/空白时先由 PathWebAccessPolicy 清洗，保留精确/前缀公开路径与私有路径认证；三线行为一致",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-13-web-core-syntax/public-path-report.json",
+      "lastEvidenceSha256": "ea40416a49238203d46a97ad395bd8b8a14a5defdfe874ecedfba119d6c691f8",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/PublicPathPolicyContractTest.java",
+            "ddd4j-web/ddd4j-web-webflux/src/test/java/io/ddd4j/web/webflux/PublicPathPolicyContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/PublicPathPolicyContractTest.java",
+            "ddd4j-web/ddd4j-web-webflux/src/test/java/io/ddd4j/web/webflux/PublicPathPolicyContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/PublicPathPolicyContractTest.java",
+            "ddd4j-web/ddd4j-web-webflux/src/test/java/io/ddd4j/web/webflux/PublicPathPolicyContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "WEB-QUARKUS-CONTRACT",
+      "description": "Quarkus HTTP 请求/响应过滤、异常、幂等与 OpenTelemetry 作用域",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebContractTest.java",
+            "ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusOtelIntegrationTest.java",
+            "ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusOtelScopeTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebContractTest.java",
+            "ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusOtelIntegrationTest.java",
+            "ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusOtelScopeTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebContractTest.java",
+            "ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusOtelIntegrationTest.java",
+            "ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusOtelScopeTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "WEB-QUARKUS-FILTER-CONTRACT",
+      "description": "Quarkus 1.x RESTEasy 与高线 Quarkus REST 各自过滤器注册入口下的共同本地 HTTP 契约；不代表生产部署",
+      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-quarkus-response-constructor/report.json",
+      "lastEvidenceSha256": "a4c69f62e91684a83b88bcd12a54a8848628b7def7620f2f3ec35feb126ac67e",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebContractTest.java",
+            "ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusOtelScopeTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebContractTest.java",
+            "ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusOtelScopeTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebContractTest.java",
+            "ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusOtelScopeTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "WEB-VALIDATION-NAMESPACE",
+      "description": "Web 自定义约束由本线 Validation Provider 识别并执行",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-validation/src/test/java/io/ddd4j/web/validation/ValidationContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-validation/src/test/java/io/ddd4j/web/validation/ValidationContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-validation/src/test/java/io/ddd4j/web/validation/ValidationContractTest.java"
+          ]
+        }
+      }
+    }
+  ]
+}
