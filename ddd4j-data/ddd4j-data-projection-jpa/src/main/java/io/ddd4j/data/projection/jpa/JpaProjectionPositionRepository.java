@@ -131,6 +131,7 @@ public class JpaProjectionPositionRepository implements ProjectionPositionReposi
      * @param delta    自增量（正数）
      * @return 自增后的最新位置计数
      * @throws IllegalArgumentException 流不存在时（须先 {@link #save(ProjectionPosition)} 落行）
+     * @throws IllegalStateException 更新成功后读回位置行失败
      */
     @Transactional
     public long incrementBy(String streamId, long delta) {
@@ -139,6 +140,7 @@ public class JpaProjectionPositionRepository implements ProjectionPositionReposi
         }
         return repository.findById(streamId)
                 .map(ProjectionPositionEntity::getNextEventNumber)
-                .orElseThrow();
+                .orElseThrow(() -> new IllegalStateException(
+                        "projection position disappeared after increment: " + streamId));
     }
 }
