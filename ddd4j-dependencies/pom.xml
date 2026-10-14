@@ -162,7 +162,7 @@
         <docx4j.version>11.5.14</docx4j.version>
         <dom4j2.version>2.2.0</dom4j2.version>
         <dozer-core.version>7.0.0</dozer-core.version>
-        <dozer-extra-converters.version>7.0.x.20241003.RELEASE</dozer-extra-converters.version>
+        <dozer-extra-converters.version>1.0.x.20260630-SNAPSHOT</dozer-extra-converters.version>
         <dozer-proto3.version>6.5.2</dozer-proto3.version>
         <dozer-spring4.version>${dozer-core.version}</dozer-spring4.version>
         <dozer.version>5.5.1</dozer.version>
@@ -2859,7 +2859,7 @@
             <!-- Source: https://mvnrepository.com/artifact/com.github.hiwepy/dozer-extra-converters -->
             <!-- Dozer Extra Converters（hiwepy）：旧坐标下的 Dozer 扩展转换器（已迁至 io.github.easy4j）。 -->
             <dependency>
-                <groupId>com.github.hiwepy</groupId>
+                <groupId>io.github.easy4j</groupId>
                 <artifactId>dozer-extra-converters</artifactId>
                 <version>${dozer-extra-converters.version}</version>
             </dependency>
