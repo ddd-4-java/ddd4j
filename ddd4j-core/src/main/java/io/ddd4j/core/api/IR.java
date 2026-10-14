@@ -25,20 +25,48 @@ import java.util.Objects;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public interface IR extends Serializable {
+
+    /**
+     * 获取响应码
+     * @return 响应码
+     */
     Serializable getCode();
 
+    /**
+     * 获取响应消息
+     * @return 响应消息
+     */
     String getMsg();
 
+    /**
+     * 获取响应数据
+     * @param <T> 响应数据类型
+     * @return 响应数据
+     */
     <T> T getData();
 
+    /**
+     * 是否响应成功
+     * @return 布尔值，表示响应是否成功
+     */
     Boolean isOk();
 
+    /**
+     * 是否响应成功
+     * @param notOkThrows 响应失败抛出异常消息
+     */
     default void isOk(String notOkThrows) {
         if (!isOk()) {
             throw new BizRuntimeException(notOkThrows + " -> {}", this);
         }
     }
 
+    /**
+     * 获取响应数据
+     * @param notOkThrows 响应失败抛出异常消息
+     * @param <T> 响应数据类型
+     * @return 响应数据
+     */
     default <T> T getData(String notOkThrows) {
         if (!isOk()) {
             throw new BizRuntimeException(notOkThrows + " -> {}", this);

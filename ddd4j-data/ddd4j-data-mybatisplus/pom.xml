@@ -12,7 +12,9 @@
 
     <artifactId>ddd4j-data-mybatisplus</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>ddd4j 数据层 - MyBatis-Plus 实现：BaseRepositoryImpl 四泛型封装、TypeHandler 实现、拦截器。 通过 ddd4j 自有字段加密、租户、观测 SPI 对接 MyBatis-Plus 官方扩展点， 将 ddd4j-data-crypto 的 CryptoStrategy 桥接为透明字段加解密能力。</description>
+    <description>ddd4j 数据层 - MyBatis-Plus 实现：BaseRepositoryImpl 四泛型封装、TypeHandler 实现、拦截器。 通过 ddd4j
+        自有字段加密、租户、观测 SPI 对接 MyBatis-Plus 官方扩展点， 将 ddd4j-data-crypto 的 CryptoStrategy 桥接为透明字段加解密能力。
+    </description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
@@ -120,7 +122,8 @@
                                         <exclude>org.mybatis:mybatis-spring</exclude>
                                         <exclude>com.baomidou:mybatis-plus-spring</exclude>
                                     </excludes>
-                                    <message>ddd4j-data-mybatisplus 必须保持 Spring 无关，请使用独立的 Spring 适配模块。</message>
+                                    <message>ddd4j-data-mybatisplus 必须保持 Spring 无关，请使用独立的 Spring 适配模块。
+                                    </message>
                                 </bannedDependencies>
                             </rules>
                         </configuration>

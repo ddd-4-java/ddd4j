@@ -14,13 +14,14 @@
  */
 package io.ddd4j.extension.qrcode.template;
 
-import org.apache.commons.lang3.StringUtils;
-
 import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Objects;
 
-/** Named reusable outer-frame template. */
+/**
+ * Named reusable outer-frame template.
+ */
 @Getter
 public final class QrCodeTemplateDefinition {
 

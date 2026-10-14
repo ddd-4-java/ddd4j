@@ -1,12 +1,17 @@
 # ddd4j 2.0.x 重构迁移实施计划
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:
+> executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** 将 ddd4j 从"Spring 强耦合的单一仓库"重构为"纯 Java 公共底座 + 多运行时绑定层"，核心契约不绑定容器，由 Spring、Quarkus、Guice、Micronaut、Vert.x、Helidon、Dropwizard 运行时模块负责接线。
+**Goal:** 将 ddd4j 从"Spring 强耦合的单一仓库"重构为"纯 Java 公共底座 + 多运行时绑定层"，核心契约不绑定容器，由
+Spring、Quarkus、Guice、Micronaut、Vert.x、Helidon、Dropwizard 运行时模块负责接线。
 
-**Architecture:** 平铺式纯 Java 公共底座 + 多运行时绑定。`ddd4j-core` 持有 DDD/CQRS/Auth/Cache/MQ 等核心契约，`ddd4j-runtime-*` 负责容器绑定，`ddd4j-web`、`ddd4j-data`、`ddd4j-mq`、`ddd4j-auth`、`ddd4j-cache` 按能力聚合。Boot 自动装配留在外部 `ddd4j-boot` 仓库。
+**Architecture:** 平铺式纯 Java 公共底座 + 多运行时绑定。`ddd4j-core` 持有 DDD/CQRS/Auth/Cache/MQ 等核心契约，
+`ddd4j-runtime-*` 负责容器绑定，`ddd4j-web`、`ddd4j-data`、`ddd4j-mq`、`ddd4j-auth`、`ddd4j-cache` 按能力聚合。Boot 自动装配留在外部
+`ddd4j-boot` 仓库。
 
 **Tech Stack:**
+
 - Java 17、Maven 多模块、JUnit 5
 - fuinorg ddd-4-java + cqrs-4-java + esc-api
 - Spring Framework 6.x / Quarkus CDI / Guice / Micronaut / Vert.x / Helidon / Dropwizard
@@ -27,16 +32,16 @@
 
 ## 实施阶段总览
 
-| Stage | 目标 | 预期 Task 数 |
-|-------|------|-------------|
-| 1 | 模块合并/删除（core-api 合并到 core、清理空壳模块） | 3 |
-| 2 | ddd4j-mq-core 迁出 Spring 集成代码到 ddd4j-mq-spring | 1 |
-| 3 | Auth 注解双地址清理 | 1 |
-| 4 | ddd4j-ddd-rules ArchUnit 增强（Clean + COLA） | 2 |
-| 5 | 14 个工具类收编到 ddd4j-kit | 1 |
-| 6 | 包路径统一（io.ddd4j.core.api.* → io.ddd4j.core.*） | 1 |
-| 7 | 七 Runtime + 八 Web 契约与共享 Order 生产接线 | 2 |
-| 8 | PostgreSQL / Redis / Kafka Testcontainers Docker 验证 | 1 |
+| Stage | 目标                                                  | 预期 Task 数 |
+|-------|-------------------------------------------------------|--------------|
+| 1     | 模块合并/删除（core-api 合并到 core、清理空壳模块）   | 3            |
+| 2     | ddd4j-mq-core 迁出 Spring 集成代码到 ddd4j-mq-spring  | 1            |
+| 3     | Auth 注解双地址清理                                   | 1            |
+| 4     | ddd4j-ddd-rules ArchUnit 增强（Clean + COLA）         | 2            |
+| 5     | 14 个工具类收编到 ddd4j-kit                           | 1            |
+| 6     | 包路径统一（io.ddd4j.core.api.* → io.ddd4j.core.*）   | 1            |
+| 7     | 七 Runtime + 八 Web 契约与共享 Order 生产接线         | 2            |
+| 8     | PostgreSQL / Redis / Kafka Testcontainers Docker 验证 | 1            |
 
 ---
 
@@ -92,9 +97,11 @@
 
 - [x] **Step 1:** 迁移 P0 工具类：`JsonKit`（24 处使用）到 `io.ddd4j.kit.lang.JsonKit`
 - [x] **Step 2:** 迁移 P1 工具类：`JacksonKit`（合并 toType）、`HttpStatus`（纯常量）
-- [x] **Step 3:** 迁移 P2 工具类：`Arith`→`ArithKit`、`DateUtils`→`DateKit`、`Functions`→`FunctionKit`、`RankUtil`→`RankKit`、`AppUtils`→`AppKit`、`GraphUtil`→`GraphKit`、`LotteryUtils`→`LotteryKit`
+- [x] **Step 3:** 迁移 P2 工具类：`Arith`→`ArithKit`、`DateUtils`→`DateKit`、`Functions`→`FunctionKit`、`RankUtil`→
+  `RankKit`、`AppUtils`→`AppKit`、`GraphUtil`→`GraphKit`、`LotteryUtils`→`LotteryKit`
 - [x] **Step 4:** 删除 P3 工具类：`CookieUtils`（0 外部使用）、`RandomString`（0 外部使用）
-- [x] **Step 5:** 保留在 ddd4j-core 的 5 个工具类：`HttpStatus`、`ExceptionKit`、`MappingKit`、`TransmittableThreadLocal`、`FastdfsUtils`
+- [x] **Step 5:** 保留在 ddd4j-core 的 5 个工具类：`HttpStatus`、`ExceptionKit`、`MappingKit`、`TransmittableThreadLocal`、
+  `FastdfsUtils`
 
 ---
 

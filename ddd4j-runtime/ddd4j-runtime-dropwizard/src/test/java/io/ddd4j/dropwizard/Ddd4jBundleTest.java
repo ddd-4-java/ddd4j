@@ -14,12 +14,10 @@
  */
 package io.ddd4j.dropwizard;
 
-import io.ddd4j.core.cqrs.command.CommandExecutor;
+import com.codahale.metrics.health.HealthCheckRegistry;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.dropwizard.core.Configuration;
-import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
-import com.codahale.metrics.health.HealthCheckRegistry;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import org.junit.jupiter.api.Test;
@@ -28,9 +26,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
-import java.util.function.Consumer;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -48,9 +44,6 @@ class Ddd4jBundleTest {
 
     @Mock
     private LifecycleEnvironment lifecycle;
-
-    private static final class TestConfiguration extends Configuration {
-    }
 
     @Test
     void defaultConstructorBuildsBundle() {
@@ -86,5 +79,8 @@ class Ddd4jBundleTest {
         Ddd4jBundle<TestConfiguration> bundle = new Ddd4jBundle<>();
         assertThrows(NullPointerException.class, () -> bundle.run(null, environment));
         assertThrows(NullPointerException.class, () -> bundle.run(new TestConfiguration(), null));
+    }
+
+    private static final class TestConfiguration extends Configuration {
     }
 }

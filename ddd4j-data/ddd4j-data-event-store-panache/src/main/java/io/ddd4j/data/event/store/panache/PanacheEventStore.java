@@ -4,6 +4,10 @@
  */
 package io.ddd4j.data.event.store.panache;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
@@ -51,7 +55,7 @@ public class PanacheEventStore implements EventStore {
      * 创建带重试策略的 Panache 事件存储。
      *
      * @param entityManager JPA EntityManager
-     * @param retry position 唯一约束冲突的重试策略
+     * @param retry         position 唯一约束冲突的重试策略
      */
     public PanacheEventStore(EntityManager entityManager, EventStoreRetry retry) {
         this(entityManager, retry, new EventPayloadSerializer(JsonMapper.builder().findAndAddModules().build()));
@@ -225,7 +229,12 @@ public class PanacheEventStore implements EventStore {
         }
     }
 
-    private record StringAggregateRootId(String value) implements AggregateRootId {
+    private final static class StringAggregateRootId implements AggregateRootId {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String value;
+
         private static final StringEntityType TYPE = new StringEntityType("String");
 
         @Override
@@ -242,6 +251,40 @@ public class PanacheEventStore implements EventStore {
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
+        }
+
+        @JsonCreator()
+        private StringAggregateRootId(@JsonProperty("value") String value) {
+            this.value = value;
+        }
+
+        @JsonProperty("value")
+        public String value() {
+            return value;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            StringAggregateRootId other = (StringAggregateRootId) obj;
+            return Objects.equals(this.value, other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(value);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "StringAggregateRootId[value=" + value + "]";
         }
     }
 }

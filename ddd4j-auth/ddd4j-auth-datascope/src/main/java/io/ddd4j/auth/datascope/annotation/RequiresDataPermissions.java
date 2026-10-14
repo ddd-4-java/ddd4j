@@ -15,6 +15,7 @@
 package io.ddd4j.auth.datascope.annotation;
 
 import io.ddd4j.auth.datascope.RequiresDataPermissionsValidator;
+
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
@@ -23,7 +24,7 @@ import java.lang.annotation.*;
 /**
  * jsr303 数据权限校验注解
  *
- * @author wandl
+ * @author ddd4j
  * @version 1.0
  * @since 2024.10.09
  */

@@ -13,35 +13,42 @@
  * limitations under the License.
  */
 package io.ddd4j.web.vertx;
+import java.util.Optional;
+import java.util.Map;
+import java.util.Locale;
+import java.util.List;
+import java.util.HashMap;
+import io.ddd4j.web.core.context.WebRequestLifecycle;
+import io.ddd4j.web.core.context.WebRequestData;
+import io.ddd4j.web.core.context.WebRequestContextFactory;
+import io.ddd4j.web.core.context.WebRequestContext;
+import io.ddd4j.web.core.context.WebHeaders;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Objects;
 
 import io.ddd4j.core.health.RuntimeReadinessRegistry;
 import io.ddd4j.web.core.auth.AuthenticationMode;
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
-import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
 import io.ddd4j.web.core.auth.PathWebAccessPolicy;
-import io.ddd4j.web.core.health.ReadinessEndpoint;
-import io.ddd4j.web.core.health.ReadinessResponse;
+import io.ddd4j.web.core.context.*;
+import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
 import io.ddd4j.web.core.error.WebError;
 import io.ddd4j.web.core.error.WebExceptionTranslator;
-import io.ddd4j.web.core.context.WebHeaders;
+import io.ddd4j.web.core.health.ReadinessEndpoint;
+import io.ddd4j.web.core.health.ReadinessResponse;
 import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.web.core.observability.WebOtelSupport;
-import io.ddd4j.web.core.context.WebRequestContext;
-import io.ddd4j.web.core.context.WebRequestContextFactory;
-import io.ddd4j.web.core.context.WebRequestData;
-import io.ddd4j.web.core.context.WebRequestLifecycle;
 import io.vertx.core.Handler;
 import io.vertx.core.json.Json;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 
 /**
@@ -65,7 +72,7 @@ public final class Ddd4jVertxWeb {
     public Ddd4jVertxWeb() {
         this(new WebRequestContextFactory(), new WebRequestLifecycle(new BearerSubjectAuthenticator(),
                         new PathWebAccessPolicy(List.of("/health", "/health/readiness", "/health/liveness",
-                                        ReadinessEndpoint.PATH),
+                                ReadinessEndpoint.PATH),
                                 AuthenticationMode.REQUIRED)),
                 new DefaultWebExceptionTranslator(), null, Json::encode, new RuntimeReadinessRegistry());
     }
@@ -78,7 +85,7 @@ public final class Ddd4jVertxWeb {
     public Ddd4jVertxWeb(RuntimeReadinessRegistry readinessRegistry) {
         this(new WebRequestContextFactory(), new WebRequestLifecycle(new BearerSubjectAuthenticator(),
                         new PathWebAccessPolicy(List.of("/health", "/health/readiness", "/health/liveness",
-                                        ReadinessEndpoint.PATH),
+                                ReadinessEndpoint.PATH),
                                 AuthenticationMode.REQUIRED)),
                 new DefaultWebExceptionTranslator(), null, Json::encode, readinessRegistry);
     }
@@ -105,6 +112,30 @@ public final class Ddd4jVertxWeb {
         RuntimeReadinessRegistry registry = Objects.requireNonNull(readinessRegistry,
                 "readinessRegistry must not be null");
         this.readinessEndpoint = new ReadinessEndpoint(() -> registry.readiness().ready());
+    }
+
+    private static Map<String, String> extractHeaders(RoutingContext context) {
+        Map<String, String> headers = new HashMap<>();
+        context.request().headers().forEach(entry -> {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            if (Objects.nonNull(key) && Objects.nonNull(value)) {
+                headers.put(key, value);
+            }
+        });
+        return headers;
+    }
+
+    private static void runWithSpan(Object span, Runnable action) {
+        AutoCloseable scope = WebOtelSupport.activate(span);
+        try {
+            action.run();
+        } finally {
+            try {
+                scope.close();
+            } catch (Throwable ignored) {
+            }
+        }
     }
 
     public void install(Router router) {
@@ -190,18 +221,6 @@ public final class Ddd4jVertxWeb {
         };
     }
 
-    private static Map<String, String> extractHeaders(RoutingContext context) {
-        Map<String, String> headers = new HashMap<>();
-        context.request().headers().forEach(entry -> {
-            String key = entry.getKey();
-            String value = entry.getValue();
-            if (Objects.nonNull(key) && Objects.nonNull(value)) {
-                headers.put(key, value);
-            }
-        });
-        return headers;
-    }
-
     private AuthenticationResult authenticate(RoutingContext routingContext, WebRequestContext requestContext) {
         Optional<BearerSubjectAuthenticator.Authentication> authentication = requestLifecycle
                 .authenticate(requestContext);
@@ -245,21 +264,54 @@ public final class Ddd4jVertxWeb {
         }).onFailure(exception -> log.error("Unable to close Vert.x request state", exception));
     }
 
-    private static void runWithSpan(Object span, Runnable action) {
-        AutoCloseable scope = WebOtelSupport.activate(span);
-        try {
-            action.run();
-        } finally {
-            try {
-                scope.close();
-            } catch (Throwable ignored) {
-            }
-        }
-    }
+    private final static class AuthenticationResult {
 
-    private record AuthenticationResult(
-            Optional<BearerSubjectAuthenticator.Authentication> authentication,
-            Optional<WebIdempotencyLifecycle.Scope> idempotencyScope) {
+        private static final long serialVersionUID = 0L;
+
+        private final Optional<BearerSubjectAuthenticator.Authentication> authentication;
+
+        private final Optional<WebIdempotencyLifecycle.Scope> idempotencyScope;
+
+        @JsonCreator()
+        private AuthenticationResult(@JsonProperty("authentication") Optional<BearerSubjectAuthenticator.Authentication> authentication, @JsonProperty("idempotencyScope") Optional<WebIdempotencyLifecycle.Scope> idempotencyScope) {
+            this.authentication = authentication;
+            this.idempotencyScope = idempotencyScope;
+        }
+
+        @JsonProperty("authentication")
+        public Optional<BearerSubjectAuthenticator.Authentication> authentication() {
+            return authentication;
+        }
+
+        @JsonProperty("idempotencyScope")
+        public Optional<WebIdempotencyLifecycle.Scope> idempotencyScope() {
+            return idempotencyScope;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            AuthenticationResult other = (AuthenticationResult) obj;
+            return Objects.equals(this.authentication, other.authentication) && Objects.equals(this.idempotencyScope, other.idempotencyScope);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(authentication);
+            result = 31 * result + Objects.hashCode(idempotencyScope);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "AuthenticationResult[authentication=" + authentication + ", idempotencyScope=" + idempotencyScope + "]";
+        }
     }
 
     private static final class RequestState {

@@ -140,4 +140,20 @@ class PageTest {
         assertThat(page.getCurrent()).isEqualTo(1L);
         assertThat(page.getSize()).isEqualTo(5L);
     }
+    @Test
+    void emptyIteration_shouldProvideValidEmptyIterators() {
+        for (Page<String> page : List.of(new Page<String>(), Page.<String>empty())) {
+            assertThat(page.iterator()).isNotNull();
+            assertThat(page.iterator().hasNext()).isFalse();
+            assertThat(page.spliterator()).isNotNull();
+            assertThat(page.spliterator().estimateSize()).isZero();
+            assertThat(page.stream().count()).isZero();
+            List<String> collected = new ArrayList<>();
+            for (String value : page) {
+                collected.add(value);
+            }
+            assertThat(collected).isEmpty();
+        }
+    }
+
 }

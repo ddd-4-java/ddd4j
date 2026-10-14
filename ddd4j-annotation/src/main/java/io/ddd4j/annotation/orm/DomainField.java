@@ -44,7 +44,7 @@ import java.lang.annotation.Target;
  *   <li>fallback：驼峰转下划线</li>
  * </ol>
  *
- * @author wandl
+ * @author ddd4j
  * @since 2.0.x
  */
 @Retention(RetentionPolicy.RUNTIME)

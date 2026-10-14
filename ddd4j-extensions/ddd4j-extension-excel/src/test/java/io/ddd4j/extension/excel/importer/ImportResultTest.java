@@ -74,7 +74,8 @@ class ImportResultTest {
 
     @Test
     void batchReadListener_should_throw_for_invalid_batch_size() {
-        assertThatThrownBy(() -> new BatchReadListener<>(0, list -> {}))
+        assertThatThrownBy(() -> new BatchReadListener<>(0, list -> {
+        }))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

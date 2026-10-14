@@ -20,8 +20,6 @@ package io.ddd4j.web.core.context;
 @FunctionalInterface
 public interface ClientIpResolver {
 
-    String resolve(String forwardedFor, String realIp, String remoteAddress);
-
     static ClientIpResolver remoteAddressOnly() {
         return new DefaultClientIpResolver(false);
     }
@@ -29,4 +27,6 @@ public interface ClientIpResolver {
     static ClientIpResolver trustedProxy() {
         return new DefaultClientIpResolver(true);
     }
+
+    String resolve(String forwardedFor, String realIp, String remoteAddress);
 }

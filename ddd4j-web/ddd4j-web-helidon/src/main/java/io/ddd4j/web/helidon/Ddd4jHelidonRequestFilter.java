@@ -71,7 +71,7 @@ public final class Ddd4jHelidonRequestFilter implements ContainerRequestFilter {
                 new PathWebAccessPolicy(config.getPublicPaths(), config.getDefaultAuthenticationMode()));
         this.idempotencyLifecycle = config.isIdempotencyEnabled()
                 ? new WebIdempotencyLifecycle(new CacheIdempotencyGuard(config.getIdempotencyCacheName()),
-                        config.getIdempotencyTtl()) : null;
+                config.getIdempotencyTtl()) : null;
     }
 
     public Ddd4jHelidonRequestFilter(WebRequestContextFactory contextFactory,
@@ -80,6 +80,16 @@ public final class Ddd4jHelidonRequestFilter implements ContainerRequestFilter {
         this.contextFactory = Objects.requireNonNull(contextFactory, "contextFactory must not be null");
         this.requestLifecycle = Objects.requireNonNull(requestLifecycle, "requestLifecycle must not be null");
         this.idempotencyLifecycle = idempotencyLifecycle;
+    }
+
+    private static Map<String, String> extractRequestHeaders(ContainerRequestContext request) {
+        Map<String, String> headers = new HashMap<>();
+        request.getHeaders().forEach((k, v) -> {
+            if (Objects.nonNull(v) && !v.isEmpty()) {
+                headers.put(k, v.get(0));
+            }
+        });
+        return headers;
     }
 
     @Override
@@ -103,16 +113,6 @@ public final class Ddd4jHelidonRequestFilter implements ContainerRequestFilter {
             WebOtelSupport.recordError(span, exception);
             throw exception;
         }
-    }
-
-    private static Map<String, String> extractRequestHeaders(ContainerRequestContext request) {
-        Map<String, String> headers = new HashMap<>();
-        request.getHeaders().forEach((k, v) -> {
-            if (Objects.nonNull(v) && !v.isEmpty()) {
-                headers.put(k, v.get(0));
-            }
-        });
-        return headers;
     }
 
     private WebRequestContext createContext(ContainerRequestContext request) {

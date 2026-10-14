@@ -16,7 +16,9 @@ package io.ddd4j.extension.qrcode.template;
 
 import java.awt.image.BufferedImage;
 
-/** 图片外框元素。 */
+/**
+ * 图片外框元素。
+ */
 public final class QrCodeImageElement extends QrCodeFrameElement {
 
     private final BufferedImage image;
@@ -27,19 +29,23 @@ public final class QrCodeImageElement extends QrCodeFrameElement {
     }
 
     /**
-     * 获取嵌入的图片。
-     *
-     * @return 图片实例
-     */
-    public BufferedImage getImage() { return image; }
-
-    /**
      * 创建图片外框元素构建器。
      *
      * @param image 嵌入的图片
      * @return 新的构建器实例
      */
-    public static Builder builder(BufferedImage image) { return new Builder(image); }
+    public static Builder builder(BufferedImage image) {
+        return new Builder(image);
+    }
+
+    /**
+     * 获取嵌入的图片。
+     *
+     * @return 图片实例
+     */
+    public BufferedImage getImage() {
+        return image;
+    }
 
     /**
      * {@link QrCodeImageElement} 构建器。
@@ -53,7 +59,10 @@ public final class QrCodeImageElement extends QrCodeFrameElement {
         private int width;
         private int height;
         private int zIndex;
-        private Builder(BufferedImage image) { this.image = image; }
+
+        private Builder(BufferedImage image) {
+            this.image = image;
+        }
 
         /**
          * 设置图片显示边界。
@@ -64,7 +73,13 @@ public final class QrCodeImageElement extends QrCodeFrameElement {
          * @param height 显示高度（像素）
          * @return 当前构建器
          */
-        public Builder bounds(int x, int y, int width, int height) { this.x = x; this.y = y; this.width = width; this.height = height; return this; }
+        public Builder bounds(int x, int y, int width, int height) {
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+            return this;
+        }
 
         /**
          * 设置绘制层级（值越大越靠上）。
@@ -72,13 +87,18 @@ public final class QrCodeImageElement extends QrCodeFrameElement {
          * @param zIndex 层级值
          * @return 当前构建器
          */
-        public Builder zIndex(int zIndex) { this.zIndex = zIndex; return this; }
+        public Builder zIndex(int zIndex) {
+            this.zIndex = zIndex;
+            return this;
+        }
 
         /**
          * 构建不可变的图片外框元素。
          *
          * @return 构建完成的元素实例
          */
-        public QrCodeImageElement build() { return new QrCodeImageElement(this); }
+        public QrCodeImageElement build() {
+            return new QrCodeImageElement(this);
+        }
     }
 }

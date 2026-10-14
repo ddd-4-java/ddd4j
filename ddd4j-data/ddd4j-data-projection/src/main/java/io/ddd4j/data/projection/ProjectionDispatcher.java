@@ -14,6 +14,10 @@
  */
 package io.ddd4j.data.projection;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import io.ddd4j.core.cqrs.readmodel.DefaultProjectionPosition;
 import io.ddd4j.core.cqrs.readmodel.EventChunk;
 import io.ddd4j.core.cqrs.readmodel.EventChunkReader;
@@ -140,8 +144,8 @@ public class ProjectionDispatcher {
      * @param event   领域事件，非空
      * @param handler 订阅该事件的 handler，非空
      * @return 应用并提交完成后的 future（同步完成）
-     * @throws NullPointerException     event 或 handler 为 null
-     * @throws RuntimeException         handler 应用失败时原样传播（位置不推进）
+     * @throws NullPointerException event 或 handler 为 null
+     * @throws RuntimeException     handler 应用失败时原样传播（位置不推进）
      */
     public CompletableFuture<Void> dispatchOne(DomainEvent<?> event, ProjectionHandler handler) {
         DomainEvent<?> actualEvent = Objects.requireNonNull(event, "event must not be null");
@@ -187,10 +191,66 @@ public class ProjectionDispatcher {
     /**
      * 流式拉取的生成器状态：投影位置 + 当前事件块 + 块内游标。
      */
-    private record Cursor(long position, EventChunk<DomainEvent<?>> chunk, int index) {
+    private final static class Cursor {
+
+        private static final long serialVersionUID = 0L;
+
+        private final long position;
+
+        private final EventChunk<DomainEvent<?>> chunk;
+
+        private final int index;
 
         static Cursor start(long position) {
             return new Cursor(position, null, 0);
+        }
+
+        @JsonCreator()
+        private Cursor(@JsonProperty("position") long position, @JsonProperty("chunk") EventChunk<DomainEvent<?>> chunk, @JsonProperty("index") int index) {
+            this.position = position;
+            this.chunk = chunk;
+            this.index = index;
+        }
+
+        @JsonProperty("position")
+        public long position() {
+            return position;
+        }
+
+        @JsonProperty("chunk")
+        public EventChunk<DomainEvent<?>> chunk() {
+            return chunk;
+        }
+
+        @JsonProperty("index")
+        public int index() {
+            return index;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            Cursor other = (Cursor) obj;
+            return this.position == other.position && Objects.equals(this.chunk, other.chunk) && this.index == other.index;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Long.hashCode(position);
+            result = 31 * result + Objects.hashCode(chunk);
+            result = 31 * result + Integer.hashCode(index);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "Cursor[position=" + position + ", chunk=" + chunk + ", index=" + index + "]";
         }
     }
 

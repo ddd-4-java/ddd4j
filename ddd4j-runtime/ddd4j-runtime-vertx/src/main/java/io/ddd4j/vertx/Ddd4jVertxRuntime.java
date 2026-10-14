@@ -23,11 +23,11 @@ import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.DefaultCommandBus;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
-import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.health.ReadinessContributor;
+import io.ddd4j.core.health.RuntimeReadinessRegistry;
+import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.core.util.SubjectKitRegistrationScope;
-import io.ddd4j.core.health.RuntimeReadinessRegistry;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 
@@ -48,13 +48,13 @@ public final class Ddd4jVertxRuntime implements AutoCloseable {
     private final RuntimeReadinessRegistry readinessRegistry;
 
     public Ddd4jVertxRuntime(Vertx vertx, DomainEventPublisher publisher, SubjectProvider subjectProvider,
-                            I18nProvider i18nProvider, CommandBus commandBus) {
+                             I18nProvider i18nProvider, CommandBus commandBus) {
         this(vertx, publisher, subjectProvider, i18nProvider, commandBus, List.of());
     }
 
     public Ddd4jVertxRuntime(Vertx vertx, DomainEventPublisher publisher, SubjectProvider subjectProvider,
-                            I18nProvider i18nProvider, CommandBus commandBus,
-                            Collection<? extends ReadinessContributor> readinessContributors) {
+                             I18nProvider i18nProvider, CommandBus commandBus,
+                             Collection<? extends ReadinessContributor> readinessContributors) {
         this.vertx = Objects.requireNonNull(vertx, "vertx must not be null");
         this.registrations = new SpiRegistrationScope()
                 .register(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class, publisher)

@@ -13,22 +13,30 @@
  * limitations under the License.
  */
 package io.ddd4j.data.projection;
-
-import io.ddd4j.core.cqrs.readmodel.DefaultProjectionPosition;
-import io.ddd4j.core.cqrs.readmodel.DefaultProjectionService;
-import io.ddd4j.core.cqrs.readmodel.EventChunk;
-import io.ddd4j.core.cqrs.readmodel.EventChunkReader;
-import io.ddd4j.core.cqrs.readmodel.InMemoryProjectionPositionRepository;
+import java.util.Set;
+import java.util.Queue;
+import java.util.List;
+import java.util.Collection;
+import java.util.ArrayList;
+import java.util.ArrayDeque;
 import io.ddd4j.core.cqrs.readmodel.ProjectionService;
+import io.ddd4j.core.cqrs.readmodel.InMemoryProjectionPositionRepository;
+import io.ddd4j.core.cqrs.readmodel.EventChunkReader;
+import io.ddd4j.core.cqrs.readmodel.EventChunk;
+import io.ddd4j.core.cqrs.readmodel.DefaultProjectionService;
+import io.ddd4j.core.cqrs.readmodel.DefaultProjectionPosition;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Objects;
+
+import io.ddd4j.core.cqrs.readmodel.*;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -200,7 +208,72 @@ class ProjectionDispatcherTest {
             return chunk != null ? chunk : EventChunk.empty(fromEventNumber);
         }
 
-        record ReadCall(String streamId, long fromEventNumber, int chunkSize, Collection<String> eventTypes) {
+        final static class ReadCall {
+
+            private static final long serialVersionUID = 0L;
+
+            private final String streamId;
+
+            private final long fromEventNumber;
+
+            private final int chunkSize;
+
+            private final Collection<String> eventTypes;
+
+            @JsonCreator()
+            ReadCall(@JsonProperty("streamId") String streamId, @JsonProperty("fromEventNumber") long fromEventNumber, @JsonProperty("chunkSize") int chunkSize, @JsonProperty("eventTypes") Collection<String> eventTypes) {
+                this.streamId = streamId;
+                this.fromEventNumber = fromEventNumber;
+                this.chunkSize = chunkSize;
+                this.eventTypes = eventTypes;
+            }
+
+            @JsonProperty("streamId")
+            public String streamId() {
+                return streamId;
+            }
+
+            @JsonProperty("fromEventNumber")
+            public long fromEventNumber() {
+                return fromEventNumber;
+            }
+
+            @JsonProperty("chunkSize")
+            public int chunkSize() {
+                return chunkSize;
+            }
+
+            @JsonProperty("eventTypes")
+            public Collection<String> eventTypes() {
+                return eventTypes;
+            }
+
+            @Override
+            public boolean equals(Object obj) {
+                if (this == obj) {
+                    return true;
+                }
+                if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                    return false;
+                }
+                ReadCall other = (ReadCall) obj;
+                return Objects.equals(this.streamId, other.streamId) && this.fromEventNumber == other.fromEventNumber && this.chunkSize == other.chunkSize && Objects.equals(this.eventTypes, other.eventTypes);
+            }
+
+            @Override
+            public int hashCode() {
+                int result = 0;
+                result = 31 * result + Objects.hashCode(streamId);
+                result = 31 * result + Long.hashCode(fromEventNumber);
+                result = 31 * result + Integer.hashCode(chunkSize);
+                result = 31 * result + Objects.hashCode(eventTypes);
+                return result;
+            }
+
+            @Override
+            public String toString() {
+                return "ReadCall[streamId=" + streamId + ", fromEventNumber=" + fromEventNumber + ", chunkSize=" + chunkSize + ", eventTypes=" + eventTypes + "]";
+            }
         }
     }
 }

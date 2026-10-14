@@ -74,7 +74,7 @@ public class Ddd4jQuarkusWebFilter {
         this.requestLifecycle = new WebRequestLifecycle(new BearerSubjectAuthenticator(), config.accessPolicy());
         this.idempotencyLifecycle = config.isIdempotencyEnabled()
                 ? new WebIdempotencyLifecycle(new CacheIdempotencyGuard(config.getIdempotencyCacheName()),
-                        config.getIdempotencyTtl()) : null;
+                config.getIdempotencyTtl()) : null;
     }
 
     Ddd4jQuarkusWebFilter(WebRequestContextFactory contextFactory,
@@ -83,6 +83,26 @@ public class Ddd4jQuarkusWebFilter {
         this.contextFactory = Objects.requireNonNull(contextFactory, "contextFactory must not be null");
         this.requestLifecycle = Objects.requireNonNull(requestLifecycle, "requestLifecycle must not be null");
         this.idempotencyLifecycle = idempotencyLifecycle;
+    }
+
+    private static void closeScope(Object scope) {
+        if (scope instanceof AutoCloseable closeable) {
+            try {
+                closeable.close();
+            } catch (Throwable ignored) {
+            }
+        }
+    }
+
+    private static Map<String, String> extractRequestHeaders(ContainerRequestContext request) {
+        Map<String, String> headers = new HashMap<>();
+        for (var entry : request.getHeaders().entrySet()) {
+            String value = request.getHeaderString(entry.getKey());
+            if (Objects.nonNull(value)) {
+                headers.put(entry.getKey(), value);
+            }
+        }
+        return headers;
     }
 
     @ServerRequestFilter(priority = Priorities.AUTHENTICATION)
@@ -148,26 +168,6 @@ public class Ddd4jQuarkusWebFilter {
             request.removeProperty(CONTEXT_PROPERTY);
             request.removeProperty(SESSION_PROPERTY);
         }
-    }
-
-    private static void closeScope(Object scope) {
-        if (scope instanceof AutoCloseable closeable) {
-            try {
-                closeable.close();
-            } catch (Throwable ignored) {
-            }
-        }
-    }
-
-    private static Map<String, String> extractRequestHeaders(ContainerRequestContext request) {
-        Map<String, String> headers = new HashMap<>();
-        for (var entry : request.getHeaders().entrySet()) {
-            String value = request.getHeaderString(entry.getKey());
-            if (Objects.nonNull(value)) {
-                headers.put(entry.getKey(), value);
-            }
-        }
-        return headers;
     }
 
     private WebRequestContext createContext(ContainerRequestContext request) {

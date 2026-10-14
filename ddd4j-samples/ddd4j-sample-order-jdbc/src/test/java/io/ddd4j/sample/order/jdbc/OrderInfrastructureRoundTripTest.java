@@ -13,18 +13,19 @@
  * limitations under the License.
  */
 package io.ddd4j.sample.order.jdbc;
+import io.ddd4j.sample.order.application.OutboxPublisher;
+import io.ddd4j.sample.order.application.OutboxDispatchResult;
+import io.ddd4j.sample.order.application.OrderReadModel;
+import io.ddd4j.sample.order.application.OrderApplicationService;
+import io.ddd4j.sample.order.application.CreateOrderCommand;
+import io.ddd4j.sample.order.application.AddOrderLineCommand;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.redis.testcontainers.RedisContainer;
 import io.ddd4j.mq.delivery.MQDeliveryPolicy;
 import io.ddd4j.mq.delivery.MQOutboxRecord;
-import io.ddd4j.sample.order.application.AddOrderLineCommand;
-import io.ddd4j.sample.order.application.CreateOrderCommand;
-import io.ddd4j.sample.order.application.OrderApplicationService;
-import io.ddd4j.sample.order.application.OrderReadModel;
-import io.ddd4j.sample.order.application.OutboxDispatchResult;
-import io.ddd4j.sample.order.application.OutboxPublisher;
+import io.ddd4j.sample.order.application.*;
 import io.ddd4j.sample.order.domain.Order;
 import io.ddd4j.sample.order.domain.OrderQuery;
 import io.ddd4j.sample.order.domain.OrderStatus;

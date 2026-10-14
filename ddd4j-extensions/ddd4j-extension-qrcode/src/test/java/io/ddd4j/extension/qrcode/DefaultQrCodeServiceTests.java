@@ -14,19 +14,18 @@
  */
 package io.ddd4j.extension.qrcode;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.jupiter.api.Test;
-
 import io.ddd4j.extension.qrcode.batch.QrCodeBatchItem;
 import io.ddd4j.extension.qrcode.batch.QrCodeBatchResult;
 import io.ddd4j.extension.qrcode.command.DecodeQrCodeCommand;
 import io.ddd4j.extension.qrcode.command.GenerateQrCodeCommand;
-import io.ddd4j.extension.qrcode.result.QrCodeArtifact;
-import io.ddd4j.extension.qrcode.result.QrCodeScanResult;
 import io.ddd4j.extension.qrcode.model.QrCodeDecodeRequest;
 import io.ddd4j.extension.qrcode.model.QrCodeRequest;
+import io.ddd4j.extension.qrcode.result.QrCodeArtifact;
+import io.ddd4j.extension.qrcode.result.QrCodeScanResult;
+import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

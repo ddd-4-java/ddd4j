@@ -15,18 +15,18 @@
 package io.ddd4j.auth.datascope;
 
 import io.ddd4j.auth.datascope.annotation.RequiresDataPermissions;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.biz.utils.SpringContextUtils;
 
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 import java.util.Objects;
 
 /**
  * 数据权限校验
  * Data permission verification
  *
- * @author wandl
+ * @author ddd4j
  * @see RequiresDataPermissions
  */
 @Slf4j

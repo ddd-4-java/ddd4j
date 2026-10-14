@@ -14,8 +14,6 @@
  */
 package io.ddd4j.sample.javalin.shiro;
 
-import java.util.Objects;
-
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -47,6 +45,8 @@ import io.ddd4j.sample.javalin.shiro.rbac.service.RbacService;
 import io.javalin.Javalin;
 import io.javalin.apibuilder.ApiBuilder;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.Objects;
 
 /**
  * Javalin + Guice + Apache Shiro + RBAC 鉴权 + DDD 业务示例启动类。
@@ -158,7 +158,7 @@ public class JavalinShiroApplication {
                 // POST /auth/orders/{id}/pay —— 业务接口 + 鉴权（order:pay 权限）
                 ApiBuilder.post("/auth/orders/{id}/pay", ctx -> {
                     if (!SubjectKit.hasPermission("order:pay")) {
-                        ctx.status(403).json(R.fail(403, "forbidden: requires order:pay permission"));
+                        ctx.status(403).json(R.of(403, "forbidden: requires order:pay permission"));
                         return;
                     }
                     String id = ctx.pathParam("id");

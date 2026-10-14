@@ -9,7 +9,8 @@
 
 基于 codegraph 对 ddd4j 2.0.x 的深度探索，评估 Quarkus 适配的完整性和深度。
 
-**状态校准**：当前 ddd4j 仓库内的 Quarkus 通用适配模块是 `ddd4j-runtime-quarkus`，不是旧文档中的 `ddd4j-quarkus` / `ddd4j-quarkus-core`。Quarkus 专属脚手架仍归外部 `ddd4j-quarkus` 项目。
+**状态校准**：当前 ddd4j 仓库内的 Quarkus 通用适配模块是 `ddd4j-runtime-quarkus`，不是旧文档中的 `ddd4j-quarkus` /
+`ddd4j-quarkus-core`。Quarkus 专属脚手架仍归外部 `ddd4j-quarkus` 项目。
 
 ## 2. 核心架构
 
@@ -33,14 +34,14 @@ ddd4j (通用基础层)
 
 ## 3. 核心契约层关键接口
 
-| 接口/类 | 包路径 | 职责 |
-|---------|--------|------|
-| `DddAggregateRoot<ID>` | `io.ddd4j.core.ddd.aggregate` | 聚合根基类（继承 fuinorg AbstractAggregateRoot） |
-| `DddDomainEvent<ID>` | `io.ddd4j.core.ddd.event` | 领域事件基类 |
-| `DddCommandExecutor<CMD>` | `io.ddd4j.core.ddd.command` | 命令执行器基类 |
-| `DddView` | `io.ddd4j.core.ddd.query` | 查询视图基类 |
-| `ViewManager` | `io.ddd4j.core.cqrs.readmodel` | 视图管理器 SPI |
-| `ProjectionPosition` | `io.ddd4j.core.cqrs.readmodel` | 投影位置 SPI |
+| 接口/类                   | 包路径                         | 职责                                             |
+|---------------------------|--------------------------------|--------------------------------------------------|
+| `DddAggregateRoot<ID>`    | `io.ddd4j.core.ddd.aggregate`  | 聚合根基类（继承 fuinorg AbstractAggregateRoot） |
+| `DddDomainEvent<ID>`      | `io.ddd4j.core.ddd.event`      | 领域事件基类                                     |
+| `DddCommandExecutor<CMD>` | `io.ddd4j.core.ddd.command`    | 命令执行器基类                                   |
+| `DddView`                 | `io.ddd4j.core.ddd.query`      | 查询视图基类                                     |
+| `ViewManager`             | `io.ddd4j.core.cqrs.readmodel` | 视图管理器 SPI                                   |
+| `ProjectionPosition`      | `io.ddd4j.core.cqrs.readmodel` | 投影位置 SPI                                     |
 
 ## 4. Quarkus 适配要点
 

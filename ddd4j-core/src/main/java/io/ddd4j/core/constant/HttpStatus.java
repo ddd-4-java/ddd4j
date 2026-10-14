@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.ddd4j.core;
+package io.ddd4j.core.constant;
 
 /**
  * HTTP 状态码常量（纯 Java，零框架依赖）

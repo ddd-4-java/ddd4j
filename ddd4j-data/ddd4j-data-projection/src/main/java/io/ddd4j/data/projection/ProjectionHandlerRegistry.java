@@ -106,7 +106,7 @@ public class ProjectionHandlerRegistry {
      * @param eventType 事件类型，非空
      * @param <E>       事件类型泛型
      * @return 订阅该类型的 handler；未注册返回 {@link Optional#empty()}
-     *         （兜底策略由 {@link ProjectionDispatcher} 决定）
+     * （兜底策略由 {@link ProjectionDispatcher} 决定）
      * @throws NullPointerException eventType 为 null
      */
     public <E extends DomainEvent<?>> Optional<ProjectionHandler> findHandler(Class<E> eventType) {

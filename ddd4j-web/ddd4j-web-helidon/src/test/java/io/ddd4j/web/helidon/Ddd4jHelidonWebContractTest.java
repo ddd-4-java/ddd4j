@@ -66,10 +66,9 @@ import static org.mockito.Mockito.when;
 @AddConfig(key = "ddd4j.web.idempotency.cache-name", value = "helidon-contract")
 class Ddd4jHelidonWebContractTest extends AbstractWebContractTest {
 
+    private final WebContractClient contractClient = new HelidonContractClient();
     @Inject
     private WebTarget target;
-
-    private final WebContractClient contractClient = new HelidonContractClient();
 
     @BeforeEach
     void setUp() {
@@ -98,23 +97,6 @@ class Ddd4jHelidonWebContractTest extends AbstractWebContractTest {
                 return subject;
             }
         };
-    }
-
-    private final class HelidonContractClient implements WebContractClient {
-
-        @Override
-        public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
-            Invocation.Builder builder = target.path(path).request();
-            headers.forEach(builder::header);
-            Response response = Objects.isNull(body)
-                    ? builder.method(method)
-                    : builder.method(method, Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
-            try (response) {
-                Map<String, List<String>> responseHeaders = new LinkedHashMap<>();
-                response.getStringHeaders().forEach((name, values) -> responseHeaders.put(name, List.copyOf(values)));
-                return new WebContractResponse(response.getStatus(), responseHeaders, response.readEntity(String.class));
-            }
-        }
     }
 
     @ApplicationPath("/")
@@ -190,6 +172,23 @@ class Ddd4jHelidonWebContractTest extends AbstractWebContractTest {
                 case "too-many-requests" -> new WebStatusException(429, "too many requests");
                 default -> new RuntimeException("internal failure");
             };
+        }
+    }
+
+    private final class HelidonContractClient implements WebContractClient {
+
+        @Override
+        public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
+            Invocation.Builder builder = target.path(path).request();
+            headers.forEach(builder::header);
+            Response response = Objects.isNull(body)
+                    ? builder.method(method)
+                    : builder.method(method, Entity.entity(body, MediaType.APPLICATION_JSON_TYPE));
+            try (response) {
+                Map<String, List<String>> responseHeaders = new LinkedHashMap<>();
+                response.getStringHeaders().forEach((name, values) -> responseHeaders.put(name, List.copyOf(values)));
+                return new WebContractResponse(response.getStatus(), responseHeaders, response.readEntity(String.class));
+            }
         }
     }
 }

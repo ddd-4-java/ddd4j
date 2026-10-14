@@ -62,8 +62,16 @@ class RocketAcknowledgmentContractTest {
         properties.setEnabled(true);
         properties.setBroker("rocket");
         client.init(Collections.<MQListener>emptyList(), properties, new MQEventSerialization() {
-            @Override @SuppressWarnings("unchecked") public <T> T serialize(Object event) { return (T) "{}"; }
-            @Override public <S, T> T deserialize(S value, Class<T> type) { return null; }
+            @Override
+            @SuppressWarnings("unchecked")
+            public <T> T serialize(Object event) {
+                return (T) "{}";
+            }
+
+            @Override
+            public <S, T> T deserialize(S value, Class<T> type) {
+                return null;
+            }
         }, null);
         MQEvent event = new MQEvent();
         event.setTopic("orders");

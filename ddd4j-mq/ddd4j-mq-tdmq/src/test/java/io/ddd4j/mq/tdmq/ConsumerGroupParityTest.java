@@ -17,13 +17,17 @@ package io.ddd4j.mq.tdmq;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.listener.MQListener;
 import org.junit.jupiter.api.Test;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/** 通过真实订阅入口观察 group，不访问外部 Broker。 */
+/**
+ * 通过真实订阅入口观察 group，不访问外部 Broker。
+ */
 class ConsumerGroupParityTest {
     @Test
     void whitespaceGroupFallsBackAndExplicitGroupIsPreserved() throws Exception {
@@ -33,7 +37,8 @@ class ConsumerGroupParityTest {
         TdmqMQClient client = new TdmqMQClient(properties);
         client.setBrokerSubscriber((topic, tags, group, handler) -> {
             groups.add(group);
-            return () -> { };
+            return () -> {
+            };
         });
         try {
             for (String group : new String[]{" \t", "", "explicit-group"}) {

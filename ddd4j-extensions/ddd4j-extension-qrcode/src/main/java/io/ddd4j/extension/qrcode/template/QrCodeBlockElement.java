@@ -14,7 +14,9 @@
  */
 package io.ddd4j.extension.qrcode.template;
 
-/** 二维码区域占位元素。 */
+/**
+ * 二维码区域占位元素。
+ */
 public final class QrCodeBlockElement extends QrCodeFrameElement {
 
     private QrCodeBlockElement(Builder builder) {
@@ -26,7 +28,9 @@ public final class QrCodeBlockElement extends QrCodeFrameElement {
      *
      * @return 新的构建器实例
      */
-    public static Builder builder() { return new Builder(); }
+    public static Builder builder() {
+        return new Builder();
+    }
 
     /**
      * {@link QrCodeBlockElement} 构建器。
@@ -46,7 +50,10 @@ public final class QrCodeBlockElement extends QrCodeFrameElement {
          * @param x X 坐标
          * @return 当前构建器
          */
-        public Builder x(int x) { this.x = x; return this; }
+        public Builder x(int x) {
+            this.x = x;
+            return this;
+        }
 
         /**
          * 设置区域左上角 Y 坐标。
@@ -54,7 +61,10 @@ public final class QrCodeBlockElement extends QrCodeFrameElement {
          * @param y Y 坐标
          * @return 当前构建器
          */
-        public Builder y(int y) { this.y = y; return this; }
+        public Builder y(int y) {
+            this.y = y;
+            return this;
+        }
 
         /**
          * 设置区域宽度（像素）。
@@ -62,7 +72,10 @@ public final class QrCodeBlockElement extends QrCodeFrameElement {
          * @param width 宽度
          * @return 当前构建器
          */
-        public Builder width(int width) { this.width = width; return this; }
+        public Builder width(int width) {
+            this.width = width;
+            return this;
+        }
 
         /**
          * 设置区域高度（像素）。
@@ -70,7 +83,10 @@ public final class QrCodeBlockElement extends QrCodeFrameElement {
          * @param height 高度
          * @return 当前构建器
          */
-        public Builder height(int height) { this.height = height; return this; }
+        public Builder height(int height) {
+            this.height = height;
+            return this;
+        }
 
         /**
          * 设置绘制层级（值越大越靠上）。
@@ -78,13 +94,18 @@ public final class QrCodeBlockElement extends QrCodeFrameElement {
          * @param zIndex 层级值
          * @return 当前构建器
          */
-        public Builder zIndex(int zIndex) { this.zIndex = zIndex; return this; }
+        public Builder zIndex(int zIndex) {
+            this.zIndex = zIndex;
+            return this;
+        }
 
         /**
          * 构建不可变的区域占位元素。
          *
          * @return 构建完成的元素实例
          */
-        public QrCodeBlockElement build() { return new QrCodeBlockElement(this); }
+        public QrCodeBlockElement build() {
+            return new QrCodeBlockElement(this);
+        }
     }
 }

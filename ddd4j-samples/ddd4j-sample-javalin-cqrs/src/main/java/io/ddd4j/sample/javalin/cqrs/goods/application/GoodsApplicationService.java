@@ -14,10 +14,9 @@
  */
 package io.ddd4j.sample.javalin.cqrs.goods.application;
 
-import io.ddd4j.kit.lang.StrKit;
-
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.exception.BizRuntimeException;
+import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.sample.javalin.cqrs.goods.domain.*;
 
 import java.math.BigDecimal;

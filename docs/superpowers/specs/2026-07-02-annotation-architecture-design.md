@@ -7,7 +7,8 @@
 
 ## 1. 目标与范围
 
-定义 ddd4j 注解的下沉策略，让业务代码只写一个 `@DomainService`，同时获得 DDD 语义 + 框架 Bean 自动注册。其他注解（auth/websocket/cache/cqrs 投影事件）保留在 ddd4j-annotation 或由具体业务模块提供。
+定义 ddd4j 注解的下沉策略，让业务代码只写一个 `@DomainService`，同时获得 DDD 语义 + 框架 Bean
+自动注册。其他注解（auth/websocket/cache/cqrs 投影事件）保留在 ddd4j-annotation 或由具体业务模块提供。
 
 **核心理念**：只下 DDD 注解。
 
@@ -38,12 +39,12 @@ public class UserDomainServiceImpl implements UserDomainService {
 
 ## 3. 三套同名注解模块
 
-| 注解 | ddd4j-annotation（纯语义） | ddd4j-boot（Spring） | ddd4j-runtime-guice（Javalin） | ddd4j-runtime-quarkus（Quarkus） |
-|------|---------------------------|---------------------|-------------------------------|--------------------------------|
-| `@DomainService` | DDD 语义标记 | → `@Service` | → `@Singleton` | → `@ApplicationScoped` |
-| `@DomainEntity` | DDD 语义标记 | 不需要 | 不需要 | 不需要 |
-| `@ApplicationService` | DDD 语义标记 | → `@Service` | → `@Singleton` | → `@ApplicationScoped` |
-| `@DomainRepository` | DDD 语义标记 | → `@Repository` | → `@Singleton` | → `@ApplicationScoped` |
+| 注解                  | ddd4j-annotation（纯语义） | ddd4j-boot（Spring） | ddd4j-runtime-guice（Javalin） | ddd4j-runtime-quarkus（Quarkus） |
+|-----------------------|----------------------------|----------------------|--------------------------------|----------------------------------|
+| `@DomainService`      | DDD 语义标记               | → `@Service`         | → `@Singleton`                 | → `@ApplicationScoped`           |
+| `@DomainEntity`       | DDD 语义标记               | 不需要               | 不需要                         | 不需要                           |
+| `@ApplicationService` | DDD 语义标记               | → `@Service`         | → `@Singleton`                 | → `@ApplicationScoped`           |
+| `@DomainRepository`   | DDD 语义标记               | → `@Repository`      | → `@Singleton`                 | → `@ApplicationScoped`           |
 
 ## 4. 实现机制
 

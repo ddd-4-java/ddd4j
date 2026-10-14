@@ -47,13 +47,6 @@ class RbacResourceTest {
     @Inject
     RbacConfig rbacConfig;
 
-    @BeforeEach
-    void resetRbacData() {
-        rbacConfig.reset();
-    }
-
-    // ========== 登录 / 认证 ==========
-
     private static String loginAs(String username, String password) {
         Map<String, String> body = new HashMap<>();
         body.put("username", username);
@@ -64,6 +57,8 @@ class RbacResourceTest {
                 .extract().path("token");
     }
 
+    // ========== 登录 / 认证 ==========
+
     private static Map<String, Object> createUserBody(String id, String username, String displayName, Object role) {
         Map<String, Object> newUser = new HashMap<>();
         newUser.put("id", id);
@@ -72,6 +67,11 @@ class RbacResourceTest {
         newUser.put("password", "123456");
         newUser.put("roleCodes", role instanceof String roleCode ? new HashSet<>(Set.of(roleCode)) : role);
         return newUser;
+    }
+
+    @BeforeEach
+    void resetRbacData() {
+        rbacConfig.reset();
     }
 
     @Test

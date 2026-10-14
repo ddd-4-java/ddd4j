@@ -34,12 +34,12 @@ public class Ddd4jTenantContext {
      * @param tenantId 租户 ID；为 {@code null} 时等价于 {@link #clear()}
      */
     public void setCurrentTenantId(Object tenantId) {
-		if (Objects.isNull(tenantId)) {
-			clear();
-			return;
-		}
-		ThreadContext.set(ContextConstants.TENANT_ID, tenantId);
-	}
+        if (Objects.isNull(tenantId)) {
+            clear();
+            return;
+        }
+        ThreadContext.set(ContextConstants.TENANT_ID, tenantId);
+    }
 
     /**
      * 读取当前线程绑定的租户 ID。
@@ -47,8 +47,8 @@ public class Ddd4jTenantContext {
      * @return 租户 ID，未设置时返回 {@code null}
      */
     public Object getCurrentTenantId() {
-		return ThreadContext.get(ContextConstants.TENANT_ID);
-	}
+        return ThreadContext.get(ContextConstants.TENANT_ID);
+    }
 
     /**
      * 清除当前线程绑定的租户 ID。

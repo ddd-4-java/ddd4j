@@ -1,12 +1,16 @@
 # 2.0.x 发布质量门禁实施计划
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:
+> executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** 定义 Java 17 的 ddd4j JAR、BOM、源码与 Javadoc 发布所需的最小质量证据，覆盖本地验证、CVE 状态、许可证白名单、API 兼容性基线、性能报告和云 MQ 验证。
+**Goal:** 定义 Java 17 的 ddd4j JAR、BOM、源码与 Javadoc 发布所需的最小质量证据，覆盖本地验证、CVE 状态、许可证白名单、API
+兼容性基线、性能报告和云 MQ 验证。
 
-**Architecture:** 发布候选必须通过 6 类验证：本地验证脚本、SBOM 生成、许可证策略、CVE 扫描（可选）、API 兼容性基线、性能报告、云 MQ 验证。报告写入 `target/release-quality/`，不污染源码。
+**Architecture:** 发布候选必须通过 6 类验证：本地验证脚本、SBOM 生成、许可证策略、CVE 扫描（可选）、API 兼容性基线、性能报告、云
+MQ 验证。报告写入 `target/release-quality/`，不污染源码。
 
 **Tech Stack:**
+
 - Java 17、Maven
 - japicmp（API 兼容性比较）
 - GitHub Actions CI
@@ -17,7 +21,8 @@
 
 ## 全局约定
 
-- **本地验证脚本**：`scripts/verify-release-worktree.sh`、`scripts/check-bom-alignment.sh`、`scripts/verify-java-style.sh`、`scripts/verify-architecture.sh`
+- **本地验证脚本**：`scripts/verify-release-worktree.sh`、`scripts/check-bom-alignment.sh`、`scripts/verify-java-style.sh`、
+  `scripts/verify-architecture.sh`
 - **性能报告契约**：见 `docs/superpowers/specs/2026-08-03-performance-report-contract-design.md`
 - **云 MQ 证据**：见 `docs/superpowers/specs/2026-08-03-cloud-mq-rc-evidence-design.md`
 
@@ -25,14 +30,14 @@
 
 ## 实施阶段总览
 
-| Stage | 目标 | 预期 Task 数 |
-|-------|------|-------------|
-| 1 | 本地验证脚本 | 1 |
-| 2 | SBOM 与许可证 | 2 |
-| 3 | CVE 扫描 | 1 |
-| 4 | API 兼容性基线 | 1 |
-| 5 | 性能报告 | 1 |
-| 6 | 云 MQ 验证 | 1 |
+| Stage | 目标           | 预期 Task 数 |
+|-------|----------------|--------------|
+| 1     | 本地验证脚本   | 1            |
+| 2     | SBOM 与许可证  | 2            |
+| 3     | CVE 扫描       | 1            |
+| 4     | API 兼容性基线 | 1            |
+| 5     | 性能报告       | 1            |
+| 6     | 云 MQ 验证     | 1            |
 
 ---
 
@@ -57,7 +62,8 @@
 ### Task 2.2：许可证验证
 
 - [x] **Step 1:** `./scripts/generate-license-report.sh` — 生成许可证报告
-- [x] **Step 2:** `./scripts/verify-license-policy.sh` — 验证许可证策略（白名单：Apache-2.0、MIT、BSD、EPL-2.0、ISC；阻断：AGPL、GPL、LGPL、CDDL、商业授权）
+- [x] **Step 2:** `./scripts/verify-license-policy.sh` —
+  验证许可证策略（白名单：Apache-2.0、MIT、BSD、EPL-2.0、ISC；阻断：AGPL、GPL、LGPL、CDDL、商业授权）
 
 ---
 

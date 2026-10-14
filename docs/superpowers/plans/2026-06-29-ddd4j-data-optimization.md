@@ -1,12 +1,17 @@
 # ddd4j-data 模块优化实施计划
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:
+> executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** 将 ddd4j-data 通用层中错误混入的 Spring Boot auto-config 代码迁移到 `ddd4j-boot-data`，实现三层范式（纯 Java SPI → Spring 桥接 → Spring Boot auto-config），对齐 ddd4j-mq 的标准分层。
+**Goal:** 将 ddd4j-data 通用层中错误混入的 Spring Boot auto-config 代码迁移到 `ddd4j-boot-data`，实现三层范式（纯 Java
+SPI → Spring 桥接 → Spring Boot auto-config），对齐 ddd4j-mq 的标准分层。
 
-**Architecture:** 以 ddd4j-mq 为标准范本：`ddd4j-data-mybatis`（纯 Java SPI）→ `ddd4j-data-spring`（Spring 桥接）→ `ddd4j-boot-data`（Spring Boot auto-config）。核心问题：data 模块当前第一层和第二层混在一起，且混入了本该在第三层的 Spring Boot auto-config。
+**Architecture:** 以 ddd4j-mq 为标准范本：`ddd4j-data-mybatis`（纯 Java SPI）→ `ddd4j-data-spring`（Spring 桥接）→
+`ddd4j-boot-data`（Spring Boot auto-config）。核心问题：data 模块当前第一层和第二层混在一起，且混入了本该在第三层的 Spring
+Boot auto-config。
 
 **Tech Stack:**
+
 - Java 17、Maven 多模块
 - MyBatis-Plus、Spring Framework 6.x
 
@@ -23,11 +28,11 @@
 
 ## 实施阶段总览
 
-| Stage | 目标 | 预期 Task 数 |
-|-------|------|-------------|
-| 1 | 审计 ddd4j-data 各子模块的 Spring Boot auto-config 现状 | 1 |
-| 2 | 将错误放置的 auto-config 迁移到 ddd4j-boot-data | 3 |
-| 3 | ddd4j-data-spring 桥接层清理 | 1 |
+| Stage | 目标                                                    | 预期 Task 数 |
+|-------|---------------------------------------------------------|--------------|
+| 1     | 审计 ddd4j-data 各子模块的 Spring Boot auto-config 现状 | 1            |
+| 2     | 将错误放置的 auto-config 迁移到 ddd4j-boot-data         | 3            |
+| 3     | ddd4j-data-spring 桥接层清理                            | 1            |
 
 ---
 
@@ -46,7 +51,8 @@
 
 ### Task 2.1：迁移 external auto-config
 
-- [ ] **Step 1:** 将 `ExternalAutoConfiguration` 从 `ddd4j-data-external` 迁移到 `ddd4j-boot-data` (未实现：ddd4j-boot 为外部仓库，当前 feature/3.0.x 分支未含此迁移)
+- [ ] **Step 1:** 将 `ExternalAutoConfiguration` 从 `ddd4j-data-external` 迁移到 `ddd4j-boot-data` (未实现：ddd4j-boot
+  为外部仓库，当前 feature/3.0.x 分支未含此迁移)
 
 ### Task 2.2：修复 crypto auto-config
 
@@ -62,7 +68,8 @@
 
 ### Task 3.1：Spring 桥接清理
 
-- [ ] **Step 1:** 创建 `ddd4j-data-spring` 模块，保留 `RepositoryBeanPostProcessor` 等 Spring 桥接代码 (未实现：当前 feature/3.0.x 分支不存在 ddd4j-data-spring 子模块)
+- [ ] **Step 1:** 创建 `ddd4j-data-spring` 模块，保留 `RepositoryBeanPostProcessor` 等 Spring 桥接代码 (未实现：当前
+  feature/3.0.x 分支不存在 ddd4j-data-spring 子模块)
 - [ ] **Step 2:** 确保不含 `spring-boot-autoconfigure` 依赖 (未实现：依赖 Step 1)
 
 <!-- 日期依据：文档内声明"最后更新：2026-07-01"，首次审计日期为 2026-06-29 -->

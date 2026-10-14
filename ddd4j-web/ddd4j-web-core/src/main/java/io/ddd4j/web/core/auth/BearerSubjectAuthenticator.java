@@ -14,15 +14,19 @@
  */
 package io.ddd4j.web.core.auth;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.Contexts;
-import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.subject.Subject;
 import io.ddd4j.core.subject.SubjectProvider;
+import io.ddd4j.web.core.error.WebStatusException;
 
 import java.util.Objects;
 import java.util.Optional;
-import io.ddd4j.web.core.error.WebStatusException;
 
 /**
  * 将标准 Bearer Token 委托给当前运行时注册的 Subject SPI。
@@ -95,32 +99,97 @@ public final class BearerSubjectAuthenticator {
 
     /**
      * 认证结果：令牌、认证主体与签发该主体的 Subject SPI。
-     *
-     * @param token     通过校验的 Bearer Token
-     * @param principal 认证通过的主体
-     * @param subject   完成校验的 Subject SPI
      */
-    public record Authentication(String token, AuthPrincipal principal, Subject subject) {
+    public final static class Authentication {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String token;
+
+        private final AuthPrincipal principal;
+
+        private final Subject subject;
 
         /**
          * 获取通过校验的 Bearer Token。
          *
          * @return 令牌值
          */
-        public String getToken() { return token; }
+        public String getToken() {
+            return token;
+        }
 
         /**
          * 获取认证通过的主体。
          *
          * @return 认证主体
          */
-        public AuthPrincipal getPrincipal() { return principal; }
+        public AuthPrincipal getPrincipal() {
+            return principal;
+        }
 
         /**
          * 获取完成校验的 Subject SPI。
          *
          * @return Subject 实例
          */
-        public Subject getSubject() { return subject; }
+        public Subject getSubject() {
+            return subject;
+        }
+
+        /**
+         * 构造认证结果。
+         *
+         * @param token     通过校验的 Bearer Token
+         * @param principal 认证通过的主体
+         * @param subject   完成校验的 Subject SPI
+         */
+        @JsonCreator()
+        public Authentication(@JsonProperty("token") String token, @JsonProperty("principal") AuthPrincipal principal, @JsonProperty("subject") Subject subject) {
+            this.token = token;
+            this.principal = principal;
+            this.subject = subject;
+        }
+
+        @JsonProperty("token")
+        public String token() {
+            return token;
+        }
+
+        @JsonProperty("principal")
+        public AuthPrincipal principal() {
+            return principal;
+        }
+
+        @JsonProperty("subject")
+        public Subject subject() {
+            return subject;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            Authentication other = (Authentication) obj;
+            return Objects.equals(this.token, other.token) && Objects.equals(this.principal, other.principal) && Objects.equals(this.subject, other.subject);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(token);
+            result = 31 * result + Objects.hashCode(principal);
+            result = 31 * result + Objects.hashCode(subject);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "Authentication[token=" + token + ", principal=" + principal + ", subject=" + subject + "]";
+        }
     }
 }

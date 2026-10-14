@@ -14,14 +14,14 @@
  */
 package io.ddd4j.extension.monitor.config;
 
+import io.ddd4j.extension.monitor.Monitor;
+import io.ddd4j.extension.monitor.Sender;
 import io.ddd4j.extension.monitor.channel.dingtalk.DingTalkClient;
 import io.ddd4j.extension.monitor.channel.dingtalk.DingTalkRobotSender;
 import io.ddd4j.extension.monitor.channel.feishu.FeishuClient;
 import io.ddd4j.extension.monitor.channel.feishu.FeishuRobotSender;
 import io.ddd4j.extension.monitor.channel.wecom.WeComClient;
 import io.ddd4j.extension.monitor.channel.wecom.WeComRobotSender;
-import io.ddd4j.extension.monitor.Monitor;
-import io.ddd4j.extension.monitor.Sender;
 import io.ddd4j.extension.monitor.runtime.ApplicationStartReporter;
 import org.junit.jupiter.api.Test;
 

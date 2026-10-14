@@ -1,6 +1,7 @@
 # 8、ddd4j-1.0.x-Architecture.zh_CN
 
-> **文档说明**：ddd4j **1.0.x 版本级架构**。聚焦于：在三轨治理中 1.0.x 的角色、JDK 8 / Maven 3 字节码约束、Stage E 整合策略、5 事件存储与 11 broker 的实际落地、与 2.0.x / 3.0.x 的允许差异与禁止差异。
+> **文档说明**：ddd4j **1.0.x 版本级架构**。聚焦于：在三轨治理中 1.0.x 的角色、JDK 8 / Maven 3 字节码约束、Stage E 整合策略、5
+> 事件存储与 11 broker 的实际落地、与 2.0.x / 3.0.x 的允许差异与禁止差异。
 >
 > **版本**：V1.0.0
 > **最后更新**：2026-09-24
@@ -8,7 +9,8 @@
 > **JdkTarget**：8
 > **Maven**：3.9.16
 >
-> **在决策链中的位置**：1.0.x 版本架构 — 决策链是 Domain → Tech Plan → Product Plan → Architecture（根级）。本文档是根级架构的"1.0.x 视图"，刻意不向上耦合根级产品规划（保持自洽）。
+> **在决策链中的位置**：1.0.x 版本架构 — 决策链是 Domain → Tech Plan → Product Plan →
+> Architecture（根级）。本文档是根级架构的"1.0.x 视图"，刻意不向上耦合根级产品规划（保持自洽）。
 
 ---
 
@@ -62,8 +64,10 @@ graph LR
 
 按当前 `41f690b7` 工作树确认，1.0.x 已包含与 2.0/3.0 字面级同构的：
 
-- 5 个 EventStore 实现（`InMemory` / `Esdb` / `JPA` / `JDBI` / `R2DBC` / `Panache` —— 实际是 6 个，2026-09-03 Stage E 后从 3.0.x 移植 PanacheEventStore）。
-- 12 个 broker 适配器（Kakfa / RabbitMQ / RocketMQ / Redis Stream / NATS / Pulsar / ActiveMQ / MQTT / Mica MQTT / ONS / SQS / TDMQ / Disruptor）。
+- 5 个 EventStore 实现（`InMemory` / `Esdb` / `JPA` / `JDBI` / `R2DBC` / `Panache` —— 实际是 6 个，2026-09-03 Stage E 后从
+  3.0.x 移植 PanacheEventStore）。
+- 12 个 broker 适配器（Kakfa / RabbitMQ / RocketMQ / Redis Stream / NATS / Pulsar / ActiveMQ / MQTT / Mica MQTT / ONS /
+  SQS / TDMQ / Disruptor）。
 - 8 个 Web 适配（WebMVC / WebFlux / Javalin / Quarkus / Vert.x / Micronaut / Helidon / Dropwizard）。
 - 8 个 runtime binder（Spring / Quarkus / Guice / Micronaut / Vert.x / Helidon / Dropwizard / Testkit）。
 - 9 条 ArchUnit 边界规则。
@@ -72,22 +76,22 @@ graph LR
 
 ### 3.1 允许差异（属"必要兼容差异"）
 
-| 类别 | 1.0.x | 2.0.x | 3.0.x | 原因 |
-|:---|:---|:---|:---|:---|
-| JDK 字节码 | major 52 | major 61 | major 61 | 1.0.x 兼容 JDK 8 |
-| 语法糖 | `Collections.unmodifiableList(new ArrayList<>(...))` | `List.copyOf(...)` | `List.copyOf(...)` | 1.0.x 不能用 JDK14+ 语法 |
-| Jackson | 2.x | 2.x | 3.x（`tools.jackson`） | 3.0.x 试用 Jackson 3 |
-| JPA | `javax.persistence` | `jakarta.persistence`（迁移中） | `jakarta.persistence`（完全体） | Jakarta EE 迁移 |
-| Maven | 3.9.16 | 3.9.16 | 4.0.0-rc-6 | 3.0.x 试用 Maven 4 |
-| `record` | ❌ | ✅ | ✅ | 1.0.x 字节码约束 |
-| Helidon | ❌ | ✅ | ✅ | 1.0.x 字节码约束 |
-| `instanceof` 模式变量 | ❌ | ✅ | ✅ | 1.0.x 字节码约束 |
-| Dropwizard 包路径 | `io.dropwizard.*` | `io.dropwizard.core.*` | `io.dropwizard.core.*` | Dropwizard 5 重构 |
-| Spring 扩展路径 | `org.springframework.biz.*` | `org.springframework.extension.*` | `org.springframework.extension.*` | Spring 6 重构 |
-| Micronaut filter 入口 | `doFilter(HttpRequest, FilterChain)` | `filter(HttpRequest, FilterContinuation, MutablePropagatedContext)` | `filter(HttpRequest, FilterContinuation, MutablePropagatedContext)` | Micronaut 4.x 改 API |
-| Javalin `configure` 参数 | `configure(Javalin)` | `configure(JavalinConfig)` | `configure(JavalinConfig)` | Javalin 7.x 改 API |
-| WebMVC 远程地址 | raw `request.getRemoteAddr()` | `IpKit.getRemoteAddr()` | `IpKit.getRemoteAddr()` | 1.0.x 实现粗糙 |
-| Micronaut remote host fallback | `getHostString()` | `unknown` | `unknown` | 实现差异，待归类 |
+| 类别                           | 1.0.x                                                | 2.0.x                                                               | 3.0.x                                                               | 原因                     |
+|:-------------------------------|:-----------------------------------------------------|:--------------------------------------------------------------------|:--------------------------------------------------------------------|:-------------------------|
+| JDK 字节码                     | major 52                                             | major 61                                                            | major 61                                                            | 1.0.x 兼容 JDK 8         |
+| 语法糖                         | `Collections.unmodifiableList(new ArrayList<>(...))` | `List.copyOf(...)`                                                  | `List.copyOf(...)`                                                  | 1.0.x 不能用 JDK14+ 语法 |
+| Jackson                        | 2.x                                                  | 2.x                                                                 | 3.x（`tools.jackson`）                                              | 3.0.x 试用 Jackson 3     |
+| JPA                            | `javax.persistence`                                  | `jakarta.persistence`（迁移中）                                     | `jakarta.persistence`（完全体）                                     | Jakarta EE 迁移          |
+| Maven                          | 3.9.16                                               | 3.9.16                                                              | 4.0.0-rc-6                                                          | 3.0.x 试用 Maven 4       |
+| `record`                       | ❌                                                   | ✅                                                                  | ✅                                                                  | 1.0.x 字节码约束         |
+| Helidon                        | ❌                                                   | ✅                                                                  | ✅                                                                  | 1.0.x 字节码约束         |
+| `instanceof` 模式变量          | ❌                                                   | ✅                                                                  | ✅                                                                  | 1.0.x 字节码约束         |
+| Dropwizard 包路径              | `io.dropwizard.*`                                    | `io.dropwizard.core.*`                                              | `io.dropwizard.core.*`                                              | Dropwizard 5 重构        |
+| Spring 扩展路径                | `org.springframework.biz.*`                          | `org.springframework.extension.*`                                   | `org.springframework.extension.*`                                   | Spring 6 重构            |
+| Micronaut filter 入口          | `doFilter(HttpRequest, FilterChain)`                 | `filter(HttpRequest, FilterContinuation, MutablePropagatedContext)` | `filter(HttpRequest, FilterContinuation, MutablePropagatedContext)` | Micronaut 4.x 改 API     |
+| Javalin `configure` 参数       | `configure(Javalin)`                                 | `configure(JavalinConfig)`                                          | `configure(JavalinConfig)`                                          | Javalin 7.x 改 API       |
+| WebMVC 远程地址                | raw `request.getRemoteAddr()`                        | `IpKit.getRemoteAddr()`                                             | `IpKit.getRemoteAddr()`                                             | 1.0.x 实现粗糙           |
+| Micronaut remote host fallback | `getHostString()`                                    | `unknown`                                                           | `unknown`                                                           | 实现差异，待归类         |
 
 ### 3.2 禁止差异（属"必须修复"）
 
@@ -101,12 +105,12 @@ graph LR
 
 Stage E 是 1.0.x 在 2026-09 期间吸收 2.0/3.0 能力的整合动作：
 
-| Commit | 行为 |
-|:---|:---|
-| `0c295e3e refactor(2.0.x): converge parity and dependency governance` | 三线依赖治理收敛 |
-| `acb59b0f feat(data): port EventStoreRetry + unify jdbi/panache impls with 3.0.x` | 把 3.0.x 的 JDBI/Panache EventStoreRetry 移植到 1.0.x |
-| `41f690b7 fix(mq): bound publish ack timeouts and replace ThreadLocal channel with bounded pool` | 三线同步推送 MQ 健壮性 |
-| `3344af38 fix(mq): prevent Kafka batch duplicate consumption and RabbitMQ listener leak` | 三线同步推送 Kafka/RabbitMQ 修复 |
+| Commit                                                                                           | 行为                                                  |
+|:-------------------------------------------------------------------------------------------------|:------------------------------------------------------|
+| `0c295e3e refactor(2.0.x): converge parity and dependency governance`                            | 三线依赖治理收敛                                      |
+| `acb59b0f feat(data): port EventStoreRetry + unify jdbi/panache impls with 3.0.x`                | 把 3.0.x 的 JDBI/Panache EventStoreRetry 移植到 1.0.x |
+| `41f690b7 fix(mq): bound publish ack timeouts and replace ThreadLocal channel with bounded pool` | 三线同步推送 MQ 健壮性                                |
+| `3344af38 fix(mq): prevent Kafka batch duplicate consumption and RabbitMQ listener leak`         | 三线同步推送 Kafka/RabbitMQ 修复                      |
 
 **Stage E 的关键原则**：
 
@@ -116,23 +120,23 @@ Stage E 是 1.0.x 在 2026-09 期间吸收 2.0/3.0 能力的整合动作：
 
 ## 5. 1.0.x 模块矩阵（与三线总览一致）
 
-| 模块 | 1.0.x 状态 | 备注 |
-|:---|:---|:---|
-| `ddd4j-core` | ✅ 字面级一致 | JDK 8 兼容写法 |
-| `ddd4j-data-mybatis` | ✅ | 业务模型不绑 MyBatis-Plus |
-| `ddd4j-data-mybatisplus` | ✅ | `MybatisAggregateRepository` |
-| `ddd4j-data-jpa` | ✅ | `javax.persistence` |
-| `ddd4j-data-event-store-jpa` / `-jdbi` / `-r2dbc` / `-esdb` | ✅ | 4 个实现 |
-| `ddd4j-data-event-store-panache` | ✅（Stage E 移植） | `jakarta.persistence` EntityManager 在源码层可用；编译需 Quarkus BOM |
-| `ddd4j-data-cqrs-{spring,guice,quarkus,vertx,javalin,micronaut,dropwizard}` | ✅ | 7 个 |
-| `ddd4j-data-cqrs-helidon` | ❌ | 字节码约束 |
-| `ddd4j-runtime-{spring,guice,quarkus,vertx,javalin,micronaut,dropwizard,testkit}` | ✅ | 8 个 |
-| `ddd4j-runtime-helidon` | ❌ | 字节码约束 |
-| `ddd4j-web-{webmvc,webflux,javalin,quarkus,vertx,micronaut,dropwizard,core,validation,testkit}` | ✅ | 10 个 |
-| `ddd4j-web-helidon` | ❌ | 字节码约束 |
-| `ddd4j-mq-*` | ✅ | 12 broker + spring + core |
-| `ddd4j-extensions/*` | ✅ | 9 个扩展 |
-| `ddd4j-auth-{spring,satoken,security,shiro,datascope,license}` | ✅ | 6 个 |
+| 模块                                                                                            | 1.0.x 状态         | 备注                                                                 |
+|:------------------------------------------------------------------------------------------------|:-------------------|:---------------------------------------------------------------------|
+| `ddd4j-core`                                                                                    | ✅ 字面级一致      | JDK 8 兼容写法                                                       |
+| `ddd4j-data-mybatis`                                                                            | ✅                 | 业务模型不绑 MyBatis-Plus                                            |
+| `ddd4j-data-mybatisplus`                                                                        | ✅                 | `MybatisAggregateRepository`                                         |
+| `ddd4j-data-jpa`                                                                                | ✅                 | `javax.persistence`                                                  |
+| `ddd4j-data-event-store-jpa` / `-jdbi` / `-r2dbc` / `-esdb`                                     | ✅                 | 4 个实现                                                             |
+| `ddd4j-data-event-store-panache`                                                                | ✅（Stage E 移植） | `jakarta.persistence` EntityManager 在源码层可用；编译需 Quarkus BOM |
+| `ddd4j-data-cqrs-{spring,guice,quarkus,vertx,javalin,micronaut,dropwizard}`                     | ✅                 | 7 个                                                                 |
+| `ddd4j-data-cqrs-helidon`                                                                       | ❌                 | 字节码约束                                                           |
+| `ddd4j-runtime-{spring,guice,quarkus,vertx,javalin,micronaut,dropwizard,testkit}`               | ✅                 | 8 个                                                                 |
+| `ddd4j-runtime-helidon`                                                                         | ❌                 | 字节码约束                                                           |
+| `ddd4j-web-{webmvc,webflux,javalin,quarkus,vertx,micronaut,dropwizard,core,validation,testkit}` | ✅                 | 10 个                                                                |
+| `ddd4j-web-helidon`                                                                             | ❌                 | 字节码约束                                                           |
+| `ddd4j-mq-*`                                                                                    | ✅                 | 12 broker + spring + core                                            |
+| `ddd4j-extensions/*`                                                                            | ✅                 | 9 个扩展                                                             |
+| `ddd4j-auth-{spring,satoken,security,shiro,datascope,license}`                                  | ✅                 | 6 个                                                                 |
 
 ## 6. 1.0.x CI 与发布
 
@@ -160,17 +164,17 @@ jobs:
 
 ## 7. 升级到 2.0.x / 3.0.x 的迁移路径
 
-| 步骤 | 1.0.x → 2.0.x | 1.0.x → 3.0.x |
-|:---|:---|:---|
-| JDK | 8 → 17 | 8 → 21 |
-| Spring | 5.x → 6.x | 5.x → 6.x |
-| JPA 命名 | `javax.persistence` → `jakarta.persistence` | `javax.persistence` → `jakarta.persistence` |
-| Jackson | 2.x 不变 | 2.x → 3.x（迁移成本最高） |
-| 字节码 | major 52 → 61 | major 52 → 61 |
-| 业务代码 | 通常零改动 | 通常零改动（核心 SPI 一致） |
-| `record` | 增加使用 | 增加使用 |
-| `instanceof PatternVar` | 增加使用 | 增加使用 |
-| Helidon 适配 | 不可用 → 可用 | 不可用 → 可用 |
+| 步骤                    | 1.0.x → 2.0.x                               | 1.0.x → 3.0.x                               |
+|:------------------------|:--------------------------------------------|:--------------------------------------------|
+| JDK                     | 8 → 17                                      | 8 → 21                                      |
+| Spring                  | 5.x → 6.x                                   | 5.x → 6.x                                   |
+| JPA 命名                | `javax.persistence` → `jakarta.persistence` | `javax.persistence` → `jakarta.persistence` |
+| Jackson                 | 2.x 不变                                    | 2.x → 3.x（迁移成本最高）                   |
+| 字节码                  | major 52 → 61                               | major 52 → 61                               |
+| 业务代码                | 通常零改动                                  | 通常零改动（核心 SPI 一致）                 |
+| `record`                | 增加使用                                    | 增加使用                                    |
+| `instanceof PatternVar` | 增加使用                                    | 增加使用                                    |
+| Helidon 适配            | 不可用 → 可用                               | 不可用 → 可用                               |
 
 业务工程在两线之间迁移时：
 
@@ -181,36 +185,39 @@ jobs:
 
 ## 8. 1.0.x 部署形态
 
-| 形态 | 适用 | 备注 |
-|:---|:---|:---|
-| Spring Boot 2.7.x + ddd4j-boot | JDK 8 生产 | 最常见的生产形态 |
-| Spring Boot 3.x | ⚠️ 不在 1.0.x 范围 | 升级 2.0.x |
-| Quarkus 2.x | ❌ | 升级 2.0.x |
-| Helidon 3.x | ❌ | 升级 2.0.x |
-| 自研 Vert.x 适配 | ✅ | `ddd4j-runtime-vertx` |
+| 形态                           | 适用               | 备注                  |
+|:-------------------------------|:-------------------|:----------------------|
+| Spring Boot 2.7.x + ddd4j-boot | JDK 8 生产         | 最常见的生产形态      |
+| Spring Boot 3.x                | ⚠️ 不在 1.0.x 范围 | 升级 2.0.x            |
+| Quarkus 2.x                    | ❌                 | 升级 2.0.x            |
+| Helidon 3.x                    | ❌                 | 升级 2.0.x            |
+| 自研 Vert.x 适配               | ✅                 | `ddd4j-runtime-vertx` |
 
 ## 9. 1.0.x 已知风险
 
-| 风险 | 缓解 |
-|:---|:---|
-| 字节码 major = 52 锁死生态 | 不在 1.0.x 引入 Helidon/Quarkus 3/Micronaut 4；ArchUnit 守护 |
-| Helidon 4 模块不可用 | 1.0.x 用户不可用 Helidon；2.0/3.0 可用 |
-| `var` / `record` 不可用 | 写代码时主动避免；CI 用 `verify-java8-source-compatibility.sh` 失败兜底 |
-| Jackson 2 与 Jackson 3 不兼容 | 1.0.x 锁死 Jackson 2；3.0.x 单独处理 |
-| Maven 4 不可用 | 1.0.x 锁死 Maven 3.9.16；3.0.x 单独处理 |
+| 风险                          | 缓解                                                                    |
+|:------------------------------|:------------------------------------------------------------------------|
+| 字节码 major = 52 锁死生态    | 不在 1.0.x 引入 Helidon/Quarkus 3/Micronaut 4；ArchUnit 守护            |
+| Helidon 4 模块不可用          | 1.0.x 用户不可用 Helidon；2.0/3.0 可用                                  |
+| `var` / `record` 不可用       | 写代码时主动避免；CI 用 `verify-java8-source-compatibility.sh` 失败兜底 |
+| Jackson 2 与 Jackson 3 不兼容 | 1.0.x 锁死 Jackson 2；3.0.x 单独处理                                    |
+| Maven 4 不可用                | 1.0.x 锁死 Maven 3.9.16；3.0.x 单独处理                                 |
 
 ## 10. 相关文档
 
 - [`../8、ddd4j-Architecture.zh_CN.md`](../8、ddd4j-Architecture.zh_CN.md) · 系统架构总览
 - [`../5、ddd4j-技术方案与路线.md`](../5、ddd4j-技术方案与路线.md) · 三轨治理 + MQ 启动生命周期 + License Gate
 - [`../7、ddd4j-领域模型设计.md`](../7、ddd4j-领域模型设计.md) · 领域模型
-- [`../docs/superpowers/reports/2026-09-09-three-line-source-parity-audit.md`](../docs/superpowers/reports/2026-09-09-three-line-source-parity-audit.md) · 三线严格审计
-- [`../docs/superpowers/plans/2026-09-10-mq-startup-lifecycle.md`](../docs/superpowers/plans/2026-09-10-mq-startup-lifecycle.md) · MQ 启动生命周期计划
-- [`../docs/superpowers/plans/2026-09-10-license-gate-hardening.md`](../docs/superpowers/plans/2026-09-10-license-gate-hardening.md) · License Gate Hardening 计划
+- [
+  `../docs/superpowers/reports/2026-09-09-three-line-source-parity-audit.md`](../docs/superpowers/reports/2026-09-09-three-line-source-parity-audit.md) ·
+  三线严格审计
+- [
+  `../docs/superpowers/plans/2026-09-10-mq-startup-lifecycle.md`](../docs/superpowers/plans/2026-09-10-mq-startup-lifecycle.md) ·
+  MQ 启动生命周期计划
+- [
+  `../docs/superpowers/plans/2026-09-10-license-gate-hardening.md`](../docs/superpowers/plans/2026-09-10-license-gate-hardening.md) ·
+  License Gate Hardening 计划
 
 ---
 
-**文档版本**：V1.0.0
-**创建日期**：2026-09-18
-**最后更新**：2026-09-18
-**文档状态**：✅ 待评审
+**文档版本**：V1.0.0 **创建日期**：2026-09-18 **最后更新**：2026-09-18 **文档状态**：✅ 待评审

@@ -45,7 +45,7 @@ import java.util.function.Function;
  * PO 字段→列名映射通过构造时传入的 {@code poProperty2ColumnProvider}（由基础设施层注入）实现。
  *
  * @param <M> Domain Model 类型
- * @author wandl
+ * @author ddd4j
  * @since 2.0.x
  */
 public class DomainModelInfo<M> {
@@ -64,6 +64,22 @@ public class DomainModelInfo<M> {
     public DomainModelInfo(Class<M> modelType, Function<String, String> poProperty2ColumnProvider) {
         this.modelType = Objects.requireNonNull(modelType, "modelType must not be null");
         build(poProperty2ColumnProvider);
+    }
+
+    /**
+     * 获取指定类及其所有父类声明的全部字段（等价于 commons-lang3 {@code FieldUtils.getAllFieldsList}）。
+     *
+     * @param clazz 目标类
+     * @return 全部字段列表（包含父类私有字段）
+     */
+    private static List<Field> getAllFields(Class<?> clazz) {
+        List<Field> fields = new ArrayList<>();
+        Class<?> current = clazz;
+        while (Objects.nonNull(current) && current != Object.class) {
+            fields.addAll(Arrays.asList(current.getDeclaredFields()));
+            current = current.getSuperclass();
+        }
+        return fields;
     }
 
     private void build(Function<String, String> poProperty2ColumnProvider) {
@@ -138,21 +154,5 @@ public class DomainModelInfo<M> {
     public String getPoColumn(String property) {
         DomainFieldInfo info = findField(property);
         return Objects.nonNull(info) ? info.getPoColumn() : null;
-    }
-
-    /**
-     * 获取指定类及其所有父类声明的全部字段（等价于 commons-lang3 {@code FieldUtils.getAllFieldsList}）。
-     *
-     * @param clazz 目标类
-     * @return 全部字段列表（包含父类私有字段）
-     */
-    private static List<Field> getAllFields(Class<?> clazz) {
-        List<Field> fields = new ArrayList<>();
-        Class<?> current = clazz;
-        while (Objects.nonNull(current) && current != Object.class) {
-            fields.addAll(Arrays.asList(current.getDeclaredFields()));
-            current = current.getSuperclass();
-        }
-        return fields;
     }
 }

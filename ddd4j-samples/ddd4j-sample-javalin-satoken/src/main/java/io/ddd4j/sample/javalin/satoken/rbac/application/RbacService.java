@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.sample.javalin.satoken.rbac.application;
-
 import java.util.Objects;
 
 import io.ddd4j.core.auth.AuthPrincipal;

@@ -14,6 +14,12 @@
  */
 package io.ddd4j.data.event.store.panache;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Objects;
+
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
 import io.ddd4j.core.ddd.event.AggregateRootId;
@@ -56,40 +62,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class PanacheEventStoreRetryTest {
 
     private static final String ORDER_TYPE = "Order";
-
-    static final class CountingSleeper implements EventStoreRetry.Sleeper {
-        final AtomicInteger calls = new AtomicInteger();
-        final List<Long> delays = new ArrayList<>();
-
-        @Override
-        public void sleep(long millis) {
-            calls.incrementAndGet();
-            delays.add(millis);
-        }
-    }
-
-    /**
-     * Hibernate 6 的 SQL 拦截器：第一次 INSERT 调用抛 PersistenceException（模拟
-     * uk_position 冲突），第二次正常透传。等价于生产中"两个事务并发争抢 uk_position
-     * → 第一个回滚 → 第二个重试成功"的场景。
-     */
-    public static final class FaultInjector implements StatementInspector {
-        public FaultInjector() {
-        }
-
-        final AtomicInteger insertCount = new AtomicInteger();
-
-        @Override
-        public String inspect(String sql) {
-            if (sql != null && sql.trim().toUpperCase().startsWith("INSERT")
-                    && insertCount.incrementAndGet() == 1) {
-                throw new PersistenceException(
-                        "could not execute statement: Unique index uk_position violation");
-            }
-            return sql;
-        }
-    }
-
     private EntityManagerFactory emf;
     private EntityManager em;
     private EventStore eventStore;
@@ -192,7 +164,45 @@ class PanacheEventStoreRetryTest {
         assertThat(eventStore.read(ORDER_TYPE, orderId)).isEmpty();
     }
 
-    record TestAggregateRootId(String value) implements AggregateRootId {
+    static final class CountingSleeper implements EventStoreRetry.Sleeper {
+        final AtomicInteger calls = new AtomicInteger();
+        final List<Long> delays = new ArrayList<>();
+
+        @Override
+        public void sleep(long millis) {
+            calls.incrementAndGet();
+            delays.add(millis);
+        }
+    }
+
+    /**
+     * Hibernate 6 的 SQL 拦截器：第一次 INSERT 调用抛 PersistenceException（模拟
+     * uk_position 冲突），第二次正常透传。等价于生产中"两个事务并发争抢 uk_position
+     * → 第一个回滚 → 第二个重试成功"的场景。
+     */
+    public static final class FaultInjector implements StatementInspector {
+        final AtomicInteger insertCount = new AtomicInteger();
+
+        public FaultInjector() {
+        }
+
+        @Override
+        public String inspect(String sql) {
+            if (sql != null && sql.trim().toUpperCase().startsWith("INSERT")
+                    && insertCount.incrementAndGet() == 1) {
+                throw new PersistenceException(
+                        "could not execute statement: Unique index uk_position violation");
+            }
+            return sql;
+        }
+    }
+
+    final static class TestAggregateRootId implements AggregateRootId {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String value;
+
         private static final EntityType TYPE = new StringEntityType("Order");
 
         @Override
@@ -208,6 +218,40 @@ class PanacheEventStoreRetryTest {
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
+        }
+
+        @JsonCreator()
+        TestAggregateRootId(@JsonProperty("value") String value) {
+            this.value = value;
+        }
+
+        @JsonProperty("value")
+        public String value() {
+            return value;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            TestAggregateRootId other = (TestAggregateRootId) obj;
+            return Objects.equals(this.value, other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(value);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "TestAggregateRootId[value=" + value + "]";
         }
     }
 

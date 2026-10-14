@@ -1,6 +1,10 @@
 # ADR-NNNN: <决策标题>
 
-> **使用说明**：新建 ADR 时复制本模板为 `docs/adr/NNNN-kebab-case.md`（编号从 0001 起递增、四位零填充，不复用已废弃编号），保留下列 5 节且顺序不变。编号与文件名一旦提交即不可更改；状态一旦 Accepted，只能通过新的 ADR 推翻——在新 ADR 中说明替代关系，并在旧 ADR 的 Status 标注「Superseded by ADR-XXXX」，不回改决策正文。写作约定：Decision 只写「决定了什么」；背景、约束与证据（含相对路径引用，如 `../reference/fuin-api-patterns/01-aggregate-root.md`）放 Context；代价与后续义务放 Consequences；被否决的候选方案及否决理由放 Alternatives Considered。正文使用全角标点，每篇控制在 60-120 行。
+> **使用说明**：新建 ADR 时复制本模板为 `docs/adr/NNNN-kebab-case.md`（编号从 0001 起递增、四位零填充，不复用已废弃编号），保留下列
+> 5 节且顺序不变。编号与文件名一旦提交即不可更改；状态一旦 Accepted，只能通过新的 ADR 推翻——在新 ADR 中说明替代关系，并在旧
+> ADR 的 Status 标注「Superseded by ADR-XXXX」，不回改决策正文。写作约定：Decision 只写「决定了什么」；背景、约束与证据（含相对路径引用，如
+> `../reference/fuin-api-patterns/01-aggregate-root.md`）放 Context；代价与后续义务放 Consequences；被否决的候选方案及否决理由放
+> Alternatives Considered。正文使用全角标点，每篇控制在 60-120 行。
 
 ## Status
 

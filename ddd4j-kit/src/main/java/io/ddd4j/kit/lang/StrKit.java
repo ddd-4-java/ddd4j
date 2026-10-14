@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 package io.ddd4j.kit.lang;
+import java.util.Objects;
 
 import cn.hutool.core.util.StrUtil;
 import lombok.experimental.UtilityClass;
@@ -20,7 +21,6 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
-import java.util.Objects;
 
 /**
  * 字符串工具类

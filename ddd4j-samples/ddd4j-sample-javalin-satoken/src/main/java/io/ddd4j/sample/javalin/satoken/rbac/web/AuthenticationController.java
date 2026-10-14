@@ -14,6 +14,10 @@
  */
 package io.ddd4j.sample.javalin.satoken.rbac.web;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.util.SubjectKit;
@@ -66,7 +70,7 @@ public class AuthenticationController {
                 LoginRequest req = ctx.bodyAsClass(LoginRequest.class);
                 String token = rbacService.login(req.username(), req.password());
                 if (Objects.isNull(token)) {
-                    ctx.status(401).json(R.fail(401, "invalid credentials or user disabled"));
+                    ctx.status(401).json(R.of(401, "invalid credentials or user disabled"));
                     return;
                 }
                 Map<String, Object> data = new HashMap<>();
@@ -78,7 +82,7 @@ public class AuthenticationController {
             // POST /auth/logout —— 登出
             post("/auth/logout", ctx -> {
                 if (!SubjectKit.isLogin()) {
-                    ctx.status(401).json(R.fail(401, "not login"));
+                    ctx.status(401).json(R.of(401, "not login"));
                     return;
                 }
                 rbacService.logout();
@@ -117,7 +121,7 @@ public class AuthenticationController {
             // POST /auth/check/role —— 编程式鉴权：检查是否拥有某个角色（要求已登录）
             post("/auth/check/role", ctx -> {
                 if (!SubjectKit.isLogin()) {
-                    ctx.status(401).json(R.fail(401, "not login"));
+                    ctx.status(401).json(R.of(401, "not login"));
                     return;
                 }
                 RoleCheckRequest req = ctx.bodyAsClass(RoleCheckRequest.class);
@@ -128,11 +132,11 @@ public class AuthenticationController {
             // GET /auth/admin —— 仅 admin 角色可访问（演示后端强制角色权限拦截）
             get("/auth/admin", ctx -> {
                 if (!SubjectKit.isLogin()) {
-                    ctx.status(401).json(R.fail(401, "not login"));
+                    ctx.status(401).json(R.of(401, "not login"));
                     return;
                 }
                 if (!SubjectKit.hasRole("admin")) {
-                    ctx.status(403).json(R.fail(403, "no role: admin"));
+                    ctx.status(403).json(R.of(403, "no role: admin"));
                     return;
                 }
                 ctx.json(R.ok(Map.of("message", "admin area accessed", "userId", SubjectKit.getUserId())));
@@ -141,11 +145,11 @@ public class AuthenticationController {
             // GET /auth/manager —— 仅 manager 角色可访问
             get("/auth/manager", ctx -> {
                 if (!SubjectKit.isLogin()) {
-                    ctx.status(401).json(R.fail(401, "not login"));
+                    ctx.status(401).json(R.of(401, "not login"));
                     return;
                 }
                 if (!SubjectKit.hasRole("manager")) {
-                    ctx.status(403).json(R.fail(403, "no role: manager"));
+                    ctx.status(403).json(R.of(403, "no role: manager"));
                     return;
                 }
                 ctx.json(R.ok(Map.of("message", "manager area accessed", "userId", SubjectKit.getUserId())));
@@ -156,7 +160,7 @@ public class AuthenticationController {
             // POST /auth/check/permission —— 编程式鉴权：检查是否拥有某权限（要求已登录）
             post("/auth/check/permission", ctx -> {
                 if (!SubjectKit.isLogin()) {
-                    ctx.status(401).json(R.fail(401, "not login"));
+                    ctx.status(401).json(R.of(401, "not login"));
                     return;
                 }
                 PermissionCheckRequest req = ctx.bodyAsClass(PermissionCheckRequest.class);
@@ -167,11 +171,11 @@ public class AuthenticationController {
             // GET /auth/users —— 需要 user:list 权限
             get("/auth/users", ctx -> {
                 if (!SubjectKit.isLogin()) {
-                    ctx.status(401).json(R.fail(401, "not login"));
+                    ctx.status(401).json(R.of(401, "not login"));
                     return;
                 }
                 if (!SubjectKit.hasPermission("user:list")) {
-                    ctx.status(403).json(R.fail(403, "no permission: user:list"));
+                    ctx.status(403).json(R.of(403, "no permission: user:list"));
                     return;
                 }
                 ctx.json(R.ok(Map.of("message", "user list accessed with permission", "userId", SubjectKit.getUserId())));
@@ -180,11 +184,11 @@ public class AuthenticationController {
             // POST /auth/orders/{id}/pay —— 业务接口鉴权：订单支付需要 order:pay 权限
             post("/auth/orders/{id}/pay", ctx -> {
                 if (!SubjectKit.isLogin()) {
-                    ctx.status(401).json(R.fail(401, "not login"));
+                    ctx.status(401).json(R.of(401, "not login"));
                     return;
                 }
                 if (!SubjectKit.hasPermission("order:pay")) {
-                    ctx.status(403).json(R.fail(403, "no permission: order:pay"));
+                    ctx.status(403).json(R.of(403, "no permission: order:pay"));
                     return;
                 }
                 String id = ctx.pathParam("id");
@@ -196,15 +200,15 @@ public class AuthenticationController {
             // DELETE /auth/users/{id} —— 组合鉴权：admin 角色 + user:delete 权限
             delete("/auth/users/{id}", ctx -> {
                 if (!SubjectKit.isLogin()) {
-                    ctx.status(401).json(R.fail(401, "not login"));
+                    ctx.status(401).json(R.of(401, "not login"));
                     return;
                 }
                 if (!SubjectKit.hasRole("admin")) {
-                    ctx.status(403).json(R.fail(403, "no role: admin"));
+                    ctx.status(403).json(R.of(403, "no role: admin"));
                     return;
                 }
                 if (!SubjectKit.hasPermission("user:delete")) {
-                    ctx.status(403).json(R.fail(403, "no permission: user:delete"));
+                    ctx.status(403).json(R.of(403, "no permission: user:delete"));
                     return;
                 }
                 String id = ctx.pathParam("id");
@@ -215,16 +219,177 @@ public class AuthenticationController {
 
     // ============================ 请求 DTO ============================
 
-    public record LoginRequest(String username, String password) {
+    public final static class LoginRequest {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String username;
+
+        private final String password;
+
+        @JsonCreator()
+        public LoginRequest(@JsonProperty("username") String username, @JsonProperty("password") String password) {
+            this.username = username;
+            this.password = password;
+        }
+
+        @JsonProperty("username")
+        public String username() {
+            return username;
+        }
+
+        @JsonProperty("password")
+        public String password() {
+            return password;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            LoginRequest other = (LoginRequest) obj;
+            return Objects.equals(this.username, other.username) && Objects.equals(this.password, other.password);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(username);
+            result = 31 * result + Objects.hashCode(password);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "LoginRequest[username=" + username + ", password=" + password + "]";
+        }
     }
 
-    public record KickoutRequest(String userId) {
+    public final static class KickoutRequest {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String userId;
+
+        @JsonCreator()
+        public KickoutRequest(@JsonProperty("userId") String userId) {
+            this.userId = userId;
+        }
+
+        @JsonProperty("userId")
+        public String userId() {
+            return userId;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            KickoutRequest other = (KickoutRequest) obj;
+            return Objects.equals(this.userId, other.userId);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(userId);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "KickoutRequest[userId=" + userId + "]";
+        }
     }
 
-    public record RoleCheckRequest(String role) {
+    public final static class RoleCheckRequest {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String role;
+
+        @JsonCreator()
+        public RoleCheckRequest(@JsonProperty("role") String role) {
+            this.role = role;
+        }
+
+        @JsonProperty("role")
+        public String role() {
+            return role;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            RoleCheckRequest other = (RoleCheckRequest) obj;
+            return Objects.equals(this.role, other.role);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(role);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "RoleCheckRequest[role=" + role + "]";
+        }
     }
 
-    public record PermissionCheckRequest(String permission) {
+    public final static class PermissionCheckRequest {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String permission;
+
+        @JsonCreator()
+        public PermissionCheckRequest(@JsonProperty("permission") String permission) {
+            this.permission = permission;
+        }
+
+        @JsonProperty("permission")
+        public String permission() {
+            return permission;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            PermissionCheckRequest other = (PermissionCheckRequest) obj;
+            return Objects.equals(this.permission, other.permission);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(permission);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "PermissionCheckRequest[permission=" + permission + "]";
+        }
     }
 
 }

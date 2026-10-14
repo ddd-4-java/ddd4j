@@ -52,12 +52,16 @@ import jakarta.persistence.Table;
 @Table(name = "ddd4j_projection_position")
 public class PanacheProjectionPositionEntity extends PanacheEntityBase {
 
-    /** 投影流 ID（视图唯一标识，自然主键即唯一键）。 */
+    /**
+     * 投影流 ID（视图唯一标识，自然主键即唯一键）。
+     */
     @Id
     @Column(name = "stream_id", nullable = false, length = 250, updatable = false)
     public String streamId;
 
-    /** 下一个待处理事件号（0-based 位置计数，non-versionable）。 */
+    /**
+     * 下一个待处理事件号（0-based 位置计数，non-versionable）。
+     */
     @Column(name = "next_event_number", nullable = false)
     public long nextEventNumber;
 

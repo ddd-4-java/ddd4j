@@ -28,6 +28,11 @@ class MQOutboxDispatcherTest {
 
     private static final Instant NOW = Instant.parse("2026-08-03T00:00:00Z");
 
+    private static MQOutboxRecord record(String messageId, int attempts) {
+        return new MQOutboxRecord(messageId, "orders.created", "{}", Map.of(), MQOutboxStatus.LEASED,
+                NOW, "instance-a", NOW.plusSeconds(60), attempts, null, null);
+    }
+
     @Test
     void dispatch_shouldPublishOutsideStoreAndConfirmWithLeaseOwner() {
         RecordingStore store = new RecordingStore(List.of(record("message-1", 1)));
@@ -130,11 +135,6 @@ class MQOutboxDispatcherTest {
 
         assertThrows(IllegalArgumentException.class, () -> dispatcher.dispatch("", 1, NOW));
         assertThrows(IllegalArgumentException.class, () -> dispatcher.dispatch("instance-a", 0, NOW));
-    }
-
-    private static MQOutboxRecord record(String messageId, int attempts) {
-        return new MQOutboxRecord(messageId, "orders.created", "{}", Map.of(), MQOutboxStatus.LEASED,
-                NOW, "instance-a", NOW.plusSeconds(60), attempts, null, null);
     }
 
     private static final class RecordingStore implements MQOutboxStore {

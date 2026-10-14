@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 package io.ddd4j.core.exception;
+import io.ddd4j.core.api.CustomApiCode;
+import io.ddd4j.core.api.ApiCode;
 
-import io.ddd4j.core.ApiCode;
-import io.ddd4j.core.CustomApiCode;
 import io.ddd4j.core.util.I18nKit;
 import lombok.Getter;
 

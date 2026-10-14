@@ -14,7 +14,7 @@
  */
 package io.ddd4j.core.exception;
 
-import io.ddd4j.core.api.ResultCode;
+import io.ddd4j.core.api.ApiCode;
 
 import java.util.Map;
 import java.util.StringJoiner;
@@ -28,12 +28,12 @@ public class ValidateException extends BizRuntimeException {
     private Map<String, String> errorMap;
 
     public ValidateException(Map<String, String> errorMap) {
-        super(ResultCode.PARAMETER_VALIDATION_FAILED.getCode(), ResultCode.PARAMETER_VALIDATION_FAILED.getDesc());
+        super(ApiCode.BAD_REQUEST.getCode(), ApiCode.BAD_REQUEST.getDesc());
         this.errorMap = errorMap;
     }
 
     public ValidateException(String errorMsg) {
-        super(ResultCode.PARAMETER_VALIDATION_FAILED.getCode(), errorMsg);
+        super(ApiCode.BAD_REQUEST.getCode(), errorMsg);
     }
 
     public String toString() {

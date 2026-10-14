@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 package io.ddd4j.core.cqrs.eventstore;
+import java.util.Map;
 
 import io.ddd4j.kit.lang.JsonKit;
 
-import java.util.Map;
 import java.util.regex.Pattern;
 
 /**

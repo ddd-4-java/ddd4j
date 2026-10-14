@@ -13,7 +13,9 @@
 
     <artifactId>ddd4j-sample-javalin-cqrs</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>ddd4j Javalin 平台 Order/Goods CQRS 示例：双业务（Order 充血 + Goods 第三轨）、命令/查询分离、CQRS 缓存读侧、领域事件 + 进程内事件总线、内存读模型投影。</description>
+    <description>ddd4j Javalin 平台 Order/Goods CQRS 示例：双业务（Order 充血 + Goods 第三轨）、命令/查询分离、CQRS 缓存读侧、领域事件
+        + 进程内事件总线、内存读模型投影。
+    </description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <properties>
@@ -125,15 +127,15 @@
             <artifactId>slf4j-simple</artifactId>
             <scope>runtime</scope>
         </dependency>
-            <!-- Javalin 7 的 JavalinJackson3 依赖 Jackson 3（tools.jackson）：2.0.x 线整体为
-             Jackson 2（com.fasterxml，DDD 事件序列化走 core EventPayloadSerializer），
-             仅 Javalin HTTP 层的 JSON 编解码用 J3，双 Jackson 共存是本线既定形态。
-             J3 无 BOM 管理（tools.jackson BOM 未发布到 Central），模块级显式钉版。 -->
+        <!-- Javalin 7 的 JavalinJackson3 依赖 Jackson 3（tools.jackson）：2.0.x 线整体为
+         Jackson 2（com.fasterxml，DDD 事件序列化走 core EventPayloadSerializer），
+         仅 Javalin HTTP 层的 JSON 编解码用 J3，双 Jackson 共存是本线既定形态。
+         J3 无 BOM 管理（tools.jackson BOM 未发布到 Central），模块级显式钉版。 -->
         <dependency>
             <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
-</dependencies>
+    </dependencies>
 
     <build>
         <plugins>

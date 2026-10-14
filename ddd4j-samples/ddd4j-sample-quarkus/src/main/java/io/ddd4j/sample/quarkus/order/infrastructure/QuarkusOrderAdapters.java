@@ -34,7 +34,9 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-/** Quarkus infrastructure adapter for the shared Order ports. */
+/**
+ * Quarkus infrastructure adapter for the shared Order ports.
+ */
 @ApplicationScoped
 public class QuarkusOrderAdapters
         implements OrderRepository, OutboxPort, OrderReadModelPort, IdempotencyPort {

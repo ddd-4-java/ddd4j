@@ -15,8 +15,6 @@
 package io.ddd4j.sample.javalin.cqrs;
 
 import com.fasterxml.jackson.databind.json.JsonMapper;
-import java.util.Objects;
-
 import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.BaseContext;
@@ -43,6 +41,8 @@ import io.ddd4j.sample.javalin.cqrs.spi.DefaultI18nProvider;
 import io.ddd4j.sample.javalin.cqrs.spi.NoOpDomainEventPublisher;
 import io.javalin.Javalin;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.Objects;
 
 /**
  * ddd4j Javalin 平台的 Order/Goods CQRS 启动入口。

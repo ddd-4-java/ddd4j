@@ -14,6 +14,8 @@
  */
 package io.ddd4j.mq;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.listener.MQListener;
 import org.junit.jupiter.api.Test;

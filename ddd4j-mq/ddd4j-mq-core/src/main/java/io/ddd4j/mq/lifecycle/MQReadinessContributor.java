@@ -11,7 +11,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
-/** 将MQ启动状态映射为框架无关Readiness。 */
+/**
+ * 将MQ启动状态映射为框架无关Readiness。
+ */
 public final class MQReadinessContributor implements ReadinessContributor {
 
     private final MQStartupStatus status;

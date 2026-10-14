@@ -29,6 +29,15 @@ import java.util.Objects;
  */
 public final class Ddd4jDropwizardResponseFilter implements ContainerResponseFilter {
 
+    private static void closeScope(Object scope) {
+        if (scope instanceof AutoCloseable closeable) {
+            try {
+                closeable.close();
+            } catch (Throwable ignored) {
+            }
+        }
+    }
+
     @Override
     public void filter(ContainerRequestContext request, ContainerResponseContext response) {
         Object span = request.getProperty(Ddd4jDropwizardRequestFilter.OTEL_SPAN_PROPERTY);
@@ -52,15 +61,6 @@ public final class Ddd4jDropwizardResponseFilter implements ContainerResponseFil
             closeScope(scope);
             request.removeProperty(Ddd4jDropwizardRequestFilter.OTEL_SPAN_PROPERTY);
             request.removeProperty(Ddd4jDropwizardRequestFilter.OTEL_SCOPE_PROPERTY);
-        }
-    }
-
-    private static void closeScope(Object scope) {
-        if (scope instanceof AutoCloseable closeable) {
-            try {
-                closeable.close();
-            } catch (Throwable ignored) {
-            }
         }
     }
 }

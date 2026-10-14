@@ -34,6 +34,7 @@ import org.junit.jupiter.api.Test;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -503,7 +504,9 @@ class JpaEventStoreTest {
         }
     }
 
-    /** 业务事件样例：无参构造 + JavaBean 属性（payload 序列化约定）。 */
+    /**
+     * 业务事件样例：无参构造 + JavaBean 属性（payload 序列化约定）。
+     */
     public static final class OrderCreatedEvent extends DomainEvent<TestAggregateRootId> {
 
         private String fact;

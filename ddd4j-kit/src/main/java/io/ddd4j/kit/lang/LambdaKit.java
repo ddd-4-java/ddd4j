@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.ddd4j.core.util;
+package io.ddd4j.kit.lang;
 
 import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;

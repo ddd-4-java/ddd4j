@@ -14,6 +14,12 @@
  */
 package io.ddd4j.data.event.store.esdb;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Objects;
+
 import com.eventstore.dbclient.EventStoreDBClient;
 import com.eventstore.dbclient.EventStoreDBConnectionString;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
@@ -38,11 +44,14 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/** EventStoreDB 的强类型 Testcontainers 验证。 */
+/**
+ * EventStoreDB 的强类型 Testcontainers 验证。
+ */
 @Testcontainers(disabledWithoutDocker = true)
 class EsdbEventStoreIT {
     private static final String ORDER_TYPE = "Order";
-    @Container static final GenericContainer<?> ESDB = new GenericContainer<>(DockerImageName.parse("eventstore/eventstore:24.10.0-bookworm-slim"))
+    @Container
+    static final GenericContainer<?> ESDB = new GenericContainer<>(DockerImageName.parse("eventstore/eventstore:24.10.0-bookworm-slim"))
             .withExposedPorts(2113)
             .withEnv("EVENTSTORE_CLUSTER_SIZE", "1")
             .withEnv("EVENTSTORE_RUN_PROJECTIONS", "All")
@@ -55,15 +64,25 @@ class EsdbEventStoreIT {
     private static EventStoreDBClient client;
     private EventStore store;
 
-    @BeforeAll static void createClient() {
+    @BeforeAll
+    static void createClient() {
         client = EventStoreDBClient.create(EventStoreDBConnectionString.parseOrThrow(
                 "esdb://" + ESDB.getHost() + ":" + ESDB.getMappedPort(2113)
                         + "?tls=false&maxDiscoverAttempts=3"));
     }
-    @AfterAll static void closeClient() { if (client != null) client.shutdown(); }
-    @BeforeEach void setUp() { store = new EsdbEventStore(client, "it-" + System.nanoTime() + "-"); }
 
-    @Test void appendReadRangeAndGlobalReadFollowStrongContract() {
+    @AfterAll
+    static void closeClient() {
+        if (client != null) client.shutdown();
+    }
+
+    @BeforeEach
+    void setUp() {
+        store = new EsdbEventStore(client, "it-" + System.nanoTime() + "-");
+    }
+
+    @Test
+    void appendReadRangeAndGlobalReadFollowStrongContract() {
         TestId id = new TestId("order-1");
         store.append(ORDER_TYPE, id, List.of(new TestEvent(id), new TestEvent(id), new TestEvent(id)), 0);
         List<StoredEvent> all = store.read(ORDER_TYPE, id);
@@ -72,14 +91,71 @@ class EsdbEventStoreIT {
         assertThat(store.readAll(0, 10)).allSatisfy(event -> assertThat(event.aggregateType()).isEqualTo(ORDER_TYPE));
     }
 
-    record TestId(String value) implements AggregateRootId {
+    final static class TestId implements AggregateRootId {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String value;
+
         private static final EntityType TYPE = new StringEntityType("Order");
-        @Override public EntityType getType() { return TYPE; }
-        @Override public String asString() { return value; }
-        @Override public String asTypedString() { return TYPE.asString() + ":" + value; }
+
+        @Override
+        public EntityType getType() {
+            return TYPE;
+        }
+
+        @Override
+        public String asString() {
+            return value;
+        }
+
+        @Override
+        public String asTypedString() {
+            return TYPE.asString() + ":" + value;
+        }
+
+        @JsonCreator()
+        TestId(@JsonProperty("value") String value) {
+            this.value = value;
+        }
+
+        @JsonProperty("value")
+        public String value() {
+            return value;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            TestId other = (TestId) obj;
+            return Objects.equals(this.value, other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(value);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "TestId[value=" + value + "]";
+        }
     }
+
     static final class TestEvent extends DomainEvent<TestId> {
-        TestEvent() { super(); }
-        TestEvent(TestId id) { super(new EntityIdPath(id)); }
+        TestEvent() {
+            super();
+        }
+
+        TestEvent(TestId id) {
+            super(new EntityIdPath(id));
+        }
     }
 }

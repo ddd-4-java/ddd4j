@@ -42,29 +42,12 @@ public class CglibProxy implements MethodInterceptor {
     }
 
     /**
-     * 拦截目标对象的方法调用，执行前后打印监听日志。
-     *
-     * @param obj    代理对象
-     * @param method 被调用的方法
-     * @param arr    方法参数数组
-     * @param proxy  方法代理，用于调用父类实现
-     * @return 方法调用的返回值
-     * @throws Throwable 反射调用或代理逻辑抛出的异常
-     */
-    @Override
-    public Object intercept(Object obj, Method method, Object[] arr, MethodProxy proxy) throws Throwable {
-        System.out.println("Cglib动态代理，监听开始！");
-        Object invoke = method.invoke(target, arr);//方法执行，参数：target 目标对象 arr参数数组
-        System.out.println("Cglib动态代理，监听结束！");
-        return invoke;
-    }
-
-    /**
      * 为目标实例创建 CGLIB 代理对象。
      *
      * @param objectTarget 目标实例
      * @return CGLIB 代理对象
      */
+    // 定义获取代理对象方法
     public static Object getCglibProxy(Object objectTarget) {
         //为目标对象target赋值
         CglibProxy target = new CglibProxy(objectTarget);
@@ -91,6 +74,25 @@ public class CglibProxy implements MethodInterceptor {
         enhancer.setCallback(target);// 设置回调
         Object result = enhancer.create();//创建并返回代理对象
         return (T) result;
+    }
+
+    /**
+     * 拦截目标对象的方法调用，执行前后打印监听日志。
+     *
+     * @param obj    代理对象
+     * @param method 被调用的方法
+     * @param arr    方法参数数组
+     * @param proxy  方法代理，用于调用父类实现
+     * @return 方法调用的返回值
+     * @throws Throwable 反射调用或代理逻辑抛出的异常
+     */
+    //重写拦截方法
+    @Override
+    public Object intercept(Object obj, Method method, Object[] arr, MethodProxy proxy) throws Throwable {
+        System.out.println("Cglib动态代理，监听开始！");
+        Object invoke = method.invoke(target, arr);//方法执行，参数：target 目标对象 arr参数数组
+        System.out.println("Cglib动态代理，监听结束！");
+        return invoke;
     }
 
 }

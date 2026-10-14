@@ -31,8 +31,8 @@ cd "$PROJECT_ROOT"
 # BOM 是发布给消费方的版本清单；ddd4j-dependencies 仅管理第三方依赖。
 BOM_POM="ddd4j-bom/pom.xml"
 if [ ! -f "$BOM_POM" ]; then
-    echo -e "${RED}❌ 找不到 $BOM_POM${NC}"
-    exit 1
+  echo -e "${RED}❌ 找不到 $BOM_POM${NC}"
+  exit 1
 fi
 
 echo "🔍 ddd4j-bom 版本对齐校验"
@@ -45,15 +45,15 @@ fail_count=0
 total_modules=0
 
 while IFS= read -r pom; do
-    total_modules=$((total_modules + 1))
-    # 找所有 ddd4j-* 工件的版本号
-    bad_versions=$(grep -E "<artifactId>ddd4j-" "$pom" 2>/dev/null | \
-        grep -A1 "</artifactId>" | grep "<version>" | \
-        grep -vcE "\\\${revision}|\\\${project.version}" || true)
-    if [ "$bad_versions" -gt 0 ]; then
-        echo -e "${RED}  ❌ $pom 包含 $bad_versions 个硬编码 ddd4j-* 版本${NC}"
-        fail_count=$((fail_count + 1))
-    fi
+  total_modules=$((total_modules + 1))
+  # 找所有 ddd4j-* 工件的版本号
+  bad_versions=$(grep -E "<artifactId>ddd4j-" "$pom" 2>/dev/null |
+    grep -A1 "</artifactId>" | grep "<version>" |
+    grep -vcE "\\\${revision}|\\\${project.version}" || true)
+  if [ "$bad_versions" -gt 0 ]; then
+    echo -e "${RED}  ❌ $pom 包含 $bad_versions 个硬编码 ddd4j-* 版本${NC}"
+    fail_count=$((fail_count + 1))
+  fi
 done < <(find . -name "pom.xml" -not -path "*/target/*" -not -path "*/node_modules/*" -not -path "*/.flattened-pom.xml")
 
 echo ""
@@ -61,24 +61,24 @@ echo -e "${YELLOW}② 校验关键 ddd4j-* 工件在 BOM 中存在（警告级�
 # 聚合 POM 不会作为依赖消费，避免将 ddd4j-data/mq/web/runtime 等聚合器误报为
 # 应进入 BOM 的工件。这里保留每个基础能力的公开入口作为回归锚点。
 required_artifacts=(
-    "ddd4j-core"
-    "ddd4j-annotation"
-    "ddd4j-kit"
-    "ddd4j-cache"
-    "ddd4j-ddd-rules"
-    "ddd4j-data-mybatis"
-    "ddd4j-mq-core"
-    "ddd4j-web-core"
-    "ddd4j-runtime-spring"
+  "ddd4j-core"
+  "ddd4j-annotation"
+  "ddd4j-kit"
+  "ddd4j-cache"
+  "ddd4j-ddd-rules"
+  "ddd4j-data-mybatis"
+  "ddd4j-mq-core"
+  "ddd4j-web-core"
+  "ddd4j-runtime-spring"
 )
 warn_count=0
 for art in "${required_artifacts[@]}"; do
-    if rg -q -F "<artifactId>$art</artifactId>" "$BOM_POM"; then
-        echo -e "${GREEN}  ✅ $art 在 BOM 中${NC}"
-    else
-        echo -e "${YELLOW}  ⚠️  $art 不在 BOM 中（建议补充到 dependencyManagement）${NC}"
-        warn_count=$((warn_count + 1))
-    fi
+  if rg -q -F "<artifactId>$art</artifactId>" "$BOM_POM"; then
+    echo -e "${GREEN}  ✅ $art 在 BOM 中${NC}"
+  else
+    echo -e "${YELLOW}  ⚠️  $art 不在 BOM 中（建议补充到 dependencyManagement）${NC}"
+    warn_count=$((warn_count + 1))
+  fi
 done
 
 echo ""
@@ -88,16 +88,16 @@ echo -e "阻塞问题数（硬编码版本）: ${RED}${fail_count}${NC}"
 echo -e "警告数（BOM 缺失）: ${YELLOW}${warn_count}${NC}"
 
 if [ "$fail_count" -eq 0 ]; then
-    echo -e "${GREEN}✅ 阻塞检查通过（硬编码版本问题已修复）${NC}"
-    if [ "$warn_count" -gt 0 ]; then
-        echo -e "${YELLOW}⚠️  建议补充 BOM（见警告）${NC}"
-    fi
-    exit 0
+  echo -e "${GREEN}✅ 阻塞检查通过（硬编码版本问题已修复）${NC}"
+  if [ "$warn_count" -gt 0 ]; then
+    echo -e "${YELLOW}⚠️  建议补充 BOM（见警告）${NC}"
+  fi
+  exit 0
 else
-    echo -e "${RED}❌ 发现 ${fail_count} 个硬编码版本问题${NC}"
-    echo ""
-    echo "修复建议："
-    echo "  1. 子模块 pom.xml 中所有 ddd4j-* 依赖应省略 <version> 标签"
-    echo "  2. 版本号统一在 ddd4j-dependencies/pom.xml 的 <dependencyManagement> 中管理"
-    exit 1
+  echo -e "${RED}❌ 发现 ${fail_count} 个硬编码版本问题${NC}"
+  echo ""
+  echo "修复建议："
+  echo "  1. 子模块 pom.xml 中所有 ddd4j-* 依赖应省略 <version> 标签"
+  echo "  2. 版本号统一在 ddd4j-dependencies/pom.xml 的 <dependencyManagement> 中管理"
+  exit 1
 fi

@@ -56,18 +56,17 @@ import java.util.Objects;
 @ApplicationScoped
 public class DddContextInitializer {
 
+    private final RuntimeReadinessRegistry readinessRegistry = new RuntimeReadinessRegistry();
     /**
      * 领域事件发布器实例
      */
     @Inject
     Instance<DomainEventPublisher> domainEventPublisher;
-
     /**
      * Subject 提供者实例
      */
     @Inject
     Instance<SubjectProvider> subjectProvider;
-
     /**
      * 国际化提供者实例
      */
@@ -77,7 +76,6 @@ public class DddContextInitializer {
     Instance<CommandBus> commandBus;
     @Inject
     Instance<ReadinessContributor> readinessContributors;
-    private final RuntimeReadinessRegistry readinessRegistry = new RuntimeReadinessRegistry();
     private Ddd4jQuarkusRuntime runtime;
 
     /**

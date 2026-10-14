@@ -14,6 +14,10 @@
  */
 package io.ddd4j.web.vertx;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.auth.AuthPrincipal;
@@ -140,16 +144,20 @@ class Ddd4jVertxWebContractTest extends AbstractWebContractTest {
         };
     }
 
-    private record VertxContractClient(HttpClient httpClient, int port) implements WebContractClient {
+    private final static class VertxContractClient implements WebContractClient {
+
+        private static final long serialVersionUID = 0L;
+
+        private final HttpClient httpClient;
+
+        private final int port;
 
         @Override
         public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
             try {
-                HttpRequest.Builder builder = HttpRequest.newBuilder()
-                        .uri(URI.create("http://127.0.0.1:" + port + path));
+                HttpRequest.Builder builder = HttpRequest.newBuilder().uri(URI.create("http://127.0.0.1:" + port + path));
                 headers.forEach(builder::header);
-                HttpRequest.BodyPublisher publisher = Objects.isNull(body)
-                        ? HttpRequest.BodyPublishers.noBody() : HttpRequest.BodyPublishers.ofString(body);
+                HttpRequest.BodyPublisher publisher = Objects.isNull(body) ? HttpRequest.BodyPublishers.noBody() : HttpRequest.BodyPublishers.ofString(body);
                 HttpResponse<String> response = send(builder.method(method, publisher).build());
                 return new WebContractResponse(response.statusCode(), response.headers().map(), response.body());
             } catch (InterruptedException exception) {
@@ -166,6 +174,47 @@ class Ddd4jVertxWebContractTest extends AbstractWebContractTest {
             } catch (IOException firstFailure) {
                 return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             }
+        }
+
+        @JsonCreator()
+        private VertxContractClient(@JsonProperty("httpClient") HttpClient httpClient, @JsonProperty("port") int port) {
+            this.httpClient = httpClient;
+            this.port = port;
+        }
+
+        @JsonProperty("httpClient")
+        public HttpClient httpClient() {
+            return httpClient;
+        }
+
+        @JsonProperty("port")
+        public int port() {
+            return port;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            VertxContractClient other = (VertxContractClient) obj;
+            return Objects.equals(this.httpClient, other.httpClient) && this.port == other.port;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(httpClient);
+            result = 31 * result + Integer.hashCode(port);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "VertxContractClient[httpClient=" + httpClient + ", port=" + port + "]";
         }
     }
 }

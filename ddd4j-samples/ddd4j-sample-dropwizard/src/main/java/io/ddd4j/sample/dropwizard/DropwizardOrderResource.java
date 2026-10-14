@@ -13,6 +13,17 @@
  * limitations under the License.
  */
 package io.ddd4j.sample.dropwizard;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.HeaderParam;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Consumes;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
 
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.auth.AuthRequest;
@@ -24,13 +35,7 @@ import io.ddd4j.sample.order.application.OrderApplicationService;
 import io.ddd4j.sample.order.application.OrderReadModel;
 import io.ddd4j.web.core.context.WebHeaders;
 import io.ddd4j.web.core.error.WebStatusException;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.HeaderParam;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.Data;
@@ -94,6 +99,47 @@ public final class DropwizardOrderResource {
         return R.ok(applicationService.find(orderId));
     }
 
+    public final static class TokenResponse {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String token;
+
+        @JsonCreator()
+        public TokenResponse(@JsonProperty("token") String token) {
+            this.token = token;
+        }
+
+        @JsonProperty("token")
+        public String token() {
+            return token;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            TokenResponse other = (TokenResponse) obj;
+            return Objects.equals(this.token, other.token);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(token);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "TokenResponse[token=" + token + "]";
+        }
+    }
+
     @Data
     public static class CreateOrderRequest {
 
@@ -109,8 +155,5 @@ public final class DropwizardOrderResource {
         private String goodsName;
         private int quantity;
         private BigDecimal unitPrice;
-    }
-
-    public record TokenResponse(String token) {
     }
 }

@@ -51,6 +51,50 @@ import static org.mockito.Mockito.when;
 
 class Ddd4jQuarkusOtelScopeTest {
 
+    private static ContainerRequestContext request() {
+        ContainerRequestContext request = mock(ContainerRequestContext.class);
+        UriInfo uriInfo = mock(UriInfo.class);
+        Map<String, Object> properties = new HashMap<>();
+        Map<String, String> headers = new HashMap<>();
+        headers.put(WebHeaders.IDEMPOTENCY_KEY, "order-1");
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getUriInfo()).thenReturn(uriInfo);
+        when(uriInfo.getRequestUri()).thenReturn(URI.create("http://localhost/orders"));
+        when(request.getHeaders()).thenReturn(new MultivaluedHashMap<>());
+        when(request.getHeaderString(anyString())).thenAnswer(invocation ->
+                headers.get(invocation.getArgument(0)));
+        when(request.getProperty(anyString())).thenAnswer(invocation ->
+                properties.get(invocation.getArgument(0)));
+        doAnswer(invocation -> {
+            properties.put(invocation.getArgument(0), invocation.getArgument(1));
+            return null;
+        }).when(request).setProperty(anyString(), org.mockito.ArgumentMatchers.any());
+        doAnswer(invocation -> {
+            properties.remove(invocation.getArgument(0));
+            return null;
+        }).when(request).removeProperty(anyString());
+        return request;
+    }
+
+    private static ContainerResponseContext response() {
+        ContainerResponseContext response = mock(ContainerResponseContext.class);
+        when(response.getStatus()).thenReturn(200);
+        when(response.getHeaders()).thenReturn(new MultivaluedHashMap<>());
+        return response;
+    }
+
+    private static void resetOpenTelemetry() throws Exception {
+        GlobalOpenTelemetry.resetForTest();
+        for (String fieldName : new String[]{"TRACER_CACHE", "METER_CACHE"}) {
+            Field field = Ddd4jOtel.class.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            ((AtomicReference<?>) field.get(null)).set(null);
+        }
+        Field available = Ddd4jOtel.class.getDeclaredField("available");
+        available.setAccessible(true);
+        available.setBoolean(null, false);
+    }
+
     @Test
     void idempotencyCompletionFailureMustStillCloseRequestScopes() throws Exception {
         resetOpenTelemetry();
@@ -127,49 +171,5 @@ class Ddd4jQuarkusOtelScopeTest {
             tracerProvider.close();
             resetOpenTelemetry();
         }
-    }
-
-    private static ContainerRequestContext request() {
-        ContainerRequestContext request = mock(ContainerRequestContext.class);
-        UriInfo uriInfo = mock(UriInfo.class);
-        Map<String, Object> properties = new HashMap<>();
-        Map<String, String> headers = new HashMap<>();
-        headers.put(WebHeaders.IDEMPOTENCY_KEY, "order-1");
-        when(request.getMethod()).thenReturn("POST");
-        when(request.getUriInfo()).thenReturn(uriInfo);
-        when(uriInfo.getRequestUri()).thenReturn(URI.create("http://localhost/orders"));
-        when(request.getHeaders()).thenReturn(new MultivaluedHashMap<>());
-        when(request.getHeaderString(anyString())).thenAnswer(invocation ->
-                headers.get(invocation.getArgument(0)));
-        when(request.getProperty(anyString())).thenAnswer(invocation ->
-                properties.get(invocation.getArgument(0)));
-        doAnswer(invocation -> {
-            properties.put(invocation.getArgument(0), invocation.getArgument(1));
-            return null;
-        }).when(request).setProperty(anyString(), org.mockito.ArgumentMatchers.any());
-        doAnswer(invocation -> {
-            properties.remove(invocation.getArgument(0));
-            return null;
-        }).when(request).removeProperty(anyString());
-        return request;
-    }
-
-    private static ContainerResponseContext response() {
-        ContainerResponseContext response = mock(ContainerResponseContext.class);
-        when(response.getStatus()).thenReturn(200);
-        when(response.getHeaders()).thenReturn(new MultivaluedHashMap<>());
-        return response;
-    }
-
-    private static void resetOpenTelemetry() throws Exception {
-        GlobalOpenTelemetry.resetForTest();
-        for (String fieldName : new String[]{"TRACER_CACHE", "METER_CACHE"}) {
-            Field field = Ddd4jOtel.class.getDeclaredField(fieldName);
-            field.setAccessible(true);
-            ((AtomicReference<?>) field.get(null)).set(null);
-        }
-        Field available = Ddd4jOtel.class.getDeclaredField("available");
-        available.setAccessible(true);
-        available.setBoolean(null, false);
     }
 }

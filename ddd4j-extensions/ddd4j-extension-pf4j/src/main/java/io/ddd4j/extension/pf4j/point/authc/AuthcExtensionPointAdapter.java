@@ -14,13 +14,12 @@
  */
 package io.ddd4j.extension.pf4j.point.authc;
 
-import javax.servlet.http.HttpServletRequest;
 import org.pf4j.PluginRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -37,18 +36,20 @@ import java.util.Map;
  *   <li>{@link #handleResult}：原样返回结果</li>
  * </ul>
  *
- * @author wandl
+ * @author ddd4j
  * @since 3.4.x
  */
 public class AuthcExtensionPointAdapter implements AuthcExtensionPoint {
 
-    private static final Logger log = LoggerFactory.getLogger(AuthcExtensionPointAdapter.class);
-
-    /** Authorization Header 名称 */
+    /**
+     * Authorization Header 名称
+     */
     public static final String AUTHORIZATION_HEADER = "Authorization";
-
-    /** Bearer Token 前缀 */
+    /**
+     * Bearer Token 前缀
+     */
     public static final String BEARER_PREFIX = "Bearer ";
+    private static final Logger log = LoggerFactory.getLogger(AuthcExtensionPointAdapter.class);
 
     @Override
     public String getToken(HttpServletRequest request, Map<String, Object> params) throws PluginRuntimeException {

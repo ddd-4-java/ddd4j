@@ -16,13 +16,13 @@
 
 ## 3. 关键类与路径
 
-| 类 | 路径 |
-|---|------|
-| Sa-Token Subject 实现 | `ddd4j-auth/ddd4j-auth-satoken/src/main/java/io/ddd4j/auth/satoken/subject/SaTokenSubject.java` |
-| SubjectProvider 实现 | `ddd4j-auth/ddd4j-auth-satoken/src/main/java/io/ddd4j/auth/satoken/subject/SaTokenSubjectProvider.java` |
-| 扩展常量 | `ddd4j-auth/ddd4j-auth-satoken/src/main/java/io/ddd4j/auth/satoken/SaConstants.java` |
-| 载荷读取 | `ddd4j-auth/ddd4j-auth-satoken/src/main/java/io/ddd4j/auth/satoken/util/StpKit.java` |
-| 临时 Token | `ddd4j-auth/ddd4j-auth-satoken/src/main/java/io/ddd4j/auth/satoken/util/SaTempKit.java` |
+| 类                    | 路径                                                                                                    |
+|-----------------------|---------------------------------------------------------------------------------------------------------|
+| Sa-Token Subject 实现 | `ddd4j-auth/ddd4j-auth-satoken/src/main/java/io/ddd4j/auth/satoken/subject/SaTokenSubject.java`         |
+| SubjectProvider 实现  | `ddd4j-auth/ddd4j-auth-satoken/src/main/java/io/ddd4j/auth/satoken/subject/SaTokenSubjectProvider.java` |
+| 扩展常量              | `ddd4j-auth/ddd4j-auth-satoken/src/main/java/io/ddd4j/auth/satoken/SaConstants.java`                    |
+| 载荷读取              | `ddd4j-auth/ddd4j-auth-satoken/src/main/java/io/ddd4j/auth/satoken/util/StpKit.java`                    |
+| 临时 Token            | `ddd4j-auth/ddd4j-auth-satoken/src/main/java/io/ddd4j/auth/satoken/util/SaTempKit.java`                 |
 
 ## 4. 快速接入
 

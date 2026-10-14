@@ -13,9 +13,14 @@
  * limitations under the License.
  */
 package io.ddd4j.web.dropwizard;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import io.dropwizard.core.Configuration;
-import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import org.junit.jupiter.api.Test;
@@ -23,13 +28,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class Ddd4jDropwizardWebBundleTest {
@@ -39,9 +40,6 @@ class Ddd4jDropwizardWebBundleTest {
 
     @Mock
     private JerseyEnvironment jersey;
-
-    private static final class TestConfiguration extends Configuration {
-    }
 
     @Test
     void constructorRejectsNullResolver() {
@@ -88,5 +86,8 @@ class Ddd4jDropwizardWebBundleTest {
         bundle.run(new TestConfiguration(), environment);
 
         verify(jersey, atLeastOnce()).register(any(Ddd4jDropwizardRequestFilter.class));
+    }
+
+    private static final class TestConfiguration extends Configuration {
     }
 }

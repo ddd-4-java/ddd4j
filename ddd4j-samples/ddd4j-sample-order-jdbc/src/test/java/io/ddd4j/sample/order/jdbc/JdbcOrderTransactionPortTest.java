@@ -13,6 +13,10 @@
  * limitations under the License.
  */
 package io.ddd4j.sample.order.jdbc;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.doThrow;
 
 import org.junit.jupiter.api.Test;
 
@@ -21,10 +25,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class JdbcOrderTransactionPortTest {
 

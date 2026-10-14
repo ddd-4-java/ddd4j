@@ -71,7 +71,7 @@ public class ServerVendorProperties {
     private String title;
 
     @Override
-public String toString() {
+    public String toString() {
         return "ServiceVendor{" + "province='" + province + '\'' + ", city='" + city + '\'' + ", desc='" + desc + '\''
                 + '}';
     }
