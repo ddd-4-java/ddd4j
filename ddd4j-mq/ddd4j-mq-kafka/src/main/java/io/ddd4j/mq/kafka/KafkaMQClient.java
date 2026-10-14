@@ -26,7 +26,6 @@ import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.lifecycle.MQClientLifecycle;
 import io.ddd4j.mq.lifecycle.MQStartupStatus;
 import io.ddd4j.mq.listener.MQListener;
-import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.AdminClient;
@@ -160,9 +159,8 @@ public class KafkaMQClient implements MQClient {
             String topic = resolveTopic(mqEvent, mqProperties);
             String key = partitionKey(mqEvent);
             ProducerRecord<String, String> record = new ProducerRecord<>(topic, key, payload);
-            if (Objects.nonNull(mqEvent.getMsgId())) {
-                record.headers().add(MessageHeaders.HEADER_MESSAGE_ID,
-                        mqEvent.getMsgId().getBytes(StandardCharsets.UTF_8));
+            for (Map.Entry<String, String> header : mqEvent.headerMap().entrySet()) {
+                record.headers().add(header.getKey(), header.getValue().getBytes(StandardCharsets.UTF_8));
             }
             try {
                 // Outbox 只有在 broker 确认后才能标记成功；异步回调不能作为同步发布契约。
@@ -241,7 +239,13 @@ public class KafkaMQClient implements MQClient {
         Properties props = properties.consumerProperties(buildGroupId(mqListener));
         props.put("bootstrap.servers", properties.getBootstrapServers());
         org.apache.kafka.clients.consumer.Consumer<String, String> consumer = createConsumer(props);
-        ConsumerWorker worker = new ConsumerWorker(consumer, mqListener, mqProperties);
+        ConsumerWorker worker;
+        try {
+            worker = new ConsumerWorker(consumer, mqListener, mqProperties);
+        } catch (RuntimeException exception) {
+            consumer.close();
+            throw exception;
+        }
         try {
             consumer.subscribe(Collections.singletonList(resolveTopic(mqListener, mqProperties)));
             consumerWorkers.add(worker);
