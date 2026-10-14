@@ -1,46 +1,19 @@
-# WebMVC 典型链路与异常处理
+# WebMVC 请求链路与异常处理
 
 ## 请求链路
 
-- 入口：`Spring MVC`（DispatcherServlet）
-- 线程上下文与本地化：`RequestContextFilter` 与 `LocaleResolver`（X-Header 支持）
-- 拦截器：
-    - 语言切换：`LocaleChangeInterceptor`（参数名：`lang`）
-    - 主题切换：`ThemeChangeInterceptor`（参数名：`theme`）
-    - MDC 链路：`Slf4jMDCInterceptor`（对接 `Sequence` 生成请求标识）
-- 控制器基类：统一事件发布、国际化消息与响应封装
+`ddd4j-web/ddd4j-web-webmvc` 的 `DefaultWebMvcConfiguration` 装配请求上下文过滤器、区域解析器、验证器、Bearer 认证器、访问策略、幂等生命周期和异常转换器。`ApiVersionWebMvcConfiguration` 启用时，版本拦截器先解析 API 版本，再由 `Ddd4jWebMvcInterceptor` 创建请求上下文。
 
-## 关键配置
+```text
+请求 → API 版本解析 → 请求上下文/追踪 → 公开路径或 Bearer 认证 → 幂等处理 → 控制器
+                                                        ↓
+响应 ← 异常转换和实际 HTTP 状态 ← 控制器结果/异常 ← 上下文与幂等资源收尾
+```
 
-- `ddd4j-cmpt/ddd4j-cmpt-webmvc/src/main/java/io/ddd4j/boot/cmpt/webmvc/DefaultWebMvcConfiguration.java:53-76`
-- `ddd4j-core/src/main/java/io/ddd4j/boot/core/web/BaseController.java:21-35`
+`ddd4j.web.public-paths` 定义公开路径；其余路径默认要求认证。`ddd4j.web.trust-forwarded-headers` 控制是否信任转发头解析客户端地址。请求上下文携带请求 ID、追踪 ID、客户端信息和解析后的 API 版本；请求完成时拦截器清理上下文与幂等资源。
 
-## 统一响应
+## 异常与响应
 
-- 成功：`ApiRestResponse.success(...)`
-- 失败：`ApiRestResponse.fail(...)`
-- 错误：`ApiRestResponse.error(...)`
-- 参考：`ddd4j-core/src/main/java/io/ddd4j/boot/core/ApiRestResponse.java:118-166`
+`Ddd4jWebMvcExceptionHandler` 使用共享的 `WebExceptionTranslator` 将异常映射为真实 HTTP 状态和统一的 `R` 响应。业务控制器应按当前模块 API 返回结果，不使用旧版 `ApiRestResponse`、`ApiCodeValue` 或已移除的 `ddd4j-cmpt` 路径。
 
-## 全局异常映射
-
-- 位置：`ddd4j-cmpt/ddd4j-cmpt-webmvc/src/main/java/io/ddd4j/boot/cmpt/webmvc/webmvc/GlobalExceptionHandler.java`
-- 典型规则：
-    - `NoHandlerFoundException` → `404`：`GlobalExceptionHandler.java:72-81`
-    - `ServletRequestBindingException` → `400`：`GlobalExceptionHandler.java:198-206`
-    - `MethodArgumentTypeMismatchException` → `400`：`GlobalExceptionHandler.java:331-340`
-    - `ConversionNotSupportedException`/`IOException`/`IndexOutOfBoundsException`/`IllegalArgumentException` → `500`：
-      `GlobalExceptionHandler.java:439-517`
-    - JDBC 异常聚合处理（`SQLClientInfoException` 等）：`GlobalExceptionHandler.java:616-625`
-
-## 幂等控制
-
-- 注解：`ddd4j-core/src/main/java/io/ddd4j/boot/core/annotation/ApiIdempotent.java`
-- Key 生成：请求映射值 + 参数（可选）→ MD5：`ddd4j-core/src/main/java/io/ddd4j/boot/core/utils/IdempotentUtils.java`
-
-## 使用建议
-
-- 控制器继承 `BaseController`，使用 `success`/`fail`/`error` 统一返回
-- 对外 API 需要幂等的，标注 `@ApiIdempotent` 并合理设置过期与重试策略
-- 通过国际化键值输出用户可读消息，统一体验
-
+相关实现：`ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/DefaultWebMvcConfiguration.java`、`Ddd4jWebMvcInterceptor.java` 和 `Ddd4jWebMvcExceptionHandler.java`。三线行为契约一致，Spring 与其他三方依赖配置分别由各线维护。

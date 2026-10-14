@@ -1,32 +1,17 @@
-# WebFlux 响应式链路与异常处理
+# WebFlux 请求链路与异常处理
 
-## 响应式链路
+## 请求链路
 
-- 入口：`WebFlux`（`HttpHandler`/`DispatcherHandler`）
-- 本地化与上下文：`LocaleResolver` 与响应式 `ServerWebExchange` 上下文
-- 拦截器与过滤：按组件默认配置注册，使用响应式链路处理 MDC、语言与主题
-- 控制器返回 `Mono/Flux`，统一包装 `ApiRestResponse` 响应
+`ddd4j-web/ddd4j-web-webflux` 的 `DefaultWebFluxConfiguration` 装配响应式请求上下文过滤器、区域解析器、Bearer 认证器、访问策略和幂等生命周期。启用 `ApiVersionWebFluxConfiguration` 时，`ApiVersionWebFilter` 在 `Ddd4jWebFluxFilter` 前解析版本；后者建立请求上下文并执行认证和幂等处理。
 
-## 关键配置与异常处理
+```text
+请求 → API 版本过滤器 → 请求上下文过滤器 → 公开路径或 Bearer 认证 → 幂等处理 → Handler
+                                                                  ↓
+响应 ← 实际 HTTP 状态与 R 错误体 ← 结果/异常 ← 响应式资源收尾
+```
 
-- 全局异常：`ddd4j-cmpt/ddd4j-cmpt-webflux/src/main/java/io/ddd4j/boot/cmpt/webflux/handler/GlobalExceptionHandler.java`
-- 典型规则：
-    - `HttpRequestMethodNotSupportedException` → `405`：`GlobalExceptionHandler.java:63-73`
-    - `MissingMatrixVariableException` → `400`：`GlobalExceptionHandler.java:104-115`
-    - `HttpMessageNotReadableException` → `400`：`GlobalExceptionHandler.java:210-219`
-    - `BindException`/`WebExchangeBindException` → `400`，输出字段错误列表：`GlobalExceptionHandler.java:255-267`
-    - `MethodArgumentConversionNotSupportedException` → `400`：`GlobalExceptionHandler.java:329-339`
-    - 服务器错误（`NullPointerException`/`IndexOutOfBoundsException` 等）→ `500`：`GlobalExceptionHandler.java:416-469`
-    - JDBC 异常聚合处理：`GlobalExceptionHandler.java:567-584`、`620-629`
+公开路径和转发头信任分别由 `ddd4j.web.public-paths`、`ddd4j.web.trust-forwarded-headers` 控制。业务 Handler 可按自己的响应式 API 返回 `Mono` 或 `Flux`；不要把旧版 `ApiRestResponse` 当作当前模块的必需类型。
 
-## 响应统一
+## 异常与响应
 
-- `ApiCode` + `ApiRestResponse`：同 MVC，响应式返回封装一致
-- 参考：`ddd4j-core/src/main/java/io/ddd4j/boot/core/ApiCode.java`、`ApiRestResponse.java`
-
-## 使用建议
-
-- 控制器方法返回 `Mono<ApiRestResponse<T>>` 或 `Flux<ApiRestResponse<T>>`，避免裸类型返回
-- 统一在异常处理类中映射错误，保证响应码与国际化消息一致
-- 在需要追踪的链路中启用 MDC，便于日志聚合
-
+`GlobalErrorWebExceptionHandler` 通过共享的异常转换规则设置真实 HTTP 状态，并序列化统一的 `R` 错误体。当前实现位于 `ddd4j-web/ddd4j-web-webflux/src/main/java/io/ddd4j/web/webflux/error/`。三线维持同一业务错误语义；Jackson、Spring 和 Reactor 的实际依赖与适配由各线分别维护。

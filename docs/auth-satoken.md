@@ -1,46 +1,15 @@
 # Sa-Token 认证授权接入指南
 
-## 能力概览
+`ddd4j-auth/ddd4j-auth-satoken` 提供纯 Java 的 Sa-Token `Subject` 适配。应用在开始接收请求前，通过 `SaTokenSecurityProperties` 和 `SaTokenSecurityConfigurer.configure(...)` 安装安全配置；该模块不提供 Spring Boot 自动配置或 OAuth 授权服务器。可运行的配置示例与 JWT 要求见 [模块 README](../ddd4j-auth/ddd4j-auth-satoken/README.md)。
 
-- 集成组件：`ddd4j-cmpt/ddd4j-cmpt-satoken`
-- 自动配置注册：`META-INF/spring.factories` → `SaTokenEnhanceAutoConfiguration`
-- 扩展工具：`StpKit` 提供扩展载荷读取与类型转换、`SaTempKit` 提供临时授权码能力
+## 请求与授权链路
 
-## 关键类与路径
+1. WebMVC 和 WebFlux 的 `BearerSubjectAuthenticator` 从请求读取 Bearer token，经 `SubjectProvider` 验证主体；受保护路径缺失或无效 token 时返回未认证结果。公开路径由 `ddd4j.web.public-paths` 配置。
+2. `SaTokenSubjectProvider` 提供 Sa-Token 的主体实现。`Subject.verify(token)` 校验 token、账号体系和服务端映射；JWT Simple 还校验签名、issuer 与 audience。权限和角色由业务提供的 `SubjectDataProvider` 查询。
+3. 业务端按需使用 `Subject`/`StpKit` 获取当前主体和扩展信息。授权数据源如有缓存，由业务侧确定失效策略。
 
-- 自动配置：`ddd4j-cmpt/ddd4j-cmpt-satoken/src/main/resources/META-INF/spring.factories:3`
-- 扩展常量：`ddd4j-cmpt/ddd4j-cmpt-satoken/src/main/java/io/ddd4j/boot/cmpt/satoken/SaConstants.java`
-- 载荷读取：`ddd4j-cmpt/ddd4j-cmpt-satoken/src/main/java/io/ddd4j/boot/cmpt/satoken/util/StpKit.java:173-183`
-- 类型转换：`ddd4j-cmpt/ddd4j-cmpt-satoken/src/main/java/io/ddd4j/boot/cmpt/satoken/util/Functions.java`
+JWT Simple 密钥至少 32 个 UTF-8 字节，issuer、audience 必填。服务端 token 映射使登出、踢人和 TTL 到期后的 token 立即失效。无状态 JWT 不在该模块的生产支持范围内。
 
-## 快速接入
+## 三线适配边界
 
-1. 引入依赖（外部项目建议通过 BOM）
-    - `ddd4j-bom` 中声明了 `ddd4j-cmpt-satoken` 版本，直接添加依赖即可
-2. 配置 Sa-Token 基本属性（如 Token 风格、过期时间、是否 JWT 等）
-3. 在登录成功后，写入必要的扩展载荷（如用户、机构、角色等），便于后续读取
-
-## 载荷读取示例
-
-```java
-String userId = StpKit.getUserIdAsString();
-Long orgId = StpKit.getOrgIdAsLong();
-String roleId = StpKit.getRoleIdAsString();
-```
-
-## 临时授权码（一次性 Token）
-
-- 校验逻辑：`ddd4j-cmpt/ddd4j-cmpt-satoken/src/main/java/io/ddd4j/boot/cmpt/satoken/util/SaTempKit.java:99-109`
-- 典型使用：签发临时码用于敏感操作确认，后端校验通过后立即失效
-
-## 统一错误码
-
-- 认证/授权相关错误码集中在：`ddd4j-core/src/main/java/io/ddd4j/boot/core/ApiCodeValue.java:56-110`
-- 建议在异常处理处统一映射为 `ApiRestResponse` 输出，确保客户端行为一致
-
-## 最佳实践
-
-- 所有鉴权受保护的接口统一走 Sa-Token 拦截；在业务层通过 `StpUtil`/`StpKit` 读取上下文信息
-- 对 JWT 载荷的扩展键使用 `SaConstants` 约定字段，避免语义不一致
-- 对管理端/移动端区分 `deviceType`，用于风控与日志聚合
-
+三线保持以上认证和撤销语义一致。JDK、Sa-Token、Spring 及其他三方依赖版本由各线 POM 和依赖清单分别确定；不要用一条线的依赖声明覆盖其他线。
