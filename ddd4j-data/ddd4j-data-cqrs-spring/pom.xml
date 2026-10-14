@@ -14,16 +14,13 @@
     <name>${project.groupId}:${project.artifactId}</name>
     <description>ddd4j CQRS Spring 适配（Spring WebMVC/WebFlux）： SpringCommandBus 以 @Component 继承 ddd4j-core
         DefaultCommandBus（ADR-0004： 命令分发唯一入口，零新框架抽象），构造期经 ApplicationContext.getBeansOfType 收集
-        CommandExecutor Bean 注册 CommandRegistry，类级 @Transactional 包 execute。
+        CommandExecutor Bean 注册 CommandRegistry，方法级 @Transactional 包 execute。
     </description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <properties>
-        <!-- 仅测试栈：@SpringBootTest 真实容器所用的 Spring Boot starter 版本（与 -event-store-jpa
-             的 Task 4.1 决策一致）。BOM 刻意不管理 Spring Boot（4.1+4.2 实证全仓无 BOM 管理），
-             版本由 ddd4j-dependencies 集中钉定，取 3.4.4 = Spring 6.2 线（与 ddd4j-dependencies 管理的
-             spring-framework 6.2.x 匹配；Boot 4.x/Spring 7 线勿用），test 作用域不进入对外依赖面。 -->
-        <spring-boot-it.version>${spring-boot3-it.version}</spring-boot-it.version>
+        <!-- JDK 8 测试栈与本线 Spring Framework 5.3 保持一致。 -->
+        <spring-boot-it.version>${spring-boot2-it.version}</spring-boot-it.version>
     </properties>
 
     <dependencies>
@@ -33,8 +30,7 @@
             <version>${revision}</version>
         </dependency>
         <!-- For DDD4j -->
-        <!-- Spring Context：@Component 刻板 + ApplicationContext 收集（版本由 ddd4j-dependencies
-             导入的 spring-framework-bom 管理 = Spring 6.2 线，刻意不声明） -->
+        <!-- Spring Context：@Component 刻板 + ApplicationContext 收集，版本由本线 Spring BOM 管理。 -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
@@ -46,12 +42,23 @@
         </dependency>
 
         <!-- ======== Test ======== -->
-        <!-- Spring Boot Test（@SpringBootTest + ApplicationContextRunner 测试栈，
-             版本局部钉 3.4.4 仅测试栈，同 -event-store-jpa 决策） -->
+        <!-- Spring Boot 2.7 Test 仅用于本线真实容器测试。 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <version>${spring-boot-it.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.tngtech.archunit</groupId>
+            <artifactId>archunit-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- Boot 2.7 的 YAML loader 依赖 SnakeYAML 1.x 构造器。 -->
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>${snakeyaml-boot2.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
