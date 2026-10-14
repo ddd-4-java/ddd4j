@@ -39,6 +39,15 @@ public final class ReliableOrderOutboxPublisher {
     private final Clock clock;
     private final BooleanSupplier transactionActive;
 
+    /**
+     * 创建从订单 Outbox 读取并可靠发布消息的入口。
+     *
+     * @param transaction 订单事务端口
+     * @param outbox 持久化的订单 Outbox
+     * @param publisher 业务消息发布器
+     * @param leaseOwner 本实例领取消息时使用的租约标识
+     * @param clock 投递时钟
+     */
     public ReliableOrderOutboxPublisher(JdbcOrderTransactionPort transaction, JdbcOutboxPort outbox,
                                        IntegrationEventPublisher publisher, String leaseOwner, Clock clock) {
         this(new JdbcMQOutboxStore(transaction), outbox::findById, publisher, leaseOwner, clock,

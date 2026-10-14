@@ -39,6 +39,13 @@ public final class ReliableOrderOutboxWorker implements AutoCloseable {
     private ScheduledFuture<?> scheduledTask;
     private boolean closed;
 
+    /**
+     * 创建按固定间隔执行的 Outbox 工作器。
+     *
+     * @param publisher 可靠发布入口
+     * @param batchSize 每轮最多处理的消息数
+     * @param interval 两轮调度之间的间隔
+     */
     public ReliableOrderOutboxWorker(ReliableOrderOutboxPublisher publisher, int batchSize, Duration interval) {
         this.publisher = Objects.requireNonNull(publisher, "publisher must not be null");
         Objects.requireNonNull(interval, "interval must not be null");
