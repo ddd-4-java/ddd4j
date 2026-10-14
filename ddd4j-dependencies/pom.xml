@@ -153,7 +153,6 @@
         <derby.version>10.14.2.0</derby.version>
         <dingtalk-sdk.version>2.2.55</dingtalk-sdk.version>
         <dingtalk-service-sdk.version>2.0.0</dingtalk-service-sdk.version>
-        <disruptor-biz.version>1.0.0.RELEASE</disruptor-biz.version>
         <!-- Disruptor 4.x requires Java 11; feature/1.0.x remains on JDK8. -->
         <disruptor.version>3.4.4</disruptor.version>
         <docker-client.version>8.16.0</docker-client.version>
