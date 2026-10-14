@@ -166,7 +166,6 @@
         <dingtalk-sdk-extension.version>2.0.x.20260630-SNAPSHOT</dingtalk-sdk-extension.version>
         <dingtalk-sdk.version>2.2.55</dingtalk-sdk.version>
         <dingtalk-service-sdk.version>2.0.0</dingtalk-service-sdk.version>
-        <disruptor-biz.version>2.0.x.20260630-SNAPSHOT</disruptor-biz.version>
         <disruptor-extension.version>2.0.x.20260630-SNAPSHOT</disruptor-extension.version>
         <disruptor.version>4.0.0</disruptor.version>
         <docker-client.version>8.16.0</docker-client.version>
@@ -2748,13 +2747,6 @@
                 <groupId>com.lmax</groupId>
                 <artifactId>disruptor</artifactId>
                 <version>${disruptor.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/disruptor-biz -->
-            <!-- Easy4J Disruptor Biz：Easy4J 封装的 LMAX Disruptor 高性能线程间消息传递业务库。 -->
-            <dependency>
-                <groupId>io.github.easy4j</groupId>
-                <artifactId>disruptor-biz</artifactId>
-                <version>${disruptor-biz.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/disruptor-extension -->
             <!-- Easy4J Disruptor Extension：Easy4J 对 LMAX Disruptor 的扩展增强库。 -->
