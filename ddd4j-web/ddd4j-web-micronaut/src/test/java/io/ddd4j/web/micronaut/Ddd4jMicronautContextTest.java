@@ -58,6 +58,16 @@ class Ddd4jMicronautContextTest {
     }
 
     @Test
+    void beanAccessorsExposeTheSameRequestContextAndSubject() {
+        WebRequestContext ctx = createContext();
+        Optional<Subject> subject = Optional.of(org.mockito.Mockito.mock(Subject.class));
+        Ddd4jMicronautContext propagated = new Ddd4jMicronautContext(ctx, subject);
+
+        assertThat(propagated.getRequestContext()).isSameAs(propagated.requestContext());
+        assertThat(propagated.getSubject()).isSameAs(propagated.subject());
+    }
+
+    @Test
     void updateThreadContextOpensScopeAndBindsSubject() {
         WebRequestContext ctx = createContext();
         Subject subject = org.mockito.Mockito.mock(Subject.class);

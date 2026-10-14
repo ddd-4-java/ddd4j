@@ -98,6 +98,24 @@ public final class Ddd4jMicronautContext implements ThreadPropagatedContextEleme
         return subject;
     }
 
+    /**
+     * 获取 Web 请求上下文的 JavaBean 访问方法。
+     *
+     * @return Web 请求上下文
+     */
+    public WebRequestContext getRequestContext() {
+        return requestContext;
+    }
+
+    /**
+     * 获取当前主体的 JavaBean 访问方法。
+     *
+     * @return 可选主体
+     */
+    public Optional<Subject> getSubject() {
+        return subject;
+    }
+
     private Object readResolve() throws ObjectStreamException {
         try {
             return new Ddd4jMicronautContext(requestContext, subject);
