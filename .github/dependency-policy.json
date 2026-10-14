@@ -1,0 +1,105 @@
+{
+  "exclude": [
+    "org.springframework*:*",
+    "com.fasterxml.jackson*:*",
+    "tools.jackson*:*",
+    "io.ddd4j*:*",
+    "io.github.easy4j:*"
+  ],
+  "fixed_properties": {},
+  "branches": {
+    "backup/feature-1.0.x-github-before-codeup-alignment-20260831": {
+      "fixed_dependencies": {
+        "com.lmax:disruptor": "4.0.0"
+      }
+    },
+    "detached": {
+      "fixed_dependencies": {
+        "com.lmax:disruptor": "3.4.4"
+      }
+    },
+    "detached2": {
+      "fixed_dependencies": {
+        "com.lmax:disruptor": "3.4.4"
+      }
+    },
+    "feat-2.0.x-graph": {
+      "fixed_dependencies": {
+        "com.lmax:disruptor": "4.0.0"
+      }
+    },
+    "feat/weixin-java-4.8.5.B-20260630": {
+      "fixed_dependencies": {
+        "com.lmax:disruptor": "4.0.0"
+      }
+    },
+    "feat/weixin-java-4.8.5.B-3.0.x": {
+      "fixed_dependencies": {
+        "com.lmax:disruptor": "4.0.0"
+      }
+    },
+    "feature/1.0.x": {
+      "fixed_dependencies": {
+        "com.lmax:disruptor": "3.4.4"
+      }
+    },
+    "feature/2.0.x": {
+      "fixed_dependencies": {
+        "com.lmax:disruptor": "4.0.0"
+      }
+    },
+    "feature/3.0.x": {
+      "fixed_dependencies": {
+        "com.lmax:disruptor": "4.0.0"
+      }
+    },
+    "fix/1.0.x-jdk8-security-refresh": {
+      "fixed_dependencies": {
+        "com.lmax:disruptor": "3.4.4"
+      }
+    },
+    "fix/1.0.x-stage-e": {
+      "fixed_dependencies": {
+        "com.lmax:disruptor": "3.4.4"
+      }
+    },
+    "fix/2.0.x-javalin-samples": {
+      "fixed_dependencies": {
+        "com.lmax:disruptor": "4.0.0"
+      }
+    },
+    "fix/3.0.x-bom-junit-mockito": {
+      "fixed_dependencies": {
+        "com.lmax:disruptor": "4.0.0"
+      }
+    },
+    "fix/3.0.x-pom-maven-compat": {
+      "fixed_dependencies": {
+        "com.lmax:disruptor": "4.0.0"
+      }
+    },
+    "integration/feature-2.0.x-as-base": {
+      "fixed_dependencies": {
+        "com.lmax:disruptor": "4.0.0"
+      }
+    },
+    "integration/stage-b-final": {
+      "fixed_dependencies": {
+        "com.lmax:disruptor": "4.0.0"
+      }
+    },
+    "master": {
+      "fixed_dependencies": {
+        "com.lmax:disruptor": "4.0.0"
+      }
+    },
+    "opt/backport-mq-it-base": {
+      "fixed_dependencies": {
+        "com.lmax:disruptor": "3.4.4"
+      }
+    }
+  },
+  "exclude_properties": [],
+  "fixed_dependencies": {},
+  "cvss_threshold": 7
+}
