@@ -632,7 +632,6 @@
         <spring-amqp.version>3.2.5</spring-amqp.version>
         <spring-authorization-server.version>1.4.3</spring-authorization-server.version>
         <spring-batch.version>6.0.4</spring-batch.version>
-        <spring-biz.version>3.3.x.20241020.RELEASE</spring-biz.version>
         <spring-boot3-it.version>3.4.4</spring-boot3-it.version>
         <spring-bytebuddy.version>2.0.x.20260630-SNAPSHOT</spring-bytebuddy.version>
         <!-- Spring 6.2 使用 Spring Data 3.5；2025.1 引入的 Data 4 面向 Spring 7。 -->
@@ -9310,13 +9309,6 @@
                 <groupId>org.springframework.amqp</groupId>
                 <artifactId>spring-amqp</artifactId>
                 <version>${spring-amqp.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.github.redacted-legacy-family/spring-biz -->
-            <!-- Spring Biz：旧坐标下的 Spring 业务增强库（已迁至 io.github.easy4j）。 -->
-            <dependency>
-                <groupId>io.github.easy4j</groupId>
-                <artifactId>spring-biz</artifactId>
-                <version>${spring-biz.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/spring-bytebuddy -->
             <!-- Easy4J Spring ByteBuddy：Easy4J 的 Spring + ByteBuddy 字节码增强集成。 -->

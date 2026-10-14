@@ -16,7 +16,8 @@ package io.ddd4j.spring.i18n;
 
 import io.ddd4j.core.i18n.I18nProvider;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.biz.context.NestedMessageSource;
+import org.springframework.extension.context.NestedMessageSource;
+import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
@@ -36,7 +37,7 @@ public class SpringI18nProvider implements I18nProvider {
     /**
      * Spring 嵌套消息源
      */
-    private final NestedMessageSource messageSource;
+    private final MessageSource messageSource;
 
     public SpringI18nProvider(NestedMessageSource messageSource) {
         this.messageSource = messageSource;

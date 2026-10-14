@@ -16,10 +16,10 @@ package io.ddd4j.auth.datascope;
 
 import io.ddd4j.auth.datascope.annotation.RequiresDataPermissions;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.biz.utils.SpringContextUtils;
+import org.springframework.extension.utils.SpringContextUtils;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import java.util.Objects;
 
 /**
