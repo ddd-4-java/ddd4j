@@ -296,11 +296,45 @@ public class OrderController {
 
         private static final long serialVersionUID = 0L;
 
-        private final String orderNo;
+        private String orderNo;
 
-        private final String buyerId;
+        private String buyerId;
 
-        private final String buyerName;
+        private String buyerName;
+
+        /** 创建供请求绑定使用的空对象。 */
+        public CreateOrderRequest() {
+        }
+
+        /** @return 订单编号 */
+        public String getOrderNo() {
+            return orderNo;
+        }
+
+        /** @param orderNo 订单编号 */
+        public void setOrderNo(String orderNo) {
+            this.orderNo = orderNo;
+        }
+
+        /** @return 买家标识 */
+        public String getBuyerId() {
+            return buyerId;
+        }
+
+        /** @param buyerId 买家标识 */
+        public void setBuyerId(String buyerId) {
+            this.buyerId = buyerId;
+        }
+
+        /** @return 买家名称 */
+        public String getBuyerName() {
+            return buyerName;
+        }
+
+        /** @param buyerName 买家名称 */
+        public void setBuyerName(String buyerName) {
+            this.buyerName = buyerName;
+        }
 
         /**
          * 创建订单请求数据。
@@ -382,13 +416,57 @@ public class OrderController {
 
         private static final long serialVersionUID = 0L;
 
-        private final String goodsId;
+        private String goodsId;
 
-        private final String goodsName;
+        private String goodsName;
 
-        private final int quantity;
+        private int quantity;
 
-        private final BigDecimal unitPrice;
+        private BigDecimal unitPrice;
+
+        /** 创建供请求绑定使用的空对象。 */
+        public AddOrderLineRequest() {
+        }
+
+        /** @return 商品标识 */
+        public String getGoodsId() {
+            return goodsId;
+        }
+
+        /** @param goodsId 商品标识 */
+        public void setGoodsId(String goodsId) {
+            this.goodsId = goodsId;
+        }
+
+        /** @return 商品名称 */
+        public String getGoodsName() {
+            return goodsName;
+        }
+
+        /** @param goodsName 商品名称 */
+        public void setGoodsName(String goodsName) {
+            this.goodsName = goodsName;
+        }
+
+        /** @return 数量 */
+        public int getQuantity() {
+            return quantity;
+        }
+
+        /** @param quantity 数量 */
+        public void setQuantity(int quantity) {
+            this.quantity = quantity;
+        }
+
+        /** @return 单价 */
+        public BigDecimal getUnitPrice() {
+            return unitPrice;
+        }
+
+        /** @param unitPrice 单价 */
+        public void setUnitPrice(BigDecimal unitPrice) {
+            this.unitPrice = unitPrice;
+        }
 
         /**
          * 创建添加订单行请求数据。
