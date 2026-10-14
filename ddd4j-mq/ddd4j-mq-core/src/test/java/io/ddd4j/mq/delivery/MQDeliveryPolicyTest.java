@@ -59,6 +59,15 @@ class MQDeliveryPolicyTest {
     }
 
     @Test
+    void nonFiniteJitter_shouldBeRejectedBeforeScheduling() {
+        assertThrows(IllegalArgumentException.class, () -> new MQDeliveryPolicy(
+                Duration.ofSeconds(60), 3, Duration.ofSeconds(1), Duration.ofSeconds(5), Double.NaN));
+        MQDeliveryPolicy policy = MQDeliveryPolicy.productionDefault();
+        assertThrows(IllegalArgumentException.class, () -> policy.nextAvailableAt(
+                1, Instant.parse("2026-08-03T00:00:00Z"), Double.NaN));
+    }
+
+    @Test
     void constructor_shouldRejectInvalidDeliverySettings() {
         assertThrows(IllegalArgumentException.class, () -> new MQDeliveryPolicy(
                 Duration.ZERO, 1, Duration.ofSeconds(1), Duration.ofSeconds(1), 0.0D));

@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import io.ddd4j.kit.lang.StrKit;
 
 import java.time.Instant;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -88,11 +89,14 @@ public final class MQOutboxRecord {
         }
         Map<String, String> mutableHeaders = new LinkedHashMap<>(headers);
         mutableHeaders.put(MQDeliveryHeaders.MESSAGE_ID, messageId);
-        headers = Map.copyOf(mutableHeaders);
+        for (Map.Entry<String, String> header : mutableHeaders.entrySet()) {
+            Objects.requireNonNull(header.getKey(), "header key must not be null");
+            Objects.requireNonNull(header.getValue(), "header value must not be null");
+        }
         this.messageId = messageId;
         this.destination = destination;
         this.payload = payload;
-        this.headers = headers;
+        this.headers = Collections.unmodifiableMap(mutableHeaders);
         this.status = status;
         this.availableAt = availableAt;
         this.leaseOwner = leaseOwner;
