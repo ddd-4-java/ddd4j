@@ -66,10 +66,10 @@ public final class EntityIdPath implements Serializable {
         if (Objects.isNull(entityIds) || entityIds.isEmpty()) {
             throw new IllegalArgumentException("Entity identifier path must not be empty");
         }
-        this.entityIds = List.copyOf(entityIds);
-        if (this.entityIds.stream().anyMatch(Objects::isNull)) {
+        if (entityIds.stream().anyMatch(Objects::isNull)) {
             throw new IllegalArgumentException("Entity identifier path must not contain null");
         }
+        this.entityIds = List.copyOf(entityIds);
     }
 
     /**
