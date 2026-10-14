@@ -15,8 +15,11 @@
 package io.ddd4j.mq.nats;
 
 import io.ddd4j.mq.BrokerType;
+import io.ddd4j.mq.delivery.MQDeliveryHeaders;
 import io.ddd4j.mq.message.Acknowledgment;
+import io.ddd4j.kit.lang.StrKit;
 import io.nats.client.Message;
+import io.nats.client.impl.Headers;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
@@ -55,6 +58,13 @@ public final class NatsAcknowledgment implements Acknowledgment {
 
     @Override
     public String correlationId() {
+        Headers headers = message.getHeaders();
+        if (Objects.nonNull(headers)) {
+            String correlationId = headers.getFirst(MQDeliveryHeaders.CORRELATION_ID);
+            if (StrKit.isNotEmpty(correlationId)) {
+                return correlationId;
+            }
+        }
         return message.getReplyTo();
     }
 
