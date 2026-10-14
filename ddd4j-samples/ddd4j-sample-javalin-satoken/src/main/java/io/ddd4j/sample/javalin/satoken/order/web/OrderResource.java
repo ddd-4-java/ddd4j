@@ -189,6 +189,16 @@ public class OrderResource {
             return currency;
         }
 
+        /** @return 折扣金额 */
+        public String getAmount() {
+            return amount;
+        }
+
+        /** @return 币种 */
+        public String getCurrency() {
+            return currency;
+        }
+
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {

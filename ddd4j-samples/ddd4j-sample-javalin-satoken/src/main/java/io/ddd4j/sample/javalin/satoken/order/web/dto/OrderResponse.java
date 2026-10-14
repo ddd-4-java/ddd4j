@@ -173,6 +173,36 @@ public final class OrderResponse {
             return currency;
         }
 
+        /** @return 订单行标识 */
+        public String getId() {
+            return id;
+        }
+
+        /** @return 商品标识 */
+        public String getGoodsId() {
+            return goodsId;
+        }
+
+        /** @return 商品名称 */
+        public String getGoodsName() {
+            return goodsName;
+        }
+
+        /** @return 数量 */
+        public int getQuantity() {
+            return quantity;
+        }
+
+        /** @return 单价 */
+        public String getUnitPrice() {
+            return unitPrice;
+        }
+
+        /** @return 币种 */
+        public String getCurrency() {
+            return currency;
+        }
+
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -304,6 +334,46 @@ public final class OrderResponse {
      */
     @JsonProperty("lines")
     public List<OrderLineResponse> lines() {
+        return lines;
+    }
+
+    /** @return 订单标识 */
+    public String getId() {
+        return id;
+    }
+
+    /** @return 订单编号 */
+    public String getOrderNo() {
+        return orderNo;
+    }
+
+    /** @return 买家标识 */
+    public String getBuyerId() {
+        return buyerId;
+    }
+
+    /** @return 买家名称 */
+    public String getBuyerName() {
+        return buyerName;
+    }
+
+    /** @return 订单状态 */
+    public OrderStatus getStatus() {
+        return status;
+    }
+
+    /** @return 总金额 */
+    public String getTotalAmount() {
+        return totalAmount;
+    }
+
+    /** @return 币种 */
+    public String getCurrency() {
+        return currency;
+    }
+
+    /** @return 订单行列表 */
+    public List<OrderLineResponse> getLines() {
         return lines;
     }
 
