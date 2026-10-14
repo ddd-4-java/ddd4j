@@ -107,9 +107,10 @@ public class RedisStreamAcknowledgment implements Acknowledgment {
     }
 
     @Override
-    public void ack(boolean multiple) {
-        if (acknowledged.compareAndSet(false, true)) {
+    public synchronized void ack(boolean multiple) {
+        if (!acknowledged.get()) {
             operations.ack(stream, group, entryId);
+            acknowledged.set(true);
         }
     }
 
