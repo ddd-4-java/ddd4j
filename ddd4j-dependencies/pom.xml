@@ -459,6 +459,7 @@
         <netty.version>4.2.15.Final</netty.version>
         <nimbus-jose-jwt.version>10.9.1</nimbus-jose-jwt.version>
         <objenesis.version>3.5</objenesis.version>
+        <ofdrw.version>2.4.0</ofdrw.version>
         <okhttp3-extension.version>2.0.x.20260630-SNAPSHOT</okhttp3-extension.version>
         <okhttp3-metrics-prometheus.version>2.0.x.20260630-SNAPSHOT</okhttp3-metrics-prometheus.version>
         <okhttp.version>4.12.0</okhttp.version>
@@ -7721,6 +7722,11 @@
                 <groupId>org.apache.pdfbox</groupId>
                 <artifactId>pdfbox</artifactId>
                 <version>${pdfbox.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ofdrw</groupId>
+                <artifactId>ofdrw-core</artifactId>
+                <version>${ofdrw.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox-debugger -->
             <!-- PDFBox Debugger：PDFBox 的 PDF 文档结构调试查看器。 -->
