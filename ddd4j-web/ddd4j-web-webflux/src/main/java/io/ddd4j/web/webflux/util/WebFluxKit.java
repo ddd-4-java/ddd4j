@@ -77,7 +77,7 @@ public class WebFluxKit {
     }
 
     /**
-     * 从 Flux<DataBuffer> 中获取请求体字符串。
+     * 从 {@code Flux<DataBuffer>} 中获取请求体字符串。
      */
     public static Mono<String> resolveBodyFromRequest(ServerHttpRequest serverHttpRequest) {
         if (serverHttpRequest.getHeaders().getContentLength() == 0) {

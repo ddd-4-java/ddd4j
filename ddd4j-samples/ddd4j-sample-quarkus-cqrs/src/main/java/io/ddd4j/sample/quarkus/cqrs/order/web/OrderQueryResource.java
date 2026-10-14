@@ -39,7 +39,7 @@ import java.util.List;
  *   <li>查询端（本类）：处理查询/列表/统计等读操作，走缓存优先</li>
  * </ul>
  *
- * <h3>端点</h3>
+ * <h2>端点</h2>
  * <ul>
  *   <li>{@code GET /query/orders/{id}}           - 按 ID 查询（缓存优先）</li>
  *   <li>{@code GET /query/orders}                 - 按条件查询列表</li>

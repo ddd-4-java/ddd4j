@@ -196,6 +196,17 @@
                 <enabled>true</enabled>
             </releases>
         </repository>
+        <repository>
+            <id>scijava-releases</id>
+            <name>SciJava Releases</name>
+            <url>https://maven.scijava.org/content/repositories/releases</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
     </repositories>
 
     <pluginRepositories>

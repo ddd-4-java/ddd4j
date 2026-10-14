@@ -18,11 +18,8 @@
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <properties>
-        <!-- 仅测试栈：@SpringBootTest 真实容器所用的 Spring Boot starter 版本（与 -event-store-jpa
-             的 Task 4.1 决策一致）。BOM 刻意不管理 Spring Boot（4.1+4.2 实证全仓无 BOM 管理），
-             版本由 ddd4j-dependencies 集中钉定，取 3.4.4 = Spring 6.2 线（与 ddd4j-dependencies 管理的
-             spring-framework 6.2.x 匹配；Boot 4.x/Spring 7 线勿用），test 作用域不进入对外依赖面。 -->
-        <spring-boot-it.version>${spring-boot3-it.version}</spring-boot-it.version>
+        <!-- JDK 21 / Spring Framework 7 测试栈使用 Spring Boot 4。 -->
+        <spring-boot-it.version>${spring-boot4-it.version}</spring-boot-it.version>
     </properties>
 
     <dependencies>
@@ -32,8 +29,7 @@
             <version>${revision}</version>
         </dependency>
         <!-- For DDD4j -->
-        <!-- Spring Context：@Component 刻板 + ApplicationContext 收集（版本由 ddd4j-dependencies
-             导入的 spring-framework-bom 管理 = Spring 6.2 线，刻意不声明） -->
+        <!-- Spring Context：@Component + ApplicationContext 收集，版本由 Spring Framework BOM 管理。 -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
@@ -45,11 +41,17 @@
         </dependency>
 
         <!-- ======== Test ======== -->
-        <!-- Spring Boot Test（@SpringBootTest + ApplicationContextRunner 测试栈，
-             版本局部钉 3.4.4 仅测试栈，同 -event-store-jpa 决策） -->
+        <!-- Spring Boot Test（@SpringBootTest + ApplicationContextRunner 测试栈）。 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <version>${spring-boot-it.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Boot 4 将事务自动配置拆为独立模块；真实容器 IT 需验证事务代理。 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-transaction</artifactId>
             <version>${spring-boot-it.version}</version>
             <scope>test</scope>
         </dependency>

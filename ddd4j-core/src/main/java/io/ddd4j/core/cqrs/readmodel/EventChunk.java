@@ -17,6 +17,7 @@ package io.ddd4j.core.cqrs.readmodel;
 import io.ddd4j.kit.lang.CollKit;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -35,7 +36,11 @@ public class EventChunk<E> {
     private final long nextEventNumber;
 
     public EventChunk(List<E> events, long nextEventNumber) {
-        this.events = List.copyOf(Objects.requireNonNull(events, "events must not be null"));
+        List<E> snapshot = new ArrayList<>(Objects.requireNonNull(events, "events must not be null"));
+        for (E event : snapshot) {
+            Objects.requireNonNull(event, "events must not contain null");
+        }
+        this.events = List.copyOf(snapshot);
         if (nextEventNumber < 0) {
             throw new IllegalArgumentException("nextEventNumber must not be negative");
         }

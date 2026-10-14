@@ -26,7 +26,7 @@ import java.util.Objects;
  * <p>8 个 web 框架的拦截器/过滤器通过此类集成 WebOtelIntegration。
  * 若 ddd4j-extension-otel 不在 classpath 上，所有方法为 noop（反射失败 → 安全降级）。
  *
- * <h3>GraalVM native-image 注意事项</h3>
+ * <h2>GraalVM native-image 注意事项</h2>
  * <p>本类在运行时通过 {@code Class.forName} + {@code getMethod} 反射调用
  * {@code io.ddd4j.extension.otel.WebOtelIntegration} 的 6 个静态方法
  * （{@code startServerSpan} / {@code activate} / {@code recordError} /

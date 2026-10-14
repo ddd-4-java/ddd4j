@@ -29,8 +29,9 @@ import java.util.function.Function;
  * <p>充血查询链路中，业务方用 Domain Model 字段引用 Lambda，本类缓存
  * {@link DomainModelInfo}（包含字段→PO 列名映射）以加速翻译。
  *
- * <h3>与 {@code TableInfoHelper} 的对偶关系</h3>
+ * <h2>与 {@code TableInfoHelper} 的对偶关系</h2>
  * <table border="1">
+ *   <caption>PO 与 Domain 元数据对照</caption>
  *   <tr><th>维度</th><th>PO（MP 原生）</th><th>Domain（本类）</th></tr>
  *   <tr><td>元数据</td><td>{@code TableInfo}</td><td>{@code DomainModelInfo}</td></tr>
  *   <tr><td>字段</td><td>{@code TableFieldInfo}</td><td>{@code DomainFieldInfo}</td></tr>

@@ -17,6 +17,7 @@ package io.ddd4j.mq.nats;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
+import io.ddd4j.mq.delivery.MQDeliveryHeaders;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.lifecycle.MQClientLifecycle;
 import io.ddd4j.mq.lifecycle.MQStartupStatus;
@@ -30,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -92,8 +94,11 @@ public class NatsMQClient implements MQClient {
 
     static Headers messageHeaders(MQEvent event) {
         Headers headers = new Headers();
-        if (StrKit.isNotEmpty(event.getMsgId())) {
-            headers.put(MessageHeaders.HEADER_MESSAGE_ID, event.getMsgId());
+        for (Map.Entry<String, String> header : event.headerMap().entrySet()) {
+            headers.put(header.getKey(), header.getValue());
+        }
+        if (StrKit.isNotEmpty(event.getTag())) {
+            headers.put(MessageHeaders.HEADER_DESTINATION_TAG, event.getTag());
         }
         return headers;
     }
@@ -113,6 +118,20 @@ public class NatsMQClient implements MQClient {
     private static void restoreMessageId(MQEvent event, String messageId) {
         if (StrKit.isNotEmpty(messageId)) {
             event.setMsgId(messageId);
+        }
+    }
+
+    private static void restoreCausality(MQEvent event, Headers headers) {
+        if (Objects.isNull(headers)) {
+            return;
+        }
+        String correlationId = headers.getFirst(MQDeliveryHeaders.CORRELATION_ID);
+        if (StrKit.isNotEmpty(correlationId)) {
+            event.setCorrelationId(correlationId);
+        }
+        String causationId = headers.getFirst(MQDeliveryHeaders.CAUSATION_ID);
+        if (StrKit.isNotEmpty(causationId)) {
+            event.setCausationId(causationId);
         }
     }
 
@@ -148,7 +167,7 @@ public class NatsMQClient implements MQClient {
         Connection conn = connection();
         return event -> {
             String payload = serialization().serialize(event);
-            String subject = resolveTopic(event, mqProperties);
+            String subject = resolveTopic(namespace(event, mqProperties), event.getTopic(), null, concat(event));
             try {
                 byte[] body = payload.getBytes(StandardCharsets.UTF_8);
                 Headers headers = messageHeaders(event);
@@ -173,7 +192,8 @@ public class NatsMQClient implements MQClient {
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
         Connection conn = connection();
-        String subject = resolveTopic(listener, mqProperties);
+        String subject = resolveTopic(namespace(listener.getNamespace(), mqProperties),
+                listener.getTopic(), null, defaultConcat());
         int checkpoint = lifecycle.checkpoint();
         try {
             JetStream jetStream = conn.jetStream();
@@ -213,17 +233,23 @@ public class NatsMQClient implements MQClient {
                 return;
             }
             restoreMessageId(event, messageId(natsMessage.getHeaders()));
-            // 应用层 tag 过滤（tag 取 subject 末段）
-            String tag = null;
-            String subject = natsMessage.getSubject();
-            int lastDot = subject.lastIndexOf('.');
-            if (lastDot >= 0) {
-                tag = subject.substring(lastDot + 1);
-            }
-            if (!TagMatcher.match(tag, listener.getTags())) {
-                return;
+            restoreCausality(event, natsMessage.getHeaders());
+            String tag = event.getTag();
+            Headers headers = natsMessage.getHeaders();
+            if (Objects.nonNull(headers)) {
+                String nativeTag = headers.getFirst(MessageHeaders.HEADER_DESTINATION_TAG);
+                if (StrKit.isNotEmpty(nativeTag)) {
+                    tag = nativeTag;
+                    event.setTag(nativeTag);
+                }
             }
             NatsAcknowledgment ack = new NatsAcknowledgment(natsMessage);
+            if (!TagMatcher.match(tag, listener.getTags())) {
+                if (Objects.nonNull(natsMessage.metaData())) {
+                    ack.ackSingle();
+                }
+                return;
+            }
             consume(listener, event, ack);
             if (!ack.isAcknowledged()) {
                 ack.ackSingle();

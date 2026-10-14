@@ -12,7 +12,7 @@
 > - 上游：[`7、ddd4j-领域模型设计.md`](./7、ddd4j-领域模型设计.md) — 抽象与契约
 > - 上游：[`5、ddd4j-技术方案与路线.md`](./5、ddd4j-技术方案与路线.md) — 如何实现
 > - 上游：[`6、ddd4j-产品与版本规划.md`](./6、ddd4j-产品与版本规划.md) — 何时做、谁来做
-> - 上游：[`1.0.x/8、ddd4j-1.0.x-Architecture.zh_CN.md`](./1.0.x/8、ddd4j-1.0.x-Architecture.zh_CN.md) — 1.0.x 版本架构
+> - 上游：[`1.0.x/8、ddd4j-1.0.x-Architecture.zh_CN.md`](./8、ddd4j-1.0.x-Architecture.zh_CN.md) — 1.0.x 版本架构
 
 ---
 
@@ -193,7 +193,7 @@ flowchart TB
     end
 ```
 
-> **运行时映射表**：见 [README §多框架运行时绑定](./README.md#5-maven-模块矩阵)。
+> **运行时映射表**：见 [README §多框架运行时绑定](../README.md#5-maven-模块矩阵)。
 
 ## 5. ArchUnit 边界守护（编译期）
 
@@ -259,7 +259,7 @@ gantt
 
 > 三轨通过 **核心 SPI 字面级一致**实现互替性。版本矩阵、升级路径、支持窗口、技术兼容性矩阵见 [
 `6、ddd4j-产品与版本规划.md`](./6、ddd4j-产品与版本规划.md)。三线允许差异的完整清单见 [
-`1.0.x/8、ddd4j-1.0.x-Architecture.zh_CN.md`](./1.0.x/8、ddd4j-1.0.x-Architecture.zh_CN.md)。
+`1.0.x/8、ddd4j-1.0.x-Architecture.zh_CN.md`](./8、ddd4j-1.0.x-Architecture.zh_CN.md)。
 
 ## 8. 安全设计
 

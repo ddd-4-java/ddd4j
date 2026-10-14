@@ -17,6 +17,11 @@ package io.ddd4j.core.ddd.event;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
@@ -27,6 +32,22 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
  * @since 4.0.0
  */
 class EntityIdPathTest {
+
+    @Test
+    void sourceListAndReturnedIteratorCannotMutateThePath() {
+        List<EntityId> source = new ArrayList<>(Arrays.asList(
+                new StringEntityId("order-1"), new StringEntityId("line-1")));
+        EntityIdPath path = new EntityIdPath(source);
+
+        source.set(0, new StringEntityId("changed"));
+        assertThat(path.first().asString()).isEqualTo("order-1");
+
+        Iterator<EntityId> iterator = path.iterator();
+        iterator.next();
+        iterator.remove();
+        assertThat(path.size()).isEqualTo(2);
+        assertThat(path.asString()).isEqualTo("String:order-1/String:line-1");
+    }
 
     @AfterEach
     void cleanup() {
@@ -178,6 +199,70 @@ class EntityIdPathTest {
         assertThat(EntityIdRegistry.isRegistered("string")).isFalse();
     }
 
+    @Test
+    void isValidAcceptsWellFormedPaths() {
+        // 单段与多段
+        assertThat(EntityIdPath.isValid("String:order-1")).isTrue();
+        assertThat(EntityIdPath.isValid("String:order-1/String:item-9")).isTrue();
+        // 值内冒号无需转义——「首个 : 切分」约定下全部归属 value
+        assertThat(EntityIdPath.isValid("String:a:b:c")).isTrue();
+        // 值内转义的 \/ 不是段分隔符
+        assertThat(EntityIdPath.isValid("String:a\\/b")).isTrue();
+    }
+
+    @Test
+    void isValidRejectsMalformedPaths() {
+        assertThat(EntityIdPath.isValid(null)).isFalse();
+        assertThat(EntityIdPath.isValid("")).isFalse();
+        assertThat(EntityIdPath.isValid("   ")).isFalse();
+        // 缺 Type:value 形态
+        assertThat(EntityIdPath.isValid("order-1")).isFalse();
+        // 尾部空段
+        assertThat(EntityIdPath.isValid("String:order-1/")).isFalse();
+        // 空 type / 空 value
+        assertThat(EntityIdPath.isValid(":order-1")).isFalse();
+        assertThat(EntityIdPath.isValid("String:")).isFalse();
+        // 中间空段
+        assertThat(EntityIdPath.isValid("String:a//b")).isFalse();
+    }
+
+    @Test
+    void isValidNeverThrowsOnGarbageInput() {
+        String[] garbage = {"/", "\\", "::", "::::", "/:", "String:order-1//", "a/b/c", "\\:", "x\\/:y/"};
+        for (String input : garbage) {
+            assertThat(EntityIdPath.isValid(input)).isFalse();
+        }
+    }
+
+    @Test
+    void isValidAgreesWithValueOf() {
+        String valid = "String:order-1/String:item-9";
+        assertThat(EntityIdPath.isValid(valid)).isTrue();
+        // 序列化对偶：解析后 asString() 还原原文
+        assertThat(EntityIdPath.valueOf(valid).asString()).isEqualTo(valid);
+    }
+
+    @Test
+    void navigationAlgebraFollowsEventRoutingContract() {
+        EntityIdPath path = EntityIdPath.valueOf("String:order-1/String:item-9");
+
+        assertThat(path.size()).isEqualTo(2);
+        // 首段恒为聚合根标识、末段为事件源标识
+        assertThat(path.first().asString()).isEqualTo("order-1");
+        assertThat(path.last().asString()).isEqualTo("item-9");
+        // rest 去首段、parent 去末段
+        assertThat(path.rest().asString()).isEqualTo("String:item-9");
+        assertThat(path.parent().asString()).isEqualTo("String:order-1");
+    }
+
+    @Test
+    void singleElementPathReturnsNullForRestAndParent() {
+        EntityIdPath single = EntityIdPath.valueOf("String:order-1");
+
+        assertThat(single.size()).isEqualTo(1);
+        assertThat(single.rest()).isNull();
+        assertThat(single.parent()).isNull();
+    }
     // === Test Fixtures ===
 
     private static final class TestOrderId implements EntityId {

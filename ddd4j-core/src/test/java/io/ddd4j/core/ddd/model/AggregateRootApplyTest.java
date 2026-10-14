@@ -22,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Objects;
 
 import io.ddd4j.core.ddd.event.DomainEvent;
-import io.ddd4j.core.ddd.event.EntityId;
+import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.EntityIdPath;
 import io.ddd4j.core.ddd.event.EntityType;
 import io.ddd4j.core.ddd.event.EventHandler;
@@ -70,6 +70,8 @@ class AggregateRootApplyTest {
                 "message should name the event type");
         assertTrue(exception.getMessage().contains(Order.class.getName()),
                 "message should name the aggregate type");
+        assertTrue(exception.getMessage().contains("rooted at Order:order-1"),
+                "message should name the aggregate root segment");
     }
 
     @Test
@@ -143,7 +145,7 @@ class AggregateRootApplyTest {
             super(new EntityIdPath(new OrderId("order-1")));
         }
 
-        final static class OrderId implements EntityId {
+        final static class OrderId implements AggregateRootId {
 
             private static final long serialVersionUID = 0L;
 

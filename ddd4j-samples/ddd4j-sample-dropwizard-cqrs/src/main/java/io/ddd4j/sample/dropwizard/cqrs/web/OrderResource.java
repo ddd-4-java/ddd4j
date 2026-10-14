@@ -18,7 +18,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
-import java.util.Objects;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import io.ddd4j.core.cqrs.command.Result;
 import io.ddd4j.sample.dropwizard.cqrs.DropwizardCqrsApplication;
@@ -65,15 +66,17 @@ public class OrderResource {
         return Response.ok(entity).build();
     }
 
-    public final static class CreateOrderRequest {
+    @Data
+    @NoArgsConstructor
+    public static class CreateOrderRequest {
 
         private static final long serialVersionUID = 0L;
 
-        private final String orderNo;
+        private String orderNo;
 
-        private final String buyerId;
+        private String buyerId;
 
-        private final String buyerName;
+        private String buyerName;
 
         @JsonCreator()
         public CreateOrderRequest(@JsonProperty("orderNo") String orderNo, @JsonProperty("buyerId") String buyerId, @JsonProperty("buyerName") String buyerName) {
@@ -97,30 +100,5 @@ public class OrderResource {
             return buyerName;
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            CreateOrderRequest other = (CreateOrderRequest) obj;
-            return Objects.equals(this.orderNo, other.orderNo) && Objects.equals(this.buyerId, other.buyerId) && Objects.equals(this.buyerName, other.buyerName);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(orderNo);
-            result = 31 * result + Objects.hashCode(buyerId);
-            result = 31 * result + Objects.hashCode(buyerName);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "CreateOrderRequest[orderNo=" + orderNo + ", buyerId=" + buyerId + ", buyerName=" + buyerName + "]";
-        }
     }
 }

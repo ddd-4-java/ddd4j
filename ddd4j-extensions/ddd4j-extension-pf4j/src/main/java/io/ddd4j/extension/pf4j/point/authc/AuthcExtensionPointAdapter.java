@@ -18,7 +18,7 @@ import org.pf4j.PluginRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
 import java.util.Map;
 

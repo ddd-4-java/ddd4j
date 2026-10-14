@@ -72,4 +72,26 @@ class PlainValueContractTest {
         assertThat(mapper.readValue(json, ReadinessResult.class)).isEqualTo(value);
         assertThat(mapper.readValue("{\"name\":\"db\",\"ready\":true,\"details\":null}", ReadinessResult.class).details()).isEmpty();
     }
+    @Test
+    void immutableValueCollectionsRejectNullEntries() {
+        assertThatThrownBy(() -> new ReadinessResult("db", true,
+                java.util.Collections.singletonMap("nullable", null)))
+                .isInstanceOf(NullPointerException.class);
+        assertThatThrownBy(() -> new ReadinessReport(true,
+                java.util.Arrays.asList(ReadinessResult.ready("db"), null)))
+                .isInstanceOf(NullPointerException.class);
+    }
+
+    @Test
+    void readinessReportRetainsValueAndJsonContract() throws Exception {
+        ReadinessReport report = new ReadinessReport(true,
+                java.util.Collections.singletonList(ReadinessResult.ready("db")));
+        JsonMapper mapper = JsonMapper.builder().build();
+        String json = mapper.writeValueAsString(report);
+        assertThat(mapper.readTree(json).get("ready").asBoolean()).isTrue();
+        assertThat(mapper.readValue(json, ReadinessReport.class)).isEqualTo(report);
+        assertThat(report.toString()).isEqualTo(
+                "ReadinessReport[ready=true, results=[ReadinessResult[name=db, ready=true, details={}]]]");
+    }
+
 }

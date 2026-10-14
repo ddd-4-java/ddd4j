@@ -17,6 +17,7 @@ package io.ddd4j.mq.redisstream;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
+import io.ddd4j.mq.delivery.MQDeliveryHeaders;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.lifecycle.MQClientLifecycle;
 import io.ddd4j.mq.lifecycle.MQStartupStatus;
@@ -28,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 import redis.clients.jedis.StreamEntryID;
 import redis.clients.jedis.UnifiedJedis;
 import redis.clients.jedis.params.XReadGroupParams;
+import redis.clients.jedis.params.XAutoClaimParams;
 import redis.clients.jedis.resps.StreamEntry;
 import redis.clients.jedis.resps.StreamGroupInfo;
 
@@ -166,9 +168,7 @@ public class RedisStreamMQClient implements MQClient {
             String streamKey = resolveTopic(mqEvent, properties);
             Map<String, String> fields = new HashMap<>();
             fields.put("payload", payload);
-            if (StrKit.isNotEmpty(mqEvent.getMsgId())) {
-                fields.put(MessageHeaders.HEADER_MESSAGE_ID, mqEvent.getMsgId());
-            }
+            fields.putAll(mqEvent.headerMap());
             if (Objects.nonNull(mqEvent.getTag())) {
                 fields.put(tagHeaderKey(), mqEvent.getTag());
             }
@@ -184,6 +184,17 @@ public class RedisStreamMQClient implements MQClient {
 
     @Override
     public boolean initConsumer(MQListener listener, MQProperties properties) throws Exception {
+        RedisStreamMQProperties streamProperties = this.properties;
+        if (Objects.isNull(streamProperties) && properties instanceof RedisStreamMQProperties) {
+            streamProperties = (RedisStreamMQProperties) properties;
+        }
+        final RedisStreamMQProperties consumerSettings = streamProperties;
+        String configuredConsumerName = Objects.nonNull(streamProperties)
+                ? streamProperties.getConsumerName() : null;
+        String consumerName = StrKit.isNotEmpty(configuredConsumerName)
+                && !"ddd4j".equals(configuredConsumerName)
+                ? configuredConsumerName + "-" + listener.getMethod().getName()
+                : listener.getMethod().getName();
         final UnifiedJedis consumerJedis;
         if (Objects.nonNull(this.properties)) {
             consumerJedis = this.properties.newJedis();
@@ -209,6 +220,7 @@ public class RedisStreamMQClient implements MQClient {
 
         Map<String, StreamEntryID> streamKeys = new HashMap<>();
         Map<String, StreamEntryID> pendingKeys = new HashMap<>();
+        Map<String, StreamEntryID> claimCursors = new HashMap<>();
         try {
             UnifiedJedis jedis = consumerJedis;
             // 创建消费组（忽略已存在）
@@ -226,6 +238,7 @@ public class RedisStreamMQClient implements MQClient {
                 }
                 streamKeys.put(topic, StreamEntryID.UNRECEIVED_ENTRY);
                 pendingKeys.put(topic, new StreamEntryID("0-0"));
+                claimCursors.put(topic, new StreamEntryID("0-0"));
             }
         } catch (Exception e) {
             log.error("Create consumer group failed!", e);
@@ -245,10 +258,26 @@ public class RedisStreamMQClient implements MQClient {
                     UnifiedJedis jedis = consumerJedis;
                     // 稳定 consumer 重启后先恢复自己的 PEL，再读取尚未投递的新消息。
                     List<Map.Entry<String, List<StreamEntry>>> messages = jedis.xreadGroup(listener.getGroup(),
-                            listener.getMethod().getName(),
+                            consumerName,
                             XReadGroupParams.xReadGroupParams().count(10), pendingKeys);
+                    if (!hasEntries(messages) && Objects.nonNull(consumerSettings)
+                            && consumerSettings.isAutoClaimEnabled()) {
+                        List<Map.Entry<String, List<StreamEntry>>> claimedMessages = new ArrayList<>();
+                        for (String topic : topics) {
+                            Map.Entry<StreamEntryID, List<StreamEntry>> claimed = jedis.xautoclaim(
+                                    topic, listener.getGroup(), consumerName,
+                                    consumerSettings.getClaimMinIdleMillis(), claimCursors.get(topic),
+                                    XAutoClaimParams.xAutoClaimParams()
+                                            .count(Math.max(1, consumerSettings.getCount())));
+                            claimCursors.put(topic, claimed.getKey());
+                            if (Objects.nonNull(claimed.getValue()) && !claimed.getValue().isEmpty()) {
+                                claimedMessages.add(new AbstractMap.SimpleEntry<>(topic, claimed.getValue()));
+                            }
+                        }
+                        messages = claimedMessages;
+                    }
                     if (!hasEntries(messages)) {
-                        messages = jedis.xreadGroup(listener.getGroup(), listener.getMethod().getName(),
+                        messages = jedis.xreadGroup(listener.getGroup(), consumerName,
                                 XReadGroupParams.xReadGroupParams().count(10).block(1000), streamKeys);
                     }
                     if (!hasEntries(messages)) {
@@ -275,9 +304,17 @@ public class RedisStreamMQClient implements MQClient {
                             if (StrKit.isNotEmpty(messageId)) {
                                 mqEvent.setMsgId(messageId);
                             }
+                            String correlationId = streamEntry.getFields().get(MQDeliveryHeaders.CORRELATION_ID);
+                            if (StrKit.isNotEmpty(correlationId)) {
+                                mqEvent.setCorrelationId(correlationId);
+                            }
+                            String causationId = streamEntry.getFields().get(MQDeliveryHeaders.CAUSATION_ID);
+                            if (StrKit.isNotEmpty(causationId)) {
+                                mqEvent.setCausationId(causationId);
+                            }
                             Acknowledgment ack = new RedisStreamAcknowledgment(
                                     jedis, entry.getKey(), listener.getGroup(), streamEntry.getID(),
-                                    mqEvent.getMsgId(), mqEvent.getMsgId());
+                                    mqEvent.getMsgId(), mqEvent.getCorrelationId());
                             try {
                                 // 消费消息
                                 consume(listener, mqEvent, ack);

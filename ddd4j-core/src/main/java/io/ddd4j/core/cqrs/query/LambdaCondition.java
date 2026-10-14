@@ -17,6 +17,7 @@ package io.ddd4j.core.cqrs.query;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.io.InvalidObjectException;
 
@@ -80,6 +81,7 @@ public final class LambdaCondition implements Serializable {
     /**
      * 是否为排序条件。
      */
+    @JsonIgnore
     public boolean isOrderBy() {
         return StrPool.ASC.equals(operator) || StrPool.DESC.equals(operator);
     }

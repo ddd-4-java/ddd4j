@@ -106,6 +106,34 @@ public class OrderCQRSQueryController {
 
         private final int lineCount;
 
+        public String getId() {
+            return id;
+        }
+
+        public String getOrderNo() {
+            return orderNo;
+        }
+
+        public String getBuyerId() {
+            return buyerId;
+        }
+
+        public String getBuyerName() {
+            return buyerName;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+
+        public Money getTotalAmount() {
+            return totalAmount;
+        }
+
+        public int getLineCount() {
+            return lineCount;
+        }
+
         @JsonCreator()
         public OrderResponse(@JsonProperty("id") String id, @JsonProperty("orderNo") String orderNo, @JsonProperty("buyerId") String buyerId, @JsonProperty("buyerName") String buyerName, @JsonProperty("status") String status, @JsonProperty("totalAmount") Money totalAmount, @JsonProperty("lineCount") int lineCount) {
             this.id = id;

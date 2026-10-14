@@ -48,6 +48,10 @@ public class IdempotentException extends BizRuntimeException {
     }
 
     public IdempotentException(ApiCode code, String i18nCode) {
+        this((CustomApiCode) code, i18nCode);
+    }
+
+    public IdempotentException(CustomApiCode code, String i18nCode) {
         super(code, i18nCode);
     }
 

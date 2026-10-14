@@ -37,7 +37,7 @@ import jakarta.ws.rs.core.Response;
  * {@code getLang()} / {@code ok(data)} / {@code fail(msg)} 等辅助方法，
  * 同时复用 ddd4j 的统一响应包装 {@link R}。
  *
- * <h3>端点</h3>
+ * <h2>端点</h2>
  * <ul>
  *   <li>{@code POST   /goods}                 - 创建商品</li>
  *   <li>{@code PUT    /goods/{id}}             - 更新商品</li>

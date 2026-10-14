@@ -103,7 +103,7 @@ public final class TestSupport {
                 goodsReadController.routes();
             });
         });
-        app.start(0);
+        app.start("127.0.0.1", 0);
         return app;
     }
 

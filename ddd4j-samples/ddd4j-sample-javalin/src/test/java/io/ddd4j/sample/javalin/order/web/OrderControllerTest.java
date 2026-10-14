@@ -41,7 +41,7 @@ class OrderControllerTest {
     static void start() {
         application = JavalinSample.start(0);
         client = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
-        baseUrl = "http://localhost:" + application.app().port();
+        baseUrl = "http://127.0.0.1:" + application.app().port();
     }
 
     @AfterAll

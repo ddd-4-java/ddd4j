@@ -35,7 +35,7 @@ import java.util.function.Function;
  * 都通过本门面统一注册和操作。业务代码面向 {@code CacheKit.get(biz, key)} 编程，
  * 不关心底层是哪种缓存引擎。
  *
- * <h3>两种注册方式</h3>
+ * <h2>两种注册方式</h2>
  * <ul>
  *   <li><b>{@code build()}</b> — 自建本地缓存（Caffeine/Guava/Hutool），门面内部根据配置自动创建实例</li>
  *   <li><b>{@code register()}</b> — 注册外部缓存实例（Jedis/Lettuce/Redisson/Memcached/JetCache 等），
@@ -450,7 +450,7 @@ public final class CacheKit {
      * @param biz      业务标识
      * @param key      缓存键
      * @param quantity 扣减数量（> 0）
-     * @return 剩余库存（>= 0）或错误码（< 0）
+     * @return 剩余库存（&gt;= 0）或错误码（&lt; 0）
      */
     public long stockDecrement(String biz, String key, long quantity) {
         Cache<String, Object> cache = getEffectiveCache(biz);
@@ -466,7 +466,7 @@ public final class CacheKit {
      * @param biz      业务标识
      * @param key      缓存键
      * @param quantity 回补数量（> 0）
-     * @return 回补后的库存（>= 0）或错误码（< 0）
+     * @return 回补后的库存（&gt;= 0）或错误码（&lt; 0）
      */
     public long stockIncrement(String biz, String key, long quantity) {
         Cache<String, Object> cache = getEffectiveCache(biz);

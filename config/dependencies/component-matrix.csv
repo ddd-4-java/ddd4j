@@ -396,7 +396,7 @@ io.github.easy4j:hermes-java-sdk,,absent,2.0.x.20260630-SNAPSHOT,bytecode-pass,3
 io.github.easy4j:hitool,,absent,2.0.x.20260630-SNAPSHOT,pom,3.0.x.20260630-SNAPSHOT,pom,
 io.github.easy4j:hitool-core,1.0.x.20260630-SNAPSHOT,bytecode-pass,2.0.x.20260630-SNAPSHOT,bytecode-pass,3.0.x.20260630-SNAPSHOT,bytecode-pass,
 io.github.easy4j:hitool-crypto,1.0.x.20260630-SNAPSHOT,bytecode-pass,2.0.x.20260630-SNAPSHOT,unverified-artifact,3.0.x.20260630-SNAPSHOT,unverified-artifact,
-io.github.easy4j:hitool-mail,1.0.x.20260630-SNAPSHOT,bytecode-pass,2.0.x.20260630-SNAPSHOT,unverified-artifact,3.0.x.20260630-SNAPSHOT,unverified-artifact,
+io.github.easy4j:hitool-mail,1.0.x.20260630-SNAPSHOT,bytecode-pass,2.0.x.20260630-SNAPSHOT,bytecode-pass,3.0.x.20260630-SNAPSHOT,bytecode-pass,
 io.github.easy4j:httpclient-extension,,absent,2.0.x.20260630-SNAPSHOT,bytecode-pass,3.0.x.20260630-SNAPSHOT,bytecode-pass,
 io.github.easy4j:httpclient3-extension,,absent,2.0.x.20260630-SNAPSHOT,bytecode-pass,3.0.x.20260630-SNAPSHOT,bytecode-pass,
 io.github.easy4j:ishumei-java-sdk,,absent,2.0.x.20260630-SNAPSHOT,bytecode-pass,3.0.x.20260630-SNAPSHOT,bytecode-pass,
@@ -423,15 +423,18 @@ io.github.easy4j:pac4j-uniauth,,absent,2.0.x.20260630-SNAPSHOT,bytecode-pass,3.0
 io.github.easy4j:pac4j-yiban,,absent,2.0.x.20260630-SNAPSHOT,bytecode-pass,3.0.x.20260630-SNAPSHOT,bytecode-pass,
 io.github.easy4j:pack-with-assembly,,absent,2.0.x.20260630-SNAPSHOT,pom,3.0.x.20260630-SNAPSHOT,pom,
 io.github.easy4j:perf4j-log4j2,,absent,2.0.x.20260630-SNAPSHOT,bytecode-pass,3.0.x.20260630-SNAPSHOT,bytecode-pass,
-io.github.easy4j:pf4j-extension,,absent,2.0.x.20260630-SNAPSHOT,pom,3.0.x.20260630-SNAPSHOT,pom,
-io.github.easy4j:pf4j3-extension,,absent,2.0.x.20260630-SNAPSHOT,bytecode-pass,3.0.x.20260630-SNAPSHOT,bytecode-pass,
+io.github.easy4j:pf4j-extension,,absent,2.0.x.20260630-SNAPSHOT,pom,3.0.x.20260630-SNAPSHOT,pom,上游聚合 POM
+io.github.easy4j:pf4j-extension-core,,absent,2.0.x.20260630-SNAPSHOT,bytecode-pass,3.0.x.20260630-SNAPSHOT,bytecode-pass,替代旧 pf4j3-extension 的 core 能力
+io.github.easy4j:pf4j-extension-spring,,absent,2.0.x.20260630-SNAPSHOT,bytecode-pass,3.0.x.20260630-SNAPSHOT,bytecode-pass,替代旧 pf4j3-extension 的 spring 能力
+io.github.easy4j:pf4j-extension-update,,absent,2.0.x.20260630-SNAPSHOT,bytecode-pass,3.0.x.20260630-SNAPSHOT,bytecode-pass,替代旧 pf4j3-extension 的 update 能力
 io.github.easy4j:playwright-extension,,absent,2.0.x.20260630-SNAPSHOT,pom,3.0.x.20260630-SNAPSHOT,pom,
 io.github.easy4j:rocketmq-extension,,absent,2.0.x.20260630-SNAPSHOT,bytecode-pass,3.0.x.20260630-SNAPSHOT,bytecode-pass,
 io.github.easy4j:schemacrawler-hive,,absent,2.0.x.20260630-SNAPSHOT,bytecode-pass,3.0.x.20260630-SNAPSHOT,bytecode-pass,
 io.github.easy4j:schemacrawler-impala,,absent,2.0.x.20260630-SNAPSHOT,bytecode-pass,3.0.x.20260630-SNAPSHOT,bytecode-pass,
 io.github.easy4j:schemacrawler-kylin,,absent,2.0.x.20260630-SNAPSHOT,bytecode-pass,3.0.x.20260630-SNAPSHOT,bytecode-pass,
 io.github.easy4j:security-guard-sdk,,absent,2.0.x.20260630-SNAPSHOT,bytecode-pass,3.0.x.20260630-SNAPSHOT,bytecode-pass,
-io.github.easy4j:security-jwt-extension,,absent,2.0.x.20260630-SNAPSHOT,bytecode-pass,3.0.x.20260630-SNAPSHOT,bytecode-pass,
+io.github.easy4j:security-jwt-extension,,absent,2.0.x.20260630-SNAPSHOT,bytecode-pass,,replacement,JDK 21 上游坐标为 io.github.easy4j:spring-security-jwt
+io.github.easy4j:spring-security-jwt,,absent,,absent,3.0.x.20260630-SNAPSHOT,bytecode-pass,上游 feature/3.0.x 实际 artifactId
 io.github.easy4j:shiro-biz-sdk,,absent,2.0.x.20260630-SNAPSHOT,bytecode-pass,3.0.x.20260630-SNAPSHOT,bytecode-pass,
 io.github.easy4j:shiro-dingtalk-core,,absent,2.0.x.20260630-SNAPSHOT,bytecode-pass,3.0.x.20260630-SNAPSHOT,bytecode-pass,
 io.github.easy4j:shiro-dingtalk-spring,,absent,2.0.x.20260630-SNAPSHOT,bytecode-pass,3.0.x.20260630-SNAPSHOT,bytecode-pass,
@@ -447,15 +450,15 @@ io.github.easy4j:shiro-saml-core,,absent,2.0.x.20260630-SNAPSHOT,bytecode-pass,3
 io.github.easy4j:shiro-saml-spring,,absent,2.0.x.20260630-SNAPSHOT,bytecode-pass,3.0.x.20260630-SNAPSHOT,bytecode-pass,
 io.github.easy4j:shiro-weixin-core,,absent,2.0.x.20260630-SNAPSHOT,bytecode-pass,3.0.x.20260630-SNAPSHOT,bytecode-pass,
 io.github.easy4j:shiro-weixin-spring,,absent,2.0.x.20260630-SNAPSHOT,bytecode-pass,3.0.x.20260630-SNAPSHOT,bytecode-pass,
-io.github.easy4j:soapui-template,,absent,2.0.x.20260630-SNAPSHOT,bytecode-pass,3.0.x.20260630-SNAPSHOT,bytecode-pass,
-io.github.easy4j:soaputils,,absent,2.0.x.20260630-SNAPSHOT,bytecode-pass,3.0.x.20260630-SNAPSHOT,bytecode-pass,
+io.github.easy4j:soapui-template,1.0.x.20260630-SNAPSHOT,bytecode-pass,2.0.x.20260630-SNAPSHOT,bytecode-pass,3.0.x.20260630-SNAPSHOT,bytecode-pass,
+io.github.easy4j:soap-utils,1.0.x.20260630-SNAPSHOT,bytecode-pass,2.0.x.20260630-SNAPSHOT,bytecode-pass,3.0.x.20260630-SNAPSHOT,bytecode-pass,source artifactId soap-utils
 io.github.easy4j:socketio-extension,,absent,2.0.x.20260630-SNAPSHOT,bytecode-pass,3.0.x.20260630-SNAPSHOT,bytecode-pass,
 io.github.easy4j:spring-bytebuddy,,absent,2.0.x.20260630-SNAPSHOT,bytecode-pass,3.0.x.20260630-SNAPSHOT,bytecode-pass,
 io.github.easy4j:spring-data-redis-extension,,absent,2.0.x.20260630-SNAPSHOT,bytecode-pass,3.0.x.20260630-SNAPSHOT,bytecode-pass,
 io.github.easy4j:spring-extension,1.0.x.20260630-SNAPSHOT,bytecode-pass,2.0.x.20260630-SNAPSHOT,bytecode-pass,3.0.x.20260630-SNAPSHOT,bytecode-pass,
 io.github.easy4j:spring-javassist,,absent,2.0.x.20260630-SNAPSHOT,bytecode-pass,3.0.x.20260630-SNAPSHOT,bytecode-pass,
 io.github.easy4j:spring-security-extension2,,absent,2.0.x.20260630-SNAPSHOT,bytecode-pass,3.0.x.20260630-SNAPSHOT,bytecode-pass,
-io.github.easy4j:tencentcloud-sdk-extension,,absent,2.0.x.20260630-SNAPSHOT,bytecode-pass,3.0.x.20260630-SNAPSHOT,bytecode-pass,
+io.github.easy4j:tencentcloud-sdk-extension,1.0.x.20260630-SNAPSHOT,bytecode-pass,2.0.x.20260630-SNAPSHOT,bytecode-pass,3.0.x.20260630-SNAPSHOT,bytecode-pass,
 io.github.easy4j:validation-api-extension,,absent,2.0.x.20260630-SNAPSHOT,bytecode-pass,3.0.x.20260630-SNAPSHOT,bytecode-pass,
 io.github.easy4j:wkhtmltopdf-invoker,,absent,2.0.x.20260630-SNAPSHOT,bytecode-pass,3.0.x.20260630-SNAPSHOT,bytecode-pass,
 io.github.easy4j:xxljob-extension,,absent,2.0.x.20260630-SNAPSHOT,pom,3.0.x.20260630-SNAPSHOT,pom,

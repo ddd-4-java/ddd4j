@@ -33,7 +33,7 @@ import java.util.Optional;
  * {@code ddd4j-data-projection-jpa}，Quarkus 请用 {@code ddd4j-data-projection-panache}，
  * 响应式请用 {@code ddd4j-data-projection-r2dbc}。
  *
- * <h3>集成方装配</h3>
+ * <h2>集成方装配</h2>
  * <p>本类为纯类（零容器注解、非容器托管）：Javalin／Vert.x 集成方在应用装配代码中
  * 手动 {@code new JdbiProjectionPositionRepository(jdbi)} 并自行管理其生命周期——
  * {@code Jdbi} 实例（可包连接池 DataSource）由集成方提供。生命周期不入 SPI

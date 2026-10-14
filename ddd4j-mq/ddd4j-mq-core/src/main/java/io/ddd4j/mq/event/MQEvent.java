@@ -15,17 +15,21 @@
 package io.ddd4j.mq.event;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
+import io.ddd4j.mq.delivery.MQDeliveryHeaders;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -40,10 +44,10 @@ import java.util.function.Consumer;
  *
  * <p>发布机制（多 broker 路由）：{@link #publish(String, String, String)} 从 {@link BaseContext}
  * 查找 key 为 {@link #MQ_EVENT_PUBLISHER} 的 {@code Map<String, Consumer<MQEvent>>}，
- * 按 {@link #broker} 字段（或全局 {@link MQProperties#getBroker()} 配置）匹配对应的 broker 生产者。
+ * 按 {@link #broker} 字段（或全局 {@code MQProperties#getBroker()} 配置）匹配对应的 broker 生产者。
  * 每个 {@link MQClient} 在 {@code initProducer} 后以 {@link MQClient#impl()} 为 key 注册。
  *
- * <h3>使用示例</h3>
+ * <h2>使用示例</h2>
  * <pre>{@code
  * public class OrderCreatedEvent extends MQEvent {
  *     private String orderId;
@@ -101,9 +105,24 @@ public class MQEvent implements Serializable {
     protected String tenantId;
     /**
      * 目标 broker 标识（如 {@code "kafka"} / {@code "rocket"} / {@code "redisStream"}）。
-     * <p>为空时走全局默认 broker（{@link MQProperties#getBroker()} 配置）。
+     * <p>为空时走全局默认 broker（{@code MQProperties#getBroker()} 配置）。
      */
     protected String broker;
+    /**
+     * 因果链关联 ID，broker header {@code X-Correlation-Id} 的权威值来源。
+     *
+     * <p>{@code @JsonIgnore}：外层载体 JSON 不重复承载因果元数据，
+     * payload 内嵌字段（既有 {@code correlation-id}）才是迁移期镜像（Requirement: Causality in broker headers）。
+     */
+    @JsonIgnore
+    protected String correlationId;
+    /**
+     * 因果链因果 ID，broker header {@code X-Causation-Id} 的权威值来源。
+     *
+     * <p>{@code @JsonIgnore}：同 {@link #correlationId}，外层 JSON 不双写。
+     */
+    @JsonIgnore
+    protected String causationId;
     /**
      * 命名空间，配置 {@code ddd4j.mq.namespace} 后无须每次指定
      */
@@ -114,6 +133,31 @@ public class MQEvent implements Serializable {
      */
     public boolean supports(List<String> supports) {
         return supports.contains(match());
+    }
+
+    /**
+     * 返回 broker header 视图：跨语言消费方可直接提取的权威元数据。
+     *
+     * <p>key 采用冻结命名的 broker header（message-id / {@code X-Correlation-Id} / {@code X-Causation-Id}），
+     * 各 broker 适配实现遍历本 Map 写入原生消息头。仅包含非空项，无因果元数据时不产生因果 header。
+     *
+     * <p>对应 spec Requirement: Causality in broker headers（OpenSpec change
+     * {@code promote-causality-to-broker-headers}）。
+     *
+     * @return 不可变 broker header 视图（key 为 header 名，value 为 header 值）
+     */
+    public Map<String, String> headerMap() {
+        Map<String, String> headers = new LinkedHashMap<String, String>();
+        if (StrKit.isNotEmpty(msgId)) {
+            headers.put(MQDeliveryHeaders.MESSAGE_ID, msgId);
+        }
+        if (StrKit.isNotEmpty(correlationId)) {
+            headers.put(MQDeliveryHeaders.CORRELATION_ID, correlationId);
+        }
+        if (StrKit.isNotEmpty(causationId)) {
+            headers.put(MQDeliveryHeaders.CAUSATION_ID, causationId);
+        }
+        return Collections.unmodifiableMap(headers);
     }
 
     /**
@@ -144,7 +188,7 @@ public class MQEvent implements Serializable {
      * 按以下优先级匹配目标 broker 生产者：
      * <ol>
      *   <li>{@link #broker} 字段非空 → 用此值作 key 查找</li>
-     *   <li>{@link MQProperties#getBroker()} 全局配置非空且非 {@code "none"} → 用此值作 key 查找</li>
+     *   <li>{@code MQProperties#getBroker()} 全局配置非空且非 {@code "none"} → 用此值作 key 查找</li>
      *   <li>仅注册了一个 broker → 直接用（便捷场景）</li>
      *   <li>都找不到 → warn 日志，事件不发布</li>
      * </ol>

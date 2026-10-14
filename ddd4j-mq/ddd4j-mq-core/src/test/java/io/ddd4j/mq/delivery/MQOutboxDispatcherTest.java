@@ -96,6 +96,23 @@ class MQOutboxDispatcherTest {
     }
 
     @Test
+    void dispatch_shouldKeepLeaseWhenConfirmationThrowsAfterSend() {
+        RecordingStore store = new RecordingStore(List.of(record("message-1", 1)));
+        store.confirmationFailure = true;
+        RecordingObserver observer = new RecordingObserver();
+        List<String> sent = new ArrayList<>();
+        MQOutboxDispatcher dispatcher = new MQOutboxDispatcher(store,
+                message -> sent.add(message.messageId()), MQDeliveryPolicy.productionDefault(), observer);
+
+        MQOutboxDispatchResult result = dispatcher.dispatch("instance-a", 10, NOW);
+
+        assertEquals(List.of("message-1"), sent);
+        assertEquals(new MQOutboxDispatchResult(1, 0, 0, 0, 1), result);
+        assertEquals(List.of(), store.rescheduled);
+        assertEquals(List.of("failed"), observer.outboxOutcomes);
+    }
+
+    @Test
     void dispatch_shouldIgnoreObserverFailure() {
         RecordingStore store = new RecordingStore(List.of(record("message-1", 1)));
         MQDeliveryObserver failingObserver = new MQDeliveryObserver() {
@@ -144,6 +161,7 @@ class MQOutboxDispatcherTest {
         private final List<String> rescheduled = new ArrayList<>();
         private String leaseOwner;
         private boolean publishConfirmed = true;
+        private boolean confirmationFailure;
         private boolean rescheduleFailure;
 
         private RecordingStore(List<MQOutboxRecord> claimed) {
@@ -163,6 +181,9 @@ class MQOutboxDispatcherTest {
         @Override
         public boolean markPublished(String messageId, String leaseOwner, Instant publishedAt) {
             published.add(messageId);
+            if (confirmationFailure) {
+                throw new IllegalStateException("confirmation outcome unknown");
+            }
             return publishConfirmed;
         }
 

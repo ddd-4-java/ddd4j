@@ -22,8 +22,8 @@ import lombok.EqualsAndHashCode;
 /**
  * ActiveMQ Artemis 适配器配置（纯 Java，零 Spring 依赖）。
  *
- * <p>对应 {@code org.apache.activemq:artemis-client} 2.x 原生 JMS 客户端。
- * 同时兼容 {@link BrokerType#ACTIVEMQ}（历史 Classic v5 通过单独引入 {@code activemq-client} 5.x 也可适配）。
+ * <p>本线使用 artemis-jakarta-client 2.44.0 与 jakarta.jms。
+ * {@link BrokerType#ACTIVEMQ} 是 ddd4j 的适配器标识，不声明 Classic v5 客户端兼容。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */

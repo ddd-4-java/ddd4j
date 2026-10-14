@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       api_baseline_version:
-        description: Published non-SNAPSHOT 2.0.x API baseline version
+        description: Published non-SNAPSHOT 3.0.x API baseline version
         required: true
         type: string
       evidence_run_id:
@@ -32,7 +32,7 @@ env:
 
 jobs:
   release-candidate:
-    name: Java 17 release candidate evidence
+    name: Java 21 release candidate evidence
     runs-on: ubuntu-latest
     environment: release-candidate
     steps:
@@ -40,7 +40,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: '21'
           cache: maven
       - name: Require protected NVD credentials
         run: |
@@ -57,7 +57,7 @@ jobs:
           ./scripts/generate-sbom.sh
           ./scripts/generate-license-report.sh
           ./scripts/verify-license-policy.sh
-      - name: Run Java 17 unit and contract suite
+      - name: Run Java 21 unit and contract suite
         run: ./mvnw -B -ntp clean test -DskipITs
       - name: Run Testcontainers integration suite
         run: >-

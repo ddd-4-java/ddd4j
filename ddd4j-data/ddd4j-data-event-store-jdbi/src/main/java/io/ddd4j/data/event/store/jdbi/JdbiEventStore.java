@@ -47,7 +47,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * {@code ddd4j-data-event-store-jpa}，Quarkus 请用 {@code ddd4j-data-event-store-panache}，
  * 响应式请用 {@code ddd4j-data-event-store-r2dbc}。
  *
- * <h3>集成方装配</h3>
+ * <h2>集成方装配</h2>
  * <p>本类为纯类（零容器注解、非容器托管）：Javalin/Vert.x 集成方在应用装配代码中
  * 手动 {@code new JdbiEventStore(jdbi)} 并自行管理其生命周期——{@code Jdbi}
  * 实例（可包连接池 DataSource）由集成方提供。
@@ -76,10 +76,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * 高并发多实例场景建议改用数据库序列（如 PostgreSQL {@code nextval}）。
  *
  * <h3>payload 序列化</h3>
- * <p>事件载荷通过 {@link JsonKit#toJson} 序列化为 JSON 文本存储，
- * 读取时通过 {@link EventDeserializer#deserialize} 按 {@code event_type} 反序列化。
- * 若事件类已被删除或重命名（{@code Class.forName} 失败），回退为 {@code Map}，
- * 此时丢失类型信息，javadoc 已说明此限制。
+ * <p>事件载荷通过 {@link EventPayloadSerializer} 序列化为 JSON 文本，
+ * 读取时按 {@code event_type} 还原事件类型。事件类不存在时抛出
+ * {@link IllegalStateException}，不会静默转换为 {@code Map}。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.0.0
@@ -250,7 +249,7 @@ public class JdbiEventStore implements EventStore {
      * {@inheritDoc}
      *
      * <p>按版本升序读取指定聚合的全部事件。
-     * 事件载荷通过 {@link EventDeserializer} 反序列化，类型无法还原时回退为 {@code Map}。
+     * 事件载荷通过 {@link EventPayloadSerializer} 反序列化；事件类型无法还原时抛出 {@link IllegalStateException}。
      */
     @Override
     public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId) {

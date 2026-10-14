@@ -12,23 +12,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package io.ddd4j.web.core.health;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-
 import java.util.Objects;
+/**
+ * Readiness HTTP 响应体，仅暴露整体状态，避免泄露下游依赖信息。
+ *
+ * <p>{@code ready} — 当前应用是否可接收流量
+ */public final class ReadinessResponse {
+
+    private final boolean ready;
 
 /**
  * Readiness HTTP 响应体，仅暴露整体状态，避免泄露下游依赖信息。
+ *
+ * @param ready 当前应用是否可接收流量
  */
 
-public final class ReadinessResponse {
+    @JsonCreator
+    public ReadinessResponse(@JsonProperty("ready") boolean ready) {
+        this.ready = ready;
+    }
 
-    private static final long serialVersionUID = 0L;
-
-    private final boolean ready;
+    @JsonProperty("ready")
+    public boolean ready() { return ready; }
 
     /**
      * 返回探针应接收的 HTTP 状态码。
@@ -42,37 +53,21 @@ public final class ReadinessResponse {
     public boolean isReady() {
         return ready;
     }
-
-    /**
- * @param ready 当前应用是否可接收流量
- */
-
-    @JsonCreator()
-    public ReadinessResponse(@JsonProperty("ready") boolean ready) {
-        this.ready = ready;
-    }
-
-    @JsonProperty("ready")
-    public boolean ready() {
-        return ready;
-    }
-
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
+    public boolean equals(Object o) {
+        if (this == o) {
             return true;
         }
-        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+        if (!(o instanceof ReadinessResponse)) {
             return false;
         }
-        ReadinessResponse other = (ReadinessResponse) obj;
-        return this.ready == other.ready;
+        ReadinessResponse that = (ReadinessResponse) o;
+        return ready == that.ready;
     }
 
     @Override
     public int hashCode() {
-        int result = 0;
-        result = 31 * result + Boolean.hashCode(ready);
+        int result = (ready ? 1231 : 1237);
         return result;
     }
 

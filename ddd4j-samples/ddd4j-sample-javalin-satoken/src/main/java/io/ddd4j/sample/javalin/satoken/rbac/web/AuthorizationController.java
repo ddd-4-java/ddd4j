@@ -19,6 +19,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 import java.util.Objects;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import io.ddd4j.core.api.R;
 import io.ddd4j.sample.javalin.satoken.rbac.application.RbacService;
@@ -183,17 +185,19 @@ public class AuthorizationController {
 
     // ============================ 请求/响应 DTO ============================
 
-    public final static class CreateUserRequest {
+    @Data
+    @NoArgsConstructor
+    public static class CreateUserRequest {
 
         private static final long serialVersionUID = 0L;
 
-        private final String userId;
+        private String userId;
 
-        private final String username;
+        private String username;
 
-        private final String password;
+        private String password;
 
-        private final String realName;
+        private String realName;
 
         @JsonCreator()
         public CreateUserRequest(@JsonProperty("userId") String userId, @JsonProperty("username") String username, @JsonProperty("password") String password, @JsonProperty("realName") String realName) {
@@ -223,43 +227,19 @@ public class AuthorizationController {
             return realName;
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            CreateUserRequest other = (CreateUserRequest) obj;
-            return Objects.equals(this.userId, other.userId) && Objects.equals(this.username, other.username) && Objects.equals(this.password, other.password) && Objects.equals(this.realName, other.realName);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(userId);
-            result = 31 * result + Objects.hashCode(username);
-            result = 31 * result + Objects.hashCode(password);
-            result = 31 * result + Objects.hashCode(realName);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "CreateUserRequest[userId=" + userId + ", username=" + username + ", password=" + password + ", realName=" + realName + "]";
-        }
     }
 
-    public final static class UpdateUserRequest {
+    @Data
+    @NoArgsConstructor
+    public static class UpdateUserRequest {
 
         private static final long serialVersionUID = 0L;
 
-        private final String realName;
+        private String realName;
 
-        private final String password;
+        private String password;
 
-        private final User.Status status;
+        private User.Status status;
 
         @JsonCreator()
         public UpdateUserRequest(@JsonProperty("realName") String realName, @JsonProperty("password") String password, @JsonProperty("status") User.Status status) {
@@ -283,38 +263,15 @@ public class AuthorizationController {
             return status;
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            UpdateUserRequest other = (UpdateUserRequest) obj;
-            return Objects.equals(this.realName, other.realName) && Objects.equals(this.password, other.password) && Objects.equals(this.status, other.status);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(realName);
-            result = 31 * result + Objects.hashCode(password);
-            result = 31 * result + Objects.hashCode(status);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "UpdateUserRequest[realName=" + realName + ", password=" + password + ", status=" + status + "]";
-        }
     }
 
-    public final static class AssignRolesRequest {
+    @Data
+    @NoArgsConstructor
+    public static class AssignRolesRequest {
 
         private static final long serialVersionUID = 0L;
 
-        private final List<String> roleIds;
+        private List<String> roleIds;
 
         @JsonCreator()
         public AssignRolesRequest(@JsonProperty("roleIds") List<String> roleIds) {
@@ -326,42 +283,21 @@ public class AuthorizationController {
             return roleIds;
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            AssignRolesRequest other = (AssignRolesRequest) obj;
-            return Objects.equals(this.roleIds, other.roleIds);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(roleIds);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "AssignRolesRequest[roleIds=" + roleIds + "]";
-        }
     }
 
-    public final static class CreateRoleRequest {
+    @Data
+    @NoArgsConstructor
+    public static class CreateRoleRequest {
 
         private static final long serialVersionUID = 0L;
 
-        private final String roleId;
+        private String roleId;
 
-        private final String roleCode;
+        private String roleCode;
 
-        private final String roleName;
+        private String roleName;
 
-        private final String description;
+        private String description;
 
         @JsonCreator()
         public CreateRoleRequest(@JsonProperty("roleId") String roleId, @JsonProperty("roleCode") String roleCode, @JsonProperty("roleName") String roleName, @JsonProperty("description") String description) {
@@ -391,43 +327,19 @@ public class AuthorizationController {
             return description;
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            CreateRoleRequest other = (CreateRoleRequest) obj;
-            return Objects.equals(this.roleId, other.roleId) && Objects.equals(this.roleCode, other.roleCode) && Objects.equals(this.roleName, other.roleName) && Objects.equals(this.description, other.description);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(roleId);
-            result = 31 * result + Objects.hashCode(roleCode);
-            result = 31 * result + Objects.hashCode(roleName);
-            result = 31 * result + Objects.hashCode(description);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "CreateRoleRequest[roleId=" + roleId + ", roleCode=" + roleCode + ", roleName=" + roleName + ", description=" + description + "]";
-        }
     }
 
-    public final static class UpdateRoleRequest {
+    @Data
+    @NoArgsConstructor
+    public static class UpdateRoleRequest {
 
         private static final long serialVersionUID = 0L;
 
-        private final String roleName;
+        private String roleName;
 
-        private final String description;
+        private String description;
 
-        private final Role.Status status;
+        private Role.Status status;
 
         @JsonCreator()
         public UpdateRoleRequest(@JsonProperty("roleName") String roleName, @JsonProperty("description") String description, @JsonProperty("status") Role.Status status) {
@@ -451,38 +363,15 @@ public class AuthorizationController {
             return status;
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            UpdateRoleRequest other = (UpdateRoleRequest) obj;
-            return Objects.equals(this.roleName, other.roleName) && Objects.equals(this.description, other.description) && Objects.equals(this.status, other.status);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(roleName);
-            result = 31 * result + Objects.hashCode(description);
-            result = 31 * result + Objects.hashCode(status);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "UpdateRoleRequest[roleName=" + roleName + ", description=" + description + ", status=" + status + "]";
-        }
     }
 
-    public final static class AssignPermissionsRequest {
+    @Data
+    @NoArgsConstructor
+    public static class AssignPermissionsRequest {
 
         private static final long serialVersionUID = 0L;
 
-        private final List<String> permissionIds;
+        private List<String> permissionIds;
 
         @JsonCreator()
         public AssignPermissionsRequest(@JsonProperty("permissionIds") List<String> permissionIds) {
@@ -494,42 +383,21 @@ public class AuthorizationController {
             return permissionIds;
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            AssignPermissionsRequest other = (AssignPermissionsRequest) obj;
-            return Objects.equals(this.permissionIds, other.permissionIds);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(permissionIds);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "AssignPermissionsRequest[permissionIds=" + permissionIds + "]";
-        }
     }
 
-    public final static class CreatePermissionRequest {
+    @Data
+    @NoArgsConstructor
+    public static class CreatePermissionRequest {
 
         private static final long serialVersionUID = 0L;
 
-        private final String permissionId;
+        private String permissionId;
 
-        private final String permissionCode;
+        private String permissionCode;
 
-        private final String permissionName;
+        private String permissionName;
 
-        private final String module;
+        private String module;
 
         @JsonCreator()
         public CreatePermissionRequest(@JsonProperty("permissionId") String permissionId, @JsonProperty("permissionCode") String permissionCode, @JsonProperty("permissionName") String permissionName, @JsonProperty("module") String module) {
@@ -559,43 +427,19 @@ public class AuthorizationController {
             return module;
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            CreatePermissionRequest other = (CreatePermissionRequest) obj;
-            return Objects.equals(this.permissionId, other.permissionId) && Objects.equals(this.permissionCode, other.permissionCode) && Objects.equals(this.permissionName, other.permissionName) && Objects.equals(this.module, other.module);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(permissionId);
-            result = 31 * result + Objects.hashCode(permissionCode);
-            result = 31 * result + Objects.hashCode(permissionName);
-            result = 31 * result + Objects.hashCode(module);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "CreatePermissionRequest[permissionId=" + permissionId + ", permissionCode=" + permissionCode + ", permissionName=" + permissionName + ", module=" + module + "]";
-        }
     }
 
-    public final static class UpdatePermissionRequest {
+    @Data
+    @NoArgsConstructor
+    public static class UpdatePermissionRequest {
 
         private static final long serialVersionUID = 0L;
 
-        private final String permissionName;
+        private String permissionName;
 
-        private final String module;
+        private String module;
 
-        private final Permission.Status status;
+        private Permission.Status status;
 
         @JsonCreator()
         public UpdatePermissionRequest(@JsonProperty("permissionName") String permissionName, @JsonProperty("module") String module, @JsonProperty("status") Permission.Status status) {
@@ -619,31 +463,7 @@ public class AuthorizationController {
             return status;
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            UpdatePermissionRequest other = (UpdatePermissionRequest) obj;
-            return Objects.equals(this.permissionName, other.permissionName) && Objects.equals(this.module, other.module) && Objects.equals(this.status, other.status);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(permissionName);
-            result = 31 * result + Objects.hashCode(module);
-            result = 31 * result + Objects.hashCode(status);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "UpdatePermissionRequest[permissionName=" + permissionName + ", module=" + module + ", status=" + status + "]";
-        }
     }
+
 
 }

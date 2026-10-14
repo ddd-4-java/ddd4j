@@ -1,0 +1,124 @@
+name: Three-line convergence
+
+on:
+  push:
+    branches:
+      - feature/1.0.x
+      - feature/2.0.x
+      - feature/3.0.x
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  convergence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 16379:6379
+    steps:
+      - name: Check out workflow driver
+        uses: actions/checkout@v4
+        with:
+          path: driver
+
+      - name: Resolve three immutable inputs
+        id: revisions
+        working-directory: driver
+        shell: bash
+        env:
+          CURRENT_REF: ${{ github.ref_name }}
+          CURRENT_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          case "$CURRENT_REF" in
+            feature/1.0.x|feature/2.0.x|feature/3.0.x) ;;
+            *) echo "Select one of the three feature branches" >&2; exit 1 ;;
+          esac
+          for line in 1.0.x 2.0.x 3.0.x; do
+            branch="feature/$line"
+            if [[ "$branch" == "$CURRENT_REF" ]]; then
+              sha="$CURRENT_SHA"
+            else
+              sha="$(git ls-remote origin "refs/heads/$branch" | awk '{print $1}')"
+            fi
+            if [[ ! "$sha" =~ ^[0-9a-f]{40}$ ]]; then
+              echo "Cannot resolve $branch to a full commit SHA" >&2
+              exit 1
+            fi
+            key="sha_${line%%.*}"
+            echo "$key=$sha" >> "$GITHUB_OUTPUT"
+            echo "$branch: $sha"
+          done
+
+      - name: Check out JDK 8 line at fixed SHA
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.revisions.outputs.sha_1 }}
+          path: line-8
+      - name: Check out JDK 17 line at fixed SHA
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.revisions.outputs.sha_2 }}
+          path: line-17
+      - name: Check out JDK 21 line at fixed SHA
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.revisions.outputs.sha_3 }}
+          path: line-21
+
+      - name: Set up all line JDKs
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: |
+            8
+            17
+            21
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Configure Maven repositories
+        shell: bash
+        env:
+          MAVEN_SETTINGS_XML: ${{ secrets.MAVEN_SETTINGS_XML }}
+        run: |
+          set -euo pipefail
+          if [[ -z "$MAVEN_SETTINGS_XML" ]]; then
+            echo "MAVEN_SETTINGS_XML is required for strict dependency verification" >&2
+            exit 1
+          fi
+          install -d -m 700 "$HOME/.m2"
+          umask 077
+          printf '%s' "$MAVEN_SETTINGS_XML" | base64 --decode > "$HOME/.m2/settings.xml"
+
+      - name: Verify three-line convergence
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 driver/scripts/verify-three-line-convergence.py \
+            --roots line-8 line-17 line-21 \
+            --jdks "$JAVA_HOME_8_X64" "$JAVA_HOME_17_X64" "$JAVA_HOME_21_X64" \
+            --expected-shas \
+              "${{ steps.revisions.outputs.sha_1 }}" \
+              "${{ steps.revisions.outputs.sha_2 }}" \
+              "${{ steps.revisions.outputs.sha_3 }}" \
+            --policy driver/config/parity/three-line-policy.json \
+            --redis-native-url redis://127.0.0.1:16379 \
+            --output target/three-line-convergence \
+            --phase verify
+
+      - name: Upload convergence evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: three-line-convergence-${{ github.run_id }}
+          path: target/three-line-convergence/
+          if-no-files-found: warn
+          retention-days: 14

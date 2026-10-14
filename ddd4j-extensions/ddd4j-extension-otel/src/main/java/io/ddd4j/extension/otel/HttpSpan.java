@@ -41,7 +41,7 @@ import java.util.Objects;
  *   <li>可选：注入下游 traceparent 到响应头</li>
  * </ul>
  *
- * <h3>使用示例</h3>
+ * <h2>使用示例</h2>
  * <pre>{@code
  * // 提取上游 context 并开启 span
  * Context parent = HttpSpan.extractContext(requestHeaders);

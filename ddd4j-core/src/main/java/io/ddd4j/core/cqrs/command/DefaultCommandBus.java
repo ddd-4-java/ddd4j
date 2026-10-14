@@ -29,7 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * {@code super(registry.executors())} 传入本类；适配器不复制路由逻辑，
  * 也不应 override {@link #execute}（事务等横切用类级注解让容器代理处理）。
  *
- * <h3>构造即快照（适配器装配顺序约束）</h3>
+ * <h2>构造即快照（适配器装配顺序约束）</h2>
  * <p>
  * 本类构造时对执行器集合<b>一次性快照</b>（逐个 {@code putIfAbsent}，
  * 冲突即抛 {@link IllegalStateException}），之后对传入集合的任何变更都不会

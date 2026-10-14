@@ -25,10 +25,10 @@ import java.util.Optional;
  * <p>继承 ddd4j-core 的 {@link Repository} 接口，标识该仓储操作 {@link Goods} 聚合根。
  * 第三方实现（如 {@code InMemoryGoodsRepository}、MyBatis-Plus 适配等）需提供：
  * <ul>
- *   <li>{@link #findById(Object)} - 按主键查询</li>
- *   <li>{@link #save(Goods)} - 保存或更新</li>
- *   <li>{@link #deleteById(Object)} - 按主键删除（继承自默认方法）</li>
- *   <li>{@link #existsById(Object)} - 判断存在（继承自默认方法）</li>
+ *   <li>{@code findById(id)} - 按主键查询</li>
+ *   <li>{@code save(aggregate)} - 保存或更新</li>
+ *   <li>{@code deleteById(id)} - 按主键删除（继承自默认方法）</li>
+ *   <li>{@code existsById(id)} - 判断存在（继承自默认方法）</li>
  * </ul>
  *
  * <p>业务侧可扩展查询方法，例如 {@link #findByCode(String)} / {@link #findByStatus(GoodsStatus)}。

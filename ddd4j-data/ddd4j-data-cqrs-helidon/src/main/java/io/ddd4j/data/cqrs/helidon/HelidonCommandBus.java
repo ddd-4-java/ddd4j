@@ -37,7 +37,7 @@ import java.util.ServiceLoader;
  * {@code ddd4j-data-cqrs-spring}，Quarkus 用 {@code ddd4j-data-cqrs-quarkus}，
  * Micronaut 用 {@code ddd4j-data-cqrs-micronaut}。
  *
- * <h3>装配语义（构造即快照，顺序不可变）</h3>
+ * <h2>装配语义（构造即快照，顺序不可变）</h2>
  * <p>
  * 构造器内先经 {@link HelidonServiceLoader}（Helidon SE 对 JDK
  * {@link java.util.ServiceLoader} 的官方包装：优先级排序＋系统属性排除）迭代

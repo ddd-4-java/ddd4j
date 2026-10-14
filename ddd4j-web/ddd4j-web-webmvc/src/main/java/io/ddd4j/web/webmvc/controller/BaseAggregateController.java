@@ -42,7 +42,6 @@ import java.io.Serializable;
  *   POST   /{id}:disable      - 禁用（业务行为）
  *   POST   /{id}:enable       - 启用（业务行为）
  * </pre>
- * </p>
  *
  * @param <M>  聚合根模型
  * @param <Q>  查询参数

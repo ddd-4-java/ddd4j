@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
  * 通过反射调用所有标有此注解的方法，完成事件应用到聚合状态。
  * 未标注此注解时回退到 {@code on<EventType>} 命名约定（3.0.x 兼容）。
  *
- * <h3>使用</h3>
+ * <h2>使用</h2>
  * <pre>{@code
  * public class Order extends AggregateRoot<OrderId> {
  *     private Money total;

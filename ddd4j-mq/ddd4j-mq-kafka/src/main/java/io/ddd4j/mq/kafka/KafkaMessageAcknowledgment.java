@@ -97,11 +97,13 @@ public class KafkaMessageAcknowledgment implements Acknowledgment {
     }
 
     @Override
-    public void ack(boolean multiple) {
-        if (acknowledged.compareAndSet(false, true)) {
+    public synchronized void ack(boolean multiple) {
+        if (!acknowledged.get()) {
             TopicPartition partition = new TopicPartition(record.topic(), record.partition());
             OffsetAndMetadata offset = new OffsetAndMetadata(record.offset() + 1);
+            // 只有 broker 确认 offset 提交后才设置状态；提交失败仍须允许 seek 和重试。
             consumer.commitSync(Map.of(partition, offset));
+            acknowledged.set(true);
         }
     }
 

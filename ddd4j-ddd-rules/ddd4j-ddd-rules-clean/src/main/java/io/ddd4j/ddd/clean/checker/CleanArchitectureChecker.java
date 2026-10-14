@@ -46,7 +46,7 @@ import java.util.Set;
  * │   ├── persistence/     ← 持久化适配器（Repository 实现）
  * │   ├── web/             ← Web 适配器（Controller）
  * │   └── messaging/       ← 消息适配器
- * └── infrastructure/      ← 框架层（Frameworks & Drivers）
+ * └── infrastructure/      ← 框架层（Frameworks &amp; Drivers）
  *     ├── config/
  *     └── external/
  * </pre>

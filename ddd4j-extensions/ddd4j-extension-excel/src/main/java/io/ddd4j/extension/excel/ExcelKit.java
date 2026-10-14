@@ -33,7 +33,7 @@ import java.util.Map;
  * {@code .registerWriteHandler(...)} 这种细节。直接复用 easyexcel 原生注解
  * （{@code @ExcelProperty} / {@code @ExcelIgnore} / {@code @ColumnWidth} / {@code @DateTimeFormat}）。
  *
- * <h3>典型用法</h3>
+ * <h2>典型用法</h2>
  * <pre>{@code
  * // 1. 一行导出
  * byte[] bytes = ExcelKit.export(OrderVO.class, orderService.listAll());
@@ -173,7 +173,7 @@ public final class ExcelKit {
     }
 
     /**
-     * 默认 listener 导入（错误自动收集到 {@link ImportResult#getErrors()}）。
+     * 默认 listener 导入（错误自动收集到 {@code ImportResult.getErrors()}）。
      *
      * @param in   输入流
      * @param head 表头类

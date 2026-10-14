@@ -308,11 +308,11 @@ ddd4j 默认推荐 **异步事件 + Outbox + MQ**。
 - [`8、ddd4j-Architecture.zh_CN.md`](./8、ddd4j-Architecture.zh_CN.md) · 系统架构
 - [`5、ddd4j-技术方案与路线.md`](./5、ddd4j-技术方案与路线.md) · 当前技术方案
 - [`6、ddd4j-产品与版本规划.md`](./6、ddd4j-产品与版本规划.md) · **三轨版本矩阵 · 升级路径 · 技术兼容性矩阵**
-- [`1.0.x/8、ddd4j-1.0.x-Architecture.zh_CN.md`](./1.0.x/8、ddd4j-1.0.x-Architecture.zh_CN.md) · 1.0.x 版本架构
+- [`1.0.x/8、ddd4j-1.0.x-Architecture.zh_CN.md`](./8、ddd4j-1.0.x-Architecture.zh_CN.md) · 1.0.x 版本架构
 - [
-  `docs/superpowers/specs/2026-06-29-ddd4j-boundary-rules-design.md`](./docs/superpowers/specs/2026-06-29-ddd4j-boundary-rules-design.md) ·
+  `docs/superpowers/specs/2026-06-29-ddd4j-boundary-rules-design.md`](./superpowers/specs/2026-06-29-ddd4j-boundary-rules-design.md) ·
   架构边界规范
-- [`docs/ddd/DDD%20思维导图.md`](./docs/ddd/DDD%20思维导图.md) · DDD 战略+战术
+- [`docs/ddd/DDD%20思维导图.md`](./ddd/DDD%20思维导图.md) · DDD 战略+战术
 
 ---
 

@@ -12,59 +12,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package io.ddd4j.web.core.error;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.ddd4j.core.api.R;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * HTTP 状态与 ddd4j 响应体之间的统一错误表示。
  */
 public final class WebError {
 
-    private static final long serialVersionUID = 0L;
-
     private final int status;
-
     private final Serializable code;
-
     private final String message;
-
     private final Object data;
 
-    public R<Object> toResponse() {
-        return R.of(code, message, data);
-    }
+    /**
+     * HTTP 状态与 ddd4j 响应体之间的统一错误表示。
+ * @param status 状态
+ * @param code 编码值
+ * @param message 消息内容
+ * @param data 数据内容
+     */
 
-    public Serializable getCode() {
-        return code;
-    }
-
-    public Object getData() {
-        return data;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    @JsonCreator()
+    @JsonCreator
     public WebError(@JsonProperty("status") int status, @JsonProperty("code") Serializable code, @JsonProperty("message") String message, @JsonProperty("data") Object data) {
         this.status = status;
         this.code = code;
         this.message = message;
         this.data = data;
+    }
+
+    public R<Object> toResponse() {
+        return R.of(code, message, data);
     }
 
     @JsonProperty("status")
@@ -87,22 +73,40 @@ public final class WebError {
         return data;
     }
 
+    public int getStatus() {
+        return status;
+    }
+
+    public Serializable getCode() {
+        return code;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public Object getData() {
+        return data;
+    }
+
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
+    public boolean equals(Object o) {
+        if (this == o) {
             return true;
         }
-        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+        if (!(o instanceof WebError)) {
             return false;
         }
-        WebError other = (WebError) obj;
-        return this.status == other.status && Objects.equals(this.code, other.code) && Objects.equals(this.message, other.message) && Objects.equals(this.data, other.data);
+        WebError that = (WebError) o;
+        return status == that.status
+                && Objects.equals(code, that.code)
+                && Objects.equals(message, that.message)
+                && Objects.equals(data, that.data);
     }
 
     @Override
     public int hashCode() {
-        int result = 0;
-        result = 31 * result + Integer.hashCode(status);
+        int result = status;
         result = 31 * result + Objects.hashCode(code);
         result = 31 * result + Objects.hashCode(message);
         result = 31 * result + Objects.hashCode(data);

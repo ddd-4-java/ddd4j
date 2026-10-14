@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
-import java.util.Objects;
+import lombok.Value;
 
 /**
  * 创建订单命令。
@@ -26,6 +26,7 @@ import java.util.Objects;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 
+@Value
 public final class CreateOrderCommand {
 
     private static final long serialVersionUID = 0L;
@@ -62,31 +63,5 @@ public final class CreateOrderCommand {
     @JsonProperty("buyerName")
     public String buyerName() {
         return buyerName;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-            return false;
-        }
-        CreateOrderCommand other = (CreateOrderCommand) obj;
-        return Objects.equals(this.orderNo, other.orderNo) && Objects.equals(this.buyerId, other.buyerId) && Objects.equals(this.buyerName, other.buyerName);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = 0;
-        result = 31 * result + Objects.hashCode(orderNo);
-        result = 31 * result + Objects.hashCode(buyerId);
-        result = 31 * result + Objects.hashCode(buyerName);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "CreateOrderCommand[orderNo=" + orderNo + ", buyerId=" + buyerId + ", buyerName=" + buyerName + "]";
     }
 }

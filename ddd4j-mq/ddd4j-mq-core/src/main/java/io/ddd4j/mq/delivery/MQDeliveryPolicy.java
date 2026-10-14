@@ -68,7 +68,7 @@ public final class MQDeliveryPolicy {
         if (maxBackoff.compareTo(initialBackoff) < 0) {
             throw new IllegalArgumentException("maxBackoff must not be less than initialBackoff");
         }
-        if (jitterFactor < 0.0D || jitterFactor > 1.0D) {
+        if (Double.isNaN(jitterFactor) || jitterFactor < 0.0D || jitterFactor > 1.0D) {
             throw new IllegalArgumentException("jitterFactor must be between zero and one");
         }
         this.leaseDuration = leaseDuration;
@@ -100,7 +100,7 @@ public final class MQDeliveryPolicy {
         if (attempts < 1) {
             throw new IllegalArgumentException("attempts must be greater than zero");
         }
-        if (randomUnitInterval < 0.0D || randomUnitInterval > 1.0D) {
+        if (Double.isNaN(randomUnitInterval) || randomUnitInterval < 0.0D || randomUnitInterval > 1.0D) {
             throw new IllegalArgumentException("randomUnitInterval must be between zero and one");
         }
         long baseMillis = exponentialBackoffMillis(attempts);

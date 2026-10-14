@@ -31,11 +31,11 @@ import java.util.Set;
  * RBAC 初始化配置：演示账号/角色/权限种子数据 + 注册 SubjectDataProvider。
  *
  * <p>本类与 {@code ddd4j-sample-javalin-satoken} 的 RBAC 业务代码<b>完全一致</b>，
- * 唯一区别是：本类在 {@link #createSubjectDataProvider()} 中返回的是基于 {@link RbacService} 派生的
+ * 唯一区别是：本类在 {@link #createSubjectDataProvider(InMemoryUserRepository, InMemoryRoleRepository)} 中返回的是基于 {@link RbacService} 派生的
  * SubjectDataProvider（业务实现细节对所有示例相同）；不同框架（Sa-Token/Shiro）的差异在于
  * 启动器调用方式，不在本类中体现。
  *
- * <h3>演示账号</h3>
+ * <h2>演示账号</h2>
  * <ul>
  *   <li>admin / admin123：角色=admin，权限=user:*, order:*</li>
  *   <li>zhangsan / pass123：角色=user，权限=user:list, order:create, order:pay</li>

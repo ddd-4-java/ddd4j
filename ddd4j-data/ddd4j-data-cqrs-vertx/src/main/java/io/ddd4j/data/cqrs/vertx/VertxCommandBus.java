@@ -35,7 +35,7 @@ import java.util.Objects;
  * Helidon SE 用 {@code ddd4j-data-cqrs-helidon}，Javalin 用
  * {@code ddd4j-data-cqrs-javalin}。
  *
- * <h3>装配语义（静态工厂，构造即快照，顺序不可变）</h3>
+ * <h2>装配语义（静态工厂，构造即快照，顺序不可变）</h2>
  * <p>
  * {@link #create} 工厂内先把集成方供入的 {@link CommandExecutor} 集合逐个
  * {@link CommandRegistry#register}（整批拒绝语义），再以

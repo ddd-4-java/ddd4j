@@ -41,7 +41,7 @@ import java.util.Optional;
  *   <li>如何利用 {@link ApplicationScoped} Bean 暴露给其他业务 Bean 注入</li>
  * </ol>
  *
- * <h3>运行效果</h3>
+ * <h2>运行效果</h2>
  * <p>应用启动后日志中会输出类似：
  * <pre>
  * [Ddd4jSampleConfig] DomainEventPublisher = NoOpDomainEventPublisher

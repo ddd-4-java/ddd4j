@@ -27,6 +27,7 @@ import tools.jackson.databind.json.JsonMapper;
 import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityIdPath;
+import io.ddd4j.core.ddd.event.Event;
 import io.ddd4j.core.ddd.event.EntityType;
 import io.ddd4j.core.ddd.event.StringEntityType;
 import org.junit.jupiter.api.Test;
@@ -38,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * {@link EventPayloadSerializer} 契约测试：round-trip、源 mapper 隔离、异常包装、
- * 默认严格模式下反序列化（含 entity-id-path/event-type 回读）。
+ * 兼容未知载荷字段的反序列化（含 entity-id-path/event-type 回读）。
  *
  * <p>注意：本版本不再使用 {@code activateDefaultTyping} 多态标记——
  * JSON 输出<b>不含</b>{@code @class}，反序列化端必须通过
@@ -52,7 +53,7 @@ class EventPayloadSerializerTest {
     /**
      * 测试基 mapper：Jackson 3 内建 JavaTimeModule（自动注册），直接支持 java.time。
      * Jackson 3 默认关闭 FAIL_ON_UNKNOWN_PROPERTIES（与 Jackson 2 相反），
-     * 此处显式启用以保持「严格反序列化」契约（serializer 构造时 rebuild() 会携带该配置）。
+     * 此处显式启用，以验证 serializer 的副本可以放宽未知字段而不修改源 mapper。
      */
     private final ObjectMapper sourceMapper = JsonMapper.builder()
             .enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
@@ -78,16 +79,16 @@ class EventPayloadSerializerTest {
 
     @Test
     void roundTripPreservesEntityIdPath() {
-        // 验证 entity-id-path 也能正确回读（修复前需要 @JsonIgnoreProperties 绕过）
-        OrderPlacedEvent original = new OrderPlacedEvent("thinkpad", 2);
+        // 使用不同于无参构造器默认值的 ID，避免回读测试由构造器默认值假通过。
+        OrderPlacedEvent original = new OrderPlacedEvent("thinkpad", 2, "order-2");
 
         OrderPlacedEvent restored = (OrderPlacedEvent) serializer.deserialize(
                 serializer.serialize(original), OrderPlacedEvent.class);
 
         // 注意：TestAggregateRootId 未注册到 EntityIdRegistry，反序列化路径走
         // StringEntityId 兜底（保留 value，type 退化为 String）—— 这是预期行为。
-        assertThat(restored.getEntityIdPath().asString()).isEqualTo("String:order-1");
-        assertThat(restored.getEntityIdPath().last().asString()).isEqualTo("order-1");
+        assertThat(restored.getEntityIdPath().asString()).isEqualTo("String:order-2");
+        assertThat(restored.getEntityIdPath().last().asString()).isEqualTo("order-2");
     }
 
     @Test
@@ -110,6 +111,16 @@ class EventPayloadSerializerTest {
     }
 
     @Test
+    void causalityMetadataUsesHyphenatedPayloadFields() {
+        OrderPlacedEvent cause = new OrderPlacedEvent("cause", 1);
+        OrderPlacedEvent effect = new OrderPlacedEvent("effect", 2, cause);
+        String json = serializer.serialize(effect);
+
+        assertThat(json).contains("\"correlation-id\"").contains("\"causation-id\"");
+        assertThat(json).doesNotContain("correlationId").doesNotContain("causationId");
+    }
+
+    @Test
     void constructionLeavesSourceMapperUntouched() throws Exception {
         // 先用 serializer 序列化（走 copy 副本路径），再验证 source mapper 未被污染
         serializer.serialize(new OrderPlacedEvent("thinkpad", 2));
@@ -121,8 +132,34 @@ class EventPayloadSerializerTest {
 
     @Test
     void mapperKeepsDefaultStrictUnknownPropertyHandling() {
-        // 证明回读发生在默认严格模式下（修复后 entity-id-path/event-type 都能通过严格校验）
+        // 源 mapper 保持严格；serializer 的内部副本允许历史事件读取未来版本新增的字段。
         assertThat(sourceMapper.isEnabled(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)).isTrue();
+    }
+
+    @Test
+    void deserializeIgnoresUnknownPayloadPropertyWithoutChangingSourceMapper() {
+        String payload = serializer.serialize(new OrderPlacedEvent("thinkpad", 2));
+        String withFutureProperty = payload.substring(0, payload.length() - 1)
+                + ",\"futureProperty\":\"newer-writer\"}";
+
+        OrderPlacedEvent restored = (OrderPlacedEvent) serializer.deserialize(
+                withFutureProperty, OrderPlacedEvent.class);
+
+        assertThat(restored.getProductName()).isEqualTo("thinkpad");
+        assertThat(restored.getQuantity()).isEqualTo(2);
+        assertThat(sourceMapper.isEnabled(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)).isTrue();
+    }
+
+    @Test
+    void unknownClassMarkerCannotChooseTheDeserializedType() {
+        String payload = serializer.serialize(new OrderPlacedEvent("thinkpad", 2));
+        String withClassMarker = payload.substring(0, payload.length() - 1)
+                + ",\"@class\":\"java.lang.ProcessBuilder\"}";
+
+        DomainEvent<?> restored = serializer.deserialize(withClassMarker, OrderPlacedEvent.class);
+
+        assertThat(restored).isInstanceOf(OrderPlacedEvent.class);
+        assertThat(((OrderPlacedEvent) restored).getProductName()).isEqualTo("thinkpad");
     }
 
     @Test
@@ -215,6 +252,18 @@ class EventPayloadSerializerTest {
 
         OrderPlacedEvent(String productName, int quantity) {
             this();
+            this.productName = productName;
+            this.quantity = quantity;
+        }
+
+        OrderPlacedEvent(String productName, int quantity, String aggregateId) {
+            super(new EntityIdPath(new TestAggregateRootId(aggregateId)));
+            this.productName = productName;
+            this.quantity = quantity;
+        }
+
+        OrderPlacedEvent(String productName, int quantity, Event causingEvent) {
+            super(new EntityIdPath(new TestAggregateRootId("order-1")), causingEvent);
             this.productName = productName;
             this.quantity = quantity;
         }

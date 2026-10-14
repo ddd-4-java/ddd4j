@@ -32,7 +32,6 @@ import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityType;
 import io.ddd4j.core.ddd.event.EventId;
 import io.ddd4j.core.ddd.event.StringEntityType;
-import io.ddd4j.kit.lang.JsonKit;
 import tools.jackson.databind.json.JsonMapper;
 
 import java.nio.charset.StandardCharsets;
@@ -50,6 +49,7 @@ import java.util.concurrent.CompletionException;
  */
 public class EsdbEventStore implements EventStore {
 
+    private static final JsonMapper METADATA_MAPPER = JsonMapper.builder().build();
     private final EventStoreDBClient client;
     private final String streamPrefix;
     private final EventPayloadSerializer serializer;
@@ -152,7 +152,15 @@ public class EsdbEventStore implements EventStore {
 
     private StoredEvent toStoredEvent(ResolvedEvent resolved, String expectedType, AggregateRootId expectedId) {
         RecordedEvent recorded = resolved.getEvent();
-        Map<String, Object> metadata = JsonKit.toMap(new String(recorded.getUserMetadata(), StandardCharsets.UTF_8));
+        Map<String, Object> metadata;
+        try {
+            metadata = METADATA_MAPPER.readValue(
+                    new String(recorded.getUserMetadata(), StandardCharsets.UTF_8),
+                    new tools.jackson.core.type.TypeReference<Map<String, Object>>() {
+                    });
+        } catch (Exception exception) {
+            throw new IllegalStateException("Invalid ESDB event metadata", exception);
+        }
         String aggregateType = expectedType == null ? String.valueOf(metadata.get("aggregateType")) : expectedType;
         AggregateRootId aggregateId = expectedId == null
                 ? new StringAggregateRootId(String.valueOf(metadata.get("aggregateId"))) : expectedId;

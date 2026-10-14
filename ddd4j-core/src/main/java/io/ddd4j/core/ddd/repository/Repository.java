@@ -27,8 +27,9 @@ import java.util.*;
  * <p>合并了旧 {@code Repository}（基础 CRUD）和 {@code RichRepository}（充血查询），
  * 因为 Lambda 改造后 {@link Query} 已绑定 PO 类型，无需区分两个接口。
  *
- * <h3>方法对照 BaseMapper</h3>
+ * <h2>方法对照 BaseMapper</h2>
  * <table border="1">
+ *   <caption>BaseMapper 与 Repository 方法对照</caption>
  *   <tr><th>BaseMapper</th><th>Repository</th><th>说明</th></tr>
  *   <tr><td colspan="3"><b>单条 CRUD</b></td></tr>
  *   <tr><td>selectById(id)</td><td>findById(ID)</td><td>按 ID 查询</td></tr>

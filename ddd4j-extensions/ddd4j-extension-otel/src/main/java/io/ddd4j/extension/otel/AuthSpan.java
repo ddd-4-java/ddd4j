@@ -39,7 +39,7 @@ import java.util.Objects;
  *   <li>{@code auth.operation} - 操作类型（login/logout/verify/hasRole/hasPermission）</li>
  * </ul>
  *
- * <h3>使用示例</h3>
+ * <h2>使用示例</h2>
  * <pre>{@code
  * String token = AuthSpan.login(authRequest);
  * boolean allowed = AuthSpan.hasPermission("user:delete");

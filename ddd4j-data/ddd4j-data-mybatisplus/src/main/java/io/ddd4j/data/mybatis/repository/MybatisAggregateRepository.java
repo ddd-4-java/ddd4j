@@ -72,7 +72,7 @@ import java.util.function.Function;
 /**
  * MyBatis-Plus 仓储抽象基类（PO↔Domain 映射 + 充血查询 + 自动填充）。
  *
- * <h3>类继承链</h3>
+ * <h2>类继承链</h2>
  * <pre>{@code
  * MybatisAggregateRepository<MP, M, P, Q, ID>
  *   └─ extends AbstractRepository<MP, P>             // mybatis-plus-extension（无 Spring 依赖）
@@ -122,7 +122,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
     }
 
     /**
-     * MyBatis-Plus Mapper 实例（无 Spring 注入，业务方通过 {@link #setBaseMapper} 或构造器手动注入）。
+     * MyBatis-Plus Mapper 实例（无 Spring 注入，业务方通过 {@code setBaseMapper(...)} 或构造器手动注入）。
      * 对应 MyBatis-Plus {@code CrudRepository.@Autowired M baseMapper} 的非 Spring 版本。
      */
     @Setter

@@ -27,7 +27,7 @@ import java.lang.annotation.*;
  * 命令契约与路由逻辑全部复用 ddd4j-core（ADR-0004：命令分发唯一入口），
  * 本注解只承担「发现」职责，不携带任何行为。
  *
- * <h3>使用示例</h3>
+ * <h2>使用示例</h2>
  * <pre>{@code
  * &#64;CommandHandler(CreateOrderCommand.class)
  * public class CreateOrderCmdExe implements CommandExecutor<CreateOrderCommand> {

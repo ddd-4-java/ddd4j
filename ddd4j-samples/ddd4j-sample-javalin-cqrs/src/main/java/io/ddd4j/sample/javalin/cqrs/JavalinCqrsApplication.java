@@ -46,7 +46,7 @@ import java.util.Objects;
 /**
  * ddd4j Javalin 平台的 Order/Goods CQRS 启动入口。
  *
- * <h3>核心要点</h3>
+ * <h2>核心要点</h2>
  * <p>Javalin 无 DI 容器，业务方在 main 中手动完成：
  * <ol>
  *   <li>注入 4 个核心 SPI（{@link BaseContext#inject}）</li>

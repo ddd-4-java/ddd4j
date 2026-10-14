@@ -33,7 +33,7 @@ import java.util.ResourceBundle;
  * </ul>
  * 默认实现返回原始 key。
  *
- * <h3>占位符约定</h3>
+ * <h2>占位符约定</h2>
  * <ul>
  *   <li><b>资源文件中</b>：使用 {@code java.text.MessageFormat} 风格 {@code {0}, {1}, ...}
  *       （与 Spring MessageSource / Quarkus 一致）</li>

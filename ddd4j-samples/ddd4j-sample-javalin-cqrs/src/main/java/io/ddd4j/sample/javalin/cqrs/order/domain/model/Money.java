@@ -14,8 +14,6 @@
  */
 package io.ddd4j.sample.javalin.cqrs.order.domain.model;
 
-import io.ddd4j.core.ddd.model.ValueObject;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -24,12 +22,21 @@ import java.io.InvalidObjectException;
 
 import java.io.ObjectStreamException;
 
+import io.ddd4j.core.ddd.model.ValueObject;
 import io.ddd4j.kit.lang.StrKit;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Locale;
 import java.util.Objects;
+
+/**
+ * 金额值对象（第二轨：充血模型）。
+ *
+ * <p>作为 {@link Order} 与 {@link OrderLine} 共用的值对象，封装金额不可变性、币种一致性与精度归一化。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
 
 public final class Money implements ValueObject {
 
@@ -38,6 +45,11 @@ public final class Money implements ValueObject {
     private final BigDecimal amount;
 
     private final String currency;
+
+    /**
+ * @param amount 金额数值
+ * @param currency 货币代码（如 CNY、USD）
+ */
 
     @JsonCreator()
     public Money(@JsonProperty("amount") BigDecimal amount, @JsonProperty("currency") String currency) {
@@ -111,6 +123,14 @@ public final class Money implements ValueObject {
             throw new IllegalArgumentException("factor must not be negative");
         }
         return new Money(amount.multiply(BigDecimal.valueOf(factor)), currency);
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public String getCurrency() {
+        return currency;
     }
 
     @JsonProperty("amount")

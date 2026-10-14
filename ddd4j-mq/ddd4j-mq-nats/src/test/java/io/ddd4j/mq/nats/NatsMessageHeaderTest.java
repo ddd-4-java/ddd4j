@@ -27,10 +27,12 @@ class NatsMessageHeaderTest {
     void shouldWriteStableHeaderAndPreferItWhenReading() {
         MQEvent event = new MQEvent();
         event.setMsgId("stable-id");
+        event.setTag("priority");
         Headers headers = NatsMQClient.messageHeaders(event);
         headers.put(MessageHeaders.LEGACY_HEADER_MESSAGE_ID, "legacy-id");
 
         assertEquals("stable-id", headers.getFirst(MessageHeaders.HEADER_MESSAGE_ID));
+        assertEquals("priority", headers.getFirst(MessageHeaders.HEADER_DESTINATION_TAG));
         assertEquals("stable-id", NatsMQClient.messageId(headers));
 
         Headers legacyHeaders = new Headers();

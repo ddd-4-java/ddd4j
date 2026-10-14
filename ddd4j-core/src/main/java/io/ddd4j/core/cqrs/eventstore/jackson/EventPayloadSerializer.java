@@ -16,6 +16,7 @@ package io.ddd4j.core.cqrs.eventstore.jackson;
 
 import io.ddd4j.core.ddd.event.DomainEvent;
 import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.ObjectMapper;
 
 import java.util.Objects;
@@ -24,7 +25,7 @@ import java.util.Objects;
  * 领域事件 payload Jackson 序列化器（ADR-0005，硬化版本见
  * {@code docs/superpowers/specs/2026-08-25-eventstore-spi-hardening.md}）。
  *
- * <h3>类型安全的序列化策略</h3>
+ * <h2>类型安全的序列化策略</h2>
  * <p>本序列化器<b>不</b>使用 Jackson {@code activateDefaultTyping} / {@code @class} 多态
  * 标记——这是对早期版本的关键安全收紧。反序列化端始终由调用方显式传入目标
  * {@link DomainEvent} 子类型（{@link #deserialize(String, Class)}），既满足业务需要，
@@ -61,7 +62,10 @@ public class EventPayloadSerializer {
      * @param source 源 mapper；构造后保持不变
      */
     public EventPayloadSerializer(ObjectMapper source) {
-        this.objectMapper = Objects.requireNonNull(source, "source must not be null").rebuild().build();
+        this.objectMapper = Objects.requireNonNull(source, "source must not be null")
+                .rebuild()
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                .build();
     }
 
     /**

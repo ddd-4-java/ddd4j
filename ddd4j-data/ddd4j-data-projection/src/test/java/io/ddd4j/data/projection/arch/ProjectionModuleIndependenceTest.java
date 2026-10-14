@@ -85,7 +85,7 @@ class ProjectionModuleIndependenceTest {
      * 来自 ddd4j-core）、Reactor（根包 {@code reactor..}——Maven 坐标
      * io.projectreactor:reactor-core 的 Java 包名；{@code chunkByEvent} 的
      * Flux 响应式轨道，ADR-0005 单轨决策：异步扩展仅此一份 Reactor 签名，
-     * 接受 Reactor 进入 SPI 层）与 Lombok 编译期标记。
+     * 接受 Reactor 进入 SPI 层）、Jackson 序列化注解与 Lombok 编译期标记。
      * 新增依赖必须显式加白并经 ADR 修订。
      */
     @ArchTest
@@ -95,6 +95,7 @@ class ProjectionModuleIndependenceTest {
                             "io.ddd4j..",
                             "java..",
                             "reactor..",
+                            "com.fasterxml.jackson.annotation..",
                             "lombok.."
                     );
 }

@@ -55,6 +55,12 @@
             <groupId>com.alibaba</groupId>
             <artifactId>transmittable-thread-local</artifactId>
         </dependency>
+        <!-- TraceContextBridge 的 MDC 行为测试需要实际 SLF4J Provider。 -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>test</scope>
+        </dependency>
 
         <!-- ======== 响应式事件存储轨道（有意保留） ======== -->
         <!-- Reactor：AsyncEventStore/AsyncStoredEvent 的 Flux/Mono 类型来源。同步与异步

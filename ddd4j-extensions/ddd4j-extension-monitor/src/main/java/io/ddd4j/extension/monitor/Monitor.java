@@ -25,7 +25,7 @@ import io.ddd4j.extension.monitor.runtime.ApplicationStartReporter;
  * <p>工具库对外的唯一入口，提供钉钉 / 企业微信两类机器人通道的快速装配，
  * 以及应用启动通告的便捷触发。
  *
- * <h3>典型用法</h3>
+ * <h2>典型用法</h2>
  * <pre>{@code
  *   // 钉钉机器人
  *   DingTalkRobotSender sender = Monitor.ofDingTalk("access_token", "secret");

@@ -20,6 +20,8 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.biz.context.NestedMessageSource;
 import org.springframework.biz.utils.SpringContextUtils;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.nio.ByteBuffer;
@@ -246,10 +248,20 @@ public class I18nKit {
     }
 
     public static String getMessage(String key, String[] args) {
-        return SpringContextUtils.getContext().getApplicationContext().getBean(NestedMessageSource.class).getMessage(key, args, LocaleContextHolder.getLocale());
+        return messageSource().getMessage(key, args, LocaleContextHolder.getLocale());
     }
 
     public static String getMessage(String key, String[] args, String defaultMsg) {
-        return SpringContextUtils.getContext().getApplicationContext().getBean(NestedMessageSource.class).getMessage(key, args, defaultMsg, LocaleContextHolder.getLocale());
+        return messageSource().getMessage(key, args, defaultMsg, LocaleContextHolder.getLocale());
+    }
+
+    private static MessageSource messageSource() {
+        ApplicationContext context = SpringContextUtils.getContext().getApplicationContext();
+        MessageSource extensionSource = context.getBeanProvider(
+                org.springframework.extension.context.NestedMessageSource.class).getIfAvailable();
+        if (Objects.nonNull(extensionSource)) {
+            return extensionSource;
+        }
+        return context.getBean(NestedMessageSource.class);
     }
 }

@@ -1,5 +1,7 @@
 # 6、ddd4j-产品与版本规划
 
+> **2026-10-10 执行状态**：下文标注的 2026-09-24 HEAD、发布和门禁结论属于当时的历史快照，不代表本轮三线收敛验收。当前任务与未完成门禁见[三线产品收敛计划](./superpowers/plans/2026-10-10-three-line-product-convergence.md)，历史报告来源见[证据索引](./superpowers/historical-evidence-index.md)。
+
 > **文档说明**：ddd4j 的产品级版本规划。把"三轨治理"从工程层面（[`5、ddd4j-技术方案与路线.md`](./5、ddd4j-技术方案与路线.md)
 >
 §2）正式纳入产品规划：发布节奏、版本矩阵、支持窗口、生态分层、升级路径、技术兼容性矩阵、商业兼容与支持政策。所有时点数字、定价、支持窗口基于"假设 /
@@ -352,19 +354,19 @@ import 的上游 BOM 文件读取。
 
 ## 10. 相关文档
 
-- [`README.md`](./README.md) · 项目门户
+- [`README.md`](../README.md) · 项目门户
 - [`8、ddd4j-Architecture.zh_CN.md`](./8、ddd4j-Architecture.zh_CN.md) · 系统架构
 - [`5、ddd4j-技术方案与路线.md`](./5、ddd4j-技术方案与路线.md) · 当前技术方案（含 ADR-2026-001~006）
 - [`7、ddd4j-领域模型设计.md`](./7、ddd4j-领域模型设计.md) · 领域模型
-- [`1.0.x/8、ddd4j-1.0.x-Architecture.zh_CN.md`](./1.0.x/8、ddd4j-1.0.x-Architecture.zh_CN.md) · 1.0.x 版本架构
+- [`1.0.x/8、ddd4j-1.0.x-Architecture.zh_CN.md`](./8、ddd4j-1.0.x-Architecture.zh_CN.md) · 1.0.x 版本架构
 - [
-  `docs/superpowers/reports/2026-09-09-three-line-source-parity-audit.md`](./docs/superpowers/reports/2026-09-09-three-line-source-parity-audit.md) ·
+  `docs/superpowers/reports/2026-09-09-three-line-source-parity-audit.md`](./superpowers/historical-evidence-index.md) ·
   三线严格审计报告
 - [
-  `docs/superpowers/plans/2026-09-10-mq-startup-lifecycle.md`](./docs/superpowers/plans/2026-09-10-mq-startup-lifecycle.md) ·
+  `docs/superpowers/plans/2026-09-10-mq-startup-lifecycle.md`](./superpowers/plans/2026-09-10-mq-startup-lifecycle.md) ·
   MQ 启动生命周期
 - [
-  `docs/superpowers/plans/2026-09-10-license-gate-hardening.md`](./docs/superpowers/plans/2026-09-10-license-gate-hardening.md) ·
+  `docs/superpowers/plans/2026-09-10-license-gate-hardening.md`](./superpowers/plans/2026-09-10-license-gate-hardening.md) ·
   License Gate Hardening
 
 ---
@@ -391,12 +393,12 @@ import 的上游 BOM 文件读取。
 按 [`6、ddd4j-产品与版本规划.md` §11](./6、ddd4j-产品与版本规划.md#11-项目维护者决策点清单)
 的 6 项决策点回填：
 
-- [ ] #1 三轨 EOL + GA 节奏（填 §3.4 gantt + §8.1 表格）
-- [ ] #2 Jackson 3 / tools.jackson 具体版本（§5.3 dependency 块）
-- [ ] #3 Spring/Hibernate/Helidon/Quarkus 等 BOM 继承版本（§6.1 + §6.2 + §6.3 表格）
-- [ ] #4 商业支持与定价（§7.2）
-- [ ] #5 Release notes 流程（§4.3 第 6 项）
-- [ ] #6 品牌归属与命名许可（§7.3）
+- [ ] #1 三轨 EOL + GA 节奏（填 §3.4 gantt + §8.1 表格）【外部阻塞：需项目维护者业务决策回填】
+- [ ] #2 Jackson 3 / tools.jackson 具体版本（§5.3 dependency 块）【外部阻塞：需项目维护者业务决策回填】
+- [ ] #3 Spring/Hibernate/Helidon/Quarkus 等 BOM 继承版本（§6.1 + §6.2 + §6.3 表格）【外部阻塞：需项目维护者业务决策回填】
+- [ ] #4 商业支持与定价（§7.2）【外部阻塞：需项目维护者业务决策回填】
+- [ ] #5 Release notes 流程（§4.3 第 6 项）【外部阻塞：需项目维护者业务决策回填】
+- [ ] #6 品牌归属与命名许可（§7.3）【外部阻塞：需项目维护者业务决策回填】
 
 完成后把本文档状态从"🟡 待评审"改为"✅ 已评审"。
 ```

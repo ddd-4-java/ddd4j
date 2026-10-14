@@ -17,38 +17,27 @@ ddd4j SubjectKit 统一鉴权入口在 Quarkus 框架下的 Shiro 适配示例�
 
 | 框架    | 鉴权适配模块     | 桥接模块           |
 |---------|------------------|--------------------|
-| Quarkus | ddd4j-auth-shiro | ddd4j-auth-quarkus |
+| Quarkus | ddd4j-auth-shiro | ddd4j-runtime-quarkus |
 
 ### 🚀 快速开始
 
-**启动命令**：
+从仓库根目录运行鉴权样例的 HTTP/RBAC 测试：
 
 ```bash
-mvn quarkus:dev         # Quarkus
+mvn -pl ddd4j-samples/ddd4j-sample-quarkus-shiro -am test
 ```
 
-**端口**：8080
+JDK 21 分支使用 `./mvnw` 替代上述命令中的 `mvn`。
 
-**测试登录**：
+应用配置端口为 `8084`。启动后，登录请求使用 JSON 用户名和密码；响应顶层包含 `token`。示例账号由 `RbacConfig` 初始化。
 
 ```bash
-# 登录获取 Token
-curl -X POST 'http://localhost:8080/auth/login?userId=10001'
-
-# 查看当前用户
-curl http://localhost:8080/auth/me
-
-# 权限校验
-curl 'http://localhost:8080/auth/check/permission?permission=user:add'
-# 返回：{"permission":"user:add","has":true}
-
-# 角色校验
-curl 'http://localhost:8080/auth/check/role?role=admin'
-# 返回：{"role":"admin","has":true}
-
-# 登出
-curl -X POST http://localhost:8080/auth/logout
+curl -s -X POST http://localhost:8084/auth/login \
+  -H 'Content-Type: application/json' \
+  -d '{"username":"admin","password":"123456"}'
 ```
+
+调用 `/auth/me`、`/auth/check/permission` 等受保护接口时，在 `Authorization` 请求头传入 `Bearer <token>`。
 
 ### 📝 业务代码（AuthService.java）
 

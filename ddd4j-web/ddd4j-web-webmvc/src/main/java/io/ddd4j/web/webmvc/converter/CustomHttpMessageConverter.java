@@ -31,9 +31,9 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 /**
- * 自定义 Jackson 2 {@link HttpMessageConverter}。
+ * 自定义 Jackson 3 {@link AbstractGenericHttpMessageConverter}。
  *
- * <p>2.0.x 使用 Jackson 2 {@link ObjectMapper}；本类避免将 MVC 转换器实现
+ * <p>3.0.x 使用 Jackson 3 {@link ObjectMapper}；本类避免将 MVC 转换器实现
  * 与 Spring 默认转换器的内部配置耦合。</p>
  */
 public class CustomHttpMessageConverter extends AbstractGenericHttpMessageConverter<Object> {

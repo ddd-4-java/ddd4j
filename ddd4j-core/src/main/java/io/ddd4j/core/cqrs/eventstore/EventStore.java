@@ -33,7 +33,7 @@ import java.util.List;
  *   <li>{@code readAll} 按全局 {@code position} 读取，补齐 esc-api 缺失的全局顺序</li>
  * </ul>
  *
- * <h3>乐观锁</h3>
+ * <h2>乐观锁</h2>
  * <p>append 时校验 {@code expectedVersion}（期望的流当前版本号，空流为 0），
  * 与实际版本不一致时抛 {@link AggregateVersionConflictException}。
  *

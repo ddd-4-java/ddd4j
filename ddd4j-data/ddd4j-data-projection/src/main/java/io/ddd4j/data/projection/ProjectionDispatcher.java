@@ -44,7 +44,7 @@ import java.util.concurrent.CompletableFuture;
  * 本类<b>不重定义任何 core 投影抽象</b>，也不做类型路由之外的分发决策
  * （多事件类型的字符串路由已有 core {@code TypedEventDispatcher} 承担）。
  *
- * <h3>事务边界（与命令侧 ddd4j-data-cqrs-spring 同款）</h3>
+ * <h2>事务边界（与命令侧 ddd4j-data-cqrs-spring 同款）</h2>
  * <p>
  * 本类<b>不包装事务</b>：{@link #dispatchOne} 只保证「先应用、后提交位置」的顺序
  * （handler 抛异常时位置不推进），事务与重试由业务 bean 自管。运行时适配层如需

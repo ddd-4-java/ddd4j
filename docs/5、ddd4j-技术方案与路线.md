@@ -311,15 +311,15 @@ gantt
 - [`8、ddd4j-Architecture.zh_CN.md`](./8、ddd4j-Architecture.zh_CN.md) · 系统架构
 - [`6、ddd4j-产品与版本规划.md`](./6、ddd4j-产品与版本规划.md) · **三轨版本矩阵 · 升级路径 · 技术兼容性矩阵**
 - [`7、ddd4j-领域模型设计.md`](./7、ddd4j-领域模型设计.md) · 领域模型
-- [`1.0.x/8、ddd4j-1.0.x-Architecture.zh_CN.md`](./1.0.x/8、ddd4j-1.0.x-Architecture.zh_CN.md) · 1.0.x 版本架构 + 三线差异表
+- [`1.0.x/8、ddd4j-1.0.x-Architecture.zh_CN.md`](./8、ddd4j-1.0.x-Architecture.zh_CN.md) · 1.0.x 版本架构 + 三线差异表
 - [
-  `docs/superpowers/plans/2026-09-10-mq-startup-lifecycle.md`](./docs/superpowers/plans/2026-09-10-mq-startup-lifecycle.md) ·
+  `docs/superpowers/plans/2026-09-10-mq-startup-lifecycle.md`](./superpowers/plans/2026-09-10-mq-startup-lifecycle.md) ·
   MQ 启动生命周期实施计划
 - [
-  `docs/superpowers/plans/2026-09-10-license-gate-hardening.md`](./docs/superpowers/plans/2026-09-10-license-gate-hardening.md) ·
+  `docs/superpowers/plans/2026-09-10-license-gate-hardening.md`](./superpowers/plans/2026-09-10-license-gate-hardening.md) ·
   License Gate Hardening 实施计划
 - [
-  `docs/superpowers/reports/2026-09-09-three-line-source-parity-audit.md`](./docs/superpowers/reports/2026-09-09-three-line-source-parity-audit.md) ·
+  `docs/superpowers/reports/2026-09-09-three-line-source-parity-audit.md`](./superpowers/historical-evidence-index.md) ·
   三线严格审计报告
 
 ---

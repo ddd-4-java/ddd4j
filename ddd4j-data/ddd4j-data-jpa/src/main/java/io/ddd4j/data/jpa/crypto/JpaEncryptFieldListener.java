@@ -34,7 +34,7 @@ import java.util.ServiceLoader;
  *
  * <p>满足等保数据加密要求：SM4 对称加密 + SM3 摘要签名。</p>
  *
- * <h3>加解密 Handler 的获取</h3>
+ * <h2>加解密 Handler 的获取</h2>
  * <p>JPA 规范要求 {@code @EntityListeners} 监听器由 ORM 以<b>无参构造</b>实例化，
  * 无法通过构造器注入 {@link CryptoStrategy}。本监听器在无参构造时通过
  * {@link ServiceLoader} 延迟发现 {@link CryptoStrategy} 实现；若发现多个则取第一个，

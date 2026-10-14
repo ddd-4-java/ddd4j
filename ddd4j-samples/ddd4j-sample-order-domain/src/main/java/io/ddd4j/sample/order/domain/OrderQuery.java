@@ -18,8 +18,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
-import java.util.Objects;
+import lombok.Value;
 
+@Value
 public final class OrderQuery {
 
     private static final long serialVersionUID = 0L;
@@ -61,32 +62,5 @@ public final class OrderQuery {
     @JsonProperty("size")
     public int size() {
         return size;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-            return false;
-        }
-        OrderQuery other = (OrderQuery) obj;
-        return Objects.equals(this.buyerId, other.buyerId) && Objects.equals(this.status, other.status) && this.page == other.page && this.size == other.size;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = 0;
-        result = 31 * result + Objects.hashCode(buyerId);
-        result = 31 * result + Objects.hashCode(status);
-        result = 31 * result + Integer.hashCode(page);
-        result = 31 * result + Integer.hashCode(size);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "OrderQuery[buyerId=" + buyerId + ", status=" + status + ", page=" + page + ", size=" + size + "]";
     }
 }

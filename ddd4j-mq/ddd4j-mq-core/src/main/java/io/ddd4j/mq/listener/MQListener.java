@@ -144,7 +144,7 @@ public class MQListener {
      * 物理路由键：{@code namespace.topic[.tag]}（与 ddd4j Disruptor
      * {@code DisruptorEvent.getRouteExpression()} 统一规则）。
      *
-     * <h3>路由模型</h3>
+     * <p><b>路由模型</b>
      * <pre>
      *   namespace.topic.tag
      *   └───┬───┘ └─┬─┘ └┬┘

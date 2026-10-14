@@ -82,4 +82,20 @@ class StrKitTest {
         assertThat(StrKit.isNotEmpty("  ")).isTrue();
     }
 
+    @Test
+    void replaceAll_shouldReplaceEachLiteralOccurrenceWithoutDamagingUnicode() {
+        assertThat(StrKit.replaceAll("中", "X", "甲中乙中")).isEqualTo("甲X乙X");
+        assertThat(StrKit.replaceAll("aa", "X", "aaaa")).isEqualTo("XX");
+        assertThat(StrKit.replaceAll(".", "X", "a.b")).isEqualTo("aXb");
+    }
+
+    @Test
+    void splitByCharacter_shouldPreserveUnicodeAndFinalSegment() {
+        assertThat(StrKit.split("甲|乙|丙", '|')).containsExactly("甲", "乙", "丙");
+        assertThat(StrKit.split("甲◇乙", '◇')).containsExactly("甲", "乙");
+        assertThat(StrKit.split("|甲||", '|')).containsExactly("", "甲", "", "");
+        assertThat(StrKit.split("原文", '|')).containsExactly("原文");
+        assertThat(StrKit.split(null, '|')).isEmpty();
+    }
+
 }

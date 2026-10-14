@@ -84,6 +84,10 @@ public class BizRuntimeException extends RuntimeException {
     }
 
     public BizRuntimeException(ApiCode code, String i18nCode) {
+        this((CustomApiCode) code, i18nCode);
+    }
+
+    public BizRuntimeException(CustomApiCode code, String i18nCode) {
         super(I18nKit.get(i18nCode, code.getReason()));
         this.code = code.getCode();
         this.i18nCode = i18nCode;

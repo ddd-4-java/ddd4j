@@ -58,15 +58,15 @@ public class Constants {
      * <p>2.0.x 破坏性变更（ADR-0002 迁移义务①）：由 SLF4J {@code Marker} 改为纯 {@code String}，
      * ddd4j-core 不再依赖日志门面，日志能力由家族模块（ddd4j-kit）与适配层承担。
      */
-    public static final String ACCESS_MARKER = "io.hiwepy.access";
+    public static final String ACCESS_MARKER = "io.ddd4j.access";
     /**
      * 授权日志 Marker 名称（2.0.x 破坏性变更：Marker→String，见 ADR-0002 迁移义务①）。
      */
-    public static final String AUTHZ_MARKER = "io.hiwepy.authz";
+    public static final String AUTHZ_MARKER = "io.ddd4j.auth";
     /**
      * 业务日志 Marker 名称（2.0.x 破坏性变更：Marker→String，见 ADR-0002 迁移义务①）。
      */
-    public static final String BIZ_MARKER = "io.hiwepy.biz";
+    public static final String BIZ_MARKER = "io.ddd4j.biz";
 
 }
 

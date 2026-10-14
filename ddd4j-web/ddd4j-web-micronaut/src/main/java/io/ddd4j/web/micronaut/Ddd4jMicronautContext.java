@@ -74,6 +74,14 @@ public final class Ddd4jMicronautContext implements ThreadPropagatedContextEleme
         return subject;
     }
 
+    public WebRequestContext getRequestContext() {
+        return requestContext;
+    }
+
+    public Optional<Subject> getSubject() {
+        return subject;
+    }
+
     private Object readResolve() throws ObjectStreamException {
         try {
             return new Ddd4jMicronautContext(requestContext, subject);

@@ -37,7 +37,7 @@ import java.util.Objects;
  * <p><b>仅服务 Spring 系运行时</b>（WebMVC／WebFlux／Helidon-Spring）；Quarkus
  * 运行时用 {@code ddd4j-data-cqrs-quarkus} 的 {@code QuarkusCommandBus}。
  *
- * <h3>装配语义（构造即快照，顺序不可变）</h3>
+ * <h2>装配语义（构造即快照，顺序不可变）</h2>
  * <p>
  * 构造器内先经 {@link ApplicationContext#getBeansOfType(Class)} 收集容器中全部
  * {@link CommandExecutor} Bean 并逐个 {@link CommandRegistry#register}（整批拒绝

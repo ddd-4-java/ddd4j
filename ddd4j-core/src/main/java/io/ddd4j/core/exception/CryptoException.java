@@ -48,6 +48,10 @@ public class CryptoException extends BizRuntimeException {
     }
 
     public CryptoException(ApiCode code, String i18nCode) {
+        this((CustomApiCode) code, i18nCode);
+    }
+
+    public CryptoException(CustomApiCode code, String i18nCode) {
         super(code, i18nCode);
     }
 

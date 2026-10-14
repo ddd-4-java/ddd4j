@@ -32,6 +32,8 @@ import redis.clients.jedis.UnifiedJedis;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -61,6 +63,23 @@ class RedisStreamBrokerAdapterTest {
 
         verify(jedis).xack("sales.order.paid", "sample", id);
         assertTrue(ack.isAcknowledged());
+    }
+
+    @Test
+    void failedXackMustRemainRetryableOnSameAcknowledgment() {
+        UnifiedJedis jedis = mock(UnifiedJedis.class);
+        StreamEntryID id = new StreamEntryID("3-0");
+        when(jedis.xack("orders", "workers", id))
+                .thenThrow(new IllegalStateException("ack lost"))
+                .thenReturn(1L);
+        RedisStreamAcknowledgment acknowledgment = new RedisStreamAcknowledgment(
+                jedis, "orders", "workers", id, "msg-3", "corr-3");
+
+        assertThrows(IllegalStateException.class, acknowledgment::ack);
+        assertFalse(acknowledgment.isAcknowledged());
+        acknowledgment.ack();
+        assertTrue(acknowledgment.isAcknowledged());
+        verify(jedis, times(2)).xack("orders", "workers", id);
     }
 
     @Test

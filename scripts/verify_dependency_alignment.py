@@ -7,6 +7,8 @@
 import argparse
 import csv
 import json
+import os
+import re
 import struct
 import sys
 import zipfile
@@ -56,11 +58,69 @@ def profile_dependencies(path):
     return result
 
 
+def module_dependencies(root):
+    """列出模块默认声明的精确依赖变体；BOM 清单和非激活 profile 不计入。"""
+    import xml.etree.ElementTree as ET
+    result = {}
+    for directory, children, files in os.walk(root):
+        children[:] = [child for child in children if child not in
+                       ('.git', '.codegraph', 'target', 'node_modules')]
+        path = Path(directory) / 'pom.xml'
+        if 'pom.xml' not in files or path == root / 'ddd4j-dependencies/pom.xml':
+            continue
+        project = ET.parse(path).getroot()
+        ns = {'m': project.tag.split('}')[0][1:]}
+        for dependency in project.findall('m:dependencies/m:dependency', ns):
+            row = {node.tag.split('}')[-1]: node.text for node in dependency if len(node) == 0}
+            group, artifact = row.get('groupId'), row.get('artifactId')
+            if not group or not artifact:
+                continue
+            key = (group, artifact, row.get('type', 'jar'), row.get('classifier', ''))
+            result.setdefault(key, []).append(str(path.relative_to(root)))
+    return {key: sorted(paths) for key, paths in result.items()}
+
+
+def pom_properties(path):
+    import xml.etree.ElementTree as ET
+    if not path.is_file():
+        return {}
+    root = ET.parse(path).getroot()
+    namespace = root.tag.partition('}')[0] + '}' if '}' in root.tag else ''
+    properties = root.find(namespace + 'properties')
+    return ({item.tag.removeprefix(namespace): (item.text or '').strip() for item in properties}
+            if properties is not None else {})
+
+
+def resolved_property(value, properties):
+    for _ in range(10):
+        match = re.fullmatch(r'\$\{([^}]+)\}', value or '')
+        if match is None or match.group(1) not in properties:
+            break
+        value = properties[match.group(1)]
+    return value
+
+
 def verify(roots, effective_paths, policy, repository, extra_cache, strict):
     direct = [dependencies(root / 'ddd4j-dependencies/pom.xml') for root in roots]
     profiles = [profile_dependencies(root / 'ddd4j-dependencies/pom.xml') for root in roots]
     effective = [dependencies(path) for path in effective_paths]
+    module_usage = {}
     errors, unknown, rows = [], [], []
+    for index, root in enumerate(roots):
+        component_line = ('1.0.x', '2.0.x', '3.0.x')[index]
+        properties = {**pom_properties(root / 'pom.xml'),
+                      **pom_properties(root / 'ddd4j-dependencies/pom.xml')}
+        for key, dependency in direct[index].items():
+            if key[0] != 'io.github.easy4j':
+                continue
+            coordinate = ':'.join(key[:2])
+            starter_lines = policy.get('boot_starter_versions', {}).get(coordinate)
+            expected_line = starter_lines[str((8, 17, 21)[index])] if starter_lines else component_line
+            expected = expected_line + '.20260630-SNAPSHOT'
+            version = resolved_property(dependency.get('version', ''), properties)
+            if version != expected:
+                errors.append(f'JDK {(8, 17, 21)[index]}: Easy4J {key[0]}:{key[1]} '
+                              f'uses {version or "<missing>"}, expected {expected}')
     keys = set().union(*(set(items) for items in direct + profiles))
     variants = policy.get('baseline_variants', {})
     if variants:
@@ -99,6 +159,21 @@ def verify(roots, effective_paths, policy, repository, extra_cache, strict):
                 continue
             if unsupported:
                 reason = unsupported['reason']
+                if value is None:
+                    if key in direct[i]:
+                        errors.append(f'JDK {jdk}: missing {coordinate}')
+                    if key in profiles[i]:
+                        errors.append(f'JDK {jdk}: {coordinate} is only in profile {profiles[i][key]}, not default coverage')
+                    rows.append([display_coordinate, jdk, '', 'unsupported-absent',
+                                 unsupported.get('requires_jdk', ''), reason])
+                    continue
+                if key not in direct[i]:
+                    if i not in module_usage:
+                        module_usage[i] = module_dependencies(roots[i])
+                    if key not in module_usage[i]:
+                        rows.append([display_coordinate, jdk, value.get('version', ''),
+                                     'unsupported-catalog-only', unsupported.get('requires_jdk', ''), reason])
+                        continue
                 errors.append(f'JDK {jdk}: unsupported {coordinate}: {reason}')
                 rows.append([display_coordinate, jdk, value.get('version', '') if value else '',
                              unsupported.get('status', 'unsupported'), unsupported.get('requires_jdk', ''), reason])
@@ -106,7 +181,12 @@ def verify(roots, effective_paths, policy, repository, extra_cache, strict):
             if value is None:
                 if key in profiles[i]:
                     errors.append(f'JDK {jdk}: {coordinate} is only in profile {profiles[i][key]}, not default coverage')
-                if i >= first:
+                # Third-party BOM catalogs are platform-specific. Require a managed
+                # entry on its own declared/baseline line; only Easy4J and explicit
+                # coordinate migrations carry a cross-line coverage obligation.
+                required = (i >= first if key[0] == 'io.github.easy4j' or exception
+                            else key in direct[i] or baseline_jdk == jdk)
+                if required:
                     alternatives = exception.get('coordinates', []) if exception else []
                     available = {':'.join(k[:2]) for k in effective[i]}
                     if not alternatives or not set(alternatives).issubset(available):
@@ -125,11 +205,15 @@ def verify(roots, effective_paths, policy, repository, extra_cache, strict):
             if not jar.exists() and extra_cache:
                 jar = extra_cache / str(relative).replace('/', '__')
             if not jar.exists():
-                unknown.append(f'JDK {jdk}: {coordinate}:{version}')
+                unknown.append(f'JDK {jdk}: {display_coordinate}:{version}')
                 rows.append([display_coordinate, jdk, version, 'unverified-artifact', '', ''])
                 continue
             counts = bytecode(jar)
             minimum = max(counts, default=0)
+            if group == 'io.github.easy4j' and not counts:
+                errors.append(f'JDK {jdk}: {coordinate}:{version} JAR has no base classes')
+                rows.append([display_coordinate, jdk, version, 'bytecode-empty', 0, str(jar)])
+                continue
             override = policy.get('optional_bytecode', {}).get(coordinate + ':' + version)
             status = 'bytecode-pass'
             if minimum > jdk:
@@ -163,6 +247,24 @@ def main():
         writer.writerows(rows)
     report = {'errors': errors, 'unverified_artifacts': unknown, 'rows': len(rows)}
     (args.output / 'result.json').write_text(json.dumps(report, indent=2, ensure_ascii=False) + '\n')
+    usage = [module_dependencies(root) for root in args.roots]
+    declared_unverified = []
+    for coordinate, jdk, version, status, _, _ in rows:
+        if status != 'unverified-artifact':
+            continue
+        parts = coordinate.split(':')
+        key = (parts[0], parts[1], parts[2], parts[3]) if len(parts) == 4 else (parts[0], parts[1], 'jar', '')
+        modules = usage[(8, 17, 21).index(jdk)].get(key, [])
+        if modules:
+            declared_unverified.append({'jdk': jdk, 'coordinate': coordinate,
+                                        'version': version, 'modules': modules})
+    (args.output / 'module-usage.json').write_text(json.dumps({
+        'scope': 'Direct dependencies in default project dependencies, with exact type and classifier. '
+                 'This excludes profiles, inheritance and transitive dependencies; non-matches are not waivers.',
+        'declared_unverified': declared_unverified,
+        'declared_unverified_count': len(declared_unverified),
+        'catalog_unverified_count': len(unknown),
+    }, indent=2, ensure_ascii=False) + '\n')
     print(f'{len(errors)} errors; {len(unknown)} unverified artifacts; {len(rows)} component/line rows')
     print('\n'.join(errors[:25]))
     return bool(errors)

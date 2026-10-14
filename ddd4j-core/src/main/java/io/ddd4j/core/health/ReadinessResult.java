@@ -12,46 +12,56 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package io.ddd4j.core.health;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.kit.lang.StrKit;
 
+import java.util.LinkedHashMap;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
 /**
  * 单个依赖的就绪检查结果。
+ *
+ * <p>字段语义：{@code name} 为稳定的依赖标识，例如 {@code postgresql} 或 {@code redis}；
+ * {@code ready} 表示是否可接受流量；{@code details} 为可安全暴露的诊断信息，
+ * 禁止放入密码、令牌或连接串。
  */
-
 public final class ReadinessResult {
 
-    private static final long serialVersionUID = 0L;
-
     private final String name;
-
     private final boolean ready;
-
     private final Map<String, String> details;
 
     /**
- * @param name 稳定的依赖标识，例如 {@code postgresql} 或 {@code redis}
- * @param ready 是否可接受流量
- * @param details 可安全暴露的诊断信息，禁止放入密码、令牌或连接串
- */
+     * 单个依赖的就绪检查结果。
+     *
+     * @param name    稳定的依赖标识，例如 {@code postgresql} 或 {@code redis}
+     * @param ready   是否可接受流量
+     * @param details 可安全暴露的诊断信息，禁止放入密码、令牌或连接串
+     */
 
-    @JsonCreator()
-    public ReadinessResult(@JsonProperty("name") String name, @JsonProperty("ready") boolean ready, @JsonProperty("details") Map<String, String> details) {
+    @JsonCreator
+    public ReadinessResult(@JsonProperty("name") String name,
+                           @JsonProperty("ready") boolean ready,
+                           @JsonProperty("details") Map<String, String> details) {
         if (StrKit.isBlank(name)) {
             throw new IllegalArgumentException("readiness contributor name must not be blank");
         }
-        details = Map.copyOf(Objects.requireNonNullElse(details, Map.of()));
         this.name = name;
         this.ready = ready;
-        this.details = details;
+        Map<String, String> copiedDetails = new LinkedHashMap<>();
+        if (Objects.nonNull(details)) {
+            for (Map.Entry<String, String> entry : details.entrySet()) {
+                copiedDetails.put(Objects.requireNonNull(entry.getKey(), "detail key"),
+                        Objects.requireNonNull(entry.getValue(), "detail value"));
+            }
+        }
+        this.details = Collections.unmodifiableMap(copiedDetails);
     }
 
     /**
@@ -60,8 +70,9 @@ public final class ReadinessResult {
      * @param name 依赖标识
      * @return 就绪结果
      */
+
     public static ReadinessResult ready(String name) {
-        return new ReadinessResult(name, true, Map.of());
+        return new ReadinessResult(name, true, Collections.<String, String>emptyMap());
     }
 
     /**
@@ -71,12 +82,10 @@ public final class ReadinessResult {
      * @param reason 可安全暴露的失败原因
      * @return 未就绪结果
      */
-    public static ReadinessResult unavailable(String name, String reason) {
-        return new ReadinessResult(name, false, StrKit.isBlank(reason) ? Map.of() : Map.of("reason", reason));
-    }
 
-    public Map<String, String> getDetails() {
-        return details;
+    public static ReadinessResult unavailable(String name, String reason) {
+        return new ReadinessResult(name, false,
+                StrKit.isBlank(reason) ? Collections.<String, String>emptyMap() : Collections.singletonMap("reason", reason));
     }
 
     public String getName() {
@@ -87,14 +96,18 @@ public final class ReadinessResult {
         return ready;
     }
 
-    @JsonProperty("name")
-    public String name() {
-        return name;
+    public Map<String, String> getDetails() {
+        return details;
     }
 
     @JsonProperty("ready")
     public boolean ready() {
         return ready;
+    }
+
+    @JsonProperty("name")
+    public String name() {
+        return name;
     }
 
     @JsonProperty("details")
@@ -107,11 +120,13 @@ public final class ReadinessResult {
         if (this == obj) {
             return true;
         }
-        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+        if (!(obj instanceof ReadinessResult)) {
             return false;
         }
-        ReadinessResult other = (ReadinessResult) obj;
-        return Objects.equals(this.name, other.name) && this.ready == other.ready && Objects.equals(this.details, other.details);
+        ReadinessResult that = (ReadinessResult) obj;
+        return ready == that.ready
+                && Objects.equals(name, that.name)
+                && Objects.equals(details, that.details);
     }
 
     @Override
@@ -125,6 +140,6 @@ public final class ReadinessResult {
 
     @Override
     public String toString() {
-        return "ReadinessResult[name=" + name + ", ready=" + ready + ", details=" + details + "]";
+        return "ReadinessResult[name=" + name + ", ready=" + ready + ", details=" + details + ']';
     }
 }

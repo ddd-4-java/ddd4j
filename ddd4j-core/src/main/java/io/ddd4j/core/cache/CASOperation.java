@@ -26,7 +26,7 @@ package io.ddd4j.core.cache;
  * });
  * }</pre>
  *
- * <h3>跨后端兼容性</h3>
+ * <h2>跨后端兼容性</h2>
  * <p>回调只使用 {@link GetsResponse#value()}——不依赖 {@link GetsResponse#version()}。
  * 这让所有缓存后端都能实现 CAS：
  * <ul>

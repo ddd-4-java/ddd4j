@@ -18,6 +18,9 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
 import java.util.Collections;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,6 +45,28 @@ class MQOutboxRecordTest {
                 Map.of(), Instant.EPOCH));
         assertThrows(IllegalArgumentException.class, () -> MQOutboxRecord.pending("message-1", " ", "{}",
                 Map.of(), Instant.EPOCH));
+    }
+
+    @Test
+    void headers_shouldKeepInputOrderAndRejectNullEntries() {
+        Map<String, String> headers = new LinkedHashMap<>();
+        headers.put("zeta", "z");
+        headers.put("alpha", "a");
+        MQOutboxRecord record = MQOutboxRecord.pending("message-1", "orders.created", "{}",
+                headers, Instant.EPOCH);
+
+        headers.put("later", "value");
+        assertEquals(Arrays.asList("zeta", "alpha", MQDeliveryHeaders.MESSAGE_ID),
+                new ArrayList<>(record.headers().keySet()));
+        assertThrows(UnsupportedOperationException.class, () -> record.headers().put("other", "value"));
+
+        headers.put("nullable", null);
+        assertThrows(NullPointerException.class, () -> MQOutboxRecord.pending(
+                "message-2", "orders.created", "{}", headers, Instant.EPOCH));
+        headers.remove("nullable");
+        headers.put(null, "value");
+        assertThrows(NullPointerException.class, () -> MQOutboxRecord.pending(
+                "message-3", "orders.created", "{}", headers, Instant.EPOCH));
     }
 
     @Test

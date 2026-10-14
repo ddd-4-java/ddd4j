@@ -42,7 +42,7 @@ import java.util.function.UnaryOperator;
  *       每方法恰一条原子语句，无跨语句事务需求（见下），桥接无一致性代价。</li>
  * </ul>
  *
- * <h3>集成方装配</h3>
+ * <h2>集成方装配</h2>
  * <p>本类为纯类（零容器注解、非容器托管）：集成方在应用装配代码中手动
  * {@code new R2dbcProjectionPositionRepository(connectionFactory)} 并自行管理生命周期——
  * 构造参数取 {@link ConnectionFactory}（SPI 接口）而非 r2dbc-pool 的

@@ -32,7 +32,7 @@ import java.util.Objects;
  * <p>easyexcel 默认不支持 Java 8 时间 API（{@code LocalDate}/{@code LocalDateTime}）的自动转换，
  * 需要业务侧自行注册。本类作为通用转换器，默认使用 ISO 格式 {@code yyyy-MM-dd}。
  *
- * <h3>用法</h3>
+ * <h2>用法</h2>
  * <pre>{@code
  * // 字段级
  * @ExcelProperty(value = "日期", converter = LocalDateConverter.class)

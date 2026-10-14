@@ -48,7 +48,7 @@ class GoodsResourceTest {
     @BeforeAll
     static void startApp() {
         app = TestSupport.start();
-        baseUrl = "http://localhost:" + app.port();
+        baseUrl = "http://127.0.0.1:" + app.port();
         httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
     }
 
@@ -83,7 +83,7 @@ class GoodsResourceTest {
     void resetServerState() {
         app.stop();
         app = TestSupport.start();
-        baseUrl = "http://localhost:" + app.port();
+        baseUrl = "http://127.0.0.1:" + app.port();
         // 新服务器实例使用独立连接池，不跨重启复用旧 HTTP 连接。
         httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
     }
@@ -260,7 +260,7 @@ class GoodsResourceTest {
     @Test
     void pageQuery_defaultPage_shouldReturn200() throws Exception {
         HttpResponse<String> r = get(PREFIX + "/page?current=1&size=10");
-        assertEquals(200, r.statusCode());
+        assertEquals(200, r.statusCode(), "baseUrl=" + baseUrl + " body=" + r.body());
     }
 
     @Test

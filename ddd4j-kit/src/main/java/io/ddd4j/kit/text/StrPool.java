@@ -14,6 +14,8 @@
  */
 package io.ddd4j.kit.text;
 
+import java.nio.charset.StandardCharsets;
+
 /**
  * String constant pool adapted from MyBatis-Plus {@code StringPool}.
  *
@@ -113,6 +115,6 @@ public interface StrPool {
 
     String[] EMPTY_ARRAY = new String[0];
 
-    byte[] BYTES_NEW_LINE = StrPool.NEWLINE.getBytes();
+    byte[] BYTES_NEW_LINE = StrPool.NEWLINE.getBytes(StandardCharsets.UTF_8);
 
 }

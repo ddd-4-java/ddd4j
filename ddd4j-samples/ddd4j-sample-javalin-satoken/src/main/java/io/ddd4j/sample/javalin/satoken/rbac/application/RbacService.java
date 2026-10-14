@@ -34,7 +34,7 @@ import java.util.*;
  * <p>本类是所有 7 个 RBAC 示例（Spring/Quarkus/Javalin × Sa-Token/Shiro/Security）中<b>完全一致</b>的业务代码，
  * 切换底层鉴权框架（sa-token/shiro/security）时无需修改任何业务代码，仅替换依赖即可。
  *
- * <h3>核心职责</h3>
+ * <h2>核心职责</h2>
  * <ul>
  *   <li>用户登录：构造 {@link AuthPrincipal} 并调用 {@link SubjectKit#login(AuthRequest)}</li>
  *   <li>用户/角色/权限的 CRUD 入口</li>

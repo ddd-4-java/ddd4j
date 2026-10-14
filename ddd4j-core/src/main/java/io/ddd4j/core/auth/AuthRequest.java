@@ -29,7 +29,7 @@ import java.util.Objects;
  * <p>承载登录所需的全部信息，由业务构造，由 {@link Subject} 实现消费。
  * 对齐 Sa-Token 的 {@code SaLoginParameter}，覆盖完整登录场景（多端挤占、Cookie 配置、活跃检查等）。
  *
- * <h3>结构</h3>
+ * <h2>结构</h2>
  * <ul>
  *   <li>身份：{@link #loginId} / {@link #principal} / {@link #realm}</li>
  *   <li>会话策略：{@link #sessionConfig}（嵌入 {@link AuthSessionConfig}，含全部高级参数）</li>

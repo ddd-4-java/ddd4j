@@ -42,7 +42,7 @@ import java.util.function.Consumer;
  * <p>接入新的 MQ 只需实现本接口，每个 broker 模块最终 3 个文件：
  * {@code XxxClient}（impl MQClient）+ {@code XxxAcknowledgment} + {@code XxxProperties}。
  *
- * <h3>核心流程</h3>
+ * <h2>核心流程</h2>
  * <ol>
  *   <li><b>发布</b>：{@link #initProducer(MQProperties)} 返回 {@link Consumer<MQEvent>}，
  *       由 {@link #init(List, MQProperties, MQEventSerialization, MQEventStorer)} 注册到 {@link BaseContext}
@@ -345,7 +345,7 @@ public interface MQClient extends AutoCloseable {
     /**
      * 解析最终的拼接符（concat）。
      *
-     * <p>优先级：{@link MQEvent#getConcat()} &gt; 当前 Client 默认值（{@link #defaultConcat()}）。
+     * <p>优先级：{@code MQEvent#getConcat()} &gt; 当前 Client 默认值（{@link #defaultConcat()}）。
      * 注：不在 properties 层暴露 concat —— 避免全局配置覆盖 broker 惯例（Kafka 习惯 {@code "_"}、
      * Redis 习惯 {@code ":"}、MQTT 习惯 {@code "/"}）。如需差异化，由各 broker 自己的 Properties 类覆写。
      *
@@ -362,7 +362,7 @@ public interface MQClient extends AutoCloseable {
     /**
      * Broker 默认拼接符（各 broker 决定，建议子类覆写）。
      *
-     * <p>对齐 base-mq {@code MQListener.namespaceTopicTags()}：Rabbit/Rocket/Kafka 用 {@code "."}（Kafka 也常用 {@code "_"}），
+     * <p>对齐 base-mq {@code MQListener.namespaceTopicTags()}：Rabbit/Kafka 用 {@code "."}，RocketMQ 用 {@code "_"}（Kafka 也常用 {@code "_"}），
      * Redis Stream 用 {@code ":"}，MQTT 用 {@code "/"}。
      *
      * @return broker 默认 concat
@@ -372,7 +372,7 @@ public interface MQClient extends AutoCloseable {
     }
 
     /**
-     * 解析命名空间：{@link MQEvent#getNamespace()} 优先，回落到 {@link MQProperties#getNamespace()}。
+     * 解析命名空间：{@code MQEvent#getNamespace()} 优先，回落到 {@code MQProperties#getNamespace()}。
      *
      * @param event      MQ 事件（可为 null）
      * @param properties MQ 配置（不可为 null）
@@ -386,7 +386,7 @@ public interface MQClient extends AutoCloseable {
     }
 
     /**
-     * 字符串版命名空间解析（{@link MQListener#getNamespace()} 直接传入）。
+     * 字符串版命名空间解析（{@code MQListener#getNamespace()} 直接传入）。
      *
      * @param namespace  显式命名空间（可为 null）
      * @param properties MQ 配置（可为 null）

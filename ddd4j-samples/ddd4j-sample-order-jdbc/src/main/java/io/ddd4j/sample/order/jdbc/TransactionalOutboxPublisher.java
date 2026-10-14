@@ -21,10 +21,11 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * 将 Outbox 领取、发送和状态确认封装在 JDBC 事务中的调度入口。
+ * 兼容旧调用方的事务内 Outbox 调度入口。
  *
  * <p>PostgreSQL {@code FOR UPDATE SKIP LOCKED} 依赖同一事务保持行锁；各 Runtime 的定时任务只需调用
- * {@link #publishPending(int)}，无需了解 JDBC 连接管理细节。
+ * {@link #publishPending(int)}，无需了解 JDBC 连接管理细节。broker 发送期间会保持数据库事务和行锁；
+ * 新接线应使用 {@link ReliableOrderOutboxPublisher}，本类保持既有事务语义。
  */
 public final class TransactionalOutboxPublisher {
 

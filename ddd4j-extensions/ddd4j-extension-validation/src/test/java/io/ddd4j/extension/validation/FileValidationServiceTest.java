@@ -24,6 +24,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 class FileValidationServiceTest {
 
     private final FileValidationService service = new FileValidationService();

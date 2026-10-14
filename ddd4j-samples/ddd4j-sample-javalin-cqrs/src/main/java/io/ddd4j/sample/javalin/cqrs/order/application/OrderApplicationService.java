@@ -163,6 +163,18 @@ public class OrderApplicationService {
             this.buyerName = buyerName;
         }
 
+                public String getOrderNo() {
+            return orderNo;
+        }
+
+        public String getBuyerId() {
+            return buyerId;
+        }
+
+        public String getBuyerName() {
+            return buyerName;
+        }
+
         @JsonProperty("orderNo")
         public String orderNo() {
             return orderNo;
@@ -238,6 +250,26 @@ public class OrderApplicationService {
             this.goodsName = goodsName;
             this.quantity = quantity;
             this.unitPrice = unitPrice;
+        }
+
+                public String getOrderId() {
+            return orderId;
+        }
+
+        public String getGoodsId() {
+            return goodsId;
+        }
+
+        public String getGoodsName() {
+            return goodsName;
+        }
+
+        public int getQuantity() {
+            return quantity;
+        }
+
+        public BigDecimal getUnitPrice() {
+            return unitPrice;
         }
 
         @JsonProperty("orderId")

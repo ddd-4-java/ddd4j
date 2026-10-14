@@ -18,6 +18,7 @@ import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator.Authentication;
 import io.ddd4j.web.core.auth.WebAccessPolicy;
 import io.ddd4j.web.core.context.*;
+import io.ddd4j.web.core.version.ApiVersion;
 import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.web.core.observability.WebOtelSupport;
 import org.springframework.http.HttpHeaders;
@@ -171,7 +172,12 @@ public final class Ddd4jWebFluxFilter implements WebFilter {
                 headers.getFirst("X-Real-IP"),
                 remoteAddress(exchange),
                 exchange.getRequest().getMethod().name(),
-                exchange.getRequest().getPath().value()));
+                exchange.getRequest().getPath().value()), resolveApiVersion(exchange));
+    }
+
+    private ApiVersion resolveApiVersion(ServerWebExchange exchange) {
+        Object attribute = exchange.getAttributes().get(ApiVersionWebFilter.API_VERSION_ATTRIBUTE);
+        return attribute instanceof ApiVersion ? (ApiVersion) attribute : null;
     }
 
     private Locale resolveLocale(HttpHeaders headers) {

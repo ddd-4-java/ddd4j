@@ -32,7 +32,7 @@ import java.util.UUID;
  * <p>实现 {@link DomainEventPublisher}，将 core 领域事件转换为 {@link DomainEventCarrier}
  * 并通过已注册的 MQ 生产者发送到消息队列，实现跨进程事件传播。
  *
- * <h3>接入点选择</h3>
+ * <h2>接入点选择</h2>
  * <p>本类委托 {@link MQEvent#publish()} 完成实际发送。该机制从 {@link io.ddd4j.core.context.BaseContext}
  * 查找已注册的 MQ 生产者 Map（由各 {@link io.ddd4j.mq.MQClient} 在初始化时注册），
  * 按 broker 配置自动路由到目标 MQ 实现（Kafka / Pulsar / NATS 等）。
@@ -125,6 +125,14 @@ public class MqDomainEventPublisher implements DomainEventPublisher {
         carrier.setTag(DOMAIN_EVENT_TAG);
         // 租户传递：优先领域事件的线程上下文
         carrier.setTenantId(ThreadContext.get(ContextConstants.TENANT_ID));
+        // 因果元数据单点双写：broker header 权威值与 payload 内嵌镜像值同源于本次转换的领域事件，
+        // 保证两处一致（对应 spec Requirement: Causality in broker headers）
+        if (Objects.nonNull(event.getCorrelationId())) {
+            carrier.setCorrelationId(event.getCorrelationId().asString());
+        }
+        if (Objects.nonNull(event.getCausationId())) {
+            carrier.setCausationId(event.getCausationId().asString());
+        }
         // 消息 ID 复用领域事件 ID
         if (Objects.nonNull(event.getEventId())) {
             carrier.setMsgId(event.getEventId().asString());

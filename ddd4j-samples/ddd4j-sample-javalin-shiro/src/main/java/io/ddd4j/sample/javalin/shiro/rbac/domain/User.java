@@ -14,6 +14,8 @@
  */
 package io.ddd4j.sample.javalin.shiro.rbac.domain;
 
+import io.ddd4j.sample.javalin.shiro.rbac.service.RbacService;
+
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Objects;

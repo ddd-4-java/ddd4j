@@ -16,8 +16,8 @@
 <p align="center">
   <a href="README.md">简体中文</a> ·
   <a href="ddd4j-samples/README.md">Samples</a> ·
-  <a href="8、ddd4j-Architecture.zh_CN.md">System Architecture</a> ·
-  <a href="5、ddd4j-技术方案与路线.md">Technical Plan</a> ·
+  <a href="docs/8、ddd4j-Architecture.zh_CN.md">System Architecture</a> ·
+  <a href="docs/5、ddd4j-技术方案与路线.md">Technical Plan</a> ·
   <a href="docs/superpowers/plans/2026-09-10-mq-startup-lifecycle.md">MQ Startup Lifecycle</a>
 </p>
 
@@ -93,7 +93,7 @@ ddd4j evolves along **three active lines** in parallel; HEADs always push the sa
 > CodeGraph-signature differences between **2.0.x and 3.0.x**. Between **1.0.x and 2.0.x** the audit found 19 public JVM
 > API differences and 231 method-body differences that are rooted in JDK 8 bytecode constraints (no
 > `java.net.http.HttpClient`, no Helidon 3.2 on JDK 8, etc.) — see [
-`docs/superpowers/reports/2026-09-09-three-line-source-parity-audit.md`](docs/superpowers/reports/2026-09-09-three-line-source-parity-audit.md).
+`docs/superpowers/reports/2026-09-09-three-line-source-parity-audit.md`](docs/superpowers/historical-evidence-index.md).
 
 ## 4. Maven modules
 
@@ -148,6 +148,7 @@ ddd4j evolves along **three active lines** in parallel; HEADs always push the sa
 ### 7.1 Import via BOM (recommended)
 
 ```xml
+
 <dependencyManagement>
     <dependencies>
         <dependency>
@@ -162,6 +163,7 @@ ddd4j evolves along **three active lines** in parallel; HEADs always push the sa
 ```
 
 ```xml
+
 <dependencies>
     <!-- core contracts (required) -->
     <dependency>
@@ -203,7 +205,9 @@ public class Order extends AggregateRoot<Long> {
     }
 
     @Override
-    public Long id() { return id; }
+    public Long id() {
+        return id;
+    }
 
     public void renameBuyer(String buyerName) {
         if (StrKit.isBlank(buyerName)) {
@@ -212,7 +216,9 @@ public class Order extends AggregateRoot<Long> {
         this.buyerName = buyerName;
     }
 
-    public String buyerName() { return buyerName; }
+    public String buyerName() {
+        return buyerName;
+    }
 }
 ```
 
@@ -226,20 +232,28 @@ public interface OrderRepository extends Repository<Order, OrderPO, Long> {
 public class MybatisOrderRepository extends MybatisAggregateRepository<Order, OrderPO, Long>
         implements OrderRepository {
 
-    public MybatisOrderRepository(BaseMapper<OrderPO> mapper) { super(mapper); }
+    public MybatisOrderRepository(BaseMapper<OrderPO> mapper) {
+        super(mapper);
+    }
 
     @Override
     public Optional<Order> findByOrderNo(String orderNo) {
         return Optional.ofNullable(lambdaQuery()
-                .eq(OrderPO::getOrderNo, orderNo)
-                .one())
+                        .eq(OrderPO::getOrderNo, orderNo)
+                        .one())
                 .map(this::toModel);
     }
 
-    @Override public Order toModel(OrderPO po) { return new Order(po.getId(), po.getBuyerName()); }
-    @Override public OrderPO toPersistenceObject(Order model) {
+    @Override
+    public Order toModel(OrderPO po) {
+        return new Order(po.getId(), po.getBuyerName());
+    }
+
+    @Override
+    public OrderPO toPersistenceObject(Order model) {
         OrderPO po = new OrderPO();
-        po.setId(model.id()); po.setBuyerName(model.buyerName());
+        po.setId(model.id());
+        po.setBuyerName(model.buyerName());
         return po;
     }
 }
@@ -249,17 +263,17 @@ public class MybatisOrderRepository extends MybatisAggregateRepository<Order, Or
 
 ```java
 Page<Order> page = new OrderQuery()
-    .eq(Order::getStatus, "PAID")
-    .like(Order::getOrderNo, "2024")
-    .ge(Order::getCreateTime, startTime)
-    .page();
+        .eq(Order::getStatus, "PAID")
+        .like(Order::getOrderNo, "2024")
+        .ge(Order::getCreateTime, startTime)
+        .page();
 
 Page<OrderPO> po = new OrderQuery()
-    .withPO(OrderPO.class)
-    .eq(OrderPO::getStatus, "PAID")
-    .orderByDesc(OrderPO::getCreateTime)
-    .current(1).size(20)
-    .page();
+        .withPO(OrderPO.class)
+        .eq(OrderPO::getStatus, "PAID")
+        .orderByDesc(OrderPO::getCreateTime)
+        .current(1).size(20)
+        .page();
 ```
 
 `Repository<M, P, ID>` aligns with `BaseMapper`:
@@ -293,14 +307,14 @@ Dependency direction: `adapter → app → domain ← infrastructure`.
 
 | Document                                                                                                                                             | Description                                                                                  |
 |:-----------------------------------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------------------------------------------------|
-| [8、ddd4j-Architecture.zh_CN.md](./8、ddd4j-Architecture.zh_CN.md)                                                                                   | System architecture (layers, runtime, deps, security, deployment)                            |
-| [5、ddd4j-技术方案与路线.md](./5、ddd4j-技术方案与路线.md)                                                                                           | Current technical plan: MQ startup lifecycle + License Gate Hardening + three-line alignment |
-| [6、ddd4j-产品与版本规划.md](./6、ddd4j-产品与版本规划.md)                                                                                           | **Three-line governance · upgrade paths · tech compatibility matrix · support window**       |
-| [7、ddd4j-领域模型设计.md](./7、ddd4j-领域模型设计.md)                                                                                               | Bounded contexts, aggregates, event contracts                                                |
-| [1.0.x/8、ddd4j-1.0.x-Architecture.zh_CN.md](./1.0.x/8、ddd4j-1.0.x-Architecture.zh_CN.md)                                                           | 1.0.x version-level architecture with three-line diff table                                  |
+| [8、ddd4j-Architecture.zh_CN.md](./docs/8、ddd4j-Architecture.zh_CN.md)                                                                                   | System architecture (layers, runtime, deps, security, deployment)                            |
+| [5、ddd4j-技术方案与路线.md](./docs/5、ddd4j-技术方案与路线.md)                                                                                           | Current technical plan: MQ startup lifecycle + License Gate Hardening + three-line alignment |
+| [6、ddd4j-产品与版本规划.md](./docs/6、ddd4j-产品与版本规划.md)                                                                                           | **Three-line governance · upgrade paths · tech compatibility matrix · support window**       |
+| [7、ddd4j-领域模型设计.md](./docs/7、ddd4j-领域模型设计.md)                                                                                               | Bounded contexts, aggregates, event contracts                                                |
+| [1.0.x/8、ddd4j-1.0.x-Architecture.zh_CN.md](./docs/8、ddd4j-1.0.x-Architecture.zh_CN.md)                                                           | 1.0.x version-level architecture with three-line diff table                                  |
 | [docs/superpowers/specs/2026-07-15-current-source-architecture-design.md](./docs/superpowers/specs/2026-07-15-current-source-architecture-design.md) | Current source-code architecture tour (CodeGraph)                                            |
 | [docs/superpowers/specs/2026-06-29-ddd4j-boundary-rules-design.md](./docs/superpowers/specs/2026-06-29-ddd4j-boundary-rules-design.md)               | Architecture boundary rules                                                                  |
-| [docs/superpowers/reports/2026-09-09-three-line-source-parity-audit.md](./docs/superpowers/reports/2026-09-09-three-line-source-parity-audit.md)     | Three-line strict-parity audit report                                                        |
+| [docs/superpowers/reports/2026-09-09-three-line-source-parity-audit.md](./docs/superpowers/historical-evidence-index.md)     | Three-line strict-parity audit report                                                        |
 
 ---
 

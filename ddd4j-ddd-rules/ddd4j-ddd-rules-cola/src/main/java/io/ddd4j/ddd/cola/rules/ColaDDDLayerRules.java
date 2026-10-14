@@ -31,7 +31,7 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
  * <p><b>框架无关性说明</b>：本模块不依赖任何具体注解实现类。注解类作为 {@link Class} 参数
  * 由调用方传入（通常为业务项目使用的某个框架适配注解包中的具体注解）。
  *
- * <h3>COLA vs Clean 命名差异</h3>
+ * <h2>COLA vs Clean 命名差异</h2>
  * <ul>
  *   <li>Clean: domain / application / adapter / infrastructure</li>
  *   <li>COLA: domain / adapter / application / infrastructure（注意 adapter 和 application 顺序）</li>

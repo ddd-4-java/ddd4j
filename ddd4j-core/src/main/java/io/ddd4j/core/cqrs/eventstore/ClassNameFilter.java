@@ -21,7 +21,7 @@ package io.ddd4j.core.cqrs.eventstore;
  * 业务方可通过实现该接口限制允许加载的根包前缀，超出范围的类名视为不可信，
  * 由 {@link EventDeserializer} 回退为 {@code Map} 反序列化（保留数据可读性）。
  *
- * <h3>实现约定</h3>
+ * <h2>实现约定</h2>
  * <ul>
  *   <li>实现必须是线程安全的——{@link EventDeserializer} 在反序列化热路径调用</li>
  *   <li>不允许返回 {@code null}；拒绝类名时返回 {@code false}</li>

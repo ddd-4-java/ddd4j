@@ -20,9 +20,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
-import java.util.Objects;
+import lombok.Value;
 
-public final class CreateOrderCommand implements Command {
+@Value
+public class CreateOrderCommand implements Command {
 
     private static final long serialVersionUID = 0L;
 
@@ -54,29 +55,4 @@ public final class CreateOrderCommand implements Command {
         return buyerName;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-            return false;
-        }
-        CreateOrderCommand other = (CreateOrderCommand) obj;
-        return Objects.equals(this.orderNo, other.orderNo) && Objects.equals(this.buyerId, other.buyerId) && Objects.equals(this.buyerName, other.buyerName);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = 0;
-        result = 31 * result + Objects.hashCode(orderNo);
-        result = 31 * result + Objects.hashCode(buyerId);
-        result = 31 * result + Objects.hashCode(buyerName);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "CreateOrderCommand[orderNo=" + orderNo + ", buyerId=" + buyerId + ", buyerName=" + buyerName + "]";
-    }
 }

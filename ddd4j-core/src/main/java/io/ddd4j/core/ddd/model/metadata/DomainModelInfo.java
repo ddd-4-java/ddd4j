@@ -30,15 +30,15 @@ import java.util.function.Function;
  * <ul>
  *   <li>{@code TableInfo.entityType} → {@link #modelType}</li>
  *   <li>{@code TableInfo.fieldList} → {@link #fieldList}</li>
- *   <li>{@code TableFieldInfo.property} → {@link DomainFieldInfo#getProperty()}</li>
- *   <li>{@code TableFieldInfo.column} → {@link DomainFieldInfo#getPoColumn()}</li>
+ *   <li>{@code TableFieldInfo.property} → {@code DomainFieldInfo#getProperty()}</li>
+ *   <li>{@code TableFieldInfo.column} → {@code DomainFieldInfo#getPoColumn()}</li>
  * </ul>
  *
  * <p>充血查询翻译链路：
  * <ol>
  *   <li>业务方 Lambda 引用解析出 property（如 {@code "userName"}）</li>
  *   <li>查 {@link #findField(String)} 找对应的 {@link DomainFieldInfo}</li>
- *   <li>取 {@link DomainFieldInfo#getPoColumn()} 作为 SQL 列名</li>
+ *   <li>取 {@code DomainFieldInfo#getPoColumn()} 作为 SQL 列名</li>
  * </ol>
  *
  * <p><b>零框架依赖</b>：本类不直接依赖 MyBatis-Plus。

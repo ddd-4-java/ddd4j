@@ -12,12 +12,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package io.ddd4j.web.core.auth;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.Contexts;
@@ -68,30 +67,16 @@ public final class BearerSubjectAuthenticator {
         return new Authentication(token, principal, subject);
     }
 
-    public final static class Authentication {
-
-        private static final long serialVersionUID = 0L;
+    public static final class Authentication {
 
         private final String token;
-
         private final AuthPrincipal principal;
-
         private final Subject subject;
 
-        public String getToken() {
-            return token;
-        }
-
-        public AuthPrincipal getPrincipal() {
-            return principal;
-        }
-
-        public Subject getSubject() {
-            return subject;
-        }
-
-        @JsonCreator()
-        public Authentication(@JsonProperty("token") String token, @JsonProperty("principal") AuthPrincipal principal, @JsonProperty("subject") Subject subject) {
+        @JsonCreator
+        public Authentication(@JsonProperty("token") String token,
+                              @JsonProperty("principal") AuthPrincipal principal,
+                              @JsonProperty("subject") Subject subject) {
             this.token = token;
             this.principal = principal;
             this.subject = subject;
@@ -112,22 +97,36 @@ public final class BearerSubjectAuthenticator {
             return subject;
         }
 
+        // === bean-style getters（与 record-style 共存，调用方任选）） ===
+        public String getToken() {
+            return token;
+        }
+
+        public AuthPrincipal getPrincipal() {
+            return principal;
+        }
+
+        public Subject getSubject() {
+            return subject;
+        }
+
         @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
+        public boolean equals(Object o) {
+            if (this == o) {
                 return true;
             }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+            if (!(o instanceof Authentication)) {
                 return false;
             }
-            Authentication other = (Authentication) obj;
-            return Objects.equals(this.token, other.token) && Objects.equals(this.principal, other.principal) && Objects.equals(this.subject, other.subject);
+            Authentication that = (Authentication) o;
+            return Objects.equals(token, that.token)
+                    && Objects.equals(principal, that.principal)
+                    && Objects.equals(subject, that.subject);
         }
 
         @Override
         public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(token);
+            int result = Objects.hashCode(token);
             result = 31 * result + Objects.hashCode(principal);
             result = 31 * result + Objects.hashCode(subject);
             return result;

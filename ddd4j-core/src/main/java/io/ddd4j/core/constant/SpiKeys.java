@@ -23,7 +23,7 @@ import io.ddd4j.core.context.ThreadContext;
  * 业务方通过 {@link BaseContext#get(String, Class)} 或
  * {@link ThreadContext#get(String, Class)} 按这些 key 查找 SPI 服务实例。
  *
- * <h3>使用约定</h3>
+ * <h2>使用约定</h2>
  * <ul>
  *   <li><b>框架适配层</b>：在启动期按这些 key 注入 SPI 服务实例（Kafka / RabbitMQ / CDI Bean / Guice Provider）</li>
  *   <li><b>业务代码</b>：通过 key 查找 SPI 服务，零框架耦合</li>
