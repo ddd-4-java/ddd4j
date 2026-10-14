@@ -103,11 +103,12 @@ public class KafkaMessageAcknowledgment implements Acknowledgment {
     }
 
     @Override
-    public void ack(boolean multiple) {
-        if (acknowledged.compareAndSet(false, true)) {
+    public synchronized void ack(boolean multiple) {
+        if (!acknowledged.get()) {
             TopicPartition partition = new TopicPartition(record.topic(), record.partition());
             OffsetAndMetadata offset = new OffsetAndMetadata(record.offset() + 1);
             consumer.commitSync(Map.of(partition, offset));
+            acknowledged.set(true);
         }
     }
 
