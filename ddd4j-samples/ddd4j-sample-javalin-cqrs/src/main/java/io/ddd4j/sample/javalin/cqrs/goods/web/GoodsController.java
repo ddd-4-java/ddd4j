@@ -163,7 +163,7 @@ public class GoodsController {
         });
     }
 
-    // ========================= 请求 DTO（轻量 record） =========================
+    // ========================= 请求 DTO =========================
 
     /**
      * 创建商品请求。
@@ -171,11 +171,55 @@ public class GoodsController {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class CreateGoodsRequest {
+    public final static class CreateGoodsRequest {
         private String code;
         private String name;
         private BigDecimal price;
         private Integer stock;
+
+        public String code() {
+            return code;
+        }
+
+        public String name() {
+            return name;
+        }
+
+        public BigDecimal price() {
+            return price;
+        }
+
+        public Integer stock() {
+            return stock;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            CreateGoodsRequest other = (CreateGoodsRequest) obj;
+            return Objects.equals(code, other.code) && Objects.equals(name, other.name)
+                    && Objects.equals(price, other.price) && Objects.equals(stock, other.stock);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(code);
+            result = 31 * result + Objects.hashCode(name);
+            result = 31 * result + Objects.hashCode(price);
+            result = 31 * result + Objects.hashCode(stock);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "CreateGoodsRequest[code=" + code + ", name=" + name + ", price=" + price + ", stock=" + stock + "]";
+        }
     }
 
     /**
@@ -184,8 +228,41 @@ public class GoodsController {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class UpdateGoodsRequest {
+    public final static class UpdateGoodsRequest {
         private String name;
         private BigDecimal price;
+
+        public String name() {
+            return name;
+        }
+
+        public BigDecimal price() {
+            return price;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            UpdateGoodsRequest other = (UpdateGoodsRequest) obj;
+            return Objects.equals(name, other.name) && Objects.equals(price, other.price);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(name);
+            result = 31 * result + Objects.hashCode(price);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "UpdateGoodsRequest[name=" + name + ", price=" + price + "]";
+        }
     }
 }
