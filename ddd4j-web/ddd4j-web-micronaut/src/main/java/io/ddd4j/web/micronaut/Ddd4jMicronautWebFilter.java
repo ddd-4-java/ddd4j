@@ -163,8 +163,8 @@ public final class Ddd4jMicronautWebFilter {
 
     private WebRequestContext createContext(HttpRequest<?> request) {
         InetSocketAddress remoteAddress = request.getRemoteAddress();
-        String remoteHost = Objects.nonNull(remoteAddress.getAddress())
-                ? remoteAddress.getAddress().getHostAddress() : remoteAddress.getHostString();
+        String remoteHost = Objects.nonNull(remoteAddress) && Objects.nonNull(remoteAddress.getAddress())
+                ? remoteAddress.getAddress().getHostAddress() : "unknown";
         return contextFactory.create(new WebRequestData(
                 request.getHeaders().get(WebHeaders.REQUEST_ID),
                 request.getHeaders().get(WebHeaders.TRACE_ID),
