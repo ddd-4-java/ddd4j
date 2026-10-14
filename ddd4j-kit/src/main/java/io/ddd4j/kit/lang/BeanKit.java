@@ -172,7 +172,8 @@ public class BeanKit {
         if (obj instanceof Map) {
             return new LinkedHashMap<>((Map<String, Object>) obj);
         }
-        Set<String> ignores = Objects.isNull(ignoreFields) ? Set.of() : Set.of(ignoreFields);
+        Set<String> ignores = Objects.isNull(ignoreFields)
+                ? Collections.emptySet() : new LinkedHashSet<>(Arrays.asList(ignoreFields));
         Map<String, Object> map = new LinkedHashMap<>();
         // 遍历继承链上的所有非静态字段
         Class<?> clazz = obj.getClass();
