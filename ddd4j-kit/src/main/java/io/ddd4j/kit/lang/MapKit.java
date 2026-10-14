@@ -30,6 +30,14 @@ import java.util.*;
 @Slf4j
 public class MapKit extends MapUtil {
 
+    /**
+     * 根据键读取映射中的值。
+     *
+     * @param map 待查询的映射
+     * @param key 键
+     * @param <T> 值类型
+     * @return 对应值；映射为空或键不存在时返回 null
+     */
     public <T> T get(Map map, String key) {
         if (Objects.isNull(map)) {
             return null;
@@ -37,6 +45,15 @@ public class MapKit extends MapUtil {
         return (T) map.get(key);
     }
 
+    /**
+     * 根据键读取映射中的值，缺失时返回默认值。
+     *
+     * @param map 待查询的映射
+     * @param key 键
+     * @param defaultValue 默认值
+     * @param <T> 值类型
+     * @return 对应值或默认值
+     */
     public <T> T get(Map map, String key, T defaultValue) {
         T result = get(map, key);
         if (Objects.isNull(result)) {
@@ -46,11 +63,12 @@ public class MapKit extends MapUtil {
     }
 
     /**
-     * 根据搜索字符串遍历Json，如：{"a":{"b":{"c":"d"}}}，入参为：a.b.c，返回：d
+     * 根据点分隔路径读取嵌套映射中的值。
      *
-     * @param path
-     * @param <T>
-     * @return
+     * @param map 待检索的映射数据
+     * @param path 点分隔的属性路径，如 a.b.c
+     * @param <T> 属性值的目标类型
+     * @return 路径命中的值，未命中时返回 null
      */
     public <T> T search(Map map, String path) {
         if (Objects.isNull(map)) {
@@ -76,11 +94,13 @@ public class MapKit extends MapUtil {
     }
 
     /**
-     * 根据搜索字符串遍历Json，如：{"a":{"b":{"c":"d"}}}，入参为：a.b.c，返回：d
+     * 根据点分隔路径读取嵌套映射中的值，并提供默认值。
      *
-     * @param keyword
-     * @param <T>
-     * @return
+     * @param map 待检索的映射数据
+     * @param keyword 点分隔的属性路径，如 a.b.c
+     * @param defaultValue 未命中时使用的默认值
+     * @param <T> 返回值类型
+     * @return 路径命中的值，未命中时返回默认值
      */
     public <T> T search(Map map, String keyword, T defaultValue) {
         T result = search(map, keyword);
@@ -90,10 +110,24 @@ public class MapKit extends MapUtil {
         return result;
     }
 
+    /**
+     * 判断指定路径是否对应非空值。
+     *
+     * @param map 待查询的映射
+     * @param keyword 点分隔的属性路径
+     * @return 对应值非空时返回 true
+     */
     public boolean has(Map map, String keyword) {
         return Objects.nonNull(search(map, keyword));
     }
 
+    /**
+     * 将对象或对象集合的字段转换为映射数据。
+     *
+     * @param obj 待转换的对象或集合
+     * @param <T> 转换结果类型
+     * @return 对象对应的映射或集合对应的映射列表
+     */
     public <T> T of(Object obj) {
         if (obj instanceof Collection) {
             Collection collection = (Collection) obj;
@@ -139,6 +173,13 @@ public class MapKit extends MapUtil {
         }
     }
 
+    /**
+     * 由交替排列的键和值创建映射。
+     *
+     * @param kvPair 交替排列的字符串键和值
+     * @return 新建的映射
+     * @throws IllegalArgumentException 参数个数为奇数时抛出
+     */
     public Map<String, Object> ofMap(Object... kvPair) {
         if (kvPair.length % 2 != 0) {
             throw new IllegalArgumentException("kvPair's must not be single");

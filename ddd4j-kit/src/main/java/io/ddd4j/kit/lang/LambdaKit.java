@@ -89,7 +89,10 @@ public final class LambdaKit {
     }
 
     /**
-     * 提取 SerializedLambda。
+     * 从可序列化的方法引用中提取 SerializedLambda。
+     *
+     * @param func 可序列化的方法引用
+     * @return 方法引用的 SerializedLambda
      */
     public static SerializedLambda extractLambda(Serializable func) {
         try {

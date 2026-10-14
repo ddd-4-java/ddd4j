@@ -38,6 +38,8 @@ public class RankKit {
      * @param sortedList   已排序数据列表
      * @param type         分数相同时排名策略
      * @param keyExtractor 键提取器, 计算排名的字段
+     * @param <T> 数据元素类型
+     * @param <U> 键提取器产生的键类型
      * @return 排名后的列表
      */
     public static <T, U> List<RankModel<T>> rank(RankSortTypeEnum type, List<T> sortedList, Function<? super T, ? extends U>
@@ -52,6 +54,8 @@ public class RankKit {
      * @param type         分数相同时排名策略
      * @param top          取前top名数据
      * @param keyExtractor 键提取器, 计算排名的字段
+     * @param <T> 数据元素类型
+     * @param <U> 键提取器产生的键类型
      * @return 排名后的列表
      */
     public static <T, U> List<RankModel<T>> rank(RankSortTypeEnum type, Integer top, List<T> sortedList, Function<? super T, ? extends U> keyExtractor) {
@@ -114,6 +118,8 @@ public class RankKit {
 
     /**
      * 排名实体模型
+     *
+     * @param <T> 排名项的数据类型
      */
     public static class RankModel<T> {
         /**
@@ -126,26 +132,55 @@ public class RankKit {
          */
         private T data;
 
+        /**
+         * 创建空排序项。
+         */
         public RankModel() {
         }
 
+        /**
+         * 创建包含排序值和数据的排序项。
+         *
+         * @param rank 排序值
+         * @param data 关联数据
+         */
         public RankModel(Integer rank, T data) {
             this.rank = rank;
             this.data = data;
         }
 
+        /**
+         * 获取排序值。
+         *
+         * @return 排序值
+         */
         public Integer getRank() {
             return rank;
         }
 
+        /**
+         * 设置排序值。
+         *
+         * @param rank 排序值
+         */
         public void setRank(Integer rank) {
             this.rank = rank;
         }
 
+        /**
+         * 获取关联数据。
+         *
+         * @return 关联数据
+         */
         public T getData() {
             return data;
         }
 
+        /**
+         * 设置关联数据。
+         *
+         * @param data 关联数据
+         */
         public void setData(T data) {
             this.data = data;
         }

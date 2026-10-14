@@ -59,16 +59,34 @@ public enum RankSortTypeEnum {
         this.value = value;
     }
 
+    /**
+     * 根据排序类型名称查询数值。
+     *
+     * @param name 排序类型名称
+     * @return 对应数值
+     */
     public static Integer getValueByName(String name) {
         Map<String, Integer> map = Arrays.stream(RankSortTypeEnum.values()).collect(Collectors.toMap(RankSortTypeEnum::getName, RankSortTypeEnum::getValue));
         return map.get(name);
     }
 
+    /**
+     * 根据排序值查询类型名称。
+     *
+     * @param value 排序值
+     * @return 对应名称
+     */
     public static String getNameByValue(Integer value) {
         Map<Integer, String> map = Arrays.stream(RankSortTypeEnum.values()).collect(Collectors.toMap(RankSortTypeEnum::getValue, RankSortTypeEnum::getName));
         return map.get(value);
     }
 
+    /**
+     * 根据排序值查询枚举项。
+     *
+     * @param value 排序值
+     * @return 对应枚举项
+     */
     public static RankSortTypeEnum getEnumByValue(Integer value) {
         for (RankSortTypeEnum loop : RankSortTypeEnum.values()) {
             if (loop.getValue().equals(value)) {
@@ -78,14 +96,30 @@ public enum RankSortTypeEnum {
         return DEFAULT_SORT_TYPE;
     }
 
+    /**
+     * 获取排序类型名称。
+     *
+     * @return 排序类型名称
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * 获取排序类型数值。
+     *
+     * @return 排序类型数值
+     */
     public Integer getValue() {
         return value;
     }
 
+    /**
+     * 比较两个排序类型。
+     *
+     * @param sortType 待比较的排序类型
+     * @return 排序类型相同时返回 true
+     */
     public boolean equals(RankSortTypeEnum sortType) {
         if (Objects.isNull(sortType)) {
             return Boolean.FALSE;

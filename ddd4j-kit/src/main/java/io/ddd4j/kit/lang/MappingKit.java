@@ -31,11 +31,29 @@ public final class MappingKit {
     // Bean容器
     private final Map<String, Map<Object, Object>> BEAN_MAPPINGS = new ConcurrentHashMap<>();
 
+    /**
+     * 为业务标识登记键值映射。
+     *
+     * @param biz 业务标识
+     * @param key 映射键
+     * @param value 映射值
+     * @param <K> 映射键类型
+     * @param <V> 映射值类型
+     */
     public <K, V> void map(String biz, K key, V value) {
         Map<Object, Object> mappings = BEAN_MAPPINGS.computeIfAbsent(biz, k -> new ConcurrentHashMap<>());
         mappings.put(key, value);
     }
 
+    /**
+     * 读取指定业务标识下的映射值。
+     *
+     * @param field 业务标识
+     * @param source 映射键
+     * @return 对应映射值；不存在时返回 null
+     * @param <K> 映射键类型
+     * @param <V> 映射值类型
+     */
     public static <K, V> V get(String field, K source) {
         Map<Object, Object> mappings = BEAN_MAPPINGS.get(field);
         if (Objects.isNull(mappings)) {

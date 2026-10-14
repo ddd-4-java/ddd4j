@@ -29,6 +29,13 @@ import java.util.stream.Collectors;
 @UtilityClass
 public class ArrayKit extends ArrayUtil {
 
+    /**
+     * 将集合转换为数组。
+     *
+     * @param coll 源集合
+     * @return 转换后的数组；集合为空时返回 null
+     * @param <T> 元素类型
+     */
     public <T> T[] convert(Collection<T> coll) {
         if (Objects.isNull(coll) || coll.size() == 0) {
             return null;
@@ -41,6 +48,13 @@ public class ArrayKit extends ArrayUtil {
         return coll.toArray((T[]) Array.newInstance(tClass, 0));
     }
 
+    /**
+     * 将数组转换为列表。
+     *
+     * @param array 源数组
+     * @return 转换后的列表；数组为空时返回 null
+     * @param <T> 元素类型
+     */
     public <T> List<T> convert(T[] array) {
         if (isEmpty(array)) {
             return null;
@@ -52,6 +66,12 @@ public class ArrayKit extends ArrayUtil {
         return ArrayUtil.append(array, e);
     }
 
+    /**
+     * 就地排序数组。
+     *
+     * @param array 待排序数组
+     * @param <T> 元素类型
+     */
     public <T> void sort(T[] array) {
         if (isEmpty(array)) {
             return;

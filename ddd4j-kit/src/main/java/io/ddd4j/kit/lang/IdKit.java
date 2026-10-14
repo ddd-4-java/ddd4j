@@ -94,6 +94,7 @@ public class IdKit extends IdUtil {
      *
      * @param workerId 工作机器节点id,数据范围为0~31
      * @since 1.0.0
+     * @return 雪花 ID 生成器实例
      */
     public static Snowflake getSnowflake(long workerId) {
         return Singleton.get(Snowflake.class, workerId);
@@ -120,6 +121,7 @@ public class IdKit extends IdUtil {
      * @param workerId     工作机器节点id,数据范围为0~31
      * @param dataCenterId 数据中心id,数据范围为0~31
      * @since 1.0.0
+     * @return 雪花 ID 生成器实例
      */
     public static Snowflake getSnowflake(long workerId, long dataCenterId) {
         return Singleton.get(Snowflake.class, workerId, dataCenterId);
@@ -147,6 +149,7 @@ public class IdKit extends IdUtil {
      * @param dataCenterId     数据中心id,数据范围为0~31
      * @param isUseSystemClock 是否使用{@link cn.hutool.core.date.SystemClock} 获取当前时间戳
      * @since 1.0.0
+     * @return 雪花 ID 生成器实例
      */
     public static Snowflake getSnowflake(long workerId, long dataCenterId, boolean isUseSystemClock) {
         return Singleton.get(Snowflake.class, workerId, dataCenterId, isUseSystemClock);
@@ -175,6 +178,7 @@ public class IdKit extends IdUtil {
      * @param isUseSystemClock 是否使用{@link cn.hutool.core.date.SystemClock} 获取当前时间戳
      * @param timeOffset       允许时间回拨的毫秒数
      * @since 1.0.0
+     * @return 雪花 ID 生成器实例
      */
     public static Snowflake getSnowflake(long workerId, long dataCenterId, boolean isUseSystemClock, long timeOffset) {
         SnowflakeOptions options = new SnowflakeOptions(workerId, dataCenterId, isUseSystemClock, timeOffset, 0L);
@@ -205,6 +209,7 @@ public class IdKit extends IdUtil {
      * @param timeOffset          允许时间回拨的毫秒数
      * @param randomSequenceLimit 限定一个随机上限，在不同毫秒下生成序号时，给定一个随机数，避免偶数问题，0表示无随机，上限不包括值本身。
      * @since 1.0.0
+     * @return 雪花 ID 生成器实例
      */
     public static Snowflake getSnowflake(long workerId, long dataCenterId, boolean isUseSystemClock, long timeOffset, long randomSequenceLimit) {
         SnowflakeOptions options = new SnowflakeOptions(

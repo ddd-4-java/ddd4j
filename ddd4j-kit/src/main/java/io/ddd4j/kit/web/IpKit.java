@@ -47,9 +47,17 @@ import java.util.Objects;
 @UtilityClass
 public class IpKit extends Ipv4Util {
 
+    /**
+     * 可复用的本机地址缓存。
+     */
     public String HOST_ADDRESS = "";
 
     // 获取本机Ip
+    /**
+     * 获取本机可用地址。
+     *
+     * @return 本机地址
+     */
     public String getLocalAddress() {
         if (StrKit.isNotBlank(HOST_ADDRESS)) {
             return HOST_ADDRESS;
@@ -79,6 +87,11 @@ public class IpKit extends Ipv4Util {
         return "";
     }
 
+    /**
+     * 获取本机 IP 地址。
+     *
+     * @return 本机 IP 地址
+     */
     public String getHostIp() {
         try {
             return InetAddress.getLocalHost().getHostAddress();
@@ -87,6 +100,11 @@ public class IpKit extends Ipv4Util {
         return "127.0.0.1";
     }
 
+    /**
+     * 获取本机主机名。
+     *
+     * @return 本机主机名
+     */
     public String getHostName() {
         try {
             return InetAddress.getLocalHost().getHostName();
@@ -96,6 +114,12 @@ public class IpKit extends Ipv4Util {
     }
 
     // 通过IP获取地址信息
+    /**
+     * 查询 IP 地址对应的地域信息。
+     *
+     * @param ip 待查询的 IP 地址
+     * @return 地域信息
+     */
     public String getAddresses(String ip) {
         try {
             // 这里调用pconline的接口
@@ -117,6 +141,12 @@ public class IpKit extends Ipv4Util {
     }
 
     // 通过IP获取省市
+    /**
+     * 查询 IP 地址对应的省市信息。
+     *
+     * @param ip 待查询的 IP 地址
+     * @return 省市信息映射
+     */
     public static Map<String, String> getProCity(String ip) {
         try {
             // 这里调用pconline的接口

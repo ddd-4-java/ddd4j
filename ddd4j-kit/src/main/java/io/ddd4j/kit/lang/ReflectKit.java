@@ -34,6 +34,14 @@ import java.util.Objects;
 @UtilityClass
 public class ReflectKit extends ReflectUtil {
 
+    /**
+     * 获取父类指定位置的泛型类型。
+     *
+     * @param clazz 待检查的类
+     * @param index 泛型参数位置
+     * @return 对应泛型类型
+     * @param <T> 泛型类型
+     */
     public <T> Class<T> getSuperClassGenericType(final Class<?> clazz, final int index) {
         Type genType = clazz.getGenericSuperclass();
         if (!(genType instanceof ParameterizedType)) {
@@ -56,6 +64,12 @@ public class ReflectKit extends ReflectUtil {
     }
 
     // 判断一个对象的所有字段是否为null
+    /**
+     * 判断对象的所有字段是否均为空。
+     *
+     * @param obj 待检查对象
+     * @return 所有字段均为空时返回 true
+     */
     public static boolean allFieldsNull(@NonNull Object obj) {
         Class<?> clazz = obj.getClass();
         Field[] fields = clazz.getDeclaredFields();

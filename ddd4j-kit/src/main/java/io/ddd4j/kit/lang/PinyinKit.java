@@ -35,6 +35,12 @@ public class PinyinKit {
         format.setToneType(HanyuPinyinToneType.WITHOUT_TONE);
     }
 
+    /**
+     * 将汉字转换为拼音。
+     *
+     * @param hanyu 待转换的汉字
+     * @return 拼音字符串
+     */
     public String toPinyin(String hanyu) {
         try {
             return PinyinHelper.toHanYuPinyinString(hanyu, format, "", true);
@@ -45,6 +51,12 @@ public class PinyinKit {
     }
 
 
+    /**
+     * 将汉字转换为大写拼音。
+     *
+     * @param hanyu 待转换的汉字
+     * @return 大写拼音字符串
+     */
     public String toPINYIN(String hanyu) {
         try {
             return PinyinHelper.toHanYuPinyinString(hanyu, format, "", true).toUpperCase();

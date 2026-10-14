@@ -30,6 +30,7 @@ import java.util.*;
 @UtilityClass
 public class StrKit extends StrUtil {
 
+    /** 无法匹配首字母时使用的占位字符。 */
     public static final char unknowChar = '*';
     private static final String FOLDER_SEPARATOR = "/";
     private static final String WINDOWS_FOLDER_SEPARATOR = "\\";
@@ -47,6 +48,7 @@ public class StrKit extends StrUtil {
      * Any number of these characters are considered delimiters between
      * multiple context config paths in a single String value.
      */
+    /** 配置位置列表使用的分隔符集合。 */
     public static String CONFIG_LOCATION_DELIMITERS = ",; \t\n";
 
     /*
@@ -54,6 +56,12 @@ public class StrKit extends StrUtil {
      *
      * @param str
      * @return
+     */
+    /**
+     * 判断输入是否为空。
+     *
+     * @param str 待处理字符串
+     * @return 满足条件时返回 true
      */
     public static boolean isEmpty(String str) {
         if (Objects.isNull(str)) {
@@ -69,6 +77,12 @@ public class StrKit extends StrUtil {
     /*
      * 该方法不能被删除；可能引起调用者代码报错
      */
+    /**
+     * 判断输入是否非空。
+     *
+     * @param str 待处理字符串
+     * @return 满足条件时返回 true
+     */
     public static boolean isNotEmpty(String str) {
         return !isEmpty(str);
     }
@@ -79,6 +93,12 @@ public class StrKit extends StrUtil {
      *
      * @param str
      * @return
+     */
+    /**
+     * 判断字符串是否为空或仅含空白。
+     *
+     * @param str 待处理字符串
+     * @return 满足条件时返回 true
      */
     public static boolean isNull(String str) {
         return Objects.isNull(str) || str.trim().length() == 0;
@@ -99,6 +119,12 @@ public class StrKit extends StrUtil {
      * @param str the candidate String
      * @since 3.2.1
      */
+    /**
+     * 判断输入是否为空。
+     *
+     * @param str 待处理字符串
+     * @return 满足条件时返回 true
+     */
     public static boolean isEmpty(Object str) {
         return (Objects.isNull(str) || "".equals(str));
     }
@@ -116,6 +142,12 @@ public class StrKit extends StrUtil {
      * @return {@code true} if the CharSequence is not null and has length
      * @see #hasText(String)
      */
+    /**
+     * 判断输入是否有字符。
+     *
+     * @param str 待处理字符串
+     * @return 满足条件时返回 true
+     */
     public static boolean hasLength(CharSequence str) {
         return (Objects.nonNull(str) && str.length() > 0);
     }
@@ -126,6 +158,12 @@ public class StrKit extends StrUtil {
      * @param str the String to check (may be {@code null})
      * @return {@code true} if the String is not null and has length
      * @see #hasLength(CharSequence)
+     */
+    /**
+     * 判断输入是否有字符。
+     *
+     * @param str 待处理字符串
+     * @return 满足条件时返回 true
      */
     public static boolean hasLength(String str) {
         return hasLength((CharSequence) str);
@@ -146,6 +184,12 @@ public class StrKit extends StrUtil {
      * @return {@code true} if the CharSequence is not {@code null},
      * its length is greater than 0, and it does not contain whitespace only
      * @see Character#isWhitespace
+     */
+    /**
+     * 判断输入是否有非空白字符。
+     *
+     * @param str 待处理字符串
+     * @return 满足条件时返回 true
      */
     public static boolean hasText(CharSequence str) {
         if (!hasLength(str)) {
@@ -169,6 +213,12 @@ public class StrKit extends StrUtil {
      * greater than 0, and it does not contain whitespace only
      * @see #hasText(CharSequence)
      */
+    /**
+     * 判断输入是否有非空白字符。
+     *
+     * @param str 待处理字符串
+     * @return 满足条件时返回 true
+     */
     public static boolean hasText(String str) {
         return hasText((CharSequence) str);
     }
@@ -179,6 +229,12 @@ public class StrKit extends StrUtil {
      * @return {@code true} if the CharSequence is not empty and
      * contains at least 1 whitespace character
      * @see Character#isWhitespace
+     */
+    /**
+     * 判断输入是否包含空白字符。
+     *
+     * @param str 待处理字符串
+     * @return 满足条件时返回 true
      */
     public static boolean containsWhitespace(CharSequence str) {
         if (!hasLength(str)) {
@@ -200,6 +256,12 @@ public class StrKit extends StrUtil {
      * contains at least 1 whitespace character
      * @see #containsWhitespace(CharSequence)
      */
+    /**
+     * 判断输入是否包含空白字符。
+     *
+     * @param str 待处理字符串
+     * @return 满足条件时返回 true
+     */
     public static boolean containsWhitespace(String str) {
         return containsWhitespace((CharSequence) str);
     }
@@ -209,6 +271,12 @@ public class StrKit extends StrUtil {
      * @param str the String to check
      * @return the trimmed String
      * @see java.lang.Character#isWhitespace
+     */
+    /**
+     * 执行 trim whitespace 字符串处理。
+     *
+     * @param str 待处理字符串
+     * @return 处理后的字符串
      */
     public static String trimWhitespace(String str) {
         if (!hasLength(str)) {
@@ -231,6 +299,12 @@ public class StrKit extends StrUtil {
      * @return the trimmed String
      * @see java.lang.Character#isWhitespace
      */
+    /**
+     * 执行 trim all whitespace 字符串处理。
+     *
+     * @param str 待处理字符串
+     * @return 处理后的字符串
+     */
     public static String trimAllWhitespace(String str) {
         if (!hasLength(str)) {
             return str;
@@ -252,6 +326,12 @@ public class StrKit extends StrUtil {
      * @return the trimmed String
      * @see java.lang.Character#isWhitespace
      */
+    /**
+     * 执行 trim leading whitespace 字符串处理。
+     *
+     * @param str 待处理字符串
+     * @return 处理后的字符串
+     */
     public static String trimLeadingWhitespace(String str) {
         if (!hasLength(str)) {
             return str;
@@ -268,6 +348,12 @@ public class StrKit extends StrUtil {
      * @param str the String to check
      * @return the trimmed String
      * @see java.lang.Character#isWhitespace
+     */
+    /**
+     * 执行 trim trailing whitespace 字符串处理。
+     *
+     * @param str 待处理字符串
+     * @return 处理后的字符串
      */
     public static String trimTrailingWhitespace(String str) {
         if (!hasLength(str)) {
@@ -286,6 +372,13 @@ public class StrKit extends StrUtil {
      * @param leadingCharacter the leading character to be trimmed
      * @return the trimmed String
      */
+    /**
+     * 执行 trim leading character 字符串处理。
+     *
+     * @param str 待处理字符串
+     * @param leadingCharacter 前导字符
+     * @return 处理后的字符串
+     */
     public static String trimLeadingCharacter(String str, char leadingCharacter) {
         if (!hasLength(str)) {
             return str;
@@ -302,6 +395,13 @@ public class StrKit extends StrUtil {
      * @param str the String to check
      * @param trailingCharacter the trailing character to be trimmed
      * @return the trimmed String
+     */
+    /**
+     * 执行 trim trailing character 字符串处理。
+     *
+     * @param str 待处理字符串
+     * @param trailingCharacter 尾随字符
+     * @return 处理后的字符串
      */
     public static String trimTrailingCharacter(String str, char trailingCharacter) {
         if (!hasLength(str)) {
@@ -321,6 +421,13 @@ public class StrKit extends StrUtil {
      * @param str the String to check
      * @param prefix the prefix to look for
      * @see java.lang.String#startsWith
+     */
+    /**
+     * 执行 starts with ignore case 字符串处理。
+     *
+     * @param str 待处理字符串
+     * @param prefix 前缀
+     * @return 满足条件时返回 true
      */
     public static boolean startsWithIgnoreCase(String str, String prefix) {
         if (Objects.isNull(str) || Objects.isNull(prefix)) {
@@ -343,6 +450,13 @@ public class StrKit extends StrUtil {
      * @param str the String to check
      * @param suffix the suffix to look for
      * @see java.lang.String#endsWith
+     */
+    /**
+     * 执行 ends with ignore case 字符串处理。
+     *
+     * @param str 待处理字符串
+     * @param suffix 后缀
+     * @return 满足条件时返回 true
      */
     public static boolean endsWithIgnoreCase(String str, String suffix) {
         if (Objects.isNull(str) || Objects.isNull(suffix)) {
@@ -367,6 +481,14 @@ public class StrKit extends StrUtil {
      * @param index the index in the original string to start matching against
      * @param substring the substring to match at the given index
      */
+    /**
+     * 执行 substring match 字符串处理。
+     *
+     * @param str 待处理字符串
+     * @param index 起始位置
+     * @param substring 待匹配子串
+     * @return 满足条件时返回 true
+     */
     public static boolean substringMatch(CharSequence str, int index, CharSequence substring) {
         for (int j = 0; j < substring.length(); j++) {
             int i = index + j;
@@ -381,6 +503,13 @@ public class StrKit extends StrUtil {
      * Count the occurrences of the substring in string s.
      * @param str string to search in. Return 0 if this is null.
      * @param sub string to search for. Return 0 if this is null.
+     */
+    /**
+     * 执行 count occurrences of 字符串处理。
+     *
+     * @param str 待处理字符串
+     * @param sub 待匹配子串
+     * @return 计算结果
      */
     public static int countOccurrencesOf(String str, String sub) {
         if (Objects.isNull(str) || Objects.isNull(sub) || str.length() == 0 || sub.length() == 0) {
@@ -403,6 +532,14 @@ public class StrKit extends StrUtil {
      * @param oldPattern String to replace
      * @param newPattern String to insert
      * @return a String with the replacements
+     */
+    /**
+     * 执行 replace 字符串处理。
+     *
+     * @param inString 源字符串
+     * @param oldPattern 待替换模式
+     * @param newPattern 替换文本
+     * @return 处理后的字符串
      */
     public static String replace(String inString, String oldPattern, String newPattern) {
         if (!hasLength(inString) || !hasLength(oldPattern) || Objects.isNull(newPattern)) {
@@ -430,6 +567,13 @@ public class StrKit extends StrUtil {
      * @param pattern the pattern to delete all occurrences of
      * @return the resulting String
      */
+    /**
+     * 执行 delete 字符串处理。
+     *
+     * @param inString 源字符串
+     * @param pattern 匹配模式
+     * @return 处理后的字符串
+     */
     public static String delete(String inString, String pattern) {
         return replace(inString, pattern, "");
     }
@@ -440,6 +584,13 @@ public class StrKit extends StrUtil {
      * @param charsToDelete a set of characters to delete.
      * E.g. "az\n" will delete 'a's, 'z's and new lines.
      * @return the resulting String
+     */
+    /**
+     * 执行 delete any 字符串处理。
+     *
+     * @param inString 源字符串
+     * @param charsToDelete 待删除字符
+     * @return 处理后的字符串
      */
     public static String deleteAny(String inString, String charsToDelete) {
         if (!hasLength(inString) || !hasLength(charsToDelete)) {
@@ -466,6 +617,12 @@ public class StrKit extends StrUtil {
      * "this.name.is.qualified", returns "qualified".
      * @param qualifiedName the qualified name
      */
+    /**
+     * 执行 unqualify 字符串处理。
+     *
+     * @param qualifiedName 限定名称
+     * @return 处理后的字符串
+     */
     public static String unqualify(String qualifiedName) {
         return unqualify(qualifiedName, '.');
     }
@@ -475,6 +632,13 @@ public class StrKit extends StrUtil {
      * "this:name:is:qualified" returns "qualified" if using a ':' separator.
      * @param qualifiedName the qualified name
      * @param separator the separator
+     */
+    /**
+     * 执行 unqualify 字符串处理。
+     *
+     * @param qualifiedName 限定名称
+     * @param separator 分隔符
+     * @return 处理后的字符串
      */
     public static String unqualify(String qualifiedName, char separator) {
         return qualifiedName.substring(qualifiedName.lastIndexOf(separator) + 1);
@@ -487,6 +651,12 @@ public class StrKit extends StrUtil {
      * @param str the String to capitalize, may be {@code null}
      * @return the capitalized String, {@code null} if null
      */
+    /**
+     * 执行 capitalize 字符串处理。
+     *
+     * @param str 待处理字符串
+     * @return 处理后的字符串
+     */
     public static String capitalize(String str) {
         return changeFirstCharacterCase(str, true);
     }
@@ -497,6 +667,12 @@ public class StrKit extends StrUtil {
      * No other letters are changed.
      * @param str the String to uncapitalize, may be {@code null}
      * @return the uncapitalized String, {@code null} if null
+     */
+    /**
+     * 执行 uncapitalize 字符串处理。
+     *
+     * @param str 待处理字符串
+     * @return 处理后的字符串
      */
     public static String uncapitalize(String str) {
         return changeFirstCharacterCase(str, false);
@@ -522,6 +698,12 @@ public class StrKit extends StrUtil {
      * @param path the file path (may be {@code null})
      * @return the extracted filename, or {@code null} if none
      */
+    /**
+     * 执行 get filename 字符串处理。
+     *
+     * @param path 路径
+     * @return 处理后的字符串
+     */
     public static String getFilename(String path) {
         if (Objects.isNull(path)) {
             return null;
@@ -535,6 +717,12 @@ public class StrKit extends StrUtil {
      * e.g. "mypath/myfile.txt" -> "txt".
      * @param path the file path (may be {@code null})
      * @return the extracted filename extension, or {@code null} if none
+     */
+    /**
+     * 执行 get filename extension 字符串处理。
+     *
+     * @param path 路径
+     * @return 处理后的字符串
      */
     public static String getFilenameExtension(String path) {
         if (Objects.isNull(path)) {
@@ -557,6 +745,12 @@ public class StrKit extends StrUtil {
      * @param path the file path (may be {@code null})
      * @return the path with stripped filename extension,
      * or {@code null} if none
+     */
+    /**
+     * 执行 strip filename extension 字符串处理。
+     *
+     * @param path 路径
+     * @return 处理后的字符串
      */
     public static String stripFilenameExtension(String path) {
         if (Objects.isNull(path)) {
@@ -581,6 +775,13 @@ public class StrKit extends StrUtil {
      * (relative to the full file path above)
      * @return the full file path that results from applying the relative path
      */
+    /**
+     * 执行 apply relative path 字符串处理。
+     *
+     * @param path 路径
+     * @param relativePath 相对路径
+     * @return 处理后的字符串
+     */
     public static String applyRelativePath(String path, String relativePath) {
         int separatorIndex = path.lastIndexOf(FOLDER_SEPARATOR);
         if (separatorIndex != -1) {
@@ -601,6 +802,12 @@ public class StrKit extends StrUtil {
      * notice that Windows separators ("\") are replaced by simple slashes.
      * @param path the original path
      * @return the normalized path
+     */
+    /**
+     * 执行 clean path 字符串处理。
+     *
+     * @param path 路径
+     * @return 处理后的字符串
      */
     public static String cleanPath(String path) {
         if (Objects.isNull(path)) {
@@ -663,6 +870,13 @@ public class StrKit extends StrUtil {
      * @param path2 second path for comparison
      * @return whether the two paths are equivalent after normalization
      */
+    /**
+     * 执行 path equals 字符串处理。
+     *
+     * @param path1 第一个路径
+     * @param path2 第二个路径
+     * @return 满足条件时返回 true
+     */
     public static boolean pathEquals(String path1, String path2) {
         return cleanPath(path1).equals(cleanPath(path2));
     }
@@ -675,6 +889,12 @@ public class StrKit extends StrUtil {
      * also accepts spaces as separators, as an alternative to underscores
      * @return a corresponding {@code Locale} instance
      * @throws IllegalArgumentException in case of an invalid locale specification
+     */
+    /**
+     * 执行 parse locale string 字符串处理。
+     *
+     * @param localeString 语言区域文本
+     * @return 解析后的语言区域
      */
     public static Locale parseLocaleString(String localeString) {
         String[] parts = tokenizeToStringArray(localeString, "_ ", false, false);
@@ -712,6 +932,12 @@ public class StrKit extends StrUtil {
      * @param locale the Locale to transform to a language tag
      * @return the RFC 3066 compliant language tag as String
      */
+    /**
+     * 执行 to language tag 字符串处理。
+     *
+     * @param locale 语言区域
+     * @return 处理后的字符串
+     */
     public static String toLanguageTag(Locale locale) {
         return locale.getLanguage() + (hasText(locale.getCountry()) ? "-" + locale.getCountry() : "");
     }
@@ -722,6 +948,12 @@ public class StrKit extends StrUtil {
      * but throwing {@link IllegalArgumentException} in case of an invalid time zone specification
      * @return a corresponding {@link TimeZone} instance
      * @throws IllegalArgumentException in case of an invalid time zone specification
+     */
+    /**
+     * 执行 parse time zone string 字符串处理。
+     *
+     * @param timeZoneString 时区文本
+     * @return 解析后的时区
      */
     public static TimeZone parseTimeZoneString(String timeZoneString) {
         TimeZone timeZone = TimeZone.getTimeZone(timeZoneString);
@@ -744,6 +976,13 @@ public class StrKit extends StrUtil {
      * @param str the String to append
      * @return the new array (never {@code null})
      */
+    /**
+     * 执行 add string to array 字符串处理。
+     *
+     * @param array 源数组
+     * @param str 待处理字符串
+     * @return 处理后的字符串数组
+     */
     public static String[] addStringToArray(String[] array, String str) {
         if (ObjectUtils.isEmpty(array)) {
             return new String[]{str};
@@ -761,6 +1000,13 @@ public class StrKit extends StrUtil {
      * @param array1 the first array (can be {@code null})
      * @param array2 the second array (can be {@code null})
      * @return the new array ({@code null} if both given arrays were {@code null})
+     */
+    /**
+     * 执行 concatenate string arrays 字符串处理。
+     *
+     * @param array1 第一个数组
+     * @param array2 第二个数组
+     * @return 处理后的字符串数组
      */
     public static String[] concatenateStringArrays(String[] array1, String[] array2) {
         if (ObjectUtils.isEmpty(array1)) {
@@ -785,6 +1031,13 @@ public class StrKit extends StrUtil {
      * @param array2 the second array (can be {@code null})
      * @return the new array ({@code null} if both given arrays were {@code null})
      */
+    /**
+     * 执行 merge string arrays 字符串处理。
+     *
+     * @param array1 第一个数组
+     * @param array2 第二个数组
+     * @return 处理后的字符串数组
+     */
     public static String[] mergeStringArrays(String[] array1, String[] array2) {
         if (ObjectUtils.isEmpty(array1)) {
             return array2;
@@ -807,6 +1060,12 @@ public class StrKit extends StrUtil {
      * @param array the source array
      * @return the sorted array (never {@code null})
      */
+    /**
+     * 执行 sort string array 字符串处理。
+     *
+     * @param array 源数组
+     * @return 处理后的字符串数组
+     */
     public static String[] sortStringArray(String[] array) {
         if (ObjectUtils.isEmpty(array)) {
             return new String[0];
@@ -822,6 +1081,12 @@ public class StrKit extends StrUtil {
      * @return the String array ({@code null} if the passed-in
      * Collection was {@code null})
      */
+    /**
+     * 执行 to string array 字符串处理。
+     *
+     * @param collection 源集合
+     * @return 处理后的字符串数组
+     */
     public static String[] toStringArray(Collection<String> collection) {
         if (Objects.isNull(collection)) {
             return null;
@@ -836,6 +1101,12 @@ public class StrKit extends StrUtil {
      * @return the String array ({@code null} if the passed-in
      * Enumeration was {@code null})
      */
+    /**
+     * 执行 to string array 字符串处理。
+     *
+     * @param enumeration 源枚举
+     * @return 处理后的字符串数组
+     */
     public static String[] toStringArray(Enumeration<String> enumeration) {
         if (Objects.isNull(enumeration)) {
             return null;
@@ -849,6 +1120,12 @@ public class StrKit extends StrUtil {
      * calling {@code String.trim()} on each of them.
      * @param array the original String array
      * @return the resulting array (of the same size) with trimmed elements
+     */
+    /**
+     * 执行 trim array elements 字符串处理。
+     *
+     * @param array 源数组
+     * @return 处理后的字符串数组
      */
     public static String[] trimArrayElements(String[] array) {
         if (ObjectUtils.isEmpty(array)) {
@@ -867,6 +1144,12 @@ public class StrKit extends StrUtil {
      * Also sorts the array, as it uses a TreeSet.
      * @param array the String array
      * @return an array without duplicates, in natural sort order
+     */
+    /**
+     * 执行 remove duplicate strings 字符串处理。
+     *
+     * @param array 源数组
+     * @return 处理后的字符串数组
      */
     public static String[] removeDuplicateStrings(String[] array) {
         if (ObjectUtils.isEmpty(array)) {
@@ -890,6 +1173,13 @@ public class StrKit extends StrUtil {
      * @return a {@code Properties} instance representing the array contents,
      * or {@code null} if the array to process was null or empty
      */
+    /**
+     * 执行 split array elements into properties 字符串处理。
+     *
+     * @param array 源数组
+     * @param delimiter 分隔符
+     * @return 拆分后的属性集合
+     */
     public static Properties splitArrayElementsIntoProperties(String[] array, String delimiter) {
         return splitArrayElementsIntoProperties(array, delimiter, null);
     }
@@ -907,6 +1197,14 @@ public class StrKit extends StrUtil {
      * symbol), or {@code null} if no removal should occur
      * @return a {@code Properties} instance representing the array contents,
      * or {@code null} if the array to process was {@code null} or empty
+     */
+    /**
+     * 执行 split array elements into properties 字符串处理。
+     *
+     * @param array 源数组
+     * @param delimiter 分隔符
+     * @param charsToDelete 待删除字符
+     * @return 拆分后的属性集合
      */
     public static Properties splitArrayElementsIntoProperties(
             String[] array, String delimiter, String charsToDelete) {
@@ -936,6 +1234,12 @@ public class StrKit extends StrUtil {
      * @param str
      * @return
      */
+    /**
+     * 执行 tokenize to string array 字符串处理。
+     *
+     * @param str 待处理字符串
+     * @return 处理后的字符串数组
+     */
     public static String[] tokenizeToStringArray(String str) {
         return tokenizeToStringArray(str, CONFIG_LOCATION_DELIMITERS, true, true);
     }
@@ -954,6 +1258,13 @@ public class StrKit extends StrUtil {
      * @see java.util.StringTokenizer
      * @see String#trim()
      * @see #delimitedListToStringArray
+     */
+    /**
+     * 执行 tokenize to string array 字符串处理。
+     *
+     * @param str 待处理字符串
+     * @param delimiters 分隔符集合
+     * @return 处理后的字符串数组
      */
     public static String[] tokenizeToStringArray(String str, String delimiters) {
         return tokenizeToStringArray(str, delimiters, true, true);
@@ -977,6 +1288,15 @@ public class StrKit extends StrUtil {
      * @see java.util.StringTokenizer
      * @see String#trim()
      * @see #delimitedListToStringArray
+     */
+    /**
+     * 执行 tokenize to string array 字符串处理。
+     *
+     * @param str 待处理字符串
+     * @param delimiters 分隔符集合
+     * @param trimTokens 方法参数
+     * @param ignoreEmptyTokens 方法参数
+     * @return 处理后的字符串数组
      */
     public static String[] tokenizeToStringArray(
             String str, String delimiters, boolean trimTokens, boolean ignoreEmptyTokens) {
@@ -1009,6 +1329,13 @@ public class StrKit extends StrUtil {
      * @return an array of the tokens in the list
      * @see #tokenizeToStringArray
      */
+    /**
+     * 执行 delimited list to string array 字符串处理。
+     *
+     * @param str 待处理字符串
+     * @param delimiter 分隔符
+     * @return 处理后的字符串数组
+     */
     public static String[] delimitedListToStringArray(String str, String delimiter) {
         return delimitedListToStringArray(str, delimiter, null);
     }
@@ -1025,6 +1352,14 @@ public class StrKit extends StrUtil {
      * line breaks: e.g. "\r\n\f" will delete all new lines and line feeds in a String.
      * @return an array of the tokens in the list
      * @see #tokenizeToStringArray
+     */
+    /**
+     * 执行 delimited list to string array 字符串处理。
+     *
+     * @param str 待处理字符串
+     * @param delimiter 分隔符
+     * @param charsToDelete 待删除字符
+     * @return 处理后的字符串数组
      */
     public static String[] delimitedListToStringArray(String str, String delimiter, String charsToDelete) {
         if (Objects.isNull(str)) {
@@ -1058,6 +1393,12 @@ public class StrKit extends StrUtil {
      * @param str the input String
      * @return an array of Strings, or the empty array in case of empty input
      */
+    /**
+     * 执行 comma delimited list to string array 字符串处理。
+     *
+     * @param str 待处理字符串
+     * @return 处理后的字符串数组
+     */
     public static String[] commaDelimitedListToStringArray(String str) {
         return delimitedListToStringArray(str, ",");
     }
@@ -1067,6 +1408,12 @@ public class StrKit extends StrUtil {
      * Note that this will suppress duplicates.
      * @param str the input String
      * @return a Set of String entries in the list
+     */
+    /**
+     * 执行 comma delimited list to set 字符串处理。
+     *
+     * @param str 待处理字符串
+     * @return 转换后的字符串集合
      */
     public static Set<String> commaDelimitedListToSet(String str) {
         Set<String> set = new TreeSet<String>();
@@ -1085,6 +1432,15 @@ public class StrKit extends StrUtil {
      * @param prefix the String to start each element with
      * @param suffix the String to end each element with
      * @return the delimited String
+     */
+    /**
+     * 执行 collection to delimited string 字符串处理。
+     *
+     * @param coll 源集合
+     * @param delim 分隔符
+     * @param prefix 前缀
+     * @param suffix 后缀
+     * @return 处理后的字符串
      */
     public static String collectionToDelimitedString(Collection<?> coll, String delim, String prefix, String suffix) {
         if (CollKit.isEmpty(coll)) {
@@ -1108,6 +1464,13 @@ public class StrKit extends StrUtil {
      * @param delim the delimiter to use (probably a ",")
      * @return the delimited String
      */
+    /**
+     * 执行 collection to delimited string 字符串处理。
+     *
+     * @param coll 源集合
+     * @param delim 分隔符
+     * @return 处理后的字符串
+     */
     public static String collectionToDelimitedString(Collection<?> coll, String delim) {
         return collectionToDelimitedString(coll, delim, "", "");
     }
@@ -1117,6 +1480,12 @@ public class StrKit extends StrUtil {
      * E.g. useful for {@code toString()} implementations.
      * @param coll the Collection to display
      * @return the delimited String
+     */
+    /**
+     * 执行 collection to comma delimited string 字符串处理。
+     *
+     * @param coll 源集合
+     * @return 处理后的字符串
      */
     public static String collectionToCommaDelimitedString(Collection<?> coll) {
         return collectionToDelimitedString(coll, ",");
@@ -1128,6 +1497,13 @@ public class StrKit extends StrUtil {
      * @param arr the array to display
      * @param delim the delimiter to use (probably a ",")
      * @return the delimited String
+     */
+    /**
+     * 执行 array to delimited string 字符串处理。
+     *
+     * @param arr 源数组
+     * @param delim 分隔符
+     * @return 处理后的字符串
      */
     public static String arrayToDelimitedString(Object[] arr, String delim) {
         if (ObjectUtils.isEmpty(arr)) {
@@ -1152,6 +1528,12 @@ public class StrKit extends StrUtil {
      * @param arr the array to display
      * @return the delimited String
      */
+    /**
+     * 执行 array to comma delimited string 字符串处理。
+     *
+     * @param arr 源数组
+     * @return 处理后的字符串
+     */
     public static String arrayToCommaDelimitedString(Object[] arr) {
         return arrayToDelimitedString(arr, ",");
     }
@@ -1161,6 +1543,12 @@ public class StrKit extends StrUtil {
      *
      * @param str
      * @return
+     */
+    /**
+     * 执行 get map from query param string 字符串处理。
+     *
+     * @param str 待处理字符串
+     * @return 解析后的键值映射
      */
     public static Map<String, String> getMapFromQueryParamString(String str) {
         Map<String, String> param = new HashMap<String, String>();
@@ -1181,6 +1569,14 @@ public class StrKit extends StrUtil {
      * @param str
      *            主字串
      * @return
+     */
+    /**
+     * 执行 replace all 字符串处理。
+     *
+     * @param src 源字符串
+     * @param tar 目标文本
+     * @param str 待处理字符串
+     * @return 处理后的字符串
      */
     public static String replaceAll(String src, String tar, String str) {
         StringBuilder sb = new StringBuilder();
@@ -1225,6 +1621,12 @@ public class StrKit extends StrUtil {
      * @param str
      * @return
      */
+    /**
+     * 取得中文词语的拼音首字母。
+     *
+     * @param str 待处理字符串
+     * @return 提取的字符
+     */
     public static char getFirstLetterFromChinessWord(String str) {
         char result = '*';
         String temp = str.toUpperCase();
@@ -1261,6 +1663,13 @@ public class StrKit extends StrUtil {
      * @param letter
      * @return
      */
+    /**
+     * 执行 split 字符串处理。
+     *
+     * @param src 源字符串
+     * @param letter 分隔字符
+     * @return 处理后的字符串数组
+     */
     public static String[] split(String src, char letter) {
         if (Objects.isNull(src)) {
             return new String[0];
@@ -1295,6 +1704,13 @@ public class StrKit extends StrUtil {
      * index 1 being after the delimiter (neither element includes the delimiter);
      * or {@code null} if the delimiter wasn't found in the given input String
      */
+    /**
+     * 执行 split 字符串处理。
+     *
+     * @param toSplit 待拆分字符串
+     * @param delimiter 分隔符
+     * @return 处理后的字符串数组
+     */
     public static String[] split(String toSplit, String delimiter) {
         if (!hasLength(toSplit) || !hasLength(delimiter)) {
             return null;
@@ -1308,6 +1724,13 @@ public class StrKit extends StrUtil {
         return new String[]{beforeDelimiter, afterDelimiter};
     }
 
+    /**
+     * 执行 splits 字符串处理。
+     *
+     * @param toSplit 待拆分字符串
+     * @param regex 正则表达式
+     * @return 处理后的字符串数组
+     */
     public static String[] splits(String toSplit, String regex) {
         if (!hasLength(toSplit) || !hasLength(regex)) {
             return new String[]{};
@@ -1320,6 +1743,12 @@ public class StrKit extends StrUtil {
      *
      * @param str
      * @return
+     */
+    /**
+     * 执行 remove last 字符串处理。
+     *
+     * @param str 待处理字符串
+     * @return 处理后的字符串
      */
     public static String removeLast(String str) {
         if (isNull(str)) {
@@ -1334,6 +1763,12 @@ public class StrKit extends StrUtil {
      *
      * @param str
      * @return
+     */
+    /**
+     * 执行 add quotation 字符串处理。
+     *
+     * @param str 待处理字符串
+     * @return 处理后的字符串
      */
     public static String addQuotation(String str) {
         if (Objects.isNull(str)) {
@@ -1357,6 +1792,12 @@ public class StrKit extends StrUtil {
      * @param list
      * @return String[]
      */
+    /**
+     * 执行 list to array 字符串处理。
+     *
+     * @param list 源列表
+     * @return 处理后的字符串数组
+     */
     public static String[] listToArray(List<String> list) {
         String[] strs = new String[list.size()];
         return list.toArray(strs);
@@ -1369,6 +1810,13 @@ public class StrKit extends StrUtil {
      * @param separator
      * @return String
      */
+    /**
+     * 执行 list to string 字符串处理。
+     *
+     * @param list 源列表
+     * @param separator 分隔符
+     * @return 处理后的字符串
+     */
     public static String listToString(List<String> list, String separator) {
         return StringUtils.join(listToArray(list), separator);
     }
@@ -1380,6 +1828,12 @@ public class StrKit extends StrUtil {
      * @param pwd_len
      *            生成的密码的总长度
      * @return 密码的字符串
+     */
+    /**
+     * 生成指定长度的随机字符串。
+     *
+     * @param pwd_len 目标长度
+     * @return 处理后的字符串
      */
     public static String genRandomNum(int pwd_len) {
         // 36是因为数组是从0开始的，26个字母+10个数字 + 下划线
@@ -1409,6 +1863,12 @@ public class StrKit extends StrUtil {
      * @param str
      * @return 传入NULL,返回空"".
      */
+    /**
+     * 执行 kill null 字符串处理。
+     *
+     * @param str 待处理字符串
+     * @return 处理后的字符串
+     */
     public static String killNull(String str) {
         if (Objects.isNull(str)) {
             return "";
@@ -1425,6 +1885,12 @@ public class StrKit extends StrUtil {
      * @param source
      * @return
      */
+    /**
+     * 执行 parentheses 字符串处理。
+     *
+     * @param source 源字符串
+     * @return 处理后的字符串
+     */
     public static String parentheses(String source) {
         return (Objects.nonNull(source) ? "(" + source + ")" : null);
     }
@@ -1438,10 +1904,22 @@ public class StrKit extends StrUtil {
      * @param source
      * @return
      */
+    /**
+     * 执行 brackets 字符串处理。
+     *
+     * @param source 源字符串
+     * @return 处理后的字符串
+     */
     public static String brackets(String source) {
         return (Objects.nonNull(source) ? "[" + source + "]" : null);
     }
 
+    /**
+     * 执行 ditto 字符串处理。
+     *
+     * @param source 源字符串
+     * @return 处理后的字符串
+     */
     public static String ditto(String source) {
         return (Objects.nonNull(source) ? "\"" + source + "\"" : null);
     }
@@ -1453,6 +1931,12 @@ public class StrKit extends StrUtil {
      *            the input String (e.g. "myString")
      * @return the quoted String (e.g. "'myString'"), or
      *         <code>null<code> if the input was <code>null</code>
+     */
+    /**
+     * 执行 quote 字符串处理。
+     *
+     * @param str 待处理字符串
+     * @return 处理后的字符串
      */
     public static String quote(String str) {
         return (Objects.nonNull(str) ? "'" + str + "'" : null);
@@ -1467,6 +1951,13 @@ public class StrKit extends StrUtil {
      * @param list
      * @param separator
      * @return
+     */
+    /**
+     * 执行 quote 字符串处理。
+     *
+     * @param array 源数组
+     * @param separator 分隔符
+     * @return 处理后的字符串
      */
     public static String quote(String[] array, String separator) {
         if (Objects.nonNull(array) && array.length != 0) {
@@ -1490,6 +1981,12 @@ public class StrKit extends StrUtil {
      * @return the quoted String (e.g. "'myString'"), or the input object as-is
      *         if not a String
      */
+    /**
+     * 执行 quote if string 字符串处理。
+     *
+     * @param obj 待处理对象
+     * @return 处理后的对象
+     */
     public static Object quoteIfString(Object obj) {
         return (obj instanceof String ? quote((String) obj) : obj);
     }
@@ -1503,6 +2000,12 @@ public class StrKit extends StrUtil {
      * @method: trimToAlphaString
      * @author: redacted-legacy-family
      * @version: 2010-12-15 下午09:06:02
+     */
+    /**
+     * 执行 trim to alpha string 字符串处理。
+     *
+     * @param string 待处理字符串
+     * @return 处理后的字符串
      */
     public static String trimToAlphaString(String string) {
         if (Objects.isNull(string) || string.length() == 0) {
@@ -1523,6 +2026,12 @@ public class StrKit extends StrUtil {
      * @author: redacted-legacy-family
      * @version: 2010-12-15 下午09:06:31
      */
+    /**
+     * 执行 trim to alpha strings 字符串处理。
+     *
+     * @param string 待处理字符串
+     * @return 处理后的字符串数组
+     */
     public static String[] trimToAlphaStrings(String string) {
         if (Objects.isNull(string) || string.length() == 0) {
             return new String[0];
@@ -1535,6 +2044,12 @@ public class StrKit extends StrUtil {
         return strs;
     }
 
+    /**
+     * 执行 trim to string 字符串处理。
+     *
+     * @param str 待处理字符串
+     * @return 处理后的字符串
+     */
     public static String trimToString(String str) {
         if (Objects.isNull(str) || str.trim().length() == 0) {
             return null;

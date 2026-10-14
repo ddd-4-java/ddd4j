@@ -45,6 +45,11 @@ public class HMACKit {
 
     /**
      * HMac-摘要
+     *
+     * @param algorithm 摘要算法
+     * @param salt 盐值
+     * @param plainTxt 待摘要的明文
+     * @return 十六进制摘要
      */
     public static String digest(String algorithm, String salt, String plainTxt) {
         HMac hMac = getHMac(algorithm, salt);
