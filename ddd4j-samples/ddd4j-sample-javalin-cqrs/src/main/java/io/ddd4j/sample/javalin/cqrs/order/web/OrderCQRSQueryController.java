@@ -111,6 +111,41 @@ public class OrderCQRSQueryController {
 
         private final int lineCount;
 
+        /** @return id */
+        public String getId() {
+            return id;
+        }
+
+        /** @return orderNo */
+        public String getOrderNo() {
+            return orderNo;
+        }
+
+        /** @return buyerId */
+        public String getBuyerId() {
+            return buyerId;
+        }
+
+        /** @return buyerName */
+        public String getBuyerName() {
+            return buyerName;
+        }
+
+        /** @return status */
+        public String getStatus() {
+            return status;
+        }
+
+        /** @return totalAmount */
+        public Money getTotalAmount() {
+            return totalAmount;
+        }
+
+        /** @return lineCount */
+        public int getLineCount() {
+            return lineCount;
+        }
+
         /**
          * 创建订单响应数据。
          *
