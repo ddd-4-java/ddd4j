@@ -42,6 +42,35 @@ public final class JdbcOutboxPort implements OutboxPort {
         this.objectMapper = Objects.requireNonNull(objectMapper, "objectMapper must not be null");
     }
 
+    /**
+     * 在短生命周期查询连接上读取已领取的完整订单事件。
+     *
+     * @param messageId Outbox 消息标识
+     * @return 原始订单事件封装
+     */
+    public OutboxMessage findById(String messageId) {
+        Objects.requireNonNull(messageId, "messageId must not be null");
+        return transaction.query(connection -> {
+            String sql = "SELECT id, aggregate_id, event_type, payload, occurred_at "
+                    + "FROM sample_order_outbox WHERE id = ?";
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setString(1, messageId);
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (!resultSet.next()) {
+                        throw new IllegalStateException("Order outbox message not found: " + messageId);
+                    }
+                    try {
+                        return new OutboxMessage(resultSet.getString("id"), resultSet.getString("aggregate_id"),
+                                resultSet.getString("event_type"), objectMapper.readTree(resultSet.getString("payload")),
+                                resultSet.getTimestamp("occurred_at").toInstant());
+                    } catch (JacksonException exception) {
+                        throw new IllegalStateException("Unable to read order outbox payload", exception);
+                    }
+                }
+            }
+        });
+    }
+
     @Override
     public void append(List<OutboxMessage> messages) {
         Objects.requireNonNull(messages, "messages must not be null");
