@@ -10,6 +10,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: verify-ddd4j-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   DDD4J_REPORT_DIR: ${{ github.workspace }}/target/release-quality
   NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
