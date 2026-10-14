@@ -38,41 +38,49 @@ public @interface ApiIdempotent {
      * type为Token时该值用于告诉拦截器取值的参数名
      *
      * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @return 幂等键或 Token 参数名
      */
     String value() default "";
 
     /**
      * 幂等方式
+     * @return 幂等方式
      */
     ApiIdempotentType type() default ApiIdempotentType.ARGS;
 
     /**
      * 是否启用 Spring Expression Language(SpEL) 表达式解析value值
+     * @return 是否解析 SpEL 表达式
      */
     boolean spel() default false;
 
     /**
      * 是否将参数作为幂等key的一部分
+     * @return 是否包含请求参数
      */
     boolean withArgs() default false;
 
     /**
      * 幂等过期时间，默认 2000 毫秒，即：在此时间段内，对API进行幂等处理。
+     * @return 过期时间，单位毫秒
      */
     long expireMillis() default 2000;
 
     /**
      * 重试次数，默认0
+     * @return 重试次数
      */
     int retryTimes() default 0;
 
     /**
      * 重试间隔时间，单位：ms，默认100
+     * @return 重试间隔，单位毫秒
      */
     long retryInterval() default 100;
 
     /**
      * 是否自动进行解锁操作，默认：false, 等待key过期
+     * @return 是否自动解锁
      */
     boolean unlock() default false;
 

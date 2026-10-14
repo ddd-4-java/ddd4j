@@ -30,5 +30,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface OrderBy {
+    /**
+     * 默认排序字段。
+     * @return 默认排序字段
+     */
     String[] value() default "";
 }

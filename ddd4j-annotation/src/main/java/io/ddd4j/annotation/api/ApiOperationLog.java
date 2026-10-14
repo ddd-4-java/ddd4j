@@ -31,21 +31,25 @@ public @interface ApiOperationLog {
 
     /**
      * 操作模块
+     * @return 操作模块
      */
     String module() default "";
 
     /**
      * 业务名称
+     * @return 业务名称
      */
     String business() default "";
 
     /**
      * 操作类型
+     * @return 操作类型
      */
     BusinessType opt();
 
     /**
      * 是否马上处理
+     * @return 是否立即处理
      */
     boolean immediate() default false;
 

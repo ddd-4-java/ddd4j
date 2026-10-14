@@ -47,6 +47,7 @@ public @interface UpdateEvent {
 
     /**
      * 要处理的事件类型。
+     * @return 要处理的事件类型
      */
     Class<?> value();
 }

@@ -55,6 +55,7 @@ public @interface DomainField {
      * PO 数据库列名（直接声明，绕过字段名匹配）。
      *
      * <p>与 {@link #poField()} 二选一，优先使用本字段。
+     * @return PO 数据库列名
      */
     String column() default "";
 
@@ -64,6 +65,7 @@ public @interface DomainField {
      * <p>用于 Domain 字段名与 PO 字段名不一致，但 PO 字段已有 {@code @TableField} 标注的场景。
      * 例如 Domain 字段 {@code phoneNumber} 对应 PO 字段 {@code phoneNum}，PO 字段标注了
      * {@code @TableField("phone_number")}，充血查询翻译会自动通过 poField 查找列名。
+     * @return 对应的 PO 字段名
      */
     String poField() default "";
 }
