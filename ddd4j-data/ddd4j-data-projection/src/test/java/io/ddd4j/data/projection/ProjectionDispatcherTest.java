@@ -1,0 +1,309 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package io.ddd4j.data.projection;
+import java.util.Set;
+import java.util.Queue;
+import java.util.List;
+import java.util.Collection;
+import java.util.ArrayList;
+import java.util.ArrayDeque;
+import io.ddd4j.core.cqrs.readmodel.ProjectionService;
+import io.ddd4j.core.cqrs.readmodel.InMemoryProjectionPositionRepository;
+import io.ddd4j.core.cqrs.readmodel.EventChunkReader;
+import io.ddd4j.core.cqrs.readmodel.EventChunk;
+import io.ddd4j.core.cqrs.readmodel.DefaultProjectionService;
+import io.ddd4j.core.cqrs.readmodel.DefaultProjectionPosition;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Objects;
+
+import io.ddd4j.core.cqrs.readmodel.*;
+import io.ddd4j.core.ddd.event.DomainEvent;
+import org.junit.jupiter.api.Test;
+
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+/**
+ * {@link ProjectionDispatcher} 分发门面契约测试。
+ * <p>
+ * 用脚本化 {@link EventChunkReader}（可校验读取参数）+ core 的
+ * {@link InMemoryProjectionPositionRepository}／{@link DefaultProjectionService}
+ * 组装真实依赖（免 mock 容器），守护：按订阅类型过滤的流式拉取、
+ * 未注册类型空流兜底、dispatchOne 的「先应用后提交」顺序与 position++ 语义、
+ * handler 失败时位置不推进、不包装事务（同步完成 future）。
+ *
+ * @author ddd4j
+ * @since 2.0.x
+ */
+class ProjectionDispatcherTest {
+
+    @SafeVarargs
+    private static Set<Class<? extends DomainEvent<?>>> setOf(
+            Class<? extends DomainEvent<?>>... eventTypes) {
+        return Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(eventTypes)));
+    }
+
+    private final ProjectionHandlerRegistry registry = new ProjectionHandlerRegistry();
+
+    private final InMemoryProjectionPositionRepository positions = new InMemoryProjectionPositionRepository();
+
+    private final ProjectionService service = new DefaultProjectionService(positions);
+
+    private final ScriptedChunkReader chunkReader = new ScriptedChunkReader();
+
+    private final ProjectionDispatcher dispatcher =
+            new ProjectionDispatcher(registry, chunkReader, positions, service);
+
+    @Test
+    void chunkReaderReceivesImmutableEventTypeNames() {
+        registry.register(new ProjectionHandlerRegistryTest.RecordingHandler(
+                "order-summary", Collections.<Class<? extends DomainEvent<?>>>singleton(
+                        ProjectionHandlerRegistryTest.OrderCreated.class)));
+        AtomicReference<Collection<String>> received = new AtomicReference<>();
+        EventChunkReader<DomainEvent<?>> reader = (streamId, fromEventNumber, chunkSize, eventTypes) -> {
+            received.set(eventTypes);
+            return EventChunk.empty(fromEventNumber);
+        };
+        ProjectionDispatcher isolated = new ProjectionDispatcher(registry, reader, positions, service);
+
+        assertThat(isolated.chunkByEvent(ProjectionHandlerRegistryTest.OrderCreated.class)
+                .collectList().block()).isEmpty();
+        assertThat(received.get()).containsExactly("OrderCreated");
+        assertThrows(UnsupportedOperationException.class, () -> received.get().clear());
+    }
+
+    @Test
+    void chunkByEventEmitsOnlyRequestedTypeAndCompletesWhenExhausted() {
+        ProjectionHandlerRegistryTest.RecordingHandler handler =
+                new ProjectionHandlerRegistryTest.RecordingHandler("order-summary",
+                        setOf(ProjectionHandlerRegistryTest.OrderCreated.class,
+                                ProjectionHandlerRegistryTest.OrderPaid.class));
+        registry.register(handler);
+        ProjectionHandlerRegistryTest.OrderCreated first = new ProjectionHandlerRegistryTest.OrderCreated();
+        ProjectionHandlerRegistryTest.OrderPaid paid = new ProjectionHandlerRegistryTest.OrderPaid();
+        ProjectionHandlerRegistryTest.OrderCreated second = new ProjectionHandlerRegistryTest.OrderCreated();
+        chunkReader.enqueue(new EventChunk<>(Arrays.asList(first, paid, second), 3));
+        chunkReader.enqueue(EventChunk.empty(3));
+
+        List<DomainEvent<?>> emitted = dispatcher
+                .chunkByEvent(ProjectionHandlerRegistryTest.OrderCreated.class)
+                .collectList()
+                .block();
+
+        assertThat(emitted).containsExactly(first, second);
+        assertThat(chunkReader.calls()).hasSize(2);
+        ScriptedChunkReader.ReadCall initialCall = chunkReader.calls().get(0);
+        assertThat(initialCall.streamId()).isEqualTo("order-summary");
+        assertThat(initialCall.fromEventNumber()).isZero();
+        assertThat(initialCall.chunkSize()).isEqualTo(100);
+        assertThat(initialCall.eventTypes())
+                .containsExactlyInAnyOrder("OrderCreated", "OrderPaid");
+    }
+
+    @Test
+    void chunkByEventReturnsEmptyFluxForUnregisteredEventType() {
+        registry.register(new ProjectionHandlerRegistryTest.RecordingHandler("order-summary",
+                setOf(ProjectionHandlerRegistryTest.OrderCreated.class)));
+
+        List<DomainEvent<?>> emitted = dispatcher
+                .chunkByEvent(ProjectionHandlerRegistryTest.OrderShipped.class)
+                .collectList()
+                .block();
+
+        assertThat(emitted).isEmpty();
+        assertThat(chunkReader.calls()).isEmpty();
+    }
+
+    @Test
+    void chunkByEventContinuesFromPersistedPosition() {
+        registry.register(new ProjectionHandlerRegistryTest.RecordingHandler("order-summary",
+                setOf(ProjectionHandlerRegistryTest.OrderCreated.class)));
+        positions.save(new DefaultProjectionPosition("order-summary", 7));
+
+        dispatcher.chunkByEvent(ProjectionHandlerRegistryTest.OrderCreated.class)
+                .collectList()
+                .block();
+
+        assertThat(chunkReader.calls().get(0).fromEventNumber()).isEqualTo(7);
+    }
+
+    @Test
+    void dispatchOneAppliesHandlerInOrderAndAdvancesPositionByOne() {
+        ProjectionHandlerRegistryTest.RecordingHandler handler =
+                new ProjectionHandlerRegistryTest.RecordingHandler("order-summary",
+                        setOf(ProjectionHandlerRegistryTest.OrderCreated.class));
+        registry.register(handler);
+        ProjectionHandlerRegistryTest.OrderCreated first = new ProjectionHandlerRegistryTest.OrderCreated();
+        ProjectionHandlerRegistryTest.OrderCreated second = new ProjectionHandlerRegistryTest.OrderCreated();
+        ProjectionHandlerRegistryTest.OrderCreated third = new ProjectionHandlerRegistryTest.OrderCreated();
+
+        dispatcher.dispatchOne(first, handler).join();
+        dispatcher.dispatchOne(second, handler).join();
+        dispatcher.dispatchOne(third, handler).join();
+
+        assertThat(handler.handled()).containsExactly(first, second, third);
+        assertThat(service.readProjectionPosition("order-summary")).isEqualTo(3L);
+        assertThat(positions.findByStreamId("order-summary"))
+                .hasValueSatisfying(position -> assertThat(position.getNextEventNumber()).isEqualTo(3L));
+    }
+
+    @Test
+    void dispatchOneKeepsPositionWhenHandlerFails() {
+        ProjectionHandlerRegistryTest.RecordingHandler handler =
+                new ProjectionHandlerRegistryTest.RecordingHandler("order-summary",
+                        setOf(ProjectionHandlerRegistryTest.OrderCreated.class));
+        handler.failWith(new IllegalStateException("projection boom"));
+        registry.register(handler);
+
+        assertThrows(IllegalStateException.class,
+                () -> dispatcher.dispatchOne(new ProjectionHandlerRegistryTest.OrderCreated(), handler));
+
+        assertThat(service.readProjectionPosition("order-summary")).isZero();
+        assertThat(handler.handled()).isEmpty();
+    }
+
+    @Test
+    void dispatchOneRejectsNullArguments() {
+        ProjectionHandlerRegistryTest.RecordingHandler handler =
+                new ProjectionHandlerRegistryTest.RecordingHandler("order-summary",
+                        setOf(ProjectionHandlerRegistryTest.OrderCreated.class));
+
+        assertThrows(NullPointerException.class,
+                () -> dispatcher.dispatchOne(null, handler));
+        assertThrows(NullPointerException.class,
+                () -> dispatcher.dispatchOne(new ProjectionHandlerRegistryTest.OrderCreated(), null));
+    }
+
+    @Test
+    void constructorRejectsNullComponents() {
+        EventChunkReader<DomainEvent<?>> reader = new ScriptedChunkReader();
+
+        assertThrows(NullPointerException.class,
+                () -> new ProjectionDispatcher(null, reader, positions, service));
+        assertThrows(NullPointerException.class,
+                () -> new ProjectionDispatcher(registry, null, positions, service));
+        assertThrows(NullPointerException.class,
+                () -> new ProjectionDispatcher(registry, reader, null, service));
+        assertThrows(NullPointerException.class,
+                () -> new ProjectionDispatcher(registry, reader, positions, null));
+    }
+
+    /**
+     * 脚本化事件块读取器：按入队顺序返回事件块，耗尽后返回空块；
+     * 同时记录每次读取参数供断言（读取约定：streamId／起始位置／块大小／事件类型名）。
+     */
+    static final class ScriptedChunkReader implements EventChunkReader<DomainEvent<?>> {
+
+        private final Queue<EventChunk<DomainEvent<?>>> script = new ArrayDeque<>();
+
+        private final List<ReadCall> calls = new ArrayList<>();
+
+        void enqueue(EventChunk<DomainEvent<?>> chunk) {
+            script.add(chunk);
+        }
+
+        List<ReadCall> calls() {
+            return calls;
+        }
+
+        @Override
+        public EventChunk<DomainEvent<?>> read(String streamId, long fromEventNumber, int chunkSize,
+                                               Collection<String> eventTypes) {
+            calls.add(new ReadCall(streamId, fromEventNumber, chunkSize,
+                    Collections.unmodifiableList(new ArrayList<>(eventTypes))));
+            EventChunk<DomainEvent<?>> chunk = script.poll();
+            return chunk != null ? chunk : EventChunk.empty(fromEventNumber);
+        }
+
+        /**
+         * 一次事件块读取的参数记录：流 ID、起始事件号、块大小与事件类型名，
+         * 供测试断言读取约定。
+         */
+        final static class ReadCall {
+
+            private static final long serialVersionUID = 0L;
+
+            private final String streamId;
+
+            private final long fromEventNumber;
+
+            private final int chunkSize;
+
+            private final Collection<String> eventTypes;
+
+            @JsonCreator()
+            ReadCall(@JsonProperty("streamId") String streamId, @JsonProperty("fromEventNumber") long fromEventNumber, @JsonProperty("chunkSize") int chunkSize, @JsonProperty("eventTypes") Collection<String> eventTypes) {
+                this.streamId = streamId;
+                this.fromEventNumber = fromEventNumber;
+                this.chunkSize = chunkSize;
+                this.eventTypes = eventTypes;
+            }
+
+            @JsonProperty("streamId")
+            public String streamId() {
+                return streamId;
+            }
+
+            @JsonProperty("fromEventNumber")
+            public long fromEventNumber() {
+                return fromEventNumber;
+            }
+
+            @JsonProperty("chunkSize")
+            public int chunkSize() {
+                return chunkSize;
+            }
+
+            @JsonProperty("eventTypes")
+            public Collection<String> eventTypes() {
+                return eventTypes;
+            }
+
+            @Override
+            public boolean equals(Object obj) {
+                if (this == obj) {
+                    return true;
+                }
+                if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                    return false;
+                }
+                ReadCall other = (ReadCall) obj;
+                return Objects.equals(this.streamId, other.streamId) && this.fromEventNumber == other.fromEventNumber && this.chunkSize == other.chunkSize && Objects.equals(this.eventTypes, other.eventTypes);
+            }
+
+            @Override
+            public int hashCode() {
+                int result = 0;
+                result = 31 * result + Objects.hashCode(streamId);
+                result = 31 * result + Long.hashCode(fromEventNumber);
+                result = 31 * result + Integer.hashCode(chunkSize);
+                result = 31 * result + Objects.hashCode(eventTypes);
+                return result;
+            }
+
+            @Override
+            public String toString() {
+                return "ReadCall[streamId=" + streamId + ", fromEventNumber=" + fromEventNumber + ", chunkSize=" + chunkSize + ", eventTypes=" + eventTypes + "]";
+            }
+        }
+    }
+}
