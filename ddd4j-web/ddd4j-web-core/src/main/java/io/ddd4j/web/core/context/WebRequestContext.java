@@ -19,6 +19,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 import io.ddd4j.kit.lang.StrKit;
+import io.ddd4j.web.core.version.ApiVersion;
 
 import java.util.Locale;
 import java.util.Objects;
@@ -46,6 +47,8 @@ public final class WebRequestContext {
 
     private final String path;
 
+    private final ApiVersion apiVersion;
+
     /**
      * 创建已规范化的请求上下文。
      *
@@ -58,8 +61,25 @@ public final class WebRequestContext {
      * @param method HTTP 方法
      * @param path 请求路径
      */
-    @JsonCreator()
-    public WebRequestContext(@JsonProperty("requestId") String requestId, @JsonProperty("traceId") String traceId, @JsonProperty("tenantId") String tenantId, @JsonProperty("authorization") String authorization, @JsonProperty("locale") Locale locale, @JsonProperty("clientIp") String clientIp, @JsonProperty("method") String method, @JsonProperty("path") String path) {
+    public WebRequestContext(String requestId, String traceId, String tenantId, String authorization, Locale locale, String clientIp, String method, String path) {
+        this(requestId, traceId, tenantId, authorization, locale, clientIp, method, path, null);
+    }
+
+    /**
+     * 创建包含 API 版本的请求上下文。
+     *
+     * @param requestId 请求标识
+     * @param traceId 跟踪标识
+     * @param tenantId 租户标识
+     * @param authorization Authorization 请求头
+     * @param locale 区域设置
+     * @param clientIp 客户端 IP 地址
+     * @param method HTTP 方法
+     * @param path 请求路径
+     * @param apiVersion API 版本，可为空
+     */
+    @JsonCreator
+    public WebRequestContext(@JsonProperty("requestId") String requestId, @JsonProperty("traceId") String traceId, @JsonProperty("tenantId") String tenantId, @JsonProperty("authorization") String authorization, @JsonProperty("locale") Locale locale, @JsonProperty("clientIp") String clientIp, @JsonProperty("method") String method, @JsonProperty("path") String path, @JsonProperty("apiVersion") ApiVersion apiVersion) {
         requestId = StrKit.isBlank(requestId) ? null : requestId;
         traceId = StrKit.isBlank(traceId) ? requestId : traceId;
         locale = Objects.isNull(locale) ? Locale.getDefault() : locale;
@@ -73,6 +93,7 @@ public final class WebRequestContext {
         this.clientIp = clientIp;
         this.method = method;
         this.path = path;
+        this.apiVersion = apiVersion;
     }
 
     /**
@@ -235,6 +256,17 @@ public final class WebRequestContext {
         return path;
     }
 
+    /** @return API 版本，未指定时为空 */
+    @JsonProperty("apiVersion")
+    public ApiVersion apiVersion() {
+        return apiVersion;
+    }
+
+    /** @return API 版本，未指定时为空 */
+    public ApiVersion getApiVersion() {
+        return apiVersion;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -244,7 +276,7 @@ public final class WebRequestContext {
             return false;
         }
         WebRequestContext other = (WebRequestContext) obj;
-        return Objects.equals(this.requestId, other.requestId) && Objects.equals(this.traceId, other.traceId) && Objects.equals(this.tenantId, other.tenantId) && Objects.equals(this.authorization, other.authorization) && Objects.equals(this.locale, other.locale) && Objects.equals(this.clientIp, other.clientIp) && Objects.equals(this.method, other.method) && Objects.equals(this.path, other.path);
+        return Objects.equals(this.requestId, other.requestId) && Objects.equals(this.traceId, other.traceId) && Objects.equals(this.tenantId, other.tenantId) && Objects.equals(this.authorization, other.authorization) && Objects.equals(this.locale, other.locale) && Objects.equals(this.clientIp, other.clientIp) && Objects.equals(this.method, other.method) && Objects.equals(this.path, other.path) && Objects.equals(this.apiVersion, other.apiVersion);
     }
 
     @Override
@@ -258,11 +290,12 @@ public final class WebRequestContext {
         result = 31 * result + Objects.hashCode(clientIp);
         result = 31 * result + Objects.hashCode(method);
         result = 31 * result + Objects.hashCode(path);
+        result = 31 * result + Objects.hashCode(apiVersion);
         return result;
     }
 
     @Override
     public String toString() {
-        return "WebRequestContext[requestId=" + requestId + ", traceId=" + traceId + ", tenantId=" + tenantId + ", authorization=" + authorization + ", locale=" + locale + ", clientIp=" + clientIp + ", method=" + method + ", path=" + path + "]";
+        return "WebRequestContext[requestId=" + requestId + ", traceId=" + traceId + ", tenantId=" + tenantId + ", authorization=" + authorization + ", locale=" + locale + ", clientIp=" + clientIp + ", method=" + method + ", path=" + path + ", apiVersion=" + apiVersion + "]";
     }
 }

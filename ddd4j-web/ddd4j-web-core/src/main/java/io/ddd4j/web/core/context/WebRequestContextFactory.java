@@ -15,6 +15,7 @@
 package io.ddd4j.web.core.context;
 
 import io.ddd4j.kit.lang.StrKit;
+import io.ddd4j.web.core.version.ApiVersion;
 
 import java.util.Objects;
 
@@ -49,6 +50,17 @@ public final class WebRequestContextFactory {
      * @return 规范化后的请求上下文
      */
     public WebRequestContext create(WebRequestData data) {
+        return create(data, null);
+    }
+
+    /**
+     * 将原始请求数据及已解析的 API 版本规范化为请求上下文。
+     *
+     * @param data 原始请求数据
+     * @param apiVersion 已解析的 API 版本，可为空
+     * @return 规范化后的请求上下文
+     */
+    public WebRequestContext create(WebRequestData data, ApiVersion apiVersion) {
         WebRequestData requestData = Objects.requireNonNull(data, "data must not be null");
         String requestId = StrKit.isBlank(requestData.requestId())
                 ? requestIdGenerator.generate() : requestData.requestId().trim();
@@ -58,6 +70,6 @@ public final class WebRequestContextFactory {
         String clientIp = clientIpResolver.resolve(requestData.forwardedFor(), requestData.realIp(),
                 requestData.remoteAddress());
         return new WebRequestContext(requestId, requestData.traceId(), requestData.tenantId(),
-                requestData.authorization(), requestData.locale(), clientIp, requestData.method(), requestData.path());
+                requestData.authorization(), requestData.locale(), clientIp, requestData.method(), requestData.path(), apiVersion);
     }
 }
