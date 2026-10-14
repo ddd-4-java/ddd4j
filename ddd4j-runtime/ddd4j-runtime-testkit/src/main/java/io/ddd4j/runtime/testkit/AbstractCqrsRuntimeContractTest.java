@@ -236,12 +236,12 @@ public abstract class AbstractCqrsRuntimeContractTest {
         public Set<Class<? extends Command>> supportedCommands() {
             return Set.of(CmdA.class);
         }
-/**
- * @SuppressWarnings() 方法。
- * @param "unchecked" "unchecked" 参数。
- * @return 方法执行结果。
- */
-
+        /**
+         * 执行测试命令。
+         *
+         * @param command 测试命令
+         * @return 执行结果
+         */
         @Override
         @SuppressWarnings("unchecked")
         public Result execute(CmdA command) {

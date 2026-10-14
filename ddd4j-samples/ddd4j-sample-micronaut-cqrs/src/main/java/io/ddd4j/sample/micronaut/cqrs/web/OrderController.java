@@ -87,9 +87,9 @@ public class OrderController {
     /**
      * 创建订单请求参数：订单号与买方信息。
      *
-     * @param orderNo 订单号（用于重复创建的幂等校验）
-     * @param buyerId 买方标识
-     * @param buyerName 买方名称
+     * 字段 {@code orderNo}：订单号（用于重复创建的幂等校验）
+     * 字段 {@code buyerId}：买方标识
+     * 字段 {@code buyerName}：买方名称
      */
     public final static class CreateOrderRequest {
 

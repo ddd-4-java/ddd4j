@@ -277,11 +277,11 @@ public class AuthorizationController {
     /**
      * 创建用户请求参数：账号、密码、显示名及初始角色/权限。
      *
-     * @param loginId 登录标识（账号）
-     * @param password 登录密码
-     * @param displayName 显示名称
-     * @param roles 初始角色编码数组
-     * @param permissions 初始权限编码数组
+     * 字段 {@code loginId}：登录标识（账号）
+     * 字段 {@code password}：登录密码
+     * 字段 {@code displayName}：显示名称
+     * 字段 {@code roles}：初始角色编码数组
+     * 字段 {@code permissions}：初始权限编码数组
      */
     @Data
     @NoArgsConstructor
@@ -338,10 +338,10 @@ public class AuthorizationController {
     /**
      * 更新用户请求参数：显示名、密码及角色/权限（为 {@code null} 表示不变更）。
      *
-     * @param displayName 新的显示名称
-     * @param password 新的登录密码
-     * @param roles 新的角色编码数组，为空表示不调整角色
-     * @param permissions 新的权限编码数组，为空表示不调整权限
+     * 字段 {@code displayName}：新的显示名称
+     * 字段 {@code password}：新的登录密码
+     * 字段 {@code roles}：新的角色编码数组，为空表示不调整角色
+     * 字段 {@code permissions}：新的权限编码数组，为空表示不调整权限
      */
     @Data
     @NoArgsConstructor
@@ -390,9 +390,9 @@ public class AuthorizationController {
     /**
      * 创建角色请求参数：角色编码、名称及持有的权限。
      *
-     * @param code 角色编码（唯一标识）
-     * @param name 角色名称
-     * @param permissions 角色持有的权限编码数组
+     * 字段 {@code code}：角色编码（唯一标识）
+     * 字段 {@code name}：角色名称
+     * 字段 {@code permissions}：角色持有的权限编码数组
      */
     @Data
     @NoArgsConstructor
@@ -432,8 +432,8 @@ public class AuthorizationController {
     /**
      * 更新角色请求参数：名称及权限（为 {@code null} 表示不变更）。
      *
-     * @param name 新的角色名称
-     * @param permissions 新的权限编码数组，为空表示不调整权限
+     * 字段 {@code name}：新的角色名称
+     * 字段 {@code permissions}：新的权限编码数组，为空表示不调整权限
      */
     @Data
     @NoArgsConstructor
@@ -465,8 +465,8 @@ public class AuthorizationController {
     /**
      * 创建权限请求参数：权限编码与描述。
      *
-     * @param code 权限编码（唯一标识）
-     * @param description 权限描述
+     * 字段 {@code code}：权限编码（唯一标识）
+     * 字段 {@code description}：权限描述
      */
     @Data
     @NoArgsConstructor
@@ -498,10 +498,10 @@ public class AuthorizationController {
     /**
      * 用户视图对象：面向接口输出的用户信息（含派生角色与权限）。
      *
-     * @param loginId 登录标识（账号）
-     * @param displayName 显示名称
-     * @param roles 角色编码集合
-     * @param permissions 权限编码集合
+     * 字段 {@code loginId}：登录标识（账号）
+     * 字段 {@code displayName}：显示名称
+     * 字段 {@code roles}：角色编码集合
+     * 字段 {@code permissions}：权限编码集合
      */
     @Value
     public final static class UserView {
@@ -548,9 +548,9 @@ public class AuthorizationController {
     /**
      * 角色视图对象：面向接口输出的角色信息及其权限。
      *
-     * @param code 角色编码
-     * @param name 角色名称
-     * @param permissions 角色持有的权限编码集合
+     * 字段 {@code code}：角色编码
+     * 字段 {@code name}：角色名称
+     * 字段 {@code permissions}：角色持有的权限编码集合
      */
     @Value
     public final static class RoleView {
@@ -589,8 +589,8 @@ public class AuthorizationController {
     /**
      * 权限视图对象：面向接口输出的权限信息。
      *
-     * @param code 权限编码
-     * @param description 权限描述
+     * 字段 {@code code}：权限编码
+     * 字段 {@code description}：权限描述
      */
     @Value
     public final static class PermissionView {

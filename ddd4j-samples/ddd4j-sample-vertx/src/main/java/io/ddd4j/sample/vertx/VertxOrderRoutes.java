@@ -136,7 +136,7 @@ public final class VertxOrderRoutes {
     /**
      * 令牌签发响应体。
      *
-     * @param token 签发的访问令牌
+     * 字段 {@code token}：签发的访问令牌
      */
     @Value
     public static class TokenResponse {

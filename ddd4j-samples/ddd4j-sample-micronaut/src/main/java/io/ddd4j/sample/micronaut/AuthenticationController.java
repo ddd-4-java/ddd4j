@@ -47,7 +47,7 @@ public class AuthenticationController {
     /**
      * 令牌发放响应：携带登录后返回的访问令牌。
      *
-     * @param token 访问令牌
+     * 字段 {@code token}：访问令牌
      */
     public final static class TokenResponse {
 

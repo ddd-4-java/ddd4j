@@ -106,9 +106,9 @@ public final class OrderController {
     /**
      * 创建订单请求参数：订单号与买方信息。
      *
-     * @param orderNo 订单号
-     * @param buyerId 买方标识
-     * @param buyerName 买方名称
+     * 字段 {@code orderNo}：订单号
+     * 字段 {@code buyerId}：买方标识
+     * 字段 {@code buyerName}：买方名称
      */
     @Data
     @NoArgsConstructor
@@ -149,10 +149,10 @@ public final class OrderController {
     /**
      * 追加订单行请求参数：商品标识、名称、数量与单价。
      *
-     * @param goodsId 商品标识
-     * @param goodsName 商品名称
-     * @param quantity 购买数量
-     * @param unitPrice 商品单价
+     * 字段 {@code goodsId}：商品标识
+     * 字段 {@code goodsName}：商品名称
+     * 字段 {@code quantity}：购买数量
+     * 字段 {@code unitPrice}：商品单价
      */
     @Data
     @NoArgsConstructor
@@ -201,14 +201,14 @@ public final class OrderController {
     /**
      * 订单响应视图：订单关键信息与金额汇总。
      *
-     * @param id 订单标识
-     * @param orderNo 订单号
-     * @param buyerId 买方标识
-     * @param buyerName 买方名称
-     * @param status 订单状态
-     * @param totalAmount 订单总金额
-     * @param currency 金额币种
-     * @param lineCount 订单行数量
+     * 字段 {@code id}：订单标识
+     * 字段 {@code orderNo}：订单号
+     * 字段 {@code buyerId}：买方标识
+     * 字段 {@code buyerName}：买方名称
+     * 字段 {@code status}：订单状态
+     * 字段 {@code totalAmount}：订单总金额
+     * 字段 {@code currency}：金额币种
+     * 字段 {@code lineCount}：订单行数量
      */
     @Data
     public static class OrderResponse {

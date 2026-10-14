@@ -172,8 +172,8 @@ public class AuthenticationController {
     /**
      * 登录请求参数：登录标识与密码。
      *
-     * @param loginId 登录标识（账号）
-     * @param password 登录密码
+     * 字段 {@code loginId}：登录标识（账号）
+     * 字段 {@code password}：登录密码
      */
     @Data
     @NoArgsConstructor

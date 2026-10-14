@@ -31,23 +31,17 @@ import org.aspectj.lang.annotation.Pointcut;
 public class AsyncAspect {
 
     // 定义一个切入点，匹配所有标记了 @Async 的方法
-    @Pointcut("@annotation(org.springframework.scheduling.annotation.Async)")
     /**
-     * asyncMethod() 方法。
+     * 匹配使用 Async 注解的方法。
      */
+    @Pointcut("@annotation(org.springframework.scheduling.annotation.Async)")
     public void asyncMethod() {
     }
-/**
- * @After() 方法。
- * @param "asyncMethod()" "asyncMethod()" 参数。
- * @return 方法执行结果。
- */
 
-    // 在方法执行后清理 ThreadLocal 数据，避免线程变量污染
-    @After("asyncMethod()")
     /**
-     * afterAsyncMethod() 方法。
+     * 异步方法执行后清理 ThreadLocal 数据，避免线程变量污染。
      */
+    @After("asyncMethod()")
     public void afterAsyncMethod() {
         ThreadContext.clear();
     }

@@ -57,9 +57,9 @@ public final class JavalinSample {
      *
      * <p>实现 {@link AutoCloseable}，关闭时先停止 HTTP 服务，再关闭 SPI 作用域。
      *
-     * @param app 已启动的 Javalin HTTP 实例
-     * @param token 演示登录后返回的 Bearer 令牌
-     * @param spiScope 本次启动注册的 SPI 作用域
+     * 字段 {@code app}：已启动的 Javalin HTTP 实例
+     * 字段 {@code token}：演示登录后返回的 Bearer 令牌
+     * 字段 {@code spiScope}：本次启动注册的 SPI 作用域
      */
     public final static class JavalinApplication implements AutoCloseable {
 
