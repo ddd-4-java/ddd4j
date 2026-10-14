@@ -14,6 +14,8 @@
  */
 package io.ddd4j.sample.order.application;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Value;
 
 /**
@@ -21,9 +23,23 @@ import lombok.Value;
  */
 @Value
 public class CreateOrderCommand {
-    String orderNo;
+String orderNo;
     String buyerId;
     String buyerName;
+
+    /** Creates an order command.
+     * @param orderNo order number
+     * @param buyerId buyer identifier
+     * @param buyerName buyer name
+     */
+    @JsonCreator
+    public CreateOrderCommand(@JsonProperty("orderNo") String orderNo,
+                              @JsonProperty("buyerId") String buyerId,
+                              @JsonProperty("buyerName") String buyerName) {
+        this.orderNo = orderNo;
+        this.buyerId = buyerId;
+        this.buyerName = buyerName;
+    }
 
     public String orderNo() {
         return orderNo;

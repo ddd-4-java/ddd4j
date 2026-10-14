@@ -14,6 +14,8 @@
  */
 package io.ddd4j.sample.order.application;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.sample.order.domain.OrderStatus;
 import lombok.Value;
 
@@ -24,12 +26,35 @@ import java.math.BigDecimal;
  */
 @Value
 public class OrderReadModel {
-    String id;
+String id;
     String orderNo;
     String buyerId;
     String buyerName;
     OrderStatus status;
     BigDecimal totalAmount;
+
+    /** Creates an order read model.
+     * @param id order identifier
+     * @param orderNo order number
+     * @param buyerId buyer identifier
+     * @param buyerName buyer name
+     * @param status order status
+     * @param totalAmount total amount
+     */
+    @JsonCreator
+    public OrderReadModel(@JsonProperty("id") String id,
+                          @JsonProperty("orderNo") String orderNo,
+                          @JsonProperty("buyerId") String buyerId,
+                          @JsonProperty("buyerName") String buyerName,
+                          @JsonProperty("status") OrderStatus status,
+                          @JsonProperty("totalAmount") BigDecimal totalAmount) {
+        this.id = id;
+        this.orderNo = orderNo;
+        this.buyerId = buyerId;
+        this.buyerName = buyerName;
+        this.status = status;
+        this.totalAmount = totalAmount;
+    }
 
     public String id() {
         return id;
