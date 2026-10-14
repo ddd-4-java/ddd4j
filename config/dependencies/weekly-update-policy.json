@@ -10,6 +10,15 @@
         "3.0.x": "4.0.0"
       },
       "reason": "JDK 8 uses the compatible Disruptor 3 line; each branch keeps its tested major version"
+    },
+    {
+      "pattern": "io.github.easy4j:dozer-extra-converters",
+      "versions": {
+        "1.0.x": "1.0.x.20260630-SNAPSHOT",
+        "2.0.x": "1.0.x.20260630-SNAPSHOT",
+        "3.0.x": "1.0.x.20260630-SNAPSHOT"
+      },
+      "reason": "One verified Java 8 provider binary; fresh JDK 8/17/21 converter contracts pass; provider version is independent of the DDD4J line"
     }
   ],
   "excluded": [

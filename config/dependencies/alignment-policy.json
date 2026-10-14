@@ -1094,7 +1094,7 @@
     "io.github.easy4j:dingtalk-sdk-extension": 17,
     "io.github.easy4j:disruptor-biz": 17,
     "io.github.easy4j:disruptor-extension": 17,
-    "io.github.easy4j:dozer-extra-converters": 17,
+    "io.github.easy4j:dozer-extra-converters": 8,
     "io.github.easy4j:dreamina-java-sdk": 21,
     "io.github.easy4j:easydoc": 17,
     "io.github.easy4j:easypdf": 17,
@@ -3074,7 +3074,7 @@
     "io.github.easy4j:dingtalk-sdk-extension:jar:": 17,
     "io.github.easy4j:disruptor-biz:jar:": 17,
     "io.github.easy4j:disruptor-extension:jar:": 17,
-    "io.github.easy4j:dozer-extra-converters:jar:": 17,
+    "io.github.easy4j:dozer-extra-converters:jar:": 8,
     "org.eclipse.angus:dsn:jar:": 17,
     "com.baomidou:dynamic-datasource-spring:jar:": 17,
     "io.github.easy4j:easydoc:jar:": 17,
@@ -3379,6 +3379,7 @@
     "io.github.easy4j:easyexcel-parent": "5.0.1",
     "io.github.easy4j:easyexcel-core": "5.0.1",
     "io.github.easy4j:easyexcel-support": "5.0.1",
-    "io.github.easy4j:easyexcel-markdown": "5.0.1"
+    "io.github.easy4j:easyexcel-markdown": "5.0.1",
+    "io.github.easy4j:dozer-extra-converters": "1.0.x.20260630-SNAPSHOT"
   }
 }
