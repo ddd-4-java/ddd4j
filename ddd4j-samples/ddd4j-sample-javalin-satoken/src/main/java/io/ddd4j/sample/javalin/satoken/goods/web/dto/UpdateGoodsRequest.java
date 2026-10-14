@@ -39,4 +39,9 @@ public class UpdateGoodsRequest {
     public BigDecimal price() {
         return price;
     }
+
+    @Override
+    public String toString() {
+        return "UpdateGoodsRequest[name=" + name + ", price=" + price + "]";
+    }
 }

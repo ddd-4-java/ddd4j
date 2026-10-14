@@ -49,4 +49,9 @@ public class CreateGoodsRequest {
     public Integer stock() {
         return stock;
     }
+
+    @Override
+    public String toString() {
+        return "CreateGoodsRequest[code=" + code + ", name=" + name + ", price=" + price + ", stock=" + stock + "]";
+    }
 }

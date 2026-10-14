@@ -49,4 +49,9 @@ public class AddOrderLineRequest {
     public BigDecimal unitPrice() {
         return unitPrice;
     }
+
+    @Override
+    public String toString() {
+        return "AddOrderLineRequest[goodsId=" + goodsId + ", goodsName=" + goodsName + ", quantity=" + quantity + ", unitPrice=" + unitPrice + "]";
+    }
 }

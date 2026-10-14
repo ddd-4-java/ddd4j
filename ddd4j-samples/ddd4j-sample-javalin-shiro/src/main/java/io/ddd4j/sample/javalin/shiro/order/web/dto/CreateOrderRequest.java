@@ -42,4 +42,9 @@ public class CreateOrderRequest {
     public String buyerName() {
         return buyerName;
     }
+
+    @Override
+    public String toString() {
+        return "CreateOrderRequest[orderNo=" + orderNo + ", buyerId=" + buyerId + ", buyerName=" + buyerName + "]";
+    }
 }
