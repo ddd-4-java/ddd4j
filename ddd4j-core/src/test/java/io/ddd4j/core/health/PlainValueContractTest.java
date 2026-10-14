@@ -12,13 +12,28 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.InvalidObjectException;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class PlainValueContractTest {
+    @Test
+    void diagnosticDetailsKeepInputOrder() {
+        Map<String, String> details = new LinkedHashMap<>();
+        details.put("alpha", "1");
+        details.put("beta", "2");
+        details.put("gamma", "3");
+        details.put("delta", "4");
+        details.put("epsilon", "5");
+        ReadinessResult result = new ReadinessResult("db", true, details);
+        assertThat(new ArrayList<>(result.details().keySet()))
+                .containsExactly("alpha", "beta", "gamma", "delta", "epsilon");
+    }
+
     @Test
     void frameworkValuesAreFinalOrdinaryClasses() {
         assertThat(ReadinessResult.class.getSuperclass()).isEqualTo(Object.class);
