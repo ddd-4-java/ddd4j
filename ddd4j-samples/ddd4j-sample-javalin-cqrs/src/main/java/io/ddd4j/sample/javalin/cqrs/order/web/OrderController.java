@@ -164,6 +164,21 @@ public class OrderController {
         private String orderNo;
         private String buyerId;
         private String buyerName;
+
+        /** @return 订单编号 */
+        public String orderNo() {
+            return orderNo;
+        }
+
+        /** @return 买家标识 */
+        public String buyerId() {
+            return buyerId;
+        }
+
+        /** @return 买家名称 */
+        public String buyerName() {
+            return buyerName;
+        }
     }
 
     // ========================= 映射 =========================
@@ -179,5 +194,25 @@ public class OrderController {
         private String goodsName;
         private int quantity;
         private BigDecimal unitPrice;
+
+        /** @return 商品标识 */
+        public String goodsId() {
+            return goodsId;
+        }
+
+        /** @return 商品名称 */
+        public String goodsName() {
+            return goodsName;
+        }
+
+        /** @return 数量 */
+        public int quantity() {
+            return quantity;
+        }
+
+        /** @return 单价 */
+        public BigDecimal unitPrice() {
+            return unitPrice;
+        }
     }
 }
