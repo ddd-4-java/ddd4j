@@ -30,6 +30,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.*;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.errors.WakeupException;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
@@ -40,6 +41,7 @@ import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 /**
@@ -47,8 +49,8 @@ import java.util.function.Consumer;
  *
  * <p>双构造：
  * <ul>
- *   <li>{@code KafkaMQClient(Producer, Callback)} —— 注入已初始化的原生 Kafka producer（runtime 自动装配用）</li>
- *   <li>{@code KafkaMQClient(KafkaMQProperties, Callback)} —— 自行根据 properties 构造 producer</li>
+ *   <li>{@link #KafkaMQClient(Producer, Callback)} —— 注入已初始化的原生 Kafka producer（runtime 自动装配用）</li>
+ *   <li>{@link #KafkaMQClient(KafkaMQProperties, Callback)} —— 自行根据 properties 构造 producer</li>
  * </ul>
  *
  * <p>借鉴 1：分区 key（producer 按 tag/tenantId 路由，同 key 进同 partition 保证顺序）
@@ -68,16 +70,17 @@ public class KafkaMQClient implements MQClient {
     private final KafkaMQProperties properties;
     private final MQClientLifecycle lifecycle = new MQClientLifecycle();
     private final MQStartupStatus startupStatus = new MQStartupStatus("kafka");
+    private final AtomicBoolean closed = new AtomicBoolean();
     /**
      * 已注入或懒构造的 Kafka producer
      */
     private Producer<String, String> producer;
     private Callback callback;
-
     /**
      * 构造方法 1：注入原生 producer（runtime 自动装配用）。
-     * @param producer 生产者配置
-     * @param callback 回调逻辑
+     *
+     * @param producer 原生 Kafka producer
+     * @param callback 发布回调，可为 null
      */
     public KafkaMQClient(Producer<String, String> producer, Callback callback) {
         this.properties = null;
@@ -87,8 +90,9 @@ public class KafkaMQClient implements MQClient {
 
     /**
      * 构造方法 2：自行根据 properties 构造 producer（lazy）。
-     * @param properties 属性集合
-     * @param callback 回调逻辑
+     *
+     * @param properties Kafka 客户端配置
+     * @param callback 发布回调，可为 null
      */
     public KafkaMQClient(KafkaMQProperties properties, Callback callback) {
         this.properties = Objects.requireNonNull(properties, "KafkaMQ Properties is required");
@@ -130,9 +134,10 @@ public class KafkaMQClient implements MQClient {
     // ========================= 生产者 =========================
 
     @Override
-    public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
+    public synchronized Consumer<MQEvent> initProducer(MQProperties mqProperties) {
+        ensureOpen();
         if (Objects.isNull(producer) && Objects.nonNull(this.properties)) {
-            this.producer = new KafkaProducer<>(properties.producerProperties());
+            this.producer = createProducer(properties.producerProperties());
             Producer<String, String> ownedProducer = this.producer;
             lifecycle.register("kafka-producer-close", ownedProducer::close);
             lifecycle.register("kafka-producer-flush", ownedProducer::flush);
@@ -143,12 +148,11 @@ public class KafkaMQClient implements MQClient {
         }
         Producer<String, String> producer1 = this.producer;
         return mqEvent -> {
+            ensureOpen();
             String payload = serialization().serialize(mqEvent);
             String topic = resolveTopic(mqEvent, mqProperties);
             String key = partitionKey(mqEvent);
             ProducerRecord<String, String> record = new ProducerRecord<>(topic, key, payload);
-            // broker header 双写：header 权威、payload 镜像；非 Java 消费方从 headers 直接提取因果元数据
-            // （对应 spec Requirement: Causality in broker headers）
             for (Map.Entry<String, String> headerEntry : mqEvent.headerMap().entrySet()) {
                 record.headers().add(headerEntry.getKey(),
                         headerEntry.getValue().getBytes(StandardCharsets.UTF_8));
@@ -168,6 +172,13 @@ public class KafkaMQClient implements MQClient {
                 throw new IllegalStateException("Publish Kafka event failed: " + mqEvent.getMsgId(), exception);
             }
         };
+    }
+
+    /**
+     * 创建生产者的单一入口，便于验证客户端自有资源的关闭竞态。
+     */
+    Producer<String, String> createProducer(Properties props) {
+        return new KafkaProducer<>(props);
     }
 
     /**
@@ -220,53 +231,58 @@ public class KafkaMQClient implements MQClient {
     }
 
     @Override
-    public boolean initConsumer(MQListener mqListener, MQProperties mqProperties) throws Exception {
+    public synchronized boolean initConsumer(MQListener mqListener, MQProperties mqProperties) throws Exception {
+        ensureOpen();
         if (Objects.isNull(properties)) {
             return false;
         }
         Properties props = properties.consumerProperties(buildGroupId(mqListener));
         props.put("bootstrap.servers", properties.getBootstrapServers());
-        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
-        consumer.subscribe(Collections.singletonList(resolveTopic(mqListener, mqProperties)));
-        ExecutorService executor = Executors.newSingleThreadExecutor(r -> {
-            Thread t = new Thread(r, "ddd4j-kafka-" + mqListener.getMethod().getName());
-            t.setDaemon(true);
-            return t;
-        });
-        lifecycle.register("kafka-consumer-" + mqListener.getMethod().getName(), () -> {
-            executor.shutdownNow();
-            consumer.wakeup();
-            try {
-                executor.awaitTermination(5, TimeUnit.SECONDS);
-            } catch (InterruptedException exception) {
-                Thread.currentThread().interrupt();
-            }
+        org.apache.kafka.clients.consumer.Consumer<String, String> consumer = createConsumer(props);
+        ConsumerWorker worker;
+        try {
+            worker = new ConsumerWorker(consumer, mqListener, mqProperties);
+        } catch (RuntimeException exception) {
             consumer.close();
-        });
-        executor.submit(() -> {
-            while (!Thread.currentThread().isInterrupted()) {
-                try {
-                    ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
-                    try {
-                        for (ConsumerRecord<String, String> record : records) {
-                            handleRecord(mqListener, mqProperties, consumer, record);
-                        }
-                    } catch (BatchRetryException exception) {
-                        // handleRecord 已 seek 回退 offset；跳出当前批次，下一次 poll 重新投递。
-                        log.debug("Kafka batch interrupted for retry: {}", exception.getMessage());
-                    }
-                } catch (org.apache.kafka.common.errors.WakeupException exception) {
-                    if (!Thread.currentThread().isInterrupted()) {
-                        throw exception;
-                    }
-                }
-            }
-        });
+            throw exception;
+        }
+        try {
+            consumer.subscribe(Collections.singletonList(resolveTopic(mqListener, mqProperties)));
+            worker.executor.execute(worker);
+            lifecycle.register("kafka-consumer-" + mqListener.getMethod().getName(), worker::close);
+        } catch (RuntimeException exception) {
+            worker.executor.shutdown();
+            consumer.close();
+            throw exception;
+        }
         return true;
+    }
+
+    /**
+     * 创建消费者的单一入口，便于验证初始化失败时的资源回收契约。
+     */
+    org.apache.kafka.clients.consumer.Consumer<String, String> createConsumer(Properties props) {
+        return new KafkaConsumer<>(props);
+    }
+
+    /**
+     * 创建消费者专属执行器的单一入口，失败初始化时由客户端负责回收。
+     */
+    ExecutorService createConsumerExecutor(MQListener listener) {
+        return Executors.newSingleThreadExecutor(r -> {
+            Thread workerThread = new Thread(r, "ddd4j-kafka-" + listener.getMethod().getName());
+            workerThread.setDaemon(true);
+            return workerThread;
+        });
     }
 
     @Override
     public void close() {
+        synchronized (this) {
+            if (!closed.compareAndSet(false, true)) {
+                return;
+            }
+        }
         try {
             lifecycle.close();
         } finally {
@@ -297,6 +313,8 @@ public class KafkaMQClient implements MQClient {
             if (!acknowledgment.isAcknowledged()) {
                 acknowledgment.ackSingle();
             }
+        } catch (WakeupException exception) {
+            throw exception;
         } catch (Throwable exception) {
             log.error("Consume MQ [{}] failed: {}", listener.getTopic(), payload, exception);
             if (!acknowledgment.isAcknowledged()) {
@@ -313,9 +331,90 @@ public class KafkaMQClient implements MQClient {
      * 构造 consumer group.id（兜底）。
      */
     private String buildGroupId(MQListener listener) {
-        return StrKit.isNotEmpty(listener.getGroup())
-                ? listener.getGroup()
-                : "ddd4j-" + listener.getMethod().getName();
+        if (StrKit.isNotBlank(listener.getGroup())) {
+            return listener.getGroup();
+        }
+        String prefix = Objects.nonNull(properties) ? properties.getGroupIdPrefix() : null;
+        return (StrKit.isNotBlank(prefix) ? prefix : "ddd4j") + "-" + listener.getMethod().getName();
+    }
+
+    /**
+     * 防止关闭后重新创建资源或复用发布入口。
+     */
+    private void ensureOpen() {
+        if (closed.get()) {
+            throw new IllegalStateException("KafkaMQClient is closed");
+        }
+    }
+
+    /**
+     * 单个消费者及其执行器的生命周期，异常退出时立即释放原生资源。
+     */
+    private final class ConsumerWorker implements Runnable {
+        private final org.apache.kafka.clients.consumer.Consumer<String, String> consumer;
+        private final MQListener listener;
+        private final MQProperties mqProperties;
+        private final ExecutorService executor;
+        private volatile Thread thread;
+
+        private ConsumerWorker(org.apache.kafka.clients.consumer.Consumer<String, String> consumer,
+                               MQListener listener, MQProperties mqProperties) {
+            this.consumer = consumer;
+            this.listener = listener;
+            this.mqProperties = mqProperties;
+            this.executor = createConsumerExecutor(listener);
+        }
+
+        private void close() {
+            executor.shutdown();
+            if (!executor.isTerminated()) {
+                consumer.wakeup();
+            }
+            if (Thread.currentThread() == thread) {
+                return;
+            }
+            try {
+                if (!executor.awaitTermination(10, TimeUnit.SECONDS)) {
+                    executor.shutdownNow();
+                    log.warn("Kafka consumer did not finish shutdown within 10 seconds");
+                }
+            } catch (InterruptedException exception) {
+                executor.shutdownNow();
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        @Override
+        public void run() {
+            thread = Thread.currentThread();
+            try {
+                while (!closed.get() && !thread.isInterrupted()) {
+                    ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
+                    try {
+                        for (ConsumerRecord<String, String> record : records) {
+                            if (closed.get()) {
+                                break;
+                            }
+                            handleRecord(listener, mqProperties, consumer, record);
+                        }
+                    } catch (BatchRetryException exception) {
+                        log.debug("Kafka batch interrupted for retry: {}", exception.getMessage());
+                    }
+                }
+            } catch (WakeupException exception) {
+                if (!closed.get()) {
+                    log.error("Kafka consumer unexpectedly woken up", exception);
+                }
+            } catch (RuntimeException exception) {
+                log.error("Kafka consumer stopped unexpectedly", exception);
+            } finally {
+                try {
+                    consumer.close();
+                } finally {
+                    executor.shutdown();
+                }
+            }
+        }
     }
 
     /**
