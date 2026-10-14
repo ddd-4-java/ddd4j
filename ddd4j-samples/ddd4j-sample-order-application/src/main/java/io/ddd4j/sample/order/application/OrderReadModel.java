@@ -123,6 +123,6 @@ public final class OrderReadModel {
 
     @Override
     public String toString() {
-        return "OrderReadModel[id=" + id + ", orderNo=" + orderNo + ", buyerId=" + buyerId + ", buyerName=" + buyerName + ", status=" + status + ", totalAmount=" + totalAmount + "]";
+        return "OrderReadModel(id=" + id + ", orderNo=" + orderNo + ", buyerId=" + buyerId + ", buyerName=" + buyerName + ", status=" + status + ", totalAmount=" + totalAmount + ")";
     }
 }

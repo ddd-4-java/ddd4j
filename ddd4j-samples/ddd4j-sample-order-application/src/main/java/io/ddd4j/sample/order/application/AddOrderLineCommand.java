@@ -133,6 +133,6 @@ public final class AddOrderLineCommand {
 
     @Override
     public String toString() {
-        return "AddOrderLineCommand[orderId=" + orderId + ", goodsId=" + goodsId + ", goodsName=" + goodsName + ", quantity=" + quantity + ", unitPrice=" + unitPrice + "]";
+        return "AddOrderLineCommand(orderId=" + orderId + ", goodsId=" + goodsId + ", goodsName=" + goodsName + ", quantity=" + quantity + ", unitPrice=" + unitPrice + ")";
     }
 }

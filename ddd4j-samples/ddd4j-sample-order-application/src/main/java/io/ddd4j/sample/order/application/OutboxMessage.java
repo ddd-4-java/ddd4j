@@ -133,6 +133,6 @@ public final class OutboxMessage {
 
     @Override
     public String toString() {
-        return "OutboxMessage[id=" + id + ", aggregateId=" + aggregateId + ", eventType=" + eventType + ", payload=" + payload + ", occurredAt=" + occurredAt + "]";
+        return "OutboxMessage(id=" + id + ", aggregateId=" + aggregateId + ", eventType=" + eventType + ", payload=" + payload + ", occurredAt=" + occurredAt + ")";
     }
 }

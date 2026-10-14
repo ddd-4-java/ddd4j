@@ -103,6 +103,6 @@ public final class OutboxDispatchResult {
 
     @Override
     public String toString() {
-        return "OutboxDispatchResult[attempted=" + attempted + ", published=" + published + ", failed=" + failed + "]";
+        return "OutboxDispatchResult(attempted=" + attempted + ", published=" + published + ", failed=" + failed + ")";
     }
 }
