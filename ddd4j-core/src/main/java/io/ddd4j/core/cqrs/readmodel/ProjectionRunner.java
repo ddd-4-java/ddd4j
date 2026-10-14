@@ -95,8 +95,8 @@ public class ProjectionRunner<E> {
         String streamId = projectionView.getStreamId();
         metrics.onRunStarted(streamId);
         long startNanos = System.nanoTime();
-        long previousPosition = projectionService.readProjectionPosition(streamId);
         try {
+            long previousPosition = projectionService.readProjectionPosition(streamId);
             EventChunk<E> chunk = chunkReader.read(
                     streamId,
                     previousPosition,
