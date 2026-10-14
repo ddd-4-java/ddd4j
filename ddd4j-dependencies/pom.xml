@@ -6565,7 +6565,7 @@
                 <version>${spring-amqp.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.github.easy4j</groupId>
+                <groupId>com.github.hiwepy</groupId>
                 <artifactId>spring-biz</artifactId>
                 <version>${spring-biz.version}</version>
             </dependency>
