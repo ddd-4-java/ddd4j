@@ -14,6 +14,8 @@
  */
 package io.ddd4j.core.auth.event;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.auth.AuthRequest;
 import lombok.Getter;
@@ -78,7 +80,11 @@ public final class AuthSucceededEvent {
      * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
      * @since 3.0.0
      */
-    public AuthSucceededEvent(AuthRequest request, AuthPrincipal principal, String token, Instant occurredAt) {
+    @JsonCreator
+    public AuthSucceededEvent(@JsonProperty("request") AuthRequest request,
+                              @JsonProperty("principal") AuthPrincipal principal,
+                              @JsonProperty("token") String token,
+                              @JsonProperty("occurredAt") Instant occurredAt) {
 
         this.request = request;
         this.principal = principal;
@@ -86,18 +92,22 @@ public final class AuthSucceededEvent {
         this.occurredAt = occurredAt;
     }
 
+    @JsonProperty("request")
     public AuthRequest request() {
         return request;
     }
 
+    @JsonProperty("principal")
     public AuthPrincipal principal() {
         return principal;
     }
 
+    @JsonProperty("token")
     public String token() {
         return token;
     }
 
+    @JsonProperty("occurredAt")
     public Instant occurredAt() {
         return occurredAt;
     }

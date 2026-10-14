@@ -14,6 +14,8 @@
  */
 package io.ddd4j.core.auth.event;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.core.auth.AuthRequest;
 import lombok.Getter;
 
@@ -48,20 +50,26 @@ public final class AuthFailedEvent {
      * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
      * @since 3.0.0
      */
-    public AuthFailedEvent(AuthRequest request, String reason, Instant occurredAt) {
+    @JsonCreator
+    public AuthFailedEvent(@JsonProperty("request") AuthRequest request,
+                           @JsonProperty("reason") String reason,
+                           @JsonProperty("occurredAt") Instant occurredAt) {
         this.request = request;
         this.reason = reason;
         this.occurredAt = occurredAt;
     }
 
+    @JsonProperty("request")
     public AuthRequest request() {
         return request;
     }
 
+    @JsonProperty("reason")
     public String reason() {
         return reason;
     }
 
+    @JsonProperty("occurredAt")
     public Instant occurredAt() {
         return occurredAt;
     }
