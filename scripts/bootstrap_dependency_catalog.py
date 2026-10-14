@@ -127,6 +127,9 @@ def remote_url(repository, group, artifact, version, classifier, fetch):
         if not remote_version:
             raise ValueError('snapshot JAR metadata missing')
         safe_component(remote_version)
+        base_version = re.escape(version[:-len('-SNAPSHOT')])
+        if not re.fullmatch(base_version + r'-(?:SNAPSHOT|\d{8}\.\d{6}-\d+)', remote_version):
+            raise ValueError('snapshot metadata version does not match requested coordinate')
     return prefix + artifact + '-' + remote_version + ('-' + classifier if classifier else '') + '.jar'
 
 
@@ -158,7 +161,12 @@ def main():
         group, artifact, version, classifier = coordinate
         destination = args.repository / artifact_path(*coordinate)
         errors = []
-        for repository in repository_list:
+        candidates = repository_list
+        if not version.endswith('-SNAPSHOT') and group != 'io.github.easy4j':
+            # 公共 release 优先官方 Central，避免对每个公共 JAR 先请求私服。
+            # 不存在时仍逐一尝试模型声明的仓库；私有快照保留原仓库顺序。
+            candidates = sorted(repository_list, key=lambda item: item['url'] != 'https://repo.maven.apache.org/maven2')
+        for repository in candidates:
             if not repository['snapshots' if version.endswith('-SNAPSHOT') else 'releases']:
                 continue
             try:
