@@ -13,6 +13,8 @@
  * limitations under the License.
  */
 package io.ddd4j.core.cqrs.query;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.ddd4j.kit.lang.SFunction;
 import io.ddd4j.kit.lang.LambdaKit;
 
@@ -123,6 +125,7 @@ public final class PropertyRef implements Serializable {
      *
      * @return 属于领域空间时为 true
      */
+    @JsonIgnore
     public boolean isDomain() {
         return Objects.equals(PropertySpace.DOMAIN, space);
     }
@@ -132,6 +135,7 @@ public final class PropertyRef implements Serializable {
      *
      * @return 属于持久化空间时为 true
      */
+    @JsonIgnore
     public boolean isPersistence() {
         return Objects.equals(PropertySpace.PERSISTENCE, space);
     }

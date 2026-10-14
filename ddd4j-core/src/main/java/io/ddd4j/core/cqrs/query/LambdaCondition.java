@@ -14,6 +14,7 @@
  */
 package io.ddd4j.core.cqrs.query;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -105,6 +106,7 @@ public final class LambdaCondition implements Serializable {
      *
      * @return 操作符为升序或降序时为 true
      */
+    @JsonIgnore
     public boolean isOrderBy() {
         return StrPool.ASC.equals(operator) || StrPool.DESC.equals(operator);
     }
