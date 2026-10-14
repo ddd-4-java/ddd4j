@@ -73,6 +73,21 @@ public final class EntityIdPath implements Serializable {
     }
 
     /**
+     * 判断路径文本能否按 {@link #valueOf(String)} 的规则解析。
+     *
+     * @param path 待校验的路径文本，可为 null
+     * @return 可解析时为 true，否则为 false
+     */
+    public static boolean isValid(String path) {
+        try {
+            valueOf(path);
+            return true;
+        } catch (IllegalArgumentException ex) {
+            return false;
+        }
+    }
+
+    /**
      * 解析 {@link #asString()} 文本重建路径（与序列化对偶，Jackson 反序列化 + 事件回放使用）。
      *
      * <p>解析契约：
