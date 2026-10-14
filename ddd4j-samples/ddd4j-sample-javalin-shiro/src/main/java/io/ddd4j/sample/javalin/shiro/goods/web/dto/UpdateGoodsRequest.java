@@ -27,63 +27,73 @@ import java.math.BigDecimal;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public final class UpdateGoodsRequest {
+public class UpdateGoodsRequest {
 
     private static final long serialVersionUID = 0L;
 
-    private final String name;
+    private String name;
 
-    private final BigDecimal price;
+    private BigDecimal price;
 
-    /**
-     * 创建商品更新请求。
-     *
-     * @param name 商品名称
-     * @param price 商品价格
-     */
+    public UpdateGoodsRequest() {
+    }
+
     @JsonCreator()
     public UpdateGoodsRequest(@JsonProperty("name") String name, @JsonProperty("price") BigDecimal price) {
         this.name = name;
         this.price = price;
     }
 
-    /**
-     * 读取商品名称。
-     *
-     * @return 商品名称
-     */
     @JsonProperty("name")
     public String name() {
         return name;
     }
 
-    /**
-     * 读取商品价格。
-     *
-     * @return 商品价格
-     */
     @JsonProperty("price")
     public BigDecimal price() {
         return price;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    protected boolean canEqual(Object other) {
+        return other instanceof UpdateGoodsRequest;
+    }
+
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
+    public boolean equals(Object o) {
+        if (this == o) {
             return true;
         }
-        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+        if (Objects.isNull(o) || !(o instanceof UpdateGoodsRequest)) {
             return false;
         }
-        UpdateGoodsRequest other = (UpdateGoodsRequest) obj;
-        return Objects.equals(this.name, other.name) && Objects.equals(this.price, other.price);
+        UpdateGoodsRequest other = (UpdateGoodsRequest) o;
+        if (!other.canEqual(this)) {
+            return false;
+        }
+        return Objects.equals(this.getName(), other.getName()) && Objects.equals(this.getPrice(), other.getPrice());
     }
 
     @Override
     public int hashCode() {
-        int result = 0;
-        result = 31 * result + Objects.hashCode(name);
-        result = 31 * result + Objects.hashCode(price);
+        int result = 1;
+        result = 59 * result + (Objects.isNull(getName()) ? 43 : getName().hashCode());
+        result = 59 * result + (Objects.isNull(getPrice()) ? 43 : getPrice().hashCode());
         return result;
     }
 

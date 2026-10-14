@@ -25,23 +25,19 @@ import java.util.Objects;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public final class CreateOrderRequest {
+public class CreateOrderRequest {
 
     private static final long serialVersionUID = 0L;
 
-    private final String orderNo;
+    private String orderNo;
 
-    private final String buyerId;
+    private String buyerId;
 
-    private final String buyerName;
+    private String buyerName;
 
-    /**
-     * 创建订单请求。
-     *
-     * @param orderNo 订单编号
-     * @param buyerId 买家标识
-     * @param buyerName 买家名称
-     */
+    public CreateOrderRequest() {
+    }
+
     @JsonCreator()
     public CreateOrderRequest(@JsonProperty("orderNo") String orderNo, @JsonProperty("buyerId") String buyerId, @JsonProperty("buyerName") String buyerName) {
         this.orderNo = orderNo;
@@ -49,54 +45,70 @@ public final class CreateOrderRequest {
         this.buyerName = buyerName;
     }
 
-    /**
-     * 读取订单编号。
-     *
-     * @return 订单编号
-     */
     @JsonProperty("orderNo")
     public String orderNo() {
         return orderNo;
     }
 
-    /**
-     * 读取买家标识。
-     *
-     * @return 买家标识
-     */
     @JsonProperty("buyerId")
     public String buyerId() {
         return buyerId;
     }
 
-    /**
-     * 读取买家名称。
-     *
-     * @return 买家名称
-     */
     @JsonProperty("buyerName")
     public String buyerName() {
         return buyerName;
     }
 
+    public String getOrderNo() {
+        return orderNo;
+    }
+
+    public void setOrderNo(String orderNo) {
+        this.orderNo = orderNo;
+    }
+
+    public String getBuyerId() {
+        return buyerId;
+    }
+
+    public void setBuyerId(String buyerId) {
+        this.buyerId = buyerId;
+    }
+
+    public String getBuyerName() {
+        return buyerName;
+    }
+
+    public void setBuyerName(String buyerName) {
+        this.buyerName = buyerName;
+    }
+
+    protected boolean canEqual(Object other) {
+        return other instanceof CreateOrderRequest;
+    }
+
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
+    public boolean equals(Object o) {
+        if (this == o) {
             return true;
         }
-        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+        if (Objects.isNull(o) || !(o instanceof CreateOrderRequest)) {
             return false;
         }
-        CreateOrderRequest other = (CreateOrderRequest) obj;
-        return Objects.equals(this.orderNo, other.orderNo) && Objects.equals(this.buyerId, other.buyerId) && Objects.equals(this.buyerName, other.buyerName);
+        CreateOrderRequest other = (CreateOrderRequest) o;
+        if (!other.canEqual(this)) {
+            return false;
+        }
+        return Objects.equals(this.getOrderNo(), other.getOrderNo()) && Objects.equals(this.getBuyerId(), other.getBuyerId()) && Objects.equals(this.getBuyerName(), other.getBuyerName());
     }
 
     @Override
     public int hashCode() {
-        int result = 0;
-        result = 31 * result + Objects.hashCode(orderNo);
-        result = 31 * result + Objects.hashCode(buyerId);
-        result = 31 * result + Objects.hashCode(buyerName);
+        int result = 1;
+        result = 59 * result + (Objects.isNull(getOrderNo()) ? 43 : getOrderNo().hashCode());
+        result = 59 * result + (Objects.isNull(getBuyerId()) ? 43 : getBuyerId().hashCode());
+        result = 59 * result + (Objects.isNull(getBuyerName()) ? 43 : getBuyerName().hashCode());
         return result;
     }
 

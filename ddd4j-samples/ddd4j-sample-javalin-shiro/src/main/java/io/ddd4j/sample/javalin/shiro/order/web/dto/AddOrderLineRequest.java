@@ -27,26 +27,21 @@ import java.math.BigDecimal;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public final class AddOrderLineRequest {
+public class AddOrderLineRequest {
 
     private static final long serialVersionUID = 0L;
 
-    private final String goodsId;
+    private String goodsId;
 
-    private final String goodsName;
+    private String goodsName;
 
-    private final int quantity;
+    private int quantity;
 
-    private final BigDecimal unitPrice;
+    private BigDecimal unitPrice;
 
-    /**
-     * 创建添加订单行请求。
-     *
-     * @param goodsId 商品标识
-     * @param goodsName 商品名称
-     * @param quantity 数量
-     * @param unitPrice 商品单价
-     */
+    public AddOrderLineRequest() {
+    }
+
     @JsonCreator()
     public AddOrderLineRequest(@JsonProperty("goodsId") String goodsId, @JsonProperty("goodsName") String goodsName, @JsonProperty("quantity") int quantity, @JsonProperty("unitPrice") BigDecimal unitPrice) {
         this.goodsId = goodsId;
@@ -55,65 +50,84 @@ public final class AddOrderLineRequest {
         this.unitPrice = unitPrice;
     }
 
-    /**
-     * 读取商品标识。
-     *
-     * @return 商品标识
-     */
     @JsonProperty("goodsId")
     public String goodsId() {
         return goodsId;
     }
 
-    /**
-     * 读取商品名称。
-     *
-     * @return 商品名称
-     */
     @JsonProperty("goodsName")
     public String goodsName() {
         return goodsName;
     }
 
-    /**
-     * 读取数量。
-     *
-     * @return 数量
-     */
     @JsonProperty("quantity")
     public int quantity() {
         return quantity;
     }
 
-    /**
-     * 读取商品单价。
-     *
-     * @return 商品单价
-     */
     @JsonProperty("unitPrice")
     public BigDecimal unitPrice() {
         return unitPrice;
     }
 
+    public String getGoodsId() {
+        return goodsId;
+    }
+
+    public void setGoodsId(String goodsId) {
+        this.goodsId = goodsId;
+    }
+
+    public String getGoodsName() {
+        return goodsName;
+    }
+
+    public void setGoodsName(String goodsName) {
+        this.goodsName = goodsName;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public BigDecimal getUnitPrice() {
+        return unitPrice;
+    }
+
+    public void setUnitPrice(BigDecimal unitPrice) {
+        this.unitPrice = unitPrice;
+    }
+
+    protected boolean canEqual(Object other) {
+        return other instanceof AddOrderLineRequest;
+    }
+
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
+    public boolean equals(Object o) {
+        if (this == o) {
             return true;
         }
-        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+        if (!(o instanceof AddOrderLineRequest)) {
             return false;
         }
-        AddOrderLineRequest other = (AddOrderLineRequest) obj;
-        return Objects.equals(this.goodsId, other.goodsId) && Objects.equals(this.goodsName, other.goodsName) && this.quantity == other.quantity && Objects.equals(this.unitPrice, other.unitPrice);
+        AddOrderLineRequest other = (AddOrderLineRequest) o;
+        if (!other.canEqual(this)) {
+            return false;
+        }
+        return Objects.equals(this.getGoodsId(), other.getGoodsId()) && Objects.equals(this.getGoodsName(), other.getGoodsName()) && this.getQuantity() == other.getQuantity() && Objects.equals(this.getUnitPrice(), other.getUnitPrice());
     }
 
     @Override
     public int hashCode() {
-        int result = 0;
-        result = 31 * result + Objects.hashCode(goodsId);
-        result = 31 * result + Objects.hashCode(goodsName);
-        result = 31 * result + Integer.hashCode(quantity);
-        result = 31 * result + Objects.hashCode(unitPrice);
+        int result = 1;
+        result = 59 * result + getQuantity();
+        result = 59 * result + (Objects.isNull(getGoodsId()) ? 43 : getGoodsId().hashCode());
+        result = 59 * result + (Objects.isNull(getGoodsName()) ? 43 : getGoodsName().hashCode());
+        result = 59 * result + (Objects.isNull(getUnitPrice()) ? 43 : getUnitPrice().hashCode());
         return result;
     }
 
