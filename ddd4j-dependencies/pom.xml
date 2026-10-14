@@ -171,7 +171,6 @@
         <disruptor.version>4.0.0</disruptor.version>
         <docker-client.version>8.16.0</docker-client.version>
         <docker-java.version>3.7.1</docker-java.version>
-        <docx4j-template.version>1.0.1.RELEASE</docx4j-template.version>
         <docx4j.version>11.5.14</docx4j.version>
         <dom4j2.version>2.2.0</dom4j2.version>
         <dozer-core.version>7.0.0</dozer-core.version>
@@ -2864,15 +2863,6 @@
                 <groupId>org.docx4j</groupId>
                 <artifactId>docx4j-openxml-objects-sml</artifactId>
                 <version>${docx4j.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.github.hiwepy/docx4j-template-bom -->
-            <!-- docx4j Template BOM：docx4j 模板引擎的 BOM，提供 Word 模板填充生成工具。 -->
-            <dependency>
-                <groupId>com.github.hiwepy</groupId>
-                <artifactId>docx4j-template-bom</artifactId>
-                <version>${docx4j-template.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.dom4j/dom4j -->
             <!-- dom4j：灵活的 Java XML 框架，提供 DOM/SAX/XPath 多种解析方式。 -->
