@@ -30,6 +30,7 @@ import io.ddd4j.core.ddd.event.EntityType;
 import io.ddd4j.core.ddd.event.EventId;
 import io.ddd4j.core.ddd.event.StringEntityType;
 import org.jdbi.v3.core.Jdbi;
+import org.jdbi.v3.core.argument.Argument;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -230,8 +231,10 @@ public class JdbiEventStore implements EventStore {
                                 .bind("correlationId", event.getCorrelationId() == null ? null : event.getCorrelationId().asString())
                                 .bind("causationId", event.getCausationId() == null ? null : event.getCausationId().asString())
                                 .bind("payload", serializer.serialize(event))
-                                .bind("timestamp", event.getEventTimestamp()
-                                        .withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime())
+                                // 使用 JDBC 4.2 的 LocalDateTime 写入，避免 java.sql.Timestamp 引入进程默认时区。
+                                .bind("timestamp", (Argument) (index, statement, context) -> statement.setObject(
+                                        index, event.getEventTimestamp()
+                                                .withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime()))
                                 .execute();
                         position++;
                     }
