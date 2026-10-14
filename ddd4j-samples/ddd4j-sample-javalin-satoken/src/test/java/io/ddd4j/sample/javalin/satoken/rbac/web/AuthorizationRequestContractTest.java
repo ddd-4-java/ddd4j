@@ -32,6 +32,7 @@ class AuthorizationRequestContractTest {
         assertEquals(create.getPassword(), create.password());
         assertEquals(create.getRealName(), create.realName());
         valueContract(create, new AuthorizationController.CreateUserRequest("u1", "alice", "secret", "Alice"));
+        assertFalse(create.toString().contains("secret"));
 
         User.Status status = User.Status.values()[0];
         AuthorizationController.UpdateUserRequest update = new AuthorizationController.UpdateUserRequest();
@@ -42,6 +43,7 @@ class AuthorizationRequestContractTest {
         assertEquals(update.getPassword(), update.password());
         assertEquals(update.getStatus(), update.status());
         valueContract(update, new AuthorizationController.UpdateUserRequest("Alice", "new-secret", status));
+        assertFalse(update.toString().contains("new-secret"));
     }
 
     @Test

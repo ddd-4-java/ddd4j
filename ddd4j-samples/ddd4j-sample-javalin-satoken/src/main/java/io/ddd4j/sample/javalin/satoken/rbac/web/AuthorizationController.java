@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import io.ddd4j.core.api.R;
 import io.ddd4j.sample.javalin.satoken.rbac.application.RbacService;
@@ -200,6 +201,7 @@ public class AuthorizationController {
 
         private String username;
 
+        @ToString.Exclude
         private String password;
 
         private String realName;
@@ -247,6 +249,7 @@ public class AuthorizationController {
 
         private String realName;
 
+        @ToString.Exclude
         private String password;
 
         private User.Status status;
