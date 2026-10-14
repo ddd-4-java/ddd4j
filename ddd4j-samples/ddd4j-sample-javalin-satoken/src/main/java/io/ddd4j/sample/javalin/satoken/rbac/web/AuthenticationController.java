@@ -17,6 +17,9 @@ package io.ddd4j.sample.javalin.satoken.rbac.web;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.auth.AuthPrincipal;
@@ -229,13 +232,16 @@ public class AuthenticationController {
     /**
      * 登录请求。
      */
-    public final static class LoginRequest {
+    @Data
+    @NoArgsConstructor
+    public static class LoginRequest {
 
         private static final long serialVersionUID = 0L;
 
-        private final String username;
+        private String username;
 
-        private final String password;
+        @ToString.Exclude
+        private String password;
 
         /**
          * 创建登录请求。
@@ -269,40 +275,18 @@ public class AuthenticationController {
             return password;
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            LoginRequest other = (LoginRequest) obj;
-            return Objects.equals(this.username, other.username) && Objects.equals(this.password, other.password);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(username);
-            result = 31 * result + Objects.hashCode(password);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "LoginRequest[username=" + username + ", password=" + password + "]";
-        }
     }
 
     /**
      * 用户下线请求。
      */
-    public final static class KickoutRequest {
+    @Data
+    @NoArgsConstructor
+    public static class KickoutRequest {
 
         private static final long serialVersionUID = 0L;
 
-        private final String userId;
+        private String userId;
 
         /**
          * 创建用户下线请求。
@@ -324,39 +308,18 @@ public class AuthenticationController {
             return userId;
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            KickoutRequest other = (KickoutRequest) obj;
-            return Objects.equals(this.userId, other.userId);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(userId);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "KickoutRequest[userId=" + userId + "]";
-        }
     }
 
     /**
      * 角色校验请求。
      */
-    public final static class RoleCheckRequest {
+    @Data
+    @NoArgsConstructor
+    public static class RoleCheckRequest {
 
         private static final long serialVersionUID = 0L;
 
-        private final String role;
+        private String role;
 
         /**
          * 创建角色校验请求。
@@ -378,39 +341,18 @@ public class AuthenticationController {
             return role;
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            RoleCheckRequest other = (RoleCheckRequest) obj;
-            return Objects.equals(this.role, other.role);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(role);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "RoleCheckRequest[role=" + role + "]";
-        }
     }
 
     /**
      * 权限校验请求。
      */
-    public final static class PermissionCheckRequest {
+    @Data
+    @NoArgsConstructor
+    public static class PermissionCheckRequest {
 
         private static final long serialVersionUID = 0L;
 
-        private final String permission;
+        private String permission;
 
         /**
          * 创建权限校验请求。
@@ -432,29 +374,6 @@ public class AuthenticationController {
             return permission;
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            PermissionCheckRequest other = (PermissionCheckRequest) obj;
-            return Objects.equals(this.permission, other.permission);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(permission);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "PermissionCheckRequest[permission=" + permission + "]";
-        }
     }
 
 }
