@@ -16,6 +16,7 @@ package io.ddd4j.mq.pulsar;
 
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
+import io.ddd4j.mq.delivery.MQDeliveryHeaders;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.lifecycle.MQClientLifecycle;
 import io.ddd4j.mq.lifecycle.MQStartupStatus;
@@ -261,7 +262,15 @@ public class PulsarMQClient implements MQClient {
                         if (Objects.nonNull(messageId)) {
                             event.setMsgId(messageId);
                         }
-                        PulsarAcknowledgment ack = new PulsarAcknowledgment(c, msg, messageId, null);
+                        String correlationId = msg.getProperty(MQDeliveryHeaders.CORRELATION_ID);
+                        if (Objects.nonNull(correlationId)) {
+                            event.setCorrelationId(correlationId);
+                        }
+                        String causationId = msg.getProperty(MQDeliveryHeaders.CAUSATION_ID);
+                        if (Objects.nonNull(causationId)) {
+                            event.setCausationId(causationId);
+                        }
+                        PulsarAcknowledgment ack = new PulsarAcknowledgment(c, msg, messageId, event.getCorrelationId());
                         try {
                             consume(listener, event, ack);
                             if (!ack.isAcknowledged()) {
