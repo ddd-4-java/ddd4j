@@ -15,6 +15,9 @@
 
 package io.ddd4j.mq.delivery;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Objects;
@@ -49,8 +52,12 @@ public final class MQDeliveryPolicy {
  * @param jitterFactor 双精度数值
      */
 
-    public MQDeliveryPolicy(Duration leaseDuration, int maxAttempts, Duration initialBackoff,
-                            Duration maxBackoff, double jitterFactor) {
+    @JsonCreator
+    public MQDeliveryPolicy(@JsonProperty("leaseDuration") Duration leaseDuration,
+                            @JsonProperty("maxAttempts") int maxAttempts,
+                            @JsonProperty("initialBackoff") Duration initialBackoff,
+                            @JsonProperty("maxBackoff") Duration maxBackoff,
+                            @JsonProperty("jitterFactor") double jitterFactor) {
         Objects.requireNonNull(leaseDuration, "leaseDuration must not be null");
         Objects.requireNonNull(initialBackoff, "initialBackoff must not be null");
         Objects.requireNonNull(maxBackoff, "maxBackoff must not be null");
@@ -130,9 +137,9 @@ public final class MQDeliveryPolicy {
 
     @Override
     public String toString() {
-        return "MQDeliveryPolicy{leaseDuration=" + leaseDuration + ", maxAttempts=" + maxAttempts
+        return "MQDeliveryPolicy[leaseDuration=" + leaseDuration + ", maxAttempts=" + maxAttempts
                 + ", initialBackoff=" + initialBackoff + ", maxBackoff=" + maxBackoff
-                + ", jitterFactor=" + jitterFactor + '}';
+                + ", jitterFactor=" + jitterFactor + ']';
     }
 
     /**
