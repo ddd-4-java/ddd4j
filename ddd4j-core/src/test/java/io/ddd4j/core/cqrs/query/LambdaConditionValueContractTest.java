@@ -60,6 +60,12 @@ class LambdaConditionValueContractTest {
         assertThat(condition.hashCode()).isEqualTo(condition().hashCode());
     }
 
+    @Test
+    void propertyReferenceDescriptionIsStableAcrossLines() {
+        assertThat(condition().propertyRef().toString()).isEqualTo(
+                "PropertyRef[space=DOMAIN, ownerType=class java.lang.String, property=status]");
+    }
+
     private static LambdaCondition condition() {
         return new LambdaCondition(new PropertyRef(PropertySpace.DOMAIN, String.class, "status"), "=", "ACTIVE");
     }
