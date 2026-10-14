@@ -172,7 +172,7 @@
         <docx4j.version>11.5.14</docx4j.version>
         <dom4j2.version>2.2.0</dom4j2.version>
         <dozer-core.version>7.0.0</dozer-core.version>
-        <dozer-extra-converters.version>3.0.x.20260630-SNAPSHOT</dozer-extra-converters.version>
+        <dozer-extra-converters.version>1.0.x.20260630-SNAPSHOT</dozer-extra-converters.version>
         <dozer-proto3.version>6.5.2</dozer-proto3.version>
         <dozer-spring4.version>${dozer-core.version}</dozer-spring4.version>
         <dozer.version>5.5.1</dozer.version>
