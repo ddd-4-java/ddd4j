@@ -23,6 +23,7 @@ import io.javalin.apibuilder.EndpointGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.HashSet;
 import java.util.List;
@@ -190,6 +191,7 @@ public class AuthorizationController {
     public static class CreateUserRequest {
         private String userId;
         private String username;
+        @ToString.Exclude
         private String password;
         private String realName;
 
@@ -215,6 +217,7 @@ public class AuthorizationController {
     @AllArgsConstructor
     public static class UpdateUserRequest {
         private String realName;
+        @ToString.Exclude
         private String password;
         private User.Status status;
 
