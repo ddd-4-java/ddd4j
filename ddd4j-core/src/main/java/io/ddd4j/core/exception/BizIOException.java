@@ -14,6 +14,7 @@
  */
 package io.ddd4j.core.exception;
 
+import io.ddd4j.core.api.ApiCode;
 import io.ddd4j.core.api.CustomApiCode;
 import io.ddd4j.core.util.I18nKit;
 import lombok.Getter;
@@ -76,6 +77,16 @@ public class BizIOException extends IOException {
 
     public BizIOException(String message, Throwable cause) {
         super(I18nKit.get(message), cause);
+    }
+
+    /**
+     * 按标准业务码和国际化键创建异常。
+     *
+     * @param code 标准业务错误码
+     * @param i18nCode 国际化资源键
+     */
+    public BizIOException(ApiCode code, String i18nCode) {
+        this((CustomApiCode) code, i18nCode);
     }
 
     public BizIOException(CustomApiCode code, String i18nCode) {

@@ -14,6 +14,7 @@
  */
 package io.ddd4j.core.exception;
 
+import io.ddd4j.core.api.ApiCode;
 import io.ddd4j.core.api.CustomApiCode;
 
 /**
@@ -44,6 +45,16 @@ public class CryptoException extends BizRuntimeException {
 
     public CryptoException(String message, Throwable cause) {
         super(message, cause);
+    }
+
+    /**
+     * 按标准业务码和国际化键创建异常。
+     *
+     * @param code 标准业务错误码
+     * @param i18nCode 国际化资源键
+     */
+    public CryptoException(ApiCode code, String i18nCode) {
+        this((CustomApiCode) code, i18nCode);
     }
 
     public CryptoException(CustomApiCode code, String i18nCode) {
