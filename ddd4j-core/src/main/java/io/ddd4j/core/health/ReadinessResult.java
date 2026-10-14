@@ -15,9 +15,12 @@
 
 package io.ddd4j.core.health;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.kit.lang.StrKit;
 
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -42,14 +45,23 @@ public final class ReadinessResult {
      * @param details 可安全暴露的诊断信息，禁止放入密码、令牌或连接串
      */
 
-    public ReadinessResult(String name, boolean ready, Map<String, String> details) {
+    @JsonCreator
+    public ReadinessResult(@JsonProperty("name") String name,
+                           @JsonProperty("ready") boolean ready,
+                           @JsonProperty("details") Map<String, String> details) {
         if (StrKit.isBlank(name)) {
             throw new IllegalArgumentException("readiness contributor name must not be blank");
         }
         this.name = name;
         this.ready = ready;
-        this.details = Collections.unmodifiableMap(
-                details != null ? details : Collections.<String, String>emptyMap());
+        Map<String, String> copiedDetails = new LinkedHashMap<>();
+        if (Objects.nonNull(details)) {
+            for (Map.Entry<String, String> entry : details.entrySet()) {
+                copiedDetails.put(Objects.requireNonNull(entry.getKey(), "detail key"),
+                        Objects.requireNonNull(entry.getValue(), "detail value"));
+            }
+        }
+        this.details = Collections.unmodifiableMap(copiedDetails);
     }
 
     /**
@@ -88,14 +100,17 @@ public final class ReadinessResult {
         return details;
     }
 
+    @JsonProperty("ready")
     public boolean ready() {
         return ready;
     }
 
+    @JsonProperty("name")
     public String name() {
         return name;
     }
 
+    @JsonProperty("details")
     public Map<String, String> details() {
         return details;
     }
@@ -112,7 +127,8 @@ public final class ReadinessResult {
 
     @Override
     public int hashCode() {
-        int result = Objects.hashCode(name);
+        int result = 0;
+        result = 31 * result + Objects.hashCode(name);
         result = 31 * result + (ready ? 1 : 0);
         result = 31 * result + Objects.hashCode(details);
         return result;
@@ -120,6 +136,6 @@ public final class ReadinessResult {
 
     @Override
     public String toString() {
-        return "ReadinessResult{name=" + name + ", ready=" + ready + ", details=" + details + '}';
+        return "ReadinessResult[name=" + name + ", ready=" + ready + ", details=" + details + ']';
     }
 }

@@ -15,12 +15,15 @@
 
 package io.ddd4j.core.health;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 多个 {@link ReadinessContributor} 的聚合结果。
@@ -46,10 +49,17 @@ public final class ReadinessReport {
      * @param ready   是否可接收流量
      * @param results 每个已执行 Contributor 的结果
      */
-    public ReadinessReport(boolean ready, List<ReadinessResult> results) {
+    @JsonCreator
+    public ReadinessReport(@JsonProperty("ready") boolean ready,
+                           @JsonProperty("results") List<ReadinessResult> results) {
         this.ready = ready;
-        this.results = Collections.unmodifiableList(new ArrayList<>(
-                results != null ? results : Collections.<ReadinessResult>emptyList()));
+        List<ReadinessResult> copiedResults = new ArrayList<>();
+        if (Objects.nonNull(results)) {
+            for (ReadinessResult result : results) {
+                copiedResults.add(Objects.requireNonNull(result, "readiness result"));
+            }
+        }
+        this.results = Collections.unmodifiableList(copiedResults);
     }
 
     /**
@@ -89,10 +99,12 @@ public final class ReadinessReport {
         }
     }
 
+    @JsonProperty("ready")
     public boolean ready() {
         return ready;
     }
 
+    @JsonProperty("results")
     public List<ReadinessResult> results() {
         return results;
     }
@@ -107,14 +119,15 @@ public final class ReadinessReport {
 
     @Override
     public int hashCode() {
-        int result = (ready ? 1 : 0);
+        int result = 0;
+        result = 31 * result + (ready ? 1 : 0);
         result = 31 * result + results.hashCode();
         return result;
     }
 
     @Override
     public String toString() {
-        return "ReadinessReport{ready=" + ready + ", results=" + results + '}';
+        return "ReadinessReport[ready=" + ready + ", results=" + results + ']';
     }
 
 }
