@@ -14,12 +14,13 @@
  */
 package io.ddd4j.sample.javalin.cqrs.order.web;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import io.ddd4j.core.api.R;
 import io.ddd4j.sample.javalin.cqrs.cache.OrderCacheService;
 import io.ddd4j.sample.javalin.cqrs.order.domain.model.Money;
 import io.ddd4j.sample.javalin.cqrs.order.domain.model.Order;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.HashMap;
@@ -95,7 +96,6 @@ public class OrderCQRSQueryController {
      * 订单响应 record。
      */
     @Data
-    @AllArgsConstructor
     public static class OrderResponse {
         private final String id;
         private final String orderNo;
@@ -104,6 +104,23 @@ public class OrderCQRSQueryController {
         private final String status;
         private final Money totalAmount;
         private final int lineCount;
+
+        @JsonCreator
+        public OrderResponse(@JsonProperty("id") String id,
+                             @JsonProperty("orderNo") String orderNo,
+                             @JsonProperty("buyerId") String buyerId,
+                             @JsonProperty("buyerName") String buyerName,
+                             @JsonProperty("status") String status,
+                             @JsonProperty("totalAmount") Money totalAmount,
+                             @JsonProperty("lineCount") int lineCount) {
+            this.id = id;
+            this.orderNo = orderNo;
+            this.buyerId = buyerId;
+            this.buyerName = buyerName;
+            this.status = status;
+            this.totalAmount = totalAmount;
+            this.lineCount = lineCount;
+        }
 
         /** @return id */
         public String id() {
@@ -138,6 +155,13 @@ public class OrderCQRSQueryController {
         /** @return lineCount */
         public int lineCount() {
             return lineCount;
+        }
+
+        @Override
+        public String toString() {
+            return "OrderResponse[id=" + id + ", orderNo=" + orderNo + ", buyerId=" + buyerId
+                    + ", buyerName=" + buyerName + ", status=" + status
+                    + ", totalAmount=" + totalAmount + ", lineCount=" + lineCount + "]";
         }
     }
 }

@@ -14,6 +14,8 @@
  */
 package io.ddd4j.sample.javalin.cqrs.order.application;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.sample.javalin.cqrs.order.domain.model.Money;
 import io.ddd4j.sample.javalin.cqrs.order.domain.model.Order;
 import io.ddd4j.sample.javalin.cqrs.order.domain.repository.OrderRepository;
@@ -146,6 +148,15 @@ public class OrderApplicationService {
         String buyerId;
         String buyerName;
 
+        @JsonCreator
+        public CreateOrderCommand(@JsonProperty("orderNo") String orderNo,
+                                  @JsonProperty("buyerId") String buyerId,
+                                  @JsonProperty("buyerName") String buyerName) {
+            this.orderNo = orderNo;
+            this.buyerId = buyerId;
+            this.buyerName = buyerName;
+        }
+
         public String orderNo() {
             return orderNo;
         }
@@ -156,6 +167,12 @@ public class OrderApplicationService {
 
         public String buyerName() {
             return buyerName;
+        }
+
+        @Override
+        public String toString() {
+            return "CreateOrderCommand[orderNo=" + orderNo + ", buyerId=" + buyerId
+                    + ", buyerName=" + buyerName + "]";
         }
     }
 
@@ -176,6 +193,19 @@ public class OrderApplicationService {
         int quantity;
         BigDecimal unitPrice;
 
+        @JsonCreator
+        public AddOrderLineCommand(@JsonProperty("orderId") String orderId,
+                                   @JsonProperty("goodsId") String goodsId,
+                                   @JsonProperty("goodsName") String goodsName,
+                                   @JsonProperty("quantity") int quantity,
+                                   @JsonProperty("unitPrice") BigDecimal unitPrice) {
+            this.orderId = orderId;
+            this.goodsId = goodsId;
+            this.goodsName = goodsName;
+            this.quantity = quantity;
+            this.unitPrice = unitPrice;
+        }
+
         public String orderId() {
             return orderId;
         }
@@ -194,6 +224,13 @@ public class OrderApplicationService {
 
         public BigDecimal unitPrice() {
             return unitPrice;
+        }
+
+        @Override
+        public String toString() {
+            return "AddOrderLineCommand[orderId=" + orderId + ", goodsId=" + goodsId
+                    + ", goodsName=" + goodsName + ", quantity=" + quantity
+                    + ", unitPrice=" + unitPrice + "]";
         }
     }
 }
