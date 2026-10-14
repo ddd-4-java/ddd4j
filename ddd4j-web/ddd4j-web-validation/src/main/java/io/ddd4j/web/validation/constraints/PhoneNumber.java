@@ -16,8 +16,8 @@ package io.ddd4j.web.validation.constraints;
 
 import io.ddd4j.web.validation.constraintvalidators.PhoneValueValidator;
 
-import javax.validation.Constraint;
-import javax.validation.Payload;
+import jakarta.validation.Constraint;
+import jakarta.validation.Payload;
 
 import java.lang.annotation.*;
 
