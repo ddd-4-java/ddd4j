@@ -77,6 +77,14 @@ class BootstrapDependencyCatalogTest(unittest.TestCase):
                          remote_url({'url': 'https://repo'}, 'example', 'library', '1-SNAPSHOT',
                                     'tests', lambda _: metadata))
 
+    def test_snapshot_metadata_cannot_switch_version_line(self):
+        metadata = b'''<metadata><versioning><snapshotVersions>
+        <snapshotVersion><extension>jar</extension><value>2-20261014.010000-1</value></snapshotVersion>
+        </snapshotVersions></versioning></metadata>'''
+        with self.assertRaisesRegex(ValueError, 'version'):
+            remote_url({'url': 'https://repo'}, 'example', 'library', '1-SNAPSHOT',
+                       '', lambda _: metadata)
+
     def test_path_traversal_coordinates_are_rejected(self):
         for coordinate in [('example', '../other', '1'), ('..', 'library', '1'),
                            ('example', 'library', '../1')]:
