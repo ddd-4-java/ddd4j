@@ -151,6 +151,16 @@ public final class Money implements ValueObject {
         return currency;
     }
 
+    /** @return 金额数值 */
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    /** @return 币种 */
+    public String getCurrency() {
+        return currency;
+    }
+
     /**
      * 反序列化后恢复规范化金额对象。
      *

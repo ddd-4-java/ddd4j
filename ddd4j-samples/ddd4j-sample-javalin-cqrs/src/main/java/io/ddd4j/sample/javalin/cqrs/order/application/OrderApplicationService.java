@@ -198,6 +198,21 @@ public class OrderApplicationService {
             return buyerName;
         }
 
+        /** @return 订单编号 */
+        public String getOrderNo() {
+            return orderNo;
+        }
+
+        /** @return 买家标识 */
+        public String getBuyerId() {
+            return buyerId;
+        }
+
+        /** @return 买家名称 */
+        public String getBuyerName() {
+            return buyerName;
+        }
+
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -307,6 +322,31 @@ public class OrderApplicationService {
          */
         @JsonProperty("unitPrice")
         public BigDecimal unitPrice() {
+            return unitPrice;
+        }
+
+        /** @return 订单标识 */
+        public String getOrderId() {
+            return orderId;
+        }
+
+        /** @return 商品标识 */
+        public String getGoodsId() {
+            return goodsId;
+        }
+
+        /** @return 商品名称 */
+        public String getGoodsName() {
+            return goodsName;
+        }
+
+        /** @return 数量 */
+        public int getQuantity() {
+            return quantity;
+        }
+
+        /** @return 单价 */
+        public BigDecimal getUnitPrice() {
             return unitPrice;
         }
 
