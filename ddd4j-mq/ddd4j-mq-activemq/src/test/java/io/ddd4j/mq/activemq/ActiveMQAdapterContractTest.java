@@ -36,6 +36,14 @@ import static org.mockito.Mockito.*;
 class ActiveMQAdapterContractTest {
 
     @Test
+    void shouldConstructArtemisFactoryWithoutContainer() throws Exception {
+        try (ActiveMQConnectionFactory factory =
+                     new ActiveMQConnectionFactory("tcp://localhost:61616")) {
+            assertTrue(factory.toURI().toString().contains("localhost"));
+        }
+    }
+
+    @Test
     void shouldReadMessageIdAndRequeueOnNack() throws Exception {
         Message message = mock(Message.class);
         Session session = mock(Session.class);
