@@ -20,7 +20,7 @@ from pathlib import Path
 SCRIPT_DIR = Path(__file__).resolve().parent
 EXPECTED = ((8, "1.0.x"), (17, "2.0.x"), (21, "3.0.x"))
 VERIFY_CHECKS = ("structure", "product-docs", "values", "effective-8", "effective-17",
-                 "effective-21", "dependencies", "reactor-8", "reactor-17", "reactor-21",
+                 "effective-21", "dependency-catalog", "dependencies", "reactor-8", "reactor-17", "reactor-21",
                  "capacity-8", "capacity-17", "capacity-21",
                  "redis-native-8", "redis-native-17", "redis-native-21",
                  "scenario-matrix", "scenario-execution")
@@ -455,6 +455,13 @@ def run(args):
                 if success:
                     effective.append(str(artifact))
             if len(effective) == 3:
+                catalog = SCRIPT_DIR / "bootstrap_dependency_catalog.py"
+                execute("dependency-catalog", [sys.executable, str(catalog), *common,
+                         "--effective", *effective, "--policy",
+                         str(roots[2] / "config/dependencies/alignment-policy.json"),
+                         "--output", str(stage / "dependency-catalog")],
+                        stage, checks,
+                        required_artifacts=("dependency-catalog/downloads.json",))
                 dependency = SCRIPT_DIR / "verify_dependency_alignment.py"
                 execute("dependencies", [sys.executable, str(dependency), *common,
                          "--effective", *effective, "--policy",
@@ -464,6 +471,7 @@ def run(args):
                                                         "dependencies/components.csv",
                                                         "dependencies/module-usage.json"))
             else:
+                checks["dependency-catalog"] = {"status": "BLOCKED", "reason": "effective POM missing"}
                 checks["dependencies"] = {"status": "BLOCKED", "reason": "effective POM missing"}
             reactor_starts = {}
             if reactors_can_run(checks):

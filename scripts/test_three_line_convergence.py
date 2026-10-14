@@ -48,6 +48,12 @@ class ThreeLineConvergenceTest(unittest.TestCase):
         del checks["product-docs"]
         self.assertEqual("BLOCKED", MODULE.combined_status(checks, "verify", True))
 
+    def test_missing_dependency_catalog_evidence_blocks_verify(self):
+        self.assertIn('dependency-catalog', MODULE.VERIFY_CHECKS)
+        checks = {name: {'status': 'PASS'} for name in MODULE.VERIFY_CHECKS}
+        del checks['dependency-catalog']
+        self.assertEqual('BLOCKED', MODULE.combined_status(checks, 'verify', True))
+
     def test_reactor_runs_after_independent_structure_or_dependency_failure(self):
         checks = {f"effective-{jdk}": {"status": "PASS"} for jdk in (8, 17, 21)}
         checks["structure"] = {"status": "FAIL"}
