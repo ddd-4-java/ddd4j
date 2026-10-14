@@ -123,4 +123,19 @@ class Ddd4jMicronautContextTest {
             assertThat(found.get().requestContext()).isEqualTo(ctx);
         }
     }
+
+    @Test
+    void propagatedContextIdentityIncludesRequestAndSubject() {
+        WebRequestContext request = createContext();
+        Subject firstSubject = org.mockito.Mockito.mock(Subject.class);
+        Subject otherSubject = org.mockito.Mockito.mock(Subject.class);
+        Ddd4jMicronautContext first = new Ddd4jMicronautContext(request, Optional.of(firstSubject));
+        Ddd4jMicronautContext equivalent = new Ddd4jMicronautContext(createContext(), Optional.of(firstSubject));
+        Ddd4jMicronautContext other = new Ddd4jMicronautContext(request, Optional.of(otherSubject));
+
+        assertThat(first).isEqualTo(equivalent).hasSameHashCodeAs(equivalent);
+        assertThat(first).isNotEqualTo(other).isNotEqualTo("request");
+        assertThat(first.subject()).contains(firstSubject);
+        assertThat(first.toString()).startsWith("Ddd4jMicronautContext[");
+    }
 }
