@@ -15,6 +15,9 @@
 
 package io.ddd4j.web.core.context;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Objects;
 
 /**
@@ -33,7 +36,10 @@ public final class WebRequestFailure {
  * @param cause 根因异常
      */
 
-    public WebRequestFailure(String method, String path, Throwable cause) {
+    @JsonCreator
+    public WebRequestFailure(@JsonProperty("method") String method,
+                             @JsonProperty("path") String path,
+                             @JsonProperty("cause") Throwable cause) {
         this.method = method;
         this.path = path;
         this.cause = cause;

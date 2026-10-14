@@ -15,6 +15,8 @@
 
 package io.ddd4j.web.core.error;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.core.api.R;
 
 import java.io.Serializable;
@@ -38,7 +40,11 @@ public final class WebError {
  * @param data 数据内容
      */
 
-    public WebError(int status, Serializable code, String message, Object data) {
+    @JsonCreator
+    public WebError(@JsonProperty("status") int status,
+                    @JsonProperty("code") Serializable code,
+                    @JsonProperty("message") String message,
+                    @JsonProperty("data") Object data) {
         this.status = status;
         this.code = code;
         this.message = message;
