@@ -14,10 +14,15 @@
  */
 package io.ddd4j.core.cqrs.query;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.kit.lang.LambdaKit;
 import io.ddd4j.kit.lang.SFunction;
 import io.ddd4j.kit.lang.StrKit;
 
+import java.io.InvalidObjectException;
+import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -45,7 +50,10 @@ public final class PropertyRef implements Serializable {
      * @since 4.0.0
      */
 
-    public PropertyRef(PropertySpace space, Class<?> ownerType, String property) {
+    @JsonCreator
+    public PropertyRef(@JsonProperty("space") PropertySpace space,
+                       @JsonProperty("ownerType") Class<?> ownerType,
+                       @JsonProperty("property") String property) {
         Objects.requireNonNull(space, "space must not be null");
         Objects.requireNonNull(ownerType, "ownerType must not be null");
         if (StrKit.isEmpty(property)) {
@@ -91,24 +99,39 @@ public final class PropertyRef implements Serializable {
         }
     }
 
+    @JsonIgnore
     public boolean isDomain() {
         return Objects.equals(PropertySpace.DOMAIN, space);
     }
 
+    @JsonIgnore
     public boolean isPersistence() {
         return Objects.equals(PropertySpace.PERSISTENCE, space);
     }
 
+    @JsonProperty("space")
     public PropertySpace space() {
         return space;
     }
 
+    @JsonProperty("ownerType")
     public Class<?> ownerType() {
         return ownerType;
     }
 
+    @JsonProperty("property")
     public String property() {
         return property;
+    }
+
+    private Object readResolve() throws ObjectStreamException {
+        try {
+            return new PropertyRef(space, ownerType, property);
+        } catch (RuntimeException cause) {
+            InvalidObjectException failure = new InvalidObjectException(cause.getMessage());
+            failure.initCause(cause);
+            throw failure;
+        }
     }
 
     @Override
@@ -129,7 +152,8 @@ public final class PropertyRef implements Serializable {
 
     @Override
     public String toString() {
-        return "PropertyRef{" + space + ", " + ownerType + ", " + property + '}';
+        return "PropertyRef[space=" + space + ", ownerType=" + ownerType
+                + ", property=" + property + ']';
     }
 
     public PropertySpace getSpace() {

@@ -15,8 +15,13 @@
 
 package io.ddd4j.core.cqrs.query;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.kit.text.StrPool;
 
+import java.io.InvalidObjectException;
+import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -51,7 +56,10 @@ public final class LambdaCondition implements Serializable {
  * @since 2.0.x
  */
 
-    public LambdaCondition(PropertyRef propertyRef, String operator, Object value) {
+    @JsonCreator
+    public LambdaCondition(@JsonProperty("propertyRef") PropertyRef propertyRef,
+                           @JsonProperty("operator") String operator,
+                           @JsonProperty("value") Object value) {
         Objects.requireNonNull(propertyRef, "propertyRef must not be null");
         Objects.requireNonNull(operator, "operator must not be null");
         this.propertyRef = propertyRef;
@@ -59,20 +67,33 @@ public final class LambdaCondition implements Serializable {
         this.value = value;
     }
 
+    @JsonProperty("propertyRef")
     public PropertyRef propertyRef() {
         return propertyRef;
     }
 
+    @JsonProperty("operator")
     public String operator() {
         return operator;
     }
 
+    @JsonProperty("value")
     public Object value() {
         return value;
     }
 
     public String property() {
         return propertyRef.property();
+    }
+
+    private Object readResolve() throws ObjectStreamException {
+        try {
+            return new LambdaCondition(propertyRef, operator, value);
+        } catch (RuntimeException cause) {
+            InvalidObjectException failure = new InvalidObjectException(cause.getMessage());
+            failure.initCause(cause);
+            throw failure;
+        }
     }
 
         /**
@@ -94,6 +115,7 @@ public static LambdaCondition asc(PropertyRef property) {
      * @return 满足条件时返回 true，否则返回 false
      */
 
+@JsonIgnore
 public boolean isOrderBy() {
         return StrPool.ASC.equals(operator) || StrPool.DESC.equals(operator);
     }
@@ -118,8 +140,8 @@ public boolean isOrderBy() {
 
     @Override
     public String toString() {
-        return "LambdaCondition{propertyRef=" + propertyRef + ", operator=" + operator
-                + ", value=" + value + '}';
+        return "LambdaCondition[propertyRef=" + propertyRef + ", operator=" + operator
+                + ", value=" + value + ']';
     }
 
     public PropertyRef getPropertyRef() {
