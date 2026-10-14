@@ -169,7 +169,7 @@ public class GoodsController {
         });
     }
 
-    // ========================= 请求 DTO（轻量 record） =========================
+    // ========================= 请求 DTO =========================
 
     /**
      * 创建商品请求。
@@ -178,13 +178,57 @@ public class GoodsController {
 
         private static final long serialVersionUID = 0L;
 
-        private final String code;
+        private String code;
 
-        private final String name;
+        private String name;
 
-        private final BigDecimal price;
+        private BigDecimal price;
 
-        private final Integer stock;
+        private Integer stock;
+
+        /** 创建用于 Bean 绑定的空请求。 */
+        public CreateGoodsRequest() {
+        }
+
+        /** @return 商品编码 */
+        public String getCode() {
+            return code;
+        }
+
+        /** @param code 商品编码 */
+        public void setCode(String code) {
+            this.code = code;
+        }
+
+        /** @return 商品名称 */
+        public String getName() {
+            return name;
+        }
+
+        /** @param name 商品名称 */
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        /** @return 商品价格 */
+        public BigDecimal getPrice() {
+            return price;
+        }
+
+        /** @param price 商品价格 */
+        public void setPrice(BigDecimal price) {
+            this.price = price;
+        }
+
+        /** @return 初始库存 */
+        public Integer getStock() {
+            return stock;
+        }
+
+        /** @param stock 初始库存 */
+        public void setStock(Integer stock) {
+            this.stock = stock;
+        }
 
         /**
          * 创建商品请求数据。
@@ -277,9 +321,33 @@ public class GoodsController {
 
         private static final long serialVersionUID = 0L;
 
-        private final String name;
+        private String name;
 
-        private final BigDecimal price;
+        private BigDecimal price;
+
+        /** 创建用于 Bean 绑定的空请求。 */
+        public UpdateGoodsRequest() {
+        }
+
+        /** @return 商品名称 */
+        public String getName() {
+            return name;
+        }
+
+        /** @param name 商品名称 */
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        /** @return 商品价格 */
+        public BigDecimal getPrice() {
+            return price;
+        }
+
+        /** @param price 商品价格 */
+        public void setPrice(BigDecimal price) {
+            this.price = price;
+        }
 
         /**
          * 创建商品更新请求数据。
