@@ -16,7 +16,7 @@
     <dependencies>
         <dependency>
             <groupId>io.github.easy4j</groupId>
-            <artifactId>spring-biz</artifactId>
+            <artifactId>spring-extension</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>

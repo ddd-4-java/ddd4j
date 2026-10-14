@@ -18,8 +18,8 @@ import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.context.ThreadContext;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.biz.context.NestedMessageSource;
-import org.springframework.biz.utils.SpringContextUtils;
+import org.springframework.extension.context.NestedMessageSource;
+import org.springframework.extension.utils.SpringContextUtils;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.nio.ByteBuffer;

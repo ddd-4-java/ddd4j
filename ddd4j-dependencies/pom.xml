@@ -351,7 +351,7 @@
         <juniversalchardet.version>2.5.0</juniversalchardet.version>
         <junrar.version>7.6.0</junrar.version>
         <just-auth.version>1.16.7</just-auth.version>
-        <jwt-issuer.version>1.1.8.RELEASE</jwt-issuer.version>
+        <jwt-issuer.version>1.0.x.20260630-SNAPSHOT</jwt-issuer.version>
         <jxl.version>2.6.12</jxl.version>
         <!-- Kafka 4.x requires JDK11; feature/1.0.x uses the JDK8-compatible client line. -->
         <kafka.version>3.9.2</kafka.version>
@@ -544,7 +544,7 @@
         <shardingsphere-jdbc.version>5.5.3</shardingsphere-jdbc.version>
         <shardingsphere-parser.version>${shardingsphere-jdbc.version}</shardingsphere-parser.version>
         <shedlock.version>4.48.0</shedlock.version>
-        <shiro-biz.version>1.2.0.RELEASE</shiro-biz.version>
+        <shiro-extension.version>1.0.x.20260630-SNAPSHOT</shiro-extension.version>
         <shiro-freemarker.version>1.0.3</shiro-freemarker.version>
         <shiro-hazelcast.version>${shiro.version}</shiro-hazelcast.version>
         <shiro-j2cache.version>1.0.5.RELEASE</shiro-j2cache.version>
@@ -569,15 +569,14 @@
         <snmp4j.version>2.8.18</snmp4j.version>
         <soapui-template.version>1.0.2.RELEASE</soapui-template.version>
         <socket-io.version>2.1.2</socket-io.version>
-        <spring-biz.version>1.1.5.RELEASE</spring-biz.version>
         <spring-boot2-it.version>2.7.18</spring-boot2-it.version>
         <spring-boot3-it.version>3.4.4</spring-boot3-it.version>
         <spring-boot-starter-ip2region.version>3.3.x.20241003.RELEASE</spring-boot-starter-ip2region.version>
         <!-- 第三方 Boot starter 版本（Phase 2 迁出 boot 轨前暂 pin） -->
         <spring-boot-starter-mybatis.version>2.3.2</spring-boot-starter-mybatis.version>
         <spring-boot-starter-redistpl-plus.version>2.7.x.20260630-SNAPSHOT</spring-boot-starter-redistpl-plus.version>
-        <spring-boot-starter-security-biz.version>2.7.x.20241003.RELEASE</spring-boot-starter-security-biz.version>
-        <spring-boot-starter-security-jwt.version>2.7.x.20241003.RELEASE</spring-boot-starter-security-jwt.version>
+        <spring-boot-starter-security-biz.version>2.7.x.20260630-SNAPSHOT</spring-boot-starter-security-biz.version>
+        <spring-boot-starter-security-jwt.version>2.7.x.20260630-SNAPSHOT</spring-boot-starter-security-jwt.version>
         <spring-bytebuddy.version>6.1.x.20241003.RELEASE</spring-bytebuddy.version>
         <!-- 版本约束：Spring Framework 锁定 5.3.x（JDK 8 兼容），不得升级至 6.x -->
         <spring-framework.version>5.3.39</spring-framework.version>
@@ -6025,11 +6024,11 @@
                 <artifactId>shiro-lang</artifactId>
                 <version>${shiro.version}</version>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/io.github.easy4j/shiro-biz -->
+            <!-- Easy4J Shiro core（shiro-extension 父产物为 POM） -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
-                <artifactId>shiro-biz</artifactId>
-                <version>${shiro-biz.version}</version>
+                <artifactId>shiro-extension-core</artifactId>
+                <version>${shiro-extension.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
@@ -6163,23 +6162,6 @@
                 <artifactId>soapui-template</artifactId>
                 <version>${soapui-template.version}</version>
             </dependency>-->
-            <dependency>
-                <groupId>io.github.easy4j</groupId>
-                <artifactId>spring-biz</artifactId>
-                <version>${spring-biz.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.apache.commons</groupId>
-                        <artifactId>commons-lang3</artifactId>
-                    </exclusion>
-                    <!-- 排除 compile 传递的旧版 JUnit，避免与 Spring Boot 3.4 的 junit-platform 6.x 冲突 -->
-                    <exclusion>
-                        <groupId>org.junit.jupiter</groupId>
-                        <artifactId>junit-jupiter-api</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>spring-javassist</artifactId>

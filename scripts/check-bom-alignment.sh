@@ -46,10 +46,25 @@ total_modules=0
 
 while IFS= read -r pom; do
   total_modules=$((total_modules + 1))
-  # 找所有 ddd4j-* 工件的版本号
-  bad_versions=$(grep -E "<artifactId>ddd4j-" "$pom" 2>/dev/null |
-    grep -A1 "</artifactId>" | grep "<version>" |
-    grep -vcE "\\\${revision}|\\\${project.version}")
+  # 按 POM 元素读取坐标，避免 grep 无匹配时触发 set -e 提前退出。
+  bad_versions=$(python3 - "$pom" <<'PY'
+import sys
+import xml.etree.ElementTree as ET
+
+root = ET.parse(sys.argv[1]).getroot()
+namespace = root.tag.partition("}")[0] + "}" if "}" in root.tag else ""
+bad = 0
+for element in root.iter():
+    artifact = element.find(namespace + "artifactId")
+    version = element.find(namespace + "version")
+    if artifact is None or version is None:
+        continue
+    if artifact.text and artifact.text.startswith("ddd4j-"):
+        if version.text not in ("${revision}", "${project.version}"):
+            bad += 1
+print(bad)
+PY
+)
   if [ "$bad_versions" -gt 0 ]; then
     echo -e "${RED}  ❌ $pom 包含 $bad_versions 个硬编码 ddd4j-* 版本${NC}"
     fail_count=$((fail_count + 1))

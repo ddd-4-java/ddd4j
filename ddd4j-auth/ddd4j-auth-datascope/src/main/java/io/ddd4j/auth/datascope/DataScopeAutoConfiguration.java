@@ -14,7 +14,7 @@
  */
 package io.ddd4j.auth.datascope;
 
-import org.springframework.biz.context.SpringContextAwareContext;
+import org.springframework.extension.context.SpringContextAwareContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
