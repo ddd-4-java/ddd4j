@@ -17,6 +17,11 @@ class MQOutboxDispatchResultJsonContractTest {
 
         assertEquals(5, mapper.readTree(json).size());
         assertEquals(result, restored);
-        assertEquals(1, restored.confirmationLost());
+        assertEquals(5, restored.getClaimed());
+        assertEquals(1, restored.getPublished());
+        assertEquals(2, restored.getRescheduled());
+        assertEquals(1, restored.getDead());
+        assertEquals(1, restored.getConfirmationLost());
+        assertEquals("MQOutboxDispatchResult[claimed=5, published=1, rescheduled=2, dead=1, confirmationLost=1]", restored.toString());
     }
 }
