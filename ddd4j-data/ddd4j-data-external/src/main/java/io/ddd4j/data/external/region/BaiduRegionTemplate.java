@@ -46,6 +46,7 @@ public class BaiduRegionTemplate {
      * 百度地图AK密钥
      */
     private final String ak;
+    private final String urlTemplate;
     /**
      * 缓存服务
      */
@@ -67,8 +68,13 @@ public class BaiduRegionTemplate {
      * @param regionCache 缓存服务
      */
     public BaiduRegionTemplate(String ak, RegionCache regionCache) {
+        this(ak, regionCache, GET_LOCATION_BY_IP_URL);
+    }
+
+    BaiduRegionTemplate(String ak, RegionCache regionCache, String urlTemplate) {
         this.ak = ak;
         this.regionCache = Objects.isNull(regionCache) ? RegionCache.none() : regionCache;
+        this.urlTemplate = Objects.requireNonNull(urlTemplate, "urlTemplate");
     }
 
     public static void main(String[] args) throws IOException {
@@ -131,7 +137,7 @@ public class BaiduRegionTemplate {
         }
         // 3、调用三方接口解析IP信息
         try {
-            String url = String.format(GET_LOCATION_BY_IP_URL, this.ak, ip);
+            String url = String.format(urlTemplate, this.ak, ip);
             HttpResponse response = HttpRequest.get(url).header("Accept", "application/json").execute();
             if (response.getStatus() >= 200 && response.getStatus() < 300) {
                 String bodyString = response.body();

@@ -74,6 +74,7 @@ public class PconlineRegionTemplate {
      * 缓存服务
      */
     private RegionCache regionCache;
+    private final String urlTemplate;
 
     /**
      * 构造函数（无缓存）
@@ -89,7 +90,12 @@ public class PconlineRegionTemplate {
      * @param regionCache 缓存服务
      */
     public PconlineRegionTemplate(RegionCache regionCache) {
+        this(regionCache, GET_COUNTRY_BY_IP_URL);
+    }
+
+    PconlineRegionTemplate(RegionCache regionCache, String urlTemplate) {
         this.regionCache = Objects.isNull(regionCache) ? RegionCache.none() : regionCache;
+        this.urlTemplate = Objects.requireNonNull(urlTemplate, "urlTemplate");
     }
 
     public static void main(String[] args) throws IOException {
@@ -131,7 +137,7 @@ public class PconlineRegionTemplate {
         // 3、调用三方接口解析IP信息
         try {
 
-            String url = String.format(GET_COUNTRY_BY_IP_URL, ip);
+            String url = String.format(urlTemplate, ip);
             HttpResponse response = HttpRequest.get(url).header("Accept", "application/json").execute();
             if (response.getStatus() >= 200 && response.getStatus() < 300) {
                 String bodyString = response.body();

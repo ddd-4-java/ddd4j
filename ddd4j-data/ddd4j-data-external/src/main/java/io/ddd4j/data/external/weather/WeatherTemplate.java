@@ -39,6 +39,7 @@ public class WeatherTemplate {
      * 天气查询请求地址
      */
     private final static String SOJSON_WEATHER_URL = "http://t.weather.sojson.com/api/weather/city/%s";
+    private final String weatherUrlTemplate;
 
     /**
      * 缓存业务标识
@@ -65,6 +66,11 @@ public class WeatherTemplate {
      *
      */
     public WeatherTemplate() {
+        this(SOJSON_WEATHER_URL);
+    }
+
+    WeatherTemplate(String weatherUrlTemplate) {
+        this.weatherUrlTemplate = Objects.requireNonNull(weatherUrlTemplate, "weatherUrlTemplate");
     }
 
     /**
@@ -95,7 +101,7 @@ public class WeatherTemplate {
      */
     private JSONObject fetchWeather(String cityCode) {
         try {
-            HttpResponse response = HttpRequest.get(String.format(SOJSON_WEATHER_URL, cityCode))
+            HttpResponse response = HttpRequest.get(String.format(weatherUrlTemplate, cityCode))
                     .header("Accept", "application/json")
                     .execute();
             if (response.getStatus() >= 200 && response.getStatus() < 300) {

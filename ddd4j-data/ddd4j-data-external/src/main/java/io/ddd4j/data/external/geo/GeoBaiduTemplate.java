@@ -54,6 +54,8 @@ public class GeoBaiduTemplate {
      * 百度地图AK密钥
      */
     private final String ak;
+    private final String geocoderUrlTemplate;
+    private final String ipUrlTemplate;
 
     /**
      * 构造函数
@@ -61,8 +63,14 @@ public class GeoBaiduTemplate {
      * @param ak         百度地图AK密钥
      */
     public GeoBaiduTemplate(String ak) {
+        this(ak, geocoder, geocoder2);
+    }
+
+    GeoBaiduTemplate(String ak, String geocoderUrlTemplate, String ipUrlTemplate) {
         super();
         this.ak = ak;
+        this.geocoderUrlTemplate = Objects.requireNonNull(geocoderUrlTemplate, "geocoderUrlTemplate");
+        this.ipUrlTemplate = Objects.requireNonNull(ipUrlTemplate, "ipUrlTemplate");
     }
 
     public static void main(String[] args) throws IOException {
@@ -107,7 +115,7 @@ public class GeoBaiduTemplate {
      */
     public Optional<JSONObject> getLocationByAddress(String addr) throws IOException {
         String address = java.net.URLEncoder.encode(addr, "UTF-8");
-        String url = String.format(geocoder, address, this.ak);
+        String url = String.format(geocoderUrlTemplate, address, this.ak);
         // {"message":"APP Referer校验失败","status":220}
         HttpResponse response;
         response = HttpRequest.get(url).header("Accept", "application/json").execute();
@@ -161,7 +169,7 @@ public class GeoBaiduTemplate {
             throw new NullPointerException("ip can not empty");
         }
         try {
-            String url = String.format(geocoder2, this.ak, ip);
+            String url = String.format(ipUrlTemplate, this.ak, ip);
             HttpResponse response = HttpRequest.get(url).header("Accept", "application/json").execute();
             if (response.getStatus() >= 200 && response.getStatus() < 300) {
                 String bodyString = response.body();
