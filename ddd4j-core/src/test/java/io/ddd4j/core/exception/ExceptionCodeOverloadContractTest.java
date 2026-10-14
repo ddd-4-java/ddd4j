@@ -19,7 +19,8 @@ class ExceptionCodeOverloadContractTest {
     @Test
     void bothBinaryConstructorSignaturesArePublished() {
         Class<?>[] exceptionTypes = {
-                BizIOException.class, CryptoException.class, IdempotentException.class,
+                BizCheckedException.class, BizRuntimeException.class, BizIOException.class,
+                CryptoException.class, IdempotentException.class,
                 MessagePushException.class, ParamException.class, PayException.class,
                 RedisOperationException.class
         };
