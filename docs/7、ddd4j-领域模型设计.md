@@ -1,5 +1,7 @@
 # 7、ddd4j-领域模型设计
 
+> **历史快照说明**：本文按 2026-09-24 所列源码提交记录当时的方案和架构；其中的模块清单、版本、门禁状态及生产状态不代表当前验收结论。当前三线共同契约与未完成项以[三线产品收敛计划](./superpowers/plans/2026-10-10-three-line-product-convergence.md)为准，历史报告来源见[证据索引](./superpowers/historical-evidence-index.md)。
+
 > **文档说明**：ddd4j 提供的领域抽象与契约。覆盖战术设计要素（聚合、实体、值对象、领域事件、仓储、查询）、CQRS 抽象（Command /
 > View / Projection）、EventStore 抽象、上下文边界与跨进程事件契约。
 >

@@ -1,5 +1,7 @@
 # 8、ddd4j-Architecture.zh_CN
 
+> **历史快照说明**：本文按 2026-09-24 所列源码提交记录当时的方案和架构；其中的模块清单、版本、门禁状态及生产状态不代表当前验收结论。当前三线共同契约与未完成项以[三线产品收敛计划](./superpowers/plans/2026-10-10-three-line-product-convergence.md)为准，历史报告来源见[证据索引](./superpowers/historical-evidence-index.md)。
+
 > **文档说明**：ddd4j 系统架构设计。覆盖分层架构、运行时矩阵、依赖隔离、数据流（命令/事件/读模型/可靠投递）、跨框架适配、ArchUnit
 > 边界守护、安全与可观测性、部署形态与故障处理。
 >

@@ -1,5 +1,7 @@
 # 8、ddd4j-1.0.x-Architecture.zh_CN
 
+> **历史快照说明**：本文按 2026-09-24 所列源码提交记录当时的方案和架构；其中的模块清单、版本、门禁状态及生产状态不代表当前验收结论。当前三线共同契约与未完成项以[三线产品收敛计划](./superpowers/plans/2026-10-10-three-line-product-convergence.md)为准，历史报告来源见[证据索引](./superpowers/historical-evidence-index.md)。
+
 > **文档说明**：ddd4j **1.0.x 版本级架构**。聚焦于：在三轨治理中 1.0.x 的角色、JDK 8 / Maven 3 字节码约束、Stage E 整合策略、5
 > 事件存储与 11 broker 的实际落地、与 2.0.x / 3.0.x 的允许差异与禁止差异。
 >
