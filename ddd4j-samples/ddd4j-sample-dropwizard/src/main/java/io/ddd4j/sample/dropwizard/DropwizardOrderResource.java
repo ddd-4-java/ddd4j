@@ -123,11 +123,12 @@ public final class DropwizardOrderResource {
     }
 
     /** 登录令牌响应。 */
-    public final static class TokenResponse {
+    @Data
+    public static class TokenResponse {
 
         private static final long serialVersionUID = 0L;
 
-        private final String token;
+        private String token;
 
         /** @param token 登录令牌 */
         @JsonCreator()
@@ -141,29 +142,6 @@ public final class DropwizardOrderResource {
             return token;
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            TokenResponse other = (TokenResponse) obj;
-            return Objects.equals(this.token, other.token);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(token);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "TokenResponse[token=" + token + "]";
-        }
     }
 
     /** 创建订单的 HTTP 请求。 */
