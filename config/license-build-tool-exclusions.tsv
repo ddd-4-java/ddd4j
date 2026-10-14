@@ -8,3 +8,4 @@ javax.servlet:javax.servlet-api:4.0.1	Servlet container provided dependency (CDD
 javax.servlet:javax.servlet-api:3.0.1	Servlet container provided dependency (CDDL)
 javax.websocket:javax.websocket-api:1.1	Servlet container provided dependency (CDDL)
 com.mysql:mysql-connector-j:9.7.0	Test-scoped database driver absent from published SBOM
+io.github.x-stream:mxparser:1.2.2	Transitive XStream parser present in the Maven inventory but absent from the published aggregate SBOM
