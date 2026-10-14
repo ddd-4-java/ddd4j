@@ -472,15 +472,17 @@ public class AuthorizationController {
     /**
      * 创建角色请求。
      */
-    public final static class CreateRoleRequest {
+    @Data
+    @NoArgsConstructor
+    public static class CreateRoleRequest {
 
         private static final long serialVersionUID = 0L;
 
-        private final String code;
+        private String code;
 
-        private final String name;
+        private String name;
 
-        private final String[] permissions;
+        private String[] permissions;
 
         /**
          * 创建创建角色请求。
@@ -526,43 +528,20 @@ public class AuthorizationController {
             return permissions;
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            CreateRoleRequest other = (CreateRoleRequest) obj;
-            return Objects.equals(this.code, other.code) && Objects.equals(this.name, other.name) && Objects.equals(this.permissions, other.permissions);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(code);
-            result = 31 * result + Objects.hashCode(name);
-            result = 31 * result + Objects.hashCode(permissions);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "CreateRoleRequest[code=" + code + ", name=" + name + ", permissions=" + permissions + "]";
-        }
     }
 
     /**
      * 更新角色请求。
      */
-    public final static class UpdateRoleRequest {
+    @Data
+    @NoArgsConstructor
+    public static class UpdateRoleRequest {
 
         private static final long serialVersionUID = 0L;
 
-        private final String name;
+        private String name;
 
-        private final String[] permissions;
+        private String[] permissions;
 
         /**
          * 创建更新角色请求。
@@ -596,42 +575,20 @@ public class AuthorizationController {
             return permissions;
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            UpdateRoleRequest other = (UpdateRoleRequest) obj;
-            return Objects.equals(this.name, other.name) && Objects.equals(this.permissions, other.permissions);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(name);
-            result = 31 * result + Objects.hashCode(permissions);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "UpdateRoleRequest[name=" + name + ", permissions=" + permissions + "]";
-        }
     }
 
     /**
      * 创建权限请求。
      */
-    public final static class CreatePermissionRequest {
+    @Data
+    @NoArgsConstructor
+    public static class CreatePermissionRequest {
 
         private static final long serialVersionUID = 0L;
 
-        private final String code;
+        private String code;
 
-        private final String description;
+        private String description;
 
         /**
          * 创建创建权限请求。
@@ -665,30 +622,6 @@ public class AuthorizationController {
             return description;
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            CreatePermissionRequest other = (CreatePermissionRequest) obj;
-            return Objects.equals(this.code, other.code) && Objects.equals(this.description, other.description);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(code);
-            result = 31 * result + Objects.hashCode(description);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "CreatePermissionRequest[code=" + code + ", description=" + description + "]";
-        }
     }
 
     /**
