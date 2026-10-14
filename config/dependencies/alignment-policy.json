@@ -460,61 +460,81 @@
     },
     "org.testcontainers:testcontainers-junit-jupiter": {
       "17": {
-        "coordinates": ["org.testcontainers:junit-jupiter"],
+        "coordinates": [
+          "org.testcontainers:junit-jupiter"
+        ],
         "reason": "2.0.x 线 Testcontainers 统一 1.21.4 后改回 1.x 标准坐标；保留同类模块"
       }
     },
     "org.testcontainers:testcontainers-kafka": {
       "17": {
-        "coordinates": ["org.testcontainers:kafka"],
+        "coordinates": [
+          "org.testcontainers:kafka"
+        ],
         "reason": "2.0.x 线 Testcontainers 统一 1.21.4 后改回 1.x 标准坐标；保留同类模块"
       }
     },
     "org.testcontainers:testcontainers-mysql": {
       "17": {
-        "coordinates": ["org.testcontainers:mysql"],
+        "coordinates": [
+          "org.testcontainers:mysql"
+        ],
         "reason": "2.0.x 线 Testcontainers 统一 1.21.4 后改回 1.x 标准坐标；保留同类模块"
       }
     },
     "org.testcontainers:testcontainers-postgresql": {
       "17": {
-        "coordinates": ["org.testcontainers:postgresql"],
+        "coordinates": [
+          "org.testcontainers:postgresql"
+        ],
         "reason": "2.0.x 线 Testcontainers 统一 1.21.4 后改回 1.x 标准坐标；保留同类模块"
       }
     },
     "org.testcontainers:testcontainers-rabbitmq": {
       "17": {
-        "coordinates": ["org.testcontainers:rabbitmq"],
+        "coordinates": [
+          "org.testcontainers:rabbitmq"
+        ],
         "reason": "2.0.x 线 Testcontainers 统一 1.21.4 后改回 1.x 标准坐标；保留同类模块"
       }
     },
     "org.testcontainers:junit-jupiter": {
       "21": {
-        "coordinates": ["org.testcontainers:testcontainers-junit-jupiter"],
+        "coordinates": [
+          "org.testcontainers:testcontainers-junit-jupiter"
+        ],
         "reason": "1.x 标准坐标仅 2.0.x 线（1.21.4）使用；JDK 8/21 线仍按 2.x 命名坐标"
       }
     },
     "org.testcontainers:kafka": {
       "21": {
-        "coordinates": ["org.testcontainers:testcontainers-kafka"],
+        "coordinates": [
+          "org.testcontainers:testcontainers-kafka"
+        ],
         "reason": "1.x 标准坐标仅 2.0.x 线（1.21.4）使用；JDK 8/21 线仍按 2.x 命名坐标"
       }
     },
     "org.testcontainers:mysql": {
       "21": {
-        "coordinates": ["org.testcontainers:testcontainers-mysql"],
+        "coordinates": [
+          "org.testcontainers:testcontainers-mysql"
+        ],
         "reason": "1.x 标准坐标仅 2.0.x 线（1.21.4）使用；JDK 8/21 线仍按 2.x 命名坐标"
       }
     },
     "org.testcontainers:postgresql": {
       "21": {
-        "coordinates": ["org.testcontainers:testcontainers-postgresql"],
+        "coordinates": [
+          "org.testcontainers:testcontainers-postgresql"
+        ],
         "reason": "1.x 标准坐标仅 2.0.x 线（1.21.4）使用；JDK 8/21 线仍按 2.x 命名坐标"
       }
     },
     "org.testcontainers:rabbitmq": {
       "21": {
-        "coordinates": ["org.testcontainers:testcontainers-rabbitmq"],
+        "coordinates": [
+          "org.testcontainers:testcontainers-rabbitmq"
+        ],
         "reason": "1.x 标准坐标仅 2.0.x 线（1.21.4）使用；JDK 8/21 线仍按 2.x 命名坐标"
       }
     }
@@ -3353,5 +3373,12 @@
     "8": "6d217054",
     "17": "90ab6cc3",
     "21": "2e730fb4"
+  },
+  "dependency_versions": {
+    "io.github.easy4j:easyexcel": "5.0.1",
+    "io.github.easy4j:easyexcel-parent": "5.0.1",
+    "io.github.easy4j:easyexcel-core": "5.0.1",
+    "io.github.easy4j:easyexcel-support": "5.0.1",
+    "io.github.easy4j:easyexcel-markdown": "5.0.1"
   }
 }
