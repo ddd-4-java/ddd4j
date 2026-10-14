@@ -31,6 +31,8 @@ import io.ddd4j.web.core.auth.WebAccessPolicy;
 import io.ddd4j.web.core.context.*;
 import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.web.core.observability.WebOtelSupport;
+import io.ddd4j.web.core.version.ApiVersion;
+import io.ddd4j.web.webmvc.interceptor.ApiVersionWebInterceptor;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -45,6 +47,9 @@ import java.util.function.Predicate;
  * WebOtelIntegration（OTel 集成可选，无依赖时不生效）。
  */
 public final class Ddd4jWebMvcInterceptor implements HandlerInterceptor {
+
+    /** 请求上下文属性键，供下游处理器读取。 */
+    public static final String CONTEXT_ATTRIBUTE = Ddd4jWebMvcInterceptor.class.getName() + ".context";
 
     private static final String STATE_ATTRIBUTE = Ddd4jWebMvcInterceptor.class.getName() + ".state";
     private static final String OTEL_SPAN_ATTRIBUTE = Ddd4jWebMvcInterceptor.class.getName() + ".otelSpan";
@@ -117,6 +122,7 @@ public final class Ddd4jWebMvcInterceptor implements HandlerInterceptor {
         }
 
         WebRequestContext requestContext = createContext(request);
+        request.setAttribute(CONTEXT_ATTRIBUTE, requestContext);
         RequestState state = new RequestState(WebContextScope.open(requestContext));
         request.setAttribute(STATE_ATTRIBUTE, state);
         response.setHeader(WebHeaders.REQUEST_ID, requestContext.requestId());
@@ -175,7 +181,12 @@ public final class Ddd4jWebMvcInterceptor implements HandlerInterceptor {
                 request.getHeader("X-Real-IP"),
                 request.getRemoteAddr(),
                 request.getMethod(),
-                request.getRequestURI()));
+                request.getRequestURI()), resolveApiVersion(request));
+    }
+
+    private ApiVersion resolveApiVersion(HttpServletRequest request) {
+        Object attribute = request.getAttribute(ApiVersionWebInterceptor.API_VERSION_ATTRIBUTE);
+        return attribute instanceof ApiVersion ? (ApiVersion) attribute : null;
     }
 
     private static final class RequestState {
