@@ -15,6 +15,9 @@
 
 package io.ddd4j.mq.delivery;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * 单次 Outbox 调度的汇总结果。
  *
@@ -42,8 +45,12 @@ public final class MQOutboxDispatchResult {
      * @param confirmationLost broker 已接收但租约确认丢失数量，后续可能重复投递
      */
 
-    public MQOutboxDispatchResult(int claimed, int published, int rescheduled, int dead,
-                                  int confirmationLost) {
+    @JsonCreator
+    public MQOutboxDispatchResult(@JsonProperty("claimed") int claimed,
+                                  @JsonProperty("published") int published,
+                                  @JsonProperty("rescheduled") int rescheduled,
+                                  @JsonProperty("dead") int dead,
+                                  @JsonProperty("confirmationLost") int confirmationLost) {
         this.claimed = claimed;
         this.published = published;
         this.rescheduled = rescheduled;
@@ -93,9 +100,9 @@ public final class MQOutboxDispatchResult {
 
     @Override
     public String toString() {
-        return "MQOutboxDispatchResult{claimed=" + claimed + ", published=" + published
+        return "MQOutboxDispatchResult[claimed=" + claimed + ", published=" + published
                 + ", rescheduled=" + rescheduled + ", dead=" + dead
-                + ", confirmationLost=" + confirmationLost + '}';
+                + ", confirmationLost=" + confirmationLost + ']';
     }
 
     public int getClaimed() {
