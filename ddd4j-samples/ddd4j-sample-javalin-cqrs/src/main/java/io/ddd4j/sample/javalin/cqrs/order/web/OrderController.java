@@ -152,6 +152,41 @@ public class OrderController {
         private final String status;
         private final Money totalAmount;
         private final int lineCount;
+
+        /** @return id */
+        public String id() {
+            return id;
+        }
+
+        /** @return orderNo */
+        public String orderNo() {
+            return orderNo;
+        }
+
+        /** @return buyerId */
+        public String buyerId() {
+            return buyerId;
+        }
+
+        /** @return buyerName */
+        public String buyerName() {
+            return buyerName;
+        }
+
+        /** @return status */
+        public String status() {
+            return status;
+        }
+
+        /** @return totalAmount */
+        public Money totalAmount() {
+            return totalAmount;
+        }
+
+        /** @return lineCount */
+        public int lineCount() {
+            return lineCount;
+        }
     }
 
     /**
