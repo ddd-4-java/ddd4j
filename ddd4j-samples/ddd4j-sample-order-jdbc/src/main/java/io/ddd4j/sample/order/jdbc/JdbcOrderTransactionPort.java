@@ -82,6 +82,10 @@ public final class JdbcOrderTransactionPort implements OrderTransactionPort {
         return connection;
     }
 
+    boolean isTransactionActive() {
+        return Objects.nonNull(currentConnection.get());
+    }
+
     /**
      * 在当前事务连接或一个短生命周期查询连接上执行只读操作。
      *
