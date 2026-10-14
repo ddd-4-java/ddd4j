@@ -170,7 +170,6 @@
         <disruptor.version>4.0.0</disruptor.version>
         <docker-client.version>8.16.0</docker-client.version>
         <docker-java.version>3.7.1</docker-java.version>
-        <docx4j-template.version>1.0.1.RELEASE</docx4j-template.version>
         <docx4j.version>11.5.14</docx4j.version>
         <dom4j2.version>2.2.0</dom4j2.version>
         <dozer-core.version>7.0.0</dozer-core.version>
