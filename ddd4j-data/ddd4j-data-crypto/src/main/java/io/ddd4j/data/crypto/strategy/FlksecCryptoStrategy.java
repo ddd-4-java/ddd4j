@@ -53,6 +53,7 @@ public class FlksecCryptoStrategy implements CryptoStrategy {
      * 远程服务端口
      */
     private final String port;
+    private final String scheme;
 
     /**
      * 构造函数
@@ -62,9 +63,14 @@ public class FlksecCryptoStrategy implements CryptoStrategy {
      * @param port         远程服务端口
      */
     public FlksecCryptoStrategy(ObjectMapper objectMapper, String address, String port) {
+        this(objectMapper, address, port, "https");
+    }
+
+    FlksecCryptoStrategy(ObjectMapper objectMapper, String address, String port, String scheme) {
         this.objectMapper = objectMapper;
         this.address = address;
         this.port = port;
+        this.scheme = scheme;
     }
 
     /**
@@ -96,7 +102,7 @@ public class FlksecCryptoStrategy implements CryptoStrategy {
             bodyContent.put("iv", iv);
             bodyContent.put("data", valueAsString);
             bodyContent.put("plainIsEncode", String.valueOf(plainIsEncode));
-            String url = String.format("https://%s:%s/api/crypto/sysEncrypt", address, port);
+            String url = String.format("%s://%s:%s/api/crypto/sysEncrypt", scheme, address, port);
             HttpResponse encryptResponse = HttpRequest.post(url)
                     .header("Content-Type", "application/json")
                     .body(objectMapper.writeValueAsString(bodyContent))
@@ -141,7 +147,7 @@ public class FlksecCryptoStrategy implements CryptoStrategy {
             bodyContent.put("iv", iv);
             bodyContent.put("data", value);
             bodyContent.put("plainIsEncode", String.valueOf(plainIsEncode));
-            String url = String.format("https://%s:%s/api/crypto/sysDecrypt", address, port);
+            String url = String.format("%s://%s:%s/api/crypto/sysDecrypt", scheme, address, port);
             HttpResponse decryptResponse = HttpRequest.post(url)
                     .header("Content-Type", "application/json")
                     .body(objectMapper.writeValueAsString(bodyContent))
@@ -156,7 +162,7 @@ public class FlksecCryptoStrategy implements CryptoStrategy {
                     if (decryptResponseVO.getCode() == 200) {
                         String responseString = StringUtils.defaultString(decryptResponseVO.getData());
                         log.debug("Response Decrypt Value : {}", responseString);
-                        return objectMapper.readValue(value, rtType);
+                        return objectMapper.readValue(responseString, rtType);
                     } else {
                         throw new BizRuntimeException(decryptResponseVO.getMsg());
                     }
@@ -187,7 +193,7 @@ public class FlksecCryptoStrategy implements CryptoStrategy {
             bodyContent.put("plainIsEncode", String.valueOf(plainIsEncode));
             bodyContent.put("key", key);
             bodyContent.put("data", valueAsString);
-            String url = String.format("https://%s:%s/api/hmac/sm3hmac", address, port);
+            String url = String.format("%s://%s:%s/api/hmac/sm3hmac", scheme, address, port);
             HttpResponse response = HttpRequest.post(url)
                     .header("Content-Type", "application/json")
                     .body(objectMapper.writeValueAsString(bodyContent))
