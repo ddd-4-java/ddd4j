@@ -79,6 +79,21 @@ public final class CreateOrderCommand {
         return buyerName;
     }
 
+    /** @return 订单编号 */
+    public String getOrderNo() {
+        return orderNo;
+    }
+
+    /** @return 买家标识 */
+    public String getBuyerId() {
+        return buyerId;
+    }
+
+    /** @return 买家名称 */
+    public String getBuyerName() {
+        return buyerName;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
