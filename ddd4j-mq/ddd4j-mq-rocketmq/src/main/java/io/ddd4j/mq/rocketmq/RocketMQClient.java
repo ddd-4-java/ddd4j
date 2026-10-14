@@ -17,6 +17,7 @@ package io.ddd4j.mq.rocketmq;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
+import io.ddd4j.mq.delivery.MQDeliveryHeaders;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.lifecycle.MQClientLifecycle;
 import io.ddd4j.mq.lifecycle.MQStartupStatus;
@@ -37,6 +38,7 @@ import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.common.message.MessageExt;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -138,9 +140,25 @@ public class RocketMQClient implements MQClient {
                 : message.getUserProperty(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
     }
 
+    static void restoreCausality(MessageExt message, MQEvent event) {
+        String correlationId = message.getUserProperty(MQDeliveryHeaders.CORRELATION_ID);
+        if (StrKit.isNotEmpty(correlationId)) {
+            event.setCorrelationId(correlationId);
+        }
+        String causationId = message.getUserProperty(MQDeliveryHeaders.CAUSATION_ID);
+        if (StrKit.isNotEmpty(causationId)) {
+            event.setCausationId(causationId);
+        }
+    }
+
     @Override
     public String impl() {
         return "rocket";
+    }
+
+    @Override
+    public String defaultConcat() {
+        return "_";
     }
 
     @Override
@@ -181,10 +199,10 @@ public class RocketMQClient implements MQClient {
             DefaultMQProducer finalProducer = this.producer;
             return event -> {
                 String payload = serialization().serialize(event);
-                String topic = resolveTopic(event, mqProperties);
+                String topic = resolveTopic(namespace(event, mqProperties), event.getTopic(), null, concat(event));
                 String tag = Objects.isNull(event.getTag()) ? "" : event.getTag();
                 try {
-                    Message msg = new Message(event.getTopic(), tag, payload.getBytes(StandardCharsets.UTF_8));
+                    Message msg = new Message(topic, tag, payload.getBytes(StandardCharsets.UTF_8));
                     // tag header 与 broker 端 selector property name 一致（无 .，合法标识符）
                     if (Objects.nonNull(event.getTag())) {
                         msg.putUserProperty(tagHeaderKey(), event.getTag());
@@ -192,8 +210,8 @@ public class RocketMQClient implements MQClient {
                     if (Objects.nonNull(event.getTenantId())) {
                         msg.putUserProperty("ddd4jTenantId", event.getTenantId());
                     }
-                    if (StrKit.isNotEmpty(event.getMsgId())) {
-                        msg.putUserProperty(MessageHeaders.HEADER_MESSAGE_ID, event.getMsgId());
+                    for (Map.Entry<String, String> header : event.headerMap().entrySet()) {
+                        msg.putUserProperty(header.getKey(), header.getValue());
                     }
                     String key = partitionKey(event);
                     org.apache.rocketmq.client.producer.SendResult sendResult;
@@ -270,8 +288,9 @@ public class RocketMQClient implements MQClient {
         Set<String> includes = TagMatcher.findIncludes(listener.getTags());
         String subscription = includes.isEmpty() ? "*"
                 : includes.stream().collect(Collectors.joining(" || "));
-        String topic = resolveTopic(listener, mqProperties);
-        consumer.subscribe(listener.getTopic(), subscription);
+        String topic = resolveTopic(namespace(listener.getNamespace(), mqProperties),
+                listener.getTopic(), null, concat(null));
+        consumer.subscribe(topic, subscription);
         consumer.registerMessageListener((MessageListenerConcurrently) (messageExts, context) -> {
             for (MessageExt messageExt : messageExts) {
                 String payload = new String(messageExt.getBody(), StandardCharsets.UTF_8);
@@ -292,6 +311,7 @@ public class RocketMQClient implements MQClient {
                 } else if (StrKit.isEmpty(event.getMsgId()) && StrKit.isNotEmpty(messageExt.getMsgId())) {
                     event.setMsgId(messageExt.getMsgId());
                 }
+                restoreCausality(messageExt, event);
                 // 若 subscribe 没做精确过滤（含 excludes/通配），在应用层再用 TagMatcher 兜底
                 if (includes.isEmpty() && !TagMatcher.match(event.getTag(), listener.getTags())) {
                     continue;
