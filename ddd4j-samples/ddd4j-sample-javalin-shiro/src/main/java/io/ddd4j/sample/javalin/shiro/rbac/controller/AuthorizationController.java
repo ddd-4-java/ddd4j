@@ -21,6 +21,9 @@ import java.util.Collection;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.Objects;
 
@@ -303,19 +306,22 @@ public class AuthorizationController {
     /**
      * 创建用户请求。
      */
-    public final static class CreateUserRequest {
+    @Data
+    @NoArgsConstructor
+    public static class CreateUserRequest {
 
         private static final long serialVersionUID = 0L;
 
-        private final String loginId;
+        private String loginId;
 
-        private final String password;
+        @ToString.Exclude
+        private String password;
 
-        private final String displayName;
+        private String displayName;
 
-        private final String[] roles;
+        private String[] roles;
 
-        private final String[] permissions;
+        private String[] permissions;
 
         /**
          * 创建创建用户请求。
@@ -385,49 +391,25 @@ public class AuthorizationController {
             return permissions;
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            CreateUserRequest other = (CreateUserRequest) obj;
-            return Objects.equals(this.loginId, other.loginId) && Objects.equals(this.password, other.password) && Objects.equals(this.displayName, other.displayName) && Objects.equals(this.roles, other.roles) && Objects.equals(this.permissions, other.permissions);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(loginId);
-            result = 31 * result + Objects.hashCode(password);
-            result = 31 * result + Objects.hashCode(displayName);
-            result = 31 * result + Objects.hashCode(roles);
-            result = 31 * result + Objects.hashCode(permissions);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "CreateUserRequest[loginId=" + loginId + ", password=" + password + ", displayName=" + displayName + ", roles=" + roles + ", permissions=" + permissions + "]";
-        }
     }
 
     /**
      * 更新用户请求。
      */
-    public final static class UpdateUserRequest {
+    @Data
+    @NoArgsConstructor
+    public static class UpdateUserRequest {
 
         private static final long serialVersionUID = 0L;
 
-        private final String displayName;
+        private String displayName;
 
-        private final String password;
+        @ToString.Exclude
+        private String password;
 
-        private final String[] roles;
+        private String[] roles;
 
-        private final String[] permissions;
+        private String[] permissions;
 
         /**
          * 创建更新用户请求。
@@ -485,32 +467,6 @@ public class AuthorizationController {
             return permissions;
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            UpdateUserRequest other = (UpdateUserRequest) obj;
-            return Objects.equals(this.displayName, other.displayName) && Objects.equals(this.password, other.password) && Objects.equals(this.roles, other.roles) && Objects.equals(this.permissions, other.permissions);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(displayName);
-            result = 31 * result + Objects.hashCode(password);
-            result = 31 * result + Objects.hashCode(roles);
-            result = 31 * result + Objects.hashCode(permissions);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "UpdateUserRequest[displayName=" + displayName + ", password=" + password + ", roles=" + roles + ", permissions=" + permissions + "]";
-        }
     }
 
     /**

@@ -17,6 +17,9 @@ package io.ddd4j.sample.javalin.shiro.rbac.controller;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.Objects;
 
@@ -188,13 +191,16 @@ public class AuthenticationController {
     /**
      * 登录请求。
      */
-    public final static class LoginRequest {
+    @Data
+    @NoArgsConstructor
+    public static class LoginRequest {
 
         private static final long serialVersionUID = 0L;
 
-        private final String loginId;
+        private String loginId;
 
-        private final String password;
+        @ToString.Exclude
+        private String password;
 
         /**
          * 创建登录请求。
@@ -228,30 +234,6 @@ public class AuthenticationController {
             return password;
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            LoginRequest other = (LoginRequest) obj;
-            return Objects.equals(this.loginId, other.loginId) && Objects.equals(this.password, other.password);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(loginId);
-            result = 31 * result + Objects.hashCode(password);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "LoginRequest[loginId=" + loginId + ", password=" + password + "]";
-        }
     }
 
 }
