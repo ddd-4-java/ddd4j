@@ -60,6 +60,12 @@ jobs:
         run: python3 scripts/test_weekly_vulnerability_report.py -q
       - name: Create report directory
         run: mkdir -p target/dependency-audit
+      - name: Inventory all directly managed BOM releases
+        run: >-
+          python3 scripts/create_managed_bom_sbom.py
+          --pom ddd4j-dependencies/pom.xml
+          --line '${{ matrix.line }}'
+          --output target/dependency-audit/managed-bom.cdx.json
       - name: Scan Maven POMs without an NVD key
         uses: aquasecurity/trivy-action@v0.36.0
         with:
@@ -71,16 +77,38 @@ jobs:
           format: json
           output: target/dependency-audit/trivy.json
           exit-code: '1'
+      - name: Scan every managed BOM release
+        if: always()
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: sbom
+          scan-ref: target/dependency-audit/managed-bom.cdx.json
+          scanners: vuln
+          vuln-type: library
+          severity: HIGH,CRITICAL
+          format: json
+          output: target/dependency-audit/managed-bom-trivy.json
+          exit-code: '1'
+          skip-setup-trivy: true
       - name: Check scanner produced Maven findings
         if: always()
         run: >-
           python3 scripts/verify_weekly_vulnerability_report.py
           target/dependency-audit/trivy.json
+      - name: Check every managed release was scanned
+        if: always()
+        run: >-
+          python3 scripts/verify_weekly_vulnerability_report.py
+          target/dependency-audit/managed-bom-trivy.json
+          target/dependency-audit/managed-bom.cdx.json
       - name: Upload vulnerability report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: dependency-vulnerabilities-${{ matrix.line }}-${{ github.run_id }}
-          path: target/dependency-audit/trivy.json
+          path: |
+            target/dependency-audit/trivy.json
+            target/dependency-audit/managed-bom.cdx.json
+            target/dependency-audit/managed-bom-trivy.json
           if-no-files-found: warn
           retention-days: 30
