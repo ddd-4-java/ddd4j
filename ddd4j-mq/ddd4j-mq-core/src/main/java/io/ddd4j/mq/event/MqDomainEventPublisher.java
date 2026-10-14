@@ -125,6 +125,13 @@ public class MqDomainEventPublisher implements DomainEventPublisher {
         carrier.setTag(DOMAIN_EVENT_TAG);
         // 租户传递：优先领域事件的线程上下文
         carrier.setTenantId(ThreadContext.get(ContextConstants.TENANT_ID));
+        // 原生 broker header 与旧 payload 字段使用同一因果源。
+        if (Objects.nonNull(event.getCorrelationId())) {
+            carrier.setCorrelationId(event.getCorrelationId().asString());
+        }
+        if (Objects.nonNull(event.getCausationId())) {
+            carrier.setCausationId(event.getCausationId().asString());
+        }
         // 消息 ID 复用领域事件 ID
         if (Objects.nonNull(event.getEventId())) {
             carrier.setMsgId(event.getEventId().asString());
