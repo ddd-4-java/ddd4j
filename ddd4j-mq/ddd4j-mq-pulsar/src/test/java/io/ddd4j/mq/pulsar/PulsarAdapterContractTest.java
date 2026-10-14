@@ -55,6 +55,49 @@ class PulsarAdapterContractTest {
 
     @Test
     @SuppressWarnings("unchecked")
+    void taggedEventUsesSubscribedPhysicalTopic() throws Exception {
+        PulsarClient pulsarClient = mock(PulsarClient.class);
+        ProducerBuilder<byte[]> producerBuilder = mock(ProducerBuilder.class);
+        Producer<byte[]> producer = mock(Producer.class);
+        TypedMessageBuilder<byte[]> messageBuilder = mock(TypedMessageBuilder.class);
+        when(pulsarClient.newProducer(Schema.BYTES)).thenReturn(producerBuilder);
+        when(producerBuilder.topic(anyString())).thenReturn(producerBuilder);
+        when(producerBuilder.batchingMaxPublishDelay(anyLong(), any())).thenReturn(producerBuilder);
+        when(producerBuilder.create()).thenReturn(producer);
+        when(producer.newMessage()).thenReturn(messageBuilder);
+        when(messageBuilder.value(any(byte[].class))).thenReturn(messageBuilder);
+        when(messageBuilder.property(anyString(), anyString())).thenReturn(messageBuilder);
+        when(messageBuilder.sendAsync()).thenReturn(CompletableFuture.completedFuture(mock(MessageId.class)));
+
+        PulsarProperties pulsarProperties = new PulsarProperties();
+        PulsarMQClient client = new PulsarMQClient(pulsarClient, pulsarProperties);
+        MQProperties properties = new MQProperties();
+        properties.setEnabled(true);
+        properties.setBroker("pulsar");
+        client.init(Collections.<MQListener>emptyList(), properties, new MQEventSerialization() {
+            @Override
+            public <T> T serialize(Object event) {
+                return (T) "{}";
+            }
+
+            @Override
+            public <S, T> T deserialize(S value, Class<T> type) {
+                return null;
+            }
+        }, null);
+        MQEvent event = new MQEvent();
+        event.setTopic("orders");
+        event.setTag("priority");
+        event.publish();
+
+        verify(producerBuilder).topic(pulsarProperties.physicalTopic("orders", null));
+        verify(producerBuilder, never()).topic(pulsarProperties.physicalTopic("orders", "priority"));
+        verify(messageBuilder).property(client.tagHeaderKey(), "priority");
+        client.close();
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
     void shouldPropagateBrokerSendFailureToPublisher() throws Exception {
         PulsarClient pulsarClient = mock(PulsarClient.class);
         ProducerBuilder<byte[]> producerBuilder = mock(ProducerBuilder.class);

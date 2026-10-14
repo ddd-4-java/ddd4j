@@ -179,7 +179,8 @@ public class PulsarMQClient implements MQClient {
                 try {
                     String topic = event.getTopic();
                     String tag = event.getTag();
-                    String physical = properties.physicalTopic(topic, tag);
+                    // 消费者订阅逻辑 topic；tag 通过消息属性过滤。
+                    String physical = properties.physicalTopic(topic, null);
                     Producer<byte[]> p = producer(physical);
                     TypedMessageBuilder<byte[]> builder = p.newMessage()
                             .value(serialization().serialize(event).toString().getBytes(StandardCharsets.UTF_8))
