@@ -14,7 +14,9 @@
  */
 package io.ddd4j.mq.rocketmq;
 
+import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.BrokerType;
+import io.ddd4j.mq.delivery.MQDeliveryHeaders;
 import io.ddd4j.mq.message.Acknowledgment;
 import org.apache.rocketmq.common.message.MessageExt;
 
@@ -62,7 +64,10 @@ public class RocketAcknowledgment implements Acknowledgment {
 
     @Override
     public String correlationId() {
-        return message.getKeys();
+        String correlationId = message.getUserProperty(MQDeliveryHeaders.CORRELATION_ID);
+        return StrKit.isNotEmpty(correlationId)
+                ? correlationId
+                : message.getKeys();
     }
 
     @Override
