@@ -63,6 +63,6 @@ cloud-agents当前没有直接导入上述Cloud异常或旧ApiCode，但它依�
 
 - 新 ddd4j 使用同步后的 CodeGraph读取 ApiCode、CustomApiCode、两种Biz异常与DefaultWebExceptionTranslator。
 - ddd4j-cloud有CodeGraph索引，读取了两个Cloud异常的完整当前源码。
-- 旧BMGW ddd4j和cloud-agents没有CodeGraph索引，遵循项目指令未初始化；受限文本搜索未发现直接异常类型匹配。
+- 旧组件库 ddd4j和cloud-agents没有CodeGraph索引，遵循项目指令未初始化；受限文本搜索未发现直接异常类型匹配。
 - 临时源位于 /tmp/ddd4j-cloud-exception-probe.p5MtZA，仅用于编译与运行，不属于交付源码。
 - 当前没有修改Cloud、没有启动真实WebMVC/WebFlux应用，也没有提交、推送或发布。

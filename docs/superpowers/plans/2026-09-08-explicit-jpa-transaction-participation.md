@@ -27,7 +27,7 @@
 - 版本只能在各线 ddd4j-dependencies/pom.xml 定义；具体模块引用管理项或属性，description 保持一行。
 - 不跳过 Enforcer；未运行或 skipped 的测试不得标为通过。
 - 当前工作区已有大量未提交修复，必须保留。仅修改任务分配文件，不提交、推送、发布或清理其他任务文件。
-- 三个根为 `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j`、同级 `ddd4j-v2.0.x`、`ddd4j-v3.0.x`。
+- 三个根为 `/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j`、同级 `ddd4j-v2.0.x`、`ddd4j-v3.0.x`。
 - 下面的相对路径均在三个根分别应用，除明确限定的 Quarkus 测试。
 
 ## 验证命令约定
@@ -44,7 +44,7 @@ JAVA_HOME=$(/usr/libexec/java_home -v 1.8) mvn -B -ntp -Pparity-verification \
 ### Task 1: RESOURCE_LOCAL 显式参与入口
 
 **Execution context:** 规格位于本计划同级 `../specs/2026-09-08-explicit-jpa-transaction-participation-design.md`，用户已批准。
-工作根为 `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j` 及同级 `ddd4j-v2.0.x`、`ddd4j-v3.0.x`；
+工作根为 `/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j` 及同级 `ddd4j-v2.0.x`、`ddd4j-v3.0.x`；
 分别使用 JDK8 / Maven、JDK17 / Maven、JDK21 / ./mvnw。不得切换分支、创建 worktree、提交、推送或覆盖已有修改。
 仅拥有本任务列出的三线文件；所有新增 null 判断使用导入的 Objects，日志如需要使用 SLF4J，不新增 provider。
 

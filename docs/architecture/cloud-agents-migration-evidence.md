@@ -270,7 +270,7 @@ BOM 工作树已按实际聚合树补齐非 sample JAR 管理项；三个独立�
 ## 源码定位
 
 - 旧框架：
-  `/Users/wandl/workspaces/workspace-bmgw/codeup/ddd4j/base-core/src/main/java/com/dddframework/core/context/ThreadContext.java`
+  `/Users/dev//workspaces/workspace-legacy/legacy/ddd4j/base-core/src/main/java/com/dddframework/core/context/ThreadContext.java`
 - 应用异常策略：cloud-agents-common-infra 的 `AgentsExceptionHandler.java`
 - 应用租户读取：cloud-agents-common-app 的 `BaseAppService.java`
 - 消费入口：cloud-agents-aigc-infra 的 `ImageGenSubmitMqConsumer.java`
@@ -347,7 +347,7 @@ Quarkus BOM、Quarkus Maven Plugin、Jandex Plugin 的三个显式版本已删�
 
 ### BOM 与企业 parent
 
-cloud-agents 根 POM 已继承 com.bmgw:bmgw-cloud-parent，迁移不能同时继承 ddd4j-parent。应保留企业构建约定，审计导入 ddd4j
+cloud-agents 根 POM 已继承 com.legacy:legacy-cloud-parent，迁移不能同时继承 ddd4j-parent。应保留企业构建约定，审计导入 ddd4j
 BOM 后的版本优先级，再显式选择框架 starter。ddd4j-bom 负责版本管理，不会自动安装运行能力；ddd4j-parent 还包含实际
 dependencies 与构建配置，不能认为 import BOM 等价于继承 parent。
 
@@ -809,6 +809,6 @@ EventChunkReader、broker confirm/持久确认或 cloud-agents 迁移；本次�
 
 三条ddd4j线已完成TrueLicense4.1.4迁移，但框架消费侧尚未闭合。只读维护线审计确认：Boot13线
 仍重复引入1.33并未透传signatureAlgorithm；Quarkus3.3/4.0使用独立extension-license却仍带
-无用1.33；Javalin6.7/7.1/7.2无旧依赖，Cloud无直接许可证集成。旧BMGW ddd4j和cloud-agents
+无用1.33；Javalin6.7/7.1/7.2无旧依赖，Cloud无直接许可证集成。旧组件库 ddd4j和cloud-agents
 当前也没有许可证相关源码/POM/配置匹配，所以这不是替代旧系统的行为对等阻塞，而是新能力的
 依赖合规阻塞。完整证据见 `docs/migrations/truelicense4-framework-consumer-audit.md`。

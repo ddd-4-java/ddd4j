@@ -96,20 +96,20 @@ Testcontainers 报 `Could not find a valid Docker environment`，`/var/run/docke
 
 ## 文件清单（均绝对路径）
 
-- `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-data/ddd4j-data-event-store-jpa/pom.xml`
+- `/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-data/ddd4j-data-event-store-jpa/pom.xml`
 -
 
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-data/ddd4j-data-event-store-jpa/src/main/java/io/ddd4j/data/eventstore/jpa/JpaEventStore.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-data/ddd4j-data-event-store-jpa/src/main/java/io/ddd4j/data/eventstore/jpa/JpaEventStore.java`
 -
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/eventstore/jpa/JpaEventStoreTest.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/eventstore/jpa/JpaEventStoreTest.java`
 -
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/eventstore/jpa/TestApp.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/eventstore/jpa/TestApp.java`
 -
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/eventstore/jpa/JpaEventStoreH2IT.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/eventstore/jpa/JpaEventStoreH2IT.java`
 -
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/eventstore/jpa/JpaEventStorePostgresIT.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/eventstore/jpa/JpaEventStorePostgresIT.java`
 -
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-data/ddd4j-data-event-store-jpa/src/test/resources/application-test.yml`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-data/ddd4j-data-event-store-jpa/src/test/resources/application-test.yml`
 
 ## Micro-fix（2026-08-24，pom 注释失实纠偏）
 

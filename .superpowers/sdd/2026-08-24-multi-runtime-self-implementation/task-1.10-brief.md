@@ -73,7 +73,7 @@ decisions now grounded in the completed reference series 01-08** — cite the su
 ## Commit
 
 ```bash
-cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add docs/adr/
 git commit -m "docs(adr): ADR 模板 + ADR-0001~0005（参考系列 01-08 证据落地）"
 ```

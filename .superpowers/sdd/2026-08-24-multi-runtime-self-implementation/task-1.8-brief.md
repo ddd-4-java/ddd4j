@@ -15,7 +15,7 @@ as the reference for stage 7's runtime schedulers.
 
 -
 
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/cqrs-4-java/springboot/src/main/java/org/fuin/cqrs4j/springboot/view/QryProjectionService.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/cqrs-4-java/springboot/src/main/java/org/fuin/cqrs4j/springboot/view/QryProjectionService.java`
 (reset/read/updateProjectionPosition)
 
 - `.../view/QryProjectionPosition.java` (JPA entity)
@@ -55,7 +55,7 @@ Content requirements:
 ## Commit
 
 ```bash
-cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add docs/reference/fuin-api-patterns/07-cqrs-projection.md
 git commit -m "docs(reference): 07-cqrs-projection API 模式参考（ddd4j-core 已对齐）"
 ```

@@ -8,7 +8,7 @@
 - [ ] **Step 1: 定位文档引用**
 
 Run:
-`grep -rn "fuin\|org\.fuin" /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/docs/ /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/README.md`
+`grep -rn "fuin\|org\.fuin" /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/docs/ /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/README.md`
 
 Expected: 列出所有文档引用
 
@@ -20,7 +20,7 @@ Expected: 列出所有文档引用
 - [ ] **Step 3: 提交**
 
 ```bash
-cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add docs/ README.md
 git commit -m "docs: 删除 fuin 依赖表述，标注为外部参考链接"
 ```

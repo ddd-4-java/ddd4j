@@ -50,7 +50,7 @@ class EventHandlerTest {
 - [ ] **Step 2: 跑测试确认失败**
 
 Run:
-`cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core test -Dtest=EventHandlerTest`
+`cd /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core test -Dtest=EventHandlerTest`
 
 Expected: FAIL with "cannot find symbol class EventHandler"
 
@@ -105,14 +105,14 @@ public @interface EventHandler {
 - [ ] **Step 4: 跑测试确认通过**
 
 Run:
-`cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core test -Dtest=EventHandlerTest`
+`cd /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core test -Dtest=EventHandlerTest`
 
 Expected: PASS
 
 - [ ] **Step 5: 提交**
 
 ```bash
-cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/EventHandler.java
 git add ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/EventHandlerTest.java
 git commit -m "feat(core): 新增 @EventHandler 注解"
@@ -141,7 +141,7 @@ git commit -m "feat(core): 新增 @EventHandler 注解"
 - TDD is mandatory: capture RED (compile failure counts as RED for a new class — use
   `./mvnw -pl ddd4j-core test-compile` output as the RED evidence) then GREEN evidence in your report.
 - Commit message: `feat(core): 新增 @EventHandler 注解`
-- Working dir: /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j; branch feature/2.0.x; latest commit
+- Working dir: /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j; branch feature/2.0.x; latest commit
   is the post-rebase HEAD (36809966 or later — check git log).
 
 ## Out of scope

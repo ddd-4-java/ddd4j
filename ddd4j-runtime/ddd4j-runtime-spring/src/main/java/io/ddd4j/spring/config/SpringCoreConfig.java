@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  * <p>
  * 注册 {@link SpringContext} 为 Spring Bean，使其不依赖 web 模块也能激活。
  *
- * @author wandl
+ * @author ddd4j
  * @since 1.0.x
  */
 @Configuration(proxyBeanMethods = false)

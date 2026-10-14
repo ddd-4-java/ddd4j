@@ -24,11 +24,11 @@ Primary (fuin `ddd-4-java/esc`):
 
 -
 
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/esc/src/main/java/org/fuin/ddd4j/esc/EventStoreRepository.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/esc/src/main/java/org/fuin/ddd4j/esc/EventStoreRepository.java`
 -
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/esc/src/main/java/org/fuin/ddd4j/esc/AggregateStreamId.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/esc/src/main/java/org/fuin/ddd4j/esc/AggregateStreamId.java`
 -
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/esc/src/main/java/org/fuin/ddd4j/esc/package-info.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/esc/src/main/java/org/fuin/ddd4j/esc/package-info.java`
 
 - (Also note: fuin's `EventStore` interface comes from external `org.fuin.esc:esc-api:0.9.0` — outside ddd-4-java
   proper; Task 1.6 covers that)
@@ -37,11 +37,11 @@ Reference (ddd4j-core existing):
 
 -
 
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/ddd/repository/EventSourcingRepository.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/ddd/repository/EventSourcingRepository.java`
 -
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/ddd/repository/Repository.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/ddd/repository/Repository.java`
 -
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/AggregateVersion.java`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/AggregateVersion.java`
 
 ## Document structure (mandatory 6 sections — same template as 1.2/1.3)
 
@@ -129,14 +129,14 @@ Use full-width: `（`、`）`、`，`、`。`、`：`、`；`. Keep English code
 After writing the file, single commit:
 
 ```bash
-cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add docs/reference/fuin-api-patterns/04-event-sourcing-repository.md
 git commit -m "docs(reference): 04-event-sourcing-repository API 模式参考"
 ```
 
 ## Context
 
-- Working directory: `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j`
+- Working directory: `/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j`
 - Branch: `feature/2.0.x`
 - Latest commit: `9b8cfcf9` (Task 1.4 — 03-domain-event.md)
 - ddd4j-build is unblocked
@@ -169,7 +169,7 @@ different), **surface that as a Concern in DONE_WITH_CONCERNS** rather than prop
 ## Report Format
 
 Write full report to:
-`/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/.superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.5-report.md`
+`/Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/.superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.5-report.md`
 
 - File path + line count
 - Section count (6) + section titles

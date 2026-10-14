@@ -52,7 +52,7 @@ import java.util.function.Function;
  * wrapper.eq(column, "alice");
  * }</pre>
  *
- * @author wandl
+ * @author ddd4j
  * @since 2.0.x
  */
 @SuppressWarnings("unchecked")

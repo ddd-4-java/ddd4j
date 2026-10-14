@@ -6,7 +6,7 @@
 建立同一品牌家族下的六个可辨识图标。封面图和内容图保持现有构图质量，本轮只重做 Logo，并定义后续
 在封面与内容图中替换 Logo、主题光和强调部件的规则。
 
-参考 `/Users/wandl/workspaces/workspace-github/_org-readmes/LOGO_SYSTEM.md` 的 Bright Aurora 方向：明亮背景、
+参考 `/Users/dev//workspaces/workspace-github/_org-readmes/LOGO_SYSTEM.md` 的 Bright Aurora 方向：明亮背景、
 等距立方体、清晰技术符号、头像安全区。不得复制已有单个组织 Logo；本系列必须形成自己的组件层级。
 
 ## 品牌架构

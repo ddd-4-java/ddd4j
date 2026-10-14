@@ -83,7 +83,7 @@ class AggregateRootApplyTest {
 - [ ] **Step 2: 跑测试确认失败**
 
 Run:
-`cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core test -Dtest=AggregateRootApplyTest`
+`cd /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core test -Dtest=AggregateRootApplyTest`
 
 Expected: FAIL with "cannot find symbol method apply (DomainEvent)"
 
@@ -205,20 +205,20 @@ Modify `AggregateRoot.java`，添加以下代码（在 `protected void registerE
 - [ ] **Step 4: 跑测试确认通过**
 
 Run:
-`cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core test -Dtest=AggregateRootApplyTest`
+`cd /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core test -Dtest=AggregateRootApplyTest`
 
 Expected: PASS
 
 - [ ] **Step 5: 跑全量测试确保无回归**
 
-Run: `cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core test`
+Run: `cd /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core test`
 
 Expected: 全部测试通过 + ArchUnit CoreIndependenceTest 通过
 
 - [ ] **Step 6: 提交**
 
 ```bash
-cd /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/dev//workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add ddd4j-core/src/main/java/io/ddd4j/core/ddd/model/AggregateRoot.java
 git add ddd4j-core/src/test/java/io/ddd4j/core/ddd/model/AggregateRootApplyTest.java
 git commit -m "feat(core): AggregateRoot.apply/loadFromHistory 反射实现"

@@ -122,9 +122,9 @@ Expected: PASS。
 - [ ] **Step 1: 在独立1.0.x checkout生成真实报告**【外部阻塞: 需 JDK8 专用 JAVA_HOME 与独立 1.0.x checkout 生成真实报告】
 
 ```bash
-JAVA_HOME=/Users/wandl/Library/Java/JavaVirtualMachines/corretto-1.8.0_504/Contents/Home \
+JAVA_HOME=/Users/dev//Library/Java/JavaVirtualMachines/corretto-1.8.0_504/Contents/Home \
   ./scripts/generate-sbom.sh
-JAVA_HOME=/Users/wandl/Library/Java/JavaVirtualMachines/corretto-1.8.0_504/Contents/Home \
+JAVA_HOME=/Users/dev//Library/Java/JavaVirtualMachines/corretto-1.8.0_504/Contents/Home \
   ./scripts/generate-license-report.sh
 ```
 
@@ -147,7 +147,7 @@ Expected: PASS，且 violations文件为空。
 
 - [ ] **Step 5: 完整JDK8回归**【外部阻塞: 需 JDK8 环境执行 mvnw clean verify（本任务禁跑 Maven）】
 
-Run: `JAVA_HOME=/Users/wandl/Library/Java/JavaVirtualMachines/corretto-1.8.0_504/Contents/Home ./mvnw clean verify`
+Run: `JAVA_HOME=/Users/dev//Library/Java/JavaVirtualMachines/corretto-1.8.0_504/Contents/Home ./mvnw clean verify`
 
 Expected: 103/103模块成功，零测试失败/错误/跳过。
 
@@ -171,13 +171,13 @@ Expected: 103/103模块成功，零测试失败/错误/跳过。
 - [ ] **Step 4: 执行许可证门禁**【外部阻塞: 需 JDK17 与 2.0.x 线 checkout】
 
 Run:
-`JAVA_HOME=/Users/wandl/Library/Java/JavaVirtualMachines/corretto-17.0.20.1/Contents/Home ./scripts/verify-license-policy.sh`
+`JAVA_HOME=/Users/dev//Library/Java/JavaVirtualMachines/corretto-17.0.20.1/Contents/Home ./scripts/verify-license-policy.sh`
 
 Expected: PASS。
 
 - [ ] **Step 5: 完整JDK17回归**【外部阻塞: 需 JDK17 环境执行 mvnw clean verify（本任务禁跑 Maven）】
 
-Run: `JAVA_HOME=/Users/wandl/Library/Java/JavaVirtualMachines/corretto-17.0.20.1/Contents/Home ./mvnw clean verify`
+Run: `JAVA_HOME=/Users/dev//Library/Java/JavaVirtualMachines/corretto-17.0.20.1/Contents/Home ./mvnw clean verify`
 
 Expected: 121/121模块成功，零测试失败/错误/跳过。
 
@@ -209,7 +209,7 @@ Expected: 全部PASS。
 
 - [ ] **Step 5: 完整JDK21/Maven4回归**【外部阻塞: 需 JDK21/Maven4 环境执行（本任务禁跑 Maven）】
 
-Run: `JAVA_HOME=/Users/wandl/Library/Java/JavaVirtualMachines/ms-21.0.12.1/Contents/Home ./mvnw clean verify`
+Run: `JAVA_HOME=/Users/dev//Library/Java/JavaVirtualMachines/ms-21.0.12.1/Contents/Home ./mvnw clean verify`
 
 Expected: 121/121模块成功，零测试失败/错误/跳过，Resolver file-lock为0。
 
