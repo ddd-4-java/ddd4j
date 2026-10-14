@@ -14,6 +14,12 @@
  */
 package io.ddd4j.core.cqrs.readmodel;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Objects;
+
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -54,11 +60,49 @@ class TypedEventDispatcherTest {
         assertThrows(IllegalArgumentException.class, () -> dispatcher.dispatch("person.created", "wrong"));
     }
 
-    record PersonCreatedEvent(String id) implements TypedEvent {
+    final static class PersonCreatedEvent implements TypedEvent {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String id;
 
         @Override
         public String getEventType() {
             return "person.created";
+        }
+
+        @JsonCreator()
+        PersonCreatedEvent(@JsonProperty("id") String id) {
+            this.id = id;
+        }
+
+        @JsonProperty("id")
+        public String id() {
+            return id;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            PersonCreatedEvent other = (PersonCreatedEvent) obj;
+            return Objects.equals(this.id, other.id);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(id);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "PersonCreatedEvent[id=" + id + "]";
         }
     }
 

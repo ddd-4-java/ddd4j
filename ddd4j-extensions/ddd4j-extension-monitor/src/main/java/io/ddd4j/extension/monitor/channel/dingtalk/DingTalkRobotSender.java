@@ -26,7 +26,7 @@ import lombok.Getter;
 public class DingTalkRobotSender implements Sender {
 
     /**
-     *  实际 HTTP 客户端暴露（仅高级场景使用，例如绕过签名直接调试）。
+     * 实际 HTTP 客户端暴露（仅高级场景使用，例如绕过签名直接调试）。
      */
     private final DingTalkClient client;
 

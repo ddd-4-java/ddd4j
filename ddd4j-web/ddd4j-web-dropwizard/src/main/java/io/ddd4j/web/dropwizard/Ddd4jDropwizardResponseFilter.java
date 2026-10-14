@@ -29,6 +29,15 @@ import java.util.Objects;
  */
 public final class Ddd4jDropwizardResponseFilter implements ContainerResponseFilter {
 
+    private static void closeScope(Object scope) {
+        if (scope instanceof AutoCloseable closeable) {
+            try {
+                closeable.close();
+            } catch (Throwable ignored) {
+            }
+        }
+    }
+
     /**
      * 过滤数据。
      * @param request 请求对象。
@@ -57,15 +66,6 @@ public final class Ddd4jDropwizardResponseFilter implements ContainerResponseFil
             closeScope(scope);
             request.removeProperty(Ddd4jDropwizardRequestFilter.OTEL_SPAN_PROPERTY);
             request.removeProperty(Ddd4jDropwizardRequestFilter.OTEL_SCOPE_PROPERTY);
-        }
-    }
-
-    private static void closeScope(Object scope) {
-        if (scope instanceof AutoCloseable closeable) {
-            try {
-                closeable.close();
-            } catch (Throwable ignored) {
-            }
         }
     }
 }

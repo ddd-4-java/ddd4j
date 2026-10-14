@@ -14,6 +14,10 @@
  */
 package io.ddd4j.sample.javalin.shiro.rbac.controller;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import java.util.Objects;
 
 import com.google.inject.Inject;
@@ -37,7 +41,7 @@ import java.util.*;
  * <p>本控制器与 {@code ddd4j-sample-javalin-satoken} 的 AuthenticationController 业务代码<b>完全一致</b>，
  * 仅 HTTP 适配层（Javalin lambda）适配不同框架。
  *
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @author ddd4j
  */
 public class AuthenticationController {
 
@@ -58,10 +62,10 @@ public class AuthenticationController {
         try {
             user = rbacService.authenticate(req.loginId(), req.password());
         } catch (NoSuchElementException e) {
-            ctx.status(401).json(R.fail(401, "user not found"));
+            ctx.status(401).json(R.of(401, "user not found"));
             return;
         } catch (IllegalArgumentException e) {
-            ctx.status(401).json(R.fail(401, "invalid credentials"));
+            ctx.status(401).json(R.of(401, "invalid credentials"));
             return;
         }
 
@@ -168,7 +172,54 @@ public class AuthenticationController {
      * @param loginId 登录标识（账号）
      * @param password 登录密码
      */
-    public record LoginRequest(String loginId, String password) {
+    public final static class LoginRequest {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String loginId;
+
+        private final String password;
+
+        @JsonCreator()
+        public LoginRequest(@JsonProperty("loginId") String loginId, @JsonProperty("password") String password) {
+            this.loginId = loginId;
+            this.password = password;
+        }
+
+        @JsonProperty("loginId")
+        public String loginId() {
+            return loginId;
+        }
+
+        @JsonProperty("password")
+        public String password() {
+            return password;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            LoginRequest other = (LoginRequest) obj;
+            return Objects.equals(this.loginId, other.loginId) && Objects.equals(this.password, other.password);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(loginId);
+            result = 31 * result + Objects.hashCode(password);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "LoginRequest[loginId=" + loginId + ", password=" + password + "]";
+        }
     }
 
 }

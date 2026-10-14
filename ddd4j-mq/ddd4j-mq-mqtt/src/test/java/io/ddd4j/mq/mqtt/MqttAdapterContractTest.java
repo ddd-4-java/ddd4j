@@ -13,6 +13,9 @@
  * limitations under the License.
  */
 package io.ddd4j.mq.mqtt;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.mock;
 
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.mq.MQProperties;
@@ -31,15 +34,13 @@ import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentCaptor.forClass;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.*;
 
 /**
  * 类型说明。
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @author ddd4j
  * @since 3.0.x
  */
 class MqttAdapterContractTest {
@@ -79,7 +80,12 @@ class MqttAdapterContractTest {
              * @param event 事件消息。
              * @return 结果值。
              */
-            @Override @SuppressWarnings("unchecked") public <T> T serialize(Object event) { return (T) "{}"; }
+            @Override
+            @SuppressWarnings("unchecked")
+            public <T> T serialize(Object event) {
+                return (T) "{}";
+            }
+
             /**
              * deserialize() 方法。
              * @param <S> 类型参数。
@@ -88,7 +94,8 @@ class MqttAdapterContractTest {
              * @param type 目标类型。
              * @return 结果值。
              */
-            @Override public <S, T> T deserialize(S value, Class<T> type) {
+            @Override
+            public <S, T> T deserialize(S value, Class<T> type) {
                 MQEvent event = new MQEvent();
                 event.setTopic("orders");
                 return type.cast(event);

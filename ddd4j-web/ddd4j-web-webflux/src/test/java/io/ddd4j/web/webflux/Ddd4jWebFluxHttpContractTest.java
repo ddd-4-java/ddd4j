@@ -13,8 +13,17 @@
  * limitations under the License.
  */
 package io.ddd4j.web.webflux;
+import java.util.NoSuchElementException;
+import java.util.Map;
+import java.util.List;
+import java.util.LinkedHashMap;
 
-import tools.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Objects;
+
 import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.auth.AuthPrincipal;
@@ -23,13 +32,13 @@ import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.subject.Subject;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
-import io.ddd4j.web.core.idempotency.CacheIdempotencyGuard;
-import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
 import io.ddd4j.web.core.auth.WebAccessPolicy;
-import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.web.core.context.WebRequestContextFactory;
 import io.ddd4j.web.core.context.WebRequestLifecycle;
+import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
 import io.ddd4j.web.core.error.WebStatusException;
+import io.ddd4j.web.core.idempotency.CacheIdempotencyGuard;
+import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.web.testkit.AbstractWebContractTest;
 import io.ddd4j.web.testkit.WebContractClient;
 import io.ddd4j.web.testkit.WebContractPaths;
@@ -54,26 +63,87 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.config.EnableWebFlux;
 import reactor.core.publisher.Mono;
+import tools.jackson.databind.ObjectMapper;
 
 import java.nio.charset.StandardCharsets;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Objects;
+import java.util.*;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
  * 类型说明。
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @author ddd4j
  * @since 3.0.x
  */
 class Ddd4jWebFluxHttpContractTest extends AbstractWebContractTest {
 
     private AnnotationConfigApplicationContext applicationContext;
     private WebContractClient contractClient;
+
+    private final static class WebFluxContractClient implements WebContractClient {
+
+        private static final long serialVersionUID = 0L;
+
+        private final WebTestClient webTestClient;
+
+        /**
+         * request() 方法。
+         * @param method 被调用的方法。
+         * @param path 路径。
+         * @param headers 消息头。
+         * @param body 字符串参数。
+         * @return 方法执行结果。
+         */
+        @Override
+        public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
+            WebTestClient.RequestBodySpec request = webTestClient.method(HttpMethod.valueOf(method)).uri(path);
+            headers.forEach(request::header);
+            if (StringUtils.hasLength(body)) {
+                request.contentType(MediaType.APPLICATION_JSON).bodyValue(body);
+            }
+            EntityExchangeResult<byte[]> result = request.exchange().expectBody().returnResult();
+            Map<String, List<String>> responseHeaders = new LinkedHashMap<>();
+            result.getResponseHeaders().forEach(responseHeaders::put);
+            byte[] responseBody = result.getResponseBody();
+            String responseText = Objects.isNull(responseBody) ? "" : new String(responseBody, StandardCharsets.UTF_8);
+            return new WebContractResponse(result.getStatus().value(), responseHeaders, responseText);
+        }
+
+        @JsonCreator()
+        private WebFluxContractClient(@JsonProperty("webTestClient") WebTestClient webTestClient) {
+            this.webTestClient = webTestClient;
+        }
+
+        @JsonProperty("webTestClient")
+        public WebTestClient webTestClient() {
+            return webTestClient;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            WebFluxContractClient other = (WebFluxContractClient) obj;
+            return Objects.equals(this.webTestClient, other.webTestClient);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(webTestClient);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "WebFluxContractClient[webTestClient=" + webTestClient + "]";
+        }
+    }
 
     @BeforeEach
     void setUp() {
@@ -122,7 +192,7 @@ class Ddd4jWebFluxHttpContractTest extends AbstractWebContractTest {
 
     /**
      * 类型说明。
-     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @author ddd4j
      * @since 3.0.x
      */
     @Configuration(proxyBeanMethods = false)
@@ -152,7 +222,7 @@ class Ddd4jWebFluxHttpContractTest extends AbstractWebContractTest {
 
     /**
      * 类型说明。
-     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @author ddd4j
      * @since 3.0.x
      */
     @RestController
@@ -197,33 +267,6 @@ class Ddd4jWebFluxHttpContractTest extends AbstractWebContractTest {
                 default -> new RuntimeException("internal failure");
             };
             return Mono.error(throwable);
-        }
-    }
-
-    private record WebFluxContractClient(WebTestClient webTestClient) implements WebContractClient {
-
-        /**
-         * request() 方法。
-         * @param method 被调用的方法。
-         * @param path 路径。
-         * @param headers 消息头。
-         * @param body 字符串参数。
-         * @return 方法执行结果。
-         */
-        @Override
-        public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
-            WebTestClient.RequestBodySpec request = webTestClient.method(HttpMethod.valueOf(method)).uri(path);
-            headers.forEach(request::header);
-            if (StringUtils.hasLength(body)) {
-                request.contentType(MediaType.APPLICATION_JSON).bodyValue(body);
-            }
-            EntityExchangeResult<byte[]> result = request.exchange().expectBody().returnResult();
-            Map<String, List<String>> responseHeaders = new LinkedHashMap<>();
-            result.getResponseHeaders().forEach(responseHeaders::put);
-            byte[] responseBody = result.getResponseBody();
-            String responseText = Objects.isNull(responseBody)
-                    ? "" : new String(responseBody, StandardCharsets.UTF_8);
-            return new WebContractResponse(result.getStatus().value(), responseHeaders, responseText);
         }
     }
 }

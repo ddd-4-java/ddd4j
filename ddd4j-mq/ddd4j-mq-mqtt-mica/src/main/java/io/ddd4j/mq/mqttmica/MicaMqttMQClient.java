@@ -19,15 +19,15 @@ import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
-import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.lifecycle.MQClientLifecycle;
 import io.ddd4j.mq.lifecycle.MQStartupStatus;
+import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.mica.mqtt.codec.MqttQoS;
-import org.dromara.mica.mqtt.core.client.MqttClient;
 import org.dromara.mica.mqtt.codec.message.MqttPublishMessage;
+import org.dromara.mica.mqtt.core.client.MqttClient;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
@@ -73,18 +73,34 @@ public class MicaMqttMQClient implements MQClient {
         this.properties = Objects.requireNonNull(properties, "properties");
     }
 
+    static String messageId(MqttPublishMessage message) {
+        String messageId = message.getProperties().getUserPropertiesMap().get(MessageHeaders.HEADER_MESSAGE_ID);
+        return StrKit.isNotEmpty(messageId)
+                ? messageId
+                : message.getProperties().getUserPropertiesMap().get(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
+    }
+
     @Override
     public String impl() {
         return "mqtt-mica";
     }
 
-    @Override public MQClientLifecycle lifecycle() { return lifecycle; }
-    @Override public MQStartupStatus startupStatus() { return startupStatus; }
+    @Override
+    public MQClientLifecycle lifecycle() {
+        return lifecycle;
+    }
+
+    @Override
+    public MQStartupStatus startupStatus() {
+        return startupStatus;
+    }
 
     @Override
     public String defaultConcat() {
         return "/";
     }
+
+    // ========================= 生产者 =========================
 
     /**
      * mica-mqtt 无原生 broker-side tag selector，仅 topic 通配 → 强制应用层 {@link TagMatcher} 过滤。
@@ -94,7 +110,7 @@ public class MicaMqttMQClient implements MQClient {
         return false;
     }
 
-    // ========================= 生产者 =========================
+    // ========================= 消费者 =========================
 
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
@@ -124,7 +140,7 @@ public class MicaMqttMQClient implements MQClient {
         };
     }
 
-    // ========================= 消费者 =========================
+    // ========================= 连接管理 =========================
 
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
@@ -169,8 +185,6 @@ public class MicaMqttMQClient implements MQClient {
         return true;
     }
 
-    // ========================= 连接管理 =========================
-
     /**
      * QoS：注入原生客户端时取默认 QoS = QOS1，否则读 properties。
      */
@@ -201,13 +215,10 @@ public class MicaMqttMQClient implements MQClient {
 
     @Override
     public void close() {
-        try { lifecycle.close(); } finally { startupStatus.stopped(); }
-    }
-
-    static String messageId(MqttPublishMessage message) {
-        String messageId = message.getProperties().getUserPropertiesMap().get(MessageHeaders.HEADER_MESSAGE_ID);
-        return StrKit.isNotEmpty(messageId)
-                ? messageId
-                : message.getProperties().getUserPropertiesMap().get(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
+        try {
+            lifecycle.close();
+        } finally {
+            startupStatus.stopped();
+        }
     }
 }

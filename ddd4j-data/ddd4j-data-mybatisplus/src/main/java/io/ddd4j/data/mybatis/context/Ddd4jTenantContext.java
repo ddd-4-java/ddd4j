@@ -32,26 +32,21 @@ public class Ddd4jTenantContext {
      * @param tenantId 租户标识。
      */
     public void setCurrentTenantId(Object tenantId) {
-		if (Objects.isNull(tenantId)) {
-			clear();
-			return;
-		/**
-		 * }
-		ThreadContext.set() 方法。
-		 * @param ContextConstants.TENANT_ID ContextConstants.TENANT_ID 参数。
-		 * @param tenantId 租户标识。
-		 */
-		}
-		ThreadContext.set(ContextConstants.TENANT_ID, tenantId);
-	}
+        if (Objects.isNull(tenantId)) {
+            clear();
+            return;
+        }
+        // ThreadContext.set() 方法。
+        ThreadContext.set(ContextConstants.TENANT_ID, tenantId);
+    }
 
     /**
      * 获取值。
      * @return 结果对象。
      */
     public Object getCurrentTenantId() {
-		return ThreadContext.get(ContextConstants.TENANT_ID);
-	}
+        return ThreadContext.get(ContextConstants.TENANT_ID);
+    }
 
     /**
      * 清空数据。

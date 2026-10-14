@@ -14,6 +14,10 @@
  */
 package io.ddd4j.data.event.store.jpa;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import com.fasterxml.jackson.annotation.JsonValue;
 import tools.jackson.databind.json.JsonMapper;
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
@@ -27,6 +31,7 @@ import io.ddd4j.core.ddd.event.EventId;
 import io.ddd4j.core.ddd.event.StringEntityType;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -128,8 +133,8 @@ public class JpaEventStore implements EventStore {
      * @return 仅参与当前活动事务的事件存储
      */
     public static JpaEventStore participating(EntityManager entityManager,
-                                               JpaStoredEventRepository repository,
-                                               EventPayloadSerializer serializer) {
+                                              JpaStoredEventRepository repository,
+                                              EventPayloadSerializer serializer) {
         return new JpaEventStore(entityManager, repository, serializer, TransactionMode.PARTICIPATING);
     }
 
@@ -160,9 +165,9 @@ public class JpaEventStore implements EventStore {
      * @return 仅参与当前容器管理事务的事件存储
      */
     public static JpaEventStore participatingManaged(EntityManager entityManager,
-                                                      JpaStoredEventRepository repository,
-                                                      EventPayloadSerializer serializer,
-                                                      Runnable markRollbackOnly) {
+                                                     JpaStoredEventRepository repository,
+                                                     EventPayloadSerializer serializer,
+                                                     Runnable markRollbackOnly) {
         Objects.requireNonNull(entityManager, "entityManager must not be null");
         Objects.requireNonNull(repository, "repository must not be null");
         Objects.requireNonNull(serializer, "serializer must not be null");
@@ -254,10 +259,10 @@ public class JpaEventStore implements EventStore {
         Objects.requireNonNull(aggregateType, "aggregateType must not be null");
         Objects.requireNonNull(aggregateId, "aggregateId must not be null");
         return executeInTransaction(() -> repository.findByAggregateTypeAndAggregateIdOrderByVersionAsc(
-                            aggregateType, aggregateId.asString())
-                    .stream()
-                    .map(this::toStoredEvent)
-                    .toList());
+                        aggregateType, aggregateId.asString())
+                .stream()
+                .map(this::toStoredEvent)
+                .toList());
     }
 
     @Override
@@ -265,10 +270,10 @@ public class JpaEventStore implements EventStore {
                                   long fromVersion, long toVersion) {
         return executeInTransaction(() -> repository
                 .findByAggregateTypeAndAggregateIdAndVersionBetweenOrderByVersionAsc(
-                            aggregateType, aggregateId.asString(), fromVersion, toVersion)
-                    .stream()
-                    .map(this::toStoredEvent)
-                    .toList());
+                        aggregateType, aggregateId.asString(), fromVersion, toVersion)
+                .stream()
+                .map(this::toStoredEvent)
+                .toList());
     }
 
     /**
@@ -395,7 +400,11 @@ public class JpaEventStore implements EventStore {
         MANAGED
     }
 
-    private record StringAggregateRootId(String value) implements AggregateRootId {
+    private final static class StringAggregateRootId implements AggregateRootId {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String value;
 
         private static final StringEntityType TYPE = new StringEntityType("String");
 
@@ -413,6 +422,40 @@ public class JpaEventStore implements EventStore {
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
+        }
+
+        @JsonCreator()
+        private StringAggregateRootId(@JsonProperty("value") String value) {
+            this.value = value;
+        }
+
+        @JsonProperty("value")
+        public String value() {
+            return value;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            StringAggregateRootId other = (StringAggregateRootId) obj;
+            return Objects.equals(this.value, other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(value);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "StringAggregateRootId[value=" + value + "]";
         }
     }
 }

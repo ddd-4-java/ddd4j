@@ -17,8 +17,8 @@ package io.ddd4j.mq.event;
 import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.ddd.event.DomainEvent;
-import io.ddd4j.core.ddd.event.EntityId;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
+import io.ddd4j.core.ddd.event.EntityId;
 import io.ddd4j.mq.serialization.JsonMQEventSerialization;
 import lombok.extern.slf4j.Slf4j;
 

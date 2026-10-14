@@ -56,7 +56,9 @@ import java.util.Optional;
  */
 public class JdbiProjectionPositionRepository implements ProjectionPositionRepository {
 
-    /** 行读取列集（与表契约一致：自然主键＋位置计数）。 */
+    /**
+     * 行读取列集（与表契约一致：自然主键＋位置计数）。
+     */
     private static final String SELECT_COLUMNS = "select stream_id, next_event_number from ddd4j_projection_position";
 
     /**

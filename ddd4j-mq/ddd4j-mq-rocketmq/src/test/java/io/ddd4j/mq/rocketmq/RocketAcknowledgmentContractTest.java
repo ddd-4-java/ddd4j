@@ -36,7 +36,7 @@ import static org.mockito.Mockito.mock;
 
 /**
  * 类型说明。
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @author ddd4j
  * @since 3.0.x
  */
 class RocketAcknowledgmentContractTest {
@@ -73,7 +73,12 @@ class RocketAcknowledgmentContractTest {
              * @param event 事件消息。
              * @return 结果值。
              */
-            @Override @SuppressWarnings("unchecked") public <T> T serialize(Object event) { return (T) "{}"; }
+            @Override
+            @SuppressWarnings("unchecked")
+            public <T> T serialize(Object event) {
+                return (T) "{}";
+            }
+
             /**
              * deserialize() 方法。
              * @param <S> 类型参数。
@@ -82,7 +87,10 @@ class RocketAcknowledgmentContractTest {
              * @param type 目标类型。
              * @return 结果值。
              */
-            @Override public <S, T> T deserialize(S value, Class<T> type) { return null; }
+            @Override
+            public <S, T> T deserialize(S value, Class<T> type) {
+                return null;
+            }
         }, null);
         MQEvent event = new MQEvent();
         event.setTopic("orders");

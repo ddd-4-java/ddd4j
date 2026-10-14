@@ -71,6 +71,12 @@ public class KafkaMQProperties extends MQProperties {
      * 自动创建 topic 时的副本数（仅当 autoCreateTopics=true 生效，生产集群建议 ≥3）。
      */
     private short defaultTopicReplication = DEFAULT_TOPIC_REPLICATION;
+    /**
+     * 发布确认等待超时（ms）。Outbox 模式下 publish 会同步阻塞至 broker ack 或超时；
+     * 超时后会抛 IllegalStateException 让上层 Outbox 重试，避免无限阻塞耗尽线程池。
+     * 默认 30s，与 Kafka {@code REQUEST_TIMEOUT_MS_CONFIG} 保持一致。
+     */
+    private long publishAckTimeoutMillis = 30_000L;
 
     /**
      * Producer 配置（对齐 ProducerConfig 常量名）
@@ -97,13 +103,6 @@ public class KafkaMQProperties extends MQProperties {
         properties.put(AdminClientConfig.CLIENT_ID_CONFIG, clientId + "-admin");
         return properties;
     }
-
-    /**
-     * 发布确认等待超时（ms）。Outbox 模式下 publish 会同步阻塞至 broker ack 或超时；
-     * 超时后会抛 IllegalStateException 让上层 Outbox 重试，避免无限阻塞耗尽线程池。
-     * 默认 30s，与 Kafka {@code REQUEST_TIMEOUT_MS_CONFIG} 保持一致。
-     */
-    private long publishAckTimeoutMillis = 30_000L;
 
     /**
      * Consumer 配置

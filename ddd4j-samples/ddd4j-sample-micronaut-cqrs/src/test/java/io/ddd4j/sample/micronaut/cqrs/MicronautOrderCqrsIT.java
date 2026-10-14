@@ -43,20 +43,16 @@ import static org.assertj.core.api.Assertions.fail;
 @DisplayName("Micronaut Order CQRS 集成测试")
 class MicronautOrderCqrsIT {
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
     @Inject
     @Client("/")
     HttpClient httpClient;
-
     @Inject
     EventSourcingOrderRepository orderRepository;
-
     @Inject
     OrderSummaryView readView;
-
     @Inject
     InMemoryViewManager viewManager;
-
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
     void cleanUp() {

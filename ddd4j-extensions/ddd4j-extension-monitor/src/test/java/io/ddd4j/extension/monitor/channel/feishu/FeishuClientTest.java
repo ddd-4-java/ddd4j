@@ -47,7 +47,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *   <li>无签名模式：query 不附带 timestamp/sign</li>
  * </ul>
  *
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @author ddd4j
  */
 class FeishuClientTest {
 
@@ -56,6 +56,21 @@ class FeishuClientTest {
 
     private HttpServer server;
     private int port;
+
+    private static Map<String, String> parseQuery(String query) {
+        Map<String, String> out = new HashMap<>();
+        if (Objects.isNull(query)) {
+            return out;
+        }
+        for (String pair : query.split("&")) {
+            int idx = pair.indexOf('=');
+            if (idx > 0) {
+                out.put(URLDecoder.decode(pair.substring(0, idx), StandardCharsets.UTF_8),
+                        URLDecoder.decode(pair.substring(idx + 1), StandardCharsets.UTF_8));
+            }
+        }
+        return out;
+    }
 
     @BeforeEach
     void startServer() throws IOException {
@@ -125,21 +140,6 @@ class FeishuClientTest {
         // 无签名 → 无 query
         assertThat(Recorder.lastQuery).isNull();
         assertThat(Recorder.lastBody).contains("\"msg_type\":\"text\"");
-    }
-
-    private static Map<String, String> parseQuery(String query) {
-        Map<String, String> out = new HashMap<>();
-        if (Objects.isNull(query)) {
-            return out;
-        }
-        for (String pair : query.split("&")) {
-            int idx = pair.indexOf('=');
-            if (idx > 0) {
-                out.put(URLDecoder.decode(pair.substring(0, idx), StandardCharsets.UTF_8),
-                        URLDecoder.decode(pair.substring(idx + 1), StandardCharsets.UTF_8));
-            }
-        }
-        return out;
     }
 
     /**

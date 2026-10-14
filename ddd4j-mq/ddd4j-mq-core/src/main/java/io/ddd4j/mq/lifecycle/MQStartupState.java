@@ -4,7 +4,9 @@
  */
 package io.ddd4j.mq.lifecycle;
 
-/** MQ客户端启动状态。 */
+/**
+ * MQ客户端启动状态。
+ */
 public enum MQStartupState {
     /** 已创建尚未启动。 */
     NEW,

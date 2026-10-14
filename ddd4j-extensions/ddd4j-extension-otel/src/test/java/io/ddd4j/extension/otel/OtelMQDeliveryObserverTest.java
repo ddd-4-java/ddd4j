@@ -13,6 +13,10 @@
  * limitations under the License.
  */
 package io.ddd4j.extension.otel;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.mock;
 
 import io.ddd4j.mq.delivery.MQOutboxRecord;
 import io.opentelemetry.api.common.Attributes;
@@ -32,10 +36,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * 类型说明。
@@ -47,6 +48,17 @@ class OtelMQDeliveryObserverTest {
     private Meter meter;
     private LongCounterBuilder builder;
     private LongCounter counter;
+
+    @SuppressWarnings("unchecked")
+    private static void setMeterCache(Meter meter) {
+        try {
+            Field field = Ddd4jOtel.class.getDeclaredField("METER_CACHE");
+            field.setAccessible(true);
+            ((AtomicReference<Meter>) field.get(null)).set(meter);
+        } catch (ReflectiveOperationException exception) {
+            throw new IllegalStateException("Unable to configure OpenTelemetry meter test cache", exception);
+        }
+    }
 
     @BeforeEach
     void setUp() {
@@ -93,16 +105,5 @@ class OtelMQDeliveryObserverTest {
         assertThat(attributesCaptor.getAllValues())
                 .extracting(attributes -> attributes.get(MqDeliveryMetrics.ATTR_DELIVERY_OUTCOME))
                 .containsExactlyInAnyOrder("published", "retry", "dead", "failed", "processed", "duplicate", "failed");
-    }
-
-    @SuppressWarnings("unchecked")
-    private static void setMeterCache(Meter meter) {
-        try {
-            Field field = Ddd4jOtel.class.getDeclaredField("METER_CACHE");
-            field.setAccessible(true);
-            ((AtomicReference<Meter>) field.get(null)).set(meter);
-        } catch (ReflectiveOperationException exception) {
-            throw new IllegalStateException("Unable to configure OpenTelemetry meter test cache", exception);
-        }
     }
 }

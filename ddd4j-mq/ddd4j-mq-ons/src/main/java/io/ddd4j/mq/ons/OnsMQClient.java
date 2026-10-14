@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 package io.ddd4j.mq.ons;
+import java.util.ArrayList;
 
 import com.aliyun.openservices.ons.api.Message;
 import com.aliyun.openservices.ons.api.ONSFactory;
@@ -21,15 +22,14 @@ import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
-import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.lifecycle.MQClientLifecycle;
 import io.ddd4j.mq.lifecycle.MQStartupStatus;
+import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -42,7 +42,7 @@ import java.util.function.Consumer;
  *
  * <p>ONS 是阿里云 RocketMQ，提供原生 subscription 表达式 tag 过滤。
  *
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @author ddd4j
  * @since 2.0.x
  */
 @Slf4j(topic = "### DDD4J-MQ : OnsMQClient ###")
@@ -50,10 +50,10 @@ public class OnsMQClient implements MQClient {
 
     private final OnsProperties properties;
     private final List<com.aliyun.openservices.ons.api.Consumer> consumers = new CopyOnWriteArrayList<>();
-    private volatile Producer producer;
-    private volatile boolean producerStarted;
     private final MQClientLifecycle lifecycle = new MQClientLifecycle();
     private final MQStartupStatus startupStatus = new MQStartupStatus("ons");
+    private volatile Producer producer;
+    private volatile boolean producerStarted;
 
     /**
      * 构造 1：传入配置，{@link #initProducer}/{@link #initConsumer} 中通过 ONSFactory 创建原生客户端。
@@ -77,6 +77,13 @@ public class OnsMQClient implements MQClient {
         this.producer = producer;
     }
 
+    static String messageId(Message message) {
+        String messageId = message.getUserProperties(MessageHeaders.HEADER_MESSAGE_ID);
+        return StrKit.isNotEmpty(messageId)
+                ? messageId
+                : message.getUserProperties(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
+    }
+
     /**
      * impl() 方法。
      * @return 结果字符串。
@@ -90,14 +97,23 @@ public class OnsMQClient implements MQClient {
      * lifecycle() 方法。
      * @return 方法执行结果。
      */
-    @Override public MQClientLifecycle lifecycle() { return lifecycle; }
+    @Override
+    public MQClientLifecycle lifecycle() {
+        return lifecycle;
+    }
+
+    // ========================= 生产者 =========================
+
     /**
      * startupStatus() 方法。
      * @return 方法执行结果。
      */
-    @Override public MQStartupStatus startupStatus() { return startupStatus; }
+    @Override
+    public MQStartupStatus startupStatus() {
+        return startupStatus;
+    }
 
-    // ========================= 生产者 =========================
+    // ========================= 消费者 =========================
 
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
@@ -214,17 +230,12 @@ public class OnsMQClient implements MQClient {
      */
     @Override
     public void close() {
-        try { lifecycle.close(); } finally {
+        try {
+            lifecycle.close();
+        } finally {
             consumers.clear();
             producerStarted = false;
             startupStatus.stopped();
         }
-    }
-
-    static String messageId(Message message) {
-        String messageId = message.getUserProperties(MessageHeaders.HEADER_MESSAGE_ID);
-        return StrKit.isNotEmpty(messageId)
-                ? messageId
-                : message.getUserProperties(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
     }
 }

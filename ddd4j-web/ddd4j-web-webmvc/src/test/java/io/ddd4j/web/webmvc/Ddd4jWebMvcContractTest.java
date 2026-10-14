@@ -14,6 +14,12 @@
  */
 package io.ddd4j.web.webmvc;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Objects;
+
 import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.auth.AuthPrincipal;
@@ -24,14 +30,14 @@ import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.subject.Subject;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
-import io.ddd4j.web.core.idempotency.CacheIdempotencyGuard;
-import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
 import io.ddd4j.web.core.auth.WebAccessPolicy;
 import io.ddd4j.web.core.context.WebContextScope;
-import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.web.core.context.WebRequestContextFactory;
 import io.ddd4j.web.core.context.WebRequestLifecycle;
+import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
 import io.ddd4j.web.core.error.WebStatusException;
+import io.ddd4j.web.core.idempotency.CacheIdempotencyGuard;
+import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.web.testkit.AbstractWebContractTest;
 import io.ddd4j.web.testkit.WebContractClient;
 import io.ddd4j.web.testkit.WebContractPaths;
@@ -63,12 +69,89 @@ import static org.mockito.Mockito.when;
 
 /**
  * 类型说明。
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @author ddd4j
  * @since 3.0.x
  */
 class Ddd4jWebMvcContractTest extends AbstractWebContractTest {
 
     private WebContractClient contractClient;
+
+    /**
+     * 基于 MockMvc 的契约客户端，将契约请求转发给独立装配的 MockMvc 执行。
+     *
+     * @param mockMvc 模拟 MVC 实例
+     * @author ddd4j
+     */
+    private final static class MockMvcContractClient implements WebContractClient {
+
+        private static final long serialVersionUID = 0L;
+
+        private final MockMvc mockMvc;
+
+        /**
+         * request() 方法。
+         * @param method 被调用的方法。
+         * @param path 路径。
+         * @param headers 消息头。
+         * @param body 字符串参数。
+         * @return 方法执行结果。
+         */
+        @Override
+        public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
+            try {
+                MockHttpServletResponse response = mockMvc.perform(requestBuilder(method, path, headers, body)).andReturn().getResponse();
+                Map<String, List<String>> responseHeaders = new LinkedHashMap<>();
+                response.getHeaderNames().forEach(name -> responseHeaders.put(name, response.getHeaders(name)));
+                return new WebContractResponse(response.getStatus(), responseHeaders, response.getContentAsString());
+            } catch (Exception exception) {
+                throw new IllegalStateException("WebMVC contract request failed", exception);
+            }
+        }
+
+        private MockHttpServletRequestBuilder requestBuilder(String method, String path, Map<String, String> headers, String body) {
+            MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.request(HttpMethod.valueOf(method), path);
+            builder.accept(MediaType.APPLICATION_JSON);
+            headers.forEach(builder::header);
+            if (StringUtils.hasLength(body)) {
+                builder.contentType(MediaType.APPLICATION_JSON).content(body);
+            }
+            return builder;
+        }
+
+        @JsonCreator()
+        private MockMvcContractClient(@JsonProperty("mockMvc") MockMvc mockMvc) {
+            this.mockMvc = mockMvc;
+        }
+
+        @JsonProperty("mockMvc")
+        public MockMvc mockMvc() {
+            return mockMvc;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            MockMvcContractClient other = (MockMvcContractClient) obj;
+            return Objects.equals(this.mockMvc, other.mockMvc);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(mockMvc);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "MockMvcContractClient[mockMvc=" + mockMvc + "]";
+        }
+    }
 
     @BeforeEach
     void setUp() {
@@ -108,10 +191,23 @@ class Ddd4jWebMvcContractTest extends AbstractWebContractTest {
         return contractClient;
     }
 
+    private SubjectProvider provider(Subject subject) {
+        return new SubjectProvider() {
+            /**
+             * 获取值。
+             * @return 方法执行结果。
+             */
+            @Override
+            public Subject getSubject() {
+                return subject;
+            }
+        };
+    }
+
     /**
      * 契约测试用控制器，提供成功、创建、上下文、幂等与各类错误场景端点。
      *
-     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @author ddd4j
      */
     @RestController
     static class ContractController {
@@ -152,61 +248,6 @@ class Ddd4jWebMvcContractTest extends AbstractWebContractTest {
                 case "too-many-requests" -> new WebStatusException(429, "too many requests");
                 default -> new RuntimeException("internal failure");
             };
-        }
-    }
-
-    private SubjectProvider provider(Subject subject) {
-        return new SubjectProvider() {
-            /**
-             * 获取值。
-             * @return 方法执行结果。
-             */
-            @Override
-            public Subject getSubject() {
-                return subject;
-            }
-        };
-    }
-
-    /**
-     * 基于 MockMvc 的契约客户端，将契约请求转发给独立装配的 MockMvc 执行。
-     *
-     * @param mockMvc 模拟 MVC 实例
-     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
-     */
-    private record MockMvcContractClient(MockMvc mockMvc) implements WebContractClient {
-
-        /**
-         * request() 方法。
-         * @param method 被调用的方法。
-         * @param path 路径。
-         * @param headers 消息头。
-         * @param body 字符串参数。
-         * @return 方法执行结果。
-         */
-        @Override
-        public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
-            try {
-                MockHttpServletResponse response = mockMvc.perform(requestBuilder(method, path, headers, body))
-                        .andReturn().getResponse();
-                Map<String, List<String>> responseHeaders = new LinkedHashMap<>();
-                response.getHeaderNames().forEach(name -> responseHeaders.put(name, response.getHeaders(name)));
-                return new WebContractResponse(response.getStatus(), responseHeaders,
-                        response.getContentAsString());
-            } catch (Exception exception) {
-                throw new IllegalStateException("WebMVC contract request failed", exception);
-            }
-        }
-
-        private MockHttpServletRequestBuilder requestBuilder(String method, String path,
-                                                             Map<String, String> headers, String body) {
-            MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.request(HttpMethod.valueOf(method), path);
-            builder.accept(MediaType.APPLICATION_JSON);
-            headers.forEach(builder::header);
-            if (StringUtils.hasLength(body)) {
-                builder.contentType(MediaType.APPLICATION_JSON).content(body);
-            }
-            return builder;
         }
     }
 }

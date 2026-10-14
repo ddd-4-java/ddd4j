@@ -28,7 +28,6 @@ import io.ddd4j.core.ddd.repository.RepositoryRegistry;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectStrategy;
 import io.ddd4j.core.util.SubjectKit;
-import io.ddd4j.sample.javalin.satoken.config.AuthModule;
 import io.ddd4j.sample.javalin.satoken.goods.application.GoodsApplicationService;
 import io.ddd4j.sample.javalin.satoken.goods.domain.Goods;
 import io.ddd4j.sample.javalin.satoken.goods.domain.GoodsRepository;

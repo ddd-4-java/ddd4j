@@ -13,18 +13,19 @@
  * limitations under the License.
  */
 package io.ddd4j.core.cqrs.query;
+import java.util.Optional;
+import java.util.Objects;
+import java.util.List;
+import java.util.Collection;
+import java.util.ArrayList;
+import io.ddd4j.kit.lang.SFunction;
 
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.ddd.model.AggregateRoot;
-import io.ddd4j.core.util.SFunction;
 import io.ddd4j.kit.lang.CollKit;
 import io.ddd4j.kit.text.StrPool;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * 显式持久化对象查询作用域。
@@ -172,7 +173,7 @@ public final class PersistenceQueryScope<M extends AggregateRoot<?>, P> {
     }
 
     private PersistenceQueryScope<M, P> condition(boolean condition, SFunction<P, ?> property,
-                                                   String operator, Object value) {
+                                                  String operator, Object value) {
         query.addCondition(condition, reference(property), operator, value);
         return this;
     }

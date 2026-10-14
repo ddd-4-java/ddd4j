@@ -13,12 +13,22 @@
  * limitations under the License.
  */
 package io.ddd4j.web.micronaut;
+import java.util.NoSuchElementException;
+import java.util.Map;
+import java.util.List;
+import java.util.LinkedHashMap;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Objects;
 
 import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.auth.AuthPrincipal;
-import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.constant.ContextConstants;
+import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.subject.Subject;
@@ -45,26 +55,102 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.time.Duration;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Objects;
+import java.util.*;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * 类型说明。
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @author ddd4j
  * @since 3.0.x
  */
 class Ddd4jMicronautWebContractTest extends AbstractWebContractTest {
 
     private EmbeddedServer server;
     private WebContractClient contractClient;
+
+    /**
+     * 基于 JDK HTTP 客户端的契约客户端，通过随机端口访问本地测试实例。
+     *
+     * @param httpClient 发起请求使用的 HTTP 客户端
+     * @param port 测试实例监听的端口
+     */
+    private final static class MicronautContractClient implements WebContractClient {
+
+        private static final long serialVersionUID = 0L;
+
+        private final HttpClient httpClient;
+
+        private final int port;
+
+        /**
+         * request() 方法。
+         * @param method 被调用的方法。
+         * @param path 路径。
+         * @param headers 消息头。
+         * @param body 字符串参数。
+         * @return 方法执行结果。
+         */
+        @Override
+        public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
+            try {
+                HttpRequest.Builder builder = HttpRequest.newBuilder().uri(URI.create("http://127.0.0.1:" + port + path));
+                headers.forEach(builder::header);
+                HttpRequest.BodyPublisher publisher = Objects.isNull(body) ? HttpRequest.BodyPublishers.noBody() : HttpRequest.BodyPublishers.ofString(body);
+                java.net.http.HttpResponse<String> response = httpClient.send(builder.method(method, publisher).build(), java.net.http.HttpResponse.BodyHandlers.ofString());
+                return new WebContractResponse(response.statusCode(), response.headers().map(), response.body());
+            } catch (InterruptedException exception) {
+                Thread.currentThread().interrupt();
+                throw new IllegalStateException("Micronaut contract request interrupted", exception);
+            } catch (Exception exception) {
+                throw new IllegalStateException("Micronaut contract request failed", exception);
+            }
+        }
+
+        @JsonCreator()
+        private MicronautContractClient(@JsonProperty("httpClient") HttpClient httpClient, @JsonProperty("port") int port) {
+            this.httpClient = httpClient;
+            this.port = port;
+        }
+
+        @JsonProperty("httpClient")
+        public HttpClient httpClient() {
+            return httpClient;
+        }
+
+        @JsonProperty("port")
+        public int port() {
+            return port;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            MicronautContractClient other = (MicronautContractClient) obj;
+            return Objects.equals(this.httpClient, other.httpClient) && this.port == other.port;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(httpClient);
+            result = 31 * result + Integer.hashCode(port);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "MicronautContractClient[httpClient=" + httpClient + ", port=" + port + "]";
+        }
+    }
 
     @BeforeEach
     void setUp() {
@@ -124,7 +210,7 @@ class Ddd4jMicronautWebContractTest extends AbstractWebContractTest {
         assertTrue(response.body().contains("tenant-async"));
     }
 
-    private SubjectProvider provider(Subject subject) {
+        private SubjectProvider provider(Subject subject) {
         return new SubjectProvider() {
             /**
              * 获取值。
@@ -136,48 +222,11 @@ class Ddd4jMicronautWebContractTest extends AbstractWebContractTest {
             }
         };
     }
-
-    /**
-     * 基于 JDK HTTP 客户端的契约客户端，通过随机端口访问本地测试实例。
-     *
-     * @param httpClient 发起请求使用的 HTTP 客户端
-     * @param port 测试实例监听的端口
-     */
-    private record MicronautContractClient(HttpClient httpClient, int port) implements WebContractClient {
-
-        /**
-         * request() 方法。
-         * @param method 被调用的方法。
-         * @param path 路径。
-         * @param headers 消息头。
-         * @param body 字符串参数。
-         * @return 方法执行结果。
-         */
-        @Override
-        public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
-            try {
-                HttpRequest.Builder builder = HttpRequest.newBuilder()
-                        .uri(URI.create("http://127.0.0.1:" + port + path));
-                headers.forEach(builder::header);
-                HttpRequest.BodyPublisher publisher = Objects.isNull(body)
-                        ? HttpRequest.BodyPublishers.noBody() : HttpRequest.BodyPublishers.ofString(body);
-                java.net.http.HttpResponse<String> response = httpClient.send(
-                        builder.method(method, publisher).build(),
-                        java.net.http.HttpResponse.BodyHandlers.ofString());
-                return new WebContractResponse(response.statusCode(), response.headers().map(), response.body());
-            } catch (InterruptedException exception) {
-                Thread.currentThread().interrupt();
-                throw new IllegalStateException("Micronaut contract request interrupted", exception);
-            } catch (Exception exception) {
-                throw new IllegalStateException("Micronaut contract request failed", exception);
-            }
-        }
-    }
 }
 
 /**
  * 类型说明。
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @author ddd4j
  * @since 3.0.x
  */
 @Controller("/contract")

@@ -140,4 +140,30 @@ class PageTest {
         assertThat(page.getCurrent()).isEqualTo(1L);
         assertThat(page.getSize()).isEqualTo(5L);
     }
+    @Test
+    void emptyRecords_shouldAllowIterationWithoutNullIterator() {
+        Page<String> page = Page.empty();
+        List<String> visited = new ArrayList<>();
+
+        for (String record : page) {
+            visited.add(record);
+        }
+
+        assertThat(visited).isEmpty();
+        assertThat(page.spliterator().estimateSize()).isZero();
+    }
+
+    @Test
+    void nullRecords_shouldAllowIterationAndStreaming() {
+        Page<String> page = new Page<>();
+        List<String> visited = new ArrayList<>();
+
+        for (String record : page) {
+            visited.add(record);
+        }
+
+        assertThat(visited).isEmpty();
+        assertThat(page.spliterator().estimateSize()).isZero();
+        assertThat(page.stream().count()).isZero();
+    }
 }

@@ -13,6 +13,10 @@
  * limitations under the License.
  */
 package io.ddd4j.auth.license;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import global.namespace.truelicense.api.License;
 import global.namespace.truelicense.api.LicenseManagementException;
@@ -38,10 +42,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.prefs.Preferences;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * TrueLicense 4.x V1 格式迁移的真实密码学回归测试。
@@ -59,6 +60,57 @@ class TrueLicenseMigrationTest {
     static void requiresInMemoryPreferencesBeforeAnyLicenseOperation() {
         assertTrue(LicenseTestPreferencesFactory.isUserRoot(Preferences.userRoot()),
                 "Surefire must install LicenseTestPreferencesFactory before running license tests");
+    }
+
+    private static void tamper(File licenseFile) throws Exception {
+        byte[] bytes = Files.readAllBytes(licenseFile.toPath());
+        bytes[bytes.length / 2] ^= 0x01;
+        Files.write(licenseFile.toPath(), bytes);
+    }
+
+    private static void assertInstallationFailsAndLeavesNoLicense(CustomLicenseManager manager, File licenseFile) {
+        assertThrows(LicenseManagementException.class, () -> manager.install(licenseFile));
+        assertThrows(LicenseManagementException.class, manager::verify);
+    }
+
+    private static LicenseCreatorParam creatorParam(LicenseTestSupport support, File licenseFile) {
+        LicenseCreatorParam param = new LicenseCreatorParam();
+        param.setSubject(SUBJECT + '-' + UUID.randomUUID());
+        param.setPrivateAlias(LicenseTestSupport.ALIAS);
+        param.setKeyPass(LicenseTestSupport.KEY_PASSWORD);
+        param.setStorePass(LicenseTestSupport.STORE_PASSWORD);
+        param.setSignatureAlgorithm(LicenseTestSupport.SIGNATURE_ALGORITHM);
+        param.setLicensePath(licenseFile.getAbsolutePath());
+        param.setPrivateKeysStorePath(support.privateKeyStorePath());
+        param.setIssuedTime(new Date(System.currentTimeMillis() - 60_000L));
+        param.setExpiryTime(new Date(System.currentTimeMillis() + 3_600_000L));
+        return param;
+    }
+
+    private static License validLicense(String subject) {
+        License license = V1.builder().subject(subject).build().licenseFactory().license();
+        Date now = new Date();
+        license.setHolder(new X500Principal("CN=ddd4j-test-holder"));
+        license.setIssuer(new X500Principal("CN=ddd4j-test-issuer"));
+        license.setSubject(subject);
+        license.setIssued(now);
+        license.setNotBefore(new Date(now.getTime() - 60_000L));
+        license.setNotAfter(new Date(now.getTime() + 3_600_000L));
+        license.setConsumerType("user");
+        license.setConsumerAmount(1);
+        return license;
+    }
+
+    private static License expiredLicense(String subject) {
+        License license = validLicense(subject);
+        license.setIssued(new Date(System.currentTimeMillis() - 7_200_000L));
+        license.setNotBefore(new Date(System.currentTimeMillis() - 7_200_000L));
+        license.setNotAfter(new Date(System.currentTimeMillis() - 3_600_000L));
+        return license;
+    }
+
+    private static LicenseValidationException testValidationException(String text) {
+        return new LicenseValidationException(new TestMessage(text));
     }
 
     @AfterEach
@@ -438,61 +490,10 @@ class TrueLicenseMigrationTest {
         return manager.install(licenseFile);
     }
 
-    private static void tamper(File licenseFile) throws Exception {
-        byte[] bytes = Files.readAllBytes(licenseFile.toPath());
-        bytes[bytes.length / 2] ^= 0x01;
-        Files.write(licenseFile.toPath(), bytes);
-    }
-
-    private static void assertInstallationFailsAndLeavesNoLicense(CustomLicenseManager manager, File licenseFile) {
-        assertThrows(LicenseManagementException.class, () -> manager.install(licenseFile));
-        assertThrows(LicenseManagementException.class, manager::verify);
-    }
-
-    private static LicenseCreatorParam creatorParam(LicenseTestSupport support, File licenseFile) {
-        LicenseCreatorParam param = new LicenseCreatorParam();
-        param.setSubject(SUBJECT + '-' + UUID.randomUUID());
-        param.setPrivateAlias(LicenseTestSupport.ALIAS);
-        param.setKeyPass(LicenseTestSupport.KEY_PASSWORD);
-        param.setStorePass(LicenseTestSupport.STORE_PASSWORD);
-        param.setSignatureAlgorithm(LicenseTestSupport.SIGNATURE_ALGORITHM);
-        param.setLicensePath(licenseFile.getAbsolutePath());
-        param.setPrivateKeysStorePath(support.privateKeyStorePath());
-        param.setIssuedTime(new Date(System.currentTimeMillis() - 60_000L));
-        param.setExpiryTime(new Date(System.currentTimeMillis() + 3_600_000L));
-        return param;
-    }
-
-    private static License validLicense(String subject) {
-        License license = V1.builder().subject(subject).build().licenseFactory().license();
-        Date now = new Date();
-        license.setHolder(new X500Principal("CN=ddd4j-test-holder"));
-        license.setIssuer(new X500Principal("CN=ddd4j-test-issuer"));
-        license.setSubject(subject);
-        license.setIssued(now);
-        license.setNotBefore(new Date(now.getTime() - 60_000L));
-        license.setNotAfter(new Date(now.getTime() + 3_600_000L));
-        license.setConsumerType("user");
-        license.setConsumerAmount(1);
-        return license;
-    }
-
-    private static License expiredLicense(String subject) {
-        License license = validLicense(subject);
-        license.setIssued(new Date(System.currentTimeMillis() - 7_200_000L));
-        license.setNotBefore(new Date(System.currentTimeMillis() - 7_200_000L));
-        license.setNotAfter(new Date(System.currentTimeMillis() - 3_600_000L));
-        return license;
-    }
-
-    private static LicenseValidationException testValidationException(String text) {
-        return new LicenseValidationException(new TestMessage(text));
-    }
-
     /**
      * 过期许可证夹具管理器：放开签发期校验，允许生成已过期的许可证用于安装拒绝测试。
      *
-     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @author ddd4j
      */
     private static final class ExpiredFixtureManager extends CustomLicenseManager {
 

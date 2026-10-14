@@ -85,7 +85,7 @@ public final class JdbcOrderTransactionPort implements OrderTransactionPort {
      * 在当前事务连接或一个短生命周期查询连接上执行只读操作。
      *
      * @param operation JDBC 查询函数
-     * @param <T> 返回类型
+     * @param <T>       返回类型
      * @return 查询结果
      */
     public <T> T query(SqlQuery<T> operation) {

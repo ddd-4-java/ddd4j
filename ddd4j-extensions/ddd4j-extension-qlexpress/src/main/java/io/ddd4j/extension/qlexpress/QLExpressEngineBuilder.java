@@ -31,12 +31,12 @@ import java.util.Objects;
  */
 public final class QLExpressEngineBuilder {
 
+    private final Map<String, NamedQLFunction> functions = new LinkedHashMap<>();
     private boolean builtInFunctions = true;
     private boolean allowPrivateAccess;
     private boolean traceExpression;
     private QLSecurityStrategy securityStrategy = QLSecurityStrategy.isolation();
     private QLExpressExecutionOptions defaultExecutionOptions = QLExpressExecutionOptions.defaults();
-    private final Map<String, NamedQLFunction> functions = new LinkedHashMap<>();
 
     /**
      * builtInFunctions() 方法。

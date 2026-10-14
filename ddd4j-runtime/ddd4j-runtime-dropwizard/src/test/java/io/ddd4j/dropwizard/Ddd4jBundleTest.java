@@ -14,12 +14,10 @@
  */
 package io.ddd4j.dropwizard;
 
-import io.ddd4j.core.cqrs.command.CommandExecutor;
+import com.codahale.metrics.health.HealthCheckRegistry;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.dropwizard.core.Configuration;
-import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
-import com.codahale.metrics.health.HealthCheckRegistry;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import org.junit.jupiter.api.Test;
@@ -28,9 +26,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
-import java.util.function.Consumer;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -39,7 +35,7 @@ import static org.mockito.Mockito.when;
 
 /**
  * 类型说明。
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @author ddd4j
  * @since 3.0.x
  */
 @ExtendWith(MockitoExtension.class)
@@ -53,14 +49,6 @@ class Ddd4jBundleTest {
 
     @Mock
     private LifecycleEnvironment lifecycle;
-
-    /**
-     * 类型说明。
-     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
-     * @since 3.0.x
-     */
-    private static final class TestConfiguration extends Configuration {
-    }
 
     @Test
     void defaultConstructorBuildsBundle() {
@@ -96,5 +84,13 @@ class Ddd4jBundleTest {
         Ddd4jBundle<TestConfiguration> bundle = new Ddd4jBundle<>();
         assertThrows(NullPointerException.class, () -> bundle.run(null, environment));
         assertThrows(NullPointerException.class, () -> bundle.run(new TestConfiguration(), null));
+    }
+
+    /**
+     * 类型说明。
+     * @author ddd4j
+     * @since 3.0.x
+     */
+    private static final class TestConfiguration extends Configuration {
     }
 }

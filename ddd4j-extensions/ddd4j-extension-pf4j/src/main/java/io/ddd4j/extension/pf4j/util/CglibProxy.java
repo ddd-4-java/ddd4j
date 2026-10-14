@@ -24,7 +24,7 @@ import java.lang.reflect.Method;
 //Cglib动态代理，实现MethodInterceptor接口
 /**
  * 类型说明。
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @author ddd4j
  * @since 3.0.x
  */
 public class CglibProxy implements MethodInterceptor {
@@ -33,24 +33,6 @@ public class CglibProxy implements MethodInterceptor {
 
     public CglibProxy(Object target) {
         this.target = target;
-    }
-
-    //重写拦截方法
-    /**
-     * intercept() 方法。
-     * @param obj 对象参数。
-     * @param method 被调用的方法。
-     * @param arr 对象参数。
-     * @param proxy 代理实例。
-     * @return 结果对象。
-     * @throws Throwable 调用过程中出现异常时抛出。
-     */
-    @Override
-    public Object intercept(Object obj, Method method, Object[] arr, MethodProxy proxy) throws Throwable {
-        System.out.println("Cglib动态代理，监听开始！");
-        Object invoke = method.invoke(target, arr);//方法执行，参数：target 目标对象 arr参数数组
-        System.out.println("Cglib动态代理，监听结束！");
-        return invoke;
     }
 
     // 定义获取代理对象方法
@@ -85,6 +67,24 @@ public class CglibProxy implements MethodInterceptor {
         enhancer.setCallback(target);// 设置回调
         Object result = enhancer.create();//创建并返回代理对象
         return (T) result;
+    }
+
+    //重写拦截方法
+    /**
+     * intercept() 方法。
+     * @param obj 对象参数。
+     * @param method 被调用的方法。
+     * @param arr 对象参数。
+     * @param proxy 代理实例。
+     * @return 结果对象。
+     * @throws Throwable 调用过程中出现异常时抛出。
+     */
+    @Override
+    public Object intercept(Object obj, Method method, Object[] arr, MethodProxy proxy) throws Throwable {
+        System.out.println("Cglib动态代理，监听开始！");
+        Object invoke = method.invoke(target, arr);//方法执行，参数：target 目标对象 arr参数数组
+        System.out.println("Cglib动态代理，监听结束！");
+        return invoke;
     }
 
 }

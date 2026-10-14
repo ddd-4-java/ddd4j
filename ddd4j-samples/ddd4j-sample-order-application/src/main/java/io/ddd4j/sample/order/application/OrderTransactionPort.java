@@ -26,13 +26,6 @@ import java.util.Objects;
 public interface OrderTransactionPort {
 
     /**
-     * 在同一个事务边界内执行订单持久化操作。
-     *
-     * @param operation 订单与 Outbox 的原子写入操作
-     */
-    void execute(Runnable operation);
-
-    /**
      * 返回用于非事务性测试或最小化运行时的直通实现。
      *
      * @return 不开启实际事务的事务端口
@@ -40,4 +33,11 @@ public interface OrderTransactionPort {
     static OrderTransactionPort noop() {
         return operation -> Objects.requireNonNull(operation, "operation must not be null").run();
     }
+
+    /**
+     * 在同一个事务边界内执行订单持久化操作。
+     *
+     * @param operation 订单与 Outbox 的原子写入操作
+     */
+    void execute(Runnable operation);
 }

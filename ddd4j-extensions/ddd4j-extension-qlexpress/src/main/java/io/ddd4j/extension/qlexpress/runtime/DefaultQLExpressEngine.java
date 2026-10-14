@@ -58,6 +58,24 @@ public final class DefaultQLExpressEngine implements QLExpressEngine {
         this.runner = createRunner();
     }
 
+    private static NamedQLFunction requireFunction(NamedQLFunction function) {
+        NamedQLFunction checked = Objects.requireNonNull(function, "function 不能为空");
+        requireFunctionName(checked.name());
+        return checked;
+    }
+
+    private static void requireFunctionName(String functionName) {
+        if (!StrKit.hasText(functionName)) {
+            throw new IllegalArgumentException("functionName 不能为空");
+        }
+    }
+
+    private static void requireExpression(String expression) {
+        if (!StrKit.hasText(expression)) {
+            throw new IllegalArgumentException("expression 不能为空");
+        }
+    }
+
     /**
      * 执行处理逻辑。
      * @param expression 字符串参数。
@@ -240,23 +258,5 @@ public final class DefaultQLExpressEngine implements QLExpressEngine {
             }
         }
         return newRunner;
-    }
-
-    private static NamedQLFunction requireFunction(NamedQLFunction function) {
-        NamedQLFunction checked = Objects.requireNonNull(function, "function 不能为空");
-        requireFunctionName(checked.name());
-        return checked;
-    }
-
-    private static void requireFunctionName(String functionName) {
-        if (!StrKit.hasText(functionName)) {
-            throw new IllegalArgumentException("functionName 不能为空");
-        }
-    }
-
-    private static void requireExpression(String expression) {
-        if (!StrKit.hasText(expression)) {
-            throw new IllegalArgumentException("expression 不能为空");
-        }
     }
 }

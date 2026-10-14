@@ -53,15 +53,15 @@ public final class StoredEvent {
     /**
      * 创建持久化事件快照。
      *
-     * @param eventId        事件标识
-     * @param aggregateType  聚合类型
-     * @param aggregateId    聚合 ID
-     * @param version        聚合流内版本号
-     * @param position       全局递增序号（由存储实现分配）
-     * @param timestamp      事件时间戳
-     * @param payload        类型化领域事件载荷
-     * @param correlationId  关联事件标识；无关联时 {@code null}
-     * @param causationId    因果事件标识；无因果时 {@code null}
+     * @param eventId       事件标识
+     * @param aggregateType 聚合类型
+     * @param aggregateId   聚合 ID
+     * @param version       聚合流内版本号
+     * @param position      全局递增序号（由存储实现分配）
+     * @param timestamp     事件时间戳
+     * @param payload       类型化领域事件载荷
+     * @param correlationId 关联事件标识；无关联时 {@code null}
+     * @param causationId   因果事件标识；无因果时 {@code null}
      */
     public StoredEvent(EventId eventId, String aggregateType, AggregateRootId aggregateId,
                        long version, long position, ZonedDateTime timestamp,

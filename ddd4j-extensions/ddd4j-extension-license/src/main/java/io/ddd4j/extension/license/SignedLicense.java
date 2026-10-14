@@ -45,6 +45,23 @@ public final class SignedLicense {
     }
 
     /**
+     * 解析输入。
+     * @param bytes bytes 参数。
+     * @return 当前对象自身，支持链式调用。
+     */
+    public static SignedLicense parse(byte[] bytes) {
+        String[] fields = new String(bytes, StandardCharsets.UTF_8).split("\\R", -1);
+        if (fields.length != FIELD_COUNT + 1 || !Objects.equals(FORMAT, fields[0])) {
+            throw new IllegalArgumentException("Unsupported ddd4j license format");
+        }
+        try {
+            return new SignedLicense(fields[1], Base64.getDecoder().decode(fields[2]), Base64.getDecoder().decode(fields[3]));
+        } catch (IllegalArgumentException exception) {
+            throw new IllegalArgumentException("Invalid ddd4j license encoding", exception);
+        }
+    }
+
+    /**
      * algorithm() 方法。
      * @return 结果字符串。
      */
@@ -76,23 +93,6 @@ public final class SignedLicense {
         return String.join("\n", FORMAT, algorithm,
                 Base64.getEncoder().encodeToString(payload),
                 Base64.getEncoder().encodeToString(signature)) + "\n";
-    }
-
-    /**
-     * 解析输入。
-     * @param bytes bytes 参数。
-     * @return 当前对象自身，支持链式调用。
-     */
-    public static SignedLicense parse(byte[] bytes) {
-        String[] fields = new String(bytes, StandardCharsets.UTF_8).split("\\R", -1);
-        if (fields.length != FIELD_COUNT + 1 || !Objects.equals(FORMAT, fields[0])) {
-            throw new IllegalArgumentException("Unsupported ddd4j license format");
-        }
-        try {
-            return new SignedLicense(fields[1], Base64.getDecoder().decode(fields[2]), Base64.getDecoder().decode(fields[3]));
-        } catch (IllegalArgumentException exception) {
-            throw new IllegalArgumentException("Invalid ddd4j license encoding", exception);
-        }
     }
 
 }

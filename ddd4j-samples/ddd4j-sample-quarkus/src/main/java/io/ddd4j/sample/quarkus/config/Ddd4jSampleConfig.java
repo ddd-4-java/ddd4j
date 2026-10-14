@@ -63,23 +63,21 @@ import java.util.Optional;
 @ApplicationScoped
 public class Ddd4jSampleConfig {
 
-    @Produces
-    @ApplicationScoped
-    OrderApplicationService orderApplicationService(QuarkusOrderAdapters adapters) {
-        return new OrderApplicationService(adapters, adapters, adapters, adapters);
-    }
-
     /**
      * 核心 SPI Bean 引用（启动期注入）
      */
     @Inject
     Instance<DomainEventPublisher> domainEventPublisher;
-
     @Inject
     Instance<SubjectProvider> subjectProvider;
-
     @Inject
     Instance<I18nProvider> i18nProvider;
+
+    @Produces
+    @ApplicationScoped
+    OrderApplicationService orderApplicationService(QuarkusOrderAdapters adapters) {
+        return new OrderApplicationService(adapters, adapters, adapters, adapters);
+    }
 
     /**
      * Quarkus 启动完成后回调：校验核心 SPI 是否成功注入，并打印日志。

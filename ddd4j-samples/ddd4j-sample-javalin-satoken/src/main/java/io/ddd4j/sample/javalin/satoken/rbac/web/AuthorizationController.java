@@ -14,6 +14,10 @@
  */
 package io.ddd4j.sample.javalin.satoken.rbac.web;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import java.util.Objects;
 
 import io.ddd4j.core.api.R;
@@ -41,7 +45,7 @@ import static io.javalin.apibuilder.ApiBuilder.*;
  * 业务代码（User/Role/Permission/Repository/Service）与 Spring 示例
  * 外部 {@code ddd4j-boot-sample-auth-satoken} 保持同一 Subject 鉴权语义，仅 Controller 层使用 Javalin 风格。
  *
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @author ddd4j
  */
 public class AuthorizationController {
 
@@ -182,66 +186,504 @@ public class AuthorizationController {
     /**
      * 创建用户请求参数。
      *
-     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @author ddd4j
      */
-    public record CreateUserRequest(String userId, String username, String password, String realName) {
+    public final static class CreateUserRequest {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String userId;
+
+        private final String username;
+
+        private final String password;
+
+        private final String realName;
+
+        @JsonCreator()
+        public CreateUserRequest(@JsonProperty("userId") String userId, @JsonProperty("username") String username, @JsonProperty("password") String password, @JsonProperty("realName") String realName) {
+            this.userId = userId;
+            this.username = username;
+            this.password = password;
+            this.realName = realName;
+        }
+
+        @JsonProperty("userId")
+        public String userId() {
+            return userId;
+        }
+
+        @JsonProperty("username")
+        public String username() {
+            return username;
+        }
+
+        @JsonProperty("password")
+        public String password() {
+            return password;
+        }
+
+        @JsonProperty("realName")
+        public String realName() {
+            return realName;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            CreateUserRequest other = (CreateUserRequest) obj;
+            return Objects.equals(this.userId, other.userId) && Objects.equals(this.username, other.username) && Objects.equals(this.password, other.password) && Objects.equals(this.realName, other.realName);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(userId);
+            result = 31 * result + Objects.hashCode(username);
+            result = 31 * result + Objects.hashCode(password);
+            result = 31 * result + Objects.hashCode(realName);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "CreateUserRequest[userId=" + userId + ", username=" + username + ", password=" + password + ", realName=" + realName + "]";
+        }
     }
 
     /**
      * 更新用户请求参数。
      *
-     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @author ddd4j
      */
-    public record UpdateUserRequest(String realName, String password, User.Status status) {
+    public final static class UpdateUserRequest {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String realName;
+
+        private final String password;
+
+        private final User.Status status;
+
+        @JsonCreator()
+        public UpdateUserRequest(@JsonProperty("realName") String realName, @JsonProperty("password") String password, @JsonProperty("status") User.Status status) {
+            this.realName = realName;
+            this.password = password;
+            this.status = status;
+        }
+
+        @JsonProperty("realName")
+        public String realName() {
+            return realName;
+        }
+
+        @JsonProperty("password")
+        public String password() {
+            return password;
+        }
+
+        @JsonProperty("status")
+        public User.Status status() {
+            return status;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            UpdateUserRequest other = (UpdateUserRequest) obj;
+            return Objects.equals(this.realName, other.realName) && Objects.equals(this.password, other.password) && Objects.equals(this.status, other.status);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(realName);
+            result = 31 * result + Objects.hashCode(password);
+            result = 31 * result + Objects.hashCode(status);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "UpdateUserRequest[realName=" + realName + ", password=" + password + ", status=" + status + "]";
+        }
     }
 
     /**
      * 给用户分配角色请求参数（全量替换）。
      *
-     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @author ddd4j
      */
-    public record AssignRolesRequest(List<String> roleIds) {
+    public final static class AssignRolesRequest {
+
+        private static final long serialVersionUID = 0L;
+
+        private final List<String> roleIds;
+
+        @JsonCreator()
+        public AssignRolesRequest(@JsonProperty("roleIds") List<String> roleIds) {
+            this.roleIds = roleIds;
+        }
+
+        @JsonProperty("roleIds")
+        public List<String> roleIds() {
+            return roleIds;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            AssignRolesRequest other = (AssignRolesRequest) obj;
+            return Objects.equals(this.roleIds, other.roleIds);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(roleIds);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "AssignRolesRequest[roleIds=" + roleIds + "]";
+        }
     }
 
     /**
      * 创建角色请求参数。
      *
-     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @author ddd4j
      */
-    public record CreateRoleRequest(String roleId, String roleCode, String roleName, String description) {
+    public final static class CreateRoleRequest {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String roleId;
+
+        private final String roleCode;
+
+        private final String roleName;
+
+        private final String description;
+
+        @JsonCreator()
+        public CreateRoleRequest(@JsonProperty("roleId") String roleId, @JsonProperty("roleCode") String roleCode, @JsonProperty("roleName") String roleName, @JsonProperty("description") String description) {
+            this.roleId = roleId;
+            this.roleCode = roleCode;
+            this.roleName = roleName;
+            this.description = description;
+        }
+
+        @JsonProperty("roleId")
+        public String roleId() {
+            return roleId;
+        }
+
+        @JsonProperty("roleCode")
+        public String roleCode() {
+            return roleCode;
+        }
+
+        @JsonProperty("roleName")
+        public String roleName() {
+            return roleName;
+        }
+
+        @JsonProperty("description")
+        public String description() {
+            return description;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            CreateRoleRequest other = (CreateRoleRequest) obj;
+            return Objects.equals(this.roleId, other.roleId) && Objects.equals(this.roleCode, other.roleCode) && Objects.equals(this.roleName, other.roleName) && Objects.equals(this.description, other.description);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(roleId);
+            result = 31 * result + Objects.hashCode(roleCode);
+            result = 31 * result + Objects.hashCode(roleName);
+            result = 31 * result + Objects.hashCode(description);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "CreateRoleRequest[roleId=" + roleId + ", roleCode=" + roleCode + ", roleName=" + roleName + ", description=" + description + "]";
+        }
     }
 
     /**
      * 更新角色请求参数。
      *
-     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @author ddd4j
      */
-    public record UpdateRoleRequest(String roleName, String description, Role.Status status) {
+    public final static class UpdateRoleRequest {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String roleName;
+
+        private final String description;
+
+        private final Role.Status status;
+
+        @JsonCreator()
+        public UpdateRoleRequest(@JsonProperty("roleName") String roleName, @JsonProperty("description") String description, @JsonProperty("status") Role.Status status) {
+            this.roleName = roleName;
+            this.description = description;
+            this.status = status;
+        }
+
+        @JsonProperty("roleName")
+        public String roleName() {
+            return roleName;
+        }
+
+        @JsonProperty("description")
+        public String description() {
+            return description;
+        }
+
+        @JsonProperty("status")
+        public Role.Status status() {
+            return status;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            UpdateRoleRequest other = (UpdateRoleRequest) obj;
+            return Objects.equals(this.roleName, other.roleName) && Objects.equals(this.description, other.description) && Objects.equals(this.status, other.status);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(roleName);
+            result = 31 * result + Objects.hashCode(description);
+            result = 31 * result + Objects.hashCode(status);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "UpdateRoleRequest[roleName=" + roleName + ", description=" + description + ", status=" + status + "]";
+        }
     }
 
     /**
      * 给角色分配权限请求参数（全量替换）。
      *
-     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @author ddd4j
      */
-    public record AssignPermissionsRequest(List<String> permissionIds) {
+    public final static class AssignPermissionsRequest {
+
+        private static final long serialVersionUID = 0L;
+
+        private final List<String> permissionIds;
+
+        @JsonCreator()
+        public AssignPermissionsRequest(@JsonProperty("permissionIds") List<String> permissionIds) {
+            this.permissionIds = permissionIds;
+        }
+
+        @JsonProperty("permissionIds")
+        public List<String> permissionIds() {
+            return permissionIds;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            AssignPermissionsRequest other = (AssignPermissionsRequest) obj;
+            return Objects.equals(this.permissionIds, other.permissionIds);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(permissionIds);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "AssignPermissionsRequest[permissionIds=" + permissionIds + "]";
+        }
     }
 
     /**
      * 创建权限请求参数。
      *
-     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @author ddd4j
      */
-    public record CreatePermissionRequest(String permissionId, String permissionCode, String permissionName,
-                                          String module) {
+    public final static class CreatePermissionRequest {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String permissionId;
+
+        private final String permissionCode;
+
+        private final String permissionName;
+
+        private final String module;
+
+        @JsonCreator()
+        public CreatePermissionRequest(@JsonProperty("permissionId") String permissionId, @JsonProperty("permissionCode") String permissionCode, @JsonProperty("permissionName") String permissionName, @JsonProperty("module") String module) {
+            this.permissionId = permissionId;
+            this.permissionCode = permissionCode;
+            this.permissionName = permissionName;
+            this.module = module;
+        }
+
+        @JsonProperty("permissionId")
+        public String permissionId() {
+            return permissionId;
+        }
+
+        @JsonProperty("permissionCode")
+        public String permissionCode() {
+            return permissionCode;
+        }
+
+        @JsonProperty("permissionName")
+        public String permissionName() {
+            return permissionName;
+        }
+
+        @JsonProperty("module")
+        public String module() {
+            return module;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            CreatePermissionRequest other = (CreatePermissionRequest) obj;
+            return Objects.equals(this.permissionId, other.permissionId) && Objects.equals(this.permissionCode, other.permissionCode) && Objects.equals(this.permissionName, other.permissionName) && Objects.equals(this.module, other.module);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(permissionId);
+            result = 31 * result + Objects.hashCode(permissionCode);
+            result = 31 * result + Objects.hashCode(permissionName);
+            result = 31 * result + Objects.hashCode(module);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "CreatePermissionRequest[permissionId=" + permissionId + ", permissionCode=" + permissionCode + ", permissionName=" + permissionName + ", module=" + module + "]";
+        }
     }
 
     /**
      * 更新权限请求参数。
      *
-     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @author ddd4j
      */
-    public record UpdatePermissionRequest(String permissionName, String module, Permission.Status status) {
+    public final static class UpdatePermissionRequest {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String permissionName;
+
+        private final String module;
+
+        private final Permission.Status status;
+
+        @JsonCreator()
+        public UpdatePermissionRequest(@JsonProperty("permissionName") String permissionName, @JsonProperty("module") String module, @JsonProperty("status") Permission.Status status) {
+            this.permissionName = permissionName;
+            this.module = module;
+            this.status = status;
+        }
+
+        @JsonProperty("permissionName")
+        public String permissionName() {
+            return permissionName;
+        }
+
+        @JsonProperty("module")
+        public String module() {
+            return module;
+        }
+
+        @JsonProperty("status")
+        public Permission.Status status() {
+            return status;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            UpdatePermissionRequest other = (UpdatePermissionRequest) obj;
+            return Objects.equals(this.permissionName, other.permissionName) && Objects.equals(this.module, other.module) && Objects.equals(this.status, other.status);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(permissionName);
+            result = 31 * result + Objects.hashCode(module);
+            result = 31 * result + Objects.hashCode(status);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "UpdatePermissionRequest[permissionName=" + permissionName + ", module=" + module + ", status=" + status + "]";
+        }
     }
 
 }

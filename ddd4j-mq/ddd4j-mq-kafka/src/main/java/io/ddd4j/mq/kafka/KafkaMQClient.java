@@ -18,9 +18,9 @@ import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
-import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.lifecycle.MQClientLifecycle;
 import io.ddd4j.mq.lifecycle.MQStartupStatus;
+import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.message.MessageHeaders;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.extern.slf4j.Slf4j;
@@ -38,8 +38,8 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Properties;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
@@ -65,26 +65,17 @@ public class KafkaMQClient implements MQClient {
 
     private static final long DEFAULT_PUBLISH_ACK_TIMEOUT_MILLIS = 30_000L;
     /**
-     * 发布确认超时（ms），优先取 {@link KafkaMQProperties#getPublishAckTimeoutMillis()}，
-     * 无 properties 时回落到默认 30s。
-     */
-    private long publishAckTimeoutMillis() {
-        return Objects.nonNull(properties) ? properties.getPublishAckTimeoutMillis() : DEFAULT_PUBLISH_ACK_TIMEOUT_MILLIS;
-    }
-
-    /**
      * KafkaMQProperties 用于懒构造
      */
     private final KafkaMQProperties properties;
+    private final MQClientLifecycle lifecycle = new MQClientLifecycle();
+    private final MQStartupStatus startupStatus = new MQStartupStatus("kafka");
+    private final AtomicBoolean closed = new AtomicBoolean();
     /**
      * 已注入或懒构造的 Kafka producer
      */
     private Producer<String, String> producer;
     private Callback callback;
-    private final MQClientLifecycle lifecycle = new MQClientLifecycle();
-    private final MQStartupStatus startupStatus = new MQStartupStatus("kafka");
-    private final AtomicBoolean closed = new AtomicBoolean();
-
     /**
      * 构造方法 1：注入原生 producer（runtime 自动装配用）。
      */
@@ -101,6 +92,14 @@ public class KafkaMQClient implements MQClient {
         this.properties = Objects.requireNonNull(properties, "KafkaMQ Properties is required");
         this.producer = null;
         this.callback = callback;
+    }
+
+    /**
+     * 发布确认超时（ms），优先取 {@link KafkaMQProperties#getPublishAckTimeoutMillis()}，
+     * 无 properties 时回落到默认 30s。
+     */
+    private long publishAckTimeoutMillis() {
+        return Objects.nonNull(properties) ? properties.getPublishAckTimeoutMillis() : DEFAULT_PUBLISH_ACK_TIMEOUT_MILLIS;
     }
 
     @Override
@@ -169,7 +168,9 @@ public class KafkaMQClient implements MQClient {
         };
     }
 
-    /** 创建生产者的单一入口，便于验证客户端自有资源的关闭竞态。 */
+    /**
+     * 创建生产者的单一入口，便于验证客户端自有资源的关闭竞态。
+     */
     Producer<String, String> createProducer(Properties props) {
         return new KafkaProducer<>(props);
     }
@@ -265,12 +266,16 @@ public class KafkaMQClient implements MQClient {
         return true;
     }
 
-    /** 创建消费者的单一入口，便于验证初始化失败时的资源回收契约。 */
+    /**
+     * 创建消费者的单一入口，便于验证初始化失败时的资源回收契约。
+     */
     org.apache.kafka.clients.consumer.Consumer<String, String> createConsumer(Properties props) {
         return new KafkaConsumer<>(props);
     }
 
-    /** 创建消费者专属执行器的单一入口，失败初始化时由客户端负责回收。 */
+    /**
+     * 创建消费者专属执行器的单一入口，失败初始化时由客户端负责回收。
+     */
     ExecutorService createConsumerExecutor(MQListener listener) {
         return Executors.newSingleThreadExecutor(r -> {
             Thread workerThread = new Thread(r, "ddd4j-kafka-" + listener.getMethod().getName());
@@ -339,7 +344,9 @@ public class KafkaMQClient implements MQClient {
         return (StrKit.isNotBlank(prefix) ? prefix : "ddd4j") + "-" + listener.getMethod().getName();
     }
 
-    /** 防止关闭后重新创建资源或复用发布入口。 */
+    /**
+     * 防止关闭后重新创建资源或复用发布入口。
+     */
     private void ensureOpen() {
         if (closed.get()) {
             throw new IllegalStateException("KafkaMQClient is closed");

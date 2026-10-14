@@ -14,23 +14,16 @@
  */
 package io.ddd4j.web.core.auth;
 
+import io.ddd4j.web.core.context.WebRequestContext;
+
 import java.util.Objects;
 import java.util.function.Predicate;
-import io.ddd4j.web.core.context.WebRequestContext;
 
 /**
  * 决定一次 HTTP 请求采用何种认证模式。
  */
 @FunctionalInterface
 public interface WebAccessPolicy {
-
-    /**
-     * 判定当前请求应采用的认证模式。
-     *
-     * @param context 当前 Web 请求上下文
-     * @return 该请求适用的认证模式
-     */
-    AuthenticationMode authenticationMode(WebRequestContext context);
 
     /**
      * 创建禁用认证的策略：不解析也不校验认证信息。
@@ -71,4 +64,12 @@ public interface WebAccessPolicy {
         return context -> pathPredicate.test(context.path())
                 ? AuthenticationMode.DISABLED : AuthenticationMode.REQUIRED;
     }
+
+    /**
+     * 判定当前请求应采用的认证模式。
+     *
+     * @param context 当前 Web 请求上下文
+     * @return 该请求适用的认证模式
+     */
+    AuthenticationMode authenticationMode(WebRequestContext context);
 }

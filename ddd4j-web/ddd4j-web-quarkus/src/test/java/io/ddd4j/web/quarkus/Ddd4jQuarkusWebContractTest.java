@@ -50,10 +50,9 @@ import static org.mockito.Mockito.when;
 @QuarkusTest
 class Ddd4jQuarkusWebContractTest extends AbstractWebContractTest {
 
+    private final WebContractClient contractClient = new QuarkusContractClient();
     @TestHTTPResource("/")
     URI baseUri;
-
-    private final WebContractClient contractClient = new QuarkusContractClient();
 
     @BeforeEach
     void setUp() {

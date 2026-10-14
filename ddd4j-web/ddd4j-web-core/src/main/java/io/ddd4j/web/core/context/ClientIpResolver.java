@@ -21,16 +21,6 @@ package io.ddd4j.web.core.context;
 public interface ClientIpResolver {
 
     /**
-     * 解析客户端真实地址。
-     *
-     * @param forwardedFor 转发链路头（如 {@code X-Forwarded-For}），可为空
-     * @param realIp 真实 IP 头（如 {@code X-Real-IP}），可为空
-     * @param remoteAddress 连接的对端地址
-     * @return 解析得到的客户端地址
-     */
-    String resolve(String forwardedFor, String realIp, String remoteAddress);
-
-    /**
      * 创建仅信任直连地址的解析器：忽略所有代理头。
      *
      * @return 只使用对端地址的解析器
@@ -47,4 +37,14 @@ public interface ClientIpResolver {
     static ClientIpResolver trustedProxy() {
         return new DefaultClientIpResolver(true);
     }
+
+    /**
+     * 解析客户端真实地址。
+     *
+     * @param forwardedFor 转发链路头（如 {@code X-Forwarded-For}），可为空
+     * @param realIp 真实 IP 头（如 {@code X-Real-IP}），可为空
+     * @param remoteAddress 连接的对端地址
+     * @return 解析得到的客户端地址
+     */
+    String resolve(String forwardedFor, String realIp, String remoteAddress);
 }

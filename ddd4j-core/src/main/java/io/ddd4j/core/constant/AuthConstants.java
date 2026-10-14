@@ -163,6 +163,7 @@ public final class AuthConstants {
      * 状态字段名。
      */
     public static final String FIELD_STATUS = "status";
+
     private AuthConstants() {
     }
 }

@@ -50,7 +50,9 @@ import java.util.Optional;
 @Slf4j
 public class GuiceJdbcProjectionPositionRepository implements ProjectionPositionRepository {
 
-    /** 统一表名，与 Spring/Quarkus 运行时一致 */
+    /**
+     * 统一表名，与 Spring/Quarkus 运行时一致
+     */
     private static final String TABLE_NAME = ProjectionConstants.TABLE_NAME;
 
     private static final String UPSERT_UPDATE =

@@ -13,6 +13,11 @@
  * limitations under the License.
  */
 package io.ddd4j.mq.nats;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.doThrow;
 
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.mq.MQProperties;
@@ -33,15 +38,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * 类型说明。
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @author ddd4j
  * @since 3.0.x
  */
 class NatsAcknowledgmentContractTest {
@@ -81,7 +82,11 @@ class NatsAcknowledgmentContractTest {
              * @param event 事件消息。
              * @return 结果值。
              */
-            @Override public <T> T serialize(Object event) { return (T) "{}"; }
+            @Override
+            public <T> T serialize(Object event) {
+                return (T) "{}";
+            }
+
             /**
              * deserialize() 方法。
              * @param <S> 类型参数。
@@ -90,7 +95,10 @@ class NatsAcknowledgmentContractTest {
              * @param type 目标类型。
              * @return 结果值。
              */
-            @Override public <S, T> T deserialize(S value, Class<T> type) { return null; }
+            @Override
+            public <S, T> T deserialize(S value, Class<T> type) {
+                return null;
+            }
         }, null);
         MQEvent event = new MQEvent();
         event.setTopic("orders");

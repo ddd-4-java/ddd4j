@@ -48,6 +48,7 @@ public final class SaConstants {
      * JWT 父级信息条目 ID。
      */
     public static final String PAYLOAD_PARENT_INFO_ID = "p_info_id";
+
     private SaConstants() {
     }
 }

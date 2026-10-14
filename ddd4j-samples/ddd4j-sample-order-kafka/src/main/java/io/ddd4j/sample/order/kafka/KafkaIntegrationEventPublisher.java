@@ -14,12 +14,12 @@
  */
 package io.ddd4j.sample.order.kafka;
 
-import tools.jackson.core.JacksonException;
-import tools.jackson.databind.ObjectMapper;
 import io.ddd4j.sample.order.application.IntegrationEventPublisher;
 import io.ddd4j.sample.order.application.OutboxMessage;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;

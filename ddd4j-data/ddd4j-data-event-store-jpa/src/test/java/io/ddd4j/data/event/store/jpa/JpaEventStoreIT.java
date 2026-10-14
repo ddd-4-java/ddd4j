@@ -3,11 +3,23 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  */
 package io.ddd4j.data.event.store.jpa;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
+
+import io.ddd4j.core.ddd.event.AggregateRootId;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Objects;
 
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
 import io.ddd4j.core.cqrs.eventstore.StoredEvent;
-import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityIdPath;
 import io.ddd4j.core.ddd.event.EntityType;
@@ -16,11 +28,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import org.hibernate.cfg.Configuration;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.util.List;
 
@@ -37,6 +45,64 @@ class JpaEventStoreIT {
 
     private EntityManager entityManager;
     private EventStore eventStore;
+
+    final static class TestAggregateRootId implements AggregateRootId {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String value;
+
+        private static final EntityType TYPE = new StringEntityType("Order");
+
+        @Override
+        public EntityType getType() {
+            return TYPE;
+        }
+
+        @Override
+        public String asString() {
+            return value;
+        }
+
+        @Override
+        public String asTypedString() {
+            return TYPE.asString() + ":" + value;
+        }
+
+        @JsonCreator()
+        TestAggregateRootId(@JsonProperty("value") String value) {
+            this.value = value;
+        }
+
+        @JsonProperty("value")
+        public String value() {
+            return value;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            TestAggregateRootId other = (TestAggregateRootId) obj;
+            return Objects.equals(this.value, other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(value);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "TestAggregateRootId[value=" + value + "]";
+        }
+    }
 
     @BeforeAll
     static void createEntityManagerFactory() {
@@ -99,7 +165,7 @@ class JpaEventStoreIT {
         assertThat(eventStore.read(ORDER_TYPE, orderId)).hasSize(1);
     }
 
-    @Test
+        @Test
     void readWithVersionRangeShouldReturnInclusiveEvents() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-3");
         eventStore.append(ORDER_TYPE, orderId,
@@ -108,29 +174,7 @@ class JpaEventStoreIT {
         assertThat(eventStore.read(ORDER_TYPE, orderId, 1, 2))
                 .extracting(StoredEvent::version)
                 .containsExactly(1L, 2L);
-    }
-
-    record TestAggregateRootId(String value) implements AggregateRootId {
-
-        private static final EntityType TYPE = new StringEntityType("Order");
-
-        @Override
-        public EntityType getType() {
-            return TYPE;
-        }
-
-        @Override
-        public String asString() {
-            return value;
-        }
-
-        @Override
-        public String asTypedString() {
-            return TYPE.asString() + ":" + value;
-        }
-    }
-
-    static final class OrderCreatedEvent extends DomainEvent<TestAggregateRootId> {
+    } static final class OrderCreatedEvent extends DomainEvent<TestAggregateRootId> {
 
         OrderCreatedEvent() {
             super();

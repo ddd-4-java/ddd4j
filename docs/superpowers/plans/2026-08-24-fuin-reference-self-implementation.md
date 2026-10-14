@@ -1,16 +1,20 @@
 # ddd4j 高精度参考 fuin + 完全自研实施计划
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:
+> executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** 不 fork fuin，以"高精度参考 + 完全自研"方式补齐 ddd4j 自研 ES/CQRS 能力，最终在 ddd4j-dependencies BOM 中删除所有 fuin 死依赖。
+**Goal:** 不 fork fuin，以"高精度参考 + 完全自研"方式补齐 ddd4j 自研 ES/CQRS 能力，最终在 ddd4j-dependencies BOM 中删除所有
+fuin 死依赖。
 
 **Architecture:**
+
 - **零 LGPL 污染**：fuin 仓库只读不写（reference-only），ddd4j 全部 Apache-2.0
 - **零代码复用**：每个自研类都重写，仅借鉴 API 形态
 - **ddd4j-core 零外部依赖**：通过 `CoreIndependenceTest` ArchUnit 规则守护
 - **渐进式**：8 个阶段，每个阶段独立可 merge + CI 绿
 
 **Tech Stack:**
+
 - JDK 17 / 21（2.0.x / 3.0.x）
 - Spring 6.2 / Spring Boot 3.x（仅在 data 模块和 runtime 模块）
 - Jackson 2.22.2 + Jakarta JSON-B（双格式）
@@ -24,7 +28,8 @@
 - **Java 版本下限**：JDK 17（2.0.x）/ JDK 21（3.0.x）
 - **Spring 版本**：6.2.x（2.0.x）/ 7.0.x（3.0.x）
 - **Jackson 版本**：2.22.2（2.0.x）/ 3.2.1（3.0.x）
-- **ddd4j-core 零外部依赖**：除 jackson-databind / jackson-annotations / commons-lang3 / transmittable-thread-local 外不允许引入
+- **ddd4j-core 零外部依赖**：除 jackson-databind / jackson-annotations / commons-lang3 / transmittable-thread-local
+  外不允许引入
 - **ddd4j-core ArchUnit 规则**：CoreIndependenceTest 必须通过
 - **ddd4j-data 模块**：每个新模块必须有独立 ArchUnit 测试，禁止反向依赖核心
 - **许可证**：ddd4j 全部模块 Apache-2.0；fuin 仓库只读，不发布 LGPL 组件
@@ -39,10 +44,12 @@
 ### Task 0.1：删除 ddd4j-dependencies/pom.xml 中 fuin 死依赖块
 
 **Files:**
+
 - Modify: `ddd4j/ddd4j-dependencies/pom.xml:274-275`（删除 2 个 version 属性）
 - Modify: `ddd4j/ddd4j-dependencies/pom.xml:3620-3675`（删除 8 个 dependency 块）
 
 **Interfaces:**
+
 - 消费：无
 - 产出：干净的 `ddd4j-dependencies/pom.xml` BOM
 
@@ -60,6 +67,7 @@ Read `ddd4j/ddd4j-dependencies/pom.xml:274-275`，确认内容为：
 - [ ] **Step 2: 删除 8 个 fuin dependency 块**
 
 Read `ddd4j/ddd4j-dependencies/pom.xml:3620-3675`，确认内容包含 8 个 fuin 依赖块：
+
 - `org.fuin.ddd4j:ddd-4-java-core / esc / jsonb / jackson / jaxb`（5 个）
 - `org.fuin.cqrs4j:cqrs-4-java-core / jsonb / jackson`（3 个）
 
@@ -67,20 +75,21 @@ Read `ddd4j/ddd4j-dependencies/pom.xml:3620-3675`，确认内容包含 8 个 fui
 
 - [ ] **Step 3: 验证编译**
 
-Run: `cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-dependencies install -DskipTests`
+Run:
+`cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-dependencies install -DskipTests`
 
 Expected: BUILD SUCCESS
 
 - [ ] **Step 4: 验证 ddd4j-core 全模块编译**
 
-Run: `cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core compile`
+Run: `cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core compile`
 
 Expected: BUILD SUCCESS（无 fuin 引用，零影响）
 
 - [ ] **Step 5: 提交**
 
 ```bash
-cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add ddd4j-dependencies/pom.xml
 git commit -m "chore(deps): 删除 ddd4j-dependencies BOM 中 8 个 fuin 死依赖"
 ```
@@ -90,15 +99,18 @@ git commit -m "chore(deps): 删除 ddd4j-dependencies BOM 中 8 个 fuin 死依�
 ### Task 0.2：删除 ProjectionService.java 注释中的 fuin 引用
 
 **Files:**
+
 - Modify: `ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ProjectionService.java:5-6`
 
 **Interfaces:**
+
 - 消费：Task 0.1
 - 产出：ddd4j-core 源码 0 处 fuin 引用
 
 - [ ] **Step 1: 定位 fuin 引用**
 
-Run: `grep -n "org.fuin" /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ProjectionService.java`
+Run:
+`grep -n "org.fuin" /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ProjectionService.java`
 
 Expected: 命中 `org.fuin.*` 引用
 
@@ -120,14 +132,14 @@ Read 该文件，改写 javadoc：
 
 - [ ] **Step 3: 验证**
 
-Run: `grep -rn "org.fuin" /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/`
+Run: `grep -rn "org.fuin" /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/`
 
 Expected: 0 个匹配
 
 - [ ] **Step 4: 提交**
 
 ```bash
-cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ProjectionService.java
 git commit -m "docs(core): ProjectionService 注释移除 fuin 引用"
 ```
@@ -137,23 +149,26 @@ git commit -m "docs(core): ProjectionService 注释移除 fuin 引用"
 ### Task 0.3：删除 docs 中 fuin 引用
 
 **Files:**
+
 - Modify: `ddd4j/docs/ddd/1、DDD 经典分层架构目录结构.md`
 - Modify: `ddd4j/README.md`（如有 fuin 引用）
 
 - [ ] **Step 1: 定位文档引用**
 
-Run: `grep -rn "fuin\|org\.fuin" /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/docs/ /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/README.md`
+Run:
+`grep -rn "fuin\|org\.fuin" /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/docs/ /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/README.md`
 
 Expected: 列出所有文档引用
 
 - [ ] **Step 2: 改写为自研表述**
 
-对每处 `fuin` 引用，改写为「自研 / ddd4j-core 抽象」。若有 fuin 仓库 URL 作为外部参考链接，**保留**，但加 `参考来源（不依赖）：）`）标记。
+对每处 `fuin` 引用，改写为「自研 / ddd4j-core 抽象」。若有 fuin 仓库 URL 作为外部参考链接， **保留**，但加 `参考来源（不依赖）：）`
+）标记。
 
 - [ ] **Step 3: 提交**
 
 ```bash
-cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add docs/ README.md
 git commit -m "docs: 删除 fuin 依赖表述，标注为外部参考链接"
 ```
@@ -163,30 +178,34 @@ git commit -m "docs: 删除 fuin 依赖表述，标注为外部参考链接"
 ### Task 0.4：CI 验证 + commit 阶段 0 完成标记
 
 **Files:**
+
 - Modify: `ddd4j/.github/workflows/verify.yml`（如有 fuin 检查步骤则删除）
 
 - [ ] **Step 1: 跑全量 verify**
 
-Run: `cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw verify -pl ddd4j-core,ddd4j-dependencies`
+Run:
+`cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw verify -pl ddd4j-core,ddd4j-dependencies`
 
 Expected: BUILD SUCCESS
 
 - [ ] **Step 2: 验证 ArchUnit CoreIndependenceTest**
 
-Run: `cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core test -Dtest=CoreIndependenceTest`
+Run:
+`cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core test -Dtest=CoreIndependenceTest`
 
 Expected: Tests passed
 
 - [ ] **Step 3: 全工程 grep 验证**
 
-Run: `grep -rn "org\.fuin" /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j --include="*.java" --include="pom.xml"`
+Run:
+`grep -rn "org\.fuin" /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j --include="*.java" --include="pom.xml"`
 
 Expected: 仅匹配 README/docs 里的参考链接，源代码 0 匹配
 
 - [ ] **Step 4: 推送**
 
 ```bash
-cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git push origin feature/2.0.x
 ```
 
@@ -197,12 +216,13 @@ git push origin feature/2.0.x
 ### Task 1.1：建 docs/reference/fuin-api-patterns/ 目录骨架
 
 **Files:**
+
 - Create: `ddd4j/docs/reference/fuin-api-patterns/README.md`
 - Create: 8 个 markdown 占位文件
 
 - [ ] **Step 1: 建目录**
 
-Run: `mkdir -p /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/docs/reference/fuin-api-patterns`
+Run: `mkdir -p /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/docs/reference/fuin-api-patterns`
 
 - [ ] **Step 2: 建 README 索引**
 
@@ -230,7 +250,7 @@ Write `README.md`：
 - [ ] **Step 3: 提交**
 
 ```bash
-cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add docs/reference/
 git commit -m "docs(reference): 建 fuin-api-patterns 目录骨架"
 ```
@@ -240,11 +260,13 @@ git commit -m "docs(reference): 建 fuin-api-patterns 目录骨架"
 ### Task 1.2：写 01-aggregate-root.md
 
 **Files:**
+
 - Create: `ddd4j/docs/reference/fuin-api-patterns/01-aggregate-root.md`
 
 - [ ] **Step 1: 读 fuin 源码**
 
-Run: `cat /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/core/src/main/java/org/fuin/ddd4j/core/AbstractAggregateRoot.java`
+Run:
+`cat /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/core/src/main/java/org/fuin/ddd4j/core/AbstractAggregateRoot.java`
 
 - [ ] **Step 2: 写参考文档**
 
@@ -303,7 +325,7 @@ Run: `cat /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd
 - [ ] **Step 3: 提交**
 
 ```bash
-cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add docs/reference/fuin-api-patterns/01-aggregate-root.md
 git commit -m "docs(reference): 01-aggregate-root API 模式参考"
 ```
@@ -313,11 +335,13 @@ git commit -m "docs(reference): 01-aggregate-root API 模式参考"
 ### Task 1.3：写 02-entity-id-path.md
 
 **Files:**
+
 - Create: `ddd4j/docs/reference/fuin-api-patterns/02-entity-id-path.md`
 
 - [ ] **Step 1: 读 fuin 源码**
 
-Run: `cat /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/core/src/main/java/org/fuin/ddd4j/core/EntityIdPath.java`
+Run:
+`cat /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/core/src/main/java/org/fuin/ddd4j/core/EntityIdPath.java`
 
 - [ ] **Step 2: 写参考文档**
 
@@ -334,7 +358,7 @@ Run: `cat /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd
 - [ ] **Step 3: 提交**
 
 ```bash
-cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add docs/reference/fuin-api-patterns/02-entity-id-path.md
 git commit -m "docs(reference): 02-entity-id-path API 模式参考"
 ```
@@ -344,18 +368,20 @@ git commit -m "docs(reference): 02-entity-id-path API 模式参考"
 ### Task 1.4：写 03-domain-event.md
 
 **Files:**
+
 - Create: `ddd4j/docs/reference/fuin-api-patterns/03-domain-event.md`
 
 - [ ] **Step 1: 对比 ddd4j 现状**
 
 ```bash
-cat /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/DomainEvent.java
-cat /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/core/src/main/java/org/fuin/ddd4j/core/DomainEvent.java
+cat /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/DomainEvent.java
+cat /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/core/src/main/java/org/fuin/ddd4j/core/DomainEvent.java
 ```
 
 - [ ] **Step 2: 写对比文档**
 
-写明：**ddd4j-core 的 DomainEvent 已经超过 fuin**——已实现：
+写明： **ddd4j-core 的 DomainEvent 已经超过 fuin**——已实现：
+
 - `eventId/correlationId/causationId` 完整元数据
 - `EventType` 类型安全（不用 String eventType）
 - `publish()` 走 DomainEventPublisher SPI
@@ -366,7 +392,7 @@ cat /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boo
 - [ ] **Step 3: 提交**
 
 ```bash
-cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add docs/reference/fuin-api-patterns/03-domain-event.md
 git commit -m "docs(reference): 03-domain-event 对比分析（ddd4j 已对齐）"
 ```
@@ -376,20 +402,24 @@ git commit -m "docs(reference): 03-domain-event 对比分析（ddd4j 已对齐�
 ### Task 1.5：写 04-event-sourcing-repository.md
 
 **Files:**
+
 - Create: `ddd4j/docs/reference/fuin-api-patterns/04-event-sourcing-repository.md`
 
 - [ ] **Step 1: 读 fuin 源码**
 
-Run: `cat /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/esc/src/main/java/org/fuin/ddd4j/esc/EventStoreRepository.java`
+Run:
+`cat /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/esc/src/main/java/org/fuin/ddd4j/esc/EventStoreRepository.java`
 
 - [ ] **Step 2: 写参考文档**
 
 格式同 Task 1.2。EventStoreRepository 接口关键方法：
+
 - `add(M aggregate)`
 - `read(ID aggregateId)`
 - `read(ID aggregateId, int version)`
 
 **ddd4j 决策**：
+
 - ddd4j-core 已有 `EventSourcingRepository` 接口
 - 重命名为 `EventSourcingRepository`（fuin 用 `EventStoreRepository`，ddd4j 更准确）
 - 接口方法签名对齐：`add/read/read(version)`（已对齐）
@@ -398,7 +428,7 @@ Run: `cat /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd
 - [ ] **Step 3: 提交**
 
 ```bash
-cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add docs/reference/fuin-api-patterns/04-event-sourcing-repository.md
 git commit -m "docs(reference): 04-event-sourcing-repository"
 ```
@@ -408,20 +438,24 @@ git commit -m "docs(reference): 04-event-sourcing-repository"
 ### Task 1.6：写 05-event-store.md
 
 **Files:**
+
 - Create: `ddd4j/docs/reference/fuin-api-patterns/05-event-store.md`
 
 - [ ] **Step 1: 读 fuin 源码**
 
-Run: `find /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/esc -name "*.java" | xargs grep -l "interface EventStore\|class EventStore" 2>&1`
+Run:
+`find /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java/esc -name "*.java" | xargs grep -l "interface EventStore\|class EventStore" 2>&1`
 
 - [ ] **Step 2: 写参考文档**
 
 EventStore SPI 关键 API：
+
 - `append(...)`：追加事件
 - `read(...)`：读取事件流
 - 乐观锁：版本冲突时抛 `AggregateVersionConflictException`
 
 **ddd4j 决策**：
+
 - 新增 `ddd4j-data-event-store` 模块
 - EventStore SPI 含 `append/read/readAll` 三个方法（扩展 fuin 的两点）
 - JPA 实现 + 乐观锁
@@ -429,7 +463,7 @@ EventStore SPI 关键 API：
 - [ ] **Step 3: 提交**
 
 ```bash
-cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add docs/reference/fuin-api-patterns/05-event-store.md
 git commit -m "docs(reference): 05-event-store"
 ```
@@ -439,22 +473,25 @@ git commit -m "docs(reference): 05-event-store"
 ### Task 1.7：写 06-cqrs-command.md
 
 **Files:**
+
 - Create: `ddd4j/docs/reference/fuin-api-patterns/06-cqrs-command.md`
 
 - [ ] **Step 1: 读 fuin 源码 + 对比 ddd4j**
 
 ```bash
-cat /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/cqrs-4-java/core/src/main/java/org/fuin/cqrs4j/core/CommandExecutor.java
-cat /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/cqrs/command/CommandExecutor.java
+cat /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/cqrs-4-java/core/src/main/java/org/fuin/cqrs4j/core/CommandExecutor.java
+cat /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/cqrs/command/CommandExecutor.java
 ```
 
 - [ ] **Step 2: 写对比文档**
 
-**重要发现**：ddd4j-core 已经有 CommandBus / CommandExecutor / Command，API 形态已对齐 fuin。**无需重写**，只需：
+**重要发现**：ddd4j-core 已经有 CommandBus / CommandExecutor / Command，API 形态已对齐 fuin。 **无需重写**，只需：
+
 - `CommandExecutor.supportedCommands()` 用 `Set<Class<? extends Command>>`（已对齐）
 - CommandBus.execute 返回 `Result<R>`（已对齐）
 
 **新增工作**：
+
 - 框架无关的 `CommandRegistry`（Map<Class, CommandExecutor>）
 - Spring 适配层扫描 @CommandHandler（Task 5）
 - Quarkus CDI 适配层（后续阶段）
@@ -462,7 +499,7 @@ cat /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boo
 - [ ] **Step 3: 提交**
 
 ```bash
-cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add docs/reference/fuin-api-patterns/06-cqrs-command.md
 git commit -m "docs(reference): 06-cqrs-command（ddd4j-core 已对齐）"
 ```
@@ -472,27 +509,30 @@ git commit -m "docs(reference): 06-cqrs-command（ddd4j-core 已对齐）"
 ### Task 1.8：写 07-cqrs-projection.md
 
 **Files:**
+
 - Create: `ddd4j/docs/reference/fuin-api-patterns/07-cqrs-projection.md`
 
 - [ ] **Step 1: 读 fuin 源码 + 对比 ddd4j**
 
 ```bash
-cat /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/cqrs-4-java/springboot/src/main/java/org/fuin/cqrs4j/springboot/view/QryProjectionService.java
-cat /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ProjectionService.java
+cat /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/cqrs-4-java/springboot/src/main/java/org/fuin/cqrs4j/springboot/view/QryProjectionService.java
+cat /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ProjectionService.java
 ```
 
 - [ ] **Step 2: 写对比文档**
 
-**重要发现**：ddd4j-core 已经有 `ProjectionService` / `ProjectionRunner` / `ProjectionView` / `ViewScheduler` / `ViewManager` / `ProjectionPosition` / `ProjectionPositionRepository` —— **API 形态已对齐 fuin + 超出**。
+**重要发现**：ddd4j-core 已经有 `ProjectionService` / `ProjectionRunner` / `ProjectionView` / `ViewScheduler` /
+`ViewManager` / `ProjectionPosition` / `ProjectionPositionRepository` —— **API 形态已对齐 fuin + 超出**。
 
 **新增工作**：
+
 - `ddd4j-data-projection` 模块：JPA 实现 `JpaProjectionPositionRepository` + `JpaViewManager`
 - Spring 适配：`SpringViewScheduler` 实现 `ViewScheduler`
 
 - [ ] **Step 3: 提交**
 
 ```bash
-cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add docs/reference/fuin-api-patterns/07-cqrs-projection.md
 git commit -m "docs(reference): 07-cqrs-projection（ddd4j-core 已对齐）"
 ```
@@ -502,18 +542,20 @@ git commit -m "docs(reference): 07-cqrs-projection（ddd4j-core 已对齐）"
 ### Task 1.9：写 08-architecture-test.md
 
 **Files:**
+
 - Create: `ddd4j/docs/reference/fuin-api-patterns/08-architecture-test.md`
 
 - [ ] **Step 1: 读 fuin 测试 + 对比 ddd4j**
 
 ```bash
-find /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java -name "ArchitectureTest.java" | head -5
-cat /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/test/java/io/ddd4j/core/arch/CoreIndependenceTest.java
+find /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd-4-java -name "ArchitectureTest.java" | head -5
+cat /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-core/src/test/java/io/ddd4j/core/arch/CoreIndependenceTest.java
 ```
 
 - [ ] **Step 2: 写对比文档**
 
-**ddd4j 已有 `CoreIndependenceTest`**——守住零外部依赖约束。**新增**：
+**ddd4j 已有 `CoreIndependenceTest`**——守住零外部依赖约束。 **新增**：
+
 - `ddd4j-data-cqrs-arch` 模块边界测试
 - `ddd4j-data-event-store-arch` 模块边界测试
 - `ddd4j-data-projection-arch` 模块边界测试
@@ -521,7 +563,7 @@ cat /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boo
 - [ ] **Step 3: 提交**
 
 ```bash
-cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add docs/reference/fuin-api-patterns/08-architecture-test.md
 git commit -m "docs(reference): 08-architecture-test"
 ```
@@ -531,6 +573,7 @@ git commit -m "docs(reference): 08-architecture-test"
 ### Task 1.10：写 ADR-0001 ~ ADR-0005
 
 **Files:**
+
 - Create: `ddd4j/docs/adr/0001-template.md`
 - Create: `ddd4j/docs/adr/0001-no-fork-strategy.md`
 - Create: `ddd4j/docs/adr/0002-core-zero-deps.md`
@@ -540,7 +583,7 @@ git commit -m "docs(reference): 08-architecture-test"
 
 - [ ] **Step 1: 建 ADR 目录**
 
-Run: `mkdir -p /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/docs/adr`
+Run: `mkdir -p /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/docs/adr`
 
 - [ ] **Step 2: 写 0001-template.md**
 
@@ -580,7 +623,7 @@ ddd4j 全部 Apache-2.0。fuin 仓库仅作为 API 形态参考，存放在 refe
 - [ ] **Step 5: 提交**
 
 ```bash
-cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add docs/adr/
 git commit -m "docs(adr): 5 篇架构决策记录"
 ```
@@ -591,19 +634,20 @@ git commit -m "docs(adr): 5 篇架构决策记录"
 
 - [ ] **Step 1: 验证文档完整性**
 
-Run: `ls /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/docs/reference/fuin-api-patterns/`
+Run: `ls /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/docs/reference/fuin-api-patterns/`
 
 Expected: 9 个 markdown 文件（README + 8 篇）
 
 - [ ] **Step 2: 验证 ADR 完整性**
 
-Run: `ls /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/docs/adr/`
+Run: `ls /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/docs/adr/`
 
 Expected: 6 个 markdown 文件（template + 5 篇 ADR）
 
 - [ ] **Step 3: 跑全量 verify 确认无破坏**
 
-Run: `cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw verify -pl ddd4j-core,ddd4j-dependencies`
+Run:
+`cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw verify -pl ddd4j-core,ddd4j-dependencies`
 
 Expected: BUILD SUCCESS
 
@@ -614,10 +658,12 @@ Expected: BUILD SUCCESS
 ### Task 2.1：添加 @EventHandler 注解
 
 **Files:**
+
 - Create: `ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/EventHandler.java`
 - Test: `ddd4j/ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/EventHandlerTest.java`
 
 **Interfaces:**
+
 - 消费：Task 1.2（参考文档）
 - 产出：`@EventHandler` 注解 API
 
@@ -660,7 +706,8 @@ class EventHandlerTest {
 
 - [ ] **Step 2: 跑测试确认失败**
 
-Run: `cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core test -Dtest=EventHandlerTest`
+Run:
+`cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core test -Dtest=EventHandlerTest`
 
 Expected: FAIL with "cannot find symbol class EventHandler"
 
@@ -714,14 +761,15 @@ public @interface EventHandler {
 
 - [ ] **Step 4: 跑测试确认通过**
 
-Run: `cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core test -Dtest=EventHandlerTest`
+Run:
+`cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core test -Dtest=EventHandlerTest`
 
 Expected: PASS
 
 - [ ] **Step 5: 提交**
 
 ```bash
-cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/EventHandler.java
 git add ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/EventHandlerTest.java
 git commit -m "feat(core): 新增 @EventHandler 注解"
@@ -729,13 +777,15 @@ git commit -m "feat(core): 新增 @EventHandler 注解"
 
 ---
 
-### Task 2.2：扩展 AggregateRoot.apply() 反射实现
+### Task 2.2：扩展 AggregateRoot.apply () 反射实现
 
 **Files:**
+
 - Modify: `ddd4j/ddd4j-core/src/main/java/io/ddd4j/core/ddd/model/AggregateRoot.java`
 - Test: `ddd4j/ddd4j-core/src/test/java/io/ddd4j/core/ddd/model/AggregateRootApplyTest.java`
 
 **Interfaces:**
+
 - 消费：Task 2.1 的 `@EventHandler`
 - 产出：`AggregateRoot.apply(DomainEvent)` / `loadFromHistory(List)` / `findHandler(Class)` 方法
 
@@ -823,9 +873,10 @@ class AggregateRootApplyTest {
 
 - [ ] **Step 2: 跑测试确认失败**
 
-Run: `cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core test -Dtest=AggregateRootApplyTest`
+Run:
+`cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core test -Dtest=AggregateRootApplyTest`
 
-Expected: FAIL with "cannot find symbol method apply(DomainEvent)"
+Expected: FAIL with "cannot find symbol method apply (DomainEvent)"
 
 - [ ] **Step 3: 实现 apply / loadFromHistory**
 
@@ -937,7 +988,7 @@ Modify `AggregateRoot.java`，在 `protected void registerEvent(DomainEvent<?> e
     }
 ```
 
-**注意**：`findHandlerInHierarchy` 需要访问 `this.getClass()`，**不能用 static**。重新设计：
+**注意**：`findHandlerInHierarchy` 需要访问 `this.getClass()`， **不能用 static**。重新设计：
 
 ```java
     private java.lang.reflect.Method findEventHandler(Class<? extends DomainEvent<?>> eventType) {
@@ -1048,20 +1099,21 @@ Modify `AggregateRoot.java`，在 `protected void registerEvent(DomainEvent<?> e
 
 - [ ] **Step 5: 跑测试确认通过**
 
-Run: `cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core test -Dtest=AggregateRootApplyTest`
+Run:
+`cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core test -Dtest=AggregateRootApplyTest`
 
 Expected: PASS
 
 - [ ] **Step 6: 跑全量测试确保无回归**
 
-Run: `cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core test`
+Run: `cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core test`
 
 Expected: 全部测试通过 + ArchUnit CoreIndependenceTest 通过
 
 - [ ] **Step 7: 提交**
 
 ```bash
-cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add ddd4j-core/src/main/java/io/ddd4j/core/ddd/model/AggregateRoot.java
 git add ddd4j-core/src/test/java/io/ddd4j/core/ddd/model/AggregateRootApplyTest.java
 git commit -m "feat(core): AggregateRoot.apply/loadFromHistory 反射实现"
@@ -1072,9 +1124,11 @@ git commit -m "feat(core): AggregateRoot.apply/loadFromHistory 反射实现"
 ### Task 2.3：扩展 AggregateRoot 单元测试覆盖
 
 **Files:**
+
 - Create: `ddd4j/ddd4j-core/src/test/java/io/ddd4j/core/ddd/model/AggregateRootEventHandlerTest.java`
 
 **Interfaces:**
+
 - 消费：Task 2.2
 - 产出：完整事件应用测试
 
@@ -1164,14 +1218,15 @@ class AggregateRootEventHandlerTest {
 
 - [ ] **Step 2: 跑测试**
 
-Run: `cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core test -Dtest=AggregateRootEventHandlerTest`
+Run:
+`cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core test -Dtest=AggregateRootEventHandlerTest`
 
 Expected: PASS（全部 6 个用例）
 
 - [ ] **Step 3: 提交**
 
 ```bash
-cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add ddd4j-core/src/test/java/io/ddd4j/core/ddd/model/AggregateRootEventHandlerTest.java
 git commit -m "test(core): AggregateRoot 事件处理器全覆盖"
 ```
@@ -1181,6 +1236,7 @@ git commit -m "test(core): AggregateRoot 事件处理器全覆盖"
 ### Task 2.4：写 ADR-0006 反射事件应用机制
 
 **Files:**
+
 - Create: `ddd4j/docs/adr/0006-apply-reflection-mechanism.md`
 
 - [ ] **Step 1: 写 ADR**
@@ -1221,7 +1277,7 @@ ddd4j-core 的 AggregateRoot 自研 apply(DomainEvent) 方法：
 - [ ] **Step 2: 提交**
 
 ```bash
-cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add docs/adr/0006-apply-reflection-mechanism.md
 git commit -m "docs(adr): 0006 反射事件应用机制"
 ```
@@ -1232,20 +1288,21 @@ git commit -m "docs(adr): 0006 反射事件应用机制"
 
 - [ ] **Step 1: 跑 ddd4j-core 全测试**
 
-Run: `cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core verify`
+Run: `cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core verify`
 
 Expected: BUILD SUCCESS + ArchUnit 通过
 
 - [ ] **Step 2: 验证零外部依赖**
 
-Run: `cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core dependency:list | grep -v "^$" | grep -v "ddd4j" | grep -v "jackson\|commons-lang3\|transmittable-thread-local\|slf4j\|logback"`
+Run:
+`cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-core dependency:list | grep -v "^$" | grep -v "ddd4j" | grep -v "jackson\|commons-lang3\|transmittable-thread-local\|slf4j\|logback"`
 
 Expected: 无其他依赖
 
 - [ ] **Step 3: 推送**
 
 ```bash
-cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git push origin feature/2.0.x
 ```
 
@@ -1256,6 +1313,7 @@ git push origin feature/2.0.x
 ### Task 3.1：建 ddd4j-data-event-store 模块骨架
 
 **Files:**
+
 - Create: `ddd4j/ddd4j-data/ddd4j-data-event-store/pom.xml`
 - Modify: `ddd4j/ddd4j-data/pom.xml:25-30`（加模块声明）
 - Modify: `ddd4j/pom.xml`（加子模块声明）
@@ -1333,14 +1391,15 @@ Write `ddd4j-data-event-store/pom.xml`：
 
 - [ ] **Step 4: 验证编译**
 
-Run: `cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-data/ddd4j-data-event-store install -DskipTests`
+Run:
+`cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-data/ddd4j-data-event-store install -DskipTests`
 
 Expected: BUILD SUCCESS
 
 - [ ] **Step 5: 提交**
 
 ```bash
-cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add ddd4j-data/ddd4j-data-event-store/pom.xml ddd4j-data/pom.xml pom.xml
 git commit -m "feat(data): 建 ddd4j-data-event-store 模块骨架"
 ```
@@ -1350,11 +1409,13 @@ git commit -m "feat(data): 建 ddd4j-data-event-store 模块骨架"
 ### Task 3.2：定义 EventStore SPI 接口
 
 **Files:**
+
 - Create: `ddd4j/ddd4j-data/ddd4j-data-event-store/src/main/java/io/ddd4j/data/eventstore/EventStore.java`
 - Create: `ddd4j/ddd4j-data/ddd4j-data-event-store/src/main/java/io/ddd4j/data/eventstore/StoredEvent.java`
 - Test: `ddd4j/ddd4j-data/ddd4j-data-event-store/src/test/java/io/ddd4j/data/eventstore/EventStoreContractTest.java`
 
 **Interfaces:**
+
 - 消费：Task 1.5 参考文档
 - 产出：`EventStore` SPI + `StoredEvent` 值对象
 
@@ -1428,7 +1489,8 @@ interface EventStoreContract {
 }
 ```
 
-**注意**：以上 contract test 是 template，**实际 JUnit 5 contract test 用 `@TestTemplate` + `TestInstanceProvider`**。简化版——创建 `JpaEventStoreTest` 直接继承并实现。
+**注意**：以上 contract test 是 template， **实际 JUnit 5 contract test 用 `@TestTemplate` + `TestInstanceProvider`**
+。简化版——创建 `JpaEventStoreTest` 直接继承并实现。
 
 - [ ] **Step 2: 写 EventStore SPI**
 
@@ -1584,14 +1646,15 @@ public class AggregateVersionConflictException extends RuntimeException {
 
 - [ ] **Step 5: 验证编译**
 
-Run: `cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-data/ddd4j-data-event-store compile`
+Run:
+`cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-data/ddd4j-data-event-store compile`
 
 Expected: BUILD SUCCESS
 
 - [ ] **Step 6: 提交**
 
 ```bash
-cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add ddd4j-data/ddd4j-data-event-store/src/main/java/
 git commit -m "feat(data): EventStore SPI + StoredEvent + AggregateVersionConflictException"
 ```
@@ -1601,12 +1664,16 @@ git commit -m "feat(data): EventStore SPI + StoredEvent + AggregateVersionConfli
 ### Task 3.3：JPA 实现 JpaEventStore
 
 **Files:**
+
 - Create: `ddd4j/ddd4j-data/ddd4j-data-event-store/src/main/java/io/ddd4j/data/eventstore/jpa/StoredEventEntity.java`
-- Create: `ddd4j/ddd4j-data/ddd4j-data-event-store/src/main/java/io/ddd4j/data/eventstore/jpa/StoredEventRepository.java`
+- Create:
+  `ddd4j/ddd4j-data/ddd4j-data-event-store/src/main/java/io/ddd4j/data/eventstore/jpa/StoredEventRepository.java`
 - Create: `ddd4j/ddd4j-data/ddd4j-data-event-store/src/main/java/io/ddd4j/data/eventstore/jpa/JpaEventStore.java`
-- Create: `ddd4j/ddd4j-data/ddd4j-data-event-store/src/main/java/io/ddd4j/data/eventstore/jpa/EventPayloadSerializer.java`
+- Create:
+  `ddd4j/ddd4j-data/ddd4j-data-event-store/src/main/java/io/ddd4j/data/eventstore/jpa/EventPayloadSerializer.java`
 
 **Interfaces:**
+
 - 消费：Task 3.2
 - 产出：JPA 实现 + 实体 + Repository + Jackson 序列化器
 
@@ -1772,7 +1839,8 @@ public interface StoredEventRepository extends JpaRepository<StoredEventEntity, 
 }
 ```
 
-**注意**：`select coalesce(max(s.version), 0)` 中的 type alias 修正为 `StoredEventEntity`，上面有 typo，**实际写代码时修正**。
+**注意**：`select coalesce(max(s.version), 0)` 中的 type alias 修正为 `StoredEventEntity`，上面有 typo，
+**实际写代码时修正**。
 
 - [ ] **Step 4: 写 JpaEventStore 实现**
 
@@ -1884,14 +1952,15 @@ public class JpaEventStore implements EventStore {
 
 - [ ] **Step 5: 验证编译**
 
-Run: `cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-data/ddd4j-data-event-store compile`
+Run:
+`cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-data/ddd4j-data-event-store compile`
 
 Expected: BUILD SUCCESS
 
 - [ ] **Step 6: 提交**
 
 ```bash
-cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add ddd4j-data/ddd4j-data-event-store/src/main/java/io/ddd4j/data/eventstore/jpa/
 git commit -m "feat(data): JpaEventStore + StoredEventEntity + Serializer"
 ```
@@ -1901,10 +1970,12 @@ git commit -m "feat(data): JpaEventStore + StoredEventEntity + Serializer"
 ### Task 3.4：JpaEventStore 集成测试（Testcontainers）
 
 **Files:**
+
 - Create: `ddd4j/ddd4j-data/ddd4j-data-event-store/src/test/java/io/ddd4j/data/eventstore/jpa/JpaEventStoreIT.java`
 - Create: `ddd4j/ddd4j-data/ddd4j-data-event-store/src/test/resources/application-test.yml`
 
 **Interfaces:**
+
 - 消费：Task 3.3
 - 产出：集成测试覆盖
 
@@ -2014,14 +2085,15 @@ spring:
 
 - [ ] **Step 3: 跑测试**
 
-Run: `cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-data/ddd4j-data-event-store verify`
+Run:
+`cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-data/ddd4j-data-event-store verify`
 
 Expected: BUILD SUCCESS + 3 个 IT 通过
 
 - [ ] **Step 4: 提交**
 
 ```bash
-cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add ddd4j-data/ddd4j-data-event-store/src/test/
 git commit -m "test(data): JpaEventStoreIT Testcontainers 集成测试"
 ```
@@ -2032,14 +2104,15 @@ git commit -m "test(data): JpaEventStoreIT Testcontainers 集成测试"
 
 - [ ] **Step 1: 跑全量 verify**
 
-Run: `cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw verify -pl ddd4j-data/ddd4j-data-event-store`
+Run:
+`cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw verify -pl ddd4j-data/ddd4j-data-event-store`
 
 Expected: BUILD SUCCESS + IT 通过
 
 - [ ] **Step 2: 推送**
 
 ```bash
-cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git push origin feature/2.0.x
 ```
 
@@ -2050,6 +2123,7 @@ git push origin feature/2.0.x
 ### Task 4.1：建 ddd4j-data-projection 模块骨架
 
 **Files:**
+
 - Create: `ddd4j/ddd4j-data/ddd4j-data-projection/pom.xml`
 - Modify: `ddd4j/ddd4j-data/pom.xml`
 - Modify: `ddd4j/pom.xml`
@@ -2114,10 +2188,11 @@ Write `ddd4j-data-projection/pom.xml`：
 
 - [ ] **Step 3: 验证 + 提交**
 
-Run: `cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-data/ddd4j-data-projection install -DskipTests`
+Run:
+`cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-data/ddd4j-data-projection install -DskipTests`
 
 ```bash
-cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add ddd4j-data/ddd4j-data-projection/pom.xml ddd4j-data/pom.xml pom.xml
 git commit -m "feat(data): 建 ddd4j-data-projection 模块骨架"
 ```
@@ -2127,11 +2202,16 @@ git commit -m "feat(data): 建 ddd4j-data-projection 模块骨架"
 ### Task 4.2：JPA 投影位置实现
 
 **Files:**
-- Create: `ddd4j/ddd4j-data/ddd4j-data-projection/src/main/java/io/ddd4j/data/projection/jpa/ProjectionPositionEntity.java`
-- Create: `ddd4j/ddd4j-data/ddd4j-data-projection/src/main/java/io/ddd4j/data/projection/jpa/ProjectionPositionRepository.java`
-- Create: `ddd4j/ddd4j-data/ddd4j-data-projection/src/main/java/io/ddd4j/data/projection/jpa/JpaProjectionPositionRepository.java`
+
+- Create:
+  `ddd4j/ddd4j-data/ddd4j-data-projection/src/main/java/io/ddd4j/data/projection/jpa/ProjectionPositionEntity.java`
+- Create:
+  `ddd4j/ddd4j-data/ddd4j-data-projection/src/main/java/io/ddd4j/data/projection/jpa/ProjectionPositionRepository.java`
+- Create:
+  `ddd4j/ddd4j-data/ddd4j-data-projection/src/main/java/io/ddd4j/data/projection/jpa/JpaProjectionPositionRepository.java`
 
 **Interfaces:**
+
 - 消费：ddd4j-core 已有的 `ProjectionPositionRepository` 接口
 - 产出：JPA 实现
 
@@ -2170,7 +2250,8 @@ public class ProjectionPositionEntity {
 
 - [ ] **Step 2: 写 Spring Data Repository**
 
-**注意**：Spring Data Repository 命名**避免与 ddd4j-core 接口同名**（否则 IDE 导入歧义 + Spring 扫描冲突）。命名为 `SpringDataProjectionPositionRepository`。
+**注意**：Spring Data Repository 命名 **避免与 ddd4j-core 接口同名**（否则 IDE 导入歧义 + Spring 扫描冲突）。命名为
+`SpringDataProjectionPositionRepository`。
 
 Write `SpringDataProjectionPositionRepository.java`：
 
@@ -2187,6 +2268,7 @@ public interface SpringDataProjectionPositionRepository
 - [ ] **Step 3: 写 JpaProjectionPositionRepository（实现 ddd4j-core 接口）**
 
 **关键事实修正**：
+
 - ddd4j-core 的 `ProjectionPositionRepository.save(ProjectionPosition)` — **直接传 ProjectionPosition**
 - ddd4j-core 的 `DefaultProjectionPosition(streamId, nextEventNumber)` — **构造参数只有这两个**
 - `ProjectionPosition` 用 `getStreamId()` / `getNextEventNumber()` getter
@@ -2258,14 +2340,15 @@ public class JpaProjectionPositionRepository implements ProjectionPositionReposi
 
 - [ ] **Step 4: 验证编译**
 
-Run: `cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-data/ddd4j-data-projection compile`
+Run:
+`cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-data/ddd4j-data-projection compile`
 
 Expected: BUILD SUCCESS
 
 - [ ] **Step 5: 提交**
 
 ```bash
-cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add ddd4j-data/ddd4j-data-projection/src/main/java/
 git commit -m "feat(data): JpaProjectionPositionRepository"
 ```
@@ -2275,9 +2358,11 @@ git commit -m "feat(data): JpaProjectionPositionRepository"
 ### Task 4.3：JpaViewManager 框架无关实现
 
 **Files:**
+
 - Create: `ddd4j/ddd4j-data/ddd4j-data-projection/src/main/java/io/ddd4j/data/projection/jpa/JpaViewManager.java`
 
 **Interfaces:**
+
 - 消费：ddd4j-core 已有的 `ViewManager` / `ProjectionRunner` / `ViewScheduler`
 - 产出：JPA 实现 + 默认 ViewScheduler
 
@@ -2375,7 +2460,8 @@ public class JpaViewManager implements ViewManager, SmartLifecycle {
 }
 ```
 
-**注意**：上面的 `start()` 和 `stop()` **重名了**——SmartLifecycle 和 ViewManager 都有。**实现时只实现一次 ViewManager 接口，SmartLifecycle 由 Spring 反射调用**。**修正**：
+**注意**：上面的 `start()` 和 `stop()` **重名了**——SmartLifecycle 和 ViewManager 都有。 **实现时只实现一次 ViewManager
+接口，SmartLifecycle 由 Spring 反射调用**。 **修正**：
 
 ```java
     @Override
@@ -2475,14 +2561,15 @@ public class ScheduledExecutorViewScheduler implements ViewScheduler {
 }
 ```
 
-**注意**：`computePeriodMillis` 实际应根据 cron 推算下一次到下一次的间隔。**简化用 60s**。
+**注意**：`computePeriodMillis` 实际应根据 cron 推算下一次到下一次的间隔。 **简化用 60s**。
 
 - [ ] **Step 3: 验证 + 提交**
 
-Run: `cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-data/ddd4j-data-projection compile`
+Run:
+`cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-data/ddd4j-data-projection compile`
 
 ```bash
-cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add ddd4j-data/ddd4j-data-projection/src/main/java/
 git commit -m "feat(data): JpaViewManager + ScheduledExecutorViewScheduler"
 ```
@@ -2492,6 +2579,7 @@ git commit -m "feat(data): JpaViewManager + ScheduledExecutorViewScheduler"
 ### Task 4.4：集成测试
 
 **Files:**
+
 - Create: `ddd4j/ddd4j-data/ddd4j-data-projection/src/test/java/io/ddd4j/data/projection/jpa/JpaViewManagerIT.java`
 
 - [ ] **Step 1: 写 IT 测试**
@@ -2545,10 +2633,11 @@ class JpaViewManagerIT {
 
 - [ ] **Step 2: 跑测试 + 提交**
 
-Run: `cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-data/ddd4j-data-projection verify`
+Run:
+`cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-data/ddd4j-data-projection verify`
 
 ```bash
-cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add ddd4j-data/ddd4j-data-projection/src/test/
 git commit -m "test(data): JpaViewManagerIT 集成测试"
 ```
@@ -2559,14 +2648,15 @@ git commit -m "test(data): JpaViewManagerIT 集成测试"
 
 - [ ] **Step 1: 全量 verify**
 
-Run: `cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw verify -pl ddd4j-data/ddd4j-data-projection`
+Run:
+`cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw verify -pl ddd4j-data/ddd4j-data-projection`
 
 Expected: BUILD SUCCESS
 
 - [ ] **Step 2: 推送**
 
 ```bash
-cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git push origin feature/2.0.x
 ```
 
@@ -2577,6 +2667,7 @@ git push origin feature/2.0.x
 ### Task 5.1：建 ddd4j-data-cqrs 模块骨架
 
 **Files:**
+
 - Create: `ddd4j/ddd4j-data/ddd4j-data-cqrs/pom.xml`
 - Modify: `ddd4j/ddd4j-data/pom.xml`
 - Modify: `ddd4j/pom.xml`
@@ -2635,7 +2726,7 @@ git push origin feature/2.0.x
 - [ ] **Step 3: 验证 + 提交**
 
 ```bash
-cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add ddd4j-data/ddd4j-data-cqrs/pom.xml ddd4j-data/pom.xml pom.xml
 git commit -m "feat(data): 建 ddd4j-data-cqrs 模块骨架"
 ```
@@ -2645,14 +2736,18 @@ git commit -m "feat(data): 建 ddd4j-data-cqrs 模块骨架"
 ### Task 5.2：SpringCommandBus 实现
 
 **Files:**
+
 - Create: `ddd4j/ddd4j-data/ddd4j-data-cqrs/src/main/java/io/ddd4j/data/cqrs/SpringCommandBus.java`
 - Test: `ddd4j/ddd4j-data/ddd4j-data-cqrs/src/test/java/io/ddd4j/data/cqrs/SpringCommandBusTest.java`
 
 **Interfaces:**
+
 - 消费：ddd4j-core 已有的 `DefaultCommandBus` / `CommandExecutor`
 - 产出：Spring 集成版（继承 DefaultCommandBus，加 @Transactional）
 
-**关键事实修正**：ddd4j-core 已有 `DefaultCommandBus`（基于 `Collection<CommandExecutor>` 构造 + Map 路由），**不要重写 CommandRegistry**。SpringCommandBus 应该**继承** DefaultCommandBus，通过 `ApplicationContext.getBeansOfType()` 自动收集所有 `CommandExecutor` Bean。
+**关键事实修正**：ddd4j-core 已有 `DefaultCommandBus`（基于 `Collection<CommandExecutor>` 构造 + Map 路由）， **不要重写
+CommandRegistry**。SpringCommandBus 应该 **继承** DefaultCommandBus，通过 `ApplicationContext.getBeansOfType()` 自动收集所有
+`CommandExecutor` Bean。
 
 - [ ] **Step 1: 写 SpringCommandBus**
 
@@ -2752,10 +2847,11 @@ class SpringCommandBusTest {
 
 - [ ] **Step 3: 验证 + 提交**
 
-Run: `cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-data/ddd4j-data-cqrs verify`
+Run:
+`cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-data/ddd4j-data-cqrs verify`
 
 ```bash
-cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add ddd4j-data/ddd4j-data-cqrs/src/main/java/ ddd4j-data/ddd4j-data-cqrs/src/test/
 git commit -m "feat(data): SpringCommandBus 继承 DefaultCommandBus"
 ```
@@ -2765,6 +2861,7 @@ git commit -m "feat(data): SpringCommandBus 继承 DefaultCommandBus"
 ### Task 5.3：Spring 集成测试
 
 **Files:**
+
 - Create: `ddd4j/ddd4j-data/ddd4j-data-cqrs/src/test/java/io/ddd4j/data/cqrs/SpringCommandBusIT.java`
 
 - [ ] **Step 1: 写 IT**
@@ -2820,10 +2917,11 @@ class SpringCommandBusIT {
 
 - [ ] **Step 2: 验证 + 提交**
 
-Run: `cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-data/ddd4j-data-cqrs verify`
+Run:
+`cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-data/ddd4j-data-cqrs verify`
 
 ```bash
-cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add ddd4j-data/ddd4j-data-cqrs/src/test/
 git commit -m "test(data): SpringCommandBusIT Spring 集成测试"
 ```
@@ -2834,14 +2932,15 @@ git commit -m "test(data): SpringCommandBusIT Spring 集成测试"
 
 - [ ] **Step 1: 全量 verify**
 
-Run: `cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw verify -pl ddd4j-data/ddd4j-data-cqrs`
+Run:
+`cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw verify -pl ddd4j-data/ddd4j-data-cqrs`
 
 Expected: BUILD SUCCESS
 
 - [ ] **Step 2: 推送**
 
 ```bash
-cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git push origin feature/2.0.x
 ```
 
@@ -2852,11 +2951,15 @@ git push origin feature/2.0.x
 ### Task 6.1：示例聚合根 + 事件 + 处理器
 
 **Files:**
+
 - Create: `ddd4j/ddd4j-samples/ddd4j-sample-order-application/src/main/java/io/ddd4j/sample/order/domain/Order.java`
-- Create: `ddd4j/ddd4j-samples/ddd4j-sample-order-application/src/main/java/io/ddd4j/sample/order/domain/OrderCreatedEvent.java`
-- Create: `ddd4j/ddd4j-samples/ddd4j-sample-order-application/src/main/java/io/ddd4j/sample/order/domain/OrderPaidEvent.java`
+- Create:
+  `ddd4j/ddd4j-samples/ddd4j-sample-order-application/src/main/java/io/ddd4j/sample/order/domain/OrderCreatedEvent.java`
+- Create:
+  `ddd4j/ddd4j-samples/ddd4j-sample-order-application/src/main/java/io/ddd4j/sample/order/domain/OrderPaidEvent.java`
 
 **Interfaces:**
+
 - 消费：Task 2.2 的 `AggregateRoot.apply`
 - 产出：示例 Order 聚合根
 
@@ -2995,14 +3098,15 @@ public record Money(BigDecimal amount, String currency) implements Serializable 
 
 - [ ] **Step 4: 验证编译**
 
-Run: `cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-samples/ddd4j-sample-order-application compile`
+Run:
+`cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-samples/ddd4j-sample-order-application compile`
 
 Expected: BUILD SUCCESS
 
 - [ ] **Step 5: 提交**
 
 ```bash
-cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add ddd4j-samples/ddd4j-sample-order-application/src/main/java/io/ddd4j/sample/order/domain/
 git commit -m "feat(sample): Order 聚合根 + 事件"
 ```
@@ -3012,9 +3116,13 @@ git commit -m "feat(sample): Order 聚合根 + 事件"
 ### Task 6.2：示例 Command + Handler + Projection
 
 **Files:**
-- Create: `ddd4j/ddd4j-samples/ddd4j-sample-order-application/src/main/java/io/ddd4j/sample/order/command/CreateOrderCommand.java`
-- Create: `ddd4j/ddd4j-samples/ddd4j-sample-order-application/src/main/java/io/ddd4j/sample/order/command/CreateOrderHandler.java`
-- Create: `ddd4j/ddd4j-samples/ddd4j-sample-order-application/src/main/java/io/ddd4j/sample/order/view/OrderSummaryView.java`
+
+- Create:
+  `ddd4j/ddd4j-samples/ddd4j-sample-order-application/src/main/java/io/ddd4j/sample/order/command/CreateOrderCommand.java`
+- Create:
+  `ddd4j/ddd4j-samples/ddd4j-sample-order-application/src/main/java/io/ddd4j/sample/order/command/CreateOrderHandler.java`
+- Create:
+  `ddd4j/ddd4j-samples/ddd4j-sample-order-application/src/main/java/io/ddd4j/sample/order/view/OrderSummaryView.java`
 
 - [ ] **Step 1: 写 CreateOrderCommand**
 
@@ -3141,7 +3249,7 @@ public class OrderSummaryView implements View {
 - [ ] **Step 4: 验证 + 提交**
 
 ```bash
-cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add ddd4j-samples/ddd4j-sample-order-application/src/main/java/io/ddd4j/sample/order/command/
 git add ddd4j-samples/ddd4j-sample-order-application/src/main/java/io/ddd4j/sample/order/view/
 git commit -m "feat(sample): CreateOrderCommand + Handler + OrderSummaryView"
@@ -3152,6 +3260,7 @@ git commit -m "feat(sample): CreateOrderCommand + Handler + OrderSummaryView"
 ### Task 6.3：示例端到端集成测试
 
 **Files:**
+
 - Create: `ddd4j/ddd4j-samples/ddd4j-sample-order-application/src/test/java/io/ddd4j/sample/order/OrderEndToEndIT.java`
 
 - [ ] **Step 1: 写 IT**
@@ -3196,10 +3305,11 @@ class OrderEndToEndIT {
 
 - [ ] **Step 2: 验证 + 提交**
 
-Run: `cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-samples/ddd4j-sample-order-application verify`
+Run:
+`cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw -pl ddd4j-samples/ddd4j-sample-order-application verify`
 
 ```bash
-cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add ddd4j-samples/ddd4j-sample-order-application/src/test/
 git commit -m "test(sample): OrderEndToEndIT"
 ```
@@ -3209,11 +3319,13 @@ git commit -m "test(sample): OrderEndToEndIT"
 ### Task 6.4：示例 README
 
 **Files:**
+
 - Modify: `ddd4j/ddd4j-samples/ddd4j-sample-order-application/README.md`
 
 - [ ] **Step 1: 写 README**
 
 按 ddd4j 标准 README 格式：
+
 - 模块简介
 - 核心 API（Order 聚合根）
 - 用法（CreateOrderCommand → 事件追加 → 投影）
@@ -3223,7 +3335,7 @@ git commit -m "test(sample): OrderEndToEndIT"
 - [ ] **Step 2: 提交**
 
 ```bash
-cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add ddd4j-samples/ddd4j-sample-order-application/README.md
 git commit -m "docs(sample): ddd4j-sample-order-application README"
 ```
@@ -3234,14 +3346,15 @@ git commit -m "docs(sample): ddd4j-sample-order-application README"
 
 - [ ] **Step 1: 全量 verify**
 
-Run: `cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw verify -pl ddd4j-samples/ddd4j-sample-order-application`
+Run:
+`cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw verify -pl ddd4j-samples/ddd4j-sample-order-application`
 
 Expected: BUILD SUCCESS
 
 - [ ] **Step 2: 推送**
 
 ```bash
-cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git push origin feature/2.0.x
 ```
 
@@ -3252,6 +3365,7 @@ git push origin feature/2.0.x
 ### Task 7.1：license-maven-plugin 验证
 
 **Files:**
+
 - Modify: `ddd4j/pom.xml`（加 license-maven-plugin）
 
 - [ ] **Step 1: 加 license-maven-plugin 配置**
@@ -3300,14 +3414,14 @@ limitations under the License.
 
 - [ ] **Step 3: 跑验证**
 
-Run: `cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw license:check`
+Run: `cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw license:check`
 
 Expected: 所有自研 .java 文件头符合 Apache-2.0
 
 - [ ] **Step 4: 提交**
 
 ```bash
-cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git add pom.xml config/apache-2.0-header.txt
 git commit -m "build: license-maven-plugin 验证 Apache-2.0 header"
 ```
@@ -3318,13 +3432,14 @@ git commit -m "build: license-maven-plugin 验证 Apache-2.0 header"
 
 - [ ] **Step 1: 验证 ddd4j 源码**
 
-Run: `grep -rn "org\.fuin\|fuin-ddd4j\|fuin-cqrs4j" /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j --include="*.java"`
+Run:
+`grep -rn "org\.fuin\|fuin-ddd4j\|fuin-cqrs4j" /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j --include="*.java"`
 
 Expected: 0 个匹配
 
 - [ ] **Step 2: 验证 ddd4j POM**
 
-Run: `grep -n "fuin" /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-dependencies/pom.xml`
+Run: `grep -n "fuin" /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j/ddd4j-dependencies/pom.xml`
 
 Expected: 0 个匹配
 
@@ -3334,14 +3449,14 @@ Expected: 0 个匹配
 
 - [ ] **Step 1: 跑全工程 verify**
 
-Run: `cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw verify`
+Run: `cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j && ./mvnw verify`
 
 Expected: BUILD SUCCESS（所有模块）
 
 - [ ] **Step 2: 推送**
 
 ```bash
-cd /Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
+cd /Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j
 git push origin feature/2.0.x
 ```
 
@@ -3351,17 +3466,17 @@ git push origin feature/2.0.x
 
 ### 1. 规格覆盖
 
-| 需求 | 任务 |
-|------|------|
-| 删 fuin 死依赖 | Task 0.1, 0.2, 0.3 |
-| 参考文档 8 篇 | Task 1.1 ~ 1.9 |
-| ADR 5 篇 + 模板 + 反射机制 | Task 1.10, 2.4 |
-| ddd4j-core apply 反射 | Task 2.1, 2.2, 2.3 |
-| ddd4j-data-event-store | Task 3.1 ~ 3.5 |
-| ddd4j-data-projection | Task 4.1 ~ 4.5 |
-| ddd4j-data-cqrs | Task 5.1 ~ 5.4 |
-| ddd4j-sample 重写 | Task 6.1 ~ 6.5 |
-| License 验证 | Task 7.1, 7.2 |
+| 需求                       | 任务               |
+|----------------------------|--------------------|
+| 删 fuin 死依赖             | Task 0.1, 0.2, 0.3 |
+| 参考文档 8 篇              | Task 1.1 ~ 1.9     |
+| ADR 5 篇 + 模板 + 反射机制 | Task 1.10, 2.4     |
+| ddd4j-core apply 反射      | Task 2.1, 2.2, 2.3 |
+| ddd4j-data-event-store     | Task 3.1 ~ 3.5     |
+| ddd4j-data-projection      | Task 4.1 ~ 4.5     |
+| ddd4j-data-cqrs            | Task 5.1 ~ 5.4     |
+| ddd4j-sample 重写          | Task 6.1 ~ 6.5     |
+| License 验证               | Task 7.1, 7.2      |
 
 ### 2. 占位符扫描
 
@@ -3381,7 +3496,8 @@ git push origin feature/2.0.x
 
 ## 执行交付
 
-**Plan complete and saved to `docs/superpowers/plans/2026-08-24-fuin-reference-self-implementation.md`. Two execution options:**
+**Plan complete and saved to `docs/superpowers/plans/2026-08-24-fuin-reference-self-implementation.md`. Two execution
+options:**
 
 **1. Subagent-Driven (recommended)** - I dispatch a fresh subagent per task, review between tasks, fast iteration
 

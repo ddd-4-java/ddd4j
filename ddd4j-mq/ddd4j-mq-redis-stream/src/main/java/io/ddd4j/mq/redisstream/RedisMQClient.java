@@ -18,9 +18,9 @@ import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
-import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.lifecycle.MQClientLifecycle;
 import io.ddd4j.mq.lifecycle.MQStartupStatus;
+import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.extern.slf4j.Slf4j;
 import redis.clients.jedis.JedisPubSub;
@@ -31,8 +31,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
@@ -77,13 +77,13 @@ public class RedisMQClient implements MQClient {
      * 双构造：构造方法 2 持有 properties，第一次调用时 lazy 构造 Jedis。
      */
     private final RedisStreamMQProperties properties;
+    private final MQClientLifecycle lifecycle = new MQClientLifecycle();
+    private final MQStartupStatus startupStatus = new MQStartupStatus("redis");
     BlockingQueue<MQEvent> SENDING_MSGS = new LinkedBlockingQueue<>();
     /**
      * lazy 构造的 Jedis（volatile 保证发布可见性）。
      */
     private volatile UnifiedJedis lazyJedis;
-    private final MQClientLifecycle lifecycle = new MQClientLifecycle();
-    private final MQStartupStatus startupStatus = new MQStartupStatus("redis");
 
     public RedisMQClient(UnifiedJedis jedis) {
         this.injectedJedis = jedis;
@@ -122,8 +122,15 @@ public class RedisMQClient implements MQClient {
         return "redis";
     }
 
-    @Override public MQClientLifecycle lifecycle() { return lifecycle; }
-    @Override public MQStartupStatus startupStatus() { return startupStatus; }
+    @Override
+    public MQClientLifecycle lifecycle() {
+        return lifecycle;
+    }
+
+    @Override
+    public MQStartupStatus startupStatus() {
+        return startupStatus;
+    }
 
     /**
      * Redis Pubsub 默认拼接符 {@code :}（Redis 命名习惯）。
@@ -212,11 +219,13 @@ public class RedisMQClient implements MQClient {
                 }
             }
 
-            @Override public void onSubscribe(String channel, int subscribedChannels) {
+            @Override
+            public void onSubscribe(String channel, int subscribedChannels) {
                 log.info("Subscribed channel: {}", channel);
             }
 
-            @Override public void onUnsubscribe(String channel, int subscribedChannels) {
+            @Override
+            public void onUnsubscribe(String channel, int subscribedChannels) {
                 log.info("Unsubscribed channel: {}", channel);
             }
         };
@@ -234,7 +243,11 @@ public class RedisMQClient implements MQClient {
 
     @Override
     public void close() {
-        try { lifecycle.close(); } finally { startupStatus.stopped(); }
+        try {
+            lifecycle.close();
+        } finally {
+            startupStatus.stopped();
+        }
     }
 
 }

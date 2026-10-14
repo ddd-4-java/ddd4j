@@ -21,15 +21,15 @@
 
 典型异常映射规则：
 
-| 异常类型 | HTTP 状态码 | 说明 |
-|---------|-----------|------|
-| `HttpRequestMethodNotSupportedException` | 405 | 请求方法不支持 |
-| `MissingMatrixVariableException` | 400 | 缺少矩阵变量 |
-| `HttpMessageNotReadableException` | 400 | 请求体不可读 |
-| `BindException` / `WebExchangeBindException` | 400 | 绑定异常，输出字段错误列表 |
-| `MethodArgumentConversionNotSupportedException` | 400 | 参数转换不支持 |
-| `NullPointerException` / `IndexOutOfBoundsException` 等 | 500 | 服务器内部错误 |
-| JDBC 异常 | 500 | 数据库异常聚合处理 |
+| 异常类型                                                | HTTP 状态码 | 说明                       |
+|---------------------------------------------------------|-------------|----------------------------|
+| `HttpRequestMethodNotSupportedException`                | 405         | 请求方法不支持             |
+| `MissingMatrixVariableException`                        | 400         | 缺少矩阵变量               |
+| `HttpMessageNotReadableException`                       | 400         | 请求体不可读               |
+| `BindException` / `WebExchangeBindException`            | 400         | 绑定异常，输出字段错误列表 |
+| `MethodArgumentConversionNotSupportedException`         | 400         | 参数转换不支持             |
+| `NullPointerException` / `IndexOutOfBoundsException` 等 | 500         | 服务器内部错误             |
+| JDBC 异常                                               | 500         | 数据库异常聚合处理         |
 
 ## 4. 响应统一
 

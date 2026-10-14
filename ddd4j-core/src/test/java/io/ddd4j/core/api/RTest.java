@@ -15,6 +15,11 @@
 package io.ddd4j.core.api;
 
 import org.junit.jupiter.api.Test;
+import io.ddd4j.core.exception.ValidateException;
+import tools.jackson.databind.json.JsonMapper;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -26,28 +31,28 @@ import static org.assertj.core.api.Assertions.assertThat;
 class RTest {
 
     @Test
-    void failed_withString_shouldTreatArgumentAsMessage() {
-        R<Object> response = R.failed("quota exceeded");
+    void fail_withString_shouldTreatArgumentAsMessage() {
+        R<Object> response = R.fail("quota exceeded");
         assertThat(response.getMsg()).isEqualTo("quota exceeded");
         assertThat(response.getData()).isNull();
-        assertThat(response.getCode()).isEqualTo(ResultCode.FAIL.getCode());
+        assertThat(response.getCode()).isEqualTo(ApiCode.FAIL.getCode());
     }
 
     @Test
-    void failed_withNullObject_shouldKeepFailureMetadata() {
-        R<Object> response = R.failed((Object) null);
+    void fail_withNullObject_shouldKeepFailureMetadata() {
+        R<Object> response = ApiCode.FAIL.toResponse((Object) null);
         assertThat(response.getData()).isNull();
-        assertThat(response.getCode()).isEqualTo(ResultCode.FAIL.getCode());
-        assertThat(response.getMsg()).isEqualTo(ResultCode.FAIL.getDesc());
+        assertThat(response.getCode()).isEqualTo(ApiCode.FAIL.getCode());
+        assertThat(response.getMsg()).isEqualTo(ApiCode.FAIL.getDesc());
     }
 
     @Test
-    void failed_withObjectData_shouldPreservePayload() {
+    void fail_withObjectData_shouldPreservePayload() {
         java.util.Map<String, String> payload = java.util.Collections.singletonMap("reason", "quota");
-        R<java.util.Map<String, String>> response = R.failed(payload);
+        R<java.util.Map<String, String>> response = ApiCode.FAIL.toResponse(payload);
         assertThat(response.getData()).isSameAs(payload);
-        assertThat(response.getCode()).isEqualTo(ResultCode.FAIL.getCode());
-        assertThat(response.getMsg()).isEqualTo(ResultCode.FAIL.getDesc());
+        assertThat(response.getCode()).isEqualTo(ApiCode.FAIL.getCode());
+        assertThat(response.getMsg()).isEqualTo(ApiCode.FAIL.getDesc());
         assertThat(response.isOk()).isFalse();
     }
 
@@ -55,8 +60,8 @@ class RTest {
     void ok_shouldReturnSuccessCodeAndNullData() {
         R<String> r = R.ok();
 
-        assertThat(r.getCode()).isEqualTo(ResultCode.OK.getCode());
-        assertThat(r.getMsg()).isEqualTo(ResultCode.OK.getDesc());
+        assertThat(r.getCode()).isEqualTo(ApiCode.OK.getCode());
+        assertThat(r.getMsg()).isEqualTo(ApiCode.OK.getDesc());
         assertThat(r.getData()).isNull();
         assertThat(r.isOk()).isTrue();
         assertThat(r.isEmpty()).isTrue();
@@ -66,7 +71,7 @@ class RTest {
     void ok_withData_shouldCarryPayload() {
         R<String> r = R.ok("hello");
 
-        assertThat(r.getCode()).isEqualTo(ResultCode.OK.getCode());
+        assertThat(r.getCode()).isEqualTo(ApiCode.OK.getCode());
         assertThat(r.getData()).isEqualTo("hello");
         assertThat(r.isOk()).isTrue();
         assertThat(r.isEmpty()).isFalse();
@@ -85,7 +90,7 @@ class RTest {
     void fail_shouldReturnFailCode() {
         R<String> r = R.fail();
 
-        assertThat(r.getCode()).isEqualTo(ResultCode.FAIL.getCode());
+        assertThat(r.getCode()).isEqualTo(ApiCode.FAIL.getCode());
         assertThat(r.isOk()).isFalse();
     }
 
@@ -93,14 +98,14 @@ class RTest {
     void fail_withMsg_shouldCarryMessage() {
         R<String> r = R.fail("boom");
 
-        assertThat(r.getCode()).isEqualTo(ResultCode.FAIL.getCode());
+        assertThat(r.getCode()).isEqualTo(ApiCode.FAIL.getCode());
         assertThat(r.getMsg()).isEqualTo("boom");
         assertThat(r.isOk()).isFalse();
     }
 
     @Test
     void fail_withCodeAndMsg_shouldCarryBoth() {
-        R<String> r = R.fail(403, "forbidden");
+        R<String> r = R.of((CustomApiCode) ApiCode.FORBIDDEN, "forbidden");
 
         assertThat(r.getCode()).isEqualTo(403);
         assertThat(r.getMsg()).isEqualTo("forbidden");
@@ -108,14 +113,14 @@ class RTest {
     }
 
     @Test
-    void failed_aliases_shouldMatchFail() {
-        assertThat(R.failed().getCode()).isEqualTo(R.fail().getCode());
-        assertThat(R.failed("err").getMsg()).isEqualTo(R.fail("err").getMsg());
+    void fail_aliases_shouldMatchFail() {
+        assertThat(R.fail().getCode()).isEqualTo(R.fail().getCode());
+        assertThat(R.fail("err").getMsg()).isEqualTo(R.fail("err").getMsg());
     }
 
     @Test
     void isOk_shouldAcceptSuccessCodeToo() {
-        R<String> r = new R<>(ResultCode.SUCCESS.getCode(), ResultCode.SUCCESS.getDesc(), "data");
+        R<String> r = new R<>(ApiCode.SUCCESS.getCode(), ApiCode.SUCCESS.getDesc(), "data");
 
         assertThat(r.isOk()).isTrue();
     }
@@ -136,5 +141,66 @@ class RTest {
         assertThat(target.getCode()).isEqualTo(source.getCode());
         assertThat(target.getMsg()).isEqualTo(source.getMsg());
         assertThat(target.getData()).isNull();
+    }
+    @Test
+    void customApiCode_shouldBuildResponseWithMessageAndPayload() {
+        CustomApiCode customCode = new CustomApiCode() {
+            @Override
+            public Integer getCode() {
+                return 42001;
+            }
+
+            @Override
+            public String getReason() {
+                return "quota exhausted";
+            }
+        };
+
+        R<String> response = customCode.toResponse("retry later", "payload");
+
+        assertThat(response.getCode()).isEqualTo(42001);
+        assertThat(response.getMsg()).isEqualTo("retry later");
+        assertThat(response.getData()).isEqualTo("payload");
+        assertThat(response.isOk()).isFalse();
+    }
+
+    @Test
+    void validationFailure_shouldUseUnifiedBadRequestCode() {
+        ValidateException exception = new ValidateException("invalid input");
+
+        assertThat(exception.getCode()).isEqualTo(400);
+        assertThat(exception.getMessage()).isEqualTo("invalid input");
+    }
+
+    @Test
+    void jackson3_shouldSerializeUnifiedResponseFieldsAndValidationErrors() {
+        List<Map<String, String>> errors = List.of(Map.of("field", "email", "message", "invalid"));
+        R<Object> response = R.of((CustomApiCode) ApiCode.BAD_REQUEST, "invalid input", errors);
+        JsonMapper mapper = JsonMapper.builder().build();
+        var json = mapper.readTree(mapper.writeValueAsString(response));
+
+        assertThat(json.get("code").asInt()).isEqualTo(400);
+        assertThat(json.get("msg").asString()).isEqualTo("invalid input");
+        assertThat(json.get("error").get(0).get("field").asString()).isEqualTo("email");
+        assertThat(json.has("message")).isFalse();
+    }
+
+    @Test
+    void success_withString_shouldPreserveCustomMessage() {
+        R<Object> response = R.success("created");
+
+        assertThat(response.getCode()).isEqualTo(200);
+        assertThat(response.getMsg()).isEqualTo("created");
+        assertThat(response.getData()).isNull();
+    }
+
+    @Test
+    void jackson3_shouldOmitAbsentValidationErrors() {
+        JsonMapper mapper = JsonMapper.builder().build();
+        var json = mapper.readTree(mapper.writeValueAsString(R.ok("payload")));
+
+        assertThat(json.get("code").asInt()).isZero();
+        assertThat(json.get("data").asString()).isEqualTo("payload");
+        assertThat(json.has("error")).isFalse();
     }
 }

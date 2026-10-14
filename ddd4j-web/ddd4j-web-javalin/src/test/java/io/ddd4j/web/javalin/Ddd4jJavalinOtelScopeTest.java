@@ -13,6 +13,9 @@
  * limitations under the License.
  */
 package io.ddd4j.web.javalin;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.ddd4j.extension.otel.Ddd4jOtel;
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
@@ -33,9 +36,7 @@ import java.net.URL;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * 类型说明。
@@ -43,6 +44,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @since 3.0.x
  */
 class Ddd4jJavalinOtelScopeTest {
+
+    private static void resetOpenTelemetry() throws Exception {
+        GlobalOpenTelemetry.resetForTest();
+        for (String fieldName : new String[]{"TRACER_CACHE", "METER_CACHE"}) {
+            Field field = Ddd4jOtel.class.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            ((AtomicReference<?>) field.get(null)).set(null);
+        }
+        Field available = Ddd4jOtel.class.getDeclaredField("available");
+        available.setAccessible(true);
+        available.setBoolean(null, false);
+    }
 
     @Test
     void requestCompletionMustCloseOtelScope() throws Exception {
@@ -82,17 +95,5 @@ class Ddd4jJavalinOtelScopeTest {
             tracerProvider.close();
             resetOpenTelemetry();
         }
-    }
-
-    private static void resetOpenTelemetry() throws Exception {
-        GlobalOpenTelemetry.resetForTest();
-        for (String fieldName : new String[]{"TRACER_CACHE", "METER_CACHE"}) {
-            Field field = Ddd4jOtel.class.getDeclaredField(fieldName);
-            field.setAccessible(true);
-            ((AtomicReference<?>) field.get(null)).set(null);
-        }
-        Field available = Ddd4jOtel.class.getDeclaredField("available");
-        available.setAccessible(true);
-        available.setBoolean(null, false);
     }
 }

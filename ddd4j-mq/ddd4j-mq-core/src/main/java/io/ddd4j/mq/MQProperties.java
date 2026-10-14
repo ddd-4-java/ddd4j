@@ -15,10 +15,7 @@
 package io.ddd4j.mq;
 
 import io.ddd4j.kit.lang.StrKit;
-
 import lombok.Data;
-
-import java.util.Objects;
 
 /**
  * ddd4j MQ 主配置（前缀 {@code ddd4j.mq}）。

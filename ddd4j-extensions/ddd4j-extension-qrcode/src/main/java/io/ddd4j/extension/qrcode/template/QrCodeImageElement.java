@@ -16,7 +16,9 @@ package io.ddd4j.extension.qrcode.template;
 
 import java.awt.image.BufferedImage;
 
-/** 图片外框元素。 */
+/**
+ * 图片外框元素。
+ */
 public final class QrCodeImageElement extends QrCodeFrameElement {
 
     private final BufferedImage image;
@@ -27,20 +29,25 @@ public final class QrCodeImageElement extends QrCodeFrameElement {
     }
 
     /**
-     * 获取值。
-     * @return 方法执行结果。
-     */
-    public BufferedImage getImage() { return image; }
-    /**
      * 创建构建器。
      * @param image image 参数。
      * @return 方法执行结果。
      */
-    public static Builder builder(BufferedImage image) { return new Builder(image); }
+    public static Builder builder(BufferedImage image) {
+        return new Builder(image);
+    }
+
+    /**
+     * 获取值。
+     * @return 方法执行结果。
+     */
+    public BufferedImage getImage() {
+        return image;
+    }
 
     /**
      * 类型说明。
-     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @author ddd4j
      * @since 3.0.x
      */
     public static final class Builder {
@@ -50,7 +57,11 @@ public final class QrCodeImageElement extends QrCodeFrameElement {
         private int width;
         private int height;
         private int zIndex;
-        private Builder(BufferedImage image) { this.image = image; }
+
+        private Builder(BufferedImage image) {
+            this.image = image;
+        }
+
         /**
          * bounds() 方法。
          * @param x x 参数。
@@ -59,17 +70,30 @@ public final class QrCodeImageElement extends QrCodeFrameElement {
          * @param height height 参数。
          * @return 方法执行结果。
          */
-        public Builder bounds(int x, int y, int width, int height) { this.x = x; this.y = y; this.width = width; this.height = height; return this; }
+        public Builder bounds(int x, int y, int width, int height) {
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+            return this;
+        }
+
         /**
          * zIndex() 方法。
          * @param zIndex zIndex 参数。
          * @return 方法执行结果。
          */
-        public Builder zIndex(int zIndex) { this.zIndex = zIndex; return this; }
+        public Builder zIndex(int zIndex) {
+            this.zIndex = zIndex;
+            return this;
+        }
+
         /**
          * 构建对象。
          * @return 当前对象自身，支持链式调用。
          */
-        public QrCodeImageElement build() { return new QrCodeImageElement(this); }
+        public QrCodeImageElement build() {
+            return new QrCodeImageElement(this);
+        }
     }
 }

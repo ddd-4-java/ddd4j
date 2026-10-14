@@ -28,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * 类型说明。
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @author ddd4j
  * @since 3.0.x
  */
 class FileValidationServiceTest {
@@ -110,7 +110,7 @@ class FileValidationServiceTest {
 
     private byte[] ole(String entryName) throws IOException {
         try (POIFSFileSystem fileSystem = new POIFSFileSystem();
-                ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+             ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             fileSystem.getRoot().createDocument(entryName,
                     new ByteArrayInputStream("content".getBytes(StandardCharsets.UTF_8)));
             fileSystem.writeFilesystem(outputStream);

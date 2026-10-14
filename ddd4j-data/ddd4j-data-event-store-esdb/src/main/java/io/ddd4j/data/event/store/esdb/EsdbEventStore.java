@@ -4,6 +4,10 @@
  */
 package io.ddd4j.data.event.store.esdb;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import com.eventstore.dbclient.AppendToStreamOptions;
 import com.eventstore.dbclient.EventData;
 import com.eventstore.dbclient.EventDataBuilder;
@@ -41,7 +45,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletionException;
 
-/** EventStoreDB 的强类型 EventStore adapter。 */
+/**
+ * EventStoreDB 的强类型 EventStore adapter。
+ */
 public class EsdbEventStore implements EventStore {
 
     private final EventStoreDBClient client;
@@ -165,26 +171,80 @@ public class EsdbEventStore implements EventStore {
 
     @SuppressWarnings("unchecked")
     private Class<? extends DomainEvent<?>> resolveEventType(String eventType) {
-        try { return (Class<? extends DomainEvent<?>>) Class.forName(eventType); }
-        catch (ClassNotFoundException exception) { throw new IllegalStateException("Unknown event type: " + eventType, exception); }
+        try {
+            return (Class<? extends DomainEvent<?>>) Class.forName(eventType);
+        } catch (ClassNotFoundException exception) {
+            throw new IllegalStateException("Unknown event type: " + eventType, exception);
+        }
     }
 
-    private record StringAggregateRootId(String value) implements AggregateRootId {
+    private final static class StringAggregateRootId implements AggregateRootId {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String value;
+
         private static final StringEntityType TYPE = new StringEntityType("String");
         /**
          * 获取值。
          * @return 方法执行结果。
          */
-        @Override public EntityType getType() { return TYPE; }
+        @Override
+        public EntityType getType() {
+            return TYPE;
+        }
+
         /**
          * asString() 方法。
          * @return 结果字符串。
          */
-        @Override @JsonValue public String asString() { return value; }
+        @Override
+        @JsonValue
+        public String asString() {
+            return value;
+        }
+
         /**
          * asTypedString() 方法。
          * @return 结果字符串。
          */
-        @Override public String asTypedString() { return TYPE.asString() + ":" + value; }
+        @Override
+        public String asTypedString() {
+            return TYPE.asString() + ":" + value;
+        }
+
+        @JsonCreator()
+        private StringAggregateRootId(@JsonProperty("value") String value) {
+            this.value = value;
+        }
+
+        @JsonProperty("value")
+        public String value() {
+            return value;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            StringAggregateRootId other = (StringAggregateRootId) obj;
+            return Objects.equals(this.value, other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(value);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "StringAggregateRootId[value=" + value + "]";
+        }
     }
 }

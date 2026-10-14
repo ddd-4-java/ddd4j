@@ -25,7 +25,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,7 +36,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * <p>使用 OTel SDK Testing 的 {@link InMemoryMetricReader} 进行真实指标断言。
  *
- * @author PartMe.AI
+ * @author ddd4j
  */
 @DisplayName("OpenTelemetryProjectionMetrics")
 class OpenTelemetryProjectionMetricsTest {
@@ -76,6 +75,15 @@ class OpenTelemetryProjectionMetricsTest {
     void convenienceConstructor_nullScope_shouldThrowNPE() {
         assertThatThrownBy(() -> new OpenTelemetryProjectionMetrics(OpenTelemetry.noop(), null))
                 .isInstanceOf(NullPointerException.class);
+    }
+
+    /**
+     * 按指标名称收集 MetricData。
+     */
+    private List<MetricData> collectMetricsByName(String metricName) {
+        return metricReader.collectAllMetrics().stream()
+                .filter(md -> md.getName().equals(metricName))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -211,14 +219,5 @@ class OpenTelemetryProjectionMetricsTest {
                     .first()
                     .satisfies(point -> assertThat(point.getValue()).isEqualTo(2));
         }
-    }
-
-    /**
-     * 按指标名称收集 MetricData。
-     */
-    private List<MetricData> collectMetricsByName(String metricName) {
-        return metricReader.collectAllMetrics().stream()
-                .filter(md -> md.getName().equals(metricName))
-                .collect(Collectors.toList());
     }
 }

@@ -23,7 +23,7 @@ import java.lang.reflect.Proxy;
 //JDK动态代理实现InvocationHandler接口
 /**
  * 类型说明。
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @author ddd4j
  * @since 3.0.x
  */
 public class JdkProxy implements InvocationHandler {
@@ -33,23 +33,6 @@ public class JdkProxy implements InvocationHandler {
     public JdkProxy(Object target) {
         this.target = target;
     }
-
-    /**
-     * 调用目标逻辑。
-     * @param proxy 代理实例。
-     * @param method 被调用的方法。
-     * @param args 命令行参数。
-     * @return 结果对象。
-     * @throws Throwable 调用过程中出现异常时抛出。
-     */
-    @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        System.out.println("JDK动态代理，监听开始！");
-        Object result = method.invoke(target, args);
-        System.out.println("JDK动态代理，监听结束！");
-        return result;
-    }
-
 
     //定义获取代理对象方法
     /**
@@ -73,6 +56,22 @@ public class JdkProxy implements InvocationHandler {
         JdkProxy target = new JdkProxy(BeanUtils.instantiateClass(className));
         //JDK动态代理只能针对实现了接口的类进行代理，newProxyInstance 函数所需参数就可看出
         return (T) Proxy.newProxyInstance(className.getClassLoader(), className.getInterfaces(), target);
+    }
+
+    /**
+     * 调用目标逻辑。
+     * @param proxy 代理实例。
+     * @param method 被调用的方法。
+     * @param args 命令行参数。
+     * @return 结果对象。
+     * @throws Throwable 调用过程中出现异常时抛出。
+     */
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        System.out.println("JDK动态代理，监听开始！");
+        Object result = method.invoke(target, args);
+        System.out.println("JDK动态代理，监听结束！");
+        return result;
     }
 
 }

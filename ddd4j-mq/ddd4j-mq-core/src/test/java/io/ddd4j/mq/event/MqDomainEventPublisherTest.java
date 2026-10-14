@@ -16,7 +16,6 @@ package io.ddd4j.mq.event;
 
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.ddd.event.DomainEvent;
-import io.ddd4j.core.ddd.event.EntityIdPath;
 import io.ddd4j.core.ddd.event.StringEntityId;
 import io.ddd4j.mq.MQProperties;
 import org.junit.jupiter.api.AfterEach;

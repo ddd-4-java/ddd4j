@@ -13,6 +13,9 @@
  * limitations under the License.
  */
 package io.ddd4j.mq.sqs;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.mock;
 
 import io.ddd4j.mq.message.MessageHeaders;
 import org.junit.jupiter.api.Test;
@@ -25,9 +28,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.*;
 
 /**
  * 类型说明。

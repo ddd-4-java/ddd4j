@@ -6,13 +6,13 @@ REPORT_PATH="${DDD4J_PERFORMANCE_REPORT:-}"
 OUTPUT_DIR="${DDD4J_REPORT_DIR:-${ROOT_DIR}/target/release-quality}/performance"
 
 if [[ -z "${REPORT_PATH}" || ! -f "${REPORT_PATH}" ]]; then
-    echo "[FAIL] DDD4J_PERFORMANCE_REPORT must point to a fixed-runner JSON performance report." >&2
-    exit 1
+  echo "[FAIL] DDD4J_PERFORMANCE_REPORT must point to a fixed-runner JSON performance report." >&2
+  exit 1
 fi
 
 if ! command -v jq >/dev/null 2>&1; then
-    echo "[FAIL] jq is required to validate the performance report." >&2
-    exit 1
+  echo "[FAIL] jq is required to validate the performance report." >&2
+  exit 1
 fi
 
 cd "${ROOT_DIR}"
@@ -42,8 +42,8 @@ if ! jq -e --arg commit "${head_commit}" --argjson required "${required_scenario
         and (.rssMegabytes <= (.baseline.rssMegabytes * 1.2))
     )
 ' "${REPORT_PATH}" >/dev/null; then
-    echo "[FAIL] Performance evidence is incomplete, targets another commit, or exceeds the 20% regression threshold." >&2
-    exit 1
+  echo "[FAIL] Performance evidence is incomplete, targets another commit, or exceeds the 20% regression threshold." >&2
+  exit 1
 fi
 
 mkdir -p "${OUTPUT_DIR}"

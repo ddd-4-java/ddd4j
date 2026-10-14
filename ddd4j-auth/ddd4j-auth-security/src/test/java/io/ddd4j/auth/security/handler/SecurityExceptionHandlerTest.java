@@ -14,7 +14,7 @@
  */
 package io.ddd4j.auth.security.handler;
 
-import io.ddd4j.core.ApiRestResponse;
+import io.ddd4j.core.api.R;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -45,7 +45,7 @@ class SecurityExceptionHandlerTest {
 
     @Test
     void authenticationExceptionReturns401() {
-        ResponseEntity<ApiRestResponse<String>> response =
+        ResponseEntity<R<String>> response =
                 handler.authenticationException(new BadCredentialsException("bad credentials"));
 
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
@@ -54,7 +54,7 @@ class SecurityExceptionHandlerTest {
 
     @Test
     void lockedExceptionReturns403() {
-        ResponseEntity<ApiRestResponse<String>> response =
+        ResponseEntity<R<String>> response =
                 handler.lockedException(new org.springframework.security.authentication.LockedException("locked"));
 
         assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());
@@ -63,7 +63,7 @@ class SecurityExceptionHandlerTest {
 
     @Test
     void accessDeniedWithoutAuthenticationReturns401() {
-        ResponseEntity<ApiRestResponse<String>> response =
+        ResponseEntity<R<String>> response =
                 handler.accessDeniedException(new AccessDeniedException("denied"));
 
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
@@ -75,7 +75,7 @@ class SecurityExceptionHandlerTest {
                 new UsernamePasswordAuthenticationToken("user-1", "pw",
                         Collections.singletonList(new SimpleGrantedAuthority("ROLE_user"))));
 
-        ResponseEntity<ApiRestResponse<String>> response =
+        ResponseEntity<R<String>> response =
                 handler.accessDeniedException(new AccessDeniedException("denied"));
 
         assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode());

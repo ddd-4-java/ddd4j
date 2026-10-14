@@ -17,6 +17,7 @@ package io.ddd4j.sample.helidon.cqrs;
 import io.ddd4j.sample.helidon.cqrs.web.OrderResource;
 import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.core.Application;
+
 import java.util.Set;
 
 /**

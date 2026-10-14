@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 package io.ddd4j.spring.cqrs;
+import io.micrometer.core.instrument.MeterRegistry;
 
 import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.BeforeEach;

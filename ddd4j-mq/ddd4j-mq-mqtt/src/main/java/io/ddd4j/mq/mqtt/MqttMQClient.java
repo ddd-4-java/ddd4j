@@ -17,9 +17,9 @@ package io.ddd4j.mq.mqtt;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
-import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.lifecycle.MQClientLifecycle;
 import io.ddd4j.mq.lifecycle.MQStartupStatus;
+import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -73,13 +73,50 @@ public class MqttMQClient implements MQClient {
         this.properties = Objects.requireNonNull(properties, "properties");
     }
 
+    private static void unsubscribe(org.eclipse.paho.client.mqttv3.MqttClient client, String topic) {
+        try {
+            client.unsubscribe(topic);
+        } catch (Exception exception) {
+            throw new IllegalStateException("Unsubscribe MQTT topic failed", exception);
+        }
+    }
+
+    private static void disconnectClient(org.eclipse.paho.client.mqttv3.MqttClient client) {
+        try {
+            if (client.isConnected()) {
+                client.disconnect();
+            }
+        } catch (Exception exception) {
+            throw new IllegalStateException("Disconnect MQTT client failed", exception);
+        }
+    }
+
+    private static void closeClient(org.eclipse.paho.client.mqttv3.MqttClient client) {
+        try {
+            client.close();
+        } catch (Exception exception) {
+            throw new IllegalStateException("Close MQTT client failed", exception);
+        }
+    }
+
     @Override
     public String impl() {
         return "mqtt";
     }
 
-    @Override public MQClientLifecycle lifecycle() { return lifecycle; }
-    @Override public MQStartupStatus startupStatus() { return startupStatus; }
+    @Override
+    public MQClientLifecycle lifecycle() {
+        return lifecycle;
+    }
+
+    // ========================= 生产者 =========================
+
+    @Override
+    public MQStartupStatus startupStatus() {
+        return startupStatus;
+    }
+
+    // ========================= 消费者 =========================
 
     @Override
     public String defaultConcat() {
@@ -94,7 +131,7 @@ public class MqttMQClient implements MQClient {
         return false;
     }
 
-    // ========================= 生产者 =========================
+    // ========================= 连接管理 =========================
 
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
@@ -116,8 +153,6 @@ public class MqttMQClient implements MQClient {
             log.info("Publish MQ [{}]: {}", topic, payload);
         };
     }
-
-    // ========================= 消费者 =========================
 
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
@@ -179,8 +214,6 @@ public class MqttMQClient implements MQClient {
         return null;
     }
 
-    // ========================= 连接管理 =========================
-
     /**
      * QoS：注入原生客户端时取默认值 1，否则读 properties。
      */
@@ -209,24 +242,10 @@ public class MqttMQClient implements MQClient {
 
     @Override
     public void close() {
-        try { lifecycle.close(); } finally { startupStatus.stopped(); }
-    }
-
-    private static void unsubscribe(org.eclipse.paho.client.mqttv3.MqttClient client, String topic) {
-        try { client.unsubscribe(topic); } catch (Exception exception) {
-            throw new IllegalStateException("Unsubscribe MQTT topic failed", exception);
-        }
-    }
-
-    private static void disconnectClient(org.eclipse.paho.client.mqttv3.MqttClient client) {
-        try { if (client.isConnected()) { client.disconnect(); } } catch (Exception exception) {
-            throw new IllegalStateException("Disconnect MQTT client failed", exception);
-        }
-    }
-
-    private static void closeClient(org.eclipse.paho.client.mqttv3.MqttClient client) {
-        try { client.close(); } catch (Exception exception) {
-            throw new IllegalStateException("Close MQTT client failed", exception);
+        try {
+            lifecycle.close();
+        } finally {
+            startupStatus.stopped();
         }
     }
 }

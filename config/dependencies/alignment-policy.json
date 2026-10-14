@@ -340,87 +340,121 @@
     },
     "com.github.redacted-legacy-family:cxf-rt-javassist": {
       "17": {
-        "coordinates": ["io.github.easy4j:cxf-rt-javassist"],
+        "coordinates": [
+          "io.github.easy4j:cxf-rt-javassist"
+        ],
         "reason": "删除重复旧坐标，仅保留当前 easy4j 组件"
       },
       "21": {
-        "coordinates": ["io.github.easy4j:cxf-rt-javassist"],
+        "coordinates": [
+          "io.github.easy4j:cxf-rt-javassist"
+        ],
         "reason": "删除重复旧坐标，仅保留当前 easy4j 组件"
       }
     },
     "com.github.redacted-legacy-family:dozer-extra-converters": {
       "17": {
-        "coordinates": ["io.github.easy4j:dozer-extra-converters"],
+        "coordinates": [
+          "io.github.easy4j:dozer-extra-converters"
+        ],
         "reason": "删除重复旧坐标，仅保留当前 easy4j 组件"
       },
       "21": {
-        "coordinates": ["io.github.easy4j:dozer-extra-converters"],
+        "coordinates": [
+          "io.github.easy4j:dozer-extra-converters"
+        ],
         "reason": "删除重复旧坐标，仅保留当前 easy4j 组件"
       }
     },
     "com.github.redacted-legacy-family:jwt-issuer-api": {
       "17": {
-        "coordinates": ["io.github.easy4j:jwt-issuer"],
+        "coordinates": [
+          "io.github.easy4j:jwt-issuer"
+        ],
         "reason": "旧拆分模块由当前 easy4j 聚合组件替代"
       },
       "21": {
-        "coordinates": ["io.github.easy4j:jwt-issuer"],
+        "coordinates": [
+          "io.github.easy4j:jwt-issuer"
+        ],
         "reason": "旧拆分模块由当前 easy4j 聚合组件替代"
       }
     },
     "com.github.redacted-legacy-family:jwt-issuer-with-jjwt": {
       "17": {
-        "coordinates": ["io.github.easy4j:jwt-issuer"],
+        "coordinates": [
+          "io.github.easy4j:jwt-issuer"
+        ],
         "reason": "旧拆分模块由当前 easy4j 聚合组件替代"
       },
       "21": {
-        "coordinates": ["io.github.easy4j:jwt-issuer"],
+        "coordinates": [
+          "io.github.easy4j:jwt-issuer"
+        ],
         "reason": "旧拆分模块由当前 easy4j 聚合组件替代"
       }
     },
     "com.github.redacted-legacy-family:jwt-issuer-with-nimbus": {
       "17": {
-        "coordinates": ["io.github.easy4j:jwt-issuer"],
+        "coordinates": [
+          "io.github.easy4j:jwt-issuer"
+        ],
         "reason": "旧拆分模块由当前 easy4j 聚合组件替代"
       },
       "21": {
-        "coordinates": ["io.github.easy4j:jwt-issuer"],
+        "coordinates": [
+          "io.github.easy4j:jwt-issuer"
+        ],
         "reason": "旧拆分模块由当前 easy4j 聚合组件替代"
       }
     },
     "com.github.redacted-legacy-family:shiro-j2cache": {
       "17": {
-        "coordinates": ["io.github.easy4j:shiro-j2cache"],
+        "coordinates": [
+          "io.github.easy4j:shiro-j2cache"
+        ],
         "reason": "删除重复旧坐标，仅保留当前 easy4j 组件"
       },
       "21": {
-        "coordinates": ["io.github.easy4j:shiro-j2cache"],
+        "coordinates": [
+          "io.github.easy4j:shiro-j2cache"
+        ],
         "reason": "删除重复旧坐标，仅保留当前 easy4j 组件"
       }
     },
     "com.github.redacted-legacy-family:spring-bytebuddy": {
       "17": {
-        "coordinates": ["io.github.easy4j:spring-bytebuddy"],
+        "coordinates": [
+          "io.github.easy4j:spring-bytebuddy"
+        ],
         "reason": "删除重复旧坐标，仅保留当前 easy4j 组件"
       },
       "21": {
-        "coordinates": ["io.github.easy4j:spring-bytebuddy"],
+        "coordinates": [
+          "io.github.easy4j:spring-bytebuddy"
+        ],
         "reason": "删除重复旧坐标，仅保留当前 easy4j 组件"
       }
     },
     "com.github.redacted-legacy-family:spring-javassist": {
       "17": {
-        "coordinates": ["io.github.easy4j:spring-javassist"],
+        "coordinates": [
+          "io.github.easy4j:spring-javassist"
+        ],
         "reason": "删除重复旧坐标，仅保留当前 easy4j 组件"
       },
       "21": {
-        "coordinates": ["io.github.easy4j:spring-javassist"],
+        "coordinates": [
+          "io.github.easy4j:spring-javassist"
+        ],
         "reason": "删除重复旧坐标，仅保留当前 easy4j 组件"
       }
     },
     "org.iherus.shiro:shiro-redis": {
       "17": {
-        "coordinates": ["org.crazycake:shiro-redis"],
+        "coordinates": [
+          "org.crazycake:shiro-redis"
+        ],
         "reason": "删除重复实现，保留已统一管理的 shiro-redis 组件"
       }
     }

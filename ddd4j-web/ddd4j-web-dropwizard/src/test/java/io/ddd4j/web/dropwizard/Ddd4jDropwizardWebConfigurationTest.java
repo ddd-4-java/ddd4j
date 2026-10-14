@@ -13,6 +13,9 @@
  * limitations under the License.
  */
 package io.ddd4j.web.dropwizard;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.ddd4j.web.core.auth.AuthenticationMode;
 import org.junit.jupiter.api.Test;
@@ -20,9 +23,7 @@ import org.junit.jupiter.api.Test;
 import java.time.Duration;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * 类型说明。

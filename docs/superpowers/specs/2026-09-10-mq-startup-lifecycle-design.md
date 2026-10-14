@@ -11,7 +11,8 @@
 
 1. 保留 `MQClient.init(...)`、`initProducer(...)`、`initConsumer(...)`、`start()` 和 `close()` 的现有公开签名。
 2. `MQEventListener`仅增加 `boolean required() default true`，已有监听器默认成为必选消费者。
-3. `MQListener`增加对应 `required` 属性，同时显式保留当前八参数公开构造器并新增含 `required` 的九参数构造器，避免Lombok重新生成构造器导致二进制破坏。
+3. `MQListener`增加对应 `required` 属性，同时显式保留当前八参数公开构造器并新增含 `required`
+   的九参数构造器，避免Lombok重新生成构造器导致二进制破坏。
 4. 1.0.x使用Java 8兼容实现；2.0.x使用Java 17；3.0.x使用Java 21，但不因语法升级改变生命周期语义。
 5. 关闭操作必须幂等；调用两次或在部分初始化后调用不得抛出“已关闭”类异常。
 
@@ -106,24 +107,25 @@ flowchart TD
 - 单个close action失败时继续关闭其他资源，最后抛出一个聚合异常并将其余异常加入suppressed。
 - 不登记密码、消息正文和连接字符串。
 
-`MQClient`增加有默认实现的 `lifecycle()` 和 `startupStatus()`访问器，保证第三方自定义实现保持二进制兼容；ddd4j内置适配器覆盖它们并返回实例级对象。默认实现不持有全局静态状态，避免classloader和client泄漏。
+`MQClient`增加有默认实现的 `lifecycle()` 和 `startupStatus()`
+访问器，保证第三方自定义实现保持二进制兼容；ddd4j内置适配器覆盖它们并返回实例级对象。默认实现不持有全局静态状态，避免classloader和client泄漏。
 
 各适配器必须登记实际持有资源：
 
-| 适配器 | 必须关闭的资源 |
-|---|---|
-| Kafka | consumers、producer flush/close、消费线程池 |
-| RabbitMQ | consumer channels、线程本地producer channels、connection（仅自行创建时） |
-| MQTT | subscriptions、client disconnect/close、executor |
-| Mica MQTT | client、subscriptions、executor |
-| NATS | JetStream subscriptions/dispatchers、connection drain/close |
-| RocketMQ | consumers shutdown、producer shutdown |
-| ActiveMQ | consumers、sessions、connections |
-| Pulsar | consumers、producer、client |
-| Redis Stream | polling tasks、executor、operations/client（仅拥有时） |
-| SQS | polling tasks、executor、async client |
-| ONS/TDMQ | consumers、producer/client |
-| Disruptor | disruptor shutdown/halt |
+| 适配器       | 必须关闭的资源                                                           |
+|--------------|--------------------------------------------------------------------------|
+| Kafka        | consumers、producer flush/close、消费线程池                              |
+| RabbitMQ     | consumer channels、线程本地producer channels、connection（仅自行创建时） |
+| MQTT         | subscriptions、client disconnect/close、executor                         |
+| Mica MQTT    | client、subscriptions、executor                                          |
+| NATS         | JetStream subscriptions/dispatchers、connection drain/close              |
+| RocketMQ     | consumers shutdown、producer shutdown                                    |
+| ActiveMQ     | consumers、sessions、connections                                         |
+| Pulsar       | consumers、producer、client                                              |
+| Redis Stream | polling tasks、executor、operations/client（仅拥有时）                   |
+| SQS          | polling tasks、executor、async client                                    |
+| ONS/TDMQ     | consumers、producer/client                                               |
+| Disruptor    | disruptor shutdown/halt                                                  |
 
 所有权规则：构造器注入的外部共享资源默认不由客户端关闭；适配器自行创建的资源必须关闭。构造器或工厂必须显式记录ownership，禁止猜测。
 

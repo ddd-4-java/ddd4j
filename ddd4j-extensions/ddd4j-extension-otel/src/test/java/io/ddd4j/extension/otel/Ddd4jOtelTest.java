@@ -35,6 +35,16 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class Ddd4jOtelTest {
 
+    private static void resetTracerCache() {
+        try {
+            Field field = Ddd4jOtel.class.getDeclaredField("TRACER_CACHE");
+            field.setAccessible(true);
+            ((java.util.concurrent.atomic.AtomicReference<?>) field.get(null)).set(null);
+        } catch (Exception ignored) {
+            // 反射失败不影响测试
+        }
+    }
+
     @BeforeEach
     void setUp() {
         ThreadContext.clear();
@@ -46,16 +56,6 @@ class Ddd4jOtelTest {
         ThreadContext.clear();
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
         resetTracerCache();
-    }
-
-    private static void resetTracerCache() {
-        try {
-            Field field = Ddd4jOtel.class.getDeclaredField("TRACER_CACHE");
-            field.setAccessible(true);
-            ((java.util.concurrent.atomic.AtomicReference<?>) field.get(null)).set(null);
-        } catch (Exception ignored) {
-            // 反射失败不影响测试
-        }
     }
 
     @Test

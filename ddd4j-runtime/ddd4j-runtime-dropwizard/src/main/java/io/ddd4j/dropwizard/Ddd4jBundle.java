@@ -19,11 +19,11 @@ import io.ddd4j.cache.subject.InMemorySubjectProvider;
 import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.DefaultCommandBus;
-import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.health.ReadinessContributor;
+import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectProvider;
-import io.dropwizard.core.ConfiguredBundle;
 import io.dropwizard.core.Configuration;
+import io.dropwizard.core.ConfiguredBundle;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
 
@@ -48,13 +48,13 @@ public final class Ddd4jBundle<C extends Configuration> implements ConfiguredBun
     }
 
     public Ddd4jBundle(Collection<CommandExecutor<?>> executors, Collection<Consumer<Object>> listeners,
-                      SubjectProvider subjectProvider, I18nProvider i18nProvider) {
+                       SubjectProvider subjectProvider, I18nProvider i18nProvider) {
         this(executors, listeners, subjectProvider, i18nProvider, List.of());
     }
 
     public Ddd4jBundle(Collection<CommandExecutor<?>> executors, Collection<Consumer<Object>> listeners,
-                      SubjectProvider subjectProvider, I18nProvider i18nProvider,
-                      Collection<? extends ReadinessContributor> readinessContributors) {
+                       SubjectProvider subjectProvider, I18nProvider i18nProvider,
+                       Collection<? extends ReadinessContributor> readinessContributors) {
         this.executors = List.copyOf(Objects.requireNonNull(executors, "executors must not be null"));
         this.listeners = List.copyOf(Objects.requireNonNull(listeners, "listeners must not be null"));
         this.subjectProvider = subjectProvider;

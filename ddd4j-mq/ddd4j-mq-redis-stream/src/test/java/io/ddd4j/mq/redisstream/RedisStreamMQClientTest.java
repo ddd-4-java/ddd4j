@@ -13,6 +13,10 @@
  * limitations under the License.
  */
 package io.ddd4j.mq.redisstream;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.mock;
 
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.mq.MQProperties;
@@ -30,10 +34,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * {@link RedisStreamMQClient} 客户端基础属性测试。
@@ -46,7 +47,7 @@ import static org.mockito.Mockito.when;
  *   <li>构造函数正确初始化</li>
  * </ul>
  *
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @author ddd4j
  */
 class RedisStreamMQClientTest {
 
@@ -132,7 +133,11 @@ class RedisStreamMQClientTest {
              * @param event 事件消息。
              * @return 结果值。
              */
-            @Override public <T> T serialize(Object event) { return (T) "{}"; }
+            @Override
+            public <T> T serialize(Object event) {
+                return (T) "{}";
+            }
+
             /**
              * deserialize() 方法。
              * @param <S> 类型参数。
@@ -141,7 +146,10 @@ class RedisStreamMQClientTest {
              * @param type 目标类型。
              * @return 结果值。
              */
-            @Override public <S, T> T deserialize(S value, Class<T> type) { return null; }
+            @Override
+            public <S, T> T deserialize(S value, Class<T> type) {
+                return null;
+            }
         }, null);
         MQEvent event = new MQEvent();
         event.setTopic("orders");

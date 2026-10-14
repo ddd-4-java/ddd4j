@@ -18,7 +18,7 @@ import feign.Contract;
 import feign.RequestLine;
 import feign.RequestTemplate;
 import feign.Target;
-import io.ddd4j.core.ApiRestResponse;
+import io.ddd4j.core.api.R;
 import io.ddd4j.core.BaseCoreProperties;
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.web.webmvc.annotation.FeignHeader;
@@ -30,8 +30,8 @@ import io.ddd4j.web.webmvc.interceptor.FeignHeaderInterceptor;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.MethodParameter;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -45,8 +45,19 @@ import java.util.Objects;
 import static io.ddd4j.core.constant.ContextConstants.SYSTEM_ID;
 import static org.junit.jupiter.api.Assertions.*;
 
-/** 同输入验证跨版本 Web 注册与出站 header；不启动外部服务。 */
+/**
+ * 同输入验证跨版本 Web 注册与出站 header；不启动外部服务。
+ */
 class ThreeLineWebParityTest {
+    private static String[] includedPatterns(MappedInterceptor interceptor) throws Exception {
+        // Spring 7 移除了旧 getter，测试观察同一注册结果。
+        try {
+            return (String[]) MappedInterceptor.class.getMethod("getIncludePathPatterns").invoke(interceptor);
+        } catch (NoSuchMethodException exception) {
+            return (String[]) MappedInterceptor.class.getMethod("getPathPatterns").invoke(interceptor);
+        }
+    }
+
     @AfterEach
     void clearContext() {
         ThreadContext.clear();
@@ -60,24 +71,38 @@ class ThreeLineWebParityTest {
              * 获取值。
              * @return 结果数值。
              */
-            @Override public int getOrder() { return 0; }
+            @Override
+            public int getOrder() {
+                return 0;
+            }
+
             /**
              * pathPatterns() 方法。
              * @return 结果字符串。
              */
-            @Override public String[] pathPatterns() { return new String[]{"/protected/**"}; }
+            @Override
+            public String[] pathPatterns() {
+                return new String[]{"/protected/**"};
+            }
+
             /**
              * excludePathPatterns() 方法。
              * @return 结果字符串。
              */
-            @Override public String[] excludePathPatterns() { return new String[]{"/protected/skipped"}; }
+            @Override
+            public String[] excludePathPatterns() {
+                return new String[]{"/protected/skipped"};
+            }
         };
         BaseWebInterceptor second = new BaseWebInterceptor() {
             /**
              * 获取值。
              * @return 结果数值。
              */
-            @Override public int getOrder() { return 1; }
+            @Override
+            public int getOrder() {
+                return 1;
+            }
         };
         BaseWebConfig config = new BaseWebConfig(java.util.Arrays.asList(interceptor, second),
                 new BaseCoreProperties(), Collections.emptyList());
@@ -130,7 +155,10 @@ class ThreeLineWebParityTest {
              * logException() 方法。
              * @param exception exception 参数。
              */
-            @Override protected void logException(Exception exception) { }
+            @Override
+            protected void logException(Exception exception) {
+            }
+
             /**
              * 获取值。
              * @param ex 异常对象。
@@ -138,7 +166,8 @@ class ThreeLineWebParityTest {
              * @param fallback 字符串参数。
              * @return 结果字符串。
              */
-            @Override protected String getLocaleMessage(Exception ex, String key, String fallback) {
+            @Override
+            protected String getLocaleMessage(Exception ex, String key, String fallback) {
                 return "localized header message";
             }
         };
@@ -148,26 +177,18 @@ class ThreeLineWebParityTest {
                 new MethodParameter(ThreeLineWebParityTest.class.getDeclaredMethod("headerEndpoint", String.class), 0));
         for (boolean enabled : new boolean[]{false, true}) {
             properties.setEnabled(enabled);
-            ApiRestResponse<String> response = handler.missingRequestHeaderException(exception);
+            R<String> response = handler.missingRequestHeaderException(exception);
             assertEquals(400, response.getCode());
-            assertEquals(enabled ? "localized header message" : "缺少请求头: [X-Parity].", response.getMessage());
+            assertEquals(enabled ? "localized header message" : "缺少请求头: [X-Parity].", response.getMsg());
         }
     }
 
-    private void headerEndpoint(String value) { }
-
-    private static String[] includedPatterns(MappedInterceptor interceptor) throws Exception {
-        // Spring 7 移除了旧 getter，测试观察同一注册结果。
-        try {
-            return (String[]) MappedInterceptor.class.getMethod("getIncludePathPatterns").invoke(interceptor);
-        } catch (NoSuchMethodException exception) {
-            return (String[]) MappedInterceptor.class.getMethod("getPathPatterns").invoke(interceptor);
-        }
+    private void headerEndpoint(String value) {
     }
 
     /**
      * 类型说明。
-     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @author ddd4j
      * @since 3.0.x
      */
     interface HeaderClient {
@@ -178,10 +199,12 @@ class ThreeLineWebParityTest {
 
     /**
      * 类型说明。
-     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @author ddd4j
      * @since 3.0.x
      */
     private static class RecordingRegistry extends InterceptorRegistry {
-        List<Object> entries() { return getInterceptors(); }
+        List<Object> entries() {
+            return getInterceptors();
+        }
     }
 }

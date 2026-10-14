@@ -8,13 +8,14 @@ ddd4j SubjectKit 统一鉴权入口在 Quarkus 框架下的 Sa-Token 适配示�
 
 本示例演示了 **ddd4j-auth 抽象层**的核心优势：
 
-- **业务代码零改动**：本示例与其他 6 个 Auth 示例（spring/Quarkus/Javalin × sa-token/shiro/security）的业务代码**完全一致**
+- **业务代码零改动**：本示例与其他 6 个 Auth 示例（spring/Quarkus/Javalin × sa-token/shiro/security）的业务代码
+  **完全一致**
 - **切换底层鉴权框架只需改 pom.xml**：从 shiro 切换到 sa-token，只需替换 2 个依赖，业务代码不动
 - **框架无关的鉴权契约**：业务代码统一通过 `SubjectKit` 调用，不直接依赖 sa-token/shiro/security API
 
 ### 📦 模块对应
 
-| 框架      | 鉴权适配模块              | 桥接模块               |
+| 框架    | 鉴权适配模块        | 桥接模块           |
 |---------|---------------------|--------------------|
 | Quarkus | ddd4j-auth-sa-token | ddd4j-auth-quarkus |
 
@@ -68,19 +69,19 @@ public class AuthService {
 
 **关键点**：
 
-- 本类**与其他 6 个示例完全一致**（证明切换框架业务代码零改动）
+- 本类 **与其他 6 个示例完全一致**（证明切换框架业务代码零改动）
 - 仅导入语句依赖 ddd4j-core（不依赖具体的 sa-token/shiro/security API）
 
 ### 🔄 切换鉴权框架
 
-| 切换目标              | pom.xml 变化                     |
-|-------------------|--------------------------------|
+| 切换目标          | pom.xml 变化                     |
+|-------------------|----------------------------------|
 | Sa-Token → Shiro  | 替换 ddd4j-auth-{sa-token,shiro} |
 | Shiro → Security  | 替换 ddd4j-auth-{shiro,security} |
-| Spring → Quarkus  | ddd4j-runtime-{spring,quarkus} |
-| Quarkus → Javalin | ddd4j-runtime-{quarkus,guice}  |
+| Spring → Quarkus  | ddd4j-runtime-{spring,quarkus}   |
+| Quarkus → Javalin | ddd4j-runtime-{quarkus,guice}    |
 
-业务代码（`AuthController`、`AuthService`）**无需任何修改**。
+业务代码（`AuthController`、`AuthService`） **无需任何修改**。
 
 ### 🏗️ 架构图
 
@@ -186,7 +187,7 @@ curl 'http://localhost:8083/api/goods/page?current=1&size=10&status=ON_SALE&orde
 ```
 
 > 业务代码（Order/Goods 域、Application、Infrastructure、Web）与另外 3 个鉴权示例
-> （quarkus-shiro、javalin-satoken、javalin-shiro）**完全一致**，仅包名不同。
+> （quarkus-shiro、javalin-satoken、javalin-shiro） **完全一致**，仅包名不同。
 
 ### 🔗 相关示例
 

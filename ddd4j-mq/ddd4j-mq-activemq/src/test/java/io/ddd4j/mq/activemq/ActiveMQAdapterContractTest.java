@@ -13,6 +13,10 @@
  * limitations under the License.
  */
 package io.ddd4j.mq.activemq;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
 
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.listener.MQListener;
@@ -26,11 +30,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.nullable;
+import static org.mockito.Mockito.*;
 
 /**
  * 类型说明。

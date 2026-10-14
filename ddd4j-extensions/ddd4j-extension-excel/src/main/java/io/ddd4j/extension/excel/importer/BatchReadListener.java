@@ -55,7 +55,7 @@ public class BatchReadListener<T> implements ReadListener<T> {
     /**
      * 构造批量监听器。
      *
-     * @param batchSize    批大小（建议 500 ~ 5000）
+     * @param batchSize     批大小（建议 500 ~ 5000）
      * @param batchConsumer 批回调（达到批大小时触发）
      */
     public BatchReadListener(int batchSize, Consumer<List<T>> batchConsumer) {

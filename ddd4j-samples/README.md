@@ -5,29 +5,29 @@ Vert.x、Helidon、Dropwizard 运行时示例。Spring Boot 自动装配和认�
 
 ## 示例矩阵
 
-| 示例                             | 方向     | 说明                                           |
-|--------------------------------|--------|----------------------------------------------|
-| `ddd4j-sample-order-*`         | 共享内核 | Order 领域、应用服务与跨运行时业务契约                   |
-| `ddd4j-sample-quarkus`         | 普通 DDD | 使用 Quarkus CDI/JAX-RS 的运行时适配                     |
-| `ddd4j-sample-javalin`         | 普通 DDD | 使用 Guice/Javalin 的运行时适配                          |
-| `ddd4j-sample-micronaut`       | 普通 DDD | 使用 Micronaut 编译期 DI/HTTP 的运行时适配               |
-| `ddd4j-sample-vertx`           | 普通 DDD | 使用 Vert.x EventBus/Router 的运行时适配                 |
-| `ddd4j-sample-helidon`         | 普通 DDD | 使用 Helidon CDI/JAX-RS 的运行时适配                     |
-| `ddd4j-sample-dropwizard`      | 普通 DDD | 使用 Dropwizard Bundle/Jersey 的运行时适配               |
-| `ddd4j-sample-quarkus-cqrs`    | CQRS   | Quarkus 运行时下的 Order/Goods 读写分离示例             |
-| `ddd4j-sample-javalin-cqrs`    | CQRS   | Javalin 运行时下的 Order/Goods 读写分离示例             |
-| `ddd4j-sample-quarkus-satoken` | Auth   | Quarkus + Sa-Token 鉴权示例                      |
-| `ddd4j-sample-quarkus-shiro`   | Auth   | Quarkus + Apache Shiro 鉴权示例                  |
-| `ddd4j-sample-javalin-satoken` | Auth   | Javalin + Sa-Token 鉴权示例                      |
-| `ddd4j-sample-javalin-shiro`   | Auth   | Javalin + Apache Shiro 鉴权示例                  |
+| 示例                           | 方向     | 说明                                        |
+|--------------------------------|----------|---------------------------------------------|
+| `ddd4j-sample-order-*`         | 共享内核 | Order 领域、应用服务与跨运行时业务契约      |
+| `ddd4j-sample-quarkus`         | 普通 DDD | 使用 Quarkus CDI/JAX-RS 的运行时适配        |
+| `ddd4j-sample-javalin`         | 普通 DDD | 使用 Guice/Javalin 的运行时适配             |
+| `ddd4j-sample-micronaut`       | 普通 DDD | 使用 Micronaut 编译期 DI/HTTP 的运行时适配  |
+| `ddd4j-sample-vertx`           | 普通 DDD | 使用 Vert.x EventBus/Router 的运行时适配    |
+| `ddd4j-sample-helidon`         | 普通 DDD | 使用 Helidon CDI/JAX-RS 的运行时适配        |
+| `ddd4j-sample-dropwizard`      | 普通 DDD | 使用 Dropwizard Bundle/Jersey 的运行时适配  |
+| `ddd4j-sample-quarkus-cqrs`    | CQRS     | Quarkus 运行时下的 Order/Goods 读写分离示例 |
+| `ddd4j-sample-javalin-cqrs`    | CQRS     | Javalin 运行时下的 Order/Goods 读写分离示例 |
+| `ddd4j-sample-quarkus-satoken` | Auth     | Quarkus + Sa-Token 鉴权示例                 |
+| `ddd4j-sample-quarkus-shiro`   | Auth     | Quarkus + Apache Shiro 鉴权示例             |
+| `ddd4j-sample-javalin-satoken` | Auth     | Javalin + Sa-Token 鉴权示例                 |
+| `ddd4j-sample-javalin-shiro`   | Auth     | Javalin + Apache Shiro 鉴权示例             |
 
 ## 普通 DDD 示例
 
 共享内核与六个非 Boot 运行时示例使用同一组业务概念，重点不是复制 CRUD，而是对照运行时边界：
 
-| 业务轨道        | 示例对象                                                | 设计重点                                                    |
-|-------------|-----------------------------------------------------|---------------------------------------------------------|
-| 充血聚合        | `Order` / `OrderLine` / `Money` / `OrderRepository` | 聚合根封装状态机、不变量和领域事件，领域层不依赖具体 Web/DI/ORM                   |
+| 业务轨道      | 示例对象                                            | 设计重点                                                                     |
+|---------------|-----------------------------------------------------|------------------------------------------------------------------------------|
+| 充血聚合      | `Order` / `OrderLine` / `Money` / `OrderRepository` | 聚合根封装状态机、不变量和领域事件，领域层不依赖具体 Web/DI/ORM              |
 | 轻量 PO/Query | `Goods` / `GoodsQuery` / `GoodsRepository`          | 简单 CRUD 场景保留轻量数据对象，查询能力通过 `Query` + `RichRepository` 承接 |
 
 推荐先阅读：

@@ -14,6 +14,10 @@
  */
 package io.ddd4j.web.javalin;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.auth.AuthPrincipal;
@@ -24,14 +28,14 @@ import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.subject.Subject;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
-import io.ddd4j.web.core.idempotency.CacheIdempotencyGuard;
-import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
 import io.ddd4j.web.core.auth.WebAccessPolicy;
 import io.ddd4j.web.core.context.WebContextScope;
-import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.web.core.context.WebRequestContextFactory;
 import io.ddd4j.web.core.context.WebRequestLifecycle;
+import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
 import io.ddd4j.web.core.error.WebStatusException;
+import io.ddd4j.web.core.idempotency.CacheIdempotencyGuard;
+import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.web.testkit.AbstractWebContractTest;
 import io.ddd4j.web.testkit.WebContractClient;
 import io.ddd4j.web.testkit.WebContractPaths;
@@ -55,13 +59,93 @@ import static org.mockito.Mockito.when;
 
 /**
  * 类型说明。
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @author ddd4j
  * @since 3.0.x
  */
 class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
 
     private Javalin app;
     private WebContractClient contractClient;
+
+    /**
+     * 基于 JDK HTTP 客户端的契约客户端，通过随机端口访问本地测试实例。
+     *
+     * @param httpClient 发起请求使用的 HTTP 客户端
+     * @param port 测试实例监听的端口
+     */
+    private final static class JavalinContractClient implements WebContractClient {
+
+        private static final long serialVersionUID = 0L;
+
+        private final HttpClient httpClient;
+
+        private final int port;
+
+        /**
+         * request() 方法。
+         * @param method 被调用的方法。
+         * @param path 路径。
+         * @param headers 消息头。
+         * @param body 字符串参数。
+         * @return 方法执行结果。
+         */
+        @Override
+        public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
+            try {
+                HttpRequest.Builder builder = HttpRequest.newBuilder().uri(URI.create("http://127.0.0.1:" + port + path));
+                headers.forEach(builder::header);
+                HttpRequest.BodyPublisher publisher = Objects.isNull(body) ? HttpRequest.BodyPublishers.noBody() : HttpRequest.BodyPublishers.ofString(body);
+                HttpResponse<String> response = httpClient.send(builder.method(method, publisher).build(), HttpResponse.BodyHandlers.ofString());
+                return new WebContractResponse(response.statusCode(), response.headers().map(), response.body());
+            } catch (InterruptedException exception) {
+                Thread.currentThread().interrupt();
+                throw new IllegalStateException("Javalin contract request interrupted", exception);
+            } catch (Exception exception) {
+                throw new IllegalStateException("Javalin contract request failed", exception);
+            }
+        }
+
+        @JsonCreator()
+        private JavalinContractClient(@JsonProperty("httpClient") HttpClient httpClient, @JsonProperty("port") int port) {
+            this.httpClient = httpClient;
+            this.port = port;
+        }
+
+        @JsonProperty("httpClient")
+        public HttpClient httpClient() {
+            return httpClient;
+        }
+
+        @JsonProperty("port")
+        public int port() {
+            return port;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            JavalinContractClient other = (JavalinContractClient) obj;
+            return Objects.equals(this.httpClient, other.httpClient) && this.port == other.port;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(httpClient);
+            result = 31 * result + Integer.hashCode(port);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "JavalinContractClient[httpClient=" + httpClient + ", port=" + port + "]";
+        }
+    }
 
     @BeforeEach
     void setUp() {
@@ -136,7 +220,7 @@ class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
         });
     }
 
-    private SubjectProvider provider(Subject subject) {
+        private SubjectProvider provider(Subject subject) {
         return new SubjectProvider() {
             /**
              * 获取值。
@@ -147,41 +231,5 @@ class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
                 return subject;
             }
         };
-    }
-
-    /**
-     * 基于 JDK HTTP 客户端的契约客户端，通过随机端口访问本地测试实例。
-     *
-     * @param httpClient 发起请求使用的 HTTP 客户端
-     * @param port 测试实例监听的端口
-     */
-    private record JavalinContractClient(HttpClient httpClient, int port) implements WebContractClient {
-
-        /**
-         * request() 方法。
-         * @param method 被调用的方法。
-         * @param path 路径。
-         * @param headers 消息头。
-         * @param body 字符串参数。
-         * @return 方法执行结果。
-         */
-        @Override
-        public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
-            try {
-                HttpRequest.Builder builder = HttpRequest.newBuilder()
-                        .uri(URI.create("http://127.0.0.1:" + port + path));
-                headers.forEach(builder::header);
-                HttpRequest.BodyPublisher publisher = Objects.isNull(body)
-                        ? HttpRequest.BodyPublishers.noBody() : HttpRequest.BodyPublishers.ofString(body);
-                HttpResponse<String> response = httpClient.send(builder.method(method, publisher).build(),
-                        HttpResponse.BodyHandlers.ofString());
-                return new WebContractResponse(response.statusCode(), response.headers().map(), response.body());
-            } catch (InterruptedException exception) {
-                Thread.currentThread().interrupt();
-                throw new IllegalStateException("Javalin contract request interrupted", exception);
-            } catch (Exception exception) {
-                throw new IllegalStateException("Javalin contract request failed", exception);
-            }
-        }
     }
 }

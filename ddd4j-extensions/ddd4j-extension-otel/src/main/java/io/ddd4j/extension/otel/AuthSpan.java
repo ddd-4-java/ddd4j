@@ -51,7 +51,9 @@ import java.util.Objects;
  */
 public final class AuthSpan {
 
-    /** 鉴权相关标准化属性键。 */
+    /**
+     * 鉴权相关标准化属性键。
+     */
     public static final AttributeKey<String> ATTR_AUTH_FRAMEWORK = AttributeKey.stringKey("auth.framework");
     /** 用户登录标识属性键，记录当前操作对应的登录 ID。 */
     public static final AttributeKey<String> ATTR_AUTH_LOGIN_ID = AttributeKey.stringKey("auth.login_id");

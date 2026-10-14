@@ -14,10 +14,10 @@
  */
 package io.ddd4j.mq.listener;
 
+import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.annotation.MQEventListener;
 import io.ddd4j.mq.event.MQEvent;
-import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.Builder;
 import lombok.Data;
@@ -29,13 +29,13 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * MQ 监听器定义（100% 对齐 base-mq {@code MQListener}）。
+ * MQ 监听器定义。
  *
  * <p>由框架适配层（如 ddd4j-mq-spring 的 BeanPostProcessor）在容器初始化阶段构建，
  * 供 {@link MQClient#initConsumer} 建立原生消费者，
  * {@link MQClient#consume} 反射调用目标方法。
  *
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @author ddd4j
  * @since 2.0.x
  */
 @Data
@@ -81,21 +81,16 @@ public class MQListener {
     private boolean required = true;
 
     /**
-     * 监听器构建器，用于覆盖 {@link #required} 等字段的默认值。
-     *
-     * <p>Lombok {@code @Builder} 生成的构建器骨架中，本类补充了 {@code required} 的默认值。
+     * 保留历史八参数构造器。
      */
-    public static class MQListenerBuilder {
-        private boolean required = true;
-    }
-
-    /** 保留历史八参数构造器。 */
     public MQListener(Object bean, Method method, String group, String namespace, String topic,
                       String tags, List<String> supports, String separator) {
         this(bean, method, group, namespace, topic, tags, supports, separator, true);
     }
 
-    /** 包含启动必要性的完整构造器。 */
+    /**
+     * 包含启动必要性的完整构造器。
+     */
     @Builder
     public MQListener(Object bean, Method method, String group, String namespace, String topic,
                       String tags, List<String> supports, String separator, boolean required) {
@@ -179,6 +174,15 @@ public class MQListener {
             return base;
         }
         return base + sep + firstTag;
+    }
+
+    /**
+     * 监听器构建器，用于覆盖 {@link #required} 等字段的默认值。
+     *
+     * <p>Lombok {@code @Builder} 生成的构建器骨架中，本类补充了 {@code required} 的默认值。
+     */
+    public static class MQListenerBuilder {
+        private boolean required = true;
     }
 
 }

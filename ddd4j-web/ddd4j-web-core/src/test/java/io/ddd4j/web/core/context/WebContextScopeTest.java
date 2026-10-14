@@ -13,6 +13,10 @@
  * limitations under the License.
  */
 package io.ddd4j.web.core.context;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import io.ddd4j.core.constant.ContextConstants;
 import org.junit.jupiter.api.AfterEach;
@@ -21,10 +25,7 @@ import org.slf4j.MDC;
 
 import java.util.Locale;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * 类型说明。
@@ -33,14 +34,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  */
 class WebContextScopeTest {
 
-    @AfterEach
-    void tearDown() {
-        MDC.clear();
-    }
-
     private static WebRequestContext request() {
         return new WebRequestContext("r-1", "t-1", "tenant-a", "Bearer token",
                 Locale.CHINA, "127.0.0.1", "GET", "/api");
+    }
+
+    @AfterEach
+    void tearDown() {
+        MDC.clear();
     }
 
     @Test

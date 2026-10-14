@@ -13,35 +13,38 @@
  * limitations under the License.
  */
 package io.ddd4j.mq.rabbitmq;
-
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.Return;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import com.rabbitmq.client.ReturnCallback;
+import com.rabbitmq.client.Return;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.AMQP;
+
+import com.rabbitmq.client.*;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.event.MQEventSerialization;
 import io.ddd4j.mq.message.MessageHeaders;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
-import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 /**
  * 类型说明。
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @author ddd4j
  * @since 3.0.x
  */
 class RabbitMQAdapterContractTest {
@@ -97,14 +100,22 @@ class RabbitMQAdapterContractTest {
              * @param dist 类型字面量。
              * @return 结果值。
              */
-            @Override public <S, T> T deserialize(S src, Class<T> dist) { return null; }
+            @Override
+            public <S, T> T deserialize(S src, Class<T> dist) {
+                return null;
+            }
+
             /**
              * serialize() 方法。
              * @param <T> 类型参数。
              * @param src 对象参数。
              * @return 结果值。
              */
-            @Override @SuppressWarnings("unchecked") public <T> T serialize(Object src) { return (T) "{}"; }
+            @Override
+            @SuppressWarnings("unchecked")
+            public <T> T serialize(Object src) {
+                return (T) "{}";
+            }
         };
         client.init(Collections.<io.ddd4j.mq.listener.MQListener>emptyList(), properties, serialization, null);
         MQEvent event = new MQEvent();
@@ -172,14 +183,22 @@ class RabbitMQAdapterContractTest {
              * @param dist 类型字面量。
              * @return 结果值。
              */
-            @Override public <S, T> T deserialize(S src, Class<T> dist) { return null; }
+            @Override
+            public <S, T> T deserialize(S src, Class<T> dist) {
+                return null;
+            }
+
             /**
              * serialize() 方法。
              * @param <T> 类型参数。
              * @param src 对象参数。
              * @return 结果值。
              */
-            @Override @SuppressWarnings("unchecked") public <T> T serialize(Object src) { return (T) "{}"; }
+            @Override
+            @SuppressWarnings("unchecked")
+            public <T> T serialize(Object src) {
+                return (T) "{}";
+            }
         };
         client.init(Collections.<io.ddd4j.mq.listener.MQListener>emptyList(), properties, serialization, null);
         // 池创建时为每个 channel 注册 listener
@@ -231,14 +250,22 @@ class RabbitMQAdapterContractTest {
              * @param dist 类型字面量。
              * @return 结果值。
              */
-            @Override public <S, T> T deserialize(S src, Class<T> dist) { return null; }
+            @Override
+            public <S, T> T deserialize(S src, Class<T> dist) {
+                return null;
+            }
+
             /**
              * serialize() 方法。
              * @param <T> 类型参数。
              * @param src 对象参数。
              * @return 结果值。
              */
-            @Override @SuppressWarnings("unchecked") public <T> T serialize(Object src) { return (T) "{}"; }
+            @Override
+            @SuppressWarnings("unchecked")
+            public <T> T serialize(Object src) {
+                return (T) "{}";
+            }
         };
         client.init(Collections.<io.ddd4j.mq.listener.MQListener>emptyList(), props, serialization, null);
 
@@ -307,14 +334,22 @@ class RabbitMQAdapterContractTest {
                      * @param dist 类型字面量。
                      * @return 结果值。
                      */
-                    @Override public <S, T> T deserialize(S src, Class<T> dist) { return null; }
+                    @Override
+                    public <S, T> T deserialize(S src, Class<T> dist) {
+                        return null;
+                    }
+
                     /**
                      * serialize() 方法。
                      * @param <T> 类型参数。
                      * @param src 对象参数。
                      * @return 结果值。
                      */
-                    @Override @SuppressWarnings("unchecked") public <T> T serialize(Object src) { return (T) "{}"; }
+                    @Override
+                    @SuppressWarnings("unchecked")
+                    public <T> T serialize(Object src) {
+                        return (T) "{}";
+                    }
                 }, null);
         MQEvent event = new MQEvent();
         event.setTopic("orders");

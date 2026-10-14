@@ -13,35 +13,35 @@
  * limitations under the License.
  */
 package io.ddd4j.guice;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import io.ddd4j.guice.DddAnnotationModule;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
-import com.google.inject.name.Names;
 import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.cqrs.readmodel.ViewManager;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.guice.annotation.ddd.AnnotationFusionVerifier;
-import com.google.inject.AbstractModule;
 import io.ddd4j.guice.annotation.ddd.DomainService;
 import io.ddd4j.guice.cqrs.GuiceViewManager;
-import io.ddd4j.guice.DddAnnotationModule;
 import io.ddd4j.guice.i18n.GuiceI18nProvider;
 import io.ddd4j.guice.subject.GuiceSubjectProvider;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * 类型说明。
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @author ddd4j
  * @since 3.0.x
  */
 class Ddd4jGuiceModuleTest {
@@ -65,7 +65,8 @@ class Ddd4jGuiceModuleTest {
              */
             @Override
             protected void configure() {
-                bind(new com.google.inject.TypeLiteral<io.ddd4j.core.cqrs.readmodel.EventChunkReader<Object>>() {})
+                bind(new com.google.inject.TypeLiteral<io.ddd4j.core.cqrs.readmodel.EventChunkReader<Object>>() {
+                })
                         /**
                          * .toInstance() 方法。
                          * @param reader reader 参数。
@@ -76,24 +77,36 @@ class Ddd4jGuiceModuleTest {
         try {
             java.util.List<Object> handled = new java.util.ArrayList<>();
             io.ddd4j.core.cqrs.readmodel.ProjectionRunner<Object> runner = injector.getInstance(
-                    Key.get(new com.google.inject.TypeLiteral<io.ddd4j.core.cqrs.readmodel.ProjectionRunner<Object>>() {}));
+                    Key.get(new com.google.inject.TypeLiteral<io.ddd4j.core.cqrs.readmodel.ProjectionRunner<Object>>() {
+                    }));
             runner.runOnce(new io.ddd4j.core.cqrs.readmodel.ProjectionView<Object>() {
                 /**
                  * 获取值。
                  * @return 结果字符串。
                  */
-                public String getName() { return "custom-reader"; }
+                public String getName() {
+                    return "custom-reader";
+                }
+
                 /**
                  * 获取值。
                  * @return 结果字符串。
                  */
-                public String getCron() { return "* * * * *"; }
-                public java.util.Collection<String> getEventTypes() { return java.util.Collections.emptyList(); }
+                public String getCron() {
+                    return "* * * * *";
+                }
+
+                public java.util.Collection<String> getEventTypes() {
+                    return java.util.Collections.emptyList();
+                }
+
                 /**
                  * handleEvents() 方法。
                  * @param events 领域事件集合。
                  */
-                public void handleEvents(java.util.Collection<Object> events) { handled.addAll(events); }
+                public void handleEvents(java.util.Collection<Object> events) {
+                    handled.addAll(events);
+                }
             });
             assertEquals(java.util.Collections.singletonList("event"), handled);
             assertEquals(1L, injector.getInstance(io.ddd4j.core.cqrs.readmodel.ProjectionService.class)
@@ -217,114 +230,6 @@ class Ddd4jGuiceModuleTest {
         assertNotNull(injector);
     }
 
-    /**
-     * 标注了领域服务注解的测试 Bean，用于验证注解扫描与单例绑定。
-     */
-    @DomainService
-    public static class TestDomainService {
-    }
-
-    /**
-     * Mapper 接口桩，仅用于验证 MyBatis 模块的 Mapper 注册流程。
-     */
-    public interface MapperStub {
-    }
-
-    /**
-     * 仓储类桩，用于验证仓储与 Mapper 的绑定关系。
-     */
-    public static class RepositoryStub {
-    }
-
-    /**
-     * 空实现的数据源桩，所有方法返回空值，避免测试依赖真实数据库连接。
-     */
-    public static final class NoopDataSource implements javax.sql.DataSource {
-
-        /**
-         * 获取值。
-         * @return 方法执行结果。
-         */
-        @Override
-        public java.sql.Connection getConnection() {
-            return null;
-        }
-
-        /**
-         * 获取值。
-         * @param username 用户名。
-         * @param password 密码。
-         * @return 方法执行结果。
-         */
-        @Override
-        public java.sql.Connection getConnection(String username, String password) {
-            return null;
-        }
-
-        /**
-         * 获取值。
-         * @return 方法执行结果。
-         */
-        @Override
-        public java.io.PrintWriter getLogWriter() {
-            return null;
-        }
-
-        /**
-         * 设置值。
-         * @param out out 参数。
-         */
-        @Override
-        public void setLogWriter(java.io.PrintWriter out) {
-        }
-
-        /**
-         * 设置值。
-         * @param seconds seconds 参数。
-         */
-        @Override
-        public void setLoginTimeout(int seconds) {
-        }
-
-        /**
-         * 获取值。
-         * @return 结果数值。
-         */
-        @Override
-        public int getLoginTimeout() {
-            return 0;
-        }
-
-        /**
-         * 获取值。
-         * @return 方法执行结果。
-         */
-        @Override
-        public java.util.logging.Logger getParentLogger() {
-            return java.util.logging.Logger.getGlobal();
-        }
-
-        /**
-         * unwrap() 方法。
-         * @param <T> 类型参数。
-         * @param iface 类型字面量。
-         * @return 结果值。
-         */
-        @Override
-        public <T> T unwrap(Class<T> iface) {
-            return null;
-        }
-
-        /**
-         * 判断布尔状态。
-         * @param iface 类型字面量。
-         * @return 判断结果。
-         */
-        @Override
-        public boolean isWrapperFor(Class<?> iface) {
-            return false;
-        }
-    }
     @Test
     void providesMethodsInstantiateOnDemand() {
         Injector injector = Guice.createInjector(new Ddd4jGuiceModule());
@@ -428,8 +333,117 @@ class Ddd4jGuiceModuleTest {
     }
 
     /**
+     * Mapper 接口桩，仅用于验证 MyBatis 模块的 Mapper 注册流程。
+     */
+    public interface MapperStub {
+    }
+
+    /**
+     * 标注了领域服务注解的测试 Bean，用于验证注解扫描与单例绑定。
+     */
+    @DomainService
+    public static class TestDomainService {
+    }
+
+    /**
+     * 仓储类桩，用于验证仓储与 Mapper 的绑定关系。
+     */
+    public static class RepositoryStub {
+    }
+
+    /**
+     * 空实现的数据源桩，所有方法返回空值，避免测试依赖真实数据库连接。
+     */
+    public static final class NoopDataSource implements javax.sql.DataSource {
+
+        /**
+         * 获取值。
+         * @return 方法执行结果。
+         */
+        @Override
+        public java.sql.Connection getConnection() {
+            return null;
+        }
+
+        /**
+         * 获取值。
+         * @param username 用户名。
+         * @param password 密码。
+         * @return 方法执行结果。
+         */
+        @Override
+        public java.sql.Connection getConnection(String username, String password) {
+            return null;
+        }
+
+        /**
+         * 获取值。
+         * @return 方法执行结果。
+         */
+        @Override
+        public java.io.PrintWriter getLogWriter() {
+            return null;
+        }
+
+        /**
+         * 设置值。
+         * @param out out 参数。
+         */
+        @Override
+        public void setLogWriter(java.io.PrintWriter out) {
+        }
+
+        /**
+         * 获取值。
+         * @return 结果数值。
+         */
+        @Override
+        public int getLoginTimeout() {
+            return 0;
+        }
+
+        /**
+         * 设置值。
+         * @param seconds seconds 参数。
+         */
+        @Override
+        public void setLoginTimeout(int seconds) {
+        }
+
+        /**
+         * 获取值。
+         * @return 方法执行结果。
+         */
+        @Override
+        public java.util.logging.Logger getParentLogger() {
+            return java.util.logging.Logger.getGlobal();
+        }
+
+        /**
+         * unwrap() 方法。
+         * @param <T> 类型参数。
+         * @param iface 类型字面量。
+         * @return 结果值。
+         */
+        @Override
+        public <T> T unwrap(Class<T> iface) {
+            return null;
+        }
+
+        /**
+         * 判断布尔状态。
+         * @param iface 类型字面量。
+         * @return 判断结果。
+         */
+        @Override
+        public boolean isWrapperFor(Class<?> iface) {
+            return false;
+        }
+    }
+
+    /**
      * 类型说明。
-     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @author ddd4j
      * @since 3.0.x
      */
     public static class ExecutorStub implements io.ddd4j.core.cqrs.command.CommandExecutor<io.ddd4j.core.cqrs.command.Command> {

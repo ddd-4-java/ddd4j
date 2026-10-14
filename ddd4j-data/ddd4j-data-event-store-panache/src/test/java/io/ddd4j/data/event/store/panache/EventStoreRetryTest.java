@@ -34,24 +34,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class EventStoreRetryTest {
 
-    /**
-     * 记录休眠调用次数的桩 Sleeper，用于断言重试退避行为而不真正等待。
-     *
-     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
-     */
-    static final class RecordingSleeper implements EventStoreRetry.Sleeper {
-        final List<Long> calls = new ArrayList<>();
-
-        /**
-         * sleep() 方法。
-         * @param millis millis 参数。
-         */
-        @Override
-        public void sleep(long millis) {
-            calls.add(millis);
-        }
-    }
-
     @Test
     void 首次成功_不调用Sleeper() throws Exception {
         RecordingSleeper sleeper = new RecordingSleeper();
@@ -140,15 +122,35 @@ class EventStoreRetryTest {
 
     @Test
     void maxAttempts_小于1_构造失败() {
-        assertThatThrownBy(() -> new EventStoreRetry(0, 1L, ms -> {}))
+        assertThatThrownBy(() -> new EventStoreRetry(0, 1L, ms -> {
+        }))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("maxAttempts");
     }
 
     @Test
     void baseDelayMillis_负数_构造失败() {
-        assertThatThrownBy(() -> new EventStoreRetry(3, -1L, ms -> {}))
+        assertThatThrownBy(() -> new EventStoreRetry(3, -1L, ms -> {
+        }))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("baseDelayMillis");
+    }
+
+    /**
+     * 记录休眠调用次数的桩 Sleeper，用于断言重试退避行为而不真正等待。
+     *
+     * @author ddd4j
+     */
+    static final class RecordingSleeper implements EventStoreRetry.Sleeper {
+        final List<Long> calls = new ArrayList<>();
+
+        /**
+         * sleep() 方法。
+         * @param millis millis 参数。
+         */
+        @Override
+        public void sleep(long millis) {
+            calls.add(millis);
+        }
     }
 }

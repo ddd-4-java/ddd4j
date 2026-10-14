@@ -14,7 +14,6 @@
  */
 package io.ddd4j.core.cqrs.readmodel;
 
-import java.time.Instant;
 import java.util.Optional;
 
 /**

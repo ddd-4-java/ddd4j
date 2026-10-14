@@ -14,10 +14,9 @@
  */
 package io.ddd4j.sample.javalin.shiro.goods.application;
 
-import io.ddd4j.kit.lang.StrKit;
-
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.exception.BizRuntimeException;
+import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.sample.javalin.shiro.goods.domain.*;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;

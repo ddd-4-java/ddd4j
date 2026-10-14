@@ -60,6 +60,17 @@ public class SaTokenRequestFilter implements ContainerRequestFilter, ContainerRe
     @Context
     ResourceInfo resourceInfo;
 
+    private static <A extends java.lang.annotation.Annotation> A getAnnotation(AnnotatedElement element, Class<A> type) {
+        return Objects.nonNull(element) ? element.getAnnotation(type) : null;
+    }
+
+    private static Response failure(Response.Status status, String message) {
+        return Response.status(status)
+                .type(MediaType.APPLICATION_JSON_TYPE)
+                .entity(R.of(status.getStatusCode(), message))
+                .build();
+    }
+
     /**
      * 过滤数据。
      * @param requestContext requestContext 参数。
@@ -153,16 +164,5 @@ public class SaTokenRequestFilter implements ContainerRequestFilter, ContainerRe
         return Objects.nonNull(methodAnnotation)
                 ? methodAnnotation
                 : getAnnotation(resourceInfo.getResourceClass(), type);
-    }
-
-    private static <A extends java.lang.annotation.Annotation> A getAnnotation(AnnotatedElement element, Class<A> type) {
-        return Objects.nonNull(element) ? element.getAnnotation(type) : null;
-    }
-
-    private static Response failure(Response.Status status, String message) {
-        return Response.status(status)
-                .type(MediaType.APPLICATION_JSON_TYPE)
-                .entity(R.fail(status.getStatusCode(), message))
-                .build();
     }
 }

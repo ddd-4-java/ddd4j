@@ -13,6 +13,11 @@
  * limitations under the License.
  */
 package io.ddd4j.guice.context;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -23,15 +28,11 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * 类型说明。
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @author ddd4j
  * @since 3.0.x
  */
 class GuiceContextTest {
@@ -117,18 +118,6 @@ class GuiceContextTest {
         assertNull(GuiceContext.getAttribute("k"));
     }
 
-    /**
-     * 空实现的可运行组件，用于验证子类型绑定能被正确收集。
-     */
-    public static final class CountingRunnable implements Runnable {
-
-        /**
-         * 执行主流程。
-         */
-        @Override
-        public void run() {
-        }
-    }
     @Test
     void getInjectorInterruptedWhileWaitingThrows() throws Exception {
         GuiceContext.clear();
@@ -182,6 +171,19 @@ class GuiceContextTest {
         GuiceContext.setInjector(injector());
 
         assertEquals("hello", GuiceContext.getInstance("greeting", String.class));
+    }
+
+    /**
+     * 空实现的可运行组件，用于验证子类型绑定能被正确收集。
+     */
+    public static final class CountingRunnable implements Runnable {
+
+        /**
+         * 执行主流程。
+         */
+        @Override
+        public void run() {
+        }
     }
 
     /**

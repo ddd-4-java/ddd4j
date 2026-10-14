@@ -11,7 +11,9 @@ import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 
-/** MQ客户端的线程安全启动状态。 */
+/**
+ * MQ客户端的线程安全启动状态。
+ */
 public final class MQStartupStatus {
 
     private static final MQStartupStatus UNMANAGED = new MQStartupStatus("unmanaged", false);
@@ -30,7 +32,9 @@ public final class MQStartupStatus {
         this.managed = managed;
     }
 
-    public static MQStartupStatus unmanaged() { return UNMANAGED; }
+    public static MQStartupStatus unmanaged() {
+        return UNMANAGED;
+    }
 
     public void starting() {
         if (managed) {
@@ -69,7 +73,9 @@ public final class MQStartupStatus {
         return new Snapshot(broker, state.get(), failures);
     }
 
-    /** 不可变启动状态快照。 */
+    /**
+     * 不可变启动状态快照。
+     */
     public static final class Snapshot {
         private final String broker;
         private final MQStartupState state;
@@ -82,11 +88,28 @@ public final class MQStartupStatus {
             this.failures = Collections.unmodifiableList(new ArrayList<>(failures));
         }
 
-        public String broker() { return broker; }
-        public MQStartupState state() { return state; }
-        public List<MQListenerInitializationFailure> failures() { return failures; }
-        public String getBroker() { return broker; }
-        public MQStartupState getState() { return state; }
-        public List<MQListenerInitializationFailure> getFailures() { return failures; }
+        public String broker() {
+            return broker;
+        }
+
+        public MQStartupState state() {
+            return state;
+        }
+
+        public List<MQListenerInitializationFailure> failures() {
+            return failures;
+        }
+
+        public String getBroker() {
+            return broker;
+        }
+
+        public MQStartupState getState() {
+            return state;
+        }
+
+        public List<MQListenerInitializationFailure> getFailures() {
+            return failures;
+        }
     }
 }

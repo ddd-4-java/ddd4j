@@ -14,6 +14,12 @@
  */
 package io.ddd4j.data.event.store.esdb;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Objects;
+
 import com.eventstore.dbclient.AppendToStreamOptions;
 import com.eventstore.dbclient.EventData;
 import com.eventstore.dbclient.EventStoreDBClient;
@@ -44,12 +50,16 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
-/** ESDB 强类型 EventStore 的单元契约。 */
+/**
+ * ESDB 强类型 EventStore 的单元契约。
+ */
 @ExtendWith(MockitoExtension.class)
 class EsdbEventStoreTest {
     private static final String ORDER_TYPE = "Order";
-    @Mock EventStoreDBClient client;
-    @Captor ArgumentCaptor<String> streamCaptor;
+    @Mock
+    EventStoreDBClient client;
+    @Captor
+    ArgumentCaptor<String> streamCaptor;
 
     @Test
     void expectedRevisionShouldFollowCoreCurrentVersionContract() {
@@ -95,36 +105,95 @@ class EsdbEventStoreTest {
     }
 
     /**
-     * 测试用聚合根标识记录，封装订单标识字符串并关联固定实体类型。
-     *
-     * @param value 聚合根标识的字符串值
+     * 测试用聚合根标识，封装订单标识字符串并关联固定实体类型。
      */
-    record TestId(String value) implements AggregateRootId {
+    final static class TestId implements AggregateRootId {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String value;
+
         private static final EntityType TYPE = new StringEntityType("Order");
+
         /**
          * 获取值。
          * @return 方法执行结果。
          */
-        @Override public EntityType getType() { return TYPE; }
+        @Override
+        public EntityType getType() {
+            return TYPE;
+        }
+
         /**
          * asString() 方法。
          * @return 结果字符串。
          */
-        @Override public String asString() { return value; }
+        @Override
+        public String asString() {
+            return value;
+        }
+
         /**
          * asTypedString() 方法。
          * @return 结果字符串。
          */
-        @Override public String asTypedString() { return TYPE.asString() + ":" + value; }
+        @Override
+        public String asTypedString() {
+            return TYPE.asString() + ":" + value;
+        }
+
+        /**
+         * 创建聚合根标识实例。
+         *
+         * @param value 聚合根标识的字符串值
+         */
+        @JsonCreator()
+        TestId(@JsonProperty("value") String value) {
+            this.value = value;
+        }
+
+        @JsonProperty("value")
+        public String value() {
+            return value;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            TestId other = (TestId) obj;
+            return Objects.equals(this.value, other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(value);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "TestId[value=" + value + "]";
+        }
     }
 
     /**
      * 类型说明。
-     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @author ddd4j
      * @since 3.0.x
      */
     static final class TestEvent extends DomainEvent<TestId> {
-        TestEvent() { super(); }
-        TestEvent(TestId id) { super(new EntityIdPath(id)); }
+        TestEvent() {
+            super();
+        }
+
+        TestEvent(TestId id) {
+            super(new EntityIdPath(id));
+        }
     }
 }

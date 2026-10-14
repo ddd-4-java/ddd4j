@@ -19,6 +19,7 @@ import io.ddd4j.sample.javalin.cqrs.cache.GoodsCacheService;
 import io.ddd4j.sample.javalin.cqrs.goods.domain.Goods;
 import io.ddd4j.sample.javalin.cqrs.goods.domain.GoodsRepository;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 import static io.javalin.apibuilder.ApiBuilder.get;
@@ -56,7 +57,7 @@ public class GoodsReadController {
             try {
                 ctx.json(R.ok(goodsCacheService.getById(id)));
             } catch (IllegalArgumentException e) {
-                ctx.status(404).json(R.fail("404", e.getMessage()));
+                ctx.status(404).json(R.of((Serializable) "404", e.getMessage()));
             }
         });
 
@@ -65,7 +66,7 @@ public class GoodsReadController {
             String code = ctx.pathParam("code");
             ctx.json(goodsRepository.findByCode(code)
                     .<io.ddd4j.core.api.R<Goods>>map(R::ok)
-                    .orElse(R.fail("404", "goods not found: " + code)));
+                    .orElse(R.of((Serializable) "404", "goods not found: " + code)));
         });
 
         // GET /api/goods/query/list

@@ -36,15 +36,13 @@ import java.util.concurrent.ThreadLocalRandom;
  *
  * <p>退避：基础 10ms，指数翻倍 + 0-10ms 抖动。默认最多 5 次尝试，总耗时 ~310ms 上限。
  *
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @author ddd4j
  */
 final class EventStoreRetry {
 
-    private static final Logger LOG = LoggerFactory.getLogger(EventStoreRetry.class);
-
     static final int DEFAULT_MAX_ATTEMPTS = 5;
     static final long BASE_DELAY_MILLIS = 10L;
-
+    private static final Logger LOG = LoggerFactory.getLogger(EventStoreRetry.class);
     private final int maxAttempts;
     private final long baseDelayMillis;
     private final Sleeper sleeper;
@@ -63,43 +61,6 @@ final class EventStoreRetry {
         this.maxAttempts = maxAttempts;
         this.baseDelayMillis = baseDelayMillis;
         this.sleeper = sleeper;
-    }
-
-    /**
-     * 执行可重试操作。
-     *
-     * @param operation 操作描述（用于日志）
-     * @param action    单次尝试逻辑
-     */
-    void execute(String operation, RetryableAction action) {
-        RuntimeException lastException = null;
-        for (int attempt = 1; attempt <= maxAttempts; attempt++) {
-            try {
-                action.run();
-                return;
-            } catch (Exception raw) {
-                RuntimeException e = unwrapToRuntime(raw);
-                lastException = e;
-                if (!isRetriable(e)) {
-                    throw e;
-                }
-                if (attempt >= maxAttempts) {
-                    LOG.warn("EventStore {} exhausted {} attempts due to retriable exception",
-                            operation, maxAttempts);
-                    throw e;
-                }
-                long delay = computeDelay(attempt);
-                LOG.debug("EventStore {} attempt {}/{} failed retriably, retrying after {}ms",
-                        operation, attempt, maxAttempts, delay);
-                try {
-                    sleeper.sleep(delay);
-                } catch (InterruptedException ie) {
-                    Thread.currentThread().interrupt();
-                    throw new RuntimeException("EventStore retry sleep interrupted", ie);
-                }
-            }
-        }
-        throw lastException != null ? lastException : new IllegalStateException("unreachable");
     }
 
     /**
@@ -197,9 +158,46 @@ final class EventStoreRetry {
     }
 
     /**
+     * 执行可重试操作。
+     *
+     * @param operation 操作描述（用于日志）
+     * @param action    单次尝试逻辑
+     */
+    void execute(String operation, RetryableAction action) {
+        RuntimeException lastException = null;
+        for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+            try {
+                action.run();
+                return;
+            } catch (Exception raw) {
+                RuntimeException e = unwrapToRuntime(raw);
+                lastException = e;
+                if (!isRetriable(e)) {
+                    throw e;
+                }
+                if (attempt >= maxAttempts) {
+                    LOG.warn("EventStore {} exhausted {} attempts due to retriable exception",
+                            operation, maxAttempts);
+                    throw e;
+                }
+                long delay = computeDelay(attempt);
+                LOG.debug("EventStore {} attempt {}/{} failed retriably, retrying after {}ms",
+                        operation, attempt, maxAttempts, delay);
+                try {
+                    sleeper.sleep(delay);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    throw new RuntimeException("EventStore retry sleep interrupted", ie);
+                }
+            }
+        }
+        throw lastException != null ? lastException : new IllegalStateException("unreachable");
+    }
+
+    /**
      * 单次尝试的业务逻辑。
      *
-     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @author ddd4j
      */
     @FunctionalInterface
     interface RetryableAction {
@@ -214,7 +212,7 @@ final class EventStoreRetry {
     /**
      * 抽象 {@code Thread.sleep} 以便测试不真正等待。
      *
-     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @author ddd4j
      */
     @FunctionalInterface
     interface Sleeper {

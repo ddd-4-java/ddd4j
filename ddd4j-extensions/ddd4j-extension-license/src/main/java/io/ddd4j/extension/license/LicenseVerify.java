@@ -49,10 +49,10 @@ public class LicenseVerify {
     /**
      * 创建许可证校验器。
      *
-     * @param subject 许可证 subject
-     * @param publicAlias 公钥别称
-     * @param storePass 公钥库密码
-     * @param licensePath 许可证文件路径
+     * @param subject             许可证 subject
+     * @param publicAlias         公钥别称
+     * @param storePass           公钥库密码
+     * @param licensePath         许可证文件路径
      * @param publicKeysStorePath 公钥库路径
      */
     public LicenseVerify(String subject, String publicAlias, String storePass, String licensePath, String publicKeysStorePath) {
@@ -68,6 +68,12 @@ public class LicenseVerify {
         this.publicKeysStorePath = publicKeysStorePath;
         this.licenseManager = new CustomLicenseManager();
         this.cacheKey = buildCacheKey();
+    }
+
+    private static void requireText(String value, String field) {
+        if (StrKit.isBlank(value)) {
+            throw new IllegalArgumentException(field + " 不能为空");
+        }
     }
 
     /**
@@ -218,12 +224,6 @@ public class LicenseVerify {
         String normalizedLicensePath = Paths.get(licensePath).toAbsolutePath().normalize().toString();
         String normalizedKeyStorePath = Paths.get(publicKeysStorePath).toAbsolutePath().normalize().toString();
         return subject + ":" + Integer.toHexString(Objects.hash(publicAlias, normalizedLicensePath, normalizedKeyStorePath));
-    }
-
-    private static void requireText(String value, String field) {
-        if (StrKit.isBlank(value)) {
-            throw new IllegalArgumentException(field + " 不能为空");
-        }
     }
 
 }

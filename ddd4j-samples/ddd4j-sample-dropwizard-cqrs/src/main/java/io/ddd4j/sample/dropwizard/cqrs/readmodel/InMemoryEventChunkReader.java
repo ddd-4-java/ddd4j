@@ -16,7 +16,6 @@ package io.ddd4j.sample.dropwizard.cqrs.readmodel;
 
 import io.ddd4j.core.cqrs.eventstore.InMemoryEventStore;
 import io.ddd4j.core.cqrs.eventstore.StoredEvent;
-import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.cqrs.readmodel.EventChunk;
 import io.ddd4j.core.cqrs.readmodel.EventChunkReader;
 

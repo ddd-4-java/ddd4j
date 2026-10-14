@@ -72,6 +72,7 @@ flowchart TB
 - `ddd4j-ddd-rules-cola`：COLA 菱形架构分层纪律规则
 
 `CleanDDDLayerRules` 检查：
+
 - `@DomainEntity`、`@DomainService` 必须在 `domain` 包
 - `@ApplicationService`、`@CommandExecutor`、`@QueryService` 必须在 `app` 或 `application` 包
 - `@DomainRepository` 必须在 `infrastructure` 或 `infras` 包

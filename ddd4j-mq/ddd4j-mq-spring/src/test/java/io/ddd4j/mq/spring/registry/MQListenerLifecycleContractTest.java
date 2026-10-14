@@ -30,7 +30,7 @@ import static org.mockito.Mockito.when;
 
 /**
  * 类型说明。
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @author ddd4j
  * @since 3.0.x
  */
 class MQListenerLifecycleContractTest {
@@ -101,19 +101,32 @@ class MQListenerLifecycleContractTest {
          * impl() 方法。
          * @return 结果字符串。
          */
-        @Override public String impl() { return impl; }
-        @Override public Consumer<MQEvent> initProducer(MQProperties properties) { return null; }
+        @Override
+        public String impl() {
+            return impl;
+        }
+
+        @Override
+        public Consumer<MQEvent> initProducer(MQProperties properties) {
+            return null;
+        }
+
         /**
          * initConsumer() 方法。
          * @param listener 消息监听器。
          * @param properties 配置属性。
          * @return 判断结果。
          */
-        @Override public boolean initConsumer(MQListener listener, MQProperties properties) { return true; }
+        @Override
+        public boolean initConsumer(MQListener listener, MQProperties properties) {
+            return true;
+        }
+
         /**
          * 关闭并释放资源。
          */
-        @Override public void close() {
+        @Override
+        public void close() {
             if (closeCount.compareAndSet(0, 1) && closed != null) {
                 closed.add(impl);
             }
@@ -122,7 +135,7 @@ class MQListenerLifecycleContractTest {
 
     /**
      * 类型说明。
-     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @author ddd4j
      * @since 3.0.x
      */
     private static final class Serialization implements MQEventSerialization {
@@ -132,7 +145,12 @@ class MQListenerLifecycleContractTest {
          * @param event 事件消息。
          * @return 结果值。
          */
-        @Override @SuppressWarnings("unchecked") public <T> T serialize(Object event) { return (T) "{}"; }
+        @Override
+        @SuppressWarnings("unchecked")
+        public <T> T serialize(Object event) {
+            return (T) "{}";
+        }
+
         /**
          * deserialize() 方法。
          * @param <S> 类型参数。
@@ -141,6 +159,9 @@ class MQListenerLifecycleContractTest {
          * @param type 目标类型。
          * @return 结果值。
          */
-        @Override public <S, T> T deserialize(S value, Class<T> type) { return null; }
+        @Override
+        public <S, T> T deserialize(S value, Class<T> type) {
+            return null;
+        }
     }
 }

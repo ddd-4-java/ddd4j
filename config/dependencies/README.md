@@ -1,8 +1,10 @@
 # 三线依赖清单与验证
 
-本目录记录 JDK 8 / 17 / 21 三线的依赖治理结果。规格事实源仍为 `ddd4j/docs/superpowers/specs/2026-09-06-three-line-parity.md` 的 D1。本次不是全量兼容性验收通过状态。
+本目录记录 JDK 8 / 17 / 21 三线的依赖治理结果。规格事实源仍为
+`ddd4j/docs/superpowers/specs/2026-09-06-three-line-parity.md` 的 D1。本次不是全量兼容性验收通过状态。
 
-- `alignment-policy.json`：原始组件基线、已核验坐标替代，以及明确未完成的兼容/迁移项。固定基线避免通过删除声明或移入 profile 缩小检查范围。
+- `alignment-policy.json`：原始组件基线、已核验坐标替代，以及明确未完成的兼容/迁移项。固定基线避免通过删除声明或移入 profile
+  缩小检查范围。
 - `version-evidence.json`：部分兼容发行版的发布 JAR 字节码证据。
 - `component-matrix.csv`：当前三线的有效版本与检查状态。
 - `unverified-artifacts.csv`：尚未取得有效 JAR 检查结果的坐标；不等同于确认不存在。
@@ -26,7 +28,9 @@ python3 ddd4j/scripts/verify_dependency_alignment.py \
   --strict-artifacts --output /tmp/ddd4j-dependency-check
 ```
 
-缺少本地 JAR 时，可在对应 checkout 使用已有 Maven 仓库配置执行 `dependency:get -Dartifact=groupId:artifactId:version -Dtransitive=false`，再复查。此次补充下载的公开 JAR 缓存在 `/tmp/ddd4j-dependency-alignment/jars`；可使用 `--extra-cache` 指向该目录。临时缓存不属于交付文件，也不会被提交。
+缺少本地 JAR 时，可在对应 checkout 使用已有 Maven 仓库配置执行
+`dependency:get -Dartifact=groupId:artifactId:version -Dtransitive=false`，再复查。此次补充下载的公开 JAR 缓存在
+`/tmp/ddd4j-dependency-alignment/jars`；可使用 `--extra-cache` 指向该目录。临时缓存不属于交付文件，也不会被提交。
 
 门禁回归：
 
@@ -62,6 +66,7 @@ PYTHONPATH=ddd4j/scripts python3 ddd4j/scripts/format_dependency_properties.py \
 - `absent` 主要表示后续 JDK 线引入的组件未在更低版本线提供，不能直接等同于业务能力缺失。
 - `pom` 是上游真实发布的聚合 POM，不应当作可执行 JAR。
 
-上游 BOM 间接导出的历史组件不机械求并集；本项目显式维护的组件以有效 POM 检查覆盖。所有 profile 都进入检查全集。测试分类器与主 JAR 分开处理。多版本 JAR 的 `META-INF/versions` 及 `module-info.class` 不作为基础 Java 版本超限证据。
+上游 BOM 间接导出的历史组件不机械求并集；本项目显式维护的组件以有效 POM 检查覆盖。所有 profile 都进入检查全集。测试分类器与主
+JAR 分开处理。多版本 JAR 的 `META-INF/versions` 及 `module-info.class` 不作为基础 Java 版本超限证据。
 
 Profile 枚举用于防止隐藏组件；各条件版本仍须在对应激活条件下生成 effective POM 并单独验证，默认模型不能证明所有条件分支运行兼容。

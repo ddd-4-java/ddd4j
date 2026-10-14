@@ -14,11 +14,17 @@
  */
 package io.ddd4j.extension.excel;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Objects;
+
 import com.alibaba.excel.EasyExcel;
 import io.ddd4j.extension.excel.TestModels.UserVO;
 import io.ddd4j.extension.excel.export.WriteOptions;
-import io.ddd4j.extension.excel.importer.ImportResult;
 import io.ddd4j.extension.excel.importer.ErrorCollectingReadListener;
+import io.ddd4j.extension.excel.importer.ImportResult;
 import io.ddd4j.extension.excel.style.ExcelStyleTemplate;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -34,7 +40,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * <p>覆盖 export → read 回环：写入数据 → 字节 → 重新读回 → 断言。
  *
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @author ddd4j
  */
 class ExcelKitTest {
 
@@ -139,7 +145,47 @@ class ExcelKitTest {
 
         // 准备一个 Date 字段的 VO 读取
         /** 日期字段 VO：用于触发日期列转换异常的读取场景。 */
-        record DateVO(@com.alibaba.excel.annotation.ExcelProperty("日期") java.util.Date d) {}
+        final class DateVO {
+
+            private static final long serialVersionUID = 0L;
+
+            @com.alibaba.excel.annotation.ExcelProperty("日期")
+            private final java.util.Date d;
+
+            @JsonCreator()
+            DateVO(@JsonProperty("d") java.util.Date d) {
+                this.d = d;
+            }
+
+            @JsonProperty("d")
+            public java.util.Date d() {
+                return d;
+            }
+
+            @Override
+            public boolean equals(Object obj) {
+                if (this == obj) {
+                    return true;
+                }
+                if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                    return false;
+                }
+                DateVO other = (DateVO) obj;
+                return Objects.equals(this.d, other.d);
+            }
+
+            @Override
+            public int hashCode() {
+                int result = 0;
+                result = 31 * result + Objects.hashCode(d);
+                return result;
+            }
+
+            @Override
+            public String toString() {
+                return "DateVO[d=" + d + "]";
+            }
+        }
 
         // when
         ImportResult<DateVO> result;
