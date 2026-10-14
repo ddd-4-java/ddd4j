@@ -159,7 +159,6 @@
         <docker-client.version>8.16.0</docker-client.version>
         <docker-java.version>3.7.1</docker-java.version>
         <docx4j-importxhtml.version>8.3.15</docx4j-importxhtml.version>
-        <docx4j-template.version>1.0.1.RELEASE</docx4j-template.version>
         <docx4j.version>8.3.15</docx4j.version>
         <dom4j2.version>2.1.5</dom4j2.version>
         <dozer-core.version>6.5.2</dozer-core.version>
@@ -2384,13 +2383,6 @@
                 <groupId>org.docx4j</groupId>
                 <artifactId>docx4j-ImportXHTML</artifactId>
                 <version>${docx4j-importxhtml.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.easy4j</groupId>
-                <artifactId>docx4j-template-bom</artifactId>
-                <version>${docx4j-template.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
 
             <!-- https://mvnrepository.com/artifact/com.spotify/docker-client -->
