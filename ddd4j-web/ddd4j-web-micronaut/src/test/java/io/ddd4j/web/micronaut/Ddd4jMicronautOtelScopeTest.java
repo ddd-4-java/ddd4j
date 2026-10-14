@@ -28,7 +28,9 @@ import io.micronaut.http.filter.FilterContinuation;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
+import io.opentelemetry.sdk.common.CompletableResultCode;
 import io.opentelemetry.sdk.trace.SdkTracerProvider;
+import io.opentelemetry.sdk.trace.SpanProcessor;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
@@ -44,9 +46,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.times;
 
 /**
  * 类型说明。
@@ -76,6 +82,34 @@ class Ddd4jMicronautOtelScopeTest {
         Field available = Ddd4jOtel.class.getDeclaredField("available");
         available.setAccessible(true);
         available.setBoolean(null, false);
+    }
+
+    @Test
+    void synchronousDownstreamFailureMustEndSpan() throws Exception {
+        resetOpenTelemetry();
+        SpanProcessor processor = mock(SpanProcessor.class);
+        when(processor.isEndRequired()).thenReturn(true);
+        when(processor.shutdown()).thenReturn(CompletableResultCode.ofSuccess());
+        SdkTracerProvider tracerProvider = SdkTracerProvider.builder().addSpanProcessor(processor).build();
+        OpenTelemetrySdk.builder().setTracerProvider(tracerProvider).buildAndRegisterGlobal();
+        try {
+            Ddd4jMicronautWebFilter filter = new Ddd4jMicronautWebFilter(
+                    new WebRequestContextFactory(() -> "request-1", ClientIpResolver.remoteAddressOnly()),
+                    new WebRequestLifecycle(new BearerSubjectAuthenticator(), WebAccessPolicy.disabled()), null);
+            @SuppressWarnings("unchecked")
+            FilterContinuation<Publisher<MutableHttpResponse<?>>> continuation =
+                    (FilterContinuation<Publisher<MutableHttpResponse<?>>>) mock(FilterContinuation.class);
+            when(continuation.proceed()).thenThrow(new IllegalStateException("downstream failed"));
+            MutablePropagatedContext propagatedContext = mock(MutablePropagatedContext.class);
+
+            assertThrows(IllegalStateException.class,
+                    () -> filter.filter(request(), continuation, propagatedContext));
+            assertFalse(Span.current().getSpanContext().isValid());
+            verify(processor, times(1)).onEnd(any());
+        } finally {
+            tracerProvider.close();
+            resetOpenTelemetry();
+        }
     }
 
     @Test

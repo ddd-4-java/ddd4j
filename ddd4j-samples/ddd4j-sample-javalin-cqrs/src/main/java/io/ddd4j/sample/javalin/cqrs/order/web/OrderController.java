@@ -39,8 +39,9 @@ import static io.javalin.apibuilder.ApiBuilder.post;
  * {@code javalinConfig.routes.apiBuilder(() -> orderController.routes())} 注册。
  * 控制器只做"HTTP 协议层 → 应用服务"的翻译，业务规则全部下沉到 {@link Order} 聚合内。
  *
- * <h3>路由列表</h3>
+ * <h2>路由列表</h2>
  * <table border="1">
+ * <caption>订单管理 REST 接口一览</caption>
  *   <tr><th>HTTP</th><th>路径</th><th>用途</th></tr>
  *   <tr><td>POST</td><td>/api/orders</td><td>创建草稿订单</td></tr>
  *   <tr><td>POST</td><td>/api/orders/{id}/lines</td><td>添加订单行</td></tr>
@@ -160,6 +161,34 @@ public class OrderController {
 
         private final int lineCount;
 
+        public String getId() {
+            return id;
+        }
+
+        public String getOrderNo() {
+            return orderNo;
+        }
+
+        public String getBuyerId() {
+            return buyerId;
+        }
+
+        public String getBuyerName() {
+            return buyerName;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+
+        public Money getTotalAmount() {
+            return totalAmount;
+        }
+
+        public int getLineCount() {
+            return lineCount;
+        }
+
         @JsonCreator()
         public OrderResponse(@JsonProperty("id") String id, @JsonProperty("orderNo") String orderNo, @JsonProperty("buyerId") String buyerId, @JsonProperty("buyerName") String buyerName, @JsonProperty("status") String status, @JsonProperty("totalAmount") Money totalAmount, @JsonProperty("lineCount") int lineCount) {
             this.id = id;
@@ -244,11 +273,38 @@ public class OrderController {
 
         private static final long serialVersionUID = 0L;
 
-        private final String orderNo;
+        private String orderNo;
 
-        private final String buyerId;
+        private String buyerId;
 
-        private final String buyerName;
+        private String buyerName;
+
+        public CreateOrderRequest() {
+        }
+
+        public String getOrderNo() {
+            return orderNo;
+        }
+
+        public void setOrderNo(String orderNo) {
+            this.orderNo = orderNo;
+        }
+
+        public String getBuyerId() {
+            return buyerId;
+        }
+
+        public void setBuyerId(String buyerId) {
+            this.buyerId = buyerId;
+        }
+
+        public String getBuyerName() {
+            return buyerName;
+        }
+
+        public void setBuyerName(String buyerName) {
+            this.buyerName = buyerName;
+        }
 
         @JsonCreator()
         public CreateOrderRequest(@JsonProperty("orderNo") String orderNo, @JsonProperty("buyerId") String buyerId, @JsonProperty("buyerName") String buyerName) {
@@ -308,13 +364,48 @@ public class OrderController {
 
         private static final long serialVersionUID = 0L;
 
-        private final String goodsId;
+        private String goodsId;
 
-        private final String goodsName;
+        private String goodsName;
 
-        private final int quantity;
+        private int quantity;
 
-        private final BigDecimal unitPrice;
+        private BigDecimal unitPrice;
+
+        public AddOrderLineRequest() {
+        }
+
+        public String getGoodsId() {
+            return goodsId;
+        }
+
+        public void setGoodsId(String goodsId) {
+            this.goodsId = goodsId;
+        }
+
+        public String getGoodsName() {
+            return goodsName;
+        }
+
+        public void setGoodsName(String goodsName) {
+            this.goodsName = goodsName;
+        }
+
+        public int getQuantity() {
+            return quantity;
+        }
+
+        public void setQuantity(int quantity) {
+            this.quantity = quantity;
+        }
+
+        public BigDecimal getUnitPrice() {
+            return unitPrice;
+        }
+
+        public void setUnitPrice(BigDecimal unitPrice) {
+            this.unitPrice = unitPrice;
+        }
 
         @JsonCreator()
         public AddOrderLineRequest(@JsonProperty("goodsId") String goodsId, @JsonProperty("goodsName") String goodsName, @JsonProperty("quantity") int quantity, @JsonProperty("unitPrice") BigDecimal unitPrice) {

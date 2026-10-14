@@ -56,9 +56,11 @@ class PanacheEventStorePostgresIT {
 
     @BeforeEach
     void setUp() {
+        String jdbcUrl = POSTGRES.getJdbcUrl();
+        String separator = jdbcUrl.contains("?") ? "&" : "?";
         Configuration configuration = new Configuration()
                 .setProperty("hibernate.connection.driver_class", "org.postgresql.Driver")
-                .setProperty("hibernate.connection.url", POSTGRES.getJdbcUrl())
+                .setProperty("hibernate.connection.url", jdbcUrl + separator + "sslmode=disable")
                 .setProperty("hibernate.connection.username", POSTGRES.getUsername())
                 .setProperty("hibernate.connection.password", POSTGRES.getPassword())
                 .setProperty("hibernate.hbm2ddl.auto", "create-drop")

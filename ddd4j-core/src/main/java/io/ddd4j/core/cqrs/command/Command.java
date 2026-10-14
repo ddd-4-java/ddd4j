@@ -19,7 +19,7 @@ package io.ddd4j.core.cqrs.command;
  * <p>
  * 取代 {@code io.ddd4j.core.ddd.command.DddAggregateCommand} 的 marker 接口语义。
  *
- * <h3>命令设计原则</h3>
+ * <h2>命令设计原则</h2>
  * <ul>
  *   <li><b>不可变</b>：命令对象一旦创建不应修改</li>
  *   <li><b>意图载体</b>：命令表达"用户想做什么"，而非"如何做"</li>

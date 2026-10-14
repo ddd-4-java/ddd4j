@@ -28,7 +28,7 @@ import java.util.Objects;
  * <p>把原先散落在调用点的 {@code registerWriteHandler(...)} 拼接收敛到一个 POJO，
  * 让样式/列宽/冻结/斑马线等选择由"配置驱动"，符合 OCP 与 DRY。
  *
- * <h3>典型用法</h3>
+ * <h2>典型用法</h2>
  * <pre>{@code
  * WriteOptions options = WriteOptions.defaults()
  *     .setSheetName("订单")

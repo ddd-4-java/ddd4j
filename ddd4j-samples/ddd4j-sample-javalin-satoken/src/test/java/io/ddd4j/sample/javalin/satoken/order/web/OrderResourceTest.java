@@ -43,7 +43,7 @@ class OrderResourceTest {
     @BeforeAll
     static void startApp() {
         app = TestSupport.start();
-        baseUrl = "http://localhost:" + app.port();
+        baseUrl = "http://127.0.0.1:" + app.port();
         httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
     }
 
@@ -72,16 +72,20 @@ class OrderResourceTest {
     void resetServerState() {
         app.stop();
         app = TestSupport.start();
-        baseUrl = "http://localhost:" + app.port();
+        baseUrl = "http://127.0.0.1:" + app.port();
         // 新服务器实例使用独立连接池，不跨重启复用旧 HTTP 连接。
         httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
     }
 
     private HttpResponse<String> postJson(String path, String body) throws Exception {
-        return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
+        HttpResponse<String> response = httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
                         .header("Content-Type", "application/json")
                         .POST(HttpRequest.BodyPublishers.ofString(body)).build(),
                 HttpResponse.BodyHandlers.ofString());
+        if ("/orders".equals(path)) {
+            assertEquals(201, response.statusCode(), "create response: " + response.body());
+        }
+        return response;
     }
 
     private HttpResponse<String> get(String path) throws Exception {
@@ -208,6 +212,8 @@ class OrderResourceTest {
     void ship_draftOrder_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> create = postJson("/orders",
                 "{\"orderNo\":\"O-031\",\"buyerId\":\"b6\",\"buyerName\":\"Judy\"}");
+        assertEquals(201, create.statusCode(), "create response: " + create.body());
+        assertFalse(create.body().isEmpty(), "create status: " + create.statusCode());
         String id = extractId(create.body());
         HttpResponse<String> r = postJson("/orders/" + id + "/ship", "");
         assertTrue(r.statusCode() >= 400);

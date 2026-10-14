@@ -75,8 +75,8 @@ class GoodsControllerTest {
             cfg.jsonMapper(new JavalinJackson3());
             cfg.routes.apiBuilder(goodsController::routes);
         });
-        app.start(0);
-        baseUrl = "http://localhost:" + app.port();
+        app.start("127.0.0.1", 0);
+        baseUrl = "http://127.0.0.1:" + app.port();
         httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
     }
 

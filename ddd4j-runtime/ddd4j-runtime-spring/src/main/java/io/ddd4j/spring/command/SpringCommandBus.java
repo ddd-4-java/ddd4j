@@ -34,7 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 基于框架中立的 ddd4j 命令 SPI 实现，在容器刷新后扫描所有 {@link CommandExecutor} Bean
  * 并构建命令类型到执行器的路由表。与 Quarkus {@code QuarkusCommandBus} 行为对齐。
  *
- * <h3>发现机制</h3>
+ * <h2>发现机制</h2>
  * <ul>
  *   <li>扫描容器中所有实现 {@link CommandExecutor} 接口的 Bean</li>
  *   <li>兼容 {@code @io.ddd4j.spring.annotation.CommandExecutor} 注解标记的 Bean

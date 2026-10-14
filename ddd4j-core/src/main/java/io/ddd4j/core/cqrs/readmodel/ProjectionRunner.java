@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * <p>封装通用投影流程：读取当前位置、拉取事件块、执行业务投影、推进位置。
  * 框架适配层只需要负责调度、事务和 Bean 装配。
  *
- * <h3>异常暴露</h3>
+ * <h2>异常暴露</h2>
  * <p>{@link #runAll} 保持失败即传播；{@link #runAllIsolated} 在视图间隔离异常，且对连续失败计数：
  * <ul>
  *   <li>单次失败 → WARN 级日志；视图状态由 {@link ProjectionMetrics#getLastRunInfo} 暴露</li>
@@ -95,8 +95,8 @@ public class ProjectionRunner<E> {
         String streamId = projectionView.getStreamId();
         metrics.onRunStarted(streamId);
         long startNanos = System.nanoTime();
-        long previousPosition = projectionService.readProjectionPosition(streamId);
         try {
+            long previousPosition = projectionService.readProjectionPosition(streamId);
             EventChunk<E> chunk = chunkReader.read(
                     streamId,
                     previousPosition,

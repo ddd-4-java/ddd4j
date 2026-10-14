@@ -39,6 +39,7 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.json.bind.annotation.JsonbProperty;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -147,6 +148,11 @@ public class HelidonOrderResource {
 
         @JsonProperty("token")
         public String token() {
+            return token;
+        }
+
+        @JsonbProperty("token")
+        public String getToken() {
             return token;
         }
 

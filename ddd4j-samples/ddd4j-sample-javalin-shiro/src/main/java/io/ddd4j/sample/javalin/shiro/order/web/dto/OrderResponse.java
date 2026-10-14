@@ -20,9 +20,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
-import java.util.Objects;
+import lombok.Value;
 
 import io.ddd4j.sample.javalin.shiro.order.domain.model.Money;
+import io.ddd4j.sample.javalin.shiro.order.domain.model.Order;
+import io.ddd4j.sample.javalin.shiro.order.domain.model.OrderLine;
 import io.ddd4j.sample.javalin.shiro.order.domain.model.OrderStatus;
 
 import java.util.List;
@@ -32,7 +34,8 @@ import java.util.List;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-public final class OrderResponse {
+@Value
+public class OrderResponse {
 
     private static final long serialVersionUID = 0L;
 
@@ -63,7 +66,8 @@ public final class OrderResponse {
         return new OrderResponse(order.id(), order.orderNo(), order.buyerId(), order.buyerName(), order.status(), total.amount().toPlainString(), total.currency(), lineResponses);
     }
 
-    public final static class OrderLineResponse {
+    @Value
+    public static class OrderLineResponse {
 
         private static final long serialVersionUID = 0L;
 
@@ -128,34 +132,6 @@ public final class OrderResponse {
             return currency;
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            OrderLineResponse other = (OrderLineResponse) obj;
-            return Objects.equals(this.id, other.id) && Objects.equals(this.goodsId, other.goodsId) && Objects.equals(this.goodsName, other.goodsName) && this.quantity == other.quantity && Objects.equals(this.unitPrice, other.unitPrice) && Objects.equals(this.currency, other.currency);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(id);
-            result = 31 * result + Objects.hashCode(goodsId);
-            result = 31 * result + Objects.hashCode(goodsName);
-            result = 31 * result + Integer.hashCode(quantity);
-            result = 31 * result + Objects.hashCode(unitPrice);
-            result = 31 * result + Objects.hashCode(currency);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "OrderLineResponse[id=" + id + ", goodsId=" + goodsId + ", goodsName=" + goodsName + ", quantity=" + quantity + ", unitPrice=" + unitPrice + ", currency=" + currency + "]";
-        }
     }
 
     @JsonCreator()
@@ -210,34 +186,5 @@ public final class OrderResponse {
         return lines;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-            return false;
-        }
-        OrderResponse other = (OrderResponse) obj;
-        return Objects.equals(this.id, other.id) && Objects.equals(this.orderNo, other.orderNo) && Objects.equals(this.buyerId, other.buyerId) && Objects.equals(this.buyerName, other.buyerName) && Objects.equals(this.status, other.status) && Objects.equals(this.totalAmount, other.totalAmount) && Objects.equals(this.currency, other.currency) && Objects.equals(this.lines, other.lines);
-    }
 
-    @Override
-    public int hashCode() {
-        int result = 0;
-        result = 31 * result + Objects.hashCode(id);
-        result = 31 * result + Objects.hashCode(orderNo);
-        result = 31 * result + Objects.hashCode(buyerId);
-        result = 31 * result + Objects.hashCode(buyerName);
-        result = 31 * result + Objects.hashCode(status);
-        result = 31 * result + Objects.hashCode(totalAmount);
-        result = 31 * result + Objects.hashCode(currency);
-        result = 31 * result + Objects.hashCode(lines);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "OrderResponse[id=" + id + ", orderNo=" + orderNo + ", buyerId=" + buyerId + ", buyerName=" + buyerName + ", status=" + status + ", totalAmount=" + totalAmount + ", currency=" + currency + ", lines=" + lines + "]";
-    }
 }

@@ -22,13 +22,20 @@ import io.ddd4j.sample.order.application.CreateOrderCommand;
 import io.ddd4j.sample.order.application.*;
 import io.ddd4j.sample.order.domain.Order;
 import io.ddd4j.sample.order.domain.OrderStatus;
+import io.ddd4j.sample.order.domain.OrderQuery;
 import io.ddd4j.sample.order.local.InMemoryOrderAdapters;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
+import java.time.Duration;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * 类型说明。
@@ -84,6 +91,93 @@ class OrderApplicationContractTest {
 
         assertEquals(OrderStatus.PAID, duplicate.status());
         assertEquals(3, scenario.adapters().pending(10).size());
+    }
+
+    @Test
+    void shouldNotReleasePaymentKeyAfterCommittedOrderWhenCompletionFails() {
+        InMemoryOrderAdapters adapters = new InMemoryOrderAdapters();
+        AtomicInteger releases = new AtomicInteger();
+        IdempotencyPort idempotency = new IdempotencyPort() {
+            @Override
+            public boolean acquire(String key, Duration ttl) {
+                return adapters.acquire(key, ttl);
+            }
+
+            @Override
+            public void complete(String key, Object result) {
+                throw new IllegalStateException("idempotency confirmation unavailable");
+            }
+
+            @Override
+            public void release(String key) {
+                releases.incrementAndGet();
+                adapters.release(key);
+            }
+        };
+        OrderApplicationService application = new OrderApplicationService(
+                adapters, adapters, adapters, idempotency, adapters);
+        Order order = application.create(new CreateOrderCommand("ORDER-COMPLETE-FAIL", "buyer-1", "Alice"));
+        application.addLine(new AddOrderLineCommand(order.id(), "goods-1", "DDD Book", 1,
+                new BigDecimal("59.90")));
+
+        assertThrows(IllegalStateException.class, () -> application.pay(order.id(), "payment-complete-fail"));
+        assertEquals(OrderStatus.PAID, application.find(order.id()).status());
+        assertEquals(0, releases.get());
+        int outboxCount = adapters.pending(10).size();
+
+        Order retry = application.pay(order.id(), "payment-complete-fail");
+
+        assertEquals(OrderStatus.PAID, retry.status());
+        assertEquals(outboxCount, adapters.pending(10).size());
+    }
+
+    @Test
+    void shouldReleasePaymentKeyWhenPaymentFailsBeforePersistence() {
+        OrderScenario scenario = new OrderScenario();
+        Order order = scenario.application().create(
+                new CreateOrderCommand("ORDER-PAY-RETRY", "buyer-1", "Alice"));
+
+        assertThrows(IllegalStateException.class,
+                () -> scenario.application().pay(order.id(), "payment-retry"));
+        scenario.application().addLine(new AddOrderLineCommand(order.id(), "goods-1", "DDD Book", 1,
+                new BigDecimal("59.90")));
+
+        Order paid = scenario.application().pay(order.id(), "payment-retry");
+
+        assertEquals(OrderStatus.PAID, paid.status());
+    }
+
+    @Test
+    void shouldReadFromWriteModelWhenProjectionIsMissing() {
+        InMemoryOrderAdapters adapters = new InMemoryOrderAdapters();
+        OrderReadModelPort missingProjection = new OrderReadModelPort() {
+            @Override
+            public void project(OrderReadModel order) {
+            }
+
+            @Override
+            public Optional<OrderReadModel> findProjectionById(String orderId) {
+                return Optional.empty();
+            }
+
+            @Override
+            public List<OrderReadModel> query(OrderQuery query) {
+                return Collections.emptyList();
+            }
+        };
+        OrderApplicationService application = new OrderApplicationService(
+                adapters, adapters, missingProjection, adapters, adapters);
+        Order created = application.create(new CreateOrderCommand("ORDER-FALLBACK", "buyer-fallback", "Alex"));
+        application.addLine(new AddOrderLineCommand(created.id(), "goods-1", "DDD Book", 1,
+                new BigDecimal("59.90")));
+        application.pay(created.id(), "payment-fallback");
+
+        OrderReadModel fallback = application.find(created.id());
+
+        assertEquals(OrderStatus.PAID, fallback.status());
+        assertEquals("59.90", fallback.totalAmount().toPlainString());
+        assertEquals(created.id(), fallback.id());
+        assertEquals("ORDER-FALLBACK", fallback.orderNo());
     }
 
     @Test

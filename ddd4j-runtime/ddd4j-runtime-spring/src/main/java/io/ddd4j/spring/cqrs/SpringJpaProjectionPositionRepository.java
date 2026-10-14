@@ -17,10 +17,8 @@ package io.ddd4j.spring.cqrs;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -69,16 +67,16 @@ public class SpringJpaProjectionPositionRepository
     /**
      * 重置指定投影位置到 0（重新拉取全量事件）。
      * <p>
-     * 方法体为空是正确的：Spring Data JPA 通过 {@link Query} 注解直接执行 JPQL UPDATE 语句，
-     * 不需要方法体内的代码。{@link Modifying} 标记这是一个修改型查询（非 SELECT），
-     * Spring Data 在事务内执行该 JPQL 并自动提交。
+     * 在事务中读取并保存位置；缺失的流创建零位置。
      *
      * @param streamId 投影流 ID
      */
     @Override
-    @Modifying
-    @Query("UPDATE SpringJpaProjectionPosition p SET p.nextEventNumber = 0 WHERE p.streamId = :streamId")
-    public void resetToZero(@Param("streamId") String streamId) {
-        // 由 Spring Data JPA 执行 @Query 中的 JPQL，方法体留空
+    @Transactional
+    public void resetToZero(String streamId) {
+        SpringJpaProjectionPosition position = jpaRepository.findById(streamId)
+                .orElseGet(() -> new SpringJpaProjectionPosition(streamId, 0L));
+        position.setNextEventNumber(0L);
+        jpaRepository.save(position);
     }
 }

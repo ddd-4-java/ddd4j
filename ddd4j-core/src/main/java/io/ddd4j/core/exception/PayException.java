@@ -48,6 +48,10 @@ public class PayException extends BizRuntimeException {
     }
 
     public PayException(ApiCode code, String i18nCode) {
+        this((CustomApiCode) code, i18nCode);
+    }
+
+    public PayException(CustomApiCode code, String i18nCode) {
         super(code, i18nCode);
     }
 

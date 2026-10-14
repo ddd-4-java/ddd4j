@@ -20,7 +20,7 @@ import java.util.List;
 
 /**
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @ 通知配置。was {@code AtVO}。
+ * 通知（@）配置。原名称为 {@code AtVO}。
  *
  * <p>传入机器人消息体时使用，控制消息是否 @ 一些用户或 @ 全体。
  */

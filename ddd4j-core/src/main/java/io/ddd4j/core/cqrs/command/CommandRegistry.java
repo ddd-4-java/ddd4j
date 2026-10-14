@@ -32,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 组装命令总线（ADR-0004：命令分发唯一入口，适配器不复制路由逻辑）。
  * 本类只维护「命令类型 → 执行器」映射，不执行命令、不感知任何运行时框架。
  *
- * <h3>与 DefaultCommandBus 注册语义的差异（有意为之）</h3>
+ * <h2>与 DefaultCommandBus 注册语义的差异（有意为之）</h2>
  * <p>
  * {@link io.ddd4j.core.cqrs.command.DefaultCommandBus} 构造时对执行器集合
  * <b>逐个</b> {@code putIfAbsent}，检测到重复才抛 {@link IllegalStateException}——

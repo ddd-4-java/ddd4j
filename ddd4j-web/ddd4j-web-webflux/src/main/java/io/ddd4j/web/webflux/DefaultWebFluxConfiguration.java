@@ -37,7 +37,6 @@ import org.springframework.extension.web.server.ReactiveRequestContextFilter;
 import org.springframework.extension.web.server.i18n.XHeaderLocaleContextResolver;
 import org.springframework.web.server.i18n.LocaleContextResolver;
 
-import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -78,7 +77,7 @@ public class DefaultWebFluxConfiguration {
         String[] publicPaths = environment.getProperty("ddd4j.web.public-paths", String[].class,
                 new String[]{"/health", "/health/readiness", "/health/liveness", ReadinessEndpoint.PATH,
                         "/assets/**", "/webjars/**"});
-        return new PathWebAccessPolicy(List.of(publicPaths), AuthenticationMode.REQUIRED);
+        return new PathWebAccessPolicy(java.util.Arrays.asList(publicPaths), AuthenticationMode.REQUIRED);
     }
 
     @Bean

@@ -44,7 +44,7 @@ class MissingQueryCodeContractTest {
     }
 
     private void assertMissing(String path, int status) throws Exception {
-        HttpRequest request = HttpRequest.newBuilder(URI.create("http://localhost:" + app.port() + path)).GET().build();
+        HttpRequest request = HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + app.port() + path)).GET().build();
         HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
         var code = JsonMapper.builder().build().readTree(response.body()).get("code");
         assertEquals(status, response.statusCode(), response.body());

@@ -32,7 +32,7 @@ import java.util.function.Consumer;
  *
  * <p>典型用途：业务侧希望拿到"全部行 + 错误明细"，而不是单点失败就中止。
  *
- * <h3>注意：监听器不能被 Spring 单例管理</h3>
+ * <h2>注意：监听器不能被 Spring 单例管理</h2>
  * <p>由于内部持有 {@code successData} / {@code errors} 状态，多线程或多次复用会污染数据。
  * 正确做法是<b>每次读取 new 一个</b>。如需注入 Spring Bean，通过构造参数传入。
  *

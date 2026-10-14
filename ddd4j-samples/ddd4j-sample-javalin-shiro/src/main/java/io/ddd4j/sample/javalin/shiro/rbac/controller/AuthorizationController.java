@@ -23,6 +23,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 import java.util.Objects;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Value;
 
 import com.google.inject.Inject;
 import io.ddd4j.core.api.R;
@@ -280,19 +283,21 @@ public class AuthorizationController {
      * @param roles 初始角色编码数组
      * @param permissions 初始权限编码数组
      */
-    public final static class CreateUserRequest {
+    @Data
+    @NoArgsConstructor
+    public static class CreateUserRequest {
 
         private static final long serialVersionUID = 0L;
 
-        private final String loginId;
+        private String loginId;
 
-        private final String password;
+        private String password;
 
-        private final String displayName;
+        private String displayName;
 
-        private final String[] roles;
+        private String[] roles;
 
-        private final String[] permissions;
+        private String[] permissions;
 
         @JsonCreator()
         public CreateUserRequest(@JsonProperty("loginId") String loginId, @JsonProperty("password") String password, @JsonProperty("displayName") String displayName, @JsonProperty("roles") String[] roles, @JsonProperty("permissions") String[] permissions) {
@@ -328,33 +333,6 @@ public class AuthorizationController {
             return permissions;
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            CreateUserRequest other = (CreateUserRequest) obj;
-            return Objects.equals(this.loginId, other.loginId) && Objects.equals(this.password, other.password) && Objects.equals(this.displayName, other.displayName) && Objects.equals(this.roles, other.roles) && Objects.equals(this.permissions, other.permissions);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(loginId);
-            result = 31 * result + Objects.hashCode(password);
-            result = 31 * result + Objects.hashCode(displayName);
-            result = 31 * result + Objects.hashCode(roles);
-            result = 31 * result + Objects.hashCode(permissions);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "CreateUserRequest[loginId=" + loginId + ", password=" + password + ", displayName=" + displayName + ", roles=" + roles + ", permissions=" + permissions + "]";
-        }
     }
 
     /**
@@ -365,17 +343,19 @@ public class AuthorizationController {
      * @param roles 新的角色编码数组，为空表示不调整角色
      * @param permissions 新的权限编码数组，为空表示不调整权限
      */
-    public final static class UpdateUserRequest {
+    @Data
+    @NoArgsConstructor
+    public static class UpdateUserRequest {
 
         private static final long serialVersionUID = 0L;
 
-        private final String displayName;
+        private String displayName;
 
-        private final String password;
+        private String password;
 
-        private final String[] roles;
+        private String[] roles;
 
-        private final String[] permissions;
+        private String[] permissions;
 
         @JsonCreator()
         public UpdateUserRequest(@JsonProperty("displayName") String displayName, @JsonProperty("password") String password, @JsonProperty("roles") String[] roles, @JsonProperty("permissions") String[] permissions) {
@@ -405,32 +385,6 @@ public class AuthorizationController {
             return permissions;
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            UpdateUserRequest other = (UpdateUserRequest) obj;
-            return Objects.equals(this.displayName, other.displayName) && Objects.equals(this.password, other.password) && Objects.equals(this.roles, other.roles) && Objects.equals(this.permissions, other.permissions);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(displayName);
-            result = 31 * result + Objects.hashCode(password);
-            result = 31 * result + Objects.hashCode(roles);
-            result = 31 * result + Objects.hashCode(permissions);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "UpdateUserRequest[displayName=" + displayName + ", password=" + password + ", roles=" + roles + ", permissions=" + permissions + "]";
-        }
     }
 
     /**
@@ -440,15 +394,17 @@ public class AuthorizationController {
      * @param name 角色名称
      * @param permissions 角色持有的权限编码数组
      */
-    public final static class CreateRoleRequest {
+    @Data
+    @NoArgsConstructor
+    public static class CreateRoleRequest {
 
         private static final long serialVersionUID = 0L;
 
-        private final String code;
+        private String code;
 
-        private final String name;
+        private String name;
 
-        private final String[] permissions;
+        private String[] permissions;
 
         @JsonCreator()
         public CreateRoleRequest(@JsonProperty("code") String code, @JsonProperty("name") String name, @JsonProperty("permissions") String[] permissions) {
@@ -471,32 +427,6 @@ public class AuthorizationController {
         public String[] permissions() {
             return permissions;
         }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            CreateRoleRequest other = (CreateRoleRequest) obj;
-            return Objects.equals(this.code, other.code) && Objects.equals(this.name, other.name) && Objects.equals(this.permissions, other.permissions);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(code);
-            result = 31 * result + Objects.hashCode(name);
-            result = 31 * result + Objects.hashCode(permissions);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "CreateRoleRequest[code=" + code + ", name=" + name + ", permissions=" + permissions + "]";
-        }
     }
 
     /**
@@ -505,13 +435,15 @@ public class AuthorizationController {
      * @param name 新的角色名称
      * @param permissions 新的权限编码数组，为空表示不调整权限
      */
-    public final static class UpdateRoleRequest {
+    @Data
+    @NoArgsConstructor
+    public static class UpdateRoleRequest {
 
         private static final long serialVersionUID = 0L;
 
-        private final String name;
+        private String name;
 
-        private final String[] permissions;
+        private String[] permissions;
 
         @JsonCreator()
         public UpdateRoleRequest(@JsonProperty("name") String name, @JsonProperty("permissions") String[] permissions) {
@@ -528,31 +460,6 @@ public class AuthorizationController {
         public String[] permissions() {
             return permissions;
         }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            UpdateRoleRequest other = (UpdateRoleRequest) obj;
-            return Objects.equals(this.name, other.name) && Objects.equals(this.permissions, other.permissions);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(name);
-            result = 31 * result + Objects.hashCode(permissions);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "UpdateRoleRequest[name=" + name + ", permissions=" + permissions + "]";
-        }
     }
 
     /**
@@ -561,13 +468,15 @@ public class AuthorizationController {
      * @param code 权限编码（唯一标识）
      * @param description 权限描述
      */
-    public final static class CreatePermissionRequest {
+    @Data
+    @NoArgsConstructor
+    public static class CreatePermissionRequest {
 
         private static final long serialVersionUID = 0L;
 
-        private final String code;
+        private String code;
 
-        private final String description;
+        private String description;
 
         @JsonCreator()
         public CreatePermissionRequest(@JsonProperty("code") String code, @JsonProperty("description") String description) {
@@ -584,31 +493,6 @@ public class AuthorizationController {
         public String description() {
             return description;
         }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            CreatePermissionRequest other = (CreatePermissionRequest) obj;
-            return Objects.equals(this.code, other.code) && Objects.equals(this.description, other.description);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(code);
-            result = 31 * result + Objects.hashCode(description);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "CreatePermissionRequest[code=" + code + ", description=" + description + "]";
-        }
     }
 
     /**
@@ -619,6 +503,7 @@ public class AuthorizationController {
      * @param roles 角色编码集合
      * @param permissions 权限编码集合
      */
+    @Value
     public final static class UserView {
 
         private static final long serialVersionUID = 0L;
@@ -658,33 +543,6 @@ public class AuthorizationController {
         public Set<String> permissions() {
             return permissions;
         }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            UserView other = (UserView) obj;
-            return Objects.equals(this.loginId, other.loginId) && Objects.equals(this.displayName, other.displayName) && Objects.equals(this.roles, other.roles) && Objects.equals(this.permissions, other.permissions);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(loginId);
-            result = 31 * result + Objects.hashCode(displayName);
-            result = 31 * result + Objects.hashCode(roles);
-            result = 31 * result + Objects.hashCode(permissions);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "UserView[loginId=" + loginId + ", displayName=" + displayName + ", roles=" + roles + ", permissions=" + permissions + "]";
-        }
     }
 
     /**
@@ -694,6 +552,7 @@ public class AuthorizationController {
      * @param name 角色名称
      * @param permissions 角色持有的权限编码集合
      */
+    @Value
     public final static class RoleView {
 
         private static final long serialVersionUID = 0L;
@@ -725,32 +584,6 @@ public class AuthorizationController {
         public Set<String> permissions() {
             return permissions;
         }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            RoleView other = (RoleView) obj;
-            return Objects.equals(this.code, other.code) && Objects.equals(this.name, other.name) && Objects.equals(this.permissions, other.permissions);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(code);
-            result = 31 * result + Objects.hashCode(name);
-            result = 31 * result + Objects.hashCode(permissions);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "RoleView[code=" + code + ", name=" + name + ", permissions=" + permissions + "]";
-        }
     }
 
     /**
@@ -759,6 +592,7 @@ public class AuthorizationController {
      * @param code 权限编码
      * @param description 权限描述
      */
+    @Value
     public final static class PermissionView {
 
         private static final long serialVersionUID = 0L;
@@ -781,31 +615,6 @@ public class AuthorizationController {
         @JsonProperty("description")
         public String description() {
             return description;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            PermissionView other = (PermissionView) obj;
-            return Objects.equals(this.code, other.code) && Objects.equals(this.description, other.description);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(code);
-            result = 31 * result + Objects.hashCode(description);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "PermissionView[code=" + code + ", description=" + description + "]";
         }
     }
 

@@ -17,7 +17,9 @@ package io.ddd4j.mq.ons;
 import com.aliyun.openservices.ons.api.Action;
 import com.aliyun.openservices.ons.api.ConsumeContext;
 import com.aliyun.openservices.ons.api.Message;
+import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.BrokerType;
+import io.ddd4j.mq.delivery.MQDeliveryHeaders;
 import io.ddd4j.mq.message.Acknowledgment;
 
 import java.util.Objects;
@@ -54,6 +56,7 @@ public class OnsAcknowledgment implements Acknowledgment {
      * 消息 ID
      */
     private final String messageId;
+    private final String correlationId;
     /**
      * 消息 Key
      */
@@ -80,7 +83,9 @@ public class OnsAcknowledgment implements Acknowledgment {
     public OnsAcknowledgment(ConsumeContext context, Message message) {
         this.context = context;
         this.message = message;
-        this.messageId = message.getMsgID();
+        String stableId = OnsMQClient.messageId(message);
+        this.messageId = StrKit.isNotEmpty(stableId) ? stableId : message.getMsgID();
+        this.correlationId = message.getUserProperties(MQDeliveryHeaders.CORRELATION_ID);
         this.key = message.getKey();
         this.offset = message.getOffset();
     }
@@ -97,7 +102,7 @@ public class OnsAcknowledgment implements Acknowledgment {
 
     @Override
     public String correlationId() {
-        return key;
+        return StrKit.isNotEmpty(correlationId) ? correlationId : key;
     }
 
     @Override

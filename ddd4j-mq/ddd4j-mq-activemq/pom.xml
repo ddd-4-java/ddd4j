@@ -12,7 +12,7 @@
 
     <artifactId>ddd4j-mq-activemq</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>Ddd4j ActiveMQ Classic (v5) adapter based on activemq-client and ddd4j MQ SPI. Pure Java, zero
+    <description>Ddd4j ActiveMQ Artemis JMS adapter based on the line-specific client and ddd4j MQ SPI. Pure Java, zero
         Spring.
     </description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
@@ -24,14 +24,22 @@
             <version>${revision}</version>
         </dependency>
         <!--
-          Apache ActiveMQ Artemis 原生客户端。
-          Apache ActiveMQ 6.x 起已迁移到 Artemis 命名空间。
-          版本由 artemis-bom (${artemis.version}=2.44.0) 统一管理。
-          注：MQBrokerType.ACTIVEMQ 同时兼容 Classic v5 与 Artemis v6+/v2.x。
+          本线使用 Apache ActiveMQ Artemis 2.44.0 的 artemis-jakarta-client 与 jakarta.jms。
+          版本由本线 BOM 管理；BrokerType.ACTIVEMQ 是 ddd4j 的枚举名称，不声明 Classic v5 兼容。
         -->
         <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>artemis-jakarta-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers-junit-jupiter</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

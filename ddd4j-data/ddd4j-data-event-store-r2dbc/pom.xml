@@ -93,6 +93,10 @@
                 <configuration>
                     <skip>false</skip>
                     <skipTests>false</skipTests>
+                    <includes>
+                        <include>**/*Test.java</include>
+                        <include>**/*IT.java</include>
+                    </includes>
                 </configuration>
             </plugin>
         </plugins>

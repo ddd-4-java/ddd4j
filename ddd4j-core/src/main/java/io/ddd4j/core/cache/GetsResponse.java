@@ -19,7 +19,7 @@ package io.ddd4j.core.cache;
  *
  * <p>对应 Memcached 协议中的 {@code gets} 命令响应。
  *
- * <h3>版本号语义</h3>
+ * <h2>版本号语义</h2>
  * <ul>
  *   <li><b>Memcached</b>：{@link #version()} 返回原生 cas 版本号（真实乐观锁 token）</li>
  *   <li><b>Redis（Jedis/Lettuce/Redisson）</b>：{@link #version()} 返回 -1（Redis 无版本号概念，CAS 基于"值比较"而非"版本号比较"）</li>

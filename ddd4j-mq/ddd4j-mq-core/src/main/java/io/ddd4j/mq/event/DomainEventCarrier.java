@@ -27,12 +27,12 @@ import java.io.Serial;
  * 作为 {@code payload} 字段附在本 MQ 事件上发送到 MQ Broker。
  * 消费端收到后通过 {@link #payload} 反序列化还原为具体的领域事件子类。
  *
- * <h3>消息结构</h3>
+ * <h2>消息结构</h2>
  * <ul>
- *   <li>{@link #getTopic()}：事件类型名称（如 {@code "OrderCreatedEvent"}）</li>
- *   <li>{@link #getTag()}：固定 {@code "domain-event"}</li>
- *   <li>{@link #getDomainEventType()}：领域事件完全限定类名，消费端据此反序列化</li>
- *   <li>{@link #getPayload()}：领域事件 JSON 序列化结果</li>
+ *   <li>{@code getTopic()}：事件类型名称（如 {@code "OrderCreatedEvent"}）</li>
+ *   <li>{@code getTag()}：固定 {@code "domain-event"}</li>
+ *   <li>{@code getDomainEventType()}：领域事件完全限定类名，消费端据此反序列化</li>
+ *   <li>{@code getPayload()}：领域事件 JSON 序列化结果</li>
  * </ul>
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>

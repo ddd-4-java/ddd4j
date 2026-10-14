@@ -337,7 +337,7 @@ public class GlobalExceptionHandler {
     /**
      * 400 (Bad Request)
      *
-     * @see javax.validation.Valid
+     * @see jakarta.validation.Valid
      * @see org.springframework.validation.Validator
      * @see org.springframework.validation.DataBinder
      */

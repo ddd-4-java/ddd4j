@@ -157,5 +157,5 @@
 - [ ] JDK17运行2.0.x完整 `clean verify`和samples。
 - [ ] JDK21/Maven4运行3.0.x完整 `clean verify`和samples。
 - [ ] 三线执行Testcontainers broker关闭与重启验证。
-- [ ] 提交并推送GitHub/Codeup，等待三线GitHub Actions全部成功。
+- [ ] 提交并推送GitHub/redacted-legacy-family，等待三线GitHub Actions全部成功。
 - [ ] 阶段2全部成功后，更新规格状态并进入阶段3设计。

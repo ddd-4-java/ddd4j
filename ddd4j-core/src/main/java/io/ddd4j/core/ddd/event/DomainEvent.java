@@ -43,7 +43,7 @@ import java.util.Set;
  *       {@code correlationId} / {@code causationId} 完整元数据，可序列化持久化到 EventStore</li>
  * </ul>
  *
- * <h3>框架适配层注入 publisher</h3>
+ * <h2>框架适配层注入 publisher</h2>
  * <pre>{@code
  * Contexts.register(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class, publisher);
  * }</pre>
@@ -81,7 +81,7 @@ public abstract class DomainEvent<ID extends EntityId> implements Event, Seriali
     /**
      * 事件支持的策略键集合（策略模式）。
      *
-     * <p>监听器通过 {@link @EventListener#supports()} 声明它处理哪些策略键，
+     * <p>监听器约定它支持的策略键，
      * 消费时框架检查事件持有的 {@code supportKeys} 与监听器声明的键是否有交集。
      * 为 {@code null} 或空时不做策略过滤。
      */

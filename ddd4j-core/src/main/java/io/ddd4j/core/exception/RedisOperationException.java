@@ -48,6 +48,10 @@ public class RedisOperationException extends BizRuntimeException {
     }
 
     public RedisOperationException(ApiCode code, String i18nCode) {
+        this((CustomApiCode) code, i18nCode);
+    }
+
+    public RedisOperationException(CustomApiCode code, String i18nCode) {
         super(code, i18nCode);
     }
 

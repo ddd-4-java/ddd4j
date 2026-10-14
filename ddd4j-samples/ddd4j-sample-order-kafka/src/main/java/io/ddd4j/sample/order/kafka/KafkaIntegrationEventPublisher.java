@@ -27,7 +27,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * 使用 Kafka broker ACK 确认的 Outbox 传输适配器。
  *
- * <p>只有 {@code send(...).get()} 成功返回，{@code OutboxPublisher} 才会将消息标记为已发布；超时和 broker
+ * <p>只有 {@code send(...).get()} 成功返回，Outbox 调度器才会确认消息已发布；超时和 broker
  * 异常会向上抛出，由 Outbox 保留并重试。
  */
 public final class KafkaIntegrationEventPublisher implements IntegrationEventPublisher {

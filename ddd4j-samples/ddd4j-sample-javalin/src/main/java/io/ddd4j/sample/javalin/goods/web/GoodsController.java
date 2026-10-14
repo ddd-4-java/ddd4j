@@ -31,6 +31,8 @@ import io.javalin.http.Context;
 
 import java.math.BigDecimal;
 import java.util.Objects;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import static io.javalin.apibuilder.ApiBuilder.*;
 
@@ -41,8 +43,9 @@ import static io.javalin.apibuilder.ApiBuilder.*;
  * {@code javalinConfig.routes.apiBuilder(() -> goodsController.routes())} 注册。
  * 响应统一使用 ddd4j 的 {@link R}{@code <T>} 包装。
  *
- * <h3>路由列表</h3>
+ * <h2>路由列表</h2>
  * <table border="1">
+ * <caption>商品管理 REST 接口一览</caption>
  *   <tr><th>HTTP</th><th>路径</th><th>用途</th></tr>
  *   <tr><td>POST</td><td>/api/goods</td><td>创建商品</td></tr>
  *   <tr><td>PUT</td><td>/api/goods/{id}</td><td>更新商品</td></tr>
@@ -195,17 +198,19 @@ public class GoodsController {
     /**
      * 创建商品请求。
      */
-    public final static class CreateGoodsRequest {
+    @Data
+    @NoArgsConstructor
+    public static class CreateGoodsRequest {
 
         private static final long serialVersionUID = 0L;
 
-        private final String code;
+        private String code;
 
-        private final String name;
+        private String name;
 
-        private final BigDecimal price;
+        private BigDecimal price;
 
-        private final Integer stock;
+        private Integer stock;
 
         @JsonCreator()
         public CreateGoodsRequest(@JsonProperty("code") String code, @JsonProperty("name") String name, @JsonProperty("price") BigDecimal price, @JsonProperty("stock") Integer stock) {
@@ -235,44 +240,17 @@ public class GoodsController {
             return stock;
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            CreateGoodsRequest other = (CreateGoodsRequest) obj;
-            return Objects.equals(this.code, other.code) && Objects.equals(this.name, other.name) && Objects.equals(this.price, other.price) && Objects.equals(this.stock, other.stock);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(code);
-            result = 31 * result + Objects.hashCode(name);
-            result = 31 * result + Objects.hashCode(price);
-            result = 31 * result + Objects.hashCode(stock);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "CreateGoodsRequest[code=" + code + ", name=" + name + ", price=" + price + ", stock=" + stock + "]";
-        }
     }
 
-    /**
-     * 更新商品请求。
-     */
-    public final static class UpdateGoodsRequest {
+    @Data
+    @NoArgsConstructor
+    public static class UpdateGoodsRequest {
 
         private static final long serialVersionUID = 0L;
 
-        private final String name;
+        private String name;
 
-        private final BigDecimal price;
+        private BigDecimal price;
 
         @JsonCreator()
         public UpdateGoodsRequest(@JsonProperty("name") String name, @JsonProperty("price") BigDecimal price) {
@@ -290,29 +268,7 @@ public class GoodsController {
             return price;
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            UpdateGoodsRequest other = (UpdateGoodsRequest) obj;
-            return Objects.equals(this.name, other.name) && Objects.equals(this.price, other.price);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(name);
-            result = 31 * result + Objects.hashCode(price);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "UpdateGoodsRequest[name=" + name + ", price=" + price + "]";
-        }
     }
+
+
 }

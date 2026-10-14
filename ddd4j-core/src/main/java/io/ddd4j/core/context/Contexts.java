@@ -29,7 +29,7 @@ import java.util.Optional;
  *   <li>{@link BaseContext}（JVM 级，全局默认 SPI）</li>
  * </ol>
  *
- * <h3>典型使用</h3>
+ * <h2>典型使用</h2>
  * <pre>{@code
  * // 业务方只调这一句即可拿到 publisher（线程 → 全局）
  * MQEventPublisher publisher = Contexts.inject(SpiKeys.MQ_EVENT_PUBLISHER, MQEventPublisher.class);

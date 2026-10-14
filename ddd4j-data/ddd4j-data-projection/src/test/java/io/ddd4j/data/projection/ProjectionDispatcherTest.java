@@ -37,6 +37,7 @@ import io.ddd4j.core.ddd.event.DomainEvent;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -65,6 +66,24 @@ class ProjectionDispatcherTest {
 
     private final ProjectionDispatcher dispatcher =
             new ProjectionDispatcher(registry, chunkReader, positions, service);
+
+    @Test
+    void chunkReaderReceivesImmutableEventTypeNames() {
+        registry.register(new ProjectionHandlerRegistryTest.RecordingHandler(
+                "order-summary", Collections.<Class<? extends DomainEvent<?>>>singleton(
+                        ProjectionHandlerRegistryTest.OrderCreated.class)));
+        AtomicReference<Collection<String>> received = new AtomicReference<>();
+        EventChunkReader<DomainEvent<?>> reader = (streamId, fromEventNumber, chunkSize, eventTypes) -> {
+            received.set(eventTypes);
+            return EventChunk.empty(fromEventNumber);
+        };
+        ProjectionDispatcher isolated = new ProjectionDispatcher(registry, reader, positions, service);
+
+        assertThat(isolated.chunkByEvent(ProjectionHandlerRegistryTest.OrderCreated.class)
+                .collectList().block()).isEmpty();
+        assertThat(received.get()).containsExactly("OrderCreated");
+        assertThrows(UnsupportedOperationException.class, () -> received.get().clear());
+    }
 
     @Test
     void chunkByEventEmitsOnlyRequestedTypeAndCompletesWhenExhausted() {

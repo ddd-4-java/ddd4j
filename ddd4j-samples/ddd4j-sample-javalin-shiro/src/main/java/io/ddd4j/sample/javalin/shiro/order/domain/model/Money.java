@@ -29,7 +29,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Locale;
 import java.util.Objects;
+import lombok.Value;
 
+@Value
 public final class Money implements ValueObject {
 
     private static final long serialVersionUID = 0L;
@@ -117,30 +119,5 @@ public final class Money implements ValueObject {
             failure.initCause(cause);
             throw failure;
         }
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-            return false;
-        }
-        Money other = (Money) obj;
-        return Objects.equals(this.amount, other.amount) && Objects.equals(this.currency, other.currency);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = 0;
-        result = 31 * result + Objects.hashCode(amount);
-        result = 31 * result + Objects.hashCode(currency);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "Money[amount=" + amount + ", currency=" + currency + "]";
     }
 }

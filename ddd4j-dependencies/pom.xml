@@ -165,12 +165,10 @@
         <dingtalk-sdk-extension.version>3.0.x.20260630-SNAPSHOT</dingtalk-sdk-extension.version>
         <dingtalk-sdk.version>2.2.55</dingtalk-sdk.version>
         <dingtalk-service-sdk.version>2.0.0</dingtalk-service-sdk.version>
-        <disruptor-biz.version>3.0.x.20260630-SNAPSHOT</disruptor-biz.version>
         <disruptor-extension.version>3.0.x.20260630-SNAPSHOT</disruptor-extension.version>
         <disruptor.version>4.0.0</disruptor.version>
         <docker-client.version>8.16.0</docker-client.version>
         <docker-java.version>3.7.1</docker-java.version>
-        <docx4j-template.version>1.0.1.RELEASE</docx4j-template.version>
         <docx4j.version>11.5.14</docx4j.version>
         <dom4j2.version>2.2.0</dom4j2.version>
         <dozer-core.version>7.0.0</dozer-core.version>
@@ -189,7 +187,7 @@
         <dynamic-tp.version>1.2.2-x</dynamic-tp.version>
         <easy-captcha.version>1.0.2</easy-captcha.version>
         <easydoc.version>3.0.x.20260630-SNAPSHOT</easydoc.version>
-        <easyexcel.version>5.0.1</easyexcel.version>
+        <easyexcel.version>3.0.x.20260630-SNAPSHOT</easyexcel.version>
         <easypdf.version>3.0.x.20260630-SNAPSHOT</easypdf.version>
         <easypoi.version>4.5.0</easypoi.version>
         <echarts.version>3.0.0.6</echarts.version>
@@ -200,6 +198,7 @@
         <faceplusplus-java-sdk.version>3.0.x.20260630-SNAPSHOT</faceplusplus-java-sdk.version>
         <fastdfs.version>1.27.2</fastdfs.version>
         <fastjson2.version>2.0.62</fastjson2.version>
+        <fastjson2.spring6.version>2.0.61</fastjson2.spring6.version>
         <fastjson.version>2.0.62</fastjson.version>
         <feign.version>13.13</feign.version>
         <feshu-oapi.version>2.8.4</feshu-oapi.version>
@@ -434,6 +433,7 @@
         <mybatis-memcached.version>1.2.0</mybatis-memcached.version>
         <mybatis-migrations.version>3.5.0</mybatis-migrations.version>
         <mybatis-oscache.version>1.0.2</mybatis-oscache.version>
+        <mybatis-plus-enhance.version>3.0.x.20260630-SNAPSHOT</mybatis-plus-enhance.version>
         <mybatis-plus-ext.version>1.7.5-RELEASE</mybatis-plus-ext.version>
         <mybatis-plus-generator.version>${mybatis-plus.version}</mybatis-plus-generator.version>
         <mybatis-plus-join.version>1.5.7</mybatis-plus-join.version>
@@ -457,6 +457,7 @@
         <netty.version>4.2.15.Final</netty.version>
         <nimbus-jose-jwt.version>10.9.1</nimbus-jose-jwt.version>
         <objenesis.version>3.5</objenesis.version>
+        <ofdrw.version>2.4.0</ofdrw.version>
         <okhttp3-extension.version>3.0.x.20260630-SNAPSHOT</okhttp3-extension.version>
         <okhttp3-metrics-prometheus.version>3.0.x.20260630-SNAPSHOT</okhttp3-metrics-prometheus.version>
         <okhttp.version>4.12.0</okhttp.version>
@@ -502,7 +503,6 @@
         <perf4j-log4j2.version>3.0.x.20260630-SNAPSHOT</perf4j-log4j2.version>
         <perf4j.version>0.9.16</perf4j.version>
         <persistence-api.version>1.0.2</persistence-api.version>
-        <pf4j3-extension.version>3.0.x.20260630-SNAPSHOT</pf4j3-extension.version>
         <pf4j-extension.version>3.0.x.20260630-SNAPSHOT</pf4j-extension.version>
         <pf4j-spring.version>0.10.0</pf4j-spring.version>
         <pf4j-update.version>2.3.0</pf4j-update.version>
@@ -585,8 +585,10 @@
         <scribejava.version>8.3.3</scribejava.version>
         <seata.version>2.0.0</seata.version>
         <seatunnel.version>2.3.13</seatunnel.version>
-        <security-guard-sdk.version>3.0.x.20260630-SNAPSHOT</security-guard-sdk.version>
-        <security-jwt-extension.version>3.0.x.20260630-SNAPSHOT</security-jwt-extension.version>
+        <spring-boot-starter-redistpl-plus.version>4.0.x.20260630-SNAPSHOT</spring-boot-starter-redistpl-plus.version>
+        <spring-boot-starter-security-biz.version>4.0.x.20260630-SNAPSHOT</spring-boot-starter-security-biz.version>
+        <spring-boot-starter-security-jwt.version>4.0.x.20260630-SNAPSHOT</spring-boot-starter-security-jwt.version>
+        <spring-security-jwt.version>3.0.x.20260630-SNAPSHOT</spring-security-jwt.version>
         <selenium-htmlunit.version>${selenium.version}</selenium-htmlunit.version>
         <selenium.version>4.39.0</selenium.version>
         <sendgrid.version>4.10.3</sendgrid.version>
@@ -597,7 +599,6 @@
         <shardingsphere-jdbc.version>5.5.3</shardingsphere-jdbc.version>
         <shardingsphere-parser.version>${shardingsphere-jdbc.version}</shardingsphere-parser.version>
         <shedlock.version>7.2.1</shedlock.version>
-        <shiro-biz-sdk.version>3.0.x.20260630-SNAPSHOT</shiro-biz-sdk.version>
         <shiro-biz.version>1.2.3.RELEASE</shiro-biz.version>
         <shiro-dingtalk.version>3.0.x.20260630-SNAPSHOT</shiro-dingtalk.version>
         <shiro-extension.version>3.0.x.20260630-SNAPSHOT</shiro-extension.version>
@@ -625,8 +626,8 @@
         <snakeyaml.version>2.6</snakeyaml.version>
         <snmp4j-agent.version>3.9.1</snmp4j-agent.version>
         <snmp4j.version>3.12.2</snmp4j.version>
+        <soap-utils.version>3.0.x.20260630-SNAPSHOT</soap-utils.version>
         <soapui-template.version>3.0.x.20260630-SNAPSHOT</soapui-template.version>
-        <soaputils.version>3.0.x.20260630-SNAPSHOT</soaputils.version>
         <socket-io.version>2.1.2</socket-io.version>
         <socketio-extension.version>3.0.x.20260630-SNAPSHOT</socketio-extension.version>
         <spark.version>4.2.0</spark.version>
@@ -652,7 +653,7 @@
         <spring-pulsar.version>1.2.18</spring-pulsar.version>
         <spring-restdocs.version>3.0.3</spring-restdocs.version>
         <spring-retry.version>2.0.11</spring-retry.version>
-        <spring-security-extension2.version>3.0.x.20260630-SNAPSHOT</spring-security-extension2.version>
+        <spring-security-extension.version>3.0.x.20260630-SNAPSHOT</spring-security-extension.version>
         <spring-security.version>7.1.0</spring-security.version>
         <spring-session.version>3.4.3</spring-session.version>
         <spring-ws.version>4.0.13</spring-ws.version>
@@ -668,7 +669,8 @@
         <swagger-bootstrap-ui.version>1.9.6</swagger-bootstrap-ui.version>
         <swagger-butler.version>2.0.0</swagger-butler.version>
         <swagger-codegen.version>2.4.19</swagger-codegen.version>
-        <swagger.version>2.0.0-rc2</swagger.version>
+        <swagger1.version>1.6.16</swagger1.version>
+        <swagger.version>${swagger1.version}</swagger.version>
         <tablesaw.version>0.44.4</tablesaw.version>
         <taos-jdbc.version>3.9.0</taos-jdbc.version>
         <tencentcloud-api-faceid.version>3.1.1472</tencentcloud-api-faceid.version>
@@ -696,7 +698,7 @@
         <truelicense.version>4.1.4</truelicense.version>
         <twilio.version>10.8.0</twilio.version>
         <unboundid-ldapsdk.version>6.0.11</unboundid-ldapsdk.version>
-        <undertow-metrics.version>1.0.0.RELEASE</undertow-metrics.version>
+        <undertow-metrics.version>3.0.x.20260630-SNAPSHOT</undertow-metrics.version>
         <undertow.version>2.3.21.Final</undertow.version>
         <unirest-java.version>4.10.0</unirest-java.version>
         <UserAgentUtils.version>1.21</UserAgentUtils.version>
@@ -2129,11 +2131,6 @@
             </dependency>
             <dependency>
                 <groupId>io.github.easy4j</groupId>
-                <artifactId>disruptor-biz</artifactId>
-                <version>${disruptor-biz.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.easy4j</groupId>
                 <artifactId>disruptor-extension</artifactId>
                 <version>${disruptor-extension.version}</version>
             </dependency>
@@ -2263,7 +2260,7 @@
                 <version>${angus-mail.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.alibaba</groupId>
+                <groupId>org.apache.dubbo</groupId>
                 <artifactId>dubbo</artifactId>
                 <version>${dubbo.version}</version>
             </dependency>
@@ -2382,7 +2379,7 @@
             <dependency>
                 <groupId>com.alibaba.fastjson2</groupId>
                 <artifactId>fastjson2-extension-spring6</artifactId>
-                <version>${fastjson2.version}</version>
+                <version>${fastjson2.spring6.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.openfeign</groupId>
@@ -3424,7 +3421,7 @@
             <dependency>
                 <groupId>net.imagej</groupId>
                 <artifactId>imagej-ui-swing</artifactId>
-                <version>imagej-ui-swing-1.0.1</version>
+                <version>1.0.1</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.angus</groupId>
@@ -3470,6 +3467,11 @@
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
                 <version>2.22</version>
+            </dependency>
+            <dependency>
+                <groupId>tools.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson.version}</version>
             </dependency>
             <dependency>
                 <groupId>tools.jackson.core</groupId>
@@ -4134,6 +4136,21 @@
                 <type>pom</type>
             </dependency>
             <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>jwt-issuer-api</artifactId>
+                <version>${jwt-issuer.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>jwt-issuer-with-jjwt</artifactId>
+                <version>${jwt-issuer.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>jwt-issuer-with-nimbus</artifactId>
+                <version>${jwt-issuer.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>net.sourceforge.jexcelapi</groupId>
                 <artifactId>jxl</artifactId>
                 <version>${jxl.version}</version>
@@ -4550,7 +4567,7 @@
                 <version>${lombok.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.lz4</groupId>
+                <groupId>at.yawk.lz4</groupId>
                 <artifactId>lz4-java</artifactId>
                 <version>${lz4-java.version}</version>
             </dependency>
@@ -4757,6 +4774,27 @@
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-extension</artifactId>
                 <version>${mybatis-plus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>mybatis-plus-enhance</artifactId>
+                <version>${mybatis-plus-enhance.version}</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>mybatis-plus-enhance-core</artifactId>
+                <version>${mybatis-plus-enhance.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>mybatis-plus-enhance-extension</artifactId>
+                <version>${mybatis-plus-enhance.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>mybatis-plus-enhance-spring</artifactId>
+                <version>${mybatis-plus-enhance.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.baomidou</groupId>
@@ -5469,6 +5507,11 @@
                 <version>${pdfbox.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.ofdrw</groupId>
+                <artifactId>ofdrw-core</artifactId>
+                <version>${ofdrw.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.pdfbox</groupId>
                 <artifactId>pdfbox-debugger</artifactId>
                 <version>${pdfbox.version}</version>
@@ -5500,6 +5543,21 @@
                 <type>pom</type>
             </dependency>
             <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>pf4j-extension-core</artifactId>
+                <version>${pf4j-extension.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>pf4j-extension-spring</artifactId>
+                <version>${pf4j-extension.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>pf4j-extension-update</artifactId>
+                <version>${pf4j-extension.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.pf4j</groupId>
                 <artifactId>pf4j-spring</artifactId>
                 <version>${pf4j-spring.version}</version>
@@ -5508,11 +5566,6 @@
                 <groupId>org.pf4j</groupId>
                 <artifactId>pf4j-update</artifactId>
                 <version>${pf4j-update.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.easy4j</groupId>
-                <artifactId>pf4j3-extension</artifactId>
-                <version>${pf4j3-extension.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.pgvector</groupId>
@@ -5949,6 +6002,7 @@
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>rocketmq-extension</artifactId>
                 <version>${rocketmq-extension.version}</version>
+                <type>pom</type>
             </dependency>
             <dependency>
                 <groupId>io.reactivex.rxjava2</groupId>
@@ -6142,13 +6196,23 @@
             </dependency>
             <dependency>
                 <groupId>io.github.easy4j</groupId>
-                <artifactId>security-guard-sdk</artifactId>
-                <version>${security-guard-sdk.version}</version>
+                <artifactId>redistpl-plus-spring-boot-starter</artifactId>
+                <version>${spring-boot-starter-redistpl-plus.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.easy4j</groupId>
-                <artifactId>security-jwt-extension</artifactId>
-                <version>${security-jwt-extension.version}</version>
+                <artifactId>security-biz-spring-boot-starter</artifactId>
+                <version>${spring-boot-starter-security-biz.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>security-jwt-spring-boot-starter</artifactId>
+                <version>${spring-boot-starter-security-jwt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>spring-security-jwt</artifactId>
+                <version>${spring-security-jwt.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.sendgrid</groupId>
@@ -6202,32 +6266,32 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
-                <artifactId>shardingsphere-parser-sql-mysql</artifactId>
+                <artifactId>shardingsphere-parser-sql-engine-mysql</artifactId>
                 <version>${shardingsphere-parser.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
-                <artifactId>shardingsphere-parser-sql-opengauss</artifactId>
+                <artifactId>shardingsphere-parser-sql-engine-opengauss</artifactId>
                 <version>${shardingsphere-parser.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
-                <artifactId>shardingsphere-parser-sql-oracle</artifactId>
+                <artifactId>shardingsphere-parser-sql-engine-oracle</artifactId>
                 <version>${shardingsphere-parser.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
-                <artifactId>shardingsphere-parser-sql-postgresql</artifactId>
+                <artifactId>shardingsphere-parser-sql-engine-postgresql</artifactId>
                 <version>${shardingsphere-parser.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
-                <artifactId>shardingsphere-parser-sql-sql92</artifactId>
+                <artifactId>shardingsphere-parser-sql-engine-sql92</artifactId>
                 <version>${shardingsphere-parser.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
-                <artifactId>shardingsphere-parser-sql-sqlserver</artifactId>
+                <artifactId>shardingsphere-parser-sql-engine-sqlserver</artifactId>
                 <version>${shardingsphere-parser.version}</version>
             </dependency>
             <dependency>
@@ -6274,11 +6338,6 @@
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>shiro-biz</artifactId>
                 <version>${shiro-biz.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.easy4j</groupId>
-                <artifactId>shiro-biz-sdk</artifactId>
-                <version>${shiro-biz-sdk.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
@@ -6472,8 +6531,8 @@
             </dependency>
             <dependency>
                 <groupId>io.github.easy4j</groupId>
-                <artifactId>soaputils</artifactId>
-                <version>${soaputils.version}</version>
+                <artifactId>soap-utils</artifactId>
+                <version>${soap-utils.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.socket</groupId>
@@ -6567,8 +6626,8 @@
             </dependency>
             <dependency>
                 <groupId>io.github.easy4j</groupId>
-                <artifactId>spring-security-extension2</artifactId>
-                <version>${spring-security-extension2.version}</version>
+                <artifactId>spring-security-extension</artifactId>
+                <version>${spring-security-extension.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -6714,7 +6773,7 @@
             <dependency>
                 <groupId>io.swagger</groupId>
                 <artifactId>swagger-annotations</artifactId>
-                <version>${swagger.version}</version>
+                <version>${swagger1.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.swagger.core.v3</groupId>
@@ -6739,7 +6798,7 @@
             <dependency>
                 <groupId>io.swagger</groupId>
                 <artifactId>swagger-core</artifactId>
-                <version>${swagger.version}</version>
+                <version>${swagger1.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.swagger.core.v3</groupId>
@@ -6749,22 +6808,22 @@
             <dependency>
                 <groupId>io.swagger</groupId>
                 <artifactId>swagger-hibernate-validations</artifactId>
-                <version>${swagger.version}</version>
+                <version>${swagger1.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.swagger</groupId>
                 <artifactId>swagger-jaxrs</artifactId>
-                <version>${swagger.version}</version>
+                <version>${swagger1.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.swagger</groupId>
                 <artifactId>swagger-jersey-jaxrs</artifactId>
-                <version>${swagger.version}</version>
+                <version>${swagger1.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.swagger</groupId>
                 <artifactId>swagger-jersey2-jaxrs</artifactId>
-                <version>${swagger.version}</version>
+                <version>${swagger1.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.swagger.core.v3</groupId>
@@ -6774,7 +6833,7 @@
             <dependency>
                 <groupId>io.swagger</groupId>
                 <artifactId>swagger-models</artifactId>
-                <version>${swagger.version}</version>
+                <version>${swagger1.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.swagger.core.v3</groupId>
@@ -6784,7 +6843,7 @@
             <dependency>
                 <groupId>io.swagger</groupId>
                 <artifactId>swagger-servlet</artifactId>
-                <version>${swagger.version}</version>
+                <version>${swagger1.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.webjars</groupId>
@@ -7292,6 +7351,11 @@
                 <artifactId>mybatis-plus-spring</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-spring-boot4-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
 
             <!-- 三线组件清单补齐：版本按当前 JDK 线集中管理。 -->
             <dependency>
@@ -7437,7 +7501,22 @@
             </dependency>
             <dependency>
                 <groupId>io.opentelemetry</groupId>
+                <artifactId>opentelemetry-sdk-common</artifactId>
+                <version>1.54.1</version>
+            </dependency>
+            <dependency>
+                <groupId>io.opentelemetry</groupId>
+                <artifactId>opentelemetry-sdk-metrics</artifactId>
+                <version>1.54.1</version>
+            </dependency>
+            <dependency>
+                <groupId>io.opentelemetry</groupId>
                 <artifactId>opentelemetry-sdk-testing</artifactId>
+                <version>1.54.1</version>
+            </dependency>
+            <dependency>
+                <groupId>io.opentelemetry</groupId>
+                <artifactId>opentelemetry-sdk-trace</artifactId>
                 <version>1.54.1</version>
             </dependency>
             <dependency>
@@ -7588,6 +7667,11 @@
             <dependency>
                 <groupId>org.testcontainers</groupId>
                 <artifactId>postgresql</artifactId>
+                <version>1.20.6</version>
+            </dependency>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>mysql</artifactId>
                 <version>1.20.6</version>
             </dependency>
             <dependency>

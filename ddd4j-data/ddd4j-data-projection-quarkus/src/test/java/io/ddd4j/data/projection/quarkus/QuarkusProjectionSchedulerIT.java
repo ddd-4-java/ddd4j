@@ -16,7 +16,10 @@ package io.ddd4j.data.projection.quarkus;
 
 import io.ddd4j.core.cqrs.readmodel.*;
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.runtime.StartupEvent;
+import io.quarkus.runtime.ShutdownEvent;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.Event;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.DisplayName;
@@ -55,6 +58,27 @@ class QuarkusProjectionSchedulerIT {
     @Inject
     QuarkusProjectionViewManager viewManager;
 
+    @Inject
+    Event<StartupEvent> startupEvents;
+
+    @Inject
+    Event<ShutdownEvent> shutdownEvents;
+
+    @Test
+    void startupEvent_应启动视图管理器() {
+        viewManager.stop();
+        startupEvents.fire(new StartupEvent());
+        assertThat(viewManager.isRunning()).isTrue();
+        viewManager.stop();
+    }
+
+    @Test
+    void shutdownEvent_应停止视图管理器() {
+        viewManager.start();
+        shutdownEvents.fire(new ShutdownEvent());
+        assertThat(viewManager.isRunning()).isFalse();
+    }
+
     @Test
     void scheduler_schedule_应返回activeHandle_cancel后应inactive() {
         ViewScheduler.ViewScheduleHandle handle = scheduler.schedule(
@@ -69,6 +93,7 @@ class QuarkusProjectionSchedulerIT {
 
     @Test
     void viewManager_start_stop_应管理生命周期() {
+        viewManager.stop();
         assertThat(viewManager.isRunning()).isFalse();
 
         viewManager.start();

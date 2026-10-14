@@ -14,16 +14,14 @@
  */
 package io.ddd4j.core.auth.event;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.util.Objects;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.auth.AuthRequest;
+import lombok.Getter;
 
 import java.time.Instant;
+import java.util.Objects;
 
 /**
  * 登录成功事件（通用鉴权事件）。
@@ -42,52 +40,52 @@ import java.time.Instant;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.0.0
  */
+@Getter
 public final class AuthSucceededEvent {
-
-    private static final long serialVersionUID = 0L;
-
+    /**
+     * 登录请求。
+     */
     private final AuthRequest request;
-
+    /**
+     * 登录凭证。
+     */
     private final AuthPrincipal principal;
-
+    /**
+     * 登录令牌。
+     */
     private final String token;
-
+    /**
+     * 登录时间。
+     */
     private final Instant occurredAt;
 
     /**
-     * 获取值。
-     * @return 方法执行结果。
+     * 登录成功事件（通用鉴权事件）。
+     *
+     * <p>由具体 {@link io.ddd4j.core.subject.Subject} 实现在建立会话时发布。
+     * 业务方可通过 {@link io.ddd4j.core.ddd.event.DomainEventPublisher} 订阅。
+     *
+     * <p>各框架适配层应负责把 ddd4j 通用事件桥接到本地事件总线：
+     * <ul>
+     *   <li>Spring：{@code SpringDomainEventPublisher} 解包 DomainEvent 后 publishEvent</li>
+     *   <li>Quarkus：CDI {@code Event<LoginSucceededEvent>}</li>
+     *   <li>Guice：Guava EventBus</li>
+     *   <li>Javalin：业务方自定义</li>
+     * </ul>
+     *
+ * @param request 请求对象
+ * @param principal 认证主体
+ * @param token 令牌
+ * @param occurredAt 发生时间
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.0
      */
-    public Instant getOccurredAt() {
-        return occurredAt;
-    }
+    @JsonCreator
+    public AuthSucceededEvent(@JsonProperty("request") AuthRequest request,
+                              @JsonProperty("principal") AuthPrincipal principal,
+                              @JsonProperty("token") String token,
+                              @JsonProperty("occurredAt") Instant occurredAt) {
 
-    /**
-     * 获取值。
-     * @return 方法执行结果。
-     */
-    public AuthPrincipal getPrincipal() {
-        return principal;
-    }
-
-    /**
-     * 获取值。
-     * @return 方法执行结果。
-     */
-    public AuthRequest getRequest() {
-        return request;
-    }
-
-    /**
-     * 获取值。
-     * @return 结果字符串。
-     */
-    public String getToken() {
-        return token;
-    }
-
-    @JsonCreator()
-    public AuthSucceededEvent(@JsonProperty("request") AuthRequest request, @JsonProperty("principal") AuthPrincipal principal, @JsonProperty("token") String token, @JsonProperty("occurredAt") Instant occurredAt) {
         this.request = request;
         this.principal = principal;
         this.token = token;
@@ -119,17 +117,16 @@ public final class AuthSucceededEvent {
         if (this == obj) {
             return true;
         }
-        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+        if (!(obj instanceof AuthSucceededEvent)) {
             return false;
         }
-        AuthSucceededEvent other = (AuthSucceededEvent) obj;
-        return Objects.equals(this.request, other.request) && Objects.equals(this.principal, other.principal) && Objects.equals(this.token, other.token) && Objects.equals(this.occurredAt, other.occurredAt);
+        AuthSucceededEvent that = (AuthSucceededEvent) obj;
+        return Objects.equals(request, that.request) && Objects.equals(principal, that.principal) && Objects.equals(token, that.token) && Objects.equals(occurredAt, that.occurredAt);
     }
 
     @Override
     public int hashCode() {
-        int result = 0;
-        result = 31 * result + Objects.hashCode(request);
+        int result = Objects.hashCode(request);
         result = 31 * result + Objects.hashCode(principal);
         result = 31 * result + Objects.hashCode(token);
         result = 31 * result + Objects.hashCode(occurredAt);
@@ -138,6 +135,7 @@ public final class AuthSucceededEvent {
 
     @Override
     public String toString() {
-        return "AuthSucceededEvent[request=" + request + ", principal=" + principal + ", token=" + token + ", occurredAt=" + occurredAt + "]";
+        return "AuthSucceededEvent[request=" + request + ", principal=" + principal + ", token=" + token + ", occurredAt=" + occurredAt + ']';
     }
+
 }

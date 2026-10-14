@@ -19,6 +19,7 @@ import io.ddd4j.kit.lang.LambdaKit;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.io.InvalidObjectException;
 
@@ -91,10 +92,12 @@ public final class PropertyRef implements Serializable {
         }
     }
 
+    @JsonIgnore
     public boolean isDomain() {
         return Objects.equals(PropertySpace.DOMAIN, space);
     }
 
+    @JsonIgnore
     public boolean isPersistence() {
         return Objects.equals(PropertySpace.PERSISTENCE, space);
     }

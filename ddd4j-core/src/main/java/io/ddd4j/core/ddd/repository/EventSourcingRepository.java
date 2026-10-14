@@ -22,7 +22,7 @@ import java.io.Serializable;
  * 事件溯源仓储接口（ddd4j 推荐用于 ES 场景）。
  * <p>
  *
- * <h3>与普通 {@link Repository} 的区别</h3>
+ * <h2>与普通 {@link Repository} 的区别</h2>
  * <ul>
  *   <li><b>状态不落库</b>：聚合根的状态仅来自事件流，仓储只追加事件</li>
  *   <li><b>{@code add} 而非 save</b>：新建聚合根（add），更新事件流（update）</li>

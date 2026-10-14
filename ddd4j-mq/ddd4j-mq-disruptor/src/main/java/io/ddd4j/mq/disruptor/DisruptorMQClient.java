@@ -41,7 +41,7 @@ import java.util.function.Consumer;
  * <p>使用 ddd4j 自己的 {@link DisruptorEvent} 作为 RingBuffer 事件类型，
  * 以确保本地消息能力可由公开仓库独立构建。
  *
- * <h3>路由模型</h3>
+ * <h2>路由模型</h2>
  * <pre>
  *   namespace.topic.tag
  *   └───┬───┘ └─┬─┘ └┬┘

@@ -48,6 +48,10 @@ public class ParamException extends BizRuntimeException {
     }
 
     public ParamException(ApiCode code, String i18nCode) {
+        this((CustomApiCode) code, i18nCode);
+    }
+
+    public ParamException(CustomApiCode code, String i18nCode) {
         super(code, i18nCode);
     }
 

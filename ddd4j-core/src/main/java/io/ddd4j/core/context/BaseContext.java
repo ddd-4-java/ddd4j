@@ -36,7 +36,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *       使用无类型校验的 {@link #inject}/{@link #get}/{@link #contains} 通用 KV API。</li>
  * </ul>
  *
- * <h3>推荐用法（SPI 服务，类型安全）</h3>
+ * <h2>推荐用法（SPI 服务，类型安全）</h2>
  * <pre>{@code
  * // 1. 框架适配层启动期注入（类型校验版本）
  * BaseContext.inject(SpiKeys.MQ_EVENT_PUBLISHER, MQEventPublisher.class, kafkaPublisher);

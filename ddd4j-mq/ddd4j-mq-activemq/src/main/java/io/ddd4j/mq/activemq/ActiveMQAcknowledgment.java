@@ -25,7 +25,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * ActiveMQ Classic (JMS) 手动确认映射实现。
+ * ActiveMQ Artemis (JMS) 手动确认映射实现。
  *
  * <p>包装了 {@link Session} 和 JMS 消息；{@link #ack()} / {@link #nack(boolean)} 方法映射到
  * {@code Session.recover()} 和 JMS {@code Message.acknowledge()} 操作。

@@ -74,14 +74,18 @@ public class OrderApplicationService {
         if (!idempotency.acquire(key, PAYMENT_IDEMPOTENCY_TTL)) {
             return load(orderId);
         }
+        boolean persisted = false;
         try {
             Order order = load(orderId);
             order.pay();
             persist(order);
+            persisted = true;
             idempotency.complete(key, order.id());
             return order;
         } catch (RuntimeException exception) {
-            idempotency.release(key);
+            if (!persisted) {
+                idempotency.release(key);
+            }
             throw exception;
         }
     }

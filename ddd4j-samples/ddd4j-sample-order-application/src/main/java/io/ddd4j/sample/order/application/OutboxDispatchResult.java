@@ -18,12 +18,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
-import java.util.Objects;
+import lombok.Value;
 
 /**
  * 单次 Outbox 发布批次的结果。
  */
 
+@Value
 public final class OutboxDispatchResult {
 
     private static final long serialVersionUID = 0L;
@@ -60,31 +61,5 @@ public final class OutboxDispatchResult {
     @JsonProperty("failed")
     public int failed() {
         return failed;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-            return false;
-        }
-        OutboxDispatchResult other = (OutboxDispatchResult) obj;
-        return this.attempted == other.attempted && this.published == other.published && this.failed == other.failed;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = 0;
-        result = 31 * result + Integer.hashCode(attempted);
-        result = 31 * result + Integer.hashCode(published);
-        result = 31 * result + Integer.hashCode(failed);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "OutboxDispatchResult[attempted=" + attempted + ", published=" + published + ", failed=" + failed + "]";
     }
 }

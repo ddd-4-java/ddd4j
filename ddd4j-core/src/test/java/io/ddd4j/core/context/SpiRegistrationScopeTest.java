@@ -14,14 +14,10 @@
  */
 package io.ddd4j.core.context;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.util.Objects;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -68,52 +64,38 @@ class SpiRegistrationScopeTest {
         assertThat(BaseContext.get(KEY, Service.class)).contains(replacement);
     }
 
-    /**
-     * 测试用的 SPI 服务载体，通过 {@code name} 区分不同注册实例。
-     */
-    private final static class Service {
-
-        private static final long serialVersionUID = 0L;
-
+    private static final class Service {
         private final String name;
 
-        /**
-         * 创建服务载体实例。
-         *
-         * @param name 服务名称
-         */
-        @JsonCreator()
-        private Service(@JsonProperty("name") String name) {
+        public Service(String name) {
             this.name = name;
         }
 
-        @JsonProperty("name")
         public String name() {
             return name;
         }
 
         @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
+        public boolean equals(Object o) {
+            if (this == o) {
                 return true;
             }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+            if (!(o instanceof Service)) {
                 return false;
             }
-            Service other = (Service) obj;
+            Service other = (Service) o;
             return Objects.equals(this.name, other.name);
         }
 
         @Override
         public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(name);
-            return result;
+            return Objects.hash(name);
         }
 
         @Override
         public String toString() {
-            return "Service[name=" + name + "]";
+            return "Service{" + "name=" + name + "}";
         }
+
     }
 }

@@ -67,6 +67,26 @@ class JdbiEventStorePostgresIT {
     }
 
     @Test
+    void timestampShouldRoundTripAcrossTimezonesOnPostgres() throws Exception {
+        JdbiTimestampTimezoneContractTest.assertUtcRoundTrip(jdbi);
+    }
+
+    @Test
+    void positionConstraintUsesSharedNameOnPostgres() {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-pg-position-schema");
+        eventStore.append(ORDER_TYPE, orderId, List.of(new OrderCreatedEvent(orderId)), 0);
+
+        List<String> names = jdbi.withHandle(handle -> handle.createQuery(
+                        "select constraint_name from information_schema.table_constraints "
+                                + "where lower(table_name) = lower(:tableName) "
+                                + "and constraint_type = 'UNIQUE'")
+                .bind("tableName", EventStoreConstants.TABLE_NAME)
+                .mapTo(String.class)
+                .list());
+        assertThat(names).contains("uk_position");
+    }
+
+    @Test
     void appendAndReadShouldRoundTripTypedEventOnPostgres() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-pg-1");
         OrderCreatedEvent event = new OrderCreatedEvent(orderId);

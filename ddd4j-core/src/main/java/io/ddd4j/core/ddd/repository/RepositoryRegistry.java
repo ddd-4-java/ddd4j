@@ -32,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 通过 {@link BaseContext}（全局默认）+ {@link ThreadContext}（请求级覆盖）
  * 两级上下文查找仓储实例。
  *
- * <h3>框架适配层注册方式</h3>
+ * <h2>框架适配层注册方式</h2>
  * <pre>{@code
  * // Spring 启动期（SpringContextBridge）
  * RepositoryRegistry.register(Order.class, orderRepository);
@@ -131,6 +131,7 @@ public final class RepositoryRegistry {
      *   <li>静态 {@link #INSTANCES}（向后兼容）</li>
      * </ol>
      *
+     * @param <M> 数据元素类型
      * @param modelClass 聚合根类型
      * @return 仓储实例
      * @throws BizRuntimeException 未找到匹配的仓储
@@ -159,8 +160,7 @@ public final class RepositoryRegistry {
         }
 
         throw new BizRuntimeException(
-                "Repository not found for aggregate {}. Register it via RepositoryRegistry.register({}, repository) " +
-                        "or ensure the framework adapter is configured.",
+                "Repository not found for aggregate {}. Register it via RepositoryRegistry.register({}, repository) or ensure the framework adapter is configured.",
                 modelClass.getSimpleName(), modelClass.getSimpleName());
     }
 

@@ -47,7 +47,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * 在同一事务内原子完成（{@code beginTransaction → 校验 → 写入 → commit}，失败整体回滚
  * 不留半截流）；读侧以 {@link Flux} 流式输出，{@code limit} 下推为 SQL 分页。
  *
- * <h3>与同步轨道的关系</h3>
+ * <h2>与同步轨道的关系</h2>
  * <ul>
  *   <li>共享同一张表 {@code DDD4J_EVENT_STORE}（建表语句与同步实现一致，含
  *       {@code aggregate_type} 列）；position 全局递增，跨两轨单调不冲突</li>

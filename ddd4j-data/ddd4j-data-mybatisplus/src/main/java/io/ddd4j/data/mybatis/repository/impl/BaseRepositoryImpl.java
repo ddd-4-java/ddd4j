@@ -25,7 +25,7 @@ import java.io.Serializable;
 /**
  * MyBatis-Plus 仓储实现基类（四泛型，业务方使用入口）。
  *
- * <h3>类继承链</h3>
+ * <h2>类继承链</h2>
  * <pre>{@code
  * BaseRepositoryImpl<MP, M, P, Q>
  *   └─ extends MybatisAggregateRepository<MP, M, P, Q, Serializable>   // 充血查询 + 自动填充 + ddd4j Repository

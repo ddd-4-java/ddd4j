@@ -21,7 +21,7 @@ import java.util.Set;
  * <p>
  * 取代旧命令执行器实现，保持 ddd4j-core 的纯 Java 边界。
  *
- * <h3>执行器契约</h3>
+ * <h2>执行器契约</h2>
  * <ul>
  *   <li><b>{@code supportedCommands}</b>：返回本执行器支持的命令类型集合，用于命令路由</li>
  *   <li><b>{@code execute}</b>：执行命令，返回 {@link Result}</li>

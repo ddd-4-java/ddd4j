@@ -22,6 +22,7 @@ import java.util.Objects;
 
 import com.eventstore.dbclient.EventStoreDBClient;
 import com.eventstore.dbclient.EventStoreDBConnectionString;
+import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
 import io.ddd4j.core.cqrs.eventstore.StoredEvent;
 import io.ddd4j.core.ddd.event.AggregateRootId;
@@ -43,6 +44,7 @@ import java.time.Duration;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * EventStoreDB 的强类型 Testcontainers 验证。
@@ -89,6 +91,37 @@ class EsdbEventStoreIT {
         assertThat(all).extracting(StoredEvent::version).containsExactly(1L, 2L, 3L);
         assertThat(store.read(ORDER_TYPE, id, 2, 3)).extracting(StoredEvent::version).containsExactly(2L, 3L);
         assertThat(store.readAll(0, 10)).allSatisfy(event -> assertThat(event.aggregateType()).isEqualTo(ORDER_TYPE));
+    }
+
+    @Test
+    void staleVersionRejectsWithoutPartialWrites() {
+        TestId id = new TestId("order-conflict");
+        store.append(ORDER_TYPE, id, List.of(new TestEvent(id)), 0);
+
+        assertThatThrownBy(() -> store.append(ORDER_TYPE, id, List.of(new TestEvent(id)), 0))
+                .isInstanceOf(AggregateVersionConflictException.class)
+                .satisfies(error -> {
+                    AggregateVersionConflictException conflict = (AggregateVersionConflictException) error;
+                    assertThat(conflict.expectedVersion()).isEqualTo(0L);
+                    assertThat(conflict.actualVersion()).isEqualTo(1L);
+                });
+        assertThat(store.read(ORDER_TYPE, id)).extracting(StoredEvent::version).containsExactly(1L);
+    }
+
+    @Test
+    void causalityMetadataRoundTripsThroughEventStoreDb() {
+        TestId id = new TestId("order-causality");
+        TestEvent root = new TestEvent(id);
+        TestEvent derived = new TestEvent(id, root);
+
+        store.append(ORDER_TYPE, id, List.of(root, derived), 0);
+
+        List<StoredEvent> events = store.read(ORDER_TYPE, id);
+        assertThat(events).hasSize(2);
+        assertThat(events.get(0).correlationId()).isNull();
+        assertThat(events.get(0).causationId()).isNull();
+        assertThat(events.get(1).correlationId()).isEqualTo(root.getEventId());
+        assertThat(events.get(1).causationId()).isEqualTo(root.getEventId());
     }
 
     /**
@@ -181,6 +214,10 @@ class EsdbEventStoreIT {
 
         TestEvent(TestId id) {
             super(new EntityIdPath(id));
+        }
+
+        TestEvent(TestId id, DomainEvent<TestId> respondTo) {
+            super(new EntityIdPath(id), respondTo);
         }
     }
 }

@@ -20,6 +20,8 @@ import io.ddd4j.core.ddd.event.EntityIdPath;
 import io.ddd4j.core.ddd.event.DomainEvent;
 
 import io.ddd4j.core.ddd.event.AggregateRootId;
+import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
+import io.ddd4j.core.cqrs.eventstore.StoredEvent;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -40,8 +42,10 @@ import org.testcontainers.postgresql.PostgreSQLContainer;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * PostgreSQL 容器轨：验证 R2DBC EventStore 自身 DDL 与事件往返。
@@ -148,7 +152,50 @@ class R2dbcEventStorePostgresIT {
                 .isEqualTo(orderId.asString());
         assertThat(eventStore.read(ORDER_TYPE, orderId).get(0).payload())
                 .isInstanceOf(OrderCreatedEvent.class);
-    } static final class OrderCreatedEvent extends DomainEvent<TestAggregateRootId> {
+    }
+
+    @Test
+    void versionRangeAndAggregateTypeIsolationShouldFollowCoreContractOnPostgres() {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-pg-shared");
+        eventStore.append(ORDER_TYPE, orderId, Arrays.asList(
+                new OrderCreatedEvent(orderId), new OrderCreatedEvent(orderId), new OrderCreatedEvent(orderId)), 0L);
+        eventStore.append("Invoice", orderId, List.of(new OrderCreatedEvent(orderId)), 0L);
+
+        assertThat(eventStore.read(ORDER_TYPE, orderId)).extracting(StoredEvent::version)
+                .containsExactly(1L, 2L, 3L);
+        assertThat(eventStore.read(ORDER_TYPE, orderId, 1, 2))
+                .extracting(StoredEvent::version).containsExactly(1L, 2L);
+        assertThat(eventStore.read("Invoice", orderId)).hasSize(1);
+    }
+
+    @Test
+    void readAllShouldPreserveGlobalPositionOrderOnPostgres() {
+        TestAggregateRootId first = new TestAggregateRootId("order-pg-a");
+        TestAggregateRootId second = new TestAggregateRootId("order-pg-b");
+        eventStore.append(ORDER_TYPE, first, List.of(new OrderCreatedEvent(first)), 0L);
+        eventStore.append(ORDER_TYPE, second, List.of(new OrderCreatedEvent(second)), 0L);
+
+        assertThat(eventStore.readAll(1, 10)).extracting(StoredEvent::position)
+                .containsExactly(1L, 2L);
+    }
+
+    @Test
+    void appendWithStaleVersionShouldRejectOnPostgres() {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-pg-conflict");
+        eventStore.append(ORDER_TYPE, orderId, List.of(new OrderCreatedEvent(orderId)), 0L);
+
+        assertThatThrownBy(() -> eventStore.append(ORDER_TYPE, orderId,
+                List.of(new OrderCreatedEvent(orderId)), 0L))
+                .isInstanceOf(AggregateVersionConflictException.class)
+                .satisfies(error -> {
+                    AggregateVersionConflictException conflict = (AggregateVersionConflictException) error;
+                    assertThat(conflict.expectedVersion()).isEqualTo(0L);
+                    assertThat(conflict.actualVersion()).isEqualTo(1L);
+                });
+        assertThat(eventStore.read(ORDER_TYPE, orderId)).hasSize(1);
+    }
+
+    static final class OrderCreatedEvent extends DomainEvent<TestAggregateRootId> {
 
         OrderCreatedEvent() {
             super();

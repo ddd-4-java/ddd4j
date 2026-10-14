@@ -12,11 +12,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package io.ddd4j.core.cqrs.readmodel;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.Instant;
 import java.util.Objects;
@@ -30,39 +30,50 @@ import java.util.Objects;
  * <p>各运行时实现可覆写 {@code getProjectionStatus()} 返回真实状态；
  * 未覆写时 {@link ViewManager} 的 default 实现返回基线状态（nextEventNumber=0）。
  *
+ * <p>{@code streamId} — 投影流 ID
+ * <p>{@code nextEventNumber} — 下一个待处理事件号（0-based）
+ * <p>{@code running} — 视图管理器是否处于运行状态
+ * <p>{@code lastRunAt} — 上次运行完成时间（nullable，首次未运行时为 null）
+ * <p>{@code lastEventCount} — 上次运行处理的事件数量（0 表示空或未运行）
+ * <p>{@code lastError} — 上次运行失败的错误信息（nullable，成功时为 null）
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.0.x
  */
-
 public final class ProjectionStatus {
 
-    private static final long serialVersionUID = 0L;
-
     private final String streamId;
-
     private final long nextEventNumber;
-
     private final boolean running;
-
     private final Instant lastRunAt;
-
     private final int lastEventCount;
-
     private final String lastError;
 
     /**
- * 紧凑构造器，校验参数合法性。
- *
- * @param streamId 投影流 ID
- * @param nextEventNumber 下一个待处理事件号（0-based）
- * @param running 视图管理器是否处于运行状态
- * @param lastRunAt 上次运行完成时间（nullable，首次未运行时为 null）
- * @param lastEventCount 上次运行处理的事件数量（0 表示空或未运行）
- * @param lastError 上次运行失败的错误信息（nullable，成功时为 null）
- */
+     * 投影视图实时状态快照（不可变值对象）。
+     *
+     * <p>由 {@link ViewManager#getProjectionStatus(String)} 返回，供运维 / 监控层
+     * 查询单个投影视图的当前进度与健康状况。
+     *
+     * <p>各运行时实现可覆写 {@code getProjectionStatus()} 返回真实状态；
+     * 未覆写时 {@link ViewManager} 的 default 实现返回基线状态（nextEventNumber=0）。
+     *
+     * @param streamId        投影流 ID
+     * @param nextEventNumber 下一个待处理事件号（0-based）
+     * @param running         视图管理器是否处于运行状态
+     * @param lastRunAt       上次运行完成时间（nullable，首次未运行时为 null）
+     * @param lastEventCount  上次运行处理的事件数量（0 表示空或未运行）
+     * @param lastError       上次运行失败的错误信息（nullable，成功时为 null）
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     * @since 3.0.x
+     */
 
-    @JsonCreator()
-    public ProjectionStatus(@JsonProperty("streamId") String streamId, @JsonProperty("nextEventNumber") long nextEventNumber, @JsonProperty("running") boolean running, @JsonProperty("lastRunAt") Instant lastRunAt, @JsonProperty("lastEventCount") int lastEventCount, @JsonProperty("lastError") String lastError) {
+    @JsonCreator
+    public ProjectionStatus(@JsonProperty("streamId") String streamId,
+                            @JsonProperty("nextEventNumber") long nextEventNumber,
+                            @JsonProperty("running") boolean running,
+                            @JsonProperty("lastRunAt") Instant lastRunAt,
+                            @JsonProperty("lastEventCount") int lastEventCount,
+                            @JsonProperty("lastError") String lastError) {
         Objects.requireNonNull(streamId, "streamId must not be null");
         if (nextEventNumber < 0) {
             throw new IllegalArgumentException("nextEventNumber must not be negative");
@@ -87,32 +98,33 @@ public final class ProjectionStatus {
      * @param running  是否处于运行状态
      * @return 基线状态
      */
+
     public static ProjectionStatus baseline(String streamId, boolean running) {
-        return new ProjectionStatus(streamId, 0, running, null, 0, null);
-    }
-
-    public String getLastError() {
-        return lastError;
-    }
-
-    public int getLastEventCount() {
-        return lastEventCount;
-    }
-
-    public Instant getLastRunAt() {
-        return lastRunAt;
-    }
-
-    public long getNextEventNumber() {
-        return nextEventNumber;
+        return new ProjectionStatus(streamId, 0L, running, null, 0, null);
     }
 
     public String getStreamId() {
         return streamId;
     }
 
+    public long getNextEventNumber() {
+        return nextEventNumber;
+    }
+
     public boolean isRunning() {
         return running;
+    }
+
+    public Instant getLastRunAt() {
+        return lastRunAt;
+    }
+
+    public int getLastEventCount() {
+        return lastEventCount;
+    }
+
+    public String getLastError() {
+        return lastError;
     }
 
     @JsonProperty("streamId")
@@ -150,27 +162,33 @@ public final class ProjectionStatus {
         if (this == obj) {
             return true;
         }
-        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+        if (!(obj instanceof ProjectionStatus)) {
             return false;
         }
-        ProjectionStatus other = (ProjectionStatus) obj;
-        return Objects.equals(this.streamId, other.streamId) && this.nextEventNumber == other.nextEventNumber && this.running == other.running && Objects.equals(this.lastRunAt, other.lastRunAt) && this.lastEventCount == other.lastEventCount && Objects.equals(this.lastError, other.lastError);
+        ProjectionStatus that = (ProjectionStatus) obj;
+        return nextEventNumber == that.nextEventNumber
+                && running == that.running
+                && lastEventCount == that.lastEventCount
+                && Objects.equals(streamId, that.streamId)
+                && Objects.equals(lastRunAt, that.lastRunAt)
+                && Objects.equals(lastError, that.lastError);
     }
 
     @Override
     public int hashCode() {
-        int result = 0;
-        result = 31 * result + Objects.hashCode(streamId);
-        result = 31 * result + Long.hashCode(nextEventNumber);
+        int result = Objects.hashCode(streamId);
+        result = 31 * result + (int) (nextEventNumber ^ (nextEventNumber >>> 32));
         result = 31 * result + Boolean.hashCode(running);
         result = 31 * result + Objects.hashCode(lastRunAt);
-        result = 31 * result + Integer.hashCode(lastEventCount);
+        result = 31 * result + lastEventCount;
         result = 31 * result + Objects.hashCode(lastError);
         return result;
     }
 
     @Override
     public String toString() {
-        return "ProjectionStatus[streamId=" + streamId + ", nextEventNumber=" + nextEventNumber + ", running=" + running + ", lastRunAt=" + lastRunAt + ", lastEventCount=" + lastEventCount + ", lastError=" + lastError + "]";
+        return "ProjectionStatus[streamId=" + streamId + ", nextEventNumber=" + nextEventNumber
+                + ", running=" + running + ", lastRunAt=" + lastRunAt
+                + ", lastEventCount=" + lastEventCount + ", lastError=" + lastError + ']';
     }
 }

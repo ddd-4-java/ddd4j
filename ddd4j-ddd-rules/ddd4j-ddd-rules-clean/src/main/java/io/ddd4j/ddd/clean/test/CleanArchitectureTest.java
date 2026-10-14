@@ -34,7 +34,7 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
  *
  * <p>运行 {@code mvn test} 时，{@code @ArchTest} 静态字段自动执行，违反规则 → JUnit 失败 → 构建失败。
  *
- * <h3>包含的规则</h3>
+ * <h2>包含的规则</h2>
  * <ul>
  *   <li>包依赖规则（Clean 四层）：domain 不依赖 adapter/infrastructure/web/framework</li>
  *   <li>聚合/装配规则：adapter 必须实现 domain.repository 接口</li>

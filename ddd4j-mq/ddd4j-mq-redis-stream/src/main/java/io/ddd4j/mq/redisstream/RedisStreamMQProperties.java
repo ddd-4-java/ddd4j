@@ -62,6 +62,14 @@ public class RedisStreamMQProperties extends MQProperties {
      */
     private boolean autoStartConsumers = true;
     /**
+     * 是否启用 Redis 6.2+ XAUTOCLAIM 接管其他消费者遗留的 PEL。
+     */
+    private boolean autoClaimEnabled = false;
+    /**
+     * 接管前的最短空闲时间，默认 30 秒。
+     */
+    private long claimMinIdleMillis = 30_000L;
+    /**
      * Redis 客户端后端类型
      */
     private RedisStreamClientType clientType = RedisStreamClientType.JEDIS;
@@ -89,5 +97,12 @@ public class RedisStreamMQProperties extends MQProperties {
      */
     public void setClientType(RedisStreamClientType clientType) {
         this.clientType = Objects.isNull(clientType) ? RedisStreamClientType.JEDIS : clientType;
+    }
+
+    public void setClaimMinIdleMillis(long claimMinIdleMillis) {
+        if (claimMinIdleMillis < 0) {
+            throw new IllegalArgumentException("claimMinIdleMillis must not be negative");
+        }
+        this.claimMinIdleMillis = claimMinIdleMillis;
     }
 }

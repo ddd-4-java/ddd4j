@@ -28,7 +28,7 @@ import java.util.Objects;
  * <p>为 {@code Ddd4jSqlObservationSink} 提供 span 包装，
  * 无 OTel 时为 noop。
  *
- * <h3>使用示例</h3>
+ * <h2>使用示例</h2>
  * <pre>{@code
  * SqlSpan.execute("mybatis", "SELECT * FROM orders WHERE id = ?", () -> {
  *     return mapper.selectById(id);

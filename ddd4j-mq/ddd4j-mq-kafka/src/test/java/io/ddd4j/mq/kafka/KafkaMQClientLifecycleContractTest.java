@@ -16,6 +16,7 @@ import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.annotation.MQEventListener;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.event.MQEventSerialization;
+import io.ddd4j.mq.lifecycle.MQStartupState;
 import io.ddd4j.mq.listener.MQListener;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.MockConsumer;
@@ -151,10 +152,58 @@ class KafkaMQClientLifecycleContractTest {
     }
 
     @Test
+    void closeWaitsForInFlightConsumerInitialization() throws Exception {
+        CountDownLatch consumerCreationEntered = new CountDownLatch(1);
+        CountDownLatch allowConsumerCreation = new CountDownLatch(1);
+        CountDownLatch closeEntered = new CountDownLatch(1);
+        TrackingConsumer consumer = new TrackingConsumer();
+        KafkaMQClient client = new KafkaMQClient(properties(), null) {
+            @Override
+            org.apache.kafka.clients.consumer.Consumer<String, String> createConsumer(java.util.Properties props) {
+                consumerCreationEntered.countDown();
+                try {
+                    if (!allowConsumerCreation.await(5, TimeUnit.SECONDS)) {
+                        throw new AssertionError("timed out waiting to finish consumer creation");
+                    }
+                } catch (InterruptedException exception) {
+                    Thread.currentThread().interrupt();
+                    throw new AssertionError(exception);
+                }
+                return consumer;
+            }
+        };
+        ExecutorService callers = Executors.newFixedThreadPool(2);
+        try {
+            Future<Boolean> initialization = callers.submit(
+                    () -> client.initConsumer(listener(), new MQProperties()));
+            assertTrue(consumerCreationEntered.await(5, TimeUnit.SECONDS));
+
+            Future<?> closing = callers.submit(() -> {
+                closeEntered.countDown();
+                client.close();
+            });
+            assertTrue(closeEntered.await(5, TimeUnit.SECONDS));
+            assertThrows(TimeoutException.class, () -> closing.get(200, TimeUnit.MILLISECONDS),
+                    "close must wait until the in-flight consumer is registered");
+
+            allowConsumerCreation.countDown();
+            assertTrue(initialization.get(5, TimeUnit.SECONDS));
+            closing.get(5, TimeUnit.SECONDS);
+            assertEquals(1, consumer.closeCount.get());
+        } finally {
+            allowConsumerCreation.countDown();
+            client.close();
+            callers.shutdownNow();
+            assertTrue(callers.awaitTermination(5, TimeUnit.SECONDS));
+        }
+    }
+
+    @Test
     void closeBeforeInitializationDoesNotCreateResources() throws Exception {
         KafkaMQClient client = new KafkaMQClient(properties(), null);
         client.close();
         client.close();
+        assertEquals(MQStartupState.STOPPED, client.startupStatus().snapshot().state());
         assertThrows(IllegalStateException.class, () -> client.initProducer(new MQProperties()));
         assertThrows(IllegalStateException.class, () -> client.initConsumer(listener(), new MQProperties()));
     }
@@ -205,6 +254,60 @@ class KafkaMQClientLifecycleContractTest {
         assertEquals(1, consumer.closeCount.get(), "partially initialized consumer must be closed once");
         client.close();
         assertEquals(1, consumer.closeCount.get(), "rejected worker must be removed from client ownership");
+    }
+
+    @Test
+    void executorCreationFailureClosesAlreadyCreatedConsumer() throws Exception {
+        TrackingConsumer consumer = new TrackingConsumer();
+        KafkaMQClient client = new KafkaMQClient(properties(), null) {
+            @Override
+            org.apache.kafka.clients.consumer.Consumer<String, String> createConsumer(java.util.Properties props) {
+                return consumer;
+            }
+
+            @Override
+            ExecutorService createConsumerExecutor(MQListener listener) {
+                throw new IllegalStateException("executor unavailable");
+            }
+        };
+
+        IllegalStateException failure = assertThrows(IllegalStateException.class,
+                () -> client.initConsumer(listener(), new MQProperties()));
+        assertEquals("executor unavailable", failure.getMessage());
+        assertEquals(1, consumer.closeCount.get(),
+                "consumer created before executor failure must be released");
+        client.close();
+    }
+
+    @Test
+    void unexpectedPollFailureReleasesConsumerWithoutClientClose() throws Exception {
+        CountDownLatch consumerClosed = new CountDownLatch(1);
+        TrackingConsumer consumer = new TrackingConsumer() {
+            @Override
+            public org.apache.kafka.clients.consumer.ConsumerRecords<String, String> poll(java.time.Duration timeout) {
+                throw new IllegalStateException("poll failed");
+            }
+
+            @Override
+            public void close() {
+                super.close();
+                consumerClosed.countDown();
+            }
+        };
+        KafkaMQClient client = new KafkaMQClient(properties(), null) {
+            @Override
+            org.apache.kafka.clients.consumer.Consumer<String, String> createConsumer(java.util.Properties props) {
+                return consumer;
+            }
+        };
+        try {
+            assertTrue(client.initConsumer(listener(), new MQProperties()));
+            assertTrue(consumerClosed.await(2, TimeUnit.SECONDS),
+                    "a failed poll must release the native consumer without waiting for client close");
+            assertEquals(1, consumer.closeCount.get());
+        } finally {
+            client.close();
+        }
     }
 
     @Test

@@ -18,7 +18,7 @@ import io.ddd4j.web.core.context.WebRequestContext;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collections;
 import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,7 +38,7 @@ class PathWebAccessPolicyTest {
 
     @Test
     void exactPatternMatchesOnlyExactPath() {
-        PathWebAccessPolicy policy = new PathWebAccessPolicy(List.of("/health"), AuthenticationMode.REQUIRED);
+        PathWebAccessPolicy policy = new PathWebAccessPolicy(Collections.singletonList("/health"), AuthenticationMode.REQUIRED);
 
         assertEquals(AuthenticationMode.DISABLED, policy.authenticationMode(request("/health")));
         assertEquals(AuthenticationMode.REQUIRED, policy.authenticationMode(request("/health/details")));
@@ -47,7 +47,7 @@ class PathWebAccessPolicyTest {
 
     @Test
     void prefixPatternMatchesPrefixAndSubPaths() {
-        PathWebAccessPolicy policy = new PathWebAccessPolicy(List.of("/health/**"), AuthenticationMode.REQUIRED);
+        PathWebAccessPolicy policy = new PathWebAccessPolicy(Collections.singletonList("/health/**"), AuthenticationMode.REQUIRED);
 
         assertEquals(AuthenticationMode.DISABLED, policy.authenticationMode(request("/health")));
         assertEquals(AuthenticationMode.DISABLED, policy.authenticationMode(request("/health/readiness")));
@@ -69,12 +69,12 @@ class PathWebAccessPolicyTest {
     void constructorRejectsNull() {
         assertThrows(NullPointerException.class, () -> new PathWebAccessPolicy(null, AuthenticationMode.REQUIRED));
         assertThrows(NullPointerException.class,
-                () -> new PathWebAccessPolicy(List.of("/health"), null));
+                () -> new PathWebAccessPolicy(Collections.singletonList("/health"), null));
     }
 
     @Test
     void emptyPatternsDisableNothing() {
-        PathWebAccessPolicy policy = new PathWebAccessPolicy(List.of(), AuthenticationMode.DISABLED);
+        PathWebAccessPolicy policy = new PathWebAccessPolicy(Arrays.asList(), AuthenticationMode.DISABLED);
         assertEquals(AuthenticationMode.DISABLED, policy.authenticationMode(request("/anything")));
     }
 }

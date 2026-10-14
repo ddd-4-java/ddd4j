@@ -52,7 +52,7 @@ class JdbiEventStoreTest {
     @Test
     void appendAndReadShouldPreserveTypedEventMetadata() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-1");
-        OrderCreatedEvent event = new OrderCreatedEvent(orderId);
+        OrderCreatedEvent event = new OrderCreatedEvent(orderId, "created");
         eventStore.append(ORDER_TYPE, orderId, List.of(event), 0);
 
         List<StoredEvent> events = eventStore.read(ORDER_TYPE, orderId);
@@ -61,6 +61,36 @@ class JdbiEventStoreTest {
         assertThat(events.get(0).aggregateId()).isInstanceOf(AggregateRootId.class);
         assertThat(events.get(0).aggregateId().asString()).isEqualTo(orderId.asString());
         assertThat(events.get(0).payload()).isInstanceOf(OrderCreatedEvent.class);
+        assertThat(((OrderCreatedEvent) events.get(0).payload()).getFact()).isEqualTo("created");
+    }
+
+    @Test
+    void positionConstraintUsesSharedName() {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-position-schema");
+        eventStore.append(ORDER_TYPE, orderId, List.of(new OrderCreatedEvent(orderId, "created")), 0);
+
+        List<String> names = jdbi.withHandle(handle -> handle.createQuery(
+                        "select upper(constraint_name) from information_schema.table_constraints "
+                                + "where upper(table_name) = :tableName")
+                .bind("tableName", EventStoreConstants.TABLE_NAME.toUpperCase())
+                .mapTo(String.class)
+                .list());
+        org.junit.jupiter.api.Assertions.assertTrue(names.contains("UK_POSITION"), "position unique constraint must be named uk_position: " + names);
+    }
+
+    @Test
+    void readBackAggregateIdsUseValueEquality() {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-id-equality");
+        eventStore.append(ORDER_TYPE, orderId, List.of(new OrderCreatedEvent(orderId, "created")), 0);
+
+        AggregateRootId first = eventStore.read(ORDER_TYPE, orderId).get(0).aggregateId();
+        AggregateRootId second = eventStore.read(ORDER_TYPE, orderId).get(0).aggregateId();
+        org.junit.jupiter.api.Assertions.assertEquals(first, second);
+        org.junit.jupiter.api.Assertions.assertEquals(first.hashCode(), second.hashCode());
+        java.util.Set<AggregateRootId> unique = new java.util.HashSet<>();
+        unique.add(first);
+        unique.add(second);
+        org.junit.jupiter.api.Assertions.assertEquals(1, unique.size());
     }
 
     @Test
@@ -72,8 +102,59 @@ class JdbiEventStoreTest {
         assertThat(eventStore.read(ORDER_TYPE, orderId, 1, 2))
                 .extracting(StoredEvent::version)
                 .containsExactly(1L, 2L);
-        assertThatThrownBy(() -> eventStore.append(ORDER_TYPE, orderId, List.of(new OrderCreatedEvent(orderId)), 0))
-                .isInstanceOf(AggregateVersionConflictException.class);
+        AggregateVersionConflictException conflict = org.junit.jupiter.api.Assertions.assertThrows(
+                AggregateVersionConflictException.class,
+                () -> eventStore.append(ORDER_TYPE, orderId, List.of(new OrderCreatedEvent(orderId)), 0));
+        assertThat(conflict.expectedVersion()).isEqualTo(0L);
+        assertThat(conflict.actualVersion()).isEqualTo(3L);
+    }
+
+    @Test
+    void readAllPreservesGlobalPositionAcrossAggregates() {
+        TestAggregateRootId first = new TestAggregateRootId("order-position-a");
+        TestAggregateRootId second = new TestAggregateRootId("order-position-b");
+        eventStore.append(ORDER_TYPE, first, List.of(new OrderCreatedEvent(first)), 0);
+        eventStore.append(ORDER_TYPE, second, List.of(new OrderCreatedEvent(second)), 0);
+
+        List<StoredEvent> events = eventStore.readAll(1, 10);
+        assertThat(events).hasSize(2);
+        assertThat(events.get(0).aggregateId().asString()).isEqualTo(first.asString());
+        assertThat(events.get(1).aggregateId().asString()).isEqualTo(second.asString());
+        assertThat(events).extracting(StoredEvent::position).containsExactly(1L, 2L);
+    }
+
+    @Test
+    void causalityColumnsRoundTrip() {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-causal");
+        OrderCreatedEvent cause = new OrderCreatedEvent(orderId);
+        OrderCreatedEvent effect = new OrderCreatedEvent(orderId, cause);
+        eventStore.append(ORDER_TYPE, orderId, List.of(cause, effect), 0);
+
+        List<StoredEvent> events = eventStore.read(ORDER_TYPE, orderId);
+        assertThat(events).hasSize(2);
+        assertThat(events.get(0).correlationId()).isNull();
+        assertThat(events.get(1).correlationId()).isEqualTo(cause.getEventId());
+        assertThat(events.get(1).causationId()).isEqualTo(cause.getEventId());
+    }
+
+    @Test
+    void missingStreamReturnsEmpty() {
+        assertThat(eventStore.read(ORDER_TYPE, new TestAggregateRootId("missing"))).isEmpty();
+    }
+
+    @Test
+    void payloadColumnUsesCharacterType() {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-payload-type");
+        eventStore.append(ORDER_TYPE, orderId, List.of(new OrderCreatedEvent(orderId)), 0);
+        String dataType = jdbi.withHandle(handle -> handle.createQuery(
+                        "select data_type from information_schema.columns"
+                                + " where upper(table_name) = :tableName"
+                                + " and upper(column_name) = :columnName")
+                .bind("tableName", EventStoreConstants.TABLE_NAME.toUpperCase())
+                .bind("columnName", EventStoreConstants.COLUMN_PAYLOAD.toUpperCase())
+                .mapTo(String.class)
+                .one());
+        assertThat(dataType).startsWith("CHARACTER");
     }
 
     @Test
@@ -168,12 +249,31 @@ class JdbiEventStoreTest {
     }
 
     static final class OrderCreatedEvent extends DomainEvent<TestAggregateRootId> {
+        private String fact;
+
         OrderCreatedEvent() {
             super();
         }
 
         OrderCreatedEvent(TestAggregateRootId orderId) {
             super(new EntityIdPath(orderId));
+        }
+
+        OrderCreatedEvent(TestAggregateRootId orderId, DomainEvent<?> causingEvent) {
+            super(new EntityIdPath(orderId), causingEvent);
+        }
+
+        OrderCreatedEvent(TestAggregateRootId orderId, String fact) {
+            super(new EntityIdPath(orderId));
+            this.fact = fact;
+        }
+
+        public String getFact() {
+            return fact;
+        }
+
+        public void setFact(String fact) {
+            this.fact = fact;
         }
     }
 }

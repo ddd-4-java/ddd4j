@@ -18,10 +18,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
-import java.util.Objects;
+import lombok.Value;
 
 import java.time.Instant;
 
+@Value
 public final class OutboxMessage {
 
     private static final long serialVersionUID = 0L;
@@ -68,33 +69,5 @@ public final class OutboxMessage {
     @JsonProperty("occurredAt")
     public Instant occurredAt() {
         return occurredAt;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-            return false;
-        }
-        OutboxMessage other = (OutboxMessage) obj;
-        return Objects.equals(this.id, other.id) && Objects.equals(this.aggregateId, other.aggregateId) && Objects.equals(this.eventType, other.eventType) && Objects.equals(this.payload, other.payload) && Objects.equals(this.occurredAt, other.occurredAt);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = 0;
-        result = 31 * result + Objects.hashCode(id);
-        result = 31 * result + Objects.hashCode(aggregateId);
-        result = 31 * result + Objects.hashCode(eventType);
-        result = 31 * result + Objects.hashCode(payload);
-        result = 31 * result + Objects.hashCode(occurredAt);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "OutboxMessage[id=" + id + ", aggregateId=" + aggregateId + ", eventType=" + eventType + ", payload=" + payload + ", occurredAt=" + occurredAt + "]";
     }
 }

@@ -26,7 +26,7 @@ import java.util.Collection;
  *   <li>{@code io.ddd4j.core.cqrs.readmodel.ProjectionView}（ddd4j 框架无关投影）</li>
  * </ul>
  *
- * <h3>统一抽象</h3>
+ * <h2>统一抽象</h2>
  * <p>
  * 本接口同时承担：
  * <ul>

@@ -18,12 +18,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
-import java.util.Objects;
+import lombok.Value;
 
 import io.ddd4j.sample.order.domain.OrderStatus;
 
 import java.math.BigDecimal;
 
+@Value
 public final class OrderReadModel {
 
     private static final long serialVersionUID = 0L;
@@ -80,32 +81,27 @@ public final class OrderReadModel {
         return totalAmount;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-            return false;
-        }
-        OrderReadModel other = (OrderReadModel) obj;
-        return Objects.equals(this.id, other.id) && Objects.equals(this.orderNo, other.orderNo) && Objects.equals(this.buyerId, other.buyerId) && Objects.equals(this.buyerName, other.buyerName) && Objects.equals(this.status, other.status) && Objects.equals(this.totalAmount, other.totalAmount);
+    public String getId() {
+        return id;
     }
 
-    @Override
-    public int hashCode() {
-        int result = 0;
-        result = 31 * result + Objects.hashCode(id);
-        result = 31 * result + Objects.hashCode(orderNo);
-        result = 31 * result + Objects.hashCode(buyerId);
-        result = 31 * result + Objects.hashCode(buyerName);
-        result = 31 * result + Objects.hashCode(status);
-        result = 31 * result + Objects.hashCode(totalAmount);
-        return result;
+    public String getOrderNo() {
+        return orderNo;
     }
 
-    @Override
-    public String toString() {
-        return "OrderReadModel[id=" + id + ", orderNo=" + orderNo + ", buyerId=" + buyerId + ", buyerName=" + buyerName + ", status=" + status + ", totalAmount=" + totalAmount + "]";
+    public String getBuyerId() {
+        return buyerId;
+    }
+
+    public String getBuyerName() {
+        return buyerName;
+    }
+
+    public OrderStatus getStatus() {
+        return status;
+    }
+
+    public BigDecimal getTotalAmount() {
+        return totalAmount;
     }
 }

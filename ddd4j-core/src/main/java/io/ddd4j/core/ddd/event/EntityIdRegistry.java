@@ -27,7 +27,7 @@ import java.util.function.Function;
  * 未注册的 {@code EntityType} 一律回退为 {@link StringEntityId}（保持与历史行为一致，
  * 序列化端只输出原始 value，类型在自定义场景下默认丢失）。
  *
- * <h3>注册时机</h3>
+ * <h2>注册时机</h2>
  * <p>建议在框架适配层（如 Spring {@code @PostConstruct}、Quarkus {@code @Startup}）
  * 注册；并发安全由 {@link ConcurrentHashMap} 保证。
  *

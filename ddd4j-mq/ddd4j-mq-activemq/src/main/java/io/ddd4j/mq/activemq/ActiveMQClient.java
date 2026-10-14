@@ -21,10 +21,19 @@ import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.activemq.util.ActivemqKit;
 import io.ddd4j.mq.event.MQEvent;
+import io.ddd4j.mq.delivery.MQDeliveryHeaders;
 import io.ddd4j.mq.lifecycle.MQClientLifecycle;
 import io.ddd4j.mq.lifecycle.MQStartupStatus;
 import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.message.MessageHeaders;
+import jakarta.jms.BytesMessage;
+import jakarta.jms.Connection;
+import jakarta.jms.DeliveryMode;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.Session;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 
@@ -61,6 +70,7 @@ public class ActiveMQClient implements MQClient {
     /**
      * 双构造 1：注入外部已配置好的 ActiveMQConnectionFactory（runtime 集成用）。
      * properties 默认为空，因为 properties 仅用于 publish 时的 message property 写入。
+     * @param connectionFactory 参数 connectionFactory
      */
     public ActiveMQClient(ActiveMQConnectionFactory connectionFactory) {
         this.connectionFactory = Objects.requireNonNull(connectionFactory, "ActiveMQ ConnectionFactory is required");
@@ -69,6 +79,7 @@ public class ActiveMQClient implements MQClient {
 
     /**
      * 双构造 2：从 properties 自建 ActiveMQConnectionFactory。
+     * @param properties 属性集合
      */
     public ActiveMQClient(ActiveMQProperties properties) {
         this.properties = Objects.requireNonNull(properties, "ActiveMQ Properties is required");
@@ -87,7 +98,7 @@ public class ActiveMQClient implements MQClient {
         if (Objects.nonNull(properties.getPassword()) && StrKit.isNotBlank(properties.getPassword())) {
             factory.setPassword(properties.getPassword());
         }
-        factory.setClientID(Objects.requireNonNullElse(properties.getClientIdPrefix(), "ddd4j-mq-"));
+        factory.setClientID((properties.getClientIdPrefix() != null ? properties.getClientIdPrefix() : "ddd4j-mq-"));
         return factory;
     }
 
@@ -182,6 +193,13 @@ public class ActiveMQClient implements MQClient {
                         message.setJMSMessageID("ID:" + mqEvent.getMsgId());
                         message.setStringProperty(jmsProperty(MessageHeaders.HEADER_MESSAGE_ID), mqEvent.getMsgId());
                     }
+                    if (StrKit.isNotEmpty(mqEvent.getCorrelationId())) {
+                        message.setStringProperty(jmsProperty(MQDeliveryHeaders.CORRELATION_ID), mqEvent.getCorrelationId());
+                        message.setJMSCorrelationID(mqEvent.getCorrelationId());
+                    }
+                    if (StrKit.isNotEmpty(mqEvent.getCausationId())) {
+                        message.setStringProperty(jmsProperty(MQDeliveryHeaders.CAUSATION_ID), mqEvent.getCausationId());
+                    }
                     producer.send(message);
                 } catch (JMSException ex) {
                     log.error("Publish MQ [{}]: {} failed!", topic, payload, ex);
@@ -215,11 +233,22 @@ public class ActiveMQClient implements MQClient {
                 if (Objects.nonNull(messageId)) {
                     event.setMsgId(messageId);
                 }
+                String correlationId = message.getStringProperty(jmsProperty(MQDeliveryHeaders.CORRELATION_ID));
+                if (Objects.isNull(correlationId)) {
+                    correlationId = ActivemqKit.correlationIdOf(message);
+                }
+                if (Objects.nonNull(correlationId)) {
+                    event.setCorrelationId(correlationId);
+                }
+                String causationId = message.getStringProperty(jmsProperty(MQDeliveryHeaders.CAUSATION_ID));
+                if (Objects.nonNull(causationId)) {
+                    event.setCausationId(causationId);
+                }
                 ActiveMQAcknowledgment ack = new ActiveMQAcknowledgment(
                         session, message,
                         ActivemqKit.messageIdHash(message),
                         ActivemqKit.messageIdOf(message),
-                        ActivemqKit.correlationIdOf(message));
+                        event.getCorrelationId());
                 this.consume(listener, event, ack);
                 if (!ack.isAcknowledged()) {
                     ack.ackSingle();
@@ -240,7 +269,16 @@ public class ActiveMQClient implements MQClient {
         if (Objects.isNull(connection)) {
             try {
                 Connection nc = connectionFactory.createConnection();
-                nc.start();
+                try {
+                    nc.start();
+                } catch (JMSException startFailure) {
+                    try {
+                        nc.close();
+                    } catch (JMSException closeFailure) {
+                        startFailure.addSuppressed(closeFailure);
+                    }
+                    throw startFailure;
+                }
                 connectionRef.set(nc);
                 lifecycle.register("activemq-connection", () -> closeConnection(nc));
                 connection = nc;

@@ -41,6 +41,12 @@ mvn -pl ddd4j-samples/ddd4j-sample-helidon -am test -DskipTests=false
 mvn -pl ddd4j-samples/ddd4j-sample-dropwizard -am test -DskipTests=false
 ```
 
+Order JDBC 样例提供 `ReliableOrderOutboxPublisher` 作为可靠 Outbox 发布入口：`JdbcMQOutboxStore`
+短事务领取，`MQOutboxDispatcher` 在事务外调用 `IntegrationEventPublisher`，再条件确认。
+`JdbcOutboxPort.findById` 重建完整 `OutboxMessage`，因此 Kafka 的聚合 ID 键和事件封装沿用原格式。
+订单 JDBC 模块提供可关闭的 `ReliableOrderOutboxWorker`，集成测试启动它验证定时投递与关闭。接入应用时需显式创建并启动工作器，并在应用关闭时调用 `close()`；现有 HTTP 样例尚未自动装配 JDBC 工作器。工作器在业务事务外定期调用 `publishPending(limit)`，入口会拒绝嵌套在订单事务中的调用；每个运行实例需要稳定且互不重复的 `leaseOwner`。
+旧 `TransactionalOutboxPublisher` 保留供兼容调用，但其 broker 发送期间持有数据库事务和行锁。
+
 ## CQRS 示例
 
 CQRS 示例按非 Boot 运行时拆分，演示命令侧、查询侧、读模型和缓存的协作方式：

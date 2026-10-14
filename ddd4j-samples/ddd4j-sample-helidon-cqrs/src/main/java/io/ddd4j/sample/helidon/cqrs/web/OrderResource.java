@@ -35,6 +35,8 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.json.bind.annotation.JsonbCreator;
+import jakarta.json.bind.annotation.JsonbProperty;
 
 import java.util.Map;
 import java.util.Objects;
@@ -111,7 +113,10 @@ public class OrderResource {
         private final String buyerName;
 
         @JsonCreator()
-        public CreateOrderRequest(@JsonProperty("orderNo") String orderNo, @JsonProperty("buyerId") String buyerId, @JsonProperty("buyerName") String buyerName) {
+        @JsonbCreator
+        public CreateOrderRequest(@JsonProperty("orderNo") @JsonbProperty("orderNo") String orderNo,
+                                  @JsonProperty("buyerId") @JsonbProperty("buyerId") String buyerId,
+                                  @JsonProperty("buyerName") @JsonbProperty("buyerName") String buyerName) {
             this.orderNo = orderNo;
             this.buyerId = buyerId;
             this.buyerName = buyerName;

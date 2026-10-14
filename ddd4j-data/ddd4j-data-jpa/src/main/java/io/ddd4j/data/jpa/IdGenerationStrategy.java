@@ -19,7 +19,7 @@ import java.io.Serializable;
 /**
  * ID 生成策略 SPI：抽象实体主键生成方式，支持业务按需选择或自定义。
  *
- * <p>与 Hibernate 的 {@link org.hibernate.id.IdentifierGenerator}（在实体注解上编译期绑定）不同，
+ * <p>与 Hibernate 的 {@code org.hibernate.id.IdentifierGenerator}（在实体注解上编译期绑定）不同，
  * 本接口提供 <b>编程式</b> 的 ID 生成能力，适用于：
  * <ul>
  *   <li>实体主键由业务代码生成后显式 set（而非依赖 ORM 自动生成）的场景</li>
@@ -34,7 +34,7 @@ import java.io.Serializable;
  *   <li>{@link UuidIdStrategy} —— UUID 字符串</li>
  * </ul>
  *
- * <p>配置项 {@code ddd4j.quarkus.data.id-strategy} 选择默认实现（供 {@link IdGeneratorProducer} 注入）：
+ * <p>配置项 {@code ddd4j.quarkus.data.id-strategy} 选择默认实现（供 {@code IdGeneratorProducer} 注入）：
  * <pre>
  *   ddd4j.quarkus.data.id-strategy=snowflake   # 默认，雪花
  *   ddd4j.quarkus.data.id-strategy=auto-increment

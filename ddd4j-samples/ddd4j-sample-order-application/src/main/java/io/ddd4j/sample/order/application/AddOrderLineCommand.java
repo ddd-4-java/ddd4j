@@ -18,10 +18,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
-import java.util.Objects;
+import lombok.Value;
 
 import java.math.BigDecimal;
 
+@Value
 public final class AddOrderLineCommand {
 
     private static final long serialVersionUID = 0L;
@@ -68,33 +69,5 @@ public final class AddOrderLineCommand {
     @JsonProperty("unitPrice")
     public BigDecimal unitPrice() {
         return unitPrice;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-            return false;
-        }
-        AddOrderLineCommand other = (AddOrderLineCommand) obj;
-        return Objects.equals(this.orderId, other.orderId) && Objects.equals(this.goodsId, other.goodsId) && Objects.equals(this.goodsName, other.goodsName) && this.quantity == other.quantity && Objects.equals(this.unitPrice, other.unitPrice);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = 0;
-        result = 31 * result + Objects.hashCode(orderId);
-        result = 31 * result + Objects.hashCode(goodsId);
-        result = 31 * result + Objects.hashCode(goodsName);
-        result = 31 * result + Integer.hashCode(quantity);
-        result = 31 * result + Objects.hashCode(unitPrice);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "AddOrderLineCommand[orderId=" + orderId + ", goodsId=" + goodsId + ", goodsName=" + goodsName + ", quantity=" + quantity + ", unitPrice=" + unitPrice + "]";
     }
 }

@@ -201,7 +201,7 @@ public final class TestSupport {
         } catch (Exception ignored) {
         }
 
-        app.start(0);
+        app.start("127.0.0.1", 0);
         return app;
     }
 

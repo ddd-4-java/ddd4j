@@ -43,7 +43,7 @@ import java.util.Optional;
  * {@code getLang()} / {@code ok(data)} / {@code fail(msg)} 等辅助方法，
  * 同时复用 ddd4j 的统一响应包装 {@link io.ddd4j.core.api.R}。
  *
- * <h3>端点</h3>
+ * <h2>端点</h2>
  * <ul>
  *   <li>{@code GET    /orders/{id}}          - 查询订单</li>
  *   <li>{@code GET    /orders/orderNo/{no}}  - 按订单编号查询</li>

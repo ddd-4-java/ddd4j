@@ -12,11 +12,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package io.ddd4j.web.core.context;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Objects;
 
@@ -25,39 +25,18 @@ import java.util.Objects;
  */
 public final class WebRequestFailure {
 
-    private static final long serialVersionUID = 0L;
-
     private final String method;
-
     private final String path;
-
     private final Throwable cause;
 
     /**
-     * 获取值。
-     * @return 方法执行结果。
+     * 可由运行时事件总线观测的框架无关 HTTP 请求失败事件。
+ * @param method 方法
+ * @param path 路径
+ * @param cause 根因异常
      */
-    public Throwable getCause() {
-        return cause;
-    }
 
-    /**
-     * 获取值。
-     * @return 结果字符串。
-     */
-    public String getMethod() {
-        return method;
-    }
-
-    /**
-     * 获取值。
-     * @return 结果字符串。
-     */
-    public String getPath() {
-        return path;
-    }
-
-    @JsonCreator()
+    @JsonCreator
     public WebRequestFailure(@JsonProperty("method") String method, @JsonProperty("path") String path, @JsonProperty("cause") Throwable cause) {
         this.method = method;
         this.path = path;
@@ -79,22 +58,35 @@ public final class WebRequestFailure {
         return cause;
     }
 
+    public String getMethod() {
+        return method;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public Throwable getCause() {
+        return cause;
+    }
+
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
+    public boolean equals(Object o) {
+        if (this == o) {
             return true;
         }
-        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+        if (!(o instanceof WebRequestFailure)) {
             return false;
         }
-        WebRequestFailure other = (WebRequestFailure) obj;
-        return Objects.equals(this.method, other.method) && Objects.equals(this.path, other.path) && Objects.equals(this.cause, other.cause);
+        WebRequestFailure that = (WebRequestFailure) o;
+        return Objects.equals(method, that.method)
+                && Objects.equals(path, that.path)
+                && Objects.equals(cause, that.cause);
     }
 
     @Override
     public int hashCode() {
-        int result = 0;
-        result = 31 * result + Objects.hashCode(method);
+        int result = Objects.hashCode(method);
         result = 31 * result + Objects.hashCode(path);
         result = 31 * result + Objects.hashCode(cause);
         return result;

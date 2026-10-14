@@ -25,7 +25,7 @@ import java.util.Objects;
  * <p>为 {@code GlobalExceptionHandler.logException()} 提供标准化错误事件。
  * 无 OTel 时为 noop。
  *
- * <h3>使用示例</h3>
+ * <h2>使用示例</h2>
  * <pre>{@code
  * // 在 GlobalExceptionHandler.logException() 中
  * ExceptionSpan.record(ex);

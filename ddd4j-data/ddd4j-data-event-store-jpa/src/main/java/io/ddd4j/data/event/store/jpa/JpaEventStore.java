@@ -44,7 +44,7 @@ import java.util.function.Supplier;
  * <p>通过 {@link JpaStoredEventRepository} 封装持久化原语，本类专注于
  * EventStore SPI 语义：乐观锁校验、事件序列化/反序列化、事务边界管理。
  *
- * <h3>事务管理</h3>
+ * <h2>事务管理</h2>
  * <p>默认构造器使用编程式事务管理（{@link EntityTransaction}），在 {@code append}
  * 方法内开启事务，冲突或异常时整体回滚。调用方无需（也不应）在外层包裹事务。
  * {@code read} / {@code readAll} 同样在本方法内开启只读事务，保证读隔离性。
@@ -52,10 +52,9 @@ import java.util.function.Supplier;
  * RESOURCE_LOCAL 事务，不负责提交、回滚或清理持久化上下文。
  *
  * <h3>payload 序列化</h3>
- * <p>事件载荷通过 {@link JsonKit#toJson} 序列化为 JSON 文本存储，
- * 读取时通过 {@link JsonKit#toObject} 按 {@code event_type} 反序列化。
- * 若事件类已被删除或重命名（{@code Class.forName} 失败），回退为 {@code Map}，
- * 此时丢失类型信息，javadoc 已说明此限制。
+ * <p>事件载荷通过 {@link EventPayloadSerializer} 序列化为 JSON 文本，
+ * 读取时按 {@code event_type} 还原事件类型。事件类不存在时抛出
+ * {@link IllegalStateException}，不会静默转换为 {@code Map}。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.0.0
@@ -185,7 +184,7 @@ public class JpaEventStore implements EventStore {
      *
      * <p>事务边界：默认模式在本方法内开启编程式事务；显式参与模式复用调用方事务。
      *
-     * <h3>批量插入</h3>
+     * <p><b>批量插入</b>
      * <p>循环构造 entity 后，先 {@link EntityManager#flush()} 触发 Hibernate 批量 INSERT；
      * 仅默认独立模式再通过 {@link EntityManager#clear()} 清空 persistence context。
      * 默认独立模式的顺序很关键：先 flush 再 clear 才能让 Hibernate 把所有 INSERT 合并为批量 SQL。
@@ -252,7 +251,7 @@ public class JpaEventStore implements EventStore {
      * {@inheritDoc}
      *
      * <p>按版本升序读取指定聚合的全部事件。
-     * 事件载荷通过 {@link JsonKit} 反序列化，类型无法还原时回退为 {@code Map}。
+     * 事件载荷通过 {@link EventPayloadSerializer} 反序列化；事件类型无法还原时抛出 {@link IllegalStateException}。
      */
     @Override
     public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId) {

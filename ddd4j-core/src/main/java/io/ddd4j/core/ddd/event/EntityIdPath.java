@@ -63,9 +63,24 @@ public final class EntityIdPath implements Serializable {
         if (Objects.isNull(entityIds) || entityIds.isEmpty()) {
             throw new IllegalArgumentException("Entity identifier path must not be empty");
         }
-        this.entityIds = List.copyOf(entityIds);
-        if (this.entityIds.stream().anyMatch(Objects::isNull)) {
+        if (entityIds.stream().anyMatch(Objects::isNull)) {
             throw new IllegalArgumentException("Entity identifier path must not contain null");
+        }
+        this.entityIds = List.copyOf(entityIds);
+    }
+
+    /**
+     * 判断路径文本能否按 {@link #valueOf(String)} 的规则解析。
+     *
+     * @param path 待校验的路径文本，可为 null
+     * @return 可解析时为 true，否则为 false
+     */
+    public static boolean isValid(String path) {
+        try {
+            valueOf(path);
+            return true;
+        } catch (IllegalArgumentException ex) {
+            return false;
         }
     }
 

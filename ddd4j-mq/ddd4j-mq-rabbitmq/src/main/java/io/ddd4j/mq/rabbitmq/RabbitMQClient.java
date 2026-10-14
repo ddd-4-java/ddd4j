@@ -38,6 +38,7 @@ import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
+import io.ddd4j.mq.delivery.MQDeliveryHeaders;
 import io.ddd4j.mq.lifecycle.MQClientLifecycle;
 import io.ddd4j.mq.lifecycle.MQStartupStatus;
 import io.ddd4j.mq.listener.MQListener;
@@ -217,6 +218,7 @@ public class RabbitMQClient implements MQClient {
                 AtomicReference<Return> returned = channelReturnHolder.get(channel);
                 returned.set(null);
                 Map<String, Object> headers = new HashMap<>();
+                headers.putAll(event.headerMap());
                 if (Objects.nonNull(event.getMsgId())) {
                     headers.put(MessageHeaders.HEADER_MESSAGE_ID, event.getMsgId());
                 }
@@ -335,6 +337,17 @@ public class RabbitMQClient implements MQClient {
             if (Objects.nonNull(messageId)) {
                 event.setMsgId(messageId);
             }
+            Map<String, Object> nativeHeaders = delivery.getProperties().getHeaders();
+            if (Objects.nonNull(nativeHeaders)) {
+                Object correlationId = nativeHeaders.get(MQDeliveryHeaders.CORRELATION_ID);
+                if (Objects.nonNull(correlationId)) {
+                    event.setCorrelationId(correlationId.toString());
+                }
+                Object causationId = nativeHeaders.get(MQDeliveryHeaders.CAUSATION_ID);
+                if (Objects.nonNull(causationId)) {
+                    event.setCausationId(causationId.toString());
+                }
+            }
             // 应用层 tag 过滤（RabbitMQ topic exchange 模式与 ddd4j 表达式不兼容，broker 端不可用）
             if (!TagMatcher.match(event.getTag(), listener.getTags())) {
                 if (!mqProperties.isAutoAck()) {
@@ -345,7 +358,7 @@ public class RabbitMQClient implements MQClient {
                 }
                 return;
             }
-            RabbitAcknowledgment ack = new RabbitAcknowledgment(channel, deliveryTag, event.getMsgId(), null);
+            RabbitAcknowledgment ack = new RabbitAcknowledgment(channel, deliveryTag, event.getMsgId(), event.getCorrelationId());
             try {
                 consume(listener, event, ack);
                 if (!mqProperties.isAutoAck() && !ack.isAcknowledged()) {

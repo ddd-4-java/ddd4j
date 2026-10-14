@@ -35,7 +35,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * 并发安全：{@code append} 使用 {@code synchronized} 保证乐观版本校验的原子性，
  * {@code read} / {@code readAll} 无锁读取。
  *
- * <h3>性能优化（M19）</h3>
+ * <h2>性能优化（M19）</h2>
  * <p>{@code readAll} 通过 {@link NavigableMap} 按全局 position 索引，
  * 实现 O(limit) 复杂度，避免全量扫描 + 排序。
  *

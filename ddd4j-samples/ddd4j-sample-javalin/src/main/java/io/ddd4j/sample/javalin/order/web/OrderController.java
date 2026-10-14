@@ -33,6 +33,8 @@ import io.ddd4j.web.core.error.WebStatusException;
 import java.math.BigDecimal;
 import java.util.Locale;
 import java.util.Objects;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import static io.javalin.apibuilder.ApiBuilder.get;
 import static io.javalin.apibuilder.ApiBuilder.post;
@@ -108,15 +110,17 @@ public final class OrderController {
      * @param buyerId 买方标识
      * @param buyerName 买方名称
      */
-    public final static class CreateOrderRequest {
+    @Data
+    @NoArgsConstructor
+    public static class CreateOrderRequest {
 
         private static final long serialVersionUID = 0L;
 
-        private final String orderNo;
+        private String orderNo;
 
-        private final String buyerId;
+        private String buyerId;
 
-        private final String buyerName;
+        private String buyerName;
 
         @JsonCreator()
         public CreateOrderRequest(@JsonProperty("orderNo") String orderNo, @JsonProperty("buyerId") String buyerId, @JsonProperty("buyerName") String buyerName) {
@@ -140,31 +144,6 @@ public final class OrderController {
             return buyerName;
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            CreateOrderRequest other = (CreateOrderRequest) obj;
-            return Objects.equals(this.orderNo, other.orderNo) && Objects.equals(this.buyerId, other.buyerId) && Objects.equals(this.buyerName, other.buyerName);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(orderNo);
-            result = 31 * result + Objects.hashCode(buyerId);
-            result = 31 * result + Objects.hashCode(buyerName);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "CreateOrderRequest[orderNo=" + orderNo + ", buyerId=" + buyerId + ", buyerName=" + buyerName + "]";
-        }
     }
 
     /**
@@ -175,17 +154,19 @@ public final class OrderController {
      * @param quantity 购买数量
      * @param unitPrice 商品单价
      */
-    public final static class AddOrderLineRequest {
+    @Data
+    @NoArgsConstructor
+    public static class AddOrderLineRequest {
 
         private static final long serialVersionUID = 0L;
 
-        private final String goodsId;
+        private String goodsId;
 
-        private final String goodsName;
+        private String goodsName;
 
-        private final int quantity;
+        private int quantity;
 
-        private final BigDecimal unitPrice;
+        private BigDecimal unitPrice;
 
         @JsonCreator()
         public AddOrderLineRequest(@JsonProperty("goodsId") String goodsId, @JsonProperty("goodsName") String goodsName, @JsonProperty("quantity") int quantity, @JsonProperty("unitPrice") BigDecimal unitPrice) {
@@ -215,32 +196,6 @@ public final class OrderController {
             return unitPrice;
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            AddOrderLineRequest other = (AddOrderLineRequest) obj;
-            return Objects.equals(this.goodsId, other.goodsId) && Objects.equals(this.goodsName, other.goodsName) && this.quantity == other.quantity && Objects.equals(this.unitPrice, other.unitPrice);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(goodsId);
-            result = 31 * result + Objects.hashCode(goodsName);
-            result = 31 * result + Integer.hashCode(quantity);
-            result = 31 * result + Objects.hashCode(unitPrice);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "AddOrderLineRequest[goodsId=" + goodsId + ", goodsName=" + goodsName + ", quantity=" + quantity + ", unitPrice=" + unitPrice + "]";
-        }
     }
 
     /**
@@ -255,7 +210,8 @@ public final class OrderController {
      * @param currency 金额币种
      * @param lineCount 订单行数量
      */
-    public final static class OrderResponse {
+    @Data
+    public static class OrderResponse {
 
         private static final long serialVersionUID = 0L;
 
@@ -327,35 +283,7 @@ public final class OrderController {
             return lineCount;
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            OrderResponse other = (OrderResponse) obj;
-            return Objects.equals(this.id, other.id) && Objects.equals(this.orderNo, other.orderNo) && Objects.equals(this.buyerId, other.buyerId) && Objects.equals(this.buyerName, other.buyerName) && Objects.equals(this.status, other.status) && Objects.equals(this.totalAmount, other.totalAmount) && Objects.equals(this.currency, other.currency) && this.lineCount == other.lineCount;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(id);
-            result = 31 * result + Objects.hashCode(orderNo);
-            result = 31 * result + Objects.hashCode(buyerId);
-            result = 31 * result + Objects.hashCode(buyerName);
-            result = 31 * result + Objects.hashCode(status);
-            result = 31 * result + Objects.hashCode(totalAmount);
-            result = 31 * result + Objects.hashCode(currency);
-            result = 31 * result + Integer.hashCode(lineCount);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "OrderResponse[id=" + id + ", orderNo=" + orderNo + ", buyerId=" + buyerId + ", buyerName=" + buyerName + ", status=" + status + ", totalAmount=" + totalAmount + ", currency=" + currency + ", lineCount=" + lineCount + "]";
-        }
     }
+
+
 }

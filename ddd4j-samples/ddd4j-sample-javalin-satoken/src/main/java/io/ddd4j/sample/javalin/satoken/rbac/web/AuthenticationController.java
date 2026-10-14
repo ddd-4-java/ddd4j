@@ -17,6 +17,9 @@ package io.ddd4j.sample.javalin.satoken.rbac.web;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.auth.AuthPrincipal;
@@ -38,7 +41,7 @@ import static io.javalin.apibuilder.ApiBuilder.*;
  * {@link RbacService} 实现业务侧鉴权判断，与 Spring Sa-Token 注解示例
  * （{@code @SaCheckLogin} / {@code @SaCheckRole} / {@code @SaCheckPermission}）行为完全一致。
  *
- * <h3>3 种鉴权控制</h3>
+ * <h2>3 种鉴权控制</h2>
  * <ol>
  *   <li><b>登录鉴权</b>：{@code SubjectKit.isLogin()}，仅登录用户可访问</li>
  *   <li><b>角色鉴权</b>：{@code SubjectKit.hasRole("admin")}，指定角色可访问</li>
@@ -224,16 +227,18 @@ public class AuthenticationController {
      *
      * @author ddd4j
      */
-    public final static class LoginRequest {
+    @Data
+    @NoArgsConstructor
+    public static class LoginRequest {
 
-        private static final long serialVersionUID = 0L;
+        private String username;
 
-        private final String username;
-
-        private final String password;
+        @ToString.Exclude
+        private String password;
 
         @JsonCreator()
-        public LoginRequest(@JsonProperty("username") String username, @JsonProperty("password") String password) {
+        public LoginRequest(@JsonProperty("username") String username,
+                            @JsonProperty("password") String password) {
             this.username = username;
             this.password = password;
         }
@@ -247,31 +252,6 @@ public class AuthenticationController {
         public String password() {
             return password;
         }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            LoginRequest other = (LoginRequest) obj;
-            return Objects.equals(this.username, other.username) && Objects.equals(this.password, other.password);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(username);
-            result = 31 * result + Objects.hashCode(password);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "LoginRequest[username=" + username + ", password=" + password + "]";
-        }
     }
 
     /**
@@ -279,11 +259,11 @@ public class AuthenticationController {
      *
      * @author ddd4j
      */
-    public final static class KickoutRequest {
+    @Data
+    @NoArgsConstructor
+    public static class KickoutRequest {
 
-        private static final long serialVersionUID = 0L;
-
-        private final String userId;
+        private String userId;
 
         @JsonCreator()
         public KickoutRequest(@JsonProperty("userId") String userId) {
@@ -294,30 +274,6 @@ public class AuthenticationController {
         public String userId() {
             return userId;
         }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            KickoutRequest other = (KickoutRequest) obj;
-            return Objects.equals(this.userId, other.userId);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(userId);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "KickoutRequest[userId=" + userId + "]";
-        }
     }
 
     /**
@@ -325,11 +281,11 @@ public class AuthenticationController {
      *
      * @author ddd4j
      */
-    public final static class RoleCheckRequest {
+    @Data
+    @NoArgsConstructor
+    public static class RoleCheckRequest {
 
-        private static final long serialVersionUID = 0L;
-
-        private final String role;
+        private String role;
 
         @JsonCreator()
         public RoleCheckRequest(@JsonProperty("role") String role) {
@@ -340,30 +296,6 @@ public class AuthenticationController {
         public String role() {
             return role;
         }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            RoleCheckRequest other = (RoleCheckRequest) obj;
-            return Objects.equals(this.role, other.role);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(role);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "RoleCheckRequest[role=" + role + "]";
-        }
     }
 
     /**
@@ -371,11 +303,11 @@ public class AuthenticationController {
      *
      * @author ddd4j
      */
-    public final static class PermissionCheckRequest {
+    @Data
+    @NoArgsConstructor
+    public static class PermissionCheckRequest {
 
-        private static final long serialVersionUID = 0L;
-
-        private final String permission;
+        private String permission;
 
         @JsonCreator()
         public PermissionCheckRequest(@JsonProperty("permission") String permission) {
@@ -385,30 +317,6 @@ public class AuthenticationController {
         @JsonProperty("permission")
         public String permission() {
             return permission;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            PermissionCheckRequest other = (PermissionCheckRequest) obj;
-            return Objects.equals(this.permission, other.permission);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(permission);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "PermissionCheckRequest[permission=" + permission + "]";
         }
     }
 

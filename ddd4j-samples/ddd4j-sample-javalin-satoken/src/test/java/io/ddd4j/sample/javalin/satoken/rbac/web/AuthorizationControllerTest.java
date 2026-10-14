@@ -52,15 +52,11 @@ class AuthorizationControllerTest {
     private static HttpClient httpClient;
     private static String baseUrl;
 
-    @BeforeAll
-    void startServer() {
-        app = TestSupport.start();
-        baseUrl = "http://localhost:" + app.port();
-        httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
-    }
-
-    @AfterAll
+    @AfterEach
     void stopServer() {
+        if (Objects.nonNull(httpClient)) {
+            httpClient.close();
+        }
         if (Objects.nonNull(app)) {
             app.stop();
         }
@@ -68,10 +64,9 @@ class AuthorizationControllerTest {
 
     @BeforeEach
     void resetServerState() {
-        app.stop();
         app = TestSupport.start();
-        baseUrl = "http://localhost:" + app.port();
-        // 新服务器实例使用独立连接池，不跨重启复用旧 HTTP 连接。
+        baseUrl = "http://127.0.0.1:" + app.port();
+        // 每个用例独立创建并关闭客户端，避免跨服务器重启保留连接与工作线程。
         httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
     }
 

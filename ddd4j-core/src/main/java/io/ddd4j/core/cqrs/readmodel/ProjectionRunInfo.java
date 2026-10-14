@@ -12,105 +12,96 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package io.ddd4j.core.cqrs.readmodel;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.util.Objects;
-
 import java.time.Instant;
+import java.util.Objects;
 
 /**
  * 投影最近一次运行的快照信息（由 {@link ProjectionMetrics} 实现方记录）。
  *
+ * <p>{@code lastRunAt} — 上次运行完成时间
+ * <p>{@code lastEventCount} — 上次运行处理的事件数量
+ * <p>{@code lastError} — 上次运行失败的错误信息（成功时为 null）
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 3.0.x
+ */
+public final class ProjectionRunInfo {
+
+    private final Instant lastRunAt;
+    private final int lastEventCount;
+    private final String lastError;
+
+/**
+ * 投影最近一次运行的快照信息（由 {@link ProjectionMetrics} 实现方记录）。
+ *
+ * @param lastRunAt      上次运行完成时间
+ * @param lastEventCount 上次运行处理的事件数量
+ * @param lastError      上次运行失败的错误信息（成功时为 null）
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.0.x
  */
 
-public final class ProjectionRunInfo {
-
-    private static final long serialVersionUID = 0L;
-
-    private final Instant lastRunAt;
-
-    private final int lastEventCount;
-
-    private final String lastError;
-
-    /**
-     * 返回最近运行时间，兼容 bean 调用方。
-     */
-    public Instant getLastRunAt() {
-        return lastRunAt;
-    }
-
-    /**
-     * 返回最近处理事件数。
-     */
-    public int getLastEventCount() {
-        return lastEventCount;
-    }
-
-    /**
-     * 返回最近错误信息。
-     */
-    public String getLastError() {
-        return lastError;
-    }
-
-    /**
- * @param lastRunAt 上次运行完成时间
- * @param lastEventCount 上次运行处理的事件数量
- * @param lastError 上次运行失败的错误信息（成功时为 null）
- */
-
-    @JsonCreator()
-    public ProjectionRunInfo(@JsonProperty("lastRunAt") Instant lastRunAt, @JsonProperty("lastEventCount") int lastEventCount, @JsonProperty("lastError") String lastError) {
+    @JsonCreator
+    public ProjectionRunInfo(@JsonProperty("lastRunAt") Instant lastRunAt,
+                             @JsonProperty("lastEventCount") int lastEventCount,
+                             @JsonProperty("lastError") String lastError) {
         this.lastRunAt = lastRunAt;
         this.lastEventCount = lastEventCount;
         this.lastError = lastError;
     }
 
+    public Instant getLastRunAt() { return lastRunAt; }
+    public int getLastEventCount() { return lastEventCount; }
+    public String getLastError() { return lastError; }
+
+    /** 返回最近运行时间，与 bean getter 保持同一值。
+    * @return 末个的Instant
+     */
     @JsonProperty("lastRunAt")
-    public Instant lastRunAt() {
-        return lastRunAt;
-    }
+    public Instant lastRunAt() { return lastRunAt; }
 
+    /** 返回最近处理事件数。
+    * @return 末个的整型数值
+     */
     @JsonProperty("lastEventCount")
-    public int lastEventCount() {
-        return lastEventCount;
-    }
+    public int lastEventCount() { return lastEventCount; }
 
+    /** 返回最近错误信息，成功时可为空。
+    * @return 末个的字符串内容
+     */
     @JsonProperty("lastError")
-    public String lastError() {
-        return lastError;
-    }
+    public String lastError() { return lastError; }
 
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
-        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+        if (!(obj instanceof ProjectionRunInfo)) {
             return false;
         }
-        ProjectionRunInfo other = (ProjectionRunInfo) obj;
-        return Objects.equals(this.lastRunAt, other.lastRunAt) && this.lastEventCount == other.lastEventCount && Objects.equals(this.lastError, other.lastError);
+        ProjectionRunInfo that = (ProjectionRunInfo) obj;
+        return lastEventCount == that.lastEventCount
+                && Objects.equals(lastRunAt, that.lastRunAt)
+                && Objects.equals(lastError, that.lastError);
     }
 
     @Override
     public int hashCode() {
-        int result = 0;
-        result = 31 * result + Objects.hashCode(lastRunAt);
-        result = 31 * result + Integer.hashCode(lastEventCount);
+        int result = Objects.hashCode(lastRunAt);
+        result = 31 * result + lastEventCount;
         result = 31 * result + Objects.hashCode(lastError);
         return result;
     }
 
     @Override
     public String toString() {
-        return "ProjectionRunInfo[lastRunAt=" + lastRunAt + ", lastEventCount=" + lastEventCount + ", lastError=" + lastError + "]";
+        return "ProjectionRunInfo[lastRunAt=" + lastRunAt + ", lastEventCount=" + lastEventCount
+                + ", lastError=" + lastError + ']';
     }
 }

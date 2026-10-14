@@ -12,125 +12,49 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package io.ddd4j.web.core.context;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.util.Objects;
-
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * Web 框架采集到的原始请求元数据。
  */
 public final class WebRequestData {
 
-    private static final long serialVersionUID = 0L;
-
     private final String requestId;
-
     private final String traceId;
-
     private final String tenantId;
-
     private final String authorization;
-
     private final Locale locale;
-
     private final String forwardedFor;
-
     private final String realIp;
-
     private final String remoteAddress;
-
     private final String method;
-
     private final String path;
 
     /**
-     * 获取值。
-     * @return 结果字符串。
+     * Web 框架采集到的原始请求元数据。
+ * @param requestId 请求标识
+ * @param traceId 链路追踪标识
+ * @param tenantId 租户标识
+ * @param authorization 授权信息
+ * @param locale 区域与语言设置
+ * @param forwardedFor 字符串参数
+ * @param realIp 字符串参数
+ * @param remoteAddress 远程地址
+ * @param method 方法
+ * @param path 路径
      */
-    public String getAuthorization() {
-        return authorization;
-    }
 
-    /**
-     * 获取值。
-     * @return 结果字符串。
-     */
-    public String getForwardedFor() {
-        return forwardedFor;
-    }
-
-    /**
-     * 获取值。
-     * @return 方法执行结果。
-     */
-    public Locale getLocale() {
-        return locale;
-    }
-
-    /**
-     * 获取值。
-     * @return 结果字符串。
-     */
-    public String getMethod() {
-        return method;
-    }
-
-    /**
-     * 获取值。
-     * @return 结果字符串。
-     */
-    public String getPath() {
-        return path;
-    }
-
-    /**
-     * 获取值。
-     * @return 结果字符串。
-     */
-    public String getRealIp() {
-        return realIp;
-    }
-
-    /**
-     * 获取值。
-     * @return 结果字符串。
-     */
-    public String getRemoteAddress() {
-        return remoteAddress;
-    }
-
-    /**
-     * 获取值。
-     * @return 结果字符串。
-     */
-    public String getRequestId() {
-        return requestId;
-    }
-
-    /**
-     * 获取值。
-     * @return 结果字符串。
-     */
-    public String getTenantId() {
-        return tenantId;
-    }
-
-    /**
-     * 获取值。
-     * @return 结果字符串。
-     */
-    public String getTraceId() {
-        return traceId;
-    }
-
-    @JsonCreator()
-    public WebRequestData(@JsonProperty("requestId") String requestId, @JsonProperty("traceId") String traceId, @JsonProperty("tenantId") String tenantId, @JsonProperty("authorization") String authorization, @JsonProperty("locale") Locale locale, @JsonProperty("forwardedFor") String forwardedFor, @JsonProperty("realIp") String realIp, @JsonProperty("remoteAddress") String remoteAddress, @JsonProperty("method") String method, @JsonProperty("path") String path) {
+    @JsonCreator
+    public WebRequestData(@JsonProperty("requestId") String requestId, @JsonProperty("traceId") String traceId, @JsonProperty("tenantId") String tenantId, @JsonProperty("authorization") String authorization,
+                          @JsonProperty("locale") Locale locale, @JsonProperty("forwardedFor") String forwardedFor, @JsonProperty("realIp") String realIp, @JsonProperty("remoteAddress") String remoteAddress,
+                          @JsonProperty("method") String method, @JsonProperty("path") String path) {
         this.requestId = requestId;
         this.traceId = traceId;
         this.tenantId = tenantId;
@@ -193,22 +117,70 @@ public final class WebRequestData {
         return path;
     }
 
+    public String getRequestId() {
+        return requestId;
+    }
+
+    public String getTraceId() {
+        return traceId;
+    }
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public String getAuthorization() {
+        return authorization;
+    }
+
+    public Locale getLocale() {
+        return locale;
+    }
+
+    public String getForwardedFor() {
+        return forwardedFor;
+    }
+
+    public String getRealIp() {
+        return realIp;
+    }
+
+    public String getRemoteAddress() {
+        return remoteAddress;
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
+    public boolean equals(Object o) {
+        if (this == o) {
             return true;
         }
-        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+        if (!(o instanceof WebRequestData)) {
             return false;
         }
-        WebRequestData other = (WebRequestData) obj;
-        return Objects.equals(this.requestId, other.requestId) && Objects.equals(this.traceId, other.traceId) && Objects.equals(this.tenantId, other.tenantId) && Objects.equals(this.authorization, other.authorization) && Objects.equals(this.locale, other.locale) && Objects.equals(this.forwardedFor, other.forwardedFor) && Objects.equals(this.realIp, other.realIp) && Objects.equals(this.remoteAddress, other.remoteAddress) && Objects.equals(this.method, other.method) && Objects.equals(this.path, other.path);
+        WebRequestData that = (WebRequestData) o;
+        return Objects.equals(requestId, that.requestId)
+                && Objects.equals(traceId, that.traceId)
+                && Objects.equals(tenantId, that.tenantId)
+                && Objects.equals(authorization, that.authorization)
+                && Objects.equals(locale, that.locale)
+                && Objects.equals(forwardedFor, that.forwardedFor)
+                && Objects.equals(realIp, that.realIp)
+                && Objects.equals(remoteAddress, that.remoteAddress)
+                && Objects.equals(method, that.method)
+                && Objects.equals(path, that.path);
     }
 
     @Override
     public int hashCode() {
-        int result = 0;
-        result = 31 * result + Objects.hashCode(requestId);
+        int result = Objects.hashCode(requestId);
         result = 31 * result + Objects.hashCode(traceId);
         result = 31 * result + Objects.hashCode(tenantId);
         result = 31 * result + Objects.hashCode(authorization);

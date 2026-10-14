@@ -35,7 +35,7 @@ import java.util.Objects;
  * 的 {@code SpringCommandBus}，Quarkus 用 {@code ddd4j-data-cqrs-quarkus} 的
  * {@code QuarkusCommandBus}。
  *
- * <h3>装配语义（构造即快照，顺序不可变）</h3>
+ * <h2>装配语义（构造即快照，顺序不可变）</h2>
  * <p>
  * 构造器内先经 {@link BeanContext#getBeansOfType(Class)} 收集容器中全部
  * {@link CommandExecutor} Bean 并逐个 {@link CommandRegistry#register}（整批拒绝

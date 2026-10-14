@@ -205,17 +205,17 @@ jobs:
 
 ## 10. 相关文档
 
-- [`../8、ddd4j-Architecture.zh_CN.md`](../8、ddd4j-Architecture.zh_CN.md) · 系统架构总览
-- [`../5、ddd4j-技术方案与路线.md`](../5、ddd4j-技术方案与路线.md) · 三轨治理 + MQ 启动生命周期 + License Gate
-- [`../7、ddd4j-领域模型设计.md`](../7、ddd4j-领域模型设计.md) · 领域模型
+- [`../8、ddd4j-Architecture.zh_CN.md`](./8、ddd4j-Architecture.zh_CN.md) · 系统架构总览
+- [`../5、ddd4j-技术方案与路线.md`](./5、ddd4j-技术方案与路线.md) · 三轨治理 + MQ 启动生命周期 + License Gate
+- [`../7、ddd4j-领域模型设计.md`](./7、ddd4j-领域模型设计.md) · 领域模型
 - [
-  `../docs/superpowers/reports/2026-09-09-three-line-source-parity-audit.md`](../docs/superpowers/reports/2026-09-09-three-line-source-parity-audit.md) ·
+  `../docs/superpowers/reports/2026-09-09-three-line-source-parity-audit.md`](./superpowers/historical-evidence-index.md) ·
   三线严格审计
 - [
-  `../docs/superpowers/plans/2026-09-10-mq-startup-lifecycle.md`](../docs/superpowers/plans/2026-09-10-mq-startup-lifecycle.md) ·
+  `../docs/superpowers/plans/2026-09-10-mq-startup-lifecycle.md`](./superpowers/plans/2026-09-10-mq-startup-lifecycle.md) ·
   MQ 启动生命周期计划
 - [
-  `../docs/superpowers/plans/2026-09-10-license-gate-hardening.md`](../docs/superpowers/plans/2026-09-10-license-gate-hardening.md) ·
+  `../docs/superpowers/plans/2026-09-10-license-gate-hardening.md`](./superpowers/plans/2026-09-10-license-gate-hardening.md) ·
   License Gate Hardening 计划
 
 ---

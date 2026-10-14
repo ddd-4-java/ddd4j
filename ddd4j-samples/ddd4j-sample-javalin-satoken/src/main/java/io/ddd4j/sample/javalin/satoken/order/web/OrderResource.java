@@ -17,6 +17,7 @@ package io.ddd4j.sample.javalin.satoken.order.web;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import lombok.Value;
 
 import io.ddd4j.core.api.R;
 import io.ddd4j.sample.javalin.satoken.order.application.AddOrderLineCommand;
@@ -41,7 +42,7 @@ import static io.javalin.apibuilder.ApiBuilder.post;
  * <p>通过 {@link EndpointGroup} 暴露路由注册入口，调用方在 Javalin 启动时通过
  * {@code javalinConfig.routes.apiBuilder(orderResource.routes())} 注册。
  *
- * <h3>REST 端点</h3>
+ * <h2>REST 端点</h2>
  * <ul>
  *   <li>POST /orders                    创建订单</li>
  *   <li>GET  /orders                    列表查询</li>
@@ -142,6 +143,7 @@ public class OrderResource {
     /**
      * 折扣预览响应。
      */
+    @Value
     public final static class DiscountView {
 
         private static final long serialVersionUID = 0L;
@@ -164,31 +166,6 @@ public class OrderResource {
         @JsonProperty("currency")
         public String currency() {
             return currency;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            DiscountView other = (DiscountView) obj;
-            return Objects.equals(this.amount, other.amount) && Objects.equals(this.currency, other.currency);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(amount);
-            result = 31 * result + Objects.hashCode(currency);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "DiscountView[amount=" + amount + ", currency=" + currency + "]";
         }
     }
 }

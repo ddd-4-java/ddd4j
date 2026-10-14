@@ -16,6 +16,7 @@ package io.ddd4j.mq.sqs;
 
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
+import io.ddd4j.mq.delivery.MQDeliveryHeaders;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.lifecycle.MQClientLifecycle;
 import io.ddd4j.mq.lifecycle.MQStartupStatus;
@@ -146,6 +147,9 @@ public class SqsMQClient implements MQClient {
                 if (Objects.nonNull(event.getTag())) {
                     attrs.put(tagHeaderKey(), attrValue(event.getTag()));
                 }
+                for (Map.Entry<String, String> header : event.headerMap().entrySet()) {
+                    attrs.put(header.getKey(), attrValue(header.getValue()));
+                }
                 client.sendMessage(SendMessageRequest.builder()
                         .queueUrl(queueUrl)
                         .messageBody(serialization().serialize(event).toString())
@@ -223,6 +227,14 @@ public class SqsMQClient implements MQClient {
             }
             if (Objects.nonNull(tag)) {
                 event.setTag(tag);
+            }
+            String correlationId = attr(message, MQDeliveryHeaders.CORRELATION_ID);
+            if (Objects.nonNull(correlationId)) {
+                event.setCorrelationId(correlationId);
+            }
+            String causationId = attr(message, MQDeliveryHeaders.CAUSATION_ID);
+            if (Objects.nonNull(causationId)) {
+                event.setCausationId(causationId);
             }
             try {
                 consume(listener, event, ack);

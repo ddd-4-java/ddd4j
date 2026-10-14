@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,7 +35,7 @@ class RuntimeReadinessRegistryTest {
     void shouldAggregateContributorsAndAllowRuntimeRegistrationChanges() {
         ReadinessContributor database = () -> ReadinessResult.ready("database");
         ReadinessContributor cache = () -> ReadinessResult.unavailable("cache", "unreachable");
-        RuntimeReadinessRegistry registry = new RuntimeReadinessRegistry(List.of(database));
+        RuntimeReadinessRegistry registry = new RuntimeReadinessRegistry(Collections.singletonList(database));
 
         assertThat(registry.readiness().ready()).isTrue();
 
@@ -69,7 +70,7 @@ class RuntimeReadinessRegistryTest {
     @Test
     void shouldReturnImmutableSnapshotOfContributors() {
         RuntimeReadinessRegistry registry = new RuntimeReadinessRegistry(
-                List.of(() -> ReadinessResult.ready("a")));
+                Arrays.asList(() -> ReadinessResult.ready("a")));
 
         List<ReadinessContributor> snapshot = registry.contributors();
         registry.register(() -> ReadinessResult.ready("b"));
@@ -82,7 +83,7 @@ class RuntimeReadinessRegistryTest {
     @Test
     void shouldAggregateUnavailableContributorAsUnready() {
         RuntimeReadinessRegistry registry = new RuntimeReadinessRegistry(
-                List.of(() -> ReadinessResult.unavailable("db", "not connected")));
+                Arrays.asList(() -> ReadinessResult.unavailable("db", "not connected")));
 
         assertThat(registry.readiness().ready()).isFalse();
         assertThat(registry.readiness().results()).hasSize(1);

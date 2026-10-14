@@ -39,7 +39,7 @@ import reactor.core.publisher.Mono;
  * 轨道只有本接口这一份 Reactor 签名，不做同步签名的 CompletableFuture 复刻；
  * 需要阻塞语义的运行时直接用 {@link EventStore}。
  *
- * <h3>乐观锁</h3>
+ * <h2>乐观锁</h2>
  * <p>语义与同步 {@link EventStore} 完全一致：append 校验 {@code expectedVersion}
  * （期望的流当前版本号，空流为 0），不一致时以
  * {@link AggregateVersionConflictException} 错误信号终止（{@link Mono#error}）。

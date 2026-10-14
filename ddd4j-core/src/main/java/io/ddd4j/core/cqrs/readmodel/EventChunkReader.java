@@ -34,7 +34,8 @@ public interface EventChunkReader<E> {
      * @param streamId        投影流 ID
      * @param fromEventNumber 起始事件号，包含该位置
      * @param chunkSize       本次最大读取数量
-     * @param eventTypes      需要读取的事件类型；为空表示由实现自行决定
+     * @param eventTypes      事件类型名；为空表示由实现自行决定。读取器应视为只读，
+     *                        {@code ProjectionDispatcher} 传入不可变快照
      * @return 事件块
      */
     EventChunk<E> read(String streamId, long fromEventNumber, int chunkSize, Collection<String> eventTypes);

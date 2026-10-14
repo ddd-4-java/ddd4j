@@ -21,7 +21,7 @@ package io.ddd4j.core.cache;
  * 支持此接口的缓存实现（Caffeine/Jedis/Redisson 等）可提供原子计数语义，
  * 不支持的实现抛出 {@link UnsupportedOperationException}。
  *
- * <h3>典型场景</h3>
+ * <h2>典型场景</h2>
  * <ul>
  *   <li><b>限流</b> — {@code increment(key, 1)} 后判断是否超过阈值</li>
  *   <li><b>计数</b> — 页面浏览量、点赞数等</li>

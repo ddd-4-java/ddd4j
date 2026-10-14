@@ -19,11 +19,8 @@
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <properties>
-        <!-- 仅测试栈：@SpringBootTest 真实容器所用的 Spring Boot starter 版本。
-             BOM 刻意不管理 Spring Boot（ddd4j 不依赖 Boot 运行时），版本由 ddd4j-dependencies 集中钉定，
-             取 3.4.4 = Spring 6.2 线（与 ddd4j-dependencies 管理的 spring-framework 6.2.x
-             匹配；Boot 4.x/Spring 7 线勿用），test 作用域不进入对外依赖面。 -->
-        <spring-boot-it.version>${spring-boot3-it.version}</spring-boot-it.version>
+        <!-- JDK 21 / Spring Framework 7 测试栈使用 Spring Boot 4。 -->
+        <spring-boot-it.version>${spring-boot4-it.version}</spring-boot-it.version>
     </properties>
 
     <dependencies>
@@ -33,8 +30,8 @@
             <artifactId>ddd4j-data-projection</artifactId>
             <version>${revision}</version>
         </dependency>
-        <!-- Spring Context：@Component 刻板 + SmartLifecycle + TaskScheduler + CronTrigger
-             （版本由 ddd4j-dependencies 导入的 spring-framework-bom 管理 = Spring 6.2 线） -->
+        <!-- Spring Context：@Component + SmartLifecycle + TaskScheduler + CronTrigger，
+             版本由 Spring Framework BOM 管理。 -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
@@ -46,8 +43,7 @@
         </dependency>
 
         <!-- ======== Test ======== -->
-        <!-- Spring Boot Test（@SpringBootTest + AssertJ/JUnit5 测试栈，
-             版本局部钉 3.4.4 仅测试栈，同 -event-store-jpa 决策） -->
+        <!-- Spring Boot Test（@SpringBootTest + AssertJ/JUnit5 测试栈）。 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
