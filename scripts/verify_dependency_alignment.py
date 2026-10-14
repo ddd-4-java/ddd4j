@@ -107,19 +107,28 @@ def verify(roots, effective_paths, policy, repository, extra_cache, strict):
     module_usage = {}
     errors, unknown, rows = [], [], []
     for index, root in enumerate(roots):
-        component_line = ('1.0.x', '2.0.x', '3.0.x')[index]
+        jdk = (8, 17, 21)[index]
         properties = {**pom_properties(root / 'pom.xml'),
                       **pom_properties(root / 'ddd4j-dependencies/pom.xml')}
         for key, dependency in direct[index].items():
-            if key[0] != 'io.github.easy4j':
-                continue
             coordinate = ':'.join(key[:2])
+            configured = policy.get('dependency_versions', {}).get(coordinate)
             starter_lines = policy.get('boot_starter_versions', {}).get(coordinate)
-            expected_line = starter_lines[str((8, 17, 21)[index])] if starter_lines else component_line
-            expected = expected_line + '.20260630-SNAPSHOT'
+            if configured is not None:
+                expected = configured.get(str(jdk)) if isinstance(configured, dict) else configured
+                label = 'dependency'
+            elif starter_lines:
+                expected = starter_lines[str(jdk)] + '.20260630-SNAPSHOT'
+                label = 'Easy4J'
+            else:
+                # Third-party versions follow their provider, never the DDD4J branch name.
+                continue
+            if not expected:
+                errors.append(f'JDK {jdk}: missing version policy for {coordinate}')
+                continue
             version = resolved_property(dependency.get('version', ''), properties)
             if version != expected:
-                errors.append(f'JDK {(8, 17, 21)[index]}: Easy4J {key[0]}:{key[1]} '
+                errors.append(f'JDK {jdk}: {label} {coordinate} '
                               f'uses {version or "<missing>"}, expected {expected}')
     keys = set().union(*(set(items) for items in direct + profiles))
     variants = policy.get('baseline_variants', {})

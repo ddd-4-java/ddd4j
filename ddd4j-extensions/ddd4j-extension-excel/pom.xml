@@ -16,7 +16,7 @@
     <dependencies>
         <!-- For EasyExcel -->
         <dependency>
-            <groupId>com.alibaba</groupId>
+            <groupId>io.github.easy4j</groupId>
             <artifactId>easyexcel</artifactId>
         </dependency>
         <!-- For Spring Boot Autoconfigure -->
