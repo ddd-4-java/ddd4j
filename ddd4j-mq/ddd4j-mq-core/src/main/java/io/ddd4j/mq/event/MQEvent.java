@@ -15,17 +15,21 @@
 package io.ddd4j.mq.event;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
+import io.ddd4j.mq.delivery.MQDeliveryHeaders;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -104,6 +108,12 @@ public class MQEvent implements Serializable {
      * <p>为空时走全局默认 broker（{@code MQProperties.getBroker()} 配置）。
      */
     protected String broker;
+    /** 因果链关联 ID；broker header 是跨语言消费方的权威来源。 */
+    @JsonIgnore
+    protected String correlationId;
+    /** 因果链因果 ID；payload 字段仅保留迁移期镜像。 */
+    @JsonIgnore
+    protected String causationId;
     /**
      * 命名空间，配置 {@code ddd4j.mq.namespace} 后无须每次指定
      */
@@ -117,6 +127,25 @@ public class MQEvent implements Serializable {
      */
     public boolean supports(List<String> supports) {
         return supports.contains(match());
+    }
+
+    /**
+     * 返回不可变的跨 Broker 消息头，仅包含非空的稳定消息 ID 和因果元数据。
+     *
+     * @return broker 消息头快照
+     */
+    public Map<String, String> headerMap() {
+        Map<String, String> headers = new LinkedHashMap<String, String>();
+        if (StrKit.isNotEmpty(msgId)) {
+            headers.put(MQDeliveryHeaders.MESSAGE_ID, msgId);
+        }
+        if (StrKit.isNotEmpty(correlationId)) {
+            headers.put(MQDeliveryHeaders.CORRELATION_ID, correlationId);
+        }
+        if (StrKit.isNotEmpty(causationId)) {
+            headers.put(MQDeliveryHeaders.CAUSATION_ID, causationId);
+        }
+        return Collections.unmodifiableMap(headers);
     }
 
     /**
