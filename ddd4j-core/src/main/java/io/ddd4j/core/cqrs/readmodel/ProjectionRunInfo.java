@@ -15,6 +15,9 @@
 
 package io.ddd4j.core.cqrs.readmodel;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.Instant;
 import java.util.Objects;
 
@@ -43,7 +46,10 @@ public final class ProjectionRunInfo {
  * @since 3.0.x
  */
 
-    public ProjectionRunInfo(Instant lastRunAt, int lastEventCount, String lastError) {
+    @JsonCreator
+    public ProjectionRunInfo(@JsonProperty("lastRunAt") Instant lastRunAt,
+                             @JsonProperty("lastEventCount") int lastEventCount,
+                             @JsonProperty("lastError") String lastError) {
         this.lastRunAt = lastRunAt;
         this.lastEventCount = lastEventCount;
         this.lastError = lastError;

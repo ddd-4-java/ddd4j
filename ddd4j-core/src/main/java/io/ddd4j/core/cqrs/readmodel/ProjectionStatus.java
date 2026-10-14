@@ -15,6 +15,9 @@
 
 package io.ddd4j.core.cqrs.readmodel;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.time.Instant;
 import java.util.Objects;
 
@@ -64,8 +67,13 @@ public final class ProjectionStatus {
      * @since 3.0.x
      */
 
-    public ProjectionStatus(String streamId, long nextEventNumber, boolean running,
-                            Instant lastRunAt, int lastEventCount, String lastError) {
+    @JsonCreator
+    public ProjectionStatus(@JsonProperty("streamId") String streamId,
+                            @JsonProperty("nextEventNumber") long nextEventNumber,
+                            @JsonProperty("running") boolean running,
+                            @JsonProperty("lastRunAt") Instant lastRunAt,
+                            @JsonProperty("lastEventCount") int lastEventCount,
+                            @JsonProperty("lastError") String lastError) {
         Objects.requireNonNull(streamId, "streamId must not be null");
         if (nextEventNumber < 0) {
             throw new IllegalArgumentException("nextEventNumber must not be negative");
@@ -160,7 +168,7 @@ public final class ProjectionStatus {
     public int hashCode() {
         int result = Objects.hashCode(streamId);
         result = 31 * result + (int) (nextEventNumber ^ (nextEventNumber >>> 32));
-        result = 31 * result + (running ? 1 : 0);
+        result = 31 * result + Boolean.hashCode(running);
         result = 31 * result + Objects.hashCode(lastRunAt);
         result = 31 * result + lastEventCount;
         result = 31 * result + Objects.hashCode(lastError);
@@ -169,8 +177,8 @@ public final class ProjectionStatus {
 
     @Override
     public String toString() {
-        return "ProjectionStatus{streamId=" + streamId + ", nextEventNumber=" + nextEventNumber
+        return "ProjectionStatus[streamId=" + streamId + ", nextEventNumber=" + nextEventNumber
                 + ", running=" + running + ", lastRunAt=" + lastRunAt
-                + ", lastEventCount=" + lastEventCount + ", lastError=" + lastError + '}';
+                + ", lastEventCount=" + lastEventCount + ", lastError=" + lastError + ']';
     }
 }
