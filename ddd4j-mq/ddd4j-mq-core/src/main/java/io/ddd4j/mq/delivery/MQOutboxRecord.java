@@ -88,6 +88,10 @@ public final class MQOutboxRecord {
         }
         Map<String, String> mutableHeaders = new LinkedHashMap<String, String>(headers);
         mutableHeaders.put(MQDeliveryHeaders.MESSAGE_ID, messageId);
+        for (Map.Entry<String, String> header : mutableHeaders.entrySet()) {
+            Objects.requireNonNull(header.getKey(), "header key must not be null");
+            Objects.requireNonNull(header.getValue(), "header value must not be null");
+        }
         this.messageId = messageId;
         this.destination = destination;
         this.payload = payload;
