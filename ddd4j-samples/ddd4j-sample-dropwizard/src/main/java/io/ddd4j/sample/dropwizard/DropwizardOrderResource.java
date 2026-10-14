@@ -14,6 +14,8 @@
  */
 package io.ddd4j.sample.dropwizard;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.auth.AuthRequest;
 import io.ddd4j.core.util.SubjectKit;
@@ -110,5 +112,11 @@ public final class DropwizardOrderResource {
     @AllArgsConstructor
     public static class TokenResponse {
         private String token;
+
+        /** @return 登录令牌 */
+        @JsonProperty("token")
+        public String token() {
+            return token;
+        }
     }
 }

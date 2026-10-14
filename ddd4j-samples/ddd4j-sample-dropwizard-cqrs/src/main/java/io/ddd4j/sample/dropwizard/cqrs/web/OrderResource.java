@@ -77,5 +77,20 @@ public class OrderResource {
         private String orderNo;
         private String buyerId;
         private String buyerName;
+
+        /** @return 订单编号 */
+        public String orderNo() {
+            return orderNo;
+        }
+
+        /** @return 买家标识 */
+        public String buyerId() {
+            return buyerId;
+        }
+
+        /** @return 买家名称 */
+        public String buyerName() {
+            return buyerName;
+        }
     }
 }
