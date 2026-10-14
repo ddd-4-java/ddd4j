@@ -44,7 +44,7 @@ import org.springframework.web.filter.RequestContextFilter;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
-import java.util.List;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -163,7 +163,7 @@ public class DefaultWebMvcConfiguration {
         String[] publicPaths = environment.getProperty("ddd4j.web.public-paths", String[].class,
                 new String[]{"/health", "/health/readiness", "/health/liveness", ReadinessEndpoint.PATH,
                         "/assets/**", "/webjars/**"});
-        return new PathWebAccessPolicy(List.of(publicPaths), AuthenticationMode.REQUIRED);
+        return new PathWebAccessPolicy(Arrays.asList(publicPaths), AuthenticationMode.REQUIRED);
     }
 
     /**
