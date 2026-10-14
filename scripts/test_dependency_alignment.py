@@ -14,6 +14,29 @@ def pom(artifact='demo', version='1', group='example'):
 
 
 class DependencyAlignmentTest(unittest.TestCase):
+    def test_unconfigured_third_party_release_does_not_inherit_ddd4j_version(self):
+        with tempfile.TemporaryDirectory() as temp:
+            base = Path(temp)
+            roots, effective = [], []
+            for index in range(3):
+                root = base / str(index)
+                (root / 'ddd4j-dependencies').mkdir(parents=True)
+                path = root / 'ddd4j-dependencies/pom.xml'
+                path.write_text(pom('easyexcel', '5.0.1', 'io.github.easy4j'))
+                roots.append(root)
+                effective.append(path)
+            errors, unknown, rows = verify(roots, effective, {}, base, None, False)
+            self.assertFalse(errors, errors)
+            self.assertEqual(3, len(unknown))
+            errors, _, _ = verify(roots, effective, {}, base, None, True)
+            self.assertTrue(any('Unverified artifact:' in error for error in errors), errors)
+            policy = {'dependency_versions': {'io.github.easy4j:easyexcel': '5.0.1'}}
+            roots[0].joinpath('ddd4j-dependencies/pom.xml').write_text(
+                pom('easyexcel', '1.0.x.20260630-SNAPSHOT', 'io.github.easy4j'))
+            errors, _, _ = verify(roots, effective, policy, base, None, False)
+            self.assertTrue(any('expected 5.0.1' in error for error in errors), errors)
+
+
     def test_multirelease_java21_does_not_reject_java8_base(self):
         with tempfile.TemporaryDirectory() as temp:
             jar = Path(temp) / 'example.jar'

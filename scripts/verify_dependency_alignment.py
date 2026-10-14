@@ -7,6 +7,7 @@
 import argparse
 import csv
 import json
+import re
 import struct
 import sys
 import zipfile
@@ -56,11 +57,55 @@ def profile_dependencies(path):
     return result
 
 
+def pom_properties(path):
+    import xml.etree.ElementTree as ET
+    if not path.is_file():
+        return {}
+    root = ET.parse(path).getroot()
+    namespace = root.tag.partition('}')[0] + '}' if '}' in root.tag else ''
+    properties = root.find(namespace + 'properties')
+    return ({item.tag.removeprefix(namespace): (item.text or '').strip() for item in properties}
+            if properties is not None else {})
+
+
+def resolved_property(value, properties):
+    for _ in range(10):
+        match = re.fullmatch(r'\$\{([^}]+)\}', value or '')
+        if match is None or match.group(1) not in properties:
+            break
+        value = properties[match.group(1)]
+    return value
+
+
 def verify(roots, effective_paths, policy, repository, extra_cache, strict):
     direct = [dependencies(root / 'ddd4j-dependencies/pom.xml') for root in roots]
     profiles = [profile_dependencies(root / 'ddd4j-dependencies/pom.xml') for root in roots]
     effective = [dependencies(path) for path in effective_paths]
     errors, unknown, rows = [], [], []
+    for index, root in enumerate(roots):
+        jdk = (8, 17, 21)[index]
+        properties = {**pom_properties(root / 'pom.xml'),
+                      **pom_properties(root / 'ddd4j-dependencies/pom.xml')}
+        for key, dependency in direct[index].items():
+            coordinate = ':'.join(key[:2])
+            configured = policy.get('dependency_versions', {}).get(coordinate)
+            starter_lines = policy.get('boot_starter_versions', {}).get(coordinate)
+            if configured is not None:
+                expected = configured.get(str(jdk)) if isinstance(configured, dict) else configured
+                label = 'dependency'
+            elif starter_lines:
+                expected = starter_lines[str(jdk)] + '.20260630-SNAPSHOT'
+                label = 'Easy4J'
+            else:
+                # Third-party versions follow their provider, never the DDD4J branch name.
+                continue
+            if not expected:
+                errors.append(f'JDK {jdk}: missing version policy for {coordinate}')
+                continue
+            version = resolved_property(dependency.get('version', ''), properties)
+            if version != expected:
+                errors.append(f'JDK {jdk}: {label} {coordinate} '
+                              f'uses {version or "<missing>"}, expected {expected}')
     keys = set().union(*(set(items) for items in direct + profiles))
     variants = policy.get('baseline_variants', {})
     if variants:
