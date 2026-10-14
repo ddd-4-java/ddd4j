@@ -125,8 +125,9 @@ public class DefaultEventSourcingRepository<M extends AggregateRoot<ID>, ID exte
     public void add(M aggregate) {
         Objects.requireNonNull(aggregate, "aggregate must not be null");
         ID aggregateId = requireId(aggregate);
-        List<DomainEvent<?>> pending = aggregate.pullDomainEvents();
+        List<DomainEvent<?>> pending = new ArrayList<>(aggregate.domainEvents());
         eventStore.append(aggregateType, resolve(aggregateId), pending, 0L);
+        aggregate.clearDomainEvents();
         trackedVersions.put(aggregateId, (long) pending.size());
     }
 
@@ -141,8 +142,9 @@ public class DefaultEventSourcingRepository<M extends AggregateRoot<ID>, ID exte
         Objects.requireNonNull(aggregate, "aggregate must not be null");
         ID aggregateId = requireId(aggregate);
         long expectedVersion = trackedVersions.getOrDefault(aggregateId, currentStreamVersion(aggregateId));
-        List<DomainEvent<?>> pending = aggregate.pullDomainEvents();
+        List<DomainEvent<?>> pending = new ArrayList<>(aggregate.domainEvents());
         eventStore.append(aggregateType, resolve(aggregateId), pending, expectedVersion);
+        aggregate.clearDomainEvents();
         trackedVersions.put(aggregateId, expectedVersion + pending.size());
     }
 

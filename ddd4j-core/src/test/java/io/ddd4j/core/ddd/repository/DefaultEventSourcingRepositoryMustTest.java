@@ -128,6 +128,25 @@ class DefaultEventSourcingRepositoryMustTest {
                 });
         assertThat(eventStore.read(AGGREGATE_TYPE, new TestOrderId("order-1")))
                 .extracting(StoredEvent::version).containsExactly(1L, 2L, 3L);
+        assertThat(aggregateA.hasDomainEvents()).isTrue();
+    }
+
+    @Test
+    void failedInitialAppendMustKeepPendingEventsForRetry() {
+        EventStore failingStore = new InMemoryEventStore() {
+            @Override
+            public synchronized void append(String type, AggregateRootId id,
+                                            List<? extends DomainEvent<?>> events, long expectedVersion) {
+                throw new IllegalStateException("write failed");
+            }
+        };
+        DefaultEventSourcingRepository<TestOrder, String> failingRepository = new DefaultEventSourcingRepository<>(
+                AGGREGATE_TYPE, TestOrder.class, ID_ADAPTER, failingStore);
+        TestOrder order = new TestOrder("order-1");
+        order.create();
+
+        assertThatThrownBy(() -> failingRepository.add(order)).isInstanceOf(IllegalStateException.class);
+        assertThat(order.domainEvents()).hasSize(1);
     }
 
     private TestOrder newOrderWithTwoEvents(String id) {

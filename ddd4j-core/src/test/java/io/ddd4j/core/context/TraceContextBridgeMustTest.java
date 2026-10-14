@@ -124,6 +124,11 @@ class TraceContextBridgeMustTest {
                     "trace 标识必须与 correlationId 并列可取");
             assertEquals("causation-xyz", snapshot.get(TraceContextBridge.CAUSATION_ID_CONTEXT_KEY),
                     "trace 标识必须与 causationId 并列可取");
+            assertThrows(UnsupportedOperationException.class,
+                    () -> snapshot.put(TraceContextBridge.TRACE_ID_CONTEXT_KEY, "tampered"),
+                    "因果链快照必须不可修改");
+            assertEquals("trace-side-by-side", TraceContextBridge.currentTraceId(),
+                    "修改快照不得影响当前上下文");
         }
     }
 }

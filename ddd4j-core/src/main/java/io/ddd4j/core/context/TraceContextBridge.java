@@ -17,6 +17,7 @@ package io.ddd4j.core.context;
 import io.ddd4j.kit.lang.StrKit;
 import org.slf4j.MDC;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -130,7 +131,7 @@ public final class TraceContextBridge {
         putIfPresent(snapshot, TRACE_ID_CONTEXT_KEY);
         putIfPresent(snapshot, CORRELATION_ID_CONTEXT_KEY);
         putIfPresent(snapshot, CAUSATION_ID_CONTEXT_KEY);
-        return snapshot;
+        return Collections.unmodifiableMap(snapshot);
     }
 
     /**
