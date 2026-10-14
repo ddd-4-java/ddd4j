@@ -66,6 +66,7 @@ public class WeatherTemplate {
      * HTTP 客户端
      */
     private final HttpClient httpClient;
+    private final String weatherUrlTemplate;
 
     /**
      * 构造函数
@@ -73,7 +74,16 @@ public class WeatherTemplate {
      * @param httpClient HTTP 客户端
      */
     public WeatherTemplate(HttpClient httpClient) {
+        this(httpClient, SOJSON_WEATHER_URL);
+    }
+
+    WeatherTemplate(String weatherUrlTemplate) {
+        this(HttpClient.newHttpClient(), weatherUrlTemplate);
+    }
+
+    private WeatherTemplate(HttpClient httpClient, String weatherUrlTemplate) {
         this.httpClient = httpClient;
+        this.weatherUrlTemplate = Objects.requireNonNull(weatherUrlTemplate, "weatherUrlTemplate must not be null");
     }
 
     /**
@@ -112,7 +122,7 @@ public class WeatherTemplate {
     private JSONObject fetchWeather(String cityCode) {
         try {
             HttpResponse<String> response = httpClient.send(
-                    HttpRequest.newBuilder(URI.create(String.format(SOJSON_WEATHER_URL, cityCode)))
+                    HttpRequest.newBuilder(URI.create(String.format(weatherUrlTemplate, cityCode)))
                             .header("Accept", "application/json")
                             .GET()
                             .build(),

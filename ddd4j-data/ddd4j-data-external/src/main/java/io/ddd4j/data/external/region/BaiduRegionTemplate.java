@@ -52,6 +52,7 @@ public class BaiduRegionTemplate {
      * HTTP 客户端
      */
     private final HttpClient httpClient;
+    private final String urlTemplate;
     /**
      * 缓存服务
      */
@@ -94,9 +95,19 @@ public class BaiduRegionTemplate {
      * @param regionCache 缓存服务
      */
     public BaiduRegionTemplate(String ak, HttpClient httpClient, RegionCache regionCache) {
+        this(ak, httpClient, regionCache, GET_LOCATION_BY_IP_URL);
+    }
+
+    BaiduRegionTemplate(String ak, RegionCache regionCache, String urlTemplate) {
+        this(ak, HttpClient.newHttpClient(), regionCache, urlTemplate);
+    }
+
+    private BaiduRegionTemplate(String ak, HttpClient httpClient,
+                                RegionCache regionCache, String urlTemplate) {
         this.ak = ak;
         this.httpClient = httpClient;
         this.regionCache = Objects.isNull(regionCache) ? RegionCache.none() : regionCache;
+        this.urlTemplate = Objects.requireNonNull(urlTemplate, "urlTemplate");
     }
 
     /**
@@ -165,7 +176,7 @@ public class BaiduRegionTemplate {
         }
         // 3、调用三方接口解析IP信息
         try {
-            String url = String.format(GET_LOCATION_BY_IP_URL, this.ak, ip);
+            String url = String.format(urlTemplate, this.ak, ip);
             HttpResponse<String> response = httpClient.send(
                     HttpRequest.newBuilder(URI.create(url))
                             .header("Accept", "application/json")

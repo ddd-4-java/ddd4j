@@ -76,6 +76,7 @@ public class PconlineRegionTemplate {
      * HTTP 客户端
      */
     private final HttpClient httpClient;
+    private final String urlTemplate;
     /**
      * 缓存服务
      */
@@ -113,8 +114,17 @@ public class PconlineRegionTemplate {
      * @param regionCache 缓存服务
      */
     public PconlineRegionTemplate(HttpClient httpClient, RegionCache regionCache) {
+        this(httpClient, regionCache, GET_COUNTRY_BY_IP_URL);
+    }
+
+    PconlineRegionTemplate(RegionCache regionCache, String urlTemplate) {
+        this(HttpClient.newHttpClient(), regionCache, urlTemplate);
+    }
+
+    private PconlineRegionTemplate(HttpClient httpClient, RegionCache regionCache, String urlTemplate) {
         this.httpClient = httpClient;
         this.regionCache = Objects.isNull(regionCache) ? RegionCache.none() : regionCache;
+        this.urlTemplate = Objects.requireNonNull(urlTemplate, "urlTemplate");
     }
 
     /**
@@ -160,7 +170,7 @@ public class PconlineRegionTemplate {
         // 3、调用三方接口解析IP信息
         try {
 
-            String url = String.format(GET_COUNTRY_BY_IP_URL, ip);
+            String url = String.format(urlTemplate, ip);
             HttpResponse<String> response = httpClient.send(
                     HttpRequest.newBuilder(URI.create(url))
                             .header("Accept", "application/json")
