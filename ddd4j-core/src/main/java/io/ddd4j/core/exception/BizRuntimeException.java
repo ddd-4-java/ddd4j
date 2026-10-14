@@ -144,6 +144,16 @@ public class BizRuntimeException extends RuntimeException {
      * @param i18nCode 国际化资源键
      */
     public BizRuntimeException(ApiCode code, String i18nCode) {
+        this((CustomApiCode) code, i18nCode);
+    }
+
+    /**
+     * 按业务扩展码和国际化键创建异常。
+     *
+     * @param code 业务扩展错误码
+     * @param i18nCode 国际化资源键
+     */
+    public BizRuntimeException(CustomApiCode code, String i18nCode) {
         super(I18nKit.get(i18nCode, code.getReason()));
         this.code = code.getCode();
         this.i18nCode = i18nCode;

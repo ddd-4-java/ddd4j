@@ -87,6 +87,16 @@ public class MessagePushException extends BizRuntimeException {
      * @param i18nCode 国际化资源键
      */
     public MessagePushException(ApiCode code, String i18nCode) {
+        this((CustomApiCode) code, i18nCode);
+    }
+
+    /**
+     * 按业务扩展码和国际化键创建异常。
+     *
+     * @param code 业务扩展错误码
+     * @param i18nCode 国际化资源键
+     */
+    public MessagePushException(CustomApiCode code, String i18nCode) {
         super(code, i18nCode);
     }
 
