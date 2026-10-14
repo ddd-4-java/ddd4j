@@ -117,8 +117,9 @@ def reactors_can_run(checks):
 
 
 def explicit_scenario_commands(version, redis_url):
-    capacity = ["./mvnw", "-q", "-pl", "ddd4j-core",
+    capacity = ["./mvnw", "-q", "-pl", "ddd4j-core", "-am",
                 "-Dtest=EventStoreAppendCapacityBaselineIT",
+                "-Dsurefire.failIfNoSpecifiedTests=false",
                 f"-Dddd4j.baseline.branch=feature/{version}", "test"]
     redis = (["./mvnw", "-q", "-pl", "ddd4j-mq/ddd4j-mq-redis-stream", "-am",
               "-Dtest=RedisStreamNativeCausalityIT",

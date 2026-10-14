@@ -70,6 +70,8 @@ class ThreeLineConvergenceTest(unittest.TestCase):
             "2.0.x", "redis://127.0.0.1:16379")
         self.assertIn("-Dddd4j.baseline.branch=feature/2.0.x", capacity)
         self.assertIn("-Dtest=EventStoreAppendCapacityBaselineIT", capacity)
+        self.assertIn("-am", capacity)
+        self.assertIn("-Dsurefire.failIfNoSpecifiedTests=false", capacity)
         self.assertIn("-Dtest=RedisStreamNativeCausalityIT", redis)
         self.assertIn("-Dddd4j.redis.native.url=redis://127.0.0.1:16379", redis)
         self.assertIsNone(MODULE.explicit_scenario_commands("2.0.x", None)[1])
