@@ -25,6 +25,7 @@ import io.javalin.http.Context;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.Value;
 
 import java.util.Collection;
@@ -286,6 +287,7 @@ public class AuthorizationController {
     @AllArgsConstructor
     public static class CreateUserRequest {
         private String loginId;
+        @ToString.Exclude
         private String password;
         private String displayName;
         private String[] roles;
@@ -317,6 +319,7 @@ public class AuthorizationController {
     @AllArgsConstructor
     public static class UpdateUserRequest {
         private String displayName;
+        @ToString.Exclude
         private String password;
         private String[] roles;
         private String[] permissions;

@@ -25,6 +25,7 @@ import io.javalin.http.Context;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.*;
 
@@ -175,6 +176,7 @@ public class AuthenticationController {
     @AllArgsConstructor
     public static class LoginRequest {
         private String loginId;
+        @ToString.Exclude
         private String password;
 
         public String loginId() {
