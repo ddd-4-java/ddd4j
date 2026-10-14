@@ -171,7 +171,6 @@
         <disruptor.version>4.0.0</disruptor.version>
         <docker-client.version>8.16.0</docker-client.version>
         <docker-java.version>3.7.1</docker-java.version>
-        <docx4j-template.version>1.0.1.RELEASE</docx4j-template.version>
         <docx4j.version>11.5.14</docx4j.version>
         <dom4j2.version>2.2.0</dom4j2.version>
         <dozer-core.version>7.0.0</dozer-core.version>
@@ -459,6 +458,7 @@
         <netty.version>4.2.15.Final</netty.version>
         <nimbus-jose-jwt.version>10.9.1</nimbus-jose-jwt.version>
         <objenesis.version>3.5</objenesis.version>
+        <ofdrw.version>2.4.0</ofdrw.version>
         <okhttp3-extension.version>2.0.x.20260630-SNAPSHOT</okhttp3-extension.version>
         <okhttp3-metrics-prometheus.version>2.0.x.20260630-SNAPSHOT</okhttp3-metrics-prometheus.version>
         <okhttp.version>4.12.0</okhttp.version>
@@ -2863,15 +2863,6 @@
                 <groupId>org.docx4j</groupId>
                 <artifactId>docx4j-openxml-objects-sml</artifactId>
                 <version>${docx4j.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.github.redacted-legacy-family/docx4j-template-bom -->
-            <!-- docx4j Template BOM：docx4j 模板引擎的 BOM，提供 Word 模板填充生成工具。 -->
-            <dependency>
-                <groupId>io.github.easy4j</groupId>
-                <artifactId>docx4j-template-bom</artifactId>
-                <version>${docx4j-template.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.dom4j/dom4j -->
             <!-- dom4j：灵活的 Java XML 框架，提供 DOM/SAX/XPath 多种解析方式。 -->
@@ -7721,6 +7712,11 @@
                 <groupId>org.apache.pdfbox</groupId>
                 <artifactId>pdfbox</artifactId>
                 <version>${pdfbox.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ofdrw</groupId>
+                <artifactId>ofdrw-core</artifactId>
+                <version>${ofdrw.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox-debugger -->
             <!-- PDFBox Debugger：PDFBox 的 PDF 文档结构调试查看器。 -->

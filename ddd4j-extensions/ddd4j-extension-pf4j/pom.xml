@@ -19,12 +19,6 @@
             <groupId>org.pf4j</groupId>
             <artifactId>pf4j</artifactId>
         </dependency>
-        <!-- For Servlet API (PF4J web 扩展点引用) -->
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
         <!-- For Spring Core -->
         <dependency>
             <groupId>org.springframework</groupId>

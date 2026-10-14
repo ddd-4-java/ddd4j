@@ -70,3 +70,25 @@ PYTHONPATH=ddd4j/scripts python3 ddd4j/scripts/format_dependency_properties.py \
 JAR 分开处理。多版本 JAR 的 `META-INF/versions` 及 `module-info.class` 不作为基础 Java 版本超限证据。
 
 Profile 枚举用于防止隐藏组件；各条件版本仍须在对应激活条件下生成 effective POM 并单独验证，默认模型不能证明所有条件分支运行兼容。
+
+## 每周依赖审计
+
+OFDRW 2.4.0 在三线管理 `org.ofdrw:ofdrw-core`。`ofdrw-full` 包含转换器，它声明 PDFBox 2.0.27，而三线 BOM 管理 PDFBox 3.0.7；完整转换能力须先做针对性集成测试，不能仅凭 Java 8 字节码将其列为兼容。
+
+
+`.github/workflows/weekly-dependency-audit.yml` 每周一 UTC 02:17 检查 `feature/1.0.x`、`feature/2.0.x`、`feature/3.0.x` 各自的 BOM，并运行 Trivy 文件系统漏洞扫描。GitHub 的 `schedule` 只从默认分支加载工作流，因此需把该工作流交付到默认分支后才会自动运行；三个功能分支上的 `workflow_dispatch` 可供手动验证。
+
+`config/dependencies/weekly-update-policy.json` 的 `fixed` 是逐线精确版本，配置版本漂移会失败；`excluded` 是有理由的不做最新版本比较的坐标，包括各线独立适配的 Spring、Jackson、Easy4J 和快照版本。规则以外的每个直接管理坐标都查询 Maven Central 最新稳定发布版（仅有预览版时取最新预览版），落后、元数据不可解析或查询失败都会使该线失败。报告保存在 `target/dependency-audit/version-report.json`；CI 不自动改写 POM，升级仍需按各线 JDK、框架、传递依赖和测试分别验证。
+
+漏洞扫描使用 `aquasecurity/trivy-action@v0.36.0` 分别扫描三线 Maven POM，并从各线 BOM 生成 CycloneDX 清单扫描全部直接管理版本；HIGH/CRITICAL 漏洞使任务失败，无需 NVD 密钥。`verify_weekly_vulnerability_report.py` 检查 POM 报告非空，且 SBOM 报告覆盖清单中的全部管理版本，防止 Maven 4 根 POM 未识别时误报通过。两份报告保存为 `target/dependency-audit/trivy.json` 和 `target/dependency-audit/managed-bom-trivy.json`。版本新旧检查不能代替漏洞检测，扫描结果也不能证明升级后的兼容性；私有仓库无法解析的传递依赖仍须单独核查。
+
+本地运行：
+
+```sh
+python3 scripts/test_weekly_dependency_versions.py -q
+python3 scripts/check_weekly_dependency_versions.py \
+  --pom ddd4j-dependencies/pom.xml \
+  --policy config/dependencies/weekly-update-policy.json \
+  --line 2.0.x \
+  --output target/dependency-audit/version-report.json
+```
