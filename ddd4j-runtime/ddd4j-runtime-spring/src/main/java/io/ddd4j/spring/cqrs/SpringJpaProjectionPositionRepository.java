@@ -18,10 +18,8 @@ package io.ddd4j.spring.cqrs;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -68,9 +66,17 @@ public class SpringJpaProjectionPositionRepository
         jpaRepository.deleteById(streamId);
     }
 
+    /**
+     * 在事务中重置已有位置；流尚不存在时创建零位置。
+     *
+     * @param streamId 投影流 ID
+     */
     @Override
-    @Modifying
-    @Query("UPDATE SpringJpaProjectionPosition p SET p.nextEventNumber = 0 WHERE p.streamId = :streamId")
-    public void resetToZero(@Param("streamId") String streamId) {
+    @Transactional
+    public void resetToZero(String streamId) {
+        SpringJpaProjectionPosition position = jpaRepository.findById(streamId)
+                .orElseGet(() -> new SpringJpaProjectionPosition(streamId, 0L));
+        position.setNextEventNumber(0L);
+        jpaRepository.save(position);
     }
 }
