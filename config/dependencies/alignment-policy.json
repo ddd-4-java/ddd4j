@@ -457,14 +457,6 @@
         ],
         "reason": "删除重复实现，保留已统一管理的 shiro-redis 组件"
       }
-    },
-    "com.github.hiwepy:spring-biz": {
-      "17": {
-        "coordinates": [
-          "io.github.easy4j:spring-extension"
-        ],
-        "reason": "JDK17线已采用实际Spring扩展组件；JDK8/21保留真实发布的Spring Biz版本及旧公开入口，版本不从DDD4J分支号推导"
-      }
     }
   },
   "optional_bytecode": {},
@@ -773,6 +765,7 @@
     "com.github.redacted-legacy-family:security-jwt-spring-boot-starter": 8,
     "com.github.redacted-legacy-family:shiro-biz": 8,
     "com.github.redacted-legacy-family:shiro-j2cache": 8,
+    "com.github.redacted-legacy-family:spring-biz": 8,
     "com.github.redacted-legacy-family:spring-bytebuddy": 8,
     "com.github.redacted-legacy-family:spring-javassist": 8,
     "com.github.redacted-legacy-family:undertow-metrics-prometheus": 8,
@@ -1949,8 +1942,7 @@
     "xalan:serializer": 8,
     "xalan:xalan": 8,
     "xml-apis:xml-apis": 8,
-    "xyz.raylab:jooq-plus": 8,
-    "com.github.hiwepy:spring-biz": 8
+    "xyz.raylab:jooq-plus": 8
   },
   "baseline_variants": {
     "com.eventstore:db-client-java:jar:": 8,
@@ -2783,6 +2775,7 @@
     "org.snmp4j:snmp4j-agent-db:jar:": 8,
     "io.socket:socket.io-client:jar:": 8,
     "javax.xml.stream:stax-api:jar:": 8,
+    "com.github.redacted-legacy-family:spring-biz:jar:": 8,
     "com.github.redacted-legacy-family:spring-bytebuddy:jar:": 8,
     "com.github.redacted-legacy-family:spring-javassist:jar:": 8,
     "org.springframework:spring-webflux:jar:": 8,
@@ -3289,8 +3282,7 @@
     "io.github.openhtmltopdf:openhtmltopdf-svg-support:jar:": 21,
     "io.github.openhtmltopdf:openhtmltopdf-rtl-support:jar:": 21,
     "io.github.openhtmltopdf:openhtmltopdf-latex-support:jar:": 21,
-    "io.github.openhtmltopdf:openhtmltopdf-mathml-support:jar:": 21,
-    "com.github.hiwepy:spring-biz:jar:": 8
+    "io.github.openhtmltopdf:openhtmltopdf-mathml-support:jar:": 21
   },
   "baseline_revisions": {
     "8": "6d217054",
