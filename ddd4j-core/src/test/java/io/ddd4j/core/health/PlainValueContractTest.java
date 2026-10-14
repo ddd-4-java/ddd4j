@@ -12,13 +12,30 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.InvalidObjectException;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class PlainValueContractTest {
+    @Test
+    void diagnosticDetailsKeepInputOrder() {
+        Map<String, String> details = new LinkedHashMap<>();
+        details.put("alpha", "1");
+        details.put("beta", "2");
+        details.put("gamma", "3");
+        details.put("delta", "4");
+        details.put("epsilon", "5");
+        ReadinessResult result = new ReadinessResult("db", true, details);
+        assertThat(new ArrayList<>(result.details().keySet()))
+                .containsExactly("alpha", "beta", "gamma", "delta", "epsilon");
+    }
+
     @Test
     void frameworkValuesAreFinalOrdinaryClasses() {
         assertThat(ReadinessResult.class.getSuperclass()).isEqualTo(Object.class);
@@ -71,5 +88,27 @@ class PlainValueContractTest {
         assertThat(mapper.readTree(json).properties()).hasSize(3);
         assertThat(mapper.readValue(json, ReadinessResult.class)).isEqualTo(value);
         assertThat(mapper.readValue("{\"name\":\"db\",\"ready\":true,\"details\":null}", ReadinessResult.class).details()).isEmpty();
+    }
+
+    @Test
+    void immutableValueCollectionsRejectNullEntries() {
+        assertThatThrownBy(() -> new ReadinessResult("db", true,
+                Collections.singletonMap("nullable", null)))
+                .isInstanceOf(NullPointerException.class);
+        assertThatThrownBy(() -> new ReadinessReport(true,
+                Arrays.asList(ReadinessResult.ready("db"), null)))
+                .isInstanceOf(NullPointerException.class);
+    }
+
+    @Test
+    void readinessReportRetainsValueAndJsonContract() throws Exception {
+        ReadinessReport report = new ReadinessReport(true,
+                Collections.singletonList(ReadinessResult.ready("db")));
+        JsonMapper mapper = JsonMapper.builder().build();
+        String json = mapper.writeValueAsString(report);
+        assertThat(mapper.readTree(json).get("ready").asBoolean()).isTrue();
+        assertThat(mapper.readValue(json, ReadinessReport.class)).isEqualTo(report);
+        assertThat(report.toString()).isEqualTo(
+                "ReadinessReport[ready=true, results=[ReadinessResult[name=db, ready=true, details={}]]]");
     }
 }

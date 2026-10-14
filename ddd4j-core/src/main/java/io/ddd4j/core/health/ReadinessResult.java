@@ -20,6 +20,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 
 import io.ddd4j.kit.lang.StrKit;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -48,10 +50,16 @@ public final class ReadinessResult {
         if (StrKit.isBlank(name)) {
             throw new IllegalArgumentException("readiness contributor name must not be blank");
         }
-        details = Map.copyOf(Objects.requireNonNullElse(details, Map.of()));
         this.name = name;
         this.ready = ready;
-        this.details = details;
+        Map<String, String> copiedDetails = new LinkedHashMap<>();
+        if (Objects.nonNull(details)) {
+            for (Map.Entry<String, String> entry : details.entrySet()) {
+                copiedDetails.put(Objects.requireNonNull(entry.getKey(), "detail key"),
+                        Objects.requireNonNull(entry.getValue(), "detail value"));
+            }
+        }
+        this.details = Collections.unmodifiableMap(copiedDetails);
     }
 
     /**
