@@ -251,7 +251,7 @@
         <easy4j-wkhtmltopdf-invoker.version>3.0.x.20260630-SNAPSHOT</easy4j-wkhtmltopdf-invoker.version>
         <easy4j-xxljob-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-xxljob-extension.version>
         <easy4j-zxing-extension.version>3.0.x.20260630-SNAPSHOT</easy4j-zxing-extension.version>
-        <easyexcel.version>4.0.3</easyexcel.version>
+        <easyexcel.version>5.0.1</easyexcel.version>
         <easypoi.version>4.5.0</easypoi.version>
         <echarts.version>3.0.0.6</echarts.version>
         <eventstore-db-client.version>5.4.5</eventstore-db-client.version>
@@ -2304,7 +2304,7 @@
                 <version>${easy4j-easydoc.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.alibaba</groupId>
+                <groupId>io.github.easy4j</groupId>
                 <artifactId>easyexcel</artifactId>
                 <version>${easyexcel.version}</version>
             </dependency>
