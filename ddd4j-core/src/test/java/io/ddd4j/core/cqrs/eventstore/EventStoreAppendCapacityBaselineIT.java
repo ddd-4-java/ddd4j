@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *       能力启用路径（版本跟踪 + 未提交事件解耦）追加</li>
  * </ul>
  *
- * <p>产出：{@code docs/performance/eventstore-append-baseline.json}（样本数、
+ * <p>产出：{@code ddd4j-core/target/three-line-parity/capacity/eventstore-append-baseline.json}（样本数、
  * 均值/中位数/P95/P99、环境说明、与直连 EventStore 的对比）。
  * 手工基线（非 JMH）：先预热后测量、关闭输出干扰；用于版本间回归对比，不用于绝对值宣称。
  * 默认不参与构建（类名 *IT 后缀），以 {@code -Dtest=EventStoreAppendCapacityBaselineIT} 显式运行。
@@ -72,6 +72,10 @@ class EventStoreAppendCapacityBaselineIT {
 
     @Test
     void appendCapacityBaselineShouldBeMeasuredAndRecorded() throws IOException {
+        String branch = System.getProperty("ddd4j.baseline.branch");
+        if (Objects.isNull(branch) || !branch.matches("feature/[123]\\.0\\.x")) {
+            throw new IllegalArgumentException("Set -Dddd4j.baseline.branch=feature/{1|2|3}.0.x");
+        }
         // 第一轮全量执行仅作预热（丢弃），消除 JIT 预热次序偏差；第二轮为正式采样
         appendSingle();
         appendBatch();
@@ -81,8 +85,8 @@ class EventStoreAppendCapacityBaselineIT {
         metrics.add(appendBatch());
         metrics.add(repositoryAppend());
 
-        String json = renderJson(metrics);
-        Path target = resolveDocsPath();
+        String json = renderJson(metrics, branch);
+        Path target = resolveOutputPath();
         Files.createDirectories(target.getParent());
         try (Writer writer = Files.newBufferedWriter(target, StandardCharsets.UTF_8)) {
             writer.write(json);
@@ -147,7 +151,9 @@ class EventStoreAppendCapacityBaselineIT {
         DefaultEventSourcingRepository<BaselineOrder, String> repository = new DefaultEventSourcingRepository<>(
                 AGGREGATE_TYPE, BaselineOrder.class, BaselineOrderId::new, store());
         for (int i = 0; i < WARMUP_OPS; i++) {
-            repository.update(loadedOrder(repository, "warmup-repo-" + i));
+            BaselineOrder order = loadedOrder(repository, "warmup-repo-" + i);
+            order.change();
+            repository.update(order);
         }
         long[] samples = new long[SAMPLES];
         for (int i = 0; i < SAMPLES; i++) {
@@ -185,18 +191,18 @@ class EventStoreAppendCapacityBaselineIT {
     }
 
     /**
-     * 解析仓库根 docs 输出路径（surefire 工作目录为模块目录，仓库根 docs 在其上级）。
+     * 输出到当前模块的构建产物目录，避免测量环境与噪声覆盖共享产品文档。
      */
-    private Path resolveDocsPath() {
+    private Path resolveOutputPath() {
         Path moduleDir = Paths.get(System.getProperty("user.dir")).toAbsolutePath();
-        Path repoRoot = moduleDir.endsWith("ddd4j-core") ? moduleDir.getParent() : moduleDir;
-        return repoRoot.resolve(Paths.get("docs", "performance", "eventstore-append-baseline.json"));
+        return moduleDir.resolve(Paths.get("target", "three-line-parity", "capacity",
+                "eventstore-append-baseline.json"));
     }
 
     /**
      * 渲染 JSON 基线（指标、样本数、均值/中位数/P95/P99、环境说明、启用前对比）。
      */
-    private String renderJson(List<Metric> metrics) {
+    private String renderJson(List<Metric> metrics, String branch) {
         Metric single = metrics.get(0);
         Metric repository = metrics.get(2);
         double overheadPercent = percentOverhead(single.mean(), repository.mean());
@@ -204,7 +210,9 @@ class EventStoreAppendCapacityBaselineIT {
         json.append("{\n");
         json.append("  \"name\": \"ddd4j eventstore append capacity baseline\",\n");
         json.append("  \"generatedAt\": \"").append(ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)).append("\",\n");
-        json.append("  \"branch\": \"feature/1.0.x\",\n");
+        json.append("  \"branch\": \"")
+                .append(branch)
+                .append("\",\n");
         json.append("  \"module\": \"ddd4j-core\",\n");
         json.append("  \"methodology\": \"manual nanoTime baseline (warmup ")
                 .append(WARMUP_OPS).append(" ops, ").append(SAMPLES)
@@ -228,8 +236,7 @@ class EventStoreAppendCapacityBaselineIT {
         json.append("    \"overheadPercent\": ").append(String.format(Locale.ROOT, "%.1f", overheadPercent)).append(",\n");
         json.append("    \"note\": \"与启用前（直连 EventStore.append）相比，启用 DefaultEventSourcingRepository 后每次追加额外承担")
                 .append(String.format(Locale.ROOT, "%.1f", overheadPercent))
-                .append("% 开销（版本跟踪 Map 读写 + pullDomainEvents 解耦 + AggregateRootId 适配），属可接受常量级差异；")
-                .append("后续版本以本文件为基线对比，若 overheadPercent 显著漂移需回归排查\"\n");
+                .append("% 观测开销；该手工基线不证明吞吐、复杂度或长期稳定性，显著漂移需单独回归排查\"\n");
         json.append("  }\n");
         json.append("}\n");
         return json.toString();
