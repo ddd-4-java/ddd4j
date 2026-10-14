@@ -263,7 +263,16 @@ public class ActiveMQClient implements MQClient {
         if (Objects.isNull(connection)) {
             try {
                 Connection nc = connectionFactory.createConnection();
-                nc.start();
+                try {
+                    nc.start();
+                } catch (JMSException startFailure) {
+                    try {
+                        nc.close();
+                    } catch (JMSException closeFailure) {
+                        startFailure.addSuppressed(closeFailure);
+                    }
+                    throw startFailure;
+                }
                 connectionRef.set(nc);
                 lifecycle.register("activemq-connection", () -> closeConnection(nc));
                 connection = nc;
