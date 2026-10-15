@@ -13,6 +13,9 @@ REQUIRED = {
     "ddd4j-mq-mqtt": "MqttContainerIntegrationTest",
     "ddd4j-mq-mqtt-mica": "MicaMqttContainerIntegrationTest",
     "ddd4j-mq-activemq": "ArtemisContainerIntegrationTest",
+    "ddd4j-mq-pulsar": "PulsarContainerIntegrationTest",
+    "ddd4j-mq-rocketmq": "RocketMQNativeIntegrationTest",
+    "ddd4j-mq-redis-stream": "RedisStreamNativeCausalityIT",
 }
 
 
