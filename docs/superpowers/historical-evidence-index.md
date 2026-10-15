@@ -5,6 +5,7 @@
 | 资料 | 原所属线 | 可定位的版本与路径 | 本轮状态 |
 |---|---|---|---|
 | 2026-09-09 三线源码对等审计 | 1.0.x | `6bca6659fe0530427aff6673ec2c7b0b5caba778` 的 `docs/superpowers/reports/2026-09-09-three-line-source-parity-audit.md`；文件 SHA-256 `03a866aa382a8f9fc67a0e5e7035259b3d1e1626281882cf3427979580a7042a` | 历史记录；2.0.x、3.0.x 未复制该报告。当前差异以本轮 `target/three-line-parity/` 重新生成的报告为准。 |
+| 旧版 Ddd4j Boot 架构与模块关系 | 1.0.x | `fafcbbde0c1b955a09561275de4f2f3564263a00` 的 `docs/architecture/architecture.md`；文件 SHA-256 `ab825036a484b0606e4eb4fee2b5bdb831370aa3f5005918041fb9efe2158dcf` | 历史产品描述；其中 Java 17、Spring Boot 3.5、`ddd4j-cmpt` 与 `io.ddd4j.boot` 路径不代表当前三线架构。现行共同正文仍位于同一路径。 |
 
 
 八篇 fuin API 模式参考文档的 `## 落地计划` 是按发布线保留的历史任务记录。以下摘要仅锁定这些段落；其余产品正文在三线逐字比对。
