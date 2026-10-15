@@ -129,7 +129,7 @@ public final class ReadinessResult {
     public int hashCode() {
         int result = 0;
         result = 31 * result + Objects.hashCode(name);
-        result = 31 * result + (ready ? 1 : 0);
+        result = 31 * result + Boolean.hashCode(ready);
         result = 31 * result + Objects.hashCode(details);
         return result;
     }
