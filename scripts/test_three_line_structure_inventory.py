@@ -18,6 +18,48 @@ SCRIPT = Path(__file__).with_name("verify-three-line-structure-api-parity.py")
 
 
 class ThreeLineInventoryTest(unittest.TestCase):
+    def test_indexed_javadoc_history_requires_locked_file_hash(self):
+        path = "docs/verification/javadoc-fill-report-01.md"
+        content = "# Historical Javadoc report\n"
+        self.write(self.roots[2], path, content)
+        digest = hashlib.sha256(content.encode()).hexdigest()
+        index = ("| 文件 | 原所属线与时间 | 历史来源 | 文件 SHA-256 |\n"
+                 f"| `javadoc-fill-report-01.md` | 3.0.x；2026-10-10T18:12:52+08:00 | "
+                 f"[原始文件](https://github.com/ddd-4-java/ddd4j/blob/{'a' * 40}/{path}) | "
+                 f"`{digest}` |\n")
+        for root in self.roots:
+            self.write(root, "docs/superpowers/historical-evidence-index.md", index)
+
+        _, output = self.run_checker("inventory")
+        rows = json.loads((output / "inventory.json").read_text())["differences"]
+        self.assertEqual("HISTORICAL", next(row["status"] for row in rows if row["path"] == path))
+
+        self.write(self.roots[2], path, content + "changed\n")
+        _, output = self.run_checker("inventory")
+        rows = json.loads((output / "inventory.json").read_text())["differences"]
+        self.assertEqual("OPEN", next(row["status"] for row in rows if row["path"] == path))
+
+    def test_indexed_javadoc_batch_requires_locked_file_hash(self):
+        path = "docs/verification/javadoc-fill-batches/batch-01.txt"
+        content = "Historical batch file list\n"
+        self.write(self.roots[2], path, content)
+        digest = hashlib.sha256(content.encode()).hexdigest()
+        index = ("| 文件 | 原所属线与时间 | 历史来源 | 文件 SHA-256 |\n"
+                 f"| `batch-01.txt` | 3.0.x；2026-10-10T18:12:52+08:00 | "
+                 f"[原始文件](https://github.com/ddd-4-java/ddd4j/blob/{'a' * 40}/{path}) | "
+                 f"`{digest}` |\n")
+        for root in self.roots:
+            self.write(root, "docs/superpowers/historical-evidence-index.md", index)
+
+        _, output = self.run_checker("inventory")
+        rows = json.loads((output / "inventory.json").read_text())["differences"]
+        self.assertEqual("HISTORICAL", next(row["status"] for row in rows if row["path"] == path))
+
+        self.write(self.roots[2], path, content + "changed\n")
+        _, output = self.run_checker("inventory")
+        rows = json.loads((output / "inventory.json").read_text())["differences"]
+        self.assertEqual("OPEN", next(row["status"] for row in rows if row["path"] == path))
+
     def test_compile_uses_explicit_jdks_without_macos_discovery(self):
         specification = importlib.util.spec_from_file_location("structure_gate", SCRIPT)
         module = importlib.util.module_from_spec(specification)
