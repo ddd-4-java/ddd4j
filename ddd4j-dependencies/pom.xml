@@ -5690,11 +5690,6 @@
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.kafka/kafka-log4j-appender -->
             <!-- Kafka Log4j Appender：将 Log4j 日志消息发送到 Kafka Topic 的 Appender。 -->
-            <dependency>
-                <groupId>org.apache.kafka</groupId>
-                <artifactId>kafka-log4j-appender</artifactId>
-                <version>${kafka.version}</version>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.kafka/kafka-metadata -->
             <!-- Kafka Metadata：Kafka 集群元数据管理模块（KRaft 模式）。 -->
             <dependency>
@@ -5761,11 +5756,6 @@
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.kafka/kafka-streams-scala_2.12 -->
             <!-- Kafka Streams Scala 2.12：Kafka Streams 的 Scala 2.12 DSL 封装。 -->
-            <dependency>
-                <groupId>org.apache.kafka</groupId>
-                <artifactId>kafka-streams-scala_2.12</artifactId>
-                <version>${kafka.version}</version>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.kafka/kafka-streams-scala_2.13 -->
             <!-- Kafka Streams Scala 2.13：Kafka Streams 的 Scala 2.13 DSL 封装。 -->
             <dependency>
@@ -5789,19 +5779,8 @@
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.kafka/kafka_2.12 -->
             <!-- Kafka Scala 2.12：Apache Kafka Broker 的 Scala 2.12 构建版本。 -->
-            <dependency>
-                <groupId>org.apache.kafka</groupId>
-                <artifactId>kafka_2.12</artifactId>
-                <version>${kafka.version}</version>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.kafka/kafka_2.12 -->
             <!-- Kafka Scala 2.12 Test Jar：Kafka Broker 的 Scala 2.12 测试工具。 -->
-            <dependency>
-                <groupId>org.apache.kafka</groupId>
-                <artifactId>kafka_2.12</artifactId>
-                <version>${kafka.version}</version>
-                <classifier>test</classifier>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.kafka/kafka_2.13 -->
             <!-- Kafka Scala 2.13：Apache Kafka Broker 的 Scala 2.13 构建版本。 -->
             <dependency>
@@ -8342,25 +8321,10 @@
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.resilience4j/resilience4j-spring -->
             <!-- Resilience4j Spring：Resilience4j 的 Spring AOP 注解集成。 -->
-            <dependency>
-                <groupId>io.github.resilience4j</groupId>
-                <artifactId>resilience4j-spring</artifactId>
-                <version>${resilience4j.version}</version>
-            </dependency>
             <!-- resilience4j-bom 不管理 spring 集成模块，显式补齐 -->
             <dependency>
                 <groupId>io.github.resilience4j</groupId>
-                <artifactId>resilience4j-spring-boot2</artifactId>
-                <version>${resilience4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.resilience4j</groupId>
                 <artifactId>resilience4j-spring-boot3</artifactId>
-                <version>${resilience4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.resilience4j</groupId>
-                <artifactId>resilience4j-spring-cloud2</artifactId>
                 <version>${resilience4j.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.resilience4j/resilience4j-timelimiter -->
