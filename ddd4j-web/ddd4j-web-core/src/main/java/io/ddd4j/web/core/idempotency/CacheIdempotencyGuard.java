@@ -59,13 +59,10 @@ public final class CacheIdempotencyGuard implements IdempotencyGuard {
     public boolean acquire(String key, Duration ttl) {
         requireKey(key);
         requireCasCapableCache();
-        Duration effectiveTtl = Objects.requireNonNull(ttl, "ttl must not be null");
-        if (effectiveTtl.isZero() || effectiveTtl.isNegative()) {
-            throw new IllegalArgumentException("ttl must be positive");
-        }
+        long expirySeconds = expirySeconds(ttl);
         boolean acquired = CacheKit.putIfAbsent(cacheName, key, PROCESSING);
         if (acquired) {
-            CacheKit.expire(cacheName, key, effectiveTtl.toSeconds());
+            CacheKit.expire(cacheName, key, expirySeconds);
         }
         return acquired;
     }
@@ -74,16 +71,13 @@ public final class CacheIdempotencyGuard implements IdempotencyGuard {
     public Optional<IdempotencyLease> acquireLease(String key, Duration ttl) {
         requireKey(key);
         requireCasCapableCache();
-        Duration effectiveTtl = Objects.requireNonNull(ttl, "ttl must not be null");
-        if (effectiveTtl.isZero() || effectiveTtl.isNegative()) {
-            throw new IllegalArgumentException("ttl must be positive");
-        }
+        long expirySeconds = expirySeconds(ttl);
         String ownerToken = PROCESSING + ':' + UUID.randomUUID();
         if (!CacheKit.putIfAbsent(cacheName, key, ownerToken)) {
             return Optional.empty();
         }
-        CacheKit.expire(cacheName, key, effectiveTtl.toSeconds());
-        return Optional.of(new IdempotencyLease(key, ownerToken, effectiveTtl));
+        CacheKit.expire(cacheName, key, expirySeconds);
+        return Optional.of(new IdempotencyLease(key, ownerToken, ttl));
     }
 
     @Override
@@ -99,8 +93,9 @@ public final class CacheIdempotencyGuard implements IdempotencyGuard {
             complete(effectiveLease.key());
             return;
         }
+        long expirySeconds = expirySeconds(effectiveLease.ttl());
         if (CacheKit.replace(cacheName, effectiveLease.key(), effectiveLease.ownerToken(), COMPLETED)) {
-            CacheKit.expire(cacheName, effectiveLease.key(), effectiveLease.ttl().toSeconds());
+            CacheKit.expire(cacheName, effectiveLease.key(), expirySeconds);
         }
     }
 
@@ -128,6 +123,18 @@ public final class CacheIdempotencyGuard implements IdempotencyGuard {
         if (!(cache instanceof CasCache)) {
             throw new IllegalStateException("idempotency cache must support CAS: " + cacheName);
         }
+    }
+
+    private static long expirySeconds(Duration ttl) {
+        Duration effectiveTtl = Objects.requireNonNull(ttl, "ttl must not be null");
+        if (effectiveTtl.isZero() || effectiveTtl.isNegative()) {
+            throw new IllegalArgumentException("ttl must be positive");
+        }
+        long seconds = effectiveTtl.getSeconds();
+        if (effectiveTtl.getNano() > 0 && seconds < Long.MAX_VALUE) {
+            return seconds + 1;
+        }
+        return seconds;
     }
 
     private void requireKey(String key) {
