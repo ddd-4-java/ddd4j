@@ -231,6 +231,56 @@ class Ddd4jWebFluxContractTest {
     }
 
     @Test
+    void shouldReleaseIdempotencyLeaseWhenCancelledDuringAcquisition() throws InterruptedException {
+        CountDownLatch acquiring = new CountDownLatch(1);
+        CountDownLatch finishAcquisition = new CountDownLatch(1);
+        CountDownLatch acquired = new CountDownLatch(1);
+        CountDownLatch released = new CountDownLatch(1);
+        IdempotencyGuard guard = new IdempotencyGuard() {
+            @Override
+            public boolean acquire(String key, Duration ttl) {
+                acquiring.countDown();
+                while (finishAcquisition.getCount() > 0) {
+                    try {
+                        finishAcquisition.await();
+                    } catch (InterruptedException ignored) {
+                        // Simulate a non-interruptible remote acquire that still grants a lease.
+                    }
+                }
+                acquired.countDown();
+                return true;
+            }
+
+            @Override
+            public void complete(String key) {
+            }
+
+            @Override
+            public void release(String key) {
+                released.countDown();
+            }
+        };
+        Ddd4jWebFluxFilter filter = new Ddd4jWebFluxFilter(
+                new WebRequestContextFactory(),
+                new WebRequestLifecycle(new BearerSubjectAuthenticator(), WebAccessPolicy.disabled()),
+                new WebIdempotencyLifecycle(guard), Schedulers.boundedElastic());
+        MockServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.post("/orders")
+                .header(WebHeaders.IDEMPOTENCY_KEY, "cancel-during-acquire"));
+
+        Disposable subscription = filter.filter(exchange, ignored -> Mono.<Void>never()).subscribe();
+        try {
+            assertTrue(acquiring.await(3, TimeUnit.SECONDS));
+            subscription.dispose();
+            finishAcquisition.countDown();
+            assertTrue(acquired.await(3, TimeUnit.SECONDS));
+            assertTrue(released.await(3, TimeUnit.SECONDS));
+        } finally {
+            finishAcquisition.countDown();
+            subscription.dispose();
+        }
+    }
+
+    @Test
     void shouldClearAuthenticatedSubjectAfterCancellationAndRejectMissingBearer() {
         Subject subject = mock(Subject.class);
         when(subject.verify("valid-token")).thenReturn(new AuthPrincipal().setUserId("contract-user"));
