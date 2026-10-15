@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * {@link DomainModelHelper} 映射隔离测试。
@@ -54,6 +55,35 @@ class DomainModelHelperTest {
                 .collect(Collectors.toSet());
 
         assertThat(properties).containsExactly("status");
+    }
+
+    @Test
+    void cacheShouldReuseMappingByContextAndRemoveAllContextsForModel() {
+        DomainModelInfo<Order> mysql = DomainModelHelper.getModelInfo(
+                Order.class, MysqlOrderPO.class, property -> "mysql_" + property);
+        DomainModelInfo<Order> mysqlAgain = DomainModelHelper.getModelInfo(
+                Order.class, MysqlOrderPO.class, property -> "other_" + property);
+        DomainModelInfo<Order> jpa = DomainModelHelper.getModelInfo(
+                Order.class, JpaOrderEntity.class, property -> "jpa_" + property);
+
+        assertThat(mysqlAgain).isSameAs(mysql);
+        assertThat(jpa).isNotSameAs(mysql);
+
+        DomainModelHelper.remove(Order.class);
+
+        assertThat(DomainModelHelper.getModelInfo(Order.class, MysqlOrderPO.class,
+                property -> "new_" + property)).isNotSameAs(mysql);
+        assertThat(DomainModelHelper.getModelInfo(Order.class, JpaOrderEntity.class,
+                property -> "new_" + property)).isNotSameAs(jpa);
+    }
+
+    @Test
+    void invalidModelShouldReturnNullAndMissingPersistenceTypeShouldFail() {
+        assertThat(DomainModelHelper.getModelInfo(null)).isNull();
+        assertThatThrownBy(() -> DomainModelHelper.getModelInfo(
+                Order.class, null, property -> property))
+                .isInstanceOf(NullPointerException.class)
+                .hasMessageContaining("persistenceType must not be null");
     }
 
     /**
