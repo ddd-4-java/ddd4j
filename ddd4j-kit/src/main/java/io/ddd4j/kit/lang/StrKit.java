@@ -1579,40 +1579,7 @@ public class StrKit extends StrUtil {
      * @return 处理后的字符串
      */
     public static String replaceAll(String src, String tar, String str) {
-        StringBuilder sb = new StringBuilder();
-        byte bytesSrc[] = src.getBytes();
-
-        byte bytes[] = str.getBytes();
-        int point = 0;
-        for (int i = 0; i < bytes.length; i++) {
-
-            if (isStartWith(bytes, i, bytesSrc, 0)) {
-
-                sb.append(new String(bytes, point, i));
-                sb.append(tar);
-                i += bytesSrc.length;
-                point = i;
-            }
-
-        }
-        sb.append(new String(bytes, point, bytes.length));
-        return sb.toString();
-    }
-
-    /*
-     *
-     * @param bytesSrc
-     * @param bytesTar
-     * @return
-     */
-    private static boolean isStartWith(byte bytesSrc[], int startSrc,
-                                       byte bytesTar[], int startTar) {
-        for (int j = startTar; j < bytesTar.length; j++) {
-            if (bytesSrc[startSrc + j] != bytesTar[j]) {
-                return false;
-            }
-        }
-        return true;
+        return str.replace(src, tar);
     }
 
     /*
@@ -1674,25 +1641,16 @@ public class StrKit extends StrUtil {
         if (Objects.isNull(src)) {
             return new String[0];
         }
-        List<String> ret = new ArrayList<String>();
-        byte bytes[] = src.getBytes();
-        int curPoint = 0;
-        for (int i = 0; i < bytes.length; i++) {
-            if (bytes[i] == letter) {
-                String s = new String(bytes, curPoint, i - curPoint);
-                ret.add(s);
-                curPoint = i + 1;
+        List<String> segments = new ArrayList<>();
+        int start = 0;
+        for (int i = 0; i < src.length(); i++) {
+            if (src.charAt(i) == letter) {
+                segments.add(src.substring(start, i));
+                start = i + 1;
             }
         }
-        if (ret.size() == 0) {
-            return new String[]{src};
-        }
-        // ret.add(new String(bytes, curPoint, src.length() - curPoint));
-        String[] retStr = new String[ret.size()];
-        for (int i = 0; i < ret.size(); i++) {
-            retStr[i] = ret.get(i);
-        }
-        return retStr;
+        segments.add(src.substring(start));
+        return segments.toArray(new String[0]);
     }
 
     /*
