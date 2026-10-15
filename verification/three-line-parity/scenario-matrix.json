@@ -2869,6 +2869,11 @@
     {
       "id": "PROJECTION-JPA-IMMUTABLE-SNAPSHOT",
       "description": "JPA 投影位置 findAll 返回不可修改的值对象快照；各线保留自身 JDK 与 JPA 依赖",
+      "caseNames": {
+        "1.0.x": ["findAllReturnsAnImmutablePositionSnapshot"],
+        "2.0.x": ["findAllReturnsAnImmutablePositionSnapshot"],
+        "3.0.x": ["findAllReturnsAnImmutablePositionSnapshot"]
+      },
       "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-projection-jpa-convergence/report.json",
       "lastEvidenceSha256": "913f193c4cc6e54acb61f3243aa0d4150398c101912fa68f7894e23c598b8797",
       "lines": {
