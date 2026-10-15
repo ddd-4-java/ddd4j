@@ -39,6 +39,16 @@ class DependencyAlignmentTest(unittest.TestCase):
             self.assertNotIn(obsolete, policy['baseline_components'])
             self.assertNotIn(obsolete + ':jar:', policy['baseline_variants'])
 
+    def test_three_line_easy4j_components_use_branch_revisions(self):
+        policy_path = Path(__file__).parents[1] / 'config/dependencies/alignment-policy.json'
+        policy = json.loads(policy_path.read_text(encoding='utf-8'))
+        for artifact in ('cxf-rt-javassist', 'shiro-j2cache', 'undertow-metrics-prometheus'):
+            coordinate = 'io.github.easy4j:' + artifact
+            actual = policy['dependency_versions'].get(coordinate)
+            expected = {str(jdk): line + '.20260630-SNAPSHOT'
+                        for jdk, line in ((8, '1.0.x'), (17, '2.0.x'), (21, '3.0.x'))}
+            self.assertEqual(expected, actual, coordinate)
+
     def test_unconfigured_third_party_release_does_not_inherit_ddd4j_version(self):
         with tempfile.TemporaryDirectory() as temp:
             base = Path(temp)
