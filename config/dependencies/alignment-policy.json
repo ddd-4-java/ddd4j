@@ -17,6 +17,20 @@
     }
   },
   "replacements": {
+    "com.kingbase8.jdbc:kingbase8": {
+      "8": {
+        "coordinates": ["cn.com.kingbase:kingbase8"],
+        "reason": "金仓 JDBC 驱动实际发布坐标为 cn.com.kingbase:kingbase8，保留 JDK 8 历史坐标映射"
+      },
+      "17": {
+        "coordinates": ["cn.com.kingbase:kingbase8"],
+        "reason": "金仓 JDBC 驱动实际发布坐标为 cn.com.kingbase:kingbase8，保留 JDK 17 历史坐标映射"
+      },
+      "21": {
+        "coordinates": ["cn.com.kingbase:kingbase8"],
+        "reason": "金仓 JDBC 驱动实际发布坐标为 cn.com.kingbase:kingbase8，保留 JDK 21 历史坐标映射"
+      }
+    },
     "io.github.easy4j:disruptor-biz": {
       "17": {
         "coordinates": [
