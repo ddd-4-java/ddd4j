@@ -6349,7 +6349,7 @@
             <!-- https://mvnrepository.com/artifact/org.lz4/lz4-java -->
             <!-- LZ4 Java：超快速压缩算法 LZ4 的 Java 实现（JNI + 纯 Java 双版本）。 -->
             <dependency>
-                <groupId>org.lz4</groupId>
+                <groupId>at.yawk.lz4</groupId>
                 <artifactId>lz4-java</artifactId>
                 <version>${lz4-java.version}</version>
             </dependency>
