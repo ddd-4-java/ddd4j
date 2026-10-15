@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PlainJavalinDtoContractTest {
 
@@ -31,6 +32,16 @@ class PlainJavalinDtoContractTest {
         assertEquals(same, create);
         assertEquals(same.hashCode(), create.hashCode());
         assertFalse(Modifier.isFinal(CreateGoodsRequest.class.getModifiers()));
+        assertTrue(create.toString().contains("CreateGoodsRequest("));
+
+        CreateGoodsRequest derived = new CreateGoodsRequest() { };
+        derived.setCode("SKU-1");
+        derived.setName("Coffee");
+        derived.setPrice(new BigDecimal("12.50"));
+        derived.setStock(3);
+        assertEquals(create, derived);
+        assertEquals(derived, create);
+        assertEquals(create.hashCode(), derived.hashCode());
 
         UpdateGoodsRequest update = new UpdateGoodsRequest();
         update.setName("Coffee");
@@ -41,6 +52,7 @@ class PlainJavalinDtoContractTest {
         assertEquals(sameUpdate, update);
         assertEquals(sameUpdate.hashCode(), update.hashCode());
         assertFalse(Modifier.isFinal(UpdateGoodsRequest.class.getModifiers()));
+        assertTrue(update.toString().contains("UpdateGoodsRequest("));
     }
 
     @Test
@@ -56,6 +68,7 @@ class PlainJavalinDtoContractTest {
         assertEquals(same, create);
         assertEquals(same.hashCode(), create.hashCode());
         assertFalse(Modifier.isFinal(CreateOrderRequest.class.getModifiers()));
+        assertTrue(create.toString().contains("CreateOrderRequest("));
 
         AddOrderLineRequest line = new AddOrderLineRequest();
         line.setGoodsId("G-1");
@@ -71,6 +84,7 @@ class PlainJavalinDtoContractTest {
         assertEquals(sameLine, line);
         assertEquals(sameLine.hashCode(), line.hashCode());
         assertFalse(Modifier.isFinal(AddOrderLineRequest.class.getModifiers()));
+        assertTrue(line.toString().contains("AddOrderLineRequest("));
     }
 
     @Test
@@ -90,5 +104,6 @@ class PlainJavalinDtoContractTest {
         assertEquals(same, response);
         assertEquals(same.hashCode(), response.hashCode());
         assertFalse(Modifier.isFinal(OrderResponse.class.getModifiers()));
+        assertTrue(response.toString().contains("OrderResponse("));
     }
 }
