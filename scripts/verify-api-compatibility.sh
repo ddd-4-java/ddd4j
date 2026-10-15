@@ -58,7 +58,7 @@ if [[ -z "${EXPECTED_LINE}" ]]; then
   exit 1
 fi
 
-if [[ -z "${BASELINE_VERSION}" || "${BASELINE_VERSION}" == *SNAPSHOT || ! "${BASELINE_VERSION}" =~ ^${EXPECTED_LINE}\. ]]; then
+if [[ -z "${BASELINE_VERSION}" || "${BASELINE_VERSION}" == *SNAPSHOT || ! "${BASELINE_VERSION}" =~ ^${EXPECTED_LINE}\.0\.x\. ]]; then
   echo "[FAIL] DDD4J_API_BASELINE_VERSION must identify a published non-SNAPSHOT ${EXPECTED_LINE}.0.x baseline." >&2
   exit 1
 fi
