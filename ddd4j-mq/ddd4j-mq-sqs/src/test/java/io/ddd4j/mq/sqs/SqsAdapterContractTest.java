@@ -141,13 +141,16 @@ class SqsAdapterContractTest {
         Message message = Message.builder()
                 .messageId("transport-id")
                 .receiptHandle("receipt")
-                .messageAttributes(Map.of(MessageHeaders.HEADER_MESSAGE_ID,
-                        MessageAttributeValue.builder().dataType("String").stringValue("stable-id").build()))
+                .messageAttributes(Map.of(
+                        MessageHeaders.HEADER_MESSAGE_ID, attribute("stable-id"),
+                        MQDeliveryHeaders.CORRELATION_ID, attribute("correlation-1")))
                 .build();
         SqsClient client = mock(SqsClient.class);
         SqsAcknowledgment acknowledgment = new SqsAcknowledgment(client, message, "http://queue", true);
 
         assertEquals("stable-id", SqsMQClient.messageId(message));
+        assertEquals("stable-id", acknowledgment.messageId());
+        assertEquals("correlation-1", acknowledgment.correlationId());
         acknowledgment.nack(true);
 
         verify(client).changeMessageVisibility(any(java.util.function.Consumer.class));
