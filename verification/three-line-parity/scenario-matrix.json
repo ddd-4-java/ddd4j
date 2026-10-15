@@ -1565,6 +1565,11 @@
     {
       "id": "DATA-PROJECTION-IMMUTABLE-READER-EVENT-TYPES",
       "description": "投影读取器收到不可变的事件类型名快照，不能通过修改读取参数改变后续过滤",
+      "caseNames": {
+        "1.0.x": ["chunkReaderReceivesImmutableEventTypeNames"],
+        "2.0.x": ["chunkReaderReceivesImmutableEventTypeNames"],
+        "3.0.x": ["chunkReaderReceivesImmutableEventTypeNames"]
+      },
       "lines": {
         "1.0.x": {
           "status": "supported",
