@@ -13,6 +13,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class OrderQueryResponseContractTest {
 
     @Test
+    void responseHash_shouldMatchCrossLineValueContract() {
+        assertEquals(-195058945, new OrderResponse("1", "O-1", "B-1", "Buyer", "PAID", null, 2).hashCode());
+    }
+
+    @Test
     void response_shouldExposeBeanAndComponentAccessorsWithJsonRoundTrip() throws Exception {
         OrderResponse response = new OrderResponse("1", "O-1", "B-1", "Buyer", "PAID", null, 2);
 

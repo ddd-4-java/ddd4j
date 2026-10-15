@@ -194,14 +194,14 @@ public class OrderCQRSQueryController {
 
         @Override
         public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(id);
-            result = 31 * result + Objects.hashCode(orderNo);
-            result = 31 * result + Objects.hashCode(buyerId);
-            result = 31 * result + Objects.hashCode(buyerName);
-            result = 31 * result + Objects.hashCode(status);
-            result = 31 * result + Objects.hashCode(totalAmount);
-            result = 31 * result + Integer.hashCode(lineCount);
+            int result = 1;
+            result = 59 * result + lineCount;
+            result = 59 * result + (Objects.isNull(id) ? 43 : id.hashCode());
+            result = 59 * result + (Objects.isNull(orderNo) ? 43 : orderNo.hashCode());
+            result = 59 * result + (Objects.isNull(buyerId) ? 43 : buyerId.hashCode());
+            result = 59 * result + (Objects.isNull(buyerName) ? 43 : buyerName.hashCode());
+            result = 59 * result + (Objects.isNull(status) ? 43 : status.hashCode());
+            result = 59 * result + (Objects.isNull(totalAmount) ? 43 : totalAmount.hashCode());
             return result;
         }
 

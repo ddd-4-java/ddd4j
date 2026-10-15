@@ -17,6 +17,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class OrderDtoContractTest {
 
     @Test
+    void responseHash_shouldMatchCrossLineValueContract() {
+        assertEquals(-195058945, new OrderResponse("1", "O-1", "B-1", "Buyer", "PAID", null, 2).hashCode());
+    }
+
+    @Test
+    void createRequestHash_shouldMatchCrossLineValueContract() {
+        assertEquals(337890771, new CreateOrderRequest("O-1", "B-1", "Buyer").hashCode());
+    }
+
+    @Test
+    void addLineRequestHash_shouldMatchCrossLineValueContract() {
+        assertEquals(30344502, new AddOrderLineRequest("G-1", "Goods", 2, new BigDecimal("10.00")).hashCode());
+    }
+
+    @Test
     void response_shouldExposeBeanAndComponentAccessorsWithJsonRoundTrip() throws Exception {
         OrderResponse response = new OrderResponse("1", "O-1", "B-1", "Buyer", "PAID", null, 2);
 
