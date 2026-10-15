@@ -22,6 +22,7 @@ import io.javalin.apibuilder.EndpointGroup;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -224,6 +225,7 @@ public class AuthenticationController {
     @AllArgsConstructor
     public static class LoginRequest {
         private String username;
+        @ToString.Exclude
         private String password;
 
         public String username() {
