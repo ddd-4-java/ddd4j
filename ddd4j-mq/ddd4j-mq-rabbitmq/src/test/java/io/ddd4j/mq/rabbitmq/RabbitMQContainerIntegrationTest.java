@@ -18,6 +18,11 @@ import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.GetResponse;
+import io.ddd4j.mq.delivery.MQDeliveryHeaders;
+import io.ddd4j.mq.event.MQEvent;
+import io.ddd4j.mq.listener.MQListener;
+import io.ddd4j.mq.message.Acknowledgment;
+import io.ddd4j.mq.serialization.JsonMQEventSerialization;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -26,6 +31,11 @@ import org.testcontainers.rabbitmq.RabbitMQContainer;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.CountDownLatch;
+import java.util.UUID;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -40,8 +50,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *   <li>messageId 与自定义 header 在 broker 上保留完整（ddd4j 消息头兼容）</li>
  * </ul>
  *
- * <p>RabbitMQClient.initConsumer/initProducer 内部依赖 MQListener 反射——本测试不强行跑全链路，
- * 而是聚焦 broker 兼容性验证，确保 ddd4j 字段不会在传输中被截断。
+ * <p>同时验证 initProducer/initConsumer 经 MQListener 反射绑定后的原生因果 header 往返。
  *
  * <p>在 CI {@code infrastructure-integration} job（Docker daemon）下运行；本地需 Docker 环境。
  */
@@ -115,6 +124,95 @@ class RabbitMQContainerIntegrationTest {
     }
 
     @Test
+    void clientShouldRoundTripCausalityThroughNativeAmqpHeaders() throws Exception {
+        String suffix = UUID.randomUUID().toString().replace("-", "");
+        String exchange = "ddd4j.it.rabbit.causality." + suffix;
+        String queue = "ddd4j.it.rabbit.causality.raw." + suffix;
+        String group = "ddd4j.it.causality." + suffix;
+        String listenerQueue = group + ".native.CausalListener.handle";
+        RabbitMQProperties properties = brokerProperties();
+        properties.setExchange(exchange);
+        properties.setProducerChannelPoolSize(1);
+        properties.setAutoAck(false);
+        CountDownLatch delivered = new CountDownLatch(1);
+        AtomicReference<MQEvent> consumed = new AtomicReference<>();
+        AtomicReference<Acknowledgment> acknowledgment = new AtomicReference<>();
+
+        try (Connection connection = properties.connectionFactory().newConnection();
+             Channel channel = connection.createChannel()) {
+            channel.exchangeDeclare(exchange, "direct", false);
+            channel.queueDeclare(queue, false, false, false, null);
+            channel.queueBind(queue, exchange, "native.causality");
+            RabbitMQClient client = new RabbitMQClient(connection) {
+                @Override
+                public io.ddd4j.mq.event.MQEventSerialization serialization() {
+                    return new JsonMQEventSerialization();
+                }
+
+                @Override
+                public void consume(MQListener listener, MQEvent event, Acknowledgment ack) {
+                    consumed.set(event);
+                    acknowledgment.set(ack);
+                    delivered.countDown();
+                }
+            };
+            try {
+                java.util.function.Consumer<MQEvent> producer = client.initProducer(properties);
+                for (int i = 0; i < 3; i++) {
+                    MQEvent event = new MQEvent();
+                    event.setMsgId("causality-" + suffix + "-" + i);
+                    event.setNamespace("native");
+                    event.setTopic("causality");
+                    if (i >= 1) {
+                        event.setCorrelationId("correlation-" + suffix);
+                    }
+                    if (i == 2) {
+                        event.setCausationId("cause-" + suffix);
+                    }
+                    producer.accept(event);
+                    GetResponse raw = channel.basicGet(queue, true);
+                    assertNotNull(raw);
+                    Map<String, Object> headers = raw.getProps().getHeaders();
+                    assertEquals(event.getMsgId(), headers.get(MQDeliveryHeaders.MESSAGE_ID).toString());
+                    assertEquals(event.getCorrelationId(), headers.containsKey(MQDeliveryHeaders.CORRELATION_ID)
+                            ? headers.get(MQDeliveryHeaders.CORRELATION_ID).toString() : null);
+                    assertEquals(event.getCausationId(), headers.containsKey(MQDeliveryHeaders.CAUSATION_ID)
+                            ? headers.get(MQDeliveryHeaders.CAUSATION_ID).toString() : null);
+                }
+
+                java.lang.reflect.Method method = CausalListener.class.getMethod("handle", MQEvent.class);
+                MQListener listener = new MQListener(new CausalListener(), method, group, "native", "causality",
+                        null, Collections.singletonList("*"), ".");
+                channel.queueDeclare(listenerQueue, properties.isDurable(), false, false, null);
+                channel.queueBind(listenerQueue, exchange, "native.causality");
+                assertTrue(client.initConsumer(listener, properties));
+                MQEvent payloadEvent = new MQEvent();
+                payloadEvent.setMsgId("payload-id");
+                payloadEvent.setNamespace("native");
+                payloadEvent.setTopic("causality");
+                Map<String, Object> nativeHeaders = new HashMap<>();
+                nativeHeaders.put(MQDeliveryHeaders.MESSAGE_ID, "native-id");
+                nativeHeaders.put(MQDeliveryHeaders.CORRELATION_ID, "native-correlation");
+                nativeHeaders.put(MQDeliveryHeaders.CAUSATION_ID, "native-cause");
+                AMQP.BasicProperties nativeProperties = new AMQP.BasicProperties.Builder()
+                        .messageId("amqp-id").headers(nativeHeaders).build();
+                String payload = new JsonMQEventSerialization().serialize(payloadEvent);
+                channel.basicPublish(exchange, "native.causality", nativeProperties,
+                        payload.getBytes(StandardCharsets.UTF_8));
+                assertTrue(delivered.await(10, TimeUnit.SECONDS));
+                assertEquals("native-id", consumed.get().getMsgId());
+                assertEquals("native-correlation", consumed.get().getCorrelationId());
+                assertEquals("native-cause", consumed.get().getCausationId());
+                assertEquals("native-correlation", acknowledgment.get().correlationId());
+            } finally {
+                client.close();
+                channel.queueDelete(listenerQueue);
+                channel.queueDelete(queue);
+            }
+        }
+    }
+
+    @Test
     void producerMustReportClosedConnectionInsteadOfReturningSuccess() throws Exception {
         RabbitMQProperties properties = brokerProperties();
         properties.setExchange(EXCHANGE);
@@ -139,6 +237,10 @@ class RabbitMQContainerIntegrationTest {
             if (connection.isOpen()) {
                 connection.close();
             }
+        }
+    }
+    public static final class CausalListener {
+        public void handle(MQEvent event) {
         }
     }
 }
