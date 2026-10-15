@@ -250,7 +250,7 @@ public class OrderCQRSQueryController {
             if (!other.canEqual(this)) {
                 return false;
             }
-            return Objects.equals(this.id, other.id) && Objects.equals(this.orderNo, other.orderNo) && Objects.equals(this.buyerId, other.buyerId) && Objects.equals(this.buyerName, other.buyerName) && Objects.equals(this.status, other.status) && Objects.equals(this.totalAmount, other.totalAmount) && this.lineCount == other.lineCount;
+            return Objects.equals(this.getId(), other.getId()) && Objects.equals(this.getOrderNo(), other.getOrderNo()) && Objects.equals(this.getBuyerId(), other.getBuyerId()) && Objects.equals(this.getBuyerName(), other.getBuyerName()) && Objects.equals(this.getStatus(), other.getStatus()) && Objects.equals(this.getTotalAmount(), other.getTotalAmount()) && this.getLineCount() == other.getLineCount();
         }
 
         /**
@@ -266,13 +266,19 @@ public class OrderCQRSQueryController {
         @Override
         public int hashCode() {
             int result = 1;
-            result = 59 * result + lineCount;
-            result = 59 * result + (Objects.isNull(id) ? 43 : id.hashCode());
-            result = 59 * result + (Objects.isNull(orderNo) ? 43 : orderNo.hashCode());
-            result = 59 * result + (Objects.isNull(buyerId) ? 43 : buyerId.hashCode());
-            result = 59 * result + (Objects.isNull(buyerName) ? 43 : buyerName.hashCode());
-            result = 59 * result + (Objects.isNull(status) ? 43 : status.hashCode());
-            result = 59 * result + (Objects.isNull(totalAmount) ? 43 : totalAmount.hashCode());
+            result = 59 * result + getLineCount();
+            Object value = getId();
+            result = 59 * result + (Objects.isNull(value) ? 43 : value.hashCode());
+            value = getOrderNo();
+            result = 59 * result + (Objects.isNull(value) ? 43 : value.hashCode());
+            value = getBuyerId();
+            result = 59 * result + (Objects.isNull(value) ? 43 : value.hashCode());
+            value = getBuyerName();
+            result = 59 * result + (Objects.isNull(value) ? 43 : value.hashCode());
+            value = getStatus();
+            result = 59 * result + (Objects.isNull(value) ? 43 : value.hashCode());
+            value = getTotalAmount();
+            result = 59 * result + (Objects.isNull(value) ? 43 : value.hashCode());
             return result;
         }
 
