@@ -39,6 +39,8 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -95,6 +97,36 @@ class EsdbEventStoreTest {
         assertThatThrownBy(() -> new EsdbEventStore(client).append(ORDER_TYPE, new TestId("conflict"),
                 List.of(new TestEvent(new TestId("conflict"))), 0))
                 .isInstanceOf(AggregateVersionConflictException.class);
+    }
+
+    @Test
+    void malformedMetadataMustFailBeforeDeserializingEvent() {
+        com.eventstore.dbclient.ReadResult result = org.mockito.Mockito.mock(com.eventstore.dbclient.ReadResult.class);
+        com.eventstore.dbclient.ResolvedEvent resolved = org.mockito.Mockito.mock(com.eventstore.dbclient.ResolvedEvent.class);
+        com.eventstore.dbclient.RecordedEvent recorded = org.mockito.Mockito.mock(com.eventstore.dbclient.RecordedEvent.class);
+        when(recorded.getUserMetadata()).thenReturn("{broken".getBytes(StandardCharsets.UTF_8));
+        when(resolved.getEvent()).thenReturn(recorded);
+        when(result.getEvents()).thenReturn(Collections.singletonList(resolved));
+        when(client.readStream(anyString(), any())).thenReturn(CompletableFuture.completedFuture(result));
+
+        assertThatThrownBy(() -> new EsdbEventStore(client).read(ORDER_TYPE, new TestId("corrupt")))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("Invalid ESDB event metadata");
+    }
+
+    @Test
+    void nullMetadataMustFailBeforeDeserializingEvent() {
+        com.eventstore.dbclient.ReadResult result = org.mockito.Mockito.mock(com.eventstore.dbclient.ReadResult.class);
+        com.eventstore.dbclient.ResolvedEvent resolved = org.mockito.Mockito.mock(com.eventstore.dbclient.ResolvedEvent.class);
+        com.eventstore.dbclient.RecordedEvent recorded = org.mockito.Mockito.mock(com.eventstore.dbclient.RecordedEvent.class);
+        when(recorded.getUserMetadata()).thenReturn("null".getBytes(StandardCharsets.UTF_8));
+        when(resolved.getEvent()).thenReturn(recorded);
+        when(result.getEvents()).thenReturn(Collections.singletonList(resolved));
+        when(client.readStream(anyString(), any())).thenReturn(CompletableFuture.completedFuture(result));
+
+        assertThatThrownBy(() -> new EsdbEventStore(client).read(ORDER_TYPE, new TestId("null-metadata")))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("Invalid ESDB event metadata");
     }
 
     @Test

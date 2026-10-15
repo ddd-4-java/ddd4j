@@ -84,6 +84,7 @@ JUnit、受影响模块回归、全量 reactor。没有执行的门禁不得标�
 - 三线是同一产品的 JDK 8、17、21 兼容发行线。共同领域模型、对象/公开方法、输入输出、错误、事件、资源生命周期、测试场景与产品文档应一致；采用现存有效实现的兼容并集，不能删除接口、测试或文档来降低差异数。
 - 三线第三方依赖的集合、版本、Maven 配置及框架 API 按 JDK 8/17/21 各自独立选择，不以同坐标、同版本或同实现为收敛目标；三线必须相同的是 ddd4j 自有业务逻辑与可观察契约。以下平台例外只处理确实受 JDK/框架限制的公开入口，不能豁免相同逻辑的行为差异。
 - `EventPayloadSerializer` 使用调用方显式给出的事件类型回读历史 payload；新增的未知字段在三线均忽略，已知字段仍回读，传入的 source mapper 配置不被修改。序列化产物不引入 `@class` 多态标记；历史载荷中出现的 `@class` 只作为未知字段忽略，不得改选目标对象类型。
+- EventStoreDB 回读事件时，损坏的 JSON 元数据及 JSON 字面量 `null` 必须在载荷反序列化前以 `IllegalStateException("Invalid ESDB event metadata")` 失败；不能吞掉解析错误并把空 Map 当作有效元数据。三线分别使用自身 Jackson 版本。
 - `JsonKit` 的 Jackson 2/3 适配应保持 `LocalDate`、`LocalDateTime`、`Instant`、`Duration` 的公开 JSON 字符串格式与反序列化值一致；单个日期时间场景通过不代表整个工具类已完成收敛。
 - Maven 版本、编译目标、第三方坐标与命名空间、受 JDK/框架约束的适配实现可以不同。每个例外必须绑定确切模块、依赖/API、兼容证据及验证结果；构件缺失和测试未运行不能写成平台不支持。
 - JDK 8 无 `java.net.http.HttpClient`。当前 `ddd4j-data-external` 的 `GeoBaiduTemplate(HttpClient,String)`、`BaiduRegionTemplate(String,HttpClient)`、`BaiduRegionTemplate(String,HttpClient,RegionCache)`、`PconlineRegionTemplate(HttpClient)`、`PconlineRegionTemplate(HttpClient,RegionCache)`、`WeatherTemplate(HttpClient)`，以及 `ddd4j-data-crypto` 的 `FlksecCryptoStrategy(ObjectMapper,HttpClient,String,String)`，共七个构造器按完整 JVM 签名、源码符号和三线共同本地 HTTP 契约测试登记为平台专属公开入口；1.0.x 保留 Hutool HTTP 与本线公开构造器，2.0.x/3.0.x 保留 JDK HTTP 入口，各线使用各自的 Jackson 依赖。原始 API 差异必须继续输出；未登记的构造器及业务行为差异仍阻断验收。
