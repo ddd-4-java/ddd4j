@@ -2236,34 +2236,6 @@
                 <artifactId>credit_card_number</artifactId>
                 <version>3.0.0</version>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/org.chromium.net/cronet-api -->
-            <!-- Chromium Cronet API：Chromium 网络栈的 Java API（高性能 HTTP/QUIC 客户端）。 -->
-            <dependency>
-                <groupId>org.chromium.net</groupId>
-                <artifactId>cronet-api</artifactId>
-                <version>${cronet.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.chromium.net/cronet-common -->
-            <!-- Chromium Cronet Common：Chromium Cronet 的公共模块。 -->
-            <dependency>
-                <groupId>org.chromium.net</groupId>
-                <artifactId>cronet-common</artifactId>
-                <version>${cronet.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.chromium.net/cronet-embedded -->
-            <!-- Chromium Cronet Embedded：Chromium Cronet 的嵌入式实现（无需外部 Chromium 二进制）。 -->
-            <dependency>
-                <groupId>org.chromium.net</groupId>
-                <artifactId>cronet-embedded</artifactId>
-                <version>${cronet.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.chromium.net/cronet-fallback -->
-            <!-- Chromium Cronet Fallback：Chromium Cronet 的回退实现（当 Cronet 不可用时使用 HttpURLConnection）。 -->
-            <dependency>
-                <groupId>org.chromium.net</groupId>
-                <artifactId>cronet-fallback</artifactId>
-                <version>${cronet.version}</version>
-            </dependency>
             <!-- https://mvnrepository.com/artifact/org.owasp/csrfguard -->
             <!-- OWASP CSRFGuard：OWASP 的 CSRF 防护库（自动生成/验证 CSRF Token）。 -->
             <dependency>
@@ -4010,7 +3982,7 @@
             <!-- HBase Protocol：Apache HBase 的 Protobuf 通信协议定义。 -->
             <dependency>
                 <groupId>org.apache.hbase</groupId>
-                <artifactId>hbase-protocol</artifactId>
+                <artifactId>hbase-protocol-shaded</artifactId>
                 <version>${hbase.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.hdrhistogram/HdrHistogram -->
@@ -7205,22 +7177,13 @@
                 <artifactId>nimbus-jose-jwt</artifactId>
                 <version>${nimbus-jose-jwt.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.apache.commons.ssl/not-yet-commons-ssl -->
-            <!-- Not Yet Commons SSL：Apache Commons SSL 的早期实现（JSSE 包装工具）。 -->
             <dependency>
-                <groupId>org.apache.commons.ssl</groupId>
+                <groupId>ca.juliusdavies</groupId>
                 <artifactId>not-yet-commons-ssl</artifactId>
                 <version>${commons-ssl.version}</version>
             </dependency>
             <!-- NOT Yet Commons SSL -->
             <!-- Source: https://mvnrepository.com/artifact/org.apache.commons/not-yet-commons-ssl -->
-            <!-- NOT Yet Commons SSL -->
-            <!-- Not Yet Commons SSL (Apache)：Apache 版本的 Commons SSL 工具库。 -->
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>not-yet-commons-ssl</artifactId>
-                <version>${commons-ssl.version}</version>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.larksuite.oapi/oapi-sdk -->
             <!-- 飞书开放平台 SDK：字节跳动飞书/Lark 的 Java 客户端 SDK（消息、文档、日历等 API）。 -->
             <dependency>
