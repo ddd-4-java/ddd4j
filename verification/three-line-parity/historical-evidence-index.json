@@ -1,0 +1,1711 @@
+{
+  "schemaVersion": 1,
+  "scope": [
+    ".superpowers",
+    "docs/superpowers",
+    "docs/reference/fuin-api-patterns"
+  ],
+  "entries": [
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/blocker-fix-brief.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "f9a843f537dc0841da207c7490c83473b99745799d7bc305ef97b1a9f2221e1a"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/blocker-fix-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "803194b5dba486c4f6ec8e3b06306f12a9b41e85f4b489e454e913b1685f2d41"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/merge-compare-core.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "078bca93a26ab271a02d4ec534ecb6bd769c8532782ba86ab5477a1a08ceff5a"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/merge-compare-data.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "0d0d67b8b4f4bdff09764bd7a7069a0de7be82dbb91a18d1a389f86335dd203c"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/merge-compare-mq-kit.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "7c10334ca410e1248647fba3528d4f6c516dfdd8a84e2338c104beabb0c0c264"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/merge-compare-poms.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "a6e91cf367eeb30d2a879bf6150d788308524db4f15590f66086f3ea0594070a"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/merge-compare-runtime.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "0f6de8eea39fb668d3b753b757f74256be2bc691c7ad53ecad179d0b2dd246fa"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/merge-compare-samples.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "9d60144ddca5c849b05cbd392c8f480bab9ba4c9274ddf79aa9c4b6049e6eafb"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/optimize-contract-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "b5ac02aabf790c8c19400786a034b3c2d466917c216890a6b2e65e7f81f72fbe"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/optimize-core-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "aaef60272a37be0d79c8f9465cf55e43a860d617b7af5a9afe6688e4d125fa56"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/optimize-esdb-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "110d9c3b7453868a183eb59a664534e1addae9e0619078e4769571f69920feba"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/optimize-guice-report.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "3ba4f41ed392569418a47b78acb945f22dbee8f8f28e451b1c9c81677db12856"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/optimize-otel-guice-report.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "5f5af0930b1d4ee6ac749fdfe9b76bf98a82b53ccd60adb4cc223a9eeaca7019"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/optimize-quarkus-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "d47abde26bca7e1a37dd3340fe6acb77ef239ee38230221d3ae8e4cccae94e96"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/optimize-samples-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "d723d6f90b69d56c886b39719d20af3c64a71043e222e86709ef5227dd40b57e"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/optimize-spring-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "9d37a7ed61896c476b456f149644d63bd583e040a030e4576ba76588d173a8a6"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/optimize-status-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "214676bdf9d6e1afa47d498fcc573d8960047a50294e75acf15f9eb2fd8944ef"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/progress.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "0b8140692c8ba7212abb705fea079ed98c36a322c8f7a84dbbee3426a11cc738"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/refactor-magic-values-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "f2d8cde24b82f50f64a62417cafcc068db0d0c4da2f89ce325a186e98a5a52be"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-0.1-brief.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "5980fb32ffd5ad80c2465bfe157dac86efb724857590e31189be3fbdb97432d7"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-0.1-fixup-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "9dacebfec857a81f5b89f3bd21e189f76eeeca5ba357230a09e60a9117362cfb"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-0.1-report.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "aac1eff7cd9fbb5c75a22dd6a124d4f0d9e584a077d800492b8d022524ebf1a1"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-0.2-brief.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "acd97ccf39f959bea80b2fc6f0f28de3894f91d6659fa24b74c7d79fde0722ed"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-0.2-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "9f417439bdefa92f5e2e29297a6f934edec43820b177434187d8066cc96d044d"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-0.3-brief.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "e331a1a8997cfc01d1e099288e0649fd3f5d7bc6363af8a4425345ab832df5ab"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-0.3-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "142b49da8ed78cf6f6df5c49232bae1bb405492e6aeb0bc28487dd52f80df4a4"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-0.4-brief.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "269729904f1834da7c322682844673886c592a7b9b8b170440d5115c2ac023c8"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-0.4-fixup-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "d4ca0c256427f742d2ff9d7d291a4bbfe4dbbdfa1c35df2f06b85725b7450ba0"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-0.4-report.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "8904471b95823d98c15c795582bf87cb7c22e0bdb998555878052b894e4a15a3"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.1-brief.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "6255ab44d3c9b307808258429736fc361c8d46a511204df9724c739bd5a9c458"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.1-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "0072f33f222fbd00cbe5230f7d43bf7bbca999775640669c82fac7a0d149ebde"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.10-brief.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "78e6fd0a51e3a5dc0e516ccb6586ccdf89eb4343c3a167387dcd4a09cd7d0b5c"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.10-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "b775fa526b5703ed5da8705335637da64a20b11f3fc9f062afbac965a00e970e"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.2-brief.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "ed8d4d5d881ca37aea305f26d58609f9d52a587289478752d70a3c591a493fd1"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.2-report.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "81e4112960074f0d5c5802e4d9474bd5a8b067e5c56032b53cfcce599cdbf5bc"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.3-brief.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "211cb66a2b252b2aca33ae5b20270891882d490330b6f4659cab83a12e59a8ba"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.3-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "8a7a5b2a96594081f415fc03c0cd015405e156c427c73320eff64a96032f0092"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.4-brief.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "892ab1020bc8ff7196a9e5c32eda7fea661d95c3ab712c2121a678cd4416082a"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.4-report.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "e6912aa8233c3fef2dfd12f6ed5d4881383de922cdec415dd250f206a956d217"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.5-brief.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "120e1118f66869dae49123c86421f0ec51ffe7c6271996cf8981ad1bb0125f2b"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.5-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "2931362c26f59bf877d2d7a9b187f44491888a757e7fc561d2e6bb0862f0bd20"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.6-brief.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "92c09b2a54818fab1e4ef35201ec3bfb3a5f3a98f6c936b637da8d02b35bf182"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.6-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "8dc60273de6addce514a7e27947eed59ed08b2deff11d23e1bbf8d1532c3c11f"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.7-brief.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "f71ef977d6fb3b251240abefb2efcbef877f3c049260263e245fb1e100ee5040"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.7-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "d7630ce1e37ee51c6182ac8d37c9d41ee9c6a51c4de9ab2a314c791f16a70a63"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.8-brief.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "5b1b355d1a03d42ca2f72e9b0b8b798fa70f077c4d254225bfe8053f89798bc5"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.8-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "ecdcb64d83429732a19403995ac5e141109047418475827ec0a966d8854bf499"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.9-brief.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "969c9fae8b95bfe41d28e7ab946293fc5ee60934b25fee0cbbe63d9b5837d92d"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.9-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "01acde6d709247d1668089b2fe5ad43405f4103ae7d5f4358d28e953f9ef3ad5"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-2.1-brief.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "4a6beac735b5d634984aced2b6f56027bfff851146cc9bd19422f334d05abce9"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-2.1-report.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "3ab07d4324a28d15e99ac40de3e200cf12e428cbee415f6a6bcaf24b3c9f7554"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-2.2-brief.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "e5eb87272c17e3e2fc73a143c15d9856017861f37b3d590cc6bb25befea35bcb"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-2.2-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "3cc0a19578274b16bd00520f7576aefe2caf9c372372a65c21f533a5de1e1edc"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-2.3-brief.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "0c98ddffa00e2e0b428ef6b2688242f82a717ec57aa142d7296bf4b9260504b4"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-2.3-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "ab7b52b603666d19209ccd0be90d66e3cbb88d3284b717aa77ca189765fa130f"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-2.4-brief.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "44783a35c9ef838ec082d28567270d24ec947be5bdeea29f27415a754d74afd3"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-2.4-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "40347fc4e8a0db9ae090152b62c024b0fa1597a2d2a31fec291b405e2e53a51f"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-2.5-brief.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "e49ea12282dbca4c28a70db9e0ac86f2e4dfaee2b8d22ce3edbd496060485a5a"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-2.5-report.md",
+      "sourceCommit": "f74cad8cce71be0162bdd432cb6d42bf97e10891",
+      "sourceTime": "2026-10-10T12:59:18+08:00",
+      "sha256": "79f43932ae11cd6dab598554bda1ed7dd1b11226eb9737b20314f9c34c789cfe"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-3.1-brief.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "144eddf5f3ada94f38bf1893e237e62f964237cb81c9a9e799a67e40ca707c5b"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-3.1-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "a12f72d36575f277f3ddb2598a7bb82ba3d8178bc016a22feb07d11d05843dea"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-3.2-brief.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "43e90596edbdfd2789b2db082d21fc8b2d9dfe74b5c3de42e5466e6ff9d2277c"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-3.2-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "ffe2d63f544c6703fa9b8b891d3d8db463a0d5cc6ac9777dedc1515cea6e3ddf"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-3.3-brief.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "849c2265a14787094cc10031e57f644a53db5e6c5777b08cf7a883acd3d7589e"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-3.3-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "6b5b881964cbd082d4a1e3df3dfa250b65aeafeccc162a8f2e1c7dbfc784d2c8"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-4.0-brief.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "d7981cd2b65634944d4ca41298efaa90ce7b458a2d3452308f216fb0a5312cb9"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-4.0-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "f5e97055b5fe9f4adf6696fc7f3050265f2f46cbabb6489c86a7f04cabafbe91"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-4.1-4.2-brief.md",
+      "sourceCommit": "5ba105c6c4be20312186c5f215dc9717c7396dba",
+      "sourceTime": "2026-10-10T02:51:17+08:00",
+      "sha256": "f14a6dc1e1c40a7d5978f0d695de671e4799bf039ec7650ae3316822e954b15d"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-4.1-4.2-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "ccbe096492f39624fa79eaa610432c9851a54a3ae2315757916b476ff9d37cb4"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-4.3-brief.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "f8d366a951aeebe81df9b2227de4f4e570b7db0aab998a0255ba7e85e82b40d5"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-4.3-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "79ed24fc131627c5e75f7c80b2e6a1d77a3b4e98bfa97262ee5259ab91097542"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-4.4-brief.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "7edaa977faa99e8cdbadefe8bdcbc9bd04b994f71dbb604a332182efe0893f54"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-4.4-report.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "80062a6c839463812574697b03a5baf746b543f5e934b019a0624fe700f5a044"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-5.1-5.2-brief.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "f3251dea4322379e8f921bc4c5642878fe473d12542ce2fa1e22ab2fea688ecd"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-5.1-5.2-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "7e1cc3d0fb7d4cea561c866a3fc0d51f2b9b919550a1c3e20719156d006339ea"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-5.3-brief.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "8a16eb68fbc2d5642165ba109ee9da820aecebbd40af1605f454c30e040f1efa"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-5.3-report.md",
+      "sourceCommit": "5ba105c6c4be20312186c5f215dc9717c7396dba",
+      "sourceTime": "2026-10-10T02:51:17+08:00",
+      "sha256": "fc4f51c28955c26b800f782f2481d63b77db1b9b4939811f47ef46297e4b8085"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-5.4-brief.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "2ef5c4d6deb2b30b0e2fd4a9785336a783444d7e57d34817346d15fbd6cfd320"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-5.4-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "be425b219c2d0ed05e67991c75455ae31b3876b3dcac17e3f995e75170e36845"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-6.1-6.2-brief.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "f6c7443a7e05f4fceae7e866abbb771bb7aa752b4fe6f4988742f87a2c636db1"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-6.1-6.2-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "e31d2da6381d3754b1d0e39bb7513778a5eb412b6be6dc51deca4f3b15a3ba55"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-6.3-6.4-brief.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "b4f74cec982e4015e1abed9b366020cbbf40f8382e6e259863830d1af02a28b4"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-6.3-6.4-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "9f65995042e63e9c8cd5e9f85586a1893c0897d8a775d4ea9fa8a2033ed38172"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-6.5-6.6-brief.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "5277051bf5e47eaf93301999e947c50910b0c986c3549ef53b143a3a87e436a2"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-6.5-6.6-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "b7819297766c8ad7ef51439dc5ea1e69c4b253e1c125e9660df33ce3e0f2b5c0"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-6.7-6.8-brief.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "73787992b248b655e1487457dc0975ebb0b219dc7e125bc691ec7759d773ac6b"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-6.7-6.8-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "f20be54d3a4ae1c94dec1d7e44f2c3af20640df53741b37b527870c6fd9d0aaa"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-6.9-brief.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "fb28e559784d6eee4af5bdcc79c38355559d1a906e7d9fe57d4a10c213f7465e"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-6.9-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "620c30c3017b49cc54c5b7ee717f83278a7633afcec420b034ffe75e4ed7c2a8"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-7.1-brief.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "e72d1b72fd7436393268cad2ed0411b74ea80ff23e2c9bbef731fee2256c1f12"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-7.1-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "70a130dfa5769bf59436bf95a5ffc5d96727f15c60f108aa15f5bef798f04161"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-7.10-7.11-brief.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "23f8eb79fd10eee89877b5931be3372b89b081cbcfc28caeea2e0b96f0c7f00f"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-7.10-7.11-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "676258419ca42b25bdb75bc56fe20129f32b8fe99ce53599f2b0a771e6552e09"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-7.12-brief.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "739d916520bcb4f547df1caedd47bb8853b2df6c3795b40eb7a021d1e4a2a573"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-7.12-report.md",
+      "sourceCommit": "5ba105c6c4be20312186c5f215dc9717c7396dba",
+      "sourceTime": "2026-10-10T02:51:17+08:00",
+      "sha256": "470649b76d7a962d87ef42a1652892b983ea5a9f0bf337834aea759edb453c30"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-7.2-brief.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "4707394a933589036996754bcfd64430eff49d54e069ab39c98cf61ee58add62"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-7.2-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "a25010116995d71535a2a69452d827929ff79fce19516e646b2e5bba88bae339"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-7.3-brief.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "ea166b9f5828b2e12f1a6134f4e4038b3a954d0bca1589cdefc762aa3c069ea9"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-7.3-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "d49b059cb383caf953f815f1de2a1eead64617ead0fcd5302fd7b2fd2ef2a71d"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-7.4-7.5-brief.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "d658b9e932389c23322399596dfa6222ea4d0077288ff28e699a6ebd8398b665"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-7.4-7.5-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "aea458b7ddae8b8d2aab5cdfcfe4bd158eb9c7197a2016d5ca789eb36930b96a"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-7.6-7.7-brief.md",
+      "sourceCommit": "5ba105c6c4be20312186c5f215dc9717c7396dba",
+      "sourceTime": "2026-10-10T02:51:17+08:00",
+      "sha256": "a41363367cbbb887191430330118aa01636370320cbced78d2c0fb368e079ecb"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-7.6-7.7-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "b5df758bfcd4748bf60743a8f08c2261621b4573dd8c5ce0694c24bccf785737"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-7.8-7.9-brief.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "dea5b4d9cd350192490443be78a24dc767e4cdc7b67e2c624715c9ebec0bf96b"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-7.8-7.9-report.md",
+      "sourceCommit": "5ba105c6c4be20312186c5f215dc9717c7396dba",
+      "sourceTime": "2026-10-10T02:51:17+08:00",
+      "sha256": "da122ce54d70692f212c928023b547154bfb3fc7032e40ed11f7bf3cacd3e25a"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-8.1-brief.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "7f280d5922314468b838cf1ebc012f846cf957caf36172e24ee1a275e4d071f3"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-8.1-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "fb70d6723edb02f0bbce541ca3b79782f252eb463545376e13d1f649aa466cac"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-8.2-brief.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "aa011d052cae89a2559ba5bbb901d8e0ee8541d1122495839b4be6c90a8b5520"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-8.2-report.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "9179d7b7464898a567e8d3976ed3a18bb58af616cc550e9207c6ae3a4817cc26"
+    },
+    {
+      "line": "1.0.x",
+      "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-9.1-9.3-brief.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "fc1e0fefe529e19604913132eb02afe95fb2ec4dd7e05ae38af58882603c6bb2"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/reference/fuin-api-patterns/01-aggregate-root.md",
+      "sourceCommit": "f74cad8cce71be0162bdd432cb6d42bf97e10891",
+      "sourceTime": "2026-10-10T12:59:18+08:00",
+      "sha256": "5a741a2f85e925816566c72eea99eb06ccce5ea6f32ef0a8c1b3c2b4d8a6aa3b"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/reference/fuin-api-patterns/02-entity-id-path.md",
+      "sourceCommit": "f74cad8cce71be0162bdd432cb6d42bf97e10891",
+      "sourceTime": "2026-10-10T12:59:18+08:00",
+      "sha256": "3a0191e4e908a8226ca1d20fe5a1e06aac20dfc7e8adcc9551707347a008fe52"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/reference/fuin-api-patterns/03-domain-event.md",
+      "sourceCommit": "f74cad8cce71be0162bdd432cb6d42bf97e10891",
+      "sourceTime": "2026-10-10T12:59:18+08:00",
+      "sha256": "7e0167e50814acba07863f05eb6e639da886f08b1577de9879b3fe7a4ffcbb9f"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/reference/fuin-api-patterns/04-event-sourcing-repository.md",
+      "sourceCommit": "f74cad8cce71be0162bdd432cb6d42bf97e10891",
+      "sourceTime": "2026-10-10T12:59:18+08:00",
+      "sha256": "80f6ea3d173d0cd44fcc793a332aef26efd6b3364e5155e1b951654a018efd5f"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/reference/fuin-api-patterns/05-event-store.md",
+      "sourceCommit": "f74cad8cce71be0162bdd432cb6d42bf97e10891",
+      "sourceTime": "2026-10-10T12:59:18+08:00",
+      "sha256": "4aee15d7c89215d848e8d15f1ca79e8948891a231241140b24a509596eba8585"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/reference/fuin-api-patterns/06-cqrs-command.md",
+      "sourceCommit": "f74cad8cce71be0162bdd432cb6d42bf97e10891",
+      "sourceTime": "2026-10-10T12:59:18+08:00",
+      "sha256": "69fcbcd182a2ad39a28290bf7aec61f8176cab7837e2f555720ca24069e9777b"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/reference/fuin-api-patterns/07-cqrs-projection.md",
+      "sourceCommit": "f74cad8cce71be0162bdd432cb6d42bf97e10891",
+      "sourceTime": "2026-10-10T12:59:18+08:00",
+      "sha256": "4e5a1b88c41955accc206f02eb3527192442e2376130832d563bbcdffa352fbe"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/reference/fuin-api-patterns/08-architecture-test.md",
+      "sourceCommit": "f74cad8cce71be0162bdd432cb6d42bf97e10891",
+      "sourceTime": "2026-10-10T12:59:18+08:00",
+      "sha256": "d4cbab45e1356eb586caae64b9a079fb6869bfa1a79b68d6b5b2094d8dc7cfca"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/reference/fuin-api-patterns/README.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "9046789c7a985f3cabfc783e9e2a7f4d3cbd2e1ab571b54dd3a4e5fe8c0b21d3"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/MIGRATION_MAP.md",
+      "sourceCommit": "f74cad8cce71be0162bdd432cb6d42bf97e10891",
+      "sourceTime": "2026-10-10T12:59:18+08:00",
+      "sha256": "ec914733962f9a5c0dfd84e5e574601fdfae205329b5ae6b4085b70e21a6ae67"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/plans/2026-06-27-ddd4j-2x-refactor-migration.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "ddf444fe54c5089ae21f770998e94e95ce86b3edab4dc4c6799ba66156f2f6c5"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/plans/2026-06-29-ddd4j-data-optimization.md",
+      "sourceCommit": "f74cad8cce71be0162bdd432cb6d42bf97e10891",
+      "sourceTime": "2026-10-10T12:59:18+08:00",
+      "sha256": "d02f420e60bc6fab5bf6420edffb17b35c081459fef46ee1f848f9819cf03369"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/plans/2026-07-02-3x-context-lookup-migration.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "3c40599915cdccac7e972e638a69b9acd61c6bed3874163ac2cf1c87d47aa460"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/plans/2026-07-06-3x-domain-reorganization.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "ce6c26ec9052c3b5bbe601e387c423c6a2ff93122493d30c8cdac6c0d82fcfc3"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/plans/2026-08-03-production-release-quality.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "29982a8d84d18482cb5f60aa9b7f5ecf96500c4db440c4572c032a9f10280763"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/plans/2026-08-24-fuin-reference-self-implementation.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "20076d704505db50f4560f331ff57a7a9cbb997e94ba6eab44b8cba59950b98e"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/plans/2026-08-24-multi-runtime-self-implementation.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "752dec1a1f1f3897e826b40684c5a32ab5732041649c6a3508a3432826586fbd"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/plans/2026-09-06-three-line-parity-batch1-results.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "b0c9a46678e08ff347e1f8e5cd86afd42fcff3bb82542477be5c1d04a2587880"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/plans/2026-09-06-three-line-parity-batch1.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "1d58432c8d0e07fc6a2add8e6957c94cd78afef8ebdae7214156ca8a35c122d5"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/plans/2026-09-07-three-line-parity-convergence-results.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "f10609b33d18e4b228cd89f53c8b4d1da02e694f755853ca911593656b9167a7"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/plans/2026-09-07-three-line-parity-convergence.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "e15ec019a29dd1e9583c5892791f092d6f1867224b1bd075350b51181729ac03"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/plans/2026-09-08-dependency-alignment-results.md",
+      "sourceCommit": "f74cad8cce71be0162bdd432cb6d42bf97e10891",
+      "sourceTime": "2026-10-10T12:59:18+08:00",
+      "sha256": "500df7b952d86c83de8232c7911d10005f3a4b59d6467fce23c5ba3a144d6a82"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/plans/2026-09-08-dependency-alignment.md",
+      "sourceCommit": "f74cad8cce71be0162bdd432cb6d42bf97e10891",
+      "sourceTime": "2026-10-10T12:59:18+08:00",
+      "sha256": "0d6b4f53cb13965b46eecdb0f96f19e9af0b1ff421a956434152db9ede1472e5"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/plans/2026-09-08-explicit-jpa-transaction-participation.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "082adba8d5dc09bbeb2910c4e8613a28c753f60dd230ef40aceed4160a236b63"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/plans/2026-09-08-truelicense4-migration.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "adf37afb88f62f06af7d954097cb4e591b9b2e358f7446f94ef22181d2231ce7"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/plans/2026-09-10-license-gate-hardening.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "225493f1bb23cece4c162fa3198dcb264d4b21725dd0bf421c4e186fea86d149"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/plans/2026-09-10-mq-startup-lifecycle.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "8273355def751b422c776cb4bc4bcd4930e210029dc374632dae51068c8d27b4"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/plans/2026-09-15-ddd4j-family-logo-system.md",
+      "sourceCommit": "f74cad8cce71be0162bdd432cb6d42bf97e10891",
+      "sourceTime": "2026-10-10T12:59:18+08:00",
+      "sha256": "d596648f0319f00ae0cdefe348ad8d3c1f4daca6941075c0469a19eb30b94fa9"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/plans/2026-10-10-three-line-product-convergence.md",
+      "sourceCommit": "7a79cde02d45367f1063c66f6a1f58401fdbea91",
+      "sourceTime": "2026-10-15T21:32:21+08:00",
+      "sha256": "0046bb28c36c5d3d6430b56db8c586828cd147d8294965c30ee5a8930eb86b81"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/reports/2026-09-09-three-line-source-parity-audit.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "03a866aa382a8f9fc67a0e5e7035259b3d1e1626281882cf3427979580a7042a"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/specs/2026-06-29-ddd-4-java-architecture-design.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "fe3f74f5cf2e764ebcb4d6595ccf088be1c8108de349f2269004696d006c384c"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/specs/2026-06-29-ddd4j-architecture-overview-design.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "93ed8c529eb4ef352e614908da95f2f10f7e6bddc64b099e1184f99e44ae9b08"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/specs/2026-06-29-ddd4j-boundary-rules-design.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "e53beb3d154329c6c04a54545ce0b8ab07d0d51ef7fc976fbd8ec040b6a5737f"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/specs/2026-06-29-webflux-flow-design.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "01e123ba18f1ddfeb9e90e54033b675fa0a0c6be90cf035a4bd8fb54985e8057"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/specs/2026-06-30-webmvc-flow-design.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "591ea3e360b89004622970fd08723d5555746571d052da14dd83d8b2a510fced"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/specs/2026-07-01-ddd4j-full-architecture-review-design.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "175557fc9d7fa443c6b4a5993c3501537a45fc9ed6061ef554120037862e53cb"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/specs/2026-07-01-ddd4j-quarkus-adaptation-design.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "62e814e0b42e44cac3727cded89c2f28c1038e99f203bddef932f1e9783b653d"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/specs/2026-07-02-annotation-architecture-design.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "d195bd9eb3a5c3ca3faa32e813d1f61cc60937c9a7461baba3f70f1e2be9d382"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/specs/2026-07-02-cqrs-4-java-architecture-design.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "36186caf2de717d1c43c79c257f85dfe5e9bd94222e5cef344ba821618cea2d5"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/specs/2026-07-02-ddd-cqrs-example-architecture-design.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "38a0c7b5c3d4b90e6ae87054cf457a55953bc5e94bdcff418bd3b13ab2659863"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/specs/2026-07-02-optional-migrations-design.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "b43ff2a831a45206c044e822cfb81bb85142a71b4a3db04063fc5f34235261c3"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/specs/2026-07-02-satoken-auth-design.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "d3553eba20e320a9a6f486c8a02bc8f9a57abbff15d3f34b39e6d01cb5e979bb"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/specs/2026-07-15-current-source-architecture-design.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "583067b9ae8771ec0bda2145d0bc9bd1592cc51ed5a79d92f4f88784fed4e866"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/specs/2026-08-03-cloud-mq-rc-evidence-design.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "526a2c4b298dec37aabd0239171f7c8a15bdada0bd77149103f729f641e93fc8"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/specs/2026-08-03-performance-report-contract-design.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "5e351c7027183e382a759d752a5efaf6a0182d812a8fbbe59a61e932ded36c34"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/specs/2026-09-06-three-line-parity.md",
+      "sourceCommit": "0ab39539133c0fd3c2a4fa34253934df1fb5aa71",
+      "sourceTime": "2026-10-15T20:54:02+08:00",
+      "sha256": "3dce7deb998a6e64a6a8b4596d716c0bb84d925d38e2ad721a54296f4c70b706"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/specs/2026-09-07-module-granularity-consolidation.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "a17aa3eab569932748cc74268aac3fe15015cd0bf6ce499802652dce81e4c7eb"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/specs/2026-09-08-explicit-jpa-transaction-participation-design.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "d603ad1398f6ccfb8f0fba42422fa1c79b0e0b8260b9d8a03a1c1696afa3dcfe"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/specs/2026-09-08-truelicense4-migration.md",
+      "sourceCommit": "5ba105c6c4be20312186c5f215dc9717c7396dba",
+      "sourceTime": "2026-10-10T02:51:17+08:00",
+      "sha256": "bf05dac73289958a59a6f6331fcfa4757e767ff2d44991ff7934fc4fe307ac54"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/specs/2026-09-10-license-gate-hardening-design.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "1cf9e0a1bf5032702d0c7ff2863bb09ae442f7aed775a50cb1ef6e02e2729271"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/specs/2026-09-10-mq-startup-lifecycle-design.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "4a605f00d07b3687fc1f41a258055b2a546f95410628a939fc12ed0d5ef789d7"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/specs/2026-09-15-ddd4j-family-logo-system-design.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "e1e8f47fee04b1b5c80ed7266858fd1b198f2ec63a75aa8e4dd2c5d8942182f6"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/superpowers/specs/2026-10-10-no-record-design.md",
+      "sourceCommit": "7dd68022eea8b725e2d3041d0d9588d88988989b",
+      "sourceTime": "2026-10-10T14:05:25+08:00",
+      "sha256": "c86ed12bed9aa5e95c98d4c12121ac3f8937040dee59fba61a1b196f5f434af6"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/reference/fuin-api-patterns/01-aggregate-root.md",
+      "sourceCommit": "d848eb550f477d4ef6927465eb6e329dd7c85e7a",
+      "sourceTime": "2026-10-10T01:48:18+08:00",
+      "sha256": "799f916a9c5614ddb02f12f08167e182488d1a8ff3b65dad283009e7b1fd4572"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/reference/fuin-api-patterns/02-entity-id-path.md",
+      "sourceCommit": "d848eb550f477d4ef6927465eb6e329dd7c85e7a",
+      "sourceTime": "2026-10-10T01:48:18+08:00",
+      "sha256": "b52d4c9f161d8f5297c4bbc5ff729c942082f6f55ec1ed1d394eb1ade82ded1d"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/reference/fuin-api-patterns/03-domain-event.md",
+      "sourceCommit": "d848eb550f477d4ef6927465eb6e329dd7c85e7a",
+      "sourceTime": "2026-10-10T01:48:18+08:00",
+      "sha256": "8e29c762cffe8b4ca01817d83deaebd3294dede4648e94ebb07c5966bfd6bc6e"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/reference/fuin-api-patterns/04-event-sourcing-repository.md",
+      "sourceCommit": "d848eb550f477d4ef6927465eb6e329dd7c85e7a",
+      "sourceTime": "2026-10-10T01:48:18+08:00",
+      "sha256": "67f65acb1a6ee7bb01eaa44d9dd93d1aa56272cb4c5dc430ae24010c79c2dac2"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/reference/fuin-api-patterns/05-event-store.md",
+      "sourceCommit": "d848eb550f477d4ef6927465eb6e329dd7c85e7a",
+      "sourceTime": "2026-10-10T01:48:18+08:00",
+      "sha256": "f73f055d2a28168366a533faa91d814c48c4dfbd079edac9a56b5d0b75da5901"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/reference/fuin-api-patterns/06-cqrs-command.md",
+      "sourceCommit": "d848eb550f477d4ef6927465eb6e329dd7c85e7a",
+      "sourceTime": "2026-10-10T01:48:18+08:00",
+      "sha256": "db3a6d461f9019367e7da93a4064e8094ab65b2a4789b01a027582f3a6105e6b"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/reference/fuin-api-patterns/07-cqrs-projection.md",
+      "sourceCommit": "d848eb550f477d4ef6927465eb6e329dd7c85e7a",
+      "sourceTime": "2026-10-10T01:48:18+08:00",
+      "sha256": "8280c1cbb53b6efa4defa0f71e906d19f1b0064bbf8f4764ef3c804a658654ca"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/reference/fuin-api-patterns/08-architecture-test.md",
+      "sourceCommit": "acb6e68274368f5e8cb68f72b3257b89f20cefd5",
+      "sourceTime": "2026-10-10T02:51:38+08:00",
+      "sha256": "fa261d81cdb40586a72ec0d27a97371094c3bc27abfecd4f590df3001723eab3"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/reference/fuin-api-patterns/README.md",
+      "sourceCommit": "d848eb550f477d4ef6927465eb6e329dd7c85e7a",
+      "sourceTime": "2026-10-10T01:48:18+08:00",
+      "sha256": "9046789c7a985f3cabfc783e9e2a7f4d3cbd2e1ab571b54dd3a4e5fe8c0b21d3"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/superpowers/MIGRATION_MAP.md",
+      "sourceCommit": "d848eb550f477d4ef6927465eb6e329dd7c85e7a",
+      "sourceTime": "2026-10-10T01:48:18+08:00",
+      "sha256": "88595262a634aca1ff222e2cd7daf0b6dde533fedb4b9da0a3241e0a9d7b8e43"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/superpowers/plans/2026-06-27-ddd4j-2x-refactor-migration.md",
+      "sourceCommit": "d848eb550f477d4ef6927465eb6e329dd7c85e7a",
+      "sourceTime": "2026-10-10T01:48:18+08:00",
+      "sha256": "ddf444fe54c5089ae21f770998e94e95ce86b3edab4dc4c6799ba66156f2f6c5"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/superpowers/plans/2026-06-29-ddd4j-data-optimization.md",
+      "sourceCommit": "d848eb550f477d4ef6927465eb6e329dd7c85e7a",
+      "sourceTime": "2026-10-10T01:48:18+08:00",
+      "sha256": "94153f6e6b66bf1018f35d5ae393dd668557c20f30155c946f9cb457553d9f84"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/superpowers/plans/2026-07-02-3x-context-lookup-migration.md",
+      "sourceCommit": "d848eb550f477d4ef6927465eb6e329dd7c85e7a",
+      "sourceTime": "2026-10-10T01:48:18+08:00",
+      "sha256": "3c40599915cdccac7e972e638a69b9acd61c6bed3874163ac2cf1c87d47aa460"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/superpowers/plans/2026-07-06-3x-domain-reorganization.md",
+      "sourceCommit": "d848eb550f477d4ef6927465eb6e329dd7c85e7a",
+      "sourceTime": "2026-10-10T01:48:18+08:00",
+      "sha256": "7a22b4612a3a417de659fae98457b2d22cb8dbca6373447f03eb270a494b5846"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/superpowers/plans/2026-08-03-production-release-quality.md",
+      "sourceCommit": "d848eb550f477d4ef6927465eb6e329dd7c85e7a",
+      "sourceTime": "2026-10-10T01:48:18+08:00",
+      "sha256": "29982a8d84d18482cb5f60aa9b7f5ecf96500c4db440c4572c032a9f10280763"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/superpowers/plans/2026-08-24-fuin-reference-self-implementation.md",
+      "sourceCommit": "9d19462409419ff341b54d494e43f4eb650168a7",
+      "sourceTime": "2026-10-14T11:51:21+08:00",
+      "sha256": "31862fa0998161210b9a3f9f55493a3a617d9db853b0871c791e45c04d3aa251"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/superpowers/plans/2026-08-24-multi-runtime-self-implementation.md",
+      "sourceCommit": "9d19462409419ff341b54d494e43f4eb650168a7",
+      "sourceTime": "2026-10-14T11:51:21+08:00",
+      "sha256": "ccc5b5f1fd445e56087aec2299e837ce077347ca02816a412c1223b4358fc21c"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/superpowers/plans/2026-09-10-license-gate-hardening.md",
+      "sourceCommit": "9d19462409419ff341b54d494e43f4eb650168a7",
+      "sourceTime": "2026-10-14T11:51:21+08:00",
+      "sha256": "c214ff08a1447d701e8727e2f20740f5609d0b9bce610b2c17069750d0678486"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/superpowers/plans/2026-09-10-mq-startup-lifecycle.md",
+      "sourceCommit": "d848eb550f477d4ef6927465eb6e329dd7c85e7a",
+      "sourceTime": "2026-10-10T01:48:18+08:00",
+      "sha256": "f33189fb751dfda0fa48aa299f63be6e0b4233f84fe3251053fd0c771c7820f3"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/superpowers/plans/2026-10-10-three-line-product-convergence.md",
+      "sourceCommit": "dbcf789bddc3647bc5c9b31393e492b6b9237921",
+      "sourceTime": "2026-10-15T21:32:22+08:00",
+      "sha256": "0046bb28c36c5d3d6430b56db8c586828cd147d8294965c30ee5a8930eb86b81"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/superpowers/reports/2026-09-09-three-line-source-parity-audit.md",
+      "sourceCommit": "9a24ba874d989eb987bc613f1f38b9e4d254e3c9",
+      "sourceTime": "2026-10-15T00:58:38+08:00",
+      "sha256": "03a866aa382a8f9fc67a0e5e7035259b3d1e1626281882cf3427979580a7042a"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/superpowers/specs/2026-06-29-ddd-4-java-architecture-design.md",
+      "sourceCommit": "d848eb550f477d4ef6927465eb6e329dd7c85e7a",
+      "sourceTime": "2026-10-10T01:48:18+08:00",
+      "sha256": "fe3f74f5cf2e764ebcb4d6595ccf088be1c8108de349f2269004696d006c384c"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/superpowers/specs/2026-06-29-ddd4j-architecture-overview-design.md",
+      "sourceCommit": "d848eb550f477d4ef6927465eb6e329dd7c85e7a",
+      "sourceTime": "2026-10-10T01:48:18+08:00",
+      "sha256": "93ed8c529eb4ef352e614908da95f2f10f7e6bddc64b099e1184f99e44ae9b08"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/superpowers/specs/2026-06-29-ddd4j-boundary-rules-design.md",
+      "sourceCommit": "d848eb550f477d4ef6927465eb6e329dd7c85e7a",
+      "sourceTime": "2026-10-10T01:48:18+08:00",
+      "sha256": "e53beb3d154329c6c04a54545ce0b8ab07d0d51ef7fc976fbd8ec040b6a5737f"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/superpowers/specs/2026-06-29-webflux-flow-design.md",
+      "sourceCommit": "d848eb550f477d4ef6927465eb6e329dd7c85e7a",
+      "sourceTime": "2026-10-10T01:48:18+08:00",
+      "sha256": "01e123ba18f1ddfeb9e90e54033b675fa0a0c6be90cf035a4bd8fb54985e8057"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/superpowers/specs/2026-06-30-webmvc-flow-design.md",
+      "sourceCommit": "d848eb550f477d4ef6927465eb6e329dd7c85e7a",
+      "sourceTime": "2026-10-10T01:48:18+08:00",
+      "sha256": "591ea3e360b89004622970fd08723d5555746571d052da14dd83d8b2a510fced"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/superpowers/specs/2026-07-01-ddd4j-full-architecture-review-design.md",
+      "sourceCommit": "9d19462409419ff341b54d494e43f4eb650168a7",
+      "sourceTime": "2026-10-14T11:51:21+08:00",
+      "sha256": "2c17ad8838472b9ea16f3266098d32d1d344ac7a73da75955ffb73d2cbfdaf98"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/superpowers/specs/2026-07-01-ddd4j-quarkus-adaptation-design.md",
+      "sourceCommit": "d848eb550f477d4ef6927465eb6e329dd7c85e7a",
+      "sourceTime": "2026-10-10T01:48:18+08:00",
+      "sha256": "62e814e0b42e44cac3727cded89c2f28c1038e99f203bddef932f1e9783b653d"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/superpowers/specs/2026-07-02-annotation-architecture-design.md",
+      "sourceCommit": "d848eb550f477d4ef6927465eb6e329dd7c85e7a",
+      "sourceTime": "2026-10-10T01:48:18+08:00",
+      "sha256": "d195bd9eb3a5c3ca3faa32e813d1f61cc60937c9a7461baba3f70f1e2be9d382"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/superpowers/specs/2026-07-02-cqrs-4-java-architecture-design.md",
+      "sourceCommit": "d848eb550f477d4ef6927465eb6e329dd7c85e7a",
+      "sourceTime": "2026-10-10T01:48:18+08:00",
+      "sha256": "36186caf2de717d1c43c79c257f85dfe5e9bd94222e5cef344ba821618cea2d5"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/superpowers/specs/2026-07-02-ddd-cqrs-example-architecture-design.md",
+      "sourceCommit": "d848eb550f477d4ef6927465eb6e329dd7c85e7a",
+      "sourceTime": "2026-10-10T01:48:18+08:00",
+      "sha256": "38a0c7b5c3d4b90e6ae87054cf457a55953bc5e94bdcff418bd3b13ab2659863"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/superpowers/specs/2026-07-02-optional-migrations-design.md",
+      "sourceCommit": "d848eb550f477d4ef6927465eb6e329dd7c85e7a",
+      "sourceTime": "2026-10-10T01:48:18+08:00",
+      "sha256": "b43ff2a831a45206c044e822cfb81bb85142a71b4a3db04063fc5f34235261c3"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/superpowers/specs/2026-07-02-satoken-auth-design.md",
+      "sourceCommit": "d848eb550f477d4ef6927465eb6e329dd7c85e7a",
+      "sourceTime": "2026-10-10T01:48:18+08:00",
+      "sha256": "d3553eba20e320a9a6f486c8a02bc8f9a57abbff15d3f34b39e6d01cb5e979bb"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/superpowers/specs/2026-07-15-current-source-architecture-design.md",
+      "sourceCommit": "d848eb550f477d4ef6927465eb6e329dd7c85e7a",
+      "sourceTime": "2026-10-10T01:48:18+08:00",
+      "sha256": "583067b9ae8771ec0bda2145d0bc9bd1592cc51ed5a79d92f4f88784fed4e866"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/superpowers/specs/2026-08-03-cloud-mq-rc-evidence-design.md",
+      "sourceCommit": "d848eb550f477d4ef6927465eb6e329dd7c85e7a",
+      "sourceTime": "2026-10-10T01:48:18+08:00",
+      "sha256": "526a2c4b298dec37aabd0239171f7c8a15bdada0bd77149103f729f641e93fc8"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/superpowers/specs/2026-08-03-performance-report-contract-design.md",
+      "sourceCommit": "d848eb550f477d4ef6927465eb6e329dd7c85e7a",
+      "sourceTime": "2026-10-10T01:48:18+08:00",
+      "sha256": "5e351c7027183e382a759d752a5efaf6a0182d812a8fbbe59a61e932ded36c34"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/superpowers/specs/2026-09-06-three-line-parity.md",
+      "sourceCommit": "bec99e6040561e4d8e79d5c2beb2e2a4583aa62d",
+      "sourceTime": "2026-10-15T20:54:03+08:00",
+      "sha256": "3dce7deb998a6e64a6a8b4596d716c0bb84d925d38e2ad721a54296f4c70b706"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/superpowers/specs/2026-09-10-license-gate-hardening-design.md",
+      "sourceCommit": "d848eb550f477d4ef6927465eb6e329dd7c85e7a",
+      "sourceTime": "2026-10-10T01:48:18+08:00",
+      "sha256": "1cf9e0a1bf5032702d0c7ff2863bb09ae442f7aed775a50cb1ef6e02e2729271"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/superpowers/specs/2026-09-10-mq-startup-lifecycle-design.md",
+      "sourceCommit": "d848eb550f477d4ef6927465eb6e329dd7c85e7a",
+      "sourceTime": "2026-10-10T01:48:18+08:00",
+      "sha256": "4a605f00d07b3687fc1f41a258055b2a546f95410628a939fc12ed0d5ef789d7"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/superpowers/specs/2026-10-10-no-record-design.md",
+      "sourceCommit": "5e6fac9d958d3634085d595f36d95a74c1405bc4",
+      "sourceTime": "2026-10-10T14:02:47+08:00",
+      "sha256": "dce6838ec3fd77b2f8c6aa432370d34772b3eabb72a0d5f0e77ebf55a315931e"
+    },
+    {
+      "line": "3.0.x",
+      "path": "docs/reference/fuin-api-patterns/01-aggregate-root.md",
+      "sourceCommit": "f558881115e4bc38a46af6dcaaf44333812050b4",
+      "sourceTime": "2026-10-10T02:55:04+08:00",
+      "sha256": "799f916a9c5614ddb02f12f08167e182488d1a8ff3b65dad283009e7b1fd4572"
+    },
+    {
+      "line": "3.0.x",
+      "path": "docs/reference/fuin-api-patterns/02-entity-id-path.md",
+      "sourceCommit": "f558881115e4bc38a46af6dcaaf44333812050b4",
+      "sourceTime": "2026-10-10T02:55:04+08:00",
+      "sha256": "b52d4c9f161d8f5297c4bbc5ff729c942082f6f55ec1ed1d394eb1ade82ded1d"
+    },
+    {
+      "line": "3.0.x",
+      "path": "docs/reference/fuin-api-patterns/03-domain-event.md",
+      "sourceCommit": "f558881115e4bc38a46af6dcaaf44333812050b4",
+      "sourceTime": "2026-10-10T02:55:04+08:00",
+      "sha256": "8e29c762cffe8b4ca01817d83deaebd3294dede4648e94ebb07c5966bfd6bc6e"
+    },
+    {
+      "line": "3.0.x",
+      "path": "docs/reference/fuin-api-patterns/04-event-sourcing-repository.md",
+      "sourceCommit": "f558881115e4bc38a46af6dcaaf44333812050b4",
+      "sourceTime": "2026-10-10T02:55:04+08:00",
+      "sha256": "67f65acb1a6ee7bb01eaa44d9dd93d1aa56272cb4c5dc430ae24010c79c2dac2"
+    },
+    {
+      "line": "3.0.x",
+      "path": "docs/reference/fuin-api-patterns/05-event-store.md",
+      "sourceCommit": "f558881115e4bc38a46af6dcaaf44333812050b4",
+      "sourceTime": "2026-10-10T02:55:04+08:00",
+      "sha256": "f73f055d2a28168366a533faa91d814c48c4dfbd079edac9a56b5d0b75da5901"
+    },
+    {
+      "line": "3.0.x",
+      "path": "docs/reference/fuin-api-patterns/06-cqrs-command.md",
+      "sourceCommit": "f558881115e4bc38a46af6dcaaf44333812050b4",
+      "sourceTime": "2026-10-10T02:55:04+08:00",
+      "sha256": "db3a6d461f9019367e7da93a4064e8094ab65b2a4789b01a027582f3a6105e6b"
+    },
+    {
+      "line": "3.0.x",
+      "path": "docs/reference/fuin-api-patterns/07-cqrs-projection.md",
+      "sourceCommit": "f558881115e4bc38a46af6dcaaf44333812050b4",
+      "sourceTime": "2026-10-10T02:55:04+08:00",
+      "sha256": "8280c1cbb53b6efa4defa0f71e906d19f1b0064bbf8f4764ef3c804a658654ca"
+    },
+    {
+      "line": "3.0.x",
+      "path": "docs/reference/fuin-api-patterns/08-architecture-test.md",
+      "sourceCommit": "f558881115e4bc38a46af6dcaaf44333812050b4",
+      "sourceTime": "2026-10-10T02:55:04+08:00",
+      "sha256": "746c11b797af11600e321d27e3083892f393725af4a7c76782708055e6c98d1e"
+    },
+    {
+      "line": "3.0.x",
+      "path": "docs/reference/fuin-api-patterns/README.md",
+      "sourceCommit": "f558881115e4bc38a46af6dcaaf44333812050b4",
+      "sourceTime": "2026-10-10T02:55:04+08:00",
+      "sha256": "9046789c7a985f3cabfc783e9e2a7f4d3cbd2e1ab571b54dd3a4e5fe8c0b21d3"
+    },
+    {
+      "line": "3.0.x",
+      "path": "docs/superpowers/MIGRATION_MAP.md",
+      "sourceCommit": "f558881115e4bc38a46af6dcaaf44333812050b4",
+      "sourceTime": "2026-10-10T02:55:04+08:00",
+      "sha256": "88595262a634aca1ff222e2cd7daf0b6dde533fedb4b9da0a3241e0a9d7b8e43"
+    },
+    {
+      "line": "3.0.x",
+      "path": "docs/superpowers/plans/2026-06-27-ddd4j-2x-refactor-migration.md",
+      "sourceCommit": "f558881115e4bc38a46af6dcaaf44333812050b4",
+      "sourceTime": "2026-10-10T02:55:04+08:00",
+      "sha256": "ddf444fe54c5089ae21f770998e94e95ce86b3edab4dc4c6799ba66156f2f6c5"
+    },
+    {
+      "line": "3.0.x",
+      "path": "docs/superpowers/plans/2026-06-29-ddd4j-data-optimization.md",
+      "sourceCommit": "f558881115e4bc38a46af6dcaaf44333812050b4",
+      "sourceTime": "2026-10-10T02:55:04+08:00",
+      "sha256": "94153f6e6b66bf1018f35d5ae393dd668557c20f30155c946f9cb457553d9f84"
+    },
+    {
+      "line": "3.0.x",
+      "path": "docs/superpowers/plans/2026-07-02-3x-context-lookup-migration.md",
+      "sourceCommit": "f558881115e4bc38a46af6dcaaf44333812050b4",
+      "sourceTime": "2026-10-10T02:55:04+08:00",
+      "sha256": "3c40599915cdccac7e972e638a69b9acd61c6bed3874163ac2cf1c87d47aa460"
+    },
+    {
+      "line": "3.0.x",
+      "path": "docs/superpowers/plans/2026-07-06-3x-domain-reorganization.md",
+      "sourceCommit": "8682542d650ceea402b8e6ead1018fb26e586f7e",
+      "sourceTime": "2026-10-10T13:21:50+08:00",
+      "sha256": "1c40042aeaf2685735a7b4c065f783d42894f2de895e19d35403454c3ffaf5af"
+    },
+    {
+      "line": "3.0.x",
+      "path": "docs/superpowers/plans/2026-08-03-production-release-quality.md",
+      "sourceCommit": "f558881115e4bc38a46af6dcaaf44333812050b4",
+      "sourceTime": "2026-10-10T02:55:04+08:00",
+      "sha256": "29982a8d84d18482cb5f60aa9b7f5ecf96500c4db440c4572c032a9f10280763"
+    },
+    {
+      "line": "3.0.x",
+      "path": "docs/superpowers/plans/2026-08-24-fuin-reference-self-implementation.md",
+      "sourceCommit": "b6406ed710d91ed1d1ad107c12bc669a7c7aae25",
+      "sourceTime": "2026-10-14T13:16:14+08:00",
+      "sha256": "31862fa0998161210b9a3f9f55493a3a617d9db853b0871c791e45c04d3aa251"
+    },
+    {
+      "line": "3.0.x",
+      "path": "docs/superpowers/plans/2026-08-24-multi-runtime-self-implementation.md",
+      "sourceCommit": "b6406ed710d91ed1d1ad107c12bc669a7c7aae25",
+      "sourceTime": "2026-10-14T13:16:14+08:00",
+      "sha256": "ccc5b5f1fd445e56087aec2299e837ce077347ca02816a412c1223b4358fc21c"
+    },
+    {
+      "line": "3.0.x",
+      "path": "docs/superpowers/plans/2026-09-10-license-gate-hardening.md",
+      "sourceCommit": "b6406ed710d91ed1d1ad107c12bc669a7c7aae25",
+      "sourceTime": "2026-10-14T13:16:14+08:00",
+      "sha256": "c214ff08a1447d701e8727e2f20740f5609d0b9bce610b2c17069750d0678486"
+    },
+    {
+      "line": "3.0.x",
+      "path": "docs/superpowers/plans/2026-09-10-mq-startup-lifecycle.md",
+      "sourceCommit": "e96a91d360aa143f9850843ac877803a6bc382ae",
+      "sourceTime": "2026-10-14T15:44:42+08:00",
+      "sha256": "b7fe3cc54c69905395bcfc260adda18f236dc5dc220d0a729fc59c2477510835"
+    },
+    {
+      "line": "3.0.x",
+      "path": "docs/superpowers/plans/2026-10-10-three-line-product-convergence.md",
+      "sourceCommit": "0c073fea15432dafc6f92db5baba50fdeb5e01a7",
+      "sourceTime": "2026-10-15T21:32:23+08:00",
+      "sha256": "0046bb28c36c5d3d6430b56db8c586828cd147d8294965c30ee5a8930eb86b81"
+    },
+    {
+      "line": "3.0.x",
+      "path": "docs/superpowers/specs/2026-06-29-ddd-4-java-architecture-design.md",
+      "sourceCommit": "f558881115e4bc38a46af6dcaaf44333812050b4",
+      "sourceTime": "2026-10-10T02:55:04+08:00",
+      "sha256": "fe3f74f5cf2e764ebcb4d6595ccf088be1c8108de349f2269004696d006c384c"
+    },
+    {
+      "line": "3.0.x",
+      "path": "docs/superpowers/specs/2026-06-29-ddd4j-architecture-overview-design.md",
+      "sourceCommit": "f558881115e4bc38a46af6dcaaf44333812050b4",
+      "sourceTime": "2026-10-10T02:55:04+08:00",
+      "sha256": "93ed8c529eb4ef352e614908da95f2f10f7e6bddc64b099e1184f99e44ae9b08"
+    },
+    {
+      "line": "3.0.x",
+      "path": "docs/superpowers/specs/2026-06-29-ddd4j-boundary-rules-design.md",
+      "sourceCommit": "f558881115e4bc38a46af6dcaaf44333812050b4",
+      "sourceTime": "2026-10-10T02:55:04+08:00",
+      "sha256": "e53beb3d154329c6c04a54545ce0b8ab07d0d51ef7fc976fbd8ec040b6a5737f"
+    },
+    {
+      "line": "3.0.x",
+      "path": "docs/superpowers/specs/2026-06-29-webflux-flow-design.md",
+      "sourceCommit": "f558881115e4bc38a46af6dcaaf44333812050b4",
+      "sourceTime": "2026-10-10T02:55:04+08:00",
+      "sha256": "01e123ba18f1ddfeb9e90e54033b675fa0a0c6be90cf035a4bd8fb54985e8057"
+    },
+    {
+      "line": "3.0.x",
+      "path": "docs/superpowers/specs/2026-06-30-webmvc-flow-design.md",
+      "sourceCommit": "f558881115e4bc38a46af6dcaaf44333812050b4",
+      "sourceTime": "2026-10-10T02:55:04+08:00",
+      "sha256": "591ea3e360b89004622970fd08723d5555746571d052da14dd83d8b2a510fced"
+    },
+    {
+      "line": "3.0.x",
+      "path": "docs/superpowers/specs/2026-07-01-ddd4j-full-architecture-review-design.md",
+      "sourceCommit": "b6406ed710d91ed1d1ad107c12bc669a7c7aae25",
+      "sourceTime": "2026-10-14T13:16:14+08:00",
+      "sha256": "2c17ad8838472b9ea16f3266098d32d1d344ac7a73da75955ffb73d2cbfdaf98"
+    },
+    {
+      "line": "3.0.x",
+      "path": "docs/superpowers/specs/2026-07-01-ddd4j-quarkus-adaptation-design.md",
+      "sourceCommit": "f558881115e4bc38a46af6dcaaf44333812050b4",
+      "sourceTime": "2026-10-10T02:55:04+08:00",
+      "sha256": "62e814e0b42e44cac3727cded89c2f28c1038e99f203bddef932f1e9783b653d"
+    },
+    {
+      "line": "3.0.x",
+      "path": "docs/superpowers/specs/2026-07-02-annotation-architecture-design.md",
+      "sourceCommit": "f558881115e4bc38a46af6dcaaf44333812050b4",
+      "sourceTime": "2026-10-10T02:55:04+08:00",
+      "sha256": "d195bd9eb3a5c3ca3faa32e813d1f61cc60937c9a7461baba3f70f1e2be9d382"
+    },
+    {
+      "line": "3.0.x",
+      "path": "docs/superpowers/specs/2026-07-02-cqrs-4-java-architecture-design.md",
+      "sourceCommit": "f558881115e4bc38a46af6dcaaf44333812050b4",
+      "sourceTime": "2026-10-10T02:55:04+08:00",
+      "sha256": "36186caf2de717d1c43c79c257f85dfe5e9bd94222e5cef344ba821618cea2d5"
+    },
+    {
+      "line": "3.0.x",
+      "path": "docs/superpowers/specs/2026-07-02-ddd-cqrs-example-architecture-design.md",
+      "sourceCommit": "f558881115e4bc38a46af6dcaaf44333812050b4",
+      "sourceTime": "2026-10-10T02:55:04+08:00",
+      "sha256": "38a0c7b5c3d4b90e6ae87054cf457a55953bc5e94bdcff418bd3b13ab2659863"
+    },
+    {
+      "line": "3.0.x",
+      "path": "docs/superpowers/specs/2026-07-02-optional-migrations-design.md",
+      "sourceCommit": "f558881115e4bc38a46af6dcaaf44333812050b4",
+      "sourceTime": "2026-10-10T02:55:04+08:00",
+      "sha256": "b43ff2a831a45206c044e822cfb81bb85142a71b4a3db04063fc5f34235261c3"
+    },
+    {
+      "line": "3.0.x",
+      "path": "docs/superpowers/specs/2026-07-02-satoken-auth-design.md",
+      "sourceCommit": "f558881115e4bc38a46af6dcaaf44333812050b4",
+      "sourceTime": "2026-10-10T02:55:04+08:00",
+      "sha256": "d3553eba20e320a9a6f486c8a02bc8f9a57abbff15d3f34b39e6d01cb5e979bb"
+    },
+    {
+      "line": "3.0.x",
+      "path": "docs/superpowers/specs/2026-07-15-current-source-architecture-design.md",
+      "sourceCommit": "f558881115e4bc38a46af6dcaaf44333812050b4",
+      "sourceTime": "2026-10-10T02:55:04+08:00",
+      "sha256": "583067b9ae8771ec0bda2145d0bc9bd1592cc51ed5a79d92f4f88784fed4e866"
+    },
+    {
+      "line": "3.0.x",
+      "path": "docs/superpowers/specs/2026-08-03-cloud-mq-rc-evidence-design.md",
+      "sourceCommit": "f558881115e4bc38a46af6dcaaf44333812050b4",
+      "sourceTime": "2026-10-10T02:55:04+08:00",
+      "sha256": "526a2c4b298dec37aabd0239171f7c8a15bdada0bd77149103f729f641e93fc8"
+    },
+    {
+      "line": "3.0.x",
+      "path": "docs/superpowers/specs/2026-08-03-performance-report-contract-design.md",
+      "sourceCommit": "f558881115e4bc38a46af6dcaaf44333812050b4",
+      "sourceTime": "2026-10-10T02:55:04+08:00",
+      "sha256": "5e351c7027183e382a759d752a5efaf6a0182d812a8fbbe59a61e932ded36c34"
+    },
+    {
+      "line": "3.0.x",
+      "path": "docs/superpowers/specs/2026-08-25-eventstore-spi-hardening.md",
+      "sourceCommit": "f558881115e4bc38a46af6dcaaf44333812050b4",
+      "sourceTime": "2026-10-10T02:55:04+08:00",
+      "sha256": "a9674846acb117d1a3cc7e6726f7cc58e9e9aaa5a03bcb42f142c75f61845bc5"
+    },
+    {
+      "line": "3.0.x",
+      "path": "docs/superpowers/specs/2026-09-06-three-line-parity.md",
+      "sourceCommit": "101b306545081fff2997d51b57c6698a021a77fe",
+      "sourceTime": "2026-10-15T20:54:04+08:00",
+      "sha256": "3dce7deb998a6e64a6a8b4596d716c0bb84d925d38e2ad721a54296f4c70b706"
+    },
+    {
+      "line": "3.0.x",
+      "path": "docs/superpowers/specs/2026-09-10-license-gate-hardening-design.md",
+      "sourceCommit": "f558881115e4bc38a46af6dcaaf44333812050b4",
+      "sourceTime": "2026-10-10T02:55:04+08:00",
+      "sha256": "1cf9e0a1bf5032702d0c7ff2863bb09ae442f7aed775a50cb1ef6e02e2729271"
+    },
+    {
+      "line": "3.0.x",
+      "path": "docs/superpowers/specs/2026-09-10-mq-startup-lifecycle-design.md",
+      "sourceCommit": "f558881115e4bc38a46af6dcaaf44333812050b4",
+      "sourceTime": "2026-10-10T02:55:04+08:00",
+      "sha256": "4a605f00d07b3687fc1f41a258055b2a546f95410628a939fc12ed0d5ef789d7"
+    },
+    {
+      "line": "3.0.x",
+      "path": "docs/superpowers/specs/2026-10-10-no-record-design.md",
+      "sourceCommit": "2223a853061c53599a4f89cd06b90ab15fece51d",
+      "sourceTime": "2026-10-10T14:08:41+08:00",
+      "sha256": "da1c22a9045c897a1c961be614f0c1b27c6b316cf4972d9664c55028a68c763d"
+    }
+  ]
+}
