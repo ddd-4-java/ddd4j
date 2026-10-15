@@ -307,14 +307,14 @@ public class OrderController {
 
         @Override
         public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(id);
-            result = 31 * result + Objects.hashCode(orderNo);
-            result = 31 * result + Objects.hashCode(buyerId);
-            result = 31 * result + Objects.hashCode(buyerName);
-            result = 31 * result + Objects.hashCode(status);
-            result = 31 * result + Objects.hashCode(totalAmount);
-            result = 31 * result + Integer.hashCode(lineCount);
+            int result = 1;
+            result = 59 * result + lineCount;
+            result = 59 * result + (Objects.isNull(id) ? 43 : id.hashCode());
+            result = 59 * result + (Objects.isNull(orderNo) ? 43 : orderNo.hashCode());
+            result = 59 * result + (Objects.isNull(buyerId) ? 43 : buyerId.hashCode());
+            result = 59 * result + (Objects.isNull(buyerName) ? 43 : buyerName.hashCode());
+            result = 59 * result + (Objects.isNull(status) ? 43 : status.hashCode());
+            result = 59 * result + (Objects.isNull(totalAmount) ? 43 : totalAmount.hashCode());
             return result;
         }
 
@@ -429,10 +429,10 @@ public class OrderController {
 
         @Override
         public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(orderNo);
-            result = 31 * result + Objects.hashCode(buyerId);
-            result = 31 * result + Objects.hashCode(buyerName);
+            int result = 1;
+            result = 59 * result + (Objects.isNull(orderNo) ? 43 : orderNo.hashCode());
+            result = 59 * result + (Objects.isNull(buyerId) ? 43 : buyerId.hashCode());
+            result = 59 * result + (Objects.isNull(buyerName) ? 43 : buyerName.hashCode());
             return result;
         }
 
@@ -573,11 +573,11 @@ public class OrderController {
 
         @Override
         public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(goodsId);
-            result = 31 * result + Objects.hashCode(goodsName);
-            result = 31 * result + Integer.hashCode(quantity);
-            result = 31 * result + Objects.hashCode(unitPrice);
+            int result = 1;
+            result = 59 * result + quantity;
+            result = 59 * result + (Objects.isNull(goodsId) ? 43 : goodsId.hashCode());
+            result = 59 * result + (Objects.isNull(goodsName) ? 43 : goodsName.hashCode());
+            result = 59 * result + (Objects.isNull(unitPrice) ? 43 : unitPrice.hashCode());
             return result;
         }
 
