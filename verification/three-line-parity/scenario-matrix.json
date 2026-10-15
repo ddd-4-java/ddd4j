@@ -2168,6 +2168,32 @@
       }
     },
     {
+      "id": "MQ-EVENT-TIMESTAMP-JSON",
+      "description": "三线事件序列化均把 ZonedDateTime 输出为相同的 ISO-8601 JSON 字符串并能往返；JDK8/17 使用 Jackson2 事件 mapper，JDK21 使用 Jackson3 默认 mapper。本地契约不代表外部 Broker 验收",
+      "lastEvidence": "/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-15-mq-timestamp-json/report.json",
+      "lastEvidenceSha256": "afcfcf552982b2d369bc39759863b09dadaf2a4b45623276718ad138405b2df4",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/serialization/JsonMQEventSerializationTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/serialization/JsonMQEventSerializationTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/serialization/JsonMQEventSerializationTest.java"
+          ]
+        }
+      }
+    },
+    {
       "id": "MQ-OUTBOX-DISPATCH-RESULT-JSON",
       "description": "三线 Outbox 派发结果的五个计数含确认丢失字段经 Jackson JSON 往返保持一致；JDK8/17 使用 Jackson2，JDK21 使用 Jackson3",
       "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-14-mq-outbox-result-json/report.json",
