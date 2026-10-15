@@ -93,7 +93,7 @@ public class OrderCQRSQueryController {
     /**
      * 订单响应 record。
      */
-    public final static class OrderResponse {
+    public static class OrderResponse {
 
         private static final long serialVersionUID = 0L;
 
@@ -243,11 +243,24 @@ public class OrderCQRSQueryController {
             if (this == obj) {
                 return true;
             }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+            if (!(obj instanceof OrderResponse)) {
                 return false;
             }
             OrderResponse other = (OrderResponse) obj;
+            if (!other.canEqual(this)) {
+                return false;
+            }
             return Objects.equals(this.id, other.id) && Objects.equals(this.orderNo, other.orderNo) && Objects.equals(this.buyerId, other.buyerId) && Objects.equals(this.buyerName, other.buyerName) && Objects.equals(this.status, other.status) && Objects.equals(this.totalAmount, other.totalAmount) && this.lineCount == other.lineCount;
+        }
+
+        /**
+         * 保留 OrderResponse 可继承值对象的对称相等性扩展点。
+         *
+         * @param other 待比较对象
+         * @return 子类是否允许与当前值对象比较
+         */
+        protected boolean canEqual(Object other) {
+            return other instanceof OrderResponse;
         }
 
         @Override

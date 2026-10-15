@@ -148,7 +148,7 @@ public class OrderController {
     /**
      * 订单响应（避免将充血领域模型直接序列化，保留聚合内字段语义）。
      */
-    public final static class OrderResponse {
+    public static class OrderResponse {
 
         private static final long serialVersionUID = 0L;
 
@@ -298,11 +298,24 @@ public class OrderController {
             if (this == obj) {
                 return true;
             }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+            if (!(obj instanceof OrderResponse)) {
                 return false;
             }
             OrderResponse other = (OrderResponse) obj;
+            if (!other.canEqual(this)) {
+                return false;
+            }
             return Objects.equals(this.id, other.id) && Objects.equals(this.orderNo, other.orderNo) && Objects.equals(this.buyerId, other.buyerId) && Objects.equals(this.buyerName, other.buyerName) && Objects.equals(this.status, other.status) && Objects.equals(this.totalAmount, other.totalAmount) && this.lineCount == other.lineCount;
+        }
+
+        /**
+         * 保留 OrderResponse 可继承值对象的对称相等性扩展点。
+         *
+         * @param other 待比较对象
+         * @return 子类是否允许与当前值对象比较
+         */
+        protected boolean canEqual(Object other) {
+            return other instanceof OrderResponse;
         }
 
         @Override
@@ -327,7 +340,7 @@ public class OrderController {
     /**
      * 创建订单请求。
      */
-    public final static class CreateOrderRequest {
+    public static class CreateOrderRequest {
 
         private static final long serialVersionUID = 0L;
 
@@ -420,11 +433,24 @@ public class OrderController {
             if (this == obj) {
                 return true;
             }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+            if (!(obj instanceof CreateOrderRequest)) {
                 return false;
             }
             CreateOrderRequest other = (CreateOrderRequest) obj;
+            if (!other.canEqual(this)) {
+                return false;
+            }
             return Objects.equals(this.orderNo, other.orderNo) && Objects.equals(this.buyerId, other.buyerId) && Objects.equals(this.buyerName, other.buyerName);
+        }
+
+        /**
+         * 保留 CreateOrderRequest 可继承值对象的对称相等性扩展点。
+         *
+         * @param other 待比较对象
+         * @return 子类是否允许与当前值对象比较
+         */
+        protected boolean canEqual(Object other) {
+            return other instanceof CreateOrderRequest;
         }
 
         @Override
@@ -447,7 +473,7 @@ public class OrderController {
     /**
      * 添加订单行请求。
      */
-    public final static class AddOrderLineRequest {
+    public static class AddOrderLineRequest {
 
         private static final long serialVersionUID = 0L;
 
@@ -564,11 +590,24 @@ public class OrderController {
             if (this == obj) {
                 return true;
             }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+            if (!(obj instanceof AddOrderLineRequest)) {
                 return false;
             }
             AddOrderLineRequest other = (AddOrderLineRequest) obj;
+            if (!other.canEqual(this)) {
+                return false;
+            }
             return Objects.equals(this.goodsId, other.goodsId) && Objects.equals(this.goodsName, other.goodsName) && this.quantity == other.quantity && Objects.equals(this.unitPrice, other.unitPrice);
+        }
+
+        /**
+         * 保留 AddOrderLineRequest 可继承值对象的对称相等性扩展点。
+         *
+         * @param other 待比较对象
+         * @return 子类是否允许与当前值对象比较
+         */
+        protected boolean canEqual(Object other) {
+            return other instanceof AddOrderLineRequest;
         }
 
         @Override
