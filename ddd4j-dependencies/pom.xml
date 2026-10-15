@@ -7281,13 +7281,6 @@
                 <artifactId>oracle-r2dbc</artifactId>
                 <version>${r2dbc-oracle.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/fr.opensagres.xdocreport/org.apache.poi.xwpf.converter.pdf.itext5 -->
-            <!-- XDocReport DOCX to PDF：使用 iText5 将 DOCX 文档转换为 PDF 的工具。 -->
-            <dependency>
-                <groupId>fr.opensagres.xdocreport</groupId>
-                <artifactId>org.apache.poi.xwpf.converter.pdf.itext5</artifactId>
-                <version>${xdocreport.version}</version>
-            </dependency>
             <!-- https://mvnrepository.com/artifact/org.eclipse.paho/org.eclipse.paho.client.mqttv3 -->
             <!-- Eclipse Paho MQTT v3：Eclipse Paho 的 MQTT 3.1.1 客户端实现。 -->
             <dependency>
