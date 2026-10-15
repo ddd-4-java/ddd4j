@@ -4011,7 +4011,7 @@
             </dependency>
             <!-- JDBC Driver For KingBase8 -->
             <dependency>
-                <groupId>com.kingbase8.jdbc</groupId>
+                <groupId>cn.com.kingbase</groupId>
                 <artifactId>kingbase8</artifactId>
                 <version>${kingbase8.version}</version>
             </dependency>
