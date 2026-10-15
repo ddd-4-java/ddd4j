@@ -136,16 +136,20 @@ class SqsAdapterContractTest {
 
     @Test
     void shouldPreferStableMessageIdAndResetVisibilityForRedelivery() {
+        Map<String, MessageAttributeValue> attributes = new HashMap<>();
+        attributes.put(MessageHeaders.HEADER_MESSAGE_ID, attribute("stable-id"));
+        attributes.put(MQDeliveryHeaders.CORRELATION_ID, attribute("correlation-1"));
         Message message = Message.builder()
                 .messageId("transport-id")
                 .receiptHandle("receipt")
-                .messageAttributes(Collections.singletonMap(MessageHeaders.HEADER_MESSAGE_ID,
-                        MessageAttributeValue.builder().dataType("String").stringValue("stable-id").build()))
+                .messageAttributes(attributes)
                 .build();
         SqsClient client = mock(SqsClient.class);
         SqsAcknowledgment acknowledgment = new SqsAcknowledgment(client, message, "http://queue", true);
 
         assertEquals("stable-id", SqsMQClient.messageId(message));
+        assertEquals("stable-id", acknowledgment.messageId());
+        assertEquals("correlation-1", acknowledgment.correlationId());
         acknowledgment.nack(true);
 
         verify(client).changeMessageVisibility(any(java.util.function.Consumer.class));
