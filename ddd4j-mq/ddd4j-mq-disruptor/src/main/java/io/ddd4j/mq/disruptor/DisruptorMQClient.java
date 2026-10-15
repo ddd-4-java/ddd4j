@@ -76,6 +76,8 @@ public class DisruptorMQClient implements MQClient {
 
     /**
      * 双构造 1：传入配置，自建 RingBuffer 与 Disruptor（构造即启动，consumer 立即可用）。
+     *
+     * @param properties Disruptor 消息配置
      */
     public DisruptorMQClient(DisruptorMQProperties properties) {
         this.properties = Objects.requireNonNull(properties, "DisruptorMQ properties is required");
@@ -85,6 +87,8 @@ public class DisruptorMQClient implements MQClient {
     /**
      * 双构造 2：传入已初始化的 RingBuffer（runtime 集成复用同一 RingBuffer，事件类型必须为 DisruptorEvent）。
      * 不启动 Disruptor —— RingBuffer 已就绪，调用方负责管理其生命周期。
+     *
+     * @param ringBuffer 已初始化的事件缓冲区
      */
     public DisruptorMQClient(RingBuffer<DisruptorEvent> ringBuffer) {
         this.properties = new DisruptorMQProperties();

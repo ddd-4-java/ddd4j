@@ -27,9 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * 类型说明。
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.0.x
+ * 就绪报告的快照、诊断信息与失败语义契约测试。
  */
 class ReadinessReportTest {
 
@@ -93,7 +91,6 @@ class ReadinessReportTest {
         assertThat(report.results().get(1).details()).containsEntry("reason", "empty result");
     }
 
-
     @Test
     void result_shouldKeepDiagnosticTextInInputOrder() {
         Map<String, String> details = new LinkedHashMap<>();
@@ -108,7 +105,6 @@ class ReadinessReportTest {
         assertThat(result.toString()).isEqualTo(
                 "ReadinessResult[name=database, ready=false, details={Aa=first, BB=second, AaAa=third, BBBB=fourth}]");
     }
-
 
     @Test
     void result_shouldRejectNullDiagnosticEntries() {
