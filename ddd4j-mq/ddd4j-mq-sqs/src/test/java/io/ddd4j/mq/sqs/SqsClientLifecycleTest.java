@@ -4,6 +4,7 @@
  */
 package io.ddd4j.mq.sqs;
 
+import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.listener.MQListener;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.sqs.SqsClient;
@@ -13,6 +14,7 @@ import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -76,5 +78,17 @@ class SqsClientLifecycleTest {
         assertThrows(IllegalStateException.class, () -> adapter.initConsumer(listener, properties));
         assertEquals(0, creations.get());
         verify(nativeClient, never()).close();
+    }
+
+    @Test
+    void producerHandleRejectsPublishAfterClose() {
+        SqsClient nativeClient = mock(SqsClient.class);
+        SqsMQClient adapter = new SqsMQClient(nativeClient);
+        Consumer<MQEvent> publisher = adapter.initProducer(new SqsProperties());
+        adapter.close();
+
+        IllegalStateException failure = assertThrows(IllegalStateException.class,
+                () -> publisher.accept(new MQEvent()));
+        assertEquals("SQS client is closed", failure.getMessage());
     }
 }
