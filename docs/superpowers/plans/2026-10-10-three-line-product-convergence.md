@@ -826,3 +826,5 @@ effective POM 必须分别用对应线的 JDK/Wrapper 从该线 `ddd4j-dependenc
 **2026-10-16 T07/T10 Mica MQTT CI 探针等待：** GitHub Verify 1.0.x run 38791977598 的 Java 8 单测作业在 `MicaMqttContainerIntegrationTest` 的订阅探针处恰好达到 10 秒截止，Broker 回传尚未到达；同一基线先前原生报告曾通过。三线共同测试只把真实探针回传的等待上限从 10 秒扩为 30 秒，未弱化回传断言或改变生产代码。本机 Docker 不可用，必须由新提交的远端原生作业复验；本次不能据此宣称故障已消除。
 
 **2026-10-16 T01 `Object.equals` 参数名误报：** 源码扫描器与既有编译 API 门禁统一，只对返回 `boolean`、单一 `Object` 参数的标准 `equals(Object)` 忽略形参名；其他公开方法仍逐项比较参数名。共同自测先因 `o`/`obj` 误报 RED，修正后 GREEN，并验证普通 `verify(Object)` 改名保持 OPEN；三线完整结构检查器自测各 37/37 通过。同一源码 inventory 差异 2296→2273、OPEN 1316→1293，消失的 23 项全是 `equals(Object)` 形参名差异，无新增差异。编译 API 与严格总入口仍需独立验收，T01/T11 保持 OPEN。
+
+**2026-10-16 T01/T10 当前编译 API 门禁：** 在三线最新源码与各自 JDK 8/17/21 上运行结构检查器 --phase verify；三线根 clean compile 均退出 0，编译 API 子门禁 PASS。源码清单 2273 项差异中，385 项由实际 class API 证明 COMPILED_API_EQUIVALENT，另 20 项已有精确 PLATFORM_API_ADAPTED 映射；API 类别没有剩余 OPEN。其余 888 项 OPEN 分别是生产源码 499、测试 295、其他 49、产品文档 24、配置 21；总结构门禁按设计退出 1。原始报告在 /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-16-compiled-api-current/，不能将编译 API PASS 扩大为业务行为或 T01/T11 整体验收通过。
