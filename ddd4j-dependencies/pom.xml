@@ -689,9 +689,6 @@
              65905/65182/68525/43512~43515/41284/41293/25854/32990/34487 等，含请求走私与
              OCSP 绕过），OSV 按 tomcat-embed-core 11.0.15 实测命中并逐条核对修复门槛 -->
         <tomcat.version>11.0.25</tomcat.version>
-        <tongweb-gmssl.version>1.0.0</tongweb-gmssl.version>
-        <tongweb-license-client.version>4.4.1.3</tongweb-license-client.version>
-        <tongweb.version>7.0.E.6_P5</tongweb.version>
         <transmittable-thread-local.version>2.14.5</transmittable-thread-local.version>
         <truelicense.version>4.1.4</truelicense.version>
         <twilio.version>10.8.0</twilio.version>
@@ -9677,41 +9674,6 @@
                 <groupId>org.apache.tomcat</groupId>
                 <artifactId>tomcat-jsp-api</artifactId>
                 <version>${tomcat.version}</version>
-            </dependency>
-            <!-- 提供web应用的核心功能依赖聚合模块 -->
-            <!-- Source: https://mvnrepository.com/artifact/com.tongweb/tongweb-embed-core -->
-            <!-- For Tongweb --> <!-- 提供web应用的核心功能依赖聚合模块 -->
-            <!-- TongWeb Embed Core：国产 TongWeb 应用服务器嵌入式核心模块。 -->
-            <dependency>
-                <groupId>com.tongweb</groupId>
-                <artifactId>tongweb-embed-core</artifactId>
-                <version>${tongweb.version}</version>
-            </dependency>
-            <!-- 提供dubbo的核心功能依赖聚合模块 -->
-            <!-- Source: https://mvnrepository.com/artifact/com.tongweb/tongweb-embed-dubbo -->
-            <!-- 提供dubbo的核心功能依赖聚合模块 -->
-            <!-- TongWeb Embed Dubbo：TongWeb 的嵌入式 Dubbo RPC 集成模块。 -->
-            <dependency>
-                <groupId>com.tongweb</groupId>
-                <artifactId>tongweb-embed-dubbo</artifactId>
-                <version>${tongweb.version}</version>
-            </dependency>
-            <!-- 提供国密 SSL 核心功能模块。 -->
-            <!-- Source: https://mvnrepository.com/artifact/com.tongweb/tongweb-gmssl -->
-            <!-- 提供国密 SSL 核心功能模块。 -->
-            <dependency>
-                <groupId>com.tongweb</groupId>
-                <artifactId>tongweb-gmssl</artifactId>
-                <version>${tongweb-gmssl.version}</version>
-            </dependency>
-            <!-- license-server 的客户端 -->
-            <!-- Source: https://mvnrepository.com/artifact/com.tongweb/tongweb-lic-sdk -->
-            <!-- license-server 的客户端 -->
-            <!-- TongWeb License SDK：TongWeb 应用服务器的许可证管理客户端。 -->
-            <dependency>
-                <groupId>com.tongweb</groupId>
-                <artifactId>tongweb-lic-sdk</artifactId>
-                <version>${tongweb-license-client.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.alibaba/transmittable-thread-local -->
             <!-- Transmittable Thread Local (TTL)：阿里巴巴开源的可跨线程传递的 ThreadLocal（线程池场景必备）。 -->
