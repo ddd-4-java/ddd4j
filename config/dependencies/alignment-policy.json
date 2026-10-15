@@ -892,6 +892,34 @@
         "requires_jdk": 11
       }
     },
+    "org.eclipse.jetty.websocket:javax-websocket-client-impl": {
+      "17": {"reason": "Jetty 12.1.8 不发布 Jetty 9/11 时代的此 WebSocket 坐标；当前默认模块不使用此旧适配器", "status": "unsupported-unpublished"},
+      "21": {"reason": "Jetty 12.1.8 不发布 Jetty 9/11 时代的此 WebSocket 坐标；当前默认模块不使用此旧适配器", "status": "unsupported-unpublished"}
+    },
+    "org.eclipse.jetty.websocket:javax-websocket-server-impl": {
+      "17": {"reason": "Jetty 12.1.8 不发布 Jetty 9/11 时代的此 WebSocket 坐标；当前默认模块不使用此旧适配器", "status": "unsupported-unpublished"},
+      "21": {"reason": "Jetty 12.1.8 不发布 Jetty 9/11 时代的此 WebSocket 坐标；当前默认模块不使用此旧适配器", "status": "unsupported-unpublished"}
+    },
+    "org.eclipse.jetty.websocket:websocket-api": {
+      "17": {"reason": "Jetty 12.1.8 不发布 Jetty 9/11 时代的此 WebSocket 坐标；当前默认模块不使用此旧适配器", "status": "unsupported-unpublished"},
+      "21": {"reason": "Jetty 12.1.8 不发布 Jetty 9/11 时代的此 WebSocket 坐标；当前默认模块不使用此旧适配器", "status": "unsupported-unpublished"}
+    },
+    "org.eclipse.jetty.websocket:websocket-client": {
+      "17": {"reason": "Jetty 12.1.8 不发布 Jetty 9/11 时代的此 WebSocket 坐标；当前默认模块不使用此旧适配器", "status": "unsupported-unpublished"},
+      "21": {"reason": "Jetty 12.1.8 不发布 Jetty 9/11 时代的此 WebSocket 坐标；当前默认模块不使用此旧适配器", "status": "unsupported-unpublished"}
+    },
+    "org.eclipse.jetty.websocket:websocket-common": {
+      "17": {"reason": "Jetty 12.1.8 不发布 Jetty 9/11 时代的此 WebSocket 坐标；当前默认模块不使用此旧适配器", "status": "unsupported-unpublished"},
+      "21": {"reason": "Jetty 12.1.8 不发布 Jetty 9/11 时代的此 WebSocket 坐标；当前默认模块不使用此旧适配器", "status": "unsupported-unpublished"}
+    },
+    "org.eclipse.jetty.websocket:websocket-server": {
+      "17": {"reason": "Jetty 12.1.8 不发布 Jetty 9/11 时代的此 WebSocket 坐标；当前默认模块不使用此旧适配器", "status": "unsupported-unpublished"},
+      "21": {"reason": "Jetty 12.1.8 不发布 Jetty 9/11 时代的此 WebSocket 坐标；当前默认模块不使用此旧适配器", "status": "unsupported-unpublished"}
+    },
+    "org.eclipse.jetty.websocket:websocket-servlet": {
+      "17": {"reason": "Jetty 12.1.8 不发布 Jetty 9/11 时代的此 WebSocket 坐标；当前默认模块不使用此旧适配器", "status": "unsupported-unpublished"},
+      "21": {"reason": "Jetty 12.1.8 不发布 Jetty 9/11 时代的此 WebSocket 坐标；当前默认模块不使用此旧适配器", "status": "unsupported-unpublished"}
+    },
     "org.flowable:flowable-content-spring-configurator": {
       "17": {"reason": "Flowable 7.2.0 不发布此 6.8.1 时代的 UI/配置器模块；本线仅管理实际发布的 Flowable 7 构件", "status": "unsupported-unpublished"},
       "21": {"reason": "Flowable 7.2.0 不发布此 6.8.1 时代的 UI/配置器模块；本线仅管理实际发布的 Flowable 7 构件", "status": "unsupported-unpublished"}

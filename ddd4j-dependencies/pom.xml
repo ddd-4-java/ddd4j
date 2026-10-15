@@ -3643,16 +3643,6 @@
                 <version>${javassist-plus.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.eclipse.jetty.websocket</groupId>
-                <artifactId>javax-websocket-client-impl</artifactId>
-                <version>${jetty-websocket.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.jetty.websocket</groupId>
-                <artifactId>javax-websocket-server-impl</artifactId>
-                <version>${jetty-websocket.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>ws.schild</groupId>
                 <artifactId>jave-all-deps</artifactId>
                 <version>${jave.version}</version>
@@ -7070,31 +7060,6 @@
                 <groupId>org.webjars</groupId>
                 <artifactId>webjars-locator-lite</artifactId>
                 <version>${webjars-locator-lite.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.jetty.websocket</groupId>
-                <artifactId>websocket-api</artifactId>
-                <version>${jetty-websocket.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.jetty.websocket</groupId>
-                <artifactId>websocket-client</artifactId>
-                <version>${jetty-websocket.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.jetty.websocket</groupId>
-                <artifactId>websocket-common</artifactId>
-                <version>${jetty-websocket.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.jetty.websocket</groupId>
-                <artifactId>websocket-server</artifactId>
-                <version>${jetty-websocket.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.jetty.websocket</groupId>
-                <artifactId>websocket-servlet</artifactId>
-                <version>${jetty-websocket.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.github.wechatpay-apiv3</groupId>

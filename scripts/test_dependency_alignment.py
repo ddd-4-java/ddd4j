@@ -63,6 +63,17 @@ class DependencyAlignmentTest(unittest.TestCase):
             for jdk in ('17', '21'):
                 self.assertIn(jdk, policy['unsupported'].get(coordinate, {}), coordinate)
 
+    def test_jetty_nine_websocket_modules_are_not_managed_as_jetty_twelve(self):
+        policy_path = Path(__file__).parents[1] / 'config/dependencies/alignment-policy.json'
+        policy = json.loads(policy_path.read_text(encoding='utf-8'))
+        artifacts = ('javax-websocket-client-impl', 'javax-websocket-server-impl',
+                     'websocket-api', 'websocket-client', 'websocket-common',
+                     'websocket-server', 'websocket-servlet')
+        for artifact in artifacts:
+            coordinate = 'org.eclipse.jetty.websocket:' + artifact
+            for jdk in ('17', '21'):
+                self.assertIn(jdk, policy['unsupported'].get(coordinate, {}), coordinate)
+
     def test_unconfigured_third_party_release_does_not_inherit_ddd4j_version(self):
         with tempfile.TemporaryDirectory() as temp:
             base = Path(temp)
