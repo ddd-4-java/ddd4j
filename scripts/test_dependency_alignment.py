@@ -1,5 +1,6 @@
 """依赖清单门禁回归：缺失、BOM 覆盖、坐标替代及 multi-release JAR。"""
 import struct
+import json
 import tempfile
 import unittest
 import zipfile
@@ -14,6 +15,18 @@ def pom(artifact='demo', version='1', group='example'):
 
 
 class DependencyAlignmentTest(unittest.TestCase):
+    def test_metrics_druid_catalog_uses_published_line_coordinates(self):
+        policy = json.loads((Path(__file__).parents[1] /
+                             'config/dependencies/alignment-policy.json').read_text())
+        self.assertEqual(8, policy['baseline_components']['io.github.easy4j:metrics-druid'])
+        self.assertEqual(8, policy['baseline_variants']['io.github.easy4j:metrics-druid:jar:'])
+        self.assertFalse(any(key.startswith('com.github.redacted-legacy-family:')
+                             for section in ('baseline_components', 'baseline_variants')
+                             for key in policy[section]))
+        self.assertEqual({str(jdk): line + '.20260630-SNAPSHOT'
+                          for jdk, line in ((8, '1.0.x'), (17, '2.0.x'), (21, '3.0.x'))},
+                         policy['dependency_versions']['io.github.easy4j:metrics-druid'])
+
     def test_unconfigured_third_party_release_does_not_inherit_ddd4j_version(self):
         with tempfile.TemporaryDirectory() as temp:
             base = Path(temp)
