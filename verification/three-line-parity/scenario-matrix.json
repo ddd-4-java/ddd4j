@@ -3605,6 +3605,13 @@
     {
       "id": "WEB-AUTH-ASYNC",
       "description": "WebFlux 异步取消后租户与认证上下文清理",
+      "caseNames": {
+        "1.0.x": ["shouldReleaseIdempotencyLeaseAndRequestContextOnCancellation", "shouldClearAuthenticatedSubjectAfterCancellationAndRejectMissingBearer"],
+        "2.0.x": ["shouldReleaseIdempotencyLeaseAndRequestContextOnCancellation", "shouldClearAuthenticatedSubjectAfterCancellationAndRejectMissingBearer"],
+        "3.0.x": ["shouldReleaseIdempotencyLeaseAndRequestContextOnCancellation", "shouldClearAuthenticatedSubjectAfterCancellationAndRejectMissingBearer"]
+      },
+      "lastEvidence": "/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-16-webflux-cancel-contract-parity/report.json",
+      "lastEvidenceSha256": "e5ce20705e95302c4c323e54049db9afef009fbdde5262bbab3d333bbccf9c6d",
       "lines": {
         "1.0.x": {
           "status": "supported",

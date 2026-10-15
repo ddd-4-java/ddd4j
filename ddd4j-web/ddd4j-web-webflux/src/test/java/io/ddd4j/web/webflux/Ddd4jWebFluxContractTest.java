@@ -13,6 +13,15 @@
  * limitations under the License.
  */
 package io.ddd4j.web.webflux;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.mock;
+import java.util.concurrent.atomic.AtomicInteger;
+import io.ddd4j.web.core.error.WebStatusException;
+import io.ddd4j.core.subject.SubjectProvider;
+import io.ddd4j.core.subject.Subject;
+import io.ddd4j.core.context.BaseContext;
+import io.ddd4j.core.constant.SpiKeys;
+import io.ddd4j.core.auth.AuthPrincipal;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.ddd4j.extension.otel.Ddd4jOtel;
@@ -161,6 +170,57 @@ class Ddd4jWebFluxContractTest {
         assertFalse(Span.current().getSpanContext().isValid());
     }
     @Test
+    void shouldReleaseIdempotencyLeaseAndRequestContextOnCancellation() throws InterruptedException {
+        AtomicInteger completed = new AtomicInteger();
+        AtomicInteger released = new AtomicInteger();
+        CountDownLatch releaseSignal = new CountDownLatch(1);
+        IdempotencyGuard guard = new IdempotencyGuard() {
+            @Override
+            public boolean acquire(String key, Duration ttl) {
+                return true;
+            }
+
+            @Override
+            public void complete(String key) {
+                completed.incrementAndGet();
+            }
+
+            @Override
+            public void release(String key) {
+                released.incrementAndGet();
+                releaseSignal.countDown();
+            }
+        };
+        Ddd4jWebFluxFilter filter = new Ddd4jWebFluxFilter(
+                new WebRequestContextFactory(),
+                new WebRequestLifecycle(new BearerSubjectAuthenticator(), WebAccessPolicy.disabled()),
+                new WebIdempotencyLifecycle(guard), Schedulers.immediate());
+        AtomicReference<WebRequestContext> firstContext = new AtomicReference<>();
+        MockServerWebExchange first = MockServerWebExchange.from(MockServerHttpRequest.get("/orders")
+                .header(WebHeaders.TENANT_ID, "tenant-a")
+                .header(WebHeaders.IDEMPOTENCY_KEY, "cancelled-request"));
+
+        Disposable subscription = filter.filter(first, ignored -> Ddd4jWebFluxContext.currentRequest()
+                .doOnNext(firstContext::set).then(Mono.<Void>never())).subscribe();
+        assertNotNull(firstContext.get());
+        assertEquals("tenant-a", firstContext.get().tenantId());
+        subscription.dispose();
+
+        assertTrue(releaseSignal.await(3, TimeUnit.SECONDS));
+        assertEquals(1, released.get());
+        assertEquals(0, completed.get());
+        AtomicReference<WebRequestContext> nextContext = new AtomicReference<>();
+        MockServerWebExchange next = MockServerWebExchange.from(MockServerHttpRequest.get("/orders")
+                .header(WebHeaders.TENANT_ID, "tenant-b"));
+        filter.filter(next, ignored -> Ddd4jWebFluxContext.currentRequest()
+                .doOnNext(nextContext::set).then()).block();
+        assertNotNull(nextContext.get());
+        assertEquals("tenant-b", nextContext.get().tenantId());
+        assertNull(Ddd4jWebFluxContext.currentRequest().block());
+        assertNull(Ddd4jWebFluxContext.currentSubject().block());
+    }
+
+    @Test
     void shouldReleaseIdempotencyLeaseWhenCancelledDuringAcquisition() throws InterruptedException {
         CountDownLatch acquiring = new CountDownLatch(1);
         CountDownLatch finishAcquisition = new CountDownLatch(1);
@@ -210,5 +270,57 @@ class Ddd4jWebFluxContractTest {
         }
     }
 
+
+    @Test
+    void shouldClearAuthenticatedSubjectAfterCancellationAndRejectMissingBearer() {
+        Subject subject = mock(Subject.class);
+        when(subject.verify("valid-token")).thenReturn(new AuthPrincipal().setUserId("contract-user"));
+        BaseContext.inject(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class, new SubjectProvider() {
+            @Override
+            public Subject getSubject() {
+                return subject;
+            }
+        });
+        try {
+            Ddd4jWebFluxFilter requiredFilter = new Ddd4jWebFluxFilter(
+                    new WebRequestContextFactory(),
+                    new WebRequestLifecycle(new BearerSubjectAuthenticator(), WebAccessPolicy.required()),
+                    null, Schedulers.immediate());
+            AtomicReference<Subject> captured = new AtomicReference<>();
+            MockServerWebExchange authenticated = MockServerWebExchange.from(MockServerHttpRequest.get("/orders")
+                    .header(WebHeaders.TENANT_ID, "tenant-a")
+                    .header(WebHeaders.AUTHORIZATION, "Bearer valid-token"));
+            Disposable subscription = requiredFilter.filter(authenticated,
+                    ignored -> Ddd4jWebFluxContext.currentSubject()
+                            .doOnNext(captured::set).then(Mono.<Void>never())).subscribe();
+            assertSame(subject, captured.get());
+            subscription.dispose();
+
+            Ddd4jWebFluxFilter optionalFilter = new Ddd4jWebFluxFilter(
+                    new WebRequestContextFactory(),
+                    new WebRequestLifecycle(new BearerSubjectAuthenticator(), WebAccessPolicy.optional()),
+                    null, Schedulers.immediate());
+            AtomicBoolean anonymousHasSubject = new AtomicBoolean(true);
+            MockServerWebExchange anonymous = MockServerWebExchange.from(MockServerHttpRequest.get("/orders")
+                    .header(WebHeaders.TENANT_ID, "tenant-b"));
+            optionalFilter.filter(anonymous, ignored -> Ddd4jWebFluxContext.currentSubject()
+                    .hasElement().doOnNext(anonymousHasSubject::set).then()).block();
+            assertFalse(anonymousHasSubject.get());
+
+            AtomicBoolean protectedChainInvoked = new AtomicBoolean();
+            MockServerWebExchange missingBearer = MockServerWebExchange.from(
+                    MockServerHttpRequest.get("/protected"));
+            WebStatusException failure = assertThrows(WebStatusException.class,
+                    () -> requiredFilter.filter(missingBearer, ignored -> {
+                        protectedChainInvoked.set(true);
+                        return Mono.empty();
+                    }).block());
+            assertEquals(401, failure.getStatus());
+            assertFalse(protectedChainInvoked.get());
+            assertNull(Ddd4jWebFluxContext.currentSubject().block());
+        } finally {
+            BaseContext.clear();
+        }
+    }
 
 }
