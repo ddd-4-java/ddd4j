@@ -182,7 +182,7 @@ public final class JavalinSample {
 
         @Override
         public String toString() {
-            return "JavalinApplication[app=" + app + ", token=" + token + ", spiScope=" + spiScope + "]";
+            return "JavalinApplication[app=" + app + ", token=[REDACTED], spiScope=" + spiScope + "]";
         }
     }
 }

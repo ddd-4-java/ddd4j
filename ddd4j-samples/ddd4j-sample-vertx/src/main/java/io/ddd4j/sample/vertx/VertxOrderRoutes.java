@@ -150,6 +150,11 @@ public final class VertxOrderRoutes {
             return token;
         }
 
+        /** @return 登录令牌 */
+        public String getToken() {
+            return token;
+        }
+
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
