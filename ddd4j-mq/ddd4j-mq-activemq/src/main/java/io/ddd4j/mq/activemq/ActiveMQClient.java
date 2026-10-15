@@ -18,6 +18,7 @@ import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.activemq.util.ActivemqKit;
+import io.ddd4j.mq.delivery.MQDeliveryHeaders;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.lifecycle.MQClientLifecycle;
 import io.ddd4j.mq.lifecycle.MQStartupStatus;
@@ -184,6 +185,13 @@ public class ActiveMQClient implements MQClient {
                         message.setJMSMessageID("ID:" + mqEvent.getMsgId());
                         message.setStringProperty(jmsProperty(MessageHeaders.HEADER_MESSAGE_ID), mqEvent.getMsgId());
                     }
+                    if (StrKit.isNotEmpty(mqEvent.getCorrelationId())) {
+                        message.setStringProperty(jmsProperty(MQDeliveryHeaders.CORRELATION_ID), mqEvent.getCorrelationId());
+                        message.setJMSCorrelationID(mqEvent.getCorrelationId());
+                    }
+                    if (StrKit.isNotEmpty(mqEvent.getCausationId())) {
+                        message.setStringProperty(jmsProperty(MQDeliveryHeaders.CAUSATION_ID), mqEvent.getCausationId());
+                    }
                     producer.send(message);
                 } catch (JMSException ex) {
                     log.error("Publish MQ [{}]: {} failed!", topic, payload, ex);
@@ -216,6 +224,17 @@ public class ActiveMQClient implements MQClient {
                 String messageId = messageId(message);
                 if (Objects.nonNull(messageId)) {
                     event.setMsgId(messageId);
+                }
+                String correlationId = message.getStringProperty(jmsProperty(MQDeliveryHeaders.CORRELATION_ID));
+                if (Objects.isNull(correlationId)) {
+                    correlationId = ActivemqKit.correlationIdOf(message);
+                }
+                if (Objects.nonNull(correlationId)) {
+                    event.setCorrelationId(correlationId);
+                }
+                String causationId = message.getStringProperty(jmsProperty(MQDeliveryHeaders.CAUSATION_ID));
+                if (Objects.nonNull(causationId)) {
+                    event.setCausationId(causationId);
                 }
                 ActiveMQAcknowledgment ack = new ActiveMQAcknowledgment(
                         session, message,
