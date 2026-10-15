@@ -18,6 +18,32 @@ SCRIPT = Path(__file__).with_name("verify-three-line-structure-api-parity.py")
 
 
 class ThreeLineInventoryTest(unittest.TestCase):
+    def test_object_equals_parameter_name_is_not_public_api(self):
+        source = "ddd4j-core/src/main/java/example/Foo.java"
+        base = ("package example; public class Foo { "
+                "public boolean equals(Object o) { return this == o; } "
+                "public boolean verify(Object input) { return input != null; } }")
+        renamed_equals = base.replace("equals(Object o)", "equals(Object obj)").replace(
+            "this == o", "this == obj")
+        self.write(self.roots[0], source, base)
+        self.write(self.roots[1], source, renamed_equals)
+        self.write(self.roots[2], source, renamed_equals)
+
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = json.loads((output / "inventory.json").read_text())["differences"]
+        self.assertFalse(any(row["category"] == "api" and row["path"].endswith("Foo#equals(Object)")
+                             for row in rows))
+
+        self.write(self.roots[1], source,
+                   renamed_equals.replace("verify(Object input)", "verify(Object value)").replace(
+                       "input != null", "value != null"))
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = json.loads((output / "inventory.json").read_text())["differences"]
+        self.assertEqual("OPEN", next(row["status"] for row in rows if row["category"] == "api"
+                                      and row["path"].endswith("Foo#verify(Object)")))
+
     def test_implicit_public_constructor_matches_explicit_noarg_constructor(self):
         source = "ddd4j-core/src/main/java/example/Foo.java"
         self.write(self.roots[0], source, "package example; public class Foo {}")

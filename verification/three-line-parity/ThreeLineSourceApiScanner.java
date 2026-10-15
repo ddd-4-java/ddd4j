@@ -178,6 +178,13 @@ public final class ThreeLineSourceApiScanner {
             String methodName = Objects.isNull(method.getReturnType()) ? "<init>" : method.getName().toString();
             String returnType = Objects.isNull(method.getReturnType()) ? "<init>"
                     : compact(method.getReturnType().toString());
+            if ("equals".equals(methodName) && "boolean".equals(returnType)
+                    && parameterTypes.size() == 1
+                    && ("Object".equals(parameterTypes.get(0))
+                    || "java.lang.Object".equals(parameterTypes.get(0)))) {
+                // Object.equals 的形参名不参与覆写契约；与编译 API 门禁保持一致。
+                parameterNames.clear();
+            }
             String visibility = flags.contains(Modifier.PROTECTED) ? "protected" : "public";
             String key = owner + "#" + methodName + "(" + String.join(",", parameterTypes) + ")";
             String value = returnType + "|" + visibility + "|" + String.join(",", parameterNames);
