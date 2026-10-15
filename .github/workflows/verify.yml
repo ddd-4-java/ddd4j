@@ -80,6 +80,8 @@ jobs:
         run: |
           SAMPLE_EXCLUSIONS="$(find ddd4j-samples -mindepth 2 -maxdepth 2 -name pom.xml | sed 's#/pom.xml$##; s#^#!#' | paste -sd, -)"
           ./mvnw -U -Denforcer.skip=true -B clean test -DskipITs -pl "${SAMPLE_EXCLUSIONS}"
+      - name: Verify JPA MySQL container test execution
+        run: python3 scripts/verify-jpa-mysql-test-report.py
       - name: Verify build did not write generated files to source control
         env:
           DDD4J_REQUIRE_CLEAN_WORKTREE: 'true'
