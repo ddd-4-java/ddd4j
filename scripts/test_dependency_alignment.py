@@ -134,6 +134,34 @@ class DependencyAlignmentTest(unittest.TestCase):
             self.assertEqual(['io.github.easy4j:pac4j-oauth-extension'],
                              replacement.get(jdk, {}).get('coordinates'))
 
+    def test_android_only_cronet_artifacts_are_not_claimed_as_jvm_jars(self):
+        policy_path = Path(__file__).parents[1] / 'config/dependencies/alignment-policy.json'
+        policy = json.loads(policy_path.read_text(encoding='utf-8'))
+        for artifact in ('cronet-api', 'cronet-common', 'cronet-embedded', 'cronet-fallback'):
+            coordinate = 'org.chromium.net:' + artifact
+            for jdk in ('8', '17', '21'):
+                self.assertIn(jdk, policy['unsupported'].get(coordinate, {}), coordinate)
+
+    def test_hbase_three_protocol_uses_published_shaded_artifact(self):
+        policy_path = Path(__file__).parents[1] / 'config/dependencies/alignment-policy.json'
+        policy = json.loads(policy_path.read_text(encoding='utf-8'))
+        replacement = policy['replacements'].get('org.apache.hbase:hbase-protocol', {})
+        for jdk in ('8', '17', '21'):
+            self.assertEqual(['org.apache.hbase:hbase-protocol-shaded'],
+                             replacement.get(jdk, {}).get('coordinates'))
+        self.assertEqual(8, policy['baseline_components'].get('org.apache.hbase:hbase-protocol-shaded'))
+
+    def test_not_yet_commons_ssl_uses_its_published_group(self):
+        policy_path = Path(__file__).parents[1] / 'config/dependencies/alignment-policy.json'
+        policy = json.loads(policy_path.read_text(encoding='utf-8'))
+        for old in ('org.apache.commons.ssl:not-yet-commons-ssl',
+                    'org.apache.commons:not-yet-commons-ssl'):
+            replacement = policy['replacements'].get(old, {})
+            for jdk in ('8', '17', '21'):
+                self.assertEqual(['ca.juliusdavies:not-yet-commons-ssl'],
+                                 replacement.get(jdk, {}).get('coordinates'))
+        self.assertEqual(8, policy['baseline_components'].get('ca.juliusdavies:not-yet-commons-ssl'))
+
     def test_unconfigured_third_party_release_does_not_inherit_ddd4j_version(self):
         with tempfile.TemporaryDirectory() as temp:
             base = Path(temp)

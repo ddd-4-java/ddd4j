@@ -17,6 +17,66 @@
     }
   },
   "replacements": {
+    "org.apache.commons.ssl:not-yet-commons-ssl": {
+      "8": {
+        "coordinates": [
+          "ca.juliusdavies:not-yet-commons-ssl"
+        ],
+        "reason": "Maven Central 官方 POM 仅发布 ca.juliusdavies:not-yet-commons-ssl:0.3.9；保留旧误写坐标映射"
+      },
+      "17": {
+        "coordinates": [
+          "ca.juliusdavies:not-yet-commons-ssl"
+        ],
+        "reason": "Maven Central 官方 POM 仅发布 ca.juliusdavies:not-yet-commons-ssl:0.3.9；保留旧误写坐标映射"
+      },
+      "21": {
+        "coordinates": [
+          "ca.juliusdavies:not-yet-commons-ssl"
+        ],
+        "reason": "Maven Central 官方 POM 仅发布 ca.juliusdavies:not-yet-commons-ssl:0.3.9；保留旧误写坐标映射"
+      }
+    },
+    "org.apache.commons:not-yet-commons-ssl": {
+      "8": {
+        "coordinates": [
+          "ca.juliusdavies:not-yet-commons-ssl"
+        ],
+        "reason": "Maven Central 官方 POM 仅发布 ca.juliusdavies:not-yet-commons-ssl:0.3.9；保留旧误写坐标映射"
+      },
+      "17": {
+        "coordinates": [
+          "ca.juliusdavies:not-yet-commons-ssl"
+        ],
+        "reason": "Maven Central 官方 POM 仅发布 ca.juliusdavies:not-yet-commons-ssl:0.3.9；保留旧误写坐标映射"
+      },
+      "21": {
+        "coordinates": [
+          "ca.juliusdavies:not-yet-commons-ssl"
+        ],
+        "reason": "Maven Central 官方 POM 仅发布 ca.juliusdavies:not-yet-commons-ssl:0.3.9；保留旧误写坐标映射"
+      }
+    },
+    "org.apache.hbase:hbase-protocol": {
+      "8": {
+        "coordinates": [
+          "org.apache.hbase:hbase-protocol-shaded"
+        ],
+        "reason": "HBase 3 官方迁移说明要求使用 hbase-protocol-shaded；3.0.0-beta-1 已发布且基础字节码支持 JDK 8"
+      },
+      "17": {
+        "coordinates": [
+          "org.apache.hbase:hbase-protocol-shaded"
+        ],
+        "reason": "HBase 3 官方迁移说明要求使用 hbase-protocol-shaded；3.0.0-beta-1 已发布且基础字节码支持 JDK 8"
+      },
+      "21": {
+        "coordinates": [
+          "org.apache.hbase:hbase-protocol-shaded"
+        ],
+        "reason": "HBase 3 官方迁移说明要求使用 hbase-protocol-shaded；3.0.0-beta-1 已发布且基础字节码支持 JDK 8"
+      }
+    },
     "io.github.easy4j:pac4j-oauth-ext": {
       "17": {
         "coordinates": [
@@ -824,6 +884,62 @@
     }
   },
   "unsupported": {
+    "org.chromium.net:cronet-api": {
+      "8": {
+        "reason": "Google Maven 仅发布此 Android AAR，无对应 JVM JAR；ddd4j 默认模块不使用 Android Cronet",
+        "status": "unsupported-platform"
+      },
+      "17": {
+        "reason": "Google Maven 仅发布此 Android AAR，无对应 JVM JAR；ddd4j 默认模块不使用 Android Cronet",
+        "status": "unsupported-platform"
+      },
+      "21": {
+        "reason": "Google Maven 仅发布此 Android AAR，无对应 JVM JAR；ddd4j 默认模块不使用 Android Cronet",
+        "status": "unsupported-platform"
+      }
+    },
+    "org.chromium.net:cronet-common": {
+      "8": {
+        "reason": "Google Maven 仅发布此 Android AAR，无对应 JVM JAR；ddd4j 默认模块不使用 Android Cronet",
+        "status": "unsupported-platform"
+      },
+      "17": {
+        "reason": "Google Maven 仅发布此 Android AAR，无对应 JVM JAR；ddd4j 默认模块不使用 Android Cronet",
+        "status": "unsupported-platform"
+      },
+      "21": {
+        "reason": "Google Maven 仅发布此 Android AAR，无对应 JVM JAR；ddd4j 默认模块不使用 Android Cronet",
+        "status": "unsupported-platform"
+      }
+    },
+    "org.chromium.net:cronet-embedded": {
+      "8": {
+        "reason": "Google Maven 仅发布此 Android AAR，无对应 JVM JAR；ddd4j 默认模块不使用 Android Cronet",
+        "status": "unsupported-platform"
+      },
+      "17": {
+        "reason": "Google Maven 仅发布此 Android AAR，无对应 JVM JAR；ddd4j 默认模块不使用 Android Cronet",
+        "status": "unsupported-platform"
+      },
+      "21": {
+        "reason": "Google Maven 仅发布此 Android AAR，无对应 JVM JAR；ddd4j 默认模块不使用 Android Cronet",
+        "status": "unsupported-platform"
+      }
+    },
+    "org.chromium.net:cronet-fallback": {
+      "8": {
+        "reason": "Google Maven 仅发布此 Android AAR，无对应 JVM JAR；ddd4j 默认模块不使用 Android Cronet",
+        "status": "unsupported-platform"
+      },
+      "17": {
+        "reason": "Google Maven 仅发布此 Android AAR，无对应 JVM JAR；ddd4j 默认模块不使用 Android Cronet",
+        "status": "unsupported-platform"
+      },
+      "21": {
+        "reason": "Google Maven 仅发布此 Android AAR，无对应 JVM JAR；ddd4j 默认模块不使用 Android Cronet",
+        "status": "unsupported-platform"
+      }
+    },
     "org.apache.logging.log4j:log4j-flume-ng": {
       "8": {
         "reason": "Log4j 2.24.3 未发布此旧模块，2.x 最后发布于 2.23.1；当前默认模块不使用",
@@ -1886,6 +2002,7 @@
     "org.apache.ant:ant-jsch": 8,
     "org.apache.cassandra:java-driver-core": 17,
     "org.apache.commons.ssl:not-yet-commons-ssl": 8,
+    "ca.juliusdavies:not-yet-commons-ssl": 8,
     "org.apache.commons:commons-collections4": 8,
     "org.apache.commons:commons-compress": 8,
     "org.apache.commons:commons-configuration2": 8,
@@ -1985,6 +2102,7 @@
     "org.apache.hadoop:hadoop-yarn-client": 8,
     "org.apache.hbase:hbase-client": 8,
     "org.apache.hbase:hbase-protocol": 8,
+    "org.apache.hbase:hbase-protocol-shaded": 8,
     "org.apache.hive:hive-exec": 8,
     "org.apache.hive:hive-jdbc": 8,
     "org.apache.hive:hive-metastore": 8,
@@ -2692,6 +2810,7 @@
     "org.apache.commons:commons-rdf-rdf4j:jar:": 8,
     "org.apache.commons:not-yet-commons-ssl:jar:": 8,
     "org.apache.commons.ssl:not-yet-commons-ssl:jar:": 8,
+    "ca.juliusdavies:not-yet-commons-ssl:jar:": 8,
     "org.apache.commons:commons-text:jar:": 8,
     "org.apache.commons:commons-vfs2:jar:": 8,
     "org.checkerframework:checker-qual:jar:": 8,
@@ -2861,6 +2980,7 @@
     "com.hankcs.hanlp.restful:hanlp-restful:jar:": 8,
     "org.apache.hbase:hbase-client:jar:": 8,
     "org.apache.hbase:hbase-protocol:jar:": 8,
+    "org.apache.hbase:hbase-protocol-shaded:jar:": 8,
     "org.hdrhistogram:HdrHistogram:jar:": 8,
     "org.htmlparser:htmlparser:jar:": 8,
     "com.h2database:h2:jar:": 8,

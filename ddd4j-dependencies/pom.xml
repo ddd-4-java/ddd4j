@@ -1777,26 +1777,6 @@
                 <version>3.0.0</version>
             </dependency>
             <dependency>
-                <groupId>org.chromium.net</groupId>
-                <artifactId>cronet-api</artifactId>
-                <version>${cronet.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.chromium.net</groupId>
-                <artifactId>cronet-common</artifactId>
-                <version>${cronet.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.chromium.net</groupId>
-                <artifactId>cronet-embedded</artifactId>
-                <version>${cronet.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.chromium.net</groupId>
-                <artifactId>cronet-fallback</artifactId>
-                <version>${cronet.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.owasp</groupId>
                 <artifactId>csrfguard</artifactId>
                 <version>${owasp-csrfguard.version}</version>
@@ -2988,7 +2968,7 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.hbase</groupId>
-                <artifactId>hbase-protocol</artifactId>
+                <artifactId>hbase-protocol-shaded</artifactId>
                 <version>${hbase.version}</version>
             </dependency>
             <dependency>
@@ -5094,12 +5074,7 @@
                 <version>${nimbus-jose-jwt.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.commons.ssl</groupId>
-                <artifactId>not-yet-commons-ssl</artifactId>
-                <version>${commons-ssl.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.commons</groupId>
+                <groupId>ca.juliusdavies</groupId>
                 <artifactId>not-yet-commons-ssl</artifactId>
                 <version>${commons-ssl.version}</version>
             </dependency>
