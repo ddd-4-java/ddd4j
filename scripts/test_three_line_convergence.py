@@ -33,6 +33,7 @@ class ThreeLineConvergenceTest(unittest.TestCase):
     def test_inventory_never_reports_product_pass(self):
         checks = {"structure": {"status": "PASS"},
                   "product-docs": {"status": "PASS"},
+                  "historical-index": {"status": "PASS"},
                   "values": {"status": "NOT_RUN"},
                   "dependencies": {"status": "NOT_RUN"},
                   "reactor": {"status": "NOT_RUN"},
@@ -53,6 +54,15 @@ class ThreeLineConvergenceTest(unittest.TestCase):
         checks = {name: {'status': 'PASS'} for name in MODULE.VERIFY_CHECKS}
         del checks['dependency-catalog']
         self.assertEqual('BLOCKED', MODULE.combined_status(checks, 'verify', True))
+
+    def test_missing_historical_index_blocks_both_phases(self):
+        self.assertIn("historical-index", MODULE.INVENTORY_CHECKS)
+        self.assertIn("historical-index", MODULE.VERIFY_CHECKS)
+        for phase, required in (("inventory", MODULE.INVENTORY_CHECKS),
+                                ("verify", MODULE.VERIFY_CHECKS)):
+            checks = {name: {"status": "PASS"} for name in required}
+            del checks["historical-index"]
+            self.assertEqual("BLOCKED", MODULE.combined_status(checks, phase, True))
 
     def test_reactor_runs_after_independent_structure_or_dependency_failure(self):
         checks = {f"effective-{jdk}": {"status": "PASS"} for jdk in (8, 17, 21)}
