@@ -14,6 +14,7 @@
  */
 package io.ddd4j.core.cqrs.eventstore.jackson;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.ddd4j.core.ddd.event.*;
 import org.junit.jupiter.api.Test;
@@ -22,7 +23,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class EventPayloadSerializerTest {
 
-    private final EventPayloadSerializer serializer = new EventPayloadSerializer(JsonMapper.builder().findAndAddModules().build());
+    private final JsonMapper sourceMapper = JsonMapper.builder().findAndAddModules().build();
+    private final EventPayloadSerializer serializer = new EventPayloadSerializer(sourceMapper);
 
     @Test
     void serializeShouldCarryOnlyBusinessProperty() {
@@ -46,6 +48,25 @@ class EventPayloadSerializerTest {
     void deserializeShouldIgnoreUnknownProperty() {
         DomainEvent<?> event = serializer.deserialize("{\"fact\":\"ok\",\"junk\":\"ignored\"}", OrderCreatedEvent.class);
         assertEquals("ok", ((OrderCreatedEvent) event).getFact());
+    }
+
+    @Test
+    void unknownClassMarkerCannotChooseDeserializedType() {
+        String payload = serializer.serialize(new OrderCreatedEvent("order-created"));
+        String withClassMarker = payload.substring(0, payload.length() - 1)
+                + ",\"@class\":\"java.lang.ProcessBuilder\"}";
+
+        DomainEvent<?> restored = serializer.deserialize(withClassMarker, OrderCreatedEvent.class);
+
+        assertInstanceOf(OrderCreatedEvent.class, restored);
+        assertEquals("order-created", ((OrderCreatedEvent) restored).getFact());
+    }
+
+    @Test
+    void serializerLeavesSourceMapperStrict() {
+        assertTrue(sourceMapper.isEnabled(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES));
+        serializer.deserialize("{\"fact\":\"ok\",\"futureProperty\":\"newer-writer\"}", OrderCreatedEvent.class);
+        assertTrue(sourceMapper.isEnabled(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES));
     }
 
     @Test
