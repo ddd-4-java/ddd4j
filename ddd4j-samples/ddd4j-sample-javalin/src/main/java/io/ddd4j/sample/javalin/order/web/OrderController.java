@@ -101,15 +101,19 @@ public final class OrderController {
     }
 
     /** 创建订单的 HTTP 请求。 */
-    public final static class CreateOrderRequest {
+    public static class CreateOrderRequest {
 
         private static final long serialVersionUID = 0L;
 
-        private final String orderNo;
+        private String orderNo;
 
-        private final String buyerId;
+        private String buyerId;
 
-        private final String buyerName;
+        private String buyerName;
+
+        /** 创建空请求，供反序列化使用。 */
+        public CreateOrderRequest() {
+        }
 
         /**
          * @param orderNo 订单号
@@ -141,6 +145,36 @@ public final class OrderController {
             return buyerName;
         }
 
+        /** @return 订单号 */
+        public String getOrderNo() {
+            return orderNo;
+        }
+
+        /** @param orderNo 订单号 */
+        public void setOrderNo(String orderNo) {
+            this.orderNo = orderNo;
+        }
+
+        /** @return 买家标识 */
+        public String getBuyerId() {
+            return buyerId;
+        }
+
+        /** @param buyerId 买家标识 */
+        public void setBuyerId(String buyerId) {
+            this.buyerId = buyerId;
+        }
+
+        /** @return 买家姓名 */
+        public String getBuyerName() {
+            return buyerName;
+        }
+
+        /** @param buyerName 买家姓名 */
+        public void setBuyerName(String buyerName) {
+            this.buyerName = buyerName;
+        }
+
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -169,17 +203,21 @@ public final class OrderController {
     }
 
     /** 添加订单明细的 HTTP 请求。 */
-    public final static class AddOrderLineRequest {
+    public static class AddOrderLineRequest {
 
         private static final long serialVersionUID = 0L;
 
-        private final String goodsId;
+        private String goodsId;
 
-        private final String goodsName;
+        private String goodsName;
 
-        private final int quantity;
+        private int quantity;
 
-        private final BigDecimal unitPrice;
+        private BigDecimal unitPrice;
+
+        /** 创建空请求，供反序列化使用。 */
+        public AddOrderLineRequest() {
+        }
 
         /**
          * @param goodsId 商品标识
@@ -219,6 +257,46 @@ public final class OrderController {
             return unitPrice;
         }
 
+        /** @return 商品标识 */
+        public String getGoodsId() {
+            return goodsId;
+        }
+
+        /** @param goodsId 商品标识 */
+        public void setGoodsId(String goodsId) {
+            this.goodsId = goodsId;
+        }
+
+        /** @return 商品名称 */
+        public String getGoodsName() {
+            return goodsName;
+        }
+
+        /** @param goodsName 商品名称 */
+        public void setGoodsName(String goodsName) {
+            this.goodsName = goodsName;
+        }
+
+        /** @return 商品数量 */
+        public int getQuantity() {
+            return quantity;
+        }
+
+        /** @param quantity 商品数量 */
+        public void setQuantity(int quantity) {
+            this.quantity = quantity;
+        }
+
+        /** @return 商品单价 */
+        public BigDecimal getUnitPrice() {
+            return unitPrice;
+        }
+
+        /** @param unitPrice 商品单价 */
+        public void setUnitPrice(BigDecimal unitPrice) {
+            this.unitPrice = unitPrice;
+        }
+
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -248,7 +326,7 @@ public final class OrderController {
     }
 
     /** 订单 HTTP 响应。 */
-    public final static class OrderResponse {
+    public static class OrderResponse {
 
         private static final long serialVersionUID = 0L;
 
@@ -335,6 +413,46 @@ public final class OrderController {
         /** @return 明细数量 */
         @JsonProperty("lineCount")
         public int lineCount() {
+            return lineCount;
+        }
+
+        /** @return 订单标识 */
+        public String getId() {
+            return id;
+        }
+
+        /** @return 订单号 */
+        public String getOrderNo() {
+            return orderNo;
+        }
+
+        /** @return 买家标识 */
+        public String getBuyerId() {
+            return buyerId;
+        }
+
+        /** @return 买家姓名 */
+        public String getBuyerName() {
+            return buyerName;
+        }
+
+        /** @return 订单状态 */
+        public OrderStatus getStatus() {
+            return status;
+        }
+
+        /** @return 订单总金额 */
+        public BigDecimal getTotalAmount() {
+            return totalAmount;
+        }
+
+        /** @return 币种 */
+        public String getCurrency() {
+            return currency;
+        }
+
+        /** @return 明细数量 */
+        public int getLineCount() {
             return lineCount;
         }
 
