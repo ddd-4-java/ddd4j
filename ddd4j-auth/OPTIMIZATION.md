@@ -725,8 +725,8 @@ ddd4j-javalin/.../ddd4j-javalin-auth-satoken/← Javalin + sa-token 整合
         <artifactId>shiro-web</artifactId>
     </dependency>
     <dependency>
-        <groupId>com.github.redacted-legacy-family</groupId>
-        <artifactId>shiro-biz</artifactId>
+        <groupId>io.github.easy4j</groupId>
+        <artifactId>shiro-extension-core</artifactId>
     </dependency>
 </dependencies>
 <!-- 注意：不再有任何 spring-context 依赖 -->
