@@ -1024,13 +1024,18 @@
     {
       "id": "CORE-PROJECTION-RUNNER-BEHAVIOR",
       "description": "单次投影处理、空块位点推进、非法输入和多视图失败隔离在三条线保持相同可观察行为",
+      "caseNames": {
+        "1.0.x": ["runOnce_chunk为空但nextEventNumber前进_仍应推进位置", "runOnce_view为null_应抛NullPointerException", "runAllIsolated_其中一个视图抛异常_应继续执行后续视图"],
+        "2.0.x": ["runOnce_chunk为空但nextEventNumber前进_仍应推进位置", "runOnce_view为null_应抛NullPointerException", "runAllIsolated_其中一个视图抛异常_应继续执行后续视图"],
+        "3.0.x": ["runOnce_chunk为空但nextEventNumber前进_仍应推进位置", "runOnce_view为null_应抛NullPointerException", "runAllIsolated_其中一个视图抛异常_应继续执行后续视图"]
+      },
       "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-14-projection-runner-test-union/report.json",
       "lastEvidenceSha256": "dbefa6e572e4c13ab1032c144bad7fa3971bbd4c8d78c0fda9b76e13baa1bbdb",
       "lines": {
         "1.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunnerTest.java"
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunnerBehaviorTest.java"
           ]
         },
         "2.0.x": {
