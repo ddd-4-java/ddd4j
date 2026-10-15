@@ -126,5 +126,10 @@ public final class VertxOrderRoutes {
     @Value
     public static class TokenResponse {
         String token;
+
+        /** @return 登录令牌 */
+        public String token() {
+            return token;
+        }
     }
 }

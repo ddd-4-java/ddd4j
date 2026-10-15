@@ -110,6 +110,34 @@ public final class JavalinSample {
         }
 
         @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            JavalinApplication other = (JavalinApplication) obj;
+            return Objects.equals(app, other.app)
+                    && Objects.equals(token, other.token)
+                    && Objects.equals(spiScope, other.spiScope);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(app);
+            result = 31 * result + Objects.hashCode(token);
+            result = 31 * result + Objects.hashCode(spiScope);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "JavalinApplication[app=" + app + ", token=[REDACTED], spiScope=" + spiScope + "]";
+        }
+
+        @Override
         public void close() {
             try {
                 app.stop();
