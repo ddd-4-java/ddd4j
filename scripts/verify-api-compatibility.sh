@@ -52,8 +52,14 @@ package_prefix() {
   printf '%s\n' "${result}"
 }
 
-if [[ -z "${BASELINE_VERSION}" || "${BASELINE_VERSION}" == *SNAPSHOT ]]; then
-  echo "[FAIL] DDD4J_API_BASELINE_VERSION must identify a published non-SNAPSHOT 2.0.x baseline." >&2
+EXPECTED_LINE="$(sed -nE 's/.*<revision>([123])\.0\.x\..*<\/revision>.*/\1/p' "${ROOT_DIR}/pom.xml" | head -n 1)"
+if [[ -z "${EXPECTED_LINE}" ]]; then
+  echo "[FAIL] Could not determine this checkout's release line from pom.xml." >&2
+  exit 1
+fi
+
+if [[ -z "${BASELINE_VERSION}" || "${BASELINE_VERSION}" == *SNAPSHOT || ! "${BASELINE_VERSION}" =~ ^${EXPECTED_LINE}\.0\.x\. ]]; then
+  echo "[FAIL] DDD4J_API_BASELINE_VERSION must identify a published non-SNAPSHOT ${EXPECTED_LINE}.0.x baseline." >&2
   exit 1
 fi
 
