@@ -28,6 +28,10 @@ class ThreeLineProductDocsTest(unittest.TestCase):
                 document = root / "docs" / name
                 document.parent.mkdir(parents=True, exist_ok=True)
                 document.write_text("共同正文\n", encoding="utf-8")
+            for name in ("ddd4j-sample-quarkus-satoken", "ddd4j-sample-quarkus-shiro"):
+                document = root / "ddd4j-samples" / name / "README.md"
+                document.parent.mkdir(parents=True, exist_ok=True)
+                document.write_text("共同鉴权样例\n", encoding="utf-8")
             for name in ("README.md", "README.en.md"):
                 (root / name).write_text(
                     "[方案](docs/5、ddd4j-技术方案与路线.md) "
@@ -72,6 +76,13 @@ class ThreeLineProductDocsTest(unittest.TestCase):
         result, report = self.check()
         self.assertNotEqual(0, result.returncode)
         self.assertIn("docs/superpowers/historical-evidence-index.md", report["differences"])
+
+    def test_quarkus_auth_sample_readme_drift_fails(self):
+        document = self.roots[1] / "ddd4j-samples/ddd4j-sample-quarkus-satoken/README.md"
+        document.write_text("旧版登录接口\n", encoding="utf-8")
+        result, report = self.check()
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("ddd4j-samples/ddd4j-sample-quarkus-satoken/README.md", report["differences"])
 
     def test_missing_document_and_broken_readme_link_fail(self):
         (self.roots[2] / "docs/7、ddd4j-领域模型设计.md").unlink()

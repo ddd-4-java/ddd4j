@@ -23,6 +23,10 @@ DOCUMENTS = (
     "superpowers/historical-evidence-index.md",
 )
 ROOT_REDIRECTS = DOCUMENTS[:4]
+SHARED_SAMPLE_DOCUMENTS = (
+    "ddd4j-samples/ddd4j-sample-quarkus-satoken/README.md",
+    "ddd4j-samples/ddd4j-sample-quarkus-shiro/README.md",
+)
 LINK = re.compile(r'(?:\]\(([^)]+)\)|href=["\']([^"\']+)["\'])')
 
 
@@ -41,8 +45,7 @@ def check(roots: list[Path], output: Path) -> int:
     differences = {}
     broken_links = []
     hashes = {}
-    for name in DOCUMENTS:
-        relative = "docs/" + name
+    for relative in (*("docs/" + name for name in DOCUMENTS), *SHARED_SAMPLE_DOCUMENTS):
         values = []
         for root in roots:
             document = root / relative
@@ -64,7 +67,7 @@ def check(roots: list[Path], output: Path) -> int:
             differences[name] = values
     for root in roots:
         for relative in ("README.md", "README.en.md", *ROOT_REDIRECTS,
-                         *("docs/" + name for name in DOCUMENTS)):
+                         *("docs/" + name for name in DOCUMENTS), *SHARED_SAMPLE_DOCUMENTS):
             document = root / relative
             if not document.is_file():
                 broken_links.append({"root": str(root), "source": relative, "target": "MISSING"})
