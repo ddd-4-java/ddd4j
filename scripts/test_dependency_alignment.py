@@ -74,6 +74,21 @@ class DependencyAlignmentTest(unittest.TestCase):
             for jdk in ('17', '21'):
                 self.assertIn(jdk, policy['unsupported'].get(coordinate, {}), coordinate)
 
+    def test_retired_kafka_and_resilience4j_catalog_entries_have_support_boundaries(self):
+        policy_path = Path(__file__).parents[1] / 'config/dependencies/alignment-policy.json'
+        policy = json.loads(policy_path.read_text(encoding='utf-8'))
+        coordinates = {
+            'org.apache.kafka:kafka-log4j-appender': ('17', '21'),
+            'org.apache.kafka:kafka-streams-scala_2.12': ('17', '21'),
+            'org.apache.kafka:kafka_2.12': ('17', '21'),
+            'io.github.resilience4j:resilience4j-spring': ('17', '21'),
+            'io.github.resilience4j:resilience4j-spring-boot2': ('17',),
+            'io.github.resilience4j:resilience4j-spring-cloud2': ('17',),
+        }
+        for coordinate, jdks in coordinates.items():
+            for jdk in jdks:
+                self.assertIn(jdk, policy['unsupported'].get(coordinate, {}), coordinate)
+
     def test_unconfigured_third_party_release_does_not_inherit_ddd4j_version(self):
         with tempfile.TemporaryDirectory() as temp:
             base = Path(temp)

@@ -790,6 +790,58 @@
     }
   },
   "unsupported": {
+    "org.apache.kafka:kafka-log4j-appender": {
+      "17": {
+        "reason": "Kafka 4.3.1 未发布此旧 Scala 2.12/Log4j 坐标；最后发布版本为 3.9.2，当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      },
+      "21": {
+        "reason": "Kafka 4.3.1 未发布此旧 Scala 2.12/Log4j 坐标；最后发布版本为 3.9.2，当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "org.apache.kafka:kafka-streams-scala_2.12": {
+      "17": {
+        "reason": "Kafka 4.3.1 未发布此旧 Scala 2.12/Log4j 坐标；最后发布版本为 3.9.2，当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      },
+      "21": {
+        "reason": "Kafka 4.3.1 未发布此旧 Scala 2.12/Log4j 坐标；最后发布版本为 3.9.2，当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "org.apache.kafka:kafka_2.12": {
+      "17": {
+        "reason": "Kafka 4.3.1 未发布此旧 Scala 2.12/Log4j 坐标；最后发布版本为 3.9.2，当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      },
+      "21": {
+        "reason": "Kafka 4.3.1 未发布此旧 Scala 2.12/Log4j 坐标；最后发布版本为 3.9.2，当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "io.github.resilience4j:resilience4j-spring": {
+      "17": {
+        "reason": "Resilience4j 2.4.0 未发布此旧 Spring 坐标；最后发布版本为 2.3.0，当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      },
+      "21": {
+        "reason": "Resilience4j 2.4.0 未发布此旧 Spring 坐标；最后发布版本为 2.3.0，当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "io.github.resilience4j:resilience4j-spring-boot2": {
+      "17": {
+        "reason": "Resilience4j 2.4.0 未发布此旧 Spring 坐标；最后发布版本为 2.3.0，当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "io.github.resilience4j:resilience4j-spring-cloud2": {
+      "17": {
+        "reason": "Resilience4j 2.4.0 未发布此旧 Spring 坐标；最后发布版本为 2.3.0，当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      }
+    },
     "com.typesafe.akka:akka-remote_3": {
       "8": {
         "reason": "发布 JAR 的基础字节码超过 JDK 8；不能由提高构建 JVM 绕过本版本线约束",

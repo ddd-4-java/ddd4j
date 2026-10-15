@@ -4117,11 +4117,6 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.kafka</groupId>
-                <artifactId>kafka-log4j-appender</artifactId>
-                <version>${kafka.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.kafka</groupId>
                 <artifactId>kafka-metadata</artifactId>
                 <version>${kafka.version}</version>
             </dependency>
@@ -4168,11 +4163,6 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.kafka</groupId>
-                <artifactId>kafka-streams-scala_2.12</artifactId>
-                <version>${kafka.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.kafka</groupId>
                 <artifactId>kafka-streams-scala_2.13</artifactId>
                 <version>${kafka.version}</version>
             </dependency>
@@ -4185,17 +4175,6 @@
                 <groupId>org.apache.kafka</groupId>
                 <artifactId>kafka-tools</artifactId>
                 <version>${kafka.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.kafka</groupId>
-                <artifactId>kafka_2.12</artifactId>
-                <version>${kafka.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.kafka</groupId>
-                <artifactId>kafka_2.12</artifactId>
-                <version>${kafka.version}</version>
-                <classifier>test</classifier>
             </dependency>
             <dependency>
                 <groupId>org.apache.kafka</groupId>
@@ -5900,11 +5879,6 @@
             <dependency>
                 <groupId>io.github.resilience4j</groupId>
                 <artifactId>resilience4j-rxjava3</artifactId>
-                <version>${resilience4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.resilience4j</groupId>
-                <artifactId>resilience4j-spring</artifactId>
                 <version>${resilience4j.version}</version>
             </dependency>
             <dependency>
