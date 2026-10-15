@@ -820,3 +820,7 @@ effective POM 必须分别用对应线的 JDK/Wrapper 从该线 `ddd4j-dependenc
 **2026-10-16 T07/T10 原生 Broker 三线 CI：** 在各自 JDK 的 GitHub Verify 中，八类原生报告 RabbitMQ、NATS、MQTT、Mica MQTT、Artemis、Pulsar、RocketMQ、Redis Stream 每线实际执行 29 项，三线运行 38788292931、38788292392、38788293898 均成功，报告校验要求正执行数且零跳过、错误、失败。证据见 /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-16-native-broker-ci/report.json（SHA-256 b30c823195bbe06d8dcfe88986b851fbb7611d96ecb7b084463616d435ad238a）；场景矩阵新增 BROKER-NATIVE-CONTAINERS，并继续将 BROKER-ADAPTERS 保持 pending：ONS/TDMQ/SQS 云端路径及其余故障、竞争路径尚未通过原生验收。
 
 **2026-10-16 T09 共同 ADR 正文：** 三线统一 core 零外部依赖 ADR 中 EntityIdPath 的拒绝项与四处证据计数，2.0.x/3.0.x 同步参考文档已完成的 ADR 状态；三线产品文档门禁 PASS、差异 0、失效链接 0，本地结构 inventory 差异 2313→2311、OPEN 1333→1331。该文档对齐不代表 T09 其他产品文档与 T11 全量验收完成。
+
+**2026-10-16 T01 源码 API 隐式构造器复核：** 三线源 API 扫描器现在识别 Java 对可见普通类生成的无参构造器，并区分 Lombok `@Value`、`@Data`、`@AllArgsConstructor`、`@RequiredArgsConstructor`、`@Builder` 与显式 `@NoArgsConstructor`，避免把 `StoredEventEntity` 和请求 DTO 的已有 public 构造器误报为缺失。新增及受影响自测按 RED→GREEN 验证，三线完整结构检查器自测各 36/36 通过；同一输入的 inventory 差异 2311→2296、OPEN 1331→1316，消失的 15 项均为无参构造器误报，未新增差异。编译 API 仍需独立验证，T01/T11 继续 OPEN。
+
+**2026-10-16 T07/T10 Mica MQTT CI 探针等待：** GitHub Verify 1.0.x run 38791977598 的 Java 8 单测作业在 `MicaMqttContainerIntegrationTest` 的订阅探针处恰好达到 10 秒截止，Broker 回传尚未到达；同一基线先前原生报告曾通过。三线共同测试只把真实探针回传的等待上限从 10 秒扩为 30 秒，未弱化回传断言或改变生产代码。本机 Docker 不可用，必须由新提交的远端原生作业复验；本次不能据此宣称故障已消除。

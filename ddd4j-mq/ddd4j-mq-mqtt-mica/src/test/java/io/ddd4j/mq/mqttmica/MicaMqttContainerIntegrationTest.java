@@ -81,7 +81,7 @@ class MicaMqttContainerIntegrationTest {
             probe.setMsgId(probeId);
             probe.setNamespace("ddd4j");
             probe.setTopic(topic);
-            long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(10);
+            long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(30);
             do {
                 client.initProducer(properties).accept(probe);
             } while (!bean.probeReceived.await(250, TimeUnit.MILLISECONDS)

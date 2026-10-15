@@ -18,6 +18,50 @@ SCRIPT = Path(__file__).with_name("verify-three-line-structure-api-parity.py")
 
 
 class ThreeLineInventoryTest(unittest.TestCase):
+    def test_implicit_public_constructor_matches_explicit_noarg_constructor(self):
+        source = "ddd4j-core/src/main/java/example/Foo.java"
+        self.write(self.roots[0], source, "package example; public class Foo {}")
+        self.write(self.roots[1], source,
+                   "package example; public class Foo { public Foo() {} }")
+        self.write(self.roots[2], source,
+                   "package example; public class Foo { public Foo() {} }")
+
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = json.loads((output / "inventory.json").read_text())["differences"]
+        constructor = "ddd4j-core/src/main/java/example/Foo.java#example.Foo#<init>()"
+        self.assertFalse(any(row["path"] == constructor for row in rows))
+
+        self.write(self.roots[0], source,
+                   "package example; public class Foo { private Foo() {} }")
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = json.loads((output / "inventory.json").read_text())["differences"]
+        self.assertEqual("OPEN", next(row["status"] for row in rows
+                                      if row["path"] == constructor))
+
+    def test_lombok_constructor_annotations_do_not_invent_implicit_constructor(self):
+        source = "ddd4j-core/src/main/java/example/Foo.java"
+        constructor = "ddd4j-core/src/main/java/example/Foo.java#example.Foo#<init>()"
+        self.write(self.roots[0], source,
+                   "package example; @Value public class Foo { final String value = \"x\"; }")
+        for root in self.roots[1:]:
+            self.write(root, source,
+                       "package example; public class Foo { public Foo() {} }")
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = json.loads((output / "inventory.json").read_text())["differences"]
+        self.assertEqual("OPEN", next(row["status"] for row in rows
+                                      if row["path"] == constructor))
+
+        self.write(self.roots[0], source,
+                   "package example; @Data @NoArgsConstructor @AllArgsConstructor "
+                   "public class Foo { String value; }")
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = json.loads((output / "inventory.json").read_text())["differences"]
+        self.assertFalse(any(row["path"] == constructor for row in rows))
+
     def test_indexed_javadoc_history_requires_locked_file_hash(self):
         path = "docs/verification/javadoc-fill-report-01.md"
         content = "# Historical Javadoc report\n"
@@ -758,9 +802,8 @@ class ThreeLineInventoryTest(unittest.TestCase):
         result, output = self.run_checker("verify")
         self.assertNotEqual(0, result.returncode, result.stderr)
         report = json.loads((output / "inventory.json").read_text())
-        source_member = next(row for row in report["differences"]
-                             if row["category"] == "api" and row["path"].endswith("Foo#<init>()"))
-        self.assertEqual("COMPILED_API_EQUIVALENT", source_member["status"])
+        self.assertFalse(any(row["category"] == "api" and row["path"].endswith("Foo#<init>()")
+                             for row in report["differences"]))
         self.assertEqual("OPEN", next(row for row in report["differences"]
                                       if row["category"] == "production" and row["path"] == path)["status"])
         self.assertEqual("PASS", report["compiledApi"]["status"])
@@ -782,7 +825,7 @@ class ThreeLineInventoryTest(unittest.TestCase):
         report = json.loads((output / "inventory.json").read_text())
         self.assertEqual("FAIL", report["compiledApi"]["status"])
         self.assertEqual("OPEN", next(row for row in report["differences"]
-                                      if row["category"] == "api" and row["path"].endswith("Foo#<init>()"))["status"])
+                                      if row["category"] == "api" and row["path"].endswith("Foo#extra()"))["status"])
 
     def test_inventory_identifies_method_return_type_drift(self):
         path = "ddd4j-core/src/main/java/example/Foo.java"
