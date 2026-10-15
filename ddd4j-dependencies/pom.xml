@@ -5190,11 +5190,7 @@
                 <artifactId>oracle-r2dbc</artifactId>
                 <version>${r2dbc-oracle.version}</version>
             </dependency>
-            <dependency>
-                <groupId>fr.opensagres.xdocreport</groupId>
-                <artifactId>org.apache.poi.xwpf.converter.pdf.itext5</artifactId>
-                <version>${xdocreport.version}</version>
-            </dependency>
+
             <dependency>
                 <groupId>org.eclipse.paho</groupId>
                 <artifactId>org.eclipse.paho.client.mqttv3</artifactId>

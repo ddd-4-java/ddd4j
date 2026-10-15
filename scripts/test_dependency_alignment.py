@@ -162,6 +162,15 @@ class DependencyAlignmentTest(unittest.TestCase):
                                  replacement.get(jdk, {}).get('coordinates'))
         self.assertEqual(8, policy['baseline_components'].get('ca.juliusdavies:not-yet-commons-ssl'))
 
+    def test_unpublished_xdocreport_and_jdk8_snmp_db_are_explicitly_unsupported(self):
+        policy_path = Path(__file__).parents[1] / 'config/dependencies/alignment-policy.json'
+        policy = json.loads(policy_path.read_text(encoding='utf-8'))
+        xdocreport = policy['unsupported'].get(
+            'fr.opensagres.xdocreport:org.apache.poi.xwpf.converter.pdf.itext5', {})
+        for jdk in ('8', '17', '21'):
+            self.assertIn(jdk, xdocreport)
+        self.assertIn('8', policy['unsupported'].get('org.snmp4j:snmp4j-agent-db', {}))
+
     def test_unconfigured_third_party_release_does_not_inherit_ddd4j_version(self):
         with tempfile.TemporaryDirectory() as temp:
             base = Path(temp)

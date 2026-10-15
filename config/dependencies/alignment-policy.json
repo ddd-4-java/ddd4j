@@ -884,6 +884,26 @@
     }
   },
   "unsupported": {
+    "fr.opensagres.xdocreport:org.apache.poi.xwpf.converter.pdf.itext5": {
+      "8": {
+        "reason": "Maven Central 仅发布到 1.0.6，未发布当前 XDocReport 2.0.6 所需同版本构件；默认模块未引用",
+        "status": "unpublished-version"
+      },
+      "17": {
+        "reason": "Maven Central 仅发布到 1.0.6，未发布当前 XDocReport 2.1.0 所需同版本构件；默认模块未引用",
+        "status": "unpublished-version"
+      },
+      "21": {
+        "reason": "Maven Central 仅发布到 1.0.6，未发布当前 XDocReport 2.1.0 所需同版本构件；默认模块未引用",
+        "status": "unpublished-version"
+      }
+    },
+    "org.snmp4j:snmp4j-agent-db": {
+      "8": {
+        "reason": "Maven Central 从 3.0.0 才发布 agent-db，当前 JDK 8 线 2.7.9 未发布；默认模块未引用，17/21 线保留本线 3.x 构件",
+        "status": "unpublished-version"
+      }
+    },
     "org.chromium.net:cronet-api": {
       "8": {
         "reason": "Google Maven 仅发布此 Android AAR，无对应 JVM JAR；ddd4j 默认模块不使用 Android Cronet",
