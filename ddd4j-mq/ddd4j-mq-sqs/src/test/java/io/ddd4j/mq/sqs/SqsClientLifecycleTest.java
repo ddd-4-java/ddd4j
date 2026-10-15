@@ -12,11 +12,15 @@ import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -51,5 +55,26 @@ class SqsClientLifecycleTest {
 
         verify(nativeClient, atLeastOnce()).receiveMessage(any(ReceiveMessageRequest.class));
         verify(nativeClient, times(1)).close();
+    }
+
+    @Test
+    void closedAdapterRejectsNewConsumerWithoutCreatingClient() {
+        SqsClient nativeClient = mock(SqsClient.class);
+        AtomicInteger creations = new AtomicInteger();
+        SqsProperties properties = new SqsProperties() {
+            @Override
+            public SqsClient client() {
+                creations.incrementAndGet();
+                return nativeClient;
+            }
+        };
+        MQListener listener = new MQListener();
+        listener.setTopic("https://sqs.example/queue");
+        SqsMQClient adapter = new SqsMQClient(properties);
+        adapter.close();
+
+        assertThrows(IllegalStateException.class, () -> adapter.initConsumer(listener, properties));
+        assertEquals(0, creations.get());
+        verify(nativeClient, never()).close();
     }
 }
