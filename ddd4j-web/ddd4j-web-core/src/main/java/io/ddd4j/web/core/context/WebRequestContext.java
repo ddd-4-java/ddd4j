@@ -15,6 +15,9 @@
 
 package io.ddd4j.web.core.context;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.web.core.version.ApiVersion;
 
@@ -82,8 +85,16 @@ import java.util.Objects;
      * @param path 路径
      * @param apiVersion 请求解析出的 API 版本，可为 null（未接线时）
      */
-    public WebRequestContext(String requestId, String traceId, String tenantId, String authorization,
-                             Locale locale, String clientIp, String method, String path, ApiVersion apiVersion) {
+    @JsonCreator
+    public WebRequestContext(@JsonProperty("requestId") String requestId,
+                             @JsonProperty("traceId") String traceId,
+                             @JsonProperty("tenantId") String tenantId,
+                             @JsonProperty("authorization") String authorization,
+                             @JsonProperty("locale") Locale locale,
+                             @JsonProperty("clientIp") String clientIp,
+                             @JsonProperty("method") String method,
+                             @JsonProperty("path") String path,
+                             @JsonProperty("apiVersion") ApiVersion apiVersion) {
         this.requestId = StrKit.isBlank(requestId) ? null : requestId;
         this.traceId = StrKit.isBlank(traceId) ? this.requestId : traceId;
         this.tenantId = tenantId;
@@ -109,6 +120,7 @@ import java.util.Objects;
      *
      * @return API 版本，未接线或未携带时为 null
      */
+    @JsonProperty("apiVersion")
     public ApiVersion apiVersion() {
         return apiVersion;
     }
