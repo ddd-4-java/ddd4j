@@ -2968,6 +2968,78 @@
       }
     },
     {
+      "id": "RUNTIME-DROPWIZARD-CQRS-CORE",
+      "description": "Dropwizard 运行时承载 core CQRS 的命令路由、投影位置与 ViewManager 生命周期；不代表框架级适配器",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-runtime/ddd4j-runtime-dropwizard/src/test/java/io/ddd4j/dropwizard/cqrs/DropwizardCqrsRuntimeContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-runtime/ddd4j-runtime-dropwizard/src/test/java/io/ddd4j/dropwizard/cqrs/DropwizardCqrsRuntimeContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-runtime/ddd4j-runtime-dropwizard/src/test/java/io/ddd4j/dropwizard/cqrs/DropwizardCqrsRuntimeContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "RUNTIME-MICRONAUT-CQRS-CORE",
+      "description": "Micronaut 运行时承载 core CQRS 的命令路由、投影位置与 ViewManager 生命周期；不代表框架级适配器",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-runtime/ddd4j-runtime-micronaut/src/test/java/io/ddd4j/micronaut/cqrs/MicronautCqrsRuntimeContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-runtime/ddd4j-runtime-micronaut/src/test/java/io/ddd4j/micronaut/cqrs/MicronautCqrsRuntimeContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-runtime/ddd4j-runtime-micronaut/src/test/java/io/ddd4j/micronaut/cqrs/MicronautCqrsRuntimeContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "RUNTIME-VERTX-CQRS-CORE",
+      "description": "Vert.x 运行时承载 core CQRS 的命令路由、投影位置与 ViewManager 生命周期；不代表框架级适配器",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-runtime/ddd4j-runtime-vertx/src/test/java/io/ddd4j/vertx/cqrs/VertxCqrsRuntimeContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-runtime/ddd4j-runtime-vertx/src/test/java/io/ddd4j/vertx/cqrs/VertxCqrsRuntimeContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-runtime/ddd4j-runtime-vertx/src/test/java/io/ddd4j/vertx/cqrs/VertxCqrsRuntimeContractTest.java"
+          ]
+        }
+      }
+    },
+    {
       "id": "RUNTIME-HELIDON-BOOT",
       "description": "Helidon Server 启动、CDI 扩展注册与就绪注册表可读取",
       "lines": {
