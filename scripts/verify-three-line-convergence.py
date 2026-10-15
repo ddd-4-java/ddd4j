@@ -146,12 +146,19 @@ def scenario_matrix(stage, roots):
         if not scenarios or len({row["id"] for row in scenarios}) != len(scenarios):
             raise ValueError("scenario IDs are empty or duplicated")
         for row in scenarios:
+            case_names = row.get("caseNames", {})
+            if case_names and (set(case_names) != {version for _, version in EXPECTED}
+                               or any(not isinstance(name, str) or not name.strip()
+                                      for name in case_names.values())):
+                raise ValueError(f"invalid case names for {row['id']}")
             for index, (_, version) in enumerate(EXPECTED):
                 mapping = row["lines"][version]
                 if mapping["status"] == "supported":
                     if not mapping["tests"] or not all((roots[index] / file).is_file()
                                                         for file in mapping["tests"]):
                         raise ValueError(f"missing mapped test for {row['id']} in {version}")
+                    if case_names and len(mapping["tests"]) != 1:
+                        raise ValueError(f"case name requires one test file for {row['id']} in {version}")
                 elif mapping["status"] == "unsupported":
                     if not mapping.get("reason"):
                         raise ValueError(f"missing platform reason for {row['id']} in {version}")
@@ -202,6 +209,7 @@ def scenario_test_reports(root, scenarios, version, started_ns):
                 continue
             counts = {"tests": 0, "failures": 0, "errors": 0, "skipped": 0}
             artifacts = {}
+            executed_cases = set()
             valid = True
             for suite in suites:
                 if suite.stat().st_mtime_ns < started_ns:
@@ -220,6 +228,7 @@ def scenario_test_reports(root, scenarios, version, started_ns):
                     continue
                 for key, value in values.items():
                     counts[key] += value
+                executed_cases.update(case.get("name") for case in xml.iter("testcase"))
                 artifacts[str(suite.relative_to(root))] = sha256(suite)
                 if suite not in counted_reports:
                     executed += values["tests"] - values["skipped"]
@@ -228,8 +237,12 @@ def scenario_test_reports(root, scenarios, version, started_ns):
             if valid and (ran <= 0 or counts["failures"] or counts["errors"]
                           or counts["skipped"]):
                 issues.append(f"{row['id']}: unsuccessful test report for {source}: {counts}")
+            required_case = row.get("caseNames", {}).get(version)
+            if valid and required_case and required_case not in executed_cases:
+                issues.append(f"{row['id']}: missing executed test case {required_case} for {source}")
             records.append({"scenario": row["id"], "source": source,
-                            "counts": counts, "artifacts": artifacts})
+                            "counts": counts, "artifacts": artifacts,
+                            "requiredCase": required_case})
     return {"status": "FAIL" if issues else "PASS", "version": version,
             "mappedTests": len(records), "uniqueReports": len(counted_reports),
             "executedTests": executed,

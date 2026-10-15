@@ -197,6 +197,30 @@ class ThreeLineConvergenceTest(unittest.TestCase):
             self.assertEqual(1, repeated["uniqueReports"])
             self.assertEqual(2, repeated["executedTests"])
 
+    def test_scenario_execution_requires_the_mapped_case_not_only_its_class(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            reports = root / "core/target/surefire-reports"
+            reports.mkdir(parents=True)
+            report = reports / "TEST-example.RequiredTest.xml"
+            report.write_text(
+                '<testsuite tests="1" failures="0" errors="0" skipped="0">'
+                '<testcase name="unrelatedCase" classname="example.RequiredTest"/>'
+                '</testsuite>', encoding="utf-8")
+            scenarios = [{"id": "CORE-CASE", "caseNames": {"2.0.x": "requiredCase"},
+                          "lines": {"2.0.x": {"status": "supported", "tests": [
+                              "core/src/test/java/example/RequiredTest.java"]}}}]
+            result = MODULE.scenario_test_reports(root, scenarios, "2.0.x", 0)
+            self.assertEqual("FAIL", result["status"])
+            self.assertIn("missing executed test case requiredCase", result["issues"][0])
+
+            report.write_text(
+                '<testsuite tests="1" failures="0" errors="0" skipped="0">'
+                '<testcase name="requiredCase" classname="example.RequiredTest"/>'
+                '</testsuite>', encoding="utf-8")
+            self.assertEqual("PASS", MODULE.scenario_test_reports(
+                root, scenarios, "2.0.x", 0)["status"])
+
     def test_reactor_requires_fresh_executed_test_reports(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

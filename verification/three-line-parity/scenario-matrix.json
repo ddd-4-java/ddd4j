@@ -1853,6 +1853,11 @@
     {
       "id": "EVENTSTORE-ESDB-NATIVE-CAUSALITY",
       "description": "真实 EventStoreDB 存储后 correlationId 与 causationId 回读一致；三线按自身客户端依赖执行",
+      "caseNames": {
+        "1.0.x": "causalityMetadataShouldRoundTripThroughBrokerStorage",
+        "2.0.x": "causalityMetadataRoundTripsThroughEventStoreDb",
+        "3.0.x": "causalityMetadataRoundTripsThroughEventStoreDb"
+      },
       "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-post-pulsar-clean-verify/report.json",
       "lastEvidenceSha256": "53fc2d03d7112f03c958c5d68bf1ce6bd34973d729fde40b9708e3c97f95765f",
       "lines": {
@@ -1879,6 +1884,11 @@
     {
       "id": "EVENTSTORE-ESDB-NATIVE-READ-RANGE-GLOBAL",
       "description": "真实 EventStoreDB 中事件追加、版本区间读取及全局顺序读取；三线按自身客户端依赖执行",
+      "caseNames": {
+        "1.0.x": "appendReadRangeAndGlobalReadFollowStrongContract",
+        "2.0.x": "appendReadRangeAndGlobalReadFollowStrongContract",
+        "3.0.x": "appendReadRangeAndGlobalReadFollowStrongContract"
+      },
       "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-post-pulsar-clean-verify/report.json",
       "lastEvidenceSha256": "53fc2d03d7112f03c958c5d68bf1ce6bd34973d729fde40b9708e3c97f95765f",
       "lines": {
@@ -1905,6 +1915,11 @@
     {
       "id": "EVENTSTORE-ESDB-NATIVE-VERSION-CONFLICT",
       "description": "真实 EventStoreDB 上过期 expectedVersion 被拒绝且不产生部分写入；三线按自身客户端依赖执行",
+      "caseNames": {
+        "1.0.x": "appendWithStaleVersionShouldRejectWithoutPartialWrites",
+        "2.0.x": "staleVersionRejectsWithoutPartialWrites",
+        "3.0.x": "staleVersionRejectsWithoutPartialWrites"
+      },
       "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-post-pulsar-clean-verify/report.json",
       "lastEvidenceSha256": "53fc2d03d7112f03c958c5d68bf1ce6bd34973d729fde40b9708e3c97f95765f",
       "lines": {
