@@ -15,6 +15,9 @@
 
 package io.ddd4j.web.testkit;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -35,7 +38,10 @@ public final class WebContractResponse {
  * @param body 请求体
      */
 
-    public WebContractResponse(int status, Map<String, List<String>> headers, String body) {
+    @JsonCreator
+    public WebContractResponse(@JsonProperty("status") int status,
+                               @JsonProperty("headers") Map<String, List<String>> headers,
+                               @JsonProperty("body") String body) {
         this.status = status;
         this.headers = headers;
         this.body = body;
@@ -73,12 +79,16 @@ public final class WebContractResponse {
 
     @Override
     public int hashCode() {
-        return Objects.hash(status, headers, body);
+        int result = 0;
+        result = 31 * result + Integer.hashCode(status);
+        result = 31 * result + Objects.hashCode(headers);
+        result = 31 * result + Objects.hashCode(body);
+        return result;
     }
 
     @Override
     public String toString() {
-        return "WebContractResponse{status=" + status + "}";
+        return "WebContractResponse[status=" + status + ", headers=" + headers + ", body=" + body + "]";
     }
 
     public int getStatus() {
