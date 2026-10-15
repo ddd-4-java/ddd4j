@@ -61,6 +61,17 @@ class PlainValueContractTest {
     }
 
     @Test
+    void readinessResultHashUsesTheSameBooleanValueAcrossLines() {
+        ReadinessResult ready = ReadinessResult.ready("db");
+        ReadinessResult unavailable = ReadinessResult.unavailable("db", null);
+
+        assertThat(ready.hashCode()).isEqualTo(
+                31 * (31 * "db".hashCode() + Boolean.hashCode(true)) + ready.details().hashCode());
+        assertThat(unavailable.hashCode()).isEqualTo(
+                31 * (31 * "db".hashCode() + Boolean.hashCode(false)) + unavailable.details().hashCode());
+    }
+
+    @Test
     void javaSerializationPreservesCanonicalValidation() throws Exception {
         PropertyRef valid = new PropertyRef(PropertySpace.DOMAIN, String.class, "length");
         assertThat(roundTrip(valid)).isEqualTo(valid);
