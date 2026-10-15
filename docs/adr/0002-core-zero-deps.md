@@ -13,14 +13,12 @@ ddd4j 面向 8 种运行时（Spring WebMVC／WebFlux、Quarkus、Micronaut、He
 投影抽象——被全部运行时适配层共同依赖。核心层每引入一个第三方库，就变成全体业务方的强制传递依赖，并可能与其运行时的版本仲裁冲突（典型如
 Jackson 版本被 Quarkus／Spring Boot BOM 锁定）。
 
-fuin 是反面教材，三处证据：
+fuin 是反面教材，四处证据：
 
-- ddd-4-java core 的 ArchUnit 允许清单锁死 objects4j（3 包）＋utils4j＋jboss.jandex＋slf4j＋jakarta.validation，核心契约绑定作者家族库，「对照
-  ddd4j 纯 Java＋零外部依赖目标偏松」（../reference/fuin-api-patterns/08-architecture-test.md「缺点」节）；
-- `EventType` 继承 objects4j 值对象基类、核心接口标 `jakarta.validation`
-  注解（../reference/fuin-api-patterns/03-domain-event.md「缺点」节）；
-- 契约校验依赖 `org.fuin.objects4j.common.Contract`（../reference/fuin-api-patterns/01-aggregate-root.md）——03
-  篇「不借鉴」节明确将其列为「违背 ddd4j-core 零第三方依赖（ADR-0002）」。
+- ddd-4-java core 的 ArchUnit 允许清单锁死 objects4j（3 包）＋utils4j＋jboss.jandex＋slf4j＋jakarta.validation，核心契约绑定作者家族库，「对照 ddd4j 纯 Java＋零外部依赖目标偏松」（../reference/fuin-api-patterns/08-architecture-test.md「缺点」节）；
+- `EventType` 继承 objects4j 值对象基类、核心接口标 `jakarta.validation` 注解（../reference/fuin-api-patterns/03-domain-event.md「缺点」节）；
+- 契约校验依赖 `org.fuin.objects4j.common.Contract`（../reference/fuin-api-patterns/01-aggregate-root.md）——03 篇「不借鉴」节明确将其列为「违背 ddd4j-core 零第三方依赖（ADR-0002）」；
+- `EntityIdPath` 侧同样外溢：`EntityIdFactory` 注册表解析体系与 `ExpectedEntityIdPathValidator`（`jakarta.validation` 注解 + objects4j `AbstractStringValueObject` 值对象基类）（../reference/fuin-api-patterns/02-entity-id-path.md「不借鉴」节）——注册表与校验注解一并拒绝，parse 收敛为 `StringEntityType`/`StringEntityId` 通用形态的纯静态方法（`isValid`/`valueOf`）。
 
 ddd4j 现状（阶段 1 基线，2026-08-24 核验）：
 
