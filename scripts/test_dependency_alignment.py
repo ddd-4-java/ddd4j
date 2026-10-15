@@ -28,6 +28,17 @@ class DependencyAlignmentTest(unittest.TestCase):
                          'spring-extension'):
             self.assertIn('io.github.easy4j:' + artifact, policy['baseline_components'])
 
+    def test_shardingsphere_parser_baseline_uses_published_coordinates(self):
+        policy_path = Path(__file__).parents[1] / 'config/dependencies/alignment-policy.json'
+        policy = json.loads(policy_path.read_text(encoding='utf-8'))
+        for dialect in ('mysql', 'opengauss', 'oracle', 'postgresql', 'sql92', 'sqlserver'):
+            current = 'org.apache.shardingsphere:shardingsphere-parser-sql-' + dialect
+            obsolete = 'org.apache.shardingsphere:shardingsphere-parser-sql-engine-' + dialect
+            self.assertIn(current, policy['baseline_components'])
+            self.assertIn(current + ':jar:', policy['baseline_variants'])
+            self.assertNotIn(obsolete, policy['baseline_components'])
+            self.assertNotIn(obsolete + ':jar:', policy['baseline_variants'])
+
     def test_unconfigured_third_party_release_does_not_inherit_ddd4j_version(self):
         with tempfile.TemporaryDirectory() as temp:
             base = Path(temp)
