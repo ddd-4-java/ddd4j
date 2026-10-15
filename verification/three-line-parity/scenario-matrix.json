@@ -3716,6 +3716,43 @@
       }
     },
     {
+      "id": "WEB-IDEMPOTENCY-ACQUIRE-CANCEL-RACE",
+      "description": "WebFlux 异步取消发生在同步幂等租约获取期间，获取仍成功时须释放租约；本地受控 WebFilter 取消测试，不代替真实 HTTP/Redis 原生验收",
+      "caseNames": {
+        "1.0.x": [
+          "shouldReleaseIdempotencyLeaseWhenCancelledDuringAcquisition"
+        ],
+        "2.0.x": [
+          "shouldReleaseIdempotencyLeaseWhenCancelledDuringAcquisition"
+        ],
+        "3.0.x": [
+          "shouldReleaseIdempotencyLeaseWhenCancelledDuringAcquisition"
+        ]
+      },
+      "lastEvidence": "/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-16-webflux-acquire-cancel/report.json",
+      "lastEvidenceSha256": "45a7ee58894820722b3f816425ce7b758e4777d9ec6264a097916e05b62aa3d6",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-webflux/src/test/java/io/ddd4j/web/webflux/Ddd4jWebFluxContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-webflux/src/test/java/io/ddd4j/web/webflux/Ddd4jWebFluxContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-webflux/src/test/java/io/ddd4j/web/webflux/Ddd4jWebFluxContractTest.java"
+          ]
+        }
+      }
+    },
+    {
       "id": "WEB-JAVALIN-CONFIG-CONTRACT",
       "description": "三线各自 Javalin 版本入口注册相同请求上下文、认证、异常、幂等与 readiness 本地 HTTP 契约；不代表生产部署",
       "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-javalin-platform-config/report.json",

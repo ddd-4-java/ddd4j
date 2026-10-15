@@ -22,6 +22,8 @@ import io.ddd4j.web.core.context.WebHeaders;
 import io.ddd4j.web.core.context.WebRequestContext;
 import io.ddd4j.web.core.context.WebRequestContextFactory;
 import io.ddd4j.web.core.context.WebRequestLifecycle;
+import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
+import io.ddd4j.web.core.idempotency.IdempotencyGuard;
 import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
 import io.ddd4j.web.webflux.error.GlobalErrorAttributes;
 import io.ddd4j.web.webflux.error.GlobalErrorWebExceptionHandler;
@@ -38,11 +40,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 import org.springframework.mock.web.server.MockServerWebExchange;
 import reactor.core.publisher.Mono;
+import reactor.core.Disposable;
 import reactor.core.scheduler.Schedulers;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.CountDownLatch;
+import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -154,4 +160,55 @@ class Ddd4jWebFluxContractTest {
         assertTrue(chainObservedValidSpan.get());
         assertFalse(Span.current().getSpanContext().isValid());
     }
+    @Test
+    void shouldReleaseIdempotencyLeaseWhenCancelledDuringAcquisition() throws InterruptedException {
+        CountDownLatch acquiring = new CountDownLatch(1);
+        CountDownLatch finishAcquisition = new CountDownLatch(1);
+        CountDownLatch acquired = new CountDownLatch(1);
+        CountDownLatch released = new CountDownLatch(1);
+        IdempotencyGuard guard = new IdempotencyGuard() {
+            @Override
+            public boolean acquire(String key, Duration ttl) {
+                acquiring.countDown();
+                while (finishAcquisition.getCount() > 0) {
+                    try {
+                        finishAcquisition.await();
+                    } catch (InterruptedException ignored) {
+                        // Simulate a non-interruptible remote acquire that still grants a lease.
+                    }
+                }
+                acquired.countDown();
+                return true;
+            }
+
+            @Override
+            public void complete(String key) {
+            }
+
+            @Override
+            public void release(String key) {
+                released.countDown();
+            }
+        };
+        Ddd4jWebFluxFilter filter = new Ddd4jWebFluxFilter(
+                new WebRequestContextFactory(),
+                new WebRequestLifecycle(new BearerSubjectAuthenticator(), WebAccessPolicy.disabled()),
+                new WebIdempotencyLifecycle(guard), Schedulers.boundedElastic());
+        MockServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.post("/orders")
+                .header(WebHeaders.IDEMPOTENCY_KEY, "cancel-during-acquire"));
+
+        Disposable subscription = filter.filter(exchange, ignored -> Mono.<Void>never()).subscribe();
+        try {
+            assertTrue(acquiring.await(3, TimeUnit.SECONDS));
+            subscription.dispose();
+            finishAcquisition.countDown();
+            assertTrue(acquired.await(3, TimeUnit.SECONDS));
+            assertTrue(released.await(3, TimeUnit.SECONDS));
+        } finally {
+            finishAcquisition.countDown();
+            subscription.dispose();
+        }
+    }
+
+
 }
