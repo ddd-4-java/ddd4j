@@ -78,6 +78,8 @@ jobs:
         run: ./scripts/verify-architecture.sh
       - name: Run unit and adapter contracts
         run: ./mvnw -U -Denforcer.skip=true -B clean test -DskipITs
+      - name: Verify JPA MySQL container test execution
+        run: python3 scripts/verify-jpa-mysql-test-report.py
       - name: Verify build did not write generated files to source control
         env:
           DDD4J_REQUIRE_CLEAN_WORKTREE: 'true'
