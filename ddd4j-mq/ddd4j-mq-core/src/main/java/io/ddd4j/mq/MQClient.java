@@ -95,6 +95,9 @@ public interface MQClient extends AutoCloseable {
         MQStartupStatus startupStatus = startupStatus();
         int checkpoint = lifecycle.checkpoint();
         startupStatus.starting();
+        MQProperties previousProperties = BaseContext.get(MQEvent.MQ_PROPERTIES);
+        MQEventSerialization previousSerialization = BaseContext.get(MQ_SERIALIZATION);
+        MQEventStorer previousStorer = BaseContext.get(MQ_STORER);
         // 注册配置与依赖到 BaseContext
         BaseContext.inject(MQEvent.MQ_PROPERTIES, properties);
         BaseContext.inject(MQ_SERIALIZATION, serialization);
@@ -116,6 +119,7 @@ public interface MQClient extends AutoCloseable {
             } catch (RuntimeException rollbackFailure) {
                 initializationException.addSuppressed(rollbackFailure);
             }
+            Internals.restoreContext(previousProperties, previousSerialization, previousStorer);
             throw initializationException;
         }
         if (Objects.nonNull(producer)) {
@@ -160,6 +164,7 @@ public interface MQClient extends AutoCloseable {
                             && publishers.remove(impl(), producer) && publishers.isEmpty()) {
                         BaseContext.remove(MQEvent.MQ_EVENT_PUBLISHER);
                     }
+                    Internals.restoreContext(previousProperties, previousSerialization, previousStorer);
                     throw initializationException;
                 }
                 startupStatus.degraded(failure);
@@ -590,6 +595,25 @@ public interface MQClient extends AutoCloseable {
     final class Internals {
 
         private Internals() {
+        }
+
+        static void restoreContext(MQProperties properties, MQEventSerialization serialization,
+                                   MQEventStorer storer) {
+            if (Objects.isNull(properties)) {
+                BaseContext.remove(MQEvent.MQ_PROPERTIES);
+            } else {
+                BaseContext.inject(MQEvent.MQ_PROPERTIES, properties);
+            }
+            if (Objects.isNull(serialization)) {
+                BaseContext.remove(MQ_SERIALIZATION);
+            } else {
+                BaseContext.inject(MQ_SERIALIZATION, serialization);
+            }
+            if (Objects.isNull(storer)) {
+                BaseContext.remove(MQ_STORER);
+            } else {
+                BaseContext.inject(MQ_STORER, storer);
+            }
         }
 
         /**

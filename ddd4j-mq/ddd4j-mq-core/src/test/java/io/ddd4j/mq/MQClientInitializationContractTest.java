@@ -7,6 +7,7 @@ package io.ddd4j.mq;
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.event.MQEventSerialization;
+import io.ddd4j.mq.event.MQEventStorer;
 import io.ddd4j.mq.lifecycle.MQClientLifecycle;
 import io.ddd4j.mq.lifecycle.MQInitializationException;
 import io.ddd4j.mq.lifecycle.MQStartupState;
@@ -51,6 +52,29 @@ class MQClientInitializationContractTest {
         assertEquals(2, client.closedResources.get());
         assertEquals(MQStartupState.FAILED, client.startupStatus().snapshot().state());
         assertNull(BaseContext.get(MQEvent.MQ_EVENT_PUBLISHER));
+        assertNull(BaseContext.get(MQEvent.MQ_PROPERTIES));
+        assertNull(BaseContext.get(MQClient.MQ_SERIALIZATION));
+    }
+
+    @Test
+    void producerFailureRestoresPreviousContextValues() {
+        MQProperties previousProperties = new MQProperties();
+        MQEventSerialization previousSerialization = serialization();
+        MQEventStorer<MQEvent> previousStorer = event -> { };
+        MQEventStorer<MQEvent> newStorer = event -> { };
+        BaseContext.inject(MQEvent.MQ_PROPERTIES, previousProperties);
+        BaseContext.inject(MQClient.MQ_SERIALIZATION, previousSerialization);
+        BaseContext.inject(MQClient.MQ_STORER, previousStorer);
+        TestClient client = new TestClient().withProducerFailure();
+
+        assertThrows(MQInitializationException.class,
+                () -> client.init(Collections.emptyList(), properties(), serialization(), newStorer));
+
+        assertEquals(1, client.closedResources.get());
+        assertEquals(MQStartupState.FAILED, client.startupStatus().snapshot().state());
+        assertSame(previousProperties, BaseContext.get(MQEvent.MQ_PROPERTIES));
+        assertSame(previousSerialization, BaseContext.get(MQClient.MQ_SERIALIZATION));
+        assertSame(previousStorer, BaseContext.get(MQClient.MQ_STORER));
     }
 
     @Test
@@ -102,6 +126,7 @@ class MQClientInitializationContractTest {
 
     private static final class TestClient implements MQClient {
         private final boolean[] results;
+        private boolean failProducer;
         private final AtomicInteger attempts = new AtomicInteger();
         private final AtomicInteger closedResources = new AtomicInteger();
         private final MQClientLifecycle lifecycle = new MQClientLifecycle();
@@ -109,6 +134,11 @@ class MQClientInitializationContractTest {
 
         private TestClient(boolean... results) {
             this.results = results;
+        }
+
+        private TestClient withProducerFailure() {
+            failProducer = true;
+            return this;
         }
 
         @Override
@@ -129,6 +159,9 @@ class MQClientInitializationContractTest {
         @Override
         public Consumer<MQEvent> initProducer(MQProperties properties) {
             lifecycle.register("producer", closedResources::incrementAndGet);
+            if (failProducer) {
+                throw new IllegalStateException("producer unavailable");
+            }
             return event -> {
             };
         }
