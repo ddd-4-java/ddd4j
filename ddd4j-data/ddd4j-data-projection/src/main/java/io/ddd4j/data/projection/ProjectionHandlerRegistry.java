@@ -61,12 +61,17 @@ public class ProjectionHandlerRegistry {
      * 且本 handler 声明的所有类型都不落库（与 {@code CommandRegistry} 同源语义）。
      *
      * @param handler 投影处理器，非空
-     * @throws NullPointerException  handler 为 null
+     * @throws NullPointerException  handler、事件类型集合或集合中的类型为 null
      * @throws IllegalStateException 任一事件类型已被注册（消息含事件类型全限定名）
      */
     public void register(ProjectionHandler handler) {
         ProjectionHandler actual = Objects.requireNonNull(handler, "handler must not be null");
-        Set<Class<?>> eventTypes = java.util.Collections.unmodifiableSet(new java.util.HashSet<>(actual.eventTypes()));
+        Collection<Class<? extends DomainEvent<?>>> declaredTypes =
+                Objects.requireNonNull(actual.eventTypes(), "event types must not be null");
+        for (Class<?> eventType : declaredTypes) {
+            Objects.requireNonNull(eventType, "event type must not be null");
+        }
+        Set<Class<?>> eventTypes = java.util.Collections.unmodifiableSet(new java.util.HashSet<>(declaredTypes));
         for (Class<?> eventType : eventTypes) {
             if (handlers.containsKey(eventType)) {
                 throw new IllegalStateException(

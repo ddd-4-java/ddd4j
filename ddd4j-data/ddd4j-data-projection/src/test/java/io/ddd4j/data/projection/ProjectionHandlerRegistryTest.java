@@ -88,6 +88,19 @@ class ProjectionHandlerRegistryTest {
     }
 
     @Test
+    void registerRejectsNullEventTypeBeforeRegisteringAnyType() {
+        Set<Class<? extends DomainEvent<?>>> eventTypes = new LinkedHashSet<>();
+        eventTypes.add(OrderPaid.class);
+        eventTypes.add(null);
+
+        NullPointerException ex = assertThrows(NullPointerException.class,
+                () -> registry.register(new RecordingHandler("invalid", eventTypes)));
+
+        assertThat(ex).hasMessage("event type must not be null");
+        assertFalse(registry.findHandler(OrderPaid.class).isPresent());
+    }
+
+    @Test
     void duplicateEventTypeRegistrationThrowsIllegalStateWithEventName() {
         registry.register(new RecordingHandler("order-summary", setOf(OrderCreated.class)));
 
