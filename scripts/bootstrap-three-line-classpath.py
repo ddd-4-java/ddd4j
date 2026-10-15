@@ -16,21 +16,26 @@ VERSION = '2.22'
 ARTIFACT = 'jackson-annotations-' + VERSION + '.jar'
 RELATIVE = Path('com/fasterxml/jackson/core/jackson-annotations') / VERSION / ARTIFACT
 URL = 'https://repo.maven.apache.org/maven2/' + RELATIVE.as_posix()
+MIRROR_URL = 'https://maven.aliyun.com/repository/public/' + RELATIVE.as_posix()
+CHECKSUM = '21ddb598807d3a51a876704eb979d9296e1c6a6f47ab1826ff88c6d6a127a2d0'
 
 
-def download(url):
-    """下载公开 Maven Central 文件；网络错误重试，最终仍失败关闭。"""
-    for attempt in range(3):
-        try:
-            with urllib.request.urlopen(url, timeout=30) as response:
-                data = response.read(2_000_001)
-            if len(data) > 2_000_000:
-                raise ValueError('Bootstrap artifact exceeds size limit')
-            return data
-        except urllib.error.URLError:
-            if attempt == 2:
-                raise
-            time.sleep(attempt + 1)
+def download():
+    """从 Maven Central 或镜像下载固定构件；两处都失败时保留网络错误。"""
+    last_error = None
+    for url in (URL, MIRROR_URL):
+        for attempt in range(2):
+            try:
+                with urllib.request.urlopen(url, timeout=30) as response:
+                    data = response.read(2_000_001)
+                if len(data) > 2_000_000:
+                    raise ValueError('Bootstrap artifact exceeds size limit')
+                return data
+            except urllib.error.URLError as error:
+                last_error = error
+                if attempt == 0:
+                    time.sleep(1)
+    raise last_error
 
 
 def validate(data, checksum):
@@ -48,16 +53,17 @@ def bootstrap(repository):
     target = repository / RELATIVE
     checksum_path = target.with_suffix('.jar.sha256')
     if target.is_file() and checksum_path.is_file():
-        validate(target.read_bytes(), checksum_path.read_text().strip())
+        if checksum_path.read_text().strip().lower() != CHECKSUM:
+            raise ValueError('Cached Jackson annotations checksum differs from pinned SHA-256')
+        validate(target.read_bytes(), CHECKSUM)
         return target
-    data = download(URL)
-    checksum = download(URL + '.sha256').decode('ascii').strip()
-    validate(data, checksum)
+    data = download()
+    validate(data, CHECKSUM)
     target.parent.mkdir(parents=True, exist_ok=True)
     temporary = target.with_suffix('.jar.tmp')
     temporary.write_bytes(data)
     temporary.replace(target)
-    checksum_path.write_text(checksum + '\n')
+    checksum_path.write_text(CHECKSUM + '\n')
     return target
 
 
