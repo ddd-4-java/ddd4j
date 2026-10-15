@@ -1018,12 +1018,12 @@
     {
       "path": "ddd4j-core/src/main/java/io/ddd4j/core/context/SpiRegistrationScope.java",
       "sourceSha256": [
-        "839388a52aea52f22c68b6512a9f3a517335e277fa68218e4ba2496bfe475257",
-        "a9093005a850ad4629c8df1e58b8ecce68e400e437491e57d99fef2c1eeb09e0",
-        "a9093005a850ad4629c8df1e58b8ecce68e400e437491e57d99fef2c1eeb09e0"
+        "ff99a52f1801c8e966c4ac6c4a9d03aa2892bfabe65ba7fbeeb7e8cbdfd3bdfd",
+        "d6de136ab89820ce5496e502ce382f00440f7556454c8614946fdee47df73e7d",
+        "d6de136ab89820ce5496e502ce382f00440f7556454c8614946fdee47df73e7d"
       ],
       "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/context/SpiRegistrationScopeTest.java",
-      "testSha256": "69762ce2bb7dab9d37432c39afd74e438cc5297663ab614165f1170f41dafce1",
+      "testSha256": "2f848a86ca66e62c73483800a1b904f341a4f54e383a16be4932531d6b456aea",
       "reason": "三线相同 SPI 注册/关闭行为及旧服务恢复契约；JDK 8 使用 Optional.get()，高两线使用无参 orElseThrow()，源码与共同测试均由 SHA-256 锁定"
     },
     {

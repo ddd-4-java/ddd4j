@@ -1267,6 +1267,46 @@
       }
     },
     {
+      "id": "CORE-SPI-REGISTRATION-SCOPE",
+      "description": "SPI 作用域注册、启动、关闭与旧服务恢复三线同契约；JDK 8 Optional.get 与高线 orElseThrow 仅为语法适配",
+      "caseNames": {
+        "1.0.x": [
+          "shouldNotRemoveServiceReplacedByApplicationAfterStart",
+          "shouldRestorePreviousServiceOnClose"
+        ],
+        "2.0.x": [
+          "shouldNotRemoveServiceReplacedByApplicationAfterStart",
+          "shouldRestorePreviousServiceOnClose"
+        ],
+        "3.0.x": [
+          "shouldNotRemoveServiceReplacedByApplicationAfterStart",
+          "shouldRestorePreviousServiceOnClose"
+        ]
+      },
+      "lastEvidence": "/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-16-spi-scope-syntax-parity/report.json",
+      "lastEvidenceSha256": "82f49b5fda33aba06937c6235afb2841750708d0149a6392b0bf4df7e063acd8",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/context/SpiRegistrationScopeTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/context/SpiRegistrationScopeTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/context/SpiRegistrationScopeTest.java"
+          ]
+        }
+      }
+    },
+    {
       "id": "CORE-TRACE-CONTEXT",
       "description": "默认关闭、TTL 跟踪透传及 MDC 双写",
       "lines": {
