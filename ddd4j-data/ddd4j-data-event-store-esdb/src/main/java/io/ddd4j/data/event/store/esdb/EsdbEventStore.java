@@ -135,7 +135,10 @@ public class EsdbEventStore implements EventStore {
                     new com.fasterxml.jackson.core.type.TypeReference<java.util.Map<String, Object>>() {
                     });
         } catch (Exception e) {
-            throw new RuntimeException("Failed to parse ESDB event metadata", e);
+            throw new IllegalStateException("Invalid ESDB event metadata", e);
+        }
+        if (Objects.isNull(metadata)) {
+            throw new IllegalStateException("Invalid ESDB event metadata");
         }
         String aggregateType = expectedType == null ? String.valueOf(metadata.get("aggregateType")) : expectedType;
         AggregateRootId aggregateId = expectedId == null
