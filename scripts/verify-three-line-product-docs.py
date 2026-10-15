@@ -20,6 +20,7 @@ DOCUMENTS = (
     "webflux-flow.md",
     "cqrs-es-base-capabilities.md",
 )
+ROOT_REDIRECTS = DOCUMENTS[:4]
 LINK = re.compile(r'(?:\]\(([^)]+)\)|href=["\']([^"\']+)["\'])')
 
 
@@ -47,8 +48,21 @@ def check(roots: list[Path], output: Path) -> int:
         hashes[relative] = values
         if len(set(values)) != 1 or "MISSING" in values:
             differences[relative] = values
+    for name in ROOT_REDIRECTS:
+        expected = f"# 文档已迁移\n\n请阅读 [{name}](docs/{name})。\n"
+        values = []
+        mismatched = False
+        for root in roots:
+            document = root / name
+            values.append(hashlib.sha256(document.read_bytes()).hexdigest() if document.is_file() else "MISSING")
+            if not document.is_file() or document.read_text(encoding="utf-8") != expected:
+                mismatched = True
+        hashes[name] = values
+        if mismatched:
+            differences[name] = values
     for root in roots:
-        for relative in ("README.md", "README.en.md", *("docs/" + name for name in DOCUMENTS)):
+        for relative in ("README.md", "README.en.md", *ROOT_REDIRECTS,
+                         *("docs/" + name for name in DOCUMENTS)):
             document = root / relative
             if not document.is_file():
                 broken_links.append({"root": str(root), "source": relative, "target": "MISSING"})
