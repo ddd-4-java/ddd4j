@@ -90,4 +90,29 @@ public final class Ddd4jMicronautContext {
     public Optional<Subject> getSubject() {
         return subject;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+            return false;
+        }
+        Ddd4jMicronautContext other = (Ddd4jMicronautContext) obj;
+        return Objects.equals(requestContext, other.requestContext)
+                && Objects.equals(subject, other.subject);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hashCode(requestContext);
+        result = 31 * result + Objects.hashCode(subject);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Ddd4jMicronautContext[requestContext=" + requestContext + ", subject=" + subject + "]";
+    }
 }
