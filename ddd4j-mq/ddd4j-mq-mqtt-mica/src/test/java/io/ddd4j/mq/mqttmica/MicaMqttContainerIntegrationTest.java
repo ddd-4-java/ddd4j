@@ -82,11 +82,16 @@ class MicaMqttContainerIntegrationTest {
             probe.setNamespace("ddd4j");
             probe.setTopic(topic);
             long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(30);
+            int probeAttempts = 0;
             do {
+                probeAttempts++;
                 client.initProducer(properties).accept(probe);
             } while (!bean.probeReceived.await(250, TimeUnit.MILLISECONDS)
                     && System.nanoTime() < deadline);
-            assertThat(bean.probeReceived.getCount()).isZero();
+            assertThat(bean.probeReceived.getCount())
+                    .as("probe attempts=%s, native connected=%s, broker log=%s",
+                            probeAttempts, nativeClient.isConnected(), MOSQUITTO.getLogs())
+                    .isZero();
 
             MQEvent event = new MQEvent();
             event.setMsgId(messageId);
