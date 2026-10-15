@@ -3515,10 +3515,36 @@
       }
     },
     {
+      "id": "WEB-MICRONAUT-AUTH-SPAN",
+      "description": "Micronaut 3/4 认证拒绝时原样传播错误，并记录、结束已创建的 OTel server span；各线保持自己的过滤器 API",
+      "lastEvidence": "/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-15-micronaut-auth-span/report.json",
+      "lastEvidenceSha256": "a78470d869e5144a96169995c594e54d1942c2504e8b3a9bdbcb8b19bd7febee",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautOtelScopeTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautOtelScopeTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautOtelScopeTest.java"
+          ]
+        }
+      }
+    },
+    {
       "id": "WEB-MICRONAUT-SYNC-FAILURE",
       "description": "Micronaut 3/4 下游同步异常原样传播、结束 OTel Span、关闭调用线程 Scope 的共同契约",
-      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-micronaut-sync-failure/report.json",
-      "lastEvidenceSha256": "f70a1114ac1f48fb542879cb4b4c031c1559c91c544fbc6895ecf785281a7bfc",
+      "lastEvidence": "/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-15-micronaut-auth-span/report.json",
+      "lastEvidenceSha256": "a78470d869e5144a96169995c594e54d1942c2504e8b3a9bdbcb8b19bd7febee",
       "lines": {
         "1.0.x": {
           "status": "supported",

@@ -96,8 +96,16 @@ public final class Ddd4jMicronautWebFilter implements HttpFilter {
         Object span = WebOtelSupport.startServerSpan(
                 request.getMethodName(), request.getPath(), headers);
 
-        WebRequestContext requestContext = createContext(request);
-        Optional<Authentication> authentication = requestLifecycle.authenticate(requestContext);
+        WebRequestContext requestContext;
+        Optional<Authentication> authentication;
+        try {
+            requestContext = createContext(request);
+            authentication = requestLifecycle.authenticate(requestContext);
+        } catch (RuntimeException exception) {
+            WebOtelSupport.recordError(span, exception);
+            WebOtelSupport.endServerSpan(span, 500);
+            throw exception;
+        }
         Ddd4jMicronautContext micronautContext;
         if (authentication.isPresent()) {
             micronautContext = new Ddd4jMicronautContext(requestContext,

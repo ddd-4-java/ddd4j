@@ -16,6 +16,8 @@ package io.ddd4j.web.micronaut;
 
 import io.ddd4j.extension.otel.Ddd4jOtel;
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
+import io.ddd4j.web.core.auth.AuthenticationMode;
+import io.ddd4j.web.core.auth.PathWebAccessPolicy;
 import io.ddd4j.web.core.auth.WebAccessPolicy;
 import io.ddd4j.web.core.context.ClientIpResolver;
 import io.ddd4j.web.core.context.WebRequestContextFactory;
@@ -27,6 +29,8 @@ import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.trace.SdkTracerProvider;
+import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter;
+import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
@@ -35,6 +39,7 @@ import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.Collections;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -42,6 +47,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -105,6 +112,53 @@ class Ddd4jMicronautOtelScopeTest {
         } finally {
             executor.shutdownNow();
             tracerProvider.close();
+            resetOpenTelemetry();
+        }
+    }
+
+    @Test
+    void authenticationFailureEndsServerSpan() throws Exception {
+        resetOpenTelemetry();
+        InMemorySpanExporter exporter = InMemorySpanExporter.create();
+        SdkTracerProvider tracerProvider = SdkTracerProvider.builder()
+                .addSpanProcessor(SimpleSpanProcessor.create(exporter)).build();
+        OpenTelemetrySdk.builder().setTracerProvider(tracerProvider).buildAndRegisterGlobal();
+        try {
+            Ddd4jMicronautWebFilter filter = new Ddd4jMicronautWebFilter(
+                    new WebRequestContextFactory(() -> "request-1", ClientIpResolver.remoteAddressOnly()),
+                    new WebRequestLifecycle(new BearerSubjectAuthenticator(),
+                            new PathWebAccessPolicy(Collections.emptyList(), AuthenticationMode.REQUIRED)), null);
+            FilterChain chain = mock(FilterChain.class);
+
+            assertThrows(io.ddd4j.web.core.error.WebStatusException.class,
+                    () -> filter.doFilter(request(), chain));
+            assertEquals(1, exporter.getFinishedSpanItems().size());
+        } finally {
+            tracerProvider.close();
+            exporter.close();
+            resetOpenTelemetry();
+        }
+    }
+
+    @Test
+    void synchronousDownstreamFailureEndsServerSpan() throws Exception {
+        resetOpenTelemetry();
+        InMemorySpanExporter exporter = InMemorySpanExporter.create();
+        SdkTracerProvider tracerProvider = SdkTracerProvider.builder()
+                .addSpanProcessor(SimpleSpanProcessor.create(exporter)).build();
+        OpenTelemetrySdk.builder().setTracerProvider(tracerProvider).buildAndRegisterGlobal();
+        try {
+            Ddd4jMicronautWebFilter filter = new Ddd4jMicronautWebFilter(
+                    new WebRequestContextFactory(() -> "request-1", ClientIpResolver.remoteAddressOnly()),
+                    new WebRequestLifecycle(new BearerSubjectAuthenticator(), WebAccessPolicy.disabled()), null);
+            FilterChain chain = mock(FilterChain.class);
+            when(chain.proceed(any())).thenThrow(new IllegalStateException("downstream failed"));
+
+            assertThrows(IllegalStateException.class, () -> filter.doFilter(request(), chain));
+            assertEquals(1, exporter.getFinishedSpanItems().size());
+        } finally {
+            tracerProvider.close();
+            exporter.close();
             resetOpenTelemetry();
         }
     }
