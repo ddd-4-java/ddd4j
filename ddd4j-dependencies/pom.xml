@@ -2553,13 +2553,6 @@
                 <artifactId>cxf-rt-rs-security-sso-saml</artifactId>
                 <version>${cxf.version}</version>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-rs-service-description-swagger -->
-            <!-- Apache CXF Swagger：CXF 的 Swagger API 描述集成。 -->
-            <dependency>
-                <groupId>org.apache.cxf</groupId>
-                <artifactId>cxf-rt-rs-service-description-swagger</artifactId>
-                <version>${cxf.version}</version>
-            </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-transports-http -->
             <!-- Apache CXF HTTP Transport：CXF 的 HTTP 传输层实现。 -->
             <dependency>
@@ -6111,13 +6104,6 @@
                 <artifactId>log4j-docker</artifactId>
                 <version>${log4j2.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-flume-ng -->
-            <!-- Log4j Flume NG：Log4j 2 的 Apache Flume Appender（将日志发送到 Flume Agent）。 -->
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-flume-ng</artifactId>
-                <version>${log4j2.version}</version>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-iostreams -->
             <!-- Log4j IOStreams：Log4j 2 的 IO 流包装模块（将 System.out/err 重定向到日志）。 -->
             <dependency>
@@ -6167,25 +6153,11 @@
                 <artifactId>log4j-jul</artifactId>
                 <version>${log4j2.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-kubernetes -->
-            <!-- Log4j Kubernetes：Log4j 2 的 Kubernetes Pod 元数据注入模块。 -->
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-kubernetes</artifactId>
-                <version>${log4j2.version}</version>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-layout-template-json -->
             <!-- Log4j Layout Template JSON：Log4j 2 的 JSON 模板布局（结构化 JSON 日志输出）。 -->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-layout-template-json</artifactId>
-                <version>${log4j2.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-mongodb3 -->
-            <!-- Log4j MongoDB3：Log4j 2 的 MongoDB 3.x 日志存储 Appender。 -->
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-mongodb3</artifactId>
                 <version>${log4j2.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-mongodb4 -->
@@ -7432,13 +7404,6 @@
             </dependency>
             <!-- PAC4J For CouchDB -->
             <!-- Source: https://mvnrepository.com/artifact/org.pac4j/pac4j-couch -->
-            <!-- PAC4J For CouchDB -->
-            <!-- Pac4j CouchDB：Pac4j 安全框架的 CouchDB 存储支持。 -->
-            <dependency>
-                <groupId>org.pac4j</groupId>
-                <artifactId>pac4j-couch</artifactId>
-                <version>${pac4j.version}</version>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/pac4j-extension-core -->
             <!-- Easy4J Pac4j Extension Core：Easy4J 对 Pac4j 安全框架的核心扩展。 -->
             <dependency>
@@ -7455,13 +7420,6 @@
             </dependency>
             <!-- PAC4J For GAE UserService Mechanism -->
             <!-- Source: https://mvnrepository.com/artifact/org.pac4j/pac4j-gae -->
-            <!-- PAC4J For GAE UserService Mechanism -->
-            <!-- Pac4j GAE：Pac4j 安全框架的 Google App Engine UserService 认证支持。 -->
-            <dependency>
-                <groupId>org.pac4j</groupId>
-                <artifactId>pac4j-gae</artifactId>
-                <version>${pac4j.version}</version>
-            </dependency>
             <!-- PAC4J For HTTP Protocol -->
             <!-- Source: https://mvnrepository.com/artifact/org.pac4j/pac4j-http -->
             <!-- PAC4J For HTTP Protocol -->
@@ -7546,13 +7504,6 @@
             </dependency>
             <!-- PAC4J For OpenId Protocol -->
             <!-- Source: https://mvnrepository.com/artifact/org.pac4j/pac4j-openid -->
-            <!-- PAC4J For OpenId Protocol -->
-            <!-- Pac4j OpenID：Pac4j 安全框架的 OpenID 2.0 协议认证支持。 -->
-            <dependency>
-                <groupId>org.pac4j</groupId>
-                <artifactId>pac4j-openid</artifactId>
-                <version>${pac4j.version}</version>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/pac4j-otp-extension -->
             <!-- Easy4J Pac4j OTP Extension：Easy4J 对 Pac4j 的一次性密码 (OTP) 认证扩展。 -->
             <dependency>
@@ -8825,13 +8776,6 @@
                 <artifactId>shardingsphere-parser-sql-sqlserver</artifactId>
                 <version>${shardingsphere-parser-sql.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/net.javacrumbs.shedlock/shedlock-provider-couchbase-javaclient -->
-            <!-- ShedLock Couchbase：ShedLock 的 Couchbase 分布式锁存储实现。 -->
-            <dependency>
-                <groupId>net.javacrumbs.shedlock</groupId>
-                <artifactId>shedlock-provider-couchbase-javaclient</artifactId>
-                <version>${shedlock.version}</version>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/net.javacrumbs.shedlock/shedlock-provider-jdbc -->
             <!-- ShedLock JDBC：ShedLock 的 JDBC 分布式锁存储实现。 -->
             <dependency>
@@ -8851,13 +8795,6 @@
             <dependency>
                 <groupId>net.javacrumbs.shedlock</groupId>
                 <artifactId>shedlock-provider-mongo</artifactId>
-                <version>${shedlock.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/net.javacrumbs.shedlock/shedlock-provider-redis-jedis -->
-            <!-- ShedLock Redis Jedis：ShedLock 的 Redis Jedis 分布式锁存储实现。 -->
-            <dependency>
-                <groupId>net.javacrumbs.shedlock</groupId>
-                <artifactId>shedlock-provider-redis-jedis</artifactId>
                 <version>${shedlock.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/net.javacrumbs.shedlock/shedlock-provider-redis-spring -->
@@ -9588,34 +9525,6 @@
                 <artifactId>swagger-core-jakarta</artifactId>
                 <version>${swagger3.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/io.swagger/swagger-hibernate-validations -->
-            <!-- Swagger Hibernate Validations：Swagger 对 Hibernate Validator 注解的自动识别。 -->
-            <dependency>
-                <groupId>io.swagger</groupId>
-                <artifactId>swagger-hibernate-validations</artifactId>
-                <version>${swagger.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/io.swagger/swagger-jaxrs -->
-            <!-- Swagger JAX-RS：Swagger 对 JAX-RS REST 框架的自动扫描集成。 -->
-            <dependency>
-                <groupId>io.swagger</groupId>
-                <artifactId>swagger-jaxrs</artifactId>
-                <version>${swagger.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/io.swagger/swagger-jersey-jaxrs -->
-            <!-- Swagger Jersey JAX-RS：Swagger 对 Jersey (JAX-RS) 框架的深度集成。 -->
-            <dependency>
-                <groupId>io.swagger</groupId>
-                <artifactId>swagger-jersey-jaxrs</artifactId>
-                <version>${swagger.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/io.swagger/swagger-jersey2-jaxrs -->
-            <!-- Swagger Jersey2 JAX-RS：Swagger 对 Jersey 2.x 框架的深度集成。 -->
-            <dependency>
-                <groupId>io.swagger</groupId>
-                <artifactId>swagger-jersey2-jaxrs</artifactId>
-                <version>${swagger.version}</version>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-models -->
             <!-- Swagger Models v3：OpenAPI 3.0 数据模型定义（OpenAPI、PathItem、Schema 等）。 -->
             <dependency>
@@ -9636,13 +9545,6 @@
                 <groupId>io.swagger.core.v3</groupId>
                 <artifactId>swagger-models-jakarta</artifactId>
                 <version>${swagger3.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/io.swagger/swagger-servlet -->
-            <!-- Swagger Servlet：Swagger 对 Servlet 容器的 API 自动扫描集成。 -->
-            <dependency>
-                <groupId>io.swagger</groupId>
-                <artifactId>swagger-servlet</artifactId>
-                <version>${swagger.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.webjars/swagger-ui -->
             <!-- Swagger UI：OpenAPI 文档的交互式 Web 界面（WebJars 打包）。 -->
