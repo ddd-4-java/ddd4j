@@ -14,9 +14,13 @@
  */
 package io.ddd4j.core.ddd.repository;
 
+import io.ddd4j.core.context.BaseContext;
+import io.ddd4j.core.context.ThreadContext;
+import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.event.StringEntityId;
 import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.core.exception.BizRuntimeException;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -26,6 +30,14 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 class RepositoryRegistryTest {
+
+    @AfterEach
+    void tearDown() {
+        ThreadContext.clear();
+        RepositoryRegistry.clear();
+        BaseContext.clear();
+    }
+
     @Test
     void shouldRegisterResolveAndUnregisterRepository() {
         InMemoryRepository repository = new InMemoryRepository();
@@ -36,6 +48,58 @@ class RepositoryRegistryTest {
         assertEquals(aggregate, RepositoryRegistry.repository(TestAggregate.class).findById(aggregate.id()).get());
         RepositoryRegistry.unregister(TestAggregate.class);
         assertThrows(BizRuntimeException.class, () -> RepositoryRegistry.repository(TestAggregate.class));
+    }
+
+    @Test
+    void threadContext_shouldOverrideBaseContext() {
+        InMemoryRepository globalRepository = new InMemoryRepository();
+        InMemoryRepository threadRepository = new InMemoryRepository();
+        RepositoryRegistry.register(TestAggregate.class, globalRepository);
+        ThreadContext.inject(RepositoryRegistry.key(TestAggregate.class), Repository.class, threadRepository);
+
+        assertSame(threadRepository, RepositoryRegistry.repository(TestAggregate.class));
+    }
+
+    @Test
+    void repository_shouldFallbackToBaseContextAfterThreadRemoved() {
+        InMemoryRepository globalRepository = new InMemoryRepository();
+        InMemoryRepository threadRepository = new InMemoryRepository();
+        RepositoryRegistry.register(TestAggregate.class, globalRepository);
+        ThreadContext.inject(RepositoryRegistry.key(TestAggregate.class), Repository.class, threadRepository);
+        assertSame(threadRepository, RepositoryRegistry.repository(TestAggregate.class));
+
+        ThreadContext.clear();
+
+        assertSame(globalRepository, RepositoryRegistry.repository(TestAggregate.class));
+    }
+
+    @Test
+    void registerWithQuery_shouldResolveBothAggregateAndQuery() {
+        InMemoryRepository repository = new InMemoryRepository();
+        RepositoryRegistry.register(TestAggregate.class, TestQuery.class, repository);
+
+        assertSame(repository, RepositoryRegistry.repository(TestAggregate.class));
+        assertSame(repository, RepositoryRegistry.repositoryForQuery(TestQuery.class));
+    }
+
+    @Test
+    void unregisterQuery_shouldRemoveQueryMapping() {
+        RepositoryRegistry.register(TestAggregate.class, TestQuery.class, new InMemoryRepository());
+        RepositoryRegistry.unregisterQuery(TestQuery.class);
+
+        assertThrows(BizRuntimeException.class, () -> RepositoryRegistry.repositoryForQuery(TestQuery.class));
+    }
+
+    @Test
+    void clear_shouldRemoveAllRegistrations() {
+        RepositoryRegistry.register(TestAggregate.class, TestQuery.class, new InMemoryRepository());
+        RepositoryRegistry.clear();
+
+        assertThrows(BizRuntimeException.class, () -> RepositoryRegistry.repository(TestAggregate.class));
+        assertThrows(BizRuntimeException.class, () -> RepositoryRegistry.repositoryForQuery(TestQuery.class));
+    }
+
+    private static final class TestQuery extends Query<TestAggregate> {
     }
 
     private static final class TestAggregate extends AggregateRoot<StringEntityId> {
