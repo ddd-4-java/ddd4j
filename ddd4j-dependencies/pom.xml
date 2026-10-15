@@ -268,10 +268,10 @@
         <httpclient5.version>5.4.4</httpclient5.version>
         <httpclient-extension.version>2.0.x.20260630-SNAPSHOT</httpclient-extension.version>
         <httpclient.version>4.5.14</httpclient.version>
-        <httpconn.version>1.0.1.RELEASE</httpconn.version>
+        <httpconn.version>2.0.x.20260630-SNAPSHOT</httpconn.version>
         <httpcore5.version>5.3.6</httpcore5.version>
         <httpcore.version>4.4.16</httpcore.version>
-        <httputils.version>1.0.0.RELEASE</httputils.version>
+        <httputils.version>2.0.x.20260630-SNAPSHOT</httputils.version>
         <hudi.version>1.2.0</hudi.version>
         <hutool.version>5.8.47</hutool.version>
         <hystrix.version>1.5.18</hystrix.version>
