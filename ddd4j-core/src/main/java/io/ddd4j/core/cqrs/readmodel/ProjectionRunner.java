@@ -16,6 +16,7 @@ package io.ddd4j.core.cqrs.readmodel;
 
 import io.ddd4j.kit.lang.CollKit;
 import io.ddd4j.kit.lang.StrKit;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -42,6 +43,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
+@Slf4j
 public class ProjectionRunner<E> {
 
     /**
@@ -158,7 +160,11 @@ public class ProjectionRunner<E> {
                 AtomicInteger counter = consecutiveFailures.computeIfAbsent(viewName, k -> new AtomicInteger());
                 int failures = counter.incrementAndGet();
                 if (failures >= CONSECUTIVE_FAILURE_THRESHOLD && failures % CONSECUTIVE_FAILURE_THRESHOLD == 0) {
-                    metrics.onCircuitOpened(viewName, failures);
+                    try {
+                        metrics.onCircuitOpened(viewName, failures);
+                    } catch (RuntimeException callbackFailure) {
+                        log.warn("Projection circuit callback failed for view {}", viewName, callbackFailure);
+                    }
                 }
             }
         }
