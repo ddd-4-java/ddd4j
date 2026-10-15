@@ -60,6 +60,7 @@ public class SqsMQClient implements MQClient {
     private final MQClientLifecycle lifecycle = new MQClientLifecycle();
     private final MQStartupStatus startupStatus = new MQStartupStatus("sqs");
     private SqsClient client;
+    private boolean closed;
 
     /**
      * 构造 1：传入配置，首次初始化生产者或消费者时 lazy 创建 SqsClient。
@@ -163,7 +164,7 @@ public class SqsMQClient implements MQClient {
     }
 
     @Override
-    public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
+    public synchronized boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
         String queueUrl = listener.getTopic();
         if (Objects.isNull(queueUrl) || !(queueUrl.startsWith("http://") || queueUrl.startsWith("https://"))) {
             throw new IllegalArgumentException("SQS MQListener.topic must be a queueUrl (https://...). Got: " + queueUrl);
@@ -271,6 +272,9 @@ public class SqsMQClient implements MQClient {
      * 首次使用生产者或消费者时创建自有客户端，避免两条初始化路径重复创建。
      */
     private synchronized void initializeClient() {
+        if (closed) {
+            throw new IllegalStateException("SQS client is closed");
+        }
         if (Objects.isNull(client)) {
             SqsClient ownedClient = Objects.requireNonNull(properties.client(), "SqsClient");
             client = ownedClient;
@@ -281,7 +285,11 @@ public class SqsMQClient implements MQClient {
     // ========================= 关闭 =========================
 
     @Override
-    public void close() {
+    public synchronized void close() {
+        if (closed) {
+            return;
+        }
+        closed = true;
         try {
             lifecycle.close();
         } finally {
