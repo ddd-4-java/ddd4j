@@ -39,9 +39,19 @@ public class AddOrderLineRequest {
 
     private BigDecimal unitPrice;
 
+    /**
+     * 创建空请求，供反序列化使用。
+     */
     public AddOrderLineRequest() {
     }
 
+    /**
+     * 创建请求。
+     * @param goodsId 商品 ID
+     * @param goodsName 商品名称
+     * @param quantity 数量
+     * @param unitPrice 单价
+     */
     @JsonCreator()
     public AddOrderLineRequest(@JsonProperty("goodsId") String goodsId, @JsonProperty("goodsName") String goodsName, @JsonProperty("quantity") int quantity, @JsonProperty("unitPrice") BigDecimal unitPrice) {
         this.goodsId = goodsId;
@@ -50,58 +60,111 @@ public class AddOrderLineRequest {
         this.unitPrice = unitPrice;
     }
 
+    /**
+     * 读取商品 ID。
+     * @return 商品 ID
+     */
     @JsonProperty("goodsId")
     public String goodsId() {
         return goodsId;
     }
 
+    /**
+     * 读取商品名称。
+     * @return 商品名称
+     */
     @JsonProperty("goodsName")
     public String goodsName() {
         return goodsName;
     }
 
+    /**
+     * 读取数量。
+     * @return 数量
+     */
     @JsonProperty("quantity")
     public int quantity() {
         return quantity;
     }
 
+    /**
+     * 读取单价。
+     * @return 单价
+     */
     @JsonProperty("unitPrice")
     public BigDecimal unitPrice() {
         return unitPrice;
     }
 
+    /**
+     * 读取商品 ID。
+     * @return 商品 ID
+     */
     public String getGoodsId() {
         return goodsId;
     }
 
+    /**
+     * 设置商品 ID。
+     * @param goodsId 商品 ID
+     */
     public void setGoodsId(String goodsId) {
         this.goodsId = goodsId;
     }
 
+    /**
+     * 读取商品名称。
+     * @return 商品名称
+     */
     public String getGoodsName() {
         return goodsName;
     }
 
+    /**
+     * 设置商品名称。
+     * @param goodsName 商品名称
+     */
     public void setGoodsName(String goodsName) {
         this.goodsName = goodsName;
     }
 
+    /**
+     * 读取数量。
+     * @return 数量
+     */
     public int getQuantity() {
         return quantity;
     }
 
+    /**
+     * 设置数量。
+     * @param quantity 数量
+     */
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
 
+    /**
+     * 读取单价。
+     * @return 单价
+     */
     public BigDecimal getUnitPrice() {
         return unitPrice;
     }
 
+    /**
+     * 设置单价。
+     * @param unitPrice 单价
+     */
     public void setUnitPrice(BigDecimal unitPrice) {
         this.unitPrice = unitPrice;
     }
 
+    /**
+     * 判断对象是否可参与值比较。
+     * @param other 待比较对象
+     * @return 是否为同类请求
+     */
     protected boolean canEqual(Object other) {
         return other instanceof AddOrderLineRequest;
     }

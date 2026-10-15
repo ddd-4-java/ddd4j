@@ -35,9 +35,18 @@ public class CreateOrderRequest {
 
     private String buyerName;
 
+    /**
+     * 创建空请求，供反序列化使用。
+     */
     public CreateOrderRequest() {
     }
 
+    /**
+     * 创建请求。
+     * @param orderNo 订单编号
+     * @param buyerId 买家 ID
+     * @param buyerName 买家名称
+     */
     @JsonCreator()
     public CreateOrderRequest(@JsonProperty("orderNo") String orderNo, @JsonProperty("buyerId") String buyerId, @JsonProperty("buyerName") String buyerName) {
         this.orderNo = orderNo;
@@ -45,45 +54,86 @@ public class CreateOrderRequest {
         this.buyerName = buyerName;
     }
 
+    /**
+     * 读取订单编号。
+     * @return 订单编号
+     */
     @JsonProperty("orderNo")
     public String orderNo() {
         return orderNo;
     }
 
+    /**
+     * 读取买家 ID。
+     * @return 买家 ID
+     */
     @JsonProperty("buyerId")
     public String buyerId() {
         return buyerId;
     }
 
+    /**
+     * 读取买家名称。
+     * @return 买家名称
+     */
     @JsonProperty("buyerName")
     public String buyerName() {
         return buyerName;
     }
 
+    /**
+     * 读取订单编号。
+     * @return 订单编号
+     */
     public String getOrderNo() {
         return orderNo;
     }
 
+    /**
+     * 设置订单编号。
+     * @param orderNo 订单编号
+     */
     public void setOrderNo(String orderNo) {
         this.orderNo = orderNo;
     }
 
+    /**
+     * 读取买家 ID。
+     * @return 买家 ID
+     */
     public String getBuyerId() {
         return buyerId;
     }
 
+    /**
+     * 设置买家 ID。
+     * @param buyerId 买家 ID
+     */
     public void setBuyerId(String buyerId) {
         this.buyerId = buyerId;
     }
 
+    /**
+     * 读取买家名称。
+     * @return 买家名称
+     */
     public String getBuyerName() {
         return buyerName;
     }
 
+    /**
+     * 设置买家名称。
+     * @param buyerName 买家名称
+     */
     public void setBuyerName(String buyerName) {
         this.buyerName = buyerName;
     }
 
+    /**
+     * 判断对象是否可参与值比较。
+     * @param other 待比较对象
+     * @return 是否为同类请求
+     */
     protected boolean canEqual(Object other) {
         return other instanceof CreateOrderRequest;
     }
