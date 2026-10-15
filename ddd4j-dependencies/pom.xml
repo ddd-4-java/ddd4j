@@ -2447,7 +2447,7 @@
                 <artifactId>cxf-rt-javassist</artifactId>
                 <version>${cxf-rt-javassist.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.github.redacted-legacy-family/cxf-rt-javassist -->
+            <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/cxf-rt-javassist -->
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-rs-client -->
             <!-- Apache CXF JAX-RS Client：CXF 的 JAX-RS REST 客户端实现。 -->
             <dependency>
@@ -2845,7 +2845,7 @@
                 <artifactId>dozer-extra-converters</artifactId>
                 <version>${dozer-extra-converters.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.github.redacted-legacy-family/dozer-extra-converters -->
+            <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/dozer-extra-converters -->
             <!-- https://mvnrepository.com/artifact/com.github.dozermapper/dozer-proto3 -->
             <!-- Dozer Proto3：Dozer 对 Protocol Buffers v3 的支持模块。 -->
             <dependency>
@@ -4193,7 +4193,7 @@
                 <version>${httpcore.version}</version>
                 <type>pom</type>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/com.github.redacted-legacy-family/httpconn -->
+            <!-- https://mvnrepository.com/artifact/io.github.easy4j/httpconn -->
             <!-- HttpConn：基于 Apache HttpClient 的 HTTP 连接工具库（简化 HTTP 调用封装）。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
@@ -4256,8 +4256,8 @@
                 <artifactId>httpmime</artifactId>
                 <version>${httpclient.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.github.redacted-legacy-family/httputils -->
-            <!-- HttpUtils（旧坐标）：旧坐标下的 HTTP 工具库（已迁至 io.github.easy4j）。 -->
+            <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/httputils -->
+            <!-- HttpUtils：HTTP 工具库。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>httputils</artifactId>
@@ -8824,7 +8824,7 @@
                 <artifactId>shiro-j2cache</artifactId>
                 <version>${shiro-j2cache.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.github.redacted-legacy-family/shiro-j2cache -->
+            <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/shiro-j2cache -->
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/shiro-jwt-core -->
             <!-- Easy4J Shiro JWT Core：Easy4J 的 Shiro JWT 认证核心模块。 -->
             <dependency>
@@ -9093,7 +9093,7 @@
                 <artifactId>spring-bytebuddy</artifactId>
                 <version>${spring-bytebuddy.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.github.redacted-legacy-family/spring-bytebuddy -->
+            <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/spring-bytebuddy -->
             <!-- Source: https://mvnrepository.com/artifact/org.springframework.data/spring-data-bom -->
             <!-- Spring Data BOM：Spring Data 各模块（JPA/Redis/MongoDB 等）的版本清单。 -->
             <dependency>
@@ -9727,7 +9727,7 @@
                 <artifactId>undertow-core</artifactId>
                 <version>${undertow.version}</version>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/com.github.redacted-legacy-family/undertow-metrics-prometheus -->
+            <!-- https://mvnrepository.com/artifact/io.github.easy4j/undertow-metrics-prometheus -->
             <!-- Undertow Metrics Prometheus：Undertow Web 服务器的 Prometheus 指标监控模块。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
