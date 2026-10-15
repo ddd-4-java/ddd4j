@@ -29,12 +29,13 @@ public final class SpiRegistrationScope implements AutoCloseable {
     private boolean started;
 
     /**
-     * 注册组件。
-     * @param <T> 类型参数。
-     * @param key 幂等键。
-     * @param type 目标类型。
-     * @param service 二维码服务。
-     * @return 当前对象自身，支持链式调用。
+     * 登记作用域启动时要安装的服务。
+     *
+     * @param <T> 服务类型
+     * @param key 服务标识
+     * @param type 服务接口类型
+     * @param service 服务实例
+     * @return 当前登记作用域
      */
     public synchronized <T> SpiRegistrationScope register(String key, Class<T> type, T service) {
         if (started) {
@@ -45,7 +46,7 @@ public final class SpiRegistrationScope implements AutoCloseable {
     }
 
     /**
-     * 启动。
+     * 安装已登记的服务；重复调用不再安装。
      */
     public synchronized void start() {
         if (started) {
@@ -53,9 +54,6 @@ public final class SpiRegistrationScope implements AutoCloseable {
         }
         try {
             for (Registration<?> registration : registrations) {
-                /**
-                 * registration.install() 方法。
-                 */
                 registration.install();
                 installed.add(registration);
             }
@@ -66,9 +64,6 @@ public final class SpiRegistrationScope implements AutoCloseable {
         }
     }
 
-    /**
-     * 关闭并释放资源。
-     */
     @Override
     public synchronized void close() {
         rollback();
@@ -83,11 +78,6 @@ public final class SpiRegistrationScope implements AutoCloseable {
         installed.clear();
     }
 
-    /**
-     * 单条 SPI 注册记录，保存键、类型、服务实例以及安装前的旧值，用于安装与回滚。
-     *
-     * @param <T> SPI 服务类型
-     */
     private static final class Registration<T> {
 
         private final String key;

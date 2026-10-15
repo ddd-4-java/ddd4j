@@ -21,11 +21,6 @@ import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * 类型说明。
- * @author ddd4j
- * @since 3.0.x
- */
 class SpiRegistrationScopeTest {
 
     private static final String KEY = "test.spi.lifecycle";
@@ -77,19 +72,15 @@ class SpiRegistrationScopeTest {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (!(o instanceof Service)) {
-                return false;
-            }
+            if (this == o) return true;
+            if (!(o instanceof Service)) return false;
             Service other = (Service) o;
             return Objects.equals(this.name, other.name);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(name);
+            return java.util.Objects.hash(name);
         }
 
         @Override
