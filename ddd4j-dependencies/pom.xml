@@ -624,9 +624,6 @@
         <tika.version>2.9.4</tika.version>
         <token-bucket.version>1.7</token-bucket.version>
         <tomcat.version>9.0.121</tomcat.version>
-        <tongweb-gmssl.version>1.0.0</tongweb-gmssl.version>
-        <tongweb-license-client.version>4.4.1.3</tongweb-license-client.version>
-        <tongweb.version>7.0.E.6_P5</tongweb.version>
         <transmittable-thread-local.version>2.14.5</transmittable-thread-local.version>
         <truelicense.version>4.1.4</truelicense.version>
         <twilio.version>10.8.0</twilio.version>
@@ -6530,32 +6527,6 @@
                 <groupId>nz.net.ultraq.thymeleaf</groupId>
                 <artifactId>thymeleaf-layout-dialect</artifactId>
                 <version>${thymeleaf-layout-dialect.version}</version>
-            </dependency>
-
-            <!-- For Tongweb -->
-            <!-- 提供web应用的核心功能依赖聚合模块 -->
-            <dependency>
-                <groupId>com.tongweb</groupId>
-                <artifactId>tongweb-embed-core</artifactId>
-                <version>${tongweb.version}</version>
-            </dependency>
-            <!-- 提供dubbo的核心功能依赖聚合模块 -->
-            <dependency>
-                <groupId>com.tongweb</groupId>
-                <artifactId>tongweb-embed-dubbo</artifactId>
-                <version>${tongweb.version}</version>
-            </dependency>
-            <!-- license-server 的客户端 -->
-            <dependency>
-                <groupId>com.tongweb</groupId>
-                <artifactId>tongweb-lic-sdk</artifactId>
-                <version>${tongweb-license-client.version}</version>
-            </dependency>
-            <!-- 提供国密 SSL 核心功能模块。 -->
-            <dependency>
-                <groupId>com.tongweb</groupId>
-                <artifactId>tongweb-gmssl</artifactId>
-                <version>${tongweb-gmssl.version}</version>
             </dependency>
 
             <!-- https://mvnrepository.com/artifact/org.isomorphism/token-bucket -->

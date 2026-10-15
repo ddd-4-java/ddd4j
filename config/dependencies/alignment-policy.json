@@ -680,6 +680,62 @@
         "reason": "已发布 starter 绑定 Spring Boot 2.7 / javax.servlet；现有新 SDK 缺少等价自动配置且仍有 javax 引用，需发布对应 Spring 6/7 适配产物",
         "status": "manual-migration"
       }
+    },
+    "com.tongweb:tongweb-embed-core": {
+      "8": {
+        "reason": "TongWeb 为外部私有商业包，需使用方手动发布到自己的私有仓库；ddd4j 默认产品与 BOM 不提供该适配",
+        "status": "unsupported-private-external"
+      },
+      "17": {
+        "reason": "TongWeb 为外部私有商业包，需使用方手动发布到自己的私有仓库；ddd4j 默认产品与 BOM 不提供该适配",
+        "status": "unsupported-private-external"
+      },
+      "21": {
+        "reason": "TongWeb 为外部私有商业包，需使用方手动发布到自己的私有仓库；ddd4j 默认产品与 BOM 不提供该适配",
+        "status": "unsupported-private-external"
+      }
+    },
+    "com.tongweb:tongweb-embed-dubbo": {
+      "8": {
+        "reason": "TongWeb 为外部私有商业包，需使用方手动发布到自己的私有仓库；ddd4j 默认产品与 BOM 不提供该适配",
+        "status": "unsupported-private-external"
+      },
+      "17": {
+        "reason": "TongWeb 为外部私有商业包，需使用方手动发布到自己的私有仓库；ddd4j 默认产品与 BOM 不提供该适配",
+        "status": "unsupported-private-external"
+      },
+      "21": {
+        "reason": "TongWeb 为外部私有商业包，需使用方手动发布到自己的私有仓库；ddd4j 默认产品与 BOM 不提供该适配",
+        "status": "unsupported-private-external"
+      }
+    },
+    "com.tongweb:tongweb-gmssl": {
+      "8": {
+        "reason": "TongWeb 为外部私有商业包，需使用方手动发布到自己的私有仓库；ddd4j 默认产品与 BOM 不提供该适配",
+        "status": "unsupported-private-external"
+      },
+      "17": {
+        "reason": "TongWeb 为外部私有商业包，需使用方手动发布到自己的私有仓库；ddd4j 默认产品与 BOM 不提供该适配",
+        "status": "unsupported-private-external"
+      },
+      "21": {
+        "reason": "TongWeb 为外部私有商业包，需使用方手动发布到自己的私有仓库；ddd4j 默认产品与 BOM 不提供该适配",
+        "status": "unsupported-private-external"
+      }
+    },
+    "com.tongweb:tongweb-lic-sdk": {
+      "8": {
+        "reason": "TongWeb 为外部私有商业包，需使用方手动发布到自己的私有仓库；ddd4j 默认产品与 BOM 不提供该适配",
+        "status": "unsupported-private-external"
+      },
+      "17": {
+        "reason": "TongWeb 为外部私有商业包，需使用方手动发布到自己的私有仓库；ddd4j 默认产品与 BOM 不提供该适配",
+        "status": "unsupported-private-external"
+      },
+      "21": {
+        "reason": "TongWeb 为外部私有商业包，需使用方手动发布到自己的私有仓库；ddd4j 默认产品与 BOM 不提供该适配",
+        "status": "unsupported-private-external"
+      }
     }
   },
   "baseline_components": {
