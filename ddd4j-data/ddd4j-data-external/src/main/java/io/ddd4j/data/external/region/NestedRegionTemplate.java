@@ -247,16 +247,18 @@ public class NestedRegionTemplate {
     }
 
     /**
-     * 获取值。
-     * @return 方法执行结果。
+     * 返回 IP 地区查询实现。
+     *
+     * @return IP 地区查询实现
      */
     public IpRegionTemplate getIp2RegionTemplate() {
         return ipRegionTemplate;
     }
 
     /**
-     * 获取值。
-     * @return 方法执行结果。
+     * 返回太平洋网络地区查询实现。
+     *
+     * @return 太平洋网络地区查询实现
      */
     public PconlineRegionTemplate getPconlineRegionTemplate() {
         return pconlineRegionTemplate;
