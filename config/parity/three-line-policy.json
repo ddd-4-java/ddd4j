@@ -279,6 +279,20 @@
       "reason": "三线相同加密 HTTP 契约，仅 Jackson 2/3 的 ObjectMapper import 随本线依赖精确替换；其余测试内容须逐字一致"
     },
     {
+      "path": "ddd4j-web/ddd4j-web-core/src/test/java/io/ddd4j/web/core/context/WebRequestContextJsonContractTest.java",
+      "targetLines": [
+        "3.0.x"
+      ],
+      "replacements": [
+        {
+          "from": "import com.fasterxml.jackson.databind.ObjectMapper;",
+          "to": "import tools.jackson.databind.ObjectMapper;"
+        }
+      ],
+      "evidence": "ddd4j-web/ddd4j-web-core/src/test/java/io/ddd4j/web/core/context/WebRequestContextJsonContractTest.java",
+      "reason": "三线相同请求上下文 JSON 往返契约；JDK 21 线仅按 Jackson 3 数据绑定包名精确适配"
+    },
+    {
       "path": "ddd4j-web/ddd4j-web-core/src/test/java/io/ddd4j/web/core/version/ApiVersionJsonContractTest.java",
       "targetLines": [
         "3.0.x"
