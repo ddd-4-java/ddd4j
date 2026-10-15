@@ -1878,14 +1878,8 @@
                 <artifactId>commons-rdf-rdf4j</artifactId>
                 <version>${commons-rdf.version}</version>
             </dependency>
-            <!-- NOT Yet Commons SSL -->
             <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>not-yet-commons-ssl</artifactId>
-                <version>${commons-ssl.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.commons.ssl</groupId>
+                <groupId>ca.juliusdavies</groupId>
                 <artifactId>not-yet-commons-ssl</artifactId>
                 <version>${commons-ssl.version}</version>
             </dependency>
@@ -1915,30 +1909,6 @@
                 <groupId>org.databene</groupId>
                 <artifactId>contiperf</artifactId>
                 <version>${contiperf.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.chromium.net/cronet-common -->
-            <dependency>
-                <groupId>org.chromium.net</groupId>
-                <artifactId>cronet-common</artifactId>
-                <version>${cronet.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.chromium.net/cronet-api -->
-            <dependency>
-                <groupId>org.chromium.net</groupId>
-                <artifactId>cronet-api</artifactId>
-                <version>${cronet.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.chromium.net/cronet-fallback -->
-            <dependency>
-                <groupId>org.chromium.net</groupId>
-                <artifactId>cronet-fallback</artifactId>
-                <version>${cronet.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.chromium.net/cronet-embedded -->
-            <dependency>
-                <groupId>org.chromium.net</groupId>
-                <artifactId>cronet-embedded</artifactId>
-                <version>${cronet.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.curator/curator-recipes -->
             <dependency>
@@ -3035,7 +3005,7 @@
             <!-- https://mvnrepository.com/artifact/org.apache.hbase/hbase-protocol -->
             <dependency>
                 <groupId>org.apache.hbase</groupId>
-                <artifactId>hbase-protocol</artifactId>
+                <artifactId>hbase-protocol-shaded</artifactId>
                 <version>${hbase.version}</version>
             </dependency>
 
