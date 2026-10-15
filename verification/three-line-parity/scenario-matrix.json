@@ -138,20 +138,67 @@
       }
     },
     {
+      "id": "BROKER-NATIVE-CONTAINERS",
+      "description": "RabbitMQ、NATS、MQTT、Mica MQTT、Artemis、Pulsar、RocketMQ、Redis Stream 的原生 Broker 场景在三线 CI 中实际执行；不包含外部云端适配器",
+      "lastEvidence": "/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-16-native-broker-ci/report.json",
+      "lastEvidenceSha256": "b30c823195bbe06d8dcfe88986b851fbb7611d96ecb7b084463616d435ad238a",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-rabbitmq/src/test/java/io/ddd4j/mq/rabbitmq/RabbitMQContainerIntegrationTest.java",
+            "ddd4j-mq/ddd4j-mq-nats/src/test/java/io/ddd4j/mq/nats/NatsJetStreamIntegrationTest.java",
+            "ddd4j-mq/ddd4j-mq-mqtt/src/test/java/io/ddd4j/mq/mqtt/MqttContainerIntegrationTest.java",
+            "ddd4j-mq/ddd4j-mq-mqtt-mica/src/test/java/io/ddd4j/mq/mqttmica/MicaMqttContainerIntegrationTest.java",
+            "ddd4j-mq/ddd4j-mq-activemq/src/test/java/io/ddd4j/mq/activemq/ArtemisContainerIntegrationTest.java",
+            "ddd4j-mq/ddd4j-mq-pulsar/src/test/java/io/ddd4j/mq/pulsar/PulsarContainerIntegrationTest.java",
+            "ddd4j-mq/ddd4j-mq-rocketmq/src/test/java/io/ddd4j/mq/rocketmq/RocketMQNativeIntegrationTest.java",
+            "ddd4j-mq/ddd4j-mq-redis-stream/src/test/java/io/ddd4j/mq/redisstream/RedisStreamNativeCausalityIT.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-rabbitmq/src/test/java/io/ddd4j/mq/rabbitmq/RabbitMQContainerIntegrationTest.java",
+            "ddd4j-mq/ddd4j-mq-nats/src/test/java/io/ddd4j/mq/nats/NatsJetStreamIntegrationTest.java",
+            "ddd4j-mq/ddd4j-mq-mqtt/src/test/java/io/ddd4j/mq/mqtt/MqttContainerIntegrationTest.java",
+            "ddd4j-mq/ddd4j-mq-mqtt-mica/src/test/java/io/ddd4j/mq/mqttmica/MicaMqttContainerIntegrationTest.java",
+            "ddd4j-mq/ddd4j-mq-activemq/src/test/java/io/ddd4j/mq/activemq/ArtemisContainerIntegrationTest.java",
+            "ddd4j-mq/ddd4j-mq-pulsar/src/test/java/io/ddd4j/mq/pulsar/PulsarContainerIntegrationTest.java",
+            "ddd4j-mq/ddd4j-mq-rocketmq/src/test/java/io/ddd4j/mq/rocketmq/RocketMQNativeIntegrationTest.java",
+            "ddd4j-mq/ddd4j-mq-redis-stream/src/test/java/io/ddd4j/mq/redisstream/RedisStreamNativeCausalityIT.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-rabbitmq/src/test/java/io/ddd4j/mq/rabbitmq/RabbitMQContainerIntegrationTest.java",
+            "ddd4j-mq/ddd4j-mq-nats/src/test/java/io/ddd4j/mq/nats/NatsJetStreamIntegrationTest.java",
+            "ddd4j-mq/ddd4j-mq-mqtt/src/test/java/io/ddd4j/mq/mqtt/MqttContainerIntegrationTest.java",
+            "ddd4j-mq/ddd4j-mq-mqtt-mica/src/test/java/io/ddd4j/mq/mqttmica/MicaMqttContainerIntegrationTest.java",
+            "ddd4j-mq/ddd4j-mq-activemq/src/test/java/io/ddd4j/mq/activemq/ArtemisContainerIntegrationTest.java",
+            "ddd4j-mq/ddd4j-mq-pulsar/src/test/java/io/ddd4j/mq/pulsar/PulsarContainerIntegrationTest.java",
+            "ddd4j-mq/ddd4j-mq-rocketmq/src/test/java/io/ddd4j/mq/rocketmq/RocketMQNativeIntegrationTest.java",
+            "ddd4j-mq/ddd4j-mq-redis-stream/src/test/java/io/ddd4j/mq/redisstream/RedisStreamNativeCausalityIT.java"
+          ]
+        }
+      }
+    },
+    {
       "id": "BROKER-ADAPTERS",
       "description": "声明支持的 Broker 适配器生命周期",
       "lines": {
         "1.0.x": {
           "status": "pending",
-          "reason": "RabbitMQ、NATS、两种 MQTT、Artemis、Pulsar 与 RocketMQ 已有部分原生场景，Disruptor 已有进程内场景；ONS/TDMQ 云端适配器及其余故障/竞争路径仍须逐项验证"
+          "reason": "RabbitMQ、NATS、两种 MQTT、Artemis、Pulsar、RocketMQ、Redis Stream 的部分原生场景已在三线 CI 验证，Disruptor 已有进程内场景；ONS/TDMQ/SQS 云端适配器及其余故障/竞争路径仍须逐项验证"
         },
         "2.0.x": {
           "status": "pending",
-          "reason": "RabbitMQ、NATS、两种 MQTT、Artemis、Pulsar 与 RocketMQ 已有部分原生场景，Disruptor 已有进程内场景；ONS/TDMQ 云端适配器及其余故障/竞争路径仍须逐项验证"
+          "reason": "RabbitMQ、NATS、两种 MQTT、Artemis、Pulsar、RocketMQ、Redis Stream 的部分原生场景已在三线 CI 验证，Disruptor 已有进程内场景；ONS/TDMQ/SQS 云端适配器及其余故障/竞争路径仍须逐项验证"
         },
         "3.0.x": {
           "status": "pending",
-          "reason": "RabbitMQ、NATS、两种 MQTT、Artemis、Pulsar 与 RocketMQ 已有部分原生场景，Disruptor 已有进程内场景；ONS/TDMQ 云端适配器及其余故障/竞争路径仍须逐项验证"
+          "reason": "RabbitMQ、NATS、两种 MQTT、Artemis、Pulsar、RocketMQ、Redis Stream 的部分原生场景已在三线 CI 验证，Disruptor 已有进程内场景；ONS/TDMQ/SQS 云端适配器及其余故障/竞争路径仍须逐项验证"
         }
       }
     },
