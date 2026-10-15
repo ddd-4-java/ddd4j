@@ -5706,12 +5706,6 @@
                 <artifactId>schemacrawler-mysql</artifactId>
                 <version>${schemacrawler-mysql.version}</version>
             </dependency>
-            <!-- SchemaCrawler For SAP HANA : https://mvnrepository.com/artifact/us.fatehi/schemacrawler-hana -->
-            <dependency>
-                <groupId>us.fatehi</groupId>
-                <artifactId>schemacrawler-hana</artifactId>
-                <version>${schemacrawler-hana.version}</version>
-            </dependency>
             <!-- SchemaCrawler For HyperSQL ：https://mvnrepository.com/artifact/us.fatehi/schemacrawler-hsqldb -->
             <dependency>
                 <groupId>us.fatehi</groupId>
