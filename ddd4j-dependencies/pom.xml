@@ -8459,11 +8459,11 @@
                 <artifactId>rocketmq-remoting</artifactId>
                 <version>${rocketmq-client.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/rocketmq-extension -->
+            <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/rocketmq-extension-core -->
             <!-- Easy4J RocketMQ Extension：Easy4J 对 RocketMQ 的扩展增强。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
-                <artifactId>rocketmq-extension</artifactId>
+                <artifactId>rocketmq-extension-core</artifactId>
                 <version>${rocketmq-extension.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/io.rsocket/rsocket-bom -->
