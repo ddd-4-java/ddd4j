@@ -409,7 +409,7 @@
       "path": "ddd4j-runtime/ddd4j-runtime-quarkus/pom.xml",
       "category": "quarkus-adapter",
       "decision": "supported",
-      "evidence": "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/cqrs/QuarkusRuntimeLifecycleIT.java"
+      "evidence": "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/cqrs/QuarkusRuntimeLifecycleTest.java"
     },
     {
       "path": "ddd4j-samples/ddd4j-sample-helidon-cqrs/pom.xml",
