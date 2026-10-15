@@ -3572,7 +3572,11 @@
     "io.github.easy4j:easyexcel-core": "5.0.1",
     "io.github.easy4j:easyexcel-support": "5.0.1",
     "io.github.easy4j:easyexcel-markdown": "5.0.1",
-    "io.github.easy4j:dozer-extra-converters": "1.0.x.20260630-SNAPSHOT",
+    "io.github.easy4j:dozer-extra-converters": {
+      "8": "1.0.x.20260630-SNAPSHOT",
+      "17": "2.0.x.20260630-SNAPSHOT",
+      "21": "3.0.x.20260630-SNAPSHOT"
+    },
     "io.github.easy4j:cxf-rt-javassist": {
       "8": "1.0.x.20260630-SNAPSHOT",
       "17": "2.0.x.20260630-SNAPSHOT",

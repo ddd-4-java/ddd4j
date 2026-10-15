@@ -42,7 +42,8 @@ class DependencyAlignmentTest(unittest.TestCase):
     def test_three_line_easy4j_components_use_branch_revisions(self):
         policy_path = Path(__file__).parents[1] / 'config/dependencies/alignment-policy.json'
         policy = json.loads(policy_path.read_text(encoding='utf-8'))
-        for artifact in ('cxf-rt-javassist', 'shiro-j2cache', 'undertow-metrics-prometheus'):
+        for artifact in ('cxf-rt-javassist', 'dozer-extra-converters',
+                         'shiro-j2cache', 'undertow-metrics-prometheus'):
             coordinate = 'io.github.easy4j:' + artifact
             actual = policy['dependency_versions'].get(coordinate)
             expected = {str(jdk): line + '.20260630-SNAPSHOT'
