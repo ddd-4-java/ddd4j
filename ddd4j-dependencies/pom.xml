@@ -6104,11 +6104,7 @@
                 <artifactId>snmp4j-agent</artifactId>
                 <version>${snmp4j-agent.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.snmp4j</groupId>
-                <artifactId>snmp4j-agent-db</artifactId>
-                <version>${snmp4j-agent.version}</version>
-            </dependency>
+
 
             <dependency>
                 <groupId>io.socket</groupId>
@@ -6941,11 +6937,7 @@
                 <artifactId>fr.opensagres.poi.xwpf.converter.pdf</artifactId>
                 <version>${xdocreport.version}</version>
             </dependency>
-            <dependency>
-                <groupId>fr.opensagres.xdocreport</groupId>
-                <artifactId>org.apache.poi.xwpf.converter.pdf.itext5</artifactId>
-                <version>${xdocreport.version}</version>
-            </dependency>
+
             <!-- https://mvnrepository.com/artifact/fr.opensagres.xdocreport/fr.opensagres.poi.xwpf.converter.xhtml -->
             <dependency>
                 <groupId>fr.opensagres.xdocreport</groupId>
