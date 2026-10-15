@@ -338,6 +338,11 @@
     {
       "id": "BROKER-NATS-NATIVE",
       "description": "真实 NATS JetStream 的文件存储发布、Header、消费确认及注入连接归属",
+      "caseNames": {
+        "1.0.x": ["natsPropertiesConnectsAndJetStreamAcknowledgesPublish", "natsAdapterPublishesStableHeaderThroughJetStream", "natsAdapterConsumesJetStreamMessageAndKeepsInjectedConnectionOpen"],
+        "2.0.x": ["natsPropertiesConnectsAndJetStreamAcknowledgesPublish", "natsAdapterPublishesStableHeaderThroughJetStream", "natsAdapterConsumesJetStreamMessageAndKeepsInjectedConnectionOpen"],
+        "3.0.x": ["natsPropertiesConnectsAndJetStreamAcknowledgesPublish", "natsAdapterPublishesStableHeaderThroughJetStream", "natsAdapterConsumesJetStreamMessageAndKeepsInjectedConnectionOpen"]
+      },
       "lines": {
         "1.0.x": {
           "status": "supported",
@@ -393,6 +398,11 @@
     {
       "id": "BROKER-NATS-NATIVE-NAK-REDELIVERY",
       "description": "真实 NATS JetStream 监听器首次抛错后 NAK 重投同一业务消息；第二次成功处理并确认，稳定消息 ID 与关联 ID 保持一致，消费者确认序号推进到 2",
+      "caseNames": {
+        "1.0.x": "natsAdapterRedeliversAfterListenerFailureAndAcknowledgesSuccess",
+        "2.0.x": "natsAdapterRedeliversAfterListenerFailureAndAcknowledgesSuccess",
+        "3.0.x": "natsAdapterRedeliversAfterListenerFailureAndAcknowledgesSuccess"
+      },
       "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-13-nats-jetstream-native/retry/report.json",
       "lastEvidenceSha256": "d24b1ebd9f17d2424eec441ea39f5be0442affb5a17013cd92586de5fb1e3f07",
       "lines": {
