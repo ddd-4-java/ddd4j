@@ -104,20 +104,40 @@ public final class ReadinessResult {
         return ready;
     }
 
+    /**
+     * 获取可安全公开的诊断详情。
+     *
+     * @return 不可变的诊断详情
+     */
     public Map<String, String> getDetails() {
         return details;
     }
 
+    /**
+     * 获取就绪状态，供业务调用及 JSON 序列化使用。
+     *
+     * @return 该依赖就绪时为 true
+     */
     @JsonProperty("ready")
     public boolean ready() {
         return ready;
     }
 
+    /**
+     * 获取依赖名称，供业务调用及 JSON 序列化使用。
+     *
+     * @return 稳定的依赖名称
+     */
     @JsonProperty("name")
     public String name() {
         return name;
     }
 
+    /**
+     * 获取诊断详情，供业务调用及 JSON 序列化使用。
+     *
+     * @return 不可变的诊断详情
+     */
     @JsonProperty("details")
     public Map<String, String> details() {
         return details;
