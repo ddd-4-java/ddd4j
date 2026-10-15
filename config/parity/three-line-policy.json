@@ -1304,13 +1304,13 @@
     {
       "path": "ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/EntityIdPath.java",
       "sourceSha256": [
-        "533c482543c1971fa8192362f3a139b7b0ec3206b1c82b2588def8752ccf3d70",
-        "e2ed2e5892b2fce32ed4c08026e2f736facfb025335cafbe100a65ea43f37a13",
-        "e2ed2e5892b2fce32ed4c08026e2f736facfb025335cafbe100a65ea43f37a13"
+        "d49447b9797e01434b57f864e0eed8d7a087db24c5f52238c886517ee9f7b301",
+        "e5e22309807e2a8ea87fa6abdb0fe37d83b3691bac4d4f6dc2092ebaaad6f942",
+        "e5e22309807e2a8ea87fa6abdb0fe37d83b3691bac4d4f6dc2092ebaaad6f942"
       ],
       "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/EntityIdPathTest.java",
       "testSha256": "ed8144e99eaf6a0d12e185cff89967f83ce48de4b592aba0744fb07bc664c264",
-      "reason": "JDK 8 用 Collections.unmodifiableList 防御性复制和显式 instanceof 强转，高两线用 List.copyOf 与模式匹配；三线共同测试覆盖路径解析、转义、快照、迭代与相等行为"
+      "reason": "JDK 8 用 Collections.unmodifiableList 防御性复制和显式 instanceof 强转，高两线用 List.copyOf 与模式匹配；三线共同测试覆盖路径解析、转义、快照、迭代与路径导航"
     },
     {
       "path": "ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/DomainEvent.java",
