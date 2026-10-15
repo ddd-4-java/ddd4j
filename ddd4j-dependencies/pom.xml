@@ -323,7 +323,6 @@
         <javalin.version>7.1.0</javalin.version>
         <javamelody.version>2.8.0</javamelody.version>
         <javassist-extension.version>2.0.x.20260630-SNAPSHOT</javassist-extension.version>
-        <javassist-plus.version>1.0.4.RELEASE</javassist-plus.version>
         <javassist.version>3.32.0-GA</javassist.version>
         <javax-cache.version>1.1.1</javax-cache.version>
         <javax-money.version>1.1</javax-money.version>
@@ -488,7 +487,6 @@
         <p6spy.version>3.9.1</p6spy.version>
         <pac4j-extension-core.version>2.0.x.20260630-SNAPSHOT</pac4j-extension-core.version>
         <pac4j-extension-spring.version>2.0.x.20260630-SNAPSHOT</pac4j-extension-spring.version>
-        <pac4j-oauth-ext.version>6.1.x.20241003.RELEASE</pac4j-oauth-ext.version>
         <pac4j-oauth-extension.version>2.0.x.20260630-SNAPSHOT</pac4j-oauth-extension.version>
         <pac4j-otp-extension.version>2.0.x.20260630-SNAPSHOT</pac4j-otp-extension.version>
         <pac4j-uniauth.version>2.0.x.20260630-SNAPSHOT</pac4j-uniauth.version>
@@ -4991,13 +4989,6 @@
                 <artifactId>javassist-extension</artifactId>
                 <version>${javassist-extension.version}</version>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/com.github.redacted-legacy-family/javassist-plus -->
-            <!-- Javassist Plus：旧坐标下的 Javassist 扩展（已迁至 io.github.easy4j）。 -->
-            <dependency>
-                <groupId>io.github.easy4j</groupId>
-                <artifactId>javassist-plus</artifactId>
-                <version>${javassist-plus.version}</version>
-            </dependency>
             <!-- https://mvnrepository.com/artifact/ws.schild/jave-all-deps -->
             <!-- JAVE All Deps：Java 音视频编码转换库（FFmpeg 的 Java 封装，含全平台本地库）。 -->
             <dependency>
@@ -7478,13 +7469,6 @@
                 <groupId>org.pac4j</groupId>
                 <artifactId>pac4j-oauth</artifactId>
                 <version>${pac4j.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.github.redacted-legacy-family/pac4j-oauth-ext -->
-            <!-- Pac4j OAuth Ext：旧坐标下的 Pac4j OAuth 扩展（已迁至 io.github.easy4j）。 -->
-            <dependency>
-                <groupId>io.github.easy4j</groupId>
-                <artifactId>pac4j-oauth-ext</artifactId>
-                <version>${pac4j-oauth-ext.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/pac4j-oauth-extension -->
             <!-- Easy4J Pac4j OAuth Extension：Easy4J 对 Pac4j OAuth 认证的扩展增强。 -->
