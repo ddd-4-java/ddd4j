@@ -25,25 +25,25 @@ import java.util.Locale;
  */
 public enum BrokerType {
 
-    /** 未指定消息代理。 */
+    /** 未启用 Broker。 */
     NONE,
     /**
      * 进程内 LMAX Disruptor 本地队列（非分布式 MQ）。
      */
     DISRUPTOR,
-    /** 基于 AMQP 协议的消息代理。 */
+    /** RabbitMQ。 */
     RABBIT,
-    /** 分布式分区日志型消息队列。 */
+    /** Kafka。 */
     KAFKA,
-    /** 分布式消息队列，支持事务消息与重试。 */
+    /** RocketMQ。 */
     ROCKET,
-    /** 分布式流式消息队列，支持多租户。 */
+    /** Pulsar。 */
     PULSAR,
-    /** 基于内存键值流结构的队列。 */
+    /** Redis Stream。 */
     REDIS_STREAM,
-    /** 基于 JMS 规范的消息代理。 */
+    /** ActiveMQ。 */
     ACTIVEMQ,
-    /** 轻量级发布订阅消息代理。 */
+    /** NATS。 */
     NATS,
     /**
      * Eclipse Paho MQTT 客户端（连接外部 Broker，非嵌入式服务端）。
@@ -53,15 +53,18 @@ public enum BrokerType {
      * mica-mqtt AIO 客户端（sample mqtt-client2，连接外部 Broker）。
      */
     MQTT_MICA,
-    /** ONS 类型消息队列。 */
+    /** 阿里云 ONS。 */
     ONS,
-    /** TDMQ 类型消息队列。 */
+    /** 腾讯云 TDMQ。 */
     TDMQ,
-    /** SQS 类型消息队列服务。 */
+    /** AWS SQS。 */
     SQS;
 
     /**
      * 解析配置字符串为 Broker 类型（兼容 redisStream 等历史命名）。
+     *
+     * @param raw 原始配置值
+     * @return 匹配的 Broker 类型；未知值返回 NONE
      */
     public static BrokerType from(String raw) {
         if (!StrKit.hasText(raw) || "none".equalsIgnoreCase(raw.trim())) {
@@ -91,6 +94,8 @@ public enum BrokerType {
 
     /**
      * 转为 kebab-case 配置值（如 {@code redis-stream}）。
+     *
+     * @return kebab-case 配置值
      */
     public String toConfigValue() {
         return name().toLowerCase(Locale.ROOT).replace('_', '-');

@@ -1020,17 +1020,6 @@
       "reason": "JDK 8 使用 ArrayList 与 Collections.unmodifiableList，JDK 17/21 使用 ArrayList 与 List.copyOf；三线先复制输入再拒绝 null 元素，统一错误消息、不可变快照和空 chunk 契约"
     },
     {
-      "path": "ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/InMemoryProjectionPositionRepository.java",
-      "sourceSha256": [
-        "4d9da85eb3750103f06f922a1e6c8575790dc39289f4a896c2de3d3356817253",
-        "5749701a5243e6ff99e4c77d799f18c7da69c7082956a73ac3d8db7c9dfe6308",
-        "5749701a5243e6ff99e4c77d799f18c7da69c7082956a73ac3d8db7c9dfe6308"
-      ],
-      "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/InMemoryProjectionPositionRepositoryTest.java",
-      "testSha256": "4fb7b13e089796eec16e4790cadbb6d3fd22c21ce707c725233cfaef79d772b3",
-      "reason": "JDK 8 使用 Collections.unmodifiableList/Map 的复制快照，JDK 17/21 使用 List.copyOf/Map.copyOf；三线共同测试锁定位置存储、重置与不可变快照契约"
-    },
-    {
       "path": "ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/AggregateVersion.java",
       "sourceSha256": [
         "522941542537f6df2a0fcb571e873e4cbe761323a74c87309f966c1f0b5a878a",
@@ -1099,13 +1088,13 @@
     {
       "path": "ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/BrokerType.java",
       "sourceSha256": [
-        "8e95c34b405e58e06e86cd808c4b96385e1b06f45948a7b2c5efc504b128ced5",
-        "3697ff88b4cf8bf1b260621bff41231c2236ab195fed613c1e588a5374c28659",
-        "3697ff88b4cf8bf1b260621bff41231c2236ab195fed613c1e588a5374c28659"
+        "78e82cad4a3a244cc43e711a4ff011d39ef3c9fbf74fc89f51541e5e89c39c9a",
+        "6710440e4b080df77409d9d446cb25171f47eace80c8e12e25475c00b50b2d30",
+        "6710440e4b080df77409d9d446cb25171f47eace80c8e12e25475c00b50b2d30"
       ],
       "evidence": "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/BrokerTypeContractTest.java",
-      "testSha256": "9845bbf97330f9bdf2ad9399d9b086d544eb25c273ace0dce6195d6cff7f3f75",
-      "reason": "JDK 8 switch statement and high-line switch expression implement the same broker alias and normalization contract; three-line contract test covers aliases, absent/unknown values, and enum configuration round trips"
+      "testSha256": "bcd87b467c9d6cd6582707857e78daa811c5b82d3467d05e805c6bb3569da821",
+      "reason": "三线 Broker 名称、历史别名、空值回退与配置值契约相同；JDK 8 使用 switch 语句，JDK 17/21 使用 switch 表达式，逐线源码及共同测试由 SHA-256 锁定"
     },
     {
       "path": "ddd4j-mq/ddd4j-mq-kafka/src/main/java/io/ddd4j/mq/kafka/KafkaMQClient.java",
