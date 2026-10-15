@@ -22,6 +22,7 @@ class JsonMQEventSerializationTest {
         source.eventTimestamp = ZonedDateTime.parse("2026-10-15T12:34:56+08:00[Asia/Shanghai]");
 
         String json = serialization.serialize(source);
+        assertEquals("{\"eventTimestamp\":\"2026-10-15T12:34:56+08:00\"}", json);
         TimestampPayload restored = serialization.deserialize(json, TimestampPayload.class);
 
         assertEquals(source.eventTimestamp, restored.eventTimestamp);
