@@ -1051,9 +1051,9 @@
     {
       "path": "ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/AggregateVersion.java",
       "sourceSha256": [
-        "522941542537f6df2a0fcb571e873e4cbe761323a74c87309f966c1f0b5a878a",
-        "920e858f4ac91f166f33e2972ea66bafbbd302ff0f2c7080652ec3987b72fb0c",
-        "920e858f4ac91f166f33e2972ea66bafbbd302ff0f2c7080652ec3987b72fb0c"
+        "d9e8e40d6721e4ddb9a34b38da5e70c9de75152d2bab9c12a5716f6a25dbb842",
+        "518188001a90b13ca73ef48516e3de3f3caf084068822acb5d0d5ef6d5dea01d",
+        "518188001a90b13ca73ef48516e3de3f3caf084068822acb5d0d5ef6d5dea01d"
       ],
       "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/EventIdentifierValueContractTest.java",
       "testSha256": "577990e60325d406f8b478e5ccd6180c289cedbf4bf31bbbbc9231fdb6106ede",
@@ -1062,9 +1062,9 @@
     {
       "path": "ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/EventId.java",
       "sourceSha256": [
-        "c1ba7cb34533e93cb70bd9200ba3fb51bb2399fb6a90ed807ca629d36ea8be48",
-        "a7cb0d66a07962a77429f580d920b7b71dd6deee5200b8bc8d04ebbd7d95da04",
-        "a7cb0d66a07962a77429f580d920b7b71dd6deee5200b8bc8d04ebbd7d95da04"
+        "cbf0c34f3ba27dcd95ffcd9647bca1cbc9698bfb00f8eb4b6c06598762876140",
+        "24c7c578ccda1585aa808f830b6fa5228a4b4922fe56ae790f0d22100b1d1cf7",
+        "24c7c578ccda1585aa808f830b6fa5228a4b4922fe56ae790f0d22100b1d1cf7"
       ],
       "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/EventIdentifierValueContractTest.java",
       "testSha256": "577990e60325d406f8b478e5ccd6180c289cedbf4bf31bbbbc9231fdb6106ede",
@@ -1073,9 +1073,9 @@
     {
       "path": "ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/EventType.java",
       "sourceSha256": [
-        "c7b5b6c2b417fb532a3cfcba7fa3fb52212f49bdd79385fdc02d9108b8dd9864",
-        "268236462fe9b6d966ca947cac7dd572979161a591901f48c7b212da707f5e23",
-        "268236462fe9b6d966ca947cac7dd572979161a591901f48c7b212da707f5e23"
+        "fcc0b142ff2f81c6b0a582a0c755c90606748340ad3a8ef22f5421f9132f5082",
+        "99a97cccfed2ff6e88ceadc84f72f3aca91b2f60b4d7e12db22f646ea38419f2",
+        "99a97cccfed2ff6e88ceadc84f72f3aca91b2f60b4d7e12db22f646ea38419f2"
       ],
       "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/EventIdentifierValueContractTest.java",
       "testSha256": "577990e60325d406f8b478e5ccd6180c289cedbf4bf31bbbbc9231fdb6106ede",
@@ -1084,9 +1084,9 @@
     {
       "path": "ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/StringEntityType.java",
       "sourceSha256": [
-        "1b95cd453a7cd13779b69155f4fbae757531d3b7379b87b2425414c44e6d71f1",
-        "74c58622f7d4714626bdd4069f92e08116ddc2c468a4a9fa0eea0e18e08d1ccf",
-        "74c58622f7d4714626bdd4069f92e08116ddc2c468a4a9fa0eea0e18e08d1ccf"
+        "35f43a26e6ab1012d4aa4719d3b415ab4b99aba8c94cc65a57dd15fb1113d7e0",
+        "a274dfdd65c126ff529d548ce7ef79dadf02e82c83f6995afa80935c18943873",
+        "a274dfdd65c126ff529d548ce7ef79dadf02e82c83f6995afa80935c18943873"
       ],
       "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/EventIdentifierValueContractTest.java",
       "testSha256": "577990e60325d406f8b478e5ccd6180c289cedbf4bf31bbbbc9231fdb6106ede",

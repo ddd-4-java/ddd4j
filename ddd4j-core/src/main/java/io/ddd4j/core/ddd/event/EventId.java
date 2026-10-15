@@ -27,6 +27,9 @@ import java.util.UUID;
 public final class EventId implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 事件 UUID。
+     */
     private final UUID value;
 
     /**
