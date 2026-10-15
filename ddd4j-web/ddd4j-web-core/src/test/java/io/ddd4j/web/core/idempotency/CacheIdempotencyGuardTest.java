@@ -16,6 +16,7 @@ package io.ddd4j.web.core.idempotency;
 
 import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.cache.Cache;
+import io.ddd4j.core.cache.CasCache;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +27,11 @@ import java.time.Duration;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CacheIdempotencyGuardTest {
@@ -34,6 +40,9 @@ class CacheIdempotencyGuardTest {
 
     @Mock
     private Cache<String, Object> plainCache;
+
+    @Mock
+    private CasCache<String, Object> casCache;
 
     @AfterEach
     void tearDown() {
@@ -151,5 +160,21 @@ class CacheIdempotencyGuardTest {
         assertTrue(lease.isPresent());
         assertEquals(Duration.ofMinutes(7), lease.get().ttl());
         guard.release(lease.get());
+    }
+
+    @Test
+    void positiveFractionalSecondTtlNeverExpiresAtZeroSeconds() {
+        CacheKit.register(TEST_CACHE, casCache);
+        when(casCache.putIfAbsent(eq("short"), any())).thenReturn(true);
+        when(casCache.putIfAbsent(eq("lease"), any())).thenReturn(true);
+        when(casCache.replace(eq("lease"), any(), eq("COMPLETED"))).thenReturn(true);
+        CacheIdempotencyGuard guard = new CacheIdempotencyGuard(TEST_CACHE);
+
+        assertTrue(guard.acquire("short", Duration.ofMillis(500)));
+        IdempotencyLease lease = guard.acquireLease("lease", Duration.ofMillis(1500)).get();
+        guard.complete(lease);
+
+        verify(casCache).expire("short", 1L);
+        verify(casCache, times(2)).expire("lease", 2L);
     }
 }
