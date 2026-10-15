@@ -76,6 +76,33 @@ def inventory_category(path: str) -> str:
     return "other"
 
 
+def indexed_javadoc_history_matches(path: str, roots: list[pathlib.Path],
+                                    values: list[str | None]) -> bool:
+    """仅将逐文件锁定且可从统一索引定位的旧 Javadoc 记录归为历史。"""
+    progress = path == "docs/verification/javadoc-fill-progress-20261009.md"
+    report = re.fullmatch(r"docs/verification/javadoc-fill-report-(?:0[1-9]|1[0-8])\.md", path)
+    batch = re.fullmatch(r"docs/verification/javadoc-fill-batches/batch-(?:0[1-9]|1[0-8])\.txt", path)
+    if not progress and not report and not batch:
+        return False
+    line_index = 1 if progress else 2
+    if len(values) != 3 or any(value is None if index == line_index else value is not None
+                               for index, value in enumerate(values)):
+        return False
+    index_path = pathlib.Path("docs/superpowers/historical-evidence-index.md")
+    try:
+        indexes = [(root / index_path).read_bytes() for root in roots]
+        if indexes[0] != indexes[1] or indexes[1] != indexes[2]:
+            return False
+        index_text = indexes[0].decode("utf-8")
+    except (OSError, UnicodeError):
+        return False
+    line = ("1.0.x", "2.0.x", "3.0.x")[line_index]
+    expected = (rf"^\| `{re.escape(pathlib.Path(path).name)}` \| {line}；[^|]+ \| "
+                rf"\[原始文件\]\(https://github\.com/ddd-4-java/ddd4j/blob/[0-9a-f]{{40}}/"
+                rf"{re.escape(path)}\) \| `{values[line_index]}` \|$")
+    return re.search(expected, index_text, re.MULTILINE) is not None
+
+
 def pom_topology_signature(file: pathlib.Path) -> tuple[str, str, str, frozenset[str]] | None:
     """只比较 Maven 模块身份与聚合拓扑；依赖和插件留给各线严格门禁。"""
     try:
@@ -521,6 +548,10 @@ def inventory_gate(roots: list[pathlib.Path], output: pathlib.Path, policy_path:
         evidence = ""
         if category == "historical-document":
             status = "HISTORICAL"
+        elif (category in ("product-document", "other")
+              and indexed_javadoc_history_matches(path, roots, values)):
+            status = "HISTORICAL"
+            evidence = "docs/superpowers/historical-evidence-index.md"
         elif (category == "product-document" and path in historical_sections
               and all(value is not None for value in values)
               and historical_document_section_matches(path, roots, historical_sections[path])):
