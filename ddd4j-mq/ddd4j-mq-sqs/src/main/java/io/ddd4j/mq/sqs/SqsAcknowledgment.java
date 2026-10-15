@@ -15,6 +15,7 @@
 package io.ddd4j.mq.sqs;
 
 import io.ddd4j.mq.BrokerType;
+import io.ddd4j.mq.delivery.MQDeliveryHeaders;
 import io.ddd4j.mq.message.Acknowledgment;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
@@ -63,6 +64,7 @@ public class SqsAcknowledgment implements Acknowledgment {
      * 消息 ID
      */
     private final String messageId;
+    private final String correlationId;
     /**
      * 消息回执句柄
      */
@@ -88,7 +90,9 @@ public class SqsAcknowledgment implements Acknowledgment {
         this.client = client;
         this.message = message;
         this.queueUrl = queueUrl;
-        this.messageId = message.messageId();
+        String stableId = SqsMQClient.messageId(message);
+        this.messageId = Objects.nonNull(stableId) ? stableId : message.messageId();
+        this.correlationId = SqsMQClient.attr(message, MQDeliveryHeaders.CORRELATION_ID);
         this.receiptHandle = message.receiptHandle();
         this.requeueOnNack = requeueOnNack;
     }
@@ -105,7 +109,7 @@ public class SqsAcknowledgment implements Acknowledgment {
 
     @Override
     public String correlationId() {
-        return null;
+        return correlationId;
     }
 
     @Override

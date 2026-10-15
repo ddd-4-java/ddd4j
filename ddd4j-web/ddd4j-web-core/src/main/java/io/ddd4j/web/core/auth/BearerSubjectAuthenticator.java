@@ -15,6 +15,8 @@
 
 package io.ddd4j.web.core.auth;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.Contexts;
@@ -71,20 +73,26 @@ public final class BearerSubjectAuthenticator {
         private final AuthPrincipal principal;
         private final Subject subject;
 
-        public Authentication(String token, AuthPrincipal principal, Subject subject) {
+        @JsonCreator
+        public Authentication(@JsonProperty("token") String token,
+                              @JsonProperty("principal") AuthPrincipal principal,
+                              @JsonProperty("subject") Subject subject) {
             this.token = token;
             this.principal = principal;
             this.subject = subject;
         }
 
+        @JsonProperty("token")
         public String token() {
             return token;
         }
 
+        @JsonProperty("principal")
         public AuthPrincipal principal() {
             return principal;
         }
 
+        @JsonProperty("subject")
         public Subject subject() {
             return subject;
         }

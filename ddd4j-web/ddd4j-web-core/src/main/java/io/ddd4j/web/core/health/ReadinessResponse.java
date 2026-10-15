@@ -15,6 +15,9 @@
 
 package io.ddd4j.web.core.health;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Objects;
 /**
  * Readiness HTTP 响应体，仅暴露整体状态，避免泄露下游依赖信息。
@@ -30,7 +33,8 @@ import java.util.Objects;
  * @param ready 当前应用是否可接收流量
  */
 
-    public ReadinessResponse(boolean ready) {
+    @JsonCreator
+    public ReadinessResponse(@JsonProperty("ready") boolean ready) {
         this.ready = ready;
     }
 

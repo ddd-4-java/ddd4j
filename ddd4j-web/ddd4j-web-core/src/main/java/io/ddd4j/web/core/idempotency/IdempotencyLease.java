@@ -15,6 +15,8 @@
 
 package io.ddd4j.web.core.idempotency;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.Duration;
 import java.util.Objects;
 
@@ -44,14 +46,20 @@ import java.util.Objects;
  * @param ttl        租约有效期
  */
 
-    public IdempotencyLease(String key, String ownerToken, Duration ttl) {
+    @JsonCreator
+    public IdempotencyLease(@JsonProperty("key") String key,
+                            @JsonProperty("ownerToken") String ownerToken,
+                            @JsonProperty("ttl") Duration ttl) {
         this.key = Objects.requireNonNull(key, "key must not be null");
         this.ownerToken = ownerToken;
         this.ttl = Objects.requireNonNull(ttl, "ttl must not be null");
     }
 
+    @JsonProperty("key")
     public String key() { return key; }
+    @JsonProperty("ownerToken")
     public String ownerToken() { return ownerToken; }
+    @JsonProperty("ttl")
     public Duration ttl() { return ttl; }
 
     public String getKey() {

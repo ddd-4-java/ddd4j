@@ -15,6 +15,8 @@
 
 package io.ddd4j.mq.delivery;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.kit.lang.StrKit;
 
 import java.time.Instant;
@@ -59,10 +61,18 @@ public final class MQOutboxRecord {
  * @param publishedAt 参数 publishedAt
      */
 
-    public MQOutboxRecord(String messageId, String destination, String payload,
-                          Map<String, String> headers, MQOutboxStatus status, Instant availableAt,
-                          String leaseOwner, Instant leaseUntil, int attempts, String lastError,
-                          Instant publishedAt) {
+    @JsonCreator
+    public MQOutboxRecord(@JsonProperty("messageId") String messageId,
+                          @JsonProperty("destination") String destination,
+                          @JsonProperty("payload") String payload,
+                          @JsonProperty("headers") Map<String, String> headers,
+                          @JsonProperty("status") MQOutboxStatus status,
+                          @JsonProperty("availableAt") Instant availableAt,
+                          @JsonProperty("leaseOwner") String leaseOwner,
+                          @JsonProperty("leaseUntil") Instant leaseUntil,
+                          @JsonProperty("attempts") int attempts,
+                          @JsonProperty("lastError") String lastError,
+                          @JsonProperty("publishedAt") Instant publishedAt) {
         if (StrKit.isBlank(messageId)) {
             throw new IllegalArgumentException("messageId must not be blank");
         }
@@ -78,6 +88,10 @@ public final class MQOutboxRecord {
         }
         Map<String, String> mutableHeaders = new LinkedHashMap<String, String>(headers);
         mutableHeaders.put(MQDeliveryHeaders.MESSAGE_ID, messageId);
+        for (Map.Entry<String, String> header : mutableHeaders.entrySet()) {
+            Objects.requireNonNull(header.getKey(), "header key must not be null");
+            Objects.requireNonNull(header.getValue(), "header value must not be null");
+        }
         this.messageId = messageId;
         this.destination = destination;
         this.payload = payload;

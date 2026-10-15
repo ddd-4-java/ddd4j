@@ -14,6 +14,8 @@
  */
 package io.ddd4j.sample.javalin.cqrs.order.web;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.core.api.R;
 import io.ddd4j.sample.javalin.cqrs.order.application.OrderApplicationService;
 import io.ddd4j.sample.javalin.cqrs.order.application.OrderApplicationService.AddOrderLineCommand;
@@ -143,7 +145,6 @@ public class OrderController {
      * 订单响应（避免将充血领域模型直接序列化，保留聚合内字段语义）。
      */
     @Data
-    @AllArgsConstructor
     public static class OrderResponse {
         private final String id;
         private final String orderNo;
@@ -152,6 +153,65 @@ public class OrderController {
         private final String status;
         private final Money totalAmount;
         private final int lineCount;
+
+        @JsonCreator
+        public OrderResponse(@JsonProperty("id") String id,
+                             @JsonProperty("orderNo") String orderNo,
+                             @JsonProperty("buyerId") String buyerId,
+                             @JsonProperty("buyerName") String buyerName,
+                             @JsonProperty("status") String status,
+                             @JsonProperty("totalAmount") Money totalAmount,
+                             @JsonProperty("lineCount") int lineCount) {
+            this.id = id;
+            this.orderNo = orderNo;
+            this.buyerId = buyerId;
+            this.buyerName = buyerName;
+            this.status = status;
+            this.totalAmount = totalAmount;
+            this.lineCount = lineCount;
+        }
+
+        /** @return id */
+        public String id() {
+            return id;
+        }
+
+        /** @return orderNo */
+        public String orderNo() {
+            return orderNo;
+        }
+
+        /** @return buyerId */
+        public String buyerId() {
+            return buyerId;
+        }
+
+        /** @return buyerName */
+        public String buyerName() {
+            return buyerName;
+        }
+
+        /** @return status */
+        public String status() {
+            return status;
+        }
+
+        /** @return totalAmount */
+        public Money totalAmount() {
+            return totalAmount;
+        }
+
+        /** @return lineCount */
+        public int lineCount() {
+            return lineCount;
+        }
+
+        @Override
+        public String toString() {
+            return "OrderResponse[id=" + id + ", orderNo=" + orderNo + ", buyerId=" + buyerId
+                    + ", buyerName=" + buyerName + ", status=" + status
+                    + ", totalAmount=" + totalAmount + ", lineCount=" + lineCount + "]";
+        }
     }
 
     /**
@@ -164,6 +224,27 @@ public class OrderController {
         private String orderNo;
         private String buyerId;
         private String buyerName;
+
+        /** @return 订单编号 */
+        public String orderNo() {
+            return orderNo;
+        }
+
+        /** @return 买家标识 */
+        public String buyerId() {
+            return buyerId;
+        }
+
+        /** @return 买家名称 */
+        public String buyerName() {
+            return buyerName;
+        }
+
+        @Override
+        public String toString() {
+            return "CreateOrderRequest[orderNo=" + orderNo + ", buyerId=" + buyerId
+                    + ", buyerName=" + buyerName + "]";
+        }
     }
 
     // ========================= 映射 =========================
@@ -179,5 +260,31 @@ public class OrderController {
         private String goodsName;
         private int quantity;
         private BigDecimal unitPrice;
+
+        /** @return 商品标识 */
+        public String goodsId() {
+            return goodsId;
+        }
+
+        /** @return 商品名称 */
+        public String goodsName() {
+            return goodsName;
+        }
+
+        /** @return 数量 */
+        public int quantity() {
+            return quantity;
+        }
+
+        /** @return 单价 */
+        public BigDecimal unitPrice() {
+            return unitPrice;
+        }
+
+        @Override
+        public String toString() {
+            return "AddOrderLineRequest[goodsId=" + goodsId + ", goodsName=" + goodsName
+                    + ", quantity=" + quantity + ", unitPrice=" + unitPrice + "]";
+        }
     }
 }

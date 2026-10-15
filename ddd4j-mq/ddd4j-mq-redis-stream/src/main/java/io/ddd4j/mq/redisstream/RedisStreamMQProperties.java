@@ -99,10 +99,6 @@ public class RedisStreamMQProperties extends MQProperties {
     }
 
     /**
-     * 设置客户端类型（null 兜底为 JEDIS）。
-     * @param clientType 客户端类型
-     */
-    /**
      * 设置接管前的最短空闲时间。
      *
      * @param claimMinIdleMillis 空闲时间，不能为负数
@@ -114,6 +110,11 @@ public class RedisStreamMQProperties extends MQProperties {
         this.claimMinIdleMillis = claimMinIdleMillis;
     }
 
+    /**
+     * 设置客户端类型（null 兜底为 JEDIS）。
+     *
+     * @param clientType 客户端类型
+     */
     public void setClientType(RedisStreamClientType clientType) {
         this.clientType = Objects.isNull(clientType) ? RedisStreamClientType.JEDIS : clientType;
     }

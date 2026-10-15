@@ -14,6 +14,8 @@
  */
 package io.ddd4j.sample.javalin.order.web;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.core.api.R;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.sample.order.application.AddOrderLineCommand;
@@ -25,7 +27,6 @@ import io.ddd4j.sample.order.domain.OrderQuery;
 import io.ddd4j.sample.order.domain.OrderStatus;
 import io.ddd4j.web.core.context.WebHeaders;
 import io.ddd4j.web.core.error.WebStatusException;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -99,25 +100,97 @@ public final class OrderController {
 
     @Data
     @NoArgsConstructor
-    @AllArgsConstructor
     public static class CreateOrderRequest {
         private String orderNo;
         private String buyerId;
         private String buyerName;
+
+        /**
+         * 构造创建订单请求。
+         * @param orderNo 订单号
+         * @param buyerId 买方标识
+         * @param buyerName 买方名称
+         */
+        @JsonCreator
+        public CreateOrderRequest(@JsonProperty("orderNo") String orderNo,
+                                  @JsonProperty("buyerId") String buyerId,
+                                  @JsonProperty("buyerName") String buyerName) {
+            this.orderNo = orderNo;
+            this.buyerId = buyerId;
+            this.buyerName = buyerName;
+        }
+
+        /** @return 订单号 */
+        @JsonProperty("orderNo")
+        public String orderNo() {
+            return orderNo;
+        }
+
+        /** @return 买方标识 */
+        @JsonProperty("buyerId")
+        public String buyerId() {
+            return buyerId;
+        }
+
+        /** @return 买方名称 */
+        @JsonProperty("buyerName")
+        public String buyerName() {
+            return buyerName;
+        }
     }
 
     @Data
     @NoArgsConstructor
-    @AllArgsConstructor
     public static class AddOrderLineRequest {
         private String goodsId;
         private String goodsName;
         private int quantity;
         private BigDecimal unitPrice;
+
+        /**
+         * 构造追加订单行请求。
+         * @param goodsId 商品标识
+         * @param goodsName 商品名称
+         * @param quantity 数量
+         * @param unitPrice 单价
+         */
+        @JsonCreator
+        public AddOrderLineRequest(@JsonProperty("goodsId") String goodsId,
+                                   @JsonProperty("goodsName") String goodsName,
+                                   @JsonProperty("quantity") int quantity,
+                                   @JsonProperty("unitPrice") BigDecimal unitPrice) {
+            this.goodsId = goodsId;
+            this.goodsName = goodsName;
+            this.quantity = quantity;
+            this.unitPrice = unitPrice;
+        }
+
+        /** @return 商品标识 */
+        @JsonProperty("goodsId")
+        public String goodsId() {
+            return goodsId;
+        }
+
+        /** @return 商品名称 */
+        @JsonProperty("goodsName")
+        public String goodsName() {
+            return goodsName;
+        }
+
+        /** @return 数量 */
+        @JsonProperty("quantity")
+        public int quantity() {
+            return quantity;
+        }
+
+        /** @return 单价 */
+        @JsonProperty("unitPrice")
+        public BigDecimal unitPrice() {
+            return unitPrice;
+        }
     }
 
     @Data
-    @AllArgsConstructor
     public static class OrderResponse {
         private final String id;
         private final String orderNo;
@@ -127,5 +200,83 @@ public final class OrderController {
         private final BigDecimal totalAmount;
         private final String currency;
         private final int lineCount;
+
+        /**
+         * 构造订单响应。
+         * @param id 订单标识
+         * @param orderNo 订单号
+         * @param buyerId 买方标识
+         * @param buyerName 买方名称
+         * @param status 订单状态
+         * @param totalAmount 总金额
+         * @param currency 币种
+         * @param lineCount 订单行数
+         */
+        @JsonCreator
+        public OrderResponse(@JsonProperty("id") String id,
+                             @JsonProperty("orderNo") String orderNo,
+                             @JsonProperty("buyerId") String buyerId,
+                             @JsonProperty("buyerName") String buyerName,
+                             @JsonProperty("status") OrderStatus status,
+                             @JsonProperty("totalAmount") BigDecimal totalAmount,
+                             @JsonProperty("currency") String currency,
+                             @JsonProperty("lineCount") int lineCount) {
+            this.id = id;
+            this.orderNo = orderNo;
+            this.buyerId = buyerId;
+            this.buyerName = buyerName;
+            this.status = status;
+            this.totalAmount = totalAmount;
+            this.currency = currency;
+            this.lineCount = lineCount;
+        }
+
+        /** @return 订单标识 */
+        @JsonProperty("id")
+        public String id() {
+            return id;
+        }
+
+        /** @return 订单号 */
+        @JsonProperty("orderNo")
+        public String orderNo() {
+            return orderNo;
+        }
+
+        /** @return 买方标识 */
+        @JsonProperty("buyerId")
+        public String buyerId() {
+            return buyerId;
+        }
+
+        /** @return 买方名称 */
+        @JsonProperty("buyerName")
+        public String buyerName() {
+            return buyerName;
+        }
+
+        /** @return 订单状态 */
+        @JsonProperty("status")
+        public OrderStatus status() {
+            return status;
+        }
+
+        /** @return 总金额 */
+        @JsonProperty("totalAmount")
+        public BigDecimal totalAmount() {
+            return totalAmount;
+        }
+
+        /** @return 币种 */
+        @JsonProperty("currency")
+        public String currency() {
+            return currency;
+        }
+
+        /** @return 订单行数 */
+        @JsonProperty("lineCount")
+        public int lineCount() {
+            return lineCount;
+        }
     }
 }

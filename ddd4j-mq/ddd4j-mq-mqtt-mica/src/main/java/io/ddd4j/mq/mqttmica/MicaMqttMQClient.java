@@ -19,6 +19,7 @@ import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.event.MQEvent;
+import io.ddd4j.mq.delivery.MQDeliveryHeaders;
 import io.ddd4j.mq.lifecycle.MQClientLifecycle;
 import io.ddd4j.mq.lifecycle.MQStartupStatus;
 import io.ddd4j.mq.listener.MQListener;
@@ -27,9 +28,14 @@ import io.ddd4j.mq.util.TagMatcher;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.mica.mqtt.codec.MqttQoS;
 import org.dromara.mica.mqtt.codec.message.MqttPublishMessage;
+import org.dromara.mica.mqtt.codec.properties.MqttPropertyType;
+import org.dromara.mica.mqtt.codec.properties.StringPair;
+import org.dromara.mica.mqtt.codec.properties.UserProperty;
 import org.dromara.mica.mqtt.core.client.MqttClient;
 
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -74,10 +80,34 @@ public class MicaMqttMQClient implements MQClient {
     }
 
     static String messageId(MqttPublishMessage message) {
-        String messageId = message.getProperties().getUserPropertiesMap().get(MessageHeaders.HEADER_MESSAGE_ID);
+        Map<String, String> headers = nativeHeaders(message);
+        String messageId = headers.get(MessageHeaders.HEADER_MESSAGE_ID);
         return StrKit.isNotEmpty(messageId)
                 ? messageId
-                : message.getProperties().getUserPropertiesMap().get(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
+                : headers.get(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
+    }
+
+    private static Map<String, String> nativeHeaders(MqttPublishMessage message) {
+        Map<String, String> headers = new HashMap<>();
+        message.getProperties().getProperties().getProperties(MqttPropertyType.USER_PROPERTY.value())
+                .forEach(property -> {
+                    StringPair pair = ((UserProperty) property).value();
+                    headers.put(pair.key, pair.value);
+                });
+        return headers;
+    }
+
+    private static boolean publish(MqttClient client, String topic, byte[] body, MqttQoS qos,
+                                   Map<String, String> headers) {
+        if (headers.isEmpty()) {
+            return client.publish(topic, body, qos);
+        }
+        // mica-mqtt 2.6.6 的编码器要求 User Properties 与其他属性一起聚合；
+        // JSON 消息体是 UTF-8 文本，格式指示器 1 同时提供合法的聚合属性。
+        return client.publish(topic, body, qos, builder -> builder.properties(properties -> {
+            properties.setPayloadFormatIndicator(1);
+            headers.forEach(properties::addUserProperty);
+        }));
     }
 
     @Override
@@ -120,14 +150,12 @@ public class MicaMqttMQClient implements MQClient {
             String topic = resolveTopic(event, mqProperties);
             try {
                 byte[] body = payload.getBytes(StandardCharsets.UTF_8);
-                // mica-mqtt 2.6.6 的 PublishBuilder 会把 UserProperties 再展开成
-                // 编码器不接受的单项 UserProperty。消息 ID 已在事件载荷中，
-                // 因此出站使用无属性发布路径，入站仍兼容读取标准与旧 Header。
-                boolean sent = client.publish(topic, body, qos());
+                Map<String, String> headers = event.headerMap();
+                boolean sent = publish(client, topic, body, qos(), headers);
                 if (!sent) {
                     log.warn("Publish mica-mqtt [{}] failed (connection lost), reconnecting and retrying", topic);
                     client.reconnect();
-                    sent = client.publish(topic, body, qos());
+                    sent = publish(client, topic, body, qos(), headers);
                 }
                 if (!sent) {
                     throw new IllegalStateException("Publish mica-mqtt event failed: " + topic);
@@ -161,6 +189,15 @@ public class MicaMqttMQClient implements MQClient {
                 if (StrKit.isNotEmpty(messageId)) {
                     event.setMsgId(messageId);
                 }
+                Map<String, String> headers = nativeHeaders(message);
+                String correlationId = headers.get(MQDeliveryHeaders.CORRELATION_ID);
+                if (StrKit.isNotEmpty(correlationId)) {
+                    event.setCorrelationId(correlationId);
+                }
+                String causationId = headers.get(MQDeliveryHeaders.CAUSATION_ID);
+                if (StrKit.isNotEmpty(causationId)) {
+                    event.setCausationId(causationId);
+                }
                 // 应用层 tag 过滤（tag 取 topic 末段）。
                 String tag = null;
                 int lastSlash = arrivedTopic.lastIndexOf('/');
@@ -171,7 +208,8 @@ public class MicaMqttMQClient implements MQClient {
                     return;
                 }
                 long deliveryMessageId = IdKit.getSnowflakeNextId();
-                MicaMqttAcknowledgment ack = new MicaMqttAcknowledgment(deliveryMessageId, arrivedTopic, null);
+                MicaMqttAcknowledgment ack = new MicaMqttAcknowledgment(deliveryMessageId, arrivedTopic,
+                        event.getCorrelationId());
                 consume(listener, event, ack);
                 if (!ack.isAcknowledged()) {
                     ack.ackSingle();

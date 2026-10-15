@@ -14,6 +14,8 @@
  */
 package io.ddd4j.sample.order.application;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Value;
 
 import java.math.BigDecimal;
@@ -23,11 +25,31 @@ import java.math.BigDecimal;
  */
 @Value
 public class AddOrderLineCommand {
-    String orderId;
+String orderId;
     String goodsId;
     String goodsName;
     int quantity;
     BigDecimal unitPrice;
+
+    /** Creates an order-line command.
+     * @param orderId order identifier
+     * @param goodsId goods identifier
+     * @param goodsName goods name
+     * @param quantity quantity
+     * @param unitPrice unit price
+     */
+    @JsonCreator
+    public AddOrderLineCommand(@JsonProperty("orderId") String orderId,
+                               @JsonProperty("goodsId") String goodsId,
+                               @JsonProperty("goodsName") String goodsName,
+                               @JsonProperty("quantity") int quantity,
+                               @JsonProperty("unitPrice") BigDecimal unitPrice) {
+        this.orderId = orderId;
+        this.goodsId = goodsId;
+        this.goodsName = goodsName;
+        this.quantity = quantity;
+        this.unitPrice = unitPrice;
+    }
 
     public String orderId() {
         return orderId;

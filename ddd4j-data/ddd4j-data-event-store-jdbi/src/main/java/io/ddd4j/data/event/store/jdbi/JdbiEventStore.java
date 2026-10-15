@@ -22,14 +22,14 @@ import io.ddd4j.core.cqrs.eventstore.StoredEvent;
 import io.ddd4j.core.cqrs.eventstore.jackson.EventPayloadSerializer;
 import io.ddd4j.core.ddd.event.*;
 import org.jdbi.v3.core.Jdbi;
+import org.jdbi.v3.core.argument.Argument;
 import org.jdbi.v3.core.mapper.RowMapper;
 import org.jdbi.v3.core.statement.StatementContext;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -191,7 +191,9 @@ public class JdbiEventStore implements EventStore {
                                 .bind("correlationId", event.getCorrelationId() == null ? null : event.getCorrelationId().asString())
                                 .bind("causationId", event.getCausationId() == null ? null : event.getCausationId().asString())
                                 .bind("payload", serializer.serialize(event))
-                                .bind("timestamp", Timestamp.from(event.getEventTimestamp().toInstant()))
+                                .bind("timestamp", (Argument) (index, statement, context) -> statement.setObject(
+                                        index, event.getEventTimestamp()
+                                                .withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime()))
                                 .execute();
                         position++;
                     }
@@ -301,14 +303,14 @@ public class JdbiEventStore implements EventStore {
             String eventType = rs.getString(EventStoreConstants.COLUMN_EVENT_TYPE);
             DomainEvent<?> payload = serializer.deserialize(
                     rs.getString(EventStoreConstants.COLUMN_PAYLOAD), resolveEventType(eventType));
-            Timestamp timestamp = rs.getTimestamp(EventStoreConstants.COLUMN_TIMESTAMP);
+            LocalDateTime timestamp = rs.getObject(EventStoreConstants.COLUMN_TIMESTAMP, LocalDateTime.class);
             return new StoredEvent(
                     EventId.valueOf(rs.getString(EventStoreConstants.COLUMN_EVENT_ID)),
                     rs.getString(EventStoreConstants.COLUMN_AGGREGATE_TYPE),
                     new StringAggregateRootId(rs.getString(EventStoreConstants.COLUMN_AGGREGATE_ID)),
                     rs.getLong(EventStoreConstants.COLUMN_VERSION),
                     rs.getLong(EventStoreConstants.COLUMN_POSITION),
-                    ZonedDateTime.ofInstant(timestamp.toInstant(), ZoneOffset.UTC),
+                    timestamp.atZone(ZoneOffset.UTC),
                     payload,
                     EventId.valueOf(rs.getString(EventStoreConstants.COLUMN_CORRELATION_ID)),
                     EventId.valueOf(rs.getString(EventStoreConstants.COLUMN_CAUSATION_ID)));

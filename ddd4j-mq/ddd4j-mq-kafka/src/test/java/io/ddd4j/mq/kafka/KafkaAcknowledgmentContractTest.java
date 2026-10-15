@@ -22,12 +22,29 @@ import org.junit.jupiter.api.Test;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 class KafkaAcknowledgmentContractTest {
+
+    @Test
+    void failedCommitMustLeaveAcknowledgmentOpenForRetry() {
+        Consumer<?, ?> consumer = mock(Consumer.class);
+        ConsumerRecord<String, String> record = new ConsumerRecord<>("orders", 1, 8L, "key", "body");
+        KafkaMessageAcknowledgment acknowledgment = new KafkaMessageAcknowledgment(consumer, record);
+        org.mockito.Mockito.doThrow(new IllegalStateException("commit unavailable"))
+                .doNothing().when(consumer).commitSync(anyMap());
+
+        assertThrows(IllegalStateException.class, acknowledgment::ack);
+        assertFalse(acknowledgment.isAcknowledged(), "failed commit cannot confirm delivery");
+        acknowledgment.ack();
+        assertTrue(acknowledgment.isAcknowledged());
+        org.mockito.Mockito.verify(consumer, org.mockito.Mockito.times(2)).commitSync(anyMap());
+    }
 
     @Test
     void shouldReadStableMessageIdAndCommitOffsetOnAck() {

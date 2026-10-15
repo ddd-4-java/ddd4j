@@ -14,6 +14,8 @@
  */
 package io.ddd4j.sample.javalin.goods.web;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.core.api.R;
 import io.ddd4j.kit.lang.SFunction;
 import io.ddd4j.kit.lang.StrKit;
@@ -24,7 +26,6 @@ import io.ddd4j.sample.javalin.goods.domain.GoodsQuery;
 import io.ddd4j.sample.javalin.goods.domain.GoodsStatus;
 import io.javalin.apibuilder.EndpointGroup;
 import io.javalin.http.Context;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -208,12 +209,54 @@ public class GoodsController {
      */
     @Data
     @NoArgsConstructor
-    @AllArgsConstructor
     public static class CreateGoodsRequest {
         private String code;
         private String name;
         private BigDecimal price;
         private Integer stock;
+
+        /**
+         * 构造创建商品请求。
+         *
+         * @param code 商品编码
+         * @param name 商品名称
+         * @param price 商品价格
+         * @param stock 库存数量
+         */
+        @JsonCreator
+        public CreateGoodsRequest(@JsonProperty("code") String code,
+                                  @JsonProperty("name") String name,
+                                  @JsonProperty("price") BigDecimal price,
+                                  @JsonProperty("stock") Integer stock) {
+            this.code = code;
+            this.name = name;
+            this.price = price;
+            this.stock = stock;
+        }
+
+        /** @return 商品编码 */
+        @JsonProperty("code")
+        public String code() {
+            return code;
+        }
+
+        /** @return 商品名称 */
+        @JsonProperty("name")
+        public String name() {
+            return name;
+        }
+
+        /** @return 商品价格 */
+        @JsonProperty("price")
+        public BigDecimal price() {
+            return price;
+        }
+
+        /** @return 库存数量 */
+        @JsonProperty("stock")
+        public Integer stock() {
+            return stock;
+        }
     }
 
     /**
@@ -221,9 +264,33 @@ public class GoodsController {
      */
     @Data
     @NoArgsConstructor
-    @AllArgsConstructor
     public static class UpdateGoodsRequest {
         private String name;
         private BigDecimal price;
+
+        /**
+         * 构造更新商品请求。
+         *
+         * @param name 商品名称
+         * @param price 商品价格
+         */
+        @JsonCreator
+        public UpdateGoodsRequest(@JsonProperty("name") String name,
+                                  @JsonProperty("price") BigDecimal price) {
+            this.name = name;
+            this.price = price;
+        }
+
+        /** @return 商品名称 */
+        @JsonProperty("name")
+        public String name() {
+            return name;
+        }
+
+        /** @return 商品价格 */
+        @JsonProperty("price")
+        public BigDecimal price() {
+            return price;
+        }
     }
 }

@@ -17,6 +17,7 @@ package io.ddd4j.mq.rabbitmq;
 import com.rabbitmq.client.*;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.event.MQEventSerialization;
+import io.ddd4j.mq.delivery.MQDeliveryHeaders;
 import io.ddd4j.mq.message.MessageHeaders;
 import org.junit.jupiter.api.Test;
 
@@ -78,6 +79,8 @@ class RabbitMQAdapterContractTest {
         MQEvent event = new MQEvent();
         event.setMsgId("message-1");
         event.setTopic("orders");
+        event.setCorrelationId("correlation-1");
+        event.setCausationId("cause-1");
 
         event.publish();
 
@@ -90,6 +93,8 @@ class RabbitMQAdapterContractTest {
                 org.mockito.ArgumentCaptor.forClass(AMQP.BasicProperties.class);
         verify(borrowed).basicPublish(eq("events"), anyString(), eq(true), captor.capture(), any());
         assertEquals(2, captor.getValue().getDeliveryMode());
+        assertEquals("correlation-1", captor.getValue().getHeaders().get(MQDeliveryHeaders.CORRELATION_ID));
+        assertEquals("cause-1", captor.getValue().getHeaders().get(MQDeliveryHeaders.CAUSATION_ID));
         verify(borrowed).waitForConfirmsOrDie(properties.getPublisherConfirmTimeoutMillis());
     }
 

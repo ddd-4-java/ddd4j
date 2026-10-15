@@ -20,6 +20,7 @@ import com.aliyun.openservices.ons.api.Producer;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
+import io.ddd4j.mq.delivery.MQDeliveryHeaders;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.lifecycle.MQClientLifecycle;
 import io.ddd4j.mq.lifecycle.MQStartupStatus;
@@ -30,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
@@ -83,6 +85,27 @@ public class OnsMQClient implements MQClient {
                 : message.getUserProperties(MessageHeaders.LEGACY_HEADER_MESSAGE_ID);
     }
 
+    static void applyNativeHeaders(Message message, MQEvent event) {
+        String tenantId = message.getUserProperties(MessageHeaders.HEADER_TENANT_ID);
+        if (StrKit.isNotEmpty(tenantId)) {
+            event.setTenantId(tenantId);
+        }
+        String stableId = messageId(message);
+        if (StrKit.isNotEmpty(stableId)) {
+            event.setMsgId(stableId);
+        } else if (StrKit.isEmpty(event.getMsgId()) && StrKit.isNotEmpty(message.getMsgID())) {
+            event.setMsgId(message.getMsgID());
+        }
+        String correlationId = message.getUserProperties(MQDeliveryHeaders.CORRELATION_ID);
+        if (StrKit.isNotEmpty(correlationId)) {
+            event.setCorrelationId(correlationId);
+        }
+        String causationId = message.getUserProperties(MQDeliveryHeaders.CAUSATION_ID);
+        if (StrKit.isNotEmpty(causationId)) {
+            event.setCausationId(causationId);
+        }
+    }
+
     @Override
     public String impl() {
         return "ons";
@@ -120,11 +143,11 @@ public class OnsMQClient implements MQClient {
                     Message msg = new Message(topic, tag, event.getMsgId(),
                             serialization().serialize(event).toString().getBytes(StandardCharsets.UTF_8));
                     msg.setKey(event.getMsgId());
-                    if (StrKit.isNotEmpty(event.getMsgId())) {
-                        msg.putUserProperties(MessageHeaders.HEADER_MESSAGE_ID, event.getMsgId());
-                    }
                     if (Objects.nonNull(event.getTenantId())) {
                         msg.putUserProperties(MessageHeaders.HEADER_TENANT_ID, event.getTenantId());
+                    }
+                    for (Map.Entry<String, String> header : event.headerMap().entrySet()) {
+                        msg.putUserProperties(header.getKey(), header.getValue());
                     }
                     p.send(msg);
                     logger().info("Publish MQ [{}]: {}", topic, serialization().serialize(event));
@@ -165,12 +188,7 @@ public class OnsMQClient implements MQClient {
                 if (Objects.nonNull(msg.getTag())) {
                     event.setTag(msg.getTag());
                 }
-                String messageId = messageId(msg);
-                if (StrKit.isNotEmpty(messageId)) {
-                    event.setMsgId(messageId);
-                } else if (StrKit.isEmpty(event.getMsgId()) && StrKit.isNotEmpty(msg.getMsgID())) {
-                    event.setMsgId(msg.getMsgID());
-                }
+                applyNativeHeaders(msg, event);
                 OnsAcknowledgment ack = new OnsAcknowledgment(ctx, msg);
                 try {
                     consume(listener, event, ack);

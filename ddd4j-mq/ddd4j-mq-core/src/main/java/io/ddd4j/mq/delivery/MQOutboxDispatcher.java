@@ -78,8 +78,10 @@ public final class MQOutboxDispatcher {
         int dead = 0;
         int confirmationLost = 0;
         for (MQOutboxRecord record : claimed) {
+            boolean sent = false;
             try {
                 sender.send(record);
+                sent = true;
                 if (store.markPublished(record.messageId(), leaseOwner, now)) {
                     published++;
                     notifyObserver(deliveryObserver -> deliveryObserver.onOutboxPublished(record));
@@ -89,6 +91,13 @@ public final class MQOutboxDispatcher {
                     notifyObserver(deliveryObserver -> deliveryObserver.onOutboxFailed(record));
                 }
             } catch (RuntimeException exception) {
+                if (sent) {
+                    confirmationLost++;
+                    notifyObserver(deliveryObserver -> deliveryObserver.onOutboxFailed(record));
+                    log.warn("Outbox message {} was sent but confirmation failed; lease remains for takeover",
+                            record.messageId(), exception);
+                    continue;
+                }
                 try {
                     if (store.reschedule(record.messageId(), leaseOwner, now, exception.getMessage(), policy)) {
                         if (policy.exhausted(record.attempts())) {

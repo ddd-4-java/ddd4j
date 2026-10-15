@@ -1,0 +1,1443 @@
+{
+  "schemaVersion": 1,
+  "branches": [
+    {
+      "name": "feature/1.0.x",
+      "jdk": 8,
+      "revision": "1.0.x.20260630-SNAPSHOT"
+    },
+    {
+      "name": "feature/2.0.x",
+      "jdk": 17,
+      "revision": "2.0.x.20260630-SNAPSHOT"
+    },
+    {
+      "name": "feature/3.0.x",
+      "jdk": 21,
+      "revision": "3.0.x.20260630-SNAPSHOT"
+    }
+  ],
+  "commonCapabilities": [
+    "core",
+    "cqrs",
+    "event-sourcing",
+    "projection",
+    "web",
+    "auth",
+    "mq",
+    "outbox",
+    "order-sample"
+  ],
+  "unclassifiedDifferenceIsFailure": true,
+  "platformFilesOnlyOnJdk8": [
+    {
+      "path": "ddd4j-web/ddd4j-web-quarkus/src/main/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebResponseFilter.java",
+      "sha256": "518b960158fb487fb190472f96de2d010cf481958c3fe72b27bd3512b2ba0d9c",
+      "counterpart": "ddd4j-web/ddd4j-web-quarkus/src/main/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebFilter.java",
+      "evidence": "ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebContractTest.java",
+      "reason": "Quarkus 1.x 以独立 JAX-RS ContainerResponseFilter Provider 委托响应清理；Quarkus 高线在共同过滤器上使用 RESTEasy Reactive @ServerResponseFilter。三线运行共同 HTTP 契约，平台入口源码由 SHA-256 锁定"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/rbac/web/Java8Maps.java",
+      "sha256": "99c8fa21f362d154fe0a95cd6ffdc73df45d836483f7213943611a29bb0e1480",
+      "counterpart": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/rbac/web/AuthenticationController.java",
+      "evidence": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/rbac/web/Java8MapsContractTest.java",
+      "reason": "JDK 8 Sa-Token 样例用 Java8Maps.of 实现不可变响应 Map；高两线在相同控制器使用 Map.of。三线共同测试锁定 null、重复键与不可变行为，低线辅助类源码哈希锁定"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/rbac/controller/Java8Maps.java",
+      "sha256": "d5b4b47339b40410d0af3ebce71993781df20cf82439c03fe55e0f8224039b6a",
+      "counterpart": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/rbac/controller/AuthenticationController.java",
+      "evidence": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/rbac/controller/Java8MapsContractTest.java",
+      "reason": "JDK 8 Shiro 样例用 Java8Maps.of 实现不可变响应 Map；高两线在相同控制器使用 Map.of。三线共同测试锁定 null、重复键与不可变行为，低线辅助类源码哈希锁定"
+    }
+  ],
+  "platformContentMappings": [
+    {
+      "path": "ddd4j-mq/ddd4j-mq-activemq/src/main/java/io/ddd4j/mq/activemq/ActiveMQClient.java",
+      "replacements": [
+        {
+          "from": "import javax.jms.BytesMessage;",
+          "to": "import jakarta.jms.BytesMessage;"
+        },
+        {
+          "from": "import javax.jms.Connection;",
+          "to": "import jakarta.jms.Connection;"
+        },
+        {
+          "from": "import javax.jms.DeliveryMode;",
+          "to": "import jakarta.jms.DeliveryMode;"
+        },
+        {
+          "from": "import javax.jms.JMSException;",
+          "to": "import jakarta.jms.JMSException;"
+        },
+        {
+          "from": "import javax.jms.Message;",
+          "to": "import jakarta.jms.Message;"
+        },
+        {
+          "from": "import javax.jms.MessageConsumer;",
+          "to": "import jakarta.jms.MessageConsumer;"
+        },
+        {
+          "from": "import javax.jms.MessageProducer;",
+          "to": "import jakarta.jms.MessageProducer;"
+        },
+        {
+          "from": "import javax.jms.Session;",
+          "to": "import jakarta.jms.Session;"
+        }
+      ],
+      "evidence": "ddd4j-mq/ddd4j-mq-activemq/src/test/java/io/ddd4j/mq/activemq/ArtemisContainerIntegrationTest.java",
+      "reason": "JDK 8 使用 javax.jms，JDK 17/21 使用 jakarta.jms；客户端其余源码相同，三线共同 Artemis 容器用例锁定 JMS 因果属性、确认与连接生命周期，仅允许这些精确导入替换"
+    },
+    {
+      "path": "ddd4j-mq/ddd4j-mq-activemq/src/test/java/io/ddd4j/mq/activemq/ArtemisContainerIntegrationTest.java",
+      "replacements": [
+        {
+          "from": "import javax.jms.Connection;",
+          "to": "import jakarta.jms.Connection;"
+        },
+        {
+          "from": "import javax.jms.BytesMessage;",
+          "to": "import jakarta.jms.BytesMessage;"
+        },
+        {
+          "from": "import javax.jms.Message;",
+          "to": "import jakarta.jms.Message;"
+        },
+        {
+          "from": "import javax.jms.MessageConsumer;",
+          "to": "import jakarta.jms.MessageConsumer;"
+        },
+        {
+          "from": "import javax.jms.MessageProducer;",
+          "to": "import jakarta.jms.MessageProducer;"
+        },
+        {
+          "from": "import javax.jms.Session;",
+          "to": "import jakarta.jms.Session;"
+        }
+      ],
+      "evidence": "ddd4j-mq/ddd4j-mq-activemq/src/test/java/io/ddd4j/mq/activemq/ArtemisContainerIntegrationTest.java",
+      "reason": "三线 Artemis 原生容器测试断言相同，仅 javax.jms 与 jakarta.jms 导入不同"
+    },
+    {
+      "path": "ddd4j-auth/ddd4j-auth-datascope/src/main/java/io/ddd4j/auth/datascope/RequiresDataPermissionsValidator.java",
+      "replacements": [
+        {
+          "from": "import javax.validation.ConstraintValidator;",
+          "to": "import jakarta.validation.ConstraintValidator;"
+        },
+        {
+          "from": "import javax.validation.ConstraintValidatorContext;",
+          "to": "import jakarta.validation.ConstraintValidatorContext;"
+        }
+      ],
+      "evidence": "ddd4j-auth/ddd4j-auth-datascope/src/test/java/io/ddd4j/auth/datascope/RequiresDataPermissionsValidationTest.java",
+      "reason": "三线保留相同数据权限校验逻辑；JDK 8 使用 javax.validation，高两线使用 jakarta.validation，仅允许两个 import 精确替换"
+    },
+    {
+      "path": "ddd4j-auth/ddd4j-auth-datascope/src/main/java/io/ddd4j/auth/datascope/annotation/RequiresDataPermissions.java",
+      "replacements": [
+        {
+          "from": "import javax.validation.Constraint;",
+          "to": "import jakarta.validation.Constraint;"
+        },
+        {
+          "from": "import javax.validation.Payload;",
+          "to": "import jakarta.validation.Payload;"
+        }
+      ],
+      "evidence": "ddd4j-auth/ddd4j-auth-datascope/src/test/java/io/ddd4j/auth/datascope/RequiresDataPermissionsValidationTest.java",
+      "reason": "三线保留相同数据权限注解和发现契约；JDK 8 使用 javax.validation，高两线使用 jakarta.validation，仅允许两个 import 精确替换"
+    },
+    {
+      "path": "ddd4j-auth/ddd4j-auth-datascope/src/test/java/io/ddd4j/auth/datascope/RequiresDataPermissionsValidationTest.java",
+      "replacements": [
+        {
+          "from": "import javax.validation.Validation;",
+          "to": "import jakarta.validation.Validation;"
+        },
+        {
+          "from": "import javax.validation.ValidatorFactory;",
+          "to": "import jakarta.validation.ValidatorFactory;"
+        }
+      ],
+      "evidence": "ddd4j-auth/ddd4j-auth-datascope/src/test/java/io/ddd4j/auth/datascope/RequiresDataPermissionsValidationTest.java",
+      "reason": "三线相同 Bean Validation 注解发现断言；JDK 8 使用 javax.validation，高两线使用 jakarta.validation，仅允许两个 import 精确替换"
+    },
+    {
+      "path": "ddd4j-mq/ddd4j-mq-pulsar/src/test/java/io/ddd4j/mq/pulsar/PulsarContainerIntegrationTest.java",
+      "replacements": [
+        {
+          "from": "apachepulsar/pulsar:2.10.6",
+          "to": "apachepulsar/pulsar:4.2.4"
+        }
+      ],
+      "evidence": "ddd4j-mq/ddd4j-mq-pulsar/src/test/java/io/ddd4j/mq/pulsar/PulsarContainerIntegrationTest.java",
+      "reason": "三线执行同一 Pulsar tag/因果头与 negative-acknowledgment 原生场景；JDK 8 线使用本线 Pulsar 2.10.6 镜像，高两线使用 Pulsar 4.2.4。仅镜像版本允许精确替换，其余测试正文须一致"
+    },
+    {
+      "path": "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/delivery/MQDeliveryPolicyValueContractTest.java",
+      "targetLines": [
+        "3.0.x"
+      ],
+      "replacements": [
+        {
+          "from": "import com.fasterxml.jackson.databind.json.JsonMapper;",
+          "to": "import tools.jackson.databind.json.JsonMapper;"
+        }
+      ],
+      "evidence": "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/delivery/MQDeliveryPolicyValueContractTest.java",
+      "reason": "三线相同可靠投递策略值与 JSON 契约，仅 JDK 21 线使用本线 Jackson 3 JsonMapper；其余测试正文逐字一致"
+    },
+    {
+      "path": "ddd4j-extensions/ddd4j-extension-validation/src/test/java/io/ddd4j/extension/validation/DetectedFileTypeContractTest.java",
+      "targetLines": [
+        "3.0.x"
+      ],
+      "replacements": [
+        {
+          "from": "import com.fasterxml.jackson.databind.ObjectMapper;",
+          "to": "import tools.jackson.databind.ObjectMapper;"
+        }
+      ],
+      "evidence": "ddd4j-extensions/ddd4j-extension-validation/src/test/java/io/ddd4j/extension/validation/DetectedFileTypeContractTest.java",
+      "reason": "三线相同文件类型值与 JSON 契约，仅 JDK 21 线按本线 Jackson 3 ObjectMapper 包名适配；其他测试内容逐字一致"
+    },
+    {
+      "path": "ddd4j-data/ddd4j-data-mybatisplus/src/test/java/io/ddd4j/data/mybatis/plugins/observation/SqlObservationJsonContractTest.java",
+      "targetLines": [
+        "3.0.x"
+      ],
+      "replacements": [
+        {
+          "from": "import com.fasterxml.jackson.databind.ObjectMapper;",
+          "to": "import tools.jackson.databind.ObjectMapper;"
+        }
+      ],
+      "evidence": "ddd4j-data/ddd4j-data-mybatisplus/src/test/java/io/ddd4j/data/mybatis/plugins/observation/SqlObservationJsonContractTest.java",
+      "reason": "三线相同 MyBatis-Plus SQL 观测值 JSON 往返契约，仅 JDK 21 线使用本线 Jackson 3 ObjectMapper 包名"
+    },
+    {
+      "path": "ddd4j-data/ddd4j-data-mybatis/src/test/java/io/ddd4j/data/mybatis/adapter/SqlObservationJsonContractTest.java",
+      "targetLines": [
+        "3.0.x"
+      ],
+      "replacements": [
+        {
+          "from": "import com.fasterxml.jackson.databind.ObjectMapper;",
+          "to": "import tools.jackson.databind.ObjectMapper;"
+        }
+      ],
+      "evidence": "ddd4j-data/ddd4j-data-mybatis/src/test/java/io/ddd4j/data/mybatis/adapter/SqlObservationJsonContractTest.java",
+      "reason": "三线相同 SQL 观测值 JSON 往返契约，仅 JDK 21 线使用本线 Jackson 3 ObjectMapper 包名"
+    },
+    {
+      "path": "ddd4j-data/ddd4j-data-crypto/src/test/java/io/ddd4j/data/crypto/strategy/FlksecCryptoHttpContractTest.java",
+      "targetLines": [
+        "3.0.x"
+      ],
+      "replacements": [
+        {
+          "from": "import com.fasterxml.jackson.databind.ObjectMapper;",
+          "to": "import tools.jackson.databind.ObjectMapper;"
+        }
+      ],
+      "evidence": "ddd4j-data/ddd4j-data-crypto/src/test/java/io/ddd4j/data/crypto/strategy/FlksecCryptoHttpContractTest.java",
+      "reason": "三线相同加密 HTTP 契约，仅 Jackson 2/3 的 ObjectMapper import 随本线依赖精确替换；其余测试内容须逐字一致"
+    },
+    {
+      "path": "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/error/ValidationExceptionParityTest.java",
+      "replacements": [
+        {
+          "from": "import javax.validation.ConstraintDeclarationException;",
+          "to": "import jakarta.validation.ConstraintDeclarationException;"
+        },
+        {
+          "from": "import javax.validation.ConstraintDefinitionException;",
+          "to": "import jakarta.validation.ConstraintDefinitionException;"
+        },
+        {
+          "from": "import javax.validation.ConstraintViolationException;",
+          "to": "import jakarta.validation.ConstraintViolationException;"
+        },
+        {
+          "from": "import javax.validation.GroupDefinitionException;",
+          "to": "import jakarta.validation.GroupDefinitionException;"
+        },
+        {
+          "from": "import javax.validation.UnexpectedTypeException;",
+          "to": "import jakarta.validation.UnexpectedTypeException;"
+        },
+        {
+          "from": "import javax.validation.ValidationException;",
+          "to": "import jakarta.validation.ValidationException;"
+        }
+      ],
+      "evidence": "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/error/ValidationExceptionParityTest.java",
+      "reason": "六个 Bean Validation 异常测试仅逐项替换本线 import，整份测试文件的断言和其他内容须完全一致"
+    },
+    {
+      "path": "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/util/WebKitCookieContractTest.java",
+      "replacements": [
+        {
+          "from": "import javax.servlet.http.Cookie;",
+          "to": "import jakarta.servlet.http.Cookie;"
+        }
+      ],
+      "evidence": "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/util/WebKitCookieContractTest.java",
+      "reason": "Servlet API 版本适配；仅归一化已列明的 import，整份文件其余内容须完全一致"
+    },
+    {
+      "path": "ddd4j-extensions/ddd4j-extension-pf4j/src/test/java/io/ddd4j/extension/pf4j/Pf4jServletContractTest.java",
+      "replacements": [
+        {
+          "from": "import javax.servlet.http.HttpServletRequest;",
+          "to": "import jakarta.servlet.http.HttpServletRequest;"
+        },
+        {
+          "from": "import javax.servlet.http.HttpServletResponse;",
+          "to": "import jakarta.servlet.http.HttpServletResponse;"
+        }
+      ],
+      "evidence": "ddd4j-extensions/ddd4j-extension-pf4j/src/test/java/io/ddd4j/extension/pf4j/Pf4jServletContractTest.java",
+      "reason": "Servlet API 版本适配；仅归一化已列明的 import，整份文件其余内容须完全一致"
+    },
+    {
+      "path": "ddd4j-extensions/ddd4j-extension-pf4j/src/main/java/io/ddd4j/extension/pf4j/point/authc/AuthcExtensionPoint.java",
+      "replacements": [
+        {
+          "from": "import javax.servlet.http.HttpServletRequest;",
+          "to": "import jakarta.servlet.http.HttpServletRequest;"
+        }
+      ],
+      "evidence": "ddd4j-extensions/ddd4j-extension-pf4j/src/test/java/io/ddd4j/extension/pf4j/Pf4jServletContractTest.java",
+      "reason": "Servlet API 版本适配；仅归一化已列明的 import，整份文件其余内容须完全一致"
+    },
+    {
+      "path": "ddd4j-extensions/ddd4j-extension-pf4j/src/main/java/io/ddd4j/extension/pf4j/point/authc/AuthcExtensionPointAdapter.java",
+      "replacements": [
+        {
+          "from": "import javax.servlet.http.HttpServletRequest;",
+          "to": "import jakarta.servlet.http.HttpServletRequest;"
+        }
+      ],
+      "evidence": "ddd4j-extensions/ddd4j-extension-pf4j/src/test/java/io/ddd4j/extension/pf4j/Pf4jServletContractTest.java",
+      "reason": "Servlet API 版本适配；仅归一化已列明的 import，整份文件其余内容须完全一致"
+    },
+    {
+      "path": "ddd4j-extensions/ddd4j-extension-pf4j/src/main/java/io/ddd4j/extension/pf4j/point/web/ParamSignatureExtensionPoint.java",
+      "replacements": [
+        {
+          "from": "import javax.servlet.http.HttpServletRequest;",
+          "to": "import jakarta.servlet.http.HttpServletRequest;"
+        }
+      ],
+      "evidence": "ddd4j-extensions/ddd4j-extension-pf4j/src/test/java/io/ddd4j/extension/pf4j/Pf4jServletContractTest.java",
+      "reason": "Servlet API 版本适配；仅归一化已列明的 import，整份文件其余内容须完全一致"
+    },
+    {
+      "path": "ddd4j-extensions/ddd4j-extension-pf4j/src/main/java/io/ddd4j/extension/pf4j/point/web/ServletRequestExtensionPoint.java",
+      "replacements": [
+        {
+          "from": "import javax.servlet.http.HttpServletRequest;",
+          "to": "import jakarta.servlet.http.HttpServletRequest;"
+        }
+      ],
+      "evidence": "ddd4j-extensions/ddd4j-extension-pf4j/src/test/java/io/ddd4j/extension/pf4j/Pf4jServletContractTest.java",
+      "reason": "Servlet API 版本适配；仅归一化已列明的 import，整份文件其余内容须完全一致"
+    },
+    {
+      "path": "ddd4j-extensions/ddd4j-extension-pf4j/src/main/java/io/ddd4j/extension/pf4j/point/web/ServletResponseExtensionPoint.java",
+      "replacements": [
+        {
+          "from": "import javax.servlet.http.HttpServletResponse;",
+          "to": "import jakarta.servlet.http.HttpServletResponse;"
+        }
+      ],
+      "evidence": "ddd4j-extensions/ddd4j-extension-pf4j/src/test/java/io/ddd4j/extension/pf4j/Pf4jServletContractTest.java",
+      "reason": "Servlet API 版本适配；仅归一化已列明的 import，整份文件其余内容须完全一致"
+    }
+  ],
+  "platformItemsMissingOnJdk8": [
+    {
+      "path": "ddd4j-data/ddd4j-data-cqrs-helidon/pom.xml",
+      "category": "helidon-adapter",
+      "decision": "supported",
+      "evidence": "ddd4j-data/ddd4j-data-cqrs-helidon/src/test/java/io/ddd4j/data/cqrs/helidon/HelidonCommandBusIT.java"
+    },
+    {
+      "path": "ddd4j-data/ddd4j-data-cqrs-quarkus/pom.xml",
+      "category": "quarkus-adapter",
+      "decision": "supported",
+      "evidence": "ddd4j-data/ddd4j-data-cqrs-quarkus/src/test/java/io/ddd4j/data/cqrs/quarkus/QuarkusCommandBusIT.java"
+    },
+    {
+      "path": "ddd4j-data/ddd4j-data-event-store-panache/pom.xml",
+      "category": "quarkus-panache-adapter",
+      "decision": "supported",
+      "evidence": "ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/event/store/panache/PanacheEventStorePostgresIT.java"
+    },
+    {
+      "path": "ddd4j-data/ddd4j-data-projection-helidon/pom.xml",
+      "category": "helidon-adapter",
+      "decision": "supported",
+      "evidence": "ddd4j-data/ddd4j-data-projection-helidon/src/test/java/io/ddd4j/data/projection/helidon/HelidonProjectionSchedulerIT.java"
+    },
+    {
+      "path": "ddd4j-data/ddd4j-data-projection-panache/pom.xml",
+      "category": "quarkus-panache-adapter",
+      "decision": "supported",
+      "evidence": "ddd4j-data/ddd4j-data-projection-panache/src/test/java/io/ddd4j/data/projection/panache/QuarkusProjectionPositionRepositoryIT.java"
+    },
+    {
+      "path": "ddd4j-data/ddd4j-data-projection-quarkus/pom.xml",
+      "category": "quarkus-adapter",
+      "decision": "supported",
+      "evidence": "ddd4j-data/ddd4j-data-projection-quarkus/src/test/java/io/ddd4j/data/projection/quarkus/QuarkusProjectionSchedulerIT.java"
+    },
+    {
+      "path": "ddd4j-runtime/ddd4j-runtime-helidon/pom.xml",
+      "category": "helidon-adapter",
+      "decision": "supported",
+      "evidence": "ddd4j-runtime/ddd4j-runtime-helidon/src/test/java/io/ddd4j/helidon/HelidonServerBootTest.java"
+    },
+    {
+      "path": "ddd4j-runtime/ddd4j-runtime-quarkus/pom.xml",
+      "category": "quarkus-adapter",
+      "decision": "supported",
+      "evidence": "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/cqrs/QuarkusRuntimeLifecycleIT.java"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-helidon-cqrs/pom.xml",
+      "category": "helidon-sample",
+      "decision": "supported",
+      "evidence": "ddd4j-samples/ddd4j-sample-helidon-cqrs/src/test/java/io/ddd4j/sample/helidon/cqrs/HelidonOrderCqrsIT.java"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-helidon/pom.xml",
+      "category": "helidon-sample",
+      "decision": "supported",
+      "evidence": "ddd4j-samples/ddd4j-sample-helidon/src/test/java/io/ddd4j/sample/helidon/HelidonOrderResourceTest.java"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-micronaut-cqrs/pom.xml",
+      "category": "micronaut-sample",
+      "decision": "supported",
+      "evidence": "ddd4j-samples/ddd4j-sample-micronaut-cqrs/src/test/java/io/ddd4j/sample/micronaut/cqrs/MicronautOrderCqrsIT.java"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-micronaut/pom.xml",
+      "category": "micronaut-sample",
+      "decision": "supported",
+      "evidence": "ddd4j-samples/ddd4j-sample-micronaut/src/test/java/io/ddd4j/sample/micronaut/MicronautOrderControllerTest.java"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/pom.xml",
+      "category": "quarkus-sample",
+      "decision": "supported",
+      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/test/java/io/ddd4j/sample/quarkus/cqrs/event/OrderEventTest.java"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-quarkus-satoken/pom.xml",
+      "category": "quarkus-sample",
+      "decision": "supported",
+      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-satoken/src/test/java/io/ddd4j/sample/quarkus/satoken/RbacResourceTest.java"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-quarkus-shiro/pom.xml",
+      "category": "quarkus-sample",
+      "decision": "supported",
+      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/test/java/io/ddd4j/sample/quarkus/shiro/RbacResourceTest.java"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-quarkus/pom.xml",
+      "category": "quarkus-sample",
+      "decision": "supported",
+      "evidence": "ddd4j-samples/ddd4j-sample-quarkus/src/test/java/io/ddd4j/sample/quarkus/OrderResourceTest.java"
+    },
+    {
+      "path": "ddd4j-web/ddd4j-web-helidon/pom.xml",
+      "category": "helidon-adapter",
+      "decision": "supported",
+      "evidence": "ddd4j-web/ddd4j-web-helidon/src/test/java/io/ddd4j/web/helidon/Ddd4jHelidonWebContractTest.java"
+    },
+    {
+      "path": "ddd4j-web/ddd4j-web-quarkus/pom.xml",
+      "category": "quarkus-adapter",
+      "decision": "supported",
+      "evidence": "ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebContractTest.java"
+    }
+  ],
+  "typeMappings": [
+    {
+      "id": "jpa-entity-manager-namespace",
+      "types": {
+        "1.0.x": "javax.persistence.EntityManager",
+        "2.0.x": "jakarta.persistence.EntityManager",
+        "3.0.x": "jakarta.persistence.EntityManager"
+      },
+      "aliases": {
+        "1.0.x": [
+          "jakarta.persistence.EntityManager"
+        ]
+      },
+      "reason": "JDK 8 EventStore 使用 javax Persistence API，而同线通用 JPA Repository 使用 jakarta Persistence API；仅 EntityManager 精确归一化，事务和仓储行为由三线测试验证",
+      "evidence": "ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/event/store/jpa/JpaEventStoreTest.java",
+      "aliasEvidence": "ddd4j-data/ddd4j-data-jpa/src/test/java/io/ddd4j/data/jpa/JpaAggregateRepositoryTest.java"
+    },
+    {
+      "id": "cdi-instance-namespace",
+      "types": {
+        "1.0.x": "javax.enterprise.inject.Instance",
+        "2.0.x": "jakarta.enterprise.inject.Instance",
+        "3.0.x": "jakarta.enterprise.inject.Instance"
+      },
+      "reason": "Quarkus 命令总线注入参数按本线 CDI API 适配，命令路由由三线集成测试验证",
+      "evidence": "ddd4j-data/ddd4j-data-cqrs-quarkus/src/test/java/io/ddd4j/data/cqrs/quarkus/QuarkusCommandBusIT.java"
+    },
+    {
+      "id": "cdi-bean-manager-namespace",
+      "types": {
+        "1.0.x": "javax.enterprise.inject.spi.BeanManager",
+        "2.0.x": "jakarta.enterprise.inject.spi.BeanManager",
+        "3.0.x": "jakarta.enterprise.inject.spi.BeanManager"
+      },
+      "reason": "Helidon 事件发布器构造器按各线 CDI BeanManager 命名空间适配，事件发送和空参数行为由三线目标测试验证",
+      "evidence": "ddd4j-runtime/ddd4j-runtime-helidon/src/test/java/io/ddd4j/helidon/HelidonDomainEventPublisherTest.java"
+    },
+    {
+      "id": "jms-session-namespace",
+      "types": {
+        "1.0.x": "javax.jms.Session",
+        "2.0.x": "jakarta.jms.Session",
+        "3.0.x": "jakarta.jms.Session"
+      },
+      "reason": "ActiveMQ 适配层的会话参数按各线 JMS API 精确归一化；确认及关闭行为由三线契约测试验证",
+      "evidence": "ddd4j-mq/ddd4j-mq-activemq/src/test/java/io/ddd4j/mq/activemq/ActiveMQAdapterContractTest.java"
+    },
+    {
+      "id": "jms-message-namespace",
+      "types": {
+        "1.0.x": "javax.jms.Message",
+        "2.0.x": "jakarta.jms.Message",
+        "3.0.x": "jakarta.jms.Message"
+      },
+      "reason": "ActiveMQ 适配层的消息参数按各线 JMS API 精确归一化；消息标识和重入队行为由三线契约测试验证",
+      "evidence": "ddd4j-mq/ddd4j-mq-activemq/src/test/java/io/ddd4j/mq/activemq/ActiveMQAdapterContractTest.java"
+    },
+    {
+      "id": "jms-destination-namespace",
+      "types": {
+        "1.0.x": "javax.jms.Destination",
+        "2.0.x": "jakarta.jms.Destination",
+        "3.0.x": "jakarta.jms.Destination"
+      },
+      "reason": "ActiveMQ 目的地返回类型按各线 JMS API 精确归一化，其他 JMS 类型仍须逐项审核",
+      "evidence": "ddd4j-mq/ddd4j-mq-activemq/src/test/java/io/ddd4j/mq/activemq/ActiveMQAdapterContractTest.java"
+    },
+    {
+      "id": "jms-exception-namespace",
+      "types": {
+        "1.0.x": "javax.jms.JMSException",
+        "2.0.x": "jakarta.jms.JMSException",
+        "3.0.x": "jakarta.jms.JMSException"
+      },
+      "reason": "ActiveMQ 消息读取与目的地创建的声明异常按各线 JMS API 精确归一化；异常行为仍需单独验证",
+      "evidence": "ddd4j-mq/ddd4j-mq-activemq/src/test/java/io/ddd4j/mq/activemq/ActiveMQAdapterContractTest.java"
+    },
+    {
+      "id": "dropwizard-application-package",
+      "types": {
+        "1.0.x": "io.dropwizard.Application",
+        "2.0.x": "io.dropwizard.core.Application",
+        "3.0.x": "io.dropwizard.core.Application"
+      },
+      "reason": "Dropwizard 应用基类在各版本中的精确包路径对应；命令总线装配另由三线测试验证",
+      "evidence": "ddd4j-data/ddd4j-data-cqrs-dropwizard/src/test/java/io/ddd4j/data/cqrs/dropwizard/DropwizardCommandBusIT.java"
+    },
+    {
+      "id": "dropwizard-configuration-package",
+      "types": {
+        "1.0.x": "io.dropwizard.Configuration",
+        "2.0.x": "io.dropwizard.core.Configuration",
+        "3.0.x": "io.dropwizard.core.Configuration"
+      },
+      "reason": "Dropwizard 配置基类在各版本中的精确包路径对应；Bundle 行为另由三线测试验证",
+      "evidence": "ddd4j-runtime/ddd4j-runtime-dropwizard/src/test/java/io/ddd4j/dropwizard/Ddd4jBundleTest.java"
+    },
+    {
+      "id": "dropwizard-configured-bundle-package",
+      "types": {
+        "1.0.x": "io.dropwizard.ConfiguredBundle",
+        "2.0.x": "io.dropwizard.core.ConfiguredBundle",
+        "3.0.x": "io.dropwizard.core.ConfiguredBundle"
+      },
+      "reason": "Dropwizard Bundle 接口在各版本中的精确包路径对应，不扩展为整包映射",
+      "evidence": "ddd4j-runtime/ddd4j-runtime-dropwizard/src/test/java/io/ddd4j/dropwizard/Ddd4jBundleTest.java"
+    },
+    {
+      "id": "dropwizard-bootstrap-package",
+      "types": {
+        "1.0.x": "io.dropwizard.setup.Bootstrap",
+        "2.0.x": "io.dropwizard.core.setup.Bootstrap",
+        "3.0.x": "io.dropwizard.core.setup.Bootstrap"
+      },
+      "reason": "Dropwizard 初始化参数在各版本中的精确包路径对应；初始化行为另由三线测试验证",
+      "evidence": "ddd4j-runtime/ddd4j-runtime-dropwizard/src/test/java/io/ddd4j/dropwizard/Ddd4jBundleTest.java"
+    },
+    {
+      "id": "dropwizard-environment-package",
+      "types": {
+        "1.0.x": "io.dropwizard.setup.Environment",
+        "2.0.x": "io.dropwizard.core.setup.Environment",
+        "3.0.x": "io.dropwizard.core.setup.Environment"
+      },
+      "reason": "Dropwizard 运行环境参数在各版本中的精确包路径对应；运行期行为另由三线测试验证",
+      "evidence": "ddd4j-runtime/ddd4j-runtime-dropwizard/src/test/java/io/ddd4j/dropwizard/Ddd4jBundleTest.java"
+    },
+    {
+      "id": "jaxrs-response-namespace",
+      "types": {
+        "1.0.x": "javax.ws.rs.core.Response",
+        "2.0.x": "jakarta.ws.rs.core.Response",
+        "3.0.x": "jakarta.ws.rs.core.Response"
+      },
+      "reason": "Quarkus/Dropwizard 等 JAX-RS 适配层跨 Java EE 与 Jakarta EE 的精确 Response 类型映射",
+      "evidence": "ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebContractTest.java"
+    },
+    {
+      "id": "jaxrs-exception-mapper-namespace",
+      "types": {
+        "1.0.x": "javax.ws.rs.ext.ExceptionMapper",
+        "2.0.x": "jakarta.ws.rs.ext.ExceptionMapper",
+        "3.0.x": "jakarta.ws.rs.ext.ExceptionMapper"
+      },
+      "reason": "Dropwizard、Helidon、Quarkus 的异常映射器按各线 JAX-RS 接口精确归一化，响应行为仍由各适配器测试验证",
+      "evidence": "ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebContractTest.java"
+    },
+    {
+      "id": "jaxrs-container-request-context-namespace",
+      "types": {
+        "1.0.x": "javax.ws.rs.container.ContainerRequestContext",
+        "2.0.x": "jakarta.ws.rs.container.ContainerRequestContext",
+        "3.0.x": "jakarta.ws.rs.container.ContainerRequestContext"
+      },
+      "reason": "JAX-RS 请求过滤器参数按各线 API 命名空间精确归一化；请求处理行为由三线 Web 契约测试验证",
+      "evidence": "ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebContractTest.java"
+    },
+    {
+      "id": "jaxrs-container-response-context-namespace",
+      "types": {
+        "1.0.x": "javax.ws.rs.container.ContainerResponseContext",
+        "2.0.x": "jakarta.ws.rs.container.ContainerResponseContext",
+        "3.0.x": "jakarta.ws.rs.container.ContainerResponseContext"
+      },
+      "reason": "JAX-RS 响应过滤器参数按各线 API 命名空间精确归一化；响应处理行为由三线 Web 契约测试验证",
+      "evidence": "ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebContractTest.java"
+    },
+    {
+      "id": "validation-payload-namespace",
+      "types": {
+        "1.0.x": "javax.validation.Payload",
+        "2.0.x": "jakarta.validation.Payload",
+        "3.0.x": "jakarta.validation.Payload"
+      },
+      "reason": "JDK 8 的 Bean Validation 2 与 JDK 17/21 的 Jakarta Validation 3 使用精确 Payload 命名空间映射",
+      "evidence": "ddd4j-web/ddd4j-web-validation/src/test/java/io/ddd4j/web/validation/ValidationContractTest.java"
+    },
+    {
+      "id": "validation-constraint-validator-namespace",
+      "types": {
+        "1.0.x": "javax.validation.ConstraintValidator",
+        "2.0.x": "jakarta.validation.ConstraintValidator",
+        "3.0.x": "jakarta.validation.ConstraintValidator"
+      },
+      "reason": "自定义验证器在两代 Bean Validation 接口之间保留同一行为",
+      "evidence": "ddd4j-web/ddd4j-web-validation/src/test/java/io/ddd4j/web/validation/ValidationContractTest.java"
+    },
+    {
+      "id": "validation-constraint-validator-context-namespace",
+      "types": {
+        "1.0.x": "javax.validation.ConstraintValidatorContext",
+        "2.0.x": "jakarta.validation.ConstraintValidatorContext",
+        "3.0.x": "jakarta.validation.ConstraintValidatorContext"
+      },
+      "reason": "自定义验证器上下文在两代 Bean Validation API 之间作精确类型映射",
+      "evidence": "ddd4j-web/ddd4j-web-validation/src/test/java/io/ddd4j/web/validation/ValidationContractTest.java"
+    },
+    {
+      "id": "validation-validation-exception-namespace",
+      "types": {
+        "1.0.x": "javax.validation.ValidationException",
+        "2.0.x": "jakarta.validation.ValidationException",
+        "3.0.x": "jakarta.validation.ValidationException"
+      },
+      "reason": "WebMVC 对 ValidationException 采用各线 Bean Validation API 的精确类型映射；响应行为由三线测试验证",
+      "evidence": "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/error/ValidationExceptionParityTest.java"
+    },
+    {
+      "id": "validation-constraint-violation-exception-namespace",
+      "types": {
+        "1.0.x": "javax.validation.ConstraintViolationException",
+        "2.0.x": "jakarta.validation.ConstraintViolationException",
+        "3.0.x": "jakarta.validation.ConstraintViolationException"
+      },
+      "reason": "WebMVC 对 ConstraintViolationException 采用各线 Bean Validation API 的精确类型映射；响应行为由三线测试验证",
+      "evidence": "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/error/ValidationExceptionParityTest.java"
+    },
+    {
+      "id": "validation-constraint-declaration-exception-namespace",
+      "types": {
+        "1.0.x": "javax.validation.ConstraintDeclarationException",
+        "2.0.x": "jakarta.validation.ConstraintDeclarationException",
+        "3.0.x": "jakarta.validation.ConstraintDeclarationException"
+      },
+      "reason": "WebMVC 对 ConstraintDeclarationException 采用各线 Bean Validation API 的精确类型映射；响应行为由三线测试验证",
+      "evidence": "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/error/ValidationExceptionParityTest.java"
+    },
+    {
+      "id": "validation-constraint-definition-exception-namespace",
+      "types": {
+        "1.0.x": "javax.validation.ConstraintDefinitionException",
+        "2.0.x": "jakarta.validation.ConstraintDefinitionException",
+        "3.0.x": "jakarta.validation.ConstraintDefinitionException"
+      },
+      "reason": "WebMVC 对 ConstraintDefinitionException 采用各线 Bean Validation API 的精确类型映射；响应行为由三线测试验证",
+      "evidence": "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/error/ValidationExceptionParityTest.java"
+    },
+    {
+      "id": "validation-group-definition-exception-namespace",
+      "types": {
+        "1.0.x": "javax.validation.GroupDefinitionException",
+        "2.0.x": "jakarta.validation.GroupDefinitionException",
+        "3.0.x": "jakarta.validation.GroupDefinitionException"
+      },
+      "reason": "WebMVC 对 GroupDefinitionException 采用各线 Bean Validation API 的精确类型映射；响应行为由三线测试验证",
+      "evidence": "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/error/ValidationExceptionParityTest.java"
+    },
+    {
+      "id": "validation-unexpected-type-exception-namespace",
+      "types": {
+        "1.0.x": "javax.validation.UnexpectedTypeException",
+        "2.0.x": "jakarta.validation.UnexpectedTypeException",
+        "3.0.x": "jakarta.validation.UnexpectedTypeException"
+      },
+      "reason": "WebMVC 对 UnexpectedTypeException 采用各线 Bean Validation API 的精确类型映射；响应行为由三线测试验证",
+      "evidence": "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/error/ValidationExceptionParityTest.java"
+    },
+    {
+      "id": "jackson-objectmapper-namespace",
+      "types": {
+        "1.0.x": "com.fasterxml.jackson.databind.ObjectMapper",
+        "2.0.x": "com.fasterxml.jackson.databind.ObjectMapper",
+        "3.0.x": "tools.jackson.databind.ObjectMapper"
+      },
+      "reason": "EventPayloadSerializer 构造器在 Jackson 2/3 之间使用对应的精确 ObjectMapper 类型；事件 payload 契约由三线测试验证",
+      "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/eventstore/jackson/EventPayloadSerializerTest.java"
+    },
+    {
+      "id": "jackson-javatype-namespace",
+      "types": {
+        "1.0.x": "com.fasterxml.jackson.databind.JavaType",
+        "2.0.x": "com.fasterxml.jackson.databind.JavaType",
+        "3.0.x": "tools.jackson.databind.JavaType"
+      },
+      "reason": "JsonKit 的集合与 Map 类型构造及读取在 Jackson 2/3 中保持同一业务契约",
+      "evidence": "ddd4j-kit/src/test/java/io/ddd4j/kit/lang/JsonKitTypeContractTest.java"
+    },
+    {
+      "id": "jackson-typereference-namespace",
+      "types": {
+        "1.0.x": "com.fasterxml.jackson.core.type.TypeReference",
+        "2.0.x": "com.fasterxml.jackson.core.type.TypeReference",
+        "3.0.x": "tools.jackson.core.type.TypeReference"
+      },
+      "reason": "JsonKit 的 TypeReference 常量与 toPojo 读取在 Jackson 2/3 中保持同一业务契约",
+      "evidence": "ddd4j-kit/src/test/java/io/ddd4j/kit/lang/JsonKitTypeContractTest.java"
+    },
+    {
+      "id": "jackson-exception-namespace",
+      "types": {
+        "1.0.x": "com.fasterxml.jackson.core.JacksonException",
+        "2.0.x": "com.fasterxml.jackson.core.JacksonException",
+        "3.0.x": "tools.jackson.core.JacksonException"
+      },
+      "reason": "GlobalExceptionHandler 的解析异常处理参数在 Jackson 2/3 间采用精确命名空间映射，响应契约由三线测试验证",
+      "evidence": "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/error/GlobalExceptionHandlerTest.java"
+    },
+    {
+      "id": "jackson-invalid-format-exception-namespace",
+      "types": {
+        "1.0.x": "com.fasterxml.jackson.databind.exc.InvalidFormatException",
+        "2.0.x": "com.fasterxml.jackson.databind.exc.InvalidFormatException",
+        "3.0.x": "tools.jackson.databind.exc.InvalidFormatException"
+      },
+      "reason": "GlobalExceptionHandler 的格式异常处理参数在 Jackson 2/3 间采用精确命名空间映射，其他异常类型仍须逐项比较",
+      "evidence": "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/error/GlobalExceptionHandlerTest.java"
+    },
+    {
+      "id": "servlet-httpservletrequest-namespace",
+      "types": {
+        "1.0.x": "javax.servlet.http.HttpServletRequest",
+        "2.0.x": "jakarta.servlet.http.HttpServletRequest",
+        "3.0.x": "jakarta.servlet.http.HttpServletRequest"
+      },
+      "reason": "Spring WebMVC 版本适配的 Servlet API 精确类型映射；不映射其他 Servlet 类型或业务方法",
+      "evidence": "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/util/WebKitCookieContractTest.java"
+    },
+    {
+      "id": "servlet-httpservletresponse-namespace",
+      "types": {
+        "1.0.x": "javax.servlet.http.HttpServletResponse",
+        "2.0.x": "jakarta.servlet.http.HttpServletResponse",
+        "3.0.x": "jakarta.servlet.http.HttpServletResponse"
+      },
+      "reason": "Spring WebMVC 版本适配的 Servlet API 精确类型映射；不映射其他 Servlet 类型或业务方法",
+      "evidence": "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/util/WebKitCookieContractTest.java"
+    },
+    {
+      "id": "servlet-cookie-namespace",
+      "types": {
+        "1.0.x": "javax.servlet.http.Cookie",
+        "2.0.x": "jakarta.servlet.http.Cookie",
+        "3.0.x": "jakarta.servlet.http.Cookie"
+      },
+      "reason": "Spring WebMVC 版本适配的 Servlet API 精确类型映射；不映射其他 Servlet 类型或业务方法",
+      "evidence": "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/util/WebKitCookieContractTest.java"
+    }
+  ],
+  "documentation": {
+    "historicalPrefixes": [
+      ".superpowers/",
+      "docs/superpowers/reports/"
+    ],
+    "sharedProductContentRequired": true
+  },
+  "platformApiMembersMissingOnJdk8": [
+    {
+      "sourceSymbol": "ddd4j-web/ddd4j-web-javalin/src/main/java/io/ddd4j/web/javalin/Ddd4jJavalinWeb.java#io.ddd4j.web.javalin.Ddd4jJavalinWeb#configure(JavalinConfig)",
+      "compiledEntry": "ddd4j-web/ddd4j-web-javalin|io/ddd4j/web/javalin/Ddd4jJavalinWeb|configure|(Lio/javalin/config/JavalinConfig;)V|generic=|throws=|constant=|params=config",
+      "evidence": "ddd4j-web/ddd4j-web-javalin/src/test/java/io/ddd4j/web/javalin/Ddd4jJavalinWebContractTest.java",
+      "reason": "Javalin 高线以 JavalinConfig 注册同一请求上下文、认证、异常、幂等与 readiness 契约；各线六项本地 HTTP 契约通过"
+    },
+    {
+      "sourceSymbol": "ddd4j-data/ddd4j-data-crypto/src/main/java/io/ddd4j/data/crypto/strategy/FlksecCryptoStrategy.java#io.ddd4j.data.crypto.strategy.FlksecCryptoStrategy#<init>(ObjectMapper,HttpClient,String,String)",
+      "compiledEntry": "ddd4j-data/ddd4j-data-crypto|io/ddd4j/data/crypto/strategy/FlksecCryptoStrategy|<init>|(LDDD4J_MAPPED/jackson-objectmapper-namespace;Ljava/net/http/HttpClient;Ljava/lang/String;Ljava/lang/String;)V|generic=|throws=|constant=|params=objectMapper,httpClient,address,port",
+      "evidence": "ddd4j-data/ddd4j-data-crypto/src/test/java/io/ddd4j/data/crypto/strategy/FlksecCryptoHttpContractTest.java",
+      "reason": "JDK 8 无 java.net.http.HttpClient；三线保留本线 HTTP/Jackson 依赖及公开构造器，以共同本地加解密、签名与错误契约验证业务行为"
+    },
+    {
+      "sourceSymbol": "ddd4j-data/ddd4j-data-external/src/main/java/io/ddd4j/data/external/geo/GeoBaiduTemplate.java#io.ddd4j.data.external.geo.GeoBaiduTemplate#<init>(HttpClient,String)",
+      "compiledEntry": "ddd4j-data/ddd4j-data-external|io/ddd4j/data/external/geo/GeoBaiduTemplate|<init>|(Ljava/net/http/HttpClient;Ljava/lang/String;)V|generic=|throws=|constant=|params=httpClient,ak",
+      "evidence": "ddd4j-data/ddd4j-data-external/src/test/java/io/ddd4j/data/external/geo/GeoBaiduHttpContractTest.java",
+      "reason": "JDK 8 无 java.net.http.HttpClient；三线保留本线传输入口，并以相同本地 HTTP/JSON 场景验证业务行为"
+    },
+    {
+      "sourceSymbol": "ddd4j-data/ddd4j-data-external/src/main/java/io/ddd4j/data/external/region/PconlineRegionTemplate.java#io.ddd4j.data.external.region.PconlineRegionTemplate#<init>(HttpClient)",
+      "compiledEntry": "ddd4j-data/ddd4j-data-external|io/ddd4j/data/external/region/PconlineRegionTemplate|<init>|(Ljava/net/http/HttpClient;)V|generic=|throws=|constant=|params=httpClient",
+      "evidence": "ddd4j-data/ddd4j-data-external/src/test/java/io/ddd4j/data/external/region/PconlineRegionHttpContractTest.java",
+      "reason": "JDK 8 无 java.net.http.HttpClient；保留各线 HTTP 客户端和公开构造器，用三线相同本地 HTTP 契约验证业务行为"
+    },
+    {
+      "sourceSymbol": "ddd4j-data/ddd4j-data-external/src/main/java/io/ddd4j/data/external/region/PconlineRegionTemplate.java#io.ddd4j.data.external.region.PconlineRegionTemplate#<init>(HttpClient,RegionCache)",
+      "compiledEntry": "ddd4j-data/ddd4j-data-external|io/ddd4j/data/external/region/PconlineRegionTemplate|<init>|(Ljava/net/http/HttpClient;Lio/ddd4j/data/external/region/RegionCache;)V|generic=|throws=|constant=|params=httpClient,regionCache",
+      "evidence": "ddd4j-data/ddd4j-data-external/src/test/java/io/ddd4j/data/external/region/PconlineRegionHttpContractTest.java",
+      "reason": "JDK 8 无 java.net.http.HttpClient；保留各线 HTTP 客户端和公开构造器，用三线相同本地 HTTP 契约验证业务行为"
+    },
+    {
+      "sourceSymbol": "ddd4j-data/ddd4j-data-external/src/main/java/io/ddd4j/data/external/weather/WeatherTemplate.java#io.ddd4j.data.external.weather.WeatherTemplate#<init>(HttpClient)",
+      "compiledEntry": "ddd4j-data/ddd4j-data-external|io/ddd4j/data/external/weather/WeatherTemplate|<init>|(Ljava/net/http/HttpClient;)V|generic=|throws=|constant=|params=httpClient",
+      "evidence": "ddd4j-data/ddd4j-data-external/src/test/java/io/ddd4j/data/external/weather/WeatherTemplateHttpContractTest.java",
+      "reason": "JDK 8 无 java.net.http.HttpClient；保留各线 HTTP 客户端和公开构造器，用三线相同本地 HTTP 契约验证业务行为"
+    },
+    {
+      "sourceSymbol": "ddd4j-data/ddd4j-data-external/src/main/java/io/ddd4j/data/external/region/BaiduRegionTemplate.java#io.ddd4j.data.external.region.BaiduRegionTemplate#<init>(String,HttpClient)",
+      "compiledEntry": "ddd4j-data/ddd4j-data-external|io/ddd4j/data/external/region/BaiduRegionTemplate|<init>|(Ljava/lang/String;Ljava/net/http/HttpClient;)V|generic=|throws=|constant=|params=ak,httpClient",
+      "evidence": "ddd4j-data/ddd4j-data-external/src/test/java/io/ddd4j/data/external/region/BaiduRegionHttpContractTest.java",
+      "reason": "JDK 8 无 java.net.http.HttpClient；保留各线 HTTP 客户端和公开构造器，以三线本地 HTTP/缓存/错误场景验证业务行为"
+    },
+    {
+      "sourceSymbol": "ddd4j-data/ddd4j-data-external/src/main/java/io/ddd4j/data/external/region/BaiduRegionTemplate.java#io.ddd4j.data.external.region.BaiduRegionTemplate#<init>(String,HttpClient,RegionCache)",
+      "compiledEntry": "ddd4j-data/ddd4j-data-external|io/ddd4j/data/external/region/BaiduRegionTemplate|<init>|(Ljava/lang/String;Ljava/net/http/HttpClient;Lio/ddd4j/data/external/region/RegionCache;)V|generic=|throws=|constant=|params=ak,httpClient,regionCache",
+      "evidence": "ddd4j-data/ddd4j-data-external/src/test/java/io/ddd4j/data/external/region/BaiduRegionHttpContractTest.java",
+      "reason": "JDK 8 无 java.net.http.HttpClient；保留各线 HTTP 客户端和公开构造器，以三线本地 HTTP/缓存/错误场景验证业务行为"
+    },
+    {
+      "sourceSymbol": "ddd4j-web/ddd4j-web-micronaut/src/main/java/io/ddd4j/web/micronaut/Ddd4jMicronautContext.java#io.ddd4j.web.micronaut.Ddd4jMicronautContext#updateThreadContext()",
+      "compiledEntry": "ddd4j-web/ddd4j-web-micronaut|io/ddd4j/web/micronaut/Ddd4jMicronautContext|updateThreadContext|()Lio/ddd4j/web/core/context/WebContextScope;|generic=|throws=|constant=|params=",
+      "evidence": "ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautContextTest.java",
+      "reason": "Micronaut 4 ThreadPropagatedContextElement 打开作用域；低线使用 openContext，三线上下文生命周期测试通过",
+      "compilerBridgeEntry": "ddd4j-web/ddd4j-web-micronaut|io/ddd4j/web/micronaut/Ddd4jMicronautContext|updateThreadContext|()Ljava/lang/Object;|generic=Ljava/lang/Object;Lio/micronaut/core/propagation/ThreadPropagatedContextElement<Lio/ddd4j/web/core/context/WebContextScope;>;|throws=|constant=|params="
+    },
+    {
+      "sourceSymbol": "ddd4j-web/ddd4j-web-micronaut/src/main/java/io/ddd4j/web/micronaut/Ddd4jMicronautContext.java#io.ddd4j.web.micronaut.Ddd4jMicronautContext#restoreThreadContext(WebContextScope)",
+      "compiledEntry": "ddd4j-web/ddd4j-web-micronaut|io/ddd4j/web/micronaut/Ddd4jMicronautContext|restoreThreadContext|(Lio/ddd4j/web/core/context/WebContextScope;)V|generic=|throws=|constant=|params=",
+      "evidence": "ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautContextTest.java",
+      "reason": "Micronaut 4 ThreadPropagatedContextElement 恢复作用域；低线由插桩 Scope.close 清理，三线上下文生命周期测试通过",
+      "compilerBridgeEntry": "ddd4j-web/ddd4j-web-micronaut|io/ddd4j/web/micronaut/Ddd4jMicronautContext|restoreThreadContext|(Ljava/lang/Object;)V|generic=|throws=|constant=|params="
+    },
+    {
+      "sourceSymbol": "ddd4j-web/ddd4j-web-micronaut/src/main/java/io/ddd4j/web/micronaut/Ddd4jMicronautWebFilter.java#io.ddd4j.web.micronaut.Ddd4jMicronautWebFilter#filter(HttpRequest<?>,FilterContinuation<Publisher<MutableHttpResponse<?>>>,MutablePropagatedContext)",
+      "compiledEntry": "ddd4j-web/ddd4j-web-micronaut|io/ddd4j/web/micronaut/Ddd4jMicronautWebFilter|filter|(Lio/micronaut/http/HttpRequest;Lio/micronaut/http/filter/FilterContinuation;Lio/micronaut/core/propagation/MutablePropagatedContext;)Lorg/reactivestreams/Publisher;|generic=(Lio/micronaut/http/HttpRequest<*>;Lio/micronaut/http/filter/FilterContinuation<Lorg/reactivestreams/Publisher<Lio/micronaut/http/MutableHttpResponse<*>;>;>;Lio/micronaut/core/propagation/MutablePropagatedContext;)Lorg/reactivestreams/Publisher<Lio/micronaut/http/MutableHttpResponse<*>;>;|throws=|constant=|params=",
+      "evidence": "ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautWebContractTest.java",
+      "reason": "Micronaut 4 @RequestFilter 入口；低线使用 Micronaut 3 HttpFilter，三线 HTTP/OTel/异常契约验证相同请求行为"
+    }
+  ],
+  "platformApiMembersOnlyOnJdk8": [
+    {
+      "sourceSymbol": "ddd4j-web/ddd4j-web-quarkus/src/main/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebFilter.java#io.ddd4j.web.quarkus.Ddd4jQuarkusWebFilter#filter(ContainerRequestContext)",
+      "sourceDeclaration": "void|public|request",
+      "compiledEntry": "ddd4j-web/ddd4j-web-quarkus|io/ddd4j/web/quarkus/Ddd4jQuarkusWebFilter|filter|(LDDD4J_MAPPED/jaxrs-container-request-context-namespace;)V|generic=|throws=|constant=|params=request",
+      "evidence": "ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebContractTest.java",
+      "reason": "Quarkus 1.x RESTEasy ContainerRequestFilter 入口；高线使用 Quarkus REST @ServerRequestFilter，三线共同 HTTP 契约验证请求行为"
+    },
+    {
+      "sourceSymbol": "ddd4j-web/ddd4j-web-quarkus/src/main/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebResponseFilter.java#io.ddd4j.web.quarkus.Ddd4jQuarkusWebResponseFilter#filter(ContainerRequestContext,ContainerResponseContext)",
+      "sourceDeclaration": "void|public|request,response",
+      "compiledEntry": "ddd4j-web/ddd4j-web-quarkus|io/ddd4j/web/quarkus/Ddd4jQuarkusWebResponseFilter|filter|(LDDD4J_MAPPED/jaxrs-container-request-context-namespace;LDDD4J_MAPPED/jaxrs-container-response-context-namespace;)V|generic=|throws=|constant=|params=request,response",
+      "evidence": "ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebContractTest.java",
+      "reason": "Quarkus 1.x 独立 RESTEasy 响应过滤器入口；高线将相同响应完成逻辑注册为 @ServerResponseFilter，三线共同 HTTP 契约验证响应行为"
+    },
+    {
+      "sourceSymbol": "ddd4j-web/ddd4j-web-javalin/src/main/java/io/ddd4j/web/javalin/Ddd4jJavalinWeb.java#io.ddd4j.web.javalin.Ddd4jJavalinWeb#configure(Javalin)",
+      "sourceDeclaration": "void|public|config",
+      "compiledEntry": "ddd4j-web/ddd4j-web-javalin|io/ddd4j/web/javalin/Ddd4jJavalinWeb|configure|(Lio/javalin/Javalin;)V|generic=|throws=|constant=|params=config",
+      "evidence": "ddd4j-web/ddd4j-web-javalin/src/test/java/io/ddd4j/web/javalin/Ddd4jJavalinWebContractTest.java",
+      "reason": "Javalin 低线以 Javalin 实例注册同一请求上下文、认证、异常、幂等与 readiness 契约；各线六项本地 HTTP 契约通过"
+    },
+    {
+      "sourceSymbol": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/rbac/controller/Java8Maps.java#io.ddd4j.sample.javalin.shiro.rbac.controller.Java8Maps#of(Object[])",
+      "sourceDeclaration": "Map<String, Object>|public|keyValues",
+      "compiledEntry": "ddd4j-samples/ddd4j-sample-javalin-shiro|io/ddd4j/sample/javalin/shiro/rbac/controller/Java8Maps|of|([Ljava/lang/Object;)Ljava/util/Map;|generic=([Ljava/lang/Object;)Ljava/util/Map<Ljava/lang/String;Ljava/lang/Object;>;|throws=|constant=|params=keyValues",
+      "evidence": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/rbac/controller/Java8MapsContractTest.java",
+      "reason": "JDK 8 无 Map.of；低线 helper 对齐三线空值、重复键和不可变 Map 契约，高线保留标准库 Map.of；各线两个样例各 4 项测试通过"
+    },
+    {
+      "sourceSymbol": "ddd4j-web/ddd4j-web-micronaut/src/main/java/io/ddd4j/web/micronaut/Ddd4jMicronautContext.java#io.ddd4j.web.micronaut.Ddd4jMicronautContext#clear()",
+      "sourceDeclaration": "void|public|",
+      "compiledEntry": "ddd4j-web/ddd4j-web-micronaut|io/ddd4j/web/micronaut/Ddd4jMicronautContext|clear|()V|generic=|throws=|constant=|params=",
+      "evidence": "ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautContextTest.java",
+      "reason": "Micronaut 3 手动 ThreadLocal 清理入口；三线上下文生命周期与 HTTP 契约验证清理行为"
+    },
+    {
+      "sourceSymbol": "ddd4j-web/ddd4j-web-micronaut/src/main/java/io/ddd4j/web/micronaut/Ddd4jMicronautContext.java#io.ddd4j.web.micronaut.Ddd4jMicronautContext#set(Ddd4jMicronautContext)",
+      "sourceDeclaration": "void|public|context",
+      "compiledEntry": "ddd4j-web/ddd4j-web-micronaut|io/ddd4j/web/micronaut/Ddd4jMicronautContext|set|(Lio/ddd4j/web/micronaut/Ddd4jMicronautContext;)V|generic=|throws=|constant=|params=",
+      "evidence": "ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautContextTest.java",
+      "reason": "Micronaut 3 手动 ThreadLocal 绑定入口；高线用 PropagatedContext，三线验证当前上下文"
+    },
+    {
+      "sourceSymbol": "ddd4j-web/ddd4j-web-micronaut/src/main/java/io/ddd4j/web/micronaut/Ddd4jMicronautContext.java#io.ddd4j.web.micronaut.Ddd4jMicronautContext#openContext()",
+      "sourceDeclaration": "WebContextScope|public|",
+      "compiledEntry": "ddd4j-web/ddd4j-web-micronaut|io/ddd4j/web/micronaut/Ddd4jMicronautContext|openContext|()Lio/ddd4j/web/core/context/WebContextScope;|generic=|throws=|constant=|params=",
+      "evidence": "ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautContextTest.java",
+      "reason": "Micronaut 3 Reactor 插桩时打开 WebContextScope；高线由 ThreadPropagatedContextElement 打开，三线验证作用域生命周期"
+    },
+    {
+      "sourceSymbol": "ddd4j-web/ddd4j-web-micronaut/src/main/java/io/ddd4j/web/micronaut/Ddd4jMicronautWebFilter.java#io.ddd4j.web.micronaut.Ddd4jMicronautWebFilter#doFilter(HttpRequest<?>,FilterChain)",
+      "sourceDeclaration": "Publisher<? extends HttpResponse<?>>|public|request,chain",
+      "compiledEntry": "ddd4j-web/ddd4j-web-micronaut|io/ddd4j/web/micronaut/Ddd4jMicronautWebFilter|doFilter|(Lio/micronaut/http/HttpRequest;Lio/micronaut/http/filter/FilterChain;)Lorg/reactivestreams/Publisher;|generic=(Lio/micronaut/http/HttpRequest<*>;Lio/micronaut/http/filter/FilterChain;)Lorg/reactivestreams/Publisher<+Lio/micronaut/http/HttpResponse<*>;>;|throws=|constant=|params=",
+      "evidence": "ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautWebContractTest.java",
+      "reason": "Micronaut 3 HttpFilter 接口入口；高线使用 Micronaut 4 @RequestFilter，三线 HTTP/OTel/异常契约验证相同请求行为"
+    },
+    {
+      "sourceSymbol": "ddd4j-web/ddd4j-web-quarkus/src/main/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebResponseFilter.java#io.ddd4j.web.quarkus.Ddd4jQuarkusWebResponseFilter#<init>()",
+      "sourceDeclaration": "<init>|public|",
+      "compiledEntry": "ddd4j-web/ddd4j-web-quarkus|io/ddd4j/web/quarkus/Ddd4jQuarkusWebResponseFilter|<init>|()V|generic=|throws=|constant=|params=",
+      "evidence": "ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebContractTest.java",
+      "reason": "Quarkus 1.x RESTEasy 独立响应 Provider 需公开无参构造器；高线 Quarkus REST 以单类 @ServerResponseFilter 注册，三线 HTTP/OTel 契约验证响应清理"
+    }
+  ],
+  "platformSyntaxMappings": [
+    {
+      "path": "ddd4j-core/src/main/java/io/ddd4j/core/ddd/model/AggregateRoot.java",
+      "sourceSha256": [
+        "d7211294eb611dbee215b983fe1fffef510a663a14bf31f528c6c85e6e2fdefa",
+        "6aca7b401bc401e9a7e313759de5eb8c6d0403a5f1ab3ef75d20ad70a1bd2a75",
+        "6aca7b401bc401e9a7e313759de5eb8c6d0403a5f1ab3ef75d20ad70a1bd2a75"
+      ],
+      "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/ddd/model/AggregateRootEventsTest.java",
+      "testSha256": "c26740d32ca4c267bd72570b785538999a1acd85f12e4e09c5d308dd73b86d93",
+      "reason": "三线相同的事件快照、注册和反射派发逻辑及 Javadoc；JDK 8 匿名 ClassValue 显式泛型和异常显式强转，高两线使用菱形与 instanceof 模式匹配，源码及共同测试由 SHA-256 锁定"
+    },
+    {
+      "path": "ddd4j-cache/src/main/java/io/ddd4j/cache/local/CaffeineCache.java",
+      "sourceSha256": [
+        "18a2d0e370ce5ae816ffa1cd2a187ce6769790647b7b9b25e27bb13aedc5460e",
+        "044e7bc2768762341a5bc5e3c7c1e8dab5a6d6b850ceec3202494efc8fe7e870",
+        "044e7bc2768762341a5bc5e3c7c1e8dab5a6d6b850ceec3202494efc8fe7e870"
+      ],
+      "evidence": "ddd4j-cache/src/test/java/io/ddd4j/cache/local/LocalCacheCasParityTest.java",
+      "testSha256": "4edd1c6d67f019eec567b990266038d2fb9f6c3e3f9d7693e5505de3f929088d",
+      "reason": "三线相同 Caffeine 回调式 CAS 行为；JDK 8 匿名类显式写 GetsResponse<V>，高两线用菱形语法，源码与共同测试均锁定"
+    },
+    {
+      "path": "ddd4j-cache/src/main/java/io/ddd4j/cache/local/GuavaCache.java",
+      "sourceSha256": [
+        "9146939847d2cc4370ec0d3bf2249d69b1c107f47db65631c65ec3400df5e626",
+        "39712e9d8a61e6c71d7b3a741397977d53f34faf23ddf9aa40694b569c04f394",
+        "39712e9d8a61e6c71d7b3a741397977d53f34faf23ddf9aa40694b569c04f394"
+      ],
+      "evidence": "ddd4j-cache/src/test/java/io/ddd4j/cache/local/LocalCacheCasParityTest.java",
+      "testSha256": "4edd1c6d67f019eec567b990266038d2fb9f6c3e3f9d7693e5505de3f929088d",
+      "reason": "三线相同 Guava 回调式 CAS 行为；JDK 8 匿名类显式写 GetsResponse<V>，高两线用菱形语法，源码与共同测试均锁定"
+    },
+    {
+      "path": "ddd4j-core/src/main/java/io/ddd4j/core/context/SpiRegistrationScope.java",
+      "sourceSha256": [
+        "839388a52aea52f22c68b6512a9f3a517335e277fa68218e4ba2496bfe475257",
+        "a9093005a850ad4629c8df1e58b8ecce68e400e437491e57d99fef2c1eeb09e0",
+        "a9093005a850ad4629c8df1e58b8ecce68e400e437491e57d99fef2c1eeb09e0"
+      ],
+      "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/context/SpiRegistrationScopeTest.java",
+      "testSha256": "69762ce2bb7dab9d37432c39afd74e438cc5297663ab614165f1170f41dafce1",
+      "reason": "三线相同 SPI 注册/关闭行为及旧服务恢复契约；JDK 8 使用 Optional.get()，高两线使用无参 orElseThrow()，源码与共同测试均由 SHA-256 锁定"
+    },
+    {
+      "path": "ddd4j-core/src/main/java/io/ddd4j/core/context/ThreadContext.java",
+      "sourceSha256": [
+        "13712cd4ab62eb4b4edc6319020fc7a797e5f00676bcc7b74fae7be8fb76a14f",
+        "f008dccea5c613eaa444977f61114d05ef45a5e5831455d1ff780ec3dd6a06c4",
+        "dab94fc8b1f001702daf4e6347cd6dc11d6c28ba4553d755766f100911e4ee42"
+      ],
+      "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/context/ThreadContextTest.java",
+      "testSha256": "70ccd88f69914931ff0b56a063fa7a2f4581c58f74f47e5496b31bd479a63116",
+      "reason": "JDK 8 匿名 TransmittableThreadLocal 显式泛型与高两线菱形语法，以及嵌套 Scope 声明位置和注释差异；线程资源复制、隔离、Scope 恢复逻辑一致，三线共同测试锁定"
+    },
+    {
+      "path": "ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/EventChunk.java",
+      "sourceSha256": [
+        "55bd10b485014c66b29915618ad81f646a6f1d6e5981e93147720b2df7280265",
+        "a0b1dfc04ee506158165740a04ec54ead70e49646940244098aa80c534930450",
+        "a0b1dfc04ee506158165740a04ec54ead70e49646940244098aa80c534930450"
+      ],
+      "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/EventChunkTest.java",
+      "testSha256": "01a6e0dfba36be0ab735d92dc639aebbfde6c1094a0b8a1b9a650d1ee3d17be5",
+      "reason": "JDK 8 使用 ArrayList 与 Collections.unmodifiableList，JDK 17/21 使用 ArrayList 与 List.copyOf；三线先复制输入再拒绝 null 元素，统一错误消息、不可变快照和空 chunk 契约"
+    },
+    {
+      "path": "ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/InMemoryProjectionPositionRepository.java",
+      "sourceSha256": [
+        "4d9da85eb3750103f06f922a1e6c8575790dc39289f4a896c2de3d3356817253",
+        "5749701a5243e6ff99e4c77d799f18c7da69c7082956a73ac3d8db7c9dfe6308",
+        "5749701a5243e6ff99e4c77d799f18c7da69c7082956a73ac3d8db7c9dfe6308"
+      ],
+      "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/InMemoryProjectionPositionRepositoryTest.java",
+      "testSha256": "4fb7b13e089796eec16e4790cadbb6d3fd22c21ce707c725233cfaef79d772b3",
+      "reason": "JDK 8 使用 Collections.unmodifiableList/Map 的复制快照，JDK 17/21 使用 List.copyOf/Map.copyOf；三线共同测试锁定位置存储、重置与不可变快照契约"
+    },
+    {
+      "path": "ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/AggregateVersion.java",
+      "sourceSha256": [
+        "522941542537f6df2a0fcb571e873e4cbe761323a74c87309f966c1f0b5a878a",
+        "920e858f4ac91f166f33e2972ea66bafbbd302ff0f2c7080652ec3987b72fb0c",
+        "920e858f4ac91f166f33e2972ea66bafbbd302ff0f2c7080652ec3987b72fb0c"
+      ],
+      "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/EventIdentifierValueContractTest.java",
+      "testSha256": "577990e60325d406f8b478e5ccd6180c289cedbf4bf31bbbbc9231fdb6106ede",
+      "reason": "JDK 8 explicit instanceof/cast and JDK 17/21 pattern matching with @Serial preserve the same value, validation, equality, hash, text and Java serialization contract verified by the shared three-line test"
+    },
+    {
+      "path": "ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/EventId.java",
+      "sourceSha256": [
+        "c1ba7cb34533e93cb70bd9200ba3fb51bb2399fb6a90ed807ca629d36ea8be48",
+        "a7cb0d66a07962a77429f580d920b7b71dd6deee5200b8bc8d04ebbd7d95da04",
+        "a7cb0d66a07962a77429f580d920b7b71dd6deee5200b8bc8d04ebbd7d95da04"
+      ],
+      "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/EventIdentifierValueContractTest.java",
+      "testSha256": "577990e60325d406f8b478e5ccd6180c289cedbf4bf31bbbbc9231fdb6106ede",
+      "reason": "JDK 8 explicit instanceof/cast and JDK 17/21 pattern matching with @Serial preserve the same value, validation, equality, hash, text and Java serialization contract verified by the shared three-line test"
+    },
+    {
+      "path": "ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/EventType.java",
+      "sourceSha256": [
+        "c7b5b6c2b417fb532a3cfcba7fa3fb52212f49bdd79385fdc02d9108b8dd9864",
+        "268236462fe9b6d966ca947cac7dd572979161a591901f48c7b212da707f5e23",
+        "268236462fe9b6d966ca947cac7dd572979161a591901f48c7b212da707f5e23"
+      ],
+      "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/EventIdentifierValueContractTest.java",
+      "testSha256": "577990e60325d406f8b478e5ccd6180c289cedbf4bf31bbbbc9231fdb6106ede",
+      "reason": "JDK 8 explicit instanceof/cast and JDK 17/21 pattern matching with @Serial preserve the same value, validation, equality, hash, text and Java serialization contract verified by the shared three-line test"
+    },
+    {
+      "path": "ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/StringEntityType.java",
+      "sourceSha256": [
+        "1b95cd453a7cd13779b69155f4fbae757531d3b7379b87b2425414c44e6d71f1",
+        "74c58622f7d4714626bdd4069f92e08116ddc2c468a4a9fa0eea0e18e08d1ccf",
+        "74c58622f7d4714626bdd4069f92e08116ddc2c468a4a9fa0eea0e18e08d1ccf"
+      ],
+      "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/EventIdentifierValueContractTest.java",
+      "testSha256": "577990e60325d406f8b478e5ccd6180c289cedbf4bf31bbbbc9231fdb6106ede",
+      "reason": "JDK 8 explicit instanceof/cast and JDK 17/21 pattern matching with @Serial preserve the same value, validation, equality, hash, text and Java serialization contract verified by the shared three-line test"
+    },
+    {
+      "path": "ddd4j-core/src/main/java/io/ddd4j/core/health/RuntimeReadinessRegistry.java",
+      "sourceSha256": [
+        "c98b59e8fe3e162460dab986304a2be00de4114bd2feacf711c1202676661fa1",
+        "1d3939e1d821d25a97dca60c479119f2e172ff5c4c78f3f818e3e7989e031bb8",
+        "1d3939e1d821d25a97dca60c479119f2e172ff5c4c78f3f818e3e7989e031bb8"
+      ],
+      "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/health/RuntimeReadinessRegistryTest.java",
+      "testSha256": "3ce7ed7a21699774f1b6f8e78b7b2ca05a2dcc7eeb6b38d6b2b9171bc55d17d8",
+      "reason": "JDK 8 使用 Collections.emptyList 与 unmodifiableList(new ArrayList)，JDK 17/21 使用 List.of 与 List.copyOf；注册表过滤 null，三线共同测试锁定快照不可变与就绪汇总契约"
+    },
+    {
+      "path": "ddd4j-core/src/main/java/io/ddd4j/core/i18n/I18nProvider.java",
+      "sourceSha256": [
+        "1038f032e9c5537f4173582312dd17a4785869250fff3db12664d83eea1dbfdd",
+        "5136d521673c31e14330723c9e9f2f5861365fa8d92cee540f59744772e6254b",
+        "5136d521673c31e14330723c9e9f2f5861365fa8d92cee540f59744772e6254b"
+      ],
+      "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/i18n/I18nProviderDefaultContractTest.java",
+      "testSha256": "14be3dd7baba35a8a9f4940cbf8717add940ff0768d479161a4beafde027e7e1",
+      "reason": "三线相同默认国际化资源命中与纯文本回退契约；JDK 8 使用匿名实现及嵌套辅助类，高两线使用 lambda 和接口私有静态方法，源码与共同测试均锁定"
+    },
+    {
+      "path": "ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/BrokerType.java",
+      "sourceSha256": [
+        "8e95c34b405e58e06e86cd808c4b96385e1b06f45948a7b2c5efc504b128ced5",
+        "3697ff88b4cf8bf1b260621bff41231c2236ab195fed613c1e588a5374c28659",
+        "3697ff88b4cf8bf1b260621bff41231c2236ab195fed613c1e588a5374c28659"
+      ],
+      "evidence": "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/BrokerTypeContractTest.java",
+      "testSha256": "9845bbf97330f9bdf2ad9399d9b086d544eb25c273ace0dce6195d6cff7f3f75",
+      "reason": "JDK 8 switch statement and high-line switch expression implement the same broker alias and normalization contract; three-line contract test covers aliases, absent/unknown values, and enum configuration round trips"
+    },
+    {
+      "path": "ddd4j-mq/ddd4j-mq-kafka/src/main/java/io/ddd4j/mq/kafka/KafkaMQClient.java",
+      "sourceSha256": [
+        "6606af100150f0f2fe79fa789624ffc4ab4e28b1c0ba71968bfed40d64bca95b",
+        "1e3f340ba04b025309dedf81c9b07b95320aacebe743d7648472905f3a1de41a",
+        "1e3f340ba04b025309dedf81c9b07b95320aacebe743d7648472905f3a1de41a"
+      ],
+      "evidence": "ddd4j-mq/ddd4j-mq-kafka/src/test/java/io/ddd4j/mq/kafka/KafkaMQClientLifecycleContractTest.java",
+      "testSha256": "a226ff111178b99426c72b9d8821ee87de2d1f23d3ee2f9e43995a1aa9d360bf",
+      "reason": "三线 Kafka 生命周期由 MQClientLifecycle 单独持有消费者资源，关闭状态均使用 AtomicBoolean；JDK 8 的 partitionKey 为等价 switch 语句，高两线为 switch 表达式。共同测试含关闭竞争、失败初始化、外部 producer 归属、poll 故障及关闭后 STOPPED 断言，源码与测试用 SHA-256 锁定"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/goods/web/dto/CreateGoodsRequest.java",
+      "sourceSha256": [
+        "264a8aa256148df897381d5245776dc2d20e18107826ac4992c28d2b38fc8bd7",
+        "fc8efc6bf108aa334af50f089de35de5a36ae9ae3c51593c10d7545b64257178",
+        "fc8efc6bf108aa334af50f089de35de5a36ae9ae3c51593c10d7545b64257178"
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/goods/web/dto/CreateGoodsRequestContractTest.java",
+      "testSha256": "b80a38c92ad4a3784de176b25b1492c6eec60c8827c353f3829ed09e86055f68",
+      "reason": "1.0.x Lombok-generated bean/value methods and 2.0.x/3.0.x explicit methods plus line-specific Jackson annotations preserve the tested constructor, bean/component accessor, subclass equality/getter/hash and JSON round-trip contract; any source or shared test change reopens this difference"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/goods/web/dto/UpdateGoodsRequest.java",
+      "sourceSha256": [
+        "9bfd0c2bf5e5eb1652111f4adfdd5482cc1a6fd2618c8141f80a2dc19c17030f",
+        "a65d50853952f24364e7ff3a59d671f6524a2ccfc93f871fc9f00c986e52b13b",
+        "a65d50853952f24364e7ff3a59d671f6524a2ccfc93f871fc9f00c986e52b13b"
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/goods/web/dto/UpdateGoodsRequestContractTest.java",
+      "testSha256": "de5c6e3af96595c91741751e09403da76ef0daf204976f90af09e1a30f8c5c7e",
+      "reason": "1.0.x Lombok-generated methods and 2.0.x/3.0.x explicit methods with line-specific Jackson annotations preserve the tested constructor, bean/component accessors, subclass canEqual equality, getter-based hash, stable value hash and text contract; changing source or shared test reopens the difference"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/order/web/dto/AddOrderLineRequest.java",
+      "sourceSha256": [
+        "b57e3d526378dc484686e57b3124fb5117529993cfe45594ecaaef467618028d",
+        "d098e7cc9db9873f8e7817637dabc64c317cfcb75118878a199ff1947039e060",
+        "d098e7cc9db9873f8e7817637dabc64c317cfcb75118878a199ff1947039e060"
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/order/web/dto/AddOrderLineRequestContractTest.java",
+      "testSha256": "3c72f68e5c639344f1345158c42b8b4a5b5bcdf1820f70a53334447c1c79e24b",
+      "reason": "1.0.x Lombok-generated bean/value methods and 2.0.x/3.0.x explicit methods plus line-specific Jackson annotations preserve the tested constructor, bean/component accessor, subclass equality/getter/hash and JSON round-trip contract; any source or shared test change reopens this difference"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/order/web/dto/CreateOrderRequest.java",
+      "sourceSha256": [
+        "53d71781c953a38515b2e1cdae3faa46acd1fa848f7d56d82fe62f5d09a59abb",
+        "977c7fa8d75bfcb692069300da18cccef69e884abbbc7adc6feadeed716d06d2",
+        "977c7fa8d75bfcb692069300da18cccef69e884abbbc7adc6feadeed716d06d2"
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/order/web/dto/CreateOrderRequestContractTest.java",
+      "testSha256": "9d3433d815e04ecb2645eb3f1483158459837974a4f8a6efba20cac9aa96f117",
+      "reason": "1.0.x Lombok-generated methods and 2.0.x/3.0.x explicit methods with line-specific Jackson annotations preserve the tested constructor, bean/component accessors, subclass canEqual equality, getter-based hash, stable value hash and text contract; changing source or shared test reopens the difference"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/goods/web/dto/CreateGoodsRequest.java",
+      "sourceSha256": [
+        "ca88613af8cbf337306805eb03488df00d9639da592b475e1a8406a92466512e",
+        "15bddf9b3c919421b5b937c293129a14e8ab3fd9d1a59e4d309e61e43d847867",
+        "15bddf9b3c919421b5b937c293129a14e8ab3fd9d1a59e4d309e61e43d847867"
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/goods/web/dto/CreateGoodsRequestContractTest.java",
+      "testSha256": "df79071328cb858c2334cec59a7994575718f715a7f08756697b88eccbf8b0e8",
+      "reason": "1.0.x Lombok-generated bean/value methods and 2.0.x/3.0.x explicit methods plus line-specific Jackson annotations preserve the tested constructor, bean/component accessor, subclass equality/getter/hash and JSON round-trip contract; any source or shared test change reopens this difference"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/goods/web/dto/UpdateGoodsRequest.java",
+      "sourceSha256": [
+        "eed0503874098c1051db482dd19d0446e252d668361d980a17624f6059dbef3e",
+        "cfe0c0c353b2ae9b181c48f21b841a7f58f19373c9a9d989dcb63987d813f987",
+        "cfe0c0c353b2ae9b181c48f21b841a7f58f19373c9a9d989dcb63987d813f987"
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/goods/web/dto/UpdateGoodsRequestContractTest.java",
+      "testSha256": "8b306f39d3d2fdcddea66b98595a632cfb7da1188291f670f00669e0ffd36b1c",
+      "reason": "1.0.x Lombok-generated methods and 2.0.x/3.0.x explicit methods with line-specific Jackson annotations preserve the tested constructor, bean/component accessors, subclass canEqual equality, getter-based hash, stable value hash and text contract; changing source or shared test reopens the difference"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/order/web/dto/AddOrderLineRequest.java",
+      "sourceSha256": [
+        "dfbb0f5332c0800f44e4a790812b31936769f3a1dc03d2c9fbd35244d9b75756",
+        "5d98a2b525067a5a9c16bed9bda87c762dbde7ed1149b7fc168daabedb2474bf",
+        "5d98a2b525067a5a9c16bed9bda87c762dbde7ed1149b7fc168daabedb2474bf"
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/order/web/dto/AddOrderLineRequestContractTest.java",
+      "testSha256": "575b557c465fabf689e3b8b0db05abb39de4f3715350c7fbdd302e2fff150112",
+      "reason": "1.0.x Lombok-generated bean/value methods and 2.0.x/3.0.x explicit methods plus line-specific Jackson annotations preserve the tested constructor, bean/component accessor, subclass equality/getter/hash and JSON round-trip contract; any source or shared test change reopens this difference"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/order/web/dto/CreateOrderRequest.java",
+      "sourceSha256": [
+        "87d1b3ddb241599210598acf660e249b030b90ceb68aa54a10083af5e999ff26",
+        "90e3dc4e600f9af23244b508ef8934d7de1fd88e4ea166ec0927503b911a773a",
+        "90e3dc4e600f9af23244b508ef8934d7de1fd88e4ea166ec0927503b911a773a"
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/order/web/dto/CreateOrderRequestContractTest.java",
+      "testSha256": "65894defe4c21ac5db7e31d929bf98108d776ac6965da967a46cbec0917bac99",
+      "reason": "1.0.x Lombok-generated methods and 2.0.x/3.0.x explicit methods with line-specific Jackson annotations preserve the tested constructor, bean/component accessors, subclass canEqual equality, getter-based hash, stable value hash and text contract; changing source or shared test reopens the difference"
+    },
+    {
+      "path": "ddd4j-web/ddd4j-web-core/src/main/java/io/ddd4j/web/core/auth/PathWebAccessPolicy.java",
+      "sourceSha256": [
+        "04965554ab7d5651ba86a03b242de337f30d005069c300bf12aba14a8ff38d0d",
+        "d64373fce29a7f6723d16263d1fd6532aa7eb066ce55f74b51b2d17398053d01",
+        "d64373fce29a7f6723d16263d1fd6532aa7eb066ce55f74b51b2d17398053d01"
+      ],
+      "evidence": "ddd4j-web/ddd4j-web-core/src/test/java/io/ddd4j/web/core/auth/PathWebAccessPolicyTest.java",
+      "testSha256": "f390a42dffd973be8db50c59a87bb7635be3874d27c3a200b745f883c965c328",
+      "reason": "JDK 8 使用 Collectors.toList，高两线使用 Stream.toList；共同测试锁定精确匹配、前缀匹配、空白清洗及空参数行为"
+    },
+    {
+      "path": "ddd4j-web/ddd4j-web-core/src/main/java/io/ddd4j/web/core/context/WebRequestLifecycle.java",
+      "sourceSha256": [
+        "fa7347b414d853e8c58b18d16ce6ba734fc2779185aba16faebf3ad0deeda195",
+        "58338c232ba306f3b755cd2690a2141620a97abd1b0fec78239e330c8d2026f7",
+        "58338c232ba306f3b755cd2690a2141620a97abd1b0fec78239e330c8d2026f7"
+      ],
+      "evidence": "ddd4j-web/ddd4j-web-core/src/test/java/io/ddd4j/web/core/WebCoreContractTest.java",
+      "testSha256": "7cbc760d775f8c88f89bea3f69f601f0c00fcf20ee5f6041f800a83d8d4d2367",
+      "reason": "JDK 8 使用 if/else，高两线使用 switch 表达式；共同测试锁定禁用、可选及必需认证模式"
+    },
+    {
+      "path": "ddd4j-web/ddd4j-web-core/src/main/java/io/ddd4j/web/core/error/DefaultWebExceptionTranslator.java",
+      "sourceSha256": [
+        "b99ffbf36ddca8b27ee729b38898a2f8a91c2f7df8d7068a4c7d4c3f7ae9d602",
+        "1189bdecc602b52fdfa810c1a8e492ed4a1880ae611cb4727804ac45913f7bb9",
+        "1189bdecc602b52fdfa810c1a8e492ed4a1880ae611cb4727804ac45913f7bb9"
+      ],
+      "evidence": "ddd4j-web/ddd4j-web-core/src/test/java/io/ddd4j/web/core/error/DefaultWebExceptionTranslatorTest.java",
+      "testSha256": "67e7b1a54e9c284c9eaea637585bf05f27b10db2b1eb31a86205ae2d6e01c8dd",
+      "reason": "JDK 8 使用 instanceof 后显式强转，高两线使用模式匹配；共同测试锁定状态码、错误码及异常翻译"
+    },
+    {
+      "path": "ddd4j-web/ddd4j-web-core/src/main/java/io/ddd4j/web/core/idempotency/CacheIdempotencyGuard.java",
+      "sourceSha256": [
+        "2266d860deb229b18119f74445cdd13b7aa17927ec37bb2ab5bc01945a2adbcf",
+        "940042bde90671d80c07e7cfa6a415507395c09ca38409ec00cfcc37ab562f45",
+        "940042bde90671d80c07e7cfa6a415507395c09ca38409ec00cfcc37ab562f45"
+      ],
+      "evidence": "ddd4j-web/ddd4j-web-core/src/test/java/io/ddd4j/web/core/idempotency/CacheIdempotencyGuardTest.java",
+      "testSha256": "d4b8153f32f7bbe4269e0b779b1294889ba2d36dfeb3955905c8272f6b351271",
+      "reason": "JDK 8 使用 Duration.getSeconds，高两线使用 Duration.toSeconds；共同测试锁定租约申请、续期及完成后的缓存过期行为"
+    },
+    {
+      "path": "ddd4j-web/ddd4j-web-core/src/main/java/io/ddd4j/web/core/idempotency/WebIdempotencyLifecycle.java",
+      "sourceSha256": [
+        "9e450d9a0146dc40e50bb1cd77e241cb4fd21847dc562dfbe077de52fd8e0c14",
+        "d47e851a346333cf749b2844f3df3253b24a3b65afe59c0088e8a983067a6f30",
+        "d47e851a346333cf749b2844f3df3253b24a3b65afe59c0088e8a983067a6f30"
+      ],
+      "evidence": "ddd4j-web/ddd4j-web-core/src/test/java/io/ddd4j/web/core/idempotency/WebIdempotencyLifecycleTest.java",
+      "testSha256": "8f49b9a94c2274583ad32923d314b31d320e0c78017f942279866ba761e89558",
+      "reason": "JDK 8 使用 Optional.isPresent/get，高两线使用 isEmpty/orElseThrow；共同测试锁定租约生命周期与重复请求冲突"
+    },
+    {
+      "path": "ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/TypedEventDispatcher.java",
+      "sourceSha256": [
+        "307e05f5e841bdba571ce1ed9c5758efe46cf0c97147b2b98729a42ae8165f79",
+        "67f07e574581848e20b04f18f9b19aa880164cdf596e40a1edb08b98867ddc4f",
+        "67f07e574581848e20b04f18f9b19aa880164cdf596e40a1edb08b98867ddc4f"
+      ],
+      "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/TypedEventDispatcherParityTest.java",
+      "testSha256": "5b9a8ca2cd90b96e5b97d1c8b7344de7656f6337b57fc8ea47def755f19e6e63",
+      "reason": "JDK 8 使用 Collections.unmodifiableMap 包装索引，高两线使用 Map.copyOf；三线共同测试锁定空输入、后项覆盖、批量计数、无效处理器和类型不匹配，公开行为一致"
+    },
+    {
+      "path": "ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunner.java",
+      "sourceSha256": [
+        "5968bbfd4e85ae857c96c7b38772694441ffb851cc3e37053ba2f8988fdd5771",
+        "aa5afd422e3b97fc8ad8798e7a43ad845350cbabfca9094a80935fc2789b5f10",
+        "aa5afd422e3b97fc8ad8798e7a43ad845350cbabfca9094a80935fc2789b5f10"
+      ],
+      "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunnerNullMetricsParityTest.java",
+      "testSha256": "4b897bc758ee31b86abef7ffc2296f9a1b95a36ba835417fa4ad424649fe01a8",
+      "reason": "JDK 8 以条件表达式回退空指标，高两线使用 Objects.requireNonNullElse；共同测试验证空指标时投影仍处理事件并推进位置"
+    },
+    {
+      "path": "ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/EntityIdPath.java",
+      "sourceSha256": [
+        "533c482543c1971fa8192362f3a139b7b0ec3206b1c82b2588def8752ccf3d70",
+        "e2ed2e5892b2fce32ed4c08026e2f736facfb025335cafbe100a65ea43f37a13",
+        "e2ed2e5892b2fce32ed4c08026e2f736facfb025335cafbe100a65ea43f37a13"
+      ],
+      "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/EntityIdPathTest.java",
+      "testSha256": "ed8144e99eaf6a0d12e185cff89967f83ce48de4b592aba0744fb07bc664c264",
+      "reason": "JDK 8 用 Collections.unmodifiableList 防御性复制和显式 instanceof 强转，高两线用 List.copyOf 与模式匹配；三线共同测试覆盖路径解析、转义、快照、迭代与相等行为"
+    },
+    {
+      "path": "ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/DomainEvent.java",
+      "sourceSha256": [
+        "d03768634600909b301afce96765748923c8f5bb35364dc76ab0f528fe4ebb21",
+        "41aa2c4b723a05fe67cebdec0e363dc7c3fa4e1f660e15d00d587c42985aea47",
+        "41aa2c4b723a05fe67cebdec0e363dc7c3fa4e1f660e15d00d587c42985aea47"
+      ],
+      "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/DomainEventContractTest.java",
+      "testSha256": "ce6434630c0a0652323bb4989b8ac1d6f36a26bad9b8ed224ed19a7437a1bad2",
+      "reason": "JDK 8 使用显式 ClassValue 泛型且不支持 @Serial；高两线使用菱形语法和 @Serial。三线共同测试锁定事件类型缓存、事件源、因果链与策略过滤；其余源码正文一致"
+    },
+    {
+      "path": "ddd4j-auth/ddd4j-auth-shiro/src/main/java/io/ddd4j/auth/shiro/subject/ShiroSubject.java",
+      "sourceSha256": [
+        "4a038a410242b3710ebb490e983c2dd545bc820e33ecb96b448e0b16103b10ea",
+        "8774d3d8b9cf1c7e5e719dca3938a49bc2efc150d0af63bec7efec6c06c64f53",
+        "8774d3d8b9cf1c7e5e719dca3938a49bc2efc150d0af63bec7efec6c06c64f53"
+      ],
+      "evidence": "ddd4j-auth/ddd4j-auth-shiro/src/test/java/io/ddd4j/auth/shiro/subject/ShiroSubjectTest.java",
+      "testSha256": "10420ac325783a3344f7218363508fc0259bea375bceab310e704412d777ba37",
+      "reason": "JDK 8 在 kickout 中对 DefaultSecurityManager 使用显式 instanceof 与强转；高两线使用模式匹配，登录 ID 匹配时登出及其他情况保持原行为，三线共同 Subject 测试通过"
+    },
+    {
+      "path": "ddd4j-auth/ddd4j-auth-security/src/main/java/io/ddd4j/auth/security/subject/SecuritySubject.java",
+      "sourceSha256": [
+        "e661aa0a4c9f0d838ba0f1848dd5ccac5490965e8e7a274be7008d820762a928",
+        "321fc3d1175cc1b936aa3ba6dd59cda60e0c095d60b883ccae6a16f88b094021",
+        "321fc3d1175cc1b936aa3ba6dd59cda60e0c095d60b883ccae6a16f88b094021"
+      ],
+      "evidence": "ddd4j-auth/ddd4j-auth-security/src/test/java/io/ddd4j/auth/security/subject/SecuritySubjectTest.java",
+      "testSha256": "b8f814393a985182f83e9791a4d5deafd8f56ae73ed0f81b2d355828dfb61d5b",
+      "reason": "JDK 8 对 AuthUserDetails 使用显式 instanceof 与强转，以 Arrays.asList() 构造空权限列表；高两线使用模式匹配与 List.of()，三线共同 Subject 测试通过"
+    },
+    {
+      "path": "ddd4j-auth/ddd4j-auth-satoken/src/main/java/io/ddd4j/auth/satoken/subject/SaTokenSubjectDataBridge.java",
+      "sourceSha256": [
+        "7fb2c9e790549e591ab7a4bfb08305a65e26defd16e345f9b13eb6e283508b36",
+        "aa3548355ad39d358df9116a34d0bf115e99ff9810d615d38f426f16d2203ddd",
+        "aa3548355ad39d358df9116a34d0bf115e99ff9810d615d38f426f16d2203ddd"
+      ],
+      "evidence": "ddd4j-auth/ddd4j-auth-satoken/src/test/java/io/ddd4j/auth/satoken/subject/SaTokenSubjectDataBridgeTest.java",
+      "testSha256": "9b28398db309f50b0f28563ce1dde293b0b504e3eee3ddabab8b46d7b9684a6e",
+      "reason": "JDK 8 在未找到账号时返回 Collections.emptyList，高两线使用 List.of；三线共同测试验证权限和角色委托及未知账号的空结果"
+    },
+    {
+      "path": "ddd4j-kit/src/main/java/io/ddd4j/kit/lang/LambdaKit.java",
+      "sourceSha256": [
+        "01be563b0f8466e9a273338a3c5a8b9487d5ec72622f28cf8851a1c77c286711",
+        "16f5ffe717ab818402dd1bbbd4a38e3cea3a87aedf60216ca5bff1d049dadf64",
+        "16f5ffe717ab818402dd1bbbd4a38e3cea3a87aedf60216ca5bff1d049dadf64"
+      ],
+      "evidence": "ddd4j-kit/src/test/java/io/ddd4j/kit/lang/LambdaKitContractTest.java",
+      "testSha256": "52a30542a51411b381137b04359f610e94281ff02ad7b5d0134a237cfd1be2a5",
+      "reason": "JDK 8 显式 instanceof/转换与 JDK 17/21 模式匹配提取 SerializedLambda；共同测试验证属性名、声明类型、布尔 getter 和无效输入"
+    }
+  ],
+  "historicalDocumentSections": [
+    {
+      "path": "docs/reference/fuin-api-patterns/01-aggregate-root.md",
+      "marker": "## 落地计划\n",
+      "sectionSha256": {
+        "1.0.x": "4795412de4121eab8a2c1fbd6441c82d09705fe5e482dfd8793a03fb3cef659e",
+        "2.0.x": "3e4d342fa9e0ab82e478b1e82415a8c64394842d1caa372f4465602d41e51a71",
+        "3.0.x": "3e4d342fa9e0ab82e478b1e82415a8c64394842d1caa372f4465602d41e51a71"
+      },
+      "evidence": "docs/superpowers/historical-evidence-index.md",
+      "reason": "三线产品正文逐字一致；落地计划为各发布线历史任务记录，逐线 SHA-256 锁定且不代表本轮收敛验收"
+    },
+    {
+      "path": "docs/reference/fuin-api-patterns/02-entity-id-path.md",
+      "marker": "## 落地计划\n",
+      "sectionSha256": {
+        "1.0.x": "5c9c6565578fc9a8db544a63ebb1306f9525fbbef836a08d5b097bd66c941bba",
+        "2.0.x": "6b8669b58e3a94abc5a90aeae1e867dc6ccec5b9b300e6e419a28d0fd98e57a0",
+        "3.0.x": "6b8669b58e3a94abc5a90aeae1e867dc6ccec5b9b300e6e419a28d0fd98e57a0"
+      },
+      "evidence": "docs/superpowers/historical-evidence-index.md",
+      "reason": "三线产品正文逐字一致；落地计划为各发布线历史任务记录，逐线 SHA-256 锁定且不代表本轮收敛验收"
+    },
+    {
+      "path": "docs/reference/fuin-api-patterns/03-domain-event.md",
+      "marker": "## 落地计划\n",
+      "sectionSha256": {
+        "1.0.x": "a9bbb812395039ccfc53552fb1d2567ff9f0af5efb7a9514c85b02fbbc231265",
+        "2.0.x": "01efff68dacc9b6d46dfa44f7c3ec117fd42ad7e42f123f9a63da95cf47db399",
+        "3.0.x": "01efff68dacc9b6d46dfa44f7c3ec117fd42ad7e42f123f9a63da95cf47db399"
+      },
+      "evidence": "docs/superpowers/historical-evidence-index.md",
+      "reason": "三线产品正文逐字一致；落地计划为各发布线历史任务记录，逐线 SHA-256 锁定且不代表本轮收敛验收"
+    },
+    {
+      "path": "docs/reference/fuin-api-patterns/04-event-sourcing-repository.md",
+      "marker": "## 落地计划\n",
+      "sectionSha256": {
+        "1.0.x": "16c9855433a0a0224053a251405bde822633205e2ac4d00a1e1755d1278bcfe6",
+        "2.0.x": "8aa18a9794310b9fa469212a006adc0353af42f7c16ac0cf026c53fcd5726f71",
+        "3.0.x": "8aa18a9794310b9fa469212a006adc0353af42f7c16ac0cf026c53fcd5726f71"
+      },
+      "evidence": "docs/superpowers/historical-evidence-index.md",
+      "reason": "三线产品正文逐字一致；落地计划为各发布线历史任务记录，逐线 SHA-256 锁定且不代表本轮收敛验收"
+    },
+    {
+      "path": "docs/reference/fuin-api-patterns/05-event-store.md",
+      "marker": "## 落地计划\n",
+      "sectionSha256": {
+        "1.0.x": "b0b6281b0ede461c9f1938a890e11e4c22aeb09cbaa80839b7381009c05cc84f",
+        "2.0.x": "15724914698fa85143f7d1aa463b053e2e2a0b7404dbff73f832e775616335f8",
+        "3.0.x": "15724914698fa85143f7d1aa463b053e2e2a0b7404dbff73f832e775616335f8"
+      },
+      "evidence": "docs/superpowers/historical-evidence-index.md",
+      "reason": "三线产品正文逐字一致；落地计划为各发布线历史任务记录，逐线 SHA-256 锁定且不代表本轮收敛验收"
+    },
+    {
+      "path": "docs/reference/fuin-api-patterns/06-cqrs-command.md",
+      "marker": "## 落地计划\n",
+      "sectionSha256": {
+        "1.0.x": "ae94fb29e3633261a28842aab524681de5a3e085a77ca8e3695847f0fe665a58",
+        "2.0.x": "3f1f256e82e1f40f9a784298ef446e81a713c6ea64650d2d16f5d30127ffd9c0",
+        "3.0.x": "3f1f256e82e1f40f9a784298ef446e81a713c6ea64650d2d16f5d30127ffd9c0"
+      },
+      "evidence": "docs/superpowers/historical-evidence-index.md",
+      "reason": "三线产品正文逐字一致；落地计划为各发布线历史任务记录，逐线 SHA-256 锁定且不代表本轮收敛验收"
+    },
+    {
+      "path": "docs/reference/fuin-api-patterns/07-cqrs-projection.md",
+      "marker": "## 落地计划\n",
+      "sectionSha256": {
+        "1.0.x": "ba838667e2f8aebe83a54233a9ec7e7646276b4f06c78651d2930050ddd2a630",
+        "2.0.x": "f10ea0b4328a07455cd09f09578f9c6f3b02e9a9ea8971f0c1a8e0bf462e7d76",
+        "3.0.x": "f10ea0b4328a07455cd09f09578f9c6f3b02e9a9ea8971f0c1a8e0bf462e7d76"
+      },
+      "evidence": "docs/superpowers/historical-evidence-index.md",
+      "reason": "三线产品正文逐字一致；落地计划为各发布线历史任务记录，逐线 SHA-256 锁定且不代表本轮收敛验收"
+    },
+    {
+      "path": "docs/reference/fuin-api-patterns/08-architecture-test.md",
+      "marker": "## 落地计划\n",
+      "sectionSha256": {
+        "1.0.x": "973ba482ae8238a9212669fc7a6b2e434bade327c7d0103292b0b04486b52094",
+        "2.0.x": "694c175ce136bd6c818c7c3652d21ca868677e9855f11ad58eda6153541442f0",
+        "3.0.x": "694c175ce136bd6c818c7c3652d21ca868677e9855f11ad58eda6153541442f0"
+      },
+      "evidence": "docs/superpowers/historical-evidence-index.md",
+      "reason": "三线产品正文逐字一致；落地计划为各发布线历史任务记录，逐线 SHA-256 锁定且不代表本轮收敛验收"
+    }
+  ]
+}

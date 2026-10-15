@@ -14,6 +14,8 @@
  */
 package io.ddd4j.sample.javalin.cqrs.order.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.core.ddd.model.ValueObject;
 import io.ddd4j.kit.lang.StrKit;
 import lombok.Value;
@@ -38,7 +40,8 @@ public class Money implements ValueObject {
     BigDecimal amount;
     String currency;
 
-    public Money(BigDecimal amount, String currency) {
+    @JsonCreator
+    public Money(@JsonProperty("amount") BigDecimal amount, @JsonProperty("currency") String currency) {
         Objects.requireNonNull(amount, "amount must not be null");
         if (amount.signum() < 0) {
             throw new IllegalArgumentException("amount must not be negative");
@@ -86,6 +89,11 @@ public class Money implements ValueObject {
 
     public String currency() {
         return currency;
+    }
+
+    @Override
+    public String toString() {
+        return "Money[amount=" + amount + ", currency=" + currency + "]";
     }
 
     /**

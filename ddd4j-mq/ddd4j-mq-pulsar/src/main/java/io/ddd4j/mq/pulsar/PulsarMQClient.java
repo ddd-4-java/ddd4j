@@ -16,6 +16,7 @@ package io.ddd4j.mq.pulsar;
 
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
+import io.ddd4j.mq.delivery.MQDeliveryHeaders;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.lifecycle.MQClientLifecycle;
 import io.ddd4j.mq.lifecycle.MQStartupStatus;
@@ -27,6 +28,7 @@ import org.apache.pulsar.client.api.*;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -179,7 +181,8 @@ public class PulsarMQClient implements MQClient {
                 try {
                     String topic = event.getTopic();
                     String tag = event.getTag();
-                    String physical = properties.physicalTopic(topic, tag);
+                    // 消费者订阅逻辑 topic；tag 通过消息属性过滤。
+                    String physical = properties.physicalTopic(topic, null);
                     Producer<byte[]> p = producer(physical);
                     TypedMessageBuilder<byte[]> builder = p.newMessage()
                             .value(serialization().serialize(event).toString().getBytes(StandardCharsets.UTF_8))
@@ -188,8 +191,8 @@ public class PulsarMQClient implements MQClient {
                     if (Objects.nonNull(routingKey)) {
                         builder.key(routingKey); // Pulsar partition routing：同 key 进同 partition
                     }
-                    if (Objects.nonNull(event.getMsgId())) {
-                        builder.property(MessageHeaders.HEADER_MESSAGE_ID, event.getMsgId());
+                    for (Map.Entry<String, String> header : event.headerMap().entrySet()) {
+                        builder.property(header.getKey(), header.getValue());
                     }
                     if (Objects.nonNull(event.getTenantId())) {
                         builder.property(MessageHeaders.HEADER_TENANT_ID, event.getTenantId());
@@ -260,7 +263,15 @@ public class PulsarMQClient implements MQClient {
                         if (Objects.nonNull(messageId)) {
                             event.setMsgId(messageId);
                         }
-                        PulsarAcknowledgment ack = new PulsarAcknowledgment(c, msg, messageId, null);
+                        String correlationId = msg.getProperty(MQDeliveryHeaders.CORRELATION_ID);
+                        if (Objects.nonNull(correlationId)) {
+                            event.setCorrelationId(correlationId);
+                        }
+                        String causationId = msg.getProperty(MQDeliveryHeaders.CAUSATION_ID);
+                        if (Objects.nonNull(causationId)) {
+                            event.setCausationId(causationId);
+                        }
+                        PulsarAcknowledgment ack = new PulsarAcknowledgment(c, msg, messageId, event.getCorrelationId());
                         try {
                             consume(listener, event, ack);
                             if (!ack.isAcknowledged()) {

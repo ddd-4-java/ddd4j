@@ -14,6 +14,8 @@
  */
 package io.ddd4j.sample.order.application;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Value;
 
 /**
@@ -25,9 +27,23 @@ import lombok.Value;
  */
 @Value
 public class OutboxDispatchResult {
-    int attempted;
+int attempted;
     int published;
     int failed;
+
+    /** Creates a dispatch summary.
+     * @param attempted attempted count
+     * @param published published count
+     * @param failed failed count
+     */
+    @JsonCreator
+    public OutboxDispatchResult(@JsonProperty("attempted") int attempted,
+                                @JsonProperty("published") int published,
+                                @JsonProperty("failed") int failed) {
+        this.attempted = attempted;
+        this.published = published;
+        this.failed = failed;
+    }
 
     public int attempted() {
         return attempted;

@@ -22,6 +22,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.*;
 
 class KafkaMQClientDurabilityContractTest {
@@ -65,6 +66,23 @@ class KafkaMQClientDurabilityContractTest {
 
         verify(consumer).seek(new TopicPartition("orders", 2), 17L);
         verify(consumer, never()).commitSync();
+    }
+
+    @Test
+    void shouldSeekRecordWhenOffsetCommitFails() throws Exception {
+        KafkaMQClient client = new KafkaMQClient(mock(Producer.class), null);
+        MQProperties properties = properties();
+        client.init(Collections.<MQListener>emptyList(), properties, serialization(), null);
+        Consumer<String, String> consumer = mock(Consumer.class);
+        doThrow(new IllegalStateException("commit unavailable")).when(consumer).commitSync(anyMap());
+        ConsumerRecord<String, String> record = new ConsumerRecord<>("orders", 1, 9L, "key", "{}");
+        Method method = SuccessfulHandler.class.getMethod("handle", MQEvent.class);
+        MQListener listener = MQListener.of(new SuccessfulHandler(), method,
+                method.getAnnotation(MQEventListener.class));
+
+        assertThrows(KafkaMQClient.BatchRetryException.class,
+                () -> client.handleRecord(listener, properties, consumer, record));
+        verify(consumer).seek(new TopicPartition("orders", 1), 9L);
     }
 
     @Test
@@ -132,6 +150,12 @@ class KafkaMQClientDurabilityContractTest {
                 return type.cast(event);
             }
         };
+    }
+
+    public static final class SuccessfulHandler {
+        @MQEventListener(topic = "orders", tags = "*")
+        public void handle(MQEvent event) {
+        }
     }
 
     public static final class FailingHandler {

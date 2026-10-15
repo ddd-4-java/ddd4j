@@ -47,12 +47,17 @@
         <!--
           Apache ActiveMQ Artemis 原生客户端。
           Apache ActiveMQ 6.x 起已迁移到 Artemis 命名空间。
-          版本由 artemis-bom (${artemis.version}=2.44.0) 统一管理。
+          JDK 8 线使用 ddd4j-dependencies 中的 ${artemis.version}=2.19.0。
           注：MQBrokerType.ACTIVEMQ 同时兼容 Classic v5 与 Artemis v6+/v2.x。
         -->
         <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>artemis-jms-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.json</artifactId>
+            <version>1.1.4</version>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>

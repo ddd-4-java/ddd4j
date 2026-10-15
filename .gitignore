@@ -166,6 +166,8 @@ CLAUDE.md
 ### Development tools ###
 .fastRequest
 *.json
+!config/parity/three-line-policy.json
+!verification/three-line-parity/scenario-matrix.json
 !cloud-agents-server/agents/maternal-recovery.json
 qodana.yaml
 

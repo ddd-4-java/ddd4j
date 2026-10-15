@@ -15,6 +15,9 @@
 
 package io.ddd4j.web.core.context;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Locale;
 import java.util.Objects;
 
@@ -48,9 +51,17 @@ public final class WebRequestData {
  * @param path 路径
      */
 
-    public WebRequestData(String requestId, String traceId, String tenantId, String authorization,
-                          Locale locale, String forwardedFor, String realIp, String remoteAddress,
-                          String method, String path) {
+    @JsonCreator
+    public WebRequestData(@JsonProperty("requestId") String requestId,
+                          @JsonProperty("traceId") String traceId,
+                          @JsonProperty("tenantId") String tenantId,
+                          @JsonProperty("authorization") String authorization,
+                          @JsonProperty("locale") Locale locale,
+                          @JsonProperty("forwardedFor") String forwardedFor,
+                          @JsonProperty("realIp") String realIp,
+                          @JsonProperty("remoteAddress") String remoteAddress,
+                          @JsonProperty("method") String method,
+                          @JsonProperty("path") String path) {
         this.requestId = requestId;
         this.traceId = traceId;
         this.tenantId = tenantId;
