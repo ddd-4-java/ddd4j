@@ -24,6 +24,10 @@ class ThreeLineProductDocsTest(unittest.TestCase):
                          "8、ddd4j-1.0.x-Architecture.zh_CN.md", "auth-satoken.md",
                          "webmvc-flow.md", "webflux-flow.md", "cqrs-es-base-capabilities.md"):
                 (root / "docs" / name).write_text("共同正文\n", encoding="utf-8")
+            for name in ("architecture/architecture.md", "superpowers/historical-evidence-index.md"):
+                document = root / "docs" / name
+                document.parent.mkdir(parents=True, exist_ok=True)
+                document.write_text("共同正文\n", encoding="utf-8")
             for name in ("README.md", "README.en.md"):
                 (root / name).write_text(
                     "[方案](docs/5、ddd4j-技术方案与路线.md) "
@@ -55,6 +59,19 @@ class ThreeLineProductDocsTest(unittest.TestCase):
         result, report = self.check()
         self.assertNotEqual(0, result.returncode)
         self.assertIn("docs/webmvc-flow.md", report["differences"])
+
+    def test_architecture_document_drift_fails(self):
+        (self.roots[1] / "docs/architecture/architecture.md").write_text(
+            "过时的单线架构\n", encoding="utf-8")
+        result, report = self.check()
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("docs/architecture/architecture.md", report["differences"])
+
+    def test_missing_historical_index_fails(self):
+        (self.roots[2] / "docs/superpowers/historical-evidence-index.md").unlink()
+        result, report = self.check()
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("docs/superpowers/historical-evidence-index.md", report["differences"])
 
     def test_missing_document_and_broken_readme_link_fail(self):
         (self.roots[2] / "docs/7、ddd4j-领域模型设计.md").unlink()

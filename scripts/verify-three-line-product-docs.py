@@ -19,6 +19,8 @@ DOCUMENTS = (
     "webmvc-flow.md",
     "webflux-flow.md",
     "cqrs-es-base-capabilities.md",
+    "architecture/architecture.md",
+    "superpowers/historical-evidence-index.md",
 )
 ROOT_REDIRECTS = DOCUMENTS[:4]
 LINK = re.compile(r'(?:\]\(([^)]+)\)|href=["\']([^"\']+)["\'])')
