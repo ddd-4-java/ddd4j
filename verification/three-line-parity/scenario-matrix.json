@@ -3654,6 +3654,37 @@
       }
     },
     {
+      "id": "WEB-IDEMPOTENCY-FRACTIONAL-TTL",
+      "description": "正数毫秒级幂等 TTL 写入秒级缓存前向上取整；租约完成沿用相同过期秒数。本地 CAS 缓存接口测试，不代替 Redis 原生集成",
+      "caseNames": {
+        "1.0.x": ["positiveFractionalSecondTtlNeverExpiresAtZeroSeconds"],
+        "2.0.x": ["positiveFractionalSecondTtlNeverExpiresAtZeroSeconds"],
+        "3.0.x": ["positiveFractionalSecondTtlNeverExpiresAtZeroSeconds"]
+      },
+      "lastEvidence": "/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-16-web-idempotency-fractional-ttl/report.json",
+      "lastEvidenceSha256": "ee361c0cc9eeb9155a1911bf86e98b1ee5c58b841ad3b288a3ad81414de5003a",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-core/src/test/java/io/ddd4j/web/core/idempotency/CacheIdempotencyGuardTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-core/src/test/java/io/ddd4j/web/core/idempotency/CacheIdempotencyGuardTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-core/src/test/java/io/ddd4j/web/core/idempotency/CacheIdempotencyGuardTest.java"
+          ]
+        }
+      }
+    },
+    {
       "id": "WEB-JAVALIN-CONFIG-CONTRACT",
       "description": "三线各自 Javalin 版本入口注册相同请求上下文、认证、异常、幂等与 readiness 本地 HTTP 契约；不代表生产部署",
       "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-javalin-platform-config/report.json",
