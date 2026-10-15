@@ -57,6 +57,48 @@ class UnitOfWorkMustTest {
     }
 
     @Test
+    void rollbackCallbackErrorMustNotReplaceOriginalWorkFailure() {
+        UnitOfWork uow = UnitOfWork.begin();
+        IllegalStateException original = new IllegalStateException("work failed");
+        AtomicInteger cleanupCalls = new AtomicInteger();
+        uow.registerRollback(() -> {
+            throw new AssertionError("rollback failed");
+        });
+        uow.registerRollback(cleanupCalls::incrementAndGet);
+
+        assertThatThrownBy(() -> uow.execute(() -> {
+            throw original;
+        })).isSameAs(original);
+        assertThat(uow.state()).isEqualTo(UnitOfWork.State.ROLLED_BACK);
+        assertThat(cleanupCalls.get()).isEqualTo(1);
+    }
+
+    @Test
+    void nestedBoundariesKeepTheirOwnCallbacksAndTerminalStates() {
+        List<String> trace = new ArrayList<>();
+        UnitOfWork outer = UnitOfWork.begin();
+        outer.registerCommit(() -> trace.add("outer-commit"));
+        outer.registerRollback(() -> trace.add("outer-rollback"));
+        UnitOfWork inner = UnitOfWork.begin();
+        inner.registerCommit(() -> trace.add("inner-commit"));
+        inner.registerRollback(() -> trace.add("inner-rollback"));
+        IllegalStateException innerFailure = new IllegalStateException("inner failed");
+
+        String result = outer.execute(() -> {
+            assertThatThrownBy(() -> inner.execute(() -> {
+                throw innerFailure;
+            })).isSameAs(innerFailure);
+            assertThat(outer.state()).isEqualTo(UnitOfWork.State.ACTIVE);
+            return "outer-result";
+        });
+
+        assertThat(result).isEqualTo("outer-result");
+        assertThat(inner.state()).isEqualTo(UnitOfWork.State.ROLLED_BACK);
+        assertThat(outer.state()).isEqualTo(UnitOfWork.State.COMMITTED);
+        assertThat(trace).containsExactly("inner-rollback", "outer-commit");
+    }
+
+    @Test
     void executeSuccessPathMustCommitAndReturnValue() {
         UnitOfWork uow = UnitOfWork.begin();
         List<String> trace = new ArrayList<>();
