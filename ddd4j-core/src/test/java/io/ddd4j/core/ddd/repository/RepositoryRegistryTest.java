@@ -36,9 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
- * {@link RepositoryRegistry} tests.
- *
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * 仓储注册表的聚合、查询、上下文优先级及清理契约测试。
  */
 class RepositoryRegistryTest {
 
