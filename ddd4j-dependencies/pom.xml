@@ -8488,13 +8488,6 @@
                 <artifactId>schemacrawler-timesten</artifactId>
                 <version>${schemacrawler-timesten.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/us.fatehi/schemacrawler-utility -->
-            <!-- SchemaCrawler Utility：SchemaCrawler 的公共工具模块。 -->
-            <dependency>
-                <groupId>us.fatehi</groupId>
-                <artifactId>schemacrawler-utility</artifactId>
-                <version>${schemacrawler.version}</version>
-            </dependency>
             <!-- https://mvnrepository.com/artifact/org.scribe/scribe -->
             <!-- Scribe：简单 OAuth 1.0a/2.0 Java 库（已被 ScribeJava 取代）。 -->
             <dependency>
