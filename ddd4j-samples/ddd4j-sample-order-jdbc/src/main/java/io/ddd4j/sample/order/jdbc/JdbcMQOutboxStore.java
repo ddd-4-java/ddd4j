@@ -14,6 +14,7 @@
  */
 package io.ddd4j.sample.order.jdbc;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.delivery.*;
 
@@ -23,8 +24,9 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
@@ -37,6 +39,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public final class JdbcMQOutboxStore implements MQOutboxStore {
 
     private final JdbcOrderTransactionPort transaction;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public JdbcMQOutboxStore(JdbcOrderTransactionPort transaction) {
         this.transaction = Objects.requireNonNull(transaction, "transaction must not be null");
@@ -46,8 +49,8 @@ public final class JdbcMQOutboxStore implements MQOutboxStore {
     public void append(MQOutboxRecord record) {
         Objects.requireNonNull(record, "record must not be null");
         String sql = "INSERT INTO sample_order_outbox "
-                + "(id, aggregate_id, event_type, payload, occurred_at, status, available_at, attempts, last_error) "
-                + "VALUES (?, ?, ?, ?::jsonb, ?, ?, ?, ?, ?)";
+                + "(id, aggregate_id, event_type, payload, occurred_at, status, available_at, attempts, last_error, headers) "
+                + "VALUES (?, ?, ?, ?::jsonb, ?, ?, ?, ?, ?, ?::jsonb)";
         try (PreparedStatement statement = transaction.connection().prepareStatement(sql)) {
             statement.setString(1, record.messageId());
             statement.setString(2, record.messageId());
@@ -58,8 +61,9 @@ public final class JdbcMQOutboxStore implements MQOutboxStore {
             statement.setTimestamp(7, Timestamp.from(record.availableAt()));
             statement.setInt(8, record.attempts());
             statement.setString(9, record.lastError());
+            statement.setString(10, writeHeaders(record.headers()));
             statement.executeUpdate();
-        } catch (SQLException exception) {
+        } catch (Exception exception) {
             throw new IllegalStateException("Unable to append reliable outbox record", exception);
         }
     }
@@ -122,7 +126,7 @@ public final class JdbcMQOutboxStore implements MQOutboxStore {
 
     private List<MQOutboxRecord> claimInCurrentTransaction(String leaseOwner, Instant now, int limit,
                                                            MQDeliveryPolicy policy) {
-        String sql = "SELECT id, event_type, payload, available_at, attempts, last_error, published_at "
+        String sql = "SELECT id, event_type, payload, headers, available_at, attempts, last_error, published_at "
                 + "FROM sample_order_outbox WHERE (status = 'PENDING' AND available_at <= ?) "
                 + "OR (status = 'LEASED' AND lease_until <= ?) ORDER BY available_at FOR UPDATE SKIP LOCKED LIMIT ?";
         List<MQOutboxRecord> records = new ArrayList<>();
@@ -137,7 +141,7 @@ public final class JdbcMQOutboxStore implements MQOutboxStore {
                     int attempts = rows.getInt("attempts") + 1;
                     lease(messageId, leaseOwner, leaseUntil, attempts);
                     records.add(new MQOutboxRecord(messageId, rows.getString("event_type"), rows.getString("payload"),
-                            Collections.singletonMap(MQDeliveryHeaders.MESSAGE_ID, messageId), MQOutboxStatus.LEASED,
+                            readHeaders(rows.getString("headers")), MQOutboxStatus.LEASED,
                             rows.getTimestamp("available_at").toInstant(), leaseOwner, leaseUntil, attempts,
                             rows.getString("last_error"), toInstant(rows, "published_at")));
                 }
@@ -188,6 +192,30 @@ public final class JdbcMQOutboxStore implements MQOutboxStore {
             }
         } catch (SQLException exception) {
             throw new IllegalStateException("Unable to reschedule reliable outbox message", exception);
+        }
+    }
+
+    private String writeHeaders(Map<String, String> headers) {
+        try {
+            return objectMapper.writeValueAsString(headers);
+        } catch (Exception exception) {
+            throw new IllegalStateException("Unable to serialize reliable outbox headers", exception);
+        }
+    }
+
+    private Map<String, String> readHeaders(String json) {
+        try {
+            Map<?, ?> decoded = objectMapper.readValue(json, Map.class);
+            Map<String, String> headers = new LinkedHashMap<>();
+            for (Map.Entry<?, ?> entry : decoded.entrySet()) {
+                if (!(entry.getKey() instanceof String) || !(entry.getValue() instanceof String)) {
+                    throw new IllegalStateException("Reliable outbox headers must contain strings");
+                }
+                headers.put((String) entry.getKey(), (String) entry.getValue());
+            }
+            return headers;
+        } catch (Exception exception) {
+            throw new IllegalStateException("Unable to deserialize reliable outbox headers", exception);
         }
     }
 
