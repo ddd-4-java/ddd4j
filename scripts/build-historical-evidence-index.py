@@ -6,6 +6,7 @@ import hashlib
 import json
 import subprocess
 import sys
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 
@@ -21,6 +22,10 @@ def git(root, *args):
 def entries_for_line(root, line):
     if git(root, "rev-parse", "--is-shallow-repository").strip() != b"false":
         raise ValueError(f"{line}: full Git history is required for source dates")
+    pom = ET.fromstring((root / "pom.xml").read_bytes())
+    revision = pom.findtext("{*}properties/{*}revision")
+    if not revision or not revision.startswith(line + "."):
+        raise ValueError(f"{line}: root Maven revision does not match the requested line")
     status = git(root, "status", "--porcelain", "--untracked-files=no", "--", *SOURCE_DIRS)
     if status:
         raise ValueError(f"{line}: indexed documents have uncommitted changes")
