@@ -18,6 +18,7 @@ import io.ddd4j.kit.lang.CollKit;
 import io.ddd4j.kit.lang.StrKit;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -104,7 +105,7 @@ public class TypedEventDispatcher {
     private Map<String, TypedEventHandler<?>> indexHandlers(Collection<? extends TypedEventHandler<?>> eventHandlers) {
         Map<String, TypedEventHandler<?>> indexedHandlers = new LinkedHashMap<>();
         if (CollKit.isEmpty(eventHandlers)) {
-            return Map.copyOf(indexedHandlers);
+            return Collections.unmodifiableMap(new LinkedHashMap<>(indexedHandlers));
         }
         for (TypedEventHandler<?> handler : eventHandlers) {
             TypedEventHandler<?> safeHandler = Objects.requireNonNull(handler, "handler must not be null");
@@ -113,7 +114,7 @@ public class TypedEventDispatcher {
             }
             indexedHandlers.put(safeHandler.getEventType(), safeHandler);
         }
-        return Map.copyOf(indexedHandlers);
+        return Collections.unmodifiableMap(new LinkedHashMap<>(indexedHandlers));
     }
 
     private <E> void invoke(TypedEventHandler<E> handler, Object event) {
