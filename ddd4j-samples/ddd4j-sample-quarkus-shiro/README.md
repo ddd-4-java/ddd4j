@@ -1,133 +1,33 @@
 # ddd4j-sample-quarkus-shiro
 
-## 鉴权示例（Quarkus + Shiro）
+本示例在 Quarkus 中组合 ddd4j 的订单、商品和 RBAC 场景，鉴权实现为 Shiro。三条 ddd4j 线使用各自的 JDK、Quarkus 与第三方依赖；本页描述三线共同的 HTTP 和业务行为。实际依赖版本以本线 pom.xml 和根 BOM 为准。
 
-ddd4j SubjectKit 统一鉴权入口在 Quarkus 框架下的 Shiro 适配示例。
+## 运行与登录
 
-### 🎯 核心价值
+从仓库根目录，使用该分支对应的 JDK 运行 HTTP/RBAC 测试：
 
-本示例演示了 **ddd4j-auth 抽象层**的核心优势：
+~~~bash
+./mvnw -pl ddd4j-samples/ddd4j-sample-quarkus-shiro -am test
+~~~
 
-- **业务代码零改动**：本示例与其他 6 个 Auth 示例（spring/Quarkus/Javalin × sa-token/shiro/security）的业务代码
-  **完全一致**
-- **切换底层鉴权框架只需改 pom.xml**：从 sa-token 切换到 shiro，只需替换 2 个依赖，业务代码不动
-- **框架无关的鉴权契约**：业务代码统一通过 `SubjectKit` 调用，不直接依赖 sa-token/shiro/security API
+应用配置端口为 8084。应用启动后，可使用 RbacConfig 创建的样例账号 admin/123456 登录；POST /auth/login 接受 JSON 用户名和密码，响应顶层包含 token：
 
-### 📦 模块对应
+~~~bash
+curl -s -X POST http://localhost:8084/auth/login \
+  -H 'Content-Type: application/json' \
+  -d '{"username":"admin","password":"123456"}'
+~~~
 
-| 框架    | 鉴权适配模块     | 桥接模块           |
-|---------|------------------|--------------------|
-| Quarkus | ddd4j-auth-shiro | ddd4j-auth-quarkus |
+后续访问 GET /auth/me、GET /auth/check/permission?permission=user:list 等受保护接口时，在 Authorization 头传入 Bearer TOKEN（将 TOKEN 替换为登录响应中的 token）。GET /auth/status 可检查登录状态。用户名、密码、端口和请求格式均对应当前源码与 HTTP 测试。
 
-### 🚀 快速开始
+## 实现边界
 
-**启动命令**：
+- 鉴权资源：src/main/java/io/ddd4j/sample/quarkus/shiro/rbac/AuthenticationResource.java；提供登录、登出、当前用户与权限/角色查询。
+- RBAC 业务：src/main/java/io/ddd4j/sample/quarkus/shiro/rbac/RbacService.java；校验用户与密码，通过 SubjectKit 签发 token 并读取当前身份。
+- 样例数据：src/main/java/io/ddd4j/sample/quarkus/shiro/rbac/RbacConfig.java；启动时初始化用户、角色和权限。
+- Maven 依赖：ddd4j-auth-shiro 与 ddd4j-runtime-quarkus；Quarkus 1.x/3.x REST、CDI 和 JAX-RS 包名按本线 POM 与源码适配。
 
-```bash
-mvn quarkus:dev         # Quarkus
-```
-
-**端口**：8080
-
-**测试登录**：
-
-```bash
-# 登录获取 Token
-curl -X POST 'http://localhost:8080/auth/login?userId=10001'
-
-# 查看当前用户
-curl http://localhost:8080/auth/me
-
-# 权限校验
-curl 'http://localhost:8080/auth/check/permission?permission=user:add'
-# 返回：{"permission":"user:add","has":true}
-
-# 角色校验
-curl 'http://localhost:8080/auth/check/role?role=admin'
-# 返回：{"role":"admin","has":true}
-
-# 登出
-curl -X POST http://localhost:8080/auth/logout
-```
-
-### 📝 业务代码（AuthService.java）
-
-```java
-@Service
-public class AuthService {
-    public Map<String, Object> login(String userId) {
-        AuthPrincipal principal = new AuthPrincipal()
-                .setLoginId(userId).setUserId(userId).setRoleCode("user");
-        AuthRequest request = AuthRequest.of(userId).setTimeout(7200);
-        request.setPrincipal(principal);
-        String token = SubjectKit.login(request);  // ← 统一入口
-        // ...
-    }
-    // 其他方法使用 SubjectKit.logout() / getPrincipal() / hasPermission() / hasRole() 等
-}
-```
-
-**关键点**：
-
-- 本类 **与其他 6 个示例完全一致**（证明切换框架业务代码零改动）
-- 仅导入语句依赖 ddd4j-core（不依赖具体的 sa-token/shiro/security API）
-
-### 🔄 切换鉴权框架
-
-| 切换目标          | pom.xml 变化                     |
-|-------------------|----------------------------------|
-| Sa-Token → Shiro  | 替换 ddd4j-auth-{sa-token,shiro} |
-| Shiro → Security  | 替换 ddd4j-auth-{shiro,security} |
-| Spring → Quarkus  | ddd4j-runtime-{spring,quarkus}   |
-| Quarkus → Javalin | ddd4j-runtime-{quarkus,guice}    |
-
-业务代码（`AuthController`、`AuthService`） **无需任何修改**。
-
-### 🏗️ 架构图
-
-```
-┌─────────────────────────────────────────┐
-│ 业务代码（AuthController/AuthService）  │ ← 本示例：业务代码完全一致
-├─────────────────────────────────────────┤
-│ ddd4j SubjectKit 统一鉴权入口            │ ← 框架无关
-├─────────────────────────────────────────┤
-│ ddd4j-auth-{sa-token|shiro|security}    │ ← 鉴权适配层
-├─────────────────────────────────────────┤
-│ ddd4j-auth-{spring|quarkus|guice}       │ ← 框架桥接层
-├─────────────────────────────────────────┤
-│ Sa-Token / Shiro / Spring Security      │ ← 具体鉴权框架
-└─────────────────────────────────────────┘
-```
-
-### 📁 项目结构
-
-```
-ddd4j-sample-quarkus-shiro/
-├── pom.xml                              # 依赖配置
-└── src/
-    ├── main/java/io/ddd4j/sample/quarkus/shiro/
-    │   ├── QuarkusShiroApplication.java  # Quarkus 启动
-    │   ├── config/AuthConfig.java          # 鉴权配置
-    │   ├── controller/AuthController.java
-    │   ├── service/AuthService.java        # 鉴权业务（与其他示例一致）
-    │   ├── order/                          # 订单域（充血模型 + 5 个事件）
-    │   │   ├── application/{OrderApplicationService, CreateOrderCommand, AddOrderLineCommand}.java
-    │   │   ├── domain/event/{5 个}.java
-    │   │   ├── domain/model/{Order, OrderLine, OrderStatus, Money}.java
-    │   │   ├── domain/repository/OrderRepository.java
-    │   │   ├── domain/service/OrderDomainService.java
-    │   │   ├── infrastructure/InMemoryOrderRepository.java
-    │   │   └── web/{OrderResource, dto/}.java
-    │   └── goods/                        # 商品域（Model/Query CRUD 模式）
-    │       ├── application/GoodsApplicationService.java
-    │       ├── domain/{Goods, GoodsId, GoodsStatus, GoodsRepository, GoodsQuery}.java
-    │       ├── infrastructure/InMemoryGoodsRepository.java
-    │       └── web/{GoodsResource, GoodsQueryResource, dto/}.java
-    ├── main/resources/
-    │   └── application.properties
-    └── test/java/io/ddd4j/sample/quarkus/shiro/
-        └── AuthControllerTest.java
-```
+Shiro 资源显式调用 RbacService 的登录、角色和权限校验；两种实现维持相同的 HTTP 契约。 POST /auth/orders/{id}/pay 演示 order:pay 权限，DELETE /auth/users/{id} 演示 admin 角色与 user:delete 权限；这些端点是鉴权演示，订单领域的业务写入使用下方 /orders 资源。
 
 ### 🛒 业务能力（Order + Goods）
 
@@ -172,10 +72,10 @@ curl -X POST 'http://localhost:8084/orders/{id}/lines' \
   -H 'Content-Type: application/json' \
   -d '{"goodsId":"1001","goodsName":"iPhone 15","quantity":1,"unitPrice":5999.00}'
 
-# 4) 支付 → 发货 → 取消
+# 4) 支付 → 发货；取消使用另一笔未发货订单
 curl -X POST 'http://localhost:8084/orders/{id}/pay'
 curl -X POST 'http://localhost:8084/orders/{id}/ship'
-curl -X POST 'http://localhost:8084/orders/{id}/cancel'
+# 另一笔未发货订单可调用 POST /orders/{id}/cancel
 
 # 5) 折扣预览
 curl 'http://localhost:8084/orders/{id}/discount'
@@ -185,7 +85,7 @@ curl 'http://localhost:8084/api/goods/page?current=1&size=10&status=ON_SALE&orde
 ```
 
 > 业务代码（Order/Goods 域、Application、Infrastructure、Web）与另外 3 个鉴权示例
-> （quarkus-satoken、javalin-satoken、javalin-shiro） **完全一致**，仅包名不同。
+> （Quarkus/Javalin 的 Sa-Token/Shiro 版本）保持相同业务场景；框架和鉴权实现分别适配。
 
 ### 🔗 相关示例
 
@@ -195,6 +95,6 @@ curl 'http://localhost:8084/api/goods/page?current=1&size=10&status=ON_SALE&orde
 
 ### 📄 相关文档
 
-- [ddd4j 主项目](https://github.com/redacted-legacy-family/ddd4j)
-- [ddd4j-auth 模块文档](https://github.com/ddd-4-java/ddd4j/tree/feature/2.0.x/ddd4j-auth)
-- [SubjectKit API 文档](https://github.com/ddd-4-java/ddd4j/blob/feature/2.0.x/ddd4j-core/src/main/java/io/ddd4j/core/util/SubjectKit.java)
+- [ddd4j 主项目](https://github.com/ddd-4-java/ddd4j)
+- [ddd4j-auth 模块](../../ddd4j-auth/pom.xml)
+- [SubjectKit 源码](../../ddd4j-core/src/main/java/io/ddd4j/core/util/SubjectKit.java)
