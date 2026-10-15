@@ -28,6 +28,10 @@ class ThreeLineProductDocsTest(unittest.TestCase):
                 (root / name).write_text(
                     "[方案](docs/5、ddd4j-技术方案与路线.md) "
                     "[架构](docs/8、ddd4j-Architecture.zh_CN.md)\n", encoding="utf-8")
+            for name in ("5、ddd4j-技术方案与路线.md", "6、ddd4j-产品与版本规划.md",
+                         "7、ddd4j-领域模型设计.md", "8、ddd4j-Architecture.zh_CN.md"):
+                (root / name).write_text(
+                    f"# 文档已迁移\n\n请阅读 [{name}](docs/{name})。\n", encoding="utf-8")
 
     def check(self):
         output = self.base / "report"
@@ -59,6 +63,18 @@ class ThreeLineProductDocsTest(unittest.TestCase):
         self.assertNotEqual(0, result.returncode)
         self.assertIn("docs/7、ddd4j-领域模型设计.md", report["differences"])
         self.assertTrue(report["brokenLinks"])
+
+    def test_legacy_root_entry_with_stale_body_fails(self):
+        (self.roots[0] / "5、ddd4j-技术方案与路线.md").write_text("旧正文\n", encoding="utf-8")
+        result, report = self.check()
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("5、ddd4j-技术方案与路线.md", report["differences"])
+
+    def test_missing_legacy_root_entry_fails(self):
+        (self.roots[1] / "8、ddd4j-Architecture.zh_CN.md").unlink()
+        result, report = self.check()
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("8、ddd4j-Architecture.zh_CN.md", report["differences"])
 
 
 if __name__ == "__main__":
