@@ -221,7 +221,7 @@ public class OrderResource {
 
         @Override
         public String toString() {
-            return "DiscountView[amount=" + amount + ", currency=" + currency + "]";
+            return "OrderResource.DiscountView(amount=" + amount + ", currency=" + currency + ")";
         }
     }
 }

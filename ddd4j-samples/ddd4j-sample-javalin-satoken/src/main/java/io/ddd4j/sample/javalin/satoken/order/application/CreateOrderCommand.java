@@ -117,6 +117,6 @@ public final class CreateOrderCommand {
 
     @Override
     public String toString() {
-        return "CreateOrderCommand[orderNo=" + orderNo + ", buyerId=" + buyerId + ", buyerName=" + buyerName + "]";
+        return "CreateOrderCommand(orderNo=" + orderNo + ", buyerId=" + buyerId + ", buyerName=" + buyerName + ")";
     }
 }

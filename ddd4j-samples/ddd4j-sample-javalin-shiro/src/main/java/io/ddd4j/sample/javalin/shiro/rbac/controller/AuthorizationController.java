@@ -739,7 +739,7 @@ public class AuthorizationController {
 
         @Override
         public String toString() {
-            return "UserView[loginId=" + loginId + ", displayName=" + displayName + ", roles=" + roles + ", permissions=" + permissions + "]";
+            return "AuthorizationController.UserView(loginId=" + loginId + ", displayName=" + displayName + ", roles=" + roles + ", permissions=" + permissions + ")";
         }
     }
 
@@ -838,7 +838,7 @@ public class AuthorizationController {
 
         @Override
         public String toString() {
-            return "RoleView[code=" + code + ", name=" + name + ", permissions=" + permissions + "]";
+            return "AuthorizationController.RoleView(code=" + code + ", name=" + name + ", permissions=" + permissions + ")";
         }
     }
 
@@ -917,7 +917,7 @@ public class AuthorizationController {
 
         @Override
         public String toString() {
-            return "PermissionView[code=" + code + ", description=" + description + "]";
+            return "AuthorizationController.PermissionView(code=" + code + ", description=" + description + ")";
         }
     }
 

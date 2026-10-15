@@ -205,6 +205,6 @@ public final class Money implements ValueObject {
 
     @Override
     public String toString() {
-        return "Money[amount=" + amount + ", currency=" + currency + "]";
+        return "Money(amount=" + amount + ", currency=" + currency + ")";
     }
 }

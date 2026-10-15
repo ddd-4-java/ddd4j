@@ -229,7 +229,7 @@ public final class OrderResponse {
 
         @Override
         public String toString() {
-            return "OrderLineResponse[id=" + id + ", goodsId=" + goodsId + ", goodsName=" + goodsName + ", quantity=" + quantity + ", unitPrice=" + unitPrice + ", currency=" + currency + "]";
+            return "OrderResponse.OrderLineResponse(id=" + id + ", goodsId=" + goodsId + ", goodsName=" + goodsName + ", quantity=" + quantity + ", unitPrice=" + unitPrice + ", currency=" + currency + ")";
         }
     }
 
@@ -405,6 +405,6 @@ public final class OrderResponse {
 
     @Override
     public String toString() {
-        return "OrderResponse[id=" + id + ", orderNo=" + orderNo + ", buyerId=" + buyerId + ", buyerName=" + buyerName + ", status=" + status + ", totalAmount=" + totalAmount + ", currency=" + currency + ", lines=" + lines + "]";
+        return "OrderResponse(id=" + id + ", orderNo=" + orderNo + ", buyerId=" + buyerId + ", buyerName=" + buyerName + ", status=" + status + ", totalAmount=" + totalAmount + ", currency=" + currency + ", lines=" + lines + ")";
     }
 }

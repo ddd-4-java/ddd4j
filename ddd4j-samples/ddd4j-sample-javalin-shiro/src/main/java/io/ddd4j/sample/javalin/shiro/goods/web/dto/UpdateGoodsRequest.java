@@ -35,41 +35,78 @@ public class UpdateGoodsRequest {
 
     private BigDecimal price;
 
+    /**
+     * 创建空请求，供反序列化使用。
+     */
     public UpdateGoodsRequest() {
     }
 
+    /**
+     * 创建请求。
+     * @param name 商品名称
+     * @param price 价格
+     */
     @JsonCreator()
     public UpdateGoodsRequest(@JsonProperty("name") String name, @JsonProperty("price") BigDecimal price) {
         this.name = name;
         this.price = price;
     }
 
+    /**
+     * 读取商品名称。
+     * @return 商品名称
+     */
     @JsonProperty("name")
     public String name() {
         return name;
     }
 
+    /**
+     * 读取价格。
+     * @return 价格
+     */
     @JsonProperty("price")
     public BigDecimal price() {
         return price;
     }
 
+    /**
+     * 读取商品名称。
+     * @return 商品名称
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * 设置商品名称。
+     * @param name 商品名称
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * 读取价格。
+     * @return 价格
+     */
     public BigDecimal getPrice() {
         return price;
     }
 
+    /**
+     * 设置价格。
+     * @param price 价格
+     */
     public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
+    /**
+     * 判断对象是否可参与值比较。
+     * @param other 待比较对象
+     * @return 是否为同类请求
+     */
     protected boolean canEqual(Object other) {
         return other instanceof UpdateGoodsRequest;
     }
