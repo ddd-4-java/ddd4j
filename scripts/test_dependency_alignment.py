@@ -171,6 +171,14 @@ class DependencyAlignmentTest(unittest.TestCase):
             self.assertIn(jdk, xdocreport)
         self.assertIn('8', policy['unsupported'].get('org.snmp4j:snmp4j-agent-db', {}))
 
+    def test_unpublished_schemacrawler_line_artifacts_are_recorded(self):
+        policy_path = Path(__file__).parents[1] / 'config/dependencies/alignment-policy.json'
+        policy = json.loads(policy_path.read_text(encoding='utf-8'))
+        self.assertIn('8', policy['unsupported'].get('us.fatehi:schemacrawler-hana', {}))
+        utility = policy['unsupported'].get('us.fatehi:schemacrawler-utility', {})
+        for jdk in ('17', '21'):
+            self.assertIn(jdk, utility)
+
     def test_unconfigured_third_party_release_does_not_inherit_ddd4j_version(self):
         with tempfile.TemporaryDirectory() as temp:
             base = Path(temp)

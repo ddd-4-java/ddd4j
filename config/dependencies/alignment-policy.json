@@ -884,6 +884,22 @@
     }
   },
   "unsupported": {
+    "us.fatehi:schemacrawler-hana": {
+      "8": {
+        "reason": "Maven Central 的 SAP HANA 插件从 16.11.2 才发布，JDK 8 线固定的 SchemaCrawler 16.9.5 无同版本插件；默认模块未引用该插件",
+        "status": "unpublished-version"
+      }
+    },
+    "us.fatehi:schemacrawler-utility": {
+      "17": {
+        "reason": "SchemaCrawler 官方 v17.11.3 源码对 utility 模块设置 install/deploy/central publish skip，未发布本线同版本 JAR；默认模块未直接引用",
+        "status": "unpublished-version"
+      },
+      "21": {
+        "reason": "SchemaCrawler 官方 v17.11.3 源码对 utility 模块设置 install/deploy/central publish skip，未发布本线同版本 JAR；默认模块未直接引用",
+        "status": "unpublished-version"
+      }
+    },
     "fr.opensagres.xdocreport:org.apache.poi.xwpf.converter.pdf.itext5": {
       "8": {
         "reason": "Maven Central 仅发布到 1.0.6，未发布当前 XDocReport 2.0.6 所需同版本构件；默认模块未引用",

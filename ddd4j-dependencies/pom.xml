@@ -5976,11 +5976,6 @@
                 <version>${schemacrawler-timesten.version}</version>
             </dependency>
             <dependency>
-                <groupId>us.fatehi</groupId>
-                <artifactId>schemacrawler-utility</artifactId>
-                <version>${schemacrawler.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.scribe</groupId>
                 <artifactId>scribe</artifactId>
                 <version>${scribe.version}</version>
