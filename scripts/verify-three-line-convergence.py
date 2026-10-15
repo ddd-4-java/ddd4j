@@ -19,12 +19,12 @@ from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 EXPECTED = ((8, "1.0.x"), (17, "2.0.x"), (21, "3.0.x"))
-VERIFY_CHECKS = ("structure", "product-docs", "values", "effective-8", "effective-17",
+VERIFY_CHECKS = ("structure", "product-docs", "historical-index", "values", "effective-8", "effective-17",
                  "effective-21", "dependency-catalog", "dependencies", "reactor-8", "reactor-17", "reactor-21",
                  "capacity-8", "capacity-17", "capacity-21",
                  "redis-native-8", "redis-native-17", "redis-native-21",
                  "scenario-matrix", "scenario-execution")
-INVENTORY_CHECKS = ("structure", "product-docs", "values", "dependencies", "reactor",
+INVENTORY_CHECKS = ("structure", "product-docs", "historical-index", "values", "dependencies", "reactor",
                     "scenario-matrix")
 
 
@@ -459,6 +459,14 @@ def run(args):
         execute("product-docs", [sys.executable, str(docs), *common,
                                   "--output", str(stage / "product-docs")], stage, checks,
                 required_artifacts=("product-docs/product-docs.json",))
+        historical_index = stage / "historical-index.json"
+        source_index = roots[2] / "verification/three-line-parity/historical-evidence-index.json"
+        if source_index.is_file():
+            shutil.copy2(source_index, historical_index)
+        execute("historical-index",
+                [sys.executable, str(SCRIPT_DIR / "build-historical-evidence-index.py"),
+                 *common, "--output", str(historical_index), "--check-content"],
+                stage, checks, required_artifacts=("historical-index.json",))
         if args.phase == "verify":
             values = SCRIPT_DIR / "verify-three-line-value-parity.py"
             classpaths = list(value_probe_classpaths(Path.home() / ".m2/repository"))

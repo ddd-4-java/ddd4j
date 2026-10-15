@@ -13,31 +13,32 @@ from pathlib import Path
 LINES = ("1.0.x", "2.0.x", "3.0.x")
 SOURCE_DIRS = (".superpowers", "docs/superpowers", "docs/reference/fuin-api-patterns")
 INDEX_DOCUMENT = "docs/superpowers/historical-evidence-index.md"
+INDEX_PATH = "verification/three-line-parity/historical-evidence-index.json"
 
 
 def git(root, *args):
     return subprocess.check_output(["git", "-C", str(root), *args])
 
 
-def entries_for_line(root, line):
-    if git(root, "rev-parse", "--is-shallow-repository").strip() != b"false":
-        raise ValueError(f"{line}: full Git history is required for source dates")
+def indexed_paths(root, line):
     pom = ET.fromstring((root / "pom.xml").read_bytes())
     revision = pom.findtext("{*}properties/{*}revision")
     if not revision or not revision.startswith(line + "."):
         raise ValueError(f"{line}: root Maven revision does not match the requested line")
+    paths = git(root, "ls-files", "-z", "--", *SOURCE_DIRS).split(b"\0")
+    return [path.decode("utf-8") for path in sorted(path for path in paths if path)
+            if path.decode("utf-8") != INDEX_DOCUMENT and path.endswith(b".md")]
+
+
+def entries_for_line(root, line):
+    if git(root, "rev-parse", "--is-shallow-repository").strip() != b"false":
+        raise ValueError(f"{line}: full Git history is required for source dates")
     status = git(root, "status", "--porcelain", "--untracked-files=no", "--", *SOURCE_DIRS)
     if status:
         raise ValueError(f"{line}: indexed documents have uncommitted changes")
 
-    paths = git(root, "ls-files", "-z", "--", *SOURCE_DIRS).split(b"\0")
     entries = []
-    for raw_path in sorted(path for path in paths if path):
-        path = raw_path.decode("utf-8")
-        if path == INDEX_DOCUMENT:
-            continue
-        if not path.endswith(".md"):
-            continue
+    for path in indexed_paths(root, line):
         source = git(root, "log", "-1", "--format=%H%x09%aI", "--", path).decode().strip()
         if not source:
             raise ValueError(f"{line}: no source commit for {path}")
@@ -53,16 +54,47 @@ def entries_for_line(root, line):
     return entries
 
 
+def check_content(roots, output):
+    if not output.is_file():
+        return 1
+    raw = output.read_bytes()
+    if any(not (root / INDEX_PATH).is_file()
+           or (root / INDEX_PATH).read_bytes() != raw for root in roots):
+        return 1
+    document = json.loads(raw)
+    if document.get("schemaVersion") != 1 or document.get("scope") != list(SOURCE_DIRS):
+        return 1
+    expected = [(entry["line"], entry["path"], entry["sha256"])
+                for entry in document["entries"]]
+    actual = []
+    for line, root in zip(LINES, roots):
+        for path in indexed_paths(root, line):
+            content = git(root, "show", f"HEAD:{path}")
+            actual.append((line, path, hashlib.sha256(content).hexdigest()))
+    if expected != actual:
+        return 1
+    print(f"historical evidence content verified: {len(actual)} records")
+    return 0
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--roots", nargs=3, type=Path, required=True, metavar="ROOT")
     parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--check", action="store_true")
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("--check", action="store_true")
+    mode.add_argument("--check-content", action="store_true")
     args = parser.parse_args()
+    roots = [root.resolve() for root in args.roots]
+    if args.check_content:
+        result = check_content(roots, args.output)
+        if result:
+            print(f"historical evidence content is stale: {args.output}", file=sys.stderr)
+        return result
 
     entries = []
-    for line, root in zip(LINES, args.roots):
-        entries.extend(entries_for_line(root.resolve(), line))
+    for line, root in zip(LINES, roots):
+        entries.extend(entries_for_line(root, line))
     document = {"schemaVersion": 1, "scope": list(SOURCE_DIRS),
                 "entries": entries}
     rendered = json.dumps(document, ensure_ascii=False, indent=2) + "\n"
