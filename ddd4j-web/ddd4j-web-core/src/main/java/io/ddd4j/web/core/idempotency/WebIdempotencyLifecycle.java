@@ -87,7 +87,7 @@ public final class WebIdempotencyLifecycle {
         /**
          * complete() 方法。
          */
-        public void complete() {
+        public synchronized void complete() {
             if (closed || completed) {
                 return;
             }
@@ -99,7 +99,7 @@ public final class WebIdempotencyLifecycle {
          * 关闭并释放资源。
          */
         @Override
-        public void close() {
+        public synchronized void close() {
             if (closed) {
                 return;
             }
