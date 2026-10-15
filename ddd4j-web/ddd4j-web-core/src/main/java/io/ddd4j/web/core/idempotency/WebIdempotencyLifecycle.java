@@ -80,7 +80,7 @@ public final class WebIdempotencyLifecycle {
             this.lease = lease;
         }
 
-        public void complete() {
+        public synchronized void complete() {
             if (closed || completed) {
                 return;
             }
@@ -89,7 +89,7 @@ public final class WebIdempotencyLifecycle {
         }
 
         @Override
-        public void close() {
+        public synchronized void close() {
             if (closed) {
                 return;
             }
