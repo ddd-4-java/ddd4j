@@ -985,13 +985,13 @@
     {
       "path": "ddd4j-core/src/main/java/io/ddd4j/core/ddd/model/AggregateRoot.java",
       "sourceSha256": [
-        "d7211294eb611dbee215b983fe1fffef510a663a14bf31f528c6c85e6e2fdefa",
-        "6aca7b401bc401e9a7e313759de5eb8c6d0403a5f1ab3ef75d20ad70a1bd2a75",
-        "6aca7b401bc401e9a7e313759de5eb8c6d0403a5f1ab3ef75d20ad70a1bd2a75"
+        "a395bce8b9468a0c0d525bb5e75eda8df67e5b17286a7feffdbe7a4e81043b2f",
+        "0d0568069f9732773553f21eb91bf27350c76c6fbf014a738eea11f5245500a0",
+        "0d0568069f9732773553f21eb91bf27350c76c6fbf014a738eea11f5245500a0"
       ],
       "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/ddd/model/AggregateRootEventsTest.java",
       "testSha256": "c26740d32ca4c267bd72570b785538999a1acd85f12e4e09c5d308dd73b86d93",
-      "reason": "三线相同的事件快照、注册和反射派发逻辑及 Javadoc；JDK 8 匿名 ClassValue 显式泛型和异常显式强转，高两线使用菱形与 instanceof 模式匹配，源码及共同测试由 SHA-256 锁定"
+      "reason": "三线事件缓冲、不可变快照、注册与反射派发逻辑及 Javadoc 一致；JDK 8 使用显式 ClassValue 泛型、不可变防御性复制和异常显式强转，高两线使用菱形、List.copyOf 与 instanceof 模式匹配；共同事件测试和源码哈希锁定"
     },
     {
       "path": "ddd4j-cache/src/main/java/io/ddd4j/cache/local/CaffeineCache.java",
@@ -1029,13 +1029,13 @@
     {
       "path": "ddd4j-core/src/main/java/io/ddd4j/core/context/ThreadContext.java",
       "sourceSha256": [
-        "13712cd4ab62eb4b4edc6319020fc7a797e5f00676bcc7b74fae7be8fb76a14f",
-        "f008dccea5c613eaa444977f61114d05ef45a5e5831455d1ff780ec3dd6a06c4",
-        "dab94fc8b1f001702daf4e6347cd6dc11d6c28ba4553d755766f100911e4ee42"
+        "af1c799a89a2c478d0ef76bb8af876441f78016f9a318f74dc41adc93aae9346",
+        "c050020df86f3e6dd34dc90b77892d7e43190f5361fa55f5a248db4ccbe2e735",
+        "c050020df86f3e6dd34dc90b77892d7e43190f5361fa55f5a248db4ccbe2e735"
       ],
       "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/context/ThreadContextTest.java",
       "testSha256": "70ccd88f69914931ff0b56a063fa7a2f4581c58f74f47e5496b31bd479a63116",
-      "reason": "JDK 8 匿名 TransmittableThreadLocal 显式泛型与高两线菱形语法，以及嵌套 Scope 声明位置和注释差异；线程资源复制、隔离、Scope 恢复逻辑一致，三线共同测试锁定"
+      "reason": "三线线程资源复制、隔离与 Scope 恢复逻辑及 Javadoc 一致；仅 JDK 8 匿名 TransmittableThreadLocal 显式泛型与高两线菱形语法不同，共同测试和源码哈希锁定"
     },
     {
       "path": "ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/EventChunk.java",
@@ -1106,9 +1106,9 @@
     {
       "path": "ddd4j-core/src/main/java/io/ddd4j/core/i18n/I18nProvider.java",
       "sourceSha256": [
-        "1038f032e9c5537f4173582312dd17a4785869250fff3db12664d83eea1dbfdd",
-        "5136d521673c31e14330723c9e9f2f5861365fa8d92cee540f59744772e6254b",
-        "5136d521673c31e14330723c9e9f2f5861365fa8d92cee540f59744772e6254b"
+        "33931bd7380dbe5ba7442a733d0f72b62c95f856c2ba76de11ff1f34eae54d29",
+        "3877165aea025051d300b765201f86d6dd460a90827b2280865dd8e903655421",
+        "3877165aea025051d300b765201f86d6dd460a90827b2280865dd8e903655421"
       ],
       "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/i18n/I18nProviderDefaultContractTest.java",
       "testSha256": "14be3dd7baba35a8a9f4940cbf8717add940ff0768d479161a4beafde027e7e1",
@@ -1315,9 +1315,9 @@
     {
       "path": "ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/DomainEvent.java",
       "sourceSha256": [
-        "d03768634600909b301afce96765748923c8f5bb35364dc76ab0f528fe4ebb21",
-        "41aa2c4b723a05fe67cebdec0e363dc7c3fa4e1f660e15d00d587c42985aea47",
-        "41aa2c4b723a05fe67cebdec0e363dc7c3fa4e1f660e15d00d587c42985aea47"
+        "b074c687705ae776c33014f7ce08cfe00c16d4837e985a77e3f97e52836ced53",
+        "2408ed8f999831ff370fc08d69420de5d20d2b17226fe9c028398102922f2ab6",
+        "2408ed8f999831ff370fc08d69420de5d20d2b17226fe9c028398102922f2ab6"
       ],
       "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/DomainEventContractTest.java",
       "testSha256": "ce6434630c0a0652323bb4989b8ac1d6f36a26bad9b8ed224ed19a7437a1bad2",
