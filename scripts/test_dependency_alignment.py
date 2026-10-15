@@ -15,6 +15,19 @@ def pom(artifact='demo', version='1', group='example'):
 
 
 class DependencyAlignmentTest(unittest.TestCase):
+    def test_required_baseline_uses_current_easy4j_coordinates(self):
+        policy_path = Path(__file__).parents[1] / 'config/dependencies/alignment-policy.json'
+        policy = json.loads(policy_path.read_text(encoding='utf-8'))
+        legacy_prefixes = ('com.github.hiwepy:', 'com.github.redacted-legacy-family:',
+                           'io.github.redacted-legacy-family:')
+        for section in ('baseline_components', 'baseline_variants'):
+            self.assertFalse([coordinate for coordinate in policy[section]
+                              if coordinate.startswith(legacy_prefixes)], section)
+        for artifact in ('druid-metrics-prometheus', 'httpconn', 'httputils',
+                         'javassist-plus', 'pac4j-oauth-ext', 'shiro-extension-core',
+                         'spring-extension'):
+            self.assertIn('io.github.easy4j:' + artifact, policy['baseline_components'])
+
     def test_unconfigured_third_party_release_does_not_inherit_ddd4j_version(self):
         with tempfile.TemporaryDirectory() as temp:
             base = Path(temp)
