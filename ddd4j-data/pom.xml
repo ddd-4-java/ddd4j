@@ -31,11 +31,9 @@
     <modules>
         <!--
             2026-09-05 补全：19 个子模块从 1240dd4c（pre-sync JDK8/javax 线）恢复并纳入 reactor。
-            2026-09-05 移除（目录已删除，原因与清单见 docs/1.0.x-module-differences.md）：
-            - Quarkus 系 ×2 + Panache ×2：Quarkus 3.x 需 JDK 17+，与 1.0.x JDK 8 基线不兼容
-              （cqrs-quarkus / projection-quarkus / event-store-panache / projection-panache）
-            - Helidon 适配器 ×2：helidon-common-service-loader 2.6.14 构件为 Java 11 字节码
-              （major 55），JDK 8 无法编译（cqrs-helidon / projection-helidon）
+            历史记录：2026-09-05 曾因高线 Quarkus/Helidon 依赖不兼容而移除部分子模块。
+            三线收敛后已使用本线 Quarkus 1.13.7.Final 和 Helidon 1.4.19 恢复；
+            当前平台支持状态见 docs/1.0.x-module-differences.md。
         -->
         <!-- CQRS 框架无关契约与注册表已收敛到 ddd4j-core -->
         <!-- cqrs 框架桥接 -->
