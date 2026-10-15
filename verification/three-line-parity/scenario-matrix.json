@@ -1218,6 +1218,55 @@
       }
     },
     {
+      "id": "CORE-RUNTIME-READINESS",
+      "description": "运行时就绪贡献者注册、null 过滤、不可变快照与汇总三线同契约；JDK 8 与高线仅使用各自可用集合构造语法",
+      "caseNames": {
+        "1.0.x": [
+          "shouldAggregateContributorsAndAllowRuntimeRegistrationChanges",
+          "shouldAggregateUnavailableContributorAsUnready",
+          "shouldFilterNullCollectionAndElementsInRegisterAll",
+          "shouldRejectNullContributorOnRegister",
+          "shouldReturnImmutableSnapshotOfContributors"
+        ],
+        "2.0.x": [
+          "shouldAggregateContributorsAndAllowRuntimeRegistrationChanges",
+          "shouldAggregateUnavailableContributorAsUnready",
+          "shouldFilterNullCollectionAndElementsInRegisterAll",
+          "shouldRejectNullContributorOnRegister",
+          "shouldReturnImmutableSnapshotOfContributors"
+        ],
+        "3.0.x": [
+          "shouldAggregateContributorsAndAllowRuntimeRegistrationChanges",
+          "shouldAggregateUnavailableContributorAsUnready",
+          "shouldFilterNullCollectionAndElementsInRegisterAll",
+          "shouldRejectNullContributorOnRegister",
+          "shouldReturnImmutableSnapshotOfContributors"
+        ]
+      },
+      "lastEvidence": "/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-16-runtime-readiness-syntax-parity/report.json",
+      "lastEvidenceSha256": "fdebdd354047fc5b9fd67b7b3aed3c892e5c70c8416ba7fdad56ac16d70e660c",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/health/RuntimeReadinessRegistryTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/health/RuntimeReadinessRegistryTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/health/RuntimeReadinessRegistryTest.java"
+          ]
+        }
+      }
+    },
+    {
       "id": "CORE-TRACE-CONTEXT",
       "description": "默认关闭、TTL 跟踪透传及 MDC 双写",
       "lines": {
