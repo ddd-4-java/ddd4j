@@ -16,14 +16,14 @@
 <p align="center">
   <a href="README.en.md">English</a> ·
   <a href="ddd4j-samples/README.md">示例工程</a> ·
-  <a href="8、ddd4j-Architecture.zh_CN.md">系统架构</a> ·
-  <a href="5、ddd4j-技术方案与路线.md">技术方案</a> ·
+  <a href="docs/8、ddd4j-Architecture.zh_CN.md">系统架构</a> ·
+  <a href="docs/5、ddd4j-技术方案与路线.md">技术方案</a> ·
   <a href="docs/superpowers/plans/2026-09-10-mq-startup-lifecycle.md">MQ 启动生命周期</a>
 </p>
 
-> **Ddd4j** 是一个**不与任何具体容器框架强绑定**的 DDD 项目脚手架，为 [ddd4j-boot](https://github.com/redacted-legacy-family/ddd4j-boot)
-> （Spring Boot）、[ddd4j-quarkus](https://github.com/redacted-legacy-family/ddd4j-quarkus)、[ddd4j-javalin](https://github.com/redacted-legacy-family/ddd4j-javalin)
-> 以及 Vert.x、Helidon、Dropwizard、Micronaut、Guice 等运行时提供**同一套纯净、可复用的领域层基础**。
+> **Ddd4j** 是一个**不与任何具体容器框架强绑定**的 DDD 项目脚手架，为 [ddd4j-boot](https://github.com/ddd-4-java/ddd4j-boot)
+> （Spring Boot）、[ddd4j-quarkus](https://github.com/ddd-4-java/ddd4j-quarkus)、[ddd4j-javalin](https://github.com/ddd-4-java/ddd4j-javalin)
+> 以及 Vert.x、Helidon、Dropwizard、Micronaut、Guice 等运行时提供 **同一套纯净、可复用的领域层基础**。
 >
 > 领域驱动设计、命令查询职责分离（CQRS）和事件溯源（Event Sourcing）的抽象层全部由 `ddd4j-core` **自研实现**，
 > 遵循 Eric Evans 与 Vaughn Vernon 的 DDD 经典理论；API 形态参考了
@@ -114,7 +114,7 @@ ddd4j 当前 **三条主线并行演化**，HEAD 同步最新同语义提交：
 
 > **三线对齐约束**：2.0.x ↔ 3.0.x 在 2026-09-09 严格结构 / Class / 公开 API / CodeGraph 签名门禁中 **全部 0 差异**
 > ；1.0.x ↔ 2.0.x 因 JDK8 字节码 / Helidon 缺失保留 19 处公开 API 差异 + 231 处方法体差异（详见 [
-`docs/superpowers/reports/2026-09-09-three-line-source-parity-audit.md`](docs/superpowers/reports/2026-09-09-three-line-source-parity-audit.md)）。
+`docs/superpowers/reports/2026-09-09-three-line-source-parity-audit.md`](docs/superpowers/historical-evidence-index.md)）。
 
 ## 5. Maven 模块矩阵
 
@@ -291,6 +291,7 @@ public class Order extends AggregateRoot<Long> {
 
 ```java
 import io.ddd4j.core.ddd.repository.Repository;
+
 import java.util.Optional;
 
 public interface OrderRepository extends Repository<Order, OrderPO, Long> {
@@ -302,6 +303,7 @@ public interface OrderRepository extends Repository<Order, OrderPO, Long> {
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import io.ddd4j.data.mybatis.repository.MybatisAggregateRepository;
 import io.ddd4j.kit.lang.StrKit;
+
 import java.util.Optional;
 
 public class MybatisOrderRepository extends MybatisAggregateRepository<Order, OrderPO, Long>
@@ -317,8 +319,8 @@ public class MybatisOrderRepository extends MybatisAggregateRepository<Order, Or
             return Optional.empty();
         }
         return Optional.ofNullable(lambdaQuery()
-                .eq(OrderPO::getOrderNo, orderNo)
-                .one())
+                        .eq(OrderPO::getOrderNo, orderNo)
+                        .one())
                 .map(this::toModel);
     }
 
@@ -425,14 +427,14 @@ order-service/
 
 | 文档                                                                                                                                                 | 说明                                                           |
 |:-----------------------------------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------------------|
-| [8、ddd4j-Architecture.zh_CN.md](./8、ddd4j-Architecture.zh_CN.md)                                                                                   | 系统架构设计（分层、运行时、依赖、安全、部署）                 |
-| [5、ddd4j-技术方案与路线.md](./5、ddd4j-技术方案与路线.md)                                                                                           | 当前进行中的 MQ 启动生命周期 + License Gate Hardening 技术方案 |
-| [6、ddd4j-产品与版本规划.md](./6、ddd4j-产品与版本规划.md)                                                                                           | **三轨版本治理 · 升级路径 · 技术兼容性矩阵 · 支持窗口**        |
-| [7、ddd4j-领域模型设计.md](./7、ddd4j-领域模型设计.md)                                                                                               | 限界上下文、聚合、事件契约                                     |
-| [1.0.x/8、ddd4j-1.0.x-Architecture.zh_CN.md](./1.0.x/8、ddd4j-1.0.x-Architecture.zh_CN.md)                                                           | 1.0.x 版本级架构与三线差异表                                   |
+| [8、ddd4j-Architecture.zh_CN.md](./docs/8、ddd4j-Architecture.zh_CN.md)                                                                                   | 系统架构设计（分层、运行时、依赖、安全、部署）                 |
+| [5、ddd4j-技术方案与路线.md](./docs/5、ddd4j-技术方案与路线.md)                                                                                           | 当前进行中的 MQ 启动生命周期 + License Gate Hardening 技术方案 |
+| [6、ddd4j-产品与版本规划.md](./docs/6、ddd4j-产品与版本规划.md)                                                                                           | **三轨版本治理 · 升级路径 · 技术兼容性矩阵 · 支持窗口**        |
+| [7、ddd4j-领域模型设计.md](./docs/7、ddd4j-领域模型设计.md)                                                                                               | 限界上下文、聚合、事件契约                                     |
+| [1.0.x/8、ddd4j-1.0.x-Architecture.zh_CN.md](./docs/8、ddd4j-1.0.x-Architecture.zh_CN.md)                                                           | 1.0.x 版本级架构与三线差异表                                   |
 | [docs/superpowers/specs/2026-07-15-current-source-architecture-design.md](./docs/superpowers/specs/2026-07-15-current-source-architecture-design.md) | 当前源码架构导览（CodeGraph）                                  |
 | [docs/superpowers/specs/2026-06-29-ddd4j-boundary-rules-design.md](./docs/superpowers/specs/2026-06-29-ddd4j-boundary-rules-design.md)               | 架构边界规范                                                   |
-| [docs/superpowers/reports/2026-09-09-three-line-source-parity-audit.md](./docs/superpowers/reports/2026-09-09-three-line-source-parity-audit.md)     | 三线严格审计报告                                               |
+| [docs/superpowers/reports/2026-09-09-three-line-source-parity-audit.md](./docs/superpowers/historical-evidence-index.md)     | 三线严格审计报告                                               |
 | [docs/ddd/DDD%20思维导图.md](./docs/ddd/DDD%20思维导图.md)                                                                                           | DDD 战略+战术设计知识体系                                      |
 | [docs/ddd/CQRS%20思维导图.md](./docs/ddd/CQRS%20思维导图.md)                                                                                         | CQRS 核心概念                                                  |
 
