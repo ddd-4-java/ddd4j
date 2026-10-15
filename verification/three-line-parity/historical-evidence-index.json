@@ -975,9 +975,9 @@
     {
       "line": "1.0.x",
       "path": "docs/superpowers/plans/2026-10-10-three-line-product-convergence.md",
-      "sourceCommit": "ba210514dc2eeb94f7b433ae9138e8fbd30d478d",
-      "sourceTime": "2026-10-16T02:16:48+08:00",
-      "sha256": "44deadf8c6077c86fa1c39b0dbcb09d3d472a3a9e30bf5843f360c835492a9d4"
+      "sourceCommit": "f98c15b025713240741ef5a06e57214e8492701b",
+      "sourceTime": "2026-10-16T03:10:48+08:00",
+      "sha256": "e13d5aa74c8841820f5195b6db2ca437a217b6d789bbd96268a8fe0dc4c82359"
     },
     {
       "line": "1.0.x",
@@ -1199,9 +1199,9 @@
     {
       "line": "2.0.x",
       "path": "docs/reference/fuin-api-patterns/08-architecture-test.md",
-      "sourceCommit": "acb6e68274368f5e8cb68f72b3257b89f20cefd5",
-      "sourceTime": "2026-10-10T02:51:38+08:00",
-      "sha256": "fa261d81cdb40586a72ec0d27a97371094c3bc27abfecd4f590df3001723eab3"
+      "sourceCommit": "d6ba7aea5b6d12c5997843fc6be190445dcddcfd",
+      "sourceTime": "2026-10-16T03:00:24+08:00",
+      "sha256": "d4cbab45e1356eb586caae64b9a079fb6869bfa1a79b68d6b5b2094d8dc7cfca"
     },
     {
       "line": "2.0.x",
@@ -1283,9 +1283,9 @@
     {
       "line": "2.0.x",
       "path": "docs/superpowers/plans/2026-10-10-three-line-product-convergence.md",
-      "sourceCommit": "4e1dea7ec92f4e4218f8059daa65b07923b5c6e8",
-      "sourceTime": "2026-10-16T02:16:48+08:00",
-      "sha256": "44deadf8c6077c86fa1c39b0dbcb09d3d472a3a9e30bf5843f360c835492a9d4"
+      "sourceCommit": "204abf0250912f69db2d8d13553589e9b0bf4596",
+      "sourceTime": "2026-10-16T03:10:49+08:00",
+      "sha256": "e13d5aa74c8841820f5195b6db2ca437a217b6d789bbd96268a8fe0dc4c82359"
     },
     {
       "line": "2.0.x",
@@ -1479,9 +1479,9 @@
     {
       "line": "3.0.x",
       "path": "docs/reference/fuin-api-patterns/08-architecture-test.md",
-      "sourceCommit": "f558881115e4bc38a46af6dcaaf44333812050b4",
-      "sourceTime": "2026-10-10T02:55:04+08:00",
-      "sha256": "746c11b797af11600e321d27e3083892f393725af4a7c76782708055e6c98d1e"
+      "sourceCommit": "627ed83ac95aba5d150f22bbe4b0a7f6e5b6c621",
+      "sourceTime": "2026-10-16T03:00:25+08:00",
+      "sha256": "d4cbab45e1356eb586caae64b9a079fb6869bfa1a79b68d6b5b2094d8dc7cfca"
     },
     {
       "line": "3.0.x",
@@ -1563,9 +1563,9 @@
     {
       "line": "3.0.x",
       "path": "docs/superpowers/plans/2026-10-10-three-line-product-convergence.md",
-      "sourceCommit": "699af13747dabf19179b8c870251b3274506b575",
-      "sourceTime": "2026-10-16T02:16:48+08:00",
-      "sha256": "44deadf8c6077c86fa1c39b0dbcb09d3d472a3a9e30bf5843f360c835492a9d4"
+      "sourceCommit": "b6d5d50886b6b73ef83419261562e80d37fd3dea",
+      "sourceTime": "2026-10-16T03:10:50+08:00",
+      "sha256": "e13d5aa74c8841820f5195b6db2ca437a217b6d789bbd96268a8fe0dc4c82359"
     },
     {
       "line": "3.0.x",
