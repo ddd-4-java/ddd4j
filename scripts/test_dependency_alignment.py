@@ -117,6 +117,23 @@ class DependencyAlignmentTest(unittest.TestCase):
             for jdk in jdks:
                 self.assertIn(jdk, policy['unsupported'].get(coordinate, {}), coordinate)
 
+    def test_javassist_plus_is_mapped_to_current_easy4j_extension_on_every_line(self):
+        policy_path = Path(__file__).parents[1] / 'config/dependencies/alignment-policy.json'
+        policy = json.loads(policy_path.read_text(encoding='utf-8'))
+        replacement = policy['replacements'].get('io.github.easy4j:javassist-plus', {})
+        for jdk in ('8', '17', '21'):
+            self.assertEqual(['io.github.easy4j:javassist-extension'],
+                             replacement.get(jdk, {}).get('coordinates'))
+        self.assertEqual(8, policy['baseline_components'].get('io.github.easy4j:javassist-extension'))
+
+    def test_pac4j_oauth_ext_is_mapped_to_current_easy4j_extension(self):
+        policy_path = Path(__file__).parents[1] / 'config/dependencies/alignment-policy.json'
+        policy = json.loads(policy_path.read_text(encoding='utf-8'))
+        replacement = policy['replacements'].get('io.github.easy4j:pac4j-oauth-ext', {})
+        for jdk in ('17', '21'):
+            self.assertEqual(['io.github.easy4j:pac4j-oauth-extension'],
+                             replacement.get(jdk, {}).get('coordinates'))
+
     def test_unconfigured_third_party_release_does_not_inherit_ddd4j_version(self):
         with tempfile.TemporaryDirectory() as temp:
             base = Path(temp)

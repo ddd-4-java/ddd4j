@@ -17,6 +17,40 @@
     }
   },
   "replacements": {
+    "io.github.easy4j:pac4j-oauth-ext": {
+      "17": {
+        "coordinates": [
+          "io.github.easy4j:pac4j-oauth-extension"
+        ],
+        "reason": "上游 pac4j-oauth-extension Git 历史记录明确将 pac4j-oauth-ext 重命名；使用本线新构件"
+      },
+      "21": {
+        "coordinates": [
+          "io.github.easy4j:pac4j-oauth-extension"
+        ],
+        "reason": "上游 pac4j-oauth-extension Git 历史记录明确将 pac4j-oauth-ext 重命名；使用本线新构件"
+      }
+    },
+    "io.github.easy4j:javassist-plus": {
+      "8": {
+        "coordinates": [
+          "io.github.easy4j:javassist-extension"
+        ],
+        "reason": "上游 javassist-extension Git 历史记录明确将 javassist-plus 重命名；本线使用对应 JDK 的新构件"
+      },
+      "17": {
+        "coordinates": [
+          "io.github.easy4j:javassist-extension"
+        ],
+        "reason": "上游 javassist-extension Git 历史记录明确将 javassist-plus 重命名；本线使用对应 JDK 的新构件"
+      },
+      "21": {
+        "coordinates": [
+          "io.github.easy4j:javassist-extension"
+        ],
+        "reason": "上游 javassist-extension Git 历史记录明确将 javassist-plus 重命名；本线使用对应 JDK 的新构件"
+      }
+    },
     "com.kingbase8.jdbc:kingbase8": {
       "8": {
         "coordinates": ["cn.com.kingbase:kingbase8"],
@@ -1573,7 +1607,7 @@
     "io.github.easy4j:httpclient3-extension": 17,
     "io.github.easy4j:ishumei-java-sdk": 17,
     "io.github.easy4j:jackson-extension": 17,
-    "io.github.easy4j:javassist-extension": 17,
+    "io.github.easy4j:javassist-extension": 8,
     "io.github.easy4j:jcifs-pool": 17,
     "io.github.easy4j:jwt-issuer": 17,
     "io.github.easy4j:metrics-biz": 17,
@@ -3617,7 +3651,7 @@
     "jakarta.xml.ws:jakarta.xml.ws-api:jar:": 17,
     "com.couchbase.client:java-client:jar:": 17,
     "org.apache.cassandra:java-driver-core:jar:": 17,
-    "io.github.easy4j:javassist-extension:jar:": 17,
+    "io.github.easy4j:javassist-extension:jar:": 8,
     "jaxen:jaxen:jar:": 17,
     "org.firebirdsql.jdbc:jaybird:jar:": 17,
     "org.jboss.logging:jboss-logging:jar:": 17,
