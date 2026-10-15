@@ -1456,7 +1456,6 @@
     "com.alibaba.otter:canal.client": 8,
     "com.alibaba.otter:canal.protocol": 8,
     "com.alibaba:druid": 8,
-    "io.github.easy4j:druid-metrics-prometheus": 8,
     "io.github.easy4j:httpconn": 8,
     "io.github.easy4j:httputils": 8,
     "io.github.easy4j:javassist-plus": 8,
@@ -1819,7 +1818,7 @@
     "io.github.easy4j:jcifs-pool": 17,
     "io.github.easy4j:jwt-issuer": 17,
     "io.github.easy4j:metrics-biz": 17,
-    "io.github.easy4j:metrics-druid": 17,
+    "io.github.easy4j:metrics-druid": 8,
     "io.github.easy4j:metrics-ehcache3": 17,
     "io.github.easy4j:metrics-resteasy": 17,
     "io.github.easy4j:metrics-sigar2": 17,
@@ -2736,7 +2735,6 @@
   },
   "baseline_variants": {
     "com.eventstore:db-client-java:jar:": 8,
-    "io.github.easy4j:druid-metrics-prometheus:jar:": 8,
     "io.github.easy4j:httpconn:jar:": 8,
     "io.github.easy4j:httputils:jar:": 8,
     "io.github.easy4j:javassist-plus:jar:": 8,
@@ -3919,7 +3917,7 @@
     "org.liquibase:liquibase-core:jar:": 17,
     "org.eclipse.angus:logging-mailhandler:jar:": 17,
     "io.github.easy4j:metrics-biz:jar:": 17,
-    "io.github.easy4j:metrics-druid:jar:": 17,
+    "io.github.easy4j:metrics-druid:jar:": 8,
     "io.github.easy4j:metrics-ehcache3:jar:": 17,
     "io.github.easy4j:metrics-resteasy:jar:": 17,
     "io.github.easy4j:metrics-sigar2:jar:": 17,
@@ -4083,6 +4081,11 @@
     "io.github.easy4j:easyexcel-support": "5.0.1",
     "io.github.easy4j:easyexcel-markdown": "5.0.1",
     "io.github.easy4j:dozer-extra-converters": {
+      "8": "1.0.x.20260630-SNAPSHOT",
+      "17": "2.0.x.20260630-SNAPSHOT",
+      "21": "3.0.x.20260630-SNAPSHOT"
+    },
+    "io.github.easy4j:metrics-druid": {
       "8": "1.0.x.20260630-SNAPSHOT",
       "17": "2.0.x.20260630-SNAPSHOT",
       "21": "3.0.x.20260630-SNAPSHOT"

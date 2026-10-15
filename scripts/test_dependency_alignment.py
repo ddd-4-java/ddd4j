@@ -23,10 +23,14 @@ class DependencyAlignmentTest(unittest.TestCase):
         for section in ('baseline_components', 'baseline_variants'):
             self.assertFalse([coordinate for coordinate in policy[section]
                               if coordinate.startswith(legacy_prefixes)], section)
-        for artifact in ('druid-metrics-prometheus', 'httpconn', 'httputils',
+        for artifact in ('metrics-druid', 'httpconn', 'httputils',
                          'javassist-plus', 'pac4j-oauth-ext', 'shiro-extension-core',
                          'spring-extension'):
             self.assertIn('io.github.easy4j:' + artifact, policy['baseline_components'])
+        self.assertEqual(8, policy['baseline_components']['io.github.easy4j:metrics-druid'])
+        self.assertEqual(8, policy['baseline_variants']['io.github.easy4j:metrics-druid:jar:'])
+        self.assertNotIn('io.github.easy4j:druid-metrics-prometheus', policy['baseline_components'])
+        self.assertNotIn('io.github.easy4j:druid-metrics-prometheus:jar:', policy['baseline_variants'])
 
     def test_shardingsphere_parser_baseline_uses_published_coordinates(self):
         policy_path = Path(__file__).parents[1] / 'config/dependencies/alignment-policy.json'
@@ -42,7 +46,7 @@ class DependencyAlignmentTest(unittest.TestCase):
     def test_three_line_easy4j_components_use_branch_revisions(self):
         policy_path = Path(__file__).parents[1] / 'config/dependencies/alignment-policy.json'
         policy = json.loads(policy_path.read_text(encoding='utf-8'))
-        for artifact in ('cxf-rt-javassist', 'dozer-extra-converters',
+        for artifact in ('cxf-rt-javassist', 'dozer-extra-converters', 'metrics-druid',
                          'shiro-j2cache', 'undertow-metrics-prometheus'):
             coordinate = 'io.github.easy4j:' + artifact
             actual = policy['dependency_versions'].get(coordinate)
