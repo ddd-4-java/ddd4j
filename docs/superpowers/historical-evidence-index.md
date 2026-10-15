@@ -2,6 +2,13 @@
 
 历史报告保留在原所属发布线。本页只定位来源，不把历史结论作为本轮收敛的验证结果。
 
+三线保留的 `.superpowers/`、`docs/superpowers/` 与 fuin API 参考文档，
+统一列在[逐文件历史证据索引](../../verification/three-line-parity/historical-evidence-index.json)。
+索引记录所属线、原路径、最后修改提交及时间、内容 SHA-256；各线原文仍在原分支。
+执行 `python3 scripts/build-historical-evidence-index.py --roots ROOT8 ROOT17 ROOT21
+--output verification/three-line-parity/historical-evidence-index.json --check`
+可核对索引是否随历史资料变化而更新。
+
 | 资料 | 原所属线 | 可定位的版本与路径 | 本轮状态 |
 |---|---|---|---|
 | 2026-09-09 三线源码对等审计 | 1.0.x | `6bca6659fe0530427aff6673ec2c7b0b5caba778` 的 `docs/superpowers/reports/2026-09-09-three-line-source-parity-audit.md`；文件 SHA-256 `03a866aa382a8f9fc67a0e5e7035259b3d1e1626281882cf3427979580a7042a` | 历史记录；2.0.x、3.0.x 未复制该报告。当前差异以本轮 `target/three-line-parity/` 重新生成的报告为准。 |
