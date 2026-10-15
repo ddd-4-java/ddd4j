@@ -110,10 +110,14 @@ public final class ReadinessReport {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ReadinessReport)) return false;
-        ReadinessReport that = (ReadinessReport) o;
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof ReadinessReport)) {
+            return false;
+        }
+        ReadinessReport that = (ReadinessReport) obj;
         return ready == that.ready && results.equals(that.results);
     }
 

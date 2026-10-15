@@ -19,8 +19,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.kit.lang.StrKit;
 
-import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
@@ -88,10 +88,18 @@ public final class ReadinessResult {
                 StrKit.isBlank(reason) ? Collections.<String, String>emptyMap() : Collections.singletonMap("reason", reason));
     }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * 判断布尔状态。
+     * @return 判断结果。
+     */
     public boolean isReady() {
         return ready;
     }
@@ -116,10 +124,14 @@ public final class ReadinessResult {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ReadinessResult)) return false;
-        ReadinessResult that = (ReadinessResult) o;
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof ReadinessResult)) {
+            return false;
+        }
+        ReadinessResult that = (ReadinessResult) obj;
         return ready == that.ready
                 && Objects.equals(name, that.name)
                 && Objects.equals(details, that.details);
