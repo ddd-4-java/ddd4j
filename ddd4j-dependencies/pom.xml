@@ -5998,9 +5998,8 @@
             </dependency>
             <dependency>
                 <groupId>io.github.easy4j</groupId>
-                <artifactId>rocketmq-extension</artifactId>
+                <artifactId>rocketmq-extension-core</artifactId>
                 <version>${rocketmq-extension.version}</version>
-                <type>pom</type>
             </dependency>
             <dependency>
                 <groupId>io.reactivex.rxjava2</groupId>

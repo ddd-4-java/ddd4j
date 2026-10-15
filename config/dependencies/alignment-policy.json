@@ -45,6 +45,16 @@
         "reason": "用户确认旧 disruptor-biz 坐标归并到 JDK 21 本线 disruptor-extension 构件"
       }
     },
+    "io.github.easy4j:rocketmq-extension": {
+      "17": {
+        "coordinates": ["io.github.easy4j:rocketmq-extension-core"],
+        "reason": "rocketmq-extension 是上游多模块父 POM；JDK 17 可用代码产物为 rocketmq-extension-core"
+      },
+      "21": {
+        "coordinates": ["io.github.easy4j:rocketmq-extension-core"],
+        "reason": "rocketmq-extension 是上游多模块父 POM；JDK 21 可用代码产物为 rocketmq-extension-core"
+      }
+    },
     "io.github.easy4j:shiro-biz-sdk": {
       "17": {
         "coordinates": [
