@@ -15,6 +15,9 @@ CASES = {
     "ddd4j-mq-mqtt": "MqttContainerIntegrationTest",
     "ddd4j-mq-mqtt-mica": "MicaMqttContainerIntegrationTest",
     "ddd4j-mq-activemq": "ArtemisContainerIntegrationTest",
+    "ddd4j-mq-pulsar": "PulsarContainerIntegrationTest",
+    "ddd4j-mq-rocketmq": "RocketMQNativeIntegrationTest",
+    "ddd4j-mq-redis-stream": "RedisStreamNativeCausalityIT",
 }
 
 
@@ -41,17 +44,17 @@ class NativeBrokerReportTest(unittest.TestCase):
         self.assertEqual(0, self.check().returncode)
 
     def test_missing_report_fails(self):
-        report = next((self.root / "ddd4j-mq" / "ddd4j-mq-nats" / "target" /
+        report = next((self.root / "ddd4j-mq" / "ddd4j-mq-pulsar" / "target" /
                        "surefire-reports").glob("TEST-*.xml"))
         report.unlink()
         self.assertNotEqual(0, self.check().returncode)
 
     def test_skipped_native_test_fails(self):
-        self.write_report("ddd4j-mq-rabbitmq", CASES["ddd4j-mq-rabbitmq"], skipped=1)
+        self.write_report("ddd4j-mq-rocketmq", CASES["ddd4j-mq-rocketmq"], skipped=1)
         self.assertNotEqual(0, self.check().returncode)
 
     def test_zero_executed_tests_fails(self):
-        self.write_report("ddd4j-mq-activemq", CASES["ddd4j-mq-activemq"], tests=0)
+        self.write_report("ddd4j-mq-redis-stream", CASES["ddd4j-mq-redis-stream"], tests=0)
         self.assertNotEqual(0, self.check().returncode)
 
 
