@@ -2,15 +2,21 @@
   "replacements": {
     "com.kingbase8.jdbc:kingbase8": {
       "8": {
-        "coordinates": ["cn.com.kingbase:kingbase8"],
+        "coordinates": [
+          "cn.com.kingbase:kingbase8"
+        ],
         "reason": "金仓 JDBC 驱动实际发布坐标为 cn.com.kingbase:kingbase8，保留 JDK 8 历史坐标映射"
       },
       "17": {
-        "coordinates": ["cn.com.kingbase:kingbase8"],
+        "coordinates": [
+          "cn.com.kingbase:kingbase8"
+        ],
         "reason": "金仓 JDBC 驱动实际发布坐标为 cn.com.kingbase:kingbase8，保留 JDK 17 历史坐标映射"
       },
       "21": {
-        "coordinates": ["cn.com.kingbase:kingbase8"],
+        "coordinates": [
+          "cn.com.kingbase:kingbase8"
+        ],
         "reason": "金仓 JDBC 驱动实际发布坐标为 cn.com.kingbase:kingbase8，保留 JDK 21 历史坐标映射"
       }
     },
@@ -30,11 +36,15 @@
     },
     "io.github.easy4j:rocketmq-extension": {
       "17": {
-        "coordinates": ["io.github.easy4j:rocketmq-extension-core"],
+        "coordinates": [
+          "io.github.easy4j:rocketmq-extension-core"
+        ],
         "reason": "rocketmq-extension 是上游多模块父 POM；JDK 17 可用代码产物为 rocketmq-extension-core"
       },
       "21": {
-        "coordinates": ["io.github.easy4j:rocketmq-extension-core"],
+        "coordinates": [
+          "io.github.easy4j:rocketmq-extension-core"
+        ],
         "reason": "rocketmq-extension 是上游多模块父 POM；JDK 21 可用代码产物为 rocketmq-extension-core"
       }
     },
@@ -393,6 +403,12 @@
       }
     },
     "com.github.redacted-legacy-family:cxf-rt-javassist": {
+      "8": {
+        "coordinates": [
+          "io.github.easy4j:cxf-rt-javassist"
+        ],
+        "reason": "同一 CXF 扩展迁移至 easy4j 坐标，已核对本地 JDK 8 构件"
+      },
       "17": {
         "coordinates": [
           "io.github.easy4j:cxf-rt-javassist"
@@ -407,6 +423,12 @@
       }
     },
     "com.github.redacted-legacy-family:dozer-extra-converters": {
+      "8": {
+        "coordinates": [
+          "io.github.easy4j:dozer-extra-converters"
+        ],
+        "reason": "同一 Dozer 扩展迁移至 easy4j 坐标，已核对本地构件"
+      },
       "17": {
         "coordinates": [
           "io.github.easy4j:dozer-extra-converters"
@@ -421,48 +443,72 @@
       }
     },
     "com.github.redacted-legacy-family:jwt-issuer-api": {
+      "8": {
+        "coordinates": [
+          "io.github.easy4j:jwt-issuer-api"
+        ],
+        "reason": "同一 JWT API 模块迁移至 easy4j 坐标"
+      },
       "17": {
         "coordinates": [
-          "io.github.easy4j:jwt-issuer"
+          "io.github.easy4j:jwt-issuer-api"
         ],
-        "reason": "旧拆分模块由当前 easy4j 聚合组件替代"
+        "reason": "同一 JWT API 模块迁移至 easy4j 坐标"
       },
       "21": {
         "coordinates": [
-          "io.github.easy4j:jwt-issuer"
+          "io.github.easy4j:jwt-issuer-api"
         ],
-        "reason": "旧拆分模块由当前 easy4j 聚合组件替代"
+        "reason": "同一 JWT API 模块迁移至 easy4j 坐标"
       }
     },
     "com.github.redacted-legacy-family:jwt-issuer-with-jjwt": {
+      "8": {
+        "coordinates": [
+          "io.github.easy4j:jwt-issuer-with-jjwt"
+        ],
+        "reason": "同一 JJWT 实现模块迁移至 easy4j 坐标"
+      },
       "17": {
         "coordinates": [
-          "io.github.easy4j:jwt-issuer"
+          "io.github.easy4j:jwt-issuer-with-jjwt"
         ],
-        "reason": "旧拆分模块由当前 easy4j 聚合组件替代"
+        "reason": "同一 JJWT 实现模块迁移至 easy4j 坐标"
       },
       "21": {
         "coordinates": [
-          "io.github.easy4j:jwt-issuer"
+          "io.github.easy4j:jwt-issuer-with-jjwt"
         ],
-        "reason": "旧拆分模块由当前 easy4j 聚合组件替代"
+        "reason": "同一 JJWT 实现模块迁移至 easy4j 坐标"
       }
     },
     "com.github.redacted-legacy-family:jwt-issuer-with-nimbus": {
+      "8": {
+        "coordinates": [
+          "io.github.easy4j:jwt-issuer-with-nimbus"
+        ],
+        "reason": "同一 Nimbus 实现模块迁移至 easy4j 坐标"
+      },
       "17": {
         "coordinates": [
-          "io.github.easy4j:jwt-issuer"
+          "io.github.easy4j:jwt-issuer-with-nimbus"
         ],
-        "reason": "旧拆分模块由当前 easy4j 聚合组件替代"
+        "reason": "同一 Nimbus 实现模块迁移至 easy4j 坐标"
       },
       "21": {
         "coordinates": [
-          "io.github.easy4j:jwt-issuer"
+          "io.github.easy4j:jwt-issuer-with-nimbus"
         ],
-        "reason": "旧拆分模块由当前 easy4j 聚合组件替代"
+        "reason": "同一 Nimbus 实现模块迁移至 easy4j 坐标"
       }
     },
     "com.github.redacted-legacy-family:shiro-j2cache": {
+      "8": {
+        "coordinates": [
+          "io.github.easy4j:shiro-j2cache"
+        ],
+        "reason": "JDK 8 线已使用 Easy4J 1.0.x 组件替代旧坐标"
+      },
       "17": {
         "coordinates": [
           "io.github.easy4j:shiro-j2cache"
@@ -491,6 +537,12 @@
       }
     },
     "com.github.redacted-legacy-family:spring-javassist": {
+      "8": {
+        "coordinates": [
+          "io.github.easy4j:spring-javassist"
+        ],
+        "reason": "JDK 8 线已使用 Easy4J 1.0.x 组件替代旧坐标"
+      },
       "17": {
         "coordinates": [
           "io.github.easy4j:spring-javassist"
@@ -511,6 +563,298 @@
         ],
         "reason": "删除重复实现，保留已统一管理的 shiro-redis 组件"
       }
+    },
+    "org.apache.commons.ssl:not-yet-commons-ssl": {
+      "8": {
+        "coordinates": [
+          "ca.juliusdavies:not-yet-commons-ssl"
+        ],
+        "reason": "Maven Central 官方 POM 仅发布 ca.juliusdavies:not-yet-commons-ssl:0.3.9；保留旧误写坐标映射"
+      },
+      "17": {
+        "coordinates": [
+          "ca.juliusdavies:not-yet-commons-ssl"
+        ],
+        "reason": "Maven Central 官方 POM 仅发布 ca.juliusdavies:not-yet-commons-ssl:0.3.9；保留旧误写坐标映射"
+      },
+      "21": {
+        "coordinates": [
+          "ca.juliusdavies:not-yet-commons-ssl"
+        ],
+        "reason": "Maven Central 官方 POM 仅发布 ca.juliusdavies:not-yet-commons-ssl:0.3.9；保留旧误写坐标映射"
+      }
+    },
+    "org.apache.commons:not-yet-commons-ssl": {
+      "8": {
+        "coordinates": [
+          "ca.juliusdavies:not-yet-commons-ssl"
+        ],
+        "reason": "Maven Central 官方 POM 仅发布 ca.juliusdavies:not-yet-commons-ssl:0.3.9；保留旧误写坐标映射"
+      },
+      "17": {
+        "coordinates": [
+          "ca.juliusdavies:not-yet-commons-ssl"
+        ],
+        "reason": "Maven Central 官方 POM 仅发布 ca.juliusdavies:not-yet-commons-ssl:0.3.9；保留旧误写坐标映射"
+      },
+      "21": {
+        "coordinates": [
+          "ca.juliusdavies:not-yet-commons-ssl"
+        ],
+        "reason": "Maven Central 官方 POM 仅发布 ca.juliusdavies:not-yet-commons-ssl:0.3.9；保留旧误写坐标映射"
+      }
+    },
+    "org.apache.hbase:hbase-protocol": {
+      "8": {
+        "coordinates": [
+          "org.apache.hbase:hbase-protocol-shaded"
+        ],
+        "reason": "HBase 3 官方迁移说明要求使用 hbase-protocol-shaded；3.0.0-beta-1 已发布且基础字节码支持 JDK 8"
+      },
+      "17": {
+        "coordinates": [
+          "org.apache.hbase:hbase-protocol-shaded"
+        ],
+        "reason": "HBase 3 官方迁移说明要求使用 hbase-protocol-shaded；3.0.0-beta-1 已发布且基础字节码支持 JDK 8"
+      },
+      "21": {
+        "coordinates": [
+          "org.apache.hbase:hbase-protocol-shaded"
+        ],
+        "reason": "HBase 3 官方迁移说明要求使用 hbase-protocol-shaded；3.0.0-beta-1 已发布且基础字节码支持 JDK 8"
+      }
+    },
+    "io.github.easy4j:pac4j-oauth-ext": {
+      "17": {
+        "coordinates": [
+          "io.github.easy4j:pac4j-oauth-extension"
+        ],
+        "reason": "上游 pac4j-oauth-extension Git 历史记录明确将 pac4j-oauth-ext 重命名；使用本线新构件"
+      },
+      "21": {
+        "coordinates": [
+          "io.github.easy4j:pac4j-oauth-extension"
+        ],
+        "reason": "上游 pac4j-oauth-extension Git 历史记录明确将 pac4j-oauth-ext 重命名；使用本线新构件"
+      }
+    },
+    "io.github.easy4j:javassist-plus": {
+      "8": {
+        "coordinates": [
+          "io.github.easy4j:javassist-extension"
+        ],
+        "reason": "上游 javassist-extension Git 历史记录明确将 javassist-plus 重命名；本线使用对应 JDK 的新构件"
+      },
+      "17": {
+        "coordinates": [
+          "io.github.easy4j:javassist-extension"
+        ],
+        "reason": "上游 javassist-extension Git 历史记录明确将 javassist-plus 重命名；本线使用对应 JDK 的新构件"
+      },
+      "21": {
+        "coordinates": [
+          "io.github.easy4j:javassist-extension"
+        ],
+        "reason": "上游 javassist-extension Git 历史记录明确将 javassist-plus 重命名；本线使用对应 JDK 的新构件"
+      }
+    },
+    "io.github.easy4j:spring-security-extension2": {
+      "17": {
+        "coordinates": [
+          "io.github.easy4j:spring-security-extension"
+        ],
+        "reason": "上游已将旧 extension2 类并入 JDK 17 的 spring-security-extension 构件"
+      },
+      "21": {
+        "coordinates": [
+          "io.github.easy4j:spring-security-extension"
+        ],
+        "reason": "上游已将旧 extension2 类并入 JDK 21 的 spring-security-extension 构件"
+      }
+    },
+    "io.github.easy4j:pf4j3-extension": {
+      "17": {
+        "coordinates": [
+          "io.github.easy4j:pf4j-extension-core",
+          "io.github.easy4j:pf4j-extension-spring",
+          "io.github.easy4j:pf4j-extension-update"
+        ],
+        "reason": "上游将旧 PF4J3 扩展按 core/spring/update 能力拆分为 JDK 17 构件"
+      },
+      "21": {
+        "coordinates": [
+          "io.github.easy4j:pf4j-extension-core",
+          "io.github.easy4j:pf4j-extension-spring",
+          "io.github.easy4j:pf4j-extension-update"
+        ],
+        "reason": "上游将旧 PF4J3 扩展按 core/spring/update 能力拆分为 JDK 21 构件"
+      }
+    },
+    "io.github.easy4j:security-jwt-extension": {
+      "21": {
+        "coordinates": [
+          "io.github.easy4j:spring-security-jwt"
+        ],
+        "reason": "JDK 21 上游 feature/3.0.x 的实际 artifactId 为 spring-security-jwt，保持 JWT 认证授权组件能力"
+      }
+    },
+    "javax.annotation:javax.annotation-api": {
+      "21": {
+        "coordinates": [
+          "jakarta.annotation:jakarta.annotation-api"
+        ],
+        "reason": "JDK 21 线使用 Jakarta Annotation 3.0；模块源码使用 jakarta.annotation 命名空间"
+      }
+    },
+    "javax.inject:javax.inject": {
+      "21": {
+        "coordinates": [
+          "jakarta.inject:jakarta.inject-api"
+        ],
+        "reason": "JDK 21 线使用 Jakarta Inject 2.0；模块源码使用 jakarta.inject 命名空间"
+      }
+    },
+    "javax.persistence:javax.persistence-api": {
+      "21": {
+        "coordinates": [
+          "jakarta.persistence:jakarta.persistence-api"
+        ],
+        "reason": "JDK 21 线使用 Jakarta Persistence 3.2；JPA 模块源码及测试使用 jakarta.persistence 命名空间"
+      }
+    },
+    "com.github.redacted-legacy-family:redistpl-plus-spring-boot-starter": {
+      "8": {
+        "coordinates": [
+          "io.github.easy4j:redistpl-plus-spring-boot-starter"
+        ],
+        "reason": "Easy4J starter 坐标迁移"
+      },
+      "17": {
+        "coordinates": [
+          "io.github.easy4j:redistpl-plus-spring-boot-starter"
+        ],
+        "reason": "Easy4J starter 坐标迁移"
+      },
+      "21": {
+        "coordinates": [
+          "io.github.easy4j:redistpl-plus-spring-boot-starter"
+        ],
+        "reason": "Easy4J starter 坐标迁移"
+      }
+    },
+    "com.github.redacted-legacy-family:security-biz-spring-boot-starter": {
+      "8": {
+        "coordinates": [
+          "io.github.easy4j:security-biz-spring-boot-starter"
+        ],
+        "reason": "Easy4J starter 坐标迁移"
+      },
+      "17": {
+        "coordinates": [
+          "io.github.easy4j:security-biz-spring-boot-starter"
+        ],
+        "reason": "Easy4J starter 坐标迁移"
+      },
+      "21": {
+        "coordinates": [
+          "io.github.easy4j:security-biz-spring-boot-starter"
+        ],
+        "reason": "Easy4J starter 坐标迁移"
+      }
+    },
+    "com.github.redacted-legacy-family:security-jwt-spring-boot-starter": {
+      "8": {
+        "coordinates": [
+          "io.github.easy4j:security-jwt-spring-boot-starter"
+        ],
+        "reason": "Easy4J starter 坐标迁移"
+      },
+      "17": {
+        "coordinates": [
+          "io.github.easy4j:security-jwt-spring-boot-starter"
+        ],
+        "reason": "Easy4J starter 坐标迁移"
+      },
+      "21": {
+        "coordinates": [
+          "io.github.easy4j:security-jwt-spring-boot-starter"
+        ],
+        "reason": "Easy4J starter 坐标迁移"
+      }
+    },
+    "com.github.redacted-legacy-family:undertow-metrics-prometheus": {
+      "8": {
+        "coordinates": [
+          "io.github.easy4j:undertow-metrics-prometheus"
+        ],
+        "reason": "同一 Undertow 指标扩展迁移至 easy4j 坐标；JDK 8 构件已完成本地测试"
+      },
+      "17": {
+        "coordinates": [
+          "io.github.easy4j:undertow-metrics-prometheus"
+        ],
+        "reason": "同一 Undertow 指标扩展迁移至 easy4j 坐标；JDK 17 构件已完成本地测试"
+      },
+      "21": {
+        "coordinates": [
+          "io.github.easy4j:undertow-metrics-prometheus"
+        ],
+        "reason": "同一 Undertow 指标扩展迁移至 easy4j 坐标；JDK 21 构件已完成本地测试"
+      }
+    },
+    "com.github.redacted-legacy-family:mybatis-plus-enhance": {
+      "8": {
+        "coordinates": [
+          "io.github.easy4j:mybatis-plus-enhance-core",
+          "io.github.easy4j:mybatis-plus-enhance-extension",
+          "io.github.easy4j:mybatis-plus-enhance-spring"
+        ],
+        "reason": "原单体扩展已拆为 Core、Extension、Spring 三个实际 JAR；聚合坐标仅为 POM"
+      },
+      "17": {
+        "coordinates": [
+          "io.github.easy4j:mybatis-plus-enhance-core",
+          "io.github.easy4j:mybatis-plus-enhance-extension",
+          "io.github.easy4j:mybatis-plus-enhance-spring"
+        ],
+        "reason": "原单体扩展已拆为 Core、Extension、Spring 三个实际 JAR；聚合坐标仅为 POM"
+      },
+      "21": {
+        "coordinates": [
+          "io.github.easy4j:mybatis-plus-enhance-core",
+          "io.github.easy4j:mybatis-plus-enhance-extension",
+          "io.github.easy4j:mybatis-plus-enhance-spring"
+        ],
+        "reason": "原单体扩展已拆为 Core、Extension、Spring 三个实际 JAR；聚合坐标仅为 POM"
+      }
+    },
+    "com.alibaba:easyexcel": {
+      "8": {
+        "coordinates": [
+          "io.github.easy4j:easyexcel"
+        ],
+        "reason": "Easy4J 三线 fork 承接原 EasyExcel 坐标，保留 com.alibaba.excel 公开包和 easyexcel-core 依赖"
+      },
+      "17": {
+        "coordinates": [
+          "io.github.easy4j:easyexcel"
+        ],
+        "reason": "Easy4J 三线 fork 承接原 EasyExcel 坐标，保留 com.alibaba.excel 公开包和 easyexcel-core 依赖"
+      },
+      "21": {
+        "coordinates": [
+          "io.github.easy4j:easyexcel"
+        ],
+        "reason": "Easy4J 三线 fork 承接原 EasyExcel 坐标，保留 com.alibaba.excel 公开包和 easyexcel-core 依赖"
+      }
+    },
+    "com.fasterxml.jackson.core:jackson-core": {
+      "21": {
+        "coordinates": [
+          "tools.jackson.core:jackson-core"
+        ],
+        "reason": "Jackson 3 将 core 工件迁移到 tools.jackson.core，JDK 21 线显式管理对应版本"
+      }
     }
   },
   "optional_bytecode": {},
@@ -530,6 +874,10 @@
     "com.github.redacted-legacy-family:ip2region-spring-boot-starter": {
       "17": "Spring Boot starter 不属于 ddd4j 通用依赖",
       "21": "Spring Boot starter 不属于 ddd4j 通用依赖"
+    },
+    "io.github.easy4j:security-guard-sdk": {
+      "17": "上游 2.0.x 只有 Maven 骨架且无生产源码；ddd4j 无直接使用，待公开 API 和实现抽离后再纳入",
+      "21": "上游 3.0.x 只有 Maven 骨架且无生产源码；ddd4j 无直接使用，待公开 API 和实现抽离后再纳入"
     }
   },
   "unsupported": {
@@ -736,6 +1084,458 @@
         "reason": "TongWeb 为外部私有商业包，需使用方手动发布到自己的私有仓库；ddd4j 默认产品与 BOM 不提供该适配",
         "status": "unsupported-private-external"
       }
+    },
+    "us.fatehi:schemacrawler-hana": {
+      "8": {
+        "reason": "Maven Central 的 SAP HANA 插件从 16.11.2 才发布，JDK 8 线固定的 SchemaCrawler 16.9.5 无同版本插件；默认模块未引用该插件",
+        "status": "unpublished-version"
+      }
+    },
+    "us.fatehi:schemacrawler-utility": {
+      "17": {
+        "reason": "SchemaCrawler 官方 v17.11.3 源码对 utility 模块设置 install/deploy/central publish skip，未发布本线同版本 JAR；默认模块未直接引用",
+        "status": "unpublished-version"
+      },
+      "21": {
+        "reason": "SchemaCrawler 官方 v17.11.3 源码对 utility 模块设置 install/deploy/central publish skip，未发布本线同版本 JAR；默认模块未直接引用",
+        "status": "unpublished-version"
+      }
+    },
+    "fr.opensagres.xdocreport:org.apache.poi.xwpf.converter.pdf.itext5": {
+      "8": {
+        "reason": "Maven Central 仅发布到 1.0.6，未发布当前 XDocReport 2.0.6 所需同版本构件；默认模块未引用",
+        "status": "unpublished-version"
+      },
+      "17": {
+        "reason": "Maven Central 仅发布到 1.0.6，未发布当前 XDocReport 2.1.0 所需同版本构件；默认模块未引用",
+        "status": "unpublished-version"
+      },
+      "21": {
+        "reason": "Maven Central 仅发布到 1.0.6，未发布当前 XDocReport 2.1.0 所需同版本构件；默认模块未引用",
+        "status": "unpublished-version"
+      }
+    },
+    "org.snmp4j:snmp4j-agent-db": {
+      "8": {
+        "reason": "Maven Central 从 3.0.0 才发布 agent-db，当前 JDK 8 线 2.7.9 未发布；默认模块未引用，17/21 线保留本线 3.x 构件",
+        "status": "unpublished-version"
+      }
+    },
+    "org.chromium.net:cronet-api": {
+      "8": {
+        "reason": "Google Maven 仅发布此 Android AAR，无对应 JVM JAR；ddd4j 默认模块不使用 Android Cronet",
+        "status": "unsupported-platform"
+      },
+      "17": {
+        "reason": "Google Maven 仅发布此 Android AAR，无对应 JVM JAR；ddd4j 默认模块不使用 Android Cronet",
+        "status": "unsupported-platform"
+      },
+      "21": {
+        "reason": "Google Maven 仅发布此 Android AAR，无对应 JVM JAR；ddd4j 默认模块不使用 Android Cronet",
+        "status": "unsupported-platform"
+      }
+    },
+    "org.chromium.net:cronet-common": {
+      "8": {
+        "reason": "Google Maven 仅发布此 Android AAR，无对应 JVM JAR；ddd4j 默认模块不使用 Android Cronet",
+        "status": "unsupported-platform"
+      },
+      "17": {
+        "reason": "Google Maven 仅发布此 Android AAR，无对应 JVM JAR；ddd4j 默认模块不使用 Android Cronet",
+        "status": "unsupported-platform"
+      },
+      "21": {
+        "reason": "Google Maven 仅发布此 Android AAR，无对应 JVM JAR；ddd4j 默认模块不使用 Android Cronet",
+        "status": "unsupported-platform"
+      }
+    },
+    "org.chromium.net:cronet-embedded": {
+      "8": {
+        "reason": "Google Maven 仅发布此 Android AAR，无对应 JVM JAR；ddd4j 默认模块不使用 Android Cronet",
+        "status": "unsupported-platform"
+      },
+      "17": {
+        "reason": "Google Maven 仅发布此 Android AAR，无对应 JVM JAR；ddd4j 默认模块不使用 Android Cronet",
+        "status": "unsupported-platform"
+      },
+      "21": {
+        "reason": "Google Maven 仅发布此 Android AAR，无对应 JVM JAR；ddd4j 默认模块不使用 Android Cronet",
+        "status": "unsupported-platform"
+      }
+    },
+    "org.chromium.net:cronet-fallback": {
+      "8": {
+        "reason": "Google Maven 仅发布此 Android AAR，无对应 JVM JAR；ddd4j 默认模块不使用 Android Cronet",
+        "status": "unsupported-platform"
+      },
+      "17": {
+        "reason": "Google Maven 仅发布此 Android AAR，无对应 JVM JAR；ddd4j 默认模块不使用 Android Cronet",
+        "status": "unsupported-platform"
+      },
+      "21": {
+        "reason": "Google Maven 仅发布此 Android AAR，无对应 JVM JAR；ddd4j 默认模块不使用 Android Cronet",
+        "status": "unsupported-platform"
+      }
+    },
+    "org.apache.logging.log4j:log4j-flume-ng": {
+      "8": {
+        "reason": "Log4j 2.24.3 未发布此旧模块，2.x 最后发布于 2.23.1；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      },
+      "17": {
+        "reason": "Log4j 2.24.3 未发布此旧模块，2.x 最后发布于 2.23.1；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      },
+      "21": {
+        "reason": "Log4j 2.24.3 未发布此旧模块，2.x 最后发布于 2.23.1；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "org.apache.logging.log4j:log4j-kubernetes": {
+      "8": {
+        "reason": "Log4j 2.24.3 未发布此旧模块，2.x 最后发布于 2.23.1；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      },
+      "17": {
+        "reason": "Log4j 2.24.3 未发布此旧模块，2.x 最后发布于 2.23.1；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      },
+      "21": {
+        "reason": "Log4j 2.24.3 未发布此旧模块，2.x 最后发布于 2.23.1；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "org.apache.logging.log4j:log4j-mongodb3": {
+      "8": {
+        "reason": "Log4j 2.24.3 未发布此旧模块，2.x 最后发布于 2.23.1；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      },
+      "17": {
+        "reason": "Log4j 2.24.3 未发布此旧模块，2.x 最后发布于 2.23.1；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      },
+      "21": {
+        "reason": "Log4j 2.24.3 未发布此旧模块，2.x 最后发布于 2.23.1；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "net.javacrumbs.shedlock:shedlock-provider-couchbase-javaclient": {
+      "17": {
+        "reason": "ShedLock 7.2.1 未发布此旧 provider，最后发布于 4.48.0；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      },
+      "21": {
+        "reason": "ShedLock 7.2.1 未发布此旧 provider，最后发布于 4.48.0；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "net.javacrumbs.shedlock:shedlock-provider-redis-jedis": {
+      "17": {
+        "reason": "ShedLock 7.2.1 未发布此旧 provider，最后发布于 4.48.0；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      },
+      "21": {
+        "reason": "ShedLock 7.2.1 未发布此旧 provider，最后发布于 4.48.0；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "org.pac4j:pac4j-couch": {
+      "17": {
+        "reason": "pac4j 6.5.3 未发布此旧模块，最后发布于 6.4.3；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      },
+      "21": {
+        "reason": "pac4j 6.5.3 未发布此旧模块，最后发布于 6.4.3；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "org.pac4j:pac4j-gae": {
+      "17": {
+        "reason": "pac4j 6.5.3 未发布此旧模块，最后发布于 6.4.3；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      },
+      "21": {
+        "reason": "pac4j 6.5.3 未发布此旧模块，最后发布于 6.4.3；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "org.pac4j:pac4j-openid": {
+      "17": {
+        "reason": "pac4j 6.5.3 未发布旧 OpenID 模块，最后发布于 4.5.10；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      },
+      "21": {
+        "reason": "pac4j 6.5.3 未发布旧 OpenID 模块，最后发布于 4.5.10；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "org.apache.cxf:cxf-rt-rs-service-description-swagger": {
+      "17": {
+        "reason": "CXF 4.2.2 未发布此旧 Swagger 模块，最后发布于 3.6.13；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      },
+      "21": {
+        "reason": "CXF 4.2.2 未发布此旧 Swagger 模块，最后发布于 3.6.13；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "io.swagger:swagger-hibernate-validations": {
+      "8": {
+        "reason": "io.swagger 当前 2.0.0-rc2 版本未发布此旧集成坐标；最后发布的 1.x 版本不与本线 rc2 核心混用，默认模块未使用",
+        "status": "unsupported-unpublished"
+      },
+      "17": {
+        "reason": "io.swagger 当前 2.0.0-rc2 版本未发布此旧集成坐标；最后发布的 1.x 版本不与本线 rc2 核心混用，默认模块未使用",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "io.swagger:swagger-jaxrs": {
+      "8": {
+        "reason": "io.swagger 当前 2.0.0-rc2 版本未发布此旧集成坐标；最后发布的 1.x 版本不与本线 rc2 核心混用，默认模块未使用",
+        "status": "unsupported-unpublished"
+      },
+      "17": {
+        "reason": "io.swagger 当前 2.0.0-rc2 版本未发布此旧集成坐标；最后发布的 1.x 版本不与本线 rc2 核心混用，默认模块未使用",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "io.swagger:swagger-jersey-jaxrs": {
+      "8": {
+        "reason": "io.swagger 当前 2.0.0-rc2 版本未发布此旧集成坐标；最后发布的 1.x 版本不与本线 rc2 核心混用，默认模块未使用",
+        "status": "unsupported-unpublished"
+      },
+      "17": {
+        "reason": "io.swagger 当前 2.0.0-rc2 版本未发布此旧集成坐标；最后发布的 1.x 版本不与本线 rc2 核心混用，默认模块未使用",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "io.swagger:swagger-jersey2-jaxrs": {
+      "8": {
+        "reason": "io.swagger 当前 2.0.0-rc2 版本未发布此旧集成坐标；最后发布的 1.x 版本不与本线 rc2 核心混用，默认模块未使用",
+        "status": "unsupported-unpublished"
+      },
+      "17": {
+        "reason": "io.swagger 当前 2.0.0-rc2 版本未发布此旧集成坐标；最后发布的 1.x 版本不与本线 rc2 核心混用，默认模块未使用",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "io.swagger:swagger-servlet": {
+      "8": {
+        "reason": "io.swagger 当前 2.0.0-rc2 版本未发布此旧集成坐标；最后发布的 1.x 版本不与本线 rc2 核心混用，默认模块未使用",
+        "status": "unsupported-unpublished"
+      },
+      "17": {
+        "reason": "io.swagger 当前 2.0.0-rc2 版本未发布此旧集成坐标；最后发布的 1.x 版本不与本线 rc2 核心混用，默认模块未使用",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "org.apache.kafka:kafka-log4j-appender": {
+      "17": {
+        "reason": "Kafka 4.3.1 未发布此旧 Scala 2.12/Log4j 坐标；最后发布版本为 3.9.2，当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      },
+      "21": {
+        "reason": "Kafka 4.3.1 未发布此旧 Scala 2.12/Log4j 坐标；最后发布版本为 3.9.2，当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "org.apache.kafka:kafka-streams-scala_2.12": {
+      "17": {
+        "reason": "Kafka 4.3.1 未发布此旧 Scala 2.12/Log4j 坐标；最后发布版本为 3.9.2，当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      },
+      "21": {
+        "reason": "Kafka 4.3.1 未发布此旧 Scala 2.12/Log4j 坐标；最后发布版本为 3.9.2，当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "org.apache.kafka:kafka_2.12": {
+      "17": {
+        "reason": "Kafka 4.3.1 未发布此旧 Scala 2.12/Log4j 坐标；最后发布版本为 3.9.2，当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      },
+      "21": {
+        "reason": "Kafka 4.3.1 未发布此旧 Scala 2.12/Log4j 坐标；最后发布版本为 3.9.2，当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "io.github.resilience4j:resilience4j-spring": {
+      "17": {
+        "reason": "Resilience4j 2.4.0 未发布此旧 Spring 坐标；最后发布版本为 2.3.0，当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      },
+      "21": {
+        "reason": "Resilience4j 2.4.0 未发布此旧 Spring 坐标；最后发布版本为 2.3.0，当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "io.github.resilience4j:resilience4j-spring-boot2": {
+      "17": {
+        "reason": "Resilience4j 2.4.0 未发布此旧 Spring 坐标；最后发布版本为 2.3.0，当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "io.github.resilience4j:resilience4j-spring-cloud2": {
+      "17": {
+        "reason": "Resilience4j 2.4.0 未发布此旧 Spring 坐标；最后发布版本为 2.3.0，当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "org.eclipse.jetty.websocket:javax-websocket-client-impl": {
+      "17": {
+        "reason": "Jetty 12.1.8 不发布 Jetty 9/11 时代的此 WebSocket 坐标；当前默认模块不使用此旧适配器",
+        "status": "unsupported-unpublished"
+      },
+      "21": {
+        "reason": "Jetty 12.1.8 不发布 Jetty 9/11 时代的此 WebSocket 坐标；当前默认模块不使用此旧适配器",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "org.eclipse.jetty.websocket:javax-websocket-server-impl": {
+      "17": {
+        "reason": "Jetty 12.1.8 不发布 Jetty 9/11 时代的此 WebSocket 坐标；当前默认模块不使用此旧适配器",
+        "status": "unsupported-unpublished"
+      },
+      "21": {
+        "reason": "Jetty 12.1.8 不发布 Jetty 9/11 时代的此 WebSocket 坐标；当前默认模块不使用此旧适配器",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "org.eclipse.jetty.websocket:websocket-api": {
+      "17": {
+        "reason": "Jetty 12.1.8 不发布 Jetty 9/11 时代的此 WebSocket 坐标；当前默认模块不使用此旧适配器",
+        "status": "unsupported-unpublished"
+      },
+      "21": {
+        "reason": "Jetty 12.1.8 不发布 Jetty 9/11 时代的此 WebSocket 坐标；当前默认模块不使用此旧适配器",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "org.eclipse.jetty.websocket:websocket-client": {
+      "17": {
+        "reason": "Jetty 12.1.8 不发布 Jetty 9/11 时代的此 WebSocket 坐标；当前默认模块不使用此旧适配器",
+        "status": "unsupported-unpublished"
+      },
+      "21": {
+        "reason": "Jetty 12.1.8 不发布 Jetty 9/11 时代的此 WebSocket 坐标；当前默认模块不使用此旧适配器",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "org.eclipse.jetty.websocket:websocket-common": {
+      "17": {
+        "reason": "Jetty 12.1.8 不发布 Jetty 9/11 时代的此 WebSocket 坐标；当前默认模块不使用此旧适配器",
+        "status": "unsupported-unpublished"
+      },
+      "21": {
+        "reason": "Jetty 12.1.8 不发布 Jetty 9/11 时代的此 WebSocket 坐标；当前默认模块不使用此旧适配器",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "org.eclipse.jetty.websocket:websocket-server": {
+      "17": {
+        "reason": "Jetty 12.1.8 不发布 Jetty 9/11 时代的此 WebSocket 坐标；当前默认模块不使用此旧适配器",
+        "status": "unsupported-unpublished"
+      },
+      "21": {
+        "reason": "Jetty 12.1.8 不发布 Jetty 9/11 时代的此 WebSocket 坐标；当前默认模块不使用此旧适配器",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "org.eclipse.jetty.websocket:websocket-servlet": {
+      "17": {
+        "reason": "Jetty 12.1.8 不发布 Jetty 9/11 时代的此 WebSocket 坐标；当前默认模块不使用此旧适配器",
+        "status": "unsupported-unpublished"
+      },
+      "21": {
+        "reason": "Jetty 12.1.8 不发布 Jetty 9/11 时代的此 WebSocket 坐标；当前默认模块不使用此旧适配器",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "org.flowable:flowable-content-spring-configurator": {
+      "17": {
+        "reason": "Flowable 7.2.0 不发布此 6.8.1 时代的 UI/配置器模块；本线仅管理实际发布的 Flowable 7 构件",
+        "status": "unsupported-unpublished"
+      },
+      "21": {
+        "reason": "Flowable 7.2.0 不发布此 6.8.1 时代的 UI/配置器模块；本线仅管理实际发布的 Flowable 7 构件",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "org.flowable:flowable-form-spring-configurator": {
+      "17": {
+        "reason": "Flowable 7.2.0 不发布此 6.8.1 时代的 UI/配置器模块；本线仅管理实际发布的 Flowable 7 构件",
+        "status": "unsupported-unpublished"
+      },
+      "21": {
+        "reason": "Flowable 7.2.0 不发布此 6.8.1 时代的 UI/配置器模块；本线仅管理实际发布的 Flowable 7 构件",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "org.flowable:flowable-ui-admin-logic": {
+      "17": {
+        "reason": "Flowable 7.2.0 不发布此 6.8.1 时代的 UI/配置器模块；本线仅管理实际发布的 Flowable 7 构件",
+        "status": "unsupported-unpublished"
+      },
+      "21": {
+        "reason": "Flowable 7.2.0 不发布此 6.8.1 时代的 UI/配置器模块；本线仅管理实际发布的 Flowable 7 构件",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "org.flowable:flowable-ui-idm-logic": {
+      "17": {
+        "reason": "Flowable 7.2.0 不发布此 6.8.1 时代的 UI/配置器模块；本线仅管理实际发布的 Flowable 7 构件",
+        "status": "unsupported-unpublished"
+      },
+      "21": {
+        "reason": "Flowable 7.2.0 不发布此 6.8.1 时代的 UI/配置器模块；本线仅管理实际发布的 Flowable 7 构件",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "org.flowable:flowable-ui-modeler-conf": {
+      "17": {
+        "reason": "Flowable 7.2.0 不发布此 6.8.1 时代的 UI/配置器模块；本线仅管理实际发布的 Flowable 7 构件",
+        "status": "unsupported-unpublished"
+      },
+      "21": {
+        "reason": "Flowable 7.2.0 不发布此 6.8.1 时代的 UI/配置器模块；本线仅管理实际发布的 Flowable 7 构件",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "org.flowable:flowable-ui-modeler-logic": {
+      "17": {
+        "reason": "Flowable 7.2.0 不发布此 6.8.1 时代的 UI/配置器模块；本线仅管理实际发布的 Flowable 7 构件",
+        "status": "unsupported-unpublished"
+      },
+      "21": {
+        "reason": "Flowable 7.2.0 不发布此 6.8.1 时代的 UI/配置器模块；本线仅管理实际发布的 Flowable 7 构件",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "org.flowable:flowable-ui-modeler-rest": {
+      "17": {
+        "reason": "Flowable 7.2.0 不发布此 6.8.1 时代的 UI/配置器模块；本线仅管理实际发布的 Flowable 7 构件",
+        "status": "unsupported-unpublished"
+      },
+      "21": {
+        "reason": "Flowable 7.2.0 不发布此 6.8.1 时代的 UI/配置器模块；本线仅管理实际发布的 Flowable 7 构件",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "org.flowable:flowable-ui-task-conf": {
+      "17": {
+        "reason": "Flowable 7.2.0 不发布此 6.8.1 时代的 UI/配置器模块；本线仅管理实际发布的 Flowable 7 构件",
+        "status": "unsupported-unpublished"
+      },
+      "21": {
+        "reason": "Flowable 7.2.0 不发布此 6.8.1 时代的 UI/配置器模块；本线仅管理实际发布的 Flowable 7 构件",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "com.alibaba.fastjson2:fastjson2-extension-spring6": {
+      "8": {
+        "reason": "Spring 6 集成依赖 Java 17，JDK 8 分支仅使用 Spring 5 扩展",
+        "requires_jdk": 17
+      }
     }
   },
   "baseline_components": {
@@ -768,12 +1568,11 @@
     "com.alibaba.fastjson2:fastjson2": 8,
     "com.alibaba.fastjson2:fastjson2-extension": 8,
     "com.alibaba.fastjson2:fastjson2-extension-spring5": 8,
-    "com.alibaba.fastjson2:fastjson2-extension-spring6": 8,
+    "com.alibaba.fastjson2:fastjson2-extension-spring6": 17,
     "com.alibaba.nacos:nacos-client": 8,
     "com.alibaba.otter:canal.client": 8,
     "com.alibaba.otter:canal.protocol": 8,
     "com.alibaba:druid": 8,
-    "com.alibaba:dubbo": 8,
     "com.alibaba:easyexcel": 8,
     "com.alibaba:fastjson": 8,
     "com.alibaba:qlexpress4": 8,
@@ -1118,7 +1917,7 @@
     "io.github.easy4j:httpclient3-extension": 17,
     "io.github.easy4j:ishumei-java-sdk": 17,
     "io.github.easy4j:jackson-extension": 17,
-    "io.github.easy4j:javassist-extension": 17,
+    "io.github.easy4j:javassist-extension": 8,
     "io.github.easy4j:jcifs-pool": 17,
     "io.github.easy4j:jwt-issuer": 17,
     "io.github.easy4j:metrics-biz": 17,
@@ -1152,7 +1951,7 @@
     "io.github.easy4j:shiro-biz-sdk": 17,
     "io.github.easy4j:shiro-dingtalk-core": 17,
     "io.github.easy4j:shiro-dingtalk-spring": 17,
-    "io.github.easy4j:shiro-extension-core": 17,
+    "io.github.easy4j:shiro-extension-core": 8,
     "io.github.easy4j:shiro-extension-spring": 17,
     "io.github.easy4j:shiro-j2cache": 17,
     "io.github.easy4j:shiro-jwt-core": 17,
@@ -1164,20 +1963,18 @@
     "io.github.easy4j:shiro-saml-spring": 17,
     "io.github.easy4j:shiro-weixin-core": 17,
     "io.github.easy4j:shiro-weixin-spring": 17,
-    "io.github.easy4j:soapui-template": 17,
-    "io.github.easy4j:soaputils": 17,
+    "io.github.easy4j:soapui-template": 8,
     "io.github.easy4j:socketio-extension": 17,
     "io.github.easy4j:spring-bytebuddy": 17,
     "io.github.easy4j:spring-data-redis-extension": 17,
     "io.github.easy4j:spring-extension": 8,
     "io.github.easy4j:spring-javassist": 17,
     "io.github.easy4j:spring-security-extension2": 17,
-    "io.github.easy4j:tencentcloud-sdk-extension": 17,
+    "io.github.easy4j:tencentcloud-sdk-extension": 8,
     "io.github.easy4j:validation-api-extension": 17,
     "io.github.easy4j:wkhtmltopdf-invoker": 17,
     "io.github.easy4j:xxljob-extension": 17,
     "io.github.easy4j:zxing-extension": 17,
-    "io.github.redacted-legacy-family:zxing-extension": 17,
     "io.github.jopenlibs:vault-java-driver": 17,
     "io.github.openfeign:feign-core": 8,
     "io.github.openfeign:feign-form": 8,
@@ -1779,7 +2576,7 @@
     "org.flywaydb:flyway-database-informix": 17,
     "org.flywaydb:flyway-database-mongodb": 17,
     "org.flywaydb:flyway-database-oracle": 17,
-    "org.flywaydb:flyway-database-postgresql": 8,
+    "org.flywaydb:flyway-database-postgresql": 17,
     "org.flywaydb:flyway-database-redshift": 17,
     "org.flywaydb:flyway-database-saphana": 17,
     "org.flywaydb:flyway-database-snowflake": 17,
@@ -1860,7 +2657,6 @@
     "org.keycloak:keycloak-admin-client": 17,
     "org.liquibase:liquibase-cdi": 17,
     "org.liquibase:liquibase-core": 17,
-    "org.lz4:lz4-java": 8,
     "org.mapstruct:mapstruct": 8,
     "org.mapstruct:mapstruct-jdk8": 8,
     "org.mapstruct:mapstruct-processor": 8,
@@ -2031,7 +2827,29 @@
     "xalan:serializer": 8,
     "xalan:xalan": 8,
     "xml-apis:xml-apis": 8,
-    "xyz.raylab:jooq-plus": 8
+    "xyz.raylab:jooq-plus": 8,
+    "io.github.easy4j:httpconn": 8,
+    "io.github.easy4j:httputils": 8,
+    "io.github.easy4j:javassist-plus": 8,
+    "io.github.easy4j:jwt-issuer-api": 8,
+    "io.github.easy4j:jwt-issuer-with-jjwt": 8,
+    "io.github.easy4j:jwt-issuer-with-nimbus": 8,
+    "io.github.easy4j:mybatis-plus-enhance-core": 8,
+    "io.github.easy4j:mybatis-plus-enhance-extension": 8,
+    "io.github.easy4j:mybatis-plus-enhance-spring": 8,
+    "io.github.easy4j:pac4j-oauth-ext": 17,
+    "org.apache.dubbo:dubbo": 8,
+    "io.github.easy4j:redistpl-plus-spring-boot-starter": 8,
+    "io.github.easy4j:security-biz-spring-boot-starter": 8,
+    "io.github.easy4j:security-jwt-spring-boot-starter": 8,
+    "io.github.easy4j:pf4j-extension-core": 17,
+    "io.github.easy4j:pf4j-extension-spring": 17,
+    "io.github.easy4j:pf4j-extension-update": 17,
+    "io.github.easy4j:soap-utils": 8,
+    "io.github.easy4j:spring-security-extension": 17,
+    "ca.juliusdavies:not-yet-commons-ssl": 8,
+    "org.apache.hbase:hbase-protocol-shaded": 8,
+    "at.yawk.lz4:lz4-java": 8
   },
   "baseline_variants": {
     "com.eventstore:db-client-java:jar:": 8,
@@ -2278,7 +3096,6 @@
     "com.aliyun:alibaba-dingtalk-service-sdk:jar:": 8,
     "com.aliyun:dingtalk:jar:": 8,
     "com.lmax:disruptor:jar:": 8,
-    "com.alibaba:dubbo:jar:": 8,
     "com.alibaba:easyexcel:jar:": 8,
     "cn.afterturn:easypoi-annotation:jar:": 8,
     "cn.afterturn:easypoi-base:jar:": 8,
@@ -2289,7 +3106,7 @@
     "com.alibaba.fastjson2:fastjson2:jar:": 8,
     "com.alibaba.fastjson2:fastjson2-extension:jar:": 8,
     "com.alibaba.fastjson2:fastjson2-extension-spring5:jar:": 8,
-    "com.alibaba.fastjson2:fastjson2-extension-spring6:jar:": 8,
+    "com.alibaba.fastjson2:fastjson2-extension-spring6:jar:": 17,
     "io.github.openfeign:feign-core:jar:": 8,
     "io.github.openfeign:feign-slf4j:jar:": 8,
     "io.github.openfeign:feign-hystrix:jar:": 8,
@@ -2558,7 +3375,6 @@
     "com.googlecode.libphonenumber:carrier:jar:": 8,
     "com.googlecode.libphonenumber:prefixmapper:jar:": 8,
     "com.googlecode.libphonenumber:geocoder:jar:": 8,
-    "org.lz4:lz4-java:jar:": 8,
     "org.terracotta:management-common-resources-v2:jar:": 8,
     "org.mapstruct:mapstruct:jar:": 8,
     "org.mapstruct:mapstruct-jdk8:jar:": 8,
@@ -2909,7 +3725,7 @@
     "org.testcontainers:testcontainers-postgresql:jar:": 8,
     "org.testcontainers:testcontainers-rabbitmq:jar:": 8,
     "org.apache.commons:commons-lang3:jar:": 8,
-    "org.flywaydb:flyway-database-postgresql:jar:": 8,
+    "org.flywaydb:flyway-database-postgresql:jar:": 17,
     "com.redis:testcontainers-redis:jar:": 8,
     "net.coobird:thumbnailator:jar:": 8,
     "org.thymeleaf:thymeleaf-spring6:jar:": 8,
@@ -3146,7 +3962,7 @@
     "jakarta.xml.ws:jakarta.xml.ws-api:jar:": 17,
     "com.couchbase.client:java-client:jar:": 17,
     "org.apache.cassandra:java-driver-core:jar:": 17,
-    "io.github.easy4j:javassist-extension:jar:": 17,
+    "io.github.easy4j:javassist-extension:jar:": 8,
     "jaxen:jaxen:jar:": 17,
     "org.firebirdsql.jdbc:jaybird:jar:": 17,
     "org.jboss.logging:jboss-logging:jar:": 17,
@@ -3268,7 +4084,7 @@
     "io.github.easy4j:shiro-biz-sdk:jar:": 17,
     "io.github.easy4j:shiro-dingtalk-core:jar:": 17,
     "io.github.easy4j:shiro-dingtalk-spring:jar:": 17,
-    "io.github.easy4j:shiro-extension-core:jar:": 17,
+    "io.github.easy4j:shiro-extension-core:jar:": 8,
     "io.github.easy4j:shiro-extension-spring:jar:": 17,
     "io.github.easy4j:shiro-j2cache:jar:": 17,
     "io.github.easy4j:shiro-jwt-core:jar:": 17,
@@ -3282,8 +4098,7 @@
     "io.github.easy4j:shiro-weixin-spring:jar:": 17,
     "org.slf4j:slf4j-simple:jar:": 17,
     "org.eclipse.angus:smtp:jar:": 17,
-    "io.github.easy4j:soapui-template:jar:": 17,
-    "io.github.easy4j:soaputils:jar:": 17,
+    "io.github.easy4j:soapui-template:jar:": 8,
     "io.github.easy4j:socketio-extension:jar:": 17,
     "org.apache.spark:spark-core_2.13:jar:": 17,
     "org.apache.spark:spark-sql_2.13:jar:": 17,
@@ -3301,7 +4116,7 @@
     "org.springframework:spring-test:jar:": 17,
     "org.xerial:sqlite-jdbc:jar:": 17,
     "com.rabbitmq:stream-client:jar:": 17,
-    "io.github.easy4j:tencentcloud-sdk-extension:jar:": 17,
+    "io.github.easy4j:tencentcloud-sdk-extension:jar:": 8,
     "org.thymeleaf:thymeleaf:jar:": 17,
     "com.github.mxab.thymeleaf.extras:thymeleaf-extras-data-attribute:jar:": 17,
     "org.thymeleaf.extras:thymeleaf-extras-springsecurity6:jar:": 17,
@@ -3333,7 +4148,6 @@
     "io.github.easy4j:xxljob-extension:jar:": 17,
     "io.github.easy4j:zxing-extension:jar:": 17,
     "com.baomidou:mybatis-plus-spring:jar:": 17,
-    "io.github.redacted-legacy-family:zxing-extension:jar:": 17,
     "io.github.easy4j:claudecode-java-sdk:jar:": 21,
     "io.github.easy4j:codex-java-sdk:jar:": 21,
     "io.github.easy4j:dreamina-java-sdk:jar:": 21,
@@ -3350,7 +4164,31 @@
     "io.github.openhtmltopdf:openhtmltopdf-svg-support:jar:": 21,
     "io.github.openhtmltopdf:openhtmltopdf-rtl-support:jar:": 21,
     "io.github.openhtmltopdf:openhtmltopdf-latex-support:jar:": 21,
-    "io.github.openhtmltopdf:openhtmltopdf-mathml-support:jar:": 21
+    "io.github.openhtmltopdf:openhtmltopdf-mathml-support:jar:": 21,
+    "io.github.easy4j:httpconn:jar:": 8,
+    "io.github.easy4j:httputils:jar:": 8,
+    "io.github.easy4j:javassist-plus:jar:": 8,
+    "io.github.easy4j:jwt-issuer-api:jar:": 8,
+    "io.github.easy4j:jwt-issuer-with-jjwt:jar:": 8,
+    "io.github.easy4j:jwt-issuer-with-nimbus:jar:": 8,
+    "io.github.easy4j:mybatis-plus-enhance-core:jar:": 8,
+    "io.github.easy4j:mybatis-plus-enhance-extension:jar:": 8,
+    "io.github.easy4j:mybatis-plus-enhance-spring:jar:": 8,
+    "io.github.easy4j:pac4j-oauth-ext:jar:": 17,
+    "ca.juliusdavies:not-yet-commons-ssl:jar:": 8,
+    "org.apache.dubbo:dubbo:jar:": 8,
+    "org.apache.hbase:hbase-protocol-shaded:jar:": 8,
+    "at.yawk.lz4:lz4-java:jar:": 8,
+    "io.github.easy4j:redistpl-plus-spring-boot-starter:jar:": 8,
+    "io.github.easy4j:security-biz-spring-boot-starter:jar:": 8,
+    "io.github.easy4j:security-jwt-spring-boot-starter:jar:": 8,
+    "io.github.easy4j:pf4j-extension:pom:": 17,
+    "io.github.easy4j:pf4j-extension-core:jar:": 17,
+    "io.github.easy4j:pf4j-extension-spring:jar:": 17,
+    "io.github.easy4j:pf4j-extension-update:jar:": 17,
+    "io.github.easy4j:rocketmq-extension:pom:": 17,
+    "io.github.easy4j:soap-utils:jar:": 8,
+    "io.github.easy4j:spring-security-extension:jar:": 17
   },
   "baseline_revisions": {
     "8": "6d217054",
@@ -3372,6 +4210,38 @@
       "8": "1.0.x.20260630-SNAPSHOT",
       "17": "2.0.x.20260630-SNAPSHOT",
       "21": "3.0.x.20260630-SNAPSHOT"
+    },
+    "io.github.easy4j:cxf-rt-javassist": {
+      "8": "1.0.x.20260630-SNAPSHOT",
+      "17": "2.0.x.20260630-SNAPSHOT",
+      "21": "3.0.x.20260630-SNAPSHOT"
+    },
+    "io.github.easy4j:shiro-j2cache": {
+      "8": "1.0.x.20260630-SNAPSHOT",
+      "17": "2.0.x.20260630-SNAPSHOT",
+      "21": "3.0.x.20260630-SNAPSHOT"
+    },
+    "io.github.easy4j:undertow-metrics-prometheus": {
+      "8": "1.0.x.20260630-SNAPSHOT",
+      "17": "2.0.x.20260630-SNAPSHOT",
+      "21": "3.0.x.20260630-SNAPSHOT"
+    }
+  },
+  "boot_starter_versions": {
+    "io.github.easy4j:redistpl-plus-spring-boot-starter": {
+      "8": "2.7.x",
+      "17": "3.4.x",
+      "21": "4.0.x"
+    },
+    "io.github.easy4j:security-biz-spring-boot-starter": {
+      "8": "2.7.x",
+      "17": "3.4.x",
+      "21": "4.0.x"
+    },
+    "io.github.easy4j:security-jwt-spring-boot-starter": {
+      "8": "2.7.x",
+      "17": "3.4.x",
+      "21": "4.0.x"
     }
   }
 }
