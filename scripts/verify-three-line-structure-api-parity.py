@@ -144,6 +144,34 @@ def platform_config_matches(path: str, roots: list[pathlib.Path]) -> bool:
     return signatures[0] is not None and signatures[0] == signatures[1] == signatures[2]
 
 
+def validate_platform_dependency_config_files(
+        mappings: list[dict], snapshots: list[dict[str, str]]) -> dict[str, dict]:
+    """只允许逐线哈希锁定的依赖治理配置差异，内容变化须重新审查。"""
+    validated = {}
+    for item in mappings:
+        path = item.get("path")
+        hashes = item.get("sha256ByJdk")
+        if (not isinstance(path, str)
+                or not path.startswith("config/dependencies/")
+                or pathlib.PurePosixPath(path).suffix not in (".json", ".csv", ".tsv")
+                or path in validated
+                or not isinstance(hashes, dict)
+                or set(hashes) != {"8", "17", "21"}
+                or not item.get("evidence")):
+            raise ValueError(f"invalid platform dependency config mapping: {path}")
+        expected = [hashes[jdk] for jdk in ("8", "17", "21")]
+        if (all(value is None for value in expected)
+                or len(set(expected)) == 1
+                or any(value is not None and not re.fullmatch(r"[0-9a-f]{64}", value)
+                       for value in expected)):
+            raise ValueError(f"invalid platform dependency config hashes: {path}")
+        actual = [snapshot.get(path) for snapshot in snapshots]
+        if actual != expected:
+            raise ValueError(f"stale platform dependency config mapping: {path}")
+        validated[path] = item
+    return validated
+
+
 def java_lexical_tokens(source: str) -> tuple[str, ...] | None:
     """仅剔除 Java 注释与格式；无法安全处理的语法保持 OPEN。"""
     # Unicode escape 在 Java 词法分析前展开，可能使注释边界发生变化。
@@ -538,6 +566,8 @@ def inventory_gate(roots: list[pathlib.Path], output: pathlib.Path, policy_path:
     historical_sections = validate_historical_document_sections(
         policy.get("historicalDocumentSections", []), roots)
     snapshots = [inventory_files(root) for root in roots]
+    dependency_configs = validate_platform_dependency_config_files(
+        policy.get("platformDependencyConfigFiles", []), snapshots)
     rows = []
     for path in sorted(set().union(*(snapshot.keys() for snapshot in snapshots))):
         values = [snapshot.get(path) for snapshot in snapshots]
@@ -562,6 +592,9 @@ def inventory_gate(roots: list[pathlib.Path], output: pathlib.Path, policy_path:
             status = "PLATFORM_CONFIG"
             evidence = ("current POMs: groupId/artifactId, packaging and reactor child set match; "
                         "per-line dependency/plugin correctness remains in T03 strict gate")
+        elif path in dependency_configs:
+            status = "PLATFORM_CONFIG"
+            evidence = dependency_configs[path]["evidence"]
         elif path in platform and values[0] is None and values[1] is not None and values[2] is not None:
             item = platform[path]
             if item.get("decision") == "unsupported" and item.get("evidence"):

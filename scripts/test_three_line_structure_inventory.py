@@ -275,6 +275,31 @@ class ThreeLineInventoryTest(unittest.TestCase):
         self.assertEqual("BLOCKED", report["compiledApi"]["status"])
         self.assertIn("Maven Wrapper", report["compiledApi"]["reason"])
 
+    def test_dependency_config_exception_requires_exact_three_line_inputs(self):
+        path = "config/dependencies/component-matrix.csv"
+        contents = ("jdk8\n", "jdk17\n", "jdk21\n")
+        for root, content in zip(self.roots, contents):
+            self.write(root, path, content)
+        policy = json.loads(self.policy.read_text())
+        policy["platformDependencyConfigFiles"] = [{
+            "path": path,
+            "sha256ByJdk": {
+                jdk: hashlib.sha256(content.encode()).hexdigest()
+                for jdk, content in zip(("8", "17", "21"), contents)
+            },
+            "evidence": "T03 strict dependency gate",
+        }]
+        self.policy.write_text(json.dumps(policy))
+
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        row = next(item for item in json.loads((output / "inventory.json").read_text())
+                   ["differences"] if item["path"] == path)
+        self.assertEqual("PLATFORM_CONFIG", row["status"])
+        self.write(self.roots[1], path, "unexpected\n")
+        result, _ = self.run_checker("inventory")
+        self.assertNotEqual(0, result.returncode)
+
     def test_verify_compares_compiled_api_while_inventory_remains_open(self):
         wrapper = ('#!/bin/sh\n'
                    'mkdir -p ddd4j-core/target/classes\n'
