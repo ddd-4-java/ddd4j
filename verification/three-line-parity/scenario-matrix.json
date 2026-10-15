@@ -510,6 +510,11 @@
     {
       "id": "BROKER-RABBITMQ-NATIVE",
       "description": "真实 RabbitMQ 的原生 AMQP 消息 ID/因果 Header 往返、确认关联 ID、失败重投、关闭后发布和适配器生命周期",
+      "caseNames": {
+        "1.0.x": ["failedListenerShouldBeNackedAndRedeliveredByTheBroker", "nativeAcknowledgmentShouldRequeueThenPermanentlyConfirm", "requiredListenerDeclarationFailureShouldRollBackOwnedChannels", "optionalListenerDeclarationFailureShouldKeepProducerAvailable", "closingDuringUnacknowledgedDeliveryShouldReleaseAndRequeue"],
+        "2.0.x": ["failedListenerShouldBeNackedAndRedeliveredByTheBroker", "nativeAcknowledgmentShouldRequeueThenPermanentlyConfirm", "requiredListenerDeclarationFailureShouldRollBackOwnedChannels", "optionalListenerDeclarationFailureShouldKeepProducerAvailable", "closingDuringUnacknowledgedDeliveryShouldReleaseAndRequeue"],
+        "3.0.x": ["failedListenerShouldBeNackedAndRedeliveredByTheBroker", "nativeAcknowledgmentShouldRequeueThenPermanentlyConfirm", "requiredListenerDeclarationFailureShouldRollBackOwnedChannels", "optionalListenerDeclarationFailureShouldKeepProducerAvailable", "closingDuringUnacknowledgedDeliveryShouldReleaseAndRequeue"]
+      },
       "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-14-rabbit-native-causality/report.json",
       "lastEvidenceSha256": "25f58ee3a4104df808fc0b44b1cfa10d0375a088f852994d8375cb9475a8cb9e",
       "lines": {
