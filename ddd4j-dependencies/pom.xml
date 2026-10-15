@@ -145,7 +145,7 @@
         <cronet.version>119.6045.31</cronet.version>
         <cssparser.version>0.9.30</cssparser.version>
         <curator.version>5.9.0</curator.version>
-        <cxf-rt-javassist.version>1.0.3.RELEASE</cxf-rt-javassist.version>
+        <cxf-rt-javassist.version>${revision}</cxf-rt-javassist.version>
         <cxf.version>3.5.11</cxf.version>
         <db2jcc.version>12.1.5.0</db2jcc.version>
         <db-meta.version>0.0.1-Release</db-meta.version>
@@ -546,7 +546,7 @@
         <shiro-extension.version>1.0.x.20260630-SNAPSHOT</shiro-extension.version>
         <shiro-freemarker.version>1.0.3</shiro-freemarker.version>
         <shiro-hazelcast.version>${shiro.version}</shiro-hazelcast.version>
-        <shiro-j2cache.version>1.0.5.RELEASE</shiro-j2cache.version>
+        <shiro-j2cache.version>${revision}</shiro-j2cache.version>
         <shiro-oltu.version>1.0</shiro-oltu.version>
         <shiro-pf4j.version>1.0.1.RELEASE</shiro-pf4j.version>
         <shiro-redis.version>3.3.1</shiro-redis.version>
@@ -631,7 +631,7 @@
         <truelicense.version>4.1.4</truelicense.version>
         <twilio.version>10.8.0</twilio.version>
         <unboundid-ldapsdk.version>6.0.11</unboundid-ldapsdk.version>
-        <undertow-metrics.version>1.0.0.RELEASE</undertow-metrics.version>
+        <undertow-metrics.version>${revision}</undertow-metrics.version>
         <undertow.version>2.3.21.Final</undertow.version>
         <unirest-java.version>4.10.0</unirest-java.version>
         <UserAgentUtils.version>1.21</UserAgentUtils.version>
