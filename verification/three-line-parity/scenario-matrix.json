@@ -1137,6 +1137,11 @@
     {
       "id": "CORE-REPOSITORY-REGISTRY",
       "description": "三线相同的注册表仓储优先级、查询映射、撤销/清空、缺失错误与内存仓储读写契约",
+      "caseNames": {
+        "1.0.x": ["threadContext_shouldOverrideBaseContext", "repository_shouldFallbackToBaseContextAfterThreadRemoved", "registerWithQuery_shouldResolveBothAggregateAndQuery"],
+        "2.0.x": ["threadContext_shouldOverrideBaseContext", "repository_shouldFallbackToBaseContextAfterThreadRemoved", "registerWithQuery_shouldResolveBothAggregateAndQuery"],
+        "3.0.x": ["threadContext_shouldOverrideBaseContext", "repository_shouldFallbackToBaseContextAfterThreadRemoved", "registerWithQuery_shouldResolveBothAggregateAndQuery"]
+      },
       "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-14-repository-registry-alignment/contract-report.json",
       "lastEvidenceSha256": "ae02e8136dee07e4679a4fbba8259823f483e058bf05dd795aa29d70efd9d34f",
       "lines": {
