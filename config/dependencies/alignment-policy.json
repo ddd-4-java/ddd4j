@@ -892,6 +892,38 @@
         "requires_jdk": 11
       }
     },
+    "org.flowable:flowable-content-spring-configurator": {
+      "17": {"reason": "Flowable 7.2.0 不发布此 6.8.1 时代的 UI/配置器模块；本线仅管理实际发布的 Flowable 7 构件", "status": "unsupported-unpublished"},
+      "21": {"reason": "Flowable 7.2.0 不发布此 6.8.1 时代的 UI/配置器模块；本线仅管理实际发布的 Flowable 7 构件", "status": "unsupported-unpublished"}
+    },
+    "org.flowable:flowable-form-spring-configurator": {
+      "17": {"reason": "Flowable 7.2.0 不发布此 6.8.1 时代的 UI/配置器模块；本线仅管理实际发布的 Flowable 7 构件", "status": "unsupported-unpublished"},
+      "21": {"reason": "Flowable 7.2.0 不发布此 6.8.1 时代的 UI/配置器模块；本线仅管理实际发布的 Flowable 7 构件", "status": "unsupported-unpublished"}
+    },
+    "org.flowable:flowable-ui-admin-logic": {
+      "17": {"reason": "Flowable 7.2.0 不发布此 6.8.1 时代的 UI/配置器模块；本线仅管理实际发布的 Flowable 7 构件", "status": "unsupported-unpublished"},
+      "21": {"reason": "Flowable 7.2.0 不发布此 6.8.1 时代的 UI/配置器模块；本线仅管理实际发布的 Flowable 7 构件", "status": "unsupported-unpublished"}
+    },
+    "org.flowable:flowable-ui-idm-logic": {
+      "17": {"reason": "Flowable 7.2.0 不发布此 6.8.1 时代的 UI/配置器模块；本线仅管理实际发布的 Flowable 7 构件", "status": "unsupported-unpublished"},
+      "21": {"reason": "Flowable 7.2.0 不发布此 6.8.1 时代的 UI/配置器模块；本线仅管理实际发布的 Flowable 7 构件", "status": "unsupported-unpublished"}
+    },
+    "org.flowable:flowable-ui-modeler-conf": {
+      "17": {"reason": "Flowable 7.2.0 不发布此 6.8.1 时代的 UI/配置器模块；本线仅管理实际发布的 Flowable 7 构件", "status": "unsupported-unpublished"},
+      "21": {"reason": "Flowable 7.2.0 不发布此 6.8.1 时代的 UI/配置器模块；本线仅管理实际发布的 Flowable 7 构件", "status": "unsupported-unpublished"}
+    },
+    "org.flowable:flowable-ui-modeler-logic": {
+      "17": {"reason": "Flowable 7.2.0 不发布此 6.8.1 时代的 UI/配置器模块；本线仅管理实际发布的 Flowable 7 构件", "status": "unsupported-unpublished"},
+      "21": {"reason": "Flowable 7.2.0 不发布此 6.8.1 时代的 UI/配置器模块；本线仅管理实际发布的 Flowable 7 构件", "status": "unsupported-unpublished"}
+    },
+    "org.flowable:flowable-ui-modeler-rest": {
+      "17": {"reason": "Flowable 7.2.0 不发布此 6.8.1 时代的 UI/配置器模块；本线仅管理实际发布的 Flowable 7 构件", "status": "unsupported-unpublished"},
+      "21": {"reason": "Flowable 7.2.0 不发布此 6.8.1 时代的 UI/配置器模块；本线仅管理实际发布的 Flowable 7 构件", "status": "unsupported-unpublished"}
+    },
+    "org.flowable:flowable-ui-task-conf": {
+      "17": {"reason": "Flowable 7.2.0 不发布此 6.8.1 时代的 UI/配置器模块；本线仅管理实际发布的 Flowable 7 构件", "status": "unsupported-unpublished"},
+      "21": {"reason": "Flowable 7.2.0 不发布此 6.8.1 时代的 UI/配置器模块；本线仅管理实际发布的 Flowable 7 构件", "status": "unsupported-unpublished"}
+    },
     "org.flowable:flowable-groovy-script-static-engine": {
       "8": {
         "reason": "发布 JAR 的基础字节码超过 JDK 8；不能由提高构建 JVM 绕过本版本线约束",

@@ -50,6 +50,19 @@ class DependencyAlignmentTest(unittest.TestCase):
                         for jdk, line in ((8, '1.0.x'), (17, '2.0.x'), (21, '3.0.x'))}
             self.assertEqual(expected, actual, coordinate)
 
+    def test_flowable_legacy_ui_is_unsupported_on_seven_x_lines(self):
+        policy_path = Path(__file__).parents[1] / 'config/dependencies/alignment-policy.json'
+        policy = json.loads(policy_path.read_text(encoding='utf-8'))
+        artifacts = ('flowable-content-spring-configurator',
+                     'flowable-form-spring-configurator', 'flowable-ui-admin-logic',
+                     'flowable-ui-idm-logic', 'flowable-ui-modeler-conf',
+                     'flowable-ui-modeler-logic', 'flowable-ui-modeler-rest',
+                     'flowable-ui-task-conf')
+        for artifact in artifacts:
+            coordinate = 'org.flowable:' + artifact
+            for jdk in ('17', '21'):
+                self.assertIn(jdk, policy['unsupported'].get(coordinate, {}), coordinate)
+
     def test_unconfigured_third_party_release_does_not_inherit_ddd4j_version(self):
         with tempfile.TemporaryDirectory() as temp:
             base = Path(temp)
