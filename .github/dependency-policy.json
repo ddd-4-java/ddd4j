@@ -8,7 +8,7 @@
   ],
   "fixed_properties": {},
   "branches": {
-    "backup/feature-1.0.x-github-before-redacted-legacy-family-alignment-20260831": {
+    "backup/feature-1.0.x-github-before-codeup-alignment-20260831": {
       "fixed_dependencies": {
         "com.lmax:disruptor": "4.0.0"
       }
