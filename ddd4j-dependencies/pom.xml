@@ -597,6 +597,7 @@
         <sfntly.version>1.0.0</sfntly.version>
         <shardingsphere-jdbc.version>5.5.3</shardingsphere-jdbc.version>
         <shardingsphere-parser.version>${shardingsphere-jdbc.version}</shardingsphere-parser.version>
+        <shardingsphere-parser-sql.version>5.5.2</shardingsphere-parser-sql.version>
         <shedlock.version>7.2.1</shedlock.version>
         <shiro-dingtalk.version>2.0.x.20260630-SNAPSHOT</shiro-dingtalk.version>
         <shiro-extension.version>2.0.x.20260630-SNAPSHOT</shiro-extension.version>
@@ -8893,42 +8894,42 @@
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>shardingsphere-parser-sql-mysql</artifactId>
-                <version>${shardingsphere-parser.version}</version>
+                <version>${shardingsphere-parser-sql.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.shardingsphere/shardingsphere-parser-sql-opengauss -->
             <!-- ShardingSphere SQL openGauss：ShardingSphere 的 openGauss SQL 解析器。 -->
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>shardingsphere-parser-sql-opengauss</artifactId>
-                <version>${shardingsphere-parser.version}</version>
+                <version>${shardingsphere-parser-sql.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.shardingsphere/shardingsphere-parser-sql-oracle -->
             <!-- ShardingSphere SQL Oracle：ShardingSphere 的 Oracle SQL 解析器。 -->
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>shardingsphere-parser-sql-oracle</artifactId>
-                <version>${shardingsphere-parser.version}</version>
+                <version>${shardingsphere-parser-sql.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.shardingsphere/shardingsphere-parser-sql-postgresql -->
             <!-- ShardingSphere SQL PostgreSQL：ShardingSphere 的 PostgreSQL SQL 解析器。 -->
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>shardingsphere-parser-sql-postgresql</artifactId>
-                <version>${shardingsphere-parser.version}</version>
+                <version>${shardingsphere-parser-sql.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.shardingsphere/shardingsphere-parser-sql-sql92 -->
             <!-- ShardingSphere SQL SQL92：ShardingSphere 的 SQL-92 标准解析器。 -->
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>shardingsphere-parser-sql-sql92</artifactId>
-                <version>${shardingsphere-parser.version}</version>
+                <version>${shardingsphere-parser-sql.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.shardingsphere/shardingsphere-parser-sql-sqlserver -->
             <!-- ShardingSphere SQL SQL Server：ShardingSphere 的 SQL Server SQL 解析器。 -->
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>shardingsphere-parser-sql-sqlserver</artifactId>
-                <version>${shardingsphere-parser.version}</version>
+                <version>${shardingsphere-parser-sql.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/net.javacrumbs.shedlock/shedlock-provider-couchbase-javaclient -->
             <!-- ShedLock Couchbase：ShedLock 的 Couchbase 分布式锁存储实现。 -->
