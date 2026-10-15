@@ -975,9 +975,9 @@
     {
       "line": "1.0.x",
       "path": "docs/superpowers/plans/2026-10-10-three-line-product-convergence.md",
-      "sourceCommit": "7a79cde02d45367f1063c66f6a1f58401fdbea91",
-      "sourceTime": "2026-10-15T21:32:21+08:00",
-      "sha256": "0046bb28c36c5d3d6430b56db8c586828cd147d8294965c30ee5a8930eb86b81"
+      "sourceCommit": "ba210514dc2eeb94f7b433ae9138e8fbd30d478d",
+      "sourceTime": "2026-10-16T02:16:48+08:00",
+      "sha256": "44deadf8c6077c86fa1c39b0dbcb09d3d472a3a9e30bf5843f360c835492a9d4"
     },
     {
       "line": "1.0.x",
@@ -1283,9 +1283,9 @@
     {
       "line": "2.0.x",
       "path": "docs/superpowers/plans/2026-10-10-three-line-product-convergence.md",
-      "sourceCommit": "dbcf789bddc3647bc5c9b31393e492b6b9237921",
-      "sourceTime": "2026-10-15T21:32:22+08:00",
-      "sha256": "0046bb28c36c5d3d6430b56db8c586828cd147d8294965c30ee5a8930eb86b81"
+      "sourceCommit": "4e1dea7ec92f4e4218f8059daa65b07923b5c6e8",
+      "sourceTime": "2026-10-16T02:16:48+08:00",
+      "sha256": "44deadf8c6077c86fa1c39b0dbcb09d3d472a3a9e30bf5843f360c835492a9d4"
     },
     {
       "line": "2.0.x",
@@ -1563,9 +1563,9 @@
     {
       "line": "3.0.x",
       "path": "docs/superpowers/plans/2026-10-10-three-line-product-convergence.md",
-      "sourceCommit": "0c073fea15432dafc6f92db5baba50fdeb5e01a7",
-      "sourceTime": "2026-10-15T21:32:23+08:00",
-      "sha256": "0046bb28c36c5d3d6430b56db8c586828cd147d8294965c30ee5a8930eb86b81"
+      "sourceCommit": "699af13747dabf19179b8c870251b3274506b575",
+      "sourceTime": "2026-10-16T02:16:48+08:00",
+      "sha256": "44deadf8c6077c86fa1c39b0dbcb09d3d472a3a9e30bf5843f360c835492a9d4"
     },
     {
       "line": "3.0.x",
