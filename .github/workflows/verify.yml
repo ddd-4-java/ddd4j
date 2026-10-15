@@ -215,12 +215,36 @@ jobs:
           fi
       - name: Verify Docker daemon
         run: docker info
-      # 容器化集成：Redis/MySQL/PostgreSQL/Kafka/RabbitMQ/NATS/MQTT/Artemis（Testcontainers）。
-      # RocketMQ 等其余适配器的本地契约由 unit-and-contract 覆盖，原生验收另行记录。
+      # 容器化集成：Redis/MySQL/PostgreSQL/Kafka/RabbitMQ/NATS/MQTT/Artemis/Pulsar/RocketMQ。
+      # ONS/TDMQ/SQS 等外部云端能力仍需独立的受保护验收。
       - name: Run infrastructure and native Broker integration tests
         run: >-
           ./mvnw -U -Denforcer.skip=true -B
-          -pl ddd4j-cache,ddd4j-data/ddd4j-data-mybatisplus,ddd4j-mq/ddd4j-mq-kafka,ddd4j-samples/ddd4j-sample-order-jdbc,ddd4j-samples/ddd4j-sample-order-kafka,ddd4j-samples/ddd4j-sample-order-redis,ddd4j-mq/ddd4j-mq-rabbitmq,ddd4j-mq/ddd4j-mq-nats,ddd4j-mq/ddd4j-mq-mqtt,ddd4j-mq/ddd4j-mq-mqtt-mica,ddd4j-mq/ddd4j-mq-activemq
+          -pl ddd4j-cache,ddd4j-data/ddd4j-data-mybatisplus,ddd4j-mq/ddd4j-mq-kafka,ddd4j-samples/ddd4j-sample-order-jdbc,ddd4j-samples/ddd4j-sample-order-kafka,ddd4j-samples/ddd4j-sample-order-redis,ddd4j-mq/ddd4j-mq-rabbitmq,ddd4j-mq/ddd4j-mq-nats,ddd4j-mq/ddd4j-mq-mqtt,ddd4j-mq/ddd4j-mq-mqtt-mica,ddd4j-mq/ddd4j-mq-activemq,ddd4j-mq/ddd4j-mq-pulsar,ddd4j-mq/ddd4j-mq-rocketmq,ddd4j-mq/ddd4j-mq-redis-stream
           -am clean test
+      - name: Run Redis Stream native causality tests
+        shell: bash
+        run: |
+          redis_container="$(docker run --rm -d -p 127.0.0.1::6379 redis:7-alpine)"
+          trap 'docker rm -f "$redis_container" >/dev/null 2>&1 || true' EXIT
+          ready=false
+          for attempt in {1..30}; do
+            if docker exec "$redis_container" redis-cli ping | grep -q '^PONG$'; then
+              ready=true
+              break
+            fi
+            sleep 1
+          done
+          if [ "$ready" != true ]; then
+            echo "Redis did not become ready after ${attempt} checks" >&2
+            exit 1
+          fi
+          redis_port="$(docker port "$redis_container" 6379/tcp | awk -F: '{print $NF}')"
+          test -n "$redis_port"
+          ./mvnw -U -Denforcer.skip=true -B \
+            -pl ddd4j-mq/ddd4j-mq-redis-stream -am \
+            -Dtest=RedisStreamNativeCausalityIT \
+            -Dsurefire.failIfNoSpecifiedTests=false \
+            -Dddd4j.redis.native.url="redis://127.0.0.1:${redis_port}" test
       - name: Verify native Broker test execution
         run: python3 scripts/verify-native-broker-test-reports.py
