@@ -22,6 +22,7 @@ import io.ddd4j.core.ddd.event.StringEntityId;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -76,6 +77,19 @@ class ProjectionHandlerRegistryTest {
     @Test
     void registerRejectsNullHandler() {
         assertThrows(NullPointerException.class, () -> registry.register(null));
+    }
+
+    @Test
+    void registerRejectsNullEventTypeBeforeRegisteringAnyType() {
+        Set<Class<? extends DomainEvent<?>>> eventTypes = new LinkedHashSet<>();
+        eventTypes.add(OrderPaid.class);
+        eventTypes.add(null);
+
+        NullPointerException ex = assertThrows(NullPointerException.class,
+                () -> registry.register(new RecordingHandler("invalid", eventTypes)));
+
+        assertThat(ex).hasMessage("event type must not be null");
+        assertFalse(registry.findHandler(OrderPaid.class).isPresent());
     }
 
     @Test
