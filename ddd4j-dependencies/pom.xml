@@ -6579,11 +6579,6 @@
                 <version>${commons-lang3.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.flywaydb</groupId>
-                <artifactId>flyway-database-postgresql</artifactId>
-                <version>${flyway.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>com.redis</groupId>
                 <artifactId>testcontainers-redis</artifactId>
                 <version>${testcontainers-redis.version}</version>
