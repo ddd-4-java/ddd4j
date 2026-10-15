@@ -62,7 +62,7 @@ public class SqsMQClient implements MQClient {
     private SqsClient client;
 
     /**
-     * 构造 1：传入配置，{@link #initProducer} 时 lazy 创建 SqsClient。
+     * 构造 1：传入配置，首次初始化生产者或消费者时 lazy 创建 SqsClient。
      */
     public SqsMQClient(SqsProperties properties) {
         this.properties = Objects.requireNonNull(properties, "properties");
@@ -126,11 +126,7 @@ public class SqsMQClient implements MQClient {
 
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
-        if (Objects.isNull(this.client)) {
-            this.client = properties.client();
-            SqsClient ownedClient = this.client;
-            lifecycle.register("sqs-client", ownedClient::close);
-        }
+        initializeClient();
         return event -> {
             try {
                 String queueUrl = event.getTopic();
@@ -168,6 +164,7 @@ public class SqsMQClient implements MQClient {
         if (Objects.isNull(queueUrl) || !(queueUrl.startsWith("http://") || queueUrl.startsWith("https://"))) {
             throw new IllegalArgumentException("SQS MQListener.topic must be a queueUrl (https://...). Got: " + queueUrl);
         }
+        initializeClient();
         AtomicBoolean running = new AtomicBoolean(true);
         ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor(r -> {
             Thread t = new Thread(r, "sqs-consumer-" + listener.getRouteExpression(this.defaultConcat()));
@@ -264,6 +261,17 @@ public class SqsMQClient implements MQClient {
     @Override
     public void start() {
         // SQS 守护线程在 initConsumer 已 scheduleWithFixedDelay
+    }
+
+    /**
+     * 首次使用生产者或消费者时创建自有客户端，避免两条初始化路径重复创建。
+     */
+    private synchronized void initializeClient() {
+        if (Objects.isNull(client)) {
+            SqsClient ownedClient = Objects.requireNonNull(properties.client(), "SqsClient");
+            client = ownedClient;
+            lifecycle.register("sqs-client", ownedClient::close);
+        }
     }
 
     // ========================= 关闭 =========================
