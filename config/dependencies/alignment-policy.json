@@ -30,6 +30,38 @@
         "reason": "组件源码归属 shiro-extension；原 Shiro Biz 实现拆分为 core/spring 两个 JDK 21 构件"
       }
     },
+    "io.github.easy4j:spring-security-extension2": {
+      "17": {
+        "coordinates": [
+          "io.github.easy4j:spring-security-extension"
+        ],
+        "reason": "上游已将旧 extension2 类并入 JDK 17 的 spring-security-extension 构件"
+      },
+      "21": {
+        "coordinates": [
+          "io.github.easy4j:spring-security-extension"
+        ],
+        "reason": "上游已将旧 extension2 类并入 JDK 21 的 spring-security-extension 构件"
+      }
+    },
+    "io.github.easy4j:pf4j3-extension": {
+      "17": {
+        "coordinates": [
+          "io.github.easy4j:pf4j-extension-core",
+          "io.github.easy4j:pf4j-extension-spring",
+          "io.github.easy4j:pf4j-extension-update"
+        ],
+        "reason": "上游将旧 PF4J3 扩展按 core/spring/update 能力拆分为 JDK 17 构件"
+      },
+      "21": {
+        "coordinates": [
+          "io.github.easy4j:pf4j-extension-core",
+          "io.github.easy4j:pf4j-extension-spring",
+          "io.github.easy4j:pf4j-extension-update"
+        ],
+        "reason": "上游将旧 PF4J3 扩展按 core/spring/update 能力拆分为 JDK 21 构件"
+      }
+    },
     "javax.el:javax.el-api": {
       "17": {
         "coordinates": [
