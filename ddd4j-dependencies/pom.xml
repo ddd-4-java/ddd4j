@@ -4273,7 +4273,7 @@
                 <version>${kimi-java-sdk.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.kingbase8.jdbc</groupId>
+                <groupId>cn.com.kingbase</groupId>
                 <artifactId>kingbase8</artifactId>
                 <version>${kingbase8.version}</version>
             </dependency>
