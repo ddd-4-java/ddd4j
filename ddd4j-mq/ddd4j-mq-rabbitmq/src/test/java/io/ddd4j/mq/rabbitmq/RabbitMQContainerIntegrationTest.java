@@ -401,7 +401,8 @@ class RabbitMQContainerIntegrationTest {
                 client.init(Collections.singletonList(listener), properties, new JsonMQEventSerialization(), null);
                 assertEquals(MQStartupState.DEGRADED, client.startupStatus().snapshot().state());
                 assertEquals(1, client.startupStatus().snapshot().failures().size());
-                assertEquals(2, client.lifecycle().checkpoint(), "producer channels remain available");
+                assertEquals(3, client.lifecycle().checkpoint(),
+                        "two producer channels and their active publisher registration remain available");
                 assertTrue(connection.isOpen());
                 MQEvent event = new MQEvent();
                 event.setMsgId("optional-" + suffix);
