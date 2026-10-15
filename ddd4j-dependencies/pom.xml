@@ -3373,7 +3373,7 @@
             <dependency>
                 <groupId>net.imagej</groupId>
                 <artifactId>imagej-ui-swing</artifactId>
-                <version>1.0.1</version>
+                <version>1.2.2</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.angus</groupId>

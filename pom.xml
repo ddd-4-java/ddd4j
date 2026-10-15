@@ -207,6 +207,20 @@
                 <enabled>true</enabled>
             </releases>
         </repository>
+        <repository>
+            <id>clojars-releases</id>
+            <name>Clojars Releases</name>
+            <url>https://repo.clojars.org</url>
+            <snapshots><enabled>false</enabled></snapshots>
+            <releases><enabled>true</enabled></releases>
+        </repository>
+        <repository>
+            <id>terracotta-releases</id>
+            <name>Terracotta Releases</name>
+            <url>https://repo.terracotta.org/maven2</url>
+            <snapshots><enabled>false</enabled></snapshots>
+            <releases><enabled>true</enabled></releases>
+        </repository>
     </repositories>
 
     <pluginRepositories>
