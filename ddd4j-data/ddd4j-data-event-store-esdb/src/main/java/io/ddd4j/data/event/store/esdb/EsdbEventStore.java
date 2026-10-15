@@ -168,6 +168,9 @@ public class EsdbEventStore implements EventStore {
         } catch (Exception exception) {
             throw new IllegalStateException("Invalid ESDB event metadata", exception);
         }
+        if (Objects.isNull(metadata)) {
+            throw new IllegalStateException("Invalid ESDB event metadata");
+        }
         String aggregateType = expectedType == null ? String.valueOf(metadata.get("aggregateType")) : expectedType;
         AggregateRootId aggregateId = expectedId == null
                 ? new StringAggregateRootId(String.valueOf(metadata.get("aggregateId"))) : expectedId;

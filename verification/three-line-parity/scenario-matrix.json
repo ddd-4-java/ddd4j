@@ -1826,7 +1826,9 @@
     },
     {
       "id": "EVENTSTORE-ESDB-MALFORMED-METADATA",
-      "description": "ESDB 元数据损坏时读取应在载荷反序列化前以一致的 Invalid ESDB event metadata 错误失败；Jackson 版本由各线自行适配",
+      "description": "ESDB 元数据为损坏 JSON 或 JSON null 时，读取在载荷反序列化前以一致的 IllegalStateException: Invalid ESDB event metadata 失败；Jackson 版本由各线自行适配。本地 mock 契约不代表真实 EventStoreDB 容器验收",
+      "lastEvidence": "/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-15-esdb-metadata-contract/report.json",
+      "lastEvidenceSha256": "7b6022000d509a58d11fba93718d69facda82558391d636fdb8b6dcc5edb7150",
       "lines": {
         "1.0.x": {
           "status": "supported",

@@ -115,6 +115,21 @@ class EsdbEventStoreTest {
     }
 
     @Test
+    void nullMetadataMustFailBeforeDeserializingEvent() {
+        com.eventstore.dbclient.ReadResult result = org.mockito.Mockito.mock(com.eventstore.dbclient.ReadResult.class);
+        com.eventstore.dbclient.ResolvedEvent resolved = org.mockito.Mockito.mock(com.eventstore.dbclient.ResolvedEvent.class);
+        com.eventstore.dbclient.RecordedEvent recorded = org.mockito.Mockito.mock(com.eventstore.dbclient.RecordedEvent.class);
+        when(recorded.getUserMetadata()).thenReturn("null".getBytes(StandardCharsets.UTF_8));
+        when(resolved.getEvent()).thenReturn(recorded);
+        when(result.getEvents()).thenReturn(Collections.singletonList(resolved));
+        when(client.readStream(anyString(), any())).thenReturn(CompletableFuture.completedFuture(result));
+
+        assertThatThrownBy(() -> new EsdbEventStore(client).read(ORDER_TYPE, new TestId("null-metadata")))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("Invalid ESDB event metadata");
+    }
+
+    @Test
     void absentStronglyTypedStreamMustReadEmpty() {
         StreamNotFoundException absent = org.mockito.Mockito.mock(StreamNotFoundException.class);
         when(client.readStream(anyString(), any())).thenReturn(CompletableFuture.failedFuture(absent));
