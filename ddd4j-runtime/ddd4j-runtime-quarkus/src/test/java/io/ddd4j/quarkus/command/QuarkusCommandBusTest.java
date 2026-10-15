@@ -38,7 +38,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * {@link QuarkusCommandBus} 命令路由与执行测试。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.0.x
+ * @since 1.0.x
  */
 class QuarkusCommandBusTest {
 
@@ -74,10 +74,9 @@ class QuarkusCommandBusTest {
 
     @Test
     void executeShouldThrowWhenNoExecutorRegistered() {
-        // CDI Instance 未注入时会抛 NPE；注入后应抛 IllegalStateException。
-        // 此处验证未注册命令必然抛出异常，不静默通过。
         assertThatThrownBy(() -> commandBus.execute(new UnregisteredCommand()))
-                .isInstanceOf(Exception.class);
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("No executor found for command:");
     }
 
     @Test

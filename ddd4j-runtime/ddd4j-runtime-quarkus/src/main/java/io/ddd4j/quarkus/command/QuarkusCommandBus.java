@@ -102,6 +102,9 @@ public class QuarkusCommandBus implements CommandBus {
         if (Objects.nonNull(executor)) {
             return executor;
         }
+        if (Objects.isNull(executors)) {
+            return null;
+        }
         for (CommandExecutor<?> candidate : executors) {
             for (Class<? extends Command> commandType : candidate.supportedCommands()) {
                 if (commandType.equals(command.getClass())) {
