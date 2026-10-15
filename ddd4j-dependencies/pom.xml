@@ -437,6 +437,7 @@
         <mybatis-oscache.version>1.0.2</mybatis-oscache.version>
         <mybatis-plus-ext.version>1.7.5-RELEASE</mybatis-plus-ext.version>
         <mybatis-plus-generator.version>${mybatis-plus.version}</mybatis-plus-generator.version>
+        <mybatis-plus-enhance.version>${revision}</mybatis-plus-enhance.version>
         <mybatis-plus-join.version>1.5.7</mybatis-plus-join.version>
         <mybatis-plus.version>3.5.17</mybatis-plus.version>
         <mybatis-r2dbc.version>3.1.1.RELEASE</mybatis-r2dbc.version>
@@ -6733,6 +6734,27 @@
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-extension</artifactId>
                 <version>${mybatis-plus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>mybatis-plus-enhance</artifactId>
+                <version>${mybatis-plus-enhance.version}</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>mybatis-plus-enhance-core</artifactId>
+                <version>${mybatis-plus-enhance.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>mybatis-plus-enhance-extension</artifactId>
+                <version>${mybatis-plus-enhance.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>mybatis-plus-enhance-spring</artifactId>
+                <version>${mybatis-plus-enhance.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.baomidou/mybatis-plus-generator -->
             <!-- MyBatis-Plus Generator：MyBatis-Plus 代码生成器（一键生成 Entity/Mapper/Service/Controller）。 -->
