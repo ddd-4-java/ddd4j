@@ -13,6 +13,7 @@ import java.io.ObjectOutputStream;
 import java.io.InvalidObjectException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -67,6 +68,17 @@ class PlainValueContractTest {
                 31 * (31 * "db".hashCode() + Boolean.hashCode(true)) + ready.details().hashCode());
         assertThat(unavailable.hashCode()).isEqualTo(
                 31 * (31 * "db".hashCode() + Boolean.hashCode(false)) + unavailable.details().hashCode());
+    }
+
+    @Test
+    void readinessReportHashUsesTheSameBooleanValueAcrossLines() {
+        ReadinessReport ready = new ReadinessReport(true, Collections.emptyList());
+        ReadinessReport unavailable = new ReadinessReport(false, Collections.emptyList());
+
+        assertThat(ready.hashCode()).isEqualTo(
+                31 * Boolean.hashCode(true) + ready.results().hashCode());
+        assertThat(unavailable.hashCode()).isEqualTo(
+                31 * Boolean.hashCode(false) + unavailable.results().hashCode());
     }
 
     @Test
