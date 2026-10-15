@@ -64,6 +64,21 @@ class JdbiEventStoreTest {
     }
 
     @Test
+    void readBackAggregateIdsUseValueEquality() {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-id-equality");
+        eventStore.append(ORDER_TYPE, orderId, List.of(new OrderCreatedEvent(orderId)), 0);
+
+        AggregateRootId first = eventStore.read(ORDER_TYPE, orderId).get(0).aggregateId();
+        AggregateRootId second = eventStore.read(ORDER_TYPE, orderId).get(0).aggregateId();
+        org.junit.jupiter.api.Assertions.assertEquals(first, second);
+        org.junit.jupiter.api.Assertions.assertEquals(first.hashCode(), second.hashCode());
+        java.util.Set<AggregateRootId> unique = new java.util.HashSet<>();
+        unique.add(first);
+        unique.add(second);
+        org.junit.jupiter.api.Assertions.assertEquals(1, unique.size());
+    }
+
+    @Test
     void readWithVersionRangeAndConflictShouldFollowCoreContract() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-2");
         eventStore.append(ORDER_TYPE, orderId,
