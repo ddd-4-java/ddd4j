@@ -27,6 +27,7 @@ import io.ddd4j.mq.lifecycle.MQStartupStatus;
 import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.util.TagMatcher;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -40,7 +41,7 @@ import java.util.function.Consumer;
  * <p>使用 ddd4j 自己的 {@link DisruptorEvent} 作为 RingBuffer 事件类型，
  * 以确保本地消息能力可由公开仓库独立构建。
  *
- * <h3>路由模型</h3>
+ * <h2>路由模型</h2>
  * <pre>
  *   namespace.topic.tag
  *   └───┬───┘ └─┬─┘ └┬┘
@@ -66,7 +67,7 @@ public class DisruptorMQClient implements MQClient {
     /**
      * 已注册监听器列表（{@link #initConsumer} 时累加，{@link #onEvent} 在 RingBuffer 回调里遍历）。
      */
-    private final List<MQListener> listeners = new CopyOnWriteArrayList<>();
+    private final List<RegisteredListener> listeners = new CopyOnWriteArrayList<>();
     private final MQClientLifecycle lifecycle = new MQClientLifecycle();
     private final MQStartupStatus startupStatus = new MQStartupStatus("disruptor");
     private Disruptor<DisruptorEvent> disruptor;
@@ -75,7 +76,8 @@ public class DisruptorMQClient implements MQClient {
 
     /**
      * 双构造 1：传入配置，自建 RingBuffer 与 Disruptor（构造即启动，consumer 立即可用）。
-     * @param properties 属性集合
+     *
+     * @param properties Disruptor 消息配置
      */
     public DisruptorMQClient(DisruptorMQProperties properties) {
         this.properties = Objects.requireNonNull(properties, "DisruptorMQ properties is required");
@@ -85,7 +87,8 @@ public class DisruptorMQClient implements MQClient {
     /**
      * 双构造 2：传入已初始化的 RingBuffer（runtime 集成复用同一 RingBuffer，事件类型必须为 DisruptorEvent）。
      * 不启动 Disruptor —— RingBuffer 已就绪，调用方负责管理其生命周期。
-     * @param ringBuffer 参数 ringBuffer
+     *
+     * @param ringBuffer 已初始化的事件缓冲区
      */
     public DisruptorMQClient(RingBuffer<DisruptorEvent> ringBuffer) {
         this.properties = new DisruptorMQProperties();
@@ -100,8 +103,6 @@ public class DisruptorMQClient implements MQClient {
         return size;
     }
 
-    // ========================= 生产者 =========================
-
     private static void shutdown(Disruptor<DisruptorEvent> disruptor) {
         try {
             disruptor.shutdown();
@@ -110,6 +111,8 @@ public class DisruptorMQClient implements MQClient {
             throw exception;
         }
     }
+
+    // ========================= 生产者 =========================
 
     @Override
     public String impl() {
@@ -121,12 +124,12 @@ public class DisruptorMQClient implements MQClient {
         return lifecycle;
     }
 
-    // ========================= 消费者 =========================
-
     @Override
     public MQStartupStatus startupStatus() {
         return startupStatus;
     }
+
+    // ========================= 消费者 =========================
 
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
@@ -136,9 +139,10 @@ public class DisruptorMQClient implements MQClient {
             long sequence = ringBuffer.next();
             try {
                 DisruptorEvent e = ringBuffer.get(sequence);
-                e.setTopic(topic);
+                // 保留原始路由分量，由 DisruptorEvent 统一拼接一次。
+                e.setTopic(event.getTopic());
                 e.setTag(event.getTag());             // private 字段走 setter
-                e.setNamespace(event.getNamespace());
+                e.setNamespace(namespace(event, mqProperties));
                 e.setMessageId(event.getMsgId());
                 e.setPayload(payload);                // private 字段走 setter
                 e.setSequence(sequence);
@@ -152,7 +156,7 @@ public class DisruptorMQClient implements MQClient {
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) {
         Objects.requireNonNull(listener, "listener");
-        listeners.add(listener);
+        listeners.add(new RegisteredListener(listener, resolveTopic(listener, mqProperties)));
         log.info("Registered Disruptor consumer: bean={}, method={}",
                 listener.getMethod().getDeclaringClass().getSimpleName(),
                 listener.getMethod().getName());
@@ -164,7 +168,7 @@ public class DisruptorMQClient implements MQClient {
      *
      * <p>匹配流程（统一遵循 {@code namespace.topic[.tag]} 路由模型）：
      * <ol>
-     *   <li>route key 精确匹配：event 的 routeExpression vs listener 的 routeExpression</li>
+     *   <li>route key 精确匹配：event 的 routeExpression vs 注册时解析的 listener 有效路由</li>
      *   <li>{@link TagMatcher} 二次过滤（应对 listener.tags 表达式如 {@code "paid || shipped"}）</li>
      *   <li>反序列化 + 反射调用（{@link MQClient#consume} 默认方法）</li>
      * </ol>
@@ -173,10 +177,11 @@ public class DisruptorMQClient implements MQClient {
     private void onEvent(DisruptorEvent event, long sequence, boolean endOfBatch) {
         String eventRouteKey = event.getRouteExpression();   // namespace.topic[.tag]
         String eventTag = event.getTag();
-        for (MQListener listener : listeners) {
+        for (RegisteredListener registered : listeners) {
+            MQListener listener = registered.listener;
             try {
-                // 1. route key 精确匹配（统一规则：event.getRouteExpression() == resolveRouteKey(listener)）
-                if (!eventRouteKey.equals(resolveRouteKey(listener))) {
+                // 1. 按注册时解析的有效路由匹配，包含全局 namespace 回退。
+                if (!eventRouteKey.equals(registered.routeKey)) {
                     continue;
                 }
                 // 2. TagMatcher 二次过滤（应对 listener.tags 表达式）
@@ -233,5 +238,14 @@ public class DisruptorMQClient implements MQClient {
         } finally {
             startupStatus.stopped();
         }
+    }
+
+    /**
+     * 保留原监听器和注册时按配置解析的有效路由，避免修改共享监听器对象。
+     */
+    @RequiredArgsConstructor
+    private static final class RegisteredListener {
+        private final MQListener listener;
+        private final String routeKey;
     }
 }
