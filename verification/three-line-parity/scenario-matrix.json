@@ -743,6 +743,11 @@
     {
       "id": "CORE-EVENT-PAYLOAD-STRONG-ROUNDTRIP",
       "description": "三线按本线 Jackson 版本保留事件 ID、时间、实体路径和因果元数据；不接受 @class 选择目标类型，坏 JSON 保留原异常",
+      "caseNames": {
+        "1.0.x": ["roundTripRestoresEventIdentityTimestampAndSource", "causalityMetadataUsesHyphenatedPayloadFields", "unknownClassMarkerCannotChooseDeserializedType", "deserializeThrowsIllegalStateExceptionOnMalformedJson"],
+        "2.0.x": ["roundTripRestoresConcreteEventWithZonedDateTimeTimestamp", "causalityMetadataUsesHyphenatedPayloadFields", "unknownClassMarkerCannotChooseTheDeserializedType", "deserializeThrowsIllegalStateExceptionOnMalformedJson"],
+        "3.0.x": ["roundTripRestoresConcreteEventWithZonedDateTimeTimestamp", "causalityMetadataUsesHyphenatedPayloadFields", "unknownClassMarkerCannotChooseTheDeserializedType", "deserializeThrowsIllegalStateExceptionOnMalformedJson"]
+      },
       "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-14-event-payload-test-strengthening/report.json",
       "lastEvidenceSha256": "84daf4c41e3eb43f3255bb9f9505c61636d6afccba9389ec3bb34e8b0c491970",
       "lines": {

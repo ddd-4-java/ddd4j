@@ -28,6 +28,7 @@ import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityIdPath;
 import io.ddd4j.core.ddd.event.EntityType;
+import io.ddd4j.core.ddd.event.Event;
 import io.ddd4j.core.ddd.event.StringEntityType;
 import org.junit.jupiter.api.Test;
 
@@ -107,6 +108,16 @@ class EventPayloadSerializerTest {
         String json = serializer.serialize(new OrderPlacedEvent("thinkpad", 2));
 
         assertThat(json).doesNotContain("\"@class\"");
+    }
+
+    @Test
+    void causalityMetadataUsesHyphenatedPayloadFields() {
+        OrderPlacedEvent cause = new OrderPlacedEvent("cause", 1);
+        OrderPlacedEvent effect = new OrderPlacedEvent("effect", 2, cause);
+        String json = serializer.serialize(effect);
+
+        assertThat(json).contains("\"correlation-id\"").contains("\"causation-id\"");
+        assertThat(json).doesNotContain("correlationId").doesNotContain("causationId");
     }
 
     @Test
@@ -241,6 +252,12 @@ class EventPayloadSerializerTest {
 
         OrderPlacedEvent(String productName, int quantity) {
             this();
+            this.productName = productName;
+            this.quantity = quantity;
+        }
+
+        OrderPlacedEvent(String productName, int quantity, Event causingEvent) {
+            super(new EntityIdPath(new TestAggregateRootId("order-1")), causingEvent);
             this.productName = productName;
             this.quantity = quantity;
         }
