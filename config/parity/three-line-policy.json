@@ -1095,9 +1095,9 @@
     {
       "path": "ddd4j-core/src/main/java/io/ddd4j/core/health/RuntimeReadinessRegistry.java",
       "sourceSha256": [
-        "c98b59e8fe3e162460dab986304a2be00de4114bd2feacf711c1202676661fa1",
-        "1d3939e1d821d25a97dca60c479119f2e172ff5c4c78f3f818e3e7989e031bb8",
-        "1d3939e1d821d25a97dca60c479119f2e172ff5c4c78f3f818e3e7989e031bb8"
+        "96662185c5427d6a1346024b1a84f9c68036bc4dfed46833f09f4d46e41d12ff",
+        "482974719ec10c09e27ac69c588d14ed1b61b8dc6a531b5b9c7f66bbfe899fb4",
+        "482974719ec10c09e27ac69c588d14ed1b61b8dc6a531b5b9c7f66bbfe899fb4"
       ],
       "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/health/RuntimeReadinessRegistryTest.java",
       "testSha256": "3ce7ed7a21699774f1b6f8e78b7b2ca05a2dcc7eeb6b38d6b2b9171bc55d17d8",
