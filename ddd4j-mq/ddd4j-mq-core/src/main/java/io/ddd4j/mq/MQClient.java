@@ -134,14 +134,28 @@ public interface MQClient extends AutoCloseable {
             restoreContext(previousProperties, previousSerialization, previousStorer);
             throw initializationException;
         }
+        Map<String, Consumer<MQEvent>> publishers = null;
+        Consumer<MQEvent> previousPublisher = null;
+        Consumer<MQEvent> registeredProducer = null;
         if (Objects.nonNull(producer)) {
             log.info("Initializing MQEventPublisher for [{}]", impl());
-            Map<String, Consumer<MQEvent>> publishers = BaseContext.get(MQEvent.MQ_EVENT_PUBLISHER);
+            publishers = BaseContext.get(MQEvent.MQ_EVENT_PUBLISHER);
             if (Objects.isNull(publishers)) {
                 publishers = new ConcurrentHashMap<>();
                 BaseContext.inject(MQEvent.MQ_EVENT_PUBLISHER, publishers);
             }
-            publishers.put(impl(), producer);
+            MQPublisherRegistration activeProducer = new MQPublisherRegistration(producer);
+            registeredProducer = activeProducer;
+            previousPublisher = publishers.put(impl(), activeProducer);
+            Map<String, Consumer<MQEvent>> registeredPublishers = publishers;
+            lifecycle.register("publisher:" + impl(), () -> {
+                activeProducer.deactivate();
+                if (registeredPublishers.remove(impl(), activeProducer)
+                        && registeredPublishers.isEmpty()
+                        && BaseContext.get(MQEvent.MQ_EVENT_PUBLISHER) == registeredPublishers) {
+                    BaseContext.remove(MQEvent.MQ_EVENT_PUBLISHER);
+                }
+            });
         }
         // 初始化消费者
         log.info("Initializing MQEventListener for [{}]", impl());
@@ -161,7 +175,19 @@ public interface MQClient extends AutoCloseable {
                     startupStatus.failed(failure);
                     MQInitializationException initializationException = initializationException(failure, e);
                     rollback(lifecycle, checkpoint, initializationException);
-                    unregisterPublisher(producer);
+                    if (Objects.nonNull(publishers)) {
+                        if (publishers.remove(impl(), registeredProducer)
+                                && publishers.isEmpty()
+                                && BaseContext.get(MQEvent.MQ_EVENT_PUBLISHER) == publishers) {
+                            BaseContext.remove(MQEvent.MQ_EVENT_PUBLISHER);
+                        }
+                        if (Objects.nonNull(previousPublisher)
+                                && (!(previousPublisher instanceof MQPublisherRegistration)
+                                || ((MQPublisherRegistration) previousPublisher).isActive())) {
+                            publishers.putIfAbsent(impl(), previousPublisher);
+                            BaseContext.inject(MQEvent.MQ_EVENT_PUBLISHER, publishers);
+                        }
+                    }
                     restoreContext(previousProperties, previousSerialization, previousStorer);
                     throw initializationException;
                 }
@@ -287,14 +313,6 @@ public interface MQClient extends AutoCloseable {
             BaseContext.remove(MQ_STORER);
         } else {
             BaseContext.inject(MQ_STORER, storer);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private void unregisterPublisher(Consumer<MQEvent> producer) {
-        Map<String, Consumer<MQEvent>> publishers = BaseContext.get(MQEvent.MQ_EVENT_PUBLISHER);
-        if (Objects.nonNull(publishers) && publishers.remove(impl(), producer) && publishers.isEmpty()) {
-            BaseContext.remove(MQEvent.MQ_EVENT_PUBLISHER);
         }
     }
 
