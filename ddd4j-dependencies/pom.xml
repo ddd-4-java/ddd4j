@@ -5886,10 +5886,10 @@
                 <version>${keycloak.version}</version>
             </dependency>
             <!-- JDBC Driver For KingBase8 -->
-            <!-- Source: https://mvnrepository.com/artifact/com.kingbase8.jdbc/kingbase8 -->
+            <!-- Source: https://central.sonatype.com/artifact/cn.com.kingbase/kingbase8 -->
             <!-- KingBase8 JDBC Driver：人大金仓数据库 KingbaseES 的 JDBC 驱动。 -->
             <dependency>
-                <groupId>com.kingbase8.jdbc</groupId>
+                <groupId>cn.com.kingbase</groupId>
                 <artifactId>kingbase8</artifactId>
                 <version>${kingbase8.version}</version>
             </dependency>
