@@ -19,6 +19,8 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.ddd4j.core.ddd.event.*;
 import org.junit.jupiter.api.Test;
 
+import java.time.ZonedDateTime;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class EventPayloadSerializerTest {
@@ -27,13 +29,29 @@ class EventPayloadSerializerTest {
     private final EventPayloadSerializer serializer = new EventPayloadSerializer(sourceMapper);
 
     @Test
-    void serializeShouldCarryOnlyBusinessProperty() {
+    void serializeShouldCarryBusinessAndEventMetadata() {
         String json = serializer.serialize(new OrderCreatedEvent("order-created"));
         assertTrue(json.contains("\"fact\":\"order-created\""));
+        assertTrue(json.contains("\"event-id\""));
+        assertTrue(json.contains("\"event-timestamp\""));
+        assertTrue(json.contains("\"entity-id-path\""));
         assertFalse(json.contains("eventId"));
         assertFalse(json.contains("eventTimestamp"));
         assertFalse(json.contains("entityIdPath"));
         assertFalse(json.contains("aggregateVersion"));
+    }
+
+    @Test
+    void roundTripRestoresEventIdentityTimestampAndSource() {
+        OrderCreatedEvent original = new OrderCreatedEvent("order-created");
+        ZonedDateTime originalTimestamp = original.getEventTimestamp();
+
+        DomainEvent<?> restored = serializer.deserialize(serializer.serialize(original), OrderCreatedEvent.class);
+
+        assertEquals(original.getEventId(), restored.getEventId());
+        assertEquals(originalTimestamp.toInstant(), restored.getEventTimestamp().toInstant());
+        assertEquals("order-1", restored.source());
+        assertEquals("order-created", ((OrderCreatedEvent) restored).getFact());
     }
 
     @Test
@@ -63,6 +81,20 @@ class EventPayloadSerializerTest {
     }
 
     @Test
+    void deserializeThrowsIllegalStateExceptionOnMalformedJson() {
+        IllegalStateException exception = assertThrows(IllegalStateException.class,
+                () -> serializer.deserialize("{\"fact\":", OrderCreatedEvent.class));
+
+        assertEquals("Failed to deserialize event", exception.getMessage());
+        assertNotNull(exception.getCause());
+    }
+
+    @Test
+    void constructorRejectsNullSourceMapper() {
+        assertThrows(NullPointerException.class, () -> new EventPayloadSerializer(null));
+    }
+
+    @Test
     void serializerLeavesSourceMapperStrict() {
         assertTrue(sourceMapper.isEnabled(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES));
         serializer.deserialize("{\"fact\":\"ok\",\"futureProperty\":\"newer-writer\"}", OrderCreatedEvent.class);
@@ -70,10 +102,12 @@ class EventPayloadSerializerTest {
     }
 
     @Test
-    void causalityMetadataShouldStayOutOfPayload() {
+    void causalityMetadataUsesHyphenatedPayloadFields() {
         OrderCreatedEvent cause = new OrderCreatedEvent("cause");
         OrderCreatedEvent effect = new OrderCreatedEvent("effect", cause);
         String json = serializer.serialize(effect);
+        assertTrue(json.contains("\"correlation-id\""));
+        assertTrue(json.contains("\"causation-id\""));
         assertFalse(json.contains("correlationId"));
         assertFalse(json.contains("causationId"));
     }
