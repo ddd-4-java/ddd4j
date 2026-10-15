@@ -17,6 +17,7 @@ package io.ddd4j.mq.serialization;
 import io.ddd4j.kit.lang.JsonKit;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.event.MQEventSerialization;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
 
@@ -25,6 +26,7 @@ import java.util.Objects;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@Slf4j
 public class JsonMQEventSerialization implements MQEventSerialization {
 
     /**
@@ -45,7 +47,12 @@ public class JsonMQEventSerialization implements MQEventSerialization {
         if (StrKit.isEmpty(text)) {
             return null;
         }
-        return JsonKit.toObject(text, dist);
+        try {
+            return JsonKit.DEFAULT_OBJECT_MAPPER.readValue(text, dist);
+        } catch (Exception exception) {
+            log.warn("Deserialize MQ event payload failed, return null: {}", exception.getMessage());
+            return null;
+        }
     }
 
     /**
@@ -58,6 +65,13 @@ public class JsonMQEventSerialization implements MQEventSerialization {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T serialize(Object src) throws RuntimeException {
-        return (T) JsonKit.toJson(src);
+        if (Objects.isNull(src)) {
+            return null;
+        }
+        try {
+            return (T) JsonKit.DEFAULT_OBJECT_MAPPER.writeValueAsString(src);
+        } catch (Exception exception) {
+            throw new IllegalStateException("Serialize MQ event payload failed: " + exception.getMessage(), exception);
+        }
     }
 }
