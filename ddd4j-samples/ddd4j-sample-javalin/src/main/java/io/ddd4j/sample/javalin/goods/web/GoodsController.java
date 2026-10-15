@@ -291,31 +291,46 @@ public class GoodsController {
             this.stock = stock;
         }
 
+        /**
+         * 判断另一对象是否可以参与相等比较。
+         * @param other 待比较对象
+         * @return 是否为同类请求或响应
+         */
+        protected boolean canEqual(Object other) {
+            return other instanceof CreateGoodsRequest;
+        }
+
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
                 return true;
             }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+            if (!(obj instanceof CreateGoodsRequest)) {
                 return false;
             }
             CreateGoodsRequest other = (CreateGoodsRequest) obj;
-            return Objects.equals(this.code, other.code) && Objects.equals(this.name, other.name) && Objects.equals(this.price, other.price) && Objects.equals(this.stock, other.stock);
+            if (!other.canEqual(this)) {
+                return false;
+            }
+            return Objects.equals(getCode(), other.getCode())
+                    && Objects.equals(getName(), other.getName())
+                    && Objects.equals(getPrice(), other.getPrice())
+                    && Objects.equals(getStock(), other.getStock());
         }
 
         @Override
         public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(code);
-            result = 31 * result + Objects.hashCode(name);
-            result = 31 * result + Objects.hashCode(price);
-            result = 31 * result + Objects.hashCode(stock);
+            int result = 1;
+            result = 59 * result + (Objects.isNull(getCode()) ? 43 : getCode().hashCode());
+            result = 59 * result + (Objects.isNull(getName()) ? 43 : getName().hashCode());
+            result = 59 * result + (Objects.isNull(getPrice()) ? 43 : getPrice().hashCode());
+            result = 59 * result + (Objects.isNull(getStock()) ? 43 : getStock().hashCode());
             return result;
         }
 
         @Override
         public String toString() {
-            return "CreateGoodsRequest[code=" + code + ", name=" + name + ", price=" + price + ", stock=" + stock + "]";
+            return "GoodsController.CreateGoodsRequest(code=" + getCode() + ", name=" + getName() + ", price=" + getPrice() + ", stock=" + getStock() + ")";
         }
     }
 
@@ -376,29 +391,42 @@ public class GoodsController {
             this.price = price;
         }
 
+        /**
+         * 判断另一对象是否可以参与相等比较。
+         * @param other 待比较对象
+         * @return 是否为同类请求或响应
+         */
+        protected boolean canEqual(Object other) {
+            return other instanceof UpdateGoodsRequest;
+        }
+
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
                 return true;
             }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+            if (!(obj instanceof UpdateGoodsRequest)) {
                 return false;
             }
             UpdateGoodsRequest other = (UpdateGoodsRequest) obj;
-            return Objects.equals(this.name, other.name) && Objects.equals(this.price, other.price);
+            if (!other.canEqual(this)) {
+                return false;
+            }
+            return Objects.equals(getName(), other.getName())
+                    && Objects.equals(getPrice(), other.getPrice());
         }
 
         @Override
         public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(name);
-            result = 31 * result + Objects.hashCode(price);
+            int result = 1;
+            result = 59 * result + (Objects.isNull(getName()) ? 43 : getName().hashCode());
+            result = 59 * result + (Objects.isNull(getPrice()) ? 43 : getPrice().hashCode());
             return result;
         }
 
         @Override
         public String toString() {
-            return "UpdateGoodsRequest[name=" + name + ", price=" + price + "]";
+            return "GoodsController.UpdateGoodsRequest(name=" + getName() + ", price=" + getPrice() + ")";
         }
     }
 }

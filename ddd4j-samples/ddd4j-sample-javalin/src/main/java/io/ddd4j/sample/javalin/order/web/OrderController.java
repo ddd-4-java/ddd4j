@@ -175,30 +175,44 @@ public final class OrderController {
             this.buyerName = buyerName;
         }
 
+        /**
+         * 判断另一对象是否可以参与相等比较。
+         * @param other 待比较对象
+         * @return 是否为同类请求或响应
+         */
+        protected boolean canEqual(Object other) {
+            return other instanceof CreateOrderRequest;
+        }
+
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
                 return true;
             }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+            if (!(obj instanceof CreateOrderRequest)) {
                 return false;
             }
             CreateOrderRequest other = (CreateOrderRequest) obj;
-            return Objects.equals(this.orderNo, other.orderNo) && Objects.equals(this.buyerId, other.buyerId) && Objects.equals(this.buyerName, other.buyerName);
+            if (!other.canEqual(this)) {
+                return false;
+            }
+            return Objects.equals(getOrderNo(), other.getOrderNo())
+                    && Objects.equals(getBuyerId(), other.getBuyerId())
+                    && Objects.equals(getBuyerName(), other.getBuyerName());
         }
 
         @Override
         public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(orderNo);
-            result = 31 * result + Objects.hashCode(buyerId);
-            result = 31 * result + Objects.hashCode(buyerName);
+            int result = 1;
+            result = 59 * result + (Objects.isNull(getOrderNo()) ? 43 : getOrderNo().hashCode());
+            result = 59 * result + (Objects.isNull(getBuyerId()) ? 43 : getBuyerId().hashCode());
+            result = 59 * result + (Objects.isNull(getBuyerName()) ? 43 : getBuyerName().hashCode());
             return result;
         }
 
         @Override
         public String toString() {
-            return "CreateOrderRequest[orderNo=" + orderNo + ", buyerId=" + buyerId + ", buyerName=" + buyerName + "]";
+            return "OrderController.CreateOrderRequest(orderNo=" + getOrderNo() + ", buyerId=" + getBuyerId() + ", buyerName=" + getBuyerName() + ")";
         }
     }
 
@@ -297,31 +311,46 @@ public final class OrderController {
             this.unitPrice = unitPrice;
         }
 
+        /**
+         * 判断另一对象是否可以参与相等比较。
+         * @param other 待比较对象
+         * @return 是否为同类请求或响应
+         */
+        protected boolean canEqual(Object other) {
+            return other instanceof AddOrderLineRequest;
+        }
+
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
                 return true;
             }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+            if (!(obj instanceof AddOrderLineRequest)) {
                 return false;
             }
             AddOrderLineRequest other = (AddOrderLineRequest) obj;
-            return Objects.equals(this.goodsId, other.goodsId) && Objects.equals(this.goodsName, other.goodsName) && this.quantity == other.quantity && Objects.equals(this.unitPrice, other.unitPrice);
+            if (!other.canEqual(this)) {
+                return false;
+            }
+            return Objects.equals(getGoodsId(), other.getGoodsId())
+                    && Objects.equals(getGoodsName(), other.getGoodsName())
+                    && getQuantity() == other.getQuantity()
+                    && Objects.equals(getUnitPrice(), other.getUnitPrice());
         }
 
         @Override
         public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(goodsId);
-            result = 31 * result + Objects.hashCode(goodsName);
-            result = 31 * result + Integer.hashCode(quantity);
-            result = 31 * result + Objects.hashCode(unitPrice);
+            int result = 1;
+            result = 59 * result + (Objects.isNull(getGoodsId()) ? 43 : getGoodsId().hashCode());
+            result = 59 * result + (Objects.isNull(getGoodsName()) ? 43 : getGoodsName().hashCode());
+            result = 59 * result + getQuantity();
+            result = 59 * result + (Objects.isNull(getUnitPrice()) ? 43 : getUnitPrice().hashCode());
             return result;
         }
 
         @Override
         public String toString() {
-            return "AddOrderLineRequest[goodsId=" + goodsId + ", goodsName=" + goodsName + ", quantity=" + quantity + ", unitPrice=" + unitPrice + "]";
+            return "OrderController.AddOrderLineRequest(goodsId=" + getGoodsId() + ", goodsName=" + getGoodsName() + ", quantity=" + getQuantity() + ", unitPrice=" + getUnitPrice() + ")";
         }
     }
 
@@ -456,35 +485,54 @@ public final class OrderController {
             return lineCount;
         }
 
+        /**
+         * 判断另一对象是否可以参与相等比较。
+         * @param other 待比较对象
+         * @return 是否为同类请求或响应
+         */
+        protected boolean canEqual(Object other) {
+            return other instanceof OrderResponse;
+        }
+
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
                 return true;
             }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+            if (!(obj instanceof OrderResponse)) {
                 return false;
             }
             OrderResponse other = (OrderResponse) obj;
-            return Objects.equals(this.id, other.id) && Objects.equals(this.orderNo, other.orderNo) && Objects.equals(this.buyerId, other.buyerId) && Objects.equals(this.buyerName, other.buyerName) && Objects.equals(this.status, other.status) && Objects.equals(this.totalAmount, other.totalAmount) && Objects.equals(this.currency, other.currency) && this.lineCount == other.lineCount;
+            if (!other.canEqual(this)) {
+                return false;
+            }
+            return Objects.equals(getId(), other.getId())
+                    && Objects.equals(getOrderNo(), other.getOrderNo())
+                    && Objects.equals(getBuyerId(), other.getBuyerId())
+                    && Objects.equals(getBuyerName(), other.getBuyerName())
+                    && Objects.equals(getStatus(), other.getStatus())
+                    && Objects.equals(getTotalAmount(), other.getTotalAmount())
+                    && Objects.equals(getCurrency(), other.getCurrency())
+                    && getLineCount() == other.getLineCount();
         }
 
         @Override
         public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(id);
-            result = 31 * result + Objects.hashCode(orderNo);
-            result = 31 * result + Objects.hashCode(buyerId);
-            result = 31 * result + Objects.hashCode(buyerName);
-            result = 31 * result + Objects.hashCode(status);
-            result = 31 * result + Objects.hashCode(totalAmount);
-            result = 31 * result + Objects.hashCode(currency);
-            result = 31 * result + Integer.hashCode(lineCount);
+            int result = 1;
+            result = 59 * result + (Objects.isNull(getId()) ? 43 : getId().hashCode());
+            result = 59 * result + (Objects.isNull(getOrderNo()) ? 43 : getOrderNo().hashCode());
+            result = 59 * result + (Objects.isNull(getBuyerId()) ? 43 : getBuyerId().hashCode());
+            result = 59 * result + (Objects.isNull(getBuyerName()) ? 43 : getBuyerName().hashCode());
+            result = 59 * result + (Objects.isNull(getStatus()) ? 43 : getStatus().hashCode());
+            result = 59 * result + (Objects.isNull(getTotalAmount()) ? 43 : getTotalAmount().hashCode());
+            result = 59 * result + (Objects.isNull(getCurrency()) ? 43 : getCurrency().hashCode());
+            result = 59 * result + getLineCount();
             return result;
         }
 
         @Override
         public String toString() {
-            return "OrderResponse[id=" + id + ", orderNo=" + orderNo + ", buyerId=" + buyerId + ", buyerName=" + buyerName + ", status=" + status + ", totalAmount=" + totalAmount + ", currency=" + currency + ", lineCount=" + lineCount + "]";
+            return "OrderController.OrderResponse(id=" + getId() + ", orderNo=" + getOrderNo() + ", buyerId=" + getBuyerId() + ", buyerName=" + getBuyerName() + ", status=" + getStatus() + ", totalAmount=" + getTotalAmount() + ", currency=" + getCurrency() + ", lineCount=" + getLineCount() + ")";
         }
     }
 }
