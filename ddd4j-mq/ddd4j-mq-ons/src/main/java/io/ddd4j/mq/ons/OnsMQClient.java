@@ -55,6 +55,7 @@ public class OnsMQClient implements MQClient {
     private final MQStartupStatus startupStatus = new MQStartupStatus("ons");
     private volatile Producer producer;
     private volatile boolean producerStarted;
+    private volatile boolean closed;
 
     /**
      * 构造 1：传入配置，{@link #initProducer}/{@link #initConsumer} 中通过 ONSFactory 创建原生客户端。
@@ -126,17 +127,25 @@ public class OnsMQClient implements MQClient {
     // ========================= 消费者 =========================
 
     @Override
-    public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
+    public synchronized Consumer<MQEvent> initProducer(MQProperties mqProperties) {
+        if (closed) {
+            throw new IllegalStateException("ONS client is closed");
+        }
         try {
             boolean owned = Objects.isNull(producer);
             Producer p = owned ? ONSFactory.createProducer(properties.sessionProperties(properties.getProducerId())) : producer;
-            p.start();
-            if (owned) {
-                lifecycle.register("ons-producer", p::shutdown);
+            if (!producerStarted) {
+                p.start();
+                if (owned) {
+                    lifecycle.register("ons-producer", p::shutdown);
+                }
+                this.producer = p;
+                this.producerStarted = true;
             }
-            this.producer = p;
-            this.producerStarted = true;
             return event -> {
+                if (closed) {
+                    throw new IllegalStateException("ONS client is closed");
+                }
                 try {
                     String topic = resolveTopic(event, mqProperties);
                     String tag = event.getTag();
@@ -161,7 +170,10 @@ public class OnsMQClient implements MQClient {
     }
 
     @Override
-    public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
+    public synchronized boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
+        if (closed) {
+            throw new IllegalStateException("ONS client is closed");
+        }
         String group = StrKit.hasText(listener.getGroup()) ? listener.getGroup() : properties.getConsumerId();
         if (!StrKit.hasText(group)) {
             throw new IllegalStateException("OnsClient requires consumerId or @MQEventListener(group=...)");
@@ -219,7 +231,11 @@ public class OnsMQClient implements MQClient {
     }
 
     @Override
-    public void close() {
+    public synchronized void close() {
+        if (closed) {
+            return;
+        }
+        closed = true;
         try {
             lifecycle.close();
         } finally {

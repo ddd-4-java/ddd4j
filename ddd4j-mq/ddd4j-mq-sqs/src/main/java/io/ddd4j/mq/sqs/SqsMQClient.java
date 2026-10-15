@@ -60,7 +60,7 @@ public class SqsMQClient implements MQClient {
     private final MQClientLifecycle lifecycle = new MQClientLifecycle();
     private final MQStartupStatus startupStatus = new MQStartupStatus("sqs");
     private SqsClient client;
-    private boolean closed;
+    private volatile boolean closed;
 
     /**
      * 构造 1：传入配置，首次初始化生产者或消费者时 lazy 创建 SqsClient。
@@ -131,6 +131,9 @@ public class SqsMQClient implements MQClient {
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         initializeClient();
         return event -> {
+            if (closed) {
+                throw new IllegalStateException("SQS client is closed");
+            }
             try {
                 String queueUrl = event.getTopic();
                 Map<String, MessageAttributeValue> attrs = new HashMap<>();

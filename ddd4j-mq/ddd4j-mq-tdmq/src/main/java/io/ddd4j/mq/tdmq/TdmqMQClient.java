@@ -60,6 +60,7 @@ public class TdmqMQClient implements MQClient {
     private final MQStartupStatus startupStatus = new MQStartupStatus("tdmq");
     private BrokerPublisher brokerPublisher;
     private BrokerSubscriber brokerSubscriber;
+    private volatile boolean closed;
 
     /**
      * 构造 1：仅 properties（业务可在 initProducer/initConsumer 之前注入 BrokerPublisher/BrokerSubscriber）。
@@ -119,12 +120,18 @@ public class TdmqMQClient implements MQClient {
     // ========================= 生产者 =========================
 
     @Override
-    public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
+    public synchronized Consumer<MQEvent> initProducer(MQProperties mqProperties) {
+        if (closed) {
+            throw new IllegalStateException("TDMQ client is closed");
+        }
         if (Objects.isNull(brokerPublisher)) {
             this.brokerPublisher = new InMemoryBrokerPublisher(topicSubscribers);
             log.warn("TdmqMQClient: no BrokerPublisher injected, falling back to in-memory broker (test only).");
         }
         return event -> {
+            if (closed) {
+                throw new IllegalStateException("TDMQ client is closed");
+            }
             try {
                 String topic = resolveTopic(event, mqProperties);
                 String tag = event.getTag();
@@ -143,7 +150,10 @@ public class TdmqMQClient implements MQClient {
     // ========================= 消费者 =========================
 
     @Override
-    public boolean initConsumer(MQListener listener, MQProperties mqProperties) {
+    public synchronized boolean initConsumer(MQListener listener, MQProperties mqProperties) {
+        if (closed) {
+            throw new IllegalStateException("TDMQ client is closed");
+        }
         if (!properties.isAutoStartConsumers()) {
             log.info("TDMQ listener registration skipped because autoStartConsumers=false");
             return false;
@@ -227,7 +237,11 @@ public class TdmqMQClient implements MQClient {
     // ========================= 关闭 =========================
 
     @Override
-    public void close() {
+    public synchronized void close() {
+        if (closed) {
+            return;
+        }
+        closed = true;
         try {
             lifecycle.close();
         } finally {
