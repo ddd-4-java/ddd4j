@@ -29,6 +29,9 @@ public final class EventType implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 事件类型值。
+     */
     private final String value;
 
     /**
@@ -53,11 +56,6 @@ public final class EventType implements Serializable {
         return value;
     }
 
-    /**
-     * 判断与另一对象是否相等。
-     * @param object 待分配主键的实体对象。
-     * @return 相等返回 {@code true}，否则返回 {@code false}。
-     */
     @Override
     public boolean equals(Object object) {
         if (this == object) {
@@ -65,29 +63,15 @@ public final class EventType implements Serializable {
         }
         if (!(object instanceof EventType that)) {
             return false;
-        /**
-         * Objects.equals() 方法。
-         * @param value 值。
-         * @param that.value that.value 参数。
-         * @return 方法执行结果。
-         */
         }
         return Objects.equals(value, that.value);
     }
 
-    /**
-     * 返回对象哈希码。
-     * @return 哈希码。
-     */
     @Override
     public int hashCode() {
         return Objects.hash(value);
     }
 
-    /**
-     * 返回对象的字符串表示。
-     * @return 对象的字符串表示。
-     */
     @Override
     public String toString() {
         return value;
