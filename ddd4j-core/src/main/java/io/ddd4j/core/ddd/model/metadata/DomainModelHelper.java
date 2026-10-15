@@ -14,10 +14,6 @@
  */
 package io.ddd4j.core.ddd.model.metadata;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -130,7 +126,7 @@ public final class DomainModelHelper {
      * @param modelClass 领域模型类型
      */
     public static void remove(Class<?> modelClass) {
-        MODEL_INFO_CACHE.keySet().removeIf(key -> Objects.equals(key.modelType(), modelClass));
+        MODEL_INFO_CACHE.keySet().removeIf(key -> Objects.equals(key.modelType, modelClass));
     }
 
     /**
@@ -140,53 +136,33 @@ public final class DomainModelHelper {
         MODEL_INFO_CACHE.clear();
     }
 
-    private final static class ModelMappingKey {
-
-        private static final long serialVersionUID = 0L;
-
+    /**
+     * 按领域模型类型与持久化映射类型隔离的缓存键。
+     */
+    private static final class ModelMappingKey {
         private final Class<?> modelType;
-
         private final Class<?> persistenceType;
 
-        @JsonCreator()
-        private ModelMappingKey(@JsonProperty("modelType") Class<?> modelType, @JsonProperty("persistenceType") Class<?> persistenceType) {
+        private ModelMappingKey(Class<?> modelType, Class<?> persistenceType) {
             this.modelType = modelType;
             this.persistenceType = persistenceType;
         }
 
-        @JsonProperty("modelType")
-        public Class<?> modelType() {
-            return modelType;
-        }
-
-        @JsonProperty("persistenceType")
-        public Class<?> persistenceType() {
-            return persistenceType;
-        }
-
         @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
+        public boolean equals(Object o) {
+            if (this == o) {
                 return true;
             }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+            if (!(o instanceof ModelMappingKey)) {
                 return false;
             }
-            ModelMappingKey other = (ModelMappingKey) obj;
-            return Objects.equals(this.modelType, other.modelType) && Objects.equals(this.persistenceType, other.persistenceType);
+            ModelMappingKey that = (ModelMappingKey) o;
+            return modelType.equals(that.modelType) && persistenceType.equals(that.persistenceType);
         }
 
         @Override
         public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(modelType);
-            result = 31 * result + Objects.hashCode(persistenceType);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "ModelMappingKey[modelType=" + modelType + ", persistenceType=" + persistenceType + "]";
+            return 31 * modelType.hashCode() + persistenceType.hashCode();
         }
     }
 }
