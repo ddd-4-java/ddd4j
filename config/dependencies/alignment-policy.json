@@ -1363,6 +1363,62 @@
         "reason": "Spring 6 集成依赖 Java 17，JDK 8 分支仅使用 Spring 5 扩展",
         "requires_jdk": 17
       }
+    },
+    "com.tongweb:tongweb-embed-core": {
+      "8": {
+        "reason": "TongWeb 为外部私有商业包，需使用方手动发布到自己的私有仓库；ddd4j 默认产品与 BOM 不提供该适配",
+        "status": "unsupported-private-external"
+      },
+      "17": {
+        "reason": "TongWeb 为外部私有商业包，需使用方手动发布到自己的私有仓库；ddd4j 默认产品与 BOM 不提供该适配",
+        "status": "unsupported-private-external"
+      },
+      "21": {
+        "reason": "TongWeb 为外部私有商业包，需使用方手动发布到自己的私有仓库；ddd4j 默认产品与 BOM 不提供该适配",
+        "status": "unsupported-private-external"
+      }
+    },
+    "com.tongweb:tongweb-embed-dubbo": {
+      "8": {
+        "reason": "TongWeb 为外部私有商业包，需使用方手动发布到自己的私有仓库；ddd4j 默认产品与 BOM 不提供该适配",
+        "status": "unsupported-private-external"
+      },
+      "17": {
+        "reason": "TongWeb 为外部私有商业包，需使用方手动发布到自己的私有仓库；ddd4j 默认产品与 BOM 不提供该适配",
+        "status": "unsupported-private-external"
+      },
+      "21": {
+        "reason": "TongWeb 为外部私有商业包，需使用方手动发布到自己的私有仓库；ddd4j 默认产品与 BOM 不提供该适配",
+        "status": "unsupported-private-external"
+      }
+    },
+    "com.tongweb:tongweb-gmssl": {
+      "8": {
+        "reason": "TongWeb 为外部私有商业包，需使用方手动发布到自己的私有仓库；ddd4j 默认产品与 BOM 不提供该适配",
+        "status": "unsupported-private-external"
+      },
+      "17": {
+        "reason": "TongWeb 为外部私有商业包，需使用方手动发布到自己的私有仓库；ddd4j 默认产品与 BOM 不提供该适配",
+        "status": "unsupported-private-external"
+      },
+      "21": {
+        "reason": "TongWeb 为外部私有商业包，需使用方手动发布到自己的私有仓库；ddd4j 默认产品与 BOM 不提供该适配",
+        "status": "unsupported-private-external"
+      }
+    },
+    "com.tongweb:tongweb-lic-sdk": {
+      "8": {
+        "reason": "TongWeb 为外部私有商业包，需使用方手动发布到自己的私有仓库；ddd4j 默认产品与 BOM 不提供该适配",
+        "status": "unsupported-private-external"
+      },
+      "17": {
+        "reason": "TongWeb 为外部私有商业包，需使用方手动发布到自己的私有仓库；ddd4j 默认产品与 BOM 不提供该适配",
+        "status": "unsupported-private-external"
+      },
+      "21": {
+        "reason": "TongWeb 为外部私有商业包，需使用方手动发布到自己的私有仓库；ddd4j 默认产品与 BOM 不提供该适配",
+        "status": "unsupported-private-external"
+      }
     }
   },
   "baseline_components": {
