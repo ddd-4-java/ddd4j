@@ -221,6 +221,17 @@ class ThreeLineConvergenceTest(unittest.TestCase):
             self.assertEqual("PASS", MODULE.scenario_test_reports(
                 root, scenarios, "2.0.x", 0)["status"])
 
+            scenarios[0]["caseNames"]["2.0.x"] = ["requiredCase", "secondCase"]
+            self.assertEqual("FAIL", MODULE.scenario_test_reports(
+                root, scenarios, "2.0.x", 0)["status"])
+            report.write_text(
+                '<testsuite tests="2" failures="0" errors="0" skipped="0">'
+                '<testcase name="requiredCase" classname="example.RequiredTest"/>'
+                '<testcase name="secondCase" classname="example.RequiredTest"/>'
+                '</testsuite>', encoding="utf-8")
+            self.assertEqual("PASS", MODULE.scenario_test_reports(
+                root, scenarios, "2.0.x", 0)["status"])
+
     def test_reactor_requires_fresh_executed_test_reports(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
