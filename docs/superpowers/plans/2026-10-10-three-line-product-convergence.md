@@ -843,3 +843,5 @@ effective POM 必须分别用对应线的 JDK/Wrapper 从该线 `ddd4j-dependenc
 
 
 **2026-10-16 T04 ReadinessReport 契约测试收敛：** 三线 ReadinessReport/ReadinessResult 生产源码已逐字一致；将 3.0.x 的不可变快照、空贡献者/空结果失败关闭、诊断顺序与空键值拒绝测试补齐到 1.0.x/2.0.x，并统一测试文档。三线测试文件逐字一致，JDK 8/17/21 目标测试各 6/6、零失败/跳过；结构 inventory 差异 2266→2265、OPEN 1278→1277。证据位于 /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-16-readiness-report-test-parity/，对应三线本地 Surefire XML。此为局部契约验证，T04/T11 总验收继续 OPEN。
+
+**2026-10-16 T04 RepositoryRegistry 测试覆盖收敛：** 三线生产实现仅有 Javadoc 标题级差异，但仓储注册、查询映射、线程/全局上下文优先级、撤销及清理的测试分别为 6/9/11 项。将完整 11 项测试对齐三线，保留旧聚合注册场景；JDK 8/17/21 目标测试各 11/11、零失败/错误/跳过，测试源码哈希一致。结构 inventory 差异 2265→2264、OPEN 1277→1276。证据 /Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-16-repository-registry-test-parity/report.json（SHA-256 62e281b68305c3944960d32b61396caf841f56e45dc29156a1fac9fb1a8d6618）。这是局部契约覆盖，不代表 T04/T11 总门禁完成。
