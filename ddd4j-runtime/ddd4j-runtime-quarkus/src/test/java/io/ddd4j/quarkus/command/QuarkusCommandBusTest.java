@@ -73,10 +73,9 @@ class QuarkusCommandBusTest {
 
     @Test
     void executeShouldThrowWhenNoExecutorRegistered() {
-        // CDI Instance 未注入时会抛 NPE；注入后应抛 IllegalStateException。
-        // 此处验证未注册命令必然抛出异常，不静默通过。
         assertThatThrownBy(() -> commandBus.execute(new UnregisteredCommand()))
-                .isInstanceOf(Exception.class);
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("No executor found for command:");
     }
 
     @Test
