@@ -156,9 +156,9 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
 
     /**
      * 批量保存。
-     * @param <M> 数据元素类型
-     * @param models 模型集合
-     * @return 操作成功返回 true，否则返回 false
+     * @param <M> 聚合根类型
+     * @param models 聚合根列表
+     * @return 保存结果；批量调用在列表非空时返回 true
      */
     public static <M extends AggregateRoot<?>> boolean save(List<M> models) {
         if (Objects.isNull(models) || models.isEmpty()) {
@@ -172,10 +172,10 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
     }
 
     /**
-     * 批量更新（仅更新，不插入；逐条委托 {@link Repository#updateById}）。
-     * @param <M> 数据元素类型
-     * @param models 模型集合
-     * @return 操作成功返回 true，否则返回 false
+     * 批量更新（仅更新，不插入；逐条委托 {@code Repository.updateById}）。
+     * @param <M> 聚合根类型
+     * @param models 聚合根列表
+     * @return 更新结果
      */
     public static <M extends AggregateRoot<?>> boolean update(List<M> models) {
         if (Objects.isNull(models) || models.isEmpty()) {
@@ -190,9 +190,9 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
 
     /**
      * 按查询条件删除。
-     * @param <Q> 数据元素类型
+     * @param <Q> 查询条件类型
      * @param query 查询条件
-     * @return 操作成功返回 true，否则返回 false
+     * @return 至少删除一条记录时为 true
      */
     public static <Q extends Query> boolean delete(Q query) {
         query.with();
@@ -202,11 +202,11 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
 
     /**
      * 按 ID 查找。
-     * @param <M> 数据元素类型
-     * @param <ID> 数据元素类型
-     * @param modelClass 目标模型类型
-     * @param id 标识
-     * @return 获取的 {@code Optional<M>} 对象
+     * @param <M> 聚合根类型
+     * @param <ID> 聚合根标识类型
+     * @param modelClass 聚合根类型
+     * @param id 聚合根标识
+     * @return 指定标识的聚合根
      */
     public static <M extends AggregateRoot<?>, ID extends Serializable>
     Optional<M> get(Class<M> modelClass, ID id) {
@@ -216,9 +216,9 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
 
     /**
      * 查找第一个。
-     * @param <M> 数据元素类型
-     * @param modelClass 目标模型类型
-     * @return 对应的可选结果容器
+     * @param <M> 聚合根类型
+     * @param modelClass 聚合根类型
+     * @return 第一条聚合根
      */
     public static <M extends AggregateRoot<?>> Optional<M> one(Class<M> modelClass) {
         Repository repo = RepositoryRegistry.repository(modelClass);
@@ -227,9 +227,9 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
 
     /**
      * 列出全部。
-     * @param <M> 数据元素类型
-     * @param modelClass 目标模型类型
-     * @return 列出的 {@code List<M>} 对象
+     * @param <M> 聚合根类型
+     * @param modelClass 聚合根类型
+     * @return 全部聚合根
      */
     public static <M extends AggregateRoot<?>> List<M> list(Class<M> modelClass) {
         Repository repo = RepositoryRegistry.repository(modelClass);
@@ -240,11 +240,11 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
 
     /**
      * 分页查询。
-     * @param <M> 数据元素类型
-     * @param <Q> 数据元素类型
-     * @param modelClass 目标模型类型
+     * @param <M> 聚合根类型
+     * @param <Q> 查询条件类型
+     * @param modelClass 聚合根类型
      * @param query 查询条件
-     * @return 返回的 {@code Page<M>} 结果
+     * @return 分页查询结果
      */
     public static <M extends AggregateRoot<?>, Q extends Query>
     Page<M> page(Class<M> modelClass, Q query) {
@@ -255,10 +255,10 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
 
     /**
      * 计数。
-     * @param <Q> 数据元素类型
-     * @param modelClass 目标模型类型
+     * @param <Q> 查询条件类型
+     * @param modelClass 聚合根类型
      * @param query 查询条件
-     * @return 统计的整型数值
+     * @return 匹配记录数
      */
     public static <Q extends Query> int count(Class<? extends AggregateRoot<?>> modelClass, Q query) {
         query.with();
@@ -268,10 +268,10 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
 
     /**
      * 是否存在。
-     * @param <Q> 数据元素类型
-     * @param modelClass 目标模型类型
+     * @param <Q> 查询条件类型
+     * @param modelClass 聚合根类型
      * @param query 查询条件
-     * @return 条件成立（或操作成功）返回 true，否则返回 false
+     * @return 存在匹配记录时为 true
      */
     public static <Q extends Query> boolean exist(Class<? extends AggregateRoot<?>> modelClass, Q query) {
         return count(modelClass, query) > 0;
@@ -281,26 +281,26 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
 
     /**
      * 充血保存。
-     * @param <M> 数据元素类型
-     * @return 保存后的M
+     * @param <M> 聚合根类型
+     * @return 保存后的聚合根
      */
     public <M extends AggregateRoot<ID>> M save() {
         return (M) repository().save(this);
     }
 
     /**
-     * 充血更新（仅按主键更新，不插入；委托 {@link Repository#updateById}）。
-     * @param <M> 数据元素类型
-     * @return 更新后的M
+     * 充血更新（仅按主键更新，不插入；委托 {@code Repository.updateById}）。
+     * @param <M> 聚合根类型
+     * @return 更新后的聚合根
      */
     public <M extends AggregateRoot<ID>> M update() {
         return (M) repository().updateById(this);
     }
 
     /**
-     * 充血保存或更新（主键存在则更新，否则插入；委托 {@link Repository#insertOrUpdate}）。
-     * @param <M> 数据元素类型
-     * @return 保存后的M
+     * 充血保存或更新（主键存在则更新，否则插入；委托 {@code Repository.insertOrUpdate}）。
+     * @param <M> 聚合根类型
+     * @return 保存或更新后的聚合根
      */
     public <M extends AggregateRoot<ID>> M saveOrUpdate() {
         return (M) repository().insertOrUpdate(this);
@@ -315,9 +315,9 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
 
     /**
      * 充血条件更新（按查询条件更新）。
-     * @param <Q> 数据元素类型
+     * @param <Q> 查询条件类型
      * @param query 查询条件
-     * @return 操作成功返回 true，否则返回 false
+     * @return 至少更新一条记录时为 true
      */
     public <Q extends Query> boolean update(Q query) {
         query.with();
@@ -330,7 +330,7 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
 
     /**
      * 充血聚合填充（从其他聚合补充数据）。
-     * @param <Q> 数据元素类型
+     * @param <Q> 查询条件类型
      * @param query 查询条件
      */
     public <Q extends Query> void fill(Q query) {
@@ -344,7 +344,7 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
 
     /**
      * 注册领域事件。
-     * @param event 事件
+     * @param event 领域事件
      */
     protected void registerEvent(DomainEvent<?> event) {
         Objects.requireNonNull(event, "event must not be null");
@@ -353,7 +353,7 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
 
     /**
      * 返回未提交的领域事件（不可变视图）。
-     * @return 对应的列表数据
+     * @return 未提交领域事件的不可变视图
      */
     public List<DomainEvent<?>> domainEvents() {
         return Collections.unmodifiableList(mutableDomainEvents());
@@ -361,10 +361,10 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
 
     /**
      * 返回并清空未提交的领域事件。
-     * @return 对应的列表数据
+     * @return 取出的未提交领域事件
      */
     public List<DomainEvent<?>> pullDomainEvents() {
-        List<DomainEvent<?>> events = Collections.unmodifiableList(new ArrayList<>(mutableDomainEvents()));
+        List<DomainEvent<?>> events = List.copyOf(mutableDomainEvents());
         clearDomainEvents();
         return events;
     }
@@ -378,7 +378,7 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
 
     /**
      * 是否存在未提交的领域事件。
-     * @return 满足条件时返回 true，否则返回 false
+     * @return 存在未提交领域事件时为 true
      */
     public boolean hasDomainEvents() {
         return !mutableDomainEvents().isEmpty();
@@ -394,36 +394,15 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
     // ========================= 事件溯源 =========================
 
     /**
-     * 应用领域事件：通过 ClassValue 缓存的反射路由到聚合内部的 {@code on<EventTypeSimpleName>} 方法。
-     *
-     * <p>例如 {@code OrderCreatedEvent} 路由到 {@code onOrderCreated(OrderCreatedEvent event)}。
-     * 若聚合未定义对应的 handler 方法，则静默忽略（不影响聚合状态）。
-     *
-     * <p>注意：{@code apply} 仅用于事件溯源回放（从历史事件重建聚合状态），
-     * 不会将事件注册到未提交事件缓冲区。业务方法应使用 {@link #registerEvent(DomainEvent)}。
-     *
-     * <h3>异常处理</h3>
-     * <p>反射调用精确捕获两类异常：
-     * <ul>
-     *   <li>{@link InvocationTargetException} — handler 自身抛出的异常解包后透传，
-     *       运行时异常直接抛出，受检异常包装为 {@link BizRuntimeException}</li>
-     *   <li>{@link IllegalAccessException} — 通常为 JDK 17+ 模块系统未开放反射访问，
-     *       错误消息明确指引解决方案（{@code --add-opens} 或 {@code module-info.java opens}）</li>
-     * </ul>
-     *
-     * @param event 领域事件
-     * @param <E>   事件类型
-     */
-    /**
-     * 应用领域事件（2.0.x 语义）。
+     * 应用领域事件。
      *
      * <p>反射派发到事件处理器（{@code @EventHandler} 优先，{@code on<Type>} 回退），
      * 并返回事件本身。找不到处理器时抛 {@link IllegalStateException}。
      *
-     * @param <E> 数据元素类型
      * @param event 领域事件
      * @return 传入的事件（链式调用便利）
      * @throws IllegalStateException 找不到对应事件类型的处理器，或反射调用失败
+     * @param <E> 领域事件类型
      */
     protected <E extends DomainEvent<?>> E apply(E event) {
         return apply(event, false);
@@ -433,22 +412,16 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
      * 事件应用内部实现。
      *
      * <p>反射派发到事件处理器（{@code @EventHandler} 优先，{@code on<Type>} 回退），
-     * 并注册进未提交事件列表（2.0.x 语义：找不到处理器时抛 {@link IllegalStateException}）。
+     * 并注册进未提交事件列表（找不到处理器时抛 {@link IllegalStateException}）。
      * 回放模式（{@code replay = true}）下跳过标有 {@code ignoreOnReplay = true} 的处理器。
-     *
-     * <p>子实体路由先取 {@code event.getEntityIdPath()} 首段，断言为 {@link AggregateRootId}
-     * 后再转型（fail-fast，消除 {@code first()} 泛型强转风险；对应 fuin
-     * AbstractAggregateRoot 路由入口的首段断言）。首段不是聚合根标识时立即抛
-     * {@link IllegalStateException}，错误路径早失败。
      *
      * @param event  领域事件
      * @param replay 是否处于历史回放（{@code loadFromHistory}）
      * @return 传入的事件
-     * @throws IllegalStateException 路径首段不是 {@link AggregateRootId}、找不到对应事件类型的处理器，或反射调用失败
+     * @throws IllegalStateException 找不到对应事件类型的处理器，或反射调用失败
      */
     private <E extends DomainEvent<?>> E apply(E event, boolean replay) {
         Objects.requireNonNull(event, "event must not be null");
-        // 子实体路由：路径首段必须是聚合根标识，先断言再转型（对应 fuin 路由入口 fail-fast）
         EntityId rootSegment = event.getEntityIdPath().first();
         if (!AggregateRootId.class.isInstance(rootSegment)) {
             throw new IllegalStateException("Event path root segment must be an AggregateRootId: "
@@ -471,7 +444,7 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
         try {
             handler.invoke(this, event);
             if (!replay) {
-                // 2.0.x 语义：apply 反射派发后注册进未提交事件列表；回放（loadFromHistory）不入队
+                // apply 反射派发后注册进未提交事件列表；回放（loadFromHistory）不入队
                 mutableDomainEvents().add(event);
             }
         } catch (InvocationTargetException e) {
@@ -531,7 +504,7 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
 
     /**
      * 通过 {@link RepositoryRegistry} 查找当前聚合根类型的仓储实例。
-     * @return 返回的 Repository 结果
+     * @return 当前聚合根类型的仓储
      */
     @SuppressWarnings("rawtypes")
     protected Repository repository() {
