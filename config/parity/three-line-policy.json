@@ -29,6 +29,35 @@
     "order-sample"
   ],
   "unclassifiedDifferenceIsFailure": true,
+  "platformDependencyConfigFiles": [
+    {
+      "path": "config/dependencies/alignment-policy.json",
+      "sha256ByJdk": {
+        "8": "c5994a171bdf72919db207357cf47e0056b0c8469c23388b18bb2cf3b4d00904",
+        "17": "b05d2cdbd6570fb55d58c18f3a98ba7dde93b1e8b6a816ecbbcafe5f9aba449e",
+        "21": "7377922fbfe922d5c79b3d3f38bd4ba41ffa74fa0e6cecc3c66fa30cf764c5e5"
+      },
+      "evidence": "三线分别执行 T03 strict-artifacts 门禁；这里仅豁免已哈希锁定的配置内容差异"
+    },
+    {
+      "path": "config/dependencies/component-matrix.csv",
+      "sha256ByJdk": {
+        "8": "38eda5375361b64167de61de46307d361a5ae2ed9293216bc467556f46a97bc4",
+        "17": "09fdac28108cac321a8e4cd56fdf8aa2a49bd3b14aa20a33c4c56aed921f0d58",
+        "21": "ff502de68712be8120e37d544ddd7d162be23edb7097da46415a8777b85e9060"
+      },
+      "evidence": "三线分别执行 T03 strict-artifacts 门禁；这里仅豁免已哈希锁定的组件矩阵差异"
+    },
+    {
+      "path": "config/dependencies/bom-conflict-allowlist.tsv",
+      "sha256ByJdk": {
+        "8": null,
+        "17": null,
+        "21": "d5aa57e46201df50897608495646752c1e0fcfc53277a4d5e4b48ee071072c6b"
+      },
+      "evidence": "仅 Maven 4/JDK 21 线使用的 BOM 冲突白名单；由该线 strict-artifacts 门禁验证"
+    }
+  ],
   "platformFilesOnlyOnJdk8": [
     {
       "path": "ddd4j-web/ddd4j-web-quarkus/src/main/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebResponseFilter.java",
