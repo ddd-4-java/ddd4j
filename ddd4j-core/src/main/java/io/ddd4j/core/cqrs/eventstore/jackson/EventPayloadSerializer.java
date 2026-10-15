@@ -15,6 +15,7 @@
 package io.ddd4j.core.cqrs.eventstore.jackson;
 
 import com.fasterxml.jackson.core.JacksonException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.ddd4j.core.ddd.event.DomainEvent;
 
@@ -63,6 +64,7 @@ public class EventPayloadSerializer {
      */
     public EventPayloadSerializer(ObjectMapper source) {
         this.objectMapper = Objects.requireNonNull(source, "source must not be null").copy();
+        this.objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     /**

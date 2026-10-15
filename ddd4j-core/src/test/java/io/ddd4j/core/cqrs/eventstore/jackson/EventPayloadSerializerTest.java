@@ -121,8 +121,34 @@ class EventPayloadSerializerTest {
 
     @Test
     void mapperKeepsDefaultStrictUnknownPropertyHandling() {
-        // Jackson 2 默认开启 FAIL_ON_UNKNOWN_PROPERTIES（修复后 entity-id-path/event-type 都能通过严格校验）
+        // 源 mapper 保持严格；serializer 的内部副本允许历史事件读取未来版本新增的字段。
         assertThat(sourceMapper.isEnabled(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)).isTrue();
+    }
+
+    @Test
+    void deserializeIgnoresUnknownPayloadPropertyWithoutChangingSourceMapper() {
+        String payload = serializer.serialize(new OrderPlacedEvent("thinkpad", 2));
+        String withFutureProperty = payload.substring(0, payload.length() - 1)
+                + ",\"futureProperty\":\"newer-writer\"}";
+
+        OrderPlacedEvent restored = (OrderPlacedEvent) serializer.deserialize(
+                withFutureProperty, OrderPlacedEvent.class);
+
+        assertThat(restored.getProductName()).isEqualTo("thinkpad");
+        assertThat(restored.getQuantity()).isEqualTo(2);
+        assertThat(sourceMapper.isEnabled(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)).isTrue();
+    }
+
+    @Test
+    void unknownClassMarkerCannotChooseTheDeserializedType() {
+        String payload = serializer.serialize(new OrderPlacedEvent("thinkpad", 2));
+        String withClassMarker = payload.substring(0, payload.length() - 1)
+                + ",\"@class\":\"java.lang.ProcessBuilder\"}";
+
+        DomainEvent<?> restored = serializer.deserialize(withClassMarker, OrderPlacedEvent.class);
+
+        assertThat(restored).isInstanceOf(OrderPlacedEvent.class);
+        assertThat(((OrderPlacedEvent) restored).getProductName()).isEqualTo("thinkpad");
     }
 
     @Test
