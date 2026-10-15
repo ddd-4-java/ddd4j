@@ -790,6 +790,158 @@
     }
   },
   "unsupported": {
+    "org.apache.logging.log4j:log4j-flume-ng": {
+      "8": {
+        "reason": "Log4j 2.24.3 未发布此旧模块，2.x 最后发布于 2.23.1；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      },
+      "17": {
+        "reason": "Log4j 2.24.3 未发布此旧模块，2.x 最后发布于 2.23.1；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      },
+      "21": {
+        "reason": "Log4j 2.24.3 未发布此旧模块，2.x 最后发布于 2.23.1；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "org.apache.logging.log4j:log4j-kubernetes": {
+      "8": {
+        "reason": "Log4j 2.24.3 未发布此旧模块，2.x 最后发布于 2.23.1；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      },
+      "17": {
+        "reason": "Log4j 2.24.3 未发布此旧模块，2.x 最后发布于 2.23.1；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      },
+      "21": {
+        "reason": "Log4j 2.24.3 未发布此旧模块，2.x 最后发布于 2.23.1；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "org.apache.logging.log4j:log4j-mongodb3": {
+      "8": {
+        "reason": "Log4j 2.24.3 未发布此旧模块，2.x 最后发布于 2.23.1；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      },
+      "17": {
+        "reason": "Log4j 2.24.3 未发布此旧模块，2.x 最后发布于 2.23.1；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      },
+      "21": {
+        "reason": "Log4j 2.24.3 未发布此旧模块，2.x 最后发布于 2.23.1；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "net.javacrumbs.shedlock:shedlock-provider-couchbase-javaclient": {
+      "17": {
+        "reason": "ShedLock 7.2.1 未发布此旧 provider，最后发布于 4.48.0；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      },
+      "21": {
+        "reason": "ShedLock 7.2.1 未发布此旧 provider，最后发布于 4.48.0；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "net.javacrumbs.shedlock:shedlock-provider-redis-jedis": {
+      "17": {
+        "reason": "ShedLock 7.2.1 未发布此旧 provider，最后发布于 4.48.0；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      },
+      "21": {
+        "reason": "ShedLock 7.2.1 未发布此旧 provider，最后发布于 4.48.0；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "org.pac4j:pac4j-couch": {
+      "17": {
+        "reason": "pac4j 6.5.3 未发布此旧模块，最后发布于 6.4.3；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      },
+      "21": {
+        "reason": "pac4j 6.5.3 未发布此旧模块，最后发布于 6.4.3；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "org.pac4j:pac4j-gae": {
+      "17": {
+        "reason": "pac4j 6.5.3 未发布此旧模块，最后发布于 6.4.3；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      },
+      "21": {
+        "reason": "pac4j 6.5.3 未发布此旧模块，最后发布于 6.4.3；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "org.pac4j:pac4j-openid": {
+      "17": {
+        "reason": "pac4j 6.5.3 未发布旧 OpenID 模块，最后发布于 4.5.10；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      },
+      "21": {
+        "reason": "pac4j 6.5.3 未发布旧 OpenID 模块，最后发布于 4.5.10；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "org.apache.cxf:cxf-rt-rs-service-description-swagger": {
+      "17": {
+        "reason": "CXF 4.2.2 未发布此旧 Swagger 模块，最后发布于 3.6.13；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      },
+      "21": {
+        "reason": "CXF 4.2.2 未发布此旧 Swagger 模块，最后发布于 3.6.13；当前默认模块不使用",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "io.swagger:swagger-hibernate-validations": {
+      "8": {
+        "reason": "io.swagger 当前 2.0.0-rc2 版本未发布此旧集成坐标；最后发布的 1.x 版本不与本线 rc2 核心混用，默认模块未使用",
+        "status": "unsupported-unpublished"
+      },
+      "17": {
+        "reason": "io.swagger 当前 2.0.0-rc2 版本未发布此旧集成坐标；最后发布的 1.x 版本不与本线 rc2 核心混用，默认模块未使用",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "io.swagger:swagger-jaxrs": {
+      "8": {
+        "reason": "io.swagger 当前 2.0.0-rc2 版本未发布此旧集成坐标；最后发布的 1.x 版本不与本线 rc2 核心混用，默认模块未使用",
+        "status": "unsupported-unpublished"
+      },
+      "17": {
+        "reason": "io.swagger 当前 2.0.0-rc2 版本未发布此旧集成坐标；最后发布的 1.x 版本不与本线 rc2 核心混用，默认模块未使用",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "io.swagger:swagger-jersey-jaxrs": {
+      "8": {
+        "reason": "io.swagger 当前 2.0.0-rc2 版本未发布此旧集成坐标；最后发布的 1.x 版本不与本线 rc2 核心混用，默认模块未使用",
+        "status": "unsupported-unpublished"
+      },
+      "17": {
+        "reason": "io.swagger 当前 2.0.0-rc2 版本未发布此旧集成坐标；最后发布的 1.x 版本不与本线 rc2 核心混用，默认模块未使用",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "io.swagger:swagger-jersey2-jaxrs": {
+      "8": {
+        "reason": "io.swagger 当前 2.0.0-rc2 版本未发布此旧集成坐标；最后发布的 1.x 版本不与本线 rc2 核心混用，默认模块未使用",
+        "status": "unsupported-unpublished"
+      },
+      "17": {
+        "reason": "io.swagger 当前 2.0.0-rc2 版本未发布此旧集成坐标；最后发布的 1.x 版本不与本线 rc2 核心混用，默认模块未使用",
+        "status": "unsupported-unpublished"
+      }
+    },
+    "io.swagger:swagger-servlet": {
+      "8": {
+        "reason": "io.swagger 当前 2.0.0-rc2 版本未发布此旧集成坐标；最后发布的 1.x 版本不与本线 rc2 核心混用，默认模块未使用",
+        "status": "unsupported-unpublished"
+      },
+      "17": {
+        "reason": "io.swagger 当前 2.0.0-rc2 版本未发布此旧集成坐标；最后发布的 1.x 版本不与本线 rc2 核心混用，默认模块未使用",
+        "status": "unsupported-unpublished"
+      }
+    },
     "org.apache.kafka:kafka-log4j-appender": {
       "17": {
         "reason": "Kafka 4.3.1 未发布此旧 Scala 2.12/Log4j 坐标；最后发布版本为 3.9.2，当前默认模块不使用",

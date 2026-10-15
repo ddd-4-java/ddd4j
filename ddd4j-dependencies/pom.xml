@@ -1995,11 +1995,6 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.cxf</groupId>
-                <artifactId>cxf-rt-rs-service-description-swagger</artifactId>
-                <version>${cxf.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-transports-http</artifactId>
                 <version>${cxf.version}</version>
             </dependency>
@@ -4381,11 +4376,6 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-flume-ng</artifactId>
-                <version>${log4j2.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-iostreams</artifactId>
                 <version>${log4j2.version}</version>
             </dependency>
@@ -4421,17 +4411,7 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-kubernetes</artifactId>
-                <version>${log4j2.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-layout-template-json</artifactId>
-                <version>${log4j2.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-mongodb3</artifactId>
                 <version>${log4j2.version}</version>
             </dependency>
             <dependency>
@@ -5294,11 +5274,6 @@
                 <version>${pac4j.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.pac4j</groupId>
-                <artifactId>pac4j-couch</artifactId>
-                <version>${pac4j.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>pac4j-extension-core</artifactId>
                 <version>${pac4j-extension-core.version}</version>
@@ -5307,11 +5282,6 @@
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>pac4j-extension-spring</artifactId>
                 <version>${pac4j-extension-spring.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.pac4j</groupId>
-                <artifactId>pac4j-gae</artifactId>
-                <version>${pac4j.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.pac4j</groupId>
@@ -5361,11 +5331,6 @@
             <dependency>
                 <groupId>org.pac4j</groupId>
                 <artifactId>pac4j-oidc</artifactId>
-                <version>${pac4j.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.pac4j</groupId>
-                <artifactId>pac4j-openid</artifactId>
                 <version>${pac4j.version}</version>
             </dependency>
             <dependency>
@@ -6218,11 +6183,6 @@
             </dependency>
             <dependency>
                 <groupId>net.javacrumbs.shedlock</groupId>
-                <artifactId>shedlock-provider-couchbase-javaclient</artifactId>
-                <version>${shedlock.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>net.javacrumbs.shedlock</groupId>
                 <artifactId>shedlock-provider-jdbc</artifactId>
                 <version>${shedlock.version}</version>
             </dependency>
@@ -6234,11 +6194,6 @@
             <dependency>
                 <groupId>net.javacrumbs.shedlock</groupId>
                 <artifactId>shedlock-provider-mongo</artifactId>
-                <version>${shedlock.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>net.javacrumbs.shedlock</groupId>
-                <artifactId>shedlock-provider-redis-jedis</artifactId>
                 <version>${shedlock.version}</version>
             </dependency>
             <dependency>

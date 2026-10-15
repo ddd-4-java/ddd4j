@@ -89,6 +89,34 @@ class DependencyAlignmentTest(unittest.TestCase):
             for jdk in jdks:
                 self.assertIn(jdk, policy['unsupported'].get(coordinate, {}), coordinate)
 
+    def test_swagger_legacy_integrations_do_not_claim_unpublished_release_candidates(self):
+        policy_path = Path(__file__).parents[1] / 'config/dependencies/alignment-policy.json'
+        policy = json.loads(policy_path.read_text(encoding='utf-8'))
+        artifacts = ('swagger-hibernate-validations', 'swagger-jaxrs',
+                     'swagger-jersey-jaxrs', 'swagger-jersey2-jaxrs', 'swagger-servlet')
+        for artifact in artifacts:
+            coordinate = 'io.swagger:' + artifact
+            for jdk in ('8', '17'):
+                self.assertIn(jdk, policy['unsupported'].get(coordinate, {}), coordinate)
+
+    def test_retired_logging_locking_cxf_and_pac4j_catalog_entries_are_bounded(self):
+        policy_path = Path(__file__).parents[1] / 'config/dependencies/alignment-policy.json'
+        policy = json.loads(policy_path.read_text(encoding='utf-8'))
+        coordinates = {
+            'org.apache.logging.log4j:log4j-flume-ng': ('8', '17', '21'),
+            'org.apache.logging.log4j:log4j-kubernetes': ('8', '17', '21'),
+            'org.apache.logging.log4j:log4j-mongodb3': ('8', '17', '21'),
+            'net.javacrumbs.shedlock:shedlock-provider-couchbase-javaclient': ('17', '21'),
+            'net.javacrumbs.shedlock:shedlock-provider-redis-jedis': ('17', '21'),
+            'org.pac4j:pac4j-couch': ('17', '21'),
+            'org.pac4j:pac4j-gae': ('17', '21'),
+            'org.pac4j:pac4j-openid': ('17', '21'),
+            'org.apache.cxf:cxf-rt-rs-service-description-swagger': ('17', '21'),
+        }
+        for coordinate, jdks in coordinates.items():
+            for jdk in jdks:
+                self.assertIn(jdk, policy['unsupported'].get(coordinate, {}), coordinate)
+
     def test_unconfigured_third_party_release_does_not_inherit_ddd4j_version(self):
         with tempfile.TemporaryDirectory() as temp:
             base = Path(temp)
