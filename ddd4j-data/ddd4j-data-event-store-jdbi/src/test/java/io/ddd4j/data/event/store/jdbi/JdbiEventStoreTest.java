@@ -81,6 +81,21 @@ class JdbiEventStoreTest {
     }
 
     @Test
+    void positionConstraintUsesSharedName() {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-position-schema");
+        eventStore.append(ORDER_TYPE, orderId,
+                Collections.<DomainEvent<?>>singletonList(new OrderCreatedEvent("created")), 0);
+
+        List<String> names = jdbi.withHandle(handle -> handle.createQuery(
+                        "select upper(constraint_name) from information_schema.table_constraints "
+                                + "where upper(table_name) = :tableName")
+                .bind("tableName", EventStoreConstants.TABLE_NAME.toUpperCase())
+                .mapTo(String.class)
+                .list());
+        assertTrue(names.contains("UK_POSITION"), "position unique constraint must be named uk_position: " + names);
+    }
+
+    @Test
     void appendWithStaleVersionShouldReject() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-b");
         eventStore.append(ORDER_TYPE, orderId,

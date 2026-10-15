@@ -71,7 +71,7 @@ public class JdbiEventStore implements EventStore {
                     + EventStoreConstants.COLUMN_TIMESTAMP + " TIMESTAMP NOT NULL, "
                     + "PRIMARY KEY (" + EventStoreConstants.COLUMN_AGGREGATE_TYPE + ", "
                     + EventStoreConstants.COLUMN_AGGREGATE_ID + ", " + EventStoreConstants.COLUMN_VERSION + "), "
-                    + "CONSTRAINT uk_" + EventStoreConstants.TABLE_NAME + "_position UNIQUE ("
+                    + "CONSTRAINT uk_position UNIQUE ("
                     + EventStoreConstants.COLUMN_POSITION + ")"
                     + ")";
 
