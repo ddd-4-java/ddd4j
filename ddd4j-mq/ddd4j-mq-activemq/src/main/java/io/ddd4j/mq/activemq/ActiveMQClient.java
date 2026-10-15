@@ -240,7 +240,7 @@ public class ActiveMQClient implements MQClient {
                         session, message,
                         ActivemqKit.messageIdHash(message),
                         ActivemqKit.messageIdOf(message),
-                        ActivemqKit.correlationIdOf(message));
+                        event.getCorrelationId());
                 this.consume(listener, event, ack);
                 if (!ack.isAcknowledged()) {
                     ack.ackSingle();
