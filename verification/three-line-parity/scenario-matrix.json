@@ -3685,6 +3685,37 @@
       }
     },
     {
+      "id": "WEB-IDEMPOTENCY-SCOPE-COMPLETE-CLOSE-RACE",
+      "description": "异步取消与完成并发时，作用域关闭不得在完成尚未返回时释放同一租约。本地受控并发测试，不代替 WebFlux 真实请求取消验收",
+      "caseNames": {
+        "1.0.x": ["closeCannotReleaseLeaseWhileCompletionIsInProgress"],
+        "2.0.x": ["closeCannotReleaseLeaseWhileCompletionIsInProgress"],
+        "3.0.x": ["closeCannotReleaseLeaseWhileCompletionIsInProgress"]
+      },
+      "lastEvidence": "/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-16-web-idempotency-scope-race/report.json",
+      "lastEvidenceSha256": "4a0bc3fe6e5bf68efc1073f0f874d9c992852654c22ed630803fc00771ffdea4",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-core/src/test/java/io/ddd4j/web/core/idempotency/WebIdempotencyLifecycleTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-core/src/test/java/io/ddd4j/web/core/idempotency/WebIdempotencyLifecycleTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-core/src/test/java/io/ddd4j/web/core/idempotency/WebIdempotencyLifecycleTest.java"
+          ]
+        }
+      }
+    },
+    {
       "id": "WEB-JAVALIN-CONFIG-CONTRACT",
       "description": "三线各自 Javalin 版本入口注册相同请求上下文、认证、异常、幂等与 readiness 本地 HTTP 契约；不代表生产部署",
       "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-javalin-platform-config/report.json",

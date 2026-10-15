@@ -117,7 +117,7 @@ public final class WebIdempotencyLifecycle {
          *
          * <p>作用域已关闭或已完成时为空操作。
          */
-        public void complete() {
+        public synchronized void complete() {
             if (closed || completed) {
                 return;
             }
@@ -131,7 +131,7 @@ public final class WebIdempotencyLifecycle {
          * <p>重复关闭为空操作，由 {@link AutoCloseable} 契约保证不抛出异常。
          */
         @Override
-        public void close() {
+        public synchronized void close() {
             if (closed) {
                 return;
             }
