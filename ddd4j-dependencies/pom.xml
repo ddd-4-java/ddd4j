@@ -542,6 +542,7 @@
         <sfntly.version>1.0.0</sfntly.version>
         <shardingsphere-jdbc.version>5.5.3</shardingsphere-jdbc.version>
         <shardingsphere-parser.version>${shardingsphere-jdbc.version}</shardingsphere-parser.version>
+        <shardingsphere-parser-sql.version>5.5.2</shardingsphere-parser-sql.version>
         <shedlock.version>4.48.0</shedlock.version>
         <shiro-extension.version>1.0.x.20260630-SNAPSHOT</shiro-extension.version>
         <shiro-freemarker.version>1.0.3</shiro-freemarker.version>
@@ -5922,37 +5923,37 @@
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>shardingsphere-parser-sql-opengauss</artifactId>
-                <version>${shardingsphere-parser.version}</version>
+                <version>${shardingsphere-parser-sql.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.shardingsphere/shardingsphere-parser-sql-oracle -->
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>shardingsphere-parser-sql-oracle</artifactId>
-                <version>${shardingsphere-parser.version}</version>
+                <version>${shardingsphere-parser-sql.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.shardingsphere/shardingsphere-parser-sql-mysql -->
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>shardingsphere-parser-sql-mysql</artifactId>
-                <version>${shardingsphere-parser.version}</version>
+                <version>${shardingsphere-parser-sql.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.shardingsphere/shardingsphere-parser-sql-postgresql -->
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>shardingsphere-parser-sql-postgresql</artifactId>
-                <version>${shardingsphere-parser.version}</version>
+                <version>${shardingsphere-parser-sql.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.shardingsphere/shardingsphere-parser-sql-sql92 -->
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>shardingsphere-parser-sql-sql92</artifactId>
-                <version>${shardingsphere-parser.version}</version>
+                <version>${shardingsphere-parser-sql.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.shardingsphere/shardingsphere-parser-sql-sqlserver -->
             <dependency>
                 <groupId>org.apache.shardingsphere</groupId>
                 <artifactId>shardingsphere-parser-sql-sqlserver</artifactId>
-                <version>${shardingsphere-parser.version}</version>
+                <version>${shardingsphere-parser-sql.version}</version>
             </dependency>
 
             <!-- https://github.com/lukas-krecan/ShedLock -->
