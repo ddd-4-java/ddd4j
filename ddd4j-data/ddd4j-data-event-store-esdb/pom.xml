@@ -84,9 +84,10 @@
                 <configuration>
                     <skip>false</skip>
                     <skipTests>false</skipTests>
-                    <!-- 只匹配 *Test.java（单元测试），*IT.java 由 failsafe 插件处理 -->
+                    <!-- 本模块的原生容器场景也在默认 verify 中执行并留下 Surefire XML。 -->
                     <includes>
                         <include>**/*Test.java</include>
+                        <include>**/*IT.java</include>
                     </includes>
                 </configuration>
             </plugin>
