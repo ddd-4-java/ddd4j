@@ -2743,6 +2743,11 @@
     {
       "id": "OUTBOX-JDBC-CAUSAL-HEADERS",
       "description": "真实 PostgreSQL 持久化与重新领取 Outbox 消息后保留 correlationId 和 causationId 原生消息头；三线分别使用本线 Jackson 依赖",
+      "caseNames": {
+        "1.0.x": "shouldPreserveCausalHeadersAcrossJdbcOutboxClaim",
+        "2.0.x": "shouldPreserveCausalHeadersAcrossJdbcOutboxClaim",
+        "3.0.x": "shouldPreserveCausalHeadersAcrossJdbcOutboxClaim"
+      },
       "lines": {
         "1.0.x": {
           "status": "supported",
@@ -2767,6 +2772,11 @@
     {
       "id": "OUTBOX-JDBC-CONCURRENT-LEASE",
       "description": "真实 PostgreSQL 上两个实例并发领取同一待发消息，仅一个获得有效租约，非持有者不可确认",
+      "caseNames": {
+        "1.0.x": "concurrentOwnersMustNotClaimTheSameActiveLease",
+        "2.0.x": "concurrentOwnersMustNotClaimTheSameActiveLease",
+        "3.0.x": "concurrentOwnersMustNotClaimTheSameActiveLease"
+      },
       "lines": {
         "1.0.x": {
           "status": "supported",
@@ -2791,6 +2801,11 @@
     {
       "id": "OUTBOX-REDELIVERY",
       "description": "租约接管、发送重试与确认丢失",
+      "caseNames": {
+        "1.0.x": ["shouldTransferExpiredLeaseAndRejectStaleOwner", "shouldRetryFailedSendAndPublishToKafka", "shouldRedeliverToKafkaAfterConfirmationIsLost"],
+        "2.0.x": ["shouldTransferExpiredLeaseAndRejectStaleOwner", "shouldRetryFailedSendAndPublishToKafka", "shouldRedeliverToKafkaAfterConfirmationIsLost"],
+        "3.0.x": ["shouldTransferExpiredLeaseAndRejectStaleOwner", "shouldRetryFailedSendAndPublishToKafka", "shouldRedeliverToKafkaAfterConfirmationIsLost"]
+      },
       "lines": {
         "1.0.x": {
           "status": "supported",

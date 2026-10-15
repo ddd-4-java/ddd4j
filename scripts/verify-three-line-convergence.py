@@ -128,6 +128,15 @@ def explicit_scenario_commands(version, redis_url):
     return capacity, redis
 
 
+def valid_case_names(names):
+    """Accept one method name or a nonempty set of distinct method names."""
+    if isinstance(names, str):
+        names = [names]
+    return (isinstance(names, list) and bool(names)
+            and all(isinstance(name, str) and name.strip() for name in names)
+            and len(set(names)) == len(names))
+
+
 def scenario_matrix(stage, roots):
     paths = [root / "verification/three-line-parity/scenario-matrix.json" for root in roots]
     missing = [str(path) for path in paths if not path.is_file()]
@@ -148,8 +157,8 @@ def scenario_matrix(stage, roots):
         for row in scenarios:
             case_names = row.get("caseNames", {})
             if case_names and (set(case_names) != {version for _, version in EXPECTED}
-                               or any(not isinstance(name, str) or not name.strip()
-                                      for name in case_names.values())):
+                               or any(not valid_case_names(names)
+                                      for names in case_names.values())):
                 raise ValueError(f"invalid case names for {row['id']}")
             for index, (_, version) in enumerate(EXPECTED):
                 mapping = row["lines"][version]
@@ -237,12 +246,15 @@ def scenario_test_reports(root, scenarios, version, started_ns):
             if valid and (ran <= 0 or counts["failures"] or counts["errors"]
                           or counts["skipped"]):
                 issues.append(f"{row['id']}: unsuccessful test report for {source}: {counts}")
-            required_case = row.get("caseNames", {}).get(version)
-            if valid and required_case and required_case not in executed_cases:
-                issues.append(f"{row['id']}: missing executed test case {required_case} for {source}")
+            required_cases = row.get("caseNames", {}).get(version, [])
+            if isinstance(required_cases, str):
+                required_cases = [required_cases]
+            for required_case in required_cases:
+                if valid and required_case not in executed_cases:
+                    issues.append(f"{row['id']}: missing executed test case {required_case} for {source}")
             records.append({"scenario": row["id"], "source": source,
                             "counts": counts, "artifacts": artifacts,
-                            "requiredCase": required_case})
+                            "requiredCases": required_cases})
     return {"status": "FAIL" if issues else "PASS", "version": version,
             "mappedTests": len(records), "uniqueReports": len(counted_reports),
             "executedTests": executed,
