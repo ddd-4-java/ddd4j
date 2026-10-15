@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -67,6 +68,13 @@ class EventChunkTest {
             assertThatThrownBy(() -> new EventChunk<String>(null, 1))
                     .isInstanceOf(NullPointerException.class)
                     .hasMessageContaining("events must not be null");
+        }
+
+        @Test
+        void 构造器_事件列表含null_应拒绝() {
+            assertThatThrownBy(() -> new EventChunk<>(Arrays.asList("e1", null), 2))
+                    .isInstanceOf(NullPointerException.class)
+                    .hasMessage("events must not contain null");
         }
 
         @Test
