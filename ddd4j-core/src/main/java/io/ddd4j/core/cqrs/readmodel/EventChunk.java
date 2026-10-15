@@ -37,7 +37,11 @@ public class EventChunk<E> {
     private final long nextEventNumber;
 
     public EventChunk(List<E> events, long nextEventNumber) {
-        this.events = Collections.unmodifiableList(new ArrayList<>(Objects.requireNonNull(events, "events must not be null")));
+        List<E> snapshot = new ArrayList<>(Objects.requireNonNull(events, "events must not be null"));
+        for (E event : snapshot) {
+            Objects.requireNonNull(event, "events must not contain null");
+        }
+        this.events = Collections.unmodifiableList(snapshot);
         if (nextEventNumber < 0) {
             throw new IllegalArgumentException("nextEventNumber must not be negative");
         }

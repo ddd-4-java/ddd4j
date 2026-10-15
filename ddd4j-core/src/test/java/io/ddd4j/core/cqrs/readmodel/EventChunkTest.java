@@ -72,6 +72,13 @@ class EventChunkTest {
         }
 
         @Test
+        void 构造器_事件列表含null_应拒绝() {
+            assertThatThrownBy(() -> new EventChunk<>(Arrays.asList("e1", null), 2))
+                    .isInstanceOf(NullPointerException.class)
+                    .hasMessage("events must not contain null");
+        }
+
+        @Test
         void 构造器_events为空列表_应创建空chunk且hasEvents为false() {
             EventChunk<String> chunk = new EventChunk<>(Arrays.asList(), 0);
 
