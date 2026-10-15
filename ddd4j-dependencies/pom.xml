@@ -3208,20 +3208,6 @@
                 <artifactId>flink-streaming-java</artifactId>
                 <version>${flink.version}</version>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/org.flowable/flowable-content-spring-configurator -->
-            <!-- Flowable Content Spring Configurator：Flowable 内容管理模块的 Spring 配置器。 -->
-            <dependency>
-                <groupId>org.flowable</groupId>
-                <artifactId>flowable-content-spring-configurator</artifactId>
-                <version>${flowable.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.flowable/flowable-form-spring-configurator -->
-            <!-- Flowable Form Spring Configurator：Flowable 表单引擎模块的 Spring 配置器。 -->
-            <dependency>
-                <groupId>org.flowable</groupId>
-                <artifactId>flowable-form-spring-configurator</artifactId>
-                <version>${flowable.version}</version>
-            </dependency>
             <!-- https://mvnrepository.com/artifact/org.flowable/flowable-groovy-script-static-engine -->
             <!-- Flowable Groovy Script Static Engine：Flowable 的 Groovy 脚本静态编译引擎。 -->
             <dependency>
@@ -3235,48 +3221,6 @@
                 <groupId>org.flowable</groupId>
                 <artifactId>flowable-process-engine-mongodb</artifactId>
                 <version>6.4.0.alpha1</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.flowable/flowable-ui-admin-logic -->
-            <!-- Flowable UI Admin Logic：Flowable 管理控制台的业务逻辑模块。 -->
-            <dependency>
-                <groupId>org.flowable</groupId>
-                <artifactId>flowable-ui-admin-logic</artifactId>
-                <version>${flowable.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.flowable/flowable-ui-idm-logic -->
-            <!-- Flowable UI IDM Logic：Flowable 身份管理模块的业务逻辑。 -->
-            <dependency>
-                <groupId>org.flowable</groupId>
-                <artifactId>flowable-ui-idm-logic</artifactId>
-                <version>${flowable.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.flowable/flowable-ui-modeler-conf -->
-            <!-- Flowable UI Modeler Conf：Flowable 流程设计器的配置模块。 -->
-            <dependency>
-                <groupId>org.flowable</groupId>
-                <artifactId>flowable-ui-modeler-conf</artifactId>
-                <version>${flowable.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.flowable/flowable-ui-modeler-logic -->
-            <!-- Flowable UI Modeler Logic：Flowable 流程设计器的业务逻辑模块。 -->
-            <dependency>
-                <groupId>org.flowable</groupId>
-                <artifactId>flowable-ui-modeler-logic</artifactId>
-                <version>${flowable.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.flowable/flowable-ui-modeler-rest -->
-            <!-- Flowable UI Modeler REST：Flowable 流程设计器的 REST API 接口。 -->
-            <dependency>
-                <groupId>org.flowable</groupId>
-                <artifactId>flowable-ui-modeler-rest</artifactId>
-                <version>${flowable.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.flowable/flowable-ui-task-conf -->
-            <!-- Flowable UI Task Conf：Flowable 任务管理界面的配置模块。 -->
-            <dependency>
-                <groupId>org.flowable</groupId>
-                <artifactId>flowable-ui-task-conf</artifactId>
-                <version>${flowable.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.flywaydb/flyway-commandline -->
             <!-- Flyway CLI：Flyway 数据库迁移的命令行工具。 -->
