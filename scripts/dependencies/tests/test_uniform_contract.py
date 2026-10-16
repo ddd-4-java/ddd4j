@@ -60,6 +60,19 @@ class UniformContract(unittest.TestCase):
             self.assertEqual(active.count('ddd4j-central-fallback'), 1)
             self.assertEqual(path.stat().st_mode & 0o777, 0o600)
 
+    def test_jdk21_dropwizard_family_uses_compatible_fixed_versions(self):
+        repository = pathlib.Path(__file__).parents[3]
+        raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
+        expected = {'hibernate-validator.version': '8.0.6.Final',
+                    'jersey.version': '3.1.12',
+                    'logback.version': '1.5.38'}
+        jdk21 = checker.resolve_policy(raw, 'feature/3.0.x')
+        self.assertEqual({key: jdk21['fixed_properties'].get(key) for key in expected}, expected)
+        for branch in ('feature/1.0.x', 'feature/2.0.x'):
+            fixed = checker.resolve_policy(raw, branch)['fixed_properties']
+            self.assertTrue(expected.keys().isdisjoint(fixed))
+        self.assertFalse(any(value in jdk21['exclude'] for value in expected))
+
     def test_non_maven_branch_is_explicitly_not_applicable(self):
         with tempfile.TemporaryDirectory() as directory:
             self.assertEqual(checker.runtime_config(pathlib.Path(directory))['project'], 'false')
