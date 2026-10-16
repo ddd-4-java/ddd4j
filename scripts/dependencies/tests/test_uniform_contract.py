@@ -331,6 +331,23 @@ class UniformContract(unittest.TestCase):
         for branch in ('feature/2.0.x', 'feature/3.0.x'):
             self.assertTrue(coordinates.isdisjoint(checker.resolve_policy(raw, branch)['exclude']))
 
+    def test_jdk17_helidon_and_testcontainers_boms_keep_managed_modules(self):
+        repository = pathlib.Path(__file__).parents[3]
+        raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
+        jdk17 = checker.resolve_policy(raw, 'feature/2.0.x')['fixed_properties']
+        expected = {'helidon-bom.version': '3.2.21',
+                    'helidon-jakarta-annotation.version': '2.0.0',
+                    'helidon-jakarta-cdi.version': '3.0.0',
+                    'helidon-jakarta-inject.version': '2.0.0',
+                    'helidon-jakarta-interceptor.version': '2.0.0',
+                    'helidon-jakarta-ws-rs.version': '3.0.0',
+                    'helidon-jersey.version': '3.0.18',
+                    'testcontainers-bom.version': '1.21.4'}
+        self.assertEqual({key: jdk17.get(key) for key in expected}, expected)
+        for branch in ('feature/1.0.x', 'feature/3.0.x'):
+            other = checker.resolve_policy(raw, branch)['fixed_properties']
+            self.assertTrue(expected.keys().isdisjoint(other))
+
     def test_jdk8_quartz_and_cdi_keep_javax_contract(self):
         repository = pathlib.Path(__file__).parents[3]
         raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
