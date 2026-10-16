@@ -12,6 +12,7 @@
 - 1.0.x 的 `microprofile-config-api` 排除自动升级：Quarkus 1.13.7.Final 的配置接口使用 MicroProfile Config 1.4；自动升级到 3.1.2 会在真实容器测试触发 `AbstractMethodError`。排除项仍进入漏洞扫描。
 - 3.0.x 的 Micronaut 固定在平台 `4.10.21`、Core `4.10.26`，并排除 `io.micronaut*:*` 的自动升级。Micronaut 5.2.x 的构件含 class 69（JDK 25），无法由本线 JDK 21 编译；Micronaut 4 系列的 CQRS 模块容器集成测试已通过。固定与排除构件仍进入每周漏洞扫描。
 - 1.0.x 的 Dozer Core 固定为 `6.5.2`（`dozer-core.version`）：候选 7.0.0 的 `Mapper` 类为 class 55，JDK 8 无法编译 Web MVC 模块；6.5.2 构件为 class 52。固定项仍扫描漏洞。
+- 1.0.x 的 metrics 测试显式声明 `opentelemetry-common`：升级 OpenTelemetry 到 1.67.0 后，SDK 内部引用的 `ConfigUtil` 位于该构件；候选从 10 项测试异常恢复为 10 项通过，继续允许 OpenTelemetry 在本线自动升级。
 - 1.0.x 的 Redis Testcontainers 扩展固定为 `2.0.2`（`testcontainers-redis.version`）：自动升级到 3.0.0 后测试使用的 `RedisContainer` 是 class 61，JDK 8 无法编译；2.0.2 构件为 class 52。固定项仍扫描漏洞。
 - 1.0.x 的 OWASP Dependency-Check Maven 插件固定为 `10.0.4`：候选 13.0.0 在 JDK 8 reactor 中即使配置 `skip=true` 仍因插件要求 Java 11 而阻断构建。固定插件照常执行版本核查，依赖漏洞扫描另由每周 Trivy 门禁负责。
 - 1.0.x 的 JSqlParser 固定为 `4.9`：这是[上游声明的最后一个 JDK 8 兼容版本](https://github.com/JSQLParser/JSqlParser)；候选 5.4 的类文件为 class 55，无法在 JDK 8 编译 MyBatis Plus 数据权限模块。固定项仍扫描漏洞。
