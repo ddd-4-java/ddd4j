@@ -4287,6 +4287,31 @@
           ]
         }
       }
+    },
+    {
+      "id": "FILE-VALIDATION-RESULT-VALUE-STRING",
+      "description": "文件校验成功与失败结果在三线使用相同的带字段名字符串表示",
+      "lastEvidence": "/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-16-current-parity/validation-result-value-string-report.json",
+      "lastEvidenceSha256": "1581db611417e0ceffe9ac16693d657637c94e5a12cb3caf6a2e6fe11d6d288f",
+      "caseNames": {
+        "1.0.x": "valueStringIncludesFieldNamesForSuccessAndFailure",
+        "2.0.x": "valueStringIncludesFieldNamesForSuccessAndFailure",
+        "3.0.x": "valueStringIncludesFieldNamesForSuccessAndFailure"
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": ["ddd4j-extensions/ddd4j-extension-validation/src/test/java/io/ddd4j/extension/validation/FileValidationResultContractTest.java"]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": ["ddd4j-extensions/ddd4j-extension-validation/src/test/java/io/ddd4j/extension/validation/FileValidationResultContractTest.java"]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": ["ddd4j-extensions/ddd4j-extension-validation/src/test/java/io/ddd4j/extension/validation/FileValidationResultContractTest.java"]
+        }
+      }
     }
   ]
 }
