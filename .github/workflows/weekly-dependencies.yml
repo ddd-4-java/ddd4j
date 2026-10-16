@@ -10,6 +10,10 @@ on:
         description: '检查、临时升级、测试和扫描，但不创建 PR'
         type: boolean
         default: true
+      target_branch:
+        description: '手动验证时仅检查指定分支；留空则检查全部分支'
+        type: string
+        default: ''
   push:
     paths:
       - '.github/workflows/weekly-dependencies.yml'
@@ -72,8 +76,11 @@ jobs:
               ['feature/1.0.x', 'feature/2.0.x', 'feature/3.0.x']
                 .map((name, index) => [name, index])
             );
+            const requested = context.eventName === 'workflow_dispatch'
+              ? (context.payload.inputs?.target_branch || '').trim() : '';
             const targets = branches
               .filter(b => !b.name.startsWith('automation/dependencies/'))
+              .filter(b => !requested || b.name === requested)
               .sort((a, b) =>
                 (priority.get(a.name) ?? 3) - (priority.get(b.name) ?? 3) ||
                 a.name.localeCompare(b.name)
@@ -101,7 +108,6 @@ jobs:
     env:
       TARGET_BRANCH: ${{ matrix.branch }}
       TARGET_SHA: ${{ matrix.sha }}
-      NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
       MAVEN_SETTINGS_XML: ${{ secrets.MAVEN_SETTINGS_XML }}
     steps:
       - name: Checkout validated controller
@@ -132,12 +138,10 @@ jobs:
           overwrite-settings: false
       - name: Preserve branch build JDK
         run: echo "BUILD_JAVA_HOME=$JAVA_HOME" >> "$GITHUB_ENV"
-      - name: Install scanner JDK
-        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+      - name: Install keyless vulnerability scanner
+        uses: aquasecurity/setup-trivy@e07451d2e059ed86c2870430ea286b3a9e0bf241
         with:
-          distribution: temurin
-          java-version: '21'
-          overwrite-settings: false
+          version: v0.76.0
       - name: Install fallback Maven with checksum verification
         env:
           MAVEN_VERSION: ${{ steps.runtime.outputs.maven }}
@@ -162,9 +166,9 @@ jobs:
           PY
       - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
-          path: ~/.cache/dependency-check
-          key: dependency-check-13-${{ matrix.id }}-${{ github.run_id }}
-          restore-keys: dependency-check-13-${{ matrix.id }}-
+          path: ~/.cache/trivy
+          key: trivy-0.76-${{ matrix.id }}-${{ github.run_id }}
+          restore-keys: trivy-0.76-${{ matrix.id }}-
       - name: Scan baseline, apply branch policy, build and scan candidate
         id: check
         run: |
@@ -186,7 +190,7 @@ jobs:
           title: 'chore(deps): weekly dependency updates for ${{ matrix.branch }}'
           body: |
             使用目标分支的 dependency-policy.json：固定版本优先，排除项保留，其余更新到最新稳定版本。
-            候选 Maven install（启用单元测试）和非空 OWASP 扫描报告通过；不自动合并。
+            候选 Maven install（启用单元测试）和非空 Trivy POM/BOM 扫描报告通过；不自动合并。
             原依赖漏洞或构建错误仍保留失败状态。Enforcer 兼容性门禁未计入本次验证。
             报告：${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
       - name: Record branch SHA and outcome
