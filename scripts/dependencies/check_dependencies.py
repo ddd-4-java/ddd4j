@@ -63,6 +63,55 @@ def configure_settings(value, path):
     path.write_text(value)
 
 
+def ensure_central_fallback(path):
+    """使 CI 在现有镜像缺件时可从 Maven Central 读取公开构件。"""
+    if not path.is_file():
+        return
+    tree = ET.parse(path)
+    root = tree.getroot()
+    namespace = root.tag.partition('}')[0] + '}' if root.tag.startswith('{') else ''
+
+    def tag(name):
+        return namespace + name
+
+    def child(parent, name):
+        found = parent.find(tag(name))
+        return found if found is not None else ET.SubElement(parent, tag(name))
+
+    repository_id = 'ddd4j-central-direct'
+    profile_id = 'ddd4j-central-fallback'
+    mirrors = child(root, 'mirrors')
+    for mirror in mirrors.findall(tag('mirror')):
+        mirror_of = child(mirror, 'mirrorOf')
+        patterns = [item.strip() for item in (mirror_of.text or '').split(',') if item.strip()]
+        if patterns and '!' + repository_id not in patterns:
+            mirror_of.text = ','.join([*patterns, '!' + repository_id])
+
+    profiles = child(root, 'profiles')
+    profile = next((item for item in profiles.findall(tag('profile'))
+                    if item.findtext(tag('id')) == profile_id), None)
+    if profile is None:
+        profile = ET.SubElement(profiles, tag('profile'))
+        ET.SubElement(profile, tag('id')).text = profile_id
+    repositories = child(profile, 'repositories')
+    repository = next((item for item in repositories.findall(tag('repository'))
+                       if item.findtext(tag('id')) == repository_id), None)
+    if repository is None:
+        repository = ET.SubElement(repositories, tag('repository'))
+        ET.SubElement(repository, tag('id')).text = repository_id
+    child(repository, 'url').text = 'https://repo.maven.apache.org/maven2'
+    child(child(repository, 'releases'), 'enabled').text = 'true'
+    child(child(repository, 'snapshots'), 'enabled').text = 'false'
+
+    active_profiles = child(root, 'activeProfiles')
+    if profile_id not in [item.text for item in active_profiles.findall(tag('activeProfile'))]:
+        ET.SubElement(active_profiles, tag('activeProfile')).text = profile_id
+    if namespace:
+        ET.register_namespace('', namespace[:-1])
+    tree.write(path, encoding='unicode', xml_declaration=True)
+    path.chmod(0o600)
+
+
 def resolve_policy(raw, branch):
     """合并公共策略和精确匹配的分支策略，拒绝拼写错误。"""
     if not isinstance(raw, dict):
