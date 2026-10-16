@@ -115,6 +115,14 @@ class RTest {
     }
 
     @Test
+    void fail_withSerializableCode_shouldPreserveCodeAndDefaultMessage() {
+        R<Object> response = R.fail((Serializable) 409);
+        assertThat(response.getCode()).isEqualTo(409);
+        assertThat(response.getMsg()).isEqualTo(ApiCode.FAIL.getDesc());
+        assertThat(response.getData()).isNull();
+    }
+
+    @Test
     void isOk_shouldAcceptSuccessCodeToo() {
         R<String> r = new R<>(ApiCode.SUCCESS.getCode(), ApiCode.SUCCESS.getDesc(), "data");
 
@@ -145,6 +153,14 @@ class RTest {
         assertThat(response.getCode()).isEqualTo(200);
         assertThat(response.getMsg()).isEqualTo("created");
         assertThat(response.getData()).isNull();
+    }
+
+    @Test
+    void success_withObjectString_shouldPreservePayload() {
+        R<Object> response = R.success((Object) "payload");
+        assertThat(response.getCode()).isEqualTo(ApiCode.SUCCESS.getCode());
+        assertThat(response.getMsg()).isEqualTo(ApiCode.SUCCESS.getReason());
+        assertThat(response.getData()).isEqualTo("payload");
     }
     @Test
     void of_withStringCode_shouldPreserveExplicitSerializableCode() {
