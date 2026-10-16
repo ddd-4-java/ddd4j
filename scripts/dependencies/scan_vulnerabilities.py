@@ -39,8 +39,8 @@ def reactor_sbom(root, output):
         if 'target' in pom.parts or '.git' in pom.parts:
             continue
         node = ET.parse(pom).getroot()
-        ns = {'m': 'http://maven.apache.org/POM/4.0.0'}
-        if node.findtext('m:packaging', 'jar', ns) != 'pom':
+        packaging = next((child.text for child in node if child.tag.rsplit('}', 1)[-1] == 'packaging'), 'jar')
+        if packaging != 'pom':
             modules.append(pom.parent)
     if not modules:
         raise ValueError('No non-POM reactor modules to scan')
