@@ -699,6 +699,7 @@
         <vault-java-driver.version>6.2.2</vault-java-driver.version>
         <velocity.version>2.4.1</velocity.version>
         <vertx.version>5.1.5</vertx.version>
+        <vertx-compat4.version>4.5.35</vertx-compat4.version>
         <webcollector.version>2.74-alpha</webcollector.version>
         <webjars-locator-core.version>0.59</webjars-locator-core.version>
         <webjars-locator-lite.version>1.1.2</webjars-locator-lite.version>
@@ -7339,17 +7340,17 @@
             <dependency>
                 <groupId>io.vertx</groupId>
                 <artifactId>vertx-core</artifactId>
-                <version>4.5.32</version>
+                <version>${vertx-compat4.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.vertx</groupId>
                 <artifactId>vertx-junit5</artifactId>
-                <version>4.5.32</version>
+                <version>${vertx-compat4.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.vertx</groupId>
                 <artifactId>vertx-web</artifactId>
-                <version>4.5.32</version>
+                <version>${vertx-compat4.version}</version>
             </dependency>
             <dependency>
                 <groupId>jakarta.enterprise</groupId>

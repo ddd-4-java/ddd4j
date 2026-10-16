@@ -381,13 +381,27 @@ class UniformContract(unittest.TestCase):
     def test_jdk21_quarkus_uses_compatible_vertx4_artifacts(self):
         repository = pathlib.Path(__file__).parents[3]
         raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
-        expected = {'io.vertx:vertx-core': '4.5.35',
-                    'io.vertx:vertx-junit5': '4.5.35',
-                    'io.vertx:vertx-web': '4.5.35'}
+        coordinates = {'io.vertx:vertx-core', 'io.vertx:vertx-junit5', 'io.vertx:vertx-web'}
         jdk21 = checker.resolve_policy(raw, 'feature/3.0.x')
-        self.assertEqual({key: jdk21['fixed_dependencies'].get(key) for key in expected}, expected)
+        self.assertEqual(jdk21['fixed_properties'].get('vertx-compat4.version'), '4.5.35')
+        self.assertTrue(coordinates.isdisjoint(jdk21['fixed_dependencies']))
+        versions = checker.declared_versions(repository)
+        for coordinate in coordinates:
+            self.assertEqual(
+                [value for key, value in versions.items()
+                 if key[0] == 'ddd4j-dependencies/pom.xml' and key[1] == coordinate],
+                ['4.5.35'])
+        for module in ('ddd4j-data-cqrs-vertx', 'ddd4j-data-projection-vertx'):
+            self.assertEqual(
+                [value for key, value in versions.items()
+                 if key[0] == f'ddd4j-data/{module}/pom.xml' and key[1] == 'io.vertx:vertx-core'],
+                ['${vertx.version}'])
+        self.assertEqual(
+            [value for key, value in versions.items()
+             if key[0] == 'ddd4j-dependencies/pom.xml' and key[1] == '#vertx.version'],
+            ['5.1.5'])
         for branch in ('feature/1.0.x', 'feature/2.0.x'):
-            self.assertTrue(expected.keys().isdisjoint(checker.resolve_policy(raw, branch)['fixed_dependencies']))
+            self.assertNotIn('vertx-compat4.version', checker.resolve_policy(raw, branch)['fixed_properties'])
 
     def test_non_maven_branch_is_explicitly_not_applicable(self):
         with tempfile.TemporaryDirectory() as directory:
