@@ -288,7 +288,7 @@
         <jackson-annotations.version>2.22</jackson-annotations.version>
         <jackson-bom.version>${jackson.version}</jackson-bom.version>
         <jackson-extension.version>3.0.x.20260630-SNAPSHOT</jackson-extension.version>
-        <jackson.version>3.2.1</jackson.version>
+        <jackson.version>3.2.3</jackson.version>
         <jai-imageio.version>1.4.0</jai-imageio.version>
         <jakarta-activation.version>2.1.4</jakarta-activation.version>
         <jakarta-annotation.version>3.0.0</jakarta-annotation.version>
