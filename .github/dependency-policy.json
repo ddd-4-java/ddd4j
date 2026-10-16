@@ -63,7 +63,8 @@
         "jersey.version": "3.1.12",
         "logback.version": "1.5.38",
         "micronaut.core.version": "4.10.26",
-        "micronaut.version": "4.10.21"
+        "micronaut.version": "4.10.21",
+        "redisson.version": "3.52.0"
       },
       "fixed_dependencies": {
         "com.lmax:disruptor": "4.0.0"
