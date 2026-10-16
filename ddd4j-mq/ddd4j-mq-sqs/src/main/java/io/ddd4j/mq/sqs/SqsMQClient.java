@@ -39,6 +39,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Consumer;
 
 /**
@@ -59,6 +60,7 @@ public class SqsMQClient implements MQClient {
     private final List<ScheduledExecutorService> pollers = new CopyOnWriteArrayList<>();
     private final MQClientLifecycle lifecycle = new MQClientLifecycle();
     private final MQStartupStatus startupStatus = new MQStartupStatus("sqs");
+    private final ReentrantReadWriteLock sendLifecycleLock = new ReentrantReadWriteLock(true);
     private SqsClient client;
     private volatile boolean closed;
 
@@ -131,37 +133,46 @@ public class SqsMQClient implements MQClient {
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         initializeClient();
         return event -> {
-            if (closed) {
-                throw new IllegalStateException("SQS client is closed");
-            }
+            sendLifecycleLock.readLock().lock();
             try {
-                String queueUrl = event.getTopic();
-                Map<String, MessageAttributeValue> attrs = new HashMap<>();
-                if (Objects.nonNull(queueUrl)) {
-                    attrs.put(MessageHeaders.HEADER_DESTINATION_TOPIC, attrValue(queueUrl));
+                if (closed) {
+                    throw new IllegalStateException("SQS client is closed");
                 }
-                if (Objects.nonNull(event.getTenantId())) {
-                    attrs.put(MessageHeaders.HEADER_TENANT_ID, attrValue(event.getTenantId()));
-                }
-                if (Objects.nonNull(event.getMsgId())) {
-                    attrs.put(MessageHeaders.HEADER_MESSAGE_ID, attrValue(event.getMsgId()));
-                }
-                if (Objects.nonNull(event.getTag())) {
-                    attrs.put(tagHeaderKey(), attrValue(event.getTag()));
-                }
-                for (Map.Entry<String, String> header : event.headerMap().entrySet()) {
-                    attrs.put(header.getKey(), attrValue(header.getValue()));
-                }
-                client.sendMessage(SendMessageRequest.builder()
-                        .queueUrl(queueUrl)
-                        .messageBody(serialization().serialize(event).toString())
-                        .messageAttributes(attrs)
-                        .build());
-                logger().info("Publish MQ [{}]: {}", queueUrl, serialization().serialize(event));
-            } catch (Exception ex) {
-                throw new IllegalStateException("Publish SQS event failed", ex);
+                publish(event);
+            } finally {
+                sendLifecycleLock.readLock().unlock();
             }
         };
+    }
+
+    private void publish(MQEvent event) {
+        try {
+            String queueUrl = event.getTopic();
+            Map<String, MessageAttributeValue> attrs = new HashMap<>();
+            if (Objects.nonNull(queueUrl)) {
+                attrs.put(MessageHeaders.HEADER_DESTINATION_TOPIC, attrValue(queueUrl));
+            }
+            if (Objects.nonNull(event.getTenantId())) {
+                attrs.put(MessageHeaders.HEADER_TENANT_ID, attrValue(event.getTenantId()));
+            }
+            if (Objects.nonNull(event.getMsgId())) {
+                attrs.put(MessageHeaders.HEADER_MESSAGE_ID, attrValue(event.getMsgId()));
+            }
+            if (Objects.nonNull(event.getTag())) {
+                attrs.put(tagHeaderKey(), attrValue(event.getTag()));
+            }
+            for (Map.Entry<String, String> header : event.headerMap().entrySet()) {
+                attrs.put(header.getKey(), attrValue(header.getValue()));
+            }
+            client.sendMessage(SendMessageRequest.builder()
+                    .queueUrl(queueUrl)
+                    .messageBody(serialization().serialize(event).toString())
+                    .messageAttributes(attrs)
+                    .build());
+            logger().info("Publish MQ [{}]: {}", queueUrl, serialization().serialize(event));
+        } catch (Exception ex) {
+            throw new IllegalStateException("Publish SQS event failed", ex);
+        }
     }
 
     @Override
@@ -287,15 +298,20 @@ public class SqsMQClient implements MQClient {
 
     @Override
     public synchronized void close() {
-        if (closed) {
-            return;
-        }
-        closed = true;
+        sendLifecycleLock.writeLock().lock();
         try {
-            lifecycle.close();
+            if (closed) {
+                return;
+            }
+            closed = true;
+            try {
+                lifecycle.close();
+            } finally {
+                pollers.clear();
+                startupStatus.stopped();
+            }
         } finally {
-            pollers.clear();
-            startupStatus.stopped();
+            sendLifecycleLock.writeLock().unlock();
         }
     }
 }

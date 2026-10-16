@@ -4,15 +4,25 @@
  */
 package io.ddd4j.mq.sqs;
 
+import io.ddd4j.core.context.BaseContext;
+import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.event.MQEvent;
+import io.ddd4j.mq.event.MQEventSerialization;
 import io.ddd4j.mq.listener.MQListener;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
+import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
+import software.amazon.awssdk.services.sqs.model.SendMessageResponse;
 
+import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
@@ -90,5 +100,71 @@ class SqsClientLifecycleTest {
         IllegalStateException failure = assertThrows(IllegalStateException.class,
                 () -> publisher.accept(new MQEvent()));
         assertEquals("SQS client is closed", failure.getMessage());
+    }
+
+    @Test
+    void closeWaitsForAnInFlightSendBeforeClosingOwnedClient() throws Exception {
+        SqsClient nativeClient = mock(SqsClient.class);
+        CountDownLatch sending = new CountDownLatch(1);
+        CountDownLatch releaseSend = new CountDownLatch(1);
+        CountDownLatch closing = new CountDownLatch(1);
+        when(nativeClient.sendMessage(any(SendMessageRequest.class))).thenAnswer(invocation -> {
+            sending.countDown();
+            assertTrue(releaseSend.await(5, TimeUnit.SECONDS));
+            return SendMessageResponse.builder().messageId("native-1").build();
+        });
+        SqsProperties properties = new SqsProperties() {
+            @Override
+            public SqsClient client() {
+                return nativeClient;
+            }
+        };
+        SqsMQClient adapter = new SqsMQClient(properties);
+        Consumer<MQEvent> publisher = adapter.initProducer(properties);
+        MQEvent event = new MQEvent();
+        event.setTopic("https://sqs.example/queue");
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        MQEventSerialization previousSerialization = BaseContext.get(MQClient.MQ_SERIALIZATION);
+        BaseContext.inject(MQClient.MQ_SERIALIZATION, new MQEventSerialization() {
+            @Override
+            public <S, T> T deserialize(S src, Class<T> dist) {
+                return null;
+            }
+
+            @Override
+            @SuppressWarnings("unchecked")
+            public <T> T serialize(Object src) {
+                return (T) "{}";
+            }
+        });
+
+        try {
+            Future<?> publish = executor.submit(() -> publisher.accept(event));
+            if (!sending.await(5, TimeUnit.SECONDS)) {
+                publish.get(1, TimeUnit.SECONDS);
+                throw new AssertionError("SQS send was not invoked");
+            }
+            Future<?> close = executor.submit(() -> {
+                closing.countDown();
+                adapter.close();
+            });
+            assertTrue(closing.await(5, TimeUnit.SECONDS));
+            assertThrows(TimeoutException.class, () -> close.get(150, TimeUnit.MILLISECONDS));
+            verify(nativeClient, never()).close();
+
+            releaseSend.countDown();
+            publish.get(5, TimeUnit.SECONDS);
+            close.get(5, TimeUnit.SECONDS);
+            verify(nativeClient, times(1)).close();
+        } finally {
+            releaseSend.countDown();
+            executor.shutdownNow();
+            adapter.close();
+            if (Objects.isNull(previousSerialization)) {
+                BaseContext.remove(MQClient.MQ_SERIALIZATION);
+            } else {
+                BaseContext.inject(MQClient.MQ_SERIALIZATION, previousSerialization);
+            }
+        }
     }
 }
