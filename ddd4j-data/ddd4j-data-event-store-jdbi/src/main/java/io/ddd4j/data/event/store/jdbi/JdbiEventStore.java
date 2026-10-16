@@ -79,8 +79,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * <p><b>payload 序列化</b></p>
  * <p>事件载荷通过 {@link EventPayloadSerializer} 序列化为 JSON 文本存储，
  * 读取时通过同一序列化器按 {@code event_type} 反序列化。
- * 若事件类已被删除或重命名（{@code Class.forName} 失败），回退为 {@code Map}，
- * 此时丢失类型信息，javadoc 已说明此限制。
+ * 若事件类已被删除或重命名（{@code Class.forName} 失败），
+ * 抛出 {@link IllegalStateException}，不静默返回无类型的载荷。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.0.0
@@ -260,7 +260,7 @@ public class JdbiEventStore implements EventStore {
      * {@inheritDoc}
      *
      * <p>按版本升序读取指定聚合的全部事件。
-     * 事件载荷通过 {@link EventPayloadSerializer} 反序列化，类型无法还原时回退为 {@code Map}。
+     * 事件载荷通过 {@link EventPayloadSerializer} 反序列化，类型无法还原时抛出 {@link IllegalStateException}。
      */
     @Override
     public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId) {
@@ -318,8 +318,8 @@ public class JdbiEventStore implements EventStore {
     /**
      * 将结果集行重建为 {@link StoredEvent}。
      *
-     * <p>事件类型经 {@code Class.forName} 还原，payload 经 {@link EventDeserializer#deserialize}
-     * 反序列化。若类不存在（被删除/重命名），回退为 {@link JsonKit#toMap}。
+     * <p>事件类型经 {@code Class.forName} 还原，payload 经 {@link EventPayloadSerializer#deserialize}
+     * 反序列化。若类不存在（被删除/重命名），抛出 {@link IllegalStateException}。
      *
      * <p>时间戳处理：H2 JDBC 驱动对 TIMESTAMP 列返回 {@link LocalDateTime}，
      * 此处统一先取 {@link LocalDateTime} 再转 {@link Instant}（UTC 偏移），

@@ -865,3 +865,5 @@ effective POM 必须分别用对应线的 JDK/Wrapper 从该线 `ddd4j-dependenc
 
 
 **2026-10-16 T08/T10 Micronaut 投影调度器竞态：** 2.0.x 远端 Verify run 38826113448 在 `MicronautProjectionSchedulerIT` 的新建句柄 `isActive()` 断言失败，本地单次目标测试通过。新增三线共同的确定性测试，让第一次已提交任务在 `schedule()` 返回前完成并重调度，修复前复现旧 Future 覆盖新 Future、句柄误报 inactive；修复后以同步调度代际防止覆盖，取消操作绑定当前 Future。三线各自 Micronaut 模块测试 7/7、受影响 reactor `verify` 通过。远端全量 Verify 对应本次修复的结果仍待运行，T08/T10/T11 保持 OPEN。
+
+**2026-10-16 T05 JDBI 未知事件类型契约：** 三线增加同一 H2 场景：先持久化合法领域事件，再将 `event_type` 改成不存在的类名，读取必须抛出带原类型名的 `IllegalStateException`，不得降级为无类型的 `Map`。现有实现已满足此行为；原 2.0.x/3.0.x Javadoc 中“回退为 Map”的陈述已按真实实现纠正，三线仍使用各自 JDK、Jackson 与 JDBI 依赖。JDK 8/17/21 目标测试类分别为 13/8/12 项，零失败、错误、跳过；受影响模块 `-am test` 命令均退出 0，模块 Surefire XML 观察到 26/30/36 项，其中分别有 3/1/3 项跳过，不把跳过记为通过。2.0.x/3.0.x 目标模块严格 Javadoc 通过；共同场景矩阵新增 `EVENTSTORE-JDBI-UNKNOWN-EVENT-TYPE`，现有 152 个场景。测试 XML 归档与源码哈希见 `/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-16-jdbi-unknown-event-type/report.json`（SHA-256 `b4c3162daa6daca38a2e55caed4f3143f61701af09940edf269312f1b434f392`）。这只固定 H2 未知类型读取，不代替 PostgreSQL/MySQL、历史数据迁移或 T05/T10/T11 总验收。
