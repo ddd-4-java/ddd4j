@@ -1,5 +1,6 @@
 import importlib.util
 import pathlib
+import re
 import unittest
 
 spec = importlib.util.spec_from_file_location('checker', pathlib.Path(__file__).parents[1] / 'check_dependencies.py')
@@ -8,6 +9,18 @@ spec.loader.exec_module(checker)
 
 
 class PolicyTests(unittest.TestCase):
+    def test_latest_update_uses_supported_prerelease_filter(self):
+        policy = checker.resolve_policy({}, 'feature/1.0.x')
+        commands = checker.update_commands(policy)
+        for command in commands[:2]:
+            self.assertNotIn('-DallowPreReleases=false', command)
+            arguments = [arg for arg in command if arg.startswith('-Dmaven.version.ignore=')]
+            self.assertEqual(len(arguments), 1)
+            ignored = arguments[0].split('=', 1)[1]
+            self.assertIsNotNone(re.fullmatch(ignored, '4.0.0-beta-1'))
+            self.assertIsNotNone(re.fullmatch(ignored, '4.0.0.Beta1'))
+            self.assertIsNone(re.fullmatch(ignored, '3.4.0'))
+
     def test_branch_overrides_merge_pins_and_exclusions(self):
         policy = {'fixed_properties': {'a.version': '1'}, 'exclude': ['spring:*'],
                   'branches': {'legacy': {'fixed_properties': {'b.version': '2'}, 'exclude': ['legacy:*']}}}
