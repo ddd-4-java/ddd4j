@@ -192,9 +192,7 @@ class EventStoreRetryTest {
     @Test
     void cause链中类名ConstraintViolationException_判定可重试() {
         // 模拟 Hibernate ConstraintViolationException：编译期不可见，仅按类名匹配。
-        Throwable hibernateCve = createThrowableByName(
-                "org.hibernate.exception.ConstraintViolationException",
-                "Unique index uk_position violation");
+        Throwable hibernateCve = new ConstraintViolationException("schema constraint rejected");
         RuntimeException wrapped = new RuntimeException("PersistenceException wrapper", hibernateCve);
         assertThat(EventStoreRetry.isRetriable(wrapped)).isTrue();
     }
@@ -221,22 +219,10 @@ class EventStoreRetryTest {
         Thread.interrupted();
     }
 
-    /**
-     * 通过反射构造指定类名的 Throwable 实例（用于模拟 Hibernate 等编译期不可见的类）。
-     * 若类不存在则返回带相同消息的普通 RuntimeException。
-     */
-    private static Throwable createThrowableByName(String className, String message) {
-        try {
-            Class<?> cls = Class.forName(className);
-            return (Throwable) cls.getConstructor(String.class).newInstance(message);
-        } catch (Throwable reflectFailure) {
-            // 编译期无 hibernate-core 时回退为带相同类名的 RuntimeException 子类（不会真实触发）
-            return new RuntimeException(message) {
-                @Override
-                public String toString() {
-                    return className + ": " + message;
-                }
-            };
+    /** 仅用简单类名触发兼容路径；消息不含任何可重试关键字。 */
+    private static final class ConstraintViolationException extends RuntimeException {
+        private ConstraintViolationException(String message) {
+            super(message);
         }
     }
 }
