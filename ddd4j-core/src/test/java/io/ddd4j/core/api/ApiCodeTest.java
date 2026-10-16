@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ApiCodeTest {
 
     @Test
-    void getDescByCode_shouldReturnMatchingDesc() {
+    void getReasonByCode_shouldReturnMatchingDesc() {
         assertThat(ApiCode.getReasonByCode(ApiCode.OK.getCode()))
                 .isEqualTo("请求/操作成功");
         assertThat(ApiCode.getReasonByCode(ApiCode.UNAUTHORIZED.getCode()))
@@ -34,12 +34,12 @@ class ApiCodeTest {
     }
 
     @Test
-    void getDescByCode_shouldReturnEmptyStringForUnknownCode() {
+    void getReasonByCode_shouldReturnEmptyStringForUnknownCode() {
         assertThat(ApiCode.getReasonByCode(999999)).isEmpty();
     }
 
     @Test
-    void getDescByCode_shouldReturnEmptyStringForNull() {
+    void getReasonByCode_shouldReturnEmptyStringForNull() {
         assertThat(ApiCode.getReasonByCode(null)).isEmpty();
     }
 
@@ -69,7 +69,7 @@ class ApiCodeTest {
 
     @Test
     void values_shouldContainKeyCodesFromBothCatalogs() {
-        // 通用码段
+        // 通用码段（原 ResultCode）
         assertThat(ApiCode.OK.getCode()).isZero();
         assertThat(ApiCode.SUCCESS.getCode()).isEqualTo(200);
         assertThat(ApiCode.FAIL.getCode()).isEqualTo(1);
@@ -90,7 +90,7 @@ class ApiCodeTest {
     }
 
     @Test
-    void getDescByCode_shouldResolveAllEnumValues() {
+    void getReasonByCode_shouldResolveAllEnumValues() {
         for (ApiCode code : ApiCode.values()) {
             assertThat(ApiCode.getReasonByCode(code.getCode())).isNotEmpty();
             // 异常映射码段共享 HTTP 码值（如 400/500/1000），getByCode 对共享码值返回声明在前的第一个条目
