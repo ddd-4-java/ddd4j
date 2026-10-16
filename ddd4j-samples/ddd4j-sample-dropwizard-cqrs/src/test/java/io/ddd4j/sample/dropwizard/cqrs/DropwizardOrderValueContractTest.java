@@ -30,7 +30,8 @@ class DropwizardOrderValueContractTest {
         assertEquals(first, same);
         assertEquals(first.hashCode(), same.hashCode());
         assertNotEquals(first, other);
-        assertTrue(first.toString().contains("orderNo=O-1"));
+        assertEquals(336683680, first.hashCode());
+        assertEquals("CreateOrderCommand(orderNo=O-1, buyerId=B-1, buyerName=Alice)", first.toString());
     }
 
     @Test
