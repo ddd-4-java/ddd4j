@@ -251,7 +251,12 @@ def materialize_inherited_properties(root, policy, effective):
         ns = {'m': node.tag.split('}')[0][1:]}
         for props in node.findall('.//m:properties', ns):
             defined.update(child.tag.split('}')[-1] for child in props)
-        for dep in node.findall('.//m:dependency', ns):
+        # Only active project dependencies need inherited versions. Plugin
+        # configuration (for example japicmp's inactive baseline profile) can
+        # contain dependency-shaped XML with intentionally unset properties.
+        dependencies = (node.findall('./m:dependencies/m:dependency', ns)
+                        + node.findall('./m:dependencyManagement/m:dependencies/m:dependency', ns))
+        for dep in dependencies:
             version = dep.findtext('m:version', default='', namespaces=ns)
             match = re.fullmatch(r'\$\{([\w.-]+)\}', version)
             if not match:
