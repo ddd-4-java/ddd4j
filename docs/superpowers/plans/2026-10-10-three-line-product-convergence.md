@@ -862,3 +862,6 @@ effective POM 必须分别用对应线的 JDK/Wrapper 从该线 `ddd4j-dependenc
 
 
 **2026-10-16 T07 SQS 发布与关闭竞争修复：** 三线共同的 `SqsClientLifecycleTest` 在修复前稳定暴露“发送未完成而 `close()` 已返回”的失败。生产者发布期间持有共享生命周期读锁，关闭时持有写锁并等待正在执行的同步发送结束，关闭后旧 producer handle 继续拒绝发布；锁不改变各线 AWS SDK、JDK 或 Maven 依赖。JDK 8/17/21 的 SQS 模块测试各 8/8 通过，三线受影响 reactor `verify` 均通过；这是本地 mock/模块验证，不代替远端全量 Verify 或真实云 SQS 故障时序，T07/T11 继续 OPEN。
+
+
+**2026-10-16 T08/T10 Micronaut 投影调度器竞态：** 2.0.x 远端 Verify run 38826113448 在 `MicronautProjectionSchedulerIT` 的新建句柄 `isActive()` 断言失败，本地单次目标测试通过。新增三线共同的确定性测试，让第一次已提交任务在 `schedule()` 返回前完成并重调度，修复前复现旧 Future 覆盖新 Future、句柄误报 inactive；修复后以同步调度代际防止覆盖，取消操作绑定当前 Future。三线各自 Micronaut 模块测试 7/7、受影响 reactor `verify` 通过。远端全量 Verify 对应本次修复的结果仍待运行，T08/T10/T11 保持 OPEN。
