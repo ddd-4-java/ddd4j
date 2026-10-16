@@ -118,6 +118,7 @@ class UniformContract(unittest.TestCase):
         repository = pathlib.Path(__file__).parents[3]
         raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
         expected = {'commons-cli.version': '1.11.0',
+                    'commons-beanutils.version': '1.11.0',
                     'commons-codec.version': '1.23.0',
                     'commons-collections.version': '3.2.2',
                     'commons-io.version': '2.22.0'}
@@ -131,6 +132,12 @@ class UniformContract(unittest.TestCase):
         for branch in ('feature/1.0.x', 'feature/2.0.x', 'feature/3.0.x'):
             policy = checker.resolve_policy(raw, branch)
             self.assertEqual(policy['fixed_properties'].get('classgraph.version'), '4.8.199')
+
+    def test_jdk8_hikari_pool_stays_on_java8_compatible_line(self):
+        repository = pathlib.Path(__file__).parents[3]
+        raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
+        policy = checker.resolve_policy(raw, 'feature/1.0.x')
+        self.assertEqual(policy['fixed_properties'].get('hikaricp-jdk8.version'), '4.0.3')
 
     def test_jedis_keeps_pooled_client_api(self):
         repository = pathlib.Path(__file__).parents[3]
