@@ -75,6 +75,28 @@ class ValidationTests(unittest.TestCase):
             self.assertIn('<undertow.version>2.3.0.Final</undertow.version>', text)
             self.assertNotIn('<spring.version>', text)
 
+    def test_inactive_api_profile_baseline_is_not_materialized(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            pom = root / 'pom.xml'
+            pom.write_text('''<project xmlns="http://maven.apache.org/POM/4.0.0">
+                <dependencies><dependency><groupId>io.undertow</groupId><artifactId>undertow-core</artifactId>
+                <version>${undertow.version}</version></dependency></dependencies>
+                <profiles><profile><id>api-compatibility</id><activation><property>
+                <name>ddd4j.api.baseline.version</name></property></activation><build><plugins><plugin>
+                <configuration><oldVersion><dependency><groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-core</artifactId><version>${ddd4j.api.baseline.version}</version>
+                </dependency></oldVersion></configuration></plugin></plugins></build></profile></profiles>
+                </project>''')
+            effective = root / 'effective.xml'
+            effective.write_text('''<project xmlns="http://maven.apache.org/POM/4.0.0"><properties>
+                <undertow.version>2.3.0.Final</undertow.version></properties></project>''')
+            policy = checker.resolve_policy({}, 'feature/2.0.x')
+            checker.materialize_inherited_properties(root, policy, effective)
+            self.assertIn('<undertow.version>2.3.0.Final</undertow.version>', pom.read_text())
+            self.assertNotIn('<ddd4j.api.baseline.version>', pom.read_text())
+
     def test_fixed_property_overrides_artifact_exclusion(self):
         import tempfile
         with tempfile.TemporaryDirectory() as directory:
