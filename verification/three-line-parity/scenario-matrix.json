@@ -3224,6 +3224,44 @@
       }
     },
     {
+      "id": "SAMPLE-DROPWIZARD-CQRS-ORDER-VALUE",
+      "description": "Dropwizard CQRS 订单命令保留组件访问器、Bean getter、值相等、三线一致的 hashCode 与 toString",
+      "caseNames": {
+        "1.0.x": [
+          "commandKeepsBeanAndComponentAccessorsAndValueSemantics",
+          "requestKeepsMutableBeanAndComponentAccessors"
+        ],
+        "2.0.x": [
+          "commandKeepsBeanAndComponentAccessorsAndValueSemantics",
+          "requestKeepsMutableBeanAndComponentAccessors"
+        ],
+        "3.0.x": [
+          "commandKeepsBeanAndComponentAccessorsAndValueSemantics",
+          "requestKeepsMutableBeanAndComponentAccessors"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-dropwizard-cqrs/src/test/java/io/ddd4j/sample/dropwizard/cqrs/DropwizardOrderValueContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-dropwizard-cqrs/src/test/java/io/ddd4j/sample/dropwizard/cqrs/DropwizardOrderValueContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-dropwizard-cqrs/src/test/java/io/ddd4j/sample/dropwizard/cqrs/DropwizardOrderValueContractTest.java"
+          ]
+        }
+      }
+    },
+    {
       "id": "SAMPLE-HELIDON-CQRS",
       "description": "Helidon 订单 CQRS 真实 HTTP 创建、投影查询与重复编号冲突",
       "lines": {
