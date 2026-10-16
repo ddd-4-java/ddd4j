@@ -41,6 +41,10 @@
       }
     },
     "feature/1.0.x": {
+      "fixed_properties": {
+        "junit-jupiter.version": "5.14.4",
+        "junit-platform-launcher.version": "1.14.4"
+      },
       "fixed_dependencies": {
         "com.lmax:disruptor": "3.4.4"
       }

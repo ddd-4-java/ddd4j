@@ -85,6 +85,17 @@ class UniformContract(unittest.TestCase):
             self.assertNotIn('io.micronaut*:*', policy['exclude'])
             self.assertNotIn('micronaut.version', policy['fixed_properties'])
 
+    def test_jdk8_junit_family_remains_on_supported_java_line(self):
+        repository = pathlib.Path(__file__).parents[3]
+        raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
+        jdk8 = checker.resolve_policy(raw, 'feature/1.0.x')
+        self.assertEqual(jdk8['fixed_properties'].get('junit-jupiter.version'), '5.14.4')
+        self.assertEqual(jdk8['fixed_properties'].get('junit-platform-launcher.version'), '1.14.4')
+        for branch in ('feature/2.0.x', 'feature/3.0.x'):
+            policy = checker.resolve_policy(raw, branch)
+            self.assertNotIn('junit-jupiter.version', policy['fixed_properties'])
+            self.assertNotIn('junit-platform-launcher.version', policy['fixed_properties'])
+
     def test_non_maven_branch_is_explicitly_not_applicable(self):
         with tempfile.TemporaryDirectory() as directory:
             self.assertEqual(checker.runtime_config(pathlib.Path(directory))['project'], 'false')
