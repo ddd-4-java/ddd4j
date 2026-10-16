@@ -4289,6 +4289,22 @@
       }
     },
     {
+      "id": "EVENTSTORE-R2DBC-POSTGRES-NATIVE-CONTRACT",
+      "description": "真实 PostgreSQL 上的事件往返、版本区间与聚合类型隔离、全局位置顺序、过期版本拒绝；三线使用各自 R2DBC 与 Testcontainers 依赖",
+      "lastEvidence": "/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-16-current-parity/r2dbc-postgres-contract-report.json",
+      "lastEvidenceSha256": "1ad4fe5f7e5b1b5c04228c73884f98d35f07f52966294f6cea3796689ebdb3c5",
+      "caseNames": {
+        "1.0.x": ["appendAndReadShouldRoundTripTypedMetadataOnPostgres", "versionRangeAndAggregateTypeIsolationShouldFollowCoreContractOnPostgres", "readAllShouldPreserveGlobalPositionOrderOnPostgres", "appendWithStaleVersionShouldRejectOnPostgres"],
+        "2.0.x": ["appendAndReadShouldRoundTripTypedEventOnPostgres", "versionRangeAndAggregateTypeIsolationShouldFollowCoreContractOnPostgres", "readAllShouldPreserveGlobalPositionOrderOnPostgres", "appendWithStaleVersionShouldRejectOnPostgres"],
+        "3.0.x": ["appendAndReadShouldRoundTripTypedEventOnPostgres", "versionRangeAndAggregateTypeIsolationShouldFollowCoreContractOnPostgres", "readAllShouldPreserveGlobalPositionOrderOnPostgres", "appendWithStaleVersionShouldRejectOnPostgres"]
+      },
+      "lines": {
+        "1.0.x": {"status": "supported", "tests": ["ddd4j-data/ddd4j-data-event-store-r2dbc/src/test/java/io/ddd4j/data/event/store/r2dbc/R2dbcEventStorePostgresIT.java"]},
+        "2.0.x": {"status": "supported", "tests": ["ddd4j-data/ddd4j-data-event-store-r2dbc/src/test/java/io/ddd4j/data/event/store/r2dbc/R2dbcEventStorePostgresIT.java"]},
+        "3.0.x": {"status": "supported", "tests": ["ddd4j-data/ddd4j-data-event-store-r2dbc/src/test/java/io/ddd4j/data/event/store/r2dbc/R2dbcEventStorePostgresIT.java"]}
+      }
+    },
+    {
       "id": "FILE-VALIDATION-RESULT-VALUE-STRING",
       "description": "文件校验成功与失败结果在三线使用相同的带字段名字符串表示",
       "lastEvidence": "/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-16-current-parity/validation-result-value-string-report.json",
