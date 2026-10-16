@@ -11,10 +11,15 @@
 - 1.0.x 的 JUnit Jupiter 固定为 `5.14.4`、Platform Launcher 固定为 `1.14.4`，Mockito 固定为最新的 4.x 版本 `4.11.0`，SLF4J legacy 通道固定为 `1.7.36`，Logback 主线及 legacy 通道固定为 `1.2.13`，SLF4J 2 测试通道固定为 `1.3.14`，Javalin 固定为最新的 JDK 8 兼容 4.x 版本 `4.6.8`，Dropwizard 固定为最新的 2.1.x 版本 `2.1.12`，Hibernate Validator 固定为 JDK 8 兼容的最新 6.2.x 版本 `6.2.6.Final`，Caffeine 固定为 JDK 8 兼容的最新 2.9.x 版本 `2.9.3`，Vert.x stack 固定为 4.5.x 最新版 `4.5.35`，Quarkus 固定为 JDK 8/`javax.enterprise` 对应的 1.13.x 最新版 `1.13.7.Final`。自动升级到 JUnit 6.1.3 会引入 class 61，超出 JDK 8 的 class 52；JUnit 和 Mockito 固定构件的关键类经 Maven Central JAR 验证仍为 class 52；Mockito 5.x 的 class 55 超出 JDK 8；Logback 1.6 不提供 SLF4J 1.7 的 MDC 绑定，导致 Core 的追踪上下文测试失败；Javalin 5.x/7.x 的主要类分别为 class 55/61，超出 JDK 8；Dropwizard 5.x 也不再提供本线使用的 `io.dropwizard.Application` API；Hibernate Validator 9.x 的 class 61 与 Caffeine 3.x 与 Vert.x 5.x 的 class 55 均无法由 JDK 8 运行。固定版本照常进入漏洞扫描。
 - 3.0.x 的 Micronaut 固定在平台 `4.10.21`、Core `4.10.26`，并排除 `io.micronaut*:*` 的自动升级。Micronaut 5.2.x 的构件含 class 69（JDK 25），无法由本线 JDK 21 编译；Micronaut 4 系列的 CQRS 模块容器集成测试已通过。固定与排除构件仍进入每周漏洞扫描。
 - 1.0.x 的 `microprofile-config-api` 排除自动升级：Quarkus 1.13.7.Final 的配置接口使用 MicroProfile Config 1.4；自动升级到 3.1.2 会在真实容器测试触发 `AbstractMethodError`。排除项仍进入漏洞扫描。
+- 1.0.x 的 Redis Testcontainers 扩展固定为 `2.0.2`（`testcontainers-redis.version`）：自动升级到 3.0.0 后测试使用的 `RedisContainer` 是 class 61，JDK 8 无法编译；2.0.2 构件为 class 52。固定项仍扫描漏洞。
+- 1.0.x 的 OWASP Dependency-Check Maven 插件固定为 `10.0.4`：候选 13.0.0 在 JDK 8 reactor 中即使配置 `skip=true` 仍因插件要求 Java 11 而阻断构建。固定插件照常执行版本核查，依赖漏洞扫描另由每周 Trivy 门禁负责。
+- 1.0.x 的 JSqlParser 固定为 `4.9`：这是[上游声明的最后一个 JDK 8 兼容版本](https://github.com/JSQLParser/JSqlParser)；候选 5.4 的类文件为 class 55，无法在 JDK 8 编译 MyBatis Plus 数据权限模块。固定项仍扫描漏洞。
+- 1.0.x 的 R2DBC H2 主线与测试别名均固定为 `1.0.0.RELEASE`：1.1.0.RELEASE 调用新版 H2 的 `Session.prepareCommand(String)`，与本线 JDK 8 兼容的 H2 2.2.224 组合会在事件存储测试触发 `NoSuchMethodError`。固定项仍扫描漏洞。
+- 1.0.x 的 Jdbi 固定为 `3.39.1`（`jdbi3.version`）：[Jdbi 官方兼容说明](https://github.com/jdbi/jdbi/blob/master/RELEASE_NOTES.md)将 3.39.x 定为最后支持 Java 8 的系列；候选 3.55.0 的 `Jdbi` class 61 无法在 JDK 8 编译。固定项仍扫描漏洞。
 - 1.0.x 的 H2 固定为 `2.2.224`（`h2.version`）：自动升级到 2.5.252 后 JDK 8 的 JPA 测试无法加载 `org.h2.Driver`；固定项仍扫描漏洞。
 - 1.0.x 的 Hibernate ORM 固定为 `5.6.15.Final`（`hibernate5.version`）：该线的 JPA 事件存储依赖 `javax.persistence`，升级到 Hibernate 7.4.13.Final 后目标测试编译读取 class 61 失败。固定项仍扫描漏洞。
 - 1.0.x 的 `jakarta.persistence:jakarta.persistence-api` 排除自动升级：本线 Panache 实体使用 `javax.persistence`，模块显式依赖 2.2.3；升级到 3.2.0 后 `javax.persistence` 注解类缺失。排除项仍扫描漏洞。
-- 3.0.x 的 Redisson 固定在 `3.52.0`（当前 3.x 最新版）：4.8.0 移除了缓存模块使用的 `RScript.ReturnType.STATUS/INTEGER`，缓存模块 48 项本地测试通过（4 项 Redis 容器测试跳过）。该固定项仍进入漏洞扫描。
+- 三线的 Redisson 固定在 `3.52.0`（当前 3.x 最新版）：4.8.0 移除了缓存模块使用的 `RScript.ReturnType.STATUS/INTEGER`，缓存模块 48 项本地测试通过（4 项 Redis 容器测试跳过）。该固定项仍进入漏洞扫描。
 - 三线将 Commons CLI `1.11.0`、Commons Codec `1.23.0`、Commons Collections `3.2.2`、Commons IO `2.22.0` 固定在当前可用的常规发行版。Versions 插件按数值排序时会误选 2003–2004 年的日期版，造成缺类和 JUnit 3.8.1 传递依赖；这四项仍进入每周漏洞扫描。签名工具已直接处理 null/空 Map，不再依赖旧 Collections 类的偶然传递引入。
 - 3.0.x 将 BOM 中显式声明的 `io.vertx:vertx-core`、`vertx-junit5`、`vertx-web` 固定为最新 4.5.x 版本 `4.5.35`；Quarkus 3.40.1 的构建增强调用 Vert.x 4 的内部类，直接提升到 Vert.x 5.2.1 会缺类。Quarkus 模块候选打包测试通过，固定构件继续漏洞扫描。
 - ClassGraph 固定为最新的 4.8.x 版本 `4.8.199`：6.0.0 的 class 69 要求 JDK 25；4.8.199 的关键类经 Maven Central JAR 核验为 class 52，三线均可使用。仍进入漏洞扫描。

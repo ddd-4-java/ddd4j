@@ -99,13 +99,12 @@ class UniformContract(unittest.TestCase):
             self.assertNotIn('junit-jupiter.version', policy['fixed_properties'])
             self.assertNotIn('junit-platform-launcher.version', policy['fixed_properties'])
 
-    def test_jdk21_redisson_remains_on_compatible_api_family(self):
+    def test_all_lines_redisson_keeps_script_return_contract(self):
         repository = pathlib.Path(__file__).parents[3]
         raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
-        jdk21 = checker.resolve_policy(raw, 'feature/3.0.x')
-        self.assertEqual(jdk21['fixed_properties'].get('redisson.version'), '3.52.0')
-        for branch in ('feature/1.0.x', 'feature/2.0.x'):
-            self.assertNotIn('redisson.version', checker.resolve_policy(raw, branch)['fixed_properties'])
+        for branch in ('feature/1.0.x', 'feature/2.0.x', 'feature/3.0.x'):
+            self.assertEqual(checker.resolve_policy(raw, branch)['fixed_properties'].get('redisson.version'),
+                             '3.52.0')
 
     def test_jdk8_mockito_remains_on_java8_bytecode(self):
         repository = pathlib.Path(__file__).parents[3]
@@ -224,6 +223,49 @@ class UniformContract(unittest.TestCase):
                          '2.2.224')
         for branch in ('feature/2.0.x', 'feature/3.0.x'):
             self.assertNotIn('h2.version', checker.resolve_policy(raw, branch)['fixed_properties'])
+
+    def test_jdk8_jdbi_uses_last_java8_release(self):
+        repository = pathlib.Path(__file__).parents[3]
+        raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
+        self.assertEqual(checker.resolve_policy(raw, 'feature/1.0.x')['fixed_properties'].get('jdbi3.version'),
+                         '3.39.1')
+        for branch in ('feature/2.0.x', 'feature/3.0.x'):
+            self.assertNotIn('jdbi3.version', checker.resolve_policy(raw, branch)['fixed_properties'])
+
+    def test_jdk8_r2dbc_h2_keeps_compatible_driver(self):
+        repository = pathlib.Path(__file__).parents[3]
+        raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
+        expected = {'r2dbc-h2-jdk8.version': '1.0.0.RELEASE', 'r2dbc-h2.version': '1.0.0.RELEASE'}
+        policy = checker.resolve_policy(raw, 'feature/1.0.x')['fixed_properties']
+        self.assertEqual({key: policy.get(key) for key in expected}, expected)
+        for branch in ('feature/2.0.x', 'feature/3.0.x'):
+            other = checker.resolve_policy(raw, branch)['fixed_properties']
+            self.assertTrue(expected.keys().isdisjoint(other))
+
+    def test_jdk8_jsqlparser_uses_last_java8_release(self):
+        repository = pathlib.Path(__file__).parents[3]
+        raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
+        self.assertEqual(checker.resolve_policy(raw, 'feature/1.0.x')['fixed_properties'].get('jsqlparser.version'),
+                         '4.9')
+        for branch in ('feature/2.0.x', 'feature/3.0.x'):
+            self.assertNotIn('jsqlparser.version', checker.resolve_policy(raw, branch)['fixed_properties'])
+
+    def test_jdk8_dependency_check_plugin_stays_on_java8(self):
+        repository = pathlib.Path(__file__).parents[3]
+        raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
+        name = 'maven-dependency-check-plugin.version'
+        self.assertEqual(checker.resolve_policy(raw, 'feature/1.0.x')['fixed_properties'].get(name), '10.0.4')
+        for branch in ('feature/2.0.x', 'feature/3.0.x'):
+            self.assertNotIn(name, checker.resolve_policy(raw, branch)['fixed_properties'])
+
+    def test_jdk8_redis_testcontainer_keeps_java8_bytecode(self):
+        repository = pathlib.Path(__file__).parents[3]
+        raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
+        name = 'testcontainers-redis.version'
+        self.assertEqual(checker.resolve_policy(raw, 'feature/1.0.x')['fixed_properties'].get(name), '2.0.2')
+        for branch in ('feature/2.0.x', 'feature/3.0.x'):
+            self.assertNotIn(name, checker.resolve_policy(raw, branch)['fixed_properties'])
+
 
     def test_jdk21_quarkus_uses_compatible_vertx4_artifacts(self):
         repository = pathlib.Path(__file__).parents[3]
