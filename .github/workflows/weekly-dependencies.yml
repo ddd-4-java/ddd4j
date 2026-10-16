@@ -68,7 +68,16 @@ jobs:
             const branches = await github.paginate(github.rest.repos.listBranches, {
               ...context.repo, per_page: 100
             });
-            const targets = branches.filter(b => !b.name.startsWith('automation/dependencies/'));
+            const priority = new Map(
+              ['feature/1.0.x', 'feature/2.0.x', 'feature/3.0.x']
+                .map((name, index) => [name, index])
+            );
+            const targets = branches
+              .filter(b => !b.name.startsWith('automation/dependencies/'))
+              .sort((a, b) =>
+                (priority.get(a.name) ?? 3) - (priority.get(b.name) ?? 3) ||
+                a.name.localeCompare(b.name)
+              );
             if (!targets.length || targets.length > 256) {
               throw new Error(`Expected 1..256 target branches, received ${targets.length}`);
             }
