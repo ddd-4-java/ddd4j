@@ -11,7 +11,8 @@ from pathlib import Path
 
 
 LINES = ("1.0.x", "2.0.x", "3.0.x")
-SOURCE_DIRS = (".superpowers", "docs/superpowers", "docs/reference/fuin-api-patterns")
+SOURCE_DIRS = (".superpowers", "docs/superpowers", "docs/reference/fuin-api-patterns",
+               "docs/ECOSYSTEM-ARCHITECTURE.md")
 INDEX_DOCUMENT = "docs/superpowers/historical-evidence-index.md"
 ACTIVE_PLAN = "docs/superpowers/plans/2026-10-10-three-line-product-convergence.md"
 INDEX_PATH = "verification/three-line-parity/historical-evidence-index.json"

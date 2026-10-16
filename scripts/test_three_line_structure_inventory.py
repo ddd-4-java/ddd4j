@@ -927,6 +927,16 @@ class ThreeLineInventoryTest(unittest.TestCase):
         self.assertEqual("content", document["reason"])
         self.assertEqual("OPEN", document["status"])
 
+    def test_dated_ecosystem_analysis_is_preserved_as_history(self):
+        path = "docs/ECOSYSTEM-ARCHITECTURE.md"
+        self.write(self.roots[0], path, "# 2026-10-06 ecosystem checkout audit\n")
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = json.loads((output / "inventory.json").read_text())["differences"]
+        row = next(item for item in rows if item["path"] == path)
+        self.assertEqual("historical-document", row["category"])
+        self.assertEqual("HISTORICAL", row["status"])
+
     def test_old_target_class_does_not_count_as_current_api(self):
         for root in self.roots:
             self.write(root, "ddd4j-core/target/classes/example/Old.class", "stale")
