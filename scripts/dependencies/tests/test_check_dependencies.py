@@ -19,7 +19,11 @@ class PolicyTests(unittest.TestCase):
             ignored = arguments[0].split('=', 1)[1]
             self.assertIsNotNone(re.fullmatch(ignored, '4.0.0-beta-1'))
             self.assertIsNotNone(re.fullmatch(ignored, '4.0.0.Beta1'))
+            self.assertIsNotNone(re.fullmatch(ignored, '20030203.000129'))
+            self.assertIsNotNone(re.fullmatch(ignored, '20020423'))
             self.assertIsNone(re.fullmatch(ignored, '3.4.0'))
+            self.assertIsNone(re.fullmatch(ignored, '2026.10.16'))
+            self.assertNotIn('-DallowDowngrade=true', command)
 
     def test_branch_overrides_merge_pins_and_exclusions(self):
         policy = {'fixed_properties': {'a.version': '1'}, 'exclude': ['spring:*'],

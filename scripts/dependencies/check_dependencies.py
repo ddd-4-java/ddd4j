@@ -11,7 +11,11 @@ import subprocess
 import xml.etree.ElementTree as ET
 
 VERSIONS = 'org.codehaus.mojo:versions-maven-plugin:2.23.0:'
-PRE_RELEASE_PATTERN = r'(?i).*[.-](?:alpha|beta|rc|cr|m|milestone|preview|ea)(?:[.-]?[0-9]+)?(?:[.-].*)?'
+# Maven orders old date-stamped Commons releases above later semantic versions.
+# Exclude only historical (pre-2020) date stamps; modern calendar versions remain eligible.
+VERSION_IGNORE_PATTERN = (r'(?i)(?:.*[.-](?:alpha|beta|rc|cr|m|milestone|preview|ea)'
+                          r'(?:[.-]?[0-9]+)?(?:[.-].*)?|(?:19[0-9]{6}|20[01][0-9]{5})'
+                          r'(?:\.[0-9]{6})?)')
 CHECK = str(Path(__file__).resolve().parent / 'scan_vulnerabilities.py')
 KEYS = {'exclude', 'exclude_properties', 'fixed_properties', 'fixed_dependencies', 'cvss_threshold', 'branches'}
 INTERNAL_PROPERTIES = {'revision', 'changelist', 'sha1', 'java.version', 'maven.version',
@@ -156,18 +160,19 @@ def update_commands(policy):
     common = ['-DgenerateBackupPoms=false', '-Dversions.skip=false', '-DprocessDependencies=true',
               '-DprocessDependencyManagement=true', '-DallowSnapshots=false',
               '-DprocessParent=true', '-DexcludeReactor=true', '-DallowMajorUpdates=true',
-              '-DallowMinorUpdates=true', '-DallowIncrementalUpdates=true', '-DallowDowngrade=true']
+              '-DallowMinorUpdates=true', '-DallowIncrementalUpdates=true']
     excludes = policy['exclude'] + list(policy['fixed_dependencies'])
     if excludes:
         common.append('-Dexcludes=' + ','.join(excludes))
     prop_excludes = policy['exclude_properties'] + list(policy['fixed_properties'])
     property_args = ['-DexcludeProperties=' + ','.join(prop_excludes)] if prop_excludes else []
-    # Versions 没有 allowPreReleases 参数；用其版本忽略规则排除非正式版。
-    stable = ['-Dmaven.version.ignore=' + PRE_RELEASE_PATTERN]
+    # Versions 没有 allowPreReleases 参数；忽略预发布和排序异常的历史时间戳。
+    stable = ['-Dmaven.version.ignore=' + VERSION_IGNORE_PATTERN]
     commands = [[VERSIONS + 'update-properties', *common, *stable, *property_args],
                 [VERSIONS + 'use-latest-versions', *common, *stable]]
     # 固定规则单独应用，不能被公共排除规则拦截。
     pin_common = [arg for arg in common if not arg.startswith('-Dexcludes=')]
+    pin_common.append('-DallowDowngrade=true')
     for name, version in policy['fixed_properties'].items():
         commands.append([VERSIONS + 'set-property', *pin_common, '-Dproperty=' + name, '-DnewVersion=' + version])
     for name, version in policy['fixed_dependencies'].items():
