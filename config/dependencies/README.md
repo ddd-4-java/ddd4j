@@ -82,7 +82,7 @@ OFDRW 2.4.0 在三线管理 `org.ofdrw:ofdrw-core`。`ofdrw-full` 包含转换�
 
 `config/dependencies/weekly-update-policy.json` 的 `fixed` 是逐线精确版本，配置版本漂移会失败；`excluded` 是有理由的不做最新版本比较的坐标，包括各线独立适配的 Spring、Jackson、Easy4J 和快照版本。规则以外的每个直接管理坐标都查询 Maven Central 最新稳定发布版（仅有预览版时取最新预览版），落后、元数据不可解析或查询失败都会使该线失败。报告保存在 `target/dependency-audit/version-report.json`；CI 不自动改写 POM，升级仍需按各线 JDK、框架、传递依赖和测试分别验证。
 
-每周工作流使用固定版本的 Trivy 扫描目标分支工作树和构建产物，并从目标分支 BOM 生成 CycloneDX 清单扫描全部直接管理版本；不使用 NVD 密钥。源 POM 与管理版本报告必须均非空，达到分支策略 `cvss_threshold` 的漏洞使任务失败。报告保存在本次工作流制品的 `baseline/`、`updated/` 目录中；固定版本和排除升级的组件仍进入管理版本扫描。Trivy 的 Maven POM 解析可能不包含 test/provided 作用域，管理清单覆盖其中直接管理的版本，但未解析的私有构件和非管理的测试/提供依赖仍须单独核查。版本新旧检查不能代替漏洞检测，扫描结果也不能证明升级后的兼容性。
+每周工作流先对目标分支执行启用单测的 Maven install，再由 CycloneDX 为 reactor 的每个非 POM 模块（含样例）生成解析后的依赖清单，包含 test/provided 作用域；缺少任一模块清单即失败。Trivy 无需 NVD 密钥，分别扫描合并后的 reactor 清单和目标分支 BOM 的全部直接管理版本，固定版本与排除升级的组件也参加漏洞扫描。两份扫描报告须逐项覆盖输入构件；达到分支策略 `cvss_threshold` 的漏洞、依赖解析失败或空报告均使任务失败。报告保存在本次工作流制品的 `baseline/`、`updated/` 目录中。版本新旧检查不能代替漏洞检测，扫描结果也不能证明升级后的运行兼容性。
 
 本地运行：
 

@@ -6,7 +6,9 @@
     "io.ddd4j*:*",
     "io.github.easy4j:*"
   ],
-  "fixed_properties": {},
+  "fixed_properties": {
+    "easyexcel.version": "5.0.1"
+  },
   "branches": {
     "backup/feature-1.0.x-github-before-codeup-alignment-20260831": {
       "fixed_dependencies": {
@@ -101,12 +103,6 @@
   },
   "exclude_properties": [],
   "fixed_dependencies": {
-    "io.github.easy4j:easyexcel": "5.0.1",
-    "io.github.easy4j:easyexcel-parent": "5.0.1",
-    "io.github.easy4j:easyexcel-core": "5.0.1",
-    "io.github.easy4j:easyexcel-support": "5.0.1",
-    "io.github.easy4j:easyexcel-markdown": "5.0.1",
-    "io.github.easy4j:dozer-extra-converters": "1.0.x.20260630-SNAPSHOT"
   },
   "cvss_threshold": 7
 }
