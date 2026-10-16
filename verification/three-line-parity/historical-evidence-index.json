@@ -4,7 +4,14 @@
     ".superpowers",
     "docs/superpowers",
     "docs/reference/fuin-api-patterns",
-    "docs/ECOSYSTEM-ARCHITECTURE.md"
+    "docs/ECOSYSTEM-ARCHITECTURE.md",
+    "docs/RELEASE-NOTES-3.0.x-2026-09.md",
+    "docs/architecture/cloud-agents-migration-evidence.md",
+    "docs/architecture/cloud-exception-contract-audit.md",
+    "docs/architecture/cloud-tenant-context-contract-audit.md",
+    "docs/architecture/shiro-http-login-audit.md",
+    "docs/architecture/shiro-real-provider-audit.md",
+    "docs/migrations/truelicense4-framework-consumer-audit.md"
   ],
   "entries": [
     {
@@ -786,6 +793,48 @@
     },
     {
       "line": "1.0.x",
+      "path": "docs/architecture/cloud-agents-migration-evidence.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "dda391e71040860e3a9af897d0ae12cc7e8cd8d82f6a89ba50dad9a5e1658bbc"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/architecture/cloud-exception-contract-audit.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "2ac4035d1ca42c66ac14ea72158b565c1d775ada002649e1806ef98ef535bf38"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/architecture/cloud-tenant-context-contract-audit.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "c8c1270b1846810cb509407ae7a86d70169184b69135daa38c3b1e6d0e629f6b"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/architecture/shiro-http-login-audit.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "f334519bb16f5caeb3c38759a59e96953059fed68faa5852c7b625b57674c62f"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/architecture/shiro-real-provider-audit.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "1334efb11f7bc40df320b68815747d7dae45cf4341ff21d98be5d8fd63f449af"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/migrations/truelicense4-framework-consumer-audit.md",
+      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
+      "sourceTime": "2026-10-15T01:48:04+08:00",
+      "sha256": "ce556bd61e961c89e08dd744dce870e0d068c5b320f307f42c5b57d306860c2a"
+    },
+    {
+      "line": "1.0.x",
       "path": "docs/reference/fuin-api-patterns/01-aggregate-root.md",
       "sourceCommit": "f74cad8cce71be0162bdd432cb6d42bf97e10891",
       "sourceTime": "2026-10-10T12:59:18+08:00",
@@ -1420,6 +1469,13 @@
       "sourceCommit": "5e6fac9d958d3634085d595f36d95a74c1405bc4",
       "sourceTime": "2026-10-10T14:02:47+08:00",
       "sha256": "dce6838ec3fd77b2f8c6aa432370d34772b3eabb72a0d5f0e77ebf55a315931e"
+    },
+    {
+      "line": "3.0.x",
+      "path": "docs/RELEASE-NOTES-3.0.x-2026-09.md",
+      "sourceCommit": "f558881115e4bc38a46af6dcaaf44333812050b4",
+      "sourceTime": "2026-10-10T02:55:04+08:00",
+      "sha256": "bbc8f182d5bcf439de35e899f0cab3b064a59f816d4223844644f73922b59651"
     },
     {
       "line": "3.0.x",
