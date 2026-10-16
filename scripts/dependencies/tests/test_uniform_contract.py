@@ -119,6 +119,7 @@ class UniformContract(unittest.TestCase):
         repository = pathlib.Path(__file__).parents[3]
         raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
         expected = {'commons-cli.version': '1.11.0',
+                    'commons-beanutils.version': '1.11.0',
                     'commons-codec.version': '1.23.0',
                     'commons-collections.version': '3.2.2',
                     'commons-io.version': '2.22.0'}

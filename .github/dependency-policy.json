@@ -7,6 +7,7 @@
     "io.github.easy4j:*"
   ],
   "fixed_properties": {
+    "commons-beanutils.version": "1.11.0",
     "classgraph.version": "4.8.199",
     "commons-cli.version": "1.11.0",
     "commons-codec.version": "1.23.0",
