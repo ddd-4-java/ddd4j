@@ -96,6 +96,14 @@ class UniformContract(unittest.TestCase):
             self.assertNotIn('junit-jupiter.version', policy['fixed_properties'])
             self.assertNotIn('junit-platform-launcher.version', policy['fixed_properties'])
 
+    def test_jdk21_redisson_remains_on_compatible_api_family(self):
+        repository = pathlib.Path(__file__).parents[3]
+        raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
+        jdk21 = checker.resolve_policy(raw, 'feature/3.0.x')
+        self.assertEqual(jdk21['fixed_properties'].get('redisson.version'), '3.52.0')
+        for branch in ('feature/1.0.x', 'feature/2.0.x'):
+            self.assertNotIn('redisson.version', checker.resolve_policy(raw, branch)['fixed_properties'])
+
     def test_non_maven_branch_is_explicitly_not_applicable(self):
         with tempfile.TemporaryDirectory() as directory:
             self.assertEqual(checker.runtime_config(pathlib.Path(directory))['project'], 'false')
