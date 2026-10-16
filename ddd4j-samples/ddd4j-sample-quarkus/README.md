@@ -119,7 +119,7 @@ ddd4j-sample-quarkus/
 
 - JDK 17+
 - Maven 3.6+
-- Quarkus 3.15.x（本示例默认 Quarkus BOM）
+- Quarkus 3.38.2（本示例默认 Quarkus BOM）
 
 ### 启动开发模式
 
@@ -455,7 +455,7 @@ public Response page(GoodsQuery query) {     // ← JAX-RS 直接绑定 Query �
 
 | 组件                      | 版本                          |
 |---------------------------|-------------------------------|
-| Quarkus Platform BOM      | 3.37.0                        |
+| Quarkus Platform BOM      | 3.38.2                        |
 | ddd4j                     | `${revision}`（与父工程一致） |
 | JDK                       | 17+                           |
 | Maven Surefire / Failsafe | 3.2.5                         |
