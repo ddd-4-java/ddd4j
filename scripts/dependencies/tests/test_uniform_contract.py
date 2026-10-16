@@ -165,6 +165,13 @@ class UniformContract(unittest.TestCase):
         for branch in ('feature/2.0.x', 'feature/3.0.x'):
             self.assertNotIn('caffeine.version', checker.resolve_policy(raw, branch)['fixed_properties'])
 
+    def test_jdk8_vertx_stack_keeps_java8_bytecode(self):
+        repository = pathlib.Path(__file__).parents[3]
+        raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
+        self.assertEqual(checker.resolve_policy(raw, 'feature/1.0.x')['fixed_properties'].get('vertx.version'), '4.5.35')
+        for branch in ('feature/2.0.x', 'feature/3.0.x'):
+            self.assertNotIn('vertx.version', checker.resolve_policy(raw, branch)['fixed_properties'])
+
     def test_jdk21_quarkus_uses_compatible_vertx4_artifacts(self):
         repository = pathlib.Path(__file__).parents[3]
         raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
