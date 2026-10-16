@@ -66,6 +66,7 @@
         "dozer-core.version": "6.5.2",
         "guice.version": "5.1.0",
         "hikaricp-jdk8.version": "4.0.3",
+        "hikaricp.version": "4.0.3",
         "h2.version": "2.2.224",
         "helidon.version": "1.4.19",
         "hibernate-validator.version": "6.2.6.Final",
