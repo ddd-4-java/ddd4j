@@ -1,27 +1,24 @@
-# 事件追加容量基线对比说明
+# 事件追加容量基线
 
-- 基线文件：`docs/performance/eventstore-append-baseline.json`（由 `ddd4j-core` 的 `EventStoreAppendCapacityBaselineIT` 以
-  `-Dtest=...` 显式运行产出）。
-- 测量环境：JDK 1.8.0_321 / Windows 11 x64 / 24 核，feature/1.0.x。
-- 方法学：手工 nanoTime 基线（非 JMH）——每指标预热 500 次 + 正式采样 2000 次，先整轮预热一轮并丢弃以消除 JIT 次序偏差。用于
-  **版本间回归对比**，不用于绝对值宣称。
+三条发布线共用 `ddd4j-core` 的 `EventStoreAppendCapacityBaselineIT`。该测试显式运行，不参与默认构建。它先对每个指标预热 500 次，再采集 2000 个样本，并将本机结果写入 `ddd4j-core/target/three-line-parity/capacity/eventstore-append-baseline.json`。`target` 下的报告属于当前工作树的运行证据，不作为三线共用产品文档提交。
 
-## 指标口径
+运行时使用对应发布线的 JDK，并传入准确的分支标识：
 
-| 指标                                       | 含义                                                               |
-|--------------------------------------------|--------------------------------------------------------------------|
-| `eventstore.append.single.existing-stream` | 直连 `EventStore.append`（已建流，期望版本 1 → 2），能力未启用路径 |
-| `eventstore.append.batch.10`               | 批量 10 事件追加的单事件摊销                                       |
-| `repository.append.enabled-path`           | 经 `DefaultEventSourcingRepository#update` 的追加（能力启用路径）  |
+```bash
+./mvnw -B -ntp -pl ddd4j-core -am \
+  -Dtest=EventStoreAppendCapacityBaselineIT \
+  -Dddd4j.baseline.branch=feature/1.0.x \
+  -Dsurefire.failIfNoSpecifiedTests=false test
+```
 
-## 与启用前的对比
+在 `feature/2.0.x`、`feature/3.0.x` 上分别把 `ddd4j.baseline.branch` 改为对应值。测试拒绝缺失或无效的标识，报告同时记录 Java 版本、供应商、操作系统和测量时间。
 
-直连 `EventStore.append` 均值 1021.3 ns/op，经 `DefaultEventSourcingRepository` 为 1866.8 ns/op：能力启用路径每次追加多承担约
-**+82.8%（绝对值 ≈ +846 ns）**，来源为版本跟踪 Map 读写、`pullDomainEvents` 未提交事件解耦与 `AggregateRootId`
-适配——常量级差异，不随事件流长度增长；换来的是乐观并发冲突拒绝与重放重建语义。后续版本以本文件为基线对比，`overheadPercent`
-显著漂移需回归排查。
+| 指标 | 含义 |
+| --- | --- |
+| `eventstore.append.single.existing-stream` | 直连内存 `EventStore.append`，向已建流追加一个事件 |
+| `eventstore.append.batch.10` | 批量追加十个事件的单事件摊销耗时 |
+| `repository.append.enabled-path` | 经 `DefaultEventSourcingRepository#update` 的追加路径 |
 
-## 劣化阈值校准（首版）
+这是手工 `System.nanoTime` 基线，不是 JMH 或吞吐测试。`overheadPercent` 只比较同次运行内的两条路径，不能证明复杂度、长期稳定性或跨 JDK 性能优劣。显著漂移应在同一机器、JDK、负载及构建条件下复测并分析。首版使用「超过同环境基线十倍时排查」作为告警线索，不把一次测量当成验收门槛。
 
-- 与基线 **同数量级**（≤10×基线）：正常波动，记录即可；
-- 超过 **10 倍劣化**：告警并回归排查（追加路径出现非预期 IO/锁竞争/分配）。
+历史参考：早期 `feature/1.0.x` 在 JDK 1.8.0_321、Windows 11 x64、24 核环境中记录过直连均值 1021.3 ns/op、仓储路径均值 1866.8 ns/op（约 +82.8%）。这些数字仅保留来源背景，不代表当前三线结果；当前结果以各线本次生成的 JSON 和测试日志为准。
