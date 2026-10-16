@@ -91,6 +91,6 @@ python3 scripts/test_weekly_dependency_versions.py -q
 python3 scripts/check_weekly_dependency_versions.py \
   --pom ddd4j-dependencies/pom.xml \
   --policy config/dependencies/weekly-update-policy.json \
-  --line 2.0.x \
+  --line 1.0.x \
   --output target/dependency-audit/version-report.json
 ```
