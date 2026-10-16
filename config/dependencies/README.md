@@ -14,6 +14,7 @@
 - 三线将 Commons Codec `1.23.0`、Commons Collections `3.2.2`、Commons IO `2.22.0` 固定在当前可用的常规发行版。Versions 插件按数值排序时会误选 2003–2004 年的日期版，造成缺类和 JUnit 3.8.1 传递依赖；这三项仍进入每周漏洞扫描。签名工具已直接处理 null/空 Map，不再依赖旧 Collections 类的偶然传递引入。
 - 3.0.x 将 BOM 中显式声明的 `io.vertx:vertx-core`、`vertx-junit5`、`vertx-web` 固定为最新 4.5.x 版本 `4.5.35`；Quarkus 3.40.1 的构建增强调用 Vert.x 4 的内部类，直接提升到 Vert.x 5.2.1 会缺类。Quarkus 模块候选打包测试通过，固定构件继续漏洞扫描。
 - ClassGraph 固定为最新的 4.8.x 版本 `4.8.199`：6.0.0 的 class 69 要求 JDK 25；4.8.199 的关键类经 Maven Central JAR 核验为 class 52，三线均可使用。仍进入漏洞扫描。
+- 三线的 Jedis 固定为最新 7.x `7.5.3`：8.x 移除了样例测试使用的 `JedisPooled`，7.5.3 JAR 保留该类且其字节码为 class 52。1.0.x 的 Helidon 服务发现构件固定为最新 1.4.x `1.4.19`（class 52）；自动升级到 Helidon 3.2.21 的 class 61 会破坏 JDK 8 编译。固定项照常扫描漏洞。
 - `io.github.easy4j:httpconn`、`httputils`、`metrics-druid` 的源码分别位于 [httpconn](https://github.com/easy-4-java/httpconn)、[httputils](https://github.com/easy-4-java/httputils)、[metrics-druid](https://github.com/easy-4-java/metrics-druid)；各线使用对应的 `1.0.x.20260630-SNAPSHOT`、`2.0.x.20260630-SNAPSHOT`、`3.0.x.20260630-SNAPSHOT` 构件。
 - `component-matrix.csv`：当前三线的有效版本与检查状态。
 - `unverified-artifacts.csv`：尚未取得有效 JAR 检查结果的坐标；不等同于确认不存在。
