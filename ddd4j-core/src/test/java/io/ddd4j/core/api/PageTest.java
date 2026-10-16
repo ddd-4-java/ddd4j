@@ -145,7 +145,10 @@ class PageTest {
     @Test
     void emptyPages_shouldSupportIterationAndStreams() {
         for (Page<String> page : Arrays.asList(new Page<String>(), Page.<String>empty())) {
+            assertThat(page.iterator()).isNotNull();
             assertThat(page.iterator().hasNext()).isFalse();
+            assertThat(page.spliterator()).isNotNull();
+            assertThat(page.spliterator().estimateSize()).isZero();
             assertThat(java.util.stream.StreamSupport.stream(page.spliterator(), false).count()).isZero();
             assertThat(page.stream().count()).isZero();
             List<String> visited = new ArrayList<>();
