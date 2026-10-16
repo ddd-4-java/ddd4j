@@ -40,6 +40,24 @@ class PolicyTests(unittest.TestCase):
         self.assertFalse(any(arg.startswith('-Dexcludes') for arg in command))
 
 class ValidationTests(unittest.TestCase):
+    def test_inherited_alias_property_is_not_upgraded_as_an_independent_version(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            (root / 'pom.xml').write_text('''<project xmlns="http://maven.apache.org/POM/4.0.0">
+                <properties>
+                    <helidon-bom.version>3.2.18</helidon-bom.version>
+                    <helidon.version>${helidon-bom.version}</helidon.version>
+                </properties>
+                <dependencies><dependency><groupId>io.helidon</groupId><artifactId>server</artifactId>
+                    <version>${helidon.version}</version></dependency></dependencies>
+                </project>''')
+            policy = checker.resolve_policy({}, 'feature/2.0.x')
+            checker.protected_properties(root, policy)
+            self.assertIn('helidon.version', policy['exclude_properties'])
+            self.assertNotIn('helidon-bom.version', policy['exclude_properties'])
+            self.assertIn('-DexcludeProperties=helidon.version', checker.update_commands(policy)[0])
+
     def test_fixed_dependency_must_exist_and_take_effect(self):
         import tempfile
         with tempfile.TemporaryDirectory() as directory:

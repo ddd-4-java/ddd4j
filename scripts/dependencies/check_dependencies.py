@@ -131,16 +131,21 @@ def scan_command(policy, output, root=Path('project'), branch=''):
 
 
 def protected_properties(root, policy):
-    """把属性通配符展开成 Versions 插件接受的精确属性名。"""
+    """展开属性排除规则，并保护引用其他版本属性的派生别名。"""
     names = set()
     shared = set()
+    aliases = set()
     for pom in root.rglob('pom.xml'):
         if 'target' in pom.parts or '.git' in pom.parts:
             continue
         tree = ET.parse(pom)
         ns = {'m': tree.getroot().tag.split('}')[0][1:]}
         for props in tree.findall('.//m:properties', ns):
-            names.update(child.tag.split('}')[-1] for child in props)
+            for child in props:
+                name = child.tag.split('}')[-1]
+                names.add(name)
+                if re.fullmatch(r'\$\{[\w.-]+\}', (child.text or '').strip()):
+                    aliases.add(name)
         for dep in tree.findall('.//m:dependency', ns) + tree.findall('.//m:parent', ns):
             coordinate = dep.findtext('m:groupId', '', ns) + ':' + dep.findtext('m:artifactId', '', ns)
             if coordinate not in policy['fixed_dependencies'] and any(fnmatch.fnmatchcase(coordinate, pattern) for pattern in policy['exclude']):
@@ -148,7 +153,7 @@ def protected_properties(root, policy):
     missing = set(policy['fixed_properties']) - names
     if missing:
         raise ValueError('固定属性在分支源码中不存在: ' + ','.join(sorted(missing)))
-    policy['exclude_properties'] = sorted(shared | {name for name in names if any(
+    policy['exclude_properties'] = sorted(shared | aliases | {name for name in names if any(
         fnmatch.fnmatchcase(name, pattern) for pattern in policy['exclude_properties'])})
 
 
