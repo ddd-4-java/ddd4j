@@ -17,10 +17,6 @@
     </description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
-    <properties>
-        <jetty.version>${javalin-jetty.version}</jetty.version>
-    </properties>
-
     <dependencies>
         <!-- ddd4j 核心：AggregateRoot / Repository / DomainEvent / Page / Query / R / RepositoryRegistry -->
         <dependency>
