@@ -8,9 +8,10 @@
 - 第三方库版本不从 DDD4J 分支号推导；只有 `dependency_versions` 中显式配置的坐标才校验指定版本（字符串表示三线共享版本，JDK 键表示明确的平台版本）。EasyExcel 五个发布模块统一固定为正式版 `5.0.1`。构件解析、JAR 字节码、组件覆盖和漏洞扫描门禁继续执行。
 - `version-evidence.json`：部分兼容发行版的发布 JAR 字节码证据。
 - 每周升级策略针对 3.0.x 的 Dropwizard 固定 `hibernate-validator.version=8.0.6.Final`、`jersey.version=3.1.12`、`logback.version=1.5.38`：当前 Dropwizard 5.0.2 的真实启动测试依赖 Validator 8、Jersey 3 和 Logback 1.5 的内部 API；升级到 9、4、1.6 分别导致缺类或缺字段。其余未固定依赖仍寻找最新稳定版；固定项照常进入漏洞扫描，候选仍须通过构建与测试。
-- 1.0.x 的 JUnit Jupiter 固定为 `5.14.4`、Platform Launcher 固定为 `1.14.4`。自动升级到 JUnit 6.1.3 会引入 class 61，超出 JDK 8 的 class 52；上述固定构件的关键类经 Maven Central JAR 验证仍为 class 52。固定版本照常进入漏洞扫描。
+- 1.0.x 的 JUnit Jupiter 固定为 `5.14.4`、Platform Launcher 固定为 `1.14.4`，Mockito 固定为最新的 4.x 版本 `4.11.0`，Logback 固定为与 SLF4J 1.7 兼容的 `1.2.13`。自动升级到 JUnit 6.1.3 会引入 class 61，超出 JDK 8 的 class 52；JUnit 和 Mockito 固定构件的关键类经 Maven Central JAR 验证仍为 class 52；Mockito 5.x 的 class 55 超出 JDK 8；Logback 1.6 不提供 SLF4J 1.7 的 MDC 绑定，导致 Core 的追踪上下文测试失败。固定版本照常进入漏洞扫描。
 - 3.0.x 的 Micronaut 固定在平台 `4.10.21`、Core `4.10.26`，并排除 `io.micronaut*:*` 的自动升级。Micronaut 5.2.x 的构件含 class 69（JDK 25），无法由本线 JDK 21 编译；Micronaut 4 系列的 CQRS 模块容器集成测试已通过。固定与排除构件仍进入每周漏洞扫描。
 - 3.0.x 的 Redisson 固定在 `3.52.0`（当前 3.x 最新版）：4.8.0 移除了缓存模块使用的 `RScript.ReturnType.STATUS/INTEGER`，缓存模块 48 项本地测试通过（4 项 Redis 容器测试跳过）。该固定项仍进入漏洞扫描。
+- 三线将 Commons Codec `1.23.0`、Commons Collections `3.2.2`、Commons IO `2.22.0` 固定在当前可用的常规发行版。Versions 插件按数值排序时会误选 2003–2004 年的日期版，造成缺类和 JUnit 3.8.1 传递依赖；这三项仍进入每周漏洞扫描。签名工具已直接处理 null/空 Map，不再依赖旧 Collections 类的偶然传递引入。
 - `io.github.easy4j:httpconn`、`httputils`、`metrics-druid` 的源码分别位于 [httpconn](https://github.com/easy-4-java/httpconn)、[httputils](https://github.com/easy-4-java/httputils)、[metrics-druid](https://github.com/easy-4-java/metrics-druid)；各线使用对应的 `1.0.x.20260630-SNAPSHOT`、`2.0.x.20260630-SNAPSHOT`、`3.0.x.20260630-SNAPSHOT` 构件。
 - `component-matrix.csv`：当前三线的有效版本与检查状态。
 - `unverified-artifacts.csv`：尚未取得有效 JAR 检查结果的坐标；不等同于确认不存在。
