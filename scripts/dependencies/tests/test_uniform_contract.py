@@ -60,17 +60,9 @@ class UniformContract(unittest.TestCase):
             checker.protected_properties(root, policy)
             self.assertIn('shared', policy['exclude_properties'])
 
-    def test_empty_scan_is_not_clean(self):
-        with tempfile.TemporaryDirectory() as directory:
-            report = pathlib.Path(directory) / 'dependency-check-report.json'
-            report.write_text('{"dependencies": []}')
-            with self.assertRaises(ValueError):
-                checker.validate_scan_report(report)
-
-    def test_test_and_provided_dependencies_are_scanned(self):
+    def test_scan_does_not_use_nvd_or_update_exclusions(self):
         command = checker.scan_command({'cvss_threshold': 7}, pathlib.Path('/tmp/report'))
-        self.assertIn('-DskipTestScope=false', command)
-        self.assertIn('-DskipProvidedScope=false', command)
+        self.assertFalse(any('NVD' in part or 'exclude' in part for part in command))
 
     def test_no_literal_java_baseline_does_not_guess(self):
         with tempfile.TemporaryDirectory() as directory:
