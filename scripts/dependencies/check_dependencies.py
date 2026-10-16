@@ -11,7 +11,7 @@ import subprocess
 import xml.etree.ElementTree as ET
 
 VERSIONS = 'org.codehaus.mojo:versions-maven-plugin:2.23.0:'
-CHECK = 'scripts/dependencies/scan_vulnerabilities.py'
+CHECK = str(Path(__file__).resolve().parent / 'scan_vulnerabilities.py')
 KEYS = {'exclude', 'exclude_properties', 'fixed_properties', 'fixed_dependencies', 'cvss_threshold', 'branches'}
 INTERNAL_PROPERTIES = {'revision', 'changelist', 'sha1', 'java.version', 'maven.version',
                        'maven.compiler.source', 'maven.compiler.target', 'maven.compiler.release'}
@@ -126,7 +126,7 @@ def update_commands(policy):
 
 def scan_command(policy, output, root=Path('project'), branch=''):
     """扫描源码 POM 和全部管理版本；升级排除规则不得成为漏洞抑制规则。"""
-    return ['python3', 'controller/' + CHECK, '--root', str(root), '--output', str(output),
+    return ['python3', CHECK, '--root', str(root), '--output', str(output),
             '--line', branch, '--threshold', str(policy['cvss_threshold'])]
 
 

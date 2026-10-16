@@ -17,7 +17,7 @@ def vulnerability_score(row):
     for source in (row.get('CVSS') or {}).values():
         if isinstance(source, dict):
             scores.extend(value for key, value in source.items()
-                          if key.endswith('Score') and isinstance(value, (int, float)))
+                          if key.endswith('Score') and isinstance(value, (int, float)) and value > 0)
     if scores:
         return max(scores)
     return {'CRITICAL': 9.0, 'HIGH': 7.0, 'MEDIUM': 4.0, 'LOW': 0.1}.get(row.get('Severity'), 10.0)
