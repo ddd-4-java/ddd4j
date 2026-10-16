@@ -153,6 +153,12 @@ class UniformContract(unittest.TestCase):
         self.assertEqual(checker.resolve_policy(raw, 'feature/2.0.x')['fixed_properties'].get('logback.version'),
                          '1.5.38')
 
+    def test_jdk17_mybatis_stays_on_spring6_line(self):
+        repository = pathlib.Path(__file__).parents[3]
+        raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
+        fixed = checker.resolve_policy(raw, 'feature/2.0.x')['fixed_properties']
+        self.assertEqual(fixed.get('mybatis-spring.version'), '3.0.5')
+
     def test_jdk8_javalin_remains_on_java8_bytecode(self):
         repository = pathlib.Path(__file__).parents[3]
         raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())

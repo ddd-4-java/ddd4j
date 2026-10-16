@@ -110,6 +110,7 @@
         "hibernate-validator.version": "8.0.6.Final",
         "jersey.version": "3.1.12",
         "logback.version": "1.5.38",
+        "mybatis-spring.version": "3.0.5",
         "pulsar.version": "4.2.2",
         "redisson.version": "3.52.0",
         "testcontainers-bom.version": "1.21.4"
