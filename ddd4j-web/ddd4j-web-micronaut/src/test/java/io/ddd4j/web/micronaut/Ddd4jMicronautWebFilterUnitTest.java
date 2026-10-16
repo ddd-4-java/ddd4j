@@ -19,6 +19,7 @@ import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
 import io.ddd4j.web.core.auth.PathWebAccessPolicy;
 import io.ddd4j.web.core.context.ClientIpResolver;
 import io.ddd4j.web.core.context.WebRequestContextFactory;
+import io.ddd4j.web.core.context.WebHeaders;
 import io.ddd4j.web.core.context.WebRequestLifecycle;
 import io.micronaut.core.propagation.MutablePropagatedContext;
 import io.micronaut.http.HttpRequest;
@@ -34,6 +35,7 @@ import java.util.Locale;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -54,7 +56,7 @@ class Ddd4jMicronautWebFilterUnitTest {
     private WebRequestLifecycle newLifecycle() {
         return new WebRequestLifecycle(
                 new BearerSubjectAuthenticator(),
-                new PathWebAccessPolicy(java.util.List.of(), io.ddd4j.web.core.auth.AuthenticationMode.REQUIRED));
+                new PathWebAccessPolicy(java.util.List.of("/test"), io.ddd4j.web.core.auth.AuthenticationMode.REQUIRED));
     }
 
     @Test
@@ -79,7 +81,7 @@ class Ddd4jMicronautWebFilterUnitTest {
     }
 
     @Test
-    void filterCallsProceed() {
+    void publicPathProceedsThroughMicronautFourContinuation() {
         Ddd4jMicronautWebFilter filter = new Ddd4jMicronautWebFilter(
                 newContextFactory(), newLifecycle(), null);
 
@@ -100,11 +102,10 @@ class Ddd4jMicronautWebFilterUnitTest {
 
         MutablePropagatedContext propagated = mock(MutablePropagatedContext.class);
 
-        try {
-            Publisher<MutableHttpResponse<?>> result = filter.filter(request, continuation, propagated);
-            assertThat(result).isNotNull();
-        } catch (io.ddd4j.web.core.error.WebStatusException expected) {
-            // 无 Authorization 头时 lifecycle 拒绝
-        }
+        Publisher<MutableHttpResponse<?>> result = filter.filter(request, continuation, propagated);
+
+        assertThat(Flux.from(result).blockFirst()).isSameAs(response);
+        verify(continuation).proceed();
+        verify(response).header(WebHeaders.REQUEST_ID, REQUEST_ID);
     }
 }
