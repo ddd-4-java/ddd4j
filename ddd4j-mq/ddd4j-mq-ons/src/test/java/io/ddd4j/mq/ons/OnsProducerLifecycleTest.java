@@ -15,6 +15,7 @@ import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.ArgumentMatchers.any;
@@ -24,6 +25,43 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 class OnsProducerLifecycleTest {
+
+    @Test
+    void failedOwnedProducerStartShutsDownCreatedProducer() {
+        Producer nativeProducer = mock(Producer.class);
+        IllegalStateException startupFailure = new IllegalStateException("startup failed");
+        doThrow(startupFailure).when(nativeProducer).start();
+        OnsProperties properties = new OnsProperties() {
+            @Override
+            public Properties sessionProperties(String groupName) {
+                return new Properties();
+            }
+        };
+        OnsMQClient client = new OnsMQClient(properties) {
+            @Override
+            Producer createProducer(Properties sessionProperties) {
+                return nativeProducer;
+            }
+        };
+
+        IllegalStateException failure = assertThrows(IllegalStateException.class,
+                () -> client.initProducer(new MQProperties()));
+        assertSame(startupFailure, failure.getCause());
+        verify(nativeProducer, times(1)).shutdown();
+        client.close();
+        verify(nativeProducer, times(1)).shutdown();
+    }
+
+    @Test
+    void failedBorrowedProducerStartDoesNotShutDownProducer() {
+        Producer nativeProducer = mock(Producer.class);
+        doThrow(new IllegalStateException("startup failed")).when(nativeProducer).start();
+        OnsMQClient client = new OnsMQClient(nativeProducer, new OnsProperties());
+
+        assertThrows(IllegalStateException.class, () -> client.initProducer(new MQProperties()));
+        client.close();
+        verify(nativeProducer, never()).shutdown();
+    }
 
     @Test
     void failedConsumerSubscriptionShutsDownCreatedConsumer() {
