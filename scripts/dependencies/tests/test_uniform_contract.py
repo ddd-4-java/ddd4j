@@ -127,6 +127,16 @@ class UniformContract(unittest.TestCase):
             policy = checker.resolve_policy(raw, branch)
             self.assertEqual({key: policy['fixed_properties'].get(key) for key in expected}, expected)
 
+    def test_jdk21_pulsar_client_uses_pinned_property(self):
+        repository = pathlib.Path(__file__).parents[3]
+        raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
+        policy = checker.resolve_policy(raw, 'feature/3.0.x')
+        pom = (repository / 'ddd4j-dependencies/pom.xml').read_text()
+        self.assertEqual(policy['fixed_properties']['pulsar.version'], '4.2.2')
+        client = checker.re.search(r'<artifactId>pulsar-client</artifactId>\s*<version>([^<]+)</version>', pom)
+        self.assertIsNotNone(client)
+        self.assertEqual(client.group(1), '${pulsar.version}')
+
     def test_classgraph_stays_on_supported_java_bytecode(self):
         repository = pathlib.Path(__file__).parents[3]
         raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
