@@ -7,12 +7,13 @@
   缩小检查范围。
 - 第三方库版本不从 DDD4J 分支号推导；只有 `dependency_versions` 中显式配置的坐标才校验指定版本（字符串表示三线共享版本，JDK 键表示明确的平台版本）。EasyExcel 五个发布模块统一固定为正式版 `5.0.1`。构件解析、JAR 字节码、组件覆盖和漏洞扫描门禁继续执行。
 - `version-evidence.json`：部分兼容发行版的发布 JAR 字节码证据。
+- `io.github.easy4j:httpconn`、`httputils`、`metrics-druid` 的源码分别位于 [httpconn](https://github.com/easy-4-java/httpconn)、[httputils](https://github.com/easy-4-java/httputils)、[metrics-druid](https://github.com/easy-4-java/metrics-druid)；各线使用对应的 `1.0.x.20260630-SNAPSHOT`、`2.0.x.20260630-SNAPSHOT`、`3.0.x.20260630-SNAPSHOT` 构件。
 - `component-matrix.csv`：历史清单快照，用于比较；其中状态可能已过期。当前三线有效版本与检查状态以本次严格检查输出的 `components.csv` 和 `result.json` 为准。
 - SOAP 工具库实际制品为 `io.github.easy4j:soap-utils`；旧 BOM 中的 `soaputils` 是错误坐标。三线分别使用 1.0.x、2.0.x、3.0.x 构件，并由本线 JDK 验证字节码和单元测试。
 - 用户确认 `io.github.easy4j:disruptor-biz` 旧坐标归并到 `io.github.easy4j:disruptor-extension`。JDK 17/21 BOM 只管理各自版本的实际扩展构件；JDK 8 BOM 原本未声明 Easy4J 的这两个坐标，不因此新增依赖。历史组件矩阵仍保留旧快照，当前状态以严格依赖检查为准。
 - PF4J 旧坐标 `io.github.easy4j:pf4j3-extension` 已并入上游 `pf4j-extension` 项目；JDK 17/21 的有效构件分别是 `pf4j-extension-core`、`pf4j-extension-spring`、`pf4j-extension-update`，按实际能力选择。聚合 `pf4j-extension` 是 POM 而非 JAR。JDK 8 线当前未声明这些组件；此坐标迁移不改变其第三方依赖。
 - Spring Security 旧坐标 `io.github.easy4j:spring-security-extension2` 的类已并入上游 `spring-security-extension`；JDK 17/21 BOM 管理本线的实际构件，JDK 8 线不新增该依赖。三线的 Spring Security 版本和其他第三方依赖仍各自独立。
-- `io.github.easy4j:shiro-biz-sdk` 的源码归属是 `shiro-extension`；上游将原 Shiro Biz 实现拆分为 `shiro-extension-core` 与 `shiro-extension-spring`。JDK 17/21 BOM 已管理本线的两个实际构件，旧坐标按两模块映射；JDK 8 线不新增。另有 `com.github.redacted-legacy-family:shiro-biz` 历史依赖，仍按其原坐标独立管理。
+- `io.github.easy4j:shiro-biz-sdk` 的源码归属是 `shiro-extension`；上游将原 Shiro Biz 实现拆分为 `shiro-extension-core` 与 `shiro-extension-spring`。JDK 17/21 BOM 已管理本线的两个实际构件，旧坐标按两模块映射；JDK 8 线不新增。
 - `io.github.easy4j:security-guard-sdk` 的上游 2.0.x/3.0.x 均无生产源码，目前只是规划中的 SDK；ddd4j 没有模块直接使用。BOM 暂不管理空构件，策略保留历史坐标并明确排除原因；这不表示安全防护能力已实现。
 - `unverified-artifacts.csv`：尚未取得有效 JAR 检查结果的坐标；不等同于确认不存在。
 - `validation-result.json`：严格门禁的原始结果；非零错误不能作为已完成处理。
@@ -51,7 +52,7 @@ python3 -m unittest discover -s ddd4j/scripts -p test_dependency_alignment.py -v
 依赖属性固定为三个分区：`Global Properties`、`Third-Party Dependencies`、
 `Maven Dependencies`。每段按属性名进行大小写不敏感的自然字母排序。
 `io.github.easy4j` 组件的版本属性不保留 `easy4j-` 前缀。发生名称冲突时，
-删除重复的 `com.github.redacted-legacy-family` 旧坐标和旧版本属性，只保留当前 easy4j 组件。
+删除同名的历史旧坐标和旧版本属性，只保留当前 `io.github.easy4j` 组件。
 
 检查与重新格式化：
 
