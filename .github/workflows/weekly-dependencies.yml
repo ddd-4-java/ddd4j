@@ -29,7 +29,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: weekly-dependencies-${{ github.ref }}
+  group: weekly-dependencies-${{ github.ref }}-${{ inputs.target_branch || github.event_name }}
   cancel-in-progress: false
 
 jobs:
