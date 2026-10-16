@@ -16,11 +16,63 @@ import java.util.function.Consumer;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 class OnsProducerLifecycleTest {
+
+    @Test
+    void failedConsumerSubscriptionShutsDownCreatedConsumer() {
+        com.aliyun.openservices.ons.api.Consumer nativeConsumer = mock(com.aliyun.openservices.ons.api.Consumer.class);
+        doThrow(new IllegalStateException("subscription failed")).when(nativeConsumer)
+                .subscribe(anyString(), anyString(), any());
+        OnsProperties properties = new OnsProperties() {
+            @Override
+            public Properties sessionProperties(String groupName) {
+                return new Properties();
+            }
+        };
+        OnsMQClient client = new OnsMQClient(properties) {
+            @Override
+            com.aliyun.openservices.ons.api.Consumer createConsumer(Properties sessionProperties) {
+                return nativeConsumer;
+            }
+        };
+        MQListener listener = MQListener.builder().group("group").topic("topic").tags("*").build();
+
+        assertThrows(IllegalStateException.class, () -> client.initConsumer(listener, new MQProperties()));
+        verify(nativeConsumer, times(1)).shutdown();
+        client.close();
+        verify(nativeConsumer, times(1)).shutdown();
+    }
+
+    @Test
+    void failedConsumerStartShutsDownCreatedConsumer() {
+        com.aliyun.openservices.ons.api.Consumer nativeConsumer = mock(com.aliyun.openservices.ons.api.Consumer.class);
+        doThrow(new IllegalStateException("startup failed")).when(nativeConsumer).start();
+        OnsProperties properties = new OnsProperties() {
+            @Override
+            public Properties sessionProperties(String groupName) {
+                return new Properties();
+            }
+        };
+        OnsMQClient client = new OnsMQClient(properties) {
+            @Override
+            com.aliyun.openservices.ons.api.Consumer createConsumer(Properties sessionProperties) {
+                return nativeConsumer;
+            }
+        };
+        MQListener listener = MQListener.builder().group("group").topic("topic").tags("*").build();
+
+        assertThrows(IllegalStateException.class, () -> client.initConsumer(listener, new MQProperties()));
+        verify(nativeConsumer, times(1)).shutdown();
+        client.close();
+        verify(nativeConsumer, times(1)).shutdown();
+    }
 
     @Test
     void repeatedInitializationStartsInjectedProducerOnce() {
