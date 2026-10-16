@@ -14,6 +14,8 @@
  */
 package io.ddd4j.sample.dropwizard.cqrs.command;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.core.cqrs.command.Command;
 import lombok.Value;
 
@@ -29,6 +31,22 @@ public class CreateOrderCommand implements Command {
     String orderNo;
     String buyerId;
     String buyerName;
+
+    /**
+     * 创建订单命令。
+     *
+     * @param orderNo 订单编号
+     * @param buyerId 买家 ID
+     * @param buyerName 买家名称
+     */
+    @JsonCreator
+    public CreateOrderCommand(@JsonProperty("orderNo") String orderNo,
+                              @JsonProperty("buyerId") String buyerId,
+                              @JsonProperty("buyerName") String buyerName) {
+        this.orderNo = orderNo;
+        this.buyerId = buyerId;
+        this.buyerName = buyerName;
+    }
 
     public String orderNo() {
         return orderNo;
