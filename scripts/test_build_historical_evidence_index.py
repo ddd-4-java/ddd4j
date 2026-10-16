@@ -17,6 +17,19 @@ class HistoricalEvidenceIndexTest(unittest.TestCase):
     def test_dated_ecosystem_audit_is_in_index_scope(self):
         self.assertIn("docs/ECOSYSTEM-ARCHITECTURE.md", MODULE.SOURCE_DIRS)
 
+    def test_dated_release_and_audit_documents_are_in_index_scope(self):
+        for path in (
+            "docs/RELEASE-NOTES-3.0.x-2026-09.md",
+            "docs/architecture/cloud-agents-migration-evidence.md",
+            "docs/architecture/cloud-exception-contract-audit.md",
+            "docs/architecture/cloud-tenant-context-contract-audit.md",
+            "docs/architecture/shiro-http-login-audit.md",
+            "docs/architecture/shiro-real-provider-audit.md",
+            "docs/migrations/truelicense4-framework-consumer-audit.md",
+        ):
+            with self.subTest(path=path):
+                self.assertIn(path, MODULE.SOURCE_DIRS)
+
     def test_active_plan_is_not_indexed_as_history(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

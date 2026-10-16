@@ -3,10 +3,11 @@
 历史报告保留在原所属发布线。本页只定位来源，不把历史结论作为本轮收敛的验证结果。
 
 三线保留的 `.superpowers/`、`docs/superpowers/`、fuin API 参考文档中的历史记录，
-以及 1.0.x 的定期生态架构分析，
+以及 1.0.x 的定期生态架构分析、Cloud/Shiro/TrueLicense 审计和 3.0.x 的 2026-09 发版说明，
 统一列在[逐文件历史证据索引](../../verification/three-line-parity/historical-evidence-index.json)。
 正在执行的[三线产品收敛计划](plans/2026-10-10-three-line-product-convergence.md)持续更新，不属于不可变历史证据，因此不收入该 JSON 索引；计划原文仍在三条分支保留。
 索引记录所属线、原路径、最后修改提交及时间、内容 SHA-256；各线原文仍在原分支。
+这些按时间和检出状态写成的审计、迁移证据与发版说明只保留在来源线；当前支持范围、依赖版本和验收状态须以本轮检查及现行产品文档为准。
 执行 `python3 scripts/build-historical-evidence-index.py --roots ROOT8 ROOT17 ROOT21
 --output verification/three-line-parity/historical-evidence-index.json --check`
 可核对索引是否随历史资料变化而更新。
