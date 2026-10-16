@@ -3256,18 +3256,21 @@
     },
     {
       "id": "SAMPLE-DROPWIZARD-CQRS-ORDER-VALUE",
-      "description": "Dropwizard CQRS 订单命令保留组件访问器、Bean getter、值相等、三线一致的 hashCode 与 toString",
+      "description": "Dropwizard CQRS 订单命令保留组件访问器、Bean getter、值相等、三线一致的 hashCode、toString 与 JSON 往返",
       "caseNames": {
         "1.0.x": [
           "commandKeepsBeanAndComponentAccessorsAndValueSemantics",
+          "commandKeepsJsonRoundTrip",
           "requestKeepsMutableBeanAndComponentAccessors"
         ],
         "2.0.x": [
           "commandKeepsBeanAndComponentAccessorsAndValueSemantics",
+          "commandKeepsJsonRoundTrip",
           "requestKeepsMutableBeanAndComponentAccessors"
         ],
         "3.0.x": [
           "commandKeepsBeanAndComponentAccessorsAndValueSemantics",
+          "commandKeepsJsonRoundTrip",
           "requestKeepsMutableBeanAndComponentAccessors"
         ]
       },
