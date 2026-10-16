@@ -12,6 +12,31 @@ spec.loader.exec_module(scanner)
 
 
 class ScannerTests(unittest.TestCase):
+    def test_maven4_pom_modules_are_not_treated_as_deployable_jars(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory) / 'project'
+            root.mkdir()
+            (root / 'pom.xml').write_text('<project xmlns="http://maven.apache.org/POM/4.1.0"><packaging>pom</packaging></project>')
+            bom = root / 'ddd4j-bom'
+            bom.mkdir()
+            (bom / 'pom.xml').write_text('<project xmlns="http://maven.apache.org/POM/4.1.0"><packaging>pom</packaging></project>')
+            module = root / 'core'
+            module.mkdir()
+            (module / 'pom.xml').write_text('<project xmlns="http://maven.apache.org/POM/4.1.0"><packaging>jar</packaging></project>')
+            output = Path(directory) / 'reports'
+            output.mkdir()
+
+            def execute(command, **kwargs):
+                target = module / 'target/weekly-deps.json'
+                target.parent.mkdir()
+                target.write_text(json.dumps({'bomFormat': 'CycloneDX', 'components': [
+                    {'group': 'example', 'name': 'resolved', 'version': '1',
+                     'purl': 'pkg:maven/example/resolved@1'}]}))
+
+            with patch.object(scanner.subprocess, 'run', side_effect=execute):
+                manifest = scanner.reactor_sbom(root, output)
+            self.assertEqual(len(json.loads(manifest.read_text())['components']), 1)
+
     def test_cvss_threshold_and_unknown_scores_fail_closed(self):
         self.assertEqual(scanner.vulnerability_score({'CVSS': {'nvd': {'V3Score': 8.1}}}), 8.1)
         self.assertEqual(scanner.vulnerability_score({'Severity': 'HIGH'}), 7.0)
