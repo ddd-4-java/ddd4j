@@ -11,7 +11,8 @@
     "commons-codec.version": "1.23.0",
     "commons-collections.version": "3.2.2",
     "commons-io.version": "2.22.0",
-    "easyexcel.version": "5.0.1"
+    "easyexcel.version": "5.0.1",
+    "jedis.version": "7.5.3"
   },
   "branches": {
     "backup/feature-1.0.x-github-before-codeup-alignment-20260831": {
@@ -60,7 +61,8 @@
         "vertx.version": "4.5.35"
       },
       "fixed_dependencies": {
-        "com.lmax:disruptor": "3.4.4"
+        "com.lmax:disruptor": "3.4.4",
+        "io.helidon.common:helidon-common-service-loader": "1.4.19"
       }
     },
     "feature/2.0.x": {
