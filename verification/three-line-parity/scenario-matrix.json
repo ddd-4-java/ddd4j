@@ -3875,6 +3875,50 @@
       }
     },
     {
+      "id": "WEB-MICRONAUT-FILTER-ENTRY",
+      "description": "三线 Micronaut 过滤器拒绝缺失的必需依赖，并通过各自版本的过滤链传递公开路径请求与响应头",
+      "caseNames": {
+        "1.0.x": [
+          "secondConstructorRejectsNullContextFactory",
+          "secondConstructorRejectsNullRequestLifecycle",
+          "secondConstructorAcceptsNullIdempotency",
+          "publicPathProceedsThroughMicronautThreeFilterChain"
+        ],
+        "2.0.x": [
+          "secondConstructorRejectsNullContextFactory",
+          "secondConstructorRejectsNullRequestLifecycle",
+          "secondConstructorAcceptsNullIdempotency",
+          "publicPathProceedsThroughMicronautFourContinuation"
+        ],
+        "3.0.x": [
+          "secondConstructorRejectsNullContextFactory",
+          "secondConstructorRejectsNullRequestLifecycle",
+          "secondConstructorAcceptsNullIdempotency",
+          "publicPathProceedsThroughMicronautFourContinuation"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautWebFilterUnitTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautWebFilterUnitTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautWebFilterUnitTest.java"
+          ]
+        }
+      }
+    },
+    {
       "id": "WEB-MICRONAUT-CONTEXT-LIFECYCLE",
       "description": "Micronaut 3 手动 ThreadLocal 与 Micronaut 4 PropagatedContext 的请求作用域创建、恢复和当前上下文契约",
       "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-micronaut-explicit-apis/report.json",
