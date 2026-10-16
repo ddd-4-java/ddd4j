@@ -58,6 +58,7 @@
         "dropwizard.version": "2.1.12",
         "dozer-core.version": "6.5.2",
         "h2.version": "2.2.224",
+        "helidon.version": "1.4.19",
         "hibernate-validator.version": "6.2.6.Final",
         "hibernate5.version": "5.6.15.Final",
         "javalin.version": "4.6.8",
@@ -82,7 +83,9 @@
       },
       "fixed_dependencies": {
         "com.lmax:disruptor": "3.4.4",
-        "io.helidon.common:helidon-common-service-loader": "1.4.19"
+        "io.helidon.common:helidon-common-service-loader": "1.4.19",
+        "io.helidon.microprofile.health:helidon-microprofile-health": "1.4.19",
+        "io.helidon.microprofile.server:helidon-microprofile-server": "1.4.19"
       }
     },
     "feature/2.0.x": {

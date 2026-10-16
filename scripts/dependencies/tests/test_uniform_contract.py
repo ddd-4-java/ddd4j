@@ -306,6 +306,19 @@ class UniformContract(unittest.TestCase):
         for branch in ('feature/2.0.x', 'feature/3.0.x'):
             self.assertNotIn(coordinate, checker.resolve_policy(raw, branch)['exclude'])
 
+    def test_jdk8_helidon_platform_keeps_java8_bytecode(self):
+        repository = pathlib.Path(__file__).parents[3]
+        raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
+        expected = {'io.helidon.microprofile.server:helidon-microprofile-server': '1.4.19',
+                    'io.helidon.microprofile.health:helidon-microprofile-health': '1.4.19'}
+        policy = checker.resolve_policy(raw, 'feature/1.0.x')
+        self.assertEqual({key: policy['fixed_dependencies'].get(key) for key in expected}, expected)
+        self.assertEqual(policy['fixed_properties'].get('helidon.version'), '1.4.19')
+        for branch in ('feature/2.0.x', 'feature/3.0.x'):
+            other = checker.resolve_policy(raw, branch)
+            self.assertTrue(expected.keys().isdisjoint(other['fixed_dependencies']))
+            self.assertNotIn('helidon.version', other['fixed_properties'])
+
 
     def test_jdk21_quarkus_uses_compatible_vertx4_artifacts(self):
         repository = pathlib.Path(__file__).parents[3]
