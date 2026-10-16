@@ -99,6 +99,9 @@
       }
     },
     "feature/2.0.x": {
+      "exclude": [
+        "io.micronaut*:*"
+      ],
       "fixed_properties": {
         "helidon-bom.version": "3.2.21",
         "helidon-jakarta-annotation.version": "2.0.0",
@@ -110,6 +113,8 @@
         "hibernate-validator.version": "8.0.6.Final",
         "jersey.version": "3.1.12",
         "logback.version": "1.5.38",
+        "micronaut.core.version": "4.10.26",
+        "micronaut.version": "4.10.21",
         "mybatis-spring.version": "3.0.5",
         "pulsar.version": "4.2.2",
         "redisson.version": "3.52.0",

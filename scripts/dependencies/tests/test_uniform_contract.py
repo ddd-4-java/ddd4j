@@ -85,10 +85,13 @@ class UniformContract(unittest.TestCase):
         self.assertEqual(jdk21['fixed_properties'].get('micronaut.version'), '4.10.21')
         self.assertEqual(jdk21['fixed_properties'].get('micronaut.core.version'), '4.10.26')
         self.assertIn('io.micronaut*:*', jdk21['exclude'])
-        for branch in ('feature/1.0.x', 'feature/2.0.x'):
-            policy = checker.resolve_policy(raw, branch)
-            self.assertNotIn('io.micronaut*:*', policy['exclude'])
-            self.assertNotIn('micronaut.version', policy['fixed_properties'])
+        jdk17 = checker.resolve_policy(raw, 'feature/2.0.x')
+        self.assertEqual(jdk17['fixed_properties'].get('micronaut.version'), '4.10.21')
+        self.assertEqual(jdk17['fixed_properties'].get('micronaut.core.version'), '4.10.26')
+        self.assertIn('io.micronaut*:*', jdk17['exclude'])
+        jdk8 = checker.resolve_policy(raw, 'feature/1.0.x')
+        self.assertNotIn('io.micronaut*:*', jdk8['exclude'])
+        self.assertNotIn('micronaut.version', jdk8['fixed_properties'])
 
     def test_jdk8_junit_family_remains_on_supported_java_line(self):
         repository = pathlib.Path(__file__).parents[3]
