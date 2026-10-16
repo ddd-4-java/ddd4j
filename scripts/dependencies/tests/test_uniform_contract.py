@@ -201,6 +201,30 @@ class UniformContract(unittest.TestCase):
             self.assertNotIn('org.eclipse.microprofile.config:microprofile-config-api',
                              checker.resolve_policy(raw, branch)['exclude'])
 
+    def test_jdk8_panache_keeps_javax_persistence_api(self):
+        repository = pathlib.Path(__file__).parents[3]
+        raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
+        coordinate = 'jakarta.persistence:jakarta.persistence-api'
+        self.assertIn(coordinate, checker.resolve_policy(raw, 'feature/1.0.x')['exclude'])
+        for branch in ('feature/2.0.x', 'feature/3.0.x'):
+            self.assertNotIn(coordinate, checker.resolve_policy(raw, branch)['exclude'])
+
+    def test_jdk8_hibernate_orm_keeps_javax_line(self):
+        repository = pathlib.Path(__file__).parents[3]
+        raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
+        self.assertEqual(checker.resolve_policy(raw, 'feature/1.0.x')['fixed_properties'].get('hibernate5.version'),
+                         '5.6.15.Final')
+        for branch in ('feature/2.0.x', 'feature/3.0.x'):
+            self.assertNotIn('hibernate5.version', checker.resolve_policy(raw, branch)['fixed_properties'])
+
+    def test_jdk8_h2_driver_keeps_java8_bytecode(self):
+        repository = pathlib.Path(__file__).parents[3]
+        raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
+        self.assertEqual(checker.resolve_policy(raw, 'feature/1.0.x')['fixed_properties'].get('h2.version'),
+                         '2.2.224')
+        for branch in ('feature/2.0.x', 'feature/3.0.x'):
+            self.assertNotIn('h2.version', checker.resolve_policy(raw, branch)['fixed_properties'])
+
     def test_jdk21_quarkus_uses_compatible_vertx4_artifacts(self):
         repository = pathlib.Path(__file__).parents[3]
         raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
