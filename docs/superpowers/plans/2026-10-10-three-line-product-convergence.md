@@ -859,3 +859,6 @@ effective POM 必须分别用对应线的 JDK/Wrapper 从该线 `ddd4j-dependenc
 **2026-10-16 T06 WebRequestContext JSON 契约收敛：** 三线共同往返测试先在 JDK 8 复现 `Cannot construct instance`，证实低线缺少 JSON 构造映射；保留既有八参兼容构造器，在九参构造器补 Jackson `@JsonCreator` 与各字段 `@JsonProperty`，并显式标注 API 版本访问器。测试在 JDK 8/17 使用本线 Jackson 2、JDK 21 使用本线 Jackson 3；三线相同请求字段与 API 版本还原结果通过，Web Core 全量测试分别 148/149/150 项、失败/错误/跳过均为 0。结构 inventory 的当前 OPEN 仍为 1267：测试仅有精确 Jackson import 平台映射，生产文件还含格式与文档差异，不能据行为测试宣称整个文件完全一致。结构检查器单测 37/37 通过；远端全量 CI 与 T06/T11 总验收仍待复验。
 
 **2026-10-16 T09/T10 活动计划与历史证据分界：** 历史索引的内容门禁在当前三线提交上复现 stale：旧索引把持续更新的本执行计划当作不可变历史记录，首次不一致即为 1.0.x 计划的 SHA-256。先加入失败测试，再在三线索引生成器精确排除本活动计划；所有原历史文件仍保留，JSON 索引由 243 项变为 240 项，三线原计划仍可从文档索引直达。重新生成同一 JSON 并运行 `--check-content`，240 项历史记录的三线内容校验通过。此修复仅消除错误的历史门禁阻塞，收敛 CI 的其余门禁仍按实际报告验收。
+
+
+**2026-10-16 T07 SQS 发布与关闭竞争修复：** 三线共同的 `SqsClientLifecycleTest` 在修复前稳定暴露“发送未完成而 `close()` 已返回”的失败。生产者发布期间持有共享生命周期读锁，关闭时持有写锁并等待正在执行的同步发送结束，关闭后旧 producer handle 继续拒绝发布；锁不改变各线 AWS SDK、JDK 或 Maven 依赖。JDK 8/17/21 的 SQS 模块测试各 8/8 通过，三线受影响 reactor `verify` 均通过；这是本地 mock/模块验证，不代替远端全量 Verify 或真实云 SQS 故障时序，T07/T11 继续 OPEN。
