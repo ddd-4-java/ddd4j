@@ -190,7 +190,7 @@ jobs:
           title: 'chore(deps): weekly dependency updates for ${{ matrix.branch }}'
           body: |
             使用目标分支的 dependency-policy.json：固定版本优先，排除项保留，其余更新到最新稳定版本。
-            候选 Maven install（启用单元测试）和非空 Trivy POM/BOM 扫描报告通过；不自动合并。
+            候选 Maven install（启用单元测试）和非空 Trivy reactor/管理 BOM 扫描报告通过；不自动合并。
             原依赖漏洞或构建错误仍保留失败状态。Enforcer 兼容性门禁未计入本次验证。
             报告：${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
       - name: Record branch SHA and outcome
