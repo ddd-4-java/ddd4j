@@ -20,7 +20,6 @@
 
     <properties>
         <shiro.version>${shiro-sample.version}</shiro.version>
-        <jetty.version>${javalin-jetty.version}</jetty.version>
     </properties>
 
     <dependencies>
