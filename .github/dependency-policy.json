@@ -87,6 +87,7 @@
         "redisson.version": "3.52.0",
         "shiro.version": "1.13.0",
         "slf4j-legacy.version": "1.7.36",
+        "snakeyaml-boot2.version": "1.33",
         "testcontainers-redis.version": "2.0.2",
         "vertx.version": "4.5.35"
       },
