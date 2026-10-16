@@ -65,6 +65,23 @@ class JdbiEventStoreTest {
     }
 
     @Test
+    void unknownPersistedEventTypeMustFailInsteadOfReturningMap() {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-unknown-type");
+        eventStore.append(ORDER_TYPE, orderId,
+                Collections.<DomainEvent<?>>singletonList(new OrderCreatedEvent("created")), 0);
+        jdbi.useHandle(handle -> handle.createUpdate("UPDATE " + EventStoreConstants.TABLE_NAME
+                        + " SET " + EventStoreConstants.COLUMN_EVENT_TYPE
+                        + " = :eventType WHERE " + EventStoreConstants.COLUMN_AGGREGATE_ID + " = :aggregateId")
+                .bind("eventType", "io.ddd4j.events.MissingForContractTest")
+                .bind("aggregateId", orderId.asString())
+                .execute());
+
+        IllegalStateException failure = assertThrows(IllegalStateException.class,
+                () -> eventStore.read(ORDER_TYPE, orderId));
+        assertEquals("Unknown event type: io.ddd4j.events.MissingForContractTest", failure.getMessage());
+    }
+
+    @Test
     void readBackAggregateIdsUseValueEquality() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-id-equality");
         eventStore.append(ORDER_TYPE, orderId,
