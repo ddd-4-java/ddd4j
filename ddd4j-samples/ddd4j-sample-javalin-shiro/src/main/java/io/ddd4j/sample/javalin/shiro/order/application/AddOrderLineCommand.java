@@ -14,6 +14,8 @@
  */
 package io.ddd4j.sample.javalin.shiro.order.application;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Value;
 
 import java.math.BigDecimal;
@@ -35,6 +37,28 @@ public class AddOrderLineCommand {
     String goodsName;
     int quantity;
     BigDecimal unitPrice;
+
+    /**
+     * 创建添加订单行命令。
+     *
+     * @param orderId 订单 ID
+     * @param goodsId 商品 ID
+     * @param goodsName 商品名称
+     * @param quantity 购买数量
+     * @param unitPrice 单价
+     */
+    @JsonCreator
+    public AddOrderLineCommand(@JsonProperty("orderId") String orderId,
+                               @JsonProperty("goodsId") String goodsId,
+                               @JsonProperty("goodsName") String goodsName,
+                               @JsonProperty("quantity") int quantity,
+                               @JsonProperty("unitPrice") BigDecimal unitPrice) {
+        this.orderId = orderId;
+        this.goodsId = goodsId;
+        this.goodsName = goodsName;
+        this.quantity = quantity;
+        this.unitPrice = unitPrice;
+    }
 
     public String orderId() {
         return orderId;
