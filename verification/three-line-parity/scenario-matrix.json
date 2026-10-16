@@ -3482,7 +3482,21 @@
     },
     {
       "id": "SAMPLE-JAVALIN-ORDER-COMMAND",
-      "description": "Javalin 订单创建与加行命令的 Bean/组件访问器、值语义及 JSON 往返",
+      "description": "Javalin 订单创建与加行命令的 Bean/组件访问器、三线一致的哈希值语义及 JSON 往返",
+      "caseNames": {
+        "1.0.x": [
+          "createOrder_shouldExposeBeanAndComponentAccessorsWithValueAndJsonContract",
+          "addLine_shouldExposeBeanAndComponentAccessorsWithValueAndJsonContract"
+        ],
+        "2.0.x": [
+          "createOrder_shouldExposeBeanAndComponentAccessorsWithValueAndJsonContract",
+          "addLine_shouldExposeBeanAndComponentAccessorsWithValueAndJsonContract"
+        ],
+        "3.0.x": [
+          "createOrder_shouldExposeBeanAndComponentAccessorsWithValueAndJsonContract",
+          "addLine_shouldExposeBeanAndComponentAccessorsWithValueAndJsonContract"
+        ]
+      },
       "lines": {
         "1.0.x": {
           "status": "supported",
