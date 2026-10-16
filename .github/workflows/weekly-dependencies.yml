@@ -162,7 +162,9 @@ jobs:
           spec = importlib.util.spec_from_file_location('checker', 'controller/scripts/dependencies/check_dependencies.py')
           checker = importlib.util.module_from_spec(spec)
           spec.loader.exec_module(checker)
-          checker.configure_settings(os.environ.get('MAVEN_SETTINGS_XML', ''), Path.home() / '.m2/settings.xml')
+          settings_path = Path.home() / '.m2/settings.xml'
+          checker.configure_settings(os.environ.get('MAVEN_SETTINGS_XML', ''), settings_path)
+          checker.ensure_central_fallback(settings_path)
           PY
       - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
