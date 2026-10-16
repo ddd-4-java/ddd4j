@@ -2,7 +2,8 @@
 
 历史报告保留在原所属发布线。本页只定位来源，不把历史结论作为本轮收敛的验证结果。
 
-三线保留的 `.superpowers/`、`docs/superpowers/` 与 fuin API 参考文档中的历史记录，
+三线保留的 `.superpowers/`、`docs/superpowers/`、fuin API 参考文档中的历史记录，
+以及 1.0.x 的定期生态架构分析，
 统一列在[逐文件历史证据索引](../../verification/three-line-parity/historical-evidence-index.json)。
 正在执行的[三线产品收敛计划](plans/2026-10-10-three-line-product-convergence.md)持续更新，不属于不可变历史证据，因此不收入该 JSON 索引；计划原文仍在三条分支保留。
 索引记录所属线、原路径、最后修改提交及时间、内容 SHA-256；各线原文仍在原分支。
@@ -14,6 +15,7 @@
 |---|---|---|---|
 | 2026-09-09 三线源码对等审计 | 1.0.x | `6bca6659fe0530427aff6673ec2c7b0b5caba778` 的 `docs/superpowers/reports/2026-09-09-three-line-source-parity-audit.md`；文件 SHA-256 `03a866aa382a8f9fc67a0e5e7035259b3d1e1626281882cf3427979580a7042a` | 历史记录；2.0.x、3.0.x 未复制该报告。当前差异以本轮 `target/three-line-parity/` 重新生成的报告为准。 |
 | 旧版 Ddd4j Boot 架构与模块关系 | 1.0.x | `fafcbbde0c1b955a09561275de4f2f3564263a00` 的 `docs/architecture/architecture.md`；文件 SHA-256 `ab825036a484b0606e4eb4fee2b5bdb831370aa3f5005918041fb9efe2158dcf` | 历史产品描述；其中 Java 17、Spring Boot 3.5、`ddd4j-cmpt` 与 `io.ddd4j.boot` 路径不代表当前三线架构。现行共同正文仍位于同一路径。 |
+| 2026-10-06 生态架构检出分析 | 1.0.x | `fafcbbde0c1b955a09561275de4f2f3564263a00` 的 `docs/ECOSYSTEM-ARCHITECTURE.md`；文件 SHA-256 `e38f3dcbe4f2703c7eb3d80e47f10c03b7a2aec8bdd0f6545e47cae6db040aa1` | 特定日期、特定本地检出与外部仓库版本的历史分析；不作为本轮三线支持矩阵或当前版本事实源。 |
 
 
 八篇 fuin API 模式参考文档的 `## 落地计划` 是按发布线保留的历史任务记录。以下摘要仅锁定这些段落；其余产品正文在三线逐字比对。

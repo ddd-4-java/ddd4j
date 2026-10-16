@@ -14,6 +14,9 @@ SPEC.loader.exec_module(MODULE)
 
 
 class HistoricalEvidenceIndexTest(unittest.TestCase):
+    def test_dated_ecosystem_audit_is_in_index_scope(self):
+        self.assertIn("docs/ECOSYSTEM-ARCHITECTURE.md", MODULE.SOURCE_DIRS)
+
     def test_active_plan_is_not_indexed_as_history(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

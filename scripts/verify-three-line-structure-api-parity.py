@@ -67,6 +67,8 @@ def inventory_category(path: str) -> str:
         return "production"
     if path.endswith(".java") and "/src/test/java/" in path:
         return "test"
+    if path == "docs/ECOSYSTEM-ARCHITECTURE.md":
+        return "historical-document"
     if path.endswith(".md") and (path.startswith(".superpowers/") or path.startswith("docs/superpowers/")):
         return "historical-document"
     if path.endswith(".md"):
