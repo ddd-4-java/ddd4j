@@ -31,6 +31,7 @@
 - 1.0.x 的 Hibernate ORM 固定为 `5.6.15.Final`（`hibernate5.version`）：该线的 JPA 事件存储依赖 `javax.persistence`，升级到 Hibernate 7.4.13.Final 后目标测试编译读取 class 61 失败。固定项仍扫描漏洞。
 - 1.0.x 的 `jakarta.persistence:jakarta.persistence-api` 排除自动升级：本线 Panache 实体使用 `javax.persistence`，模块显式依赖 2.2.3；升级到 3.2.0 后 `javax.persistence` 注解类缺失。排除项仍扫描漏洞。
 - 三线的 Redisson 固定在 `3.52.0`（当前 3.x 最新版）：4.8.0 移除了缓存模块使用的 `RScript.ReturnType.STATUS/INTEGER`，缓存模块 48 项本地测试通过（4 项 Redis 容器测试跳过）。该固定项仍进入漏洞扫描。
+- 三线将 RabbitMQ Java 客户端由 `5.32.0` 升至 `5.37.0`：旧 2.0.x 扫描在该坐标报告多条高危项，[RabbitMQ 安全公告](https://www.rabbitmq.com/security)列出 5.37.0 的修复；[官方客户端指南](https://www.rabbitmq.com/client-libraries/java-api-guide)确认 5.x 支持 JDK 8。三线各自在本线 JDK 下通过 RabbitMQ 适配模块目标测试（14 项中 9 项容器测试跳过）。此坐标没有列入固定/排除规则，后续仍按最新稳定版检查并进入漏洞扫描。
 - 三线将 Commons CLI `1.11.0`、Commons Codec `1.23.0`、Commons Collections `3.2.2`、Commons IO `2.22.0` 固定在当前可用的常规发行版。Versions 插件按数值排序时会误选 2003–2004 年的日期版，造成缺类和 JUnit 3.8.1 传递依赖；这四项仍进入每周漏洞扫描。签名工具已直接处理 null/空 Map，不再依赖旧 Collections 类的偶然传递引入。
 - 3.0.x 将 BOM 中显式声明的 `io.vertx:vertx-core`、`vertx-junit5`、`vertx-web` 固定为最新 4.5.x 版本 `4.5.35`；Quarkus 3.40.1 的构建增强调用 Vert.x 4 的内部类，直接提升到 Vert.x 5.2.1 会缺类。Quarkus 模块候选打包测试通过，固定构件继续漏洞扫描。
 - ClassGraph 固定为最新的 4.8.x 版本 `4.8.199`：6.0.0 的 class 69 要求 JDK 25；4.8.199 的关键类经 Maven Central JAR 核验为 class 52，三线均可使用。仍进入漏洞扫描。
