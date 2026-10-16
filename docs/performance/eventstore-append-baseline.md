@@ -1,6 +1,6 @@
 # 事件追加容量基线
 
-三条发布线共用 `ddd4j-core` 的 `EventStoreAppendCapacityBaselineIT`。该测试显式运行，不参与默认构建。它先预热，再对每个指标采集 2000 个样本，并将本机结果写入 `ddd4j-core/target/three-line-parity/capacity/eventstore-append-baseline.json`。`target` 下的报告属于当前工作树的运行证据，不作为三线共用产品文档提交。
+三条发布线共用 `ddd4j-core` 的 `EventStoreAppendCapacityBaselineIT`。该测试显式运行，不参与默认构建。它先对每个指标预热 500 次，再采集 2000 个样本，并将本机结果写入 `ddd4j-core/target/three-line-parity/capacity/eventstore-append-baseline.json`。`target` 下的报告属于当前工作树的运行证据，不作为三线共用产品文档提交。
 
 运行时使用对应发布线的 JDK，并传入准确的分支标识：
 
