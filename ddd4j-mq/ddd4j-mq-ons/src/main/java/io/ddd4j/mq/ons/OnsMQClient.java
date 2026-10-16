@@ -140,6 +140,10 @@ public class OnsMQClient implements MQClient {
 
     // ========================= 消费者 =========================
 
+    Producer createProducer(Properties sessionProperties) {
+        return ONSFactory.createProducer(sessionProperties);
+    }
+
     @Override
     public synchronized Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         if (closed) {
@@ -147,11 +151,22 @@ public class OnsMQClient implements MQClient {
         }
         try {
             boolean owned = Objects.isNull(producer);
-            Producer p = owned ? ONSFactory.createProducer(properties.sessionProperties(properties.getProducerId())) : producer;
+            Producer p = owned ? createProducer(properties.sessionProperties(properties.getProducerId())) : producer;
             if (!producerStarted) {
-                p.start();
-                if (owned) {
-                    lifecycle.register("ons-producer", p::shutdown);
+                try {
+                    p.start();
+                    if (owned) {
+                        lifecycle.register("ons-producer", p::shutdown);
+                    }
+                } catch (RuntimeException | Error exception) {
+                    if (owned) {
+                        try {
+                            p.shutdown();
+                        } catch (RuntimeException | Error shutdownFailure) {
+                            exception.addSuppressed(shutdownFailure);
+                        }
+                    }
+                    throw exception;
                 }
                 this.producer = p;
                 this.producerStarted = true;
