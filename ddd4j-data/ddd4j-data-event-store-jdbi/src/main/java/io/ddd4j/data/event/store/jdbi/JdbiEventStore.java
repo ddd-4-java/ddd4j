@@ -55,16 +55,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * <h3>表契约</h3>
  * <p>目标表 {@code DDD4J_EVENT_STORE} 与 -jpa/-r2dbc/-esdb 模块同构：
- * {@code aggregate_id} VARCHAR(255)、{@code aggregate_type} VARCHAR(255)（可空）、
+ * {@code aggregate_id} VARCHAR(255)、{@code aggregate_type} VARCHAR(255)（NOT NULL）、
  * {@code version} BIGINT、{@code position} BIGINT（UNIQUE）、
  * {@code event_type} VARCHAR(512)、{@code event_id} VARCHAR(64)、
  * {@code payload} TEXT（JSON 文本）、{@code timestamp} TIMESTAMP。
- * 主键 {@code (aggregate_id, version)}，{@code position} 唯一索引。
+ * 主键 {@code (aggregate_type, aggregate_id, version)}，{@code position} 唯一约束。
  * 表在首次操作时通过 {@code CREATE TABLE IF NOT EXISTS} 懒创建。
  *
  * <h3>乐观锁与 position 生成</h3>
  * <p>append 在事务内以 {@code SELECT COUNT(*)} 读取当前事件数
- * （即当前版本），与 {@code expectedVersion} 不一致即抛 {@link IllegalStateException}
+ * （即当前版本），与 {@code expectedVersion} 不一致即抛 {@link AggregateVersionConflictException}
  * 并回滚。全局 position 在事务内逐条以 {@code COALESCE(MAX(position), 0) + 1} 生成，
  * 与 JPA/R2DBC 侧策略一致。
  *
@@ -72,8 +72,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * 回退提交），并发的 append 事务可能读到相同的 {@code MAX(position)} 并各自生成
  * 重复的 position 值。{@code uk_position} 唯一约束作为兜底会抛
  * {@link java.sql.SQLException}/{@code ConstraintViolationException}，事务被强制回滚。
- * 调用方应捕获该异常并按指数退避重试整个 append 流程（保持 expectedVersion 不变）；
- * 若重试后版本号已变化则回到 {@link IllegalStateException} 乐观锁失败分支。
+ * {@link EventStoreRetry} 对 position 冲突按退避策略重试整个 append 流程；
+ * 若重试后版本号已变化则抛 {@link AggregateVersionConflictException}。
  * 高并发多实例场景建议改用数据库序列（如 PostgreSQL {@code nextval}）。
  *
  * <h3>payload 序列化</h3>
@@ -302,8 +302,14 @@ public class JdbiEventStore implements EventStore {
      * 确保表已创建（懒初始化，仅执行一次）。
      */
     private void ensureInitialized() {
-        if (initialized.compareAndSet(false, true)) {
-            jdbi.useHandle(handle -> handle.execute(CREATE_TABLE_SQL));
+        if (initialized.get()) {
+            return;
+        }
+        synchronized (initialized) {
+            if (!initialized.get()) {
+                jdbi.useHandle(handle -> handle.execute(CREATE_TABLE_SQL));
+                initialized.set(true);
+            }
         }
     }
 
