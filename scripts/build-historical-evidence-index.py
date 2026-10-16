@@ -12,7 +12,14 @@ from pathlib import Path
 
 LINES = ("1.0.x", "2.0.x", "3.0.x")
 SOURCE_DIRS = (".superpowers", "docs/superpowers", "docs/reference/fuin-api-patterns",
-               "docs/ECOSYSTEM-ARCHITECTURE.md")
+               "docs/ECOSYSTEM-ARCHITECTURE.md",
+               "docs/RELEASE-NOTES-3.0.x-2026-09.md",
+               "docs/architecture/cloud-agents-migration-evidence.md",
+               "docs/architecture/cloud-exception-contract-audit.md",
+               "docs/architecture/cloud-tenant-context-contract-audit.md",
+               "docs/architecture/shiro-http-login-audit.md",
+               "docs/architecture/shiro-real-provider-audit.md",
+               "docs/migrations/truelicense4-framework-consumer-audit.md")
 INDEX_DOCUMENT = "docs/superpowers/historical-evidence-index.md"
 ACTIVE_PLAN = "docs/superpowers/plans/2026-10-10-three-line-product-convergence.md"
 INDEX_PATH = "verification/three-line-parity/historical-evidence-index.json"

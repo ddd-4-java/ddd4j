@@ -937,6 +937,28 @@ class ThreeLineInventoryTest(unittest.TestCase):
         self.assertEqual("historical-document", row["category"])
         self.assertEqual("HISTORICAL", row["status"])
 
+    def test_dated_release_and_audit_documents_are_preserved_as_history(self):
+        paths = (
+            "docs/RELEASE-NOTES-3.0.x-2026-09.md",
+            "docs/architecture/cloud-agents-migration-evidence.md",
+            "docs/architecture/cloud-exception-contract-audit.md",
+            "docs/architecture/cloud-tenant-context-contract-audit.md",
+            "docs/architecture/shiro-http-login-audit.md",
+            "docs/architecture/shiro-real-provider-audit.md",
+            "docs/migrations/truelicense4-framework-consumer-audit.md",
+        )
+        for path in paths:
+            self.write(self.roots[2] if "RELEASE-NOTES" in path else self.roots[0],
+                       path, "# Dated audit\n")
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = {item["path"]: item for item in
+                json.loads((output / "inventory.json").read_text())["differences"]}
+        for path in paths:
+            with self.subTest(path=path):
+                self.assertEqual("historical-document", rows[path]["category"])
+                self.assertEqual("HISTORICAL", rows[path]["status"])
+
     def test_old_target_class_does_not_count_as_current_api(self):
         for root in self.roots:
             self.write(root, "ddd4j-core/target/classes/example/Old.class", "stale")
