@@ -637,7 +637,7 @@
         <spring-data-bom.version>2025.1.6</spring-data-bom.version>
         <spring-data-redis-extension.version>3.0.x.20260630-SNAPSHOT</spring-data-redis-extension.version>
         <spring-extension.version>3.0.x.20260630-SNAPSHOT</spring-extension.version>
-        <spring-framework.version>7.0.8</spring-framework.version>
+        <spring-framework.version>7.0.9</spring-framework.version>
         <spring-graphql.version>1.4.6</spring-graphql.version>
         <spring-hateoas.version>2.4.1</spring-hateoas.version>
         <spring-initializr.version>0.24.0</spring-initializr.version>
