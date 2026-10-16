@@ -82,6 +82,7 @@
         "logback.version": "1.2.13",
         "maven-dependency-check-plugin.version": "10.0.4",
         "mockito.version": "4.11.0",
+        "mybatis-spring.version": "2.1.2",
         "quarkus.version": "1.13.7.Final",
         "quartz.version": "2.4.1",
         "pulsar.version": "4.0.14",
@@ -91,6 +92,7 @@
         "shiro.version": "1.13.0",
         "slf4j-legacy.version": "1.7.36",
         "snakeyaml-boot2.version": "1.33",
+        "spring-boot-starter-mybatis.version": "2.3.2",
         "testcontainers-redis.version": "2.0.2",
         "vertx.version": "4.5.35"
       },

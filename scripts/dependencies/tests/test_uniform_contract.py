@@ -140,6 +140,13 @@ class UniformContract(unittest.TestCase):
         self.assertEqual(policy['fixed_properties'].get('hikaricp-jdk8.version'), '4.0.3')
         self.assertEqual(policy['fixed_properties'].get('hikaricp.version'), '4.0.3')
 
+    def test_jdk8_mybatis_stays_on_spring5_line(self):
+        repository = pathlib.Path(__file__).parents[3]
+        raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
+        fixed = checker.resolve_policy(raw, 'feature/1.0.x')['fixed_properties']
+        self.assertEqual(fixed.get('mybatis-spring.version'), '2.1.2')
+        self.assertEqual(fixed.get('spring-boot-starter-mybatis.version'), '2.3.2')
+
     def test_jedis_keeps_pooled_client_api(self):
         repository = pathlib.Path(__file__).parents[3]
         raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
