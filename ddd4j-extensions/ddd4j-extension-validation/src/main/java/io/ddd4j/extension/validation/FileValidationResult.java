@@ -91,7 +91,8 @@ public final class FileValidationResult {
 
     @Override
     public String toString() {
-        return "FileValidationResult{" + valid + ", " + failure + ", " + detectedType + '}';
+        return "FileValidationResult[valid=" + valid + ", failure=" + failure
+                + ", detectedType=" + detectedType + ']';
     }
 
     public boolean isValid() {
