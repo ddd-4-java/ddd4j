@@ -73,7 +73,8 @@ class UniformContract(unittest.TestCase):
         self.assertEqual(jdk8.get('hibernate-validator.version'), '6.2.6.Final')
         self.assertNotIn('jersey.version', jdk8)
         jdk17 = checker.resolve_policy(raw, 'feature/2.0.x')['fixed_properties']
-        self.assertTrue(expected.keys().isdisjoint(jdk17))
+        self.assertEqual(jdk17.get('jersey.version'), '3.1.12')
+        self.assertTrue({'hibernate-validator.version', 'logback.version'}.isdisjoint(jdk17))
         self.assertFalse(any(value in jdk21['exclude'] for value in expected))
 
     def test_jdk21_micronaut_family_remains_on_supported_java_line(self):
@@ -299,7 +300,13 @@ class UniformContract(unittest.TestCase):
         name = 'pulsar.version'
         self.assertEqual(checker.resolve_policy(raw, 'feature/1.0.x')['fixed_properties'].get(name), '4.0.14')
         for branch in ('feature/2.0.x', 'feature/3.0.x'):
-            self.assertNotIn(name, checker.resolve_policy(raw, branch)['fixed_properties'])
+            self.assertEqual(checker.resolve_policy(raw, branch)['fixed_properties'].get(name), '4.2.2')
+
+    def test_jdk17_dropwizard_keeps_jersey_3(self):
+        repository = pathlib.Path(__file__).parents[3]
+        raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
+        policy = checker.resolve_policy(raw, 'feature/2.0.x')
+        self.assertEqual(policy['fixed_properties'].get('jersey.version'), '3.1.12')
 
     def test_jdk8_micronaut_keeps_java8_annotation_api(self):
         repository = pathlib.Path(__file__).parents[3]
