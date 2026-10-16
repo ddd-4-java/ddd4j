@@ -99,7 +99,15 @@
     },
     "feature/2.0.x": {
       "fixed_properties": {
-        "redisson.version": "3.52.0"
+        "helidon-bom.version": "3.2.21",
+        "helidon-jakarta-annotation.version": "2.0.0",
+        "helidon-jakarta-cdi.version": "3.0.0",
+        "helidon-jakarta-inject.version": "2.0.0",
+        "helidon-jakarta-interceptor.version": "2.0.0",
+        "helidon-jakarta-ws-rs.version": "3.0.0",
+        "helidon-jersey.version": "3.0.18",
+        "redisson.version": "3.52.0",
+        "testcontainers-bom.version": "1.21.4"
       },
       "fixed_dependencies": {
         "com.lmax:disruptor": "4.0.0"
