@@ -70,7 +70,7 @@ class UniformContract(unittest.TestCase):
         self.assertEqual({key: jdk21['fixed_properties'].get(key) for key in expected}, expected)
         jdk8 = checker.resolve_policy(raw, 'feature/1.0.x')['fixed_properties']
         self.assertEqual(jdk8.get('logback.version'), '1.2.13')
-        self.assertNotIn('hibernate-validator.version', jdk8)
+        self.assertEqual(jdk8.get('hibernate-validator.version'), '6.2.6.Final')
         self.assertNotIn('jersey.version', jdk8)
         jdk17 = checker.resolve_policy(raw, 'feature/2.0.x')['fixed_properties']
         self.assertTrue(expected.keys().isdisjoint(jdk17))
@@ -125,12 +125,56 @@ class UniformContract(unittest.TestCase):
             policy = checker.resolve_policy(raw, branch)
             self.assertEqual({key: policy['fixed_properties'].get(key) for key in expected}, expected)
 
+    def test_classgraph_stays_on_supported_java_bytecode(self):
+        repository = pathlib.Path(__file__).parents[3]
+        raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
+        for branch in ('feature/1.0.x', 'feature/2.0.x', 'feature/3.0.x'):
+            policy = checker.resolve_policy(raw, branch)
+            self.assertEqual(policy['fixed_properties'].get('classgraph.version'), '4.8.199')
+
     def test_jdk8_logback_keeps_slf4j_17_mdc_binding(self):
         repository = pathlib.Path(__file__).parents[3]
         raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
         jdk8 = checker.resolve_policy(raw, 'feature/1.0.x')
         self.assertEqual(jdk8['fixed_properties'].get('logback.version'), '1.2.13')
+        self.assertEqual(jdk8['fixed_properties'].get('logback-legacy.version'), '1.2.13')
+        self.assertEqual(jdk8['fixed_properties'].get('logback-slf4j2.version'), '1.3.14')
+        self.assertEqual(jdk8['fixed_properties'].get('slf4j-legacy.version'), '1.7.36')
         self.assertNotIn('logback.version', checker.resolve_policy(raw, 'feature/2.0.x')['fixed_properties'])
+
+    def test_jdk8_javalin_remains_on_java8_bytecode(self):
+        repository = pathlib.Path(__file__).parents[3]
+        raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
+        jdk8 = checker.resolve_policy(raw, 'feature/1.0.x')
+        self.assertEqual(jdk8['fixed_properties'].get('javalin.version'), '4.6.8')
+        for branch in ('feature/2.0.x', 'feature/3.0.x'):
+            self.assertNotIn('javalin.version', checker.resolve_policy(raw, branch)['fixed_properties'])
+
+    def test_jdk8_dropwizard_keeps_java8_api(self):
+        repository = pathlib.Path(__file__).parents[3]
+        raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
+        jdk8 = checker.resolve_policy(raw, 'feature/1.0.x')
+        self.assertEqual(jdk8['fixed_properties'].get('dropwizard.version'), '2.1.12')
+        for branch in ('feature/2.0.x', 'feature/3.0.x'):
+            self.assertNotIn('dropwizard.version', checker.resolve_policy(raw, branch)['fixed_properties'])
+
+    def test_jdk8_caffeine_keeps_java8_bytecode(self):
+        repository = pathlib.Path(__file__).parents[3]
+        raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
+        self.assertEqual(checker.resolve_policy(raw, 'feature/1.0.x')['fixed_properties'].get('caffeine.version'), '2.9.3')
+        for branch in ('feature/2.0.x', 'feature/3.0.x'):
+            self.assertNotIn('caffeine.version', checker.resolve_policy(raw, branch)['fixed_properties'])
+
+    def test_jdk21_quarkus_uses_compatible_vertx4_artifacts(self):
+        repository = pathlib.Path(__file__).parents[3]
+        raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
+        expected = {'io.vertx:vertx-core': '4.5.35',
+                    'io.vertx:vertx-junit5': '4.5.35',
+                    'io.vertx:vertx-web': '4.5.35'}
+        jdk21 = checker.resolve_policy(raw, 'feature/3.0.x')
+        self.assertEqual({key: jdk21['fixed_dependencies'].get(key) for key in expected}, expected)
+        for branch in ('feature/1.0.x', 'feature/2.0.x'):
+            self.assertTrue(expected.keys().isdisjoint(checker.resolve_policy(raw, branch)['fixed_dependencies']))
 
     def test_non_maven_branch_is_explicitly_not_applicable(self):
         with tempfile.TemporaryDirectory() as directory:
