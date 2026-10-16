@@ -58,14 +58,21 @@
         "hibernate-validator.version": "6.2.6.Final",
         "hibernate5.version": "5.6.15.Final",
         "javalin.version": "4.6.8",
+        "jdbi3.version": "3.39.1",
         "junit-jupiter.version": "5.14.4",
         "junit-platform-launcher.version": "1.14.4",
+        "jsqlparser.version": "4.9",
         "logback-legacy.version": "1.2.13",
         "logback-slf4j2.version": "1.3.14",
         "logback.version": "1.2.13",
+        "maven-dependency-check-plugin.version": "10.0.4",
         "mockito.version": "4.11.0",
         "quarkus.version": "1.13.7.Final",
+        "r2dbc-h2-jdk8.version": "1.0.0.RELEASE",
+        "r2dbc-h2.version": "1.0.0.RELEASE",
+        "redisson.version": "3.52.0",
         "slf4j-legacy.version": "1.7.36",
+        "testcontainers-redis.version": "2.0.2",
         "vertx.version": "4.5.35"
       },
       "fixed_dependencies": {
@@ -74,6 +81,9 @@
       }
     },
     "feature/2.0.x": {
+      "fixed_properties": {
+        "redisson.version": "3.52.0"
+      },
       "fixed_dependencies": {
         "com.lmax:disruptor": "4.0.0"
       }
