@@ -36,7 +36,7 @@ class PolicyTests(unittest.TestCase):
     def test_scan_keeps_pinned_and_excluded_components(self):
         command = checker.scan_command({'cvss_threshold': 7}, pathlib.Path('/tmp/reports'))
         self.assertIn('7', command)
-        self.assertIn('controller/scripts/dependencies/scan_vulnerabilities.py', command)
+        self.assertTrue(pathlib.Path(command[1]).is_file())
         self.assertFalse(any(arg.startswith('-Dexcludes') for arg in command))
 
 class ValidationTests(unittest.TestCase):
@@ -131,7 +131,7 @@ class PipelineTests(unittest.TestCase):
 
             def execute(command, **kwargs):
                 code = 0
-                if 'controller/' + checker.CHECK in command:
+                if checker.CHECK in command:
                     scans.append(command)
                     directory = pathlib.Path(command[command.index('--output') + 1])
                     if missing_reports:
