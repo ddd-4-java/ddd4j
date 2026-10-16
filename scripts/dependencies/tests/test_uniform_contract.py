@@ -162,8 +162,10 @@ class UniformContract(unittest.TestCase):
         raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
         jdk8 = checker.resolve_policy(raw, 'feature/1.0.x')
         self.assertEqual(jdk8['fixed_properties'].get('dropwizard.version'), '2.1.12')
+        self.assertEqual(jdk8['fixed_properties'].get('dropwizard-bom.version'), '2.1.12')
         for branch in ('feature/2.0.x', 'feature/3.0.x'):
             self.assertNotIn('dropwizard.version', checker.resolve_policy(raw, branch)['fixed_properties'])
+            self.assertNotIn('dropwizard-bom.version', checker.resolve_policy(raw, branch)['fixed_properties'])
 
     def test_jdk8_caffeine_keeps_java8_bytecode(self):
         repository = pathlib.Path(__file__).parents[3]
@@ -318,6 +320,45 @@ class UniformContract(unittest.TestCase):
             other = checker.resolve_policy(raw, branch)
             self.assertTrue(expected.keys().isdisjoint(other['fixed_dependencies']))
             self.assertNotIn('helidon.version', other['fixed_properties'])
+
+    def test_jdk8_helidon_json_binding_keeps_javax_api(self):
+        repository = pathlib.Path(__file__).parents[3]
+        raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
+        coordinates = {'org.glassfish.jersey:jersey-bom',
+                       'org.glassfish.jersey.media:jersey-media-json-binding',
+                       'jakarta.json.bind:jakarta.json.bind-api'}
+        self.assertTrue(coordinates.issubset(checker.resolve_policy(raw, 'feature/1.0.x')['exclude']))
+        for branch in ('feature/2.0.x', 'feature/3.0.x'):
+            self.assertTrue(coordinates.isdisjoint(checker.resolve_policy(raw, branch)['exclude']))
+
+    def test_jdk8_quartz_and_cdi_keep_javax_contract(self):
+        repository = pathlib.Path(__file__).parents[3]
+        raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
+        jdk8 = checker.resolve_policy(raw, 'feature/1.0.x')
+        self.assertEqual(jdk8['fixed_properties'].get('quartz.version'), '2.4.1')
+        java8_api = {'jakarta.enterprise:jakarta.enterprise.cdi-api',
+                     'jakarta.transaction:jakarta.transaction-api'}
+        self.assertTrue(java8_api.issubset(jdk8['exclude']))
+        for branch in ('feature/2.0.x', 'feature/3.0.x'):
+            other = checker.resolve_policy(raw, branch)
+            self.assertNotIn('quartz.version', other['fixed_properties'])
+            self.assertTrue(java8_api.isdisjoint(other['exclude']))
+
+    def test_jdk8_shiro_keeps_java8_bytecode(self):
+        repository = pathlib.Path(__file__).parents[3]
+        raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
+        self.assertEqual(checker.resolve_policy(raw, 'feature/1.0.x')['fixed_properties'].get('shiro.version'),
+                         '1.13.0')
+        for branch in ('feature/2.0.x', 'feature/3.0.x'):
+            self.assertNotIn('shiro.version', checker.resolve_policy(raw, branch)['fixed_properties'])
+
+    def test_jdk8_guice_keeps_javax_inject(self):
+        repository = pathlib.Path(__file__).parents[3]
+        raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
+        self.assertEqual(checker.resolve_policy(raw, 'feature/1.0.x')['fixed_properties'].get('guice.version'),
+                         '5.1.0')
+        for branch in ('feature/2.0.x', 'feature/3.0.x'):
+            self.assertNotIn('guice.version', checker.resolve_policy(raw, branch)['fixed_properties'])
 
 
     def test_jdk21_quarkus_uses_compatible_vertx4_artifacts(self):

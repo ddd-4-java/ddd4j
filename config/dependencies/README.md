@@ -12,9 +12,13 @@
 - 1.0.x 的 `microprofile-config-api` 排除自动升级：Quarkus 1.13.7.Final 的配置接口使用 MicroProfile Config 1.4；自动升级到 3.1.2 会在真实容器测试触发 `AbstractMethodError`。排除项仍进入漏洞扫描。
 - 3.0.x 的 Micronaut 固定在平台 `4.10.21`、Core `4.10.26`，并排除 `io.micronaut*:*` 的自动升级。Micronaut 5.2.x 的构件含 class 69（JDK 25），无法由本线 JDK 21 编译；Micronaut 4 系列的 CQRS 模块容器集成测试已通过。固定与排除构件仍进入每周漏洞扫描。
 - 1.0.x 的 Helidon MicroProfile Server、Health 及样例 BOM 保持 `1.4.19`：候选 4.5.5 的 Server 为 class 65，JDK 8 无法编译；隔离候选恢复 1.4.19 后，真实 Server 启停在内的运行时测试 23/23 通过。固定构件仍扫描漏洞。
-- 1.0.x 的 Micronaut 运行时显式使用 Jakarta Annotation API `2.1.1`：Micronaut 3.10.15 的候选依赖图带入 3.0.0（class 55），导致 JDK 8 编译失败；直接声明 2.1.1 后该模块 10 项测试通过。此坐标仅在 1.0.x 排除自动升级，仍扫描漏洞。
+- 1.0.x 的 Helidon 样例及 Web 测试使用 `javax.json.bind` 注解，保留 JSON-B API `1.0.2`、Jersey JSON Binding/BOM `2.48`，避免每周升级将其替换成 Jakarta 命名空间的 JSON-B 3/Jersey 4。三个直接坐标只排除自动升级，仍参加漏洞扫描。
+- 1.0.x 的 Micronaut 运行时、样例及监控扩展显式使用 Jakarta Annotation API `2.1.1`：Micronaut 3.10.15 的候选依赖图带入 3.0.0（class 55），导致 JDK 8 编译失败；直接声明 2.1.1 后运行时模块 10 项测试通过。此坐标仅在 1.0.x 排除自动升级，仍扫描漏洞。
+- 1.0.x 的 Quartz 固定为 `2.4.1`：官方将 2.4.x 列为 Java 8/`javax.*` 线，2.5.x 要求 Java 11/`jakarta.*`；候选 2.5.2 的 `CronScheduleBuilder` 为 class 55，无法由本线 JDK 8 编译。Quarkus 1.13 使用的 CDI API `2.0.2` 和 JTA API `1.3.3` 保留 `javax.*` 命名空间，因此排除这两个直接坐标的自动升级。Dropwizard 样例导入的 `dropwizard-bom.version` 与已固定的 `dropwizard.version` 一同保持 `2.1.12`，避免导入 Dropwizard 5 的 class 61 构件。上述固定及排除构件仍进入漏洞扫描。
 - 1.0.x 的 Pulsar 客户端固定为 `4.0.14`：5.0.0 的 `Consumer` 是 class 61；[上游说明](https://pulsar.apache.org/blog/2026/10/05/announcing-apache-pulsar-5-0/)确认 4.0.x 客户端可支持 Java 8，4.0.14 的该类为 class 52，本线适配器目标测试 5/5 通过（2 项容器测试跳过）。固定项仍扫描漏洞。
 - 1.0.x 的 Kafka 客户端固定为 `3.9.2`：Apache [3.9 兼容说明](https://kafka.apache.org/39/operations/java-version/)支持 JDK 8，[4.0 起移除 JDK 8](https://kafka.apache.org/43/getting-started/compatibility/)；候选 4.4.0 的 `AdminClient` 为 class 55，3.9.2 为 class 52。固定项仍扫描漏洞。
+- 1.0.x 的 Apache Shiro 保持 `1.13.0`：Shiro [官方 2.0 发布说明](https://shiro.apache.org/blog/2024/02/apache-shiro-200-released.html)将最低 JVM 提高到 Java 11；本周候选 3.0.1 的 `SecurityUtils` 是 class 61，JDK 8 无法编译。固定版本仍进入漏洞扫描。
+- 1.0.x 的 Guice 固定为 `5.1.0`：本线模块使用 `javax.inject`，Guice [官方兼容说明](https://github.com/google/guice/wiki/JSR330)指出 7.x 仅支持 `jakarta.inject`，候选 7.0.0 因此无法编译。固定版本仍扫描漏洞。
 - 1.0.x 的 Artemis JMS 客户端固定为 `2.19.0`（`artemis.version`）：本线源码已注明 2.20.0 起要求 JDK 11；候选 2.57.0 的连接工厂是 class 61，JDK 8 无法编译 MQ 模块。固定项仍扫描漏洞。
 - 1.0.x 的 Dozer Core 固定为 `6.5.2`（`dozer-core.version`）：候选 7.0.0 的 `Mapper` 类为 class 55，JDK 8 无法编译 Web MVC 模块；6.5.2 构件为 class 52。固定项仍扫描漏洞。
 - 1.0.x 的 metrics 测试显式声明 `opentelemetry-common`：升级 OpenTelemetry 到 1.67.0 后，SDK 内部引用的 `ConfigUtil` 位于该构件；候选从 10 项测试异常恢复为 10 项通过，继续允许 OpenTelemetry 在本线自动升级。
