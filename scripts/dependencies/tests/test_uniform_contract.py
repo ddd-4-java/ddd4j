@@ -73,7 +73,8 @@ class UniformContract(unittest.TestCase):
         self.assertEqual(jdk8.get('hibernate-validator.version'), '6.2.6.Final')
         self.assertNotIn('jersey.version', jdk8)
         jdk17 = checker.resolve_policy(raw, 'feature/2.0.x')['fixed_properties']
-        self.assertTrue(expected.keys().isdisjoint(jdk17))
+        self.assertEqual(jdk17.get('hibernate-validator.version'), '8.0.6.Final')
+        self.assertTrue({'jersey.version', 'logback.version'}.isdisjoint(jdk17))
         self.assertFalse(any(value in jdk21['exclude'] for value in expected))
 
     def test_jdk21_micronaut_family_remains_on_supported_java_line(self):
@@ -347,6 +348,13 @@ class UniformContract(unittest.TestCase):
         for branch in ('feature/1.0.x', 'feature/3.0.x'):
             other = checker.resolve_policy(raw, branch)['fixed_properties']
             self.assertTrue(expected.keys().isdisjoint(other))
+
+    def test_jdk17_dropwizard_keeps_hibernate_validator_8(self):
+        repository = pathlib.Path(__file__).parents[3]
+        raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
+        name = 'hibernate-validator.version'
+        self.assertEqual(checker.resolve_policy(raw, 'feature/2.0.x')['fixed_properties'].get(name),
+                         '8.0.6.Final')
 
     def test_jdk8_quartz_and_cdi_keep_javax_contract(self):
         repository = pathlib.Path(__file__).parents[3]
