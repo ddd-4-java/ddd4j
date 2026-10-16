@@ -263,10 +263,10 @@
         <influxdb-java.version>2.25</influxdb-java.version>
         <istack.version>3.0.12</istack.version>
         <istio-client.version>1.7.7.1</istio-client.version>
-        <jackson-annotations.version>2.22</jackson-annotations.version>
+        <jackson-annotations.version>2.18.11</jackson-annotations.version>
         <jackson-bom.version>${jackson.version}</jackson-bom.version>
         <jackson-extension.version>1.0.x.20260630-SNAPSHOT</jackson-extension.version>
-        <jackson.version>2.22.2</jackson.version>
+        <jackson.version>2.18.11</jackson.version>
         <jai-imageio.version>1.4.0</jai-imageio.version>
         <jakarta-inject.version>2.0.1</jakarta-inject.version>
         <!-- 2026-09-04 补：ddd4j-data-jpa 使用 jakarta.persistence 命名空间（与 spring-boot 3.x 兼容） -->
