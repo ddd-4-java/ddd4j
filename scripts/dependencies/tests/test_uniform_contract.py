@@ -68,9 +68,12 @@ class UniformContract(unittest.TestCase):
                     'logback.version': '1.5.38'}
         jdk21 = checker.resolve_policy(raw, 'feature/3.0.x')
         self.assertEqual({key: jdk21['fixed_properties'].get(key) for key in expected}, expected)
-        for branch in ('feature/1.0.x', 'feature/2.0.x'):
-            fixed = checker.resolve_policy(raw, branch)['fixed_properties']
-            self.assertTrue(expected.keys().isdisjoint(fixed))
+        jdk8 = checker.resolve_policy(raw, 'feature/1.0.x')['fixed_properties']
+        self.assertEqual(jdk8.get('logback.version'), '1.2.13')
+        self.assertNotIn('hibernate-validator.version', jdk8)
+        self.assertNotIn('jersey.version', jdk8)
+        jdk17 = checker.resolve_policy(raw, 'feature/2.0.x')['fixed_properties']
+        self.assertTrue(expected.keys().isdisjoint(jdk17))
         self.assertFalse(any(value in jdk21['exclude'] for value in expected))
 
     def test_jdk21_micronaut_family_remains_on_supported_java_line(self):
@@ -103,6 +106,31 @@ class UniformContract(unittest.TestCase):
         self.assertEqual(jdk21['fixed_properties'].get('redisson.version'), '3.52.0')
         for branch in ('feature/1.0.x', 'feature/2.0.x'):
             self.assertNotIn('redisson.version', checker.resolve_policy(raw, branch)['fixed_properties'])
+
+    def test_jdk8_mockito_remains_on_java8_bytecode(self):
+        repository = pathlib.Path(__file__).parents[3]
+        raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
+        jdk8 = checker.resolve_policy(raw, 'feature/1.0.x')
+        self.assertEqual(jdk8['fixed_properties'].get('mockito.version'), '4.11.0')
+        for branch in ('feature/2.0.x', 'feature/3.0.x'):
+            self.assertNotIn('mockito.version', checker.resolve_policy(raw, branch)['fixed_properties'])
+
+    def test_legacy_commons_date_versions_do_not_beat_current_releases(self):
+        repository = pathlib.Path(__file__).parents[3]
+        raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
+        expected = {'commons-codec.version': '1.23.0',
+                    'commons-collections.version': '3.2.2',
+                    'commons-io.version': '2.22.0'}
+        for branch in ('feature/1.0.x', 'feature/2.0.x', 'feature/3.0.x'):
+            policy = checker.resolve_policy(raw, branch)
+            self.assertEqual({key: policy['fixed_properties'].get(key) for key in expected}, expected)
+
+    def test_jdk8_logback_keeps_slf4j_17_mdc_binding(self):
+        repository = pathlib.Path(__file__).parents[3]
+        raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
+        jdk8 = checker.resolve_policy(raw, 'feature/1.0.x')
+        self.assertEqual(jdk8['fixed_properties'].get('logback.version'), '1.2.13')
+        self.assertNotIn('logback.version', checker.resolve_policy(raw, 'feature/2.0.x')['fixed_properties'])
 
     def test_non_maven_branch_is_explicitly_not_applicable(self):
         with tempfile.TemporaryDirectory() as directory:
