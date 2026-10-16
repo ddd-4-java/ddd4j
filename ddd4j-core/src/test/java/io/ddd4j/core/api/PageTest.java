@@ -17,6 +17,8 @@ package io.ddd4j.core.api;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,7 +43,7 @@ class PageTest {
 
     @Test
     void succeed_shouldCarryRecordsAndTotal() {
-        List<String> records = List.of("a", "b");
+        List<String> records = Arrays.asList("a", "b");
 
         Page<String> page = Page.succeed(records, 2L, 1L, 10L);
 
@@ -73,7 +75,7 @@ class PageTest {
 
     @Test
     void remove_shouldDeleteElement() {
-        Page<String> page = Page.succeed(new ArrayList<>(List.of("a", "b")), 2L, 1L, 10L);
+        Page<String> page = Page.succeed(new ArrayList<>(Arrays.asList("a", "b")), 2L, 1L, 10L);
 
         boolean removed = page.remove("a");
 
@@ -83,7 +85,7 @@ class PageTest {
 
     @Test
     void contains_shouldDetectElement() {
-        Page<String> page = Page.succeed(List.of("a"), 1L, 1L, 10L);
+        Page<String> page = Page.succeed(Collections.singletonList("a"), 1L, 1L, 10L);
 
         assertThat(page.contains("a")).isTrue();
         assertThat(page.contains("z")).isFalse();
@@ -101,7 +103,7 @@ class PageTest {
     @Test
     void peek_shouldApplyConsumerAndReturnSelf() {
         List<String> collected = new ArrayList<>();
-        Page<String> page = Page.succeed(List.of("a", "b"), 2L, 1L, 10L);
+        Page<String> page = Page.succeed(Arrays.asList("a", "b"), 2L, 1L, 10L);
 
         Page<String> result = page.peek(collected::add);
 
@@ -120,9 +122,9 @@ class PageTest {
 
     @Test
     void stream_shouldExposeRecords() {
-        Page<String> page = Page.succeed(List.of("a", "b"), 2L, 1L, 10L);
+        Page<String> page = Page.succeed(Arrays.asList("a", "b"), 2L, 1L, 10L);
 
-        List<String> collected = page.stream().toList();
+        List<String> collected = page.stream().collect(java.util.stream.Collectors.toList());
 
         assertThat(collected).containsExactly("a", "b");
     }
@@ -130,7 +132,7 @@ class PageTest {
     @Test
     void builderMethods_shouldChainCorrectly() {
         Page<String> page = Page.<String>empty()
-                .setRecords(List.of("x"))
+                .setRecords(Collections.singletonList("x"))
                 .setTotal(1L)
                 .setCurrent(1L)
                 .setSize(5L);
@@ -141,29 +143,19 @@ class PageTest {
         assertThat(page.getSize()).isEqualTo(5L);
     }
     @Test
-    void emptyRecords_shouldAllowIterationWithoutNullIterator() {
-        Page<String> page = Page.empty();
-        List<String> visited = new ArrayList<>();
-
-        for (String record : page) {
-            visited.add(record);
+    void emptyPages_shouldSupportIterationAndStreams() {
+        for (Page<String> page : Arrays.asList(new Page<String>(), Page.<String>empty())) {
+            assertThat(page.iterator()).isNotNull();
+            assertThat(page.iterator().hasNext()).isFalse();
+            assertThat(page.spliterator()).isNotNull();
+            assertThat(page.spliterator().estimateSize()).isZero();
+            assertThat(java.util.stream.StreamSupport.stream(page.spliterator(), false).count()).isZero();
+            assertThat(page.stream().count()).isZero();
+            List<String> visited = new ArrayList<>();
+            for (String value : page) {
+                visited.add(value);
+            }
+            assertThat(visited).isEmpty();
         }
-
-        assertThat(visited).isEmpty();
-        assertThat(page.spliterator().estimateSize()).isZero();
-    }
-
-    @Test
-    void nullRecords_shouldAllowIterationAndStreaming() {
-        Page<String> page = new Page<>();
-        List<String> visited = new ArrayList<>();
-
-        for (String record : page) {
-            visited.add(record);
-        }
-
-        assertThat(visited).isEmpty();
-        assertThat(page.spliterator().estimateSize()).isZero();
-        assertThat(page.stream().count()).isZero();
     }
 }
