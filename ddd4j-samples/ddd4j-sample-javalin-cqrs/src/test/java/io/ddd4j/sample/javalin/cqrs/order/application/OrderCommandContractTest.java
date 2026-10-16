@@ -25,6 +25,7 @@ class OrderCommandContractTest {
         assertEquals(command.buyerName(), command.getBuyerName());
         assertEquals(equal, command);
         assertEquals(equal.hashCode(), command.hashCode());
+        assertEquals(337890771, command.hashCode());
         assertNotEquals(command, new CreateOrderCommand("O-2", "B-1", "Buyer"));
         assertEquals("CreateOrderCommand[orderNo=O-1, buyerId=B-1, buyerName=Buyer]", command.toString());
         ObjectMapper mapper = new ObjectMapper();
@@ -42,6 +43,7 @@ class OrderCommandContractTest {
         assertEquals(command.unitPrice(), command.getUnitPrice());
         assertEquals(equal, command);
         assertEquals(equal.hashCode(), command.hashCode());
+        assertEquals(-534179903, command.hashCode());
         assertNotEquals(command, new AddOrderLineCommand("O-1", "G-1", "Goods", 3, new BigDecimal("3.00")));
         assertEquals("AddOrderLineCommand[orderId=O-1, goodsId=G-1, goodsName=Goods, quantity=2, unitPrice=3.00]", command.toString());
         ObjectMapper mapper = new ObjectMapper();
