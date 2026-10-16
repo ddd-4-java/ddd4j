@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import io.ddd4j.core.exception.ValidateException;
 import tools.jackson.databind.json.JsonMapper;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -113,9 +114,11 @@ class RTest {
     }
 
     @Test
-    void fail_aliases_shouldMatchFail() {
-        assertThat(R.fail().getCode()).isEqualTo(R.fail().getCode());
-        assertThat(R.fail("err").getMsg()).isEqualTo(R.fail("err").getMsg());
+    void fail_withSerializableCode_shouldPreserveCodeAndDefaultMessage() {
+        R<Object> response = R.fail((Serializable) 409);
+        assertThat(response.getCode()).isEqualTo(409);
+        assertThat(response.getMsg()).isEqualTo(ApiCode.FAIL.getDesc());
+        assertThat(response.getData()).isNull();
     }
 
     @Test
@@ -191,6 +194,22 @@ class RTest {
 
         assertThat(response.getCode()).isEqualTo(200);
         assertThat(response.getMsg()).isEqualTo("created");
+        assertThat(response.getData()).isNull();
+    }
+
+    @Test
+    void success_withObjectString_shouldPreservePayload() {
+        R<Object> response = R.success((Object) "payload");
+        assertThat(response.getCode()).isEqualTo(ApiCode.SUCCESS.getCode());
+        assertThat(response.getMsg()).isEqualTo(ApiCode.SUCCESS.getReason());
+        assertThat(response.getData()).isEqualTo("payload");
+    }
+
+    @Test
+    void of_withSerializableStringCode_shouldKeepStringCode() {
+        R<Object> response = R.of((Serializable) "404", "missing");
+        assertThat(response.getCode()).isEqualTo("404");
+        assertThat(response.getMsg()).isEqualTo("missing");
         assertThat(response.getData()).isNull();
     }
 
