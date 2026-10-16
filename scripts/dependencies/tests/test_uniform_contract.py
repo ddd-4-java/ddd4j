@@ -34,6 +34,32 @@ class UniformContract(unittest.TestCase):
                 self.assertEqual(path.read_text(), raw)
                 self.assertEqual(path.stat().st_mode & 0o777, 0o600)
 
+    def test_central_fallback_bypasses_mirror_and_preserves_private_server(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = pathlib.Path(directory) / 'settings.xml'
+            raw = ('<settings xmlns="http://maven.apache.org/SETTINGS/1.2.0">'
+                   '<servers><server><id>private</id><username>user</username>'
+                   '<password>secret</password></server></servers>'
+                   '<mirrors><mirror><id>mirror</id><mirrorOf>*</mirrorOf>'
+                   '<url>https://mirror.example.test/maven</url></mirror></mirrors>'
+                   '</settings>')
+            checker.configure_settings(raw, path)
+            checker.ensure_central_fallback(path)
+            checker.ensure_central_fallback(path)
+            root = checker.ET.parse(path).getroot()
+            namespace = {'m': 'http://maven.apache.org/SETTINGS/1.2.0'}
+            self.assertEqual(root.findtext('./m:servers/m:server/m:password', namespaces=namespace), 'secret')
+            mirror = root.findtext('./m:mirrors/m:mirror/m:mirrorOf', namespaces=namespace)
+            self.assertIn('!ddd4j-central-direct', mirror.split(','))
+            repositories = root.findall('./m:profiles/m:profile/m:repositories/m:repository', namespace)
+            self.assertEqual(len(repositories), 1)
+            self.assertEqual(repositories[0].findtext('m:id', namespaces=namespace), 'ddd4j-central-direct')
+            self.assertEqual(repositories[0].findtext('m:url', namespaces=namespace),
+                             'https://repo.maven.apache.org/maven2')
+            active = [node.text for node in root.findall('./m:activeProfiles/m:activeProfile', namespace)]
+            self.assertEqual(active.count('ddd4j-central-fallback'), 1)
+            self.assertEqual(path.stat().st_mode & 0o777, 0o600)
+
     def test_non_maven_branch_is_explicitly_not_applicable(self):
         with tempfile.TemporaryDirectory() as directory:
             self.assertEqual(checker.runtime_config(pathlib.Path(directory))['project'], 'false')
