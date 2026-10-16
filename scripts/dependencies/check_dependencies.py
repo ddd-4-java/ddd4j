@@ -125,7 +125,7 @@ def update_commands(policy):
 
 
 def scan_command(policy, output, root=Path('project'), branch=''):
-    """扫描源码 POM 和全部管理版本；升级排除规则不得成为漏洞抑制规则。"""
+    """扫描完整 reactor 解析结果和全部管理版本；升级排除规则不得成为漏洞抑制规则。"""
     return ['python3', CHECK, '--root', str(root), '--output', str(output),
             '--line', branch, '--threshold', str(policy['cvss_threshold'])]
 
