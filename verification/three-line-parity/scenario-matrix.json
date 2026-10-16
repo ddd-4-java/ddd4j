@@ -4230,6 +4230,33 @@
           ]
         }
       }
+    },
+    {
+      "id": "SAMPLE-JAVALIN-AUTH-ORDER-JSON",
+      "description": "Javalin Sa-Token 和 Shiro 样例的订单响应及订单行在本线 Jackson 下完成 JSON 往返",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/order/web/dto/OrderResponseJsonContractTest.java",
+            "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/order/web/dto/OrderResponseJsonContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/order/web/dto/OrderResponseJsonContractTest.java",
+            "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/order/web/dto/OrderResponseJsonContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/order/web/dto/OrderResponseJsonContractTest.java",
+            "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/order/web/dto/OrderResponseJsonContractTest.java"
+          ]
+        }
+      }
     }
   ]
 }

@@ -14,6 +14,8 @@
  */
 package io.ddd4j.sample.javalin.shiro.order.web.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.sample.javalin.shiro.order.domain.model.Money;
 import io.ddd4j.sample.javalin.shiro.order.domain.model.Order;
 import io.ddd4j.sample.javalin.shiro.order.domain.model.OrderLine;
@@ -38,6 +40,37 @@ public class OrderResponse {
     String totalAmount;
     String currency;
     List<OrderLineResponse> lines;
+
+    /**
+     * 创建订单响应，并保留供 JSON 还原使用的字段映射。
+     *
+     * @param id 订单 ID
+     * @param orderNo 订单号
+     * @param buyerId 买家 ID
+     * @param buyerName 买家名称
+     * @param status 订单状态
+     * @param totalAmount 总金额
+     * @param currency 币种
+     * @param lines 订单行
+     */
+    @JsonCreator
+    public OrderResponse(@JsonProperty("id") String id,
+                         @JsonProperty("orderNo") String orderNo,
+                         @JsonProperty("buyerId") String buyerId,
+                         @JsonProperty("buyerName") String buyerName,
+                         @JsonProperty("status") OrderStatus status,
+                         @JsonProperty("totalAmount") String totalAmount,
+                         @JsonProperty("currency") String currency,
+                         @JsonProperty("lines") List<OrderLineResponse> lines) {
+        this.id = id;
+        this.orderNo = orderNo;
+        this.buyerId = buyerId;
+        this.buyerName = buyerName;
+        this.status = status;
+        this.totalAmount = totalAmount;
+        this.currency = currency;
+        this.lines = lines;
+    }
 
     public static OrderResponse from(Order order) {
         Money total = order.totalAmount();
@@ -96,6 +129,31 @@ public class OrderResponse {
         int quantity;
         String unitPrice;
         String currency;
+
+        /**
+         * 创建订单行响应，并保留供 JSON 还原使用的字段映射。
+         *
+         * @param id 订单行 ID
+         * @param goodsId 商品 ID
+         * @param goodsName 商品名称
+         * @param quantity 数量
+         * @param unitPrice 商品单价
+         * @param currency 币种
+         */
+        @JsonCreator
+        public OrderLineResponse(@JsonProperty("id") String id,
+                                 @JsonProperty("goodsId") String goodsId,
+                                 @JsonProperty("goodsName") String goodsName,
+                                 @JsonProperty("quantity") int quantity,
+                                 @JsonProperty("unitPrice") String unitPrice,
+                                 @JsonProperty("currency") String currency) {
+            this.id = id;
+            this.goodsId = goodsId;
+            this.goodsName = goodsName;
+            this.quantity = quantity;
+            this.unitPrice = unitPrice;
+            this.currency = currency;
+        }
 
         public static OrderLineResponse from(OrderLine line) {
             return new OrderLineResponse(
