@@ -11,7 +11,7 @@ import subprocess
 import xml.etree.ElementTree as ET
 
 VERSIONS = 'org.codehaus.mojo:versions-maven-plugin:2.23.0:'
-CHECK = 'org.owasp:dependency-check-maven:13.0.0:aggregate'
+CHECK = 'scripts/dependencies/scan_vulnerabilities.py'
 KEYS = {'exclude', 'exclude_properties', 'fixed_properties', 'fixed_dependencies', 'cvss_threshold', 'branches'}
 INTERNAL_PROPERTIES = {'revision', 'changelist', 'sha1', 'java.version', 'maven.version',
                        'maven.compiler.source', 'maven.compiler.target', 'maven.compiler.release'}
@@ -45,13 +45,6 @@ def runtime_config(root):
 def maven_command(root):
     """优先使用目标分支 Wrapper；历史分支使用 CI 校验下载的 Maven。"""
     return ['bash', './mvnw'] if (root / 'mvnw').is_file() else ['mvn']
-
-
-def validate_scan_report(path):
-    """要求真实、非空的依赖扫描报告，空扫描不能作为无漏洞证明。"""
-    report = json.loads(path.read_text())
-    if not isinstance(report.get('dependencies'), list) or not report['dependencies']:
-        raise ValueError('扫描报告缺少非空 dependencies')
 
 
 def configure_settings(value, path):
@@ -131,12 +124,10 @@ def update_commands(policy):
     return commands
 
 
-def scan_command(policy, output):
-    """扫描所有解析依赖；升级排除规则不得成为漏洞抑制规则。"""
-    return [CHECK, '-DfailBuildOnCVSS=' + str(policy['cvss_threshold']), '-DfailOnError=true',
-            '-DskipTestScope=false', '-DskipProvidedScope=false', '-DossindexAnalyzerEnabled=false',
-            '-Ddependency-check.skip=false', '-Dformats=HTML,JSON', '-DoutputDirectory=' + str(output),
-            '-DnvdApiKeyEnvironmentVariable=NVD_API_KEY', '-DdataDirectory=' + str(Path.home() / '.cache/dependency-check')]
+def scan_command(policy, output, root=Path('project'), branch=''):
+    """扫描源码 POM 和全部管理版本；升级排除规则不得成为漏洞抑制规则。"""
+    return ['python3', 'controller/' + CHECK, '--root', str(root), '--output', str(output),
+            '--line', branch, '--threshold', str(policy['cvss_threshold'])]
 
 
 def protected_properties(root, policy):
@@ -325,28 +316,17 @@ def main():
                 env['JAVA_HOME'] = env['BUILD_JAVA_HOME']
             if env.get('JAVA_HOME'):
                 env['PATH'] = str(Path(env['JAVA_HOME']) / 'bin') + os.pathsep + env.get('PATH', '')
-            result = subprocess.run([*maven_command(root), '-B', '-ntp', '-U', *command], cwd=root, env=env, stdout=log, stderr=subprocess.STDOUT)
+            actual = command if stage.endswith('-scan') else [*maven_command(root), '-B', '-ntp', '-U', *command]
+            result = subprocess.run(actual, cwd=root.parent if stage.endswith('-scan') else root,
+                                    env=env, stdout=log, stderr=subprocess.STDOUT)
         code = result.returncode
-        if stage.endswith('-scan') and code == 0:
-            directory = reports / stage.removesuffix('-scan')
-            if not all((directory / ('dependency-check-report.' + suffix)).is_file() for suffix in ('html', 'json')):
-                with (reports / (stage + '.log')).open('a') as log:
-                    log.write('\n扫描未生成 HTML/JSON 报告，拒绝视为通过。\n')
-                code = 1
-            else:
-                try:
-                    validate_scan_report(directory / 'dependency-check-report.json')
-                except (ValueError, OSError) as error:
-                    with (reports / (stage + '.log')).open('a') as log:
-                        log.write(str(error) + '\n')
-                    code = 1
         statuses[stage] = code
         print(stage + ': ' + ('通过' if code == 0 else '失败（见日志）'), flush=True)
         return code == 0
 
-    build = ['install', '-DskipTests=false', '-Dmaven.test.skip=false', '-Dsurefire.skip=false', '-Denforcer.skip=true', '-Ddependency-check.skip=true']
+    build = ['install', '-DskipTests=false', '-Dmaven.test.skip=false', '-Dsurefire.skip=false', '-Denforcer.skip=true']
     run('baseline-build', build)
-    run('baseline-scan', scan_command(policy, reports / 'baseline'))
+    run('baseline-scan', scan_command(policy, reports / 'baseline', root, args.branch))
     before = declared_versions(root)
     updated = run('effective-model', ['org.apache.maven.plugins:maven-help-plugin:3.5.1:effective-pom', '-N', '-Doutput=' + str(reports / 'effective-pom.xml')])
     if updated:
@@ -372,7 +352,7 @@ def main():
     # 升级失败仍保留原依赖扫描证据，不将部分升级作为有效 PR。
     if updated:
         run('updated-build', build)
-        run('updated-scan', scan_command(policy, reports / 'updated'))
+        run('updated-scan', scan_command(policy, reports / 'updated', root, args.branch))
     with (reports / 'dependencies.patch').open('w') as patch:
         subprocess.run(['git', 'diff', '--', '**/pom.xml', 'pom.xml'], cwd=root, stdout=patch, check=True)
     ready = updated and statuses.get('updated-build') == 0 and statuses.get('updated-scan') == 0

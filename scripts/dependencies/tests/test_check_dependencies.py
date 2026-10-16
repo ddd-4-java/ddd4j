@@ -35,7 +35,8 @@ class PolicyTests(unittest.TestCase):
 
     def test_scan_keeps_pinned_and_excluded_components(self):
         command = checker.scan_command({'cvss_threshold': 7}, pathlib.Path('/tmp/reports'))
-        self.assertIn('-DfailBuildOnCVSS=7', command)
+        self.assertIn('7', command)
+        self.assertIn('controller/scripts/dependencies/scan_vulnerabilities.py', command)
         self.assertFalse(any(arg.startswith('-Dexcludes') for arg in command))
 
 class ValidationTests(unittest.TestCase):
@@ -130,13 +131,14 @@ class PipelineTests(unittest.TestCase):
 
             def execute(command, **kwargs):
                 code = 0
-                if checker.CHECK in command:
+                if 'controller/' + checker.CHECK in command:
                     scans.append(command)
-                    directory = pathlib.Path(next(arg.split('=', 1)[1] for arg in command if arg.startswith('-DoutputDirectory=')))
-                    directory.mkdir(parents=True, exist_ok=True)
-                    if not missing_reports:
-                        (directory / 'dependency-check-report.html').write_text('<html></html>')
-                        (directory / 'dependency-check-report.json').write_text('{"dependencies": [{"fileName": "fixture.jar"}]}')
+                    directory = pathlib.Path(command[command.index('--output') + 1])
+                    if missing_reports:
+                        code = 1
+                    else:
+                        directory.mkdir(parents=True, exist_ok=True)
+                        (directory / 'trivy.json').write_text('{"Results": [{"Target": "pom.xml", "Packages": [{"Name": "fixture"}]}]}')
                     if len(scans) == failed_scan_index:
                         code = 1
                 if fail_update and any(arg.endswith(':update-properties') for arg in command):
