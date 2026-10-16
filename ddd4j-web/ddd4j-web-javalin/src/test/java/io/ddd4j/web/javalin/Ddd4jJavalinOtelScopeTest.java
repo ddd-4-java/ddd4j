@@ -28,6 +28,8 @@ import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.trace.SdkTracerProvider;
+import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
+import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
@@ -60,7 +62,9 @@ class Ddd4jJavalinOtelScopeTest {
     @Test
     void requestCompletionMustCloseOtelScope() throws Exception {
         resetOpenTelemetry();
-        SdkTracerProvider tracerProvider = SdkTracerProvider.builder().build();
+        SdkTracerProvider tracerProvider = SdkTracerProvider.builder()
+                .addSpanProcessor(SimpleSpanProcessor.create(InMemorySpanExporter.create()))
+                .build();
         OpenTelemetrySdk.builder().setTracerProvider(tracerProvider).buildAndRegisterGlobal();
         AtomicBoolean activeDuringHandler = new AtomicBoolean();
         AtomicBoolean activeAfterDdd4jCompletion = new AtomicBoolean();
