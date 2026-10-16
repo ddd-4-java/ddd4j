@@ -115,6 +115,14 @@ class RTest {
     }
 
     @Test
+    void fail_withSerializableCode_shouldPreserveCodeAndDefaultMessage() {
+        R<Object> response = R.fail((Serializable) 409);
+        assertThat(response.getCode()).isEqualTo(409);
+        assertThat(response.getMsg()).isEqualTo(ApiCode.FAIL.getDesc());
+        assertThat(response.getData()).isNull();
+    }
+
+    @Test
     void isOk_shouldAcceptSuccessCodeToo() {
         R<String> r = new R<>(ApiCode.SUCCESS.getCode(), ApiCode.SUCCESS.getDesc(), "data");
 
