@@ -310,8 +310,8 @@ public class JdbiEventStore implements EventStore {
     /**
      * 将结果集行重建为 {@link StoredEvent}。
      *
-     * <p>事件类型经 {@code Class.forName} 还原，payload 经 {@link EventDeserializer#deserialize}
-     * 反序列化。若类不存在（被删除/重命名），回退为 {@link JsonKit#toMap}。
+     * <p>事件类型经 {@code Class.forName} 还原，payload 经 {@link EventPayloadSerializer#deserialize}
+     * 反序列化。若类不存在（被删除/重命名），抛出 {@link IllegalStateException}。
      *
      * <p>时间戳处理：H2 JDBC 驱动对 TIMESTAMP 列返回 {@link LocalDateTime}，
      * 此处统一先取 {@link LocalDateTime} 再转 {@link Instant}（UTC 偏移），

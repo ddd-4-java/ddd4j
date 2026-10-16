@@ -2115,6 +2115,37 @@
       }
     },
     {
+      "id": "EVENTSTORE-JDBI-UNKNOWN-EVENT-TYPE",
+      "description": "JDBI 读取持久化的未知 event_type 时三线均明确失败，不静默将领域事件载荷降级为 Map",
+      "caseNames": {
+        "1.0.x": "unknownPersistedEventTypeMustFailInsteadOfReturningMap",
+        "2.0.x": "unknownPersistedEventTypeMustFailInsteadOfReturningMap",
+        "3.0.x": "unknownPersistedEventTypeMustFailInsteadOfReturningMap"
+      },
+      "lastEvidence": "/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-16-jdbi-unknown-event-type/report.json",
+      "lastEvidenceSha256": "b4c3162daa6daca38a2e55caed4f3143f61701af09940edf269312f1b434f392",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/JdbiEventStoreTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/JdbiEventStoreTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/JdbiEventStoreTest.java"
+          ]
+        }
+      }
+    },
+    {
       "id": "EVENTSTORE-JDBI-UTC-TIMESTAMP",
       "description": "JDBI 在 H2、PostgreSQL、MySQL 中跨写入/读取进程默认时区持久化 UTC TIMESTAMP，并读回同一事件 Instant",
       "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-13-jdbi-native-timezone/native-report.json",
