@@ -298,6 +298,14 @@ class UniformContract(unittest.TestCase):
         for branch in ('feature/2.0.x', 'feature/3.0.x'):
             self.assertNotIn(name, checker.resolve_policy(raw, branch)['fixed_properties'])
 
+    def test_jdk8_micronaut_keeps_java8_annotation_api(self):
+        repository = pathlib.Path(__file__).parents[3]
+        raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
+        coordinate = 'jakarta.annotation:jakarta.annotation-api'
+        self.assertIn(coordinate, checker.resolve_policy(raw, 'feature/1.0.x')['exclude'])
+        for branch in ('feature/2.0.x', 'feature/3.0.x'):
+            self.assertNotIn(coordinate, checker.resolve_policy(raw, branch)['exclude'])
+
 
     def test_jdk21_quarkus_uses_compatible_vertx4_artifacts(self):
         repository = pathlib.Path(__file__).parents[3]
