@@ -4257,6 +4257,33 @@
           ]
         }
       }
+    },
+    {
+      "id": "SAMPLE-JAVALIN-AUTH-ORDER-COMMAND-JSON",
+      "description": "Javalin Sa-Token 与 Shiro 样例的创建订单和添加订单行命令在本线 Jackson 下完成 JSON 往返",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/order/application/OrderCommandJsonContractTest.java",
+            "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/order/application/OrderCommandJsonContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/order/application/OrderCommandJsonContractTest.java",
+            "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/order/application/OrderCommandJsonContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/order/application/OrderCommandJsonContractTest.java",
+            "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/order/application/OrderCommandJsonContractTest.java"
+          ]
+        }
+      }
     }
   ]
 }
