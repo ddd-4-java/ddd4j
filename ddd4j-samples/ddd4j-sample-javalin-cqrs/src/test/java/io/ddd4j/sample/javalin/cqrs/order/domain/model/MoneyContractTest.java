@@ -29,6 +29,7 @@ class MoneyContractTest {
         assertEquals(money.currency(), money.getCurrency());
         assertEquals(equal, money);
         assertEquals(equal.hashCode(), money.hashCode());
+        assertEquals(297289, money.hashCode());
         assertNotEquals(money, Money.cny("2"));
         assertEquals("Money[amount=1.24, currency=CNY]", money.toString());
         ObjectMapper mapper = new ObjectMapper();

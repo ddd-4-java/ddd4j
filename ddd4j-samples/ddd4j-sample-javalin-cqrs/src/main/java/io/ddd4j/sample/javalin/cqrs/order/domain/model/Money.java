@@ -167,9 +167,9 @@ public final class Money implements ValueObject {
 
     @Override
     public int hashCode() {
-        int result = 0;
-        result = 31 * result + Objects.hashCode(amount);
-        result = 31 * result + Objects.hashCode(currency);
+        int result = 1;
+        result = 59 * result + (Objects.isNull(amount) ? 43 : amount.hashCode());
+        result = 59 * result + (Objects.isNull(currency) ? 43 : currency.hashCode());
         return result;
     }
 
