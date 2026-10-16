@@ -3,7 +3,8 @@
   "scope": [
     ".superpowers",
     "docs/superpowers",
-    "docs/reference/fuin-api-patterns"
+    "docs/reference/fuin-api-patterns",
+    "docs/ECOSYSTEM-ARCHITECTURE.md"
   ],
   "entries": [
     {
@@ -775,6 +776,13 @@
       "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
       "sourceTime": "2026-10-15T01:48:04+08:00",
       "sha256": "fc1e0fefe529e19604913132eb02afe95fb2ec4dd7e05ae38af58882603c6bb2"
+    },
+    {
+      "line": "1.0.x",
+      "path": "docs/ECOSYSTEM-ARCHITECTURE.md",
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "e38f3dcbe4f2703c7eb3d80e47f10c03b7a2aec8bdd0f6545e47cae6db040aa1"
     },
     {
       "line": "1.0.x",
