@@ -250,8 +250,14 @@ public class JdbiEventStore implements EventStore {
     }
 
     private void ensureInitialized() {
-        if (initialized.compareAndSet(false, true)) {
-            jdbi.useHandle(handle -> handle.execute(CREATE_TABLE_SQL));
+        if (initialized.get()) {
+            return;
+        }
+        synchronized (initialized) {
+            if (!initialized.get()) {
+                jdbi.useHandle(handle -> handle.execute(CREATE_TABLE_SQL));
+                initialized.set(true);
+            }
         }
     }
 

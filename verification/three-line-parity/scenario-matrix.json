@@ -1618,24 +1618,27 @@
     },
     {
       "id": "DATA-JDBI-RETRY",
-      "description": "JDBI 事件存储版本冲突不重试，position 冲突重试后保留强类型事件",
+      "description": "JDBI 事件存储版本冲突不重试，position 冲突重试后保留强类型事件，首次建表失败后下一次操作重试初始化",
       "lines": {
         "1.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/JdbiEventStoreRetryTest.java"
+            "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/JdbiEventStoreRetryTest.java",
+            "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/JdbiInitializationRetryTest.java"
           ]
         },
         "2.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/JdbiEventStoreRetryTest.java"
+            "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/JdbiEventStoreRetryTest.java",
+            "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/JdbiInitializationRetryTest.java"
           ]
         },
         "3.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/JdbiEventStoreRetryTest.java"
+            "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/JdbiEventStoreRetryTest.java",
+            "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/JdbiInitializationRetryTest.java"
           ]
         }
       }
