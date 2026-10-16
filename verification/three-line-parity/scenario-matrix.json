@@ -3458,7 +3458,21 @@
     },
     {
       "id": "SAMPLE-JAVALIN-MONEY",
-      "description": "Javalin 订单金额归一化、币种约束、值语义、JSON 与 Java 序列化",
+      "description": "Javalin 订单金额归一化、币种约束、三线一致的哈希值语义、JSON 与 Java 序列化",
+      "caseNames": {
+        "1.0.x": [
+          "amount_shouldNormalizeAndPreserveValueAndJsonContract",
+          "javaSerialization_shouldRestoreValidatedValue"
+        ],
+        "2.0.x": [
+          "amount_shouldNormalizeAndPreserveValueAndJsonContract",
+          "javaSerialization_shouldRestoreValidatedValue"
+        ],
+        "3.0.x": [
+          "amount_shouldNormalizeAndPreserveValueAndJsonContract",
+          "javaSerialization_shouldRestoreValidatedValue"
+        ]
+      },
       "lines": {
         "1.0.x": {
           "status": "supported",
