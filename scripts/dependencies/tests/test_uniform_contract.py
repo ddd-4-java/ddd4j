@@ -73,6 +73,18 @@ class UniformContract(unittest.TestCase):
             self.assertTrue(expected.keys().isdisjoint(fixed))
         self.assertFalse(any(value in jdk21['exclude'] for value in expected))
 
+    def test_jdk21_micronaut_family_remains_on_supported_java_line(self):
+        repository = pathlib.Path(__file__).parents[3]
+        raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
+        jdk21 = checker.resolve_policy(raw, 'feature/3.0.x')
+        self.assertEqual(jdk21['fixed_properties'].get('micronaut.version'), '4.10.21')
+        self.assertEqual(jdk21['fixed_properties'].get('micronaut.core.version'), '4.10.26')
+        self.assertIn('io.micronaut*:*', jdk21['exclude'])
+        for branch in ('feature/1.0.x', 'feature/2.0.x'):
+            policy = checker.resolve_policy(raw, branch)
+            self.assertNotIn('io.micronaut*:*', policy['exclude'])
+            self.assertNotIn('micronaut.version', policy['fixed_properties'])
+
     def test_non_maven_branch_is_explicitly_not_applicable(self):
         with tempfile.TemporaryDirectory() as directory:
             self.assertEqual(checker.runtime_config(pathlib.Path(directory))['project'], 'false')
