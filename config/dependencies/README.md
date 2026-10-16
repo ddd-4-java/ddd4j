@@ -7,6 +7,7 @@
   缩小检查范围。
 - 第三方库版本不从 DDD4J 分支号推导；只有 `dependency_versions` 中显式配置的坐标才校验指定版本（字符串表示三线共享版本，JDK 键表示明确的平台版本）。EasyExcel 五个发布模块统一固定为正式版 `5.0.1`。构件解析、JAR 字节码、组件覆盖和漏洞扫描门禁继续执行。
 - `version-evidence.json`：部分兼容发行版的发布 JAR 字节码证据。
+- `io.github.easy4j:httpconn`、`httputils`、`metrics-druid` 的源码分别位于 [httpconn](https://github.com/easy-4-java/httpconn)、[httputils](https://github.com/easy-4-java/httputils)、[metrics-druid](https://github.com/easy-4-java/metrics-druid)；各线使用对应的 `1.0.x.20260630-SNAPSHOT`、`2.0.x.20260630-SNAPSHOT`、`3.0.x.20260630-SNAPSHOT` 构件。
 - `component-matrix.csv`：当前三线的有效版本与检查状态。
 - `unverified-artifacts.csv`：尚未取得有效 JAR 检查结果的坐标；不等同于确认不存在。
 - `validation-result.json`：严格门禁的原始结果；非零错误不能作为已完成处理。
@@ -42,7 +43,7 @@ python3 -m unittest discover -s ddd4j/scripts -p test_dependency_alignment.py -v
 依赖属性固定为三个分区：`Global Properties`、`Third-Party Dependencies`、
 `Maven Dependencies`。每段按属性名进行大小写不敏感的自然字母排序。
 `io.github.easy4j` 组件的版本属性不保留 `easy4j-` 前缀。发生名称冲突时，
-删除重复的 `com.github.redacted-legacy-family` 旧坐标和旧版本属性，只保留当前 easy4j 组件。
+删除同名的历史旧坐标和旧版本属性，只保留当前 `io.github.easy4j` 组件。
 
 检查与重新格式化：
 
