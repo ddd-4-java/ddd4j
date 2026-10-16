@@ -274,6 +274,30 @@ class UniformContract(unittest.TestCase):
         for branch in ('feature/2.0.x', 'feature/3.0.x'):
             self.assertNotIn(name, checker.resolve_policy(raw, branch)['fixed_properties'])
 
+    def test_jdk8_artemis_client_keeps_java8_bytecode(self):
+        repository = pathlib.Path(__file__).parents[3]
+        raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
+        name = 'artemis.version'
+        self.assertEqual(checker.resolve_policy(raw, 'feature/1.0.x')['fixed_properties'].get(name), '2.19.0')
+        for branch in ('feature/2.0.x', 'feature/3.0.x'):
+            self.assertNotIn(name, checker.resolve_policy(raw, branch)['fixed_properties'])
+
+    def test_jdk8_kafka_client_keeps_java8_bytecode(self):
+        repository = pathlib.Path(__file__).parents[3]
+        raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
+        name = 'kafka.version'
+        self.assertEqual(checker.resolve_policy(raw, 'feature/1.0.x')['fixed_properties'].get(name), '3.9.2')
+        for branch in ('feature/2.0.x', 'feature/3.0.x'):
+            self.assertNotIn(name, checker.resolve_policy(raw, branch)['fixed_properties'])
+
+    def test_jdk8_pulsar_client_keeps_compatible_api(self):
+        repository = pathlib.Path(__file__).parents[3]
+        raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
+        name = 'pulsar.version'
+        self.assertEqual(checker.resolve_policy(raw, 'feature/1.0.x')['fixed_properties'].get(name), '4.0.14')
+        for branch in ('feature/2.0.x', 'feature/3.0.x'):
+            self.assertNotIn(name, checker.resolve_policy(raw, branch)['fixed_properties'])
+
 
     def test_jdk21_quarkus_uses_compatible_vertx4_artifacts(self):
         repository = pathlib.Path(__file__).parents[3]
