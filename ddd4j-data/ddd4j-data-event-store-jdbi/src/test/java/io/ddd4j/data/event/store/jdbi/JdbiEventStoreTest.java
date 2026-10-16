@@ -27,7 +27,6 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * JDBI EventStore 的 H2 强类型契约测试。
@@ -119,8 +118,59 @@ class JdbiEventStoreTest {
         assertThat(eventStore.read(ORDER_TYPE, orderId, 1, 2))
                 .extracting(StoredEvent::version)
                 .containsExactly(1L, 2L);
-        assertThatThrownBy(() -> eventStore.append(ORDER_TYPE, orderId, List.of(new OrderCreatedEvent(orderId)), 0))
-                .isInstanceOf(AggregateVersionConflictException.class);
+        AggregateVersionConflictException conflict = org.junit.jupiter.api.Assertions.assertThrows(
+                AggregateVersionConflictException.class,
+                () -> eventStore.append(ORDER_TYPE, orderId, List.of(new OrderCreatedEvent(orderId)), 0));
+        assertThat(conflict.expectedVersion()).isEqualTo(0L);
+        assertThat(conflict.actualVersion()).isEqualTo(3L);
+    }
+
+    @Test
+    void readAllPreservesGlobalPositionAcrossAggregates() {
+        TestAggregateRootId first = new TestAggregateRootId("order-position-a");
+        TestAggregateRootId second = new TestAggregateRootId("order-position-b");
+        eventStore.append(ORDER_TYPE, first, List.of(new OrderCreatedEvent(first)), 0);
+        eventStore.append(ORDER_TYPE, second, List.of(new OrderCreatedEvent(second)), 0);
+
+        List<StoredEvent> events = eventStore.readAll(1, 10);
+        assertThat(events).hasSize(2);
+        assertThat(events.get(0).aggregateId().asString()).isEqualTo(first.asString());
+        assertThat(events.get(1).aggregateId().asString()).isEqualTo(second.asString());
+        assertThat(events).extracting(StoredEvent::position).containsExactly(1L, 2L);
+    }
+
+    @Test
+    void causalityColumnsRoundTrip() {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-causal");
+        OrderCreatedEvent cause = new OrderCreatedEvent(orderId);
+        OrderCreatedEvent effect = new OrderCreatedEvent(orderId, cause);
+        eventStore.append(ORDER_TYPE, orderId, List.of(cause, effect), 0);
+
+        List<StoredEvent> events = eventStore.read(ORDER_TYPE, orderId);
+        assertThat(events).hasSize(2);
+        assertThat(events.get(0).correlationId()).isNull();
+        assertThat(events.get(1).correlationId()).isEqualTo(cause.getEventId());
+        assertThat(events.get(1).causationId()).isEqualTo(cause.getEventId());
+    }
+
+    @Test
+    void missingStreamReturnsEmpty() {
+        assertThat(eventStore.read(ORDER_TYPE, new TestAggregateRootId("missing"))).isEmpty();
+    }
+
+    @Test
+    void payloadColumnUsesCharacterType() {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-payload-type");
+        eventStore.append(ORDER_TYPE, orderId, List.of(new OrderCreatedEvent(orderId)), 0);
+        String dataType = jdbi.withHandle(handle -> handle.createQuery(
+                        "select data_type from information_schema.columns"
+                                + " where upper(table_name) = :tableName"
+                                + " and upper(column_name) = :columnName")
+                .bind("tableName", EventStoreConstants.TABLE_NAME.toUpperCase())
+                .bind("columnName", EventStoreConstants.COLUMN_PAYLOAD.toUpperCase())
+                .mapTo(String.class)
+                .one());
+        assertThat(dataType).startsWith("CHARACTER");
     }
 
     @Test
@@ -221,6 +271,10 @@ class JdbiEventStoreTest {
 
         OrderCreatedEvent(TestAggregateRootId orderId) {
             super(new EntityIdPath(orderId));
+        }
+
+        OrderCreatedEvent(TestAggregateRootId orderId, DomainEvent<?> causingEvent) {
+            super(new EntityIdPath(orderId), causingEvent);
         }
     }
 }
