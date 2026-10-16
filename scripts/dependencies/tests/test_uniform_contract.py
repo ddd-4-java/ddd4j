@@ -118,7 +118,8 @@ class UniformContract(unittest.TestCase):
     def test_legacy_commons_date_versions_do_not_beat_current_releases(self):
         repository = pathlib.Path(__file__).parents[3]
         raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
-        expected = {'commons-codec.version': '1.23.0',
+        expected = {'commons-cli.version': '1.11.0',
+                    'commons-codec.version': '1.23.0',
                     'commons-collections.version': '3.2.2',
                     'commons-io.version': '2.22.0'}
         for branch in ('feature/1.0.x', 'feature/2.0.x', 'feature/3.0.x'):
@@ -187,6 +188,18 @@ class UniformContract(unittest.TestCase):
         for branch in ('feature/2.0.x', 'feature/3.0.x'):
             self.assertNotIn('io.helidon.common:helidon-common-service-loader',
                              checker.resolve_policy(raw, branch)['fixed_dependencies'])
+
+    def test_jdk8_quarkus_keeps_javax_cdi_api(self):
+        repository = pathlib.Path(__file__).parents[3]
+        raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
+        self.assertEqual(checker.resolve_policy(raw, 'feature/1.0.x')['fixed_properties'].get('quarkus.version'),
+                         '1.13.7.Final')
+        self.assertIn('org.eclipse.microprofile.config:microprofile-config-api',
+                      checker.resolve_policy(raw, 'feature/1.0.x')['exclude'])
+        for branch in ('feature/2.0.x', 'feature/3.0.x'):
+            self.assertNotIn('quarkus.version', checker.resolve_policy(raw, branch)['fixed_properties'])
+            self.assertNotIn('org.eclipse.microprofile.config:microprofile-config-api',
+                             checker.resolve_policy(raw, branch)['exclude'])
 
     def test_jdk21_quarkus_uses_compatible_vertx4_artifacts(self):
         repository = pathlib.Path(__file__).parents[3]
