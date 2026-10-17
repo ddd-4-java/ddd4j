@@ -1055,6 +1055,17 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/listener/MQListener.java",
+      "sourceSha256": [
+        "9be4ae7572681c1633ae83fce5a23aa76a7807b5f980b86958efa922bd50e74e",
+        "7c217530a60a045cbf4e61305ccda7f515610fc6bdcafe025d92e04e80e827ef",
+        "7c217530a60a045cbf4e61305ccda7f515610fc6bdcafe025d92e04e80e827ef"
+      ],
+      "evidence": "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/MQClientInitializationContractTest.java",
+      "testSha256": "1ce21f2aa871dfecc810b9be12920cee2d18f0f1c4021359f4c447a4755e3988",
+      "reason": "三线共同初始化契约验证监听器默认 required=true、显式 false、历史八参数构造器及默认空 supports；JDK 8 使用 Collections.emptyList，高两线使用 List.of，监听器行为一致"
+    },
+    {
       "path": "ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/event/MqDomainEventPublisher.java",
       "sourceSha256": [
         "b9545a54bef776f79008933fa2e9cbec0183c4826f79834ab97fb707714117d5",
