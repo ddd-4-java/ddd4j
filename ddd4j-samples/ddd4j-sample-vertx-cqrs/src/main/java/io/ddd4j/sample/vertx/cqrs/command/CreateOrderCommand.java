@@ -19,6 +19,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.core.cqrs.command.Command;
 import lombok.Value;
 
+import java.util.Objects;
+
 /**
  * 创建订单命令（CQRS 写侧）。
  *
@@ -58,5 +60,49 @@ public class CreateOrderCommand implements Command {
 
     public String buyerName() {
         return buyerName;
+    }
+
+    /** @return 订单编号 */
+    public String getOrderNo() {
+        return orderNo;
+    }
+
+    /** @return 买家标识 */
+    public String getBuyerId() {
+        return buyerId;
+    }
+
+    /** @return 买家名称 */
+    public String getBuyerName() {
+        return buyerName;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+            return false;
+        }
+        CreateOrderCommand other = (CreateOrderCommand) obj;
+        return Objects.equals(this.orderNo, other.orderNo)
+                && Objects.equals(this.buyerId, other.buyerId)
+                && Objects.equals(this.buyerName, other.buyerName);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 1;
+        result = 59 * result + (Objects.isNull(orderNo) ? 43 : orderNo.hashCode());
+        result = 59 * result + (Objects.isNull(buyerId) ? 43 : buyerId.hashCode());
+        result = 59 * result + (Objects.isNull(buyerName) ? 43 : buyerName.hashCode());
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "CreateOrderCommand(orderNo=" + orderNo + ", buyerId=" + buyerId
+                + ", buyerName=" + buyerName + ")";
     }
 }
