@@ -15,7 +15,9 @@
 package io.ddd4j.spring.cqrs;
 
 import io.ddd4j.core.cqrs.readmodel.DefaultProjectionPosition;
+import io.ddd4j.core.cqrs.readmodel.ProjectionMetrics;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
+import io.ddd4j.core.cqrs.readmodel.ProjectionRunInfo;
 import io.ddd4j.core.cqrs.readmodel.ProjectionStatus;
 import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
 import org.junit.jupiter.api.DisplayName;
@@ -25,6 +27,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Instant;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -45,10 +48,32 @@ class SpringJpaViewManagerTest {
     @Mock
     private ProjectionPositionRepository positionRepository;
 
+    @Mock
+    private ProjectionMetrics projectionMetrics;
+
     /** 针对 {@code getProjectionStatus} 投影状态查询行为的嵌套测试组。 */
     @Nested
     @DisplayName("getProjectionStatus")
     class GetProjectionStatusTests {
+
+        @Test
+        void withMetricsIncludesLatestRunInfo() {
+            Instant lastRunAt = Instant.parse("2026-10-18T00:00:00Z");
+            when(positionRepository.findByStreamId("orders"))
+                    .thenReturn(Optional.of(new DefaultProjectionPosition("orders", 42L)));
+            when(projectionMetrics.getLastRunInfo("orders"))
+                    .thenReturn(Optional.of(new ProjectionRunInfo(lastRunAt, 3, "last failure")));
+
+            SpringJpaViewManager manager =
+                    new SpringJpaViewManager(scheduler, positionRepository, projectionMetrics);
+            ProjectionStatus status = manager.getProjectionStatus("orders");
+
+            assertThat(status.streamId()).isEqualTo("orders");
+            assertThat(status.nextEventNumber()).isEqualTo(42L);
+            assertThat(status.lastRunAt()).isEqualTo(lastRunAt);
+            assertThat(status.lastEventCount()).isEqualTo(3);
+            assertThat(status.lastError()).isEqualTo("last failure");
+        }
 
         @Test
         @DisplayName("无位置仓储时应返回基线状态")
