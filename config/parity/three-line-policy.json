@@ -1055,6 +1055,17 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-mq/ddd4j-mq-kafka/src/main/java/io/ddd4j/mq/kafka/KafkaMessageAcknowledgment.java",
+      "sourceSha256": [
+        "64fa83f2adef08952755eb054d345681932552100ef1c5ce28ea236919d5d425",
+        "aea14e92ef20f8136814f3bd7318bfbfe04571e0ec8cff8fa484faef84b92a0d",
+        "aea14e92ef20f8136814f3bd7318bfbfe04571e0ec8cff8fa484faef84b92a0d"
+      ],
+      "evidence": "ddd4j-mq/ddd4j-mq-kafka/src/test/java/io/ddd4j/mq/kafka/KafkaAcknowledgmentContractTest.java",
+      "testSha256": "6fd2f3a351a2b50eb18f9e8230e662d5e96e5b429df01467207a64aed2e414b0",
+      "reason": "三线共同测试验证 Kafka 确认提交准确分区及下一偏移量、提交失败保持可重试和稳定消息 ID；JDK 8 使用 singletonMap，高两线使用 Map.of，提交语义一致"
+    },
+    {
       "path": "ddd4j-runtime/ddd4j-runtime-helidon/src/main/java/io/ddd4j/helidon/Ddd4jHelidonRuntime.java",
       "sourceSha256": [
         "921a212bd9b20e7618a870e66daa888b4cbfb15b9e42e59ae0cf95a280f34530",
