@@ -47,7 +47,7 @@ public final class FileValidationResult {
     /**
      * 创建失败结果。
      *
-     * @param failure 失败原因
+     * @param failure      失败原因
      * @param detectedType 已检测类型
      * @return 失败结果
      */
@@ -55,26 +55,17 @@ public final class FileValidationResult {
         return new FileValidationResult(false, failure, detectedType);
     }
 
-    /**
-     * 获取值。
-     * @return 方法执行结果。
-     */
+    /** @return 检测到的文件类型，可以为空 */
     public DetectedFileType getDetectedType() {
         return detectedType;
     }
 
-    /**
-     * 获取值。
-     * @return 方法执行结果。
-     */
+    /** @return 校验失败原因，通过时为空 */
     public FileValidationFailure getFailure() {
         return failure;
     }
 
-    /**
-     * 判断布尔状态。
-     * @return 判断结果。
-     */
+    /** @return 文件是否通过校验 */
     public boolean isValid() {
         return valid;
     }
@@ -92,16 +83,19 @@ public final class FileValidationResult {
         this.detectedType = detectedType;
     }
 
+    /** @return 文件是否通过校验 */
     @JsonProperty("valid")
     public boolean valid() {
         return valid;
     }
 
+    /** @return 校验失败原因，通过时为空 */
     @JsonProperty("failure")
     public FileValidationFailure failure() {
         return failure;
     }
 
+    /** @return 检测到的文件类型，可以为空 */
     @JsonProperty("detectedType")
     public DetectedFileType detectedType() {
         return detectedType;
