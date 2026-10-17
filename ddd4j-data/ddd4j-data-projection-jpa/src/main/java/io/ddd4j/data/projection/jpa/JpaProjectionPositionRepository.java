@@ -54,6 +54,11 @@ public class JpaProjectionPositionRepository implements ProjectionPositionReposi
 
     private final SpringDataProjectionPositionRepository repository;
 
+    /**
+     * 创建基于 Spring Data JPA 的投影位置仓库。
+     *
+     * @param repository Spring Data JPA 仓库
+     */
     public JpaProjectionPositionRepository(SpringDataProjectionPositionRepository repository) {
         this.repository = Objects.requireNonNull(repository, "repository must not be null");
     }
