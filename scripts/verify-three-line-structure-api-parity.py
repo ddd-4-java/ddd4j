@@ -630,7 +630,7 @@ def classify_compiled_source_api(rows: list[dict[str, str]], roots: list[pathlib
 
 
 def inventory_gate(roots: list[pathlib.Path], output: pathlib.Path, policy_path: pathlib.Path,
-                   phase: str) -> int:
+                   phase: str, fail_on_open: bool = False) -> int:
     policy = json.loads(policy_path.read_text(encoding="utf-8"))
     if policy.get("schemaVersion") != 1:
         raise ValueError("unsupported three-line policy schema")
@@ -757,7 +757,8 @@ def inventory_gate(roots: list[pathlib.Path], output: pathlib.Path, policy_path:
         encoding="utf-8")
     print(f"phase={phase} differences={len(rows)} open={counts['OPEN']} "
           f"compiled_api={compiled['status']} output={output}")
-    return 1 if phase == "verify" and (counts["OPEN"] or compiled["status"] != "PASS") else 0
+    return 1 if ((fail_on_open and counts["OPEN"])
+                 or (phase == "verify" and (counts["OPEN"] or compiled["status"] != "PASS"))) else 0
 
 
 def module_dirs(paths: set[str]) -> set[str]:
@@ -1227,13 +1228,15 @@ def main() -> int:
                         help="兼容入口：执行当前源码清单与三线 clean compile/API 验证")
     parser.add_argument("--policy", type=pathlib.Path)
     parser.add_argument("--phase", choices=("inventory", "verify"))
+    parser.add_argument("--fail-on-open", action="store_true",
+                        help="盘点后保留证据，并在存在 OPEN 差异时以失败退出")
     args = parser.parse_args()
     roots = [supplied_root.resolve() for supplied_root in args.roots]
     policy = args.policy or roots[-1] / "config/parity/three-line-policy.json"
     if not policy.is_file():
         parser.error(f"missing three-line policy: {policy}")
     phase = args.phase or ("verify" if args.compile else "inventory")
-    return inventory_gate(roots, args.output, policy, phase)
+    return inventory_gate(roots, args.output, policy, phase, args.fail_on_open)
 
 
 if __name__ == "__main__":
