@@ -1659,13 +1659,15 @@
         "2.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/EventStoreRetryTest.java"
+            "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/EventStoreRetryTest.java",
+            "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/EventStoreRetryClassificationParityTest.java"
           ]
         },
         "3.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/EventStoreRetryTest.java"
+            "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/EventStoreRetryTest.java",
+            "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/EventStoreRetryClassificationParityTest.java"
           ]
         }
       }
