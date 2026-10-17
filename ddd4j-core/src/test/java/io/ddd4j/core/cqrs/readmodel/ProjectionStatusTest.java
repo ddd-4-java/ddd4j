@@ -25,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
- * {@link ProjectionStatus} record 契约测试 + {@link ViewManager#getProjectionStatus(String)} 默认行为测试。
+ * {@link ProjectionStatus} 值对象契约测试 + {@link ViewManager#getProjectionStatus(String)} 默认行为测试。
  *
  * @author PartMe.AI
  */
@@ -33,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class ProjectionStatusTest {
 
     @Nested
-    @DisplayName("record 构造与校验")
+    @DisplayName("值对象构造与校验")
     class RecordConstruction {
 
         @Test
