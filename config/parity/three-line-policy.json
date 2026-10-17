@@ -221,6 +221,17 @@
         "699b608ab52511af697a03419ebdf7f1fddd49809c0c4564905bc6f0b064d502"
       ],
       "reason": "JDK 8 HTTP 测试客户端替代 java.net.http；三线 GoodsControllerTest 与 OrderControllerTest 均在真实 Javalin 服务上执行且无跳过"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-vertx-cqrs/src/test/java/io/ddd4j/sample/vertx/cqrs/Jdk8HttpCompat.java",
+      "sha256": "1ef483217a467b0d15e48fb410e487aaef5ea28be834192aa335e95a408a8665",
+      "counterpart": "ddd4j-samples/ddd4j-sample-vertx-cqrs/src/test/java/io/ddd4j/sample/vertx/cqrs/VertxOrderCqrsIT.java",
+      "counterpartSha256": [
+        "61213fd2d9eee3b0d5529657ab7803be87e5cb525ed4f00256482e50a45a7a8e",
+        "d5e631fcfef1fa636841582b2f9812f147261a017429ff6cb17701a23b710740",
+        "d5e631fcfef1fa636841582b2f9812f147261a017429ff6cb17701a23b710740"
+      ],
+      "reason": "JDK 8 HTTP 测试门面替代 java.net.http；三线 VertxOrderCqrsIT 均有 3 项真实 HTTP 测试通过且无跳过"
     }
   ],
   "platformContentMappings": [
