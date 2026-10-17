@@ -31,8 +31,9 @@ import java.util.Objects;
 public final class FormatDateFunction implements NamedQLFunction {
 
     /**
-     * name() 方法。
-     * @return 结果字符串。
+     * 返回表达式中注册的函数名。
+     *
+     * @return {@code formatDate}
      */
     @Override
     public String name() {
@@ -40,10 +41,11 @@ public final class FormatDateFunction implements NamedQLFunction {
     }
 
     /**
-     * call() 方法。
-     * @param qContext qContext 参数。
-     * @param parameters parameters 参数。
-     * @return 结果对象。
+     * 将 Date 或 java.time 日期按指定格式转为字符串。
+     *
+     * @param qContext 表达式上下文
+     * @param parameters 日期对象和格式
+     * @return 格式化结果；日期为 null 时返回 null
      */
     @Override
     public Object call(QContext qContext, Parameters parameters) {
