@@ -30,6 +30,12 @@ public final class PathWebAccessPolicy implements WebAccessPolicy {
     private final List<String> disabledPatterns;
     private final AuthenticationMode defaultMode;
 
+    /**
+     * 创建基于路径模式的访问策略。
+     *
+     * @param disabledPatterns 免认证路径模式
+     * @param defaultMode 其他路径的默认认证模式
+     */
     public PathWebAccessPolicy(Collection<String> disabledPatterns, AuthenticationMode defaultMode) {
         Objects.requireNonNull(disabledPatterns, "disabledPatterns must not be null");
         this.disabledPatterns = disabledPatterns.stream()
@@ -41,9 +47,10 @@ public final class PathWebAccessPolicy implements WebAccessPolicy {
     }
 
     /**
-     * authenticationMode() 方法。
-     * @param context JUnit 扩展上下文。
-     * @return 方法执行结果。
+     * 按请求路径选择认证模式。
+     *
+     * @param context 当前请求上下文
+     * @return 路径匹配时为免认证模式，否则为默认认证模式
      */
     @Override
     public AuthenticationMode authenticationMode(WebRequestContext context) {
