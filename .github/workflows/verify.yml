@@ -46,9 +46,23 @@ jobs:
       - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
         with:
           distribution: temurin
+          java-version: '8'
+      - name: Record Java 8 checker home
+        run: echo "DDD4J_JDK8_HOME=$JAVA_HOME" >> "$GITHUB_ENV"
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Record Java 21 checker home
+        run: echo "DDD4J_JDK21_HOME=$JAVA_HOME" >> "$GITHUB_ENV"
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
           java-version: '17'
           cache: maven
           overwrite-settings: true
+      - name: Record Java 17 checker home
+        run: echo "DDD4J_JDK17_HOME=$JAVA_HOME" >> "$GITHUB_ENV"
       - name: Configure Easy4J Maven repositories
         env:
           MAVEN_SETTINGS_XML: ${{ secrets.MAVEN_SETTINGS_XML }}
