@@ -29,16 +29,37 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Locale;
 import java.util.Objects;
-import lombok.Value;
 
-@Value
+/**
+ * 金额值对象。
+ *
+ * <p>封装不可变的金额与货币代码，提供加减乘运算与折扣计算。
+ * 构造期校验非负与货币一致性，是订单聚合内常用值对象。
+ *
+ * <p>使用 {@code record} 实现 {@link ValueObject} 接口，
+ * 自动获得不可变性、equals/hashCode/toString。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
+
 public final class Money implements ValueObject {
 
     private static final long serialVersionUID = 0L;
 
+    /**
+     * 金额数值。
+     */
     private final BigDecimal amount;
 
+    /**
+     * 币种。
+     */
     private final String currency;
+
+    /**
+ * @param amount 金额数值
+ * @param currency 货币代码（如 CNY、USD）
+ */
 
     @JsonCreator()
     public Money(@JsonProperty("amount") BigDecimal amount, @JsonProperty("currency") String currency) {
@@ -57,6 +78,9 @@ public final class Money implements ValueObject {
 
     /**
      * 创建人民币金额。
+     *
+     * @param amount 金额数值
+     * @return 人民币金额
      */
     public static Money cny(String amount) {
         return new Money(new BigDecimal(Objects.requireNonNull(amount, "amount must not be null")), "CNY");
@@ -64,6 +88,9 @@ public final class Money implements ValueObject {
 
     /**
      * 创建指定货币的零金额。
+     *
+     * @param currency 币种
+     * @return 零金额
      */
     public static Money zero(String currency) {
         return new Money(BigDecimal.ZERO, currency);
@@ -71,6 +98,9 @@ public final class Money implements ValueObject {
 
     /**
      * 金额相加（币种必须一致）。
+     *
+     * @param other 另一金额
+     * @return 相加后的金额
      */
     public Money add(Money other) {
         Objects.requireNonNull(other, "other must not be null");
@@ -82,6 +112,9 @@ public final class Money implements ValueObject {
 
     /**
      * 金额乘以整数因子。
+     *
+     * @param factor 倍数
+     * @return 计算后的金额
      */
     public Money multiply(int factor) {
         if (factor < 0) {
@@ -92,6 +125,9 @@ public final class Money implements ValueObject {
 
     /**
      * 应用折扣（百分比）。
+     *
+     * @param percent 折扣百分比
+     * @return 折扣金额
      */
     public Money discount(int percent) {
         if (percent < 0 || percent > 100) {
@@ -101,16 +137,42 @@ public final class Money implements ValueObject {
         return new Money(amount.multiply(factor), currency);
     }
 
+    /**
+     * 读取金额数值。
+     *
+     * @return 金额数值
+     */
     @JsonProperty("amount")
     public BigDecimal amount() {
         return amount;
     }
 
+    /**
+     * 读取币种。
+     *
+     * @return 币种
+     */
     @JsonProperty("currency")
     public String currency() {
         return currency;
     }
 
+    /** @return 金额数值 */
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    /** @return 币种 */
+    public String getCurrency() {
+        return currency;
+    }
+
+    /**
+     * 反序列化后恢复规范化金额对象。
+     *
+     * @return 规范化金额对象
+     * @throws ObjectStreamException 反序列化对象恢复失败时
+     */
     private Object readResolve() throws ObjectStreamException {
         try {
             return new Money(amount, currency);
@@ -119,5 +181,30 @@ public final class Money implements ValueObject {
             failure.initCause(cause);
             throw failure;
         }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+            return false;
+        }
+        Money other = (Money) obj;
+        return Objects.equals(this.amount, other.amount) && Objects.equals(this.currency, other.currency);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 1;
+        result = 59 * result + (Objects.isNull(amount) ? 43 : amount.hashCode());
+        result = 59 * result + (Objects.isNull(currency) ? 43 : currency.hashCode());
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Money(amount=" + amount + ", currency=" + currency + ")";
     }
 }
