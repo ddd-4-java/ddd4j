@@ -39,6 +39,11 @@ public class SpringDomainEventPublisher implements DomainEventPublisher {
      */
     private final ApplicationEventPublisher publisher;
 
+    /**
+     * 创建基于 Spring 应用事件的领域事件发布器。
+     *
+     * @param publisher Spring 应用事件发布器
+     */
     public SpringDomainEventPublisher(ApplicationEventPublisher publisher) {
         log.debug("Initializing SpringDomainEventPublisher");
         Objects.requireNonNull(publisher, "ApplicationEventPublisher cannot be null");
