@@ -1267,6 +1267,28 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-extensions/ddd4j-extension-qlexpress/src/main/java/io/ddd4j/extension/qlexpress/function/BuiltInFunctions.java",
+      "sourceSha256": [
+        "7c6d4b0a7ed82d6681d8187a3476edecb558a3852ad21a4b0ad6bbdd5391a933",
+        "7f7cabf9c82a5b7e3daf9d3541e1705ea12666ba8a6223719e59753531d150b0",
+        "ce2f4166d2198322404cd6e5f477c510a9737c93eec8fa94cbbf72ecc56b52e8"
+      ],
+      "evidence": "ddd4j-extensions/ddd4j-extension-qlexpress/src/test/java/io/ddd4j/extension/qlexpress/function/BuiltInFunctionsContractTest.java",
+      "testSha256": "4401d43513765129d0cc4ce2eddfaf9b361d6cc14a566aae02bd97e6db56ba51",
+      "reason": "JDK 8 使用 Collections.unmodifiableList(Arrays.asList)，高两线使用 List.of；三线共同测试锁定内置函数顺序和返回列表不可修改的行为"
+    },
+    {
+      "path": "ddd4j-runtime/ddd4j-runtime-testkit/src/main/java/io/ddd4j/runtime/testkit/RuntimeFixtures.java",
+      "sourceSha256": [
+        "8f17a4eff7d96febb797b033bd8051cd47ca1b966f2ce9d623f29e7228f7a9fc",
+        "a935c2e1d8ac69c90bf51a24e40e5aa7e02e8c11bb698acf12c19ed96646c911",
+        "6f115800fbee4e1fde4e5ec0badbb2f191312d773f97f90ab76d892d0bd599de"
+      ],
+      "evidence": "ddd4j-runtime/ddd4j-runtime-testkit/src/test/java/io/ddd4j/runtime/testkit/RuntimeFixturesContractTest.java",
+      "testSha256": "7e9ef2a6708ac6ac1bb2248cd3b66f7f64276b9ac13ea556b549bd1c9bc50720",
+      "reason": "JDK 8 使用不可修改集合包装，高两线使用 List.of 和 Map.of；三线共同测试锁定就绪项及服务注册表的内容和不可修改行为"
+    },
+    {
       "path": "ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/listener/MQListener.java",
       "sourceSha256": [
         "9be4ae7572681c1633ae83fce5a23aa76a7807b5f980b86958efa922bd50e74e",
