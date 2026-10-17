@@ -28,16 +28,30 @@ import java.util.Optional;
  */
 public final class WebIdempotencyLifecycle {
 
-    /** 未显式指定时使用的默认幂等键存活时长。 */
+    /**
+     * 默认幂等租约 TTL（5 分钟）。
+     */
     public static final Duration DEFAULT_TTL = Duration.ofMinutes(5);
 
     private final IdempotencyGuard guard;
     private final Duration ttl;
 
+    /**
+     * 使用默认 TTL 构造生命周期。
+     *
+     * @param guard 幂等守卫，不可为 {@code null}
+     */
     public WebIdempotencyLifecycle(IdempotencyGuard guard) {
         this(guard, DEFAULT_TTL);
     }
 
+    /**
+     * 使用指定 TTL 构造生命周期。
+     *
+     * @param guard 幂等守卫，不可为 {@code null}
+     * @param ttl   租约存活时长，必须为正数
+     * @throws IllegalArgumentException TTL 为零或负数时抛出
+     */
     public WebIdempotencyLifecycle(IdempotencyGuard guard, Duration ttl) {
         this.guard = Objects.requireNonNull(guard, "guard must not be null");
         this.ttl = Objects.requireNonNull(ttl, "ttl must not be null");
@@ -46,6 +60,17 @@ public final class WebIdempotencyLifecycle {
         }
     }
 
+    /**
+     * 以幂等键申请租约并开启一次幂等作用域。
+     *
+     * <p>幂等键为空白时视为非幂等请求，直接返回 {@link Optional#empty()}；
+     * 租约被占用（重复请求）时抛出 409 冲突异常。
+     *
+     * @param context        Web 请求上下文
+     * @param idempotencyKey 客户端提供的幂等键
+     * @return 开启的作用域；幂等键为空白时为空
+     * @throws WebStatusException 重复的幂等请求时抛出
+     */
     public Optional<Scope> open(WebRequestContext context, String idempotencyKey) {
         if (StrKit.isBlank(idempotencyKey)) {
             return Optional.empty();
@@ -53,11 +78,11 @@ public final class WebIdempotencyLifecycle {
         WebRequestContext requestContext = Objects.requireNonNull(context, "context must not be null");
         String storageKey = storageKey(requestContext, idempotencyKey.trim());
         Optional<IdempotencyLease> lease = guard.acquireLease(storageKey, ttl);
-        if (lease.isEmpty()) {
+        if (!lease.isPresent()) {
             throw new WebStatusException(DefaultWebExceptionTranslator.CONFLICT,
                     "Duplicate idempotent request");
         }
-        return Optional.of(new Scope(guard, lease.orElseThrow()));
+        return Optional.of(new Scope(guard, lease.get()));
     }
 
     private String storageKey(WebRequestContext context, String idempotencyKey) {
@@ -70,7 +95,10 @@ public final class WebIdempotencyLifecycle {
     }
 
     /**
-     * 单次幂等请求的作用域：处理期间持有租约，关闭时按完成情况提交或回滚。
+     * 幂等作用域：持有租约并保证 {@link #close()} 前完成或释放。
+     *
+     * <p>请求成功时调用 {@link #complete()} 落库完成；失败时由 {@link #close()}
+     * 释放租约，让后续重试可以重新执行。
      */
     public static final class Scope implements AutoCloseable {
 
@@ -85,7 +113,9 @@ public final class WebIdempotencyLifecycle {
         }
 
         /**
-         * complete() 方法。
+         * 标记本次幂等请求执行完成（幂等落库）。
+         *
+         * <p>作用域已关闭或已完成时为空操作。
          */
         public synchronized void complete() {
             if (closed || completed) {
@@ -96,7 +126,9 @@ public final class WebIdempotencyLifecycle {
         }
 
         /**
-         * 关闭并释放资源。
+         * 关闭作用域：未完成时释放租约，允许后续重试重新执行。
+         *
+         * <p>重复关闭为空操作，由 {@link AutoCloseable} 契约保证不抛出异常。
          */
         @Override
         public synchronized void close() {
