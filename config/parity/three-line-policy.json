@@ -232,6 +232,17 @@
         "d5e631fcfef1fa636841582b2f9812f147261a017429ff6cb17701a23b710740"
       ],
       "reason": "JDK 8 HTTP 测试门面替代 java.net.http；三线 VertxOrderCqrsIT 均有 3 项真实 HTTP 测试通过且无跳过"
+    },
+    {
+      "path": "ddd4j-data/ddd4j-data-event-store-r2dbc/src/test/java/io/ddd4j/data/event/store/r2dbc/PostgresEventStoreContainerSupport.java",
+      "sha256": "4391fdd7bbd84ef05b3a248cffe8705b25e19f1ed1280d8b0e602edb3734e663",
+      "counterpart": "ddd4j-data/ddd4j-data-event-store-r2dbc/src/test/java/io/ddd4j/data/event/store/r2dbc/R2dbcEventStorePostgresIT.java",
+      "counterpartSha256": [
+        "94b83e2b1fd0b7533e146e6a779c91d7d257d041f211c61d5f7af309f75f5cd6",
+        "fc64ce831c5c11447e66f2f0b563a462ccbdd53a589ed1210e034104e97aae8e",
+        "629075ea5e76f502453a25b6b982fafd94711e4ebd60c352f0a28097858519c7"
+      ],
+      "reason": "JDK 8 PostgreSQL 进程级单例容器夹具；高两线使用 @Container；三线 R2dbcEventStorePostgresIT 各 4 项真实 PostgreSQL 测试通过且无跳过"
     }
   ],
   "platformContentMappings": [
