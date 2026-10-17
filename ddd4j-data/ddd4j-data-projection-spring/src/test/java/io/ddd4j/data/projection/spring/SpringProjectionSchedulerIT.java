@@ -26,6 +26,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -182,7 +183,7 @@ class SpringProjectionSchedulerIT {
 
         @Override
         public Collection<String> getEventTypes() {
-            return Set.of("TestEvent");
+            return Collections.singleton("TestEvent");
         }
 
         @Override
