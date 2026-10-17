@@ -14,6 +14,7 @@
  */
 package io.ddd4j.sample.quarkus.satoken.order.infrastructure;
 
+import java.util.stream.Collectors;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.sample.quarkus.satoken.order.domain.model.Money;
 import io.ddd4j.sample.quarkus.satoken.order.domain.model.Order;
@@ -65,10 +66,10 @@ public class InMemoryOrderRepository implements OrderRepository {
     }
 
     private static Order toModel(OrderRow row) {
-        List<OrderLine> lines = Optional.ofNullable(row.lines).orElseGet(List::of).stream()
+        List<OrderLine> lines = Optional.ofNullable(row.lines).orElseGet(java.util.Collections::emptyList).stream()
                 .map(lr -> new OrderLine(lr.id, lr.goodsId, lr.goodsName, lr.quantity,
                         new Money(lr.unitPrice, lr.currency)))
-                .toList();
+                .collect(Collectors.toList());
         return new Order(row.id, row.orderNo, row.buyerId, row.buyerName,
                 OrderStatus.valueOf(row.status), lines);
     }
@@ -96,7 +97,7 @@ public class InMemoryOrderRepository implements OrderRepository {
     public List<Order> findAll() {
         return rows.values().stream()
                 .map(InMemoryOrderRepository::toModel)
-                .toList();
+                .collect(Collectors.toList());
     }
 
     // ============================ 模型与行转换 ============================
