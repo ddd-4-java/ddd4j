@@ -22,6 +22,8 @@ import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.core.Application;
 
 import java.util.Set;
+import java.util.Arrays;
+import java.util.HashSet;
 
 /**
  * 共享 Order 业务内核的 Helidon MP JAX-RS 应用声明。
@@ -31,10 +33,10 @@ public class HelidonOrderApplication extends Application {
 
     @Override
     public Set<Class<?>> getClasses() {
-        return Set.of(HelidonOrderResource.class,
+        return new HashSet<>(Arrays.<Class<?>>asList(HelidonOrderResource.class,
                 Ddd4jHelidonRequestFilter.class,
                 Ddd4jHelidonResponseFilter.class,
                 Ddd4jHelidonExceptionMapper.class,
-                Ddd4jHelidonIllegalStateExceptionMapper.class);
+                Ddd4jHelidonIllegalStateExceptionMapper.class));
     }
 }
