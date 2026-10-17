@@ -13,12 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.guice;
-import com.google.inject.Singleton;
-import com.google.inject.Provides;
-import com.google.inject.Key;
-import com.google.inject.Injector;
-import com.google.inject.Binding;
-import com.google.inject.AbstractModule;
 
 import com.google.inject.*;
 import io.ddd4j.core.cqrs.command.CommandBus;
@@ -87,6 +81,6 @@ public class Ddd4jCommandGuiceModule extends AbstractModule {
     @SuppressWarnings("unchecked")
     private CommandExecutor<?> resolveExecutor(Injector injector, Key<?> key) {
         Object instance = injector.getInstance((Key<Object>) key);
-        return instance instanceof CommandExecutor<?> executor ? executor : null;
+        return instance instanceof CommandExecutor ? (CommandExecutor<?>) instance : null;
     }
 }
