@@ -70,7 +70,7 @@ class GoodsQueryTest {
         assertThat(onSale.getStatus()).isEqualTo(GoodsStatus.ON_SALE);
 
         applicationService.delete(GoodsId.of(created.id()));
-        assertThat(repository.findById(created.id()).orElseThrow().getStatus())
+        assertThat(repository.findById(created.id()).orElseThrow(IllegalStateException::new).getStatus())
                 .isEqualTo(GoodsStatus.DELETED);
     }
 
