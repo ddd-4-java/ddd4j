@@ -28,6 +28,8 @@ public interface RequestIdGenerator {
      * @return 以随机 UUID 作为标识的生成器实现
      */
     static RequestIdGenerator uuid() {
+        // 首次 UUID 随机数初始化在生成器创建时完成，避免首个请求承担初始化延迟。
+        UUID.randomUUID();
         return () -> UUID.randomUUID().toString();
     }
 
