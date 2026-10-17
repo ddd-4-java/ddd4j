@@ -527,17 +527,24 @@ def validate_platform_files_only_on_jdk8(items: list[dict],
 
 
 def compiled_api_gate(roots: list[pathlib.Path], output: pathlib.Path,
-                      policy: dict[str, object], source_rows: list[dict[str, str]]) -> dict[str, object]:
+                      policy: dict[str, object], source_rows: list[dict[str, str]],
+                      module: str | None = None) -> dict[str, object]:
     """独立验证编译 API；源码清单差异不应遮蔽独立的构建阻塞或 API 漂移。"""
     if any(not (root / "mvnw").is_file() for root in roots):
         return {"status": "BLOCKED", "reason": "Maven Wrapper is missing in at least one line"}
-    results = compile_roots(roots, output)
+    results = compile_roots(roots, output, module)
     if any(result["exit"] != 0 for result in results):
         return {"status": "BLOCKED", "reason": "clean compile failed", "compiles": results}
     mappings = policy.get("typeMappings", [])
     bridge_sets = [set() for _ in roots]
-    api_sets = [javap_api(class_files(root), mappings, version, bridge_entries=bridges)
-                for root, version, bridges in zip(roots, ("1.0.x", "2.0.x", "3.0.x"), bridge_sets)]
+    class_sets = [({identity: path for identity, path in class_files(root).items()
+                    if identity.startswith(module + "|")} if module else class_files(root))
+                  for root in roots]
+    if module and any(not classes for classes in class_sets):
+        return {"status": "BLOCKED", "reason": f"no compiled classes for {module}",
+                "compiles": results}
+    api_sets = [javap_api(classes, mappings, version, bridge_entries=bridges)
+                for classes, version, bridges in zip(class_sets, ("1.0.x", "2.0.x", "3.0.x"), bridge_sets)]
     differences = {f"{left}-{right}": pair_diff(api_sets[left - 1], api_sets[right - 1])
                    for left, right in ((1, 2), (2, 3), (1, 3))}
     source_by_symbol = {row["path"]: row for row in source_rows if row["category"] == "api"}
@@ -546,6 +553,8 @@ def compiled_api_gate(roots: list[pathlib.Path], output: pathlib.Path,
     adapted_bridges = []
     stale = []
     for item in policy.get("platformApiMembersMissingOnJdk8", []):
+        if module and not item["sourceSymbol"].startswith(module + "/"):
+            continue
         entry = item["compiledEntry"]
         bridge = item.get("compilerBridgeEntry")
         source = source_by_symbol.get(item["sourceSymbol"])
@@ -562,6 +571,8 @@ def compiled_api_gate(roots: list[pathlib.Path], output: pathlib.Path,
         else:
             stale.append(bridge if explicit_matches and bridge else entry)
     for item in policy.get("platformApiMembersOnlyOnJdk8", []):
+        if module and not item["sourceSymbol"].startswith(module + "/"):
+            continue
         entry = item["compiledEntry"]
         source = source_by_symbol.get(item["sourceSymbol"])
         if (entry in api_sets[0] and entry not in api_sets[1] and entry not in api_sets[2]
@@ -587,6 +598,12 @@ def compiled_api_gate(roots: list[pathlib.Path], output: pathlib.Path,
               "platformCompilerBridges": adapted_bridges,
               "stalePlatformApiMappings": stale,
               "unresolved": unresolved}
+    if module:
+        result["module"] = module
+        result["scope"] = "module-compiled-api-only"
+        result["fullConvergence"] = "NOT_RUN"
+        result["roots"] = [str(root) for root in roots]
+        result["sourceApiDifferenceCount"] = len(source_rows)
     (output / "compiled-api.json").write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n",
                                                 encoding="utf-8")
     return {"status": result["status"], "artifact": "compiled-api.json", "compiles": results}
@@ -1105,14 +1122,18 @@ def javap_api(classes: dict[str, pathlib.Path], mappings=(), version_line: str =
     return result
 
 
-def compile_roots(roots: list[pathlib.Path], output: pathlib.Path) -> list[dict[str, object]]:
+def compile_roots(roots: list[pathlib.Path], output: pathlib.Path,
+                  module: str | None = None) -> list[dict[str, object]]:
     results = []
     for index, (root, jdk_version) in enumerate(zip(roots, JDK_VERSIONS), 1):
         major = (8, 17, 21)[index - 1]
         configured = os.environ.get(f"DDD4J_JDK{major}_HOME")
         jdk = pathlib.Path(configured or run("/usr/libexec/java_home", "-v", jdk_version).strip())
         executable = root / "mvnw"
-        command = [str(executable), "-B", "-ntp", "clean", "compile"]
+        command = [str(executable), "-B", "-ntp"]
+        if module:
+            command.extend(("-pl", module, "-am"))
+        command.extend(("clean", "compile"))
         environment = os.environ.copy()
         environment["JAVA_HOME"] = str(jdk)
         environment["PATH"] = str(jdk / "bin") + os.pathsep + environment["PATH"]
@@ -1121,6 +1142,35 @@ def compile_roots(roots: list[pathlib.Path], output: pathlib.Path) -> list[dict[
         log.write_text(completed.stdout + completed.stderr, encoding="utf-8")
         results.append({"line": index, "exit": completed.returncode, "log": log.name})
     return results
+
+
+def module_compiled_api_gate(roots: list[pathlib.Path], output: pathlib.Path,
+                             policy_path: pathlib.Path, module: str) -> int:
+    """只编译指定模块及其 reactor 依赖，报告该模块的公开 JVM API 差异。"""
+    policy = json.loads(policy_path.read_text(encoding="utf-8"))
+    if policy.get("schemaVersion") != 1:
+        raise ValueError("unsupported three-line policy schema")
+    validate_type_mappings(policy.get("typeMappings", []), roots)
+    platform_api = (policy.get("platformApiMembersMissingOnJdk8", [])
+                    + policy.get("platformApiMembersOnlyOnJdk8", []))
+    validate_platform_api_mappings(
+        [item for item in platform_api if item["sourceSymbol"].startswith(module + "/")], roots)
+    output.mkdir(parents=True, exist_ok=True)
+    snapshots = [{path: digest for path, digest in inventory_files(root).items()
+                  if path.startswith(module + "/")}
+                 for root in roots]
+    apis = [source_api(root, snapshot, output) for root, snapshot in zip(roots, snapshots)]
+    rows = []
+    for symbol in sorted(set().union(*(api.keys() for api in apis))):
+        values = [api.get(symbol) for api in apis]
+        if values[0] == values[1] == values[2]:
+            continue
+        rows.append({"category": "api", "path": symbol, "jdk8": values[0] or "MISSING",
+                     "jdk17": values[1] or "MISSING", "jdk21": values[2] or "MISSING"})
+    compiled = compiled_api_gate(roots, output, policy, rows, module)
+    print(f"module={module} compiled_api={compiled['status']} "
+          f"source_api_differences={len(rows)} output={output}")
+    return 0 if compiled["status"] == "PASS" else 1
 
 
 def codegraph_signatures(root: pathlib.Path, tracked: set[str]) -> set[str]:
@@ -1228,6 +1278,7 @@ def main() -> int:
                         help="兼容入口：执行当前源码清单与三线 clean compile/API 验证")
     parser.add_argument("--policy", type=pathlib.Path)
     parser.add_argument("--phase", choices=("inventory", "verify"))
+    parser.add_argument("--module", help="仅在 verify 阶段 clean compile 指定模块及其依赖并比较该模块 API")
     parser.add_argument("--fail-on-open", action="store_true",
                         help="盘点后保留证据，并在存在 OPEN 差异时以失败退出")
     args = parser.parse_args()
@@ -1236,6 +1287,14 @@ def main() -> int:
     if not policy.is_file():
         parser.error(f"missing three-line policy: {policy}")
     phase = args.phase or ("verify" if args.compile else "inventory")
+    if args.module:
+        module = pathlib.PurePosixPath(args.module)
+        if (phase != "verify" or module.is_absolute() or ".." in module.parts
+                or "." in module.parts or "*" in args.module
+                or module.as_posix() != args.module
+                or not all((root / module / "pom.xml").is_file() for root in roots)):
+            parser.error(f"invalid module for scoped verification: {args.module}")
+        return module_compiled_api_gate(roots, args.output, policy, args.module)
     return inventory_gate(roots, args.output, policy, phase, args.fail_on_open)
 
 
