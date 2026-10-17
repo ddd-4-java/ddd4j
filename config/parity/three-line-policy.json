@@ -1684,12 +1684,12 @@
     {
       "path": "ddd4j-web/ddd4j-web-core/src/main/java/io/ddd4j/web/core/error/DefaultWebExceptionTranslator.java",
       "sourceSha256": [
-        "b99ffbf36ddca8b27ee729b38898a2f8a91c2f7df8d7068a4c7d4c3f7ae9d602",
-        "1189bdecc602b52fdfa810c1a8e492ed4a1880ae611cb4727804ac45913f7bb9",
-        "1189bdecc602b52fdfa810c1a8e492ed4a1880ae611cb4727804ac45913f7bb9"
+        "e20eb3ddfdc5891d95fc5a3435f5ec63f5b884c2d2b775b8a545725456abfa5d",
+        "d7a1e5deecf7a3bbfd168ef71e944769309d78d7586179b5fd0a520591b939cd",
+        "d7a1e5deecf7a3bbfd168ef71e944769309d78d7586179b5fd0a520591b939cd"
       ],
       "evidence": "ddd4j-web/ddd4j-web-core/src/test/java/io/ddd4j/web/core/error/DefaultWebExceptionTranslatorTest.java",
-      "testSha256": "67e7b1a54e9c284c9eaea637585bf05f27b10db2b1eb31a86205ae2d6e01c8dd",
+      "testSha256": "316b5f0a7e5b6353141fea435c7face853cd10a5b58a2ddeddae516daeaf5f6b",
       "reason": "JDK 8 使用 instanceof 后显式强转，高两线使用模式匹配；共同测试锁定状态码、错误码及异常翻译"
     },
     {

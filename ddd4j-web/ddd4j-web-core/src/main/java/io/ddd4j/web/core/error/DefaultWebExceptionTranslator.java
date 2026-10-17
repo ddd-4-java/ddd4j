@@ -28,13 +28,25 @@ import java.util.Objects;
  */
 public final class DefaultWebExceptionTranslator implements WebExceptionTranslator {
 
+    /** 表示请求参数或格式非法的状态码。 */
     public static final int BAD_REQUEST = 400;
+    /** 表示缺少或无效授权凭证的状态码。 */
     public static final int UNAUTHORIZED = 401;
+    /** 表示已认证但无权访问的状态码。 */
     public static final int FORBIDDEN = 403;
+    /** 表示目标资源不存在的状态码。 */
     public static final int NOT_FOUND = 404;
+    /** 表示请求与当前资源状态冲突（如重复提交）的状态码。 */
     public static final int CONFLICT = 409;
+    /** 表示服务端发生未预期错误的状态码。 */
     public static final int INTERNAL_SERVER_ERROR = 500;
 
+    /**
+     * 将已知业务异常转换为稳定的 HTTP 错误响应。
+     *
+     * @param throwable 待翻译的异常
+     * @return 包含状态码、错误码和消息的响应
+     */
     @Override
     public WebError translate(Throwable throwable) {
         Throwable cause = Objects.requireNonNull(throwable, "throwable must not be null");
