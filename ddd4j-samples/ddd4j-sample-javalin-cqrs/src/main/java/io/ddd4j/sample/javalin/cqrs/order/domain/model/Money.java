@@ -42,8 +42,14 @@ public final class Money implements ValueObject {
 
     private static final long serialVersionUID = 0L;
 
+    /**
+     * 金额数值。
+     */
     private final BigDecimal amount;
 
+    /**
+     * 币种。
+     */
     private final String currency;
 
     /**
@@ -125,24 +131,42 @@ public final class Money implements ValueObject {
         return new Money(amount.multiply(BigDecimal.valueOf(factor)), currency);
     }
 
-    public BigDecimal getAmount() {
-        return amount;
-    }
-
-    public String getCurrency() {
-        return currency;
-    }
-
+    /**
+     * 金额数值。
+     *
+     * @return 金额数值
+     */
     @JsonProperty("amount")
     public BigDecimal amount() {
         return amount;
     }
 
+    /**
+     * 币种。
+     *
+     * @return 币种
+     */
     @JsonProperty("currency")
     public String currency() {
         return currency;
     }
 
+    /** @return 金额数值 */
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    /** @return 币种 */
+    public String getCurrency() {
+        return currency;
+    }
+
+    /**
+     * 反序列化后恢复规范化金额对象。
+     *
+     * @return 规范化的金额对象
+     * @throws ObjectStreamException 反序列化对象恢复失败时
+     */
     private Object readResolve() throws ObjectStreamException {
         try {
             return new Money(amount, currency);
