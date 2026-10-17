@@ -36,6 +36,7 @@ jobs:
           scripts/test_structure_api_normalization.py
           scripts/test_eventstore_parity_reports.py
           scripts/test_workflow_line_baseline.py
+          scripts/test_product_document_links.py
 
   unit-and-contract:
     name: Java 17 unit and contract
