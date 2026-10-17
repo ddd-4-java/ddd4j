@@ -1490,6 +1490,17 @@
       "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/eventstore/jackson/EventPayloadParityContractTest.java",
       "testSha256": "4e646fa716797eb5aa7692740739147108880f2214845705c7dc5278ce088430",
       "reason": "1.0.x/2.0.x 使用本线 Jackson 2 ObjectMapper.copy/configure，3.0.x 使用 Jackson 3 rebuild/disable/build；三线共同测试固定显式事件类型、未知字段兼容、拒绝 @class 类型选择和异常因果，既有本线测试验证 mapper 隔离"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-order-domain/src/main/java/io/ddd4j/sample/order/domain/Money.java",
+      "sourceSha256": [
+        "964780375a65f7baeb73819ccb2a864ebc704c5f4526a148323419b340da5181",
+        "cf4804d228fdfbe62b96ac1bbb07ec5d3acc76e4390e2ba9cbd1d4565f9e9b1c",
+        "cf4804d228fdfbe62b96ac1bbb07ec5d3acc76e4390e2ba9cbd1d4565f9e9b1c"
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-order-domain/src/test/java/io/ddd4j/sample/order/domain/OrderDomainValueContractTest.java",
+      "testSha256": "91a1f1581128375e4594c7e3dc0c77cecb044027ffe7284e3724625d2c59f681",
+      "reason": "三线显式值方法、JSON 构造器与共同往返契约一致；1.0.x 单独保留已发布 Java 序列化 UID -8848492078636310279，由 MoneyLegacySerializationTest 锁定；高两线 UID 为 0"
     }
   ],
   "historicalDocumentSections": [
