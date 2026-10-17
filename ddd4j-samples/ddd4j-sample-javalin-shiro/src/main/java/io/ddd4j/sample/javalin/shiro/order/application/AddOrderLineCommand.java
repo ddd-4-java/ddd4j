@@ -148,12 +148,12 @@ public final class AddOrderLineCommand {
 
     @Override
     public int hashCode() {
-        int result = 0;
-        result = 31 * result + Objects.hashCode(orderId);
-        result = 31 * result + Objects.hashCode(goodsId);
-        result = 31 * result + Objects.hashCode(goodsName);
-        result = 31 * result + Integer.hashCode(quantity);
-        result = 31 * result + Objects.hashCode(unitPrice);
+        int result = 1;
+        result = 59 * result + quantity;
+        result = 59 * result + (Objects.isNull(orderId) ? 43 : orderId.hashCode());
+        result = 59 * result + (Objects.isNull(goodsId) ? 43 : goodsId.hashCode());
+        result = 59 * result + (Objects.isNull(goodsName) ? 43 : goodsName.hashCode());
+        result = 59 * result + (Objects.isNull(unitPrice) ? 43 : unitPrice.hashCode());
         return result;
     }
 
