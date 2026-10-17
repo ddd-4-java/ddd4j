@@ -5208,7 +5208,21 @@
                 <artifactId>jetcache-starter-redisson</artifactId>
                 <version>${jetcache.version}</version>
             </dependency>
-            <!-- 显式锁定 Jetty 核心组件版本，覆盖 micronaut-platform 传递的旧版本 -->
+            <!-- 对齐 Jetty 核心及 EE10 家族，覆盖平台 BOM 传递的旧版本。 -->
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-bom</artifactId>
+                <version>${jetty.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty.ee10</groupId>
+                <artifactId>jetty-ee10-bom</artifactId>
+                <version>${jetty.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-server -->
             <!-- Jetty Server：Eclipse Jetty 嵌入式 Web 服务器核心（Servlet 容器、HTTP/1.1/2）。 -->
             <dependency>
