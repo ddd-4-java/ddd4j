@@ -111,6 +111,30 @@
       "reason": "JDK 8 Shiro 样例用 Java8Maps.of 实现不可变响应 Map；高两线在相同控制器使用 Map.of。三线共同测试锁定 null、重复键与不可变行为，低线辅助类源码哈希锁定"
     }
   ],
+  "platformTestsOnlyOnJdk8": [
+    {
+      "path": "ddd4j-data/ddd4j-data-event-store-esdb/src/test/java/io/ddd4j/data/event/store/esdb/EsdbContainerSupport.java",
+      "sha256": "69a6f22092fb4f5af473dc35b1ab0773efc51fb2ffbb4de5a14cd812838fab61",
+      "counterpart": "ddd4j-data/ddd4j-data-event-store-esdb/src/test/java/io/ddd4j/data/event/store/esdb/EsdbEventStoreIT.java",
+      "counterpartSha256": [
+        "64f83b8b509ff7f21469fdf6030e20a213ece458fd42efd56256adff1a095a24",
+        "c9ecb12935984809c56b20cf76d55473ff3307b292f9915039ac22fcfc1c896e",
+        "c9ecb12935984809c56b20cf76d55473ff3307b292f9915039ac22fcfc1c896e"
+      ],
+      "reason": "JDK 8 进程级单例 EventStoreDB 容器夹具；三线 EsdbEventStoreIT 均在真实容器执行，低线额外补充用例覆盖并发与因果元数据"
+    },
+    {
+      "path": "ddd4j-data/ddd4j-data-event-store-esdb/src/test/java/io/ddd4j/data/event/store/esdb/EsdbEventStoreContainerIT.java",
+      "sha256": "9919d78ab903abddac190e6feb18c8a107fa0b67b3c6b8127e38e06d067629af",
+      "counterpart": "ddd4j-data/ddd4j-data-event-store-esdb/src/test/java/io/ddd4j/data/event/store/esdb/EsdbEventStoreIT.java",
+      "counterpartSha256": [
+        "64f83b8b509ff7f21469fdf6030e20a213ece458fd42efd56256adff1a095a24",
+        "c9ecb12935984809c56b20cf76d55473ff3307b292f9915039ac22fcfc1c896e",
+        "c9ecb12935984809c56b20cf76d55473ff3307b292f9915039ac22fcfc1c896e"
+      ],
+      "reason": "JDK 8 补充容器契约验证并发冲突与因果元数据；高两线 EsdbEventStoreIT 包含相同断言并在真实容器执行"
+    }
+  ],
   "platformContentMappings": [
     {
       "path": "ddd4j-mq/ddd4j-mq-activemq/src/main/java/io/ddd4j/mq/activemq/ActiveMQClient.java",
