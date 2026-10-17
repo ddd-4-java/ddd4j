@@ -16,6 +16,7 @@ package io.ddd4j.extension.excel.importer;
 
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -38,8 +39,8 @@ public final class ImportResult<T> {
     private final List<ImportError> errors;
 
     private ImportResult(List<T> data, List<ImportError> errors) {
-        this.data = List.copyOf(data);
-        this.errors = List.copyOf(errors);
+        this.data = Collections.unmodifiableList(new ArrayList<>(data));
+        this.errors = Collections.unmodifiableList(new ArrayList<>(errors));
     }
 
     /**
