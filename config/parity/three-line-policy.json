@@ -1055,6 +1055,17 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-runtime/ddd4j-runtime-spring/src/main/java/io/ddd4j/spring/cqrs/SpringJpaProjectionPosition.java",
+      "sourceSha256": [
+        "b4b57e00662e9c0dd0653a73403720418f889f747c1c2e328255fdd42a6aa698",
+        "195f78782b4a11f041db5e92fbd3ca2689d48e36cce05e642a385b157c2f88d7",
+        "195f78782b4a11f041db5e92fbd3ca2689d48e36cce05e642a385b157c2f88d7"
+      ],
+      "evidence": "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/cqrs/SpringJpaProjectionPositionDatabaseTest.java",
+      "testSha256": "842869d6ca7097aed117eee29f9a5131948d87d6db8c66ee3ba300a35591f989",
+      "reason": "三线相同的 H2 JPA 测试验证偏移量实体持久化与重置；JDK 8 javax.persistence 和高两线 jakarta.persistence 以及 @Serial 标注差异由源码哈希锁定"
+    },
+    {
       "path": "ddd4j-mq/ddd4j-mq-spring/src/main/java/io/ddd4j/mq/spring/registry/MQListenerBeanPostProcessor.java",
       "sourceSha256": [
         "c96e22ea583e2336100706501e3c6c3c8f1fe094c655eed1e3f05f21fc5c8e81",
