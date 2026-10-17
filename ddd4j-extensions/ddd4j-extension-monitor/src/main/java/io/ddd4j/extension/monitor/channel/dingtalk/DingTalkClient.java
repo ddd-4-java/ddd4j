@@ -65,6 +65,9 @@ public class DingTalkClient {
 
     /**
      * 默认构造函数，使用 {@link #BASE_URL}。
+     *
+     * @param accessToken 钉钉机器人 access_token
+     * @param secret 钉钉机器人加签密钥
      */
     public DingTalkClient(String accessToken, String secret) {
         this(accessToken, secret, BASE_URL);
