@@ -5251,15 +5251,6 @@
                 <artifactId>jetty-util</artifactId>
                 <version>${jetty.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.eclipse.jetty.ee10/jetty-ee10-bom -->
-            <!-- Jetty EE10 BOM：Jetty 12 EE10 环境各模块的版本清单（Servlet 6.0/JSP 3.1/EL 5.0）。 -->
-            <dependency>
-                <groupId>org.eclipse.jetty.ee10</groupId>
-                <artifactId>jetty-ee10-bom</artifactId>
-                <version>${jetty.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-reactive-httpclient -->
             <!-- Jetty Reactive HttpClient：Jetty 的响应式 HTTP 客户端（基于 Reactive Streams 规范）。 -->
             <dependency>
@@ -6369,16 +6360,6 @@
                 <groupId>io.javalin</groupId>
                 <artifactId>javalin-bom</artifactId>
                 <version>${javalin.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <!-- Jetty BOM -->
-            <!-- Source: https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-bom -->
-            <!-- Jetty BOM：Eclipse Jetty 嵌入式 Web 服务器各模块的版本清单。 -->
-            <dependency>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-bom</artifactId>
-                <version>${jetty.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
