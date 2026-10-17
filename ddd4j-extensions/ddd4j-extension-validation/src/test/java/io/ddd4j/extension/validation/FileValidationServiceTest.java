@@ -21,10 +21,13 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * 类型说明。
@@ -34,6 +37,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 class FileValidationServiceTest {
 
     private final FileValidationService service = new FileValidationService();
+
+    @Test
+    void nullContentCheckerFailsAtConstruction() {
+        assertThatThrownBy(() -> new FileValidationService(file -> Optional.empty(),
+                Collections.singletonList(null)))
+                .isInstanceOf(NullPointerException.class);
+    }
 
     @Test
     void shouldValidateSupportedDocumentSignatures() throws IOException {
