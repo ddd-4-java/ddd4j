@@ -1055,6 +1055,17 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/cqrs/GuiceViewManager.java",
+      "sourceSha256": [
+        "a9f2fd7d7a43cc63652755b04697d7ff92158d894e40434d5cd4f6298f24d697",
+        "ffafb37849d663a20392296c11385508fd619f7a19f95dd628dd252be2315eeb",
+        "ffafb37849d663a20392296c11385508fd619f7a19f95dd628dd252be2315eeb"
+      ],
+      "evidence": "ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/guice/cqrs/GuiceViewManagerTest.java",
+      "testSha256": "1e4037cd37f3d0db3592002d79de2087e9ab73e875557f7b2de92b7cb564e07c",
+      "reason": "三线共同测试覆盖 Guice 调度生命周期、视图位置和最近运行指标回填；JDK 8 使用兼容 Bean getter，高两线使用显式值访问方法，业务语义一致"
+    },
+    {
       "path": "ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/cqrs/GuiceInMemoryProjectionPositionRepository.java",
       "sourceSha256": [
         "c816697b2a319e5d2c7e308d1a48771bb4419e7c2aeb928333e83fb97fdca905",
