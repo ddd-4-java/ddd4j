@@ -29,6 +29,36 @@
     "order-sample"
   ],
   "unclassifiedDifferenceIsFailure": true,
+  "platformBuildConfigFiles": [
+    {
+      "path": ".mvn/jvm.config",
+      "sha256ByJdk": {
+        "8": "d4401522029cc82568d55e31c285954b7e4f61e929a23d2971ddc9a88ec9adcb",
+        "17": "d4401522029cc82568d55e31c285954b7e4f61e929a23d2971ddc9a88ec9adcb",
+        "21": "7b581878eb45d47ee973dfb5f3ffd0bfffcc1f51f15c48aecd326e3aff484a5a"
+      },
+      "evidence": "JDK 21 Maven 4 模型解析额外指定本地锁；三线 .mvn/jvm.config 逐字节锁定"
+    },
+    {
+      "path": ".mvn/maven.config",
+      "sha256ByJdk": {"8": null, "17": null, "21": "b10b39084669192fd6abbe2951ccbc1ba98b6a23913f0f387fc4d6bec1dc206f"},
+      "evidence": "仅 JDK 21 原生构建配置 Mandrel；文件存在性和内容逐线锁定"
+    },
+    {
+      "path": ".mvn/wrapper/maven-wrapper.properties",
+      "sha256ByJdk": {
+        "8": "488e1b3f2e641779d4636abf9390845f901e64607261bc3c0b0bfe4fe96e6706",
+        "17": "488e1b3f2e641779d4636abf9390845f901e64607261bc3c0b0bfe4fe96e6706",
+        "21": "bbd28a9f2351926f30f2c8d2d09be7f2cd26fe3d0dc7701a8b482b82a5c1f10c"
+      },
+      "evidence": "JDK 8/17 使用 Maven 3.9.16，JDK 21 使用 Maven 4.0.0-rc-6；Wrapper 配置逐字节锁定"
+    },
+    {
+      "path": ".mvn/wrapper/MavenWrapperDownloader.java",
+      "sha256ByJdk": {"8": "fb659b25bb5e50140f23556c635d703e5206116b2333e12b547223ea5ece63cd", "17": null, "21": null},
+      "evidence": "仅 JDK 8 旧 Maven Wrapper 兼容下载器；文件存在性和内容逐线锁定"
+    }
+  ],
   "platformDependencyConfigFiles": [
     {
       "path": "config/dependencies/alignment-policy.json",

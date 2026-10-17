@@ -370,6 +370,31 @@ class ThreeLineInventoryTest(unittest.TestCase):
         result, _ = self.run_checker("inventory")
         self.assertNotEqual(0, result.returncode)
 
+    def test_build_config_exception_requires_exact_three_line_inputs(self):
+        path = ".mvn/wrapper/maven-wrapper.properties"
+        contents = ("maven 3\n", "maven 3\n", "maven 4\n")
+        for root, content in zip(self.roots, contents):
+            self.write(root, path, content)
+        policy = json.loads(self.policy.read_text())
+        policy["platformBuildConfigFiles"] = [{
+            "path": path,
+            "sha256ByJdk": {
+                jdk: hashlib.sha256(content.encode()).hexdigest()
+                for jdk, content in zip(("8", "17", "21"), contents)
+            },
+            "evidence": "JDK 8/17 Maven 3; JDK 21 Maven 4 build gate",
+        }]
+        self.policy.write_text(json.dumps(policy))
+
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        row = next(item for item in json.loads((output / "inventory.json").read_text())
+                   ["differences"] if item["path"] == path)
+        self.assertEqual("PLATFORM_CONFIG", row["status"])
+        self.write(self.roots[2], path, "unexpected\n")
+        result, _ = self.run_checker("inventory")
+        self.assertNotEqual(0, result.returncode)
+
     def test_verify_compares_compiled_api_while_inventory_remains_open(self):
         wrapper = ('#!/bin/sh\n'
                    'mkdir -p ddd4j-core/target/classes\n'
