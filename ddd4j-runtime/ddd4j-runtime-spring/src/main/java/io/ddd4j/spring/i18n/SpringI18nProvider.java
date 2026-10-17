@@ -34,9 +34,7 @@ import java.util.Locale;
 @Component
 public class SpringI18nProvider implements I18nProvider {
 
-    /**
-     * Spring 嵌套消息源
-     */
+    /** Spring 消息源接口；构造器仍要求本线 Easy4J 嵌套消息源。 */
     private final MessageSource messageSource;
 
     /**
@@ -48,6 +46,13 @@ public class SpringI18nProvider implements I18nProvider {
         this.messageSource = messageSource;
     }
 
+    /**
+     * 使用当前线程的 Locale 解析国际化消息。
+     *
+     * @param key 消息代码
+     * @param args 消息占位符参数
+     * @return 当前 Locale 对应的消息文本
+     */
     @Override
     public String getMessage(String key, Object... args) {
         Locale locale = LocaleContextHolder.getLocale();
