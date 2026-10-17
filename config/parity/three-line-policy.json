@@ -1296,12 +1296,12 @@
     {
       "path": "ddd4j-web/ddd4j-web-core/src/main/java/io/ddd4j/web/core/auth/PathWebAccessPolicy.java",
       "sourceSha256": [
-        "04965554ab7d5651ba86a03b242de337f30d005069c300bf12aba14a8ff38d0d",
-        "d64373fce29a7f6723d16263d1fd6532aa7eb066ce55f74b51b2d17398053d01",
-        "d64373fce29a7f6723d16263d1fd6532aa7eb066ce55f74b51b2d17398053d01"
+        "3d0a6b4809e5b7b6a95464de7b8623e54c5c4fee9b9e15dd6b6499e301b9e314",
+        "d4065d791a721cb7de9796e1286fe5df6bb7c6dc1e8fe8c35d87562ba75da6b1",
+        "d4065d791a721cb7de9796e1286fe5df6bb7c6dc1e8fe8c35d87562ba75da6b1"
       ],
       "evidence": "ddd4j-web/ddd4j-web-core/src/test/java/io/ddd4j/web/core/auth/PathWebAccessPolicyTest.java",
-      "testSha256": "f390a42dffd973be8db50c59a87bb7635be3874d27c3a200b745f883c965c328",
+      "testSha256": "d70ae21474a8317036c3c6bb652380f273a2d25e71f0c7f62dca8de77b7e38cb",
       "reason": "JDK 8 使用 Collectors.toList，高两线使用 Stream.toList；共同测试锁定精确匹配、前缀匹配、空白清洗及空参数行为"
     },
     {
