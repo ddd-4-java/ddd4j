@@ -14,6 +14,8 @@
  */
 package io.ddd4j.web.core.error;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import io.ddd4j.core.exception.BizRuntimeException;
 import io.ddd4j.core.exception.IdempotentException;
 import io.ddd4j.core.exception.ParamException;
@@ -22,15 +24,9 @@ import org.junit.jupiter.api.Test;
 
 import java.util.NoSuchElementException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/**
- * 类型说明。
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.0.x
- */
 class DefaultWebExceptionTranslatorTest {
 
     private final DefaultWebExceptionTranslator translator = new DefaultWebExceptionTranslator();

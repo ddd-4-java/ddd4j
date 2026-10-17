@@ -42,9 +42,10 @@ public final class DefaultWebExceptionTranslator implements WebExceptionTranslat
     public static final int INTERNAL_SERVER_ERROR = 500;
 
     /**
-     * translate() 方法。
-     * @param throwable 异常对象。
-     * @return 方法执行结果。
+     * 将已知业务异常转换为稳定的 HTTP 错误响应。
+     *
+     * @param throwable 待翻译的异常
+     * @return 包含状态码、错误码和消息的响应
      */
     @Override
     public WebError translate(Throwable throwable) {
