@@ -967,7 +967,12 @@ def validate_platform_content_mappings(mappings, roots: list[pathlib.Path]) -> d
                 source == "ddd4j-mq/ddd4j-mq-pulsar/src/test/java/io/ddd4j/mq/pulsar/PulsarContainerIntegrationTest.java"
                 and (before, after) == ("apachepulsar/pulsar:2.10.6", "apachepulsar/pulsar:4.2.4")
             )
-            if (not (javax_to_jakarta or (before, after) in jackson_mapper_imports or pulsar_broker_image)
+            dropwizard_configuration_import = (
+                source == "ddd4j-samples/ddd4j-sample-dropwizard/src/main/java/io/ddd4j/sample/dropwizard/DropwizardOrderConfiguration.java"
+                and (before, after) == ("import io.dropwizard.Configuration;", "import io.dropwizard.core.Configuration;")
+            )
+            if (not (javax_to_jakarta or (before, after) in jackson_mapper_imports
+                     or pulsar_broker_image or dropwizard_configuration_import)
                     or "*" in before or "*" in after or "\n" in before or "\n" in after
                     or (target_lines == ["3.0.x"] and (before, after) not in jackson_mapper_imports)
                     or before in originals):

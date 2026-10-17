@@ -247,6 +247,32 @@
   ],
   "platformContentMappings": [
     {
+      "path": "ddd4j-samples/ddd4j-sample-dropwizard/src/main/java/io/ddd4j/sample/dropwizard/DropwizardOrderConfiguration.java",
+      "replacements": [
+        {
+          "from": "import io.dropwizard.Configuration;",
+          "to": "import io.dropwizard.core.Configuration;"
+        }
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-dropwizard/src/test/java/io/ddd4j/sample/dropwizard/DropwizardOrderResourceTest.java",
+      "reason": "Dropwizard 示例公开路径集合行为三线一致；仅框架 Configuration 包名随平台变化"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-helidon/src/main/java/io/ddd4j/sample/helidon/HelidonOrderApplication.java",
+      "replacements": [
+        {
+          "from": "import javax.ws.rs.ApplicationPath;",
+          "to": "import jakarta.ws.rs.ApplicationPath;"
+        },
+        {
+          "from": "import javax.ws.rs.core.Application;",
+          "to": "import jakarta.ws.rs.core.Application;"
+        }
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-helidon/src/test/java/io/ddd4j/sample/helidon/HelidonOrderResourceTest.java",
+      "reason": "Helidon 示例资源集合行为三线一致；仅 JAX-RS 包名随平台变化"
+    },
+    {
       "path": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/main/java/io/ddd4j/sample/quarkus/cqrs/cache/OrderCacheService.java",
       "replacements": [
         {
