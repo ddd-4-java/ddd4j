@@ -17,7 +17,6 @@ package io.ddd4j.data.event.store.jdbi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -35,7 +34,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * </ol>
  *
  * <p>退避策略：基础延迟 10ms，每次翻倍，加 0-10ms 抖动避免雷鸣群。
- * 默认最大 5 次尝试（含首次）；总耗时上限 ~310ms（10+20+40+80+160+抖动）。
+ * 默认最大 5 次尝试（含首次）；四次退避总时长上限 190ms（10+20+40+80+抖动）。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
