@@ -35,16 +35,16 @@ public class Ddd4jVertxContext {
     private static final String REQUEST_CONTEXT_KEY = Ddd4jVertxContext.class.getName() + ".request";
     private static final String SUBJECT_KEY = Ddd4jVertxContext.class.getName() + ".subject";
 
-    public Optional<WebRequestContext> request(RoutingContext context) {
+    public static Optional<WebRequestContext> request(RoutingContext context) {
         return Optional.ofNullable(Objects.requireNonNull(context, "context must not be null")
                 .get(REQUEST_CONTEXT_KEY));
     }
 
-    public Optional<Subject> subject(RoutingContext context) {
+    public static Optional<Subject> subject(RoutingContext context) {
         return Optional.ofNullable(Objects.requireNonNull(context, "context must not be null").get(SUBJECT_KEY));
     }
 
-    public <T> Future<T> executeBlocking(RoutingContext context, Callable<T> task) {
+    public static <T> Future<T> executeBlocking(RoutingContext context, Callable<T> task) {
         RoutingContext routingContext = Objects.requireNonNull(context, "context must not be null");
         Callable<T> actualTask = Objects.requireNonNull(task, "task must not be null");
         WebRequestContext requestContext = request(routingContext)
