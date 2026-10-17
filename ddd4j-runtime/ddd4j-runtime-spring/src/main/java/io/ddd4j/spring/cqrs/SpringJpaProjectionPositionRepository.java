@@ -40,6 +40,11 @@ public class SpringJpaProjectionPositionRepository
      */
     private final JpaRepository<SpringJpaProjectionPosition, String> jpaRepository;
 
+    /**
+     * 创建基于 Spring Data JPA 的投影位置仓库。
+     *
+     * @param jpaRepository Spring Data JPA 仓库
+     */
     public SpringJpaProjectionPositionRepository(JpaRepository<SpringJpaProjectionPosition, String> jpaRepository) {
         this.jpaRepository = jpaRepository;
     }
@@ -65,9 +70,7 @@ public class SpringJpaProjectionPositionRepository
     }
 
     /**
-     * 重置指定投影位置到 0（重新拉取全量事件）。
-     * <p>
-     * 在事务中读取并保存位置；缺失的流创建零位置。
+     * 在事务中重置已有位置；流尚不存在时创建零位置。
      *
      * @param streamId 投影流 ID
      */
