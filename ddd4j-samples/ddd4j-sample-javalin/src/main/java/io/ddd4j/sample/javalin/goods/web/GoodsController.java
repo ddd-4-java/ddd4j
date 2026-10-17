@@ -13,11 +13,13 @@
  * limitations under the License.
  */
 package io.ddd4j.sample.javalin.goods.web;
+import io.ddd4j.kit.lang.SFunction;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+
 import io.ddd4j.core.api.R;
-import io.ddd4j.kit.lang.SFunction;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.sample.javalin.goods.application.GoodsApplicationService;
 import io.ddd4j.sample.javalin.goods.domain.Goods;
@@ -26,8 +28,6 @@ import io.ddd4j.sample.javalin.goods.domain.GoodsQuery;
 import io.ddd4j.sample.javalin.goods.domain.GoodsStatus;
 import io.javalin.apibuilder.EndpointGroup;
 import io.javalin.http.Context;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -41,9 +41,9 @@ import static io.javalin.apibuilder.ApiBuilder.*;
  * {@code javalinConfig.routes.apiBuilder(() -> goodsController.routes())} 注册。
  * 响应统一使用 ddd4j 的 {@link R}{@code <T>} 包装。
  *
- * <h3>路由列表</h3>
+ * <h2>路由列表</h2>
  * <table border="1">
- * <caption>商品管理 REST 接口一览</caption>
+ *   <caption>商品 REST 路由</caption>
  *   <tr><th>HTTP</th><th>路径</th><th>用途</th></tr>
  *   <tr><td>POST</td><td>/api/goods</td><td>创建商品</td></tr>
  *   <tr><td>PUT</td><td>/api/goods/{id}</td><td>更新商品</td></tr>
@@ -62,6 +62,7 @@ public class GoodsController {
 
     private final GoodsApplicationService applicationService;
 
+    /** @param applicationService 商品应用服务 */
     public GoodsController(GoodsApplicationService applicationService) {
         this.applicationService = Objects.requireNonNull(applicationService, "applicationService must not be null");
     }
@@ -142,7 +143,7 @@ public class GoodsController {
         post("/api/goods", ctx -> {
             CreateGoodsRequest req = ctx.bodyAsClass(CreateGoodsRequest.class);
             Goods goods = applicationService.create(
-                    req.getCode(), req.getName(), req.getPrice(), req.getStock());
+                    req.code(), req.name(), req.price(), req.stock());
             ctx.status(201).json(R.ok(goods));
         });
 
@@ -151,7 +152,7 @@ public class GoodsController {
             Long id = ctx.pathParamAsClass("id", Long.class).get();
             UpdateGoodsRequest req = ctx.bodyAsClass(UpdateGoodsRequest.class);
             Goods goods = applicationService.update(
-                    GoodsId.of(id), req.getName(), req.getPrice());
+                    GoodsId.of(id), req.name(), req.price());
             ctx.json(R.ok(goods));
         });
 
@@ -202,32 +203,35 @@ public class GoodsController {
         });
     }
 
-    // ========================= 请求 DTO（轻量 record） =========================
+    // ========================= 请求 DTO =========================
 
     /**
      * 创建商品请求。
      */
-    @Data
-    @NoArgsConstructor
     public static class CreateGoodsRequest {
+
+        private static final long serialVersionUID = 0L;
+
         private String code;
+
         private String name;
+
         private BigDecimal price;
+
         private Integer stock;
 
+        /** 创建空请求，供反序列化使用。 */
+        public CreateGoodsRequest() {
+        }
+
         /**
-         * 构造创建商品请求。
-         *
          * @param code 商品编码
          * @param name 商品名称
          * @param price 商品价格
          * @param stock 库存数量
          */
-        @JsonCreator
-        public CreateGoodsRequest(@JsonProperty("code") String code,
-                                  @JsonProperty("name") String name,
-                                  @JsonProperty("price") BigDecimal price,
-                                  @JsonProperty("stock") Integer stock) {
+        @JsonCreator()
+        public CreateGoodsRequest(@JsonProperty("code") String code, @JsonProperty("name") String name, @JsonProperty("price") BigDecimal price, @JsonProperty("stock") Integer stock) {
             this.code = code;
             this.name = name;
             this.price = price;
@@ -257,40 +261,183 @@ public class GoodsController {
         public Integer stock() {
             return stock;
         }
+
+        /** @return 商品编码 */
+        public String getCode() {
+            return code;
+        }
+
+        /** @param code 商品编码 */
+        public void setCode(String code) {
+            this.code = code;
+        }
+
+        /** @return 商品名称 */
+        public String getName() {
+            return name;
+        }
+
+        /** @param name 商品名称 */
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        /** @return 商品价格 */
+        public BigDecimal getPrice() {
+            return price;
+        }
+
+        /** @param price 商品价格 */
+        public void setPrice(BigDecimal price) {
+            this.price = price;
+        }
+
+        /** @return 库存数量 */
+        public Integer getStock() {
+            return stock;
+        }
+
+        /** @param stock 库存数量 */
+        public void setStock(Integer stock) {
+            this.stock = stock;
+        }
+
+        /**
+         * 判断另一对象是否可以参与相等比较。
+         * @param other 待比较对象
+         * @return 是否为同类请求或响应
+         */
+        protected boolean canEqual(Object other) {
+            return other instanceof CreateGoodsRequest;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (!(obj instanceof CreateGoodsRequest)) {
+                return false;
+            }
+            CreateGoodsRequest other = (CreateGoodsRequest) obj;
+            if (!other.canEqual(this)) {
+                return false;
+            }
+            return Objects.equals(getCode(), other.getCode())
+                    && Objects.equals(getName(), other.getName())
+                    && Objects.equals(getPrice(), other.getPrice())
+                    && Objects.equals(getStock(), other.getStock());
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 1;
+            result = 59 * result + (Objects.isNull(getCode()) ? 43 : getCode().hashCode());
+            result = 59 * result + (Objects.isNull(getName()) ? 43 : getName().hashCode());
+            result = 59 * result + (Objects.isNull(getPrice()) ? 43 : getPrice().hashCode());
+            result = 59 * result + (Objects.isNull(getStock()) ? 43 : getStock().hashCode());
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "GoodsController.CreateGoodsRequest(code=" + getCode() + ", name=" + getName() + ", price=" + getPrice() + ", stock=" + getStock() + ")";
+        }
     }
 
     /**
      * 更新商品请求。
      */
-    @Data
-    @NoArgsConstructor
     public static class UpdateGoodsRequest {
+
+        private static final long serialVersionUID = 0L;
+
         private String name;
+
         private BigDecimal price;
 
+        /** 创建空请求，供反序列化使用。 */
+        public UpdateGoodsRequest() {
+        }
+
         /**
-         * 构造更新商品请求。
-         *
-         * @param name 商品名称
-         * @param price 商品价格
+         * @param name 新商品名称
+         * @param price 新商品价格
          */
-        @JsonCreator
-        public UpdateGoodsRequest(@JsonProperty("name") String name,
-                                  @JsonProperty("price") BigDecimal price) {
+        @JsonCreator()
+        public UpdateGoodsRequest(@JsonProperty("name") String name, @JsonProperty("price") BigDecimal price) {
             this.name = name;
             this.price = price;
         }
 
-        /** @return 商品名称 */
+        /** @return 新商品名称 */
         @JsonProperty("name")
         public String name() {
             return name;
         }
 
-        /** @return 商品价格 */
+        /** @return 新商品价格 */
         @JsonProperty("price")
         public BigDecimal price() {
             return price;
+        }
+
+        /** @return 商品名称 */
+        public String getName() {
+            return name;
+        }
+
+        /** @param name 商品名称 */
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        /** @return 商品价格 */
+        public BigDecimal getPrice() {
+            return price;
+        }
+
+        /** @param price 商品价格 */
+        public void setPrice(BigDecimal price) {
+            this.price = price;
+        }
+
+        /**
+         * 判断另一对象是否可以参与相等比较。
+         * @param other 待比较对象
+         * @return 是否为同类请求或响应
+         */
+        protected boolean canEqual(Object other) {
+            return other instanceof UpdateGoodsRequest;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (!(obj instanceof UpdateGoodsRequest)) {
+                return false;
+            }
+            UpdateGoodsRequest other = (UpdateGoodsRequest) obj;
+            if (!other.canEqual(this)) {
+                return false;
+            }
+            return Objects.equals(getName(), other.getName())
+                    && Objects.equals(getPrice(), other.getPrice());
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 1;
+            result = 59 * result + (Objects.isNull(getName()) ? 43 : getName().hashCode());
+            result = 59 * result + (Objects.isNull(getPrice()) ? 43 : getPrice().hashCode());
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "GoodsController.UpdateGoodsRequest(name=" + getName() + ", price=" + getPrice() + ")";
         }
     }
 }
