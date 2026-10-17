@@ -1055,6 +1055,17 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-extensions/ddd4j-extension-excel/src/main/java/io/ddd4j/extension/excel/fill/ExcelFiller.java",
+      "sourceSha256": [
+        "19edeb1a0aba2097e86d17b0524e9cbc6b1c0a17009d37b745ae8b0cb2bafa64",
+        "3dcf395e0af66db5d75c5196bafcae6eafc1009b7b70b2facded8b9910dd51f1",
+        "3dcf395e0af66db5d75c5196bafcae6eafc1009b7b70b2facded8b9910dd51f1"
+      ],
+      "evidence": "ddd4j-extensions/ddd4j-extension-excel/src/test/java/io/ddd4j/extension/excel/fill/ExcelFillerTemplateStreamContractTest.java",
+      "testSha256": "46a14db356620637cc47ffcb53e3ea01ceea5ad19e5deca13ef4e557d81e964a",
+      "reason": "三线共同测试验证模板流重读、ByteArrayInputStream 复用与原流关闭归属；JDK 8 手工拷贝和高两线 readAllBytes 语法差异由源码哈希锁定"
+    },
+    {
       "path": "ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/event/CdiDomainEventPublisher.java",
       "sourceSha256": [
         "b0496d65975abc0fbf5d7edc70a8be038e927c3a8da16fdb5da03218525e2482",
