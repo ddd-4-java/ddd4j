@@ -337,6 +337,13 @@ public class JpaEventStore implements EventStore {
                 EventId.valueOf(entity.getCausationId()));
     }
 
+    /**
+     * 解析存储的事件类；类不存在时失败，不回退为无类型数据。
+     *
+     * @param eventType 事件类型全限定名
+     * @return 领域事件类型
+     * @throws IllegalStateException 事件类不存在
+     */
     @SuppressWarnings("unchecked")
     private Class<? extends DomainEvent<?>> resolveEventType(String eventType) {
         try {
