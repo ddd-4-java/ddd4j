@@ -104,6 +104,9 @@
       }
     },
     "feature/2.0.x": {
+      "exclude": [
+        "io.micronaut*:*"
+      ],
       "fixed_properties": {
         "helidon-bom.version": "3.2.21",
         "helidon-jakarta-annotation.version": "2.0.0",
@@ -112,6 +115,13 @@
         "helidon-jakarta-interceptor.version": "2.0.0",
         "helidon-jakarta-ws-rs.version": "3.0.0",
         "helidon-jersey.version": "3.0.18",
+        "hibernate-validator.version": "8.0.6.Final",
+        "jersey.version": "3.1.12",
+        "logback.version": "1.5.38",
+        "micronaut.core.version": "4.10.26",
+        "micronaut.version": "4.10.21",
+        "mybatis-spring.version": "3.0.5",
+        "pulsar.version": "4.2.2",
         "redisson.version": "3.52.0",
         "testcontainers-bom.version": "1.21.4"
       },
@@ -129,13 +139,12 @@
         "logback.version": "1.5.38",
         "micronaut.core.version": "4.10.26",
         "micronaut.version": "4.10.21",
-        "redisson.version": "3.52.0"
+        "pulsar.version": "4.2.2",
+        "redisson.version": "3.52.0",
+        "vertx-compat4.version": "4.5.35"
       },
       "fixed_dependencies": {
-        "com.lmax:disruptor": "4.0.0",
-        "io.vertx:vertx-core": "4.5.35",
-        "io.vertx:vertx-junit5": "4.5.35",
-        "io.vertx:vertx-web": "4.5.35"
+        "com.lmax:disruptor": "4.0.0"
       }
     },
     "fix/1.0.x-jdk8-security-refresh": {
@@ -185,7 +194,6 @@
     }
   },
   "exclude_properties": [],
-  "fixed_dependencies": {
-  },
+  "fixed_dependencies": {},
   "cvss_threshold": 7
 }
