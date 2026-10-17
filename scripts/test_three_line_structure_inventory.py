@@ -295,6 +295,13 @@ class ThreeLineInventoryTest(unittest.TestCase):
             "reason": "Generic platform interface generates an exact JVM bridge",
         }]
         self.policy.write_text(json.dumps(policy))
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        inventory = json.loads((output / "inventory.json").read_text())
+        source_row = next(row for row in inventory["differences"] if row["path"] == symbol)
+        self.assertEqual("PLATFORM_API_PENDING_COMPILE", source_row["status"])
+        self.assertEqual("NOT_RUN", inventory["compiledApi"]["status"])
+
         result, output = self.run_checker("verify")
         self.assertNotEqual(0, result.returncode)  # overload and inventory remain open
         report = json.loads((output / "compiled-api.json").read_text())
@@ -602,6 +609,13 @@ class ThreeLineInventoryTest(unittest.TestCase):
             "reason": "A platform constructor unavailable on JDK 8",
         }]
         self.policy.write_text(json.dumps(policy))
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        inventory = json.loads((output / "inventory.json").read_text())
+        source_row = next(row for row in inventory["differences"] if row["path"] == source_symbol)
+        self.assertEqual("PLATFORM_API_PENDING_COMPILE", source_row["status"])
+        self.assertEqual("NOT_RUN", inventory["compiledApi"]["status"])
+
         result, output = self.run_checker("verify")
         self.assertNotEqual(0, result.returncode, result.stderr)  # other inventory differences remain
         report = json.loads((output / "compiled-api.json").read_text())
@@ -614,6 +628,10 @@ class ThreeLineInventoryTest(unittest.TestCase):
 
         self.write(self.roots[1], source,
                    "package example; public class Foo { public Foo() {} public Foo(String transport) {} }")
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = json.loads((output / "inventory.json").read_text())["differences"]
+        self.assertEqual("OPEN", next(row["status"] for row in rows if row["path"] == source_symbol))
         result, output = self.run_checker("verify")
         self.assertNotEqual(0, result.returncode)
         report = json.loads((output / "compiled-api.json").read_text())
@@ -661,6 +679,13 @@ class ThreeLineInventoryTest(unittest.TestCase):
         }]
         self.policy.write_text(json.dumps(policy))
 
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        inventory = json.loads((output / "inventory.json").read_text())
+        source_row = next(row for row in inventory["differences"] if row["path"] == source_symbol)
+        self.assertEqual("PLATFORM_API_PENDING_COMPILE", source_row["status"])
+        self.assertEqual("NOT_RUN", inventory["compiledApi"]["status"])
+
         result, output = self.run_checker("verify")
         self.assertNotEqual(0, result.returncode)
         report = json.loads((output / "compiled-api.json").read_text())
@@ -672,6 +697,10 @@ class ThreeLineInventoryTest(unittest.TestCase):
 
         self.write(self.roots[0], source,
                    "package example; public class Foo { public Foo(String transport) {} }")
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = json.loads((output / "inventory.json").read_text())["differences"]
+        self.assertEqual("OPEN", next(row["status"] for row in rows if row["path"] == source_symbol))
         result, output = self.run_checker("verify")
         self.assertNotEqual(0, result.returncode)
         report = json.loads((output / "compiled-api.json").read_text())
