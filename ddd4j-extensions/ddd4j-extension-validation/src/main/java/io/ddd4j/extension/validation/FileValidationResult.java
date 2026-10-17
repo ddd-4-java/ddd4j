@@ -15,6 +15,9 @@
 
 package io.ddd4j.extension.validation;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Objects;
 
 /**
@@ -33,7 +36,10 @@ public final class FileValidationResult {
      * @param detectedType 内容检测结果，可以为空
      */
 
-    public FileValidationResult(boolean valid, FileValidationFailure failure, DetectedFileType detectedType) {
+    @JsonCreator
+    public FileValidationResult(@JsonProperty("valid") boolean valid,
+                                @JsonProperty("failure") FileValidationFailure failure,
+                                @JsonProperty("detectedType") DetectedFileType detectedType) {
 
         this.valid = valid;
         this.failure = failure;
@@ -61,14 +67,17 @@ public final class FileValidationResult {
         return new FileValidationResult(false, failure, detectedType);
     }
 
+    @JsonProperty("valid")
     public boolean valid() {
         return valid;
     }
 
+    @JsonProperty("failure")
     public FileValidationFailure failure() {
         return failure;
     }
 
+    @JsonProperty("detectedType")
     public DetectedFileType detectedType() {
         return detectedType;
     }
