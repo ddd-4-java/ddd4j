@@ -150,6 +150,35 @@ class EsdbEventStoreTest {
                 .isInstanceOf(UnsupportedOperationException.class);
     }
 
+    @Test
+    void readAllShouldExposeStableAggregateIdString() {
+        com.eventstore.dbclient.ReadResult result = org.mockito.Mockito.mock(com.eventstore.dbclient.ReadResult.class);
+        com.eventstore.dbclient.ResolvedEvent resolved = org.mockito.Mockito.mock(com.eventstore.dbclient.ResolvedEvent.class);
+        com.eventstore.dbclient.RecordedEvent recorded = org.mockito.Mockito.mock(com.eventstore.dbclient.RecordedEvent.class);
+        when(recorded.getStreamId()).thenReturn("Order::order-1");
+        when(recorded.getPosition()).thenReturn(new com.eventstore.dbclient.Position(1, 1));
+        when(recorded.getUserMetadata()).thenReturn(
+                "{\"aggregateType\":\"Order\",\"aggregateId\":\"order-1\"}".getBytes(StandardCharsets.UTF_8));
+        when(recorded.getEventData()).thenReturn("{}".getBytes(StandardCharsets.UTF_8));
+        when(recorded.getEventType()).thenReturn(TestEvent.class.getName());
+        when(recorded.getEventId()).thenReturn(java.util.UUID.randomUUID());
+        when(recorded.getCreated()).thenReturn(java.time.Instant.parse("2026-01-01T00:00:00Z"));
+        when(resolved.getEvent()).thenReturn(recorded);
+        when(result.getEvents()).thenReturn(Collections.singletonList(resolved));
+        when(client.readAll(any(com.eventstore.dbclient.ReadAllOptions.class)))
+                .thenReturn(CompletableFuture.completedFuture(result));
+        io.ddd4j.core.cqrs.eventstore.jackson.EventPayloadSerializer serializer =
+                org.mockito.Mockito.mock(io.ddd4j.core.cqrs.eventstore.jackson.EventPayloadSerializer.class);
+        org.mockito.Mockito.doReturn(new TestEvent(new TestId("order-1")))
+                .when(serializer).deserialize(anyString(), any());
+
+        io.ddd4j.core.cqrs.eventstore.StoredEvent event = new EsdbEventStore(client, "", serializer)
+                .readAll(0, 1).get(0);
+        assertThat(event.aggregateId().asString()).isEqualTo("order-1");
+        assertThat(event.aggregateId().asTypedString()).isEqualTo("String:order-1");
+        assertThat(event.aggregateId().toString()).isEqualTo("StringAggregateRootId[value=order-1]");
+    }
+
     /**
      * 测试用聚合根标识，封装订单标识字符串并关联固定实体类型。
      */
