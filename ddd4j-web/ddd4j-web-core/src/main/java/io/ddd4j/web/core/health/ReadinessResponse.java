@@ -19,27 +19,35 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Objects;
+
 /**
  * Readiness HTTP 响应体，仅暴露整体状态，避免泄露下游依赖信息。
  *
- * <p>{@code ready} — 当前应用是否可接收流量
- */public final class ReadinessResponse {
+ * <p>{@code ready} 表示当前应用是否可接收流量。
+ */
+public final class ReadinessResponse {
 
     private final boolean ready;
 
-/**
- * Readiness HTTP 响应体，仅暴露整体状态，避免泄露下游依赖信息。
- *
- * @param ready 当前应用是否可接收流量
- */
-
+    /**
+     * 创建 Readiness HTTP 响应体。
+     *
+     * @param ready 当前应用是否可接收流量
+     */
     @JsonCreator
     public ReadinessResponse(@JsonProperty("ready") boolean ready) {
         this.ready = ready;
     }
 
+    /**
+     * 返回就绪状态。
+     *
+     * @return 就绪状态
+     */
     @JsonProperty("ready")
-    public boolean ready() { return ready; }
+    public boolean ready() {
+        return ready;
+    }
 
     /**
      * 返回探针应接收的 HTTP 状态码。
@@ -51,28 +59,29 @@ import java.util.Objects;
     }
 
     /**
-     * 判断布尔状态。
-     * @return 判断结果。
+     * 返回就绪状态。
+     *
+     * @return 就绪状态
      */
     public boolean isReady() {
         return ready;
     }
+
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
         }
-        if (!(o instanceof ReadinessResponse)) {
+        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
             return false;
         }
-        ReadinessResponse that = (ReadinessResponse) o;
-        return ready == that.ready;
+        ReadinessResponse other = (ReadinessResponse) obj;
+        return ready == other.ready;
     }
 
     @Override
     public int hashCode() {
-        int result = (ready ? 1231 : 1237);
-        return result;
+        return Boolean.hashCode(ready);
     }
 
     @Override
