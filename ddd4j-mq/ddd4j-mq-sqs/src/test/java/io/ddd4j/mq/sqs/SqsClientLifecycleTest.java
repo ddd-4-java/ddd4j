@@ -191,4 +191,53 @@ class SqsClientLifecycleTest {
             }
         }
     }
+
+    @Test
+    void closeWaitsForAnInFlightReceiveBeforeClosingOwnedClient() throws Exception {
+        SqsClient nativeClient = mock(SqsClient.class);
+        CountDownLatch receiving = new CountDownLatch(1);
+        CountDownLatch releaseReceive = new CountDownLatch(1);
+        CountDownLatch closing = new CountDownLatch(1);
+        when(nativeClient.receiveMessage(any(ReceiveMessageRequest.class))).thenAnswer(invocation -> {
+            receiving.countDown();
+            while (releaseReceive.getCount() > 0) {
+                try {
+                    releaseReceive.await(5, TimeUnit.SECONDS);
+                } catch (InterruptedException ignored) {
+                    // Simulate a native long poll that has not finished after interruption.
+                }
+            }
+            return ReceiveMessageResponse.builder().build();
+        });
+        SqsProperties properties = new SqsProperties() {
+            @Override
+            public SqsClient client() {
+                return nativeClient;
+            }
+        };
+        MQListener listener = new MQListener();
+        listener.setTopic("https://sqs.example/queue");
+        SqsMQClient adapter = new SqsMQClient(properties);
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+
+        try {
+            assertTrue(adapter.initConsumer(listener, properties));
+            assertTrue(receiving.await(5, TimeUnit.SECONDS));
+            Future<?> close = executor.submit(() -> {
+                closing.countDown();
+                adapter.close();
+            });
+            assertTrue(closing.await(5, TimeUnit.SECONDS));
+            assertThrows(TimeoutException.class, () -> close.get(150, TimeUnit.MILLISECONDS));
+            verify(nativeClient, never()).close();
+
+            releaseReceive.countDown();
+            close.get(5, TimeUnit.SECONDS);
+            verify(nativeClient, times(1)).close();
+        } finally {
+            releaseReceive.countDown();
+            adapter.close();
+            executor.shutdownNow();
+        }
+    }
 }
