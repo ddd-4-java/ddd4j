@@ -181,6 +181,9 @@ public class SqsMQClient implements MQClient {
         if (Objects.isNull(queueUrl) || !(queueUrl.startsWith("http://") || queueUrl.startsWith("https://"))) {
             throw new IllegalArgumentException("SQS MQListener.topic must be a queueUrl (https://...). Got: " + queueUrl);
         }
+        if (properties.getPollIntervalMs() <= 0) {
+            throw new IllegalArgumentException("SQS pollIntervalMs must be positive");
+        }
         initializeClient();
         AtomicBoolean running = new AtomicBoolean(true);
         ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor(r -> {

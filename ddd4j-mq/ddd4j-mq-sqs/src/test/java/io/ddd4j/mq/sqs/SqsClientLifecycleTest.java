@@ -91,6 +91,30 @@ class SqsClientLifecycleTest {
     }
 
     @Test
+    void invalidPollIntervalRejectsConsumerBeforeCreatingClient() {
+        AtomicInteger creations = new AtomicInteger();
+        SqsProperties properties = new SqsProperties() {
+            @Override
+            public SqsClient client() {
+                creations.incrementAndGet();
+                return mock(SqsClient.class);
+            }
+        };
+        properties.setPollIntervalMs(0L);
+        MQListener listener = new MQListener();
+        listener.setTopic("https://sqs.example/queue");
+        SqsMQClient adapter = new SqsMQClient(properties);
+
+        try {
+            assertThrows(IllegalArgumentException.class,
+                    () -> adapter.initConsumer(listener, properties));
+            assertEquals(0, creations.get());
+        } finally {
+            adapter.close();
+        }
+    }
+
+    @Test
     void producerHandleRejectsPublishAfterClose() {
         SqsClient nativeClient = mock(SqsClient.class);
         SqsMQClient adapter = new SqsMQClient(nativeClient);
