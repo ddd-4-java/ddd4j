@@ -1267,6 +1267,17 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-extensions/ddd4j-extension-qlexpress/src/main/java/io/ddd4j/extension/qlexpress/function/FormatDateFunction.java",
+      "sourceSha256": [
+        "7fd034153d34ff2caa9edc91412a531a8a21d0421794c8bccb5c87ce1f650d0d",
+        "3a28fc07e964429db29c8fc9209254b35eb04899080260ecf31ec4ade53f202b",
+        "3a28fc07e964429db29c8fc9209254b35eb04899080260ecf31ec4ade53f202b"
+      ],
+      "evidence": "ddd4j-extensions/ddd4j-extension-qlexpress/src/test/java/io/ddd4j/extension/qlexpress/function/FormatDateFunctionContractTest.java",
+      "testSha256": "95616e6c3f786b3b42227f648a69eb6fea24354b82cd128f391593134f68786a",
+      "reason": "三线共同测试验证 Date 按系统时区及 java.time 日期格式化；JDK 8 使用显式 instanceof 转换，高两线使用模式匹配，返回结果一致"
+    },
+    {
       "path": "ddd4j-extensions/ddd4j-extension-qlexpress/src/main/java/io/ddd4j/extension/qlexpress/function/BuiltInFunctions.java",
       "sourceSha256": [
         "7c6d4b0a7ed82d6681d8187a3476edecb558a3852ad21a4b0ad6bbdd5391a933",
