@@ -1055,6 +1055,17 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-mq/ddd4j-mq-spring/src/main/java/io/ddd4j/mq/spring/registry/MQListenerBeanPostProcessor.java",
+      "sourceSha256": [
+        "c96e22ea583e2336100706501e3c6c3c8f1fe094c655eed1e3f05f21fc5c8e81",
+        "181409f076af0011672272fb40ebc4c93b7f971c98083a1b25860f53a3ce4d41",
+        "181409f076af0011672272fb40ebc4c93b7f971c98083a1b25860f53a3ce4d41"
+      ],
+      "evidence": "ddd4j-mq/ddd4j-mq-spring/src/test/java/io/ddd4j/mq/spring/registry/SpringMqBridgeContractTest.java",
+      "testSha256": "a9e55fc7d83d32af10ccdb83b70fe91f284e82ea0d9e944d0afd9cc1f82a7505",
+      "reason": "三线共同测试验证监听器发现、supports 默认值、不可变快照及后续注册隔离；JDK 8 的集合拷贝与高两线 List.copyOf/List.of 语法差异由源码哈希锁定"
+    },
+    {
       "path": "ddd4j-extensions/ddd4j-extension-monitor/src/main/java/io/ddd4j/extension/monitor/channel/dingtalk/DingTalkClient.java",
       "sourceSha256": [
         "7549749b3bb9cca76959b345c23775da6ed34be3e2c37e12ae93d5e18430471d",
