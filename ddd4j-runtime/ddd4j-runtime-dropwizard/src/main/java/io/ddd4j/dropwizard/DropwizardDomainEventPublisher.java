@@ -32,24 +32,20 @@ public final class DropwizardDomainEventPublisher implements DomainEventPublishe
 
     private final List<Consumer<Object>> listeners;
 
+    /**
+     * 使用指定事件监听器创建发布器。
+     *
+     * @param listeners 事件监听器
+     */
     public DropwizardDomainEventPublisher(Collection<Consumer<Object>> listeners) {
         this.listeners = List.copyOf(Objects.requireNonNull(listeners, "listeners must not be null"));
     }
 
-    /**
-     * 发布数据。
-     * @param <ID> 类型参数。
-     * @param event 事件消息。
-     */
     @Override
     public <ID extends EntityId> void publish(DomainEvent<ID> event) {
         publish((Object) event);
     }
 
-    /**
-     * 发布数据。
-     * @param event 事件消息。
-     */
     @Override
     public void publish(Object event) {
         if (Objects.nonNull(event)) {
