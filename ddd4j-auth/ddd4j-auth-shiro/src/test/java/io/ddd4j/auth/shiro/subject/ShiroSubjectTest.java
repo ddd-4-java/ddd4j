@@ -13,24 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.auth.shiro.subject;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import org.apache.shiro.authc.SimpleAuthenticationInfo;
-import org.apache.shiro.authc.LockedAccountException;
-import org.apache.shiro.authc.DisabledAccountException;
-import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authc.AuthenticationInfo;
-import io.ddd4j.core.exception.NotLoggedInException;
-import io.ddd4j.core.exception.CredentialsExpiredException;
-import io.ddd4j.core.exception.BadCredentialsException;
-import io.ddd4j.core.exception.AccountLockedException;
-import io.ddd4j.core.exception.AccountDisabledException;
 
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.auth.AuthRequest;
