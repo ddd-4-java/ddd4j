@@ -18,13 +18,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
-import lombok.Value;
+import java.util.Objects;
 
 import io.ddd4j.sample.order.domain.OrderStatus;
 
 import java.math.BigDecimal;
+import lombok.Getter;
 
-@Value
+/** 订单查询侧的只读数据模型。 */
+@Getter
 public final class OrderReadModel {
 
     private static final long serialVersionUID = 0L;
@@ -41,6 +43,14 @@ public final class OrderReadModel {
 
     private final BigDecimal totalAmount;
 
+    /**
+     * @param id 订单标识
+     * @param orderNo 订单号
+     * @param buyerId 买家标识
+     * @param buyerName 买家姓名
+     * @param status 订单状态
+     * @param totalAmount 订单总金额
+     */
     @JsonCreator()
     public OrderReadModel(@JsonProperty("id") String id, @JsonProperty("orderNo") String orderNo, @JsonProperty("buyerId") String buyerId, @JsonProperty("buyerName") String buyerName, @JsonProperty("status") OrderStatus status, @JsonProperty("totalAmount") BigDecimal totalAmount) {
         this.id = id;
@@ -51,57 +61,68 @@ public final class OrderReadModel {
         this.totalAmount = totalAmount;
     }
 
+    /** @return 订单标识 */
     @JsonProperty("id")
     public String id() {
         return id;
     }
 
+    /** @return 订单号 */
     @JsonProperty("orderNo")
     public String orderNo() {
         return orderNo;
     }
 
+    /** @return 买家标识 */
     @JsonProperty("buyerId")
     public String buyerId() {
         return buyerId;
     }
 
+    /** @return 买家姓名 */
     @JsonProperty("buyerName")
     public String buyerName() {
         return buyerName;
     }
 
+    /** @return 订单状态 */
     @JsonProperty("status")
     public OrderStatus status() {
         return status;
     }
 
+    /** @return 订单总金额 */
     @JsonProperty("totalAmount")
     public BigDecimal totalAmount() {
         return totalAmount;
     }
 
-    public String getId() {
-        return id;
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+            return false;
+        }
+        OrderReadModel other = (OrderReadModel) obj;
+        return Objects.equals(this.id, other.id) && Objects.equals(this.orderNo, other.orderNo) && Objects.equals(this.buyerId, other.buyerId) && Objects.equals(this.buyerName, other.buyerName) && Objects.equals(this.status, other.status) && Objects.equals(this.totalAmount, other.totalAmount);
     }
 
-    public String getOrderNo() {
-        return orderNo;
+    @Override
+    public int hashCode() {
+        int result = 1;
+        result = 59 * result + (Objects.isNull(id) ? 43 : id.hashCode());
+        result = 59 * result + (Objects.isNull(orderNo) ? 43 : orderNo.hashCode());
+        result = 59 * result + (Objects.isNull(buyerId) ? 43 : buyerId.hashCode());
+        result = 59 * result + (Objects.isNull(buyerName) ? 43 : buyerName.hashCode());
+        result = 59 * result + (Objects.isNull(status) ? 43 : status.hashCode());
+        result = 59 * result + (Objects.isNull(totalAmount) ? 43 : totalAmount.hashCode());
+        return result;
     }
 
-    public String getBuyerId() {
-        return buyerId;
-    }
-
-    public String getBuyerName() {
-        return buyerName;
-    }
-
-    public OrderStatus getStatus() {
-        return status;
-    }
-
-    public BigDecimal getTotalAmount() {
-        return totalAmount;
+    @Override
+    public String toString() {
+        return "OrderReadModel(id=" + id + ", orderNo=" + orderNo + ", buyerId=" + buyerId + ", buyerName=" + buyerName + ", status=" + status + ", totalAmount=" + totalAmount + ")";
     }
 }
