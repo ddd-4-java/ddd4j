@@ -17,11 +17,11 @@ package io.ddd4j.sample.javalin.satoken.rbac.web;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.util.Objects;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+
+import java.util.Objects;
 
 import io.ddd4j.core.api.R;
 import io.ddd4j.sample.javalin.satoken.rbac.application.RbacService;
@@ -48,18 +48,25 @@ import static io.javalin.apibuilder.ApiBuilder.*;
  * 业务代码（User/Role/Permission/Repository/Service）与 Spring 示例
  * 外部 {@code ddd4j-boot-sample-auth-satoken} 保持同一 Subject 鉴权语义，仅 Controller 层使用 Javalin 风格。
  *
- * @author ddd4j
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class AuthorizationController {
 
     private final RbacService rbacService;
 
+    /**
+     * 创建授权控制器。
+     *
+     * @param rbacService RBAC 服务
+     */
     public AuthorizationController(RbacService rbacService) {
         this.rbacService = Objects.requireNonNull(rbacService, "rbacService must not be null");
     }
 
     /**
      * 注册 RBAC 授权管理路由（建议在 {@code path("rbac", ...)} 内调用，使路径变为 {@code /rbac/admin/*}）。
+     *
+     * @return 路由组
      */
     public EndpointGroup routes() {
         return () -> {
@@ -187,9 +194,7 @@ public class AuthorizationController {
     // ============================ 请求/响应 DTO ============================
 
     /**
-     * 创建用户请求参数。
-     *
-     * @author ddd4j
+     * 创建用户请求。
      */
     @Data
     @NoArgsConstructor
@@ -206,6 +211,14 @@ public class AuthorizationController {
 
         private String realName;
 
+        /**
+         * 创建创建用户请求。
+         *
+         * @param userId 用户标识
+         * @param username 用户名
+         * @param password 密码
+         * @param realName 真实姓名
+         */
         @JsonCreator()
         public CreateUserRequest(@JsonProperty("userId") String userId, @JsonProperty("username") String username, @JsonProperty("password") String password, @JsonProperty("realName") String realName) {
             this.userId = userId;
@@ -214,21 +227,41 @@ public class AuthorizationController {
             this.realName = realName;
         }
 
+        /**
+         * 读取用户标识。
+         *
+         * @return 用户标识
+         */
         @JsonProperty("userId")
         public String userId() {
             return userId;
         }
 
+        /**
+         * 读取用户名。
+         *
+         * @return 用户名
+         */
         @JsonProperty("username")
         public String username() {
             return username;
         }
 
+        /**
+         * 读取密码。
+         *
+         * @return 密码
+         */
         @JsonProperty("password")
         public String password() {
             return password;
         }
 
+        /**
+         * 读取真实姓名。
+         *
+         * @return 真实姓名
+         */
         @JsonProperty("realName")
         public String realName() {
             return realName;
@@ -237,9 +270,7 @@ public class AuthorizationController {
     }
 
     /**
-     * 更新用户请求参数。
-     *
-     * @author ddd4j
+     * 更新用户请求。
      */
     @Data
     @NoArgsConstructor
@@ -254,6 +285,13 @@ public class AuthorizationController {
 
         private User.Status status;
 
+        /**
+         * 创建更新用户请求。
+         *
+         * @param realName 真实姓名
+         * @param password 密码
+         * @param status 状态
+         */
         @JsonCreator()
         public UpdateUserRequest(@JsonProperty("realName") String realName, @JsonProperty("password") String password, @JsonProperty("status") User.Status status) {
             this.realName = realName;
@@ -261,16 +299,31 @@ public class AuthorizationController {
             this.status = status;
         }
 
+        /**
+         * 读取真实姓名。
+         *
+         * @return 真实姓名
+         */
         @JsonProperty("realName")
         public String realName() {
             return realName;
         }
 
+        /**
+         * 读取密码。
+         *
+         * @return 密码
+         */
         @JsonProperty("password")
         public String password() {
             return password;
         }
 
+        /**
+         * 读取状态。
+         *
+         * @return 状态
+         */
         @JsonProperty("status")
         public User.Status status() {
             return status;
@@ -279,9 +332,7 @@ public class AuthorizationController {
     }
 
     /**
-     * 给用户分配角色请求参数（全量替换）。
-     *
-     * @author ddd4j
+     * 分配角色请求。
      */
     @Data
     @NoArgsConstructor
@@ -291,11 +342,21 @@ public class AuthorizationController {
 
         private List<String> roleIds;
 
+        /**
+         * 创建分配角色请求。
+         *
+         * @param roleIds 角色标识集合
+         */
         @JsonCreator()
         public AssignRolesRequest(@JsonProperty("roleIds") List<String> roleIds) {
             this.roleIds = roleIds;
         }
 
+        /**
+         * 读取角色标识集合。
+         *
+         * @return 角色标识集合
+         */
         @JsonProperty("roleIds")
         public List<String> roleIds() {
             return roleIds;
@@ -304,9 +365,7 @@ public class AuthorizationController {
     }
 
     /**
-     * 创建角色请求参数。
-     *
-     * @author ddd4j
+     * 创建角色请求。
      */
     @Data
     @NoArgsConstructor
@@ -322,6 +381,14 @@ public class AuthorizationController {
 
         private String description;
 
+        /**
+         * 创建创建角色请求。
+         *
+         * @param roleId 角色标识
+         * @param roleCode 角色编码
+         * @param roleName 角色名称
+         * @param description 描述
+         */
         @JsonCreator()
         public CreateRoleRequest(@JsonProperty("roleId") String roleId, @JsonProperty("roleCode") String roleCode, @JsonProperty("roleName") String roleName, @JsonProperty("description") String description) {
             this.roleId = roleId;
@@ -330,21 +397,41 @@ public class AuthorizationController {
             this.description = description;
         }
 
+        /**
+         * 读取角色标识。
+         *
+         * @return 角色标识
+         */
         @JsonProperty("roleId")
         public String roleId() {
             return roleId;
         }
 
+        /**
+         * 读取角色编码。
+         *
+         * @return 角色编码
+         */
         @JsonProperty("roleCode")
         public String roleCode() {
             return roleCode;
         }
 
+        /**
+         * 读取角色名称。
+         *
+         * @return 角色名称
+         */
         @JsonProperty("roleName")
         public String roleName() {
             return roleName;
         }
 
+        /**
+         * 读取描述。
+         *
+         * @return 描述
+         */
         @JsonProperty("description")
         public String description() {
             return description;
@@ -353,9 +440,7 @@ public class AuthorizationController {
     }
 
     /**
-     * 更新角色请求参数。
-     *
-     * @author ddd4j
+     * 更新角色请求。
      */
     @Data
     @NoArgsConstructor
@@ -369,6 +454,13 @@ public class AuthorizationController {
 
         private Role.Status status;
 
+        /**
+         * 创建更新角色请求。
+         *
+         * @param roleName 角色名称
+         * @param description 描述
+         * @param status 状态
+         */
         @JsonCreator()
         public UpdateRoleRequest(@JsonProperty("roleName") String roleName, @JsonProperty("description") String description, @JsonProperty("status") Role.Status status) {
             this.roleName = roleName;
@@ -376,16 +468,31 @@ public class AuthorizationController {
             this.status = status;
         }
 
+        /**
+         * 读取角色名称。
+         *
+         * @return 角色名称
+         */
         @JsonProperty("roleName")
         public String roleName() {
             return roleName;
         }
 
+        /**
+         * 读取描述。
+         *
+         * @return 描述
+         */
         @JsonProperty("description")
         public String description() {
             return description;
         }
 
+        /**
+         * 读取状态。
+         *
+         * @return 状态
+         */
         @JsonProperty("status")
         public Role.Status status() {
             return status;
@@ -394,9 +501,7 @@ public class AuthorizationController {
     }
 
     /**
-     * 给角色分配权限请求参数（全量替换）。
-     *
-     * @author ddd4j
+     * 分配权限请求。
      */
     @Data
     @NoArgsConstructor
@@ -406,11 +511,21 @@ public class AuthorizationController {
 
         private List<String> permissionIds;
 
+        /**
+         * 创建分配权限请求。
+         *
+         * @param permissionIds 权限标识集合
+         */
         @JsonCreator()
         public AssignPermissionsRequest(@JsonProperty("permissionIds") List<String> permissionIds) {
             this.permissionIds = permissionIds;
         }
 
+        /**
+         * 读取权限标识集合。
+         *
+         * @return 权限标识集合
+         */
         @JsonProperty("permissionIds")
         public List<String> permissionIds() {
             return permissionIds;
@@ -419,9 +534,7 @@ public class AuthorizationController {
     }
 
     /**
-     * 创建权限请求参数。
-     *
-     * @author ddd4j
+     * 创建权限请求。
      */
     @Data
     @NoArgsConstructor
@@ -437,6 +550,14 @@ public class AuthorizationController {
 
         private String module;
 
+        /**
+         * 创建创建权限请求。
+         *
+         * @param permissionId 权限标识
+         * @param permissionCode 权限编码
+         * @param permissionName 权限名称
+         * @param module 所属模块
+         */
         @JsonCreator()
         public CreatePermissionRequest(@JsonProperty("permissionId") String permissionId, @JsonProperty("permissionCode") String permissionCode, @JsonProperty("permissionName") String permissionName, @JsonProperty("module") String module) {
             this.permissionId = permissionId;
@@ -445,21 +566,41 @@ public class AuthorizationController {
             this.module = module;
         }
 
+        /**
+         * 读取权限标识。
+         *
+         * @return 权限标识
+         */
         @JsonProperty("permissionId")
         public String permissionId() {
             return permissionId;
         }
 
+        /**
+         * 读取权限编码。
+         *
+         * @return 权限编码
+         */
         @JsonProperty("permissionCode")
         public String permissionCode() {
             return permissionCode;
         }
 
+        /**
+         * 读取权限名称。
+         *
+         * @return 权限名称
+         */
         @JsonProperty("permissionName")
         public String permissionName() {
             return permissionName;
         }
 
+        /**
+         * 读取所属模块。
+         *
+         * @return 所属模块
+         */
         @JsonProperty("module")
         public String module() {
             return module;
@@ -468,9 +609,7 @@ public class AuthorizationController {
     }
 
     /**
-     * 更新权限请求参数。
-     *
-     * @author ddd4j
+     * 更新权限请求。
      */
     @Data
     @NoArgsConstructor
@@ -484,6 +623,13 @@ public class AuthorizationController {
 
         private Permission.Status status;
 
+        /**
+         * 创建更新权限请求。
+         *
+         * @param permissionName 权限名称
+         * @param module 所属模块
+         * @param status 状态
+         */
         @JsonCreator()
         public UpdatePermissionRequest(@JsonProperty("permissionName") String permissionName, @JsonProperty("module") String module, @JsonProperty("status") Permission.Status status) {
             this.permissionName = permissionName;
@@ -491,22 +637,36 @@ public class AuthorizationController {
             this.status = status;
         }
 
+        /**
+         * 读取权限名称。
+         *
+         * @return 权限名称
+         */
         @JsonProperty("permissionName")
         public String permissionName() {
             return permissionName;
         }
 
+        /**
+         * 读取所属模块。
+         *
+         * @return 所属模块
+         */
         @JsonProperty("module")
         public String module() {
             return module;
         }
 
+        /**
+         * 读取状态。
+         *
+         * @return 状态
+         */
         @JsonProperty("status")
         public Permission.Status status() {
             return status;
         }
 
     }
-
 
 }

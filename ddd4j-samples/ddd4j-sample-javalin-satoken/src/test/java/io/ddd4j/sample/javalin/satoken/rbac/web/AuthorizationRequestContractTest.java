@@ -1,5 +1,6 @@
 package io.ddd4j.sample.javalin.satoken.rbac.web;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.ddd4j.sample.javalin.satoken.rbac.domain.model.Permission;
 import io.ddd4j.sample.javalin.satoken.rbac.domain.model.Role;
 import io.ddd4j.sample.javalin.satoken.rbac.domain.model.User;
@@ -13,6 +14,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class AuthorizationRequestContractTest {
+
+    @Test
+    void createUserRequestRetainsJsonFieldContract() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        AuthorizationController.CreateUserRequest request = mapper.readValue(
+                "{\"userId\":\"u1\",\"username\":\"alice\",\"password\":\"secret\",\"realName\":\"Alice\"}",
+                AuthorizationController.CreateUserRequest.class);
+        assertEquals("u1", request.userId());
+        assertEquals("alice", request.username());
+        assertEquals("secret", request.password());
+        assertEquals("Alice", request.realName());
+        assertEquals(request, mapper.readValue(mapper.writeValueAsString(request),
+                AuthorizationController.CreateUserRequest.class));
+    }
 
     private static void valueContract(Object bean, Object constructed) {
         assertEquals(constructed, bean);
