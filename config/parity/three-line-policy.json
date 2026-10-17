@@ -1055,6 +1055,28 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-extensions/ddd4j-extension-validation/src/main/java/io/ddd4j/extension/validation/OfficeFileTypeDetector.java",
+      "sourceSha256": [
+        "d3a746bccd0331b8699741f903d2da261759b274cb28d439db48e7ec986816b7",
+        "b52b98a36b801eb9fb65e88fa17343560a7415927b48e42849a2c3984299fa5c",
+        "b52b98a36b801eb9fb65e88fa17343560a7415927b48e42849a2c3984299fa5c"
+      ],
+      "evidence": "ddd4j-extensions/ddd4j-extension-validation/src/test/java/io/ddd4j/extension/validation/OfficeFileTypeDetectorSignatureContractTest.java",
+      "testSha256": "755d24219853740a04810836beb71555b6c47799c39b8fe7e26b90489b96e3a5",
+      "reason": "三线相同 PDF/OLE/OOXML 检测流程，唯 JDK 8 以循环读取并截短缓冲区对应高两线 InputStream.readNBytes；共同测试锁定分块读取和短签名拒绝，源码哈希锁定全部差异"
+    },
+    {
+      "path": "ddd4j-extensions/ddd4j-extension-validation/src/main/java/io/ddd4j/extension/validation/FileValidationService.java",
+      "sourceSha256": [
+        "290f673377e80998d5d60980f51c317e6ee391a85954699cfb3ba3eeb5ac3c0a",
+        "20d25552ac7a8e0736e585cca16398f0a4fe1a423421e64a838a7dd67dc64040",
+        "d8d51e782a42d529cd15997872ced2336a37ee86f3f4d65084f0c19459581d88"
+      ],
+      "evidence": "ddd4j-extensions/ddd4j-extension-validation/src/test/java/io/ddd4j/extension/validation/FileValidationServiceCopyContractTest.java",
+      "testSha256": "99d07afbc4b309241764057d4367d1a55762d903dd85f66ecc7bacedabaeab83",
+      "reason": "三线文件校验构造、规则和内容检查契约一致；JDK 8 以显式循环加不可变防御性复制对应高两线 List.copyOf，并以 Optional.isPresent 的反向判断对应 isEmpty；共同测试锁定空集合与 null 元素处理，源码哈希锁定全部差异"
+    },
+    {
       "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/order/web/dto/OrderResponse.java",
       "sourceSha256": [
         "dc65a5b3d7ed97c9642a85365980cd0382873a0c50029bb928810097faf50f64",
