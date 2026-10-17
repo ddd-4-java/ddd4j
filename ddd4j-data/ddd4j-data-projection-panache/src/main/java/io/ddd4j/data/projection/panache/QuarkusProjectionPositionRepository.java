@@ -71,7 +71,7 @@ public class QuarkusProjectionPositionRepository implements ProjectionPositionRe
         return entities.stream()
                 .map(entity -> (ProjectionPosition) new DefaultProjectionPosition(
                         entity.streamId, entity.nextEventNumber))
-                .toList();
+                .collect(java.util.stream.Collectors.toList());
     }
 
     /**

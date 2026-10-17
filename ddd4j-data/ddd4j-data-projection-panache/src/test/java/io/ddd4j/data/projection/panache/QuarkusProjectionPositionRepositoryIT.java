@@ -20,6 +20,7 @@ import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -66,6 +67,17 @@ class QuarkusProjectionPositionRepositoryIT {
     @BeforeEach
     void cleanPositions() {
         itConfig.clearPositions();
+    }
+
+    @Test
+    void findAll_返回可修改的独立结果快照() {
+        positions.save(new DefaultProjectionPosition(ORDER_SUMMARY, 7L));
+
+        List<ProjectionPosition> snapshot = positions.findAll();
+        snapshot.clear();
+
+        assertThat(snapshot).isEmpty();
+        assertThat(positions.findAll()).hasSize(1);
     }
 
     @Test
