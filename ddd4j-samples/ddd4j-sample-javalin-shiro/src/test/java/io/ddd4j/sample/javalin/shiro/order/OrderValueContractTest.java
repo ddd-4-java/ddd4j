@@ -4,6 +4,7 @@ import io.ddd4j.sample.javalin.shiro.order.application.AddOrderLineCommand;
 import io.ddd4j.sample.javalin.shiro.order.application.CreateOrderCommand;
 import io.ddd4j.sample.javalin.shiro.order.domain.model.Money;
 import io.ddd4j.sample.javalin.shiro.order.web.OrderResource;
+import io.ddd4j.kit.lang.JsonKit;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -54,6 +55,12 @@ class OrderValueContractTest {
         expected = 59 * expected + money.currency().hashCode();
 
         assertEquals(expected, money.hashCode());
+    }
+
+    @Test
+    void moneyRoundTripsThroughJson() {
+        Money money = new Money(new BigDecimal("12.345"), " cny ");
+        assertEquals(money, JsonKit.toObject(JsonKit.toJson(money), Money.class));
     }
 
     @Test
