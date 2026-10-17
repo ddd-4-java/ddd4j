@@ -19,7 +19,7 @@ import io.micronaut.context.annotation.Factory;
 import jakarta.inject.Singleton;
 
 import java.util.Collection;
-import java.util.Set;
+import java.util.Collections;
 
 /**
  * 集成测试专用装配工厂：{@code @MicronautTest} 引导的真实 BeanContext 需要
@@ -92,7 +92,7 @@ class TestFactory {
 
         @Override
         public Collection<String> getEventTypes() {
-            return Set.of("TestEvent");
+            return Collections.singleton("TestEvent");
         }
 
         @Override

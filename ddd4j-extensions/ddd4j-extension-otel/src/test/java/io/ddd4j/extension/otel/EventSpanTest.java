@@ -19,6 +19,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -53,7 +54,7 @@ class EventSpanTest {
 
     @Test
     void query_shouldReturnValue() {
-        List<String> result = EventSpan.query("OrderQuery", () -> List.of("ORD-001", "ORD-002"));
+        List<String> result = EventSpan.query("OrderQuery", () -> Arrays.asList("ORD-001", "ORD-002"));
 
         assertThat(result).hasSize(2);
     }
