@@ -25,6 +25,9 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -70,9 +73,8 @@ public class ColaArchitectureChecker {
     /**
      * COLA 架构必需的四层目录名称
      */
-    private static final Set<String> REQUIRED_LAYERS = Set.of(
-            "domain", "adapter", "application", "infrastructure"
-    );
+    private static final Set<String> REQUIRED_LAYERS = Collections.unmodifiableSet(
+            new LinkedHashSet<>(Arrays.asList("domain", "adapter", "application", "infrastructure")));
 
     /**
      * 领域层（domain）推荐的子包名称
@@ -121,6 +123,8 @@ public class ColaArchitectureChecker {
 
     /**
      * 构造器（向后兼容）：仅做目录结构检查，不应用注解驱动规则。
+     *
+     * @param basePackage 业务代码的根包名
      */
     public ColaArchitectureChecker(String basePackage) {
         this(basePackage, null, null, null, null);
@@ -128,6 +132,12 @@ public class ColaArchitectureChecker {
 
     /**
      * 构造器（带注解驱动规则）。
+     *
+     * @param basePackage 业务代码的根包名
+     * @param domainEntityAnnotation 领域实体注解类型
+     * @param domainServiceAnnotation 领域服务注解类型
+     * @param applicationServiceAnnotation 应用服务注解类型
+     * @param domainRepositoryAnnotation 仓储实现注解类型
      */
     public ColaArchitectureChecker(String basePackage,
                                    Class<? extends java.lang.annotation.Annotation> domainEntityAnnotation,
@@ -281,6 +291,8 @@ public class ColaArchitectureChecker {
 
     /**
      * 获取 COLA 规范要求的目录结构描述。
+     *
+     * @return 目录结构描述
      */
     public String getExpectedStructure() {
         return """
@@ -302,6 +314,6 @@ public class ColaArchitectureChecker {
                     ├── config/
                     ├── external/
                     └── common/
-                """.formatted(basePackage);
+                """.formatted(basePackage).stripTrailing();
     }
 }

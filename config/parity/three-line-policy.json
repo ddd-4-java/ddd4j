@@ -1055,6 +1055,17 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-ddd-rules/ddd4j-ddd-rules-cola/src/main/java/io/ddd4j/ddd/cola/checker/ColaArchitectureChecker.java",
+      "sourceSha256": [
+        "7d655e0cda421e9f53a2024a7c4c607e72a587a6cb6601394e9d76fbfc0449e4",
+        "4e409a305116e6932d46be295983c90efc9db527718b7b1fbf611fec65193686",
+        "4e409a305116e6932d46be295983c90efc9db527718b7b1fbf611fec65193686"
+      ],
+      "evidence": "ddd4j-ddd-rules/ddd4j-ddd-rules-cola/src/test/java/io/ddd4j/ddd/cola/ColaArchitectureStructureContractTest.java",
+      "testSha256": "68b860fded3fde1489da68ea2f088b69f132d9b659939317c6ab2e7461abe528",
+      "reason": "三线按 domain/adapter/application/infrastructure 顺序报告缺失目录，并返回逐字相同且无尾换行的目录说明；JDK 8 StringBuilder 与高两线文本块及未使用的推荐子包集合写法差异由源码哈希锁定"
+    },
+    {
       "path": "ddd4j-ddd-rules/ddd4j-ddd-rules-clean/src/main/java/io/ddd4j/ddd/clean/checker/CleanArchitectureChecker.java",
       "sourceSha256": [
         "89cff55c2df849a7805282635002f973d20901cb27fe694f081b39304a448c6e",
