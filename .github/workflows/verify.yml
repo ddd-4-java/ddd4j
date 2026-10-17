@@ -30,6 +30,12 @@ jobs:
         with:
           reporter: github-check
           fail_level: error
+      - name: Validate parity and workflow gate selftests
+        run: >-
+          python3 -m unittest -q
+          scripts/test_structure_api_normalization.py
+          scripts/test_eventstore_parity_reports.py
+          scripts/test_workflow_line_baseline.py
 
   unit-and-contract:
     name: Java 21 unit and contract
