@@ -19,7 +19,11 @@ import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.ddd.event.EntityId;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
@@ -30,8 +34,15 @@ public final class DropwizardDomainEventPublisher implements DomainEventPublishe
 
     private final List<Consumer<Object>> listeners;
 
+    /**
+     * 使用指定事件监听器创建发布器。
+     *
+     * @param listeners 事件监听器
+     */
     public DropwizardDomainEventPublisher(Collection<Consumer<Object>> listeners) {
-        this.listeners = Collections.unmodifiableList(new ArrayList<>(Objects.requireNonNull(listeners, "listeners must not be null")));
+        List<Consumer<Object>> copy = new ArrayList<>(Objects.requireNonNull(listeners, "listeners must not be null"));
+        copy.forEach(listener -> Objects.requireNonNull(listener, "listener must not be null"));
+        this.listeners = Collections.unmodifiableList(copy);
     }
 
     @Override
