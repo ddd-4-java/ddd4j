@@ -38,7 +38,7 @@ import java.util.Objects;
  *   <li>{@link #fillList(InputStream, List, FillConfig)}：带配置（如 {@code forceNewRow=true}）</li>
  * </ul>
  *
- * <h3>模板语法</h3>
+ * <h2>模板语法</h2>
  * <pre>
  *   {name}        普通变量
  *   {.}           列表占位符（默认纵向展开）
