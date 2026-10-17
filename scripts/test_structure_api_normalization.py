@@ -73,5 +73,29 @@ class DescriptorNormalizationTest(unittest.TestCase):
         )
 
 
+class StaticImportNormalizationTest(unittest.TestCase):
+    BASE = ("package example; import static org.junit.jupiter.api.Assertions.*; "
+            "class ContractTest { void check() { assertTrue(true); } }")
+
+    def test_explicit_import_covered_by_same_owner_wildcard_is_equivalent(self):
+        redundant = self.BASE.replace(
+            "import static org.junit.jupiter.api.Assertions.*;",
+            "import static org.junit.jupiter.api.Assertions.assertTrue; "
+            "import static org.junit.jupiter.api.Assertions.*;")
+        self.assertEqual(parity.java_tokens_with_normalized_imports(self.BASE),
+                         parity.java_tokens_with_normalized_imports(redundant))
+
+    def test_different_owner_and_changed_assertion_remain_distinct(self):
+        different_owner = self.BASE.replace(
+            "import static org.junit.jupiter.api.Assertions.*;",
+            "import static example.Other.assertTrue; "
+            "import static org.junit.jupiter.api.Assertions.*;")
+        changed_assertion = self.BASE.replace("assertTrue(true)", "assertTrue(false)")
+        self.assertNotEqual(parity.java_tokens_with_normalized_imports(self.BASE),
+                            parity.java_tokens_with_normalized_imports(different_owner))
+        self.assertNotEqual(parity.java_tokens_with_normalized_imports(self.BASE),
+                            parity.java_tokens_with_normalized_imports(changed_assertion))
+
+
 if __name__ == "__main__":
     unittest.main()
