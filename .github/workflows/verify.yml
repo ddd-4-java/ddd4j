@@ -77,9 +77,7 @@ jobs:
       - name: Verify DDD architecture rules
         run: ./scripts/verify-architecture.sh
       - name: Run unit and adapter contracts
-        run: |
-          SAMPLE_EXCLUSIONS="$(find ddd4j-samples -mindepth 2 -maxdepth 2 -name pom.xml | sed 's#/pom.xml$##; s#^#!#' | paste -sd, -)"
-          ./mvnw -U -Denforcer.skip=true -B clean test -DskipITs -pl "${SAMPLE_EXCLUSIONS}"
+        run: ./mvnw -U -Denforcer.skip=true -B clean test -DskipITs
       - name: Verify JPA MySQL container test execution
         run: python3 scripts/verify-jpa-mysql-test-report.py
       - name: Verify build did not write generated files to source control
@@ -120,9 +118,7 @@ jobs:
             echo "::warning::Aliyun auth returned $HTTP_CODE - private snapshot deps may fail"
           fi
       - name: Install reactor dependencies without coverage enforcement
-        run: |
-          SAMPLE_EXCLUSIONS="$(find ddd4j-samples -mindepth 2 -maxdepth 2 -name pom.xml | sed 's#/pom.xml$##; s#^#!#' | paste -sd, -)"
-          ./mvnw -U -Denforcer.skip=true -B -DskipTests install -pl "${SAMPLE_EXCLUSIONS}"
+        run: ./mvnw -U -Denforcer.skip=true -B -DskipTests install
       - name: Enforce 90% line coverage on gated modules
         run: >-
           ./mvnw -U -Denforcer.skip=true -B -Pcoverage verify
@@ -158,9 +154,7 @@ jobs:
             echo "::warning::Aliyun auth returned $HTTP_CODE - private snapshot deps may fail"
           fi
       - name: Install reactor artifacts for plugin resolution
-        run: |
-          SAMPLE_EXCLUSIONS="$(find ddd4j-samples -mindepth 2 -maxdepth 2 -name pom.xml | sed 's#/pom.xml$##; s#^#!#' | paste -sd, -)"
-          ./mvnw -U -Denforcer.skip=true -B -DskipTests -Dquarkus.build.skip=true install -pl "${SAMPLE_EXCLUSIONS}"
+        run: ./mvnw -U -Denforcer.skip=true -B -DskipTests -Dquarkus.build.skip=true install
       - name: Generate CycloneDX SBOM
         run: ./scripts/generate-sbom.sh
       - name: Generate third-party license inventory
