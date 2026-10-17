@@ -76,10 +76,10 @@ public class OrderSummaryView implements ProjectionView<Object> {
     @Override
     public void handleEvents(Collection<Object> events) {
         for (Object event : events) {
-            if (event instanceof OrderCreatedEvent created) {
-                handleCreated(created);
-            } else if (event instanceof OrderPaidEvent paid) {
-                handlePaid(paid);
+            if (event instanceof OrderCreatedEvent) {
+                handleCreated((OrderCreatedEvent) event);
+            } else if (event instanceof OrderPaidEvent) {
+                handlePaid((OrderPaidEvent) event);
             }
         }
     }
@@ -103,7 +103,7 @@ public class OrderSummaryView implements ProjectionView<Object> {
     private void handlePaid(OrderPaidEvent event) {
         String orderId = event.source();
         OrderSummaryViewEntity entity = store.get(orderId);
-        if (entity != null) {
+        if (Objects.nonNull(entity)) {
             entity.setStatus("PAID");
         }
     }
