@@ -395,6 +395,31 @@ class ThreeLineInventoryTest(unittest.TestCase):
         result, _ = self.run_checker("inventory")
         self.assertNotEqual(0, result.returncode)
 
+    def test_single_wildcard_makes_same_package_explicit_import_redundant(self):
+        path = "ddd4j-core/src/main/java/example/Foo.java"
+        common = "package example; import java.util.*; public class Foo { List<String> values; }"
+        redundant = ("package example; import java.util.*; import java.util.List; "
+                     "public class Foo { List<String> values; }")
+        for root, source in zip(self.roots, (common, redundant, common)):
+            self.write(root, path, source)
+
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = json.loads((output / "inventory.json").read_text())["differences"]
+        self.assertEqual("LEXICALLY_EQUIVALENT", next(row["status"] for row in rows
+                                                 if row["path"] == path and row["category"] == "production"))
+
+        ambiguous = common.replace("import java.util.*;", "import java.util.*; import java.awt.*;")
+        ambiguous_redundant = redundant.replace(
+            "import java.util.*;", "import java.util.*; import java.awt.*;")
+        for root, source in zip(self.roots, (ambiguous, ambiguous_redundant, ambiguous)):
+            self.write(root, path, source)
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = json.loads((output / "inventory.json").read_text())["differences"]
+        self.assertEqual("OPEN", next(row["status"] for row in rows
+                                      if row["path"] == path and row["category"] == "production"))
+
     def test_verify_compares_compiled_api_while_inventory_remains_open(self):
         wrapper = ('#!/bin/sh\n'
                    'mkdir -p ddd4j-core/target/classes\n'
