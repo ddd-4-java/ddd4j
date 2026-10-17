@@ -34,30 +34,25 @@ public class Ddd4jFieldCryptoHandler {
 
     private final CryptoStrategy cryptoStrategy;
 
+    /**
+     * 创建共享的字段加解密处理器。
+     *
+     * @param cryptoStrategy 加解密策略
+     */
     public Ddd4jFieldCryptoHandler(CryptoStrategy cryptoStrategy) {
         this.cryptoStrategy = Objects.requireNonNull(cryptoStrategy, "cryptoStrategy must not be null");
     }
 
     /**
-     * 加密数据。
-     * @param <T> 类型参数。
-     * @param value 值。
-     * @return 结果值。
+     * 加密字段值；空值原样返回。
+     *
+     * @param value 原始字段值
+     * @param <T> 字段类型
+     * @return 加密后的字段值
      */
     public <T> T encrypt(T value) {
         if (Objects.isNull(value)) {
             return null;
-        /**
-         * cryptoStrategy.encrypt() 方法。
-         * @param value 值。
-         * @param null null 参数。
-         * @param null null 参数。
-         * @param null null 参数。
-         * @param null null 参数。
-         * @param null null 参数。
-         * @param false false 参数。
-         * @return 方法执行结果。
-         */
         }
         String encrypted = cryptoStrategy.encrypt(value, null, null, null, null, null, false);
         log.debug("Field encrypted: {}", value.getClass().getSimpleName());
@@ -65,13 +60,18 @@ public class Ddd4jFieldCryptoHandler {
     }
 
     /**
-     * 解密数据。
-     * @param <T> 类型参数。
-     * @param value 值。
-     * @return 结果值。
+     * 解密字段值；解密失败时返回原值。
+     *
+     * @param value 加密后的字段值
+     * @param <T> 字段类型
+     * @return 解密后的字段值或原值
      */
     public <T> T decrypt(T value) {
-        if (!(value instanceof String encrypted) || StrKit.isEmpty(encrypted)) {
+        if (!(value instanceof String)) {
+            return value;
+        }
+        String encrypted = (String) value;
+        if (StrKit.isEmpty(encrypted)) {
             return value;
         }
         try {
@@ -84,8 +84,9 @@ public class Ddd4jFieldCryptoHandler {
     }
 
     /**
-     * 获取值。
-     * @return 方法执行结果。
+     * 返回当前加解密策略。
+     *
+     * @return 加解密策略
      */
     public CryptoStrategy getCryptoStrategy() {
         return cryptoStrategy;

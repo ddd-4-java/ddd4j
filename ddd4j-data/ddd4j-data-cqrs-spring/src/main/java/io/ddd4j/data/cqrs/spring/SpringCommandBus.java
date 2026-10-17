@@ -37,7 +37,7 @@ import java.util.Objects;
  * <p><b>仅服务 Spring 系运行时</b>（WebMVC／WebFlux／Helidon-Spring）；Quarkus
  * 运行时用 {@code ddd4j-data-cqrs-quarkus} 的 {@code QuarkusCommandBus}。
  *
- * <h2>装配语义（构造即快照，顺序不可变）</h2>
+ * <p><b>装配语义（构造即快照，顺序不可变）</b></p>
  * <p>
  * 构造器内先经 {@link ApplicationContext#getBeansOfType(Class)} 收集容器中全部
  * {@link CommandExecutor} Bean 并逐个 {@link CommandRegistry#register}（整批拒绝
@@ -50,7 +50,7 @@ import java.util.Objects;
  * 的整批拒绝（all-or-nothing）{@link IllegalStateException} 在装配期立即暴露
  * ——Bean 创建失败＝容器启动失败，不会留下半注册总线。
  *
- * <h3>{@link CommandHandler @CommandHandler} 发现</h3>
+ * <p><b>{@link CommandHandler @CommandHandler} 发现</b></p>
  * <p>
  * 发现完全复用 Spring 内置的 {@code ClassPathScanningCandidateComponentProvider}：
  * 执行器类带 {@code @Component}/{@code @Service} 等刻板（{@code @CommandHandler}
@@ -66,7 +66,7 @@ import java.util.Objects;
  * }</pre>
  * 本模块不提供自定义 BeanPostProcessor（ADR-0004：仅扫描＋自动注入）。
  *
- * <h3>事务与代理（execute 必须 <b>方法级</b> @Transactional）</h3>
+ * <p><b>事务与代理（execute 必须方法级 @Transactional）</b></p>
  * <p>
  * {@link #execute} 以<b>方法级</b> {@link Transactional @Transactional} 纯委托
  * override（{@code return super.execute(command)}）包裹：Spring 事务切面的
