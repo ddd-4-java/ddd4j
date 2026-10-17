@@ -133,6 +133,39 @@
         "c9ecb12935984809c56b20cf76d55473ff3307b292f9915039ac22fcfc1c896e"
       ],
       "reason": "JDK 8 补充容器契约验证并发冲突与因果元数据；高两线 EsdbEventStoreIT 包含相同断言并在真实容器执行"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/http/HttpClient.java",
+      "sha256": "d3ec82aef81cd3dc4cc05ed0626db4bcc2458c910ccf38258b554cfa8dc57440",
+      "counterpart": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/rbac/web/AuthenticationControllerTest.java",
+      "counterpartSha256": [
+        "a9d6cdd9b28dfba92a86e4d1eb16cbddbe1c9ad70587ea38e8a00558d388b8f5",
+        "699f69337c9a5a2e61677e266c751641d71ae763a107ae6979ad147d78bad71d",
+        "22404f5a2d9692722e27b91b7ef66177d98b475e03607fe3aa9a498d63768f30"
+      ],
+      "reason": "JDK 8 测试 HTTP 客户端适配；高两线使用 java.net.http，三线相同 AuthenticationControllerTest 31 项真实 HTTP 测试通过"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/http/HttpRequest.java",
+      "sha256": "c7201aa9612957c84607e195e22a1f364c178c571d7873987dfb06b0a904a9bc",
+      "counterpart": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/rbac/web/AuthenticationControllerTest.java",
+      "counterpartSha256": [
+        "a9d6cdd9b28dfba92a86e4d1eb16cbddbe1c9ad70587ea38e8a00558d388b8f5",
+        "699f69337c9a5a2e61677e266c751641d71ae763a107ae6979ad147d78bad71d",
+        "22404f5a2d9692722e27b91b7ef66177d98b475e03607fe3aa9a498d63768f30"
+      ],
+      "reason": "JDK 8 测试 HTTP 客户端适配；高两线使用 java.net.http，三线相同 AuthenticationControllerTest 31 项真实 HTTP 测试通过"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/http/HttpResponse.java",
+      "sha256": "edb0348021bd162d013a34d6a4d1b32463b9feb38ade880825c7a9fb0a7af194",
+      "counterpart": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/rbac/web/AuthenticationControllerTest.java",
+      "counterpartSha256": [
+        "a9d6cdd9b28dfba92a86e4d1eb16cbddbe1c9ad70587ea38e8a00558d388b8f5",
+        "699f69337c9a5a2e61677e266c751641d71ae763a107ae6979ad147d78bad71d",
+        "22404f5a2d9692722e27b91b7ef66177d98b475e03607fe3aa9a498d63768f30"
+      ],
+      "reason": "JDK 8 测试 HTTP 客户端适配；高两线使用 java.net.http，三线相同 AuthenticationControllerTest 31 项真实 HTTP 测试通过"
     }
   ],
   "platformContentMappings": [
