@@ -30,6 +30,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * 验证 Sa-Token 权限和角色数据桥接契约。
+ */
 class SaTokenSubjectDataBridgeTest {
 
     private final SaTokenSubjectDataBridge bridge = new SaTokenSubjectDataBridge();
@@ -41,9 +44,21 @@ class SaTokenSubjectDataBridgeTest {
         originalProvider = SubjectKit.subjectProvider;
         originalDataProvider = SubjectKit.dataProvider;
         SubjectKit.register(new SubjectProvider() {
+            /**
+             * 返回当前测试使用的 Subject。
+             *
+             * @return 测试 Subject
+             */
             @Override
             public Subject getSubject() {
                 return new SaTokenSubject() {
+                    /**
+                     * 按登录标识返回测试用户。
+                     *
+                     * @param <T> 用户类型
+                     * @param loginId 登录标识。
+                     * @return 匹配的用户，未匹配时返回 null
+                     */
                     @Override
                     public <T extends AuthPrincipal> T getPrincipalByLoginId(Object loginId) {
                         if ("user-1".equals(loginId)) {
