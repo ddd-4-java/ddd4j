@@ -14,10 +14,10 @@
  */
 package io.ddd4j.core.cqrs.query;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.io.InvalidObjectException;
 
@@ -42,10 +42,19 @@ public final class LambdaCondition implements Serializable {
 
     private static final long serialVersionUID = 0L;
 
+    /**
+     * 类型安全属性引用。
+     */
     private final PropertyRef propertyRef;
 
+    /**
+     * 条件操作符。
+     */
     private final String operator;
 
+    /**
+     * 条件值。
+     */
     private final Object value;
 
     /**
@@ -63,56 +72,108 @@ public final class LambdaCondition implements Serializable {
         this.value = value;
     }
 
+    /**
+     * 获取属性名。
+     *
+     * @return Java 属性名
+     */
     public String property() {
         return propertyRef.property();
     }
 
     /**
      * 排序条件构造器。
+     *
+     * @param property 待排序属性
+     * @return 升序排序条件
      */
     public static LambdaCondition asc(PropertyRef property) {
         return new LambdaCondition(property, StrPool.ASC, null);
     }
 
+    /**
+     * 创建降序排序条件。
+     *
+     * @param property 待排序属性
+     * @return 降序排序条件
+     */
     public static LambdaCondition desc(PropertyRef property) {
         return new LambdaCondition(property, StrPool.DESC, null);
     }
 
     /**
      * 是否为排序条件。
+     *
+     * @return 操作符为升序或降序时为 true
      */
     @JsonIgnore
     public boolean isOrderBy() {
         return StrPool.ASC.equals(operator) || StrPool.DESC.equals(operator);
     }
 
+    /**
+     * 获取条件操作符。
+     *
+     * @return 条件操作符
+     */
     public String getOperator() {
         return operator;
     }
 
+    /**
+     * 获取类型安全属性引用。
+     *
+     * @return 属性引用
+     */
     public PropertyRef getPropertyRef() {
         return propertyRef;
     }
 
+    /**
+     * 获取条件值。
+     *
+     * @return 条件值
+     */
     public Object getValue() {
         return value;
     }
 
+    /**
+     * 获取用于 JSON 的属性引用。
+     *
+     * @return 属性引用
+     */
     @JsonProperty("propertyRef")
     public PropertyRef propertyRef() {
         return propertyRef;
     }
 
+    /**
+     * 获取用于 JSON 的条件操作符。
+     *
+     * @return 条件操作符
+     */
     @JsonProperty("operator")
     public String operator() {
         return operator;
     }
 
+    /**
+     * 获取用于 JSON 的条件值。
+     *
+     * @return 条件值
+     */
     @JsonProperty("value")
     public Object value() {
         return value;
     }
 
+    /**
+     * 反序列化时重新校验属性引用和操作符。
+     *
+     * @return 校验后的查询条件
+     * @throws ObjectStreamException 查询条件无效时
+     */
     private Object readResolve() throws ObjectStreamException {
         try {
             return new LambdaCondition(propertyRef, operator, value);
