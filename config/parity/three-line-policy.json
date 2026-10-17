@@ -1055,6 +1055,17 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-runtime/ddd4j-runtime-dropwizard/src/main/java/io/ddd4j/dropwizard/Ddd4jDropwizardRuntime.java",
+      "sourceSha256": [
+        "1352adc0d8a1f1d42981d1b41fd439a5fba21b12e178238014cefd9d437932c7",
+        "1519e0133413fe50d1bbd3d279ecfdaed1d1eb4facc906726e5af662c0f7d6be",
+        "1519e0133413fe50d1bbd3d279ecfdaed1d1eb4facc906726e5af662c0f7d6be"
+      ],
+      "evidence": "ddd4j-runtime/ddd4j-runtime-dropwizard/src/test/java/io/ddd4j/dropwizard/Ddd4jDropwizardRuntimeTest.java",
+      "testSha256": "145bd77a30a14eb5288029466189d6f3e25da56b99c2dda9c6ee8b29496c904b",
+      "reason": "三线共同测试验证 Dropwizard 生命周期、就绪状态和默认空就绪贡献者集合；JDK 8 使用 Collections.emptyList，高两线使用 List.of，业务语义一致"
+    },
+    {
       "path": "ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/Ddd4jGuiceRuntime.java",
       "sourceSha256": [
         "eea813a30e203c2495796eb6b1a3741918d5037c056c8a83164bb6b5729c77fb",
