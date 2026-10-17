@@ -22,7 +22,9 @@ class VertxTokenResponseContractTest {
         assertEquals(response.getToken(), response.token());
         assertEquals(response, new TokenResponse("token-1"));
         assertEquals(response.hashCode(), new TokenResponse("token-1").hashCode());
+        assertEquals(-1143986792, response.hashCode());
         assertNotEquals(response, new TokenResponse("token-2"));
+        assertEquals("VertxOrderRoutes.TokenResponse(token=token-1)", response.toString());
         assertTrue(response.toString().contains("token=token-1"));
     }
 }

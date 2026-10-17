@@ -155,5 +155,34 @@ public final class VertxOrderRoutes {
             return token;
         }
 
+        /** @return 登录令牌 */
+        public String getToken() {
+            return token;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            TokenResponse other = (TokenResponse) obj;
+            return Objects.equals(this.token, other.token);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 1;
+            result = 59 * result + (Objects.isNull(token) ? 43 : token.hashCode());
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "VertxOrderRoutes.TokenResponse(token=" + token + ")";
+        }
+
     }
 }
