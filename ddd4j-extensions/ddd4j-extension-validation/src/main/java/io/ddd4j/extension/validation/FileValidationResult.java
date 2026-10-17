@@ -12,39 +12,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.ddd4j.extension.validation;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
 
 import java.util.Objects;
 
 /**
- * 文件校验结果（valid 是否通过、failure 失败原因、detectedType 内容检测结果）。
+ * 文件校验结果。
  */
+
 public final class FileValidationResult {
+
+    private static final long serialVersionUID = 0L;
+
     private final boolean valid;
+
     private final FileValidationFailure failure;
+
     private final DetectedFileType detectedType;
-
-    /**
-     * 文件校验结果。
-     *
-     * @param valid        是否通过
-     * @param failure      失败原因，通过时为空
-     * @param detectedType 内容检测结果，可以为空
-     */
-
-    @JsonCreator
-    public FileValidationResult(@JsonProperty("valid") boolean valid,
-                                @JsonProperty("failure") FileValidationFailure failure,
-                                @JsonProperty("detectedType") DetectedFileType detectedType) {
-
-        this.valid = valid;
-        this.failure = failure;
-        this.detectedType = detectedType;
-    }
 
     /**
      * 创建成功结果。
@@ -67,32 +55,68 @@ public final class FileValidationResult {
         return new FileValidationResult(false, failure, detectedType);
     }
 
+    /** @return 检测到的文件类型，可以为空 */
+    public DetectedFileType getDetectedType() {
+        return detectedType;
+    }
+
+    /** @return 校验失败原因，通过时为空 */
+    public FileValidationFailure getFailure() {
+        return failure;
+    }
+
+    /** @return 文件是否通过校验 */
+    public boolean isValid() {
+        return valid;
+    }
+
+    /**
+ * @param valid 是否通过
+ * @param failure 失败原因，通过时为空
+ * @param detectedType 内容检测结果，可以为空
+ */
+
+    @JsonCreator()
+    public FileValidationResult(@JsonProperty("valid") boolean valid, @JsonProperty("failure") FileValidationFailure failure, @JsonProperty("detectedType") DetectedFileType detectedType) {
+        this.valid = valid;
+        this.failure = failure;
+        this.detectedType = detectedType;
+    }
+
+    /** @return 文件是否通过校验 */
     @JsonProperty("valid")
     public boolean valid() {
         return valid;
     }
 
+    /** @return 校验失败原因，通过时为空 */
     @JsonProperty("failure")
     public FileValidationFailure failure() {
         return failure;
     }
 
+    /** @return 检测到的文件类型，可以为空 */
     @JsonProperty("detectedType")
     public DetectedFileType detectedType() {
         return detectedType;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof FileValidationResult)) return false;
-        FileValidationResult that = (FileValidationResult) o;
-        return Objects.equals(valid, that.valid) && Objects.equals(failure, that.failure) && Objects.equals(detectedType, that.detectedType);
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+            return false;
+        }
+        FileValidationResult other = (FileValidationResult) obj;
+        return this.valid == other.valid && Objects.equals(this.failure, other.failure) && Objects.equals(this.detectedType, other.detectedType);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hashCode(valid);
+        int result = 0;
+        result = 31 * result + Boolean.hashCode(valid);
         result = 31 * result + Objects.hashCode(failure);
         result = 31 * result + Objects.hashCode(detectedType);
         return result;
@@ -100,19 +124,6 @@ public final class FileValidationResult {
 
     @Override
     public String toString() {
-        return "FileValidationResult[valid=" + valid + ", failure=" + failure
-                + ", detectedType=" + detectedType + ']';
-    }
-
-    public boolean isValid() {
-        return valid;
-    }
-
-    public FileValidationFailure getFailure() {
-        return failure;
-    }
-
-    public DetectedFileType getDetectedType() {
-        return detectedType;
+        return "FileValidationResult[valid=" + valid + ", failure=" + failure + ", detectedType=" + detectedType + "]";
     }
 }

@@ -253,6 +253,20 @@
       "reason": "三线相同可靠投递策略值与 JSON 契约，仅 JDK 21 线使用本线 Jackson 3 JsonMapper；其余测试正文逐字一致"
     },
     {
+      "path": "ddd4j-extensions/ddd4j-extension-validation/src/test/java/io/ddd4j/extension/validation/FileValidationResultContractTest.java",
+      "targetLines": [
+        "3.0.x"
+      ],
+      "replacements": [
+        {
+          "from": "import com.fasterxml.jackson.databind.json.JsonMapper;",
+          "to": "import tools.jackson.databind.json.JsonMapper;"
+        }
+      ],
+      "evidence": "ddd4j-extensions/ddd4j-extension-validation/src/test/java/io/ddd4j/extension/validation/FileValidationResultContractTest.java",
+      "reason": "三线相同文件校验结果与嵌套检测类型的 JSON 往返契约，仅 JDK 21 线使用本线 Jackson 3 JsonMapper；其余测试正文逐字一致"
+    },
+    {
       "path": "ddd4j-extensions/ddd4j-extension-validation/src/test/java/io/ddd4j/extension/validation/DetectedFileTypeContractTest.java",
       "targetLines": [
         "3.0.x"
