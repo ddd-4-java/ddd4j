@@ -14,8 +14,10 @@
  */
 package io.ddd4j.sample.javalin.cqrs.order.web;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import io.ddd4j.core.api.R;
 import io.ddd4j.sample.javalin.cqrs.order.application.OrderApplicationService;
 import io.ddd4j.sample.javalin.cqrs.order.application.OrderApplicationService.AddOrderLineCommand;
@@ -23,9 +25,6 @@ import io.ddd4j.sample.javalin.cqrs.order.application.OrderApplicationService.Cr
 import io.ddd4j.sample.javalin.cqrs.order.domain.model.Money;
 import io.ddd4j.sample.javalin.cqrs.order.domain.model.Order;
 import io.javalin.apibuilder.EndpointGroup;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -40,9 +39,9 @@ import static io.javalin.apibuilder.ApiBuilder.post;
  * {@code javalinConfig.routes.apiBuilder(() -> orderController.routes())} 注册。
  * 控制器只做"HTTP 协议层 → 应用服务"的翻译，业务规则全部下沉到 {@link Order} 聚合内。
  *
- * <h3>路由列表</h3>
+ * <h2>路由列表</h2>
  * <table border="1">
- * <caption>订单管理 REST 接口一览</caption>
+ *   <caption>订单路由</caption>
  *   <tr><th>HTTP</th><th>路径</th><th>用途</th></tr>
  *   <tr><td>POST</td><td>/api/orders</td><td>创建草稿订单</td></tr>
  *   <tr><td>POST</td><td>/api/orders/{id}/lines</td><td>添加订单行</td></tr>
@@ -59,6 +58,11 @@ public class OrderController {
 
     private final OrderApplicationService applicationService;
 
+    /**
+     * 创建订单控制器。
+     *
+     * @param applicationService 应用服务
+     */
     public OrderController(OrderApplicationService applicationService) {
         this.applicationService = Objects.requireNonNull(applicationService, "applicationService must not be null");
     }
@@ -92,7 +96,7 @@ public class OrderController {
         post("/api/orders", ctx -> {
             CreateOrderRequest req = ctx.bodyAsClass(CreateOrderRequest.class);
             Order order = applicationService.createDraft(
-                    new CreateOrderCommand(req.getOrderNo(), req.getBuyerId(), req.getBuyerName()));
+                    new CreateOrderCommand(req.orderNo(), req.buyerId(), req.buyerName()));
             ctx.status(201).json(R.ok(toResponse(order)));
         });
 
@@ -101,7 +105,7 @@ public class OrderController {
             String orderId = ctx.pathParam("id");
             AddOrderLineRequest req = ctx.bodyAsClass(AddOrderLineRequest.class);
             Order order = applicationService.addLine(new AddOrderLineCommand(
-                    orderId, req.getGoodsId(), req.getGoodsName(), req.getQuantity(), req.getUnitPrice()));
+                    orderId, req.goodsId(), req.goodsName(), req.quantity(), req.unitPrice()));
             ctx.json(R.ok(toResponse(order)));
         });
 
@@ -144,24 +148,72 @@ public class OrderController {
     /**
      * 订单响应（避免将充血领域模型直接序列化，保留聚合内字段语义）。
      */
-    @Data
     public static class OrderResponse {
+
+        private static final long serialVersionUID = 0L;
+
         private final String id;
+
         private final String orderNo;
+
         private final String buyerId;
+
         private final String buyerName;
+
         private final String status;
+
         private final Money totalAmount;
+
         private final int lineCount;
 
-        @JsonCreator
-        public OrderResponse(@JsonProperty("id") String id,
-                             @JsonProperty("orderNo") String orderNo,
-                             @JsonProperty("buyerId") String buyerId,
-                             @JsonProperty("buyerName") String buyerName,
-                             @JsonProperty("status") String status,
-                             @JsonProperty("totalAmount") Money totalAmount,
-                             @JsonProperty("lineCount") int lineCount) {
+        /** @return id */
+        public String getId() {
+            return id;
+        }
+
+        /** @return orderNo */
+        public String getOrderNo() {
+            return orderNo;
+        }
+
+        /** @return buyerId */
+        public String getBuyerId() {
+            return buyerId;
+        }
+
+        /** @return buyerName */
+        public String getBuyerName() {
+            return buyerName;
+        }
+
+        /** @return status */
+        public String getStatus() {
+            return status;
+        }
+
+        /** @return totalAmount */
+        public Money getTotalAmount() {
+            return totalAmount;
+        }
+
+        /** @return lineCount */
+        public int getLineCount() {
+            return lineCount;
+        }
+
+        /**
+         * 创建订单响应数据。
+         *
+         * @param id 标识
+         * @param orderNo 订单编号
+         * @param buyerId 买家标识
+         * @param buyerName 买家名称
+         * @param status 状态
+         * @param totalAmount 订单总金额
+         * @param lineCount 订单行数
+         */
+        @JsonCreator()
+        public OrderResponse(@JsonProperty("id") String id, @JsonProperty("orderNo") String orderNo, @JsonProperty("buyerId") String buyerId, @JsonProperty("buyerName") String buyerName, @JsonProperty("status") String status, @JsonProperty("totalAmount") Money totalAmount, @JsonProperty("lineCount") int lineCount) {
             this.id = id;
             this.orderNo = orderNo;
             this.buyerId = buyerId;
@@ -171,79 +223,257 @@ public class OrderController {
             this.lineCount = lineCount;
         }
 
-        /** @return id */
+        /**
+         * 读取标识。
+         *
+         * @return 标识
+         */
+        @JsonProperty("id")
         public String id() {
             return id;
         }
 
-        /** @return orderNo */
+        /**
+         * 读取订单编号。
+         *
+         * @return 订单编号
+         */
+        @JsonProperty("orderNo")
         public String orderNo() {
             return orderNo;
         }
 
-        /** @return buyerId */
+        /**
+         * 读取买家标识。
+         *
+         * @return 买家标识
+         */
+        @JsonProperty("buyerId")
         public String buyerId() {
             return buyerId;
         }
 
-        /** @return buyerName */
+        /**
+         * 读取买家名称。
+         *
+         * @return 买家名称
+         */
+        @JsonProperty("buyerName")
         public String buyerName() {
             return buyerName;
         }
 
-        /** @return status */
+        /**
+         * 读取状态。
+         *
+         * @return 订单状态
+         */
+        @JsonProperty("status")
         public String status() {
             return status;
         }
 
-        /** @return totalAmount */
+        /**
+         * 读取订单总金额。
+         *
+         * @return 订单总金额
+         */
+        @JsonProperty("totalAmount")
         public Money totalAmount() {
             return totalAmount;
         }
 
-        /** @return lineCount */
+        /**
+         * 读取订单行数。
+         *
+         * @return 订单行数
+         */
+        @JsonProperty("lineCount")
         public int lineCount() {
             return lineCount;
         }
 
         @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (!(obj instanceof OrderResponse)) {
+                return false;
+            }
+            OrderResponse other = (OrderResponse) obj;
+            if (!other.canEqual(this)) {
+                return false;
+            }
+            return Objects.equals(this.getId(), other.getId()) && Objects.equals(this.getOrderNo(), other.getOrderNo()) && Objects.equals(this.getBuyerId(), other.getBuyerId()) && Objects.equals(this.getBuyerName(), other.getBuyerName()) && Objects.equals(this.getStatus(), other.getStatus()) && Objects.equals(this.getTotalAmount(), other.getTotalAmount()) && this.getLineCount() == other.getLineCount();
+        }
+
+        /**
+         * 保留 OrderResponse 可继承值对象的对称相等性扩展点。
+         *
+         * @param other 待比较对象
+         * @return 子类是否允许与当前值对象比较
+         */
+        protected boolean canEqual(Object other) {
+            return other instanceof OrderResponse;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 1;
+            result = 59 * result + getLineCount();
+            Object value = getId();
+            result = 59 * result + (Objects.isNull(value) ? 43 : value.hashCode());
+            value = getOrderNo();
+            result = 59 * result + (Objects.isNull(value) ? 43 : value.hashCode());
+            value = getBuyerId();
+            result = 59 * result + (Objects.isNull(value) ? 43 : value.hashCode());
+            value = getBuyerName();
+            result = 59 * result + (Objects.isNull(value) ? 43 : value.hashCode());
+            value = getStatus();
+            result = 59 * result + (Objects.isNull(value) ? 43 : value.hashCode());
+            value = getTotalAmount();
+            result = 59 * result + (Objects.isNull(value) ? 43 : value.hashCode());
+            return result;
+        }
+
+        @Override
         public String toString() {
-            return "OrderResponse[id=" + id + ", orderNo=" + orderNo + ", buyerId=" + buyerId
-                    + ", buyerName=" + buyerName + ", status=" + status
-                    + ", totalAmount=" + totalAmount + ", lineCount=" + lineCount + "]";
+            return "OrderResponse[id=" + id + ", orderNo=" + orderNo + ", buyerId=" + buyerId + ", buyerName=" + buyerName + ", status=" + status + ", totalAmount=" + totalAmount + ", lineCount=" + lineCount + "]";
         }
     }
 
     /**
      * 创建订单请求。
      */
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
     public static class CreateOrderRequest {
+
+        private static final long serialVersionUID = 0L;
+
         private String orderNo;
+
         private String buyerId;
+
         private String buyerName;
 
+        /** 创建供请求绑定使用的空对象。 */
+        public CreateOrderRequest() {
+        }
+
         /** @return 订单编号 */
+        public String getOrderNo() {
+            return orderNo;
+        }
+
+        /** @param orderNo 订单编号 */
+        public void setOrderNo(String orderNo) {
+            this.orderNo = orderNo;
+        }
+
+        /** @return 买家标识 */
+        public String getBuyerId() {
+            return buyerId;
+        }
+
+        /** @param buyerId 买家标识 */
+        public void setBuyerId(String buyerId) {
+            this.buyerId = buyerId;
+        }
+
+        /** @return 买家名称 */
+        public String getBuyerName() {
+            return buyerName;
+        }
+
+        /** @param buyerName 买家名称 */
+        public void setBuyerName(String buyerName) {
+            this.buyerName = buyerName;
+        }
+
+        /**
+         * 创建订单请求数据。
+         *
+         * @param orderNo 订单编号
+         * @param buyerId 买家标识
+         * @param buyerName 买家名称
+         */
+        @JsonCreator()
+        public CreateOrderRequest(@JsonProperty("orderNo") String orderNo, @JsonProperty("buyerId") String buyerId, @JsonProperty("buyerName") String buyerName) {
+            this.orderNo = orderNo;
+            this.buyerId = buyerId;
+            this.buyerName = buyerName;
+        }
+
+        /**
+         * 读取订单编号。
+         *
+         * @return 订单编号
+         */
+        @JsonProperty("orderNo")
         public String orderNo() {
             return orderNo;
         }
 
-        /** @return 买家标识 */
+        /**
+         * 读取买家标识。
+         *
+         * @return 买家标识
+         */
+        @JsonProperty("buyerId")
         public String buyerId() {
             return buyerId;
         }
 
-        /** @return 买家名称 */
+        /**
+         * 读取买家名称。
+         *
+         * @return 买家名称
+         */
+        @JsonProperty("buyerName")
         public String buyerName() {
             return buyerName;
         }
 
         @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (!(obj instanceof CreateOrderRequest)) {
+                return false;
+            }
+            CreateOrderRequest other = (CreateOrderRequest) obj;
+            if (!other.canEqual(this)) {
+                return false;
+            }
+            return Objects.equals(this.getOrderNo(), other.getOrderNo()) && Objects.equals(this.getBuyerId(), other.getBuyerId()) && Objects.equals(this.getBuyerName(), other.getBuyerName());
+        }
+
+        /**
+         * 保留 CreateOrderRequest 可继承值对象的对称相等性扩展点。
+         *
+         * @param other 待比较对象
+         * @return 子类是否允许与当前值对象比较
+         */
+        protected boolean canEqual(Object other) {
+            return other instanceof CreateOrderRequest;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 1;
+            Object value = getOrderNo();
+            result = 59 * result + (Objects.isNull(value) ? 43 : value.hashCode());
+            value = getBuyerId();
+            result = 59 * result + (Objects.isNull(value) ? 43 : value.hashCode());
+            value = getBuyerName();
+            result = 59 * result + (Objects.isNull(value) ? 43 : value.hashCode());
+            return result;
+        }
+
+        @Override
         public String toString() {
-            return "CreateOrderRequest[orderNo=" + orderNo + ", buyerId=" + buyerId
-                    + ", buyerName=" + buyerName + "]";
+            return "CreateOrderRequest[orderNo=" + orderNo + ", buyerId=" + buyerId + ", buyerName=" + buyerName + "]";
         }
     }
 
@@ -252,39 +482,159 @@ public class OrderController {
     /**
      * 添加订单行请求。
      */
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
     public static class AddOrderLineRequest {
+
+        private static final long serialVersionUID = 0L;
+
         private String goodsId;
+
         private String goodsName;
+
         private int quantity;
+
         private BigDecimal unitPrice;
 
+        /** 创建供请求绑定使用的空对象。 */
+        public AddOrderLineRequest() {
+        }
+
         /** @return 商品标识 */
+        public String getGoodsId() {
+            return goodsId;
+        }
+
+        /** @param goodsId 商品标识 */
+        public void setGoodsId(String goodsId) {
+            this.goodsId = goodsId;
+        }
+
+        /** @return 商品名称 */
+        public String getGoodsName() {
+            return goodsName;
+        }
+
+        /** @param goodsName 商品名称 */
+        public void setGoodsName(String goodsName) {
+            this.goodsName = goodsName;
+        }
+
+        /** @return 数量 */
+        public int getQuantity() {
+            return quantity;
+        }
+
+        /** @param quantity 数量 */
+        public void setQuantity(int quantity) {
+            this.quantity = quantity;
+        }
+
+        /** @return 单价 */
+        public BigDecimal getUnitPrice() {
+            return unitPrice;
+        }
+
+        /** @param unitPrice 单价 */
+        public void setUnitPrice(BigDecimal unitPrice) {
+            this.unitPrice = unitPrice;
+        }
+
+        /**
+         * 创建添加订单行请求数据。
+         *
+         * @param goodsId 商品标识
+         * @param goodsName 商品名称
+         * @param quantity 购买数量
+         * @param unitPrice 商品单价
+         */
+        @JsonCreator()
+        public AddOrderLineRequest(@JsonProperty("goodsId") String goodsId, @JsonProperty("goodsName") String goodsName, @JsonProperty("quantity") int quantity, @JsonProperty("unitPrice") BigDecimal unitPrice) {
+            this.goodsId = goodsId;
+            this.goodsName = goodsName;
+            this.quantity = quantity;
+            this.unitPrice = unitPrice;
+        }
+
+        /**
+         * 读取商品标识。
+         *
+         * @return 商品标识
+         */
+        @JsonProperty("goodsId")
         public String goodsId() {
             return goodsId;
         }
 
-        /** @return 商品名称 */
+        /**
+         * 读取商品名称。
+         *
+         * @return 商品名称
+         */
+        @JsonProperty("goodsName")
         public String goodsName() {
             return goodsName;
         }
 
-        /** @return 数量 */
+        /**
+         * 读取购买数量。
+         *
+         * @return 购买数量
+         */
+        @JsonProperty("quantity")
         public int quantity() {
             return quantity;
         }
 
-        /** @return 单价 */
+        /**
+         * 读取商品单价。
+         *
+         * @return 商品单价
+         */
+        @JsonProperty("unitPrice")
         public BigDecimal unitPrice() {
             return unitPrice;
         }
 
         @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (!(obj instanceof AddOrderLineRequest)) {
+                return false;
+            }
+            AddOrderLineRequest other = (AddOrderLineRequest) obj;
+            if (!other.canEqual(this)) {
+                return false;
+            }
+            return Objects.equals(this.getGoodsId(), other.getGoodsId()) && Objects.equals(this.getGoodsName(), other.getGoodsName()) && this.getQuantity() == other.getQuantity() && Objects.equals(this.getUnitPrice(), other.getUnitPrice());
+        }
+
+        /**
+         * 保留 AddOrderLineRequest 可继承值对象的对称相等性扩展点。
+         *
+         * @param other 待比较对象
+         * @return 子类是否允许与当前值对象比较
+         */
+        protected boolean canEqual(Object other) {
+            return other instanceof AddOrderLineRequest;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 1;
+            result = 59 * result + getQuantity();
+            Object value = getGoodsId();
+            result = 59 * result + (Objects.isNull(value) ? 43 : value.hashCode());
+            value = getGoodsName();
+            result = 59 * result + (Objects.isNull(value) ? 43 : value.hashCode());
+            value = getUnitPrice();
+            result = 59 * result + (Objects.isNull(value) ? 43 : value.hashCode());
+            return result;
+        }
+
+        @Override
         public String toString() {
-            return "AddOrderLineRequest[goodsId=" + goodsId + ", goodsName=" + goodsName
-                    + ", quantity=" + quantity + ", unitPrice=" + unitPrice + "]";
+            return "AddOrderLineRequest[goodsId=" + goodsId + ", goodsName=" + goodsName + ", quantity=" + quantity + ", unitPrice=" + unitPrice + "]";
         }
     }
 }
