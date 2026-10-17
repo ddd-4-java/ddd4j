@@ -1055,6 +1055,17 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-runtime/ddd4j-runtime-micronaut/src/main/java/io/ddd4j/micronaut/health/Ddd4jMicronautReadinessHealthIndicator.java",
+      "sourceSha256": [
+        "67cca1b611fe5c6cf0a4504629989482dc1b1829484966f17d34581fc5ef8f8a",
+        "932480e12f22ebc07a7f198130d76996057dd0787466d1a49645d1d152a9bc7f",
+        "932480e12f22ebc07a7f198130d76996057dd0787466d1a49645d1d152a9bc7f"
+      ],
+      "evidence": "ddd4j-runtime/ddd4j-runtime-micronaut/src/test/java/io/ddd4j/micronaut/health/Ddd4jMicronautReadinessHealthIndicatorTest.java",
+      "testSha256": "482fcd3e1600d0ea1c4892a2572a8ddd766b53a0caedbcac50971b0c46b3b3e0",
+      "reason": "三线共同测试验证就绪状态、检查数量及错误详情不外露；JDK 8 使用 Collections.singletonMap，高两线使用 Map.of，输出语义一致"
+    },
+    {
       "path": "ddd4j-runtime/ddd4j-runtime-dropwizard/src/main/java/io/ddd4j/dropwizard/Ddd4jBundle.java",
       "sourceSha256": [
         "f658fbb594393aca39206a85b14d49353f83a69e2e6f6faaf70b4ee0cd3260a3",
