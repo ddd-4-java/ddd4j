@@ -31,9 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * 类型说明。
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.0.x
+ * 验证 Sa-Token 权限和角色数据桥接契约。
  */
 class SaTokenSubjectDataBridgeTest {
 
@@ -45,23 +43,21 @@ class SaTokenSubjectDataBridgeTest {
     void setUp() {
         originalProvider = SubjectKit.subjectProvider;
         originalDataProvider = SubjectKit.dataProvider;
-        /**
-         * SubjectKit.register() 方法。
-         * @param } } 参数。
-         */
         SubjectKit.register(new SubjectProvider() {
             /**
-             * 获取值。
-             * @return 方法执行结果。
+             * 返回当前测试使用的 Subject。
+             *
+             * @return 测试 Subject
              */
             @Override
             public Subject getSubject() {
                 return new SaTokenSubject() {
                     /**
-                     * 获取值。
-                     * @param <T> 类型参数。
+                     * 按登录标识返回测试用户。
+                     *
+                     * @param <T> 用户类型
                      * @param loginId 登录标识。
-                     * @return 结果值。
+                     * @return 匹配的用户，未匹配时返回 null
                      */
                     @Override
                     public <T extends AuthPrincipal> T getPrincipalByLoginId(Object loginId) {

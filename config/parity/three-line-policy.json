@@ -1411,7 +1411,7 @@
         "321fc3d1175cc1b936aa3ba6dd59cda60e0c095d60b883ccae6a16f88b094021"
       ],
       "evidence": "ddd4j-auth/ddd4j-auth-security/src/test/java/io/ddd4j/auth/security/subject/SecuritySubjectTest.java",
-      "testSha256": "b8f814393a985182f83e9791a4d5deafd8f56ae73ed0f81b2d355828dfb61d5b",
+      "testSha256": "4231f3331962d4ae172ebaf4835a968688c38ac348c356c66b7a529a4522b784",
       "reason": "JDK 8 对 AuthUserDetails 使用显式 instanceof 与强转，以 Arrays.asList() 构造空权限列表；高两线使用模式匹配与 List.of()，三线共同 Subject 测试通过"
     },
     {
@@ -1422,7 +1422,7 @@
         "aa3548355ad39d358df9116a34d0bf115e99ff9810d615d38f426f16d2203ddd"
       ],
       "evidence": "ddd4j-auth/ddd4j-auth-satoken/src/test/java/io/ddd4j/auth/satoken/subject/SaTokenSubjectDataBridgeTest.java",
-      "testSha256": "9b28398db309f50b0f28563ce1dde293b0b504e3eee3ddabab8b46d7b9684a6e",
+      "testSha256": "f5624b69b3d9cd5af6092c7db2888327a73143536bd5fe76be38122f9cf0ff7b",
       "reason": "JDK 8 在未找到账号时返回 Collections.emptyList，高两线使用 List.of；三线共同测试验证权限和角色委托及未知账号的空结果"
     },
     {
