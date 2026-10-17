@@ -1479,6 +1479,17 @@
       "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/query/QuerySerializationContractTest.java",
       "testSha256": "afa6f0d753480f7669dec65e1eb3609d9a5921b5f5aa7f36e8a51b5562c547d0",
       "reason": "1.0.x 保留旧 Java 序列化流的自动 UID -3906849612189306727，2.0.x/3.0.x 显式 UID 为 0；其余源码相同，三线序列化往返通过，低线旧 UID 另由 PlainValueContractTest 锁定"
+    },
+    {
+      "path": "ddd4j-core/src/main/java/io/ddd4j/core/cqrs/eventstore/jackson/EventPayloadSerializer.java",
+      "sourceSha256": [
+        "2937a12595d62c74ae2b0ec3e10ecc4f3f8d9e9db1dffc7f588b2a30f48681ac",
+        "2937a12595d62c74ae2b0ec3e10ecc4f3f8d9e9db1dffc7f588b2a30f48681ac",
+        "27faebdd26602ac9db0e72c48d6fa74b945a5fb90c3a17c96d40ee0ed601c561"
+      ],
+      "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/eventstore/jackson/EventPayloadParityContractTest.java",
+      "testSha256": "4e646fa716797eb5aa7692740739147108880f2214845705c7dc5278ce088430",
+      "reason": "1.0.x/2.0.x 使用本线 Jackson 2 ObjectMapper.copy/configure，3.0.x 使用 Jackson 3 rebuild/disable/build；三线共同测试固定显式事件类型、未知字段兼容、拒绝 @class 类型选择和异常因果，既有本线测试验证 mapper 隔离"
     }
   ],
   "historicalDocumentSections": [
