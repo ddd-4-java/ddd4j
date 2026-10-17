@@ -124,6 +124,20 @@ class EsdbEventStoreTest {
         assertThat(new EsdbEventStore(client).read(ORDER_TYPE, new TestId("missing"))).isEmpty();
     }
 
+    @Test
+    void existingEmptyStreamMustReturnUnmodifiableReadResults() {
+        com.eventstore.dbclient.ReadResult result = org.mockito.Mockito.mock(com.eventstore.dbclient.ReadResult.class);
+        when(result.getEvents()).thenReturn(Collections.emptyList());
+        when(client.readStream(anyString(), any())).thenReturn(CompletableFuture.completedFuture(result));
+        EsdbEventStore store = new EsdbEventStore(client);
+        TestId id = new TestId("empty-stream");
+
+        assertThatThrownBy(() -> store.read(ORDER_TYPE, id).add(null))
+                .isInstanceOf(UnsupportedOperationException.class);
+        assertThatThrownBy(() -> store.read(ORDER_TYPE, id, 1, 2).add(null))
+                .isInstanceOf(UnsupportedOperationException.class);
+    }
+
     static final class TestId implements AggregateRootId {
         private static final EntityType TYPE = new StringEntityType("Order");
         private final String value;

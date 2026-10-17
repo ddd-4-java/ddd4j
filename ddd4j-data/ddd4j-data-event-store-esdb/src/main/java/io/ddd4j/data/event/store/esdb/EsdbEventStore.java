@@ -78,7 +78,9 @@ public class EsdbEventStore implements EventStore {
         try {
             ReadResult result = client.readStream(streamName, ReadStreamOptions.get().forwards().fromStart()
                     .maxCount(EventStoreConstants.ESDB_DEFAULT_READ_LIMIT)).join();
-            return result.getEvents().stream().map(event -> toStoredEvent(event, aggregateType, aggregateId)).collect(java.util.stream.Collectors.toList());
+            return Collections.unmodifiableList(result.getEvents().stream()
+                    .map(event -> toStoredEvent(event, aggregateType, aggregateId))
+                    .collect(java.util.stream.Collectors.toList()));
         } catch (CompletionException exception) {
             if (exception.getCause() instanceof StreamNotFoundException) return java.util.Arrays.asList();
             throw new IllegalStateException("Failed to read events from stream: " + streamName, exception.getCause());
@@ -87,8 +89,9 @@ public class EsdbEventStore implements EventStore {
 
     @Override
     public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId, long fromVersion, long toVersion) {
-        return read(aggregateType, aggregateId).stream()
-                .filter(event -> event.version() >= fromVersion && event.version() <= toVersion).collect(java.util.stream.Collectors.toList());
+        return Collections.unmodifiableList(read(aggregateType, aggregateId).stream()
+                .filter(event -> event.version() >= fromVersion && event.version() <= toVersion)
+                .collect(java.util.stream.Collectors.toList()));
     }
 
     @Override
