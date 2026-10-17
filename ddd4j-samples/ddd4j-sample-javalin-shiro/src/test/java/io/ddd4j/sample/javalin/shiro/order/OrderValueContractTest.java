@@ -47,6 +47,16 @@ class OrderValueContractTest {
     }
 
     @Test
+    void moneyRetainsThreeLineValueHash() {
+        Money money = new Money(new BigDecimal("12.50"), "CNY");
+        int expected = 1;
+        expected = 59 * expected + money.amount().hashCode();
+        expected = 59 * expected + money.currency().hashCode();
+
+        assertEquals(expected, money.hashCode());
+    }
+
+    @Test
     void discountViewRetainsReadOnlyValueContract() {
         OrderResource.DiscountView view = new OrderResource.DiscountView("11.12", "CNY");
         assertEquals(view.getAmount(), view.amount());
