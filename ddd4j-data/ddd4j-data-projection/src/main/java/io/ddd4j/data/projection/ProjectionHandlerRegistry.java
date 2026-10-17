@@ -35,7 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 交给 {@link ProjectionDispatcher} 拉块分发。本类只维护「事件类型 → handler」
  * 映射，不执行事件、不感知任何运行时框架。
  *
- * <h3>注册语义（与 CommandRegistry 同源）</h3>
+ * <h2>注册语义（与 CommandRegistry 同源）</h2>
  * <p>
  * {@link #register} 采用 <b>先校验全部订阅类型无冲突、再统一落库</b> 的整批拒绝
  * （all-or-nothing）语义：任一事件类型已被其他 handler 注册即抛
