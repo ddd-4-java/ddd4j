@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.guice.cqrs;
-
 import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
 import org.junit.jupiter.api.Test;
 
@@ -50,6 +49,10 @@ class GuiceInMemoryProjectionPositionRepositoryTest {
 
         assertEquals(2, all.size());
         assertEquals(2, repository.size());
+        repository.clear();
+        assertEquals(2, all.size());
+        assertThrows(UnsupportedOperationException.class,
+                () -> all.add(new GuiceProjectionPosition("stream-3", 3L)));
     }
 
     @Test
@@ -82,6 +85,9 @@ class GuiceInMemoryProjectionPositionRepositoryTest {
 
         repository.clear();
         assertEquals(0, repository.size());
-        assertEquals(0, snapshot.size() - 1);
+        assertEquals(1, snapshot.size());
+        assertTrue(snapshot.containsKey("stream-1"));
+        assertThrows(UnsupportedOperationException.class,
+                () -> snapshot.put("stream-2", new GuiceProjectionPosition("stream-2", 2L)));
     }
 }
