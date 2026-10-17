@@ -44,7 +44,7 @@
 ## 凭据与运行
 
 - `MAVEN_SETTINGS_XML` 兼容原文 XML 和 base64 XML。私有仓库需相应认证；不将凭据写入 artifact。
-- 推荐 `NVD_API_KEY`。未设置则使用公共限流下载，可能超时；下载失败不会当成无漏洞。
+- 漏洞扫描使用无密钥 Trivy，不需要 `NVD_API_KEY`。漏洞库下载失败会使任务失败，不把空报告当成无漏洞。
 - 可选 `DEPENDENCY_UPDATE_TOKEN` 或现有 `RENOVATE_TOKEN`，用于使升级 PR 触发已有 CI。没有时使用 GITHUB_TOKEN，需仓库允许 Actions 创建 PR；其提交不触发普通 push/PR 工作流，本工作流已验证候选。
 
 ```mermaid
@@ -69,4 +69,4 @@ flowchart TD
 
 ## 验证边界
 
-控制器单测、actionlint、全分支 POM/策略/工具链检查和真实 Maven 微型项目更新，与各分支完整构建和 NVD 扫描是不同证据。本地检查不证明全部分支无漏洞；完整运行需检查各分支扫描及构建报告。
+控制器单测、actionlint、全分支 POM/策略/工具链检查和真实 Maven 微型项目更新，与各分支完整构建和 Trivy 扫描是不同证据。本地检查不证明全部分支无漏洞；完整运行需检查各分支扫描及构建报告。

@@ -28,7 +28,6 @@ permissions:
 
 env:
   DDD4J_REPORT_DIR: ${{ github.workspace }}/target/release-quality
-  NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
 
 jobs:
   release-candidate:
@@ -42,12 +41,10 @@ jobs:
           distribution: temurin
           java-version: '17'
           cache: maven
-      - name: Require protected NVD credentials
-        run: |
-          if [[ -z "${NVD_API_KEY}" ]]; then
-            echo "NVD_API_KEY is required for release-candidate CVE evidence." >&2
-            exit 1
-          fi
+      - name: Install keyless vulnerability scanner
+        uses: aquasecurity/setup-trivy@e07451d2e059ed86c2870430ea286b3a9e0bf241
+        with:
+          version: v0.76.0
       - name: Verify source, architecture and license gates
         run: |
           DDD4J_REQUIRE_CLEAN_WORKTREE=true ./scripts/verify-release-worktree.sh
@@ -64,9 +61,10 @@ jobs:
           ./mvnw -B -ntp
           -pl ddd4j-cache,ddd4j-data/ddd4j-data-mybatisplus,ddd4j-mq/ddd4j-mq-kafka,ddd4j-samples/ddd4j-sample-order-jdbc,ddd4j-samples/ddd4j-sample-order-kafka,ddd4j-samples/ddd4j-sample-order-redis
           -am test
-      - name: Generate CVE report
+      - name: Enforce keyless CVE gate
         env:
           DDD4J_ENABLE_CVE_SCAN: 'true'
+          DDD4J_BRANCH: ${{ github.ref_name }}
         run: ./scripts/scan-cve.sh
       - name: Verify binary API compatibility
         env:
