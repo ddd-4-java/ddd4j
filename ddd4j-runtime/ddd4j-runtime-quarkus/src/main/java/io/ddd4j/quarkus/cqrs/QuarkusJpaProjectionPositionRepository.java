@@ -50,7 +50,7 @@ public class QuarkusJpaProjectionPositionRepository implements ProjectionPositio
                         QuarkusJpaProjectionPosition.class)
                 .getResultList().stream()
                 .map(position -> (ProjectionPosition) position)
-                .toList();
+                .collect(java.util.stream.Collectors.toList());
     }
 
     @Override
