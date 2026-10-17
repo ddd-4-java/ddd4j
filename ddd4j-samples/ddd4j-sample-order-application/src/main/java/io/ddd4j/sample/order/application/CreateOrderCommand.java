@@ -90,10 +90,10 @@ public final class CreateOrderCommand {
 
     @Override
     public int hashCode() {
-        int result = 0;
-        result = 31 * result + Objects.hashCode(orderNo);
-        result = 31 * result + Objects.hashCode(buyerId);
-        result = 31 * result + Objects.hashCode(buyerName);
+        int result = 1;
+        result = 59 * result + (Objects.isNull(orderNo) ? 43 : orderNo.hashCode());
+        result = 59 * result + (Objects.isNull(buyerId) ? 43 : buyerId.hashCode());
+        result = 59 * result + (Objects.isNull(buyerName) ? 43 : buyerName.hashCode());
         return result;
     }
 
