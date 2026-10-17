@@ -17,10 +17,15 @@ package io.ddd4j.mq.spring.registry;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.annotation.MQEventListener;
 import io.ddd4j.mq.event.MQEvent;
+import io.ddd4j.mq.listener.MQListener;
+
+import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Spring 模块只发现并装配监听器，不承载 broker 报文；ddd4j-message-id 由实际 adapter 负责。
@@ -39,27 +44,22 @@ class SpringMqBridgeContractTest {
         assertEquals(1, processor.getListeners().size());
         assertEquals("orders", processor.getListeners().get(0).getTopic());
         assertTrue(processor.getListeners().get(0).isRequired());
+        assertEquals(Collections.singletonList("*"), processor.getListeners().get(0).getSupports());
+
+        List<MQListener> snapshot = processor.getListeners();
+        assertThrows(UnsupportedOperationException.class, () -> snapshot.clear());
+        processor.postProcessAfterInitialization(new OrderListener(), "secondOrderListener");
+        assertEquals(1, snapshot.size());
+        assertEquals(2, processor.getListeners().size());
     }
 
-    /**
-     * 订单监听器示例，用于验证监听器能被发现并装配到正确 topic。
-     */
     static final class OrderListener {
 
-        /**
-         * onPaid() 方法。
-         * @param event 事件消息。
-         */
         @MQEventListener(topic = "orders", tags = "paid")
         public void onPaid(OrderPaidEvent event) {
         }
     }
 
-    /**
-     * 类型说明。
-     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
-     * @since 3.0.x
-     */
     static final class OrderPaidEvent extends MQEvent {
     }
 }
