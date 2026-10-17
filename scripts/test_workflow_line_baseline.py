@@ -18,9 +18,17 @@ class WorkflowLineBaselineTest(unittest.TestCase):
 
     def test_verify_uses_own_jdk_and_keeps_required_jobs_blocking(self):
         workflow = (ROOT / ".github/workflows/verify.yml").read_text(encoding="utf-8")
-        versions = re.findall(r"java-version: ['\"]?([0-9]+)['\"]?", workflow)
-        self.assertTrue(versions)
-        self.assertEqual({self.jdk.replace("1.8", "8")}, set(versions))
+        target_jdk = self.jdk.replace("1.8", "8")
+        unit_job = workflow.split("  unit-and-contract:\n", 1)[1].split("  coverage-gate:\n", 1)[0]
+        before_maven = unit_job.split("      - name: Configure Easy4J Maven repositories", 1)[0]
+        checker_jdks = re.findall(r"java-version: ['\"]?([0-9]+)['\"]?", before_maven)
+        self.assertEqual({"8", "17", "21"}, set(checker_jdks))
+        self.assertEqual(target_jdk, checker_jdks[-1], "Maven must use this branch's JDK")
+        for version in ("8", "17", "21"):
+            self.assertIn(f"DDD4J_JDK{version}_HOME=$JAVA_HOME", before_maven)
+        other_jobs = workflow.replace("  unit-and-contract:\n" + unit_job, "", 1)
+        other_jdks = re.findall(r"java-version: ['\"]?([0-9]+)['\"]?", other_jobs)
+        self.assertEqual({target_jdk}, set(other_jdks))
         self.assertNotIn("continue-on-error: true", workflow)
         self.assertNotIn("SAMPLE_EXCLUSIONS", workflow)
         self.assertNotIn("QUARKUS_TEST_EXCLUSIONS", workflow)
