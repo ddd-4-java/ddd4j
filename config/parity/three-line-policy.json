@@ -1055,6 +1055,17 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/cqrs/GuiceInMemoryProjectionPositionRepository.java",
+      "sourceSha256": [
+        "c816697b2a319e5d2c7e308d1a48771bb4419e7c2aeb928333e83fb97fdca905",
+        "5cb726b0a8b39da3d36973511c335aa16c4b31afd3e4eeefe928180dce96b795",
+        "5cb726b0a8b39da3d36973511c335aa16c4b31afd3e4eeefe928180dce96b795"
+      ],
+      "evidence": "ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/guice/cqrs/GuiceInMemoryProjectionPositionRepositoryTest.java",
+      "testSha256": "daad8a2ecd89cf4a9d18ae8e27ff5cb5129fe12b3133dedd70e4deccf509cd5c",
+      "reason": "三线共同测试验证位置列表及映射快照在仓库清空后保留原值且拒绝修改；JDK 8 使用不可修改副本包装，高两线使用 List.copyOf/Map.copyOf，业务语义一致"
+    },
+    {
       "path": "ddd4j-runtime/ddd4j-runtime-spring/src/main/java/io/ddd4j/spring/cqrs/SpringJpaViewManager.java",
       "sourceSha256": [
         "e24b4fb673b3698b249c50bbb0e4f1d4d02efa93d1ca426819c640935ba7bf26",
