@@ -13,14 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.guice;
-import io.ddd4j.guice.GuiceConstants;
-import com.google.inject.Singleton;
-import com.google.inject.Provides;
-import com.google.inject.TypeLiteral;
-import com.google.inject.Key;
-import com.google.inject.Injector;
-import com.google.inject.Binding;
-import com.google.inject.AbstractModule;
 
 import com.google.common.eventbus.EventBus;
 import com.google.inject.*;
