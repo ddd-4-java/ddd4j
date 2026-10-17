@@ -16,9 +16,11 @@ package io.ddd4j.sample.javalin.satoken.order.domain.model;
 
 import io.ddd4j.sample.javalin.satoken.order.application.AddOrderLineCommand;
 import io.ddd4j.sample.javalin.satoken.order.application.CreateOrderCommand;
+import io.ddd4j.sample.javalin.satoken.order.web.dto.OrderResponse;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,6 +45,20 @@ class ValueHashContractTest {
         AddOrderLineCommand add = new AddOrderLineCommand("ORDER-1", "GOODS-1", null, 2, null);
         assertEquals(valueHash(add.getQuantity(), add.getOrderId(), add.getGoodsId(),
                 add.getGoodsName(), add.getUnitPrice()), add.hashCode());
+    }
+
+    @Test
+    void responseAndLineUseTheSharedValueHash() {
+        OrderResponse.OrderLineResponse line = new OrderResponse.OrderLineResponse(
+                "LINE-1", "GOODS-1", null, 2, "3.50", "CNY");
+        assertEquals(valueHash(line.getQuantity(), line.getId(), line.getGoodsId(),
+                line.getGoodsName(), line.getUnitPrice(), line.getCurrency()), line.hashCode());
+
+        OrderResponse response = new OrderResponse("ORDER-1", "NO-1", null, "Ada",
+                OrderStatus.DRAFT, "7.00", "CNY", Collections.singletonList(line));
+        assertEquals(valueHash(response.getId(), response.getOrderNo(), response.getBuyerId(),
+                response.getBuyerName(), response.getStatus(), response.getTotalAmount(),
+                response.getCurrency(), response.getLines()), response.hashCode());
     }
 
     private static int valueHash(Object... values) {
