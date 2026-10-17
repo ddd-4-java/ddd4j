@@ -144,7 +144,7 @@ public class RedisStreamAcknowledgment implements Acknowledgment {
     }
 
     @Override
-    public void nack(boolean multiple, boolean requeue) {
+    public synchronized void nack(boolean multiple, boolean requeue) {
         if (requeue) {
             // Redis Stream 通过保留 PEL 记录表达重投；标记已处理以阻止调用方随后自动 XACK。
             acknowledged.compareAndSet(false, true);
