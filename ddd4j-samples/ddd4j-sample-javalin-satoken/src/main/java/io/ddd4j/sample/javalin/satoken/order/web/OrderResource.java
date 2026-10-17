@@ -31,6 +31,7 @@ import io.javalin.apibuilder.EndpointGroup;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static io.javalin.apibuilder.ApiBuilder.get;
 import static io.javalin.apibuilder.ApiBuilder.post;
@@ -133,7 +134,7 @@ public class OrderResource {
             get("/orders", ctx -> {
                 List<OrderResponse> items = orderApplicationService.listAll().stream()
                         .map(OrderResponse::from)
-                        .toList();
+                        .collect(Collectors.toList());
                 ctx.json(R.ok(items));
             });
 
