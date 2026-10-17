@@ -52,6 +52,9 @@ class OrderValueContractTest {
         assertEquals(view.getAmount(), view.amount());
         assertEquals(view.getCurrency(), view.currency());
         assertEquals(new OrderResource.DiscountView("11.12", "CNY"), view);
+        assertEquals((59 + "11.12".hashCode()) * 59 + "CNY".hashCode(), view.hashCode());
+        assertEquals((59 + 43) * 59 + 43,
+                new OrderResource.DiscountView(null, null).hashCode());
         assertTrue(view.toString().contains("DiscountView(amount="));
     }
 }
