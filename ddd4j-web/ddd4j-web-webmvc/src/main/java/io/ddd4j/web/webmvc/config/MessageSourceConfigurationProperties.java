@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.ddd4j.web.webmvc.config;
 
 import lombok.Data;
@@ -26,6 +25,8 @@ import java.util.List;
 
 /**
  * 国际化 MessageSource 配置（对应 Boot {@code spring.messages.*}，Framework 层本地绑定）。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Data
 public class MessageSourceConfigurationProperties {
