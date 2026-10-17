@@ -137,7 +137,14 @@ public final class FileValidationService {
         }
 
         private static <T> Collection<T> copyOf(Collection<T> source) {
-            return Objects.isNull(source) ? Collections.emptyList() : java.util.Collections.unmodifiableList(new ArrayList<>(source));
+            if (Objects.isNull(source)) {
+                return Collections.emptyList();
+            }
+            ArrayList<T> copy = new ArrayList<>(source);
+            for (T item : copy) {
+                Objects.requireNonNull(item, "collection must not contain null");
+            }
+            return Collections.unmodifiableList(copy);
         }
     }
 }
