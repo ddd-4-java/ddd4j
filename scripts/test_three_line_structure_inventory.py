@@ -205,6 +205,43 @@ class ThreeLineInventoryTest(unittest.TestCase):
         result, _ = self.run_checker("inventory", "--fail-on-open")
         self.assertEqual(0, result.returncode, result.stderr)
 
+    def test_scoped_compiled_api_ignores_other_modules_and_detects_real_drift(self):
+        wrapper = ('#!/bin/sh\n'
+                   'printf "%s\\n" "$@" > invoked.txt\n'
+                   'mkdir -p ddd4j-core/target/classes\n'
+                   '"$JAVA_HOME/bin/javac" -parameters -d ddd4j-core/target/classes '
+                   'ddd4j-core/src/main/java/example/Foo.java\n')
+        for root in self.roots:
+            executable = root / "mvnw"
+            executable.write_text(wrapper)
+            executable.chmod(0o755)
+        self.write(self.roots[1], "ddd4j-samples/demo/target/classes/example/Stale.class", "not a class")
+
+        result, output = self.run_checker("verify", "--module", "ddd4j-core")
+        self.assertEqual(0, result.returncode, result.stderr)
+        report = json.loads((output / "compiled-api.json").read_text())
+        self.assertEqual("PASS", report["status"])
+        self.assertEqual("ddd4j-core", report["module"])
+        self.assertEqual("module-compiled-api-only", report["scope"])
+        self.assertEqual("NOT_RUN", report["fullConvergence"])
+        self.assertEqual(["-B", "-ntp", "-pl", "ddd4j-core", "-am", "clean", "compile"],
+                         (self.roots[0] / "invoked.txt").read_text().splitlines())
+
+        self.write(self.roots[1], "ddd4j-core/src/main/java/example/Foo.java",
+                   "package example; public class Foo { public String drift() { return \"x\"; } }")
+        result, output = self.run_checker("verify", "--module", "ddd4j-core")
+        self.assertEqual(1, result.returncode, result.stderr)
+        report = json.loads((output / "compiled-api.json").read_text())
+        self.assertEqual("FAIL", report["status"])
+        self.assertTrue(report["unresolved"]["1-2"]["only_right"])
+
+    def test_scoped_api_rejects_invalid_module_or_phase(self):
+        for arguments in (("verify", "--module", "../ddd4j-core"),
+                          ("inventory", "--module", "ddd4j-core")):
+            result, _ = self.run_checker(*arguments)
+            self.assertEqual(2, result.returncode)
+            self.assertIn("invalid module for scoped verification", result.stderr)
+
     def test_exact_platform_api_allows_jvm_generic_wildcard_but_not_descriptor_glob(self):
         specification = importlib.util.spec_from_file_location("structure_gate", SCRIPT)
         module = importlib.util.module_from_spec(specification)
