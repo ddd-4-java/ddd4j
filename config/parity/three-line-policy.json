@@ -1109,12 +1109,12 @@
     {
       "path": "ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/EventChunk.java",
       "sourceSha256": [
-        "55bd10b485014c66b29915618ad81f646a6f1d6e5981e93147720b2df7280265",
-        "a0b1dfc04ee506158165740a04ec54ead70e49646940244098aa80c534930450",
-        "a0b1dfc04ee506158165740a04ec54ead70e49646940244098aa80c534930450"
+        "c17c00d742060e9c11268f06b75a51a2e1d1f686b8169fed9b94ba7bcc7f25c6",
+        "5a3ae1ded0499adc527b407621290ef8d75b2e70e36015575b86e5c2dcd80721",
+        "5a3ae1ded0499adc527b407621290ef8d75b2e70e36015575b86e5c2dcd80721"
       ],
       "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/EventChunkTest.java",
-      "testSha256": "01a6e0dfba36be0ab735d92dc639aebbfde6c1094a0b8a1b9a650d1ee3d17be5",
+      "testSha256": "76d0b647e3330af7d37e1be7b8ea74531dbc78eae6c34b4768c862d3f25cfe7d",
       "reason": "JDK 8 使用 ArrayList 与 Collections.unmodifiableList，JDK 17/21 使用 ArrayList 与 List.copyOf；三线先复制输入再拒绝 null 元素，统一错误消息、不可变快照和空 chunk 契约"
     },
     {
@@ -1362,9 +1362,9 @@
     {
       "path": "ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunner.java",
       "sourceSha256": [
-        "5968bbfd4e85ae857c96c7b38772694441ffb851cc3e37053ba2f8988fdd5771",
-        "aa5afd422e3b97fc8ad8798e7a43ad845350cbabfca9094a80935fc2789b5f10",
-        "aa5afd422e3b97fc8ad8798e7a43ad845350cbabfca9094a80935fc2789b5f10"
+        "f05137aa8eec21bafe76228684daa5ba5375897cfb6362e3c67b0dc6899f29fd",
+        "3e65eec22050db39264c6ee3bb2223e1db142b21c0177d75e34ed144b9fd7e60",
+        "3e65eec22050db39264c6ee3bb2223e1db142b21c0177d75e34ed144b9fd7e60"
       ],
       "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunnerNullMetricsParityTest.java",
       "testSha256": "4b897bc758ee31b86abef7ffc2296f9a1b95a36ba835417fa4ad424649fe01a8",
