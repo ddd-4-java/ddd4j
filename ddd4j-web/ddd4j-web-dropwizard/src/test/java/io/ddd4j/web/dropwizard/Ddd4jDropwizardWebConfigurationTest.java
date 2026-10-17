@@ -23,6 +23,7 @@ import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/** 校验 Dropwizard Web 配置的默认值和可配置项。 */
 class Ddd4jDropwizardWebConfigurationTest {
 
     @Test
