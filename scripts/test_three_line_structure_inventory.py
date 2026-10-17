@@ -528,6 +528,45 @@ class ThreeLineInventoryTest(unittest.TestCase):
         self.assertEqual("OPEN", next(row["status"] for row in rows
                                       if row["path"] == path and row["category"] == "production"))
 
+    def test_dropwizard_import_relocation_requires_exact_approved_type(self):
+        path = "ddd4j-core/src/main/java/example/Foo.java"
+        old = ("package example;\nimport io.dropwizard.Application;\n"
+               "public class Foo { Application<?> app; int size() { return 1; } }\n")
+        modern = old.replace("io.dropwizard.Application", "io.dropwizard.core.Application")
+        for root, source in zip(self.roots, (old, modern, modern)):
+            self.write(root, path, source)
+
+        def status():
+            result, output = self.run_checker("inventory")
+            self.assertEqual(0, result.returncode, result.stderr)
+            rows = json.loads((output / "inventory.json").read_text())["differences"]
+            return next(row["status"] for row in rows
+                        if row["path"] == path and row["category"] == "production")
+
+        self.assertEqual("OPEN", status())
+        evidence = "ddd4j-core/src/test/java/example/DropwizardTest.java"
+        for root in self.roots:
+            self.write(root, evidence, "class DropwizardTest {}")
+        policy = json.loads(self.policy.read_text())
+        policy["typeMappings"] = [{"id": "dropwizard-application-package",
+                                   "types": {"1.0.x": "io.dropwizard.Application",
+                                             "2.0.x": "io.dropwizard.core.Application",
+                                             "3.0.x": "io.dropwizard.core.Application"},
+                                   "reason": "exact relocation", "evidence": evidence}]
+        self.policy.write_text(json.dumps(policy))
+        self.assertEqual("PLATFORM_ADAPTED", status())
+
+        self.write(self.roots[2], path, modern.replace("return 1", "return 2"))
+        self.assertEqual("OPEN", status())
+        self.write(self.roots[2], path, modern)
+        unapproved = old.replace("io.dropwizard.Application", "io.dropwizard.Other").replace(
+            "Application<?> app", "Other<?> app")
+        for root, source in zip(self.roots, (unapproved,
+                                             unapproved.replace("io.dropwizard.Other", "io.dropwizard.core.Other"),
+                                             unapproved.replace("io.dropwizard.Other", "io.dropwizard.core.Other"))):
+            self.write(root, path, source)
+        self.assertEqual("OPEN", status())
+
     def test_unused_explicit_import_does_not_create_structure_difference(self):
         path = "ddd4j-core/src/main/java/example/Foo.java"
         source = "package example;\npublic class Foo { int size() { return 1; } }\n"
