@@ -1055,6 +1055,28 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/config/MessageSourceConfigurationProperties.java",
+      "sourceSha256": [
+        "5c38990e3256e22356f3339c60e89da34e93cccbdc31d83897e951153d0e21d0",
+        "f97f38faeded2d21ebe587da174d6088283f2543d03eb69cc385b71695713992",
+        "f97f38faeded2d21ebe587da174d6088283f2543d03eb69cc385b71695713992"
+      ],
+      "evidence": "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/config/MessageSourceConfigurationPropertiesContractTest.java",
+      "testSha256": "ffb1a3e9bf4f90398a910ca55c82303bccfaf7153793b3858d29e682008cf8ee",
+      "reason": "三线共同测试覆盖消息源默认值、每个实例独立可变的 basename 列表和 setter 行为；JDK 8 singletonList 与高两线 List.of 的初始化语法差异由源码哈希锁定"
+    },
+    {
+      "path": "ddd4j-web/ddd4j-web-webflux/src/main/java/io/ddd4j/web/webflux/config/MessageSourceConfigurationProperties.java",
+      "sourceSha256": [
+        "2761cec948bfb3def3fe01fe7943b8ab929b3a9fd1f14afbe1f8a58430460acf",
+        "cd05b64d7f087d722cdd2955af6e008b016bb5ff557fa444f716d8573b6088f3",
+        "cd05b64d7f087d722cdd2955af6e008b016bb5ff557fa444f716d8573b6088f3"
+      ],
+      "evidence": "ddd4j-web/ddd4j-web-webflux/src/test/java/io/ddd4j/web/webflux/config/MessageSourceConfigurationPropertiesContractTest.java",
+      "testSha256": "897818c9526fb6b6d3e4fb12888f18f799a199ff4eeac76fa827413227df3cbc",
+      "reason": "三线共同测试覆盖消息源默认值、每个实例独立可变的 basename 列表和 setter 行为；JDK 8 singletonList 与高两线 List.of 的初始化语法差异由源码哈希锁定"
+    },
+    {
       "path": "ddd4j-extensions/ddd4j-extension-excel/src/main/java/io/ddd4j/extension/excel/importer/ImportError.java",
       "sourceSha256": [
         "865cfa0947a1354149472a12fdf809576897b064f146a6bdf3df8b537effa850",
