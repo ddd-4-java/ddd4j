@@ -1435,6 +1435,17 @@
       "evidence": "ddd4j-kit/src/test/java/io/ddd4j/kit/lang/LambdaKitContractTest.java",
       "testSha256": "52a30542a51411b381137b04359f610e94281ff02ad7b5d0134a237cfd1be2a5",
       "reason": "JDK 8 显式 instanceof/转换与 JDK 17/21 模式匹配提取 SerializedLambda；共同测试验证属性名、声明类型、布尔 getter 和无效输入"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/rbac/web/AuthorizationController.java",
+      "sourceSha256": [
+        "9978992e3cbdd36d57b8fd8b77c96078485800f5fedb0238ca8584ed0613fd54",
+        "85d8b3f0cfe0fc1dd6786e2bb16fe0d5b0ba7f71581d376f207560f455d7136f",
+        "85d8b3f0cfe0fc1dd6786e2bb16fe0d5b0ba7f71581d376f207560f455d7136f"
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/rbac/web/AuthorizationRequestContractTest.java",
+      "testSha256": "6a762f4e14aba5a472465ad20aaf819f0e93c4bcbad7fe464d272a26626c1090",
+      "reason": "三线授权管理路由与 DTO 源码仅有 JDK 8 的 Java8Maps.of 和高两线的 Map.of 差异；三线请求 JSON、值契约与 29 项路由测试通过，公开 API 一致"
     }
   ],
   "historicalDocumentSections": [
