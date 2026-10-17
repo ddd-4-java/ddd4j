@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.sample.javalin.cqrs.goods.infrastructure;
-import java.util.Objects;
 
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.cqrs.query.LambdaCondition;
@@ -89,7 +88,7 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
     @Override
     public List<Goods> findByStatus(GoodsStatus status) {
         if (Objects.isNull(status)) {
-            return List.of();
+            return Collections.emptyList();
         }
         return rows.values().stream()
                 .filter(p -> status.equals(p.getStatus()))
@@ -216,16 +215,27 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
         for (LambdaCondition orderBy : orderByConditions) {
             String field = orderBy.property();
             boolean desc = "DESC".equalsIgnoreCase(orderBy.operator());
-            Comparator<Goods> current = switch (field) {
-                case "id" -> Comparator.comparing(Goods::id);
-                case "createTime" -> Comparator.comparing(Goods::getCreateTime,
-                        Comparator.nullsLast(Comparator.naturalOrder()));
-                case "updateTime" -> Comparator.comparing(Goods::getUpdateTime,
-                        Comparator.nullsLast(Comparator.naturalOrder()));
-                case "price" -> Comparator.comparing(Goods::getPrice,
-                        Comparator.nullsLast(Comparator.naturalOrder()));
-                default -> null;
-            };
+            Comparator<Goods> current;
+            switch (field) {
+                case "id":
+                    current = Comparator.comparing(Goods::id);
+                    break;
+                case "createTime":
+                    current = Comparator.comparing(Goods::getCreateTime,
+                            Comparator.nullsLast(Comparator.naturalOrder()));
+                    break;
+                case "updateTime":
+                    current = Comparator.comparing(Goods::getUpdateTime,
+                            Comparator.nullsLast(Comparator.naturalOrder()));
+                    break;
+                case "price":
+                    current = Comparator.comparing(Goods::getPrice,
+                            Comparator.nullsLast(Comparator.naturalOrder()));
+                    break;
+                default:
+                    current = null;
+                    break;
+            }
             if (Objects.isNull(current)) {
                 continue;
             }
