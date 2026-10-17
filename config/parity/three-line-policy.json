@@ -1055,6 +1055,17 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/event/CdiDomainEventPublisher.java",
+      "sourceSha256": [
+        "b0496d65975abc0fbf5d7edc70a8be038e927c3a8da16fdb5da03218525e2482",
+        "c2aa1845ebb818c3bc305e303e99de4ac09e353746b6d5d6a3ee4e367e8c24ce",
+        "c2aa1845ebb818c3bc305e303e99de4ac09e353746b6d5d6a3ee4e367e8c24ce"
+      ],
+      "evidence": "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/event/CdiDomainEventPublisherContractTest.java",
+      "testSha256": "242c04a60bcaecd46c087bd5a34129788dedbee9fa9225b1e9423526b8e5ac87",
+      "reason": "三线共同测试验证 DomainEvent、普通对象与 null 的 CDI 发布契约；JDK 8 javax 与高两线 jakarta 命名空间及 instanceof 语法、对应 @since 版本差异由源码哈希锁定"
+    },
+    {
       "path": "ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/config/MessageSourceConfigurationProperties.java",
       "sourceSha256": [
         "5c38990e3256e22356f3339c60e89da34e93cccbdc31d83897e951153d0e21d0",
