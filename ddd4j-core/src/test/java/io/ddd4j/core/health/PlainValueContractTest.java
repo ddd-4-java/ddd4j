@@ -1,6 +1,7 @@
 package io.ddd4j.core.health;
 
 import io.ddd4j.core.cqrs.query.PropertyRef;
+import io.ddd4j.core.cqrs.query.LambdaCondition;
 import io.ddd4j.core.cqrs.query.PropertySpace;
 import org.junit.jupiter.api.Test;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -45,6 +46,8 @@ class PlainValueContractTest {
         // 1.0.x 已有 Java 序列化数据保留原 UID，避免旧流反序列化失败。
         assertThat(ObjectStreamClass.lookup(PropertyRef.class).getSerialVersionUID())
                 .isEqualTo(-3906849612189306727L);
+        assertThat(ObjectStreamClass.lookup(LambdaCondition.class).getSerialVersionUID())
+                .isEqualTo(-4292780888118581043L);
     }
 
     @Test
