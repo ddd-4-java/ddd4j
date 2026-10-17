@@ -14,14 +14,18 @@
  */
 package io.ddd4j.sample.javalin.satoken.order.web.dto;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Objects;
+
 import io.ddd4j.sample.javalin.satoken.order.domain.model.Money;
 import io.ddd4j.sample.javalin.satoken.order.domain.model.Order;
 import io.ddd4j.sample.javalin.satoken.order.domain.model.OrderLine;
 import io.ddd4j.sample.javalin.satoken.order.domain.model.OrderStatus;
-import lombok.Value;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,38 +34,222 @@ import java.util.stream.Collectors;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-@Value
-public class OrderResponse {
-    String id;
-    String orderNo;
-    String buyerId;
-    String buyerName;
-    OrderStatus status;
-    String totalAmount;
-    String currency;
-    List<OrderLineResponse> lines;
+public final class OrderResponse {
+
+    private static final long serialVersionUID = 0L;
+
+    private final String id;
+
+    private final String orderNo;
+
+    private final String buyerId;
+
+    private final String buyerName;
+
+    private final OrderStatus status;
+
+    private final String totalAmount;
+
+    private final String currency;
+
+    private final List<OrderLineResponse> lines;
 
     /**
-     * 创建订单响应，并保留供 JSON 还原使用的字段映射。
+     * 从领域对象构造响应数据。
      *
-     * @param id 订单 ID
-     * @param orderNo 订单号
-     * @param buyerId 买家 ID
+     * @param order 订单聚合
+     * @return 响应对象
+     */
+    public static OrderResponse from(Order order) {
+        Money total = order.totalAmount();
+        List<OrderLineResponse> lineResponses = Collections.unmodifiableList(
+                order.lines().stream().map(OrderLineResponse::from).collect(Collectors.toList()));
+        return new OrderResponse(order.id(), order.orderNo(), order.buyerId(), order.buyerName(), order.status(), total.amount().toPlainString(), total.currency(), lineResponses);
+    }
+
+    /**
+     * 订单行响应数据。
+     */
+    public final static class OrderLineResponse {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String id;
+
+        private final String goodsId;
+
+        private final String goodsName;
+
+        private final int quantity;
+
+        private final String unitPrice;
+
+        private final String currency;
+
+        /**
+         * 从领域对象构造响应数据。
+         *
+         * @param line 订单行
+         * @return 响应对象
+         */
+        public static OrderLineResponse from(OrderLine line) {
+            return new OrderLineResponse(line.id(), line.goodsId(), line.goodsName(), line.quantity(), line.unitPrice().amount().toPlainString(), line.unitPrice().currency());
+        }
+
+        /**
+         * 创建订单行响应。
+         *
+         * @param id 资源标识
+         * @param goodsId 商品标识
+         * @param goodsName 商品名称
+         * @param quantity 数量
+         * @param unitPrice 商品单价
+         * @param currency 币种
+         */
+        @JsonCreator()
+        public OrderLineResponse(@JsonProperty("id") String id, @JsonProperty("goodsId") String goodsId, @JsonProperty("goodsName") String goodsName, @JsonProperty("quantity") int quantity, @JsonProperty("unitPrice") String unitPrice, @JsonProperty("currency") String currency) {
+            this.id = id;
+            this.goodsId = goodsId;
+            this.goodsName = goodsName;
+            this.quantity = quantity;
+            this.unitPrice = unitPrice;
+            this.currency = currency;
+        }
+
+        /**
+         * 读取资源标识。
+         *
+         * @return 资源标识
+         */
+        @JsonProperty("id")
+        public String id() {
+            return id;
+        }
+
+        /**
+         * 读取商品标识。
+         *
+         * @return 商品标识
+         */
+        @JsonProperty("goodsId")
+        public String goodsId() {
+            return goodsId;
+        }
+
+        /**
+         * 读取商品名称。
+         *
+         * @return 商品名称
+         */
+        @JsonProperty("goodsName")
+        public String goodsName() {
+            return goodsName;
+        }
+
+        /**
+         * 读取数量。
+         *
+         * @return 数量
+         */
+        @JsonProperty("quantity")
+        public int quantity() {
+            return quantity;
+        }
+
+        /**
+         * 读取商品单价。
+         *
+         * @return 商品单价
+         */
+        @JsonProperty("unitPrice")
+        public String unitPrice() {
+            return unitPrice;
+        }
+
+        /**
+         * 读取币种。
+         *
+         * @return 币种
+         */
+        @JsonProperty("currency")
+        public String currency() {
+            return currency;
+        }
+
+        /** @return 订单行标识 */
+        public String getId() {
+            return id;
+        }
+
+        /** @return 商品标识 */
+        public String getGoodsId() {
+            return goodsId;
+        }
+
+        /** @return 商品名称 */
+        public String getGoodsName() {
+            return goodsName;
+        }
+
+        /** @return 数量 */
+        public int getQuantity() {
+            return quantity;
+        }
+
+        /** @return 单价 */
+        public String getUnitPrice() {
+            return unitPrice;
+        }
+
+        /** @return 币种 */
+        public String getCurrency() {
+            return currency;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            OrderLineResponse other = (OrderLineResponse) obj;
+            return Objects.equals(this.id, other.id) && Objects.equals(this.goodsId, other.goodsId) && Objects.equals(this.goodsName, other.goodsName) && this.quantity == other.quantity && Objects.equals(this.unitPrice, other.unitPrice) && Objects.equals(this.currency, other.currency);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 1;
+            result = 59 * result + quantity;
+            result = 59 * result + (Objects.isNull(id) ? 43 : id.hashCode());
+            result = 59 * result + (Objects.isNull(goodsId) ? 43 : goodsId.hashCode());
+            result = 59 * result + (Objects.isNull(goodsName) ? 43 : goodsName.hashCode());
+            result = 59 * result + (Objects.isNull(unitPrice) ? 43 : unitPrice.hashCode());
+            result = 59 * result + (Objects.isNull(currency) ? 43 : currency.hashCode());
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "OrderResponse.OrderLineResponse(id=" + id + ", goodsId=" + goodsId + ", goodsName=" + goodsName + ", quantity=" + quantity + ", unitPrice=" + unitPrice + ", currency=" + currency + ")";
+        }
+    }
+
+    /**
+     * 创建订单响应。
+     *
+     * @param id 资源标识
+     * @param orderNo 订单编号
+     * @param buyerId 买家标识
      * @param buyerName 买家名称
      * @param status 订单状态
      * @param totalAmount 总金额
      * @param currency 币种
-     * @param lines 订单行
+     * @param lines 订单行列表
      */
-    @JsonCreator
-    public OrderResponse(@JsonProperty("id") String id,
-                         @JsonProperty("orderNo") String orderNo,
-                         @JsonProperty("buyerId") String buyerId,
-                         @JsonProperty("buyerName") String buyerName,
-                         @JsonProperty("status") OrderStatus status,
-                         @JsonProperty("totalAmount") String totalAmount,
-                         @JsonProperty("currency") String currency,
-                         @JsonProperty("lines") List<OrderLineResponse> lines) {
+    @JsonCreator()
+    public OrderResponse(@JsonProperty("id") String id, @JsonProperty("orderNo") String orderNo, @JsonProperty("buyerId") String buyerId, @JsonProperty("buyerName") String buyerName, @JsonProperty("status") OrderStatus status, @JsonProperty("totalAmount") String totalAmount, @JsonProperty("currency") String currency, @JsonProperty("lines") List<OrderLineResponse> lines) {
         this.id = id;
         this.orderNo = orderNo;
         this.buyerId = buyerId;
@@ -72,122 +260,154 @@ public class OrderResponse {
         this.lines = lines;
     }
 
-    public static OrderResponse from(Order order) {
-        Money total = order.totalAmount();
-        List<OrderLineResponse> lineResponses = order.lines().stream()
-                .map(OrderLineResponse::from)
-                .collect(Collectors.toList());
-        return new OrderResponse(
-                order.id(),
-                order.orderNo(),
-                order.buyerId(),
-                order.buyerName(),
-                order.status(),
-                total.amount().toPlainString(),
-                total.currency(),
-                lineResponses
-        );
-    }
-
+    /**
+     * 读取资源标识。
+     *
+     * @return 资源标识
+     */
+    @JsonProperty("id")
     public String id() {
         return id;
     }
 
+    /**
+     * 读取订单编号。
+     *
+     * @return 订单编号
+     */
+    @JsonProperty("orderNo")
     public String orderNo() {
         return orderNo;
     }
 
+    /**
+     * 读取买家标识。
+     *
+     * @return 买家标识
+     */
+    @JsonProperty("buyerId")
     public String buyerId() {
         return buyerId;
     }
 
+    /**
+     * 读取买家名称。
+     *
+     * @return 买家名称
+     */
+    @JsonProperty("buyerName")
     public String buyerName() {
         return buyerName;
     }
 
+    /**
+     * 读取订单状态。
+     *
+     * @return 订单状态
+     */
+    @JsonProperty("status")
     public OrderStatus status() {
         return status;
     }
 
+    /**
+     * 读取总金额。
+     *
+     * @return 总金额
+     */
+    @JsonProperty("totalAmount")
     public String totalAmount() {
         return totalAmount;
     }
 
+    /**
+     * 读取币种。
+     *
+     * @return 币种
+     */
+    @JsonProperty("currency")
     public String currency() {
         return currency;
     }
 
+    /**
+     * 读取订单行列表。
+     *
+     * @return 订单行列表
+     */
+    @JsonProperty("lines")
     public List<OrderLineResponse> lines() {
         return lines;
     }
 
-    @Value
-    public static class OrderLineResponse {
-        String id;
-        String goodsId;
-        String goodsName;
-        int quantity;
-        String unitPrice;
-        String currency;
+    /** @return 订单标识 */
+    public String getId() {
+        return id;
+    }
 
-        /**
-         * 创建订单行响应，并保留供 JSON 还原使用的字段映射。
-         *
-         * @param id 订单行 ID
-         * @param goodsId 商品 ID
-         * @param goodsName 商品名称
-         * @param quantity 数量
-         * @param unitPrice 商品单价
-         * @param currency 币种
-         */
-        @JsonCreator
-        public OrderLineResponse(@JsonProperty("id") String id,
-                                 @JsonProperty("goodsId") String goodsId,
-                                 @JsonProperty("goodsName") String goodsName,
-                                 @JsonProperty("quantity") int quantity,
-                                 @JsonProperty("unitPrice") String unitPrice,
-                                 @JsonProperty("currency") String currency) {
-            this.id = id;
-            this.goodsId = goodsId;
-            this.goodsName = goodsName;
-            this.quantity = quantity;
-            this.unitPrice = unitPrice;
-            this.currency = currency;
-        }
+    /** @return 订单编号 */
+    public String getOrderNo() {
+        return orderNo;
+    }
 
-        public static OrderLineResponse from(OrderLine line) {
-            return new OrderLineResponse(
-                    line.id(),
-                    line.goodsId(),
-                    line.goodsName(),
-                    line.quantity(),
-                    line.unitPrice().amount().toPlainString(),
-                    line.unitPrice().currency()
-            );
-        }
+    /** @return 买家标识 */
+    public String getBuyerId() {
+        return buyerId;
+    }
 
-        public String id() {
-            return id;
-        }
+    /** @return 买家名称 */
+    public String getBuyerName() {
+        return buyerName;
+    }
 
-        public String goodsId() {
-            return goodsId;
-        }
+    /** @return 订单状态 */
+    public OrderStatus getStatus() {
+        return status;
+    }
 
-        public String goodsName() {
-            return goodsName;
-        }
+    /** @return 总金额 */
+    public String getTotalAmount() {
+        return totalAmount;
+    }
 
-        public int quantity() {
-            return quantity;
-        }
+    /** @return 币种 */
+    public String getCurrency() {
+        return currency;
+    }
 
-        public String unitPrice() {
-            return unitPrice;
-        }
+    /** @return 订单行列表 */
+    public List<OrderLineResponse> getLines() {
+        return lines;
+    }
 
-        public String currency() {
-            return currency;
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
         }
+        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+            return false;
+        }
+        OrderResponse other = (OrderResponse) obj;
+        return Objects.equals(this.id, other.id) && Objects.equals(this.orderNo, other.orderNo) && Objects.equals(this.buyerId, other.buyerId) && Objects.equals(this.buyerName, other.buyerName) && Objects.equals(this.status, other.status) && Objects.equals(this.totalAmount, other.totalAmount) && Objects.equals(this.currency, other.currency) && Objects.equals(this.lines, other.lines);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 1;
+        result = 59 * result + (Objects.isNull(id) ? 43 : id.hashCode());
+        result = 59 * result + (Objects.isNull(orderNo) ? 43 : orderNo.hashCode());
+        result = 59 * result + (Objects.isNull(buyerId) ? 43 : buyerId.hashCode());
+        result = 59 * result + (Objects.isNull(buyerName) ? 43 : buyerName.hashCode());
+        result = 59 * result + (Objects.isNull(status) ? 43 : status.hashCode());
+        result = 59 * result + (Objects.isNull(totalAmount) ? 43 : totalAmount.hashCode());
+        result = 59 * result + (Objects.isNull(currency) ? 43 : currency.hashCode());
+        result = 59 * result + (Objects.isNull(lines) ? 43 : lines.hashCode());
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "OrderResponse(id=" + id + ", orderNo=" + orderNo + ", buyerId=" + buyerId + ", buyerName=" + buyerName + ", status=" + status + ", totalAmount=" + totalAmount + ", currency=" + currency + ", lines=" + lines + ")";
     }
 }
