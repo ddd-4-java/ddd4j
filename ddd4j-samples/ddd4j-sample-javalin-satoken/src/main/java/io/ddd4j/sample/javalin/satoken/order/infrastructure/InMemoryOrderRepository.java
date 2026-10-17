@@ -20,7 +20,6 @@ import io.ddd4j.sample.javalin.satoken.order.domain.model.Order;
 import io.ddd4j.sample.javalin.satoken.order.domain.model.OrderLine;
 import io.ddd4j.sample.javalin.satoken.order.domain.model.OrderStatus;
 import io.ddd4j.sample.javalin.satoken.order.domain.repository.OrderRepository;
-import jakarta.enterprise.context.ApplicationScoped;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -34,11 +33,10 @@ import java.util.concurrent.ConcurrentMap;
  * 基于内存的订单仓储实现（演示用）。
  *
  * <p>使用 {@link ConcurrentHashMap} 存储订单聚合的内部字段映射。
- * Quarkus 下用 {@link ApplicationScoped} 取代 Spring 的 {@code @Repository}。
+ * Javalin 运行时由应用入口手动装配。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-@ApplicationScoped
 public class InMemoryOrderRepository implements OrderRepository {
 
     private final ConcurrentMap<String, OrderRow> rows = new ConcurrentHashMap<>();
