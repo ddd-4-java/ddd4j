@@ -1055,6 +1055,17 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-ddd-rules/ddd4j-ddd-rules-clean/src/main/java/io/ddd4j/ddd/clean/checker/CleanArchitectureChecker.java",
+      "sourceSha256": [
+        "89cff55c2df849a7805282635002f973d20901cb27fe694f081b39304a448c6e",
+        "00c4667a1d0711fb0b5e33ec55dc9278f01e9e4491caf9b1adab4756893abad7",
+        "00c4667a1d0711fb0b5e33ec55dc9278f01e9e4491caf9b1adab4756893abad7"
+      ],
+      "evidence": "ddd4j-ddd-rules/ddd4j-ddd-rules-clean/src/test/java/io/ddd4j/ddd/clean/CleanArchitectureStructureContractTest.java",
+      "testSha256": "19fc3eb635ce446c7009bf9261a4da098525d1ca5a4642c504a5be9f6ea0cfb9",
+      "reason": "三线按 domain/application/adapter/infrastructure 顺序报告缺失目录，并返回逐字相同且无尾换行的目录说明；JDK 8 StringBuilder 与高两线文本块以及未使用的推荐子包集合实现差异由源码哈希锁定"
+    },
+    {
       "path": "ddd4j-extensions/ddd4j-extension-license/src/main/java/io/ddd4j/extension/license/keystore/LicenseKeyStoreGenerator.java",
       "sourceSha256": [
         "579158b96db6a8d9bdbcc63318325f9d838bce0b4378f641390f5c65724e8a05",
