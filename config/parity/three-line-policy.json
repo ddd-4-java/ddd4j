@@ -1055,6 +1055,17 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-extensions/ddd4j-extension-excel/src/main/java/io/ddd4j/extension/excel/convert/BigDecimalStringConverter.java",
+      "sourceSha256": [
+        "eb4a9e1b11d040e4d3f0a4e549c5acf37725288b755ad567c717f4ed8bc22f34",
+        "1740d65023312a6825a10460494063e5732598a886c9f43304317da024e471fd",
+        "1740d65023312a6825a10460494063e5732598a886c9f43304317da024e471fd"
+      ],
+      "evidence": "ddd4j-extensions/ddd4j-extension-excel/src/test/java/io/ddd4j/extension/excel/convert/ConvertersTest.java",
+      "testSha256": "792a48894b850ac5b3e28fba8d730ed8fa45f9f24912b42f96129cf9883636f8",
+      "reason": "金额字符串读写由三线相同的 ConvertersTest 7 项覆盖；JDK 8 的传统 instanceof 与高两线模式匹配及 Javadoc 表达差异由源码哈希锁定"
+    },
+    {
       "path": "ddd4j-ddd-rules/ddd4j-ddd-rules-cola/src/main/java/io/ddd4j/ddd/cola/checker/ColaArchitectureChecker.java",
       "sourceSha256": [
         "7d655e0cda421e9f53a2024a7c4c607e72a587a6cb6601394e9d76fbfc0449e4",
