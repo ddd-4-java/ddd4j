@@ -1055,6 +1055,17 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-runtime/ddd4j-runtime-dropwizard/src/main/java/io/ddd4j/dropwizard/Ddd4jBundle.java",
+      "sourceSha256": [
+        "f658fbb594393aca39206a85b14d49353f83a69e2e6f6faaf70b4ee0cd3260a3",
+        "36be887c8be5a9bc64a374445d58fe183e80f93b95db3709b518e0449b37d467",
+        "36be887c8be5a9bc64a374445d58fe183e80f93b95db3709b518e0449b37d467"
+      ],
+      "evidence": "ddd4j-runtime/ddd4j-runtime-dropwizard/src/test/java/io/ddd4j/dropwizard/Ddd4jBundleCollectionContractTest.java",
+      "testSha256": "6e5a3fcc70354bc731e15aada49e87d86390acbc0767f904736714c00d2e0c7e",
+      "reason": "三线共同测试验证 Bundle 在构造阶段拒绝三个服务集合中的空元素；JDK 8 对应 Dropwizard 旧包名及不可修改副本并逐项校验，高两线对应新包名及 List.copyOf，业务语义一致"
+    },
+    {
       "path": "ddd4j-runtime/ddd4j-runtime-dropwizard/src/main/java/io/ddd4j/dropwizard/DropwizardDomainEventPublisher.java",
       "sourceSha256": [
         "2f7ffee73558c6de94ea45f4fec496e7a87da1d2d10abb82a947a86b9c2326e1",
