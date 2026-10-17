@@ -1055,6 +1055,17 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-extensions/ddd4j-extension-monitor/src/main/java/io/ddd4j/extension/monitor/channel/dingtalk/DingTalkClient.java",
+      "sourceSha256": [
+        "7549749b3bb9cca76959b345c23775da6ed34be3e2c37e12ae93d5e18430471d",
+        "08463e65a804f8967a3523236f7d12a237471af8d4fde593c68613f5478f9114",
+        "08463e65a804f8967a3523236f7d12a237471af8d4fde593c68613f5478f9114"
+      ],
+      "evidence": "ddd4j-extensions/ddd4j-extension-monitor/src/test/java/io/ddd4j/extension/monitor/channel/dingtalk/DingTalkClientTest.java",
+      "testSha256": "cccc8332ceae76822b2058b5a55bb64de11ef88cea151fafcab26cad7edda49a",
+      "reason": "三线共同的本地 HTTP 端到端测试验证 POST 消息体、时间戳与 HMAC 签名；JDK 8 的 Hutool HTTP 和高两线 JDK HttpClient 为独立传输适配，源码与测试哈希精确锁定"
+    },
+    {
       "path": "ddd4j-extensions/ddd4j-extension-excel/src/main/java/io/ddd4j/extension/excel/fill/ExcelFiller.java",
       "sourceSha256": [
         "19edeb1a0aba2097e86d17b0524e9cbc6b1c0a17009d37b745ae8b0cb2bafa64",
