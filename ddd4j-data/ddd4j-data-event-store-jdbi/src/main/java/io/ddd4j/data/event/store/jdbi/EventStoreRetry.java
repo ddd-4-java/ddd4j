@@ -21,27 +21,36 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * uk_position 唯一约束冲突自动重试（回填自 3.0.x 16744e1b，适配 eventstore 包路径）。
+ * EventStore append 重试工具：捕获 {@code uk_position} 唯一约束冲突后
+ * 按指数退避自动重试整个 append 操作（保持 {@code expectedVersion} 不变）。
  *
- * <p>并发 append 时全局 position 由数据库唯一约束兜底，冲突按指数退避重试
- * （10/20/40/80/160ms + jitter）。
+ * <p>检测范围（按顺序短路）：
+ * <ol>
+ *   <li>{@link IllegalStateException}（乐观锁版本冲突）— 立即抛，不重试</li>
+ *   <li>嵌套 {@link SQLIntegrityConstraintViolationException}</li>
+ *   <li>任意 cause 链中消息含 "uk_position"/"unique constraint"/"unique index"/"duplicate key"/"duplicate entry"
+ *       的 {@link Throwable}（覆盖 Hibernate 包装路径）</li>
+ *   <li>类名为 "ConstraintViolationException" 的 cause（兼容 Hibernate，避免编译期依赖）</li>
+ * </ol>
+ *
+ * <p>退避策略：基础延迟 10ms，每次翻倍，加 0-10ms 抖动避免雷鸣群。
+ * 默认最大 5 次尝试（含首次）；四次退避总时长上限 190ms（10+20+40+80+抖动）。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 final class EventStoreRetry {
 
+    private static final Logger LOG = LoggerFactory.getLogger(EventStoreRetry.class);
+
     static final int DEFAULT_MAX_ATTEMPTS = 5;
     static final long BASE_DELAY_MILLIS = 10L;
-    private static final Logger LOG = LoggerFactory.getLogger(EventStoreRetry.class);
+
     private final int maxAttempts;
     private final long baseDelayMillis;
     private final Sleeper sleeper;
 
     EventStoreRetry() {
-        this(DEFAULT_MAX_ATTEMPTS, BASE_DELAY_MILLIS, new Sleeper() {
-            @Override
-            public void sleep(long millis) throws InterruptedException {
-                Thread.sleep(millis);
-            }
-        });
+        this(DEFAULT_MAX_ATTEMPTS, BASE_DELAY_MILLIS, Thread::sleep);
     }
 
     EventStoreRetry(int maxAttempts, long baseDelayMillis, Sleeper sleeper) {
@@ -54,6 +63,45 @@ final class EventStoreRetry {
         this.maxAttempts = maxAttempts;
         this.baseDelayMillis = baseDelayMillis;
         this.sleeper = sleeper;
+    }
+
+    /**
+     * 执行可重试操作。
+     *
+     * @param operation 描述（用于日志）
+     * @param action    单次尝试的业务逻辑；必须抛出与 {@link #isRetriable} 匹配的异常以触发重试
+     * @param <T>       返回值类型
+     * @return 首次成功或最终一次尝试的返回值
+     * @throws Exception 最终一次仍失败时抛出最后一次的异常（若为可重试异常则耗尽重试）
+     */
+    <T> T execute(String operation, RetryableAction<T> action) throws Exception {
+        Exception lastException = null;
+        for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+            try {
+                return action.run();
+            } catch (Exception e) {
+                lastException = e;
+                if (!isRetriable(e)) {
+                    throw e;
+                }
+                if (attempt >= maxAttempts) {
+                    LOG.warn("EventStore {} exhausted {} attempts due to retriable exception",
+                            operation, maxAttempts);
+                    throw e;
+                }
+                long delay = computeDelay(attempt);
+                LOG.debug("EventStore {} attempt {}/{} failed retriably, retrying after {}ms",
+                        operation, attempt, maxAttempts, delay);
+                try {
+                    sleeper.sleep(delay);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    throw new RuntimeException("EventStore retry sleep interrupted", ie);
+                }
+            }
+        }
+        // 不应到达，但编译器要求
+        throw lastException != null ? lastException : new IllegalStateException("unreachable");
     }
 
     static long computeDelay(int attempt) {
@@ -69,7 +117,7 @@ final class EventStoreRetry {
      * <ol>
      *   <li>{@link IllegalStateException}（乐观锁版本冲突）→ false（不可重试）</li>
      *   <li>顶层或任何 cause 为 {@link SQLIntegrityConstraintViolationException} → true</li>
-     *   <li>cause 链消息含 uk_position/unique constraint/unique index/duplicate key/duplicate entry → true</li>
+     *   <li>顶层或任何 cause 的 message 含 "uk_position"/"unique constraint"/"unique index"/"duplicate key"/"duplicate entry" → true</li>
      *   <li>类名为 "ConstraintViolationException" 的 cause（兼容 Hibernate，避免编译期依赖） → true</li>
      * </ol>
      */
@@ -85,7 +133,9 @@ final class EventStoreRetry {
         if (containsCause(t, SQLIntegrityConstraintViolationException.class)) {
             return true;
         }
-        // 遍历 cause 链，匹配唯一约束关键字
+        // 遍历 cause 链，匹配两种关键字：
+        //   1. SQLException 嵌套中的标准 SQL 关键字
+        //   2. 任何 RuntimeException（含 PersistenceException）消息中的 uk_position
         Throwable current = t;
         while (current != null) {
             String msg = current.getMessage();
@@ -141,56 +191,30 @@ final class EventStoreRetry {
     }
 
     /**
-     * 执行可重试操作。
-     *
-     * @param operation 描述（用于日志）
-     * @param action    单次尝试的业务逻辑；必须抛出与 {@link #isRetriable} 匹配的异常以触发重试
-     * @param <T>       返回值类型
-     * @return 首次成功或最终一次尝试的返回值
-     * @throws Exception 最终一次仍失败时抛出最后一次的异常
-     */
-    <T> T execute(String operation, RetryableAction<T> action) throws Exception {
-        Exception lastException = null;
-        for (int attempt = 1; attempt <= maxAttempts; attempt++) {
-            try {
-                return action.run();
-            } catch (Exception e) {
-                lastException = e;
-                if (!isRetriable(e)) {
-                    throw e;
-                }
-                if (attempt >= maxAttempts) {
-                    LOG.warn("EventStore {} exhausted {} attempts due to retriable exception",
-                            operation, maxAttempts);
-                    throw e;
-                }
-                long delay = computeDelay(attempt);
-                LOG.debug("EventStore {} attempt {}/{} failed retriably, retrying after {}ms",
-                        operation, attempt, maxAttempts, delay);
-                try {
-                    sleeper.sleep(delay);
-                } catch (InterruptedException ie) {
-                    Thread.currentThread().interrupt();
-                    throw new RuntimeException("EventStore retry sleep interrupted", ie);
-                }
-            }
-        }
-        // 不应到达，但编译器要求
-        throw lastException != null ? lastException : new IllegalStateException("unreachable");
-    }
-
-    /**
      * 单次尝试的业务逻辑。
      */
     @FunctionalInterface
     interface RetryableAction<T> {
+        /**
+         * 执行一次业务逻辑。
+         *
+         * @return 业务逻辑的返回值
+         * @throws Exception 执行过程中出现的异常，交由重试机制判定是否可重试
+         */
         T run() throws Exception;
     }
 
     /**
-     * 睡眠抽象（测试注入用）。
+     * 抽象 {@code Thread.sleep} 以便测试不真正等待。
      */
+    @FunctionalInterface
     interface Sleeper {
+        /**
+         * 休眠指定时长。
+         *
+         * @param millis 休眠的毫秒数
+         * @throws InterruptedException 休眠过程中线程被中断
+         */
         void sleep(long millis) throws InterruptedException;
     }
 }

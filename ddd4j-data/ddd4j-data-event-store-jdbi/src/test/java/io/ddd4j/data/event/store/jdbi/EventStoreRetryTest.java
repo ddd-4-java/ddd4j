@@ -112,8 +112,56 @@ class EventStoreRetryTest {
     @Test
     void invalidConstructorArgs_throwIAE() {
         RecordingSleeper sleeper = new RecordingSleeper();
-        assertThrows(IllegalArgumentException.class, () -> new EventStoreRetry(0, 1L, sleeper));
-        assertThrows(IllegalArgumentException.class, () -> new EventStoreRetry(3, -1L, sleeper));
+        assertTrue(assertThrows(IllegalArgumentException.class,
+                () -> new EventStoreRetry(0, 1L, sleeper)).getMessage().contains("maxAttempts"));
+        assertTrue(assertThrows(IllegalArgumentException.class,
+                () -> new EventStoreRetry(3, -1L, sleeper)).getMessage().contains("baseDelayMillis"));
+    }
+
+    @Test
+    void sqlAndWrappedConstraintMessages_areRetriable() {
+        assertTrue(EventStoreRetry.isRetriable(new SQLException("duplicate key for constraint uk_position")));
+        assertTrue(EventStoreRetry.isRetriable(new SQLException("Unique constraint violation detected")));
+        assertTrue(EventStoreRetry.isRetriable(new RuntimeException("Unique index uk_position violation")));
+        assertTrue(EventStoreRetry.isRetriable(new RuntimeException("Duplicate entry 'x' for key 'uk_position'")));
+        assertTrue(EventStoreRetry.isRetriable(new RuntimeException("outer wrapper",
+                new RuntimeException("middle wrapper", new SQLException("uk_position")))));
+    }
+
+    @Test
+    void unrelatedExceptions_areNotRetriable() {
+        assertFalse(EventStoreRetry.isRetriable(new SQLException("connection lost")));
+        assertFalse(EventStoreRetry.isRetriable(new RuntimeException("other")));
+        assertFalse(EventStoreRetry.isRetriable(new NullPointerException()));
+    }
+
+    @Test
+    void constraintViolationClassName_isRetriableWithoutCompileTimeDependency() {
+        RuntimeException wrapper = new RuntimeException("PersistenceException wrapper",
+                new ConstraintViolationException("schema constraint rejected"));
+        assertTrue(EventStoreRetry.isRetriable(wrapper));
+    }
+
+    @Test
+    void interruptedSleep_restoresInterruptFlag() {
+        EventStoreRetry retry = new EventStoreRetry(3, 1L, millis -> {
+            throw new InterruptedException("test interrupt");
+        });
+        try {
+            RuntimeException failure = assertThrows(RuntimeException.class, () -> retry.execute("op", () -> {
+                throw new SQLIntegrityConstraintViolationException("uk_position");
+            }));
+            assertTrue(failure.getMessage().contains("interrupted"));
+            assertTrue(Thread.currentThread().isInterrupted());
+        } finally {
+            Thread.interrupted();
+        }
+    }
+
+    private static final class ConstraintViolationException extends RuntimeException {
+        private ConstraintViolationException(String message) {
+            super(message);
+        }
     }
 
     /**
