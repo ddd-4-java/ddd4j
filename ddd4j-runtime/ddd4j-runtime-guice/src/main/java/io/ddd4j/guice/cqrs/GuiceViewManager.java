@@ -13,13 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.guice.cqrs;
-import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
-import io.ddd4j.core.cqrs.readmodel.ViewManager;
-import io.ddd4j.core.cqrs.readmodel.ProjectionStatus;
-import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
-import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
-import io.ddd4j.core.cqrs.readmodel.ProjectionMetrics;
-
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import io.ddd4j.core.cqrs.readmodel.*;

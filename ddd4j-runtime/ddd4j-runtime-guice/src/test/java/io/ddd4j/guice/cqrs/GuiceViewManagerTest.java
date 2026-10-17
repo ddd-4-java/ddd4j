@@ -21,20 +21,19 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.ddd4j.core.cqrs.readmodel.DefaultProjectionPosition;
+import io.ddd4j.core.cqrs.readmodel.ProjectionMetrics;
+import io.ddd4j.core.cqrs.readmodel.ProjectionRunInfo;
 import io.ddd4j.core.cqrs.readmodel.ProjectionStatus;
 import io.ddd4j.core.cqrs.readmodel.ViewScheduler.ViewScheduleHandle;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.Instant;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * 类型说明。
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.0.x
- */
 class GuiceViewManagerTest {
 
     private final GuiceViewManager manager = new GuiceViewManager();
@@ -188,6 +187,28 @@ class GuiceViewManagerTest {
         assertNull(status.lastError());
 
         mgr.stop();
+    }
+
+    @Test
+    void getProjectionStatus_withMetrics_returnsLastRunInfo() {
+        GuiceInMemoryProjectionPositionRepository repo = new GuiceInMemoryProjectionPositionRepository();
+        repo.save(new DefaultProjectionPosition("orders", 42L));
+        Instant lastRunAt = Instant.parse("2026-10-18T00:00:00Z");
+        ProjectionMetrics metrics = new ProjectionMetrics() {
+            @Override
+            public Optional<ProjectionRunInfo> getLastRunInfo(String streamId) {
+                return Optional.of(new ProjectionRunInfo(lastRunAt, 3, "last failure"));
+            }
+        };
+        GuiceViewManager mgr = new GuiceViewManager(2, repo, metrics);
+
+        ProjectionStatus status = mgr.getProjectionStatus("orders");
+
+        assertEquals("orders", status.streamId());
+        assertEquals(42L, status.nextEventNumber());
+        assertEquals(lastRunAt, status.lastRunAt());
+        assertEquals(3, status.lastEventCount());
+        assertEquals("last failure", status.lastError());
     }
 
     @Test
