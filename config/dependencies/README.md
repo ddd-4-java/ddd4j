@@ -13,9 +13,14 @@
 - 1.0.x 的 `microprofile-config-api` 排除自动升级：Quarkus 1.13.7.Final 的配置接口使用 MicroProfile Config 1.4；自动升级到 3.1.2 会在真实容器测试触发 `AbstractMethodError`。排除项仍进入漏洞扫描。
 - 3.0.x 的 Micronaut 固定在平台 `4.10.21`、Core `4.10.26`，并排除 `io.micronaut*:*` 的自动升级。Micronaut 5.2.x 的构件含 class 69（JDK 25），无法由本线 JDK 21 编译；Micronaut 4 系列的 CQRS 模块容器集成测试已通过。固定与排除构件仍进入每周漏洞扫描。
 - 1.0.x 的 Helidon MicroProfile Server、Health 及样例 BOM 保持 `1.4.19`：候选 4.5.5 的 Server 为 class 65，JDK 8 无法编译；隔离候选恢复 1.4.19 后，真实 Server 启停在内的运行时测试 23/23 通过。固定构件仍扫描漏洞。
-- 1.0.x 的 Micronaut 运行时显式使用 Jakarta Annotation API `2.1.1`：Micronaut 3.10.15 的候选依赖图带入 3.0.0（class 55），导致 JDK 8 编译失败；直接声明 2.1.1 后该模块 10 项测试通过。此坐标仅在 1.0.x 排除自动升级，仍扫描漏洞。
+- 1.0.x 的 Helidon 样例及 Web 测试使用 `javax.json.bind` 注解，保留 JSON-B API `1.0.2`、Jersey JSON Binding/BOM `2.48`，避免每周升级将其替换成 Jakarta 命名空间的 JSON-B 3/Jersey 4。三个直接坐标只排除自动升级，仍参加漏洞扫描。
+- 2.0.x 的 Helidon BOM 固定为 `3.2.21`：[官方 3.2.21 发布说明](https://github.com/helidon-io/helidon/releases)仍以 JDK 17 为最低版本，候选自动升级误选 Helidon 27.0.0 会使现有 MicroProfile 模块失去版本管理。Helidon 3 相关 Jakarta CDI/Annotation/Inject/Interceptor/WS-RS 与 Jersey 属性保持本线原有版本；升级到 CDI 5 后真实 Helidon 启动测试缺 `jakarta.enterprise.inject.New`。Testcontainers BOM 固定为 `1.21.4`，2.x 改用 `testcontainers-junit-jupiter` 等新坐标，现有 `junit-jupiter`、`postgresql`、`kafka` 声明在 2.x BOM 下无版本，候选 Maven 模型无法加载。固定项仍扫描漏洞，后续迁移到 Testcontainers 2 需连同模块坐标和容器测试一起验证。
+- 1.0.x 的 Micronaut 运行时、样例及监控扩展显式使用 Jakarta Annotation API `2.1.1`：Micronaut 3.10.15 的候选依赖图带入 3.0.0（class 55），导致 JDK 8 编译失败；直接声明 2.1.1 后运行时模块 10 项测试通过。此坐标仅在 1.0.x 排除自动升级，仍扫描漏洞。
 - 1.0.x 的 Pulsar 客户端固定为 `4.0.14`：5.0.0 的 `Consumer` 是 class 61；[上游说明](https://pulsar.apache.org/blog/2026/10/05/announcing-apache-pulsar-5-0/)确认 4.0.x 客户端可支持 Java 8，4.0.14 的该类为 class 52，本线适配器目标测试 5/5 通过（2 项容器测试跳过）。固定项仍扫描漏洞。
 - 1.0.x 的 Kafka 客户端固定为 `3.9.2`：Apache [3.9 兼容说明](https://kafka.apache.org/39/operations/java-version/)支持 JDK 8，[4.0 起移除 JDK 8](https://kafka.apache.org/43/getting-started/compatibility/)；候选 4.4.0 的 `AdminClient` 为 class 55，3.9.2 为 class 52。固定项仍扫描漏洞。
+- 1.0.x 的 Quartz 固定为 `2.4.1`：官方将 2.4.x 列为 Java 8/`javax.*` 线，2.5.x 要求 Java 11/`jakarta.*`；候选 2.5.2 的 `CronScheduleBuilder` 为 class 55，无法由本线 JDK 8 编译。Quarkus 1.13 使用的 CDI API `2.0.2` 和 JTA API `1.3.3` 保留 `javax.*` 命名空间，因此排除这两个直接坐标的自动升级。Dropwizard 样例导入的 `dropwizard-bom.version` 与已固定的 `dropwizard.version` 一同保持 `2.1.12`，避免导入 Dropwizard 5 的 class 61 构件。上述固定及排除构件仍进入漏洞扫描。
+- 1.0.x 的 Apache Shiro 保持 `1.13.0`：Shiro [官方 2.0 发布说明](https://shiro.apache.org/blog/2024/02/apache-shiro-200-released.html)将最低 JVM 提高到 Java 11；本周候选 3.0.1 的 `SecurityUtils` 是 class 61，JDK 8 无法编译。固定版本仍进入漏洞扫描。
+- 1.0.x 的 Guice 固定为 `5.1.0`：本线模块使用 `javax.inject`，Guice [官方兼容说明](https://github.com/google/guice/wiki/JSR330)指出 7.x 仅支持 `jakarta.inject`，候选 7.0.0 因此无法编译。固定版本仍扫描漏洞。
 - 1.0.x 的 Artemis JMS 客户端固定为 `2.19.0`（`artemis.version`）：本线源码已注明 2.20.0 起要求 JDK 11；候选 2.57.0 的连接工厂是 class 61，JDK 8 无法编译 MQ 模块。固定项仍扫描漏洞。
 - 1.0.x 的 Dozer Core 固定为 `6.5.2`（`dozer-core.version`）：候选 7.0.0 的 `Mapper` 类为 class 55，JDK 8 无法编译 Web MVC 模块；6.5.2 构件为 class 52。固定项仍扫描漏洞。
 - 1.0.x 的 Redis Testcontainers 扩展固定为 `2.0.2`（`testcontainers-redis.version`）：自动升级到 3.0.0 后测试使用的 `RedisContainer` 是 class 61，JDK 8 无法编译；2.0.2 构件为 class 52。固定项仍扫描漏洞。
@@ -25,6 +30,7 @@
 - 1.0.x 的 Jdbi 固定为 `3.39.1`（`jdbi3.version`）：[Jdbi 官方兼容说明](https://github.com/jdbi/jdbi/blob/master/RELEASE_NOTES.md)将 3.39.x 定为最后支持 Java 8 的系列；候选 3.55.0 的 `Jdbi` class 61 无法在 JDK 8 编译。固定项仍扫描漏洞。
 - 1.0.x 的 H2 固定为 `2.2.224`（`h2.version`）：自动升级到 2.5.252 后 JDK 8 的 JPA 测试无法加载 `org.h2.Driver`；固定项仍扫描漏洞。
 - 1.0.x 的 Hibernate ORM 固定为 `5.6.15.Final`（`hibernate5.version`）：该线的 JPA 事件存储依赖 `javax.persistence`，升级到 Hibernate 7.4.13.Final 后目标测试编译读取 class 61 失败。固定项仍扫描漏洞。
+- 1.0.x 的 metrics 测试显式声明 `opentelemetry-common`：升级 OpenTelemetry 到 1.67.0 后，SDK 内部引用的 `ConfigUtil` 位于该构件；候选从 10 项测试异常恢复为 10 项通过，继续允许 OpenTelemetry 在本线自动升级。
 - 1.0.x 的 `jakarta.persistence:jakarta.persistence-api` 排除自动升级：本线 Panache 实体使用 `javax.persistence`，模块显式依赖 2.2.3；升级到 3.2.0 后 `javax.persistence` 注解类缺失。排除项仍扫描漏洞。
 - 三线的 Redisson 固定在 `3.52.0`（当前 3.x 最新版）：4.8.0 移除了缓存模块使用的 `RScript.ReturnType.STATUS/INTEGER`，缓存模块 48 项本地测试通过（4 项 Redis 容器测试跳过）。该固定项仍进入漏洞扫描。
 - 三线将 RabbitMQ Java 客户端由 `5.32.0` 升至 `5.37.0`：旧 2.0.x 扫描在该坐标报告多条高危项，[RabbitMQ 安全公告](https://www.rabbitmq.com/security)列出 5.37.0 的修复；[官方客户端指南](https://www.rabbitmq.com/client-libraries/java-api-guide)确认 5.x 支持 JDK 8。三线各自在本线 JDK 下通过 RabbitMQ 适配模块目标测试（14 项中 9 项容器测试跳过）。此坐标没有列入固定/排除规则，后续仍按最新稳定版检查并进入漏洞扫描。
@@ -121,11 +127,22 @@ OFDRW 2.4.0 在三线管理 `org.ofdrw:ofdrw-core`。`ofdrw-full` 包含转换�
 
 本地运行：
 
+在三个 checkout 使用各自的 JDK，并按下表设置 `DDD4J_LINE`；Easy4J 组件也使用本线版本：
+
+| 分支 | JDK | `DDD4J_LINE` | Easy4J 组件版本 |
+| --- | ---: | --- | --- |
+| `feature/1.0.x` | 8 | `1.0.x` | `1.0.x.20260630-SNAPSHOT` |
+| `feature/2.0.x` | 17 | `2.0.x` | `2.0.x.20260630-SNAPSHOT` |
+| `feature/3.0.x` | 21 | `3.0.x` | `3.0.x.20260630-SNAPSHOT` |
+
+以下以 1.0.x 为例，另外两线只调整变量值：
+
 ```sh
+DDD4J_LINE=1.0.x
 python3 scripts/test_weekly_dependency_versions.py -q
 python3 scripts/check_weekly_dependency_versions.py \
   --pom ddd4j-dependencies/pom.xml \
   --policy config/dependencies/weekly-update-policy.json \
-  --line 3.0.x \
+  --line "$DDD4J_LINE" \
   --output target/dependency-audit/version-report.json
 ```
