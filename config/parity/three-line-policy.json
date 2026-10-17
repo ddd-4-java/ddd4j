@@ -1735,6 +1735,17 @@
       "evidence": "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/order/OrderValueAccessorsTest.java",
       "testSha256": "d410f340424ac35a6f4f9b1824f78bf4466c99f1c582a5fa3e8c8b663c89a8cc",
       "reason": "三线显式值方法与公开 API 相同，本线 MoneyContractTest 分别验证 Jackson 2/3 JSON、哈希和 Java 序列化；1.0.x 保留已发布 Java 序列化 UID -8477704881210516506，另由 MoneyLegacySerializationTest 锁定"
+    },
+    {
+      "path": "ddd4j-data/ddd4j-data-projection-jpa/src/main/java/io/ddd4j/data/projection/jpa/JpaProjectionPositionRepository.java",
+      "sourceSha256": [
+        "dacef1bf330ee6b1e5c3a947e0edc5b00947eedcb3b14038917b4f7a1d70334d",
+        "0867704820a6713b1af58957262e249dcc8a99567627c5f99ac5e7f0b3d6d27f",
+        "0867704820a6713b1af58957262e249dcc8a99567627c5f99ac5e7f0b3d6d27f"
+      ],
+      "evidence": "ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/JpaProjectionPositionRepositoryTest.java",
+      "testSha256": "7f4679c4d09f00a97df5edd9a98974039807057a0d7a6ea7d03aa71b84a10838",
+      "reason": "三线共同测试验证 findAll 保持仓储顺序、返回不可修改的值对象快照；JDK 8 使用 Collectors 与不可修改包装，JDK 17/21 使用 Stream.toList，业务语义一致"
     }
   ],
   "historicalDocumentSections": [
