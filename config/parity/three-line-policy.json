@@ -1055,6 +1055,17 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-extensions/ddd4j-extension-excel/src/main/java/io/ddd4j/extension/excel/importer/ImportError.java",
+      "sourceSha256": [
+        "865cfa0947a1354149472a12fdf809576897b064f146a6bdf3df8b537effa850",
+        "feb49d320eba98f75e04e2c688ffc40b1002b32eef1210774aba187bf6d305c4",
+        "feb49d320eba98f75e04e2c688ffc40b1002b32eef1210774aba187bf6d305c4"
+      ],
+      "evidence": "ddd4j-extensions/ddd4j-extension-excel/src/test/java/io/ddd4j/extension/excel/importer/ImportErrorContractTest.java",
+      "testSha256": "ab2f6e24cd6ea5bbf46a22e2dc0a570b9370109fd088f36ed61b9c4903a56d2c",
+      "reason": "三线共同测试覆盖单元格转换异常的位置、原始值、消息和字符串表示，以及普通异常与业务校验错误；JDK 8 传统 instanceof 与高两线模式匹配语法差异由源码哈希锁定"
+    },
+    {
       "path": "ddd4j-extensions/ddd4j-extension-excel/src/main/java/io/ddd4j/extension/excel/convert/BigDecimalStringConverter.java",
       "sourceSha256": [
         "eb4a9e1b11d040e4d3f0a4e549c5acf37725288b755ad567c717f4ed8bc22f34",
