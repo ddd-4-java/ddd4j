@@ -41,6 +41,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -126,6 +131,79 @@ class JpaEventStorePostgresIT {
             if (second.getTransaction().isActive()) {
                 second.getTransaction().rollback();
             }
+            first.close();
+            second.close();
+        }
+    }
+
+    @Test
+    void concurrentAppendsMustSerializeGlobalPositionAllocation() throws Exception {
+        TestAggregateRootId seed = new TestAggregateRootId("position-seed");
+        eventStore.append("Order", seed, Collections.singletonList(new OrderCreatedEvent("seed")), 0);
+
+        EntityManager first = entityManagerFactory.createEntityManager();
+        EntityManager second = entityManagerFactory.createEntityManager();
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        EntityTransaction firstTransaction = first.getTransaction();
+        CountDownLatch versionRead = new CountDownLatch(1);
+        CountDownLatch positionLookup = new CountDownLatch(1);
+        Future<?> competing = null;
+        try {
+            TestAggregateRootId firstId = new TestAggregateRootId("position-first");
+            firstTransaction.begin();
+            JpaEventStore.participating(first).append("Order", firstId,
+                    Collections.singletonList(new OrderCreatedEvent("first")), 0);
+
+            JpaStoredEventRepository secondRepository = new JpaStoredEventRepositoryImpl(second) {
+                @Override
+                public long findCurrentVersion(String aggregateType, String aggregateId) {
+                    long version = super.findCurrentVersion(aggregateType, aggregateId);
+                    versionRead.countDown();
+                    return version;
+                }
+
+                @Override
+                public long nextPosition() {
+                    positionLookup.countDown();
+                    return super.nextPosition();
+                }
+            };
+            TestAggregateRootId secondId = new TestAggregateRootId("position-second");
+            competing = executor.submit(() -> {
+                EntityTransaction transaction = second.getTransaction();
+                transaction.begin();
+                try {
+                    JpaEventStore.participating(second, secondRepository,
+                            new EventPayloadSerializer(JsonMapper.builder().findAndAddModules().build()))
+                            .append("Order", secondId,
+                                    Collections.singletonList(new OrderCreatedEvent("second")), 0);
+                    transaction.commit();
+                } finally {
+                    if (transaction.isActive()) {
+                        transaction.rollback();
+                    }
+                }
+            });
+            assertTrue(versionRead.await(10, TimeUnit.SECONDS), "competing transaction did not reach version lookup");
+            boolean allocatedBeforeCommit = positionLookup.await(300, TimeUnit.MILLISECONDS);
+            firstTransaction.commit();
+
+            assertFalse(allocatedBeforeCommit, "position lookup passed the uncommitted predecessor");
+            competing.get(15, TimeUnit.SECONDS);
+            entityManager.clear();
+            List<StoredEvent> stored = eventStore.readAll(0, 10);
+            assertEquals(3, stored.size());
+            assertEquals(1L, stored.get(0).position());
+            assertEquals(2L, stored.get(1).position());
+            assertEquals(3L, stored.get(2).position());
+        } finally {
+            if (firstTransaction.isActive()) {
+                firstTransaction.rollback();
+            }
+            if (Objects.nonNull(competing)) {
+                competing.cancel(true);
+            }
+            executor.shutdownNow();
             first.close();
             second.close();
         }
