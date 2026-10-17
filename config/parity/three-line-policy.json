@@ -1055,6 +1055,39 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-extensions/ddd4j-extension-license/src/main/java/io/ddd4j/extension/license/keystore/LicenseKeyStoreGenerator.java",
+      "sourceSha256": [
+        "579158b96db6a8d9bdbcc63318325f9d838bce0b4378f641390f5c65724e8a05",
+        "0bf05050c04524f231e7103b4910169ce8e4eb166f7cdbc44f4de60b79bb5c11",
+        "0bf05050c04524f231e7103b4910169ce8e4eb166f7cdbc44f4de60b79bb5c11"
+      ],
+      "evidence": "ddd4j-extensions/ddd4j-extension-license/src/test/java/io/ddd4j/extension/license/LicenseKitTest.java",
+      "testSha256": "d2898c90c6afa1e8739bfd46afd24c303f0566a5101e8a3e0a044e7eb613849c",
+      "reason": "三线 keytool 命令、超时及 UTF-8 输出处理一致；JDK 8 用缓冲循环读取进程输出，高两线用 readAllBytes，共同测试覆盖密钥库生成与签发验签，源码和测试哈希逐线锁定"
+    },
+    {
+      "path": "ddd4j-extensions/ddd4j-extension-license/src/main/java/io/ddd4j/extension/license/creator/LicenseCreator.java",
+      "sourceSha256": [
+        "53a4bdf3ebed4cd5da32bc17469cac8711491a14ce75d2805ddc200a68089a68",
+        "d1b89360fd1e47d441b32294641c817e2372c64051d4ee8126b3ad4429f2999d",
+        "d1b89360fd1e47d441b32294641c817e2372c64051d4ee8126b3ad4429f2999d"
+      ],
+      "evidence": "ddd4j-extensions/ddd4j-extension-license/src/test/java/io/ddd4j/extension/license/LicenseKitTest.java",
+      "testSha256": "d2898c90c6afa1e8739bfd46afd24c303f0566a5101e8a3e0a044e7eb613849c",
+      "reason": "三线签名、临时文件和原子替换逻辑相同；JDK 8 使用 UTF-8 bytes 写入与显式 PrivateKey 强转，高两线使用 Files.writeString 与模式匹配，三线共同签发验签测试及逐线哈希锁定差异"
+    },
+    {
+      "path": "ddd4j-extensions/ddd4j-extension-license/src/main/java/io/ddd4j/extension/license/LicenseVerify.java",
+      "sourceSha256": [
+        "a75670eefda125be2e5718f9a39c71bb14cfeaadcfa6d164d4be6033ee959736",
+        "b286c943aba252981ec4f6f96b1fdf891635de2ed30109fc21624c3e1591299d",
+        "b286c943aba252981ec4f6f96b1fdf891635de2ed30109fc21624c3e1591299d"
+      ],
+      "evidence": "ddd4j-extensions/ddd4j-extension-license/src/test/java/io/ddd4j/extension/license/LicenseKitTest.java",
+      "testSha256": "d2898c90c6afa1e8739bfd46afd24c303f0566a5101e8a3e0a044e7eb613849c",
+      "reason": "三线公钥加载与空别名异常逻辑相同；JDK 8 的显式 InputStream/Certificate 类型在高两线仅改为 var，共同签发、安装和验签测试及逐线源码哈希锁定该语法差异"
+    },
+    {
       "path": "ddd4j-extensions/ddd4j-extension-validation/src/main/java/io/ddd4j/extension/validation/OfficeFileTypeDetector.java",
       "sourceSha256": [
         "d3a746bccd0331b8699741f903d2da261759b274cb28d439db48e7ec986816b7",
