@@ -17,7 +17,6 @@ package io.ddd4j.sample.javalin.satoken.order.web;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import lombok.Value;
 
 import io.ddd4j.core.api.R;
 import io.ddd4j.sample.javalin.satoken.order.application.AddOrderLineCommand;
@@ -61,12 +60,19 @@ public class OrderResource {
 
     private final OrderApplicationService orderApplicationService;
 
+    /**
+     * 创建订单资源。
+     *
+     * @param orderApplicationService 订单应用服务
+     */
     public OrderResource(OrderApplicationService orderApplicationService) {
         this.orderApplicationService = Objects.requireNonNull(orderApplicationService, "orderApplicationService must not be null");
     }
 
     /**
      * 以 {@link EndpointGroup} 形式暴露本资源的全部路由。
+     *
+     * @return 订单路由组
      */
     public EndpointGroup routes() {
         return () -> {
@@ -143,7 +149,6 @@ public class OrderResource {
     /**
      * 折扣预览响应。
      */
-    @Value
     public final static class DiscountView {
 
         private static final long serialVersionUID = 0L;
@@ -152,20 +157,71 @@ public class OrderResource {
 
         private final String currency;
 
+        /**
+         * 创建折扣金额视图。
+         *
+         * @param amount 金额数值
+         * @param currency 币种
+         */
         @JsonCreator()
         public DiscountView(@JsonProperty("amount") String amount, @JsonProperty("currency") String currency) {
             this.amount = amount;
             this.currency = currency;
         }
 
+        /**
+         * 读取金额数值。
+         *
+         * @return 金额数值
+         */
         @JsonProperty("amount")
         public String amount() {
             return amount;
         }
 
+        /**
+         * 读取币种。
+         *
+         * @return 币种
+         */
         @JsonProperty("currency")
         public String currency() {
             return currency;
+        }
+
+        /** @return 折扣金额 */
+        public String getAmount() {
+            return amount;
+        }
+
+        /** @return 币种 */
+        public String getCurrency() {
+            return currency;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            DiscountView other = (DiscountView) obj;
+            return Objects.equals(this.amount, other.amount) && Objects.equals(this.currency, other.currency);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 1;
+            result = 59 * result + (Objects.isNull(amount) ? 43 : amount.hashCode());
+            result = 59 * result + (Objects.isNull(currency) ? 43 : currency.hashCode());
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "OrderResource.DiscountView(amount=" + amount + ", currency=" + currency + ")";
         }
     }
 }
