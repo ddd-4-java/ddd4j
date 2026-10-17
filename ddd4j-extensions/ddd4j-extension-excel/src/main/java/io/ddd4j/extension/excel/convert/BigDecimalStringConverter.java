@@ -46,6 +46,7 @@ import java.util.Objects;
  */
 public class BigDecimalStringConverter implements Converter<BigDecimal> {
 
+    /** 默认金额格式：两位小数和千分位。 */
     public static final String DEFAULT_PATTERN = "#,##0.00";
 
     private final String pattern;
