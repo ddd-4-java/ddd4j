@@ -1055,6 +1055,17 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/Ddd4jGuiceRuntime.java",
+      "sourceSha256": [
+        "eea813a30e203c2495796eb6b1a3741918d5037c056c8a83164bb6b5729c77fb",
+        "eb5ab8c2a66316632f72e00f38d1f81f3c4cf8ca37b08dee2368b66512839f21",
+        "eb5ab8c2a66316632f72e00f38d1f81f3c4cf8ca37b08dee2368b66512839f21"
+      ],
+      "evidence": "ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/guice/GuiceRuntimeContractTest.java",
+      "testSha256": "3ffd5623469e2247f50fea8c23dfd8ed80a41aa61aa328c86fc5cbae92b30e36",
+      "reason": "三线共同运行时契约测试验证 Guice 启动、关闭和就绪能力；JDK 8 使用 Collections.emptyList，高两线使用 List.of，默认就绪贡献者集合语义一致"
+    },
+    {
       "path": "ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/cqrs/GuiceViewManager.java",
       "sourceSha256": [
         "a9f2fd7d7a43cc63652755b04697d7ff92158d894e40434d5cd4f6298f24d697",
