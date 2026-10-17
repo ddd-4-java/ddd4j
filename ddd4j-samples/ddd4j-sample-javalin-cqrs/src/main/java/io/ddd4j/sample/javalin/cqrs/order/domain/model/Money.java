@@ -14,11 +14,16 @@
  */
 package io.ddd4j.sample.javalin.cqrs.order.domain.model;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.io.InvalidObjectException;
+
+import java.io.ObjectStreamException;
+
 import io.ddd4j.core.ddd.model.ValueObject;
 import io.ddd4j.kit.lang.StrKit;
-import lombok.Value;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -30,17 +35,29 @@ import java.util.Objects;
  *
  * <p>作为 {@link Order} 与 {@link OrderLine} 共用的值对象，封装金额不可变性、币种一致性与精度归一化。
  *
- * <p>{@code amount} — 金额数值
- * <p>{@code currency} — 货币代码（如 CNY、USD）
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-@Value
-public class Money implements ValueObject {
 
-    BigDecimal amount;
-    String currency;
+public final class Money implements ValueObject {
 
-    @JsonCreator
+    private static final long serialVersionUID = -8477704881210516506L;
+
+    /**
+     * 金额数值。
+     */
+    private final BigDecimal amount;
+
+    /**
+     * 币种。
+     */
+    private final String currency;
+
+    /**
+ * @param amount 金额数值
+ * @param currency 货币代码（如 CNY、USD）
+ */
+
+    @JsonCreator()
     public Money(@JsonProperty("amount") BigDecimal amount, @JsonProperty("currency") String currency) {
         Objects.requireNonNull(amount, "amount must not be null");
         if (amount.signum() < 0) {
@@ -49,8 +66,10 @@ public class Money implements ValueObject {
         if (StrKit.isBlank(currency)) {
             throw new IllegalArgumentException("currency must not be blank");
         }
-        this.amount = amount.setScale(2, RoundingMode.HALF_UP);
-        this.currency = currency.trim().toUpperCase(Locale.ROOT);
+        amount = amount.setScale(2, RoundingMode.HALF_UP);
+        currency = currency.trim().toUpperCase(Locale.ROOT);
+        this.amount = amount;
+        this.currency = currency;
     }
 
     /**
@@ -83,19 +102,6 @@ public class Money implements ValueObject {
         return new Money(BigDecimal.ZERO, currency);
     }
 
-    public BigDecimal amount() {
-        return amount;
-    }
-
-    public String currency() {
-        return currency;
-    }
-
-    @Override
-    public String toString() {
-        return "Money[amount=" + amount + ", currency=" + currency + "]";
-    }
-
     /**
      * 金额相加。
      *
@@ -123,5 +129,76 @@ public class Money implements ValueObject {
             throw new IllegalArgumentException("factor must not be negative");
         }
         return new Money(amount.multiply(BigDecimal.valueOf(factor)), currency);
+    }
+
+    /**
+     * 金额数值。
+     *
+     * @return 金额数值
+     */
+    @JsonProperty("amount")
+    public BigDecimal amount() {
+        return amount;
+    }
+
+    /**
+     * 币种。
+     *
+     * @return 币种
+     */
+    @JsonProperty("currency")
+    public String currency() {
+        return currency;
+    }
+
+    /** @return 金额数值 */
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    /** @return 币种 */
+    public String getCurrency() {
+        return currency;
+    }
+
+    /**
+     * 反序列化后恢复规范化金额对象。
+     *
+     * @return 规范化的金额对象
+     * @throws ObjectStreamException 反序列化对象恢复失败时
+     */
+    private Object readResolve() throws ObjectStreamException {
+        try {
+            return new Money(amount, currency);
+        } catch (RuntimeException cause) {
+            InvalidObjectException failure = new InvalidObjectException(cause.getMessage());
+            failure.initCause(cause);
+            throw failure;
+        }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+            return false;
+        }
+        Money other = (Money) obj;
+        return Objects.equals(this.amount, other.amount) && Objects.equals(this.currency, other.currency);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 1;
+        result = 59 * result + (Objects.isNull(amount) ? 43 : amount.hashCode());
+        result = 59 * result + (Objects.isNull(currency) ? 43 : currency.hashCode());
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Money[amount=" + amount + ", currency=" + currency + "]";
     }
 }

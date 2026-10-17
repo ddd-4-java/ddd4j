@@ -1512,6 +1512,17 @@
       "evidence": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/order/OrderValueContractTest.java",
       "testSha256": "6a770c5fa48a165dd8572e2c31f4a969bdecd678e9423e7d8b10ac95c20e91c9",
       "reason": "三线显式值方法、JSON 构造器和共同金额契约一致；1.0.x 保留已发布 Java 序列化 UID 1545370294742823931，由 MoneyLegacySerializationTest 锁定；高两线 UID 为 0"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/main/java/io/ddd4j/sample/javalin/cqrs/order/domain/model/Money.java",
+      "sourceSha256": [
+        "ca8ff90413ac9964a587291a328e15dea1cb29b136beebc42c241be70bd9a6e2",
+        "f104154dd6f3c9f095e0f73996384b3907a44a55557c35961ffe2934d1106a70",
+        "f104154dd6f3c9f095e0f73996384b3907a44a55557c35961ffe2934d1106a70"
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/order/OrderValueAccessorsTest.java",
+      "testSha256": "d410f340424ac35a6f4f9b1824f78bf4466c99f1c582a5fa3e8c8b663c89a8cc",
+      "reason": "三线显式值方法与公开 API 相同，本线 MoneyContractTest 分别验证 Jackson 2/3 JSON、哈希和 Java 序列化；1.0.x 保留已发布 Java 序列化 UID -8477704881210516506，另由 MoneyLegacySerializationTest 锁定"
     }
   ],
   "historicalDocumentSections": [
