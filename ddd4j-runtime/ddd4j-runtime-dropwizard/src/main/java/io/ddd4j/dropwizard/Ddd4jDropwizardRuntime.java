@@ -37,11 +37,28 @@ public final class Ddd4jDropwizardRuntime implements Managed, AutoCloseable {
     private final SubjectKitRegistrationScope subjectRegistration;
     private final RuntimeReadinessRegistry readinessRegistry;
 
+    /**
+     * 使用默认就绪检查集合创建运行时。
+     *
+     * @param publisher 领域事件发布器
+     * @param subjectProvider 主体提供器
+     * @param i18nProvider 国际化提供器
+     * @param commandBus 命令总线
+     */
     public Ddd4jDropwizardRuntime(DomainEventPublisher publisher, SubjectProvider subjectProvider,
                                   I18nProvider i18nProvider, CommandBus commandBus) {
         this(publisher, subjectProvider, i18nProvider, commandBus, List.of());
     }
 
+    /**
+     * 使用指定就绪检查集合创建运行时。
+     *
+     * @param publisher 领域事件发布器
+     * @param subjectProvider 主体提供器
+     * @param i18nProvider 国际化提供器
+     * @param commandBus 命令总线
+     * @param readinessContributors 就绪检查贡献者
+     */
     public Ddd4jDropwizardRuntime(DomainEventPublisher publisher, SubjectProvider subjectProvider,
                                   I18nProvider i18nProvider, CommandBus commandBus,
                                   Collection<? extends ReadinessContributor> readinessContributors) {
@@ -60,6 +77,11 @@ public final class Ddd4jDropwizardRuntime implements Managed, AutoCloseable {
         subjectRegistration.start();
     }
 
+    /**
+     * 获取运行时就绪注册表。
+     *
+     * @return 就绪注册表
+     */
     public RuntimeReadinessRegistry readiness() {
         return readinessRegistry;
     }
