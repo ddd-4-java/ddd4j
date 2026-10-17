@@ -247,6 +247,17 @@
   ],
   "platformContentMappings": [
     {
+      "path": "ddd4j-data/ddd4j-data-cqrs-dropwizard/src/test/java/io/ddd4j/data/cqrs/dropwizard/ElRuntimeTest.java",
+      "replacements": [
+        {
+          "from": "import javax.el.ExpressionFactory;",
+          "to": "import jakarta.el.ExpressionFactory;"
+        }
+      ],
+      "evidence": "ddd4j-data/ddd4j-data-cqrs-dropwizard/src/test/java/io/ddd4j/data/cqrs/dropwizard/ElRuntimeTest.java",
+      "reason": "三线相同测试锁定 EL ExpressionFactory 可加载；JDK 8 使用 javax.el，高两线使用 jakarta.el"
+    },
+    {
       "path": "ddd4j-mq/ddd4j-mq-activemq/src/main/java/io/ddd4j/mq/activemq/ActiveMQClient.java",
       "replacements": [
         {
