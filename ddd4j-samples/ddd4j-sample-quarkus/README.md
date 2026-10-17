@@ -117,9 +117,13 @@ ddd4j-sample-quarkus/
 
 ### 前置条件
 
-- JDK 8+
-- Maven：使用仓库根目录的 `./mvnw`（3.9.16）
-- Quarkus 1.13.7.Final（本示例 Quarkus BOM）
+按当前 ddd4j 兼容线选择 JDK、仓库根目录 Maven Wrapper 和 Quarkus：
+
+| ddd4j 线 | JDK | Maven Wrapper | Quarkus | REST 依赖 |
+|-----------|-----|---------------|---------|-----------|
+| 1.0.x | 8 | 3.9.16 | 1.13.7.Final | `quarkus-resteasy-jackson` |
+| 2.0.x | 17 | 3.9.16 | 3.38.2 | `quarkus-rest` |
+| 3.0.x | 21 | 4.0.0-rc-6 | 3.38.2 | `quarkus-rest` |
 
 ### 启动开发模式
 
@@ -287,7 +291,7 @@ curl "http://localhost:8080/query/goods/count?status=ON_SALE"
 ### 打包与运行
 
 ```bash
-# 构建可执行 fast-jar
+# 构建可执行 jar（fast-jar）
 ./mvnw -pl ddd4j-samples/ddd4j-sample-quarkus package
 
 # 运行
@@ -438,7 +442,7 @@ public Response page(GoodsQuery query) {     // ← JAX-RS 直接绑定 Query �
 | `ddd4j-web-quarkus`     | TenantAwareResource、JAX-RS 异常映射              |
 | `ddd4j-cache`           | 缓存能力：CacheKit、Caffeine 本地缓存             |
 | `ddd4j-mq-core`         | MQ 核心契约：MQEvent、MQEventPublisher（纯 Java） |
-| `quarkus-resteasy-jackson` | Quarkus RESTEasy Classic（JAX-RS）             |
+| Quarkus REST 适配      | 依当前兼容线选择前置条件表中的 REST 依赖         |
 
 > **注意**：`ddd4j-mq-disruptor` 依赖 `spring-context`，在 Quarkus CDI 下不适用。
 > 真实项目可引入 Quarkus 兼容的 MQ 实现（如 SmallRye Reactive Messaging + Kafka）。
@@ -447,7 +451,7 @@ public Response page(GoodsQuery query) {     // ← JAX-RS 直接绑定 Query �
 
 1. **替换持久化**：把 `InMemoryOrderRepository` 换成 Hibernate Panache / MyBatis-Plus 实现
 2. **替换缓存**：把本地 Caffeine 缓存换成 Redis（引入 `ddd4j-cache` 的 Redisson/Lettuce 实现）
-3. **替换事件总线**：把 `NoOpDomainEventPublisher` 换成基于 `javax.enterprise.event.Event` 的真实实现
+3. **替换事件总线**：把 `NoOpDomainEventPublisher` 换成基于 CDI `Event` 的真实实现（1.0.x 为 `javax.enterprise.event.Event`，2.0.x/3.0.x 为 `jakarta.enterprise.event.Event`）
 4. **替换 MQ**：把 `NoOpMQEventPublisher` 换成 Kafka / RabbitMQ 实现
 5. **替换鉴权**：把 `AnonymousSubjectProvider` 换成基于 sa-token / shiro 的实现
 6. **添加鉴权拦截器**：通过 `ContainerRequestFilter` 注入当前 Subject
@@ -456,9 +460,8 @@ public Response page(GoodsQuery query) {     // ← JAX-RS 直接绑定 Query �
 
 | 组件                      | 版本                          |
 |---------------------------|-------------------------------|
-| Quarkus BOM               | 1.13.7.Final                  |
+| Quarkus 与 JDK            | 见前置条件三线适配表            |
 | ddd4j                     | `${revision}`（与父工程一致） |
-| JDK                       | 8+                            |
 | Maven Surefire / Failsafe | 3.5.2                         |
 
 ## 参考
@@ -467,7 +470,7 @@ public Response page(GoodsQuery query) {     // ← JAX-RS 直接绑定 Query �
 - [ddd4j-runtime-quarkus 源码](../../ddd4j-runtime/ddd4j-runtime-quarkus)
 - [ddd4j-web-quarkus 源码](../../ddd4j-web/ddd4j-web-quarkus)
 - 外部 `ddd4j-boot-samples/ddd4j-boot-sample-order`（Spring Boot 对照）
-- [ddd4j-sample-cache](../ddd4j-sample-cache)（缓存示例参考）
+- [ddd4j-cache](../../ddd4j-cache/README.md)（缓存能力参考）
 
 ## 作者
 
