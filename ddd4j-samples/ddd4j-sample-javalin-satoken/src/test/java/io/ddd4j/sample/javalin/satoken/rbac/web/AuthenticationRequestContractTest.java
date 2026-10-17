@@ -1,11 +1,25 @@
 package io.ddd4j.sample.javalin.satoken.rbac.web;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class AuthenticationRequestContractTest {
+
+    @Test
+    void loginRequestRetainsJsonFieldContract() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        AuthenticationController.LoginRequest request = mapper.readValue(
+                "{\"username\":\"alice\",\"password\":\"secret-123\"}",
+                AuthenticationController.LoginRequest.class);
+        assertEquals("alice", request.username());
+        assertEquals("secret-123", request.password());
+        assertEquals(request, mapper.readValue(mapper.writeValueAsString(request),
+                AuthenticationController.LoginRequest.class));
+        assertFalse(request.toString().contains("secret-123"));
+    }
 
     @Test
     void loginRequestKeepsMutableBeanContractWithoutPrintingPassword() {

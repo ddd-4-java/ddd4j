@@ -1446,6 +1446,17 @@
       "evidence": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/rbac/web/AuthorizationRequestContractTest.java",
       "testSha256": "6a762f4e14aba5a472465ad20aaf819f0e93c4bcbad7fe464d272a26626c1090",
       "reason": "三线授权管理路由与 DTO 源码仅有 JDK 8 的 Java8Maps.of 和高两线的 Map.of 差异；三线请求 JSON、值契约与 29 项路由测试通过，公开 API 一致"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/rbac/web/AuthenticationController.java",
+      "sourceSha256": [
+        "d547452874e623e3aab4c0fbaeb37e4e0bd7fdc6f00e117fd49fac5ab6a83040",
+        "889de37109f316a8aa4ba588fa9f3488505f564b8fe39732df015f44c0c1ab8b",
+        "889de37109f316a8aa4ba588fa9f3488505f564b8fe39732df015f44c0c1ab8b"
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/rbac/web/AuthenticationRequestContractTest.java",
+      "testSha256": "c437483db9b92696d84e71371ef513715231be6d2d086b7a9d68e048f1d9c362",
+      "reason": "三线登录鉴权路由与四个请求 DTO 源码仅有 JDK 8 的 Java8Maps.of 和高两线的 Map.of 差异；请求 JSON、值契约与 HTTP 路由定向测试通过，公开 API 一致"
     }
   ],
   "historicalDocumentSections": [
