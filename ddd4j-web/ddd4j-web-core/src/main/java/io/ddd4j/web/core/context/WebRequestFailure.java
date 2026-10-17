@@ -12,11 +12,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.ddd4j.web.core.context;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
 
 import java.util.Objects;
 
@@ -25,68 +25,104 @@ import java.util.Objects;
  */
 public final class WebRequestFailure {
 
+    private static final long serialVersionUID = 0L;
+
     private final String method;
+
     private final String path;
+
     private final Throwable cause;
 
     /**
-     * 可由运行时事件总线观测的框架无关 HTTP 请求失败事件。
- * @param method 方法
- * @param path 路径
- * @param cause 根因异常
+     * 返回异常原因。
+     *
+     * @return 异常原因
      */
 
-    @JsonCreator
+    public Throwable getCause() {
+        return cause;
+    }
+
+    /**
+     * 返回HTTP 方法。
+     *
+     * @return HTTP 方法
+     */
+
+    public String getMethod() {
+        return method;
+    }
+
+    /**
+     * 返回请求路径。
+     *
+     * @return 请求路径
+     */
+
+    public String getPath() {
+        return path;
+    }
+
+    /**
+     * 创建请求失败记录。
+     *
+     * @param method HTTP 方法
+     * @param path 请求路径
+     * @param cause 原始异常
+     */
+    @JsonCreator()
     public WebRequestFailure(@JsonProperty("method") String method, @JsonProperty("path") String path, @JsonProperty("cause") Throwable cause) {
         this.method = method;
         this.path = path;
         this.cause = cause;
     }
 
+    /**
+     * 返回HTTP 方法。
+     *
+     * @return HTTP 方法
+     */
     @JsonProperty("method")
     public String method() {
         return method;
     }
 
+    /**
+     * 返回请求路径。
+     *
+     * @return 请求路径
+     */
     @JsonProperty("path")
     public String path() {
         return path;
     }
 
+    /**
+     * 返回异常原因。
+     *
+     * @return 异常原因
+     */
     @JsonProperty("cause")
     public Throwable cause() {
         return cause;
     }
 
-    public String getMethod() {
-        return method;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public Throwable getCause() {
-        return cause;
-    }
-
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
         }
-        if (!(o instanceof WebRequestFailure)) {
+        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
             return false;
         }
-        WebRequestFailure that = (WebRequestFailure) o;
-        return Objects.equals(method, that.method)
-                && Objects.equals(path, that.path)
-                && Objects.equals(cause, that.cause);
+        WebRequestFailure other = (WebRequestFailure) obj;
+        return Objects.equals(this.method, other.method) && Objects.equals(this.path, other.path) && Objects.equals(this.cause, other.cause);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hashCode(method);
+        int result = 0;
+        result = 31 * result + Objects.hashCode(method);
         result = 31 * result + Objects.hashCode(path);
         result = 31 * result + Objects.hashCode(cause);
         return result;
