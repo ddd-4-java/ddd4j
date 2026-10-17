@@ -27,7 +27,7 @@
 
 ```bash
 fixture_tmp=$(mktemp -d /tmp/ddd4j-truelicense-legacy.XXXXXX)
-jdk8_bin=/Users/ddd4j/Library/Java/JavaVirtualMachines/corretto-1.8.0_504/Contents/Home/bin
+jdk8_bin="${JAVA8_HOME:?Set JAVA8_HOME to a JDK 8 installation}/bin"
 
 cp LegacyFixtureGenerator.java.txt "$fixture_tmp/LegacyFixtureGenerator.java"
 
