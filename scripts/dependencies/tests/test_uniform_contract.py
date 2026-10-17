@@ -10,6 +10,21 @@ spec.loader.exec_module(checker)
 
 
 class UniformContract(unittest.TestCase):
+    def test_three_release_lines_retain_their_own_compatible_pins(self):
+        repository = pathlib.Path(__file__).parents[3]
+        raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
+        jdk8 = checker.resolve_policy(raw, 'feature/1.0.x')
+        jdk17 = checker.resolve_policy(raw, 'feature/2.0.x')
+        jdk21 = checker.resolve_policy(raw, 'feature/3.0.x')
+        self.assertEqual(jdk8['fixed_properties'].get('hikaricp-jdk8.version'), '4.0.3')
+        self.assertEqual(jdk8['fixed_properties'].get('mybatis-spring.version'), '2.1.2')
+        self.assertEqual(jdk17['fixed_properties'].get('mybatis-spring.version'), '3.0.5')
+        self.assertEqual(jdk17['fixed_properties'].get('micronaut.version'), '4.10.21')
+        self.assertIn('io.micronaut*:*', jdk17['exclude'])
+        self.assertEqual(jdk21['fixed_properties'].get('vertx-compat4.version'), '4.5.35')
+        self.assertNotIn('vertx-compat4.version', jdk8['fixed_properties'])
+        self.assertNotIn('vertx-compat4.version', jdk17['fixed_properties'])
+
     def test_pattern_applies_without_exact_branch_entry(self):
         policy = checker.resolve_policy({'branches': {'feature/*': {'fixed_properties': {'v': '2'}}}}, 'feature/new')
         self.assertEqual(policy['fixed_properties'], {'v': '2'})
@@ -407,13 +422,13 @@ class UniformContract(unittest.TestCase):
     def test_jdk21_quarkus_uses_compatible_vertx4_artifacts(self):
         repository = pathlib.Path(__file__).parents[3]
         raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
-        expected = {'io.vertx:vertx-core': '4.5.35',
-                    'io.vertx:vertx-junit5': '4.5.35',
-                    'io.vertx:vertx-web': '4.5.35'}
+        coordinates = {'io.vertx:vertx-core', 'io.vertx:vertx-junit5', 'io.vertx:vertx-web'}
         jdk21 = checker.resolve_policy(raw, 'feature/3.0.x')
-        self.assertEqual({key: jdk21['fixed_dependencies'].get(key) for key in expected}, expected)
+        self.assertEqual(jdk21['fixed_properties'].get('vertx-compat4.version'), '4.5.35')
+        self.assertTrue(coordinates.isdisjoint(jdk21['fixed_dependencies']))
         for branch in ('feature/1.0.x', 'feature/2.0.x'):
-            self.assertTrue(expected.keys().isdisjoint(checker.resolve_policy(raw, branch)['fixed_dependencies']))
+            self.assertNotIn('vertx-compat4.version',
+                             checker.resolve_policy(raw, branch)['fixed_properties'])
 
     def test_non_maven_branch_is_explicitly_not_applicable(self):
         with tempfile.TemporaryDirectory() as directory:

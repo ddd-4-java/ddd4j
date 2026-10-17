@@ -65,6 +65,8 @@
         "dropwizard.version": "2.1.12",
         "dozer-core.version": "6.5.2",
         "guice.version": "5.1.0",
+        "hikaricp-jdk8.version": "4.0.3",
+        "hikaricp.version": "4.0.3",
         "h2.version": "2.2.224",
         "helidon.version": "1.4.19",
         "hibernate-validator.version": "6.2.6.Final",
@@ -80,6 +82,7 @@
         "logback.version": "1.2.13",
         "maven-dependency-check-plugin.version": "10.0.4",
         "mockito.version": "4.11.0",
+        "mybatis-spring.version": "2.1.2",
         "quarkus.version": "1.13.7.Final",
         "quartz.version": "2.4.1",
         "pulsar.version": "4.0.14",
@@ -88,6 +91,8 @@
         "redisson.version": "3.52.0",
         "shiro.version": "1.13.0",
         "slf4j-legacy.version": "1.7.36",
+        "snakeyaml-boot2.version": "1.33",
+        "spring-boot-starter-mybatis.version": "2.3.2",
         "testcontainers-redis.version": "2.0.2",
         "vertx.version": "4.5.35"
       },
@@ -135,13 +140,11 @@
         "micronaut.core.version": "4.10.26",
         "micronaut.version": "4.10.21",
         "pulsar.version": "4.2.2",
-        "redisson.version": "3.52.0"
+        "redisson.version": "3.52.0",
+        "vertx-compat4.version": "4.5.35"
       },
       "fixed_dependencies": {
-        "com.lmax:disruptor": "4.0.0",
-        "io.vertx:vertx-core": "4.5.35",
-        "io.vertx:vertx-junit5": "4.5.35",
-        "io.vertx:vertx-web": "4.5.35"
+        "com.lmax:disruptor": "4.0.0"
       }
     },
     "fix/1.0.x-jdk8-security-refresh": {
@@ -191,7 +194,6 @@
     }
   },
   "exclude_properties": [],
-  "fixed_dependencies": {
-  },
+  "fixed_dependencies": {},
   "cvss_threshold": 7
 }
