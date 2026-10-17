@@ -1,4 +1,4 @@
-package io.ddd4j.sample.javalin.cqrs.order.domain.model;
+package io.ddd4j.sample.order.domain;
 
 import org.junit.jupiter.api.Test;
 
@@ -7,16 +7,18 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamClass;
+import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class MoneyLegacySerializationTest {
+class MoneySerializationContractTest {
 
     @Test
-    void preservesJdk8PublishedSerialVersionUidAndValue() throws Exception {
-        assertEquals(-8477704881210516506L, ObjectStreamClass.lookup(Money.class).getSerialVersionUID());
+    void preservesPublishedSerialVersionUidAndValue() throws Exception {
+        assertEquals("1.8".equals(System.getProperty("java.specification.version")) ? -8848492078636310279L : 0L,
+                ObjectStreamClass.lookup(Money.class).getSerialVersionUID());
 
-        Money original = Money.cny("3.50");
+        Money original = Money.cny(new BigDecimal("12.35"));
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         try (ObjectOutputStream output = new ObjectOutputStream(bytes)) {
             output.writeObject(original);
