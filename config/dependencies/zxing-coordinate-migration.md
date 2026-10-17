@@ -19,4 +19,4 @@
 所用公共依赖来自本次三线 effective POM：ZXing core 3.5.4、Thumbnailator 0.4.21、SLF4J 2.0.18、Commons Lang3 和 Commons
 IO。探针仅测试二维码编码解码，不宣称验证所有图形、logo、frame 组合。
 
-因此 JDK 17/21 线统一选择真实可用的 `io.github.easy4j` 2.0.x 产物，旧 `io.github.ddd4j` 坐标记录为迁移关系。此次未重新构建或发布上游 SDK，也未虚构 3.0.x 新坐标的可用性。
+因此 JDK 17/21 线统一选择真实可用的 `io.github.easy4j` 2.0.x 产物，旧 `io.github.redacted-legacy-family` 坐标记录为迁移关系。此次未重新构建或发布上游 SDK，也未虚构 3.0.x 新坐标的可用性。
