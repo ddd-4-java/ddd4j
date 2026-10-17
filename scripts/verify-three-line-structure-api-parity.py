@@ -318,7 +318,7 @@ def java_serial_field_adaptation_matches(path: str, roots: list[pathlib.Path]) -
 
 
 def java_tokens_with_normalized_imports(source: str) -> tuple[str, ...] | None:
-    """仅排序完整的 Java import 声明；导入目标和正文仍须逐 token 相同。"""
+    """排序导入，并去除唯一通配包已覆盖的显式导入；正文逐 token 比较。"""
     tokens = java_lexical_tokens(source)
     if tokens is None or "import" not in tokens:
         return tokens
@@ -355,6 +355,14 @@ def java_tokens_with_normalized_imports(source: str) -> tuple[str, ...] | None:
             position += 2
         imports.append(statement)
         index = end + 1
+    wildcard_packages = [statement[1:-3] for statement in imports
+                         if statement[1] != "static" and statement[-2] == "*"]
+    static_wildcard = any(statement[1] == "static" and statement[-2] == "*"
+                          for statement in imports)
+    if len(wildcard_packages) == 1 and not static_wildcard:
+        imports = [statement for statement in imports
+                   if statement[1] == "static" or statement[-2] == "*"
+                   or statement[1:-3] != wildcard_packages[0]]
     ordered = tuple(token for statement in sorted(imports) for token in statement)
     return tokens[:start] + ordered + tokens[index:]
 
