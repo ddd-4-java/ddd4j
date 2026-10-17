@@ -24,6 +24,7 @@ import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.event.MQEventSerialization;
 import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.message.MessageHeaders;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.Message;
@@ -33,6 +34,7 @@ import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -47,6 +49,43 @@ import static org.mockito.Mockito.*;
  * @since 3.0.x
  */
 class SqsAdapterContractTest {
+
+    @AfterEach
+    void clearContext() {
+        BaseContext.clear();
+    }
+
+    @Test
+    void successfulNativeSendDoesNotSerializeAgainForLogging() {
+        SqsClient client = mock(SqsClient.class);
+        SqsMQClient adapter = new SqsMQClient(client);
+        AtomicInteger serializations = new AtomicInteger();
+        BaseContext.inject(MQClient.MQ_SERIALIZATION, new MQEventSerialization() {
+            @Override
+            public <S, T> T deserialize(S src, Class<T> dist) {
+                return null;
+            }
+
+            @Override
+            @SuppressWarnings("unchecked")
+            public <T> T serialize(Object src) {
+                if (serializations.incrementAndGet() > 1) {
+                    throw new IllegalStateException("serialized twice after native send");
+                }
+                return (T) "{}";
+            }
+        });
+        MQEvent event = new MQEvent();
+        event.setTopic("http://queue");
+
+        try {
+            adapter.initProducer(new SqsProperties()).accept(event);
+            verify(client, times(1)).sendMessage(any(SendMessageRequest.class));
+            assertEquals(1, serializations.get());
+        } finally {
+            adapter.close();
+        }
+    }
 
     @Test
     void shouldPublishFrozenCausalityHeadersAsNativeAttributes() {
