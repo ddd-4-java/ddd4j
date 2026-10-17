@@ -85,6 +85,12 @@ jobs:
         run: ./scripts/verify-architecture.sh
       - name: Install reactor dependencies
         run: ./mvnw -U -Denforcer.skip=true -B clean install -DskipTests -DskipITs
+      - name: Validate structure and compiled API checker
+        run: >-
+          python3 -m unittest -q
+          scripts/test_three_line_structure_inventory.py
+          scripts/test_three_line_compiled_api_metadata.py
+          scripts/test_three_line_type_mappings.py
       - name: Run unit and adapter contracts
         run: ./mvnw -Denforcer.skip=true -B test -DskipITs
       - name: Verify JPA MySQL container test execution
