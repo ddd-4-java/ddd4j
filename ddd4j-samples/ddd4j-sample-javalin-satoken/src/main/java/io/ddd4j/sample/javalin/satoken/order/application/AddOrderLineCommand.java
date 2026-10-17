@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
-import lombok.Value;
+import java.util.Objects;
 
 import java.math.BigDecimal;
 
@@ -28,7 +28,6 @@ import java.math.BigDecimal;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 
-@Value
 public final class AddOrderLineCommand {
 
     private static final long serialVersionUID = 0L;
@@ -60,28 +59,106 @@ public final class AddOrderLineCommand {
         this.unitPrice = unitPrice;
     }
 
+    /**
+     * 读取订单标识。
+     *
+     * @return 订单标识
+     */
     @JsonProperty("orderId")
     public String orderId() {
         return orderId;
     }
 
+    /**
+     * 读取商品标识。
+     *
+     * @return 商品标识
+     */
     @JsonProperty("goodsId")
     public String goodsId() {
         return goodsId;
     }
 
+    /**
+     * 读取商品名称。
+     *
+     * @return 商品名称
+     */
     @JsonProperty("goodsName")
     public String goodsName() {
         return goodsName;
     }
 
+    /**
+     * 读取数量。
+     *
+     * @return 数量
+     */
     @JsonProperty("quantity")
     public int quantity() {
         return quantity;
     }
 
+    /**
+     * 读取商品单价。
+     *
+     * @return 商品单价
+     */
     @JsonProperty("unitPrice")
     public BigDecimal unitPrice() {
         return unitPrice;
+    }
+
+    /** @return 订单标识 */
+    public String getOrderId() {
+        return orderId;
+    }
+
+    /** @return 商品标识 */
+    public String getGoodsId() {
+        return goodsId;
+    }
+
+    /** @return 商品名称 */
+    public String getGoodsName() {
+        return goodsName;
+    }
+
+    /** @return 数量 */
+    public int getQuantity() {
+        return quantity;
+    }
+
+    /** @return 单价 */
+    public BigDecimal getUnitPrice() {
+        return unitPrice;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+            return false;
+        }
+        AddOrderLineCommand other = (AddOrderLineCommand) obj;
+        return Objects.equals(this.orderId, other.orderId) && Objects.equals(this.goodsId, other.goodsId) && Objects.equals(this.goodsName, other.goodsName) && this.quantity == other.quantity && Objects.equals(this.unitPrice, other.unitPrice);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 1;
+        result = 59 * result + quantity;
+        result = 59 * result + (Objects.isNull(orderId) ? 43 : orderId.hashCode());
+        result = 59 * result + (Objects.isNull(goodsId) ? 43 : goodsId.hashCode());
+        result = 59 * result + (Objects.isNull(goodsName) ? 43 : goodsName.hashCode());
+        result = 59 * result + (Objects.isNull(unitPrice) ? 43 : unitPrice.hashCode());
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "AddOrderLineCommand(orderId=" + orderId + ", goodsId=" + goodsId + ", goodsName=" + goodsName + ", quantity=" + quantity + ", unitPrice=" + unitPrice + ")";
     }
 }

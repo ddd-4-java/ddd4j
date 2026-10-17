@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
-import lombok.Value;
+import java.util.Objects;
 
 /**
  * 创建订单命令。
@@ -26,7 +26,6 @@ import lombok.Value;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 
-@Value
 public final class CreateOrderCommand {
 
     private static final long serialVersionUID = 0L;
@@ -50,18 +49,74 @@ public final class CreateOrderCommand {
         this.buyerName = buyerName;
     }
 
+    /**
+     * 读取订单编号。
+     *
+     * @return 订单编号
+     */
     @JsonProperty("orderNo")
     public String orderNo() {
         return orderNo;
     }
 
+    /**
+     * 读取买家标识。
+     *
+     * @return 买家标识
+     */
     @JsonProperty("buyerId")
     public String buyerId() {
         return buyerId;
     }
 
+    /**
+     * 读取买家名称。
+     *
+     * @return 买家名称
+     */
     @JsonProperty("buyerName")
     public String buyerName() {
         return buyerName;
+    }
+
+    /** @return 订单编号 */
+    public String getOrderNo() {
+        return orderNo;
+    }
+
+    /** @return 买家标识 */
+    public String getBuyerId() {
+        return buyerId;
+    }
+
+    /** @return 买家名称 */
+    public String getBuyerName() {
+        return buyerName;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+            return false;
+        }
+        CreateOrderCommand other = (CreateOrderCommand) obj;
+        return Objects.equals(this.orderNo, other.orderNo) && Objects.equals(this.buyerId, other.buyerId) && Objects.equals(this.buyerName, other.buyerName);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 1;
+        result = 59 * result + (Objects.isNull(orderNo) ? 43 : orderNo.hashCode());
+        result = 59 * result + (Objects.isNull(buyerId) ? 43 : buyerId.hashCode());
+        result = 59 * result + (Objects.isNull(buyerName) ? 43 : buyerName.hashCode());
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "CreateOrderCommand(orderNo=" + orderNo + ", buyerId=" + buyerId + ", buyerName=" + buyerName + ")";
     }
 }
