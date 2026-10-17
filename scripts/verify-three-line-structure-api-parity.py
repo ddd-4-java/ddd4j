@@ -641,9 +641,29 @@ def classify_compiled_source_api(rows: list[dict[str, str]], roots: list[pathlib
             row["evidence"] = "compiled-api.json: class exists in all lines with equal public JVM API"
     for item in result.get("platformAdaptations", []):
         for row in rows:
-            if row["category"] == "api" and row["path"] == item["sourceSymbol"] and row["status"] == "OPEN":
+            if (row["category"] == "api" and row["path"] == item["sourceSymbol"]
+                    and row["status"] in ("OPEN", "PLATFORM_API_PENDING_COMPILE")):
                 row["status"] = "PLATFORM_API_ADAPTED"
                 row["evidence"] = item["evidence"]
+
+
+def classify_declared_platform_api(rows: list[dict[str, str]], policy: dict[str, object]) -> None:
+    """精确源码形态已登记时暂缓 OPEN；只有编译门禁能确认平台适配。"""
+    missing = {item["sourceSymbol"]: item for item in
+               policy.get("platformApiMembersMissingOnJdk8", [])}
+    only_jdk8 = {item["sourceSymbol"]: item for item in
+                 policy.get("platformApiMembersOnlyOnJdk8", [])}
+    for row in rows:
+        if row["category"] != "api" or row["status"] != "OPEN":
+            continue
+        absent = missing.get(row["path"])
+        present = only_jdk8.get(row["path"])
+        if ((absent and row["jdk8"] == "MISSING" and row["jdk17"] != "MISSING"
+             and row["jdk17"] == row["jdk21"])
+                or (present and row["jdk8"] == present.get("sourceDeclaration")
+                    and row["jdk17"] == row["jdk21"] == "MISSING")):
+            row["status"] = "PLATFORM_API_PENDING_COMPILE"
+            row["evidence"] = (absent or present)["evidence"]
 
 
 def inventory_gate(roots: list[pathlib.Path], output: pathlib.Path, policy_path: pathlib.Path,
@@ -746,6 +766,7 @@ def inventory_gate(roots: list[pathlib.Path], output: pathlib.Path, policy_path:
                      "jdk17": values[1] or "MISSING", "jdk21": values[2] or "MISSING",
                      "reason": reason, "status": "OPEN", "task": task_for_difference(symbol, "api"),
                      "evidence": ""})
+    classify_declared_platform_api(rows, policy)
     rows.sort(key=lambda row: (row["path"], row["category"]))
     compiled = (compiled_api_gate(roots, output, policy, rows) if phase == "verify"
                 else {"status": "NOT_RUN", "reason": "inventory phase"})
@@ -753,6 +774,7 @@ def inventory_gate(roots: list[pathlib.Path], output: pathlib.Path, policy_path:
         classify_compiled_source_api(rows, roots, output, compiled)
     counts = {status: sum(row["status"] == status for row in rows)
               for status in ("OPEN", "PLATFORM_UNSUPPORTED", "PLATFORM_ADAPTED", "PLATFORM_API_ADAPTED",
+                             "PLATFORM_API_PENDING_COMPILE",
                              "PLATFORM_CONFIG", "HISTORICAL", "HISTORICAL_SECTION",
                              "COMPILED_API_EQUIVALENT", "LEXICALLY_EQUIVALENT")}
     report = {"schemaVersion": 1, "phase": phase, "roots": [str(root) for root in roots],
@@ -769,13 +791,15 @@ def inventory_gate(roots: list[pathlib.Path], output: pathlib.Path, policy_path:
     (output / "summary.md").write_text(
         "# 三线当前文件差异\n\n" + "\n".join(f"- {name}: {count}" for name, count in counts.items())
         + "\n- compiled API: " + compiled["status"] + "\n\n"
+        + "PLATFORM_API_PENDING_COMPILE 仅代表当前源码声明符合精确登记；必须完成编译 API 门禁才能验收。\n"
         + "PLATFORM_CONFIG 仅证明模块身份与聚合拓扑一致；依赖和插件正确性由 T03 严格门禁验证。\n"
         + "文件内容差异仍须进一步判定语义与公开 API；本清单不代表行为验证。\n",
         encoding="utf-8")
     print(f"phase={phase} differences={len(rows)} open={counts['OPEN']} "
           f"compiled_api={compiled['status']} output={output}")
     return 1 if ((fail_on_open and counts["OPEN"])
-                 or (phase == "verify" and (counts["OPEN"] or compiled["status"] != "PASS"))) else 0
+                 or (phase == "verify" and (counts["OPEN"] or counts["PLATFORM_API_PENDING_COMPILE"]
+                                            or compiled["status"] != "PASS"))) else 0
 
 
 def module_dirs(paths: set[str]) -> set[str]:
