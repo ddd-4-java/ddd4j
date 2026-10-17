@@ -1055,6 +1055,17 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-runtime/ddd4j-runtime-dropwizard/src/main/java/io/ddd4j/dropwizard/DropwizardDomainEventPublisher.java",
+      "sourceSha256": [
+        "2f7ffee73558c6de94ea45f4fec496e7a87da1d2d10abb82a947a86b9c2326e1",
+        "899263b7e64c3a52bbd417abf7d7c611d51c39f1a94657bc671f7cea67f2e3a4",
+        "899263b7e64c3a52bbd417abf7d7c611d51c39f1a94657bc671f7cea67f2e3a4"
+      ],
+      "evidence": "ddd4j-runtime/ddd4j-runtime-dropwizard/src/test/java/io/ddd4j/dropwizard/DropwizardDomainEventPublisherTest.java",
+      "testSha256": "ecee0ac4af4e424f25ac310859e7565621fe551fce9956b9da1ffea37c0b2e4a",
+      "reason": "三线共同测试验证监听器列表快照、空监听器在构造时被拒绝、null 事件跳过和事件分发；JDK 8 使用不可修改副本并逐项校验，高两线使用 List.copyOf，业务语义一致"
+    },
+    {
       "path": "ddd4j-runtime/ddd4j-runtime-dropwizard/src/main/java/io/ddd4j/dropwizard/Ddd4jDropwizardRuntime.java",
       "sourceSha256": [
         "1352adc0d8a1f1d42981d1b41fd439a5fba21b12e178238014cefd9d437932c7",
