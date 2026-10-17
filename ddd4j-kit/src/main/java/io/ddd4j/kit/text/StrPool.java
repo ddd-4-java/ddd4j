@@ -33,8 +33,8 @@ public interface StrPool {
     String COLON = ":";
     String COMMA = ",";
     String DASH = "-";
-    String DOLLAR = "$";
     String DDD4J_PREFIX = "ddd4j.";
+    String DOLLAR = "$";
     String DOT = ".";
     String DOTDOT = "..";
     String DOT_CLASS = ".class";
