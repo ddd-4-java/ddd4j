@@ -31,6 +31,7 @@ import io.ddd4j.core.ddd.event.EventId;
 import io.ddd4j.core.ddd.event.StringEntityType;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.LockModeType;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -60,6 +61,8 @@ import java.util.function.Supplier;
  * @since 3.0.0
  */
 public class JpaEventStore implements EventStore {
+
+    private static final String ENTITY = "StoredEventEntity";
 
     private final EntityManager entityManager;
     private final JpaStoredEventRepository repository;
@@ -221,6 +224,8 @@ public class JpaEventStore implements EventStore {
                         aggregateType, aggregateId.asString(), expectedVersion, currentVersion);
             }
 
+            // 锁定已有的最后位置行，串行化跨聚合的全局 position 分配。
+            maxPosition();
             long version = expectedVersion;
             for (DomainEvent<?> event : events) {
                 StoredEventEntity entity = new StoredEventEntity();
@@ -350,6 +355,15 @@ public class JpaEventStore implements EventStore {
                 failure.addSuppressed(markingFailure);
             }
         }
+    }
+
+    private long maxPosition() {
+        List<Long> maxRows = entityManager.createQuery(
+                        "select e.position from " + ENTITY + " e order by e.position desc", Long.class)
+                .setMaxResults(1)
+                .setLockMode(LockModeType.PESSIMISTIC_WRITE)
+                .getResultList();
+        return maxRows.isEmpty() ? 0L : maxRows.get(0);
     }
 
     /**

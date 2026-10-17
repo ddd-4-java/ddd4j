@@ -36,6 +36,11 @@ import jakarta.persistence.RollbackException;
 import java.sql.Connection;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.hibernate.cfg.Configuration;
 import org.junit.jupiter.api.AfterAll;
@@ -86,6 +91,75 @@ class JpaEventStorePostgresIT {
             if (second.getTransaction().isActive()) {
                 second.getTransaction().rollback();
             }
+            first.close();
+            second.close();
+        }
+    }
+
+    @Test
+    void concurrentAppendsMustSerializeGlobalPositionAllocation() throws Exception {
+        TestAggregateRootId seed = new TestAggregateRootId("position-seed");
+        eventStore.append("Order", seed, List.of(new OrderCreatedEvent(seed)), 0);
+
+        EntityManager first = entityManagerFactory.createEntityManager();
+        EntityManager second = entityManagerFactory.createEntityManager();
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        EntityTransaction firstTransaction = first.getTransaction();
+        CountDownLatch versionRead = new CountDownLatch(1);
+        CountDownLatch positionLookup = new CountDownLatch(1);
+        Future<?> competing = null;
+        try {
+            TestAggregateRootId firstId = new TestAggregateRootId("position-first");
+            firstTransaction.begin();
+            JpaEventStore.participating(first).append("Order", firstId,
+                    List.of(new OrderCreatedEvent(firstId)), 0);
+
+            JpaStoredEventRepository secondRepository = new JpaStoredEventRepositoryImpl(second) {
+                @Override
+                public long findCurrentVersion(String aggregateType, String aggregateId) {
+                    long version = super.findCurrentVersion(aggregateType, aggregateId);
+                    versionRead.countDown();
+                    return version;
+                }
+
+                @Override
+                public long nextPosition() {
+                    positionLookup.countDown();
+                    return super.nextPosition();
+                }
+            };
+            TestAggregateRootId secondId = new TestAggregateRootId("position-second");
+            competing = executor.submit(() -> {
+                EntityTransaction transaction = second.getTransaction();
+                transaction.begin();
+                try {
+                    JpaEventStore.participating(second, secondRepository,
+                            new EventPayloadSerializer(JsonMapper.builder().findAndAddModules().build()))
+                            .append("Order", secondId, List.of(new OrderCreatedEvent(secondId)), 0);
+                    transaction.commit();
+                } finally {
+                    if (transaction.isActive()) {
+                        transaction.rollback();
+                    }
+                }
+            });
+            assertTrue(versionRead.await(10, TimeUnit.SECONDS), "competing transaction did not reach version lookup");
+            boolean allocatedBeforeCommit = positionLookup.await(300, TimeUnit.MILLISECONDS);
+            firstTransaction.commit();
+
+            assertFalse(allocatedBeforeCommit, "position lookup passed the uncommitted predecessor");
+            competing.get(15, TimeUnit.SECONDS);
+            entityManager.clear();
+            assertThat(eventStore.readAll(0, 10)).extracting(StoredEvent::position)
+                    .containsExactly(1L, 2L, 3L);
+        } finally {
+            if (firstTransaction.isActive()) {
+                firstTransaction.rollback();
+            }
+            if (Objects.nonNull(competing)) {
+                competing.cancel(true);
+            }
+            executor.shutdownNow();
             first.close();
             second.close();
         }
