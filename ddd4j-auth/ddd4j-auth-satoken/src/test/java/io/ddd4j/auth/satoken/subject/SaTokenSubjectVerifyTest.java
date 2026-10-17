@@ -33,6 +33,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -171,8 +173,11 @@ class SaTokenSubjectVerifyTest {
         SaTokenSubject subject = new SaTokenSubject();
         AuthPrincipal principal = principal("jwt-user");
         login(logic, principal);
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("iss", "ddd4j-test");
+        claims.put("aud", "unexpected");
         String forgedToken = cn.dev33.satoken.jwt.SaJwtUtil.createToken(logic.getLoginType(), principal.getLoginId(),
-                "default-device", 60L, Map.of("iss", "ddd4j-test", "aud", "unexpected"),
+                "default-device", 60L, claims,
                 "ddd4j-satoken-subject-test-secret-32bytes");
         logic.saveTokenToIdMapping(forgedToken, principal.getLoginId(), 60L);
 
@@ -187,7 +192,7 @@ class SaTokenSubjectVerifyTest {
         SaTokenSubject subject = install(logic);
         AuthPrincipal principal = principal("permission-user");
         login(logic, principal);
-        AtomicReference<List<String>> permissions = new AtomicReference<>(List.of("order:read"));
+        AtomicReference<List<String>> permissions = new AtomicReference<>(Collections.singletonList("order:read"));
         SubjectKit.setDataProvider(new SubjectDataProvider() {
             @Override
             public List<String> getPermissionList(AuthPrincipal ignored) {
@@ -196,7 +201,7 @@ class SaTokenSubjectVerifyTest {
         });
 
         assertThat(subject.isPermitted(principal.getLoginId(), "order:read")).isTrue();
-        permissions.set(List.of("order:write"));
+        permissions.set(Collections.singletonList("order:write"));
 
         assertThat(subject.isPermitted(principal.getLoginId(), "order:read")).isFalse();
         assertThat(subject.isPermitted(principal.getLoginId(), "order:write")).isTrue();
