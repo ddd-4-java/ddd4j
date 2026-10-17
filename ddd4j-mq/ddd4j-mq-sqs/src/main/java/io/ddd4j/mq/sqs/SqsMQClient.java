@@ -61,7 +61,9 @@ public class SqsMQClient implements MQClient {
     private final MQClientLifecycle lifecycle = new MQClientLifecycle();
     private final MQStartupStatus startupStatus = new MQStartupStatus("sqs");
     private final ReentrantReadWriteLock sendLifecycleLock = new ReentrantReadWriteLock(true);
+    private final ReentrantReadWriteLock receiveLifecycleLock = new ReentrantReadWriteLock(true);
     private SqsClient client;
+    private boolean receiveDrainRegistered;
     private volatile boolean closed;
 
     /**
@@ -195,13 +197,25 @@ public class SqsMQClient implements MQClient {
                 return;
             }
             try {
-                List<Message> messages = client.receiveMessage(ReceiveMessageRequest.builder()
-                                .queueUrl(queueUrl)
-                                .maxNumberOfMessages(properties.getMaxNumberOfMessages())
-                                .waitTimeSeconds(properties.getWaitTimeSeconds())
-                                .messageAttributeNames("All")
-                                .build())
-                        .messages();
+                List<Message> messages;
+                receiveLifecycleLock.readLock().lock();
+                try {
+                    if (closed) {
+                        return;
+                    }
+                    messages = client.receiveMessage(ReceiveMessageRequest.builder()
+                                    .queueUrl(queueUrl)
+                                    .maxNumberOfMessages(properties.getMaxNumberOfMessages())
+                                    .waitTimeSeconds(properties.getWaitTimeSeconds())
+                                    .messageAttributeNames("All")
+                                    .build())
+                            .messages();
+                } finally {
+                    receiveLifecycleLock.readLock().unlock();
+                }
+                if (closed) {
+                    return;
+                }
                 for (Message message : messages) {
                     handleMessage(message, queueUrl, listener);
                 }
@@ -293,6 +307,17 @@ public class SqsMQClient implements MQClient {
             SqsClient ownedClient = Objects.requireNonNull(properties.client(), "SqsClient");
             client = ownedClient;
             lifecycle.register("sqs-client", ownedClient::close);
+        }
+        if (!receiveDrainRegistered) {
+            lifecycle.register("sqs-receive-drain", () -> {
+                receiveLifecycleLock.writeLock().lock();
+                try {
+                    // Wait for an in-flight native receive before closing the client.
+                } finally {
+                    receiveLifecycleLock.writeLock().unlock();
+                }
+            });
+            receiveDrainRegistered = true;
         }
     }
 
