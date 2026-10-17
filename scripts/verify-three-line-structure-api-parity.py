@@ -293,12 +293,20 @@ def java_files_lexically_equal(path: str, roots: list[pathlib.Path]) -> bool:
     return tokens[0] is not None and tokens[0] == tokens[1] == tokens[2]
 
 
-def java_platform_imports_only_match(path: str, roots: list[pathlib.Path]) -> bool:
+def java_platform_imports_only_match(path: str, roots: list[pathlib.Path],
+                                     type_mappings: list[dict]) -> bool:
     """只映射已确认的平台导入命名空间；类型正文和其余导入逐 token 相同。"""
     sources = [(root / path).read_text(encoding="utf-8") for root in roots]
+    dropwizard_imports = []
+    for mapping in type_mappings:
+        types = mapping["types"]
+        old, modern = types["1.0.x"], types["2.0.x"]
+        if (old.startswith("io.dropwizard.") and old != modern
+                and modern == types["3.0.x"]):
+            dropwizard_imports.append((old + ";", modern + ";"))
 
     def normalize(source: str) -> str:
-        for old, new in PLATFORM_IMPORT_NAMESPACES:
+        for old, new in (*PLATFORM_IMPORT_NAMESPACES, *dropwizard_imports):
             source = re.sub(r"(?m)^([ \t]*import[ \t]+(?:static[ \t]+)?)" + re.escape(old),
                             lambda match: match.group(1) + new, source)
         return source
@@ -744,9 +752,10 @@ def inventory_gate(roots: list[pathlib.Path], output: pathlib.Path, policy_path:
             status = "LEXICALLY_EQUIVALENT"
             evidence = "current Java source: identical tokens after removing comments, whitespace and import order"
         elif (category in ("production", "test") and all(value is not None for value in values)
-              and java_platform_imports_only_match(path, roots)):
+              and java_platform_imports_only_match(path, roots, policy.get("typeMappings", []))):
             status = "PLATFORM_ADAPTED"
-            evidence = ("current Java source: only approved javax/Jakarta or Jackson import namespaces differ; "
+            evidence = ("current Java source: only approved javax/Jakarta, Jackson, or exact "
+                        "Dropwizard type imports differ; "
                         "remaining tokens match; compiled API and behavior require separate gates")
         reason = "missing" if any(value is None for value in values) else "content"
         stable_id = hashlib.sha256((category + "\0" + path + "\0" + reason).encode()).hexdigest()[:16]
