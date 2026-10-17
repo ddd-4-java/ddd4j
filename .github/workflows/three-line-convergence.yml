@@ -92,6 +92,7 @@ jobs:
       - name: Check unresolved three-line inventory on push
         if: github.event_name == 'push'
         run: |
+          DDD4J_JDK21_HOME="$JAVA_HOME_21_X64" \
           python3 driver/scripts/verify-three-line-structure-api-parity.py \
             --roots line-8 line-17 line-21 \
             --policy driver/config/parity/three-line-policy.json \
