@@ -31,4 +31,29 @@ class OrderCommandJsonContractTest {
 
         assertEquals(original, restored);
     }
+
+    @Test
+    void createOrderCommandRetainsThreeLineValueHash() {
+        CreateOrderCommand command = new CreateOrderCommand("O-1", null, "Alice");
+        int expected = 1;
+        expected = 59 * expected + "O-1".hashCode();
+        expected = 59 * expected + 43;
+        expected = 59 * expected + "Alice".hashCode();
+
+        assertEquals(expected, command.hashCode());
+    }
+
+    @Test
+    void addOrderLineCommandRetainsThreeLineValueHash() {
+        AddOrderLineCommand command = new AddOrderLineCommand(
+                "order-1", null, "Coffee", 2, new BigDecimal("12.50"));
+        int expected = 1;
+        expected = 59 * expected + 2;
+        expected = 59 * expected + "order-1".hashCode();
+        expected = 59 * expected + 43;
+        expected = 59 * expected + "Coffee".hashCode();
+        expected = 59 * expected + new BigDecimal("12.50").hashCode();
+
+        assertEquals(expected, command.hashCode());
+    }
 }
