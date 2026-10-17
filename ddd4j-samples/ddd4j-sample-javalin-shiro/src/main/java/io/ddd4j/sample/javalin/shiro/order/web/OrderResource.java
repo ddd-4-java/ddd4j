@@ -167,5 +167,41 @@ public class OrderResource {
         public String currency() {
             return currency;
         }
+
+        /** @return 折扣金额 */
+        public String getAmount() {
+            return amount;
+        }
+
+        /** @return 币种 */
+        public String getCurrency() {
+            return currency;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            DiscountView other = (DiscountView) obj;
+            return Objects.equals(this.amount, other.amount)
+                    && Objects.equals(this.currency, other.currency);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 1;
+            result = 59 * result + (Objects.isNull(amount) ? 43 : amount.hashCode());
+            result = 59 * result + (Objects.isNull(currency) ? 43 : currency.hashCode());
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "OrderResource.DiscountView(amount=" + amount + ", currency=" + currency + ")";
+        }
     }
 }
