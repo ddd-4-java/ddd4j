@@ -5,6 +5,7 @@
  */
 package io.ddd4j.sample.vertx.cqrs;
 
+import tools.jackson.databind.ObjectMapper;
 import io.ddd4j.sample.vertx.cqrs.command.CreateOrderCommand;
 import org.junit.jupiter.api.Test;
 
@@ -14,6 +15,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /** 三线 Vert.x CQRS 创建订单命令契约。 */
 class VertxOrderCommandContractTest {
+
+    @Test
+    void commandKeepsJsonRoundTrip() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        CreateOrderCommand command = new CreateOrderCommand("O-1", "B-1", "Alice");
+        assertEquals(command, mapper.readValue(mapper.writeValueAsString(command), CreateOrderCommand.class));
+    }
 
     @Test
     void commandKeepsBeanAndComponentAccessorsAndValueSemantics() {
@@ -28,6 +36,7 @@ class VertxOrderCommandContractTest {
         assertEquals(first, same);
         assertEquals(first.hashCode(), same.hashCode());
         assertNotEquals(first, new CreateOrderCommand("O-2", "B-1", "Alice"));
-        assertTrue(first.toString().contains("orderNo=O-1"));
+        assertEquals(336683680, first.hashCode());
+        assertEquals("CreateOrderCommand(orderNo=O-1, buyerId=B-1, buyerName=Alice)", first.toString());
     }
 }
