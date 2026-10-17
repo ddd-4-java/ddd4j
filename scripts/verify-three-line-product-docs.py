@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""检查三线共同产品文档正文与本地 Markdown 链接。"""
+"""检查三线共同产品文档正文与本地文档、脚本、图片链接。"""
 
 import argparse
 import hashlib
@@ -27,7 +27,8 @@ SHARED_SAMPLE_DOCUMENTS = (
     "ddd4j-samples/ddd4j-sample-quarkus-satoken/README.md",
     "ddd4j-samples/ddd4j-sample-quarkus-shiro/README.md",
 )
-LINK = re.compile(r'(?:\]\(([^)]+)\)|href=["\']([^"\']+)["\'])')
+LINK = re.compile(r'(?:\]\(([^)]+)\)|(?:href|src)=["\']([^"\']+)["\'])')
+LOCAL_FILE_SUFFIXES = frozenset((".md", ".py", ".sh", ".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp"))
 
 
 def local_markdown_links(document: Path):
@@ -37,7 +38,7 @@ def local_markdown_links(document: Path):
         if parsed.scheme or parsed.netloc or not parsed.path:
             continue
         path = unquote(parsed.path)
-        if path.endswith(".md"):
+        if Path(path).suffix.lower() in LOCAL_FILE_SUFFIXES:
             yield raw, (document.parent / path).resolve()
 
 
