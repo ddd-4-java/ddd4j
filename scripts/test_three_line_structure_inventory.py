@@ -178,12 +178,32 @@ class ThreeLineInventoryTest(unittest.TestCase):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(content)
 
-    def run_checker(self, phase):
+    def run_checker(self, phase, *extra_args):
         output = self.base / phase
         command = [sys.executable, str(SCRIPT), "--roots", *map(str, self.roots),
-                   "--output", str(output), "--policy", str(self.policy), "--phase", phase]
+                   "--output", str(output), "--policy", str(self.policy), "--phase", phase,
+                   *extra_args]
         result = subprocess.run(command, capture_output=True, text=True)
         return result, output
+
+    def test_inventory_can_fail_fast_on_open_differences_and_keep_evidence(self):
+        result, output = self.run_checker("inventory", "--fail-on-open")
+        self.assertEqual(1, result.returncode, result.stderr)
+        self.assertTrue((output / "inventory.json").is_file())
+        self.assertTrue((output / "differences.csv").is_file())
+        self.assertTrue((output / "summary.md").is_file())
+        self.assertTrue(any(row["status"] == "OPEN" for row in
+                            json.loads((output / "inventory.json").read_text())["differences"]))
+
+        for root in self.roots:
+            self.write(root, "docs/guide.md", "same content\n")
+        result, _ = self.run_checker("inventory", "--fail-on-open")
+        self.assertEqual(1, result.returncode, result.stderr)
+        for root in self.roots:
+            self.write(root, "ddd4j-samples/demo/src/main/java/example/Demo.java", "class Demo {}")
+            self.write(root, "ddd4j-core/src/test/java/example/FooTest.java", "class FooTest {}")
+        result, _ = self.run_checker("inventory", "--fail-on-open")
+        self.assertEqual(0, result.returncode, result.stderr)
 
     def test_exact_platform_api_allows_jvm_generic_wildcard_but_not_descriptor_glob(self):
         specification = importlib.util.spec_from_file_location("structure_gate", SCRIPT)

@@ -89,6 +89,16 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Check unresolved three-line inventory on push
+        if: github.event_name == 'push'
+        run: |
+          python3 driver/scripts/verify-three-line-structure-api-parity.py \
+            --roots line-8 line-17 line-21 \
+            --policy driver/config/parity/three-line-policy.json \
+            --output target/three-line-convergence/preflight \
+            --phase inventory \
+            --fail-on-open
+
       - name: Configure Maven repositories
         shell: bash
         env:
