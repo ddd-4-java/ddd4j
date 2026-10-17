@@ -67,7 +67,11 @@ public class Ddd4jFieldCryptoHandler {
      * @return 解密后的字段值或原值
      */
     public <T> T decrypt(T value) {
-        if (!(value instanceof String encrypted) || StrKit.isEmpty(encrypted)) {
+        if (!(value instanceof String)) {
+            return value;
+        }
+        String encrypted = (String) value;
+        if (StrKit.isEmpty(encrypted)) {
             return value;
         }
         try {
