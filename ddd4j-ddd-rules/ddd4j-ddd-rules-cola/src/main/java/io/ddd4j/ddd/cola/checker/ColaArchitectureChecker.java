@@ -25,6 +25,9 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -70,9 +73,8 @@ public class ColaArchitectureChecker {
     /**
      * COLA 架构必需的四层目录名称
      */
-    private static final Set<String> REQUIRED_LAYERS = Set.of(
-            "domain", "adapter", "application", "infrastructure"
-    );
+    private static final Set<String> REQUIRED_LAYERS = Collections.unmodifiableSet(
+            new LinkedHashSet<>(Arrays.asList("domain", "adapter", "application", "infrastructure")));
 
     /**
      * 领域层（domain）推荐的子包名称
@@ -312,6 +314,6 @@ public class ColaArchitectureChecker {
                     ├── config/
                     ├── external/
                     └── common/
-                """.formatted(basePackage);
+                """.formatted(basePackage).stripTrailing();
     }
 }
