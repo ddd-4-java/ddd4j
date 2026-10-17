@@ -215,10 +215,10 @@ public class StrKit extends StrUtil {
             return str;
         }
         StringBuilder sb = new StringBuilder(str);
-        while (!sb.isEmpty() && Character.isWhitespace(sb.charAt(0))) {
+        while (sb.length() > 0 && Character.isWhitespace(sb.charAt(0))) {
             sb.deleteCharAt(0);
         }
-        while (!sb.isEmpty() && Character.isWhitespace(sb.charAt(sb.length() - 1))) {
+        while (sb.length() > 0 && Character.isWhitespace(sb.charAt(sb.length() - 1))) {
             sb.deleteCharAt(sb.length() - 1);
         }
         return sb.toString();
@@ -257,7 +257,7 @@ public class StrKit extends StrUtil {
             return str;
         }
         StringBuilder sb = new StringBuilder(str);
-        while (!sb.isEmpty() && Character.isWhitespace(sb.charAt(0))) {
+        while (sb.length() > 0 && Character.isWhitespace(sb.charAt(0))) {
             sb.deleteCharAt(0);
         }
         return sb.toString();
@@ -274,7 +274,7 @@ public class StrKit extends StrUtil {
             return str;
         }
         StringBuilder sb = new StringBuilder(str);
-        while (!sb.isEmpty() && Character.isWhitespace(sb.charAt(sb.length() - 1))) {
+        while (sb.length() > 0 && Character.isWhitespace(sb.charAt(sb.length() - 1))) {
             sb.deleteCharAt(sb.length() - 1);
         }
         return sb.toString();
@@ -291,7 +291,7 @@ public class StrKit extends StrUtil {
             return str;
         }
         StringBuilder sb = new StringBuilder(str);
-        while (!sb.isEmpty() && sb.charAt(0) == leadingCharacter) {
+        while (sb.length() > 0 && sb.charAt(0) == leadingCharacter) {
             sb.deleteCharAt(0);
         }
         return sb.toString();
@@ -308,7 +308,7 @@ public class StrKit extends StrUtil {
             return str;
         }
         StringBuilder sb = new StringBuilder(str);
-        while (!sb.isEmpty() && sb.charAt(sb.length() - 1) == trailingCharacter) {
+        while (sb.length() > 0 && sb.charAt(sb.length() - 1) == trailingCharacter) {
             sb.deleteCharAt(sb.length() - 1);
         }
         return sb.toString();

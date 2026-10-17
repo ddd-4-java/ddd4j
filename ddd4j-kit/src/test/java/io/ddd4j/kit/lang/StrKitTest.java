@@ -98,4 +98,17 @@ class StrKitTest {
         assertThat(StrKit.split(null, '|')).isEmpty();
     }
 
+    @Test
+    void trimMethods_shouldHandleEmptyAndRepeatedBoundaryCharacters() {
+        assertThat(StrKit.trimWhitespace("   ")).isEmpty();
+        assertThat(StrKit.trimWhitespace("  a b  ")).isEqualTo("a b");
+        assertThat(StrKit.trimAllWhitespace(" a b ")).isEqualTo("ab");
+        assertThat(StrKit.trimLeadingWhitespace("  a  ")).isEqualTo("a  ");
+        assertThat(StrKit.trimTrailingWhitespace("  a  ")).isEqualTo("  a");
+        assertThat(StrKit.trimLeadingCharacter("///a/", '/')).isEqualTo("a/");
+        assertThat(StrKit.trimTrailingCharacter("/a///", '/')).isEqualTo("/a");
+        assertThat(StrKit.trimLeadingCharacter("///", '/')).isEmpty();
+        assertThat(StrKit.trimTrailingCharacter("///", '/')).isEmpty();
+    }
+
 }
