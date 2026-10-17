@@ -1055,6 +1055,17 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-data/ddd4j-data-cqrs-quarkus/src/main/java/io/ddd4j/data/cqrs/quarkus/QuarkusCommandBus.java",
+      "sourceSha256": [
+        "f75ad5e855f09a503ece746fb32714eb3f83be8989ca979fc7b046665f7980f5",
+        "dd924903dad17836ee5807f7fd6fb7de11a766ce750eaca16aa605d21091e622",
+        "dd924903dad17836ee5807f7fd6fb7de11a766ce750eaca16aa605d21091e622"
+      ],
+      "evidence": "ddd4j-data/ddd4j-data-cqrs-quarkus/src/test/java/io/ddd4j/data/cqrs/quarkus/QuarkusCommandBusPlatformContractTest.java",
+      "testSha256": "d59a49878ea5815cef0238ce42839de3ee290cce29a8c246dae0e63a7aa8fab0",
+      "reason": "三线共同测试锁定 CDI 作用域、请求上下文、注入与代理构造及 core 路由继承；各线真实 ArC IT 均验证命令路由、冲突拒绝和未注册命令，javax/jakarta 与 JDK 8 空集合写法为平台适配"
+    },
+    {
       "path": "ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/cqrs/QuarkusJpaProjectionPosition.java",
       "sourceSha256": [
         "091d3d9a09a26b58e6e58ccf6743cc7ec02b690389a07910f15a37f9a2f7f9ec",
