@@ -36,6 +36,11 @@ public class Ddd4jMicronautReadinessHealthIndicator implements HealthIndicator {
 
     private final RuntimeReadinessRegistry readinessRegistry;
 
+    /**
+     * 使用 ddd4j 运行时就绪注册表创建健康指标。
+     *
+     * @param readinessRegistry 就绪注册表
+     */
     public Ddd4jMicronautReadinessHealthIndicator(RuntimeReadinessRegistry readinessRegistry) {
         this.readinessRegistry = Objects.requireNonNull(readinessRegistry,
                 "readinessRegistry must not be null");
