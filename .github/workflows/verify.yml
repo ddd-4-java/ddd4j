@@ -16,7 +16,6 @@ concurrency:
 
 env:
   DDD4J_REPORT_DIR: ${{ github.workspace }}/target/release-quality
-  NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
 
 
 jobs:
@@ -162,6 +161,10 @@ jobs:
           java-version: '21'
           cache: maven
           overwrite-settings: true
+      - name: Install keyless vulnerability scanner
+        uses: aquasecurity/setup-trivy@e07451d2e059ed86c2870430ea286b3a9e0bf241
+        with:
+          version: v0.76.0
       - name: Configure Easy4J Maven repositories
         env:
           MAVEN_SETTINGS_XML: ${{ secrets.MAVEN_SETTINGS_XML }}
@@ -192,15 +195,11 @@ jobs:
         env:
           DDD4J_REQUIRE_CLEAN_WORKTREE: 'true'
         run: ./scripts/verify-release-worktree.sh
-      - name: Run opt-in CVE report
-        if: ${{ env.NVD_API_KEY != '' }}
+      - name: Enforce keyless CVE gate
         env:
           DDD4J_ENABLE_CVE_SCAN: 'true'
+          DDD4J_BRANCH: ${{ github.head_ref || github.ref_name }}
         run: ./scripts/scan-cve.sh
-      - name: Record CVE scan prerequisite
-        if: ${{ env.NVD_API_KEY == '' }}
-        run: >-
-          echo "CVE scan not run: repository secret NVD_API_KEY is not configured."
       - name: Archive release quality reports
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: ${{ always() }}
