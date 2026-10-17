@@ -1510,7 +1510,7 @@
         "f02dbdb24ebfd00fb5f0457ee98dc74adbefead1f7f51e9628f6fa679d6d2966"
       ],
       "evidence": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/order/OrderValueContractTest.java",
-      "testSha256": "6a770c5fa48a165dd8572e2c31f4a969bdecd678e9423e7d8b10ac95c20e91c9",
+      "testSha256": "470959851230a78ff7b897598e19075033583ba5f520f522f55ea8a467d18b61",
       "reason": "三线显式值方法、JSON 构造器和共同金额契约一致；1.0.x 保留已发布 Java 序列化 UID 1545370294742823931，由 MoneyLegacySerializationTest 锁定；高两线 UID 为 0"
     },
     {
