@@ -51,18 +51,25 @@ import static io.javalin.apibuilder.ApiBuilder.*;
  * <h3>组合鉴权</h3>
  * <p>{@code DELETE /auth/users/{id}} 需要 admin 角色 + {@code user:delete} 权限（AND 模式）。
  *
- * @author ddd4j
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class AuthenticationController {
 
     private final RbacService rbacService;
 
+    /**
+     * 创建认证控制器。
+     *
+     * @param rbacService RBAC 服务
+     */
     public AuthenticationController(RbacService rbacService) {
         this.rbacService = Objects.requireNonNull(rbacService, "rbacService must not be null");
     }
 
     /**
      * 注册 {@code /auth/*} 路由。
+     *
+     * @return 路由组
      */
     public EndpointGroup routes() {
         return () -> {
@@ -223,101 +230,150 @@ public class AuthenticationController {
     // ============================ 请求 DTO ============================
 
     /**
-     * 登录请求参数。
-     *
-     * @author ddd4j
+     * 登录请求。
      */
     @Data
     @NoArgsConstructor
     public static class LoginRequest {
+
+        private static final long serialVersionUID = 0L;
 
         private String username;
 
         @ToString.Exclude
         private String password;
 
+        /**
+         * 创建登录请求。
+         *
+         * @param username 用户名
+         * @param password 密码
+         */
         @JsonCreator()
-        public LoginRequest(@JsonProperty("username") String username,
-                            @JsonProperty("password") String password) {
+        public LoginRequest(@JsonProperty("username") String username, @JsonProperty("password") String password) {
             this.username = username;
             this.password = password;
         }
 
+        /**
+         * 读取用户名。
+         *
+         * @return 用户名
+         */
         @JsonProperty("username")
         public String username() {
             return username;
         }
 
+        /**
+         * 读取密码。
+         *
+         * @return 密码
+         */
         @JsonProperty("password")
         public String password() {
             return password;
         }
+
     }
 
     /**
-     * 踢人下线请求参数。
-     *
-     * @author ddd4j
+     * 用户下线请求。
      */
     @Data
     @NoArgsConstructor
     public static class KickoutRequest {
 
+        private static final long serialVersionUID = 0L;
+
         private String userId;
 
+        /**
+         * 创建用户下线请求。
+         *
+         * @param userId 用户标识
+         */
         @JsonCreator()
         public KickoutRequest(@JsonProperty("userId") String userId) {
             this.userId = userId;
         }
 
+        /**
+         * 读取用户标识。
+         *
+         * @return 用户标识
+         */
         @JsonProperty("userId")
         public String userId() {
             return userId;
         }
+
     }
 
     /**
-     * 角色鉴权检查请求参数。
-     *
-     * @author ddd4j
+     * 角色校验请求。
      */
     @Data
     @NoArgsConstructor
     public static class RoleCheckRequest {
 
+        private static final long serialVersionUID = 0L;
+
         private String role;
 
+        /**
+         * 创建角色校验请求。
+         *
+         * @param role 角色编码
+         */
         @JsonCreator()
         public RoleCheckRequest(@JsonProperty("role") String role) {
             this.role = role;
         }
 
+        /**
+         * 读取角色编码。
+         *
+         * @return 角色编码
+         */
         @JsonProperty("role")
         public String role() {
             return role;
         }
+
     }
 
     /**
-     * 权限鉴权检查请求参数。
-     *
-     * @author ddd4j
+     * 权限校验请求。
      */
     @Data
     @NoArgsConstructor
     public static class PermissionCheckRequest {
 
+        private static final long serialVersionUID = 0L;
+
         private String permission;
 
+        /**
+         * 创建权限校验请求。
+         *
+         * @param permission 权限编码
+         */
         @JsonCreator()
         public PermissionCheckRequest(@JsonProperty("permission") String permission) {
             this.permission = permission;
         }
 
+        /**
+         * 读取权限编码。
+         *
+         * @return 权限编码
+         */
         @JsonProperty("permission")
         public String permission() {
             return permission;
         }
+
     }
 
 }
