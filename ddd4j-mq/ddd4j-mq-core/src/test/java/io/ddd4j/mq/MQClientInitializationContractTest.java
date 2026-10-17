@@ -41,6 +41,8 @@ class MQClientInitializationContractTest {
 
         assertTrue(built.isRequired());
         assertTrue(legacy.isRequired());
+        assertTrue(built.supports().isEmpty());
+        assertFalse(MQListener.builder().required(false).build().isRequired());
     }
 
     @Test
