@@ -197,7 +197,7 @@ public class EsdbEventStore implements EventStore {
 
         @Override
         public String toString() {
-            return "StringAggregateRootId{" + value + "}";
+            return "StringAggregateRootId[value=" + value + "]";
         }
     }
 }
