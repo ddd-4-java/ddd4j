@@ -96,6 +96,16 @@ class StaticImportNormalizationTest(unittest.TestCase):
         self.assertNotEqual(parity.java_tokens_with_normalized_imports(self.BASE),
                             parity.java_tokens_with_normalized_imports(changed_assertion))
 
+    def test_explicit_import_with_multiple_static_wildcards_remains_distinct(self):
+        wildcards = ("package example; import static example.First.*; "
+                     "import static example.Second.*; class ContractTest { "
+                     "void check() { select(\"value\"); } }")
+        explicit = wildcards.replace("import static example.First.*;",
+                                     "import static example.First.select; "
+                                     "import static example.First.*;")
+        self.assertNotEqual(parity.java_tokens_with_normalized_imports(wildcards),
+                            parity.java_tokens_with_normalized_imports(explicit))
+
 
 if __name__ == "__main__":
     unittest.main()
