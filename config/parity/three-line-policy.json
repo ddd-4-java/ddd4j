@@ -1055,6 +1055,17 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-runtime/ddd4j-runtime-helidon/src/main/java/io/ddd4j/helidon/Ddd4jHelidonRuntime.java",
+      "sourceSha256": [
+        "921a212bd9b20e7618a870e66daa888b4cbfb15b9e42e59ae0cf95a280f34530",
+        "0f9139ea34142a67956facde3cc2723d2c3df86a0255ac1266ecc7602ad5d9ff",
+        "0f9139ea34142a67956facde3cc2723d2c3df86a0255ac1266ecc7602ad5d9ff"
+      ],
+      "evidence": "ddd4j-runtime/ddd4j-runtime-helidon/src/test/java/io/ddd4j/helidon/Ddd4jHelidonRuntimeTest.java",
+      "testSha256": "73fdb8541d077c2d19736d7b895923bb9fe22b74bd6c5342a51ebba4f5f9b8a5",
+      "reason": "三线共同运行时契约测试验证 Helidon 生命周期、服务注册、就绪状态和默认空贡献者集合；JDK 8 使用 Collections.emptyList，高两线使用 List.of，业务语义一致"
+    },
+    {
       "path": "ddd4j-runtime/ddd4j-runtime-micronaut/src/main/java/io/ddd4j/micronaut/Ddd4jMicronautRuntime.java",
       "sourceSha256": [
         "1edf35abe3d5fe32c7d7653099fb878f208eff1dc965ff3ffceb820592630c1f",
