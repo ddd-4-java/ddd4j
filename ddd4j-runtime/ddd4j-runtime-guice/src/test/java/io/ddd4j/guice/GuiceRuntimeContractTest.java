@@ -21,17 +21,9 @@ import io.ddd4j.runtime.testkit.RuntimeContract;
 import io.ddd4j.runtime.testkit.RuntimeContractAdapter;
 import io.ddd4j.runtime.testkit.RuntimeFixtures;
 
-/**
- * 类型说明。
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.0.x
- */
+/** Guice 适配器的运行时启动、关闭及就绪契约。 */
 class GuiceRuntimeContractTest extends AbstractRuntimeContractTest {
 
-    /**
-     * 创建对象。
-     * @return 方法执行结果。
-     */
     @Override
     protected RuntimeContract createRuntime() {
         Injector injector = Guice.createInjector(new Ddd4jGuiceModule());

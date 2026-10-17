@@ -38,12 +38,31 @@ public final class Ddd4jGuiceRuntime implements AutoCloseable {
     private final SpiRegistrationScope registrations;
     private final RuntimeReadinessRegistry readinessRegistry;
 
+    /**
+     * 使用默认就绪检查集合创建 Guice 运行时。
+     *
+     * @param injector Guice 注入器
+     * @param publisher 领域事件发布器
+     * @param subjectProvider 主体提供器
+     * @param i18nProvider 国际化提供器
+     * @param commandBus 命令总线
+     */
     @Inject
     public Ddd4jGuiceRuntime(Injector injector, DomainEventPublisher publisher, SubjectProvider subjectProvider,
                              I18nProvider i18nProvider, CommandBus commandBus) {
         this(injector, publisher, subjectProvider, i18nProvider, commandBus, List.of());
     }
 
+    /**
+     * 使用指定就绪检查集合创建 Guice 运行时。
+     *
+     * @param injector Guice 注入器
+     * @param publisher 领域事件发布器
+     * @param subjectProvider 主体提供器
+     * @param i18nProvider 国际化提供器
+     * @param commandBus 命令总线
+     * @param readinessContributors 就绪检查贡献者
+     */
     public Ddd4jGuiceRuntime(Injector injector, DomainEventPublisher publisher, SubjectProvider subjectProvider,
                              I18nProvider i18nProvider, CommandBus commandBus,
                              Collection<? extends ReadinessContributor> readinessContributors) {
@@ -61,27 +80,20 @@ public final class Ddd4jGuiceRuntime implements AutoCloseable {
         start();
     }
 
-    /**
-     * 启动。
-     */
+    /** 启动 ddd4j 全局 SPI 注册。 */
     public void start() {
-        /**
-         * registrations.start() 方法。
-         */
         registrations.start();
     }
 
     /**
-     * readiness() 方法。
-     * @return 方法执行结果。
+     * 获取运行时就绪注册表。
+     *
+     * @return 就绪注册表
      */
     public RuntimeReadinessRegistry readiness() {
         return readinessRegistry;
     }
 
-    /**
-     * 关闭并释放资源。
-     */
     @Override
     public void close() {
         registrations.close();
