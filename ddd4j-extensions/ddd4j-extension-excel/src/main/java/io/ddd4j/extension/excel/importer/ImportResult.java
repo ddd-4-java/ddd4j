@@ -57,8 +57,9 @@ public final class ImportResult<T> {
 
     /**
      * 空结果。
-     * @param <T> 数据元素类型
-     * @return 返回的 {@code ImportResult<T>} 结果
+     *
+     * @param <T> 数据类型
+     * @return 不含成功数据或错误的导入结果
      */
     public static <T> ImportResult<T> empty() {
         return new ImportResult<>(Collections.emptyList(), Collections.emptyList());
