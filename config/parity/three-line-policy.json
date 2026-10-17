@@ -1055,6 +1055,17 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/cqrs/QuarkusJpaProjectionPosition.java",
+      "sourceSha256": [
+        "091d3d9a09a26b58e6e58ccf6743cc7ec02b690389a07910f15a37f9a2f7f9ec",
+        "b80fa2d16741446f687cd3c98c107d4dbeb0cc676482c81cb4664c1acb72fc15",
+        "b80fa2d16741446f687cd3c98c107d4dbeb0cc676482c81cb4664c1acb72fc15"
+      ],
+      "evidence": "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/cqrs/QuarkusJpaProjectionPositionTest.java",
+      "testSha256": "bb09c5824ae4cdcdefde338e01c8ca1eb7cac4d9b77ace7e8a543f8734ef63e9",
+      "reason": "三线共同测试验证投影偏移量的值语义、字段封装、JPA 注解命名空间和表列名称；JDK 8 javax.persistence 与高两线 jakarta.persistence/@Serial 为平台适配"
+    },
+    {
       "path": "ddd4j-runtime/ddd4j-runtime-spring/src/main/java/io/ddd4j/spring/cqrs/SpringJpaProjectionPosition.java",
       "sourceSha256": [
         "b4b57e00662e9c0dd0653a73403720418f889f747c1c2e328255fdd42a6aa698",
