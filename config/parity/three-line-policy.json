@@ -1055,6 +1055,17 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-runtime/ddd4j-runtime-spring/src/main/java/io/ddd4j/spring/cqrs/SpringJpaProjectionPositionRepository.java",
+      "sourceSha256": [
+        "3ef320c32198b3c83aa4407e3cbb9f73f64b18ab5571627040ec88a09b26be5e",
+        "ea1933efa7b1d156d39b34d5b6b9d7f0727f63c1368d5536bf82fb0132c78fc9",
+        "ea1933efa7b1d156d39b34d5b6b9d7f0727f63c1368d5536bf82fb0132c78fc9"
+      ],
+      "evidence": "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/cqrs/SpringJpaProjectionPositionRepositoryTest.java",
+      "testSha256": "686a954978ccaabaa10449a32e38be85a88ed90132f035d73eda28b4928a7c65",
+      "reason": "三线共同测试验证 findAll 顺序与不可修改列表，并覆盖 resetToZero；JDK 8 使用不可修改包装和 Collectors，JDK 17/21 使用 Stream.toList，业务语义一致"
+    },
+    {
       "path": "ddd4j-data/ddd4j-data-cqrs-quarkus/src/main/java/io/ddd4j/data/cqrs/quarkus/QuarkusCommandBus.java",
       "sourceSha256": [
         "f75ad5e855f09a503ece746fb32714eb3f83be8989ca979fc7b046665f7980f5",
