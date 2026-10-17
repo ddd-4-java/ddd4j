@@ -729,11 +729,11 @@ public class AuthorizationController {
 
         @Override
         public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(loginId);
-            result = 31 * result + Objects.hashCode(displayName);
-            result = 31 * result + Objects.hashCode(roles);
-            result = 31 * result + Objects.hashCode(permissions);
+            int result = 1;
+            result = 59 * result + (Objects.isNull(loginId) ? 43 : loginId.hashCode());
+            result = 59 * result + (Objects.isNull(displayName) ? 43 : displayName.hashCode());
+            result = 59 * result + (Objects.isNull(roles) ? 43 : roles.hashCode());
+            result = 59 * result + (Objects.isNull(permissions) ? 43 : permissions.hashCode());
             return result;
         }
 
@@ -829,10 +829,10 @@ public class AuthorizationController {
 
         @Override
         public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(code);
-            result = 31 * result + Objects.hashCode(name);
-            result = 31 * result + Objects.hashCode(permissions);
+            int result = 1;
+            result = 59 * result + (Objects.isNull(code) ? 43 : code.hashCode());
+            result = 59 * result + (Objects.isNull(name) ? 43 : name.hashCode());
+            result = 59 * result + (Objects.isNull(permissions) ? 43 : permissions.hashCode());
             return result;
         }
 
@@ -909,9 +909,9 @@ public class AuthorizationController {
 
         @Override
         public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(code);
-            result = 31 * result + Objects.hashCode(description);
+            int result = 1;
+            result = 59 * result + (Objects.isNull(code) ? 43 : code.hashCode());
+            result = 59 * result + (Objects.isNull(description) ? 43 : description.hashCode());
             return result;
         }
 

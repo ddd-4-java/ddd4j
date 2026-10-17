@@ -31,4 +31,32 @@ class AuthorizationViewContractTest {
         assertEquals(permission.code(), permission.getCode());
         assertEquals(permission.description(), permission.getDescription());
     }
+
+    @Test
+    void viewsRetainThreeLineValueHashes() {
+        Set<String> roles = Collections.singleton("admin");
+        AuthorizationController.UserView user =
+                new AuthorizationController.UserView("alice", null, roles, null);
+        int userHash = 1;
+        userHash = 59 * userHash + "alice".hashCode();
+        userHash = 59 * userHash + 43;
+        userHash = 59 * userHash + roles.hashCode();
+        userHash = 59 * userHash + 43;
+        assertEquals(userHash, user.hashCode());
+
+        AuthorizationController.RoleView role =
+                new AuthorizationController.RoleView("admin", null, roles);
+        int roleHash = 1;
+        roleHash = 59 * roleHash + "admin".hashCode();
+        roleHash = 59 * roleHash + 43;
+        roleHash = 59 * roleHash + roles.hashCode();
+        assertEquals(roleHash, role.hashCode());
+
+        AuthorizationController.PermissionView permission =
+                new AuthorizationController.PermissionView("user:read", null);
+        int permissionHash = 1;
+        permissionHash = 59 * permissionHash + "user:read".hashCode();
+        permissionHash = 59 * permissionHash + 43;
+        assertEquals(permissionHash, permission.hashCode());
+    }
 }
