@@ -72,12 +72,13 @@ public interface JpaStoredEventRepository {
     void save(StoredEventEntity entity);
 
     /**
-     * 生成下一个全局 position（原子操作）。
+     * 读取下一个全局 position 候选值。
      *
-     * <p>使用 {@code SELECT COALESCE(MAX(position), 0) + 1} 策略。
-     * 在高并发场景下，建议使用数据库序列以避免争用。
+     * <p>默认实现使用 {@code SELECT COALESCE(MAX(position), 0) + 1}，该读取并非原子分配。
+     * 并发事务可能得到相同候选值；保存时由唯一约束阻止重复，冲突后须重试整个 append 事务。
+     * 高并发多实例场景应使用数据库序列实现此仓储端口。
      *
-     * @return 下一个可用的全局 position
+     * @return 全局 position 候选值，提交前不保证仍可用
      */
     long nextPosition();
 }

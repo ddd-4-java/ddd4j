@@ -375,14 +375,13 @@ public class JpaEventStore implements EventStore {
     }
 
     /**
-     * 反序列化事件载荷。
+     * 解析存储的事件类。
      *
-     * <p>优先尝试按 {@code eventType} 还原为强类型对象；
-     * 若类不存在，回退为 {@code Map}（丢失类型信息）。
+     * <p>读取存储的事件类；类不存在时失败，不回退为无类型数据。
      *
-     * @param payload   JSON 文本
      * @param eventType 事件类型全限定名
-     * @return 反序列化后的事件对象或 Map
+     * @return 领域事件类型
+     * @throws IllegalStateException 事件类不存在
      */
     @SuppressWarnings("unchecked")
     private Class<? extends DomainEvent<?>> resolveEventType(String eventType) {
