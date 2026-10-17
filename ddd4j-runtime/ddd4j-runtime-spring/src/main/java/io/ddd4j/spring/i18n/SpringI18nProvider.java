@@ -34,21 +34,24 @@ import java.util.Locale;
 @Component
 public class SpringI18nProvider implements I18nProvider {
 
-    /**
-     * Spring 嵌套消息源
-     */
+    /** Spring 消息源接口；构造器仍要求本线 Easy4J 嵌套消息源。 */
     private final MessageSource messageSource;
 
-    /** 使用当前 WebMVC 配置提供的 Easy4J 嵌套消息源。 */
+    /**
+     * 创建使用嵌套消息源的国际化提供者。
+     *
+     * @param messageSource 嵌套消息源
+     */
     public SpringI18nProvider(NestedMessageSource messageSource) {
         this.messageSource = messageSource;
     }
 
     /**
-     * 获取值。
-     * @param key 幂等键。
-     * @param args 命令行参数。
-     * @return 结果字符串。
+     * 使用当前线程的 Locale 解析国际化消息。
+     *
+     * @param key 消息代码
+     * @param args 消息占位符参数
+     * @return 当前 Locale 对应的消息文本
      */
     @Override
     public String getMessage(String key, Object... args) {
