@@ -6,6 +6,7 @@
 package io.ddd4j.sample.javalin.satoken.rbac.infrastructure;
 
 import io.ddd4j.sample.javalin.satoken.rbac.domain.model.Role;
+import io.ddd4j.sample.javalin.satoken.rbac.domain.model.Permission;
 import io.ddd4j.sample.javalin.satoken.rbac.domain.model.User;
 import org.junit.jupiter.api.Test;
 
@@ -39,5 +40,20 @@ class InMemoryRepositoryListContractTest {
 
         assertEquals(1, repository.findAll().size());
         assertEquals(1, repository.findByStatus(User.Status.ENABLED).size());
+    }
+
+    @Test
+    void permissionQueriesReturnDetachedMutableLists() {
+        InMemoryPermissionRepository repository = new InMemoryPermissionRepository();
+        repository.save(new Permission("permission-1", "order:read", "Read orders",
+                "order", Permission.Status.ENABLED));
+
+        List<Permission> all = repository.findAll();
+        List<Permission> byModule = repository.findByModule("order");
+        all.clear();
+        byModule.clear();
+
+        assertEquals(1, repository.findAll().size());
+        assertEquals(1, repository.findByModule("order").size());
     }
 }
