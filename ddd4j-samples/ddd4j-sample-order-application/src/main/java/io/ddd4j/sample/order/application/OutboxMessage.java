@@ -14,36 +14,38 @@
  */
 package io.ddd4j.sample.order.application;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Value;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Objects;
 
 import java.time.Instant;
 
-/**
- * Outbox 消息，Java 8 等价实现保留 record 值语义。
- */
-@Value
-public class OutboxMessage {
-String id;
-    String aggregateId;
-    String eventType;
-    Object payload;
-    Instant occurredAt;
+/** 等待可靠发布的订单集成事件消息。 */
+public final class OutboxMessage {
 
-    /** Creates an outbox message.
-     * @param id message identifier
-     * @param aggregateId aggregate identifier
-     * @param eventType event type
-     * @param payload event payload
-     * @param occurredAt occurrence time
+    private static final long serialVersionUID = 0L;
+
+    private final String id;
+
+    private final String aggregateId;
+
+    private final String eventType;
+
+    private final Object payload;
+
+    private final Instant occurredAt;
+
+    /**
+     * @param id 消息标识
+     * @param aggregateId 订单聚合标识
+     * @param eventType 事件类型
+     * @param payload 事件内容
+     * @param occurredAt 事件发生时间
      */
-    @JsonCreator
-    public OutboxMessage(@JsonProperty("id") String id,
-                         @JsonProperty("aggregateId") String aggregateId,
-                         @JsonProperty("eventType") String eventType,
-                         @JsonProperty("payload") Object payload,
-                         @JsonProperty("occurredAt") Instant occurredAt) {
+    @JsonCreator()
+    public OutboxMessage(@JsonProperty("id") String id, @JsonProperty("aggregateId") String aggregateId, @JsonProperty("eventType") String eventType, @JsonProperty("payload") Object payload, @JsonProperty("occurredAt") Instant occurredAt) {
         this.id = id;
         this.aggregateId = aggregateId;
         this.eventType = eventType;
@@ -51,23 +53,86 @@ String id;
         this.occurredAt = occurredAt;
     }
 
+    /** @return 消息标识 */
+    @JsonProperty("id")
     public String id() {
         return id;
     }
 
+    /** @return 订单聚合标识 */
+    @JsonProperty("aggregateId")
     public String aggregateId() {
         return aggregateId;
     }
 
+    /** @return 事件类型 */
+    @JsonProperty("eventType")
     public String eventType() {
         return eventType;
     }
 
+    /** @return 事件内容 */
+    @JsonProperty("payload")
     public Object payload() {
         return payload;
     }
 
+    /** @return 事件发生时间 */
+    @JsonProperty("occurredAt")
     public Instant occurredAt() {
         return occurredAt;
+    }
+
+    /** @return 消息标识 */
+    public String getId() {
+        return id;
+    }
+
+    /** @return 订单聚合标识 */
+    public String getAggregateId() {
+        return aggregateId;
+    }
+
+    /** @return 事件类型 */
+    public String getEventType() {
+        return eventType;
+    }
+
+    /** @return 事件内容 */
+    public Object getPayload() {
+        return payload;
+    }
+
+    /** @return 事件发生时间 */
+    public Instant getOccurredAt() {
+        return occurredAt;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+            return false;
+        }
+        OutboxMessage other = (OutboxMessage) obj;
+        return Objects.equals(this.id, other.id) && Objects.equals(this.aggregateId, other.aggregateId) && Objects.equals(this.eventType, other.eventType) && Objects.equals(this.payload, other.payload) && Objects.equals(this.occurredAt, other.occurredAt);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 1;
+        result = 59 * result + (Objects.isNull(id) ? 43 : id.hashCode());
+        result = 59 * result + (Objects.isNull(aggregateId) ? 43 : aggregateId.hashCode());
+        result = 59 * result + (Objects.isNull(eventType) ? 43 : eventType.hashCode());
+        result = 59 * result + (Objects.isNull(payload) ? 43 : payload.hashCode());
+        result = 59 * result + (Objects.isNull(occurredAt) ? 43 : occurredAt.hashCode());
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "OutboxMessage(id=" + id + ", aggregateId=" + aggregateId + ", eventType=" + eventType + ", payload=" + payload + ", occurredAt=" + occurredAt + ")";
     }
 }
