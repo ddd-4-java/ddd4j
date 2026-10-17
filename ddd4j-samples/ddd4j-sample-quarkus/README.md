@@ -118,14 +118,15 @@ ddd4j-sample-quarkus/
 ### 前置条件
 
 - JDK 8+
-- Maven 3.6+
+- Maven：使用仓库根目录的 `./mvnw`（3.9.16）
 - Quarkus 1.13.7.Final（本示例 Quarkus BOM）
 
 ### 启动开发模式
 
 ```bash
-# 在仓库根目录
-mvn -pl ddd4j/ddd4j-samples/ddd4j-sample-quarkus quarkus:dev
+# 在 ddd4j 仓库根目录；首次检出先安装本样例依赖的模块
+./mvnw -pl ddd4j-samples/ddd4j-sample-quarkus -am install -DskipTests
+./mvnw -pl ddd4j-samples/ddd4j-sample-quarkus quarkus:dev
 ```
 
 启动成功后会看到类似日志：
@@ -287,16 +288,16 @@ curl "http://localhost:8080/query/goods/count?status=ON_SALE"
 
 ```bash
 # 构建可执行 fast-jar
-mvn -pl ddd4j/ddd4j-samples/ddd4j-sample-quarkus -am package -Dmaven.javadoc.skip=true
+./mvnw -pl ddd4j-samples/ddd4j-sample-quarkus package
 
 # 运行
-java -jar ddd4j/ddd4j-samples/ddd4j-sample-quarkus/target/quarkus-app/quarkus-run.jar
+java -jar ddd4j-samples/ddd4j-sample-quarkus/target/quarkus-app/quarkus-run.jar
 ```
 
 ### 运行测试
 
 ```bash
-mvn -pl ddd4j/ddd4j-samples/ddd4j-sample-quarkus test
+./mvnw -pl ddd4j-samples/ddd4j-sample-quarkus test
 ```
 
 测试覆盖：
