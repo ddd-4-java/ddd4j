@@ -37,6 +37,11 @@ public class OrderApplicationService {
 
     private final OrderRepository repository;
 
+    /**
+     * 创建订单应用服务。
+     *
+     * @param repository 仓储实现
+     */
     public OrderApplicationService(OrderRepository repository) {
         this.repository = Objects.requireNonNull(repository, "repository must not be null");
     }
@@ -45,7 +50,7 @@ public class OrderApplicationService {
      * 创建草稿订单。
      *
      * @param command 创建订单命令
-     * @return 创建的订单聚合
+     * @return 创建的订单
      */
     public Order createDraft(CreateOrderCommand command) {
         Objects.requireNonNull(command, "command must not be null");
@@ -58,7 +63,7 @@ public class OrderApplicationService {
      * 添加订单行。
      *
      * @param command 添加订单行命令
-     * @return 更新后的订单聚合
+     * @return 更新后的订单
      */
     public Order addLine(AddOrderLineCommand command) {
         Objects.requireNonNull(command, "command must not be null");
@@ -76,7 +81,7 @@ public class OrderApplicationService {
      * 支付订单。
      *
      * @param orderId 订单 ID
-     * @return 支付后的订单聚合
+     * @return 支付后的订单
      */
     public Order pay(String orderId) {
         Order order = repository.findById(orderId)
@@ -90,7 +95,7 @@ public class OrderApplicationService {
      * 发货订单。
      *
      * @param orderId 订单 ID
-     * @return 发货后的订单聚合
+     * @return 发货后的订单
      */
     public Order ship(String orderId) {
         Order order = repository.findById(orderId)
@@ -104,7 +109,7 @@ public class OrderApplicationService {
      * 取消订单。
      *
      * @param orderId 订单 ID
-     * @return 取消后的订单聚合
+     * @return 取消后的订单
      */
     public Order cancel(String orderId) {
         Order order = repository.findById(orderId)
@@ -118,7 +123,7 @@ public class OrderApplicationService {
      * 按 ID 查询订单。
      *
      * @param orderId 订单 ID
-     * @return 订单聚合
+     * @return 订单
      */
     public Order getById(String orderId) {
         return repository.findById(orderId)
@@ -129,7 +134,7 @@ public class OrderApplicationService {
      * 按订单编号查询订单。
      *
      * @param orderNo 订单编号
-     * @return 订单聚合
+     * @return 订单
      */
     public Order getByOrderNo(String orderNo) {
         return repository.findByOrderNo(orderNo)
@@ -163,30 +168,48 @@ public class OrderApplicationService {
             this.buyerName = buyerName;
         }
 
-                public String getOrderNo() {
-            return orderNo;
-        }
-
-        public String getBuyerId() {
-            return buyerId;
-        }
-
-        public String getBuyerName() {
-            return buyerName;
-        }
-
+        /**
+         * 读取订单编号。
+         *
+         * @return 订单编号
+         */
         @JsonProperty("orderNo")
         public String orderNo() {
             return orderNo;
         }
 
+        /**
+         * 读取买家标识。
+         *
+         * @return 买家标识
+         */
         @JsonProperty("buyerId")
         public String buyerId() {
             return buyerId;
         }
 
+        /**
+         * 读取买家名称。
+         *
+         * @return 买家名称
+         */
         @JsonProperty("buyerName")
         public String buyerName() {
+            return buyerName;
+        }
+
+        /** @return 订单编号 */
+        public String getOrderNo() {
+            return orderNo;
+        }
+
+        /** @return 买家标识 */
+        public String getBuyerId() {
+            return buyerId;
+        }
+
+        /** @return 买家名称 */
+        public String getBuyerName() {
             return buyerName;
         }
 
@@ -252,48 +275,78 @@ public class OrderApplicationService {
             this.unitPrice = unitPrice;
         }
 
-                public String getOrderId() {
-            return orderId;
-        }
-
-        public String getGoodsId() {
-            return goodsId;
-        }
-
-        public String getGoodsName() {
-            return goodsName;
-        }
-
-        public int getQuantity() {
-            return quantity;
-        }
-
-        public BigDecimal getUnitPrice() {
-            return unitPrice;
-        }
-
+        /**
+         * 读取订单标识。
+         *
+         * @return 订单标识
+         */
         @JsonProperty("orderId")
         public String orderId() {
             return orderId;
         }
 
+        /**
+         * 读取商品标识。
+         *
+         * @return 商品标识
+         */
         @JsonProperty("goodsId")
         public String goodsId() {
             return goodsId;
         }
 
+        /**
+         * 读取商品名称。
+         *
+         * @return 商品名称
+         */
         @JsonProperty("goodsName")
         public String goodsName() {
             return goodsName;
         }
 
+        /**
+         * 读取购买数量。
+         *
+         * @return 购买数量
+         */
         @JsonProperty("quantity")
         public int quantity() {
             return quantity;
         }
 
+        /**
+         * 读取商品单价。
+         *
+         * @return 商品单价
+         */
         @JsonProperty("unitPrice")
         public BigDecimal unitPrice() {
+            return unitPrice;
+        }
+
+        /** @return 订单标识 */
+        public String getOrderId() {
+            return orderId;
+        }
+
+        /** @return 商品标识 */
+        public String getGoodsId() {
+            return goodsId;
+        }
+
+        /** @return 商品名称 */
+        public String getGoodsName() {
+            return goodsName;
+        }
+
+        /** @return 数量 */
+        public int getQuantity() {
+            return quantity;
+        }
+
+        /** @return 单价 */
+        public BigDecimal getUnitPrice() {
             return unitPrice;
         }
 

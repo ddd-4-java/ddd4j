@@ -38,6 +38,11 @@ public class OrderCQRSQueryController {
 
     private final OrderCacheService orderCacheService;
 
+    /**
+     * 创建订单查询控制器。
+     *
+     * @param orderCacheService 订单缓存服务
+     */
     public OrderCQRSQueryController(OrderCacheService orderCacheService) {
         this.orderCacheService = Objects.requireNonNull(orderCacheService, "orderCacheService must not be null");
     }
@@ -106,34 +111,52 @@ public class OrderCQRSQueryController {
 
         private final int lineCount;
 
+        /** @return id */
         public String getId() {
             return id;
         }
 
+        /** @return orderNo */
         public String getOrderNo() {
             return orderNo;
         }
 
+        /** @return buyerId */
         public String getBuyerId() {
             return buyerId;
         }
 
+        /** @return buyerName */
         public String getBuyerName() {
             return buyerName;
         }
 
+        /** @return status */
         public String getStatus() {
             return status;
         }
 
+        /** @return totalAmount */
         public Money getTotalAmount() {
             return totalAmount;
         }
 
+        /** @return lineCount */
         public int getLineCount() {
             return lineCount;
         }
 
+        /**
+         * 创建订单响应数据。
+         *
+         * @param id 标识
+         * @param orderNo 订单编号
+         * @param buyerId 买家标识
+         * @param buyerName 买家名称
+         * @param status 状态
+         * @param totalAmount 订单总金额
+         * @param lineCount 订单行数
+         */
         @JsonCreator()
         public OrderResponse(@JsonProperty("id") String id, @JsonProperty("orderNo") String orderNo, @JsonProperty("buyerId") String buyerId, @JsonProperty("buyerName") String buyerName, @JsonProperty("status") String status, @JsonProperty("totalAmount") Money totalAmount, @JsonProperty("lineCount") int lineCount) {
             this.id = id;
@@ -145,36 +168,71 @@ public class OrderCQRSQueryController {
             this.lineCount = lineCount;
         }
 
+        /**
+         * 读取标识。
+         *
+         * @return 标识
+         */
         @JsonProperty("id")
         public String id() {
             return id;
         }
 
+        /**
+         * 读取订单编号。
+         *
+         * @return 订单编号
+         */
         @JsonProperty("orderNo")
         public String orderNo() {
             return orderNo;
         }
 
+        /**
+         * 读取买家标识。
+         *
+         * @return 买家标识
+         */
         @JsonProperty("buyerId")
         public String buyerId() {
             return buyerId;
         }
 
+        /**
+         * 读取买家名称。
+         *
+         * @return 买家名称
+         */
         @JsonProperty("buyerName")
         public String buyerName() {
             return buyerName;
         }
 
+        /**
+         * 读取状态。
+         *
+         * @return 状态
+         */
         @JsonProperty("status")
         public String status() {
             return status;
         }
 
+        /**
+         * 读取订单总金额。
+         *
+         * @return 订单总金额
+         */
         @JsonProperty("totalAmount")
         public Money totalAmount() {
             return totalAmount;
         }
 
+        /**
+         * 读取订单行数。
+         *
+         * @return 数量
+         */
         @JsonProperty("lineCount")
         public int lineCount() {
             return lineCount;
