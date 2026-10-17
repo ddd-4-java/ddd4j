@@ -14,8 +14,6 @@
  */
 package io.ddd4j.sample.order.domain;
 
-import io.ddd4j.core.ddd.model.ValueObject;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -24,23 +22,31 @@ import java.io.InvalidObjectException;
 
 import java.io.ObjectStreamException;
 
+import io.ddd4j.core.ddd.model.ValueObject;
 import io.ddd4j.kit.lang.StrKit;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Locale;
 import java.util.Objects;
-import lombok.Value;
 
-@Value
+/** 金额与币种组成的不可变值对象。 */
 public final class Money implements ValueObject {
 
     private static final long serialVersionUID = 0L;
 
+    /** 保留两位小数的非负金额。 */
     private final BigDecimal amount;
 
+    /** 标准化的大写币种。 */
     private final String currency;
 
+    /**
+     * 创建金额值对象。
+     *
+     * @param amount 非负金额
+     * @param currency 币种
+     */
     @JsonCreator()
     public Money(@JsonProperty("amount") BigDecimal amount, @JsonProperty("currency") String currency) {
         Objects.requireNonNull(amount, "amount must not be null");
@@ -57,27 +63,24 @@ public final class Money implements ValueObject {
     }
 
     /**
-     * cny() 方法。
-     * @param amount 金额。
-     * @return 当前对象自身，支持链式调用。
+     * @param amount 人民币金额
+     * @return 人民币金额对象
      */
     public static Money cny(BigDecimal amount) {
         return new Money(amount, "CNY");
     }
 
     /**
-     * zero() 方法。
-     * @param currency 字符串参数。
-     * @return 当前对象自身，支持链式调用。
+     * @param currency 币种
+     * @return 该币种的零金额
      */
     public static Money zero(String currency) {
         return new Money(BigDecimal.ZERO, currency);
     }
 
     /**
-     * add() 方法。
-     * @param other other 参数。
-     * @return 当前对象自身，支持链式调用。
+     * @param other 同币种的另一金额
+     * @return 相加后的金额
      */
     public Money add(Money other) {
         Objects.requireNonNull(other, "other must not be null");
@@ -88,9 +91,8 @@ public final class Money implements ValueObject {
     }
 
     /**
-     * multiply() 方法。
-     * @param factor factor 参数。
-     * @return 当前对象自身，支持链式调用。
+     * @param factor 非负乘数
+     * @return 相乘后的金额
      */
     public Money multiply(int factor) {
         if (factor < 0) {
@@ -99,16 +101,34 @@ public final class Money implements ValueObject {
         return new Money(amount.multiply(BigDecimal.valueOf(factor)), currency);
     }
 
+    /** @return 金额 */
     @JsonProperty("amount")
     public BigDecimal amount() {
         return amount;
     }
 
+    /** @return 币种 */
     @JsonProperty("currency")
     public String currency() {
         return currency;
     }
 
+    /** @return 金额 */
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    /** @return 币种 */
+    public String getCurrency() {
+        return currency;
+    }
+
+    /**
+     * 反序列化时重新校验金额约束。
+     *
+     * @return 校验后的金额对象
+     * @throws ObjectStreamException 反序列化数据不合法时抛出
+     */
     private Object readResolve() throws ObjectStreamException {
         try {
             return new Money(amount, currency);
@@ -117,5 +137,30 @@ public final class Money implements ValueObject {
             failure.initCause(cause);
             throw failure;
         }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+            return false;
+        }
+        Money other = (Money) obj;
+        return Objects.equals(this.amount, other.amount) && Objects.equals(this.currency, other.currency);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 0;
+        result = 31 * result + Objects.hashCode(amount);
+        result = 31 * result + Objects.hashCode(currency);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Money(amount=" + amount + ", currency=" + currency + ")";
     }
 }
