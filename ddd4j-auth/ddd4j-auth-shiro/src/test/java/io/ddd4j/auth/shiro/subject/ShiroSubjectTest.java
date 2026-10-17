@@ -13,24 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.auth.shiro.subject;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import org.apache.shiro.authc.SimpleAuthenticationInfo;
-import org.apache.shiro.authc.LockedAccountException;
-import org.apache.shiro.authc.DisabledAccountException;
-import org.apache.shiro.authc.AuthenticationToken;
-import org.apache.shiro.authc.AuthenticationInfo;
-import io.ddd4j.core.exception.NotLoggedInException;
-import io.ddd4j.core.exception.CredentialsExpiredException;
-import io.ddd4j.core.exception.BadCredentialsException;
-import io.ddd4j.core.exception.AccountLockedException;
-import io.ddd4j.core.exception.AccountDisabledException;
 
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.auth.AuthRequest;
@@ -51,11 +33,6 @@ import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * 类型说明。
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.0.x
- */
 class ShiroSubjectTest {
 
     private ShiroSubject shiroSubject() {
@@ -318,11 +295,6 @@ class ShiroSubjectTest {
      */
     private static final class TestRealm extends AuthorizingRealm {
 
-        /**
-         * 执行处理逻辑。
-         * @param token 访问令牌。
-         * @return 方法执行结果。
-         */
         @Override
         protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) {
             String username = (String) token.getPrincipal();
@@ -344,11 +316,6 @@ class ShiroSubjectTest {
             return new SimpleAuthenticationInfo(username, "pw", getName());
         }
 
-        /**
-         * 执行处理逻辑。
-         * @param principals principals 参数。
-         * @return 方法执行结果。
-         */
         @Override
         protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
             SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
