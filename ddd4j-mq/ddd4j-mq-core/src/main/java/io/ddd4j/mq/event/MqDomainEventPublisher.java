@@ -32,19 +32,19 @@ import java.util.UUID;
  * <p>实现 {@link DomainEventPublisher}，将 core 领域事件转换为 {@link DomainEventCarrier}
  * 并通过已注册的 MQ 生产者发送到消息队列，实现跨进程事件传播。
  *
- * <h2>接入点选择</h2>
+ * <p><b>接入点选择</b></p>
  * <p>本类委托 {@link MQEvent#publish()} 完成实际发送。该机制从 {@link io.ddd4j.core.context.BaseContext}
  * 查找已注册的 MQ 生产者 Map（由各 {@link io.ddd4j.mq.MQClient} 在初始化时注册），
  * 按 broker 配置自动路由到目标 MQ 实现（Kafka / Pulsar / NATS 等）。
  *
- * <h3>Topic / Tag 设计</h3>
+ * <p><b>Topic / Tag 设计</b></p>
  * <ul>
  *   <li><b>topic</b>：取 {@link DomainEvent#getEventType()} 的值（即事件类简单名称，如 {@code "OrderCreatedEvent"}）</li>
  *   <li><b>tag</b>：固定 {@code "domain-event"}，便于消费者统一批量订阅所有领域事件</li>
  *   <li><b>payload</b>：领域事件 JSON 序列化结果，通过 {@link DomainEventCarrier} 携带</li>
  * </ul>
  *
- * <h3>失败语义</h3>
+ * <p><b>失败语义</b></p>
  * <p>与 {@link MQEvent#publish()} 保持一致——不抛异常，而是 warn 日志。
  * 原因：
  * <ol>

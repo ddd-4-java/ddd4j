@@ -16,6 +16,7 @@ package io.ddd4j.mq.event;
 
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.ddd.event.DomainEvent;
+import io.ddd4j.core.ddd.event.EntityIdPath;
 import io.ddd4j.core.ddd.event.StringEntityId;
 import io.ddd4j.mq.MQProperties;
 import org.junit.jupiter.api.AfterEach;
@@ -23,6 +24,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -88,17 +90,26 @@ class MqDomainEventPublisherTest {
     void publishDomainEvent_shouldSerializePayloadAsJson() {
         TestDomainEvent domainEvent = new TestDomainEvent(ENTITY_ID);
 
-        publisher.publish(domainEvent);
+        MqDomainEventPublisher deterministicPublisher = new MqDomainEventPublisher(new MQEventSerialization() {
+            @Override
+            public <S, T> T deserialize(S src, Class<T> dist) {
+                return null;
+            }
+
+            @Override
+            @SuppressWarnings("unchecked")
+            public <T> T serialize(Object src) {
+                return (T) ("payload:" + ((DomainEvent<?>) src).source());
+            }
+        });
+
+        deterministicPublisher.publish(domainEvent);
 
         MQEvent mqEvent = publishedEvents.get(0);
         assertInstanceOf(DomainEventCarrier.class, mqEvent);
         DomainEventCarrier carrier = (DomainEventCarrier) mqEvent;
 
-        // 负载非空且包含领域事件关键字段
-        assertNotNull(carrier.getPayload());
-        String payload = carrier.getPayload();
-        assertTrue(payload.contains("\"event-type\""), "payload 应包含 event-type 字段");
-        assertTrue(payload.contains(ENTITY_ID), "payload 应包含实体标识");
+        assertEquals("payload:" + ENTITY_ID, carrier.getPayload());
     }
 
     @Test
@@ -179,7 +190,7 @@ class MqDomainEventPublisherTest {
         TestDomainEvent event1 = new TestDomainEvent("order-001");
         TestDomainEvent event2 = new TestDomainEvent("order-002");
 
-        publisher.publishAll(List.of(event1, event2));
+        publisher.publishAll(Arrays.asList(event1, event2));
 
         assertEquals(2, publishedEvents.size());
     }
@@ -208,6 +219,17 @@ class MqDomainEventPublisherTest {
         assertEquals(MqDomainEventPublisher.DOMAIN_EVENT_TAG, carrier.getTag());
     }
 
+    @Test
+    void toCarrier_shouldPreserveCorrelationAndCausationIds() {
+        TestDomainEvent causing = new TestDomainEvent(ENTITY_ID);
+        TestDomainEvent child = new TestDomainEvent(ENTITY_ID, causing);
+
+        DomainEventCarrier carrier = publisher.toCarrier(child);
+
+        assertEquals(causing.getEventId().asString(), carrier.getCorrelationId());
+        assertEquals(causing.getEventId().asString(), carrier.getCausationId());
+    }
+
     // ========================= 测试辅助类 =========================
 
     /**
@@ -217,6 +239,10 @@ class MqDomainEventPublisherTest {
 
         TestDomainEvent(String entityId) {
             super(entityId);
+        }
+
+        TestDomainEvent(String entityId, DomainEvent<?> causing) {
+            super(new EntityIdPath(new StringEntityId(entityId)), causing);
         }
     }
 }

@@ -1055,6 +1055,17 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/event/MqDomainEventPublisher.java",
+      "sourceSha256": [
+        "b9545a54bef776f79008933fa2e9cbec0183c4826f79834ab97fb707714117d5",
+        "e9c6b4bb6b01004eb64c050892d09e411e25e5db8e321654db35d91b24340aea",
+        "e9c6b4bb6b01004eb64c050892d09e411e25e5db8e321654db35d91b24340aea"
+      ],
+      "evidence": "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/event/MqDomainEventPublisherTest.java",
+      "testSha256": "93741bcf26ec9a33862fb45297df925aaae77f516decdcb132af97e963fbc15e",
+      "reason": "三线共同测试验证领域事件到 MQ 载体的主题、标签、关联与因果 ID 以及批量发布；JDK 8 使用显式 instanceof 强转，高两线使用模式匹配，路由和载体语义一致"
+    },
+    {
       "path": "ddd4j-mq/ddd4j-mq-kafka/src/main/java/io/ddd4j/mq/kafka/KafkaMessageAcknowledgment.java",
       "sourceSha256": [
         "64fa83f2adef08952755eb054d345681932552100ef1c5ce28ea236919d5d425",
