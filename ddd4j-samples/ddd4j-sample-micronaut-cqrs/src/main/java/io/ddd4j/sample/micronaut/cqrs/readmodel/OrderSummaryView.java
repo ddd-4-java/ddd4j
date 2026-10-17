@@ -21,6 +21,7 @@ import io.ddd4j.sample.order.domain.event.OrderCreatedEvent;
 import io.ddd4j.sample.order.domain.event.OrderPaidEvent;
 import jakarta.inject.Singleton;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -64,7 +65,7 @@ public class OrderSummaryView implements ProjectionView<Object> {
 
     @Override
     public Collection<String> getEventTypes() {
-        return List.of("OrderCreatedEvent", "OrderPaidEvent");
+        return Arrays.asList("OrderCreatedEvent", "OrderPaidEvent");
     }
 
     @Override
