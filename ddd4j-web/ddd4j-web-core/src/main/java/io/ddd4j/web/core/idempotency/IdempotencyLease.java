@@ -12,11 +12,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package io.ddd4j.web.core.idempotency;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.Duration;
 import java.util.Objects;
@@ -24,69 +24,35 @@ import java.util.Objects;
 /**
  * 一次幂等请求获取到的租约。
  *
- * <p>ownerToken 用于保证过期请求不能完成或释放后续请求重新获取的同一个幂等键。
+ * <p>ownerToken 保证过期请求不能完成或释放后续请求重新获取的同一个幂等键。
  * 调用方只应将实例交回创建它的 {@link IdempotencyGuard}。
  */
-
 public final class IdempotencyLease {
 
-    private static final long serialVersionUID = 0L;
-
     private final String key;
-
     private final String ownerToken;
-
     private final Duration ttl;
 
     /**
- * @param key 存储键
- * @param ownerToken 此次获取的唯一所有者标识
- * @param ttl 租约有效期
- */
-
-    @JsonCreator()
-    public IdempotencyLease(@JsonProperty("key") String key, @JsonProperty("ownerToken") String ownerToken, @JsonProperty("ttl") Duration ttl) {
-        key = Objects.requireNonNull(key, "key must not be null");
-        ttl = Objects.requireNonNull(ttl, "ttl must not be null");
-        this.key = key;
+     * 创建幂等租约。
+     *
+     * @param key 存储键
+     * @param ownerToken 此次获取的唯一所有者标识
+     * @param ttl 租约有效期
+     */
+    @JsonCreator
+    public IdempotencyLease(@JsonProperty("key") String key,
+                            @JsonProperty("ownerToken") String ownerToken,
+                            @JsonProperty("ttl") Duration ttl) {
+        this.key = Objects.requireNonNull(key, "key must not be null");
         this.ownerToken = ownerToken;
-        this.ttl = ttl;
+        this.ttl = Objects.requireNonNull(ttl, "ttl must not be null");
     }
 
     /**
-     * 返回幂等键。
+     * 返回存储键。
      *
-     * @return 幂等键
-     */
-
-    public String getKey() {
-        return key;
-    }
-
-    /**
-     * 返回租约所有者令牌。
-     *
-     * @return 租约所有者令牌
-     */
-
-    public String getOwnerToken() {
-        return ownerToken;
-    }
-
-    /**
-     * 返回租约有效期。
-     *
-     * @return 租约有效期
-     */
-
-    public Duration getTtl() {
-        return ttl;
-    }
-
-    /**
-     * 返回幂等键。
-     *
-     * @return 幂等键
+     * @return 存储键
      */
     @JsonProperty("key")
     public String key() {
@@ -96,7 +62,7 @@ public final class IdempotencyLease {
     /**
      * 返回租约所有者令牌。
      *
-     * @return 租约所有者令牌
+     * @return 所有者令牌
      */
     @JsonProperty("ownerToken")
     public String ownerToken() {
@@ -106,10 +72,37 @@ public final class IdempotencyLease {
     /**
      * 返回租约有效期。
      *
-     * @return 租约有效期
+     * @return 有效期
      */
     @JsonProperty("ttl")
     public Duration ttl() {
+        return ttl;
+    }
+
+    /**
+     * 返回存储键。
+     *
+     * @return 存储键
+     */
+    public String getKey() {
+        return key;
+    }
+
+    /**
+     * 返回租约所有者令牌。
+     *
+     * @return 所有者令牌
+     */
+    public String getOwnerToken() {
+        return ownerToken;
+    }
+
+    /**
+     * 返回租约有效期。
+     *
+     * @return 有效期
+     */
+    public Duration getTtl() {
         return ttl;
     }
 
@@ -122,13 +115,14 @@ public final class IdempotencyLease {
             return false;
         }
         IdempotencyLease other = (IdempotencyLease) obj;
-        return Objects.equals(this.key, other.key) && Objects.equals(this.ownerToken, other.ownerToken) && Objects.equals(this.ttl, other.ttl);
+        return Objects.equals(key, other.key)
+                && Objects.equals(ownerToken, other.ownerToken)
+                && Objects.equals(ttl, other.ttl);
     }
 
     @Override
     public int hashCode() {
-        int result = 0;
-        result = 31 * result + Objects.hashCode(key);
+        int result = Objects.hashCode(key);
         result = 31 * result + Objects.hashCode(ownerToken);
         result = 31 * result + Objects.hashCode(ttl);
         return result;
