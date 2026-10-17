@@ -399,6 +399,11 @@ def java_tokens_with_normalized_imports(source: str) -> tuple[str, ...] | None:
                          if statement[1] != "static" and statement[-2] == "*"]
     static_wildcard = any(statement[1] == "static" and statement[-2] == "*"
                           for statement in imports)
+    static_wildcard_owners = {statement[1:-3] for statement in imports
+                              if statement[1] == "static" and statement[-2] == "*"}
+    imports = [statement for statement in imports
+               if not (statement[1] == "static" and statement[-2] != "*"
+                       and statement[1:-3] in static_wildcard_owners)]
     if len(wildcard_packages) == 1 and not static_wildcard:
         imports = [statement for statement in imports
                    if statement[1] == "static" or statement[-2] == "*"
