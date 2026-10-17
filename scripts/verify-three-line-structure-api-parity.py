@@ -183,6 +183,33 @@ def validate_platform_dependency_config_files(
     return validated
 
 
+def validate_platform_build_config_files(
+        mappings: list[dict], snapshots: list[dict[str, str]]) -> dict[str, dict]:
+    """只豁免精确锁定的 Maven Wrapper/JDK 构建配置。"""
+    allowed = {".mvn/jvm.config", ".mvn/maven.config",
+               ".mvn/wrapper/maven-wrapper.properties",
+               ".mvn/wrapper/MavenWrapperDownloader.java"}
+    validated = {}
+    for item in mappings:
+        path = item.get("path")
+        hashes = item.get("sha256ByJdk")
+        if (path not in allowed or path in validated
+                or not isinstance(hashes, dict)
+                or set(hashes) != {"8", "17", "21"}
+                or not item.get("evidence")):
+            raise ValueError(f"invalid platform build config mapping: {path}")
+        expected = [hashes[jdk] for jdk in ("8", "17", "21")]
+        if (all(value is None for value in expected)
+                or len(set(expected)) == 1
+                or any(value is not None and not re.fullmatch(r"[0-9a-f]{64}", value)
+                       for value in expected)):
+            raise ValueError(f"invalid platform build config hashes: {path}")
+        if [snapshot.get(path) for snapshot in snapshots] != expected:
+            raise ValueError(f"stale platform build config mapping: {path}")
+        validated[path] = item
+    return validated
+
+
 def java_lexical_tokens(source: str) -> tuple[str, ...] | None:
     """仅剔除 Java 注释与格式；无法安全处理的语法保持 OPEN。"""
     # Unicode escape 在 Java 词法分析前展开，可能使注释边界发生变化。
@@ -579,6 +606,8 @@ def inventory_gate(roots: list[pathlib.Path], output: pathlib.Path, policy_path:
     snapshots = [inventory_files(root) for root in roots]
     dependency_configs = validate_platform_dependency_config_files(
         policy.get("platformDependencyConfigFiles", []), snapshots)
+    build_configs = validate_platform_build_config_files(
+        policy.get("platformBuildConfigFiles", []), snapshots)
     rows = []
     for path in sorted(set().union(*(snapshot.keys() for snapshot in snapshots))):
         values = [snapshot.get(path) for snapshot in snapshots]
@@ -606,6 +635,9 @@ def inventory_gate(roots: list[pathlib.Path], output: pathlib.Path, policy_path:
         elif path in dependency_configs:
             status = "PLATFORM_CONFIG"
             evidence = dependency_configs[path]["evidence"]
+        elif path in build_configs:
+            status = "PLATFORM_CONFIG"
+            evidence = build_configs[path]["evidence"]
         elif path in platform and values[0] is None and values[1] is not None and values[2] is not None:
             item = platform[path]
             if item.get("decision") == "unsupported" and item.get("evidence"):
