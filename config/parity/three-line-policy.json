@@ -1041,6 +1041,17 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/order/web/dto/OrderResponse.java",
+      "sourceSha256": [
+        "dc65a5b3d7ed97c9642a85365980cd0382873a0c50029bb928810097faf50f64",
+        "b2e672a1abeaffd4e77232a9cde504145017461c0102f5bdb9a6052d42334ea8",
+        "b2e672a1abeaffd4e77232a9cde504145017461c0102f5bdb9a6052d42334ea8"
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/order/web/dto/OrderResponseContractTest.java",
+      "testSha256": "7851e75b157fb4f641aff40a5dcbe0dd4f9223877577dd258568be0e096515f2",
+      "reason": "订单响应及其公开方法三线一致；JDK 8 用 Collections.unmodifiableList 包装 Collectors.toList，JDK 17/21 用 Stream.toList，定向契约锁定响应行列表不可修改"
+    },
+    {
       "path": "ddd4j-core/src/main/java/io/ddd4j/core/ddd/model/AggregateRoot.java",
       "sourceSha256": [
         "a395bce8b9468a0c0d525bb5e75eda8df67e5b17286a7feffdbe7a4e81043b2f",
