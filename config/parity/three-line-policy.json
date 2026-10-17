@@ -1055,6 +1055,17 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-runtime/ddd4j-runtime-spring/src/main/java/io/ddd4j/spring/cqrs/SpringJpaViewManager.java",
+      "sourceSha256": [
+        "e24b4fb673b3698b249c50bbb0e4f1d4d02efa93d1ca426819c640935ba7bf26",
+        "9c3d283880c67d249aeee917f1fbe69e98f9689a1d5948000ff0bde24910a279",
+        "9c3d283880c67d249aeee917f1fbe69e98f9689a1d5948000ff0bde24910a279"
+      ],
+      "evidence": "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/cqrs/SpringJpaViewManagerTest.java",
+      "testSha256": "07bcced851746eecf10dbb5a556e36477f4470699fec85562ba8b387b99c5494",
+      "reason": "三线共同测试验证视图位置、运行状态及 ProjectionMetrics 最近运行信息；JDK 8 使用兼容 Bean getter，高两线使用显式值访问方法，业务语义一致"
+    },
+    {
       "path": "ddd4j-runtime/ddd4j-runtime-spring/src/main/java/io/ddd4j/spring/cqrs/SpringJpaProjectionPositionRepository.java",
       "sourceSha256": [
         "3ef320c32198b3c83aa4407e3cbb9f73f64b18ab5571627040ec88a09b26be5e",

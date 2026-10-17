@@ -13,13 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.spring.cqrs;
-import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
-import io.ddd4j.core.cqrs.readmodel.ViewManager;
-import io.ddd4j.core.cqrs.readmodel.ProjectionStatus;
-import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
-import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
-import io.ddd4j.core.cqrs.readmodel.ProjectionMetrics;
-
 import io.ddd4j.core.cqrs.readmodel.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.ContextRefreshedEvent;
