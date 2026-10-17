@@ -51,6 +51,12 @@ public class KafkaMessageAcknowledgment implements Acknowledgment {
     private final ConsumerRecord<?, ?> record;
     private final AtomicBoolean acknowledged = new AtomicBoolean(false);
 
+    /**
+     * 创建 Kafka 消息确认句柄。
+     *
+     * @param consumer Kafka 消费者
+     * @param record 待确认的 Kafka 记录
+     */
     public KafkaMessageAcknowledgment(Consumer<?, ?> consumer, ConsumerRecord<?, ?> record) {
         this.consumer = Objects.requireNonNull(consumer, "Kafka Consumer is required");
         this.record = Objects.requireNonNull(record, "ConsumerRecord is required");
@@ -100,6 +106,7 @@ public class KafkaMessageAcknowledgment implements Acknowledgment {
         if (!acknowledged.get()) {
             TopicPartition partition = new TopicPartition(record.topic(), record.partition());
             OffsetAndMetadata offset = new OffsetAndMetadata(record.offset() + 1);
+            // 只有 broker 确认 offset 提交后才设置状态；提交失败仍须允许 seek 和重试。
             consumer.commitSync(java.util.Collections.singletonMap(partition, offset));
             acknowledged.set(true);
         }

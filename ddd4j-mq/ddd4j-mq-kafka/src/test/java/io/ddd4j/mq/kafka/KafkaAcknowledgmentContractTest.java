@@ -17,15 +17,19 @@ package io.ddd4j.mq.kafka;
 import io.ddd4j.mq.message.MessageHeaders;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.OffsetAndMetadata;
+import org.apache.kafka.common.TopicPartition;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -56,7 +60,10 @@ class KafkaAcknowledgmentContractTest {
         assertEquals("stable-id", acknowledgment.messageId());
         acknowledgment.ack();
 
-        verify(consumer).commitSync(anyMap());
+        TopicPartition partition = new TopicPartition("orders", 1);
+        verify(consumer).commitSync(argThat((Map<TopicPartition, OffsetAndMetadata> offsets) -> offsets.size() == 1
+                && offsets.containsKey(partition)
+                && offsets.get(partition).offset() == 9L));
         assertTrue(acknowledgment.isAcknowledged());
     }
 }
