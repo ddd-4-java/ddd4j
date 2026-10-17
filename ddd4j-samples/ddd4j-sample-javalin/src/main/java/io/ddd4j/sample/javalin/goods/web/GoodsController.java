@@ -107,13 +107,24 @@ public class GoodsController {
         if (tokens.length != 2) {
             return;
         }
-        SFunction<Goods, ?> property = switch (tokens[0]) {
-            case "id" -> Goods::id;
-            case "createTime" -> Goods::getCreateTime;
-            case "updateTime" -> Goods::getUpdateTime;
-            case "price" -> Goods::getPrice;
-            default -> null;
-        };
+        SFunction<Goods, ?> property;
+        switch (tokens[0]) {
+            case "id":
+                property = Goods::id;
+                break;
+            case "createTime":
+                property = Goods::getCreateTime;
+                break;
+            case "updateTime":
+                property = Goods::getUpdateTime;
+                break;
+            case "price":
+                property = Goods::getPrice;
+                break;
+            default:
+                property = null;
+                break;
+        }
         if (Objects.isNull(property)) {
             return;
         }
