@@ -164,12 +164,13 @@ public class SqsMQClient implements MQClient {
             for (Map.Entry<String, String> header : event.headerMap().entrySet()) {
                 attrs.put(header.getKey(), attrValue(header.getValue()));
             }
+            String payload = serialization().serialize(event).toString();
             client.sendMessage(SendMessageRequest.builder()
                     .queueUrl(queueUrl)
-                    .messageBody(serialization().serialize(event).toString())
+                    .messageBody(payload)
                     .messageAttributes(attrs)
                     .build());
-            logger().info("Publish MQ [{}]: {}", queueUrl, serialization().serialize(event));
+            logger().info("Publish MQ [{}]: {}", queueUrl, payload);
         } catch (Exception ex) {
             throw new IllegalStateException("Publish SQS event failed", ex);
         }
