@@ -38,6 +38,9 @@ public interface Sender {
 
     /**
      * 将 {@link Message} 序列化为通道通用的 JSON 字符串。
+     *
+     * @param message 待序列化消息
+     * @return JSON 字符串
      */
     static String renderMessage(Message message) {
         return JsonKit.toJson(message);
