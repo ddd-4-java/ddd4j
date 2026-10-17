@@ -16,8 +16,9 @@ package io.ddd4j.core.auth;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-import java.util.Set;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -56,7 +57,7 @@ class AuthPrincipalTest {
         AuthPrincipal.RolePair role = new AuthPrincipal.RolePair()
                 .setRoleId("r1").setRoleCode("admin").setRoleName("Admin");
 
-        AuthPrincipal principal = new AuthPrincipal().setRoles(List.of(role));
+        AuthPrincipal principal = new AuthPrincipal().setRoles(Collections.singletonList(role));
 
         assertThat(principal.getRoles()).hasSize(1);
         assertThat(principal.getRoles().get(0).getRoleCode()).isEqualTo("admin");
@@ -64,7 +65,7 @@ class AuthPrincipalTest {
 
     @Test
     void setPerms_shouldCarryPermissionSet() {
-        AuthPrincipal principal = new AuthPrincipal().setPerms(Set.of("user:add", "user:del"));
+        AuthPrincipal principal = new AuthPrincipal().setPerms(Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList("user:add", "user:del"))));
 
         assertThat(principal.getPerms()).containsExactlyInAnyOrder("user:add", "user:del");
     }
@@ -72,7 +73,7 @@ class AuthPrincipalTest {
     @Test
     void setProfile_shouldCarryProfileMap() {
         AuthPrincipal principal = new AuthPrincipal()
-                .setProfile(java.util.Map.of("dept", "engineering"));
+                .setProfile(java.util.Collections.singletonMap("dept", "engineering"));
 
         assertThat(principal.getProfile()).containsEntry("dept", "engineering");
     }
