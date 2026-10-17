@@ -30,19 +30,34 @@ public final class WebRequestLifecycle {
     private final BearerSubjectAuthenticator authenticator;
     private final WebAccessPolicy accessPolicy;
 
+    /**
+     * 创建请求认证生命周期。
+     *
+     * @param authenticator Bearer 主体认证器
+     * @param accessPolicy 访问策略
+     */
     public WebRequestLifecycle(BearerSubjectAuthenticator authenticator, WebAccessPolicy accessPolicy) {
         this.authenticator = Objects.requireNonNull(authenticator, "authenticator must not be null");
         this.accessPolicy = Objects.requireNonNull(accessPolicy, "accessPolicy must not be null");
     }
 
+    /**
+     * 按访问策略认证请求。
+     *
+     * @param context 请求上下文
+     * @return 认证结果；免认证时为空
+     */
     public Optional<Authentication> authenticate(WebRequestContext context) {
         WebRequestContext requestContext = Objects.requireNonNull(context, "context must not be null");
         AuthenticationMode mode = Objects.requireNonNull(accessPolicy.authenticationMode(requestContext),
                 "access policy must return an authentication mode");
-        return switch (mode) {
-            case DISABLED -> Optional.empty();
-            case OPTIONAL -> authenticator.authenticateOptional(requestContext.authorization());
-            case REQUIRED -> Optional.of(authenticator.authenticateSubject(requestContext.authorization()));
-        };
+        if (mode == AuthenticationMode.DISABLED) {
+            return Optional.empty();
+        } else if (mode == AuthenticationMode.OPTIONAL) {
+            return authenticator.authenticateOptional(requestContext.authorization());
+        } else if (mode == AuthenticationMode.REQUIRED) {
+            return Optional.of(authenticator.authenticateSubject(requestContext.authorization()));
+        }
+        throw new IllegalStateException("Unknown authentication mode: " + mode);
     }
 }
