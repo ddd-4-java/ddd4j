@@ -34,6 +34,12 @@ import org.apache.rocketmq.client.producer.DefaultMQProducer;
 public class RocketMQProperties extends MQProperties {
 
     /**
+     * 构造 RocketMQ 配置（各字段带默认值，可经配置绑定覆盖）。
+     */
+    public RocketMQProperties() {
+    }
+
+    /**
      * NameServer 地址（例：{@code localhost:9876} 或 {@code 192.168.1.1:9876;192.168.1.2:9876}）。
      */
     private String nameServer = "localhost:9876";
