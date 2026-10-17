@@ -13,11 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.guice.cqrs;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
 import org.junit.jupiter.api.Test;
 
@@ -27,11 +22,6 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * 类型说明。
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.0.x
- */
 class GuiceInMemoryProjectionPositionRepositoryTest {
 
     private final GuiceInMemoryProjectionPositionRepository repository =
@@ -59,6 +49,10 @@ class GuiceInMemoryProjectionPositionRepositoryTest {
 
         assertEquals(2, all.size());
         assertEquals(2, repository.size());
+        repository.clear();
+        assertEquals(2, all.size());
+        assertThrows(UnsupportedOperationException.class,
+                () -> all.add(new GuiceProjectionPosition("stream-3", 3L)));
     }
 
     @Test
@@ -91,6 +85,9 @@ class GuiceInMemoryProjectionPositionRepositoryTest {
 
         repository.clear();
         assertEquals(0, repository.size());
-        assertEquals(0, snapshot.size() - 1);
+        assertEquals(1, snapshot.size());
+        assertTrue(snapshot.containsKey("stream-1"));
+        assertThrows(UnsupportedOperationException.class,
+                () -> snapshot.put("stream-2", new GuiceProjectionPosition("stream-2", 2L)));
     }
 }
