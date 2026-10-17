@@ -464,6 +464,39 @@ class ThreeLineInventoryTest(unittest.TestCase):
         self.assertEqual("OPEN", next(row["status"] for row in rows
                                       if row["path"] == path and row["category"] == "production"))
 
+    def test_unused_explicit_import_does_not_create_structure_difference(self):
+        path = "ddd4j-core/src/main/java/example/Foo.java"
+        source = "package example;\npublic class Foo { int size() { return 1; } }\n"
+        self.write(self.roots[0], path, source)
+        self.write(self.roots[1], path, source.replace("public class", "import java.util.Map;\npublic class"))
+        self.write(self.roots[2], path, source)
+
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = json.loads((output / "inventory.json").read_text())["differences"]
+        self.assertEqual("LEXICALLY_EQUIVALENT", next(row["status"] for row in rows
+                                               if row["path"] == path and row["category"] == "production"))
+
+        used = source.replace("int size() { return 1; }", "Map size() { return null; }")
+        for root in self.roots:
+            self.write(root, path, used)
+        self.write(self.roots[1], path, used.replace("public class", "import java.util.Map;\npublic class"))
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = json.loads((output / "inventory.json").read_text())["differences"]
+        self.assertEqual("OPEN", next(row["status"] for row in rows
+                                      if row["path"] == path and row["category"] == "production"))
+
+        for extra_import in ("import static java.util.Map.of;", "import java.util.*;"):
+            for root in self.roots:
+                self.write(root, path, source)
+            self.write(self.roots[1], path, source.replace("public class", extra_import + "\npublic class"))
+            result, output = self.run_checker("inventory")
+            self.assertEqual(0, result.returncode, result.stderr)
+            rows = json.loads((output / "inventory.json").read_text())["differences"]
+            self.assertEqual("OPEN", next(row["status"] for row in rows
+                                          if row["path"] == path and row["category"] == "production"))
+
     def test_verify_compares_compiled_api_while_inventory_remains_open(self):
         wrapper = ('#!/bin/sh\n'
                    'mkdir -p ddd4j-core/target/classes\n'
