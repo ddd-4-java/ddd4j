@@ -7,13 +7,24 @@ if [[ "${DDD4J_ENABLE_CVE_SCAN:-false}" != "true" ]]; then
   echo "[SKIP] CVE scan is disabled"
   exit 0
 fi
-if [[ -z "${NVD_API_KEY:-}" ]]; then
-  echo "[FAIL] NVD_API_KEY is required" >&2
+BRANCH="${DDD4J_BRANCH:-${GITHUB_HEAD_REF:-${GITHUB_REF_NAME:-}}}"
+if [[ -z "${BRANCH}" ]]; then
+  echo "[FAIL] DDD4J_BRANCH or a GitHub branch name is required" >&2
   exit 1
 fi
+THRESHOLD="$(PYTHONPATH="${ROOT_DIR}/scripts" python3 - "${BRANCH}" <<'PY'
+import json
+import sys
+
+from dependencies.check_dependencies import resolve_policy
+
+with open('.github/dependency-policy.json', encoding='utf-8') as source:
+    policy = resolve_policy(json.load(source), sys.argv[1])
+print(policy['cvss_threshold'])
+PY
+)"
 rm -rf "${CVE_DIR}" && mkdir -p "${CVE_DIR}"
-./mvnw -B -ntp -DskipTests org.owasp:dependency-check-maven:12.2.2:aggregate \
-  -Dformat=ALL -DoutputDirectory="${CVE_DIR}" \
-  -DfailBuildOnCVSS=7
-find "${CVE_DIR}" -maxdepth 1 -type f -name 'dependency-check-report.*' -size +0c -print -quit | grep -q .
-echo "[PASS] CVE reports generated in ${CVE_DIR}; CVSS 7.0 or higher blocks the build."
+python3 scripts/dependencies/scan_vulnerabilities.py \
+  --root "${ROOT_DIR}" --output "${CVE_DIR}" \
+  --line "${BRANCH}" --threshold "${THRESHOLD}"
+echo "[PASS] Keyless Trivy reports generated in ${CVE_DIR}; CVSS ${THRESHOLD} or higher blocks the build."
