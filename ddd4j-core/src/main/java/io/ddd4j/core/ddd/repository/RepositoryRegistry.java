@@ -32,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 通过 {@link BaseContext}（全局默认）+ {@link ThreadContext}（请求级覆盖）
  * 两级上下文查找仓储实例。
  *
- * <h2>框架适配层注册方式</h2>
+ * <p><b>框架适配层注册方式</b></p>
  * <pre>{@code
  * // Spring 启动期（SpringContextBridge）
  * RepositoryRegistry.register(Order.class, orderRepository);
@@ -42,7 +42,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *                     Repository.class, orderRepository);
  * }</pre>
  *
- * <h3>聚合根充血查找</h3>
+ * <p><b>聚合根充血查找</b></p>
  * <pre>{@code
  * // 在 AggregateRoot 内部自动调用
  * Repository<Order, OrderId> repo = RepositoryRegistry.repository(Order.class);
@@ -50,7 +50,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * // 查找优先级：ThreadContext → BaseContext
  * }</pre>
  *
- * <h3>多租户覆盖</h3>
+ * <p><b>多租户覆盖</b></p>
  * <p>
  * 通过 {@link ThreadContext} 可为当前请求注入租户专属仓储：
  * <pre>{@code
@@ -131,7 +131,7 @@ public final class RepositoryRegistry {
      *   <li>静态 {@link #INSTANCES}（向后兼容）</li>
      * </ol>
      *
-     * @param <M> 数据元素类型
+     * @param <M> 聚合根类型
      * @param modelClass 聚合根类型
      * @return 仓储实例
      * @throws BizRuntimeException 未找到匹配的仓储
@@ -160,7 +160,8 @@ public final class RepositoryRegistry {
         }
 
         throw new BizRuntimeException(
-                "Repository not found for aggregate {}. Register it via RepositoryRegistry.register({}, repository) or ensure the framework adapter is configured.",
+                "Repository not found for aggregate {}. Register it via RepositoryRegistry.register({}, repository) " +
+                        "or ensure the framework adapter is configured.",
                 modelClass.getSimpleName(), modelClass.getSimpleName());
     }
 
