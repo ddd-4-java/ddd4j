@@ -14,11 +14,13 @@
  */
 package io.ddd4j.sample.dropwizard.cqrs.web;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import io.ddd4j.core.cqrs.command.Result;
 import io.ddd4j.sample.dropwizard.cqrs.DropwizardCqrsApplication;
 import io.ddd4j.sample.dropwizard.cqrs.command.CreateOrderCommand;
 import io.ddd4j.sample.dropwizard.cqrs.readmodel.OrderSummaryViewEntity;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -72,11 +74,26 @@ public class OrderResource {
 
     @Data
     @NoArgsConstructor
-    @AllArgsConstructor
     public static class CreateOrderRequest {
         private String orderNo;
         private String buyerId;
         private String buyerName;
+
+        /**
+         * 创建订单请求。
+         *
+         * @param orderNo 订单编号
+         * @param buyerId 买家标识
+         * @param buyerName 买家名称
+         */
+        @JsonCreator
+        public CreateOrderRequest(@JsonProperty("orderNo") String orderNo,
+                                  @JsonProperty("buyerId") String buyerId,
+                                  @JsonProperty("buyerName") String buyerName) {
+            this.orderNo = orderNo;
+            this.buyerId = buyerId;
+            this.buyerName = buyerName;
+        }
 
         /** @return 订单编号 */
         public String orderNo() {

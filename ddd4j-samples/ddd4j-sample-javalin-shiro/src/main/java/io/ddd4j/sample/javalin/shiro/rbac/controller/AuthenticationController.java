@@ -14,6 +14,9 @@
  */
 package io.ddd4j.sample.javalin.shiro.rbac.controller;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import com.google.inject.Inject;
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.auth.AuthPrincipal;
@@ -22,7 +25,6 @@ import io.ddd4j.core.util.SubjectKit;
 import io.ddd4j.sample.javalin.shiro.rbac.domain.User;
 import io.ddd4j.sample.javalin.shiro.rbac.service.RbacService;
 import io.javalin.http.Context;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -173,11 +175,23 @@ public class AuthenticationController {
 
     @Data
     @NoArgsConstructor
-    @AllArgsConstructor
     public static class LoginRequest {
         private String loginId;
         @ToString.Exclude
         private String password;
+
+        /**
+         * 创建登录请求。
+         *
+         * @param loginId 登录标识
+         * @param password 密码
+         */
+        @JsonCreator
+        public LoginRequest(@JsonProperty("loginId") String loginId,
+                            @JsonProperty("password") String password) {
+            this.loginId = loginId;
+            this.password = password;
+        }
 
         public String loginId() {
             return loginId;

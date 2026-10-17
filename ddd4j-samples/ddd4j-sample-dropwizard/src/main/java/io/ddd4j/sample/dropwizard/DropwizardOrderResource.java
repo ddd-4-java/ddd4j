@@ -14,6 +14,7 @@
  */
 package io.ddd4j.sample.dropwizard;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.ddd4j.core.api.R;
@@ -26,7 +27,6 @@ import io.ddd4j.sample.order.application.OrderApplicationService;
 import io.ddd4j.sample.order.application.OrderReadModel;
 import io.ddd4j.web.core.context.WebHeaders;
 import io.ddd4j.web.core.error.WebStatusException;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import javax.ws.rs.*;
@@ -109,9 +109,14 @@ public final class DropwizardOrderResource {
     }
 
     @Data
-    @AllArgsConstructor
     public static class TokenResponse {
         private String token;
+
+        /** @param token 登录令牌 */
+        @JsonCreator
+        public TokenResponse(@JsonProperty("token") String token) {
+            this.token = token;
+        }
 
         /** @return 登录令牌 */
         @JsonProperty("token")

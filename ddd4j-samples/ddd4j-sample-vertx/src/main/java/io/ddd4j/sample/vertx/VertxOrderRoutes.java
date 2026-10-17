@@ -14,6 +14,9 @@
  */
 package io.ddd4j.sample.vertx;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.auth.AuthRequest;
 import io.ddd4j.core.subject.Subject;
@@ -127,9 +130,45 @@ public final class VertxOrderRoutes {
     public static class TokenResponse {
         String token;
 
+        /** @param token 登录令牌 */
+        @JsonCreator
+        public TokenResponse(@JsonProperty("token") String token) {
+            this.token = token;
+        }
+
         /** @return 登录令牌 */
+        @JsonProperty("token")
         public String token() {
             return token;
+        }
+
+        /** @return 登录令牌 */
+        public String getToken() {
+            return token;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            TokenResponse other = (TokenResponse) obj;
+            return Objects.equals(this.token, other.token);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 1;
+            result = 59 * result + (Objects.isNull(token) ? 43 : token.hashCode());
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "VertxOrderRoutes.TokenResponse(token=" + token + ")";
         }
     }
 }
