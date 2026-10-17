@@ -420,6 +420,50 @@ class ThreeLineInventoryTest(unittest.TestCase):
         self.assertEqual("OPEN", next(row["status"] for row in rows
                                       if row["path"] == path and row["category"] == "production"))
 
+    def test_platform_import_namespace_requires_unchanged_java_body(self):
+        path = "ddd4j-core/src/main/java/example/Foo.java"
+        old = ("package example;\nimport javax.servlet.ServletRequest;\n"
+               "public class Foo { ServletRequest request; int size() { return 1; } }\n")
+        modern = old.replace("javax.servlet.", "jakarta.servlet.")
+        for root, source in zip(self.roots, (old, modern, modern)):
+            self.write(root, path, source)
+
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = json.loads((output / "inventory.json").read_text())["differences"]
+        self.assertEqual("PLATFORM_ADAPTED", next(row["status"] for row in rows
+                                             if row["path"] == path and row["category"] == "production"))
+
+        self.write(self.roots[2], path, modern.replace("return 1", "return 2"))
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = json.loads((output / "inventory.json").read_text())["differences"]
+        self.assertEqual("OPEN", next(row["status"] for row in rows
+                                      if row["path"] == path and row["category"] == "production"))
+
+        jackson_two = ("package example;\nimport com.fasterxml.jackson.databind.ObjectMapper;\n"
+                       "public class Foo { ObjectMapper mapper; int size() { return 1; } }\n")
+        jackson_three = jackson_two.replace("com.fasterxml.jackson.databind.",
+                                            "tools.jackson.databind.")
+        for root, source in zip(self.roots, (jackson_two, jackson_two, jackson_three)):
+            self.write(root, path, source)
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = json.loads((output / "inventory.json").read_text())["differences"]
+        self.assertEqual("PLATFORM_ADAPTED", next(row["status"] for row in rows
+                                             if row["path"] == path and row["category"] == "production"))
+
+        unapproved = old.replace("javax.servlet.", "javax.crypto.")
+        for root, source in zip(self.roots, (unapproved,
+                                             unapproved.replace("javax.crypto.", "jakarta.crypto."),
+                                             unapproved.replace("javax.crypto.", "jakarta.crypto."))):
+            self.write(root, path, source)
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = json.loads((output / "inventory.json").read_text())["differences"]
+        self.assertEqual("OPEN", next(row["status"] for row in rows
+                                      if row["path"] == path and row["category"] == "production"))
+
     def test_verify_compares_compiled_api_while_inventory_remains_open(self):
         wrapper = ('#!/bin/sh\n'
                    'mkdir -p ddd4j-core/target/classes\n'

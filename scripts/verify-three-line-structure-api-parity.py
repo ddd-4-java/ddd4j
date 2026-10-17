@@ -22,6 +22,21 @@ JAVA_OPERATORS = tuple(sorted((
     "==", "!=", "<=", ">=", "&&", "||", "+=", "-=", "*=", "/=", "%=",
     "&=", "|=", "^=",
 ), key=len, reverse=True))
+PLATFORM_IMPORT_NAMESPACES = tuple((old, new) for old, new in (
+    ("javax.persistence.", "jakarta.persistence."),
+    ("javax.validation.", "jakarta.validation."),
+    ("javax.servlet.", "jakarta.servlet."),
+    ("javax.ws.rs.", "jakarta.ws.rs."),
+    ("javax.annotation.", "jakarta.annotation."),
+    ("javax.inject.", "jakarta.inject."),
+    ("javax.jms.", "jakarta.jms."),
+    ("javax.json.bind.", "jakarta.json.bind."),
+    ("javax.enterprise.", "jakarta.enterprise."),
+    ("javax.interceptor.", "jakarta.interceptor."),
+    ("javax.transaction.", "jakarta.transaction."),
+    ("com.fasterxml.jackson.databind.", "tools.jackson.databind."),
+    ("com.fasterxml.jackson.core.", "tools.jackson.core."),
+))
 
 
 def run(*command: str) -> str:
@@ -276,6 +291,23 @@ def java_files_lexically_equal(path: str, roots: list[pathlib.Path]) -> bool:
     tokens = [java_tokens_with_normalized_imports((root / path).read_text(encoding="utf-8"))
               for root in roots]
     return tokens[0] is not None and tokens[0] == tokens[1] == tokens[2]
+
+
+def java_platform_imports_only_match(path: str, roots: list[pathlib.Path]) -> bool:
+    """只映射已确认的平台导入命名空间；类型正文和其余导入逐 token 相同。"""
+    sources = [(root / path).read_text(encoding="utf-8") for root in roots]
+
+    def normalize(source: str) -> str:
+        for old, new in PLATFORM_IMPORT_NAMESPACES:
+            source = re.sub(r"(?m)^([ \t]*import[ \t]+(?:static[ \t]+)?)" + re.escape(old),
+                            lambda match: match.group(1) + new, source)
+        return source
+
+    original = [java_tokens_with_normalized_imports(source) for source in sources]
+    if any(tokens is None for tokens in original) or original[0] == original[1] == original[2]:
+        return False
+    mapped = [java_tokens_with_normalized_imports(normalize(source)) for source in sources]
+    return mapped[0] is not None and mapped[0] == mapped[1] == mapped[2]
 
 
 def java_serial_field_adaptation_matches(path: str, roots: list[pathlib.Path]) -> bool:
@@ -670,6 +702,11 @@ def inventory_gate(roots: list[pathlib.Path], output: pathlib.Path, policy_path:
               and java_files_lexically_equal(path, roots)):
             status = "LEXICALLY_EQUIVALENT"
             evidence = "current Java source: identical tokens after removing comments, whitespace and import order"
+        elif (category in ("production", "test") and all(value is not None for value in values)
+              and java_platform_imports_only_match(path, roots)):
+            status = "PLATFORM_ADAPTED"
+            evidence = ("current Java source: only approved javax/Jakarta or Jackson import namespaces differ; "
+                        "remaining tokens match; compiled API and behavior require separate gates")
         reason = "missing" if any(value is None for value in values) else "content"
         stable_id = hashlib.sha256((category + "\0" + path + "\0" + reason).encode()).hexdigest()[:16]
         rows.append({"id": stable_id, "path": path, "category": category,
