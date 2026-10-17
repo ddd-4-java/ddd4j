@@ -247,6 +247,47 @@
   ],
   "platformContentMappings": [
     {
+      "path": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/main/java/io/ddd4j/sample/quarkus/cqrs/cache/OrderCacheService.java",
+      "replacements": [
+        {
+          "from": "import javax.enterprise.context.ApplicationScoped;",
+          "to": "import jakarta.enterprise.context.ApplicationScoped;"
+        },
+        {
+          "from": "import javax.inject.Inject;",
+          "to": "import jakarta.inject.Inject;"
+        }
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/test/java/io/ddd4j/sample/quarkus/cqrs/order/OrderCQRSQueryTest.java",
+      "reason": "Quarkus CQRS 缓存逻辑三线一致；仅 CDI import 随平台变化"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/main/java/io/ddd4j/sample/quarkus/shiro/order/infrastructure/InMemoryOrderRepository.java",
+      "replacements": [
+        {
+          "from": "import javax.enterprise.context.ApplicationScoped;",
+          "to": "import jakarta.enterprise.context.ApplicationScoped;"
+        }
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/test/java/io/ddd4j/sample/quarkus/shiro/RbacResourceTest.java",
+      "reason": "Quarkus Shiro 订单仓储逻辑三线一致；仅 CDI import 随平台变化"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-helidon-cqrs/src/main/java/io/ddd4j/sample/helidon/cqrs/HelidonCqrsJaxRsApplication.java",
+      "replacements": [
+        {
+          "from": "import javax.ws.rs.ApplicationPath;",
+          "to": "import jakarta.ws.rs.ApplicationPath;"
+        },
+        {
+          "from": "import javax.ws.rs.core.Application;",
+          "to": "import jakarta.ws.rs.core.Application;"
+        }
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-helidon-cqrs/src/test/java/io/ddd4j/sample/helidon/cqrs/HelidonOrderCqrsIT.java",
+      "reason": "Helidon CQRS 资源注册逻辑三线一致；仅 JAX-RS import 随平台变化"
+    },
+    {
       "path": "ddd4j-data/ddd4j-data-cqrs-dropwizard/src/test/java/io/ddd4j/data/cqrs/dropwizard/ElRuntimeTest.java",
       "replacements": [
         {
