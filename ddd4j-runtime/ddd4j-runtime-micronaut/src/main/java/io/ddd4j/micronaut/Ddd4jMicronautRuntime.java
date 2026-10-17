@@ -39,11 +39,28 @@ public final class Ddd4jMicronautRuntime implements AutoCloseable {
     private final SubjectKitRegistrationScope subjectRegistration;
     private final RuntimeReadinessRegistry readinessRegistry;
 
+    /**
+     * 使用默认的就绪检查集合创建运行时桥梁。
+     *
+     * @param publisher 领域事件发布器
+     * @param subjectProvider 主体提供器
+     * @param i18nProvider 国际化提供器
+     * @param commandBus 命令总线
+     */
     public Ddd4jMicronautRuntime(DomainEventPublisher publisher, SubjectProvider subjectProvider,
                                  I18nProvider i18nProvider, CommandBus commandBus) {
         this(publisher, subjectProvider, i18nProvider, commandBus, List.of());
     }
 
+    /**
+     * 注册 Micronaut 提供的 ddd4j 服务与就绪检查。
+     *
+     * @param publisher 领域事件发布器
+     * @param subjectProvider 主体提供器
+     * @param i18nProvider 国际化提供器
+     * @param commandBus 命令总线
+     * @param readinessContributors 就绪检查贡献者
+     */
     public Ddd4jMicronautRuntime(DomainEventPublisher publisher, SubjectProvider subjectProvider,
                                  I18nProvider i18nProvider, CommandBus commandBus,
                                  Collection<? extends ReadinessContributor> readinessContributors) {
@@ -60,12 +77,20 @@ public final class Ddd4jMicronautRuntime implements AutoCloseable {
         this.readinessRegistry = new RuntimeReadinessRegistry(readinessContributors);
     }
 
+    /**
+     * 启动全局 SPI 和主体注册。
+     */
     @PostConstruct
     public void start() {
         registrations.start();
         subjectRegistration.start();
     }
 
+    /**
+     * 获取当前运行时的就绪注册表。
+     *
+     * @return 就绪注册表
+     */
     public RuntimeReadinessRegistry readiness() {
         return readinessRegistry;
     }

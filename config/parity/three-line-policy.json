@@ -1055,6 +1055,17 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-runtime/ddd4j-runtime-micronaut/src/main/java/io/ddd4j/micronaut/Ddd4jMicronautRuntime.java",
+      "sourceSha256": [
+        "1edf35abe3d5fe32c7d7653099fb878f208eff1dc965ff3ffceb820592630c1f",
+        "f7806cff629bf2e3fb10249f017115289ff1b5f70a34f95854d8ad0a56d9efec",
+        "f7806cff629bf2e3fb10249f017115289ff1b5f70a34f95854d8ad0a56d9efec"
+      ],
+      "evidence": "ddd4j-runtime/ddd4j-runtime-micronaut/src/test/java/io/ddd4j/micronaut/Ddd4jMicronautRuntimeTest.java",
+      "testSha256": "49722e6bb468dcc902a975cf643dffb6f505a4d0d7d4570bc23f7fc05877af1e",
+      "reason": "三线共同运行时契约测试验证 Micronaut 生命周期、服务注册、就绪状态和默认空贡献者集合；JDK 8 使用 Collections.emptyList，高两线使用 List.of，业务语义一致"
+    },
+    {
       "path": "ddd4j-runtime/ddd4j-runtime-micronaut/src/main/java/io/ddd4j/micronaut/health/Ddd4jMicronautReadinessHealthIndicator.java",
       "sourceSha256": [
         "67cca1b611fe5c6cf0a4504629989482dc1b1829484966f17d34581fc5ef8f8a",
