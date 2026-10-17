@@ -534,6 +534,42 @@ def validate_platform_files_only_on_jdk8(items: list[dict],
     return validated
 
 
+def validate_platform_tests_only_on_jdk8(items: list[dict],
+                                         roots: list[pathlib.Path]) -> dict[str, dict]:
+    """锁定低线专用测试及三线对应容器契约，避免用宽泛排除掩盖测试缺失。"""
+    def valid_sha256(value: object) -> bool:
+        return (isinstance(value, str) and len(value) == 64
+                and all(char in "0123456789abcdef" for char in value))
+
+    validated = {}
+    for item in items:
+        path = pathlib.PurePosixPath(item.get("path", ""))
+        counterpart = pathlib.PurePosixPath(item.get("counterpart", ""))
+        path_text = path.as_posix()
+        digest = item.get("sha256", "")
+        counterpart_digests = item.get("counterpartSha256", [])
+        if (path.is_absolute() or ".." in path.parts
+                or "/src/test/java/" not in path_text or path.suffix != ".java"
+                or path_text in validated or not valid_sha256(digest)
+                or counterpart.is_absolute() or ".." in counterpart.parts
+                or "/src/test/java/" not in counterpart.as_posix()
+                or counterpart.suffix != ".java"
+                or not isinstance(counterpart_digests, list)
+                or len(counterpart_digests) != len(roots)
+                or not all(valid_sha256(value) for value in counterpart_digests)
+                or not item.get("reason")):
+            raise ValueError(f"invalid JDK 8-only platform test: {path_text}")
+        if (not (roots[0] / path).is_file()
+                or hashlib.sha256((roots[0] / path).read_bytes()).hexdigest() != digest
+                or any((root / path).exists() for root in roots[1:])
+                or any(not (root / counterpart).is_file()
+                       or hashlib.sha256((root / counterpart).read_bytes()).hexdigest() != expected
+                       for root, expected in zip(roots, counterpart_digests))):
+            raise ValueError(f"stale JDK 8-only platform test: {path_text}")
+        validated[path_text] = item
+    return validated
+
+
 def compiled_api_gate(roots: list[pathlib.Path], output: pathlib.Path,
                       policy: dict[str, object], source_rows: list[dict[str, str]],
                       module: str | None = None) -> dict[str, object]:
@@ -686,6 +722,8 @@ def inventory_gate(roots: list[pathlib.Path], output: pathlib.Path, policy_path:
     platform = {item["path"]: item for item in policy.get("platformItemsMissingOnJdk8", [])}
     platform_only_jdk8 = validate_platform_files_only_on_jdk8(
         policy.get("platformFilesOnlyOnJdk8", []), roots)
+    platform_tests_only_jdk8 = validate_platform_tests_only_on_jdk8(
+        policy.get("platformTestsOnlyOnJdk8", []), roots)
     platform_content = validate_platform_content_mappings(
         policy.get("platformContentMappings", []), roots)
     platform_syntax = validate_platform_syntax_mappings(
@@ -735,6 +773,9 @@ def inventory_gate(roots: list[pathlib.Path], output: pathlib.Path, policy_path:
         elif path in platform_only_jdk8 and values[0] is not None and values[1] is None and values[2] is None:
             status = "PLATFORM_ADAPTED"
             evidence = platform_only_jdk8[path]["evidence"]
+        elif path in platform_tests_only_jdk8 and values[0] is not None and values[1] is None and values[2] is None:
+            status = "PLATFORM_ADAPTED"
+            evidence = platform_tests_only_jdk8[path]["counterpart"]
         elif (path in platform_content and all(value is not None for value in values)
               and platform_content_matches(path, roots, platform_content[path])):
             status = "PLATFORM_ADAPTED"

@@ -18,6 +18,43 @@ SCRIPT = Path(__file__).with_name("verify-three-line-structure-api-parity.py")
 
 
 class ThreeLineInventoryTest(unittest.TestCase):
+    def test_jdk8_only_test_requires_locked_counterpart_contract(self):
+        low_only = "ddd4j-core/src/test/java/example/LegacyContainerIT.java"
+        counterpart = "ddd4j-core/src/test/java/example/ContainerIT.java"
+        low_source = "class LegacyContainerIT {}"
+        contract_sources = [f"class ContainerIT {{ int line = {line}; }}"
+                            for line in (8, 17, 21)]
+        self.write(self.roots[0], low_only, low_source)
+        for root, source in zip(self.roots, contract_sources):
+            self.write(root, counterpart, source)
+        policy = json.loads(self.policy.read_text())
+        policy["platformTestsOnlyOnJdk8"] = [{
+            "path": low_only,
+            "sha256": hashlib.sha256(low_source.encode()).hexdigest(),
+            "counterpart": counterpart,
+            "counterpartSha256": [hashlib.sha256(source.encode()).hexdigest()
+                                  for source in contract_sources],
+            "reason": "低线专用容器夹具由三线共同契约覆盖",
+        }]
+        self.policy.write_text(json.dumps(policy))
+
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = json.loads((output / "inventory.json").read_text())["differences"]
+        self.assertEqual("PLATFORM_ADAPTED", next(row["status"] for row in rows
+                                                  if row["path"] == low_only))
+
+        self.write(self.roots[0], low_only, low_source + " changed")
+        result, _ = self.run_checker("inventory")
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("stale JDK 8-only platform test", result.stderr)
+
+        self.write(self.roots[0], low_only, low_source)
+        self.write(self.roots[2], counterpart, contract_sources[2] + " changed")
+        result, _ = self.run_checker("inventory")
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("stale JDK 8-only platform test", result.stderr)
+
     def test_object_equals_parameter_name_is_not_public_api(self):
         source = "ddd4j-core/src/main/java/example/Foo.java"
         base = ("package example; public class Foo { "
