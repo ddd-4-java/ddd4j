@@ -199,6 +199,28 @@
         "746e1402c3d3eb6f483254eaabc022e56dd9a57bd9ce929342cc13899a52877c"
       ],
       "reason": "JDK 8 测试 HTTP 客户端适配；高两线使用 java.net.http，三线相同 AuthControllerTest 37 项真实 HTTP 测试通过"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/TestHttpClient.java",
+      "sha256": "609b3071d622662f42a175af5206c138ad7c20d200a6bc2c99a815220dddcf8a",
+      "counterpart": "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/goods/web/GoodsControllerTest.java",
+      "counterpartSha256": [
+        "a5dd7616cb4e5fc946f2691b6bcb9d03689eae6e0890fc67719df7ad82d34983",
+        "2ece64d6a45586f63eb486e2d66034baa3ea5c483ab34d37fec191477d468ee2",
+        "a7e790c1cea8643652a96f4dff106a2d9602405839c3e6c28c54a8be67e66e53"
+      ],
+      "reason": "JDK 8 HTTP 测试客户端替代 java.net.http；三线 GoodsControllerTest 与 OrderControllerTest 均在真实 Javalin 服务上执行且无跳过"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin/src/test/java/io/ddd4j/sample/javalin/TestHttpClient.java",
+      "sha256": "26b4e3ef9c69b0671b317833249dba6e6dc720d87af623ae9125cfeab63aa6ce",
+      "counterpart": "ddd4j-samples/ddd4j-sample-javalin/src/test/java/io/ddd4j/sample/javalin/goods/web/GoodsControllerTest.java",
+      "counterpartSha256": [
+        "86fd121dfd5cca1fe9bc8715513495437ff25a850e7aa7f6a506cb00a0f14bfd",
+        "bfaf290bc32c526d6f2a218ec60c5183a3b71a09171df594cf0651298436cd26",
+        "699b608ab52511af697a03419ebdf7f1fddd49809c0c4564905bc6f0b064d502"
+      ],
+      "reason": "JDK 8 HTTP 测试客户端替代 java.net.http；三线 GoodsControllerTest 与 OrderControllerTest 均在真实 Javalin 服务上执行且无跳过"
     }
   ],
   "platformContentMappings": [
