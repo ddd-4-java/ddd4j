@@ -31,7 +31,7 @@ import java.util.Objects;
 /**
  * 基于 Apache Shiro 的 {@link io.ddd4j.core.subject.Subject} 实现。
  *
- * <h3>设计原则</h3>
+ * <h2>设计原则</h2>
  * <p><b>绝大多数方法直接调用 Shiro 原生 API</b>（{@code subject.isPermitted/isPermittedAll/hasRole/...}），
  * Shiro 的 {@link org.apache.shiro.realm.Realm} 体系负责实际的"账号→权限/角色"映射。
  * 这样做的好处是：业务方继续用 Shiro 的标准 {@code @RequiresPermissions}/{@code @RequiresRoles} 即可生效，
@@ -419,15 +419,12 @@ public class ShiroSubject implements io.ddd4j.core.subject.Subject {
         // ddd4j 标准做法：业务侧提供自定义 SessionDAO/Realm 把 loginId 映射到 Session
         // 此处降级处理：使用 DefaultSecurityManager 的 logout 入口
         SecurityManager sm = SecurityUtils.getSecurityManager();
-        if (sm instanceof DefaultSecurityManager) {
-            DefaultSecurityManager dsm = (DefaultSecurityManager) sm;
-            if (Objects.nonNull(loginId)) {
-                // 注意：DefaultSecurityManager 没有直接 killByPrincipal，我们走 sessionId 路径
-                // 业务方可通过 Subject.runAs / 自定义 SessionDAO 实现
-                // 这里降级为：如果登录用户就是被踢者，登出当前会话
-                if (Objects.equals(loginId, getLoginId())) {
-                    logout();
-                }
+        if (sm instanceof DefaultSecurityManager && Objects.nonNull(loginId)) {
+            // 注意：DefaultSecurityManager 没有直接 killByPrincipal，我们走 sessionId 路径
+            // 业务方可通过 Subject.runAs / 自定义 SessionDAO 实现
+            // 这里降级为：如果登录用户就是被踢者，登出当前会话
+            if (Objects.equals(loginId, getLoginId())) {
+                logout();
             }
         }
     }
