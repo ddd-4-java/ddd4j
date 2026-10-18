@@ -29,6 +29,35 @@
     "order-sample"
   ],
   "unclassifiedDifferenceIsFailure": true,
+  "platformWorkflowFiles": [
+    {
+      "path": ".github/workflows/deploy.yml",
+      "sha256ByJdk": {
+        "8": "f77ae3916c87dbc02ce8e5ed086cff8316d8d58b8babc9762b26e582d329888c",
+        "17": "389254cc4223a8be844ce3999072c3bfb6022f81da34dcb6af541a50474b2e60",
+        "21": "ee81eae2547bc7c8d66ea08ba34b9658dd3bdb14d6bf0d2d8d00715f967b688f"
+      },
+      "evidence": "逐线 JDK、Easy4J 快照及发布基线已核对；文件 SHA-256 锁定，workflow lint 和实际 CI 独立验收"
+    },
+    {
+      "path": ".github/workflows/release-candidate.yml",
+      "sha256ByJdk": {
+        "8": "3dcec9c2d574ddeda4479fff5187efa39fa079fc02b8379e60b1ace3e7543c5a",
+        "17": "bc3d8dee4b67eab84433b9155f7a2ed750f84f5846808ff237d9416198a352de",
+        "21": "49da33f526a6a5120c3336369c92deea8bc0f3a345416b7a9ab019208806c717"
+      },
+      "evidence": "逐线 JDK、Easy4J 快照及发布基线已核对；文件 SHA-256 锁定，workflow lint 和实际 CI 独立验收"
+    },
+    {
+      "path": ".github/workflows/verify.yml",
+      "sha256ByJdk": {
+        "8": "a8b0e1d910b3d72415c77db522ee89dde109019bec8be1497e286f88fb102868",
+        "17": "c8b5b05b78185017f7345b9ef6f840881ac4bdaf153af6800a604ab8ff63502a",
+        "21": "84662bd86f2c285047570d33fe0ba3d3b7114bc72d7201004f9a1ee0de98b051"
+      },
+      "evidence": "逐线 JDK、Easy4J 快照及发布基线已核对；文件 SHA-256 锁定，workflow lint 和实际 CI 独立验收"
+    }
+  ],
   "platformBuildConfigFiles": [
     {
       "path": ".mvn/jvm.config",
