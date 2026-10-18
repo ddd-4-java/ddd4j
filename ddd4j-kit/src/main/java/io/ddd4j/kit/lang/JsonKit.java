@@ -81,7 +81,8 @@ public class JsonKit {
 
     /**
      * 创建默认 ObjectMapper
-          * @return 默认 JSON 映射器
+     *
+     * @return 完成日期与时间类型序列化配置的 ObjectMapper 实例
      */
     public static ObjectMapper defaultObjectMapper() {
         // Jackson 2: java.time 序列化通过 SimpleModule + JsonSerializer/JsonDeserializer 注册（jsr310 未在 classpath）
@@ -104,7 +105,8 @@ public class JsonKit {
 
     /**
      * 创建 Redis ObjectMapper（带 DefaultTyping）
-          * @return 支持 Redis 类型信息的 JSON 映射器
+     *
+     * @return 启用默认类型信息（DefaultTyping）的 ObjectMapper 实例
      */
     public static ObjectMapper redisObjectMapper() {
         return JsonMapper.builder()
@@ -119,10 +121,11 @@ public class JsonKit {
 
     /**
      * 创建自定义 ObjectMapper
-          * @param datePattern 日期格式
-     * @param dateTimePattern 日期时间格式
-     * @param timePattern 时间格式
-     * @return 使用指定时间格式的 JSON 映射器
+     *
+     * @param datePattern     日期格式模式串
+     * @param dateTimePattern 日期时间格式模式串
+     * @param timePattern      时间格式模式串
+     * @return 按指定模式序列化时间类型的 ObjectMapper 实例
      */
     public static ObjectMapper buildObjectMapper(String datePattern, String dateTimePattern, String timePattern) {
         SimpleModule customDateModule = new SimpleModule();
@@ -165,8 +168,9 @@ public class JsonKit {
 
     /**
      * 对象转 JSON 字符串
-          * @param object 待序列化对象
-     * @return JSON 字符串；输入为 null 时返回 null
+     *
+     * @param object 待序列化的对象
+     * @return JSON 字符串；对象为 null 时返回 null，序列化失败时返回空字符串
      */
     public static String toJson(Object object) {
         if (Objects.isNull(object)) {
@@ -185,8 +189,9 @@ public class JsonKit {
 
     /**
      * JSON 字符串转 Map
-          * @param json JSON 对象字符串
-     * @return 转换后的键值映射
+     *
+     * @param json JSON 对象字符串
+     * @return 解析得到的键值对 Map；解析失败时返回空 Map
      */
     public static Map<String, Object> toMap(String json) {
         Map<String, Object> map = new HashMap<>();
@@ -220,8 +225,9 @@ public class JsonKit {
 
     /**
      * JSON 字符串转 Map 列表
-          * @param json JSON 数组字符串
-     * @return 对象映射列表；解析失败时返回 null
+     *
+     * @param json JSON 数组字符串
+     * @return 由各对象元素组成的 Map 列表；解析失败时返回 null
      */
     public static List<Map<String, Object>> toMapList(String json) {
         try {
@@ -241,8 +247,9 @@ public class JsonKit {
 
     /**
      * 对象转格式化 JSON 字符串
-          * @param object 待序列化对象
-     * @return 格式化后的 JSON 字符串
+     *
+     * @param object 待序列化的对象
+     * @return 带缩进格式的 JSON 字符串；序列化失败时返回空字符串
      */
     public static String toJsonWithDefaultPrettyPrinter(Object object) {
         try {
@@ -255,10 +262,11 @@ public class JsonKit {
 
     /**
      * JSON 字符串转对象
-          * @param <T> 目标对象类型
-     * @param object JSON 字符串或现有对象
-     * @param clazz 目标对象类型
-     * @return 转换后的对象
+     *
+     * @param object JSON 字符串或已转换的目标对象
+     * @param clazz  目标类型
+     * @param <T> 目标类型
+     * @return 转换后的对象；输入为空、空白或解析失败时返回 null
      */
     public static <T> T toObject(Object object, Class<T> clazz) {
         if (Objects.isNull(object)) {
@@ -282,10 +290,11 @@ public class JsonKit {
 
     /**
      * JSON 字符串转对象（带 JavaType）
-          * @param <T> 目标对象类型
-     * @param object JSON 字符串或现有对象
-     * @param javaType Jackson 目标类型
-     * @return 转换后的对象
+     *
+     * @param object   JSON 字符串或已转换的目标对象
+     * @param javaType 目标 Java 类型
+     * @param <T> 目标类型
+     * @return 转换后的对象；输入为空、空白或解析失败时返回 null
      */
     public static <T> T toObject(Object object, JavaType javaType) {
         if (Objects.isNull(object)) {
@@ -309,10 +318,11 @@ public class JsonKit {
 
     /**
      * JSON 字符串转列表
-          * @param <T> 列表元素类型
-     * @param object JSON 数组字符串或现有列表
-     * @param beanType 元素类型
-     * @return 转换后的对象列表
+     *
+     * @param object   JSON 数组字符串或已转换的列表
+     * @param beanType 列表元素类型
+     * @param <T> 列表元素类型
+     * @return 转换后的列表；输入为 null 时返回空列表，为空白字符串时返回 null
      */
     public static <T> List<T> toList(Object object, Class<T> beanType) {
         if (Objects.isNull(object)) {
@@ -337,10 +347,11 @@ public class JsonKit {
 
     /**
      * JSON 字符串转对象（带 TypeReference）
-          * @param <T> 目标对象类型
-     * @param object JSON 字符串或现有对象
+     *
+     * @param object        JSON 字符串或已转换的目标对象
      * @param typeReference 目标类型引用
-     * @return 转换后的对象
+     * @param <T> 目标类型
+     * @return 转换后的对象；输入为空、空白或解析失败时返回 null
      */
     public static <T> T toPojo(Object object, TypeReference<T> typeReference) {
         if (Objects.isNull(object)) {
@@ -364,8 +375,9 @@ public class JsonKit {
 
     /**
      * 判断是否为 JSON 对象字符串
-          * @param str 待判断的字符串
-     * @return 首尾为对象花括号时返回 true
+     *
+     * @param str 待校验的字符串
+     * @return 字符串以花括号包裹（JSON 对象形式）时返回 true，否则返回 false
      */
     public static boolean isJson(String str) {
         return str.startsWith("{") && str.endsWith("}");
@@ -373,8 +385,9 @@ public class JsonKit {
 
     /**
      * 判断是否为 JSON 数组字符串
-          * @param str 待判断的字符串
-     * @return 首尾为数组方括号时返回 true
+     *
+     * @param str 待校验的字符串
+     * @return 字符串以方括号包裹（JSON 数组形式）时返回 true，否则返回 false
      */
     public static boolean isJsonArray(String str) {
         return str.startsWith("[") && str.endsWith("]");
@@ -382,9 +395,10 @@ public class JsonKit {
 
     /**
      * 构建集合类型
-          * @param collectionClass 集合类型
-     * @param elementClass 元素类型
-     * @return Jackson 集合类型
+     *
+     * @param collectionClass 集合类型
+     * @param elementClass    元素类型
+     * @return 对应的集合 JavaType
      */
     public static JavaType buildCollectionType(Class<? extends Collection> collectionClass, Class<?> elementClass) {
         return DEFAULT_OBJECT_MAPPER.getTypeFactory().constructCollectionType(collectionClass, elementClass);
@@ -392,10 +406,11 @@ public class JsonKit {
 
     /**
      * 构建 Map 类型
-          * @param mapClass Map 类型
-     * @param keyClass 键类型
+     *
+     * @param mapClass   Map 类型
+     * @param keyClass   键类型
      * @param valueClass 值类型
-     * @return Jackson Map 类型
+     * @return 对应的映射 JavaType
      */
     public static JavaType buildMapType(Class<? extends Map> mapClass, Class<?> keyClass, Class<?> valueClass) {
         return DEFAULT_OBJECT_MAPPER.getTypeFactory().constructMapType(mapClass, keyClass, valueClass);
@@ -403,8 +418,9 @@ public class JsonKit {
 
     /**
      * 更新对象
-          * @param jsonString 更新内容的 JSON 字符串
-     * @param object 待更新对象
+     *
+     * @param jsonString 包含待更新字段的 JSON 字符串
+     * @param object     待更新的目标对象
      */
     public static void update(String jsonString, Object object) {
         try {
@@ -415,12 +431,12 @@ public class JsonKit {
     }
 
     /**
-     * 类型转换（合并自 JacksonKit）
+     * 将任意值转换为目标类型
      *
      * @param value     源对象
      * @param valueType 目标类型
+     * @param <T> 目标类型
      * @return 转换后的对象
-          * @param <T> 目标对象类型
      */
     public static <T> T toType(Object value, Class<T> valueType) {
         // 1、如果value为空，直接返回null

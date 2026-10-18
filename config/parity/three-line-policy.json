@@ -2607,6 +2607,27 @@
       "evidence": "ddd4j-mq/ddd4j-mq-pulsar/src/test/java/io/ddd4j/mq/pulsar/PulsarPartitionKeyContractTest.java",
       "testSha256": "f142c602adf3d8b9c70de4cc6e1e0cf76bfa5f8bc4b65d59826149107eb93851",
       "reason": "JDK 8 的传统 switch 与 JDK 17/21 的 switch 表达式均实现 NONE、TAG、TENANT、TAG_TENANT、CUSTOM 五种路由键策略；三线同一测试验证策略结果、空事件和缺失字段，逐线源码与共同测试哈希锁定"
+    },
+    {
+      "path": "ddd4j-kit/src/main/java/io/ddd4j/kit/lang/JsonKit.java",
+      "sourceSha256": [
+        "38698b79c52e4413109bb5268dac5beda4f5143d6b351494e83d9041b33915ac",
+        "6eb7426bc5f13b05a0ab72ea35f5a9d07508bf9cc051ac03ae8356f8b527c0a8",
+        "ea553c6c33c7ae8edff39f460503a51d46483764cb9349e45554060fa3d97ebd"
+      ],
+      "evidence": "ddd4j-kit/src/test/java/io/ddd4j/kit/lang/JsonKitPublicContractTest.java",
+      "testSha256": "3d1614a691e39c57bcf0b6404f4e279f66322ec0e7ad06498927c29f65a9c1fb",
+      "additionalEvidence": [
+        {
+          "path": "ddd4j-kit/src/test/java/io/ddd4j/kit/lang/JsonKitDateTimeContractTest.java",
+          "testSha256": "0ccb6d48852005dfefca41c0a64716083bd7b53c52eb3abd057fc7fc905eb078"
+        },
+        {
+          "path": "ddd4j-kit/src/test/java/io/ddd4j/kit/lang/JsonKitTypeContractTest.java",
+          "testSha256": "a6b252cd776579c2cd679ea7f1889423af6cc932ae14d2ad8fa57a3dd4a1b5eb"
+        }
+      ],
+      "reason": "JDK 8/17 使用 Jackson 2，JDK 21 使用 Jackson 3；三线保留各自的 ObjectMapper、JsonNode 和时间序列化 API，共同测试验证 10 项公开日期、类型和转换契约。源码与三组测试逐文件 SHA-256 锁定；编译 API 和整体验收仍由独立门禁验证"
     }
   ],
   "historicalDocumentSections": [
