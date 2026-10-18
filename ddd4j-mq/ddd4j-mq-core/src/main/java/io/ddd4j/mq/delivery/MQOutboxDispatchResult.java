@@ -12,87 +12,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package io.ddd4j.mq.delivery;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * 单次 Outbox 调度的汇总结果。
+ *
+ * <p>{@code claimed} — 已领取数量
+ * <p>{@code published} — 已确认发布数量
+ * <p>{@code rescheduled} — 已安排重试数量
+ * <p>{@code dead} — 预计进入死信数量
+ * <p>{@code confirmationLost} — broker 已接收但租约确认丢失数量，后续可能重复投递
  */
-
 public final class MQOutboxDispatchResult {
 
-    private static final long serialVersionUID = 0L;
-
     private final int claimed;
-
     private final int published;
-
     private final int rescheduled;
-
     private final int dead;
-
     private final int confirmationLost;
 
     /**
-     * 返回已领取消息数。
+     * 单次 Outbox 调度的汇总结果。
      *
-     * @return 已领取消息数
+     * @param claimed          已领取数量
+     * @param published        已确认发布数量
+     * @param rescheduled      已安排重试数量
+     * @param dead             预计进入死信数量
+     * @param confirmationLost broker 已接收但租约确认丢失数量，后续可能重复投递
      */
-    public int getClaimed() {
-        return claimed;
-    }
 
-    /**
-     * 返回确认丢失消息数。
-     *
-     * @return 确认丢失消息数
-     */
-    public int getConfirmationLost() {
-        return confirmationLost;
-    }
-
-    /**
-     * 返回死信消息数。
-     *
-     * @return 死信消息数
-     */
-    public int getDead() {
-        return dead;
-    }
-
-    /**
-     * 返回已发布消息数。
-     *
-     * @return 已发布消息数
-     */
-    public int getPublished() {
-        return published;
-    }
-
-    /**
-     * 返回已安排重试消息数。
-     *
-     * @return 已安排重试消息数
-     */
-    public int getRescheduled() {
-        return rescheduled;
-    }
-
-    /**
- * @param claimed 已领取数量
- * @param published 已确认发布数量
- * @param rescheduled 已安排重试数量
- * @param dead 预计进入死信数量
- * @param confirmationLost broker 已接收但租约确认丢失数量，后续可能重复投递
- */
-
-    @JsonCreator()
-    public MQOutboxDispatchResult(@JsonProperty("claimed") int claimed, @JsonProperty("published") int published, @JsonProperty("rescheduled") int rescheduled, @JsonProperty("dead") int dead, @JsonProperty("confirmationLost") int confirmationLost) {
+    @JsonCreator
+    public MQOutboxDispatchResult(@JsonProperty("claimed") int claimed,
+                                  @JsonProperty("published") int published,
+                                  @JsonProperty("rescheduled") int rescheduled,
+                                  @JsonProperty("dead") int dead,
+                                  @JsonProperty("confirmationLost") int confirmationLost) {
         this.claimed = claimed;
         this.published = published;
         this.rescheduled = rescheduled;
@@ -100,81 +58,84 @@ public final class MQOutboxDispatchResult {
         this.confirmationLost = confirmationLost;
     }
 
-    /**
-     * 返回已领取消息数。
-     *
-     * @return 已领取消息数
-     */
-    @JsonProperty("claimed")
+    /** @return 已领取数量 */
     public int claimed() {
         return claimed;
     }
 
-    /**
-     * 返回已发布消息数。
-     *
-     * @return 已发布消息数
-     */
-    @JsonProperty("published")
+    /** @return 已确认发布数量 */
     public int published() {
         return published;
     }
 
-    /**
-     * 返回已安排重试消息数。
-     *
-     * @return 已安排重试消息数
-     */
-    @JsonProperty("rescheduled")
+    /** @return 已安排重试数量 */
     public int rescheduled() {
         return rescheduled;
     }
 
-    /**
-     * 返回死信消息数。
-     *
-     * @return 死信消息数
-     */
-    @JsonProperty("dead")
+    /** @return 预计进入死信数量 */
     public int dead() {
         return dead;
     }
 
-    /**
-     * 返回确认丢失消息数。
-     *
-     * @return 确认丢失消息数
-     */
-    @JsonProperty("confirmationLost")
+    /** @return 租约确认丢失数量 */
     public int confirmationLost() {
         return confirmationLost;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
+    public boolean equals(Object o) {
+        if (this == o) {
             return true;
         }
-        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+        if (!(o instanceof MQOutboxDispatchResult)) {
             return false;
         }
-        MQOutboxDispatchResult other = (MQOutboxDispatchResult) obj;
-        return this.claimed == other.claimed && this.published == other.published && this.rescheduled == other.rescheduled && this.dead == other.dead && this.confirmationLost == other.confirmationLost;
+        MQOutboxDispatchResult that = (MQOutboxDispatchResult) o;
+        return claimed == that.claimed && published == that.published
+                && rescheduled == that.rescheduled && dead == that.dead
+                && confirmationLost == that.confirmationLost;
     }
 
     @Override
     public int hashCode() {
-        int result = 0;
-        result = 31 * result + Integer.hashCode(claimed);
-        result = 31 * result + Integer.hashCode(published);
-        result = 31 * result + Integer.hashCode(rescheduled);
-        result = 31 * result + Integer.hashCode(dead);
-        result = 31 * result + Integer.hashCode(confirmationLost);
+        int result = claimed;
+        result = 31 * result + published;
+        result = 31 * result + rescheduled;
+        result = 31 * result + dead;
+        result = 31 * result + confirmationLost;
         return result;
     }
 
     @Override
     public String toString() {
-        return "MQOutboxDispatchResult[claimed=" + claimed + ", published=" + published + ", rescheduled=" + rescheduled + ", dead=" + dead + ", confirmationLost=" + confirmationLost + "]";
+        return "MQOutboxDispatchResult[claimed=" + claimed + ", published=" + published
+                + ", rescheduled=" + rescheduled + ", dead=" + dead
+                + ", confirmationLost=" + confirmationLost + ']';
+    }
+
+    /** @return 已领取数量 */
+    public int getClaimed() {
+        return claimed;
+    }
+
+    /** @return 已确认发布数量 */
+    public int getPublished() {
+        return published;
+    }
+
+    /** @return 已安排重试数量 */
+    public int getRescheduled() {
+        return rescheduled;
+    }
+
+    /** @return 预计进入死信数量 */
+    public int getDead() {
+        return dead;
+    }
+
+    /** @return 租约确认丢失数量 */
+    public int getConfirmationLost() {
+        return confirmationLost;
     }
 }
