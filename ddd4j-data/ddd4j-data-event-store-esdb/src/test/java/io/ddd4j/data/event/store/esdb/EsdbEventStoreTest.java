@@ -14,6 +14,7 @@
  */
 package io.ddd4j.data.event.store.esdb;
 
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.eventstore.dbclient.*;
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.ddd.event.*;
@@ -139,7 +140,7 @@ class EsdbEventStoreTest {
     }
 
     @Test
-    void readAllShouldExposeStableAggregateIdString() {
+    void readAllShouldExposeStableAggregateIdString() throws Exception {
         com.eventstore.dbclient.ReadResult result = org.mockito.Mockito.mock(com.eventstore.dbclient.ReadResult.class);
         com.eventstore.dbclient.ResolvedEvent resolved = org.mockito.Mockito.mock(com.eventstore.dbclient.ResolvedEvent.class);
         com.eventstore.dbclient.RecordedEvent recorded = org.mockito.Mockito.mock(com.eventstore.dbclient.RecordedEvent.class);
@@ -165,6 +166,8 @@ class EsdbEventStoreTest {
         assertThat(event.aggregateId().asString()).isEqualTo("order-1");
         assertThat(event.aggregateId().asTypedString()).isEqualTo("String:order-1");
         assertThat(event.aggregateId().toString()).isEqualTo("StringAggregateRootId[value=order-1]");
+        assertThat(JsonMapper.builder().build().writeValueAsString(event.aggregateId()))
+                .isEqualTo("\"order-1\"");
     }
 
     static final class TestId implements AggregateRootId {
