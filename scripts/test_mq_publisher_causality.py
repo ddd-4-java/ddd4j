@@ -1,5 +1,6 @@
 """领域事件转 MQ 载体时保留事件 ID 与因果链。"""
 
+import os
 from pathlib import Path
 import subprocess
 import tempfile
@@ -13,6 +14,9 @@ LOMBOK = Path.home() / ".m2/repository/org/projectlombok/lombok/1.18.46/lombok-1
 
 
 def current_jdk():
+    configured = os.environ.get("JAVA_HOME")
+    if configured:
+        return Path(configured)
     pom = ET.parse(ROOT / "pom.xml").getroot()
     namespace = pom.tag.partition("}")[0] + "}" if "}" in pom.tag else ""
     version = pom.findtext("./" + namespace + "properties/" + namespace + "java.version")
