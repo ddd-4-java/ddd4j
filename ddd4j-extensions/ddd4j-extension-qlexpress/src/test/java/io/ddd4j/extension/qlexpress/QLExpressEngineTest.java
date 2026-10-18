@@ -20,22 +20,20 @@ import io.ddd4j.extension.qlexpress.function.NamedQLFunction;
 import io.ddd4j.extension.qlexpress.model.QLExpressExecutionResult;
 import org.junit.jupiter.api.Test;
 
-import java.util.Map;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * 类型说明。
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.0.x
- */
 class QLExpressEngineTest {
 
     @Test
     void executeShouldReturnExpressionValueInsteadOfNativeWrapper() {
         QLExpressEngine engine = QLExpress.create();
 
-        Object result = engine.execute("price * quantity", Map.of("price", 20, "quantity", 3));
+        Object result = engine.execute("price * quantity", new java.util.LinkedHashMap<String, Object>() {{
+            put("price", 20);
+            put("quantity", 3);
+        }});
 
         assertThat(result).isEqualTo(60);
     }
@@ -46,7 +44,7 @@ class QLExpressEngineTest {
 
         Boolean result = engine.execute(
                 "contains(name, 'ddd4j') && startsWith(name, 'hello')",
-                Map.of("name", "hello ddd4j"),
+                Collections.singletonMap("name", "hello ddd4j"),
                 Boolean.class);
 
         assertThat(result).isTrue();
@@ -64,7 +62,7 @@ class QLExpressEngineTest {
     void safeExecutionShouldCaptureFailure() {
         QLExpressEngine engine = QLExpress.create();
 
-        QLExpressExecutionResult<Object> result = engine.executeSafely("missing + 1", Map.of());
+        QLExpressExecutionResult<Object> result = engine.executeSafely("missing + 1", Collections.emptyMap());
 
         assertThat(result.success()).isFalse();
         assertThat(result.errorCode()).isNotBlank();
@@ -78,13 +76,13 @@ class QLExpressEngineTest {
                 .function(new MultiplierFunction(2))
                 .build();
 
-        assertThat(engine.execute("multiply(5)", Map.of())).isEqualTo(10);
+        assertThat(engine.execute("multiply(5)", Collections.emptyMap())).isEqualTo(10);
 
         engine.registerOrReplaceFunction(new MultiplierFunction(3));
-        assertThat(engine.execute("multiply(5)", Map.of())).isEqualTo(15);
+        assertThat(engine.execute("multiply(5)", Collections.emptyMap())).isEqualTo(15);
 
         assertThat(engine.removeFunction("multiply")).isTrue();
-        assertThat(engine.executeSafely("multiply(5)", Map.of()).success()).isFalse();
+        assertThat(engine.executeSafely("multiply(5)", Collections.emptyMap()).success()).isFalse();
     }
 
     @Test
@@ -95,9 +93,6 @@ class QLExpressEngineTest {
                 .containsExactlyInAnyOrder("price", "quantity");
     }
 
-    /**
-     * 测试用乘法函数，以 {@code multiply} 为固定函数名，将首个参数乘以指定倍数。
-     */
     private static final class MultiplierFunction implements NamedQLFunction {
 
         private final int multiplier;
@@ -106,21 +101,11 @@ class QLExpressEngineTest {
             this.multiplier = multiplier;
         }
 
-        /**
-         * name() 方法。
-         * @return 结果字符串。
-         */
         @Override
         public String name() {
             return "multiply";
         }
 
-        /**
-         * call() 方法。
-         * @param qContext qContext 参数。
-         * @param parameters parameters 参数。
-         * @return 结果对象。
-         */
         @Override
         public Object call(QContext qContext, Parameters parameters) {
             return ((Number) parameters.getValue(0)).intValue() * multiplier;
