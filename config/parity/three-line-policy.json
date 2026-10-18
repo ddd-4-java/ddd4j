@@ -2541,6 +2541,21 @@
         "21": "bf8f7d31c2dafc1fba9721bd4142ec007bcb4488200b654b6cca3a77eb68cc91"
       },
       "reason": "JDK 8 使用 javax.jms 与显式 instanceof 转型，JDK 17/21 使用 jakarta.jms 与模式匹配；三线各三项目的地、UTF-8 payload、JMS 消息头及异常回退契约测试验证等价行为"
+    },
+    {
+      "path": "ddd4j-data/ddd4j-data-projection-quarkus/src/main/java/io/ddd4j/data/projection/quarkus/QuarkusProjectionViewManager.java",
+      "sourceSha256": [
+        "0eff26036256c42fda2315ec9b863b5c3e73eab7c06a4babdf8ed767d5f54ecb",
+        "b0a3ace4c99942e042cbe5ea697b8455c8bc23ee1f8cb6957b18e0af4ab529ae",
+        "3698ed6f3bbcb099ef1e4200a4ed223216e1b07aae1164fbbbafa0f8feb54de4"
+      ],
+      "evidence": "ddd4j-data/ddd4j-data-projection-quarkus/src/test/java/io/ddd4j/data/projection/quarkus/QuarkusProjectionSchedulerIT.java",
+      "testSha256ByJdk": {
+        "8": "cc45dfdd3424854a266769c5398fb318e9b5507192a7a27316fad2a5ecf92dce",
+        "17": "b3c90692f8985fd14fad2d9ad79e1f9f2ff2aa5d3ead748aca4ca3d653b7e440",
+        "21": "f9421b72c1b77d6899b04531b0c6fd2403c95a87637d2103a882235df876fb39"
+      },
+      "reason": "Quarkus 1.x/JDK 8 使用 javax CDI 与 ShutdownEvent，Quarkus 3.x/JDK 17/21 使用 jakarta CDI 与 Shutdown；三线真实 ArC 容器各五项生命周期和调度契约通过，逐线源码与测试哈希锁定"
     }
   ],
   "historicalDocumentSections": [
