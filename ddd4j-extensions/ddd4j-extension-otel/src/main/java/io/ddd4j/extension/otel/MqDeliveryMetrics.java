@@ -14,10 +14,6 @@
  */
 package io.ddd4j.extension.otel;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.metrics.LongCounter;
@@ -33,23 +29,17 @@ import java.util.concurrent.atomic.AtomicReference;
  * token、authorization 或用户信息，避免高基数和敏感信息泄漏。Exporter、Collector
  * 与告警规则均由宿主应用配置。
  *
- * @author ddd4j
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.0
  */
 public final class MqDeliveryMetrics {
 
-    /**
-     * Outbox 投递总数，单位为消息。
-     */
+    /** Outbox 投递总数，单位为消息。 */
     public static final String OUTBOX_DELIVERY_METRIC = "ddd4j.mq.outbox.delivery";
-    /**
-     * Inbox 消费结果总数，单位为消息。
-     */
+    /** Inbox 消费结果总数，单位为消息。 */
     public static final String INBOX_DELIVERY_METRIC = "ddd4j.mq.inbox.delivery";
 
-    /**
-     * 受控结果标签，避免业务自定义值造成时序数据库基数失控。
-     */
+    /** 受控结果标签，避免业务自定义值造成时序数据库基数失控。 */
     public static final AttributeKey<String> ATTR_DELIVERY_OUTCOME =
             AttributeKey.stringKey("ddd4j.delivery.outcome");
 
@@ -66,50 +56,50 @@ public final class MqDeliveryMetrics {
     private MqDeliveryMetrics() {
     }
 
-    /**
-     * 记录一条成功确认发布的 Outbox 消息。
+    /** 记录一条成功确认发布的 Outbox 消息。
+    * @param broker 消息中间件连接地址
      */
     public static void outboxPublished(String broker) {
         recordOutbox(broker, OUTCOME_PUBLISHED);
     }
 
-    /**
-     * 记录一条等待后续重试的 Outbox 消息。
+    /** 记录一条等待后续重试的 Outbox 消息。
+    * @param broker 消息中间件连接地址
      */
     public static void outboxRetry(String broker) {
         recordOutbox(broker, OUTCOME_RETRY);
     }
 
-    /**
-     * 记录一条已进入死信状态的 Outbox 消息。
+    /** 记录一条已进入死信状态的 Outbox 消息。
+    * @param broker 消息中间件连接地址
      */
     public static void outboxDead(String broker) {
         recordOutbox(broker, OUTCOME_DEAD);
     }
 
-    /**
-     * 记录一条发送或确认失败、最终状态尚未确定的 Outbox 消息。
+    /** 记录一条发送或确认失败、最终状态尚未确定的 Outbox 消息。
+    * @param broker 消息中间件连接地址
      */
     public static void outboxFailed(String broker) {
         recordOutbox(broker, OUTCOME_FAILED);
     }
 
-    /**
-     * 记录一条成功处理的 Inbox 消息。
+    /** 记录一条成功处理的 Inbox 消息。
+    * @param broker 消息中间件连接地址
      */
     public static void inboxProcessed(String broker) {
         recordInbox(broker, OUTCOME_PROCESSED);
     }
 
-    /**
-     * 记录一条被持久 Inbox 去重的重复消息。
+    /** 记录一条被持久 Inbox 去重的重复消息。
+    * @param broker 消息中间件连接地址
      */
     public static void inboxDuplicate(String broker) {
         recordInbox(broker, OUTCOME_DUPLICATE);
     }
 
-    /**
-     * 记录一条业务处理失败、应由 broker 重投的 Inbox 消息。
+    /** 记录一条业务处理失败、应由 broker 重投的 Inbox 消息。
+    * @param broker 消息中间件连接地址
      */
     public static void inboxFailed(String broker) {
         recordInbox(broker, OUTCOME_FAILED);
@@ -128,8 +118,8 @@ public final class MqDeliveryMetrics {
     private static LongCounter counter(AtomicReference<CounterHandle> cache, String name, String description) {
         Meter meter = Ddd4jOtel.meter();
         CounterHandle cached = cache.get();
-        if (Objects.nonNull(cached) && cached.meter() == meter) {
-            return cached.counter();
+        if (Objects.nonNull(cached) && cached.meter == meter) {
+            return cached.counter;
         }
         CounterHandle created = new CounterHandle(
                 meter,
@@ -139,7 +129,7 @@ public final class MqDeliveryMetrics {
                         .build()
         );
         cache.set(created);
-        return created.counter();
+        return created.counter;
     }
 
     private static Attributes attributes(String broker, String outcome) {
@@ -151,59 +141,13 @@ public final class MqDeliveryMetrics {
         );
     }
 
-    private final static class CounterHandle {
-
-        private static final long serialVersionUID = 0L;
-
+    private static final class CounterHandle {
         private final Meter meter;
-
         private final LongCounter counter;
 
-        /**
-         * 计数器句柄，缓存 Meter 与其上创建的计数器，避免重复创建。
-         *
-         * @param meter   创建计数器所用的 Meter
-         * @param counter 已创建的投递结果计数器
-         */
-        @JsonCreator()
-        private CounterHandle(@JsonProperty("meter") Meter meter, @JsonProperty("counter") LongCounter counter) {
+        CounterHandle(Meter meter, LongCounter counter) {
             this.meter = meter;
             this.counter = counter;
-        }
-
-        @JsonProperty("meter")
-        public Meter meter() {
-            return meter;
-        }
-
-        @JsonProperty("counter")
-        public LongCounter counter() {
-            return counter;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            CounterHandle other = (CounterHandle) obj;
-            return Objects.equals(this.meter, other.meter) && Objects.equals(this.counter, other.counter);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(meter);
-            result = 31 * result + Objects.hashCode(counter);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "CounterHandle[meter=" + meter + ", counter=" + counter + "]";
         }
     }
 }
