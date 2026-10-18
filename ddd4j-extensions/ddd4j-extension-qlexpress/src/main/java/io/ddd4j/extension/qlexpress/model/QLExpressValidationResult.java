@@ -12,8 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.ddd4j.extension.qlexpress.model;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Objects;
 
@@ -23,71 +25,100 @@ import java.util.Objects;
 public final class QLExpressValidationResult {
 
     private final boolean valid;
+
     private final String message;
 
     /**
-     * 表达式语法校验结果。
- * @param valid 是否有效
- * @param message 消息内容
+     * 创建语法校验成功结果。
+     *
+     * @return 成功结果
      */
-
-    public QLExpressValidationResult(boolean valid, String message) {
-        this.valid = valid;
-        this.message = message;
-    }
-
     public static QLExpressValidationResult success() {
         return new QLExpressValidationResult(true, "表达式语法正确");
     }
 
+    /**
+     * 创建语法校验失败结果。
+     *
+     * @param message 错误消息
+     * @return 失败结果
+     */
     public static QLExpressValidationResult invalid(String message) {
         return new QLExpressValidationResult(false, message);
     }
 
-    public boolean valid() {
-        return valid;
-    }
-
-    public String message() {
-        return message;
-    }
-
+    /**
+     * 返回校验状态，兼容 bean 调用方。
+     *
+     * @return 有效时为 true
+     */
     public boolean isValid() {
         return valid;
     }
 
+    /**
+     * 返回校验消息。
+     *
+     * @return 校验消息
+     */
     public String getMessage() {
         return message;
     }
 
     /**
-     * 按校验状态与消息比较结果，匹配 record 的值语义。
+     * 创建语法校验结果。
+     *
+     * @param valid 是否有效
+     * @param message 校验消息
      */
+    @JsonCreator()
+    public QLExpressValidationResult(@JsonProperty("valid") boolean valid, @JsonProperty("message") String message) {
+        this.valid = valid;
+        this.message = message;
+    }
+
+    /**
+     * 读取校验状态。
+     *
+     * @return 有效时为 true
+     */
+    @JsonProperty("valid")
+    public boolean valid() {
+        return valid;
+    }
+
+    /**
+     * 读取校验消息。
+     *
+     * @return 校验消息
+     */
+    @JsonProperty("message")
+    public String message() {
+        return message;
+    }
+
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
         }
-        if (!(o instanceof QLExpressValidationResult)) {
+        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
             return false;
         }
-        QLExpressValidationResult that = (QLExpressValidationResult) o;
-        return valid == that.valid && Objects.equals(message, that.message);
+        QLExpressValidationResult other = (QLExpressValidationResult) obj;
+        return this.valid == other.valid && Objects.equals(this.message, other.message);
     }
 
-    /**
-     * 返回与 record 组件顺序一致的哈希。
-     */
     @Override
     public int hashCode() {
-        return 31 * Boolean.hashCode(valid) + Objects.hashCode(message);
+        int result = 0;
+        result = 31 * result + Boolean.hashCode(valid);
+        result = 31 * result + Objects.hashCode(message);
+        return result;
     }
 
-    /**
-     * 返回跨版本一致的校验结果文本。
-     */
     @Override
     public String toString() {
-        return "QLExpressValidationResult[valid=" + valid + ", message=" + message + ']';
+        return "QLExpressValidationResult[valid=" + valid + ", message=" + message + "]";
     }
 }
