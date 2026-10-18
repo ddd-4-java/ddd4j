@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.sample.javalin.cqrs.cache;
-import java.util.Objects;
 
 import io.ddd4j.cache.CacheKit;
 import io.ddd4j.kit.lang.StrKit;
@@ -60,7 +59,7 @@ public class OrderCacheService {
     /**
      * 创建订单缓存服务。
      *
-     * @param repository 仓储实现
+     * @param repository 订单仓储
      */
     public OrderCacheService(OrderRepository repository) {
         this.repository = Objects.requireNonNull(repository, "repository must not be null");
@@ -69,7 +68,7 @@ public class OrderCacheService {
     /**
      * 订单统计（缓存优先）。
      *
-     * @return 查询结果
+     * @return 按状态汇总的订单统计
      */
     @SuppressWarnings("unchecked")
     public Map<String, Object> getOrderStats() {
@@ -95,14 +94,14 @@ public class OrderCacheService {
      * 买家订单计数（缓存优先）。
      *
      * @param buyerId 买家标识
-     * @return 数量
+     * @return 订单数量
      */
     public long getBuyerOrderCount(String buyerId) {
         String cacheKey = "buyer:" + buyerId;
         Object cached = CacheKit.get(BIZ_BUYER_ORDER_COUNT, cacheKey);
-        if (cached instanceof Long count) {
+        if (cached instanceof Long) {
             log.debug("Cache hit: BUYER_ORDER_COUNT buyerId={}", buyerId);
-            return count;
+            return (Long) cached;
         }
         log.debug("Cache miss: BUYER_ORDER_COUNT buyerId={}, computing...", buyerId);
         long count = repository.findAll().stream()
@@ -116,7 +115,7 @@ public class OrderCacheService {
      * 订单详情（缓存优先）。
      *
      * @param orderId 订单标识
-     * @return 查询结果
+     * @return 匹配的订单
      */
     public Optional<Order> getOrderDetail(String orderId) {
         if (Objects.isNull(orderId) || StrKit.isBlank(orderId)) {
@@ -136,7 +135,7 @@ public class OrderCacheService {
     /**
      * 写入订单后更新缓存与失效统计。
      *
-     * @param order order参数
+     * @param order 订单
      */
     public void putOrder(Order order) {
         if (Objects.isNull(order)) {
