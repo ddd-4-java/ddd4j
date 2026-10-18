@@ -513,6 +513,7 @@
         <picocli.version>4.7.7</picocli.version>
         <pinyin4j.version>2.5.1</pinyin4j.version>
         <playwright-extension.version>2.0.x.20260630-SNAPSHOT</playwright-extension.version>
+        <plexus-utils.version>3.6.2</plexus-utils.version>
         <png-encoder.version>1.5</png-encoder.version>
         <poi.version>5.5.1</poi.version>
         <pooled-jms.version>3.1.8</pooled-jms.version>
@@ -8013,6 +8014,12 @@
                 <groupId>com.ongres.scram</groupId>
                 <artifactId>scram-common</artifactId>
                 <version>${scram.version}</version>
+            </dependency>
+            <!-- Quarkus test bootstrap still requests vulnerable Plexus Utils 3.1.0. -->
+            <dependency>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-utils</artifactId>
+                <version>${plexus-utils.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.r2dbc/r2dbc-proxy -->
             <!-- R2DBC Proxy：R2DBC 连接代理（SQL 日志、指标收集、慢查询追踪）。 -->
