@@ -20,17 +20,8 @@ import io.ddd4j.runtime.testkit.RuntimeContractAdapter;
 import io.ddd4j.runtime.testkit.RuntimeFixtures;
 import io.vertx.core.Vertx;
 
-/**
- * 类型说明。
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.0.x
- */
 class Ddd4jVertxRuntimeTest extends AbstractRuntimeContractTest {
 
-    /**
-     * 创建对象。
-     * @return 方法执行结果。
-     */
     @Override
     protected RuntimeContract createRuntime() {
         RuntimeFixtures fixtures = new RuntimeFixtures();

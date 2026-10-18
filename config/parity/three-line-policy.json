@@ -1282,6 +1282,17 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-runtime/ddd4j-runtime-vertx/src/main/java/io/ddd4j/vertx/Ddd4jVertxRuntime.java",
+      "sourceSha256": [
+        "1982e3723aba15ec1da9a2ce6dc4f9dec8feda1791d784bce0dbcca7b6793520",
+        "f7d256ff9243a8156945651db91bb24f8be5534e142ab5657ae8285bb2fedb54",
+        "f7d256ff9243a8156945651db91bb24f8be5534e142ab5657ae8285bb2fedb54"
+      ],
+      "evidence": "ddd4j-runtime/ddd4j-runtime-vertx/src/test/java/io/ddd4j/vertx/Ddd4jVertxRuntimeTest.java",
+      "testSha256": "2bd458a7ee5952611bd66e6b8e43c798106c5af9212cb0a8e00e0d567494de29",
+      "reason": "三线显式 Vert.x 运行时构造、启动、上下文传播与关闭契约相同；JDK 8 使用 Collections.emptyList，JDK 17/21 使用 List.of。逐线源码及共同运行时契约测试由 SHA-256 锁定。"
+    },
+    {
       "path": "ddd4j-data/ddd4j-data-jpa/src/main/java/io/ddd4j/data/jpa/crypto/JpaEncryptFieldListener.java",
       "sourceSha256": [
         "dd24196b454e5133bfed8ac453370d19ab25c0270ae60b0824aff9aa6ff1e5c5",
