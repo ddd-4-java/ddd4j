@@ -19,6 +19,13 @@ import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 
 import io.ddd4j.mq.MQProperties;
+import io.ddd4j.mq.delivery.MQDeliveryHeaders;
+import io.ddd4j.mq.event.MQEvent;
+import io.ddd4j.mq.event.MQEventSerialization;
+import io.ddd4j.mq.serialization.JsonMQEventSerialization;
+import jakarta.jms.BytesMessage;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.Topic;
 import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.message.MessageHeaders;
 import jakarta.jms.Connection;
@@ -37,6 +44,54 @@ import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.*;
 
 class ActiveMQAdapterContractTest {
+
+    @Test
+    void shouldPublishCausalHeadersAsNativeJmsProperties() throws Exception {
+        ActiveMQConnectionFactory factory = mock(ActiveMQConnectionFactory.class);
+        Connection connection = mock(Connection.class);
+        Session session = mock(Session.class);
+        Topic destination = mock(Topic.class);
+        MessageProducer producer = mock(MessageProducer.class);
+        BytesMessage message = mock(BytesMessage.class);
+        when(factory.createConnection()).thenReturn(connection);
+        when(connection.createSession(false, Session.AUTO_ACKNOWLEDGE)).thenReturn(session);
+        when(session.createTopic(org.mockito.ArgumentMatchers.anyString())).thenReturn(destination);
+        when(session.createProducer(destination)).thenReturn(producer);
+        when(session.createBytesMessage()).thenReturn(message);
+
+        MQEvent event = new MQEvent();
+        event.setMsgId("message-1");
+        event.setNamespace("ddd4j");
+        event.setTopic("orders");
+        event.setCorrelationId("correlation-1");
+        event.setCausationId("cause-1");
+
+        ActiveMQClient client = new ActiveMQClient(factory) {
+            @Override
+            public MQEventSerialization serialization() {
+                return new JsonMQEventSerialization();
+            }
+        };
+        try {
+            client.initProducer(new MQProperties()).accept(event);
+            verify(message).setStringProperty(
+                    ActiveMQClient.jmsProperty(MQDeliveryHeaders.CORRELATION_ID), "correlation-1");
+            verify(message).setStringProperty(
+                    ActiveMQClient.jmsProperty(MQDeliveryHeaders.CAUSATION_ID), "cause-1");
+            verify(message).setJMSCorrelationID("correlation-1");
+            verify(producer).send(message);
+        } finally {
+            client.close();
+        }
+    }
+
+    @Test
+    void shouldConstructArtemisFactoryWithoutContainer() throws Exception {
+        try (ActiveMQConnectionFactory factory =
+                     new ActiveMQConnectionFactory("tcp://localhost:61616")) {
+            assertTrue(factory.toURI().toString().contains("localhost"));
+        }
+    }
 
     @Test
     void shouldReadMessageIdAndRequeueOnNack() throws Exception {
