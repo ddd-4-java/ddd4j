@@ -1282,6 +1282,21 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-data/ddd4j-data-crypto/src/main/java/io/ddd4j/data/crypto/strategy/FlksecCryptoStrategy.java",
+      "sourceSha256": [
+        "537671e4312c25a315d6995272bcf9bf2d0c0b4435a0b7ff48ec66e2e7d549e7",
+        "3357b7a39f2341783675ad3659c61701e24afbe91651af94ed8f67e94f716214",
+        "65d03dcfc196bbfe0919b6a87bcb888156191b3c3c9dc2828f0245f7e9b68bda"
+      ],
+      "evidence": "ddd4j-data/ddd4j-data-crypto/src/test/java/io/ddd4j/data/crypto/strategy/FlksecCryptoHttpContractTest.java",
+      "testSha256ByJdk": {
+        "8": "cab598b0cf6f8a04491aad0bcfa0fcf5ab5f9e58e4804474adadfa5d1b5fbc92",
+        "17": "cab598b0cf6f8a04491aad0bcfa0fcf5ab5f9e58e4804474adadfa5d1b5fbc92",
+        "21": "d058f9d058d731d2586ac86d7ed597bfb3b5e062e5ce03ff788a108af9058c8c"
+      },
+      "reason": "JDK 8 使用 Hutool HTTP，JDK 17/21 使用 java.net.http.HttpClient，Jackson 2/3 也各自适配；三线同五个 HTTP 契约场景验证端点、编码输入、非成功状态、业务错误和远端结果"
+    },
+    {
       "path": "ddd4j-data/ddd4j-data-event-store-r2dbc/src/main/java/io/ddd4j/data/event/store/r2dbc/R2dbcAsyncEventStore.java",
       "sourceSha256": [
         "4b0d629ab160462b8eed06b5b4d7b229af986893d7840a4d9258755087af0b6e",
