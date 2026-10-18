@@ -51,6 +51,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 1.0.x
+ */
 class WebCoreContractTest {
 
     @AfterEach
@@ -125,9 +130,9 @@ class WebCoreContractTest {
     @Test
     void shouldNotReleaseLeaseOwnedByLaterRequest() {
         CacheIdempotencyGuard guard = newGuard("web-core-test");
-        IdempotencyLease expiredLease = guard.acquireLease("payment-lease", Duration.ofMinutes(1)).orElseThrow();
+        IdempotencyLease expiredLease = guard.acquireLease("payment-lease", Duration.ofMinutes(1)).get();
         CacheKit.invalidate("web-core-test", "payment-lease");
-        IdempotencyLease activeLease = guard.acquireLease("payment-lease", Duration.ofMinutes(1)).orElseThrow();
+        IdempotencyLease activeLease = guard.acquireLease("payment-lease", Duration.ofMinutes(1)).get();
 
         guard.release(expiredLease);
 
@@ -222,11 +227,11 @@ class WebCoreContractTest {
         WebIdempotencyLifecycle lifecycle = new WebIdempotencyLifecycle(guard);
         WebRequestContext context = requestContext(null);
 
-        WebIdempotencyLifecycle.Scope released = lifecycle.open(context, "release-key").orElseThrow();
+        WebIdempotencyLifecycle.Scope released = lifecycle.open(context, "release-key").get();
         released.close();
         assertThat(lifecycle.open(context, "release-key")).isPresent();
 
-        WebIdempotencyLifecycle.Scope completed = lifecycle.open(context, "complete-key").orElseThrow();
+        WebIdempotencyLifecycle.Scope completed = lifecycle.open(context, "complete-key").get();
         completed.complete();
         completed.close();
         assertThatThrownBy(() -> lifecycle.open(context, "complete-key"))
@@ -266,6 +271,10 @@ class WebCoreContractTest {
 
     private SubjectProvider provider(Subject subject) {
         return new SubjectProvider() {
+            /**
+             * 获取值。
+             * @return 方法执行结果。
+             */
             @Override
             public Subject getSubject() {
                 return subject;
