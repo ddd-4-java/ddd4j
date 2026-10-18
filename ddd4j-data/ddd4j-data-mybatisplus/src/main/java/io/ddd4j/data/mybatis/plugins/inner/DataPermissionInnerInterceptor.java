@@ -1,10 +1,11 @@
 /*
- * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Copyright 2017-2026 the original author redacted-legacy-family.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -49,15 +50,21 @@ public class DataPermissionInnerInterceptor implements InnerInterceptor {
 
     private final DataScopeProvider provider;
 
+    /**
+     * 创建使用指定数据范围提供者的拦截器。
+     *
+     * @param provider 数据范围提供者
+     */
     public DataPermissionInnerInterceptor(DataScopeProvider provider) {
         this.provider = provider;
     }
 
     /**
-     * beforePrepare() 方法。
-     * @param sh sh 参数。
-     * @param connection connection 参数。
-     * @param transactionTimeout transactionTimeout 参数。
+     * 在 SELECT 语句准备执行前合并原有 WHERE 条件与数据范围条件。
+     *
+     * @param sh MyBatis 语句处理器
+     * @param connection 当前数据库连接
+     * @param transactionTimeout 事务超时时间
      */
     @Override
     public void beforePrepare(StatementHandler sh, Connection connection, Integer transactionTimeout) {
@@ -80,9 +87,10 @@ public class DataPermissionInnerInterceptor implements InnerInterceptor {
                 return;
             }
             Select select = (Select) CCJSqlParserUtil.parse(originalSql);
-            if (!(select instanceof PlainSelect ps)) {
+            if (!(select instanceof PlainSelect)) {
                 return;
             }
+            PlainSelect ps = (PlainSelect) select;
             Expression where = ps.getWhere();
             Expression scope = CCJSqlParserUtil.parseCondExpression(scopeCondition);
             if (Objects.isNull(where)) {
