@@ -363,7 +363,7 @@ fr.opensagres.xdocreport:fr.opensagres.xdocreport.itext.extension,2.0.6,bytecode
 fr.opensagres.xdocreport:fr.opensagres.xdocreport.itext5.extension,2.0.6,bytecode-pass,2.1.0,bytecode-pass,2.1.0,bytecode-pass,
 fr.opensagres.xdocreport:fr.opensagres.xdocreport.remoting.resources,2.0.6,bytecode-pass,2.1.0,bytecode-pass,2.1.0,bytecode-pass,
 fr.opensagres.xdocreport:fr.opensagres.xdocreport.template,2.0.6,bytecode-pass,2.1.0,bytecode-pass,2.1.0,bytecode-pass,
-fr.opensagres.xdocreport:fr.opensagres.xdocreport.template.freemarker,2.0.6,bytecode-pass,2.1.0,bytecode-pass,2.1.0,bytecode-pass,
+fr.opensagres.xdocreport:fr.opensagres.xdocreport.template.freemarker,2.0.6,bytecode-pass,2.2.0,bytecode-pass,2.2.0,bytecode-pass,
 fr.opensagres.xdocreport:fr.opensagres.xdocreport.template.textstyling.wiki,0.9.4,bytecode-pass,0.9.4,bytecode-pass,0.9.4,bytecode-pass,
 fr.opensagres.xdocreport:fr.opensagres.xdocreport.template.velocity,2.0.6,bytecode-pass,2.1.0,bytecode-pass,2.1.0,bytecode-pass,
 fr.opensagres.xdocreport:org.apache.poi.xwpf.converter.pdf.itext5,2.0.6,unverified-artifact,2.1.0,unverified-artifact,2.1.0,unverified-artifact,
