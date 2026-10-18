@@ -18,8 +18,9 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -29,13 +30,13 @@ class MQOutboxDispatcherTest {
     private static final Instant NOW = Instant.parse("2026-08-03T00:00:00Z");
 
     private static MQOutboxRecord record(String messageId, int attempts) {
-        return new MQOutboxRecord(messageId, "orders.created", "{}", Map.of(), MQOutboxStatus.LEASED,
+        return new MQOutboxRecord(messageId, "orders.created", "{}", Collections.emptyMap(), MQOutboxStatus.LEASED,
                 NOW, "instance-a", NOW.plusSeconds(60), attempts, null, null);
     }
 
     @Test
     void dispatch_shouldPublishOutsideStoreAndConfirmWithLeaseOwner() {
-        RecordingStore store = new RecordingStore(List.of(record("message-1", 1)));
+        RecordingStore store = new RecordingStore(Arrays.asList(record("message-1", 1)));
         List<String> sent = new ArrayList<>();
         RecordingObserver observer = new RecordingObserver();
         MQOutboxDispatcher dispatcher = new MQOutboxDispatcher(store, message -> sent.add(message.messageId()),
@@ -43,16 +44,16 @@ class MQOutboxDispatcherTest {
 
         MQOutboxDispatchResult result = dispatcher.dispatch("instance-a", 10, NOW);
 
-        assertEquals(List.of("message-1"), sent);
+        assertEquals(Collections.singletonList("message-1"), sent);
         assertEquals("instance-a", store.leaseOwner);
-        assertEquals(List.of("message-1"), store.published);
+        assertEquals(Collections.singletonList("message-1"), store.published);
         assertEquals(new MQOutboxDispatchResult(1, 1, 0, 0, 0), result);
-        assertEquals(List.of("published"), observer.outboxOutcomes);
+        assertEquals(Collections.singletonList("published"), observer.outboxOutcomes);
     }
 
     @Test
     void dispatch_shouldRescheduleFailedMessageBeforeMaximumAttempts() {
-        RecordingStore store = new RecordingStore(List.of(record("message-1", 1)));
+        RecordingStore store = new RecordingStore(Arrays.asList(record("message-1", 1)));
         RecordingObserver observer = new RecordingObserver();
         MQOutboxDispatcher dispatcher = new MQOutboxDispatcher(store,
                 message -> {
@@ -61,14 +62,14 @@ class MQOutboxDispatcherTest {
 
         MQOutboxDispatchResult result = dispatcher.dispatch("instance-a", 10, NOW);
 
-        assertEquals(List.of("message-1"), store.rescheduled);
+        assertEquals(Collections.singletonList("message-1"), store.rescheduled);
         assertEquals(new MQOutboxDispatchResult(1, 0, 1, 0, 0), result);
-        assertEquals(List.of("retry"), observer.outboxOutcomes);
+        assertEquals(Collections.singletonList("retry"), observer.outboxOutcomes);
     }
 
     @Test
     void dispatch_shouldReportDeadMessageAfterMaximumAttempts() {
-        RecordingStore store = new RecordingStore(List.of(record("message-1", 12)));
+        RecordingStore store = new RecordingStore(Arrays.asList(record("message-1", 12)));
         RecordingObserver observer = new RecordingObserver();
         MQOutboxDispatcher dispatcher = new MQOutboxDispatcher(store,
                 message -> {
@@ -78,12 +79,12 @@ class MQOutboxDispatcherTest {
         MQOutboxDispatchResult result = dispatcher.dispatch("instance-a", 10, NOW);
 
         assertEquals(new MQOutboxDispatchResult(1, 0, 0, 1, 0), result);
-        assertEquals(List.of("dead"), observer.outboxOutcomes);
+        assertEquals(Collections.singletonList("dead"), observer.outboxOutcomes);
     }
 
     @Test
     void dispatch_shouldNotifyFailureWhenLeaseConfirmationIsLost() {
-        RecordingStore store = new RecordingStore(List.of(record("message-1", 1)));
+        RecordingStore store = new RecordingStore(Arrays.asList(record("message-1", 1)));
         store.publishConfirmed = false;
         RecordingObserver observer = new RecordingObserver();
         MQOutboxDispatcher dispatcher = new MQOutboxDispatcher(store, message -> {
@@ -92,12 +93,12 @@ class MQOutboxDispatcherTest {
         MQOutboxDispatchResult result = dispatcher.dispatch("instance-a", 10, NOW);
 
         assertEquals(new MQOutboxDispatchResult(1, 0, 0, 0, 1), result);
-        assertEquals(List.of("failed"), observer.outboxOutcomes);
+        assertEquals(Collections.singletonList("failed"), observer.outboxOutcomes);
     }
 
     @Test
     void dispatch_shouldKeepLeaseWhenConfirmationThrowsAfterSend() {
-        RecordingStore store = new RecordingStore(List.of(record("message-1", 1)));
+        RecordingStore store = new RecordingStore(Arrays.asList(record("message-1", 1)));
         store.confirmationFailure = true;
         RecordingObserver observer = new RecordingObserver();
         List<String> sent = new ArrayList<>();
@@ -106,15 +107,15 @@ class MQOutboxDispatcherTest {
 
         MQOutboxDispatchResult result = dispatcher.dispatch("instance-a", 10, NOW);
 
-        assertEquals(List.of("message-1"), sent);
+        assertEquals(Collections.singletonList("message-1"), sent);
         assertEquals(new MQOutboxDispatchResult(1, 0, 0, 0, 1), result);
-        assertEquals(List.of(), store.rescheduled);
-        assertEquals(List.of("failed"), observer.outboxOutcomes);
+        assertEquals(Collections.emptyList(), store.rescheduled);
+        assertEquals(Collections.singletonList("failed"), observer.outboxOutcomes);
     }
 
     @Test
     void dispatch_shouldIgnoreObserverFailure() {
-        RecordingStore store = new RecordingStore(List.of(record("message-1", 1)));
+        RecordingStore store = new RecordingStore(Arrays.asList(record("message-1", 1)));
         MQDeliveryObserver failingObserver = new MQDeliveryObserver() {
             @Override
             public void onOutboxPublished(MQOutboxRecord record) {
@@ -131,7 +132,7 @@ class MQOutboxDispatcherTest {
 
     @Test
     void dispatch_shouldNotifyFailureWhenRescheduleCannotPersist() {
-        RecordingStore store = new RecordingStore(List.of(record("message-1", 1)));
+        RecordingStore store = new RecordingStore(Arrays.asList(record("message-1", 1)));
         store.rescheduleFailure = true;
         RecordingObserver observer = new RecordingObserver();
         MQOutboxDispatcher dispatcher = new MQOutboxDispatcher(store,
@@ -141,12 +142,12 @@ class MQOutboxDispatcherTest {
 
         assertThrows(IllegalStateException.class, () -> dispatcher.dispatch("instance-a", 10, NOW));
 
-        assertEquals(List.of("failed"), observer.outboxOutcomes);
+        assertEquals(Collections.singletonList("failed"), observer.outboxOutcomes);
     }
 
     @Test
     void dispatch_shouldRejectInvalidOwnerAndLimit() {
-        RecordingStore store = new RecordingStore(List.of());
+        RecordingStore store = new RecordingStore(Arrays.asList());
         MQOutboxDispatcher dispatcher = new MQOutboxDispatcher(store, message -> {
         }, MQDeliveryPolicy.productionDefault());
 
