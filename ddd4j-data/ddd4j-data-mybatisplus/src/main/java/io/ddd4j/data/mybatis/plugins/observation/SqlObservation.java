@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.ddd4j.data.mybatis.plugins.observation;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -43,7 +42,6 @@ public final class SqlObservation {
      * @param elapsedNanos 耗时，单位为纳秒
      * @param error        执行异常，可为空
      */
-
     @JsonCreator
     public SqlObservation(@JsonProperty("statementId") String statementId,
                           @JsonProperty("sql") String sql,
@@ -55,42 +53,51 @@ public final class SqlObservation {
         this.error = error;
     }
 
+    /** @return SQL 执行耗时，单位为毫秒 */
     public long elapsedMillis() {
         return elapsedNanos / 1_000_000L;
     }
 
+    /** @return MyBatis 语句标识 */
     @JsonProperty("statementId")
     public String statementId() {
         return statementId;
     }
 
+    /** @return 已执行的 SQL */
     @JsonProperty("sql")
     public String sql() {
         return sql;
     }
 
+    /** @return SQL 执行耗时，单位为纳秒 */
     @JsonProperty("elapsedNanos")
     public long elapsedNanos() {
         return elapsedNanos;
     }
 
+    /** @return 执行异常；成功时为空 */
     @JsonProperty("error")
     public Throwable error() {
         return error;
     }
 
+    /** @return MyBatis 语句标识 */
     public String getStatementId() {
         return statementId;
     }
 
+    /** @return 已执行的 SQL */
     public String getSql() {
         return sql;
     }
 
+    /** @return SQL 执行耗时，单位为纳秒 */
     public long getElapsedNanos() {
         return elapsedNanos;
     }
 
+    /** @return 执行异常；成功时为空 */
     public Throwable getError() {
         return error;
     }
