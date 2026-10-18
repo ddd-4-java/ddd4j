@@ -1282,6 +1282,17 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/main/java/io/ddd4j/sample/quarkus/cqrs/goods/web/dto/GoodsQueryParameters.java",
+      "sourceSha256": [
+        "c010e0d5611eca51e3cd8b29f1a2065983a83f00a7f2e47dcd97267adfdf8dc9",
+        "dae1669d992082ce60f6037eb555ebbbb33d431611940fb1e3c3dc1613ffb134",
+        "23079300013892233bbbc24df60e32a98416c9d5dcb4859d829fac33db30bb82"
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/test/java/io/ddd4j/sample/quarkus/cqrs/goods/web/dto/GoodsQueryParametersContractTest.java",
+      "testSha256": "99bf06cd18489262f6040d1f8a547263fad2f9ea8e98ed544f5555e108e825b6",
+      "reason": "JDK 8 使用 Java 8 switch 与 javax.ws.rs，JDK 17/21 使用 switch 箭头与 jakarta.ws.rs；三线相同契约测试验证筛选、排序字段和方向及非法字段拒绝"
+    },
+    {
       "path": "ddd4j-extensions/ddd4j-extension-monitor/src/main/java/io/ddd4j/extension/monitor/channel/feishu/FeishuClient.java",
       "sourceSha256": [
         "c450f2f5926ef9e8517429c6a44d2b7ee59721dfc77a57aa06512e1e9cc60722",
