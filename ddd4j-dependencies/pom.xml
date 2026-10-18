@@ -43,7 +43,7 @@
         <appium.version>8.6.0</appium.version>
         <!-- ArchUnit：分层约束验证（ddd4j-ddd 模块用） -->
         <archunit.version>1.4.2</archunit.version>
-        <artemis.version>2.19.0</artemis.version>
+        <artemis.version>2.19.1</artemis.version>
         <!-- Artemis 2.19.0 = 最后 JDK8（major 52）版本；2.20.0 起 major 55/JDK11 -->
         <asmsupport.version>0.4.3</asmsupport.version>
         <aspectj-tools.version>1.9.7</aspectj-tools.version>
