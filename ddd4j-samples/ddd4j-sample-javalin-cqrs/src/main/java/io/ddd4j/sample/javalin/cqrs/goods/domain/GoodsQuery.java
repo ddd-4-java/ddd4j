@@ -17,6 +17,7 @@ package io.ddd4j.sample.javalin.cqrs.goods.domain;
 import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
+import io.ddd4j.kit.lang.SFunction;
 import io.ddd4j.kit.lang.StrKit;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -42,7 +43,7 @@ import java.math.BigDecimal;
  * 即可享受充血查询。所有条件通过 Lombok {@link Data} 自动生成 setter，
  * 业务侧可直接以链式或传统方式构造查询条件。
  *
- * <h2>使用示例</h2>
+ * <h3>使用示例</h3>
  * <pre>{@code
  * // 1. 链式构建
  * Page<Goods> page = new GoodsQuery()
@@ -90,9 +91,10 @@ public class GoodsQuery extends Query<Goods> {
     private BigDecimal priceMax;
 
     /**
-     * 设置值。
-     * @param orderBys 字符串参数。
-     * @return 当前对象自身，支持链式调用。
+     * 解析允许的排序字段及方向，忽略未知字段。
+     *
+     * @param orderBys 逗号分隔的字段与方向
+     * @return 当前查询对象
      */
     public GoodsQuery setOrderBys(String orderBys) {
         if (StrKit.isBlank(orderBys)) {
@@ -105,18 +107,26 @@ public class GoodsQuery extends Query<Goods> {
             }
             boolean desc = "DESC".equalsIgnoreCase(tokens[1]);
             switch (tokens[0]) {
-                case "id" -> applyOrder(desc, Goods::id);
-                case "createTime" -> applyOrder(desc, Goods::getCreateTime);
-                case "updateTime" -> applyOrder(desc, Goods::getUpdateTime);
-                case "price" -> applyOrder(desc, Goods::getPrice);
-                default -> {
-                }
+                case "id":
+                    applyOrder(desc, Goods::id);
+                    break;
+                case "createTime":
+                    applyOrder(desc, Goods::getCreateTime);
+                    break;
+                case "updateTime":
+                    applyOrder(desc, Goods::getUpdateTime);
+                    break;
+                case "price":
+                    applyOrder(desc, Goods::getPrice);
+                    break;
+                default:
+                    break;
             }
         }
         return this;
     }
 
-    private void applyOrder(boolean desc, io.ddd4j.kit.lang.SFunction<Goods, ?> property) {
+    private void applyOrder(boolean desc, SFunction<Goods, ?> property) {
         if (desc) {
             orderByDesc(property);
             return;
