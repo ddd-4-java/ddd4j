@@ -1282,6 +1282,21 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/cqrs/QuarkusJpaProjectionService.java",
+      "sourceSha256": [
+        "9005127c3b48a62f1f8bd93364475311ac154c385bf4d94c222ccfd40fdecfbe",
+        "b5f697053cc9fb9cfd159d703ffe39c9adec861e5c0393810aa220018b7ff881",
+        "191f55cbbba21f5e6029ba3185c15124a39f8cddf9a45ee0e4a6045f33bee562"
+      ],
+      "evidence": "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/cqrs/QuarkusJpaProjectionServiceContractTest.java",
+      "testSha256ByJdk": {
+        "8": "e50d1fd7cb43f7755104cc32e4ddd8d26e1feee001035673d68fe44659171bbb",
+        "17": "078341ac520ff1d26874f97ef73e49d799ad49a88879417624cf544f6ce7d03c",
+        "21": "078341ac520ff1d26874f97ef73e49d799ad49a88879417624cf544f6ce7d03c"
+      },
+      "reason": "Quarkus 1.x 使用 javax 与配置文件默认 cron，3.x 使用 jakarta 与注解内默认 cron；三线测试验证 30 秒默认值、空仓储跳过及单流失败隔离，Quarkus 生命周期定向测试验证容器启动"
+    },
+    {
       "path": "ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/extension/DddCdiExtension.java",
       "sourceSha256": [
         "fb39bbbb2eb6f3b0da7e715c96daa80205c212088ab1c9ee17697c1491a7706a",
