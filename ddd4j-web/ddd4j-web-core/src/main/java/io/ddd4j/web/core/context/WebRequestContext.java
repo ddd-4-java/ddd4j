@@ -12,12 +12,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package io.ddd4j.web.core.context;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.web.core.version.ApiVersion;
 
@@ -29,260 +28,182 @@ import java.util.Objects;
  */
 public final class WebRequestContext {
 
-    private static final long serialVersionUID = 0L;
-
     private final String requestId;
-
     private final String traceId;
-
     private final String tenantId;
-
     private final String authorization;
-
     private final Locale locale;
-
     private final String clientIp;
-
     private final String method;
-
     private final String path;
 
+    /**
+     * 请求解析出的 API 版本，未启用版本解析或解析未接线时为 null。
+     */
     private final ApiVersion apiVersion;
 
+/**
+ * HTTP 请求在 ddd4j 内部的框架无关表示。
+ * @param requestId 请求标识
+ * @param traceId 链路追踪标识
+ * @param tenantId 租户标识
+ * @param authorization 授权信息
+ * @param locale 区域与语言设置
+ * @param clientIp 字符串参数
+ * @param method 方法
+ * @param path 路径
+ */
+
     /**
-     * 创建已规范化的请求上下文。
+     * 未携带 API 版本的兼容构造器：委托九参构造器并传入 null 版本，
+     * 旧调用方行为与接线前完全一致。
      *
      * @param requestId 请求标识
-     * @param traceId 跟踪标识
+     * @param traceId 链路追踪标识
      * @param tenantId 租户标识
-     * @param authorization Authorization 请求头
-     * @param locale 区域设置
-     * @param clientIp 客户端 IP 地址
+     * @param authorization 授权信息
+     * @param locale 区域与语言设置
+     * @param clientIp 客户端 IP
      * @param method HTTP 方法
-     * @param path 请求路径
+     * @param path 路径
      */
-    public WebRequestContext(String requestId, String traceId, String tenantId, String authorization, Locale locale, String clientIp, String method, String path) {
+    public WebRequestContext(String requestId, String traceId, String tenantId, String authorization,
+                             Locale locale, String clientIp, String method, String path) {
         this(requestId, traceId, tenantId, authorization, locale, clientIp, method, path, null);
     }
 
     /**
-     * 创建包含 API 版本的请求上下文。
+     * 携带 API 版本的完整构造器。
      *
      * @param requestId 请求标识
-     * @param traceId 跟踪标识
+     * @param traceId 链路追踪标识
      * @param tenantId 租户标识
-     * @param authorization Authorization 请求头
-     * @param locale 区域设置
-     * @param clientIp 客户端 IP 地址
+     * @param authorization 授权信息
+     * @param locale 区域与语言设置
+     * @param clientIp 客户端 IP
      * @param method HTTP 方法
-     * @param path 请求路径
-     * @param apiVersion API 版本，可为空
+     * @param path 路径
+     * @param apiVersion 请求解析出的 API 版本，可为 null（未接线时）
      */
     @JsonCreator
-    public WebRequestContext(@JsonProperty("requestId") String requestId, @JsonProperty("traceId") String traceId, @JsonProperty("tenantId") String tenantId, @JsonProperty("authorization") String authorization, @JsonProperty("locale") Locale locale, @JsonProperty("clientIp") String clientIp, @JsonProperty("method") String method, @JsonProperty("path") String path, @JsonProperty("apiVersion") ApiVersion apiVersion) {
-        requestId = StrKit.isBlank(requestId) ? null : requestId;
-        traceId = StrKit.isBlank(traceId) ? requestId : traceId;
-        locale = Objects.isNull(locale) ? Locale.getDefault() : locale;
-        method = StrKit.isBlank(method) ? null : method.toUpperCase(Locale.ROOT);
-        path = StrKit.isBlank(path) ? "/" : path;
-        this.requestId = requestId;
-        this.traceId = traceId;
+    public WebRequestContext(@JsonProperty("requestId") String requestId, @JsonProperty("traceId") String traceId,
+                             @JsonProperty("tenantId") String tenantId, @JsonProperty("authorization") String authorization,
+                             @JsonProperty("locale") Locale locale, @JsonProperty("clientIp") String clientIp,
+                             @JsonProperty("method") String method, @JsonProperty("path") String path,
+                             @JsonProperty("apiVersion") ApiVersion apiVersion) {
+        this.requestId = StrKit.isBlank(requestId) ? null : requestId;
+        this.traceId = StrKit.isBlank(traceId) ? this.requestId : traceId;
         this.tenantId = tenantId;
         this.authorization = authorization;
-        this.locale = locale;
+        this.locale = Objects.isNull(locale) ? Locale.getDefault() : locale;
         this.clientIp = clientIp;
-        this.method = method;
-        this.path = path;
+        this.method = StrKit.isBlank(method) ? null : method.toUpperCase(Locale.ROOT);
+        this.path = StrKit.isBlank(path) ? "/" : path;
         this.apiVersion = apiVersion;
     }
 
-    /**
-     * 返回Authorization 请求头。
-     *
-     * @return Authorization 请求头
-     */
+    public String requestId() { return requestId; }
+    public String traceId() { return traceId; }
+    public String tenantId() { return tenantId; }
+    public String authorization() { return authorization; }
+    public Locale locale() { return locale; }
+    public String clientIp() { return clientIp; }
+    public String method() { return method; }
+    public String path() { return path; }
 
-    public String getAuthorization() {
-        return authorization;
+    /**
+     * 请求解析出的 API 版本（函数式风格访问器）。
+     *
+     * @return API 版本，未接线或未携带时为 null
+     */
+    @JsonProperty("apiVersion")
+    public ApiVersion apiVersion() {
+        return apiVersion;
     }
 
     /**
-     * 返回客户端 IP 地址。
+     * 请求解析出的 API 版本（JavaBean 风格访问器）。
      *
-     * @return 客户端 IP 地址
+     * @return API 版本，未接线或未携带时为 null
      */
-
-    public String getClientIp() {
-        return clientIp;
+    public ApiVersion getApiVersion() {
+        return apiVersion;
     }
-
-    /**
-     * 返回区域设置。
-     *
-     * @return 区域设置
-     */
-
-    public Locale getLocale() {
-        return locale;
-    }
-
-    /**
-     * 返回HTTP 方法。
-     *
-     * @return HTTP 方法
-     */
-
-    public String getMethod() {
-        return method;
-    }
-
-    /**
-     * 返回请求路径。
-     *
-     * @return 请求路径
-     */
-
-    public String getPath() {
-        return path;
-    }
-
-    /**
-     * 返回请求标识。
-     *
-     * @return 请求标识
-     */
 
     public String getRequestId() {
         return requestId;
     }
 
-    /**
-     * 返回租户标识。
-     *
-     * @return 租户标识
-     */
+    public String getTraceId() {
+        return traceId;
+    }
 
     public String getTenantId() {
         return tenantId;
     }
 
     /**
-     * 返回跟踪标识。
-     *
-     * @return 跟踪标识
+     * 获取值。
+     * @return 结果字符串。
      */
-
-    public String getTraceId() {
-        return traceId;
-    }
-
-    /**
-     * 返回请求标识。
-     *
-     * @return 请求标识
-     */
-    @JsonProperty("requestId")
-    public String requestId() {
-        return requestId;
-    }
-
-    /**
-     * 返回跟踪标识。
-     *
-     * @return 跟踪标识
-     */
-    @JsonProperty("traceId")
-    public String traceId() {
-        return traceId;
-    }
-
-    /**
-     * 返回租户标识。
-     *
-     * @return 租户标识
-     */
-    @JsonProperty("tenantId")
-    public String tenantId() {
-        return tenantId;
-    }
-
-    /**
-     * 返回Authorization 请求头。
-     *
-     * @return Authorization 请求头
-     */
-    @JsonProperty("authorization")
-    public String authorization() {
+    public String getAuthorization() {
         return authorization;
     }
 
-    /**
-     * 返回区域设置。
-     *
-     * @return 区域设置
-     */
-    @JsonProperty("locale")
-    public Locale locale() {
+    public Locale getLocale() {
         return locale;
     }
 
-    /**
-     * 返回客户端 IP 地址。
-     *
-     * @return 客户端 IP 地址
-     */
-    @JsonProperty("clientIp")
-    public String clientIp() {
+    public String getClientIp() {
         return clientIp;
     }
 
-    /**
-     * 返回HTTP 方法。
-     *
-     * @return HTTP 方法
-     */
-    @JsonProperty("method")
-    public String method() {
+    public String getMethod() {
         return method;
     }
 
     /**
-     * 返回请求路径。
-     *
-     * @return 请求路径
+     * 获取值。
+     * @return 结果字符串。
      */
-    @JsonProperty("path")
-    public String path() {
+    public String getPath() {
         return path;
     }
 
-    /** @return API 版本，未指定时为空 */
-    @JsonProperty("apiVersion")
-    public ApiVersion apiVersion() {
-        return apiVersion;
-    }
-
-    /** @return API 版本，未指定时为空 */
-    public ApiVersion getApiVersion() {
-        return apiVersion;
-    }
-
+    /**
+     * 判断当前请求上下文与指定对象是否相等：八个基础字段加可选 {@code apiVersion} 全部参与比较。
+     *
+     * @param o 待比较的对象
+     * @return 与指定对象相等返回 {@code true}，否则返回 {@code false}
+     */
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
+    public boolean equals(Object o) {
+        if (this == o) {
             return true;
         }
-        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+        if (!(o instanceof WebRequestContext)) {
             return false;
         }
-        WebRequestContext other = (WebRequestContext) obj;
-        return Objects.equals(this.requestId, other.requestId) && Objects.equals(this.traceId, other.traceId) && Objects.equals(this.tenantId, other.tenantId) && Objects.equals(this.authorization, other.authorization) && Objects.equals(this.locale, other.locale) && Objects.equals(this.clientIp, other.clientIp) && Objects.equals(this.method, other.method) && Objects.equals(this.path, other.path) && Objects.equals(this.apiVersion, other.apiVersion);
+        WebRequestContext that = (WebRequestContext) o;
+        return Objects.equals(requestId, that.requestId)
+                && Objects.equals(traceId, that.traceId)
+                && Objects.equals(tenantId, that.tenantId)
+                && Objects.equals(authorization, that.authorization)
+                && Objects.equals(locale, that.locale)
+                && Objects.equals(clientIp, that.clientIp)
+                && Objects.equals(method, that.method)
+                && Objects.equals(path, that.path)
+                && Objects.equals(apiVersion, that.apiVersion);
     }
 
+    /**
+     * 返回请求上下文的哈希码：八个基础字段加可选 {@code apiVersion} 全部参与计算。
+     *
+     * @return 请求上下文的哈希码
+     */
     @Override
     public int hashCode() {
-        int result = 0;
-        result = 31 * result + Objects.hashCode(requestId);
+        int result = Objects.hashCode(requestId);
         result = 31 * result + Objects.hashCode(traceId);
         result = 31 * result + Objects.hashCode(tenantId);
         result = 31 * result + Objects.hashCode(authorization);
@@ -294,6 +215,11 @@ public final class WebRequestContext {
         return result;
     }
 
+    /**
+     * 返回请求上下文的字符串表示，包含解析出的 {@code apiVersion}。
+     *
+     * @return 形如 {@code WebRequestContext[... , apiVersion=...]} 的字符串
+     */
     @Override
     public String toString() {
         return "WebRequestContext[requestId=" + requestId + ", traceId=" + traceId + ", tenantId=" + tenantId + ", authorization=" + authorization + ", locale=" + locale + ", clientIp=" + clientIp + ", method=" + method + ", path=" + path + ", apiVersion=" + apiVersion + "]";
