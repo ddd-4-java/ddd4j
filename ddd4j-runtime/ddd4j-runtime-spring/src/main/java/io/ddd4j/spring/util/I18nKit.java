@@ -20,8 +20,6 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.extension.context.NestedMessageSource;
 import org.springframework.extension.utils.SpringContextUtils;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.nio.ByteBuffer;
@@ -45,9 +43,10 @@ public class I18nKit {
     private final String I18N_FILE_PREFIX = "i18n/messages";
 
     /**
-     * get() 方法。
-     * @param source 序列化源对象。
-     * @return 结果字符串。
+     * 获取当前语言环境下的消息。
+     *
+     * @param source 消息键或原文
+     * @return 本地化消息
      */
     public String get(String source) {
         if (Objects.isNull(source) || !org.springframework.util.StringUtils.hasLength(source)) {
@@ -64,29 +63,26 @@ public class I18nKit {
                 return resourceBundle.getString(source);
             }
         } catch (Exception e) {
-            /**
-             * log.warn() 方法。
-             * @param "处理国际化异常" "处理国际化异常" 参数。
-             * @param e 异常对象。
-             */
             log.warn("处理国际化异常", e);
         }
         return source;
     }
 
     /**
-     * get() 方法。
-     * @param source 序列化源对象。
-     * @param args 命令行参数。
-     * @return 结果字符串。
+     * 获取并格式化当前语言环境下的消息。
+     *
+     * @param source 消息键或原文
+     * @param args 格式化参数
+     * @return 格式化后的本地化消息
      */
     public String get(String source, Object... args) {
         return format(get(source), args);
     }
 
     /**
-     * 设置值。
-     * @param locale locale 参数。
+     * 设置当前线程的语言环境。
+     *
+     * @param locale 语言环境
      */
     public void setLocale(Locale locale) {
         ThreadContext.set(ContextConstants.LOCALE, locale);
@@ -264,37 +260,35 @@ public class I18nKit {
     }
 
     /**
-     * 获取值。
-     * @param key 幂等键。
-     * @return 结果字符串。
+     * 从 Spring 消息源获取当前语言环境下的消息。
+     *
+     * @param key 消息键
+     * @return 本地化消息
      */
     public static String getMessage(String key) {
         return getMessage(key, null);
     }
 
     /**
-     * 获取值。
-     * @param key 幂等键。
-     * @param args 命令行参数。
-     * @return 结果字符串。
+     * 从 Spring 消息源获取格式化消息。
+     *
+     * @param key 消息键
+     * @param args 格式化参数
+     * @return 本地化消息
      */
     public static String getMessage(String key, String[] args) {
-        return messageSource().getMessage(key, args, LocaleContextHolder.getLocale());
+        return SpringContextUtils.getContext().getApplicationContext().getBean(NestedMessageSource.class).getMessage(key, args, LocaleContextHolder.getLocale());
     }
 
     /**
-     * 获取值。
-     * @param key 幂等键。
-     * @param args 命令行参数。
-     * @param defaultMsg 字符串参数。
-     * @return 结果字符串。
+     * 从 Spring 消息源获取消息，未命中时使用默认文案。
+     *
+     * @param key 消息键
+     * @param args 格式化参数
+     * @param defaultMsg 默认文案
+     * @return 本地化消息
      */
     public static String getMessage(String key, String[] args, String defaultMsg) {
-        return messageSource().getMessage(key, args, defaultMsg, LocaleContextHolder.getLocale());
-    }
-
-    private static MessageSource messageSource() {
-        ApplicationContext context = SpringContextUtils.getContext().getApplicationContext();
-        return context.getBean(NestedMessageSource.class);
+        return SpringContextUtils.getContext().getApplicationContext().getBean(NestedMessageSource.class).getMessage(key, args, defaultMsg, LocaleContextHolder.getLocale());
     }
 }
