@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * 类型说明。
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.0.x
+ * @since 1.0.x
  */
 class WebRequestContextFactoryTest {
 
@@ -72,6 +72,6 @@ class WebRequestContextFactoryTest {
     void defaultFactoryUsesDefaults() {
         WebRequestContextFactory factory = new WebRequestContextFactory();
         WebRequestContext context = factory.create(requestData(null));
-        org.junit.jupiter.api.Assertions.assertFalse(context.requestId().isBlank());
+        org.junit.jupiter.api.Assertions.assertFalse(context.requestId().trim().isEmpty());
     }
 }

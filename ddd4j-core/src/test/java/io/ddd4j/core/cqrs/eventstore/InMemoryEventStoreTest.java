@@ -25,22 +25,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
- * {@link InMemoryEventStore} 测试（继承契约测试 + 内存实现特有行为）。
+ * {@link InMemoryEventStore} 测试（继承契约测试并验证内存实现特有行为）。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.0.0
  */
 @DisplayName("InMemoryEventStore")
 class InMemoryEventStoreTest extends EventStoreContractTest {
 
     /**
-     * 创建对象。
-     * @return 方法执行结果。
+     * 创建内存事件存储实现供通用契约测试使用。
+     * @return 内存事件存储
      */
     @Override
     protected EventStore createEventStore() {
         return new InMemoryEventStore();
     }
+
     @Test
     void shouldAppendReadAndRejectWrongVersion() {
         InMemoryEventStore store = new InMemoryEventStore();

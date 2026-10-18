@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * 类型说明。
  * @author ddd4j
- * @since 3.0.x
+ * @since 1.0.x
  */
 class IdempotencyGuardTest {
 
@@ -55,7 +55,7 @@ class IdempotencyGuardTest {
     @Test
     void completeByLeaseDelegatesToKey() {
         RecordingGuard guard = new RecordingGuard(true);
-        IdempotencyLease lease = guard.acquireLease("order-1", TTL).orElseThrow();
+        IdempotencyLease lease = guard.acquireLease("order-1", TTL).get();
 
         guard.complete(lease);
 
