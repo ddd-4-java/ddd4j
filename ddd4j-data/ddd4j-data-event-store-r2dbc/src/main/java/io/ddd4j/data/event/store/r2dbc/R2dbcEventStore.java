@@ -42,6 +42,19 @@ public class R2dbcEventStore implements EventStore {
         this.asyncEventStore = Objects.requireNonNull(asyncEventStore, "asyncEventStore must not be null");
     }
 
+    private static StoredEvent toStoredEvent(AsyncStoredEvent event) {
+        return new StoredEvent(
+                event.eventId(),
+                event.aggregateType(),
+                event.aggregateId(),
+                event.version(),
+                event.position(),
+                event.timestamp(),
+                event.payload(),
+                event.correlationId(),
+                event.causationId());
+    }
+
     /**
      * 在同步边界追加领域事件。
      */
@@ -84,18 +97,5 @@ public class R2dbcEventStore implements EventStore {
                 .map(R2dbcEventStore::toStoredEvent)
                 .collectList()
                 .block();
-    }
-
-    private static StoredEvent toStoredEvent(AsyncStoredEvent event) {
-        return new StoredEvent(
-                event.eventId(),
-                event.aggregateType(),
-                event.aggregateId(),
-                event.version(),
-                event.position(),
-                event.timestamp(),
-                event.payload(),
-                event.correlationId(),
-                event.causationId());
     }
 }
