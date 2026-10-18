@@ -156,6 +156,17 @@ class JpaEventStoreTest {
     }
 
     @Test
+    void reconstructedAggregateIdShouldSerializeAsString() throws Exception {
+        TestAggregateRootId orderId = new TestAggregateRootId("serialized-id");
+        eventStore.append(ORDER_TYPE, orderId,
+                Collections.<DomainEvent<?>>singletonList(new OrderCreatedEvent("created")), 0);
+
+        AggregateRootId reconstructed = eventStore.read(ORDER_TYPE, orderId).get(0).aggregateId();
+        assertEquals("\"serialized-id\"",
+                JsonMapper.builder().build().writeValueAsString(reconstructed));
+    }
+
+    @Test
     void appendWithStaleVersionShouldReject() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-b");
         eventStore.append(ORDER_TYPE, orderId,
