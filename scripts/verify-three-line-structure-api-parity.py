@@ -290,8 +290,9 @@ def validate_platform_build_config_files(
 
 def validate_platform_tool_scripts(
         mappings: list[dict], snapshots: list[dict[str, str]]) -> dict[str, dict]:
-    """仅分类明确属于 JDK 8 或 Maven 4/JDK 21 的逐线检查脚本。"""
+    """仅分类已锁定的逐线构建脚本和依赖策略测试。"""
     allowed = {
+        "scripts/dependencies/tests/test_uniform_contract.py",
         "scripts/test-maven-wrapper-jdk-compatibility.sh",
         "scripts/test-parent-consumer-version-isolation.sh",
         "scripts/verify-java8-dependency-baseline.sh",
@@ -321,9 +322,13 @@ def validate_platform_tool_scripts(
                 or not item.get("evidence")):
             raise ValueError(f"invalid platform tool script: {path}")
         expected = [hashes[jdk] for jdk in ("8", "17", "21")]
-        required_index = 0 if path in jdk8_only else 2
-        if (any((value is not None) != (index == required_index)
-                for index, value in enumerate(expected))
+        if path == "scripts/dependencies/tests/test_uniform_contract.py":
+            required = (True, True, True)
+        else:
+            required_index = 0 if path in jdk8_only else 2
+            required = tuple(index == required_index for index in range(3))
+        if (any((value is not None) != present
+                for value, present in zip(expected, required))
                 or any(value is not None and not re.fullmatch(r"[0-9a-f]{64}", value)
                        for value in expected)):
             raise ValueError(f"invalid platform tool script hashes: {path}")
