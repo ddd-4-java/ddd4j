@@ -66,6 +66,7 @@ def reactor_sbom(root, output):
 
     components = {}
     dependencies = {}
+    origins = {}
     for module in modules:
         data = json.loads((module / 'target/weekly-deps.json').read_text(encoding='utf-8'))
         if data.get('bomFormat') != 'CycloneDX' or not isinstance(data.get('components'), list):
@@ -76,6 +77,7 @@ def reactor_sbom(root, output):
             if not all(identity):
                 raise ValueError('Unversioned CycloneDX component: ' + str(module.relative_to(root)))
             components[identity] = component
+            origins.setdefault(component['purl'], set()).add(module.relative_to(root).as_posix())
         for dependency in data.get('dependencies') or []:
             if dependency.get('ref'):
                 dependencies[dependency['ref']] = dependency
@@ -87,6 +89,9 @@ def reactor_sbom(root, output):
         'components': [components[key] for key in sorted(components)],
         'dependencies': [dependencies[key] for key in sorted(dependencies)],
     }), encoding='utf-8')
+    (output / 'reactor-component-origins.json').write_text(json.dumps({
+        purl: sorted(module_paths) for purl, module_paths in sorted(origins.items())
+    }, indent=2), encoding='utf-8')
     print(f'CycloneDX resolved {len(modules)} modules and {len(components)} component releases')
     return manifest
 
