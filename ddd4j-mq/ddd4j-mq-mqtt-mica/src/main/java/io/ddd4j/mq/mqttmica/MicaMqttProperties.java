@@ -70,16 +70,18 @@ public class MicaMqttProperties extends MQProperties {
     private int maxInflight = 100;
 
     /**
-     * 创建对象。
-     * @return 结果字符串。
+     * 为新连接生成唯一客户端标识。
+     *
+     * @return 新客户端标识
      */
     public String newClientId() {
         return (Objects.isNull(clientIdPrefix) ? "ddd4j-mica-" : clientIdPrefix) + UUID.randomUUID();
     }
 
     /**
-     * client() 方法。
-     * @return 方法执行结果。
+     * 根据当前配置建立 mica-mqtt 客户端连接。
+     *
+     * @return 已连接的 MQTT 客户端
      */
     public MqttClient client() {
         MqttClientCreator creator = MqttClient.create()
@@ -88,10 +90,6 @@ public class MicaMqttProperties extends MQProperties {
                 .username(getUsername())
                 .password(getPassword())
                 .clientId(newClientId())
-                /**
-                 * .keepAliveSecs() 方法。
-                 * @param keepAliveSeconds keepAliveSeconds 参数。
-                 */
                 .keepAliveSecs(keepAliveSeconds)
                 .readBufferSize(readBufferSize);
         if (useSsl) {
@@ -101,8 +99,9 @@ public class MicaMqttProperties extends MQProperties {
     }
 
     /**
-     * mqttQoS() 方法。
-     * @return 方法执行结果。
+     * 将数字服务质量级别转换为 mica-mqtt 枚举。
+     *
+     * @return MQTT 服务质量级别
      */
     public MqttQoS mqttQoS() {
         return switch (qos) {

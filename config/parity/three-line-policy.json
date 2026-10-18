@@ -1282,6 +1282,17 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-mq/ddd4j-mq-mqtt-mica/src/main/java/io/ddd4j/mq/mqttmica/MicaMqttProperties.java",
+      "sourceSha256": [
+        "eb03180f29dbc31b81d26a5e4fd244c0b7118f14eae49bac392ecb3974519f83",
+        "fdf842f4d45efcb94fadeeff32466f247b333cbb43d4092d0a27979a75c4186f",
+        "fdf842f4d45efcb94fadeeff32466f247b333cbb43d4092d0a27979a75c4186f"
+      ],
+      "evidence": "ddd4j-mq/ddd4j-mq-mqtt-mica/src/test/java/io/ddd4j/mq/mqttmica/MicaMqttPropertiesContractTest.java",
+      "testSha256": "c3a3262f49db70b30956db382993674aefd0dc04bcfb3495936630ec554b5173",
+      "reason": "JDK 8 使用普通 switch，JDK 17/21 使用 switch 表达式；三线同一契约测试验证 QoS 0/1/2/未知值回退、客户端 ID 前缀和唯一性"
+    },
+    {
       "path": "ddd4j-data/ddd4j-data-crypto/src/main/java/io/ddd4j/data/crypto/strategy/FlksecCryptoStrategy.java",
       "sourceSha256": [
         "537671e4312c25a315d6995272bcf9bf2d0c0b4435a0b7ff48ec66e2e7d549e7",
