@@ -1282,6 +1282,21 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-data/ddd4j-data-event-store-esdb/src/main/java/io/ddd4j/data/event/store/esdb/EsdbEventStore.java",
+      "sourceSha256": [
+        "527c53a9178615c6bd768968867391e22ac972137316f5a37bddbb38255289af",
+        "57887aff451857f105d865b973d8ca20da137ab92947417ec9eb1e90a9eb1e08",
+        "43a68a203d56f208a4ceadd323282a2de7f6c15496e1126bb57d0a9d0dfec909"
+      ],
+      "evidence": "ddd4j-data/ddd4j-data-event-store-esdb/src/test/java/io/ddd4j/data/event/store/esdb/EsdbEventStoreTest.java",
+      "testSha256ByJdk": {
+        "8": "4f6f4fbff6d5cd58d5174182a7187772806c572f53dd91c129a4de72b8c2aeb9",
+        "17": "a2b61971c2b1e27853752e9e99a2f9e132f484dc3045c2555bd60e3ade1e0394",
+        "21": "9beb187a2c90087a6e54525d0e09e96dead7dcb28db0e9afa4707b63b4da5832"
+      },
+      "reason": "ESDB 三线共享事件写入、读取、版本冲突和重建 ID 契约；JDK 8 集合/类型语法、JDK 17/21 模式匹配及 Jackson 2/3 的元数据解析各随平台适配，三线同九项测试验证行为"
+    },
+    {
       "path": "ddd4j-data/ddd4j-data-external/src/main/java/io/ddd4j/data/external/geo/GeoBaiduTemplate.java",
       "sourceSha256": [
         "733e6ff6982dbf08cf8b7a646028e1e298e13cb4e4faa13909680c3d336d56bb",
