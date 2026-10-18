@@ -43,7 +43,7 @@ class RTest {
 
     @Test
     void fail_withNullObject_shouldKeepFailureMetadata() {
-        R<Object> response = R.of(ApiCode.FAIL.getCode(), ApiCode.FAIL.getDesc(), (Object) null);
+        R<Object> response = ApiCode.FAIL.toResponse((Object) null);
         assertThat(response.getData()).isNull();
         assertThat(response.getCode()).isEqualTo(ApiCode.FAIL.getCode());
         assertThat(response.getMsg()).isEqualTo(ApiCode.FAIL.getDesc());
@@ -52,7 +52,7 @@ class RTest {
     @Test
     void fail_withObjectData_shouldPreservePayload() {
         Map<String, String> payload = Collections.singletonMap("reason", "quota");
-        R<Map<String, String>> response = R.of(ApiCode.FAIL.getCode(), ApiCode.FAIL.getDesc(), payload);
+        R<Map<String, String>> response = ApiCode.FAIL.toResponse(payload);
         assertThat(response.getData()).isSameAs(payload);
         assertThat(response.getCode()).isEqualTo(ApiCode.FAIL.getCode());
         assertThat(response.getMsg()).isEqualTo(ApiCode.FAIL.getDesc());
