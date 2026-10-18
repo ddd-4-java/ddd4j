@@ -38,6 +38,7 @@ import io.ddd4j.web.core.context.WebRequestLifecycle;
 import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.web.core.idempotency.IdempotencyGuard;
 import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
+import io.ddd4j.web.core.error.WebError;
 import io.ddd4j.web.webflux.error.GlobalErrorAttributes;
 import io.ddd4j.web.webflux.error.GlobalErrorWebExceptionHandler;
 import io.opentelemetry.api.GlobalOpenTelemetry;
@@ -133,6 +134,20 @@ class Ddd4jWebFluxContractTest {
         assertNotNull(body);
         assertTrue(body.contains("invalid order"));
         assertTrue(body.contains("400"));
+    }
+
+    @Test
+    void shouldWriteCustomHttpStatusWithoutLosingErrorBody() {
+        GlobalErrorWebExceptionHandler handler = new GlobalErrorWebExceptionHandler(new GlobalErrorAttributes(),
+                new ObjectMapper(), ignored -> new WebError(599, 599, "custom status", null));
+        MockServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/orders"));
+
+        handler.handle(exchange, new IllegalStateException("custom status")).block();
+
+        String body = exchange.getResponse().getBodyAsString().block();
+        assertNotNull(body);
+        assertTrue(body.contains("599"));
+        assertTrue(body.contains("custom status"));
     }
 
     @Test

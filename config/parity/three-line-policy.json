@@ -1282,6 +1282,21 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-web/ddd4j-web-webflux/src/main/java/io/ddd4j/web/webflux/error/GlobalErrorWebExceptionHandler.java",
+      "sourceSha256": [
+        "5d6f30b642732e74e897f63efe8720cf8c31d11d251c33b038ec855a0329ae68",
+        "54194a84300399fa4d11161df538a2c1bdcb3c43283c2454f2acb68cff3acf82",
+        "f6411728a03de97fc3bbad038e4632d400b043294cfc56bbeb754aa23cd323b6"
+      ],
+      "evidence": "ddd4j-web/ddd4j-web-webflux/src/test/java/io/ddd4j/web/webflux/Ddd4jWebFluxContractTest.java",
+      "testSha256ByJdk": {
+        "8": "77a1c85d5d2249676aa617a2460dd2ae6553682fe40b1aaa753ed54f3a347974",
+        "17": "0ff99e399b356bc30924d7710ce9d91dcdead72ef4f9bec3dad865e5cf17a6db",
+        "21": "efcc11f43483c9e53224094c6f7bab7b3997a703d63f6eb236776efad944a390"
+      },
+      "reason": "Spring 5 WebFlux 以 setRawStatusCode 表示未枚举的合法 HTTP 状态，Spring 6/7 以 HttpStatusCode.valueOf 表示；三线相同契约测试验证 599 状态的响应体和既有标准错误状态"
+    },
+    {
       "path": "ddd4j-runtime/ddd4j-runtime-spring/src/main/java/io/ddd4j/spring/config/SpringCoreConfig.java",
       "sourceSha256": [
         "aaeaaad5b961643ec77a8b2e28c2431b90f588d31091dff05eb90bf4c5d1ffee",
