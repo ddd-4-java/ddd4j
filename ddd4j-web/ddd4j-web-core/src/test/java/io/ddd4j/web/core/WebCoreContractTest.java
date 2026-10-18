@@ -54,7 +54,7 @@ import static org.mockito.Mockito.when;
 /**
  * 类型说明。
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.0.x
+ * @since 1.0.x
  */
 class WebCoreContractTest {
 
