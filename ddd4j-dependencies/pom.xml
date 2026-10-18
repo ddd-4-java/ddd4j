@@ -369,7 +369,7 @@
         <junit-jupiter.version>6.1.0</junit-jupiter.version>
         <junit.version>4.13.2</junit.version>
         <juniversalchardet.version>2.5.0</juniversalchardet.version>
-        <junrar.version>7.6.0</junrar.version>
+        <junrar.version>8.1.2</junrar.version>
         <just-auth.version>1.16.7</just-auth.version>
         <jwt-issuer.version>3.0.x.20260630-SNAPSHOT</jwt-issuer.version>
         <jxl.version>2.6.12</jxl.version>
