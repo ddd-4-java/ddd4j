@@ -778,6 +778,28 @@
       ],
       "evidence": "ddd4j-extensions/ddd4j-extension-pf4j/src/test/java/io/ddd4j/extension/pf4j/Pf4jServletContractTest.java",
       "reason": "Servlet API 版本适配；仅归一化已列明的 import，整份文件其余内容须完全一致"
+    },
+    {
+      "path": "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/event/MQCausalityBrokerHeaderMustTest.java",
+      "targetLines": [
+        "3.0.x"
+      ],
+      "replacements": [
+        {
+          "from": "import com.fasterxml.jackson.databind.JsonNode;",
+          "to": "import tools.jackson.databind.JsonNode;"
+        },
+        {
+          "from": "import com.fasterxml.jackson.databind.ObjectMapper;",
+          "to": "import tools.jackson.databind.ObjectMapper;"
+        },
+        {
+          "from": "import com.fasterxml.jackson.databind.json.JsonMapper;",
+          "to": "import tools.jackson.databind.json.JsonMapper;"
+        }
+      ],
+      "evidence": "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/event/MQCausalityBrokerHeaderMustTest.java",
+      "reason": "三线执行相同 MQ 因果元数据与 Broker Header 契约，JDK 21 线仅替换 Jackson 3 导入命名空间"
     }
   ],
   "platformItemsMissingOnJdk8": [
