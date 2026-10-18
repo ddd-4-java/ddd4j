@@ -800,6 +800,34 @@
       ],
       "evidence": "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/event/MQCausalityBrokerHeaderMustTest.java",
       "reason": "三线执行相同 MQ 因果元数据与 Broker Header 契约，JDK 21 线仅替换 Jackson 3 导入命名空间"
+    },
+    {
+      "path": "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/delivery/MQOutboxDispatchResultJsonContractTest.java",
+      "targetLines": [
+        "3.0.x"
+      ],
+      "replacements": [
+        {
+          "from": "import com.fasterxml.jackson.databind.json.JsonMapper;",
+          "to": "import tools.jackson.databind.json.JsonMapper;"
+        }
+      ],
+      "evidence": "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/delivery/MQOutboxDispatchResultJsonContractTest.java",
+      "reason": "三线验证同一 MQ Outbox 结果 JSON 五计数往返，JDK 21 仅使用 Jackson 3 导入命名空间"
+    },
+    {
+      "path": "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/event/MQEventHeaderMapTest.java",
+      "targetLines": [
+        "3.0.x"
+      ],
+      "replacements": [
+        {
+          "from": "import com.fasterxml.jackson.databind.json.JsonMapper;",
+          "to": "import tools.jackson.databind.json.JsonMapper;"
+        }
+      ],
+      "evidence": "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/event/MQEventHeaderMapTest.java",
+      "reason": "三线验证相同 Broker Header 与 payload 排除契约，JDK 21 仅使用 Jackson 3 导入命名空间"
     }
   ],
   "platformItemsMissingOnJdk8": [
