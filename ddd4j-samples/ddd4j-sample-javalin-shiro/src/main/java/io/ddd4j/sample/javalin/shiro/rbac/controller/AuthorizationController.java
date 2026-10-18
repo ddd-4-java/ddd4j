@@ -184,7 +184,7 @@ public class AuthorizationController {
         }
         String loginId = ctx.pathParam("id");
         rbacService.deleteUser(loginId);
-        ctx.json(R.ok("user deleted", Java8Maps.of("loginId", loginId)));
+        ctx.json(R.ok("user deleted", Collections.singletonMap("loginId", loginId)));
     }
 
     // ============================ Permission CRUD ============================
@@ -246,7 +246,7 @@ public class AuthorizationController {
         }
         String code = ctx.pathParam("code");
         rbacService.deleteRole(code);
-        ctx.json(R.ok("role deleted", Java8Maps.of("code", code)));
+        ctx.json(R.ok("role deleted", Collections.singletonMap("code", code)));
     }
 
     /**
@@ -288,7 +288,7 @@ public class AuthorizationController {
         }
         String code = ctx.pathParam("code");
         rbacService.deletePermission(code);
-        ctx.json(R.ok("permission deleted", Java8Maps.of("code", code)));
+        ctx.json(R.ok("permission deleted", Collections.singletonMap("code", code)));
     }
 
     /**
