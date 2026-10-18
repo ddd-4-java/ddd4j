@@ -914,6 +914,40 @@ class ThreeLineInventoryTest(unittest.TestCase):
         rows = json.loads((output / "inventory.json").read_text())["differences"]
         self.assertEqual("OPEN", next(row["status"] for row in rows if row["path"] == path))
 
+    def test_hashed_syntax_adaptation_accepts_line_specific_contract_tests(self):
+        path = "ddd4j-core/src/main/java/example/PlatformType.java"
+        evidence = "ddd4j-core/src/test/java/example/PlatformTypeTest.java"
+        sources = [f"class PlatformType {{ int value() {{ return {jdk}; }} }}"
+                   for jdk in (8, 17, 21)]
+        tests = [f"class PlatformTypeTest {{ /* JDK {jdk} contract */ }}"
+                 for jdk in (8, 17, 21)]
+        for root, source, test in zip(self.roots, sources, tests):
+            self.write(root, path, source)
+            self.write(root, evidence, test)
+        policy = json.loads(self.policy.read_text())
+        policy["platformSyntaxMappings"] = [{
+            "path": path,
+            "sourceSha256": [hashlib.sha256(source.encode()).hexdigest() for source in sources],
+            "evidence": evidence,
+            "testSha256ByJdk": {str(jdk): hashlib.sha256(test.encode()).hexdigest()
+                                for jdk, test in zip((8, 17, 21), tests)},
+            "reason": "Each platform runs its own locked contract test",
+        }]
+        self.policy.write_text(json.dumps(policy))
+
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = json.loads((output / "inventory.json").read_text())["differences"]
+        self.assertEqual("PLATFORM_ADAPTED", next(row["status"] for row in rows
+                         if row["path"] == path))
+
+        self.write(self.roots[1], evidence, tests[1] + " // changed")
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = json.loads((output / "inventory.json").read_text())["differences"]
+        self.assertEqual("OPEN", next(row["status"] for row in rows
+                         if row["path"] == path))
+
     def test_exact_pulsar_broker_image_mapping_rejects_behavior_change(self):
         path = ("ddd4j-mq/ddd4j-mq-pulsar/src/test/java/io/ddd4j/mq/pulsar/"
                 "PulsarContainerIntegrationTest.java")

@@ -1267,6 +1267,21 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-data/ddd4j-data-event-store-panache/src/main/java/io/ddd4j/data/event/store/panache/PanacheEventStore.java",
+      "sourceSha256": [
+        "a6b06fe3413dd2be996057743b210b9777ff79b5bc038cf0682386483406683d",
+        "4df10a62b86a251200a100737a8f21862e1592434e323e50c27990d75a863b5c",
+        "98eaf4557c9e0ee4e5c932f54cf72335c442c52c1ad440224e24b03306bbed16"
+      ],
+      "evidence": "ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/event/store/panache/PanacheEventStoreTest.java",
+      "testSha256ByJdk": {
+        "8": "609791dcc130097539e324ed1cea38deac735e9775e81611a222b643a92719a3",
+        "17": "a7d3a2ee06e5ea492f3f6f3ee2ba12fa8cf69e3ca6566b578d0485ab848774b8",
+        "21": "a7d3a2ee06e5ea492f3f6f3ee2ba12fa8cf69e3ca6566b578d0485ab848774b8"
+      },
+      "reason": "三线各自 H2 测试验证事件读取顺序、强类型元数据、版本冲突以及三种读取结果不可修改；JDK 8 使用 javax.persistence 与不可变收集器，高两线使用 jakarta.persistence 与 Stream.toList，JDK 21 适配 Jackson 3"
+    },
+    {
       "path": "ddd4j-runtime/ddd4j-runtime-testkit/src/main/java/io/ddd4j/runtime/testkit/RuntimeContractAdapter.java",
       "sourceSha256": [
         "5f2ed2a2c9a3cbebec8a4d7cca86757a218dd094b6e540b753281183932001e9",

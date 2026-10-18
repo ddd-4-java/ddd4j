@@ -1048,7 +1048,7 @@ def historical_document_section_matches(path: str, roots: list[pathlib.Path], ma
 
 
 def validate_platform_syntax_mappings(mappings, roots: list[pathlib.Path]) -> dict[str, dict]:
-    """只接受逐文件、逐线锁定源码和相同契约测试的语法适配声明。"""
+    """只接受逐文件锁定源码和三线契约测试的语法适配声明。"""
     by_path = {}
     for mapping in mappings:
         path = pathlib.PurePosixPath(mapping.get("path", ""))
@@ -1057,6 +1057,15 @@ def validate_platform_syntax_mappings(mappings, roots: list[pathlib.Path]) -> di
         test = evidence.as_posix()
         hashes = mapping.get("sourceSha256")
         test_hash = mapping.get("testSha256")
+        test_hashes = mapping.get("testSha256ByJdk")
+        valid_test_hash = (isinstance(test_hash, str)
+                           and re.fullmatch(r"[0-9a-f]{64}", test_hash)
+                           and test_hashes is None)
+        valid_line_hashes = (test_hash is None and isinstance(test_hashes, dict)
+                             and set(test_hashes) == {"8", "17", "21"}
+                             and all(isinstance(value, str)
+                                     and re.fullmatch(r"[0-9a-f]{64}", value)
+                                     for value in test_hashes.values()))
         if (path.is_absolute() or ".." in path.parts or "*" in source
                 or "/src/main/java/" not in source or source in by_path
                 or evidence.is_absolute() or ".." in evidence.parts or "*" in test
@@ -1065,7 +1074,7 @@ def validate_platform_syntax_mappings(mappings, roots: list[pathlib.Path]) -> di
                 or not isinstance(hashes, list) or len(hashes) != 3
                 or not all(isinstance(value, str) and re.fullmatch(r"[0-9a-f]{64}", value)
                            for value in hashes)
-                or not isinstance(test_hash, str) or not re.fullmatch(r"[0-9a-f]{64}", test_hash)
+                or not (valid_test_hash or valid_line_hashes)
                 or not mapping.get("reason")):
             raise ValueError(f"invalid platform syntax mapping: {source}")
         by_path[source] = mapping
@@ -1075,10 +1084,12 @@ def validate_platform_syntax_mappings(mappings, roots: list[pathlib.Path]) -> di
 def platform_syntax_matches(path: str, roots: list[pathlib.Path], mapping: dict) -> bool:
     expected = mapping["sourceSha256"]
     evidence = mapping["evidence"]
+    test_hashes = mapping.get("testSha256ByJdk")
     return (all(hashlib.sha256((root / path).read_bytes()).hexdigest() == expected[index]
                 for index, root in enumerate(roots))
             and all(hashlib.sha256((root / evidence).read_bytes()).hexdigest()
-                    == mapping["testSha256"] for root in roots))
+                    == (test_hashes[str(jdk)] if test_hashes else mapping["testSha256"])
+                    for root, jdk in zip(roots, (8, 17, 21))))
 
 
 def class_files(root: pathlib.Path) -> dict[str, pathlib.Path]:
