@@ -23,7 +23,6 @@ import io.ddd4j.sample.javalin.shiro.order.domain.model.OrderStatus;
 import lombok.Value;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 订单 REST 响应。
@@ -74,9 +73,8 @@ public class OrderResponse {
 
     public static OrderResponse from(Order order) {
         Money total = order.totalAmount();
-        List<OrderLineResponse> lineResponses = order.lines().stream()
-                .map(OrderLineResponse::from)
-                .collect(Collectors.toList());
+        List<OrderLineResponse> lineResponses = java.util.Collections.unmodifiableList(
+                order.lines().stream().map(OrderLineResponse::from).collect(java.util.stream.Collectors.toList()));
         return new OrderResponse(
                 order.id(),
                 order.orderNo(),
