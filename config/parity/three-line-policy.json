@@ -1282,6 +1282,21 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-data/ddd4j-data-event-store-r2dbc/src/main/java/io/ddd4j/data/event/store/r2dbc/R2dbcAsyncEventStore.java",
+      "sourceSha256": [
+        "4b0d629ab160462b8eed06b5b4d7b229af986893d7840a4d9258755087af0b6e",
+        "72d3cc359f7eeb9c745533e325d8a8867d62f76a05ff83a856e9dc77864b0884",
+        "fb463ba0b7b5f7cd8afb818fa2790575eeeff44e6b2bb80c75e72d7de4bc3bfe"
+      ],
+      "evidence": "ddd4j-data/ddd4j-data-event-store-r2dbc/src/test/java/io/ddd4j/data/event/store/r2dbc/R2dbcAsyncEventStoreTest.java",
+      "testSha256ByJdk": {
+        "8": "f9f9eebd95fca798b50361097837139dc982388eb2caf61e280b5705f0fe709c",
+        "17": "8e07f8bb24a9233187b1b9e8c1d8c58fba8cf8d9db30381f7094ec18750a5c78",
+        "21": "8e07f8bb24a9233187b1b9e8c1d8c58fba8cf8d9db30381f7094ec18750a5c78"
+      },
+      "reason": "R2DBC 事件存储三线共用读写与乐观锁逻辑；JDK 8 的显式 instanceof 强转与 JDK 17/21 的模式匹配等价，Jackson 2/3 构造器和文档各随平台适配；三线 H2 集成测试验证版本顺序、类型化 ID、payload、因果链及冲突不落库"
+    },
+    {
       "path": "ddd4j-web/ddd4j-web-webflux/src/main/java/io/ddd4j/web/webflux/error/GlobalErrorWebExceptionHandler.java",
       "sourceSha256": [
         "5d6f30b642732e74e897f63efe8720cf8c31d11d251c33b038ec855a0329ae68",
