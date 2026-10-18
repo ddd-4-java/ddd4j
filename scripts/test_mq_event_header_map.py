@@ -12,7 +12,23 @@ ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/event/MQEvent.java"
 HEADERS = ROOT / "ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/delivery/MQDeliveryHeaders.java"
 LOMBOK = Path.home() / ".m2/repository/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar"
-JACKSON = Path.home() / ".m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.22/jackson-annotations-2.22.jar"
+def jackson_annotations_jar():
+    pom = ET.parse(ROOT / "ddd4j-dependencies/pom.xml").getroot()
+    namespace = pom.tag.partition("}")[0] + "}" if "}" in pom.tag else ""
+    properties = pom.find(namespace + "properties")
+    version = properties.findtext(namespace + "jackson-annotations.version")
+    if not version:
+        jackson_version = properties.findtext(namespace + "jackson.version")
+        bom = Path.home() / ".m2/repository/com/fasterxml/jackson/jackson-bom" / jackson_version / ("jackson-bom-" + jackson_version + ".pom")
+        bom_root = ET.parse(bom).getroot()
+        bom_namespace = bom_root.tag.partition("}")[0] + "}" if "}" in bom_root.tag else ""
+        version = bom_root.findtext("./" + bom_namespace + "properties/" + bom_namespace + "jackson.version.annotations")
+    if not version:
+        raise ValueError("Jackson annotations version is missing from the line BOM")
+    return Path.home() / ".m2/repository/com/fasterxml/jackson/core/jackson-annotations" / version / ("jackson-annotations-" + version + ".jar")
+
+
+JACKSON = jackson_annotations_jar()
 
 
 def current_jdk():
