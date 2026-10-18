@@ -23,7 +23,13 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class InMemoryEventStoreTest {
+class InMemoryEventStoreTest extends EventStoreContractTest {
+
+    @Override
+    protected EventStore createEventStore() {
+        return new InMemoryEventStore();
+    }
+
     @Test
     void shouldAppendReadAndRejectWrongVersion() {
         InMemoryEventStore store = new InMemoryEventStore();
