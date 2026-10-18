@@ -797,6 +797,10 @@ def inventory_gate(roots: list[pathlib.Path], output: pathlib.Path, policy_path:
         policy.get("platformContentMappings", []), roots)
     platform_syntax = validate_platform_syntax_mappings(
         policy.get("platformSyntaxMappings", []), roots)
+    platform_test_evidence = {}
+    for source, mapping in platform_syntax.items():
+        if mapping.get("testSha256ByJdk"):
+            platform_test_evidence.setdefault(mapping["evidence"], []).append((source, mapping))
     historical_sections = validate_historical_document_sections(
         policy.get("historicalDocumentSections", []), roots)
     snapshots = [inventory_files(root) for root in roots]
@@ -860,6 +864,12 @@ def inventory_gate(roots: list[pathlib.Path], output: pathlib.Path, policy_path:
               and platform_syntax_matches(path, roots, platform_syntax[path])):
             status = "PLATFORM_ADAPTED"
             evidence = platform_syntax[path]["evidence"]
+        elif (category == "test" and path in platform_test_evidence
+              and all(value is not None for value in values)
+              and all(platform_syntax_matches(source, roots, mapping)
+                      for source, mapping in platform_test_evidence[path])):
+            status = "PLATFORM_ADAPTED"
+            evidence = "; ".join(source for source, _ in platform_test_evidence[path])
         elif (category in ("production", "test") and all(value is not None for value in values)
               and java_serial_field_adaptation_matches(path, roots)):
             status = "PLATFORM_ADAPTED"
