@@ -49,7 +49,7 @@ import static org.assertj.core.api.Assertions.catchThrowableOfType;
  * {@code HelidonServiceLoader}（发现到 services 文件中的样例执行器即撞型）。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 2.0.x
+ * @since 1.0.x
  */
 @DisplayName("HelidonCommandBus 真实 ServiceLoader 发现 IT")
 class HelidonCommandBusIT {
@@ -102,9 +102,11 @@ class HelidonCommandBusIT {
         assertThat(exception.getMessage()).contains(UnknownCommand.class.getName());
     }
 
+    /** 用于验证多类型处理器撞型拒绝的伴随命令。 */
     static class CompanionCommand implements Command {
     }
 
+    /** 用于验证未注册命令错误路径的测试命令。 */
     static class UnknownCommand implements Command {
     }
 
@@ -118,9 +120,16 @@ class HelidonCommandBusIT {
 
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
-            return Set.of(SampleCommand.class, CompanionCommand.class);
+            return java.util.Collections.unmodifiableSet(new java.util.LinkedHashSet<>(
+                    java.util.Arrays.asList(SampleCommand.class, CompanionCommand.class)));
         }
 
+        /**
+         * 执行占位命令。
+         *
+         * @param command 测试命令
+         * @return 成功结果
+         */
         @Override
         public Result execute(Command command) {
             return Result.ok();
