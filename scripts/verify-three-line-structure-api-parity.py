@@ -37,6 +37,10 @@ PLATFORM_IMPORT_NAMESPACES = tuple((old, new) for old, new in (
     ("com.fasterxml.jackson.databind.", "tools.jackson.databind."),
     ("com.fasterxml.jackson.core.", "tools.jackson.core."),
 ))
+CDI_PLATFORM_DESCRIPTORS = {
+    "ddd4j-runtime/ddd4j-runtime-quarkus/src/main/resources/META-INF/beans.xml": ("4.0", "4_0"),
+    "ddd4j-samples/ddd4j-sample-helidon-cqrs/src/main/resources/META-INF/beans.xml": ("3.0", "3_0"),
+}
 
 
 def run(*command: str) -> str:
@@ -168,6 +172,39 @@ def pom_topology_signature(file: pathlib.Path) -> tuple[str, str, str, frozenset
 def platform_config_matches(path: str, roots: list[pathlib.Path]) -> bool:
     signatures = [pom_topology_signature(root / path) for root in roots]
     return signatures[0] is not None and signatures[0] == signatures[1] == signatures[2]
+
+
+def cdi_descriptor_platform_match(path: str, roots: list[pathlib.Path]) -> bool:
+    """只认可两处已知 CDI 描述符的 Java EE 到 Jakarta EE schema 迁移。"""
+    if path not in CDI_PLATFORM_DESCRIPTORS:
+        return False
+    version, suffix = CDI_PLATFORM_DESCRIPTORS[path]
+    legacy_namespace = "http://xmlns.jcp.org/xml/ns/javaee"
+    modern_namespace = "https://jakarta.ee/xml/ns/jakartaee"
+    schema_attribute = "{http://www.w3.org/2001/XMLSchema-instance}schemaLocation"
+    legacy_attributes = {"bean-discovery-mode": "annotated", "version": "2.0"}
+    if "helidon-cqrs" in path:
+        legacy_attributes[schema_attribute] = (
+            f"{legacy_namespace} {legacy_namespace}/beans_2_0.xsd")
+    modern_attributes = {
+        "bean-discovery-mode": "annotated",
+        "version": version,
+        schema_attribute: f"{modern_namespace} {modern_namespace}/beans_{suffix}.xsd",
+    }
+    for index, root in enumerate(roots):
+        try:
+            document = ET.parse(root / path).getroot()
+        except (OSError, ET.ParseError):
+            return False
+        namespace = legacy_namespace if index == 0 else modern_namespace
+        attributes = legacy_attributes if index == 0 else modern_attributes
+        actual = dict(document.attrib)
+        if schema_attribute in actual:
+            actual[schema_attribute] = " ".join(actual[schema_attribute].split())
+        if (document.tag != f"{{{namespace}}}beans" or actual != attributes
+                or len(document) != 0 or (document.text or "").strip()):
+            return False
+    return True
 
 
 def validate_platform_dependency_config_files(
@@ -771,6 +808,10 @@ def inventory_gate(roots: list[pathlib.Path], output: pathlib.Path, policy_path:
         elif path in build_configs:
             status = "PLATFORM_CONFIG"
             evidence = build_configs[path]["evidence"]
+        elif (category == "configuration" and all(value is not None for value in values)
+              and cdi_descriptor_platform_match(path, roots)):
+            status = "PLATFORM_ADAPTED"
+            evidence = "current CDI beans.xml: annotated discovery, empty body and exact Java EE/Jakarta EE schema"
         elif path in platform and values[0] is None and values[1] is not None and values[2] is not None:
             item = platform[path]
             if item.get("decision") == "unsupported" and item.get("evidence"):
