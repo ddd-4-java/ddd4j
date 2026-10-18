@@ -76,6 +76,11 @@ class JdbiEventStoreMysqlIT {
     }
 
     @Test
+    void timestampShouldRoundTripAcrossTimezonesOnMysql() throws Exception {
+        JdbiTimestampTimezoneContractTest.assertUtcRoundTrip(jdbi);
+    }
+
+    @Test
     void appendAndReadShouldRoundTripTypedEventOnMysql() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-mysql-1");
         eventStore.append(ORDER_TYPE, orderId, Arrays.<DomainEvent<?>>asList(
