@@ -20,6 +20,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.Collections;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -34,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * {@code io.ddd4j.core.ddd.event.EventHandlerTest} 的守护模式）。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 2.0.x
+ * @since 1.0.x
  */
 class CommandHandlerTest {
 
@@ -75,7 +76,7 @@ class CommandHandlerTest {
 
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
-            return Set.of(CreateOrderCommand.class);
+            return Collections.<Class<? extends Command>>singleton(CreateOrderCommand.class);
         }
 
         /**
