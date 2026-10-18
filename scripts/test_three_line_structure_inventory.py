@@ -901,6 +901,25 @@ class ThreeLineInventoryTest(unittest.TestCase):
                    and item["category"] == "production")
         self.assertEqual("OPEN", row["status"])
 
+    def test_changed_error_code_fails_inventory_gate(self):
+        path = "ddd4j-core/src/main/java/example/OrderErrorCode.java"
+        original = ('package example; public enum OrderErrorCode {'
+                    ' NOT_FOUND("ORDER_NOT_FOUND");'
+                    ' public final String code;'
+                    ' OrderErrorCode(String code) { this.code = code; } }')
+        for root in self.roots:
+            self.write(root, path, original)
+        self.write(self.roots[1], path,
+                   original.replace("ORDER_NOT_FOUND", "ORDER_MISSING"))
+
+        result, output = self.run_checker("inventory", "--fail-on-open")
+        self.assertNotEqual(0, result.returncode)
+        rows = json.loads((output / "inventory.json").read_text())["differences"]
+        row = next(item for item in rows if item["path"] == path
+                   and item["category"] == "production")
+        self.assertEqual("OPEN", row["status"])
+        self.assertEqual("content", row["reason"])
+
     def test_historical_task_section_keeps_shared_document_body_guarded(self):
         path = "docs/reference/fuin-api-patterns/01-aggregate-root.md"
         index = "docs/superpowers/historical-evidence-index.md"
