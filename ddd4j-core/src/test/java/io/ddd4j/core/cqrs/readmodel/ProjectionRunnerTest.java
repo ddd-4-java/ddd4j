@@ -417,6 +417,7 @@ class ProjectionRunnerTest {
             runner.runAllIsolated(Arrays.asList(first, second));
 
             assertThat(second.handled).containsExactly("e2");
+            verify(projectionService).readProjectionPosition("second");
             verify(projectionService).updateProjectionPosition("second", 1L);
         }
 
