@@ -13,28 +13,25 @@
  * limitations under the License.
  */
 package io.ddd4j.mq.activemq;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
 
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.delivery.MQDeliveryHeaders;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.event.MQEventSerialization;
-import io.ddd4j.mq.serialization.JsonMQEventSerialization;
-import jakarta.jms.BytesMessage;
-import jakarta.jms.MessageProducer;
-import jakarta.jms.Topic;
 import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.message.MessageHeaders;
+import io.ddd4j.mq.serialization.JsonMQEventSerialization;
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
+import org.junit.jupiter.api.Test;
+
+import jakarta.jms.BytesMessage;
 import jakarta.jms.Connection;
 import jakarta.jms.JMSException;
 import jakarta.jms.Message;
 import jakarta.jms.MessageConsumer;
+import jakarta.jms.MessageProducer;
 import jakarta.jms.Session;
-import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
-import org.junit.jupiter.api.Test;
+import jakarta.jms.Topic;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -44,9 +41,7 @@ import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.*;
 
 /**
- * 类型说明。
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.0.x
+ * ActiveMQ 因果头、消息读取与连接生命周期三线契约。
  */
 class ActiveMQAdapterContractTest {
 
@@ -146,7 +141,7 @@ class ActiveMQAdapterContractTest {
         ActiveMQConnectionFactory factory = mock(ActiveMQConnectionFactory.class);
         Connection connection = mock(Connection.class);
         Session session = mock(Session.class);
-        jakarta.jms.Topic destination = mock(jakarta.jms.Topic.class);
+        Topic destination = mock(Topic.class);
         MessageConsumer consumer = mock(MessageConsumer.class);
         when(factory.createConnection()).thenReturn(connection);
         when(connection.createSession(false, Session.CLIENT_ACKNOWLEDGE)).thenReturn(session);
