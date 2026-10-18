@@ -77,164 +77,187 @@ public class StoredEventEntity {
     @Column(name = EventStoreConstants.COLUMN_TIMESTAMP, nullable = false)
     private Instant timestamp;
 
+    /**
+     * 创建空的StoredEventEntity实例，供 JPA 或序列化框架使用。
+     */
     public StoredEventEntity() {
     }
 
     /**
-     * 获取值。
-     * @return 结果字符串。
+     * 返回聚合标识。
+     *
+     * @return 聚合标识
      */
     public String getAggregateId() {
         return aggregateId;
     }
 
     /**
-     * 获取值。
-     * @return 结果字符串。
+     * 返回聚合类型。
+     *
+     * @return 聚合类型
      */
     public String getAggregateType() {
         return aggregateType;
     }
 
     /**
-     * 设置值。
-     * @param aggregateType 字符串参数。
+     * 设置聚合类型。
+     *
+     * @param aggregateType 聚合类型
      */
     public void setAggregateType(String aggregateType) {
         this.aggregateType = aggregateType;
     }
 
     /**
-     * 设置值。
-     * @param aggregateId 字符串参数。
+     * 设置聚合标识。
+     *
+     * @param aggregateId 聚合标识
      */
     public void setAggregateId(String aggregateId) {
         this.aggregateId = aggregateId;
     }
 
     /**
-     * 获取值。
-     * @return 结果数值。
+     * 返回事件版本。
+     *
+     * @return 事件版本
      */
     public long getVersion() {
         return version;
     }
 
     /**
-     * 设置值。
-     * @param version version 参数。
+     * 设置事件版本。
+     *
+     * @param version 事件版本
      */
     public void setVersion(long version) {
         this.version = version;
     }
 
     /**
-     * 获取值。
-     * @return 结果数值。
+     * 返回全局位置。
+     *
+     * @return 全局位置
      */
     public long getPosition() {
         return position;
     }
 
     /**
-     * 设置值。
-     * @param position position 参数。
+     * 设置全局位置。
+     *
+     * @param position 全局位置
      */
     public void setPosition(long position) {
         this.position = position;
     }
 
     /**
-     * 获取值。
-     * @return 结果字符串。
+     * 返回事件类型。
+     *
+     * @return 事件类型
      */
     public String getEventType() {
         return eventType;
     }
 
     /**
-     * 设置值。
-     * @param eventType 字符串参数。
+     * 设置事件类型。
+     *
+     * @param eventType 事件类型
      */
     public void setEventType(String eventType) {
         this.eventType = eventType;
     }
 
     /**
-     * 获取值。
-     * @return 结果字符串。
+     * 返回事件标识。
+     *
+     * @return 事件标识
      */
     public String getEventId() {
         return eventId;
     }
 
     /**
-     * 设置值。
-     * @param eventId 字符串参数。
+     * 设置事件标识。
+     *
+     * @param eventId 事件标识
      */
     public void setEventId(String eventId) {
         this.eventId = eventId;
     }
 
     /**
-     * 获取值。
-     * @return 结果字符串。
+     * 返回关联标识。
+     *
+     * @return 关联标识
      */
     public String getCorrelationId() {
         return correlationId;
     }
 
     /**
-     * 设置值。
-     * @param correlationId 字符串参数。
+     * 设置关联标识。
+     *
+     * @param correlationId 关联标识
      */
     public void setCorrelationId(String correlationId) {
         this.correlationId = correlationId;
     }
 
     /**
-     * 获取值。
-     * @return 结果字符串。
+     * 返回因果标识。
+     *
+     * @return 因果标识
      */
     public String getCausationId() {
         return causationId;
     }
 
     /**
-     * 设置值。
-     * @param causationId 字符串参数。
+     * 设置因果标识。
+     *
+     * @param causationId 因果标识
      */
     public void setCausationId(String causationId) {
         this.causationId = causationId;
     }
 
     /**
-     * 获取值。
-     * @return 结果字符串。
+     * 返回事件载荷。
+     *
+     * @return 事件载荷
      */
     public String getPayload() {
         return payload;
     }
 
     /**
-     * 设置值。
-     * @param payload 消息载荷。
+     * 设置事件载荷。
+     *
+     * @param payload 事件载荷
      */
     public void setPayload(String payload) {
         this.payload = payload;
     }
 
     /**
-     * 获取值。
-     * @return 方法执行结果。
+     * 返回事件时间。
+     *
+     * @return 事件时间
      */
     public Instant getTimestamp() {
         return timestamp;
     }
 
     /**
-     * 设置值。
-     * @param timestamp timestamp 参数。
+     * 设置事件时间。
+     *
+     * @param timestamp 事件时间
      */
     public void setTimestamp(Instant timestamp) {
         this.timestamp = timestamp;
