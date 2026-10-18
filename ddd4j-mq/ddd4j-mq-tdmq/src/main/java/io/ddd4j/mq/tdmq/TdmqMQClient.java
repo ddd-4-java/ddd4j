@@ -45,7 +45,7 @@ import java.util.function.Consumer;
  * <p>由于 ddd4j-mq-tdmq 不直接依赖腾讯云官方 SDK（保持无依赖、零 Spring），
  * 实际的 publish/subscribe 由业务侧通过 {@link BrokerPublisher} / {@link BrokerSubscriber} 注入。
  * 保留旧 SPI 单抽象方法供现有调用方使用；元数据重载负责冻结的 broker header。
- * 旧发布器无法携带因果头时显式失败，不得静默把 transport message id 冒充业务稳定 ID。
+ * 旧发布器无法携带因果头时显式失败，不得把 transport message id 冒充业务稳定 ID。
  * 当未注入时，{@link TdmqMQClient} 提供"内存总线"实现，仅供本地联调/测试。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
@@ -66,6 +66,8 @@ public class TdmqMQClient implements MQClient {
 
     /**
      * 构造 1：仅 properties（业务可在 initProducer/initConsumer 之前注入 BrokerPublisher/BrokerSubscriber）。
+     *
+     * @param properties TDMQ 连接配置
      */
     public TdmqMQClient(TdmqProperties properties) {
         this.properties = Objects.requireNonNull(properties, "properties");
@@ -73,6 +75,10 @@ public class TdmqMQClient implements MQClient {
 
     /**
      * 构造 2：注入外部 BrokerPublisher / BrokerSubscriber（runtime 集成时由业务 SDK 包装传入）。
+     *
+     * @param publisher 业务侧发布器
+     * @param subscriber 业务侧订阅器
+     * @param properties TDMQ 连接配置
      */
     public TdmqMQClient(BrokerPublisher publisher, BrokerSubscriber subscriber, TdmqProperties properties) {
         this.brokerPublisher = publisher;
@@ -82,6 +88,8 @@ public class TdmqMQClient implements MQClient {
 
     /**
      * 注入 TDMQ 业务侧发布器（如腾讯云 SDK 包装）。
+     *
+     * @param publisher 业务侧发布器
      */
     public void setBrokerPublisher(BrokerPublisher publisher) {
         this.brokerPublisher = publisher;
@@ -89,6 +97,8 @@ public class TdmqMQClient implements MQClient {
 
     /**
      * 注入 TDMQ 业务侧订阅器（如腾讯云 SDK 包装）。
+     *
+     * @param subscriber 业务侧订阅器
      */
     public void setBrokerSubscriber(BrokerSubscriber subscriber) {
         this.brokerSubscriber = subscriber;
@@ -262,11 +272,28 @@ public class TdmqMQClient implements MQClient {
 
         private final java.util.function.Consumer<Boolean> ackCallback;
 
+        /**
+         * 创建 TDMQ 已投递消息快照。
+         *
+         * @param messageId 消息标识
+         * @param correlationId 关联标识
+         * @param payload 消息内容
+         * @param ackCallback 确认结果回调
+         */
         public DeliveredMessage(String messageId, String correlationId, byte[] payload,
                                 java.util.function.Consumer<Boolean> ackCallback) {
             this(messageId, correlationId, payload, Collections.emptyMap(), ackCallback);
         }
 
+        /**
+         * 创建携带原生消息头的 TDMQ 投递快照。
+         *
+         * @param messageId 消息标识
+         * @param correlationId 关联标识
+         * @param payload 消息内容
+         * @param headers broker 消息头
+         * @param ackCallback 确认结果回调
+         */
         @JsonCreator()
         public DeliveredMessage(@JsonProperty("messageId") String messageId,
                                 @JsonProperty("correlationId") String correlationId,
@@ -281,26 +308,31 @@ public class TdmqMQClient implements MQClient {
             this.ackCallback = ackCallback;
         }
 
+        /** @return 消息标识 */
         @JsonProperty("messageId")
         public String messageId() {
             return messageId;
         }
 
+        /** @return 关联标识 */
         @JsonProperty("correlationId")
         public String correlationId() {
             return correlationId;
         }
 
+        /** @return 消息内容 */
         @JsonProperty("payload")
         public byte[] payload() {
             return payload;
         }
 
+        /** @return 不可变 broker 消息头 */
         @JsonProperty("headers")
         public Map<String, String> headers() {
             return headers;
         }
 
+        /** @return 确认结果回调 */
         @JsonProperty("ackCallback")
         public java.util.function.Consumer<Boolean> ackCallback() {
             return ackCallback;
@@ -353,14 +385,14 @@ public class TdmqMQClient implements MQClient {
         void publish(String topic, String tag, String tenantId, String key, byte[] payload);
 
         /**
-         * 携带原生消息头发布。旧发布器仍可发送无因果字段的消息；有因果字段时必须显式实现本方法。
+         * 携带原生消息头发布；旧发布器遇到因果头时显式失败。
          *
          * @param topic 物理 topic
          * @param tag tag
          * @param tenantId 租户 ID
          * @param key 业务 Key
          * @param payload 序列化内容
-         * @param headers 冻结的 broker header
+         * @param headers broker 消息头
          */
         default void publish(String topic, String tag, String tenantId, String key,
                              byte[] payload, Map<String, String> headers) {
@@ -415,6 +447,14 @@ public class TdmqMQClient implements MQClient {
     @FunctionalInterface
     public interface MessageHandler {
 
+        /**
+         * 处理一条已投递消息。
+         *
+         * @param messageId 消息标识
+         * @param correlationId 关联标识
+         * @param payload 消息内容
+         * @param ackCallback 确认结果回调
+         */
         void onMessage(String messageId, String correlationId, byte[] payload,
                        java.util.function.Consumer<Boolean> ackCallback);
     }
@@ -425,6 +465,15 @@ public class TdmqMQClient implements MQClient {
     @FunctionalInterface
     public interface HeaderMessageHandler {
 
+        /**
+         * 处理携带原生消息头的投递。
+         *
+         * @param messageId 消息标识
+         * @param correlationId 关联标识
+         * @param headers broker 消息头
+         * @param payload 消息内容
+         * @param ackCallback 确认结果回调
+         */
         void onMessage(String messageId, String correlationId, Map<String, String> headers,
                        byte[] payload, java.util.function.Consumer<Boolean> ackCallback);
     }
