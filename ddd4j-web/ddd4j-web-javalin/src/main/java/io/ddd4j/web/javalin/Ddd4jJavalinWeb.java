@@ -240,6 +240,9 @@ public final class Ddd4jJavalinWeb {
         return StrKit.isBlank(language) ? Locale.getDefault() : Locale.forLanguageTag(language.split(",", 2)[0]);
     }
 
+    /**
+     * 单次请求的处理状态，聚合请求上下文作用域、追踪作用域与幂等作用域并按序关闭。
+     */
     private static final class RequestState {
 
         private final WebContextScope contextScope;
