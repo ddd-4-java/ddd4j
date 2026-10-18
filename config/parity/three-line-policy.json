@@ -1282,6 +1282,17 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-data/ddd4j-data-external/src/main/java/io/ddd4j/data/external/geo/GeoBaiduTemplate.java",
+      "sourceSha256": [
+        "733e6ff6982dbf08cf8b7a646028e1e298e13cb4e4faa13909680c3d336d56bb",
+        "03f0980c31cb0e34b4081e9fea9760db0e791f17a1f1a6170675ea3374786ab9",
+        "6452e45df9805a027f22cfd2509dd3e66341a2a309f7aa8261403b1c78f3c759"
+      ],
+      "evidence": "ddd4j-data/ddd4j-data-external/src/test/java/io/ddd4j/data/external/geo/GeoBaiduHttpContractTest.java",
+      "testSha256": "b3f8241b613fb40d594e16e151ac96369ffc24f4b56ff033406bd420ea89dd86",
+      "reason": "JDK 8 使用 Hutool HTTP，JDK 17/21 使用 java.net.http.HttpClient；三线同一 HTTP 契约测试验证地址编码、坐标和 IP 解析、非成功响应以及供应商错误"
+    },
+    {
       "path": "ddd4j-mq/ddd4j-mq-rocketmq/src/main/java/io/ddd4j/mq/rocketmq/RocketMQClient.java",
       "sourceSha256": [
         "10d6ab2bc1a71b65c035fec74511824d8f71c9f6cf447448712c404a504bcc59",
