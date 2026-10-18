@@ -83,6 +83,19 @@ class PanacheEventStoreTest {
     }
 
     @Test
+    void readResultsShouldBeUnmodifiableSnapshots() {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-immutable");
+        eventStore.append(ORDER_TYPE, orderId, java.util.Arrays.asList(new OrderCreatedEvent(orderId)), 0);
+
+        assertThatThrownBy(() -> eventStore.read(ORDER_TYPE, orderId).clear())
+                .isInstanceOf(UnsupportedOperationException.class);
+        assertThatThrownBy(() -> eventStore.read(ORDER_TYPE, orderId, 1, 1).clear())
+                .isInstanceOf(UnsupportedOperationException.class);
+        assertThatThrownBy(() -> eventStore.readAll(0, 10).clear())
+                .isInstanceOf(UnsupportedOperationException.class);
+    }
+
+    @Test
     void readWithVersionRangeAndConflictShouldFollowCoreContract() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-2");
         eventStore.append(ORDER_TYPE, orderId,
