@@ -1282,6 +1282,21 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/extension/DddCdiExtension.java",
+      "sourceSha256": [
+        "fb39bbbb2eb6f3b0da7e715c96daa80205c212088ab1c9ee17697c1491a7706a",
+        "23876605e884743238079a8ea5724d9e2da85e21046e65505cb1ec6c99f682d7",
+        "5e04f73e2addac29e9e577e2664c9550ab90c8de24654e12392f113ffffaf3bd"
+      ],
+      "evidence": "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/extension/DddCdiExtensionContractTest.java",
+      "testSha256ByJdk": {
+        "8": "0a9932e4890e428781b8c697ba59eb2d28e18b1b72d8b5b999053ae0a1583de3",
+        "17": "9491701007ffec3b66ac7f49e8921a4f73793e843f6222d7e4c870d78e98ad3e",
+        "21": "9491701007ffec3b66ac7f49e8921a4f73793e843f6222d7e4c870d78e98ad3e"
+      },
+      "reason": "Quarkus 1.x CDI 使用 javax.enterprise，Quarkus 3.x 使用 jakarta.enterprise；三线契约测试验证 DDD 构造型自动注册 ApplicationScoped、保留已有作用域并忽略非 DDD 类型"
+    },
+    {
       "path": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/main/java/io/ddd4j/sample/quarkus/cqrs/goods/web/dto/GoodsQueryParameters.java",
       "sourceSha256": [
         "c010e0d5611eca51e3cd8b29f1a2065983a83f00a7f2e47dcd97267adfdf8dc9",
