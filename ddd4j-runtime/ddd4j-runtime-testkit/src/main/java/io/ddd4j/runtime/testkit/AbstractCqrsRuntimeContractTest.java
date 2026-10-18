@@ -22,6 +22,7 @@ import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -185,14 +186,12 @@ public abstract class AbstractCqrsRuntimeContractTest {
     public static final class CmdA implements Command {
         private final String payload;
 
+        /** @param payload 命令内容 */
         public CmdA(String payload) {
             this.payload = payload;
         }
 
-        /**
-         * 获取值。
-         * @return 结果字符串。
-         */
+        /** @return 命令内容 */
         public String getPayload() {
             return payload;
         }
@@ -204,14 +203,12 @@ public abstract class AbstractCqrsRuntimeContractTest {
     public static final class CmdB implements Command {
         private final int value;
 
+        /** @param value 命令数值 */
         public CmdB(int value) {
             this.value = value;
         }
 
-        /**
-         * 获取值。
-         * @return 结果数值。
-         */
+        /** @return 命令数值 */
         public int getValue() {
             return value;
         }
@@ -234,14 +231,9 @@ public abstract class AbstractCqrsRuntimeContractTest {
 
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
-            return Set.of(CmdA.class);
+            return Collections.singleton(CmdA.class);
         }
-        /**
-         * 执行测试命令。
-         *
-         * @param command 测试命令
-         * @return 执行结果
-         */
+
         @Override
         @SuppressWarnings("unchecked")
         public Result execute(CmdA command) {
@@ -249,10 +241,7 @@ public abstract class AbstractCqrsRuntimeContractTest {
             return Result.ok("executor-a:" + command.getPayload());
         }
 
-        /**
-         * wasInvoked() 方法。
-         * @return 判断结果。
-         */
+        /** @return 执行器是否已被调用 */
         public boolean wasInvoked() {
             return invoked.get();
         }
@@ -267,14 +256,9 @@ public abstract class AbstractCqrsRuntimeContractTest {
 
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
-            return Set.of(CmdB.class);
+            return Collections.singleton(CmdB.class);
         }
 
-        /**
-         * 执行处理逻辑。
-         * @param command command 参数。
-         * @return 方法执行结果。
-         */
         @Override
         @SuppressWarnings("unchecked")
         public Result execute(CmdB command) {
@@ -282,10 +266,7 @@ public abstract class AbstractCqrsRuntimeContractTest {
             return Result.ok("executor-b:" + command.getValue());
         }
 
-        /**
-         * wasInvoked() 方法。
-         * @return 判断结果。
-         */
+        /** @return 执行器是否已被调用 */
         public boolean wasInvoked() {
             return invoked.get();
         }
