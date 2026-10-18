@@ -2911,6 +2911,21 @@
         "21": "dfe80acb6e6c7de263ef4a73985174154509dffaec97d752403d126082ad4a91"
       },
       "reason": "三线 RBAC 登录及角色权限业务逻辑一致；JDK 8 使用 Optional.isPresent 与 Collections.emptyList，高两线使用 isEmpty 与 List.of；授权/认证定向测试覆盖 HTTP 契约，中文业务文档对齐"
+    },
+    {
+      "path": "ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/Ddd4jWebMvcInterceptor.java",
+      "sourceSha256": [
+        "70f59944188fbd880f461048a03fde98e83bd19616fff9809795340256fba119",
+        "833fc8051922725aca7eecec04114d9d5c793d9fb4b842e6d2116740b4be5df4",
+        "fccf4431eb63cd6a8a475b699b322175214fc9566bc90a65a3ed9191344cc4f6"
+      ],
+      "evidence": "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/Ddd4jWebMvcInterceptorTest.java",
+      "testSha256ByJdk": {
+        "8": "911eb12da5d818e9a3523e5f1f0486f3692c500d94beecc196f76e7d16a7e0b3",
+        "17": "c3f8908d6fc12dd8125a3c53d895d2758baf524fc9cf2e156fccc137453d80ed",
+        "21": "e85f0802cbffd26769d682f7a28fa9a76a5b453b64608bfa64abd01ec1acb08f"
+      },
+      "reason": "三线 Web MVC 拦截器请求上下文、头部提取与幂等作用域行为相同；JDK 8 使用显式 instanceof/强转，JDK 17/21 使用模式匹配，辅助方法顺序和设置属性顺序无对外差异"
     }
   ],
   "historicalDocumentSections": [
