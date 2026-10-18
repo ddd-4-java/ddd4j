@@ -41,6 +41,14 @@ CDI_PLATFORM_DESCRIPTORS = {
     "ddd4j-runtime/ddd4j-runtime-quarkus/src/main/resources/META-INF/beans.xml": ("4.0", "4_0"),
     "ddd4j-samples/ddd4j-sample-helidon-cqrs/src/main/resources/META-INF/beans.xml": ("3.0", "3_0"),
 }
+HELIDON_CDI_SERVICE_PREFIX = (
+    "ddd4j-runtime/ddd4j-runtime-helidon/src/main/resources/META-INF/services/"
+)
+HELIDON_CDI_SERVICE_NAMES = (
+    HELIDON_CDI_SERVICE_PREFIX + "javax.enterprise.inject.spi.Extension",
+    HELIDON_CDI_SERVICE_PREFIX + "jakarta.enterprise.inject.spi.Extension",
+)
+HELIDON_CDI_PROVIDER = b"io.ddd4j.helidon.Ddd4jHelidonExtension\n"
 
 
 def run(*command: str) -> str:
@@ -203,6 +211,24 @@ def cdi_descriptor_platform_match(path: str, roots: list[pathlib.Path]) -> bool:
             actual[schema_attribute] = " ".join(actual[schema_attribute].split())
         if (document.tag != f"{{{namespace}}}beans" or actual != attributes
                 or len(document) != 0 or (document.text or "").strip()):
+            return False
+    return True
+
+
+def helidon_cdi_service_platform_match(path: str, roots: list[pathlib.Path]) -> bool:
+    """只认可同一 Helidon CDI 扩展从 javax 到 jakarta 的 SPI 文件名迁移。"""
+    if path not in HELIDON_CDI_SERVICE_NAMES:
+        return False
+    legacy, modern = HELIDON_CDI_SERVICE_NAMES
+    for index, root in enumerate(roots):
+        expected = legacy if index == 0 else modern
+        unexpected = modern if index == 0 else legacy
+        try:
+            if (root / expected).read_bytes() != HELIDON_CDI_PROVIDER:
+                return False
+        except OSError:
+            return False
+        if (root / unexpected).exists():
             return False
     return True
 
@@ -812,6 +838,9 @@ def inventory_gate(roots: list[pathlib.Path], output: pathlib.Path, policy_path:
               and cdi_descriptor_platform_match(path, roots)):
             status = "PLATFORM_ADAPTED"
             evidence = "current CDI beans.xml: annotated discovery, empty body and exact Java EE/Jakarta EE schema"
+        elif helidon_cdi_service_platform_match(path, roots):
+            status = "PLATFORM_ADAPTED"
+            evidence = "current Helidon CDI SPI: exact provider and javax/Jakarta filename transition"
         elif path in platform and values[0] is None and values[1] is not None and values[2] is not None:
             item = platform[path]
             if item.get("decision") == "unsupported" and item.get("evidence"):
