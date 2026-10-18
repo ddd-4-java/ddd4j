@@ -1616,6 +1616,66 @@
         "reason": "Spring 6 集成依赖 Java 17，JDK 8 分支仅使用 Spring 5 扩展",
         "requires_jdk": 17
       }
+    },
+    "org.apache.derby:derby": {
+      "17": {
+        "reason": "ddd4j JDK 17 reactor 未引用；该家族无已发布且修复当前 CVE 的 JDK 17 兼容版本，停止在 BOM 管理旧版",
+        "requires_jdk": 21
+      }
+    },
+    "org.apache.derby:derbyclient": {
+      "17": {
+        "reason": "ddd4j JDK 17 reactor 未引用；该家族无已发布且修复当前 CVE 的 JDK 17 兼容版本，停止在 BOM 管理旧版",
+        "requires_jdk": 21
+      }
+    },
+    "org.apache.derby:derbyLocale_zh_CN": {
+      "17": {
+        "reason": "ddd4j JDK 17 reactor 未引用；该家族无已发布且修复当前 CVE 的 JDK 17 兼容版本，停止在 BOM 管理旧版",
+        "requires_jdk": 21
+      }
+    },
+    "org.apache.derby:derbynet": {
+      "17": {
+        "reason": "ddd4j JDK 17 reactor 未引用；该家族无已发布且修复当前 CVE 的 JDK 17 兼容版本，停止在 BOM 管理旧版",
+        "requires_jdk": 21
+      }
+    },
+    "org.apache.derby:derbyoptionaltools": {
+      "17": {
+        "reason": "ddd4j JDK 17 reactor 未引用；该家族无已发布且修复当前 CVE 的 JDK 17 兼容版本，停止在 BOM 管理旧版",
+        "requires_jdk": 21
+      }
+    },
+    "org.apache.derby:derbyshared": {
+      "17": {
+        "reason": "ddd4j JDK 17 reactor 未引用；该家族无已发布且修复当前 CVE 的 JDK 17 兼容版本，停止在 BOM 管理旧版",
+        "requires_jdk": 21
+      }
+    },
+    "org.apache.derby:derbytools": {
+      "17": {
+        "reason": "ddd4j JDK 17 reactor 未引用；该家族无已发布且修复当前 CVE 的 JDK 17 兼容版本，停止在 BOM 管理旧版",
+        "requires_jdk": 21
+      }
+    },
+    "org.apache.hive:hive-exec": {
+      "17": {
+        "reason": "ddd4j JDK 17 reactor 未引用；该家族无已发布且修复当前 CVE 的 JDK 17 兼容版本，停止在 BOM 管理旧版",
+        "requires_jdk": 21
+      }
+    },
+    "org.apache.hive:hive-jdbc": {
+      "17": {
+        "reason": "ddd4j JDK 17 reactor 未引用；该家族无已发布且修复当前 CVE 的 JDK 17 兼容版本，停止在 BOM 管理旧版",
+        "requires_jdk": 21
+      }
+    },
+    "org.apache.hive:hive-metastore": {
+      "17": {
+        "reason": "ddd4j JDK 17 reactor 未引用；该家族无已发布且修复当前 CVE 的 JDK 17 兼容版本，停止在 BOM 管理旧版",
+        "requires_jdk": 21
+      }
     }
   },
   "baseline_components": {
@@ -2354,13 +2414,6 @@
     "org.apache.cxf:cxf-rt-ws-policy": 8,
     "org.apache.cxf:cxf-rt-ws-rm": 8,
     "org.apache.cxf:cxf-rt-ws-security": 8,
-    "org.apache.derby:derby": 8,
-    "org.apache.derby:derbyLocale_zh_CN": 8,
-    "org.apache.derby:derbyclient": 8,
-    "org.apache.derby:derbynet": 8,
-    "org.apache.derby:derbyoptionaltools": 8,
-    "org.apache.derby:derbyshared": 17,
-    "org.apache.derby:derbytools": 8,
     "org.apache.flink:flink-cdc-common": 17,
     "org.apache.flink:flink-clients": 17,
     "org.apache.flink:flink-core": 17,
@@ -2373,9 +2426,6 @@
     "org.apache.hadoop:hadoop-yarn-client": 8,
     "org.apache.hbase:hbase-client": 8,
     "org.apache.hbase:hbase-protocol": 8,
-    "org.apache.hive:hive-exec": 8,
-    "org.apache.hive:hive-jdbc": 8,
-    "org.apache.hive:hive-metastore": 8,
     "org.apache.httpcomponents.client5:httpclient5": 17,
     "org.apache.httpcomponents.client5:httpclient5-cache": 17,
     "org.apache.httpcomponents.client5:httpclient5-fluent": 17,
@@ -3150,12 +3200,6 @@
     "org.apache.cxf:cxf-rt-rs-security-sso-saml:jar:": 8,
     "com.ibm.db2:jcc:jar:": 8,
     "org.clojars.xumh:db-meta:jar:": 8,
-    "org.apache.derby:derby:jar:": 8,
-    "org.apache.derby:derbyclient:jar:": 8,
-    "org.apache.derby:derbynet:jar:": 8,
-    "org.apache.derby:derbytools:jar:": 8,
-    "org.apache.derby:derbyoptionaltools:jar:": 8,
-    "org.apache.derby:derbyLocale_zh_CN:jar:": 8,
     "org.docx4j:docx4j-core:jar:": 8,
     "org.docx4j:docx4j-JAXB-MOXy:jar:": 8,
     "org.docx4j:docx4j-JAXB-ReferenceImpl:jar:": 8,
@@ -3277,9 +3321,6 @@
     "io.github.easy4j:hitool-core:jar:": 8,
     "io.github.easy4j:hitool-crypto:jar:": 8,
     "io.github.easy4j:hitool-mail:jar:": 8,
-    "org.apache.hive:hive-exec:jar:": 8,
-    "org.apache.hive:hive-metastore:jar:": 8,
-    "org.apache.hive:hive-jdbc:jar:": 8,
     "org.apache.activemq:artemis-jms-client:jar:": 8,
     "cn.hutool:hutool-core:jar:": 8,
     "cn.hutool:hutool-json:jar:": 8,
@@ -3954,7 +3995,6 @@
     "io.github.easy4j:cxf-rt-bytebuddy:jar:": 17,
     "io.github.easy4j:cxf-rt-javassist:jar:": 17,
     "io.spring.gradle:dependency-management-plugin:jar:": 17,
-    "org.apache.derby:derbyshared:jar:": 17,
     "io.github.easy4j:dingtalk-sdk-extension:jar:": 17,
     "io.github.easy4j:disruptor-biz:jar:": 17,
     "io.github.easy4j:disruptor-extension:jar:": 17,

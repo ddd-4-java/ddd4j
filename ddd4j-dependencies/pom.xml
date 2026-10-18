@@ -162,8 +162,6 @@
         <db-meta.version>0.0.1-Release</db-meta.version>
         <debezium.version>3.6.0.Final</debezium.version>
         <dependency-management-plugin.version>1.1.7</dependency-management-plugin.version>
-        <derby-locale.version>${derby.version}</derby-locale.version>
-        <derby.version>10.16.1.1</derby.version>
         <dingtalk-sdk-extension.version>2.0.x.20260630-SNAPSHOT</dingtalk-sdk-extension.version>
         <dingtalk-sdk.version>2.2.55</dingtalk-sdk.version>
         <dingtalk-service-sdk.version>2.0.0</dingtalk-service-sdk.version>
@@ -259,7 +257,6 @@
         <hibernate.version>6.6.40.Final</hibernate.version>
         <hikaricp.version>7.1.0</hikaricp.version>
         <hitool.version>2.0.x.20260630-SNAPSHOT</hitool.version>
-        <hive.version>4.1.0</hive.version>
         <hsqldb.version>2.7.4</hsqldb.version>
         <htmlparser.version>2.1</htmlparser.version>
         <htmlunit.version>4.21.0</htmlunit.version>
@@ -2663,55 +2660,6 @@
                 <artifactId>dependency-management-plugin</artifactId>
                 <version>${dependency-management-plugin.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.apache.derby/derby -->
-            <!-- Apache Derby：纯 Java 嵌入式关系数据库（支持内存和文件模式）。 -->
-            <dependency>
-                <groupId>org.apache.derby</groupId>
-                <artifactId>derby</artifactId>
-                <version>${derby.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.apache.derby/derbyclient -->
-            <!-- Derby Client：Apache Derby 的网络客户端 JDBC 驱动。 -->
-            <dependency>
-                <groupId>org.apache.derby</groupId>
-                <artifactId>derbyclient</artifactId>
-                <version>${derby.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.apache.derby/derbyLocale_zh_CN -->
-            <!-- Apache Derby 中文语言包：Derby 嵌入式数据库的简体中文错误消息和界面翻译。 -->
-            <dependency>
-                <groupId>org.apache.derby</groupId>
-                <artifactId>derbyLocale_zh_CN</artifactId>
-                <version>${derby-locale.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.apache.derby/derbynet -->
-            <!-- Derby Net：Apache Derby 的网络服务器模块（远程访问 Derby 数据库）。 -->
-            <dependency>
-                <groupId>org.apache.derby</groupId>
-                <artifactId>derbynet</artifactId>
-                <version>${derby.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.apache.derby/derbyoptionaltools -->
-            <!-- Derby Optional Tools：Apache Derby 的可选工具模块。 -->
-            <dependency>
-                <groupId>org.apache.derby</groupId>
-                <artifactId>derbyoptionaltools</artifactId>
-                <version>${derby.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.apache.derby/derbyshared -->
-            <!-- Derby Shared：Apache Derby 的公共共享模块。 -->
-            <dependency>
-                <groupId>org.apache.derby</groupId>
-                <artifactId>derbyshared</artifactId>
-                <version>${derby.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.apache.derby/derbytools -->
-            <!-- Derby Tools：Apache Derby 的命令行工具（ij、sysinfo 等）。 -->
-            <dependency>
-                <groupId>org.apache.derby</groupId>
-                <artifactId>derbytools</artifactId>
-                <version>${derby.version}</version>
-            </dependency>
             <!-- https://mvnrepository.com/artifact/com.aliyun/dingtalk -->
             <!-- 钉钉 SDK：阿里钉钉开放平台 Java SDK。 -->
             <dependency>
@@ -4078,27 +4026,6 @@
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>hitool-core</artifactId>
                 <version>${hitool.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.apache.hive/hive-exec -->
-            <!-- Hive Exec：Apache Hive 查询执行引擎（MapReduce/Tez/Spark 任务执行）。 -->
-            <dependency>
-                <groupId>org.apache.hive</groupId>
-                <artifactId>hive-exec</artifactId>
-                <version>${hive.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.apache.hive/hive-jdbc -->
-            <!-- Hive JDBC：Apache Hive 的 JDBC 驱动（通过 HiveServer2 连接 Hive）。 -->
-            <dependency>
-                <groupId>org.apache.hive</groupId>
-                <artifactId>hive-jdbc</artifactId>
-                <version>${hive.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.apache.hive/hive-metastore -->
-            <!-- Hive Metastore：Apache Hive 的元数据存储服务（表 Schema、分区信息等）。 -->
-            <dependency>
-                <groupId>org.apache.hive</groupId>
-                <artifactId>hive-metastore</artifactId>
-                <version>${hive.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.hsqldb/hsqldb -->
             <!-- HSQLDB：轻量级 100% Java SQL 数据库（支持内存、文件、服务器模式）。 -->
