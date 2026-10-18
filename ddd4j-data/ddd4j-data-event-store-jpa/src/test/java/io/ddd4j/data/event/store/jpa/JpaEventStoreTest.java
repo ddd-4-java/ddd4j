@@ -40,6 +40,8 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -89,6 +91,24 @@ class JpaEventStoreTest {
         entityManager.createQuery("delete from StoredEventEntity").executeUpdate();
         tx.commit();
         entityManager.close();
+    }
+
+    @Test
+    void independentAppendShouldDetachPersistedEntity() {
+        StoredEventEntity[] saved = new StoredEventEntity[1];
+        JpaStoredEventRepository repository = new JpaStoredEventRepositoryImpl(entityManager) {
+            @Override
+            public void save(StoredEventEntity entity) {
+                saved[0] = entity;
+                super.save(entity);
+            }
+        };
+        JpaEventStore independent = new JpaEventStore(entityManager, repository);
+        independent.append(ORDER_TYPE, new TestAggregateRootId("independent-context"),
+                Collections.<DomainEvent<?>>singletonList(new OrderCreatedEvent("created")), 0);
+
+        assertNotNull(saved[0]);
+        assertFalse(entityManager.contains(saved[0]));
     }
 
     @Test
