@@ -1282,6 +1282,21 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-data/ddd4j-data-event-store-jpa/src/main/java/io/ddd4j/data/event/store/jpa/JpaEventStore.java",
+      "sourceSha256": [
+        "69062e2ba5a65bf79f594fba66c4fafe17b9842e82ff1be301e9832b0d1a96da",
+        "c816dd541496a5f3c65615b74ff0dc4f36c0239e4e1b6cac5fcfa83d24e20857",
+        "41878b9894f3a3e90577f4e57e21ee793e2277dff1d28fd15c4183386c198789"
+      ],
+      "evidence": "ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/event/store/jpa/JpaEventStoreTest.java",
+      "testSha256ByJdk": {
+        "8": "3248e8aec1851f8f1b2b1aeb943e0b042ebd2f16c28787c4d40d48f40df3efca",
+        "17": "b3f1b7323261a29347b93417e2cd495dedb22b0815ed4994d8d23ced3f12b6a3",
+        "21": "d8796637be2d29d13d92ef5900614135911fb1a1114efb8f2e31dda25362490a"
+      },
+      "reason": "JPA 事件存储的写入、读取、版本冲突与重建 ID 契约三线一致；JDK 8 的 javax.persistence 与集合语法适配 JDK 17/21 的 Jakarta 和 Stream.toList，三线 H2 模块测试覆盖事件与 JSON 契约"
+    },
+    {
       "path": "ddd4j-data/ddd4j-data-external/src/main/java/io/ddd4j/data/external/region/BaiduRegionTemplate.java",
       "sourceSha256": [
         "8213037a013e86392a37f0dc2247fadbe34935e4116e3bc6d3c75f1149318db6",
