@@ -979,6 +979,46 @@ class ThreeLineInventoryTest(unittest.TestCase):
         rows = json.loads((output / "inventory.json").read_text())["differences"]
         self.assertEqual("OPEN", next(row["status"] for row in rows if row["path"] == path))
 
+    def test_hashed_syntax_adaptation_locks_additional_shared_contracts(self):
+        path = "ddd4j-core/src/main/java/example/Client.java"
+        evidence = "ddd4j-core/src/test/java/example/ClientContractTest.java"
+        additional = "ddd4j-core/src/test/java/example/ClientSelectorTest.java"
+        sources = [f"class Client {{ int line = {jdk}; }}" for jdk in (8, 17, 21)]
+        for root, source in zip(self.roots, sources):
+            self.write(root, path, source)
+            self.write(root, evidence, "class ClientContractTest {}")
+            self.write(root, additional, "class ClientSelectorTest {}")
+        policy = json.loads(self.policy.read_text())
+        policy["platformSyntaxMappings"] = [{
+            "path": path,
+            "sourceSha256": [hashlib.sha256(source.encode()).hexdigest() for source in sources],
+            "evidence": evidence,
+            "testSha256": hashlib.sha256(b"class ClientContractTest {}").hexdigest(),
+            "additionalEvidence": [{
+                "path": additional,
+                "testSha256": hashlib.sha256(b"class ClientSelectorTest {}").hexdigest(),
+            }],
+            "reason": "The shared contracts cover initialization and selectors",
+        }]
+        self.policy.write_text(json.dumps(policy))
+
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = json.loads((output / "inventory.json").read_text())["differences"]
+        self.assertEqual("PLATFORM_ADAPTED", next(row["status"] for row in rows
+                                             if row["path"] == path))
+
+        self.write(self.roots[2], additional, "class ClientSelectorTest { /* changed */ }")
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = json.loads((output / "inventory.json").read_text())["differences"]
+        self.assertEqual("OPEN", next(row["status"] for row in rows if row["path"] == path))
+
+        policy["platformSyntaxMappings"][0]["additionalEvidence"][0]["path"] = "../outside.java"
+        self.policy.write_text(json.dumps(policy))
+        result, _ = self.run_checker("inventory")
+        self.assertNotEqual(0, result.returncode)
+
     def test_hashed_syntax_adaptation_accepts_line_specific_contract_tests(self):
         path = "ddd4j-core/src/main/java/example/PlatformType.java"
         evidence = "ddd4j-core/src/test/java/example/PlatformTypeTest.java"
