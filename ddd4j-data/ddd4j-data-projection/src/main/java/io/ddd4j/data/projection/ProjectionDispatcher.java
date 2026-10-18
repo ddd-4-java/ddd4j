@@ -14,24 +14,17 @@
  */
 package io.ddd4j.data.projection;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-
-import io.ddd4j.core.cqrs.readmodel.DefaultProjectionPosition;
-import io.ddd4j.core.cqrs.readmodel.EventChunk;
-import io.ddd4j.core.cqrs.readmodel.EventChunkReader;
-import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
-import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
-import io.ddd4j.core.cqrs.readmodel.ProjectionService;
+import io.ddd4j.core.cqrs.readmodel.*;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.SynchronousSink;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 /**
  * 投影分发门面（core 投影契约之上的薄封装）。
@@ -188,72 +181,6 @@ public class ProjectionDispatcher {
         }
     }
 
-    /**
-     * 流式拉取的生成器状态：投影位置 + 当前事件块 + 块内游标。
-     */
-    private final static class Cursor {
-
-        private static final long serialVersionUID = 0L;
-
-        private final long position;
-
-        private final EventChunk<DomainEvent<?>> chunk;
-
-        private final int index;
-
-        static Cursor start(long position) {
-            return new Cursor(position, null, 0);
-        }
-
-        @JsonCreator()
-        private Cursor(@JsonProperty("position") long position, @JsonProperty("chunk") EventChunk<DomainEvent<?>> chunk, @JsonProperty("index") int index) {
-            this.position = position;
-            this.chunk = chunk;
-            this.index = index;
-        }
-
-        @JsonProperty("position")
-        public long position() {
-            return position;
-        }
-
-        @JsonProperty("chunk")
-        public EventChunk<DomainEvent<?>> chunk() {
-            return chunk;
-        }
-
-        @JsonProperty("index")
-        public int index() {
-            return index;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            Cursor other = (Cursor) obj;
-            return this.position == other.position && Objects.equals(this.chunk, other.chunk) && this.index == other.index;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Long.hashCode(position);
-            result = 31 * result + Objects.hashCode(chunk);
-            result = 31 * result + Integer.hashCode(index);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "Cursor[position=" + position + ", chunk=" + chunk + ", index=" + index + "]";
-        }
-    }
-
     private void commitPosition(String streamId) {
         ProjectionPosition current = positions.findByStreamId(streamId)
                 .orElseGet(() -> DefaultProjectionPosition.zero(streamId));
@@ -270,8 +197,54 @@ public class ProjectionDispatcher {
     }
 
     private Collection<String> eventTypeNames(ProjectionHandler handler) {
-        return handler.eventTypes().stream()
+        return Collections.unmodifiableList(handler.eventTypes().stream()
                 .map(Class::getSimpleName)
-                .toList();
+                .collect(Collectors.toList()));
+    }
+
+    /**
+     * 流式拉取的生成器状态：投影位置 + 当前事件块 + 块内游标。
+     */
+    private static final class Cursor {
+        private final long position;
+        private final EventChunk<DomainEvent<?>> chunk;
+        private final int index;
+
+        Cursor(long position, EventChunk<DomainEvent<?>> chunk, int index) {
+            this.position = position;
+            this.chunk = chunk;
+            this.index = index;
+        }
+
+        static Cursor start(long position) {
+            return new Cursor(position, null, 0);
+        }
+
+        public long position() {
+            return position;
+        }
+
+        public EventChunk<DomainEvent<?>> chunk() {
+            return chunk;
+        }
+
+        public int index() {
+            return index;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return this == o || (o instanceof Cursor && position == ((Cursor) o).position && java.util.Objects.equals(chunk, ((Cursor) o).chunk) && index == ((Cursor) o).index);
+        }
+
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(position, chunk, index);
+        }
+
+        @Override
+        public String toString() {
+            return "Cursor{position=" + position + ", chunk=" + chunk + ", index=" + index + "}";
+        }
     }
 }
