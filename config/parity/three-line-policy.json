@@ -92,7 +92,7 @@
     {
       "path": "config/dependencies/alignment-policy.json",
       "sha256ByJdk": {
-        "8": "a2b77a04f4a2c7f37740084672ab3a6a2b54f8b0de99eee45122ddaeaa71da97",
+        "8": "04cf6678e515b869f675c55a0fe8c90d0cb875ed418ed7bf7e6bfc19b7979018",
         "17": "9677b6d07b5afd44634942eb3e8719a0d893be01bf5994513bc446712243d58a",
         "21": "af34bd567ee26652e9f26780582dbac189992eaf215d9ccf972aa13c88541c2b"
       },
@@ -101,7 +101,7 @@
     {
       "path": "config/dependencies/component-matrix.csv",
       "sha256ByJdk": {
-        "8": "a88f3288889a07f28dc6bab4714c67db98429bd41970827d141415718a7deb19",
+        "8": "ae636037a9748ce35d0a305ae0ee5f56c48f64db7d4525f4b8daf4221c215123",
         "17": "3a56eea707376105f8b0b32b5dd12fd5e01644fccd0c1decae1e36a222ee4674",
         "21": "48cfd57cb7a221d0d6642786a0981b4c6776250da3f5fd9c3145dfbcb7643288"
       },

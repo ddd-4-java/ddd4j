@@ -151,8 +151,6 @@
         <cxf.version>3.5.11</cxf.version>
         <db2jcc.version>12.1.5.0</db2jcc.version>
         <db-meta.version>0.0.1-Release</db-meta.version>
-        <derby-locale.version>${derby.version}</derby-locale.version>
-        <derby.version>10.14.2.0</derby.version>
         <dingtalk-sdk.version>2.2.55</dingtalk-sdk.version>
         <dingtalk-service-sdk.version>2.0.0</dingtalk-service-sdk.version>
         <!-- Disruptor 4.x requires Java 11; feature/1.0.x remains on JDK8. -->
@@ -2297,40 +2295,6 @@
                         <artifactId>logback-classic</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>
-            <!-- JDBC Driver For Apache Derby -->
-            <!-- http://mvnrepository.com/artifact/org.apache.derby -->
-            <dependency>
-                <groupId>org.apache.derby</groupId>
-                <artifactId>derby</artifactId>
-                <version>${derby.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.derby</groupId>
-                <artifactId>derbyclient</artifactId>
-                <version>${derby.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.derby</groupId>
-                <artifactId>derbynet</artifactId>
-                <version>${derby.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.derby</groupId>
-                <artifactId>derbytools</artifactId>
-                <version>${derby.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.apache.derby/derbyoptionaltools -->
-            <dependency>
-                <groupId>org.apache.derby</groupId>
-                <artifactId>derbyoptionaltools</artifactId>
-                <version>${derby.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.apache.derby/derbyLocale_zh_CN -->
-            <dependency>
-                <groupId>org.apache.derby</groupId>
-                <artifactId>derbyLocale_zh_CN</artifactId>
-                <version>${derby-locale.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.docx4j/docx4j-core -->
             <dependency>

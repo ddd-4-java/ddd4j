@@ -1536,6 +1536,42 @@
         "reason": "Spring 6 集成依赖 Java 17，JDK 8 分支仅使用 Spring 5 扩展",
         "requires_jdk": 17
       }
+    },
+    "org.apache.derby:derby": {
+      "8": {
+        "reason": "ddd4j JDK 8 reactor 未引用；Derby 最后支持 JDK 8 的 10.14.2.0 有未修复漏洞，停止在 BOM 管理",
+        "requires_jdk": 21
+      }
+    },
+    "org.apache.derby:derbyLocale_zh_CN": {
+      "8": {
+        "reason": "ddd4j JDK 8 reactor 未引用；Derby 最后支持 JDK 8 的 10.14.2.0 有未修复漏洞，停止在 BOM 管理",
+        "requires_jdk": 21
+      }
+    },
+    "org.apache.derby:derbyclient": {
+      "8": {
+        "reason": "ddd4j JDK 8 reactor 未引用；Derby 最后支持 JDK 8 的 10.14.2.0 有未修复漏洞，停止在 BOM 管理",
+        "requires_jdk": 21
+      }
+    },
+    "org.apache.derby:derbynet": {
+      "8": {
+        "reason": "ddd4j JDK 8 reactor 未引用；Derby 最后支持 JDK 8 的 10.14.2.0 有未修复漏洞，停止在 BOM 管理",
+        "requires_jdk": 21
+      }
+    },
+    "org.apache.derby:derbyoptionaltools": {
+      "8": {
+        "reason": "ddd4j JDK 8 reactor 未引用；Derby 最后支持 JDK 8 的 10.14.2.0 有未修复漏洞，停止在 BOM 管理",
+        "requires_jdk": 21
+      }
+    },
+    "org.apache.derby:derbytools": {
+      "8": {
+        "reason": "ddd4j JDK 8 reactor 未引用；Derby 最后支持 JDK 8 的 10.14.2.0 有未修复漏洞，停止在 BOM 管理",
+        "requires_jdk": 21
+      }
     }
   },
   "baseline_components": {
@@ -2274,13 +2310,7 @@
     "org.apache.cxf:cxf-rt-ws-policy": 8,
     "org.apache.cxf:cxf-rt-ws-rm": 8,
     "org.apache.cxf:cxf-rt-ws-security": 8,
-    "org.apache.derby:derby": 8,
-    "org.apache.derby:derbyLocale_zh_CN": 8,
-    "org.apache.derby:derbyclient": 8,
-    "org.apache.derby:derbynet": 8,
-    "org.apache.derby:derbyoptionaltools": 8,
     "org.apache.derby:derbyshared": 17,
-    "org.apache.derby:derbytools": 8,
     "org.apache.flink:flink-cdc-common": 17,
     "org.apache.flink:flink-clients": 17,
     "org.apache.flink:flink-core": 17,
@@ -3070,12 +3100,6 @@
     "org.apache.cxf:cxf-rt-rs-security-sso-saml:jar:": 8,
     "com.ibm.db2:jcc:jar:": 8,
     "org.clojars.xumh:db-meta:jar:": 8,
-    "org.apache.derby:derby:jar:": 8,
-    "org.apache.derby:derbyclient:jar:": 8,
-    "org.apache.derby:derbynet:jar:": 8,
-    "org.apache.derby:derbytools:jar:": 8,
-    "org.apache.derby:derbyoptionaltools:jar:": 8,
-    "org.apache.derby:derbyLocale_zh_CN:jar:": 8,
     "org.docx4j:docx4j-core:jar:": 8,
     "org.docx4j:docx4j-JAXB-MOXy:jar:": 8,
     "org.docx4j:docx4j-JAXB-ReferenceImpl:jar:": 8,
