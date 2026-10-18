@@ -12,69 +12,51 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package io.ddd4j.extension.validation;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Objects;
 
 /**
- * 根据文件内容识别出的真实文件类型。
+ * 根据文件内容识别出的真实文件类型（extension 为真实扩展名、mimeType 为真实 MIME 类型）。
  */
-
 public final class DetectedFileType {
-
-    private static final long serialVersionUID = 0L;
-
     private final String extension;
-
     private final String mimeType;
 
-    /** @return 真实扩展名 */
-    public String getExtension() {
-        return extension;
-    }
-
-    /** @return 真实 MIME 类型 */
-    public String getMimeType() {
-        return mimeType;
-    }
-
     /**
- * @param extension 真实扩展名，不含点号
- * @param mimeType 真实 MIME 类型
- */
+     * 根据文件内容识别出的真实文件类型。
+     *
+     * @param extension 真实扩展名，不含点号
+     * @param mimeType  真实 MIME 类型
+     */
 
-    @JsonCreator()
-    public DetectedFileType(@JsonProperty("extension") String extension, @JsonProperty("mimeType") String mimeType) {
+    @JsonCreator
+    public DetectedFileType(@JsonProperty("extension") String extension,
+                            @JsonProperty("mimeType") String mimeType) {
         this.extension = extension;
         this.mimeType = mimeType;
     }
 
-    /** @return 真实扩展名 */
     @JsonProperty("extension")
     public String extension() {
         return extension;
     }
 
-    /** @return 真实 MIME 类型 */
     @JsonProperty("mimeType")
     public String mimeType() {
         return mimeType;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-            return false;
-        }
-        DetectedFileType other = (DetectedFileType) obj;
-        return Objects.equals(this.extension, other.extension) && Objects.equals(this.mimeType, other.mimeType);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DetectedFileType)) return false;
+        DetectedFileType that = (DetectedFileType) o;
+        return Objects.equals(extension, that.extension) && Objects.equals(mimeType, that.mimeType);
     }
 
     @Override
@@ -87,6 +69,14 @@ public final class DetectedFileType {
 
     @Override
     public String toString() {
-        return "DetectedFileType[extension=" + extension + ", mimeType=" + mimeType + "]";
+        return "DetectedFileType[extension=" + extension + ", mimeType=" + mimeType + ']';
+    }
+
+    public String getExtension() {
+        return extension;
+    }
+
+    public String getMimeType() {
+        return mimeType;
     }
 }
