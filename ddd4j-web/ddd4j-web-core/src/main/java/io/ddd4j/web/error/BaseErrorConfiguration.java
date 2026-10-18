@@ -46,23 +46,48 @@ public abstract class BaseErrorConfiguration {
     private final WebExceptionTranslator translator;
     private final WebErrorResponseBuilder responseBuilder;
 
+    /** 使用默认异常翻译器和响应构造器。 */
     protected BaseErrorConfiguration() {
         this(new DefaultWebExceptionTranslator());
     }
 
+    /**
+     * 使用指定异常翻译器和默认响应构造器。
+     *
+     * @param translator 异常翻译器
+     */
     protected BaseErrorConfiguration(WebExceptionTranslator translator) {
         this(translator, WebErrorResponseBuilder.defaults());
     }
 
+    /**
+     * 使用指定异常翻译器和响应构造器。
+     *
+     * @param translator 异常翻译器
+     * @param responseBuilder 错误响应构造器
+     */
     protected BaseErrorConfiguration(WebExceptionTranslator translator, WebErrorResponseBuilder responseBuilder) {
         this.translator = Objects.requireNonNull(translator, "translator must not be null");
         this.responseBuilder = Objects.requireNonNull(responseBuilder, "responseBuilder must not be null");
     }
 
     /**
+     * 框架已给出 HTTP 状态时的兜底错误表示：消息为空时回退到状态短语。
+     *
+     * @param status HTTP 状态码
+     * @param fallbackMessage 默认错误消息
+     * @param message 错误消息
+     * @return HTTP 状态错误
+     */
+    protected static WebError httpStatusError(int status, String fallbackMessage, String message) {
+        return new WebError(status, status, StrKit.isBlank(message) ? fallbackMessage : message, null);
+    }
+
+    /**
      * 统一异常翻译入口：框架特定异常归一后交给 {@link WebExceptionTranslator} 翻译。
-     * @param throwable 异常对象
-     * @return 返回的 WebError 结果
+     *
+     * @param throwable 原始异常
+     * @return 转换后的 Web 错误
      */
     public final WebError translate(Throwable throwable) {
         return doTranslate(throwable);
@@ -71,8 +96,9 @@ public abstract class BaseErrorConfiguration {
     /**
      * 策略翻译，子类可覆盖以先归一框架特定异常（如 JAX-RS {@code WebApplicationException}），
      * 再委托 {@code super.doTranslate} 走通用翻译。
-     * @param throwable 异常对象
-     * @return 返回的 WebError 结果
+     *
+     * @param throwable 原始异常
+     * @return 转换后的 Web 错误
      */
     protected WebError doTranslate(Throwable throwable) {
         return translator.translate(throwable);
@@ -80,8 +106,9 @@ public abstract class BaseErrorConfiguration {
 
     /**
      * 统一 {@link R} 响应体。
-     * @param error 错误对象
-     * @return 转换得到的R
+     *
+     * @param error Web 错误
+     * @return 统一错误响应
      */
     public final R<Object> toResponse(WebError error) {
         return responseBuilder.toResponse(error);
@@ -89,8 +116,9 @@ public abstract class BaseErrorConfiguration {
 
     /**
      * status &gt;= 500 视为未处理的服务端错误。
-     * @param error 错误对象
-     * @return 满足条件时返回 true，否则返回 false
+     *
+     * @param error Web 错误
+     * @return 服务器错误时为 true
      */
     protected final boolean isServerError(WebError error) {
         return responseBuilder.isServerError(error);
@@ -98,7 +126,8 @@ public abstract class BaseErrorConfiguration {
 
     /**
      * JSON 序列化失败时的兜底响应体。
-     * @return 对应的字节值
+     *
+     * @return 默认错误响应体
      */
     protected final byte[] fallbackBody() {
         return responseBuilder.fallbackBody();
@@ -106,8 +135,9 @@ public abstract class BaseErrorConfiguration {
 
     /**
      * 统一的未处理错误日志：status &gt;= 500 时按 error 级别记录，子类在写响应前调用。
-     * @param throwable 异常对象
-     * @param error 错误对象
+     *
+     * @param throwable 原始异常
+     * @param error Web 错误
      */
     protected void logUnhandled(Throwable throwable, WebError error) {
         if (isServerError(error)) {
@@ -116,19 +146,9 @@ public abstract class BaseErrorConfiguration {
     }
 
     /**
-     * 框架已给出 HTTP 状态时的兜底错误表示：消息为空时回退到状态短语。
-     * @param status 状态
-     * @param fallbackMessage 兜底消息
-     * @param message 消息内容
-     * @return 返回的 WebError 结果
-     */
-    protected static WebError httpStatusError(int status, String fallbackMessage, String message) {
-        return new WebError(status, status, StrKit.isBlank(message) ? fallbackMessage : message, null);
-    }
-
-    /**
      * 框架名，用于未处理错误日志定位。
-     * @return 返回的字符串内容
+     *
+     * @return 框架名称
      */
     protected abstract String frameworkName();
 }
