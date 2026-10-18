@@ -1,5 +1,6 @@
 """MQEvent 的 broker header 映射在三条产品线保持一致。"""
 
+import os
 from pathlib import Path
 import subprocess
 import tempfile
@@ -15,6 +16,9 @@ JACKSON = Path.home() / ".m2/repository/com/fasterxml/jackson/core/jackson-annot
 
 
 def current_jdk():
+    configured = os.environ.get("JAVA_HOME")
+    if configured:
+        return Path(configured)
     pom = ET.parse(ROOT / "pom.xml").getroot()
     namespace = pom.tag.partition("}")[0] + "}" if "}" in pom.tag else ""
     version = pom.findtext("./" + namespace + "properties/" + namespace + "java.version")

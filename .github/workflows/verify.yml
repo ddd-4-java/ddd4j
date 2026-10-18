@@ -98,6 +98,11 @@ jobs:
           scripts/test_three_line_type_mappings.py
       - name: Run unit and adapter contracts
         run: ./mvnw -U -Denforcer.skip=true -B clean test -DskipITs
+      - name: Verify MQ header and causality contracts
+        run: >-
+          python3 -m unittest -q
+          scripts/test_mq_event_header_map.py
+          scripts/test_mq_publisher_causality.py
       - name: Verify JPA MySQL container test execution
         run: python3 scripts/verify-jpa-mysql-test-report.py
       - name: Verify build did not write generated files to source control
