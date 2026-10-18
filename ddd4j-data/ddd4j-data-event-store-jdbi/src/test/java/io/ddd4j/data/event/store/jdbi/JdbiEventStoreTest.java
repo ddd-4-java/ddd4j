@@ -14,6 +14,7 @@
  */
 package io.ddd4j.data.event.store.jdbi;
 
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.ddd4j.core.constant.EventStoreConstants;
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
@@ -46,6 +47,17 @@ class JdbiEventStoreTest {
     @AfterEach
     void tearDown() {
         jdbi.useHandle(handle -> handle.execute("DROP TABLE IF EXISTS " + EventStoreConstants.TABLE_NAME));
+    }
+
+    @Test
+    void reconstructedAggregateIdShouldSerializeAsString() throws Exception {
+        TestAggregateRootId orderId = new TestAggregateRootId("serialized-id");
+        eventStore.append(ORDER_TYPE, orderId,
+                java.util.Collections.<DomainEvent<?>>singletonList(new OrderCreatedEvent("created")), 0);
+
+        AggregateRootId reconstructed = eventStore.read(ORDER_TYPE, orderId).get(0).aggregateId();
+        String json = JsonMapper.builder().build().writeValueAsString(reconstructed);
+        assertEquals("\"serialized-id\"", json);
     }
 
     @Test
