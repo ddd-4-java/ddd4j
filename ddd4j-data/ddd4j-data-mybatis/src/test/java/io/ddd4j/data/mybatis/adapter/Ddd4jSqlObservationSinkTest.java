@@ -25,6 +25,7 @@ import java.util.ServiceLoader;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/** SQL 观测写入线程上下文的契约测试。 */
 class Ddd4jSqlObservationSinkTest {
 
     @AfterEach
