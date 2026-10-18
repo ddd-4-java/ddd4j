@@ -1,6 +1,6 @@
 package io.ddd4j.mq.event;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.ddd4j.mq.delivery.MQDeliveryHeaders;
 import org.junit.jupiter.api.Test;
 
@@ -36,7 +36,7 @@ class MQEventHeaderMapTest {
         assertFalse(event.headerMap().containsKey(MQDeliveryHeaders.CAUSATION_ID));
 
         event.setCorrelationId("correlation-2");
-        String payload = new ObjectMapper().writeValueAsString(event);
+        String payload = JsonMapper.builder().build().writeValueAsString(event);
         assertFalse(payload.contains("correlationId"));
         assertFalse(payload.contains("causationId"));
     }
