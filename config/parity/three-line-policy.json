@@ -247,6 +247,25 @@
   ],
   "platformContentMappings": [
     {
+      "path": "ddd4j-samples/ddd4j-sample-quarkus-satoken/src/main/java/io/ddd4j/sample/quarkus/satoken/config/AuthConfig.java",
+      "replacements": [
+        {
+          "from": "import javax.enterprise.context.ApplicationScoped;",
+          "to": "import jakarta.enterprise.context.ApplicationScoped;"
+        },
+        {
+          "from": "import javax.enterprise.inject.Produces;",
+          "to": "import jakarta.enterprise.inject.Produces;"
+        },
+        {
+          "from": "import javax.inject.Singleton;",
+          "to": "import jakarta.inject.Singleton;"
+        }
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-satoken/src/test/java/io/ddd4j/sample/quarkus/satoken/config/AuthConfigContractTest.java",
+      "reason": "三线权限和角色列表均不可修改，RBAC 样例模块各 48 项测试通过；仅 CDI 注解包名按 Quarkus 平台版本适配"
+    },
+    {
       "path": "ddd4j-samples/ddd4j-sample-dropwizard/src/main/java/io/ddd4j/sample/dropwizard/DropwizardOrderConfiguration.java",
       "replacements": [
         {
