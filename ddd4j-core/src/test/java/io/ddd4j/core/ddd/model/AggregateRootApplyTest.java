@@ -12,18 +12,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package io.ddd4j.core.ddd.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import java.util.Objects;
-import java.util.Arrays;
-import io.ddd4j.core.ddd.event.AggregateRootId;
+
 import io.ddd4j.core.ddd.event.DomainEvent;
+import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.EntityIdPath;
 import io.ddd4j.core.ddd.event.EntityType;
 import io.ddd4j.core.ddd.event.EventHandler;
 import io.ddd4j.core.ddd.event.StringEntityType;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * 的反射派发行为测试。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 2.0.x
+ * @since 1.0.x
  */
 class AggregateRootApplyTest {
 
@@ -65,6 +71,8 @@ class AggregateRootApplyTest {
                 "message should name the event type");
         assertTrue(exception.getMessage().contains(Order.class.getName()),
                 "message should name the aggregate type");
+        assertTrue(exception.getMessage().contains("rooted at Order:order-1"),
+                "message should name the aggregate root segment");
     }
 
     @Test
@@ -136,28 +144,14 @@ class AggregateRootApplyTest {
 
         OrderCreatedEvent() {
             super(new EntityIdPath(new OrderId("order-1")));
-        }static final class OrderId implements AggregateRootId {
-        private final String value;
+        }
 
-        public OrderId(String value) {
-            this.value = value;
-        }
-        public String value() { return value; }
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof OrderId)) return false;
-            OrderId other = (OrderId) o;
-            return Objects.equals(this.value, other.value);
-        }
-        @Override
-        public int hashCode() {
-            return java.util.Objects.hash(value);
-        }
-        @Override
-        public String toString() {
-            return "OrderId{" + "value=" + value + "}";
-        }
+        final static class OrderId implements AggregateRootId {
+
+            private static final long serialVersionUID = 0L;
+
+            private final String value;
+
             private static final EntityType TYPE = new StringEntityType("Order");
 
             @Override
@@ -175,7 +169,40 @@ class AggregateRootApplyTest {
                 return TYPE.asString() + ":" + value;
             }
 
-    }
+            @JsonCreator()
+            OrderId(@JsonProperty("value") String value) {
+                this.value = value;
+            }
+
+            @JsonProperty("value")
+            public String value() {
+                return value;
+            }
+
+            @Override
+            public boolean equals(Object obj) {
+                if (this == obj) {
+                    return true;
+                }
+                if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                    return false;
+                }
+                OrderId other = (OrderId) obj;
+                return Objects.equals(this.value, other.value);
+            }
+
+            @Override
+            public int hashCode() {
+                int result = 0;
+                result = 31 * result + Objects.hashCode(value);
+                return result;
+            }
+
+            @Override
+            public String toString() {
+                return "OrderId[value=" + value + "]";
+            }
+        }
     }
 
     static class OrderNotifiedEvent extends DomainEvent<OrderCreatedEvent.OrderId> {

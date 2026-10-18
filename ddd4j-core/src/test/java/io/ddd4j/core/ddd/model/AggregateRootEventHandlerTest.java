@@ -12,10 +12,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package io.ddd4j.core.ddd.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import java.util.Objects;
-import java.util.Arrays;
+
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.EntityIdPath;
@@ -24,6 +29,7 @@ import io.ddd4j.core.ddd.event.EventHandler;
 import io.ddd4j.core.ddd.event.StringEntityType;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -40,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * 基本契约，这里按 Counter/IncrementEvent 场景逐一覆盖处理器机制本身。</p>
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 2.0.x
+ * @since 1.0.x
  */
 class AggregateRootEventHandlerTest {
 
@@ -185,28 +191,14 @@ class AggregateRootEventHandlerTest {
 
         IncrementEvent() {
             super(new EntityIdPath(new CounterId("counter-1")));
-        }static final class CounterId implements AggregateRootId {
-        private final String value;
+        }
 
-        public CounterId(String value) {
-            this.value = value;
-        }
-        public String value() { return value; }
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof CounterId)) return false;
-            CounterId other = (CounterId) o;
-            return Objects.equals(this.value, other.value);
-        }
-        @Override
-        public int hashCode() {
-            return java.util.Objects.hash(value);
-        }
-        @Override
-        public String toString() {
-            return "CounterId{" + "value=" + value + "}";
-        }
+        final static class CounterId implements AggregateRootId {
+
+            private static final long serialVersionUID = 0L;
+
+            private final String value;
+
             private static final EntityType TYPE = new StringEntityType("Counter");
 
             @Override
@@ -224,7 +216,40 @@ class AggregateRootEventHandlerTest {
                 return TYPE.asString() + ":" + value;
             }
 
-    }
+            @JsonCreator()
+            CounterId(@JsonProperty("value") String value) {
+                this.value = value;
+            }
+
+            @JsonProperty("value")
+            public String value() {
+                return value;
+            }
+
+            @Override
+            public boolean equals(Object obj) {
+                if (this == obj) {
+                    return true;
+                }
+                if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                    return false;
+                }
+                CounterId other = (CounterId) obj;
+                return Objects.equals(this.value, other.value);
+            }
+
+            @Override
+            public int hashCode() {
+                int result = 0;
+                result = 31 * result + Objects.hashCode(value);
+                return result;
+            }
+
+            @Override
+            public String toString() {
+                return "CounterId[value=" + value + "]";
+            }
+        }
     }
 
     static class CountNotifiedEvent extends DomainEvent<IncrementEvent.CounterId> {
