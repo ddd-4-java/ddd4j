@@ -2866,6 +2866,36 @@
         "21": "3807aeb13a6e58b3c923b54a0167408ff5f50c8c50a3b5a2d234c2358f2b3972"
       },
       "reason": "WebFlux 请求过滤、认证和幂等流程三线 6 项 HTTP 契约均通过；JDK 8 用 Optional.isPresent/get，高两线用 isEmpty/orElseThrow，辅助方法顺序与注释不改变行为"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/order/application/OrderApplicationService.java",
+      "sourceSha256": [
+        "6e259ad18cf5b14ba7430e43080f6ed05924f7fa4f9c1a04f7fedb060dcebf0d",
+        "e893b004db8d71fff700d6dd78cfabf6c688a16584bda9e1e7138c3556ac4c92",
+        "e893b004db8d71fff700d6dd78cfabf6c688a16584bda9e1e7138c3556ac4c92"
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/order/web/OrderResourceTest.java",
+      "testSha256ByJdk": {
+        "8": "b8b49c00bab20e25436a3d9779554ab6b5c2b1ad76402ad455a3a988eb60143d",
+        "17": "f6ed2736ef24c62966df2a6acd2a6ed78201a57c0f58a3a1b9fb8b42fae1f160",
+        "21": "377249d4ce0a2b8e4c711344d1e350c12b115e51e809eb8d308427151541991e"
+      },
+      "reason": "三线 order 应用服务的业务语句一致；JDK 8 样例以手动装配，JDK 17/21 使用 jakarta.inject.Inject；各线资源 HTTP 契约 53 项通过，中文方法文档对齐"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/goods/application/GoodsApplicationService.java",
+      "sourceSha256": [
+        "2f4976014d6663f684eb15e4503d1eaa303dcb5f891d678c0220ac6e62267393",
+        "967a3a30e3b16208db7782f9ff25fcf6da9460ab389b2da12de9e1d4b7b7a2b1",
+        "967a3a30e3b16208db7782f9ff25fcf6da9460ab389b2da12de9e1d4b7b7a2b1"
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/goods/web/GoodsResourceTest.java",
+      "testSha256ByJdk": {
+        "8": "45179c199a6d3842100825d9d32a4e47df2c29c1936b14cc97f7dd5dc7c86ad9",
+        "17": "a82b1e2b2adb0861454a1755cdc7c1feeeee12651221e0637af5eccc4ecf1854",
+        "21": "66a805f8f2a389b2e6369a32cfc31729b610c137f0d1eccf5ce55e5933e382d8"
+      },
+      "reason": "三线 goods 应用服务的业务语句一致；JDK 8 样例以手动装配，JDK 17/21 使用 jakarta.inject.Inject；各线资源 HTTP 契约 53 项通过，中文方法文档对齐"
     }
   ],
   "historicalDocumentSections": [
