@@ -41,11 +41,21 @@ public final class DetectedFileType {
         this.mimeType = mimeType;
     }
 
+    /**
+     * 真实文件扩展名，不含点号。
+     *
+     * @return 真实文件扩展名，不含点号。
+     */
     @JsonProperty("extension")
     public String extension() {
         return extension;
     }
 
+    /**
+     * 真实 MIME 类型。
+     *
+     * @return 真实 MIME 类型。
+     */
     @JsonProperty("mimeType")
     public String mimeType() {
         return mimeType;
@@ -72,10 +82,20 @@ public final class DetectedFileType {
         return "DetectedFileType[extension=" + extension + ", mimeType=" + mimeType + ']';
     }
 
+    /**
+     * 返回真实文件扩展名，不含点号。
+     *
+     * @return 返回真实文件扩展名，不含点号。
+     */
     public String getExtension() {
         return extension;
     }
 
+    /**
+     * 返回真实 MIME 类型。
+     *
+     * @return 返回真实 MIME 类型。
+     */
     public String getMimeType() {
         return mimeType;
     }
