@@ -18,6 +18,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -109,7 +111,7 @@ class EventDeserializerTest {
 
         @Test
         void 注册白名单_拒绝不在白名单内的类名() {
-            Set<String> allowedPrefixes = Set.of("io.ddd4j.", "com.example.");
+            Set<String> allowedPrefixes = new HashSet<>(Arrays.asList("io.ddd4j.", "com.example."));
             EventDeserializer.setFilter(className -> allowedPrefixes.stream()
                     .anyMatch(className::startsWith));
 
