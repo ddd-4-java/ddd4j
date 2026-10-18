@@ -81,6 +81,13 @@ public class FlksecCryptoStrategy implements CryptoStrategy {
         this.scheme = scheme;
     }
 
+    /**
+     * 使用默认 HTTP 客户端连接远程加解密服务。
+     *
+     * @param objectMapper JSON 对象映射器
+     * @param address 远程服务地址
+     * @param port 远程服务端口
+     */
     public FlksecCryptoStrategy(ObjectMapper objectMapper, String address, String port) {
         this(objectMapper, HttpClient.newHttpClient(), address, port);
     }
@@ -178,7 +185,7 @@ public class FlksecCryptoStrategy implements CryptoStrategy {
                 if (decryptResponseVO.getCode() == 200) {
                     String responseString = StringUtils.defaultString(decryptResponseVO.getData());
                     log.debug("Response Decrypt Value : {}", responseString);
-                        return objectMapper.readValue(responseString, rtType);
+                    return objectMapper.readValue(responseString, rtType);
                 } else {
                     throw new BizRuntimeException(decryptResponseVO.getMsg());
                 }

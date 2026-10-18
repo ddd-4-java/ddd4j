@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -73,6 +74,56 @@ class FlksecCryptoHttpContractTest {
         }
     }
 
+    @Test
+    void encodedInputIsSentForEncryptAndHmac() throws IOException {
+        AtomicReference<String> encryptBody = new AtomicReference<>();
+        AtomicReference<String> hmacBody = new AtomicReference<>();
+        HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        server.createContext("/api/crypto/sysEncrypt",
+                exchange -> reply(exchange, "{\"code\":200,\"data\":\"encrypted\"}", encryptBody));
+        server.createContext("/api/hmac/sm3hmac",
+                exchange -> reply(exchange, "{\"code\":200,\"data\":\"signed\"}", hmacBody));
+        server.start();
+        try {
+            FlksecCryptoStrategy strategy = strategy(server);
+            assertEquals("encrypted", strategy.encrypt("plain", null, "CBC", "PKCS7",
+                    "test-key", "test-iv", true));
+            assertEquals("signed", strategy.hmac("plain", null, "test-key", "test-iv", true));
+            String encoded = Base64.getEncoder().encodeToString("\"plain\"".getBytes(StandardCharsets.UTF_8));
+            assertTrue(encryptBody.get().contains("\"data\":\"" + encoded + "\""));
+            assertTrue(hmacBody.get().contains("\"data\":\"" + encoded + "\""));
+            assertTrue(encryptBody.get().contains("\"plainIsEncode\":\"true\""));
+            assertTrue(hmacBody.get().contains("\"plainIsEncode\":\"true\""));
+        } finally {
+            server.stop(0);
+        }
+    }
+
+    @Test
+    void nonSuccessHttpStatusIsReportedForEveryEndpoint() throws IOException {
+        HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        AtomicReference<String> body = new AtomicReference<>();
+        server.createContext("/api/crypto/sysEncrypt",
+                exchange -> reply(exchange, "unavailable", body, 503));
+        server.createContext("/api/crypto/sysDecrypt",
+                exchange -> reply(exchange, "unavailable", body, 503));
+        server.createContext("/api/hmac/sm3hmac",
+                exchange -> reply(exchange, "unavailable", body, 503));
+        server.start();
+        try {
+            FlksecCryptoStrategy strategy = strategy(server);
+            assertEquals("调用远程接口加密失败，StatusCode :503", assertThrows(BizRuntimeException.class,
+                    () -> strategy.encrypt("plain", null, "CBC", "PKCS7", "test-key", "test-iv", false)).getMessage());
+            assertEquals("调用远程接口解密失败，StatusCode :503", assertThrows(BizRuntimeException.class,
+                    () -> strategy.decrypt("ciphertext", null, "CBC", "PKCS7", "test-key", "test-iv", false,
+                            String.class)).getMessage());
+            assertEquals("调用远程接口签名失败，StatusCode :503", assertThrows(BizRuntimeException.class,
+                    () -> strategy.hmac("plain", null, "test-key", "test-iv", false)).getMessage());
+        } finally {
+            server.stop(0);
+        }
+    }
+
     private FlksecCryptoStrategy strategy(HttpServer server) {
         return new FlksecCryptoStrategy(new ObjectMapper(), "127.0.0.1",
                 String.valueOf(server.getAddress().getPort()), "http");
@@ -86,12 +137,16 @@ class FlksecCryptoHttpContractTest {
     }
 
     private void reply(HttpExchange exchange, String response, AtomicReference<String> body) throws IOException {
+        reply(exchange, response, body, 200);
+    }
+
+    private void reply(HttpExchange exchange, String response, AtomicReference<String> body, int status) throws IOException {
         byte[] request = new byte[4096];
         int length = exchange.getRequestBody().read(request);
         body.set(new String(request, 0, Math.max(length, 0), StandardCharsets.UTF_8));
         byte[] bytes = response.getBytes(StandardCharsets.UTF_8);
         exchange.getResponseHeaders().set("Content-Type", "application/json");
-        exchange.sendResponseHeaders(200, bytes.length);
+        exchange.sendResponseHeaders(status, bytes.length);
         try (OutputStream output = exchange.getResponseBody()) {
             output.write(bytes);
         }
