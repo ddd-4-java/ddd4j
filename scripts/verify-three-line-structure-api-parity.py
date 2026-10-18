@@ -1134,6 +1134,8 @@ def validate_platform_content_mappings(mappings, roots: list[pathlib.Path]) -> d
             raise ValueError(f"invalid platform content target lines: {source}")
         originals = set()
         jackson_mapper_imports = {
+            ("import com.fasterxml.jackson.databind.JsonNode;",
+             "import tools.jackson.databind.JsonNode;"),
             ("import com.fasterxml.jackson.databind.ObjectMapper;",
              "import tools.jackson.databind.ObjectMapper;"),
             ("import com.fasterxml.jackson.databind.json.JsonMapper;",
