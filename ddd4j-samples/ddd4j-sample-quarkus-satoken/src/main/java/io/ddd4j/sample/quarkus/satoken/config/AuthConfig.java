@@ -22,6 +22,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Singleton;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -37,6 +39,8 @@ public class AuthConfig {
 
     /**
      * 将纯 Java Sa-Token Subject 暴露给 Quarkus 的 CDI SubjectProvider。
+     *
+     * @return 主体实例
      */
     @Produces
     @Singleton
@@ -47,6 +51,8 @@ public class AuthConfig {
     /**
      * 注册权限数据源。
      * <p>实际项目中从数据库/缓存查询，此处用 Mock 数据演示。
+     *
+     * @return 主体数据提供者
      */
     @Produces
     @Singleton
@@ -55,17 +61,17 @@ public class AuthConfig {
             @Override
             public List<String> getPermissionList(AuthPrincipal principal) {
                 if ("10001".equals(String.valueOf(principal.getLoginId()))) {
-                    return List.of("user:add", "user:delete", "user:list");
+                    return Collections.unmodifiableList(Arrays.asList("user:add", "user:delete", "user:list"));
                 }
-                return List.of("user:list");
+                return Collections.unmodifiableList(Arrays.asList("user:list"));
             }
 
             @Override
             public List<String> getRoleList(AuthPrincipal principal) {
                 if ("10001".equals(String.valueOf(principal.getLoginId()))) {
-                    return List.of("admin", "user");
+                    return Collections.unmodifiableList(Arrays.asList("admin", "user"));
                 }
-                return List.of("user");
+                return Collections.unmodifiableList(Arrays.asList("user"));
             }
         };
     }
