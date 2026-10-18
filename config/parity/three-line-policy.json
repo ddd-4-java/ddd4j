@@ -2851,6 +2851,21 @@
         "21": "0581919046923efac972e85e2e98f2eec051149aefca2052e42f5c2c7ff50455"
       },
       "reason": "Javalin 4 的 Context.method() 返回 String，Javalin 7 返回 HandlerType，取 name() 后三线 WebRequestFailure.method 均为 POST；独立三线契约测试核对 HTTP 方法、路径及异常身份"
+    },
+    {
+      "path": "ddd4j-web/ddd4j-web-webflux/src/main/java/io/ddd4j/web/webflux/Ddd4jWebFluxFilter.java",
+      "sourceSha256": [
+        "83fff83f7b9a406b978fa9bfac27e6ff49c85695a5f02cd3395b7cf281bd767c",
+        "60b28154402a41e3d29f46f8b9384998e2d9c228225a71317f2ca687491221f0",
+        "0555bd09bfc7f0e65c0fa563bf0654e567ae349703f3c41b4ef6b9122ac66cbf"
+      ],
+      "evidence": "ddd4j-web/ddd4j-web-webflux/src/test/java/io/ddd4j/web/webflux/Ddd4jWebFluxHttpContractTest.java",
+      "testSha256ByJdk": {
+        "8": "955b71779e56b7d6c0641945d1bcd67152976223d4e57bcd2ae88a066d04a337",
+        "17": "65117b11613a8ad3125ea8bfc3e2dff94352bbe8b8a87887cdd39201eb28f338",
+        "21": "3807aeb13a6e58b3c923b54a0167408ff5f50c8c50a3b5a2d234c2358f2b3972"
+      },
+      "reason": "WebFlux 请求过滤、认证和幂等流程三线 6 项 HTTP 契约均通过；JDK 8 用 Optional.isPresent/get，高两线用 isEmpty/orElseThrow，辅助方法顺序与注释不改变行为"
     }
   ],
   "historicalDocumentSections": [
