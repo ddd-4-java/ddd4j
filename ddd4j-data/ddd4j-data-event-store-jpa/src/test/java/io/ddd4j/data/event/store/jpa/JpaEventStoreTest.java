@@ -79,6 +79,24 @@ class JpaEventStoreTest {
     }
 
     @Test
+    void independentAppendShouldDetachPersistedEntity() {
+        StoredEventEntity[] saved = new StoredEventEntity[1];
+        JpaStoredEventRepository repository = new JpaStoredEventRepositoryImpl(entityManager) {
+            @Override
+            public void save(StoredEventEntity entity) {
+                saved[0] = entity;
+                super.save(entity);
+            }
+        };
+        JpaEventStore independent = new JpaEventStore(entityManager, repository);
+        independent.append(ORDER_TYPE, new TestAggregateRootId("independent-context"),
+                Collections.<DomainEvent<?>>singletonList(new OrderCreatedEvent("created")), 0);
+
+        assertNotNull(saved[0]);
+        assertFalse(entityManager.contains(saved[0]));
+    }
+
+    @Test
     void appendAndReadShouldRoundTripBusinessPayload() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-a");
         eventStore.append(ORDER_TYPE, orderId, Arrays.<DomainEvent<?>>asList(

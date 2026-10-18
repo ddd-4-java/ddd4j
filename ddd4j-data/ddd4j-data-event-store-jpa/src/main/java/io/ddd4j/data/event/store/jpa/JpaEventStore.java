@@ -188,6 +188,9 @@ public class JpaEventStore implements EventStore {
             if (events.isEmpty()) {
                 return null;
             }
+            if (transactionMode == TransactionMode.INDEPENDENT) {
+                entityManager.clear();
+            }
             long actualVersion = repository.findCurrentVersion(aggregateType, aggregateId.asString());
             if (actualVersion != expectedVersion) {
                 throw new AggregateVersionConflictException(
@@ -212,6 +215,9 @@ public class JpaEventStore implements EventStore {
                 repository.save(entity);
             }
             entityManager.flush();
+            if (transactionMode == TransactionMode.INDEPENDENT) {
+                entityManager.clear();
+            }
             return null;
         });
     }
