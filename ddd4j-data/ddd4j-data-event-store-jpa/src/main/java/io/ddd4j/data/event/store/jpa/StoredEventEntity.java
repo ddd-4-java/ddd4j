@@ -20,20 +20,24 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 import java.time.Instant;
 
 /**
  * 事件存储 JPA 实体——映射统一 schema {@code DDD4J_EVENT_STORE}。
  *
- * <p>主键为 {@code (aggregate_id, version)} 复合键，{@code position} 全局单调递增且唯一。
+ * <p>主键为 {@code (aggregate_type, aggregate_id, version)} 复合键，
+ * {@code position} 全局单调递增且唯一。
  * 与 R2DBC 模块共用同一张表，保证跨运行时数据一致性。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.0.0
  */
 @Entity
-@Table(name = EventStoreConstants.TABLE_NAME)
+@Table(name = EventStoreConstants.TABLE_NAME, uniqueConstraints = {
+        @UniqueConstraint(name = "uk_event_store_position", columnNames = EventStoreConstants.COLUMN_POSITION)
+})
 @IdClass(StoredEventEntityId.class)
 public class StoredEventEntity {
 
@@ -49,7 +53,7 @@ public class StoredEventEntity {
     @Column(name = EventStoreConstants.COLUMN_VERSION, nullable = false)
     private long version;
 
-    @Column(name = EventStoreConstants.COLUMN_POSITION, nullable = false, unique = true)
+    @Column(name = EventStoreConstants.COLUMN_POSITION, nullable = false)
     private long position;
 
     @Column(name = EventStoreConstants.COLUMN_EVENT_TYPE, nullable = false, length = 512)
