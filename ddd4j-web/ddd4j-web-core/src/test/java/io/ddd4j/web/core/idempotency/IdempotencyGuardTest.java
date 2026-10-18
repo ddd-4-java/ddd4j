@@ -25,6 +25,11 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * 类型说明。
+ * @author ddd4j
+ * @since 1.0.x
+ */
 class IdempotencyGuardTest {
 
     private static final Duration TTL = Duration.ofMinutes(5);
@@ -50,7 +55,7 @@ class IdempotencyGuardTest {
     @Test
     void completeByLeaseDelegatesToKey() {
         RecordingGuard guard = new RecordingGuard(true);
-        IdempotencyLease lease = guard.acquireLease("order-1", TTL).orElseThrow();
+        IdempotencyLease lease = guard.acquireLease("order-1", TTL).get();
 
         guard.complete(lease);
 
@@ -67,6 +72,9 @@ class IdempotencyGuardTest {
         assertEquals("order-1", guard.releasedKey);
     }
 
+    /**
+     * 记录完成与释放调用的桩实现，便于断言租约到按键操作的委托行为。
+     */
     private static final class RecordingGuard implements IdempotencyGuard {
 
         private final boolean acquired;
@@ -77,16 +85,30 @@ class IdempotencyGuardTest {
             this.acquired = acquired;
         }
 
+        /**
+         * acquire() 方法。
+         * @param key 幂等键。
+         * @param ttl 锁的有效期。
+         * @return 判断结果。
+         */
         @Override
         public boolean acquire(String key, Duration ttl) {
             return acquired;
         }
 
+        /**
+         * complete() 方法。
+         * @param key 幂等键。
+         */
         @Override
         public void complete(String key) {
             this.completedKey = key;
         }
 
+        /**
+         * release() 方法。
+         * @param key 幂等键。
+         */
         @Override
         public void release(String key) {
             this.releasedKey = key;

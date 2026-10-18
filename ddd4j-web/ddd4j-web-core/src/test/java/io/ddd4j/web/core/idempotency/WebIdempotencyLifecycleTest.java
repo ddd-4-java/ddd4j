@@ -39,6 +39,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 1.0.x
+ */
 @ExtendWith(MockitoExtension.class)
 class WebIdempotencyLifecycleTest {
 
@@ -131,7 +136,7 @@ class WebIdempotencyLifecycleTest {
                         null, Duration.ofMinutes(5))));
 
         WebIdempotencyLifecycle lifecycle = new WebIdempotencyLifecycle(guard);
-        WebIdempotencyLifecycle.Scope scope = lifecycle.open(request(), "order-1").orElseThrow();
+        WebIdempotencyLifecycle.Scope scope = lifecycle.open(request(), "order-1").get();
 
         scope.close();
         scope.complete();
@@ -147,7 +152,7 @@ class WebIdempotencyLifecycleTest {
                         null, Duration.ofMinutes(5))));
 
         WebIdempotencyLifecycle lifecycle = new WebIdempotencyLifecycle(guard);
-        WebIdempotencyLifecycle.Scope scope = lifecycle.open(request(), "order-1").orElseThrow();
+        WebIdempotencyLifecycle.Scope scope = lifecycle.open(request(), "order-1").get();
 
         scope.close();
         scope.close();
