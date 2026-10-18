@@ -2511,6 +2511,21 @@
         }
       ],
       "reason": "JDK 8 接口默认方法通过嵌套辅助类复用逻辑，JDK 17/21 使用接口私有方法和新版字符串 API；三线相同初始化、持久化、标签选择契约测试锁定等价行为"
+    },
+    {
+      "path": "ddd4j-mq/ddd4j-mq-activemq/src/main/java/io/ddd4j/mq/activemq/ActiveMQClient.java",
+      "sourceSha256": [
+        "d470fb302c7908572a2452c28acd6056fbecb074f0f9c11095829f79a71d9d13",
+        "5915ee07620c7cfd5e5d756b03171fcf44498b458c02f8834b978a6df8a8d44a",
+        "26a458fec32375077a7e289e56f9c80ae04c52029f9504bf22de5574568c6620"
+      ],
+      "evidence": "ddd4j-mq/ddd4j-mq-activemq/src/test/java/io/ddd4j/mq/activemq/ActiveMQAdapterContractTest.java",
+      "testSha256ByJdk": {
+        "8": "e738856af672f619e6c114d0bb43997d04fde218c398eb6354ce9b5e9eba2561",
+        "17": "14bc9d105e5cda7e317f02fbdd5bd30a4d07b55065fe50ffced895dd44e71ba9",
+        "21": "2900155792b7ae757cdd091ef0df5c31ed0dd8f487105275ad88e15be3cb96cf"
+      },
+      "reason": "ActiveMQ 的 JDK 8 线使用 javax.jms 与旧 Java 条件表达式，JDK 17/21 线使用 jakarta.jms 与等价语法；三线各六项适配器契约测试验证因果头、消息 ID、失败关闭与逆序释放"
     }
   ],
   "historicalDocumentSections": [
