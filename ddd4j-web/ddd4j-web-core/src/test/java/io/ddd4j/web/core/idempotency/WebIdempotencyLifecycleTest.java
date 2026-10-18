@@ -13,6 +13,13 @@
  * limitations under the License.
  */
 package io.ddd4j.web.core.idempotency;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.never;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import io.ddd4j.web.core.context.WebRequestContext;
 import io.ddd4j.web.core.error.WebStatusException;
@@ -32,6 +39,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 1.0.x
+ */
 @ExtendWith(MockitoExtension.class)
 class WebIdempotencyLifecycleTest {
 

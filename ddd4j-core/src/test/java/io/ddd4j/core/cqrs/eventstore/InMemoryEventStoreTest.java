@@ -15,6 +15,7 @@
 package io.ddd4j.core.cqrs.eventstore;
 
 import io.ddd4j.core.ddd.event.*;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
@@ -23,8 +24,18 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+/**
+ * {@link InMemoryEventStore} 测试（继承契约测试并验证内存实现特有行为）。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ */
+@DisplayName("InMemoryEventStore")
 class InMemoryEventStoreTest extends EventStoreContractTest {
 
+    /**
+     * 创建内存事件存储实现供通用契约测试使用。
+     * @return 内存事件存储
+     */
     @Override
     protected EventStore createEventStore() {
         return new InMemoryEventStore();
