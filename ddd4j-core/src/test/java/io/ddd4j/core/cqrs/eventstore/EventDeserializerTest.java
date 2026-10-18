@@ -18,6 +18,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,6 +39,9 @@ class EventDeserializerTest {
         EventDeserializer.setFilter(EventDeserializer.defaultFilter());
     }
 
+    /**
+     * 类名格式合法性校验用例：覆盖合法全限定名、空值、单包段、数字开头与特殊字符。
+     */
     @Nested
     class ClassNameValidation {
 
@@ -71,6 +76,9 @@ class EventDeserializerTest {
         }
     }
 
+    /**
+     * 反序列化回退用例：类名非法或类不存在时回退为 Map 结果。
+     */
     @Nested
     class DeserializeFallback {
 
@@ -89,6 +97,9 @@ class EventDeserializerTest {
         }
     }
 
+    /**
+     * 类名白名单过滤 SPI 用例：覆盖默认过滤器、白名单注册与 null 注册防护。
+     */
     @Nested
     class ClassNameFilterSPI {
 
@@ -100,7 +111,7 @@ class EventDeserializerTest {
 
         @Test
         void 注册白名单_拒绝不在白名单内的类名() {
-            Set<String> allowedPrefixes = Set.of("io.ddd4j.", "com.example.");
+            Set<String> allowedPrefixes = new HashSet<>(Arrays.asList("io.ddd4j.", "com.example."));
             EventDeserializer.setFilter(className -> allowedPrefixes.stream()
                     .anyMatch(className::startsWith));
 
