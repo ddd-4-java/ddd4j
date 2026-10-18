@@ -430,7 +430,7 @@
         <neethi.version>3.2.2</neethi.version>
         <netty-socketio.version>2.0.14</netty-socketio.version>
         <netty-tcnative.version>2.0.79.Final</netty-tcnative.version>
-        <netty.version>4.2.15.Final</netty.version>
+        <netty.version>4.2.19.Final</netty.version>
         <nimbus-jose-jwt.version>10.9.1</nimbus-jose-jwt.version>
         <objenesis.version>3.5</objenesis.version>
         <ofdrw.version>2.4.0</ofdrw.version>
