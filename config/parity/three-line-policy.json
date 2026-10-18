@@ -273,6 +273,21 @@
       "reason": "Helidon 示例资源集合行为三线一致；仅 JAX-RS 包名随平台变化"
     },
     {
+      "path": "ddd4j-samples/ddd4j-sample-helidon-cqrs/src/main/java/io/ddd4j/sample/helidon/cqrs/HelidonCqrsBeans.java",
+      "replacements": [
+        {"from": "import javax.enterprise.context.ApplicationScoped;", "to": "import jakarta.enterprise.context.ApplicationScoped;"},
+        {"from": "import javax.enterprise.context.BeforeDestroyed;", "to": "import jakarta.enterprise.context.BeforeDestroyed;"},
+        {"from": "import javax.enterprise.context.Dependent;", "to": "import jakarta.enterprise.context.Dependent;"},
+        {"from": "import javax.enterprise.context.Initialized;", "to": "import jakarta.enterprise.context.Initialized;"},
+        {"from": "import javax.enterprise.event.Observes;", "to": "import jakarta.enterprise.event.Observes;"},
+        {"from": "import javax.enterprise.inject.Instance;", "to": "import jakarta.enterprise.inject.Instance;"},
+        {"from": "import javax.enterprise.inject.Produces;", "to": "import jakarta.enterprise.inject.Produces;"},
+        {"from": "import javax.inject.Inject;", "to": "import jakarta.inject.Inject;"}
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-helidon-cqrs/src/test/java/io/ddd4j/sample/helidon/cqrs/HelidonOrderCqrsIT.java",
+      "reason": "Helidon CQRS 装配与单元素处理器集合三线相同；仅 CDI 包名按各线 Helidon 版本适配"
+    },
+    {
       "path": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/main/java/io/ddd4j/sample/quarkus/cqrs/cache/OrderCacheService.java",
       "replacements": [
         {
