@@ -634,7 +634,7 @@
         <spring-amqp.version>3.2.5</spring-amqp.version>
         <spring-authorization-server.version>1.4.3</spring-authorization-server.version>
         <spring-batch.version>6.0.4</spring-batch.version>
-        <spring-boot3-it.version>3.4.4</spring-boot3-it.version>
+        <spring-boot3-it.version>3.5.16</spring-boot3-it.version>
         <spring-bytebuddy.version>2.0.x.20260630-SNAPSHOT</spring-bytebuddy.version>
         <!-- Spring 6.2 使用 Spring Data 3.5；2025.1 引入的 Data 4 面向 Spring 7。 -->
         <spring-data-bom.version>2025.0.13</spring-data-bom.version>
@@ -6383,6 +6383,32 @@
                 <version>${spring-framework.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <!-- Micronaut Platform 仍管理部分旧版 Boot 构件；显式对齐当前线的 Spring Boot 3.5 补丁版本。 -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot</artifactId>
+                <version>${spring-boot3-it.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-autoconfigure</artifactId>
+                <version>${spring-boot3-it.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter</artifactId>
+                <version>${spring-boot3-it.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-logging</artifactId>
+                <version>${spring-boot3-it.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+                <version>${spring-boot3-it.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.springframework.security/spring-security-bom -->
             <!-- Spring Security BOM：Spring 安全框架各模块的版本清单（认证/授权/OAuth2/OIDC 等）。 -->
