@@ -60,7 +60,8 @@ public final class JavalinOrderAdapters
 
     @Override
     public List<Order> findAll(int offset, int limit) {
-        return orders.values().stream().skip(offset).limit(limit).collect(Collectors.toList());
+        return orders.values().stream().skip(offset).limit(limit)
+                .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
     }
 
     @Override
@@ -75,7 +76,8 @@ public final class JavalinOrderAdapters
 
     @Override
     public List<OutboxMessage> pending(int limit) {
-        return new ArrayList<>(outbox.values()).stream().limit(limit).collect(Collectors.toList());
+        return new ArrayList<>(outbox.values()).stream().limit(limit)
+                .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
     }
 
     @Override
@@ -108,7 +110,7 @@ public final class JavalinOrderAdapters
                         || Objects.equals(criteria.status(), order.status()))
                 .skip((long) (criteria.page() - 1) * criteria.size())
                 .limit(criteria.size())
-                .collect(Collectors.toList());
+                .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
     }
 
     @Override
