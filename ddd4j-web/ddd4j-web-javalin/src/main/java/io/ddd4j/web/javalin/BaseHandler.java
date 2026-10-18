@@ -21,15 +21,13 @@ import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.web.core.context.WebRequestFailure;
 import io.ddd4j.web.javalin.util.WebKit;
 import io.javalin.http.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Javalin Handler 可选基类，只依赖 ddd4j SPI，不依赖 Guice 或 Spring。
  */
+@Slf4j
 public abstract class BaseHandler {
-
-    private static final Logger log = LoggerFactory.getLogger(BaseHandler.class);
 
     /**
      * 解析本地化消息。

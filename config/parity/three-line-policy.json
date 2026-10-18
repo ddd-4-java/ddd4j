@@ -2836,6 +2836,21 @@
         }
       ],
       "reason": "JDK 8/17 使用 Jackson 2，JDK 21 使用 Jackson 3；三线保留各自的 ObjectMapper、JsonNode 和时间序列化 API，共同测试验证 10 项公开日期、类型和转换契约。源码与三组测试逐文件 SHA-256 锁定；编译 API 和整体验收仍由独立门禁验证"
+    },
+    {
+      "path": "ddd4j-web/ddd4j-web-javalin/src/main/java/io/ddd4j/web/javalin/BaseHandler.java",
+      "sourceSha256": [
+        "bf026f59806c8598921d03cbe71ea90434f8e24f469575d99643221b4e17171e",
+        "dde00ee22249bda59add410aebc8dd80ced3f330ae82c86d853b54a2c4c91088",
+        "dde00ee22249bda59add410aebc8dd80ced3f330ae82c86d853b54a2c4c91088"
+      ],
+      "evidence": "ddd4j-web/ddd4j-web-javalin/src/test/java/io/ddd4j/web/javalin/BaseHandlerFailureEventTest.java",
+      "testSha256ByJdk": {
+        "8": "7ef972fcbaab09e758dda64e15312008af9e8626e1d57b705065226fc0d3de08",
+        "17": "0581919046923efac972e85e2e98f2eec051149aefca2052e42f5c2c7ff50455",
+        "21": "0581919046923efac972e85e2e98f2eec051149aefca2052e42f5c2c7ff50455"
+      },
+      "reason": "Javalin 4 的 Context.method() 返回 String，Javalin 7 返回 HandlerType，取 name() 后三线 WebRequestFailure.method 均为 POST；独立三线契约测试核对 HTTP 方法、路径及异常身份"
     }
   ],
   "historicalDocumentSections": [
