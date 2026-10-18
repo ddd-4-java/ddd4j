@@ -18,6 +18,46 @@ SCRIPT = Path(__file__).with_name("verify-three-line-structure-api-parity.py")
 
 
 class ThreeLineInventoryTest(unittest.TestCase):
+    def test_known_cdi_descriptors_allow_only_namespace_and_schema_transition(self):
+        paths = {
+            "ddd4j-runtime/ddd4j-runtime-quarkus/src/main/resources/META-INF/beans.xml": ("4.0", "4_0"),
+            "ddd4j-samples/ddd4j-sample-helidon-cqrs/src/main/resources/META-INF/beans.xml": ("3.0", "3_0"),
+        }
+        for path, (version, schema_suffix) in paths.items():
+            legacy_schema = (
+                ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '
+                'xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee '
+                'http://xmlns.jcp.org/xml/ns/javaee/beans_2_0.xsd"'
+                if "helidon-cqrs" in path else "")
+            legacy = ('<beans xmlns="http://xmlns.jcp.org/xml/ns/javaee"'
+                      f'{legacy_schema} bean-discovery-mode="annotated" version="2.0"/>')
+            modern = ('<beans xmlns="https://jakarta.ee/xml/ns/jakartaee" '
+                      'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '
+                      'xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee '
+                      f'https://jakarta.ee/xml/ns/jakartaee/beans_{schema_suffix}.xsd" '
+                      f'bean-discovery-mode="annotated" version="{version}"/>')
+            for root, source in zip(self.roots, (legacy, modern, modern)):
+                self.write(root, path, source)
+
+        def status(path):
+            result, output = self.run_checker("inventory")
+            self.assertEqual(0, result.returncode, result.stderr)
+            rows = json.loads((output / "inventory.json").read_text())["differences"]
+            return next(row["status"] for row in rows if row["path"] == path)
+
+        for path in paths:
+            self.assertEqual("PLATFORM_ADAPTED", status(path))
+
+        path = next(iter(paths))
+        modern = (self.roots[1] / path).read_text()
+        self.write(self.roots[1], path, modern.replace("/>", "<alternatives/></beans>"))
+        self.assertEqual("OPEN", status(path))
+        self.write(self.roots[1], path, modern.replace('annotated', 'all'))
+        self.assertEqual("OPEN", status(path))
+        self.write(self.roots[1], path, modern)
+        (self.roots[2] / path).unlink()
+        self.assertEqual("OPEN", status(path))
+
     def test_jdk8_only_test_requires_locked_counterpart_contract(self):
         low_only = "ddd4j-core/src/test/java/example/LegacyContainerIT.java"
         counterpart = "ddd4j-core/src/test/java/example/ContainerIT.java"
