@@ -31,7 +31,7 @@ import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 
-import java.util.List;
+import java.util.Collections;
 
 /**
  * Helidon CDI 中 CQRS 组件的装配。
@@ -86,7 +86,7 @@ public class HelidonCqrsBeans {
     @Produces
     @ApplicationScoped
     CommandBus commandBus(CreateOrderCommandHandler commandHandler) {
-        return new DefaultCommandBus(List.of(commandHandler));
+        return new DefaultCommandBus(Collections.singletonList(commandHandler));
     }
 
     @Produces
