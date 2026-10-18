@@ -21,7 +21,11 @@ import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.plugin.*;
+import org.apache.ibatis.plugin.Interceptor;
+import org.apache.ibatis.plugin.Intercepts;
+import org.apache.ibatis.plugin.Invocation;
+import org.apache.ibatis.plugin.Plugin;
+import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
@@ -45,6 +49,13 @@ import java.util.Objects;
 })
 public class Ddd4jAggregateFillInnerInterceptor implements Interceptor {
 
+    /**
+     * 执行原始查询后，填充结果中的聚合根。
+     *
+     * @param invocation MyBatis 查询调用
+     * @return 原始查询结果
+     * @throws Throwable 原始查询抛出的异常
+     */
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
         Object result = invocation.proceed();
@@ -54,11 +65,23 @@ public class Ddd4jAggregateFillInnerInterceptor implements Interceptor {
         return result;
     }
 
+    /**
+     * 将拦截器包装到 MyBatis 目标对象。
+     *
+     * @param target 目标对象
+     * @return 包装后的对象
+     */
     @Override
     public Object plugin(Object target) {
         return Plugin.wrap(target, this);
     }
 
+    /**
+     * 从查询参数中查找领域查询，并填充查询结果中的聚合根。
+     *
+     * @param parameter MyBatis 查询参数，可直接为 Query 或包含 Query 的 Map
+     * @param results 查询结果
+     */
     public void afterQuery(Object parameter, List<?> results) {
         Query query = this.findQuery(parameter);
         if (Objects.isNull(query) || Objects.isNull(results) || results.isEmpty()) {
