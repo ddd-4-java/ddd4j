@@ -2556,6 +2556,17 @@
         "21": "f9421b72c1b77d6899b04531b0c6fd2403c95a87637d2103a882235df876fb39"
       },
       "reason": "Quarkus 1.x/JDK 8 使用 javax CDI 与 ShutdownEvent，Quarkus 3.x/JDK 17/21 使用 jakarta CDI 与 Shutdown；三线真实 ArC 容器各五项生命周期和调度契约通过，逐线源码与测试哈希锁定"
+    },
+    {
+      "path": "ddd4j-mq/ddd4j-mq-pulsar/src/main/java/io/ddd4j/mq/pulsar/PulsarMQClient.java",
+      "sourceSha256": [
+        "f49995d14739889ffe3a47a6c5dc5162828a5c670aa6e8d0fed3c1b18ffb9f83",
+        "937e0564c60bf83181bae6b4aec39ffa1ccd43c5a0326f0e19ea972461cfa6ec",
+        "910955441e6d0da0131a5367dae3c6ed5bd07a6da87d12be9fbe7e6a76424c71"
+      ],
+      "evidence": "ddd4j-mq/ddd4j-mq-pulsar/src/test/java/io/ddd4j/mq/pulsar/PulsarPartitionKeyContractTest.java",
+      "testSha256": "f142c602adf3d8b9c70de4cc6e1e0cf76bfa5f8bc4b65d59826149107eb93851",
+      "reason": "JDK 8 的传统 switch 与 JDK 17/21 的 switch 表达式均实现 NONE、TAG、TENANT、TAG_TENANT、CUSTOM 五种路由键策略；三线同一测试验证策略结果、空事件和缺失字段，逐线源码与共同测试哈希锁定"
     }
   ],
   "historicalDocumentSections": [
