@@ -32,7 +32,7 @@ import java.util.Set;
  * 发现机制不要求 public）。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 2.0.x
+ * @since 1.0.x
  */
 @CommandHandler(SampleCommand.class)
 public class SampleCommandHandler implements CommandExecutor<SampleCommand> {
@@ -44,13 +44,14 @@ public class SampleCommandHandler implements CommandExecutor<SampleCommand> {
 
     @Override
     public Set<Class<? extends Command>> supportedCommands() {
-        return Set.of(SampleCommand.class);
+        return java.util.Collections.singleton(SampleCommand.class);
     }
 
     /**
-     * 执行处理逻辑。
-     * @param command command 参数。
-     * @return 方法执行结果。
+     * 执行样例命令并返回路由标记。
+     *
+     * @param command 样例命令
+     * @return 执行结果
      */
     @Override
     public Result execute(SampleCommand command) {
