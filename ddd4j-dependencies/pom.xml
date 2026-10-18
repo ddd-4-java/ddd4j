@@ -385,6 +385,7 @@
         <mapstruct.version>1.6.3</mapstruct.version>
         <mariadb.version>3.5.9</mariadb.version>
         <markdown.version>1.11.1</markdown.version>
+        <maven-shared-utils.version>3.5.0</maven-shared-utils.version>
         <maven.version>3.6.3</maven.version>
         <mercadopago-sdk-java.version>2.9.2</mercadopago-sdk-java.version>
         <metadata-extractor.version>2.20.0</metadata-extractor.version>
@@ -5254,6 +5255,12 @@
                 <groupId>com.cronutils</groupId>
                 <artifactId>cron-utils</artifactId>
                 <version>${cron-utils.version}</version>
+            </dependency>
+            <!-- Quarkus 1.x test bootstrap requests vulnerable Maven Shared Utils 3.2.1. -->
+            <dependency>
+                <groupId>org.apache.maven.shared</groupId>
+                <artifactId>maven-shared-utils</artifactId>
+                <version>${maven-shared-utils.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.r2dbc</groupId>
