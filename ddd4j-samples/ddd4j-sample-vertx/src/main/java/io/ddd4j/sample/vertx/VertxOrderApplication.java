@@ -21,7 +21,7 @@ import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
 import io.vertx.ext.web.Router;
 
-import java.util.List;
+import java.util.Collections;
 import java.util.Objects;
 
 /**
@@ -35,7 +35,7 @@ public final class VertxOrderApplication {
     /** @param args 启动参数 */
     public static void main(String[] args) {
         Vertx vertx = Vertx.vertx();
-        Ddd4jVertxRuntime runtime = Ddd4jVertxRuntime.create(vertx, List.of());
+        Ddd4jVertxRuntime runtime = Ddd4jVertxRuntime.create(vertx, Collections.emptyList());
         runtime.start();
         InMemoryOrderAdapters adapters = new InMemoryOrderAdapters();
         OrderApplicationService applicationService = new OrderApplicationService(adapters, adapters, adapters,
