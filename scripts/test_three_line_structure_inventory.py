@@ -18,6 +18,55 @@ SCRIPT = Path(__file__).with_name("verify-three-line-structure-api-parity.py")
 
 
 class ThreeLineInventoryTest(unittest.TestCase):
+    def test_platform_tool_script_requires_exact_line_and_content(self):
+        path = "scripts/test-maven-wrapper-jdk-compatibility.sh"
+        source = "#!/bin/sh\nexit 0\n"
+        self.write(self.roots[0], path, source)
+        policy = json.loads(self.policy.read_text())
+        policy["platformToolScripts"] = [{
+            "path": path,
+            "sha256ByJdk": {"8": hashlib.sha256(source.encode()).hexdigest(),
+                            "17": None, "21": None},
+            "evidence": "JDK 8 Maven Wrapper compatibility check",
+        }]
+        self.policy.write_text(json.dumps(policy))
+
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = json.loads((output / "inventory.json").read_text())["differences"]
+        self.assertEqual("PLATFORM_CONFIG", next(row["status"] for row in rows
+                                                  if row["path"] == path))
+
+        self.write(self.roots[0], path, source + "# changed\n")
+        result, _ = self.run_checker("inventory")
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("stale platform tool script", result.stderr)
+
+    def test_maven4_tool_script_cannot_be_reassigned_to_jdk8(self):
+        path = "scripts/test_maven4_model_contract.py"
+        source = "print('maven 4')\n"
+        self.write(self.roots[2], path, source)
+        policy = json.loads(self.policy.read_text())
+        digest = hashlib.sha256(source.encode()).hexdigest()
+        policy["platformToolScripts"] = [{
+            "path": path,
+            "sha256ByJdk": {"8": None, "17": None, "21": digest},
+            "evidence": "Maven 4 model contract check",
+        }]
+        self.policy.write_text(json.dumps(policy))
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = json.loads((output / "inventory.json").read_text())["differences"]
+        self.assertEqual("PLATFORM_CONFIG", next(row["status"] for row in rows
+                                                  if row["path"] == path))
+
+        policy["platformToolScripts"][0]["sha256ByJdk"] = {
+            "8": digest, "17": None, "21": None}
+        self.policy.write_text(json.dumps(policy))
+        result, _ = self.run_checker("inventory")
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("invalid platform tool script hashes", result.stderr)
+
     def test_helidon_cdi_service_descriptor_tracks_namespace_without_missing_provider(self):
         prefix = "ddd4j-runtime/ddd4j-runtime-helidon/src/main/resources/META-INF/services/"
         legacy = prefix + "javax.enterprise.inject.spi.Extension"

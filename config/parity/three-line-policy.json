@@ -2877,5 +2877,115 @@
       "evidence": "docs/superpowers/historical-evidence-index.md",
       "reason": "三线产品正文逐字一致；落地计划为各发布线历史任务记录，逐线 SHA-256 锁定且不代表本轮收敛验收"
     }
+  ],
+  "platformToolScripts": [
+    {
+      "path": "scripts/test-maven-wrapper-jdk-compatibility.sh",
+      "sha256ByJdk": {
+        "8": "57f45d7f4afbe2a8fe2deb5e6e24bf14ca457b527db76565c0d2a3c88e229d11",
+        "17": null,
+        "21": null
+      },
+      "evidence": "仅 JDK 8 线验证旧 Maven Wrapper 与 JDK 兼容；文件内容与缺失位置逐线锁定"
+    },
+    {
+      "path": "scripts/test-parent-consumer-version-isolation.sh",
+      "sha256ByJdk": {
+        "8": "717ee65bc1365b76ecc4bcd465f622e9d127ed9cb328ba9aea719212d4b1116a",
+        "17": null,
+        "21": null
+      },
+      "evidence": "仅 JDK 8 线验证旧父 POM 消费者版本隔离；文件内容与缺失位置逐线锁定"
+    },
+    {
+      "path": "scripts/verify-java8-dependency-baseline.sh",
+      "sha256ByJdk": {
+        "8": "495620630ce2575eb5c7cc6ed5f6535f2dd4df4a2f9120f3534e58807c4ea73d",
+        "17": null,
+        "21": null
+      },
+      "evidence": "仅 JDK 8 线验证依赖基线；文件内容与缺失位置逐线锁定"
+    },
+    {
+      "path": "scripts/verify-java8-source-compatibility.sh",
+      "sha256ByJdk": {
+        "8": "89833a3c56669f23da5a7623c407bfa9e32ec07bb30ae43f9bd968235db42050",
+        "17": null,
+        "21": null
+      },
+      "evidence": "仅 JDK 8 线验证源码语法兼容；文件内容与缺失位置逐线锁定"
+    },
+    {
+      "path": "scripts/test_bom_import_conflicts.py",
+      "sha256ByJdk": {
+        "8": null,
+        "17": null,
+        "21": "1c08cedf01b096f9d14f1cf1c9c23878bbd6978f1a7445625dfbddc3f806b6c9"
+      },
+      "evidence": "仅 Maven 4/JDK 21 线测试 BOM 冲突门禁；文件内容与缺失位置逐线锁定"
+    },
+    {
+      "path": "scripts/test_maven4_model_contract.py",
+      "sha256ByJdk": {
+        "8": null,
+        "17": null,
+        "21": "ab95cf94477af9cf355a5c0b2ea4c126017a217f6e38283e35544e6d602fe14d"
+      },
+      "evidence": "仅 Maven 4/JDK 21 线测试模型解析契约；文件内容与缺失位置逐线锁定"
+    },
+    {
+      "path": "scripts/test_platform_version_contract.py",
+      "sha256ByJdk": {
+        "8": null,
+        "17": null,
+        "21": "2fd9cb44eebe01740eac7f19b225681bcb4daa7e06e3fc255fa6b13e5e0fdc0e"
+      },
+      "evidence": "仅 Maven 4/JDK 21 线测试平台版本契约；文件内容与缺失位置逐线锁定"
+    },
+    {
+      "path": "scripts/test_web_api_version_suite.py",
+      "sha256ByJdk": {
+        "8": null,
+        "17": null,
+        "21": "1e3dd1206daa06f1c619fe644563d7168dbd09915b0060e942844d57086aa4ba"
+      },
+      "evidence": "仅 Maven 4/JDK 21 线测试 Web API 版本套件；文件内容与缺失位置逐线锁定"
+    },
+    {
+      "path": "scripts/verify_bom_import_conflicts.py",
+      "sha256ByJdk": {
+        "8": null,
+        "17": null,
+        "21": "310effcb0db148299ca9f17f84b3edd5ca668063aaae1ad5ec5480af4dd2280a"
+      },
+      "evidence": "仅 Maven 4/JDK 21 线验证 BOM 导入冲突；文件内容与缺失位置逐线锁定"
+    },
+    {
+      "path": "scripts/verify_maven4_model_contract.py",
+      "sha256ByJdk": {
+        "8": null,
+        "17": null,
+        "21": "83f64b7bee30f554817eb35105d804e9db1b79a28864230c6277c609711308a5"
+      },
+      "evidence": "仅 Maven 4/JDK 21 线验证模型解析契约；文件内容与缺失位置逐线锁定"
+    },
+    {
+      "path": "scripts/verify_maven4_parent_contract.py",
+      "sha256ByJdk": {
+        "8": null,
+        "17": null,
+        "21": "24b078a5f08163c8d42bb4c554ef6bfdf9990ee945a169cc85db0b3b919b131e"
+      },
+      "evidence": "仅 Maven 4/JDK 21 线验证父 POM 契约；文件内容与缺失位置逐线锁定"
+    },
+    {
+      "path": "scripts/verify_platform_version_contract.py",
+      "sha256ByJdk": {
+        "8": null,
+        "17": null,
+        "21": "902caf09d1d95684198c92cb847e979eaf2bfdc1dacb8d5a2a8fa5ed8827f390"
+      },
+      "evidence": "仅 Maven 4/JDK 21 线验证平台版本契约；文件内容与缺失位置逐线锁定"
+    }
   ]
 }

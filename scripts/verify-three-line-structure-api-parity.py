@@ -288,6 +288,51 @@ def validate_platform_build_config_files(
     return validated
 
 
+def validate_platform_tool_scripts(
+        mappings: list[dict], snapshots: list[dict[str, str]]) -> dict[str, dict]:
+    """仅分类明确属于 JDK 8 或 Maven 4/JDK 21 的逐线检查脚本。"""
+    allowed = {
+        "scripts/test-maven-wrapper-jdk-compatibility.sh",
+        "scripts/test-parent-consumer-version-isolation.sh",
+        "scripts/verify-java8-dependency-baseline.sh",
+        "scripts/verify-java8-source-compatibility.sh",
+        "scripts/test_bom_import_conflicts.py",
+        "scripts/test_maven4_model_contract.py",
+        "scripts/test_platform_version_contract.py",
+        "scripts/test_web_api_version_suite.py",
+        "scripts/verify_bom_import_conflicts.py",
+        "scripts/verify_maven4_model_contract.py",
+        "scripts/verify_maven4_parent_contract.py",
+        "scripts/verify_platform_version_contract.py",
+    }
+    jdk8_only = {
+        "scripts/test-maven-wrapper-jdk-compatibility.sh",
+        "scripts/test-parent-consumer-version-isolation.sh",
+        "scripts/verify-java8-dependency-baseline.sh",
+        "scripts/verify-java8-source-compatibility.sh",
+    }
+    validated = {}
+    for item in mappings:
+        path = item.get("path")
+        hashes = item.get("sha256ByJdk")
+        if (path not in allowed or path in validated
+                or not isinstance(hashes, dict)
+                or set(hashes) != {"8", "17", "21"}
+                or not item.get("evidence")):
+            raise ValueError(f"invalid platform tool script: {path}")
+        expected = [hashes[jdk] for jdk in ("8", "17", "21")]
+        required_index = 0 if path in jdk8_only else 2
+        if (any((value is not None) != (index == required_index)
+                for index, value in enumerate(expected))
+                or any(value is not None and not re.fullmatch(r"[0-9a-f]{64}", value)
+                       for value in expected)):
+            raise ValueError(f"invalid platform tool script hashes: {path}")
+        if [snapshot.get(path) for snapshot in snapshots] != expected:
+            raise ValueError(f"stale platform tool script: {path}")
+        validated[path] = item
+    return validated
+
+
 def validate_platform_workflow_files(mappings: list[dict], roots: list[pathlib.Path],
                                      snapshots: list[dict[str, str]]) -> dict[str, dict]:
     """锁定三线工作流，并核对各线 JDK 与发布坐标标记。"""
@@ -845,6 +890,8 @@ def inventory_gate(roots: list[pathlib.Path], output: pathlib.Path, policy_path:
         policy.get("platformDependencyConfigFiles", []), snapshots)
     build_configs = validate_platform_build_config_files(
         policy.get("platformBuildConfigFiles", []), snapshots)
+    tool_scripts = validate_platform_tool_scripts(
+        policy.get("platformToolScripts", []), snapshots)
     workflow_configs = validate_platform_workflow_files(
         policy.get("platformWorkflowFiles", []), roots, snapshots)
     rows = []
@@ -877,6 +924,9 @@ def inventory_gate(roots: list[pathlib.Path], output: pathlib.Path, policy_path:
         elif path in build_configs:
             status = "PLATFORM_CONFIG"
             evidence = build_configs[path]["evidence"]
+        elif path in tool_scripts:
+            status = "PLATFORM_CONFIG"
+            evidence = tool_scripts[path]["evidence"]
         elif path in workflow_configs:
             status = "PLATFORM_CONFIG"
             evidence = workflow_configs[path]["evidence"]
