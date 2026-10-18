@@ -20,6 +20,7 @@ import io.ddd4j.core.cqrs.command.CommandHandler;
 import io.ddd4j.core.cqrs.command.Result;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -41,7 +42,7 @@ public class SampleCommandHandler implements CommandExecutor<SampleCommand> {
 
     @Override
     public Set<Class<? extends Command>> supportedCommands() {
-        return Set.of(SampleCommand.class);
+        return Collections.<Class<? extends Command>>singleton(SampleCommand.class);
     }
 
     /**
