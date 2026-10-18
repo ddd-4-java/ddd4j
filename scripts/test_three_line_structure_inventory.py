@@ -561,6 +561,43 @@ class ThreeLineInventoryTest(unittest.TestCase):
         result, _ = self.run_checker("inventory")
         self.assertNotEqual(0, result.returncode)
 
+    def test_workflow_version_adaptation_requires_exact_files_and_line_markers(self):
+        path = ".github/workflows/deploy.yml"
+        contents = tuple(
+            f"name: Set up JDK {jdk}\njava-version: '{jdk}'\n"
+            f"spring-extension/{line}.20260630-SNAPSHOT\n"
+            for jdk, line in ((8, "1.0.x"), (17, "2.0.x"), (21, "3.0.x"))
+        )
+        for root, content in zip(self.roots, contents):
+            self.write(root, path, content)
+        policy = json.loads(self.policy.read_text())
+        policy["platformWorkflowFiles"] = [{
+            "path": path,
+            "sha256ByJdk": {
+                jdk: hashlib.sha256(content.encode()).hexdigest()
+                for jdk, content in zip(("8", "17", "21"), contents)
+            },
+            "evidence": "Line-specific JDK and Easy4J snapshot; workflow lint runs separately",
+        }]
+        self.policy.write_text(json.dumps(policy))
+
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        row = next(item for item in json.loads((output / "inventory.json").read_text())
+                   ["differences"] if item["path"] == path)
+        self.assertEqual("PLATFORM_CONFIG", row["status"])
+
+        self.write(self.roots[2], path, contents[2].replace("3.0.x", "2.0.x"))
+        result, _ = self.run_checker("inventory")
+        self.assertNotEqual(0, result.returncode)
+
+        changed = contents[2].replace("JDK 21", "JDK 17")
+        self.write(self.roots[2], path, changed)
+        policy["platformWorkflowFiles"][0]["sha256ByJdk"]["21"] = hashlib.sha256(changed.encode()).hexdigest()
+        self.policy.write_text(json.dumps(policy))
+        result, _ = self.run_checker("inventory")
+        self.assertNotEqual(0, result.returncode)
+
     def test_single_wildcard_makes_same_package_explicit_import_redundant(self):
         path = "ddd4j-core/src/main/java/example/Foo.java"
         common = "package example; import java.util.*; public class Foo { List<String> values; }"

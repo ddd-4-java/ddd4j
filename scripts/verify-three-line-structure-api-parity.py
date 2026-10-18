@@ -288,6 +288,43 @@ def validate_platform_build_config_files(
     return validated
 
 
+def validate_platform_workflow_files(mappings: list[dict], roots: list[pathlib.Path],
+                                     snapshots: list[dict[str, str]]) -> dict[str, dict]:
+    """锁定三线工作流，并核对各线 JDK 与发布坐标标记。"""
+    allowed = {".github/workflows/deploy.yml", ".github/workflows/release-candidate.yml",
+               ".github/workflows/verify.yml"}
+    validated = {}
+    for item in mappings:
+        path = item.get("path")
+        hashes = item.get("sha256ByJdk")
+        if (path not in allowed or path in validated
+                or not isinstance(hashes, dict) or set(hashes) != {"8", "17", "21"}
+                or not item.get("evidence")
+                or any(not isinstance(hashes[jdk], str)
+                       or not re.fullmatch(r"[0-9a-f]{64}", hashes[jdk])
+                       for jdk in ("8", "17", "21"))
+                or len(set(hashes.values())) == 1):
+            raise ValueError(f"invalid platform workflow mapping: {path}")
+        if [snapshot.get(path) for snapshot in snapshots] != [hashes[jdk] for jdk in ("8", "17", "21")]:
+            raise ValueError(f"stale platform workflow mapping: {path}")
+        for root, (jdk, line) in zip(roots, ((8, "1.0.x"), (17, "2.0.x"), (21, "3.0.x"))):
+            source = (root / path).read_text(encoding="utf-8")
+            markers = [f"java-version: '{jdk}'"]
+            if path.endswith("/deploy.yml"):
+                markers.extend((f"name: Set up JDK {jdk}",
+                                f"spring-extension/{line}.20260630-SNAPSHOT"))
+            elif path.endswith("/release-candidate.yml"):
+                markers.extend((f"name: Java {jdk} release candidate evidence",
+                                f"Published non-SNAPSHOT {line} API baseline version"))
+            else:
+                markers.extend((f"name: Java {jdk} unit and contract",
+                                f"spring-extension/{line}.20260630-SNAPSHOT"))
+            if any(marker not in source for marker in markers):
+                raise ValueError(f"wrong line markers in platform workflow: {path} JDK {jdk}")
+        validated[path] = item
+    return validated
+
+
 def java_lexical_tokens(source: str) -> tuple[str, ...] | None:
     """仅剔除 Java 注释与格式；无法安全处理的语法保持 OPEN。"""
     # Unicode escape 在 Java 词法分析前展开，可能使注释边界发生变化。
@@ -808,6 +845,8 @@ def inventory_gate(roots: list[pathlib.Path], output: pathlib.Path, policy_path:
         policy.get("platformDependencyConfigFiles", []), snapshots)
     build_configs = validate_platform_build_config_files(
         policy.get("platformBuildConfigFiles", []), snapshots)
+    workflow_configs = validate_platform_workflow_files(
+        policy.get("platformWorkflowFiles", []), roots, snapshots)
     rows = []
     for path in sorted(set().union(*(snapshot.keys() for snapshot in snapshots))):
         values = [snapshot.get(path) for snapshot in snapshots]
@@ -838,6 +877,9 @@ def inventory_gate(roots: list[pathlib.Path], output: pathlib.Path, policy_path:
         elif path in build_configs:
             status = "PLATFORM_CONFIG"
             evidence = build_configs[path]["evidence"]
+        elif path in workflow_configs:
+            status = "PLATFORM_CONFIG"
+            evidence = workflow_configs[path]["evidence"]
         elif (category == "configuration" and all(value is not None for value in values)
               and cdi_descriptor_platform_match(path, roots)):
             status = "PLATFORM_ADAPTED"
@@ -928,7 +970,7 @@ def inventory_gate(roots: list[pathlib.Path], output: pathlib.Path, policy_path:
         "# 三线当前文件差异\n\n" + "\n".join(f"- {name}: {count}" for name, count in counts.items())
         + "\n- compiled API: " + compiled["status"] + "\n\n"
         + "PLATFORM_API_PENDING_COMPILE 仅代表当前源码声明符合精确登记；必须完成编译 API 门禁才能验收。\n"
-        + "PLATFORM_CONFIG 仅证明模块身份与聚合拓扑一致；依赖和插件正确性由 T03 严格门禁验证。\n"
+        + "PLATFORM_CONFIG 仅证明所列配置的精确适配：POM 依赖由 T03 严格门禁验证，工作流由 lint 和实际 CI 验证。\n"
         + "文件内容差异仍须进一步判定语义与公开 API；本清单不代表行为验证。\n",
         encoding="utf-8")
     print(f"phase={phase} differences={len(rows)} open={counts['OPEN']} "
