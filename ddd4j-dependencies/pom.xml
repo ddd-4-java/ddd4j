@@ -49,7 +49,7 @@
         <aspectj-tools.version>1.9.7</aspectj-tools.version>
         <aspectj.version>1.9.25.1</aspectj.version>
         <assertj.version>3.27.7</assertj.version>
-        <async-http-client.version>2.12.4</async-http-client.version>
+        <async-http-client.version>2.16.1</async-http-client.version>
         <auth0-java-jwt.version>4.5.2</auth0-java-jwt.version>
         <auth0-jwks-rsa.version>0.24.1</auth0-jwks-rsa.version>
         <awaitility.version>4.2.2</awaitility.version>
@@ -621,7 +621,7 @@
         <thumbnailator.version>0.4.21</thumbnailator.version>
         <thymeleaf-extras-conditionalcomments.version>2.1.2.RELEASE</thymeleaf-extras-conditionalcomments.version>
         <thymeleaf-layout-dialect.version>3.4.0</thymeleaf-layout-dialect.version>
-        <thymeleaf.version>3.1.3.RELEASE</thymeleaf.version>
+        <thymeleaf.version>3.1.5.RELEASE</thymeleaf.version>
         <tika.version>2.9.4</tika.version>
         <token-bucket.version>1.7</token-bucket.version>
         <tomcat.version>9.0.121</tomcat.version>
