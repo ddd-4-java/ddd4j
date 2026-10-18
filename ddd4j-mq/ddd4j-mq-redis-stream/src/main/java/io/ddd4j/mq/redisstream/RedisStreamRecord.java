@@ -15,6 +15,9 @@
 
 package io.ddd4j.mq.redisstream;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Map;
 import java.util.Objects;
 
@@ -44,7 +47,11 @@ public final class RedisStreamRecord {
      * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
      */
 
-    public RedisStreamRecord(String stream, String id, Map<String, String> fields, Object nativeMessage) {
+    @JsonCreator
+    public RedisStreamRecord(@JsonProperty("stream") String stream,
+                             @JsonProperty("id") String id,
+                             @JsonProperty("fields") Map<String, String> fields,
+                             @JsonProperty("nativeMessage") Object nativeMessage) {
         this.stream = stream;
         this.id = id;
         this.fields = fields;
