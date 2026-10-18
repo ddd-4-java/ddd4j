@@ -21,6 +21,9 @@ import java.util.Objects;
  * <p>持久化语义统一由 {@link R2dbcAsyncEventStore} 提供；本类仅在同步 SPI 边界阻塞，
  * 使同步和异步轨道使用同一张表、同一聚合唯一性规则和同一事件元数据映射，避免两套 SQL
  * 实现随版本演进再次漂移。
+ *
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 2.0.x
  */
 public class R2dbcEventStore implements EventStore {
 
@@ -37,6 +40,19 @@ public class R2dbcEventStore implements EventStore {
 
     R2dbcEventStore(R2dbcAsyncEventStore asyncEventStore) {
         this.asyncEventStore = Objects.requireNonNull(asyncEventStore, "asyncEventStore must not be null");
+    }
+
+    private static StoredEvent toStoredEvent(AsyncStoredEvent event) {
+        return new StoredEvent(
+                event.eventId(),
+                event.aggregateType(),
+                event.aggregateId(),
+                event.version(),
+                event.position(),
+                event.timestamp(),
+                event.payload(),
+                event.correlationId(),
+                event.causationId());
     }
 
     /**
@@ -81,18 +97,5 @@ public class R2dbcEventStore implements EventStore {
                 .map(R2dbcEventStore::toStoredEvent)
                 .collectList()
                 .block();
-    }
-
-    private static StoredEvent toStoredEvent(AsyncStoredEvent event) {
-        return new StoredEvent(
-                event.eventId(),
-                event.aggregateType(),
-                event.aggregateId(),
-                event.version(),
-                event.position(),
-                event.timestamp(),
-                event.payload(),
-                event.correlationId(),
-                event.causationId());
     }
 }
