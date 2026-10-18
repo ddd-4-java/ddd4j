@@ -15,11 +15,13 @@
 package io.ddd4j.core.api;
 
 import org.junit.jupiter.api.Test;
+import io.ddd4j.core.exception.ValidateException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -172,8 +174,10 @@ class RTest {
 
     @Test
     void jackson_shouldPreserveResponseFieldsAndValidationErrors() throws Exception {
-        List<Map<String, String>> errors = Collections.singletonList(
-                Collections.singletonMap("field", "email"));
+        Map<String, String> error = new HashMap<>();
+        error.put("field", "email");
+        error.put("message", "invalid");
+        List<Map<String, String>> errors = Collections.singletonList(error);
         R<Object> response = R.of((CustomApiCode) ApiCode.BAD_REQUEST, "invalid input", errors);
         ObjectMapper mapper = new ObjectMapper();
         JsonNode json = mapper.readTree(mapper.writeValueAsString(response));
@@ -181,6 +185,40 @@ class RTest {
         assertThat(json.get("msg").asText()).isEqualTo("invalid input");
         assertThat(json.get("error").get(0).get("field").asText()).isEqualTo("email");
         assertThat(json.has("message")).isFalse();
-        assertThat(mapper.readTree(mapper.writeValueAsString(R.ok("payload"))).has("error")).isFalse();
+        JsonNode okJson = mapper.readTree(mapper.writeValueAsString(R.ok("payload")));
+        assertThat(okJson.get("code").asInt()).isZero();
+        assertThat(okJson.get("data").asText()).isEqualTo("payload");
+        assertThat(okJson.has("error")).isFalse();
     }
+    @Test
+    void customApiCode_shouldBuildResponseWithMessageAndPayload() {
+        CustomApiCode customCode = new CustomApiCode() {
+            @Override
+            public Integer getCode() {
+                return 42001;
+            }
+
+            @Override
+            public String getReason() {
+                return "quota exhausted";
+            }
+        };
+
+        R<String> response = customCode.toResponse("retry later", "payload");
+
+        assertThat(response.getCode()).isEqualTo(42001);
+        assertThat(response.getMsg()).isEqualTo("retry later");
+        assertThat(response.getData()).isEqualTo("payload");
+        assertThat(response.isOk()).isFalse();
+    }
+
+    @Test
+    void validationFailure_shouldUseUnifiedBadRequestCode() {
+        ValidateException exception = new ValidateException("invalid input");
+
+        assertThat(exception.getCode()).isEqualTo(400);
+        assertThat(exception.getMessage()).isEqualTo("invalid input");
+    }
+
+
 }
