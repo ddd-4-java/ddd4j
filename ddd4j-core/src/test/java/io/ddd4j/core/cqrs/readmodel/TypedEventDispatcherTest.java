@@ -14,10 +14,15 @@
  */
 package io.ddd4j.core.cqrs.readmodel;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Objects;
+
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -55,40 +60,50 @@ class TypedEventDispatcherTest {
         assertThrows(IllegalArgumentException.class, () -> dispatcher.dispatch("person.created", "wrong"));
     }
 
-    static final class PersonCreatedEvent implements TypedEvent {
+    final static class PersonCreatedEvent implements TypedEvent {
+
+        private static final long serialVersionUID = 0L;
+
         private final String id;
-
-        public PersonCreatedEvent(String id) {
-            this.id = id;
-        }
-
-        public String id() {
-            return id;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof PersonCreatedEvent)) return false;
-            PersonCreatedEvent other = (PersonCreatedEvent) o;
-            return Objects.equals(this.id, other.id);
-        }
-
-        @Override
-        public int hashCode() {
-            return java.util.Objects.hash(id);
-        }
-
-        @Override
-        public String toString() {
-            return "PersonCreatedEvent{" + "id=" + id + "}";
-        }
 
         @Override
         public String getEventType() {
             return "person.created";
         }
 
+        @JsonCreator()
+        PersonCreatedEvent(@JsonProperty("id") String id) {
+            this.id = id;
+        }
+
+        @JsonProperty("id")
+        public String id() {
+            return id;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            PersonCreatedEvent other = (PersonCreatedEvent) obj;
+            return Objects.equals(this.id, other.id);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(id);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "PersonCreatedEvent[id=" + id + "]";
+        }
     }
 
     static class PersonCreatedHandler implements TypedEventHandler<PersonCreatedEvent> {
