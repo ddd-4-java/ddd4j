@@ -1282,6 +1282,17 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-mq/ddd4j-mq-rocketmq/src/main/java/io/ddd4j/mq/rocketmq/RocketMQClient.java",
+      "sourceSha256": [
+        "10d6ab2bc1a71b65c035fec74511824d8f71c9f6cf447448712c404a504bcc59",
+        "fead65e07ab7dd18ab603fd5568e91c910a0d6f76aac5d6f5681333418deeffe",
+        "fead65e07ab7dd18ab603fd5568e91c910a0d6f76aac5d6f5681333418deeffe"
+      ],
+      "evidence": "ddd4j-mq/ddd4j-mq-rocketmq/src/test/java/io/ddd4j/mq/rocketmq/RocketMQPartitionKeyContractTest.java",
+      "testSha256": "ad4e34dc70eb3dbb62b34eb7f55252d69472062c4f44f5ce45e1a2cb040d0df4",
+      "reason": "JDK 8 的分区键策略使用普通 switch，JDK 17/21 使用等价 switch 表达式；三线同一无 broker 契约测试验证全部五种策略及空事件回退"
+    },
+    {
       "path": "ddd4j-mq/ddd4j-mq-mqtt-mica/src/main/java/io/ddd4j/mq/mqttmica/MicaMqttProperties.java",
       "sourceSha256": [
         "eb03180f29dbc31b81d26a5e4fd244c0b7118f14eae49bac392ecb3974519f83",
