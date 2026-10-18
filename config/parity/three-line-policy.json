@@ -63,18 +63,18 @@
     {
       "path": "config/dependencies/alignment-policy.json",
       "sha256ByJdk": {
-        "8": "8d3298768250c7a9b4e996ffdf022d16c98bbbef1f4d346875dc8747f09cd69a",
-        "17": "0fd54f77944a21bccfe046028af647b18a1bb3bec2f8d59f373d7f59ecc01c02",
-        "21": "03c65ef2c178ff9bb61e798d3828fd177d1d9bbbb6d7e4096ead790cc5cd4e4f"
+        "8": "a2b77a04f4a2c7f37740084672ab3a6a2b54f8b0de99eee45122ddaeaa71da97",
+        "17": "fc31a1621573aba455eae6172391738d61c66b8a9ecd1a23f485af7527f22853",
+        "21": "af34bd567ee26652e9f26780582dbac189992eaf215d9ccf972aa13c88541c2b"
       },
       "evidence": "三线分别执行 T03 strict-artifacts 门禁；这里仅豁免已哈希锁定的配置内容差异"
     },
     {
       "path": "config/dependencies/component-matrix.csv",
       "sha256ByJdk": {
-        "8": "867b98af6866b2790f5ca68a5c554a56c14baf432889d734b9b707111893f516",
-        "17": "9acf997f77c116097739eb3ba1a18c470291cc351afe83876f7327f0da0758fa",
-        "21": "aed19e707bdf6383349e3702d9bcbc8aa31104d2732ed1008011f63674df54cf"
+        "8": "6d6ddb04f717dc353ff50b26c55038d5448c90bde78cfd3eb3d65e533afbf829",
+        "17": "42b8f3a6f1e0bb6a09bd1acab9672bd145487ffa9a763956277e18a7468b6974",
+        "21": "ac97ee824b0b0f27310e847a75e5a8d01c6a02cdd17ed07e5a68550f37509bb8"
       },
       "evidence": "三线分别执行 T03 strict-artifacts 门禁；这里仅豁免已哈希锁定的组件矩阵差异"
     },
