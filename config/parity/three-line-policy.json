@@ -2896,6 +2896,21 @@
         "21": "66a805f8f2a389b2e6369a32cfc31729b610c137f0d1eccf5ce55e5933e382d8"
       },
       "reason": "三线 goods 应用服务的业务语句一致；JDK 8 样例以手动装配，JDK 17/21 使用 jakarta.inject.Inject；各线资源 HTTP 契约 53 项通过，中文方法文档对齐"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/rbac/application/RbacService.java",
+      "sourceSha256": [
+        "afeb0eb702e1065b61bef0b8a90841d6d4c852cfac1ecc9d0c24e93f5cd57864",
+        "5ba739f12a8718f811838db389815fb3b5c7b11a685440632d15f4dfdb32eaee",
+        "5ba739f12a8718f811838db389815fb3b5c7b11a685440632d15f4dfdb32eaee"
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/rbac/web/AuthorizationControllerTest.java",
+      "testSha256ByJdk": {
+        "8": "21e7a595ace6ed569794e70bc53f23fc8e0f37d7e283c9b279267e2b6fe5499d",
+        "17": "c710a22ef3ad26f0fbebb1256df3ba75e4a98d3bef1e47c1ff527d262494c9fe",
+        "21": "dfe80acb6e6c7de263ef4a73985174154509dffaec97d752403d126082ad4a91"
+      },
+      "reason": "三线 RBAC 登录及角色权限业务逻辑一致；JDK 8 使用 Optional.isPresent 与 Collections.emptyList，高两线使用 isEmpty 与 List.of；授权/认证定向测试覆盖 HTTP 契约，中文业务文档对齐"
     }
   ],
   "historicalDocumentSections": [
