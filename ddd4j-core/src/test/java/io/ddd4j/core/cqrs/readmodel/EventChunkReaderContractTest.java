@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayDeque;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
 
@@ -103,7 +104,7 @@ class EventChunkReaderContractTest {
         reader.append(1, "a");
         reader.append(2, "b");
 
-        EventChunk<String> chunk = reader.read("s", 1, 100, List.of());
+        EventChunk<String> chunk = reader.read("s", 1, 100, Collections.emptyList());
 
         assertThat(chunk.getEvents()).containsExactly("a", "b");
     }
