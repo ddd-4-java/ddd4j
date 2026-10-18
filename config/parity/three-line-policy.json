@@ -72,9 +72,9 @@
     {
       "path": "config/dependencies/component-matrix.csv",
       "sha256ByJdk": {
-        "8": "f56b0644da937e386a08eb495e55b48c4d4e28b247070d3fb35427d5dc3908f9",
-        "17": "d478b7ca10697a7c20b4aa8ac62bab8eb13b44f94456d682f419f2b32b9d5522",
-        "21": "9f45a2800ad4758160fe2848bfc05ac80f8b894d65ca0e691882a4a4cee6f342"
+        "8": "867b98af6866b2790f5ca68a5c554a56c14baf432889d734b9b707111893f516",
+        "17": "9acf997f77c116097739eb3ba1a18c470291cc351afe83876f7327f0da0758fa",
+        "21": "aed19e707bdf6383349e3702d9bcbc8aa31104d2732ed1008011f63674df54cf"
       },
       "evidence": "三线分别执行 T03 strict-artifacts 门禁；这里仅豁免已哈希锁定的组件矩阵差异"
     },
