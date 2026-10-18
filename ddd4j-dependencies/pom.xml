@@ -786,6 +786,27 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <!-- 测试模块已使用 2.7.18；覆盖平台 BOM 中残留的 2.7.7 基础构件。 -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot</artifactId>
+                <version>${spring-boot2-it.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-autoconfigure</artifactId>
+                <version>${spring-boot2-it.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter</artifactId>
+                <version>${spring-boot2-it.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-logging</artifactId>
+                <version>${spring-boot2-it.version}</version>
+            </dependency>
             <!-- https://mvnrepository.com/artifact/com.eventstore/db-client-java -->
             <!-- EventStoreDB Client：EventStoreDB（事件溯源数据库）的 gRPC Java 客户端。
                  5.4.5 字节码 major=52=Java 8 已实测；io.kurrent:kurrentdb-client 是更名后新 GAV（包名不兼容，勿混用）。 -->
