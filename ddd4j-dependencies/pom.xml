@@ -78,6 +78,7 @@
         <brave.version>6.3.0</brave.version>
         <buji-pac4j.version>9.1.1</buji-pac4j.version>
         <byte-buddy.version>1.18.10</byte-buddy.version>
+        <c3p0.version>0.14.0</c3p0.version>
         <cache2k.version>2.6.1.Final</cache2k.version>
         <!-- simulator 3.2.x 已要求 Java 25；基准工具独立保留 Java 11 兼容发行版。 -->
         <caffeine-simulator.version>3.1.8</caffeine-simulator.version>
@@ -407,6 +408,7 @@
         <mapstruct.version>1.6.3</mapstruct.version>
         <mariadb.version>3.5.9</mariadb.version>
         <markdown.version>1.11.1</markdown.version>
+        <mchange-commons-java.version>0.6.0</mchange-commons-java.version>
         <mercadopago-sdk-java.version>2.9.2</mercadopago-sdk-java.version>
         <metadata-extractor.version>2.20.0</metadata-extractor.version>
         <metrics-biz.version>2.0.x.20260630-SNAPSHOT</metrics-biz.version>
@@ -782,6 +784,16 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.mchange</groupId>
+                <artifactId>c3p0</artifactId>
+                <version>${c3p0.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mchange</groupId>
+                <artifactId>mchange-commons-java</artifactId>
+                <version>${mchange-commons-java.version}</version>
+            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.activemq/activemq-bom -->
             <!-- Apache ActiveMQ：流行的开源消息中间件，实现了 JMS 1.1 规范，支持多种跨语言客户端和集群部署。 -->
             <dependency>
