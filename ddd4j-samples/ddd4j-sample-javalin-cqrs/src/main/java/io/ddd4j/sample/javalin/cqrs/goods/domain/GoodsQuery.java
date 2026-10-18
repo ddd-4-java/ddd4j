@@ -43,7 +43,7 @@ import java.math.BigDecimal;
  * 即可享受充血查询。所有条件通过 Lombok {@link Data} 自动生成 setter，
  * 业务侧可直接以链式或传统方式构造查询条件。
  *
- * <h3>使用示例</h3>
+ * <h2>使用示例</h2>
  * <pre>{@code
  * // 1. 链式构建
  * Page<Goods> page = new GoodsQuery()
