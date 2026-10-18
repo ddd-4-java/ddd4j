@@ -2521,9 +2521,9 @@
       ],
       "evidence": "ddd4j-mq/ddd4j-mq-activemq/src/test/java/io/ddd4j/mq/activemq/ActiveMQAdapterContractTest.java",
       "testSha256ByJdk": {
-        "8": "e738856af672f619e6c114d0bb43997d04fde218c398eb6354ce9b5e9eba2561",
-        "17": "14bc9d105e5cda7e317f02fbdd5bd30a4d07b55065fe50ffced895dd44e71ba9",
-        "21": "2900155792b7ae757cdd091ef0df5c31ed0dd8f487105275ad88e15be3cb96cf"
+        "8": "e04ebb50656ab3c4a0a00ad2114305b48ebe678edec06869e11287a6bd2f6c88",
+        "17": "38f3251c3c76d11816499621291e3f05a4e9a2a52bb086bb128efe813fef56a6",
+        "21": "38f3251c3c76d11816499621291e3f05a4e9a2a52bb086bb128efe813fef56a6"
       },
       "reason": "ActiveMQ 的 JDK 8 线使用 javax.jms 与旧 Java 条件表达式，JDK 17/21 线使用 jakarta.jms 与等价语法；三线各六项适配器契约测试验证因果头、消息 ID、失败关闭与逆序释放"
     },
