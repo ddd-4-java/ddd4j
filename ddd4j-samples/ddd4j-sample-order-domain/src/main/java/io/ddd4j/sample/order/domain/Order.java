@@ -13,15 +13,14 @@
  * limitations under the License.
  */
 package io.ddd4j.sample.order.domain;
-import io.ddd4j.sample.order.domain.event.OrderShippedEvent;
-import io.ddd4j.sample.order.domain.event.OrderPaidEvent;
-import io.ddd4j.sample.order.domain.event.OrderLineAddedEvent;
-import io.ddd4j.sample.order.domain.event.OrderCreatedEvent;
-import io.ddd4j.sample.order.domain.event.OrderCancelledEvent;
 
 import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.kit.lang.StrKit;
-import io.ddd4j.sample.order.domain.event.*;
+import io.ddd4j.sample.order.domain.event.OrderCancelledEvent;
+import io.ddd4j.sample.order.domain.event.OrderCreatedEvent;
+import io.ddd4j.sample.order.domain.event.OrderLineAddedEvent;
+import io.ddd4j.sample.order.domain.event.OrderPaidEvent;
+import io.ddd4j.sample.order.domain.event.OrderShippedEvent;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -82,7 +81,7 @@ public final class Order extends AggregateRoot<String> {
      */
     public static Order draft(String orderNo, String buyerId, String buyerName) {
         Order order = new Order(UUID.randomUUID().toString(), orderNo, buyerId, buyerName,
-                OrderStatus.DRAFT, List.of());
+                OrderStatus.DRAFT, Collections.emptyList());
         order.registerEvent(new OrderCreatedEvent(order.id));
         return order;
     }
