@@ -2986,6 +2986,15 @@
         "21": "902caf09d1d95684198c92cb847e979eaf2bfdc1dacb8d5a2a8fa5ed8827f390"
       },
       "evidence": "仅 Maven 4/JDK 21 线验证平台版本契约；文件内容与缺失位置逐线锁定"
+    },
+    {
+      "path": "scripts/dependencies/tests/test_uniform_contract.py",
+      "sha256ByJdk": {
+        "8": "54b7f5ca933ac67dda25baf85f129cdbcd8d7d8585d459bb5bf1ff5e0a5348f1",
+        "17": "d6eecb4fb96a496612a1bdcb0886ad8b4613b64e2ab73d15c6cab84a160bf276",
+        "21": "465848300be4662869aa63e7bee6652dd9ba1c8398b31bef9e90c4670cb0ddb6"
+      },
+      "evidence": "三线各自断言对应 JDK 与第三方依赖策略；文件 SHA-256 锁定，dependency-policy 单测与 CI 独立执行"
     }
   ]
 }
