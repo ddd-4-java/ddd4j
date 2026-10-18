@@ -153,9 +153,11 @@ class VertxCommandBusIT {
         assertThat(exception.getMessage()).contains(UnknownCommand.class.getName());
     }
 
+    /** 用于验证多类型处理器撞型拒绝的伴随命令。 */
     static class CompanionCommand implements Command {
     }
 
+    /** 用于验证未注册命令错误路径的测试命令。 */
     static class UnknownCommand implements Command {
     }
 
@@ -172,6 +174,12 @@ class VertxCommandBusIT {
             return Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(SampleCommand.class, CompanionCommand.class)));
         }
 
+        /**
+         * 执行占位命令。
+         *
+         * @param command 测试命令
+         * @return 成功结果
+         */
         @Override
         public Result execute(Command command) {
             return Result.ok();
