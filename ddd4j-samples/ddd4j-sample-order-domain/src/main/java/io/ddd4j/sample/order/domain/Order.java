@@ -24,6 +24,7 @@ import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.sample.order.domain.event.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -113,7 +114,7 @@ public final class Order extends AggregateRoot<String> {
 
     /** @return 不可变的订单明细副本 */
     public List<OrderLine> lines() {
-        return List.copyOf(lines);
+        return Collections.unmodifiableList(new ArrayList<>(lines));
     }
 
     /** @return 人民币订单总金额 */
