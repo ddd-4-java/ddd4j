@@ -2526,6 +2526,21 @@
         "21": "2900155792b7ae757cdd091ef0df5c31ed0dd8f487105275ad88e15be3cb96cf"
       },
       "reason": "ActiveMQ 的 JDK 8 线使用 javax.jms 与旧 Java 条件表达式，JDK 17/21 线使用 jakarta.jms 与等价语法；三线各六项适配器契约测试验证因果头、消息 ID、失败关闭与逆序释放"
+    },
+    {
+      "path": "ddd4j-mq/ddd4j-mq-activemq/src/main/java/io/ddd4j/mq/activemq/util/ActivemqKit.java",
+      "sourceSha256": [
+        "32bb77138231bd8e77b0ca3d21d8b45c6364d7a9936639d8b65172ac9c109783",
+        "7aceda1b85acadfc623b131038a160fa691409c93f2b63d45b3203709fab0a94",
+        "6120851e14b6f4067f3f72802283b5070a00b09d974d215bed09843ef631c40e"
+      ],
+      "evidence": "ddd4j-mq/ddd4j-mq-activemq/src/test/java/io/ddd4j/mq/activemq/util/ActivemqKitContractTest.java",
+      "testSha256ByJdk": {
+        "8": "8dba921266af13959a79ac39705c79209a1047882561fcd159848bb55e9b8fe1",
+        "17": "bf8f7d31c2dafc1fba9721bd4142ec007bcb4488200b654b6cca3a77eb68cc91",
+        "21": "bf8f7d31c2dafc1fba9721bd4142ec007bcb4488200b654b6cca3a77eb68cc91"
+      },
+      "reason": "JDK 8 使用 javax.jms 与显式 instanceof 转型，JDK 17/21 使用 jakarta.jms 与模式匹配；三线各三项目的地、UTF-8 payload、JMS 消息头及异常回退契约测试验证等价行为"
     }
   ],
   "historicalDocumentSections": [
