@@ -1282,6 +1282,21 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-web/ddd4j-web-testkit/src/main/java/io/ddd4j/web/testkit/AbstractWebContractTest.java",
+      "sourceSha256": [
+        "5e220e393615c48ee3f5a39a400cf99a7d95b227c27873a2e7c0ee3f27a12028",
+        "3b1717588fc80f406b287478c7bc14e9d41a9a65441991d2285db949de31e668",
+        "3fcff52f4d36aaeba75f439471a30f20a0553276ec224ac843969fabc7ed7717"
+      ],
+      "evidence": "ddd4j-web/ddd4j-web-javalin/src/test/java/io/ddd4j/web/javalin/Ddd4jJavalinWebContractTest.java",
+      "testSha256ByJdk": {
+        "8": "649223d4cb91a2a1a694c80d5545d8bbde6b03ef85a1dd791e52e41e04ca98aa",
+        "17": "b1ad89317e7e3d28b66b4288a464e53b6453f71af7738dead25f516edc76e1c0",
+        "21": "2ec4df86f37899c5e302c3d02bc6df6f425ab38b989fc90c0fa32a6af749fa7d"
+      },
+      "reason": "三线 Web testkit 的成功响应、认证、上下文与幂等性契约相同；JDK 8 使用 Collections，JDK 17/21 使用 Map.of，JDK 21 使用 Jackson 3。逐线源码及继承基类的 Javalin Web 契约测试由 SHA-256 锁定。"
+    },
+    {
       "path": "ddd4j-runtime/ddd4j-runtime-vertx/src/main/java/io/ddd4j/vertx/Ddd4jVertxRuntime.java",
       "sourceSha256": [
         "1982e3723aba15ec1da9a2ce6dc4f9dec8feda1791d784bce0dbcca7b6793520",
