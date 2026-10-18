@@ -29,7 +29,7 @@ import org.redisson.api.stream.StreamCreateGroupArgs;
 import redis.clients.jedis.StreamEntryID;
 import redis.clients.jedis.UnifiedJedis;
 
-import java.util.Map;
+import java.util.Collections;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -144,7 +144,7 @@ class RedisStreamBrokerAdapterTest {
         when(stream.add(any(StreamAddArgs.class))).thenReturn(new StreamMessageId(1L, 0L));
         RedissonRedisStreamOperations operations = new RedissonRedisStreamOperations(client);
 
-        String id = operations.add("sales.order.paid", Map.of("payload", "body"));
+        String id = operations.add("sales.order.paid", Collections.singletonMap("payload", "body"));
         operations.createGroup("sales.order.paid", "sample");
         operations.ack("sales.order.paid", "sample", "1-0");
 
@@ -160,7 +160,7 @@ class RedisStreamBrokerAdapterTest {
         when(commands.xadd(eq("sales.order.paid"), any(XAddArgs.class), anyMap())).thenReturn("1-0");
         LettuceRedisStreamOperations operations = new LettuceRedisStreamOperations(commands);
 
-        String id = operations.add("sales.order.paid", Map.of("payload", "body"));
+        String id = operations.add("sales.order.paid", Collections.singletonMap("payload", "body"));
         operations.createGroup("sales.order.paid", "sample");
         operations.ack("sales.order.paid", "sample", "1-0");
 
