@@ -1024,7 +1024,7 @@ class ThreeLineInventoryTest(unittest.TestCase):
         evidence = "ddd4j-core/src/test/java/example/PlatformTypeTest.java"
         sources = [f"class PlatformType {{ int value() {{ return {jdk}; }} }}"
                    for jdk in (8, 17, 21)]
-        tests = [f"class PlatformTypeTest {{ /* JDK {jdk} contract */ }}"
+        tests = [f"class PlatformTypeTest {{ int jdk = {jdk}; }}"
                  for jdk in (8, 17, 21)]
         for root, source, test in zip(self.roots, sources, tests):
             self.write(root, path, source)
@@ -1045,6 +1045,8 @@ class ThreeLineInventoryTest(unittest.TestCase):
         rows = json.loads((output / "inventory.json").read_text())["differences"]
         self.assertEqual("PLATFORM_ADAPTED", next(row["status"] for row in rows
                          if row["path"] == path))
+        self.assertEqual("PLATFORM_ADAPTED", next(row["status"] for row in rows
+                         if row["path"] == evidence))
 
         self.write(self.roots[1], evidence, tests[1] + " // changed")
         result, output = self.run_checker("inventory")
@@ -1052,6 +1054,16 @@ class ThreeLineInventoryTest(unittest.TestCase):
         rows = json.loads((output / "inventory.json").read_text())["differences"]
         self.assertEqual("OPEN", next(row["status"] for row in rows
                          if row["path"] == path))
+        self.assertEqual("OPEN", next(row["status"] for row in rows
+                         if row["path"] == evidence))
+
+        self.write(self.roots[1], evidence, tests[1])
+        self.write(self.roots[1], path, sources[1] + " // changed")
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = json.loads((output / "inventory.json").read_text())["differences"]
+        self.assertEqual("OPEN", next(row["status"] for row in rows
+                         if row["path"] == evidence))
 
     def test_exact_pulsar_broker_image_mapping_rejects_behavior_change(self):
         path = ("ddd4j-mq/ddd4j-mq-pulsar/src/test/java/io/ddd4j/mq/pulsar/"
