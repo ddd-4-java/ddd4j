@@ -2109,13 +2109,27 @@
     {
       "path": "ddd4j-mq/ddd4j-mq-kafka/src/main/java/io/ddd4j/mq/kafka/KafkaMQClient.java",
       "sourceSha256": [
-        "6606af100150f0f2fe79fa789624ffc4ab4e28b1c0ba71968bfed40d64bca95b",
-        "1e3f340ba04b025309dedf81c9b07b95320aacebe743d7648472905f3a1de41a",
-        "1e3f340ba04b025309dedf81c9b07b95320aacebe743d7648472905f3a1de41a"
+        "441449898aac3176c79c49dae153482f7b884f6434003bc5b5029a880b136011",
+        "f5c4e2e9386276fb185ae283cf096caba32a0ebf38e98e762afcd8e0b23464d7",
+        "f5c4e2e9386276fb185ae283cf096caba32a0ebf38e98e762afcd8e0b23464d7"
       ],
       "evidence": "ddd4j-mq/ddd4j-mq-kafka/src/test/java/io/ddd4j/mq/kafka/KafkaMQClientLifecycleContractTest.java",
-      "testSha256": "a226ff111178b99426c72b9d8821ee87de2d1f23d3ee2f9e43995a1aa9d360bf",
-      "reason": "三线 Kafka 生命周期由 MQClientLifecycle 单独持有消费者资源，关闭状态均使用 AtomicBoolean；JDK 8 的 partitionKey 为等价 switch 语句，高两线为 switch 表达式。共同测试含关闭竞争、失败初始化、外部 producer 归属、poll 故障及关闭后 STOPPED 断言，源码与测试用 SHA-256 锁定"
+      "testSha256ByJdk": {
+        "8": "a226ff111178b99426c72b9d8821ee87de2d1f23d3ee2f9e43995a1aa9d360bf",
+        "17": "9ce41ac03790e365a70f7192ee0c6e0ea43a0581da42ce643d00de05a29da78e",
+        "21": "9ce41ac03790e365a70f7192ee0c6e0ea43a0581da42ce643d00de05a29da78e"
+      },
+      "additionalEvidence": [
+        {
+          "path": "ddd4j-mq/ddd4j-mq-kafka/src/test/java/io/ddd4j/mq/kafka/KafkaCausalityBrokerHeaderMustTest.java",
+          "testSha256": "56ef62a90e14a1a9e06d9bced9ed103af6950fc37d50f6e3521bbde630579783"
+        },
+        {
+          "path": "ddd4j-mq/ddd4j-mq-kafka/src/test/java/io/ddd4j/mq/kafka/KafkaAcknowledgmentContractTest.java",
+          "testSha256": "6fd2f3a351a2b50eb18f9e8230e662d5e96e5b429df01467207a64aed2e414b0"
+        }
+      ],
+      "reason": "三线 Kafka 生命周期、生产者归属、Broker 因果头及确认语义由契约测试验证；JDK 8 使用 switch 语句，JDK 17/21 使用 switch 表达式。源码与逐线生命周期及共同测试均以 SHA-256 锁定。"
     },
     {
       "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/goods/web/dto/CreateGoodsRequest.java",
