@@ -18,7 +18,7 @@ import io.ddd4j.core.cqrs.readmodel.ProjectionRunner;
 import io.ddd4j.core.cqrs.readmodel.ProjectionView;
 import io.ddd4j.core.cqrs.readmodel.ViewManager;
 import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
-import io.quarkus.runtime.Startup;
+import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.event.Shutdown;
@@ -34,7 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * <p>以 {@code @ApplicationScoped} 实现：ArC {@link Instance} 收集所有
  * {@link ProjectionView} Beans + {@link ProjectionRunner}；
- * {@link Startup} 事件触发 {@link #start()}（遍历 views 按 cron 调
+ * {@link StartupEvent} 事件触发 {@link #start()}（遍历 views 按 cron 调
  * {@link ViewScheduler#schedule}），{@link Shutdown} 事件触发 {@link #stop()}
  * （取消全部 handle），{@link #triggerOnce()} 立即执行一次所有 view 的 runOnce。
  *
@@ -83,7 +83,7 @@ public class QuarkusProjectionViewManager implements ViewManager {
         this.views = null;
     }
 
-    void onStart(@Observes Startup event) {
+    void onStart(@Observes StartupEvent event) {
         start();
     }
 
