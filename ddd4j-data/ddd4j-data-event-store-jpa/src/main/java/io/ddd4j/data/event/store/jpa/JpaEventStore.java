@@ -386,5 +386,27 @@ public class JpaEventStore implements EventStore {
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
         }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            StringAggregateRootId other = (StringAggregateRootId) obj;
+            return Objects.equals(value, other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(value);
+        }
+
+        @Override
+        public String toString() {
+            return "StringAggregateRootId[value=" + value + "]";
+        }
     }
 }

@@ -95,6 +95,18 @@ class JpaEventStoreTest {
     }
 
     @Test
+    void repeatedReadsShouldReconstructEqualAggregateIds() {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-value-id");
+        eventStore.append(ORDER_TYPE, orderId,
+                Collections.<DomainEvent<?>>singletonList(new OrderCreatedEvent("created")), 0);
+
+        AggregateRootId first = eventStore.read(ORDER_TYPE, orderId).get(0).aggregateId();
+        AggregateRootId second = eventStore.read(ORDER_TYPE, orderId).get(0).aggregateId();
+        assertEquals(first, second);
+        assertEquals(first.hashCode(), second.hashCode());
+    }
+
+    @Test
     void appendWithStaleVersionShouldReject() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-b");
         eventStore.append(ORDER_TYPE, orderId,
