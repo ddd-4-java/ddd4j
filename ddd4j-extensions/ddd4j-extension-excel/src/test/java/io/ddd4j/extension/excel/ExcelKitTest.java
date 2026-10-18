@@ -14,12 +14,6 @@
  */
 package io.ddd4j.extension.excel;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.util.Objects;
-
 import com.alibaba.excel.EasyExcel;
 import io.ddd4j.extension.excel.TestModels.UserVO;
 import io.ddd4j.extension.excel.export.WriteOptions;
@@ -40,7 +34,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * <p>覆盖 export → read 回环：写入数据 → 字节 → 重新读回 → 断言。
  *
- * @author ddd4j
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 class ExcelKitTest {
 
@@ -55,7 +49,7 @@ class ExcelKitTest {
 
         // when read back
         List<UserVO> read;
-        try (var in = new ByteArrayInputStream(bytes)) {
+        try (java.io.ByteArrayInputStream in = new java.io.ByteArrayInputStream(bytes)) {
             read = ExcelKit.readAll(in, UserVO.class);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -95,7 +89,7 @@ class ExcelKitTest {
 
         // when
         ImportResult<UserVO> result;
-        try (var in = new ByteArrayInputStream(bytes)) {
+        try (java.io.ByteArrayInputStream in = new java.io.ByteArrayInputStream(bytes)) {
             result = ExcelKit.importExcel(in, UserVO.class);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -133,10 +127,10 @@ class ExcelKitTest {
     void errorCollectingListener_should_not_throw_on_parse_error() {
         // given：构造一个故意混入错误数据的 Excel。
         // 用 Date 列写入非日期字符串，触发 ExcelDataConvertException
-        var head = new java.util.ArrayList<List<String>>();
-        head.add(java.util.List.of("日期"));
-        var content = new java.util.ArrayList<List<Object>>();
-        var row1 = new java.util.ArrayList<Object>();
+        java.util.List<java.util.List<String>> head = new java.util.ArrayList<>();
+        head.add(java.util.Arrays.asList("日期"));
+        java.util.List<java.util.List<Object>> content = new java.util.ArrayList<>();
+        java.util.List<Object> row1 = new java.util.ArrayList<>();
         row1.add("不是日期格式的字符串");  // 写入字符串但字段为 Date
         content.add(row1);
 
@@ -144,52 +138,11 @@ class ExcelKitTest {
         EasyExcel.write(out).head(head).sheet("S").doWrite(content);
 
         // 准备一个 Date 字段的 VO 读取
-        /** 日期字段 VO：用于触发日期列转换异常的读取场景。 */
-        final class DateVO {
-
-            private static final long serialVersionUID = 0L;
-
-            @com.alibaba.excel.annotation.ExcelProperty("日期")
-            private final java.util.Date d;
-
-            @JsonCreator()
-            DateVO(@JsonProperty("d") java.util.Date d) {
-                this.d = d;
-            }
-
-            @JsonProperty("d")
-            public java.util.Date d() {
-                return d;
-            }
-
-            @Override
-            public boolean equals(Object obj) {
-                if (this == obj) {
-                    return true;
-                }
-                if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                    return false;
-                }
-                DateVO other = (DateVO) obj;
-                return Objects.equals(this.d, other.d);
-            }
-
-            @Override
-            public int hashCode() {
-                int result = 0;
-                result = 31 * result + Objects.hashCode(d);
-                return result;
-            }
-
-            @Override
-            public String toString() {
-                return "DateVO[d=" + d + "]";
-            }
-        }
+        // DateVO 类已移到外部
 
         // when
         ImportResult<DateVO> result;
-        try (var in = new java.io.ByteArrayInputStream(out.toByteArray())) {
+        try (java.io.ByteArrayInputStream in = new java.io.ByteArrayInputStream(out.toByteArray())) {
             ErrorCollectingReadListener<DateVO> listener = new ErrorCollectingReadListener<>();
             ExcelKit.importExcel(in, DateVO.class, listener);
             result = listener.toResult();
@@ -200,5 +153,25 @@ class ExcelKitTest {
         // then：onException 收集到错误，不抛到调用方
         // easyexcel 对部分转换失败容错较好；如未触发异常，至少保证流程不抛
         Assertions.assertThat(result).isNotNull();
+    }
+
+    public static class DateVO {
+        @com.alibaba.excel.annotation.ExcelProperty("日期")
+        private java.util.Date d;
+
+        public DateVO() {
+        }
+
+        public DateVO(java.util.Date d) {
+            this.d = d;
+        }
+
+        public java.util.Date getD() {
+            return d;
+        }
+
+        public void setD(java.util.Date d) {
+            this.d = d;
+        }
     }
 }
