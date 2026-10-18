@@ -247,6 +247,21 @@
   ],
   "platformContentMappings": [
     {
+      "path": "ddd4j-samples/ddd4j-sample-quarkus-satoken/src/main/java/io/ddd4j/sample/quarkus/satoken/rbac/RbacService.java",
+      "replacements": [
+        {
+          "from": "import javax.enterprise.context.ApplicationScoped;",
+          "to": "import jakarta.enterprise.context.ApplicationScoped;"
+        },
+        {
+          "from": "import javax.inject.Inject;",
+          "to": "import jakarta.inject.Inject;"
+        }
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-satoken/src/test/java/io/ddd4j/sample/quarkus/satoken/RbacResourceTest.java",
+      "reason": "RBAC 登录、用户角色权限 CRUD 和空集合行为三线一致；Sa-Token 样例测试覆盖公开端点，仅 CDI 注解包名按 Quarkus 平台适配"
+    },
+    {
       "path": "ddd4j-samples/ddd4j-sample-quarkus-satoken/src/main/java/io/ddd4j/sample/quarkus/satoken/rbac/RbacConfig.java",
       "replacements": [
         {
