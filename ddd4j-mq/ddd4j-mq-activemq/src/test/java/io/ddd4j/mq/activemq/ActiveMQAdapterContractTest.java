@@ -40,6 +40,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.*;
 
+/**
+ * ActiveMQ 因果头、消息读取与连接生命周期三线契约。
+ */
 class ActiveMQAdapterContractTest {
 
     @Test
@@ -138,7 +141,7 @@ class ActiveMQAdapterContractTest {
         ActiveMQConnectionFactory factory = mock(ActiveMQConnectionFactory.class);
         Connection connection = mock(Connection.class);
         Session session = mock(Session.class);
-        javax.jms.Topic destination = mock(javax.jms.Topic.class);
+        Topic destination = mock(Topic.class);
         MessageConsumer consumer = mock(MessageConsumer.class);
         when(factory.createConnection()).thenReturn(connection);
         when(connection.createSession(false, Session.CLIENT_ACKNOWLEDGE)).thenReturn(session);
