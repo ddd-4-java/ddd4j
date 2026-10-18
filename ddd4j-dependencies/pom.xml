@@ -386,7 +386,6 @@
         <mapstruct.version>1.6.3</mapstruct.version>
         <mariadb.version>3.5.9</mariadb.version>
         <markdown.version>1.11.1</markdown.version>
-        <maven-shared-utils.version>3.5.0</maven-shared-utils.version>
         <maven.version>3.6.3</maven.version>
         <mchange-commons-java.version>0.6.0</mchange-commons-java.version>
         <mercadopago-sdk-java.version>2.9.2</mercadopago-sdk-java.version>
@@ -546,8 +545,8 @@
         <sevenzipjbinding.version>16.02-2.01</sevenzipjbinding.version>
         <sfntly.version>1.0.0</sfntly.version>
         <shardingsphere-jdbc.version>5.5.3</shardingsphere-jdbc.version>
-        <shardingsphere-parser.version>${shardingsphere-jdbc.version}</shardingsphere-parser.version>
         <shardingsphere-parser-sql.version>5.5.2</shardingsphere-parser-sql.version>
+        <shardingsphere-parser.version>${shardingsphere-jdbc.version}</shardingsphere-parser.version>
         <shedlock.version>4.48.0</shedlock.version>
         <shiro-extension.version>1.0.x.20260630-SNAPSHOT</shiro-extension.version>
         <shiro-freemarker.version>1.0.3</shiro-freemarker.version>
@@ -603,21 +602,21 @@
         <sshd-sftp.version>${sshd.version}</sshd-sftp.version>
         <sshd.version>3.0.0-M6</sshd.version>
         <svnkit.version>1.10.11</svnkit.version>
+        <!-- swagger 1.x 独立属性：springfox 2.x 生态需要 1.6.x，勿与 ${swagger.version}(2.0.0-rc2) 混用 -->
+        <swagger1.version>1.6.14</swagger1.version>
         <swagger2markup.version>1.3.3</swagger2markup.version>
         <swagger3.version>2.2.52</swagger3.version>
         <swagger-bootstrap-ui.version>1.9.6</swagger-bootstrap-ui.version>
         <swagger-butler.version>2.0.0</swagger-butler.version>
         <swagger-codegen.version>2.4.19</swagger-codegen.version>
-        <!-- swagger 1.x 独立属性：springfox 2.x 生态需要 1.6.x，勿与 ${swagger.version}(2.0.0-rc2) 混用 -->
-        <swagger1.version>1.6.14</swagger1.version>
         <swagger.version>2.0.0-rc2</swagger.version>
         <tablesaw.version>0.43.1</tablesaw.version>
         <taos-jdbc.version>3.8.4</taos-jdbc.version>
         <tencentcloud-api-faceid.version>3.1.1472</tencentcloud-api-faceid.version>
+        <tencentcloud-sdk-extension.version>${revision}</tencentcloud-sdk-extension.version>
         <tencentcloud-sdk-java-sms.version>3.1.1451</tencentcloud-sdk-java-sms.version>
         <tencentcloud-sdk-java.version>3.1.1492</tencentcloud-sdk-java.version>
         <tencentcloud-tls-sig-api-v2.version>2.0</tencentcloud-tls-sig-api-v2.version>
-        <tencentcloud-sdk-extension.version>${revision}</tencentcloud-sdk-extension.version>
         <!-- JDK8 线 Testcontainers 官方线 1.21.4（1.x 末代支持 Java 8；sample-order-jdbc 等 JDK8 容器轨引用） -->
         <testcontainers-jdk8.version>1.21.4</testcontainers-jdk8.version>
         <testcontainers-redis.version>2.0.2</testcontainers-redis.version>
@@ -712,6 +711,7 @@
         <maven-quarkus-plugin.version>3.63.3</maven-quarkus-plugin.version>
         <maven-rpm-plugin.version>2.2.0</maven-rpm-plugin.version>
         <maven-shade-plugin.version>3.6.1</maven-shade-plugin.version>
+        <maven-shared-utils.version>3.5.0</maven-shared-utils.version>
         <maven-sonar-plugin.version>4.0.0.4121</maven-sonar-plugin.version>
         <maven-war-plugin.version>3.4.0</maven-war-plugin.version>
     </properties>
