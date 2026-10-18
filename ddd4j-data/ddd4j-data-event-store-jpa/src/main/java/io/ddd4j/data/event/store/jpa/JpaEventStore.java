@@ -14,6 +14,9 @@
  */
 package io.ddd4j.data.event.store.jpa;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
@@ -374,7 +377,8 @@ public class JpaEventStore implements EventStore {
 
         private final String value;
 
-        StringAggregateRootId(String value) {
+        @JsonCreator
+        private StringAggregateRootId(@JsonProperty("value") String value) {
             this.value = value;
         }
 
@@ -384,7 +388,13 @@ public class JpaEventStore implements EventStore {
         }
 
         @Override
+        @JsonValue
         public String asString() {
+            return value;
+        }
+
+        @JsonProperty("value")
+        public String value() {
             return value;
         }
 
@@ -407,7 +417,9 @@ public class JpaEventStore implements EventStore {
 
         @Override
         public int hashCode() {
-            return Objects.hashCode(value);
+            int result = 0;
+            result = 31 * result + Objects.hashCode(value);
+            return result;
         }
 
         @Override
