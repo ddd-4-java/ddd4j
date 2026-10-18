@@ -13,13 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.extension.qrcode;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.Future;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Callable;
-
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.MultiFormatReader;
@@ -45,6 +38,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.*;
@@ -158,7 +152,7 @@ public class DefaultQrCodeService implements QrCodeService, AutoCloseable {
             }
             BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(new BufferedImageLuminanceSource(image)));
             Result result = new MultiFormatReader().decode(bitmap);
-            return List.of(new QrCodeDecodeResult(result.getText()));
+            return Collections.singletonList(new QrCodeDecodeResult(result.getText()));
         } catch (Exception exception) {
             throw new IllegalStateException("QR code decoding failed", exception);
         }
