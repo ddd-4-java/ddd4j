@@ -90,6 +90,12 @@ public class GoodsQuery extends Query<Goods> {
      */
     private BigDecimal priceMax;
 
+    /**
+     * 解析允许的排序字段及方向，忽略未知字段。
+     *
+     * @param orderBys 逗号分隔的字段与方向
+     * @return 当前查询对象
+     */
     public GoodsQuery setOrderBys(String orderBys) {
         if (StrKit.isBlank(orderBys)) {
             return this;
