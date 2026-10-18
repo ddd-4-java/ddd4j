@@ -121,54 +121,69 @@ public final class MQOutboxRecord {
                 availableAt, null, null, 0, null, null);
     }
 
+    /** @return 稳定消息标识 */
     public String messageId() {
         return messageId;
     }
 
+    /** @return Broker 目的地 */
     public String destination() {
         return destination;
     }
 
+    /** @return 已序列化事件负载 */
     public String payload() {
         return payload;
     }
 
+    /** @return 不可修改的消息头快照 */
     public Map<String, String> headers() {
         return headers;
     }
 
+    /** @return 当前投递状态 */
     public MQOutboxStatus status() {
         return status;
     }
 
+    /** @return 下一次可投递时间 */
     public Instant availableAt() {
         return availableAt;
     }
 
+    /** @return 当前租约持有者 */
     public String leaseOwner() {
         return leaseOwner;
     }
 
+    /** @return 当前租约截止时间 */
     public Instant leaseUntil() {
         return leaseUntil;
     }
 
+    /** @return 已尝试投递次数 */
     public int attempts() {
         return attempts;
     }
 
+    /** @return 最近一次投递错误 */
     public String lastError() {
         return lastError;
     }
 
+    /** @return 确认发布的时间 */
     public Instant publishedAt() {
         return publishedAt;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof MQOutboxRecord)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof MQOutboxRecord)) {
+            return false;
+        }
         MQOutboxRecord that = (MQOutboxRecord) o;
         return attempts == that.attempts
                 && messageId.equals(that.messageId)
@@ -208,46 +223,57 @@ public final class MQOutboxRecord {
                 + ", lastError=" + lastError + ", publishedAt=" + publishedAt + ']';
     }
 
+    /** @return 稳定消息标识 */
     public String getMessageId() {
         return messageId;
     }
 
+    /** @return Broker 目的地 */
     public String getDestination() {
         return destination;
     }
 
+    /** @return 已序列化事件负载 */
     public String getPayload() {
         return payload;
     }
 
+    /** @return 不可修改的消息头快照 */
     public Map<String, String> getHeaders() {
         return headers;
     }
 
+    /** @return 当前投递状态 */
     public MQOutboxStatus getStatus() {
         return status;
     }
 
+    /** @return 下一次可投递时间 */
     public Instant getAvailableAt() {
         return availableAt;
     }
 
+    /** @return 当前租约持有者 */
     public String getLeaseOwner() {
         return leaseOwner;
     }
 
+    /** @return 当前租约截止时间 */
     public Instant getLeaseUntil() {
         return leaseUntil;
     }
 
+    /** @return 已尝试投递次数 */
     public int getAttempts() {
         return attempts;
     }
 
+    /** @return 最近一次投递错误 */
     public String getLastError() {
         return lastError;
     }
 
+    /** @return 确认发布的时间 */
     public Instant getPublishedAt() {
         return publishedAt;
     }
