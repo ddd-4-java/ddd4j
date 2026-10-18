@@ -14,8 +14,10 @@
  */
 package io.ddd4j.mq.tdmq;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
@@ -65,7 +67,7 @@ public class TdmqMQClient implements MQClient {
     /**
      * 构造 1：仅 properties（业务可在 initProducer/initConsumer 之前注入 BrokerPublisher/BrokerSubscriber）。
      *
-     * @param properties TDMQ 配置
+     * @param properties TDMQ 连接配置
      */
     public TdmqMQClient(TdmqProperties properties) {
         this.properties = Objects.requireNonNull(properties, "properties");
@@ -74,9 +76,9 @@ public class TdmqMQClient implements MQClient {
     /**
      * 构造 2：注入外部 BrokerPublisher / BrokerSubscriber（runtime 集成时由业务 SDK 包装传入）。
      *
-     * @param publisher   业务侧发布器
-     * @param subscriber  业务侧订阅器
-     * @param properties  TDMQ 配置
+     * @param publisher 业务侧发布器
+     * @param subscriber 业务侧订阅器
+     * @param properties TDMQ 连接配置
      */
     public TdmqMQClient(BrokerPublisher publisher, BrokerSubscriber subscriber, TdmqProperties properties) {
         this.brokerPublisher = publisher;
@@ -254,6 +256,118 @@ public class TdmqMQClient implements MQClient {
     // ========================= 业务侧适配接口 =========================
 
     /**
+     * 默认内存发布器（本地联调/测试）：把消息路由到同进程内订阅者。
+     */
+    public final static class DeliveredMessage {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String messageId;
+
+        private final String correlationId;
+
+        private final byte[] payload;
+
+        private final Map<String, String> headers;
+
+        private final java.util.function.Consumer<Boolean> ackCallback;
+
+        /**
+         * 创建 TDMQ 已投递消息快照。
+         *
+         * @param messageId 消息标识
+         * @param correlationId 关联标识
+         * @param payload 消息内容
+         * @param ackCallback 确认结果回调
+         */
+        public DeliveredMessage(String messageId, String correlationId, byte[] payload,
+                                java.util.function.Consumer<Boolean> ackCallback) {
+            this(messageId, correlationId, payload, Collections.emptyMap(), ackCallback);
+        }
+
+        /**
+         * 创建携带原生消息头的 TDMQ 投递快照。
+         *
+         * @param messageId 消息标识
+         * @param correlationId 关联标识
+         * @param payload 消息内容
+         * @param headers broker 消息头
+         * @param ackCallback 确认结果回调
+         */
+        @JsonCreator()
+        public DeliveredMessage(@JsonProperty("messageId") String messageId,
+                                @JsonProperty("correlationId") String correlationId,
+                                @JsonProperty("payload") byte[] payload,
+                                @JsonProperty("headers") Map<String, String> headers,
+                                @JsonProperty("ackCallback") java.util.function.Consumer<Boolean> ackCallback) {
+            this.messageId = messageId;
+            this.correlationId = correlationId;
+            this.payload = payload;
+            this.headers = Collections.unmodifiableMap(new LinkedHashMap<>(
+                    Objects.nonNull(headers) ? headers : Collections.emptyMap()));
+            this.ackCallback = ackCallback;
+        }
+
+        /** @return 消息标识 */
+        @JsonProperty("messageId")
+        public String messageId() {
+            return messageId;
+        }
+
+        /** @return 关联标识 */
+        @JsonProperty("correlationId")
+        public String correlationId() {
+            return correlationId;
+        }
+
+        /** @return 消息内容 */
+        @JsonProperty("payload")
+        public byte[] payload() {
+            return payload;
+        }
+
+        /** @return 不可变 broker 消息头 */
+        @JsonProperty("headers")
+        public Map<String, String> headers() {
+            return headers;
+        }
+
+        /** @return 确认结果回调 */
+        @JsonProperty("ackCallback")
+        public java.util.function.Consumer<Boolean> ackCallback() {
+            return ackCallback;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            DeliveredMessage other = (DeliveredMessage) obj;
+            return Objects.equals(this.messageId, other.messageId) && Objects.equals(this.correlationId, other.correlationId) && Objects.equals(this.payload, other.payload) && Objects.equals(this.headers, other.headers) && Objects.equals(this.ackCallback, other.ackCallback);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(messageId);
+            result = 31 * result + Objects.hashCode(correlationId);
+            result = 31 * result + Objects.hashCode(payload);
+            result = 31 * result + Objects.hashCode(headers);
+            result = 31 * result + Objects.hashCode(ackCallback);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "DeliveredMessage[messageId=" + messageId + ", correlationId=" + correlationId + ", payload=" + payload + ", headers=" + headers + ", ackCallback=" + ackCallback + "]";
+        }
+    }
+
+    /**
      * TDMQ 业务侧发布器，由 {@link TdmqMQClient} 通过 {@link #setBrokerPublisher} 注入。
      */
     @FunctionalInterface
@@ -333,6 +447,14 @@ public class TdmqMQClient implements MQClient {
     @FunctionalInterface
     public interface MessageHandler {
 
+        /**
+         * 处理一条已投递消息。
+         *
+         * @param messageId 消息标识
+         * @param correlationId 关联标识
+         * @param payload 消息内容
+         * @param ackCallback 确认结果回调
+         */
         void onMessage(String messageId, String correlationId, byte[] payload,
                        java.util.function.Consumer<Boolean> ackCallback);
     }
@@ -364,113 +486,6 @@ public class TdmqMQClient implements MQClient {
 
         @Override
         void close();
-    }
-
-    /**
-     * 内存总线投递的消息载体（本地联调/测试）。
-     */
-    public static final class DeliveredMessage {
-        private final String messageId;
-        private final String correlationId;
-        private final byte[] payload;
-        private final Map<String, String> headers;
-        private final java.util.function.Consumer<Boolean> ackCallback;
-
-        /**
-         * 构造投递消息。
-         *
-         * @param messageId    消息 ID
-         * @param correlationId 关联 ID
-         * @param payload      序列化字节流
-         * @param ackCallback  确认回调（true=消费成功）
-         */
-        public DeliveredMessage(String messageId, String correlationId, byte[] payload,
-                                java.util.function.Consumer<Boolean> ackCallback) {
-            this(messageId, correlationId, payload, Collections.emptyMap(), ackCallback);
-        }
-
-        /**
-         * 构造携带原生消息头的投递消息。
-         *
-         * @param messageId 消息 ID
-         * @param correlationId 关联 ID
-         * @param payload 序列化字节流
-         * @param headers broker 消息头
-         * @param ackCallback 确认回调
-         */
-        @JsonCreator
-        public DeliveredMessage(@JsonProperty("messageId") String messageId,
-                                @JsonProperty("correlationId") String correlationId,
-                                @JsonProperty("payload") byte[] payload,
-                                @JsonProperty("headers") Map<String, String> headers,
-                                @JsonProperty("ackCallback") java.util.function.Consumer<Boolean> ackCallback) {
-            this.messageId = messageId;
-            this.correlationId = correlationId;
-            this.payload = payload;
-            this.headers = Collections.unmodifiableMap(new LinkedHashMap<>(
-                    Objects.nonNull(headers) ? headers : Collections.emptyMap()));
-            this.ackCallback = ackCallback;
-        }
-
-        @JsonProperty("messageId")
-        public String messageId() {
-            return messageId;
-        }
-
-        @JsonProperty("correlationId")
-        public String correlationId() {
-            return correlationId;
-        }
-
-        @JsonProperty("payload")
-        public byte[] payload() {
-            return payload;
-        }
-
-        /**
-         * @return 不可变 broker 消息头
-         */
-        @JsonProperty("headers")
-        public Map<String, String> headers() {
-            return headers;
-        }
-
-        @JsonProperty("ackCallback")
-        public java.util.function.Consumer<Boolean> ackCallback() {
-            return ackCallback;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (!(o instanceof DeliveredMessage)) {
-                return false;
-            }
-            DeliveredMessage that = (DeliveredMessage) o;
-            return Objects.equals(messageId, that.messageId)
-                    && Objects.equals(correlationId, that.correlationId)
-                    && Objects.equals(payload, that.payload)
-                    && Objects.equals(headers, that.headers)
-                    && Objects.equals(ackCallback, that.ackCallback);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = Objects.hashCode(messageId);
-            result = 31 * result + Objects.hashCode(correlationId);
-            result = 31 * result + Objects.hashCode(payload);
-            result = 31 * result + Objects.hashCode(headers);
-            result = 31 * result + Objects.hashCode(ackCallback);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "DeliveredMessage[messageId=" + messageId + ", correlationId=" + correlationId
-                    + ", payload=" + payload + ", headers=" + headers + ", ackCallback=" + ackCallback + "]";
-        }
     }
 
     /**
