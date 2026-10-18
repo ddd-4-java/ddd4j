@@ -8,12 +8,20 @@ from license_policy import (
     InventoryEntry,
     LicenseSelection,
     load_selections,
+    normalize_license,
     parse_inventory,
     verify_policy,
 )
 
 
 class LicensePolicyTest(unittest.TestCase):
+
+    def test_distinguishes_epl_1_from_epl_2_in_upstream_declarations(self):
+        self.assertEqual("EPL-1.0", normalize_license("Eclipse Public License 1.0"))
+        self.assertEqual("EPL-1.0", normalize_license("Eclipse Public License, Version 1.0"))
+        self.assertEqual("EPL-1.0", normalize_license("Eclipse Public License - v 1.0"))
+        self.assertEqual("EPL-1.0", normalize_license("Eclipse Public License v1.0"))
+        self.assertEqual("EPL-2.0", normalize_license("Eclipse Public License 2.0"))
 
     def write(self, name, content):
         temporary = tempfile.TemporaryDirectory()
