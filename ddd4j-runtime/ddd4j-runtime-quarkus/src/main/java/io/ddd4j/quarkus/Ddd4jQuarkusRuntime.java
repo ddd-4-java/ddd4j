@@ -24,7 +24,7 @@ import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.core.health.RuntimeReadinessRegistry;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Collections;
 import java.util.Objects;
 
 /**
@@ -45,7 +45,7 @@ public final class Ddd4jQuarkusRuntime implements AutoCloseable {
      */
     public Ddd4jQuarkusRuntime(DomainEventPublisher publisher, SubjectProvider subjectProvider,
                                I18nProvider i18nProvider, CommandBus commandBus) {
-        this(publisher, subjectProvider, i18nProvider, commandBus, List.of());
+        this(publisher, subjectProvider, i18nProvider, commandBus, Collections.emptyList());
     }
 
     /**
