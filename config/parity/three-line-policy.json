@@ -1282,6 +1282,17 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-data/ddd4j-data-jpa/src/main/java/io/ddd4j/data/jpa/crypto/JpaEncryptFieldListener.java",
+      "sourceSha256": [
+        "dd24196b454e5133bfed8ac453370d19ab25c0270ae60b0824aff9aa6ff1e5c5",
+        "42ef70c5758b140afbc8a01c008a042a72d275b178a609e4aca2d2cf6091dc7c",
+        "b6725eb44d343b2168fd116f763bdd81b3b5a9967a0defdd707d7556aa6ed250"
+      ],
+      "evidence": "ddd4j-data/ddd4j-data-jpa/src/test/java/io/ddd4j/data/jpa/crypto/JpaEncryptFieldListenerContractTest.java",
+      "testSha256": "637cb45b2bbfc650e907bcc4b4715e167347f4b677b4c998e063e56574b9c48b",
+      "reason": "JDK 8 使用显式 instanceof 转型和 Collectors.toList，JDK 17/21 使用模式匹配和 Stream.toList；三线同一监听器契约测试验证继承字段加解密、普通字段不处理、空值及未配置处理器回退"
+    },
+    {
       "path": "ddd4j-data/ddd4j-data-jpa/src/main/java/io/ddd4j/data/jpa/JpaAggregateRepository.java",
       "sourceSha256": [
         "ad92f46c2ab78b37a90ce0089b6951d6a4719538f0c5d2f80ea2ae6538814011",
