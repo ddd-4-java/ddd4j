@@ -21,8 +21,6 @@ import java.util.Map;
 
 /**
  * 本地静态资源映射配置属性。
- *
- * @since 2.0.x
  */
 @Data
 public class LocalResourceProperteis {
