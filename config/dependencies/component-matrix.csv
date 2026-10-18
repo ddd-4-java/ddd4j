@@ -221,6 +221,8 @@ com.konghq:unirest-modules-jackson,,unsupported,4.10.0,bytecode-pass,4.10.0,byte
 com.larksuite.oapi:oapi-sdk,2.8.4,bytecode-pass,2.8.4,bytecode-pass,2.8.4,bytecode-pass,
 com.lmax:disruptor,3.4.4,bytecode-pass,4.0.0,bytecode-pass,4.0.0,bytecode-pass,
 com.maxmind.geoip2:geoip2,2.17.0,bytecode-pass,5.1.0,bytecode-pass,5.1.0,bytecode-pass,
+com.mchange:c3p0,0.14.0,bytecode-pass,0.14.0,bytecode-pass,,absent,JDK 8/17 transitive security baseline
+com.mchange:mchange-commons-java,0.6.0,bytecode-pass,0.6.0,bytecode-pass,,absent,JDK 8/17 transitive security baseline
 com.mercadopago:sdk-java,2.9.2,bytecode-pass,2.9.2,bytecode-pass,2.9.2,bytecode-pass,
 com.microsoft.sqlserver:mssql-jdbc,6.2.1.jre7,bytecode-pass,12.10.2.jre11,bytecode-pass,12.10.2.jre11,bytecode-pass,
 com.mysql:mysql-connector-j,9.7.0,bytecode-pass,9.7.0,bytecode-pass,9.7.0,bytecode-pass,

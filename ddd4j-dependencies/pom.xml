@@ -75,6 +75,7 @@
         <brave.version>6.3.0</brave.version>
         <buji-pac4j.version>4.1.1</buji-pac4j.version>
         <byte-buddy.version>1.18.10</byte-buddy.version>
+        <c3p0.version>0.14.0</c3p0.version>
         <cache2k.version>2.6.1.Final</cache2k.version>
         <caffeine.version>2.9.3</caffeine.version>
         <camel.version>4.20.0</camel.version>
@@ -387,6 +388,7 @@
         <markdown.version>1.11.1</markdown.version>
         <maven-shared-utils.version>3.5.0</maven-shared-utils.version>
         <maven.version>3.6.3</maven.version>
+        <mchange-commons-java.version>0.6.0</mchange-commons-java.version>
         <mercadopago-sdk-java.version>2.9.2</mercadopago-sdk-java.version>
         <metadata-extractor.version>2.20.0</metadata-extractor.version>
         <metrics-druid.version>${revision}</metrics-druid.version>
@@ -716,6 +718,16 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.mchange</groupId>
+                <artifactId>c3p0</artifactId>
+                <version>${c3p0.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mchange</groupId>
+                <artifactId>mchange-commons-java</artifactId>
+                <version>${mchange-commons-java.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>

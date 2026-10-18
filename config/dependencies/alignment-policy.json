@@ -1737,6 +1737,8 @@
     "com.larksuite.oapi:oapi-sdk": 17,
     "com.lmax:disruptor": 8,
     "com.maxmind.geoip2:geoip2": 8,
+    "com.mchange:c3p0": 8,
+    "com.mchange:mchange-commons-java": 8,
     "com.mercadopago:sdk-java": 8,
     "com.microsoft.sqlserver:mssql-jdbc": 17,
     "com.mysql:mysql-connector-j": 8,
