@@ -47,6 +47,12 @@ public class SampleCommandHandler implements CommandExecutor<SampleCommand> {
         return java.util.Collections.singleton(SampleCommand.class);
     }
 
+    /**
+     * 执行样例命令并返回路由标记。
+     *
+     * @param command 样例命令
+     * @return 执行结果
+     */
     @Override
     public Result execute(SampleCommand command) {
         return Result.ok(HANDLED);
