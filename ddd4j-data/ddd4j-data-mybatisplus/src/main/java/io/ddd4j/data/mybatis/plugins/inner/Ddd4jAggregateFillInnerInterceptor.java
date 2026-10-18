@@ -49,24 +49,37 @@ import java.util.Objects;
 })
 public class Ddd4jAggregateFillInnerInterceptor implements Interceptor {
 
+    /**
+     * 执行原始查询后，填充结果中的聚合根。
+     *
+     * @param invocation MyBatis 查询调用
+     * @return 原始查询结果
+     * @throws Throwable 原始查询抛出的异常
+     */
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
         Object result = invocation.proceed();
-        if (result instanceof List<?> results) {
-            afterQuery(invocation.getArgs()[1], results);
+        if (result instanceof List<?>) {
+            afterQuery(invocation.getArgs()[1], (List<?>) result);
         }
         return result;
     }
 
+    /**
+     * 将拦截器包装到 MyBatis 目标对象。
+     *
+     * @param target 目标对象
+     * @return 包装后的对象
+     */
     @Override
     public Object plugin(Object target) {
         return Plugin.wrap(target, this);
     }
 
     /**
-     * 查询完成后处理聚合根字段。
+     * 从查询参数中查找领域查询，并填充查询结果中的聚合根。
      *
-     * @param parameter 查询参数
+     * @param parameter MyBatis 查询参数，可直接为 Query 或包含 Query 的 Map
      * @param results 查询结果
      */
     public void afterQuery(Object parameter, List<?> results) {
