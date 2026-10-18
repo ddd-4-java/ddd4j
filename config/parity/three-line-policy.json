@@ -1343,6 +1343,17 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-samples/ddd4j-sample-quarkus-satoken/src/main/java/io/ddd4j/sample/quarkus/satoken/goods/domain/GoodsQuery.java",
+      "sourceSha256": [
+        "e6bf6114741d555d0463e3d58433fb81a2d7cdc25449a4ee6a62fba09f44149d",
+        "b19b0d7ca83979691416cae5621cedf92301049f0e5e0f12cb53d0f2f3b829fe",
+        "b19b0d7ca83979691416cae5621cedf92301049f0e5e0f12cb53d0f2f3b829fe"
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-satoken/src/test/java/io/ddd4j/sample/quarkus/satoken/goods/domain/GoodsQueryContractTest.java",
+      "testSha256": "c548b15ea60028b4fa7d9aa351847c013e2f40556a0f8eb5e19130a146af6d3f",
+      "reason": "三线商品排序白名单、方向和非法字段忽略行为相同；JDK 8 保留传统 switch，JDK 17/21 保留箭头 switch。逐线源码与 2 项共同排序契约测试由 SHA-256 锁定。"
+    },
+    {
       "path": "ddd4j-web/ddd4j-web-testkit/src/main/java/io/ddd4j/web/testkit/AbstractWebContractTest.java",
       "sourceSha256": [
         "5e220e393615c48ee3f5a39a400cf99a7d95b227c27873a2e7c0ee3f27a12028",
