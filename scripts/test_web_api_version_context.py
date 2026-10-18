@@ -1,5 +1,6 @@
 """API 版本值对象与旧/新请求上下文构造器的兼容行为。"""
 
+import os
 from pathlib import Path
 import subprocess
 import tempfile
@@ -13,6 +14,9 @@ JACKSON = Path.home() / ".m2/repository/com/fasterxml/jackson/core/jackson-annot
 
 
 def current_jdk():
+    configured = os.environ.get("JAVA_HOME")
+    if configured:
+        return Path(configured)
     pom = ET.parse(ROOT / "pom.xml").getroot()
     namespace = pom.tag.partition("}")[0] + "}" if "}" in pom.tag else ""
     version = pom.findtext("./" + namespace + "properties/" + namespace + "java.version")
