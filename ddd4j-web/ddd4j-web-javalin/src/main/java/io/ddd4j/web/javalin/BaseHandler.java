@@ -30,10 +30,11 @@ import lombok.extern.slf4j.Slf4j;
 public abstract class BaseHandler {
 
     /**
-     * 获取值。
-     * @param code 编码值。
-     * @param args 命令行参数。
-     * @return 结果字符串。
+     * 解析本地化消息。
+     *
+     * @param code 消息键
+     * @param args 消息参数
+     * @return 本地化消息
      */
     protected String getMessage(String code, Object... args) {
         return Contexts.get(SpiKeys.I18N_PROVIDER, I18nProvider.class)
@@ -42,9 +43,10 @@ public abstract class BaseHandler {
     }
 
     /**
-     * logException() 方法。
-     * @param context JUnit 扩展上下文。
-     * @param exception exception 参数。
+     * 记录请求异常并发布失败事件。
+     *
+     * @param context Javalin 请求上下文
+     * @param exception 捕获的异常
      */
     protected void logException(Context context, Exception exception) {
         log.error("Exception in request [{} {}]", context.method(), context.path(), exception);
@@ -54,18 +56,20 @@ public abstract class BaseHandler {
     }
 
     /**
-     * 获取值。
-     * @param context JUnit 扩展上下文。
-     * @return 结果字符串。
+     * 获取请求客户端地址。
+     *
+     * @param context Javalin 请求上下文
+     * @return 客户端地址
      */
     protected String getClientIp(Context context) {
         return WebKit.getClientIp(context);
     }
 
     /**
-     * 判断布尔状态。
-     * @param context JUnit 扩展上下文。
-     * @return 判断结果。
+     * 判断请求是否为 AJAX 请求。
+     *
+     * @param context Javalin 请求上下文
+     * @return 是否为 AJAX 请求
      */
     protected boolean isAjax(Context context) {
         return WebKit.isAjax(context);

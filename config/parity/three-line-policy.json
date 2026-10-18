@@ -1343,6 +1343,21 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-web/ddd4j-web-javalin/src/main/java/io/ddd4j/web/javalin/Ddd4jJavalinWeb.java",
+      "sourceSha256": [
+        "08e07a970b98aa64a0a2bbee49ca04fff3cfafc27f7cdeb76313ac126e01f91a",
+        "68098d21aee2fda16e467ae77a3438281d9183659213aba69e4531a49232a40f",
+        "68098d21aee2fda16e467ae77a3438281d9183659213aba69e4531a49232a40f"
+      ],
+      "evidence": "ddd4j-web/ddd4j-web-javalin/src/test/java/io/ddd4j/web/javalin/Ddd4jJavalinWebContractTest.java",
+      "testSha256ByJdk": {
+        "8": "4598761f0dae12ca4b1c4f23fc535813f5e6170f3662dbc985e5cc478a4f930a",
+        "17": "d64532b3ac76dde62cb74e81e68258fa4a3f87dd5a71392005c9f1daed90d3a3",
+        "21": "780c77ef44d9774fc12577ee312d104aa8abd14072e6c7bc474b70eab46c8d77"
+      },
+      "reason": "三线 Javalin 4 与新版本的配置、请求方法和状态码 API 不同；成功响应、错误转换、认证、请求上下文、幂等与 readiness 的七项共同 HTTP 契约分别在 JDK 8/17/21 目标测试通过。逐线源码及契约测试用 SHA-256 锁定；OTel 作用域另有各线一项目标测试通过。"
+    },
+    {
       "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/goods/domain/GoodsQuery.java",
       "sourceSha256": [
         "ca3215452f0a32dd1dfbbffb9c3cbbeef042feaf5af27afdcb05c70563b5fa23",
@@ -1404,9 +1419,9 @@
       ],
       "evidence": "ddd4j-web/ddd4j-web-javalin/src/test/java/io/ddd4j/web/javalin/Ddd4jJavalinWebContractTest.java",
       "testSha256ByJdk": {
-        "8": "649223d4cb91a2a1a694c80d5545d8bbde6b03ef85a1dd791e52e41e04ca98aa",
-        "17": "b1ad89317e7e3d28b66b4288a464e53b6453f71af7738dead25f516edc76e1c0",
-        "21": "2ec4df86f37899c5e302c3d02bc6df6f425ab38b989fc90c0fa32a6af749fa7d"
+        "8": "4598761f0dae12ca4b1c4f23fc535813f5e6170f3662dbc985e5cc478a4f930a",
+        "17": "d64532b3ac76dde62cb74e81e68258fa4a3f87dd5a71392005c9f1daed90d3a3",
+        "21": "780c77ef44d9774fc12577ee312d104aa8abd14072e6c7bc474b70eab46c8d77"
       },
       "reason": "三线 Web testkit 的成功响应、认证、上下文与幂等性契约相同；JDK 8 使用 Collections，JDK 17/21 使用 Map.of，JDK 21 使用 Jackson 3。逐线源码及继承基类的 Javalin Web 契约测试由 SHA-256 锁定。"
     },

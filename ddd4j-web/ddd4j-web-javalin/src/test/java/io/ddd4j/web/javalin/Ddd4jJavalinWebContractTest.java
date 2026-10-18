@@ -20,6 +20,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 
 import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.api.R;
+import io.ddd4j.core.health.ReadinessResult;
+import io.ddd4j.core.health.RuntimeReadinessRegistry;
+import io.ddd4j.web.core.health.ReadinessEndpoint;
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.constant.SpiKeys;
@@ -44,16 +47,19 @@ import io.javalin.Javalin;
 import io.javalin.json.JavalinJackson3;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -66,6 +72,7 @@ class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
 
     private Javalin app;
     private WebContractClient contractClient;
+    private RuntimeReadinessRegistry readinessRegistry;
 
     /**
      * 基于 JDK HTTP 客户端的契约客户端，通过随机端口访问本地测试实例。
@@ -156,9 +163,10 @@ class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
 
         WebRequestLifecycle requestLifecycle = new WebRequestLifecycle(new BearerSubjectAuthenticator(),
                 WebAccessPolicy.requiredExcept(path -> !WebContractPaths.PROTECTED.equals(path)));
+        readinessRegistry = new RuntimeReadinessRegistry();
         Ddd4jJavalinWeb ddd4jWeb = new Ddd4jJavalinWeb(new WebRequestContextFactory(), requestLifecycle,
                 new DefaultWebExceptionTranslator(),
-                new WebIdempotencyLifecycle(new CacheIdempotencyGuard("javalin-contract")));
+                new WebIdempotencyLifecycle(new CacheIdempotencyGuard("javalin-contract")), readinessRegistry);
         app = Javalin.create(config -> {
             config.startup.showJavalinBanner = false;
             config.jsonMapper(new JavalinJackson3());
@@ -188,6 +196,19 @@ class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
     @Override
     protected WebContractClient client() {
         return contractClient;
+    }
+
+    @Test
+    void readinessEndpointReflectsRegistryWithoutLeakingDetails() {
+        WebContractResponse ready = client().request("GET", ReadinessEndpoint.PATH, Collections.emptyMap(), null);
+        assertThat(ready.status()).isEqualTo(200);
+        assertThat(ready.body()).contains("\"ready\":true");
+
+        readinessRegistry.register(() -> ReadinessResult.unavailable("database", "secret diagnostic"));
+        WebContractResponse unavailable = client().request("GET", ReadinessEndpoint.PATH, Collections.emptyMap(), null);
+        assertThat(unavailable.status()).isEqualTo(503);
+        assertThat(unavailable.body()).contains("\"ready\":false")
+                .doesNotContain("database", "secret diagnostic");
     }
 
     private void registerContractRoutes(io.javalin.config.RoutesConfig routes) {
