@@ -79,16 +79,16 @@ class EventPayloadSerializerTest {
 
     @Test
     void roundTripPreservesEntityIdPath() {
-        // 验证 entity-id-path 也能正确回读（修复前需要 @JsonIgnoreProperties 绕过）
-        OrderPlacedEvent original = new OrderPlacedEvent("thinkpad", 2);
+        // 使用不同于无参构造器默认值的 ID，避免回读测试由构造器默认值假通过。
+        OrderPlacedEvent original = new OrderPlacedEvent("thinkpad", 2, "order-2");
 
         OrderPlacedEvent restored = (OrderPlacedEvent) serializer.deserialize(
                 serializer.serialize(original), OrderPlacedEvent.class);
 
         // 注意：TestAggregateRootId 未注册到 EntityIdRegistry，反序列化路径走
         // StringEntityId 兜底（保留 value，type 退化为 String）—— 这是预期行为。
-        assertThat(restored.getEntityIdPath().asString()).isEqualTo("String:order-1");
-        assertThat(restored.getEntityIdPath().last().asString()).isEqualTo("order-1");
+        assertThat(restored.getEntityIdPath().asString()).isEqualTo("String:order-2");
+        assertThat(restored.getEntityIdPath().last().asString()).isEqualTo("order-2");
     }
 
     @Test
@@ -252,6 +252,12 @@ class EventPayloadSerializerTest {
 
         OrderPlacedEvent(String productName, int quantity) {
             this();
+            this.productName = productName;
+            this.quantity = quantity;
+        }
+
+        OrderPlacedEvent(String productName, int quantity, String aggregateId) {
+            super(new EntityIdPath(new TestAggregateRootId(aggregateId)));
             this.productName = productName;
             this.quantity = quantity;
         }
