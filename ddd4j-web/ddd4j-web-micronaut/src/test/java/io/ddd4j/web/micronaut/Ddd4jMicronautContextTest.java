@@ -86,4 +86,19 @@ class Ddd4jMicronautContextTest {
         Ddd4jMicronautContext.clear();
         assertFalse(Ddd4jMicronautContext.current().isPresent());
     }
+
+    @Test
+    void contextIdentityIncludesRequestAndSubject() {
+        Subject subject = mock(Subject.class);
+        Ddd4jMicronautContext first = new Ddd4jMicronautContext(requestContext(), Optional.of(subject));
+        Ddd4jMicronautContext equivalent = new Ddd4jMicronautContext(requestContext(), Optional.of(subject));
+        Ddd4jMicronautContext other = new Ddd4jMicronautContext(requestContext(), Optional.of(mock(Subject.class)));
+
+        assertEquals(first, equivalent);
+        assertEquals(first.hashCode(), equivalent.hashCode());
+        assertFalse(first.equals(other));
+        assertFalse(first.equals("request"));
+        assertEquals(Optional.of(subject), first.subject());
+        assertTrue(first.toString().startsWith("Ddd4jMicronautContext["));
+    }
 }
