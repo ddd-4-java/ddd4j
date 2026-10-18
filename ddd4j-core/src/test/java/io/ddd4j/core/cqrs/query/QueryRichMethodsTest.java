@@ -17,7 +17,6 @@ package io.ddd4j.core.cqrs.query;
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.core.ddd.repository.Repository;
-import io.ddd4j.core.ddd.repository.RepositoryRegistry;
 import io.ddd4j.core.exception.BizRuntimeException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,9 +26,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * {@link Query} 充血查询方法（list/page/one/count/exists/maps）单元测试。
@@ -63,7 +64,7 @@ class QueryRichMethodsTest {
 
     @Test
     void list_shouldDelegateToRepository() {
-        List<TestAggregate> expected = List.of(new TestAggregate("1", "A"));
+        List<TestAggregate> expected = Arrays.asList(new TestAggregate("1", "A"));
         when(repository.findList(any())).thenReturn(expected);
 
         List<TestAggregate> result = query.list();
@@ -92,7 +93,7 @@ class QueryRichMethodsTest {
 
     @Test
     void list_withIfEmpty_shouldReturnWhenNotEmpty() {
-        List<TestAggregate> expected = List.of(new TestAggregate("1", "A"));
+        List<TestAggregate> expected = Arrays.asList(new TestAggregate("1", "A"));
         when(repository.findList(any())).thenReturn(expected);
 
         List<TestAggregate> result = query.list("No orders found");
@@ -104,7 +105,7 @@ class QueryRichMethodsTest {
 
     @Test
     void page_shouldDelegateToRepository() {
-        Page<TestAggregate> expected = Page.succeed(List.of(new TestAggregate("1", "A")), 1, 1, 10);
+        Page<TestAggregate> expected = Page.succeed(Arrays.asList(new TestAggregate("1", "A")), 1, 1, 10);
         when(repository.page(any())).thenReturn(expected);
 
         Page<TestAggregate> result = query.current(1).size(10).page();
@@ -293,7 +294,10 @@ class QueryRichMethodsTest {
 
     @Test
     void maps_shouldDelegateToRepository() {
-        List<Map<String, Object>> expected = List.of(Map.of("id", "1", "name", "A"));
+        Map<String, Object> expectedMap = new java.util.LinkedHashMap<>();
+        expectedMap.put("id", "1");
+        expectedMap.put("name", "A");
+        List<Map<String, Object>> expected = Collections.singletonList(expectedMap);
         when(repository.maps(any())).thenReturn(expected);
 
         List<Map<String, Object>> result = query.maps();
@@ -304,8 +308,10 @@ class QueryRichMethodsTest {
 
     @Test
     void map_shouldReturnFirstElement() {
-        Map<String, Object> expected = Map.of("id", "1", "name", "A");
-        when(repository.maps(any())).thenReturn(List.of(expected));
+        Map<String, Object> expected = new java.util.LinkedHashMap<>();
+        expected.put("id", "1");
+        expected.put("name", "A");
+        when(repository.maps(any())).thenReturn(Collections.singletonList(expected));
 
         Map<String, Object> result = query.map();
 
