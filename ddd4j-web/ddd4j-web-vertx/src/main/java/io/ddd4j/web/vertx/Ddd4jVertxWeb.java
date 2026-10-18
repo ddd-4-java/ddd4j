@@ -69,6 +69,9 @@ public final class Ddd4jVertxWeb {
     private final Function<Object, String> jsonEncoder;
     private final ReadinessEndpoint readinessEndpoint;
 
+    /**
+     * 使用默认认证、错误处理和就绪配置创建 Web 适配器。
+     */
     public Ddd4jVertxWeb() {
         this(new WebRequestContextFactory(), new WebRequestLifecycle(new BearerSubjectAuthenticator(),
                         new PathWebAccessPolicy(List.of("/health", "/health/readiness", "/health/liveness",
@@ -90,6 +93,15 @@ public final class Ddd4jVertxWeb {
                 new DefaultWebExceptionTranslator(), null, Json::encode, readinessRegistry);
     }
 
+    /**
+     * 使用指定 Web 组件和默认就绪注册表创建适配器。
+     *
+     * @param contextFactory 请求上下文工厂
+     * @param requestLifecycle 请求生命周期
+     * @param exceptionTranslator 异常翻译器
+     * @param idempotencyLifecycle 幂等生命周期，可为空
+     * @param jsonEncoder JSON 编码器
+     */
     public Ddd4jVertxWeb(WebRequestContextFactory contextFactory, WebRequestLifecycle requestLifecycle,
                          WebExceptionTranslator exceptionTranslator,
                          WebIdempotencyLifecycle idempotencyLifecycle,
@@ -98,6 +110,16 @@ public final class Ddd4jVertxWeb {
                 new RuntimeReadinessRegistry());
     }
 
+    /**
+     * 使用指定 Web 组件和就绪注册表创建适配器。
+     *
+     * @param contextFactory 请求上下文工厂
+     * @param requestLifecycle 请求生命周期
+     * @param exceptionTranslator 异常翻译器
+     * @param idempotencyLifecycle 幂等生命周期，可为空
+     * @param jsonEncoder JSON 编码器
+     * @param readinessRegistry 就绪注册表
+     */
     public Ddd4jVertxWeb(WebRequestContextFactory contextFactory, WebRequestLifecycle requestLifecycle,
                          WebExceptionTranslator exceptionTranslator,
                          WebIdempotencyLifecycle idempotencyLifecycle,
@@ -139,8 +161,9 @@ public final class Ddd4jVertxWeb {
     }
 
     /**
-     * install() 方法。
-     * @param router router 参数。
+     * 将请求上下文、认证、错误处理及就绪端点安装到路由器。
+     *
+     * @param router Vert.x 路由器
      */
     public void install(Router router) {
         Router target = Objects.requireNonNull(router, "router must not be null");
@@ -157,6 +180,11 @@ public final class Ddd4jVertxWeb {
                 .end(jsonEncoder.apply(response));
     }
 
+    /**
+     * 创建初始化请求上下文与追踪的处理器。
+     *
+     * @return 请求上下文处理器
+     */
     public Handler<RoutingContext> contextHandler() {
         return routingContext -> {
             // OTel: 提取上游 TraceContext 并开启 SERVER span
@@ -177,6 +205,11 @@ public final class Ddd4jVertxWeb {
         };
     }
 
+    /**
+     * 创建认证与幂等检查处理器。
+     *
+     * @return 认证处理器
+     */
     public Handler<RoutingContext> authenticationHandler() {
         return routingContext -> {
             WebRequestContext requestContext = Ddd4jVertxContext.request(routingContext).orElseThrow();
@@ -196,6 +229,11 @@ public final class Ddd4jVertxWeb {
         };
     }
 
+    /**
+     * 创建统一异常翻译和响应处理器。
+     *
+     * @return 异常处理器
+     */
     public Handler<RoutingContext> failureHandler() {
         return routingContext -> {
             Throwable failure = Objects.nonNull(routingContext.failure())
