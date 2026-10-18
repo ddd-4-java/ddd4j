@@ -59,6 +59,15 @@ public class Permission extends AggregateRoot<String> {
      */
     private Status status;
 
+    /**
+     * 创建权限。
+     *
+     * @param permissionId 权限标识
+     * @param permissionCode 权限编码
+     * @param permissionName 权限名称
+     * @param module 所属模块
+     * @param status 状态
+     */
     public Permission(String permissionId, String permissionCode, String permissionName, String module, Status status) {
         if (StrKit.isBlank(permissionId)) {
             throw new IllegalArgumentException("permissionId must not be blank");
@@ -76,8 +85,9 @@ public class Permission extends AggregateRoot<String> {
 
     /**
      * 重命名。
+     *
      * @param permissionName 权限名称
-     * @param module 模块
+     * @param module 所属模块
      */
     public void rename(String permissionName, String module) {
         if (StrKit.isNotBlank(permissionName)) {
@@ -111,6 +121,6 @@ public class Permission extends AggregateRoot<String> {
      * 权限状态。
      */
     public enum Status {
-        ENABLED, DISABLED
+        /** 启用状态。 */ ENABLED, /** 禁用状态。 */ DISABLED
     }
 }
