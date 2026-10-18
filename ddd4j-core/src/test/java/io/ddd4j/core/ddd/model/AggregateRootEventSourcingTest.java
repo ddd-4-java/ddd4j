@@ -27,6 +27,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Arrays;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -91,7 +93,7 @@ class AggregateRootEventSourcingTest {
     void loadFromHistory_shouldRebuildStateInOrder() {
         Order order = new Order("o1");
 
-        List<DomainEvent<?>> history = List.of(
+        List<DomainEvent<?>> history = Arrays.asList(
                 new OrderCreated("o1", "ORD-001"),
                 new OrderPaid("o1", "PAID")
         );
@@ -106,7 +108,7 @@ class AggregateRootEventSourcingTest {
     void loadFromHistory_emptyList_shouldNotChangeState() {
         Order order = new Order("o1");
 
-        order.loadFromHistoryFromList(List.of());
+        order.loadFromHistoryFromList(Collections.emptyList());
 
         assertThat(order.getOrderNo()).isNull();
     }

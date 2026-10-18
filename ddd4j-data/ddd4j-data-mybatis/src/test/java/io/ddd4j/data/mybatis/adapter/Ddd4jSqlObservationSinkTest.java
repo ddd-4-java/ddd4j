@@ -19,11 +19,13 @@ import io.ddd4j.core.context.ThreadContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.ServiceLoader;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/** SQL 观测写入线程上下文的契约测试。 */
 class Ddd4jSqlObservationSinkTest {
 
     @AfterEach
@@ -33,7 +35,7 @@ class Ddd4jSqlObservationSinkTest {
 
     @Test
     void shouldStoreSqlObservationInThreadContext() {
-        List<String> params = List.of("PAID", "2024");
+        List<String> params = Arrays.asList("PAID", "2024");
 
         new Ddd4jSqlObservationSink().accept(
                 new SqlObservation("io.ddd4j.data.mybatis.OrderMapper.listPaid", "SELECT * FROM orders", params, 8_000_000L, null));

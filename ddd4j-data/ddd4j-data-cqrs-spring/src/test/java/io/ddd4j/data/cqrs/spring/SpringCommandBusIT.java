@@ -31,6 +31,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -138,7 +141,7 @@ class SpringCommandBusIT {
 
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
-            return Set.of(ConflictCommand.class);
+            return Collections.<Class<? extends Command>>singleton(ConflictCommand.class);
         }
 
         @Override
@@ -156,7 +159,7 @@ class SpringCommandBusIT {
 
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
-            return Set.of(ConflictCommand.class, CompanionCommand.class);
+            return new HashSet<Class<? extends Command>>(Arrays.asList(ConflictCommand.class, CompanionCommand.class));
         }
 
         @Override
