@@ -13,11 +13,11 @@
  * limitations under the License.
  */
 package io.ddd4j.sample.quarkus.goods.domain;
+import io.ddd4j.kit.lang.SFunction;
 
 import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
-import io.ddd4j.kit.lang.SFunction;
 import io.ddd4j.kit.lang.StrKit;
 
 import java.math.BigDecimal;
@@ -88,8 +88,9 @@ public class GoodsQuery extends Query<Goods> {
 
     /**
      * Applies comma-separated, whitelisted sort expressions such as {@code price_DESC}.
-     * @param orderBys 排序条件
-     * @return 操作结果
+     *
+     * @param orderBys 逗号分隔的排序表达式
+     * @return 当前查询对象
      */
     public GoodsQuery setOrderBys(String orderBys) {
         if (StrKit.isBlank(orderBys)) {
@@ -137,46 +138,71 @@ public class GoodsQuery extends Query<Goods> {
         return RepositoryRegistry.repository(Goods.class);
     }
 
+    /** @return 商品编码 */
     public String getCode() {
         return code;
     }
 
+    /**
+     * @param code 商品编码
+     * @return 当前查询对象
+     */
     public GoodsQuery setCode(String code) {
         this.code = code;
         return this;
     }
 
+    /** @return 模糊匹配的商品名称 */
     public String getNameLike() {
         return nameLike;
     }
 
+    /**
+     * @param nameLike 模糊匹配的商品名称
+     * @return 当前查询对象
+     */
     public GoodsQuery setNameLike(String nameLike) {
         this.nameLike = nameLike;
         return this;
     }
 
+    /** @return 商品状态 */
     public GoodsStatus getStatus() {
         return status;
     }
 
+    /**
+     * @param status 商品状态
+     * @return 当前查询对象
+     */
     public GoodsQuery setStatus(GoodsStatus status) {
         this.status = status;
         return this;
     }
 
+    /** @return 最低价格 */
     public BigDecimal getPriceMin() {
         return priceMin;
     }
 
+    /**
+     * @param priceMin 最低价格
+     * @return 当前查询对象
+     */
     public GoodsQuery setPriceMin(BigDecimal priceMin) {
         this.priceMin = priceMin;
         return this;
     }
 
+    /** @return 最高价格 */
     public BigDecimal getPriceMax() {
         return priceMax;
     }
 
+    /**
+     * @param priceMax 最高价格
+     * @return 当前查询对象
+     */
     public GoodsQuery setPriceMax(BigDecimal priceMax) {
         this.priceMax = priceMax;
         return this;
