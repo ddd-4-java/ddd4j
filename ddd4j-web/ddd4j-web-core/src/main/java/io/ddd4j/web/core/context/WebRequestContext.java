@@ -102,13 +102,21 @@ public final class WebRequestContext {
         this.apiVersion = apiVersion;
     }
 
+    /** @return 请求标识 */
     public String requestId() { return requestId; }
+    /** @return 追踪标识 */
     public String traceId() { return traceId; }
+    /** @return 租户标识 */
     public String tenantId() { return tenantId; }
+    /** @return 授权头 */
     public String authorization() { return authorization; }
+    /** @return 语言区域 */
     public Locale locale() { return locale; }
+    /** @return 客户端 IP */
     public String clientIp() { return clientIp; }
+    /** @return HTTP 方法 */
     public String method() { return method; }
+    /** @return 请求路径 */
     public String path() { return path; }
 
     /**
@@ -130,42 +138,42 @@ public final class WebRequestContext {
         return apiVersion;
     }
 
+    /** @return 请求标识 */
     public String getRequestId() {
         return requestId;
     }
 
+    /** @return 追踪标识 */
     public String getTraceId() {
         return traceId;
     }
 
+    /** @return 租户标识 */
     public String getTenantId() {
         return tenantId;
     }
 
-    /**
-     * 获取值。
-     * @return 结果字符串。
-     */
+    /** @return 授权头 */
     public String getAuthorization() {
         return authorization;
     }
 
+    /** @return 语言区域 */
     public Locale getLocale() {
         return locale;
     }
 
+    /** @return 客户端 IP */
     public String getClientIp() {
         return clientIp;
     }
 
+    /** @return HTTP 方法 */
     public String getMethod() {
         return method;
     }
 
-    /**
-     * 获取值。
-     * @return 结果字符串。
-     */
+    /** @return 请求路径 */
     public String getPath() {
         return path;
     }
