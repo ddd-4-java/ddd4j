@@ -27,7 +27,12 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 /**
@@ -38,7 +43,7 @@ import java.util.function.Consumer;
  *
  * <p>发布机制（多 broker 路由）：{@link #publish(String, String, String)} 从 {@link BaseContext}
  * 查找 key 为 {@link #MQ_EVENT_PUBLISHER} 的 {@code Map<String, Consumer<MQEvent>>}，
- * 按 {@link #broker} 字段（或全局 {@link MQProperties#broker} 配置）匹配对应的 broker 生产者。
+ * 按 {@link #broker} 字段（或全局 {@code MQProperties.getBroker()} 配置）匹配对应的 broker 生产者。
  * 每个 {@link MQClient} 在 {@code initProducer} 后以 {@link MQClient#impl()} 为 key 注册。
  *
  * <h3>使用示例</h3>
@@ -98,7 +103,7 @@ public class MQEvent implements Serializable {
     protected String tenantId;
     /**
      * 目标 broker 标识（如 {@code "kafka"} / {@code "rocket"} / {@code "redisStream"}）。
-     * <p>为空时走全局默认 broker（{@link MQProperties#broker} 配置）。
+     * <p>为空时走全局默认 broker（{@code MQProperties.getBroker()} 配置）。
      */
     protected String broker;
     /**
@@ -165,14 +170,24 @@ public class MQEvent implements Serializable {
 
     // ========================= 发布 =========================
 
+    /** 按事件自身的主题、标签和租户发布。 */
     public void publish() {
         publish(getTopic(), getTag(), getTenantId());
     }
 
+    /**
+     * 发布到指定主题。
+     * @param topic 发布主题
+     */
     public void publish(String topic) {
         publish(topic, getTag(), getTenantId());
     }
 
+    /**
+     * 发布到指定主题和标签。
+     * @param topic 发布主题
+     * @param tag 消息标签
+     */
     public void publish(String topic, String tag) {
         publish(topic, tag, getTenantId());
     }
