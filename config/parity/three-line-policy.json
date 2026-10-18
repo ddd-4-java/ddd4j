@@ -2145,6 +2145,39 @@
       "evidence": "ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/JpaProjectionPositionRepositoryTest.java",
       "testSha256": "7f4679c4d09f00a97df5edd9a98974039807057a0d7a6ea7d03aa71b84a10838",
       "reason": "三线共同测试验证 findAll 保持仓储顺序、返回不可修改的值对象快照；JDK 8 使用 Collectors 与不可修改包装，JDK 17/21 使用 Stream.toList，业务语义一致"
+    },
+    {
+      "path": "ddd4j-cache/src/main/java/io/ddd4j/cache/lettuce/LettuceCache.java",
+      "sourceSha256": [
+        "d02d6307608547ebfb49532669e0ae2e4fbcf4392b557320b383fc6f80a96fba",
+        "5cd8f654a039bed353a97a02d0d488e4e432b0776e6f3f21bb1f3b44ddff3b65",
+        "e2ccb8eb2bc2d9c271c67f5be4709a701d2119c60474f2d9557b066fc23a9a99"
+      ],
+      "evidence": "ddd4j-cache/src/test/java/io/ddd4j/cache/CacheDefaultMapperContractTest.java",
+      "testSha256": "c2babe25b693a314657c3535c3e0957c503dcd09bbb1be4435b810af2accf91b",
+      "reason": "三线共同测试验证默认映射器均省略 null 字段；Jackson 2 使用 defaultPropertyInclusion，Jackson 3 使用 changeDefaultPropertyInclusion，逐文件源码和测试 SHA-256 锁定"
+    },
+    {
+      "path": "ddd4j-cache/src/main/java/io/ddd4j/cache/memcached/MemcachedCache.java",
+      "sourceSha256": [
+        "659f346afe782df83c5d32c2385a02b8603348824a8b36d821bd3db39c644a00",
+        "06b1cb282633b7df0f9aa9b35bf131a5905cba084450604ea19632e734d2e098",
+        "b571188815e6bb407b6b5aed96d45d6ada9141b60f5b3d9c18663af1c1299254"
+      ],
+      "evidence": "ddd4j-cache/src/test/java/io/ddd4j/cache/CacheDefaultMapperContractTest.java",
+      "testSha256": "c2babe25b693a314657c3535c3e0957c503dcd09bbb1be4435b810af2accf91b",
+      "reason": "三线共同测试验证默认映射器均省略 null 字段；Jackson 2 使用 defaultPropertyInclusion，Jackson 3 使用 changeDefaultPropertyInclusion，逐文件源码和测试 SHA-256 锁定"
+    },
+    {
+      "path": "ddd4j-cache/src/main/java/io/ddd4j/cache/redisson/RedissonCache.java",
+      "sourceSha256": [
+        "e89bba9d50fa7f4699de2b4ba951cd0f3ca36e92cc9af18775ed3bc801e752af",
+        "5e5d76ec1de16a0e1fec290d827a8558f9d9cff51a1e830b4d0d5c70dd40ced5",
+        "90056e9fc67df2f8b88826d0980e22558406d6ed7d863a68991d6541af81faec"
+      ],
+      "evidence": "ddd4j-cache/src/test/java/io/ddd4j/cache/CacheDefaultMapperContractTest.java",
+      "testSha256": "c2babe25b693a314657c3535c3e0957c503dcd09bbb1be4435b810af2accf91b",
+      "reason": "三线共同测试验证默认映射器均省略 null 字段；Jackson 2 使用 defaultPropertyInclusion，Jackson 3 使用 changeDefaultPropertyInclusion，逐文件源码和测试 SHA-256 锁定"
     }
   ],
   "historicalDocumentSections": [
