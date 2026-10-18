@@ -27,6 +27,8 @@ import io.ddd4j.extension.qlexpress.model.QLExpressExecutionResult;
 import io.ddd4j.extension.qlexpress.model.QLExpressValidationResult;
 import io.ddd4j.kit.lang.StrKit;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -92,7 +94,7 @@ public final class DefaultQLExpressEngine implements QLExpressEngine {
     public Object execute(String expression, Map<String, Object> context, QLExpressExecutionOptions options) {
         requireExpression(expression);
         QLExpressExecutionOptions checkedOptions = Objects.requireNonNull(options, "options 不能为空");
-        Map<String, Object> safeContext = Objects.isNull(context) ? Map.of() : context;
+        Map<String, Object> safeContext = Objects.isNull(context) ? Collections.emptyMap() : context;
         try {
             QLResult result = runner.execute(expression, safeContext, checkedOptions.toNativeOptions());
             return result.getResult();
@@ -155,13 +157,13 @@ public final class DefaultQLExpressEngine implements QLExpressEngine {
     @Override
     public Set<String> getExternalVariables(String expression) {
         requireExpression(expression);
-        return Set.copyOf(runner.getOutVarNames(expression));
+        return Collections.unmodifiableSet(new HashSet<>(runner.getOutVarNames(expression)));
     }
 
     @Override
     public Set<String> getExternalFunctions(String expression) {
         requireExpression(expression);
-        return Set.copyOf(runner.getOutFunctions(expression));
+        return Collections.unmodifiableSet(new HashSet<>(runner.getOutFunctions(expression)));
     }
 
     @Override
