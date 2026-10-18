@@ -62,7 +62,8 @@ public class OrderResponse {
      */
     public static OrderResponse from(Order order) {
         Money total = order.totalAmount();
-        List<OrderLineResponse> lineResponses = order.lines().stream().map(OrderLineResponse::from).toList();
+        List<OrderLineResponse> lineResponses = java.util.Collections.unmodifiableList(
+                order.lines().stream().map(OrderLineResponse::from).collect(java.util.stream.Collectors.toList()));
         return new OrderResponse(order.id(), order.orderNo(), order.buyerId(), order.buyerName(), order.status(), total.amount().toPlainString(), total.currency(), lineResponses);
     }
 
