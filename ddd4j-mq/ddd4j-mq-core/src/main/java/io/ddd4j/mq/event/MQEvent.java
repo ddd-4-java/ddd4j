@@ -46,7 +46,7 @@ import java.util.function.Consumer;
  * 按 {@link #broker} 字段（或全局 {@code MQProperties.getBroker()} 配置）匹配对应的 broker 生产者。
  * 每个 {@link MQClient} 在 {@code initProducer} 后以 {@link MQClient#impl()} 为 key 注册。
  *
- * <h3>使用示例</h3>
+ * <h2>使用示例</h2>
  * <pre>{@code
  * public class OrderCreatedEvent extends MQEvent {
  *     private String orderId;
