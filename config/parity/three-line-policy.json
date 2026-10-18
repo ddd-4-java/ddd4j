@@ -1343,6 +1343,27 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/goods/domain/GoodsQuery.java",
+      "sourceSha256": [
+        "ca3215452f0a32dd1dfbbffb9c3cbbeef042feaf5af27afdcb05c70563b5fa23",
+        "ba21059713fa05e0e82323bfa46eb42e4e5f58d877f840be4aa33e5776fafa1a",
+        "ba21059713fa05e0e82323bfa46eb42e4e5f58d877f840be4aa33e5776fafa1a"
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/goods/domain/GoodsQueryContractTest.java",
+      "testSha256": "ec5ca8966c58417f3e3173da84dbc7cedb333dcd0818321fa7f662e60e405027",
+      "reason": "三线商品排序白名单、方向和非法字段忽略行为相同；JDK 8 保留传统 switch，JDK 17/21 保留箭头 switch。逐线源码与 2 项共同排序契约测试由 SHA-256 锁定。"
+    },    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/goods/domain/GoodsQuery.java",
+      "sourceSha256": [
+        "5d3f294ccfea7bd1c23a8d9c7cba2b1fe8646b25dd75b35696cc6957a2f4bb3e",
+        "bda87cd099a061c9abc4901cefe405821b055a847725040f352ca5544abe065c",
+        "bda87cd099a061c9abc4901cefe405821b055a847725040f352ca5544abe065c"
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/goods/domain/GoodsQueryContractTest.java",
+      "testSha256": "821c6914be6fa4319a46065b4072edff27c0a913ba392c419bf8a0c637b675a3",
+      "reason": "三线商品排序白名单、方向和非法字段忽略行为相同；JDK 8 保留传统 switch，JDK 17/21 保留箭头 switch。逐线源码与 2 项共同排序契约测试由 SHA-256 锁定。"
+    },
+    {
       "path": "ddd4j-samples/ddd4j-sample-quarkus/src/main/java/io/ddd4j/sample/quarkus/goods/domain/GoodsQuery.java",
       "sourceSha256": [
         "7cf4a4f68ab5ba0e59ea2749f8ce045e265e80ee1200aef5531c436bb829a518",
