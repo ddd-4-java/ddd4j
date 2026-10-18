@@ -12,6 +12,35 @@ spec.loader.exec_module(scanner)
 
 
 class ScannerTests(unittest.TestCase):
+    def test_reactor_sbom_records_exact_component_module_origins(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory) / 'project'
+            root.mkdir()
+            (root / 'pom.xml').write_text('<project><packaging>pom</packaging></project>')
+            modules = [root / 'alpha', root / 'beta']
+            for module in modules:
+                module.mkdir()
+                (module / 'pom.xml').write_text('<project><packaging>jar</packaging></project>')
+            output = Path(directory) / 'reports'
+            output.mkdir()
+
+            def execute(command, **kwargs):
+                for module in modules:
+                    target = module / 'target/weekly-deps.json'
+                    target.parent.mkdir()
+                    target.write_text(json.dumps({'bomFormat': 'CycloneDX', 'components': [
+                        {'group': 'example', 'name': 'shared', 'version': '1',
+                         'purl': 'pkg:maven/example/shared@1'},
+                        {'group': 'example', 'name': module.name, 'version': '1',
+                         'purl': 'pkg:maven/example/' + module.name + '@1'}]}))
+
+            with patch.object(scanner.subprocess, 'run', side_effect=execute):
+                scanner.reactor_sbom(root, output)
+            origins = json.loads((output / 'reactor-component-origins.json').read_text())
+            self.assertEqual(origins['pkg:maven/example/shared@1'], ['alpha', 'beta'])
+            self.assertEqual(origins['pkg:maven/example/alpha@1'], ['alpha'])
+            self.assertEqual(origins['pkg:maven/example/beta@1'], ['beta'])
+
     def test_maven4_pom_modules_are_not_treated_as_deployable_jars(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory) / 'project'
