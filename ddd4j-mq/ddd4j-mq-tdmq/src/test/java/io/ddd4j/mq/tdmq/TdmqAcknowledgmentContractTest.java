@@ -21,6 +21,11 @@ import java.util.concurrent.atomic.AtomicReference;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * TDMQ 确认结果契约测试。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 1.0.x
+ */
 class TdmqAcknowledgmentContractTest {
 
     @Test
