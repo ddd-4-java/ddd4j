@@ -589,8 +589,8 @@
         <!-- Spring Security 锁定 5.8.x（与 Spring Framework 5.3.x 配套，JDK 8 兼容） -->
         <spring-initializr.version>0.24.0</spring-initializr.version>
         <spring-javassist.version>1.0.x.20260630-SNAPSHOT</spring-javassist.version>
-        <!-- 版本约束：spring-kafka 锁定 3.3.x（适配 Spring Boot 3.4.x），不得升级至 4.x -->
-        <spring-kafka.version>2.8.11</spring-kafka.version>
+        <!-- 版本约束：spring-kafka 锁定 2.9.x，兼容 JDK 8 与 Spring Framework 5.3.x -->
+        <spring-kafka.version>2.9.11</spring-kafka.version>
         <spring-plugin.version>2.0.0.RELEASE</spring-plugin.version>
         <spring-pulsar.version>1.2.5</spring-pulsar.version>
         <spring-security.version>5.8.16</spring-security.version>
