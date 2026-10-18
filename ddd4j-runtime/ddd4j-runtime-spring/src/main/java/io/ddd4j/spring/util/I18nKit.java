@@ -42,6 +42,12 @@ public class I18nKit {
     // 国际化文件前缀
     private final String I18N_FILE_PREFIX = "i18n/messages";
 
+    /**
+     * 获取当前语言环境下的消息。
+     *
+     * @param source 消息键或原文
+     * @return 本地化消息
+     */
     public String get(String source) {
         if (Objects.isNull(source) || !org.springframework.util.StringUtils.hasLength(source)) {
             return source;
@@ -62,10 +68,22 @@ public class I18nKit {
         return source;
     }
 
+    /**
+     * 获取并格式化当前语言环境下的消息。
+     *
+     * @param source 消息键或原文
+     * @param args 格式化参数
+     * @return 格式化后的本地化消息
+     */
     public String get(String source, Object... args) {
         return format(get(source), args);
     }
 
+    /**
+     * 设置当前线程的语言环境。
+     *
+     * @param locale 语言环境
+     */
     public void setLocale(Locale locale) {
         ThreadContext.set(ContextConstants.LOCALE, locale);
     }
@@ -241,14 +259,35 @@ public class I18nKit {
         return obj.toString();
     }
 
+    /**
+     * 从 Spring 消息源获取当前语言环境下的消息。
+     *
+     * @param key 消息键
+     * @return 本地化消息
+     */
     public static String getMessage(String key) {
         return getMessage(key, null);
     }
 
+    /**
+     * 从 Spring 消息源获取格式化消息。
+     *
+     * @param key 消息键
+     * @param args 格式化参数
+     * @return 本地化消息
+     */
     public static String getMessage(String key, String[] args) {
         return SpringContextUtils.getContext().getApplicationContext().getBean(NestedMessageSource.class).getMessage(key, args, LocaleContextHolder.getLocale());
     }
 
+    /**
+     * 从 Spring 消息源获取消息，未命中时使用默认文案。
+     *
+     * @param key 消息键
+     * @param args 格式化参数
+     * @param defaultMsg 默认文案
+     * @return 本地化消息
+     */
     public static String getMessage(String key, String[] args, String defaultMsg) {
         return SpringContextUtils.getContext().getApplicationContext().getBean(NestedMessageSource.class).getMessage(key, args, defaultMsg, LocaleContextHolder.getLocale());
     }
