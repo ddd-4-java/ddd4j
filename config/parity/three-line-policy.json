@@ -1300,11 +1300,7 @@
         "579ffbdfca113d2f888269b00e1c16250fa87e63905942ac1d8a5caae060a034"
       ],
       "evidence": "ddd4j-data/ddd4j-data-jpa/src/test/java/io/ddd4j/data/jpa/JpaAggregateRepositoryCrudTest.java",
-      "testSha256ByJdk": {
-        "8": "866577fb95dcf8f37282015c61c42ac0373b0ee7489f14b5d47b660e7d7a4bd9",
-        "17": "d57256a24fdc09150a34080b042e01818bbc65844b686c13acdd0320526e9934",
-        "21": "8c20cc1c0685c07991a53dedb4b9f3c0a7a67a53c1ab34fc361f963930272164"
-      },
+      "testSha256": "866577fb95dcf8f37282015c61c42ac0373b0ee7489f14b5d47b660e7d7a4bd9",
       "reason": "JDK 8 使用 javax.persistence 的单条结果兼容查询、普通 switch 与显式数组/类型判断，JDK 17/21 使用 Jakarta JPA 新 API 与等价语法；三线仓储 CRUD 和条件查询目标测试各七项通过"
     },
     {
