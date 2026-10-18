@@ -67,6 +67,30 @@ class ThreeLineInventoryTest(unittest.TestCase):
         self.assertNotEqual(0, result.returncode)
         self.assertIn("invalid platform tool script hashes", result.stderr)
 
+    def test_dependency_policy_tests_require_all_three_locked_variants(self):
+        path = "scripts/dependencies/tests/test_uniform_contract.py"
+        sources = [f"def test_jdk{jdk}(): pass\n" for jdk in (8, 17, 21)]
+        for root, source in zip(self.roots, sources):
+            self.write(root, path, source)
+        policy = json.loads(self.policy.read_text())
+        policy["platformToolScripts"] = [{
+            "path": path,
+            "sha256ByJdk": {jdk: hashlib.sha256(source.encode()).hexdigest()
+                            for jdk, source in zip(("8", "17", "21"), sources)},
+            "evidence": "line-specific dependency policy assertions",
+        }]
+        self.policy.write_text(json.dumps(policy))
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = json.loads((output / "inventory.json").read_text())["differences"]
+        self.assertEqual("PLATFORM_CONFIG", next(row["status"] for row in rows
+                                                  if row["path"] == path))
+
+        (self.roots[1] / path).unlink()
+        result, _ = self.run_checker("inventory")
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("stale platform tool script", result.stderr)
+
     def test_helidon_cdi_service_descriptor_tracks_namespace_without_missing_provider(self):
         prefix = "ddd4j-runtime/ddd4j-runtime-helidon/src/main/resources/META-INF/services/"
         legacy = prefix + "javax.enterprise.inject.spi.Extension"
