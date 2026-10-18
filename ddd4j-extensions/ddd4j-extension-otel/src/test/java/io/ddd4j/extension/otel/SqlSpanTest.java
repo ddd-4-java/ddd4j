@@ -31,6 +31,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class SqlSpanTest {
 
+    private static String replicate(String s, int times) {
+        StringBuilder sb = new StringBuilder(s.length() * times);
+        for (int i = 0; i < times; i++) {
+            sb.append(s);
+        }
+        return sb.toString();
+    }
+
     @BeforeEach
     void setUp() {
         OpenTelemetrySdkSetter.set(OpenTelemetry.noop());
@@ -67,7 +75,7 @@ class SqlSpanTest {
 
     @Test
     void execute_withVeryLongStatement_shouldNotThrow() {
-        String longSql = "SELECT * FROM huge_table WHERE " + "a = 1 AND ".repeat(100) + "b = 2";
+        String longSql = "SELECT * FROM huge_table WHERE " + replicate("a = 1 AND ", 100) + "b = 2";
         SqlSpan.execute("mybatis", longSql, () -> {
         });
         assertThat(true).isTrue();
