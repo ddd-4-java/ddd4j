@@ -143,17 +143,33 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
      */
     private TableInfo tableInfo;
 
+    /**
+     * 创建 MyBatis-Plus 聚合仓库。
+     *
+     */
     protected MybatisAggregateRepository() {
         this.configureTypes(resolveModelClass(), resolvePersistenceObjectClass(), resolveQueryClass());
         this.registerToRepositoryRegistry();
     }
 
+    /**
+     * 创建 MyBatis-Plus 聚合仓库。
+     *
+     * @param baseMapper MyBatis-Plus 映射器
+     */
     protected MybatisAggregateRepository(MP baseMapper) {
         this.configureTypes(resolveModelClass(), resolvePersistenceObjectClass(), resolveQueryClass());
         this.setBaseMapper(baseMapper);
         this.registerToRepositoryRegistry();
     }
 
+    /**
+     * 创建 MyBatis-Plus 聚合仓库。
+     *
+     * @param baseMapper MyBatis-Plus 映射器
+     * @param modelClass 聚合根模型类型
+     * @param persistenceObjectClass 持久化对象类型
+     */
     protected MybatisAggregateRepository(MP baseMapper, Class<M> modelClass, Class<P> persistenceObjectClass) {
         this.configureTypes(modelClass, persistenceObjectClass, null);
         this.setBaseMapper(baseMapper);
@@ -177,6 +193,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
 
     /**
      * 解析聚合根类型（泛型参数 M，索引 0 — 在子类 BaseRepositoryImpl 中索引变为 1）。
+     * @return 聚合根模型类型
      */
     protected Class<M> resolveModelClass() {
         return (Class<M>) ReflectionKit.getSuperClassGenericType(this.getClass(), MybatisAggregateRepository.class, 0);
@@ -184,6 +201,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
 
     /**
      * 解析持久化对象类型（泛型参数 P，索引 1 — 在子类 BaseRepositoryImpl 中索引变为 2）。
+     * @return 持久化对象类型
      */
     protected Class<P> resolvePersistenceObjectClass() {
         return (Class<P>) ReflectionKit.getSuperClassGenericType(this.getClass(), MybatisAggregateRepository.class, 1);
@@ -191,11 +209,19 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
 
     /**
      * 解析查询对象类型（泛型参数 Q，索引 2 — 在子类 BaseRepositoryImpl 中索引变为 3）。
+     * @return 查询对象类型
      */
     protected Class<? extends Query<M>> resolveQueryClass() {
         return (Class<? extends Query<M>>) ReflectionKit.getSuperClassGenericType(this.getClass(), MybatisAggregateRepository.class, 2);
     }
 
+    /**
+     * 配置聚合根和持久化对象类型。
+     *
+     * @param modelClass 聚合根模型类型
+     * @param persistenceObjectClass 持久化对象类型
+     * @param queryClass 查询对象类型
+     */
     protected final void configureTypes(Class<M> modelClass, Class<P> persistenceObjectClass, Class<? extends Query<M>> queryClass) {
         this.modelClass = modelClass;
         this.persistenceObjectClass = persistenceObjectClass;
@@ -275,6 +301,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
     /**
      * Domain Model 元数据访问器（充血查询翻译：Domain 字段 → PO 列名）。
      * 缓存于 {@link DomainModelHelper}。
+     * @return 领域模型属性映射信息
      */
     protected DomainModelInfo<M> domainModelInfo() {
         return Objects.requireNonNull(domainModelInfo, "domainModelInfo must not be null");
@@ -282,6 +309,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
 
     /**
      * PO 元数据访问器（委托 MP {@code TableInfoHelper}），用于 auto-fill、bizKey、tenantId、tableLogic 等。
+     * @return MyBatis-Plus 表元信息
      */
     protected TableInfo tableInfo() {
         return Objects.requireNonNull(tableInfo, "tableInfo must not be null");
@@ -295,6 +323,8 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
      *   <li>查 {@link DomainModelInfo}（{@code @DomainField} 注解 + 默认约定）→ 用列名</li>
      *   <li>fallback：直接驼峰转下划线（保持向后兼容）</li>
      * </ol>
+     * @return 持久化字段或列名
+     * @param property 领域属性或持久化属性
      */
     protected String translateProperty(String property) {
         if (StrKit.isEmpty(property)) {
@@ -309,6 +339,8 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
 
     /**
      * 按属性空间翻译查询条件，并校验 Query 绑定的 Domain/PO 类型。
+     * @return 持久化字段或列名
+     * @param condition 查询条件
      */
     protected String translateProperty(LambdaCondition condition) {
         Objects.requireNonNull(condition, "condition must not be null");
@@ -332,6 +364,11 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
                         + " does not exist on " + persistenceObjectClass().getName()));
     }
 
+    /**
+     * 配置 MyBatis-Plus 映射器。
+     *
+     * @param mapper MyBatis-Plus 映射器
+     */
     public void setMapper(MP mapper) {
         this.baseMapper = Objects.requireNonNull(mapper, "mapper must not be null");
     }
@@ -477,10 +514,20 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
     }
 
 
+    /**
+     * 获取聚合根模型类型。
+     *
+     * @return 聚合根模型类型
+     */
     protected Class<M> modelClass() {
         return Objects.requireNonNull(modelClass, "modelClass must not be null");
     }
 
+    /**
+     * 获取持久化对象类型。
+     *
+     * @return 持久化对象类型
+     */
     protected Class<P> persistenceObjectClass() {
         return Objects.requireNonNull(persistenceObjectClass, "persistenceObjectClass must not be null");
     }
@@ -597,6 +644,8 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
 
     /**
      * 获取 mapperStatementId（CrudRepository.getSqlStatement 的非 Spring 版本）。
+     * @return MyBatis-Plus 语句标识
+     * @param sqlMethod MyBatis-Plus SQL 方法
      */
     protected String getSqlStatement(SqlMethod sqlMethod) {
         return SqlHelper.getSqlStatement(this.getMapperClass(), sqlMethod);
@@ -655,10 +704,22 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return save(aggregate);
     }
 
+    /**
+     * 更新聚合根。
+     *
+     * @param aggregate 聚合根
+     * @return 更新后的聚合根
+     */
     public M update(M aggregate) {
         return updateById(aggregate);
     }
 
+    /**
+     * 插入或更新聚合根。
+     *
+     * @param aggregate 聚合根
+     * @return 保存后的聚合根
+     */
     public M saveOrUpdate(M aggregate) {
         return insertOrUpdate(aggregate);
     }
@@ -670,6 +731,12 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         }
     }
 
+    /**
+     * 删除匹配的聚合根。
+     *
+     * @param id 聚合根标识
+     * @return 是否删除成功
+     */
     public boolean delete(Serializable id) {
         if (Objects.isNull(id)) {
             return false;
@@ -677,6 +744,12 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return SqlHelper.retBool(getBaseMapper().deleteById(id));
     }
 
+    /**
+     * 判断聚合根是否需要插入。
+     *
+     * @param aggregate 聚合根
+     * @return 是否需要插入
+     */
     protected boolean shouldInsert(M aggregate) {
         Serializable id = aggregate.id();
         return Objects.isNull(id) || Objects.isNull(getBaseMapper().selectById(id));
@@ -772,30 +845,72 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return SqlHelper.retBool(getBaseMapper().delete(getBaseWrapper(query)));
     }
 
+    /**
+     * 删除匹配的聚合根。
+     *
+     * @param query 查询条件
+     * @return 是否删除成功
+     */
     public boolean delete(Query query) {
         return deleteByQuery(query);
     }
 
+    /**
+     * 按标识查询聚合根。
+     *
+     * @param id 聚合根标识
+     * @return 匹配的聚合根
+     */
     public M get(Serializable id) {
         return findById((ID) id).orElse(null);
     }
 
+    /**
+     * 查询匹配的聚合根列表。
+     *
+     * @param query 查询条件
+     * @return 聚合根列表
+     */
     public List<M> list(Query query) {
         return findList(query);
     }
 
+    /**
+     * 查询第一个匹配的聚合根。
+     *
+     * @param query 查询条件
+     * @return 首个匹配的聚合根
+     */
     public M first(Query query) {
         return findFirst(query).orElse(null);
     }
 
+    /**
+     * 查询唯一匹配的聚合根。
+     *
+     * @param query 查询条件
+     * @return 唯一匹配的聚合根
+     */
     public M one(Query query) {
         return findFirst(query).orElse(null);
     }
 
+    /**
+     * 检查匹配的聚合根是否存在。
+     *
+     * @param query 查询条件
+     * @return 是否存在匹配的聚合根
+     */
     public boolean exist(Query query) {
         return exists(query);
     }
 
+    /**
+     * 按业务键更新聚合根。
+     *
+     * @param model 聚合根模型
+     * @return 是否更新成功
+     */
     public boolean updateByKey(M model) {
         P persistenceObject = toPersistenceObject(model);
         String key = getKeyValue(persistenceObject);
@@ -806,6 +921,12 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return SqlHelper.retBool(getBaseMapper().update(persistenceObject, getKeyWrapper(key)));
     }
 
+    /**
+     * 按业务键查询聚合根。
+     *
+     * @param key 业务键
+     * @return 匹配的聚合根
+     */
     public M getByKey(String key) {
         if (Objects.isNull(key) || !StrKit.hasText(key)) {
             log.warn("The key annotated by @BizKey must not blank");
@@ -815,6 +936,12 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return Objects.nonNull(persistenceObject) ? toModel(persistenceObject) : null;
     }
 
+    /**
+     * 按业务键批量查询聚合根。
+     *
+     * @param keys 业务键列表
+     * @return 匹配的聚合根列表
+     */
     public List<M> listByKey(List<Serializable> keys) {
         if (Objects.isNull(keys) || keys.isEmpty()) {
             return Collections.emptyList();
@@ -852,6 +979,12 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return BeanKit.copy(model, persistenceObjectClass());
     }
 
+    /**
+     * 将持久化对象列表转换为聚合根列表。
+     *
+     * @param persistenceObjects 持久化对象列表
+     * @return 聚合根列表
+     */
     protected List<M> convert(List<P> persistenceObjects) {
         if (Objects.isNull(persistenceObjects) || persistenceObjects.isEmpty()) {
             return new ArrayList<>();
@@ -859,6 +992,12 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return BeanKit.copy(persistenceObjects, modelClass());
     }
 
+    /**
+     * 构造默认查询条件。
+     *
+     * @param ignoreTenantId 是否忽略租户条件
+     * @return 默认查询包装器
+     */
     protected QueryWrapper<P> getDefaultWrapper(boolean ignoreTenantId) {
         QueryWrapper<P> wrapper = new QueryWrapper<>();
         TableInfo ti = tableInfo();
@@ -877,6 +1016,12 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return wrapper;
     }
 
+    /**
+     * 构造基础查询条件。
+     *
+     * @param query 查询条件
+     * @return 基础查询包装器
+     */
     @SuppressWarnings("unchecked")
     protected QueryWrapper<P> getBaseWrapper(Query<M> query) {
         QueryWrapper<P> wrapper = getDefaultWrapper(query.isIgnoreTenantId());
@@ -926,6 +1071,12 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         }
     }
 
+    /**
+     * 构造业务键查询条件。
+     *
+     * @param key 业务键
+     * @return 业务键查询包装器
+     */
     protected QueryWrapper<P> getKeyWrapper(Serializable key) {
         TableInfo ti = tableInfo();
         TableFieldInfo bizKeyField = findFieldInfoByAnnotation(ti, BizKey.class);
@@ -937,6 +1088,12 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return wrapper;
     }
 
+    /**
+     * 构造业务键查询条件。
+     *
+     * @param keys 业务键列表
+     * @return 业务键查询包装器
+     */
     protected QueryWrapper<P> getKeyWrapper(List<Serializable> keys) {
         TableInfo ti = tableInfo();
         TableFieldInfo bizKeyField = findFieldInfoByAnnotation(ti, BizKey.class);
@@ -1004,6 +1161,12 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         }
     }
 
+    /**
+     * 读取持久化对象的业务键。
+     *
+     * @param persistenceObject 持久化对象
+     * @return 业务键值
+     */
     protected String getKeyValue(P persistenceObject) {
         try {
             TableFieldInfo bizKeyField = findFieldInfoByAnnotation(tableInfo(), BizKey.class);
