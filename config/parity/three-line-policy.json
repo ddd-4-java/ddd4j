@@ -1282,6 +1282,17 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-runtime/ddd4j-runtime-spring/src/main/java/io/ddd4j/spring/config/SpringCoreConfig.java",
+      "sourceSha256": [
+        "aaeaaad5b961643ec77a8b2e28c2431b90f588d31091dff05eb90bf4c5d1ffee",
+        "595902436b40189292d65d8a55b0cfd9ab3aaa38bd1852b29d95e71e898b1bb6",
+        "6269d7fdfbcc5b233f3fb24cdf6b0977fc91b9a8c19563aeecec363b29fbb2cb"
+      ],
+      "evidence": "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/config/SpringCoreConfigReadinessContractTest.java",
+      "testSha256": "dcc4890d63dea0dc4b47ab1f80df1f6cb2593a24d0f34095675aec4c6348b424",
+      "reason": "JDK 8 用 Collectors.toList，JDK 17/21 用 Stream.toList；注册表复制输入集合，三线同一 Spring 容器测试验证 Ordered 就绪检查项次序与结果"
+    },
+    {
       "path": "ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/cqrs/QuarkusJpaProjectionService.java",
       "sourceSha256": [
         "9005127c3b48a62f1f8bd93364475311ac154c385bf4d94c222ccfd40fdecfbe",
