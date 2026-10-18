@@ -37,7 +37,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 /**
@@ -170,9 +172,26 @@ public class MicaMqttMQClient implements MQClient {
 
     // ========================= 连接管理 =========================
 
+    static void awaitConnected(BooleanSupplier connected) throws InterruptedException {
+        // connectSync 只等待 TCP 连接；CONNACK 未到时 mica 会将订阅留到下次重连。
+        long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(10);
+        while (!connected.getAsBoolean()) {
+            if (System.nanoTime() >= deadline) {
+                throw new IllegalStateException("Mica MQTT client did not become ready for subscription");
+            }
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+                throw ex;
+            }
+        }
+    }
+
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
         MqttClient client = client();
+        awaitConnected(client::isConnected);
         // mica subscribe 通配：保留原生 subscribe `topic/#` 行为（首个 include tag 拼接到末尾 /#）
         String topic = resolveTopic(listener, mqProperties);
         String includeTag = TagMatcher.findIncludes(listener.getTags()).stream().findFirst().orElse(null);
