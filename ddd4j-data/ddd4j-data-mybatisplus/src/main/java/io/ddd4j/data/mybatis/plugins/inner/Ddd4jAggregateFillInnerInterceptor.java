@@ -47,32 +47,29 @@ import java.util.Objects;
         @Signature(type = Executor.class, method = "query", args = {
                 MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class, CacheKey.class, BoundSql.class})
 })
-/**
- * 类型说明。
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.0.x
- */
 public class Ddd4jAggregateFillInnerInterceptor implements Interceptor {
 
     /**
-     * intercept() 方法。
-     * @param invocation invocation 参数。
-     * @return 结果对象。
-     * @throws Throwable 调用过程中出现异常时抛出。
+     * 执行原始查询后，填充结果中的聚合根。
+     *
+     * @param invocation MyBatis 查询调用
+     * @return 原始查询结果
+     * @throws Throwable 原始查询抛出的异常
      */
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
         Object result = invocation.proceed();
-        if (result instanceof List<?> results) {
-            afterQuery(invocation.getArgs()[1], results);
+        if (result instanceof List<?>) {
+            afterQuery(invocation.getArgs()[1], (List<?>) result);
         }
         return result;
     }
 
     /**
-     * plugin() 方法。
-     * @param target 目标对象。
-     * @return 结果对象。
+     * 将拦截器包装到 MyBatis 目标对象。
+     *
+     * @param target 目标对象
+     * @return 包装后的对象
      */
     @Override
     public Object plugin(Object target) {
@@ -80,9 +77,10 @@ public class Ddd4jAggregateFillInnerInterceptor implements Interceptor {
     }
 
     /**
-     * afterQuery() 方法。
-     * @param parameter 对象参数。
-     * @param results results 参数。
+     * 从查询参数中查找领域查询，并填充查询结果中的聚合根。
+     *
+     * @param parameter MyBatis 查询参数，可直接为 Query 或包含 Query 的 Map
+     * @param results 查询结果
      */
     public void afterQuery(Object parameter, List<?> results) {
         Query query = this.findQuery(parameter);
