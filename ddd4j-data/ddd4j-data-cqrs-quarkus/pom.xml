@@ -20,6 +20,14 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- Keep shared Jackson 2 security fixes ahead of the framework BOM. -->
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <!-- Quarkus 平台 BOM（模块级再导入，= ddd4j-dependencies:8022 同款，引用根 pom:55 的
                  ${quarkus.version}=3.38.2，刻意不声明本地 quarkus 版本属性）：沿 -event-store-panache
                  实证的模式预防父链混版——父 BOM 链更早的 import（spring-data-bom/hibernate-platform 等）

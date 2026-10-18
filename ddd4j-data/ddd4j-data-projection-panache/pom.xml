@@ -21,6 +21,14 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- Keep shared Jackson 2 security fixes ahead of the framework BOM. -->
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <!-- Quarkus 平台 BOM（模块级再导入，= ddd4j-dependencies 同款 ${quarkus.version}）：
                  与 ddd4j-data-event-store-panache（Task 5.1）同款 parent-chain 防御，实测必要
                  （非冗余）。父 BOM 链中更早的 import 已把 hibernate-core 管理为面向 Framework 7
