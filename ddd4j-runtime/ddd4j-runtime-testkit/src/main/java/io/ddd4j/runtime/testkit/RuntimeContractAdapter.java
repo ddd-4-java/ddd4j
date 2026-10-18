@@ -32,11 +32,24 @@ public final class RuntimeContractAdapter implements RuntimeContract {
     private final Map<String, Class<?>> services;
     private final Supplier<ReadinessReport> readinessSupplier;
 
+    /**
+     * 创建运行时契约适配器。
+     *
+     * @param starter 启动动作
+     * @param closer 关闭动作
+     * @param services 注册的服务键与接口类型
+     * @param readinessSupplier 就绪状态提供者
+     */
     public RuntimeContractAdapter(Runnable starter, Runnable closer, Map<String, Class<?>> services,
                                   Supplier<ReadinessReport> readinessSupplier) {
         this.starter = Objects.requireNonNull(starter, "starter must not be null");
         this.closer = Objects.requireNonNull(closer, "closer must not be null");
-        this.services = Collections.unmodifiableMap(new HashMap<>(Objects.requireNonNull(services, "services must not be null")));
+        Map<String, Class<?>> copy = new HashMap<>(Objects.requireNonNull(services, "services must not be null"));
+        for (Map.Entry<String, Class<?>> entry : copy.entrySet()) {
+            Objects.requireNonNull(entry.getKey(), "service key must not be null");
+            Objects.requireNonNull(entry.getValue(), "service type must not be null");
+        }
+        this.services = Collections.unmodifiableMap(copy);
         this.readinessSupplier = Objects.requireNonNull(readinessSupplier, "readinessSupplier must not be null");
     }
 
