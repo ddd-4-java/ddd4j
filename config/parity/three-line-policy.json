@@ -247,6 +247,33 @@
   ],
   "platformContentMappings": [
     {
+      "path": "ddd4j-samples/ddd4j-sample-quarkus-satoken/src/main/java/io/ddd4j/sample/quarkus/satoken/rbac/RbacConfig.java",
+      "replacements": [
+        {
+          "from": "import javax.enterprise.context.ApplicationScoped;",
+          "to": "import jakarta.enterprise.context.ApplicationScoped;"
+        },
+        {
+          "from": "import javax.enterprise.event.Observes;",
+          "to": "import jakarta.enterprise.event.Observes;"
+        },
+        {
+          "from": "import javax.enterprise.inject.Produces;",
+          "to": "import jakarta.enterprise.inject.Produces;"
+        },
+        {
+          "from": "import javax.inject.Inject;",
+          "to": "import jakarta.inject.Inject;"
+        },
+        {
+          "from": "import javax.inject.Singleton;",
+          "to": "import jakarta.inject.Singleton;"
+        }
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-satoken/src/test/java/io/ddd4j/sample/quarkus/satoken/RbacResourceTest.java",
+      "reason": "三线 RBAC 种子权限、角色与查询逻辑一致；Sa-Token 样例 48 项测试覆盖角色和权限端点，仅 CDI 注解包名按 Quarkus 平台版本适配"
+    },
+    {
       "path": "ddd4j-samples/ddd4j-sample-quarkus-satoken/src/main/java/io/ddd4j/sample/quarkus/satoken/config/AuthConfig.java",
       "replacements": [
         {
