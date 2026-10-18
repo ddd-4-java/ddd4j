@@ -16,6 +16,9 @@ package io.ddd4j.core.cqrs.command;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * 的重复抛 {@link IllegalStateException} 语义一致（ADR-0004）。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 2.0.x
+ * @since 1.0.x
  */
 class CommandRegistryTest {
 
@@ -131,7 +134,7 @@ class CommandRegistryTest {
 
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
-            return Set.of(CreateOrderCommand.class);
+            return Collections.<Class<? extends Command>>singleton(CreateOrderCommand.class);
         }
 
         @Override
@@ -144,7 +147,7 @@ class CommandRegistryTest {
 
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
-            return Set.of(CancelOrderCommand.class);
+            return Collections.<Class<? extends Command>>singleton(CancelOrderCommand.class);
         }
 
         @Override
@@ -161,7 +164,8 @@ class CommandRegistryTest {
 
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
-            return Set.of(CreateOrderCommand.class, CancelOrderCommand.class);
+            return new HashSet<>(Arrays.<Class<? extends Command>>asList(
+                    CreateOrderCommand.class, CancelOrderCommand.class));
         }
 
         @Override
@@ -178,7 +182,8 @@ class CommandRegistryTest {
 
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
-            return Set.of(ShipOrderCommand.class, TrackOrderCommand.class);
+            return new HashSet<>(Arrays.<Class<? extends Command>>asList(
+                    ShipOrderCommand.class, TrackOrderCommand.class));
         }
 
         @Override
