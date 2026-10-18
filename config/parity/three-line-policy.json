@@ -1282,6 +1282,39 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-data/ddd4j-data-external/src/main/java/io/ddd4j/data/external/region/BaiduRegionTemplate.java",
+      "sourceSha256": [
+        "8213037a013e86392a37f0dc2247fadbe34935e4116e3bc6d3c75f1149318db6",
+        "7c7c0fed58f0ea693b8d6393114e628552866689935d777a400fffbd171d448e",
+        "15d772df855f653978ef5ef9df37119af5564533d722fd867c7b7bb6b43bcf78"
+      ],
+      "evidence": "ddd4j-data/ddd4j-data-external/src/test/java/io/ddd4j/data/external/region/BaiduRegionHttpContractTest.java",
+      "testSha256": "070466556b2d5469b8d967d09f39b9199f5c770ac5bef1a42916f10e1bd9319f",
+      "reason": "JDK 8 使用 Hutool HTTP，JDK 17/21 使用 java.net.http.HttpClient；三线同一 HTTP 契约测试验证 IP 校验、成功响应缓存与到期时间、供应商及 HTTP 错误不缓存"
+    },
+    {
+      "path": "ddd4j-data/ddd4j-data-external/src/main/java/io/ddd4j/data/external/region/PconlineRegionTemplate.java",
+      "sourceSha256": [
+        "e5b7009a61360167e8872de2dfa4468da983fc3544ecc9115cf18e2c7c5d06cd",
+        "296f4f8ad3a43a3d3ef6b766142a0775361ce290a3060c1d1a95ed3bac4d6fad",
+        "a0d20c487fe6a3b994e21964dbec7e22bfc2b3ea9b2b93a76440f72c73d29e86"
+      ],
+      "evidence": "ddd4j-data/ddd4j-data-external/src/test/java/io/ddd4j/data/external/region/PconlineRegionHttpContractTest.java",
+      "testSha256": "4038906e645b01fdaeaf60c96736b9ceed9b13ba4cf80512b6b2c2ddd4922fe5",
+      "reason": "JDK 8 使用 Hutool HTTP 和等价的 Unicode 空白裁剪，JDK 17/21 使用 java.net.http.HttpClient 与 String.strip；三线同一 HTTP 契约测试验证 IP 校验、缓存、失败回退及 Unicode 空白处理"
+    },
+    {
+      "path": "ddd4j-data/ddd4j-data-external/src/main/java/io/ddd4j/data/external/weather/WeatherTemplate.java",
+      "sourceSha256": [
+        "c9f0f3cbd51953370da98ce0c0f5f2e5b7f737bc2af16518c3377405ab303b3d",
+        "3420e0ef6b14934e28896a72bb0f328e7a16b456aefb9457c122c8404bb3731b",
+        "500dc15a90c354bbffb7fa8bb5de753082d3e183efa4c9f8308f74c4629d4de4"
+      ],
+      "evidence": "ddd4j-data/ddd4j-data-external/src/test/java/io/ddd4j/data/external/weather/WeatherTemplateHttpContractTest.java",
+      "testSha256": "f9d79d492b544c4f26c9e1ed4ef3e7ba9a73fa91da6a4da9479bf87a191ac5d4",
+      "reason": "JDK 8 使用 Hutool HTTP，JDK 17/21 使用 java.net.http.HttpClient；三线同一 HTTP 契约测试验证天气响应解析、成功缓存和失败不缓存"
+    },
+    {
       "path": "ddd4j-data/ddd4j-data-event-store-esdb/src/main/java/io/ddd4j/data/event/store/esdb/EsdbEventStore.java",
       "sourceSha256": [
         "527c53a9178615c6bd768968867391e22ac972137316f5a37bddbb38255289af",
