@@ -13,16 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.sample.javalin.order.infrastructure;
-import java.util.Optional;
-import java.util.Objects;
-import java.util.Map;
-import java.util.List;
-import java.util.ArrayList;
-import io.ddd4j.sample.order.application.OutboxPort;
-import io.ddd4j.sample.order.application.OutboxMessage;
-import io.ddd4j.sample.order.application.OrderReadModelPort;
-import io.ddd4j.sample.order.application.OrderReadModel;
-import io.ddd4j.sample.order.application.IdempotencyPort;
 
 import io.ddd4j.sample.order.application.*;
 import io.ddd4j.sample.order.domain.Order;
@@ -34,6 +24,7 @@ import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 /**
  * Javalin sample infrastructure boundary.
@@ -69,7 +60,8 @@ public final class JavalinOrderAdapters
 
     @Override
     public List<Order> findAll(int offset, int limit) {
-        return orders.values().stream().skip(offset).limit(limit).toList();
+        return orders.values().stream().skip(offset).limit(limit)
+                .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
     }
 
     @Override
@@ -84,7 +76,8 @@ public final class JavalinOrderAdapters
 
     @Override
     public List<OutboxMessage> pending(int limit) {
-        return new ArrayList<>(outbox.values()).stream().limit(limit).toList();
+        return new ArrayList<>(outbox.values()).stream().limit(limit)
+                .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
     }
 
     @Override
@@ -117,7 +110,7 @@ public final class JavalinOrderAdapters
                         || Objects.equals(criteria.status(), order.status()))
                 .skip((long) (criteria.page() - 1) * criteria.size())
                 .limit(criteria.size())
-                .toList();
+                .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
     }
 
     @Override
