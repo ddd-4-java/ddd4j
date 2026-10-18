@@ -23,6 +23,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -141,11 +142,11 @@ class ProjectionMetricsTest {
         void runOnce_有事件_应触发started和completed回调() {
             RecordingMetrics metrics = new RecordingMetrics();
             ProjectionRunner<String> runner = new ProjectionRunner<>(projectionService, chunkReader, metrics);
-            TestView view = new TestView("orders", "orders", 100, List.of("created"));
+            TestView view = new TestView("orders", "orders", 100, Arrays.asList("created"));
 
             when(projectionService.readProjectionPosition("orders")).thenReturn(0L);
-            EventChunk<String> chunk = new EventChunk<>(List.of("e1", "e2", "e3"), 3);
-            when(chunkReader.read(eq("orders"), eq(0L), eq(100), eq(List.of("created"))))
+            EventChunk<String> chunk = new EventChunk<>(Arrays.asList("e1", "e2", "e3"), 3);
+            when(chunkReader.read(eq("orders"), eq(0L), eq(100), eq(Arrays.asList("created"))))
                     .thenReturn(chunk);
 
             runner.runOnce(view);
@@ -161,10 +162,10 @@ class ProjectionMetricsTest {
         void runOnce_空chunk_应触发started和completed回调且eventCount为0() {
             RecordingMetrics metrics = new RecordingMetrics();
             ProjectionRunner<String> runner = new ProjectionRunner<>(projectionService, chunkReader, metrics);
-            TestView view = new TestView("orders", "orders", 100, List.of("created"));
+            TestView view = new TestView("orders", "orders", 100, Arrays.asList("created"));
 
             when(projectionService.readProjectionPosition("orders")).thenReturn(5L);
-            when(chunkReader.read(eq("orders"), eq(5L), eq(100), eq(List.of("created"))))
+            when(chunkReader.read(eq("orders"), eq(5L), eq(100), eq(Arrays.asList("created"))))
                     .thenReturn(EventChunk.empty(5));
 
             runner.runOnce(view);
@@ -178,12 +179,12 @@ class ProjectionMetricsTest {
         void runOnce_位置未前进_应触发completed且positionAdvance为0() {
             RecordingMetrics metrics = new RecordingMetrics();
             ProjectionRunner<String> runner = new ProjectionRunner<>(projectionService, chunkReader, metrics);
-            TestView view = new TestView("orders", "orders", 100, List.of("created"));
+            TestView view = new TestView("orders", "orders", 100, Arrays.asList("created"));
 
             when(projectionService.readProjectionPosition("orders")).thenReturn(5L);
             // chunk 有事件但 nextEventNumber 未前进
-            when(chunkReader.read(eq("orders"), eq(5L), eq(100), eq(List.of("created"))))
-                    .thenReturn(new EventChunk<>(List.of("e1"), 5));
+            when(chunkReader.read(eq("orders"), eq(5L), eq(100), eq(Arrays.asList("created"))))
+                    .thenReturn(new EventChunk<>(Arrays.asList("e1"), 5));
 
             runner.runOnce(view);
 
@@ -200,7 +201,7 @@ class ProjectionMetricsTest {
         void runOnce_chunkReader抛异常_应触发started和failed回调() {
             RecordingMetrics metrics = new RecordingMetrics();
             ProjectionRunner<String> runner = new ProjectionRunner<>(projectionService, chunkReader, metrics);
-            TestView view = new TestView("orders", "orders", 100, List.of("created"));
+            TestView view = new TestView("orders", "orders", 100, Arrays.asList("created"));
 
             when(projectionService.readProjectionPosition("orders")).thenReturn(0L);
             RuntimeException expectedError = new RuntimeException("chunk reader failed");
@@ -240,11 +241,11 @@ class ProjectionMetricsTest {
         void 使用noopMetrics_不影响正常流程() {
             ProjectionRunner<String> runner = new ProjectionRunner<>(projectionService, chunkReader,
                     NoopProjectionMetrics.INSTANCE);
-            TestView view = new TestView("orders", "orders", 100, List.of("created"));
+            TestView view = new TestView("orders", "orders", 100, Arrays.asList("created"));
 
             when(projectionService.readProjectionPosition("orders")).thenReturn(0L);
-            EventChunk<String> chunk = new EventChunk<>(List.of("e1"), 1);
-            when(chunkReader.read(eq("orders"), eq(0L), eq(100), eq(List.of("created"))))
+            EventChunk<String> chunk = new EventChunk<>(Arrays.asList("e1"), 1);
+            when(chunkReader.read(eq("orders"), eq(0L), eq(100), eq(Arrays.asList("created"))))
                     .thenReturn(chunk);
 
             EventChunk<String> result = runner.runOnce(view);
@@ -255,10 +256,10 @@ class ProjectionMetricsTest {
         @Test
         void metrics参数为null_应默认使用noop() {
             ProjectionRunner<String> runner = new ProjectionRunner<>(projectionService, chunkReader, null);
-            TestView view = new TestView("orders", "orders", 100, List.of("created"));
+            TestView view = new TestView("orders", "orders", 100, Arrays.asList("created"));
 
             when(projectionService.readProjectionPosition("orders")).thenReturn(0L);
-            when(chunkReader.read(eq("orders"), eq(0L), eq(100), eq(List.of("created"))))
+            when(chunkReader.read(eq("orders"), eq(0L), eq(100), eq(Arrays.asList("created"))))
                     .thenReturn(EventChunk.empty(0));
 
             // 不应抛异常
