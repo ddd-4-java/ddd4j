@@ -22,7 +22,7 @@ import java.util.Objects;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,7 +32,7 @@ class TypedEventDispatcherTest {
     @Test
     void shouldDispatchMatchingEvent() {
         AtomicInteger handled = new AtomicInteger();
-        TypedEventDispatcher dispatcher = new TypedEventDispatcher(List.of(
+        TypedEventDispatcher dispatcher = new TypedEventDispatcher(Arrays.asList(
                 new PersonCreatedHandler(handled)
         ));
 
@@ -44,7 +44,7 @@ class TypedEventDispatcherTest {
 
     @Test
     void shouldIgnoreUnknownEventType() {
-        TypedEventDispatcher dispatcher = new TypedEventDispatcher(List.of());
+        TypedEventDispatcher dispatcher = new TypedEventDispatcher(Arrays.asList());
 
         boolean dispatched = dispatcher.dispatch(new PersonCreatedEvent("p-1"));
 
@@ -53,7 +53,7 @@ class TypedEventDispatcherTest {
 
     @Test
     void shouldRejectEventClassMismatch() {
-        TypedEventDispatcher dispatcher = new TypedEventDispatcher(List.of(
+        TypedEventDispatcher dispatcher = new TypedEventDispatcher(Arrays.asList(
                 new PersonCreatedHandler(new AtomicInteger())
         ));
 
