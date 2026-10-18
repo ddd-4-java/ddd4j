@@ -39,7 +39,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.*;
@@ -153,7 +153,7 @@ public class DefaultQrCodeService implements QrCodeService, AutoCloseable {
             }
             BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(new BufferedImageLuminanceSource(image)));
             Result result = new MultiFormatReader().decode(bitmap);
-            return Arrays.asList(new QrCodeDecodeResult(result.getText()));
+            return Collections.singletonList(new QrCodeDecodeResult(result.getText()));
         } catch (Exception exception) {
             throw new IllegalStateException("QR code decoding failed", exception);
         }
