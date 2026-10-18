@@ -74,7 +74,7 @@
       "sha256ByJdk": {
         "8": "a88f3288889a07f28dc6bab4714c67db98429bd41970827d141415718a7deb19",
         "17": "0eb08019a8a58479e224953f578fd154cb99b4c152993e96288e5b3fe3f113ea",
-        "21": "5de022d0d6deb45b1ddf86b6da770e601fe3add02ef3c69e6f01b576163960ce"
+        "21": "48cfd57cb7a221d0d6642786a0981b4c6776250da3f5fd9c3145dfbcb7643288"
       },
       "evidence": "三线分别执行 T03 strict-artifacts 门禁；这里仅豁免已哈希锁定的组件矩阵差异"
     },
