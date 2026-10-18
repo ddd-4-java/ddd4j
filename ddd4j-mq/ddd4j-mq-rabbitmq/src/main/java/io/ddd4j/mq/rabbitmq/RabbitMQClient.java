@@ -13,6 +13,25 @@
  * limitations under the License.
  */
 package io.ddd4j.mq.rabbitmq;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.Set;
+import java.util.Objects;
+import java.util.Map;
+import java.util.List;
+import java.util.HashMap;
+import java.util.ArrayList;
+import com.rabbitmq.client.Return;
+import com.rabbitmq.client.DeliverCallback;
+import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.Channel;
 
 import com.rabbitmq.client.*;
 import io.ddd4j.kit.lang.StrKit;
@@ -70,7 +89,8 @@ public class RabbitMQClient implements MQClient {
 
     /**
      * 构造方法 1：注入原生 connection（runtime 自动装配用）。
-     * @param connection 连接对象
+     *
+     * @param connection 已创建的 RabbitMQ 连接
      */
     public RabbitMQClient(Connection connection) {
         this.connectionRef.set(Objects.requireNonNull(connection, "RabbitMQ Connection is required"));
@@ -79,7 +99,8 @@ public class RabbitMQClient implements MQClient {
 
     /**
      * 构造方法 2：自行根据 properties 构造 connection（lazy）。
-     * @param properties 属性集合
+     *
+     * @param properties RabbitMQ 连接配置
      */
     public RabbitMQClient(RabbitMQProperties properties) {
         this.connectionRef.set(null);
