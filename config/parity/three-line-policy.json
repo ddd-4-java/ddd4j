@@ -2178,6 +2178,17 @@
       "evidence": "ddd4j-cache/src/test/java/io/ddd4j/cache/CacheDefaultMapperContractTest.java",
       "testSha256": "c2babe25b693a314657c3535c3e0957c503dcd09bbb1be4435b810af2accf91b",
       "reason": "三线共同测试验证默认映射器均省略 null 字段；Jackson 2 使用 defaultPropertyInclusion，Jackson 3 使用 changeDefaultPropertyInclusion，逐文件源码和测试 SHA-256 锁定"
+    },
+    {
+      "path": "ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/serialization/JsonMQEventSerialization.java",
+      "sourceSha256": [
+        "d46ca64d1c5dad6036304f301a78f450022953f2d052ac2e0334247232404edf",
+        "d46ca64d1c5dad6036304f301a78f450022953f2d052ac2e0334247232404edf",
+        "7ac87d90952a2936da158fe1256436d5d4bf00ab28c2007dceb31db13671630c"
+      ],
+      "evidence": "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/serialization/JsonMQEventSerializationTest.java",
+      "testSha256": "e1d87306376d4e98de78090a3e63a2122e18587c206a8e892dd2646443c40fca",
+      "reason": "Jackson 2 的事件 mapper 显式注册 JavaTimeModule 并输出 ISO-8601；Jackson 3 的 JsonKit mapper 自动支持 java.time。三线共同测试验证带时区事件时间戳的 JSON 往返及不可序列化对象抛错；逐线源码和测试 SHA-256 锁定。"
     }
   ],
   "historicalDocumentSections": [
