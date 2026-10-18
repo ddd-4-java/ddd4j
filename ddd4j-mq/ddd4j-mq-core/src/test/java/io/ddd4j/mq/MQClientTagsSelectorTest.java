@@ -34,10 +34,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 class MQClientTagsSelectorTest {
 
     private final MQClient cli = new MQClient() {
-        /**
-         * impl() 方法。
-         * @return 结果字符串。
-         */
         @Override
         public String impl() {
             return "test";
@@ -48,12 +44,6 @@ class MQClientTagsSelectorTest {
             return null;
         }
 
-        /**
-         * initConsumer() 方法。
-         * @param listener 消息监听器。
-         * @param properties 配置属性。
-         * @return 判断结果。
-         */
         @Override
         public boolean initConsumer(MQListener listener, MQProperties properties) {
             return false;
