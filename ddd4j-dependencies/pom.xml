@@ -471,6 +471,7 @@
         <pgvector.version>0.1.6</pgvector.version>
         <picocli.version>4.7.7</picocli.version>
         <pinyin4j.version>2.5.1</pinyin4j.version>
+        <plexus-utils.version>3.6.2</plexus-utils.version>
         <png-encoder.version>1.5</png-encoder.version>
         <poi.version>5.5.1</poi.version>
         <postgresql.version>42.7.12</postgresql.version>
@@ -5240,6 +5241,12 @@
                 <groupId>org.postgresql</groupId>
                 <artifactId>r2dbc-postgresql</artifactId>
                 <version>${r2dbc-postgresql.version}</version>
+            </dependency>
+            <!-- Quarkus 1.x test bootstrap requests a vulnerable Plexus Utils release. -->
+            <dependency>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-utils</artifactId>
+                <version>${plexus-utils.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.r2dbc</groupId>
