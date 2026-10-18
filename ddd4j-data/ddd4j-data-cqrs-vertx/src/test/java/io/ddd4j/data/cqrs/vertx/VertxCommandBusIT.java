@@ -24,10 +24,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ServiceLoader;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -156,15 +153,11 @@ class VertxCommandBusIT {
         assertThat(exception.getMessage()).contains(UnknownCommand.class.getName());
     }
 
-    /**
-     * 伴随命令测试夹具：作为多类型占位执行器支持的第二类型，验证撞型时被整批拒绝。
-     */
+    /** 用于验证多类型处理器撞型拒绝的伴随命令。 */
     static class CompanionCommand implements Command {
     }
 
-    /**
-     * 未注册命令测试夹具：执行时应触发未注册命令的非法状态异常。
-     */
+    /** 用于验证未注册命令错误路径的测试命令。 */
     static class UnknownCommand implements Command {
     }
 
@@ -178,13 +171,14 @@ class VertxCommandBusIT {
 
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
-            return Set.of(SampleCommand.class, CompanionCommand.class);
+            return Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(SampleCommand.class, CompanionCommand.class)));
         }
 
         /**
-         * 执行处理逻辑。
-         * @param command command 参数。
-         * @return 方法执行结果。
+         * 执行占位命令。
+         *
+         * @param command 测试命令
+         * @return 成功结果
          */
         @Override
         public Result execute(Command command) {

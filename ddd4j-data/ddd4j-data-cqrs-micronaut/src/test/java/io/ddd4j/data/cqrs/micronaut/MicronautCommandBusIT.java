@@ -16,14 +16,17 @@ package io.ddd4j.data.cqrs.micronaut;
 
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
-import io.ddd4j.core.cqrs.command.Result;
 import io.ddd4j.core.cqrs.command.CommandRegistry;
+import io.ddd4j.core.cqrs.command.Result;
 import io.micronaut.context.BeanContext;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -96,15 +99,11 @@ class MicronautCommandBusIT {
         assertThat(exception.getMessage()).contains(UnknownCommand.class.getName());
     }
 
-    /**
-     * 伴随命令测试夹具：作为多类型占位执行器支持的第二类型，验证撞型时被整批拒绝。
-     */
+    /** 用于验证多类型处理器撞型拒绝的伴随命令。 */
     static class CompanionCommand implements Command {
     }
 
-    /**
-     * 未注册命令测试夹具：执行时应触发未注册命令的非法状态异常。
-     */
+    /** 用于验证未注册命令错误路径的测试命令。 */
     static class UnknownCommand implements Command {
     }
 
@@ -117,13 +116,14 @@ class MicronautCommandBusIT {
 
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
-            return Set.of(SampleCommand.class, CompanionCommand.class);
+            return Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(SampleCommand.class, CompanionCommand.class)));
         }
 
         /**
-         * 执行处理逻辑。
-         * @param command command 参数。
-         * @return 方法执行结果。
+         * 执行占位命令。
+         *
+         * @param command 测试命令
+         * @return 成功结果
          */
         @Override
         public Result execute(Command command) {
