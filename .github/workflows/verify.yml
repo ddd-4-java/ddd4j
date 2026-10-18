@@ -184,7 +184,7 @@ jobs:
             echo "::warning::Aliyun auth returned $HTTP_CODE - private snapshot deps may fail"
           fi
       - name: Install reactor artifacts for plugin resolution
-        run: ./mvnw -U -Denforcer.skip=true -B -DskipTests -Dquarkus.build.skip=true install
+        run: ./mvnw -U -Denforcer.skip=true -B -Dmaven.test.skip=true -DskipITs -Dquarkus.build.skip=true install
       - name: Generate CycloneDX SBOM
         run: ./scripts/generate-sbom.sh
       - name: Generate third-party license inventory
