@@ -876,6 +876,11 @@
             </dependency>
             <dependency>
                 <groupId>org.glassfish</groupId>
+                <artifactId>jakarta.el</artifactId>
+                <version>${glassfish-el.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish</groupId>
                 <artifactId>javax.el</artifactId>
                 <version>${javax-el-implementation.version}</version>
             </dependency>
