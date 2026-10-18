@@ -22,7 +22,6 @@ import io.ddd4j.core.subject.SubjectProvider;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Set;
 
 /**
  * Development Subject provider used to demonstrate the generic Bearer bridge.
@@ -39,7 +38,7 @@ public class SampleSubjectProvider implements SubjectProvider {
         token = subject.login(AuthRequest.of("sample-user").setPrincipal(new AuthPrincipal()
                 .setLoginId("sample-user")
                 .setUserId("sample-user")
-                .setPerms(Set.of("order:read", "order:write"))));
+                .setPerms(new java.util.HashSet<>(java.util.Arrays.asList("order:read", "order:write")))));
     }
 
     /**
