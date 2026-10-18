@@ -20,6 +20,7 @@ import static org.mockito.Mockito.mock;
 
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.mq.MQProperties;
+import io.ddd4j.mq.delivery.MQDeliveryHeaders;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.event.MQEventSerialization;
 import io.ddd4j.mq.listener.MQListener;
@@ -27,6 +28,7 @@ import io.ddd4j.mq.message.MessageHeaders;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -146,4 +148,37 @@ class RedisStreamMQClientTest {
         client.close();
         verify(jedis, never()).close();
     }
+    @Test
+    @SuppressWarnings("unchecked")
+    void publish_shouldWriteCausalityIntoNativeStreamFields() {
+        redis.clients.jedis.UnifiedJedis jedis = mock(redis.clients.jedis.UnifiedJedis.class);
+        RedisStreamMQClient client = new RedisStreamMQClient(jedis);
+        MQProperties mqProperties = new MQProperties();
+        mqProperties.setEnabled(true);
+        mqProperties.setBroker("redisStream");
+        client.init(Collections.<MQListener>emptyList(), mqProperties, new MQEventSerialization() {
+            @Override
+            public <T> T serialize(Object event) {
+                return (T) "{}";
+            }
+
+            @Override
+            public <S, T> T deserialize(S value, Class<T> type) {
+                return null;
+            }
+        }, null);
+        MQEvent event = new MQEvent();
+        event.setTopic("orders");
+        event.setCorrelationId("correlation-1");
+        event.setCausationId("causation-1");
+
+        event.publish();
+
+        ArgumentCaptor<Map<String, String>> fields = ArgumentCaptor.forClass((Class<Map<String, String>>) (Class<?>) Map.class);
+        verify(jedis).xadd(anyString(), any(redis.clients.jedis.StreamEntryID.class), fields.capture());
+        assertEquals("correlation-1", fields.getValue().get(MQDeliveryHeaders.CORRELATION_ID));
+        assertEquals("causation-1", fields.getValue().get(MQDeliveryHeaders.CAUSATION_ID));
+        client.close();
+    }
+
 }
