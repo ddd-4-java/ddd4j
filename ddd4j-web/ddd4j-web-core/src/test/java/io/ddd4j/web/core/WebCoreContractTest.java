@@ -13,6 +13,13 @@
  * limitations under the License.
  */
 package io.ddd4j.web.core;
+import io.ddd4j.web.core.context.WebRequestLifecycle;
+import io.ddd4j.web.core.context.WebRequestData;
+import io.ddd4j.web.core.context.WebRequestContextFactory;
+import io.ddd4j.web.core.context.WebRequestContext;
+import io.ddd4j.web.core.context.WebContextScope;
+import io.ddd4j.web.core.context.SynchronousWebRequestSession;
+import io.ddd4j.web.core.context.ClientIpResolver;
 
 import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.auth.AuthPrincipal;
@@ -44,6 +51,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 1.0.x
+ */
 class WebCoreContractTest {
 
     @AfterEach
@@ -259,6 +271,10 @@ class WebCoreContractTest {
 
     private SubjectProvider provider(Subject subject) {
         return new SubjectProvider() {
+            /**
+             * 获取值。
+             * @return 方法执行结果。
+             */
             @Override
             public Subject getSubject() {
                 return subject;
