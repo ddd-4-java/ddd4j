@@ -2490,6 +2490,27 @@
       "evidence": "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/serialization/JsonMQEventSerializationTest.java",
       "testSha256": "e1d87306376d4e98de78090a3e63a2122e18587c206a8e892dd2646443c40fca",
       "reason": "Jackson 2 的事件 mapper 显式注册 JavaTimeModule 并输出 ISO-8601；Jackson 3 的 JsonKit mapper 自动支持 java.time。三线共同测试验证带时区事件时间戳的 JSON 往返及不可序列化对象抛错；逐线源码和测试 SHA-256 锁定。"
+    },
+    {
+      "path": "ddd4j-mq/ddd4j-mq-core/src/main/java/io/ddd4j/mq/MQClient.java",
+      "sourceSha256": [
+        "3c47b33fabf4c21b2ccf5db703a72972579411f11df4856e48c9072a7d319e32",
+        "8eacc764d7af0bc42a93df286194ac022b4d7afcebcb55d46589151b5d305a2d",
+        "375780b2f685515064d76dc2123c3628891d68a1412d5048b7304b0df8d8cbe8"
+      ],
+      "evidence": "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/MQClientInitializationContractTest.java",
+      "testSha256": "1ce21f2aa871dfecc810b9be12920cee2d18f0f1c4021359f4c447a4755e3988",
+      "additionalEvidence": [
+        {
+          "path": "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/MQClientPersistenceContractTest.java",
+          "testSha256": "3e465fc364f1b5094b3f30346b8fea9b6d5782c2364b41ae5c9ecfcc01e26343"
+        },
+        {
+          "path": "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/MQClientTagsSelectorTest.java",
+          "testSha256": "8fe998966294abc6cc9178b52b311376077e68ea40110d7d1e9196ab56badae2"
+        }
+      ],
+      "reason": "JDK 8 接口默认方法通过嵌套辅助类复用逻辑，JDK 17/21 使用接口私有方法和新版字符串 API；三线相同初始化、持久化、标签选择契约测试锁定等价行为"
     }
   ],
   "historicalDocumentSections": [

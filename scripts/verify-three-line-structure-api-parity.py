@@ -1128,6 +1128,7 @@ def validate_platform_syntax_mappings(mappings, roots: list[pathlib.Path]) -> di
         hashes = mapping.get("sourceSha256")
         test_hash = mapping.get("testSha256")
         test_hashes = mapping.get("testSha256ByJdk")
+        additional_evidence = mapping.get("additionalEvidence", [])
         valid_test_hash = (isinstance(test_hash, str)
                            and re.fullmatch(r"[0-9a-f]{64}", test_hash)
                            and test_hashes is None)
@@ -1147,6 +1148,22 @@ def validate_platform_syntax_mappings(mappings, roots: list[pathlib.Path]) -> di
                 or not (valid_test_hash or valid_line_hashes)
                 or not mapping.get("reason")):
             raise ValueError(f"invalid platform syntax mapping: {source}")
+        if not isinstance(additional_evidence, list):
+            raise ValueError(f"invalid additional platform evidence: {source}")
+        seen_evidence = {test}
+        for item in additional_evidence:
+            if not isinstance(item, dict):
+                raise ValueError(f"invalid additional platform evidence: {source}")
+            extra = pathlib.PurePosixPath(item.get("path", ""))
+            extra_path = extra.as_posix()
+            extra_hash = item.get("testSha256")
+            if (extra.is_absolute() or ".." in extra.parts or "*" in extra_path
+                    or "/src/test/java/" not in extra_path or extra_path in seen_evidence
+                    or not isinstance(extra_hash, str)
+                    or not re.fullmatch(r"[0-9a-f]{64}", extra_hash)
+                    or not all((root / extra).is_file() for root in roots)):
+                raise ValueError(f"invalid additional platform evidence: {extra_path}")
+            seen_evidence.add(extra_path)
         by_path[source] = mapping
     return by_path
 
@@ -1159,7 +1176,10 @@ def platform_syntax_matches(path: str, roots: list[pathlib.Path], mapping: dict)
                 for index, root in enumerate(roots))
             and all(hashlib.sha256((root / evidence).read_bytes()).hexdigest()
                     == (test_hashes[str(jdk)] if test_hashes else mapping["testSha256"])
-                    for root, jdk in zip(roots, (8, 17, 21))))
+                    for root, jdk in zip(roots, (8, 17, 21)))
+            and all(hashlib.sha256((root / item["path"]).read_bytes()).hexdigest()
+                    == item["testSha256"]
+                    for item in mapping.get("additionalEvidence", []) for root in roots))
 
 
 def class_files(root: pathlib.Path) -> dict[str, pathlib.Path]:
