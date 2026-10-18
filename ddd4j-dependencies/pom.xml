@@ -607,7 +607,7 @@
         <shiro-redis.version>3.3.1</shiro-redis.version>
         <shiro-redisson.version>1.5.0.RELEASE</shiro-redisson.version>
         <shiro-saml.version>2.0.x.20260630-SNAPSHOT</shiro-saml.version>
-        <shiro-sample.version>2.0.6</shiro-sample.version>
+        <shiro-sample.version>2.2.1</shiro-sample.version>
         <shiro-thymeleaf.version>2.1.0</shiro-thymeleaf.version>
         <shiro-weixin.version>2.0.x.20260630-SNAPSHOT</shiro-weixin.version>
         <shiro.version>2.2.1</shiro.version>

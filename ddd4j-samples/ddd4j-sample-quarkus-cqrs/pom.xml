@@ -31,6 +31,14 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- Keep Jackson aligned with the product BOM before Quarkus manages transitive modules. -->
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <!-- 显式引入 Quarkus BOM，统一管控 quarkus-* 版本 -->
             <dependency>
                 <groupId>${quarkus.platform.group-id}</groupId>
