@@ -1267,6 +1267,51 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-extensions/ddd4j-extension-monitor/src/main/java/io/ddd4j/extension/monitor/channel/feishu/FeishuClient.java",
+      "sourceSha256": [
+        "c450f2f5926ef9e8517429c6a44d2b7ee59721dfc77a57aa06512e1e9cc60722",
+        "90c706cab2d6295047502d8938177d43b85150b0a93f0ae74fec8e9f46d312d6",
+        "52af73b8385a3b8c44f457b6e953111a458d5e5f9f2dc0a6cb36c8aacf9b60d2"
+      ],
+      "evidence": "ddd4j-extensions/ddd4j-extension-monitor/src/test/java/io/ddd4j/extension/monitor/channel/feishu/FeishuClientTest.java",
+      "testSha256ByJdk": {
+        "8": "dd0b426555840bbb97a657fd4dcf80cf98a69e6732280e1d7ec9d204fd8d5ea6",
+        "17": "136bcacc7c5f75192f42b68478a445e297283cd9c04468bdcc0d7e2b3171c96e",
+        "21": "ddb6d9339b0bf070e448a1c34aa34f086055c0b31cd5b161ddcb17d03490d54e"
+      },
+      "reason": "JDK 8 使用 Hutool HTTP，JDK 17/21 使用 JDK HttpClient；三线测试均验证 POST、签名与非签名请求体"
+    },
+    {
+      "path": "ddd4j-extensions/ddd4j-extension-monitor/src/main/java/io/ddd4j/extension/monitor/channel/feishu/FeishuRobotSender.java",
+      "sourceSha256": [
+        "9058775ac94bb75f379cb5bd323f2b6074ea4f7bd9b03b6181e796f2078f7a77",
+        "1e625cb121c5b559db99c6d1dc69d18d8daaf15d4132258d7567a671436e2490",
+        "5338733b372e5e4ab5f0d6494f4fbcbb501a02e35a73694b38cdee260944486a"
+      ],
+      "evidence": "ddd4j-extensions/ddd4j-extension-monitor/src/test/java/io/ddd4j/extension/monitor/channel/feishu/FeishuRobotSenderContractTest.java",
+      "testSha256ByJdk": {
+        "8": "7678628da088a05637d31b1f28e06b334cd2674861f89c484e3291ed2f84ca07",
+        "17": "7678628da088a05637d31b1f28e06b334cd2674861f89c484e3291ed2f84ca07",
+        "21": "7678628da088a05637d31b1f28e06b334cd2674861f89c484e3291ed2f84ca07"
+      },
+      "reason": "JDK 8 使用 Arrays.asList/Collections.singletonList，高线使用 List.of；三线共同测试验证 post 富文本消息封装及发送"
+    },
+    {
+      "path": "ddd4j-extensions/ddd4j-extension-monitor/src/main/java/io/ddd4j/extension/monitor/channel/wecom/WeComClient.java",
+      "sourceSha256": [
+        "d39805fb1289904fcbf18597f1bd52c701d837b89311ef65ab9f10d65da21b4f",
+        "2674379cd1ee86ac7a34b181f30dcbdcf2739d9d5478dceb25ce6abf8a879249",
+        "b55d98b2364e0afc34cbe11ced0ddccc214f24207edc62f46587364477d629d2"
+      ],
+      "evidence": "ddd4j-extensions/ddd4j-extension-monitor/src/test/java/io/ddd4j/extension/monitor/channel/wecom/WeComClientTest.java",
+      "testSha256ByJdk": {
+        "8": "fdfc850d42011fa47d7ea4f051ebaddefc91f60c8c230d6cfb8d6d9ba715f888",
+        "17": "6ccde9be427992f4e38641f85c2a665ed515525fd3c835ffbd85c22e47799f58",
+        "21": "b72d7d944e68425065364df05d83997287ced4bf5bc6cda31c4f85040fbe349b"
+      },
+      "reason": "JDK 8 使用 Hutool HTTP，JDK 17/21 使用 JDK HttpClient；三线测试均验证企业微信 webhook 请求"
+    },
+    {
       "path": "ddd4j-data/ddd4j-data-event-store-panache/src/main/java/io/ddd4j/data/event/store/panache/PanacheEventStore.java",
       "sourceSha256": [
         "a6b06fe3413dd2be996057743b210b9777ff79b5bc038cf0682386483406683d",
