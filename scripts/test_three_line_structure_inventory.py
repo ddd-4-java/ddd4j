@@ -18,6 +18,31 @@ SCRIPT = Path(__file__).with_name("verify-three-line-structure-api-parity.py")
 
 
 class ThreeLineInventoryTest(unittest.TestCase):
+    def test_helidon_cdi_service_descriptor_tracks_namespace_without_missing_provider(self):
+        prefix = "ddd4j-runtime/ddd4j-runtime-helidon/src/main/resources/META-INF/services/"
+        legacy = prefix + "javax.enterprise.inject.spi.Extension"
+        modern = prefix + "jakarta.enterprise.inject.spi.Extension"
+        provider = "io.ddd4j.helidon.Ddd4jHelidonExtension\n"
+        self.write(self.roots[0], legacy, provider)
+        self.write(self.roots[1], modern, provider)
+        self.write(self.roots[2], modern, provider)
+
+        def status(path):
+            result, output = self.run_checker("inventory")
+            self.assertEqual(0, result.returncode, result.stderr)
+            rows = json.loads((output / "inventory.json").read_text())["differences"]
+            return next(row["status"] for row in rows if row["path"] == path)
+
+        self.assertEqual("PLATFORM_ADAPTED", status(legacy))
+        self.assertEqual("PLATFORM_ADAPTED", status(modern))
+        self.write(self.roots[2], modern, "io.ddd4j.helidon.WrongExtension\n")
+        self.assertEqual("OPEN", status(legacy))
+        self.assertEqual("OPEN", status(modern))
+        self.write(self.roots[2], modern, provider)
+        (self.roots[1] / modern).unlink()
+        self.assertEqual("OPEN", status(legacy))
+        self.assertEqual("OPEN", status(modern))
+
     def test_known_cdi_descriptors_allow_only_namespace_and_schema_transition(self):
         paths = {
             "ddd4j-runtime/ddd4j-runtime-quarkus/src/main/resources/META-INF/beans.xml": ("4.0", "4_0"),
