@@ -24,31 +24,24 @@ import java.util.Objects;
 
 /**
  * 基础属性源后置处理器。
- * <p>
- * 将应用配置属性（如 application.yml 中的 ddd4j.* 配置）注入到 Spring Environment，
- * 供 ddd4j 各模块通过 {@code @Value("${ddd4j.xxx}")} 读取使用。
- *
- * <p>将应用配置属性（如 application.yml 中的 ddd4j.* 配置）注入到 Spring Environment，
- * 供 {@code ddd4j-webmvc} 等模块通过 {@code @Value("${ddd4j.xxx}")} 读取。
+ * <p>将 {@code ddd4j.*} 系统属性加入 Spring Environment，供框架模块读取。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 2.0.x
  */
 public class BasePropertySourcePostProcessor implements BeanFactoryPostProcessor, Ordered {
 
-    /**
-     * postProcessBeanFactory() 方法。
-     * @param beanFactory beanFactory 参数。
-     */
+    /** @param beanFactory 待处理的 Bean 工厂 */
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
-        if (beanFactory instanceof ConfigurableEnvironment env) {
+        if (beanFactory instanceof ConfigurableEnvironment) {
+            ConfigurableEnvironment env = (ConfigurableEnvironment) beanFactory;
             env.getPropertySources()
-                    .addLast(new PropertySource<>("ddd4j-app-props", System.getProperties()) {
+                    .addLast(new PropertySource<Object>("ddd4j-app-props", System.getProperties()) {
                         /**
-                         * 获取值。
-                         * @param name 名称。
-                         * @return 结果对象。
+                         * 读取框架属性。
+                         *
+                         * @param name 属性名
+                         * @return 属性值；不属于框架命名空间时为 null
                          */
                         @Override
                         public Object getProperty(String name) {
@@ -61,10 +54,7 @@ public class BasePropertySourcePostProcessor implements BeanFactoryPostProcessor
         }
     }
 
-    /**
-     * 获取值。
-     * @return 结果数值。
-     */
+    /** @return 最低优先级 */
     @Override
     public int getOrder() {
         return LOWEST_PRECEDENCE;

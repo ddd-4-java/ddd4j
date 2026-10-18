@@ -28,24 +28,22 @@ import java.util.Objects;
  * <p>将 ddd4j 框架级别的配置属性源（如 application-ddd4j.yml）注入到 Spring 环境。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 2.0.x
  */
 public class SpringPropertySourcePostProcessor implements BeanFactoryPostProcessor, Ordered {
 
-    /**
-     * postProcessBeanFactory() 方法。
-     * @param beanFactory beanFactory 参数。
-     */
+    /** @param beanFactory 待处理的 Bean 工厂 */
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
         // 将 ddd4j 配置属性源添加到 Spring Environment
-        if (beanFactory instanceof ConfigurableEnvironment env) {
+        if (beanFactory instanceof ConfigurableEnvironment) {
+            ConfigurableEnvironment env = (ConfigurableEnvironment) beanFactory;
             env.getPropertySources()
-                    .addLast(new PropertySource<>("ddd4j-defaults", System.getProperties()) {
+                    .addLast(new PropertySource<Object>("ddd4j-defaults", System.getProperties()) {
                         /**
-                         * 获取值。
-                         * @param name 名称。
-                         * @return 结果对象。
+                         * 读取框架属性。
+                         *
+                         * @param name 属性名
+                         * @return 属性值；不属于框架命名空间时为 null
                          */
                         @Override
                         public Object getProperty(String name) {
@@ -59,10 +57,7 @@ public class SpringPropertySourcePostProcessor implements BeanFactoryPostProcess
         }
     }
 
-    /**
-     * 获取值。
-     * @return 结果数值。
-     */
+    /** @return 最低优先级 */
     @Override
     public int getOrder() {
         return LOWEST_PRECEDENCE;
