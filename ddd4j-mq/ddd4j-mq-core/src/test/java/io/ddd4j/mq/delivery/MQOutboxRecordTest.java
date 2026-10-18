@@ -17,24 +17,25 @@ package io.ddd4j.mq.delivery;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
-import java.util.Collections;
-import java.util.Map;
-import java.util.LinkedHashMap;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+/** 验证 Outbox 消息身份、消息头和不可修改快照契约。 */
 class MQOutboxRecordTest {
 
     @Test
     void pending_shouldUsePendingStateAndEnforceStableMessageIdHeader() {
+        Map<String, String> headers = new LinkedHashMap<>();
+        headers.put(MQDeliveryHeaders.MESSAGE_ID, "incorrect");
+        headers.put("tenant", "tenant-1");
         MQOutboxRecord record = MQOutboxRecord.pending("message-1", "orders.created", "{}",
-                new java.util.LinkedHashMap<String, String>() {{
-                    put(MQDeliveryHeaders.MESSAGE_ID, "incorrect");
-                    put("tenant", "tenant-1");
-                }}, Instant.EPOCH);
+                headers, Instant.EPOCH);
 
         assertEquals(MQOutboxStatus.PENDING, record.status());
         assertEquals(0, record.attempts());
