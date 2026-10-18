@@ -257,7 +257,7 @@
         <hibernate.version>6.6.40.Final</hibernate.version>
         <hikaricp.version>7.1.0</hikaricp.version>
         <hitool.version>3.0.x.20260630-SNAPSHOT</hitool.version>
-        <hive.version>4.2.0</hive.version>
+        <hive.version>4.2.1</hive.version>
         <hsqldb.version>2.7.4</hsqldb.version>
         <htmlparser.version>2.1</htmlparser.version>
         <htmlunit.version>4.21.0</htmlunit.version>
