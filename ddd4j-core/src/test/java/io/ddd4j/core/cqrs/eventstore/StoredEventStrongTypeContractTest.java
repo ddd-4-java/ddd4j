@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * {@link StoredEvent} 构造契约测试。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 2.0.x
+ * @since 1.0.x
  */
 class StoredEventStrongTypeContractTest {
 
@@ -100,19 +100,20 @@ class StoredEventStrongTypeContractTest {
     }
 
     private static StoredEvent newStoredEventWithNullAt(int nullIndex) {
-        return switch (nullIndex) {
-            case 0 ->
-                    new StoredEvent(null, AGGREGATE_TYPE, AGGREGATE_ID, VERSION, POSITION, TIMESTAMP, new TestEvent(), null, null);
-            case 1 ->
-                    new StoredEvent(EVENT_ID, null, AGGREGATE_ID, VERSION, POSITION, TIMESTAMP, new TestEvent(), null, null);
-            case 2 ->
-                    new StoredEvent(EVENT_ID, AGGREGATE_TYPE, null, VERSION, POSITION, TIMESTAMP, new TestEvent(), null, null);
-            case 3 ->
-                    new StoredEvent(EVENT_ID, AGGREGATE_TYPE, AGGREGATE_ID, VERSION, POSITION, null, new TestEvent(), null, null);
-            case 4 ->
-                    new StoredEvent(EVENT_ID, AGGREGATE_TYPE, AGGREGATE_ID, VERSION, POSITION, TIMESTAMP, null, null, null);
-            default -> throw new IllegalArgumentException("unexpected null index: " + nullIndex);
-        };
+        switch (nullIndex) {
+            case 0:
+                return new StoredEvent(null, AGGREGATE_TYPE, AGGREGATE_ID, VERSION, POSITION, TIMESTAMP, new TestEvent(), null, null);
+            case 1:
+                return new StoredEvent(EVENT_ID, null, AGGREGATE_ID, VERSION, POSITION, TIMESTAMP, new TestEvent(), null, null);
+            case 2:
+                return new StoredEvent(EVENT_ID, AGGREGATE_TYPE, null, VERSION, POSITION, TIMESTAMP, new TestEvent(), null, null);
+            case 3:
+                return new StoredEvent(EVENT_ID, AGGREGATE_TYPE, AGGREGATE_ID, VERSION, POSITION, null, new TestEvent(), null, null);
+            case 4:
+                return new StoredEvent(EVENT_ID, AGGREGATE_TYPE, AGGREGATE_ID, VERSION, POSITION, TIMESTAMP, null, null, null);
+            default:
+                throw new IllegalArgumentException("unexpected null index: " + nullIndex);
+        }
     }
 
     /**
