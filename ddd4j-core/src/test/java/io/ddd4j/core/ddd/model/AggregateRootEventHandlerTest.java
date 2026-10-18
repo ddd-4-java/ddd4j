@@ -29,6 +29,7 @@ import io.ddd4j.core.ddd.event.EventHandler;
 import io.ddd4j.core.ddd.event.StringEntityType;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -45,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * 基本契约，这里按 Counter/IncrementEvent 场景逐一覆盖处理器机制本身。</p>
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 2.0.x
+ * @since 1.0.x
  */
 class AggregateRootEventHandlerTest {
 
@@ -73,7 +74,7 @@ class AggregateRootEventHandlerTest {
     void ignoreOnReplayHandlerNotInvokedOnLoad() {
         Counter counter = new Counter();
 
-        counter.loadFromHistory(List.of(new IncrementEvent(), new CountNotifiedEvent()));
+        counter.loadFromHistory(Arrays.asList(new IncrementEvent(), new CountNotifiedEvent()));
 
         assertEquals(1, counter.count, "normal handler should replay and rebuild state");
         assertFalse(counter.sideEffectRan, "ignoreOnReplay=true handler must be skipped on loadFromHistory");
@@ -108,7 +109,7 @@ class AggregateRootEventHandlerTest {
         assertEquals(1, applying.count, "apply should reach private @EventHandler via setAccessible");
 
         PrivateHandlerCounter replaying = new PrivateHandlerCounter();
-        replaying.loadFromHistory(List.of(new IncrementEvent(), new IncrementEvent()));
+        replaying.loadFromHistory(Arrays.asList(new IncrementEvent(), new IncrementEvent()));
         assertEquals(2, replaying.count, "loadFromHistory should reach private @EventHandler via setAccessible");
         assertTrue(replaying.domainEvents().isEmpty(), "replay must not enqueue events");
     }
