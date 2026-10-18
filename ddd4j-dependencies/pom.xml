@@ -263,7 +263,7 @@
         <htmlunit.version>4.21.0</htmlunit.version>
         <httpasyncclient.version>4.1.5</httpasyncclient.version>
         <httpclient3-extension.version>3.0.x.20260630-SNAPSHOT</httpclient3-extension.version>
-        <httpclient5.version>5.4.4</httpclient5.version>
+        <httpclient5.version>5.6.5</httpclient5.version>
         <httpclient-extension.version>3.0.x.20260630-SNAPSHOT</httpclient-extension.version>
         <httpclient.version>4.5.14</httpclient.version>
         <httpconn.version>3.0.x.20260630-SNAPSHOT</httpconn.version>
@@ -396,7 +396,7 @@
         <liquibase.version>4.33.0</liquibase.version>
         <liteflow.version>2.16.0</liteflow.version>
         <lock4j.version>2.2.7</lock4j.version>
-        <log4j2.version>2.24.3</log4j2.version>
+        <log4j2.version>2.26.1</log4j2.version>
         <logback.version>1.5.36</logback.version>
         <lz4-java.version>1.12.0</lz4-java.version>
         <management-core.version>2.1.30.4.43</management-core.version>
