@@ -1267,6 +1267,17 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-runtime/ddd4j-runtime-testkit/src/main/java/io/ddd4j/runtime/testkit/RuntimeContractAdapter.java",
+      "sourceSha256": [
+        "5f2ed2a2c9a3cbebec8a4d7cca86757a218dd094b6e540b753281183932001e9",
+        "a8dddea12ffcab66aa70de484fd756a50afece2d968179550e6b7c7549d973be",
+        "a8dddea12ffcab66aa70de484fd756a50afece2d968179550e6b7c7549d973be"
+      ],
+      "evidence": "ddd4j-runtime/ddd4j-runtime-testkit/src/test/java/io/ddd4j/runtime/testkit/RuntimeContractAdapterTest.java",
+      "testSha256": "11b404beab4386deff57ed974590c8c0745069d5a42b73a30c702b61e3154eae",
+      "reason": "三线共同测试验证服务注册表拒绝 null 键和值、保留不可变快照；JDK 8 使用显式校验与不可变 Map 包装，JDK 17/21 使用 Map.copyOf，行为一致"
+    },
+    {
       "path": "ddd4j-extensions/ddd4j-extension-qlexpress/src/main/java/io/ddd4j/extension/qlexpress/function/FormatDateFunction.java",
       "sourceSha256": [
         "7fd034153d34ff2caa9edc91412a531a8a21d0421794c8bccb5c87ce1f650d0d",
