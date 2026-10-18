@@ -24,7 +24,7 @@ import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.core.health.RuntimeReadinessRegistry;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Collections;
 import java.util.Objects;
 
 /**
@@ -35,11 +35,28 @@ public final class Ddd4jQuarkusRuntime implements AutoCloseable {
     private final SpiRegistrationScope registrations;
     private final RuntimeReadinessRegistry readinessRegistry;
 
+    /**
+     * 使用默认就绪检查项创建运行时。
+     *
+     * @param publisher 领域事件发布器
+     * @param subjectProvider 主体提供者
+     * @param i18nProvider 国际化提供者
+     * @param commandBus 命令总线
+     */
     public Ddd4jQuarkusRuntime(DomainEventPublisher publisher, SubjectProvider subjectProvider,
                                I18nProvider i18nProvider, CommandBus commandBus) {
-        this(publisher, subjectProvider, i18nProvider, commandBus, List.of());
+        this(publisher, subjectProvider, i18nProvider, commandBus, Collections.emptyList());
     }
 
+    /**
+     * 使用指定就绪检查项创建运行时。
+     *
+     * @param publisher 领域事件发布器
+     * @param subjectProvider 主体提供者
+     * @param i18nProvider 国际化提供者
+     * @param commandBus 命令总线
+     * @param readinessContributors 就绪检查项
+     */
     public Ddd4jQuarkusRuntime(DomainEventPublisher publisher, SubjectProvider subjectProvider,
                                I18nProvider i18nProvider, CommandBus commandBus,
                                Collection<? extends ReadinessContributor> readinessContributors) {
@@ -47,6 +64,15 @@ public final class Ddd4jQuarkusRuntime implements AutoCloseable {
                 new RuntimeReadinessRegistry(readinessContributors));
     }
 
+    /**
+     * 使用就绪注册表创建运行时并注册框架 SPI。
+     *
+     * @param publisher 领域事件发布器
+     * @param subjectProvider 主体提供者
+     * @param i18nProvider 国际化提供者
+     * @param commandBus 命令总线
+     * @param readinessRegistry 就绪状态注册表
+     */
     public Ddd4jQuarkusRuntime(DomainEventPublisher publisher, SubjectProvider subjectProvider,
                                I18nProvider i18nProvider, CommandBus commandBus,
                                RuntimeReadinessRegistry readinessRegistry) {
@@ -63,27 +89,16 @@ public final class Ddd4jQuarkusRuntime implements AutoCloseable {
                 "readinessRegistry must not be null");
     }
 
-    /**
-     * 启动。
-     */
+    /** 启动框架 SPI 注册作用域。 */
     public void start() {
-        /**
-         * registrations.start() 方法。
-         */
         registrations.start();
     }
 
-    /**
-     * readiness() 方法。
-     * @return 方法执行结果。
-     */
+    /** @return 运行时就绪状态注册表 */
     public RuntimeReadinessRegistry readiness() {
         return readinessRegistry;
     }
 
-    /**
-     * 关闭并释放资源。
-     */
     @Override
     public void close() {
         registrations.close();
