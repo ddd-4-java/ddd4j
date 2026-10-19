@@ -534,6 +534,44 @@ class ThreeLineInventoryTest(unittest.TestCase):
         self.assertNotEqual(0, result.returncode)
         self.assertIn("stale JDK 8-only platform file evidence", result.stderr)
 
+    def test_jdk8_only_quarkus_cron_resource_requires_same_inline_default(self):
+        resource = "ddd4j-runtime/ddd4j-runtime-quarkus/src/main/resources/application.properties"
+        counterpart = ("ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/"
+                       "example/ProjectionService.java")
+        evidence = ("ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/"
+                    "example/ProjectionContractTest.java")
+        property_name = "ddd4j.quarkus.cqrs.projection.cron"
+        default = "*/30 * * * * ?"
+        content = f"{property_name}={default}\n"
+        self.write(self.roots[0], resource, content)
+        self.write(self.roots[0], counterpart,
+                   f'@Scheduled(cron = "{{{property_name}}}")')
+        for root in self.roots[1:]:
+            self.write(root, counterpart,
+                       f'@Scheduled(cron = "${{{property_name}:{default}}}")')
+        for root in self.roots:
+            self.write(root, evidence, "class ProjectionContractTest {}")
+        policy = json.loads(self.policy.read_text())
+        policy["platformResourcesOnlyOnJdk8"] = [{
+            "path": resource, "sha256": hashlib.sha256(content.encode()).hexdigest(),
+            "counterpart": counterpart, "evidence": evidence,
+            "property": property_name, "default": default,
+            "reason": "Quarkus cron default moved from resource to annotation",
+        }]
+        self.policy.write_text(json.dumps(policy))
+
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = json.loads((output / "inventory.json").read_text())["differences"]
+        self.assertEqual("PLATFORM_ADAPTED", next(row["status"] for row in rows
+                                                  if row["path"] == resource))
+
+        self.write(self.roots[2], counterpart,
+                   f'@Scheduled(cron = "${{{property_name}:0 * * * * ?}}")')
+        result, _ = self.run_checker("inventory")
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("stale JDK 8-only platform resource evidence", result.stderr)
+
     def test_verify_fails_for_unexplained_differences(self):
         result, output = self.run_checker("verify")
         self.assertNotEqual(0, result.returncode)
