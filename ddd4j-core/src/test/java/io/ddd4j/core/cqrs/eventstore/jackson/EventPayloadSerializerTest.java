@@ -55,6 +55,28 @@ class EventPayloadSerializerTest {
     }
 
     @Test
+    void roundTripPreservesEntityIdPath() {
+        OrderCreatedEvent original = new OrderCreatedEvent("order-created", "order-2");
+
+        OrderCreatedEvent restored = (OrderCreatedEvent) serializer.deserialize(
+                serializer.serialize(original), OrderCreatedEvent.class);
+
+        // TestId 未注册到 EntityIdRegistry，回读使用保留值的 StringEntityId。
+        assertEquals("String:order-2", restored.getEntityIdPath().asString());
+        assertEquals("order-2", restored.getEntityIdPath().last().asString());
+    }
+
+    @Test
+    void roundTripPreservesEventType() {
+        OrderCreatedEvent original = new OrderCreatedEvent("order-created");
+
+        OrderCreatedEvent restored = (OrderCreatedEvent) serializer.deserialize(
+                serializer.serialize(original), OrderCreatedEvent.class);
+
+        assertEquals("OrderCreatedEvent", restored.getEventType().asString());
+    }
+
+    @Test
     void deserializeShouldRestoreBusinessProperty() {
         String json = serializer.serialize(new OrderCreatedEvent("renamed"));
         DomainEvent<?> event = serializer.deserialize(json, OrderCreatedEvent.class);
@@ -147,7 +169,11 @@ class EventPayloadSerializerTest {
         }
 
         private OrderCreatedEvent(String fact) {
-            super(new EntityIdPath(new TestId("order-1")));
+            this(fact, "order-1");
+        }
+
+        private OrderCreatedEvent(String fact, String id) {
+            super(new EntityIdPath(new TestId(id)));
             this.fact = fact;
         }
 
