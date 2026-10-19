@@ -117,6 +117,17 @@
       "evidence": "仅 Maven 4/JDK 21 线使用的 BOM 冲突白名单；由该线 strict-artifacts 门禁验证"
     }
   ],
+  "platformResourcesOnlyOnJdk8": [
+    {
+      "path": "ddd4j-runtime/ddd4j-runtime-quarkus/src/main/resources/application.properties",
+      "sha256": "29716abf1b07448c88e73f0ab1f105794638c5d04a7d513ea4cb13e3eafd9754",
+      "counterpart": "ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/cqrs/QuarkusJpaProjectionService.java",
+      "evidence": "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/cqrs/QuarkusJpaProjectionServiceContractTest.java",
+      "property": "ddd4j.quarkus.cqrs.projection.cron",
+      "default": "*/30 * * * * ?",
+      "reason": "JDK 8 Quarkus 从 application.properties 读取 30 秒投影调度；JDK 17/21 Quarkus 在相同服务的 @Scheduled 中内联相同默认值，三线契约测试覆盖默认值"
+    }
+  ],
   "platformFilesOnlyOnJdk8": [
     {
       "path": "ddd4j-web/ddd4j-web-quarkus/src/main/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebResponseFilter.java",

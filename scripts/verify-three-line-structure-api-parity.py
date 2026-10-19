@@ -690,6 +690,47 @@ def validate_platform_files_only_on_jdk8(items: list[dict],
     return validated
 
 
+def validate_platform_resources_only_on_jdk8(items: list[dict],
+                                             roots: list[pathlib.Path]) -> dict[str, dict]:
+    """锁定低线配置资源，并核对高线注解内联了相同的默认值。"""
+    validated = {}
+    for item in items:
+        path = pathlib.PurePosixPath(item.get("path", ""))
+        counterpart = pathlib.PurePosixPath(item.get("counterpart", ""))
+        evidence = pathlib.PurePosixPath(item.get("evidence", ""))
+        path_text = path.as_posix()
+        digest = item.get("sha256", "")
+        property_name = item.get("property", "")
+        default = item.get("default", "")
+        if (path.is_absolute() or ".." in path.parts
+                or "/src/main/resources/" not in path_text
+                or path.suffix != ".properties" or path_text in validated
+                or len(digest) != 64
+                or any(char not in "0123456789abcdef" for char in digest)
+                or counterpart.is_absolute() or ".." in counterpart.parts
+                or "/src/main/java/" not in counterpart.as_posix()
+                or counterpart.suffix != ".java"
+                or evidence.is_absolute() or ".." in evidence.parts
+                or "/src/test/java/" not in evidence.as_posix()
+                or not property_name or "\n" in property_name
+                or not default or "\n" in default or not item.get("reason")):
+            raise ValueError(f"invalid JDK 8-only platform resource: {path_text}")
+        old_annotation = f'@Scheduled(cron = "{{{property_name}}}")'
+        new_annotation = f'@Scheduled(cron = "${{{property_name}:{default}}}")'
+        if (not (roots[0] / path).is_file()
+                or hashlib.sha256((roots[0] / path).read_bytes()).hexdigest() != digest
+                or (roots[0] / path).read_text().strip() != f"{property_name}={default}"
+                or any((root / path).exists() for root in roots[1:])
+                or not all((root / counterpart).is_file() for root in roots)
+                or old_annotation not in (roots[0] / counterpart).read_text()
+                or any(new_annotation not in (root / counterpart).read_text()
+                       for root in roots[1:])
+                or not all((root / evidence).is_file() for root in roots)):
+            raise ValueError(f"stale JDK 8-only platform resource evidence: {path_text}")
+        validated[path_text] = item
+    return validated
+
+
 def validate_platform_tests_only_on_jdk8(items: list[dict],
                                          roots: list[pathlib.Path]) -> dict[str, dict]:
     """锁定低线专用测试及三线对应容器契约，避免用宽泛排除掩盖测试缺失。"""
@@ -878,6 +919,8 @@ def inventory_gate(roots: list[pathlib.Path], output: pathlib.Path, policy_path:
     platform = {item["path"]: item for item in policy.get("platformItemsMissingOnJdk8", [])}
     platform_only_jdk8 = validate_platform_files_only_on_jdk8(
         policy.get("platformFilesOnlyOnJdk8", []), roots)
+    platform_resources_only_jdk8 = validate_platform_resources_only_on_jdk8(
+        policy.get("platformResourcesOnlyOnJdk8", []), roots)
     platform_tests_only_jdk8 = validate_platform_tests_only_on_jdk8(
         policy.get("platformTestsOnlyOnJdk8", []), roots)
     platform_content = validate_platform_content_mappings(
@@ -950,6 +993,10 @@ def inventory_gate(roots: list[pathlib.Path], output: pathlib.Path, policy_path:
         elif path in platform_only_jdk8 and values[0] is not None and values[1] is None and values[2] is None:
             status = "PLATFORM_ADAPTED"
             evidence = platform_only_jdk8[path]["evidence"]
+        elif (path in platform_resources_only_jdk8 and values[0] is not None
+              and values[1] is None and values[2] is None):
+            status = "PLATFORM_ADAPTED"
+            evidence = platform_resources_only_jdk8[path]["evidence"]
         elif path in platform_tests_only_jdk8 and values[0] is not None and values[1] is None and values[2] is None:
             status = "PLATFORM_ADAPTED"
             evidence = platform_tests_only_jdk8[path]["counterpart"]
