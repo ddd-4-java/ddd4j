@@ -370,15 +370,22 @@ class JpaEventStorePostgresIT {
     }
 
     @Test
-    void appendAndReadShouldRoundTripPayloadOnPostgres() {
+    void appendAndReadShouldRoundTripTypedEventOnPostgres() {
         TestAggregateRootId aggregateId = new TestAggregateRootId("order-pg-1");
-        OrderCreatedEvent event = new OrderCreatedEvent(aggregateId);
+        OrderCreatedEvent first = new OrderCreatedEvent(aggregateId);
+        OrderCreatedEvent second = new OrderCreatedEvent(aggregateId);
 
-        eventStore.append("Order", aggregateId, List.of(event), 0L);
+        eventStore.append("Order", aggregateId, List.of(first, second), 0L);
 
         List<StoredEvent> events = eventStore.read("Order", aggregateId);
-        assertThat(events).hasSize(1);
+        assertThat(events).hasSize(2);
+        assertThat(events).extracting(StoredEvent::version).containsExactly(1L, 2L);
         assertThat(events.get(0).payload()).isInstanceOf(OrderCreatedEvent.class);
+        assertThat(events.get(1).payload()).isInstanceOf(OrderCreatedEvent.class);
+        assertThat(events.get(0).eventId()).isEqualTo(first.getEventId());
+        assertThat(events.get(1).eventId()).isEqualTo(second.getEventId());
+        assertThat(events.get(0).aggregateId().asString()).isEqualTo(aggregateId.asString());
+        assertThat(events.get(1).aggregateId().asString()).isEqualTo(aggregateId.asString());
     }
 
     @Test
