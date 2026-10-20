@@ -71,9 +71,9 @@ public class JdbiEventStore implements EventStore {
                     + EventStoreConstants.COLUMN_PAYLOAD + " TEXT NOT NULL, "
                     + EventStoreConstants.COLUMN_TIMESTAMP + " TIMESTAMP NOT NULL, "
                     + "PRIMARY KEY (" + EventStoreConstants.COLUMN_AGGREGATE_TYPE + ", "
-                    + EventStoreConstants.COLUMN_AGGREGATE_ID + ", " + EventStoreConstants.COLUMN_VERSION + "), "
-                    + "CONSTRAINT uk_position UNIQUE ("
-                    + EventStoreConstants.COLUMN_POSITION + ")"
+                    + EventStoreConstants.COLUMN_AGGREGATE_ID + ", "
+                    + EventStoreConstants.COLUMN_VERSION + "), "
+                    + "CONSTRAINT uk_position UNIQUE (" + EventStoreConstants.COLUMN_POSITION + ")"
                     + ")";
 
     private static final String CURRENT_VERSION_SQL =
@@ -96,9 +96,8 @@ public class JdbiEventStore implements EventStore {
                     + ", " + EventStoreConstants.COLUMN_CORRELATION_ID
                     + ", " + EventStoreConstants.COLUMN_CAUSATION_ID
                     + ", " + EventStoreConstants.COLUMN_PAYLOAD
-                    + ", " + EventStoreConstants.COLUMN_TIMESTAMP + ")"
-                    + " VALUES (:aggregateId, :aggregateType, :version, :position, :eventType,"
-                    + " :eventId, :correlationId, :causationId, :payload, :timestamp)";
+                    + ", " + EventStoreConstants.COLUMN_TIMESTAMP
+                    + ") VALUES (:aggregateId, :aggregateType, :version, :position, :eventType, :eventId, :correlationId, :causationId, :payload, :timestamp)";
 
     private static final String READ_BY_AGGREGATE_SQL =
             "SELECT * FROM " + EventStoreConstants.TABLE_NAME
@@ -106,7 +105,7 @@ public class JdbiEventStore implements EventStore {
                     + " AND " + EventStoreConstants.COLUMN_AGGREGATE_ID + " = :aggregateId"
                     + " ORDER BY " + EventStoreConstants.COLUMN_VERSION + " ASC";
 
-    private static final String READ_RANGE_SQL =
+    private static final String READ_BY_VERSION_RANGE_SQL =
             "SELECT * FROM " + EventStoreConstants.TABLE_NAME
                     + " WHERE " + EventStoreConstants.COLUMN_AGGREGATE_TYPE + " = :aggregateType"
                     + " AND " + EventStoreConstants.COLUMN_AGGREGATE_ID + " = :aggregateId"
@@ -120,11 +119,8 @@ public class JdbiEventStore implements EventStore {
                     + " LIMIT :limit";
 
     private final Jdbi jdbi;
-    private final EventPayloadSerializer serializer;
-    /**
-     * uk_position 唯一约束冲突自动重试（并发 append 全局 position 兜底，回填自 3.0.x）。
-     */
     private final EventStoreRetry retry;
+    private final EventPayloadSerializer serializer;
     private final AtomicBoolean initialized = new AtomicBoolean(false);
 
     /**
@@ -175,17 +171,16 @@ public class JdbiEventStore implements EventStore {
                         throw new AggregateVersionConflictException(
                                 aggregateType, aggregateId.asString(), expectedVersion, actualVersion);
                     }
-                    long maxPosition = handle.createQuery(NEXT_POSITION_SQL)
+                    long maxPos = handle.createQuery(NEXT_POSITION_SQL)
                             .mapTo(Long.class)
                             .one();
-                    long position = maxPosition + 1L;
+                    long position = maxPos + 1L;
                     long version = expectedVersion;
                     for (DomainEvent<?> event : events) {
-                        version++;
                         handle.createUpdate(INSERT_SQL)
                                 .bind("aggregateId", aggregateId.asString())
                                 .bind("aggregateType", aggregateType)
-                                .bind("version", version)
+                                .bind("version", ++version)
                                 .bind("position", position)
                                 .bind("eventType", event.getClass().getName())
                                 .bind("eventId", event.getEventId().asString())
@@ -224,7 +219,7 @@ public class JdbiEventStore implements EventStore {
     public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId,
                                   long fromVersion, long toVersion) {
         ensureInitialized();
-        return jdbi.withHandle(handle -> handle.createQuery(READ_RANGE_SQL)
+        return jdbi.withHandle(handle -> handle.createQuery(READ_BY_VERSION_RANGE_SQL)
                 .bind("aggregateType", aggregateType)
                 .bind("aggregateId", aggregateId.asString())
                 .bind("fromVersion", fromVersion)
@@ -258,30 +253,57 @@ public class JdbiEventStore implements EventStore {
         }
     }
 
+    /**
+     * 将结果集行重建为 {@link StoredEvent}。
+     *
+     * <p>事件类型经 {@code Class.forName} 还原，payload 经 {@link EventPayloadSerializer#deserialize}
+     * 反序列化。若类不存在（被删除/重命名），抛出 {@link IllegalStateException}。
+     *
+     * <p>时间戳处理：H2 JDBC 驱动对 TIMESTAMP 列返回 {@link LocalDateTime}，
+     * 此处统一先取 {@link LocalDateTime} 再转 {@link Instant}（UTC 偏移），
+     * 与 R2DBC 实现一致。
+     *
+     * @param rs 当前行（列名与表契约一致）
+     * @return 重建的存储事件
+     * @throws SQLException JDBC 列读取失败
+     */
+    private StoredEvent toStoredEvent(ResultSet rs) throws SQLException {
+        String payload = rs.getString(EventStoreConstants.COLUMN_PAYLOAD);
+        String eventType = rs.getString(EventStoreConstants.COLUMN_EVENT_TYPE);
+        DomainEvent<?> event = serializer.deserialize(payload, resolveEventType(eventType));
+        // H2 JDBC 对 TIMESTAMP 列返回 LocalDateTime，转为 Instant（与 R2DBC 实现一致）
+        LocalDateTime timestamp = rs.getObject(EventStoreConstants.COLUMN_TIMESTAMP, LocalDateTime.class);
+        if (Objects.isNull(timestamp)) {
+            throw new IllegalStateException("Missing persisted event timestamp");
+        }
+        return new StoredEvent(
+                EventId.valueOf(rs.getString(EventStoreConstants.COLUMN_EVENT_ID)),
+                rs.getString(EventStoreConstants.COLUMN_AGGREGATE_TYPE),
+                new StringAggregateRootId(rs.getString(EventStoreConstants.COLUMN_AGGREGATE_ID)),
+                rs.getLong(EventStoreConstants.COLUMN_VERSION),
+                rs.getLong(EventStoreConstants.COLUMN_POSITION),
+                timestamp.atZone(ZoneOffset.UTC),
+                event,
+                EventId.valueOf(rs.getString(EventStoreConstants.COLUMN_CORRELATION_ID)),
+                EventId.valueOf(rs.getString(EventStoreConstants.COLUMN_CAUSATION_ID)));
+    }
+
     @SuppressWarnings("unchecked")
     private Class<? extends DomainEvent<?>> resolveEventType(String eventType) {
         try {
             return (Class<? extends DomainEvent<?>>) Class.forName(eventType);
-        } catch (ClassNotFoundException e) {
-            throw new IllegalStateException("Unknown event type: " + eventType, e);
+        } catch (ClassNotFoundException exception) {
+            throw new IllegalStateException("Unknown event type: " + eventType, exception);
         }
     }
 
-    /**
-     * 字符串聚合根标识适配器：实体列只存字符串，读回侧重建 {@link AggregateRootId}。
-     */
-    private static final class StringAggregateRootId implements AggregateRootId {
+    private final static class StringAggregateRootId implements AggregateRootId {
 
         private static final long serialVersionUID = 6652084670470061437L;
 
-        private static final EntityType TYPE = new StringEntityType("String");
-
         private final String value;
 
-        @JsonCreator
-        private StringAggregateRootId(@JsonProperty("value") String value) {
-            this.value = value;
-        }
+        private static final StringEntityType TYPE = new StringEntityType("String");
 
         @Override
         public EntityType getType() {
@@ -294,14 +316,19 @@ public class JdbiEventStore implements EventStore {
             return value;
         }
 
-        @JsonProperty("value")
-        public String value() {
-            return value;
-        }
-
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
+        }
+
+        @JsonCreator()
+        private StringAggregateRootId(@JsonProperty("value") String value) {
+            this.value = value;
+        }
+
+        @JsonProperty("value")
+        public String value() {
+            return value;
         }
 
         @Override
@@ -313,7 +340,7 @@ public class JdbiEventStore implements EventStore {
                 return false;
             }
             StringAggregateRootId other = (StringAggregateRootId) obj;
-            return Objects.equals(value, other.value);
+            return Objects.equals(this.value, other.value);
         }
 
         @Override
@@ -327,28 +354,5 @@ public class JdbiEventStore implements EventStore {
         public String toString() {
             return "StringAggregateRootId[value=" + value + "]";
         }
-    }
-
-    /**
-     * 行 → {@link StoredEvent}：元数据取列值，payload 按 {@code event_type} 反序列化。
-     */
-    private StoredEvent toStoredEvent(ResultSet rs) throws SQLException {
-        String eventType = rs.getString(EventStoreConstants.COLUMN_EVENT_TYPE);
-        DomainEvent<?> payload = serializer.deserialize(
-                rs.getString(EventStoreConstants.COLUMN_PAYLOAD), resolveEventType(eventType));
-        LocalDateTime timestamp = rs.getObject(EventStoreConstants.COLUMN_TIMESTAMP, LocalDateTime.class);
-        if (Objects.isNull(timestamp)) {
-            throw new IllegalStateException("Missing persisted event timestamp");
-        }
-        return new StoredEvent(
-                EventId.valueOf(rs.getString(EventStoreConstants.COLUMN_EVENT_ID)),
-                rs.getString(EventStoreConstants.COLUMN_AGGREGATE_TYPE),
-                new StringAggregateRootId(rs.getString(EventStoreConstants.COLUMN_AGGREGATE_ID)),
-                rs.getLong(EventStoreConstants.COLUMN_VERSION),
-                rs.getLong(EventStoreConstants.COLUMN_POSITION),
-                timestamp.atZone(ZoneOffset.UTC),
-                payload,
-                EventId.valueOf(rs.getString(EventStoreConstants.COLUMN_CORRELATION_ID)),
-                EventId.valueOf(rs.getString(EventStoreConstants.COLUMN_CAUSATION_ID)));
     }
 }
