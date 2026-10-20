@@ -40,6 +40,8 @@ import java.util.Objects;
 
 public final class LambdaCondition implements Serializable {
 
+    private static final long serialVersionUID = -4292780888118581043L;
+
     /**
      * 类型安全属性引用。
      */

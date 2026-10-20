@@ -2731,28 +2731,6 @@
       "reason": "三线登录鉴权路由与四个请求 DTO 源码仅有 JDK 8 的 Java8Maps.of 和高两线的 Map.of 差异；请求 JSON、值契约与 HTTP 路由定向测试通过，公开 API 一致"
     },
     {
-      "path": "ddd4j-core/src/main/java/io/ddd4j/core/cqrs/query/LambdaCondition.java",
-      "sourceSha256": [
-        "b529cadcd256e550ed2916aecf1da7d1e7424096bbbeeabeb54a43b5a84331e4",
-        "61895712719debf0c866ffe55486b7e5bc0cff346e8e62e480a4633c08e1acd9",
-        "61895712719debf0c866ffe55486b7e5bc0cff346e8e62e480a4633c08e1acd9"
-      ],
-      "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/query/QuerySerializationContractTest.java",
-      "testSha256": "afa6f0d753480f7669dec65e1eb3609d9a5921b5f5aa7f36e8a51b5562c547d0",
-      "reason": "1.0.x 保留旧 Java 序列化流的自动 UID -4292780888118581043，2.0.x/3.0.x 显式 UID 为 0；其余源码相同，三线序列化往返通过，低线旧 UID 另由 PlainValueContractTest 锁定"
-    },
-    {
-      "path": "ddd4j-core/src/main/java/io/ddd4j/core/cqrs/query/PropertyRef.java",
-      "sourceSha256": [
-        "6ff4f601f5b40671bf94abb284affed3728f89ae9d7ecebc5cac42928737a4b0",
-        "7671b3339f7e404ec5a44d129918cf7df34de2a7b5918fa8b77bd24073f9896e",
-        "7671b3339f7e404ec5a44d129918cf7df34de2a7b5918fa8b77bd24073f9896e"
-      ],
-      "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/query/QuerySerializationContractTest.java",
-      "testSha256": "afa6f0d753480f7669dec65e1eb3609d9a5921b5f5aa7f36e8a51b5562c547d0",
-      "reason": "1.0.x 保留旧 Java 序列化流的自动 UID -3906849612189306727，2.0.x/3.0.x 显式 UID 为 0；其余源码相同，三线序列化往返通过，低线旧 UID 另由 PlainValueContractTest 锁定"
-    },
-    {
       "path": "ddd4j-core/src/main/java/io/ddd4j/core/cqrs/eventstore/jackson/EventPayloadSerializer.java",
       "sourceSha256": [
         "2937a12595d62c74ae2b0ec3e10ecc4f3f8d9e9db1dffc7f588b2a30f48681ac",
