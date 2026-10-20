@@ -84,17 +84,18 @@ class R2dbcEventStorePostgresIT {
     }
 
     @Test
-    void appendAndReadShouldRoundTripTypedEventOnPostgres() {
+    void appendAndReadShouldRoundTripTypedMetadataOnPostgres() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-pg-1");
         OrderCreatedEvent event = new OrderCreatedEvent(orderId);
 
         eventStore.append(ORDER_TYPE, orderId, List.of(event), 0L);
 
-        assertThat(eventStore.read(ORDER_TYPE, orderId)).hasSize(1);
-        assertThat(eventStore.read(ORDER_TYPE, orderId).get(0).aggregateId().asString())
-                .isEqualTo(orderId.asString());
-        assertThat(eventStore.read(ORDER_TYPE, orderId).get(0).payload())
-                .isInstanceOf(OrderCreatedEvent.class);
+        List<StoredEvent> events = eventStore.read(ORDER_TYPE, orderId);
+        assertThat(events).hasSize(1);
+        assertThat(events.get(0).aggregateType()).isEqualTo(ORDER_TYPE);
+        assertThat(events.get(0).aggregateId().asString()).isEqualTo(orderId.asString());
+        assertThat(events.get(0).payload()).isInstanceOf(OrderCreatedEvent.class);
+        assertThat(events.get(0).eventId()).isEqualTo(event.getEventId());
     }
 
     @Test
