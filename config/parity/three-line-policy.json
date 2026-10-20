@@ -151,6 +151,13 @@
       "reason": "Quarkus 1/JDK 8 使用 Java EE 2.0 annotated beans.xml 启用 CDI；高两线省略旧命名空间文件。三线共同 QuarkusTest 从 Arc 容器验证 GoodsQueryResource 的 ApplicationScoped 作用域。"
     },
     {
+      "path": "ddd4j-samples/ddd4j-sample-quarkus-satoken/src/main/resources/META-INF/beans.xml",
+      "sha256": "eeda5bb2f3e034daa25fb64f2c7ff46c3055921f5e6bb012e5e575666f28ef6c",
+      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-satoken/src/test/java/io/ddd4j/sample/quarkus/satoken/GoodsQueryCdiContractTest.java",
+      "testSha256": "f9279420524911d08f64b522732f9a237b790b083d7cbf3b057e3dfe210da4e8",
+      "reason": "Quarkus 1/JDK 8 使用 Java EE 2.0 annotated beans.xml 启用 CDI；高两线省略旧命名空间文件。三线共同 QuarkusTest 从 Arc 容器验证 GoodsQueryResource 的 ApplicationScoped 作用域。"
+    },
+    {
       "path": "ddd4j-web/ddd4j-web-quarkus/src/main/resources/META-INF/beans.xml",
       "sha256": "eeda5bb2f3e034daa25fb64f2c7ff46c3055921f5e6bb012e5e575666f28ef6c",
       "evidence": "ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusFilterCdiContractTest.java",
