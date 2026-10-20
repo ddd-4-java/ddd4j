@@ -3313,9 +3313,9 @@
     {
       "path": "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/main/java/io/ddd4j/sample/quarkus/shiro/rbac/RbacConfig.java",
       "sourceSha256": [
-        "7d5dfe9dd663787895a99649687ef16c6bdfd18eb9dca9f58c78f8f8fff9b278",
-        "c1f4c5714ffa58083d291c296819d24cb09697bf065089d6a801b9ec4e2e2879",
-        "c1f4c5714ffa58083d291c296819d24cb09697bf065089d6a801b9ec4e2e2879"
+        "ab4a8a25415e05f489417d24699338483564cd76d43137467fee7e8206c06bbc",
+        "73a5e6cce981515a0f03be3070d33179e926dc0aa060c5fbf7bc623d7ad4fb64",
+        "73a5e6cce981515a0f03be3070d33179e926dc0aa060c5fbf7bc623d7ad4fb64"
       ],
       "evidence": "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/test/java/io/ddd4j/sample/quarkus/shiro/RbacResourceTest.java",
       "testSha256ByJdk": {
