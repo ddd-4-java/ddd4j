@@ -1534,6 +1534,21 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/config/BaseWebConfig.java",
+      "sourceSha256": [
+        "cddd729630efb9a4ae573e1071f6b81ec79b24eb777cb169da9ab9fdb71fdd68",
+        "e953d45190710cc69907b95e1af3a2413079794b22710aa767e63ccf665fd4b8",
+        "ba4cfee2e3013a4cf6e91d7171cbd8f715efba8796d5a73d805161cd36f20932"
+      ],
+      "evidence": "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/ThreeLineWebParityTest.java",
+      "testSha256ByJdk": {
+        "8": "95fd33f731403d0878510c64df08f84f287b9d43d05b39a240824861857a38e0",
+        "17": "5d840ad9d104b995783a717e5ba5f664e9819c9f4845a32e4b75b0aa4e652b9a",
+        "21": "d04a00a7dd8d7c9fd22108236a39c616a55f9fcfc8731f0e77b0b048000331ad"
+      },
+      "reason": "三线 WebMVC 配置生产逻辑去掉平台导入及 Javadoc 后逐行一致；空 WebSocket 列表不再进入遍历分支。各线保留 javax/jakarta 与 Jackson 2/3 类型，ThreeLineWebParityTest 各 4 项通过；源码与测试按 SHA-256 锁定。"
+    },
+    {
       "path": "ddd4j-data/ddd4j-data-event-store-jdbi/src/main/java/io/ddd4j/data/event/store/jdbi/JdbiEventStore.java",
       "sourceSha256": [
         "5c2608a9ab3fa39377ab78fe3ff30ecaf7f36c132dd8f7947efd8ecafc343be9",
