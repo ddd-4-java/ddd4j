@@ -4512,6 +4512,26 @@
       "reason": "三线 R2DBC 生产源码逐字一致，真实 PostgreSQL 容器各通过聚合 ID 值语义回读、版本区间、全局顺序和过期版本拒绝 4 项；JDK 8 与高两线集合工厂及事件夹具 API 分别适配。"
     },
     {
+      "path": "ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/event/store/panache/PanacheEventStorePostgresIT.java",
+      "productionPath": "ddd4j-data/ddd4j-data-event-store-panache/src/main/java/io/ddd4j/data/event/store/panache/PanacheEventStore.java",
+      "sourceSha256": [
+        "ddc9939ab3fac7d6d6ac527e5e26fc8922fc16786ab35c2bde140ec7661ac944",
+        "83edecd82841f904db900dc4563115ac0255b5bda295083d61dad3dab767b930",
+        "b0a7a01ab693e458c1d6a3c98a15b140d9197c1c407e8eade1a1c074548d8431"
+      ],
+      "productionSha256": [
+        "a6b06fe3413dd2be996057743b210b9777ff79b5bc038cf0682386483406683d",
+        "4df10a62b86a251200a100737a8f21862e1592434e323e50c27990d75a863b5c",
+        "98eaf4557c9e0ee4e5c932f54cf72335c442c52c1ad440224e24b03306bbed16"
+      ],
+      "testMethods": [
+        "setUp",
+        "tearDown",
+        "payloadColumnShouldUseTextAndRoundTripTypedEvent"
+      ],
+      "reason": "三线真实 PostgreSQL 容器各验证 payload TEXT 列与类型化事件回读 1 项；JDK 8 使用 javax.persistence/拼接 SQL，高两线使用 jakarta.persistence/文本块，生产 Panache 适配器已有逐线源码锁定。"
+    },
+    {
       "path": "ddd4j-data/ddd4j-data-mybatisplus/src/test/java/io/ddd4j/data/mybatis/repository/MybatisAggregateRepositoryMySQLTest.java",
       "productionPath": "ddd4j-data/ddd4j-data-mybatisplus/src/main/java/io/ddd4j/data/mybatis/repository/MybatisAggregateRepository.java",
       "sourceSha256": [
