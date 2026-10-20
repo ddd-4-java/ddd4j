@@ -3058,6 +3058,17 @@
             "21": "670d33504e5fa9db310d476162fc186521d32c9149e6cd991d1b2e4e617dbcf6"
         },
         "reason": "三线 Helidon 响应过滤器的请求标识回传与幂等会话提交行为一致；JDK 8 使用 javax JAX-RS 和显式强转，Helidon MP 1 的 Jersey 属性代理不支持 removeProperty；JDK 17/21 使用 jakarta JAX-RS、模式匹配并显式移除属性。三线 Helidon Web 契约各 6 项通过，源码及测试哈希逐线锁定。"
+    },
+    {
+        "path": "ddd4j-web/ddd4j-web-micronaut/src/main/java/io/ddd4j/web/micronaut/Ddd4jMicronautContext.java",
+        "sourceSha256": [
+            "02ac17aa2f7201dccf09a999eb52ef5c27f884e75b2e29c089dfe374cf8d5e2f",
+            "b13979c6359a08f35c2b014e55f0c80459d652f3cf2a7dac9aa38d9b49dff06b",
+            "f44708d616de7862375986f18891355c74c2ade9b9ce0f243a66e2bef4a8c0ba"
+        ],
+        "evidence": "ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautContextValueContractTest.java",
+        "testSha256": "53065021647075244fd030f433cd3067aa7c51d33c5a09422933c8ee86cbb789",
+        "reason": "三线 Micronaut 请求上下文的值方法、访问器与 Jackson JSON 往返行为一致；JDK 8 的 Micronaut 3 使用 ThreadLocal/ServerRequestContext 与 Reactor 插桩传播，JDK 17/21 的 Micronaut 4 使用 PropagatedContext/ThreadPropagatedContextElement。三线值契约各 3 项、上下文定向测试 JDK 8 为 7 项而 JDK 17/21 各 9 项均通过；源码和同一契约测试哈希锁定。"
     }
   ],
   "historicalDocumentSections": [

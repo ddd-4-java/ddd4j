@@ -14,6 +14,8 @@
  */
 package io.ddd4j.web.micronaut;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.subject.Subject;
 import io.ddd4j.web.core.context.WebContextScope;
@@ -35,7 +37,15 @@ public final class Ddd4jMicronautContext {
     private final WebRequestContext requestContext;
     private final Optional<Subject> subject;
 
-    public Ddd4jMicronautContext(WebRequestContext requestContext, Optional<Subject> subject) {
+    /**
+     * 创建请求状态。
+     *
+     * @param requestContext Web 请求上下文
+     * @param subject 当前主体，可为空
+     */
+    @JsonCreator
+    public Ddd4jMicronautContext(@JsonProperty("requestContext") WebRequestContext requestContext,
+                                  @JsonProperty("subject") Optional<Subject> subject) {
         this.requestContext = Objects.requireNonNull(requestContext, "requestContext must not be null");
         this.subject = Objects.requireNonNull(subject, "subject must not be null");
     }
@@ -69,10 +79,12 @@ public final class Ddd4jMicronautContext {
         }
     }
 
+    @JsonProperty("requestContext")
     public WebRequestContext requestContext() {
         return requestContext;
     }
 
+    @JsonProperty("subject")
     public Optional<Subject> subject() {
         return subject;
     }
