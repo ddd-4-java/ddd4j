@@ -415,6 +415,38 @@ class ThreeLineInventoryTest(unittest.TestCase):
         rows = json.loads((output / "inventory.json").read_text())["differences"]
         self.assertEqual("OPEN", next(row["status"] for row in rows if row["path"] == path))
 
+    def test_indexed_raw_verification_records_require_locked_hashes(self):
+        records = (
+            (0, "docs/verification/redline-cleanup-evidence-20261009.txt", "redline evidence\n"),
+            (2, "docs/verification/javadoc-gaps-raw.txt", "javadoc gaps\n"),
+        )
+        index_rows = []
+        for line_index, path, content in records:
+            self.write(self.roots[line_index], path, content)
+            digest = hashlib.sha256(content.encode()).hexdigest()
+            line = ("1.0.x", "2.0.x", "3.0.x")[line_index]
+            index_rows.append(
+                f"| `{Path(path).name}` | {line}；2026-10-10T18:12:52+08:00 | "
+                f"[原始文件](https://github.com/ddd-4-java/ddd4j/blob/{'a' * 40}/{path}) | "
+                f"`{digest}` |")
+        index = "\n".join(index_rows) + "\n"
+        for root in self.roots:
+            self.write(root, "docs/superpowers/historical-evidence-index.md", index)
+
+        _, output = self.run_checker("inventory")
+        rows = {row["path"]: row["status"] for row in
+                json.loads((output / "inventory.json").read_text())["differences"]}
+        for _, path, _ in records:
+            self.assertEqual("HISTORICAL", rows[path])
+
+        line_index, path, content = records[0]
+        self.write(self.roots[line_index], path, content + "changed\n")
+        _, output = self.run_checker("inventory")
+        rows = {row["path"]: row["status"] for row in
+                json.loads((output / "inventory.json").read_text())["differences"]}
+        self.assertEqual("OPEN", rows[path])
+        self.assertEqual("HISTORICAL", rows[records[1][1]])
+
     def test_compile_uses_explicit_jdks_without_macos_discovery(self):
         specification = importlib.util.spec_from_file_location("structure_gate", SCRIPT)
         module = importlib.util.module_from_spec(specification)
