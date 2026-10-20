@@ -18,7 +18,6 @@ import io.ddd4j.sample.javalin.shiro.order.domain.model.Money;
 import io.ddd4j.sample.javalin.shiro.order.domain.model.Order;
 import io.ddd4j.sample.javalin.shiro.order.domain.repository.OrderRepository;
 import io.ddd4j.sample.javalin.shiro.order.domain.service.OrderDomainService;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,18 +27,22 @@ import java.util.Objects;
 /**
  * 订单应用服务：编排业务用例，领域规则下沉到 Order 聚合中。
  *
- * <p>Quarkus CDI 管理（{@link ApplicationScoped}），
- * 通过构造器注入 {@link OrderRepository} 与 {@link OrderDomainService}。
+ * <p>Javalin 入口通过 Guice 构造器装配 {@link OrderRepository} 与 {@link OrderDomainService}。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @Slf4j
-@ApplicationScoped
 public class OrderApplicationService {
 
     private final OrderRepository repository;
     private final OrderDomainService domainService;
 
+    /**
+     * 创建订单应用服务。
+     *
+     * @param repository 订单仓储
+     * @param domainService 订单领域服务
+     */
     @Inject
     public OrderApplicationService(OrderRepository repository, OrderDomainService domainService) {
         this.repository = Objects.requireNonNull(repository, "repository must not be null");
@@ -47,34 +50,27 @@ public class OrderApplicationService {
     }
 
     /**
-     * 创建对象。
-     * @param command command 参数。
-     * @return 方法执行结果。
+     * 创建草稿订单。
+     *
+     * @param command 订单命令
+     * @return 创建的订单
      */
     public Order createDraft(CreateOrderCommand command) {
         Objects.requireNonNull(command, "command must not be null");
         log.info("Creating draft order: orderNo={}, buyerId={}", command.orderNo(), command.buyerId());
         Order order = Order.draft(command.orderNo(), command.buyerId(), command.buyerName());
-        /**
-         * repository.save() 方法。
-         * @param order order 参数。
-         */
         repository.save(order);
         publishDomainEvents(order);
         return order;
     }
 
     /**
-     * 追加元素。
-     * @param command command 参数。
-     * @return 方法执行结果。
+     * 向订单添加商品行。
+     *
+     * @param command 订单命令
+     * @return 更新后的订单
      */
     public Order addLine(AddOrderLineCommand command) {
-        /**
-         * Objects.requireNonNull() 方法。
-         * @param command command 参数。
-         * @param null" null" 参数。
-         */
         Objects.requireNonNull(command, "command must not be null");
         Order order = repository.findById(command.orderId())
                 .orElseThrow(() -> new IllegalArgumentException("order not found: " + command.orderId()));
@@ -86,16 +82,14 @@ public class OrderApplicationService {
     }
 
     /**
-     * pay() 方法。
-     * @param orderId 订单标识。
-     * @return 方法执行结果。
+     * 支付订单。
+     *
+     * @param orderId 订单标识
+     * @return 支付后的订单
      */
     public Order pay(String orderId) {
         Order order = repository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("order not found: " + orderId));
-        /**
-         * order.pay() 方法。
-         */
         order.pay();
         repository.save(order);
         publishDomainEvents(order);
@@ -103,9 +97,10 @@ public class OrderApplicationService {
     }
 
     /**
-     * ship() 方法。
-     * @param orderId 订单标识。
-     * @return 方法执行结果。
+     * 发货订单。
+     *
+     * @param orderId 订单标识
+     * @return 发货后的订单
      */
     public Order ship(String orderId) {
         Order order = repository.findById(orderId)
@@ -117,9 +112,10 @@ public class OrderApplicationService {
     }
 
     /**
-     * cancel() 方法。
-     * @param orderId 订单标识。
-     * @return 方法执行结果。
+     * 取消订单。
+     *
+     * @param orderId 订单标识
+     * @return 取消后的订单
      */
     public Order cancel(String orderId) {
         Order order = repository.findById(orderId)
@@ -131,9 +127,10 @@ public class OrderApplicationService {
     }
 
     /**
-     * 查询数据。
-     * @param orderId 订单标识。
-     * @return 方法执行结果。
+     * 按标识查询订单。
+     *
+     * @param orderId 订单标识
+     * @return 订单
      */
     public Order findById(String orderId) {
         return repository.findById(orderId)
@@ -141,9 +138,10 @@ public class OrderApplicationService {
     }
 
     /**
-     * 查询数据。
-     * @param orderNo 订单号。
-     * @return 方法执行结果。
+     * 按编号查询订单。
+     *
+     * @param orderNo 订单编号
+     * @return 订单
      */
     public Order findByOrderNo(String orderNo) {
         return repository.findByOrderNo(orderNo)
@@ -151,15 +149,21 @@ public class OrderApplicationService {
     }
 
     /**
-     * previewDiscount() 方法。
-     * @param orderId 订单标识。
-     * @return 方法执行结果。
+     * 预览订单折扣。
+     *
+     * @param orderId 订单标识
+     * @return 折扣金额
      */
     public Money previewDiscount(String orderId) {
         Order order = findById(orderId);
         return domainService.previewDiscount(order);
     }
 
+    /**
+     * 列出全部订单。
+     *
+     * @return 订单列表
+     */
     public List<Order> listAll() {
         return repository.findAll();
     }
