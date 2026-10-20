@@ -113,7 +113,7 @@ public final class RbacConfig {
                 }
                 return userRepository.findByLoginId(String.valueOf(loginId))
                         .map(User::roles)
-                        .map(roles -> (List<String>) new ArrayList<>(roles))
+                        .map(roles -> (List<String>) Collections.unmodifiableList(new ArrayList<>(roles)))
                         .orElse(Collections.emptyList());
             }
         };
@@ -129,7 +129,7 @@ public final class RbacConfig {
                 roleRepository.findByCode(roleCode)
                         .ifPresent(role -> allPerms.addAll(role.permissions()));
             }
-            return new ArrayList<>(allPerms);
+            return Collections.unmodifiableList(new ArrayList<>(allPerms));
         };
     }
 
