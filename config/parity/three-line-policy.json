@@ -4907,6 +4907,24 @@
         "shouldMapReadyAndUnavailableReportsWithoutExposingFailureDetails"
       ],
       "reason": "三线 Quarkus 就绪探针各 1 项测试通过；旧 MicroProfile Health 使用 State/getState，高两线使用 Status/getStatus，均验证相同 UP/DOWN、数据计数和故障详情隔离。"
+    },
+    {
+      "path": "ddd4j-runtime/ddd4j-runtime-vertx/src/test/java/io/ddd4j/vertx/VertxDomainEventPublisherTest.java",
+      "productionPath": "ddd4j-runtime/ddd4j-runtime-vertx/src/main/java/io/ddd4j/vertx/VertxDomainEventPublisher.java",
+      "sourceSha256": [
+        "4e2de5452323fbe393bf40c1061e3262d4a0407dc282a7287f13f46db264dd71",
+        "ae95cff7bea64fa66f364c06c433d5f954dea3e8d6d7e917d0d6e50a34811caa",
+        "82a1523a41457c2f8e476a43c81bd146d9bb78a8f4e302feb78a0f68eba8c498"
+      ],
+      "productionSha256": [
+        "8a16f62ac55015c68bfb8b4fb81e5c9599c8979f13916a54d987cff40c326053",
+        "29948eec6e4598e050bf7b1c68145efd801c60c0e8eaa8091a453ee793390ea0",
+        "9acf95989f34f89f770b116f5d7430a10c08b14a872e7d3b0d6c4374160d657d"
+      ],
+      "testMethods": [
+        "shouldPublishLocalEventWithoutRequiringWireCodec"
+      ],
+      "reason": "三线 Vert.x 本地事件总线各 1 项通过，断言接收体与发送事件为同一引用，因而没有 wire codec 参与；高两线测试夹具已移除 Jackson 注解及无关值语义，生产发布器规范化逻辑相同。"
     }
   ]
 }
