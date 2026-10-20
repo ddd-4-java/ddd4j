@@ -3069,6 +3069,21 @@
         "evidence": "ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautContextValueContractTest.java",
         "testSha256": "53065021647075244fd030f433cd3067aa7c51d33c5a09422933c8ee86cbb789",
         "reason": "三线 Micronaut 请求上下文的值方法、访问器与 Jackson JSON 往返行为一致；JDK 8 的 Micronaut 3 使用 ThreadLocal/ServerRequestContext 与 Reactor 插桩传播，JDK 17/21 的 Micronaut 4 使用 PropagatedContext/ThreadPropagatedContextElement。三线值契约各 3 项、上下文定向测试 JDK 8 为 7 项而 JDK 17/21 各 9 项均通过；源码和同一契约测试哈希锁定。"
+    },
+    {
+        "path": "ddd4j-web/ddd4j-web-micronaut/src/main/java/io/ddd4j/web/micronaut/Ddd4jMicronautWebConfiguration.java",
+        "sourceSha256": [
+            "e995bf26c65c07c9b54ee08cb96aefc057ea8ea7b42f102621e54570363c6f7f",
+            "6111a89c3ec0b604c12636dc98c8df1a0fd7ef0a5fd026358a9e570cf673f5c5",
+            "6111a89c3ec0b604c12636dc98c8df1a0fd7ef0a5fd026358a9e570cf673f5c5"
+        ],
+        "evidence": "ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautWebConfigurationTest.java",
+        "testSha256ByJdk": {
+            "8": "a03cfcb994dfcc91c5fa864abc21f4c391e9b3999dce3f5e98ffe41d3c506e72",
+            "17": "abdade46cfb9e11cab110641764525412344dbd64360ae9d6ba27616ffc83e8d",
+            "21": "4a91e747f8d237314e87445c3a32b60d6b991daad6eaac0bf1205c4fea2e4f91"
+        },
+        "reason": "三线 Micronaut Web 配置的默认值、setter 拷贝与空值拒绝行为一致；JDK 8 使用 Arrays.asList，JDK 17/21 使用 List.of，setter 文档逐线对齐。三线配置定向测试各 3 项通过，源码及测试哈希锁定。"
     }
   ],
   "historicalDocumentSections": [
