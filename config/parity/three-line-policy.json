@@ -4704,6 +4704,27 @@
         "markerFailureShouldKeepOriginalFailureAndFrameworkShouldAbort"
       ],
       "reason": "三线 H2/Spring 托管事务集成测试各 4 项通过，涵盖业务实体、事件和 outbox 的共同提交、外层回滚、捕获异常后的回滚及标记失败；JDK 8 的 Hibernate 5/javax.persistence 与高两线 Hibernate 6/jakarta.persistence 为逐线适配。"
+    },
+    {
+      "path": "ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/event/store/panache/JpaManagedParticipationIT.java",
+      "productionPath": "ddd4j-data/ddd4j-data-event-store-panache/src/main/java/io/ddd4j/data/event/store/panache/PanacheEventStore.java",
+      "sourceSha256": [
+        "c56945f197c1d70651781d2cd2d7b2a8b14ebe7addd0662ab211ea1ce17d84a8",
+        "871121f15b1b583a972a7293abeeb4e5de95979887142185b0874bd256c1f3d8",
+        "871121f15b1b583a972a7293abeeb4e5de95979887142185b0874bd256c1f3d8"
+      ],
+      "productionSha256": [
+        "a6b06fe3413dd2be996057743b210b9777ff79b5bc038cf0682386483406683d",
+        "4df10a62b86a251200a100737a8f21862e1592434e323e50c27990d75a863b5c",
+        "98eaf4557c9e0ee4e5c932f54cf72335c442c52c1ad440224e24b03306bbed16"
+      ],
+      "testMethods": [
+        "managedParticipationShouldCommitAllRowsAndKeepBusinessEntityManaged",
+        "managedParticipationShouldFollowOuterRollback",
+        "caughtOperationFailureShouldStillRollBackOuterTransaction",
+        "markerFailureShouldKeepOriginalFailureAndFrameworkShouldAbort"
+      ],
+      "reason": "三线 Quarkus/JPA 托管事务集成测试各 4 项通过，验证业务实体、outbox 与事件共同提交、外层回滚、捕获失败和回滚标记异常；JDK 8 使用 javax/JTA TransactionManager，高两线使用 jakarta/QuarkusTransaction，保留逐线框架 API 差异。"
     }
   ]
 }
