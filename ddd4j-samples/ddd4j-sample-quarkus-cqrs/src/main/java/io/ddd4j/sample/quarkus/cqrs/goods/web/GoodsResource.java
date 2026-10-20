@@ -22,8 +22,17 @@ import io.ddd4j.sample.quarkus.cqrs.goods.domain.GoodsStatus;
 import io.ddd4j.sample.quarkus.cqrs.goods.web.dto.CreateGoodsRequest;
 import io.ddd4j.sample.quarkus.cqrs.goods.web.dto.UpdateGoodsRequest;
 import io.ddd4j.web.quarkus.TenantAwareResource;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.*;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -47,7 +56,7 @@ import jakarta.ws.rs.core.Response;
  *   <li>{@code GET    /goods/by-code}          - 按编码查询</li>
  * </ul>
  *
- * <h3>设计原则</h3>
+ * <h2>设计原则</h2>
  * <p>Resource 层只做协议适配（HTTP ↔ 应用服务入参 / 响应），不包含业务规则。
  * 所有业务方法都委托给 {@link GoodsApplicationService}。
  *
@@ -55,10 +64,12 @@ import jakarta.ws.rs.core.Response;
  */
 @Path("/goods")
 @Produces(MediaType.APPLICATION_JSON)
+@ApplicationScoped
 public class GoodsResource extends TenantAwareResource {
 
     private final GoodsApplicationService applicationService;
 
+    /** @param applicationService 商品应用服务 */
     @Inject
     public GoodsResource(GoodsApplicationService applicationService) {
         this.applicationService = applicationService;
