@@ -1057,6 +1057,8 @@ def inventory_gate(roots: list[pathlib.Path], output: pathlib.Path, policy_path:
         policy.get("platformSyntaxMappings", []), roots)
     platform_test_syntax = validate_platform_test_syntax_mappings(
         policy.get("platformTestSyntaxMappings", []), roots, platform_syntax)
+    platform_test_helpers = validate_platform_test_helper_mappings(
+        policy.get("platformTestHelperMappings", []), roots)
     platform_test_namespace = validate_platform_test_namespace_mappings(
         policy.get("platformTestNamespaceMappings", []), roots)
     platform_test_evidence = {}
@@ -1154,6 +1156,10 @@ def inventory_gate(roots: list[pathlib.Path], output: pathlib.Path, policy_path:
               and all(value is not None for value in values)):
             status = "PLATFORM_ADAPTED"
             evidence = platform_test_syntax[path]["productionPath"]
+        elif (category == "test" and path in platform_test_helpers
+              and all(value is not None for value in values)):
+            status = "PLATFORM_ADAPTED"
+            evidence = platform_test_helpers[path]["contractPath"]
         elif (category == "test" and path in platform_test_namespace
               and all(value is not None for value in values)):
             status = "PLATFORM_ADAPTED"
@@ -1463,6 +1469,53 @@ def historical_document_section_matches(path: str, roots: list[pathlib.Path], ma
     return all(section and hashlib.sha256(section.encode("utf-8")).hexdigest()
                == mapping["sectionSha256"][version]
                for (_, section), version in zip(sections, ("1.0.x", "2.0.x", "3.0.x")))
+
+
+def validate_platform_test_helper_mappings(mappings, roots: list[pathlib.Path]) -> dict[str, dict]:
+    """只接受哈希固定、同模块三线 HTTP 契约方法一致的测试装配器。"""
+    validated = {}
+    for mapping in mappings:
+        path = pathlib.PurePosixPath(mapping.get("path", ""))
+        contract = pathlib.PurePosixPath(mapping.get("contractPath", ""))
+        source = path.as_posix()
+        contract_path = contract.as_posix()
+        hashes = mapping.get("sourceSha256")
+        contract_hashes = mapping.get("contractSha256")
+        methods = mapping.get("testMethods")
+        if (path.is_absolute() or ".." in path.parts
+                or path.name != "TestSupport.java" or "/src/test/java/" not in source
+                or source in validated or contract.is_absolute() or ".." in contract.parts
+                or contract.suffix != ".java" or "/src/test/java/" not in contract_path
+                or contract_path == source
+                or source.split("/src/test/java/", 1)[0]
+                   != contract_path.split("/src/test/java/", 1)[0]
+                or not isinstance(methods, list) or not methods
+                or len(set(methods)) != len(methods)
+                or not all(isinstance(method, str)
+                           and re.fullmatch(r"(?:[^\W\d]|\$)[\w$]*", method)
+                           for method in methods)
+                or not mapping.get("reason")):
+            raise ValueError(f"invalid platform test helper mapping: {source}")
+        for expected in (hashes, contract_hashes):
+            if (not isinstance(expected, list) or len(expected) != len(roots)
+                    or not all(isinstance(value, str)
+                               and re.fullmatch(r"[0-9a-f]{64}", value)
+                               for value in expected)):
+                raise ValueError(f"invalid platform test helper hashes: {source}")
+        for index, root in enumerate(roots):
+            helper_file, contract_file = root / path, root / contract
+            if (not helper_file.is_file() or not contract_file.is_file()
+                    or hashlib.sha256(helper_file.read_bytes()).hexdigest() != hashes[index]
+                    or hashlib.sha256(contract_file.read_bytes()).hexdigest()
+                    != contract_hashes[index]):
+                raise ValueError(f"stale platform test helper mapping: {source}")
+            contract_text = contract_file.read_text(encoding="utf-8")
+            actual_methods = re.findall(r"(?m)^\s*void\s+((?:[^\W\d]|\$)[\w$]*)\s*\(",
+                                        contract_text)
+            if "@Test" not in contract_text or actual_methods != methods:
+                raise ValueError(f"platform test helper contract differs: {source}")
+        validated[source] = mapping
+    return validated
 
 
 def validate_platform_test_syntax_mappings(mappings, roots: list[pathlib.Path],
