@@ -68,6 +68,16 @@ public class Order extends AggregateRoot<String> {
      */
     private OrderStatus status;
 
+    /**
+     * 重建订单聚合。
+     *
+     * @param id 订单标识
+     * @param orderNo 订单号
+     * @param buyerId 买家标识
+     * @param buyerName 买家姓名
+     * @param status 订单状态
+     * @param lines 订单明细
+     */
     public Order(String id, String orderNo, String buyerId, String buyerName, OrderStatus status, List<OrderLine> lines) {
         if (StrKit.isBlank(id)) {
             throw new IllegalArgumentException("id must not be blank");
@@ -84,7 +94,9 @@ public class Order extends AggregateRoot<String> {
         renameBuyer(buyerName);
         this.status = Objects.requireNonNull(status, "status must not be null");
         if (Objects.nonNull(lines)) {
-            this.lines.addAll(lines);
+            for (OrderLine line : lines) {
+                this.lines.add(Objects.requireNonNull(line, "order line must not be null"));
+            }
         }
     }
 
@@ -97,7 +109,7 @@ public class Order extends AggregateRoot<String> {
      * @return 草稿订单
      */
     public static Order draft(String orderNo, String buyerId, String buyerName) {
-        Order order = new Order(UUID.randomUUID().toString(), orderNo, buyerId, buyerName, OrderStatus.DRAFT, List.of());
+        Order order = new Order(UUID.randomUUID().toString(), orderNo, buyerId, buyerName, OrderStatus.DRAFT, java.util.Collections.emptyList());
         order.registerEvent(new OrderCreatedEvent(order.id()));
         return order;
     }
@@ -107,18 +119,22 @@ public class Order extends AggregateRoot<String> {
         return id;
     }
 
+    /** @return 订单号 */
     public String orderNo() {
         return orderNo;
     }
 
+    /** @return 买家标识 */
     public String buyerId() {
         return buyerId;
     }
 
+    /** @return 买家姓名 */
     public String buyerName() {
         return buyerName;
     }
 
+    /** @return 订单状态 */
     public OrderStatus status() {
         return status;
     }
@@ -129,7 +145,7 @@ public class Order extends AggregateRoot<String> {
      * @return 订单行列表
      */
     public List<OrderLine> lines() {
-        return List.copyOf(lines);
+        return java.util.Collections.unmodifiableList(new ArrayList<>(lines));
     }
 
     /**
