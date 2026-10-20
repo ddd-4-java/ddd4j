@@ -41,8 +41,8 @@ import java.util.Objects;
  * 订单 REST 控制器（Micronaut 运行时）。
  *
  * <ul>
- *   <li>{@code POST /orders} -> 创建订单（写侧）</li>
- *   <li>{@code GET /orders/{id}} -> 查询订单摘要（读侧）</li>
+ *   <li>{@code POST /orders}：创建订单（写侧）</li>
+ *   <li>{@code GET /orders/{id}}：查询订单摘要（读侧）</li>
  * </ul>
  */
 @Controller("/orders")
