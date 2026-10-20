@@ -91,6 +91,21 @@
       "path": "config/apache-2.0-header.txt",
       "sha256ByJdk": {"8": null, "17": null, "21": "19b0737941d33a4dc8a1a7ea5920d08d3943030c2cf29322b99172c51d9111de"},
       "evidence": "仅 JDK 21 根 POM 的 Maven 许可证插件引用此 header；文件存在性和内容逐线锁定"
+    },
+    {
+      "path": "ddd4j-data/ddd4j-data-event-store-jpa/src/test/resources/META-INF/persistence.xml",
+      "sha256ByJdk": {"8": null, "17": "2005878c6d1343a705cca4c4cbe054ae034fbfb2828bf7f0dc8d29bb4b187ae5", "21": "2005878c6d1343a705cca4c4cbe054ae034fbfb2828bf7f0dc8d29bb4b187ae5"},
+      "evidence": "JDK 17/21 的 Jakarta JPA 测试使用 persistence.xml；JDK 8 javax JPA 测试使用程序化 Hibernate 配置，逐线哈希锁定"
+    },
+    {
+      "path": "ddd4j-data/ddd4j-data-event-store-panache/src/main/resources/META-INF/beans.xml",
+      "sha256ByJdk": {"8": "eeda5bb2f3e034daa25fb64f2c7ff46c3055921f5e6bb012e5e575666f28ef6c", "17": null, "21": null},
+      "evidence": "仅 JDK 8 Quarkus 1 Java EE CDI 适配器携带 beans.xml；存在性和内容逐线锁定"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-helidon/src/main/resources/META-INF/beans.xml",
+      "sha256ByJdk": {"8": "1350b6283bc368bcf48131748c8b4e5159cdd9693f466c86da7c298bd2203480", "17": null, "21": null},
+      "evidence": "仅 JDK 8 Helidon Java EE 示例携带 beans.xml；存在性和内容逐线锁定"
     }
   ],
   "platformDependencyConfigFiles": [
