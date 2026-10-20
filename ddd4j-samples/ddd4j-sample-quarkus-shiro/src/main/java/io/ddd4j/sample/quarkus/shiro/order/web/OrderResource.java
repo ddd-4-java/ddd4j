@@ -64,11 +64,22 @@ public class OrderResource {
 
     private final OrderApplicationService orderApplicationService;
 
+    /**
+     * 创建订单资源。
+     *
+     * @param orderApplicationService 订单应用服务
+     */
     @Inject
     public OrderResource(OrderApplicationService orderApplicationService) {
         this.orderApplicationService = orderApplicationService;
     }
 
+    /**
+     * 接收创建订单请求。
+     *
+     * @param request 请求数据
+     * @return 创建的订单响应
+     */
     @POST
     public R<OrderResponse> create(CreateOrderRequest request) {
         Order order = orderApplicationService.createDraft(
@@ -77,6 +88,12 @@ public class OrderResource {
         return R.ok("order created", OrderResponse.from(order));
     }
 
+    /**
+     * 按标识查询订单。
+     *
+     * @param id 订单标识
+     * @return 订单
+     */
     @GET
     @Path("/{id}")
     public R<OrderResponse> findById(@PathParam("id") String id) {
@@ -84,6 +101,12 @@ public class OrderResource {
         return R.ok(OrderResponse.from(order));
     }
 
+    /**
+     * 按编号查询订单。
+     *
+     * @param orderNo 订单编号
+     * @return 订单响应
+     */
     @GET
     @Path("/by-order-no")
     public R<OrderResponse> findByOrderNo(@QueryParam("orderNo") String orderNo) {
@@ -91,6 +114,11 @@ public class OrderResource {
         return R.ok(OrderResponse.from(order));
     }
 
+    /**
+     * 列出全部订单。
+     *
+     * @return 订单响应列表
+     */
     @GET
     public R<List<OrderResponse>> listAll() {
         List<OrderResponse> items = orderApplicationService.listAll().stream()
@@ -99,6 +127,13 @@ public class OrderResource {
         return R.ok(items);
     }
 
+    /**
+     * 向订单添加商品行。
+     *
+     * @param id 订单标识
+     * @param request 请求数据
+     * @return 更新后的订单响应
+     */
     @POST
     @Path("/{id}/lines")
     public R<OrderResponse> addLine(@PathParam("id") String id, AddOrderLineRequest request) {
@@ -108,6 +143,12 @@ public class OrderResource {
         return R.ok("order line added", OrderResponse.from(order));
     }
 
+    /**
+     * 支付订单。
+     *
+     * @param id 订单标识
+     * @return 更新后的订单响应
+     */
     @POST
     @Path("/{id}/pay")
     public R<OrderResponse> pay(@PathParam("id") String id) {
@@ -115,6 +156,12 @@ public class OrderResource {
         return R.ok("order paid", OrderResponse.from(order));
     }
 
+    /**
+     * 发货订单。
+     *
+     * @param id 订单标识
+     * @return 更新后的订单响应
+     */
     @POST
     @Path("/{id}/ship")
     public R<OrderResponse> ship(@PathParam("id") String id) {
@@ -122,6 +169,12 @@ public class OrderResource {
         return R.ok("order shipped", OrderResponse.from(order));
     }
 
+    /**
+     * 取消订单。
+     *
+     * @param id 订单标识
+     * @return 更新后的订单响应
+     */
     @POST
     @Path("/{id}/cancel")
     public R<OrderResponse> cancel(@PathParam("id") String id) {
@@ -129,6 +182,12 @@ public class OrderResource {
         return R.ok("order cancelled", OrderResponse.from(order));
     }
 
+    /**
+     * 预览订单折扣。
+     *
+     * @param id 订单标识
+     * @return 折扣金额响应
+     */
     @GET
     @Path("/{id}/discount")
     public R<DiscountView> previewDiscount(@PathParam("id") String id) {
@@ -147,17 +206,33 @@ public class OrderResource {
 
         private final String currency;
 
+        /**
+         * 创建折扣金额视图。
+         *
+         * @param amount 金额数值
+         * @param currency 币种
+         */
         @JsonCreator()
         public DiscountView(@JsonProperty("amount") String amount, @JsonProperty("currency") String currency) {
             this.amount = amount;
             this.currency = currency;
         }
 
+        /**
+         * 读取金额数值。
+         *
+         * @return 金额数值
+         */
         @JsonProperty("amount")
         public String amount() {
             return amount;
         }
 
+        /**
+         * 读取币种。
+         *
+         * @return 币种
+         */
         @JsonProperty("currency")
         public String currency() {
             return currency;

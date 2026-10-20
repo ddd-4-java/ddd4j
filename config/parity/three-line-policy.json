@@ -3335,6 +3335,17 @@
       "evidence": "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/test/java/io/ddd4j/sample/quarkus/shiro/goods/web/GoodsQueryResourceContractTest.java",
       "testSha256": "dfa6e3e43b35648e936152edeccc02ab6fa2071f87fb5b96d64ea5d737f0c901",
       "reason": "三线共用 GoodsResource 商品读写 URL；JDK 8 Quarkus 1 显式 CDI 作用域和 javax JAX-RS，高线使用 jakarta JAX-RS。查询逻辑委托 GoodsQueryResource，三线商品查询 HTTP 契约各 2 项及 RBAC 回归各 45 项通过；源码和共同查询测试哈希锁定。"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/main/java/io/ddd4j/sample/quarkus/shiro/order/web/OrderResource.java",
+      "sourceSha256": [
+        "cffcdadeed793ceb732072a559a806860fcf2bfe530c1ae6c43d6c480c9c735e",
+        "19d48dad5ffafb0e288bf552b5c90dfa0693e2a0a71a183d69a7c791576c5dd8",
+        "19d48dad5ffafb0e288bf552b5c90dfa0693e2a0a71a183d69a7c791576c5dd8"
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/test/java/io/ddd4j/sample/quarkus/shiro/order/web/OrderResourceContractTest.java",
+      "testSha256": "a9e0f139a1a60b7102984e62f0df00185a1359303f7532c05a99514a89535c56",
+      "reason": "三线订单 HTTP 端点、响应映射及方法文档一致；JDK 8 使用 javax JAX-RS、显式 CDI 作用域和 Collectors.toList，JDK 17/21 使用 jakarta JAX-RS 与 Stream.toList。逐行核对仅上述平台适配差异，源码哈希锁定；运行时端点仍由 Verify 独立验证。"
     }
   ],
   "historicalDocumentSections": [
