@@ -287,6 +287,29 @@
   ],
   "platformContentMappings": [
     {
+      "path": "ddd4j-web/ddd4j-web-quarkus/src/main/java/io/ddd4j/web/quarkus/AccessLogFilter.java",
+      "replacements": [
+        {
+          "from": "import javax.ws.rs.container.ContainerRequestContext;",
+          "to": "import jakarta.ws.rs.container.ContainerRequestContext;"
+        },
+        {
+          "from": "import javax.ws.rs.container.ContainerRequestFilter;",
+          "to": "import jakarta.ws.rs.container.ContainerRequestFilter;"
+        },
+        {
+          "from": "import javax.ws.rs.core.Context;",
+          "to": "import jakarta.ws.rs.core.Context;"
+        },
+        {
+          "from": "import javax.ws.rs.ext.Provider;",
+          "to": "import jakarta.ws.rs.ext.Provider;"
+        }
+      ],
+      "evidence": "ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebContractTest.java",
+      "reason": "访问日志过滤器在三线均读取 SocketAddress.host() 并保持同一日志格式；仅 JAX-RS 命名空间按 Quarkus 平台适配，受影响 Web 契约测试逐线验证"
+    },
+    {
       "path": "ddd4j-samples/ddd4j-sample-quarkus-satoken/src/main/java/io/ddd4j/sample/quarkus/satoken/rbac/RbacService.java",
       "replacements": [
         {

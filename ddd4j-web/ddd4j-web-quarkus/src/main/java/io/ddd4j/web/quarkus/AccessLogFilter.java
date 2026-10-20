@@ -44,6 +44,12 @@ public class AccessLogFilter implements ContainerRequestFilter {
     @Context
     HttpServerRequest request;
 
+    /**
+     * 记录请求地址、方法、路径和租户标识。
+     *
+     * @param requestContext JAX-RS 请求上下文
+     * @throws IOException 请求过滤失败时抛出
+     */
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
         String method = requestContext.getMethod();
