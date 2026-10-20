@@ -3013,7 +3013,8 @@
         "21": "746e1402c3d3eb6f483254eaabc022e56dd9a57bd9ce929342cc13899a52877c"
       },
       "reason": "三线 Javalin Shiro RBAC 服务的用户、角色、权限 CRUD 和最终权限计算逻辑及 Javadoc 一致；JDK 8 使用 !Optional.isPresent()，JDK 17/21 使用 Optional.isEmpty()。每线 37 项认证/授权控制器测试通过，源码与测试 SHA-256 锁定。"
-    }
+    },
+    {"path": "ddd4j-web/ddd4j-web-dropwizard/src/main/java/io/ddd4j/web/dropwizard/Ddd4jDropwizardResponseFilter.java", "sourceSha256": ["49ba4bbe683c1ab41606a90da70be197295c911f27e5a8e8c891e04dbe0d73f0", "a6fa5ea8c6bafb2fb2e7fd275940c5a67b7e9939b6eff52f0d41985bf3614826", "a6fa5ea8c6bafb2fb2e7fd275940c5a67b7e9939b6eff52f0d41985bf3614826"], "evidence": "ddd4j-web/ddd4j-web-dropwizard/src/test/java/io/ddd4j/web/dropwizard/Ddd4jDropwizardWebContractTest.java", "testSha256ByJdk": {"8": "412d959bd3209dbc3cdc98fc6217d128a050410a9717d0ad32a2a43e7a765d4f", "17": "0a24c57f4a2c5749f21c61a9ff1e8dfb3a7f9ee3ee625926a27de15d978fbd90", "21": "0a24c57f4a2c5749f21c61a9ff1e8dfb3a7f9ee3ee625926a27de15d978fbd90"}, "reason": "三线 Dropwizard 响应过滤器均在 finally 关闭追踪作用域、按状态完成会话并回写请求/追踪 ID；JDK 8 使用 javax 与显式类型转换，JDK 17/21 使用 jakarta 与 instanceof 模式匹配。三线 Web 契约测试各 6/6 通过；源码和测试哈希逐线锁定。"}
   ],
   "historicalDocumentSections": [
     {
