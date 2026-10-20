@@ -3740,6 +3740,21 @@
         "21": "4c174ee24839329cf35e35b02742f4c1e14bb6dfa99c6bf5f918a1cb6e3a76e4"
       },
       "reason": "Quarkus 2 的 javax CDI 与 Quarkus 3 的 jakarta CDI 是注入命名空间适配；三线探针测试各 1 项锁定 UP/DOWN、检查数量及不泄露故障详情。"
+    },
+    {
+      "path": "ddd4j-web/ddd4j-web-dropwizard/src/main/java/io/ddd4j/web/dropwizard/Ddd4jDropwizardWebBundle.java",
+      "sourceSha256": [
+        "3e80a0863c41127ea38fc0813c75af552236599671ae615650a206877b61d38d",
+        "5d9276e646facb5fee863eef3cfc4e28235dde5df3df5d18b1a0a1ab1280143a",
+        "db8eddbc1e298ab44fa127edab4cc970c61662bf067da95eed33fb0f44001850"
+      ],
+      "evidence": "ddd4j-web/ddd4j-web-dropwizard/src/test/java/io/ddd4j/web/dropwizard/Ddd4jDropwizardWebBundleTest.java",
+      "testSha256ByJdk": {
+        "8": "245be910f0fd4e72ca40f3bea28d9f4aa39553c08134209328cc2e2741a5d5cc",
+        "17": "5ad59b586643f3156bbdfc8b2177c9209903b82e50ca81b2f79d01e299a24bfc",
+        "21": "fe8b27d2d69439f4cb61850969fc041f7a7b47de1f50c0488bc18352a8f3064f"
+      },
+      "reason": "Dropwizard 2 到 4 将 Configuration、ConfiguredBundle、Bootstrap 和 Environment 移入 io.dropwizard.core 包；三线 Web Bundle 5 项测试验证注册与配置契约。"
     }
   ],
   "historicalDocumentSections": [
@@ -4947,6 +4962,28 @@
         "missingOrderKeepsStringCode"
       ],
       "reason": "三线真实 Javalin HTTP 查询缺失商品 ID、商品编码和订单各 1 项通过，状态码分别保持 404/200/200，JSON code 均为字符串 404；JDK 8 使用 TestHttpClient，高两线使用 JDK HttpClient，JDK 21 使用 Jackson 3 节点 API。"
+    },
+    {
+      "path": "ddd4j-web/ddd4j-web-dropwizard/src/test/java/io/ddd4j/web/dropwizard/Ddd4jDropwizardWebBundleTest.java",
+      "productionPath": "ddd4j-web/ddd4j-web-dropwizard/src/main/java/io/ddd4j/web/dropwizard/Ddd4jDropwizardWebBundle.java",
+      "sourceSha256": [
+        "245be910f0fd4e72ca40f3bea28d9f4aa39553c08134209328cc2e2741a5d5cc",
+        "5ad59b586643f3156bbdfc8b2177c9209903b82e50ca81b2f79d01e299a24bfc",
+        "fe8b27d2d69439f4cb61850969fc041f7a7b47de1f50c0488bc18352a8f3064f"
+      ],
+      "productionSha256": [
+        "3e80a0863c41127ea38fc0813c75af552236599671ae615650a206877b61d38d",
+        "5d9276e646facb5fee863eef3cfc4e28235dde5df3df5d18b1a0a1ab1280143a",
+        "db8eddbc1e298ab44fa127edab4cc970c61662bf067da95eed33fb0f44001850"
+      ],
+      "testMethods": [
+        "constructorRejectsNullResolver",
+        "defaultConstructorBuildsDefaultConfiguration",
+        "runRegistersFiltersAndExceptionMappers",
+        "runRejectsNullWebConfiguration",
+        "runUsesCustomResolver"
+      ],
+      "reason": "三线 Web Bundle 各 5 项测试通过，验证空解析器拒绝、默认配置、过滤器及异常映射注册、自定义解析器；测试仅适配 Dropwizard 2/4 包路径及 JDK 文档约束。"
     }
   ]
 }
