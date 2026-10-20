@@ -53,6 +53,12 @@ class WorkflowLineBaselineTest(unittest.TestCase):
             with self.subTest(module=module):
                 self.assertIn(module, modules)
 
+    def test_workflow_lint_runs_native_broker_report_selftests(self):
+        workflow = (ROOT / ".github/workflows/verify.yml").read_text(encoding="utf-8")
+        lint_job = workflow.split("  workflow-lint:\n", 1)[1].split(
+            "  unit-and-contract:\n", 1)[0]
+        self.assertIn("scripts/test_verify_native_broker_test_reports.py", lint_job)
+
     def test_release_candidate_uses_own_jdk_and_baseline_line(self):
         workflow = (ROOT / ".github/workflows/release-candidate.yml").read_text(encoding="utf-8")
         version = self.jdk.replace("1.8", "8")

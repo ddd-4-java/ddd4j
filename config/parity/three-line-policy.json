@@ -51,9 +51,9 @@
     {
       "path": ".github/workflows/verify.yml",
       "sha256ByJdk": {
-        "8": "774bbd479eb9ed1d1d5653e7e005c78f5e78979a79229b929ffa75cca82c0645",
-        "17": "464d9af5131897dbb4a78e6e02c9772b08f3609349498c79b117940c2d53553a",
-        "21": "b11fe94f5f66125786f69660b30370dd8dc2e6f99096bc1a41b6d81062f7dcc0"
+        "8": "4baf4da893aab3ee9acae7daff8d20a01f62dfb1ccba34f43835d4bc9bba536e",
+        "17": "b3e53c7328a61ceef6782ae4559af5ac19545fddf8050dfbf12e32c9adbaad83",
+        "21": "0f6acfaaf38b40617f3080b791c91964f122dab419afc8a13fe48882f621355d"
       },
       "evidence": "逐线 JDK、Easy4J 快照及发布基线已核对；文件 SHA-256 锁定，workflow lint 和实际 CI 独立验收"
     }
