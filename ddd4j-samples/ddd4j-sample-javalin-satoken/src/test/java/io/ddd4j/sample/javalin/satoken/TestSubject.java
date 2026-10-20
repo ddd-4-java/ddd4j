@@ -31,7 +31,7 @@ public class TestSubject extends SaTokenSubject {
     @Override
     public Object getUserId() {
         // 回退到 Subject 接口默认实现：从 principal.getUserId() 取值
-        var principal = getPrincipal();
+        io.ddd4j.core.auth.AuthPrincipal principal = getPrincipal();
         return Objects.nonNull(principal) ? principal.getUserId() : null;
     }
 }
