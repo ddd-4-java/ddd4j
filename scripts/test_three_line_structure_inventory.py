@@ -1128,6 +1128,34 @@ class ThreeLineInventoryTest(unittest.TestCase):
                 json.loads((output / "inventory.json").read_text())["differences"]}
         self.assertEqual("OPEN", rows[path])
 
+    def test_rabbitmq_container_import_adapts_only_jdk17_line(self):
+        path = "ddd4j-mq/ddd4j-mq-rabbitmq/src/test/java/io/ddd4j/mq/rabbitmq/RabbitMQContainerIntegrationTest.java"
+        before = "import org.testcontainers.rabbitmq.RabbitMQContainer;"
+        after = "import org.testcontainers.containers.RabbitMQContainer;"
+        original = before + "\nclass Contract { void same() {} }\n"
+        for root, value in zip(self.roots, (original, original.replace(before, after), original)):
+            self.write(root, path, value)
+        policy = json.loads(self.policy.read_text())
+        policy["platformContentMappings"] = [{
+            "path": path, "replacements": [{"from": before, "to": after}],
+            "targetLines": ["2.0.x"], "evidence": path,
+            "reason": "Testcontainers RabbitMQ package adaptation only on JDK 17 line",
+        }]
+        self.policy.write_text(json.dumps(policy))
+
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = {row["path"]: row["status"] for row in
+                json.loads((output / "inventory.json").read_text())["differences"]}
+        self.assertEqual("PLATFORM_ADAPTED", rows[path])
+
+        self.write(self.roots[1], path, (self.roots[1] / path).read_text().replace("same", "changed"))
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = {row["path"]: row["status"] for row in
+                json.loads((output / "inventory.json").read_text())["differences"]}
+        self.assertEqual("OPEN", rows[path])
+
     def test_changed_error_code_fails_inventory_gate(self):
         path = "ddd4j-core/src/main/java/example/OrderErrorCode.java"
         original = ('package example; public enum OrderErrorCode {'
