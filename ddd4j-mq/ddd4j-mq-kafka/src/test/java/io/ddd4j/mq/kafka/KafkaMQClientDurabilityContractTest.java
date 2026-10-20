@@ -1,8 +1,4 @@
 package io.ddd4j.mq.kafka;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.mock;
 
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.mq.MQProperties;
@@ -26,6 +22,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.*;
 
 class KafkaMQClientDurabilityContractTest {
@@ -72,7 +69,6 @@ class KafkaMQClientDurabilityContractTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     void shouldSeekRecordWhenOffsetCommitFails() throws Exception {
         KafkaMQClient client = new KafkaMQClient(mock(Producer.class), null);
         MQProperties properties = properties();
