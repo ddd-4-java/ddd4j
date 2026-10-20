@@ -27,7 +27,7 @@ import io.micronaut.runtime.Micronaut;
 import io.micronaut.runtime.event.annotation.EventListener;
 import jakarta.inject.Singleton;
 
-import java.util.List;
+import java.util.Collections;
 
 /**
  * Micronaut CQRS 集成示例启动入口。
@@ -37,8 +37,9 @@ import java.util.List;
 public class MicronautCqrsApplication {
 
     /**
-     * main() 方法。
-     * @param args 命令行参数。
+     * 启动 Micronaut CQRS 示例应用。
+     *
+     * @param args 命令行参数
      */
     public static void main(String[] args) {
         Micronaut.run(MicronautCqrsApplication.class, args);
@@ -62,7 +63,7 @@ public class MicronautCqrsApplication {
 
         @Singleton
         CommandBus commandBus(CreateOrderCommandHandler handler) {
-            return new DefaultCommandBus(List.of(handler));
+            return new DefaultCommandBus(Collections.singletonList(handler));
         }
 
         @Singleton

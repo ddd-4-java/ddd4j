@@ -33,6 +33,7 @@ import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Status;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -51,6 +52,13 @@ public class OrderController {
     private final EventSourcingOrderRepository orderRepository;
     private final OrderSummaryView readView;
 
+    /**
+     * 创建订单控制器。
+     *
+     * @param commandBus 命令总线
+     * @param orderRepository 事件溯源订单仓储
+     * @param readView 订单摘要视图
+     */
     public OrderController(CommandBus commandBus,
                            EventSourcingOrderRepository orderRepository,
                            OrderSummaryView readView) {
@@ -59,26 +67,42 @@ public class OrderController {
         this.readView = Objects.requireNonNull(readView, "readView must not be null");
     }
 
+    /**
+     * 接收创建订单请求并分发命令。
+     *
+     * @param request 创建订单请求
+     * @return 创建结果
+     */
     @Post(produces = MediaType.APPLICATION_JSON)
     @Status(io.micronaut.http.HttpStatus.CREATED)
     public HttpResponse<Map<String, Object>> createOrder(@Body CreateOrderRequest request) {
         if (orderRepository.findByOrderNo(request.orderNo()).isPresent()) {
-            return HttpResponse.status(io.micronaut.http.HttpStatus.CONFLICT)
-                    .body(Map.of("success", false, "message", "order already exists: " + request.orderNo()));
+            Map<String, Object> body = new HashMap<>();
+            body.put("success", false);
+            body.put("message", "order already exists: " + request.orderNo());
+            return HttpResponse.status(io.micronaut.http.HttpStatus.CONFLICT).body(body);
         }
 
         CreateOrderCommand command = new CreateOrderCommand(
                 request.orderNo(), request.buyerId(), request.buyerName());
         Result<String> result = commandBus.execute(command);
 
-        return HttpResponse.status(io.micronaut.http.HttpStatus.CREATED)
-                .body(Map.of("success", true, "orderId", result.getData()));
+        Map<String, Object> body = new HashMap<>();
+        body.put("success", true);
+        body.put("orderId", result.getData());
+        return HttpResponse.status(io.micronaut.http.HttpStatus.CREATED).body(body);
     }
 
+    /**
+     * 读取订单。
+     *
+     * @param id 订单标识
+     * @return 查询结果
+     */
     @Get("/{id}")
     public HttpResponse<OrderSummaryViewEntity> getOrder(@PathVariable String id) {
         OrderSummaryViewEntity entity = readView.findById(id);
-        if (entity == null) {
+        if (Objects.isNull(entity)) {
             return HttpResponse.notFound();
         }
         return HttpResponse.ok(entity);
@@ -101,6 +125,13 @@ public class OrderController {
 
         private final String buyerName;
 
+        /**
+         * 创建订单创建请求。
+         *
+         * @param orderNo 订单编号
+         * @param buyerId 买家标识
+         * @param buyerName 买家名称
+         */
         @JsonCreator()
         public CreateOrderRequest(@JsonProperty("orderNo") String orderNo, @JsonProperty("buyerId") String buyerId, @JsonProperty("buyerName") String buyerName) {
             this.orderNo = orderNo;
@@ -108,16 +139,31 @@ public class OrderController {
             this.buyerName = buyerName;
         }
 
+        /**
+         * 读取订单编号。
+         *
+         * @return 订单编号
+         */
         @JsonProperty("orderNo")
         public String orderNo() {
             return orderNo;
         }
 
+        /**
+         * 读取买家标识。
+         *
+         * @return 买家标识
+         */
         @JsonProperty("buyerId")
         public String buyerId() {
             return buyerId;
         }
 
+        /**
+         * 读取买家名称。
+         *
+         * @return 买家名称
+         */
         @JsonProperty("buyerName")
         public String buyerName() {
             return buyerName;
