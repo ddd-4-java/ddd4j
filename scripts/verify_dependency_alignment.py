@@ -44,6 +44,22 @@ def bytecode(path):
     return counts
 
 
+def optional_bytecode_isolated(path, jdk, prefixes):
+    """Only permit higher-JDK base classes in explicitly named optional packages."""
+    if not isinstance(prefixes, list) or not prefixes or any(
+            not isinstance(prefix, str) or not prefix.endswith('/') for prefix in prefixes):
+        return False
+    with zipfile.ZipFile(path) as jar:
+        for name in jar.namelist():
+            if not name.endswith('.class') or name.startswith('META-INF/versions/') or name.endswith('module-info.class'):
+                continue
+            with jar.open(name) as stream:
+                header = stream.read(8)
+            if struct.unpack('>H', header[6:8])[0] - 44 > jdk and not name.startswith(tuple(prefixes)):
+                return False
+    return True
+
+
 def profile_dependencies(path):
     import xml.etree.ElementTree as ET
     root = ET.parse(path).getroot()
@@ -226,7 +242,8 @@ def verify(roots, effective_paths, policy, repository, extra_cache, strict):
             override = policy.get('optional_bytecode', {}).get(coordinate + ':' + version)
             status = 'bytecode-pass'
             if minimum > jdk:
-                if override and override['base_jdk'] <= jdk:
+                if (override and override['base_jdk'] <= jdk
+                        and optional_bytecode_isolated(jar, jdk, override.get('allowed_prefixes'))):
                     status = 'optional-higher-jdk-classes'
                 else:
                     errors.append(f'JDK {jdk}: {coordinate}:{version} contains Java {minimum} classes')

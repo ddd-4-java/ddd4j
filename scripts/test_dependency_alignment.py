@@ -332,6 +332,34 @@ class DependencyAlignmentTest(unittest.TestCase):
                 output.writestr('META-INF/versions/21/example/A.class', b'\xca\xfe\xba\xbe' + struct.pack('>HH', 0, 65))
             self.assertEqual(bytecode(jar), {8: 1})
 
+    def test_optional_higher_bytecode_only_allows_named_class_path(self):
+        with tempfile.TemporaryDirectory() as temp:
+            base = Path(temp)
+            repository = base / 'repository'
+            roots, effective = [], []
+            for index in range(3):
+                root = base / str(index)
+                (root / 'ddd4j-dependencies').mkdir(parents=True)
+                path = root / 'ddd4j-dependencies/pom.xml'
+                path.write_text(pom('common', '1', 'example'))
+                roots.append(root)
+                effective.append(path)
+            jar = repository / 'example/common/1/common-1.jar'
+            jar.parent.mkdir(parents=True)
+            with zipfile.ZipFile(jar, 'w') as output:
+                output.writestr('example/Base.class', b'\xca\xfe\xba\xbe' + struct.pack('>HH', 0, 52))
+                output.writestr('example/optional/VarHandle.class',
+                                b'\xca\xfe\xba\xbe' + struct.pack('>HH', 0, 55))
+            policy = {'optional_bytecode': {'example:common:1': {
+                'base_jdk': 8, 'allowed_prefixes': ['example/optional/']}}}
+            errors, _, _ = verify(roots, effective, policy, repository, None, True)
+            self.assertEqual(errors, [])
+            with zipfile.ZipFile(jar, 'a') as output:
+                output.writestr('example/Unexpected.class',
+                                b'\xca\xfe\xba\xbe' + struct.pack('>HH', 0, 55))
+            errors, _, _ = verify(roots, effective, policy, repository, None, True)
+            self.assertIn('JDK 8: example:common:1 contains Java 11 classes', errors)
+
     def test_easy4j_empty_jar_does_not_pass_bytecode_verification(self):
         with tempfile.TemporaryDirectory() as temp:
             base = Path(temp)
