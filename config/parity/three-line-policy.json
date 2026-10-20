@@ -130,9 +130,9 @@
     {
       "path": "config/dependencies/alignment-policy.json",
       "sha256ByJdk": {
-        "8": "04cf6678e515b869f675c55a0fe8c90d0cb875ed418ed7bf7e6bfc19b7979018",
-        "17": "9677b6d07b5afd44634942eb3e8719a0d893be01bf5994513bc446712243d58a",
-        "21": "af34bd567ee26652e9f26780582dbac189992eaf215d9ccf972aa13c88541c2b"
+        "8": "65999c1615dfee88a670b3416899a153a34b0bd86cd46019c3015ba30ee50cbf",
+        "17": "ef213f616f95855c56507a1fd060d6dbff826432f1de336baa0031a22b57239c",
+        "21": "d5e932e575753339d467d49734d6952de56de62e35145104beb2b08d73d6b253"
       },
       "evidence": "三线分别执行 T03 strict-artifacts 门禁；这里仅豁免已哈希锁定的配置内容差异"
     },
