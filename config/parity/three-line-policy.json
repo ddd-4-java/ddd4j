@@ -3361,6 +3361,21 @@
         "21": "34f681464d7769bfb9c98345850399008cd2d71c0ec298870ce75fa00491b858"
       },
       "reason": "三线管理权限 HTTP 资源的公开端点、响应和 Javadoc 一致；JDK 8 使用 javax JAX-RS 与显式 CDI 作用域，高两线使用 jakarta JAX-RS。RBAC 资源测试在三线各 45 项通过，源码和逐线测试哈希锁定。"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/main/java/io/ddd4j/sample/quarkus/shiro/rbac/AuthenticationResource.java",
+      "sourceSha256": [
+        "337b699f48b40ad6f743a803fabc6c793ffd7947672c4f7eec34478498e2033b",
+        "516b4e717296330f128f198e6aae1eac3af58c58f12d6d1290b9d096e905d600",
+        "516b4e717296330f128f198e6aae1eac3af58c58f12d6d1290b9d096e905d600"
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/test/java/io/ddd4j/sample/quarkus/shiro/RbacResourceTest.java",
+      "testSha256ByJdk": {
+        "8": "9194e84eb28c1ddb3429f712ab6cb89bc20e11cb13e88cdd6e6e7770611185c7",
+        "17": "34f681464d7769bfb9c98345850399008cd2d71c0ec298870ce75fa00491b858",
+        "21": "34f681464d7769bfb9c98345850399008cd2d71c0ec298870ce75fa00491b858"
+      },
+      "reason": "三线认证 HTTP 端点、响应 Map 构造与 Javadoc 一致；JDK 8 使用 javax JAX-RS 和显式 CDI 作用域，高两线使用 jakarta JAX-RS。三线 RBAC 资源测试各 45 项通过，源码和逐线测试哈希锁定。"
     }
   ],
   "historicalDocumentSections": [
