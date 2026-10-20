@@ -3191,6 +3191,21 @@
             "21": "652f25123e8e8673a6779e2e8e37c3d7846c13a52ed6aadc7ce6d536f82a8546"
         },
         "reason": "三线 Dropwizard 订单资源的登录、建单、加明细、幂等支付及嵌套 DTO 契约由目标资源测试逐线通过；JDK 8 使用 javax.ws.rs，JDK 17/21 使用 jakarta.ws.rs。源码及对应平台测试哈希锁定。"
+    },
+    {
+        "path": "ddd4j-samples/ddd4j-sample-dropwizard-cqrs/src/main/java/io/ddd4j/sample/dropwizard/cqrs/web/OrderResource.java",
+        "sourceSha256": [
+            "10b2e2bcf14e4749a23884bbe2d0ae6c1f5bcad7f8539d7c590d148e746b5c8d",
+            "98fb5f881139796d98a4e2e2d9395cbafbd71aa3f5924fc14d48394854d12ebf",
+            "98fb5f881139796d98a4e2e2d9395cbafbd71aa3f5924fc14d48394854d12ebf"
+        ],
+        "evidence": "ddd4j-samples/ddd4j-sample-dropwizard-cqrs/src/test/java/io/ddd4j/sample/dropwizard/cqrs/web/OrderResourceMapContractTest.java",
+        "testSha256ByJdk": {
+            "8": "0be68333c68b353b83073d1a40a65be63cf6e783f6af0c1be16ddb60fcfa1780",
+            "17": "9aa5035d24f7cf3e1fec1080bec14ef0c7a910a3d6268a13b3987a17ba954d93",
+            "21": "9aa5035d24f7cf3e1fec1080bec14ef0c7a910a3d6268a13b3987a17ba954d93"
+        },
+        "reason": "三线 Dropwizard CQRS 创建与重复订单响应均提供不可修改的 Map，目标测试逐线覆盖 201/409 响应；HTTP 资源集成测试逐线覆盖创建、查询和幂等冲突。JDK 8 使用 javax.ws.rs 与显式不可变 Map 构造，JDK 17/21 使用 jakarta.ws.rs 与 Map.of；源码及目标测试哈希锁定。"
     }
   ],
   "historicalDocumentSections": [
