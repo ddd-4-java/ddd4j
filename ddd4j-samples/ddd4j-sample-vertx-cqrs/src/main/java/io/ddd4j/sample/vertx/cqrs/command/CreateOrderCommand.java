@@ -49,16 +49,19 @@ public final class CreateOrderCommand implements Command {
         this.buyerName = buyerName;
     }
 
+    /** @return 订单编号 */
     @JsonProperty("orderNo")
     public String orderNo() {
         return orderNo;
     }
 
+    /** @return 买家标识 */
     @JsonProperty("buyerId")
     public String buyerId() {
         return buyerId;
     }
 
+    /** @return 买家名称 */
     @JsonProperty("buyerName")
     public String buyerName() {
         return buyerName;
