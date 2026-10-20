@@ -3406,6 +3406,21 @@
         "21": "053822380dbf2b91d1a00c488b0b9e5d6b86622fccd675e844d9e1e1fb8e39aa"
       },
       "reason": "三线 CQRS 启动入口的路由与产品文档一致；Javalin 4/7 的路由注册 API 和 JavalinJackson/JavalinJackson3 配置随平台版本适配。三线 HTTP 订单控制器测试各 35 项通过，源码和逐线测试哈希锁定；正式 main 启动仍由远端 Verify 独立检验。"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/JavalinSaTokenApplication.java",
+      "sourceSha256": [
+        "55b2a9b9813dd570d18c50a6e6b1b7d134c28f3ff25ed028a0e0f37a8687c871",
+        "8732b4067a6743d8d3327f8bc49147e0a8e912e97cd7f94425432be142ba7618",
+        "8732b4067a6743d8d3327f8bc49147e0a8e912e97cd7f94425432be142ba7618"
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/goods/web/GoodsResourceTest.java",
+      "testSha256ByJdk": {
+        "8": "45179c199a6d3842100825d9d32a4e47df2c29c1936b14cc97f7dd5dc7c86ad9",
+        "17": "a82b1e2b2adb0861454a1755cdc7c1feeeee12651221e0637af5eccc4ecf1854",
+        "21": "66a805f8f2a389b2e6369a32cfc31729b610c137f0d1eccf5ce55e5933e382d8"
+      },
+      "reason": "三线 Sa-Token 样例的 Guice 注入、认证与商品路由配置及 Javadoc 一致；Javalin 4/7 的启动、路由注册 API 随平台版本适配。三线商品 HTTP 集成测试各 29 项通过，源码和逐线测试哈希锁定。"
     }
   ],
   "historicalDocumentSections": [
