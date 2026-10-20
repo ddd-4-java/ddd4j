@@ -3095,6 +3095,17 @@
         "evidence": "ddd4j-web/ddd4j-web-webflux/src/test/java/io/ddd4j/web/webflux/DefaultWebFluxConfigurerContractTest.java",
         "testSha256": "5874d96aabc4a81618f6d883712bd6772600c4fc1342156ffa895e8ee9c83972",
         "reason": "三线 /webjars/** 均注册版本无关资源解析器；JDK 8 的 Spring 5 使用 WebJarsResourceResolver，JDK 17/21 的 Spring 6/7 使用 LiteWebJarsResourceResolver 和 webjars-locator-lite。相同定向测试逐线通过，源码及测试哈希锁定。"
+    },
+    {
+        "path": "ddd4j-web/ddd4j-web-quarkus/src/main/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebFilter.java",
+        "sourceSha256": [
+            "cd8d7a382b9f7a17931bc5a88d187957a1a8f783e56f6c4c6e6761d9a9d5025c",
+            "1c177c86b83d4830f3ddb60cc3def05eb20e70378aa13996ceafd1a354260ab0",
+            "1c177c86b83d4830f3ddb60cc3def05eb20e70378aa13996ceafd1a354260ab0"
+        ],
+        "evidence": "ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebFilterRemoteAddressTest.java",
+        "testSha256": "089f5c4e0962ac563be7a0e1a75a9bf5d4d9d7f9b0c11178ee858d000dd352ef",
+        "reason": "三线远端主机名与 IP 地址、请求/响应头、认证错误和 OTel 会话契约已逐线测试；JDK 8 使用 RESTEasy Classic 的 javax ContainerRequestFilter/Vert.x 3 host()，JDK 17/21 使用 RESTEasy Reactive 的 Jakarta 过滤器/Vert.x 4+ hostAddress() 并在未解析地址时回退 host()。三线 Quarkus 定向测试各 10 项通过，源码和共同地址测试哈希锁定。"
     }
   ],
   "historicalDocumentSections": [
