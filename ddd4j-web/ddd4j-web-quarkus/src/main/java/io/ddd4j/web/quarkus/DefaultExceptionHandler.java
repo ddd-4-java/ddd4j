@@ -48,7 +48,8 @@ public class DefaultExceptionHandler extends BaseErrorConfiguration implements E
      */
     @Override
     protected WebError doTranslate(Throwable exception) {
-        if (exception instanceof WebApplicationException webException) {
+        if (exception instanceof WebApplicationException) {
+            WebApplicationException webException = (WebApplicationException) exception;
             return httpStatusError(webException.getResponse().getStatus(),
                     webException.getResponse().getStatusInfo().getReasonPhrase(), webException.getMessage());
         }
