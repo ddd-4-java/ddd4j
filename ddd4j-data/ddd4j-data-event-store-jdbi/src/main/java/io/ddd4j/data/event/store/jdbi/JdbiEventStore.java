@@ -344,6 +344,9 @@ public class JdbiEventStore implements EventStore {
             DomainEvent<?> payload = serializer.deserialize(
                     rs.getString(EventStoreConstants.COLUMN_PAYLOAD), resolveEventType(eventType));
             LocalDateTime timestamp = rs.getObject(EventStoreConstants.COLUMN_TIMESTAMP, LocalDateTime.class);
+            if (Objects.isNull(timestamp)) {
+                throw new IllegalStateException("Missing persisted event timestamp");
+            }
             return new StoredEvent(
                     EventId.valueOf(rs.getString(EventStoreConstants.COLUMN_EVENT_ID)),
                     rs.getString(EventStoreConstants.COLUMN_AGGREGATE_TYPE),

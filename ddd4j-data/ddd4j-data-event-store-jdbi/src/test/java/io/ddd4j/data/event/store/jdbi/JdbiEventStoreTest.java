@@ -234,6 +234,25 @@ class JdbiEventStoreTest {
         assertEquals(java.time.ZoneOffset.UTC, actual.getZone());
     }
 
+    @Test
+    void nullPersistedTimestampMustFailInsteadOfInventingCurrentTime() {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-1");
+        eventStore.append(ORDER_TYPE, orderId,
+                java.util.Collections.<DomainEvent<?>>singletonList(new OrderCreatedEvent("created")), 0);
+        jdbi.useHandle(handle -> {
+            handle.execute("ALTER TABLE " + EventStoreConstants.TABLE_NAME + " ALTER COLUMN "
+                    + EventStoreConstants.COLUMN_TIMESTAMP + " DROP NOT NULL");
+            handle.createUpdate("UPDATE " + EventStoreConstants.TABLE_NAME + " SET "
+                            + EventStoreConstants.COLUMN_TIMESTAMP + " = NULL WHERE "
+                            + EventStoreConstants.COLUMN_AGGREGATE_ID + " = :aggregateId")
+                    .bind("aggregateId", orderId.asString()).execute();
+        });
+
+        IllegalStateException failure = org.junit.jupiter.api.Assertions.assertThrows(
+                IllegalStateException.class, () -> eventStore.read(ORDER_TYPE, orderId));
+        org.junit.jupiter.api.Assertions.assertEquals("Missing persisted event timestamp", failure.getMessage());
+    }
+
     private static final class TestAggregateRootId implements AggregateRootId {
 
         private static final EntityType TYPE = new StringEntityType("Order");
