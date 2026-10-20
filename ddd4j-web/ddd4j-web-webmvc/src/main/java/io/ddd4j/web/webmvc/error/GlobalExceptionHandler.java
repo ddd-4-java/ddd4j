@@ -277,7 +277,7 @@ public class GlobalExceptionHandler {
     /**
      * 400 (Bad Request)
      */
-    @ExceptionHandler({JacksonException.class, JacksonException.class})
+    @ExceptionHandler(JacksonException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public R<String> jsonProcessingException(JacksonException ex) {
         this.logException(ex);
