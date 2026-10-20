@@ -29,10 +29,18 @@ import javax.ws.rs.ext.Provider;
 @Provider
 public class DefaultExceptionHandler extends BaseErrorConfiguration implements ExceptionMapper<RuntimeException> {
 
+    /**
+     * 使用默认异常翻译器创建处理器。
+     */
     public DefaultExceptionHandler() {
         super();
     }
 
+    /**
+     * 使用指定异常翻译器创建处理器。
+     *
+     * @param translator 异常翻译器
+     */
     public DefaultExceptionHandler(WebExceptionTranslator translator) {
         super(translator);
     }
