@@ -25,7 +25,6 @@ import io.ddd4j.core.ddd.model.metadata.DomainModelHelper;
 import io.ddd4j.core.ddd.model.metadata.DomainModelInfo;
 import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
-import io.ddd4j.data.mybatis.mapper.Ddd4jMapper;
 import io.ddd4j.kit.lang.BeanKit;
 import io.ddd4j.kit.lang.StrKit;
 import lombok.Getter;
@@ -33,6 +32,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import io.ddd4j.data.mybatis.mapper.Ddd4jMapper;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -40,6 +40,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.Objects;
 
 /**
  * 原生 MyBatis 轨道的聚合仓储基类（五泛型，对齐 mybatisplus 模块）。
@@ -155,7 +156,7 @@ public abstract class MybatisAggregateRepository<MP extends Ddd4jMapper<P>, M ex
     }
 
     /**
-     * 主键存在则更新，否则插入（与 {@link #save} 同为 upsert 语义）。
+     * 主键存在则更新，否则插入（与 {@code save} 同为 upsert 语义）。
      */
     @Override
     public M insertOrUpdate(M aggregate) {
@@ -361,8 +362,9 @@ public abstract class MybatisAggregateRepository<MP extends Ddd4jMapper<P>, M ex
 
     /**
      * 将领域属性名映射为持久化属性名（默认同名，子类可覆盖）。
-     * @param domainProperty 领域属性
-     * @return 返回的字符串内容
+     *
+     * @param domainProperty 领域属性名
+     * @return 持久化属性名
      */
     protected String persistenceProperty(String domainProperty) {
         return domainProperty;
@@ -370,8 +372,9 @@ public abstract class MybatisAggregateRepository<MP extends Ddd4jMapper<P>, M ex
 
     /**
      * 将领域属性名映射为数据库列名（默认驼峰转下划线）。
-     * @param propertyName 属性名
-     * @return 转换得到的字符串内容
+     *
+     * @param propertyName 持久化属性名
+     * @return 数据库列名
      */
     protected String toColumn(String propertyName) {
         if (StringUtils.isBlank(propertyName)) {
@@ -396,7 +399,8 @@ public abstract class MybatisAggregateRepository<MP extends Ddd4jMapper<P>, M ex
 
     /**
      * 插入前自动填充 {@code @OnCreate} / {@code @TenantId} / {@code @SystemId} 字段。
-     * @param po 持久化对象
+     *
+     * @param po 待插入的持久化对象
      */
     protected void insertFill(P po) {
         if (Objects.isNull(po)) {
@@ -413,7 +417,8 @@ public abstract class MybatisAggregateRepository<MP extends Ddd4jMapper<P>, M ex
 
     /**
      * 更新前自动填充 {@code @OnUpdate} 字段。
-     * @param po 持久化对象
+     *
+     * @param po 待更新的持久化对象
      */
     protected void updateFill(P po) {
         if (Objects.isNull(po)) {
