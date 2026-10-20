@@ -3376,6 +3376,21 @@
         "21": "34f681464d7769bfb9c98345850399008cd2d71c0ec298870ce75fa00491b858"
       },
       "reason": "三线认证 HTTP 端点、响应 Map 构造与 Javadoc 一致；JDK 8 使用 javax JAX-RS 和显式 CDI 作用域，高两线使用 jakarta JAX-RS。三线 RBAC 资源测试各 45 项通过，源码和逐线测试哈希锁定。"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/main/java/io/ddd4j/sample/quarkus/shiro/rbac/RbacService.java",
+      "sourceSha256": [
+        "c9e774455fd788d3ad18743e76ae0c6ece0a993a8438deddcab04f99928f411e",
+        "263e6253d28ae12f0e7b17f1513cf99fda24dd5903b985d47d6d25629ad41166",
+        "263e6253d28ae12f0e7b17f1513cf99fda24dd5903b985d47d6d25629ad41166"
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/test/java/io/ddd4j/sample/quarkus/shiro/RbacResourceTest.java",
+      "testSha256ByJdk": {
+        "8": "9194e84eb28c1ddb3429f712ab6cb89bc20e11cb13e88cdd6e6e7770611185c7",
+        "17": "34f681464d7769bfb9c98345850399008cd2d71c0ec298870ce75fa00491b858",
+        "21": "34f681464d7769bfb9c98345850399008cd2d71c0ec298870ce75fa00491b858"
+      },
+      "reason": "三线 RBAC 认证、角色与权限业务逻辑及文档一致；空集合统一由 Collections 返回，JDK 8 使用 javax CDI/JAX-RS，高线使用 jakarta CDI/JAX-RS。三线 RBAC HTTP 回归各 45 项通过，源码和逐线测试哈希锁定。"
     }
   ],
   "historicalDocumentSections": [
