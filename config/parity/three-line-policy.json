@@ -3695,6 +3695,21 @@
         "21": "dfd5cbef0670ba64fe770c8c3b1c12ac25c9f885cc637bb432c5e08735dd8c12"
       },
       "reason": "Dropwizard 2 的 io.dropwizard.Application 与 Dropwizard 4 的 io.dropwizard.core.Application 包迁移；三线实际命令总线集成测试各 3 项锁定发现、冲突拒绝和未注册路由。"
+    },
+    {
+      "path": "ddd4j-runtime/ddd4j-runtime-helidon/src/main/java/io/ddd4j/helidon/health/Ddd4jHelidonReadinessHealthCheck.java",
+      "sourceSha256": [
+        "2baf2ea2dbf3ed173b5cdac9bca9bd5d510934e6f19db1cb877f1d1a2f860cd6",
+        "eb0621332a2291be44fa91c921e7fd704e4277d0b5392238061fb498cd4040a6",
+        "79dc824432a24eb01bbefe021376871dcbbf19a0a8c6bc6e4570b1d37ea8989a"
+      ],
+      "evidence": "ddd4j-runtime/ddd4j-runtime-helidon/src/test/java/io/ddd4j/helidon/health/Ddd4jHelidonReadinessHealthCheckTest.java",
+      "testSha256ByJdk": {
+        "8": "8398024857c9723cac533a1f8027fb6743432d1dcce82bf19901416a3f9a42eb",
+        "17": "eceb43259981f2303df730beafb80079c88f5785100e75b0ebe1a459b65d758a",
+        "21": "f4e4a5c68f7b3552773c7855f20164e3ea9a58945a00662e65305e396df7ac31"
+      },
+      "reason": "Helidon 2 的 javax CDI 与 Helidon 4 的 jakarta CDI 是注入命名空间适配；三线探针测试各 1 项锁定 UP/DOWN、检查数量及不泄露故障详情。"
     }
   ],
   "historicalDocumentSections": [
@@ -4804,6 +4819,24 @@
         "execute_未注册命令_应抛ISE与ddd4j_core一致"
       ],
       "reason": "三线 Dropwizard 命令总线各 3 项测试通过；JDK 8 的 Dropwizard 2 与高两线 Dropwizard 4 保留独立启动 API 和依赖，注册测试夹具统一为确定顺序。生产总线源码及测试方法逐线锁定。"
+    },
+    {
+      "path": "ddd4j-runtime/ddd4j-runtime-helidon/src/test/java/io/ddd4j/helidon/health/Ddd4jHelidonReadinessHealthCheckTest.java",
+      "productionPath": "ddd4j-runtime/ddd4j-runtime-helidon/src/main/java/io/ddd4j/helidon/health/Ddd4jHelidonReadinessHealthCheck.java",
+      "sourceSha256": [
+        "8398024857c9723cac533a1f8027fb6743432d1dcce82bf19901416a3f9a42eb",
+        "eceb43259981f2303df730beafb80079c88f5785100e75b0ebe1a459b65d758a",
+        "f4e4a5c68f7b3552773c7855f20164e3ea9a58945a00662e65305e396df7ac31"
+      ],
+      "productionSha256": [
+        "2baf2ea2dbf3ed173b5cdac9bca9bd5d510934e6f19db1cb877f1d1a2f860cd6",
+        "eb0621332a2291be44fa91c921e7fd704e4277d0b5392238061fb498cd4040a6",
+        "79dc824432a24eb01bbefe021376871dcbbf19a0a8c6bc6e4570b1d37ea8989a"
+      ],
+      "testMethods": [
+        "shouldMapReadyAndUnavailableReportsWithoutExposingFailureDetails"
+      ],
+      "reason": "三线就绪探针各 1 项测试通过；旧 MicroProfile Health 使用 State/getState，高两线使用 Status/getStatus，均验证相同 UP/DOWN、数据计数和故障详情隔离。"
     }
   ]
 }
