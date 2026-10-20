@@ -236,12 +236,15 @@ def helidon_cdi_service_platform_match(path: str, roots: list[pathlib.Path]) -> 
 def validate_platform_dependency_config_files(
         mappings: list[dict], snapshots: list[dict[str, str]]) -> dict[str, dict]:
     """只允许逐线哈希锁定的依赖治理配置差异，内容变化须重新审查。"""
+    license_governance = {"config/license-selections.tsv",
+                          "config/license-build-tool-exclusions.tsv"}
     validated = {}
     for item in mappings:
         path = item.get("path")
         hashes = item.get("sha256ByJdk")
         if (not isinstance(path, str)
-                or not path.startswith("config/dependencies/")
+                or not (path.startswith("config/dependencies/")
+                        or path in license_governance)
                 or pathlib.PurePosixPath(path).suffix not in (".json", ".csv", ".tsv")
                 or path in validated
                 or not isinstance(hashes, dict)
