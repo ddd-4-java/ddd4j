@@ -1043,7 +1043,7 @@ def inventory_gate(roots: list[pathlib.Path], output: pathlib.Path, policy_path:
     platform_syntax = validate_platform_syntax_mappings(
         policy.get("platformSyntaxMappings", []), roots)
     platform_test_syntax = validate_platform_test_syntax_mappings(
-        policy.get("platformTestSyntaxMappings", []), roots)
+        policy.get("platformTestSyntaxMappings", []), roots, platform_syntax)
     platform_test_namespace = validate_platform_test_namespace_mappings(
         policy.get("platformTestNamespaceMappings", []), roots)
     platform_test_evidence = {}
@@ -1452,8 +1452,9 @@ def historical_document_section_matches(path: str, roots: list[pathlib.Path], ma
                for (_, section), version in zip(sections, ("1.0.x", "2.0.x", "3.0.x")))
 
 
-def validate_platform_test_syntax_mappings(mappings, roots: list[pathlib.Path]) -> dict[str, dict]:
-    """只登记同一生产逻辑下、测试方法一致的逐线依赖 API 适配。"""
+def validate_platform_test_syntax_mappings(mappings, roots: list[pathlib.Path],
+                                           platform_syntax: dict[str, dict] | None = None) -> dict[str, dict]:
+    """只登记生产源码相同或已锁定语法适配、测试方法一致的逐线依赖 API 适配。"""
     validated = {}
     for mapping in mappings:
         path = pathlib.PurePosixPath(mapping.get("path", ""))
@@ -1514,7 +1515,9 @@ def validate_platform_test_syntax_mappings(mappings, roots: list[pathlib.Path]) 
             if actual_methods != methods:
                 raise ValueError(f"platform test methods differ: {source}")
         if not java_files_lexically_equal(production.as_posix(), roots):
-            raise ValueError(f"platform test production logic differs: {source}")
+            locked = (platform_syntax or {}).get(production.as_posix())
+            if locked is None or not platform_syntax_matches(production.as_posix(), roots, locked):
+                raise ValueError(f"platform test production logic differs: {source}")
         validated[source] = mapping
     return validated
 
