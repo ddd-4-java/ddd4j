@@ -3272,6 +3272,21 @@
             "21": "3e355e4306cff9935d8f866797265dbb25200ad53cb005207e51732f9e19c40e"
         },
         "reason": "三线 MyBatis-Plus 聚合仓储的 CRUD、查询和条件处理由各线 20 项 CRUD 契约及 3 项查询翻译测试通过；JDK 8 使用 switch case/break 与 Collections.singletonList，JDK 17/21 使用 switch 箭头与 List.of。业务方法和公开接口保持一致，源码及 CRUD 契约测试逐线哈希锁定。"
+    },
+    {
+        "path": "ddd4j-samples/ddd4j-sample-helidon-cqrs/src/main/java/io/ddd4j/sample/helidon/cqrs/web/OrderResource.java",
+        "sourceSha256": [
+            "b0dcbbb01c96706d1ad6755614dd210944e86d43ea57ee3fc8232de828796d17",
+            "dbbd9b2b5d413b2ca676cb29fa61d672a853528c065af7893a410c661322f09f",
+            "dbbd9b2b5d413b2ca676cb29fa61d672a853528c065af7893a410c661322f09f"
+        ],
+        "evidence": "ddd4j-samples/ddd4j-sample-helidon-cqrs/src/test/java/io/ddd4j/sample/helidon/cqrs/HelidonOrderCqrsIT.java",
+        "testSha256ByJdk": {
+            "8": "2eb6eb029a44b55ee39d9159e6c256eefb1b78ad55df1ff888fe8ea4623f5400",
+            "17": "2ecbc79748b393866ce2f687601d45edcf6d2de725ab3f8ee9b4e547b59648aa",
+            "21": "2ecbc79748b393866ce2f687601d45edcf6d2de725ab3f8ee9b4e547b59648aa"
+        },
+        "reason": "三线 Helidon CQRS 的创建、读模型查询与重复订单冲突由 HTTP 集成测试逐线各 3 项验证；JDK 8 使用 javax 与不可修改的显式 Map 构造，JDK 17/21 使用 jakarta 与 Map.of。源码和目标测试哈希锁定。"
     }
   ],
   "historicalDocumentSections": [
