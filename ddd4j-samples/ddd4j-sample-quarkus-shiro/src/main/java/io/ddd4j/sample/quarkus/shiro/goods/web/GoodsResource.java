@@ -44,12 +44,6 @@ public class GoodsResource {
     private final GoodsQueryResource queryResource;
 
     /**
-     * 创建商品写入资源。
-     *
-     * @param applicationService 商品应用服务
-     * @param queryResource 商品查询逻辑
-     */
-    /**
      * 保留单参数构造入口，供现有直接调用方使用。
      *
      * @param applicationService 商品应用服务
@@ -58,6 +52,12 @@ public class GoodsResource {
         this(applicationService, new GoodsQueryResource(applicationService));
     }
 
+    /**
+     * 创建商品写入资源。
+     *
+     * @param applicationService 商品应用服务
+     * @param queryResource 商品查询逻辑
+     */
     @Inject
     public GoodsResource(GoodsApplicationService applicationService, GoodsQueryResource queryResource) {
         this.applicationService = applicationService;
