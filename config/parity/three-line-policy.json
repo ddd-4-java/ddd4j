@@ -3084,6 +3084,17 @@
             "21": "4a91e747f8d237314e87445c3a32b60d6b991daad6eaac0bf1205c4fea2e4f91"
         },
         "reason": "三线 Micronaut Web 配置的默认值、setter 拷贝与空值拒绝行为一致；JDK 8 使用 Arrays.asList，JDK 17/21 使用 List.of，setter 文档逐线对齐。三线配置定向测试各 3 项通过，源码及测试哈希锁定。"
+    },
+    {
+        "path": "ddd4j-web/ddd4j-web-webflux/src/main/java/io/ddd4j/web/webflux/DefaultWebFluxConfigurer.java",
+        "sourceSha256": [
+            "77473dd974d70af71c95d962a4c4a8d9261b2cc43a0d5f291c266a00b1fd6289",
+            "ff54af0a64d478ac20eed125e620a3cb939e9bc8f78277e1a77540840fff7cca",
+            "ff54af0a64d478ac20eed125e620a3cb939e9bc8f78277e1a77540840fff7cca"
+        ],
+        "evidence": "ddd4j-web/ddd4j-web-webflux/src/test/java/io/ddd4j/web/webflux/DefaultWebFluxConfigurerContractTest.java",
+        "testSha256": "5874d96aabc4a81618f6d883712bd6772600c4fc1342156ffa895e8ee9c83972",
+        "reason": "三线 /webjars/** 均注册版本无关资源解析器；JDK 8 的 Spring 5 使用 WebJarsResourceResolver，JDK 17/21 的 Spring 6/7 使用 LiteWebJarsResourceResolver 和 webjars-locator-lite。相同定向测试逐线通过，源码及测试哈希锁定。"
     }
   ],
   "historicalDocumentSections": [
