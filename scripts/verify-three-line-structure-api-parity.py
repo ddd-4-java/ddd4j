@@ -266,11 +266,14 @@ def validate_platform_dependency_config_files(
 
 def validate_platform_build_config_files(
         mappings: list[dict], snapshots: list[dict[str, str]]) -> dict[str, dict]:
-    """只豁免精确锁定的 Maven Wrapper/JDK 与许可证构建配置。"""
+    """只豁免精确锁定的逐线构建配置与框架资源。"""
     allowed = {".mvn/jvm.config", ".mvn/maven.config",
                ".mvn/wrapper/maven-wrapper.properties",
                ".mvn/wrapper/MavenWrapperDownloader.java",
-               "config/apache-2.0-header.txt"}
+               "config/apache-2.0-header.txt",
+               "ddd4j-data/ddd4j-data-event-store-jpa/src/test/resources/META-INF/persistence.xml",
+               "ddd4j-data/ddd4j-data-event-store-panache/src/main/resources/META-INF/beans.xml",
+               "ddd4j-samples/ddd4j-sample-helidon/src/main/resources/META-INF/beans.xml"}
     validated = {}
     for item in mappings:
         path = item.get("path")

@@ -731,6 +731,41 @@ class ThreeLineInventoryTest(unittest.TestCase):
         result, _ = self.run_checker("inventory")
         self.assertNotEqual(0, result.returncode)
 
+    def test_framework_resource_mappings_require_exact_line_inputs(self):
+        resources = (
+            ("ddd4j-data/ddd4j-data-event-store-jpa/src/test/resources/META-INF/persistence.xml",
+             (None, "jakarta persistence\n", "jakarta persistence\n")),
+            ("ddd4j-data/ddd4j-data-event-store-panache/src/main/resources/META-INF/beans.xml",
+             ("javaee panache\n", None, None)),
+            ("ddd4j-samples/ddd4j-sample-helidon/src/main/resources/META-INF/beans.xml",
+             ("javaee helidon\n", None, None)),
+        )
+        policy = json.loads(self.policy.read_text())
+        policy["platformBuildConfigFiles"] = []
+        for path, contents in resources:
+            for root, content in zip(self.roots, contents):
+                if content is not None:
+                    self.write(root, path, content)
+            policy["platformBuildConfigFiles"].append({
+                "path": path,
+                "sha256ByJdk": {
+                    jdk: hashlib.sha256(content.encode()).hexdigest() if content else None
+                    for jdk, content in zip(("8", "17", "21"), contents)
+                },
+                "evidence": "Framework generation requires this exact resource",
+            })
+        self.policy.write_text(json.dumps(policy))
+
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = {item["path"]: item for item in
+                json.loads((output / "inventory.json").read_text())["differences"]}
+        self.assertTrue(all(rows[path]["status"] == "PLATFORM_CONFIG"
+                            for path, _ in resources))
+        self.write(self.roots[0], resources[1][0], "changed\n")
+        result, _ = self.run_checker("inventory")
+        self.assertNotEqual(0, result.returncode)
+
     def test_workflow_version_adaptation_requires_exact_files_and_line_markers(self):
         path = ".github/workflows/deploy.yml"
         contents = tuple(
