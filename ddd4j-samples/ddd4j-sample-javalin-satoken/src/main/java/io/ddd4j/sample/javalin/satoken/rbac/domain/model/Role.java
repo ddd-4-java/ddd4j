@@ -65,6 +65,15 @@ public class Role extends AggregateRoot<String> {
      */
     private Status status;
 
+    /**
+     * 创建角色。
+     *
+     * @param roleId 角色标识
+     * @param roleCode 角色编码
+     * @param roleName 角色名称
+     * @param description 描述
+     * @param status 状态
+     */
     public Role(String roleId, String roleCode, String roleName, String description, Status status) {
         if (StrKit.isBlank(roleId)) {
             throw new IllegalArgumentException("roleId must not be blank");
@@ -82,8 +91,9 @@ public class Role extends AggregateRoot<String> {
 
     /**
      * 重命名/描述修改。
+     *
      * @param roleName 角色名称
-     * @param description 描述信息
+     * @param description 描述
      */
     public void rename(String roleName, String description) {
         if (StrKit.isNotBlank(roleName)) {
@@ -110,7 +120,8 @@ public class Role extends AggregateRoot<String> {
 
     /**
      * 分配权限给角色。
-     * @param newPermissionIds 集合数据
+     *
+     * @param newPermissionIds 新的权限标识集合
      */
     public void assignPermissions(Set<String> newPermissionIds) {
         if (Objects.nonNull(newPermissionIds)) {
@@ -121,6 +132,7 @@ public class Role extends AggregateRoot<String> {
 
     /**
      * 添加单个权限。
+     *
      * @param permissionId 权限标识
      */
     public void addPermission(String permissionId) {
@@ -131,6 +143,7 @@ public class Role extends AggregateRoot<String> {
 
     /**
      * 移除权限。
+     *
      * @param permissionId 权限标识
      */
     public void removePermission(String permissionId) {
@@ -146,6 +159,6 @@ public class Role extends AggregateRoot<String> {
      * 角色状态。
      */
     public enum Status {
-        ENABLED, DISABLED
+        /** 启用状态。 */ ENABLED, /** 禁用状态。 */ DISABLED
     }
 }
