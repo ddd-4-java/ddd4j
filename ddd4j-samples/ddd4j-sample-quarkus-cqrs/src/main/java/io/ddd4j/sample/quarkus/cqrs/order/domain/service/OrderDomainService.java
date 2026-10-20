@@ -82,9 +82,10 @@ public class OrderDomainService {
             throw new IllegalArgumentException(i18nProvider.getMessage("order.error.buyerIdRequired"));
         }
         // 演示：在 Quarkus 中如何同时获取领域接口与具体实现
-        if (!(repository instanceof InMemoryOrderRepository inMemory)) {
+        if (!(repository instanceof InMemoryOrderRepository)) {
             throw new IllegalStateException("cancelAllDraftsOf requires InMemoryOrderRepository in this sample");
         }
+        InMemoryOrderRepository inMemory = (InMemoryOrderRepository) repository;
         int cancelled = 0;
         for (Order order : inMemory.findAll()) {
             if (Objects.equals(buyerId, order.buyerId()) && OrderStatus.DRAFT == order.status()) {
