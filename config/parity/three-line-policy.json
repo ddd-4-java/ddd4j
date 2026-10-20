@@ -2989,9 +2989,9 @@
     {
       "path": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/rbac/RbacConfig.java",
       "sourceSha256": [
-        "7113864023e65bd2b696eb03897c2e25fbacb5545f983eaee45e74a196e2d883",
+        "c4445f55e41a514a551e6ac0b9c5f20e2096cedce1ad5f6928c5be258e596346",
         "148168ef8c82c4a5d97baefffeb99fde946bd12a12dd9bf6fb3d343dba02e5dd",
-        "f537daefa0da954f6d6c21535aa45581fbfc2147ff797dd9d87b398ae42bc2ed"
+        "148168ef8c82c4a5d97baefffeb99fde946bd12a12dd9bf6fb3d343dba02e5dd"
       ],
       "evidence": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/rbac/RbacConfigContractTest.java",
       "testSha256": "d4180325747c9420c702b3dd91fbfc8238c27b12c446bc7d144e537332879705",
