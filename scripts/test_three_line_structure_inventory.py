@@ -1482,6 +1482,30 @@ class ThreeLineInventoryTest(unittest.TestCase):
         self.assertNotEqual(0, result.returncode)
         self.assertIn("platform test production logic differs", result.stderr)
 
+    def test_platform_test_syntax_recognizes_unicode_java_method_names(self):
+        path = "ddd4j-core/src/test/java/example/UnicodeTest.java"
+        production = "ddd4j-core/src/main/java/example/Unicode.java"
+        tests = [f"class UnicodeTest {{\n void 装配期冲突() {{ /* JDK {jdk} */ }}\n}}\n"
+                 for jdk in (8, 17, 21)]
+        implementation = "class Unicode {}\n"
+        for root, source in zip(self.roots, tests):
+            self.write(root, path, source)
+            self.write(root, production, implementation)
+        policy = json.loads(self.policy.read_text())
+        policy["platformTestSyntaxMappings"] = [{
+            "path": path, "productionPath": production,
+            "sourceSha256": [hashlib.sha256(source.encode()).hexdigest() for source in tests],
+            "productionSha256": [hashlib.sha256(implementation.encode()).hexdigest()] * 3,
+            "testMethods": ["装配期冲突"], "reason": "Unicode Java identifier contract",
+        }]
+        self.policy.write_text(json.dumps(policy))
+
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = json.loads((output / "inventory.json").read_text())["differences"]
+        self.assertEqual("PLATFORM_ADAPTED", next(row["status"] for row in rows
+                         if row["path"] == path))
+
     def test_hashed_syntax_adaptation_requires_three_line_contract_and_current_sources(self):
         path = "ddd4j-core/src/main/java/example/BrokerType.java"
         evidence = "ddd4j-core/src/test/java/example/BrokerTypeContractTest.java"
