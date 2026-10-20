@@ -1382,6 +1382,26 @@ def validate_platform_content_mappings(mappings, roots: list[pathlib.Path]) -> d
              '                            "jakarta..",',
              ("2.0.x", "3.0.x")),
         }
+        java8_map_calls = (
+            ('Java8Maps.of("name", "alice", "count", 2)',
+             'Map.of("name", "alice", "count", 2)'),
+            ('Java8Maps.of(null, "value")', 'Map.of(null, "value")'),
+            ('Java8Maps.of("key", null)', 'Map.of("key", null)'),
+            ('Java8Maps.of("name", "alice")', 'Map.of("name", "alice")'),
+            ('void rejectsDuplicateKeysAndOddArguments() {\n'
+             '        assertThrows(IllegalArgumentException.class, () -> Java8Maps.of("key", 1, "key", 2));\n'
+             '        assertThrows(IllegalArgumentException.class, () -> Java8Maps.of("key"));\n'
+             '    }',
+             'void rejectsDuplicateKeys() {\n'
+             '        assertThrows(IllegalArgumentException.class, () -> Map.of("key", 1, "key", 2));\n'
+             '    }'),
+        )
+        for sample in ("satoken/rbac/web", "shiro/rbac/controller"):
+            family = sample.split("/", 1)[0]
+            contract = (f"ddd4j-samples/ddd4j-sample-javalin-{family}/src/test/java/"
+                        f"io/ddd4j/sample/javalin/{sample}/Java8MapsContractTest.java")
+            exact_test_adaptations.update((contract, before, after, ("2.0.x", "3.0.x"))
+                                          for before, after in java8_map_calls)
         for replacement in replacements:
             before, after = replacement.get("from", ""), replacement.get("to", "")
             exact_test_adaptation = (source, before, after, tuple(target_lines)) in exact_test_adaptations
