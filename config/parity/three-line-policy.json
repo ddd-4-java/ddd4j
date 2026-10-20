@@ -86,6 +86,11 @@
       "path": ".mvn/wrapper/MavenWrapperDownloader.java",
       "sha256ByJdk": {"8": "fb659b25bb5e50140f23556c635d703e5206116b2333e12b547223ea5ece63cd", "17": null, "21": null},
       "evidence": "仅 JDK 8 旧 Maven Wrapper 兼容下载器；文件存在性和内容逐线锁定"
+    },
+    {
+      "path": "config/apache-2.0-header.txt",
+      "sha256ByJdk": {"8": null, "17": null, "21": "19b0737941d33a4dc8a1a7ea5920d08d3943030c2cf29322b99172c51d9111de"},
+      "evidence": "仅 JDK 21 根 POM 的 Maven 许可证插件引用此 header；文件存在性和内容逐线锁定"
     }
   ],
   "platformDependencyConfigFiles": [
