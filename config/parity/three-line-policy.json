@@ -368,8 +368,8 @@
       "counterpart": "ddd4j-data/ddd4j-data-event-store-r2dbc/src/test/java/io/ddd4j/data/event/store/r2dbc/R2dbcEventStorePostgresIT.java",
       "counterpartSha256": [
         "94b83e2b1fd0b7533e146e6a779c91d7d257d041f211c61d5f7af309f75f5cd6",
-        "fc64ce831c5c11447e66f2f0b563a462ccbdd53a589ed1210e034104e97aae8e",
-        "629075ea5e76f502453a25b6b982fafd94711e4ebd60c352f0a28097858519c7"
+        "4468eeec54478d2c481e41f51aac81183b0d4b90d3163ccc3f6309e1cfbdbe0c",
+        "414cef26b726e0461038cc8f465a1c2dfe1bb31ac8d606ca30042556eee97395"
       ],
       "reason": "JDK 8 PostgreSQL 进程级单例容器夹具；高两线使用 @Container；三线 R2dbcEventStorePostgresIT 各 4 项真实 PostgreSQL 测试通过且无跳过"
     }
