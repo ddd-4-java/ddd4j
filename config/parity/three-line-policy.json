@@ -1534,6 +1534,21 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-web/ddd4j-web-vertx/src/main/java/io/ddd4j/web/vertx/Ddd4jVertxWeb.java",
+      "sourceSha256": [
+        "c5e92aabc70afd025b0f8b08036463e7a504dee3760708f1f0e63ea0dc2000f4",
+        "0ef368db7634368c66570f540006d95aeb1af88175fcedfb931154561ae5e32d",
+        "efb1b8ad2276f491cb143e76875bd1c0454bcc2f3c102233bdd9d6f9bb427779"
+      ],
+      "evidence": "ddd4j-web/ddd4j-web-vertx/src/test/java/io/ddd4j/web/vertx/Ddd4jVertxWebContractTest.java",
+      "testSha256ByJdk": {
+        "8": "1bfd7cc7dbf2e3713c6398db9183f6b307bd235a32eaa35bc155b12f33c09c04",
+        "17": "d3e5ce4430ed3083ee40225bb5343272edef0df8f53099fd1353f0f1e7d5b202",
+        "21": "341ba223932c78468ec5bb1efe0ba103b56d0127c67b8ab3866183b697757a23"
+      },
+      "reason": "三线 Vert.x 请求上下文、认证、幂等和错误翻译逻辑一致；JDK 8 使用 Arrays.asList 与 Optional.get，JDK 17/21 使用 List.of 与 Optional.orElseThrow，两者在该非空路径语义一致。高线移除仅内部使用的认证结果 JSON 注解和值对象方法。三线 Vert.x Web 定向契约测试均通过，源码与测试哈希锁定。"
+    },
+    {
       "path": "ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/config/BaseWebConfig.java",
       "sourceSha256": [
         "cddd729630efb9a4ae573e1071f6b81ec79b24eb777cb169da9ab9fdb71fdd68",
