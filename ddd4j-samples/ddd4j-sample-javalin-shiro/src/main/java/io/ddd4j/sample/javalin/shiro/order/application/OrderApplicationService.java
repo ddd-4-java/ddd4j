@@ -14,6 +14,7 @@
  */
 package io.ddd4j.sample.javalin.shiro.order.application;
 
+import javax.inject.Inject;
 import io.ddd4j.sample.javalin.shiro.order.domain.model.Money;
 import io.ddd4j.sample.javalin.shiro.order.domain.model.Order;
 import io.ddd4j.sample.javalin.shiro.order.domain.repository.OrderRepository;
@@ -36,6 +37,7 @@ public class OrderApplicationService {
     private final OrderRepository repository;
     private final OrderDomainService domainService;
 
+    @Inject
     public OrderApplicationService(OrderRepository repository, OrderDomainService domainService) {
         this.repository = Objects.requireNonNull(repository, "repository must not be null");
         this.domainService = Objects.requireNonNull(domainService, "domainService must not be null");

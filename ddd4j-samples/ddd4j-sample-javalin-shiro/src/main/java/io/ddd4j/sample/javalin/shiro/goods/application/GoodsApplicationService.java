@@ -14,6 +14,7 @@
  */
 package io.ddd4j.sample.javalin.shiro.goods.application;
 
+import javax.inject.Inject;
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.exception.BizRuntimeException;
 import io.ddd4j.kit.lang.StrKit;
@@ -35,6 +36,7 @@ public class GoodsApplicationService {
     private static final AtomicLong ID_GENERATOR = new AtomicLong(1000L);
     private final GoodsRepository repository;
 
+    @Inject
     public GoodsApplicationService(GoodsRepository repository) {
         this.repository = Objects.requireNonNull(repository, "repository must not be null");
     }

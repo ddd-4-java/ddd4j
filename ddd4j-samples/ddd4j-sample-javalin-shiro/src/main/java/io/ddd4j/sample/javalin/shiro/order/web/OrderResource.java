@@ -14,6 +14,7 @@
  */
 package io.ddd4j.sample.javalin.shiro.order.web;
 
+import javax.inject.Inject;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -66,6 +67,7 @@ public class OrderResource {
      *
      * @param orderApplicationService 订单应用服务
      */
+    @Inject
     public OrderResource(OrderApplicationService orderApplicationService) {
         this.orderApplicationService = Objects.requireNonNull(orderApplicationService, "orderApplicationService must not be null");
     }
