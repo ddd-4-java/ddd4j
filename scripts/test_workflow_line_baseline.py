@@ -48,6 +48,7 @@ class WorkflowLineBaselineTest(unittest.TestCase):
             "ddd4j-mq/ddd4j-mq-mqtt",
             "ddd4j-mq/ddd4j-mq-mqtt-mica",
             "ddd4j-mq/ddd4j-mq-activemq",
+            "ddd4j-mq/ddd4j-mq-sqs",
         ):
             with self.subTest(module=module):
                 self.assertIn(module, modules)
