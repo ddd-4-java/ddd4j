@@ -14,6 +14,8 @@
  */
 package io.ddd4j.data.event.store.jdbi;
 
+import java.io.ObjectStreamClass;
+
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.ddd4j.core.constant.EventStoreConstants;
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
@@ -100,6 +102,7 @@ class JdbiEventStoreTest {
                 Collections.<DomainEvent<?>>singletonList(new OrderCreatedEvent("created")), 0);
 
         AggregateRootId first = eventStore.read(ORDER_TYPE, orderId).get(0).aggregateId();
+        assertEquals(6652084670470061437L, ObjectStreamClass.lookup(first.getClass()).getSerialVersionUID());
         AggregateRootId second = eventStore.read(ORDER_TYPE, orderId).get(0).aggregateId();
         assertEquals(first, second);
         assertEquals(first.hashCode(), second.hashCode());

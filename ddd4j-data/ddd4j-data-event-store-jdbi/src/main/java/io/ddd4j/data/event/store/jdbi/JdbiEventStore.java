@@ -26,8 +26,6 @@ import io.ddd4j.core.cqrs.eventstore.jackson.EventPayloadSerializer;
 import io.ddd4j.core.ddd.event.*;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.argument.Argument;
-import org.jdbi.v3.core.mapper.RowMapper;
-import org.jdbi.v3.core.statement.StatementContext;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -218,7 +216,7 @@ public class JdbiEventStore implements EventStore {
         return jdbi.withHandle(handle -> handle.createQuery(READ_BY_AGGREGATE_SQL)
                 .bind("aggregateType", aggregateType)
                 .bind("aggregateId", aggregateId.asString())
-                .map(rowMapper())
+                .map((rs, ctx) -> toStoredEvent(rs))
                 .list());
     }
 
@@ -231,7 +229,7 @@ public class JdbiEventStore implements EventStore {
                 .bind("aggregateId", aggregateId.asString())
                 .bind("fromVersion", fromVersion)
                 .bind("toVersion", toVersion)
-                .map(rowMapper())
+                .map((rs, ctx) -> toStoredEvent(rs))
                 .list());
     }
 
@@ -244,12 +242,8 @@ public class JdbiEventStore implements EventStore {
         return jdbi.withHandle(handle -> handle.createQuery(READ_ALL_SQL)
                 .bind("fromPosition", fromPosition)
                 .bind("limit", limit)
-                .map(rowMapper())
+                .map((rs, ctx) -> toStoredEvent(rs))
                 .list());
-    }
-
-    private RowMapper<StoredEvent> rowMapper() {
-        return new StoredEventRowMapper();
     }
 
     private void ensureInitialized() {
@@ -277,6 +271,8 @@ public class JdbiEventStore implements EventStore {
      * 字符串聚合根标识适配器：实体列只存字符串，读回侧重建 {@link AggregateRootId}。
      */
     private static final class StringAggregateRootId implements AggregateRootId {
+
+        private static final long serialVersionUID = 6652084670470061437L;
 
         private static final EntityType TYPE = new StringEntityType("String");
 
@@ -336,27 +332,23 @@ public class JdbiEventStore implements EventStore {
     /**
      * 行 → {@link StoredEvent}：元数据取列值，payload 按 {@code event_type} 反序列化。
      */
-    private final class StoredEventRowMapper implements RowMapper<StoredEvent> {
-
-        @Override
-        public StoredEvent map(ResultSet rs, StatementContext ctx) throws SQLException {
-            String eventType = rs.getString(EventStoreConstants.COLUMN_EVENT_TYPE);
-            DomainEvent<?> payload = serializer.deserialize(
-                    rs.getString(EventStoreConstants.COLUMN_PAYLOAD), resolveEventType(eventType));
-            LocalDateTime timestamp = rs.getObject(EventStoreConstants.COLUMN_TIMESTAMP, LocalDateTime.class);
-            if (Objects.isNull(timestamp)) {
-                throw new IllegalStateException("Missing persisted event timestamp");
-            }
-            return new StoredEvent(
-                    EventId.valueOf(rs.getString(EventStoreConstants.COLUMN_EVENT_ID)),
-                    rs.getString(EventStoreConstants.COLUMN_AGGREGATE_TYPE),
-                    new StringAggregateRootId(rs.getString(EventStoreConstants.COLUMN_AGGREGATE_ID)),
-                    rs.getLong(EventStoreConstants.COLUMN_VERSION),
-                    rs.getLong(EventStoreConstants.COLUMN_POSITION),
-                    timestamp.atZone(ZoneOffset.UTC),
-                    payload,
-                    EventId.valueOf(rs.getString(EventStoreConstants.COLUMN_CORRELATION_ID)),
-                    EventId.valueOf(rs.getString(EventStoreConstants.COLUMN_CAUSATION_ID)));
+    private StoredEvent toStoredEvent(ResultSet rs) throws SQLException {
+        String eventType = rs.getString(EventStoreConstants.COLUMN_EVENT_TYPE);
+        DomainEvent<?> payload = serializer.deserialize(
+                rs.getString(EventStoreConstants.COLUMN_PAYLOAD), resolveEventType(eventType));
+        LocalDateTime timestamp = rs.getObject(EventStoreConstants.COLUMN_TIMESTAMP, LocalDateTime.class);
+        if (Objects.isNull(timestamp)) {
+            throw new IllegalStateException("Missing persisted event timestamp");
         }
+        return new StoredEvent(
+                EventId.valueOf(rs.getString(EventStoreConstants.COLUMN_EVENT_ID)),
+                rs.getString(EventStoreConstants.COLUMN_AGGREGATE_TYPE),
+                new StringAggregateRootId(rs.getString(EventStoreConstants.COLUMN_AGGREGATE_ID)),
+                rs.getLong(EventStoreConstants.COLUMN_VERSION),
+                rs.getLong(EventStoreConstants.COLUMN_POSITION),
+                timestamp.atZone(ZoneOffset.UTC),
+                payload,
+                EventId.valueOf(rs.getString(EventStoreConstants.COLUMN_CORRELATION_ID)),
+                EventId.valueOf(rs.getString(EventStoreConstants.COLUMN_CAUSATION_ID)));
     }
 }
