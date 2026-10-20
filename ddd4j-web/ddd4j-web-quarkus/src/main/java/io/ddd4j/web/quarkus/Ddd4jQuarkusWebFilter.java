@@ -36,6 +36,7 @@ import org.jboss.resteasy.reactive.server.ServerRequestFilter;
 import org.jboss.resteasy.reactive.server.ServerResponseFilter;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -61,10 +62,18 @@ public class Ddd4jQuarkusWebFilter {
     @Inject
     RoutingContext routingContext;
 
+    /**
+     * 使用当前 MicroProfile 配置创建过滤器。
+     */
     public Ddd4jQuarkusWebFilter() {
         this(Ddd4jQuarkusWebConfiguration.load());
     }
 
+    /**
+     * 使用指定 Web 配置创建过滤器。
+     *
+     * @param configuration Web 配置
+     */
     public Ddd4jQuarkusWebFilter(Ddd4jQuarkusWebConfiguration configuration) {
         Ddd4jQuarkusWebConfiguration config = Objects.requireNonNull(configuration,
                 "configuration must not be null");
@@ -86,9 +95,9 @@ public class Ddd4jQuarkusWebFilter {
     }
 
     private static void closeScope(Object scope) {
-        if (scope instanceof AutoCloseable closeable) {
+        if (scope instanceof AutoCloseable) {
             try {
-                closeable.close();
+                ((AutoCloseable) scope).close();
             } catch (Throwable ignored) {
             }
         }
@@ -96,7 +105,7 @@ public class Ddd4jQuarkusWebFilter {
 
     private static Map<String, String> extractRequestHeaders(ContainerRequestContext request) {
         Map<String, String> headers = new HashMap<>();
-        for (var entry : request.getHeaders().entrySet()) {
+        for (Map.Entry<String, List<String>> entry : request.getHeaders().entrySet()) {
             String value = request.getHeaderString(entry.getKey());
             if (Objects.nonNull(value)) {
                 headers.put(entry.getKey(), value);
@@ -106,8 +115,9 @@ public class Ddd4jQuarkusWebFilter {
     }
 
     /**
-     * request() 方法。
-     * @param request 请求对象。
+     * 初始化请求上下文、认证与幂等会话，并启动追踪。
+     *
+     * @param request JAX-RS 请求上下文
      */
     @ServerRequestFilter(priority = Priorities.AUTHENTICATION)
     public void request(ContainerRequestContext request) {
@@ -148,9 +158,10 @@ public class Ddd4jQuarkusWebFilter {
     }
 
     /**
-     * response() 方法。
-     * @param request 请求对象。
-     * @param response 响应对象。
+     * 完成请求会话与追踪，并写入关联标识响应头。
+     *
+     * @param request JAX-RS 请求上下文
+     * @param response JAX-RS 响应上下文
      */
     @ServerResponseFilter(priority = Priorities.USER)
     public void response(ContainerRequestContext request, ContainerResponseContext response) {
@@ -158,13 +169,15 @@ public class Ddd4jQuarkusWebFilter {
         Object scope = request.getProperty(OTEL_SCOPE_PROPERTY);
         try {
             Object contextValue = request.getProperty(CONTEXT_PROPERTY);
-            if (contextValue instanceof WebRequestContext context) {
+            if (contextValue instanceof WebRequestContext) {
+                WebRequestContext context = (WebRequestContext) contextValue;
                 response.getHeaders().putSingle(WebHeaders.REQUEST_ID, context.requestId());
                 response.getHeaders().putSingle(WebHeaders.TRACE_ID, context.traceId());
             }
             Object sessionValue = request.getProperty(SESSION_PROPERTY);
             boolean successful = response.getStatus() < 400;
-            if (sessionValue instanceof SynchronousWebRequestSession session) {
+            if (sessionValue instanceof SynchronousWebRequestSession) {
+                SynchronousWebRequestSession session = (SynchronousWebRequestSession) sessionValue;
                 session.complete(successful);
             }
         } finally {
