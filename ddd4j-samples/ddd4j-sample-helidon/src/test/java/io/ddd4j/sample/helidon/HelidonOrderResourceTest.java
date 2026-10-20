@@ -68,6 +68,7 @@ class HelidonOrderResourceTest {
         String createBody = readAndClose(create);
         assertThat(create.getStatus()).withFailMessage(createBody).isEqualTo(201);
         String orderId = objectMapper.readTree(createBody).path("data").path("id").asText();
+        assertThat(orderId).withFailMessage(createBody).isNotBlank();
 
         Response line = request("POST", "/api/orders/" + orderId + "/lines", token,
                 "{\"goodsId\":\"goods-1\",\"goodsName\":\"DDD Book\",\"quantity\":2,\"unitPrice\":59.90}");
