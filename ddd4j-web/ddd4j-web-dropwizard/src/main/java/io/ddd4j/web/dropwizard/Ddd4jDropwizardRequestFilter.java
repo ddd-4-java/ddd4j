@@ -111,6 +111,10 @@ public final class Ddd4jDropwizardRequestFilter implements ContainerRequestFilte
         return headers;
     }
 
+    /**
+     * 过滤数据。
+     * @param request 请求对象。
+     */
     @Override
     public void filter(ContainerRequestContext request) {
         // OTel: 提取上游 TraceContext 并开启 SERVER span
