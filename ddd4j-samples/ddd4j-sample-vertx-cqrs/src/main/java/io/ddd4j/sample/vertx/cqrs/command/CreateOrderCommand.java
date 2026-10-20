@@ -17,7 +17,6 @@ package io.ddd4j.sample.vertx.cqrs.command;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.core.cqrs.command.Command;
-import lombok.Value;
 
 import java.util.Objects;
 
@@ -28,11 +27,11 @@ import java.util.Objects;
  * <p>{@code buyerId} — 买家 ID
  * <p>{@code buyerName} — 买家名称
  */
-@Value
-public class CreateOrderCommand implements Command {
-    String orderNo;
-    String buyerId;
-    String buyerName;
+public final class CreateOrderCommand implements Command {
+    private static final long serialVersionUID = 0L;
+    private final String orderNo;
+    private final String buyerId;
+    private final String buyerName;
 
     /**
      * 创建可由 JSON 还原的订单命令。
@@ -50,14 +49,17 @@ public class CreateOrderCommand implements Command {
         this.buyerName = buyerName;
     }
 
+    @JsonProperty("orderNo")
     public String orderNo() {
         return orderNo;
     }
 
+    @JsonProperty("buyerId")
     public String buyerId() {
         return buyerId;
     }
 
+    @JsonProperty("buyerName")
     public String buyerName() {
         return buyerName;
     }
