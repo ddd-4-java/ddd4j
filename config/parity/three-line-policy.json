@@ -3346,6 +3346,21 @@
       "evidence": "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/test/java/io/ddd4j/sample/quarkus/shiro/order/web/OrderResourceContractTest.java",
       "testSha256": "a9e0f139a1a60b7102984e62f0df00185a1359303f7532c05a99514a89535c56",
       "reason": "三线订单 HTTP 端点、响应映射及方法文档一致；JDK 8 使用 javax JAX-RS、显式 CDI 作用域和 Collectors.toList，JDK 17/21 使用 jakarta JAX-RS 与 Stream.toList。逐行核对仅上述平台适配差异，源码哈希锁定；运行时端点仍由 Verify 独立验证。"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/main/java/io/ddd4j/sample/quarkus/shiro/rbac/AuthorizationResource.java",
+      "sourceSha256": [
+        "3ad5ce244d8b086f42b940bb51afd668cfd21fc54e050df6474e27b50d4121d4",
+        "32e9012de0dcf7eab1501cbac0e0bb5054522560764ec96f2f39c917ecf73cd7",
+        "32e9012de0dcf7eab1501cbac0e0bb5054522560764ec96f2f39c917ecf73cd7"
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/test/java/io/ddd4j/sample/quarkus/shiro/RbacResourceTest.java",
+      "testSha256ByJdk": {
+        "8": "9194e84eb28c1ddb3429f712ab6cb89bc20e11cb13e88cdd6e6e7770611185c7",
+        "17": "34f681464d7769bfb9c98345850399008cd2d71c0ec298870ce75fa00491b858",
+        "21": "34f681464d7769bfb9c98345850399008cd2d71c0ec298870ce75fa00491b858"
+      },
+      "reason": "三线管理权限 HTTP 资源的公开端点、响应和 Javadoc 一致；JDK 8 使用 javax JAX-RS 与显式 CDI 作用域，高两线使用 jakarta JAX-RS。RBAC 资源测试在三线各 45 项通过，源码和逐线测试哈希锁定。"
     }
   ],
   "historicalDocumentSections": [
