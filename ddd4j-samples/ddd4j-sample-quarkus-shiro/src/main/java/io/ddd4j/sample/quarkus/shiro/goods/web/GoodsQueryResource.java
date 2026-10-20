@@ -23,6 +23,7 @@ import io.ddd4j.core.api.R;
 import io.ddd4j.sample.quarkus.shiro.goods.application.GoodsApplicationService;
 import io.ddd4j.sample.quarkus.shiro.goods.domain.Goods;
 import io.ddd4j.sample.quarkus.shiro.goods.domain.GoodsQuery;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -34,18 +35,23 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * 商品充血查询资源（读侧）。
+ * 商品充血查询逻辑（由 GoodsResource 暴露 HTTP 读侧路由）。
  *
  * <p>接收查询参数并构造 {@link GoodsQuery}，调用充血查询方法。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-@Path("/api/goods")
+@ApplicationScoped
 @Produces(MediaType.APPLICATION_JSON)
 public class GoodsQueryResource {
 
     private final GoodsApplicationService applicationService;
 
+    /**
+     * 创建商品查询资源。
+     *
+     * @param applicationService 商品应用服务
+     */
     @Inject
     public GoodsQueryResource(GoodsApplicationService applicationService) {
         this.applicationService = applicationService;
@@ -53,6 +59,16 @@ public class GoodsQueryResource {
 
     /**
      * 充血分页查询。
+     *
+     * @param current 当前页码
+     * @param size 每页数量
+     * @param code 商品编码
+     * @param nameLike 名称模糊匹配条件
+     * @param status 商品状态
+     * @param priceMin 最低价格
+     * @param priceMax 最高价格
+     * @param orderBys 排序字段
+     * @return 商品分页响应
      */
     @GET
     @Path("/page")
@@ -70,6 +86,14 @@ public class GoodsQueryResource {
 
     /**
      * 充血列表查询。
+     *
+     * @param code 商品编码
+     * @param nameLike 名称模糊匹配条件
+     * @param status 商品状态
+     * @param priceMin 最低价格
+     * @param priceMax 最高价格
+     * @param orderBys 排序字段
+     * @return 商品列表响应
      */
     @GET
     @Path("/list")
@@ -85,6 +109,13 @@ public class GoodsQueryResource {
 
     /**
      * 充血计数。
+     *
+     * @param code 商品编码
+     * @param nameLike 名称模糊匹配条件
+     * @param status 商品状态
+     * @param priceMin 最低价格
+     * @param priceMax 最高价格
+     * @return 商品数量响应
      */
     @GET
     @Path("/count")
