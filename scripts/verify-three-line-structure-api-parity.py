@@ -1473,7 +1473,7 @@ def validate_platform_test_syntax_mappings(mappings, roots: list[pathlib.Path],
                 or production.suffix != ".java"
                 or not isinstance(methods, list) or not methods
                 or len(set(methods)) != len(methods)
-                or not all(isinstance(method, str) and re.fullmatch(r"[A-Za-z_$][\w$]*", method)
+                or not all(isinstance(method, str) and re.fullmatch(r"(?:[^\W\d]|\$)[\w$]*", method)
                            for method in methods)
                 or not mapping.get("reason")):
             raise ValueError(f"invalid platform test syntax mapping: {source}")
@@ -1510,7 +1510,7 @@ def validate_platform_test_syntax_mappings(mappings, roots: list[pathlib.Path],
                         or "createContract(" not in adapter_contents
                         or "@Test" not in method_file.read_text(encoding="utf-8")):
                     raise ValueError(f"missing inherited test contract: {source}")
-            actual_methods = re.findall(r"(?m)^\s*void\s+([A-Za-z_$][\w$]*)\s*\(",
+            actual_methods = re.findall(r"(?m)^\s*void\s+((?:[^\W\d]|\$)[\w$]*)\s*\(",
                                         method_file.read_text(encoding="utf-8"))
             if actual_methods != methods:
                 raise ValueError(f"platform test methods differ: {source}")
