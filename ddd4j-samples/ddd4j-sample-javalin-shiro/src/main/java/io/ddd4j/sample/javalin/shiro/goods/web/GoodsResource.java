@@ -14,6 +14,7 @@
  */
 package io.ddd4j.sample.javalin.shiro.goods.web;
 
+import jakarta.inject.Inject;
 import io.ddd4j.core.api.R;
 import io.ddd4j.sample.javalin.shiro.goods.application.GoodsApplicationService;
 import io.ddd4j.sample.javalin.shiro.goods.domain.Goods;
@@ -36,6 +37,7 @@ public class GoodsResource {
 
     private final GoodsApplicationService applicationService;
 
+    @Inject
     public GoodsResource(GoodsApplicationService applicationService) {
         this.applicationService = Objects.requireNonNull(applicationService, "applicationService must not be null");
     }
