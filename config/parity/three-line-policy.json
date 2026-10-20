@@ -3309,6 +3309,21 @@
       "evidence": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/config/AuthModuleInjectionContractTest.java",
       "testSha256": "be020fb0ce6c136ab01333f5dc3dab9a120e2f6b0445259aee85e3bd10049707",
       "reason": "Javalin Shiro 订单应用服务三线逻辑与文档逐字一致；JDK 8 使用 javax.inject，JDK 17/21 使用 jakarta.inject。Guice 容器构建契约各线 1 项及资源回归各线 67 项通过，源码与共同容器契约哈希锁定。"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/main/java/io/ddd4j/sample/quarkus/shiro/rbac/RbacConfig.java",
+      "sourceSha256": [
+        "7d5dfe9dd663787895a99649687ef16c6bdfd18eb9dca9f58c78f8f8fff9b278",
+        "c1f4c5714ffa58083d291c296819d24cb09697bf065089d6a801b9ec4e2e2879",
+        "c1f4c5714ffa58083d291c296819d24cb09697bf065089d6a801b9ec4e2e2879"
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/test/java/io/ddd4j/sample/quarkus/shiro/RbacResourceTest.java",
+      "testSha256ByJdk": {
+        "8": "9194e84eb28c1ddb3429f712ab6cb89bc20e11cb13e88cdd6e6e7770611185c7",
+        "17": "34f681464d7769bfb9c98345850399008cd2d71c0ec298870ce75fa00491b858",
+        "21": "34f681464d7769bfb9c98345850399008cd2d71c0ec298870ce75fa00491b858"
+      },
+      "reason": "Quarkus Shiro 三线种子角色、用户与权限聚合逻辑一致；JDK 8 使用 javax CDI、Arrays/Collections，高两线使用 jakarta CDI、List/Set 工厂方法。各线 RBAC HTTP 资源契约顺序执行 45 项通过；源码和逐线测试哈希锁定。"
     }
   ],
   "historicalDocumentSections": [
