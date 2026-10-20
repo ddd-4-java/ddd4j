@@ -3106,6 +3106,17 @@
         "evidence": "ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebFilterRemoteAddressTest.java",
         "testSha256": "089f5c4e0962ac563be7a0e1a75a9bf5d4d9d7f9b0c11178ee858d000dd352ef",
         "reason": "三线远端主机名与 IP 地址、请求/响应头、认证错误和 OTel 会话契约已逐线测试；JDK 8 使用 RESTEasy Classic 的 javax ContainerRequestFilter/Vert.x 3 host()，JDK 17/21 使用 RESTEasy Reactive 的 Jakarta 过滤器/Vert.x 4+ hostAddress() 并在未解析地址时回退 host()。三线 Quarkus 定向测试各 10 项通过，源码和共同地址测试哈希锁定。"
+    },
+    {
+        "path": "ddd4j-samples/ddd4j-sample-order-local/src/main/java/io/ddd4j/sample/order/local/InMemoryOrderAdapters.java",
+        "sourceSha256": [
+            "d98aaaf2a180c2690750eff04b34fb69a28790feb50c3ebec2a05c884970509f",
+            "2a62435cbfdf43bbd3a19c85dcefcf83afe3204e252a3ec679dec20ffa05d2f2",
+            "2a62435cbfdf43bbd3a19c85dcefcf83afe3204e252a3ec679dec20ffa05d2f2"
+        ],
+        "evidence": "ddd4j-samples/ddd4j-sample-order-testkit/src/test/java/io/ddd4j/sample/order/testkit/InMemoryOrderAdaptersValueContractTest.java",
+        "testSha256": "bed99bebc8b14a9073085e091e28138457740821eb8a3189d4b20ef94d181fe2",
+        "reason": "三线订单、Outbox 和读模型查询均返回有内容的不可修改列表；JDK 8 使用 Collectors 收集后包装只读列表，JDK 17/21 使用 Stream.toList()。共同测试逐线通过，源码及测试哈希锁定。"
     }
   ],
   "historicalDocumentSections": [
