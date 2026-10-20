@@ -3287,6 +3287,28 @@
             "21": "2ecbc79748b393866ce2f687601d45edcf6d2de725ab3f8ee9b4e547b59648aa"
         },
         "reason": "三线 Helidon CQRS 的创建、读模型查询与重复订单冲突由 HTTP 集成测试逐线各 3 项验证；JDK 8 使用 javax 与不可修改的显式 Map 构造，JDK 17/21 使用 jakarta 与 Map.of。源码和目标测试哈希锁定。"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/goods/application/GoodsApplicationService.java",
+      "sourceSha256": [
+        "9fcc2fddc140d39ca177d021240eec45c2765506382f29fb91112872ecd7c7b8",
+        "8374960a80054e5a702034769482069b5853e55d9fea4b6cb58f9d1d8e883140",
+        "8374960a80054e5a702034769482069b5853e55d9fea4b6cb58f9d1d8e883140"
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/config/AuthModuleInjectionContractTest.java",
+      "testSha256": "be020fb0ce6c136ab01333f5dc3dab9a120e2f6b0445259aee85e3bd10049707",
+      "reason": "Javalin Shiro 商品应用服务三线逻辑与文档逐字一致；JDK 8 使用 javax.inject，JDK 17/21 使用 jakarta.inject。Guice 容器构建契约各线 1 项及资源回归各线 67 项通过，源码与共同容器契约哈希锁定。"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/order/application/OrderApplicationService.java",
+      "sourceSha256": [
+        "e3574555d97504a54727c3eb41465eec5cc7cacae086d3742a42594092db9e47",
+        "b9c173fcdfa4176260671d05996b6e12752290e5750cb6d96f9a9aff2dc62396",
+        "b9c173fcdfa4176260671d05996b6e12752290e5750cb6d96f9a9aff2dc62396"
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/config/AuthModuleInjectionContractTest.java",
+      "testSha256": "be020fb0ce6c136ab01333f5dc3dab9a120e2f6b0445259aee85e3bd10049707",
+      "reason": "Javalin Shiro 订单应用服务三线逻辑与文档逐字一致；JDK 8 使用 javax.inject，JDK 17/21 使用 jakarta.inject。Guice 容器构建契约各线 1 项及资源回归各线 67 项通过，源码与共同容器契约哈希锁定。"
     }
   ],
   "historicalDocumentSections": [
