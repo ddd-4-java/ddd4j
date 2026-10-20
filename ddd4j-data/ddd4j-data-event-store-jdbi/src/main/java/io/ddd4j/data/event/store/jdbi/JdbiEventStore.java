@@ -359,7 +359,7 @@ public class JdbiEventStore implements EventStore {
 
     private final static class StringAggregateRootId implements AggregateRootId {
 
-        private static final long serialVersionUID = 0L;
+        private static final long serialVersionUID = 6652084670470061437L;
 
         private final String value;
 
