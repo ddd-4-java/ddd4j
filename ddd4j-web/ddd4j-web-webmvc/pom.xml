@@ -31,6 +31,11 @@
             <artifactId>ddd4j-core</artifactId>
             <version>${revision}</version>
         </dependency>
+        <!-- WebJars versionless path resolution for Spring 6/7. -->
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>webjars-locator-lite</artifactId>
+        </dependency>
         <!-- Spring WebMVC -->
         <dependency>
             <groupId>org.springframework</groupId>
