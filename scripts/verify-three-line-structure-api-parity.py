@@ -842,6 +842,44 @@ def validate_platform_tests_only_on_jdk8(items: list[dict],
     return validated
 
 
+def validate_platform_test_namespace_mappings(
+        mappings: list[dict], roots: list[pathlib.Path]) -> dict[str, dict]:
+    """仅接受两份 Helidon 架构规则中精确的 Java EE/Jakarta EE 命名空间替换。"""
+    allowed = {
+        "ddd4j-data/ddd4j-data-cqrs-helidon/src/test/java/"
+        "io/ddd4j/data/cqrs/helidon/arch/CqrsHelidonModuleIndependenceTest.java",
+        "ddd4j-data/ddd4j-data-projection-helidon/src/test/java/"
+        "io/ddd4j/data/projection/helidon/arch/ProjectionHelidonModuleIndependenceTest.java",
+    }
+    validated = {}
+    for item in mappings:
+        path = item.get("path")
+        hashes = item.get("sha256ByJdk")
+        if (path not in allowed or path in validated
+                or not isinstance(hashes, dict)
+                or set(hashes) != {"8", "17", "21"}
+                or not all(isinstance(value, str) and re.fullmatch(r"[0-9a-f]{64}", value)
+                           for value in hashes.values())
+                or not item.get("evidence")):
+            raise ValueError(f"invalid platform test namespace mapping: {path}")
+        contents = []
+        for jdk, root in zip(("8", "17", "21"), roots):
+            source = root / path
+            if (not source.is_file()
+                    or hashlib.sha256(source.read_bytes()).hexdigest() != hashes[jdk]):
+                raise ValueError(f"stale platform test namespace mapping: {path}")
+            contents.append(source.read_text(encoding="utf-8"))
+        normalized = (contents[0].replace("Javax", "Jakarta")
+                      .replace("javax", "jakarta")
+                      .replace("@since 1.0.x", "@since 2.0.x"))
+        if ("@ArchTest" not in contents[0] or '"javax.."' not in contents[0]
+                or '"jakarta.."' not in contents[1]
+                or normalized != contents[1] or contents[1] != contents[2]):
+            raise ValueError(f"platform test namespace contract differs: {path}")
+        validated[path] = item
+    return validated
+
+
 def compiled_api_gate(roots: list[pathlib.Path], output: pathlib.Path,
                       policy: dict[str, object], source_rows: list[dict[str, str]],
                       module: str | None = None) -> dict[str, object]:
@@ -1006,6 +1044,8 @@ def inventory_gate(roots: list[pathlib.Path], output: pathlib.Path, policy_path:
         policy.get("platformSyntaxMappings", []), roots)
     platform_test_syntax = validate_platform_test_syntax_mappings(
         policy.get("platformTestSyntaxMappings", []), roots)
+    platform_test_namespace = validate_platform_test_namespace_mappings(
+        policy.get("platformTestNamespaceMappings", []), roots)
     platform_test_evidence = {}
     for source, mapping in platform_syntax.items():
         if mapping.get("testSha256ByJdk"):
@@ -1101,6 +1141,10 @@ def inventory_gate(roots: list[pathlib.Path], output: pathlib.Path, policy_path:
               and all(value is not None for value in values)):
             status = "PLATFORM_ADAPTED"
             evidence = platform_test_syntax[path]["productionPath"]
+        elif (category == "test" and path in platform_test_namespace
+              and all(value is not None for value in values)):
+            status = "PLATFORM_ADAPTED"
+            evidence = platform_test_namespace[path]["evidence"]
         elif (category in ("production", "test") and all(value is not None for value in values)
               and java_serial_field_adaptation_matches(path, roots)):
             status = "PLATFORM_ADAPTED"

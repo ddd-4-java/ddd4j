@@ -766,6 +766,48 @@ class ThreeLineInventoryTest(unittest.TestCase):
         result, _ = self.run_checker("inventory")
         self.assertNotEqual(0, result.returncode)
 
+    def test_helidon_arch_namespace_mapping_rejects_changed_rule(self):
+        path = ("ddd4j-data/ddd4j-data-cqrs-helidon/src/test/java/"
+                "io/ddd4j/data/cqrs/helidon/arch/CqrsHelidonModuleIndependenceTest.java")
+        contents = (
+            '@since 1.0.x\n@ArchTest "javax.." Javax API\n',
+            '@since 2.0.x\n@ArchTest "jakarta.." Jakarta API\n',
+            '@since 2.0.x\n@ArchTest "jakarta.." Jakarta API\n',
+        )
+        for root, content in zip(self.roots, contents):
+            self.write(root, path, content)
+        policy = json.loads(self.policy.read_text())
+        policy["platformTestNamespaceMappings"] = [{
+            "path": path,
+            "sha256ByJdk": {
+                jdk: hashlib.sha256(content.encode()).hexdigest()
+                for jdk, content in zip(("8", "17", "21"), contents)
+            },
+            "evidence": "Helidon Java EE/Jakarta architecture rule",
+        }]
+        self.policy.write_text(json.dumps(policy))
+
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        row = next(item for item in json.loads((output / "inventory.json").read_text())
+                   ["differences"] if item["path"] == path)
+        self.assertEqual("PLATFORM_ADAPTED", row["status"])
+
+        changed = contents[1].replace("jakarta..", "io.spring..")
+        self.write(self.roots[1], path, changed)
+        policy["platformTestNamespaceMappings"][0]["sha256ByJdk"]["17"] = (
+            hashlib.sha256(changed.encode()).hexdigest())
+        self.policy.write_text(json.dumps(policy))
+        result, _ = self.run_checker("inventory")
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("namespace contract differs", result.stderr)
+
+        policy["platformTestNamespaceMappings"][0]["path"] = "other/UnrelatedTest.java"
+        self.policy.write_text(json.dumps(policy))
+        result, _ = self.run_checker("inventory")
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("invalid platform test namespace mapping", result.stderr)
+
     def test_workflow_version_adaptation_requires_exact_files_and_line_markers(self):
         path = ".github/workflows/deploy.yml"
         contents = tuple(
