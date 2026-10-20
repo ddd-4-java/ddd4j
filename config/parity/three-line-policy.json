@@ -3680,6 +3680,21 @@
         "21": "66e93ce013b27376f00e26f6d256ea9925e743c7f87fd4ea4edf0f0309005fe1"
       },
       "reason": "Dropwizard 2 的 io.dropwizard.setup.Environment 与 Dropwizard 4 的 io.dropwizard.core.setup.Environment 仅包路径不同；三线调度器集成测试各 3 项验证 active/cancel、生命周期和 triggerOnce。"
+    },
+    {
+      "path": "ddd4j-data/ddd4j-data-cqrs-dropwizard/src/main/java/io/ddd4j/data/cqrs/dropwizard/DropwizardCommandBus.java",
+      "sourceSha256": [
+        "59b7860fb0b6620998133f1346fefb4d94cff2ebaf55d3cbdc8819d5736069c1",
+        "b640c01123f9d3ed21a7e3fc6706101b5e33dbe38ca4ff5e2e2501006f75bae8",
+        "60a154995e2c99dce5676defa9b517bf9f02c07a2bf2a73aae2bd4f01eff5fef"
+      ],
+      "evidence": "ddd4j-data/ddd4j-data-cqrs-dropwizard/src/test/java/io/ddd4j/data/cqrs/dropwizard/DropwizardCommandBusIT.java",
+      "testSha256ByJdk": {
+        "8": "82b1a78682f5a5dbe716a9702b2ecb11a70aeaecc262892c3a566ee190b0a920",
+        "17": "dfd5cbef0670ba64fe770c8c3b1c12ac25c9f885cc637bb432c5e08735dd8c12",
+        "21": "dfd5cbef0670ba64fe770c8c3b1c12ac25c9f885cc637bb432c5e08735dd8c12"
+      },
+      "reason": "Dropwizard 2 的 io.dropwizard.Application 与 Dropwizard 4 的 io.dropwizard.core.Application 包迁移；三线实际命令总线集成测试各 3 项锁定发现、冲突拒绝和未注册路由。"
     }
   ],
   "historicalDocumentSections": [
@@ -4760,6 +4775,26 @@
         "triggerOnce_应立即执行所有view的runOnce"
       ],
       "reason": "三线 Dropwizard 投影调度器集成测试各 3 项通过；JDK 8 的 Dropwizard 2 与高两线的 Dropwizard 4 在 Application/Environment 包和集合工厂语法上适配，生产调度器已由逐线源码与测试指纹锁定。"
+    },
+    {
+      "path": "ddd4j-data/ddd4j-data-cqrs-dropwizard/src/test/java/io/ddd4j/data/cqrs/dropwizard/DropwizardCommandBusIT.java",
+      "productionPath": "ddd4j-data/ddd4j-data-cqrs-dropwizard/src/main/java/io/ddd4j/data/cqrs/dropwizard/DropwizardCommandBus.java",
+      "sourceSha256": [
+        "82b1a78682f5a5dbe716a9702b2ecb11a70aeaecc262892c3a566ee190b0a920",
+        "dfd5cbef0670ba64fe770c8c3b1c12ac25c9f885cc637bb432c5e08735dd8c12",
+        "dfd5cbef0670ba64fe770c8c3b1c12ac25c9f885cc637bb432c5e08735dd8c12"
+      ],
+      "productionSha256": [
+        "59b7860fb0b6620998133f1346fefb4d94cff2ebaf55d3cbdc8819d5736069c1",
+        "b640c01123f9d3ed21a7e3fc6706101b5e33dbe38ca4ff5e2e2501006f75bae8",
+        "60a154995e2c99dce5676defa9b517bf9f02c07a2bf2a73aae2bd4f01eff5fef"
+      ],
+      "testMethods": [
+        "execute_已注册命令_应路由到真实Handler并返回成功",
+        "装配期冲突_整批拒绝应自工厂传播",
+        "execute_未注册命令_应抛ISE与ddd4j_core一致"
+      ],
+      "reason": "三线 Dropwizard 命令总线各 3 项测试通过；JDK 8 的 Dropwizard 2 与高两线 Dropwizard 4 保留独立启动 API 和依赖，注册测试夹具统一为确定顺序。生产总线源码及测试方法逐线锁定。"
     }
   ]
 }
