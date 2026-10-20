@@ -15,16 +15,32 @@
 package io.ddd4j.sample.quarkus.cqrs.order.web;
 
 import io.ddd4j.core.api.R;
+import io.ddd4j.sample.quarkus.cqrs.order.domain.repository.OrderRepository;
 import io.ddd4j.sample.quarkus.cqrs.order.infrastructure.InMemoryOrderRepository;
 import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Proxy;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /** 基础查询端列表结果的三线行为契约。 */
 class OrderQueryListContractTest {
+
+    @Test
+    void nonMemoryRepositoryReturnsImmutableEmptyListAndZeroCount() {
+        OrderRepository repository = (OrderRepository) Proxy.newProxyInstance(
+                OrderRepository.class.getClassLoader(), new Class<?>[]{OrderRepository.class},
+                (proxy, method, args) -> null);
+        OrderQueryResource resource = new OrderQueryResource(null, repository);
+        @SuppressWarnings("unchecked")
+        List<Object> data = (List<Object>) ((R<?>) resource.list(null).getEntity()).getData();
+        assertEquals(0, data.size());
+        assertThrows(UnsupportedOperationException.class, () -> data.add(null));
+        assertEquals(0L, ((R<?>) resource.count().getEntity()).getData());
+    }
 
     @Test
     void inMemoryResultRemainsMutable() {

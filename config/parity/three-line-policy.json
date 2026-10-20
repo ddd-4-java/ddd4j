@@ -3161,6 +3161,21 @@
         "evidence": "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/test/java/io/ddd4j/sample/quarkus/shiro/order/domain/model/OrderLinesContractTest.java",
         "testSha256": "0c0bf9689b915801dbce83342be6ef31f152576dd3d445e249f949c02db1e460",
         "reason": "三线订单聚合公开逻辑及中文文档一致；JDK 8 使用 Collections.emptyList() 与验证空元素后返回不可修改副本，JDK 17/21 使用 List.of() 和 List.copyOf()。共同测试逐线验证空元素拒绝及列表不可修改，源码与测试哈希锁定。"
+    },
+    {
+        "path": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/main/java/io/ddd4j/sample/quarkus/cqrs/order/web/OrderQueryResource.java",
+        "sourceSha256": [
+            "abfd7e81263dd3cc4472d9289697ea176bc47e6b929276d41f2df515b42a8f6d",
+            "e286401bff94dae07fdc48b90f9a16262c6498a469d8cfdbb5dc28f526666067",
+            "e286401bff94dae07fdc48b90f9a16262c6498a469d8cfdbb5dc28f526666067"
+        ],
+        "evidence": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/test/java/io/ddd4j/sample/quarkus/cqrs/order/web/OrderQueryListContractTest.java",
+        "testSha256ByJdk": {
+            "8": "757132180f2725d948174ad4230f942db3716286506eae2738512c3ad110b540",
+            "17": "5618182a514220aa6cb4e3463fc2a870d7801f1817653e21ed4b0a920295f4ae",
+            "21": "5618182a514220aa6cb4e3463fc2a870d7801f1817653e21ed4b0a920295f4ae"
+        },
+        "reason": "三线查询端点逻辑及文档一致；JDK 8 使用 javax CDI/JAX-RS、显式 instanceof/cast 与 Collections.emptyList()，JDK 17/21 使用 Jakarta、模式匹配及 List.of()。目标测试逐线验证内存仓库可变列表和非内存仓库不可变空列表及零计数；源码与测试哈希锁定。"
     }
   ],
   "historicalDocumentSections": [
