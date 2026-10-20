@@ -73,7 +73,7 @@ class Ddd4jMicronautContextTest {
     }
 
     @Test
-    void updateThreadContextOpensScopeAndBindsSubject() {
+    void openingScopeWithSubjectBindsRequest() {
         WebRequestContext ctx = createContext();
         Subject subject = org.mockito.Mockito.mock(Subject.class);
         Ddd4jMicronautContext propagated =
@@ -91,7 +91,7 @@ class Ddd4jMicronautContextTest {
     }
 
     @Test
-    void updateThreadContextWithoutSubjectOnlyOpensScope() {
+    void openingScopeWithoutSubjectBindsRequest() {
         WebRequestContext ctx = createContext();
         Ddd4jMicronautContext propagated =
                 new Ddd4jMicronautContext(ctx, Optional.empty());
@@ -107,7 +107,7 @@ class Ddd4jMicronautContextTest {
     }
 
     @Test
-    void restoreThreadContextClosesOldScope() {
+    void closingScopeRestoresThreadContext() {
         WebRequestContext ctx = createContext();
         Ddd4jMicronautContext propagated =
                 new Ddd4jMicronautContext(ctx, Optional.empty());
@@ -121,12 +121,12 @@ class Ddd4jMicronautContextTest {
     }
 
     @Test
-    void currentReturnsEmptyWhenNotPropagated() {
+    void currentIsEmptyBeforeBinding() {
         assertThat(Ddd4jMicronautContext.current()).isEmpty();
     }
 
     @Test
-    void currentReturnsContextWhenPropagated() {
+    void currentResolvesBoundContext() {
         WebRequestContext ctx = createContext();
         Ddd4jMicronautContext propagated =
                 new Ddd4jMicronautContext(ctx, Optional.empty());
@@ -140,7 +140,7 @@ class Ddd4jMicronautContextTest {
     }
 
     @Test
-    void propagatedContextIdentityIncludesRequestAndSubject() {
+    void contextIdentityIncludesRequestAndSubject() {
         WebRequestContext request = createContext();
         Subject firstSubject = org.mockito.Mockito.mock(Subject.class);
         Subject otherSubject = org.mockito.Mockito.mock(Subject.class);
