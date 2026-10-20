@@ -1551,6 +1551,7 @@ def validate_platform_test_syntax_mappings(mappings, roots: list[pathlib.Path],
         methods = mapping.get("testMethods")
         contract = pathlib.PurePosixPath(mapping.get("contractPath", ""))
         contract_hash = mapping.get("contractSha256")
+        contract_hashes = mapping.get("contractSha256ByJdk")
         inherited = bool(mapping.get("contractPath"))
         if (path.is_absolute() or ".." in path.parts or "/src/test/java/" not in source
                 or path.suffix != ".java" or source in validated
@@ -1569,13 +1570,20 @@ def validate_platform_test_syntax_mappings(mappings, roots: list[pathlib.Path],
                                for value in expected)):
                 raise ValueError(f"invalid platform test hashes: {source}")
         if inherited:
+            scalar_hash = (isinstance(contract_hash, str)
+                           and re.fullmatch(r"[0-9a-f]{64}", contract_hash)
+                           and contract_hashes is None)
+            line_hashes = (contract_hash is None and isinstance(contract_hashes, dict)
+                           and set(contract_hashes) == {"8", "17", "21"}
+                           and all(isinstance(value, str)
+                                   and re.fullmatch(r"[0-9a-f]{64}", value)
+                                   for value in contract_hashes.values()))
             if (contract.is_absolute() or ".." in contract.parts
                     or "/src/main/java/" not in contract.as_posix()
                     or contract.suffix != ".java"
-                    or not isinstance(contract_hash, str)
-                    or not re.fullmatch(r"[0-9a-f]{64}", contract_hash)):
+                    or not (scalar_hash or line_hashes)):
                 raise ValueError(f"invalid inherited contract mapping: {source}")
-        elif contract_hash is not None:
+        elif contract_hash is not None or contract_hashes is not None:
             raise ValueError(f"inherited contract hash without path: {source}")
         for index, root in enumerate(roots):
             test_file, production_file = root / path, root / production
@@ -1587,13 +1595,20 @@ def validate_platform_test_syntax_mappings(mappings, roots: list[pathlib.Path],
             method_file = test_file
             if inherited:
                 method_file = root / contract
+                expected_contract_hash = (contract_hashes[str((8, 17, 21)[index])]
+                                          if contract_hashes else contract_hash)
                 if (not method_file.is_file()
                         or hashlib.sha256(method_file.read_bytes()).hexdigest()
-                        != contract_hash):
+                        != expected_contract_hash):
                     raise ValueError(f"stale inherited contract mapping: {source}")
                 adapter_contents = test_file.read_text(encoding="utf-8")
-                if ("extends AbstractCqrsRuntimeContractTest" not in adapter_contents
-                        or "createContract(" not in adapter_contents
+                cqrs_contract = (contract.name == "AbstractCqrsRuntimeContractTest.java"
+                                 and "extends AbstractCqrsRuntimeContractTest" in adapter_contents
+                                 and "createContract(" in adapter_contents)
+                web_contract = (contract.name == "AbstractWebContractTest.java"
+                                and "extends AbstractWebContractTest" in adapter_contents
+                                and "client()" in adapter_contents)
+                if (not (cqrs_contract or web_contract)
                         or "@Test" not in method_file.read_text(encoding="utf-8")):
                     raise ValueError(f"missing inherited test contract: {source}")
             actual_methods = re.findall(r"(?m)^\s*void\s+((?:[^\W\d]|\$)[\w$]*)\s*\(",
