@@ -5017,6 +5017,24 @@
         "shouldRunSharedOrderUseCasesThroughHelidonHttp"
       ],
       "reason": "三线 Helidon 订单 HTTP 样例各 1 项通过，JDK 8 线已补充创建订单 ID 非空断言；Helidon 2 手动 Server 与高两线 HelidonTest 注入目标属逐线测试启动适配，订单资源生产逻辑仅 javax/jakarta 命名空间不同。"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-micronaut/src/test/java/io/ddd4j/sample/micronaut/MicronautOrderControllerTest.java",
+      "productionPath": "ddd4j-samples/ddd4j-sample-micronaut/src/main/java/io/ddd4j/sample/micronaut/OrderController.java",
+      "sourceSha256": [
+        "1541daa92db0370c94ccdbe19dda9c5f523fa4c255191b137977a8ca0861895c",
+        "c570d115e8086f09a2fe385cd4efb6863cd74f48ef92f71c32ec99f66f78759b",
+        "4fd381f731b686c64f2ff342881c34880b6d562cf1afe431dc59b167f535ae65"
+      ],
+      "productionSha256": [
+        "97956dcff7aa55dd41045e843b3b14b9a985ebde65d60fae6f2664b7e7d0ac6b",
+        "123101c1c2e49fac9155375e98408545a2b59967e45509e2e32100c281f1c3f4",
+        "aca0b559526999202de473c16e277ee9ae54e329050f76c3e3fb82de34f79be5"
+      ],
+      "testMethods": [
+        "shouldRunSharedOrderUseCasesThroughMicronautHttp"
+      ],
+      "reason": "三线 Micronaut 订单 HTTP 样例各 1 项通过，覆盖创建、增加明细后 119.80 金额、缺幂等键 400 与支付成功 PAID；JDK 8 使用 HttpURLConnection，高两线使用 JDK HttpClient 和相应 Jackson 节点 API，生产控制器规范化逻辑一致。"
     }
   ]
 }
