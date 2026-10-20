@@ -1,5 +1,6 @@
 package io.ddd4j.web.micronaut;
 
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.ddd4j.web.core.context.WebRequestContext;
 import org.junit.jupiter.api.Test;
 
@@ -34,6 +35,17 @@ class Ddd4jMicronautContextValueContractTest {
         assertEquals(left.hashCode(), same.hashCode());
         assertNotEquals(left, different);
         assertTrue(left.toString().contains("Ddd4jMicronautContext"));
+    }
+
+    @Test
+    void jsonRoundTripPreservesRequestState() throws Exception {
+        Ddd4jMicronautContext original = new Ddd4jMicronautContext(request("request-1"), Optional.empty());
+        JsonMapper mapper = JsonMapper.builder().findAndAddModules().build();
+
+        Ddd4jMicronautContext restored = mapper.readValue(
+                mapper.writeValueAsString(original), Ddd4jMicronautContext.class);
+
+        assertEquals(original, restored);
     }
 
     private WebRequestContext request(String id) {
