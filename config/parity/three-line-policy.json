@@ -4925,6 +4925,28 @@
         "shouldPublishLocalEventWithoutRequiringWireCodec"
       ],
       "reason": "三线 Vert.x 本地事件总线各 1 项通过，断言接收体与发送事件为同一引用，因而没有 wire codec 参与；高两线测试夹具已移除 Jackson 注解及无关值语义，生产发布器规范化逻辑相同。"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/MissingQueryCodeContractTest.java",
+      "productionPath": "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/main/java/io/ddd4j/sample/javalin/cqrs/JavalinCqrsApplication.java",
+      "sourceSha256": [
+        "d1591eca83ea69a47f0e7579043c4e79c0e2abad2789f7ea8111f980c52d1af8",
+        "2d8500750f13b91023eb6e1f417fd72c53087b720f86ff7e4064019614533878",
+        "cb50e41088d94c2c243fc0807b11ef74bddedd4c1f4121da14a491692536d18f"
+      ],
+      "productionSha256": [
+        "4156e3cbdfdf70f6658a67799cb68a0ca86d8960c9f368a28405a967025426cb",
+        "f8858c776a3a0b2d348293d831beb45ff8e534c26eff1e5b3543ee6047de188e",
+        "096d232dad05f49481d29e94f7ace9c746c6bd5fc05311f2b2329069a74e067b"
+      ],
+      "testMethods": [
+        "startApp",
+        "stopApp",
+        "missingGoodsIdKeepsStringCode",
+        "missingGoodsCodeKeepsStringCode",
+        "missingOrderKeepsStringCode"
+      ],
+      "reason": "三线真实 Javalin HTTP 查询缺失商品 ID、商品编码和订单各 1 项通过，状态码分别保持 404/200/200，JSON code 均为字符串 404；JDK 8 使用 TestHttpClient，高两线使用 JDK HttpClient，JDK 21 使用 Jackson 3 节点 API。"
     }
   ]
 }
