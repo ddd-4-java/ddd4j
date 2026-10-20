@@ -4,6 +4,8 @@
  */
 package io.ddd4j.data.event.store.jdbi;
 
+import java.io.ObjectStreamClass;
+
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -97,6 +99,7 @@ class JdbiEventStoreTest {
         eventStore.append(ORDER_TYPE, orderId, List.of(new OrderCreatedEvent(orderId)), 0);
 
         AggregateRootId first = eventStore.read(ORDER_TYPE, orderId).get(0).aggregateId();
+        org.junit.jupiter.api.Assertions.assertEquals(6652084670470061437L, ObjectStreamClass.lookup(first.getClass()).getSerialVersionUID());
         AggregateRootId second = eventStore.read(ORDER_TYPE, orderId).get(0).aggregateId();
         org.junit.jupiter.api.Assertions.assertEquals(first, second);
         org.junit.jupiter.api.Assertions.assertEquals(first.hashCode(), second.hashCode());
