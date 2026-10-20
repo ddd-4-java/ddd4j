@@ -4619,6 +4619,28 @@
         "execute_未注册命令_应抛ISE与ddd4j_core一致"
       ],
       "reason": "三线 Javalin 命令总线各 3 项集成测试通过，注册路由、冲突拒绝和未注册命令错误语义一致；JDK 8 与高两线分别使用 Javalin 5/6 的启动 API，测试夹具均以确定顺序注册命令，生产总线逻辑规范化后相同。"
+    },
+    {
+      "path": "ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/DomainEventRoundTripTest.java",
+      "productionPath": "ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/DomainEvent.java",
+      "sourceSha256": [
+        "0d1c4b59858e325c6eb9d7541d4697089dc1a8e013d203513b858981c8220572",
+        "0d1c4b59858e325c6eb9d7541d4697089dc1a8e013d203513b858981c8220572",
+        "261ef34f49d0b30fcbd8f5e6d1e4ed057ca83a299b015e3922a7be644153fb11"
+      ],
+      "productionSha256": [
+        "b074c687705ae776c33014f7ce08cfe00c16d4837e985a77e3f97e52836ced53",
+        "2408ed8f999831ff370fc08d69420de5d20d2b17226fe9c028398102922f2ab6",
+        "2408ed8f999831ff370fc08d69420de5d20d2b17226fe9c028398102922f2ab6"
+      ],
+      "testMethods": [
+        "roundTripRestoresIdentityMetadataAndPayload",
+        "mapperKeepsPlatformDefaultUnknownPropertyHandling",
+        "valueOfParsesSingleAndMultiSegmentPaths",
+        "valueOfRejectsMalformedPaths",
+        "valueOfIsIdempotentForSerializedForm"
+      ],
+      "reason": "三线 DomainEvent JSON 回读与 EntityIdPath 值语义各 5 项通过；JDK 8/17 使用 Jackson 2 默认严格未知属性模式并显式加载 JavaTimeModule，JDK 21 使用 Jackson 3 默认宽松模式和内建 java.time 支持；生产 DomainEvent 的 JDK 语法差异由独立映射锁定。"
     }
   ]
 }

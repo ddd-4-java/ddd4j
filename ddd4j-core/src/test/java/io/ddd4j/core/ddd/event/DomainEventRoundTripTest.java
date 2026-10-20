@@ -62,7 +62,7 @@ class DomainEventRoundTripTest {
     }
 
     @Test
-    void mapperKeepsJ3DefaultLenientUnknownPropertyHandling() {
+    void mapperKeepsPlatformDefaultUnknownPropertyHandling() {
         // Jackson 3 将 FAIL_ON_UNKNOWN_PROPERTIES 默认改为 disabled（2.x 默认 enabled）；
         // 证明回读发生在 J3 默认宽松模式下（未手工启用严格模式 workaround）
         assertThat(objectMapper.isEnabled(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)).isFalse();
