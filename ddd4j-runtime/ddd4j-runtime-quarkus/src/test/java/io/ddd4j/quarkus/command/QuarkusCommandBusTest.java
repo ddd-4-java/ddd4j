@@ -27,6 +27,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,7 +38,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * {@link QuarkusCommandBus} 命令路由与执行测试。
  *
  * @author ddd4j
- * @since 3.0.x
+ * @since 1.0.x
  */
 class QuarkusCommandBusTest {
 
@@ -238,7 +239,7 @@ class QuarkusCommandBusTest {
 
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
-            return Set.of(TestCommand.class);
+            return Collections.<Class<? extends Command>>singleton(TestCommand.class);
         }
     }
 
@@ -254,7 +255,7 @@ class QuarkusCommandBusTest {
 
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
-            return Set.of(FailCommand.class);
+            return Collections.<Class<? extends Command>>singleton(FailCommand.class);
         }
     }
 }
