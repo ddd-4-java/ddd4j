@@ -3117,6 +3117,17 @@
         "evidence": "ddd4j-samples/ddd4j-sample-order-testkit/src/test/java/io/ddd4j/sample/order/testkit/InMemoryOrderAdaptersValueContractTest.java",
         "testSha256": "bed99bebc8b14a9073085e091e28138457740821eb8a3189d4b20ef94d181fe2",
         "reason": "三线订单、Outbox 和读模型查询均返回有内容的不可修改列表；JDK 8 使用 Collectors 收集后包装只读列表，JDK 17/21 使用 Stream.toList()。共同测试逐线通过，源码及测试哈希锁定。"
+    },
+    {
+        "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/order/domain/model/Order.java",
+        "sourceSha256": [
+            "142a1b8afdf38fc0716c47414ef3a5ff2f51c662605df0cf8fee35f25aab6d78",
+            "f7385302ba44571d3b57b0d2bc0ea78d43e76230bfcf166f1e5e4ee725d1ebc6",
+            "f7385302ba44571d3b57b0d2bc0ea78d43e76230bfcf166f1e5e4ee725d1ebc6"
+        ],
+        "evidence": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/order/OrderValueContractTest.java",
+        "testSha256": "e00837481f0d63bfa9597f108f77bdd83f146a0e51a329ca0509207374f3599d",
+        "reason": "三线订单聚合的公开逻辑及中文文档一致；JDK 8 使用 Collections.emptyList() 与验证空元素后返回不可修改副本，JDK 17/21 使用 List.of() 和 List.copyOf()。共同测试逐线验证含空元素时抛出 NullPointerException，并锁定源码及测试哈希。"
     }
   ],
   "historicalDocumentSections": [
