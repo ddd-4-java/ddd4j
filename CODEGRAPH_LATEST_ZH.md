@@ -4,7 +4,7 @@
 > [`docs/architecture/current-source-architecture.md`](./docs/architecture/current-source-architecture.md)，后续请以该文档和当前源码为准。
 
 分析时间：2026-07-08  
-分析目录：`/Users/ddd4j/workspaces/workspace-ddd4j/workspace-ddd4j-boot/ddd4j`  
+分析目录（省略历史检出账号）：`workspace-ddd4j/workspace-ddd4j-boot/ddd4j`
 CodeGraph 状态：索引最新，`1,332` 个文件、`23,405` 个节点、`46,055` 条边。  
 当前分支：`feature/2.0.x`  
 最近提交：`d9906a3b 2026-07-07 23:44:19 +0800 refactor(mq): 重构消息队列客户端实现`
