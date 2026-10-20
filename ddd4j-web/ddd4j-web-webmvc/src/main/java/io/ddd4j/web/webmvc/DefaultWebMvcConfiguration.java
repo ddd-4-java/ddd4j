@@ -44,6 +44,7 @@ import org.springframework.web.filter.RequestContextFilter;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -56,6 +57,8 @@ public class DefaultWebMvcConfiguration {
 
     /**
      * Profile 管理器：根据活跃环境配置切换。
+     * @return 配置或处理后的组件
+     * @param environment Spring 环境
      */
     @Bean
     public ProfileManager profileManager(Environment environment) {
@@ -64,6 +67,7 @@ public class DefaultWebMvcConfiguration {
 
     /**
      * 请求上下文过滤器（线程上下文可继承）。
+     * @return 配置或处理后的组件
      */
     @Bean(name = "ddd4jRequestContextFilter")
     public RequestContextFilter requestContextFilter() {
@@ -81,6 +85,7 @@ public class DefaultWebMvcConfiguration {
 
     /**
      * 语言切换拦截器。
+     * @return 配置或处理后的组件
      */
     @Bean
     public LocaleChangeInterceptor localeChangeInterceptor() {
@@ -91,6 +96,7 @@ public class DefaultWebMvcConfiguration {
 
     /**
      * 区域解析器（基于请求头 X-Locale）。
+     * @return 配置或处理后的组件
      */
     @Bean
     public LocaleResolver localeResolver() {
@@ -103,6 +109,8 @@ public class DefaultWebMvcConfiguration {
 
     /**
      * MVC 验证器（集成国际化消息源）。
+     * @return 配置或处理后的组件
+     * @param messageSource 消息源
      */
     @Bean
     @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
@@ -113,29 +121,57 @@ public class DefaultWebMvcConfiguration {
         return factoryBean;
     }
 
+    /**
+     * 创建或配置 bearerSubjectAuthenticator 组件。
+     *
+     * @return 配置或处理后的结果
+     */
     @Bean
     public BearerSubjectAuthenticator bearerSubjectAuthenticator() {
         return new BearerSubjectAuthenticator();
     }
 
+    /**
+     * 创建或配置 webExceptionTranslator 组件。
+     *
+     * @return 配置或处理后的结果
+     */
     @Bean
     public WebExceptionTranslator webExceptionTranslator() {
         return new DefaultWebExceptionTranslator();
     }
 
+    /**
+     * 创建或配置 ddd4jWebMvcExceptionHandler 组件。
+     *
+     * @param exceptionTranslator 异常转换器
+     * @return 配置或处理后的结果
+     */
     @Bean
     public Ddd4jWebMvcExceptionHandler ddd4jWebMvcExceptionHandler(WebExceptionTranslator exceptionTranslator) {
         return new Ddd4jWebMvcExceptionHandler(exceptionTranslator);
     }
 
+    /**
+     * 创建或配置 webAccessPolicy 组件。
+     *
+     * @param environment Spring 环境
+     * @return 配置或处理后的结果
+     */
     @Bean
     public WebAccessPolicy webAccessPolicy(Environment environment) {
         String[] publicPaths = environment.getProperty("ddd4j.web.public-paths", String[].class,
                 new String[]{"/health", "/health/readiness", "/health/liveness", ReadinessEndpoint.PATH,
                         "/assets/**", "/webjars/**"});
-        return new PathWebAccessPolicy(java.util.Arrays.asList(publicPaths), AuthenticationMode.REQUIRED);
+        return new PathWebAccessPolicy(Arrays.asList(publicPaths), AuthenticationMode.REQUIRED);
     }
 
+    /**
+     * 创建或配置 webRequestContextFactory 组件。
+     *
+     * @param environment Spring 环境
+     * @return 配置或处理后的结果
+     */
     @Bean
     public WebRequestContextFactory webRequestContextFactory(Environment environment) {
         boolean trustForwardedHeaders = environment.getProperty("ddd4j.web.trust-forwarded-headers",
@@ -145,17 +181,37 @@ public class DefaultWebMvcConfiguration {
         return new WebRequestContextFactory(RequestIdGenerator.uuid(), clientIpResolver);
     }
 
+    /**
+     * 创建或配置 webRequestLifecycle 组件。
+     *
+     * @param authenticator Bearer 认证器
+     * @param accessPolicy 方法参数
+     * @return 配置或处理后的结果
+     */
     @Bean
     public WebRequestLifecycle webRequestLifecycle(BearerSubjectAuthenticator authenticator,
                                                    WebAccessPolicy accessPolicy) {
         return new WebRequestLifecycle(authenticator, accessPolicy);
     }
 
+    /**
+     * 创建或配置 webIdempotencyLifecycle 组件。
+     *
+     * @return 配置或处理后的结果
+     */
     @Bean
     public WebIdempotencyLifecycle webIdempotencyLifecycle() {
         return new WebIdempotencyLifecycle(new CacheIdempotencyGuard());
     }
 
+    /**
+     * 创建或配置 ddd4jWebMvcInterceptor 组件。
+     *
+     * @param contextFactory 请求上下文工厂
+     * @param requestLifecycle 请求生命周期
+     * @param idempotencyLifecycle 方法参数
+     * @return 配置或处理后的结果
+     */
     @Bean
     public Ddd4jWebMvcInterceptor ddd4jWebMvcInterceptor(WebRequestContextFactory contextFactory,
                                                          WebRequestLifecycle requestLifecycle,
@@ -165,6 +221,8 @@ public class DefaultWebMvcConfiguration {
 
     /**
      * 注册不依赖 Spring Boot Actuator 的显式 readiness 端点。
+     * @return 配置或处理后的组件
+     * @param readinessRegistry 就绪状态注册表
      */
     @Bean
     public Ddd4jWebMvcReadinessController ddd4jWebMvcReadinessController(
@@ -174,6 +232,10 @@ public class DefaultWebMvcConfiguration {
 
     /**
      * 自定义 WebMVC 配置器。
+     * @return 配置或处理后的组件
+     * @param localeChangeInterceptor 语言环境切换拦截器
+     * @param localResourceProperteis 本地资源配置
+     * @param ddd4jWebMvcInterceptor DDD4J Web 拦截器
      */
     @Bean
     public DefaultWebMvcConfigurer defaultWebMvcConfigurer(LocalResourceProperteis localResourceProperteis,
