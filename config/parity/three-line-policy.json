@@ -3710,6 +3710,21 @@
         "21": "f4e4a5c68f7b3552773c7855f20164e3ea9a58945a00662e65305e396df7ac31"
       },
       "reason": "Helidon 2 的 javax CDI 与 Helidon 4 的 jakarta CDI 是注入命名空间适配；三线探针测试各 1 项锁定 UP/DOWN、检查数量及不泄露故障详情。"
+    },
+    {
+      "path": "ddd4j-runtime/ddd4j-runtime-helidon/src/main/java/io/ddd4j/helidon/Ddd4jHelidonExtension.java",
+      "sourceSha256": [
+        "9ab3036502ddce394f218079bedd1fd709943657d98202e7ea6410b86b38ee12",
+        "f6219f60f7f1827a1da6da905775f7685b0bd85f3995c25841ea20086c8433c9",
+        "f6219f60f7f1827a1da6da905775f7685b0bd85f3995c25841ea20086c8433c9"
+      ],
+      "evidence": "ddd4j-runtime/ddd4j-runtime-helidon/src/test/java/io/ddd4j/helidon/Ddd4jHelidonExtensionTest.java",
+      "testSha256ByJdk": {
+        "8": "d76529dd302a62a2d1791671db06edbd829701e2420b52362f24acfccc80f17c",
+        "17": "8b4470fa879280efc775bc3612148ff100bf672007e81d3a07b269102e245883",
+        "21": "1a6fd5b58f487b618d709e8f94a13f48e525b18ac533c952f85e06dcb16b6b4f"
+      },
+      "reason": "Helidon 扩展的 CDI javax/jakarta import 随平台迁移，运行时初始化、停止与 Bean 发现契约由同文件两类测试逐线 5 项锁定。"
     }
   ],
   "historicalDocumentSections": [
@@ -4837,6 +4852,28 @@
         "shouldMapReadyAndUnavailableReportsWithoutExposingFailureDetails"
       ],
       "reason": "三线就绪探针各 1 项测试通过；旧 MicroProfile Health 使用 State/getState，高两线使用 Status/getStatus，均验证相同 UP/DOWN、数据计数和故障详情隔离。"
+    },
+    {
+      "path": "ddd4j-runtime/ddd4j-runtime-helidon/src/test/java/io/ddd4j/helidon/Ddd4jHelidonExtensionTest.java",
+      "productionPath": "ddd4j-runtime/ddd4j-runtime-helidon/src/main/java/io/ddd4j/helidon/Ddd4jHelidonExtension.java",
+      "sourceSha256": [
+        "d76529dd302a62a2d1791671db06edbd829701e2420b52362f24acfccc80f17c",
+        "8b4470fa879280efc775bc3612148ff100bf672007e81d3a07b269102e245883",
+        "1a6fd5b58f487b618d709e8f94a13f48e525b18ac533c952f85e06dcb16b6b4f"
+      ],
+      "productionSha256": [
+        "9ab3036502ddce394f218079bedd1fd709943657d98202e7ea6410b86b38ee12",
+        "f6219f60f7f1827a1da6da905775f7685b0bd85f3995c25841ea20086c8433c9",
+        "f6219f60f7f1827a1da6da905775f7685b0bd85f3995c25841ea20086c8433c9"
+      ],
+      "testMethods": [
+        "registerReadinessRegistryAddsBean",
+        "startInitializesRuntimeWithDefaults",
+        "stopClosesRuntimeWhenStarted",
+        "stopIsSafeWithoutStart",
+        "startUsesExistingBeans"
+      ],
+      "reason": "Ddd4jHelidonExtensionTest 的 4 项及同文件 BeanBranchTest 的 1 项在三线分别通过；JDK 8 使用 javax CDI，高两线使用 jakarta CDI，生产扩展逻辑除命名空间外一致。"
     }
   ]
 }
