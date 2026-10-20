@@ -731,6 +731,48 @@ def validate_platform_resources_only_on_jdk8(items: list[dict],
     return validated
 
 
+def validate_platform_cdi_resources_only_on_jdk8(items: list[dict],
+                                                 roots: list[pathlib.Path]) -> dict[str, dict]:
+    """只登记有三线 Arc 作用域测试的低线 Java EE CDI 描述符。"""
+    validated = {}
+    for item in items:
+        path = pathlib.PurePosixPath(item.get("path", ""))
+        evidence = pathlib.PurePosixPath(item.get("evidence", ""))
+        source = path.as_posix()
+        test = evidence.as_posix()
+        digest = item.get("sha256", "")
+        test_digest = item.get("testSha256", "")
+        if (path.is_absolute() or ".." in path.parts
+                or not source.endswith("/src/main/resources/META-INF/beans.xml")
+                or source in validated
+                or evidence.is_absolute() or ".." in evidence.parts
+                or "/src/test/java/" not in test or evidence.suffix != ".java"
+                or not all(isinstance(value, str) and re.fullmatch(r"[0-9a-f]{64}", value)
+                           for value in (digest, test_digest))
+                or not item.get("reason")):
+            raise ValueError(f"invalid JDK 8-only CDI descriptor: {source}")
+        descriptor = roots[0] / path
+        tests = [root / evidence for root in roots]
+        if (not descriptor.is_file()
+                or hashlib.sha256(descriptor.read_bytes()).hexdigest() != digest
+                or any((root / path).exists() for root in roots[1:])
+                or not all(file.is_file()
+                           and hashlib.sha256(file.read_bytes()).hexdigest() == test_digest
+                           for file in tests)):
+            raise ValueError(f"stale JDK 8-only CDI descriptor evidence: {source}")
+        contents = tests[0].read_text(encoding="utf-8")
+        if not all(marker in contents for marker in
+                   ("@QuarkusTest", "Arc.container()", "ApplicationScoped")):
+            raise ValueError(f"missing CDI scope assertion: {test}")
+        beans = ET.fromstring(descriptor.read_bytes())
+        if (beans.tag != "{http://xmlns.jcp.org/xml/ns/javaee}beans"
+                or beans.attrib != {"bean-discovery-mode": "annotated", "version": "2.0"}
+                or list(beans) or (beans.text or "").strip()):
+            raise ValueError(f"unsupported JDK 8-only CDI descriptor: {source}")
+        validated[source] = item
+    return validated
+
+
 def validate_platform_tests_only_on_jdk8(items: list[dict],
                                          roots: list[pathlib.Path]) -> dict[str, dict]:
     """锁定低线专用测试及三线对应容器契约，避免用宽泛排除掩盖测试缺失。"""
@@ -921,6 +963,8 @@ def inventory_gate(roots: list[pathlib.Path], output: pathlib.Path, policy_path:
         policy.get("platformFilesOnlyOnJdk8", []), roots)
     platform_resources_only_jdk8 = validate_platform_resources_only_on_jdk8(
         policy.get("platformResourcesOnlyOnJdk8", []), roots)
+    platform_cdi_resources_only_jdk8 = validate_platform_cdi_resources_only_on_jdk8(
+        policy.get("platformCdiResourcesOnlyOnJdk8", []), roots)
     platform_tests_only_jdk8 = validate_platform_tests_only_on_jdk8(
         policy.get("platformTestsOnlyOnJdk8", []), roots)
     platform_content = validate_platform_content_mappings(
@@ -999,6 +1043,10 @@ def inventory_gate(roots: list[pathlib.Path], output: pathlib.Path, policy_path:
               and values[1] is None and values[2] is None):
             status = "PLATFORM_ADAPTED"
             evidence = platform_resources_only_jdk8[path]["evidence"]
+        elif (path in platform_cdi_resources_only_jdk8 and values[0] is not None
+              and values[1] is None and values[2] is None):
+            status = "PLATFORM_ADAPTED"
+            evidence = platform_cdi_resources_only_jdk8[path]["evidence"]
         elif path in platform_tests_only_jdk8 and values[0] is not None and values[1] is None and values[2] is None:
             status = "PLATFORM_ADAPTED"
             evidence = platform_tests_only_jdk8[path]["counterpart"]
