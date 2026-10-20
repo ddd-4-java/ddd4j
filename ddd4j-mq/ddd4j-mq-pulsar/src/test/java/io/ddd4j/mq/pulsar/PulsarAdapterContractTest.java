@@ -13,24 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.mq.pulsar;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.mock;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.any;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import org.apache.pulsar.client.api.TypedMessageBuilder;
-import org.apache.pulsar.client.api.Schema;
-import org.apache.pulsar.client.api.PulsarClientException;
-import org.apache.pulsar.client.api.PulsarClient;
-import org.apache.pulsar.client.api.ProducerBuilder;
-import org.apache.pulsar.client.api.Producer;
-import org.apache.pulsar.client.api.MessageId;
-import org.apache.pulsar.client.api.Message;
-import org.apache.pulsar.client.api.Consumer;
 
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.mq.MQProperties;
@@ -52,11 +34,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-/**
- * 类型说明。
- * @author ddd4j
- * @since 3.0.x
- */
 class PulsarAdapterContractTest {
 
     @AfterEach
@@ -285,25 +262,11 @@ class PulsarAdapterContractTest {
         properties.setEnabled(true);
         properties.setBroker("pulsar");
         client.init(Collections.<MQListener>emptyList(), properties, new MQEventSerialization() {
-            /**
-             * serialize() 方法。
-             * @param <T> 类型参数。
-             * @param event 事件消息。
-             * @return 结果值。
-             */
             @Override
             public <T> T serialize(Object event) {
                 return (T) "{}";
             }
 
-            /**
-             * deserialize() 方法。
-             * @param <S> 类型参数。
-             * @param <T> 类型参数。
-             * @param value 值。
-             * @param type 目标类型。
-             * @return 结果值。
-             */
             @Override
             public <S, T> T deserialize(S value, Class<T> type) {
                 return null;
