@@ -42,6 +42,20 @@ class EventPayloadSerializerTest {
     }
 
     @Test
+    void serializedJsonDoesNotCarryPolymorphicClassMarker() {
+        String json = serializer.serialize(new OrderCreatedEvent("order-created"));
+        assertFalse(json.contains("\"@class\""));
+    }
+
+    @Test
+    void constructionLeavesSourceMapperUntouched() throws Exception {
+        serializer.serialize(new OrderCreatedEvent("order-created"));
+        String plainJson = sourceMapper.writeValueAsString(new OrderCreatedEvent("order-created"));
+        assertFalse(plainJson.contains("\"@class\""));
+        assertTrue(sourceMapper.isEnabled(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES));
+    }
+
+    @Test
     void roundTripRestoresEventIdentityTimestampAndSource() {
         OrderCreatedEvent original = new OrderCreatedEvent("order-created");
         ZonedDateTime originalTimestamp = original.getEventTimestamp();
