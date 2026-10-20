@@ -63,7 +63,7 @@ class Ddd4jMicronautWebFilterUnitTest {
     }
 
     @Test
-    void publicPathProceedsThroughMicronautThreeFilterChain() {
+    void publicPathProceedsThroughMicronautFilterChain() {
         Ddd4jMicronautWebFilter filter = new Ddd4jMicronautWebFilter(
                 contextFactory(), requestLifecycle(), null);
         HttpRequest<?> request = mock(HttpRequest.class);
