@@ -3466,6 +3466,21 @@
         "21": "746e1402c3d3eb6f483254eaabc022e56dd9a57bd9ce929342cc13899a52877c"
       },
       "reason": "三线 Shiro 示例的 SPI 注册、认证和商品路由逻辑一致，Javadoc 对齐；JDK 8 使用 Javalin 4 与 Java8Maps，JDK 17/21 使用各自 Javalin 版本和 Map.of。三线认证 HTTP 集成测试各 37 项通过，商品 HTTP 测试各 32 项通过；源码和逐线测试哈希锁定。"
+    },
+    {
+      "path": "ddd4j-web/ddd4j-web-micronaut/src/main/java/io/ddd4j/web/micronaut/Ddd4jMicronautWebFilter.java",
+      "sourceSha256": [
+        "e7a1a36f4c5cb9b09c395061d36409bbe4141cf1a7663dd8528e6748b1a37b61",
+        "bd15651f9f06c71c432edf02960f68f08dde504621c5261e8801da5fbbafb670",
+        "bd15651f9f06c71c432edf02960f68f08dde504621c5261e8801da5fbbafb670"
+      ],
+      "evidence": "ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautOtelScopeTest.java",
+      "testSha256ByJdk": {
+        "8": "69158b3b193072d5078184530972a63204f154df2df9fb40decb8ab9e25a5a74",
+        "17": "fe2240dbf19cc8f074d9fc2361210b3ac9709fa0d3950dabde9f2fb9cf801506",
+        "21": "8c722692eeca0090ce617e1a147d05f5a3da4ee1d7a6d00b93bf2c64d77309b9"
+      },
+      "reason": "三线请求上下文、认证、幂等提交/回滚和 OTel Span 生命周期契约一致；JDK 8 的 Micronaut 3 采用 HttpFilter/FilterChain 与线程上下文传播工厂，JDK 17/21 的 Micronaut 4 采用 Filter Method/FilterContinuation 与 MutablePropagatedContext。各线过滤器单元测试 4 项、OTel Scope 3 项、Web 契约 7 项通过；源码与逐线测试哈希锁定。"
     }
   ],
   "historicalDocumentSections": [
