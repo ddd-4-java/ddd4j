@@ -14,6 +14,7 @@
  */
 package io.ddd4j.sample.quarkus.satoken.goods.web;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import io.ddd4j.kit.lang.StrKit;
 
 import java.util.Objects;
@@ -42,6 +43,7 @@ import java.util.List;
  */
 @Path("/api/goods")
 @Produces(MediaType.APPLICATION_JSON)
+@ApplicationScoped
 public class GoodsQueryResource {
 
     private final GoodsApplicationService applicationService;

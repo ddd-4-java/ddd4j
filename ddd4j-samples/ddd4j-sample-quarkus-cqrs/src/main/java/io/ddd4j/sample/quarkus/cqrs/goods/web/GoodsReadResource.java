@@ -14,6 +14,7 @@
  */
 package io.ddd4j.sample.quarkus.cqrs.goods.web;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import io.ddd4j.sample.quarkus.cqrs.cache.GoodsCacheService;
 import io.ddd4j.sample.quarkus.cqrs.goods.domain.GoodsRepository;
 import io.ddd4j.web.quarkus.TenantAwareResource;
@@ -49,6 +50,7 @@ import java.util.Map;
  */
 @Path("/api/goods/query")
 @Produces(MediaType.APPLICATION_JSON)
+@ApplicationScoped
 public class GoodsReadResource extends TenantAwareResource {
 
     private final GoodsCacheService goodsCacheService;

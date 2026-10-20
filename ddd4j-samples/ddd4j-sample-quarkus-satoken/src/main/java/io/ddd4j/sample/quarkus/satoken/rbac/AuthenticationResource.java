@@ -14,6 +14,7 @@
  */
 package io.ddd4j.sample.quarkus.satoken.rbac;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -53,6 +54,7 @@ import java.util.Map;
  */
 @Path("/auth")
 @Produces(MediaType.APPLICATION_JSON)
+@ApplicationScoped
 public class AuthenticationResource {
 
     @Inject
