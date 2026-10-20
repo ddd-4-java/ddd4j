@@ -57,7 +57,7 @@ import java.util.Objects;
  *   <li>启动 Javalin，注入路由</li>
  * </ol>
  *
- * <h3>REST 端点（CQRS）</h3>
+ * <h2>REST 端点（CQRS）</h2>
  * <ul>
  *   <li>POST /api/orders, POST /api/orders/{id}/lines, /pay, /ship, /cancel — Order 命令端</li>
  *   <li>GET  /api/orders/query/list, /stats, /buyer/{buyerId}/count, /detail/{id} — Order 查询端（缓存）</li>
@@ -65,7 +65,7 @@ import java.util.Objects;
  *   <li>GET  /api/goods/query/by-id/{id}, /by-code, /list, /by-status, /count, /cache-stats — Goods 查询端（缓存）</li>
  * </ul>
  *
- * <h3>运行</h3>
+ * <h2>运行</h2>
  * <pre>{@code
  * mvn -pl ddd4j-samples/ddd4j-sample-javalin-cqrs exec:java
  * }</pre>
@@ -125,6 +125,7 @@ public class JavalinCqrsApplication {
         // 7. 启动 Javalin
         Javalin app = Javalin.create(javalinConfig -> {
             javalinConfig.startup.showJavalinBanner = false;
+            javalinConfig.jsonMapper(new io.javalin.json.JavalinJackson3());
             javalinConfig.routes.apiBuilder(() -> {
                 orderController.routes();
                 orderQueryController.routes();
