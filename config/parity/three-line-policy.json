@@ -5085,6 +5085,27 @@
         "constructorRejectsNullSourceMapper"
       ],
       "reason": "三线事件载荷序列化测试的 12 个场景一致，覆盖显式类型、事件元数据与业务字段往返、未知字段兼容且源 mapper 保持严格、拒绝 @class 类型选择及异常因果；1.0.x 使用 JavaBean 事件夹具，高两线使用 Jackson 2/3 对应事件夹具。生产实现的 Jackson 2/3 差异另由 platformSyntaxMappings 锁定。"
+    },
+    {
+      "path": "ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautWebFilterUnitTest.java",
+      "productionPath": "ddd4j-web/ddd4j-web-micronaut/src/main/java/io/ddd4j/web/micronaut/Ddd4jMicronautWebFilter.java",
+      "sourceSha256": [
+        "fb8756b6816dc0e2f494e179e0483e324e062eb875342e756100f7e621faabc2",
+        "6eba374185d4b182093a1db8270aa944faaede8017c0dc9c0f880ea98b27ee35",
+        "494317eff1a3f4d34770010e27f595f64e3f6ec0b9f0feb317258d268e318868"
+      ],
+      "productionSha256": [
+        "e7a1a36f4c5cb9b09c395061d36409bbe4141cf1a7663dd8528e6748b1a37b61",
+        "bd15651f9f06c71c432edf02960f68f08dde504621c5261e8801da5fbbafb670",
+        "bd15651f9f06c71c432edf02960f68f08dde504621c5261e8801da5fbbafb670"
+      ],
+      "testMethods": [
+        "secondConstructorRejectsNullContextFactory",
+        "secondConstructorRejectsNullRequestLifecycle",
+        "secondConstructorAcceptsNullIdempotency",
+        "publicPathProceedsThroughMicronautFilterChain"
+      ],
+      "reason": "三线 Micronaut Web Filter 单元契约各 4 项通过，覆盖构造器空值、可选幂等及公开路径放行；JDK 8 的 Micronaut 3 使用 FilterChain，高两线的 Micronaut 4 使用 FilterContinuation，生产适配另由 platformSyntaxMappings 锁定。"
     }
   ]
 }
