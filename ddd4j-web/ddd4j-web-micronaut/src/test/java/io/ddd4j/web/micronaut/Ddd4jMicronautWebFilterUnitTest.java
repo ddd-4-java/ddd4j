@@ -81,7 +81,7 @@ class Ddd4jMicronautWebFilterUnitTest {
     }
 
     @Test
-    void publicPathProceedsThroughMicronautFourContinuation() {
+    void publicPathProceedsThroughMicronautFilterChain() {
         Ddd4jMicronautWebFilter filter = new Ddd4jMicronautWebFilter(
                 newContextFactory(), newLifecycle(), null);
 
