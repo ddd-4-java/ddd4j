@@ -1092,6 +1092,42 @@ class ThreeLineInventoryTest(unittest.TestCase):
                 json.loads((output / "inventory.json").read_text())["differences"]}
         self.assertEqual("OPEN", rows[path])
 
+    def test_jackson_three_projection_run_info_mapping_rejects_other_changes(self):
+        path = "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunInfoValueContractTest.java"
+        replacements = [
+            ("import com.fasterxml.jackson.databind.ObjectMapper;",
+             "import tools.jackson.databind.json.JsonMapper;"),
+            ("ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();",
+             "JsonMapper mapper = JsonMapper.builder().findAndAddModules().build();"),
+        ]
+        original = "class Contract {\n" + "\n".join(pair[0] for pair in replacements) + "\nvoid same() {}\n}\n"
+        adapted = original
+        for before, after in replacements:
+            adapted = adapted.replace(before, after)
+        for root, value in zip(self.roots, (original, original, adapted)):
+            self.write(root, path, value)
+        policy = json.loads(self.policy.read_text())
+        policy["platformContentMappings"] = [{
+            "path": path,
+            "replacements": [{"from": before, "to": after} for before, after in replacements],
+            "targetLines": ["3.0.x"], "evidence": path,
+            "reason": "Jackson 3 mapper construction in a common projection value test",
+        }]
+        self.policy.write_text(json.dumps(policy))
+
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = {row["path"]: row["status"] for row in
+                json.loads((output / "inventory.json").read_text())["differences"]}
+        self.assertEqual("PLATFORM_ADAPTED", rows[path])
+
+        self.write(self.roots[2], path, adapted.replace("same", "changed"))
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = {row["path"]: row["status"] for row in
+                json.loads((output / "inventory.json").read_text())["differences"]}
+        self.assertEqual("OPEN", rows[path])
+
     def test_changed_error_code_fails_inventory_gate(self):
         path = "ddd4j-core/src/main/java/example/OrderErrorCode.java"
         original = ('package example; public enum OrderErrorCode {'
