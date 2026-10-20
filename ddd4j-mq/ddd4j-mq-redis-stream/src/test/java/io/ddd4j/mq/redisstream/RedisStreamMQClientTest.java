@@ -125,11 +125,27 @@ class RedisStreamMQClientTest {
         mqProperties.setEnabled(true);
         mqProperties.setBroker("redisStream");
         client.init(Collections.<MQListener>emptyList(), mqProperties, new MQEventSerialization() {
+            /**
+             * 为发布失败测试提供固定的 JSON 载荷。
+             *
+             * @param <T> 序列化结果类型
+             * @param event 待发布事件
+             * @return 固定的空 JSON 对象
+             */
             @Override
             public <T> T serialize(Object event) {
                 return (T) "{}";
             }
 
+            /**
+             * 此测试不执行反序列化，返回空值作为桩实现。
+             *
+             * @param <S> 输入值类型
+             * @param <T> 目标事件类型
+             * @param value 输入值
+             * @param type 目标类型
+             * @return 空值
+             */
             @Override
             public <S, T> T deserialize(S value, Class<T> type) {
                 return null;
@@ -144,6 +160,7 @@ class RedisStreamMQClientTest {
         client.close();
         verify(jedis, never()).close();
     }
+
     @Test
     @SuppressWarnings("unchecked")
     void publish_shouldWriteCausalityIntoNativeStreamFields() {
@@ -176,5 +193,4 @@ class RedisStreamMQClientTest {
         assertEquals("causation-1", fields.getValue().get(MQDeliveryHeaders.CAUSATION_ID));
         client.close();
     }
-
 }
