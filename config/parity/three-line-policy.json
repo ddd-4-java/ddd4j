@@ -4252,6 +4252,24 @@
       "reason": "三线生产 CQRS GoodsController.java 逻辑词法等价，测试方法与 HTTP 断言一致；JDK 8 用 TestHttpClient，JDK 17/21 用 JDK HttpClient 与各自 Javalin 绑定地址。逐线哈希锁定。"
     },
     {
+      "path": "ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/DomainEventJsonTest.java",
+      "productionPath": "ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/DomainEvent.java",
+      "sourceSha256": [
+        "4a25c936c2b7e71e868309afb8e453732aacf7421e406d9dd391b551f76bab15",
+        "4a25c936c2b7e71e868309afb8e453732aacf7421e406d9dd391b551f76bab15",
+        "ace5e9ee7f2dcb6d220e144dd1914006e2f4a9f7499edd2ca7aec4a53613c1eb"
+      ],
+      "productionSha256": [
+        "b074c687705ae776c33014f7ce08cfe00c16d4837e985a77e3f97e52836ced53",
+        "2408ed8f999831ff370fc08d69420de5d20d2b17226fe9c028398102922f2ab6",
+        "2408ed8f999831ff370fc08d69420de5d20d2b17226fe9c028398102922f2ab6"
+      ],
+      "testMethods": [
+        "shouldSerializeEventMetadataAsStableScalarValues"
+      ],
+      "reason": "三线验证相同的事件元数据 JSON 标量值契约；JDK 8/17 使用 Jackson 2 并注册 JavaTimeModule，JDK 21 使用 Jackson 3 内建时间模块；生产 DomainEvent 已由平台语法映射锁定。"
+    },
+    {
       "path": "ddd4j-data/ddd4j-data-mybatisplus/src/test/java/io/ddd4j/data/mybatis/repository/MybatisAggregateRepositoryMySQLTest.java",
       "productionPath": "ddd4j-data/ddd4j-data-mybatisplus/src/main/java/io/ddd4j/data/mybatis/repository/MybatisAggregateRepository.java",
       "sourceSha256": [
