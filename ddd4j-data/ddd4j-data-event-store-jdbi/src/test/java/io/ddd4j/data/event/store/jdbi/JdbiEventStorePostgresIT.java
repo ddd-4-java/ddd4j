@@ -86,6 +86,16 @@ class JdbiEventStorePostgresIT {
     }
 
     @Test
+    void appendWithStaleVersionShouldRejectOnPostgres() {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-pg-2");
+        eventStore.append(ORDER_TYPE, orderId, List.of(new OrderCreatedEvent(orderId)), 0);
+
+        assertThrows(AggregateVersionConflictException.class,
+                () -> eventStore.append(ORDER_TYPE, orderId,
+                        List.of(new OrderCreatedEvent(orderId)), 0));
+    }
+
+    @Test
     void timestampShouldRoundTripAcrossTimezonesOnPostgres() throws Exception {
         JdbiTimestampTimezoneContractTest.assertUtcRoundTrip(jdbi);
     }
@@ -103,16 +113,6 @@ class JdbiEventStorePostgresIT {
                 .mapTo(String.class)
                 .list());
         assertThat(names).contains("uk_position");
-    }
-
-    @Test
-    void appendWithStaleVersionShouldRejectOnPostgres() {
-        TestAggregateRootId orderId = new TestAggregateRootId("order-pg-2");
-        eventStore.append(ORDER_TYPE, orderId, List.of(new OrderCreatedEvent(orderId)), 0);
-
-        assertThrows(AggregateVersionConflictException.class,
-                () -> eventStore.append(ORDER_TYPE, orderId,
-                        List.of(new OrderCreatedEvent(orderId)), 0));
     }
 
     @Test

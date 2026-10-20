@@ -4532,6 +4532,30 @@
       "reason": "三线真实 PostgreSQL 容器各验证 payload TEXT 列与类型化事件回读 1 项；JDK 8 使用 javax.persistence/拼接 SQL，高两线使用 jakarta.persistence/文本块，生产 Panache 适配器已有逐线源码锁定。"
     },
     {
+      "path": "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/JdbiEventStorePostgresIT.java",
+      "productionPath": "ddd4j-data/ddd4j-data-event-store-jdbi/src/main/java/io/ddd4j/data/event/store/jdbi/JdbiEventStore.java",
+      "sourceSha256": [
+        "ba127b5a5965429753e4dd5f602627176b0aa2c24aea8e111278229a2e49e27d",
+        "7c8663f5cac457b7c634e6a5447674dfcea53d58e1d0c0f80ab1e8cfd3ed1f0e",
+        "166236432f7c74ae0848a445821ec0c883fa966ed4a3aaa2bdd47b156a5cfa67"
+      ],
+      "productionSha256": [
+        "5c2608a9ab3fa39377ab78fe3ff30ecaf7f36c132dd8f7947efd8ecafc343be9",
+        "b45925d04439d12f2d8d5c64202026ec53b2a3a36af5fa5260c57e9449f13537",
+        "c94dea87d4cf6d41afdc892db649729a5fdcb2ecdec22150252aaec1bb9ed083"
+      ],
+      "testMethods": [
+        "setUp",
+        "tearDown",
+        "appendAndReadShouldRoundTripTypedEventOnPostgres",
+        "appendWithStaleVersionShouldRejectOnPostgres",
+        "timestampShouldRoundTripAcrossTimezonesOnPostgres",
+        "positionConstraintUsesSharedNameOnPostgres",
+        "payloadColumnShouldUsePortableTextType"
+      ],
+      "reason": "三线真实 PostgreSQL 容器各通过事件回读、版本冲突、跨时区时间戳、全局位置约束和 payload TEXT 列 5 项；JDK 8 与高两线的 Testcontainers/Jackson/JDK 集合 API 各自适配，生产 JDBI 适配器已有逐线源码锁定。"
+    },
+    {
       "path": "ddd4j-data/ddd4j-data-mybatisplus/src/test/java/io/ddd4j/data/mybatis/repository/MybatisAggregateRepositoryMySQLTest.java",
       "productionPath": "ddd4j-data/ddd4j-data-mybatisplus/src/main/java/io/ddd4j/data/mybatis/repository/MybatisAggregateRepository.java",
       "sourceSha256": [
