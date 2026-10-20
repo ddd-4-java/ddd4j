@@ -23,10 +23,13 @@ import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import java.lang.annotation.Annotation;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/** 验证 DDD 注解的 Spring 组合注解及聚合根标记契约。 */
 @DisplayName("ddd4j-runtime-spring DDD 注解与 Spring 元注解融合验收")
 class SpringDddAnnotationFusionTest {
 
@@ -60,10 +63,12 @@ class SpringDddAnnotationFusionTest {
 
     @Test
     void springShouldResolveComposedAnnotations() {
+        /** 领域服务组合注解样例。 */
         @DomainService
         class TestDomainService {
         }
 
+        /** 领域仓储组合注解样例。 */
         @DomainRepository
         class TestDomainRepository {
         }
@@ -75,6 +80,7 @@ class SpringDddAnnotationFusionTest {
 
     @Test
     void domainEntityShouldKeepAggregateRootAttribute() {
+        /** 聚合根属性样例。 */
         @DomainEntity(aggregateRoot = true)
         class AggregateRoot {
         }
@@ -86,7 +92,7 @@ class SpringDddAnnotationFusionTest {
 
     @Test
     void springAnnotationPackageShouldContainExpectedAnnotations() {
-        Set<Class<?>> annotations = new java.util.HashSet<>(java.util.Arrays.asList(
+        Set<Class<?>> annotations = new HashSet<>(Arrays.asList(
                 DomainService.class,
                 DomainRepository.class,
                 DomainEntity.class,
