@@ -3043,6 +3043,21 @@
             "21": "670d33504e5fa9db310d476162fc186521d32c9149e6cd991d1b2e4e617dbcf6"
         },
         "reason": "三线 Helidon 请求过滤器的上下文、鉴权与 OTel 空 span 安全降级行为一致；JDK 8 使用 javax JAX-RS，JDK 17/21 使用 jakarta JAX-RS。三线 Helidon Web 契约各 6 项与 OTel 集成各 5 项通过，源码和证据测试哈希逐线锁定。"
+    },
+    {
+        "path": "ddd4j-web/ddd4j-web-helidon/src/main/java/io/ddd4j/web/helidon/Ddd4jHelidonResponseFilter.java",
+        "sourceSha256": [
+            "e6b5e08999f2e7f1a55e42cb3c7c7a26ff750876b33daf9c4b36d955fc99a2d0",
+            "158b003ef6c03271a7b8f4a85f922333f2aa7945127a4db07e4eb7e2596f8e69",
+            "158b003ef6c03271a7b8f4a85f922333f2aa7945127a4db07e4eb7e2596f8e69"
+        ],
+        "evidence": "ddd4j-web/ddd4j-web-helidon/src/test/java/io/ddd4j/web/helidon/Ddd4jHelidonWebContractTest.java",
+        "testSha256ByJdk": {
+            "8": "49af8712b57008a9c1941adfb92c54554f548a75b8b2d32e1d9ffa9abe31217e",
+            "17": "670d33504e5fa9db310d476162fc186521d32c9149e6cd991d1b2e4e617dbcf6",
+            "21": "670d33504e5fa9db310d476162fc186521d32c9149e6cd991d1b2e4e617dbcf6"
+        },
+        "reason": "三线 Helidon 响应过滤器的请求标识回传与幂等会话提交行为一致；JDK 8 使用 javax JAX-RS 和显式强转，Helidon MP 1 的 Jersey 属性代理不支持 removeProperty；JDK 17/21 使用 jakarta JAX-RS、模式匹配并显式移除属性。三线 Helidon Web 契约各 6 项通过，源码及测试哈希逐线锁定。"
     }
   ],
   "historicalDocumentSections": [
