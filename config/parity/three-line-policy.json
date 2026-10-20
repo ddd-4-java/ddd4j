@@ -3421,6 +3421,21 @@
         "21": "66a805f8f2a389b2e6369a32cfc31729b610c137f0d1eccf5ce55e5933e382d8"
       },
       "reason": "三线 Sa-Token 样例的 Guice 注入、认证与商品路由配置及 Javadoc 一致；Javalin 4/7 的启动、路由注册 API 随平台版本适配。三线商品 HTTP 集成测试各 29 项通过，源码和逐线测试哈希锁定。"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/rbac/controller/AuthenticationController.java",
+      "sourceSha256": [
+        "d4079caff1f8cf1c3366ba66003a8e2242b9631d8bebdd05c7c9434272942a86",
+        "863c98877a8d302b92af9021eb83c4b2c9067e9fe028f96281918e2884c872c7",
+        "863c98877a8d302b92af9021eb83c4b2c9067e9fe028f96281918e2884c872c7"
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/rbac/web/AuthControllerTest.java",
+      "testSha256ByJdk": {
+        "8": "5a9cbad2b9a1c2094eed2a8aab5c37a4662f1fb6ae0b40533b69168dccefd921",
+        "17": "3efd8e8b487f6458db97e65f8d59a3146f3b9975c6eaaf76e56f079b7fcfc29b",
+        "21": "746e1402c3d3eb6f483254eaabc022e56dd9a57bd9ce929342cc13899a52877c"
+      },
+      "reason": "三线 Shiro 登录 DTO 的 Jackson 属性、认证端点与文档一致；JDK 8 使用 Java8Maps 和 Collections.emptySet，高线使用 Map.of/Set.of，保持不可变非空映射契约。三线认证 HTTP 测试各 37 项通过，源码和逐线测试哈希锁定。"
     }
   ],
   "historicalDocumentSections": [
