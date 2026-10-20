@@ -35,6 +35,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 订单 JAX-RS 资源（写侧）。
@@ -124,7 +125,7 @@ public class OrderResource {
     public R<List<OrderResponse>> listAll() {
         List<OrderResponse> items = orderApplicationService.listAll().stream()
                 .map(OrderResponse::from)
-                .toList();
+                .collect(Collectors.toList());
         return R.ok(items);
     }
 
