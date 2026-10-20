@@ -4659,6 +4659,30 @@
         "produceConsumeRoundTrip"
       ],
       "reason": "三线真实 Kafka broker 的生产、序列化、消费、反序列化及监听器回调测试各 1 项通过且未跳过；Testcontainers Kafka 模块坐标与 JDK 21 容器 tmpfs 是逐线运行环境适配，KafkaMQClient 生产逻辑已由独立映射和生命周期测试锁定。"
+    },
+    {
+      "path": "ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/event/store/jpa/JpaManagedParticipationTest.java",
+      "productionPath": "ddd4j-data/ddd4j-data-event-store-jpa/src/main/java/io/ddd4j/data/event/store/jpa/JpaEventStore.java",
+      "sourceSha256": [
+        "4403357ee05ae459ad1cd04349aa9a91c6f82fc478d75978c94fe9c847aa1b0f",
+        "05066b32a71fb79d7e185a07da1d7f8fae5540586cb8e9202d4dbf5b749695e6",
+        "5028fee9fbeffd04a7a4a5991a1c597b1f54a86def005e60438f89852e09a3e4"
+      ],
+      "productionSha256": [
+        "69062e2ba5a65bf79f594fba66c4fafe17b9842e82ff1be301e9832b0d1a96da",
+        "c816dd541496a5f3c65615b74ff0dc4f36c0239e4e1b6cac5fcfa83d24e20857",
+        "41878b9894f3a3e90577f4e57e21ee793e2277dff1d28fd15c4183386c198789"
+      ],
+      "testMethods": [
+        "managedFactoryConstructionMustNotRequireAnActiveTransaction",
+        "managedFactoriesMustRejectNullArgumentsBeforeAccessingEntityManager",
+        "managedReadMustRejectWhenEntityManagerIsNotJoinedWithoutMarkingRollback",
+        "managedEmptyAppendMustRejectWhenEntityManagerIsNotJoinedWithoutMarkingRollback",
+        "managedOperationsMustNotUseResourceLocalOrEntityManagerLifecycleMethods",
+        "managedRepositoryFailureMustKeepOriginalAndSuppressMarkerFailure",
+        "managedSerializerFailureMustKeepOriginalAndMarkRollback"
+      ],
+      "reason": "三线 JPA 托管参与的事务边界、回滚标记、异常抑制和 EntityManager 生命周期共 7 项测试各自通过；JDK 8 的 javax.persistence 与高两线的 jakarta.persistence、Jackson 2/3 属于逐线依赖适配，生产 JpaEventStore 已由独立契约映射锁定。"
     }
   ]
 }
