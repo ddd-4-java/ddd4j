@@ -340,12 +340,9 @@ public class JdbiEventStore implements EventStore {
         String eventType = rs.getString(EventStoreConstants.COLUMN_EVENT_TYPE);
         DomainEvent<?> event = serializer.deserialize(payload, resolveEventType(eventType));
         // H2 JDBC 对 TIMESTAMP 列返回 LocalDateTime，转为 Instant（与 R2DBC 实现一致）
-        LocalDateTime timestamp;
-        LocalDateTime ldt = rs.getObject(EventStoreConstants.COLUMN_TIMESTAMP, LocalDateTime.class);
-        if (ldt != null) {
-            timestamp = ldt;
-        } else {
-            timestamp = LocalDateTime.now();
+        LocalDateTime timestamp = rs.getObject(EventStoreConstants.COLUMN_TIMESTAMP, LocalDateTime.class);
+        if (Objects.isNull(timestamp)) {
+            throw new IllegalStateException("Missing persisted event timestamp");
         }
         return new StoredEvent(
                 EventId.valueOf(rs.getString(EventStoreConstants.COLUMN_EVENT_ID)),
