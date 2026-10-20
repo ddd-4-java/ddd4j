@@ -4641,6 +4641,24 @@
         "valueOfIsIdempotentForSerializedForm"
       ],
       "reason": "三线 DomainEvent JSON 回读与 EntityIdPath 值语义各 5 项通过；JDK 8/17 使用 Jackson 2 默认严格未知属性模式并显式加载 JavaTimeModule，JDK 21 使用 Jackson 3 默认宽松模式和内建 java.time 支持；生产 DomainEvent 的 JDK 语法差异由独立映射锁定。"
+    },
+    {
+      "path": "ddd4j-mq/ddd4j-mq-kafka/src/test/java/io/ddd4j/mq/kafka/KafkaMQClientRoundTripTest.java",
+      "productionPath": "ddd4j-mq/ddd4j-mq-kafka/src/main/java/io/ddd4j/mq/kafka/KafkaMQClient.java",
+      "sourceSha256": [
+        "ffa0edd284b8cd62f75e637f8225aee8dc03354f5fea5fa4e54cc8a2c7e0f6aa",
+        "e44f598fe29c81c9ee9f0994bd2ec00820f3ff461f8d090e6db4f3e67219627f",
+        "a7cbb50e9d45489c8253ab96504193a851fc99d6bc3abc0ee4f8f1f0f513c11e"
+      ],
+      "productionSha256": [
+        "441449898aac3176c79c49dae153482f7b884f6434003bc5b5029a880b136011",
+        "f5c4e2e9386276fb185ae283cf096caba32a0ebf38e98e762afcd8e0b23464d7",
+        "f5c4e2e9386276fb185ae283cf096caba32a0ebf38e98e762afcd8e0b23464d7"
+      ],
+      "testMethods": [
+        "produceConsumeRoundTrip"
+      ],
+      "reason": "三线真实 Kafka broker 的生产、序列化、消费、反序列化及监听器回调测试各 1 项通过且未跳过；Testcontainers Kafka 模块坐标与 JDK 21 容器 tmpfs 是逐线运行环境适配，KafkaMQClient 生产逻辑已由独立映射和生命周期测试锁定。"
     }
   ]
 }
