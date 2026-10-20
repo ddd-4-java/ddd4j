@@ -13,9 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.mq.sqs;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.mock;
 
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.mq.MQClient;
@@ -36,6 +33,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -171,12 +169,13 @@ class SqsAdapterContractTest {
 
     @Test
     void shouldPreferStableMessageIdAndResetVisibilityForRedelivery() {
+        Map<String, MessageAttributeValue> attributes = new HashMap<>();
+        attributes.put(MessageHeaders.HEADER_MESSAGE_ID, attribute("stable-id"));
+        attributes.put(MQDeliveryHeaders.CORRELATION_ID, attribute("correlation-1"));
         Message message = Message.builder()
                 .messageId("transport-id")
                 .receiptHandle("receipt")
-                .messageAttributes(Map.of(
-                        MessageHeaders.HEADER_MESSAGE_ID, attribute("stable-id"),
-                        MQDeliveryHeaders.CORRELATION_ID, attribute("correlation-1")))
+                .messageAttributes(attributes)
                 .build();
         SqsClient client = mock(SqsClient.class);
         SqsAcknowledgment acknowledgment = new SqsAcknowledgment(client, message, "http://queue", true);
