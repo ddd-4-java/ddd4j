@@ -4397,6 +4397,28 @@
       "reason": "三线保持 31 项认证 HTTP 契约；JDK 8 使用兼容 HttpClient，高两线使用 JDK HttpClient，Javalin 新线重建连接池并使用 IPv4 回环地址，生产控制器已由平台语法映射锁定。"
     },
     {
+      "path": "ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/event/store/jpa/JpaEventStoreIT.java",
+      "productionPath": "ddd4j-data/ddd4j-data-event-store-jpa/src/main/java/io/ddd4j/data/event/store/jpa/JpaEventStore.java",
+      "sourceSha256": [
+        "8f9b937dbb1b1f1c479913e1a86ec67584fb5025d9e1e6efd8c99981c01a266f",
+        "f95d304d1f7cda3b30192b759799847928d7a794c34a4e6aef85e50568d93738",
+        "c76dc4b3aaea3da44c9dc878b62c52c3dd1083a3a84adbd0af88b44c8623e0bd"
+      ],
+      "productionSha256": [
+        "69062e2ba5a65bf79f594fba66c4fafe17b9842e82ff1be301e9832b0d1a96da",
+        "c816dd541496a5f3c65615b74ff0dc4f36c0239e4e1b6cac5fcfa83d24e20857",
+        "41878b9894f3a3e90577f4e57e21ee793e2277dff1d28fd15c4183386c198789"
+      ],
+      "testMethods": [
+        "setUp",
+        "tearDown",
+        "appendAndReadShouldPreserveTypedAggregateAndPayload",
+        "appendWithStaleVersionShouldRollbackAndExposeTypedConflict",
+        "readWithVersionRangeShouldReturnInclusiveEvents"
+      ],
+      "reason": "三线相同的 JPA 事件追加、版本冲突回滚和区间读取契约；JDK 8 使用 javax.persistence/Hibernate 5，高两线使用 jakarta.persistence/Hibernate 6，三线目标测试各 3 项通过，生产适配器已有逐线源码锁定。"
+    },
+    {
       "path": "ddd4j-data/ddd4j-data-mybatisplus/src/test/java/io/ddd4j/data/mybatis/repository/MybatisAggregateRepositoryMySQLTest.java",
       "productionPath": "ddd4j-data/ddd4j-data-mybatisplus/src/main/java/io/ddd4j/data/mybatis/repository/MybatisAggregateRepository.java",
       "sourceSha256": [
