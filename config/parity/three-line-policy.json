@@ -5056,6 +5056,35 @@
         "createOrder_idempotent"
       ],
       "reason": "三线 Micronaut CQRS 订单契约各 3 项通过，覆盖创建及投影、读模型查询和幂等创建；JDK 8 使用 HashMap 构造请求，高两线使用 Map.of，生产控制器词法等价。"
+    },
+    {
+      "path": "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/eventstore/jackson/EventPayloadSerializerTest.java",
+      "productionPath": "ddd4j-core/src/main/java/io/ddd4j/core/cqrs/eventstore/jackson/EventPayloadSerializer.java",
+      "sourceSha256": [
+        "492287ef3cf39ce3fcf960d8782d5e64dfdcd7123a9a546f480606e445330599",
+        "76a4bcf06a80af0666f0fd93e2c1d4783e201b5c54fe4e7892cbb8dab7954521",
+        "69efff74251b252aa0c48a9331d65931c58173edd8f9f8fd6e48f9582d3dd878"
+      ],
+      "productionSha256": [
+        "2937a12595d62c74ae2b0ec3e10ecc4f3f8d9e9db1dffc7f588b2a30f48681ac",
+        "2937a12595d62c74ae2b0ec3e10ecc4f3f8d9e9db1dffc7f588b2a30f48681ac",
+        "27faebdd26602ac9db0e72c48d6fa74b945a5fb90c3a17c96d40ee0ed601c561"
+      ],
+      "testMethods": [
+        "serializeShouldCarryBusinessAndEventMetadata",
+        "roundTripRestoresConcreteEventWithZonedDateTimeTimestamp",
+        "roundTripPreservesEntityIdPath",
+        "roundTripPreservesEventType",
+        "serializedJsonDoesNotCarryPolymorphicClassMarker",
+        "causalityMetadataUsesHyphenatedPayloadFields",
+        "constructionLeavesSourceMapperUntouched",
+        "mapperKeepsDefaultStrictUnknownPropertyHandling",
+        "deserializeIgnoresUnknownPayloadPropertyWithoutChangingSourceMapper",
+        "unknownClassMarkerCannotChooseTheDeserializedType",
+        "deserializeThrowsIllegalStateExceptionOnMalformedJson",
+        "constructorRejectsNullSourceMapper"
+      ],
+      "reason": "三线事件载荷序列化测试的 12 个场景一致，覆盖显式类型、事件元数据与业务字段往返、未知字段兼容且源 mapper 保持严格、拒绝 @class 类型选择及异常因果；1.0.x 使用 JavaBean 事件夹具，高两线使用 Jackson 2/3 对应事件夹具。生产实现的 Jackson 2/3 差异另由 platformSyntaxMappings 锁定。"
     }
   ]
 }

@@ -42,21 +42,7 @@ class EventPayloadSerializerTest {
     }
 
     @Test
-    void serializedJsonDoesNotCarryPolymorphicClassMarker() {
-        String json = serializer.serialize(new OrderCreatedEvent("order-created"));
-        assertFalse(json.contains("\"@class\""));
-    }
-
-    @Test
-    void constructionLeavesSourceMapperUntouched() throws Exception {
-        serializer.serialize(new OrderCreatedEvent("order-created"));
-        String plainJson = sourceMapper.writeValueAsString(new OrderCreatedEvent("order-created"));
-        assertFalse(plainJson.contains("\"@class\""));
-        assertTrue(sourceMapper.isEnabled(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES));
-    }
-
-    @Test
-    void roundTripRestoresEventIdentityTimestampAndSource() {
+    void roundTripRestoresConcreteEventWithZonedDateTimeTimestamp() {
         OrderCreatedEvent original = new OrderCreatedEvent("order-created");
         ZonedDateTime originalTimestamp = original.getEventTimestamp();
 
@@ -91,21 +77,49 @@ class EventPayloadSerializerTest {
     }
 
     @Test
-    void deserializeShouldRestoreBusinessProperty() {
-        String json = serializer.serialize(new OrderCreatedEvent("renamed"));
-        DomainEvent<?> event = serializer.deserialize(json, OrderCreatedEvent.class);
-        assertInstanceOf(OrderCreatedEvent.class, event);
-        assertEquals("renamed", ((OrderCreatedEvent) event).getFact());
+    void serializedJsonDoesNotCarryPolymorphicClassMarker() {
+        String json = serializer.serialize(new OrderCreatedEvent("order-created"));
+        assertFalse(json.contains("\"@class\""));
     }
 
     @Test
-    void deserializeShouldIgnoreUnknownProperty() {
-        DomainEvent<?> event = serializer.deserialize("{\"fact\":\"ok\",\"junk\":\"ignored\"}", OrderCreatedEvent.class);
+    void causalityMetadataUsesHyphenatedPayloadFields() {
+        OrderCreatedEvent cause = new OrderCreatedEvent("cause");
+        OrderCreatedEvent effect = new OrderCreatedEvent("effect", cause);
+        String json = serializer.serialize(effect);
+        assertTrue(json.contains("\"correlation-id\""));
+        assertTrue(json.contains("\"causation-id\""));
+        assertFalse(json.contains("correlationId"));
+        assertFalse(json.contains("causationId"));
+    }
+
+    @Test
+    void constructionLeavesSourceMapperUntouched() throws Exception {
+        serializer.serialize(new OrderCreatedEvent("order-created"));
+        String plainJson = sourceMapper.writeValueAsString(new OrderCreatedEvent("order-created"));
+        assertFalse(plainJson.contains("\"@class\""));
+        assertTrue(sourceMapper.isEnabled(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES));
+    }
+
+    @Test
+    void mapperKeepsDefaultStrictUnknownPropertyHandling() {
+        assertTrue(sourceMapper.isEnabled(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES));
+    }
+
+    @Test
+    void deserializeIgnoresUnknownPayloadPropertyWithoutChangingSourceMapper() {
+        String payload = serializer.serialize(new OrderCreatedEvent("ok"));
+        String withFutureProperty = payload.substring(0, payload.length() - 1)
+                + ",\"futureProperty\":\"newer-writer\"}";
+
+        DomainEvent<?> event = serializer.deserialize(withFutureProperty, OrderCreatedEvent.class);
+
         assertEquals("ok", ((OrderCreatedEvent) event).getFact());
+        assertTrue(sourceMapper.isEnabled(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES));
     }
 
     @Test
-    void unknownClassMarkerCannotChooseDeserializedType() {
+    void unknownClassMarkerCannotChooseTheDeserializedType() {
         String payload = serializer.serialize(new OrderCreatedEvent("order-created"));
         String withClassMarker = payload.substring(0, payload.length() - 1)
                 + ",\"@class\":\"java.lang.ProcessBuilder\"}";
@@ -128,24 +142,6 @@ class EventPayloadSerializerTest {
     @Test
     void constructorRejectsNullSourceMapper() {
         assertThrows(NullPointerException.class, () -> new EventPayloadSerializer(null));
-    }
-
-    @Test
-    void serializerLeavesSourceMapperStrict() {
-        assertTrue(sourceMapper.isEnabled(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES));
-        serializer.deserialize("{\"fact\":\"ok\",\"futureProperty\":\"newer-writer\"}", OrderCreatedEvent.class);
-        assertTrue(sourceMapper.isEnabled(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES));
-    }
-
-    @Test
-    void causalityMetadataUsesHyphenatedPayloadFields() {
-        OrderCreatedEvent cause = new OrderCreatedEvent("cause");
-        OrderCreatedEvent effect = new OrderCreatedEvent("effect", cause);
-        String json = serializer.serialize(effect);
-        assertTrue(json.contains("\"correlation-id\""));
-        assertTrue(json.contains("\"causation-id\""));
-        assertFalse(json.contains("correlationId"));
-        assertFalse(json.contains("causationId"));
     }
 
     private static final class TestId implements AggregateRootId {
