@@ -86,7 +86,7 @@ public class AuthenticationResource {
     @SaCheckLogin
     public R<Map<String, Object>> logout() {
         rbacService.logout();
-        return R.ok(Map.of("success", true));
+        return R.ok(java.util.Collections.<String, Object>singletonMap("success", true));
     }
 
     /**
@@ -105,7 +105,7 @@ public class AuthenticationResource {
     @GET
     @Path("/status")
     public R<Map<String, Object>> status() {
-        return R.ok(Map.of("login", rbacService.isLogin()));
+        return R.ok(java.util.Collections.<String, Object>singletonMap("login", rbacService.isLogin()));
     }
 
     // ============ 运行时权限 / 角色校验 ============
@@ -146,7 +146,7 @@ public class AuthenticationResource {
     @SaCheckLogin
     @SaCheckPermission("user:list")
     public R<Object> businessListUsers() {
-        return R.ok(Map.of("items", rbacService.listUsers()));
+        return R.ok(java.util.Collections.singletonMap("items", rbacService.listUsers()));
     }
 
     /**
@@ -157,7 +157,10 @@ public class AuthenticationResource {
     @SaCheckLogin
     @SaCheckPermission("order:pay")
     public R<Map<String, Object>> businessPayOrder(@PathParam("id") String id) {
-        return R.ok(Map.of("orderId", id, "paid", true));
+        Map<String, Object> result = new java.util.LinkedHashMap<>();
+        result.put("orderId", id);
+        result.put("paid", true);
+        return R.ok(result);
     }
 
     /**
