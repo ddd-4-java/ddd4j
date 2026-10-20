@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -149,20 +150,34 @@ class RTest {
     }
 
     @Test
-    void success_shouldDistinguishCustomMessageAndPayload() {
-        R<Object> messageResponse = R.success("created");
-        assertThat(messageResponse.getCode()).isEqualTo(200);
-        assertThat(messageResponse.getMsg()).isEqualTo("created");
-        assertThat(messageResponse.getData()).isNull();
-        R<Object> payloadResponse = R.success((Object) "payload");
-        assertThat(payloadResponse.getCode()).isEqualTo(200);
-        assertThat(payloadResponse.getData()).isEqualTo("payload");
-        assertThat(payloadResponse.getMsg()).isEqualTo(ApiCode.SUCCESS.getReason());
+    void success_withString_shouldPreserveCustomMessage() {
+        R<Object> response = R.success("created");
+        assertThat(response.getCode()).isEqualTo(200);
+        assertThat(response.getMsg()).isEqualTo("created");
+        assertThat(response.getData()).isNull();
     }
 
     @Test
-    void validationResponse_shouldKeepUnifiedJsonFields() throws Exception {
-        List<Map<String, String>> errors = List.of(Map.of("field", "email", "message", "invalid"));
+    void success_withObjectString_shouldPreservePayload() {
+        R<Object> response = R.success((Object) "payload");
+        assertThat(response.getCode()).isEqualTo(ApiCode.SUCCESS.getCode());
+        assertThat(response.getMsg()).isEqualTo(ApiCode.SUCCESS.getReason());
+        assertThat(response.getData()).isEqualTo("payload");
+    }
+    @Test
+    void of_withStringCode_shouldPreserveExplicitSerializableCode() {
+        R<Object> response = R.of((Serializable) "404", "missing");
+        assertThat(response.getCode()).isEqualTo("404");
+        assertThat(response.getMsg()).isEqualTo("missing");
+        assertThat(response.getData()).isNull();
+    }
+
+    @Test
+    void jackson_shouldPreserveResponseFieldsAndValidationErrors() throws Exception {
+        Map<String, String> error = new HashMap<>();
+        error.put("field", "email");
+        error.put("message", "invalid");
+        List<Map<String, String>> errors = Collections.singletonList(error);
         R<Object> response = R.of((CustomApiCode) ApiCode.BAD_REQUEST, "invalid input", errors);
         ObjectMapper mapper = new ObjectMapper();
         JsonNode json = mapper.readTree(mapper.writeValueAsString(response));
@@ -175,15 +190,6 @@ class RTest {
         assertThat(okJson.get("data").asText()).isEqualTo("payload");
         assertThat(okJson.has("error")).isFalse();
     }
-
-    @Test
-    void explicitSerializableCode_shouldPreserveStringCode() {
-        R<Object> response = R.of((Serializable) "404", "not found");
-        assertThat(response.getCode()).isEqualTo("404");
-        assertThat(response.getMsg()).isEqualTo("not found");
-        assertThat(response.getData()).isNull();
-    }
-
     @Test
     void customApiCode_shouldBuildResponseWithMessageAndPayload() {
         CustomApiCode customCode = new CustomApiCode() {
