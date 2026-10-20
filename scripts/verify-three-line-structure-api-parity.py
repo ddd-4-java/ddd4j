@@ -1177,7 +1177,7 @@ def validate_platform_content_mappings(mappings, roots: list[pathlib.Path]) -> d
         if not replacements or not mapping.get("reason"):
             raise ValueError(f"platform content mapping lacks replacements or reason: {source}")
         target_lines = mapping.get("targetLines", ["2.0.x", "3.0.x"])
-        if target_lines not in (["2.0.x", "3.0.x"], ["3.0.x"]):
+        if target_lines not in (["2.0.x", "3.0.x"], ["2.0.x"], ["3.0.x"]):
             raise ValueError(f"invalid platform content target lines: {source}")
         originals = set()
         jackson_mapper_imports = {
@@ -1189,6 +1189,9 @@ def validate_platform_content_mappings(mappings, roots: list[pathlib.Path]) -> d
              "import tools.jackson.databind.json.JsonMapper;"),
         }
         exact_test_adaptations = {
+            ("ddd4j-mq/ddd4j-mq-rabbitmq/src/test/java/io/ddd4j/mq/rabbitmq/RabbitMQContainerIntegrationTest.java",
+             "import org.testcontainers.rabbitmq.RabbitMQContainer;",
+             "import org.testcontainers.containers.RabbitMQContainer;", ("2.0.x",)),
             ("ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunInfoValueContractTest.java",
              "import com.fasterxml.jackson.databind.ObjectMapper;",
              "import tools.jackson.databind.json.JsonMapper;", ("3.0.x",)),
