@@ -5376,6 +5376,93 @@
         "executeBlockingPropagatesTaskFailure"
       ],
       "reason": "三线 Vert.x 请求上下文目标测试各 10 项通过；JDK 8 的 Vert.x 4 使用动态代理模拟 executeBlocking，高两线的 Vert.x 5 使用 Mockito。生产上下文源码词法等价，测试覆盖请求、主体、绑定、异步执行与失败传播。"
+    },
+    {
+      "path": "ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautWebContractTest.java",
+      "productionPath": "ddd4j-web/ddd4j-web-micronaut/src/main/java/io/ddd4j/web/micronaut/Ddd4jMicronautWebFilter.java",
+      "sourceSha256": [
+        "ca8654f3870ef186a62b3e2eb7fb4cb822e6e968411db124d5aadd1cebec1e6e",
+        "f747234f9a3dd768448a8faa12f5b915523a79bfd8446560d62ed71a95384eb8",
+        "1e7bcf78fe425c77e66aa6fa6df7aa7f89d04f75f4aa13a98e673c4c125409a9"
+      ],
+      "productionSha256": [
+        "e7a1a36f4c5cb9b09c395061d36409bbe4141cf1a7663dd8528e6748b1a37b61",
+        "bd15651f9f06c71c432edf02960f68f08dde504621c5261e8801da5fbbafb670",
+        "bd15651f9f06c71c432edf02960f68f08dde504621c5261e8801da5fbbafb670"
+      ],
+      "contractPath": "ddd4j-web/ddd4j-web-testkit/src/main/java/io/ddd4j/web/testkit/AbstractWebContractTest.java",
+      "contractSha256ByJdk": {
+        "8": "5e220e393615c48ee3f5a39a400cf99a7d95b227c27873a2e7c0ee3f27a12028",
+        "17": "3b1717588fc80f406b287478c7bc14e9d41a9a65441991d2285db949de31e668",
+        "21": "3fcff52f4d36aaeba75f439471a30f20a0553276ec224ac843969fabc7ed7717"
+      },
+      "testMethods": [
+        "shouldExposeStableSuccessAndCreatedEnvelopes",
+        "shouldExposeTranslatedErrorStatusesAndEnvelopes",
+        "shouldEnforceBearerAuthenticationAccordingToPolicy",
+        "shouldPropagateRequestHeadersAndReturnRequestId",
+        "shouldNotLeakContextBetweenRequests",
+        "shouldRejectDuplicateIdempotencyKey"
+      ],
+      "reason": "三线 micronaut Web 适配器继承相同 6 项请求/响应、认证、上下文清理与幂等测试；模块目标测试各 7 项通过。JDK/框架 API 及 Jackson 2/3 在各线独立适配，适配器、生产源码与继承契约均由逐线 SHA-256 锁定。"
+    },
+    {
+      "path": "ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebContractTest.java",
+      "productionPath": "ddd4j-web/ddd4j-web-quarkus/src/main/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebFilter.java",
+      "sourceSha256": [
+        "fb046d423efe84aeeab3754fa066df646350c12c5d854ef1e3cb4321c6728449",
+        "8e03833c56faabbbf2dc760b64333d2f5337b5781dc890fe862d7c61c59d540c",
+        "11f1047eedfb9765cf6385f097ad87d2e74ac8be17e5cbc328b2dc1cb85a766c"
+      ],
+      "productionSha256": [
+        "cd8d7a382b9f7a17931bc5a88d187957a1a8f783e56f6c4c6e6761d9a9d5025c",
+        "1c177c86b83d4830f3ddb60cc3def05eb20e70378aa13996ceafd1a354260ab0",
+        "1c177c86b83d4830f3ddb60cc3def05eb20e70378aa13996ceafd1a354260ab0"
+      ],
+      "contractPath": "ddd4j-web/ddd4j-web-testkit/src/main/java/io/ddd4j/web/testkit/AbstractWebContractTest.java",
+      "contractSha256ByJdk": {
+        "8": "5e220e393615c48ee3f5a39a400cf99a7d95b227c27873a2e7c0ee3f27a12028",
+        "17": "3b1717588fc80f406b287478c7bc14e9d41a9a65441991d2285db949de31e668",
+        "21": "3fcff52f4d36aaeba75f439471a30f20a0553276ec224ac843969fabc7ed7717"
+      },
+      "testMethods": [
+        "shouldExposeStableSuccessAndCreatedEnvelopes",
+        "shouldExposeTranslatedErrorStatusesAndEnvelopes",
+        "shouldEnforceBearerAuthenticationAccordingToPolicy",
+        "shouldPropagateRequestHeadersAndReturnRequestId",
+        "shouldNotLeakContextBetweenRequests",
+        "shouldRejectDuplicateIdempotencyKey"
+      ],
+      "reason": "三线 quarkus Web 适配器继承相同 6 项请求/响应、认证、上下文清理与幂等测试；模块目标测试各 6 项通过。JDK/框架 API 及 Jackson 2/3 在各线独立适配，适配器、生产源码与继承契约均由逐线 SHA-256 锁定。"
+    },
+    {
+      "path": "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/Ddd4jWebMvcContractTest.java",
+      "productionPath": "ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/DefaultWebMvcConfigurer.java",
+      "sourceSha256": [
+        "25a2458e4edb60543460140ba947bf98fef507d9cdf3ac06fe46fdaca7c0ea39",
+        "53e46cabbca66fce9c6200c4651592ee6713478eda75609bf1b3ef8c1547c118",
+        "3137cb5c31eb352725055a2ecc9a4b74b30cf32d3e0a7e73903de59fa5c3aead"
+      ],
+      "productionSha256": [
+        "03940078a791178fa92128d63d8054a574fb254c30a409e8e98d2927691f40d7",
+        "505753717fe886cb2578cae9a6aa2355dfc85a476128bd8bfc404757640b77f6",
+        "26e007c01fb81ffac6f4ade9a69a8c202071277b372058f8b95db6a5ab69f9f2"
+      ],
+      "contractPath": "ddd4j-web/ddd4j-web-testkit/src/main/java/io/ddd4j/web/testkit/AbstractWebContractTest.java",
+      "contractSha256ByJdk": {
+        "8": "5e220e393615c48ee3f5a39a400cf99a7d95b227c27873a2e7c0ee3f27a12028",
+        "17": "3b1717588fc80f406b287478c7bc14e9d41a9a65441991d2285db949de31e668",
+        "21": "3fcff52f4d36aaeba75f439471a30f20a0553276ec224ac843969fabc7ed7717"
+      },
+      "testMethods": [
+        "shouldExposeStableSuccessAndCreatedEnvelopes",
+        "shouldExposeTranslatedErrorStatusesAndEnvelopes",
+        "shouldEnforceBearerAuthenticationAccordingToPolicy",
+        "shouldPropagateRequestHeadersAndReturnRequestId",
+        "shouldNotLeakContextBetweenRequests",
+        "shouldRejectDuplicateIdempotencyKey"
+      ],
+      "reason": "三线 webmvc Web 适配器继承相同 6 项请求/响应、认证、上下文清理与幂等测试；模块目标测试各 6 项通过。JDK/框架 API 及 Jackson 2/3 在各线独立适配，适配器、生产源码与继承契约均由逐线 SHA-256 锁定。"
     }
   ],
   "platformTestHelperMappings": [

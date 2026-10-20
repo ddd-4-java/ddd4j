@@ -18,6 +18,45 @@ SCRIPT = Path(__file__).with_name("verify-three-line-structure-api-parity.py")
 
 
 class ThreeLineInventoryTest(unittest.TestCase):
+    def test_inherited_web_contract_requires_each_line_contract_hash(self):
+        test = "ddd4j-web/demo/src/test/java/example/AdapterWebContractTest.java"
+        contract = "ddd4j-web/testkit/src/main/java/example/AbstractWebContractTest.java"
+        production = "ddd4j-web/demo/src/main/java/example/WebAdapter.java"
+        adapters = [("class AdapterWebContractTest extends AbstractWebContractTest {\n"
+                     f"WebContractClient client() {{ return null; }} // {jdk}\n}}")
+                    for jdk in (8, 17, 21)]
+        bases = ["class AbstractWebContractTest {\n@Test\nvoid shouldHandleRequest() {}\n}",
+                 "class AbstractWebContractTest {\n@Test\nvoid shouldHandleRequest() { /*17*/ }\n}",
+                 "class AbstractWebContractTest {\n@Test\nvoid shouldHandleRequest() { /*21*/ }\n}"]
+        for root, base, adapter in zip(self.roots, bases, adapters):
+            self.write(root, test, adapter)
+            self.write(root, contract, base)
+            self.write(root, production, "class WebAdapter {}")
+        digest = lambda source: hashlib.sha256(source.encode()).hexdigest()
+        policy = json.loads(self.policy.read_text())
+        policy["platformTestSyntaxMappings"] = [{
+            "path": test,
+            "productionPath": production,
+            "sourceSha256": [digest(adapter) for adapter in adapters],
+            "productionSha256": [digest("class WebAdapter {}")]*3,
+            "contractPath": contract,
+            "contractSha256ByJdk": dict(zip(("8", "17", "21"), map(digest, bases))),
+            "testMethods": ["shouldHandleRequest"],
+            "reason": "Three adapters inherit the same request contract",
+        }]
+        self.policy.write_text(json.dumps(policy))
+
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = json.loads((output / "inventory.json").read_text())["differences"]
+        self.assertEqual("PLATFORM_ADAPTED", next(row["status"] for row in rows
+                                                  if row["path"] == test))
+
+        self.write(self.roots[2], contract, bases[2] + " // changed")
+        result, _ = self.run_checker("inventory")
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("stale inherited contract mapping", result.stderr)
+
     def test_java8_map_contract_only_normalizes_exact_approved_call(self):
         path = ("ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/"
                 "io/ddd4j/sample/javalin/satoken/rbac/web/Java8MapsContractTest.java")
