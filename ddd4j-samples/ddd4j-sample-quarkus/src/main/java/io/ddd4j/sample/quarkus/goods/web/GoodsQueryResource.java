@@ -31,6 +31,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 商品 CQRS 查询端点（第三轨：Model/Query 快速 CRUD 模式，查询侧）。
@@ -105,7 +106,7 @@ public class GoodsQueryResource extends TenantAwareResource {
     public Response list(@BeanParam GoodsQueryParameters parameters) {
         List<GoodsResponse> products = applicationService.listQuery(parameters.toQuery()).stream()
                 .map(GoodsResponse::from)
-                .toList();
+                .collect(Collectors.toList());
         return ok(products);
     }
 
