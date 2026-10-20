@@ -29,7 +29,7 @@ import java.util.Set;
  * 由真实 ArC 容器在索引中发现装配。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 2.0.x
+ * @since 1.0.x
  */
 @ApplicationScoped
 @CommandHandler(SampleCommand.class)
@@ -42,7 +42,7 @@ class SampleCommandHandler implements CommandExecutor<SampleCommand> {
 
     @Override
     public Set<Class<? extends Command>> supportedCommands() {
-        return Set.of(SampleCommand.class);
+        return java.util.Collections.singleton(SampleCommand.class);
     }
 
     /**
