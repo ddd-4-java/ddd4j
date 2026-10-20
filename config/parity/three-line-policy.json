@@ -3128,6 +3128,39 @@
         "evidence": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/order/OrderValueContractTest.java",
         "testSha256": "e00837481f0d63bfa9597f108f77bdd83f146a0e51a329ca0509207374f3599d",
         "reason": "三线订单聚合的公开逻辑及中文文档一致；JDK 8 使用 Collections.emptyList() 与验证空元素后返回不可修改副本，JDK 17/21 使用 List.of() 和 List.copyOf()。共同测试逐线验证含空元素时抛出 NullPointerException，并锁定源码及测试哈希。"
+    },
+    {
+        "path": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/order/domain/model/Order.java",
+        "sourceSha256": [
+            "3c82d9309c17929ac48b981f77b3aa6190b8ec2b11f6a5657d206eb17b52b0e7",
+            "711e5648983e16c955ba4a0dc799a0d889e96e3eb3a82069e0d3c5896564f3f5",
+            "711e5648983e16c955ba4a0dc799a0d889e96e3eb3a82069e0d3c5896564f3f5"
+        ],
+        "evidence": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/order/domain/model/OrderLinesContractTest.java",
+        "testSha256": "3ea3fb81d70c1c666c49d09e70a8980db38d900db6fa42f1dca30cc521cf83a6",
+        "reason": "三线订单聚合公开逻辑及中文文档一致；JDK 8 使用 Collections.emptyList() 与验证空元素后返回不可修改副本，JDK 17/21 使用 List.of() 和 List.copyOf()。共同测试逐线验证空元素拒绝及列表不可修改，源码与测试哈希锁定。"
+    },
+    {
+        "path": "ddd4j-samples/ddd4j-sample-quarkus-satoken/src/main/java/io/ddd4j/sample/quarkus/satoken/order/domain/model/Order.java",
+        "sourceSha256": [
+            "71c2f048b94a764c2aea33140831da8fd10377a8c221248605808e5a63f043fd",
+            "300e2c26fc8cb9f8e56c7a09bee59dae255ecd75221ea0a5538523d235a8060b",
+            "300e2c26fc8cb9f8e56c7a09bee59dae255ecd75221ea0a5538523d235a8060b"
+        ],
+        "evidence": "ddd4j-samples/ddd4j-sample-quarkus-satoken/src/test/java/io/ddd4j/sample/quarkus/satoken/order/domain/model/OrderLinesContractTest.java",
+        "testSha256": "e7f5ed83219016a1f1cfe6164fbb3333d5061147f8cb942c31a16db2fdc4c336",
+        "reason": "三线订单聚合公开逻辑及中文文档一致；JDK 8 使用 Collections.emptyList() 与验证空元素后返回不可修改副本，JDK 17/21 使用 List.of() 和 List.copyOf()。共同测试逐线验证空元素拒绝及列表不可修改，源码与测试哈希锁定。"
+    },
+    {
+        "path": "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/main/java/io/ddd4j/sample/quarkus/shiro/order/domain/model/Order.java",
+        "sourceSha256": [
+            "9d9150b3f04f69a274adfe2e185772d0ed41efdf2b4854431488b813f63718f2",
+            "40ec8505615de3cb842820a515d70923c71db69dba32c8e975b32e172deae5e5",
+            "40ec8505615de3cb842820a515d70923c71db69dba32c8e975b32e172deae5e5"
+        ],
+        "evidence": "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/test/java/io/ddd4j/sample/quarkus/shiro/order/domain/model/OrderLinesContractTest.java",
+        "testSha256": "0c0bf9689b915801dbce83342be6ef31f152576dd3d445e249f949c02db1e460",
+        "reason": "三线订单聚合公开逻辑及中文文档一致；JDK 8 使用 Collections.emptyList() 与验证空元素后返回不可修改副本，JDK 17/21 使用 List.of() 和 List.copyOf()。共同测试逐线验证空元素拒绝及列表不可修改，源码与测试哈希锁定。"
     }
   ],
   "historicalDocumentSections": [
