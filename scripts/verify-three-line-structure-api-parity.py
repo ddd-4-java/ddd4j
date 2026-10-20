@@ -927,6 +927,8 @@ def inventory_gate(roots: list[pathlib.Path], output: pathlib.Path, policy_path:
         policy.get("platformContentMappings", []), roots)
     platform_syntax = validate_platform_syntax_mappings(
         policy.get("platformSyntaxMappings", []), roots)
+    platform_test_syntax = validate_platform_test_syntax_mappings(
+        policy.get("platformTestSyntaxMappings", []), roots)
     platform_test_evidence = {}
     for source, mapping in platform_syntax.items():
         if mapping.get("testSha256ByJdk"):
@@ -1014,6 +1016,10 @@ def inventory_gate(roots: list[pathlib.Path], output: pathlib.Path, policy_path:
                       for source, mapping in platform_test_evidence[path])):
             status = "PLATFORM_ADAPTED"
             evidence = "; ".join(source for source, _ in platform_test_evidence[path])
+        elif (category == "test" and path in platform_test_syntax
+              and all(value is not None for value in values)):
+            status = "PLATFORM_ADAPTED"
+            evidence = platform_test_syntax[path]["productionPath"]
         elif (category in ("production", "test") and all(value is not None for value in values)
               and java_serial_field_adaptation_matches(path, roots)):
             status = "PLATFORM_ADAPTED"
@@ -1319,6 +1325,49 @@ def historical_document_section_matches(path: str, roots: list[pathlib.Path], ma
     return all(section and hashlib.sha256(section.encode("utf-8")).hexdigest()
                == mapping["sectionSha256"][version]
                for (_, section), version in zip(sections, ("1.0.x", "2.0.x", "3.0.x")))
+
+
+def validate_platform_test_syntax_mappings(mappings, roots: list[pathlib.Path]) -> dict[str, dict]:
+    """只登记同一生产逻辑下、测试方法一致的逐线依赖 API 适配。"""
+    validated = {}
+    for mapping in mappings:
+        path = pathlib.PurePosixPath(mapping.get("path", ""))
+        production = pathlib.PurePosixPath(mapping.get("productionPath", ""))
+        source = path.as_posix()
+        hashes = mapping.get("sourceSha256")
+        production_hashes = mapping.get("productionSha256")
+        methods = mapping.get("testMethods")
+        if (path.is_absolute() or ".." in path.parts or "/src/test/java/" not in source
+                or path.suffix != ".java" or source in validated
+                or production.is_absolute() or ".." in production.parts
+                or "/src/main/java/" not in production.as_posix()
+                or production.suffix != ".java"
+                or not isinstance(methods, list) or not methods
+                or len(set(methods)) != len(methods)
+                or not all(isinstance(method, str) and re.fullmatch(r"[A-Za-z_$][\w$]*", method)
+                           for method in methods)
+                or not mapping.get("reason")):
+            raise ValueError(f"invalid platform test syntax mapping: {source}")
+        for expected in (hashes, production_hashes):
+            if (not isinstance(expected, list) or len(expected) != len(roots)
+                    or not all(isinstance(value, str) and re.fullmatch(r"[0-9a-f]{64}", value)
+                               for value in expected)):
+                raise ValueError(f"invalid platform test hashes: {source}")
+        for index, root in enumerate(roots):
+            test_file, production_file = root / path, root / production
+            if (not test_file.is_file() or not production_file.is_file()
+                    or hashlib.sha256(test_file.read_bytes()).hexdigest() != hashes[index]
+                    or hashlib.sha256(production_file.read_bytes()).hexdigest()
+                    != production_hashes[index]):
+                raise ValueError(f"stale platform test syntax mapping: {source}")
+            actual_methods = re.findall(r"(?m)^\s*void\s+([A-Za-z_$][\w$]*)\s*\(",
+                                        test_file.read_text(encoding="utf-8"))
+            if actual_methods != methods:
+                raise ValueError(f"platform test methods differ: {source}")
+        if not java_files_lexically_equal(production.as_posix(), roots):
+            raise ValueError(f"platform test production logic differs: {source}")
+        validated[source] = mapping
+    return validated
 
 
 def validate_platform_syntax_mappings(mappings, roots: list[pathlib.Path]) -> dict[str, dict]:
