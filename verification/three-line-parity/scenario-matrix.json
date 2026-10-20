@@ -2764,11 +2764,11 @@
     },
     {
       "id": "BROKER-SQS-COMPAT-PROTOCOL",
-      "description": "ElasticMQ 容器上的 SQS 兼容协议发布、消费、消息 ID/因果头还原及确认删除；不代表 AWS 云端验收",
+      "description": "ElasticMQ 容器上的 SQS 兼容协议发布、消费、消息 ID/因果头还原、失败重投及确认删除；不代表 AWS 云端验收",
       "caseNames": {
-        "1.0.x": "publishesConsumesAndDeletesMessageThroughSqsProtocol",
-        "2.0.x": "publishesConsumesAndDeletesMessageThroughSqsProtocol",
-        "3.0.x": "publishesConsumesAndDeletesMessageThroughSqsProtocol"
+        "1.0.x": ["publishesConsumesAndDeletesMessageThroughSqsProtocol", "redeliversAfterListenerFailureAndDeletesAfterSuccess"],
+        "2.0.x": ["publishesConsumesAndDeletesMessageThroughSqsProtocol", "redeliversAfterListenerFailureAndDeletesAfterSuccess"],
+        "3.0.x": ["publishesConsumesAndDeletesMessageThroughSqsProtocol", "redeliversAfterListenerFailureAndDeletesAfterSuccess"]
       },
       "lines": {
         "1.0.x": {
