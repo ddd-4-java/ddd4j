@@ -26,10 +26,10 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
  * ddd4j-data-projection-panache 模块独立性自检：Quarkus Panache 实现的依赖面锁定。
  *
  * <p>本模块是 ProjectionPositionRepository SPI（core）在 Quarkus 运行时的落地，
- * 允许依赖 Quarkus／Panache 与 Java EE API（CDI／持久化／事务），但不得：
+ * 允许依赖 Quarkus／Panache 与当前线的 CDI／持久化／事务 API，但不得：
  * <ul>
  *   <li>引入 Spring（其实现归 ddd4j-data-projection-jpa——注意两边 {@code @Transactional}
- *       语义同名不同包，Quarkus 侧必须是 {@code javax.transaction}）</li>
+ *       语义同名不同包，Quarkus 侧必须使用当前线的事务注解）</li>
  *   <li>引入 Vert.x（响应式实现归后续 r2dbc 模块）</li>
  * </ul>
  * 并以允许清单式规则 {@link #projection_panache_deps_allowlist} 锁定总依赖面，
@@ -42,7 +42,7 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 class ProjectionPanacheModuleIndependenceTest {
 
     /**
-     * Panache 实现模块依赖允许清单：仅 JDK（java..）、Java EE API（javax..，
+     * Panache 实现模块依赖允许清单：仅 JDK（java..）、平台 API（
      * 含 CDI／persistence／transaction）、io.ddd4j 家族模块、Quarkus 全家桶
      * （含 Panache 基类，.hibernate.orm.panache 亦在 io.quarkus.. 下）、
      * Hibernate（若实体注解用到）与 Lombok 编译期标记。
