@@ -31,10 +31,16 @@ import javax.ws.rs.ext.ExceptionMapper;
  */
 public final class Ddd4jDropwizardExceptionMapper extends BaseErrorConfiguration implements ExceptionMapper<Throwable> {
 
+    /** 使用默认异常翻译器创建映射器。 */
     public Ddd4jDropwizardExceptionMapper() {
         super();
     }
 
+    /**
+     * 使用指定异常翻译器创建映射器。
+     *
+     * @param translator 异常翻译器
+     */
     public Ddd4jDropwizardExceptionMapper(WebExceptionTranslator translator) {
         super(translator);
     }
