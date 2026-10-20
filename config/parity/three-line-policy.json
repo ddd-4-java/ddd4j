@@ -3770,6 +3770,36 @@
         "21": "1b8217dd562bce5a65621171fff8234c5cbf382e6c327504b27f943cb4248eed"
       },
       "reason": "Helidon 2 的 javax CDI/JAX-RS/JSON-B 与高两线的 jakarta 包迁移；订单 HTTP 样例逐线实测创建、增加明细、查询、鉴权。"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/goods/web/GoodsResource.java",
+      "sourceSha256": [
+        "db709356272d67cf04053719fec7aa87527fa51a47223a0b3ce85a40b9979940",
+        "c5c04c3440f1c32d047d6b20a4c4fdc676ba8c68b2b100104e4d3525f37efc42",
+        "3de7aba1c3a836643c7c0049de9352bf76425e6fd07f0eab5d3b6215267a5cee"
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/goods/web/GoodsResourceTest.java",
+      "testSha256ByJdk": {
+        "8": "88d6a42d978448dd4d1c404c35ea22f5f92624f86ed33a0c97a4dacb63adb94a",
+        "17": "f1450f7fc9ca533c2d2f704e9700e70705e609592ad705f2ddcc7fc9e5c5165b",
+        "21": "744982819658ae2dd276388645359e155808b505eae3c84d65e9ddc24fb31f8c"
+      },
+      "reason": "三线 Javalin Shiro 商品 HTTP 路由契约各 32 项通过；JDK 8 采用 javax.inject，JDK 17/21 采用 jakarta.inject，路由业务行为一致。"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/order/web/OrderResource.java",
+      "sourceSha256": [
+        "b1081d75c69e9a3d3845e51823b1775550e4eff887ca28f3b76588f8fa34913c",
+        "c2eaf44d142bd6c6ae4ca5871a0b9ce34d37f5e384173f5e05ce35679f18cd24",
+        "c2eaf44d142bd6c6ae4ca5871a0b9ce34d37f5e384173f5e05ce35679f18cd24"
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/order/web/OrderResourceTest.java",
+      "testSha256ByJdk": {
+        "8": "7095738ea162ab3f1891bcac14e3e17c13178a1e4ae7ec4ee8c9b4d9cc99305a",
+        "17": "9419da7da7ed3c957302e06da2a8236e7a43a0fe19652065d199a8c7ceb7cb22",
+        "21": "4abbf9129c20d92735e0e4f6956b00dc9fefaa02d6b4f49112a00b409ff8a3c8"
+      },
+      "reason": "三线 Javalin Shiro 订单 HTTP 路由契约各 35 项通过；JDK 8 采用 javax.inject，JDK 17/21 采用 jakarta.inject，路由业务行为一致。"
     }
   ],
   "historicalDocumentSections": [
@@ -5162,6 +5192,109 @@
         "kickout_shouldReturn200"
       ],
       "reason": "三线 Javalin Sa-Token 认证与授权 HTTP 测试各 36 项通过，测试场景与方法一致；JDK 8 使用项目内 HttpClient 兼容层，高两线使用 JDK HttpClient，3.0.x 绑定 127.0.0.1。AuthenticationController 生产差异已由 platformSyntaxMappings 锁定。"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/goods/web/GoodsResourceTest.java",
+      "productionPath": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/goods/web/GoodsResource.java",
+      "sourceSha256": [
+        "88d6a42d978448dd4d1c404c35ea22f5f92624f86ed33a0c97a4dacb63adb94a",
+        "f1450f7fc9ca533c2d2f704e9700e70705e609592ad705f2ddcc7fc9e5c5165b",
+        "744982819658ae2dd276388645359e155808b505eae3c84d65e9ddc24fb31f8c"
+      ],
+      "productionSha256": [
+        "db709356272d67cf04053719fec7aa87527fa51a47223a0b3ce85a40b9979940",
+        "c5c04c3440f1c32d047d6b20a4c4fdc676ba8c68b2b100104e4d3525f37efc42",
+        "3de7aba1c3a836643c7c0049de9352bf76425e6fd07f0eab5d3b6215267a5cee"
+      ],
+      "testMethods": [
+        "resetServerState",
+        "create_shouldReturn201",
+        "create_thenGetById_shouldReturnSameCode",
+        "create_zeroStock_shouldBeOk",
+        "create_highPrice_shouldBeOk",
+        "create_decimalPrice_shouldPersist",
+        "update_shouldBeOk",
+        "update_thenGetById_shouldReturnNewName",
+        "update_nonexistentId_shouldReturn4xxOr5xx",
+        "update_invalidId_shouldReturn4xxOr5xx",
+        "changeStatus_toOnSale_shouldBeOk",
+        "changeStatus_toOffSale_shouldBeOk",
+        "changeStatus_invalidStatus_shouldReturn4xxOr5xx",
+        "changeStatus_lowercase_shouldStillWork",
+        "delete_shouldReturnOk",
+        "delete_thenGetById_shouldReturn4xxOr5xx",
+        "delete_nonexistentId_shouldReturn4xxOr5xx",
+        "delete_invalidId_shouldReturn4xxOr5xx",
+        "getById_unknownId_shouldReturn4xxOr5xx",
+        "getById_invalidId_shouldReturn4xxOr5xx",
+        "getByCode_validCode_shouldReturnOk",
+        "getByCode_unknownCode_shouldReturn4xxOr5xx",
+        "pageQuery_shouldReturn200",
+        "pageQuery_withCode_shouldReturnMatchingGoods",
+        "pageQuery_withOrderBys_shouldReturn200",
+        "listQuery_shouldReturn200",
+        "listQuery_byStatus_shouldReturn200",
+        "countQuery_shouldReturn200",
+        "countQuery_byStatus_shouldReturn200",
+        "fullCrudLifecycle",
+        "multipleCreates_allShouldSucceed",
+        "getByCode_responseShape",
+        "getById_responseShape"
+      ],
+      "reason": "三线 Javalin Shiro 商品 HTTP 测试各 32 项通过，场景及方法一致；JDK 8 使用项目内 HTTP 客户端，高两线使用 JDK HttpClient，3.0.x 使用 127.0.0.1 监听地址。生产资源差异由 platformSyntaxMappings 锁定。"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/order/web/OrderResourceTest.java",
+      "productionPath": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/order/web/OrderResource.java",
+      "sourceSha256": [
+        "7095738ea162ab3f1891bcac14e3e17c13178a1e4ae7ec4ee8c9b4d9cc99305a",
+        "9419da7da7ed3c957302e06da2a8236e7a43a0fe19652065d199a8c7ceb7cb22",
+        "4abbf9129c20d92735e0e4f6956b00dc9fefaa02d6b4f49112a00b409ff8a3c8"
+      ],
+      "productionSha256": [
+        "b1081d75c69e9a3d3845e51823b1775550e4eff887ca28f3b76588f8fa34913c",
+        "c2eaf44d142bd6c6ae4ca5871a0b9ce34d37f5e384173f5e05ce35679f18cd24",
+        "c2eaf44d142bd6c6ae4ca5871a0b9ce34d37f5e384173f5e05ce35679f18cd24"
+      ],
+      "testMethods": [
+        "resetServerState",
+        "createOrder_shouldReturn201",
+        "createOrder_thenGetById_shouldReturnSameOrder",
+        "getById_unknownId_shouldReturn4xxOr5xx",
+        "getByOrderNo_shouldReturnOrder",
+        "createOrder_buyerNameShouldPersist",
+        "createOrder_buyerIdShouldPersist",
+        "addLine_shouldIncludeLineInResponse",
+        "addLine_multipleLines_shouldAccumulate",
+        "addLine_toUnknownOrder_shouldReturn4xxOr5xx",
+        "addLine_quantity3_shouldPersist",
+        "addLine_unitPriceDecimal_shouldPersist",
+        "pay_orderWithoutLines_shouldReturn4xxOr5xx",
+        "pay_orderWithLines_shouldBePaid",
+        "pay_unknownOrder_shouldReturn4xx",
+        "pay_paidOrderTwice_secondShouldFail",
+        "ship_paidOrder_shouldBeShipped",
+        "ship_draftOrder_shouldReturn4xxOr5xx",
+        "ship_unknownOrder_shouldReturn4xx",
+        "ship_shippedOrderTwice_shouldFail",
+        "cancel_draftOrder_shouldBeCancelled",
+        "cancel_paidOrder_shouldBeCancelled",
+        "cancel_shippedOrder_shouldReturn4xxOr5xx",
+        "cancel_unknownOrder_shouldReturn4xx",
+        "cancel_cancelledOrderTwice_shouldNotConflict",
+        "listAll_shouldReturnOk",
+        "discount_unknownId_shouldReturn4xxOr5xx",
+        "discount_validId_shouldReturnOk",
+        "getById_returnsResponseShape",
+        "discount_containsAmount",
+        "fullLifecycle_createAddPayShip",
+        "multipleCreates_allShouldSucceed",
+        "listAll_multipleOrders_shouldReturnOk",
+        "addLine_differentGoodsIds_shouldPersist",
+        "fullLifecycle_createAddCancel",
+        "getById_responseIsValidJson"
+      ],
+      "reason": "三线 Javalin Shiro 订单 HTTP 测试各 35 项通过，场景及方法一致；JDK 8 使用项目内 HTTP 客户端，高两线使用 JDK HttpClient，3.0.x 使用 127.0.0.1 监听地址。生产资源差异由 platformSyntaxMappings 锁定。"
     }
   ]
 }
