@@ -23,15 +23,13 @@ import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import java.lang.annotation.Annotation;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * 类型说明。
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.0.x
- */
+/** 验证 DDD 注解的 Spring 组合注解及聚合根标记契约。 */
 @DisplayName("ddd4j-runtime-spring DDD 注解与 Spring 元注解融合验收")
 class SpringDddAnnotationFusionTest {
 
@@ -65,20 +63,12 @@ class SpringDddAnnotationFusionTest {
 
     @Test
     void springShouldResolveComposedAnnotations() {
-        /**
-         * 类型说明。
-         * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
-         * @since 3.0.x
-         */
+        /** 领域服务组合注解样例。 */
         @DomainService
         class TestDomainService {
         }
 
-        /**
-         * 类型说明。
-         * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
-         * @since 3.0.x
-         */
+        /** 领域仓储组合注解样例。 */
         @DomainRepository
         class TestDomainRepository {
         }
@@ -90,11 +80,7 @@ class SpringDddAnnotationFusionTest {
 
     @Test
     void domainEntityShouldKeepAggregateRootAttribute() {
-        /**
-         * 类型说明。
-         * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
-         * @since 3.0.x
-         */
+        /** 聚合根属性样例。 */
         @DomainEntity(aggregateRoot = true)
         class AggregateRoot {
         }
@@ -106,7 +92,7 @@ class SpringDddAnnotationFusionTest {
 
     @Test
     void springAnnotationPackageShouldContainExpectedAnnotations() {
-        Set<Class<?>> annotations = Set.of(
+        Set<Class<?>> annotations = new HashSet<>(Arrays.asList(
                 DomainService.class,
                 DomainRepository.class,
                 DomainEntity.class,
@@ -117,7 +103,7 @@ class SpringDddAnnotationFusionTest {
                 ApplicationService.class,
                 QueryService.class,
                 CommandExecutor.class
-        );
+        ));
 
         assertEquals(10, annotations.size());
         assertNull(loadOptional("io.ddd4j.spring.annotation.DomainEvent"));
