@@ -4252,6 +4252,29 @@
       "reason": "三线生产 CQRS GoodsController.java 逻辑词法等价，测试方法与 HTTP 断言一致；JDK 8 用 TestHttpClient，JDK 17/21 用 JDK HttpClient 与各自 Javalin 绑定地址。逐线哈希锁定。"
     },
     {
+      "path": "ddd4j-data/ddd4j-data-mybatisplus/src/test/java/io/ddd4j/data/mybatis/repository/MybatisAggregateRepositoryMySQLTest.java",
+      "productionPath": "ddd4j-data/ddd4j-data-mybatisplus/src/main/java/io/ddd4j/data/mybatis/repository/MybatisAggregateRepository.java",
+      "sourceSha256": [
+        "e3b512b7b76eda9f36e21bb51879c8332e0e2e2395ffe283c2dcf2d0ffc9fc1a",
+        "b14bdc3deec82a018ce29f9ca578b8c6fe12460405c1fc9531841e621d6e1be7",
+        "9050d0838d751328e29053118750956a9156953fd695160bbb1cb166dfa9c7eb"
+      ],
+      "productionSha256": [
+        "4fb720bf80eabb16b2e3b15dfb03d136f4edf38af30983a0549668d057745efe",
+        "c99ca69393385ff569cecea4e0e12a5ac7c86a915a5c86315597bcac19161189",
+        "c99ca69393385ff569cecea4e0e12a5ac7c86a915a5c86315597bcac19161189"
+      ],
+      "testMethods": [
+        "cleanTable",
+        "saveInsertsNewAggregate",
+        "updateByIdUpdatesExistingOnly",
+        "updateByIdDoesNotInsertWhenAbsent",
+        "insertOrUpdateBehavesAsUpsert",
+        "deleteByIdRemovesRow"
+      ],
+      "reason": "三线真实 MySQL 仓储测试各 5 项通过；生产仓储的 JDK 语法差异已由 platformSyntaxMappings 锁定，测试只使用各线 Testcontainers MySQL 模块坐标与导入，测试和生产源码按三线 SHA-256 锁定。"
+    },
+    {
       "path": "ddd4j-samples/ddd4j-sample-order-jdbc/src/test/java/io/ddd4j/sample/order/jdbc/JdbcOrderAtomicityTest.java",
       "productionPath": "ddd4j-samples/ddd4j-sample-order-application/src/main/java/io/ddd4j/sample/order/application/OrderApplicationService.java",
       "sourceSha256": [
