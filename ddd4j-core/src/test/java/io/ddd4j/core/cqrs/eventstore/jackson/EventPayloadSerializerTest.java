@@ -62,6 +62,19 @@ class EventPayloadSerializerTest {
     private final EventPayloadSerializer serializer = new EventPayloadSerializer(sourceMapper);
 
     @Test
+    void serializeShouldCarryBusinessAndEventMetadata() {
+        String json = serializer.serialize(new OrderPlacedEvent("thinkpad", 2));
+        assertThat(json).contains("\"productName\":\"thinkpad\"");
+        assertThat(json).contains("\"event-id\"");
+        assertThat(json).contains("\"event-timestamp\"");
+        assertThat(json).contains("\"entity-id-path\"");
+        assertThat(json).doesNotContain("\"eventId\"");
+        assertThat(json).doesNotContain("\"eventTimestamp\"");
+        assertThat(json).doesNotContain("\"entityIdPath\"");
+        assertThat(json).doesNotContain("\"aggregateVersion\"");
+    }
+
+    @Test
     void roundTripRestoresConcreteEventWithZonedDateTimeTimestamp() {
         OrderPlacedEvent original = new OrderPlacedEvent("thinkpad", 2);
         ZonedDateTime originalTimestamp = original.getEventTimestamp();
