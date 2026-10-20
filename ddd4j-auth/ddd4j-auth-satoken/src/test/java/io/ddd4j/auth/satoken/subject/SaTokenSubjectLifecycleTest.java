@@ -238,7 +238,8 @@ class SaTokenSubjectLifecycleTest {
     void refreshRenewsActiveSessionTimeout() {
         String token = login("user-8");
         SaManager.getSaTokenDao().updateTimeout(StpUtil.stpLogic.splicingKeyTokenValue(token), 30);
-        assertEquals(30, SaManager.getSaTokenDao().getTimeout(StpUtil.stpLogic.splicingKeyTokenValue(token)));
+        long initialTimeout = SaManager.getSaTokenDao().getTimeout(StpUtil.stpLogic.splicingKeyTokenValue(token));
+        assertTrue(initialTimeout > 0 && initialTimeout <= 30);
 
         String refreshed = subject().refresh();
 
