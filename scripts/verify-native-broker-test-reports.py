@@ -8,6 +8,7 @@ from pathlib import Path
 
 
 REQUIRED = {
+    "ddd4j-mq-kafka": "KafkaMQClientRoundTripTest",
     "ddd4j-mq-rabbitmq": "RabbitMQContainerIntegrationTest",
     "ddd4j-mq-nats": "NatsJetStreamIntegrationTest",
     "ddd4j-mq-mqtt": "MqttContainerIntegrationTest",

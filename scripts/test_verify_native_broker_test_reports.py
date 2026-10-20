@@ -10,6 +10,7 @@ from pathlib import Path
 
 SCRIPT = Path(__file__).with_name("verify-native-broker-test-reports.py")
 CASES = {
+    "ddd4j-mq-kafka": "KafkaMQClientRoundTripTest",
     "ddd4j-mq-rabbitmq": "RabbitMQContainerIntegrationTest",
     "ddd4j-mq-nats": "NatsJetStreamIntegrationTest",
     "ddd4j-mq-mqtt": "MqttContainerIntegrationTest",
@@ -56,6 +57,12 @@ class NativeBrokerReportTest(unittest.TestCase):
 
     def test_missing_sqs_report_fails(self):
         report = next((self.root / "ddd4j-mq" / "ddd4j-mq-sqs" / "target" /
+                       "surefire-reports").glob("TEST-*.xml"))
+        report.unlink()
+        self.assertNotEqual(0, self.check().returncode)
+
+    def test_missing_kafka_report_fails(self):
+        report = next((self.root / "ddd4j-mq" / "ddd4j-mq-kafka" / "target" /
                        "surefire-reports").glob("TEST-*.xml"))
         report.unlink()
         self.assertNotEqual(0, self.check().returncode)
