@@ -207,7 +207,7 @@ public class TenantAwareResource {
      * 将分页记录映射转换
      */
     protected <T, R> Page<R> transfer(Page<T> page, Function<T, R> func) {
-        List<R> results = page.getRecords().stream().map(func).toList();
+        List<R> results = page.getRecords().stream().map(func).collect(java.util.stream.Collectors.toList());
         Page<R> p = new Page<>();
         p.setRecords(results);
         p.setTotal(page.getTotal());
