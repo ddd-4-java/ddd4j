@@ -3771,6 +3771,118 @@
   ],
   "platformTestSyntaxMappings": [
     {
+      "path": "ddd4j-runtime/ddd4j-runtime-dropwizard/src/test/java/io/ddd4j/dropwizard/cqrs/DropwizardCqrsRuntimeContractTest.java",
+      "productionPath": "ddd4j-core/src/main/java/io/ddd4j/core/cqrs/command/DefaultCommandBus.java",
+      "sourceSha256": [
+        "459c08a0ecca9ade2506fe069a1511fb2d0a0ff0d2ab031419079769b624dcf8",
+        "b7d5e19ff43dcb0f55f298e696d94179e28dafc303afbd84cb08b1fe0881dd83",
+        "e031118415822a24d772b530f5e0f7d9b541fbac18b71fe637bd5dc94aa88e70"
+      ],
+      "productionSha256": [
+        "bca120047c41357fc253a8f45f2d3506bbf53ebe1b4bad14b6c7b5fef2cc2a41",
+        "e9f4ef78ecb4787d534b00ba13878e6b383f61c591745acb1efe8d43d393bcce",
+        "b2e4ff9750654c491d7049c07ebe0ce7acb93fe681126226c736ad14cf661728"
+      ],
+      "testMethods": [
+        "closeContract",
+        "shouldRouteCommandAToExecutorA",
+        "shouldRouteCommandBToExecutorB",
+        "shouldThrowWhenCommandNotRegistered",
+        "shouldThrowWhenCommandIsNull",
+        "shouldWriteAndReadBackProjectionPosition",
+        "shouldOverwriteProjectionPositionOnUpdate",
+        "shouldReportRunningAfterStart",
+        "shouldReportNotRunningAfterStop"
+      ],
+      "reason": "dropwizard 运行时测试以相同 CQRS 执行器顺序构造 DefaultCommandBus；JDK 8 使用 Arrays.asList，高两线使用 List.of。构造器仅迭代并注册，不修改输入集合；三线各 8 项定点契约测试通过。",
+      "contractPath": "ddd4j-runtime/ddd4j-runtime-testkit/src/main/java/io/ddd4j/runtime/testkit/AbstractCqrsRuntimeContractTest.java",
+      "contractSha256": "25cc37a06506caf805b54bf22ff1d219fce14b33e68ddb078d58aa6695af5f84"
+    },
+    {
+      "path": "ddd4j-runtime/ddd4j-runtime-micronaut/src/test/java/io/ddd4j/micronaut/cqrs/MicronautCqrsRuntimeContractTest.java",
+      "productionPath": "ddd4j-core/src/main/java/io/ddd4j/core/cqrs/command/DefaultCommandBus.java",
+      "sourceSha256": [
+        "76809274f12aee44fae7dc043cfa53ef142bc361ed9ce9b3d587edd07675fdaf",
+        "d8ab44a260dc330b62a10fb7dbebb13dd9ad643fab07cadec72fa13b5bd774a8",
+        "27885c15321a9c03fc28d408e807ddc520abbeebb2c5222e24b765cb1af8d290"
+      ],
+      "productionSha256": [
+        "bca120047c41357fc253a8f45f2d3506bbf53ebe1b4bad14b6c7b5fef2cc2a41",
+        "e9f4ef78ecb4787d534b00ba13878e6b383f61c591745acb1efe8d43d393bcce",
+        "b2e4ff9750654c491d7049c07ebe0ce7acb93fe681126226c736ad14cf661728"
+      ],
+      "testMethods": [
+        "closeContract",
+        "shouldRouteCommandAToExecutorA",
+        "shouldRouteCommandBToExecutorB",
+        "shouldThrowWhenCommandNotRegistered",
+        "shouldThrowWhenCommandIsNull",
+        "shouldWriteAndReadBackProjectionPosition",
+        "shouldOverwriteProjectionPositionOnUpdate",
+        "shouldReportRunningAfterStart",
+        "shouldReportNotRunningAfterStop"
+      ],
+      "reason": "micronaut 运行时测试以相同 CQRS 执行器顺序构造 DefaultCommandBus；JDK 8 使用 Arrays.asList，高两线使用 List.of。构造器仅迭代并注册，不修改输入集合；三线各 8 项定点契约测试通过。",
+      "contractPath": "ddd4j-runtime/ddd4j-runtime-testkit/src/main/java/io/ddd4j/runtime/testkit/AbstractCqrsRuntimeContractTest.java",
+      "contractSha256": "25cc37a06506caf805b54bf22ff1d219fce14b33e68ddb078d58aa6695af5f84"
+    },
+    {
+      "path": "ddd4j-runtime/ddd4j-runtime-vertx/src/test/java/io/ddd4j/vertx/cqrs/VertxCqrsRuntimeContractTest.java",
+      "productionPath": "ddd4j-core/src/main/java/io/ddd4j/core/cqrs/command/DefaultCommandBus.java",
+      "sourceSha256": [
+        "b96e0d6ad55fdc2417b0d90cd583a87c8191f88f5b80f0f4455c1c63b6fe1011",
+        "86654564f5cb334ae2ec2a0503d8a948e3482d2b93887e1278d92e27c886c19e",
+        "9200d86dcc24edf29ff4120c45bf0c362525f9a963988bde15346e3806cb4083"
+      ],
+      "productionSha256": [
+        "bca120047c41357fc253a8f45f2d3506bbf53ebe1b4bad14b6c7b5fef2cc2a41",
+        "e9f4ef78ecb4787d534b00ba13878e6b383f61c591745acb1efe8d43d393bcce",
+        "b2e4ff9750654c491d7049c07ebe0ce7acb93fe681126226c736ad14cf661728"
+      ],
+      "testMethods": [
+        "closeContract",
+        "shouldRouteCommandAToExecutorA",
+        "shouldRouteCommandBToExecutorB",
+        "shouldThrowWhenCommandNotRegistered",
+        "shouldThrowWhenCommandIsNull",
+        "shouldWriteAndReadBackProjectionPosition",
+        "shouldOverwriteProjectionPositionOnUpdate",
+        "shouldReportRunningAfterStart",
+        "shouldReportNotRunningAfterStop"
+      ],
+      "reason": "vertx 运行时测试以相同 CQRS 执行器顺序构造 DefaultCommandBus；JDK 8 使用 Arrays.asList，高两线使用 List.of。构造器仅迭代并注册，不修改输入集合；三线各 8 项定点契约测试通过。",
+      "contractPath": "ddd4j-runtime/ddd4j-runtime-testkit/src/main/java/io/ddd4j/runtime/testkit/AbstractCqrsRuntimeContractTest.java",
+      "contractSha256": "25cc37a06506caf805b54bf22ff1d219fce14b33e68ddb078d58aa6695af5f84"
+    },
+    {
+      "path": "ddd4j-runtime/ddd4j-runtime-helidon/src/test/java/io/ddd4j/helidon/cqrs/HelidonCqrsRuntimeContractTest.java",
+      "productionPath": "ddd4j-core/src/main/java/io/ddd4j/core/cqrs/command/DefaultCommandBus.java",
+      "sourceSha256": [
+        "47a36d86d0d2ce92b538b301f24e9f93b049501991da29f0172d5643b30d3a7a",
+        "2397ef048ad160e2c01cc84a4ae480c11583e4b539da75fe354cfad196ed27c8",
+        "ab9ec12d71ee47c191329f355872dc3ad0fd614c728cc5b22caa1660c1356e5a"
+      ],
+      "productionSha256": [
+        "bca120047c41357fc253a8f45f2d3506bbf53ebe1b4bad14b6c7b5fef2cc2a41",
+        "e9f4ef78ecb4787d534b00ba13878e6b383f61c591745acb1efe8d43d393bcce",
+        "b2e4ff9750654c491d7049c07ebe0ce7acb93fe681126226c736ad14cf661728"
+      ],
+      "testMethods": [
+        "closeContract",
+        "shouldRouteCommandAToExecutorA",
+        "shouldRouteCommandBToExecutorB",
+        "shouldThrowWhenCommandNotRegistered",
+        "shouldThrowWhenCommandIsNull",
+        "shouldWriteAndReadBackProjectionPosition",
+        "shouldOverwriteProjectionPositionOnUpdate",
+        "shouldReportRunningAfterStart",
+        "shouldReportNotRunningAfterStop"
+      ],
+      "reason": "helidon 运行时测试以相同 CQRS 执行器顺序构造 DefaultCommandBus；JDK 8 使用 Arrays.asList，高两线使用 List.of。构造器仅迭代并注册，不修改输入集合；三线各 8 项定点契约测试通过。",
+      "contractPath": "ddd4j-runtime/ddd4j-runtime-testkit/src/main/java/io/ddd4j/runtime/testkit/AbstractCqrsRuntimeContractTest.java",
+      "contractSha256": "25cc37a06506caf805b54bf22ff1d219fce14b33e68ddb078d58aa6695af5f84"
+    },
+    {
       "path": "ddd4j-core/src/test/java/io/ddd4j/core/api/RTest.java",
       "productionPath": "ddd4j-core/src/main/java/io/ddd4j/core/api/R.java",
       "sourceSha256": [
