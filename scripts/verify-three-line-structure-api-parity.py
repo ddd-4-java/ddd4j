@@ -761,9 +761,35 @@ def validate_platform_cdi_resources_only_on_jdk8(items: list[dict],
                            for file in tests)):
             raise ValueError(f"stale JDK 8-only CDI descriptor evidence: {source}")
         contents = tests[0].read_text(encoding="utf-8")
-        if not all(marker in contents for marker in
-                   ("@QuarkusTest", "Arc.container()", "ApplicationScoped")):
-            raise ValueError(f"missing CDI scope assertion: {test}")
+        assertion = item.get("assertion", "scope")
+        if assertion == "scope":
+            markers = ("@QuarkusTest", "Arc.container()", "ApplicationScoped")
+        elif assertion == "available":
+            markers = ("@QuarkusTest", "Arc.container()", "isAvailable()")
+            http_path = pathlib.PurePosixPath(item.get("httpEvidence", ""))
+            http_hashes = item.get("httpTestSha256")
+            module = source.split("/src/main/resources/", 1)[0]
+            if (http_path.is_absolute() or ".." in http_path.parts
+                    or not http_path.as_posix().startswith(module + "/src/test/java/")
+                    or http_path.suffix != ".java"
+                    or not isinstance(http_hashes, list) or len(http_hashes) != 3
+                    or not all(isinstance(digest, str)
+                               and re.fullmatch(r"[0-9a-f]{64}", digest)
+                               for digest in http_hashes)):
+                raise ValueError(f"invalid CDI HTTP contract evidence: {source}")
+            for root, digest in zip(roots, http_hashes):
+                http_file = root / http_path
+                if (not http_file.is_file()
+                        or hashlib.sha256(http_file.read_bytes()).hexdigest() != digest):
+                    raise ValueError(f"stale CDI HTTP contract evidence: {source}")
+                http_content = http_file.read_text(encoding="utf-8")
+                if ("@QuarkusTest" not in http_content
+                        or "extends AbstractWebContractTest" not in http_content):
+                    raise ValueError(f"missing CDI HTTP contract: {source}")
+        else:
+            raise ValueError(f"unsupported CDI assertion: {source}")
+        if not all(marker in contents for marker in markers):
+            raise ValueError(f"missing CDI {assertion} assertion: {test}")
         beans = ET.fromstring(descriptor.read_bytes())
         if (beans.tag != "{http://xmlns.jcp.org/xml/ns/javaee}beans"
                 or beans.attrib != {"bean-discovery-mode": "annotated", "version": "2.0"}
