@@ -1534,6 +1534,21 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-samples/ddd4j-sample-javalin/src/main/java/io/ddd4j/sample/javalin/JavalinSample.java",
+      "sourceSha256": [
+        "4e2affd56c44ca4ae8f71c9e51d55fcead9a0c5534e81df24947f294b344b256",
+        "3e8c63b19fd377b5d9ec2ead64a949922abca15e57ff7d9028d0f4e2acddba75",
+        "096c5477589250b3fdc1caf1727ec7bdb8a07d31e79810d66b087a516e09eed9"
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-javalin/src/test/java/io/ddd4j/sample/javalin/order/web/OrderControllerTest.java",
+      "testSha256ByJdk": {
+        "8": "3c32a7d114f054b3ac8a8f83539d277b6fe9dd189ef05b3d277112e255988caf",
+        "17": "e799ea911a7c304c142bab33150be55006ec867e71a163ba3195af83c93f5c0a",
+        "21": "4efaaa07f2407487a59a7b08372a463d54f666bdceadd8d41e34f61c4891a7c7"
+      },
+      "reason": "三线均启动 Javalin 示例并提供相同订单、鉴权、幂等和请求上下文行为；JDK 8 使用 Javalin 4 和 Jackson 2 配置，JDK 17/21 使用 Javalin 7 及各线 Jackson 2/3 配置。高线删除运行句柄多余 JSON 注解和无效反序列化钩子。OrderControllerTest 各 4 项真实 HTTP 测试及 JavalinApplicationContractTest 各 2 项值契约测试通过；源码与 HTTP 测试哈希锁定。"
+    },
+    {
       "path": "ddd4j-web/ddd4j-web-vertx/src/main/java/io/ddd4j/web/vertx/Ddd4jVertxWeb.java",
       "sourceSha256": [
         "c5e92aabc70afd025b0f8b08036463e7a504dee3760708f1f0e63ea0dc2000f4",
