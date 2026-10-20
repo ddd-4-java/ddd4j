@@ -25,6 +25,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -68,7 +69,11 @@ public class OrderCQRSQueryResource extends TenantAwareResource {
         int p = Objects.isNull(page) || page < 1 ? 1 : page;
         int ps = Objects.isNull(pageSize) || pageSize < 1 ? 10 : pageSize;
         // 直接通过订单详情缓存逐个遍历（演示缓存读侧效果）
-        return ok(Map.of("page", p, "pageSize", ps, "note", "see /api/orders/query/stats"));
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("page", p);
+        result.put("pageSize", ps);
+        result.put("note", "see /api/orders/query/stats");
+        return ok(result);
     }
 
     /**
@@ -87,7 +92,10 @@ public class OrderCQRSQueryResource extends TenantAwareResource {
     @Path("/buyer/{buyerId}/count")
     public Response buyerCount(@PathParam("buyerId") String buyerId) {
         long count = orderCacheService.getBuyerOrderCount(buyerId);
-        return ok(Map.of("buyerId", buyerId, "count", count));
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("buyerId", buyerId);
+        result.put("count", count);
+        return ok(result);
     }
 
     /**
