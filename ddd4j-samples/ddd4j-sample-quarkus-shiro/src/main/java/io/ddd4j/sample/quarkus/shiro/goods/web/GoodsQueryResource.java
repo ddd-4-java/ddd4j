@@ -23,6 +23,7 @@ import io.ddd4j.core.api.R;
 import io.ddd4j.sample.quarkus.shiro.goods.application.GoodsApplicationService;
 import io.ddd4j.sample.quarkus.shiro.goods.domain.Goods;
 import io.ddd4j.sample.quarkus.shiro.goods.domain.GoodsQuery;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -34,13 +35,13 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * 商品充血查询资源（读侧）。
+ * 商品充血查询逻辑（由 GoodsResource 暴露 HTTP 读侧路由）。
  *
  * <p>接收查询参数并构造 {@link GoodsQuery}，调用充血查询方法。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-@Path("/api/goods")
+@ApplicationScoped
 @Produces(MediaType.APPLICATION_JSON)
 public class GoodsQueryResource {
 

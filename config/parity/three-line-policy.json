@@ -3324,6 +3324,17 @@
         "21": "34f681464d7769bfb9c98345850399008cd2d71c0ec298870ce75fa00491b858"
       },
       "reason": "Quarkus Shiro 三线种子角色、用户与权限聚合逻辑一致；JDK 8 使用 javax CDI、Arrays/Collections，高两线使用 jakarta CDI、List/Set 工厂方法。各线 RBAC HTTP 资源契约顺序执行 45 项通过；源码和逐线测试哈希锁定。"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/main/java/io/ddd4j/sample/quarkus/shiro/goods/web/GoodsResource.java",
+      "sourceSha256": [
+        "eed8aa4fee1552a923bab04413668863fd1e39d71fa523b5cd62a36cd9fb053f",
+        "d851d2fa55024e8c7cb03124acab0513e40c5f5dd40be0c2502cece470020de6",
+        "d851d2fa55024e8c7cb03124acab0513e40c5f5dd40be0c2502cece470020de6"
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/test/java/io/ddd4j/sample/quarkus/shiro/goods/web/GoodsQueryResourceContractTest.java",
+      "testSha256": "dfa6e3e43b35648e936152edeccc02ab6fa2071f87fb5b96d64ea5d737f0c901",
+      "reason": "三线共用 GoodsResource 商品读写 URL；JDK 8 Quarkus 1 显式 CDI 作用域和 javax JAX-RS，高线使用 jakarta JAX-RS。查询逻辑委托 GoodsQueryResource，三线商品查询 HTTP 契约各 2 项及 RBAC 回归各 45 项通过；源码和共同查询测试哈希锁定。"
     }
   ],
   "historicalDocumentSections": [
