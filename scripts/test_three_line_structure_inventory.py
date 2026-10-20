@@ -706,6 +706,31 @@ class ThreeLineInventoryTest(unittest.TestCase):
         result, _ = self.run_checker("inventory")
         self.assertNotEqual(0, result.returncode)
 
+    def test_jdk21_license_header_mapping_requires_exact_content(self):
+        path = "config/apache-2.0-header.txt"
+        content = "Copyright (c) ddd4j\n"
+        self.write(self.roots[2], path, content)
+        policy = json.loads(self.policy.read_text())
+        policy["platformBuildConfigFiles"] = [{
+            "path": path,
+            "sha256ByJdk": {
+                "8": None,
+                "17": None,
+                "21": hashlib.sha256(content.encode()).hexdigest(),
+            },
+            "evidence": "JDK 21 Maven license plugin references this header",
+        }]
+        self.policy.write_text(json.dumps(policy))
+
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        row = next(item for item in json.loads((output / "inventory.json").read_text())
+                   ["differences"] if item["path"] == path)
+        self.assertEqual("PLATFORM_CONFIG", row["status"])
+        self.write(self.roots[2], path, "changed\n")
+        result, _ = self.run_checker("inventory")
+        self.assertNotEqual(0, result.returncode)
+
     def test_workflow_version_adaptation_requires_exact_files_and_line_markers(self):
         path = ".github/workflows/deploy.yml"
         contents = tuple(
