@@ -791,7 +791,7 @@
       "id": "CORE-EVENT-PAYLOAD-STRONG-ROUNDTRIP",
       "description": "三线按本线 Jackson 版本保留事件 ID、时间、实体路径和因果元数据；不接受 @class 选择目标类型，坏 JSON 保留原异常",
       "caseNames": {
-        "1.0.x": ["roundTripRestoresEventIdentityTimestampAndSource", "causalityMetadataUsesHyphenatedPayloadFields", "unknownClassMarkerCannotChooseDeserializedType", "deserializeThrowsIllegalStateExceptionOnMalformedJson"],
+        "1.0.x": ["roundTripRestoresConcreteEventWithZonedDateTimeTimestamp", "causalityMetadataUsesHyphenatedPayloadFields", "unknownClassMarkerCannotChooseTheDeserializedType", "deserializeThrowsIllegalStateExceptionOnMalformedJson"],
         "2.0.x": ["roundTripRestoresConcreteEventWithZonedDateTimeTimestamp", "causalityMetadataUsesHyphenatedPayloadFields", "unknownClassMarkerCannotChooseTheDeserializedType", "deserializeThrowsIllegalStateExceptionOnMalformedJson"],
         "3.0.x": ["roundTripRestoresConcreteEventWithZonedDateTimeTimestamp", "causalityMetadataUsesHyphenatedPayloadFields", "unknownClassMarkerCannotChooseTheDeserializedType", "deserializeThrowsIllegalStateExceptionOnMalformedJson"]
       },
@@ -3988,19 +3988,19 @@
           "secondConstructorRejectsNullContextFactory",
           "secondConstructorRejectsNullRequestLifecycle",
           "secondConstructorAcceptsNullIdempotency",
-          "publicPathProceedsThroughMicronautThreeFilterChain"
+          "publicPathProceedsThroughMicronautFilterChain"
         ],
         "2.0.x": [
           "secondConstructorRejectsNullContextFactory",
           "secondConstructorRejectsNullRequestLifecycle",
           "secondConstructorAcceptsNullIdempotency",
-          "publicPathProceedsThroughMicronautFourContinuation"
+          "publicPathProceedsThroughMicronautFilterChain"
         ],
         "3.0.x": [
           "secondConstructorRejectsNullContextFactory",
           "secondConstructorRejectsNullRequestLifecycle",
           "secondConstructorAcceptsNullIdempotency",
-          "publicPathProceedsThroughMicronautFourContinuation"
+          "publicPathProceedsThroughMicronautFilterChain"
         ]
       },
       "lines": {
@@ -4301,8 +4301,8 @@
       "lastEvidenceSha256": "1ad4fe5f7e5b1b5c04228c73884f98d35f07f52966294f6cea3796689ebdb3c5",
       "caseNames": {
         "1.0.x": ["appendAndReadShouldRoundTripTypedMetadataOnPostgres", "versionRangeAndAggregateTypeIsolationShouldFollowCoreContractOnPostgres", "readAllShouldPreserveGlobalPositionOrderOnPostgres", "appendWithStaleVersionShouldRejectOnPostgres"],
-        "2.0.x": ["appendAndReadShouldRoundTripTypedEventOnPostgres", "versionRangeAndAggregateTypeIsolationShouldFollowCoreContractOnPostgres", "readAllShouldPreserveGlobalPositionOrderOnPostgres", "appendWithStaleVersionShouldRejectOnPostgres"],
-        "3.0.x": ["appendAndReadShouldRoundTripTypedEventOnPostgres", "versionRangeAndAggregateTypeIsolationShouldFollowCoreContractOnPostgres", "readAllShouldPreserveGlobalPositionOrderOnPostgres", "appendWithStaleVersionShouldRejectOnPostgres"]
+        "2.0.x": ["appendAndReadShouldRoundTripTypedMetadataOnPostgres", "versionRangeAndAggregateTypeIsolationShouldFollowCoreContractOnPostgres", "readAllShouldPreserveGlobalPositionOrderOnPostgres", "appendWithStaleVersionShouldRejectOnPostgres"],
+        "3.0.x": ["appendAndReadShouldRoundTripTypedMetadataOnPostgres", "versionRangeAndAggregateTypeIsolationShouldFollowCoreContractOnPostgres", "readAllShouldPreserveGlobalPositionOrderOnPostgres", "appendWithStaleVersionShouldRejectOnPostgres"]
       },
       "lines": {
         "1.0.x": {"status": "supported", "tests": ["ddd4j-data/ddd4j-data-event-store-r2dbc/src/test/java/io/ddd4j/data/event/store/r2dbc/R2dbcEventStorePostgresIT.java"]},
