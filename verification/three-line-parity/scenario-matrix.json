@@ -2763,6 +2763,35 @@
       }
     },
     {
+      "id": "BROKER-SQS-COMPAT-PROTOCOL",
+      "description": "ElasticMQ 容器上的 SQS 兼容协议发布、消费、消息 ID/因果头还原及确认删除；不代表 AWS 云端验收",
+      "caseNames": {
+        "1.0.x": "publishesConsumesAndDeletesMessageThroughSqsProtocol",
+        "2.0.x": "publishesConsumesAndDeletesMessageThroughSqsProtocol",
+        "3.0.x": "publishesConsumesAndDeletesMessageThroughSqsProtocol"
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-sqs/src/test/java/io/ddd4j/mq/sqs/SqsBrokerIntegrationTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-sqs/src/test/java/io/ddd4j/mq/sqs/SqsBrokerIntegrationTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-sqs/src/test/java/io/ddd4j/mq/sqs/SqsBrokerIntegrationTest.java"
+          ]
+        }
+      }
+    },
+    {
       "id": "MQ-TDMQ-SPI-HEADER-CONTRACT",
       "description": "TDMQ 业务注入 SPI 的冻结头传递、内存链路原生头优先级和旧函数式发布器因果头 fail-fast；无腾讯云 SDK 或云端认证证据",
       "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-13-tdmq-header-spi/report.json",
