@@ -3743,6 +3743,34 @@
         "validationFailure_shouldUseUnifiedBadRequestCode"
       ],
       "reason": "三线 19 项 R 响应契约测试的方法及断言语义一致；JDK 21 使用 Jackson 3 的 JsonMapper/asString，JDK 8/17 使用 Jackson 2 的 ObjectMapper/asText。生产 R.java 词法等价，测试与生产源码均逐线哈希锁定。"
+    },
+    {
+      "path": "ddd4j-data/ddd4j-data-projection/src/test/java/io/ddd4j/data/projection/ProjectionHandlerRegistryTest.java",
+      "productionPath": "ddd4j-data/ddd4j-data-projection/src/main/java/io/ddd4j/data/projection/ProjectionHandlerRegistry.java",
+      "sourceSha256": [
+        "91d4e97d593cc59c457488d50a71367274bd9d586d90ad0244dc9373a902d8fb",
+        "4d20d3681fa1c78f47844cb47727d31899316304330f130fd9d075065ebfebff",
+        "fcc0c70439731faa7d0d4adcda40311637bddab403529e38f507febabf6e0bc8"
+      ],
+      "productionSha256": [
+        "f7eafc87154a1d96769cc281ff1cb2b24aec76dd9a75280a18604980886507d6",
+        "f7eafc87154a1d96769cc281ff1cb2b24aec76dd9a75280a18604980886507d6",
+        "f7eafc87154a1d96769cc281ff1cb2b24aec76dd9a75280a18604980886507d6"
+      ],
+      "testMethods": [
+        "registeredHandlerIsFoundByExactEventType",
+        "findHandlerReturnsEmptyForUnregisteredEventType",
+        "findHandlerRejectsNullEventType",
+        "registerRejectsNullHandler",
+        "registerRejectsNullEventTypeBeforeRegisteringAnyType",
+        "duplicateEventTypeRegistrationThrowsIllegalStateWithEventName",
+        "conflictingBatchRegistrationIsRejectedEntirely",
+        "allViewIsImmutable",
+        "multipleHandlersRouteToTheirOwnEventTypesAndMultiTypeHandlerAppearsOnce",
+        "defaultHandlerConfigurationMatchesContract",
+        "failWith"
+      ],
+      "reason": "三线生产 ProjectionHandlerRegistry.java 字节一致，测试方法和断言一致；JDK 8 用 Arrays.asList/LinkedHashSet 构造不可变 Set，JDK 17/21 用 Set.of。JDK 21 仅多 Javadoc；逐线哈希锁定。"
     }
   ]
 }
