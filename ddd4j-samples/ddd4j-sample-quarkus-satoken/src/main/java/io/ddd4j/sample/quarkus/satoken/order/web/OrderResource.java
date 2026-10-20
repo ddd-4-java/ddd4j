@@ -14,6 +14,7 @@
  */
 package io.ddd4j.sample.quarkus.satoken.order.web;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -59,6 +60,7 @@ import java.util.List;
 @Path("/orders")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@ApplicationScoped
 public class OrderResource {
 
     private final OrderApplicationService orderApplicationService;

@@ -14,6 +14,7 @@
  */
 package io.ddd4j.sample.quarkus.order.web;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -52,6 +53,7 @@ import java.util.Objects;
  */
 @Path("/api/orders")
 @Produces(MediaType.APPLICATION_JSON)
+@ApplicationScoped
 public class OrderResource {
 
     private final OrderApplicationService applicationService;

@@ -14,6 +14,7 @@
  */
 package io.ddd4j.sample.quarkus.satoken.goods.web;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import io.ddd4j.core.api.R;
 import io.ddd4j.sample.quarkus.satoken.goods.application.GoodsApplicationService;
 import io.ddd4j.sample.quarkus.satoken.goods.domain.Goods;
@@ -33,6 +34,7 @@ import jakarta.ws.rs.core.MediaType;
 @Path("/api/goods")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@ApplicationScoped
 public class GoodsResource {
 
     private final GoodsApplicationService applicationService;

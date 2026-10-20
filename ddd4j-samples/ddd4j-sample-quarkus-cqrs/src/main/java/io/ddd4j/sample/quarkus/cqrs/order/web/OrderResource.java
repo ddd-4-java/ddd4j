@@ -14,6 +14,7 @@
  */
 package io.ddd4j.sample.quarkus.cqrs.order.web;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -63,6 +64,7 @@ import java.util.Optional;
  */
 @Path("/orders")
 @Produces(MediaType.APPLICATION_JSON)
+@ApplicationScoped
 public class OrderResource extends TenantAwareResource {
 
     private final OrderApplicationService applicationService;

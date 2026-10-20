@@ -14,6 +14,7 @@
  */
 package io.ddd4j.sample.quarkus.satoken.rbac;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaCheckRole;
@@ -57,6 +58,7 @@ import java.util.List;
  */
 @Path("/admin")
 @Produces(MediaType.APPLICATION_JSON)
+@ApplicationScoped
 public class AuthorizationResource {
 
     @Inject

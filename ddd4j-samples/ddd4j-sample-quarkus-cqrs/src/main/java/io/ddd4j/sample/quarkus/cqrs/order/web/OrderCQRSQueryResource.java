@@ -14,6 +14,7 @@
  */
 package io.ddd4j.sample.quarkus.cqrs.order.web;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import java.util.Objects;
 
 import io.ddd4j.sample.quarkus.cqrs.cache.OrderCacheService;
@@ -48,6 +49,7 @@ import java.util.Map;
  */
 @Path("/api/orders/query")
 @Produces(MediaType.APPLICATION_JSON)
+@ApplicationScoped
 public class OrderCQRSQueryResource extends TenantAwareResource {
 
     private final OrderCacheService orderCacheService;
