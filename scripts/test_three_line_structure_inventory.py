@@ -647,6 +647,40 @@ class ThreeLineInventoryTest(unittest.TestCase):
         result, _ = self.run_checker("inventory")
         self.assertNotEqual(0, result.returncode)
 
+    def test_license_governance_files_require_exact_line_hashes(self):
+        paths = ("config/license-selections.tsv", "config/license-build-tool-exclusions.tsv")
+        policy = json.loads(self.policy.read_text())
+        mappings = []
+        for path in paths:
+            contents = tuple(f"{path}:jdk{jdk}\n" for jdk in (8, 17, 21))
+            for root, content in zip(self.roots, contents):
+                self.write(root, path, content)
+            mappings.append({
+                "path": path,
+                "sha256ByJdk": {jdk: hashlib.sha256(content.encode()).hexdigest()
+                                for jdk, content in zip(("8", "17", "21"), contents)},
+                "evidence": "line-specific license audit",
+            })
+        policy["platformDependencyConfigFiles"] = mappings
+        self.policy.write_text(json.dumps(policy))
+
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = {item["path"]: item for item in
+                json.loads((output / "inventory.json").read_text())["differences"]}
+        self.assertTrue(all(rows[path]["status"] == "PLATFORM_CONFIG" for path in paths))
+
+        self.write(self.roots[1], paths[0], "unexpected\n")
+        result, _ = self.run_checker("inventory")
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("stale platform dependency config mapping", result.stderr)
+
+        policy["platformDependencyConfigFiles"][0]["path"] = "config/unrelated.tsv"
+        self.policy.write_text(json.dumps(policy))
+        result, _ = self.run_checker("inventory")
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("invalid platform dependency config mapping", result.stderr)
+
     def test_build_config_exception_requires_exact_three_line_inputs(self):
         path = ".mvn/wrapper/maven-wrapper.properties"
         contents = ("maven 3\n", "maven 3\n", "maven 4\n")
