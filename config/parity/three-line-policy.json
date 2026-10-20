@@ -4346,6 +4346,57 @@
       "reason": "三线相同的真实 ArC 命令路由、未注册命令和装配冲突测试；JDK 8 的 javax CDI Instance 与高两线 jakarta CDI 接口及集合工厂 API 不同，生产源码已有逐线语法映射锁定。"
     },
     {
+      "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/rbac/web/AuthenticationControllerTest.java",
+      "productionPath": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/rbac/web/AuthenticationController.java",
+      "sourceSha256": [
+        "a9d6cdd9b28dfba92a86e4d1eb16cbddbe1c9ad70587ea38e8a00558d388b8f5",
+        "699f69337c9a5a2e61677e266c751641d71ae763a107ae6979ad147d78bad71d",
+        "22404f5a2d9692722e27b91b7ef66177d98b475e03607fe3aa9a498d63768f30"
+      ],
+      "productionSha256": [
+        "d547452874e623e3aab4c0fbaeb37e4e0bd7fdc6f00e117fd49fac5ab6a83040",
+        "889de37109f316a8aa4ba588fa9f3488505f564b8fe39732df015f44c0c1ab8b",
+        "889de37109f316a8aa4ba588fa9f3488505f564b8fe39732df015f44c0c1ab8b"
+      ],
+      "testMethods": [
+        "startServer",
+        "stopServer",
+        "resetServerState",
+        "login_validCredentials_shouldReturnToken",
+        "login_wrongPassword_shouldReturn401",
+        "login_disabledUser_shouldReturn401",
+        "login_nonExistentUser_shouldReturn401",
+        "logout_authenticated_shouldReturn200",
+        "logout_unauthenticated_shouldReturn401",
+        "me_authenticated_shouldReturnUserInfo",
+        "me_unauthenticated_shouldReturnNotAuthenticated",
+        "status_authenticated_shouldReturnLoginTrue",
+        "status_unauthenticated_shouldReturnLoginFalse",
+        "kickout_shouldReturn200",
+        "checkRole_adminHasAdminRole_shouldReturnTrue",
+        "checkRole_userLacksAdminRole_shouldReturnFalse",
+        "checkRole_unauthenticated_shouldReturn401",
+        "adminArea_asAdmin_shouldReturn200",
+        "adminArea_asUser_shouldReturn403",
+        "adminArea_unauthenticated_shouldReturn401",
+        "managerArea_asAdmin_shouldReturn403",
+        "managerArea_unauthenticated_shouldReturn401",
+        "checkPermission_adminHasOrderPay_shouldReturnTrue",
+        "checkPermission_userLacksOrderPay_shouldReturnFalse",
+        "checkPermission_unauthenticated_shouldReturn401",
+        "usersList_asAdmin_shouldReturn200",
+        "usersList_asUser_shouldReturn200",
+        "usersList_unauthenticated_shouldReturn401",
+        "orderPay_asAdmin_shouldReturn200",
+        "orderPay_asUser_shouldReturn403",
+        "orderPay_unauthenticated_shouldReturn401",
+        "deleteUser_asAdmin_shouldReturn200",
+        "deleteUser_asUser_shouldReturn403",
+        "deleteUser_unauthenticated_shouldReturn401"
+      ],
+      "reason": "三线保持 31 项认证 HTTP 契约；JDK 8 使用兼容 HttpClient，高两线使用 JDK HttpClient，Javalin 新线重建连接池并使用 IPv4 回环地址，生产控制器已由平台语法映射锁定。"
+    },
+    {
       "path": "ddd4j-data/ddd4j-data-mybatisplus/src/test/java/io/ddd4j/data/mybatis/repository/MybatisAggregateRepositoryMySQLTest.java",
       "productionPath": "ddd4j-data/ddd4j-data-mybatisplus/src/main/java/io/ddd4j/data/mybatis/repository/MybatisAggregateRepository.java",
       "sourceSha256": [
