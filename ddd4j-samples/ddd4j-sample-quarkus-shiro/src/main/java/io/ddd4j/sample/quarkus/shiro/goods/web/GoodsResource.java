@@ -14,6 +14,7 @@
  */
 package io.ddd4j.sample.quarkus.shiro.goods.web;
 
+import io.ddd4j.core.api.Page;
 import io.ddd4j.core.api.R;
 import io.ddd4j.sample.quarkus.shiro.goods.application.GoodsApplicationService;
 import io.ddd4j.sample.quarkus.shiro.goods.domain.Goods;
@@ -21,12 +22,15 @@ import io.ddd4j.sample.quarkus.shiro.goods.domain.GoodsId;
 import io.ddd4j.sample.quarkus.shiro.goods.domain.GoodsStatus;
 import io.ddd4j.sample.quarkus.shiro.goods.web.dto.CreateGoodsRequest;
 import io.ddd4j.sample.quarkus.shiro.goods.web.dto.UpdateGoodsRequest;
+import java.math.BigDecimal;
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 /**
- * 商品 JAX-RS 资源（写侧）。
+ * 商品 JAX-RS 资源（读写 HTTP 入口）。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
@@ -37,16 +41,34 @@ import javax.ws.rs.core.MediaType;
 public class GoodsResource {
 
     private final GoodsApplicationService applicationService;
+    private final GoodsQueryResource queryResource;
+
+    /**
+     * 创建商品写入资源。
+     *
+     * @param applicationService 商品应用服务
+     * @param queryResource 商品查询逻辑
+     */
+    /**
+     * 保留单参数构造入口，供现有直接调用方使用。
+     *
+     * @param applicationService 商品应用服务
+     */
+    public GoodsResource(GoodsApplicationService applicationService) {
+        this(applicationService, new GoodsQueryResource(applicationService));
+    }
 
     @Inject
-    public GoodsResource(GoodsApplicationService applicationService) {
+    public GoodsResource(GoodsApplicationService applicationService, GoodsQueryResource queryResource) {
         this.applicationService = applicationService;
+        this.queryResource = queryResource;
     }
 
     /**
      * 创建商品。
+     *
      * @param request 请求数据
-     * @return API 响应
+     * @return 创建后的商品
      */
     @POST
     public R<Goods> create(CreateGoodsRequest request) {
@@ -57,9 +79,10 @@ public class GoodsResource {
 
     /**
      * 更新商品。
-     * @param id 对象标识
+     *
+     * @param id 商品标识
      * @param request 请求数据
-     * @return API 响应
+     * @return 更新后的商品
      */
     @PUT
     @Path("/{id}")
@@ -71,9 +94,10 @@ public class GoodsResource {
 
     /**
      * 调整商品状态。
-     * @param id 对象标识
-     * @param status 状态
-     * @return API 响应
+     *
+     * @param id 商品标识
+     * @param status 商品状态
+     * @return 更新后的商品
      */
     @PUT
     @Path("/{id}/status")
@@ -84,8 +108,9 @@ public class GoodsResource {
 
     /**
      * 删除商品（软删）。
-     * @param id 对象标识
-     * @return API 响应
+     *
+     * @param id 商品标识
+     * @return 响应结果
      */
     @DELETE
     @Path("/{id}")
@@ -96,8 +121,9 @@ public class GoodsResource {
 
     /**
      * 按 ID 查询商品。
-     * @param id 对象标识
-     * @return API 响应
+     *
+     * @param id 商品标识
+     * @return 商品
      */
     @GET
     @Path("/{id}")
@@ -107,12 +133,84 @@ public class GoodsResource {
 
     /**
      * 按编码查询商品。
-     * @param code 业务编码
-     * @return API 响应
+     *
+     * @param code 商品编码
+     * @return 商品
      */
     @GET
     @Path("/by-code")
     public R<Goods> getByCode(@QueryParam("code") String code) {
         return R.ok(applicationService.getByCode(code));
+    }
+
+    /**
+     * 按条件分页查询商品。
+     *
+     * @param current 当前页码
+     * @param size 每页数量
+     * @param code 商品编码
+     * @param nameLike 名称模糊匹配条件
+     * @param status 商品状态
+     * @param priceMin 最低价格
+     * @param priceMax 最高价格
+     * @param orderBys 排序字段
+     * @return 商品分页响应
+     */
+    @GET
+    @Path("/page")
+    public R<Page<Goods>> page(
+            @QueryParam("current") Long current,
+            @QueryParam("size") Long size,
+            @QueryParam("code") String code,
+            @QueryParam("nameLike") String nameLike,
+            @QueryParam("status") String status,
+            @QueryParam("priceMin") BigDecimal priceMin,
+            @QueryParam("priceMax") BigDecimal priceMax,
+            @QueryParam("orderBys") String orderBys) {
+        return queryResource.page(current, size, code, nameLike, status, priceMin, priceMax, orderBys);
+    }
+
+    /**
+     * 按条件列出商品。
+     *
+     * @param code 商品编码
+     * @param nameLike 名称模糊匹配条件
+     * @param status 商品状态
+     * @param priceMin 最低价格
+     * @param priceMax 最高价格
+     * @param orderBys 排序字段
+     * @return 商品列表响应
+     */
+    @GET
+    @Path("/list")
+    public R<List<Goods>> list(
+            @QueryParam("code") String code,
+            @QueryParam("nameLike") String nameLike,
+            @QueryParam("status") String status,
+            @QueryParam("priceMin") BigDecimal priceMin,
+            @QueryParam("priceMax") BigDecimal priceMax,
+            @QueryParam("orderBys") String orderBys) {
+        return queryResource.list(code, nameLike, status, priceMin, priceMax, orderBys);
+    }
+
+    /**
+     * 按条件统计商品。
+     *
+     * @param code 商品编码
+     * @param nameLike 名称模糊匹配条件
+     * @param status 商品状态
+     * @param priceMin 最低价格
+     * @param priceMax 最高价格
+     * @return 商品数量响应
+     */
+    @GET
+    @Path("/count")
+    public R<Long> count(
+            @QueryParam("code") String code,
+            @QueryParam("nameLike") String nameLike,
+            @QueryParam("status") String status,
+            @QueryParam("priceMin") BigDecimal priceMin,
+            @QueryParam("priceMax") BigDecimal priceMax) {
+        return queryResource.count(code, nameLike, status, priceMin, priceMax);
     }
 }
