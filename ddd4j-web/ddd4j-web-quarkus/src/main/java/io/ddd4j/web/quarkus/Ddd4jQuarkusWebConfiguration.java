@@ -25,9 +25,11 @@ import org.eclipse.microprofile.config.ConfigProvider;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Quarkus Web 配置，并兼容早期 {@code ddd4j.quarkus.web.*} 访问控制属性。
@@ -39,7 +41,7 @@ public class Ddd4jQuarkusWebConfiguration {
     private static final String PREFIX = "ddd4j.web.";
     private static final String LEGACY_PREFIX = "ddd4j.quarkus.web.";
 
-    private List<String> publicPaths = new ArrayList<>(List.of("/health", "/q/health/**"));
+    private List<String> publicPaths = new ArrayList<>(java.util.Arrays.asList("/health", "/q/health/**"));
     private AuthenticationMode defaultAuthenticationMode = AuthenticationMode.REQUIRED;
     private boolean standardAccessConfigured;
     private boolean legacyBearerRequired;
@@ -65,8 +67,11 @@ public class Ddd4jQuarkusWebConfiguration {
     public static Ddd4jQuarkusWebConfiguration from(Config config) {
         Config source = Objects.requireNonNull(config, "config must not be null");
         Ddd4jQuarkusWebConfiguration configuration = new Ddd4jQuarkusWebConfiguration();
-        source.getOptionalValues(PREFIX + "public-paths", String.class).ifPresent(values -> {
-            configuration.setPublicPaths(new ArrayList<>(values));
+        source.getOptionalValue(PREFIX + "public-paths", String.class).ifPresent(value -> {
+            configuration.setPublicPaths(Arrays.stream(value.split(","))
+                    .map(String::trim)
+                    .filter(path -> !StrKit.isBlank(path))
+                    .collect(Collectors.toList()));
             configuration.setStandardAccessConfigured(true);
         });
         source.getOptionalValue(PREFIX + "authentication-mode", String.class).ifPresent(value -> {
