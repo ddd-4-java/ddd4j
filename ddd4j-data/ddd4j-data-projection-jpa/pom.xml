@@ -118,11 +118,11 @@
             <artifactId>javax.persistence-api</artifactId>
             <scope>provided</scope>
         </dependency>
-        <!-- Boot 2.7 的 YAML loader 需要 SnakeYAML 1.x 的无参 Representer 构造器。 -->
+        <!-- Boot 2.7 测试通道已验证使用本线集中管理的 SnakeYAML 2.6。 -->
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
-            <version>${snakeyaml-boot2.version}</version>
+            <version>${snakeyaml.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- Boot 2.7/Hibernate 5 测试栈使用 SLF4J 1.7 SPI；全部限 test scope。 -->

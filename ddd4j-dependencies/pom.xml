@@ -565,7 +565,6 @@
         <!-- Dropwizard 2 / Spring Boot 2 测试通道仍使用 SLF4J 1.7 SPI。 -->
         <sms4j.version>3.3.5</sms4j.version>
         <smslib.version>3.5.4</smslib.version>
-        <snakeyaml-boot2.version>1.33</snakeyaml-boot2.version>
         <snakeyaml.version>2.6</snakeyaml.version>
         <snmp4j-agent.version>2.7.9</snmp4j-agent.version>
         <snmp4j.version>2.8.18</snmp4j.version>
