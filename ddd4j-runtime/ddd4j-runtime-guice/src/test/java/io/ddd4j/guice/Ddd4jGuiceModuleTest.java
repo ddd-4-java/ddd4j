@@ -13,12 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.guice;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import io.ddd4j.guice.DddAnnotationModule;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
