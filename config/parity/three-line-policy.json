@@ -3028,6 +3028,21 @@
         "evidence": "ddd4j-web/ddd4j-web-helidon/src/test/java/io/ddd4j/web/helidon/Ddd4jHelidonWebConfigurationContractTest.java",
         "testSha256": "19c32328599f60547fc3cf9443b83499cb188440ea8fc35828fb42fc69348368",
         "reason": "三线 Helidon Web 配置的公开路径去空白行为一致；JDK 8 的 MicroProfile Config 使用 getOptionalValue(String) 并拆分逗号及 Arrays.asList，JDK 17/21 使用 getOptionalValues(String) 与 List.of。配置契约及 Web 回归每线 7 项通过，源码和测试哈希锁定。"
+    },
+    {
+        "path": "ddd4j-web/ddd4j-web-helidon/src/main/java/io/ddd4j/web/helidon/Ddd4jHelidonRequestFilter.java",
+        "sourceSha256": [
+            "4cd243ef6a73a6bf6e94139e3d4793c552ffc4adda198ef6dd6f80f0f5a79d27",
+            "a038aabcc49213c15816f4ccb23f15f92bf204f6eebcbcd89b7dba69f97731cb",
+            "a038aabcc49213c15816f4ccb23f15f92bf204f6eebcbcd89b7dba69f97731cb"
+        ],
+        "evidence": "ddd4j-web/ddd4j-web-helidon/src/test/java/io/ddd4j/web/helidon/Ddd4jHelidonWebContractTest.java",
+        "testSha256ByJdk": {
+            "8": "49af8712b57008a9c1941adfb92c54554f548a75b8b2d32e1d9ffa9abe31217e",
+            "17": "670d33504e5fa9db310d476162fc186521d32c9149e6cd991d1b2e4e617dbcf6",
+            "21": "670d33504e5fa9db310d476162fc186521d32c9149e6cd991d1b2e4e617dbcf6"
+        },
+        "reason": "三线 Helidon 请求过滤器的上下文、鉴权与 OTel 空 span 安全降级行为一致；JDK 8 使用 javax JAX-RS，JDK 17/21 使用 jakarta JAX-RS。三线 Helidon Web 契约各 6 项与 OTel 集成各 5 项通过，源码和证据测试哈希逐线锁定。"
     }
   ],
   "historicalDocumentSections": [

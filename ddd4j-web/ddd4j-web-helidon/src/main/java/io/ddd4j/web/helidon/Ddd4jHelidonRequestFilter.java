@@ -113,8 +113,12 @@ public final class Ddd4jHelidonRequestFilter implements ContainerRequestFilter {
                 request.getUriInfo().getRequestUri().getPath(),
                 extractRequestHeaders(request));
         AutoCloseable scope = WebOtelSupport.activate(span);
-        request.setProperty(OTEL_SPAN_PROPERTY, span);
-        request.setProperty(OTEL_SCOPE_PROPERTY, scope);
+        if (Objects.nonNull(span)) {
+            request.setProperty(OTEL_SPAN_PROPERTY, span);
+        }
+        if (Objects.nonNull(scope)) {
+            request.setProperty(OTEL_SCOPE_PROPERTY, scope);
+        }
 
         try {
             WebRequestContext context = createContext(request);
