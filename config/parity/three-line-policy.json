@@ -2996,6 +2996,21 @@
       "evidence": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/rbac/RbacConfigContractTest.java",
       "testSha256": "d4180325747c9420c702b3dd91fbfc8238c27b12c446bc7d144e537332879705",
       "reason": "三线 RBAC 种子数据、不可变角色/权限快照与权限顺序契约一致；JDK 8 使用 Arrays.asList、Collections 与防御性副本，JDK 17/21 使用 List.of、Set.of、List.copyOf；三线相同的契约测试 2/2 与认证控制器测试 37/37 通过。逐线源码及测试 SHA-256 锁定。"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/rbac/service/RbacService.java",
+      "sourceSha256": [
+        "9a854d9ba139ec4b3537f645861dd871a703b4c4fdf13a6caea6acb68e193d20",
+        "3f92ce832f1fd96d458c25cbebbd8670328445910b976b45580469fd6dd06300",
+        "3f92ce832f1fd96d458c25cbebbd8670328445910b976b45580469fd6dd06300"
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/rbac/web/AuthControllerTest.java",
+      "testSha256ByJdk": {
+        "8": "5a9cbad2b9a1c2094eed2a8aab5c37a4662f1fb6ae0b40533b69168dccefd921",
+        "17": "3efd8e8b487f6458db97e65f8d59a3146f3b9975c6eaaf76e56f079b7fcfc29b",
+        "21": "746e1402c3d3eb6f483254eaabc022e56dd9a57bd9ce929342cc13899a52877c"
+      },
+      "reason": "三线 Javalin Shiro RBAC 服务的用户、角色、权限 CRUD 和最终权限计算逻辑及 Javadoc 一致；JDK 8 使用 !Optional.isPresent()，JDK 17/21 使用 Optional.isEmpty()。每线 37 项认证/授权控制器测试通过，源码与测试 SHA-256 锁定。"
     }
   ],
   "historicalDocumentSections": [

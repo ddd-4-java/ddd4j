@@ -42,6 +42,13 @@ public class RbacService {
     private final InMemoryRoleRepository roleRepository;
     private final InMemoryPermissionRepository permissionRepository;
 
+    /**
+     * 创建 RBAC 服务。
+     *
+     * @param userRepository 用户仓储
+     * @param roleRepository 角色仓储
+     * @param permissionRepository 权限仓储
+     */
     public RbacService(InMemoryUserRepository userRepository,
                        InMemoryRoleRepository roleRepository,
                        InMemoryPermissionRepository permissionRepository) {
@@ -54,6 +61,9 @@ public class RbacService {
 
     /**
      * 复制权限集合（不可变）。
+     *
+     * @param perms 权限编码集合
+     * @return 权限集合副本
      */
     public static Set<String> copyPerms(Set<String> perms) {
         return Objects.isNull(perms) ? Collections.emptySet() : Collections.unmodifiableSet(new HashSet<>(perms));
@@ -61,6 +71,13 @@ public class RbacService {
 
     /**
      * 创建用户。
+     *
+     * @param loginId 登录标识
+     * @param password 密码
+     * @param displayName 显示名称
+     * @param roleCodes 角色编码集合
+     * @param permissions 权限编码集合
+     * @return 已创建的用户
      */
     public User createUser(String loginId, String password, String displayName, Set<String> roleCodes, Set<String> permissions) {
         if (userRepository.findByLoginId(loginId).isPresent()) {
@@ -74,6 +91,9 @@ public class RbacService {
 
     /**
      * 保存用户（upsert 语义，用于种子数据初始化）。
+     *
+     * @param user 用户
+     * @return 已保存的用户
      */
     public User saveUser(User user) {
         return userRepository.save(user);
@@ -81,6 +101,13 @@ public class RbacService {
 
     /**
      * 更新用户。
+     *
+     * @param loginId 登录标识
+     * @param displayName 显示名称
+     * @param password 密码
+     * @param roleCodes 角色编码集合
+     * @param permissions 权限编码集合
+     * @return 已更新的用户
      */
     public User updateUser(String loginId, String displayName, String password, Set<String> roleCodes, Set<String> permissions) {
         User existing = userRepository.findByLoginId(loginId)
@@ -97,6 +124,8 @@ public class RbacService {
 
     /**
      * 删除用户。
+     *
+     * @param loginId 登录标识
      */
     public void deleteUser(String loginId) {
         if (!userRepository.deleteByLoginId(loginId)) {
@@ -106,6 +135,9 @@ public class RbacService {
 
     /**
      * 查询用户。
+     *
+     * @param loginId 登录标识
+     * @return 用户
      */
     public User findUser(String loginId) {
         return userRepository.findByLoginId(loginId)
@@ -116,6 +148,8 @@ public class RbacService {
 
     /**
      * 列出全部用户。
+     *
+     * @return 用户集合
      */
     public Collection<User> listUsers() {
         return userRepository.findAll();
@@ -123,6 +157,11 @@ public class RbacService {
 
     /**
      * 创建角色。
+     *
+     * @param code 编码
+     * @param name 名称
+     * @param permissionCodes 权限编码集合
+     * @return 已创建的角色
      */
     public Role createRole(String code, String name, Set<String> permissionCodes) {
         if (roleRepository.findByCode(code).isPresent()) {
@@ -133,6 +172,9 @@ public class RbacService {
 
     /**
      * 保存角色（upsert 语义，用于种子数据初始化）。
+     *
+     * @param role 角色
+     * @return 已保存的角色
      */
     public Role saveRole(Role role) {
         return roleRepository.save(role);
@@ -140,6 +182,11 @@ public class RbacService {
 
     /**
      * 更新角色。
+     *
+     * @param code 编码
+     * @param name 名称
+     * @param permissionCodes 权限编码集合
+     * @return 已更新的角色
      */
     public Role updateRole(String code, String name, Set<String> permissionCodes) {
         Role existing = roleRepository.findByCode(code)
@@ -153,6 +200,8 @@ public class RbacService {
 
     /**
      * 删除角色。
+     *
+     * @param code 编码
      */
     public void deleteRole(String code) {
         if (!roleRepository.deleteByCode(code)) {
@@ -162,6 +211,9 @@ public class RbacService {
 
     /**
      * 查询角色。
+     *
+     * @param code 编码
+     * @return 角色
      */
     public Role findRole(String code) {
         return roleRepository.findByCode(code)
@@ -172,6 +224,8 @@ public class RbacService {
 
     /**
      * 列出全部角色。
+     *
+     * @return 角色集合
      */
     public Collection<Role> listRoles() {
         return roleRepository.findAll();
@@ -179,6 +233,10 @@ public class RbacService {
 
     /**
      * 创建权限。
+     *
+     * @param code 编码
+     * @param description 描述
+     * @return 已创建的权限
      */
     public Permission createPermission(String code, String description) {
         if (permissionRepository.findByCode(code).isPresent()) {
@@ -189,6 +247,9 @@ public class RbacService {
 
     /**
      * 保存权限（upsert 语义，用于种子数据初始化）。
+     *
+     * @param permission 权限
+     * @return 已保存的权限
      */
     public Permission savePermission(Permission permission) {
         return permissionRepository.save(permission);
@@ -196,6 +257,8 @@ public class RbacService {
 
     /**
      * 删除权限。
+     *
+     * @param code 编码
      */
     public void deletePermission(String code) {
         if (!permissionRepository.deleteByCode(code)) {
@@ -205,6 +268,9 @@ public class RbacService {
 
     /**
      * 查询权限。
+     *
+     * @param code 编码
+     * @return 权限
      */
     public Permission findPermission(String code) {
         return permissionRepository.findByCode(code)
@@ -215,6 +281,8 @@ public class RbacService {
 
     /**
      * 列出全部权限。
+     *
+     * @return 权限集合
      */
     public Collection<Permission> listPermissions() {
         return permissionRepository.findAll();
@@ -222,6 +290,9 @@ public class RbacService {
 
     /**
      * 派生用户的最终权限码集合：用户直接权限 ∪ 角色持有的权限。
+     *
+     * @param user 用户
+     * @return 有效权限编码集合
      */
     public Set<String> computeEffectivePermissions(User user) {
         Set<String> all = new LinkedHashSet<>(user.permissions());
@@ -247,6 +318,10 @@ public class RbacService {
 
     /**
      * 校验账号密码（明文比对，仅供演示）。
+     *
+     * @param loginId 登录标识
+     * @param password 密码
+     * @return 已认证的用户
      */
     public User authenticate(String loginId, String password) {
         User user = userRepository.findByLoginId(loginId)
