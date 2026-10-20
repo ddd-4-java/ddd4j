@@ -25,17 +25,23 @@ io.ddd4j.boot:ddd4j-boot-extension-qlexpress
 ```java
 import io.ddd4j.extension.qlexpress.QLExpress;
 import io.ddd4j.extension.qlexpress.QLExpressEngine;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 QLExpressEngine engine = QLExpress.create();
+Map<String, Object> values = new HashMap<>();
+values.put("price", 20);
+values.put("quantity", 3);
 
 Integer amount = engine.execute(
         "price * quantity",
-        Map.of("price", 20, "quantity", 3),
+        values,
         Integer.class);
 
 boolean matched = engine.execute(
         "contains(name, 'ddd4j')",
-        Map.of("name", "hello ddd4j"),
+        Collections.<String, Object>singletonMap("name", "hello ddd4j"),
         Boolean.class);
 ```
 
