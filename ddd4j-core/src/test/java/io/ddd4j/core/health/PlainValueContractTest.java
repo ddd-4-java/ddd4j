@@ -1,6 +1,7 @@
 package io.ddd4j.core.health;
 
 import io.ddd4j.core.cqrs.query.PropertyRef;
+import io.ddd4j.core.cqrs.query.LambdaCondition;
 import io.ddd4j.core.cqrs.query.PropertySpace;
 import org.junit.jupiter.api.Test;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -41,7 +42,10 @@ class PlainValueContractTest {
         assertThat(ReadinessResult.class.getSuperclass()).isEqualTo(Object.class);
         assertThat(Modifier.isFinal(ReadinessResult.class.getModifiers())).isTrue();
         assertThat(PropertyRef.class.getSuperclass()).isEqualTo(Object.class);
-        assertThat(ObjectStreamClass.lookup(PropertyRef.class).getSerialVersionUID()).isZero();
+        assertThat(ObjectStreamClass.lookup(PropertyRef.class).getSerialVersionUID())
+                .isEqualTo(-3906849612189306727L);
+        assertThat(ObjectStreamClass.lookup(LambdaCondition.class).getSerialVersionUID())
+                .isEqualTo(-4292780888118581043L);
     }
 
     @Test
