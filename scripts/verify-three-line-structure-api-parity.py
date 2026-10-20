@@ -1159,7 +1159,7 @@ def validate_type_mappings(mappings, roots: list[pathlib.Path]) -> None:
 
 
 def validate_platform_content_mappings(mappings, roots: list[pathlib.Path]) -> dict[str, dict]:
-    """只接受有三线文件与测试证据的、逐文件精确 Java import 命名空间适配。"""
+    """只接受有三线文件与测试证据的逐文件精确平台适配。"""
     by_path = {}
     for mapping in mappings:
         path = pathlib.PurePosixPath(mapping.get("path", ""))
@@ -1188,8 +1188,21 @@ def validate_platform_content_mappings(mappings, roots: list[pathlib.Path]) -> d
             ("import com.fasterxml.jackson.databind.json.JsonMapper;",
              "import tools.jackson.databind.json.JsonMapper;"),
         }
+        exact_test_adaptations = {
+            ("ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/arch/ProjectionJpaModuleIndependenceTest.java",
+             '                            "javax..",\n', "", ("2.0.x", "3.0.x")),
+            ("ddd4j-runtime/ddd4j-runtime-helidon/src/test/java/io/ddd4j/helidon/HelidonServerBootTest.java",
+             "server.cdiContainer().select(RuntimeReadinessRegistry.class).get()",
+             "jakarta.enterprise.inject.spi.CDI.current().select(RuntimeReadinessRegistry.class).get()",
+             ("2.0.x", "3.0.x")),
+            ("ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/cqrs/SpringJpaProjectionPositionTestApp.java",
+             "import org.springframework.boot.autoconfigure.domain.EntityScan;",
+             "import org.springframework.boot.persistence.autoconfigure.EntityScan;",
+             ("3.0.x",)),
+        }
         for replacement in replacements:
             before, after = replacement.get("from", ""), replacement.get("to", "")
+            exact_test_adaptation = (source, before, after, tuple(target_lines)) in exact_test_adaptations
             javax_to_jakarta = (
                 before.startswith("import javax.") and before.endswith(";")
                 and after.startswith("import jakarta.") and after.endswith(";")
@@ -1204,9 +1217,12 @@ def validate_platform_content_mappings(mappings, roots: list[pathlib.Path]) -> d
                 and (before, after) == ("import io.dropwizard.Configuration;", "import io.dropwizard.core.Configuration;")
             )
             if (not (javax_to_jakarta or (before, after) in jackson_mapper_imports
-                     or pulsar_broker_image or dropwizard_configuration_import)
-                    or "*" in before or "*" in after or "\n" in before or "\n" in after
-                    or (target_lines == ["3.0.x"] and (before, after) not in jackson_mapper_imports)
+                     or pulsar_broker_image or dropwizard_configuration_import
+                     or exact_test_adaptation)
+                    or "*" in before or "*" in after
+                    or (("\n" in before or "\n" in after) and not exact_test_adaptation)
+                    or (target_lines == ["3.0.x"] and (before, after) not in jackson_mapper_imports
+                        and not exact_test_adaptation)
                     or before in originals):
                 raise ValueError(f"non-exact platform content replacement: {source}")
             originals.add(before)

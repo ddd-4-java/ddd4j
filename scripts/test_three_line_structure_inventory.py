@@ -1049,6 +1049,49 @@ class ThreeLineInventoryTest(unittest.TestCase):
                    and item["category"] == "production")
         self.assertEqual("OPEN", row["status"])
 
+    def test_exact_platform_test_adaptations_keep_other_test_content_identical(self):
+        cases = [
+            ("ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/arch/ProjectionJpaModuleIndependenceTest.java",
+             '                            "javax..",\n', "", ["2.0.x", "3.0.x"]),
+            ("ddd4j-runtime/ddd4j-runtime-helidon/src/test/java/io/ddd4j/helidon/HelidonServerBootTest.java",
+             "server.cdiContainer().select(RuntimeReadinessRegistry.class).get()",
+             "jakarta.enterprise.inject.spi.CDI.current().select(RuntimeReadinessRegistry.class).get()",
+             ["2.0.x", "3.0.x"]),
+            ("ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/cqrs/SpringJpaProjectionPositionTestApp.java",
+             "import org.springframework.boot.autoconfigure.domain.EntityScan;",
+             "import org.springframework.boot.persistence.autoconfigure.EntityScan;",
+             ["3.0.x"]),
+        ]
+        policy = json.loads(self.policy.read_text())
+        policy["platformContentMappings"] = []
+        for path, before, after, target_lines in cases:
+            original = "class Contract {\n" + before + "void same() {}\n}\n"
+            for index, root in enumerate(self.roots):
+                self.write(root, path, original.replace(before, after)
+                           if ("1.0.x", "2.0.x", "3.0.x")[index] in target_lines
+                           else original)
+            policy["platformContentMappings"].append({
+                "path": path, "replacements": [{"from": before, "to": after}],
+                "targetLines": target_lines, "evidence": path,
+                "reason": "exact platform test API adaptation",
+            })
+        self.policy.write_text(json.dumps(policy))
+
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = {row["path"]: row["status"] for row in
+                json.loads((output / "inventory.json").read_text())["differences"]}
+        for path, _, _, _ in cases:
+            self.assertEqual("PLATFORM_ADAPTED", rows[path])
+
+        path = cases[1][0]
+        self.write(self.roots[2], path, (self.roots[2] / path).read_text().replace("same", "changed"))
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = {row["path"]: row["status"] for row in
+                json.loads((output / "inventory.json").read_text())["differences"]}
+        self.assertEqual("OPEN", rows[path])
+
     def test_changed_error_code_fails_inventory_gate(self):
         path = "ddd4j-core/src/main/java/example/OrderErrorCode.java"
         original = ('package example; public enum OrderErrorCode {'
