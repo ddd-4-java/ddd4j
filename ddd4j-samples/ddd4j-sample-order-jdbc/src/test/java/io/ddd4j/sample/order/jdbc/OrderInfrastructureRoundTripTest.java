@@ -67,6 +67,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -270,7 +271,7 @@ class OrderInfrastructureRoundTripTest {
             MQOutboxRecord record = retry.stream()
                     .filter(candidate -> candidate.messageId().equals(failedId))
                     .findFirst()
-                    .orElseThrow();
+                    .orElseThrow(() -> new NoSuchElementException("retry record not found: " + failedId));
             assertThat(record.attempts()).isEqualTo(attempt);
             assertThat(store.reschedule(failedId, "test-instance", attemptTime,
                     "broker unavailable", policy)).isTrue();
