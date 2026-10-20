@@ -1061,6 +1061,10 @@ class ThreeLineInventoryTest(unittest.TestCase):
              "import org.springframework.boot.autoconfigure.domain.EntityScan;",
              "import org.springframework.boot.persistence.autoconfigure.EntityScan;",
              ["3.0.x"]),
+            ("ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/TestApp.java",
+             "import org.springframework.boot.autoconfigure.domain.EntityScan;",
+             "import org.springframework.boot.persistence.autoconfigure.EntityScan;",
+             ["3.0.x"]),
         ]
         policy = json.loads(self.policy.read_text())
         policy["platformContentMappings"] = []
