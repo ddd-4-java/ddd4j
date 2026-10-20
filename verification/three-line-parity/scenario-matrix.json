@@ -190,15 +190,15 @@
       "lines": {
         "1.0.x": {
           "status": "pending",
-          "reason": "RabbitMQ、NATS、两种 MQTT、Artemis、Pulsar、RocketMQ、Redis Stream 的部分原生场景已在三线 CI 验证，Disruptor 已有进程内场景；ONS/TDMQ/SQS 云端适配器及其余故障/竞争路径仍须逐项验证"
+          "reason": "RabbitMQ、NATS、两种 MQTT、Artemis、Pulsar、RocketMQ、Redis Stream 的部分原生场景已在三线 CI 验证，Disruptor 已有进程内场景，SQS 本地兼容协议发布和失败重投已测；ONS/TDMQ/AWS SQS 云端及其余故障/竞争路径仍须逐项验证"
         },
         "2.0.x": {
           "status": "pending",
-          "reason": "RabbitMQ、NATS、两种 MQTT、Artemis、Pulsar、RocketMQ、Redis Stream 的部分原生场景已在三线 CI 验证，Disruptor 已有进程内场景；ONS/TDMQ/SQS 云端适配器及其余故障/竞争路径仍须逐项验证"
+          "reason": "RabbitMQ、NATS、两种 MQTT、Artemis、Pulsar、RocketMQ、Redis Stream 的部分原生场景已在三线 CI 验证，Disruptor 已有进程内场景，SQS 本地兼容协议发布和失败重投已测；ONS/TDMQ/AWS SQS 云端及其余故障/竞争路径仍须逐项验证"
         },
         "3.0.x": {
           "status": "pending",
-          "reason": "RabbitMQ、NATS、两种 MQTT、Artemis、Pulsar、RocketMQ、Redis Stream 的部分原生场景已在三线 CI 验证，Disruptor 已有进程内场景；ONS/TDMQ/SQS 云端适配器及其余故障/竞争路径仍须逐项验证"
+          "reason": "RabbitMQ、NATS、两种 MQTT、Artemis、Pulsar、RocketMQ、Redis Stream 的部分原生场景已在三线 CI 验证，Disruptor 已有进程内场景，SQS 本地兼容协议发布和失败重投已测；ONS/TDMQ/AWS SQS 云端及其余故障/竞争路径仍须逐项验证"
         }
       }
     },
