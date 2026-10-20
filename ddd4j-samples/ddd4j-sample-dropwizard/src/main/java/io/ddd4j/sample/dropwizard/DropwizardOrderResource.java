@@ -13,9 +13,17 @@
  * limitations under the License.
  */
 package io.ddd4j.sample.dropwizard;
+import javax.ws.rs.Produces;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Path;
+import javax.ws.rs.POST;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.Consumes;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.auth.AuthRequest;
@@ -27,11 +35,11 @@ import io.ddd4j.sample.order.application.OrderApplicationService;
 import io.ddd4j.sample.order.application.OrderReadModel;
 import io.ddd4j.web.core.context.WebHeaders;
 import io.ddd4j.web.core.error.WebStatusException;
-import lombok.Data;
-
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import lombok.Data;
+
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -44,16 +52,25 @@ public final class DropwizardOrderResource {
 
     private final OrderApplicationService applicationService;
 
+    /** @param applicationService 订单应用服务 */
     public DropwizardOrderResource(OrderApplicationService applicationService) {
         this.applicationService = Objects.requireNonNull(applicationService, "applicationService must not be null");
     }
 
+    /**
+     * @param userId 演示用户标识
+     * @return 登录令牌响应
+     */
     @POST
     @Path("/auth/tokens/{userId}")
     public R<TokenResponse> issueToken(@PathParam("userId") String userId) {
         return R.ok(new TokenResponse(SubjectKit.getSubject().login(AuthRequest.of(userId))));
     }
 
+    /**
+     * @param request 创建订单请求
+     * @return 新订单响应
+     */
     @POST
     @Path("/orders")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -64,12 +81,21 @@ public final class DropwizardOrderResource {
         return Response.status(Response.Status.CREATED).entity(R.ok(order)).build();
     }
 
+    /**
+     * @param orderId 订单标识
+     * @return 订单查询模型
+     */
     @GET
     @Path("/orders/{orderId}")
     public R<OrderReadModel> find(@PathParam("orderId") String orderId) {
         return R.ok(applicationService.find(orderId));
     }
 
+    /**
+     * @param orderId 订单标识
+     * @param request 添加明细请求
+     * @return 更新后的订单查询模型
+     */
     @POST
     @Path("/orders/{orderId}/lines")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -80,6 +106,11 @@ public final class DropwizardOrderResource {
         return R.ok(applicationService.find(orderId));
     }
 
+    /**
+     * @param orderId 订单标识
+     * @param idempotencyKey 支付幂等键
+     * @return 支付后的订单查询模型
+     */
     @POST
     @Path("/orders/{orderId}/pay")
     public R<OrderReadModel> pay(@PathParam("orderId") String orderId,
@@ -91,29 +122,16 @@ public final class DropwizardOrderResource {
         return R.ok(applicationService.find(orderId));
     }
 
-    @Data
-    public static class CreateOrderRequest {
-
-        private String orderNo;
-        private String buyerId;
-        private String buyerName;
-    }
-
-    @Data
-    public static class AddOrderLineRequest {
-
-        private String goodsId;
-        private String goodsName;
-        private int quantity;
-        private BigDecimal unitPrice;
-    }
-
+    /** 登录令牌响应。 */
     @Data
     public static class TokenResponse {
+
+        private static final long serialVersionUID = 0L;
+
         private String token;
 
         /** @param token 登录令牌 */
-        @JsonCreator
+        @JsonCreator()
         public TokenResponse(@JsonProperty("token") String token) {
             this.token = token;
         }
@@ -123,5 +141,25 @@ public final class DropwizardOrderResource {
         public String token() {
             return token;
         }
+
+    }
+
+    /** 创建订单的 HTTP 请求。 */
+    @Data
+    public static class CreateOrderRequest {
+
+        private String orderNo;
+        private String buyerId;
+        private String buyerName;
+    }
+
+    /** 添加订单明细的 HTTP 请求。 */
+    @Data
+    public static class AddOrderLineRequest {
+
+        private String goodsId;
+        private String goodsName;
+        private int quantity;
+        private BigDecimal unitPrice;
     }
 }

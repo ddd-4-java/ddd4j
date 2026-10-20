@@ -3176,6 +3176,21 @@
             "21": "5618182a514220aa6cb4e3463fc2a870d7801f1817653e21ed4b0a920295f4ae"
         },
         "reason": "三线查询端点逻辑及文档一致；JDK 8 使用 javax CDI/JAX-RS、显式 instanceof/cast 与 Collections.emptyList()，JDK 17/21 使用 Jakarta、模式匹配及 List.of()。目标测试逐线验证内存仓库可变列表和非内存仓库不可变空列表及零计数；源码与测试哈希锁定。"
+    },
+    {
+        "path": "ddd4j-samples/ddd4j-sample-dropwizard/src/main/java/io/ddd4j/sample/dropwizard/DropwizardOrderResource.java",
+        "sourceSha256": [
+            "d843896c9d82319f0a16ce6f13ba5232052416ba0bd6e48ab30a2b007c373d1f",
+            "db92cf6ba1a96fcfd40ab3fd7681c65aa54bc3033b96b979ae37251f5d1b5bcb",
+            "db92cf6ba1a96fcfd40ab3fd7681c65aa54bc3033b96b979ae37251f5d1b5bcb"
+        ],
+        "evidence": "ddd4j-samples/ddd4j-sample-dropwizard/src/test/java/io/ddd4j/sample/dropwizard/DropwizardOrderResourceTest.java",
+        "testSha256ByJdk": {
+            "8": "e2e16a1d153ae362769c9897b35b5b05660907573a25af735997d9737f588be3",
+            "17": "b1cf61c1130aa11cd155172191fd988d057e31a66f09ef829f5bbcde703a1eba",
+            "21": "652f25123e8e8673a6779e2e8e37c3d7846c13a52ed6aadc7ce6d536f82a8546"
+        },
+        "reason": "三线 Dropwizard 订单资源的登录、建单、加明细、幂等支付及嵌套 DTO 契约由目标资源测试逐线通过；JDK 8 使用 javax.ws.rs，JDK 17/21 使用 jakarta.ws.rs。源码及对应平台测试哈希锁定。"
     }
   ],
   "historicalDocumentSections": [
