@@ -4308,6 +4308,24 @@
       "reason": "三线调度器生产逻辑逐字一致，测试方法和生命周期断言相同；JDK 8 使用兼容的集合工厂，JDK 17/21 使用 List.of 与 Set.of，Javalin 新线可关闭启动横幅。"
     },
     {
+      "path": "ddd4j-web/ddd4j-web-javalin/src/test/java/io/ddd4j/web/javalin/Ddd4jJavalinOtelScopeTest.java",
+      "productionPath": "ddd4j-web/ddd4j-web-javalin/src/main/java/io/ddd4j/web/javalin/Ddd4jJavalinWeb.java",
+      "sourceSha256": [
+        "6c1bcb5feb4939241a63d6ba0f9dd67f3a97e183fb77db4952c8c1dc44f814b4",
+        "cfaf4145dd3c9fadf7b565bec594eed0d56958643552b44c644313ad5211d825",
+        "99e85a6fd3ece92bc7e4951156b755208ea05cfa00d1f96259c8af454caa23af"
+      ],
+      "productionSha256": [
+        "08e07a970b98aa64a0a2bbee49ca04fff3cfafc27f7cdeb76313ac126e01f91a",
+        "68098d21aee2fda16e467ae77a3438281d9183659213aba69e4531a49232a40f",
+        "68098d21aee2fda16e467ae77a3438281d9183659213aba69e4531a49232a40f"
+      ],
+      "testMethods": [
+        "requestCompletionMustCloseOtelScope"
+      ],
+      "reason": "三线相同测试验证请求处理期间 OTel Scope 有效、请求完成后关闭；Javalin 4/新版本路由配置 API 不同，生产类另由平台语法映射锁定。"
+    },
+    {
       "path": "ddd4j-data/ddd4j-data-mybatisplus/src/test/java/io/ddd4j/data/mybatis/repository/MybatisAggregateRepositoryMySQLTest.java",
       "productionPath": "ddd4j-data/ddd4j-data-mybatisplus/src/main/java/io/ddd4j/data/mybatis/repository/MybatisAggregateRepository.java",
       "sourceSha256": [
