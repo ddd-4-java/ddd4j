@@ -5106,6 +5106,62 @@
         "publicPathProceedsThroughMicronautFilterChain"
       ],
       "reason": "三线 Micronaut Web Filter 单元契约各 4 项通过，覆盖构造器空值、可选幂等及公开路径放行；JDK 8 的 Micronaut 3 使用 FilterChain，高两线的 Micronaut 4 使用 FilterContinuation，生产适配另由 platformSyntaxMappings 锁定。"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/rbac/web/AuthControllerTest.java",
+      "productionPath": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/rbac/web/AuthenticationController.java",
+      "sourceSha256": [
+        "c4b2204ea3569cfc4b1d5216de799dd24385c2f354995c84f02429e426806566",
+        "87995ef9502347bde535a7c3073ad79efe4919dc762320a5e34ec79614d0089b",
+        "d15577fa4859289b352cb4b46c47cbf54d4ef8e64e19e5d78f8814d750faffb8"
+      ],
+      "productionSha256": [
+        "d547452874e623e3aab4c0fbaeb37e4e0bd7fdc6f00e117fd49fac5ab6a83040",
+        "889de37109f316a8aa4ba588fa9f3488505f564b8fe39732df015f44c0c1ab8b",
+        "889de37109f316a8aa4ba588fa9f3488505f564b8fe39732df015f44c0c1ab8b"
+      ],
+      "testMethods": [
+        "startServer",
+        "stopServer",
+        "resetServerState",
+        "login_asAdmin_shouldReturnToken",
+        "login_asUser_shouldReturnToken",
+        "login_withWrongPassword_shouldReturn401",
+        "login_disabledUser_shouldReturn401",
+        "me_unauthenticated_shouldReturnOkWithFalse",
+        "status_unauthenticated_shouldReturnOk",
+        "adminArea_asAdmin_shouldBeOk",
+        "adminArea_asUser_shouldBeForbidden",
+        "adminArea_unauthenticated_shouldBe401",
+        "managerArea_asAdmin_shouldBeForbidden",
+        "managerArea_unauthenticated_shouldBe401",
+        "usersList_asAdmin_shouldBeOk",
+        "usersList_asUser_shouldBeOk",
+        "usersList_unauthenticated_shouldBe401",
+        "orderPay_asAdmin_shouldBeOk",
+        "orderPay_asUser_shouldBeForbidden",
+        "orderPay_unauthenticated_shouldBe401",
+        "deleteUser_asAdmin_shouldBeOk",
+        "deleteUser_asUser_shouldBeForbidden",
+        "deleteUser_unauthenticated_shouldBe401",
+        "checkRole_asAdmin_shouldReturnTrueForAdmin",
+        "checkRole_asUser_shouldReturnFalseForAdmin",
+        "listUsers_shouldReturn3SeedUsers",
+        "getUser_byId_shouldReturnUser",
+        "createUser_shouldReturn201",
+        "updateUser_shouldReturn200",
+        "deleteUser_byRbacAdmin_shouldReturn200",
+        "listRoles_shouldReturn3SeedRoles",
+        "getRole_byId_shouldReturnRole",
+        "createRole_shouldReturn201",
+        "listPermissions_shouldReturn6SeedPermissions",
+        "assignRolesToUser_shouldReturn200",
+        "getUserPermissions_adminShouldHaveAll",
+        "getRolePermissions_adminShouldHaveAll",
+        "assignPermissionsToRole_shouldReturn200",
+        "kickout_shouldReturn200"
+      ],
+      "reason": "三线 Javalin Sa-Token 认证与授权 HTTP 测试各 36 项通过，测试场景与方法一致；JDK 8 使用项目内 HttpClient 兼容层，高两线使用 JDK HttpClient，3.0.x 绑定 127.0.0.1。AuthenticationController 生产差异已由 platformSyntaxMappings 锁定。"
     }
   ]
 }
