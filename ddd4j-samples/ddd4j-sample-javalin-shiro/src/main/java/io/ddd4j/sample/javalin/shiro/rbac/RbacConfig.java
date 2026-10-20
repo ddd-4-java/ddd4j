@@ -56,12 +56,12 @@ public final class RbacConfig {
         // ==================== 种子角色 ====================
         // admin：拥有全部权限
         rbacService.saveRole(new Role("admin", "管理员",
-                new HashSet<>(Arrays.asList("user:list", "user:add", "user:update", "user:delete",
+                new LinkedHashSet<>(Arrays.asList("user:list", "user:add", "user:update", "user:delete",
                         "order:create", "order:pay", "order:ship", "order:cancel",
                         "permission:list", "role:list"))));
         // user：拥有基本业务权限
         rbacService.saveRole(new Role("user", "普通用户",
-                new HashSet<>(Arrays.asList("user:list", "order:create", "order:pay"))));
+                new LinkedHashSet<>(Arrays.asList("user:list", "order:create", "order:pay"))));
 
         // ==================== 种子用户 ====================
         // admin：admin 角色
@@ -124,7 +124,7 @@ public final class RbacConfig {
      */
     private static java.util.function.Function<User, List<String>> rbacServicePerms(InMemoryRoleRepository roleRepository) {
         return user -> {
-            Set<String> allPerms = new HashSet<>(user.permissions());
+            Set<String> allPerms = new LinkedHashSet<>(user.permissions());
             for (String roleCode : user.roles()) {
                 roleRepository.findByCode(roleCode)
                         .ifPresent(role -> allPerms.addAll(role.permissions()));
