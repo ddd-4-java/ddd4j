@@ -1223,6 +1223,14 @@ def validate_platform_content_mappings(mappings, roots: list[pathlib.Path]) -> d
              "import org.springframework.boot.autoconfigure.domain.EntityScan;",
              "import org.springframework.boot.persistence.autoconfigure.EntityScan;",
              ("3.0.x",)),
+            ("ddd4j-data/ddd4j-data-projection-panache/src/test/java/io/ddd4j/data/projection/panache/arch/ProjectionPanacheModuleIndependenceTest.java",
+             '                            "javax..",',
+             '                            "jakarta..",',
+             ("2.0.x", "3.0.x")),
+            ("ddd4j-data/ddd4j-data-projection-quarkus/src/test/java/io/ddd4j/data/projection/quarkus/arch/ProjectionQuarkusModuleIndependenceTest.java",
+             '                            "javax..",',
+             '                            "jakarta..",',
+             ("2.0.x", "3.0.x")),
         }
         for replacement in replacements:
             before, after = replacement.get("from", ""), replacement.get("to", "")
