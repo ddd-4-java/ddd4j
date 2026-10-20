@@ -16,6 +16,7 @@ REQUIRED = {
     "ddd4j-mq-pulsar": "PulsarContainerIntegrationTest",
     "ddd4j-mq-rocketmq": "RocketMQNativeIntegrationTest",
     "ddd4j-mq-redis-stream": "RedisStreamNativeCausalityIT",
+    "ddd4j-mq-sqs": "SqsBrokerIntegrationTest",
 }
 
 

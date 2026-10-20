@@ -18,6 +18,7 @@ CASES = {
     "ddd4j-mq-pulsar": "PulsarContainerIntegrationTest",
     "ddd4j-mq-rocketmq": "RocketMQNativeIntegrationTest",
     "ddd4j-mq-redis-stream": "RedisStreamNativeCausalityIT",
+    "ddd4j-mq-sqs": "SqsBrokerIntegrationTest",
 }
 
 
@@ -51,6 +52,16 @@ class NativeBrokerReportTest(unittest.TestCase):
 
     def test_skipped_native_test_fails(self):
         self.write_report("ddd4j-mq-rocketmq", CASES["ddd4j-mq-rocketmq"], skipped=1)
+        self.assertNotEqual(0, self.check().returncode)
+
+    def test_missing_sqs_report_fails(self):
+        report = next((self.root / "ddd4j-mq" / "ddd4j-mq-sqs" / "target" /
+                       "surefire-reports").glob("TEST-*.xml"))
+        report.unlink()
+        self.assertNotEqual(0, self.check().returncode)
+
+    def test_skipped_sqs_test_fails(self):
+        self.write_report("ddd4j-mq-sqs", CASES["ddd4j-mq-sqs"], tests=2, skipped=2)
         self.assertNotEqual(0, self.check().returncode)
 
     def test_zero_executed_tests_fails(self):
