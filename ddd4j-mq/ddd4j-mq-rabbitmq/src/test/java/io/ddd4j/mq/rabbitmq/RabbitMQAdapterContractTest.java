@@ -13,22 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.mq.rabbitmq;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.any;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import com.rabbitmq.client.ReturnCallback;
-import com.rabbitmq.client.Return;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.AMQP;
 
 import com.rabbitmq.client.*;
 import io.ddd4j.mq.event.MQEvent;
@@ -43,11 +27,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-/**
- * 类型说明。
- * @author ddd4j
- * @since 3.0.x
- */
 class RabbitMQAdapterContractTest {
 
     @Test
@@ -80,38 +59,16 @@ class RabbitMQAdapterContractTest {
         when(connection.createChannel()).thenAnswer(inv -> channels.get(createIdx.getAndIncrement() % poolSize));
         RabbitMQProperties properties = new RabbitMQProperties();
         properties.setEnabled(true);
-        /**
-         * properties.setBroker() 方法。
-         * @param "rabbit" "rabbit" 参数。
-         */
         properties.setBroker("rabbit");
-        /**
-         * properties.setExchange() 方法。
-         * @param "events" "events" 参数。
-         */
         properties.setExchange("events");
         properties.setDurable(true);
         RabbitMQClient client = new RabbitMQClient(connection);
         MQEventSerialization serialization = new MQEventSerialization() {
-            /**
-             * deserialize() 方法。
-             * @param <S> 类型参数。
-             * @param <T> 类型参数。
-             * @param src src 参数。
-             * @param dist 类型字面量。
-             * @return 结果值。
-             */
             @Override
             public <S, T> T deserialize(S src, Class<T> dist) {
                 return null;
             }
 
-            /**
-             * serialize() 方法。
-             * @param <T> 类型参数。
-             * @param src 对象参数。
-             * @return 结果值。
-             */
             @Override
             @SuppressWarnings("unchecked")
             public <T> T serialize(Object src) {
@@ -156,11 +113,6 @@ class RabbitMQAdapterContractTest {
                 return null;
             }).when(ch).addReturnListener(any(ReturnCallback.class));
             doAnswer(invocation -> {
-                /**
-                 * listenerByChannel.get() 方法。
-                 * @param ch ch 参数。
-                 * @return 方法执行结果。
-                 */
                 ReturnCallback callback = listenerByChannel.get(ch);
                 if (callback != null) {
                     AMQP.BasicProperties returnedProperties = new AMQP.BasicProperties.Builder()
@@ -180,25 +132,11 @@ class RabbitMQAdapterContractTest {
         properties.setExchange("events");
         RabbitMQClient client = new RabbitMQClient(connection);
         MQEventSerialization serialization = new MQEventSerialization() {
-            /**
-             * deserialize() 方法。
-             * @param <S> 类型参数。
-             * @param <T> 类型参数。
-             * @param src src 参数。
-             * @param dist 类型字面量。
-             * @return 结果值。
-             */
             @Override
             public <S, T> T deserialize(S src, Class<T> dist) {
                 return null;
             }
 
-            /**
-             * serialize() 方法。
-             * @param <T> 类型参数。
-             * @param src 对象参数。
-             * @return 结果值。
-             */
             @Override
             @SuppressWarnings("unchecked")
             public <T> T serialize(Object src) {
@@ -210,10 +148,6 @@ class RabbitMQAdapterContractTest {
         org.junit.jupiter.api.Assertions.assertEquals(poolSize, listenerByChannel.size());
         MQEvent event = new MQEvent();
         event.setMsgId("message-unroutable");
-        /**
-         * event.setTopic() 方法。
-         * @param "orders" "orders" 参数。
-         */
         event.setTopic("orders");
 
         assertThrows(IllegalStateException.class, event::publish);
@@ -247,25 +181,11 @@ class RabbitMQAdapterContractTest {
         props.setProducerChannelPoolSize(poolSize);
         RabbitMQClient client = new RabbitMQClient(connection);
         MQEventSerialization serialization = new MQEventSerialization() {
-            /**
-             * deserialize() 方法。
-             * @param <S> 类型参数。
-             * @param <T> 类型参数。
-             * @param src src 参数。
-             * @param dist 类型字面量。
-             * @return 结果值。
-             */
             @Override
             public <S, T> T deserialize(S src, Class<T> dist) {
                 return null;
             }
 
-            /**
-             * serialize() 方法。
-             * @param <T> 类型参数。
-             * @param src 对象参数。
-             * @return 结果值。
-             */
             @Override
             @SuppressWarnings("unchecked")
             public <T> T serialize(Object src) {
@@ -276,15 +196,7 @@ class RabbitMQAdapterContractTest {
 
         // 第一次发布：channels[0] 失败 → catch 块创建替补 channels[poolSize] 入池
         MQEvent event1 = new MQEvent();
-        /**
-         * event1.setMsgId() 方法。
-         * @param "msg-fail" "msg-fail" 参数。
-         */
         event1.setMsgId("msg-fail");
-        /**
-         * event1.setTopic() 方法。
-         * @param "orders" "orders" 参数。
-         */
         event1.setTopic("orders");
         assertThrows(IllegalStateException.class, event1::publish);
 
@@ -331,25 +243,11 @@ class RabbitMQAdapterContractTest {
         RabbitMQClient client = new RabbitMQClient(connection);
         client.init(Collections.<io.ddd4j.mq.listener.MQListener>emptyList(), properties,
                 new MQEventSerialization() {
-                    /**
-                     * deserialize() 方法。
-                     * @param <S> 类型参数。
-                     * @param <T> 类型参数。
-                     * @param src src 参数。
-                     * @param dist 类型字面量。
-                     * @return 结果值。
-                     */
                     @Override
                     public <S, T> T deserialize(S src, Class<T> dist) {
                         return null;
                     }
 
-                    /**
-                     * serialize() 方法。
-                     * @param <T> 类型参数。
-                     * @param src 对象参数。
-                     * @return 结果值。
-                     */
                     @Override
                     @SuppressWarnings("unchecked")
                     public <T> T serialize(Object src) {
