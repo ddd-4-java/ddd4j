@@ -35,19 +35,33 @@ import java.util.List;
 public class DropwizardCqrsApplication extends Application<DropwizardCqrsConfiguration> {
 
     // 共享组件（手动装配，使用 core SPI）
-    /** 内存事件存储，承载订单聚合的领域事件。 */
+    /**
+     * 事件存储。
+     */
     public static final InMemoryEventStore EVENT_STORE = new InMemoryEventStore();
-    /** 基于事件溯源的订单仓储。 */
+    /**
+     * 订单仓储。
+     */
     public static final EventSourcingOrderRepository ORDER_REPO = new EventSourcingOrderRepository(EVENT_STORE);
-    /** 创建订单命令处理器。 */
+    /**
+     * 创建订单命令处理器。
+     */
     public static final CreateOrderCommandHandler COMMAND_HANDLER = new CreateOrderCommandHandler(ORDER_REPO);
-    /** 默认命令总线，注册上述命令处理器。 */
+    /**
+     * 命令总线。
+     */
     public static final CommandBus COMMAND_BUS = new DefaultCommandBus(List.of(COMMAND_HANDLER));
-    /** 订单摘要读模型视图。 */
+    /**
+     * 订单读取视图。
+     */
     public static final OrderSummaryView READ_VIEW = new OrderSummaryView(ORDER_REPO);
-    /** 内存事件分片读取器，为视图管理器供应事件。 */
+    /**
+     * 事件块读取器。
+     */
     public static final InMemoryEventChunkReader CHUNK_READER = new InMemoryEventChunkReader(EVENT_STORE);
-    /** 内存视图管理器，注册并驱动订单摘要视图。 */
+    /**
+     * 投影视图管理器。
+     */
     public static final InMemoryViewManager VIEW_MANAGER = createViewManager();
 
     private static InMemoryViewManager createViewManager() {
@@ -57,27 +71,19 @@ public class DropwizardCqrsApplication extends Application<DropwizardCqrsConfigu
     }
 
     /**
-     * main() 方法。
-     * @param args 命令行参数。
-     * @throws Exception 执行过程中出现异常时抛出。
+     * 启动 Dropwizard CQRS 示例应用。
+     *
+     * @param args 命令行参数
+     * @throws Exception 应用启动失败时
      */
     public static void main(String[] args) throws Exception {
         new DropwizardCqrsApplication().run(args);
     }
 
-    /**
-     * initialize() 方法。
-     * @param bootstrap bootstrap 参数。
-     */
     @Override
     public void initialize(Bootstrap<DropwizardCqrsConfiguration> bootstrap) {
     }
 
-    /**
-     * 执行主流程。
-     * @param configuration configuration 参数。
-     * @param environment environment 参数。
-     */
     @Override
     public void run(DropwizardCqrsConfiguration configuration, Environment environment) {
         environment.jersey().register(new OrderResource());
