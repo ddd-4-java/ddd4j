@@ -48,3 +48,5 @@ Integer result = engine.execute("doubleValue(5)",
 本模块的 `QLExpressEngine.unwrap()` 返回 `com.alibaba.qlexpress4.Express4Runner`。只有需要底层 API、且接受其版本耦合时才使用它。QLExpress 4 的方法注解位于 `com.alibaba.qlexpress4.annotation.QLFunction`；它与上面的 `NamedQLFunction` 扩展点不同，不应混用旧版示例。
 
 Spring Boot 自动配置、规则仓储、缓存和 Web 接口位于上层适配模块，不属于此纯 Java 工具模块。完整入口和安全默认值见同目录 `README.md`；可运行的函数注册与替换契约见 `src/test/java/io/ddd4j/extension/qlexpress/QLExpressEngineTest.java`。
+
+历史外部参考：[原链接](https://mp.weixin.qq.com/s/h2XXYiq7Ty5-xqulFfxwug)。其内容目前无法核验，不作为本模块现行 API 契约依据。
