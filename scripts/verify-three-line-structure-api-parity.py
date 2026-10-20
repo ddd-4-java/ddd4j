@@ -1189,6 +1189,12 @@ def validate_platform_content_mappings(mappings, roots: list[pathlib.Path]) -> d
              "import tools.jackson.databind.json.JsonMapper;"),
         }
         exact_test_adaptations = {
+            ("ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunInfoValueContractTest.java",
+             "import com.fasterxml.jackson.databind.ObjectMapper;",
+             "import tools.jackson.databind.json.JsonMapper;", ("3.0.x",)),
+            ("ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunInfoValueContractTest.java",
+             "ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();",
+             "JsonMapper mapper = JsonMapper.builder().findAndAddModules().build();", ("3.0.x",)),
             ("ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/arch/ProjectionJpaModuleIndependenceTest.java",
              '                            "javax..",\n', "", ("2.0.x", "3.0.x")),
             ("ddd4j-runtime/ddd4j-runtime-helidon/src/test/java/io/ddd4j/helidon/HelidonServerBootTest.java",
