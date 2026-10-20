@@ -69,6 +69,33 @@ class JdbiEventStorePostgresIT {
     }
 
     @Test
+    void appendAndReadShouldRoundTripTypedEventOnPostgres() {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-pg-1");
+        eventStore.append(ORDER_TYPE, orderId,
+                List.of(new OrderCreatedEvent(orderId), new OrderCreatedEvent(orderId)), 0L);
+
+        List<StoredEvent> events = eventStore.read(ORDER_TYPE, orderId);
+        assertThat(events).hasSize(2);
+        assertThat(events).extracting(StoredEvent::version).containsExactly(1L, 2L);
+        assertThat(events.get(0).aggregateType()).isEqualTo(ORDER_TYPE);
+        assertThat(events.get(0).aggregateId().asString()).isEqualTo(orderId.asString());
+        assertThat(events.get(0).payload()).isInstanceOf(OrderCreatedEvent.class);
+        assertThat(events.get(1).aggregateId().asString()).isEqualTo(orderId.asString());
+        assertThat(events.get(1).payload()).isInstanceOf(OrderCreatedEvent.class);
+        assertThat(eventStore.readAll(0L, 2)).extracting(StoredEvent::position).hasSize(2);
+    }
+
+    @Test
+    void appendWithStaleVersionShouldRejectOnPostgres() {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-pg-2");
+        eventStore.append(ORDER_TYPE, orderId, List.of(new OrderCreatedEvent(orderId)), 0);
+
+        assertThrows(AggregateVersionConflictException.class,
+                () -> eventStore.append(ORDER_TYPE, orderId,
+                        List.of(new OrderCreatedEvent(orderId)), 0));
+    }
+
+    @Test
     void timestampShouldRoundTripAcrossTimezonesOnPostgres() throws Exception {
         JdbiTimestampTimezoneContractTest.assertUtcRoundTrip(jdbi);
     }
@@ -89,16 +116,6 @@ class JdbiEventStorePostgresIT {
     }
 
     @Test
-    void appendWithStaleVersionShouldRejectOnPostgres() {
-        TestAggregateRootId orderId = new TestAggregateRootId("order-pg-2");
-        eventStore.append(ORDER_TYPE, orderId, List.of(new OrderCreatedEvent(orderId)), 0);
-
-        assertThrows(AggregateVersionConflictException.class,
-                () -> eventStore.append(ORDER_TYPE, orderId,
-                        List.of(new OrderCreatedEvent(orderId)), 0));
-    }
-
-    @Test
     void payloadColumnShouldUsePortableTextType() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-pg-schema");
         eventStore.append(ORDER_TYPE, orderId, List.of(new OrderCreatedEvent(orderId)), 0);
@@ -112,23 +129,6 @@ class JdbiEventStorePostgresIT {
                 .mapTo(String.class)
                 .one());
         assertThat(dataType).isEqualTo("text");
-    }
-
-    @Test
-    void appendAndReadShouldRoundTripTypedEventOnPostgres() {
-        TestAggregateRootId orderId = new TestAggregateRootId("order-pg-1");
-        eventStore.append(ORDER_TYPE, orderId,
-                List.of(new OrderCreatedEvent(orderId), new OrderCreatedEvent(orderId)), 0L);
-
-        List<StoredEvent> events = eventStore.read(ORDER_TYPE, orderId);
-        assertThat(events).hasSize(2);
-        assertThat(events).extracting(StoredEvent::version).containsExactly(1L, 2L);
-        assertThat(events.get(0).aggregateType()).isEqualTo(ORDER_TYPE);
-        assertThat(events.get(0).aggregateId().asString()).isEqualTo(orderId.asString());
-        assertThat(events.get(0).payload()).isInstanceOf(OrderCreatedEvent.class);
-        assertThat(events.get(1).aggregateId().asString()).isEqualTo(orderId.asString());
-        assertThat(events.get(1).payload()).isInstanceOf(OrderCreatedEvent.class);
-        assertThat(eventStore.readAll(0L, 2)).extracting(StoredEvent::position).hasSize(2);
     }
 
     private final static class TestAggregateRootId implements AggregateRootId {
