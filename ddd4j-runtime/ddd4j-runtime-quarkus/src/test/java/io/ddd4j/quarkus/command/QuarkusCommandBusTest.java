@@ -37,8 +37,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 /**
  * {@link QuarkusCommandBus} 命令路由与执行测试。
  *
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 2.0.x
+ * @author ddd4j
+ * @since 1.0.x
  */
 class QuarkusCommandBusTest {
 
@@ -111,6 +111,11 @@ class QuarkusCommandBusTest {
 
     // --- 测试用命令和执行器 ---
 
+    /**
+     * 携带字符串负载的测试命令，已注册执行器用于验证正常路由。
+     *
+     * @param payload 命令负载
+     */
     final static class TestCommand implements Command {
 
         private static final long serialVersionUID = 0L;
@@ -152,6 +157,9 @@ class QuarkusCommandBusTest {
         }
     }
 
+    /**
+     * 未注册执行器的测试命令，用于验证未知命令抛出异常。
+     */
     final static class UnregisteredCommand implements Command {
 
         private static final long serialVersionUID = 0L;
@@ -184,6 +192,9 @@ class QuarkusCommandBusTest {
         }
     }
 
+    /**
+     * 会返回失败结果的测试命令，用于验证失败结果透传。
+     */
     final static class FailCommand implements Command {
 
         private static final long serialVersionUID = 0L;
@@ -216,6 +227,9 @@ class QuarkusCommandBusTest {
         }
     }
 
+    /**
+     * {@link TestCommand} 的执行器，返回携带负载的成功结果。
+     */
     static class TestCommandExecutor implements CommandExecutor<TestCommand> {
 
         @Override
@@ -229,6 +243,9 @@ class QuarkusCommandBusTest {
         }
     }
 
+    /**
+     * {@link FailCommand} 的执行器，恒返回失败结果。
+     */
     static class FailCommandExecutor implements CommandExecutor<FailCommand> {
 
         @Override
