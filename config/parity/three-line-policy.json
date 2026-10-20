@@ -3860,6 +3860,18 @@
       "evidence": "三线各自断言对应 JDK 与第三方依赖策略；文件 SHA-256 锁定，dependency-policy 单测与 CI 独立执行"
     }
   ],
+  "platformTestNamespaceMappings": [
+    {
+      "path": "ddd4j-data/ddd4j-data-cqrs-helidon/src/test/java/io/ddd4j/data/cqrs/helidon/arch/CqrsHelidonModuleIndependenceTest.java",
+      "sha256ByJdk": {"8": "30ab5761013b49339b7e749f32141b30ca5b1e62a0d6513529d46857072f93b2", "17": "8868b4917e79e7a94f492b8fdade243b23c9e87be5d8f9e8ba93ce7aee6bc719", "21": "8868b4917e79e7a94f492b8fdade243b23c9e87be5d8f9e8ba93ce7aee6bc719"},
+      "evidence": "三线 Helidon CQRS 架构规则仅作 javax/jakarta 命名空间与版本注记替换；规范化后逐字一致"
+    },
+    {
+      "path": "ddd4j-data/ddd4j-data-projection-helidon/src/test/java/io/ddd4j/data/projection/helidon/arch/ProjectionHelidonModuleIndependenceTest.java",
+      "sha256ByJdk": {"8": "fdc5de72801222c18b7b693461afdef81ba2a9fa51b8840289c11184353a9848", "17": "559fa1128c9cdfd13480e69921f6b7aec06ea260ba5bc84fcc69892febc7eeec", "21": "559fa1128c9cdfd13480e69921f6b7aec06ea260ba5bc84fcc69892febc7eeec"},
+      "evidence": "三线 Helidon Projection 架构规则仅作 javax/jakarta 命名空间与版本注记替换；规范化后逐字一致"
+    }
+  ],
   "platformTestSyntaxMappings": [
     {
       "path": "ddd4j-core/src/test/java/io/ddd4j/core/health/PlainValueContractTest.java",
