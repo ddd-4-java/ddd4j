@@ -376,6 +376,14 @@
   ],
   "platformContentMappings": [
     {
+      "path": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/test/java/io/ddd4j/sample/quarkus/cqrs/event/OrderEventTest.java",
+      "replacements": [
+        {"from": "import javax.inject.Inject;", "to": "import jakarta.inject.Inject;"}
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/test/java/io/ddd4j/sample/quarkus/cqrs/event/OrderEventTest.java",
+      "reason": "三线事件与 REST 断言逐字一致，构造相同请求体；仅 Quarkus CDI 的 javax/jakarta 注入命名空间不同。"
+    },
+    {
       "path": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/main/java/io/ddd4j/sample/quarkus/cqrs/order/domain/service/OrderDomainService.java",
       "replacements": [
         {"from": "import javax.enterprise.context.ApplicationScoped;", "to": "import jakarta.enterprise.context.ApplicationScoped;"},
