@@ -81,8 +81,9 @@ public class JavalinShiroApplication {
     public static final int PORT = 7000;
 
     /**
-     * main() 方法。
-     * @param args 命令行参数。
+     * 启动 Javalin Shiro 示例。
+     *
+     * @param args 命令行参数
      */
     public static void main(String[] args) {
         // ==================== 1. 初始化 RBAC + Shiro SecurityManager ====================

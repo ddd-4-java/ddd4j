@@ -3451,6 +3451,21 @@
         "21": "0dbf4d8449b12105b3a2c550021b1bdc2dbaf66bea0d0990c566d46a6d389a6a"
       },
       "reason": "三线复用同一异常翻译与响应体构造，构造文档及 SLF4J/Lombok 日志一致；Micronaut 3 仅有 HttpStatus 枚举重载，高线使用整数状态码与消息重载。三线异常处理目标测试各 6 项通过，验证 HTTP 状态码和响应体；源码与逐线测试哈希锁定。"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/JavalinShiroApplication.java",
+      "sourceSha256": [
+        "c424f5b66c808181bc0ff9baf596d9743466675f3799170408b032e9b765b492",
+        "1fd01ca1a64acb33746f8d367d06c7caeade2218e3906189ecfbb1d1b0c1c30f",
+        "1fd01ca1a64acb33746f8d367d06c7caeade2218e3906189ecfbb1d1b0c1c30f"
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/rbac/web/AuthControllerTest.java",
+      "testSha256ByJdk": {
+        "8": "5a9cbad2b9a1c2094eed2a8aab5c37a4662f1fb6ae0b40533b69168dccefd921",
+        "17": "3efd8e8b487f6458db97e65f8d59a3146f3b9975c6eaaf76e56f079b7fcfc29b",
+        "21": "746e1402c3d3eb6f483254eaabc022e56dd9a57bd9ce929342cc13899a52877c"
+      },
+      "reason": "三线 Shiro 示例的 SPI 注册、认证和商品路由逻辑一致，Javadoc 对齐；JDK 8 使用 Javalin 4 与 Java8Maps，JDK 17/21 使用各自 Javalin 版本和 Map.of。三线认证 HTTP 集成测试各 37 项通过，商品 HTTP 测试各 32 项通过；源码和逐线测试哈希锁定。"
     }
   ],
   "historicalDocumentSections": [
