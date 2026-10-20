@@ -30,6 +30,7 @@ import io.ddd4j.sample.javalin.shiro.order.web.dto.OrderResponse;
 import io.javalin.apibuilder.EndpointGroup;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.Objects;
 
 import static io.javalin.apibuilder.ApiBuilder.get;
@@ -133,7 +134,7 @@ public class OrderResource {
             get("/orders", ctx -> {
                 List<OrderResponse> items = orderApplicationService.listAll().stream()
                         .map(OrderResponse::from)
-                        .toList();
+                        .collect(Collectors.toList());
                 ctx.json(R.ok(items));
             });
 
