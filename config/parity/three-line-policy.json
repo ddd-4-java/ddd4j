@@ -2985,6 +2985,17 @@
         "21": "e85f0802cbffd26769d682f7a28fa9a76a5b453b64608bfa64abd01ec1acb08f"
       },
       "reason": "三线 Web MVC 拦截器请求上下文、头部提取与幂等作用域行为相同；JDK 8 使用显式 instanceof/强转，JDK 17/21 使用模式匹配，辅助方法顺序和设置属性顺序无对外差异"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/rbac/RbacConfig.java",
+      "sourceSha256": [
+        "7113864023e65bd2b696eb03897c2e25fbacb5545f983eaee45e74a196e2d883",
+        "148168ef8c82c4a5d97baefffeb99fde946bd12a12dd9bf6fb3d343dba02e5dd",
+        "f537daefa0da954f6d6c21535aa45581fbfc2147ff797dd9d87b398ae42bc2ed"
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/rbac/RbacConfigContractTest.java",
+      "testSha256": "d4180325747c9420c702b3dd91fbfc8238c27b12c446bc7d144e537332879705",
+      "reason": "三线 RBAC 种子数据、不可变角色/权限快照与权限顺序契约一致；JDK 8 使用 Arrays.asList、Collections 与防御性副本，JDK 17/21 使用 List.of、Set.of、List.copyOf；三线相同的契约测试 2/2 与认证控制器测试 37/37 通过。逐线源码及测试 SHA-256 锁定。"
     }
   ],
   "historicalDocumentSections": [
