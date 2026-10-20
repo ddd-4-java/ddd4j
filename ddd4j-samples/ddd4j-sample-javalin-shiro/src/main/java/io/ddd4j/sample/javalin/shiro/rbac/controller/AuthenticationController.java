@@ -44,12 +44,17 @@ import java.util.*;
  * <p>本控制器与 {@code ddd4j-sample-javalin-satoken} 的 AuthenticationController 业务代码<b>完全一致</b>，
  * 仅 HTTP 适配层（Javalin lambda）适配不同框架。
  *
- * @author ddd4j
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class AuthenticationController {
 
     private final RbacService rbacService;
 
+    /**
+     * 创建认证控制器。
+     *
+     * @param rbacService RBAC 服务
+     */
     @Inject
     public AuthenticationController(RbacService rbacService) {
         this.rbacService = rbacService;
@@ -57,6 +62,8 @@ public class AuthenticationController {
 
     /**
      * POST /auth/login —— 登录：SubjectKit.login(AuthRequest)
+     *
+     * @param ctx Javalin 请求上下文
      */
     public void login(Context ctx) {
         LoginRequest req = ctx.bodyAsClass(LoginRequest.class);
@@ -94,6 +101,8 @@ public class AuthenticationController {
 
     /**
      * POST /auth/logout —— 登出：SubjectKit.logout()
+     *
+     * @param ctx Javalin 请求上下文
      */
     public void logout(Context ctx) {
         SubjectKit.logout();
@@ -102,6 +111,8 @@ public class AuthenticationController {
 
     /**
      * GET /auth/me —— 当前用户：SubjectKit.getPrincipal() + 派生角色/权限
+     *
+     * @param ctx Javalin 请求上下文
      */
     public void me(Context ctx) {
         AuthPrincipal principal = SubjectKit.getPrincipal();
@@ -135,6 +146,8 @@ public class AuthenticationController {
 
     /**
      * GET /auth/check/permission?permission=xxx —— 权限校验
+     *
+     * @param ctx Javalin 请求上下文
      */
     public void checkPermission(Context ctx) {
         String permission = ctx.queryParam("permission");
@@ -144,6 +157,8 @@ public class AuthenticationController {
 
     /**
      * GET /auth/check/role?role=xxx —— 角色校验
+     *
+     * @param ctx Javalin 请求上下文
      */
     public void checkRole(Context ctx) {
         String role = ctx.queryParam("role");
@@ -153,6 +168,8 @@ public class AuthenticationController {
 
     /**
      * POST /auth/kickout —— 踢人下线：SubjectKit.kickout()
+     *
+     * @param ctx Javalin 请求上下文
      */
     public void kickout(Context ctx) {
         String userId = ctx.formParam("userId");
@@ -162,6 +179,8 @@ public class AuthenticationController {
 
     /**
      * GET /auth/status —— 登录状态：SubjectKit.isLogin()
+     *
+     * @param ctx Javalin 请求上下文
      */
     public void status(Context ctx) {
         ctx.json(R.ok(Map.of("login", SubjectKit.isLogin())));
@@ -170,36 +189,51 @@ public class AuthenticationController {
     // ============================ DTO ============================
 
     /**
-     * 登录请求参数：登录标识与密码。
-     *
-     * 字段 {@code loginId}：登录标识（账号）
-     * 字段 {@code password}：登录密码
+     * 登录请求。
      */
     @Data
     @NoArgsConstructor
     public static class LoginRequest {
+
+        private static final long serialVersionUID = 0L;
 
         private String loginId;
 
         @ToString.Exclude
         private String password;
 
+        /**
+         * 创建登录请求。
+         *
+         * @param loginId 登录标识
+         * @param password 密码
+         */
         @JsonCreator()
-        public LoginRequest(@JsonProperty("loginId") String loginId,
-                            @JsonProperty("password") String password) {
+        public LoginRequest(@JsonProperty("loginId") String loginId, @JsonProperty("password") String password) {
             this.loginId = loginId;
             this.password = password;
         }
 
+        /**
+         * 读取登录标识。
+         *
+         * @return 登录标识
+         */
         @JsonProperty("loginId")
         public String loginId() {
             return loginId;
         }
 
+        /**
+         * 读取密码。
+         *
+         * @return 密码
+         */
         @JsonProperty("password")
         public String password() {
             return password;
         }
+
     }
 
 }
