@@ -14,16 +14,24 @@
  */
 package io.ddd4j.sample.quarkus.shiro.goods.web;
 
+import io.quarkus.arc.Arc;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 
 /** 商品查询 HTTP 路由在三条平台线的共同契约。 */
 @QuarkusTest
 class GoodsQueryResourceContractTest {
+
+    @Test
+    void goodsResourceUsesApplicationScope() {
+        assertEquals("ApplicationScoped", Arc.container().instance(GoodsResource.class)
+                .getBean().getScope().getSimpleName());
+    }
 
     @Test
     void emptyCatalogHasZeroCount() {
