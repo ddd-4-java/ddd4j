@@ -90,6 +90,24 @@
   ],
   "platformDependencyConfigFiles": [
     {
+      "path": "config/license-selections.tsv",
+      "sha256ByJdk": {
+        "8": "7af2b94235e32453d06e897e68181dac717a1f6d409fb39f8cb69c7ad1aaa273",
+        "17": "825cc13db26ce2bfe514ac4d093b2da16d8bb6ddbe2c92c82aa9db008bf0d40a",
+        "21": "597610af254907c6f8116cf45a13a20a531c40b03ef09ed21fb6710789648a08"
+      },
+      "evidence": "三线 SBOM/license 作业分别扫描各自的依赖版本；选择记录逐线哈希锁定，许可证核验仍须独立通过"
+    },
+    {
+      "path": "config/license-build-tool-exclusions.tsv",
+      "sha256ByJdk": {
+        "8": "3212420143cecc80c40d4533fb8fed9cb284e8cf1bc49c12717b8494ab27d192",
+        "17": "69774fed58c2ac131d160627089021fc59c84649c0f855caedbff36f5d4272d6",
+        "21": "87652a1b38761a272576031a4c0985e1c6e828aae1c4cfbb0bf11a8db5a5559a"
+      },
+      "evidence": "构建工具依赖豁免仅针对逐线实际 BOM/SBOM 差异；文件哈希锁定，许可证核验仍须独立通过"
+    },
+    {
       "path": "config/dependencies/alignment-policy.json",
       "sha256ByJdk": {
         "8": "04cf6678e515b869f675c55a0fe8c90d0cb875ed418ed7bf7e6bfc19b7979018",
