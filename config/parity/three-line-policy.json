@@ -3824,6 +3824,32 @@
   ],
   "platformTestSyntaxMappings": [
     {
+      "path": "ddd4j-core/src/test/java/io/ddd4j/core/health/PlainValueContractTest.java",
+      "productionPath": "ddd4j-core/src/main/java/io/ddd4j/core/health/ReadinessResult.java",
+      "sourceSha256": [
+        "3e0425a3c3e1f85f20af4339a4222cd75a3d2621617535e14ab2dea561ca0d12",
+        "272e84dab026fcf6e1204bed2dfddda2b154915c5e51675b69430825b143a672",
+        "b5c46a76a5f50de147ff4a36c8b06afeb08e661ea8c462502643f84199548202"
+      ],
+      "productionSha256": [
+        "0b61c7cd6f74df83559b9f46e44eff269760b5bef0376dbfd7676c1b73ec8708",
+        "0b61c7cd6f74df83559b9f46e44eff269760b5bef0376dbfd7676c1b73ec8708",
+        "0b61c7cd6f74df83559b9f46e44eff269760b5bef0376dbfd7676c1b73ec8708"
+      ],
+      "testMethods": [
+        "diagnosticDetailsKeepInputOrder",
+        "frameworkValuesAreFinalOrdinaryClasses",
+        "componentsPreserveValuesAndDefensiveCopies",
+        "readinessResultHashUsesTheSameBooleanValueAcrossLines",
+        "readinessReportHashUsesTheSameBooleanValueAcrossLines",
+        "javaSerializationPreservesCanonicalValidation",
+        "jacksonPreservesComponentNamesAndCanonicalValidation",
+        "immutableValueCollectionsRejectNullEntries",
+        "readinessReportRetainsValueAndJsonContract"
+      ],
+      "reason": "三线同一组 9 项值、不可变集合、Java 序列化和 JSON 契约测试均通过；ReadinessResult 生产源码逐字节相同。JDK 8 使用 Collections/Field 显式类型，JDK 17/21 使用 Map.of/var，Jackson 3 的 JsonNode properties API 与 Jackson 2 size API 等价；测试和生产源码逐线哈希锁定。"
+    },
+    {
       "path": "ddd4j-runtime/ddd4j-runtime-dropwizard/src/test/java/io/ddd4j/dropwizard/cqrs/DropwizardCqrsRuntimeContractTest.java",
       "productionPath": "ddd4j-core/src/main/java/io/ddd4j/core/cqrs/command/DefaultCommandBus.java",
       "sourceSha256": [
