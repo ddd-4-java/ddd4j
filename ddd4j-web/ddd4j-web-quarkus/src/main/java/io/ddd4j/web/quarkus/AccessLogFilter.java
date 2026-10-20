@@ -45,16 +45,17 @@ public class AccessLogFilter implements ContainerRequestFilter {
     HttpServerRequest request;
 
     /**
-     * 过滤数据。
-     * @param requestContext requestContext 参数。
-     * @throws IOException 打开文件流失败时抛出。
+     * 记录请求地址、方法、路径和租户标识。
+     *
+     * @param requestContext JAX-RS 请求上下文
+     * @throws IOException 请求过滤失败时抛出
      */
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
         String method = requestContext.getMethod();
         String path = requestContext.getUriInfo().getPath();
         String tenantId = ThreadContext.get(ContextConstants.TENANT_ID);
-        String address = request.remoteAddress().hostAddress();
+        String address = request.remoteAddress().host();
 
         if ("POST".equalsIgnoreCase(method) || "DELETE".equalsIgnoreCase(method) || "GET".equalsIgnoreCase(method)) {
             log.info("{}:{} {} tenantId={}", address, method, path, tenantId);
