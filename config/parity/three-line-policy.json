@@ -3665,6 +3665,21 @@
       "evidence": "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/exception/BaseExceptionHandlerAddressTest.java",
       "testSha256": "30b69d5297bb45058589d2e90a424797502f7b5a41e9af71ac3537b996582af9",
       "reason": "三线异常日志均通过 IpKit 解析代理头与连接地址，公共测试覆盖转发地址优先和无代理头回退；JDK 8 保留 javax.servlet，JDK 17/21 保留 jakarta.servlet。其余文档差异由逐线源码哈希锁定。"
+    },
+    {
+      "path": "ddd4j-data/ddd4j-data-projection-dropwizard/src/main/java/io/ddd4j/data/projection/dropwizard/DropwizardProjectionScheduler.java",
+      "sourceSha256": [
+        "c6e1a32d460fc6f6dee9de33bae1b1155505d64f74dadd5201a5164375694fa3",
+        "5ebb2bafe862b68ce62593ffa4974007e4f90e66d29bcfb3ffac1f8a0651368d",
+        "5ebb2bafe862b68ce62593ffa4974007e4f90e66d29bcfb3ffac1f8a0651368d"
+      ],
+      "evidence": "ddd4j-data/ddd4j-data-projection-dropwizard/src/test/java/io/ddd4j/data/projection/dropwizard/DropwizardProjectionSchedulerIT.java",
+      "testSha256ByJdk": {
+        "8": "f16497d9fd51270fed42fbc8592694bc42114f41095cd0c3cee47d7d198788c9",
+        "17": "753c508030bf0282a9cf7b2ed3ed8d88f23517805c11c5884647b24a24579572",
+        "21": "66e93ce013b27376f00e26f6d256ea9925e743c7f87fd4ea4edf0f0309005fe1"
+      },
+      "reason": "Dropwizard 2 的 io.dropwizard.setup.Environment 与 Dropwizard 4 的 io.dropwizard.core.setup.Environment 仅包路径不同；三线调度器集成测试各 3 项验证 active/cancel、生命周期和 triggerOnce。"
     }
   ],
   "historicalDocumentSections": [
@@ -4725,6 +4740,26 @@
         "markerFailureShouldKeepOriginalFailureAndFrameworkShouldAbort"
       ],
       "reason": "三线 Quarkus/JPA 托管事务集成测试各 4 项通过，验证业务实体、outbox 与事件共同提交、外层回滚、捕获失败和回滚标记异常；JDK 8 使用 javax/JTA TransactionManager，高两线使用 jakarta/QuarkusTransaction，保留逐线框架 API 差异。"
+    },
+    {
+      "path": "ddd4j-data/ddd4j-data-projection-dropwizard/src/test/java/io/ddd4j/data/projection/dropwizard/DropwizardProjectionSchedulerIT.java",
+      "productionPath": "ddd4j-data/ddd4j-data-projection-dropwizard/src/main/java/io/ddd4j/data/projection/dropwizard/DropwizardProjectionScheduler.java",
+      "sourceSha256": [
+        "f16497d9fd51270fed42fbc8592694bc42114f41095cd0c3cee47d7d198788c9",
+        "753c508030bf0282a9cf7b2ed3ed8d88f23517805c11c5884647b24a24579572",
+        "66e93ce013b27376f00e26f6d256ea9925e743c7f87fd4ea4edf0f0309005fe1"
+      ],
+      "productionSha256": [
+        "c6e1a32d460fc6f6dee9de33bae1b1155505d64f74dadd5201a5164375694fa3",
+        "5ebb2bafe862b68ce62593ffa4974007e4f90e66d29bcfb3ffac1f8a0651368d",
+        "5ebb2bafe862b68ce62593ffa4974007e4f90e66d29bcfb3ffac1f8a0651368d"
+      ],
+      "testMethods": [
+        "scheduler_schedule_应返回activeHandle_cancel后应inactive",
+        "viewManager_start_stop_应管理生命周期",
+        "triggerOnce_应立即执行所有view的runOnce"
+      ],
+      "reason": "三线 Dropwizard 投影调度器集成测试各 3 项通过；JDK 8 的 Dropwizard 2 与高两线的 Dropwizard 4 在 Application/Environment 包和集合工厂语法上适配，生产调度器已由逐线源码与测试指纹锁定。"
     }
   ]
 }
