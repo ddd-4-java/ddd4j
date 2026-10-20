@@ -3496,6 +3496,17 @@
         "21": "eb28aa3cde69bd6ac5f5a141f9a9e77ac3044e470bbc7fe8269750adc6922d72"
       },
       "reason": "三线 WebMVC 拦截器顺序、静态资源路径及 JSON/日期转换契约一致；JDK 8 使用 Arrays.asList 与 Spring 5 WebJarsResourceResolver，JDK 17/21 使用 List.of 与 Spring 6/7 LiteWebJarsResourceResolver，3.0.x 的 Jackson 3 转换器由桥接层适配。三线 WebMVC 契约 6 项、API 版本拦截器 11 项、WebJars 1 项测试通过，逐线源码及测试哈希锁定。"
+    },
+    {
+      "path": "ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/exception/BaseExceptionHandler.java",
+      "sourceSha256": [
+        "693442e68ce80638e3526b435fa1c824996882b6b6768e858d31b2afa23bbe7f",
+        "97917136d4360c81cf900dd8ed7f0f6d50163af82dde7f4bf1586fe6b7c14c65",
+        "9f32d6b30ee9ddae19faaa7b6b82933431b315019ceb97931ac9f028093b8071"
+      ],
+      "evidence": "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/exception/BaseExceptionHandlerAddressTest.java",
+      "testSha256": "30b69d5297bb45058589d2e90a424797502f7b5a41e9af71ac3537b996582af9",
+      "reason": "三线异常日志均通过 IpKit 解析代理头与连接地址，公共测试覆盖转发地址优先和无代理头回退；JDK 8 保留 javax.servlet，JDK 17/21 保留 jakarta.servlet。其余文档差异由逐线源码哈希锁定。"
     }
   ],
   "historicalDocumentSections": [
