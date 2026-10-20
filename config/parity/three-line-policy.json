@@ -3391,6 +3391,21 @@
         "21": "34f681464d7769bfb9c98345850399008cd2d71c0ec298870ce75fa00491b858"
       },
       "reason": "三线 RBAC 认证、角色与权限业务逻辑及文档一致；空集合统一由 Collections 返回，JDK 8 使用 javax CDI/JAX-RS，高线使用 jakarta CDI/JAX-RS。三线 RBAC HTTP 回归各 45 项通过，源码和逐线测试哈希锁定。"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/main/java/io/ddd4j/sample/javalin/cqrs/JavalinCqrsApplication.java",
+      "sourceSha256": [
+        "4156e3cbdfdf70f6658a67799cb68a0ca86d8960c9f368a28405a967025426cb",
+        "f8858c776a3a0b2d348293d831beb45ff8e534c26eff1e5b3543ee6047de188e",
+        "096d232dad05f49481d29e94f7ace9c746c6bd5fc05311f2b2329069a74e067b"
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/order/web/OrderControllerTest.java",
+      "testSha256ByJdk": {
+        "8": "3dc9f83e400107ec4bb6fedd0f1952b795d0c303730ede5dc99f2f646806321f",
+        "17": "7b50024e6cedcb347f38df1bfc622d5b682ca03c516d7df501e1f318aec79383",
+        "21": "053822380dbf2b91d1a00c488b0b9e5d6b86622fccd675e844d9e1e1fb8e39aa"
+      },
+      "reason": "三线 CQRS 启动入口的路由与产品文档一致；Javalin 4/7 的路由注册 API 和 JavalinJackson/JavalinJackson3 配置随平台版本适配。三线 HTTP 订单控制器测试各 35 项通过，源码和逐线测试哈希锁定；正式 main 启动仍由远端 Verify 独立检验。"
     }
   ],
   "historicalDocumentSections": [
