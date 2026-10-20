@@ -22,6 +22,9 @@ TEST = ('@QuarkusTest\n'
         '  void scope() { Arc.container().instance(Resource.class); '
         '"ApplicationScoped"; }\n'
         '}\n')
+AVAILABLE_TEST = '@QuarkusTest Arc.container().instance(Filter.class).isAvailable()\n'
+HTTP_EVIDENCE = 'sample/src/test/java/example/FilterHttpContractTest.java'
+HTTP_TEST = '@QuarkusTest class FilterHttpContractTest extends AbstractWebContractTest {}\n'
 
 
 class PlatformCdiResourcesTest(unittest.TestCase):
@@ -66,6 +69,29 @@ class PlatformCdiResourcesTest(unittest.TestCase):
 
     def test_rejects_changed_scope_evidence(self):
         (self.roots[2] / EVIDENCE).write_text(TEST.replace("ApplicationScoped", "Singleton"))
+        with self.assertRaises(ValueError):
+            PARITY.validate_platform_cdi_resources_only_on_jdk8(
+                [self.mapping], self.roots)
+
+    def test_accepts_available_bean_with_three_line_http_contract(self):
+        for root in self.roots:
+            (root / EVIDENCE).write_text(AVAILABLE_TEST)
+            http = root / HTTP_EVIDENCE
+            http.parent.mkdir(parents=True, exist_ok=True)
+            http.write_text(HTTP_TEST)
+        self.mapping.update({
+            'assertion': 'available',
+            'testSha256': hashlib.sha256(AVAILABLE_TEST.encode()).hexdigest(),
+            'httpEvidence': HTTP_EVIDENCE,
+            'httpTestSha256': [hashlib.sha256(HTTP_TEST.encode()).hexdigest()] * 3,
+        })
+        self.assertIn(DESCRIPTOR,
+                      PARITY.validate_platform_cdi_resources_only_on_jdk8(
+                          [self.mapping], self.roots))
+
+    def test_rejects_changed_http_contract_for_available_bean(self):
+        self.test_accepts_available_bean_with_three_line_http_contract()
+        (self.roots[2] / HTTP_EVIDENCE).write_text(HTTP_TEST + '// changed\n')
         with self.assertRaises(ValueError):
             PARITY.validate_platform_cdi_resources_only_on_jdk8(
                 [self.mapping], self.roots)

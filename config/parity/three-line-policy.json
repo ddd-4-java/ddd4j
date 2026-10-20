@@ -142,6 +142,20 @@
       "evidence": "ddd4j-samples/ddd4j-sample-quarkus/src/test/java/io/ddd4j/sample/quarkus/goods/web/GoodsResourceCdiContractTest.java",
       "testSha256": "9b7bd749e80f55cb6f94a6e31c3721a9f705439453470a401855c5c0fbb3f9a1",
       "reason": "Quarkus 1/JDK 8 使用 Java EE 2.0 annotated beans.xml 作为 CDI 发现入口；高两线省略旧命名空间文件。三线共同 QuarkusTest 从 Arc 容器验证 GoodsResource 的 ApplicationScoped 作用域。"
+    },
+    {
+      "path": "ddd4j-web/ddd4j-web-quarkus/src/main/resources/META-INF/beans.xml",
+      "sha256": "eeda5bb2f3e034daa25fb64f2c7ff46c3055921f5e6bb012e5e575666f28ef6c",
+      "evidence": "ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusFilterCdiContractTest.java",
+      "testSha256": "6f8f37bf04f320757c3ec2a80c6e35460892f73d5e6a039bb9c623d49c022ade",
+      "assertion": "available",
+      "httpEvidence": "ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebContractTest.java",
+      "httpTestSha256": [
+        "fb046d423efe84aeeab3754fa066df646350c12c5d854ef1e3cb4321c6728449",
+        "8e03833c56faabbbf2dc760b64333d2f5337b5781dc890fe862d7c61c59d540c",
+        "11f1047eedfb9765cf6385f097ad87d2e74ac8be17e5cbc328b2dc1cb85a766c"
+      ],
+      "reason": "Quarkus 1/JDK 8 的 Java EE 2.0 annotated beans.xml 是 CDI 发现入口；高线 Quarkus REST 的 Bean 作用域为 Singleton。三线 Arc 均能取得过滤器 Bean，且共同 HTTP 契约每线 6 项通过。"
     }
   ],
   "platformFilesOnlyOnJdk8": [
