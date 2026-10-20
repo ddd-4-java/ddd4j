@@ -18,6 +18,39 @@ SCRIPT = Path(__file__).with_name("verify-three-line-structure-api-parity.py")
 
 
 class ThreeLineInventoryTest(unittest.TestCase):
+    def test_java8_map_contract_only_normalizes_exact_approved_call(self):
+        path = ("ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/"
+                "io/ddd4j/sample/javalin/satoken/rbac/web/Java8MapsContractTest.java")
+        evidence = ("ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/"
+                    "io/ddd4j/sample/javalin/satoken/rbac/web/AuthControllerTest.java")
+        before = 'Java8Maps.of("name", "alice", "count", 2)'
+        after = 'Map.of("name", "alice", "count", 2)'
+        original = "class Java8MapsContractTest { String value = " + before + "; }"
+        for index, root in enumerate(self.roots):
+            self.write(root, path, original if index == 0 else original.replace(before, after))
+            self.write(root, evidence, "class AuthControllerTest {}")
+        policy = json.loads(self.policy.read_text())
+        policy["platformContentMappings"] = [{
+            "path": path,
+            "replacements": [{"from": before, "to": after}],
+            "evidence": evidence,
+            "reason": "JDK 8 helper and JDK Map.of have the same output contract",
+        }]
+        self.policy.write_text(json.dumps(policy))
+
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = json.loads((output / "inventory.json").read_text())["differences"]
+        self.assertEqual("PLATFORM_ADAPTED", next(row["status"] for row in rows
+                                                  if row["path"] == path))
+
+        self.write(self.roots[1], path, original.replace(before, after) + " // changed")
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = json.loads((output / "inventory.json").read_text())["differences"]
+        self.assertEqual("OPEN", next(row["status"] for row in rows
+                                      if row["path"] == path))
+
     def test_platform_test_helper_requires_exact_sources_and_shared_http_contract(self):
         helper = "ddd4j-samples/demo/src/test/java/example/TestSupport.java"
         contract = "ddd4j-samples/demo/src/test/java/example/OrderHttpTest.java"
