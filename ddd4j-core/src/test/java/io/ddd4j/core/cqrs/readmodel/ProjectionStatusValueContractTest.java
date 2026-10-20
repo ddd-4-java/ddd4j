@@ -1,6 +1,6 @@
 package io.ddd4j.core.cqrs.readmodel;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
@@ -13,7 +13,7 @@ class ProjectionStatusValueContractTest {
     @Test
     void jsonRoundTripPreservesSixComponents() throws Exception {
         ProjectionStatus status = status();
-        ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
+        JsonMapper mapper = JsonMapper.builder().build();
 
         String json = mapper.writeValueAsString(status);
 
@@ -25,7 +25,7 @@ class ProjectionStatusValueContractTest {
     void timestampRoundTripPreservesInstant() throws Exception {
         ProjectionStatus status = new ProjectionStatus("orders", 42L, true,
                 Instant.parse("2026-01-01T01:02:03Z"), 7, null);
-        ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
+        JsonMapper mapper = JsonMapper.builder().findAndAddModules().build();
 
         ProjectionStatus restored = mapper.readValue(mapper.writeValueAsString(status), ProjectionStatus.class);
 
