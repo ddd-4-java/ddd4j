@@ -72,6 +72,12 @@ public abstract class BaseExceptionHandler {
         return IpKit.getRemoteAddr(request);
     }
 
+    /**
+     * 判断请求是否通过 XMLHttpRequest 发起。
+     *
+     * @param request 当前 HTTP 请求
+     * @return 请求头标记为 XMLHttpRequest 时返回 true
+     */
     protected boolean isAjaxRequest(HttpServletRequest request) {
         return XML_HTTP_REQUEST.equalsIgnoreCase(request.getHeader(X_REQUESTED_WITH));
     }
