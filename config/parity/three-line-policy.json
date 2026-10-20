@@ -3818,6 +3818,135 @@
         "versionRangeAndAggregateTypeIsolationShouldFollowCoreContract"
       ],
       "reason": "三线生产 R2dbcEventStore.java 字节一致，测试方法和断言一致；JDK 8 使用 Collections/Arrays 集合工厂与传统 instanceof 转型，JDK 17/21 使用 List.of/Map.of 和模式匹配。逐线哈希锁定。"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin/src/test/java/io/ddd4j/sample/javalin/goods/web/GoodsControllerTest.java",
+      "productionPath": "ddd4j-samples/ddd4j-sample-javalin/src/main/java/io/ddd4j/sample/javalin/goods/web/GoodsController.java",
+      "sourceSha256": [
+        "86fd121dfd5cca1fe9bc8715513495437ff25a850e7aa7f6a506cb00a0f14bfd",
+        "bfaf290bc32c526d6f2a218ec60c5183a3b71a09171df594cf0651298436cd26",
+        "699b608ab52511af697a03419ebdf7f1fddd49809c0c4564905bc6f0b064d502"
+      ],
+      "productionSha256": [
+        "ccac54974a435c57f207a391b6e36ec12246ae4156a446b34329937fd78ab2bf",
+        "ccac54974a435c57f207a391b6e36ec12246ae4156a446b34329937fd78ab2bf",
+        "ccac54974a435c57f207a391b6e36ec12246ae4156a446b34329937fd78ab2bf"
+      ],
+      "testMethods": [
+        "createGoods_shouldReturn201",
+        "createGoods_duplicateCode_shouldReturn4xxOr5xx",
+        "createGoods_blankCode_shouldReturn4xxOr5xx",
+        "createGoods_negativePrice_shouldReturn4xxOr5xx",
+        "createGoods_negativeStock_shouldReturn4xxOr5xx",
+        "updateGoods_shouldChangeNameAndPrice",
+        "updateGoods_unknownId_shouldReturn4xxOr5xx",
+        "updateGoods_deletedGoods_shouldReturn4xxOr5xx",
+        "changeStatus_toOnSale_shouldReturn200",
+        "changeStatus_invalidStatus_shouldReturn4xxOr5xx",
+        "changeStatus_offSale_shouldReturn200",
+        "changeStatus_unknownId_shouldReturn4xxOr5xx",
+        "deleteGoods_shouldReturn200",
+        "deleteGoods_unknownId_shouldReturn4xxOr5xx",
+        "deleteGoods_thenGetByCode_shouldReturnDeletedStatus",
+        "getById_shouldReturnGoods",
+        "getById_unknownId_shouldReturn4xxOr5xx",
+        "getByCode_shouldReturnGoods",
+        "getByCode_missingParam_shouldHandle",
+        "getByCode_unknownCode_shouldReturn4xxOr5xx",
+        "pageQuery_defaultPage_shouldReturnOk",
+        "pageQuery_byStatus_shouldReturnOk",
+        "pageQuery_byPriceRange_shouldReturnOk",
+        "pageQuery_byNameLike_shouldReturnOk",
+        "pageQuery_byCodeExact_shouldReturnOk",
+        "listQuery_shouldReturnOk",
+        "listQuery_byStatus_shouldReturnOk",
+        "countQuery_shouldReturnOk",
+        "countQuery_byStatus_shouldReturnOk",
+        "fullCrudLifecycle",
+        "multipleCreates_allShouldSucceed",
+        "pageQuery_withPagination_shouldReturnOk",
+        "updateGoods_blankName_shouldReturn4xxOr5xx",
+        "createGoods_zeroStock_shouldReturn201",
+        "pageQuery_withOrderBys_shouldReturnOk",
+        "pageQuery_invalidStatusEnum_shouldReturn4xxOr5xx"
+      ],
+      "reason": "三线生产 GoodsController.java 字节一致，36 项 HTTP 契约测试的方法及断言一致；JDK 8/Javalin 4 使用 TestHttpClient 和旧配置 API，JDK 17/Javalin 6 与 JDK 21/Javalin 7 使用 JDK HttpClient 及各自 JSON mapper、启动 API。逐线哈希锁定。"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin/src/test/java/io/ddd4j/sample/javalin/order/web/OrderControllerTest.java",
+      "productionPath": "ddd4j-samples/ddd4j-sample-javalin/src/main/java/io/ddd4j/sample/javalin/order/web/OrderController.java",
+      "sourceSha256": [
+        "3c32a7d114f054b3ac8a8f83539d277b6fe9dd189ef05b3d277112e255988caf",
+        "e799ea911a7c304c142bab33150be55006ec867e71a163ba3195af83c93f5c0a",
+        "4efaaa07f2407487a59a7b08372a463d54f666bdceadd8d41e34f61c4891a7c7"
+      ],
+      "productionSha256": [
+        "b50a1af20aaf170362bcda58d116ae9c4af7c29b6a81f9d1f24b223bb871dfc0",
+        "b50a1af20aaf170362bcda58d116ae9c4af7c29b6a81f9d1f24b223bb871dfc0",
+        "b50a1af20aaf170362bcda58d116ae9c4af7c29b6a81f9d1f24b223bb871dfc0"
+      ],
+      "testMethods": [
+        "protectedRouteRequiresBearerToken",
+        "createQueryAndLookupUseSharedOrderKernel",
+        "paymentRequiresIdempotencyKeyAndOnlyTransitionsOnce",
+        "requestIdIsReturnedAndContextDoesNotLeak"
+      ],
+      "reason": "三线生产 OrderController.java 逻辑词法等价，测试方法与 HTTP 断言一致；JDK 8 用 TestHttpClient，JDK 17/21 用 JDK HttpClient，并适配各自 Javalin 绑定地址。逐线哈希锁定。"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/goods/web/GoodsControllerTest.java",
+      "productionPath": "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/main/java/io/ddd4j/sample/javalin/cqrs/goods/web/GoodsController.java",
+      "sourceSha256": [
+        "a5dd7616cb4e5fc946f2691b6bcb9d03689eae6e0890fc67719df7ad82d34983",
+        "2ece64d6a45586f63eb486e2d66034baa3ea5c483ab34d37fec191477d468ee2",
+        "a7e790c1cea8643652a96f4dff106a2d9602405839c3e6c28c54a8be67e66e53"
+      ],
+      "productionSha256": [
+        "a83680b941ed1f05b5681982de29f3d2db1d8f383cd9e7e77eeaec266ca39325",
+        "a83680b941ed1f05b5681982de29f3d2db1d8f383cd9e7e77eeaec266ca39325",
+        "a83680b941ed1f05b5681982de29f3d2db1d8f383cd9e7e77eeaec266ca39325"
+      ],
+      "testMethods": [
+        "resetServerState",
+        "create_shouldReturn201",
+        "create_thenGetById_shouldReturnSameCode",
+        "create_zeroStock_shouldBeOk",
+        "create_highPrice_shouldBeOk",
+        "create_decimalPrice_shouldPersist",
+        "update_shouldBeOk",
+        "update_thenGetById_shouldReturnNewName",
+        "update_nonexistentId_shouldReturn4xxOr5xx",
+        "update_invalidId_shouldReturn4xxOr5xx",
+        "changeStatus_toOnSale_shouldBeOk",
+        "changeStatus_toOffSale_shouldBeOk",
+        "changeStatus_invalidStatus_shouldReturn4xxOr5xx",
+        "delete_shouldReturnOk",
+        "delete_nonexistentId_shouldReturn4xxOr5xx",
+        "delete_invalidId_shouldReturn4xxOr5xx",
+        "getById_unknownId_shouldReturn4xxOr5xx",
+        "getById_invalidId_shouldReturn4xxOr5xx",
+        "getByCode_validCode_shouldReturnOk",
+        "getByCode_unknownCode_shouldReturn4xxOr5xx",
+        "pageQuery_shouldReturnAny",
+        "pageQuery_withCode_shouldReturnAny",
+        "pageQuery_withOrderBys_shouldReturnAny",
+        "listQuery_shouldReturnAny",
+        "listQuery_byStatus_shouldReturnAny",
+        "countQuery_shouldReturnAny",
+        "countQuery_byStatus_shouldReturnAny",
+        "queryById_shouldReturnOk",
+        "queryByCode_shouldReturnOk",
+        "queryByCode_unknownCode_shouldReturnOkOr404",
+        "queryList_shouldReturnOk",
+        "queryByStatus_shouldReturnOk",
+        "queryCount_shouldReturnOk",
+        "queryCacheStats_shouldReturnOk",
+        "queryById_unknownId_shouldReturn404",
+        "fullCrudLifecycle",
+        "multipleCreates_allShouldSucceed",
+        "getById_responseShape"
+      ],
+      "reason": "三线生产 CQRS GoodsController.java 逻辑词法等价，测试方法与 HTTP 断言一致；JDK 8 用 TestHttpClient，JDK 17/21 用 JDK HttpClient 与各自 Javalin 绑定地址。逐线哈希锁定。"
     }
   ]
 }
