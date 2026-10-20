@@ -63,7 +63,7 @@ class DomainEventRoundTripTest {
     }
 
     @Test
-    void mapperKeepsDefaultStrictUnknownPropertyHandling() {
+    void mapperKeepsPlatformDefaultUnknownPropertyHandling() {
         // 证明回读发生在默认严格模式下（未用 workaround 放宽）
         assertThat(objectMapper.isEnabled(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)).isTrue();
     }
