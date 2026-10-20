@@ -5295,6 +5295,33 @@
         "getById_responseIsValidJson"
       ],
       "reason": "三线 Javalin Shiro 订单 HTTP 测试各 35 项通过，场景及方法一致；JDK 8 使用项目内 HTTP 客户端，高两线使用 JDK HttpClient，3.0.x 使用 127.0.0.1 监听地址。生产资源差异由 platformSyntaxMappings 锁定。"
+    },
+    {
+      "path": "ddd4j-web/ddd4j-web-vertx/src/test/java/io/ddd4j/web/vertx/Ddd4jVertxContextTest.java",
+      "productionPath": "ddd4j-web/ddd4j-web-vertx/src/main/java/io/ddd4j/web/vertx/Ddd4jVertxContext.java",
+      "sourceSha256": [
+        "41cde316770bf75079bbadd8ab5416f688902b08396372caeb3e7ca15d85247c",
+        "c6f118925039254d9a50859589df8b2394859b4a97e35cb6b6c17f966c2731bd",
+        "8c17ac2a6774e957eef11d970185ebf51a8441763c3ac3bf8a0c92d240db92d8"
+      ],
+      "productionSha256": [
+        "6825e24c31d4b0fa59783e0693e717591b11355ecc69b48ca6b5679f5d75ac0e",
+        "2472bcc42b635401497ce5cdcbe2c63b005d35adaad6ece7df669cb07ab779d4",
+        "6825e24c31d4b0fa59783e0693e717591b11355ecc69b48ca6b5679f5d75ac0e"
+      ],
+      "testMethods": [
+        "requestReturnsStoredContext",
+        "requestReturnsEmptyWhenAbsent",
+        "subjectReturnsStoredSubject",
+        "requestRejectsNullContext",
+        "executeBlockingRunsTaskWithBoundRequest",
+        "executeBlockingFailsWhenRequestContextMissing",
+        "executeBlockingRejectsNullTask",
+        "bindRequestStoresRequest",
+        "bindSubjectStoresSubject",
+        "executeBlockingPropagatesTaskFailure"
+      ],
+      "reason": "三线 Vert.x 请求上下文目标测试各 10 项通过；JDK 8 的 Vert.x 4 使用动态代理模拟 executeBlocking，高两线的 Vert.x 5 使用 Mockito。生产上下文源码词法等价，测试覆盖请求、主体、绑定、异步执行与失败传播。"
     }
   ],
   "platformTestHelperMappings": [

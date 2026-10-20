@@ -19,7 +19,6 @@ import io.ddd4j.web.core.context.WebRequestContext;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.ext.web.RoutingContext;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Proxy;
@@ -36,21 +35,17 @@ class Ddd4jVertxContextTest {
     private static final String REQUEST_KEY = Ddd4jVertxContext.class.getName() + ".request";
     private static final String SUBJECT_KEY = Ddd4jVertxContext.class.getName() + ".subject";
 
-    private RoutingContext context;
-
-    private Map<String, Object> contextValues;
-
-    private Vertx vertx;
+    private final Map<String, Object> contextValues = new HashMap<>();
+    private final Vertx vertx = createVertx();
+    private final RoutingContext context = createRoutingContext();
 
     private static WebRequestContext requestContext() {
         return new WebRequestContext("r-1", "t-1", "tenant-a", "Bearer token",
                 Locale.CHINA, "127.0.0.1", "GET", "/api");
     }
 
-    @BeforeEach
-    void setUpRoutingContext() {
-        contextValues = new HashMap<>();
-        vertx = (Vertx) Proxy.newProxyInstance(
+    private Vertx createVertx() {
+        return (Vertx) Proxy.newProxyInstance(
                 Vertx.class.getClassLoader(), new Class<?>[]{Vertx.class},
                 (proxy, method, arguments) -> {
                     if ("executeBlocking".equals(method.getName())
@@ -63,7 +58,10 @@ class Ddd4jVertxContextTest {
                     }
                     return null;
                 });
-        context = (RoutingContext) Proxy.newProxyInstance(
+    }
+
+    private RoutingContext createRoutingContext() {
+        return (RoutingContext) Proxy.newProxyInstance(
                 RoutingContext.class.getClassLoader(), new Class<?>[]{RoutingContext.class},
                 (proxy, method, arguments) -> {
                     if ("get".equals(method.getName())) {
