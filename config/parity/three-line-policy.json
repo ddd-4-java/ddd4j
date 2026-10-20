@@ -4088,6 +4088,32 @@
   ],
   "platformTestSyntaxMappings": [
     {
+      "path": "ddd4j-samples/ddd4j-sample-order-jdbc/src/test/java/io/ddd4j/sample/order/jdbc/OrderInfrastructureRoundTripTest.java",
+      "productionPath": "ddd4j-samples/ddd4j-sample-order-jdbc/src/main/java/io/ddd4j/sample/order/jdbc/JdbcOrderTransactionPort.java",
+      "sourceSha256": [
+        "9a3ef54d576186c2d559c5942e65cecbbd133ded76e0273df5ebc92c7fe2472d",
+        "880632c46a1553b4a36ca26bf391b0ed3b6908d3714ac4c1df2102771b5cf29e",
+        "c7e7ce350f5a853c74224c28c81923acbcff8b222c288eafacddd894d84272e6"
+      ],
+      "productionSha256": [
+        "74ca3c4bb1abd7084da2846953ef9379ec436ed2e1f8393cb4531d0cb03402c2",
+        "a91d884692aed84d691cd5d381001a0e4ab42f2e90fea156d0ceba6ab95b65e6",
+        "74ca3c4bb1abd7084da2846953ef9379ec436ed2e1f8393cb4531d0cb03402c2"
+      ],
+      "testMethods": [
+        "shouldPersistProjectPublishAndDeduplicatePayment",
+        "shouldKeepCommittedPaymentIdempotentWhenRedisCompletionFails",
+        "shouldPreserveCausalHeadersAcrossJdbcOutboxClaim",
+        "shouldClaimConfirmRescheduleAndReplayReliableOutboxRecords",
+        "concurrentOwnersMustNotClaimTheSameActiveLease",
+        "shouldTransferExpiredLeaseAndRejectStaleOwner",
+        "shouldRedeliverToKafkaAfterConfirmationIsLost",
+        "shouldRedeliverToKafkaAfterConfirmationThrows",
+        "shouldRetryFailedSendAndPublishToKafka"
+      ],
+      "reason": "三线保持相同的 9 个 PostgreSQL/Redis/Kafka 订单、幂等、租约和 Outbox 集成场景及相同的失败诊断；JDK 8 使用 Collections/显式 JDBC 类型，JDK 17/21 使用 Map.of/List.of/var，JDK 21 Jackson 3 自动注册 Java Time 模块。逐线测试与事务端口源码 SHA-256 锁定；容器运行结果仍由独立 IT 门禁验收。"
+    },
+    {
       "path": "ddd4j-core/src/test/java/io/ddd4j/core/health/PlainValueContractTest.java",
       "productionPath": "ddd4j-core/src/main/java/io/ddd4j/core/health/ReadinessResult.java",
       "sourceSha256": [
