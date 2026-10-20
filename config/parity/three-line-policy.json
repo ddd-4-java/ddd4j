@@ -3446,5 +3446,43 @@
       },
       "evidence": "三线各自断言对应 JDK 与第三方依赖策略；文件 SHA-256 锁定，dependency-policy 单测与 CI 独立执行"
     }
+  ],
+  "platformTestSyntaxMappings": [
+    {
+      "path": "ddd4j-core/src/test/java/io/ddd4j/core/api/RTest.java",
+      "productionPath": "ddd4j-core/src/main/java/io/ddd4j/core/api/R.java",
+      "sourceSha256": [
+        "8971463897406b253c1cd1ee6affdb32647f9cb717b4ea27e6c02f0ebee12422",
+        "8971463897406b253c1cd1ee6affdb32647f9cb717b4ea27e6c02f0ebee12422",
+        "160e2aaec550ea07627518dbc1f4c3bb9971938fe24b405e46972fdbb28eae0c"
+      ],
+      "productionSha256": [
+        "1554ca6a55b3de1e307edec584d9a9b55d956cb1f531e8cb777cf753a6ae41ed",
+        "1554ca6a55b3de1e307edec584d9a9b55d956cb1f531e8cb777cf753a6ae41ed",
+        "a50a26acdd1d61d7c7d89b26dbf93334861cd44412230ad48ee58301a59c8ed3"
+      ],
+      "testMethods": [
+        "fail_withString_shouldTreatArgumentAsMessage",
+        "fail_withNullObject_shouldKeepFailureMetadata",
+        "fail_withObjectData_shouldPreservePayload",
+        "ok_shouldReturnSuccessCodeAndNullData",
+        "ok_withData_shouldCarryPayload",
+        "ok_withMsgAndData_shouldUseProvidedMessage",
+        "fail_shouldReturnFailCode",
+        "fail_withMsg_shouldCarryMessage",
+        "fail_withCodeAndMsg_shouldCarryBoth",
+        "fail_withSerializableCode_shouldPreserveCodeAndDefaultMessage",
+        "isOk_shouldAcceptSuccessCodeToo",
+        "empty_shouldDetectNullDataOrNullResponse",
+        "transform_shouldCopyCodeAndMsg",
+        "success_withString_shouldPreserveCustomMessage",
+        "success_withObjectString_shouldPreservePayload",
+        "of_withStringCode_shouldPreserveExplicitSerializableCode",
+        "jackson_shouldPreserveResponseFieldsAndValidationErrors",
+        "customApiCode_shouldBuildResponseWithMessageAndPayload",
+        "validationFailure_shouldUseUnifiedBadRequestCode"
+      ],
+      "reason": "三线 19 项 R 响应契约测试的方法及断言语义一致；JDK 21 使用 Jackson 3 的 JsonMapper/asString，JDK 8/17 使用 Jackson 2 的 ObjectMapper/asText。生产 R.java 词法等价，测试与生产源码均逐线哈希锁定。"
+    }
   ]
 }
