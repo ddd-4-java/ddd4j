@@ -1189,6 +1189,18 @@ def validate_platform_content_mappings(mappings, roots: list[pathlib.Path]) -> d
              "import tools.jackson.databind.json.JsonMapper;"),
         }
         exact_test_adaptations = {
+            ("ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/MysqlEventStoreContainerSupport.java",
+             "import org.testcontainers.containers.MySQLContainer;",
+             "import org.testcontainers.mysql.MySQLContainer;", ("3.0.x",)),
+            ("ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/MysqlEventStoreContainerSupport.java",
+             "static final MySQLContainer<?> MYSQL = new MySQLContainer<>(",
+             "static final MySQLContainer MYSQL = new MySQLContainer(", ("3.0.x",)),
+            ("ddd4j-web/ddd4j-web-webflux/src/test/java/io/ddd4j/web/webflux/ApiVersionWebFilterTest.java",
+             "import com.fasterxml.jackson.databind.ObjectMapper;",
+             "import tools.jackson.databind.json.JsonMapper;", ("3.0.x",)),
+            ("ddd4j-web/ddd4j-web-webflux/src/test/java/io/ddd4j/web/webflux/ApiVersionWebFilterTest.java",
+             "new GlobalErrorWebExceptionHandler(new GlobalErrorAttributes(), new ObjectMapper(),",
+             "new GlobalErrorWebExceptionHandler(new GlobalErrorAttributes(), JsonMapper.builder().build(),", ("3.0.x",)),
             ("ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/TestApp.java",
              "import org.springframework.boot.autoconfigure.domain.EntityScan;",
              "import org.springframework.boot.persistence.autoconfigure.EntityScan;", ("3.0.x",)),

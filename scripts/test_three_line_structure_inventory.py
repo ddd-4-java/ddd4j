@@ -1160,6 +1160,50 @@ class ThreeLineInventoryTest(unittest.TestCase):
                 json.loads((output / "inventory.json").read_text())["differences"]}
         self.assertEqual("OPEN", rows[path])
 
+    def test_jdk21_container_and_webflux_test_api_adaptations_are_exact(self):
+        cases = [
+            ("ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/MysqlEventStoreContainerSupport.java", [
+                ("import org.testcontainers.containers.MySQLContainer;", "import org.testcontainers.mysql.MySQLContainer;"),
+                ("static final MySQLContainer<?> MYSQL = new MySQLContainer<>(", "static final MySQLContainer MYSQL = new MySQLContainer("),
+            ]),
+            ("ddd4j-web/ddd4j-web-webflux/src/test/java/io/ddd4j/web/webflux/ApiVersionWebFilterTest.java", [
+                ("import com.fasterxml.jackson.databind.ObjectMapper;", "import tools.jackson.databind.json.JsonMapper;"),
+                ("new GlobalErrorWebExceptionHandler(new GlobalErrorAttributes(), new ObjectMapper(),",
+                 "new GlobalErrorWebExceptionHandler(new GlobalErrorAttributes(), JsonMapper.builder().build(),"),
+            ]),
+        ]
+        policy = json.loads(self.policy.read_text())
+        policy["platformContentMappings"] = []
+        for path, replacements in cases:
+            original = "\n".join(pair[0] for pair in replacements) + "\nclass Contract { void same() {} }\n"
+            adapted = original
+            for before, after in replacements:
+                adapted = adapted.replace(before, after)
+            for root, value in zip(self.roots, (original, original, adapted)):
+                self.write(root, path, value)
+            policy["platformContentMappings"].append({
+                "path": path,
+                "replacements": [{"from": before, "to": after} for before, after in replacements],
+                "targetLines": ["3.0.x"], "evidence": path,
+                "reason": "exact JDK 21 platform test API adaptation",
+            })
+        self.policy.write_text(json.dumps(policy))
+
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = {row["path"]: row["status"] for row in
+                json.loads((output / "inventory.json").read_text())["differences"]}
+        for path, _ in cases:
+            self.assertEqual("PLATFORM_ADAPTED", rows[path])
+
+        path = cases[0][0]
+        self.write(self.roots[2], path, (self.roots[2] / path).read_text().replace("same", "changed"))
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = {row["path"]: row["status"] for row in
+                json.loads((output / "inventory.json").read_text())["differences"]}
+        self.assertEqual("OPEN", rows[path])
+
     def test_changed_error_code_fails_inventory_gate(self):
         path = "ddd4j-core/src/main/java/example/OrderErrorCode.java"
         original = ('package example; public enum OrderErrorCode {'
