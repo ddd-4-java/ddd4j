@@ -4683,6 +4683,27 @@
         "managedSerializerFailureMustKeepOriginalAndMarkRollback"
       ],
       "reason": "三线 JPA 托管参与的事务边界、回滚标记、异常抑制和 EntityManager 生命周期共 7 项测试各自通过；JDK 8 的 javax.persistence 与高两线的 jakarta.persistence、Jackson 2/3 属于逐线依赖适配，生产 JpaEventStore 已由独立契约映射锁定。"
+    },
+    {
+      "path": "ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/event/store/jpa/JpaSpringParticipationIT.java",
+      "productionPath": "ddd4j-data/ddd4j-data-event-store-jpa/src/main/java/io/ddd4j/data/event/store/jpa/JpaEventStore.java",
+      "sourceSha256": [
+        "79fc7ad2a1ddff141152e18ee4407d7422cde7dbf97279029ae31aefcd5c2377",
+        "3a5e1b26d04c0c09e1f00762942954393ef531b85d42c47f6bf7af96773ed84f",
+        "3a5e1b26d04c0c09e1f00762942954393ef531b85d42c47f6bf7af96773ed84f"
+      ],
+      "productionSha256": [
+        "69062e2ba5a65bf79f594fba66c4fafe17b9842e82ff1be301e9832b0d1a96da",
+        "c816dd541496a5f3c65615b74ff0dc4f36c0239e4e1b6cac5fcfa83d24e20857",
+        "41878b9894f3a3e90577f4e57e21ee793e2277dff1d28fd15c4183386c198789"
+      ],
+      "testMethods": [
+        "managedParticipationShouldCommitAllRowsAndKeepBusinessEntityManaged",
+        "managedParticipationShouldFollowOuterRollback",
+        "caughtOperationFailureShouldStillRollBackOuterTransaction",
+        "markerFailureShouldKeepOriginalFailureAndFrameworkShouldAbort"
+      ],
+      "reason": "三线 H2/Spring 托管事务集成测试各 4 项通过，涵盖业务实体、事件和 outbox 的共同提交、外层回滚、捕获异常后的回滚及标记失败；JDK 8 的 Hibernate 5/javax.persistence 与高两线 Hibernate 6/jakarta.persistence 为逐线适配。"
     }
   ]
 }
