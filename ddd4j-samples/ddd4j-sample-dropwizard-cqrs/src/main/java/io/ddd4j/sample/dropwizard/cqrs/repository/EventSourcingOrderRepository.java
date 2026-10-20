@@ -13,26 +13,25 @@
  * limitations under the License.
  */
 package io.ddd4j.sample.dropwizard.cqrs.repository;
-import java.util.Optional;
-import java.util.Map;
-import java.util.List;
-import java.util.ArrayList;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
-import java.util.Objects;
-
+import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.cqrs.eventstore.InMemoryEventStore;
 import io.ddd4j.core.ddd.event.AggregateRootId;
-import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityType;
 import io.ddd4j.core.ddd.event.StringEntityType;
 import io.ddd4j.sample.order.domain.Order;
 import io.ddd4j.sample.order.domain.OrderRepository;
 
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -61,10 +60,53 @@ public class EventSourcingOrderRepository implements OrderRepository {
      */
     private final Map<String, Order> orderCache = new ConcurrentHashMap<>();
 
+    /**
+     * 创建EventSourcingOrderRepository。
+     *
+     * @param eventStore 内存事件存储
+     */
     public EventSourcingOrderRepository(InMemoryEventStore eventStore) {
         this.eventStore = Objects.requireNonNull(eventStore, "eventStore must not be null");
     }
 
+    @Override
+    public void save(Order order) {
+        if (!order.domainEvents().isEmpty()) {
+            List<DomainEvent<?>> events = order.pullDomainEvents();
+            long currentVersion = orderCache.containsKey(order.id())
+                    ? eventStore.read(AGGREGATE_TYPE, aggregateId(order.id())).size() : 0;
+            List<DomainEvent<?>> payloads = new ArrayList<>(events);
+            eventStore.append(AGGREGATE_TYPE, aggregateId(order.id()), payloads, currentVersion);
+            orderNoIndex.put(order.orderNo(), order.id());
+            orderCache.put(order.id(), order);
+        }
+    }
+
+    @Override
+    public Optional<Order> findById(String orderId) {
+        return Optional.ofNullable(orderCache.get(orderId));
+    }
+
+    @Override
+    public Optional<Order> findByOrderNo(String orderNo) {
+        return Optional.ofNullable(orderNoIndex.get(orderNo))
+                .flatMap(this::findById);
+    }
+
+    @Override
+    public List<Order> findAll(int offset, int limit) {
+        throw new UnsupportedOperationException("findAll not supported in event sourcing repository");
+    }
+
+    @Override
+    public long count() {
+        return orderNoIndex.size();
+    }
+
+    /**
+     * 字符串聚合根标识适配器：core EventStore SPI 以 {@link AggregateRootId} 定位流，
+     * 样例订单以字符串为 ID（与 2.0.x 旧 r2dbc StringAggregateRootId 同构）。
+     */
     private final static class OrderAggregateId implements AggregateRootId {
 
         private static final long serialVersionUID = 0L;
@@ -126,43 +168,4 @@ public class EventSourcingOrderRepository implements OrderRepository {
     private static AggregateRootId aggregateId(String value) {
         return new OrderAggregateId(value);
     }
-
-    @Override
-    public void save(Order order) {
-        if (!order.domainEvents().isEmpty()) {
-            List<DomainEvent<?>> events = order.pullDomainEvents();
-            long currentVersion = orderCache.containsKey(order.id())
-                    ? eventStore.read(AGGREGATE_TYPE, aggregateId(order.id())).size() : 0;
-            List<DomainEvent<?>> payloads = new ArrayList<>(events);
-            eventStore.append(AGGREGATE_TYPE, aggregateId(order.id()), payloads, currentVersion);
-            orderNoIndex.put(order.orderNo(), order.id());
-            orderCache.put(order.id(), order);
-        }
-    }
-
-    @Override
-    public Optional<Order> findById(String orderId) {
-        return Optional.ofNullable(orderCache.get(orderId));
-    }
-
-    @Override
-    public Optional<Order> findByOrderNo(String orderNo) {
-        return Optional.ofNullable(orderNoIndex.get(orderNo))
-                .flatMap(this::findById);
-    }
-
-        @Override
-    public List<Order> findAll(int offset, int limit) {
-        throw new UnsupportedOperationException("findAll not supported in event sourcing repository");
-    }
-
-    @Override
-    public long count() {
-        return orderNoIndex.size();
-    }
-
-/**
-     * 字符串聚合根标识适配器：core EventStore SPI 以 {@link AggregateRootId} 定位流，
-     * 样例订单以字符串为 ID（与 2.0.x 旧 r2dbc StringAggregateRootId 同构）。
-     */
 }
