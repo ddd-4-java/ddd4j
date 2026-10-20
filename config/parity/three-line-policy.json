@@ -3797,6 +3797,27 @@
         "enqueue"
       ],
       "reason": "三线生产 ProjectionDispatcher.java 字节一致，测试方法和断言一致；JDK 8 使用 Arrays.asList 与不可变包装，JDK 17/21 使用 Set.of/List.copyOf。JDK 21 的单元素集合及 Javadoc 写法不同；逐线哈希锁定。"
+    },
+    {
+      "path": "ddd4j-data/ddd4j-data-event-store-r2dbc/src/test/java/io/ddd4j/data/event/store/r2dbc/R2dbcEventStoreTest.java",
+      "productionPath": "ddd4j-data/ddd4j-data-event-store-r2dbc/src/main/java/io/ddd4j/data/event/store/r2dbc/R2dbcEventStore.java",
+      "sourceSha256": [
+        "0dada77c63b390239b34a655ad9d383ddd0694a9c78d570992829f80627566be",
+        "10102bf0c7945437c0291834ccbac80af6ee6bcb9705663290dd1b34c159cded",
+        "10102bf0c7945437c0291834ccbac80af6ee6bcb9705663290dd1b34c159cded"
+      ],
+      "productionSha256": [
+        "965da85d46381a1c0d5fbdd153212f11bbcd30833e81968c6139ae65cad0de9a",
+        "965da85d46381a1c0d5fbdd153212f11bbcd30833e81968c6139ae65cad0de9a",
+        "965da85d46381a1c0d5fbdd153212f11bbcd30833e81968c6139ae65cad0de9a"
+      ],
+      "testMethods": [
+        "setUp",
+        "tearDown",
+        "appendAndReadShouldPreserveTypedMetadata",
+        "versionRangeAndAggregateTypeIsolationShouldFollowCoreContract"
+      ],
+      "reason": "三线生产 R2dbcEventStore.java 字节一致，测试方法和断言一致；JDK 8 使用 Collections/Arrays 集合工厂与传统 instanceof 转型，JDK 17/21 使用 List.of/Map.of 和模式匹配。逐线哈希锁定。"
     }
   ]
 }
