@@ -3725,6 +3725,21 @@
         "21": "1a6fd5b58f487b618d709e8f94a13f48e525b18ac533c952f85e06dcb16b6b4f"
       },
       "reason": "Helidon 扩展的 CDI javax/jakarta import 随平台迁移，运行时初始化、停止与 Bean 发现契约由同文件两类测试逐线 5 项锁定。"
+    },
+    {
+      "path": "ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/health/Ddd4jQuarkusReadinessHealthCheck.java",
+      "sourceSha256": [
+        "afde77dd359a26be36518929ef70e925a51298975c0e036179438558b427b7b7",
+        "2fbdb2428d27fdddd0d76d5a6d509aea0c807ad64b1754c10734625e934fa1a9",
+        "7c71c2e194c447a3400d79103b3533efb94813c73322c6cd66083fe29d538e7c"
+      ],
+      "evidence": "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/health/Ddd4jQuarkusReadinessHealthCheckTest.java",
+      "testSha256ByJdk": {
+        "8": "2388cdc129084258638a625c2f038c3494d57ddd5ca91c4bb7513fe6b39dfa4d",
+        "17": "f52acc4dd222b3bd66879dcfec09d0985bc64d6317e9beb710224c7c4e5737b4",
+        "21": "4c174ee24839329cf35e35b02742f4c1e14bb6dfa99c6bf5f918a1cb6e3a76e4"
+      },
+      "reason": "Quarkus 2 的 javax CDI 与 Quarkus 3 的 jakarta CDI 是注入命名空间适配；三线探针测试各 1 项锁定 UP/DOWN、检查数量及不泄露故障详情。"
     }
   ],
   "historicalDocumentSections": [
@@ -4874,6 +4889,24 @@
         "startUsesExistingBeans"
       ],
       "reason": "Ddd4jHelidonExtensionTest 的 4 项及同文件 BeanBranchTest 的 1 项在三线分别通过；JDK 8 使用 javax CDI，高两线使用 jakarta CDI，生产扩展逻辑除命名空间外一致。"
+    },
+    {
+      "path": "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/health/Ddd4jQuarkusReadinessHealthCheckTest.java",
+      "productionPath": "ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/io/ddd4j/quarkus/health/Ddd4jQuarkusReadinessHealthCheck.java",
+      "sourceSha256": [
+        "2388cdc129084258638a625c2f038c3494d57ddd5ca91c4bb7513fe6b39dfa4d",
+        "f52acc4dd222b3bd66879dcfec09d0985bc64d6317e9beb710224c7c4e5737b4",
+        "4c174ee24839329cf35e35b02742f4c1e14bb6dfa99c6bf5f918a1cb6e3a76e4"
+      ],
+      "productionSha256": [
+        "afde77dd359a26be36518929ef70e925a51298975c0e036179438558b427b7b7",
+        "2fbdb2428d27fdddd0d76d5a6d509aea0c807ad64b1754c10734625e934fa1a9",
+        "7c71c2e194c447a3400d79103b3533efb94813c73322c6cd66083fe29d538e7c"
+      ],
+      "testMethods": [
+        "shouldMapReadyAndUnavailableReportsWithoutExposingFailureDetails"
+      ],
+      "reason": "三线 Quarkus 就绪探针各 1 项测试通过；旧 MicroProfile Health 使用 State/getState，高两线使用 Status/getStatus，均验证相同 UP/DOWN、数据计数和故障详情隔离。"
     }
   ]
 }
