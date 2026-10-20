@@ -14,29 +14,36 @@
  */
 package io.ddd4j.sample.vertx.cqrs.command;
 
-import io.ddd4j.core.cqrs.command.Command;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-
-import lombok.Value;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.ddd4j.core.cqrs.command.Command;
 
 import java.util.Objects;
 
-@Value
-public class CreateOrderCommand implements Command {
-
+/**
+ * 创建订单命令（CQRS 写侧）。
+ *
+ * <p>{@code orderNo} — 订单编号
+ * <p>{@code buyerId} — 买家 ID
+ * <p>{@code buyerName} — 买家名称
+ */
+public final class CreateOrderCommand implements Command {
     private static final long serialVersionUID = 0L;
-
     private final String orderNo;
-
     private final String buyerId;
-
     private final String buyerName;
 
-    @JsonCreator()
-    public CreateOrderCommand(@JsonProperty("orderNo") String orderNo, @JsonProperty("buyerId") String buyerId, @JsonProperty("buyerName") String buyerName) {
+    /**
+     * 创建可由 JSON 还原的订单命令。
+     *
+     * @param orderNo 订单编号
+     * @param buyerId 买家 ID
+     * @param buyerName 买家名称
+     */
+    @JsonCreator
+    public CreateOrderCommand(@JsonProperty("orderNo") String orderNo,
+                              @JsonProperty("buyerId") String buyerId,
+                              @JsonProperty("buyerName") String buyerName) {
         this.orderNo = orderNo;
         this.buyerId = buyerId;
         this.buyerName = buyerName;
@@ -100,5 +107,4 @@ public class CreateOrderCommand implements Command {
         return "CreateOrderCommand(orderNo=" + orderNo + ", buyerId=" + buyerId
                 + ", buyerName=" + buyerName + ")";
     }
-
 }
