@@ -5035,6 +5035,27 @@
         "shouldRunSharedOrderUseCasesThroughMicronautHttp"
       ],
       "reason": "三线 Micronaut 订单 HTTP 样例各 1 项通过，覆盖创建、增加明细后 119.80 金额、缺幂等键 400 与支付成功 PAID；JDK 8 使用 HttpURLConnection，高两线使用 JDK HttpClient 和相应 Jackson 节点 API，生产控制器规范化逻辑一致。"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-micronaut-cqrs/src/test/java/io/ddd4j/sample/micronaut/cqrs/MicronautOrderCqrsIT.java",
+      "productionPath": "ddd4j-samples/ddd4j-sample-micronaut-cqrs/src/main/java/io/ddd4j/sample/micronaut/cqrs/web/OrderController.java",
+      "sourceSha256": [
+        "34a9c276d434756fdbfd2a2e3760c6726161be8f7f50168ba3c4cf60cf7da690",
+        "4fd3227b1e92505f6b40becb98362aa75e9401d26a6bd974ac3fb24d9f62b2f1",
+        "4fd3227b1e92505f6b40becb98362aa75e9401d26a6bd974ac3fb24d9f62b2f1"
+      ],
+      "productionSha256": [
+        "64baa8a4c114f8a01a898d1d9f350c4b65ebe56f167e5e029541fa70137ff3e4",
+        "aeb038959afa87e17a900e9c6203eaf8ca0aef5864e26ade27664c9c42384fc4",
+        "aeb038959afa87e17a900e9c6203eaf8ca0aef5864e26ade27664c9c42384fc4"
+      ],
+      "testMethods": [
+        "cleanUp",
+        "createOrder_thenProjection",
+        "getOrder_fromReadModel",
+        "createOrder_idempotent"
+      ],
+      "reason": "三线 Micronaut CQRS 订单契约各 3 项通过，覆盖创建及投影、读模型查询和幂等创建；JDK 8 使用 HashMap 构造请求，高两线使用 Map.of，生产控制器词法等价。"
     }
   ]
 }
