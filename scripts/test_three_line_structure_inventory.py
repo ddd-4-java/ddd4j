@@ -18,6 +18,44 @@ SCRIPT = Path(__file__).with_name("verify-three-line-structure-api-parity.py")
 
 
 class ThreeLineInventoryTest(unittest.TestCase):
+    def test_platform_test_helper_requires_exact_sources_and_shared_http_contract(self):
+        helper = "ddd4j-samples/demo/src/test/java/example/TestSupport.java"
+        contract = "ddd4j-samples/demo/src/test/java/example/OrderHttpTest.java"
+        sources = ["class TestSupport { int port() { return 8; } }",
+                   "class TestSupport { int port() { return 17; } }",
+                   "class TestSupport { int port() { return 21; } }"]
+        test_source = "import org.junit.jupiter.api.Test;\nclass OrderHttpTest {\n@Test\nvoid order() {}\n}"
+        for root, source in zip(self.roots, sources):
+            self.write(root, helper, source)
+            self.write(root, contract, test_source)
+        policy = json.loads(self.policy.read_text())
+        policy["platformTestHelperMappings"] = [{
+            "path": helper,
+            "sourceSha256": [hashlib.sha256(source.encode()).hexdigest() for source in sources],
+            "contractPath": contract,
+            "contractSha256": [hashlib.sha256(test_source.encode()).hexdigest()] * 3,
+            "testMethods": ["order"],
+            "reason": "Three platform test adapters run one shared HTTP contract",
+        }]
+        self.policy.write_text(json.dumps(policy))
+
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = json.loads((output / "inventory.json").read_text())["differences"]
+        self.assertEqual("PLATFORM_ADAPTED", next(row["status"] for row in rows
+                                                  if row["path"] == helper))
+
+        self.write(self.roots[1], helper, sources[1] + " // changed")
+        result, _ = self.run_checker("inventory")
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("stale platform test helper mapping", result.stderr)
+
+        self.write(self.roots[1], helper, sources[1])
+        (self.roots[2] / contract).unlink()
+        result, _ = self.run_checker("inventory")
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("stale platform test helper mapping", result.stderr)
+
     def test_platform_tool_script_requires_exact_line_and_content(self):
         path = "scripts/test-maven-wrapper-jdk-compatibility.sh"
         source = "#!/bin/sh\nexit 0\n"
