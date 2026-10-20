@@ -14,11 +14,11 @@
  */
 package io.ddd4j.sample.javalin.shiro.goods.application;
 
-import javax.inject.Inject;
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.exception.BizRuntimeException;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.sample.javalin.shiro.goods.domain.*;
+import javax.inject.Inject;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -36,11 +36,25 @@ public class GoodsApplicationService {
     private static final AtomicLong ID_GENERATOR = new AtomicLong(1000L);
     private final GoodsRepository repository;
 
+    /**
+     * 创建商品应用服务。
+     *
+     * @param repository 商品仓储
+     */
     @Inject
     public GoodsApplicationService(GoodsRepository repository) {
         this.repository = Objects.requireNonNull(repository, "repository must not be null");
     }
 
+    /**
+     * 创建商品。
+     *
+     * @param code 商品编码
+     * @param name 商品名称
+     * @param price 商品价格
+     * @param stock 库存数量
+     * @return 创建后的商品
+     */
     public Goods create(String code, String name, BigDecimal price, Integer stock) {
         validateCode(code);
         validateName(name);
@@ -66,6 +80,14 @@ public class GoodsApplicationService {
         return repository.save(goods);
     }
 
+    /**
+     * 更新商品基本信息。
+     *
+     * @param id 商品标识
+     * @param name 商品名称
+     * @param price 商品价格
+     * @return 更新后的商品
+     */
     public Goods update(GoodsId id, String name, BigDecimal price) {
         Goods goods = repository.findById(id.value())
                 .orElseThrow(() -> new BizRuntimeException("goods.not.found", "goods not found: " + id));
@@ -80,6 +102,13 @@ public class GoodsApplicationService {
         return repository.save(goods);
     }
 
+    /**
+     * 调整商品状态。
+     *
+     * @param id 商品标识
+     * @param status 商品状态
+     * @return 更新后的商品
+     */
     public Goods changeStatus(GoodsId id, GoodsStatus status) {
         Objects.requireNonNull(status, "status must not be null");
         Goods goods = repository.findById(id.value())
@@ -92,6 +121,11 @@ public class GoodsApplicationService {
         return repository.save(goods);
     }
 
+    /**
+     * 软删除商品。
+     *
+     * @param id 商品标识
+     */
     public void delete(GoodsId id) {
         Goods goods = repository.findById(id.value())
                 .orElseThrow(() -> new BizRuntimeException("goods.not.found", "goods not found: " + id));
@@ -100,21 +134,45 @@ public class GoodsApplicationService {
         repository.save(goods);
     }
 
+    /**
+     * 按标识读取商品。
+     *
+     * @param id 商品标识
+     * @return 商品
+     */
     public Goods getById(GoodsId id) {
         return repository.findById(id.value())
                 .orElseThrow(() -> new BizRuntimeException("goods.not.found", "goods not found: " + id));
     }
 
+    /**
+     * 按编码读取商品。
+     *
+     * @param code 商品编码
+     * @return 商品
+     */
     public Goods getByCode(String code) {
         return repository.findByCode(code)
                 .orElseThrow(() -> new BizRuntimeException("goods.not.found", "goods code not found: " + code));
     }
 
+    /**
+     * 按查询条件分页读取商品。
+     *
+     * @param query 商品查询条件
+     * @return 商品分页结果
+     */
     public Page<Goods> pageQuery(GoodsQuery query) {
         Objects.requireNonNull(query, "query must not be null");
         return query.page();
     }
 
+    /**
+     * 按查询条件列出商品。
+     *
+     * @param query 商品查询条件
+     * @return 商品列表
+     */
     public List<Goods> listQuery(GoodsQuery query) {
         Objects.requireNonNull(query, "query must not be null");
         return query.list();
@@ -122,6 +180,12 @@ public class GoodsApplicationService {
 
     // ========================= 私有校验方法 =========================
 
+    /**
+     * 按查询条件统计商品。
+     *
+     * @param query 商品查询条件
+     * @return 商品数量
+     */
     public long countQuery(GoodsQuery query) {
         Objects.requireNonNull(query, "query must not be null");
         return query.count();
