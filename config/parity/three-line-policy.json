@@ -994,7 +994,61 @@
     {"path": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/test/java/io/ddd4j/sample/quarkus/cqrs/ResourceScopeContractTest.java", "replacements": [{"from": "import javax.enterprise.context.ApplicationScoped;", "to": "import jakarta.enterprise.context.ApplicationScoped;"}], "evidence": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/test/java/io/ddd4j/sample/quarkus/cqrs/ResourceScopeContractTest.java", "reason": "同一组 Quarkus 资源生命周期契约测试仅按平台切换 CDI 注解命名空间"},
     {"path": "ddd4j-samples/ddd4j-sample-quarkus-satoken/src/test/java/io/ddd4j/sample/quarkus/satoken/ResourceScopeContractTest.java", "replacements": [{"from": "import javax.enterprise.context.ApplicationScoped;", "to": "import jakarta.enterprise.context.ApplicationScoped;"}], "evidence": "ddd4j-samples/ddd4j-sample-quarkus-satoken/src/test/java/io/ddd4j/sample/quarkus/satoken/ResourceScopeContractTest.java", "reason": "同一组 Quarkus 资源生命周期契约测试仅按平台切换 CDI 注解命名空间"},
     {"path": "ddd4j-data/ddd4j-data-projection-panache/src/test/java/io/ddd4j/data/projection/panache/arch/ProjectionPanacheModuleIndependenceTest.java", "replacements": [{"from": "                            \"javax..\",", "to": "                            \"jakarta..\","}], "evidence": "ddd4j-data/ddd4j-data-projection-panache/src/test/java/io/ddd4j/data/projection/panache/arch/ProjectionPanacheModuleIndependenceTest.java", "reason": "三线执行相同的 Projection Panache 模块依赖边界测试；JDK 8 的 Quarkus 使用 javax，JDK 17/21 使用 jakarta。仅允许该精确包名前缀替换，其他测试逻辑与说明逐字一致。"},
-    {"path": "ddd4j-data/ddd4j-data-projection-quarkus/src/test/java/io/ddd4j/data/projection/quarkus/arch/ProjectionQuarkusModuleIndependenceTest.java", "replacements": [{"from": "                            \"javax..\",", "to": "                            \"jakarta..\","}], "evidence": "ddd4j-data/ddd4j-data-projection-quarkus/src/test/java/io/ddd4j/data/projection/quarkus/arch/ProjectionQuarkusModuleIndependenceTest.java", "reason": "三线执行相同的 Projection Quarkus 模块依赖边界测试；JDK 8 的 Quarkus 使用 javax，JDK 17/21 使用 jakarta。仅允许该精确包名前缀替换，其他测试逻辑与说明逐字一致。"}
+    {"path": "ddd4j-data/ddd4j-data-projection-quarkus/src/test/java/io/ddd4j/data/projection/quarkus/arch/ProjectionQuarkusModuleIndependenceTest.java", "replacements": [{"from": "                            \"javax..\",", "to": "                            \"jakarta..\","}], "evidence": "ddd4j-data/ddd4j-data-projection-quarkus/src/test/java/io/ddd4j/data/projection/quarkus/arch/ProjectionQuarkusModuleIndependenceTest.java", "reason": "三线执行相同的 Projection Quarkus 模块依赖边界测试；JDK 8 的 Quarkus 使用 javax，JDK 17/21 使用 jakarta。仅允许该精确包名前缀替换，其他测试逻辑与说明逐字一致。"},
+    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/rbac/web/Java8MapsContractTest.java",
+      "replacements": [
+        {
+          "from": "Java8Maps.of(\"name\", \"alice\", \"count\", 2)",
+          "to": "Map.of(\"name\", \"alice\", \"count\", 2)"
+        },
+        {
+          "from": "Java8Maps.of(null, \"value\")",
+          "to": "Map.of(null, \"value\")"
+        },
+        {
+          "from": "Java8Maps.of(\"key\", null)",
+          "to": "Map.of(\"key\", null)"
+        },
+        {
+          "from": "Java8Maps.of(\"name\", \"alice\")",
+          "to": "Map.of(\"name\", \"alice\")"
+        },
+        {
+          "from": "void rejectsDuplicateKeysAndOddArguments() {\n        assertThrows(IllegalArgumentException.class, () -> Java8Maps.of(\"key\", 1, \"key\", 2));\n        assertThrows(IllegalArgumentException.class, () -> Java8Maps.of(\"key\"));\n    }",
+          "to": "void rejectsDuplicateKeys() {\n        assertThrows(IllegalArgumentException.class, () -> Map.of(\"key\", 1, \"key\", 2));\n    }"
+        }
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/rbac/web/AuthControllerTest.java",
+      "reason": "JDK 8 用 Java8Maps.of 保留 Map.of 的空值、重复键和不可变性契约，并额外拒绝奇数个可变参数；高两线使用 JDK Map.of。三线契约测试和对应 HTTP 测试已通过；仅逐项规范化这两份测试中的精确调用。"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/rbac/controller/Java8MapsContractTest.java",
+      "replacements": [
+        {
+          "from": "Java8Maps.of(\"name\", \"alice\", \"count\", 2)",
+          "to": "Map.of(\"name\", \"alice\", \"count\", 2)"
+        },
+        {
+          "from": "Java8Maps.of(null, \"value\")",
+          "to": "Map.of(null, \"value\")"
+        },
+        {
+          "from": "Java8Maps.of(\"key\", null)",
+          "to": "Map.of(\"key\", null)"
+        },
+        {
+          "from": "Java8Maps.of(\"name\", \"alice\")",
+          "to": "Map.of(\"name\", \"alice\")"
+        },
+        {
+          "from": "void rejectsDuplicateKeysAndOddArguments() {\n        assertThrows(IllegalArgumentException.class, () -> Java8Maps.of(\"key\", 1, \"key\", 2));\n        assertThrows(IllegalArgumentException.class, () -> Java8Maps.of(\"key\"));\n    }",
+          "to": "void rejectsDuplicateKeys() {\n        assertThrows(IllegalArgumentException.class, () -> Map.of(\"key\", 1, \"key\", 2));\n    }"
+        }
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/goods/web/GoodsResourceTest.java",
+      "reason": "JDK 8 用 Java8Maps.of 保留 Map.of 的空值、重复键和不可变性契约，并额外拒绝奇数个可变参数；高两线使用 JDK Map.of。三线契约测试和对应 HTTP 测试已通过；仅逐项规范化这两份测试中的精确调用。"
+    }
   ],
   "platformItemsMissingOnJdk8": [
     {
