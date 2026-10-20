@@ -62,7 +62,7 @@ public class Ddd4jHelidonWebConfiguration {
         Config source = Objects.requireNonNull(config, "config must not be null");
         Ddd4jHelidonWebConfiguration configuration = new Ddd4jHelidonWebConfiguration();
         source.getOptionalValues(PREFIX + "public-paths", String.class)
-                .ifPresent(values -> configuration.setPublicPaths(new ArrayList<>(values)));
+                .ifPresent(values -> configuration.setPublicPaths(trimPublicPaths(values)));
         source.getOptionalValue(PREFIX + "authentication-mode", String.class)
                 .map(value -> AuthenticationMode.valueOf(value.toUpperCase(Locale.ROOT)))
                 .ifPresent(configuration::setDefaultAuthenticationMode);
@@ -76,5 +76,19 @@ public class Ddd4jHelidonWebConfiguration {
                 .map(Duration::parse)
                 .ifPresent(configuration::setIdempotencyTtl);
         return configuration;
+    }
+
+    /**
+     * 去除配置列表中每个公开路径两侧的空白，保留路径顺序和可修改列表语义。
+     *
+     * @param paths 由当前 MicroProfile Config 版本转换的路径列表
+     * @return 去除首尾空白的路径列表
+     */
+    private static List<String> trimPublicPaths(List<String> paths) {
+        List<String> result = new ArrayList<>(paths.size());
+        for (String path : paths) {
+            result.add(path.trim());
+        }
+        return result;
     }
 }
