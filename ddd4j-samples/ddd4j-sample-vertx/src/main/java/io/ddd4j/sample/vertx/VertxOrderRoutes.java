@@ -14,8 +14,9 @@
  */
 package io.ddd4j.sample.vertx;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
 
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.auth.AuthRequest;
@@ -42,7 +43,6 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
-import lombok.Value;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -59,6 +59,11 @@ public final class VertxOrderRoutes {
     private VertxOrderRoutes() {
     }
 
+    /**
+     * @param vertx Vert.x 实例
+     * @param applicationService 订单应用服务
+     * @return 已注册订单路由的 Router
+     */
     public static Router router(Vertx vertx, OrderApplicationService applicationService) {
         Vertx actualVertx = Objects.requireNonNull(vertx, "vertx must not be null");
         OrderApplicationService service = Objects.requireNonNull(applicationService,
@@ -126,12 +131,15 @@ public final class VertxOrderRoutes {
                 .end(Json.encode(response));
     }
 
-    @Value
-    public static class TokenResponse {
-        String token;
+    /** 登录令牌响应。 */
+    public final static class TokenResponse {
+
+        private static final long serialVersionUID = 0L;
+
+        private final String token;
 
         /** @param token 登录令牌 */
-        @JsonCreator
+        @JsonCreator()
         public TokenResponse(@JsonProperty("token") String token) {
             this.token = token;
         }
