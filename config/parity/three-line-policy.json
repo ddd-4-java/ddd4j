@@ -3771,6 +3771,32 @@
         "failWith"
       ],
       "reason": "三线生产 ProjectionHandlerRegistry.java 字节一致，测试方法和断言一致；JDK 8 用 Arrays.asList/LinkedHashSet 构造不可变 Set，JDK 17/21 用 Set.of。JDK 21 仅多 Javadoc；逐线哈希锁定。"
+    },
+    {
+      "path": "ddd4j-data/ddd4j-data-projection/src/test/java/io/ddd4j/data/projection/ProjectionDispatcherTest.java",
+      "productionPath": "ddd4j-data/ddd4j-data-projection/src/main/java/io/ddd4j/data/projection/ProjectionDispatcher.java",
+      "sourceSha256": [
+        "2c49332728d5cd2f4cf9750fe9f5fc7af06c25ab5625dd0bd548d9b70fbd7641",
+        "6e37fff26597a484355232c2003c331c956198a7382a0589f7d07a9a37838395",
+        "f052c48f0a4e7a986d0ae9954143f87599cf9c814b3d14175be0ebceec189722"
+      ],
+      "productionSha256": [
+        "d45ed23c69236a13a786c5dd6a54e048bb4f4fb6cb9ac7f5284270c632a06f48",
+        "d45ed23c69236a13a786c5dd6a54e048bb4f4fb6cb9ac7f5284270c632a06f48",
+        "d45ed23c69236a13a786c5dd6a54e048bb4f4fb6cb9ac7f5284270c632a06f48"
+      ],
+      "testMethods": [
+        "chunkReaderReceivesImmutableEventTypeNames",
+        "chunkByEventEmitsOnlyRequestedTypeAndCompletesWhenExhausted",
+        "chunkByEventReturnsEmptyFluxForUnregisteredEventType",
+        "chunkByEventContinuesFromPersistedPosition",
+        "dispatchOneAppliesHandlerInOrderAndAdvancesPositionByOne",
+        "dispatchOneKeepsPositionWhenHandlerFails",
+        "dispatchOneRejectsNullArguments",
+        "constructorRejectsNullComponents",
+        "enqueue"
+      ],
+      "reason": "三线生产 ProjectionDispatcher.java 字节一致，测试方法和断言一致；JDK 8 使用 Arrays.asList 与不可变包装，JDK 17/21 使用 Set.of/List.copyOf。JDK 21 的单元素集合及 Javadoc 写法不同；逐线哈希锁定。"
     }
   ]
 }
