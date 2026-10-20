@@ -17,8 +17,6 @@ package io.ddd4j.web.webmvc.error;
 
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import hitool.core.format.ByteUnitFormat;
 import io.ddd4j.core.api.ApiCode;
 import io.ddd4j.core.api.R;
@@ -305,7 +303,7 @@ public class GlobalExceptionHandler {
      * @param ex 异常对象
      * @return 返回的 ApiRestResponse 结果
      */
-    @ExceptionHandler({JacksonException.class, JacksonException.class})
+    @ExceptionHandler(JacksonException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public R<String> jsonProcessingException(JacksonException ex) {
         this.logException(ex);
@@ -405,9 +403,9 @@ public class GlobalExceptionHandler {
 
     protected R<?> bindException(Exception ex, BindingResult result) {
         if (result.getErrorCount() > 0) {
-            List<Map<String, String>> errorList = Lists.newArrayList();
+            List<Map<String, String>> errorList = new ArrayList<>();
             for (FieldError error : result.getFieldErrors()) {
-                Map<String, String> errorMap = Maps.newHashMap();
+                Map<String, String> errorMap = new HashMap<>();
                 errorMap.put("field", error.getField());
                 errorMap.put("msg", error.getDefaultMessage());
                 errorList.add(errorMap);

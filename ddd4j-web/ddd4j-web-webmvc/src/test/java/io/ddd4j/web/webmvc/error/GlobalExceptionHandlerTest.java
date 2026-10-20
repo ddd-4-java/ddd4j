@@ -26,6 +26,8 @@ import io.ddd4j.web.webmvc.config.ServerI18nProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import com.fasterxml.jackson.core.JacksonException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 
 import java.util.HashSet;
@@ -73,6 +75,14 @@ class GlobalExceptionHandlerTest {
         assertThat(response).isNotNull();
         assertThat(response.getCode()).isEqualTo(ApiCode.METHOD_NOT_ALLOWED.getCode());
         assertThat(response.getMsg()).contains("POST");
+    }
+
+    @Test
+    void jsonExceptionHandlerRegistersJacksonExceptionOnce() throws Exception {
+        ExceptionHandler mapping = GlobalExceptionHandler.class
+                .getMethod("jsonProcessingException", JacksonException.class)
+                .getAnnotation(ExceptionHandler.class);
+        assertThat(mapping.value()).containsExactly(JacksonException.class);
     }
 
     @Test
