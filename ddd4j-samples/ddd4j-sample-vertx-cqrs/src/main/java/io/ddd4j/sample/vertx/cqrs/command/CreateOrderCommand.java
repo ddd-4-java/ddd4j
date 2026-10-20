@@ -14,66 +14,51 @@
  */
 package io.ddd4j.sample.vertx.cqrs.command;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.ddd4j.core.cqrs.command.Command;
 
 import java.util.Objects;
 
-import io.ddd4j.core.cqrs.command.Command;
-
 /**
  * 创建订单命令（CQRS 写侧）。
+ *
+ * <p>{@code orderNo} — 订单编号
+ * <p>{@code buyerId} — 买家 ID
+ * <p>{@code buyerName} — 买家名称
  */
-
 public final class CreateOrderCommand implements Command {
-
     private static final long serialVersionUID = 0L;
-
     private final String orderNo;
-
     private final String buyerId;
-
     private final String buyerName;
 
     /**
- * @param orderNo 订单编号
- * @param buyerId 买家 ID
- * @param buyerName 买家名称
- */
-
-    @JsonCreator()
-    public CreateOrderCommand(@JsonProperty("orderNo") String orderNo, @JsonProperty("buyerId") String buyerId, @JsonProperty("buyerName") String buyerName) {
+     * 创建可由 JSON 还原的订单命令。
+     *
+     * @param orderNo 订单编号
+     * @param buyerId 买家 ID
+     * @param buyerName 买家名称
+     */
+    @JsonCreator
+    public CreateOrderCommand(@JsonProperty("orderNo") String orderNo,
+                              @JsonProperty("buyerId") String buyerId,
+                              @JsonProperty("buyerName") String buyerName) {
         this.orderNo = orderNo;
         this.buyerId = buyerId;
         this.buyerName = buyerName;
     }
 
-    /**
-     * 读取订单编号。
-     *
-     * @return 订单编号
-     */
     @JsonProperty("orderNo")
     public String orderNo() {
         return orderNo;
     }
 
-    /**
-     * 读取买家标识。
-     *
-     * @return 买家标识
-     */
     @JsonProperty("buyerId")
     public String buyerId() {
         return buyerId;
     }
 
-    /**
-     * 读取买家名称。
-     *
-     * @return 买家名称
-     */
     @JsonProperty("buyerName")
     public String buyerName() {
         return buyerName;
@@ -84,7 +69,7 @@ public final class CreateOrderCommand implements Command {
         return orderNo;
     }
 
-    /** @return 买家 ID */
+    /** @return 买家标识 */
     public String getBuyerId() {
         return buyerId;
     }
@@ -103,7 +88,9 @@ public final class CreateOrderCommand implements Command {
             return false;
         }
         CreateOrderCommand other = (CreateOrderCommand) obj;
-        return Objects.equals(this.orderNo, other.orderNo) && Objects.equals(this.buyerId, other.buyerId) && Objects.equals(this.buyerName, other.buyerName);
+        return Objects.equals(this.orderNo, other.orderNo)
+                && Objects.equals(this.buyerId, other.buyerId)
+                && Objects.equals(this.buyerName, other.buyerName);
     }
 
     @Override
@@ -117,6 +104,7 @@ public final class CreateOrderCommand implements Command {
 
     @Override
     public String toString() {
-        return "CreateOrderCommand(orderNo=" + orderNo + ", buyerId=" + buyerId + ", buyerName=" + buyerName + ")";
+        return "CreateOrderCommand(orderNo=" + orderNo + ", buyerId=" + buyerId
+                + ", buyerName=" + buyerName + ")";
     }
 }
