@@ -3206,6 +3206,21 @@
             "21": "9aa5035d24f7cf3e1fec1080bec14ef0c7a910a3d6268a13b3987a17ba954d93"
         },
         "reason": "三线 Dropwizard CQRS 创建与重复订单响应均提供不可修改的 Map，目标测试逐线覆盖 201/409 响应；HTTP 资源集成测试逐线覆盖创建、查询和幂等冲突。JDK 8 使用 javax.ws.rs 与显式不可变 Map 构造，JDK 17/21 使用 jakarta.ws.rs 与 Map.of；源码及目标测试哈希锁定。"
+    },
+    {
+        "path": "ddd4j-samples/ddd4j-sample-dropwizard-cqrs/src/main/java/io/ddd4j/sample/dropwizard/cqrs/DropwizardCqrsApplication.java",
+        "sourceSha256": [
+            "5a82d15d0917b8f1d4743546885892d3a7f2571421522c445515562532357d0a",
+            "8b35bb6786b3ad06dcbe3c11b80bbd58984feab2bb62285dd9308a3fc0eba80a",
+            "8b35bb6786b3ad06dcbe3c11b80bbd58984feab2bb62285dd9308a3fc0eba80a"
+        ],
+        "evidence": "ddd4j-samples/ddd4j-sample-dropwizard-cqrs/src/test/java/io/ddd4j/sample/dropwizard/cqrs/DropwizardOrderCqrsIT.java",
+        "testSha256ByJdk": {
+            "8": "044aa78e2efaca62443c4a28817d3a68c9dfddbadf9c0e326a44c07d9388d7a2",
+            "17": "32f6aed62e717a612822b55c050f10a4c5fa9a86c78800aefa1ebb4b525bd2c0",
+            "21": "32f6aed62e717a612822b55c050f10a4c5fa9a86c78800aefa1ebb4b525bd2c0"
+        },
+        "reason": "三线 CQRS 应用共享事件存储、命令总线、投影视图和资源注册逻辑一致，逐线 DropwizardOrderCqrsIT 各 3 项验证命令与查询集成路径。JDK 8 使用旧版 Dropwizard 包及 Collections.singletonList，JDK 17/21 使用新版包及 List.of；此测试不声称覆盖实际服务启动。源码及目标测试哈希锁定。"
     }
   ],
   "historicalDocumentSections": [
