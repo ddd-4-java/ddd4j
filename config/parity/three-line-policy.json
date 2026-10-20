@@ -4326,6 +4326,26 @@
       "reason": "三线相同测试验证请求处理期间 OTel Scope 有效、请求完成后关闭；Javalin 4/新版本路由配置 API 不同，生产类另由平台语法映射锁定。"
     },
     {
+      "path": "ddd4j-data/ddd4j-data-cqrs-quarkus/src/test/java/io/ddd4j/data/cqrs/quarkus/QuarkusCommandBusIT.java",
+      "productionPath": "ddd4j-data/ddd4j-data-cqrs-quarkus/src/main/java/io/ddd4j/data/cqrs/quarkus/QuarkusCommandBus.java",
+      "sourceSha256": [
+        "034e9b14254f5c03c1a10fc47180b457c64161d4fc93eaf2d7fdc29fef8e1433",
+        "12f33bc9918776c4ff9fbe0f12c7eb32544751976ea3eaf740a2ce4b654acd7f",
+        "12f33bc9918776c4ff9fbe0f12c7eb32544751976ea3eaf740a2ce4b654acd7f"
+      ],
+      "productionSha256": [
+        "f75ad5e855f09a503ece746fb32714eb3f83be8989ca979fc7b046665f7980f5",
+        "dd924903dad17836ee5807f7fd6fb7de11a766ce750eaca16aa605d21091e622",
+        "dd924903dad17836ee5807f7fd6fb7de11a766ce750eaca16aa605d21091e622"
+      ],
+      "testMethods": [
+        "execute_已注册命令_应路由到真实Handler并返回成功",
+        "装配期冲突_整批拒绝应传播为Bean创建失败",
+        "execute_未注册命令_应抛ISE与ddd4j_core一致"
+      ],
+      "reason": "三线相同的真实 ArC 命令路由、未注册命令和装配冲突测试；JDK 8 的 javax CDI Instance 与高两线 jakarta CDI 接口及集合工厂 API 不同，生产源码已有逐线语法映射锁定。"
+    },
+    {
       "path": "ddd4j-data/ddd4j-data-mybatisplus/src/test/java/io/ddd4j/data/mybatis/repository/MybatisAggregateRepositoryMySQLTest.java",
       "productionPath": "ddd4j-data/ddd4j-data-mybatisplus/src/main/java/io/ddd4j/data/mybatis/repository/MybatisAggregateRepository.java",
       "sourceSha256": [
