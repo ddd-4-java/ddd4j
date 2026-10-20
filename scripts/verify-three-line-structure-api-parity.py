@@ -1189,6 +1189,9 @@ def validate_platform_content_mappings(mappings, roots: list[pathlib.Path]) -> d
              "import tools.jackson.databind.json.JsonMapper;"),
         }
         exact_test_adaptations = {
+            ("ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/TestApp.java",
+             "import org.springframework.boot.autoconfigure.domain.EntityScan;",
+             "import org.springframework.boot.persistence.autoconfigure.EntityScan;", ("3.0.x",)),
             ("ddd4j-mq/ddd4j-mq-rabbitmq/src/test/java/io/ddd4j/mq/rabbitmq/RabbitMQContainerIntegrationTest.java",
              "import org.testcontainers.rabbitmq.RabbitMQContainer;",
              "import org.testcontainers.containers.RabbitMQContainer;", ("2.0.x",)),
