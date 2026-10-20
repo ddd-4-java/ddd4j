@@ -937,7 +937,15 @@
       }
     }
   },
-  "optional_bytecode": {},
+  "optional_bytecode": {
+    "io.netty:netty-common:4.2.19.Final": {
+      "base_jdk": 8,
+      "allowed_prefixes": [
+        "io/netty/util/internal/shaded/org/jctools/queues/varhandle/"
+      ],
+      "reason": "51 个 Java 11 类仅位于 shaded JCTools varhandle 目录；其余 603 个基础类为 Java 6/8，JDK 8 使用非 VarHandle 路径"
+    }
+  },
   "excluded_components": {
     "xyz.raylab:jooq-plus": {
       "17": "旧扩展不属于 ddd4j 通用依赖，保留 org.jooq:jooq",

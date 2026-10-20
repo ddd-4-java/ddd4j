@@ -160,6 +160,7 @@
         <cxf.version>4.2.2</cxf.version>
         <db2jcc.version>12.1.5.0</db2jcc.version>
         <db-meta.version>0.0.1-Release</db-meta.version>
+        <derby.version>10.16.1.1</derby.version>
         <debezium.version>3.6.0.Final</debezium.version>
         <dependency-management-plugin.version>1.1.7</dependency-management-plugin.version>
         <dingtalk-sdk-extension.version>2.0.x.20260630-SNAPSHOT</dingtalk-sdk-extension.version>
@@ -2659,6 +2660,41 @@
                 <groupId>io.spring.gradle</groupId>
                 <artifactId>dependency-management-plugin</artifactId>
                 <version>${dependency-management-plugin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.derby</groupId>
+                <artifactId>derby</artifactId>
+                <version>${derby.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.derby</groupId>
+                <artifactId>derbyclient</artifactId>
+                <version>${derby.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.derby</groupId>
+                <artifactId>derbyLocale_zh_CN</artifactId>
+                <version>${derby.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.derby</groupId>
+                <artifactId>derbynet</artifactId>
+                <version>${derby.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.derby</groupId>
+                <artifactId>derbyoptionaltools</artifactId>
+                <version>${derby.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.derby</groupId>
+                <artifactId>derbyshared</artifactId>
+                <version>${derby.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.derby</groupId>
+                <artifactId>derbytools</artifactId>
+                <version>${derby.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.aliyun/dingtalk -->
             <!-- 钉钉 SDK：阿里钉钉开放平台 Java SDK。 -->
