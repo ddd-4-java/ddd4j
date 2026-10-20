@@ -4250,6 +4250,26 @@
         "getById_responseShape"
       ],
       "reason": "三线生产 CQRS GoodsController.java 逻辑词法等价，测试方法与 HTTP 断言一致；JDK 8 用 TestHttpClient，JDK 17/21 用 JDK HttpClient 与各自 Javalin 绑定地址。逐线哈希锁定。"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-order-jdbc/src/test/java/io/ddd4j/sample/order/jdbc/JdbcOrderAtomicityTest.java",
+      "productionPath": "ddd4j-samples/ddd4j-sample-order-application/src/main/java/io/ddd4j/sample/order/application/OrderApplicationService.java",
+      "sourceSha256": [
+        "19ca4e90b33cfd2551d012af036c58ad78e3c2e9e42215ebd0604757a05638bb",
+        "19ca4e90b33cfd2551d012af036c58ad78e3c2e9e42215ebd0604757a05638bb",
+        "329509f6bf1d1e501094e0d4367aba492f3b3326b413fd28b07f205fd96b0e40"
+      ],
+      "productionSha256": [
+        "7b48ddb573af4beffbb59a14215bb94349ac423e20233389cd37611ca2f81b3c",
+        "7b48ddb573af4beffbb59a14215bb94349ac423e20233389cd37611ca2f81b3c",
+        "7b48ddb573af4beffbb59a14215bb94349ac423e20233389cd37611ca2f81b3c"
+      ],
+      "testMethods": [
+        "failureAfterProjectionMustRollBackOrderOutboxAndReadModel",
+        "failureAfterOrderWriteMustRollBackTheWriteModel",
+        "failureAfterOutboxWriteMustRollBackOrderAndOutbox"
+      ],
+      "reason": "三线真实 PostgreSQL 事务原子性测试各 3 项通过，OrderApplicationService 生产源码逐字节相同；JDK 8/17 的 Jackson 2 mapper 显式发现模块，JDK 21 的 Jackson 3 mapper 默认支持对应模块。测试和生产源码按三线 SHA-256 锁定。"
     }
   ]
 }
