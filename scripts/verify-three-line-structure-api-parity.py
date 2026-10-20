@@ -1411,6 +1411,9 @@ def validate_platform_test_syntax_mappings(mappings, roots: list[pathlib.Path]) 
         hashes = mapping.get("sourceSha256")
         production_hashes = mapping.get("productionSha256")
         methods = mapping.get("testMethods")
+        contract = pathlib.PurePosixPath(mapping.get("contractPath", ""))
+        contract_hash = mapping.get("contractSha256")
+        inherited = bool(mapping.get("contractPath"))
         if (path.is_absolute() or ".." in path.parts or "/src/test/java/" not in source
                 or path.suffix != ".java" or source in validated
                 or production.is_absolute() or ".." in production.parts
@@ -1427,6 +1430,15 @@ def validate_platform_test_syntax_mappings(mappings, roots: list[pathlib.Path]) 
                     or not all(isinstance(value, str) and re.fullmatch(r"[0-9a-f]{64}", value)
                                for value in expected)):
                 raise ValueError(f"invalid platform test hashes: {source}")
+        if inherited:
+            if (contract.is_absolute() or ".." in contract.parts
+                    or "/src/main/java/" not in contract.as_posix()
+                    or contract.suffix != ".java"
+                    or not isinstance(contract_hash, str)
+                    or not re.fullmatch(r"[0-9a-f]{64}", contract_hash)):
+                raise ValueError(f"invalid inherited contract mapping: {source}")
+        elif contract_hash is not None:
+            raise ValueError(f"inherited contract hash without path: {source}")
         for index, root in enumerate(roots):
             test_file, production_file = root / path, root / production
             if (not test_file.is_file() or not production_file.is_file()
@@ -1434,8 +1446,20 @@ def validate_platform_test_syntax_mappings(mappings, roots: list[pathlib.Path]) 
                     or hashlib.sha256(production_file.read_bytes()).hexdigest()
                     != production_hashes[index]):
                 raise ValueError(f"stale platform test syntax mapping: {source}")
+            method_file = test_file
+            if inherited:
+                method_file = root / contract
+                if (not method_file.is_file()
+                        or hashlib.sha256(method_file.read_bytes()).hexdigest()
+                        != contract_hash):
+                    raise ValueError(f"stale inherited contract mapping: {source}")
+                adapter_contents = test_file.read_text(encoding="utf-8")
+                if ("extends AbstractCqrsRuntimeContractTest" not in adapter_contents
+                        or "createContract(" not in adapter_contents
+                        or "@Test" not in method_file.read_text(encoding="utf-8")):
+                    raise ValueError(f"missing inherited test contract: {source}")
             actual_methods = re.findall(r"(?m)^\s*void\s+([A-Za-z_$][\w$]*)\s*\(",
-                                        test_file.read_text(encoding="utf-8"))
+                                        method_file.read_text(encoding="utf-8"))
             if actual_methods != methods:
                 raise ValueError(f"platform test methods differ: {source}")
         if not java_files_lexically_equal(production.as_posix(), roots):
