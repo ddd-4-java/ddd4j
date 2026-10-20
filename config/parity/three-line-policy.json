@@ -3257,6 +3257,21 @@
             }
         ],
         "reason": "三线 Vert.x 订单路由的认证、创建与令牌响应值语义由目标路由和令牌测试分别验证；JDK 8 使用 Arrays.asList，JDK 17/21 使用 List.of，令牌 DTO 逻辑一致。源码和两项测试逐线哈希锁定。"
+    },
+    {
+        "path": "ddd4j-data/ddd4j-data-mybatisplus/src/main/java/io/ddd4j/data/mybatis/repository/MybatisAggregateRepository.java",
+        "sourceSha256": [
+            "4fb720bf80eabb16b2e3b15dfb03d136f4edf38af30983a0549668d057745efe",
+            "c99ca69393385ff569cecea4e0e12a5ac7c86a915a5c86315597bcac19161189",
+            "c99ca69393385ff569cecea4e0e12a5ac7c86a915a5c86315597bcac19161189"
+        ],
+        "evidence": "ddd4j-data/ddd4j-data-mybatisplus/src/test/java/io/ddd4j/data/mybatis/repository/MybatisAggregateRepositoryCrudTest.java",
+        "testSha256ByJdk": {
+            "8": "2e09451af5b019a32d5537e7e65af5a0a3a2f837be906dede835c9d9269bb638",
+            "17": "a1202a960d015a4b96cb39ce863e249a51f1c38d479d5771155caa6080e8c7de",
+            "21": "3e355e4306cff9935d8f866797265dbb25200ad53cb005207e51732f9e19c40e"
+        },
+        "reason": "三线 MyBatis-Plus 聚合仓储的 CRUD、查询和条件处理由各线 20 项 CRUD 契约及 3 项查询翻译测试通过；JDK 8 使用 switch case/break 与 Collections.singletonList，JDK 17/21 使用 switch 箭头与 List.of。业务方法和公开接口保持一致，源码及 CRUD 契约测试逐线哈希锁定。"
     }
   ],
   "historicalDocumentSections": [
