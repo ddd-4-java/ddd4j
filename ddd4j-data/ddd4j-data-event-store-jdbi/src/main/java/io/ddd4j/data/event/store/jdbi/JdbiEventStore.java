@@ -14,6 +14,8 @@
  */
 package io.ddd4j.data.event.store.jdbi;
 
+import tools.jackson.databind.json.JsonMapper;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -160,7 +162,7 @@ public class JdbiEventStore implements EventStore {
      * @throws NullPointerException jdbi 为 null 时抛出
      */
     public JdbiEventStore(Jdbi jdbi) {
-        this(jdbi, new EventStoreRetry(), new EventPayloadSerializer(tools.jackson.databind.json.JsonMapper.builder().findAndAddModules().build()));
+        this(jdbi, new EventStoreRetry(), new EventPayloadSerializer(JsonMapper.builder().findAndAddModules().build()));
     }
 
     /**
@@ -170,7 +172,7 @@ public class JdbiEventStore implements EventStore {
      * @param retry 重试策略
      */
     public JdbiEventStore(Jdbi jdbi, EventStoreRetry retry) {
-        this(jdbi, retry, new EventPayloadSerializer(tools.jackson.databind.json.JsonMapper.builder().findAndAddModules().build()));
+        this(jdbi, retry, new EventPayloadSerializer(JsonMapper.builder().findAndAddModules().build()));
     }
 
     public JdbiEventStore(Jdbi jdbi, EventStoreRetry retry, EventPayloadSerializer serializer) {

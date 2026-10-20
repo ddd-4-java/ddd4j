@@ -1534,6 +1534,21 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-data/ddd4j-data-event-store-jdbi/src/main/java/io/ddd4j/data/event/store/jdbi/JdbiEventStore.java",
+      "sourceSha256": [
+        "5c2608a9ab3fa39377ab78fe3ff30ecaf7f36c132dd8f7947efd8ecafc343be9",
+        "b45925d04439d12f2d8d5c64202026ec53b2a3a36af5fa5260c57e9449f13537",
+        "c94dea87d4cf6d41afdc892db649729a5fdcb2ecdec22150252aaec1bb9ed083"
+      ],
+      "evidence": "ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/JdbiEventStoreTest.java",
+      "testSha256ByJdk": {
+        "8": "77ceebd590cd9165477759685069e05ac447670c77fede0fac81d4b9eba744b8",
+        "17": "66695f05a9b723365fcf2eaf0fd875eba366070eeaddbb9ec40c4700a49b1721",
+        "21": "ea8889a868726ddc6588aa699775917a62471bfdabed6b19f755c23f724d4c33"
+      },
+      "reason": "三线 JDBI 生产逻辑去掉注释及导入后逐行一致；Jackson 2/3 及 JDK 版本保持各线适配。历史聚合 ID 序列化 UID 6652084670470061437 在三线锁定；H2、MySQL 容器等 JDBI 模块测试分别 44/41/43 项通过。源码与同名测试以 SHA-256 锁定。"
+    },
+    {
       "path": "ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/error/GlobalExceptionHandler.java",
       "sourceSha256": [
         "1f18c186a3925764e0c29e2d5c9c72fc9b43d1f5f0dd6be72f7dbe3824f427ab",
