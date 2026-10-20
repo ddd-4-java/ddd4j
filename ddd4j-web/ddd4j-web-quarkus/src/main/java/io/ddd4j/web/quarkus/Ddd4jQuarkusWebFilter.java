@@ -27,6 +27,7 @@ import io.ddd4j.web.core.context.WebRequestContext;
 import io.ddd4j.web.core.context.WebRequestContextFactory;
 import io.ddd4j.web.core.context.WebRequestData;
 import io.ddd4j.web.core.context.WebRequestLifecycle;
+import io.vertx.core.net.SocketAddress;
 import io.vertx.ext.web.RoutingContext;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Priorities;
@@ -207,9 +208,14 @@ public class Ddd4jQuarkusWebFilter {
     }
 
     private String remoteAddress() {
-        if (Objects.isNull(routingContext) || Objects.isNull(routingContext.request().remoteAddress())) {
+        if (Objects.isNull(routingContext)) {
             return null;
         }
-        return routingContext.request().remoteAddress().hostAddress();
+        SocketAddress address = routingContext.request().remoteAddress();
+        if (Objects.isNull(address)) {
+            return null;
+        }
+        String hostAddress = address.hostAddress();
+        return Objects.nonNull(hostAddress) ? hostAddress : address.host();
     }
 }
