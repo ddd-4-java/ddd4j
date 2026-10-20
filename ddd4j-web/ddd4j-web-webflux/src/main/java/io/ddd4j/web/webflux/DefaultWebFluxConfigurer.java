@@ -26,9 +26,9 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 
 /**
- * 类型说明。
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.0.x
+ * WebFlux 静态资源映射的默认配置器。
+ *
+ * <p>注册本地资源、classpath 静态资源与 WebJars 资源处理器。
  */
 public class DefaultWebFluxConfigurer implements WebFluxConfigurer {
 
@@ -37,13 +37,19 @@ public class DefaultWebFluxConfigurer implements WebFluxConfigurer {
 
     private LocalResourceProperteis localResourceProperteis;
 
+    /**
+     * 构造资源配置器。
+     *
+     * @param localResourceProperteis 本地静态资源映射配置
+     */
     public DefaultWebFluxConfigurer(LocalResourceProperteis localResourceProperteis) {
         this.localResourceProperteis = localResourceProperteis;
     }
 
     /**
-     * 追加元素。
-     * @param registry registry 参数。
+     * 注册静态资源处理器：本地资源、{@code /assets|/js|/css|/images} 与 WebJars。
+     *
+     * @param registry WebFlux 资源处理器注册表
      */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
