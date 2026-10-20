@@ -22,6 +22,7 @@ import java.util.Objects;
 
 import io.ddd4j.core.constant.EventStoreConstants;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
+import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.StoredEvent;
 import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.DomainEvent;
@@ -40,6 +41,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.postgresql.PostgreSQLContainer;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * PostgreSQL 容器轨：验证 JDBI EventStore 的真实 DDL、持久化与读取。
@@ -84,6 +86,32 @@ class JdbiEventStorePostgresIT {
                 .mapTo(String.class)
                 .list());
         assertThat(names).contains("uk_position");
+    }
+
+    @Test
+    void appendWithStaleVersionShouldRejectOnPostgres() {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-pg-2");
+        eventStore.append(ORDER_TYPE, orderId, List.of(new OrderCreatedEvent(orderId)), 0);
+
+        assertThrows(AggregateVersionConflictException.class,
+                () -> eventStore.append(ORDER_TYPE, orderId,
+                        List.of(new OrderCreatedEvent(orderId)), 0));
+    }
+
+    @Test
+    void payloadColumnShouldUsePortableTextType() {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-pg-schema");
+        eventStore.append(ORDER_TYPE, orderId, List.of(new OrderCreatedEvent(orderId)), 0);
+
+        String dataType = jdbi.withHandle(handle -> handle.createQuery(
+                        "select data_type from information_schema.columns "
+                                + "where lower(table_name) = lower(:tableName) "
+                                + "and lower(column_name) = lower(:columnName)")
+                .bind("tableName", EventStoreConstants.TABLE_NAME)
+                .bind("columnName", EventStoreConstants.COLUMN_PAYLOAD)
+                .mapTo(String.class)
+                .one());
+        assertThat(dataType).isEqualTo("text");
     }
 
     @Test
