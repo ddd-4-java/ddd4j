@@ -287,6 +287,15 @@
   ],
   "platformContentMappings": [
     {
+      "path": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/main/java/io/ddd4j/sample/quarkus/cqrs/order/domain/service/OrderDomainService.java",
+      "replacements": [
+        {"from": "import javax.enterprise.context.ApplicationScoped;", "to": "import jakarta.enterprise.context.ApplicationScoped;"},
+        {"from": "import javax.inject.Inject;", "to": "import jakarta.inject.Inject;"}
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/test/java/io/ddd4j/sample/quarkus/cqrs/order/OrderCQRSQueryTest.java",
+      "reason": "取消草稿订单的业务逻辑和公开方法文档三线逐字一致；仅 CDI 注解命名空间随 Quarkus 版本适配，三线目标模块测试通过"
+    },
+    {
       "path": "ddd4j-web/ddd4j-web-quarkus/src/main/java/io/ddd4j/web/quarkus/AccessLogFilter.java",
       "replacements": [
         {
