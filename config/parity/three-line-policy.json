@@ -3755,6 +3755,21 @@
         "21": "fe8b27d2d69439f4cb61850969fc041f7a7b47de1f50c0488bc18352a8f3064f"
       },
       "reason": "Dropwizard 2 到 4 将 Configuration、ConfiguredBundle、Bootstrap 和 Environment 移入 io.dropwizard.core 包；三线 Web Bundle 5 项测试验证注册与配置契约。"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-helidon/src/main/java/io/ddd4j/sample/helidon/HelidonOrderResource.java",
+      "sourceSha256": [
+        "6a33c3b07b271962da6d263d366e54134cb44c7c1b7f265ca17315b1c179d3b3",
+        "b8ea25fb5dc652983216e1ec58f2c86064e30c943dc16973d3fe33442ab53188",
+        "b8ea25fb5dc652983216e1ec58f2c86064e30c943dc16973d3fe33442ab53188"
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-helidon/src/test/java/io/ddd4j/sample/helidon/HelidonOrderResourceTest.java",
+      "testSha256ByJdk": {
+        "8": "99777fa306e630374025210691997b8280c66a0371f2f86a3c2c055747c2e22f",
+        "17": "bf49dfee8b6823ba3440c9315a67bde5777b7551730d44b7e8e160b81eef8490",
+        "21": "1b8217dd562bce5a65621171fff8234c5cbf382e6c327504b27f943cb4248eed"
+      },
+      "reason": "Helidon 2 的 javax CDI/JAX-RS/JSON-B 与高两线的 jakarta 包迁移；订单 HTTP 样例逐线实测创建、增加明细、查询、鉴权。"
     }
   ],
   "historicalDocumentSections": [
@@ -4984,6 +4999,24 @@
         "runUsesCustomResolver"
       ],
       "reason": "三线 Web Bundle 各 5 项测试通过，验证空解析器拒绝、默认配置、过滤器及异常映射注册、自定义解析器；测试仅适配 Dropwizard 2/4 包路径及 JDK 文档约束。"
+    },
+    {
+      "path": "ddd4j-samples/ddd4j-sample-helidon/src/test/java/io/ddd4j/sample/helidon/HelidonOrderResourceTest.java",
+      "productionPath": "ddd4j-samples/ddd4j-sample-helidon/src/main/java/io/ddd4j/sample/helidon/HelidonOrderResource.java",
+      "sourceSha256": [
+        "99777fa306e630374025210691997b8280c66a0371f2f86a3c2c055747c2e22f",
+        "bf49dfee8b6823ba3440c9315a67bde5777b7551730d44b7e8e160b81eef8490",
+        "1b8217dd562bce5a65621171fff8234c5cbf382e6c327504b27f943cb4248eed"
+      ],
+      "productionSha256": [
+        "6a33c3b07b271962da6d263d366e54134cb44c7c1b7f265ca17315b1c179d3b3",
+        "b8ea25fb5dc652983216e1ec58f2c86064e30c943dc16973d3fe33442ab53188",
+        "b8ea25fb5dc652983216e1ec58f2c86064e30c943dc16973d3fe33442ab53188"
+      ],
+      "testMethods": [
+        "shouldRunSharedOrderUseCasesThroughHelidonHttp"
+      ],
+      "reason": "三线 Helidon 订单 HTTP 样例各 1 项通过，JDK 8 线已补充创建订单 ID 非空断言；Helidon 2 手动 Server 与高两线 HelidonTest 注入目标属逐线测试启动适配，订单资源生产逻辑仅 javax/jakarta 命名空间不同。"
     }
   ]
 }
