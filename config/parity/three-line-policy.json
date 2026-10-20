@@ -3236,6 +3236,27 @@
             "21": "d5e631fcfef1fa636841582b2f9812f147261a017429ff6cb17701a23b710740"
         },
         "reason": "三线 Vert.x CQRS 路由的创建、查询与幂等冲突由目标集成测试逐线各 3 项覆盖；JDK 8 使用显式局部类型及 Collections.singletonList，JDK 17/21 使用 var 与 List.of。业务装配及路由逻辑一致，源码和目标测试哈希锁定。"
+    },
+    {
+        "path": "ddd4j-samples/ddd4j-sample-vertx/src/main/java/io/ddd4j/sample/vertx/VertxOrderRoutes.java",
+        "sourceSha256": [
+            "1cd051bafffcc141ab67dc7ced501dc7660e3f1b51cfc1e8f7ab973e22e5b335",
+            "f967b595f82729a24cabac08f51fda1d2452096d79e0dad71f7b358006682297",
+            "f967b595f82729a24cabac08f51fda1d2452096d79e0dad71f7b358006682297"
+        ],
+        "evidence": "ddd4j-samples/ddd4j-sample-vertx/src/test/java/io/ddd4j/sample/vertx/VertxOrderRoutesTest.java",
+        "testSha256ByJdk": {
+            "8": "b562b75e77ca4666a822772d5faead4e2fc6ff0f1bcff19e0d90215d14708f74",
+            "17": "29cadea385fc15271a97d3488ac4ade8482bd424033e1bed49c4d7347331a4b6",
+            "21": "e71122be0cc3072b5ba816496278fa518eac72fdc6893b0e03c788cc7b9424b8"
+        },
+        "additionalEvidence": [
+            {
+                "path": "ddd4j-samples/ddd4j-sample-vertx/src/test/java/io/ddd4j/sample/vertx/VertxTokenResponseContractTest.java",
+                "testSha256": "d5e2a1d03dca7bf29142d7ffc015a525515973d5e71c7464d882b5aae42e5d3f"
+            }
+        ],
+        "reason": "三线 Vert.x 订单路由的认证、创建与令牌响应值语义由目标路由和令牌测试分别验证；JDK 8 使用 Arrays.asList，JDK 17/21 使用 List.of，令牌 DTO 逻辑一致。源码和两项测试逐线哈希锁定。"
     }
   ],
   "historicalDocumentSections": [

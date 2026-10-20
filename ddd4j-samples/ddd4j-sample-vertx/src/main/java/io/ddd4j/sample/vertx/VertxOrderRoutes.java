@@ -43,7 +43,6 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
-import lombok.Value;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -61,10 +60,9 @@ public final class VertxOrderRoutes {
     }
 
     /**
-     * router() 方法。
-     * @param vertx vertx 参数。
-     * @param applicationService 订单应用服务。
-     * @return 方法执行结果。
+     * @param vertx Vert.x 实例
+     * @param applicationService 订单应用服务
+     * @return 已注册订单路由的 Router
      */
     public static Router router(Vertx vertx, OrderApplicationService applicationService) {
         Vertx actualVertx = Objects.requireNonNull(vertx, "vertx must not be null");
@@ -133,23 +131,20 @@ public final class VertxOrderRoutes {
                 .end(Json.encode(response));
     }
 
-    /**
-     * 令牌签发响应体。
-     *
-     * 字段 {@code token}：签发的访问令牌
-     */
-    @Value
-    public static class TokenResponse {
+    /** 登录令牌响应。 */
+    public final static class TokenResponse {
 
         private static final long serialVersionUID = 0L;
 
         private final String token;
 
+        /** @param token 登录令牌 */
         @JsonCreator()
         public TokenResponse(@JsonProperty("token") String token) {
             this.token = token;
         }
 
+        /** @return 登录令牌 */
         @JsonProperty("token")
         public String token() {
             return token;
@@ -183,6 +178,5 @@ public final class VertxOrderRoutes {
         public String toString() {
             return "VertxOrderRoutes.TokenResponse(token=" + token + ")";
         }
-
     }
 }
