@@ -4462,6 +4462,33 @@
       "reason": "三线真实 MySQL 容器各通过类型化事件回读、旧版本拒绝、payload TEXT 列 3 项；JDK 8 使用 javax.persistence/Hibernate 5 MySQL8Dialect，高两线使用 jakarta.persistence/Hibernate 6 MySQLDialect，生产适配器已有逐线源码锁定。"
     },
     {
+      "path": "ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/event/store/jpa/JpaEventStorePostgresIT.java",
+      "productionPath": "ddd4j-data/ddd4j-data-event-store-jpa/src/main/java/io/ddd4j/data/event/store/jpa/JpaEventStore.java",
+      "sourceSha256": [
+        "f121db738879d60cd921270b4ada2ba76d1b3d6361addc5dc73393e063c77187",
+        "f5f72eb5b798f281cac2841897d318e1f955f2e8ed1e096f6b9fe4c555d3c613",
+        "80acc6f9cd0999e1509594b8f14ff1e2ff3f661dde4d0d88761d323cf81dfe0a"
+      ],
+      "productionSha256": [
+        "69062e2ba5a65bf79f594fba66c4fafe17b9842e82ff1be301e9832b0d1a96da",
+        "c816dd541496a5f3c65615b74ff0dc4f36c0239e4e1b6cac5fcfa83d24e20857",
+        "41878b9894f3a3e90577f4e57e21ee793e2277dff1d28fd15c4183386c198789"
+      ],
+      "testMethods": [
+        "positionLookupMustLeaveCallerTransactionsActive",
+        "concurrentAppendsMustSerializeGlobalPositionAllocation",
+        "setUp",
+        "tearDown",
+        "participatingAppendShouldCommitBusinessEventAndOutboxAtomically",
+        "participatingAppendShouldRollBackBusinessEventAndOutboxTogether",
+        "participatingFailureShouldMakeCaughtTransactionUncommittableWithoutPartialWrites",
+        "appendAndReadShouldRoundTripTypedEventOnPostgres",
+        "payloadColumnShouldUsePortableTextType",
+        "appendWithStaleVersionShouldRejectOnPostgres"
+      ],
+      "reason": "三线真实 PostgreSQL 容器各通过事务参与、回滚、并发全局位置、类型化回读等 8 项；JDK 8 使用 javax.persistence/Hibernate 5，高两线使用 jakarta.persistence/Hibernate 6，生产 JPA 适配器已有逐线源码锁定。"
+    },
+    {
       "path": "ddd4j-data/ddd4j-data-mybatisplus/src/test/java/io/ddd4j/data/mybatis/repository/MybatisAggregateRepositoryMySQLTest.java",
       "productionPath": "ddd4j-data/ddd4j-data-mybatisplus/src/main/java/io/ddd4j/data/mybatis/repository/MybatisAggregateRepository.java",
       "sourceSha256": [
