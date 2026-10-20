@@ -1262,6 +1262,46 @@ class ThreeLineInventoryTest(unittest.TestCase):
                    ["differences"] if item["path"] == path)
         self.assertEqual("OPEN", row["status"])
 
+    def test_platform_test_syntax_requires_equal_methods_and_production_logic(self):
+        path = "ddd4j-core/src/test/java/example/ResponseTest.java"
+        production = "ddd4j-core/src/main/java/example/Response.java"
+        tests = ["class ResponseTest {\n void value() { /* Jackson 2 */ }\n}\n",
+                 "class ResponseTest {\n void value() { /* Jackson 2 */ }\n}\n",
+                 "class ResponseTest {\n void value() { /* Jackson 3 */ }\n}\n"]
+        implementation = "class Response { int value() { return 1; } }\n"
+        for root, source in zip(self.roots, tests):
+            self.write(root, path, source)
+            self.write(root, production, implementation)
+        policy = json.loads(self.policy.read_text())
+        digest = hashlib.sha256(implementation.encode()).hexdigest()
+        policy["platformTestSyntaxMappings"] = [{
+            "path": path, "productionPath": production,
+            "sourceSha256": [hashlib.sha256(source.encode()).hexdigest() for source in tests],
+            "productionSha256": [digest] * 3,
+            "testMethods": ["value"], "reason": "Jackson test API differs by JDK",
+        }]
+        self.policy.write_text(json.dumps(policy))
+
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = json.loads((output / "inventory.json").read_text())["differences"]
+        self.assertEqual("PLATFORM_ADAPTED", next(row["status"] for row in rows
+                         if row["path"] == path))
+
+        self.write(self.roots[2], path, tests[2].replace("value()", "other()"))
+        result, _ = self.run_checker("inventory")
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("stale platform test syntax mapping", result.stderr)
+
+        self.write(self.roots[2], path, tests[2])
+        self.write(self.roots[2], production, "class Response { int value() { return 2; } }\n")
+        policy["platformTestSyntaxMappings"][0]["productionSha256"][2] = hashlib.sha256(
+            (self.roots[2] / production).read_bytes()).hexdigest()
+        self.policy.write_text(json.dumps(policy))
+        result, _ = self.run_checker("inventory")
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("platform test production logic differs", result.stderr)
+
     def test_hashed_syntax_adaptation_requires_three_line_contract_and_current_sources(self):
         path = "ddd4j-core/src/main/java/example/BrokerType.java"
         evidence = "ddd4j-core/src/test/java/example/BrokerTypeContractTest.java"
