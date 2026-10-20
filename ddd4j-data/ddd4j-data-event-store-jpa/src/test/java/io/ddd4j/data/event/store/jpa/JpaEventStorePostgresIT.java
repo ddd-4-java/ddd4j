@@ -391,6 +391,20 @@ class JpaEventStorePostgresIT {
     }
 
     @Test
+    void payloadColumnShouldUsePortableTextType() throws Exception {
+        // PG 将列名折叠为小写；information_schema 中 table_schema = current_schema()
+        try (Connection conn = DriverManager.getConnection(PG.getJdbcUrl(), PG.getUsername(), PG.getPassword());
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(
+                     "select data_type from information_schema.columns"
+                             + " where lower(table_name) = lower('" + EventStoreConstants.TABLE_NAME + "')"
+                             + " and lower(column_name) = lower('" + EventStoreConstants.COLUMN_PAYLOAD + "')")) {
+            assertTrue(rs.next(), "payload column must exist");
+            assertEquals("text", rs.getString("data_type"));
+        }
+    }
+
+    @Test
     void appendWithStaleVersionShouldRejectOnPostgres() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-pg-2");
         eventStore.append(ORDER_TYPE, orderId,
@@ -403,20 +417,6 @@ class JpaEventStorePostgresIT {
         assertEquals(1L, conflict.actualVersion());
         entityManager.clear();
         assertEquals(1, eventStore.read(ORDER_TYPE, orderId).size());
-    }
-
-    @Test
-    void payloadColumnShouldUsePortableTextType() throws Exception {
-        // PG 将列名折叠为小写；information_schema 中 table_schema = current_schema()
-        try (Connection conn = DriverManager.getConnection(PG.getJdbcUrl(), PG.getUsername(), PG.getPassword());
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(
-                     "select data_type from information_schema.columns"
-                             + " where lower(table_name) = lower('" + EventStoreConstants.TABLE_NAME + "')"
-                             + " and lower(column_name) = lower('" + EventStoreConstants.COLUMN_PAYLOAD + "')")) {
-            assertTrue(rs.next(), "payload column must exist");
-            assertEquals("text", rs.getString("data_type"));
-        }
     }
 
     private static final class TestAggregateRootId implements AggregateRootId {
