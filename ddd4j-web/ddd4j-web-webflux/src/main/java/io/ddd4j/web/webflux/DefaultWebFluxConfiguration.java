@@ -46,8 +46,6 @@ import java.util.TimeZone;
  *
  * <p>注册请求上下文过滤器、区域解析、认证、异常翻译、访问策略、
  * 幂等生命周期与静态资源映射等 ddd4j Web 核心组件。
- *
- * @since 2.0.x
  */
 @Configuration(proxyBeanMethods = false)
 public class DefaultWebFluxConfiguration {
