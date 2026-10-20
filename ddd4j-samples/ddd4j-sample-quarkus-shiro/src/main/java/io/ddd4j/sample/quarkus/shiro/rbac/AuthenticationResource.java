@@ -25,7 +25,9 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -90,7 +92,7 @@ public class AuthenticationResource {
     public R<Map<String, Object>> logout() {
         rbacService.requireLogin();
         rbacService.logout();
-        return R.ok(Map.of("success", true));
+        return R.ok(Collections.<String, Object>singletonMap("success", true));
     }
 
     /**
@@ -113,7 +115,7 @@ public class AuthenticationResource {
     @GET
     @Path("/status")
     public R<Map<String, Object>> status() {
-        return R.ok(Map.of("login", rbacService.isLogin()));
+        return R.ok(Collections.<String, Object>singletonMap("login", rbacService.isLogin()));
     }
 
     // ============ 运行时权限 / 角色校验 ============
@@ -162,7 +164,7 @@ public class AuthenticationResource {
     public R<Object> businessListUsers() {
         rbacService.requireLogin();
         rbacService.requirePermission("user:list");
-        return R.ok(Map.of("items", rbacService.listUsers()));
+        return R.ok(Collections.<String, Object>singletonMap("items", rbacService.listUsers()));
     }
 
     /**
@@ -176,7 +178,10 @@ public class AuthenticationResource {
     public R<Map<String, Object>> businessPayOrder(@PathParam("id") String id) {
         rbacService.requireLogin();
         rbacService.requirePermission("order:pay");
-        return R.ok(Map.of("orderId", id, "paid", true));
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("orderId", id);
+        result.put("paid", true);
+        return R.ok(result);
     }
 
     /**
