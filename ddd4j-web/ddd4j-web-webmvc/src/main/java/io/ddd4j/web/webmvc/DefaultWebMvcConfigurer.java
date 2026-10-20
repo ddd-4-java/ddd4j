@@ -96,6 +96,13 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
      */
     private LocalResourceProperteis localResourceProperteis;
 
+    /**
+     * 创建 DefaultWebMvcConfigurer 实例。
+     *
+     * @param localResourceProperteis 本地资源配置
+     * @param localeChangeInterceptor 语言环境拦截器
+     * @param ddd4jWebMvcInterceptor DDD4J Web 拦截器
+     */
     public DefaultWebMvcConfigurer(LocalResourceProperteis localResourceProperteis,
                                    LocaleChangeInterceptor localeChangeInterceptor,
                                    Ddd4jWebMvcInterceptor ddd4jWebMvcInterceptor) {
@@ -186,6 +193,14 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
 
     }
 
+    /**
+     * 注册拦截器并确定执行顺序。
+     * <p>为 API 版本解析拦截器（顺序 {@link org.springframework.core.Ordered#HIGHEST_PRECEDENCE}
+     * 即 {@code Integer.MIN_VALUE}，由 {@code ApiVersionWebMvcConfiguration} 注册）预留最前位置，
+     * 既有上下文拦截器与语言切换拦截器整体顺移，相对顺序保持不变。</p>
+     *
+     * @param registry 拦截器注册表
+     */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(ddd4jWebMvcInterceptor).addPathPatterns("/**").order(Integer.MIN_VALUE + 1);

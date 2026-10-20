@@ -3481,6 +3481,21 @@
         "21": "8c722692eeca0090ce617e1a147d05f5a3da4ee1d7a6d00b93bf2c64d77309b9"
       },
       "reason": "三线请求上下文、认证、幂等提交/回滚和 OTel Span 生命周期契约一致；JDK 8 的 Micronaut 3 采用 HttpFilter/FilterChain 与线程上下文传播工厂，JDK 17/21 的 Micronaut 4 采用 Filter Method/FilterContinuation 与 MutablePropagatedContext。各线过滤器单元测试 4 项、OTel Scope 3 项、Web 契约 7 项通过；源码与逐线测试哈希锁定。"
+    },
+    {
+      "path": "ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/DefaultWebMvcConfigurer.java",
+      "sourceSha256": [
+        "03940078a791178fa92128d63d8054a574fb254c30a409e8e98d2927691f40d7",
+        "505753717fe886cb2578cae9a6aa2355dfc85a476128bd8bfc404757640b77f6",
+        "26e007c01fb81ffac6f4ade9a69a8c202071277b372058f8b95db6a5ab69f9f2"
+      ],
+      "evidence": "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/DefaultWebMvcConfigurerWebJarsTest.java",
+      "testSha256ByJdk": {
+        "8": "eb28aa3cde69bd6ac5f5a141f9a9e77ac3044e470bbc7fe8269750adc6922d72",
+        "17": "eb28aa3cde69bd6ac5f5a141f9a9e77ac3044e470bbc7fe8269750adc6922d72",
+        "21": "eb28aa3cde69bd6ac5f5a141f9a9e77ac3044e470bbc7fe8269750adc6922d72"
+      },
+      "reason": "三线 WebMVC 拦截器顺序、静态资源路径及 JSON/日期转换契约一致；JDK 8 使用 Arrays.asList 与 Spring 5 WebJarsResourceResolver，JDK 17/21 使用 List.of 与 Spring 6/7 LiteWebJarsResourceResolver，3.0.x 的 Jackson 3 转换器由桥接层适配。三线 WebMVC 契约 6 项、API 版本拦截器 11 项、WebJars 1 项测试通过，逐线源码及测试哈希锁定。"
     }
   ],
   "historicalDocumentSections": [
