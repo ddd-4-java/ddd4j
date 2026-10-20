@@ -116,13 +116,15 @@ def inventory_category(path: str) -> str:
 
 def indexed_javadoc_history_matches(path: str, roots: list[pathlib.Path],
                                     values: list[str | None]) -> bool:
-    """仅将逐文件锁定且可从统一索引定位的旧 Javadoc 记录归为历史。"""
+    """仅将逐文件锁定且可从统一索引定位的旧验证记录归为历史。"""
     progress = path == "docs/verification/javadoc-fill-progress-20261009.md"
     report = re.fullmatch(r"docs/verification/javadoc-fill-report-(?:0[1-9]|1[0-8])\.md", path)
     batch = re.fullmatch(r"docs/verification/javadoc-fill-batches/batch-(?:0[1-9]|1[0-8])\.txt", path)
-    if not progress and not report and not batch:
+    raw_gaps = path == "docs/verification/javadoc-gaps-raw.txt"
+    redline = path == "docs/verification/redline-cleanup-evidence-20261009.txt"
+    if not (progress or report or batch or raw_gaps or redline):
         return False
-    line_index = 1 if progress else 2
+    line_index = 0 if redline else 1 if progress else 2
     if len(values) != 3 or any(value is None if index == line_index else value is not None
                                for index, value in enumerate(values)):
         return False

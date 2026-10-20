@@ -76,4 +76,11 @@
 | `javadoc-fill-report-17.md` | 3.0.x；2026-10-10T18:12:52+08:00 | [原始文件](https://github.com/ddd-4-java/ddd4j/blob/2af17377ea3d3c2ce007241a5634fc6be00cb309/docs/verification/javadoc-fill-report-17.md) | `7e5c186212bf85312d100990bc9046200af63dfd19855caadca5cd1a8c5a26a6` |
 | `javadoc-fill-report-18.md` | 3.0.x；2026-10-10T18:12:52+08:00 | [原始文件](https://github.com/ddd-4-java/ddd4j/blob/2af17377ea3d3c2ce007241a5634fc6be00cb309/docs/verification/javadoc-fill-report-18.md) | `0d587b48ad4363d07aa1066cba0018e2cb95e4f500cfc458e2c156ca3604f983` |
 
+另外两份原始验证记录只保留在所属线；它们记录旧批次的输入和结果，不证明当前分支的 Javadoc 或品牌门禁已通过。
+
+| 文件 | 原所属线与时间 | 历史来源 | 文件 SHA-256 |
+|---|---|---|---|
+| `redline-cleanup-evidence-20261009.txt` | 1.0.x；2026-10-09T12:33:43+08:00 | [原始文件](https://github.com/ddd-4-java/ddd4j/blob/d975d8b7d9f39abd131768b9e9e9fadb7b2b77f7/docs/verification/redline-cleanup-evidence-20261009.txt) | `41f3562e83261139b572a12a3d2ab5859cec519cc1d1f3e04a1ab0bf87778928` |
+| `javadoc-gaps-raw.txt` | 3.0.x；2026-10-10T18:12:52+08:00 | [原始文件](https://github.com/ddd-4-java/ddd4j/blob/2af17377ea3d3c2ce007241a5634fc6be00cb309/docs/verification/javadoc-gaps-raw.txt) | `b28862c26f150bcd1bf92de1c49f4b11413a91bfdac7c6e090aa65d63e0268e5` |
+
 其余既往规格、计划与报告保留各线原路径和 Git 历史。新增历史资料时，应在此补入所属线、版本、路径和文件摘要。
