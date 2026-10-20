@@ -3916,6 +3916,15 @@
       "path": "ddd4j-data/ddd4j-data-projection-helidon/src/test/java/io/ddd4j/data/projection/helidon/arch/ProjectionHelidonModuleIndependenceTest.java",
       "sha256ByJdk": {"8": "fdc5de72801222c18b7b693461afdef81ba2a9fa51b8840289c11184353a9848", "17": "559fa1128c9cdfd13480e69921f6b7aec06ea260ba5bc84fcc69892febc7eeec", "21": "559fa1128c9cdfd13480e69921f6b7aec06ea260ba5bc84fcc69892febc7eeec"},
       "evidence": "三线 Helidon Projection 架构规则仅作 javax/jakarta 命名空间与版本注记替换；规范化后逐字一致"
+    },
+    {
+      "path": "ddd4j-data/ddd4j-data-cqrs-quarkus/src/test/java/io/ddd4j/data/cqrs/quarkus/arch/CqrsQuarkusModuleIndependenceTest.java",
+      "sha256ByJdk": {
+        "8": "3767cb330b62a04a2d93ae44cfcebcaf4fcf1bdc1d1e122cabdd9e1514aa9099",
+        "17": "761c5b538e826eaa2a42d8c49503d0793f0a4d0d2c2dc43deacaf57f8e1acf95",
+        "21": "761c5b538e826eaa2a42d8c49503d0793f0a4d0d2c2dc43deacaf57f8e1acf95"
+      },
+      "evidence": "Quarkus CDI 允许清单分别使用 javax/jakarta，三线同时禁止 javax.persistence 与 jakarta.persistence；逐线源文件 SHA-256 和规范化内容必须一致。"
     }
   ],
   "platformTestSyntaxMappings": [

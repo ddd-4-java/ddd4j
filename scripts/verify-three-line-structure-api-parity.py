@@ -844,12 +844,14 @@ def validate_platform_tests_only_on_jdk8(items: list[dict],
 
 def validate_platform_test_namespace_mappings(
         mappings: list[dict], roots: list[pathlib.Path]) -> dict[str, dict]:
-    """仅接受两份 Helidon 架构规则中精确的 Java EE/Jakarta EE 命名空间替换。"""
+    """仅接受已列明架构规则中精确的 Java EE/Jakarta EE 命名空间替换。"""
     allowed = {
         "ddd4j-data/ddd4j-data-cqrs-helidon/src/test/java/"
         "io/ddd4j/data/cqrs/helidon/arch/CqrsHelidonModuleIndependenceTest.java",
         "ddd4j-data/ddd4j-data-projection-helidon/src/test/java/"
         "io/ddd4j/data/projection/helidon/arch/ProjectionHelidonModuleIndependenceTest.java",
+        "ddd4j-data/ddd4j-data-cqrs-quarkus/src/test/java/"
+        "io/ddd4j/data/cqrs/quarkus/arch/CqrsQuarkusModuleIndependenceTest.java",
     }
     validated = {}
     for item in mappings:
@@ -869,9 +871,20 @@ def validate_platform_test_namespace_mappings(
                     or hashlib.sha256(source.read_bytes()).hexdigest() != hashes[jdk]):
                 raise ValueError(f"stale platform test namespace mapping: {path}")
             contents.append(source.read_text(encoding="utf-8"))
-        normalized = (contents[0].replace("Javax", "Jakarta")
+        quarkus = path.endswith("/CqrsQuarkusModuleIndependenceTest.java")
+        if quarkus and any(
+                '"jakarta.persistence.."' not in content
+                or '"javax.persistence.."' not in content
+                for content in contents):
+            raise ValueError(f"platform test namespace contract differs: {path}")
+        source = contents[0]
+        if quarkus:
+            source = source.replace('"javax.persistence.."', '"__LEGACY_PERSISTENCE__"')
+        normalized = (source.replace("Javax", "Jakarta")
                       .replace("javax", "jakarta")
                       .replace("@since 1.0.x", "@since 2.0.x"))
+        if quarkus:
+            normalized = normalized.replace('"__LEGACY_PERSISTENCE__"', '"javax.persistence.."')
         if ("@ArchTest" not in contents[0] or '"javax.."' not in contents[0]
                 or '"jakarta.."' not in contents[1]
                 or normalized != contents[1] or contents[1] != contents[2]):
