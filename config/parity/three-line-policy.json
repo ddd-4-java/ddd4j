@@ -368,8 +368,8 @@
       "counterpart": "ddd4j-data/ddd4j-data-event-store-r2dbc/src/test/java/io/ddd4j/data/event/store/r2dbc/R2dbcEventStorePostgresIT.java",
       "counterpartSha256": [
         "94b83e2b1fd0b7533e146e6a779c91d7d257d041f211c61d5f7af309f75f5cd6",
-        "4468eeec54478d2c481e41f51aac81183b0d4b90d3163ccc3f6309e1cfbdbe0c",
-        "414cef26b726e0461038cc8f465a1c2dfe1bb31ac8d606ca30042556eee97395"
+        "71b7884ae9fa3c1911a2afa0ab94b87e52d5a798d93e2621798d38a940cb34c6",
+        "4f62b531d9d39f76fd2b18ca6250d4d2cfcee4ed923a3bda2df1fc84eb76916e"
       ],
       "reason": "JDK 8 PostgreSQL 进程级单例容器夹具；高两线使用 @Container；三线 R2dbcEventStorePostgresIT 各 4 项真实 PostgreSQL 测试通过且无跳过"
     }
@@ -4487,6 +4487,29 @@
         "appendWithStaleVersionShouldRejectOnPostgres"
       ],
       "reason": "三线真实 PostgreSQL 容器各通过事务参与、回滚、并发全局位置、类型化回读等 8 项；JDK 8 使用 javax.persistence/Hibernate 5，高两线使用 jakarta.persistence/Hibernate 6，生产 JPA 适配器已有逐线源码锁定。"
+    },
+    {
+      "path": "ddd4j-data/ddd4j-data-event-store-r2dbc/src/test/java/io/ddd4j/data/event/store/r2dbc/R2dbcEventStorePostgresIT.java",
+      "productionPath": "ddd4j-data/ddd4j-data-event-store-r2dbc/src/main/java/io/ddd4j/data/event/store/r2dbc/R2dbcEventStore.java",
+      "sourceSha256": [
+        "94b83e2b1fd0b7533e146e6a779c91d7d257d041f211c61d5f7af309f75f5cd6",
+        "71b7884ae9fa3c1911a2afa0ab94b87e52d5a798d93e2621798d38a940cb34c6",
+        "4f62b531d9d39f76fd2b18ca6250d4d2cfcee4ed923a3bda2df1fc84eb76916e"
+      ],
+      "productionSha256": [
+        "965da85d46381a1c0d5fbdd153212f11bbcd30833e81968c6139ae65cad0de9a",
+        "965da85d46381a1c0d5fbdd153212f11bbcd30833e81968c6139ae65cad0de9a",
+        "965da85d46381a1c0d5fbdd153212f11bbcd30833e81968c6139ae65cad0de9a"
+      ],
+      "testMethods": [
+        "setUp",
+        "tearDown",
+        "appendAndReadShouldRoundTripTypedMetadataOnPostgres",
+        "versionRangeAndAggregateTypeIsolationShouldFollowCoreContractOnPostgres",
+        "readAllShouldPreserveGlobalPositionOrderOnPostgres",
+        "appendWithStaleVersionShouldRejectOnPostgres"
+      ],
+      "reason": "三线 R2DBC 生产源码逐字一致，真实 PostgreSQL 容器各通过聚合 ID 值语义回读、版本区间、全局顺序和过期版本拒绝 4 项；JDK 8 与高两线集合工厂及事件夹具 API 分别适配。"
     },
     {
       "path": "ddd4j-data/ddd4j-data-mybatisplus/src/test/java/io/ddd4j/data/mybatis/repository/MybatisAggregateRepositoryMySQLTest.java",
