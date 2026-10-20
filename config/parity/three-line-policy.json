@@ -4286,6 +4286,28 @@
       "reason": "三线验证相同的事件元数据 JSON 标量值契约；JDK 8/17 使用 Jackson 2 并注册 JavaTimeModule，JDK 21 使用 Jackson 3 内建时间模块；生产 DomainEvent 已由平台语法映射锁定。"
     },
     {
+      "path": "ddd4j-data/ddd4j-data-projection-javalin/src/test/java/io/ddd4j/data/projection/javalin/JavalinProjectionSchedulerIT.java",
+      "productionPath": "ddd4j-data/ddd4j-data-projection-javalin/src/main/java/io/ddd4j/data/projection/javalin/JavalinProjectionScheduler.java",
+      "sourceSha256": [
+        "3b71035272579190afd31b4d2111218fc2e48204672e1916f9d409052eb5e0ce",
+        "a76e6b9f69aaa3127392ab4543aca23871486ec5753be5f9fe49ebc8b90c7cf3",
+        "a76e6b9f69aaa3127392ab4543aca23871486ec5753be5f9fe49ebc8b90c7cf3"
+      ],
+      "productionSha256": [
+        "d4fcbe48cd8e3cd7948d908a234a2ed07145800bf6f7f9cec94628ae471fa92b",
+        "d4fcbe48cd8e3cd7948d908a234a2ed07145800bf6f7f9cec94628ae471fa92b",
+        "d4fcbe48cd8e3cd7948d908a234a2ed07145800bf6f7f9cec94628ae471fa92b"
+      ],
+      "testMethods": [
+        "startJavalin",
+        "stopJavalin",
+        "scheduler_schedule_应返回activeHandle_cancel后应inactive",
+        "viewManager_start_stop_应管理生命周期",
+        "triggerOnce_应立即执行所有view的runOnce"
+      ],
+      "reason": "三线调度器生产逻辑逐字一致，测试方法和生命周期断言相同；JDK 8 使用兼容的集合工厂，JDK 17/21 使用 List.of 与 Set.of，Javalin 新线可关闭启动横幅。"
+    },
+    {
       "path": "ddd4j-data/ddd4j-data-mybatisplus/src/test/java/io/ddd4j/data/mybatis/repository/MybatisAggregateRepositoryMySQLTest.java",
       "productionPath": "ddd4j-data/ddd4j-data-mybatisplus/src/main/java/io/ddd4j/data/mybatis/repository/MybatisAggregateRepository.java",
       "sourceSha256": [
