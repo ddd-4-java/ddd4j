@@ -25,6 +25,7 @@ import io.ddd4j.sample.quarkus.shiro.goods.web.dto.UpdateGoodsRequest;
 import java.math.BigDecimal;
 import java.util.List;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -34,6 +35,7 @@ import jakarta.ws.rs.core.MediaType;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@ApplicationScoped
 @Path("/api/goods")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)

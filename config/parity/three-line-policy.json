@@ -3328,13 +3328,13 @@
     {
       "path": "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/main/java/io/ddd4j/sample/quarkus/shiro/goods/web/GoodsResource.java",
       "sourceSha256": [
-        "eed8aa4fee1552a923bab04413668863fd1e39d71fa523b5cd62a36cd9fb053f",
-        "d851d2fa55024e8c7cb03124acab0513e40c5f5dd40be0c2502cece470020de6",
-        "d851d2fa55024e8c7cb03124acab0513e40c5f5dd40be0c2502cece470020de6"
+        "201e621fa9b2b1650ced2376676015079e589efd84bf65a6652350d5405e8865",
+        "762113b05f276146500d2299e83bac678cede2e03b83089c7496ec8ba938119f",
+        "762113b05f276146500d2299e83bac678cede2e03b83089c7496ec8ba938119f"
       ],
       "evidence": "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/test/java/io/ddd4j/sample/quarkus/shiro/goods/web/GoodsQueryResourceContractTest.java",
-      "testSha256": "dfa6e3e43b35648e936152edeccc02ab6fa2071f87fb5b96d64ea5d737f0c901",
-      "reason": "三线共用 GoodsResource 商品读写 URL；JDK 8 Quarkus 1 显式 CDI 作用域和 javax JAX-RS，高线使用 jakarta JAX-RS。查询逻辑委托 GoodsQueryResource，三线商品查询 HTTP 契约各 2 项及 RBAC 回归各 45 项通过；源码和共同查询测试哈希锁定。"
+      "testSha256": "1173758bafa46f057d886bad38e950c78531b5de215aef1b71a0668862fa3e44",
+      "reason": "三线商品 REST 资源均显式使用应用级 CDI 生命周期，写入与查询路由保持一致；Quarkus 1 使用 javax 注解与 RESTEasy Classic，Quarkus 3 使用 jakarta 注解与 Quarkus REST。目标测试先验证高线默认 Singleton 与低线 ApplicationScoped 的真实差异，再在三线各通过 3 项 HTTP/CDI 契约及严格 Javadoc；源码和共同测试哈希锁定。"
     },
     {
       "path": "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/main/java/io/ddd4j/sample/quarkus/shiro/order/web/OrderResource.java",
