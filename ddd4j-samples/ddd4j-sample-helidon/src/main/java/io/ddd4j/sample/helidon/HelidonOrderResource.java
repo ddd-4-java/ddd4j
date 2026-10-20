@@ -39,6 +39,7 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.json.bind.annotation.JsonbProperty;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -164,6 +165,7 @@ public class HelidonOrderResource {
         }
 
         /** @return 登录令牌，供 JSON-B 按 Bean 属性序列化 */
+        @JsonbProperty("token")
         public String getToken() {
             return token;
         }
