@@ -19,6 +19,7 @@ import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.sample.javalin.cqrs.order.domain.event.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -62,6 +63,16 @@ public class Order extends AggregateRoot<String> {
      */
     private OrderStatus status;
 
+    /**
+     * 创建订单聚合。
+     *
+     * @param id 标识
+     * @param orderNo 订单编号
+     * @param buyerId 买家标识
+     * @param buyerName 买家名称
+     * @param status 状态
+     * @param lines 订单行集合
+     */
     public Order(String id, String orderNo, String buyerId, String buyerName, OrderStatus status, List<OrderLine> lines) {
         if (StrKit.isBlank(id)) {
             throw new IllegalArgumentException("id must not be blank");
@@ -91,7 +102,7 @@ public class Order extends AggregateRoot<String> {
      * @return 草稿订单
      */
     public static Order draft(String orderNo, String buyerId, String buyerName) {
-        Order order = new Order(UUID.randomUUID().toString(), orderNo, buyerId, buyerName, OrderStatus.DRAFT, List.of());
+        Order order = new Order(UUID.randomUUID().toString(), orderNo, buyerId, buyerName, OrderStatus.DRAFT, Collections.emptyList());
         order.registerEvent(new OrderCreatedEvent(order.id()));
         return order;
     }
@@ -101,18 +112,38 @@ public class Order extends AggregateRoot<String> {
         return id;
     }
 
+    /**
+     * 读取订单编号。
+     *
+     * @return 订单编号
+     */
     public String orderNo() {
         return orderNo;
     }
 
+    /**
+     * 读取买家标识。
+     *
+     * @return 买家标识
+     */
     public String buyerId() {
         return buyerId;
     }
 
+    /**
+     * 读取买家名称。
+     *
+     * @return 买家名称
+     */
     public String buyerName() {
         return buyerName;
     }
 
+    /**
+     * 读取状态。
+     *
+     * @return 状态
+     */
     public OrderStatus status() {
         return status;
     }
@@ -123,7 +154,7 @@ public class Order extends AggregateRoot<String> {
      * @return 订单行列表
      */
     public List<OrderLine> lines() {
-        return List.copyOf(lines);
+        return Collections.unmodifiableList(new ArrayList<>(lines));
     }
 
     /**
