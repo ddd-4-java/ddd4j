@@ -31,18 +31,18 @@ import java.util.function.Function;
  * </p>
  *
  * <h2>使用示例</h2>
- * <pre>{@code
- * @Path("/api/users")
+ * <pre>
+ * &#64;Path("/api/users")
  * public class UserResource extends TenantAwareResource {
  *
- *     @GET
- *     public R<Page<UserVo>> list() {
+ *     &#64;GET
+ *     public R&lt;Page&lt;UserVo&gt;&gt; list() {
  *         String tenantId = getTenantId();
  *         String lang = getLang();
  *         return R.ok(userService.list(tenantId, lang));
  *     }
  * }
- * }</pre>
+ * </pre>
  */
 public class TenantAwareResource {
 
