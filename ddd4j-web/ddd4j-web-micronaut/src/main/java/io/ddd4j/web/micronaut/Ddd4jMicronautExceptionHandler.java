@@ -23,8 +23,7 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.http.server.exceptions.ExceptionHandler;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Micronaut 全局异常到 ddd4j R 响应的映射。
@@ -32,16 +31,23 @@ import org.slf4j.LoggerFactory;
  * <p>翻译与响应体构造复用 {@link BaseErrorConfiguration}，此处只保留
  * Micronaut 的 {@code HttpResponse} 写出与请求上下文日志。
  */
+@Slf4j
 @Singleton
 public final class Ddd4jMicronautExceptionHandler extends BaseErrorConfiguration implements ExceptionHandler<Throwable, HttpResponse<?>> {
 
-    private static final Logger log = LoggerFactory.getLogger(Ddd4jMicronautExceptionHandler.class);
-
+    /**
+     * 使用默认异常翻译器创建处理器。
+     */
     @Inject
     public Ddd4jMicronautExceptionHandler() {
         super();
     }
 
+    /**
+     * 使用指定异常翻译器创建处理器。
+     *
+     * @param translator 异常翻译器
+     */
     public Ddd4jMicronautExceptionHandler(WebExceptionTranslator translator) {
         super(translator);
     }
