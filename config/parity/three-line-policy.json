@@ -3280,7 +3280,7 @@
         ],
         "evidence": "ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautContextValueContractTest.java",
         "testSha256": "53065021647075244fd030f433cd3067aa7c51d33c5a09422933c8ee86cbb789",
-        "reason": "三线 Micronaut 请求上下文的值方法、访问器与 Jackson JSON 往返行为一致；JDK 8 的 Micronaut 3 使用 ThreadLocal/ServerRequestContext 与 Reactor 插桩传播，JDK 17/21 的 Micronaut 4 使用 PropagatedContext/ThreadPropagatedContextElement。三线值契约各 3 项、上下文定向测试 JDK 8 为 7 项而 JDK 17/21 各 9 项均通过；源码和同一契约测试哈希锁定。"
+        "reason": "三线 Micronaut 请求上下文的值方法、访问器与 Jackson JSON 往返行为一致；JDK 8 的 Micronaut 3 使用 ThreadLocal/ServerRequestContext 与 Reactor 插桩传播，JDK 17/21 的 Micronaut 4 使用 PropagatedContext/ThreadPropagatedContextElement。三线值契约各 3 项、上下文定向测试各 9 项均通过；源码和同一契约测试哈希锁定。"
     },
     {
         "path": "ddd4j-web/ddd4j-web-micronaut/src/main/java/io/ddd4j/web/micronaut/Ddd4jMicronautWebConfiguration.java",
@@ -4087,6 +4087,33 @@
     }
   ],
   "platformTestSyntaxMappings": [
+    {
+      "path": "ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautContextTest.java",
+      "productionPath": "ddd4j-web/ddd4j-web-micronaut/src/main/java/io/ddd4j/web/micronaut/Ddd4jMicronautContext.java",
+      "sourceSha256": [
+        "ee2aeeca52788b3210955fd602ef2272bb9387e00dd4514cbdb9c503aaeb38e5",
+        "449115ed1b2a39ff1a2dc847beca2069e728ff75c768f301ec43ab01ad558f90",
+        "6f4d76f3e3e1277984f1975827dda6235f97ac2a3c156bac0cf62664e9872f74"
+      ],
+      "productionSha256": [
+        "02ac17aa2f7201dccf09a999eb52ef5c27f884e75b2e29c089dfe374cf8d5e2f",
+        "b13979c6359a08f35c2b014e55f0c80459d652f3cf2a7dac9aa38d9b49dff06b",
+        "f44708d616de7862375986f18891355c74c2ade9b9ce0f243a66e2bef4a8c0ba"
+      ],
+      "testMethods": [
+        "clear",
+        "constructorRejectsNullRequestContext",
+        "constructorRejectsNullSubject",
+        "beanAccessorsExposeTheSameRequestContextAndSubject",
+        "openingScopeWithSubjectBindsRequest",
+        "openingScopeWithoutSubjectBindsRequest",
+        "closingScopeRestoresThreadContext",
+        "currentIsEmptyBeforeBinding",
+        "currentResolvesBoundContext",
+        "contextIdentityIncludesRequestAndSubject"
+      ],
+      "reason": "三线同名 9 项测试覆盖构造约束、访问器、请求作用域生命周期、当前上下文和对象身份，JDK 8/17/21 各 9 项通过；Micronaut 3 使用 ThreadLocal/ServerRequestContext 与 openContext，Micronaut 4 使用 PropagatedContext 与 updateThreadContext/restoreThreadContext。逐线测试及生产源码哈希锁定，生产 API 的平台差异另由编译门禁核验。"
+    },
     {
       "path": "ddd4j-samples/ddd4j-sample-order-jdbc/src/test/java/io/ddd4j/sample/order/jdbc/OrderInfrastructureRoundTripTest.java",
       "productionPath": "ddd4j-samples/ddd4j-sample-order-jdbc/src/main/java/io/ddd4j/sample/order/jdbc/JdbcOrderTransactionPort.java",
