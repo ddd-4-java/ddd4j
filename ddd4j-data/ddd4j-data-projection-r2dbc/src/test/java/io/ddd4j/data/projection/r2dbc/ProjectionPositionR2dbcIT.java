@@ -16,8 +16,8 @@ package io.ddd4j.data.projection.r2dbc;
 
 import io.ddd4j.core.cqrs.readmodel.DefaultProjectionPosition;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
-import io.r2dbc.spi.ConnectionFactory;
 import io.r2dbc.spi.ConnectionFactories;
+import io.r2dbc.spi.ConnectionFactory;
 import io.r2dbc.spi.Statement;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -63,11 +63,11 @@ class ProjectionPositionR2dbcIT {
      * 与 -jpa/-panache/-jdbi 模块同构的 DDL（列集 parity：{@code stream_id}
      * VARCHAR(250) 自然主键＋{@code next_event_number} BIGINT 非空计数）。
      */
-    private static final String DDL = """
-            create table if not exists ddd4j_projection_position (
-                stream_id varchar(250) not null primary key,
-                next_event_number bigint not null
-            )""";
+    private static final String DDL =
+            "create table if not exists ddd4j_projection_position (" +
+                    "  stream_id varchar(250) not null primary key," +
+                    "  next_event_number bigint not null" +
+                    ")";
 
     private static ConnectionFactory connectionFactory;
 
@@ -77,6 +77,24 @@ class ProjectionPositionR2dbcIT {
     static void setUpDatabase() {
         connectionFactory = ConnectionFactories.get("r2dbc:h2:mem:///projectionit;DB_CLOSE_DELAY=-1");
         StepVerifier.create(executeUpdate(DDL, statement -> statement)).verifyComplete();
+    }
+
+    /**
+     * 直连执行 DML（建表／清表）：连接以 {@code Mono.usingWhen} 托管，完成信号即成功。
+     *
+     * @param sql    DML 语句（占位符 {@code $n}）
+     * @param binder 占位符绑参
+     * @return 完成信号
+     */
+    private static Mono<Void> executeUpdate(String sql, UnaryOperator<Statement> binder) {
+        return Mono.usingWhen(
+                connectionFactory.create(),
+                connection -> Mono.from(binder.apply(connection.createStatement(sql)).execute())
+                        .flatMap(result -> Mono.from(result.getRowsUpdated()))
+                        .then(),
+                connection -> Mono.from(connection.close()),
+                (connection, ex) -> Mono.from(connection.close()),
+                connection -> Mono.from(connection.close()));
     }
 
     @BeforeEach
@@ -98,19 +116,19 @@ class ProjectionPositionR2dbcIT {
         // 逐事件推进到 5（每次一条 MERGE INTO 原子 upsert）
         StepVerifier.create(positions.findByStreamIdReactive(ORDER_SUMMARY)
                         .flatMap(optional -> positions.saveReactive(
-                                optional.orElseThrow().withNextEventNumber(1L)))
+                                optional.orElseThrow(() -> new IllegalStateException("mandatory")).withNextEventNumber(1L)))
                         .then(positions.findByStreamIdReactive(ORDER_SUMMARY)
                                 .flatMap(optional -> positions.saveReactive(
-                                        optional.orElseThrow().withNextEventNumber(2L))))
+                                        optional.orElseThrow(() -> new IllegalStateException("mandatory")).withNextEventNumber(2L))))
                         .then(positions.findByStreamIdReactive(ORDER_SUMMARY)
                                 .flatMap(optional -> positions.saveReactive(
-                                        optional.orElseThrow().withNextEventNumber(3L))))
+                                        optional.orElseThrow(() -> new IllegalStateException("mandatory")).withNextEventNumber(3L))))
                         .then(positions.findByStreamIdReactive(ORDER_SUMMARY)
                                 .flatMap(optional -> positions.saveReactive(
-                                        optional.orElseThrow().withNextEventNumber(4L))))
+                                        optional.orElseThrow(() -> new IllegalStateException("mandatory")).withNextEventNumber(4L))))
                         .then(positions.findByStreamIdReactive(ORDER_SUMMARY)
                                 .flatMap(optional -> positions.saveReactive(
-                                        optional.orElseThrow().withNextEventNumber(5L)))))
+                                        optional.orElseThrow(() -> new IllegalStateException("mandatory")).withNextEventNumber(5L)))))
                 .expectNextMatches(position -> position.getNextEventNumber() == 5L)
                 .verifyComplete();
 
@@ -187,23 +205,5 @@ class ProjectionPositionR2dbcIT {
         assertThat(positions.findAll()).isEmpty();
         positions.deleteByStreamId(ORDER_SUMMARY);
         assertThat(positions.findAll()).isEmpty();
-    }
-
-    /**
-     * 直连执行 DML（建表／清表）：连接以 {@code Mono.usingWhen} 托管，完成信号即成功。
-     *
-     * @param sql    DML 语句（占位符 {@code $n}）
-     * @param binder 占位符绑参
-     * @return 完成信号
-     */
-    private static Mono<Void> executeUpdate(String sql, UnaryOperator<Statement> binder) {
-        return Mono.usingWhen(
-                connectionFactory.create(),
-                connection -> Mono.from(binder.apply(connection.createStatement(sql)).execute())
-                        .flatMap(result -> Mono.from(result.getRowsUpdated()))
-                        .then(),
-                connection -> Mono.from(connection.close()),
-                (connection, ex) -> Mono.from(connection.close()),
-                connection -> Mono.from(connection.close()));
     }
 }
