@@ -3221,6 +3221,21 @@
             "21": "32f6aed62e717a612822b55c050f10a4c5fa9a86c78800aefa1ebb4b525bd2c0"
         },
         "reason": "三线 CQRS 应用共享事件存储、命令总线、投影视图和资源注册逻辑一致，逐线 DropwizardOrderCqrsIT 各 3 项验证命令与查询集成路径。JDK 8 使用旧版 Dropwizard 包及 Collections.singletonList，JDK 17/21 使用新版包及 List.of；此测试不声称覆盖实际服务启动。源码及目标测试哈希锁定。"
+    },
+    {
+        "path": "ddd4j-samples/ddd4j-sample-vertx-cqrs/src/main/java/io/ddd4j/sample/vertx/cqrs/VertxCqrsApplication.java",
+        "sourceSha256": [
+            "822e595867fa97bf3a932b96db87a0722b32e5cb89aa9f5cf3a88884af7d727f",
+            "d260167c8155265071de850dd24a98e2275c23f0bb769294617fffcbff51aacd",
+            "d260167c8155265071de850dd24a98e2275c23f0bb769294617fffcbff51aacd"
+        ],
+        "evidence": "ddd4j-samples/ddd4j-sample-vertx-cqrs/src/test/java/io/ddd4j/sample/vertx/cqrs/VertxOrderCqrsIT.java",
+        "testSha256ByJdk": {
+            "8": "61213fd2d9eee3b0d5529657ab7803be87e5cb525ed4f00256482e50a45a7a8e",
+            "17": "d5e631fcfef1fa636841582b2f9812f147261a017429ff6cb17701a23b710740",
+            "21": "d5e631fcfef1fa636841582b2f9812f147261a017429ff6cb17701a23b710740"
+        },
+        "reason": "三线 Vert.x CQRS 路由的创建、查询与幂等冲突由目标集成测试逐线各 3 项覆盖；JDK 8 使用显式局部类型及 Collections.singletonList，JDK 17/21 使用 var 与 List.of。业务装配及路由逻辑一致，源码和目标测试哈希锁定。"
     }
   ],
   "historicalDocumentSections": [
