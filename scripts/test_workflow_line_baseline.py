@@ -43,11 +43,15 @@ class WorkflowLineBaselineTest(unittest.TestCase):
         self.assertIsNotNone(module_list)
         modules = set(module_list.group(1).split(","))
         for module in (
+            "ddd4j-mq/ddd4j-mq-kafka",
             "ddd4j-mq/ddd4j-mq-rabbitmq",
             "ddd4j-mq/ddd4j-mq-nats",
             "ddd4j-mq/ddd4j-mq-mqtt",
             "ddd4j-mq/ddd4j-mq-mqtt-mica",
             "ddd4j-mq/ddd4j-mq-activemq",
+            "ddd4j-mq/ddd4j-mq-pulsar",
+            "ddd4j-mq/ddd4j-mq-rocketmq",
+            "ddd4j-mq/ddd4j-mq-redis-stream",
             "ddd4j-mq/ddd4j-mq-sqs",
         ):
             with self.subTest(module=module):
