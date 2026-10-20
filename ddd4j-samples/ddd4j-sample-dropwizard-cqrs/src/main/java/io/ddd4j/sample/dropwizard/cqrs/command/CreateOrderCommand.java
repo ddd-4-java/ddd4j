@@ -14,18 +14,19 @@
  */
 package io.ddd4j.sample.dropwizard.cqrs.command;
 
-import io.ddd4j.core.cqrs.command.Command;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
-import lombok.Value;
-
 import java.util.Objects;
 
-@Value
-public class CreateOrderCommand implements Command {
+import io.ddd4j.core.cqrs.command.Command;
+
+/**
+ * 创建订单命令（CQRS 写侧）。
+ */
+
+public final class CreateOrderCommand implements Command {
 
     private static final long serialVersionUID = 0L;
 
@@ -35,6 +36,12 @@ public class CreateOrderCommand implements Command {
 
     private final String buyerName;
 
+    /**
+ * @param orderNo 订单编号
+ * @param buyerId 买家 ID
+ * @param buyerName 买家名称
+ */
+
     @JsonCreator()
     public CreateOrderCommand(@JsonProperty("orderNo") String orderNo, @JsonProperty("buyerId") String buyerId, @JsonProperty("buyerName") String buyerName) {
         this.orderNo = orderNo;
@@ -42,16 +49,31 @@ public class CreateOrderCommand implements Command {
         this.buyerName = buyerName;
     }
 
+    /**
+     * 读取订单编号。
+     *
+     * @return 订单编号
+     */
     @JsonProperty("orderNo")
     public String orderNo() {
         return orderNo;
     }
 
+    /**
+     * 读取买家标识。
+     *
+     * @return 买家标识
+     */
     @JsonProperty("buyerId")
     public String buyerId() {
         return buyerId;
     }
 
+    /**
+     * 读取买家名称。
+     *
+     * @return 买家名称
+     */
     @JsonProperty("buyerName")
     public String buyerName() {
         return buyerName;
@@ -81,9 +103,7 @@ public class CreateOrderCommand implements Command {
             return false;
         }
         CreateOrderCommand other = (CreateOrderCommand) obj;
-        return Objects.equals(this.orderNo, other.orderNo)
-                && Objects.equals(this.buyerId, other.buyerId)
-                && Objects.equals(this.buyerName, other.buyerName);
+        return Objects.equals(this.orderNo, other.orderNo) && Objects.equals(this.buyerId, other.buyerId) && Objects.equals(this.buyerName, other.buyerName);
     }
 
     @Override
@@ -97,8 +117,6 @@ public class CreateOrderCommand implements Command {
 
     @Override
     public String toString() {
-        return "CreateOrderCommand(orderNo=" + orderNo + ", buyerId=" + buyerId
-                + ", buyerName=" + buyerName + ")";
+        return "CreateOrderCommand(orderNo=" + orderNo + ", buyerId=" + buyerId + ", buyerName=" + buyerName + ")";
     }
-
 }
