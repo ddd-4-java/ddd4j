@@ -31,6 +31,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -83,26 +84,73 @@ class SqsBrokerIntegrationTest {
                 assertTrue(receiver.received.await(10, TimeUnit.SECONDS));
                 assertEquals(event.getMsgId(), receiver.messageId);
                 assertEquals(event.getCorrelationId(), receiver.correlationId);
-                long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(5);
-                int outstanding;
-                do {
-                    Map<QueueAttributeName, String> counts = nativeClient.getQueueAttributes(r ->
-                                    r.queueUrl(queueUrl).attributeNames(
-                                            QueueAttributeName.APPROXIMATE_NUMBER_OF_MESSAGES,
-                                            QueueAttributeName.APPROXIMATE_NUMBER_OF_MESSAGES_NOT_VISIBLE))
-                            .attributes();
-                    outstanding = Integer.parseInt(counts.get(QueueAttributeName.APPROXIMATE_NUMBER_OF_MESSAGES))
-                            + Integer.parseInt(counts.get(QueueAttributeName.APPROXIMATE_NUMBER_OF_MESSAGES_NOT_VISIBLE));
-                    if (outstanding == 0) {
-                        break;
-                    }
-                    Thread.sleep(50L);
-                } while (System.nanoTime() < deadline);
-                assertEquals(0, outstanding);
+                awaitQueueEmpty(nativeClient, queueUrl);
             } finally {
                 adapter.close();
             }
         }
+    }
+
+    @Test
+    void redeliversAfterListenerFailureAndDeletesAfterSuccess() throws Exception {
+        SqsProperties properties = new SqsProperties();
+        properties.setEndpointOverride("http://" + SQS.getHost() + ":" + SQS.getMappedPort(9324));
+        properties.setAccessKey("test");
+        properties.setSecretKey("test");
+        properties.setWaitTimeSeconds(0);
+        properties.setPollIntervalMs(50L);
+
+        try (SqsClient nativeClient = properties.client()) {
+            String queueUrl = nativeClient.createQueue(r -> r.queueName("ddd4j-retry-" + System.nanoTime()))
+                    .queueUrl();
+            FailOnceListener receiver = new FailOnceListener();
+            MQListener listener = new MQListener(receiver,
+                    FailOnceListener.class.getMethod("handle", MQEvent.class),
+                    "ddd4j-sqs-retry", "ddd4j", queueUrl, "*",
+                    Collections.singletonList("*"), ".");
+            SqsMQClient adapter = new SqsMQClient(properties) {
+                @Override
+                public io.ddd4j.mq.event.MQEventSerialization serialization() {
+                    return new JsonMQEventSerialization();
+                }
+            };
+            try {
+                assertTrue(adapter.initConsumer(listener, properties));
+                MQEvent event = new MQEvent();
+                event.setMsgId("sqs-retry-message");
+                event.setNamespace("ddd4j");
+                event.setTopic(queueUrl);
+                event.setCorrelationId("sqs-retry-correlation");
+                adapter.initProducer(properties).accept(event);
+
+                assertTrue(receiver.receivedTwice.await(10, TimeUnit.SECONDS));
+                assertEquals(2, receiver.attempts.get());
+                assertEquals(event.getMsgId(), receiver.messageId);
+                assertEquals(event.getCorrelationId(), receiver.correlationId);
+                awaitQueueEmpty(nativeClient, queueUrl);
+            } finally {
+                adapter.close();
+            }
+        }
+    }
+
+    private static void awaitQueueEmpty(SqsClient nativeClient, String queueUrl) throws Exception {
+        long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(5);
+        int outstanding;
+        do {
+            Map<QueueAttributeName, String> counts = nativeClient.getQueueAttributes(r ->
+                            r.queueUrl(queueUrl).attributeNames(
+                                    QueueAttributeName.APPROXIMATE_NUMBER_OF_MESSAGES,
+                                    QueueAttributeName.APPROXIMATE_NUMBER_OF_MESSAGES_NOT_VISIBLE))
+                    .attributes();
+            outstanding = Integer.parseInt(counts.get(QueueAttributeName.APPROXIMATE_NUMBER_OF_MESSAGES))
+                    + Integer.parseInt(counts.get(QueueAttributeName.APPROXIMATE_NUMBER_OF_MESSAGES_NOT_VISIBLE));
+            if (outstanding == 0) {
+                break;
+            }
+            Thread.sleep(50L);
+        } while (System.nanoTime() < deadline);
+        assertEquals(0, outstanding);
     }
 
     /** 记录实际消费到的消息值。 */
@@ -116,6 +164,24 @@ class SqsBrokerIntegrationTest {
             messageId = event.getMsgId();
             correlationId = event.getCorrelationId();
             received.countDown();
+        }
+    }
+
+    /** 第一次消费失败，第二次记录实际重投。 */
+    public static final class FailOnceListener {
+        private final AtomicInteger attempts = new AtomicInteger();
+        private final CountDownLatch receivedTwice = new CountDownLatch(1);
+        private volatile String messageId;
+        private volatile String correlationId;
+
+        /** @param event 实际消费的消息 */
+        public void handle(MQEvent event) {
+            if (attempts.incrementAndGet() == 1) {
+                throw new IllegalStateException("first delivery fails");
+            }
+            messageId = event.getMsgId();
+            correlationId = event.getCorrelationId();
+            receivedTwice.countDown();
         }
     }
 }
