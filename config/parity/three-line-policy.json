@@ -1534,6 +1534,21 @@
   ],
   "platformSyntaxMappings": [
     {
+      "path": "ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/error/GlobalExceptionHandler.java",
+      "sourceSha256": [
+        "1f18c186a3925764e0c29e2d5c9c72fc9b43d1f5f0dd6be72f7dbe3824f427ab",
+        "23df44de871ff785c3fbb05d7e016e76ae103c68083a15c2e9ff964a88455d2b",
+        "930029898fc6b8d635de9ecfc1c6c1a44b896d576bab05e3c342261e4eb79316"
+      ],
+      "evidence": "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/error/GlobalExceptionHandlerTest.java",
+      "testSha256ByJdk": {
+        "8": "de41129e8aa41a28c060525bf82def180f665b6daa232adb7c32ad49c672e8d5",
+        "17": "739717a343accdaf9f1013eeec8737c5d71cc74b2a03e65e172a7b90894e1f4a",
+        "21": "ba3a4b03ca1bfdf8289adb3fa11a5ee0589216ea77e05e06b843c7f0d9bf5518"
+      },
+      "reason": "三线异常映射、返回码和错误处理逻辑逐行相同；差异仅为 javax/jakarta、Jackson 2/3 等平台导入及 Javadoc。三线 GlobalExceptionHandlerTest 各 15 项通过，JSON 异常映射只登记一次；源码和测试以 SHA-256 锁定。"
+    },
+    {
       "path": "ddd4j-web/ddd4j-web-javalin/src/main/java/io/ddd4j/web/javalin/Ddd4jJavalinWeb.java",
       "sourceSha256": [
         "08e07a970b98aa64a0a2bbee49ca04fff3cfafc27f7cdeb76313ac126e01f91a",
