@@ -190,15 +190,15 @@
       "lines": {
         "1.0.x": {
           "status": "pending",
-          "reason": "RabbitMQ、NATS、两种 MQTT、Artemis、Pulsar、RocketMQ、Redis Stream 的部分原生场景已在三线 CI 验证，Disruptor 已有进程内场景，SQS 本地兼容协议发布和失败重投已测；ONS/TDMQ/AWS SQS 云端及其余故障/竞争路径仍须逐项验证"
+          "reason": "RabbitMQ、NATS、两种 MQTT、Artemis、Pulsar、RocketMQ、Redis Stream 的部分原生场景已在三线 CI 验证，Disruptor 已有进程内场景，SQS 本地兼容协议发布和失败重投、TDMQ 本地 Pulsar 协议已测；ONS/TDMQ/AWS SQS 云端及其余故障/竞争路径仍须逐项验证"
         },
         "2.0.x": {
           "status": "pending",
-          "reason": "RabbitMQ、NATS、两种 MQTT、Artemis、Pulsar、RocketMQ、Redis Stream 的部分原生场景已在三线 CI 验证，Disruptor 已有进程内场景，SQS 本地兼容协议发布和失败重投已测；ONS/TDMQ/AWS SQS 云端及其余故障/竞争路径仍须逐项验证"
+          "reason": "RabbitMQ、NATS、两种 MQTT、Artemis、Pulsar、RocketMQ、Redis Stream 的部分原生场景已在三线 CI 验证，Disruptor 已有进程内场景，SQS 本地兼容协议发布和失败重投、TDMQ 本地 Pulsar 协议已测；ONS/TDMQ/AWS SQS 云端及其余故障/竞争路径仍须逐项验证"
         },
         "3.0.x": {
           "status": "pending",
-          "reason": "RabbitMQ、NATS、两种 MQTT、Artemis、Pulsar、RocketMQ、Redis Stream 的部分原生场景已在三线 CI 验证，Disruptor 已有进程内场景，SQS 本地兼容协议发布和失败重投已测；ONS/TDMQ/AWS SQS 云端及其余故障/竞争路径仍须逐项验证"
+          "reason": "RabbitMQ、NATS、两种 MQTT、Artemis、Pulsar、RocketMQ、Redis Stream 的部分原生场景已在三线 CI 验证，Disruptor 已有进程内场景，SQS 本地兼容协议发布和失败重投、TDMQ 本地 Pulsar 协议已测；ONS/TDMQ/AWS SQS 云端及其余故障/竞争路径仍须逐项验证"
         }
       }
     },
@@ -2789,6 +2789,20 @@
             "ddd4j-mq/ddd4j-mq-sqs/src/test/java/io/ddd4j/mq/sqs/SqsBrokerIntegrationTest.java"
           ]
         }
+      }
+    },
+    {
+      "id": "BROKER-TDMQ-PULSAR-COMPAT-PROTOCOL",
+      "description": "本地 Pulsar 容器验证 TDMQ serviceUrl 配置后的跨客户端协议投递和业务因果头；不代表腾讯云鉴权与云端验收",
+      "caseNames": {
+        "1.0.x": ["configuredBrokerDeliversBetweenIndependentClientsWithCausality"],
+        "2.0.x": ["configuredBrokerDeliversBetweenIndependentClientsWithCausality"],
+        "3.0.x": ["configuredBrokerDeliversBetweenIndependentClientsWithCausality"]
+      },
+      "lines": {
+        "1.0.x": {"status": "supported", "tests": ["ddd4j-mq/ddd4j-mq-tdmq/src/test/java/io/ddd4j/mq/tdmq/TdmqPulsarProtocolIntegrationTest.java"]},
+        "2.0.x": {"status": "supported", "tests": ["ddd4j-mq/ddd4j-mq-tdmq/src/test/java/io/ddd4j/mq/tdmq/TdmqPulsarProtocolIntegrationTest.java"]},
+        "3.0.x": {"status": "supported", "tests": ["ddd4j-mq/ddd4j-mq-tdmq/src/test/java/io/ddd4j/mq/tdmq/TdmqPulsarProtocolIntegrationTest.java"]}
       }
     },
     {
