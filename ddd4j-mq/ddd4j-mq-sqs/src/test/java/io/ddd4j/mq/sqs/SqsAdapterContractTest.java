@@ -24,6 +24,7 @@ import io.ddd4j.mq.message.MessageHeaders;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.sqs.SqsClient;
+import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
 import software.amazon.awssdk.services.sqs.model.Message;
 import software.amazon.awssdk.services.sqs.model.MessageAttributeValue;
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
@@ -37,6 +38,7 @@ import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentCaptor.forClass;
 import static org.mockito.ArgumentMatchers.any;
@@ -186,6 +188,24 @@ class SqsAdapterContractTest {
         acknowledgment.nack(true);
 
         verify(client).changeMessageVisibility(any(java.util.function.Consumer.class));
+        assertTrue(acknowledgment.isAcknowledged());
+    }
+
+    @Test
+    void disabledRequeueDoesNotDeleteRequestedRedelivery() {
+        Message message = Message.builder().messageId("transport-id").receiptHandle("receipt").build();
+        SqsClient client = mock(SqsClient.class);
+        SqsAcknowledgment acknowledgment = new SqsAcknowledgment(client, message, "http://queue", false);
+
+        assertThrows(UnsupportedOperationException.class, () -> acknowledgment.nack(true));
+        assertThrows(UnsupportedOperationException.class, () -> acknowledgment.reject(true));
+        assertThrows(UnsupportedOperationException.class, () -> acknowledgment.recover(true));
+        assertFalse(acknowledgment.isAcknowledged());
+        verifyNoInteractions(client);
+
+        acknowledgment.nack(false);
+
+        verify(client).deleteMessage(any(DeleteMessageRequest.class));
         assertTrue(acknowledgment.isAcknowledged());
     }
 
