@@ -2832,6 +2832,114 @@
       }
     },
     {
+      "id": "MQ-SQS-DISABLED-REQUEUE",
+      "description": "SQS 禁用重投时 nack/reject/recover 请求重投均显式失败且不删消息；此项使用 mocked SqsClient，不代表 AWS 云端验收",
+      "caseNames": {
+        "1.0.x": [
+          "disabledRequeueDoesNotDeleteRequestedRedelivery"
+        ],
+        "2.0.x": [
+          "disabledRequeueDoesNotDeleteRequestedRedelivery"
+        ],
+        "3.0.x": [
+          "disabledRequeueDoesNotDeleteRequestedRedelivery"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-sqs/src/test/java/io/ddd4j/mq/sqs/SqsAdapterContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-sqs/src/test/java/io/ddd4j/mq/sqs/SqsAdapterContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-sqs/src/test/java/io/ddd4j/mq/sqs/SqsAdapterContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "MQ-MQTT-UNSUPPORTED-NACK",
+      "description": "Paho MQTT 不支持的 nack/reject/recover 均保留未确认状态，后续 ack 仍可完成；此项不代表真实 Broker 故障验收",
+      "caseNames": {
+        "1.0.x": [
+          "shouldTreatMessageIdAsPayloadConcernAndRejectNativeNack"
+        ],
+        "2.0.x": [
+          "shouldTreatMessageIdAsPayloadConcernAndRejectNativeNack"
+        ],
+        "3.0.x": [
+          "shouldTreatMessageIdAsPayloadConcernAndRejectNativeNack"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-mqtt/src/test/java/io/ddd4j/mq/mqtt/MqttAdapterContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-mqtt/src/test/java/io/ddd4j/mq/mqtt/MqttAdapterContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-mqtt/src/test/java/io/ddd4j/mq/mqtt/MqttAdapterContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "MQ-TDMQ-ACK-CONCURRENCY",
+      "description": "TDMQ 同一消息的确认回调在并发 ack/nack 下只执行一次，回调失败后可重试；此项使用注入回调，不代表腾讯云验收",
+      "caseNames": {
+        "1.0.x": [
+          "concurrentAckAndNackInvokeProtocolOnlyOnce",
+          "failedCallbackLeavesAcknowledgmentRetryable"
+        ],
+        "2.0.x": [
+          "concurrentAckAndNackInvokeProtocolOnlyOnce",
+          "failedCallbackLeavesAcknowledgmentRetryable"
+        ],
+        "3.0.x": [
+          "concurrentAckAndNackInvokeProtocolOnlyOnce",
+          "failedCallbackLeavesAcknowledgmentRetryable"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-tdmq/src/test/java/io/ddd4j/mq/tdmq/TdmqAcknowledgmentContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-tdmq/src/test/java/io/ddd4j/mq/tdmq/TdmqAcknowledgmentContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-tdmq/src/test/java/io/ddd4j/mq/tdmq/TdmqAcknowledgmentContractTest.java"
+          ]
+        }
+      }
+    },
+    {
       "id": "ORDER-APPLICATION-VALUE-JSON",
       "description": "订单应用命令、读模型、Outbox 结果与消息的 JSON 往返及 UTC 时间字段",
       "lines": {
