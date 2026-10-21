@@ -16,11 +16,12 @@ class WorkflowLineBaselineTest(unittest.TestCase):
         pom = (ROOT / "pom.xml").read_text(encoding="utf-8")
         self.jdk = re.search(r"<java.version>([^<]+)</java.version>", pom).group(1)
 
-    def test_convergence_supersedes_older_three_line_pushes(self):
+    def test_convergence_supersedes_only_older_pushes_on_same_branch(self):
         workflow = (ROOT / ".github/workflows/three-line-convergence.yml").read_text(encoding="utf-8")
         for line in ("1", "2", "3"):
             self.assertIn(f"feature/{line}.0.x", workflow)
-        self.assertIn("github.event_name == 'workflow_dispatch' && github.run_id || 'all-lines'", workflow)
+        self.assertIn("github.event_name == 'workflow_dispatch' && github.run_id || github.ref", workflow)
+        self.assertNotIn("'all-lines'", workflow)
         self.assertIn("cancel-in-progress: true", workflow)
 
     def test_verify_uses_own_jdk_and_keeps_required_jobs_blocking(self):
