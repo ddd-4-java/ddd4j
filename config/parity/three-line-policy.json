@@ -52,8 +52,8 @@
       "path": ".github/workflows/verify.yml",
       "sha256ByJdk": {
         "8": "53ae6d6a2fd654568c94bb9f94f639285d419eb276f0e6c399ec1671918deab3",
-        "17": "b3e53c7328a61ceef6782ae4559af5ac19545fddf8050dfbf12e32c9adbaad83",
-        "21": "0f6acfaaf38b40617f3080b791c91964f122dab419afc8a13fe48882f621355d"
+        "17": "6090dab742b4acbc2bc435bf2ad1b706c1a7476515c361da6256d07439cc3fe7",
+        "21": "9a30a3a57afed61bb1cc430295efae4feb18dc6dc39e570e2cdcaae9747e0b64"
       },
       "evidence": "逐线 JDK、Easy4J 快照及发布基线已核对；文件 SHA-256 锁定，workflow lint 和实际 CI 独立验收"
     }
@@ -702,6 +702,17 @@
       ],
       "evidence": "ddd4j-mq/ddd4j-mq-pulsar/src/test/java/io/ddd4j/mq/pulsar/PulsarContainerIntegrationTest.java",
       "reason": "三线执行同一 Pulsar tag/因果头与 negative-acknowledgment 原生场景；JDK 8 线使用本线 Pulsar 2.10.6 镜像，高两线使用 Pulsar 4.2.4。仅镜像版本允许精确替换，其余测试正文须一致"
+    },
+    {
+      "path": "ddd4j-mq/ddd4j-mq-tdmq/src/test/java/io/ddd4j/mq/tdmq/TdmqPulsarProtocolIntegrationTest.java",
+      "replacements": [
+        {
+          "from": "apachepulsar/pulsar:2.10.6",
+          "to": "apachepulsar/pulsar:4.2.4"
+        }
+      ],
+      "evidence": "ddd4j-mq/ddd4j-mq-tdmq/src/test/java/io/ddd4j/mq/tdmq/TdmqPulsarProtocolIntegrationTest.java",
+      "reason": "三线相同 TDMQ Pulsar 协议与因果头用例；JDK 8 使用本线 Pulsar 2.10.6 容器，JDK 17/21 使用 4.2.4，仅镜像版本差异允许精确替换"
     },
     {
       "path": "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/delivery/MQDeliveryPolicyValueContractTest.java",
