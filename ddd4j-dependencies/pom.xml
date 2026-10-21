@@ -394,7 +394,7 @@
         <libphonenumber-prefixmapper.version>3.33</libphonenumber-prefixmapper.version>
         <libphonenumber.version>9.0.33</libphonenumber.version>
         <liquibase.version>4.33.0</liquibase.version>
-        <liteflow.version>2.16.0</liteflow.version>
+        <liteflow.version>2.16.3.1</liteflow.version>
         <lock4j.version>2.2.7</lock4j.version>
         <log4j2.version>2.26.1</log4j2.version>
         <logback.version>1.5.36</logback.version>
