@@ -249,7 +249,7 @@ jobs:
       - name: Run infrastructure and native Broker integration tests
         run: >-
           ./mvnw -U -Denforcer.skip=true -B
-          -pl ddd4j-cache,ddd4j-data/ddd4j-data-mybatisplus,ddd4j-mq/ddd4j-mq-kafka,ddd4j-samples/ddd4j-sample-order-jdbc,ddd4j-samples/ddd4j-sample-order-kafka,ddd4j-samples/ddd4j-sample-order-redis,ddd4j-mq/ddd4j-mq-rabbitmq,ddd4j-mq/ddd4j-mq-nats,ddd4j-mq/ddd4j-mq-mqtt,ddd4j-mq/ddd4j-mq-mqtt-mica,ddd4j-mq/ddd4j-mq-activemq,ddd4j-mq/ddd4j-mq-pulsar,ddd4j-mq/ddd4j-mq-rocketmq,ddd4j-mq/ddd4j-mq-redis-stream,ddd4j-mq/ddd4j-mq-sqs
+          -pl ddd4j-cache,ddd4j-data/ddd4j-data-mybatisplus,ddd4j-mq/ddd4j-mq-kafka,ddd4j-samples/ddd4j-sample-order-jdbc,ddd4j-samples/ddd4j-sample-order-kafka,ddd4j-samples/ddd4j-sample-order-redis,ddd4j-mq/ddd4j-mq-rabbitmq,ddd4j-mq/ddd4j-mq-nats,ddd4j-mq/ddd4j-mq-mqtt,ddd4j-mq/ddd4j-mq-mqtt-mica,ddd4j-mq/ddd4j-mq-activemq,ddd4j-mq/ddd4j-mq-pulsar,ddd4j-mq/ddd4j-mq-tdmq,ddd4j-mq/ddd4j-mq-rocketmq,ddd4j-mq/ddd4j-mq-redis-stream,ddd4j-mq/ddd4j-mq-sqs
           -am clean test
       - name: Run Redis Stream native causality tests
         shell: bash

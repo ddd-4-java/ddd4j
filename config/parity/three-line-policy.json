@@ -51,7 +51,7 @@
     {
       "path": ".github/workflows/verify.yml",
       "sha256ByJdk": {
-        "8": "4baf4da893aab3ee9acae7daff8d20a01f62dfb1ccba34f43835d4bc9bba536e",
+        "8": "53ae6d6a2fd654568c94bb9f94f639285d419eb276f0e6c399ec1671918deab3",
         "17": "b3e53c7328a61ceef6782ae4559af5ac19545fddf8050dfbf12e32c9adbaad83",
         "21": "0f6acfaaf38b40617f3080b791c91964f122dab419afc8a13fe48882f621355d"
       },
