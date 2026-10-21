@@ -57,6 +57,24 @@ class PulsarAdapterContractTest {
     }
 
     @Test
+    void doesNotRedeliverWhenNonRequeueWasRequested() {
+        Message<byte[]> message = mock(Message.class);
+        Consumer<byte[]> consumer = mock(Consumer.class);
+        PulsarAcknowledgment acknowledgment = new PulsarAcknowledgment(consumer, message, "stable-id", null);
+
+        assertThrows(UnsupportedOperationException.class, () -> acknowledgment.nack(false));
+        assertThrows(UnsupportedOperationException.class, () -> acknowledgment.reject(false));
+        assertThrows(UnsupportedOperationException.class, () -> acknowledgment.recover(false));
+        assertThrows(UnsupportedOperationException.class, acknowledgment::discard);
+        assertFalse(acknowledgment.isAcknowledged());
+        verifyNoInteractions(consumer);
+
+        acknowledgment.nack(true);
+        verify(consumer).negativeAcknowledge(message);
+        assertTrue(acknowledgment.isAcknowledged());
+    }
+
+    @Test
     @SuppressWarnings("unchecked")
     void taggedEventUsesSubscribedPhysicalTopic() throws Exception {
         PulsarClient pulsarClient = mock(PulsarClient.class);
