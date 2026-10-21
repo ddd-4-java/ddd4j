@@ -26,6 +26,9 @@ import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.lifecycle.MQClientLifecycle;
 import io.ddd4j.mq.lifecycle.MQStartupStatus;
 import io.ddd4j.mq.listener.MQListener;
+import io.ddd4j.mq.message.Acknowledgment;
+import io.ddd4j.mq.pulsar.PulsarMQClient;
+import io.ddd4j.mq.pulsar.PulsarProperties;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
@@ -42,11 +45,11 @@ import java.util.function.Consumer;
  *
  * <p>主线只有 {@link #initProducer} 与 {@link #initConsumer}，核心业务逻辑全部内联。
  *
- * <p>由于 ddd4j-mq-tdmq 不直接依赖腾讯云官方 SDK（保持无依赖、零 Spring），
- * 实际的 publish/subscribe 由业务侧通过 {@link BrokerPublisher} / {@link BrokerSubscriber} 注入。
+ * <p>配置 serviceUrl 时通过社区 Pulsar 客户端连接 TDMQ Pulsar 服务；业务侧仍可通过
+ * {@link BrokerPublisher} / {@link BrokerSubscriber} 注入已有传输实现。
  * 保留旧 SPI 单抽象方法供现有调用方使用；元数据重载负责冻结的 broker header。
  * 旧发布器无法携带因果头时显式失败，不得把 transport message id 冒充业务稳定 ID。
- * 当未注入时，{@link TdmqMQClient} 提供"内存总线"实现，仅供本地联调/测试。
+ * 未配置 serviceUrl 且未注入传输时，提供"内存总线"实现，仅供本地联调/测试。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
@@ -60,6 +63,7 @@ public class TdmqMQClient implements MQClient {
             new java.util.concurrent.ConcurrentHashMap<>();
     private final MQClientLifecycle lifecycle = new MQClientLifecycle();
     private final MQStartupStatus startupStatus = new MQStartupStatus("tdmq");
+    private final PulsarMQClient nativePulsar;
     private BrokerPublisher brokerPublisher;
     private BrokerSubscriber brokerSubscriber;
     private volatile boolean closed;
@@ -71,6 +75,13 @@ public class TdmqMQClient implements MQClient {
      */
     public TdmqMQClient(TdmqProperties properties) {
         this.properties = Objects.requireNonNull(properties, "properties");
+        this.nativePulsar = StrKit.isBlank(properties.getServiceUrl()) ? null : new PulsarMQClient(
+                pulsarProperties(properties)) {
+            @Override
+            public void consume(MQListener listener, MQEvent event, Acknowledgment ack) throws Throwable {
+                TdmqMQClient.this.consume(listener, event, ack);
+            }
+        };
     }
 
     /**
@@ -84,6 +95,30 @@ public class TdmqMQClient implements MQClient {
         this.brokerPublisher = publisher;
         this.brokerSubscriber = subscriber;
         this.properties = Objects.requireNonNull(properties, "properties");
+        this.nativePulsar = null;
+    }
+
+    private static PulsarProperties pulsarProperties(TdmqProperties source) {
+        PulsarProperties target = new PulsarProperties();
+        target.setEnabled(source.isEnabled());
+        target.setBroker("pulsar");
+        target.setServiceUrl(source.getServiceUrl());
+        target.setTenant(source.getTenant());
+        target.setAuthToken(source.getAuthToken());
+        target.setNamespace(source.getNamespace());
+        target.setDefaultTopic(source.getDefaultTopic());
+        target.setSerialization(source.getSerialization());
+        target.setPersist(source.isPersist());
+        target.setAutoAck(source.isAutoAck());
+        target.setRetries(source.getRetries());
+        target.setPartitionKeyStrategy(source.getPartitionKeyStrategy());
+        target.setSubscriptionName(source.getDefaultGroup());
+        return target;
+    }
+
+    private boolean nativeMode() {
+        return Objects.nonNull(nativePulsar) && Objects.isNull(brokerPublisher)
+                && Objects.isNull(brokerSubscriber);
     }
 
     /**
@@ -111,12 +146,12 @@ public class TdmqMQClient implements MQClient {
 
     @Override
     public MQClientLifecycle lifecycle() {
-        return lifecycle;
+        return nativeMode() ? nativePulsar.lifecycle() : lifecycle;
     }
 
     @Override
     public MQStartupStatus startupStatus() {
-        return startupStatus;
+        return nativeMode() ? nativePulsar.startupStatus() : startupStatus;
     }
 
     // ========================= 生产者 =========================
@@ -125,6 +160,15 @@ public class TdmqMQClient implements MQClient {
     public synchronized Consumer<MQEvent> initProducer(MQProperties mqProperties) {
         if (closed) {
             throw new IllegalStateException("TDMQ client is closed");
+        }
+        if (nativeMode()) {
+            Consumer<MQEvent> publisher = nativePulsar.initProducer(mqProperties);
+            return event -> {
+                if (closed) {
+                    throw new IllegalStateException("TDMQ client is closed");
+                }
+                publisher.accept(event);
+            };
         }
         if (Objects.isNull(brokerPublisher)) {
             this.brokerPublisher = new InMemoryBrokerPublisher(topicSubscribers);
@@ -159,6 +203,13 @@ public class TdmqMQClient implements MQClient {
         if (!properties.isAutoStartConsumers()) {
             log.info("TDMQ listener registration skipped because autoStartConsumers=false");
             return false;
+        }
+        if (nativeMode()) {
+            try {
+                return nativePulsar.initConsumer(listener, mqProperties);
+            } catch (Exception exception) {
+                throw new IllegalStateException("Initialize TDMQ Pulsar consumer failed", exception);
+            }
         }
         String topic = resolveTopic(listener, mqProperties);
         String tagExpression = listener.getTags();
@@ -233,7 +284,9 @@ public class TdmqMQClient implements MQClient {
 
     @Override
     public void start() {
-        // TDMQ 订阅在 initConsumer 时已启动
+        if (nativeMode()) {
+            nativePulsar.start();
+        }
     }
 
     // ========================= 关闭 =========================
@@ -245,7 +298,11 @@ public class TdmqMQClient implements MQClient {
         }
         closed = true;
         try {
-            lifecycle.close();
+            if (nativeMode()) {
+                nativePulsar.close();
+            } else {
+                lifecycle.close();
+            }
         } finally {
             subscriptions.clear();
             topicSubscribers.clear();

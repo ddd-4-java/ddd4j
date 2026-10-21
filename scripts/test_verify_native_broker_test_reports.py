@@ -20,6 +20,7 @@ CASES = {
     "ddd4j-mq-rocketmq": "RocketMQNativeIntegrationTest",
     "ddd4j-mq-redis-stream": "RedisStreamNativeCausalityIT",
     "ddd4j-mq-sqs": "SqsBrokerIntegrationTest",
+    "ddd4j-mq-tdmq": "TdmqPulsarProtocolIntegrationTest",
 }
 
 
@@ -63,6 +64,12 @@ class NativeBrokerReportTest(unittest.TestCase):
 
     def test_missing_kafka_report_fails(self):
         report = next((self.root / "ddd4j-mq" / "ddd4j-mq-kafka" / "target" /
+                       "surefire-reports").glob("TEST-*.xml"))
+        report.unlink()
+        self.assertNotEqual(0, self.check().returncode)
+
+    def test_missing_tdmq_protocol_report_fails(self):
+        report = next((self.root / "ddd4j-mq" / "ddd4j-mq-tdmq" / "target" /
                        "surefire-reports").glob("TEST-*.xml"))
         report.unlink()
         self.assertNotEqual(0, self.check().returncode)
