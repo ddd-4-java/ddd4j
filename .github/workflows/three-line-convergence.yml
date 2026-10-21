@@ -12,8 +12,9 @@ permissions:
   contents: read
 
 concurrency:
-  # Keep the newest push for each line; runs from different lines must not cancel one another.
-  group: three-line-convergence-${{ github.event_name == 'workflow_dispatch' && github.run_id || github.ref }}
+  # A newer branch push compares all three current SHAs and supersedes older push runs.
+  # Manual runs remain independent for frozen evidence collection.
+  group: three-line-convergence-${{ github.event_name == 'workflow_dispatch' && github.run_id || 'all-lines' }}
   cancel-in-progress: true
 
 jobs:
