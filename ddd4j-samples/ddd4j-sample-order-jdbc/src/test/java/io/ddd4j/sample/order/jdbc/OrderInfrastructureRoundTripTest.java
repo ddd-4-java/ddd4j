@@ -121,37 +121,29 @@ class OrderInfrastructureRoundTripTest {
 
     @Test
     void shouldPersistProjectPublishAndDeduplicatePayment() throws Exception {
-        JdbcOrderTransactionPort transaction = new JdbcOrderTransactionPort(dataSource);
-        JdbcOrderRepository repository = new JdbcOrderRepository(transaction);
         ObjectMapper objectMapper = new ObjectMapper();
-        JdbcOutboxPort outbox = new JdbcOutboxPort(transaction, objectMapper);
-        JdbcOrderReadModelPort readModels = new JdbcOrderReadModelPort(transaction);
 
         try (JedisPooled jedis = new JedisPooled(REDIS.getHost(), REDIS.getFirstMappedPort());
              Producer<String, String> producer = new KafkaProducer<>(producerProperties());
              Consumer<String, String> consumer = new KafkaConsumer<>(consumerProperties())) {
-            OrderApplicationService applicationService = new OrderApplicationService(repository, outbox, readModels,
-                    new RedisIdempotencyPort(jedis), transaction);
-            ReliableOrderOutboxPublisher publisher = new ReliableOrderOutboxPublisher(transaction, outbox,
-                    new KafkaIntegrationEventPublisher(producer, objectMapper, TOPIC),
-                    "order-sample-worker", java.time.Clock.systemUTC());
-            consumer.subscribe(List.of(TOPIC));
+            try (JdbcOrderSampleRuntime runtime = JdbcOrderSampleRuntime.start(dataSource, objectMapper,
+                    new RedisIdempotencyPort(jedis), new KafkaIntegrationEventPublisher(producer, objectMapper, TOPIC),
+                    "order-sample-worker", 100, Duration.ofMillis(50), java.time.Clock.systemUTC())) {
+                OrderApplicationService applicationService = runtime.applicationService();
+                consumer.subscribe(List.of(TOPIC));
 
-            Order created = applicationService.create(new CreateOrderCommand("ORDER-IT-001", "buyer-1", "Alice"));
-            applicationService.addLine(new AddOrderLineCommand(created.id(), "goods-1", "DDD Book", 2,
-                    new BigDecimal("59.90")));
-            applicationService.pay(created.id(), "payment-ORDER-IT-001");
-            applicationService.pay(created.id(), "payment-ORDER-IT-001");
+                Order created = applicationService.create(new CreateOrderCommand("ORDER-IT-001", "buyer-1", "Alice"));
+                applicationService.addLine(new AddOrderLineCommand(created.id(), "goods-1", "DDD Book", 2,
+                        new BigDecimal("59.90")));
+                applicationService.pay(created.id(), "payment-ORDER-IT-001");
+                applicationService.pay(created.id(), "payment-ORDER-IT-001");
 
-            OrderReadModel projection = applicationService.find(created.id());
-            assertThat(projection.status()).isEqualTo(OrderStatus.PAID);
-            assertThat(projection.totalAmount()).isEqualByComparingTo("119.80");
-            assertThat(applicationService.query(new OrderQuery("buyer-1", OrderStatus.PAID, 1, 10))).hasSize(1);
+                OrderReadModel projection = applicationService.find(created.id());
+                assertThat(projection.status()).isEqualTo(OrderStatus.PAID);
+                assertThat(projection.totalAmount()).isEqualByComparingTo("119.80");
+                assertThat(applicationService.query(new OrderQuery("buyer-1", OrderStatus.PAID, 1, 10))).hasSize(1);
 
-            List<String> statuses;
-            try (ReliableOrderOutboxWorker worker = new ReliableOrderOutboxWorker(
-                    publisher, 100, Duration.ofMillis(50))) {
-                worker.start();
+                List<String> statuses;
                 long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(20);
                 do {
                     statuses = readOutboxStatus(created.id());
@@ -160,13 +152,13 @@ class OrderInfrastructureRoundTripTest {
                     }
                     TimeUnit.MILLISECONDS.sleep(50);
                 } while (System.nanoTime() < deadline);
-            }
-            assertThat(statuses).hasSizeGreaterThanOrEqualTo(3).containsOnly("PUBLISHED");
+                assertThat(statuses).hasSizeGreaterThanOrEqualTo(3).containsOnly("PUBLISHED");
 
-            ConsumerRecords<String, String> records = consumer.poll(Duration.ofSeconds(20));
-            assertThat(records.count()).isGreaterThanOrEqualTo(3);
-            assertThat(records.records(TOPIC))
-                    .anySatisfy(record -> assertThat(record.value()).contains("OrderPaidEvent"));
+                ConsumerRecords<String, String> records = consumer.poll(Duration.ofSeconds(20));
+                assertThat(records.count()).isGreaterThanOrEqualTo(3);
+                assertThat(records.records(TOPIC))
+                        .anySatisfy(record -> assertThat(record.value()).contains("OrderPaidEvent"));
+            }
         }
     }
 
