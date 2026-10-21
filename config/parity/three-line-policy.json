@@ -757,6 +757,20 @@
       "reason": "三线相同文件类型值与 JSON 契约，仅 JDK 21 线按本线 Jackson 3 ObjectMapper 包名适配；其他测试内容逐字一致"
     },
     {
+      "path": "ddd4j-samples/ddd4j-sample-order-jdbc/src/main/java/io/ddd4j/sample/order/jdbc/JdbcOrderSampleRuntime.java",
+      "targetLines": [
+        "3.0.x"
+      ],
+      "replacements": [
+        {
+          "from": "import com.fasterxml.jackson.databind.ObjectMapper;",
+          "to": "import tools.jackson.databind.ObjectMapper;"
+        }
+      ],
+      "evidence": "ddd4j-samples/ddd4j-sample-order-jdbc/src/test/java/io/ddd4j/sample/order/jdbc/OrderInfrastructureRoundTripTest.java",
+      "reason": "三线共享 JDBC 订单可靠投递运行接线；JDK 21 线仅按 Jackson 3 的 ObjectMapper 包名适配"
+    },
+    {
       "path": "ddd4j-data/ddd4j-data-mybatisplus/src/test/java/io/ddd4j/data/mybatis/plugins/observation/SqlObservationJsonContractTest.java",
       "targetLines": [
         "3.0.x"
@@ -4129,9 +4143,9 @@
       "path": "ddd4j-samples/ddd4j-sample-order-jdbc/src/test/java/io/ddd4j/sample/order/jdbc/OrderInfrastructureRoundTripTest.java",
       "productionPath": "ddd4j-samples/ddd4j-sample-order-jdbc/src/main/java/io/ddd4j/sample/order/jdbc/JdbcOrderTransactionPort.java",
       "sourceSha256": [
-        "9a3ef54d576186c2d559c5942e65cecbbd133ded76e0273df5ebc92c7fe2472d",
-        "880632c46a1553b4a36ca26bf391b0ed3b6908d3714ac4c1df2102771b5cf29e",
-        "c7e7ce350f5a853c74224c28c81923acbcff8b222c288eafacddd894d84272e6"
+        "b1aba1e3d5d19b402ddb8f978c191b0f175f8614b24d62c375e9c02c6cf1f466",
+        "42e825f2c01de3ec61968b217ba9cd160971095a2a1add4c52b3da6dda5de2a1",
+        "063891edbfb4f86c7c61d2546f999ce7e70a33141bdf51c029eeddd32a8e0a10"
       ],
       "productionSha256": [
         "74ca3c4bb1abd7084da2846953ef9379ec436ed2e1f8393cb4531d0cb03402c2",
