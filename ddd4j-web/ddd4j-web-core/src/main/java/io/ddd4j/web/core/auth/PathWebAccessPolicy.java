@@ -46,6 +46,12 @@ public final class PathWebAccessPolicy implements WebAccessPolicy {
         this.defaultMode = Objects.requireNonNull(defaultMode, "defaultMode must not be null");
     }
 
+    /**
+     * 按请求路径选择认证模式。
+     *
+     * @param context 当前请求上下文
+     * @return 路径匹配时为免认证模式，否则为默认认证模式
+     */
     @Override
     public AuthenticationMode authenticationMode(WebRequestContext context) {
         String path = Objects.requireNonNull(context, "context must not be null").path();

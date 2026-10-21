@@ -4,6 +4,7 @@ import io.ddd4j.sample.javalin.shiro.order.application.AddOrderLineCommand;
 import io.ddd4j.sample.javalin.shiro.order.application.CreateOrderCommand;
 import io.ddd4j.sample.javalin.shiro.order.domain.model.Money;
 import io.ddd4j.sample.javalin.shiro.order.web.OrderResource;
+import io.ddd4j.kit.lang.JsonKit;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -47,11 +48,29 @@ class OrderValueContractTest {
     }
 
     @Test
+    void moneyRetainsThreeLineValueHash() {
+        Money money = new Money(new BigDecimal("12.50"), "CNY");
+        int expected = 1;
+        expected = 59 * expected + money.amount().hashCode();
+        expected = 59 * expected + money.currency().hashCode();
+
+        assertEquals(expected, money.hashCode());
+    }
+
+    @Test
+    void moneyRoundTripsThroughJson() {
+        Money money = new Money(new BigDecimal("12.345"), " cny ");
+        assertEquals(money, JsonKit.toObject(JsonKit.toJson(money), Money.class));
+    }
+
+    @Test
     void discountViewRetainsReadOnlyValueContract() {
         OrderResource.DiscountView view = new OrderResource.DiscountView("11.12", "CNY");
         assertEquals(view.getAmount(), view.amount());
         assertEquals(view.getCurrency(), view.currency());
         assertEquals(new OrderResource.DiscountView("11.12", "CNY"), view);
+        assertEquals(-1536171204, view.hashCode());
+        assertEquals(view, JsonKit.toObject(JsonKit.toJson(view), OrderResource.DiscountView.class));
         assertTrue(view.toString().contains("DiscountView(amount="));
     }
 }

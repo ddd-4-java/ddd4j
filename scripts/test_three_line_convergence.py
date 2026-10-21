@@ -33,6 +33,7 @@ class ThreeLineConvergenceTest(unittest.TestCase):
     def test_inventory_never_reports_product_pass(self):
         checks = {"structure": {"status": "PASS"},
                   "product-docs": {"status": "PASS"},
+                  "historical-index": {"status": "PASS"},
                   "values": {"status": "NOT_RUN"},
                   "dependencies": {"status": "NOT_RUN"},
                   "reactor": {"status": "NOT_RUN"},
@@ -53,6 +54,15 @@ class ThreeLineConvergenceTest(unittest.TestCase):
         checks = {name: {'status': 'PASS'} for name in MODULE.VERIFY_CHECKS}
         del checks['dependency-catalog']
         self.assertEqual('BLOCKED', MODULE.combined_status(checks, 'verify', True))
+
+    def test_missing_historical_index_blocks_both_phases(self):
+        self.assertIn("historical-index", MODULE.INVENTORY_CHECKS)
+        self.assertIn("historical-index", MODULE.VERIFY_CHECKS)
+        for phase, required in (("inventory", MODULE.INVENTORY_CHECKS),
+                                ("verify", MODULE.VERIFY_CHECKS)):
+            checks = {name: {"status": "PASS"} for name in required}
+            del checks["historical-index"]
+            self.assertEqual("BLOCKED", MODULE.combined_status(checks, phase, True))
 
     def test_reactor_runs_after_independent_structure_or_dependency_failure(self):
         checks = {f"effective-{jdk}": {"status": "PASS"} for jdk in (8, 17, 21)}
@@ -196,6 +206,41 @@ class ThreeLineConvergenceTest(unittest.TestCase):
             self.assertEqual(2, repeated["mappedTests"])
             self.assertEqual(1, repeated["uniqueReports"])
             self.assertEqual(2, repeated["executedTests"])
+
+    def test_scenario_execution_requires_the_mapped_case_not_only_its_class(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            reports = root / "core/target/surefire-reports"
+            reports.mkdir(parents=True)
+            report = reports / "TEST-example.RequiredTest.xml"
+            report.write_text(
+                '<testsuite tests="1" failures="0" errors="0" skipped="0">'
+                '<testcase name="unrelatedCase" classname="example.RequiredTest"/>'
+                '</testsuite>', encoding="utf-8")
+            scenarios = [{"id": "CORE-CASE", "caseNames": {"2.0.x": "requiredCase"},
+                          "lines": {"2.0.x": {"status": "supported", "tests": [
+                              "core/src/test/java/example/RequiredTest.java"]}}}]
+            result = MODULE.scenario_test_reports(root, scenarios, "2.0.x", 0)
+            self.assertEqual("FAIL", result["status"])
+            self.assertIn("missing executed test case requiredCase", result["issues"][0])
+
+            report.write_text(
+                '<testsuite tests="1" failures="0" errors="0" skipped="0">'
+                '<testcase name="requiredCase" classname="example.RequiredTest"/>'
+                '</testsuite>', encoding="utf-8")
+            self.assertEqual("PASS", MODULE.scenario_test_reports(
+                root, scenarios, "2.0.x", 0)["status"])
+
+            scenarios[0]["caseNames"]["2.0.x"] = ["requiredCase", "secondCase"]
+            self.assertEqual("FAIL", MODULE.scenario_test_reports(
+                root, scenarios, "2.0.x", 0)["status"])
+            report.write_text(
+                '<testsuite tests="2" failures="0" errors="0" skipped="0">'
+                '<testcase name="requiredCase" classname="example.RequiredTest"/>'
+                '<testcase name="secondCase" classname="example.RequiredTest"/>'
+                '</testsuite>', encoding="utf-8")
+            self.assertEqual("PASS", MODULE.scenario_test_reports(
+                root, scenarios, "2.0.x", 0)["status"])
 
     def test_reactor_requires_fresh_executed_test_reports(self):
         with tempfile.TemporaryDirectory() as temporary:

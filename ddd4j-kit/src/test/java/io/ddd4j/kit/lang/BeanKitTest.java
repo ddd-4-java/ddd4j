@@ -17,6 +17,7 @@ package io.ddd4j.kit.lang;
 import lombok.Data;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,7 +69,7 @@ class BeanKitTest {
         SourceBean s2 = new SourceBean();
         s2.setName("b");
 
-        List<TargetBean> result = BeanKit.copy(List.of(s1, s2), TargetBean.class);
+        List<TargetBean> result = BeanKit.copy(Arrays.asList(s1, s2), TargetBean.class);
 
         assertThat(result).hasSize(2);
         assertThat(result).extracting(TargetBean::getName).containsExactly("a", "b");
@@ -137,17 +138,17 @@ class BeanKitTest {
 
     @Test
     void listToString_shouldJoinWithCommaByDefault() {
-        assertThat(BeanKit.listToString(List.of("a", "b", "c"))).isEqualTo("a,b,c");
+        assertThat(BeanKit.listToString(Arrays.asList("a", "b", "c"))).isEqualTo("a,b,c");
     }
 
     @Test
     void listToString_shouldJoinWithCustomSeparator() {
-        assertThat(BeanKit.listToString(List.of("a", "b"), ";")).isEqualTo("a;b");
+        assertThat(BeanKit.listToString(Arrays.asList("a", "b"), ";")).isEqualTo("a;b");
     }
 
     @Test
     void listToString_shouldWrapWithSurround() {
-        assertThat(BeanKit.listToString(List.of("a", "b"), ",", "'")).isEqualTo("'a','b'");
+        assertThat(BeanKit.listToString(Arrays.asList("a", "b"), ",", "'")).isEqualTo("'a','b'");
     }
 
     @Test
@@ -170,12 +171,14 @@ class BeanKitTest {
 
     // ========================= Fixtures =========================
 
+    /** 拷贝测试的源数据对象。 */
     @Data
     static class SourceBean {
         private String name;
         private Integer age;
     }
 
+    /** 拷贝测试的目标数据对象。 */
     @Data
     static class TargetBean {
         private String name;

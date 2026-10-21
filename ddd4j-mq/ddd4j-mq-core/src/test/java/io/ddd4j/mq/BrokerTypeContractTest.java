@@ -8,10 +8,15 @@ class BrokerTypeContractTest {
 
     @Test
     void aliasesAndInputNormalizationShareTheSameBrokerContract() {
+        assertEquals(BrokerType.DISRUPTOR, BrokerType.from("local"));
         assertEquals(BrokerType.DISRUPTOR, BrokerType.from(" LOCAL_disruptor "));
+        assertEquals(BrokerType.REDIS_STREAM, BrokerType.from("redis"));
+        assertEquals(BrokerType.REDIS_STREAM, BrokerType.from("redis-stream"));
         assertEquals(BrokerType.REDIS_STREAM, BrokerType.from(" RedisStream "));
         assertEquals(BrokerType.REDIS_STREAM, BrokerType.from("redis_stream"));
+        assertEquals(BrokerType.ACTIVEMQ, BrokerType.from("activemq"));
         assertEquals(BrokerType.ACTIVEMQ, BrokerType.from(" Artemis "));
+        assertEquals(BrokerType.MQTT_MICA, BrokerType.from("mica"));
         assertEquals(BrokerType.MQTT_MICA, BrokerType.from("mica_mqtt"));
     }
 

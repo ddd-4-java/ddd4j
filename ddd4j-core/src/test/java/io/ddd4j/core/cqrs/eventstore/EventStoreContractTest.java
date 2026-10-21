@@ -17,6 +17,7 @@ import io.ddd4j.core.ddd.event.EntityType;
 import io.ddd4j.core.ddd.event.StringEntityType;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,10 +28,23 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 public abstract class EventStoreContractTest {
 
+    /**
+     * 契约测试统一使用的聚合根类型标识。
+     */
     protected static final String ORDER_TYPE = "Order";
+    /**
+     * 第一个订单聚合根标识（order-1）。
+     */
     protected static final AggregateRootId ORDER_1 = new TestAggregateRootId("order-1");
+    /**
+     * 第二个订单聚合根标识（order-2）。
+     */
     protected static final AggregateRootId ORDER_2 = new TestAggregateRootId("order-2");
 
+    /**
+     * 创建对象。
+     * @return 方法执行结果。
+     */
     protected abstract EventStore createEventStore();
 
     @Test
@@ -39,7 +53,7 @@ public abstract class EventStoreContractTest {
         TestEvent first = new TestEvent((TestAggregateRootId) ORDER_1);
         TestEvent second = new TestEvent((TestAggregateRootId) ORDER_1);
 
-        store.append(ORDER_TYPE, ORDER_1, List.of(first, second), 0);
+        store.append(ORDER_TYPE, ORDER_1, Arrays.asList(first, second), 0);
 
         List<StoredEvent> events = store.read(ORDER_TYPE, ORDER_1);
         assertThat(events).hasSize(2);
@@ -53,9 +67,9 @@ public abstract class EventStoreContractTest {
     @Test
     void appendWithStaleVersionShouldExposeTypedConflict() {
         EventStore store = createEventStore();
-        store.append(ORDER_TYPE, ORDER_1, List.of(new TestEvent((TestAggregateRootId) ORDER_1)), 0);
+        store.append(ORDER_TYPE, ORDER_1, Arrays.asList(new TestEvent((TestAggregateRootId) ORDER_1)), 0);
 
-        assertThatThrownBy(() -> store.append(ORDER_TYPE, ORDER_1, List.of(new TestEvent((TestAggregateRootId) ORDER_1)), 0))
+        assertThatThrownBy(() -> store.append(ORDER_TYPE, ORDER_1, Arrays.asList(new TestEvent((TestAggregateRootId) ORDER_1)), 0))
                 .isInstanceOf(AggregateVersionConflictException.class)
                 .satisfies(error -> {
                     AggregateVersionConflictException conflict = (AggregateVersionConflictException) error;
@@ -69,7 +83,7 @@ public abstract class EventStoreContractTest {
     @Test
     void readWithVersionRangeShouldReturnInclusiveSlice() {
         EventStore store = createEventStore();
-        store.append(ORDER_TYPE, ORDER_1, List.of(new TestEvent((TestAggregateRootId) ORDER_1), new TestEvent((TestAggregateRootId) ORDER_1), new TestEvent((TestAggregateRootId) ORDER_1)), 0);
+        store.append(ORDER_TYPE, ORDER_1, Arrays.asList(new TestEvent((TestAggregateRootId) ORDER_1), new TestEvent((TestAggregateRootId) ORDER_1), new TestEvent((TestAggregateRootId) ORDER_1)), 0);
 
         List<StoredEvent> events = store.read(ORDER_TYPE, ORDER_1, 1, 2);
 
@@ -79,8 +93,8 @@ public abstract class EventStoreContractTest {
     @Test
     void readAllShouldPreserveGlobalPositionOrderAcrossAggregates() {
         EventStore store = createEventStore();
-        store.append(ORDER_TYPE, ORDER_1, List.of(new TestEvent((TestAggregateRootId) ORDER_1)), 0);
-        store.append(ORDER_TYPE, ORDER_2, List.of(new TestEvent((TestAggregateRootId) ORDER_2)), 0);
+        store.append(ORDER_TYPE, ORDER_1, Arrays.asList(new TestEvent((TestAggregateRootId) ORDER_1)), 0);
+        store.append(ORDER_TYPE, ORDER_2, Arrays.asList(new TestEvent((TestAggregateRootId) ORDER_2)), 0);
 
         List<StoredEvent> events = store.readAll(1, 10);
 
@@ -88,6 +102,9 @@ public abstract class EventStoreContractTest {
         assertThat(events).extracting(StoredEvent::aggregateId).containsExactly(ORDER_1, ORDER_2);
     }
 
+    /**
+     * 契约测试用订单聚合根标识：满足 {@link AggregateRootId} 契约。
+     */
     protected final static class TestAggregateRootId implements AggregateRootId {
 
         private static final long serialVersionUID = 0L;
@@ -96,21 +113,38 @@ public abstract class EventStoreContractTest {
 
         private static final EntityType TYPE = new StringEntityType("Order");
 
+        /**
+         * 获取值。
+         * @return 方法执行结果。
+         */
         @Override
         public EntityType getType() {
             return TYPE;
         }
 
+        /**
+         * asString() 方法。
+         * @return 结果字符串。
+         */
         @Override
         public String asString() {
             return value;
         }
 
+        /**
+         * asTypedString() 方法。
+         * @return 结果字符串。
+         */
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
         }
 
+        /**
+         * 创建聚合根标识实例。
+         *
+         * @param value 聚合根标识值
+         */
         @JsonCreator()
         protected TestAggregateRootId(@JsonProperty("value") String value) {
             this.value = value;
@@ -146,6 +180,11 @@ public abstract class EventStoreContractTest {
         }
     }
 
+    /**
+     * 类型说明。
+     * @author ddd4j
+     * @since 1.0.x
+     */
     protected static final class TestEvent extends DomainEvent<TestAggregateRootId> {
 
         private TestEvent(TestAggregateRootId aggregateId) {

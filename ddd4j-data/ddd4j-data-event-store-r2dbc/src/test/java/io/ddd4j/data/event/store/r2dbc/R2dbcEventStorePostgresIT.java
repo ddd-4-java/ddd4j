@@ -20,6 +20,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 
 import java.util.Objects;
 
+import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
+import io.ddd4j.core.cqrs.eventstore.StoredEvent;
 import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityIdPath;
@@ -30,6 +32,7 @@ import io.r2dbc.postgresql.PostgresqlConnectionConfiguration;
 import io.r2dbc.postgresql.PostgresqlConnectionFactory;
 import io.r2dbc.spi.Connection;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.AfterEach;
@@ -41,6 +44,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import reactor.core.publisher.Mono;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * PostgreSQL 容器轨：验证 R2DBC EventStore 自身 DDL 与事件往返。
@@ -80,17 +84,59 @@ class R2dbcEventStorePostgresIT {
     }
 
     @Test
-    void appendAndReadShouldRoundTripTypedEventOnPostgres() {
+    void appendAndReadShouldRoundTripTypedMetadataOnPostgres() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-pg-1");
         OrderCreatedEvent event = new OrderCreatedEvent(orderId);
 
         eventStore.append(ORDER_TYPE, orderId, List.of(event), 0L);
 
+        List<StoredEvent> events = eventStore.read(ORDER_TYPE, orderId);
+        assertThat(events).hasSize(1);
+        assertThat(events.get(0).aggregateType()).isEqualTo(ORDER_TYPE);
+        assertThat(events.get(0).aggregateId()).isEqualTo(orderId);
+        assertThat(events.get(0).payload()).isInstanceOf(OrderCreatedEvent.class);
+        assertThat(events.get(0).eventId()).isEqualTo(event.getEventId());
+    }
+
+    @Test
+    void versionRangeAndAggregateTypeIsolationShouldFollowCoreContractOnPostgres() {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-pg-shared");
+        eventStore.append(ORDER_TYPE, orderId, Arrays.asList(
+                new OrderCreatedEvent(orderId), new OrderCreatedEvent(orderId), new OrderCreatedEvent(orderId)), 0L);
+        eventStore.append("Invoice", orderId, List.of(new OrderCreatedEvent(orderId)), 0L);
+
+        assertThat(eventStore.read(ORDER_TYPE, orderId)).extracting(StoredEvent::version)
+                .containsExactly(1L, 2L, 3L);
+        assertThat(eventStore.read(ORDER_TYPE, orderId, 1, 2))
+                .extracting(StoredEvent::version).containsExactly(1L, 2L);
+        assertThat(eventStore.read("Invoice", orderId)).hasSize(1);
+    }
+
+    @Test
+    void readAllShouldPreserveGlobalPositionOrderOnPostgres() {
+        TestAggregateRootId first = new TestAggregateRootId("order-pg-a");
+        TestAggregateRootId second = new TestAggregateRootId("order-pg-b");
+        eventStore.append(ORDER_TYPE, first, List.of(new OrderCreatedEvent(first)), 0L);
+        eventStore.append(ORDER_TYPE, second, List.of(new OrderCreatedEvent(second)), 0L);
+
+        assertThat(eventStore.readAll(1, 10)).extracting(StoredEvent::position)
+                .containsExactly(1L, 2L);
+    }
+
+    @Test
+    void appendWithStaleVersionShouldRejectOnPostgres() {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-pg-conflict");
+        eventStore.append(ORDER_TYPE, orderId, List.of(new OrderCreatedEvent(orderId)), 0L);
+
+        assertThatThrownBy(() -> eventStore.append(ORDER_TYPE, orderId,
+                List.of(new OrderCreatedEvent(orderId)), 0L))
+                .isInstanceOf(AggregateVersionConflictException.class)
+                .satisfies(error -> {
+                    AggregateVersionConflictException conflict = (AggregateVersionConflictException) error;
+                    assertThat(conflict.expectedVersion()).isEqualTo(0L);
+                    assertThat(conflict.actualVersion()).isEqualTo(1L);
+                });
         assertThat(eventStore.read(ORDER_TYPE, orderId)).hasSize(1);
-        assertThat(eventStore.read(ORDER_TYPE, orderId).get(0).aggregateId().asString())
-                .isEqualTo(orderId.asString());
-        assertThat(eventStore.read(ORDER_TYPE, orderId).get(0).payload())
-                .isInstanceOf(OrderCreatedEvent.class);
     }
 
     private final static class TestAggregateRootId implements AggregateRootId {

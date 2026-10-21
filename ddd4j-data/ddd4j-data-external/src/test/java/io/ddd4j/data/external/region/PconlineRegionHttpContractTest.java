@@ -77,6 +77,20 @@ class PconlineRegionHttpContractTest {
         }
     }
 
+    @Test
+    void regionAddressStripsUnicodeWhitespace() throws IOException {
+        AtomicInteger requests = new AtomicInteger();
+        HttpServer server = server(200, "{\"addr\":\"\\u2003Fictionland\\u2003\"}", requests);
+        try {
+            PconlineRegionTemplate template = template(server, RegionCache.none());
+
+            assertEquals("Fictionland", template.getRegionAddress("127.0.0.1").getCountry());
+            assertEquals(1, requests.get());
+        } finally {
+            server.stop(0);
+        }
+    }
+
     private PconlineRegionTemplate template(HttpServer server, RegionCache cache) {
         return new PconlineRegionTemplate(cache,
                 "http://127.0.0.1:" + server.getAddress().getPort() + "/ip?json=true&ip=%s");

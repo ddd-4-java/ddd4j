@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayDeque;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
 
@@ -43,7 +44,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *   <li>{@code eventTypes} 过滤生效</li>
  * </ul>
  *
- * @author PartMe.AI
+ * @author ddd4j
  */
 @DisplayName("EventChunkReader SPI 契约")
 class EventChunkReaderContractTest {
@@ -103,7 +104,7 @@ class EventChunkReaderContractTest {
         reader.append(1, "a");
         reader.append(2, "b");
 
-        EventChunk<String> chunk = reader.read("s", 1, 100, List.of());
+        EventChunk<String> chunk = reader.read("s", 1, 100, Collections.emptyList());
 
         assertThat(chunk.getEvents()).containsExactly("a", "b");
     }
@@ -140,6 +141,9 @@ class EventChunkReaderContractTest {
             return new EventChunk<>(picked, next);
         }
 
+        /**
+         * 带事件号的载荷条目，用于按号顺序读取。
+         */
         private final static class Numbered {
 
             private static final long serialVersionUID = 0L;
@@ -148,6 +152,12 @@ class EventChunkReaderContractTest {
 
             private final String payload;
 
+            /**
+             * 创建载荷条目实例。
+             *
+             * @param number  事件号
+             * @param payload 事件载荷
+             */
             @JsonCreator()
             private Numbered(@JsonProperty("number") long number, @JsonProperty("payload") String payload) {
                 this.number = number;

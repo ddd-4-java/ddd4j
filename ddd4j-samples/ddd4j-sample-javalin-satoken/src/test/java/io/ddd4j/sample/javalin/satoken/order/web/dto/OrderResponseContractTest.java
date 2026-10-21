@@ -1,11 +1,14 @@
 package io.ddd4j.sample.javalin.satoken.order.web.dto;
 
+import io.ddd4j.sample.javalin.satoken.order.domain.model.Order;
 import io.ddd4j.sample.javalin.satoken.order.domain.model.OrderStatus;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class OrderResponseContractTest {
@@ -43,5 +46,14 @@ class OrderResponseContractTest {
         assertEquals(same.hashCode(), response.hashCode());
         assertEquals(same.toString(), response.toString());
         assertTrue(response.toString().startsWith("OrderResponse("));
+    }
+
+    @Test
+    void responseLinesCannotBeMutatedAfterConversion() {
+        Order order = new Order("ORDER-1", "NO-1", "BUYER-1", "Ada",
+                OrderStatus.DRAFT, Collections.emptyList());
+        OrderResponse response = OrderResponse.from(order);
+
+        assertThrows(UnsupportedOperationException.class, () -> response.lines().add(null));
     }
 }

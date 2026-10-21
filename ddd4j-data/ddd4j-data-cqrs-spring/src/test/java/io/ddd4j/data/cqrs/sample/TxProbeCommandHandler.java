@@ -21,6 +21,7 @@ import io.ddd4j.core.cqrs.command.Result;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -48,9 +49,14 @@ public class TxProbeCommandHandler implements CommandExecutor<TxProbeCommand> {
 
     @Override
     public Set<Class<? extends Command>> supportedCommands() {
-        return Set.of(TxProbeCommand.class);
+        return Collections.<Class<? extends Command>>singleton(TxProbeCommand.class);
     }
 
+    /**
+     * 执行处理逻辑。
+     * @param command command 参数。
+     * @return 方法执行结果。
+     */
     @Override
     public Result execute(TxProbeCommand command) {
         DISPATCHED_IN_ACTIVE_TX.set(TransactionSynchronizationManager.isActualTransactionActive());

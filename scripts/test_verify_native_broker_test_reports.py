@@ -10,11 +10,17 @@ from pathlib import Path
 
 SCRIPT = Path(__file__).with_name("verify-native-broker-test-reports.py")
 CASES = {
+    "ddd4j-mq-kafka": "KafkaMQClientRoundTripTest",
     "ddd4j-mq-rabbitmq": "RabbitMQContainerIntegrationTest",
     "ddd4j-mq-nats": "NatsJetStreamIntegrationTest",
     "ddd4j-mq-mqtt": "MqttContainerIntegrationTest",
     "ddd4j-mq-mqtt-mica": "MicaMqttContainerIntegrationTest",
     "ddd4j-mq-activemq": "ArtemisContainerIntegrationTest",
+    "ddd4j-mq-pulsar": "PulsarContainerIntegrationTest",
+    "ddd4j-mq-rocketmq": "RocketMQNativeIntegrationTest",
+    "ddd4j-mq-redis-stream": "RedisStreamNativeCausalityIT",
+    "ddd4j-mq-sqs": "SqsBrokerIntegrationTest",
+    "ddd4j-mq-tdmq": "TdmqPulsarProtocolIntegrationTest",
 }
 
 
@@ -41,17 +47,39 @@ class NativeBrokerReportTest(unittest.TestCase):
         self.assertEqual(0, self.check().returncode)
 
     def test_missing_report_fails(self):
-        report = next((self.root / "ddd4j-mq" / "ddd4j-mq-nats" / "target" /
+        report = next((self.root / "ddd4j-mq" / "ddd4j-mq-pulsar" / "target" /
                        "surefire-reports").glob("TEST-*.xml"))
         report.unlink()
         self.assertNotEqual(0, self.check().returncode)
 
     def test_skipped_native_test_fails(self):
-        self.write_report("ddd4j-mq-rabbitmq", CASES["ddd4j-mq-rabbitmq"], skipped=1)
+        self.write_report("ddd4j-mq-rocketmq", CASES["ddd4j-mq-rocketmq"], skipped=1)
+        self.assertNotEqual(0, self.check().returncode)
+
+    def test_missing_sqs_report_fails(self):
+        report = next((self.root / "ddd4j-mq" / "ddd4j-mq-sqs" / "target" /
+                       "surefire-reports").glob("TEST-*.xml"))
+        report.unlink()
+        self.assertNotEqual(0, self.check().returncode)
+
+    def test_missing_kafka_report_fails(self):
+        report = next((self.root / "ddd4j-mq" / "ddd4j-mq-kafka" / "target" /
+                       "surefire-reports").glob("TEST-*.xml"))
+        report.unlink()
+        self.assertNotEqual(0, self.check().returncode)
+
+    def test_missing_tdmq_protocol_report_fails(self):
+        report = next((self.root / "ddd4j-mq" / "ddd4j-mq-tdmq" / "target" /
+                       "surefire-reports").glob("TEST-*.xml"))
+        report.unlink()
+        self.assertNotEqual(0, self.check().returncode)
+
+    def test_skipped_sqs_test_fails(self):
+        self.write_report("ddd4j-mq-sqs", CASES["ddd4j-mq-sqs"], tests=2, skipped=2)
         self.assertNotEqual(0, self.check().returncode)
 
     def test_zero_executed_tests_fails(self):
-        self.write_report("ddd4j-mq-activemq", CASES["ddd4j-mq-activemq"], tests=0)
+        self.write_report("ddd4j-mq-redis-stream", CASES["ddd4j-mq-redis-stream"], tests=0)
         self.assertNotEqual(0, self.check().returncode)
 
 

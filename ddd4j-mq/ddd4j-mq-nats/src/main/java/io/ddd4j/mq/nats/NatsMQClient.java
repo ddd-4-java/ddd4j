@@ -167,7 +167,7 @@ public class NatsMQClient implements MQClient {
         Connection conn = connection();
         return event -> {
             String payload = serialization().serialize(event);
-            String subject = resolveTopic(event, mqProperties);
+            String subject = resolveTopic(namespace(event, mqProperties), event.getTopic(), null, concat(event));
             try {
                 byte[] body = payload.getBytes(StandardCharsets.UTF_8);
                 Headers headers = messageHeaders(event);
@@ -192,7 +192,8 @@ public class NatsMQClient implements MQClient {
     @Override
     public boolean initConsumer(MQListener listener, MQProperties mqProperties) throws Exception {
         Connection conn = connection();
-        String subject = resolveTopic(listener, mqProperties);
+        String subject = resolveTopic(namespace(listener.getNamespace(), mqProperties),
+                listener.getTopic(), null, defaultConcat());
         int checkpoint = lifecycle.checkpoint();
         try {
             JetStream jetStream = conn.jetStream();

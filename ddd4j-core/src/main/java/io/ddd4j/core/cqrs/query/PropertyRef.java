@@ -40,7 +40,7 @@ import java.util.Objects;
 
 public final class PropertyRef implements Serializable {
 
-    private static final long serialVersionUID = 0L;
+    private static final long serialVersionUID = -3906849612189306727L;
 
     /**
      * 属性所属空间。

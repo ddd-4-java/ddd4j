@@ -147,7 +147,7 @@ class SpringCommandBusTest {
 
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
-            return Set.of(TestCommand.class);
+            return java.util.Collections.<Class<? extends Command>>singleton(TestCommand.class);
         }
 
         @Override
@@ -163,7 +163,7 @@ class SpringCommandBusTest {
 
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
-            return Set.of(AnotherCommand.class);
+            return java.util.Collections.<Class<? extends Command>>singleton(AnotherCommand.class);
         }
 
         @Override

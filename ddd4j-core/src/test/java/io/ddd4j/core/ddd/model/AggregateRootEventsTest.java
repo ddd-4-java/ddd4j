@@ -16,8 +16,8 @@ package io.ddd4j.core.ddd.model;
 
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.context.ThreadContext;
-import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.AggregateRootId;
+import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityIdPath;
 import io.ddd4j.core.ddd.event.EntityType;
 import io.ddd4j.core.ddd.repository.Repository;
@@ -85,6 +85,24 @@ class AggregateRootEventsTest {
 
         assertThat(pulled).hasSize(1);
         assertThat(order.hasDomainEvents()).isFalse();
+    }
+
+    @Test
+    void pullDomainEvents_shouldKeepAnImmutableSnapshotInEventOrder() {
+        Order order = new Order("o1");
+        order.markCreated();
+        order.rename("paid");
+
+        List<DomainEvent<?>> pulled = order.pullDomainEvents();
+        order.rename("shipped");
+
+        assertThat(pulled).hasSize(2);
+        assertThat(((TestEvent) pulled.get(0)).getName()).isEqualTo("created");
+        assertThat(((TestEvent) pulled.get(1)).getName()).isEqualTo("paid");
+        assertThatThrownBy(() -> pulled.add(new TestEvent("late")))
+                .isInstanceOf(UnsupportedOperationException.class);
+        assertThat(order.domainEvents()).hasSize(1);
+        assertThat(((TestEvent) order.domainEvents().get(0)).getName()).isEqualTo("shipped");
     }
 
     @Test

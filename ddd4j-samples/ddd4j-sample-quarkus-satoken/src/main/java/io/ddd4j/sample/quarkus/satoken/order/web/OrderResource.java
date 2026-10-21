@@ -14,6 +14,7 @@
  */
 package io.ddd4j.sample.quarkus.satoken.order.web;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -34,6 +35,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 订单 JAX-RS 资源（写侧）。
@@ -59,6 +61,7 @@ import java.util.List;
 @Path("/orders")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@ApplicationScoped
 public class OrderResource {
 
     private final OrderApplicationService orderApplicationService;
@@ -122,7 +125,7 @@ public class OrderResource {
     public R<List<OrderResponse>> listAll() {
         List<OrderResponse> items = orderApplicationService.listAll().stream()
                 .map(OrderResponse::from)
-                .toList();
+                .collect(Collectors.toList());
         return R.ok(items);
     }
 

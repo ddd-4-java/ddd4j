@@ -26,11 +26,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.sql.SQLIntegrityConstraintViolationException;
-import java.util.List;
+import java.util.Collections;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * 强类型 JDBI EventStore 的 position 冲突重试集成测试。
@@ -57,13 +58,13 @@ class JdbiEventStoreRetryTest {
     @Test
     void aggregateVersionConflictMustNotRetry() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-1");
-        eventStore.append(ORDER_TYPE, orderId, List.of(new TestEvent(orderId)), 0);
+        eventStore.append(ORDER_TYPE, orderId, Collections.singletonList(new TestEvent(orderId)), 0);
 
-        assertThatThrownBy(() -> eventStore.append(ORDER_TYPE, orderId, List.of(new TestEvent(orderId)), 0))
-                .isInstanceOf(AggregateVersionConflictException.class);
+        assertThrows(AggregateVersionConflictException.class,
+                () -> eventStore.append(ORDER_TYPE, orderId, Collections.singletonList(new TestEvent(orderId)), 0));
 
-        assertThat(sleeper.calls.get()).isZero();
-        assertThat(eventStore.read(ORDER_TYPE, orderId)).hasSize(1);
+        assertEquals(0, sleeper.calls.get());
+        assertEquals(1, eventStore.read(ORDER_TYPE, orderId).size());
     }
 
     @Test
@@ -79,10 +80,10 @@ class JdbiEventStoreRetryTest {
         });
         TestAggregateRootId orderId = new TestAggregateRootId("order-2");
 
-        eventStore.append(ORDER_TYPE, orderId, List.of(new TestEvent(orderId)), 0);
+        eventStore.append(ORDER_TYPE, orderId, Collections.singletonList(new TestEvent(orderId)), 0);
 
-        assertThat(sleeper.calls.get()).isGreaterThanOrEqualTo(1);
-        assertThat(eventStore.read(ORDER_TYPE, orderId)).hasSize(1);
+        assertTrue(sleeper.calls.get() >= 1);
+        assertEquals(1, eventStore.read(ORDER_TYPE, orderId).size());
     }
 
     static final class RecordingSleeper implements EventStoreRetry.Sleeper {

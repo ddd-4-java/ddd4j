@@ -29,8 +29,6 @@ import java.util.Map.Entry;
  * WebFlux 静态资源映射的默认配置器。
  *
  * <p>注册本地资源、classpath 静态资源与 WebJars 资源处理器。
- *
- * @since 2.0.x
  */
 public class DefaultWebFluxConfigurer implements WebFluxConfigurer {
 

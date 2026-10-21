@@ -21,6 +21,7 @@ import io.ddd4j.runtime.testkit.RuntimeContract;
 import io.ddd4j.runtime.testkit.RuntimeContractAdapter;
 import io.ddd4j.runtime.testkit.RuntimeFixtures;
 
+/** Guice 适配器的运行时启动、关闭及就绪契约。 */
 class GuiceRuntimeContractTest extends AbstractRuntimeContractTest {
 
     @Override

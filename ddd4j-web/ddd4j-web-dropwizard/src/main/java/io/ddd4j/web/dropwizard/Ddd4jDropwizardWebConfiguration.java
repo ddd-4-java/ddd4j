@@ -20,6 +20,7 @@ import lombok.Setter;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -29,7 +30,7 @@ import java.util.List;
 @Setter
 public class Ddd4jDropwizardWebConfiguration {
 
-    private List<String> publicPaths = new ArrayList<>(List.of("/health", "/healthcheck/**"));
+    private List<String> publicPaths = new ArrayList<>(Arrays.asList("/health", "/healthcheck/**"));
     private AuthenticationMode defaultAuthenticationMode = AuthenticationMode.REQUIRED;
     private boolean trustForwardedHeaders;
     private boolean idempotencyEnabled = true;

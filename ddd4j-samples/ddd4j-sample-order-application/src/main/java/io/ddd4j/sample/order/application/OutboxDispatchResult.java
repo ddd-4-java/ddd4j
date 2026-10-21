@@ -94,10 +94,10 @@ public final class OutboxDispatchResult {
 
     @Override
     public int hashCode() {
-        int result = 0;
-        result = 31 * result + Integer.hashCode(attempted);
-        result = 31 * result + Integer.hashCode(published);
-        result = 31 * result + Integer.hashCode(failed);
+        int result = 1;
+        result = 59 * result + attempted;
+        result = 59 * result + published;
+        result = 59 * result + failed;
         return result;
     }
 

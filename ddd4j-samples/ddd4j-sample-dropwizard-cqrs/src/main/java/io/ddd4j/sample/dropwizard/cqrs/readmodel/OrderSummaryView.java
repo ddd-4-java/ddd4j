@@ -17,6 +17,7 @@ import java.util.Optional;
 import java.util.Objects;
 import java.util.Map;
 import java.util.List;
+import java.util.Arrays;
 import java.util.Collection;
 
 import io.ddd4j.core.cqrs.readmodel.ProjectionView;
@@ -68,16 +69,16 @@ public class OrderSummaryView implements ProjectionView<Object> {
 
     @Override
     public Collection<String> getEventTypes() {
-        return List.of("OrderCreatedEvent", "OrderPaidEvent");
+        return Arrays.asList("OrderCreatedEvent", "OrderPaidEvent");
     }
 
     @Override
     public void handleEvents(Collection<Object> events) {
         for (Object event : events) {
-            if (event instanceof OrderCreatedEvent created) {
-                handleCreated(created);
-            } else if (event instanceof OrderPaidEvent paid) {
-                handlePaid(paid);
+            if (event instanceof OrderCreatedEvent) {
+                handleCreated((OrderCreatedEvent) event);
+            } else if (event instanceof OrderPaidEvent) {
+                handlePaid((OrderPaidEvent) event);
             }
         }
     }

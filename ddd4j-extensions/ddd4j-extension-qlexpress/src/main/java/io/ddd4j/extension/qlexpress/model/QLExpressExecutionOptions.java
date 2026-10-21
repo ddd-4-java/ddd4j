@@ -18,6 +18,8 @@ import com.alibaba.qlexpress4.QLOptions;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -42,7 +44,7 @@ public final class QLExpressExecutionOptions {
     @Builder.Default
     private final long timeoutMillis = DEFAULT_TIMEOUT_MILLIS;
     @Builder.Default
-    private final Map<String, Object> attachments = Map.of();
+    private final Map<String, Object> attachments = Collections.emptyMap();
     @Builder.Default
     private final boolean cache = true;
     @Builder.Default
@@ -69,7 +71,7 @@ public final class QLExpressExecutionOptions {
      * @return 原生执行选项
      */
     public QLOptions toNativeOptions() {
-        Map<String, Object> safeAttachments = Objects.isNull(attachments) ? Map.of() : Map.copyOf(attachments);
+        Map<String, Object> safeAttachments = Objects.isNull(attachments) ? Collections.emptyMap() : Collections.unmodifiableMap(new HashMap<>(attachments));
         return QLOptions.builder()
                 .precise(precise)
                 .polluteUserContext(polluteUserContext)

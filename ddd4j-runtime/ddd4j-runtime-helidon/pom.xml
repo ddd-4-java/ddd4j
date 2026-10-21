@@ -16,6 +16,19 @@
     <description>ddd4j Runtime - Helidon MP 3 CDI 与 MicroProfile Config 接线。</description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
+    <dependencyManagement>
+        <dependencies>
+            <!-- Helidon MP 3 requires one Jersey 3 family; the root catalog also manages Jersey 2 consumers. -->
+            <dependency>
+                <groupId>org.glassfish.jersey</groupId>
+                <artifactId>jersey-bom</artifactId>
+                <version>3.1.11</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>io.ddd4j</groupId>

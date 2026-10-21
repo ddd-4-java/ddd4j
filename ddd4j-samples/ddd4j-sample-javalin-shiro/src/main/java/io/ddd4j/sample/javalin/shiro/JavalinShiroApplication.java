@@ -55,7 +55,7 @@ import java.util.Objects;
  * <p>Javalin 本身<b>没有 DI 容器</b>，使用 Google Guice 注入业务服务。
  * 同时，ddd4j 的 4 个核心 SPI（DomainEventPublisher / MQEventPublisher /
  * SubjectProvider / I18nProvider）需要手动注册到 {@link BaseContext} 才能被
- * 业务代码通过 {@code Contexts.inject} 查找到。
+ * 业务代码通过 {@link io.ddd4j.core.context.Contexts#getOrThrow(String, Class)} 查找到。
  *
  * <h3>Shiro 适配的特殊性</h3>
  * <p>Shiro 不同于 Sa-Token，它依赖一个<b>JVM 级 SecurityManager</b>（通过
@@ -187,7 +187,17 @@ public class JavalinShiroApplication {
 
     // ==================== 示例 SPI 实现（仅本示例使用） ====================
 
+    /**
+     * 空操作的领域事件发布器：仅记录事件日志，不做真实投递（示例用）。
+     *
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     */
     private static class NoOpDomainEventPublisher implements DomainEventPublisher {
+        /**
+         * 发布数据。
+         * @param <ID> 类型参数。
+         * @param event 事件消息。
+         */
         @Override
         public <ID extends io.ddd4j.core.ddd.event.EntityId> void publish(
                 io.ddd4j.core.ddd.event.DomainEvent<ID> event) {
@@ -197,6 +207,11 @@ public class JavalinShiroApplication {
             log.info("[DomainEvent] {}", event.getClass().getSimpleName());
         }
 
+        /**
+         * publishAll() 方法。
+         * @param <ID> 类型参数。
+         * @param events 领域事件集合。
+         */
         @Override
         public <ID extends io.ddd4j.core.ddd.event.EntityId> void publishAll(
                 java.util.Collection<io.ddd4j.core.ddd.event.DomainEvent<ID>> events) {
@@ -206,7 +221,18 @@ public class JavalinShiroApplication {
         }
     }
 
+    /**
+     * 默认国际化提供者：委托给内置默认实现解析消息键。
+     *
+     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+     */
     private static class DefaultI18nProvider implements I18nProvider {
+        /**
+         * 获取值。
+         * @param key 幂等键。
+         * @param args 命令行参数。
+         * @return 结果字符串。
+         */
         @Override
         public String getMessage(String key, Object... args) {
             return I18nProvider.DEFAULT.getMessage(key, args);

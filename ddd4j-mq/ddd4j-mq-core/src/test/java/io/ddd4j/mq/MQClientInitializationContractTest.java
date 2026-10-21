@@ -3,11 +3,6 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  */
 package io.ddd4j.mq;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.mq.event.MQEvent;
@@ -24,6 +19,8 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
@@ -44,6 +41,8 @@ class MQClientInitializationContractTest {
 
         assertTrue(built.isRequired());
         assertTrue(legacy.isRequired());
+        assertTrue(built.supports().isEmpty());
+        assertFalse(MQListener.builder().required(false).build().isRequired());
     }
 
     @Test
@@ -59,6 +58,62 @@ class MQClientInitializationContractTest {
         assertNull(BaseContext.get(MQEvent.MQ_EVENT_PUBLISHER));
         assertNull(BaseContext.get(MQEvent.MQ_PROPERTIES));
         assertNull(BaseContext.get(MQClient.MQ_SERIALIZATION));
+    }
+
+    @Test
+    void requiredListenerFailureRestoresPreviouslyRegisteredPublisher() throws Exception {
+        Map<String, Consumer<MQEvent>> publishers = new ConcurrentHashMap<>();
+        Consumer<MQEvent> previousPublisher = event -> { };
+        publishers.put("test", previousPublisher);
+        BaseContext.inject(MQEvent.MQ_EVENT_PUBLISHER, publishers);
+        TestClient client = new TestClient(false);
+
+        assertThrows(MQInitializationException.class,
+                () -> client.init(Collections.singletonList(listener(true, "required")),
+                        properties(), serialization(), null));
+
+        assertSame(previousPublisher, publishers.get("test"));
+        assertSame(publishers, BaseContext.get(MQEvent.MQ_EVENT_PUBLISHER));
+    }
+
+    @Test
+    void closingClientUnregistersItsPublisher() {
+        TestClient client = new TestClient();
+        client.init(Collections.emptyList(), properties(), serialization(), null);
+        assertNotNull(BaseContext.get(MQEvent.MQ_EVENT_PUBLISHER));
+
+        client.close();
+
+        assertNull(BaseContext.get(MQEvent.MQ_EVENT_PUBLISHER));
+    }
+
+    @Test
+    void closingEarlierClientDoesNotRemoveLaterPublisher() {
+        TestClient earlier = new TestClient();
+        TestClient later = new TestClient();
+        earlier.init(Collections.emptyList(), properties(), serialization(), null);
+        later.init(Collections.emptyList(), properties(), serialization(), null);
+        Map<String, Consumer<MQEvent>> publishers = BaseContext.get(MQEvent.MQ_EVENT_PUBLISHER);
+        Consumer<MQEvent> activePublisher = publishers.get("test");
+
+        earlier.close();
+        assertSame(activePublisher, publishers.get("test"));
+
+        later.close();
+        assertNull(BaseContext.get(MQEvent.MQ_EVENT_PUBLISHER));
+    }
+
+    @Test
+    void failedReplacementDoesNotRestorePublisherAlreadyClosedDuringInitialization() throws Exception {
+        TestClient earlier = new TestClient();
+        earlier.init(Collections.emptyList(), properties(), serialization(), null);
+        TestClient failing = new TestClient(false).beforeConsumerInit(earlier::close);
+
+        assertThrows(MQInitializationException.class,
+                () -> failing.init(Collections.singletonList(listener(true, "required")),
+                        properties(), serialization(), null));
+
+        assertNull(BaseContext.get(MQEvent.MQ_EVENT_PUBLISHER));
     }
 
     @Test
@@ -132,6 +187,7 @@ class MQClientInitializationContractTest {
     private static final class TestClient implements MQClient {
         private final boolean[] results;
         private boolean failProducer;
+        private Runnable consumerInitHook = () -> { };
         private final AtomicInteger attempts = new AtomicInteger();
         private final AtomicInteger closedResources = new AtomicInteger();
         private final MQClientLifecycle lifecycle = new MQClientLifecycle();
@@ -143,6 +199,11 @@ class MQClientInitializationContractTest {
 
         private TestClient withProducerFailure() {
             failProducer = true;
+            return this;
+        }
+
+        private TestClient beforeConsumerInit(Runnable hook) {
+            consumerInitHook = hook;
             return this;
         }
 
@@ -173,6 +234,7 @@ class MQClientInitializationContractTest {
 
         @Override
         public boolean initConsumer(MQListener listener, MQProperties properties) {
+            consumerInitHook.run();
             int index = attempts.getAndIncrement();
             lifecycle.register("consumer-" + index, closedResources::incrementAndGet);
             return results[index];

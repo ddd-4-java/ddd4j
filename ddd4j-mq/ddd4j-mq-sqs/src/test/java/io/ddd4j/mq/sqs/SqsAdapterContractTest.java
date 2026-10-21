@@ -13,9 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.mq.sqs;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.mock;
 
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.mq.MQClient;
@@ -27,6 +24,7 @@ import io.ddd4j.mq.message.MessageHeaders;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.sqs.SqsClient;
+import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
 import software.amazon.awssdk.services.sqs.model.Message;
 import software.amazon.awssdk.services.sqs.model.MessageAttributeValue;
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
@@ -35,9 +33,12 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentCaptor.forClass;
 import static org.mockito.ArgumentMatchers.any;
@@ -48,6 +49,38 @@ class SqsAdapterContractTest {
     @AfterEach
     void clearContext() {
         BaseContext.clear();
+    }
+
+    @Test
+    void successfulNativeSendDoesNotSerializeAgainForLogging() {
+        SqsClient client = mock(SqsClient.class);
+        SqsMQClient adapter = new SqsMQClient(client);
+        AtomicInteger serializations = new AtomicInteger();
+        BaseContext.inject(MQClient.MQ_SERIALIZATION, new MQEventSerialization() {
+            @Override
+            public <S, T> T deserialize(S src, Class<T> dist) {
+                return null;
+            }
+
+            @Override
+            @SuppressWarnings("unchecked")
+            public <T> T serialize(Object src) {
+                if (serializations.incrementAndGet() > 1) {
+                    throw new IllegalStateException("serialized twice after native send");
+                }
+                return (T) "{}";
+            }
+        });
+        MQEvent event = new MQEvent();
+        event.setTopic("http://queue");
+
+        try {
+            adapter.initProducer(new SqsProperties()).accept(event);
+            verify(client, times(1)).sendMessage(any(SendMessageRequest.class));
+            assertEquals(1, serializations.get());
+        } finally {
+            adapter.close();
+        }
     }
 
     @Test
@@ -138,12 +171,13 @@ class SqsAdapterContractTest {
 
     @Test
     void shouldPreferStableMessageIdAndResetVisibilityForRedelivery() {
+        Map<String, MessageAttributeValue> attributes = new HashMap<>();
+        attributes.put(MessageHeaders.HEADER_MESSAGE_ID, attribute("stable-id"));
+        attributes.put(MQDeliveryHeaders.CORRELATION_ID, attribute("correlation-1"));
         Message message = Message.builder()
                 .messageId("transport-id")
                 .receiptHandle("receipt")
-                .messageAttributes(Map.of(
-                        MessageHeaders.HEADER_MESSAGE_ID, attribute("stable-id"),
-                        MQDeliveryHeaders.CORRELATION_ID, attribute("correlation-1")))
+                .messageAttributes(attributes)
                 .build();
         SqsClient client = mock(SqsClient.class);
         SqsAcknowledgment acknowledgment = new SqsAcknowledgment(client, message, "http://queue", true);
@@ -154,6 +188,24 @@ class SqsAdapterContractTest {
         acknowledgment.nack(true);
 
         verify(client).changeMessageVisibility(any(java.util.function.Consumer.class));
+        assertTrue(acknowledgment.isAcknowledged());
+    }
+
+    @Test
+    void disabledRequeueDoesNotDeleteRequestedRedelivery() {
+        Message message = Message.builder().messageId("transport-id").receiptHandle("receipt").build();
+        SqsClient client = mock(SqsClient.class);
+        SqsAcknowledgment acknowledgment = new SqsAcknowledgment(client, message, "http://queue", false);
+
+        assertThrows(UnsupportedOperationException.class, () -> acknowledgment.nack(true));
+        assertThrows(UnsupportedOperationException.class, () -> acknowledgment.reject(true));
+        assertThrows(UnsupportedOperationException.class, () -> acknowledgment.recover(true));
+        assertFalse(acknowledgment.isAcknowledged());
+        verifyNoInteractions(client);
+
+        acknowledgment.nack(false);
+
+        verify(client).deleteMessage(any(DeleteMessageRequest.class));
         assertTrue(acknowledgment.isAcknowledged());
     }
 

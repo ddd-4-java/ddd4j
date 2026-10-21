@@ -14,6 +14,7 @@
  */
 package io.ddd4j.sample.javalin.shiro.order.web;
 
+import jakarta.inject.Inject;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -30,6 +31,7 @@ import io.ddd4j.sample.javalin.shiro.order.web.dto.OrderResponse;
 import io.javalin.apibuilder.EndpointGroup;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.Objects;
 
 import static io.javalin.apibuilder.ApiBuilder.get;
@@ -65,6 +67,7 @@ public class OrderResource {
      *
      * @param orderApplicationService 订单应用服务
      */
+    @Inject
     public OrderResource(OrderApplicationService orderApplicationService) {
         this.orderApplicationService = Objects.requireNonNull(orderApplicationService, "orderApplicationService must not be null");
     }
@@ -133,7 +136,7 @@ public class OrderResource {
             get("/orders", ctx -> {
                 List<OrderResponse> items = orderApplicationService.listAll().stream()
                         .map(OrderResponse::from)
-                        .toList();
+                        .collect(Collectors.toList());
                 ctx.json(R.ok(items));
             });
 
@@ -213,9 +216,9 @@ public class OrderResource {
 
         @Override
         public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(amount);
-            result = 31 * result + Objects.hashCode(currency);
+            int result = 1;
+            result = 59 * result + (Objects.isNull(amount) ? 43 : amount.hashCode());
+            result = 59 * result + (Objects.isNull(currency) ? 43 : currency.hashCode());
             return result;
         }
 

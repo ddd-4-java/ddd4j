@@ -22,6 +22,7 @@ import java.util.Objects;
 
 import io.ddd4j.core.constant.EventStoreConstants;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
+import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.StoredEvent;
 import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.DomainEvent;
@@ -40,6 +41,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * PostgreSQL 容器轨：验证 JDBI EventStore 的真实 DDL、持久化与读取。
@@ -69,16 +71,64 @@ class JdbiEventStorePostgresIT {
     @Test
     void appendAndReadShouldRoundTripTypedEventOnPostgres() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-pg-1");
-        OrderCreatedEvent event = new OrderCreatedEvent(orderId);
-
-        eventStore.append(ORDER_TYPE, orderId, List.of(event), 0L);
+        eventStore.append(ORDER_TYPE, orderId,
+                List.of(new OrderCreatedEvent(orderId), new OrderCreatedEvent(orderId)), 0L);
 
         List<StoredEvent> events = eventStore.read(ORDER_TYPE, orderId);
-        assertThat(events).hasSize(1);
+        assertThat(events).hasSize(2);
+        assertThat(events).extracting(StoredEvent::version).containsExactly(1L, 2L);
         assertThat(events.get(0).aggregateType()).isEqualTo(ORDER_TYPE);
         assertThat(events.get(0).aggregateId().asString()).isEqualTo(orderId.asString());
         assertThat(events.get(0).payload()).isInstanceOf(OrderCreatedEvent.class);
-        assertThat(eventStore.readAll(0L, 1)).extracting(StoredEvent::position).hasSize(1);
+        assertThat(events.get(1).aggregateId().asString()).isEqualTo(orderId.asString());
+        assertThat(events.get(1).payload()).isInstanceOf(OrderCreatedEvent.class);
+        assertThat(eventStore.readAll(0L, 2)).extracting(StoredEvent::position).hasSize(2);
+    }
+
+    @Test
+    void appendWithStaleVersionShouldRejectOnPostgres() {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-pg-2");
+        eventStore.append(ORDER_TYPE, orderId, List.of(new OrderCreatedEvent(orderId)), 0);
+
+        assertThrows(AggregateVersionConflictException.class,
+                () -> eventStore.append(ORDER_TYPE, orderId,
+                        List.of(new OrderCreatedEvent(orderId)), 0));
+    }
+
+    @Test
+    void timestampShouldRoundTripAcrossTimezonesOnPostgres() throws Exception {
+        JdbiTimestampTimezoneContractTest.assertUtcRoundTrip(jdbi);
+    }
+
+    @Test
+    void positionConstraintUsesSharedNameOnPostgres() {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-pg-position-schema");
+        eventStore.append(ORDER_TYPE, orderId, List.of(new OrderCreatedEvent(orderId)), 0);
+
+        List<String> names = jdbi.withHandle(handle -> handle.createQuery(
+                        "select constraint_name from information_schema.table_constraints "
+                                + "where lower(table_name) = lower(:tableName) "
+                                + "and constraint_type = 'UNIQUE'")
+                .bind("tableName", EventStoreConstants.TABLE_NAME)
+                .mapTo(String.class)
+                .list());
+        assertThat(names).contains("uk_position");
+    }
+
+    @Test
+    void payloadColumnShouldUsePortableTextType() {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-pg-schema");
+        eventStore.append(ORDER_TYPE, orderId, List.of(new OrderCreatedEvent(orderId)), 0);
+
+        String dataType = jdbi.withHandle(handle -> handle.createQuery(
+                        "select data_type from information_schema.columns "
+                                + "where lower(table_name) = lower(:tableName) "
+                                + "and lower(column_name) = lower(:columnName)")
+                .bind("tableName", EventStoreConstants.TABLE_NAME)
+                .bind("columnName", EventStoreConstants.COLUMN_PAYLOAD)
+                .mapTo(String.class)
+                .one());
+        assertThat(dataType).isEqualTo("text");
     }
 
     private final static class TestAggregateRootId implements AggregateRootId {

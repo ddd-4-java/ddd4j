@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 package io.ddd4j.sample.javalin.shiro.goods.domain;
-import io.ddd4j.kit.lang.StrKit;
+import io.ddd4j.kit.lang.SFunction;
 
 import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.repository.Repository;
@@ -85,7 +85,7 @@ public class GoodsQuery extends Query<Goods> {
         return this;
     }
 
-    private void applyOrder(boolean desc, io.ddd4j.kit.lang.SFunction<Goods, ?> property) {
+    private void applyOrder(boolean desc, SFunction<Goods, ?> property) {
         if (desc) {
             orderByDesc(property);
             return;

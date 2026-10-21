@@ -14,14 +14,6 @@
  */
 package io.ddd4j.sample.javalin;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.io.InvalidObjectException;
-
-import java.io.ObjectStreamException;
-
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.ddd4j.cache.subject.InMemorySubject;
 import io.ddd4j.cache.subject.InMemorySubjectProvider;
@@ -99,8 +91,6 @@ public final class JavalinSample {
     /** 可关闭的 Javalin 示例运行实例。 */
     public final static class JavalinApplication implements AutoCloseable {
 
-        private static final long serialVersionUID = 0L;
-
         private final Javalin app;
 
         private final String token;
@@ -112,8 +102,7 @@ public final class JavalinSample {
          * @param token 演示登录令牌
          * @param spiScope SPI 注册作用域
          */
-        @JsonCreator()
-        public JavalinApplication(@JsonProperty("app") Javalin app, @JsonProperty("token") String token, @JsonProperty("spiScope") SpiRegistrationScope spiScope) {
+        public JavalinApplication(Javalin app, String token, SpiRegistrationScope spiScope) {
             Objects.requireNonNull(app, "app must not be null");
             Objects.requireNonNull(token, "token must not be null");
             Objects.requireNonNull(spiScope, "spiScope must not be null");
@@ -132,31 +121,18 @@ public final class JavalinSample {
         }
 
         /** @return Javalin 服务实例 */
-        @JsonProperty("app")
         public Javalin app() {
             return app;
         }
 
         /** @return 演示登录令牌 */
-        @JsonProperty("token")
         public String token() {
             return token;
         }
 
         /** @return SPI 注册作用域 */
-        @JsonProperty("spiScope")
         public SpiRegistrationScope spiScope() {
             return spiScope;
-        }
-
-        private Object readResolve() throws ObjectStreamException {
-            try {
-                return new JavalinApplication(app, token, spiScope);
-            } catch (RuntimeException cause) {
-                InvalidObjectException failure = new InvalidObjectException(cause.getMessage());
-                failure.initCause(cause);
-                throw failure;
-            }
         }
 
         @Override

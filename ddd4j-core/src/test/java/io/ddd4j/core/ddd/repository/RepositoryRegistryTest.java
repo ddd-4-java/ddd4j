@@ -17,6 +17,7 @@ package io.ddd4j.core.ddd.repository;
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.cqrs.query.Query;
+import io.ddd4j.core.ddd.event.StringEntityId;
 import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.core.exception.BizRuntimeException;
 import org.junit.jupiter.api.AfterEach;
@@ -24,15 +25,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
- * {@link RepositoryRegistry} tests.
- *
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * 仓储注册表的聚合、查询、上下文优先级及清理契约测试。
  */
 class RepositoryRegistryTest {
 
@@ -44,6 +48,7 @@ class RepositoryRegistryTest {
         BaseContext.clear();
         ThreadContext.clear();
         RepositoryRegistry.unregister(Order.class);
+        RepositoryRegistry.unregister(TestAggregate.class);
         RepositoryRegistry.unregisterQuery(OrderQuery.class);
         globalRepo = new StubOrderRepository("global");
         threadRepo = new StubOrderRepository("thread");
@@ -54,6 +59,7 @@ class RepositoryRegistryTest {
         BaseContext.clear();
         ThreadContext.clear();
         RepositoryRegistry.unregister(Order.class);
+        RepositoryRegistry.unregister(TestAggregate.class);
         RepositoryRegistry.unregisterQuery(OrderQuery.class);
     }
 
@@ -129,6 +135,20 @@ class RepositoryRegistryTest {
     }
 
     @Test
+    void clear_shouldRemoveAllRegistrations() {
+        RepositoryRegistry.register(Order.class, OrderQuery.class, globalRepo);
+        assertThat(RepositoryRegistry.repository(Order.class)).isSameAs(globalRepo);
+        assertThat(RepositoryRegistry.repositoryForQuery(OrderQuery.class)).isSameAs(globalRepo);
+
+        RepositoryRegistry.clear();
+
+        assertThatThrownBy(() -> RepositoryRegistry.repository(Order.class))
+                .isInstanceOf(BizRuntimeException.class);
+        assertThatThrownBy(() -> RepositoryRegistry.repositoryForQuery(OrderQuery.class))
+                .isInstanceOf(BizRuntimeException.class);
+    }
+
+    @Test
     void repository_shouldFallbackToBaseContextAfterThreadRemoved() {
         RepositoryRegistry.register(Order.class, globalRepo);
         ThreadContext.inject(RepositoryRegistry.key(Order.class), Repository.class, threadRepo);
@@ -177,6 +197,46 @@ class RepositoryRegistryTest {
         @Override
         public void delete(Order aggregate) {
             // no-op
+        }
+    }
+
+    @Test
+    void shouldRegisterResolveAndUnregisterRepository() {
+        InMemoryRepository repository = new InMemoryRepository();
+        RepositoryRegistry.register(TestAggregate.class, repository);
+        assertSame(repository, RepositoryRegistry.repository(TestAggregate.class));
+        TestAggregate aggregate = new TestAggregate(new StringEntityId("a-1"));
+        repository.save(aggregate);
+        assertEquals(aggregate, RepositoryRegistry.repository(TestAggregate.class).findById(aggregate.id()).get());
+        RepositoryRegistry.unregister(TestAggregate.class);
+        assertThrows(BizRuntimeException.class, () -> RepositoryRegistry.repository(TestAggregate.class));
+    }
+
+    private static final class TestAggregate extends AggregateRoot<StringEntityId> {
+        private final StringEntityId id;
+
+        private TestAggregate(StringEntityId id) {
+            this.id = id;
+        }
+
+        @Override
+        public StringEntityId id() {
+            return id;
+        }
+    }
+
+    private static final class InMemoryRepository implements Repository<TestAggregate, StringEntityId> {
+        private final Map<StringEntityId, TestAggregate> values = new HashMap<StringEntityId, TestAggregate>();
+
+        @Override
+        public Optional<TestAggregate> findById(StringEntityId id) {
+            return Optional.ofNullable(values.get(id));
+        }
+
+        @Override
+        public TestAggregate save(TestAggregate aggregate) {
+            values.put(aggregate.id(), aggregate);
+            return aggregate;
         }
     }
 }

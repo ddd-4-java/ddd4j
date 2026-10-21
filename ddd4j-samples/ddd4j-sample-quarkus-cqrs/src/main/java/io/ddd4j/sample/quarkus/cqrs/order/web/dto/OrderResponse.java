@@ -57,7 +57,7 @@ public final class OrderResponse {
     public static OrderResponse from(Order order) {
         Order source = Objects.requireNonNull(order, "order must not be null");
         Money total = source.totalAmount();
-        return new OrderResponse(source.id(), source.orderNo(), source.buyerId(), source.buyerName(), source.status(), total.amount(), total.currency(), source.lines().stream().map(OrderLineResponse::from).toList());
+        return new OrderResponse(source.id(), source.orderNo(), source.buyerId(), source.buyerName(), source.status(), total.amount(), total.currency(), java.util.Collections.unmodifiableList(source.lines().stream().map(OrderLineResponse::from).collect(java.util.stream.Collectors.toList())));
     }
 
     /**

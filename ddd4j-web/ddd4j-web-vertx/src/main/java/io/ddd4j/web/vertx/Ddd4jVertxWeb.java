@@ -24,10 +24,6 @@ import io.ddd4j.web.core.context.WebRequestContextFactory;
 import io.ddd4j.web.core.context.WebRequestContext;
 import io.ddd4j.web.core.context.WebHeaders;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-
 import java.util.Objects;
 
 import io.ddd4j.core.health.RuntimeReadinessRegistry;
@@ -306,54 +302,26 @@ public final class Ddd4jVertxWeb {
         }).onFailure(exception -> log.error("Unable to close Vert.x request state", exception));
     }
 
-    private final static class AuthenticationResult {
-
-        private static final long serialVersionUID = 0L;
+    private static final class AuthenticationResult {
 
         private final Optional<BearerSubjectAuthenticator.Authentication> authentication;
 
         private final Optional<WebIdempotencyLifecycle.Scope> idempotencyScope;
 
-        @JsonCreator()
-        private AuthenticationResult(@JsonProperty("authentication") Optional<BearerSubjectAuthenticator.Authentication> authentication, @JsonProperty("idempotencyScope") Optional<WebIdempotencyLifecycle.Scope> idempotencyScope) {
+        private AuthenticationResult(Optional<BearerSubjectAuthenticator.Authentication> authentication,
+                                     Optional<WebIdempotencyLifecycle.Scope> idempotencyScope) {
             this.authentication = authentication;
             this.idempotencyScope = idempotencyScope;
         }
 
-        @JsonProperty("authentication")
-        public Optional<BearerSubjectAuthenticator.Authentication> authentication() {
+        private Optional<BearerSubjectAuthenticator.Authentication> authentication() {
             return authentication;
         }
 
-        @JsonProperty("idempotencyScope")
-        public Optional<WebIdempotencyLifecycle.Scope> idempotencyScope() {
+        private Optional<WebIdempotencyLifecycle.Scope> idempotencyScope() {
             return idempotencyScope;
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            AuthenticationResult other = (AuthenticationResult) obj;
-            return Objects.equals(this.authentication, other.authentication) && Objects.equals(this.idempotencyScope, other.idempotencyScope);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(authentication);
-            result = 31 * result + Objects.hashCode(idempotencyScope);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "AuthenticationResult[authentication=" + authentication + ", idempotencyScope=" + idempotencyScope + "]";
-        }
     }
 
     private static final class RequestState {

@@ -1,0 +1,111 @@
+"""API 归一化只能消除允许的命名空间变化，不能抹去参数类型身份。"""
+
+import importlib.util
+import pathlib
+import unittest
+from unittest.mock import patch
+
+
+spec = importlib.util.spec_from_file_location(
+    "structure_api_parity",
+    pathlib.Path(__file__).with_name("verify-three-line-structure-api-parity.py"),
+)
+parity = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(parity)
+
+
+class DescriptorNormalizationTest(unittest.TestCase):
+    OBJECT_MAPPER_MAPPING = {
+        "id": "jackson-objectmapper-namespace",
+        "types": {
+            "1.0.x": "com.fasterxml.jackson.databind.ObjectMapper",
+            "2.0.x": "com.fasterxml.jackson.databind.ObjectMapper",
+            "3.0.x": "tools.jackson.databind.ObjectMapper",
+        },
+        "reason": "exact Jackson 2/3 ObjectMapper adaptation",
+        "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/eventstore/jackson/EventPayloadSerializerTest.java",
+    }
+
+    def parse_parameter_table(self, table):
+        output = """public class example.Adapter {
+  public java.lang.Object handle(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Ljava/lang/Object;
+    flags: (0x1041) ACC_PUBLIC, ACC_BRIDGE, ACC_SYNTHETIC
+""" + table + "\n}\n"
+        with patch.object(parity, "run", return_value=output):
+            return parity.javap_api({"module|example/Adapter": pathlib.Path("Adapter.class")})
+
+    def test_unnamed_parameter_is_not_a_parameter_named_no(self):
+        unnamed = "    MethodParameters:\n      Name                           Flags\n      <no name>                      synthetic\n"
+        self.assertEqual(self.parse_parameter_table(""), self.parse_parameter_table(unnamed))
+
+    def test_real_parameter_name_is_not_erased(self):
+        named = "    MethodParameters:\n      Name                           Flags\n      request\n"
+        self.assertNotEqual(self.parse_parameter_table(""), self.parse_parameter_table(named))
+
+    def test_equivalent_jackson_namespace_migration(self):
+        self.assertEqual(
+            parity.normalize_descriptor("(Lcom/fasterxml/jackson/databind/ObjectMapper;)V",
+                                        [self.OBJECT_MAPPER_MAPPING], "1.0.x"),
+            parity.normalize_descriptor("(Ltools/jackson/databind/ObjectMapper;)V",
+                                        [self.OBJECT_MAPPER_MAPPING], "3.0.x"),
+        )
+
+    def test_unmapped_jackson_types_remain_different(self):
+        self.assertNotEqual(
+            parity.normalize_descriptor("(Lcom/fasterxml/jackson/databind/JsonNode;)V",
+                                        [self.OBJECT_MAPPER_MAPPING], "1.0.x"),
+            parity.normalize_descriptor("(Ltools/jackson/databind/JsonNode;)V"),
+        )
+
+    def test_parameter_order_remains_observable(self):
+        self.assertNotEqual(
+            parity.normalize_descriptor("(Ltools/jackson/databind/JsonNode;Ltools/jackson/core/JsonParser;)V"),
+            parity.normalize_descriptor("(Ltools/jackson/core/JsonParser;Ltools/jackson/databind/JsonNode;)V"),
+        )
+
+    def test_array_and_return_type_preserve_identity(self):
+        self.assertEqual(
+            "([LDDD4J_MAPPED/jackson-objectmapper-namespace;)Ltools/jackson/core/JsonParser;",
+            parity.normalize_descriptor(
+                "([Lcom/fasterxml/jackson/databind/ObjectMapper;)Ltools/jackson/core/JsonParser;",
+                [self.OBJECT_MAPPER_MAPPING], "1.0.x"),
+        )
+
+
+class StaticImportNormalizationTest(unittest.TestCase):
+    BASE = ("package example; import static org.junit.jupiter.api.Assertions.*; "
+            "class ContractTest { void check() { assertTrue(true); } }")
+
+    def test_explicit_import_covered_by_same_owner_wildcard_is_equivalent(self):
+        redundant = self.BASE.replace(
+            "import static org.junit.jupiter.api.Assertions.*;",
+            "import static org.junit.jupiter.api.Assertions.assertTrue; "
+            "import static org.junit.jupiter.api.Assertions.*;")
+        self.assertEqual(parity.java_tokens_with_normalized_imports(self.BASE),
+                         parity.java_tokens_with_normalized_imports(redundant))
+
+    def test_different_owner_and_changed_assertion_remain_distinct(self):
+        different_owner = self.BASE.replace(
+            "import static org.junit.jupiter.api.Assertions.*;",
+            "import static example.Other.assertTrue; "
+            "import static org.junit.jupiter.api.Assertions.*;")
+        changed_assertion = self.BASE.replace("assertTrue(true)", "assertTrue(false)")
+        self.assertNotEqual(parity.java_tokens_with_normalized_imports(self.BASE),
+                            parity.java_tokens_with_normalized_imports(different_owner))
+        self.assertNotEqual(parity.java_tokens_with_normalized_imports(self.BASE),
+                            parity.java_tokens_with_normalized_imports(changed_assertion))
+
+    def test_explicit_import_with_multiple_static_wildcards_remains_distinct(self):
+        wildcards = ("package example; import static example.First.*; "
+                     "import static example.Second.*; class ContractTest { "
+                     "void check() { select(\"value\"); } }")
+        explicit = wildcards.replace("import static example.First.*;",
+                                     "import static example.First.select; "
+                                     "import static example.First.*;")
+        self.assertNotEqual(parity.java_tokens_with_normalized_imports(wildcards),
+                            parity.java_tokens_with_normalized_imports(explicit))
+
+
+if __name__ == "__main__":
+    unittest.main()

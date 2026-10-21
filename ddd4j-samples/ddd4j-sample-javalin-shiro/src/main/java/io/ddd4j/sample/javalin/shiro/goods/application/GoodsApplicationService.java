@@ -18,7 +18,6 @@ import io.ddd4j.core.api.Page;
 import io.ddd4j.core.exception.BizRuntimeException;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.sample.javalin.shiro.goods.domain.*;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
@@ -32,7 +31,6 @@ import java.util.concurrent.atomic.AtomicLong;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-@ApplicationScoped
 public class GoodsApplicationService {
 
     private static final AtomicLong ID_GENERATOR = new AtomicLong(1000L);

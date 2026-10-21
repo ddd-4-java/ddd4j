@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Map;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -124,5 +125,29 @@ class OrderApplicationValueContractTest {
         assertEquals(sameMessage, message);
         assertEquals(sameMessage.hashCode(), message.hashCode());
         assertTrue(message.toString().startsWith("OutboxMessage("));
+    }
+
+    @Test
+    void valuesRetainThreeLineHashContract() {
+        BigDecimal price = new BigDecimal("12.50");
+        Instant occurredAt = Instant.parse("2026-01-01T00:00:00Z");
+
+        assertEquals(valueHash("O-1", null, "Alice"),
+                new CreateOrderCommand("O-1", null, "Alice").hashCode());
+        assertEquals(valueHash(2, "id-1", null, "Coffee", price),
+                new AddOrderLineCommand("id-1", null, "Coffee", 2, price).hashCode());
+        assertEquals(valueHash("id-1", "O-1", null, "Alice", OrderStatus.DRAFT, price),
+                new OrderReadModel("id-1", "O-1", null, "Alice", OrderStatus.DRAFT, price).hashCode());
+        assertEquals(valueHash("msg-1", "id-1", "OrderCreated", "{}", occurredAt),
+                new OutboxMessage("msg-1", "id-1", "OrderCreated", "{}", occurredAt).hashCode());
+        assertEquals(valueHash(3, 2, 1), new OutboxDispatchResult(3, 2, 1).hashCode());
+    }
+
+    private static int valueHash(Object... fields) {
+        int result = 1;
+        for (Object field : fields) {
+            result = 59 * result + (Objects.isNull(field) ? 43 : field.hashCode());
+        }
+        return result;
     }
 }

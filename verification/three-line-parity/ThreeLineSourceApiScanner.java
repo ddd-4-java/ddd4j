@@ -1,6 +1,7 @@
 import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.CompilationUnitTree;
 import com.sun.source.tree.MethodTree;
+import com.sun.source.tree.AnnotationTree;
 import com.sun.source.tree.Tree;
 import com.sun.source.util.JavacTask;
 import com.sun.source.util.TreeScanner;
@@ -106,10 +107,50 @@ public final class ThreeLineSourceApiScanner {
             types.addLast(name);
             interfaces.addLast(type.getKind() == Tree.Kind.INTERFACE
                     || type.getKind() == Tree.Kind.ANNOTATION_TYPE);
+            boolean hasConstructor = type.getMembers().stream()
+                    .anyMatch(member -> member instanceof MethodTree
+                            && Objects.isNull(((MethodTree) member).getReturnType()));
+            boolean lombokNoArgs = hasAnnotation(type, "NoArgsConstructor");
+            boolean lombokOtherConstructor = hasAnnotation(type, "Value")
+                    || hasAnnotation(type, "Data")
+                    || hasAnnotation(type, "AllArgsConstructor")
+                    || hasAnnotation(type, "RequiredArgsConstructor")
+                    || hasAnnotation(type, "Builder")
+                    || hasAnnotation(type, "SuperBuilder");
+            if (type.getKind() == Tree.Kind.CLASS
+                    && (lombokNoArgs || (!hasConstructor && !lombokOtherConstructor))
+                    && !hasExplicitNoArgs(type)) {
+                StringBuilder owner = new StringBuilder(packageName);
+                for (String part : types) {
+                    if (owner.length() > 0) {
+                        owner.append('.');
+                    }
+                    owner.append(part);
+                }
+                String visibility = flags.contains(Modifier.PROTECTED) ? "protected" : "public";
+                System.out.println(path + "\t" + owner + "#<init>()\t<init>|" + visibility + "|");
+            }
             super.visitClass(type, ignored);
             interfaces.removeLast();
             types.removeLast();
             return null;
+        }
+
+        private static boolean hasAnnotation(ClassTree type, String simpleName) {
+            for (AnnotationTree annotation : type.getModifiers().getAnnotations()) {
+                String name = annotation.getAnnotationType().toString();
+                if (name.equals(simpleName) || name.endsWith("." + simpleName)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private static boolean hasExplicitNoArgs(ClassTree type) {
+            return type.getMembers().stream()
+                    .anyMatch(member -> member instanceof MethodTree
+                            && Objects.isNull(((MethodTree) member).getReturnType())
+                            && ((MethodTree) member).getParameters().isEmpty());
         }
 
         @Override
@@ -137,6 +178,13 @@ public final class ThreeLineSourceApiScanner {
             String methodName = Objects.isNull(method.getReturnType()) ? "<init>" : method.getName().toString();
             String returnType = Objects.isNull(method.getReturnType()) ? "<init>"
                     : compact(method.getReturnType().toString());
+            if ("equals".equals(methodName) && "boolean".equals(returnType)
+                    && parameterTypes.size() == 1
+                    && ("Object".equals(parameterTypes.get(0))
+                    || "java.lang.Object".equals(parameterTypes.get(0)))) {
+                // Object.equals 的形参名不参与覆写契约；与编译 API 门禁保持一致。
+                parameterNames.clear();
+            }
             String visibility = flags.contains(Modifier.PROTECTED) ? "protected" : "public";
             String key = owner + "#" + methodName + "(" + String.join(",", parameterTypes) + ")";
             String value = returnType + "|" + visibility + "|" + String.join(",", parameterNames);

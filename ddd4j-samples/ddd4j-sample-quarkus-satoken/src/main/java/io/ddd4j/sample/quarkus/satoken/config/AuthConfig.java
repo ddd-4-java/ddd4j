@@ -22,6 +22,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Singleton;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -59,17 +61,17 @@ public class AuthConfig {
             @Override
             public List<String> getPermissionList(AuthPrincipal principal) {
                 if ("10001".equals(String.valueOf(principal.getLoginId()))) {
-                    return List.of("user:add", "user:delete", "user:list");
+                    return Collections.unmodifiableList(Arrays.asList("user:add", "user:delete", "user:list"));
                 }
-                return List.of("user:list");
+                return Collections.unmodifiableList(Arrays.asList("user:list"));
             }
 
             @Override
             public List<String> getRoleList(AuthPrincipal principal) {
                 if ("10001".equals(String.valueOf(principal.getLoginId()))) {
-                    return List.of("admin", "user");
+                    return Collections.unmodifiableList(Arrays.asList("admin", "user"));
                 }
-                return List.of("user");
+                return Collections.unmodifiableList(Arrays.asList("user"));
             }
         };
     }

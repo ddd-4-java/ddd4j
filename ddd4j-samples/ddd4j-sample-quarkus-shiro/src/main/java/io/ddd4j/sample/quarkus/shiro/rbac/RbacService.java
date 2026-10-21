@@ -411,7 +411,7 @@ public class RbacService {
 
     private List<AuthPrincipal.RolePair> buildRolePairs(Set<String> roleCodes) {
         if (CollKit.isEmpty(roleCodes)) {
-            return List.of();
+            return Collections.emptyList();
         }
         List<AuthPrincipal.RolePair> pairs = new ArrayList<>();
         for (String code : roleCodes) {
@@ -429,7 +429,7 @@ public class RbacService {
 
     private Set<String> aggregatePermissions(Set<String> roleCodes) {
         if (CollKit.isEmpty(roleCodes)) {
-            return Set.of();
+            return Collections.emptySet();
         }
         Set<String> aggregated = new HashSet<>();
         for (String code : roleCodes) {

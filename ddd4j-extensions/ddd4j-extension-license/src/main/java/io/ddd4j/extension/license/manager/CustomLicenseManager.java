@@ -20,6 +20,7 @@ import io.ddd4j.extension.license.machine.DefaultLicenseMachineInfoProvider;
 import io.ddd4j.extension.license.machine.LicenseMachineInfoProvider;
 import io.ddd4j.kit.lang.StrKit;
 
+import java.util.Collections;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
@@ -77,7 +78,7 @@ public class CustomLicenseManager {
             throw new IllegalStateException("MAC 校验失败: 当前机器地址不在授权范围内");
         }
         if (Objects.nonNull(expected.getSn())
-                && !matchesAny(expected.getSn(), Set.of(machineInfoProvider.serialNumber()), this::normalizeText)) {
+                && !matchesAny(expected.getSn(), Collections.singleton(machineInfoProvider.serialNumber()), this::normalizeText)) {
             throw new IllegalStateException("SN 校验失败: 当前机器序列号不在授权范围内");
         }
     }

@@ -65,7 +65,7 @@ class RbacResourceTest {
         newUser.put("username", username);
         newUser.put("displayName", displayName);
         newUser.put("password", "123456");
-        newUser.put("roleCodes", role instanceof String roleCode ? new HashSet<>(Set.of(roleCode)) : role);
+        newUser.put("roleCodes", role instanceof String ? new HashSet<>(java.util.Arrays.asList((String) role)) : role);
         return newUser;
     }
 

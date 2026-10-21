@@ -46,10 +46,26 @@ total_modules=0
 
 while IFS= read -r pom; do
   total_modules=$((total_modules + 1))
-  # 找所有 ddd4j-* 工件的版本号
-  bad_versions=$(grep -E "<artifactId>ddd4j-" "$pom" 2>/dev/null |
-    grep -A1 "</artifactId>" | grep "<version>" |
-    grep -vcE "\\\${revision}|\\\${project.version}" || true)
+  # 只检查内部依赖；Maven 4 子模块的固定父 POM 版本是构建配置。
+  bad_versions=$(python3 - "$pom" <<'PY'
+import sys
+import xml.etree.ElementTree as ET
+
+root = ET.parse(sys.argv[1]).getroot()
+namespace = root.tag.partition("}")[0] + "}" if "}" in root.tag else ""
+bad = 0
+for element in root.iter(namespace + "dependency"):
+    group = element.find(namespace + "groupId")
+    artifact = element.find(namespace + "artifactId")
+    version = element.find(namespace + "version")
+    if group is None or artifact is None or version is None:
+        continue
+    if group.text == "io.ddd4j" and artifact.text and artifact.text.startswith("ddd4j-"):
+        if version.text not in ("${revision}", "${project.version}"):
+            bad += 1
+print(bad)
+PY
+)
   if [ "$bad_versions" -gt 0 ]; then
     echo -e "${RED}  ❌ $pom 包含 $bad_versions 个硬编码 ddd4j-* 版本${NC}"
     fail_count=$((fail_count + 1))

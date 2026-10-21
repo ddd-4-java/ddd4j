@@ -2,10 +2,21 @@
 
 历史报告保留在原所属发布线。本页只定位来源，不把历史结论作为本轮收敛的验证结果。
 
+三线保留的 `.superpowers/`、`docs/superpowers/`、fuin API 参考文档中的历史记录，
+以及 1.0.x 的定期生态架构分析、Cloud/Shiro/TrueLicense 审计和 3.0.x 的 2026-09 发版说明，
+统一列在[逐文件历史证据索引](../../verification/three-line-parity/historical-evidence-index.json)。
+正在执行的[三线产品收敛计划](plans/2026-10-10-three-line-product-convergence.md)持续更新，不属于不可变历史证据，因此不收入该 JSON 索引；计划原文仍在三条分支保留。
+索引记录所属线、原路径、最后修改提交及时间、内容 SHA-256；各线原文仍在原分支。
+这些按时间和检出状态写成的审计、迁移证据与发版说明只保留在来源线；当前支持范围、依赖版本和验收状态须以本轮检查及现行产品文档为准。
+执行 `python3 scripts/build-historical-evidence-index.py --roots ROOT8 ROOT17 ROOT21
+--output verification/three-line-parity/historical-evidence-index.json --check`
+可核对索引是否随历史资料变化而更新。
+
 | 资料 | 原所属线 | 可定位的版本与路径 | 本轮状态 |
 |---|---|---|---|
 | 2026-09-09 三线源码对等审计 | 1.0.x | `6bca6659fe0530427aff6673ec2c7b0b5caba778` 的 `docs/superpowers/reports/2026-09-09-three-line-source-parity-audit.md`；文件 SHA-256 `03a866aa382a8f9fc67a0e5e7035259b3d1e1626281882cf3427979580a7042a` | 历史记录；2.0.x、3.0.x 未复制该报告。当前差异以本轮 `target/three-line-parity/` 重新生成的报告为准。 |
 | 旧版 Ddd4j Boot 架构与模块关系 | 1.0.x | `fafcbbde0c1b955a09561275de4f2f3564263a00` 的 `docs/architecture/architecture.md`；文件 SHA-256 `ab825036a484b0606e4eb4fee2b5bdb831370aa3f5005918041fb9efe2158dcf` | 历史产品描述；其中 Java 17、Spring Boot 3.5、`ddd4j-cmpt` 与 `io.ddd4j.boot` 路径不代表当前三线架构。现行共同正文仍位于同一路径。 |
+| 2026-10-06 生态架构检出分析 | 1.0.x | `fafcbbde0c1b955a09561275de4f2f3564263a00` 的 `docs/ECOSYSTEM-ARCHITECTURE.md`；文件 SHA-256 `e38f3dcbe4f2703c7eb3d80e47f10c03b7a2aec8bdd0f6545e47cae6db040aa1` | 特定日期、特定本地检出与外部仓库版本的历史分析；不作为本轮三线支持矩阵或当前版本事实源。 |
 
 
 八篇 fuin API 模式参考文档的 `## 落地计划` 是按发布线保留的历史任务记录。以下摘要仅锁定这些段落；其余产品正文在三线逐字比对。
@@ -64,5 +75,12 @@
 | `javadoc-fill-report-16.md` | 3.0.x；2026-10-10T18:12:52+08:00 | [原始文件](https://github.com/ddd-4-java/ddd4j/blob/2af17377ea3d3c2ce007241a5634fc6be00cb309/docs/verification/javadoc-fill-report-16.md) | `c825885b33cbc76cb934a988c5448201b8d029ecd8650f503d5f49b8c8435c93` |
 | `javadoc-fill-report-17.md` | 3.0.x；2026-10-10T18:12:52+08:00 | [原始文件](https://github.com/ddd-4-java/ddd4j/blob/2af17377ea3d3c2ce007241a5634fc6be00cb309/docs/verification/javadoc-fill-report-17.md) | `7e5c186212bf85312d100990bc9046200af63dfd19855caadca5cd1a8c5a26a6` |
 | `javadoc-fill-report-18.md` | 3.0.x；2026-10-10T18:12:52+08:00 | [原始文件](https://github.com/ddd-4-java/ddd4j/blob/2af17377ea3d3c2ce007241a5634fc6be00cb309/docs/verification/javadoc-fill-report-18.md) | `0d587b48ad4363d07aa1066cba0018e2cb95e4f500cfc458e2c156ca3604f983` |
+
+另外两份原始验证记录只保留在所属线；它们记录旧批次的输入和结果，不证明当前分支的 Javadoc 或品牌门禁已通过。
+
+| 文件 | 原所属线与时间 | 历史来源 | 文件 SHA-256 |
+|---|---|---|---|
+| `redline-cleanup-evidence-20261009.txt` | 1.0.x；2026-10-09T12:33:43+08:00 | [原始文件](https://github.com/ddd-4-java/ddd4j/blob/d975d8b7d9f39abd131768b9e9e9fadb7b2b77f7/docs/verification/redline-cleanup-evidence-20261009.txt) | `41f3562e83261139b572a12a3d2ab5859cec519cc1d1f3e04a1ab0bf87778928` |
+| `javadoc-gaps-raw.txt` | 3.0.x；2026-10-10T18:12:52+08:00 | [原始文件](https://github.com/ddd-4-java/ddd4j/blob/2af17377ea3d3c2ce007241a5634fc6be00cb309/docs/verification/javadoc-gaps-raw.txt) | `b28862c26f150bcd1bf92de1c49f4b11413a91bfdac7c6e090aa65d63e0268e5` |
 
 其余既往规格、计划与报告保留各线原路径和 Git 历史。新增历史资料时，应在此补入所属线、版本、路径和文件摘要。

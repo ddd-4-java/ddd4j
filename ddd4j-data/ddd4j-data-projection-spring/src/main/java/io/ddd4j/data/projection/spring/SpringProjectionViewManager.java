@@ -35,7 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * {@link #start()} 遍历 views 按 cron 调 {@link ViewScheduler#schedule}，
  * {@link #stop()} 取消全部 handle，{@link #triggerOnce()} 立即执行一次所有 view 的 runOnce。
  * 实现 {@link SmartLifecycle} 使 Spring 容器启动后自动调用 {@link #start()}，
- * 与 Quarkus 版 {@code QuarkusProjectionViewManager} 的 {@code @Observes Startup} 行为对齐。
+ * 与 Quarkus 版 {@code QuarkusProjectionViewManager} 的 {@code @Observes StartupEvent} 行为对齐。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @see ViewManager

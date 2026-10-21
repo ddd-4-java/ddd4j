@@ -34,7 +34,7 @@ public class InMemoryEventChunkReader implements EventChunkReader<Object> {
     private final InMemoryEventStore eventStore;
 
     /**
-     * 创建InMemoryEventChunkReader。
+     * 创建内存事件块读取器。
      *
      * @param eventStore 内存事件存储
      */
@@ -51,7 +51,7 @@ public class InMemoryEventChunkReader implements EventChunkReader<Object> {
         }
         List<Object> payloads = storedEvents.stream()
                 .map(e -> (Object) e.payload())
-                .toList();
+                .collect(java.util.stream.Collectors.toList());
         long nextPos = storedEvents.get(storedEvents.size() - 1).position() + 1;
         return new EventChunk<>(payloads, nextPos);
     }

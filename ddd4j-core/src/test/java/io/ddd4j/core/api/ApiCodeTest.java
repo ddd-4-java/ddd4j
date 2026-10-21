@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-class ResultCodeTest {
+class ApiCodeTest {
 
     @Test
     void getReasonByCode_shouldReturnMatchingDesc() {
@@ -69,7 +69,7 @@ class ResultCodeTest {
 
     @Test
     void values_shouldContainKeyCodesFromBothCatalogs() {
-        // 通用码段
+        // 通用码段（原 ResultCode）
         assertThat(ApiCode.OK.getCode()).isZero();
         assertThat(ApiCode.SUCCESS.getCode()).isEqualTo(200);
         assertThat(ApiCode.FAIL.getCode()).isEqualTo(1);

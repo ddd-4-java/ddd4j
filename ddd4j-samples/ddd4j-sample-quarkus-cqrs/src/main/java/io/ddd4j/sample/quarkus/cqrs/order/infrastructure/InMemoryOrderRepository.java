@@ -14,6 +14,7 @@
  */
 package io.ddd4j.sample.quarkus.cqrs.order.infrastructure;
 
+import java.util.stream.Collectors;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.sample.quarkus.cqrs.order.domain.model.Order;
 import io.ddd4j.sample.quarkus.cqrs.order.domain.model.OrderStatus;
@@ -93,7 +94,7 @@ public class InMemoryOrderRepository implements OrderRepository {
     public List<Order> findAll() {
         return rows.values().stream()
                 .sorted((a, b) -> a.id().compareTo(b.id()))
-                .toList();
+                .collect(Collectors.toList());
     }
 
     /**
@@ -104,10 +105,10 @@ public class InMemoryOrderRepository implements OrderRepository {
      */
     public List<Order> findByStatus(OrderStatus status) {
         if (Objects.isNull(status)) {
-            return List.of();
+            return java.util.Collections.emptyList();
         }
         return rows.values().stream()
                 .filter(order -> status == order.status())
-                .toList();
+                .collect(Collectors.toList());
     }
 }

@@ -20,10 +20,10 @@ import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
 import io.ddd4j.core.cqrs.readmodel.ProjectionRunInfo;
 import io.ddd4j.core.cqrs.readmodel.ProjectionStatus;
 import io.ddd4j.core.cqrs.readmodel.ViewManager;
-import io.quarkus.runtime.Startup;
+import io.quarkus.runtime.StartupEvent;
+import io.quarkus.runtime.ShutdownEvent;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
-import jakarta.enterprise.event.Shutdown;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +35,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Quarkus CQRS 读侧视图管理器（基于 {@code @Scheduled}）。
  *
  * <p>实现 ddd4j-core 的 {@link ViewManager} SPI。Quarkus 通过 CDI 事件
- * （{@link Startup} / {@link Shutdown}）自动触发 start/stop。
+ * （{@link StartupEvent} / {@link ShutdownEvent}）自动触发 start/stop。
  *
  * <p>实际视图拉取由 {@code QuarkusJpaProjectionService}（{@code @Scheduled}）
  * 负责，本类仅负责生命周期管理。
@@ -62,11 +62,11 @@ public class QuarkusJpaViewManager implements ViewManager {
     @Inject
     Instance<ProjectionMetrics> projectionMetricsInstances;
 
-    void onStart(@Observes Startup event) {
+    void onStart(@Observes StartupEvent event) {
         start();
     }
 
-    void onStop(@Observes Shutdown event) {
+    void onStop(@Observes ShutdownEvent event) {
         stop();
     }
 

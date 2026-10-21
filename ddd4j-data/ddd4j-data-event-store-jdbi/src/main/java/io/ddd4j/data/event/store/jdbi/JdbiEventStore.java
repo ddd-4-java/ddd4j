@@ -14,6 +14,8 @@
  */
 package io.ddd4j.data.event.store.jdbi;
 
+import com.fasterxml.jackson.databind.json.JsonMapper;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -55,16 +57,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * <p><b>表契约</b></p>
  * <p>目标表 {@code DDD4J_EVENT_STORE} 与 -jpa/-r2dbc/-esdb 模块同构：
- * {@code aggregate_id} VARCHAR(255)、{@code aggregate_type} VARCHAR(255)（可空）、
+ * {@code aggregate_id} VARCHAR(255)、{@code aggregate_type} VARCHAR(255)（NOT NULL）、
  * {@code version} BIGINT、{@code position} BIGINT（UNIQUE）、
  * {@code event_type} VARCHAR(512)、{@code event_id} VARCHAR(64)、
  * {@code payload} TEXT（JSON 文本）、{@code timestamp} TIMESTAMP。
- * 主键 {@code (aggregate_id, version)}，{@code position} 唯一索引。
+ * 主键 {@code (aggregate_type, aggregate_id, version)}，{@code position} 唯一约束。
  * 表在首次操作时通过 {@code CREATE TABLE IF NOT EXISTS} 懒创建。
  *
  * <p><b>乐观锁与 position 生成</b></p>
  * <p>append 在事务内以 {@code SELECT COUNT(*)} 读取当前事件数
- * （即当前版本），与 {@code expectedVersion} 不一致即抛 {@link IllegalStateException}
+ * （即当前版本），与 {@code expectedVersion} 不一致即抛 {@link AggregateVersionConflictException}
  * 并回滚。全局 position 在事务内逐条以 {@code COALESCE(MAX(position), 0) + 1} 生成，
  * 与 JPA/R2DBC 侧策略一致。
  *
@@ -72,15 +74,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * 回退提交），并发的 append 事务可能读到相同的 {@code MAX(position)} 并各自生成
  * 重复的 position 值。{@code uk_position} 唯一约束作为兜底会抛
  * {@link java.sql.SQLException}/{@code ConstraintViolationException}，事务被强制回滚。
- * 调用方应捕获该异常并按指数退避重试整个 append 流程（保持 expectedVersion 不变）；
- * 若重试后版本号已变化则回到 {@link IllegalStateException} 乐观锁失败分支。
+ * {@link EventStoreRetry} 对 position 冲突按退避策略重试整个 append 流程；
+ * 若重试后版本号已变化则抛 {@link AggregateVersionConflictException}。
  * 高并发多实例场景建议改用数据库序列（如 PostgreSQL {@code nextval}）。
  *
  * <p><b>payload 序列化</b></p>
  * <p>事件载荷通过 {@link EventPayloadSerializer} 序列化为 JSON 文本存储，
  * 读取时通过同一序列化器按 {@code event_type} 反序列化。
- * 若事件类已被删除或重命名（{@code Class.forName} 失败），回退为 {@code Map}，
- * 此时丢失类型信息，javadoc 已说明此限制。
+ * 若事件类已被删除或重命名（{@code Class.forName} 失败），
+ * 抛出 {@link IllegalStateException}，不静默返回无类型的载荷。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.0.0
@@ -161,7 +163,7 @@ public class JdbiEventStore implements EventStore {
      * @throws NullPointerException jdbi 为 null 时抛出
      */
     public JdbiEventStore(Jdbi jdbi) {
-        this(jdbi, new EventStoreRetry(), new EventPayloadSerializer(com.fasterxml.jackson.databind.json.JsonMapper.builder().findAndAddModules().build()));
+        this(jdbi, new EventStoreRetry(), new EventPayloadSerializer(JsonMapper.builder().findAndAddModules().build()));
     }
 
     /**
@@ -171,7 +173,7 @@ public class JdbiEventStore implements EventStore {
      * @param retry 重试策略
      */
     public JdbiEventStore(Jdbi jdbi, EventStoreRetry retry) {
-        this(jdbi, retry, new EventPayloadSerializer(com.fasterxml.jackson.databind.json.JsonMapper.builder().findAndAddModules().build()));
+        this(jdbi, retry, new EventPayloadSerializer(JsonMapper.builder().findAndAddModules().build()));
     }
 
     /**
@@ -260,7 +262,7 @@ public class JdbiEventStore implements EventStore {
      * {@inheritDoc}
      *
      * <p>按版本升序读取指定聚合的全部事件。
-     * 事件载荷通过 {@link EventPayloadSerializer} 反序列化，类型无法还原时回退为 {@code Map}。
+     * 事件载荷通过 {@link EventPayloadSerializer} 反序列化，类型无法还原时抛出 {@link IllegalStateException}。
      */
     @Override
     public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId) {
@@ -310,16 +312,22 @@ public class JdbiEventStore implements EventStore {
      * 确保表已创建（懒初始化，仅执行一次）。
      */
     private void ensureInitialized() {
-        if (initialized.compareAndSet(false, true)) {
-            jdbi.useHandle(handle -> handle.execute(CREATE_TABLE_SQL));
+        if (initialized.get()) {
+            return;
+        }
+        synchronized (initialized) {
+            if (!initialized.get()) {
+                jdbi.useHandle(handle -> handle.execute(CREATE_TABLE_SQL));
+                initialized.set(true);
+            }
         }
     }
 
     /**
      * 将结果集行重建为 {@link StoredEvent}。
      *
-     * <p>事件类型经 {@code Class.forName} 还原，payload 经 {@link EventDeserializer#deserialize}
-     * 反序列化。若类不存在（被删除/重命名），回退为 {@link JsonKit#toMap}。
+     * <p>事件类型经 {@code Class.forName} 还原，payload 经 {@link EventPayloadSerializer#deserialize}
+     * 反序列化。若类不存在（被删除/重命名），抛出 {@link IllegalStateException}。
      *
      * <p>时间戳处理：H2 JDBC 驱动对 TIMESTAMP 列返回 {@link LocalDateTime}，
      * 此处统一先取 {@link LocalDateTime} 再转 {@link Instant}（UTC 偏移），
@@ -334,12 +342,9 @@ public class JdbiEventStore implements EventStore {
         String eventType = rs.getString(EventStoreConstants.COLUMN_EVENT_TYPE);
         DomainEvent<?> event = serializer.deserialize(payload, resolveEventType(eventType));
         // H2 JDBC 对 TIMESTAMP 列返回 LocalDateTime，转为 Instant（与 R2DBC 实现一致）
-        LocalDateTime timestamp;
-        LocalDateTime ldt = rs.getObject(EventStoreConstants.COLUMN_TIMESTAMP, LocalDateTime.class);
-        if (ldt != null) {
-            timestamp = ldt;
-        } else {
-            timestamp = LocalDateTime.now();
+        LocalDateTime timestamp = rs.getObject(EventStoreConstants.COLUMN_TIMESTAMP, LocalDateTime.class);
+        if (Objects.isNull(timestamp)) {
+            throw new IllegalStateException("Missing persisted event timestamp");
         }
         return new StoredEvent(
                 EventId.valueOf(rs.getString(EventStoreConstants.COLUMN_EVENT_ID)),
@@ -364,7 +369,7 @@ public class JdbiEventStore implements EventStore {
 
     private final static class StringAggregateRootId implements AggregateRootId {
 
-        private static final long serialVersionUID = 0L;
+        private static final long serialVersionUID = 6652084670470061437L;
 
         private final String value;
 

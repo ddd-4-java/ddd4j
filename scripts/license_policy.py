@@ -76,7 +76,8 @@ def normalize_license(value):
         return "BSD-3-Clause"
     if "edl 1.0" in normalized or "eclipse distribution license" in normalized:
         return "EDL-1.0"
-    if "epl 1.0" in normalized or "epl-1.0" in normalized:
+    if ("epl 1.0" in normalized or "epl-1.0" in normalized
+            or re.search(r"eclipse public license[\s,\-]*(?:version|v\.?)?[\s]*1\.0", normalized)):
         return "EPL-1.0"
     if "epl 2.0" in normalized or "epl-2.0" in normalized or "eclipse public license" in normalized:
         return "EPL-2.0"

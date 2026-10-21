@@ -19,8 +19,10 @@ import com.alibaba.excel.read.listener.ReadListener;
 import io.ddd4j.core.exception.BizRuntimeException;
 import lombok.extern.slf4j.Slf4j;
 
+
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -56,7 +58,8 @@ public final class ExcelImporter {
         } catch (Exception e) {
             throw new BizRuntimeException(500, "excel.import.failed", e);
         }
-        if (listener instanceof ErrorCollectingReadListener<T> ec) {
+        if (listener instanceof ErrorCollectingReadListener) {
+            ErrorCollectingReadListener<T> ec = (ErrorCollectingReadListener<T>) listener;
             return ec.toResult();
         }
         // 非 ErrorCollectingReadListener 场景：返回空 errors（业务 listener 自行处理）
@@ -80,7 +83,7 @@ public final class ExcelImporter {
      * 同步全量读取（小数据量语法糖，{@code doReadSync}）。
      *
      * <p><b>警告</b>：内部使用 easyexcel {@code doReadSync()}，会把数据全部加载到内存。
-     * 大数据量（> 5000 行）请改用 {@link #importExcel(InputStream, Class, ReadListener)}
+     * 大数据量（&gt; 5000 行）请改用 {@link #importExcel(InputStream, Class, ReadListener)}
      * + {@link BatchReadListener}。
      *
      * @param in   输入流
@@ -89,15 +92,16 @@ public final class ExcelImporter {
      * @return 全部数据
      */
     public static <T> List<T> readAll(InputStream in, Class<T> head) {
-        try (in) {
+        try (InputStream stream = in) {
             try {
-                return EasyExcel.read(in).head(head).sheet().doReadSync();
+                return EasyExcel.read(stream).head(head).sheet().doReadSync();
             } catch (Exception e) {
                 throw new BizRuntimeException(500, "excel.import.readall.failed", e);
             }
         } catch (IOException ex) {
-            log.error("excel.import.readall.failed", ex);
+            // 读取成功后关闭流失败，保留原有的空结果回退；读取失败则抛出 BizRuntimeException。
+            log.warn("excel.import.readall.close.failed", ex);
         }
-        return List.of();
+        return Collections.emptyList();
     }
 }

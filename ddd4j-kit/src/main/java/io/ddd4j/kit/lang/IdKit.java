@@ -14,12 +14,6 @@
  */
 package io.ddd4j.kit.lang;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.util.Objects;
-
 import cn.hutool.core.lang.Singleton;
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
@@ -208,8 +202,8 @@ public class IdKit extends IdUtil {
      * @param isUseSystemClock    是否使用{@link cn.hutool.core.date.SystemClock} 获取当前时间戳
      * @param timeOffset          允许时间回拨的毫秒数
      * @param randomSequenceLimit 限定一个随机上限，在不同毫秒下生成序号时，给定一个随机数，避免偶数问题，0表示无随机，上限不包括值本身。
-     * @since 1.0.0
      * @return 雪花 ID 生成器实例
+     * @since 1.0.0
      */
     public static Snowflake getSnowflake(long workerId, long dataCenterId, boolean isUseSystemClock, long timeOffset, long randomSequenceLimit) {
         SnowflakeOptions options = new SnowflakeOptions(
@@ -218,85 +212,8 @@ public class IdKit extends IdUtil {
     }
 
     private static Snowflake newSnowflake(SnowflakeOptions options) {
-        return new Snowflake(null, options.workerId(), options.dataCenterId(), options.useSystemClock(),
-                options.timeOffset(), options.randomSequenceLimit());
-    }
-
-    private final static class SnowflakeOptions {
-
-        private static final long serialVersionUID = 0L;
-
-        private final long workerId;
-
-        private final long dataCenterId;
-
-        private final boolean useSystemClock;
-
-        private final long timeOffset;
-
-        private final long randomSequenceLimit;
-
-        @JsonCreator()
-        private SnowflakeOptions(@JsonProperty("workerId") long workerId, @JsonProperty("dataCenterId") long dataCenterId, @JsonProperty("useSystemClock") boolean useSystemClock, @JsonProperty("timeOffset") long timeOffset, @JsonProperty("randomSequenceLimit") long randomSequenceLimit) {
-            this.workerId = workerId;
-            this.dataCenterId = dataCenterId;
-            this.useSystemClock = useSystemClock;
-            this.timeOffset = timeOffset;
-            this.randomSequenceLimit = randomSequenceLimit;
-        }
-
-        @JsonProperty("workerId")
-        public long workerId() {
-            return workerId;
-        }
-
-        @JsonProperty("dataCenterId")
-        public long dataCenterId() {
-            return dataCenterId;
-        }
-
-        @JsonProperty("useSystemClock")
-        public boolean useSystemClock() {
-            return useSystemClock;
-        }
-
-        @JsonProperty("timeOffset")
-        public long timeOffset() {
-            return timeOffset;
-        }
-
-        @JsonProperty("randomSequenceLimit")
-        public long randomSequenceLimit() {
-            return randomSequenceLimit;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            SnowflakeOptions other = (SnowflakeOptions) obj;
-            return this.workerId == other.workerId && this.dataCenterId == other.dataCenterId && this.useSystemClock == other.useSystemClock && this.timeOffset == other.timeOffset && this.randomSequenceLimit == other.randomSequenceLimit;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Long.hashCode(workerId);
-            result = 31 * result + Long.hashCode(dataCenterId);
-            result = 31 * result + Boolean.hashCode(useSystemClock);
-            result = 31 * result + Long.hashCode(timeOffset);
-            result = 31 * result + Long.hashCode(randomSequenceLimit);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "SnowflakeOptions[workerId=" + workerId + ", dataCenterId=" + dataCenterId + ", useSystemClock=" + useSystemClock + ", timeOffset=" + timeOffset + ", randomSequenceLimit=" + randomSequenceLimit + "]";
-        }
+        return new Snowflake(null, options.workerId, options.dataCenterId, options.useSystemClock,
+                options.timeOffset, options.randomSequenceLimit);
     }
 
     /**
@@ -426,7 +343,7 @@ public class IdKit extends IdUtil {
     /**
      * 用IP地址最后几个字节标示
      * <p>
-     * eg:192.168.1.30->30
+     * eg：IP 192.168.1.30 取最后一段 30
      *
      * @return last IP
      */
@@ -445,5 +362,48 @@ public class IdKit extends IdUtil {
         }
 
         return LAST_IP;
+    }
+
+    private static final class SnowflakeOptions {
+        private final long workerId;
+        private final long dataCenterId;
+        private final boolean useSystemClock;
+        private final long timeOffset;
+        private final long randomSequenceLimit;
+
+        private SnowflakeOptions(long workerId, long dataCenterId, boolean useSystemClock,
+                                 long timeOffset, long randomSequenceLimit) {
+            this.workerId = workerId;
+            this.dataCenterId = dataCenterId;
+            this.useSystemClock = useSystemClock;
+            this.timeOffset = timeOffset;
+            this.randomSequenceLimit = randomSequenceLimit;
+        }
+
+        @Override
+        public boolean equals(Object object) {
+            if (this == object) {
+                return true;
+            }
+            if (!(object instanceof SnowflakeOptions)) {
+                return false;
+            }
+            SnowflakeOptions that = (SnowflakeOptions) object;
+            return workerId == that.workerId
+                    && dataCenterId == that.dataCenterId
+                    && useSystemClock == that.useSystemClock
+                    && timeOffset == that.timeOffset
+                    && randomSequenceLimit == that.randomSequenceLimit;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = (int) (workerId ^ (workerId >>> 32));
+            result = 31 * result + (int) (dataCenterId ^ (dataCenterId >>> 32));
+            result = 31 * result + (useSystemClock ? 1231 : 1237);
+            result = 31 * result + (int) (timeOffset ^ (timeOffset >>> 32));
+            result = 31 * result + (int) (randomSequenceLimit ^ (randomSequenceLimit >>> 32));
+            return result;
+        }
     }
 }

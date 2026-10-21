@@ -31,6 +31,7 @@ import io.javalin.apibuilder.EndpointGroup;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static io.javalin.apibuilder.ApiBuilder.get;
 import static io.javalin.apibuilder.ApiBuilder.post;
@@ -133,7 +134,7 @@ public class OrderResource {
             get("/orders", ctx -> {
                 List<OrderResponse> items = orderApplicationService.listAll().stream()
                         .map(OrderResponse::from)
-                        .toList();
+                        .collect(Collectors.toList());
                 ctx.json(R.ok(items));
             });
 
@@ -213,9 +214,9 @@ public class OrderResource {
 
         @Override
         public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(amount);
-            result = 31 * result + Objects.hashCode(currency);
+            int result = 1;
+            result = 59 * result + (Objects.isNull(amount) ? 43 : amount.hashCode());
+            result = 59 * result + (Objects.isNull(currency) ? 43 : currency.hashCode());
             return result;
         }
 

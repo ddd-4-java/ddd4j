@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package io.ddd4j.core.ddd.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -28,6 +29,7 @@ import io.ddd4j.core.ddd.event.EventHandler;
 import io.ddd4j.core.ddd.event.StringEntityType;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * 的反射派发行为测试。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 2.0.x
+ * @since 1.0.x
  */
 class AggregateRootApplyTest {
 
@@ -69,13 +71,15 @@ class AggregateRootApplyTest {
                 "message should name the event type");
         assertTrue(exception.getMessage().contains(Order.class.getName()),
                 "message should name the aggregate type");
+        assertTrue(exception.getMessage().contains("rooted at Order:order-1"),
+                "message should name the aggregate root segment");
     }
 
     @Test
     void loadFromHistoryRebuildsAggregateWithoutEnqueueing() {
         Order order = new Order("order-1");
 
-        order.loadFromHistory(List.of(new OrderCreatedEvent(), new OrderCreatedEvent()));
+        order.loadFromHistory(Arrays.asList(new OrderCreatedEvent(), new OrderCreatedEvent()));
 
         assertEquals("CREATED", order.status, "replay should rebuild aggregate state");
         assertTrue(order.domainEvents().isEmpty(), "replay must not enqueue events into domainEvents");
@@ -89,7 +93,7 @@ class AggregateRootApplyTest {
         assertTrue(applying.notified, "apply should invoke ignoreOnReplay=true handler");
 
         Order replaying = new Order("order-1");
-        replaying.loadFromHistory(List.of(new OrderCreatedEvent(), new OrderNotifiedEvent()));
+        replaying.loadFromHistory(Arrays.asList(new OrderCreatedEvent(), new OrderNotifiedEvent()));
         assertEquals("CREATED", replaying.status, "normal handlers should still replay");
         assertFalse(replaying.notified, "loadFromHistory should skip ignoreOnReplay=true handler");
     }

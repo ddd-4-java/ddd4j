@@ -4,15 +4,15 @@
  */
 package io.ddd4j.mq.lifecycle;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import io.ddd4j.core.health.ReadinessResult;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/** 验证 MQ 启动状态和就绪状态快照。 */
 class MQStartupStatusTest {
 
     @Test

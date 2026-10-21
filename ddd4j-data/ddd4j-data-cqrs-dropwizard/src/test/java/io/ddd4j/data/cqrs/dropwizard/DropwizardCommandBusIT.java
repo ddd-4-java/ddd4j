@@ -29,6 +29,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.Set;
@@ -199,7 +202,7 @@ class DropwizardCommandBusIT {
 
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
-            return Set.of(SampleCommand.class, CompanionCommand.class);
+            return Collections.unmodifiableSet(new LinkedHashSet<>(Arrays.asList(SampleCommand.class, CompanionCommand.class)));
         }
 
         @Override

@@ -12,41 +12,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package io.ddd4j.core.health;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.kit.lang.StrKit;
 
-import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
 /**
  * 单个依赖的就绪检查结果。
+ *
+ * <p>字段语义：{@code name} 为稳定的依赖标识，例如 {@code postgresql} 或 {@code redis}；
+ * {@code ready} 表示是否可接受流量；{@code details} 为可安全暴露的诊断信息，
+ * 禁止放入密码、令牌或连接串。
  */
-
 public final class ReadinessResult {
 
-    private static final long serialVersionUID = 0L;
-
     private final String name;
-
     private final boolean ready;
-
     private final Map<String, String> details;
 
     /**
- * @param name 稳定的依赖标识，例如 {@code postgresql} 或 {@code redis}
- * @param ready 是否可接受流量
- * @param details 可安全暴露的诊断信息，禁止放入密码、令牌或连接串
- */
+     * 单个依赖的就绪检查结果。
+     *
+     * @param name    稳定的依赖标识，例如 {@code postgresql} 或 {@code redis}
+     * @param ready   是否可接受流量
+     * @param details 可安全暴露的诊断信息，禁止放入密码、令牌或连接串
+     */
 
-    @JsonCreator()
-    public ReadinessResult(@JsonProperty("name") String name, @JsonProperty("ready") boolean ready, @JsonProperty("details") Map<String, String> details) {
+    @JsonCreator
+    public ReadinessResult(@JsonProperty("name") String name,
+                           @JsonProperty("ready") boolean ready,
+                           @JsonProperty("details") Map<String, String> details) {
         if (StrKit.isBlank(name)) {
             throw new IllegalArgumentException("readiness contributor name must not be blank");
         }
@@ -68,8 +70,9 @@ public final class ReadinessResult {
      * @param name 依赖标识
      * @return 就绪结果
      */
+
     public static ReadinessResult ready(String name) {
-        return new ReadinessResult(name, true, Map.of());
+        return new ReadinessResult(name, true, Collections.<String, String>emptyMap());
     }
 
     /**
@@ -79,51 +82,41 @@ public final class ReadinessResult {
      * @param reason 可安全暴露的失败原因
      * @return 未就绪结果
      */
+
     public static ReadinessResult unavailable(String name, String reason) {
-        return new ReadinessResult(name, false, StrKit.isBlank(reason) ? Map.of() : Map.of("reason", reason));
+        return new ReadinessResult(name, false,
+                StrKit.isBlank(reason) ? Collections.<String, String>emptyMap() : Collections.singletonMap("reason", reason));
     }
 
     /**
-     * 获取诊断详情。
-     *
-     * @return 不可变诊断详情
-     */
-    public Map<String, String> getDetails() {
-        return details;
-    }
-
-    /**
-     * 获取依赖名称。
-     *
-     * @return 依赖名称
+     * 获取值。
+     * @return 结果字符串。
      */
     public String getName() {
         return name;
     }
 
     /**
-     * 判断该依赖是否可接收流量。
-     *
-     * @return 就绪时为 true
+     * 判断布尔状态。
+     * @return 判断结果。
      */
     public boolean isReady() {
         return ready;
     }
 
     /**
-     * 获取用于 JSON 的依赖名称。
+     * 获取可安全公开的诊断详情。
      *
-     * @return 依赖名称
+     * @return 不可变的诊断详情
      */
-    @JsonProperty("name")
-    public String name() {
-        return name;
+    public Map<String, String> getDetails() {
+        return details;
     }
 
     /**
-     * 获取用于 JSON 的就绪状态。
+     * 获取就绪状态，供业务调用及 JSON 序列化使用。
      *
-     * @return 就绪时为 true
+     * @return 该依赖就绪时为 true
      */
     @JsonProperty("ready")
     public boolean ready() {
@@ -131,9 +124,19 @@ public final class ReadinessResult {
     }
 
     /**
-     * 获取用于 JSON 的诊断详情。
+     * 获取依赖名称，供业务调用及 JSON 序列化使用。
      *
-     * @return 不可变诊断详情
+     * @return 稳定的依赖名称
+     */
+    @JsonProperty("name")
+    public String name() {
+        return name;
+    }
+
+    /**
+     * 获取诊断详情，供业务调用及 JSON 序列化使用。
+     *
+     * @return 不可变的诊断详情
      */
     @JsonProperty("details")
     public Map<String, String> details() {
@@ -145,11 +148,13 @@ public final class ReadinessResult {
         if (this == obj) {
             return true;
         }
-        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+        if (!(obj instanceof ReadinessResult)) {
             return false;
         }
-        ReadinessResult other = (ReadinessResult) obj;
-        return Objects.equals(this.name, other.name) && this.ready == other.ready && Objects.equals(this.details, other.details);
+        ReadinessResult that = (ReadinessResult) obj;
+        return ready == that.ready
+                && Objects.equals(name, that.name)
+                && Objects.equals(details, that.details);
     }
 
     @Override
@@ -163,6 +168,6 @@ public final class ReadinessResult {
 
     @Override
     public String toString() {
-        return "ReadinessResult[name=" + name + ", ready=" + ready + ", details=" + details + "]";
+        return "ReadinessResult[name=" + name + ", ready=" + ready + ", details=" + details + ']';
     }
 }

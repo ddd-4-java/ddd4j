@@ -13,10 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.extension.otel;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.mock;
 
 import io.ddd4j.mq.delivery.MQOutboxRecord;
 import io.opentelemetry.api.common.Attributes;
@@ -30,7 +26,7 @@ import org.mockito.ArgumentCaptor;
 
 import java.lang.reflect.Field;
 import java.time.Instant;
-import java.util.Map;
+import java.util.Collections;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,6 +34,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
+/** 验证 MQ 投递事件的低基数指标契约。 */
 class OtelMQDeliveryObserverTest {
 
     private Meter meter;
@@ -75,7 +72,7 @@ class OtelMQDeliveryObserverTest {
     @Test
     void shouldDelegateAllDeliveryOutcomesWithoutMessageAttributes() {
         OtelMQDeliveryObserver observer = new OtelMQDeliveryObserver("kafka");
-        MQOutboxRecord record = MQOutboxRecord.pending("message-1", "orders.created", "{}", Map.of(),
+        MQOutboxRecord record = MQOutboxRecord.pending("message-1", "orders.created", "{}", Collections.emptyMap(),
                 Instant.EPOCH);
 
         observer.onOutboxPublished(record);

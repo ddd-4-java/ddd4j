@@ -37,6 +37,7 @@ import io.ddd4j.sample.javalin.shiro.rbac.service.RbacService;
 import io.javalin.http.Context;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 授权管理控制器：用户 / 角色 / 权限的 CRUD。
@@ -111,7 +112,7 @@ public class AuthorizationController {
             return;
         }
         Collection<User> users = rbacService.listUsers();
-        ctx.json(R.ok(users.stream().map(AuthorizationController::toUserView).toList()));
+        ctx.json(R.ok(users.stream().map(AuthorizationController::toUserView).collect(Collectors.toList())));
     }
 
     // ============================ Role CRUD ============================
@@ -183,7 +184,7 @@ public class AuthorizationController {
         }
         String loginId = ctx.pathParam("id");
         rbacService.deleteUser(loginId);
-        ctx.json(R.ok("user deleted", Map.of("loginId", loginId)));
+        ctx.json(R.ok("user deleted", Collections.singletonMap("loginId", loginId)));
     }
 
     // ============================ Permission CRUD ============================
@@ -199,7 +200,7 @@ public class AuthorizationController {
             return;
         }
         Collection<Role> roles = rbacService.listRoles();
-        ctx.json(R.ok(roles.stream().map(AuthorizationController::toRoleView).toList()));
+        ctx.json(R.ok(roles.stream().map(AuthorizationController::toRoleView).collect(Collectors.toList())));
     }
 
     /**
@@ -245,7 +246,7 @@ public class AuthorizationController {
         }
         String code = ctx.pathParam("code");
         rbacService.deleteRole(code);
-        ctx.json(R.ok("role deleted", Map.of("code", code)));
+        ctx.json(R.ok("role deleted", Collections.singletonMap("code", code)));
     }
 
     /**
@@ -259,7 +260,7 @@ public class AuthorizationController {
             return;
         }
         Collection<Permission> perms = rbacService.listPermissions();
-        ctx.json(R.ok(perms.stream().map(AuthorizationController::toPermissionView).toList()));
+        ctx.json(R.ok(perms.stream().map(AuthorizationController::toPermissionView).collect(Collectors.toList())));
     }
 
     /**
@@ -287,7 +288,7 @@ public class AuthorizationController {
         }
         String code = ctx.pathParam("code");
         rbacService.deletePermission(code);
-        ctx.json(R.ok("permission deleted", Map.of("code", code)));
+        ctx.json(R.ok("permission deleted", Collections.singletonMap("code", code)));
     }
 
     /**
@@ -729,11 +730,11 @@ public class AuthorizationController {
 
         @Override
         public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(loginId);
-            result = 31 * result + Objects.hashCode(displayName);
-            result = 31 * result + Objects.hashCode(roles);
-            result = 31 * result + Objects.hashCode(permissions);
+            int result = 1;
+            result = 59 * result + (Objects.isNull(loginId) ? 43 : loginId.hashCode());
+            result = 59 * result + (Objects.isNull(displayName) ? 43 : displayName.hashCode());
+            result = 59 * result + (Objects.isNull(roles) ? 43 : roles.hashCode());
+            result = 59 * result + (Objects.isNull(permissions) ? 43 : permissions.hashCode());
             return result;
         }
 
@@ -829,10 +830,10 @@ public class AuthorizationController {
 
         @Override
         public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(code);
-            result = 31 * result + Objects.hashCode(name);
-            result = 31 * result + Objects.hashCode(permissions);
+            int result = 1;
+            result = 59 * result + (Objects.isNull(code) ? 43 : code.hashCode());
+            result = 59 * result + (Objects.isNull(name) ? 43 : name.hashCode());
+            result = 59 * result + (Objects.isNull(permissions) ? 43 : permissions.hashCode());
             return result;
         }
 
@@ -909,9 +910,9 @@ public class AuthorizationController {
 
         @Override
         public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(code);
-            result = 31 * result + Objects.hashCode(description);
+            int result = 1;
+            result = 59 * result + (Objects.isNull(code) ? 43 : code.hashCode());
+            result = 59 * result + (Objects.isNull(description) ? 43 : description.hashCode());
             return result;
         }
 

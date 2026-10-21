@@ -15,8 +15,10 @@
 package io.ddd4j.quarkus.cqrs;
 
 import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
+import io.ddd4j.core.constant.ProjectionConstants;
 import org.junit.jupiter.api.Test;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,9 +27,38 @@ import static org.assertj.core.api.Assertions.assertThat;
  * {@link QuarkusJpaProjectionPosition} 不可变契约与字段封装测试。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 2.0.x
  */
 class QuarkusJpaProjectionPositionTest {
+
+    @Test
+    void usesTheJpaNamespaceAndColumnsSupportedByThisJdk() throws Exception {
+        String namespace = "1.8".equals(System.getProperty("java.specification.version"))
+                ? "javax.persistence." : "jakarta.persistence.";
+        assertThat(annotation(QuarkusJpaProjectionPosition.class, namespace + "Entity")).isNotNull();
+        Annotation table = annotation(QuarkusJpaProjectionPosition.class, namespace + "Table");
+        assertThat(table).isNotNull();
+        assertThat(table.annotationType().getMethod("name").invoke(table))
+                .isEqualTo(ProjectionConstants.TABLE_NAME);
+        Annotation streamIdColumn = annotation(
+                QuarkusJpaProjectionPosition.class.getDeclaredField("streamId"), namespace + "Column");
+        Annotation nextEventColumn = annotation(
+                QuarkusJpaProjectionPosition.class.getDeclaredField("nextEventNumber"), namespace + "Column");
+        assertThat(streamIdColumn).isNotNull();
+        assertThat(nextEventColumn).isNotNull();
+        assertThat(streamIdColumn.annotationType().getMethod("name").invoke(streamIdColumn))
+                .isEqualTo(ProjectionConstants.COLUMN_STREAM_ID);
+        assertThat(nextEventColumn.annotationType().getMethod("name").invoke(nextEventColumn))
+                .isEqualTo(ProjectionConstants.COLUMN_NEXT_EVENT_NUMBER);
+    }
+
+    private static Annotation annotation(java.lang.reflect.AnnotatedElement element, String typeName) {
+        for (Annotation annotation : element.getAnnotations()) {
+            if (typeName.equals(annotation.annotationType().getName())) {
+                return annotation;
+            }
+        }
+        return null;
+    }
 
     @Test
     void withNextEventNumberShouldReturnNewInstance() {

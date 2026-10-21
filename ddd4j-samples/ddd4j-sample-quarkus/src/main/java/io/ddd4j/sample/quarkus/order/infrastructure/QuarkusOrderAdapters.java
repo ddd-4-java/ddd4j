@@ -24,6 +24,7 @@ import io.ddd4j.sample.order.domain.OrderQuery;
 import io.ddd4j.sample.order.domain.OrderRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 
+import java.util.stream.Collectors;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -66,7 +67,7 @@ public class QuarkusOrderAdapters
 
     @Override
     public List<Order> findAll(int offset, int limit) {
-        return orders.values().stream().skip(offset).limit(limit).toList();
+        return orders.values().stream().skip(offset).limit(limit).collect(Collectors.toList());
     }
 
     @Override
@@ -81,7 +82,7 @@ public class QuarkusOrderAdapters
 
     @Override
     public List<OutboxMessage> pending(int limit) {
-        return new ArrayList<>(outbox.values()).stream().limit(limit).toList();
+        return new ArrayList<>(outbox.values()).stream().limit(limit).collect(Collectors.toList());
     }
 
     @Override
@@ -114,7 +115,7 @@ public class QuarkusOrderAdapters
                         || Objects.equals(criteria.status(), order.status()))
                 .skip((long) (criteria.page() - 1) * criteria.size())
                 .limit(criteria.size())
-                .toList();
+                .collect(Collectors.toList());
     }
 
     @Override

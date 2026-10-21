@@ -18,8 +18,22 @@ import io.ddd4j.runtime.testkit.AbstractRuntimeContractTest;
 import io.ddd4j.runtime.testkit.RuntimeContract;
 import io.ddd4j.runtime.testkit.RuntimeContractAdapter;
 import io.ddd4j.runtime.testkit.RuntimeFixtures;
+import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+/** Helidon 生命周期和就绪状态的运行时契约。 */
 class Ddd4jHelidonRuntimeTest extends AbstractRuntimeContractTest {
+
+    @Test
+    void defaultConstructorStartsWithNoReadinessContributors() {
+        RuntimeFixtures fixtures = new RuntimeFixtures();
+        Ddd4jHelidonRuntime runtime = new Ddd4jHelidonRuntime(fixtures.publisher(),
+                fixtures.subjectProvider(), fixtures.i18nProvider(), fixtures.commandBus());
+
+        assertTrue(runtime.readiness().contributors().isEmpty());
+        runtime.close();
+    }
 
     @Override
     protected RuntimeContract createRuntime() {

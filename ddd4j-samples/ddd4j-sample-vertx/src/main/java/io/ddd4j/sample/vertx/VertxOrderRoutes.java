@@ -169,14 +169,14 @@ public final class VertxOrderRoutes {
 
         @Override
         public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(token);
+            int result = 1;
+            result = 59 * result + (Objects.isNull(token) ? 43 : token.hashCode());
             return result;
         }
 
         @Override
         public String toString() {
-            return "TokenResponse[token=" + token + "]";
+            return "VertxOrderRoutes.TokenResponse(token=" + token + ")";
         }
     }
 }

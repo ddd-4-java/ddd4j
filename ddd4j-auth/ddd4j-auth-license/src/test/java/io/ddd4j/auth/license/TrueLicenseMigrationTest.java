@@ -246,16 +246,15 @@ class TrueLicenseMigrationTest {
         Preferences node = isolatedPreferences();
         CustomLicenseManager manager = new CustomLicenseManager(SUBJECT, support.samePasswordKeyStoreParam(), node);
         File validFile = temporaryDirectory.resolve("cleanup-valid.lic").toFile();
-        File tamperedFile = temporaryDirectory.resolve("cleanup-tampered.lic").toFile();
         manager.store(validLicense(SUBJECT), validFile);
-        manager.store(validLicense(SUBJECT), tamperedFile);
         manager.install(validFile);
-        tamper(tamperedFile);
+        URL legacyResource = TrueLicenseMigrationTest.class.getResource("/truelicense-legacy/legacy-v1.lic");
+        File legacyFile = new File(Objects.requireNonNull(legacyResource, "legacy license fixture").toURI());
         LicenseTestPreferencesFactory.setRemoveFailureMode(
                 LicenseTestPreferencesFactory.RemoveFailureMode.RUNTIME);
 
         LicenseManagementException failure = assertThrows(LicenseManagementException.class,
-                () -> manager.install(tamperedFile));
+                () -> manager.install(legacyFile));
         assertEquals(1, failure.getSuppressed().length);
         assertEquals(IllegalStateException.class, failure.getSuppressed()[0].getClass());
         assertThrows(LicenseManagementException.class, manager::verify);

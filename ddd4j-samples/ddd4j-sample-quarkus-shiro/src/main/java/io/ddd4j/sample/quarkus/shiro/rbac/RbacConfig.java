@@ -100,7 +100,7 @@ public class RbacConfig {
     }
 
     /**
-     * RBAC 权限数据源：从 User -> Role -> Permission 实时聚合。
+     * RBAC 权限数据源：从 User → Role → Permission 实时聚合。
      *
      * @return 主体数据提供者
      */

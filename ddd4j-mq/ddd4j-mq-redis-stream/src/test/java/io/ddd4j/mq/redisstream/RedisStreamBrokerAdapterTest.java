@@ -29,7 +29,13 @@ import org.redisson.api.stream.StreamCreateGroupArgs;
 import redis.clients.jedis.StreamEntryID;
 import redis.clients.jedis.UnifiedJedis;
 
-import java.util.Map;
+import java.util.Collections;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -46,6 +52,41 @@ import static org.mockito.Mockito.*;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 class RedisStreamBrokerAdapterTest {
+
+    @Test
+    void nackMustWaitForInFlightXackBeforeClaimingRequeue() throws Exception {
+        RedisStreamOperations operations = mock(RedisStreamOperations.class);
+        CountDownLatch xackEntered = new CountDownLatch(1);
+        CountDownLatch releaseXack = new CountDownLatch(1);
+        doAnswer(invocation -> {
+            xackEntered.countDown();
+            assertTrue(releaseXack.await(5, TimeUnit.SECONDS));
+            return null;
+        }).when(operations).ack("orders", "workers", "1-0");
+        RedisStreamAcknowledgment acknowledgment = new RedisStreamAcknowledgment(
+                operations, "orders", "workers", "1-0", null, "msg-1", null);
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        try {
+            Future<?> ackCall = executor.submit(() -> {
+                acknowledgment.ack();
+            });
+            assertTrue(xackEntered.await(5, TimeUnit.SECONDS));
+            CountDownLatch nackStarted = new CountDownLatch(1);
+            Future<?> nackCall = executor.submit(() -> {
+                nackStarted.countDown();
+                acknowledgment.nack(true);
+            });
+            assertTrue(nackStarted.await(5, TimeUnit.SECONDS));
+            assertThrows(TimeoutException.class, () -> nackCall.get(200, TimeUnit.MILLISECONDS));
+            releaseXack.countDown();
+            ackCall.get(5, TimeUnit.SECONDS);
+            nackCall.get(5, TimeUnit.SECONDS);
+            verify(operations).ack("orders", "workers", "1-0");
+        } finally {
+            releaseXack.countDown();
+            executor.shutdownNow();
+        }
+    }
 
     @Test
     void manualAckShouldMapToXack() {
@@ -103,7 +144,7 @@ class RedisStreamBrokerAdapterTest {
         when(stream.add(any(StreamAddArgs.class))).thenReturn(new StreamMessageId(1L, 0L));
         RedissonRedisStreamOperations operations = new RedissonRedisStreamOperations(client);
 
-        String id = operations.add("sales.order.paid", Map.of("payload", "body"));
+        String id = operations.add("sales.order.paid", Collections.singletonMap("payload", "body"));
         operations.createGroup("sales.order.paid", "sample");
         operations.ack("sales.order.paid", "sample", "1-0");
 
@@ -119,7 +160,7 @@ class RedisStreamBrokerAdapterTest {
         when(commands.xadd(eq("sales.order.paid"), any(XAddArgs.class), anyMap())).thenReturn("1-0");
         LettuceRedisStreamOperations operations = new LettuceRedisStreamOperations(commands);
 
-        String id = operations.add("sales.order.paid", Map.of("payload", "body"));
+        String id = operations.add("sales.order.paid", Collections.singletonMap("payload", "body"));
         operations.createGroup("sales.order.paid", "sample");
         operations.ack("sales.order.paid", "sample", "1-0");
 

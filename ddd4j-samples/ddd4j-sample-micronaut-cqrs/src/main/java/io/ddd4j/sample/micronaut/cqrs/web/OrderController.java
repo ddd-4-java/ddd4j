@@ -33,6 +33,7 @@ import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Status;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -76,16 +77,20 @@ public class OrderController {
     @Status(io.micronaut.http.HttpStatus.CREATED)
     public HttpResponse<Map<String, Object>> createOrder(@Body CreateOrderRequest request) {
         if (orderRepository.findByOrderNo(request.orderNo()).isPresent()) {
-            return HttpResponse.status(io.micronaut.http.HttpStatus.CONFLICT)
-                    .body(Map.of("success", false, "message", "order already exists: " + request.orderNo()));
+            Map<String, Object> body = new HashMap<>();
+            body.put("success", false);
+            body.put("message", "order already exists: " + request.orderNo());
+            return HttpResponse.status(io.micronaut.http.HttpStatus.CONFLICT).body(body);
         }
 
         CreateOrderCommand command = new CreateOrderCommand(
                 request.orderNo(), request.buyerId(), request.buyerName());
         Result<String> result = commandBus.execute(command);
 
-        return HttpResponse.status(io.micronaut.http.HttpStatus.CREATED)
-                .body(Map.of("success", true, "orderId", result.getData()));
+        Map<String, Object> body = new HashMap<>();
+        body.put("success", true);
+        body.put("orderId", result.getData());
+        return HttpResponse.status(io.micronaut.http.HttpStatus.CREATED).body(body);
     }
 
     /**
@@ -97,14 +102,18 @@ public class OrderController {
     @Get("/{id}")
     public HttpResponse<OrderSummaryViewEntity> getOrder(@PathVariable String id) {
         OrderSummaryViewEntity entity = readView.findById(id);
-        if (entity == null) {
+        if (Objects.isNull(entity)) {
             return HttpResponse.notFound();
         }
         return HttpResponse.ok(entity);
     }
 
     /**
-     * 订单创建请求数据。
+     * 创建订单请求参数：订单号与买方信息。
+     *
+     * 字段 {@code orderNo}：订单号（用于重复创建的幂等校验）
+     * 字段 {@code buyerId}：买方标识
+     * 字段 {@code buyerName}：买方名称
      */
     public final static class CreateOrderRequest {
 

@@ -14,15 +14,19 @@
  */
 package io.ddd4j.web.core.context;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-
 import org.junit.jupiter.api.Test;
 
 import java.util.Locale;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 1.0.x
+ */
 class WebRequestContextFactoryTest {
 
     private static final RequestIdGenerator FIXED_ID = () -> "generated-request";
@@ -68,6 +72,6 @@ class WebRequestContextFactoryTest {
     void defaultFactoryUsesDefaults() {
         WebRequestContextFactory factory = new WebRequestContextFactory();
         WebRequestContext context = factory.create(requestData(null));
-        org.junit.jupiter.api.Assertions.assertFalse(context.requestId().isBlank());
+        org.junit.jupiter.api.Assertions.assertFalse(context.requestId().trim().isEmpty());
     }
 }

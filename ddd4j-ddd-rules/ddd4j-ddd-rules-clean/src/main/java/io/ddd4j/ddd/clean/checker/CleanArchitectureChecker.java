@@ -25,6 +25,9 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -68,9 +71,8 @@ public class CleanArchitectureChecker {
     /**
      * Clean Architecture 必需的四层目录名称
      */
-    private static final Set<String> REQUIRED_LAYERS = Set.of(
-            "domain", "application", "adapter", "infrastructure"
-    );
+    private static final Set<String> REQUIRED_LAYERS = Collections.unmodifiableSet(
+            new LinkedHashSet<>(Arrays.asList("domain", "application", "adapter", "infrastructure")));
 
     /**
      * 领域层（domain）推荐的子包名称
@@ -291,6 +293,6 @@ public class CleanArchitectureChecker {
                 └── infrastructure/      ← 框架层
                     ├── config/
                     └── external/
-                """.formatted(basePackage);
+                """.formatted(basePackage).stripTrailing();
     }
 }

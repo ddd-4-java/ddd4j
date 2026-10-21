@@ -31,6 +31,7 @@ import io.ddd4j.core.ddd.event.EventId;
 import io.ddd4j.core.ddd.event.StringEntityType;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.LockModeType;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -61,6 +62,8 @@ import java.util.function.Supplier;
  * @since 3.0.0
  */
 public class JpaEventStore implements EventStore {
+
+    private static final String ENTITY = "StoredEventEntity";
 
     private final EntityManager entityManager;
     private final JpaStoredEventRepository repository;
@@ -229,6 +232,8 @@ public class JpaEventStore implements EventStore {
                         aggregateType, aggregateId.asString(), expectedVersion, currentVersion);
             }
 
+            // 锁定已有的最后位置行，串行化跨聚合的全局 position 分配。
+            maxPosition();
             long version = expectedVersion;
             for (DomainEvent<?> event : events) {
                 StoredEventEntity entity = new StoredEventEntity();
@@ -259,7 +264,7 @@ public class JpaEventStore implements EventStore {
      * {@inheritDoc}
      *
      * <p>按版本升序读取指定聚合的全部事件。
-     * 事件载荷通过 {@link EventPayloadSerializer} 反序列化，类型无法还原时回退为 {@code Map}。
+     * 事件载荷通过 {@link EventPayloadSerializer} 反序列化，事件类不存在时抛出异常。
      */
     @Override
     public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId) {
@@ -360,6 +365,15 @@ public class JpaEventStore implements EventStore {
         }
     }
 
+    private long maxPosition() {
+        List<Long> maxRows = entityManager.createQuery(
+                        "select e.position from " + ENTITY + " e order by e.position desc", Long.class)
+                .setMaxResults(1)
+                .setLockMode(LockModeType.PESSIMISTIC_WRITE)
+                .getResultList();
+        return maxRows.isEmpty() ? 0L : maxRows.get(0);
+    }
+
     /**
      * 将持久化实体转换为 core {@link StoredEvent}。
      *
@@ -383,14 +397,13 @@ public class JpaEventStore implements EventStore {
     }
 
     /**
-     * 反序列化事件载荷。
+     * 解析存储的事件类。
      *
-     * <p>优先尝试按 {@code eventType} 还原为强类型对象；
-     * 若类不存在，回退为 {@code Map}（丢失类型信息）。
+     * <p>读取存储的事件类；类不存在时失败，不回退为无类型数据。
      *
-     * @param payload   JSON 文本
      * @param eventType 事件类型全限定名
-     * @return 反序列化后的事件对象或 Map
+     * @return 领域事件类型
+     * @throws IllegalStateException 事件类不存在
      */
     @SuppressWarnings("unchecked")
     private Class<? extends DomainEvent<?>> resolveEventType(String eventType) {

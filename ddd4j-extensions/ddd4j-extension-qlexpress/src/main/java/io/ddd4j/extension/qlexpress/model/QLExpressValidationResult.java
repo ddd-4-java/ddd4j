@@ -14,9 +14,8 @@
  */
 package io.ddd4j.extension.qlexpress.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Objects;
 
@@ -24,8 +23,6 @@ import java.util.Objects;
  * 表达式语法校验结果。
  */
 public final class QLExpressValidationResult {
-
-    private static final long serialVersionUID = 0L;
 
     private final boolean valid;
 

@@ -13,22 +13,24 @@
  * limitations under the License.
  */
 package io.ddd4j.mq.delivery;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/** 验证 Inbox 去重、处理失败及观察器回调契约。 */
 class MQInboxProcessorTest {
 
     @Test
@@ -43,7 +45,7 @@ class MQInboxProcessorTest {
 
         assertEquals(1, handled.get());
         assertEquals("order-read-model:message-1", store.lastKey);
-        assertEquals(List.of("processed", "duplicate"), observer.inboxOutcomes);
+        assertEquals(Arrays.asList("processed", "duplicate"), observer.inboxOutcomes);
     }
 
     @Test
@@ -68,7 +70,7 @@ class MQInboxProcessorTest {
                             throw new IllegalStateException("business failed");
                         }));
 
-        assertEquals(List.of("failed"), observer.inboxOutcomes);
+        assertEquals(Collections.singletonList("failed"), observer.inboxOutcomes);
     }
 
     private static final class InMemoryInboxStore implements MQInboxStore {

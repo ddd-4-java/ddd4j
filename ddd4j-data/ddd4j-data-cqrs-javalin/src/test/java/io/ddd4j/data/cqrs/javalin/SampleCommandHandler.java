@@ -16,9 +16,10 @@ package io.ddd4j.data.cqrs.javalin;
 
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
-import io.ddd4j.core.cqrs.command.Result;
 import io.ddd4j.core.cqrs.command.CommandHandler;
+import io.ddd4j.core.cqrs.command.Result;
 
+import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -44,9 +45,15 @@ public class SampleCommandHandler implements CommandExecutor<SampleCommand> {
 
     @Override
     public Set<Class<? extends Command>> supportedCommands() {
-        return Set.of(SampleCommand.class);
+        return Collections.singleton(SampleCommand.class);
     }
 
+    /**
+     * 执行样例命令并返回路由标记。
+     *
+     * @param command 样例命令
+     * @return 执行结果
+     */
     @Override
     public Result execute(SampleCommand command) {
         return Result.ok(HANDLED);

@@ -8,7 +8,13 @@
 
 ## 1. 这是什么
 
-本示例在 **Quarkus 3.15 LTS** 上同时演示两个业务轨道 + CQRS 读写分离：
+本示例在三条兼容线上同时演示两个业务轨道 + CQRS 读写分离：
+
+| ddd4j 线 | JDK | Quarkus | REST 依赖 |
+|-----------|-----|---------|-----------|
+| 1.0.x | 8 | 1.13.7.Final | `quarkus-resteasy-jackson` |
+| 2.0.x | 17 | 3.38.2 | `quarkus-rest` |
+| 3.0.x | 21 | 3.38.2 | `quarkus-rest` |
 
 | 轨道                      | 业务包                   | 风格                                                                              |
 |---------------------------|--------------------------|-----------------------------------------------------------------------------------|
@@ -226,7 +232,7 @@ java -jar target/quarkus-app/quarkus-run.jar
 | `ddd4j-runtime-quarkus` | 启动期自动注入 4 个核心 SPI（DddContextInitializer）     |
 | `ddd4j-web-quarkus`     | TenantAwareResource、DefaultExceptionHandler             |
 | `ddd4j-cache`           | CacheKit 缓存门面                                        |
-| `quarkus-rest`          | Quarkus 3.x REST 实现                                    |
+| Quarkus REST 适配      | 依当前兼容线选择上表的 REST 依赖                         |
 | `quarkus-arc`           | CDI 容器                                                 |
 | `jackson-databind`      | 值对象 / 事件的 JSON 序列化                              |
 

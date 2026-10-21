@@ -22,11 +22,13 @@ import io.ddd4j.sample.javalin.cqrs.order.domain.model.OrderLine;
 import io.ddd4j.sample.javalin.cqrs.order.domain.model.OrderStatus;
 import io.ddd4j.sample.javalin.cqrs.order.domain.repository.OrderRepository;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
 
 /**
  * 基于内存的订单仓库实现（第二轨：充血模型）。
@@ -70,9 +72,16 @@ public class InMemoryOrderRepository implements OrderRepository, DomainObjectMap
 
     @Override
     public List<Order> findAll() {
-        return rows.values().stream().map(this::toModel).toList();
+        return rows.values().stream().map(this::toModel)
+                .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
     }
 
+    /**
+     * 保存订单聚合。
+     *
+     * @param aggregate 订单聚合
+     * @return 保存后的订单
+     */
     @Override
     public Order save(Order aggregate) {
         Objects.requireNonNull(aggregate, "aggregate must not be null");
@@ -80,6 +89,11 @@ public class InMemoryOrderRepository implements OrderRepository, DomainObjectMap
         return aggregate;
     }
 
+    /**
+     * 删除指定订单。
+     *
+     * @param id 订单标识
+     */
     @Override
     public void deleteById(String id) {
         if (StrKit.isNotBlank(id)) {
@@ -89,14 +103,20 @@ public class InMemoryOrderRepository implements OrderRepository, DomainObjectMap
 
     // ========================= DomainObjectMapper<Order, OrderPO> =========================
 
+    /**
+     * 将持久化对象转换为订单聚合。
+     *
+     * @param persistenceObject 持久化对象
+     * @return 订单聚合
+     */
     @Override
     public Order toModel(OrderPO persistenceObject) {
         Objects.requireNonNull(persistenceObject, "persistenceObject must not be null");
         List<OrderLine> lines = Optional.ofNullable(persistenceObject.getLines())
-                .orElseGet(List::of)
+                .orElseGet(Collections::emptyList)
                 .stream()
                 .map(this::toLineModel)
-                .toList();
+                .collect(Collectors.toList());
         return new Order(
                 persistenceObject.getId(),
                 persistenceObject.getOrderNo(),
@@ -107,6 +127,12 @@ public class InMemoryOrderRepository implements OrderRepository, DomainObjectMap
         );
     }
 
+    /**
+     * 将订单聚合转换为持久化对象。
+     *
+     * @param model 订单聚合
+     * @return 持久化对象
+     */
     @Override
     public OrderPO toPersistenceObject(Order model) {
         Objects.requireNonNull(model, "model must not be null");
@@ -119,7 +145,8 @@ public class InMemoryOrderRepository implements OrderRepository, DomainObjectMap
                 .status(model.status().name())
                 .totalAmount(totalAmount.amount())
                 .currency(totalAmount.currency())
-                .lines(model.lines().stream().map(this::toLinePersistenceObject).toList())
+                .lines(model.lines().stream().map(this::toLinePersistenceObject)
+                        .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList)))
                 .build();
     }
 

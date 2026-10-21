@@ -117,15 +117,20 @@ ddd4j-sample-quarkus/
 
 ### 前置条件
 
-- JDK 17+
-- Maven 3.6+
-- Quarkus 3.15.x（本示例默认 Quarkus BOM）
+按当前 ddd4j 兼容线选择 JDK、仓库根目录 Maven Wrapper 和 Quarkus：
+
+| ddd4j 线 | JDK | Maven Wrapper | Quarkus | REST 依赖 |
+|-----------|-----|---------------|---------|-----------|
+| 1.0.x | 8 | 3.9.16 | 1.13.7.Final | `quarkus-resteasy-jackson` |
+| 2.0.x | 17 | 3.9.16 | 3.38.2 | `quarkus-rest` |
+| 3.0.x | 21 | 4.0.0-rc-6 | 3.38.2 | `quarkus-rest` |
 
 ### 启动开发模式
 
 ```bash
-# 在仓库根目录
-mvn -pl ddd4j/ddd4j-samples/ddd4j-sample-quarkus quarkus:dev
+# 在 ddd4j 仓库根目录；首次检出先安装本样例依赖的模块
+./mvnw -pl ddd4j-samples/ddd4j-sample-quarkus -am install -DskipTests
+./mvnw -pl ddd4j-samples/ddd4j-sample-quarkus quarkus:dev
 ```
 
 启动成功后会看到类似日志：
@@ -287,16 +292,16 @@ curl "http://localhost:8080/query/goods/count?status=ON_SALE"
 
 ```bash
 # 构建可执行 jar（fast-jar）
-mvn -pl ddd4j/ddd4j-samples/ddd4j-sample-quarkus package
+./mvnw -pl ddd4j-samples/ddd4j-sample-quarkus package
 
 # 运行
-java -jar ddd4j/ddd4j-samples/ddd4j-sample-quarkus/target/quarkus-app/quarkus-run.jar
+java -jar ddd4j-samples/ddd4j-sample-quarkus/target/quarkus-app/quarkus-run.jar
 ```
 
 ### 运行测试
 
 ```bash
-mvn -pl ddd4j/ddd4j-samples/ddd4j-sample-quarkus test
+./mvnw -pl ddd4j-samples/ddd4j-sample-quarkus test
 ```
 
 测试覆盖：
@@ -437,7 +442,7 @@ public Response page(GoodsQuery query) {     // ← JAX-RS 直接绑定 Query �
 | `ddd4j-web-quarkus`     | TenantAwareResource、JAX-RS 异常映射              |
 | `ddd4j-cache`           | 缓存能力：CacheKit、Caffeine 本地缓存             |
 | `ddd4j-mq-core`         | MQ 核心契约：MQEvent、MQEventPublisher（纯 Java） |
-| `quarkus-rest`          | Quarkus RESTEasy Reactive（JAX-RS）               |
+| Quarkus REST 适配      | 依当前兼容线选择前置条件表中的 REST 依赖         |
 
 > **注意**：`ddd4j-mq-disruptor` 依赖 `spring-context`，在 Quarkus CDI 下不适用。
 > 真实项目可引入 Quarkus 兼容的 MQ 实现（如 SmallRye Reactive Messaging + Kafka）。
@@ -446,7 +451,7 @@ public Response page(GoodsQuery query) {     // ← JAX-RS 直接绑定 Query �
 
 1. **替换持久化**：把 `InMemoryOrderRepository` 换成 Hibernate Panache / MyBatis-Plus 实现
 2. **替换缓存**：把本地 Caffeine 缓存换成 Redis（引入 `ddd4j-cache` 的 Redisson/Lettuce 实现）
-3. **替换事件总线**：把 `NoOpDomainEventPublisher` 换成基于 `jakarta.enterprise.event.Event` 的真实实现
+3. **替换事件总线**：把 `NoOpDomainEventPublisher` 换成基于 CDI `Event` 的真实实现（1.0.x 为 `javax.enterprise.event.Event`，2.0.x/3.0.x 为 `jakarta.enterprise.event.Event`）
 4. **替换 MQ**：把 `NoOpMQEventPublisher` 换成 Kafka / RabbitMQ 实现
 5. **替换鉴权**：把 `AnonymousSubjectProvider` 换成基于 sa-token / shiro 的实现
 6. **添加鉴权拦截器**：通过 `ContainerRequestFilter` 注入当前 Subject
@@ -455,10 +460,9 @@ public Response page(GoodsQuery query) {     // ← JAX-RS 直接绑定 Query �
 
 | 组件                      | 版本                          |
 |---------------------------|-------------------------------|
-| Quarkus Platform BOM      | 3.37.0                        |
+| Quarkus 与 JDK            | 见前置条件三线适配表            |
 | ddd4j                     | `${revision}`（与父工程一致） |
-| JDK                       | 17+                           |
-| Maven Surefire / Failsafe | 3.2.5                         |
+| Maven Surefire / Failsafe | 3.5.2                         |
 
 ## 参考
 
@@ -466,7 +470,7 @@ public Response page(GoodsQuery query) {     // ← JAX-RS 直接绑定 Query �
 - [ddd4j-runtime-quarkus 源码](../../ddd4j-runtime/ddd4j-runtime-quarkus)
 - [ddd4j-web-quarkus 源码](../../ddd4j-web/ddd4j-web-quarkus)
 - 外部 `ddd4j-boot-samples/ddd4j-boot-sample-order`（Spring Boot 对照）
-- [ddd4j-sample-cache](../ddd4j-sample-cache)（缓存示例参考）
+- [ddd4j-cache](../../ddd4j-cache/README.md)（缓存能力参考）
 
 ## 作者
 

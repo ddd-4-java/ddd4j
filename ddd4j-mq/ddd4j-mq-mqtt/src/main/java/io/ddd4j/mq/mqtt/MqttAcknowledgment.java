@@ -27,8 +27,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * <p>MQTT 没有原生 broker-side ack（仅 QoS 1/2 协议层的 PUBACK/PUBCOMP）；
  * Paho 客户端在 QoS &gt; 0 时收到消息需要 {@link org.eclipse.paho.client.mqttv3.IMqttDeliveryToken#waitForCompletion(long)} 确认。
- * 这里把 {@code ack()} 映射为标记已处理，{@code nack(requeue=true)} 映射为发布一条重发消息
- * （业务侧需自行实现 DLQ 策略）。
+ * 这里把 {@code ack()} 映射为标记已处理；MQTT 不支持原生 nack、reject 或 recover，
+ * 调用这些操作会抛出异常并保留未确认状态，业务侧需自行实现 DLQ 策略。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
@@ -119,10 +119,8 @@ public class MqttAcknowledgment implements Acknowledgment {
 
     @Override
     public void nack(boolean multiple, boolean requeue) {
-        // MQTT 没有原生 nack；仅标记本地为未处理（业务侧可订阅 DLQ topic 重新发布）
-        runOnce(() -> {
-            throw new UnsupportedOperationException("MQTT has no native nack; use a DLQ topic");
-        });
+        // MQTT 没有原生 nack；失败时保留未确认状态，业务侧可自行发布到 DLQ。
+        throw new UnsupportedOperationException("MQTT has no native nack; use a DLQ topic");
     }
 
     @Override

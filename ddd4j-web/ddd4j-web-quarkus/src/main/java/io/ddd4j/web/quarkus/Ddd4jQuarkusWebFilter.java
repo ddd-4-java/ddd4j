@@ -27,6 +27,7 @@ import io.ddd4j.web.core.context.WebRequestContext;
 import io.ddd4j.web.core.context.WebRequestContextFactory;
 import io.ddd4j.web.core.context.WebRequestData;
 import io.ddd4j.web.core.context.WebRequestLifecycle;
+import io.vertx.core.net.SocketAddress;
 import io.vertx.ext.web.RoutingContext;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Priorities;
@@ -36,6 +37,7 @@ import org.jboss.resteasy.reactive.server.ServerRequestFilter;
 import org.jboss.resteasy.reactive.server.ServerResponseFilter;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -94,9 +96,9 @@ public class Ddd4jQuarkusWebFilter {
     }
 
     private static void closeScope(Object scope) {
-        if (scope instanceof AutoCloseable closeable) {
+        if (scope instanceof AutoCloseable) {
             try {
-                closeable.close();
+                ((AutoCloseable) scope).close();
             } catch (Throwable ignored) {
             }
         }
@@ -104,7 +106,7 @@ public class Ddd4jQuarkusWebFilter {
 
     private static Map<String, String> extractRequestHeaders(ContainerRequestContext request) {
         Map<String, String> headers = new HashMap<>();
-        for (var entry : request.getHeaders().entrySet()) {
+        for (Map.Entry<String, List<String>> entry : request.getHeaders().entrySet()) {
             String value = request.getHeaderString(entry.getKey());
             if (Objects.nonNull(value)) {
                 headers.put(entry.getKey(), value);
@@ -168,13 +170,15 @@ public class Ddd4jQuarkusWebFilter {
         Object scope = request.getProperty(OTEL_SCOPE_PROPERTY);
         try {
             Object contextValue = request.getProperty(CONTEXT_PROPERTY);
-            if (contextValue instanceof WebRequestContext context) {
+            if (contextValue instanceof WebRequestContext) {
+                WebRequestContext context = (WebRequestContext) contextValue;
                 response.getHeaders().putSingle(WebHeaders.REQUEST_ID, context.requestId());
                 response.getHeaders().putSingle(WebHeaders.TRACE_ID, context.traceId());
             }
             Object sessionValue = request.getProperty(SESSION_PROPERTY);
             boolean successful = response.getStatus() < 400;
-            if (sessionValue instanceof SynchronousWebRequestSession session) {
+            if (sessionValue instanceof SynchronousWebRequestSession) {
+                SynchronousWebRequestSession session = (SynchronousWebRequestSession) sessionValue;
                 session.complete(successful);
             }
         } finally {
@@ -204,9 +208,14 @@ public class Ddd4jQuarkusWebFilter {
     }
 
     private String remoteAddress() {
-        if (Objects.isNull(routingContext) || Objects.isNull(routingContext.request().remoteAddress())) {
+        if (Objects.isNull(routingContext)) {
             return null;
         }
-        return routingContext.request().remoteAddress().hostAddress();
+        SocketAddress address = routingContext.request().remoteAddress();
+        if (Objects.isNull(address)) {
+            return null;
+        }
+        String hostAddress = address.hostAddress();
+        return Objects.nonNull(hostAddress) ? hostAddress : address.host();
     }
 }

@@ -27,7 +27,7 @@ import io.micronaut.runtime.Micronaut;
 import io.micronaut.runtime.event.annotation.EventListener;
 import jakarta.inject.Singleton;
 
-import java.util.List;
+import java.util.Collections;
 
 /**
  * Micronaut CQRS 集成示例启动入口。
@@ -46,7 +46,7 @@ public class MicronautCqrsApplication {
     }
 
     /**
-     * 注册 CQRS 示例的命令、事件和投影视图组件。
+     * CQRS 组件装配工厂：向容器提供事件存储、事件分块读取器、命令总线与视图管理器。
      */
     @Factory
     public static class CqrsConfig {
@@ -63,7 +63,7 @@ public class MicronautCqrsApplication {
 
         @Singleton
         CommandBus commandBus(CreateOrderCommandHandler handler) {
-            return new DefaultCommandBus(List.of(handler));
+            return new DefaultCommandBus(Collections.singletonList(handler));
         }
 
         @Singleton
@@ -75,6 +75,9 @@ public class MicronautCqrsApplication {
         }
     }
 
+    /**
+     * 启动监听器：在应用启动事件到达时启动读模型视图管理器。
+     */
     @Singleton
     static class StartupListener {
 

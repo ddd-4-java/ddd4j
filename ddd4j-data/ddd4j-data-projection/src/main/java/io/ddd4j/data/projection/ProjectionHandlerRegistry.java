@@ -18,6 +18,7 @@ import io.ddd4j.core.ddd.event.DomainEvent;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
@@ -44,7 +45,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * {@code CommandRegistry}（ADR-0004 对 fuin 先例的保留决策）同源：
  * 冲突在装配期暴露，注册中心保持长生命周期共享组件的一致性。
  *
- * <h2>线程模型</h2>
+ * <h3>线程模型</h3>
  * <p>
  * 注册发生在装配期（单线程或已外部同步）；内部使用 {@link ConcurrentHashMap}
  * 保证 {@link #findHandler} 无锁读。并发的重复注册属契约外用法，落库阶段的
@@ -67,12 +68,17 @@ public class ProjectionHandlerRegistry {
      * 且本 handler 声明的所有类型都不落库（与 {@code CommandRegistry} 同源语义）。
      *
      * @param handler 投影处理器，非空
-     * @throws NullPointerException  handler 为 null
+     * @throws NullPointerException  handler、事件类型集合或集合中的类型为 null
      * @throws IllegalStateException 任一事件类型已被注册（消息含事件类型全限定名）
      */
     public void register(ProjectionHandler handler) {
         ProjectionHandler actual = Objects.requireNonNull(handler, "handler must not be null");
-        Set<Class<?>> eventTypes = Set.copyOf(actual.eventTypes());
+        Collection<Class<? extends DomainEvent<?>>> declaredTypes =
+                Objects.requireNonNull(actual.eventTypes(), "event types must not be null");
+        for (Class<?> eventType : declaredTypes) {
+            Objects.requireNonNull(eventType, "event type must not be null");
+        }
+        Set<Class<?>> eventTypes = Collections.unmodifiableSet(new HashSet<>(declaredTypes));
         for (Class<?> eventType : eventTypes) {
             if (handlers.containsKey(eventType)) {
                 throw new IllegalStateException(

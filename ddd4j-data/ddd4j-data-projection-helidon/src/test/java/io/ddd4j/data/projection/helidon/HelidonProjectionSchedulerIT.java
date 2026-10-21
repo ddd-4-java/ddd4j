@@ -42,7 +42,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * <p>每用例独立装配（构造即快照、无共享可变状态），保持用例间隔离。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 2.0.x
+ * @since 1.0.x
  */
 @DisplayName("HelidonProjectionScheduler + ViewManager 手动装配 IT")
 class HelidonProjectionSchedulerIT {
@@ -73,7 +73,7 @@ class HelidonProjectionSchedulerIT {
     }
 
     private ProjectionView<Object> createView(String name, String cron) {
-        return new ProjectionView<>() {
+        return new ProjectionView<Object>() {
             @Override
             public String getName() {
                 return name;
@@ -86,7 +86,7 @@ class HelidonProjectionSchedulerIT {
 
             @Override
             public Collection<String> getEventTypes() {
-                return Set.of("TestEvent");
+                return java.util.Collections.singleton("TestEvent");
             }
 
             @Override
@@ -117,7 +117,7 @@ class HelidonProjectionSchedulerIT {
         ProjectionRunner<Object> runner = createRunner();
         ProjectionView<Object> view = createView("test-view", "0/5 * * * * *");
         HelidonProjectionViewManager viewManager =
-                new HelidonProjectionViewManager(scheduler, runner, List.of(view));
+                new HelidonProjectionViewManager(scheduler, runner, java.util.Collections.singletonList(view));
 
         assertThat(viewManager.isRunning()).isFalse();
 
@@ -140,7 +140,7 @@ class HelidonProjectionSchedulerIT {
         ProjectionRunner<Object> runner = createRunner();
         ProjectionView<Object> view = createView("test-view", "0/5 * * * * *");
         HelidonProjectionViewManager viewManager =
-                new HelidonProjectionViewManager(scheduler, runner, List.of(view));
+                new HelidonProjectionViewManager(scheduler, runner, java.util.Collections.singletonList(view));
 
         viewManager.start();
         viewManager.triggerOnce();

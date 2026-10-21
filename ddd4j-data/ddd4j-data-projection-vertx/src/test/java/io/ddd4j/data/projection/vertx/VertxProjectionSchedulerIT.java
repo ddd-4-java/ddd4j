@@ -21,9 +21,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -90,7 +90,7 @@ class VertxProjectionSchedulerIT {
     }
 
     private ProjectionView<Object> createView(String name, String cron) {
-        return new ProjectionView<>() {
+        return new ProjectionView<Object>() {
             @Override
             public String getName() {
                 return name;
@@ -103,7 +103,7 @@ class VertxProjectionSchedulerIT {
 
             @Override
             public Collection<String> getEventTypes() {
-                return Set.of("TestEvent");
+                return Collections.singleton("TestEvent");
             }
 
             @Override
@@ -115,7 +115,7 @@ class VertxProjectionSchedulerIT {
     @Test
     void scheduler_schedule_应返回activeHandle_cancel后应inactive() {
         VertxProjectionScheduler scheduler =
-                VertxProjectionScheduler.create(vertx, List.of(), createRunner());
+                VertxProjectionScheduler.create(vertx, Arrays.asList(), createRunner());
 
         ViewScheduler.ViewScheduleHandle handle = scheduler.schedule(
                 "direct-view", "0/1 * * * * *", () -> {
@@ -132,7 +132,7 @@ class VertxProjectionSchedulerIT {
         ProjectionRunner<Object> runner = createRunner();
         ProjectionView<Object> view = createView("test-view", "0/5 * * * * *");
         VertxProjectionViewManager viewManager =
-                VertxProjectionViewManager.create(vertx, List.of(view), runner);
+                VertxProjectionViewManager.create(vertx, Collections.singletonList(view), runner);
 
         assertThat(viewManager.isRunning()).isFalse();
 
@@ -152,7 +152,7 @@ class VertxProjectionSchedulerIT {
         ProjectionRunner<Object> runner = createRunner();
         ProjectionView<Object> view = createView("test-view", "0/5 * * * * *");
         VertxProjectionViewManager viewManager =
-                VertxProjectionViewManager.create(vertx, List.of(view), runner);
+                VertxProjectionViewManager.create(vertx, Collections.singletonList(view), runner);
 
         viewManager.start();
         viewManager.triggerOnce();

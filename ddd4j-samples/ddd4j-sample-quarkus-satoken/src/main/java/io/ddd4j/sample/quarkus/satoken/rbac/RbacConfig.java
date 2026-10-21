@@ -83,27 +83,27 @@ public class RbacConfig {
         permissionRepository.save(new Permission("admin:dashboard", "管理面板", "访问管理面板"));
 
         // 2. 角色（绑定权限）
-        Role admin = new Role("admin", "管理员", "拥有全部权限", new HashSet<>(List.of(
+        Role admin = new Role("admin", "管理员", "拥有全部权限", new HashSet<>(java.util.Arrays.asList(
                 "user:list", "user:add", "user:delete",
                 "order:pay", "order:cancel", "admin:dashboard")));
         roleRepository.save(admin);
 
-        Role user = new Role("user", "普通用户", "基础用户", new HashSet<>(List.of("user:list")));
+        Role user = new Role("user", "普通用户", "基础用户", new HashSet<>(java.util.Arrays.asList("user:list")));
         roleRepository.save(user);
 
         // 3. 用户（绑定角色）
         userRepository.save(new User("u-admin", "admin", "管理员", "123456",
-                new HashSet<>(Set.of("admin", "user")), false));
+                new HashSet<>(java.util.Arrays.asList("admin", "user")), false));
         userRepository.save(new User("u-user", "user", "普通用户", "123456",
-                new HashSet<>(Set.of("user")), false));
+                new HashSet<>(java.util.Arrays.asList("user")), false));
         userRepository.save(new User("u-disabled", "disabled", "已禁用用户", "123456",
-                new HashSet<>(Set.of("user")), true));
+                new HashSet<>(java.util.Arrays.asList("user")), true));
 
         SubjectKit.setDataProvider(subjectDataProvider());
     }
 
     /**
-     * RBAC 权限数据源：从 User -> Role -> Permission 实时聚合。
+     * RBAC 权限数据源：从 User 到 Role 再到 Permission 实时聚合。
      *
      * @return 主体数据提供者
      */
@@ -114,23 +114,23 @@ public class RbacConfig {
             @Override
             public List<String> getPermissionList(AuthPrincipal principal) {
                 if (Objects.isNull(principal) || Objects.isNull(principal.getUserId())) {
-                    return List.of();
+                    return java.util.Collections.emptyList();
                 }
                 String userId = String.valueOf(principal.getUserId());
                 return userRepository.findById(userId)
                         .map(user -> aggregatePermissions(user.getRoleCodes()))
-                        .orElse(List.of());
+                        .orElse(java.util.Collections.emptyList());
             }
 
             @Override
             public List<String> getRoleList(AuthPrincipal principal) {
                 if (Objects.isNull(principal) || Objects.isNull(principal.getUserId())) {
-                    return List.of();
+                    return java.util.Collections.emptyList();
                 }
                 String userId = String.valueOf(principal.getUserId());
                 return userRepository.findById(userId)
-                        .map(user -> List.copyOf(user.getRoleCodes()))
-                        .orElse(List.of());
+                        .map(user -> java.util.Collections.unmodifiableList(new java.util.ArrayList<>(user.getRoleCodes())))
+                        .orElse(java.util.Collections.emptyList());
             }
         };
     }
@@ -140,7 +140,7 @@ public class RbacConfig {
      */
     private List<String> aggregatePermissions(Set<String> roleCodes) {
         if (CollKit.isEmpty(roleCodes)) {
-            return List.of();
+            return java.util.Collections.emptyList();
         }
         Set<String> aggregated = new HashSet<>();
         for (String roleCode : roleCodes) {

@@ -70,6 +70,8 @@ class DropwizardDomainEventPublisherTest {
     @Test
     void constructorRejectsNullAndSnapshotsListeners() {
         assertThrows(NullPointerException.class, () -> new DropwizardDomainEventPublisher(null));
+        assertThrows(NullPointerException.class,
+                () -> new DropwizardDomainEventPublisher(Collections.singletonList(null)));
 
         List<Consumer<Object>> mutable = new ArrayList<>();
         Consumer<Object> lateListener = mock(Consumer.class);

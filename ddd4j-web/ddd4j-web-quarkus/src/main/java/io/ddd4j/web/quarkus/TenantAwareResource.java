@@ -31,18 +31,18 @@ import java.util.function.Function;
  * </p>
  *
  * <h2>使用示例</h2>
- * <pre>{@code
- * @Path("/api/users")
+ * <pre>
+ * &#64;Path("/api/users")
  * public class UserResource extends TenantAwareResource {
  *
- *     @GET
- *     public R<Page<UserVo>> list() {
+ *     &#64;GET
+ *     public R&lt;Page&lt;UserVo&gt;&gt; list() {
  *         String tenantId = getTenantId();
  *         String lang = getLang();
  *         return R.ok(userService.list(tenantId, lang));
  *     }
  * }
- * }</pre>
+ * </pre>
  */
 public class TenantAwareResource {
 
@@ -237,7 +237,7 @@ public class TenantAwareResource {
      * @return 映射后的分页数据
      */
     protected <T, R> Page<R> transfer(Page<T> page, Function<T, R> func) {
-        List<R> results = page.getRecords().stream().map(func).toList();
+        List<R> results = page.getRecords().stream().map(func).collect(java.util.stream.Collectors.toList());
         Page<R> p = new Page<>();
         p.setRecords(results);
         p.setTotal(page.getTotal());

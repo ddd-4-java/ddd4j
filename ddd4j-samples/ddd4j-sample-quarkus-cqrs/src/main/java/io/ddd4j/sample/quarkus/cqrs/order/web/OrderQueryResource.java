@@ -14,6 +14,7 @@
  */
 package io.ddd4j.sample.quarkus.cqrs.order.web;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import io.ddd4j.kit.lang.StrKit;
 
 import io.ddd4j.sample.quarkus.cqrs.order.cache.OrderCacheService;
@@ -29,6 +30,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 订单 CQRS 查询端点：演示读写分离的查询侧设计。
@@ -55,6 +57,7 @@ import java.util.List;
  */
 @Path("/query/orders")
 @Produces(MediaType.APPLICATION_JSON)
+@ApplicationScoped
 public class OrderQueryResource extends TenantAwareResource {
 
     private final OrderCacheService cacheService;
@@ -105,7 +108,7 @@ public class OrderQueryResource extends TenantAwareResource {
         } else {
             orders = inMemory.findAll();
         }
-        return ok(orders.stream().map(OrderResponse::from).toList());
+        return ok(orders.stream().map(OrderResponse::from).collect(Collectors.toList()));
     }
 
     /**

@@ -22,6 +22,7 @@ import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -230,7 +231,7 @@ public abstract class AbstractCqrsRuntimeContractTest {
 
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
-            return Set.of(CmdA.class);
+            return Collections.singleton(CmdA.class);
         }
 
         @Override
@@ -255,7 +256,7 @@ public abstract class AbstractCqrsRuntimeContractTest {
 
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
-            return Set.of(CmdB.class);
+            return Collections.singleton(CmdB.class);
         }
 
         @Override

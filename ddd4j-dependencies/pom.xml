@@ -51,7 +51,7 @@
         <asmsupport.version>0.4.3</asmsupport.version>
         <aspectj.version>1.9.25.1</aspectj.version>
         <assertj.version>3.27.7</assertj.version>
-        <async-http-client.version>3.0.11</async-http-client.version>
+        <async-http-client.version>3.0.14</async-http-client.version>
         <auth0-java-jwt.version>4.5.2</auth0-java-jwt.version>
         <auth0-jwks-rsa.version>0.24.1</auth0-jwks-rsa.version>
         <awaitility.version>4.2.2</awaitility.version>
@@ -78,6 +78,7 @@
         <brave.version>6.3.0</brave.version>
         <buji-pac4j.version>9.1.1</buji-pac4j.version>
         <byte-buddy.version>1.18.10</byte-buddy.version>
+        <c3p0.version>0.14.0</c3p0.version>
         <cache2k.version>2.6.1.Final</cache2k.version>
         <!-- simulator 3.2.x 已要求 Java 25；基准工具独立保留 Java 11 兼容发行版。 -->
         <caffeine-simulator.version>3.1.8</caffeine-simulator.version>
@@ -159,10 +160,9 @@
         <cxf.version>4.2.2</cxf.version>
         <db2jcc.version>12.1.5.0</db2jcc.version>
         <db-meta.version>0.0.1-Release</db-meta.version>
+        <derby.version>10.16.1.1</derby.version>
         <debezium.version>3.6.0.Final</debezium.version>
         <dependency-management-plugin.version>1.1.7</dependency-management-plugin.version>
-        <derby-locale.version>${derby.version}</derby-locale.version>
-        <derby.version>10.16.1.1</derby.version>
         <dingtalk-sdk-extension.version>2.0.x.20260630-SNAPSHOT</dingtalk-sdk-extension.version>
         <dingtalk-sdk.version>2.2.55</dingtalk-sdk.version>
         <dingtalk-service-sdk.version>2.0.0</dingtalk-service-sdk.version>
@@ -181,7 +181,6 @@
         <dropwizard-bom.version>5.0.2</dropwizard-bom.version>
         <dropwizard-metrics-influxdb.version>1.3.4</dropwizard-metrics-influxdb.version>
         <dropwizard-metrics.version>4.2.39</dropwizard-metrics.version>
-        <druid-metrics.version>1.0.2.RELEASE</druid-metrics.version>
         <druid.version>1.2.28</druid.version>
         <dubbo.version>3.2.17</dubbo.version>
         <dynamic-datasource.version>4.3.1</dynamic-datasource.version>
@@ -198,8 +197,8 @@
         <expressly.version>6.0.0</expressly.version>
         <faceplusplus-java-sdk.version>2.0.x.20260630-SNAPSHOT</faceplusplus-java-sdk.version>
         <fastdfs.version>1.27.2</fastdfs.version>
-        <fastjson2.version>2.0.62</fastjson2.version>
         <fastjson2.spring6.version>2.0.61</fastjson2.spring6.version>
+        <fastjson2.version>2.0.62</fastjson2.version>
         <fastjson.version>2.0.62</fastjson.version>
         <feign.version>13.13</feign.version>
         <feshu-oapi.version>2.8.4</feshu-oapi.version>
@@ -212,7 +211,7 @@
         <flyway.version>11.19.0</flyway.version>
         <forest.version>1.8.1</forest.version>
         <formio.version>1.8.1</formio.version>
-        <freemarker.version>2.3.34</freemarker.version>
+        <freemarker.version>2.3.35</freemarker.version>
         <geodesy.version>1.1.3</geodesy.version>
         <geoip2.version>5.1.0</geoip2.version>
         <glassfish-el.version>3.0.4</glassfish-el.version>
@@ -243,7 +242,7 @@
         <hamcrest.version>3.0</hamcrest.version>
         <hanlp-restful.version>0.0.15</hanlp-restful.version>
         <hanlp.version>portable-1.8.4</hanlp.version>
-        <hazelcast.version>5.6.0</hazelcast.version>
+        <hazelcast.version>5.7.0</hazelcast.version>
         <hbase.version>3.0.0-beta-1</hbase.version>
         <hdrhistogram.version>2.2.2</hdrhistogram.version>
         <helidon-bom.version>3.2.18</helidon-bom.version>
@@ -259,17 +258,16 @@
         <hibernate.version>6.6.40.Final</hibernate.version>
         <hikaricp.version>7.1.0</hikaricp.version>
         <hitool.version>2.0.x.20260630-SNAPSHOT</hitool.version>
-        <hive.version>4.1.0</hive.version>
         <hsqldb.version>2.7.4</hsqldb.version>
         <htmlparser.version>2.1</htmlparser.version>
         <htmlunit.version>4.21.0</htmlunit.version>
         <httpasyncclient.version>4.1.5</httpasyncclient.version>
         <httpclient3-extension.version>2.0.x.20260630-SNAPSHOT</httpclient3-extension.version>
-        <httpclient5.version>5.4.4</httpclient5.version>
+        <httpclient5.version>5.6.5</httpclient5.version>
         <httpclient-extension.version>2.0.x.20260630-SNAPSHOT</httpclient-extension.version>
         <httpclient.version>4.5.14</httpclient.version>
         <httpconn.version>2.0.x.20260630-SNAPSHOT</httpconn.version>
-        <httpcore5.version>5.3.6</httpcore5.version>
+        <httpcore5.version>5.4.3</httpcore5.version>
         <httpcore.version>4.4.16</httpcore.version>
         <httputils.version>2.0.x.20260630-SNAPSHOT</httputils.version>
         <hudi.version>1.2.0</hudi.version>
@@ -287,10 +285,10 @@
         <ishumei-java-sdk.version>2.0.x.20260630-SNAPSHOT</ishumei-java-sdk.version>
         <istack.version>4.2.0</istack.version>
         <istio-client.version>1.7.7.1</istio-client.version>
-        <jackson3.version>3.2.1</jackson3.version>
+        <jackson3.version>3.2.3</jackson3.version>
         <jackson-bom.version>${jackson.version}</jackson-bom.version>
         <jackson-extension.version>2.0.x.20260630-SNAPSHOT</jackson-extension.version>
-        <jackson.version>2.22.2</jackson.version>
+        <jackson.version>2.22.3</jackson.version>
         <jai-imageio.version>1.4.0</jai-imageio.version>
         <jakarta-activation.version>2.1.4</jakarta-activation.version>
         <jakarta-annotation.version>3.0.0</jakarta-annotation.version>
@@ -319,7 +317,6 @@
         <java-unrar.version>1.7.0-8</java-unrar.version>
         <java-uuid-generator.version>5.2.0</java-uuid-generator.version>
         <java-websocket.version>1.6.0</java-websocket.version>
-        <javalin-jetty.version>12.1.5</javalin-jetty.version>
         <javalin.version>7.1.0</javalin.version>
         <javamelody.version>2.8.0</javamelody.version>
         <javassist-extension.version>2.0.x.20260630-SNAPSHOT</javassist-extension.version>
@@ -345,14 +342,14 @@
         <jetcache.version>2.8.0.RC</jetcache.version>
         <jetty-reactive-httpclient.version>4.1.4</jetty-reactive-httpclient.version>
         <jetty-websocket.version>${jetty.version}</jetty-websocket.version>
-        <jetty.version>12.1.8</jetty.version>
+        <jetty.version>12.1.13</jetty.version>
         <jgit.version>7.1.0.202411261347-r</jgit.version>
         <jgoodies.version>2.7.0</jgoodies.version>
         <jgroups.version>5.5.6.Final</jgroups.version>
         <jjwt.version>0.13.0</jjwt.version>
         <jlayer.version>1.0.1</jlayer.version>
         <jmustache.version>1.16</jmustache.version>
-        <jnats-compat.version>2.20.5</jnats-compat.version>
+        <jnats-compat.version>2.26.4</jnats-compat.version>
         <joda-time.version>2.14.2</joda-time.version>
         <jodd-bean.version>5.1.6</jodd-bean.version>
         <jodd.version>5.3.0</jodd.version>
@@ -367,18 +364,15 @@
         <json.version>20260522</json.version>
         <jsonassert.version>1.5.3</jsonassert.version>
         <jsonschema.version>4.38.0</jsonschema.version>
-        <jsoup.version>1.22.2</jsoup.version>
+        <jsoup.version>1.23.2</jsoup.version>
         <jsqlparser.version>5.3</jsqlparser.version>
         <jtds.version>1.3.1</jtds.version>
         <junit-jupiter.version>6.1.0</junit-jupiter.version>
         <junit.version>4.13.2</junit.version>
         <juniversalchardet.version>2.5.0</juniversalchardet.version>
-        <junrar.version>7.6.0</junrar.version>
+        <junrar.version>8.1.2</junrar.version>
         <just-auth.version>1.16.7</just-auth.version>
         <jwt-issuer.version>2.0.x.20260630-SNAPSHOT</jwt-issuer.version>
-        <spring-boot-starter-redistpl-plus.version>3.4.x.20260630-SNAPSHOT</spring-boot-starter-redistpl-plus.version>
-        <spring-boot-starter-security-biz.version>3.4.x.20260630-SNAPSHOT</spring-boot-starter-security-biz.version>
-        <spring-boot-starter-security-jwt.version>3.4.x.20260630-SNAPSHOT</spring-boot-starter-security-jwt.version>
         <jxl.version>2.6.12</jxl.version>
         <kafka.version>4.3.1</kafka.version>
         <kaptcha.version>0.0.9</kaptcha.version>
@@ -402,23 +396,24 @@
         <liquibase.version>4.33.0</liquibase.version>
         <liteflow.version>2.16.0</liteflow.version>
         <lock4j.version>2.2.7</lock4j.version>
-        <log4j2.version>2.24.3</log4j2.version>
+        <log4j2.version>2.26.1</log4j2.version>
         <logback.version>1.5.36</logback.version>
-        <lz4-java.version>1.8.1</lz4-java.version>
+        <lz4-java.version>1.12.0</lz4-java.version>
         <management-core.version>2.1.30.4.43</management-core.version>
         <mapstruct.version>1.6.3</mapstruct.version>
         <mariadb.version>3.5.9</mariadb.version>
         <markdown.version>1.11.1</markdown.version>
+        <mchange-commons-java.version>0.6.0</mchange-commons-java.version>
         <mercadopago-sdk-java.version>2.9.2</mercadopago-sdk-java.version>
         <metadata-extractor.version>2.20.0</metadata-extractor.version>
         <metrics-biz.version>2.0.x.20260630-SNAPSHOT</metrics-biz.version>
-        <metrics-druid.version>2.0.x.20260630-SNAPSHOT</metrics-druid.version>
+        <metrics-druid.version>${revision}</metrics-druid.version>
         <metrics-ehcache3.version>2.0.x.20260630-SNAPSHOT</metrics-ehcache3.version>
         <metrics-resteasy.version>2.0.x.20260630-SNAPSHOT</metrics-resteasy.version>
         <metrics-sigar2.version>2.0.x.20260630-SNAPSHOT</metrics-sigar2.version>
         <mica-mqtt.version>2.6.6</mica-mqtt.version>
         <micrometer-tracing.version>1.6.1</micrometer-tracing.version>
-        <micrometer.version>1.16.1</micrometer.version>
+        <micrometer.version>1.17.1</micrometer.version>
         <micronaut.core.version>4.10.26</micronaut.core.version>
         <micronaut.version>4.10.17</micronaut.version>
         <milvus.version>3.0.4</milvus.version>
@@ -437,9 +432,9 @@
         <mybatis-memcached.version>1.2.0</mybatis-memcached.version>
         <mybatis-migrations.version>3.5.0</mybatis-migrations.version>
         <mybatis-oscache.version>1.0.2</mybatis-oscache.version>
+        <mybatis-plus-enhance.version>${revision}</mybatis-plus-enhance.version>
         <mybatis-plus-ext.version>1.7.5-RELEASE</mybatis-plus-ext.version>
         <mybatis-plus-generator.version>${mybatis-plus.version}</mybatis-plus-generator.version>
-        <mybatis-plus-enhance.version>${revision}</mybatis-plus-enhance.version>
         <mybatis-plus-join.version>1.5.7</mybatis-plus-join.version>
         <mybatis-plus.version>3.5.17</mybatis-plus.version>
         <mybatis-r2dbc.version>3.1.1.RELEASE</mybatis-r2dbc.version>
@@ -458,7 +453,7 @@
         <neo4j-java-driver.version>5.28.10</neo4j-java-driver.version>
         <netty-socketio.version>2.0.14</netty-socketio.version>
         <netty-tcnative.version>2.0.79.Final</netty-tcnative.version>
-        <netty.version>4.2.15.Final</netty.version>
+        <netty.version>4.2.19.Final</netty.version>
         <nimbus-jose-jwt.version>10.9.1</nimbus-jose-jwt.version>
         <objenesis.version>3.5</objenesis.version>
         <ofdrw.version>2.4.0</ofdrw.version>
@@ -515,10 +510,11 @@
         <picocli.version>4.7.7</picocli.version>
         <pinyin4j.version>2.5.1</pinyin4j.version>
         <playwright-extension.version>2.0.x.20260630-SNAPSHOT</playwright-extension.version>
+        <plexus-utils.version>3.6.2</plexus-utils.version>
         <png-encoder.version>1.5</png-encoder.version>
         <poi.version>5.5.1</poi.version>
         <pooled-jms.version>3.1.8</pooled-jms.version>
-        <postgresql.version>42.7.8</postgresql.version>
+        <postgresql.version>42.7.12</postgresql.version>
         <powerjob-client.version>5.1.2</powerjob-client.version>
         <prometheus-client.version>1.8.0</prometheus-client.version>
         <prometheus-simpleclient.version>0.16.0</prometheus-simpleclient.version>
@@ -543,7 +539,7 @@
         <r2dbc-postgresql.version>1.1.2.RELEASE</r2dbc-postgresql.version>
         <r2dbc-proxy.version>1.1.6.RELEASE</r2dbc-proxy.version>
         <r2dbc-spi.version>1.0.0.RELEASE</r2dbc-spi.version>
-        <rabbit-amqp-client.version>5.32.0</rabbit-amqp-client.version>
+        <rabbit-amqp-client.version>5.37.0</rabbit-amqp-client.version>
         <rabbit-stream-client.version>0.24.0</rabbit-stream-client.version>
         <reactive-streams.version>1.0.4</reactive-streams.version>
         <reactor-bom.version>2025.0.6</reactor-bom.version>
@@ -578,6 +574,7 @@
         <schemacrawler.version>17.11.3</schemacrawler.version>
         <scijava-jep.version>2.4.2</scijava-jep.version>
         <scijava-native.version>2.5.0</scijava-native.version>
+        <scram.version>3.4</scram.version>
         <scribe-up.version>1.3.1</scribe-up.version>
         <scribe.version>1.3.7</scribe.version>
         <scribejava-apis-ext.version>1.0.1.RELEASE</scribejava-apis-ext.version>
@@ -594,8 +591,8 @@
         <sevenzipjbinding.version>16.02-2.01</sevenzipjbinding.version>
         <sfntly.version>1.0.0</sfntly.version>
         <shardingsphere-jdbc.version>5.5.3</shardingsphere-jdbc.version>
-        <shardingsphere-parser.version>${shardingsphere-jdbc.version}</shardingsphere-parser.version>
         <shardingsphere-parser-sql.version>5.5.2</shardingsphere-parser-sql.version>
+        <shardingsphere-parser.version>${shardingsphere-jdbc.version}</shardingsphere-parser.version>
         <shedlock.version>7.2.1</shedlock.version>
         <shiro-dingtalk.version>2.0.x.20260630-SNAPSHOT</shiro-dingtalk.version>
         <shiro-extension.version>2.0.x.20260630-SNAPSHOT</shiro-extension.version>
@@ -609,7 +606,7 @@
         <shiro-redis.version>3.3.1</shiro-redis.version>
         <shiro-redisson.version>1.5.0.RELEASE</shiro-redisson.version>
         <shiro-saml.version>2.0.x.20260630-SNAPSHOT</shiro-saml.version>
-        <shiro-sample.version>2.0.6</shiro-sample.version>
+        <shiro-sample.version>2.2.1</shiro-sample.version>
         <shiro-thymeleaf.version>2.1.0</shiro-thymeleaf.version>
         <shiro-weixin.version>2.0.x.20260630-SNAPSHOT</shiro-weixin.version>
         <shiro.version>2.2.1</shiro.version>
@@ -623,8 +620,8 @@
         <snakeyaml.version>2.6</snakeyaml.version>
         <snmp4j-agent.version>3.9.1</snmp4j-agent.version>
         <snmp4j.version>3.12.2</snmp4j.version>
-        <soapui-template.version>2.0.x.20260630-SNAPSHOT</soapui-template.version>
         <soap-utils.version>2.0.x.20260630-SNAPSHOT</soap-utils.version>
+        <soapui-template.version>2.0.x.20260630-SNAPSHOT</soapui-template.version>
         <socket-io.version>2.1.2</socket-io.version>
         <socketio-extension.version>2.0.x.20260630-SNAPSHOT</socketio-extension.version>
         <spark.version>4.2.0</spark.version>
@@ -632,7 +629,10 @@
         <spring-amqp.version>3.2.5</spring-amqp.version>
         <spring-authorization-server.version>1.4.3</spring-authorization-server.version>
         <spring-batch.version>6.0.4</spring-batch.version>
-        <spring-boot3-it.version>3.4.4</spring-boot3-it.version>
+        <spring-boot3-it.version>3.5.16</spring-boot3-it.version>
+        <spring-boot-starter-redistpl-plus.version>3.4.x.20260630-SNAPSHOT</spring-boot-starter-redistpl-plus.version>
+        <spring-boot-starter-security-biz.version>3.4.x.20260630-SNAPSHOT</spring-boot-starter-security-biz.version>
+        <spring-boot-starter-security-jwt.version>3.4.x.20260630-SNAPSHOT</spring-boot-starter-security-jwt.version>
         <spring-bytebuddy.version>2.0.x.20260630-SNAPSHOT</spring-bytebuddy.version>
         <!-- Spring 6.2 使用 Spring Data 3.5；2025.1 引入的 Data 4 面向 Spring 7。 -->
         <spring-data-bom.version>2025.0.13</spring-data-bom.version>
@@ -659,7 +659,7 @@
         <sqlite-jdbc.version>3.51.1.0</sqlite-jdbc.version>
         <sshd-pam.version>0.11.1-atlassian-1</sshd-pam.version>
         <sshd-sftp.version>2.14.0</sshd-sftp.version>
-        <sshd.version>3.0.0-M2</sshd.version>
+        <sshd.version>3.0.0-M6</sshd.version>
         <svnkit.version>1.10.11</svnkit.version>
         <swagger2markup.version>1.3.4</swagger2markup.version>
         <swagger3.version>2.2.52</swagger3.version>
@@ -681,7 +681,7 @@
         <thymeleaf-extras-data-attribute.version>2.0.1</thymeleaf-extras-data-attribute.version>
         <thymeleaf-extras-springsecurity.version>3.1.3.RELEASE</thymeleaf-extras-springsecurity.version>
         <thymeleaf-layout-dialect.version>3.4.0</thymeleaf-layout-dialect.version>
-        <thymeleaf.version>3.1.3.RELEASE</thymeleaf.version>
+        <thymeleaf.version>3.1.5.RELEASE</thymeleaf.version>
         <tika-bom.version>3.3.2</tika-bom.version>
         <tio.version>3.8.6.v20240801-RELEASE</tio.version>
         <token-bucket.version>1.7</token-bucket.version>
@@ -719,7 +719,7 @@
         <woodstox-stax2-api.version>4.3.0</woodstox-stax2-api.version>
         <wsdl4j.version>1.6.3</wsdl4j.version>
         <xalan.version>2.7.3</xalan.version>
-        <xdocreport.version>2.1.0</xdocreport.version>
+        <xdocreport.version>2.2.0</xdocreport.version>
         <xmemcached.version>2.4.9</xmemcached.version>
         <xml-apis.version>2.0.2</xml-apis.version>
         <xmlbeans.version>5.3.0</xmlbeans.version>
@@ -782,6 +782,16 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.mchange</groupId>
+                <artifactId>c3p0</artifactId>
+                <version>${c3p0.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mchange</groupId>
+                <artifactId>mchange-commons-java</artifactId>
+                <version>${mchange-commons-java.version}</version>
+            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.activemq/activemq-bom -->
             <!-- Apache ActiveMQ：流行的开源消息中间件，实现了 JMS 1.1 规范，支持多种跨语言客户端和集群部署。 -->
             <dependency>
@@ -2448,7 +2458,7 @@
                 <artifactId>cxf-rt-javassist</artifactId>
                 <version>${cxf-rt-javassist.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.github.redacted-legacy-family/cxf-rt-javassist -->
+            <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/cxf-rt-javassist -->
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-rs-client -->
             <!-- Apache CXF JAX-RS Client：CXF 的 JAX-RS REST 客户端实现。 -->
             <dependency>
@@ -2627,6 +2637,14 @@
                 <artifactId>db-meta</artifactId>
                 <version>${db-meta.version}</version>
             </dependency>
+            <!-- Jackson must precede imported BOMs that manage older Jackson modules. -->
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.debezium/debezium-bom -->
             <!-- Debezium BOM：Debezium 变更数据捕获（CDC）平台的版本清单，统一管理 Debezium 组件版本。 -->
             <dependency>
@@ -2643,50 +2661,36 @@
                 <artifactId>dependency-management-plugin</artifactId>
                 <version>${dependency-management-plugin.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.apache.derby/derby -->
-            <!-- Apache Derby：纯 Java 嵌入式关系数据库（支持内存和文件模式）。 -->
             <dependency>
                 <groupId>org.apache.derby</groupId>
                 <artifactId>derby</artifactId>
                 <version>${derby.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.apache.derby/derbyclient -->
-            <!-- Derby Client：Apache Derby 的网络客户端 JDBC 驱动。 -->
             <dependency>
                 <groupId>org.apache.derby</groupId>
                 <artifactId>derbyclient</artifactId>
                 <version>${derby.version}</version>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/org.apache.derby/derbyLocale_zh_CN -->
-            <!-- Apache Derby 中文语言包：Derby 嵌入式数据库的简体中文错误消息和界面翻译。 -->
             <dependency>
                 <groupId>org.apache.derby</groupId>
                 <artifactId>derbyLocale_zh_CN</artifactId>
-                <version>${derby-locale.version}</version>
+                <version>${derby.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.apache.derby/derbynet -->
-            <!-- Derby Net：Apache Derby 的网络服务器模块（远程访问 Derby 数据库）。 -->
             <dependency>
                 <groupId>org.apache.derby</groupId>
                 <artifactId>derbynet</artifactId>
                 <version>${derby.version}</version>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/org.apache.derby/derbyoptionaltools -->
-            <!-- Derby Optional Tools：Apache Derby 的可选工具模块。 -->
             <dependency>
                 <groupId>org.apache.derby</groupId>
                 <artifactId>derbyoptionaltools</artifactId>
                 <version>${derby.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.apache.derby/derbyshared -->
-            <!-- Derby Shared：Apache Derby 的公共共享模块。 -->
             <dependency>
                 <groupId>org.apache.derby</groupId>
                 <artifactId>derbyshared</artifactId>
                 <version>${derby.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.apache.derby/derbytools -->
-            <!-- Derby Tools：Apache Derby 的命令行工具（ij、sysinfo 等）。 -->
             <dependency>
                 <groupId>org.apache.derby</groupId>
                 <artifactId>derbytools</artifactId>
@@ -2846,7 +2850,7 @@
                 <artifactId>dozer-extra-converters</artifactId>
                 <version>${dozer-extra-converters.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.github.redacted-legacy-family/dozer-extra-converters -->
+            <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/dozer-extra-converters -->
             <!-- https://mvnrepository.com/artifact/com.github.dozermapper/dozer-proto3 -->
             <!-- Dozer Proto3：Dozer 对 Protocol Buffers v3 的支持模块。 -->
             <dependency>
@@ -2883,13 +2887,6 @@
                 <groupId>com.alibaba</groupId>
                 <artifactId>druid</artifactId>
                 <version>${druid.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/com.github.redacted-legacy-family/druid-metrics-prometheus -->
-            <!-- Druid Metrics Prometheus：将 Druid 监控指标推送到 Prometheus 的桥接模块。 -->
-            <dependency>
-                <groupId>io.github.easy4j</groupId>
-                <artifactId>druid-metrics-prometheus</artifactId>
-                <version>${druid-metrics.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.eclipse.angus/dsn -->
             <!-- Eclipse Angus DSN：Angus Mail 的 DSN（投递状态通知）实现。 -->
@@ -4005,6 +4002,14 @@
                 <artifactId>hermes-java-sdk</artifactId>
                 <version>${hermes-java-sdk.version}</version>
             </dependency>
+            <!-- Micrometer must precede imported BOMs that manage older metrics modules. -->
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-bom</artifactId>
+                <version>${micrometer.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.hibernate.orm/hibernate-platform -->
             <!-- Hibernate Platform：Hibernate ORM 6.x 各模块的版本清单。 -->
             <dependency>
@@ -4057,27 +4062,6 @@
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>hitool-core</artifactId>
                 <version>${hitool.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.apache.hive/hive-exec -->
-            <!-- Hive Exec：Apache Hive 查询执行引擎（MapReduce/Tez/Spark 任务执行）。 -->
-            <dependency>
-                <groupId>org.apache.hive</groupId>
-                <artifactId>hive-exec</artifactId>
-                <version>${hive.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.apache.hive/hive-jdbc -->
-            <!-- Hive JDBC：Apache Hive 的 JDBC 驱动（通过 HiveServer2 连接 Hive）。 -->
-            <dependency>
-                <groupId>org.apache.hive</groupId>
-                <artifactId>hive-jdbc</artifactId>
-                <version>${hive.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.apache.hive/hive-metastore -->
-            <!-- Hive Metastore：Apache Hive 的元数据存储服务（表 Schema、分区信息等）。 -->
-            <dependency>
-                <groupId>org.apache.hive</groupId>
-                <artifactId>hive-metastore</artifactId>
-                <version>${hive.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.hsqldb/hsqldb -->
             <!-- HSQLDB：轻量级 100% Java SQL 数据库（支持内存、文件、服务器模式）。 -->
@@ -4201,7 +4185,7 @@
                 <version>${httpcore.version}</version>
                 <type>pom</type>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/com.github.redacted-legacy-family/httpconn -->
+            <!-- https://mvnrepository.com/artifact/io.github.easy4j/httpconn -->
             <!-- HttpConn：基于 Apache HttpClient 的 HTTP 连接工具库（简化 HTTP 调用封装）。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
@@ -4264,8 +4248,8 @@
                 <artifactId>httpmime</artifactId>
                 <version>${httpclient.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.github.redacted-legacy-family/httputils -->
-            <!-- HttpUtils（旧坐标）：旧坐标下的 HTTP 工具库（已迁至 io.github.easy4j）。 -->
+            <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/httputils -->
+            <!-- HttpUtils：HTTP 工具库。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>httputils</artifactId>
@@ -4634,15 +4618,6 @@
                 <groupId>com.google.j2objc</groupId>
                 <artifactId>j2objc-annotations</artifactId>
                 <version>${google-j2objc-annotations.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.fasterxml.jackson/jackson-bom -->
-            <!-- Jackson BOM：Jackson JSON 处理库各模块的版本清单（Core/Databind/Dataformat 等）。 -->
-            <dependency>
-                <groupId>com.fasterxml.jackson</groupId>
-                <artifactId>jackson-bom</artifactId>
-                <version>${jackson-bom.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/jackson-extension -->
             <!-- Easy4J Jackson Extension：Easy4J 对 Jackson JSON 库的扩展增强。 -->
@@ -5217,7 +5192,21 @@
                 <artifactId>jetcache-starter-redisson</artifactId>
                 <version>${jetcache.version}</version>
             </dependency>
-            <!-- 显式锁定 Jetty 核心组件版本，覆盖 micronaut-platform 传递的旧版本 -->
+            <!-- 对齐 Jetty 核心及 EE10 家族，覆盖平台 BOM 传递的旧版本。 -->
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-bom</artifactId>
+                <version>${jetty.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty.ee10</groupId>
+                <artifactId>jetty-ee10-bom</artifactId>
+                <version>${jetty.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-server -->
             <!-- Jetty Server：Eclipse Jetty 嵌入式 Web 服务器核心（Servlet 容器、HTTP/1.1/2）。 -->
             <dependency>
@@ -5245,15 +5234,6 @@
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-util</artifactId>
                 <version>${jetty.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.eclipse.jetty.ee10/jetty-ee10-bom -->
-            <!-- Jetty EE10 BOM：Jetty 12 EE10 环境各模块的版本清单（Servlet 6.0/JSP 3.1/EL 5.0）。 -->
-            <dependency>
-                <groupId>org.eclipse.jetty.ee10</groupId>
-                <artifactId>jetty-ee10-bom</artifactId>
-                <version>${jetty.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-reactive-httpclient -->
             <!-- Jetty Reactive HttpClient：Jetty 的响应式 HTTP 客户端（基于 Reactive Streams 规范）。 -->
@@ -6331,15 +6311,6 @@
                 <artifactId>mica-mqtt-client</artifactId>
                 <version>${mica-mqtt.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/io.micrometer/micrometer-bom -->
-            <!-- Micrometer BOM：Micrometer 应用指标门面各模块的版本清单。 -->
-            <dependency>
-                <groupId>io.micrometer</groupId>
-                <artifactId>micrometer-bom</artifactId>
-                <version>${micrometer.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.micrometer/micrometer-registry-stackdriver -->
             <!-- Micrometer Stackdriver：Micrometer 的 Google Cloud Monitoring (Stackdriver) 指标输出。 -->
             <dependency>
@@ -6367,16 +6338,6 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <!-- Jetty BOM -->
-            <!-- Source: https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-bom -->
-            <!-- Jetty BOM：Eclipse Jetty 嵌入式 Web 服务器各模块的版本清单。 -->
-            <dependency>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-bom</artifactId>
-                <version>${jetty.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.springframework/spring-framework-bom -->
             <!-- Spring Framework BOM：Spring 核心框架各模块的版本清单（IoC/AOP/MVC/Data/Web 等）。 -->
             <dependency>
@@ -6385,6 +6346,32 @@
                 <version>${spring-framework.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <!-- Micronaut Platform 仍管理部分旧版 Boot 构件；显式对齐当前线的 Spring Boot 3.5 补丁版本。 -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot</artifactId>
+                <version>${spring-boot3-it.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-autoconfigure</artifactId>
+                <version>${spring-boot3-it.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter</artifactId>
+                <version>${spring-boot3-it.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-logging</artifactId>
+                <version>${spring-boot3-it.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+                <version>${spring-boot3-it.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.springframework.security/spring-security-bom -->
             <!-- Spring Security BOM：Spring 安全框架各模块的版本清单（认证/授权/OAuth2/OIDC 等）。 -->
@@ -8018,6 +8005,23 @@
                 <artifactId>r2dbc-postgresql</artifactId>
                 <version>${r2dbc-postgresql.version}</version>
             </dependency>
+            <!-- Keep the R2DBC PostgreSQL SCRAM client above the channel-binding downgrade fix. -->
+            <dependency>
+                <groupId>com.ongres.scram</groupId>
+                <artifactId>scram-client</artifactId>
+                <version>${scram.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.ongres.scram</groupId>
+                <artifactId>scram-common</artifactId>
+                <version>${scram.version}</version>
+            </dependency>
+            <!-- Quarkus test bootstrap still requests vulnerable Plexus Utils 3.1.0. -->
+            <dependency>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-utils</artifactId>
+                <version>${plexus-utils.version}</version>
+            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.r2dbc/r2dbc-proxy -->
             <!-- R2DBC Proxy：R2DBC 连接代理（SQL 日志、指标收集、慢查询追踪）。 -->
             <dependency>
@@ -8832,7 +8836,7 @@
                 <artifactId>shiro-j2cache</artifactId>
                 <version>${shiro-j2cache.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.github.redacted-legacy-family/shiro-j2cache -->
+            <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/shiro-j2cache -->
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/shiro-jwt-core -->
             <!-- Easy4J Shiro JWT Core：Easy4J 的 Shiro JWT 认证核心模块。 -->
             <dependency>
@@ -9101,7 +9105,7 @@
                 <artifactId>spring-bytebuddy</artifactId>
                 <version>${spring-bytebuddy.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.github.redacted-legacy-family/spring-bytebuddy -->
+            <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/spring-bytebuddy -->
             <!-- Source: https://mvnrepository.com/artifact/org.springframework.data/spring-data-bom -->
             <!-- Spring Data BOM：Spring Data 各模块（JPA/Redis/MongoDB 等）的版本清单。 -->
             <dependency>
@@ -9735,7 +9739,7 @@
                 <artifactId>undertow-core</artifactId>
                 <version>${undertow.version}</version>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/com.github.redacted-legacy-family/undertow-metrics-prometheus -->
+            <!-- https://mvnrepository.com/artifact/io.github.easy4j/undertow-metrics-prometheus -->
             <!-- Undertow Metrics Prometheus：Undertow Web 服务器的 Prometheus 指标监控模块。 -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>

@@ -199,11 +199,12 @@ class OrderEventTest {
 
     @Test
     void shouldTriggerEventsEndToEndViaRest() {
+        java.util.Map<String, String> body = new java.util.HashMap<>();
+        body.put("orderNo", "REST-EV-1");
+        body.put("buyerId", "BUYER-REST-EV-1");
+        body.put("buyerName", "Z");
         given().contentType("application/json")
-                .body(java.util.Map.of(
-                        "orderNo", "REST-EV-1",
-                        "buyerId", "BUYER-REST-EV-1",
-                        "buyerName", "Z"))
+                .body(body)
                 .when().post("/orders")
                 .then()
                 .statusCode(200)

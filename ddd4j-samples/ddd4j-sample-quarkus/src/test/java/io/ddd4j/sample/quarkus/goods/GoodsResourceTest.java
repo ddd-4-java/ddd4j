@@ -72,7 +72,7 @@ class GoodsResourceTest {
         assertThat(onSale.getStatus()).isEqualTo(GoodsStatus.ON_SALE);
 
         applicationService.delete(GoodsId.of(created.id()));
-        Goods afterDelete = repository.findById(created.id()).orElseThrow();
+        Goods afterDelete = repository.findById(created.id()).orElseThrow(IllegalStateException::new);
         assertThat(afterDelete.getStatus()).isEqualTo(GoodsStatus.DELETED);
     }
 
@@ -301,7 +301,7 @@ class GoodsResourceTest {
                 .statusCode(200)
                 .body("code", equalTo(0));
 
-        Goods afterDelete = repository.findById(created.id()).orElseThrow();
+        Goods afterDelete = repository.findById(created.id()).orElseThrow(IllegalStateException::new);
         assertThat(afterDelete.getStatus()).isEqualTo(GoodsStatus.DELETED);
     }
 

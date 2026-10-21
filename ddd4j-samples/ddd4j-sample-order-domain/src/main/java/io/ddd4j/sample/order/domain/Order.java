@@ -13,17 +13,17 @@
  * limitations under the License.
  */
 package io.ddd4j.sample.order.domain;
-import io.ddd4j.sample.order.domain.event.OrderShippedEvent;
-import io.ddd4j.sample.order.domain.event.OrderPaidEvent;
-import io.ddd4j.sample.order.domain.event.OrderLineAddedEvent;
-import io.ddd4j.sample.order.domain.event.OrderCreatedEvent;
-import io.ddd4j.sample.order.domain.event.OrderCancelledEvent;
 
 import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.kit.lang.StrKit;
-import io.ddd4j.sample.order.domain.event.*;
+import io.ddd4j.sample.order.domain.event.OrderCancelledEvent;
+import io.ddd4j.sample.order.domain.event.OrderCreatedEvent;
+import io.ddd4j.sample.order.domain.event.OrderLineAddedEvent;
+import io.ddd4j.sample.order.domain.event.OrderPaidEvent;
+import io.ddd4j.sample.order.domain.event.OrderShippedEvent;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -81,7 +81,7 @@ public final class Order extends AggregateRoot<String> {
      */
     public static Order draft(String orderNo, String buyerId, String buyerName) {
         Order order = new Order(UUID.randomUUID().toString(), orderNo, buyerId, buyerName,
-                OrderStatus.DRAFT, List.of());
+                OrderStatus.DRAFT, Collections.emptyList());
         order.registerEvent(new OrderCreatedEvent(order.id));
         return order;
     }
@@ -113,7 +113,7 @@ public final class Order extends AggregateRoot<String> {
 
     /** @return 不可变的订单明细副本 */
     public List<OrderLine> lines() {
-        return List.copyOf(lines);
+        return Collections.unmodifiableList(new ArrayList<>(lines));
     }
 
     /** @return 人民币订单总金额 */

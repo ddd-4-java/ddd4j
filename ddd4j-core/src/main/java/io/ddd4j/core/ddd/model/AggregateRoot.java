@@ -110,12 +110,6 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
      */
     private static final ClassValue<ClassValue<Method>> EVENT_HANDLER_CACHE = new ClassValue<>() {
         @Override
-/**
- * 事件处理器方法缓存（ClassValue 二级索引）。
- * 外层 key = 聚合根 Class，内层 key = 事件 Class → 处理器 Method（可能为 null）。
- * 解析优先级：{@code @EventHandler} 注解方法 > {@code on<EventType>} 命名约定（3.0.x 兼容）。
- */
-
         protected ClassValue<Method> computeValue(Class<?> aggregateClass) {
             return new ClassValue<>() {
                 @Override
@@ -400,28 +394,7 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
     // ========================= 事件溯源 =========================
 
     /**
-     * 应用领域事件：通过 ClassValue 缓存的反射路由到聚合内部的 {@code on<EventTypeSimpleName>} 方法。
-     *
-     * <p>例如 {@code OrderCreatedEvent} 路由到 {@code onOrderCreated(OrderCreatedEvent event)}。
-     * 若聚合未定义对应的 handler 方法，则静默忽略（不影响聚合状态）。
-     *
-     * <p>注意：{@code apply} 仅用于事件溯源回放（从历史事件重建聚合状态），
-     * 不会将事件注册到未提交事件缓冲区。业务方法应使用 {@link #registerEvent(DomainEvent)}。
-     *
-     * <h3>异常处理</h3>
-     * <p>反射调用精确捕获两类异常：
-     * <ul>
-     *   <li>{@link InvocationTargetException} — handler 自身抛出的异常解包后透传，
-     *       运行时异常直接抛出，受检异常包装为 {@link BizRuntimeException}</li>
-     *   <li>{@link IllegalAccessException} — 通常为 JDK 17+ 模块系统未开放反射访问，
-     *       错误消息明确指引解决方案（{@code --add-opens} 或 {@code module-info.java opens}）</li>
-     * </ul>
-     *
-     * @param event 领域事件
-     * @param <E>   事件类型
-     */
-    /**
-     * 应用领域事件（2.0.x 语义）。
+     * 应用领域事件。
      *
      * <p>反射派发到事件处理器（{@code @EventHandler} 优先，{@code on<Type>} 回退），
      * 并返回事件本身。找不到处理器时抛 {@link IllegalStateException}。
@@ -439,7 +412,7 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
      * 事件应用内部实现。
      *
      * <p>反射派发到事件处理器（{@code @EventHandler} 优先，{@code on<Type>} 回退），
-     * 并注册进未提交事件列表（2.0.x 语义：找不到处理器时抛 {@link IllegalStateException}）。
+     * 并注册进未提交事件列表（找不到处理器时抛 {@link IllegalStateException}）。
      * 回放模式（{@code replay = true}）下跳过标有 {@code ignoreOnReplay = true} 的处理器。
      *
      * @param event  领域事件
@@ -471,7 +444,7 @@ public abstract class AggregateRoot<ID extends Serializable> implements Entity<I
         try {
             handler.invoke(this, event);
             if (!replay) {
-                // 2.0.x 语义：apply 反射派发后注册进未提交事件列表；回放（loadFromHistory）不入队
+                // apply 反射派发后注册进未提交事件列表；回放（loadFromHistory）不入队
                 mutableDomainEvents().add(event);
             }
         } catch (InvocationTargetException e) {

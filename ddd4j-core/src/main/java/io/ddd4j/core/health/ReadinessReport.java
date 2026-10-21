@@ -12,13 +12,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package io.ddd4j.core.health;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -27,26 +30,36 @@ import java.util.Objects;
  *
  * <p>任一关键依赖未就绪或检查异常时，报告均为未就绪。检查异常只转换为安全的状态原因，
  * 原始异常应由 Runtime 的日志或观测系统记录。
+ *
+ * <p>{@code ready} — 是否可接收流量
+ * <p>{@code results} — 每个已执行 Contributor 的结果
  */
-
+@Getter
 public final class ReadinessReport {
 
-    private static final long serialVersionUID = 0L;
-
     private final boolean ready;
-
     private final List<ReadinessResult> results;
 
     /**
- * @param ready 是否可接收流量
- * @param results 每个已执行 Contributor 的结果
- */
-
-    @JsonCreator()
-    public ReadinessReport(@JsonProperty("ready") boolean ready, @JsonProperty("results") List<ReadinessResult> results) {
-        results = List.copyOf(Objects.requireNonNullElse(results, List.of()));
+     * 多个 {@link ReadinessContributor} 的聚合结果。
+     *
+     * <p>任一关键依赖未就绪或检查异常时，报告均为未就绪。检查异常只转换为安全的状态原因，
+     * 原始异常应由 Runtime 的日志或观测系统记录。
+     *
+     * @param ready   是否可接收流量
+     * @param results 每个已执行 Contributor 的结果
+     */
+    @JsonCreator
+    public ReadinessReport(@JsonProperty("ready") boolean ready,
+                           @JsonProperty("results") List<ReadinessResult> results) {
         this.ready = ready;
-        this.results = results;
+        List<ReadinessResult> copiedResults = new ArrayList<>();
+        if (Objects.nonNull(results)) {
+            for (ReadinessResult result : results) {
+                copiedResults.add(Objects.requireNonNull(result, "readiness result"));
+            }
+        }
+        this.results = Collections.unmodifiableList(copiedResults);
     }
 
     /**
@@ -56,41 +69,40 @@ public final class ReadinessReport {
      * @return 聚合就绪报告
      */
     public static ReadinessReport check(Collection<? extends ReadinessContributor> contributors) {
-        List<ReadinessResult> results = Objects.requireNonNullElse(contributors, List.<ReadinessContributor>of()).stream().filter(Objects::nonNull).map(ReadinessReport::checkContributor).toList();
-        return new ReadinessReport(results.stream().allMatch(ReadinessResult::ready), results);
+        List<ReadinessResult> results = new ArrayList<>();
+        Collection<? extends ReadinessContributor> safe = contributors != null
+                ? contributors : Collections.<ReadinessContributor>emptyList();
+        for (ReadinessContributor contributor : safe) {
+            if (contributor != null) {
+                results.add(checkContributor(contributor));
+            }
+        }
+        boolean allReady = true;
+        for (ReadinessResult result : results) {
+            if (!result.ready()) {
+                allReady = false;
+                break;
+            }
+        }
+        return new ReadinessReport(allReady, results);
     }
 
     private static ReadinessResult checkContributor(ReadinessContributor contributor) {
         try {
             ReadinessResult result = contributor.check();
-            return Objects.requireNonNullElseGet(result, () -> ReadinessResult.unavailable(contributor.getClass().getSimpleName(), "empty result"));
+            if (result != null) {
+                return result;
+            }
+            return ReadinessResult.unavailable(contributor.getClass().getSimpleName(), "empty result");
         } catch (RuntimeException exception) {
             return ReadinessResult.unavailable(contributor.getClass().getSimpleName(), "check failed");
         }
     }
 
     /**
-     * 获取各依赖的就绪结果。
+     * 获取整体就绪状态，供业务调用及 JSON 序列化使用。
      *
-     * @return 不可变就绪结果列表
-     */
-    public List<ReadinessResult> getResults() {
-        return results;
-    }
-
-    /**
-     * 判断整体是否可接收流量。
-     *
-     * @return 全部必需依赖就绪时为 true
-     */
-    public boolean isReady() {
-        return ready;
-    }
-
-    /**
-     * 获取用于 JSON 的整体就绪状态。
-     *
-     * @return 就绪时为 true
+     * @return 整体就绪时为 true
      */
     @JsonProperty("ready")
     public boolean ready() {
@@ -98,9 +110,9 @@ public final class ReadinessReport {
     }
 
     /**
-     * 获取用于 JSON 的就绪结果。
+     * 获取各依赖的就绪结果，供业务调用及 JSON 序列化使用。
      *
-     * @return 不可变就绪结果列表
+     * @return 不可变的就绪结果列表
      */
     @JsonProperty("results")
     public List<ReadinessResult> results() {
@@ -112,23 +124,24 @@ public final class ReadinessReport {
         if (this == obj) {
             return true;
         }
-        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+        if (!(obj instanceof ReadinessReport)) {
             return false;
         }
-        ReadinessReport other = (ReadinessReport) obj;
-        return this.ready == other.ready && Objects.equals(this.results, other.results);
+        ReadinessReport that = (ReadinessReport) obj;
+        return ready == that.ready && results.equals(that.results);
     }
 
     @Override
     public int hashCode() {
         int result = 0;
         result = 31 * result + Boolean.hashCode(ready);
-        result = 31 * result + Objects.hashCode(results);
+        result = 31 * result + results.hashCode();
         return result;
     }
 
     @Override
     public String toString() {
-        return "ReadinessReport[ready=" + ready + ", results=" + results + "]";
+        return "ReadinessReport[ready=" + ready + ", results=" + results + ']';
     }
+
 }

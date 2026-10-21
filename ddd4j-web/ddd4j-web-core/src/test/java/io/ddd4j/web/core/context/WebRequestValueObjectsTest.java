@@ -15,12 +15,30 @@
 package io.ddd4j.web.core.context;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import org.junit.jupiter.api.Test;
 
 import java.util.Locale;
 
 class WebRequestValueObjectsTest {
+
+    @Test
+    void webRequestDataValueEqualityIncludesTenantAndRequestPath() {
+        WebRequestData first = new WebRequestData("request-1", "trace-1", "tenant-a", "Bearer token",
+                Locale.CHINA, "203.0.113.1", "203.0.113.2", "10.0.0.1", "POST", "/orders");
+        WebRequestData same = new WebRequestData("request-1", "trace-1", "tenant-a", "Bearer token",
+                Locale.CHINA, "203.0.113.1", "203.0.113.2", "10.0.0.1", "POST", "/orders");
+        WebRequestData otherTenant = new WebRequestData("request-1", "trace-1", "tenant-b", "Bearer token",
+                Locale.CHINA, "203.0.113.1", "203.0.113.2", "10.0.0.1", "POST", "/orders");
+        WebRequestData otherPath = new WebRequestData("request-1", "trace-1", "tenant-a", "Bearer token",
+                Locale.CHINA, "203.0.113.1", "203.0.113.2", "10.0.0.1", "POST", "/goods");
+
+        assertEquals(first, same);
+        assertEquals(first.hashCode(), same.hashCode());
+        assertNotEquals(first, otherTenant);
+        assertNotEquals(first, otherPath);
+    }
 
     @Test
     void webRequestDataExposesJavaBeanAccessors() {

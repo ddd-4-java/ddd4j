@@ -39,19 +39,19 @@ public class Ddd4jQuarkusContractResource {
     @GET
     @Path("/success")
     public R<Map<String, String>> success() {
-        return R.ok(Map.of("result", "ok"));
+        return R.ok(java.util.Collections.singletonMap("result", "ok"));
     }
 
     @GET
     @Path("/public")
     public R<Map<String, String>> publicEndpoint() {
-        return R.ok(Map.of("result", "ok"));
+        return R.ok(java.util.Collections.singletonMap("result", "ok"));
     }
 
     @GET
     @Path("/protected")
     public R<Map<String, String>> protectedEndpoint() {
-        return R.ok(Map.of("result", "ok"));
+        return R.ok(java.util.Collections.singletonMap("result", "ok"));
     }
 
     @POST
@@ -59,7 +59,7 @@ public class Ddd4jQuarkusContractResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response created(String ignoredBody) {
         return Response.status(Response.Status.CREATED)
-                .entity(R.ok(Map.of("result", "created"))).build();
+                .entity(R.ok(java.util.Collections.singletonMap("result", "created"))).build();
     }
 
     @GET
@@ -76,21 +76,21 @@ public class Ddd4jQuarkusContractResource {
     @Path("/idempotent")
     @Consumes(MediaType.APPLICATION_JSON)
     public R<Map<String, String>> idempotent(String ignoredBody) {
-        return R.ok(Map.of("result", "accepted"));
+        return R.ok(java.util.Collections.singletonMap("result", "accepted"));
     }
 
     @GET
     @Path("/errors/{type}")
     public R<Void> error(@PathParam("type") String type) {
-        throw switch (type) {
-            case "bad-request" -> new IllegalArgumentException("bad request");
-            case "forbidden" -> new SecurityException("forbidden");
-            case "not-found" -> new NoSuchElementException("not found");
-            case "conflict" -> new IllegalStateException("conflict");
-            case "unsupported-media-type" -> new WebStatusException(415, "unsupported media type");
-            case "unprocessable-entity" -> new WebStatusException(422, "unprocessable entity");
-            case "too-many-requests" -> new WebStatusException(429, "too many requests");
-            default -> new RuntimeException("internal failure");
-        };
+        switch (type) {
+            case "bad-request": throw new IllegalArgumentException("bad request");
+            case "forbidden": throw new SecurityException("forbidden");
+            case "not-found": throw new NoSuchElementException("not found");
+            case "conflict": throw new IllegalStateException("conflict");
+            case "unsupported-media-type": throw new WebStatusException(415, "unsupported media type");
+            case "unprocessable-entity": throw new WebStatusException(422, "unprocessable entity");
+            case "too-many-requests": throw new WebStatusException(429, "too many requests");
+            default: throw new RuntimeException("internal failure");
+        }
     }
 }

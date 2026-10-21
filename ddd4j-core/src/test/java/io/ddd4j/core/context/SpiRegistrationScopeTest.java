@@ -14,14 +14,10 @@
  */
 package io.ddd4j.core.context;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.util.Objects;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -63,44 +59,34 @@ class SpiRegistrationScopeTest {
         assertThat(BaseContext.get(KEY, Service.class)).contains(replacement);
     }
 
-    private final static class Service {
-
-        private static final long serialVersionUID = 0L;
-
+    private static final class Service {
         private final String name;
 
-        @JsonCreator()
-        private Service(@JsonProperty("name") String name) {
+        public Service(String name) {
             this.name = name;
         }
 
-        @JsonProperty("name")
         public String name() {
             return name;
         }
 
         @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            Service other = (Service) obj;
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof Service)) return false;
+            Service other = (Service) o;
             return Objects.equals(this.name, other.name);
         }
 
         @Override
         public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(name);
-            return result;
+            return java.util.Objects.hash(name);
         }
 
         @Override
         public String toString() {
-            return "Service[name=" + name + "]";
+            return "Service{" + "name=" + name + "}";
         }
+
     }
 }

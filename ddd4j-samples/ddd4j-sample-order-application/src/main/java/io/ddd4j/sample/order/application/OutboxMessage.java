@@ -122,12 +122,12 @@ public final class OutboxMessage {
 
     @Override
     public int hashCode() {
-        int result = 0;
-        result = 31 * result + Objects.hashCode(id);
-        result = 31 * result + Objects.hashCode(aggregateId);
-        result = 31 * result + Objects.hashCode(eventType);
-        result = 31 * result + Objects.hashCode(payload);
-        result = 31 * result + Objects.hashCode(occurredAt);
+        int result = 1;
+        result = 59 * result + (Objects.isNull(id) ? 43 : id.hashCode());
+        result = 59 * result + (Objects.isNull(aggregateId) ? 43 : aggregateId.hashCode());
+        result = 59 * result + (Objects.isNull(eventType) ? 43 : eventType.hashCode());
+        result = 59 * result + (Objects.isNull(payload) ? 43 : payload.hashCode());
+        result = 59 * result + (Objects.isNull(occurredAt) ? 43 : occurredAt.hashCode());
         return result;
     }
 

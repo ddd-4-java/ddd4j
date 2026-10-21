@@ -26,7 +26,7 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
  * ddd4j-data-projection-quarkus 模块独立性自检：Quarkus CDI 投影调度适配器的依赖面锁定。
  *
  * <p>本模块是 ViewScheduler / ViewManager SPI 在 Quarkus 运行时的装配适配器，
- * 允许依赖 Quarkus／ArC 与 Jakarta API（CDI），但不得：
+ * 允许依赖 Quarkus／ArC 与当前线的 CDI API，但不得：
  * <ul>
  *   <li>引入 Spring（Spring 系运行时适配归 ddd4j-data-projection-spring——注意两边
  *       调度机制不同，Quarkus 侧严禁混入 Spring 刻板）</li>
@@ -36,15 +36,15 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
  * 新增依赖必须显式加白并经 ADR 修订。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 2.0.x
+ * @since 1.0.x
  */
 @AnalyzeClasses(packages = "io.ddd4j.data.projection.quarkus", importOptions = {ImportOption.DoNotIncludeTests.class})
 class ProjectionQuarkusModuleIndependenceTest {
 
     /**
      * Quarkus 投影调度适配器依赖允许清单：仅 JDK（java..）、io.ddd4j 家族模块
-     * （投影契约来自 ddd4j-core/ddd4j-data-projection）、Jakarta API
-     * （jakarta..，CDI 上下文／注入）与 Quarkus 全家桶（io.quarkus..，ArC）。
+     * （投影契约来自 ddd4j-core/ddd4j-data-projection）、平台 CDI API
+     * （上下文／注入）与 Quarkus 全家桶（io.quarkus..，ArC）。
      */
     @ArchTest
     static final ArchRule projection_quarkus_deps_allowlist =

@@ -103,7 +103,7 @@ public class DddContextInitializer {
             log.warn("Ddd4j Quarkus runtime requires unique DomainEventPublisher, SubjectProvider, I18nProvider and CommandBus beans");
             return;
         }
-        readinessRegistry.registerAll(readinessContributors.stream().toList());
+        readinessRegistry.registerAll(readinessContributors.stream().collect(java.util.stream.Collectors.toList()));
         runtime = new Ddd4jQuarkusRuntime(domainEventPublisher.get(), subjectProvider.get(), i18nProvider.get(),
                 commandBus.get(), readinessRegistry);
         runtime.start();
