@@ -2832,6 +2832,41 @@
       }
     },
     {
+      "id": "MQ-PULSAR-NONREQUEUE-FAILFAST",
+      "description": "Pulsar 原生 negativeAcknowledge 必定重投；nack/reject/recover/discard 请求不重投时显式失败且不调用 Broker，此项不代表真实 Broker 故障验收",
+      "caseNames": {
+        "1.0.x": [
+          "doesNotRedeliverWhenNonRequeueWasRequested"
+        ],
+        "2.0.x": [
+          "doesNotRedeliverWhenNonRequeueWasRequested"
+        ],
+        "3.0.x": [
+          "doesNotRedeliverWhenNonRequeueWasRequested"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-pulsar/src/test/java/io/ddd4j/mq/pulsar/PulsarAdapterContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-pulsar/src/test/java/io/ddd4j/mq/pulsar/PulsarAdapterContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-pulsar/src/test/java/io/ddd4j/mq/pulsar/PulsarAdapterContractTest.java"
+          ]
+        }
+      }
+    },
+    {
       "id": "MQ-SQS-DISABLED-REQUEUE",
       "description": "SQS 禁用重投时 nack/reject/recover 请求重投均显式失败且不删消息；此项使用 mocked SqsClient，不代表 AWS 云端验收",
       "caseNames": {
