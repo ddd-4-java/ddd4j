@@ -1413,7 +1413,10 @@ def validate_platform_content_mappings(mappings, roots: list[pathlib.Path]) -> d
                 and before[len("import javax."):] == after[len("import jakarta."):]
             )
             pulsar_broker_image = (
-                source == "ddd4j-mq/ddd4j-mq-pulsar/src/test/java/io/ddd4j/mq/pulsar/PulsarContainerIntegrationTest.java"
+                source in {
+                    "ddd4j-mq/ddd4j-mq-pulsar/src/test/java/io/ddd4j/mq/pulsar/PulsarContainerIntegrationTest.java",
+                    "ddd4j-mq/ddd4j-mq-tdmq/src/test/java/io/ddd4j/mq/tdmq/TdmqPulsarProtocolIntegrationTest.java",
+                }
                 and (before, after) == ("apachepulsar/pulsar:2.10.6", "apachepulsar/pulsar:4.2.4")
             )
             dropwizard_configuration_import = (
