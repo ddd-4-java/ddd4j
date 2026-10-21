@@ -716,6 +716,14 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- Jetty 9.4 补丁统一管理，避免框架传递依赖回退到旧的易受攻击版本。 -->
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-bom</artifactId>
+                <version>${jetty.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>com.mchange</groupId>
                 <artifactId>c3p0</artifactId>

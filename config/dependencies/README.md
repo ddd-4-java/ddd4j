@@ -146,3 +146,7 @@ python3 scripts/check_weekly_dependency_versions.py \
   --line "$DDD4J_LINE" \
   --output target/dependency-audit/version-report.json
 ```
+
+### JDK 8 Jetty 补丁对齐
+
+1.0.x 通过 `jetty-bom:${jetty.version}` 管理 Jetty 9.4 核心组件，避免 Javalin 和 Dropwizard 的传递依赖停留在不同的旧补丁版本。验证须同时检查两类模块的有效 POM，并在 JDK 8 下执行适配器测试。该对齐保留 JDK 8、javax 和现有框架版本线；不代表 Jetty 9.4 的所有安全问题已解决，CVE 门禁继续执行。
