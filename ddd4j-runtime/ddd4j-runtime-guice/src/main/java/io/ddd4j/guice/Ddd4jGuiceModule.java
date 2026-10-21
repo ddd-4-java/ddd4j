@@ -78,8 +78,9 @@ public class Ddd4jGuiceModule extends AbstractModule {
     }
 
     /**
-     * 提供 Guava EventBus（单例）
-     * @return 返回的 EventBus 结果
+     * 提供 Guava EventBus（单例）。
+     *
+     * @return Guava EventBus
      */
     @Provides
     @Singleton
@@ -91,8 +92,9 @@ public class Ddd4jGuiceModule extends AbstractModule {
 
     /**
      * 默认投影运行器。业务侧可在自己的模块中绑定更具体的事件读取器和运行器。
-     * @param projectionService 参数 projectionService
-     * @return 返回的 ProjectionRunner 结果
+     *
+     * @param projectionService 投影位置服务
+     * @return 使用空事件读取器的投影运行器
      */
     public ProjectionRunner<Object> projectionRunner(ProjectionService projectionService) {
         return new ProjectionRunner<>(projectionService, new NoopEventChunkReader<>());
@@ -118,6 +120,12 @@ public class Ddd4jGuiceModule extends AbstractModule {
         return new ProjectionRunner<>(projectionService, binding.getProvider().get());
     }
 
+    /**
+     * 使用位置仓储提供投影服务。
+     *
+     * @param repository 投影位置仓储
+     * @return 投影服务
+     */
     @Provides
     @Singleton
     public ProjectionService projectionService(ProjectionPositionRepository repository) {

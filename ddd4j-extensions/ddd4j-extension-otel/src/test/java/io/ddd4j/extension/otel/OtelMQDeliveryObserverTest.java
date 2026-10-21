@@ -34,6 +34,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
+/** 验证 MQ 投递事件的低基数指标契约。 */
 class OtelMQDeliveryObserverTest {
 
     private Meter meter;

@@ -16,6 +16,7 @@ package io.ddd4j.mq.event;
 
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.ddd.event.DomainEvent;
+import io.ddd4j.core.ddd.event.EntityIdPath;
 import io.ddd4j.core.ddd.event.StringEntityId;
 import io.ddd4j.mq.MQProperties;
 import org.junit.jupiter.api.AfterEach;
@@ -23,6 +24,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -188,7 +190,7 @@ class MqDomainEventPublisherTest {
         TestDomainEvent event1 = new TestDomainEvent("order-001");
         TestDomainEvent event2 = new TestDomainEvent("order-002");
 
-        publisher.publishAll(java.util.Arrays.asList(event1, event2));
+        publisher.publishAll(Arrays.asList(event1, event2));
 
         assertEquals(2, publishedEvents.size());
     }
@@ -217,6 +219,17 @@ class MqDomainEventPublisherTest {
         assertEquals(MqDomainEventPublisher.DOMAIN_EVENT_TAG, carrier.getTag());
     }
 
+    @Test
+    void toCarrier_shouldPreserveCorrelationAndCausationIds() {
+        TestDomainEvent causing = new TestDomainEvent(ENTITY_ID);
+        TestDomainEvent child = new TestDomainEvent(ENTITY_ID, causing);
+
+        DomainEventCarrier carrier = publisher.toCarrier(child);
+
+        assertEquals(causing.getEventId().asString(), carrier.getCorrelationId());
+        assertEquals(causing.getEventId().asString(), carrier.getCausationId());
+    }
+
     // ========================= 测试辅助类 =========================
 
     /**
@@ -226,6 +239,10 @@ class MqDomainEventPublisherTest {
 
         TestDomainEvent(String entityId) {
             super(entityId);
+        }
+
+        TestDomainEvent(String entityId, DomainEvent<?> causing) {
+            super(new EntityIdPath(new StringEntityId(entityId)), causing);
         }
     }
 }

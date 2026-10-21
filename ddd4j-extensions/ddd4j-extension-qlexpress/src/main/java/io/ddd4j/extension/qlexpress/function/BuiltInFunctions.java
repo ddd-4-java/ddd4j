@@ -15,6 +15,7 @@
 package io.ddd4j.extension.qlexpress.function;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -26,11 +27,11 @@ public final class BuiltInFunctions {
     }
 
     public static List<NamedQLFunction> all() {
-        return Arrays.asList(
+        return Collections.unmodifiableList(Arrays.asList(
                 new ContainsFunction(),
                 new StartsWithFunction(),
                 new EndsWithFunction(),
                 new FormatDateFunction()
-        );
+        ));
     }
 }

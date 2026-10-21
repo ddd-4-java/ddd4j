@@ -50,10 +50,22 @@ public class DataPermissionInnerInterceptor implements InnerInterceptor {
 
     private final DataScopeProvider provider;
 
+    /**
+     * 创建使用指定数据范围提供者的拦截器。
+     *
+     * @param provider 数据范围提供者
+     */
     public DataPermissionInnerInterceptor(DataScopeProvider provider) {
         this.provider = provider;
     }
 
+    /**
+     * 在 SELECT 语句准备执行前合并原有 WHERE 条件与数据范围条件。
+     *
+     * @param sh MyBatis 语句处理器
+     * @param connection 当前数据库连接
+     * @param transactionTimeout 事务超时时间
+     */
     @Override
     public void beforePrepare(StatementHandler sh, Connection connection, Integer transactionTimeout) {
         MappedStatement ms = (MappedStatement) SystemMetaObject.forObject(sh)

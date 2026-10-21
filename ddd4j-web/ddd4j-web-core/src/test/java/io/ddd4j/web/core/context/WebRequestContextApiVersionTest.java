@@ -14,6 +14,7 @@
  */
 package io.ddd4j.web.core.context;
 
+import io.ddd4j.kit.lang.JsonKit;
 import io.ddd4j.web.core.version.ApiVersion;
 import org.junit.jupiter.api.Test;
 
@@ -95,6 +96,19 @@ class WebRequestContextApiVersionTest {
 
         assertTrue(context.toString().contains("apiVersion=2.1.0"));
         assertTrue(legacyContext().toString().contains("apiVersion=null"));
+    }
+
+    @Test
+    void jsonRoundTripPreservesApiVersion() {
+        WebRequestContext context = new WebRequestContext("request-1", "trace-1", "tenant-1", null,
+                Locale.CHINA, "203.0.113.1", "get", "/orders", ApiVersion.parse("2.1.0"));
+
+        String json = JsonKit.toJson(context);
+        assertTrue(json.contains("\"apiVersion\":\"2.1.0\""));
+        WebRequestContext restored = JsonKit.toObject(json, WebRequestContext.class);
+
+        assertEquals(context, restored);
+        assertEquals(ApiVersion.parse("2.1.0"), restored.apiVersion());
     }
 
     @Test

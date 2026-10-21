@@ -41,6 +41,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -126,6 +131,79 @@ class JpaEventStorePostgresIT {
             if (second.getTransaction().isActive()) {
                 second.getTransaction().rollback();
             }
+            first.close();
+            second.close();
+        }
+    }
+
+    @Test
+    void concurrentAppendsMustSerializeGlobalPositionAllocation() throws Exception {
+        TestAggregateRootId seed = new TestAggregateRootId("position-seed");
+        eventStore.append("Order", seed, Collections.singletonList(new OrderCreatedEvent("seed")), 0);
+
+        EntityManager first = entityManagerFactory.createEntityManager();
+        EntityManager second = entityManagerFactory.createEntityManager();
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        EntityTransaction firstTransaction = first.getTransaction();
+        CountDownLatch versionRead = new CountDownLatch(1);
+        CountDownLatch positionLookup = new CountDownLatch(1);
+        Future<?> competing = null;
+        try {
+            TestAggregateRootId firstId = new TestAggregateRootId("position-first");
+            firstTransaction.begin();
+            JpaEventStore.participating(first).append("Order", firstId,
+                    Collections.singletonList(new OrderCreatedEvent("first")), 0);
+
+            JpaStoredEventRepository secondRepository = new JpaStoredEventRepositoryImpl(second) {
+                @Override
+                public long findCurrentVersion(String aggregateType, String aggregateId) {
+                    long version = super.findCurrentVersion(aggregateType, aggregateId);
+                    versionRead.countDown();
+                    return version;
+                }
+
+                @Override
+                public long nextPosition() {
+                    positionLookup.countDown();
+                    return super.nextPosition();
+                }
+            };
+            TestAggregateRootId secondId = new TestAggregateRootId("position-second");
+            competing = executor.submit(() -> {
+                EntityTransaction transaction = second.getTransaction();
+                transaction.begin();
+                try {
+                    JpaEventStore.participating(second, secondRepository,
+                            new EventPayloadSerializer(JsonMapper.builder().findAndAddModules().build()))
+                            .append("Order", secondId,
+                                    Collections.singletonList(new OrderCreatedEvent("second")), 0);
+                    transaction.commit();
+                } finally {
+                    if (transaction.isActive()) {
+                        transaction.rollback();
+                    }
+                }
+            });
+            assertTrue(versionRead.await(10, TimeUnit.SECONDS), "competing transaction did not reach version lookup");
+            boolean allocatedBeforeCommit = positionLookup.await(300, TimeUnit.MILLISECONDS);
+            firstTransaction.commit();
+
+            assertFalse(allocatedBeforeCommit, "position lookup passed the uncommitted predecessor");
+            competing.get(15, TimeUnit.SECONDS);
+            entityManager.clear();
+            List<StoredEvent> stored = eventStore.readAll(0, 10);
+            assertEquals(3, stored.size());
+            assertEquals(1L, stored.get(0).position());
+            assertEquals(2L, stored.get(1).position());
+            assertEquals(3L, stored.get(2).position());
+        } finally {
+            if (firstTransaction.isActive()) {
+                firstTransaction.rollback();
+            }
+            if (Objects.nonNull(competing)) {
+                competing.cancel(true);
+            }
+            executor.shutdownNow();
             first.close();
             second.close();
         }
@@ -313,6 +391,20 @@ class JpaEventStorePostgresIT {
     }
 
     @Test
+    void payloadColumnShouldUsePortableTextType() throws Exception {
+        // PG 将列名折叠为小写；information_schema 中 table_schema = current_schema()
+        try (Connection conn = DriverManager.getConnection(PG.getJdbcUrl(), PG.getUsername(), PG.getPassword());
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(
+                     "select data_type from information_schema.columns"
+                             + " where lower(table_name) = lower('" + EventStoreConstants.TABLE_NAME + "')"
+                             + " and lower(column_name) = lower('" + EventStoreConstants.COLUMN_PAYLOAD + "')")) {
+            assertTrue(rs.next(), "payload column must exist");
+            assertEquals("text", rs.getString("data_type"));
+        }
+    }
+
+    @Test
     void appendWithStaleVersionShouldRejectOnPostgres() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-pg-2");
         eventStore.append(ORDER_TYPE, orderId,
@@ -325,20 +417,6 @@ class JpaEventStorePostgresIT {
         assertEquals(1L, conflict.actualVersion());
         entityManager.clear();
         assertEquals(1, eventStore.read(ORDER_TYPE, orderId).size());
-    }
-
-    @Test
-    void payloadColumnShouldUsePortableTextType() throws Exception {
-        // PG 将列名折叠为小写；information_schema 中 table_schema = current_schema()
-        try (Connection conn = DriverManager.getConnection(PG.getJdbcUrl(), PG.getUsername(), PG.getPassword());
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(
-                     "select data_type from information_schema.columns"
-                             + " where lower(table_name) = lower('" + EventStoreConstants.TABLE_NAME + "')"
-                             + " and lower(column_name) = lower('" + EventStoreConstants.COLUMN_PAYLOAD + "')")) {
-            assertTrue(rs.next(), "payload column must exist");
-            assertEquals("text", rs.getString("data_type"));
-        }
     }
 
     private static final class TestAggregateRootId implements AggregateRootId {

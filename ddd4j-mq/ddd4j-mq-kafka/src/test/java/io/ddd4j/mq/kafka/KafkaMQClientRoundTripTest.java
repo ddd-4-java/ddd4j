@@ -14,11 +14,13 @@
  */
 package io.ddd4j.mq.kafka;
 
+import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.annotation.MQEventListener;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.serialization.JsonMQEventSerialization;
+import org.apache.kafka.clients.admin.AdminClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Container;
@@ -57,6 +59,7 @@ class KafkaMQClientRoundTripTest {
         KafkaMQProperties kafkaProps = new KafkaMQProperties();
         kafkaProps.setBootstrapServers(KAFKA.getBootstrapServers());
         kafkaProps.setAutoCreateTopics(true);
+        kafkaProps.setGroupIdPrefix("billing");
 
         MQProperties mqProps = new MQProperties();
         mqProps.setEnabled(true);
@@ -74,27 +77,40 @@ class KafkaMQClientRoundTripTest {
 
         // 3. 走框架统一入口 init()：注册序列化器/配置到 BaseContext，
         //    初始化生产者（注册进 publishers Map）并注册消费者
-        client.init(Collections.singletonList(listener), mqProps, new JsonMQEventSerialization(), null);
+        try {
+            client.init(Collections.singletonList(listener), mqProps, new JsonMQEventSerialization(), null);
 
-        // 4. 生产：走 MQEvent.publish() 的 BaseContext 路由（与生产环境用法一致）
-        OrderPaidEvent event = new OrderPaidEvent();
-        event.setTopic("ORDER");
-        event.setTag("paid");
-        event.setTenantId("t-100");
-        event.orderId = "o-12345";
-        event.amount = 9900L;
-        event.publish();
+            // 4. 生产：走 MQEvent.publish() 的 BaseContext 路由（与生产环境用法一致）
+            OrderPaidEvent event = new OrderPaidEvent();
+            event.setTopic("ORDER");
+            event.setTag("paid");
+            event.setTenantId("t-100");
+            event.orderId = "o-12345";
+            event.amount = 9900L;
+            event.publish();
 
-        // 5. 断言：监听器在 30s 内收到完整负载
-        assertThat(bean.latch.await(30, TimeUnit.SECONDS))
-                .as("监听器应在 30 秒内收到事件")
-                .isTrue();
-        OrderPaidEvent received = bean.received.get();
-        assertThat(received).isNotNull();
-        assertThat(received.orderId).isEqualTo("o-12345");
-        assertThat(received.amount).isEqualTo(9900L);
-        assertThat(received.getTenantId()).isEqualTo("t-100");
-        assertThat(received.getMsgId()).isEqualTo(event.getMsgId());
+            // 5. 断言：监听器在 30s 内收到完整负载
+            assertThat(bean.latch.await(30, TimeUnit.SECONDS))
+                    .as("监听器应在 30 秒内收到事件")
+                    .isTrue();
+            OrderPaidEvent received = bean.received.get();
+            assertThat(received).isNotNull();
+            assertThat(received.orderId).isEqualTo("o-12345");
+            assertThat(received.amount).isEqualTo(9900L);
+            assertThat(received.getTenantId()).isEqualTo("t-100");
+            assertThat(received.getMsgId()).isEqualTo(event.getMsgId());
+            try (AdminClient admin = AdminClient.create(kafkaProps.adminProperties())) {
+                assertThat(admin.describeConsumerGroups(Collections.singletonList("billing-onPaid"))
+                        .all().get(10, TimeUnit.SECONDS).get("billing-onPaid").members()).hasSize(1);
+                client.close();
+                client.close();
+                assertThat(admin.describeConsumerGroups(Collections.singletonList("billing-onPaid"))
+                        .all().get(10, TimeUnit.SECONDS).get("billing-onPaid").members()).isEmpty();
+            }
+        } finally {
+            client.close();
+            BaseContext.clear();
+        }
     }
 
     /**

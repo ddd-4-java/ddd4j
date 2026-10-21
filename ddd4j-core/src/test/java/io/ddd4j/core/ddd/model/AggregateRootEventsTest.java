@@ -88,6 +88,24 @@ class AggregateRootEventsTest {
     }
 
     @Test
+    void pullDomainEvents_shouldKeepAnImmutableSnapshotInEventOrder() {
+        Order order = new Order("o1");
+        order.markCreated();
+        order.rename("paid");
+
+        List<DomainEvent<?>> pulled = order.pullDomainEvents();
+        order.rename("shipped");
+
+        assertThat(pulled).hasSize(2);
+        assertThat(((TestEvent) pulled.get(0)).getName()).isEqualTo("created");
+        assertThat(((TestEvent) pulled.get(1)).getName()).isEqualTo("paid");
+        assertThatThrownBy(() -> pulled.add(new TestEvent("late")))
+                .isInstanceOf(UnsupportedOperationException.class);
+        assertThat(order.domainEvents()).hasSize(1);
+        assertThat(((TestEvent) order.domainEvents().get(0)).getName()).isEqualTo("shipped");
+    }
+
+    @Test
     void clearDomainEvents_shouldEmptyBuffer() {
         Order order = new Order("o1");
         order.markCreated();

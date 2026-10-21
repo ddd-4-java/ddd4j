@@ -19,8 +19,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.kit.lang.StrKit;
 
-import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
@@ -88,38 +88,70 @@ public final class ReadinessResult {
                 StrKit.isBlank(reason) ? Collections.<String, String>emptyMap() : Collections.singletonMap("reason", reason));
     }
 
+    /**
+     * 获取值。
+     * @return 结果字符串。
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * 判断布尔状态。
+     * @return 判断结果。
+     */
     public boolean isReady() {
         return ready;
     }
 
+    /**
+     * 获取可安全公开的诊断详情。
+     *
+     * @return 不可变的诊断详情
+     */
     public Map<String, String> getDetails() {
         return details;
     }
 
+    /**
+     * 获取就绪状态，供业务调用及 JSON 序列化使用。
+     *
+     * @return 该依赖就绪时为 true
+     */
     @JsonProperty("ready")
     public boolean ready() {
         return ready;
     }
 
+    /**
+     * 获取依赖名称，供业务调用及 JSON 序列化使用。
+     *
+     * @return 稳定的依赖名称
+     */
     @JsonProperty("name")
     public String name() {
         return name;
     }
 
+    /**
+     * 获取诊断详情，供业务调用及 JSON 序列化使用。
+     *
+     * @return 不可变的诊断详情
+     */
     @JsonProperty("details")
     public Map<String, String> details() {
         return details;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ReadinessResult)) return false;
-        ReadinessResult that = (ReadinessResult) o;
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof ReadinessResult)) {
+            return false;
+        }
+        ReadinessResult that = (ReadinessResult) obj;
         return ready == that.ready
                 && Objects.equals(name, that.name)
                 && Objects.equals(details, that.details);

@@ -14,7 +14,12 @@
  */
 package io.ddd4j.core.cqrs.readmodel;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -57,14 +62,27 @@ public class InMemoryProjectionPositionRepository implements ProjectionPositionR
         save(DefaultProjectionPosition.zero(streamId));
     }
 
+    /**
+     * 统计内存中保存的投影位置数。
+     *
+     * @return 投影位置数
+     */
     public int size() {
         return store.size();
     }
 
+    /**
+     * 清空内存中的全部投影位置。
+     */
     public void clear() {
         store.clear();
     }
 
+    /**
+     * 复制当前投影位置映射。
+     *
+     * @return 当前映射快照
+     */
     public Map<String, ProjectionPosition> snapshot() {
         return Collections.unmodifiableMap(new HashMap<>(store));
     }

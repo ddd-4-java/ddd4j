@@ -5,6 +5,7 @@
  */
 package io.ddd4j.sample.dropwizard.cqrs;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.ddd4j.sample.dropwizard.cqrs.command.CreateOrderCommand;
 import io.ddd4j.sample.dropwizard.cqrs.web.OrderResource.CreateOrderRequest;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /** 三线 Dropwizard CQRS 订单值对象的共同公开契约。 */
 class DropwizardOrderValueContractTest {
+
+    @Test
+    void commandKeepsJsonRoundTrip() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        CreateOrderCommand command = new CreateOrderCommand("O-1", "B-1", "Alice");
+        assertEquals(command, mapper.readValue(mapper.writeValueAsString(command), CreateOrderCommand.class));
+    }
 
     @Test
     void commandKeepsBeanAndComponentAccessorsAndValueSemantics() {
@@ -30,7 +38,8 @@ class DropwizardOrderValueContractTest {
         assertEquals(first, same);
         assertEquals(first.hashCode(), same.hashCode());
         assertNotEquals(first, other);
-        assertTrue(first.toString().contains("orderNo=O-1"));
+        assertEquals(336683680, first.hashCode());
+        assertEquals("CreateOrderCommand(orderNo=O-1, buyerId=B-1, buyerName=Alice)", first.toString());
     }
 
     @Test

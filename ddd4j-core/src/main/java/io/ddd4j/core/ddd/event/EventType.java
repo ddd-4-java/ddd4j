@@ -26,6 +26,9 @@ import java.util.Objects;
 public final class EventType implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 事件类型值。
+     */
     private final String value;
 
     /**

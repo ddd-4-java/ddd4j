@@ -42,7 +42,7 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Javalin + Guice + Sa-Token + RBAC 鉴权 + DDD 业务示例启动类。
  *
- * <h3>核心要点</h3>
+ * <h2>核心要点</h2>
  * <p>Javalin 本身<b>没有 DI 容器</b>，使用 Google Guice 注入业务服务。
  * 业务代码（RBAC User/Role/Permission/Repository/Service）与 Spring 示例完全一致，
  * 仅 Controller 层使用 Javalin {@link ApiBuilder} 风格。
@@ -64,6 +64,11 @@ public class JavalinSaTokenApplication {
      */
     public static final int PORT = 8085;
 
+    /**
+     * 启动 Javalin Sa-Token 示例。
+     *
+     * @param args 命令行参数
+     */
     public static void main(String[] args) {
         // ==================== 1. 创建 Guice 注入器 ====================
         Module authModule = new AuthModule();

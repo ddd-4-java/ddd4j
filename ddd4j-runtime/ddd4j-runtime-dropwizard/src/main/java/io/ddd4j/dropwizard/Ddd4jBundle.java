@@ -43,24 +43,45 @@ public final class Ddd4jBundle<C extends Configuration> implements ConfiguredBun
     private final I18nProvider i18nProvider;
     private final Collection<ReadinessContributor> readinessContributors;
 
+    /** 使用默认服务集合创建 Dropwizard Bundle。 */
     public Ddd4jBundle() {
         this(Collections.emptyList(), Collections.emptyList(), null, I18nProvider.DEFAULT, Collections.emptyList());
     }
 
+    /**
+     * 使用指定服务集合创建 Bundle。
+     *
+     * @param executors 命令执行器
+     * @param listeners 事件监听器
+     * @param subjectProvider 主体提供器，可为空
+     * @param i18nProvider 国际化提供器
+     */
     public Ddd4jBundle(Collection<CommandExecutor<?>> executors, Collection<Consumer<Object>> listeners,
                        SubjectProvider subjectProvider, I18nProvider i18nProvider) {
         this(executors, listeners, subjectProvider, i18nProvider, Collections.emptyList());
     }
 
+    /**
+     * 使用指定服务与就绪检查创建 Bundle。
+     *
+     * @param executors 命令执行器
+     * @param listeners 事件监听器
+     * @param subjectProvider 主体提供器，可为空
+     * @param i18nProvider 国际化提供器
+     * @param readinessContributors 就绪检查贡献者
+     */
     public Ddd4jBundle(Collection<CommandExecutor<?>> executors, Collection<Consumer<Object>> listeners,
                        SubjectProvider subjectProvider, I18nProvider i18nProvider,
                        Collection<? extends ReadinessContributor> readinessContributors) {
         this.executors = Collections.unmodifiableList(new java.util.ArrayList<>(Objects.requireNonNull(executors, "executors must not be null")));
+        this.executors.forEach(executor -> Objects.requireNonNull(executor, "executor must not be null"));
         this.listeners = Collections.unmodifiableList(new java.util.ArrayList<>(Objects.requireNonNull(listeners, "listeners must not be null")));
+        this.listeners.forEach(listener -> Objects.requireNonNull(listener, "listener must not be null"));
         this.subjectProvider = subjectProvider;
         this.i18nProvider = Objects.requireNonNull(i18nProvider, "i18nProvider must not be null");
         this.readinessContributors = Collections.unmodifiableList(new java.util.ArrayList<>(Objects.requireNonNull(readinessContributors,
                 "readinessContributors must not be null")));
+        this.readinessContributors.forEach(contributor -> Objects.requireNonNull(contributor, "contributor must not be null"));
     }
 
     @Override

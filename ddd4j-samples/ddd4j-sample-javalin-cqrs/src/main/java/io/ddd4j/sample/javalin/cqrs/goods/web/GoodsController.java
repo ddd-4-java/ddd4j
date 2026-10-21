@@ -14,6 +14,10 @@
  */
 package io.ddd4j.sample.javalin.cqrs.goods.web;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import io.ddd4j.core.api.R;
 import io.ddd4j.sample.javalin.cqrs.goods.application.GoodsApplicationService;
 import io.ddd4j.sample.javalin.cqrs.goods.domain.Goods;
@@ -22,8 +26,6 @@ import io.ddd4j.sample.javalin.cqrs.goods.domain.GoodsQuery;
 import io.ddd4j.sample.javalin.cqrs.goods.domain.GoodsStatus;
 import io.javalin.apibuilder.EndpointGroup;
 import io.javalin.http.Context;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -37,9 +39,9 @@ import static io.javalin.apibuilder.ApiBuilder.*;
  * {@code javalinConfig.routes.apiBuilder(() -> goodsController.routes())} 注册。
  * 响应统一使用 ddd4j 的 {@link R}{@code <T>} 包装。
  *
- * <h3>路由列表</h3>
+ * <h2>路由列表</h2>
  * <table border="1">
- * <caption>商品管理 REST 接口一览</caption>
+ *   <caption>商品路由</caption>
  *   <tr><th>HTTP</th><th>路径</th><th>用途</th></tr>
  *   <tr><td>POST</td><td>/api/goods</td><td>创建商品</td></tr>
  *   <tr><td>PUT</td><td>/api/goods/{id}</td><td>更新商品</td></tr>
@@ -58,6 +60,11 @@ public class GoodsController {
 
     private final GoodsApplicationService applicationService;
 
+    /**
+     * 创建商品控制器。
+     *
+     * @param applicationService 应用服务
+     */
     public GoodsController(GoodsApplicationService applicationService) {
         this.applicationService = Objects.requireNonNull(applicationService, "applicationService must not be null");
     }
@@ -102,7 +109,7 @@ public class GoodsController {
         post("/api/goods", ctx -> {
             CreateGoodsRequest req = ctx.bodyAsClass(CreateGoodsRequest.class);
             Goods goods = applicationService.create(
-                    req.getCode(), req.getName(), req.getPrice(), req.getStock());
+                    req.code(), req.name(), req.price(), req.stock());
             ctx.status(201).json(R.ok(goods));
         });
 
@@ -111,7 +118,7 @@ public class GoodsController {
             Long id = ctx.pathParamAsClass("id", Long.class).get();
             UpdateGoodsRequest req = ctx.bodyAsClass(UpdateGoodsRequest.class);
             Goods goods = applicationService.update(
-                    GoodsId.of(id), req.getName(), req.getPrice());
+                    GoodsId.of(id), req.name(), req.price());
             ctx.json(R.ok(goods));
         });
 
@@ -179,41 +186,58 @@ public class GoodsController {
 
         private Integer stock;
 
+        /** 创建用于 Bean 绑定的空请求。 */
         public CreateGoodsRequest() {
         }
 
+        /** @return 商品编码 */
         public String getCode() {
             return code;
         }
 
+        /** @param code 商品编码 */
         public void setCode(String code) {
             this.code = code;
         }
 
+        /** @return 商品名称 */
         public String getName() {
             return name;
         }
 
+        /** @param name 商品名称 */
         public void setName(String name) {
             this.name = name;
         }
 
+        /** @return 商品价格 */
         public BigDecimal getPrice() {
             return price;
         }
 
+        /** @param price 商品价格 */
         public void setPrice(BigDecimal price) {
             this.price = price;
         }
 
+        /** @return 初始库存 */
         public Integer getStock() {
             return stock;
         }
 
+        /** @param stock 初始库存 */
         public void setStock(Integer stock) {
             this.stock = stock;
         }
 
+        /**
+         * 创建商品请求数据。
+         *
+         * @param code 商品编码
+         * @param name 商品名称
+         * @param price 商品价格
+         * @param stock 初始库存
+         */
         @JsonCreator()
         public CreateGoodsRequest(@JsonProperty("code") String code, @JsonProperty("name") String name, @JsonProperty("price") BigDecimal price, @JsonProperty("stock") Integer stock) {
             this.code = code;
@@ -222,21 +246,41 @@ public class GoodsController {
             this.stock = stock;
         }
 
+        /**
+         * 读取商品编码。
+         *
+         * @return 商品编码
+         */
         @JsonProperty("code")
         public String code() {
             return code;
         }
 
+        /**
+         * 读取商品名称。
+         *
+         * @return 商品名称
+         */
         @JsonProperty("name")
         public String name() {
             return name;
         }
 
+        /**
+         * 读取商品价格。
+         *
+         * @return 商品价格
+         */
         @JsonProperty("price")
         public BigDecimal price() {
             return price;
         }
 
+        /**
+         * 读取初始库存。
+         *
+         * @return 商品库存
+         */
         @JsonProperty("stock")
         public Integer stock() {
             return stock;
@@ -281,36 +325,57 @@ public class GoodsController {
 
         private BigDecimal price;
 
+        /** 创建用于 Bean 绑定的空请求。 */
         public UpdateGoodsRequest() {
         }
 
+        /** @return 商品名称 */
         public String getName() {
             return name;
         }
 
+        /** @param name 商品名称 */
         public void setName(String name) {
             this.name = name;
         }
 
+        /** @return 商品价格 */
         public BigDecimal getPrice() {
             return price;
         }
 
+        /** @param price 商品价格 */
         public void setPrice(BigDecimal price) {
             this.price = price;
         }
 
+        /**
+         * 创建商品更新请求数据。
+         *
+         * @param name 商品名称
+         * @param price 商品价格
+         */
         @JsonCreator()
         public UpdateGoodsRequest(@JsonProperty("name") String name, @JsonProperty("price") BigDecimal price) {
             this.name = name;
             this.price = price;
         }
 
+        /**
+         * 读取商品名称。
+         *
+         * @return 商品名称
+         */
         @JsonProperty("name")
         public String name() {
             return name;
         }
 
+        /**
+         * 读取商品价格。
+         *
+         * @return 商品价格
+         */
         @JsonProperty("price")
         public BigDecimal price() {
             return price;

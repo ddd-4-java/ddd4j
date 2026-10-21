@@ -7,7 +7,7 @@ import textwrap
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
-from verify_dependency_property_layout import SECTION_MARKERS, expected_section, natural_key
+from verify_dependency_property_layout import LEGACY, SECTION_MARKERS, expected_section, natural_key
 
 GENERIC_COMMENTS = {
     "<!-- 核心配置 -->",
@@ -20,7 +20,7 @@ GENERIC_COMMENTS = {
 
 
 def rename_easy4j_properties(text):
-    """移除 easy4j- 前缀，并删除与新坐标冲突的 redacted-legacy-family 旧声明。"""
+    """移除 easy4j- 前缀，并删除与新坐标冲突的旧族声明。"""
     root = ET.fromstring(text)
     namespace = {"m": root.tag.split("}")[0][1:]}
     properties = root.find("m:properties", namespace)
@@ -41,8 +41,8 @@ def rename_easy4j_properties(text):
             raise ValueError(f"cannot remove alignment property: {alignment}")
         names.remove(alignment)
         changes.append((alignment, "use-current-version" if references else "removed"))
-    for legacy in sorted((name for name in names if name.startswith("redacted-legacy-family-")), key=natural_key):
-        text, removed = remove_dependencies_using_property(text, legacy, "com.github.redacted-legacy-family")
+    for legacy in sorted((name for name in names if name.startswith(LEGACY + "-")), key=natural_key):
+        text, removed = remove_dependencies_using_property(text, legacy, "com.github." + LEGACY)
         if not removed:
             raise ValueError(f"legacy property has no dependency to remove: {legacy}")
         text, count = re.subn(r"^[ \t]*<" + re.escape(legacy) + r">[^<]*</" +
@@ -58,7 +58,7 @@ def rename_easy4j_properties(text):
         if target in names:
             references = len(re.findall(r"\$\{" + re.escape(target) + r"\}", text))
             if references:
-                text, removed = remove_dependencies_using_property(text, target, "com.github.redacted-legacy-family")
+                text, removed = remove_dependencies_using_property(text, target, "com.github." + LEGACY)
                 if removed != references:
                     raise ValueError(f"not all colliding references belong to removable legacy dependencies: {target}")
             text, count = re.subn(r"^[ \t]*<" + re.escape(target) + r">[^<]*</" +

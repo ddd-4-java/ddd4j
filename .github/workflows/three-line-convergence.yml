@@ -12,7 +12,9 @@ permissions:
   contents: read
 
 concurrency:
-  group: three-line-convergence-${{ github.event_name == 'workflow_dispatch' && github.run_id || 'push' }}
+  # A newer push supersedes only runs from the same branch.
+  # Manual runs remain independent for frozen evidence collection.
+  group: three-line-convergence-${{ github.event_name == 'workflow_dispatch' && github.run_id || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -87,6 +89,17 @@ jobs:
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: '3.11'
+
+      - name: Check unresolved three-line inventory on push
+        if: github.event_name == 'push'
+        run: |
+          DDD4J_JDK21_HOME="$JAVA_HOME_21_X64" \
+          python3 driver/scripts/verify-three-line-structure-api-parity.py \
+            --roots line-8 line-17 line-21 \
+            --policy driver/config/parity/three-line-policy.json \
+            --output target/three-line-convergence/preflight \
+            --phase inventory \
+            --fail-on-open
 
       - name: Configure Maven repositories
         shell: bash

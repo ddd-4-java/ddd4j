@@ -25,14 +25,16 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * 基于 Quarkus Hibernate ORM Panache 的强类型 {@link EventStore} 实现。
  *
  * <p>该实现与 JPA/JDBI adapter 共享 Core EventStore 契约：以聚合类型、聚合标识和
- * 版本定位流，保存事件元数据，并在读取时按显式事件类型反序列化。位置号沿用共同契约的
+ * 版本定位流，保存事件元数据，并在读取时按显式事件类型反序列化。位置号遵循共同契约的
  * 已有的唯一约束和重试策略，避免丢失并发恢复能力。
  */
 public class PanacheEventStore implements EventStore {
@@ -137,7 +139,7 @@ public class PanacheEventStore implements EventStore {
                 .getResultList()
                 .stream()
                 .map(this::toStoredEvent)
-                .collect(java.util.stream.Collectors.toList());
+                .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
     }
 
     /**
@@ -160,7 +162,7 @@ public class PanacheEventStore implements EventStore {
                 .getResultList()
                 .stream()
                 .map(this::toStoredEvent)
-                .collect(java.util.stream.Collectors.toList());
+                .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
     }
 
     /**
@@ -177,7 +179,7 @@ public class PanacheEventStore implements EventStore {
                 .getResultList()
                 .stream()
                 .map(this::toStoredEvent)
-                .collect(java.util.stream.Collectors.toList());
+                .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
     }
 
     private long findCurrentVersion(String aggregateType, String aggregateId) {

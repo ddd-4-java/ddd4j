@@ -52,9 +52,10 @@ public class RbacService {
 
     /**
      * 登录：根据用户名 + 密码校验，构造 AuthPrincipal 并调用 {@link SubjectKit#login(AuthRequest)}。
+     *
      * @param username 用户名
-     * @param password 密码
-     * @return 结果映射
+     * @param password 明文密码
+     * @return 令牌和当前主体信息
      */
     public Map<String, Object> login(String username, String password) {
         User user = userRepository.findByUsername(username)
@@ -93,7 +94,8 @@ public class RbacService {
 
     /**
      * 当前用户：调用 {@link SubjectKit#getPrincipal()}。
-     * @return 结果映射
+     *
+     * @return 认证状态和主体信息
      */
     public Map<String, Object> me() {
         AuthPrincipal principal = SubjectKit.getPrincipal();
@@ -114,8 +116,9 @@ public class RbacService {
 
     /**
      * 权限校验（运行时）：调用 {@link SubjectKit#hasPermission(String)}。
+     *
      * @param permission 权限
-     * @return 判断结果
+     * @return 拥有权限时为 true
      */
     public boolean hasPermission(String permission) {
         return SubjectKit.hasPermission(permission);
@@ -123,8 +126,9 @@ public class RbacService {
 
     /**
      * 角色校验（运行时）：调用 {@link SubjectKit#hasRole(String)}。
+     *
      * @param role 角色
-     * @return 判断结果
+     * @return 拥有角色时为 true
      */
     public boolean hasRole(String role) {
         return SubjectKit.hasRole(role);
@@ -132,7 +136,8 @@ public class RbacService {
 
     /**
      * 登录状态：调用 {@link SubjectKit#isLogin()}。
-     * @return 判断结果
+     *
+     * @return 已登录时为 true
      */
     public boolean isLogin() {
         return SubjectKit.isLogin();
@@ -140,15 +145,32 @@ public class RbacService {
 
     // ============ 用户 CRUD ============
 
+    /**
+     * 列出全部用户。
+     *
+     * @return 用户列表
+     */
     public List<User> listUsers() {
         return userRepository.findAll();
     }
 
+    /**
+     * 按标识查找用户。
+     *
+     * @param id 标识
+     * @return 匹配的用户
+     */
     public User findUser(String id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("user not found: " + id));
     }
 
+    /**
+     * 创建用户。
+     *
+     * @param user 用户
+     * @return 已保存的用户
+     */
     public User createUser(User user) {
         if (StrKit.isBlank(user.getId())) {
             throw new IllegalArgumentException("user.id must not be blank");
@@ -159,6 +181,13 @@ public class RbacService {
         return userRepository.save(user);
     }
 
+    /**
+     * 更新用户资料和角色。
+     *
+     * @param id 标识
+     * @param patch 待更新字段
+     * @return 已更新的用户
+     */
     public User updateUser(String id, User patch) {
         User existing = findUser(id);
         if (Objects.nonNull(patch.getUsername())) {
@@ -177,31 +206,68 @@ public class RbacService {
         return userRepository.save(existing);
     }
 
+    /**
+     * 删除用户。
+     *
+     * @param id 标识
+     * @return 删除成功时为 true
+     */
     public boolean deleteUser(String id) {
         return userRepository.deleteById(id);
     }
 
+    /**
+     * 为用户分配角色。
+     *
+     * @param userId 用户标识
+     * @param roleCode 角色编码
+     * @return 已更新的用户
+     */
     public User assignRole(String userId, String roleCode) {
         roleRepository.findByCode(roleCode)
                 .orElseThrow(() -> new IllegalArgumentException("role not found: " + roleCode));
         return userRepository.addRole(userId, roleCode);
     }
 
+    /**
+     * 撤销用户角色。
+     *
+     * @param userId 用户标识
+     * @param roleCode 角色编码
+     * @return 已更新的用户
+     */
     public User revokeRole(String userId, String roleCode) {
         return userRepository.removeRole(userId, roleCode);
     }
 
     // ============ 角色 CRUD ============
 
+    /**
+     * 列出全部角色。
+     *
+     * @return 角色列表
+     */
     public List<Role> listRoles() {
         return roleRepository.findAll();
     }
 
+    /**
+     * 按编码查找角色。
+     *
+     * @param code 业务编码
+     * @return 匹配的角色
+     */
     public Role findRole(String code) {
         return roleRepository.findByCode(code)
                 .orElseThrow(() -> new IllegalArgumentException("role not found: " + code));
     }
 
+    /**
+     * 创建角色。
+     *
+     * @param role 角色
+     * @return 已保存的角色
+     */
     public Role createRole(Role role) {
         if (StrKit.isBlank(role.getCode())) {
             throw new IllegalArgumentException("role.code must not be blank");
@@ -212,6 +278,13 @@ public class RbacService {
         return roleRepository.save(role);
     }
 
+    /**
+     * 更新角色资料。
+     *
+     * @param code 业务编码
+     * @param patch 待更新字段
+     * @return 已更新的角色
+     */
     public Role updateRole(String code, Role patch) {
         Role existing = findRole(code);
         if (Objects.nonNull(patch.getDisplayName())) {
@@ -226,31 +299,68 @@ public class RbacService {
         return roleRepository.save(existing);
     }
 
+    /**
+     * 删除角色。
+     *
+     * @param code 业务编码
+     * @return 删除成功时为 true
+     */
     public boolean deleteRole(String code) {
         return roleRepository.deleteByCode(code);
     }
 
+    /**
+     * 为角色授予权限。
+     *
+     * @param roleCode 角色编码
+     * @param permissionCode 权限编码
+     * @return 已更新的角色
+     */
     public Role grantPermission(String roleCode, String permissionCode) {
         permissionRepository.findByCode(permissionCode)
                 .orElseThrow(() -> new IllegalArgumentException("permission not found: " + permissionCode));
         return roleRepository.addPermission(roleCode, permissionCode);
     }
 
+    /**
+     * 撤销角色权限。
+     *
+     * @param roleCode 角色编码
+     * @param permissionCode 权限编码
+     * @return 已更新的角色
+     */
     public Role revokePermission(String roleCode, String permissionCode) {
         return roleRepository.removePermission(roleCode, permissionCode);
     }
 
     // ============ 权限 CRUD ============
 
+    /**
+     * 列出全部权限。
+     *
+     * @return 权限列表
+     */
     public List<Permission> listPermissions() {
         return permissionRepository.findAll();
     }
 
+    /**
+     * 按编码查找权限。
+     *
+     * @param code 业务编码
+     * @return 匹配的权限
+     */
     public Permission findPermission(String code) {
         return permissionRepository.findByCode(code)
                 .orElseThrow(() -> new IllegalArgumentException("permission not found: " + code));
     }
 
+    /**
+     * 创建权限。
+     *
+     * @param permission 权限
+     * @return 已保存的权限
+     */
     public Permission createPermission(Permission permission) {
         if (StrKit.isBlank(permission.getCode())) {
             throw new IllegalArgumentException("permission.code must not be blank");
@@ -261,6 +371,13 @@ public class RbacService {
         return permissionRepository.save(permission);
     }
 
+    /**
+     * 更新权限资料。
+     *
+     * @param code 业务编码
+     * @param patch 待更新字段
+     * @return 已更新的权限
+     */
     public Permission updatePermission(String code, Permission patch) {
         Permission existing = findPermission(code);
         if (Objects.nonNull(patch.getDisplayName())) {
@@ -272,6 +389,12 @@ public class RbacService {
         return permissionRepository.save(existing);
     }
 
+    /**
+     * 删除权限。
+     *
+     * @param code 业务编码
+     * @return 删除成功时为 true
+     */
     public boolean deletePermission(String code) {
         return permissionRepository.deleteByCode(code);
     }

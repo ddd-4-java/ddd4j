@@ -13,6 +13,19 @@
  * limitations under the License.
  */
 package io.ddd4j.sample.javalin.shiro.rbac.controller;
+import java.util.Set;
+import java.util.Map;
+import java.util.LinkedHashSet;
+import java.util.Collection;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+import java.util.Objects;
 
 import com.google.inject.Inject;
 import io.ddd4j.core.api.R;
@@ -22,16 +35,8 @@ import io.ddd4j.sample.javalin.shiro.rbac.domain.Role;
 import io.ddd4j.sample.javalin.shiro.rbac.domain.User;
 import io.ddd4j.sample.javalin.shiro.rbac.service.RbacService;
 import io.javalin.http.Context;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-import lombok.Value;
 
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -56,6 +61,11 @@ public class AuthorizationController {
 
     private final RbacService rbacService;
 
+    /**
+     * 创建授权控制器。
+     *
+     * @param rbacService RBAC 服务
+     */
     @Inject
     public AuthorizationController(RbacService rbacService) {
         this.rbacService = rbacService;
@@ -93,7 +103,8 @@ public class AuthorizationController {
 
     /**
      * GET /auth/users —— 查询用户列表（需要 user:list 权限）。
-     * @param ctx 上下文对象
+     *
+     * @param ctx Javalin 请求上下文
      */
     public void listUsers(Context ctx) {
         if (!SubjectKit.hasPermission("user:list")) {
@@ -108,7 +119,8 @@ public class AuthorizationController {
 
     /**
      * GET /auth/users/{id} —— 查询单个用户。
-     * @param ctx 上下文对象
+     *
+     * @param ctx Javalin 请求上下文
      */
     public void getUser(Context ctx) {
         if (!SubjectKit.hasPermission("user:list")) {
@@ -122,7 +134,8 @@ public class AuthorizationController {
 
     /**
      * POST /auth/users —— 创建用户（需要 admin 角色）。
-     * @param ctx 上下文对象
+     *
+     * @param ctx Javalin 请求上下文
      */
     public void createUser(Context ctx) {
         if (!requireAdmin(ctx)) {
@@ -140,7 +153,8 @@ public class AuthorizationController {
 
     /**
      * PUT /auth/users/{id} —— 更新用户（需要 admin 角色）。
-     * @param ctx 上下文对象
+     *
+     * @param ctx Javalin 请求上下文
      */
     public void updateUser(Context ctx) {
         if (!requireAdmin(ctx)) {
@@ -159,7 +173,8 @@ public class AuthorizationController {
 
     /**
      * DELETE /auth/users/{id} —— 删除用户（需要 admin 角色 + user:delete 权限组合）。
-     * @param ctx 上下文对象
+     *
+     * @param ctx Javalin 请求上下文
      */
     public void deleteUser(Context ctx) {
         // 组合校验：必须同时拥有 admin 角色 + user:delete 权限
@@ -169,14 +184,15 @@ public class AuthorizationController {
         }
         String loginId = ctx.pathParam("id");
         rbacService.deleteUser(loginId);
-        ctx.json(R.ok("user deleted", Java8Maps.of("loginId", loginId)));
+        ctx.json(R.ok("user deleted", Collections.singletonMap("loginId", loginId)));
     }
 
     // ============================ Permission CRUD ============================
 
     /**
      * GET /auth/roles —— 查询角色列表（需要 role:list 权限）。
-     * @param ctx 上下文对象
+     *
+     * @param ctx Javalin 请求上下文
      */
     public void listRoles(Context ctx) {
         if (!SubjectKit.hasPermission("role:list")) {
@@ -189,7 +205,8 @@ public class AuthorizationController {
 
     /**
      * POST /auth/roles —— 创建角色（需要 admin 角色）。
-     * @param ctx 上下文对象
+     *
+     * @param ctx Javalin 请求上下文
      */
     public void createRole(Context ctx) {
         if (!requireAdmin(ctx)) {
@@ -202,7 +219,8 @@ public class AuthorizationController {
 
     /**
      * PUT /auth/roles/{code} —— 更新角色（需要 admin 角色）。
-     * @param ctx 上下文对象
+     *
+     * @param ctx Javalin 请求上下文
      */
     public void updateRole(Context ctx) {
         if (!requireAdmin(ctx)) {
@@ -219,7 +237,8 @@ public class AuthorizationController {
 
     /**
      * DELETE /auth/roles/{code} —— 删除角色（需要 admin 角色）。
-     * @param ctx 上下文对象
+     *
+     * @param ctx Javalin 请求上下文
      */
     public void deleteRole(Context ctx) {
         if (!requireAdmin(ctx)) {
@@ -227,12 +246,13 @@ public class AuthorizationController {
         }
         String code = ctx.pathParam("code");
         rbacService.deleteRole(code);
-        ctx.json(R.ok("role deleted", Java8Maps.of("code", code)));
+        ctx.json(R.ok("role deleted", Collections.singletonMap("code", code)));
     }
 
     /**
      * GET /auth/permissions —— 查询权限列表（需要 permission:list 权限）。
-     * @param ctx 上下文对象
+     *
+     * @param ctx Javalin 请求上下文
      */
     public void listPermissions(Context ctx) {
         if (!SubjectKit.hasPermission("permission:list")) {
@@ -245,7 +265,8 @@ public class AuthorizationController {
 
     /**
      * POST /auth/permissions —— 创建权限（需要 admin 角色）。
-     * @param ctx 上下文对象
+     *
+     * @param ctx Javalin 请求上下文
      */
     public void createPermission(Context ctx) {
         if (!requireAdmin(ctx)) {
@@ -258,7 +279,8 @@ public class AuthorizationController {
 
     /**
      * DELETE /auth/permissions/{code} —— 删除权限（需要 admin 角色）。
-     * @param ctx 上下文对象
+     *
+     * @param ctx Javalin 请求上下文
      */
     public void deletePermission(Context ctx) {
         if (!requireAdmin(ctx)) {
@@ -266,7 +288,7 @@ public class AuthorizationController {
         }
         String code = ctx.pathParam("code");
         rbacService.deletePermission(code);
-        ctx.json(R.ok("permission deleted", Java8Maps.of("code", code)));
+        ctx.json(R.ok("permission deleted", Collections.singletonMap("code", code)));
     }
 
     /**
@@ -282,172 +304,621 @@ public class AuthorizationController {
 
     // ============================ DTO 视图对象 ============================
 
+    /**
+     * 创建用户请求。
+     */
     @Data
     @NoArgsConstructor
-    @AllArgsConstructor
     public static class CreateUserRequest {
+
+        private static final long serialVersionUID = 0L;
+
         private String loginId;
+
         @ToString.Exclude
         private String password;
+
         private String displayName;
+
         private String[] roles;
+
         private String[] permissions;
 
+        /**
+         * 创建创建用户请求。
+         *
+         * @param loginId 登录标识
+         * @param password 密码
+         * @param displayName 显示名称
+         * @param roles 角色编码集合
+         * @param permissions 权限编码集合
+         */
+        @JsonCreator()
+        public CreateUserRequest(@JsonProperty("loginId") String loginId, @JsonProperty("password") String password, @JsonProperty("displayName") String displayName, @JsonProperty("roles") String[] roles, @JsonProperty("permissions") String[] permissions) {
+            this.loginId = loginId;
+            this.password = password;
+            this.displayName = displayName;
+            this.roles = roles;
+            this.permissions = permissions;
+        }
+
+        /**
+         * 读取登录标识。
+         *
+         * @return 登录标识
+         */
+        @JsonProperty("loginId")
         public String loginId() {
             return loginId;
         }
 
+        /**
+         * 读取密码。
+         *
+         * @return 密码
+         */
+        @JsonProperty("password")
         public String password() {
             return password;
         }
 
+        /**
+         * 读取显示名称。
+         *
+         * @return 显示名称
+         */
+        @JsonProperty("displayName")
         public String displayName() {
             return displayName;
         }
 
+        /**
+         * 读取角色编码集合。
+         *
+         * @return 角色编码集合
+         */
+        @JsonProperty("roles")
         public String[] roles() {
             return roles;
         }
 
+        /**
+         * 读取权限编码集合。
+         *
+         * @return 权限编码集合
+         */
+        @JsonProperty("permissions")
         public String[] permissions() {
             return permissions;
         }
+
     }
 
+    /**
+     * 更新用户请求。
+     */
     @Data
     @NoArgsConstructor
-    @AllArgsConstructor
     public static class UpdateUserRequest {
+
+        private static final long serialVersionUID = 0L;
+
         private String displayName;
+
         @ToString.Exclude
         private String password;
+
         private String[] roles;
+
         private String[] permissions;
 
+        /**
+         * 创建更新用户请求。
+         *
+         * @param displayName 显示名称
+         * @param password 密码
+         * @param roles 角色编码集合
+         * @param permissions 权限编码集合
+         */
+        @JsonCreator()
+        public UpdateUserRequest(@JsonProperty("displayName") String displayName, @JsonProperty("password") String password, @JsonProperty("roles") String[] roles, @JsonProperty("permissions") String[] permissions) {
+            this.displayName = displayName;
+            this.password = password;
+            this.roles = roles;
+            this.permissions = permissions;
+        }
+
+        /**
+         * 读取显示名称。
+         *
+         * @return 显示名称
+         */
+        @JsonProperty("displayName")
         public String displayName() {
             return displayName;
         }
 
+        /**
+         * 读取密码。
+         *
+         * @return 密码
+         */
+        @JsonProperty("password")
         public String password() {
             return password;
         }
 
+        /**
+         * 读取角色编码集合。
+         *
+         * @return 角色编码集合
+         */
+        @JsonProperty("roles")
         public String[] roles() {
             return roles;
         }
 
+        /**
+         * 读取权限编码集合。
+         *
+         * @return 权限编码集合
+         */
+        @JsonProperty("permissions")
         public String[] permissions() {
             return permissions;
         }
+
     }
 
+    /**
+     * 创建角色请求。
+     */
     @Data
     @NoArgsConstructor
-    @AllArgsConstructor
     public static class CreateRoleRequest {
+
+        private static final long serialVersionUID = 0L;
+
         private String code;
+
         private String name;
+
         private String[] permissions;
 
+        /**
+         * 创建创建角色请求。
+         *
+         * @param code 编码
+         * @param name 名称
+         * @param permissions 权限编码集合
+         */
+        @JsonCreator()
+        public CreateRoleRequest(@JsonProperty("code") String code, @JsonProperty("name") String name, @JsonProperty("permissions") String[] permissions) {
+            this.code = code;
+            this.name = name;
+            this.permissions = permissions;
+        }
+
+        /**
+         * 读取编码。
+         *
+         * @return 编码
+         */
+        @JsonProperty("code")
         public String code() {
             return code;
         }
 
+        /**
+         * 读取名称。
+         *
+         * @return 名称
+         */
+        @JsonProperty("name")
         public String name() {
             return name;
         }
 
+        /**
+         * 读取权限编码集合。
+         *
+         * @return 权限编码集合
+         */
+        @JsonProperty("permissions")
         public String[] permissions() {
             return permissions;
         }
+
     }
 
+    /**
+     * 更新角色请求。
+     */
     @Data
     @NoArgsConstructor
-    @AllArgsConstructor
     public static class UpdateRoleRequest {
+
+        private static final long serialVersionUID = 0L;
+
         private String name;
+
         private String[] permissions;
 
+        /**
+         * 创建更新角色请求。
+         *
+         * @param name 名称
+         * @param permissions 权限编码集合
+         */
+        @JsonCreator()
+        public UpdateRoleRequest(@JsonProperty("name") String name, @JsonProperty("permissions") String[] permissions) {
+            this.name = name;
+            this.permissions = permissions;
+        }
+
+        /**
+         * 读取名称。
+         *
+         * @return 名称
+         */
+        @JsonProperty("name")
         public String name() {
             return name;
         }
 
+        /**
+         * 读取权限编码集合。
+         *
+         * @return 权限编码集合
+         */
+        @JsonProperty("permissions")
         public String[] permissions() {
             return permissions;
         }
+
     }
 
+    /**
+     * 创建权限请求。
+     */
     @Data
     @NoArgsConstructor
-    @AllArgsConstructor
     public static class CreatePermissionRequest {
+
+        private static final long serialVersionUID = 0L;
+
         private String code;
+
         private String description;
 
+        /**
+         * 创建创建权限请求。
+         *
+         * @param code 编码
+         * @param description 描述
+         */
+        @JsonCreator()
+        public CreatePermissionRequest(@JsonProperty("code") String code, @JsonProperty("description") String description) {
+            this.code = code;
+            this.description = description;
+        }
+
+        /**
+         * 读取编码。
+         *
+         * @return 编码
+         */
+        @JsonProperty("code")
         public String code() {
             return code;
         }
 
+        /**
+         * 读取描述。
+         *
+         * @return 描述
+         */
+        @JsonProperty("description")
         public String description() {
             return description;
         }
+
     }
 
-    @Value
-    public static class UserView {
-        String loginId;
-        String displayName;
-        Set<String> roles;
-        Set<String> permissions;
+    /**
+     * 用户视图。
+     */
+    public final static class UserView {
 
+        private static final long serialVersionUID = 0L;
+
+        private final String loginId;
+
+        private final String displayName;
+
+        private final Set<String> roles;
+
+        private final Set<String> permissions;
+
+        /**
+         * 创建用户视图。
+         *
+         * @param loginId 登录标识
+         * @param displayName 显示名称
+         * @param roles 角色编码集合
+         * @param permissions 权限编码集合
+         */
+        @JsonCreator()
+        public UserView(@JsonProperty("loginId") String loginId, @JsonProperty("displayName") String displayName, @JsonProperty("roles") Set<String> roles, @JsonProperty("permissions") Set<String> permissions) {
+            this.loginId = loginId;
+            this.displayName = displayName;
+            this.roles = roles;
+            this.permissions = permissions;
+        }
+
+        /** @return 登录标识 */
+        public String getLoginId() {
+            return loginId;
+        }
+
+        /** @return 显示名称 */
+        public String getDisplayName() {
+            return displayName;
+        }
+
+        /** @return 角色编码集合 */
+        public Set<String> getRoles() {
+            return roles;
+        }
+
+        /** @return 权限编码集合 */
+        public Set<String> getPermissions() {
+            return permissions;
+        }
+
+        /**
+         * 读取登录标识。
+         *
+         * @return 登录标识
+         */
+        @JsonProperty("loginId")
         public String loginId() {
             return loginId;
         }
 
+        /**
+         * 读取显示名称。
+         *
+         * @return 显示名称
+         */
+        @JsonProperty("displayName")
         public String displayName() {
             return displayName;
         }
 
+        /**
+         * 读取角色编码集合。
+         *
+         * @return 角色编码集合
+         */
+        @JsonProperty("roles")
         public Set<String> roles() {
             return roles;
         }
 
+        /**
+         * 读取权限编码集合。
+         *
+         * @return 权限编码集合
+         */
+        @JsonProperty("permissions")
         public Set<String> permissions() {
             return permissions;
         }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            UserView other = (UserView) obj;
+            return Objects.equals(this.loginId, other.loginId) && Objects.equals(this.displayName, other.displayName) && Objects.equals(this.roles, other.roles) && Objects.equals(this.permissions, other.permissions);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 1;
+            result = 59 * result + (Objects.isNull(loginId) ? 43 : loginId.hashCode());
+            result = 59 * result + (Objects.isNull(displayName) ? 43 : displayName.hashCode());
+            result = 59 * result + (Objects.isNull(roles) ? 43 : roles.hashCode());
+            result = 59 * result + (Objects.isNull(permissions) ? 43 : permissions.hashCode());
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "AuthorizationController.UserView(loginId=" + loginId + ", displayName=" + displayName + ", roles=" + roles + ", permissions=" + permissions + ")";
+        }
     }
 
-    @Value
-    public static class RoleView {
-        String code;
-        String name;
-        Set<String> permissions;
+    /**
+     * 角色视图。
+     */
+    public final static class RoleView {
 
+        private static final long serialVersionUID = 0L;
+
+        private final String code;
+
+        private final String name;
+
+        private final Set<String> permissions;
+
+        /**
+         * 创建角色视图。
+         *
+         * @param code 编码
+         * @param name 名称
+         * @param permissions 权限编码集合
+         */
+        @JsonCreator()
+        public RoleView(@JsonProperty("code") String code, @JsonProperty("name") String name, @JsonProperty("permissions") Set<String> permissions) {
+            this.code = code;
+            this.name = name;
+            this.permissions = permissions;
+        }
+
+        /** @return 角色编码 */
+        public String getCode() {
+            return code;
+        }
+
+        /** @return 角色名称 */
+        public String getName() {
+            return name;
+        }
+
+        /** @return 权限编码集合 */
+        public Set<String> getPermissions() {
+            return permissions;
+        }
+
+        /**
+         * 读取编码。
+         *
+         * @return 编码
+         */
+        @JsonProperty("code")
         public String code() {
             return code;
         }
 
+        /**
+         * 读取名称。
+         *
+         * @return 名称
+         */
+        @JsonProperty("name")
         public String name() {
             return name;
         }
 
+        /**
+         * 读取权限编码集合。
+         *
+         * @return 权限编码集合
+         */
+        @JsonProperty("permissions")
         public Set<String> permissions() {
             return permissions;
         }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            RoleView other = (RoleView) obj;
+            return Objects.equals(this.code, other.code) && Objects.equals(this.name, other.name) && Objects.equals(this.permissions, other.permissions);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 1;
+            result = 59 * result + (Objects.isNull(code) ? 43 : code.hashCode());
+            result = 59 * result + (Objects.isNull(name) ? 43 : name.hashCode());
+            result = 59 * result + (Objects.isNull(permissions) ? 43 : permissions.hashCode());
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "AuthorizationController.RoleView(code=" + code + ", name=" + name + ", permissions=" + permissions + ")";
+        }
     }
 
-    @Value
-    public static class PermissionView {
-        String code;
-        String description;
+    /**
+     * 权限视图。
+     */
+    public final static class PermissionView {
 
+        private static final long serialVersionUID = 0L;
+
+        private final String code;
+
+        private final String description;
+
+        /**
+         * 创建权限视图。
+         *
+         * @param code 编码
+         * @param description 描述
+         */
+        @JsonCreator()
+        public PermissionView(@JsonProperty("code") String code, @JsonProperty("description") String description) {
+            this.code = code;
+            this.description = description;
+        }
+
+        /** @return 权限编码 */
+        public String getCode() {
+            return code;
+        }
+
+        /** @return 权限描述 */
+        public String getDescription() {
+            return description;
+        }
+
+        /**
+         * 读取编码。
+         *
+         * @return 编码
+         */
+        @JsonProperty("code")
         public String code() {
             return code;
         }
 
+        /**
+         * 读取描述。
+         *
+         * @return 描述
+         */
+        @JsonProperty("description")
         public String description() {
             return description;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            PermissionView other = (PermissionView) obj;
+            return Objects.equals(this.code, other.code) && Objects.equals(this.description, other.description);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 1;
+            result = 59 * result + (Objects.isNull(code) ? 43 : code.hashCode());
+            result = 59 * result + (Objects.isNull(description) ? 43 : description.hashCode());
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "AuthorizationController.PermissionView(code=" + code + ", description=" + description + ")";
         }
     }
 

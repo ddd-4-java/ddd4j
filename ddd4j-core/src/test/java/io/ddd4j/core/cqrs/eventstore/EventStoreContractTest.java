@@ -4,12 +4,21 @@
  */
 package io.ddd4j.core.cqrs.eventstore;
 
-import io.ddd4j.core.ddd.event.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Objects;
+
+import io.ddd4j.core.ddd.event.AggregateRootId;
+import io.ddd4j.core.ddd.event.DomainEvent;
+import io.ddd4j.core.ddd.event.EntityIdPath;
+import io.ddd4j.core.ddd.event.EntityType;
+import io.ddd4j.core.ddd.event.StringEntityType;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -19,10 +28,23 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 public abstract class EventStoreContractTest {
 
+    /**
+     * 契约测试统一使用的聚合根类型标识。
+     */
     protected static final String ORDER_TYPE = "Order";
+    /**
+     * 第一个订单聚合根标识（order-1）。
+     */
     protected static final AggregateRootId ORDER_1 = new TestAggregateRootId("order-1");
+    /**
+     * 第二个订单聚合根标识（order-2）。
+     */
     protected static final AggregateRootId ORDER_2 = new TestAggregateRootId("order-2");
 
+    /**
+     * 创建对象。
+     * @return 方法执行结果。
+     */
     protected abstract EventStore createEventStore();
 
     @Test
@@ -80,53 +102,89 @@ public abstract class EventStoreContractTest {
         assertThat(events).extracting(StoredEvent::aggregateId).containsExactly(ORDER_1, ORDER_2);
     }
 
-    protected static final class TestAggregateRootId implements AggregateRootId {
-        private static final EntityType TYPE = new StringEntityType("Order");
+    /**
+     * 契约测试用订单聚合根标识：满足 {@link AggregateRootId} 契约。
+     */
+    protected final static class TestAggregateRootId implements AggregateRootId {
+
+        private static final long serialVersionUID = 0L;
+
         private final String value;
 
-        public TestAggregateRootId(String value) {
-            this.value = value;
-        }
+        private static final EntityType TYPE = new StringEntityType("Order");
 
-        public String value() {
-            return value;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof TestAggregateRootId)) return false;
-            TestAggregateRootId other = (TestAggregateRootId) o;
-            return Objects.equals(this.value, other.value);
-        }
-
-        @Override
-        public int hashCode() {
-            return java.util.Objects.hash(value);
-        }
-
-        @Override
-        public String toString() {
-            return "TestAggregateRootId{" + "value=" + value + "}";
-        }
-
+        /**
+         * 获取值。
+         * @return 方法执行结果。
+         */
         @Override
         public EntityType getType() {
             return TYPE;
         }
 
+        /**
+         * asString() 方法。
+         * @return 结果字符串。
+         */
         @Override
         public String asString() {
             return value;
         }
 
+        /**
+         * asTypedString() 方法。
+         * @return 结果字符串。
+         */
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
         }
 
+        /**
+         * 创建聚合根标识实例。
+         *
+         * @param value 聚合根标识值
+         */
+        @JsonCreator()
+        protected TestAggregateRootId(@JsonProperty("value") String value) {
+            this.value = value;
+        }
+
+        @JsonProperty("value")
+        public String value() {
+            return value;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            TestAggregateRootId other = (TestAggregateRootId) obj;
+            return Objects.equals(this.value, other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(value);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "TestAggregateRootId[value=" + value + "]";
+        }
     }
 
+    /**
+     * 类型说明。
+     * @author ddd4j
+     * @since 1.0.x
+     */
     protected static final class TestEvent extends DomainEvent<TestAggregateRootId> {
 
         private TestEvent(TestAggregateRootId aggregateId) {

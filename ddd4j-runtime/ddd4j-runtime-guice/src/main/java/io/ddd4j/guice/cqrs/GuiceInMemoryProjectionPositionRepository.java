@@ -63,14 +63,25 @@ public class GuiceInMemoryProjectionPositionRepository implements ProjectionPosi
         }
     }
 
+    /**
+     * 获取内存中的投影位置数。
+     *
+     * @return 位置数
+     */
     public int size() {
         return store.size();
     }
 
+    /** 清空内存中的投影位置。 */
     public void clear() {
         store.clear();
     }
 
+    /**
+     * 获取当前投影位置快照。
+     *
+     * @return 只读位置快照
+     */
     public Map<String, ProjectionPosition> snapshot() {
         return Collections.unmodifiableMap(new HashMap<>(store));
     }

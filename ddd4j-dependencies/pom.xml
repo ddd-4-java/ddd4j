@@ -43,13 +43,13 @@
         <appium.version>8.6.0</appium.version>
         <!-- ArchUnit：分层约束验证（ddd4j-ddd 模块用） -->
         <archunit.version>1.4.2</archunit.version>
-        <artemis.version>2.19.0</artemis.version>
+        <artemis.version>2.19.1</artemis.version>
         <!-- Artemis 2.19.0 = 最后 JDK8（major 52）版本；2.20.0 起 major 55/JDK11 -->
         <asmsupport.version>0.4.3</asmsupport.version>
         <aspectj-tools.version>1.9.7</aspectj-tools.version>
         <aspectj.version>1.9.25.1</aspectj.version>
         <assertj.version>3.27.7</assertj.version>
-        <async-http-client.version>2.12.4</async-http-client.version>
+        <async-http-client.version>2.16.1</async-http-client.version>
         <auth0-java-jwt.version>4.5.2</auth0-java-jwt.version>
         <auth0-jwks-rsa.version>0.24.1</auth0-jwks-rsa.version>
         <awaitility.version>4.2.2</awaitility.version>
@@ -75,6 +75,7 @@
         <brave.version>6.3.0</brave.version>
         <buji-pac4j.version>4.1.1</buji-pac4j.version>
         <byte-buddy.version>1.18.10</byte-buddy.version>
+        <c3p0.version>0.14.0</c3p0.version>
         <cache2k.version>2.6.1.Final</cache2k.version>
         <caffeine.version>2.9.3</caffeine.version>
         <camel.version>4.20.0</camel.version>
@@ -123,7 +124,7 @@
         <commons-jexl3.version>3.6.3</commons-jexl3.version>
         <commons-jexl.version>2.1.1</commons-jexl.version>
         <commons-jxpath.version>1.4.0</commons-jxpath.version>
-        <commons-lang3-jdk8.version>3.17.0</commons-lang3-jdk8.version>
+        <commons-lang3-jdk8.version>3.18.0</commons-lang3-jdk8.version>
         <commons-lang3.version>3.20.0</commons-lang3.version>
         <commons-lang.version>2.6</commons-lang.version>
         <commons-logging.version>1.4.0</commons-logging.version>
@@ -142,6 +143,7 @@
         <contiperf.version>2.3.4</contiperf.version>
         <cos.version>2020.4</cos.version>
         <couchbase-client.version>3.7.9</couchbase-client.version>
+        <cron-utils.version>9.2.1</cron-utils.version>
         <cronet.version>119.6045.31</cronet.version>
         <cssparser.version>0.9.30</cssparser.version>
         <curator.version>5.9.0</curator.version>
@@ -149,7 +151,6 @@
         <cxf.version>3.5.11</cxf.version>
         <db2jcc.version>12.1.5.0</db2jcc.version>
         <db-meta.version>0.0.1-Release</db-meta.version>
-        <derby-locale.version>${derby.version}</derby-locale.version>
         <derby.version>10.14.2.0</derby.version>
         <dingtalk-sdk.version>2.2.55</dingtalk-sdk.version>
         <dingtalk-service-sdk.version>2.0.0</dingtalk-service-sdk.version>
@@ -174,7 +175,6 @@
         <dropwizard-metrics-influxdb.version>1.3.4</dropwizard-metrics-influxdb.version>
         <dropwizard-metrics.version>4.2.39</dropwizard-metrics.version>
         <dropwizard.version>2.1.12</dropwizard.version>
-        <druid-metrics.version>1.0.2.RELEASE</druid-metrics.version>
         <druid.version>1.2.28</druid.version>
         <dubbo.version>3.2.17</dubbo.version>
         <dynamic-tp.version>1.2.2</dynamic-tp.version>
@@ -246,10 +246,10 @@
         <htmlparser.version>2.1</htmlparser.version>
         <htmlunit.version>4.21.0</htmlunit.version>
         <httpasyncclient.version>4.1.5</httpasyncclient.version>
-        <httpclient5.version>5.4.4</httpclient5.version>
+        <httpclient5.version>5.6.5</httpclient5.version>
         <httpclient.version>4.5.14</httpclient.version>
         <httpconn.version>1.0.x.20260630-SNAPSHOT</httpconn.version>
-        <httpcore5.version>5.3.6</httpcore5.version>
+        <httpcore5.version>5.4.3</httpcore5.version>
         <httpcore.version>4.4.16</httpcore.version>
         <httputils.version>1.0.x.20260630-SNAPSHOT</httputils.version>
         <hutool.version>5.8.47</hutool.version>
@@ -264,9 +264,10 @@
         <influxdb-java.version>2.25</influxdb-java.version>
         <istack.version>3.0.12</istack.version>
         <istio-client.version>1.7.7.1</istio-client.version>
-        <jackson-annotations.version>2.22</jackson-annotations.version>
+        <jackson-annotations.version>2.18.11</jackson-annotations.version>
         <jackson-bom.version>${jackson.version}</jackson-bom.version>
-        <jackson.version>2.22.2</jackson.version>
+        <jackson-extension.version>1.0.x.20260630-SNAPSHOT</jackson-extension.version>
+        <jackson.version>2.18.11</jackson.version>
         <jai-imageio.version>1.4.0</jai-imageio.version>
         <jakarta-inject.version>2.0.1</jakarta-inject.version>
         <!-- 2026-09-04 补：ddd4j-data-jpa 使用 jakarta.persistence 命名空间（与 spring-boot 3.x 兼容） -->
@@ -325,7 +326,7 @@
         <jjwt.version>0.13.0</jjwt.version>
         <jlayer.version>1.0.1</jlayer.version>
         <jna-jdk8.version>5.13.0</jna-jdk8.version>
-        <jnats-compat.version>2.20.5</jnats-compat.version>
+        <jnats-compat.version>2.26.4</jnats-compat.version>
         <joda-time.version>2.14.2</joda-time.version>
         <jodd-bean.version>5.1.6</jodd-bean.version>
         <jodd.version>5.3.0</jodd.version>
@@ -340,14 +341,14 @@
         <json-smart.version>2.6.0</json-smart.version>
         <json.version>20260522</json.version>
         <jsonschema.version>4.38.0</jsonschema.version>
-        <jsoup.version>1.22.2</jsoup.version>
+        <jsoup.version>1.23.2</jsoup.version>
         <jsqlparser.version>4.9</jsqlparser.version>
         <jtds.version>1.3.1</jtds.version>
         <junit-jupiter.version>5.11.4</junit-jupiter.version>
         <junit-platform-launcher.version>1.11.4</junit-platform-launcher.version>
         <junit.version>4.13.2</junit.version>
         <juniversalchardet.version>2.5.0</juniversalchardet.version>
-        <junrar.version>7.6.0</junrar.version>
+        <junrar.version>8.1.2</junrar.version>
         <just-auth.version>1.16.7</just-auth.version>
         <jwt-issuer.version>1.0.x.20260630-SNAPSHOT</jwt-issuer.version>
         <jxl.version>2.6.12</jxl.version>
@@ -373,23 +374,25 @@
         <liquibase.version>4.33.0</liquibase.version>
         <liteflow.version>2.16.0</liteflow.version>
         <lock4j.version>2.2.7</lock4j.version>
-        <log4j2.version>2.24.3</log4j2.version>
+        <log4j2.version>2.26.1</log4j2.version>
         <logback-legacy.version>1.2.13</logback-legacy.version>
         <!-- SLF4J 2 测试通道：仅供 Dropwizard LoggingUtil 兼容测试使用。 -->
         <logback-slf4j2.version>1.3.14</logback-slf4j2.version>
         <logback.version>1.2.13</logback.version>
         <lombok.version>1.18.46</lombok.version>
-        <lz4-java.version>1.8.1</lz4-java.version>
+        <lz4-java.version>1.12.0</lz4-java.version>
         <management-core.version>2.1.30.4.43</management-core.version>
         <mapstruct.version>1.6.3</mapstruct.version>
         <mariadb.version>3.5.9</mariadb.version>
         <markdown.version>1.11.1</markdown.version>
         <maven.version>3.6.3</maven.version>
+        <mchange-commons-java.version>0.6.0</mchange-commons-java.version>
         <mercadopago-sdk-java.version>2.9.2</mercadopago-sdk-java.version>
         <metadata-extractor.version>2.20.0</metadata-extractor.version>
+        <metrics-druid.version>${revision}</metrics-druid.version>
         <mica-mqtt.version>2.6.6</mica-mqtt.version>
         <micrometer-tracing.version>1.6.1</micrometer-tracing.version>
-        <micrometer.version>1.16.1</micrometer.version>
+        <micrometer.version>1.17.1</micrometer.version>
         <!-- Micronaut 3.10.10：Micronaut 4 弃用 JDK8（BOM=micronaut-bom） -->
         <micronaut.version>3.10.10</micronaut.version>
         <microprofile-config-api.version>2.0.1</microprofile-config-api.version>
@@ -429,7 +432,7 @@
         <neethi.version>3.2.2</neethi.version>
         <netty-socketio.version>2.0.14</netty-socketio.version>
         <netty-tcnative.version>2.0.79.Final</netty-tcnative.version>
-        <netty.version>4.2.15.Final</netty.version>
+        <netty.version>4.2.19.Final</netty.version>
         <nimbus-jose-jwt.version>10.9.1</nimbus-jose-jwt.version>
         <objenesis.version>3.5</objenesis.version>
         <ofdrw.version>2.4.0</ofdrw.version>
@@ -439,7 +442,7 @@
         <opencli-java-sdk.version>1.0.x.20260630-SNAPSHOT</opencli-java-sdk.version>
         <opencode-java-sdk.version>1.0.x.20260630-SNAPSHOT</opencode-java-sdk.version>
         <openhtmltopdf.version>1.1.75</openhtmltopdf.version>
-        <opentelemetry.version>1.57.0</opentelemetry.version>
+        <opentelemetry.version>1.62.0</opentelemetry.version>
         <opentest4j.version>1.3.0</opentest4j.version>
         <opentracing.version>0.33.0</opentracing.version>
         <oracle-database.version>23.26.2.0.0</oracle-database.version>
@@ -470,9 +473,10 @@
         <pgvector.version>0.1.6</pgvector.version>
         <picocli.version>4.7.7</picocli.version>
         <pinyin4j.version>2.5.1</pinyin4j.version>
+        <plexus-utils.version>3.6.2</plexus-utils.version>
         <png-encoder.version>1.5</png-encoder.version>
         <poi.version>5.5.1</poi.version>
-        <postgresql.version>42.7.4</postgresql.version>
+        <postgresql.version>42.7.12</postgresql.version>
         <powerjob-client.version>5.1.2</powerjob-client.version>
         <prometheus-client.version>1.8.0</prometheus-client.version>
         <prometheus-simpleclient.version>0.16.0</prometheus-simpleclient.version>
@@ -498,7 +502,7 @@
         <r2dbc-postgresql.version>1.1.2.RELEASE</r2dbc-postgresql.version>
         <r2dbc-proxy.version>1.1.6.RELEASE</r2dbc-proxy.version>
         <r2dbc-spi.version>1.0.0.RELEASE</r2dbc-spi.version>
-        <rabbit-amqp-client.version>5.32.0</rabbit-amqp-client.version>
+        <rabbit-amqp-client.version>5.37.0</rabbit-amqp-client.version>
         <rabbit-stream-client.version>0.24.0</rabbit-stream-client.version>
         <reactive-streams.version>1.0.4</reactive-streams.version>
         <reactor-bom.version>2025.0.6</reactor-bom.version>
@@ -540,8 +544,8 @@
         <sevenzipjbinding.version>16.02-2.01</sevenzipjbinding.version>
         <sfntly.version>1.0.0</sfntly.version>
         <shardingsphere-jdbc.version>5.5.3</shardingsphere-jdbc.version>
-        <shardingsphere-parser.version>${shardingsphere-jdbc.version}</shardingsphere-parser.version>
         <shardingsphere-parser-sql.version>5.5.2</shardingsphere-parser-sql.version>
+        <shardingsphere-parser.version>${shardingsphere-jdbc.version}</shardingsphere-parser.version>
         <shedlock.version>4.48.0</shedlock.version>
         <shiro-extension.version>1.0.x.20260630-SNAPSHOT</shiro-extension.version>
         <shiro-freemarker.version>1.0.3</shiro-freemarker.version>
@@ -562,7 +566,6 @@
         <!-- Dropwizard 2 / Spring Boot 2 测试通道仍使用 SLF4J 1.7 SPI。 -->
         <sms4j.version>3.3.5</sms4j.version>
         <smslib.version>3.5.4</smslib.version>
-        <snakeyaml-boot2.version>1.33</snakeyaml-boot2.version>
         <snakeyaml.version>2.6</snakeyaml.version>
         <snmp4j-agent.version>2.7.9</snmp4j-agent.version>
         <snmp4j.version>2.8.18</snmp4j.version>
@@ -583,8 +586,8 @@
         <!-- Spring Security 锁定 5.8.x（与 Spring Framework 5.3.x 配套，JDK 8 兼容） -->
         <spring-initializr.version>0.24.0</spring-initializr.version>
         <spring-javassist.version>1.0.x.20260630-SNAPSHOT</spring-javassist.version>
-        <!-- 版本约束：spring-kafka 锁定 3.3.x（适配 Spring Boot 3.4.x），不得升级至 4.x -->
-        <spring-kafka.version>2.8.11</spring-kafka.version>
+        <!-- 版本约束：spring-kafka 锁定 2.9.x，兼容 JDK 8 与 Spring Framework 5.3.x -->
+        <spring-kafka.version>2.9.11</spring-kafka.version>
         <spring-plugin.version>2.0.0.RELEASE</spring-plugin.version>
         <spring-pulsar.version>1.2.5</spring-pulsar.version>
         <spring-security.version>5.8.16</spring-security.version>
@@ -595,23 +598,23 @@
         <sqlite-jdbc.version>3.51.1.0</sqlite-jdbc.version>
         <sshd-pam.version>0.11.1-atlassian-1</sshd-pam.version>
         <sshd-sftp.version>${sshd.version}</sshd-sftp.version>
-        <sshd.version>3.0.0-M2</sshd.version>
+        <sshd.version>3.0.0-M6</sshd.version>
         <svnkit.version>1.10.11</svnkit.version>
+        <!-- swagger 1.x 独立属性：springfox 2.x 生态需要 1.6.x，勿与 ${swagger.version}(2.0.0-rc2) 混用 -->
+        <swagger1.version>1.6.14</swagger1.version>
         <swagger2markup.version>1.3.3</swagger2markup.version>
         <swagger3.version>2.2.52</swagger3.version>
         <swagger-bootstrap-ui.version>1.9.6</swagger-bootstrap-ui.version>
         <swagger-butler.version>2.0.0</swagger-butler.version>
         <swagger-codegen.version>2.4.19</swagger-codegen.version>
-        <!-- swagger 1.x 独立属性：springfox 2.x 生态需要 1.6.x，勿与 ${swagger.version}(2.0.0-rc2) 混用 -->
-        <swagger1.version>1.6.14</swagger1.version>
         <swagger.version>2.0.0-rc2</swagger.version>
         <tablesaw.version>0.43.1</tablesaw.version>
         <taos-jdbc.version>3.8.4</taos-jdbc.version>
         <tencentcloud-api-faceid.version>3.1.1472</tencentcloud-api-faceid.version>
+        <tencentcloud-sdk-extension.version>${revision}</tencentcloud-sdk-extension.version>
         <tencentcloud-sdk-java-sms.version>3.1.1451</tencentcloud-sdk-java-sms.version>
         <tencentcloud-sdk-java.version>3.1.1492</tencentcloud-sdk-java.version>
         <tencentcloud-tls-sig-api-v2.version>2.0</tencentcloud-tls-sig-api-v2.version>
-        <tencentcloud-sdk-extension.version>${revision}</tencentcloud-sdk-extension.version>
         <!-- JDK8 线 Testcontainers 官方线 1.21.4（1.x 末代支持 Java 8；sample-order-jdbc 等 JDK8 容器轨引用） -->
         <testcontainers-jdk8.version>1.21.4</testcontainers-jdk8.version>
         <testcontainers-redis.version>2.0.2</testcontainers-redis.version>
@@ -620,7 +623,7 @@
         <thumbnailator.version>0.4.21</thumbnailator.version>
         <thymeleaf-extras-conditionalcomments.version>2.1.2.RELEASE</thymeleaf-extras-conditionalcomments.version>
         <thymeleaf-layout-dialect.version>3.4.0</thymeleaf-layout-dialect.version>
-        <thymeleaf.version>3.1.3.RELEASE</thymeleaf.version>
+        <thymeleaf.version>3.1.5.RELEASE</thymeleaf.version>
         <tika.version>2.9.4</tika.version>
         <token-bucket.version>1.7</token-bucket.version>
         <tomcat.version>9.0.121</tomcat.version>
@@ -706,12 +709,28 @@
         <maven-quarkus-plugin.version>3.63.3</maven-quarkus-plugin.version>
         <maven-rpm-plugin.version>2.2.0</maven-rpm-plugin.version>
         <maven-shade-plugin.version>3.6.1</maven-shade-plugin.version>
+        <maven-shared-utils.version>3.5.0</maven-shared-utils.version>
         <maven-sonar-plugin.version>4.0.0.4121</maven-sonar-plugin.version>
         <maven-war-plugin.version>3.4.0</maven-war-plugin.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.mchange</groupId>
+                <artifactId>c3p0</artifactId>
+                <version>${c3p0.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mchange</groupId>
+                <artifactId>mchange-commons-java</artifactId>
+                <version>${mchange-commons-java.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>${postgresql.version}</version>
+            </dependency>
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>claudecode-java-sdk</artifactId>
@@ -764,6 +783,27 @@
                 <version>${spring-framework.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <!-- 测试模块已使用 2.7.18；覆盖平台 BOM 中残留的 2.7.7 基础构件。 -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot</artifactId>
+                <version>${spring-boot2-it.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-autoconfigure</artifactId>
+                <version>${spring-boot2-it.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter</artifactId>
+                <version>${spring-boot2-it.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-logging</artifactId>
+                <version>${spring-boot2-it.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.eventstore/db-client-java -->
             <!-- EventStoreDB Client：EventStoreDB（事件溯源数据库）的 gRPC Java 客户端。
@@ -831,6 +871,11 @@
                 <groupId>javax.persistence</groupId>
                 <artifactId>javax.persistence-api</artifactId>
                 <version>${javax.persistence-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish</groupId>
+                <artifactId>jakarta.el</artifactId>
+                <version>${glassfish-el.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.glassfish</groupId>
@@ -2251,8 +2296,6 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            <!-- JDBC Driver For Apache Derby -->
-            <!-- http://mvnrepository.com/artifact/org.apache.derby -->
             <dependency>
                 <groupId>org.apache.derby</groupId>
                 <artifactId>derby</artifactId>
@@ -2265,25 +2308,23 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.derby</groupId>
+                <artifactId>derbyLocale_zh_CN</artifactId>
+                <version>${derby.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.derby</groupId>
                 <artifactId>derbynet</artifactId>
+                <version>${derby.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.derby</groupId>
+                <artifactId>derbyoptionaltools</artifactId>
                 <version>${derby.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.derby</groupId>
                 <artifactId>derbytools</artifactId>
                 <version>${derby.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.apache.derby/derbyoptionaltools -->
-            <dependency>
-                <groupId>org.apache.derby</groupId>
-                <artifactId>derbyoptionaltools</artifactId>
-                <version>${derby.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.apache.derby/derbyLocale_zh_CN -->
-            <dependency>
-                <groupId>org.apache.derby</groupId>
-                <artifactId>derbyLocale_zh_CN</artifactId>
-                <version>${derby-locale.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.docx4j/docx4j-core -->
             <dependency>
@@ -2414,11 +2455,11 @@
                 <artifactId>druid</artifactId>
                 <version>${druid.version}</version>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/io.github.easy4j/druid-metrics-prometheus -->
+            <!-- Easy4J metrics-druid currently provides Druid health checks, not a Prometheus bridge. -->
             <dependency>
                 <groupId>io.github.easy4j</groupId>
-                <artifactId>druid-metrics-prometheus</artifactId>
-                <version>${druid-metrics.version}</version>
+                <artifactId>metrics-druid</artifactId>
+                <version>${metrics-druid.version}</version>
             </dependency>
 
             <!-- https://mvnrepository.com/artifact/com.aliyun/alibaba-dingtalk-service-sdk -->
@@ -3447,6 +3488,11 @@
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
                 <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>jackson-extension</artifactId>
+                <version>${jackson-extension.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/io.smallrye/jandex -->
             <dependency>
@@ -5229,6 +5275,24 @@
                 <groupId>org.postgresql</groupId>
                 <artifactId>r2dbc-postgresql</artifactId>
                 <version>${r2dbc-postgresql.version}</version>
+            </dependency>
+            <!-- Quarkus 1.x test bootstrap requests a vulnerable Plexus Utils release. -->
+            <dependency>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-utils</artifactId>
+                <version>${plexus-utils.version}</version>
+            </dependency>
+            <!-- Quarkus 1.x scheduler requests cron-utils 9.1.3, affected by template injection. -->
+            <dependency>
+                <groupId>com.cronutils</groupId>
+                <artifactId>cron-utils</artifactId>
+                <version>${cron-utils.version}</version>
+            </dependency>
+            <!-- Quarkus 1.x test bootstrap requests vulnerable Maven Shared Utils 3.2.1. -->
+            <dependency>
+                <groupId>org.apache.maven.shared</groupId>
+                <artifactId>maven-shared-utils</artifactId>
+                <version>${maven-shared-utils.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.r2dbc</groupId>
@@ -7107,6 +7171,26 @@
                 <version>${opentelemetry.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.opentelemetry</groupId>
+                <artifactId>opentelemetry-api</artifactId>
+                <version>${opentelemetry.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.opentelemetry</groupId>
+                <artifactId>opentelemetry-context</artifactId>
+                <version>${opentelemetry.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.opentelemetry</groupId>
+                <artifactId>opentelemetry-common</artifactId>
+                <version>${opentelemetry.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.opentelemetry</groupId>
+                <artifactId>opentelemetry-sdk-logs</artifactId>
+                <version>${opentelemetry.version}</version>
             </dependency>
             <!-- OTel SDK 族显式钉版（显式条目优先于一切 import，解 transitive 被压版问题） -->
             <dependency>

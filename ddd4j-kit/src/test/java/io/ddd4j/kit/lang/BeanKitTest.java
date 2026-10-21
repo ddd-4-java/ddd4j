@@ -171,12 +171,14 @@ class BeanKitTest {
 
     // ========================= Fixtures =========================
 
+    /** 拷贝测试的源数据对象。 */
     @Data
     static class SourceBean {
         private String name;
         private Integer age;
     }
 
+    /** 拷贝测试的目标数据对象。 */
     @Data
     static class TargetBean {
         private String name;

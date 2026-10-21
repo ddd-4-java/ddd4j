@@ -6,10 +6,10 @@ import javax.el.ExpressionFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class JavaxElRuntimeTest {
+class ElRuntimeTest {
 
     @Test
-    void expressionFactoryShouldLoadOnJdk8() {
+    void expressionFactoryShouldLoadFromCurrentPlatform() {
         assertThat(ExpressionFactory.newInstance()).isNotNull();
     }
 }

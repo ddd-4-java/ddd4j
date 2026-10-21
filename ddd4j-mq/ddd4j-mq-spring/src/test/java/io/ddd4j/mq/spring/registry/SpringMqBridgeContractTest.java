@@ -17,10 +17,15 @@ package io.ddd4j.mq.spring.registry;
 import io.ddd4j.mq.MQProperties;
 import io.ddd4j.mq.annotation.MQEventListener;
 import io.ddd4j.mq.event.MQEvent;
+import io.ddd4j.mq.listener.MQListener;
+
+import java.util.Collections;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Spring 模块只发现并装配监听器，不承载 broker 报文；ddd4j-message-id 由实际 adapter 负责。
@@ -39,6 +44,13 @@ class SpringMqBridgeContractTest {
         assertEquals(1, processor.getListeners().size());
         assertEquals("orders", processor.getListeners().get(0).getTopic());
         assertTrue(processor.getListeners().get(0).isRequired());
+        assertEquals(Collections.singletonList("*"), processor.getListeners().get(0).getSupports());
+
+        List<MQListener> snapshot = processor.getListeners();
+        assertThrows(UnsupportedOperationException.class, () -> snapshot.clear());
+        processor.postProcessAfterInitialization(new OrderListener(), "secondOrderListener");
+        assertEquals(1, snapshot.size());
+        assertEquals(2, processor.getListeners().size());
     }
 
     static final class OrderListener {

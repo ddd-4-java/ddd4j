@@ -3,15 +3,26 @@ package io.ddd4j.sample.javalin.satoken.order;
 import io.ddd4j.sample.javalin.satoken.order.application.AddOrderLineCommand;
 import io.ddd4j.sample.javalin.satoken.order.application.CreateOrderCommand;
 import io.ddd4j.sample.javalin.satoken.order.domain.model.Money;
+import io.ddd4j.sample.javalin.satoken.order.domain.model.Order;
+import io.ddd4j.sample.javalin.satoken.order.domain.model.OrderStatus;
 import io.ddd4j.sample.javalin.satoken.order.web.OrderResource;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class OrderValueContractTest {
+
+    @Test
+    void orderLinesRejectNullElementsOnRead() {
+        Order order = new Order("order-1", "O-1", "buyer-1", "Alice",
+                OrderStatus.DRAFT, Collections.singletonList(null));
+        assertThrows(NullPointerException.class, order::lines);
+    }
 
     @Test
     void commandsRetainBeanAndComponentReaders() {
@@ -52,6 +63,9 @@ class OrderValueContractTest {
         assertEquals(view.getAmount(), view.amount());
         assertEquals(view.getCurrency(), view.currency());
         assertEquals(new OrderResource.DiscountView("11.12", "CNY"), view);
+        assertEquals((59 + "11.12".hashCode()) * 59 + "CNY".hashCode(), view.hashCode());
+        assertEquals((59 + 43) * 59 + 43,
+                new OrderResource.DiscountView(null, null).hashCode());
         assertTrue(view.toString().contains("DiscountView(amount="));
     }
 }

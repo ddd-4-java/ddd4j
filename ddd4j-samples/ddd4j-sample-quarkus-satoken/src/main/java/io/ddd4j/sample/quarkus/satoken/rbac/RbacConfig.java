@@ -104,7 +104,8 @@ public class RbacConfig {
 
     /**
      * RBAC 权限数据源：从 User 到 Role 再到 Permission 实时聚合。
-     * @return 操作结果
+     *
+     * @return 主体数据提供者
      */
     @Produces
     @Singleton

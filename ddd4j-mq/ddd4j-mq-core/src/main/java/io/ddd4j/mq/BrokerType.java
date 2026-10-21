@@ -25,17 +25,25 @@ import java.util.Locale;
  */
 public enum BrokerType {
 
+    /** 未启用 Broker。 */
     NONE,
     /**
      * 进程内 LMAX Disruptor 本地队列（非分布式 MQ）。
      */
     DISRUPTOR,
+    /** RabbitMQ。 */
     RABBIT,
+    /** Kafka。 */
     KAFKA,
+    /** RocketMQ。 */
     ROCKET,
+    /** Pulsar。 */
     PULSAR,
+    /** Redis Stream。 */
     REDIS_STREAM,
+    /** ActiveMQ。 */
     ACTIVEMQ,
+    /** NATS。 */
     NATS,
     /**
      * Eclipse Paho MQTT 客户端（连接外部 Broker，非嵌入式服务端）。
@@ -45,17 +53,21 @@ public enum BrokerType {
      * mica-mqtt AIO 客户端（sample mqtt-client2，连接外部 Broker）。
      */
     MQTT_MICA,
+    /** 阿里云 ONS。 */
     ONS,
+    /** 腾讯云 TDMQ。 */
     TDMQ,
+    /** AWS SQS。 */
     SQS;
 
     /**
      * 解析配置字符串为 Broker 类型（兼容 redisStream 等历史命名）。
-     * @param raw 原始数据
-     * @return 返回的 BrokerType 结果
+     *
+     * @param raw 原始配置值
+     * @return 匹配的 Broker 类型；未知值返回 NONE
      */
     public static BrokerType from(String raw) {
-        if (!StrKit.isNotEmpty(raw) || "none".equalsIgnoreCase(raw.trim())) {
+        if (!StrKit.hasText(raw) || "none".equalsIgnoreCase(raw.trim())) {
             return NONE;
         }
         String normalized = raw.trim()
@@ -103,7 +115,8 @@ public enum BrokerType {
 
     /**
      * 转为 kebab-case 配置值（如 {@code redis-stream}）。
-     * @return 转换得到的字符串内容
+     *
+     * @return kebab-case 配置值
      */
     public String toConfigValue() {
         return name().toLowerCase(Locale.ROOT).replace('_', '-');

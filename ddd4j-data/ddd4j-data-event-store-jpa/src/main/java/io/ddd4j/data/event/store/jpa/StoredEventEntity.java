@@ -15,21 +15,26 @@
 package io.ddd4j.data.event.store.jpa;
 
 import io.ddd4j.core.constant.EventStoreConstants;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
-import javax.persistence.*;
 import java.time.Instant;
 
 /**
  * 事件存储 JPA 实体——映射统一 schema {@code DDD4J_EVENT_STORE}。
  *
  * <p>主键为 {@code (aggregate_type, aggregate_id, version)} 复合键，
- * {@code position} 全局单调递增且唯一；{@code payload} 为跨方言 TEXT 类型
- * （与 2.0.x/3.0.x 的 TEXT 统一 schema 对齐）。
+ * {@code position} 全局单调递增且唯一。
+ * 与 R2DBC 模块共用同一张表，保证跨运行时数据一致性。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 1.0.x
  */
-@Entity(name = "StoredEventEntity")
+@Entity
 @Table(name = EventStoreConstants.TABLE_NAME, uniqueConstraints = {
         @UniqueConstraint(name = "uk_event_store_position", columnNames = EventStoreConstants.COLUMN_POSITION)
 })
@@ -63,88 +68,197 @@ public class StoredEventEntity {
     @Column(name = EventStoreConstants.COLUMN_CAUSATION_ID, length = 64)
     private String causationId;
 
+    /**
+     * 事件载荷 JSON 文本。使用可与 JDBI/R2DBC 共享的 SQL TEXT 类型。
+     */
     @Column(name = EventStoreConstants.COLUMN_PAYLOAD, nullable = false, columnDefinition = "TEXT")
     private String payload;
 
     @Column(name = EventStoreConstants.COLUMN_TIMESTAMP, nullable = false)
     private Instant timestamp;
 
-    public String getAggregateType() {
-        return aggregateType;
+    /**
+     * 创建空的StoredEventEntity实例，供 JPA 或序列化框架使用。
+     */
+    public StoredEventEntity() {
     }
 
-    public void setAggregateType(String aggregateType) {
-        this.aggregateType = aggregateType;
-    }
-
+    /**
+     * 返回聚合标识。
+     *
+     * @return 聚合标识
+     */
     public String getAggregateId() {
         return aggregateId;
     }
 
+    /**
+     * 返回聚合类型。
+     *
+     * @return 聚合类型
+     */
+    public String getAggregateType() {
+        return aggregateType;
+    }
+
+    /**
+     * 设置聚合类型。
+     *
+     * @param aggregateType 聚合类型
+     */
+    public void setAggregateType(String aggregateType) {
+        this.aggregateType = aggregateType;
+    }
+
+    /**
+     * 设置聚合标识。
+     *
+     * @param aggregateId 聚合标识
+     */
     public void setAggregateId(String aggregateId) {
         this.aggregateId = aggregateId;
     }
 
+    /**
+     * 返回事件版本。
+     *
+     * @return 事件版本
+     */
     public long getVersion() {
         return version;
     }
 
+    /**
+     * 设置事件版本。
+     *
+     * @param version 事件版本
+     */
     public void setVersion(long version) {
         this.version = version;
     }
 
+    /**
+     * 返回全局位置。
+     *
+     * @return 全局位置
+     */
     public long getPosition() {
         return position;
     }
 
+    /**
+     * 设置全局位置。
+     *
+     * @param position 全局位置
+     */
     public void setPosition(long position) {
         this.position = position;
     }
 
+    /**
+     * 返回事件类型。
+     *
+     * @return 事件类型
+     */
     public String getEventType() {
         return eventType;
     }
 
+    /**
+     * 设置事件类型。
+     *
+     * @param eventType 事件类型
+     */
     public void setEventType(String eventType) {
         this.eventType = eventType;
     }
 
+    /**
+     * 返回事件标识。
+     *
+     * @return 事件标识
+     */
     public String getEventId() {
         return eventId;
     }
 
+    /**
+     * 设置事件标识。
+     *
+     * @param eventId 事件标识
+     */
     public void setEventId(String eventId) {
         this.eventId = eventId;
     }
 
+    /**
+     * 返回关联标识。
+     *
+     * @return 关联标识
+     */
     public String getCorrelationId() {
         return correlationId;
     }
 
+    /**
+     * 设置关联标识。
+     *
+     * @param correlationId 关联标识
+     */
     public void setCorrelationId(String correlationId) {
         this.correlationId = correlationId;
     }
 
+    /**
+     * 返回因果标识。
+     *
+     * @return 因果标识
+     */
     public String getCausationId() {
         return causationId;
     }
 
+    /**
+     * 设置因果标识。
+     *
+     * @param causationId 因果标识
+     */
     public void setCausationId(String causationId) {
         this.causationId = causationId;
     }
 
+    /**
+     * 返回事件载荷。
+     *
+     * @return 事件载荷
+     */
     public String getPayload() {
         return payload;
     }
 
+    /**
+     * 设置事件载荷。
+     *
+     * @param payload 事件载荷
+     */
     public void setPayload(String payload) {
         this.payload = payload;
     }
 
+    /**
+     * 返回事件时间。
+     *
+     * @return 事件时间
+     */
     public Instant getTimestamp() {
         return timestamp;
     }
 
+    /**
+     * 设置事件时间。
+     *
+     * @param timestamp 事件时间
+     */
     public void setTimestamp(Instant timestamp) {
         this.timestamp = timestamp;
     }

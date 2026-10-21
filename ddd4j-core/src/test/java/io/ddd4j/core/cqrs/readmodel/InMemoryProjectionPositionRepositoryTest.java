@@ -119,6 +119,8 @@ class InMemoryProjectionPositionRepositoryTest {
 
         List<ProjectionPosition> all = repository.findAll();
 
+        repository.save(new DefaultProjectionPosition("c", 3));
+
         assertThat(all).hasSize(2);
         assertThatThrownBy(() -> all.add(new DefaultProjectionPosition("c", 3)))
                 .isInstanceOf(UnsupportedOperationException.class);
@@ -133,6 +135,8 @@ class InMemoryProjectionPositionRepositoryTest {
         repository.save(new DefaultProjectionPosition("b", 2));
 
         assertThat(snapshot).hasSize(1).containsKey("a");
+        assertThatThrownBy(() -> snapshot.put("c", new DefaultProjectionPosition("c", 3)))
+                .isInstanceOf(UnsupportedOperationException.class);
     }
 
     @Test

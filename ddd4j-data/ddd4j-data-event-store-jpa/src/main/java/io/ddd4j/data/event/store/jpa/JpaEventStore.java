@@ -14,6 +14,9 @@
  */
 package io.ddd4j.data.event.store.jpa;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
@@ -188,6 +191,9 @@ public class JpaEventStore implements EventStore {
             if (events.isEmpty()) {
                 return null;
             }
+            if (transactionMode == TransactionMode.INDEPENDENT) {
+                entityManager.clear();
+            }
             long actualVersion = repository.findCurrentVersion(aggregateType, aggregateId.asString());
             if (actualVersion != expectedVersion) {
                 throw new AggregateVersionConflictException(
@@ -212,6 +218,9 @@ public class JpaEventStore implements EventStore {
                 repository.save(entity);
             }
             entityManager.flush();
+            if (transactionMode == TransactionMode.INDEPENDENT) {
+                entityManager.clear();
+            }
             return null;
         });
     }
@@ -337,6 +346,13 @@ public class JpaEventStore implements EventStore {
                 EventId.valueOf(entity.getCausationId()));
     }
 
+    /**
+     * 解析存储的事件类；类不存在时失败，不回退为无类型数据。
+     *
+     * @param eventType 事件类型全限定名
+     * @return 领域事件类型
+     * @throws IllegalStateException 事件类不存在
+     */
     @SuppressWarnings("unchecked")
     private Class<? extends DomainEvent<?>> resolveEventType(String eventType) {
         try {
@@ -361,7 +377,8 @@ public class JpaEventStore implements EventStore {
 
         private final String value;
 
-        StringAggregateRootId(String value) {
+        @JsonCreator
+        private StringAggregateRootId(@JsonProperty("value") String value) {
             this.value = value;
         }
 
@@ -371,13 +388,43 @@ public class JpaEventStore implements EventStore {
         }
 
         @Override
+        @JsonValue
         public String asString() {
+            return value;
+        }
+
+        @JsonProperty("value")
+        public String value() {
             return value;
         }
 
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            StringAggregateRootId other = (StringAggregateRootId) obj;
+            return Objects.equals(value, other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(value);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "StringAggregateRootId[value=" + value + "]";
         }
     }
 }

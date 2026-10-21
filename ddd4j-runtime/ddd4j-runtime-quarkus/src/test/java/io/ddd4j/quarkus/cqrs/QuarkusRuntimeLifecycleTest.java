@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * 在真实 Quarkus 容器中验证读侧管理器的启动和停止事件。
  */
 @QuarkusTest
-class QuarkusRuntimeLifecycleIT {
+class QuarkusRuntimeLifecycleTest {
 
     @Inject
     QuarkusJpaViewManager viewManager;

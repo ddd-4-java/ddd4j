@@ -38,7 +38,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * <p><b>Helidon SE 模式</b>：无 {@code @PostConstruct} 自动启动——集成方需在应用启动时
  * 手动调用 {@link #start()}（或注册 Helidon {@code io.helidon.common.context.Context}
- * lifecycle hook 触发）。这与 Quarkus 的 {@code @Observes Startup} /
+ * lifecycle hook 触发）。这与 Quarkus 的 {@code @Observes StartupEvent} /
  * Micronaut 的 {@code @PostConstruct} 自动启动不同，是 Helidon SE 的显式控制语义。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>

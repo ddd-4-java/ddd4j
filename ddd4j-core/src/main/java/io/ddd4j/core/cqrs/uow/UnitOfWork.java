@@ -146,19 +146,21 @@ public final class UnitOfWork implements AutoCloseable {
     }
 
     /**
-     * 失败路径回滚：回滚回调异常被记录降级，确保原始失败异常不被吞掉。
+     * 失败路径回滚：逐个执行回滚回调，失败被记录降级，确保原始失败原样传播。
      *
      * @param failure 触发回滚的原始失败
      */
     private void rollbackFor(Throwable failure) {
-        try {
-            if (state == State.ACTIVE) {
-                state = State.ROLLED_BACK;
-                runActions(rollbackActions);
+        if (state == State.ACTIVE) {
+            state = State.ROLLED_BACK;
+            for (Runnable action : rollbackActions) {
+                try {
+                    action.run();
+                } catch (RuntimeException | Error rollbackFailure) {
+                    log.warn("UnitOfWork rollback callback failed; original failure [{}] is rethrown as-is",
+                            failure, rollbackFailure);
+                }
             }
-        } catch (RuntimeException rollbackFailure) {
-            log.warn("UnitOfWork rollback callback failed; original failure [{}] is rethrown as-is",
-                    failure, rollbackFailure);
         }
     }
 

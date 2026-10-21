@@ -34,7 +34,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -171,11 +173,11 @@ class SaTokenSubjectVerifyTest {
         SaTokenSubject subject = new SaTokenSubject();
         AuthPrincipal principal = principal("jwt-user");
         login(logic, principal);
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("iss", "ddd4j-test");
+        claims.put("aud", "unexpected");
         String forgedToken = cn.dev33.satoken.jwt.SaJwtUtil.createToken(logic.getLoginType(), principal.getLoginId(),
-                "default-device", 60L, new java.util.LinkedHashMap<String, Object>() {{
-                    put("iss", "ddd4j-test");
-                    put("aud", "unexpected");
-                }},
+                "default-device", 60L, claims,
                 "ddd4j-satoken-subject-test-secret-32bytes");
         logic.saveTokenToIdMapping(forgedToken, principal.getLoginId(), 60L);
 

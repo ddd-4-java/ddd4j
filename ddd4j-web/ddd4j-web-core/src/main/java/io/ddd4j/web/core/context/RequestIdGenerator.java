@@ -22,14 +22,21 @@ import java.util.UUID;
 @FunctionalInterface
 public interface RequestIdGenerator {
 
+    /**
+     * 创建基于随机 UUID 的请求标识生成器。
+     *
+     * @return 以随机 UUID 作为标识的生成器实现
+     */
     static RequestIdGenerator uuid() {
-        // 预热 SecureRandom 熵源播种：JVM 内首次 UUID.randomUUID() 会触发 SeederHolder
-        // 类初始化，Windows 下需枚举网卡收集熵，实测（JDK 8）可达 8 秒以上；若落在
-        // 首个请求的上下文创建上，将击穿网关/测试客户端的响应超时（WebTestClient 默认 5s）。
-        // 在生成器创建期（Bean 装配/测试上下文启动）完成播种，此后 generate() 零额外开销。
+        // 首次 UUID 随机数初始化在生成器创建时完成，避免首个请求承担初始化延迟。
         UUID.randomUUID();
         return () -> UUID.randomUUID().toString();
     }
 
+    /**
+     * 生成一个请求标识。
+     *
+     * @return 生成得到的请求标识字符串
+     */
     String generate();
 }

@@ -35,6 +35,8 @@ import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
 import java.net.InetSocketAddress;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -94,8 +96,8 @@ public final class Ddd4jWebFluxFilter implements WebFilter {
                 exchange.getResponse().getHeaders().set(WebHeaders.TRACE_ID, requestContext.traceId());
                 Mono<Optional<Authentication>> authentication = Mono.fromCallable(
                         () -> requestLifecycle.authenticate(requestContext)).subscribeOn(blockingScheduler);
-                Mono<Optional<WebIdempotencyLifecycle.Scope>> idempotency = Mono.fromCallable(
-                        () -> openIdempotency(requestContext, exchange)).subscribeOn(blockingScheduler);
+                Mono<Optional<WebIdempotencyLifecycle.Scope>> idempotency = acquireIdempotency(requestContext,
+                        exchange);
                 return authentication.flatMap(result -> idempotency.flatMap(idem -> invoke(exchange, chain,
                         requestContext, result, idem, span)));
             }).doFinally(signalType -> {
@@ -156,6 +158,31 @@ public final class Ddd4jWebFluxFilter implements WebFilter {
                                                                      ServerWebExchange exchange) {
         return idempotencyLifecycle.flatMap(lifecycle -> lifecycle.open(context,
                 exchange.getRequest().getHeaders().getFirst(WebHeaders.IDEMPOTENCY_KEY)));
+    }
+
+    private Mono<Optional<WebIdempotencyLifecycle.Scope>> acquireIdempotency(WebRequestContext context,
+                                                                              ServerWebExchange exchange) {
+        return Mono.defer(() -> {
+            AtomicBoolean cancelled = new AtomicBoolean();
+            AtomicReference<WebIdempotencyLifecycle.Scope> pending = new AtomicReference<>();
+            return Mono.fromCallable(() -> {
+                Optional<WebIdempotencyLifecycle.Scope> acquired = openIdempotency(context, exchange);
+                acquired.ifPresent(pending::set);
+                if (cancelled.get()) {
+                    WebIdempotencyLifecycle.Scope scope = pending.getAndSet(null);
+                    if (Objects.nonNull(scope)) {
+                        scope.close();
+                    }
+                }
+                return acquired;
+            }).subscribeOn(blockingScheduler).doOnCancel(() -> {
+                cancelled.set(true);
+                WebIdempotencyLifecycle.Scope scope = pending.getAndSet(null);
+                if (Objects.nonNull(scope)) {
+                    scope.close();
+                }
+            });
+        });
     }
 
     private Mono<Void> complete(WebIdempotencyLifecycle.Scope scope) {

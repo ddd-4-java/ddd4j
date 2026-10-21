@@ -25,7 +25,6 @@ import io.ddd4j.core.ddd.model.metadata.DomainModelHelper;
 import io.ddd4j.core.ddd.model.metadata.DomainModelInfo;
 import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
-import io.ddd4j.data.mybatis.mapper.Ddd4jMapper;
 import io.ddd4j.kit.lang.BeanKit;
 import io.ddd4j.kit.lang.StrKit;
 import lombok.Getter;
@@ -33,6 +32,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import io.ddd4j.data.mybatis.mapper.Ddd4jMapper;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -40,6 +40,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.Objects;
 
 /**
  * 原生 MyBatis 轨道的聚合仓储基类（五泛型，对齐 mybatisplus 模块）。
@@ -60,16 +61,22 @@ import java.util.*;
 public abstract class MybatisAggregateRepository<MP extends Ddd4jMapper<P>, M extends AggregateRoot<?>, P, Q extends Query<M>, ID extends Serializable>
         implements Repository<M, ID>, DomainObjectMapper<M, P>, Serializable {
 
+    /** 聚合根模型类型。 */
     protected final Class<M> modelClass;
+    /** 持久化对象类型。 */
     protected final Class<P> persistenceClass;
+    /** 查询对象类型。 */
     protected final Class<? extends Query<M>> queryClass;
+    /** 领域模型的属性映射信息。 */
     protected final DomainModelInfo<M> domainModelInfo;
+    /** MyBatis 持久化映射器。 */
     @Getter
     @Setter
     protected MP baseMapper;
 
     // ========================= 构造器 =========================
 
+    /** 根据泛型参数推断模型与持久化对象类型。 */
     protected MybatisAggregateRepository() {
         this.modelClass = resolveClassArg(0);
         this.persistenceClass = resolveClassArg(1);
@@ -78,11 +85,23 @@ public abstract class MybatisAggregateRepository<MP extends Ddd4jMapper<P>, M ex
         registerToRegistry();
     }
 
+    /**
+     * 使用指定 MyBatis 映射器创建仓库。
+     *
+     * @param baseMapper MyBatis 映射器
+     */
     protected MybatisAggregateRepository(MP baseMapper) {
         this();
         this.baseMapper = baseMapper;
     }
 
+    /**
+     * 使用显式模型类型和 MyBatis 映射器创建仓库。
+     *
+     * @param baseMapper MyBatis 映射器
+     * @param modelClass 聚合根模型类型
+     * @param persistenceClass 持久化对象类型
+     */
     protected MybatisAggregateRepository(MP baseMapper, Class<M> modelClass, Class<P> persistenceClass) {
         this.baseMapper = Objects.requireNonNull(baseMapper, "baseMapper must not be null");
         this.modelClass = Objects.requireNonNull(modelClass, "modelClass must not be null");
@@ -137,7 +156,7 @@ public abstract class MybatisAggregateRepository<MP extends Ddd4jMapper<P>, M ex
     }
 
     /**
-     * 主键存在则更新，否则插入（与 {@link #save} 同为 upsert 语义）。
+     * 主键存在则更新，否则插入（与 {@code save} 同为 upsert 语义）。
      */
     @Override
     public M insertOrUpdate(M aggregate) {
@@ -329,6 +348,12 @@ public abstract class MybatisAggregateRepository<MP extends Ddd4jMapper<P>, M ex
         return BeanKit.copy(model, persistenceClass);
     }
 
+    /**
+     * 将持久化对象列表转换为聚合根列表。
+     *
+     * @param persistenceObjects 持久化对象列表
+     * @return 聚合根列表
+     */
     protected List<M> convert(List<P> persistenceObjects) {
         return persistenceObjects.stream().map(this::toModel).collect(java.util.stream.Collectors.toList());
     }
@@ -337,8 +362,9 @@ public abstract class MybatisAggregateRepository<MP extends Ddd4jMapper<P>, M ex
 
     /**
      * 将领域属性名映射为持久化属性名（默认同名，子类可覆盖）。
-     * @param domainProperty 领域属性
-     * @return 返回的字符串内容
+     *
+     * @param domainProperty 领域属性名
+     * @return 持久化属性名
      */
     protected String persistenceProperty(String domainProperty) {
         return domainProperty;
@@ -346,8 +372,9 @@ public abstract class MybatisAggregateRepository<MP extends Ddd4jMapper<P>, M ex
 
     /**
      * 将领域属性名映射为数据库列名（默认驼峰转下划线）。
-     * @param propertyName 属性名
-     * @return 转换得到的字符串内容
+     *
+     * @param propertyName 持久化属性名
+     * @return 数据库列名
      */
     protected String toColumn(String propertyName) {
         if (StringUtils.isBlank(propertyName)) {
@@ -372,7 +399,8 @@ public abstract class MybatisAggregateRepository<MP extends Ddd4jMapper<P>, M ex
 
     /**
      * 插入前自动填充 {@code @OnCreate} / {@code @TenantId} / {@code @SystemId} 字段。
-     * @param po 持久化对象
+     *
+     * @param po 待插入的持久化对象
      */
     protected void insertFill(P po) {
         if (Objects.isNull(po)) {
@@ -389,7 +417,8 @@ public abstract class MybatisAggregateRepository<MP extends Ddd4jMapper<P>, M ex
 
     /**
      * 更新前自动填充 {@code @OnUpdate} 字段。
-     * @param po 持久化对象
+     *
+     * @param po 待更新的持久化对象
      */
     protected void updateFill(P po) {
         if (Objects.isNull(po)) {
@@ -435,11 +464,23 @@ public abstract class MybatisAggregateRepository<MP extends Ddd4jMapper<P>, M ex
 
     // ========================= 内部工具 =========================
 
+    /**
+     * 判断持久化对象需要插入还是更新。
+     *
+     * @param po 持久化对象
+     * @return 需要插入时为 true
+     */
     protected boolean shouldInsert(P po) {
         Serializable id = extractId(po);
         return Objects.isNull(id) || Objects.isNull(baseMapper.selectById(id));
     }
 
+    /**
+     * 从对象中提取可序列化标识。
+     *
+     * @param entity 待检查的对象
+     * @return 对象标识
+     */
     protected Serializable extractId(Object entity) {
         for (Field field : FieldUtils.getAllFieldsList(entity.getClass())) {
             if ("id".equals(field.getName())) {

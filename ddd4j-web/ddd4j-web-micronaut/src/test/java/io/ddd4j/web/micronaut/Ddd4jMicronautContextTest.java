@@ -13,6 +13,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -45,7 +46,16 @@ class Ddd4jMicronautContextTest {
     }
 
     @Test
-    void openContextWithSubjectOpensRequestScope() {
+    void beanAccessorsExposeTheSameRequestContextAndSubject() {
+        WebRequestContext request = requestContext();
+        Optional<Subject> subject = Optional.of(mock(Subject.class));
+        Ddd4jMicronautContext context = new Ddd4jMicronautContext(request, subject);
+        assertSame(context.requestContext(), context.getRequestContext());
+        assertSame(context.subject(), context.getSubject());
+    }
+
+    @Test
+    void openingScopeWithSubjectBindsRequest() {
         Ddd4jMicronautContext context =
                 new Ddd4jMicronautContext(requestContext(), Optional.of(mock(Subject.class)));
         WebContextScope scope = context.openContext();
@@ -58,7 +68,7 @@ class Ddd4jMicronautContextTest {
     }
 
     @Test
-    void openContextWithoutSubjectOpensRequestScope() {
+    void openingScopeWithoutSubjectBindsRequest() {
         Ddd4jMicronautContext context =
                 new Ddd4jMicronautContext(requestContext(), Optional.empty());
         WebContextScope scope = context.openContext();
@@ -71,13 +81,23 @@ class Ddd4jMicronautContextTest {
     }
 
     @Test
-    void currentReturnsEmptyWhenNotSet() {
+    void closingScopeRestoresThreadContext() {
+        Ddd4jMicronautContext context =
+                new Ddd4jMicronautContext(requestContext(), Optional.empty());
+        WebContextScope scope = context.openContext();
+        assertFalse(ThreadContext.getResources().isEmpty());
+        scope.close();
+        assertTrue(ThreadContext.getResources().isEmpty());
+    }
+
+    @Test
+    void currentIsEmptyBeforeBinding() {
         Ddd4jMicronautContext.clear();
         assertFalse(Ddd4jMicronautContext.current().isPresent());
     }
 
     @Test
-    void setAndClearBoundContext() {
+    void currentResolvesBoundContext() {
         Ddd4jMicronautContext context =
                 new Ddd4jMicronautContext(requestContext(), Optional.empty());
         Ddd4jMicronautContext.set(context);
@@ -85,5 +105,20 @@ class Ddd4jMicronautContextTest {
         assertEquals(context, Ddd4jMicronautContext.current().get());
         Ddd4jMicronautContext.clear();
         assertFalse(Ddd4jMicronautContext.current().isPresent());
+    }
+
+    @Test
+    void contextIdentityIncludesRequestAndSubject() {
+        Subject subject = mock(Subject.class);
+        Ddd4jMicronautContext first = new Ddd4jMicronautContext(requestContext(), Optional.of(subject));
+        Ddd4jMicronautContext equivalent = new Ddd4jMicronautContext(requestContext(), Optional.of(subject));
+        Ddd4jMicronautContext other = new Ddd4jMicronautContext(requestContext(), Optional.of(mock(Subject.class)));
+
+        assertEquals(first, equivalent);
+        assertEquals(first.hashCode(), equivalent.hashCode());
+        assertFalse(first.equals(other));
+        assertFalse(first.equals("request"));
+        assertEquals(Optional.of(subject), first.subject());
+        assertTrue(first.toString().startsWith("Ddd4jMicronautContext["));
     }
 }

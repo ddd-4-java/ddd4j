@@ -4,6 +4,7 @@
  */
 package io.ddd4j.spring.cqrs;
 
+import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -11,9 +12,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -22,6 +26,21 @@ class SpringJpaProjectionPositionRepositoryTest {
 
     @Mock
     private JpaRepository<SpringJpaProjectionPosition, String> jpaRepository;
+
+    @Test
+    void findAllReturnsImmutablePositionListInRepositoryOrder() {
+        when(jpaRepository.findAll()).thenReturn(Arrays.asList(
+                new SpringJpaProjectionPosition("orders", 2L),
+                new SpringJpaProjectionPosition("payments", 5L)));
+
+        List<ProjectionPosition> positions =
+                new SpringJpaProjectionPositionRepository(jpaRepository).findAll();
+
+        assertThat(positions).extracting("streamId").containsExactly("orders", "payments");
+        assertThat(positions).extracting("nextEventNumber").containsExactly(2L, 5L);
+        assertThatThrownBy(() -> positions.add(positions.get(0)))
+                .isInstanceOf(UnsupportedOperationException.class);
+    }
 
     @Test
     void resetExistingPositionMustPersistZero() {

@@ -14,46 +14,95 @@
  */
 package io.ddd4j.sample.order.application;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Value;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Objects;
 
 /**
  * 单次 Outbox 发布批次的结果。
- *
- * <p>{@code attempted} — 已尝试消息数
- * <p>{@code published} — 已确认消息数
- * <p>{@code failed} — 保留重试的失败消息数
  */
-@Value
-public class OutboxDispatchResult {
-int attempted;
-    int published;
-    int failed;
 
-    /** Creates a dispatch summary.
-     * @param attempted attempted count
-     * @param published published count
-     * @param failed failed count
-     */
-    @JsonCreator
-    public OutboxDispatchResult(@JsonProperty("attempted") int attempted,
-                                @JsonProperty("published") int published,
-                                @JsonProperty("failed") int failed) {
+public final class OutboxDispatchResult {
+
+    private static final long serialVersionUID = 0L;
+
+    private final int attempted;
+
+    private final int published;
+
+    private final int failed;
+
+    /**
+ * @param attempted 已尝试消息数
+ * @param published 已确认消息数
+ * @param failed 保留重试的失败消息数
+ */
+
+    @JsonCreator()
+    public OutboxDispatchResult(@JsonProperty("attempted") int attempted, @JsonProperty("published") int published, @JsonProperty("failed") int failed) {
         this.attempted = attempted;
         this.published = published;
         this.failed = failed;
     }
 
+    /** @return 本轮尝试发送的消息数 */
+    @JsonProperty("attempted")
     public int attempted() {
         return attempted;
     }
 
+    /** @return 本轮确认发送的消息数 */
+    @JsonProperty("published")
     public int published() {
         return published;
     }
 
+    /** @return 本轮保留重试的消息数 */
+    @JsonProperty("failed")
     public int failed() {
         return failed;
+    }
+
+    /** @return 尝试数量 */
+    public int getAttempted() {
+        return attempted;
+    }
+
+    /** @return 已发布数量 */
+    public int getPublished() {
+        return published;
+    }
+
+    /** @return 失败数量 */
+    public int getFailed() {
+        return failed;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+            return false;
+        }
+        OutboxDispatchResult other = (OutboxDispatchResult) obj;
+        return this.attempted == other.attempted && this.published == other.published && this.failed == other.failed;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 1;
+        result = 59 * result + attempted;
+        result = 59 * result + published;
+        result = 59 * result + failed;
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "OutboxDispatchResult(attempted=" + attempted + ", published=" + published + ", failed=" + failed + ")";
     }
 }

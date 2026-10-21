@@ -19,12 +19,12 @@ from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 EXPECTED = ((8, "1.0.x"), (17, "2.0.x"), (21, "3.0.x"))
-VERIFY_CHECKS = ("structure", "product-docs", "values", "effective-8", "effective-17",
+VERIFY_CHECKS = ("structure", "product-docs", "historical-index", "values", "effective-8", "effective-17",
                  "effective-21", "dependency-catalog", "dependencies", "reactor-8", "reactor-17", "reactor-21",
                  "capacity-8", "capacity-17", "capacity-21",
                  "redis-native-8", "redis-native-17", "redis-native-21",
                  "scenario-matrix", "scenario-execution")
-INVENTORY_CHECKS = ("structure", "product-docs", "values", "dependencies", "reactor",
+INVENTORY_CHECKS = ("structure", "product-docs", "historical-index", "values", "dependencies", "reactor",
                     "scenario-matrix")
 
 
@@ -128,6 +128,15 @@ def explicit_scenario_commands(version, redis_url):
     return capacity, redis
 
 
+def valid_case_names(names):
+    """Accept one method name or a nonempty set of distinct method names."""
+    if isinstance(names, str):
+        names = [names]
+    return (isinstance(names, list) and bool(names)
+            and all(isinstance(name, str) and name.strip() for name in names)
+            and len(set(names)) == len(names))
+
+
 def scenario_matrix(stage, roots):
     paths = [root / "verification/three-line-parity/scenario-matrix.json" for root in roots]
     missing = [str(path) for path in paths if not path.is_file()]
@@ -146,12 +155,19 @@ def scenario_matrix(stage, roots):
         if not scenarios or len({row["id"] for row in scenarios}) != len(scenarios):
             raise ValueError("scenario IDs are empty or duplicated")
         for row in scenarios:
+            case_names = row.get("caseNames", {})
+            if case_names and (set(case_names) != {version for _, version in EXPECTED}
+                               or any(not valid_case_names(names)
+                                      for names in case_names.values())):
+                raise ValueError(f"invalid case names for {row['id']}")
             for index, (_, version) in enumerate(EXPECTED):
                 mapping = row["lines"][version]
                 if mapping["status"] == "supported":
                     if not mapping["tests"] or not all((roots[index] / file).is_file()
                                                         for file in mapping["tests"]):
                         raise ValueError(f"missing mapped test for {row['id']} in {version}")
+                    if case_names and len(mapping["tests"]) != 1:
+                        raise ValueError(f"case name requires one test file for {row['id']} in {version}")
                 elif mapping["status"] == "unsupported":
                     if not mapping.get("reason"):
                         raise ValueError(f"missing platform reason for {row['id']} in {version}")
@@ -202,6 +218,7 @@ def scenario_test_reports(root, scenarios, version, started_ns):
                 continue
             counts = {"tests": 0, "failures": 0, "errors": 0, "skipped": 0}
             artifacts = {}
+            executed_cases = set()
             valid = True
             for suite in suites:
                 if suite.stat().st_mtime_ns < started_ns:
@@ -220,6 +237,7 @@ def scenario_test_reports(root, scenarios, version, started_ns):
                     continue
                 for key, value in values.items():
                     counts[key] += value
+                executed_cases.update(case.get("name") for case in xml.iter("testcase"))
                 artifacts[str(suite.relative_to(root))] = sha256(suite)
                 if suite not in counted_reports:
                     executed += values["tests"] - values["skipped"]
@@ -228,8 +246,15 @@ def scenario_test_reports(root, scenarios, version, started_ns):
             if valid and (ran <= 0 or counts["failures"] or counts["errors"]
                           or counts["skipped"]):
                 issues.append(f"{row['id']}: unsuccessful test report for {source}: {counts}")
+            required_cases = row.get("caseNames", {}).get(version, [])
+            if isinstance(required_cases, str):
+                required_cases = [required_cases]
+            for required_case in required_cases:
+                if valid and required_case not in executed_cases:
+                    issues.append(f"{row['id']}: missing executed test case {required_case} for {source}")
             records.append({"scenario": row["id"], "source": source,
-                            "counts": counts, "artifacts": artifacts})
+                            "counts": counts, "artifacts": artifacts,
+                            "requiredCases": required_cases})
     return {"status": "FAIL" if issues else "PASS", "version": version,
             "mappedTests": len(records), "uniqueReports": len(counted_reports),
             "executedTests": executed,
@@ -434,6 +459,14 @@ def run(args):
         execute("product-docs", [sys.executable, str(docs), *common,
                                   "--output", str(stage / "product-docs")], stage, checks,
                 required_artifacts=("product-docs/product-docs.json",))
+        historical_index = stage / "historical-index.json"
+        source_index = roots[2] / "verification/three-line-parity/historical-evidence-index.json"
+        if source_index.is_file():
+            shutil.copy2(source_index, historical_index)
+        execute("historical-index",
+                [sys.executable, str(SCRIPT_DIR / "build-historical-evidence-index.py"),
+                 *common, "--output", str(historical_index), "--check-content"],
+                stage, checks, required_artifacts=("historical-index.json",))
         if args.phase == "verify":
             values = SCRIPT_DIR / "verify-three-line-value-parity.py"
             classpaths = list(value_probe_classpaths(Path.home() / ".m2/repository"))

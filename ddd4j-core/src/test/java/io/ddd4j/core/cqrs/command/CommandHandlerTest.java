@@ -23,11 +23,16 @@ import java.lang.annotation.Target;
 import java.util.Collections;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * {@link CommandHandler} 注解契约测试：守护发现机制赖以成立的元注解配置。
+ * {@link CommandHandler} 注解契约测试：守护发现机制赖以成立的元注解配置——
  * 该框架无关契约现由 ddd4j-core 直接承载。
+ * 运行时适配器（阶段 6 Task 6.3+）靠反射扫描读取 {@code value}，
+ * 误改 Retention／Target 会让扫描静默失效（照
+ * {@code io.ddd4j.core.ddd.event.EventHandlerTest} 的守护模式）。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 1.0.x
@@ -56,9 +61,16 @@ class CommandHandlerTest {
                 "value attribute should be reflectively readable and carry the handled command type");
     }
 
+    /**
+     * 测试用创建订单命令，用于校验 {@code @CommandHandler} 的 value 属性。
+     */
     static class CreateOrderCommand implements Command {
     }
 
+    /**
+     * 处理 {@link CreateOrderCommand} 的测试命令执行器，
+     * 标注 {@code @CommandHandler} 供注解契约测试反射读取。
+     */
     @CommandHandler(CreateOrderCommand.class)
     static class CreateOrderCmdExe implements CommandExecutor<CreateOrderCommand> {
 
@@ -67,6 +79,11 @@ class CommandHandlerTest {
             return Collections.<Class<? extends Command>>singleton(CreateOrderCommand.class);
         }
 
+        /**
+         * 执行处理逻辑。
+         * @param command command 参数。
+         * @return 方法执行结果。
+         */
         @Override
         public Result execute(CreateOrderCommand command) {
             return Result.ok();

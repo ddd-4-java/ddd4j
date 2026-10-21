@@ -20,7 +20,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * {@link TagMatcher} tag 表达式单测。
@@ -65,7 +67,7 @@ class TagMatcherTest {
 
     @Test
     void findIncludesShouldKeepDeclarationOrder() {
-        assertEquals(Arrays.asList("A", "B"), Collections.unmodifiableList(new ArrayList<>(TagMatcher.findIncludes("A || B -C"))));
-        assertEquals(Arrays.asList(), Collections.unmodifiableList(new ArrayList<>(TagMatcher.findIncludes("* -C"))));
+        assertEquals(Arrays.asList("A", "B"), new ArrayList<>(TagMatcher.findIncludes("A || B -C")));
+        assertEquals(Collections.emptyList(), new ArrayList<>(TagMatcher.findIncludes("* -C")));
     }
 }

@@ -93,30 +93,39 @@ public final class MQDeliveryPolicy {
                 DEFAULT_INITIAL_BACKOFF, DEFAULT_MAX_BACKOFF, DEFAULT_JITTER_FACTOR);
     }
 
+    /** @return 投递租约时长 */
     public Duration leaseDuration() {
         return leaseDuration;
     }
 
+    /** @return 最多投递尝试次数 */
     public int maxAttempts() {
         return maxAttempts;
     }
 
+    /** @return 初始退避时长 */
     public Duration initialBackoff() {
         return initialBackoff;
     }
 
+    /** @return 最大退避时长 */
     public Duration maxBackoff() {
         return maxBackoff;
     }
 
+    /** @return 退避抖动系数 */
     public double jitterFactor() {
         return jitterFactor;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof MQDeliveryPolicy)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof MQDeliveryPolicy)) {
+            return false;
+        }
         MQDeliveryPolicy that = (MQDeliveryPolicy) o;
         return maxAttempts == that.maxAttempts
                 && Double.compare(that.jitterFactor, jitterFactor) == 0
@@ -184,22 +193,27 @@ public final class MQDeliveryPolicy {
         return Math.min(initialMillis * multiplier, maxMillis);
     }
 
+    /** @return 投递租约时长 */
     public Duration getLeaseDuration() {
         return leaseDuration;
     }
 
+    /** @return 最多投递尝试次数 */
     public int getMaxAttempts() {
         return maxAttempts;
     }
 
+    /** @return 初始退避时长 */
     public Duration getInitialBackoff() {
         return initialBackoff;
     }
 
+    /** @return 最大退避时长 */
     public Duration getMaxBackoff() {
         return maxBackoff;
     }
 
+    /** @return 退避抖动系数 */
     public double getJitterFactor() {
         return jitterFactor;
     }

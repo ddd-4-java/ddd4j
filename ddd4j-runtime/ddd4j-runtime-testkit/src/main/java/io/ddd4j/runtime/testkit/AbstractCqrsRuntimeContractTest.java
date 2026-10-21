@@ -186,10 +186,12 @@ public abstract class AbstractCqrsRuntimeContractTest {
     public static final class CmdA implements Command {
         private final String payload;
 
+        /** @param payload 命令内容 */
         public CmdA(String payload) {
             this.payload = payload;
         }
 
+        /** @return 命令内容 */
         public String getPayload() {
             return payload;
         }
@@ -201,10 +203,12 @@ public abstract class AbstractCqrsRuntimeContractTest {
     public static final class CmdB implements Command {
         private final int value;
 
+        /** @param value 命令数值 */
         public CmdB(int value) {
             this.value = value;
         }
 
+        /** @return 命令数值 */
         public int getValue() {
             return value;
         }
@@ -237,6 +241,7 @@ public abstract class AbstractCqrsRuntimeContractTest {
             return Result.ok("executor-a:" + command.getPayload());
         }
 
+        /** @return 执行器是否已被调用 */
         public boolean wasInvoked() {
             return invoked.get();
         }
@@ -261,6 +266,7 @@ public abstract class AbstractCqrsRuntimeContractTest {
             return Result.ok("executor-b:" + command.getValue());
         }
 
+        /** @return 执行器是否已被调用 */
         public boolean wasInvoked() {
             return invoked.get();
         }

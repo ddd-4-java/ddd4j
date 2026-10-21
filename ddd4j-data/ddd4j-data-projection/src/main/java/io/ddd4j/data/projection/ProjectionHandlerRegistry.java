@@ -16,7 +16,14 @@ package io.ddd4j.data.projection;
 
 import io.ddd4j.core.ddd.event.DomainEvent;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -28,7 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 交给 {@link ProjectionDispatcher} 拉块分发。本类只维护「事件类型 → handler」
  * 映射，不执行事件、不感知任何运行时框架。
  *
- * <h3>注册语义（与 CommandRegistry 同源）</h3>
+ * <h2>注册语义（与 CommandRegistry 同源）</h2>
  * <p>
  * {@link #register} 采用 <b>先校验全部订阅类型无冲突、再统一落库</b> 的整批拒绝
  * （all-or-nothing）语义：任一事件类型已被其他 handler 注册即抛
@@ -61,12 +68,17 @@ public class ProjectionHandlerRegistry {
      * 且本 handler 声明的所有类型都不落库（与 {@code CommandRegistry} 同源语义）。
      *
      * @param handler 投影处理器，非空
-     * @throws NullPointerException  handler 为 null
+     * @throws NullPointerException  handler、事件类型集合或集合中的类型为 null
      * @throws IllegalStateException 任一事件类型已被注册（消息含事件类型全限定名）
      */
     public void register(ProjectionHandler handler) {
         ProjectionHandler actual = Objects.requireNonNull(handler, "handler must not be null");
-        Set<Class<?>> eventTypes = java.util.Collections.unmodifiableSet(new java.util.HashSet<>(actual.eventTypes()));
+        Collection<Class<? extends DomainEvent<?>>> declaredTypes =
+                Objects.requireNonNull(actual.eventTypes(), "event types must not be null");
+        for (Class<?> eventType : declaredTypes) {
+            Objects.requireNonNull(eventType, "event type must not be null");
+        }
+        Set<Class<?>> eventTypes = Collections.unmodifiableSet(new HashSet<>(declaredTypes));
         for (Class<?> eventType : eventTypes) {
             if (handlers.containsKey(eventType)) {
                 throw new IllegalStateException(

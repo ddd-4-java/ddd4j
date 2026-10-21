@@ -14,6 +14,9 @@
  */
 package io.ddd4j.data.event.store.jdbi;
 
+import java.io.ObjectStreamClass;
+
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.ddd4j.core.constant.EventStoreConstants;
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
@@ -49,6 +52,17 @@ class JdbiEventStoreTest {
     }
 
     @Test
+    void reconstructedAggregateIdShouldSerializeAsString() throws Exception {
+        TestAggregateRootId orderId = new TestAggregateRootId("serialized-id");
+        eventStore.append(ORDER_TYPE, orderId,
+                java.util.Collections.<DomainEvent<?>>singletonList(new OrderCreatedEvent("created")), 0);
+
+        AggregateRootId reconstructed = eventStore.read(ORDER_TYPE, orderId).get(0).aggregateId();
+        String json = JsonMapper.builder().build().writeValueAsString(reconstructed);
+        assertEquals("\"serialized-id\"", json);
+    }
+
+    @Test
     void appendAndReadShouldRoundTripBusinessPayload() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-a");
         eventStore.append(ORDER_TYPE, orderId, Arrays.<DomainEvent<?>>asList(
@@ -62,6 +76,55 @@ class JdbiEventStoreTest {
         assertEquals("created", ((OrderCreatedEvent) events.get(0).payload()).getFact());
         assertEquals("renamed", ((OrderCreatedEvent) events.get(1).payload()).getFact());
         assertEquals(orderId.asString(), events.get(0).aggregateId().asString());
+    }
+
+    @Test
+    void unknownPersistedEventTypeMustFailInsteadOfReturningMap() {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-unknown-type");
+        eventStore.append(ORDER_TYPE, orderId,
+                Collections.<DomainEvent<?>>singletonList(new OrderCreatedEvent("created")), 0);
+        jdbi.useHandle(handle -> handle.createUpdate("UPDATE " + EventStoreConstants.TABLE_NAME
+                        + " SET " + EventStoreConstants.COLUMN_EVENT_TYPE
+                        + " = :eventType WHERE " + EventStoreConstants.COLUMN_AGGREGATE_ID + " = :aggregateId")
+                .bind("eventType", "io.ddd4j.events.MissingForContractTest")
+                .bind("aggregateId", orderId.asString())
+                .execute());
+
+        IllegalStateException failure = assertThrows(IllegalStateException.class,
+                () -> eventStore.read(ORDER_TYPE, orderId));
+        assertEquals("Unknown event type: io.ddd4j.events.MissingForContractTest", failure.getMessage());
+    }
+
+    @Test
+    void readBackAggregateIdsUseValueEquality() {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-id-equality");
+        eventStore.append(ORDER_TYPE, orderId,
+                Collections.<DomainEvent<?>>singletonList(new OrderCreatedEvent("created")), 0);
+
+        AggregateRootId first = eventStore.read(ORDER_TYPE, orderId).get(0).aggregateId();
+        assertEquals(6652084670470061437L, ObjectStreamClass.lookup(first.getClass()).getSerialVersionUID());
+        AggregateRootId second = eventStore.read(ORDER_TYPE, orderId).get(0).aggregateId();
+        assertEquals(first, second);
+        assertEquals(first.hashCode(), second.hashCode());
+        java.util.Set<AggregateRootId> unique = new java.util.HashSet<>();
+        unique.add(first);
+        unique.add(second);
+        assertEquals(1, unique.size());
+    }
+
+    @Test
+    void positionConstraintUsesSharedName() {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-position-schema");
+        eventStore.append(ORDER_TYPE, orderId,
+                Collections.<DomainEvent<?>>singletonList(new OrderCreatedEvent("created")), 0);
+
+        List<String> names = jdbi.withHandle(handle -> handle.createQuery(
+                        "select upper(constraint_name) from information_schema.table_constraints "
+                                + "where upper(table_name) = :tableName")
+                .bind("tableName", EventStoreConstants.TABLE_NAME.toUpperCase())
+                .mapTo(String.class)
+                .list());
+        assertTrue(names.contains("UK_POSITION"), "position unique constraint must be named uk_position: " + names);
     }
 
     @Test
@@ -172,6 +235,25 @@ class JdbiEventStoreTest {
         java.time.ZonedDateTime actual = eventStore.read(ORDER_TYPE, orderId).get(0).timestamp();
         assertEquals(expected.toInstant(), actual.toInstant());
         assertEquals(java.time.ZoneOffset.UTC, actual.getZone());
+    }
+
+    @Test
+    void nullPersistedTimestampMustFailInsteadOfInventingCurrentTime() {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-1");
+        eventStore.append(ORDER_TYPE, orderId,
+                java.util.Collections.<DomainEvent<?>>singletonList(new OrderCreatedEvent("created")), 0);
+        jdbi.useHandle(handle -> {
+            handle.execute("ALTER TABLE " + EventStoreConstants.TABLE_NAME + " ALTER COLUMN "
+                    + EventStoreConstants.COLUMN_TIMESTAMP + " DROP NOT NULL");
+            handle.createUpdate("UPDATE " + EventStoreConstants.TABLE_NAME + " SET "
+                            + EventStoreConstants.COLUMN_TIMESTAMP + " = NULL WHERE "
+                            + EventStoreConstants.COLUMN_AGGREGATE_ID + " = :aggregateId")
+                    .bind("aggregateId", orderId.asString()).execute();
+        });
+
+        IllegalStateException failure = org.junit.jupiter.api.Assertions.assertThrows(
+                IllegalStateException.class, () -> eventStore.read(ORDER_TYPE, orderId));
+        org.junit.jupiter.api.Assertions.assertEquals("Missing persisted event timestamp", failure.getMessage());
     }
 
     private static final class TestAggregateRootId implements AggregateRootId {

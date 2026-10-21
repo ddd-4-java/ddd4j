@@ -15,6 +15,7 @@
 package io.ddd4j.web.webmvc.exception;
 
 import com.alibaba.ttl.TransmittableThreadLocal;
+import io.ddd4j.kit.web.IpKit;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 
@@ -78,6 +79,22 @@ public abstract class BaseExceptionHandler {
         REQUEST_HOLDER.set(request);
     }
 
+    /**
+     * 解析异常日志中的客户端地址。
+     *
+     * @param request 当前请求
+     * @return 代理头优先的客户端地址
+     */
+    static String clientAddress(Object request) {
+        return IpKit.getRemoteAddr(request);
+    }
+
+    /**
+     * 判断请求是否通过 XMLHttpRequest 发起。
+     *
+     * @param request 当前 HTTP 请求
+     * @return 请求头标记为 XMLHttpRequest 时返回 true
+     */
     protected boolean isAjaxRequest(HttpServletRequest request) {
         return XML_HTTP_REQUEST.equalsIgnoreCase(request.getHeader(X_REQUESTED_WITH));
     }
@@ -85,7 +102,7 @@ public abstract class BaseExceptionHandler {
     protected void logException(Exception ex) {
         HttpServletRequest request = getCurrentRequest();
         if (Objects.nonNull(request)) {
-            log.error("URI : {} Request Fail. IP >> {} ", request.getRequestURI(), request.getRemoteAddr());
+            log.error("URI : {} Request Fail. IP >> {} ", request.getRequestURI(), clientAddress(request));
         }
         log.error(ex.getMessage(), ex);
     }
@@ -93,7 +110,7 @@ public abstract class BaseExceptionHandler {
     protected void logException(Exception ex, Map<String, Object> detailMap) {
         HttpServletRequest request = getCurrentRequest();
         if (Objects.nonNull(request)) {
-            log.error("URI : {} Request Fail. IP >> {} ", request.getRequestURI(), request.getRemoteAddr());
+            log.error("URI : {} Request Fail. IP >> {} ", request.getRequestURI(), clientAddress(request));
         }
         for (Map.Entry<String, Object> entry : detailMap.entrySet()) {
             Object val = entry.getValue();

@@ -27,6 +27,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * {@link JpaProjectionPositionRepository} H2 集成测试（Task 7.2，本地必跑轨）。
@@ -66,6 +67,17 @@ class ProjectionPositionJpaIT {
     @BeforeEach
     void cleanPositions() {
         repository.deleteAll();
+    }
+
+    @Test
+    void findAllReturnsAnImmutablePositionSnapshot() {
+        positions.save(DefaultProjectionPosition.zero(ORDER_SUMMARY));
+
+        java.util.List<ProjectionPosition> snapshot = positions.findAll();
+        assertThat(snapshot).hasSize(1);
+        assertThatThrownBy(() -> snapshot.clear())
+                .isInstanceOf(UnsupportedOperationException.class);
+        assertThat(positions.findAll()).hasSize(1);
     }
 
     @Test

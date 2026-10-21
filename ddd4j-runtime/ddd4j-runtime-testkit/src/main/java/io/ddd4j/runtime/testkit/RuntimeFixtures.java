@@ -65,7 +65,7 @@ public final class RuntimeFixtures {
     }
 
     public List<ReadinessContributor> readinessContributors() {
-        return Arrays.asList(() -> ReadinessResult.ready("runtime-fixture"));
+        return Collections.unmodifiableList(Arrays.asList(() -> ReadinessResult.ready("runtime-fixture")));
     }
 
     public Map<String, Class<?>> services() {

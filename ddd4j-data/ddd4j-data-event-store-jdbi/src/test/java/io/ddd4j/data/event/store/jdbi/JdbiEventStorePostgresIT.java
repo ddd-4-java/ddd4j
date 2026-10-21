@@ -91,6 +91,27 @@ class JdbiEventStorePostgresIT {
     }
 
     @Test
+    void timestampShouldRoundTripAcrossTimezonesOnPostgres() throws Exception {
+        JdbiTimestampTimezoneContractTest.assertUtcRoundTrip(jdbi);
+    }
+
+    @Test
+    void positionConstraintUsesSharedNameOnPostgres() {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-pg-position-schema");
+        eventStore.append(ORDER_TYPE, orderId,
+                Collections.<DomainEvent<?>>singletonList(new OrderCreatedEvent("seed")), 0);
+
+        List<String> names = jdbi.withHandle(handle -> handle.createQuery(
+                        "select constraint_name from information_schema.table_constraints "
+                                + "where lower(table_name) = lower(:tableName) "
+                                + "and constraint_type = 'UNIQUE'")
+                .bind("tableName", EventStoreConstants.TABLE_NAME)
+                .mapTo(String.class)
+                .list());
+        assertTrue(names.contains("uk_position"));
+    }
+
+    @Test
     void payloadColumnShouldUsePortableTextType() throws Exception {
         // 先 append 一次触发懒建表
         TestAggregateRootId orderId = new TestAggregateRootId("order-pg-schema");

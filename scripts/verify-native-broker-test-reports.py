@@ -8,11 +8,17 @@ from pathlib import Path
 
 
 REQUIRED = {
+    "ddd4j-mq-kafka": "KafkaMQClientRoundTripTest",
     "ddd4j-mq-rabbitmq": "RabbitMQContainerIntegrationTest",
     "ddd4j-mq-nats": "NatsJetStreamIntegrationTest",
     "ddd4j-mq-mqtt": "MqttContainerIntegrationTest",
     "ddd4j-mq-mqtt-mica": "MicaMqttContainerIntegrationTest",
     "ddd4j-mq-activemq": "ArtemisContainerIntegrationTest",
+    "ddd4j-mq-pulsar": "PulsarContainerIntegrationTest",
+    "ddd4j-mq-tdmq": "TdmqPulsarProtocolIntegrationTest",
+    "ddd4j-mq-rocketmq": "RocketMQNativeIntegrationTest",
+    "ddd4j-mq-redis-stream": "RedisStreamNativeCausalityIT",
+    "ddd4j-mq-sqs": "SqsBrokerIntegrationTest",
 }
 
 

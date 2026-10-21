@@ -1,5 +1,6 @@
 package io.ddd4j.sample.order.domain;
 
+import io.ddd4j.kit.lang.JsonKit;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -38,5 +39,16 @@ class OrderDomainValueContractTest {
         assertTrue(query.toString().startsWith("OrderQuery("));
         assertThrows(IllegalArgumentException.class,
                 () -> new OrderQuery("buyer-1", OrderStatus.DRAFT, 0, 20));
+    }
+
+    @Test
+    void moneyAndOrderQueryRoundTripThroughJson() {
+        Money money = new Money(new BigDecimal("12.345"), " cny ");
+        String moneyJson = JsonKit.toJson(money);
+        assertEquals(money, JsonKit.toObject(moneyJson, Money.class));
+
+        OrderQuery query = new OrderQuery("buyer-1", OrderStatus.DRAFT, 1, 20);
+        String queryJson = JsonKit.toJson(query);
+        assertEquals(query, JsonKit.toObject(queryJson, OrderQuery.class));
     }
 }

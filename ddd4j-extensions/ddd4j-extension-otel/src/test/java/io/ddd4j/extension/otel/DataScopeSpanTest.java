@@ -58,12 +58,10 @@ class DataScopeSpanTest {
 
     @Test
     void evaluate_nonNullAllowedProvider_shouldCheckNullability() {
-        boolean result = DataScopeSpan.evaluate("Test", "valid-data",
-                (dataType, data) -> java.util.Objects.nonNull(data));
+        boolean result = DataScopeSpan.evaluate("Test", "valid-data", DataScopeProvider.nonNullAllowed());
         assertThat(result).isTrue();
 
-        boolean nullResult = DataScopeSpan.evaluate("Test", null,
-                (dataType, data) -> java.util.Objects.nonNull(data));
+        boolean nullResult = DataScopeSpan.evaluate("Test", null, DataScopeProvider.nonNullAllowed());
         assertThat(nullResult).isFalse();
     }
 

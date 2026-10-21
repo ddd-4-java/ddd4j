@@ -15,7 +15,6 @@
 package io.ddd4j.spring.util;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.LinkedMultiValueMap;
@@ -26,6 +25,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 
 /**
@@ -70,7 +70,7 @@ public class SignKit {
 
         StringBuilder requestData = new StringBuilder(StringUtils.defaultString(token)).append("|");
         // form参数
-        if (MapUtils.isEmpty(formData)) {
+        if (Objects.isNull(formData) || formData.isEmpty()) {
             requestData.append("|");
         } else {
 
@@ -146,7 +146,7 @@ public class SignKit {
 
         StringBuilder requestData = new StringBuilder(StringUtils.defaultString(token)).append("|");
         // form参数
-        if (MapUtils.isEmpty(formData)) {
+        if (Objects.isNull(formData) || formData.isEmpty()) {
             requestData.append("|");
         } else {
 

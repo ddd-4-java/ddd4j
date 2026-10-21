@@ -44,13 +44,22 @@ import java.util.concurrent.TimeUnit;
 @Singleton
 public class MicronautProjectionScheduler implements ViewScheduler {
 
-    private final ScheduledExecutorService executor = Executors.newScheduledThreadPool(
-            Runtime.getRuntime().availableProcessors(),
-            r -> {
-                Thread t = new Thread(r, "micronaut-projection-scheduler");
-                t.setDaemon(true);
-                return t;
-            });
+    private final ScheduledExecutorService executor;
+
+    /** 创建由框架管理的调度器。 */
+    public MicronautProjectionScheduler() {
+        this(Executors.newScheduledThreadPool(
+                Runtime.getRuntime().availableProcessors(),
+                r -> {
+                    Thread t = new Thread(r, "micronaut-projection-scheduler");
+                    t.setDaemon(true);
+                    return t;
+                }));
+    }
+
+    MicronautProjectionScheduler(ScheduledExecutorService executor) {
+        this.executor = Objects.requireNonNull(executor, "executor");
+    }
 
     @PreDestroy
     void shutdown() {
@@ -78,6 +87,7 @@ public class MicronautProjectionScheduler implements ViewScheduler {
         private final Runnable task;
         private volatile ScheduledFuture<?> future;
         private volatile boolean cancelled = false;
+        private long scheduleGeneration;
 
         ReschedulingHandle(ScheduledExecutorService executor, CronExpression cron, Runnable task) {
             this.executor = executor;
@@ -85,7 +95,7 @@ public class MicronautProjectionScheduler implements ViewScheduler {
             this.task = task;
         }
 
-        void scheduleNext() {
+        synchronized void scheduleNext() {
             if (cancelled) {
                 return;
             }
@@ -98,7 +108,12 @@ public class MicronautProjectionScheduler implements ViewScheduler {
             if (delayMillis < 0) {
                 delayMillis = 0;
             }
-            future = executor.schedule(this, delayMillis, TimeUnit.MILLISECONDS);
+            // 立即执行的任务可能先完成重调度，旧 Future 不得覆盖新的句柄。
+            long generation = ++scheduleGeneration;
+            ScheduledFuture<?> scheduled = executor.schedule(this, delayMillis, TimeUnit.MILLISECONDS);
+            if (generation == scheduleGeneration) {
+                future = scheduled;
+            }
         }
 
         @Override
@@ -114,7 +129,7 @@ public class MicronautProjectionScheduler implements ViewScheduler {
         }
 
         @Override
-        public void cancel() {
+        public synchronized void cancel() {
             cancelled = true;
             ScheduledFuture<?> f = future;
             if (f != null) {
@@ -123,7 +138,7 @@ public class MicronautProjectionScheduler implements ViewScheduler {
         }
 
         @Override
-        public boolean isActive() {
+        public synchronized boolean isActive() {
             if (cancelled) {
                 return false;
             }
@@ -175,6 +190,31 @@ public class MicronautProjectionScheduler implements ViewScheduler {
             );
         }
 
+        LocalDateTime next(LocalDateTime from) {
+            LocalDateTime candidate = from.plusSeconds(1).withNano(0);
+            for (int i = 0; i < 1_000_000; i++) {
+                if (matches(candidate)) {
+                    return candidate;
+                }
+                candidate = candidate.plusSeconds(1);
+            }
+            return null;
+        }
+
+        private boolean matches(LocalDateTime dt) {
+            return contains(seconds, dt.getSecond())
+                    && contains(minutes, dt.getMinute())
+                    && contains(hours, dt.getHour())
+                    && contains(daysOfMonth, dt.getDayOfMonth())
+                    && contains(months, dt.getMonthValue())
+                    && matchesDayOfWeek(dt);
+        }
+
+        private boolean matchesDayOfWeek(LocalDateTime dt) {
+            int dow = dt.getDayOfWeek().getValue() % 7; // Monday=1 -> 1, Sunday=7 -> 0
+            return contains(daysOfWeek, dow) || contains(daysOfWeek, dt.getDayOfWeek().getValue());
+        }
+
         private static boolean contains(int[] values, int v) {
             for (int val : values) {
                 if (val == v) {
@@ -213,31 +253,6 @@ public class MicronautProjectionScheduler implements ViewScheduler {
                 }
             }
             return values.stream().mapToInt(Integer::intValue).toArray();
-        }
-
-        LocalDateTime next(LocalDateTime from) {
-            LocalDateTime candidate = from.plusSeconds(1).withNano(0);
-            for (int i = 0; i < 1_000_000; i++) {
-                if (matches(candidate)) {
-                    return candidate;
-                }
-                candidate = candidate.plusSeconds(1);
-            }
-            return null;
-        }
-
-        private boolean matches(LocalDateTime dt) {
-            return contains(seconds, dt.getSecond())
-                    && contains(minutes, dt.getMinute())
-                    && contains(hours, dt.getHour())
-                    && contains(daysOfMonth, dt.getDayOfMonth())
-                    && contains(months, dt.getMonthValue())
-                    && matchesDayOfWeek(dt);
-        }
-
-        private boolean matchesDayOfWeek(LocalDateTime dt) {
-            int dow = dt.getDayOfWeek().getValue() % 7; // Monday=1 -> 1, Sunday=7 -> 0
-            return contains(daysOfWeek, dow) || contains(daysOfWeek, dt.getDayOfWeek().getValue());
         }
     }
 }

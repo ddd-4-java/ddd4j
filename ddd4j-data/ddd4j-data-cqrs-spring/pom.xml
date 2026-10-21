@@ -58,7 +58,7 @@
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
-            <version>${snakeyaml-boot2.version}</version>
+            <version>${snakeyaml.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

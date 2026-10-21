@@ -12,8 +12,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.ddd4j.web.testkit;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
 
 import java.util.List;
 import java.util.Map;
@@ -24,72 +27,96 @@ import java.util.Optional;
  * Web 契约测试使用的最小响应快照。
  */
 public final class WebContractResponse {
+
+    private static final long serialVersionUID = 0L;
+
     private final int status;
+
     private final Map<String, List<String>> headers;
+
     private final String body;
 
     /**
-     * Web 契约测试使用的最小响应快照。
- * @param status 状态
- * @param headers 消息头集合
- * @param body 请求体
+     * 按名称查询首个响应头值，忽略名称大小写。
+     *
+     * @param name 响应头名称
+     * @return 首个值；不存在时为空
      */
+    public Optional<String> firstHeader(String name) {
+        Objects.requireNonNull(name, "name must not be null");
+        return headers.entrySet().stream().filter(entry -> entry.getKey().equalsIgnoreCase(name)).map(Map.Entry::getValue).filter(values -> Objects.nonNull(values) && !values.isEmpty()).map(values -> values.get(0)).findFirst();
+    }
 
-    public WebContractResponse(int status, Map<String, List<String>> headers, String body) {
+    /** @return 响应体 */
+    public String getBody() {
+        return body;
+    }
+
+    /** @return 响应头 */
+    public Map<String, List<String>> getHeaders() {
+        return headers;
+    }
+
+    /** @return HTTP 状态码 */
+    public int getStatus() {
+        return status;
+    }
+
+    /**
+     * 创建 Web 契约响应快照。
+     *
+     * @param status HTTP 状态码
+     * @param headers 响应头
+     * @param body 响应体
+     */
+    @JsonCreator()
+    public WebContractResponse(@JsonProperty("status") int status, @JsonProperty("headers") Map<String, List<String>> headers, @JsonProperty("body") String body) {
         this.status = status;
         this.headers = headers;
         this.body = body;
     }
 
+    /** @return HTTP 状态码 */
+    @JsonProperty("status")
     public int status() {
         return status;
     }
 
+    /** @return 响应头 */
+    @JsonProperty("headers")
     public Map<String, List<String>> headers() {
         return headers;
     }
 
+    /** @return 响应体 */
+    @JsonProperty("body")
     public String body() {
         return body;
     }
 
-    public Optional<String> firstHeader(String name) {
-        Objects.requireNonNull(name, "name must not be null");
-        return headers.entrySet().stream()
-                .filter(entry -> entry.getKey().equalsIgnoreCase(name))
-                .map(Map.Entry::getValue)
-                .filter(values -> Objects.nonNull(values) && !values.isEmpty())
-                .map(values -> values.get(0))
-                .findFirst();
-    }
-
     @Override
-    public boolean equals(Object o) {
-        return this == o || (o instanceof WebContractResponse
-                && status == ((WebContractResponse) o).status
-                && Objects.equals(headers, ((WebContractResponse) o).headers)
-                && Objects.equals(body, ((WebContractResponse) o).body));
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+            return false;
+        }
+        WebContractResponse other = (WebContractResponse) obj;
+        return this.status == other.status && Objects.equals(this.headers, other.headers) && Objects.equals(this.body, other.body);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(status, headers, body);
+        int result = 0;
+        result = 31 * result + Integer.hashCode(status);
+        result = 31 * result + Objects.hashCode(headers);
+        result = 31 * result + Objects.hashCode(body);
+        return result;
     }
 
     @Override
     public String toString() {
-        return "WebContractResponse{status=" + status + "}";
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public Map<String, List<String>> getHeaders() {
-        return headers;
-    }
-
-    public String getBody() {
-        return body;
+        return "WebContractResponse[status=" + status + ", headers=" + headers + ", body=" + body + "]";
     }
 }

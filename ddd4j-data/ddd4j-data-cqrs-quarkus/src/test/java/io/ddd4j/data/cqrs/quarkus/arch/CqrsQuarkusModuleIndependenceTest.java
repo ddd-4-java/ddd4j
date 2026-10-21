@@ -77,7 +77,7 @@ class CqrsQuarkusModuleIndependenceTest {
     static final ArchRule cqrs_quarkus_no_jakarta_persistence =
             noClasses().that().resideInAPackage("io.ddd4j.data.cqrs.quarkus..")
                     .should().dependOnClassesThat().resideInAnyPackage(
-                            "javax.persistence..",
+                            "jakarta.persistence..",
                             "javax.persistence.."
                     );
 }

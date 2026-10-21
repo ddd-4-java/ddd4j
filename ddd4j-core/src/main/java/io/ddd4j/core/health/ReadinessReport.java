@@ -99,21 +99,35 @@ public final class ReadinessReport {
         }
     }
 
+    /**
+     * 获取整体就绪状态，供业务调用及 JSON 序列化使用。
+     *
+     * @return 整体就绪时为 true
+     */
     @JsonProperty("ready")
     public boolean ready() {
         return ready;
     }
 
+    /**
+     * 获取各依赖的就绪结果，供业务调用及 JSON 序列化使用。
+     *
+     * @return 不可变的就绪结果列表
+     */
     @JsonProperty("results")
     public List<ReadinessResult> results() {
         return results;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ReadinessReport)) return false;
-        ReadinessReport that = (ReadinessReport) o;
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof ReadinessReport)) {
+            return false;
+        }
+        ReadinessReport that = (ReadinessReport) obj;
         return ready == that.ready && results.equals(that.results);
     }
 

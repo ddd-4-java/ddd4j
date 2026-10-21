@@ -1,5 +1,6 @@
 import importlib.util
 import pathlib
+import re
 import unittest
 
 spec = importlib.util.spec_from_file_location('checker', pathlib.Path(__file__).parents[1] / 'check_dependencies.py')
@@ -8,6 +9,22 @@ spec.loader.exec_module(checker)
 
 
 class PolicyTests(unittest.TestCase):
+    def test_latest_update_uses_supported_prerelease_filter(self):
+        policy = checker.resolve_policy({}, 'feature/1.0.x')
+        commands = checker.update_commands(policy)
+        for command in commands[:2]:
+            self.assertNotIn('-DallowPreReleases=false', command)
+            arguments = [arg for arg in command if arg.startswith('-Dmaven.version.ignore=')]
+            self.assertEqual(len(arguments), 1)
+            ignored = arguments[0].split('=', 1)[1]
+            self.assertIsNotNone(re.fullmatch(ignored, '4.0.0-beta-1'))
+            self.assertIsNotNone(re.fullmatch(ignored, '4.0.0.Beta1'))
+            self.assertIsNotNone(re.fullmatch(ignored, '20030203.000129'))
+            self.assertIsNotNone(re.fullmatch(ignored, '20020423'))
+            self.assertIsNone(re.fullmatch(ignored, '3.4.0'))
+            self.assertIsNone(re.fullmatch(ignored, '2026.10.16'))
+            self.assertNotIn('-DallowDowngrade=true', command)
+
     def test_branch_overrides_merge_pins_and_exclusions(self):
         policy = {'fixed_properties': {'a.version': '1'}, 'exclude': ['spring:*'],
                   'branches': {'legacy': {'fixed_properties': {'b.version': '2'}, 'exclude': ['legacy:*']}}}
@@ -35,10 +52,29 @@ class PolicyTests(unittest.TestCase):
 
     def test_scan_keeps_pinned_and_excluded_components(self):
         command = checker.scan_command({'cvss_threshold': 7}, pathlib.Path('/tmp/reports'))
-        self.assertIn('-DfailBuildOnCVSS=7', command)
+        self.assertIn('7', command)
+        self.assertTrue(pathlib.Path(command[1]).is_file())
         self.assertFalse(any(arg.startswith('-Dexcludes') for arg in command))
 
 class ValidationTests(unittest.TestCase):
+    def test_inherited_alias_property_is_not_upgraded_as_an_independent_version(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            (root / 'pom.xml').write_text('''<project xmlns="http://maven.apache.org/POM/4.0.0">
+                <properties>
+                    <helidon-bom.version>3.2.18</helidon-bom.version>
+                    <helidon.version>${helidon-bom.version}</helidon.version>
+                </properties>
+                <dependencies><dependency><groupId>io.helidon</groupId><artifactId>server</artifactId>
+                    <version>${helidon.version}</version></dependency></dependencies>
+                </project>''')
+            policy = checker.resolve_policy({}, 'feature/2.0.x')
+            checker.protected_properties(root, policy)
+            self.assertIn('helidon.version', policy['exclude_properties'])
+            self.assertNotIn('helidon-bom.version', policy['exclude_properties'])
+            self.assertIn('-DexcludeProperties=helidon.version', checker.update_commands(policy)[0])
+
     def test_fixed_dependency_must_exist_and_take_effect(self):
         import tempfile
         with tempfile.TemporaryDirectory() as directory:
@@ -75,6 +111,28 @@ class ValidationTests(unittest.TestCase):
             self.assertIn('<undertow.version>2.3.0.Final</undertow.version>', text)
             self.assertNotIn('<spring.version>', text)
 
+    def test_inactive_api_profile_baseline_is_not_materialized(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as directory:
+            root = pathlib.Path(directory)
+            pom = root / 'pom.xml'
+            pom.write_text('''<project xmlns="http://maven.apache.org/POM/4.0.0">
+                <dependencies><dependency><groupId>io.undertow</groupId><artifactId>undertow-core</artifactId>
+                <version>${undertow.version}</version></dependency></dependencies>
+                <profiles><profile><id>api-compatibility</id><activation><property>
+                <name>ddd4j.api.baseline.version</name></property></activation><build><plugins><plugin>
+                <configuration><oldVersion><dependency><groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-core</artifactId><version>${ddd4j.api.baseline.version}</version>
+                </dependency></oldVersion></configuration></plugin></plugins></build></profile></profiles>
+                </project>''')
+            effective = root / 'effective.xml'
+            effective.write_text('''<project xmlns="http://maven.apache.org/POM/4.0.0"><properties>
+                <undertow.version>2.3.0.Final</undertow.version></properties></project>''')
+            policy = checker.resolve_policy({}, 'feature/2.0.x')
+            checker.materialize_inherited_properties(root, policy, effective)
+            self.assertIn('<undertow.version>2.3.0.Final</undertow.version>', pom.read_text())
+            self.assertNotIn('<ddd4j.api.baseline.version>', pom.read_text())
+
     def test_fixed_property_overrides_artifact_exclusion(self):
         import tempfile
         with tempfile.TemporaryDirectory() as directory:
@@ -110,11 +168,12 @@ class PipelineTests(unittest.TestCase):
                 code = 0
                 if checker.CHECK in command:
                     scans.append(command)
-                    directory = pathlib.Path(next(arg.split('=', 1)[1] for arg in command if arg.startswith('-DoutputDirectory=')))
-                    directory.mkdir(parents=True, exist_ok=True)
-                    if not missing_reports:
-                        (directory / 'dependency-check-report.html').write_text('<html></html>')
-                        (directory / 'dependency-check-report.json').write_text('{"dependencies": [{"fileName": "fixture.jar"}]}')
+                    directory = pathlib.Path(command[command.index('--output') + 1])
+                    if missing_reports:
+                        code = 1
+                    else:
+                        directory.mkdir(parents=True, exist_ok=True)
+                        (directory / 'trivy.json').write_text('{"Results": [{"Target": "pom.xml", "Packages": [{"Name": "fixture"}]}]}')
                     if len(scans) == failed_scan_index:
                         code = 1
                 if fail_update and any(arg.endswith(':update-properties') for arg in command):

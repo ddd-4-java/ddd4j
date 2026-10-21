@@ -58,30 +58,39 @@ public final class MQOutboxDispatchResult {
         this.confirmationLost = confirmationLost;
     }
 
+    /** @return 已领取数量 */
     public int claimed() {
         return claimed;
     }
 
+    /** @return 已确认发布数量 */
     public int published() {
         return published;
     }
 
+    /** @return 已安排重试数量 */
     public int rescheduled() {
         return rescheduled;
     }
 
+    /** @return 预计进入死信数量 */
     public int dead() {
         return dead;
     }
 
+    /** @return 租约确认丢失数量 */
     public int confirmationLost() {
         return confirmationLost;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof MQOutboxDispatchResult)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof MQOutboxDispatchResult)) {
+            return false;
+        }
         MQOutboxDispatchResult that = (MQOutboxDispatchResult) o;
         return claimed == that.claimed && published == that.published
                 && rescheduled == that.rescheduled && dead == that.dead
@@ -105,22 +114,27 @@ public final class MQOutboxDispatchResult {
                 + ", confirmationLost=" + confirmationLost + ']';
     }
 
+    /** @return 已领取数量 */
     public int getClaimed() {
         return claimed;
     }
 
+    /** @return 已确认发布数量 */
     public int getPublished() {
         return published;
     }
 
+    /** @return 已安排重试数量 */
     public int getRescheduled() {
         return rescheduled;
     }
 
+    /** @return 预计进入死信数量 */
     public int getDead() {
         return dead;
     }
 
+    /** @return 租约确认丢失数量 */
     public int getConfirmationLost() {
         return confirmationLost;
     }

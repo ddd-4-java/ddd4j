@@ -36,12 +36,33 @@ public class GoodsQuery extends Query<Goods> {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 商品编码。
+     */
     private String code;
+    /**
+     * 名称模糊匹配条件。
+     */
     private String nameLike;
+    /**
+     * 商品状态。
+     */
     private GoodsStatus status;
+    /**
+     * 最低价格。
+     */
     private BigDecimal priceMin;
+    /**
+     * 最高价格。
+     */
     private BigDecimal priceMax;
 
+    /**
+     * 设置排序条件。
+     *
+     * @param orderBys 排序字段
+     * @return 当前查询对象
+     */
     public GoodsQuery setOrderBys(String orderBys) {
         if (io.ddd4j.kit.lang.StrKit.isBlank(orderBys)) {
             return this;

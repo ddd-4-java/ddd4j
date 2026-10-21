@@ -17,7 +17,11 @@ package io.ddd4j.core.cqrs.readmodel;
 import io.ddd4j.kit.lang.CollKit;
 import io.ddd4j.kit.lang.StrKit;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * 轻量类型事件分发器。
@@ -31,15 +35,32 @@ public class TypedEventDispatcher {
 
     private final Map<String, TypedEventHandler<?>> handlers;
 
+    /**
+     * 建立事件类型到处理器的索引。
+     *
+     * @param handlers 待注册的类型化事件处理器
+     */
     public TypedEventDispatcher(Collection<? extends TypedEventHandler<?>> handlers) {
         this.handlers = indexHandlers(handlers);
     }
 
+    /**
+     * 将事件交给匹配类型的处理器。
+     *
+     * @param event 待派发事件
+     * @return 找到并调用处理器时为 true
+     */
     public boolean dispatch(TypedEvent event) {
         TypedEvent typedEvent = Objects.requireNonNull(event, "event must not be null");
         return dispatch(typedEvent.getEventType(), typedEvent);
     }
 
+    /**
+     * 逐个派发事件集合。
+     *
+     * @param events 待派发事件集合
+     * @return 实际派发的事件数
+     */
     public int dispatchAll(Collection<? extends TypedEvent> events) {
         if (CollKit.isEmpty(events)) {
             return 0;
@@ -53,6 +74,13 @@ public class TypedEventDispatcher {
         return dispatched;
     }
 
+    /**
+     * 将事件交给匹配类型的处理器。
+     *
+     * @param eventType 事件类型
+     * @param event 事件载荷
+     * @return 找到并调用处理器时为 true
+     */
     public boolean dispatch(String eventType, Object event) {
         if (StrKit.isBlank(eventType) || Objects.isNull(event)) {
             return false;
@@ -65,6 +93,11 @@ public class TypedEventDispatcher {
         return true;
     }
 
+    /**
+     * 统计已注册的处理器数。
+     *
+     * @return 处理器数量
+     */
     public int size() {
         return handlers.size();
     }
@@ -72,7 +105,7 @@ public class TypedEventDispatcher {
     private Map<String, TypedEventHandler<?>> indexHandlers(Collection<? extends TypedEventHandler<?>> eventHandlers) {
         Map<String, TypedEventHandler<?>> indexedHandlers = new LinkedHashMap<>();
         if (CollKit.isEmpty(eventHandlers)) {
-            return Collections.unmodifiableMap(new HashMap<>(indexedHandlers));
+            return Collections.unmodifiableMap(new LinkedHashMap<>(indexedHandlers));
         }
         for (TypedEventHandler<?> handler : eventHandlers) {
             TypedEventHandler<?> safeHandler = Objects.requireNonNull(handler, "handler must not be null");
@@ -81,7 +114,7 @@ public class TypedEventDispatcher {
             }
             indexedHandlers.put(safeHandler.getEventType(), safeHandler);
         }
-        return Collections.unmodifiableMap(new HashMap<>(indexedHandlers));
+        return Collections.unmodifiableMap(new LinkedHashMap<>(indexedHandlers));
     }
 
     private <E> void invoke(TypedEventHandler<E> handler, Object event) {

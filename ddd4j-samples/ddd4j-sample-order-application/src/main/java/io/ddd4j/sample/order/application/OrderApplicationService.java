@@ -23,9 +23,15 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
+/** 协调订单写操作、查询投影、幂等处理和 Outbox 持久化的应用服务。 */
 @Slf4j
 public class OrderApplicationService {
 
@@ -37,11 +43,28 @@ public class OrderApplicationService {
     private final IdempotencyPort idempotency;
     private final OrderTransactionPort transaction;
 
+    /**
+     * 使用直通事务边界创建应用服务。
+     *
+     * @param repository 订单存储
+     * @param outbox 待发布消息存储
+     * @param readModels 查询模型端口
+     * @param idempotency 幂等端口
+     */
     public OrderApplicationService(OrderRepository repository, OutboxPort outbox,
                                    OrderReadModelPort readModels, IdempotencyPort idempotency) {
         this(repository, outbox, readModels, idempotency, OrderTransactionPort.noop());
     }
 
+    /**
+     * 使用指定事务边界创建应用服务。
+     *
+     * @param repository 订单存储
+     * @param outbox 待发布消息存储
+     * @param readModels 查询模型端口
+     * @param idempotency 幂等端口
+     * @param transaction 订单写入事务边界
+     */
     public OrderApplicationService(OrderRepository repository, OutboxPort outbox,
                                    OrderReadModelPort readModels, IdempotencyPort idempotency,
                                    OrderTransactionPort transaction) {
@@ -52,6 +75,10 @@ public class OrderApplicationService {
         this.transaction = Objects.requireNonNull(transaction, "transaction must not be null");
     }
 
+    /**
+     * @param command 创建订单命令
+     * @return 新草稿订单
+     */
     public Order create(CreateOrderCommand command) {
         Objects.requireNonNull(command, "command must not be null");
         Order order = Order.draft(command.orderNo(), command.buyerId(), command.buyerName());
@@ -59,6 +86,10 @@ public class OrderApplicationService {
         return order;
     }
 
+    /**
+     * @param command 添加明细命令
+     * @return 更新后的订单
+     */
     public Order addLine(AddOrderLineCommand command) {
         Objects.requireNonNull(command, "command must not be null");
         Order order = load(command.orderId());
@@ -67,6 +98,13 @@ public class OrderApplicationService {
         return order;
     }
 
+    /**
+     * 幂等地支付订单。
+     *
+     * @param orderId 订单标识
+     * @param idempotencyKey 支付幂等键
+     * @return 支付后的订单
+     */
     public Order pay(String orderId, String idempotencyKey) {
         String key = "order:payment:" + Objects.requireNonNull(idempotencyKey, "idempotencyKey must not be null");
         if (!idempotency.acquire(key, PAYMENT_IDEMPOTENCY_TTL)) {
@@ -88,6 +126,10 @@ public class OrderApplicationService {
         }
     }
 
+    /**
+     * @param orderId 订单标识
+     * @return 取消后的订单
+     */
     public Order cancel(String orderId) {
         Order order = load(orderId);
         order.cancel();
@@ -95,6 +137,10 @@ public class OrderApplicationService {
         return order;
     }
 
+    /**
+     * @param orderId 订单标识
+     * @return 发货后的订单
+     */
     public Order ship(String orderId) {
         Order order = load(orderId);
         order.ship();
@@ -102,16 +148,28 @@ public class OrderApplicationService {
         return order;
     }
 
+    /**
+     * @param orderId 订单标识
+     * @return 订单查询模型
+     */
     public OrderReadModel find(String orderId) {
         return readModels.findProjectionById(orderId).orElseGet(() -> toReadModel(load(orderId)));
     }
 
+    /**
+     * @param orderNo 订单号
+     * @return 订单查询模型
+     */
     public OrderReadModel findByOrderNo(String orderNo) {
         return repository.findByOrderNo(orderNo)
                 .map(this::toReadModel)
                 .orElseThrow(() -> new NoSuchElementException("order not found: " + orderNo));
     }
 
+    /**
+     * @param query 分页查询条件
+     * @return 匹配的订单查询模型
+     */
     public List<OrderReadModel> query(OrderQuery query) {
         return readModels.query(Objects.requireNonNull(query, "query must not be null"));
     }

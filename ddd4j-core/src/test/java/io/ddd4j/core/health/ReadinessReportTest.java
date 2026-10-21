@@ -16,10 +16,19 @@ package io.ddd4j.core.health;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+/**
+ * 就绪报告的快照、诊断信息与失败语义契约测试。
+ */
 class ReadinessReportTest {
 
     @Test
@@ -48,4 +57,67 @@ class ReadinessReportTest {
             assertThat(result.details()).containsEntry("reason", "check failed");
         });
     }
+
+    @Test
+    void resultAndReport_shouldKeepImmutableSnapshots() {
+        Map<String, String> details = new HashMap<>();
+        details.put("reason", "initial");
+        ReadinessResult result = new ReadinessResult("database", false, details);
+        details.put("reason", "changed");
+        assertThat(result.details()).containsEntry("reason", "initial");
+        assertThatThrownBy(() -> result.details().put("extra", "value"))
+                .isInstanceOf(UnsupportedOperationException.class);
+
+        List<ReadinessResult> results = new ArrayList<>();
+        results.add(result);
+        ReadinessReport report = new ReadinessReport(false, results);
+        results.clear();
+        assertThat(report.results()).containsExactly(result);
+        assertThatThrownBy(() -> report.results().clear())
+                .isInstanceOf(UnsupportedOperationException.class);
+    }
+
+    @Test
+    void check_shouldIgnoreNullContributorAndFailClosedOnEmptyResult() {
+        ReadinessReport report = ReadinessReport.check(Arrays.asList(
+                null,
+                () -> ReadinessResult.ready("database"),
+                () -> null));
+
+        assertThat(report.ready()).isFalse();
+        assertThat(report.results()).hasSize(2);
+        assertThat(report.results().get(0).name()).isEqualTo("database");
+        assertThat(report.results().get(1).ready()).isFalse();
+        assertThat(report.results().get(1).details()).containsEntry("reason", "empty result");
+    }
+
+    @Test
+    void result_shouldKeepDiagnosticTextInInputOrder() {
+        Map<String, String> details = new LinkedHashMap<>();
+        details.put("Aa", "first");
+        details.put("BB", "second");
+        details.put("AaAa", "third");
+        details.put("BBBB", "fourth");
+
+        ReadinessResult result = new ReadinessResult("database", false, details);
+
+        assertThat(new ArrayList<>(result.details().keySet())).containsExactly("Aa", "BB", "AaAa", "BBBB");
+        assertThat(result.toString()).isEqualTo(
+                "ReadinessResult[name=database, ready=false, details={Aa=first, BB=second, AaAa=third, BBBB=fourth}]");
+    }
+
+    @Test
+    void result_shouldRejectNullDiagnosticEntries() {
+        Map<String, String> nullKey = new HashMap<>();
+        nullKey.put(null, "value");
+        assertThatThrownBy(() -> new ReadinessResult("database", false, nullKey))
+                .isInstanceOf(NullPointerException.class);
+
+        Map<String, String> nullValue = new HashMap<>();
+        nullValue.put("reason", null);
+        assertThatThrownBy(() -> new ReadinessResult("database", false, nullValue))
+                .isInstanceOf(NullPointerException.class);
+        assertThat(new ReadinessResult("database", true, null).details()).isEmpty();
+    }
+
 }

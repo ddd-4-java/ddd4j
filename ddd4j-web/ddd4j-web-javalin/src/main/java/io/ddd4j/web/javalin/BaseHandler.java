@@ -21,22 +21,33 @@ import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.web.core.context.WebRequestFailure;
 import io.ddd4j.web.javalin.util.WebKit;
 import io.javalin.http.Context;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Javalin Handler 可选基类，只依赖 ddd4j SPI，不依赖 Guice 或 Spring。
  */
+@Slf4j
 public abstract class BaseHandler {
 
-    private static final Logger log = LoggerFactory.getLogger(BaseHandler.class);
-
+    /**
+     * 解析本地化消息。
+     *
+     * @param code 消息键
+     * @param args 消息参数
+     * @return 本地化消息
+     */
     protected String getMessage(String code, Object... args) {
         return Contexts.get(SpiKeys.I18N_PROVIDER, I18nProvider.class)
                 .orElse(I18nProvider.DEFAULT)
                 .getMessage(code, args);
     }
 
+    /**
+     * 记录请求异常并发布失败事件。
+     *
+     * @param context Javalin 请求上下文
+     * @param exception 捕获的异常
+     */
     protected void logException(Context context, Exception exception) {
         log.error("Exception in request [{} {}]", context.method(), context.path(), exception);
         Contexts.get(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class)
@@ -44,10 +55,22 @@ public abstract class BaseHandler {
                         new WebRequestFailure(context.method(), context.path(), exception)));
     }
 
+    /**
+     * 获取请求客户端地址。
+     *
+     * @param context Javalin 请求上下文
+     * @return 客户端地址
+     */
     protected String getClientIp(Context context) {
         return WebKit.getClientIp(context);
     }
 
+    /**
+     * 判断请求是否为 AJAX 请求。
+     *
+     * @param context Javalin 请求上下文
+     * @return 是否为 AJAX 请求
+     */
     protected boolean isAjax(Context context) {
         return WebKit.isAjax(context);
     }

@@ -15,6 +15,9 @@
 
 package io.ddd4j.web.core.context;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.web.core.version.ApiVersion;
 
@@ -82,8 +85,16 @@ import java.util.Objects;
      * @param path 路径
      * @param apiVersion 请求解析出的 API 版本，可为 null（未接线时）
      */
-    public WebRequestContext(String requestId, String traceId, String tenantId, String authorization,
-                             Locale locale, String clientIp, String method, String path, ApiVersion apiVersion) {
+    @JsonCreator
+    public WebRequestContext(@JsonProperty("requestId") String requestId,
+                             @JsonProperty("traceId") String traceId,
+                             @JsonProperty("tenantId") String tenantId,
+                             @JsonProperty("authorization") String authorization,
+                             @JsonProperty("locale") Locale locale,
+                             @JsonProperty("clientIp") String clientIp,
+                             @JsonProperty("method") String method,
+                             @JsonProperty("path") String path,
+                             @JsonProperty("apiVersion") ApiVersion apiVersion) {
         this.requestId = StrKit.isBlank(requestId) ? null : requestId;
         this.traceId = StrKit.isBlank(traceId) ? this.requestId : traceId;
         this.tenantId = tenantId;
@@ -95,13 +106,21 @@ import java.util.Objects;
         this.apiVersion = apiVersion;
     }
 
+    /** @return 请求标识 */
     public String requestId() { return requestId; }
+    /** @return 追踪标识 */
     public String traceId() { return traceId; }
+    /** @return 租户标识 */
     public String tenantId() { return tenantId; }
+    /** @return 授权头 */
     public String authorization() { return authorization; }
+    /** @return 语言区域 */
     public Locale locale() { return locale; }
+    /** @return 客户端 IP */
     public String clientIp() { return clientIp; }
+    /** @return HTTP 方法 */
     public String method() { return method; }
+    /** @return 请求路径 */
     public String path() { return path; }
 
     /**
@@ -109,6 +128,7 @@ import java.util.Objects;
      *
      * @return API 版本，未接线或未携带时为 null
      */
+    @JsonProperty("apiVersion")
     public ApiVersion apiVersion() {
         return apiVersion;
     }
@@ -122,34 +142,42 @@ import java.util.Objects;
         return apiVersion;
     }
 
+    /** @return 请求标识 */
     public String getRequestId() {
         return requestId;
     }
 
+    /** @return 追踪标识 */
     public String getTraceId() {
         return traceId;
     }
 
+    /** @return 租户标识 */
     public String getTenantId() {
         return tenantId;
     }
 
+    /** @return 授权头 */
     public String getAuthorization() {
         return authorization;
     }
 
+    /** @return 语言区域 */
     public Locale getLocale() {
         return locale;
     }
 
+    /** @return 客户端 IP */
     public String getClientIp() {
         return clientIp;
     }
 
+    /** @return HTTP 方法 */
     public String getMethod() {
         return method;
     }
 
+    /** @return 请求路径 */
     public String getPath() {
         return path;
     }

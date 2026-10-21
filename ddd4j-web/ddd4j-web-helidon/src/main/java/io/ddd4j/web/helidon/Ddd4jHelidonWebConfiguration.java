@@ -44,16 +44,27 @@ public class Ddd4jHelidonWebConfiguration {
     private String idempotencyCacheName = "ddd4j-web-idempotency";
     private Duration idempotencyTtl = Duration.ofMinutes(5);
 
+    /**
+     * 从当前 MicroProfile 配置加载 Web 属性。
+     *
+     * @return Web 配置
+     */
     public static Ddd4jHelidonWebConfiguration load() {
         return from(ConfigProvider.getConfig());
     }
 
+    /**
+     * 从指定配置源加载 Web 属性。
+     *
+     * @param config MicroProfile 配置源
+     * @return Web 配置
+     */
     public static Ddd4jHelidonWebConfiguration from(Config config) {
         Config source = Objects.requireNonNull(config, "config must not be null");
         Ddd4jHelidonWebConfiguration configuration = new Ddd4jHelidonWebConfiguration();
         source.getOptionalValue(PREFIX + "public-paths", String.class)
                 .ifPresent(value -> configuration.setPublicPaths(
-                        new ArrayList<>(Arrays.asList(value.split("\\s*,\\s*")))));
+                        trimPublicPaths(Arrays.asList(value.split("\\s*,\\s*")))));
         source.getOptionalValue(PREFIX + "authentication-mode", String.class)
                 .map(value -> AuthenticationMode.valueOf(value.toUpperCase(Locale.ROOT)))
                 .ifPresent(configuration::setDefaultAuthenticationMode);
@@ -67,5 +78,19 @@ public class Ddd4jHelidonWebConfiguration {
                 .map(Duration::parse)
                 .ifPresent(configuration::setIdempotencyTtl);
         return configuration;
+    }
+
+    /**
+     * 去除配置列表中每个公开路径两侧的空白，保留路径顺序和可修改列表语义。
+     *
+     * @param paths 由当前 MicroProfile Config 版本转换的路径列表
+     * @return 去除首尾空白的路径列表
+     */
+    private static List<String> trimPublicPaths(List<String> paths) {
+        List<String> result = new ArrayList<>(paths.size());
+        for (String path : paths) {
+            result.add(path.trim());
+        }
+        return result;
     }
 }

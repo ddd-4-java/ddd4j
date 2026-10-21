@@ -16,6 +16,7 @@ package io.ddd4j.mq.event;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.ddd.event.DomainEvent;
@@ -49,7 +50,7 @@ class MQCausalityBrokerHeaderMustTest {
     private final MqDomainEventPublisher publisher = new MqDomainEventPublisher();
     private final List<MQEvent> publishedEvents = new ArrayList<>();
     private final Map<String, Consumer<MQEvent>> publisherMap = new ConcurrentHashMap<>();
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = JsonMapper.builder().build();
 
     @BeforeEach
     void setUp() {

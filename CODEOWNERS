@@ -1,10 +1,10 @@
 # Default code owners for ddd-4-java organization
 # All changes require review from the organization maintainers.
 
-*       @redacted-legacy-family
+*       @partme-ai
 
 # Profile & community health files
-/.github/       @redacted-legacy-family
-/profile/       @redacted-legacy-family
-/LICENSE        @redacted-legacy-family
-/README.md      @redacted-legacy-family
+/.github/       @partme-ai
+/profile/       @partme-ai
+/LICENSE        @partme-ai
+/README.md      @partme-ai

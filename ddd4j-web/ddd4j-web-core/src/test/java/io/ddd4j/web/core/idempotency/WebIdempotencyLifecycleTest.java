@@ -13,6 +13,13 @@
  * limitations under the License.
  */
 package io.ddd4j.web.core.idempotency;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.never;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import io.ddd4j.web.core.context.WebRequestContext;
 import io.ddd4j.web.core.error.WebStatusException;
@@ -24,11 +31,19 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.Duration;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * 类型说明。
+ * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
+ * @since 1.0.x
+ */
 @ExtendWith(MockitoExtension.class)
 class WebIdempotencyLifecycleTest {
 
@@ -143,5 +158,42 @@ class WebIdempotencyLifecycleTest {
         scope.close();
 
         verify(guard, times(1)).release(any(IdempotencyLease.class));
+    }
+
+    @Test
+    void closeCannotReleaseLeaseWhileCompletionIsInProgress() throws Exception {
+        IdempotencyLease lease = new IdempotencyLease("tenant-a:POST:/api/orders:order-1",
+                "owner-1", Duration.ofMinutes(5));
+        when(guard.acquireLease(any(String.class), any(Duration.class)))
+                .thenReturn(Optional.of(lease));
+        CountDownLatch completing = new CountDownLatch(1);
+        CountDownLatch finishCompletion = new CountDownLatch(1);
+        doAnswer(invocation -> {
+            completing.countDown();
+            assertTrue(finishCompletion.await(2, TimeUnit.SECONDS));
+            return null;
+        }).when(guard).complete(lease);
+        WebIdempotencyLifecycle.Scope scope =
+                new WebIdempotencyLifecycle(guard).open(request(), "order-1").get();
+
+        CompletableFuture<Void> completingTask = CompletableFuture.runAsync(scope::complete);
+        try {
+            assertTrue(completing.await(2, TimeUnit.SECONDS));
+            CountDownLatch closing = new CountDownLatch(1);
+            CompletableFuture<Void> closingTask = CompletableFuture.runAsync(() -> {
+                closing.countDown();
+                scope.close();
+            });
+            assertTrue(closing.await(2, TimeUnit.SECONDS));
+            TimeUnit.MILLISECONDS.sleep(50);
+            finishCompletion.countDown();
+            completingTask.get(2, TimeUnit.SECONDS);
+            closingTask.get(2, TimeUnit.SECONDS);
+        } finally {
+            finishCompletion.countDown();
+        }
+
+        verify(guard).complete(lease);
+        verify(guard, never()).release(lease);
     }
 }

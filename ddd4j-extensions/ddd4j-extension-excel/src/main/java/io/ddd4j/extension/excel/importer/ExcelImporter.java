@@ -99,8 +99,7 @@ public final class ExcelImporter {
                 throw new BizRuntimeException(500, "excel.import.readall.failed", e);
             }
         } catch (IOException ex) {
-            // stream close() failure after a BizRuntimeException would otherwise
-            // shadow the original error and silently return an empty list.
+            // 读取成功后关闭流失败，保留原有的空结果回退；读取失败则抛出 BizRuntimeException。
             log.warn("excel.import.readall.close.failed", ex);
         }
         return Collections.emptyList();

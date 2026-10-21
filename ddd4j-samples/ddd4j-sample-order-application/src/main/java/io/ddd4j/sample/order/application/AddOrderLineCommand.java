@@ -14,36 +14,38 @@
  */
 package io.ddd4j.sample.order.application;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Value;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Objects;
 
 import java.math.BigDecimal;
 
-/**
- * 添加订单行命令，Java 8 等价实现保留 record 值语义。
- */
-@Value
-public class AddOrderLineCommand {
-String orderId;
-    String goodsId;
-    String goodsName;
-    int quantity;
-    BigDecimal unitPrice;
+/** 向指定订单添加商品明细的命令。 */
+public final class AddOrderLineCommand {
 
-    /** Creates an order-line command.
-     * @param orderId order identifier
-     * @param goodsId goods identifier
-     * @param goodsName goods name
-     * @param quantity quantity
-     * @param unitPrice unit price
+    private static final long serialVersionUID = 0L;
+
+    private final String orderId;
+
+    private final String goodsId;
+
+    private final String goodsName;
+
+    private final int quantity;
+
+    private final BigDecimal unitPrice;
+
+    /**
+     * @param orderId 订单标识
+     * @param goodsId 商品标识
+     * @param goodsName 商品名称
+     * @param quantity 商品数量
+     * @param unitPrice 商品单价
      */
-    @JsonCreator
-    public AddOrderLineCommand(@JsonProperty("orderId") String orderId,
-                               @JsonProperty("goodsId") String goodsId,
-                               @JsonProperty("goodsName") String goodsName,
-                               @JsonProperty("quantity") int quantity,
-                               @JsonProperty("unitPrice") BigDecimal unitPrice) {
+    @JsonCreator()
+    public AddOrderLineCommand(@JsonProperty("orderId") String orderId, @JsonProperty("goodsId") String goodsId, @JsonProperty("goodsName") String goodsName, @JsonProperty("quantity") int quantity, @JsonProperty("unitPrice") BigDecimal unitPrice) {
         this.orderId = orderId;
         this.goodsId = goodsId;
         this.goodsName = goodsName;
@@ -51,23 +53,86 @@ String orderId;
         this.unitPrice = unitPrice;
     }
 
+    /** @return 订单标识 */
+    @JsonProperty("orderId")
     public String orderId() {
         return orderId;
     }
 
+    /** @return 商品标识 */
+    @JsonProperty("goodsId")
     public String goodsId() {
         return goodsId;
     }
 
+    /** @return 商品名称 */
+    @JsonProperty("goodsName")
     public String goodsName() {
         return goodsName;
     }
 
+    /** @return 商品数量 */
+    @JsonProperty("quantity")
     public int quantity() {
         return quantity;
     }
 
+    /** @return 商品单价 */
+    @JsonProperty("unitPrice")
     public BigDecimal unitPrice() {
         return unitPrice;
+    }
+
+    /** @return 订单标识 */
+    public String getOrderId() {
+        return orderId;
+    }
+
+    /** @return 商品标识 */
+    public String getGoodsId() {
+        return goodsId;
+    }
+
+    /** @return 商品名称 */
+    public String getGoodsName() {
+        return goodsName;
+    }
+
+    /** @return 数量 */
+    public int getQuantity() {
+        return quantity;
+    }
+
+    /** @return 单价 */
+    public BigDecimal getUnitPrice() {
+        return unitPrice;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+            return false;
+        }
+        AddOrderLineCommand other = (AddOrderLineCommand) obj;
+        return Objects.equals(this.orderId, other.orderId) && Objects.equals(this.goodsId, other.goodsId) && Objects.equals(this.goodsName, other.goodsName) && this.quantity == other.quantity && Objects.equals(this.unitPrice, other.unitPrice);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 1;
+        result = 59 * result + quantity;
+        result = 59 * result + (Objects.isNull(orderId) ? 43 : orderId.hashCode());
+        result = 59 * result + (Objects.isNull(goodsId) ? 43 : goodsId.hashCode());
+        result = 59 * result + (Objects.isNull(goodsName) ? 43 : goodsName.hashCode());
+        result = 59 * result + (Objects.isNull(unitPrice) ? 43 : unitPrice.hashCode());
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "AddOrderLineCommand(orderId=" + orderId + ", goodsId=" + goodsId + ", goodsName=" + goodsName + ", quantity=" + quantity + ", unitPrice=" + unitPrice + ")";
     }
 }

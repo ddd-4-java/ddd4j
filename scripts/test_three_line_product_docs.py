@@ -92,6 +92,22 @@ class ThreeLineProductDocsTest(unittest.TestCase):
         self.assertIn("docs/7、ddd4j-领域模型设计.md", report["differences"])
         self.assertTrue(report["brokenLinks"])
 
+    def test_missing_html_image_in_readme_fails(self):
+        (self.roots[1] / "README.md").write_text(
+            '<img src="assets/ddd4j-hero-v2.png" alt="hero" />\n', encoding="utf-8")
+        result, report = self.check()
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn({"root": str(self.roots[1].resolve()), "source": "README.md",
+                       "target": "assets/ddd4j-hero-v2.png"}, report["brokenLinks"])
+
+    def test_missing_local_script_in_usage_guide_fails(self):
+        (self.roots[0] / "README.en.md").write_text(
+            "[Run verifier](scripts/missing-verifier.py)\n", encoding="utf-8")
+        result, report = self.check()
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn({"root": str(self.roots[0].resolve()), "source": "README.en.md",
+                       "target": "scripts/missing-verifier.py"}, report["brokenLinks"])
+
     def test_legacy_root_entry_with_stale_body_fails(self):
         (self.roots[0] / "5、ddd4j-技术方案与路线.md").write_text("旧正文\n", encoding="utf-8")
         result, report = self.check()

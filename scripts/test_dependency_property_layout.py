@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from verify_dependency_property_layout import natural_key, verify
+from verify_dependency_property_layout import LEGACY, natural_key, verify
 from format_dependency_properties import format_properties, rename_easy4j_properties
 
 
@@ -38,9 +38,9 @@ class DependencyPropertyLayoutTest(unittest.TestCase):
         errors = self.check(pom(("", "        <easy4j-hitool.version>2</easy4j-hitool.version>", "")))
         self.assertTrue(any("easy4j-prefixed" in error for error in errors))
 
-    def test_redacted_legacy_family_conflict_prefix_fails(self):
-        errors = self.check(pom(("", "        <redacted-legacy-family-hitool.version>1</redacted-legacy-family-hitool.version>", "")))
-        self.assertTrue(any("conflicting redacted-legacy-family" in error for error in errors))
+    def test_legacy_conflict_prefix_fails(self):
+        errors = self.check(pom(("", f"        <{LEGACY}-hitool.version>1</{LEGACY}-hitool.version>", "")))
+        self.assertTrue(any("conflicting legacy" in error for error in errors))
 
     def test_alignment_prefix_fails(self):
         errors = self.check(pom(("", "        <alignment.hitool.version>1</alignment.hitool.version>", "")))
@@ -55,7 +55,7 @@ class DependencyPropertyLayoutTest(unittest.TestCase):
     <dependencyManagement><dependencies>
         <!-- old component -->
         <dependency>
-            <groupId>com.github.redacted-legacy-family</groupId>
+            <groupId>com.github.@L@</groupId>
             <artifactId>component</artifactId>
             <version>${component.version}</version>
         </dependency>
@@ -66,24 +66,24 @@ class DependencyPropertyLayoutTest(unittest.TestCase):
             <version>${easy4j-component.version}</version>
         </dependency>
     </dependencies></dependencyManagement>
-</project>'''
+</project>'''.replace("@L@", LEGACY)
         changed, _ = rename_easy4j_properties(source)
-        self.assertNotIn("com.github.redacted-legacy-family", changed)
+        self.assertNotIn("com.github." + LEGACY, changed)
         self.assertNotIn("easy4j-component.version", changed)
         self.assertIn("io.github.easy4j", changed)
         self.assertIn("${component.version}", changed)
 
-    def test_existing_redacted_legacy_family_property_removes_old_dependency(self):
+    def test_existing_legacy_property_removes_old_dependency(self):
         source = '''<project xmlns="http://maven.apache.org/POM/4.0.0">
     <properties>
         <component.version>2</component.version>
-        <redacted-legacy-family-component.version>1</redacted-legacy-family-component.version>
+        <@L@-component.version>1</@L@-component.version>
     </properties>
     <dependencyManagement><dependencies>
         <dependency>
-            <groupId>com.github.redacted-legacy-family</groupId>
+            <groupId>com.github.@L@</groupId>
             <artifactId>component</artifactId>
-            <version>${redacted-legacy-family-component.version}</version>
+            <version>${@L@-component.version}</version>
         </dependency>
         <dependency>
             <groupId>io.github.easy4j</groupId>
@@ -91,10 +91,10 @@ class DependencyPropertyLayoutTest(unittest.TestCase):
             <version>${component.version}</version>
         </dependency>
     </dependencies></dependencyManagement>
-</project>'''
+</project>'''.replace("@L@", LEGACY)
         changed, _ = rename_easy4j_properties(source)
-        self.assertNotIn("redacted-legacy-family-component.version", changed)
-        self.assertNotIn("com.github.redacted-legacy-family", changed)
+        self.assertNotIn(f"{LEGACY}-component.version", changed)
+        self.assertNotIn("com.github." + LEGACY, changed)
         self.assertIn("io.github.easy4j", changed)
 
     def test_wrong_section_and_order_fail(self):

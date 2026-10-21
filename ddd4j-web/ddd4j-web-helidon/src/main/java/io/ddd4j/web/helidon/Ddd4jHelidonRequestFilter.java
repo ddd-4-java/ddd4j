@@ -57,10 +57,16 @@ public final class Ddd4jHelidonRequestFilter implements ContainerRequestFilter {
     private final WebRequestLifecycle requestLifecycle;
     private final WebIdempotencyLifecycle idempotencyLifecycle;
 
+    /** 使用当前 MicroProfile 配置创建请求过滤器。 */
     public Ddd4jHelidonRequestFilter() {
         this(Ddd4jHelidonWebConfiguration.load());
     }
 
+    /**
+     * 使用指定 Web 配置创建请求过滤器。
+     *
+     * @param configuration Web 配置
+     */
     public Ddd4jHelidonRequestFilter(Ddd4jHelidonWebConfiguration configuration) {
         Ddd4jHelidonWebConfiguration config = Objects.requireNonNull(configuration,
                 "configuration must not be null");
@@ -74,6 +80,13 @@ public final class Ddd4jHelidonRequestFilter implements ContainerRequestFilter {
                 config.getIdempotencyTtl()) : null;
     }
 
+    /**
+     * 使用指定请求组件创建过滤器。
+     *
+     * @param contextFactory 请求上下文工厂
+     * @param requestLifecycle 请求生命周期
+     * @param idempotencyLifecycle 幂等生命周期，可为空
+     */
     public Ddd4jHelidonRequestFilter(WebRequestContextFactory contextFactory,
                                      WebRequestLifecycle requestLifecycle,
                                      WebIdempotencyLifecycle idempotencyLifecycle) {

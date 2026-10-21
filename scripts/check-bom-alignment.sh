@@ -46,7 +46,7 @@ total_modules=0
 
 while IFS= read -r pom; do
   total_modules=$((total_modules + 1))
-  # 按 POM 元素读取坐标，避免 grep 无匹配时触发 set -e 提前退出。
+  # 只检查内部依赖；Maven 4 子模块的固定父 POM 版本是构建配置。
   bad_versions=$(python3 - "$pom" <<'PY'
 import sys
 import xml.etree.ElementTree as ET
@@ -54,12 +54,13 @@ import xml.etree.ElementTree as ET
 root = ET.parse(sys.argv[1]).getroot()
 namespace = root.tag.partition("}")[0] + "}" if "}" in root.tag else ""
 bad = 0
-for element in root.iter():
+for element in root.iter(namespace + "dependency"):
+    group = element.find(namespace + "groupId")
     artifact = element.find(namespace + "artifactId")
     version = element.find(namespace + "version")
-    if artifact is None or version is None:
+    if group is None or artifact is None or version is None:
         continue
-    if artifact.text and artifact.text.startswith("ddd4j-"):
+    if group.text == "io.ddd4j" and artifact.text and artifact.text.startswith("ddd4j-"):
         if version.text not in ("${revision}", "${project.version}"):
             bad += 1
 print(bad)

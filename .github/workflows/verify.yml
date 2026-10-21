@@ -16,7 +16,6 @@ concurrency:
 
 env:
   DDD4J_REPORT_DIR: ${{ github.workspace }}/target/release-quality
-  NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
 
 
 jobs:
@@ -30,6 +29,14 @@ jobs:
         with:
           reporter: github-check
           fail_level: error
+      - name: Validate parity and workflow gate selftests
+        run: >-
+          python3 -m unittest -q
+          scripts/test_structure_api_normalization.py
+          scripts/test_eventstore_parity_reports.py
+          scripts/test_workflow_line_baseline.py
+          scripts/test_verify_native_broker_test_reports.py
+          scripts/test_product_document_links.py
 
   unit-and-contract:
     name: Java 8 unit and contract
@@ -39,9 +46,23 @@ jobs:
       - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
         with:
           distribution: temurin
+          java-version: '17'
+      - name: Record Java 17 checker home
+        run: echo "DDD4J_JDK17_HOME=$JAVA_HOME" >> "$GITHUB_ENV"
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Record Java 21 checker home
+        run: echo "DDD4J_JDK21_HOME=$JAVA_HOME" >> "$GITHUB_ENV"
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
           java-version: '8'
           cache: maven
           overwrite-settings: true
+      - name: Record Java 8 checker home
+        run: echo "DDD4J_JDK8_HOME=$JAVA_HOME" >> "$GITHUB_ENV"
       - name: Configure Easy4J Maven repositories
         env:
           MAVEN_SETTINGS_XML: ${{ secrets.MAVEN_SETTINGS_XML }}
@@ -60,12 +81,6 @@ jobs:
           grep -A1 "2624322-snapshot-3EoOv3" "$HOME/.m2/settings.xml" | head -3 | sed 's/<password>.*/<password>***</'
 
 
-      - name: Diagnose private repo auth
-        run: |
-          echo "--- settings servers (masked) ---"
-          sed 's/<password>[^<]*</<password>***</' ~/.m2/settings.xml | grep -B1 -A2 "<server>" | head -30
-          echo "--- direct maven resolve test ---"
-          ./mvnw -U -Denforcer.skip=true -B dependency:get -Dartifact=io.github.easy4j:spring-extension:1.0.x.20260630-SNAPSHOT -DremoteRepositories=2624322-snapshot-3EoOv3::default::https://packages.aliyun.com/6927b116e6c3e0425dbdf60d/maven/2624322-snapshot-3eoov3 2>&1 | tail -5 || true
       - name: Verify BOM publication contract
         run: ./scripts/check-bom-alignment.sh
       - name: Verify Java style guardrails
@@ -78,8 +93,20 @@ jobs:
         run: ./scripts/verify-architecture.sh
       - name: Install reactor dependencies
         run: ./mvnw -U -Denforcer.skip=true -B clean install -DskipTests -DskipITs
+      - name: Validate structure and compiled API checker
+        run: >-
+          python3 -m unittest -q
+          scripts/test_three_line_structure_inventory.py
+          scripts/test_three_line_compiled_api_metadata.py
+          scripts/test_three_line_type_mappings.py
       - name: Run unit and adapter contracts
         run: ./mvnw -Denforcer.skip=true -B test -DskipITs
+      - name: Verify shared MQ and Web version contracts
+        run: >-
+          python3 -m unittest -q
+          scripts/test_mq_event_header_map.py
+          scripts/test_mq_publisher_causality.py
+          scripts/test_web_api_version_context.py
       - name: Verify JPA MySQL container test execution
         run: python3 scripts/verify-jpa-mysql-test-report.py
       - name: Verify build did not write generated files to source control
@@ -137,6 +164,10 @@ jobs:
           java-version: '8'
           cache: maven
           overwrite-settings: true
+      - name: Install keyless vulnerability scanner
+        uses: aquasecurity/setup-trivy@e07451d2e059ed86c2870430ea286b3a9e0bf241
+        with:
+          version: v0.76.0
       - name: Configure Easy4J Maven repositories
         env:
           MAVEN_SETTINGS_XML: ${{ secrets.MAVEN_SETTINGS_XML }}
@@ -156,7 +187,7 @@ jobs:
             echo "::warning::Aliyun auth returned $HTTP_CODE - private snapshot deps may fail"
           fi
       - name: Install reactor artifacts for plugin resolution
-        run: ./mvnw -U -Denforcer.skip=true -B -DskipTests -Dquarkus.build.skip=true install
+        run: ./mvnw -U -Denforcer.skip=true -B -Dmaven.test.skip=true -DskipITs -Dquarkus.build.skip=true install
       - name: Generate CycloneDX SBOM
         run: ./scripts/generate-sbom.sh
       - name: Generate third-party license inventory
@@ -167,15 +198,11 @@ jobs:
         env:
           DDD4J_REQUIRE_CLEAN_WORKTREE: 'true'
         run: ./scripts/verify-release-worktree.sh
-      - name: Run opt-in CVE report
-        if: ${{ env.NVD_API_KEY != '' }}
+      - name: Enforce keyless CVE gate
         env:
           DDD4J_ENABLE_CVE_SCAN: 'true'
+          DDD4J_BRANCH: ${{ github.head_ref || github.ref_name }}
         run: ./scripts/scan-cve.sh
-      - name: Record CVE scan prerequisite
-        if: ${{ env.NVD_API_KEY == '' }}
-        run: >-
-          echo "CVE scan not run: repository secret NVD_API_KEY is not configured."
       - name: Archive release quality reports
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: ${{ always() }}
@@ -217,12 +244,36 @@ jobs:
           fi
       - name: Verify Docker daemon
         run: docker info
-      # 容器化集成：Redis/MySQL/PostgreSQL/Kafka/RabbitMQ/NATS/MQTT/Artemis（Testcontainers）。
-      # RocketMQ 等其余适配器的本地契约由 unit-and-contract 覆盖，原生验收另行记录。
+      # 容器化集成：Redis/MySQL/PostgreSQL/Kafka/RabbitMQ/NATS/MQTT/Artemis/Pulsar/RocketMQ。
+      # SQS 在 ElasticMQ 容器验证兼容协议；ONS/TDMQ/AWS SQS 云端能力仍需独立的受保护验收。
       - name: Run infrastructure and native Broker integration tests
         run: >-
           ./mvnw -U -Denforcer.skip=true -B
-          -pl ddd4j-cache,ddd4j-data/ddd4j-data-mybatisplus,ddd4j-mq/ddd4j-mq-kafka,ddd4j-samples/ddd4j-sample-order-jdbc,ddd4j-samples/ddd4j-sample-order-kafka,ddd4j-samples/ddd4j-sample-order-redis,ddd4j-mq/ddd4j-mq-rabbitmq,ddd4j-mq/ddd4j-mq-nats,ddd4j-mq/ddd4j-mq-mqtt,ddd4j-mq/ddd4j-mq-mqtt-mica,ddd4j-mq/ddd4j-mq-activemq
+          -pl ddd4j-cache,ddd4j-data/ddd4j-data-mybatisplus,ddd4j-mq/ddd4j-mq-kafka,ddd4j-samples/ddd4j-sample-order-jdbc,ddd4j-samples/ddd4j-sample-order-kafka,ddd4j-samples/ddd4j-sample-order-redis,ddd4j-mq/ddd4j-mq-rabbitmq,ddd4j-mq/ddd4j-mq-nats,ddd4j-mq/ddd4j-mq-mqtt,ddd4j-mq/ddd4j-mq-mqtt-mica,ddd4j-mq/ddd4j-mq-activemq,ddd4j-mq/ddd4j-mq-pulsar,ddd4j-mq/ddd4j-mq-tdmq,ddd4j-mq/ddd4j-mq-rocketmq,ddd4j-mq/ddd4j-mq-redis-stream,ddd4j-mq/ddd4j-mq-sqs
           -am clean test
+      - name: Run Redis Stream native causality tests
+        shell: bash
+        run: |
+          redis_container="$(docker run --rm -d -p 127.0.0.1::6379 redis:7-alpine)"
+          trap 'docker rm -f "$redis_container" >/dev/null 2>&1 || true' EXIT
+          ready=false
+          for attempt in {1..30}; do
+            if docker exec "$redis_container" redis-cli ping | grep -q '^PONG$'; then
+              ready=true
+              break
+            fi
+            sleep 1
+          done
+          if [ "$ready" != true ]; then
+            echo "Redis did not become ready after ${attempt} checks" >&2
+            exit 1
+          fi
+          redis_port="$(docker port "$redis_container" 6379/tcp | awk -F: '{print $NF}')"
+          test -n "$redis_port"
+          ./mvnw -U -Denforcer.skip=true -B \
+            -pl ddd4j-mq/ddd4j-mq-redis-stream -am \
+            -Dtest=RedisStreamNativeCausalityIT \
+            -Dsurefire.failIfNoSpecifiedTests=false \
+            -Dddd4j.redis.native.url="redis://127.0.0.1:${redis_port}" test
       - name: Verify native Broker test execution
         run: python3 scripts/verify-native-broker-test-reports.py

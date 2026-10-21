@@ -39,6 +39,10 @@ public class TdmqProperties extends MQProperties {
      */
     private String tenant;
     /**
+     * TDMQ Pulsar 角色密钥；使用原生 Pulsar 协议时作为 token 鉴权。
+     */
+    private String authToken;
+    /**
      * TDMQ AccessKey。
      */
     private String accessKey;

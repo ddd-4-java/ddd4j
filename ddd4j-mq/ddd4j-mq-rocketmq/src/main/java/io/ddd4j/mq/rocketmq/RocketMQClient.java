@@ -93,7 +93,8 @@ public class RocketMQClient implements MQClient {
 
     /**
      * 构造方法 1：注入原生 producer（runtime 自动装配用）。
-     * @param producer 生产者配置
+     *
+     * @param producer 已初始化的原生生产者，不可为空
      */
     public RocketMQClient(DefaultMQProducer producer) {
         this.producer = Objects.requireNonNull(producer, "RocketMQ Producer is required");
@@ -102,8 +103,9 @@ public class RocketMQClient implements MQClient {
 
     /**
      * 构造方法 1'：注入原生 producer + 异步发送回调。
-     * @param producer 生产者配置
-     * @param callback 回调逻辑
+     *
+     * @param producer 已初始化的原生生产者，不可为空
+     * @param callback 异步发送回调，可为空（为空时仅记录发送结果日志）
      */
     public RocketMQClient(DefaultMQProducer producer, SendCallback callback) {
         this.producer = Objects.requireNonNull(producer, "RocketMQ Producer is required");
@@ -113,7 +115,8 @@ public class RocketMQClient implements MQClient {
 
     /**
      * 构造方法 2：自行根据 properties 构造 producer（lazy）。
-     * @param properties 属性集合
+     *
+     * @param properties 驱动懒构造的配置，不可为空
      */
     public RocketMQClient(RocketMQProperties properties) {
         this.producer = null;
@@ -122,8 +125,9 @@ public class RocketMQClient implements MQClient {
 
     /**
      * 构造方法 2'：自行根据 properties 构造 producer + 异步发送回调（lazy）。
-     * @param properties 属性集合
-     * @param callback 回调逻辑
+     *
+     * @param properties 驱动懒构造的配置，不可为空
+     * @param callback 异步发送回调，可为空（为空时仅记录发送结果日志）
      */
     public RocketMQClient(RocketMQProperties properties, SendCallback callback) {
         this.producer = null;

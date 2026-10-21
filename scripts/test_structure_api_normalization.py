@@ -15,6 +15,17 @@ spec.loader.exec_module(parity)
 
 
 class DescriptorNormalizationTest(unittest.TestCase):
+    OBJECT_MAPPER_MAPPING = {
+        "id": "jackson-objectmapper-namespace",
+        "types": {
+            "1.0.x": "com.fasterxml.jackson.databind.ObjectMapper",
+            "2.0.x": "com.fasterxml.jackson.databind.ObjectMapper",
+            "3.0.x": "tools.jackson.databind.ObjectMapper",
+        },
+        "reason": "exact Jackson 2/3 ObjectMapper adaptation",
+        "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/eventstore/jackson/EventPayloadSerializerTest.java",
+    }
+
     def parse_parameter_table(self, table):
         output = """public class example.Adapter {
   public java.lang.Object handle(java.lang.Object);
@@ -34,13 +45,16 @@ class DescriptorNormalizationTest(unittest.TestCase):
 
     def test_equivalent_jackson_namespace_migration(self):
         self.assertEqual(
-            parity.normalize_descriptor("(Lcom/fasterxml/jackson/databind/JsonNode;)V"),
-            parity.normalize_descriptor("(Ltools/jackson/databind/JsonNode;)V"),
+            parity.normalize_descriptor("(Lcom/fasterxml/jackson/databind/ObjectMapper;)V",
+                                        [self.OBJECT_MAPPER_MAPPING], "1.0.x"),
+            parity.normalize_descriptor("(Ltools/jackson/databind/ObjectMapper;)V",
+                                        [self.OBJECT_MAPPER_MAPPING], "3.0.x"),
         )
 
-    def test_different_jackson_parameter_types_remain_different(self):
+    def test_unmapped_jackson_types_remain_different(self):
         self.assertNotEqual(
-            parity.normalize_descriptor("(Lcom/fasterxml/jackson/databind/ObjectMapper;)V"),
+            parity.normalize_descriptor("(Lcom/fasterxml/jackson/databind/JsonNode;)V",
+                                        [self.OBJECT_MAPPER_MAPPING], "1.0.x"),
             parity.normalize_descriptor("(Ltools/jackson/databind/JsonNode;)V"),
         )
 
@@ -52,9 +66,45 @@ class DescriptorNormalizationTest(unittest.TestCase):
 
     def test_array_and_return_type_preserve_identity(self):
         self.assertEqual(
-            "([LJACKSON/databind/JsonNode;)LJACKSON/core/JsonParser;",
-            parity.normalize_descriptor("([Lcom/fasterxml/jackson/databind/JsonNode;)Ltools/jackson/core/JsonParser;"),
+            "([LDDD4J_MAPPED/jackson-objectmapper-namespace;)Ltools/jackson/core/JsonParser;",
+            parity.normalize_descriptor(
+                "([Lcom/fasterxml/jackson/databind/ObjectMapper;)Ltools/jackson/core/JsonParser;",
+                [self.OBJECT_MAPPER_MAPPING], "1.0.x"),
         )
+
+
+class StaticImportNormalizationTest(unittest.TestCase):
+    BASE = ("package example; import static org.junit.jupiter.api.Assertions.*; "
+            "class ContractTest { void check() { assertTrue(true); } }")
+
+    def test_explicit_import_covered_by_same_owner_wildcard_is_equivalent(self):
+        redundant = self.BASE.replace(
+            "import static org.junit.jupiter.api.Assertions.*;",
+            "import static org.junit.jupiter.api.Assertions.assertTrue; "
+            "import static org.junit.jupiter.api.Assertions.*;")
+        self.assertEqual(parity.java_tokens_with_normalized_imports(self.BASE),
+                         parity.java_tokens_with_normalized_imports(redundant))
+
+    def test_different_owner_and_changed_assertion_remain_distinct(self):
+        different_owner = self.BASE.replace(
+            "import static org.junit.jupiter.api.Assertions.*;",
+            "import static example.Other.assertTrue; "
+            "import static org.junit.jupiter.api.Assertions.*;")
+        changed_assertion = self.BASE.replace("assertTrue(true)", "assertTrue(false)")
+        self.assertNotEqual(parity.java_tokens_with_normalized_imports(self.BASE),
+                            parity.java_tokens_with_normalized_imports(different_owner))
+        self.assertNotEqual(parity.java_tokens_with_normalized_imports(self.BASE),
+                            parity.java_tokens_with_normalized_imports(changed_assertion))
+
+    def test_explicit_import_with_multiple_static_wildcards_remains_distinct(self):
+        wildcards = ("package example; import static example.First.*; "
+                     "import static example.Second.*; class ContractTest { "
+                     "void check() { select(\"value\"); } }")
+        explicit = wildcards.replace("import static example.First.*;",
+                                     "import static example.First.select; "
+                                     "import static example.First.*;")
+        self.assertNotEqual(parity.java_tokens_with_normalized_imports(wildcards),
+                            parity.java_tokens_with_normalized_imports(explicit))
 
 
 if __name__ == "__main__":

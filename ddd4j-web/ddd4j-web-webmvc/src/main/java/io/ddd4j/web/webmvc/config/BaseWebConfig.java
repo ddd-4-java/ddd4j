@@ -143,7 +143,7 @@ public class BaseWebConfig implements WebMvcConfigurer {
     @PostConstruct
     public void init() {
         // 启动WebSocket服务端
-        if (baseWebSocketServers.isEmpty()) {
+        if (!baseWebSocketServers.isEmpty()) {
             for (BaseWebSocketServer server : baseWebSocketServers) {
 //                WebSocketKit.startServer(server.getClass());
             }

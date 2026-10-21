@@ -30,11 +30,23 @@ public final class WebRequestLifecycle {
     private final BearerSubjectAuthenticator authenticator;
     private final WebAccessPolicy accessPolicy;
 
+    /**
+     * 创建请求认证生命周期。
+     *
+     * @param authenticator Bearer 主体认证器
+     * @param accessPolicy 访问策略
+     */
     public WebRequestLifecycle(BearerSubjectAuthenticator authenticator, WebAccessPolicy accessPolicy) {
         this.authenticator = Objects.requireNonNull(authenticator, "authenticator must not be null");
         this.accessPolicy = Objects.requireNonNull(accessPolicy, "accessPolicy must not be null");
     }
 
+    /**
+     * 按访问策略认证请求。
+     *
+     * @param context 请求上下文
+     * @return 认证结果；免认证时为空
+     */
     public Optional<Authentication> authenticate(WebRequestContext context) {
         WebRequestContext requestContext = Objects.requireNonNull(context, "context must not be null");
         AuthenticationMode mode = Objects.requireNonNull(accessPolicy.authenticationMode(requestContext),

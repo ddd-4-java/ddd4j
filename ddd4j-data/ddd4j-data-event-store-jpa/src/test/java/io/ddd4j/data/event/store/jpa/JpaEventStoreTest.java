@@ -79,6 +79,24 @@ class JpaEventStoreTest {
     }
 
     @Test
+    void independentAppendShouldDetachPersistedEntity() {
+        StoredEventEntity[] saved = new StoredEventEntity[1];
+        JpaStoredEventRepository repository = new JpaStoredEventRepositoryImpl(entityManager) {
+            @Override
+            public void save(StoredEventEntity entity) {
+                saved[0] = entity;
+                super.save(entity);
+            }
+        };
+        JpaEventStore independent = new JpaEventStore(entityManager, repository);
+        independent.append(ORDER_TYPE, new TestAggregateRootId("independent-context"),
+                Collections.<DomainEvent<?>>singletonList(new OrderCreatedEvent("created")), 0);
+
+        assertNotNull(saved[0]);
+        assertFalse(entityManager.contains(saved[0]));
+    }
+
+    @Test
     void appendAndReadShouldRoundTripBusinessPayload() {
         TestAggregateRootId orderId = new TestAggregateRootId("order-a");
         eventStore.append(ORDER_TYPE, orderId, Arrays.<DomainEvent<?>>asList(
@@ -92,6 +110,29 @@ class JpaEventStoreTest {
         assertEquals("created", ((OrderCreatedEvent) events.get(0).payload()).getFact());
         assertEquals("renamed", ((OrderCreatedEvent) events.get(1).payload()).getFact());
         assertEquals(orderId.asString(), events.get(0).aggregateId().asString());
+    }
+
+    @Test
+    void repeatedReadsShouldReconstructEqualAggregateIds() {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-value-id");
+        eventStore.append(ORDER_TYPE, orderId,
+                Collections.<DomainEvent<?>>singletonList(new OrderCreatedEvent("created")), 0);
+
+        AggregateRootId first = eventStore.read(ORDER_TYPE, orderId).get(0).aggregateId();
+        AggregateRootId second = eventStore.read(ORDER_TYPE, orderId).get(0).aggregateId();
+        assertEquals(first, second);
+        assertEquals(first.hashCode(), second.hashCode());
+    }
+
+    @Test
+    void reconstructedAggregateIdShouldSerializeAsString() throws Exception {
+        TestAggregateRootId orderId = new TestAggregateRootId("serialized-id");
+        eventStore.append(ORDER_TYPE, orderId,
+                Collections.<DomainEvent<?>>singletonList(new OrderCreatedEvent("created")), 0);
+
+        AggregateRootId reconstructed = eventStore.read(ORDER_TYPE, orderId).get(0).aggregateId();
+        assertEquals("\"serialized-id\"",
+                JsonMapper.builder().build().writeValueAsString(reconstructed));
     }
 
     @Test

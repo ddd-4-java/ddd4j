@@ -78,7 +78,9 @@ public class EsdbEventStore implements EventStore {
         try {
             ReadResult result = client.readStream(streamName, ReadStreamOptions.get().forwards().fromStart()
                     .maxCount(EventStoreConstants.ESDB_DEFAULT_READ_LIMIT)).join();
-            return result.getEvents().stream().map(event -> toStoredEvent(event, aggregateType, aggregateId)).collect(java.util.stream.Collectors.toList());
+            return Collections.unmodifiableList(result.getEvents().stream()
+                    .map(event -> toStoredEvent(event, aggregateType, aggregateId))
+                    .collect(java.util.stream.Collectors.toList()));
         } catch (CompletionException exception) {
             if (exception.getCause() instanceof StreamNotFoundException) return java.util.Arrays.asList();
             throw new IllegalStateException("Failed to read events from stream: " + streamName, exception.getCause());
@@ -87,8 +89,9 @@ public class EsdbEventStore implements EventStore {
 
     @Override
     public List<StoredEvent> read(String aggregateType, AggregateRootId aggregateId, long fromVersion, long toVersion) {
-        return read(aggregateType, aggregateId).stream()
-                .filter(event -> event.version() >= fromVersion && event.version() <= toVersion).collect(java.util.stream.Collectors.toList());
+        return Collections.unmodifiableList(read(aggregateType, aggregateId).stream()
+                .filter(event -> event.version() >= fromVersion && event.version() <= toVersion)
+                .collect(java.util.stream.Collectors.toList()));
     }
 
     @Override
@@ -135,7 +138,10 @@ public class EsdbEventStore implements EventStore {
                     new com.fasterxml.jackson.core.type.TypeReference<java.util.Map<String, Object>>() {
                     });
         } catch (Exception e) {
-            throw new RuntimeException("Failed to parse ESDB event metadata", e);
+            throw new IllegalStateException("Invalid ESDB event metadata", e);
+        }
+        if (Objects.isNull(metadata)) {
+            throw new IllegalStateException("Invalid ESDB event metadata");
         }
         String aggregateType = expectedType == null ? String.valueOf(metadata.get("aggregateType")) : expectedType;
         AggregateRootId aggregateId = expectedId == null
@@ -191,7 +197,7 @@ public class EsdbEventStore implements EventStore {
 
         @Override
         public String toString() {
-            return "StringAggregateRootId{" + value + "}";
+            return "StringAggregateRootId[value=" + value + "]";
         }
     }
 }

@@ -39,6 +39,11 @@ public final class Ddd4jDropwizardResponseFilter implements ContainerResponseFil
         }
     }
 
+    /**
+     * 过滤数据。
+     * @param request 请求对象。
+     * @param response 响应对象。
+     */
     @Override
     public void filter(ContainerRequestContext request, ContainerResponseContext response) {
         Object span = request.getProperty(Ddd4jDropwizardRequestFilter.OTEL_SPAN_PROPERTY);

@@ -16,8 +16,6 @@ package io.ddd4j.dropwizard;
 
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityId;
-import io.ddd4j.core.ddd.event.EntityIdPath;
-import io.ddd4j.core.ddd.event.StringEntityId;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -61,7 +59,7 @@ class DropwizardDomainEventPublisherTest {
         Consumer<Object> listener = mock(Consumer.class);
         DropwizardDomainEventPublisher publisher =
                 new DropwizardDomainEventPublisher(Collections.singletonList(listener));
-        DomainEvent<EntityId> event = new DomainEvent<EntityId>(new EntityIdPath(new StringEntityId("orders"), new StringEntityId("created"))) {
+        DomainEvent<EntityId> event = new DomainEvent<EntityId>("orders.created") {
         };
 
         publisher.publish(event);
@@ -72,6 +70,8 @@ class DropwizardDomainEventPublisherTest {
     @Test
     void constructorRejectsNullAndSnapshotsListeners() {
         assertThrows(NullPointerException.class, () -> new DropwizardDomainEventPublisher(null));
+        assertThrows(NullPointerException.class,
+                () -> new DropwizardDomainEventPublisher(Collections.singletonList(null)));
 
         List<Consumer<Object>> mutable = new ArrayList<>();
         Consumer<Object> lateListener = mock(Consumer.class);

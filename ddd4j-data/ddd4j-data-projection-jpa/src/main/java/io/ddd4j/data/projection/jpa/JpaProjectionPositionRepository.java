@@ -20,9 +20,11 @@ import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * 基于 Spring Data JPA 的 {@link ProjectionPositionRepository} 实现（core SPI，
@@ -52,6 +54,11 @@ public class JpaProjectionPositionRepository implements ProjectionPositionReposi
 
     private final SpringDataProjectionPositionRepository repository;
 
+    /**
+     * 创建基于 Spring Data JPA 的投影位置仓库。
+     *
+     * @param repository Spring Data JPA 仓库
+     */
     public JpaProjectionPositionRepository(SpringDataProjectionPositionRepository repository) {
         this.repository = Objects.requireNonNull(repository, "repository must not be null");
     }
@@ -72,10 +79,10 @@ public class JpaProjectionPositionRepository implements ProjectionPositionReposi
     @Override
     @Transactional(readOnly = true)
     public List<ProjectionPosition> findAll() {
-        return repository.findAll().stream()
+        return Collections.unmodifiableList(repository.findAll().stream()
                 .map(entity -> (ProjectionPosition) new DefaultProjectionPosition(
                         entity.getStreamId(), entity.getNextEventNumber()))
-                .collect(java.util.stream.Collectors.toList());
+                .collect(Collectors.toList()));
     }
 
     /**

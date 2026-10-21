@@ -14,6 +14,9 @@
  */
 package io.ddd4j.web.core.version;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import java.util.Objects;
 
 /**
@@ -83,6 +86,7 @@ public final class ApiVersion implements Comparable<ApiVersion> {
      * @return 解析后的版本值对象，缺失段补 0
      * @throws IllegalArgumentException 文本为 null、空白或形态非法时抛出
      */
+    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
     public static ApiVersion parse(String text) {
         if (Objects.isNull(text)) {
             throw new IllegalArgumentException("api version text must not be null");
@@ -230,6 +234,7 @@ public final class ApiVersion implements Comparable<ApiVersion> {
      * @return 形如 {@code major.minor.patch} 的字符串
      */
     @Override
+    @JsonValue
     public String toString() {
         return major + "." + minor + "." + patch;
     }

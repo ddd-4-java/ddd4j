@@ -146,72 +146,80 @@ public class TenantAwareResource {
     // ========== Response 构建快捷方法 ==========
 
     /**
-     * HTTP 200 + R.ok(data)
+     * HTTP 200 + R.ok(data)。
+     *
      * @param data 响应数据
-     * @return HTTP 响应
+     * @return 包含成功结果的 HTTP 响应
      */
     protected Response ok(Object data) {
         return Response.ok(R.ok(data)).build();
     }
 
     /**
-     * HTTP 200 + R.ok()
-     * @return HTTP 响应
+     * HTTP 200 + R.ok()。
+     *
+     * @return 不带数据的成功响应
      */
     protected Response ok() {
         return Response.ok(R.ok()).build();
     }
 
     /**
-     * HTTP 200 + R.of(code, message)
-     * @param code 响应码
-     * @param message 响应消息
-     * @return HTTP 响应
+     * HTTP 200 + R.of(code, message)。
+     *
+     * @param code 业务错误码
+     * @param message 错误消息
+     * @return 包含业务错误的 HTTP 响应
      */
     protected Response fail(int code, String message) {
         return Response.ok(R.of(code, message)).build();
     }
 
     /**
-     * HTTP 200 + R.fail(message)
-     * @param message 响应消息
-     * @return HTTP 响应
+     * HTTP 200 + R.fail(message)。
+     *
+     * @param message 错误消息
+     * @return 包含失败结果的 HTTP 响应
      */
     protected Response fail(String message) {
         return Response.ok(R.fail(message)).build();
     }
 
     /**
-     * HTTP 200 + 404 语义
-     * @param message 响应消息
-     * @return HTTP 响应
+     * HTTP 200 + 404 语义。
+     *
+     * @param message 未找到资源的说明
+     * @return 包含 404 业务码的 HTTP 响应
      */
     protected Response notFound(String message) {
         return Response.ok(R.of(404, message)).build();
     }
 
     /**
-     * HTTP 200 + 401 语义
-     * @param message 响应消息
-     * @return HTTP 响应
+     * HTTP 200 + 401 语义。
+     *
+     * @param message 未授权的说明
+     * @return 包含 401 业务码的 HTTP 响应
      */
     protected Response unauthorized(String message) {
         return Response.ok(R.of(401, message)).build();
     }
 
     /**
-     * HTTP 200 + 400 语义
-     * @param message 响应消息
-     * @return HTTP 响应
+     * HTTP 200 + 400 语义。
+     *
+     * @param message 错误请求的说明
+     * @return 包含 400 业务码的 HTTP 响应
      */
     protected Response badRequest(String message) {
         return Response.ok(R.of(400, message)).build();
     }
 
     /**
-     * HTTP 200 + 500 语义
-     * @param message 响应消息
-     * @return HTTP 响应
+     * HTTP 200 + 500 语义。
+     *
+     * @param message 服务端错误的说明
+     * @return 包含 500 业务码的 HTTP 响应
      */
     protected Response serverError(String message) {
         return Response.ok(R.of(500, message)).build();
@@ -220,12 +228,13 @@ public class TenantAwareResource {
     // ========== 分页便捷方法 ==========
 
     /**
-     * 将分页记录映射转换
-     * @param <T> 源记录类型
+     * 将分页记录映射转换，并保留分页元数据。
+     *
+     * @param <T> 原记录类型
      * @param <R> 目标记录类型
-     * @param page 源分页对象
+     * @param page 原分页数据
      * @param func 记录映射函数
-     * @return 转换后的分页对象
+     * @return 映射后的分页数据
      */
     protected <T, R> Page<R> transfer(Page<T> page, Function<T, R> func) {
         List<R> results = page.getRecords().stream().map(func).collect(java.util.stream.Collectors.toList());

@@ -157,15 +157,15 @@ class MybatisAggregateRepositoryMySQLTest {
 
     // =================== 测试夹具 ===================
 
-    interface OrderMapper extends BaseMapper<OrderPO> {
-    }
-
     static final class TestRepository
             extends MybatisAggregateRepository<OrderMapper, Order, OrderPO, OrderQuery, String> {
 
         TestRepository(OrderMapper mapper) {
             super(mapper, Order.class, OrderPO.class);
         }
+    }
+
+    interface OrderMapper extends BaseMapper<OrderPO> {
     }
 
     static final class OrderQuery extends Query<Order> {

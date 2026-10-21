@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.ddd4j.spring.cqrs;
 
 import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
@@ -21,6 +20,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -42,6 +42,11 @@ public class SpringJpaProjectionPositionRepository
      */
     private final JpaRepository<SpringJpaProjectionPosition, String> jpaRepository;
 
+    /**
+     * 创建基于 Spring Data JPA 的投影位置仓库。
+     *
+     * @param jpaRepository Spring Data JPA 仓库
+     */
     public SpringJpaProjectionPositionRepository(JpaRepository<SpringJpaProjectionPosition, String> jpaRepository) {
         this.jpaRepository = jpaRepository;
     }
@@ -53,7 +58,8 @@ public class SpringJpaProjectionPositionRepository
 
     @Override
     public List<ProjectionPosition> findAll() {
-        return jpaRepository.findAll().stream().map(p -> (ProjectionPosition) p).collect(Collectors.toList());
+        return Collections.unmodifiableList(jpaRepository.findAll().stream()
+                .map(p -> (ProjectionPosition) p).collect(Collectors.toList()));
     }
 
     @Override

@@ -39,7 +39,7 @@ import java.net.InetSocketAddress;
 import java.util.*;
 
 /**
- * Micronaut 4 Filter Method 请求上下文、Bearer Subject 与幂等适配器。
+ * Micronaut 3 HttpFilter 请求上下文、Bearer Subject 与幂等适配器。
  *
  * <p>集成 OTel 分布式追踪：通过 {@link WebOtelSupport} 反射调用 WebOtelIntegration。
  */
@@ -50,6 +50,11 @@ public final class Ddd4jMicronautWebFilter implements HttpFilter {
     private final WebRequestLifecycle requestLifecycle;
     private final Optional<WebIdempotencyLifecycle> idempotencyLifecycle;
 
+    /**
+     * 根据 Micronaut Web 配置创建请求过滤器。
+     *
+     * @param configuration Web 配置
+     */
     @Inject
     public Ddd4jMicronautWebFilter(Ddd4jMicronautWebConfiguration configuration) {
         Ddd4jMicronautWebConfiguration config = Objects.requireNonNull(configuration,
@@ -65,6 +70,13 @@ public final class Ddd4jMicronautWebFilter implements HttpFilter {
                 : Optional.empty();
     }
 
+    /**
+     * 使用指定上下文、认证及幂等组件创建过滤器。
+     *
+     * @param contextFactory 请求上下文工厂
+     * @param requestLifecycle 请求生命周期
+     * @param idempotencyLifecycle 幂等生命周期，可为空
+     */
     public Ddd4jMicronautWebFilter(WebRequestContextFactory contextFactory, WebRequestLifecycle requestLifecycle,
                                    WebIdempotencyLifecycle idempotencyLifecycle) {
         this.contextFactory = Objects.requireNonNull(contextFactory, "contextFactory must not be null");
@@ -89,6 +101,13 @@ public final class Ddd4jMicronautWebFilter implements HttpFilter {
         return headers;
     }
 
+    /**
+     * 建立请求上下文并在响应或异常后结束会话与追踪。
+     *
+     * @param request Micronaut 请求
+     * @param chain 下游过滤链
+     * @return 下游响应流
+     */
     @Override
     public Publisher<? extends HttpResponse<?>> doFilter(HttpRequest<?> request, FilterChain chain) {
         // OTel: 提取上游 TraceContext 并开启 SERVER span
@@ -96,8 +115,16 @@ public final class Ddd4jMicronautWebFilter implements HttpFilter {
         Object span = WebOtelSupport.startServerSpan(
                 request.getMethodName(), request.getPath(), headers);
 
-        WebRequestContext requestContext = createContext(request);
-        Optional<Authentication> authentication = requestLifecycle.authenticate(requestContext);
+        WebRequestContext requestContext;
+        Optional<Authentication> authentication;
+        try {
+            requestContext = createContext(request);
+            authentication = requestLifecycle.authenticate(requestContext);
+        } catch (RuntimeException exception) {
+            WebOtelSupport.recordError(span, exception);
+            WebOtelSupport.endServerSpan(span, 500);
+            throw exception;
+        }
         Ddd4jMicronautContext micronautContext;
         if (authentication.isPresent()) {
             micronautContext = new Ddd4jMicronautContext(requestContext,

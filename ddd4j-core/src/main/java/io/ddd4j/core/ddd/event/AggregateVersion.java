@@ -25,6 +25,9 @@ import java.util.Objects;
 public final class AggregateVersion implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 聚合版本号。
+     */
     private final long value;
 
     /**

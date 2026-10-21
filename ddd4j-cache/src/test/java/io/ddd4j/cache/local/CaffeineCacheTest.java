@@ -17,6 +17,7 @@ package io.ddd4j.cache.local;
 import io.ddd4j.core.cache.CacheConfig;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -99,10 +100,10 @@ class CaffeineCacheTest {
     void putAll_shouldStoreMultipleEntries() {
         CaffeineCache<String, String> cache = buildWithTtl(300);
 
-        cache.putAll(new java.util.HashMap<String, String>() {{
-            put("k1", "v1");
-            put("k2", "v2");
-        }});
+        HashMap<String, String> values = new HashMap<>();
+        values.put("k1", "v1");
+        values.put("k2", "v2");
+        cache.putAll(values);
 
         assertThat(cache.getIfPresent("k1")).isEqualTo("v1");
         assertThat(cache.getIfPresent("k2")).isEqualTo("v2");

@@ -11,7 +11,12 @@ import subprocess
 import xml.etree.ElementTree as ET
 
 VERSIONS = 'org.codehaus.mojo:versions-maven-plugin:2.23.0:'
-CHECK = 'org.owasp:dependency-check-maven:13.0.0:aggregate'
+# Maven orders old date-stamped Commons releases above later semantic versions.
+# Exclude only historical (pre-2020) date stamps; modern calendar versions remain eligible.
+VERSION_IGNORE_PATTERN = (r'(?i)(?:.*[.-](?:alpha|beta|rc|cr|m|milestone|preview|ea)'
+                          r'(?:[.-]?[0-9]+)?(?:[.-].*)?|(?:19[0-9]{6}|20[01][0-9]{5})'
+                          r'(?:\.[0-9]{6})?)')
+CHECK = str(Path(__file__).resolve().parent / 'scan_vulnerabilities.py')
 KEYS = {'exclude', 'exclude_properties', 'fixed_properties', 'fixed_dependencies', 'cvss_threshold', 'branches'}
 INTERNAL_PROPERTIES = {'revision', 'changelist', 'sha1', 'java.version', 'maven.version',
                        'maven.compiler.source', 'maven.compiler.target', 'maven.compiler.release'}
@@ -47,13 +52,6 @@ def maven_command(root):
     return ['bash', './mvnw'] if (root / 'mvnw').is_file() else ['mvn']
 
 
-def validate_scan_report(path):
-    """要求真实、非空的依赖扫描报告，空扫描不能作为无漏洞证明。"""
-    report = json.loads(path.read_text())
-    if not isinstance(report.get('dependencies'), list) or not report['dependencies']:
-        raise ValueError('扫描报告缺少非空 dependencies')
-
-
 def configure_settings(value, path):
     """兼容原文和 base64 Maven settings，不输出凭据。"""
     if not value.strip():
@@ -67,6 +65,55 @@ def configure_settings(value, path):
     path.touch(mode=0o600, exist_ok=True)
     path.chmod(0o600)
     path.write_text(value)
+
+
+def ensure_central_fallback(path):
+    """使 CI 在现有镜像缺件时可从 Maven Central 读取公开构件。"""
+    if not path.is_file():
+        return
+    tree = ET.parse(path)
+    root = tree.getroot()
+    namespace = root.tag.partition('}')[0] + '}' if root.tag.startswith('{') else ''
+
+    def tag(name):
+        return namespace + name
+
+    def child(parent, name):
+        found = parent.find(tag(name))
+        return found if found is not None else ET.SubElement(parent, tag(name))
+
+    repository_id = 'ddd4j-central-direct'
+    profile_id = 'ddd4j-central-fallback'
+    mirrors = child(root, 'mirrors')
+    for mirror in mirrors.findall(tag('mirror')):
+        mirror_of = child(mirror, 'mirrorOf')
+        patterns = [item.strip() for item in (mirror_of.text or '').split(',') if item.strip()]
+        if patterns and '!' + repository_id not in patterns:
+            mirror_of.text = ','.join([*patterns, '!' + repository_id])
+
+    profiles = child(root, 'profiles')
+    profile = next((item for item in profiles.findall(tag('profile'))
+                    if item.findtext(tag('id')) == profile_id), None)
+    if profile is None:
+        profile = ET.SubElement(profiles, tag('profile'))
+        ET.SubElement(profile, tag('id')).text = profile_id
+    repositories = child(profile, 'repositories')
+    repository = next((item for item in repositories.findall(tag('repository'))
+                       if item.findtext(tag('id')) == repository_id), None)
+    if repository is None:
+        repository = ET.SubElement(repositories, tag('repository'))
+        ET.SubElement(repository, tag('id')).text = repository_id
+    child(repository, 'url').text = 'https://repo.maven.apache.org/maven2'
+    child(child(repository, 'releases'), 'enabled').text = 'true'
+    child(child(repository, 'snapshots'), 'enabled').text = 'false'
+
+    active_profiles = child(root, 'activeProfiles')
+    if profile_id not in [item.text for item in active_profiles.findall(tag('activeProfile'))]:
+        ET.SubElement(active_profiles, tag('activeProfile')).text = profile_id
+    if namespace:
+        ET.register_namespace('', namespace[:-1])
+    tree.write(path, encoding='unicode', xml_declaration=True)
+    path.chmod(0o600)
 
 
 def resolve_policy(raw, branch):
@@ -111,18 +158,21 @@ def resolve_policy(raw, branch):
 def update_commands(policy):
     """生成无 shell 插值的 Maven 参数；固定版本优先于排除。"""
     common = ['-DgenerateBackupPoms=false', '-Dversions.skip=false', '-DprocessDependencies=true',
-              '-DprocessDependencyManagement=true', '-DallowSnapshots=false', '-DallowPreReleases=false',
+              '-DprocessDependencyManagement=true', '-DallowSnapshots=false',
               '-DprocessParent=true', '-DexcludeReactor=true', '-DallowMajorUpdates=true',
-              '-DallowMinorUpdates=true', '-DallowIncrementalUpdates=true', '-DallowDowngrade=true']
+              '-DallowMinorUpdates=true', '-DallowIncrementalUpdates=true']
     excludes = policy['exclude'] + list(policy['fixed_dependencies'])
     if excludes:
         common.append('-Dexcludes=' + ','.join(excludes))
     prop_excludes = policy['exclude_properties'] + list(policy['fixed_properties'])
     property_args = ['-DexcludeProperties=' + ','.join(prop_excludes)] if prop_excludes else []
-    commands = [[VERSIONS + 'update-properties', *common, *property_args],
-                [VERSIONS + 'use-latest-versions', *common]]
+    # Versions 没有 allowPreReleases 参数；忽略预发布和排序异常的历史时间戳。
+    stable = ['-Dmaven.version.ignore=' + VERSION_IGNORE_PATTERN]
+    commands = [[VERSIONS + 'update-properties', *common, *stable, *property_args],
+                [VERSIONS + 'use-latest-versions', *common, *stable]]
     # 固定规则单独应用，不能被公共排除规则拦截。
     pin_common = [arg for arg in common if not arg.startswith('-Dexcludes=')]
+    pin_common.append('-DallowDowngrade=true')
     for name, version in policy['fixed_properties'].items():
         commands.append([VERSIONS + 'set-property', *pin_common, '-Dproperty=' + name, '-DnewVersion=' + version])
     for name, version in policy['fixed_dependencies'].items():
@@ -131,25 +181,28 @@ def update_commands(policy):
     return commands
 
 
-def scan_command(policy, output):
-    """扫描所有解析依赖；升级排除规则不得成为漏洞抑制规则。"""
-    return [CHECK, '-DfailBuildOnCVSS=' + str(policy['cvss_threshold']), '-DfailOnError=true',
-            '-DskipTestScope=false', '-DskipProvidedScope=false', '-DossindexAnalyzerEnabled=false',
-            '-Ddependency-check.skip=false', '-Dformats=HTML,JSON', '-DoutputDirectory=' + str(output),
-            '-DnvdApiKeyEnvironmentVariable=NVD_API_KEY', '-DdataDirectory=' + str(Path.home() / '.cache/dependency-check')]
+def scan_command(policy, output, root=Path('project'), branch=''):
+    """扫描完整 reactor 解析结果和全部管理版本；升级排除规则不得成为漏洞抑制规则。"""
+    return ['python3', CHECK, '--root', str(root), '--output', str(output),
+            '--line', branch, '--threshold', str(policy['cvss_threshold'])]
 
 
 def protected_properties(root, policy):
-    """把属性通配符展开成 Versions 插件接受的精确属性名。"""
+    """展开属性排除规则，并保护引用其他版本属性的派生别名。"""
     names = set()
     shared = set()
+    aliases = set()
     for pom in root.rglob('pom.xml'):
         if 'target' in pom.parts or '.git' in pom.parts:
             continue
         tree = ET.parse(pom)
         ns = {'m': tree.getroot().tag.split('}')[0][1:]}
         for props in tree.findall('.//m:properties', ns):
-            names.update(child.tag.split('}')[-1] for child in props)
+            for child in props:
+                name = child.tag.split('}')[-1]
+                names.add(name)
+                if re.fullmatch(r'\$\{[\w.-]+\}', (child.text or '').strip()):
+                    aliases.add(name)
         for dep in tree.findall('.//m:dependency', ns) + tree.findall('.//m:parent', ns):
             coordinate = dep.findtext('m:groupId', '', ns) + ':' + dep.findtext('m:artifactId', '', ns)
             if coordinate not in policy['fixed_dependencies'] and any(fnmatch.fnmatchcase(coordinate, pattern) for pattern in policy['exclude']):
@@ -157,7 +210,7 @@ def protected_properties(root, policy):
     missing = set(policy['fixed_properties']) - names
     if missing:
         raise ValueError('固定属性在分支源码中不存在: ' + ','.join(sorted(missing)))
-    policy['exclude_properties'] = sorted(shared | {name for name in names if any(
+    policy['exclude_properties'] = sorted(shared | aliases | {name for name in names if any(
         fnmatch.fnmatchcase(name, pattern) for pattern in policy['exclude_properties'])})
 
 
@@ -251,7 +304,12 @@ def materialize_inherited_properties(root, policy, effective):
         ns = {'m': node.tag.split('}')[0][1:]}
         for props in node.findall('.//m:properties', ns):
             defined.update(child.tag.split('}')[-1] for child in props)
-        for dep in node.findall('.//m:dependency', ns):
+        # Only active project dependencies need inherited versions. Plugin
+        # configuration (for example japicmp's inactive baseline profile) can
+        # contain dependency-shaped XML with intentionally unset properties.
+        dependencies = (node.findall('./m:dependencies/m:dependency', ns)
+                        + node.findall('./m:dependencyManagement/m:dependencies/m:dependency', ns))
+        for dep in dependencies:
             version = dep.findtext('m:version', default='', namespaces=ns)
             match = re.fullmatch(r'\$\{([\w.-]+)\}', version)
             if not match:
@@ -320,28 +378,17 @@ def main():
                 env['JAVA_HOME'] = env['BUILD_JAVA_HOME']
             if env.get('JAVA_HOME'):
                 env['PATH'] = str(Path(env['JAVA_HOME']) / 'bin') + os.pathsep + env.get('PATH', '')
-            result = subprocess.run([*maven_command(root), '-B', '-ntp', '-U', *command], cwd=root, env=env, stdout=log, stderr=subprocess.STDOUT)
+            actual = command if stage.endswith('-scan') else [*maven_command(root), '-B', '-ntp', '-U', *command]
+            result = subprocess.run(actual, cwd=root.parent if stage.endswith('-scan') else root,
+                                    env=env, stdout=log, stderr=subprocess.STDOUT)
         code = result.returncode
-        if stage.endswith('-scan') and code == 0:
-            directory = reports / stage.removesuffix('-scan')
-            if not all((directory / ('dependency-check-report.' + suffix)).is_file() for suffix in ('html', 'json')):
-                with (reports / (stage + '.log')).open('a') as log:
-                    log.write('\n扫描未生成 HTML/JSON 报告，拒绝视为通过。\n')
-                code = 1
-            else:
-                try:
-                    validate_scan_report(directory / 'dependency-check-report.json')
-                except (ValueError, OSError) as error:
-                    with (reports / (stage + '.log')).open('a') as log:
-                        log.write(str(error) + '\n')
-                    code = 1
         statuses[stage] = code
         print(stage + ': ' + ('通过' if code == 0 else '失败（见日志）'), flush=True)
         return code == 0
 
-    build = ['install', '-DskipTests=false', '-Dmaven.test.skip=false', '-Dsurefire.skip=false', '-Denforcer.skip=true', '-Ddependency-check.skip=true']
+    build = ['install', '-DskipTests=false', '-Dmaven.test.skip=false', '-Dsurefire.skip=false', '-Denforcer.skip=true']
     run('baseline-build', build)
-    run('baseline-scan', scan_command(policy, reports / 'baseline'))
+    run('baseline-scan', scan_command(policy, reports / 'baseline', root, args.branch))
     before = declared_versions(root)
     updated = run('effective-model', ['org.apache.maven.plugins:maven-help-plugin:3.5.1:effective-pom', '-N', '-Doutput=' + str(reports / 'effective-pom.xml')])
     if updated:
@@ -367,7 +414,7 @@ def main():
     # 升级失败仍保留原依赖扫描证据，不将部分升级作为有效 PR。
     if updated:
         run('updated-build', build)
-        run('updated-scan', scan_command(policy, reports / 'updated'))
+        run('updated-scan', scan_command(policy, reports / 'updated', root, args.branch))
     with (reports / 'dependencies.patch').open('w') as patch:
         subprocess.run(['git', 'diff', '--', '**/pom.xml', 'pom.xml'], cwd=root, stdout=patch, check=True)
     ready = updated and statuses.get('updated-build') == 0 and statuses.get('updated-scan') == 0

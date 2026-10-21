@@ -14,7 +14,6 @@
  */
 package io.ddd4j.sample.quarkus.cqrs.order.web.dto;
 
-import java.util.stream.Collectors;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -51,10 +50,14 @@ public final class OrderResponse {
 
     private final List<OrderLineResponse> lines;
 
+    /**
+     * @param order 订单聚合
+     * @return 订单 HTTP 响应
+     */
     public static OrderResponse from(Order order) {
         Order source = Objects.requireNonNull(order, "order must not be null");
         Money total = source.totalAmount();
-        return new OrderResponse(source.id(), source.orderNo(), source.buyerId(), source.buyerName(), source.status(), total.amount(), total.currency(), source.lines().stream().map(OrderLineResponse::from).collect(Collectors.toList()));
+        return new OrderResponse(source.id(), source.orderNo(), source.buyerId(), source.buyerName(), source.status(), total.amount(), total.currency(), java.util.Collections.unmodifiableList(source.lines().stream().map(OrderLineResponse::from).collect(java.util.stream.Collectors.toList())));
     }
 
     /**
@@ -83,6 +86,15 @@ public final class OrderResponse {
             return new OrderLineResponse(line.id(), line.goodsId(), line.goodsName(), line.quantity(), unitPrice.amount(), unitPrice.currency(), line.subtotal().amount());
         }
 
+        /**
+         * @param id 明细标识
+         * @param goodsId 商品标识
+         * @param goodsName 商品名称
+         * @param quantity 商品数量
+         * @param unitPrice 商品单价
+         * @param currency 币种
+         * @param subtotal 明细小计
+         */
         @JsonCreator()
         public OrderLineResponse(@JsonProperty("id") String id, @JsonProperty("goodsId") String goodsId, @JsonProperty("goodsName") String goodsName, @JsonProperty("quantity") int quantity, @JsonProperty("unitPrice") BigDecimal unitPrice, @JsonProperty("currency") String currency, @JsonProperty("subtotal") BigDecimal subtotal) {
             this.id = id;
@@ -94,36 +106,43 @@ public final class OrderResponse {
             this.subtotal = subtotal;
         }
 
+        /** @return 明细标识 */
         @JsonProperty("id")
         public String id() {
             return id;
         }
 
+        /** @return 商品标识 */
         @JsonProperty("goodsId")
         public String goodsId() {
             return goodsId;
         }
 
+        /** @return 商品名称 */
         @JsonProperty("goodsName")
         public String goodsName() {
             return goodsName;
         }
 
+        /** @return 商品数量 */
         @JsonProperty("quantity")
         public int quantity() {
             return quantity;
         }
 
+        /** @return 商品单价 */
         @JsonProperty("unitPrice")
         public BigDecimal unitPrice() {
             return unitPrice;
         }
 
+        /** @return 明细币种 */
         @JsonProperty("currency")
         public String currency() {
             return currency;
         }
 
+        /** @return 明细小计 */
         @JsonProperty("subtotal")
         public BigDecimal subtotal() {
             return subtotal;
@@ -160,6 +179,16 @@ public final class OrderResponse {
         }
     }
 
+    /**
+     * @param id 订单标识
+     * @param orderNo 订单号
+     * @param buyerId 买家标识
+     * @param buyerName 买家姓名
+     * @param status 订单状态
+     * @param totalAmount 订单总金额
+     * @param currency 币种
+     * @param lines 明细响应列表
+     */
     @JsonCreator()
     public OrderResponse(@JsonProperty("id") String id, @JsonProperty("orderNo") String orderNo, @JsonProperty("buyerId") String buyerId, @JsonProperty("buyerName") String buyerName, @JsonProperty("status") OrderStatus status, @JsonProperty("totalAmount") BigDecimal totalAmount, @JsonProperty("currency") String currency, @JsonProperty("lines") List<OrderLineResponse> lines) {
         this.id = id;
@@ -172,41 +201,49 @@ public final class OrderResponse {
         this.lines = lines;
     }
 
+    /** @return 订单标识 */
     @JsonProperty("id")
     public String id() {
         return id;
     }
 
+    /** @return 订单号 */
     @JsonProperty("orderNo")
     public String orderNo() {
         return orderNo;
     }
 
+    /** @return 买家标识 */
     @JsonProperty("buyerId")
     public String buyerId() {
         return buyerId;
     }
 
+    /** @return 买家姓名 */
     @JsonProperty("buyerName")
     public String buyerName() {
         return buyerName;
     }
 
+    /** @return 订单状态 */
     @JsonProperty("status")
     public OrderStatus status() {
         return status;
     }
 
+    /** @return 订单总金额 */
     @JsonProperty("totalAmount")
     public BigDecimal totalAmount() {
         return totalAmount;
     }
 
+    /** @return 订单币种 */
     @JsonProperty("currency")
     public String currency() {
         return currency;
     }
 
+    /** @return 明细响应列表 */
     @JsonProperty("lines")
     public List<OrderLineResponse> lines() {
         return lines;

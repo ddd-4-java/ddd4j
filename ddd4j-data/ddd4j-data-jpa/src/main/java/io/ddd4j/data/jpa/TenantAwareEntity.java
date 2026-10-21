@@ -14,7 +14,11 @@
  */
 package io.ddd4j.data.jpa;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PrePersist;
 
 import java.util.Objects;
 
@@ -31,14 +35,19 @@ import java.util.Objects;
 @IdClass(TenantAwareId.class)
 public abstract class TenantAwareEntity extends TenantAwareEntityBase {
 
+    /** 实体主键。 */
     @Id
     @Column(name = "id")
     protected Long id;
 
+    /** 租户标识。 */
     @Id
     @Column(name = "tenant_id")
     protected String tenantId;
 
+    /**
+     * 首次持久化前分配雪花主键。
+     */
     @PrePersist
     protected void assignIdentity() {
         if (Objects.isNull(id)) {
@@ -46,10 +55,20 @@ public abstract class TenantAwareEntity extends TenantAwareEntityBase {
         }
     }
 
+    /**
+     * 返回实体主键。
+     *
+     * @return 实体主键
+     */
     public Long getId() {
         return id;
     }
 
+    /**
+     * 返回租户标识。
+     *
+     * @return 租户标识
+     */
     public String getTenantId() {
         return tenantId;
     }

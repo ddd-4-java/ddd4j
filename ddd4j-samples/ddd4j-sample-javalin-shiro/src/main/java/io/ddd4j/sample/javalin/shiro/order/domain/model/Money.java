@@ -14,9 +14,16 @@
  */
 package io.ddd4j.sample.javalin.shiro.order.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.io.InvalidObjectException;
+
+import java.io.ObjectStreamException;
+
 import io.ddd4j.core.ddd.model.ValueObject;
 import io.ddd4j.kit.lang.StrKit;
-import lombok.Value;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -32,17 +39,30 @@ import java.util.Objects;
  * <p>使用 {@code record} 实现 {@link ValueObject} 接口，
  * 自动获得不可变性、equals/hashCode/toString。
  *
- * <p>{@code amount} — 金额数值
- * <p>{@code currency} — 货币代码（如 CNY、USD）
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-@Value
-public class Money implements ValueObject {
 
-    BigDecimal amount;
-    String currency;
+public final class Money implements ValueObject {
 
-    public Money(BigDecimal amount, String currency) {
+    private static final long serialVersionUID = 1545370294742823931L;
+
+    /**
+     * 金额数值。
+     */
+    private final BigDecimal amount;
+
+    /**
+     * 币种。
+     */
+    private final String currency;
+
+    /**
+ * @param amount 金额数值
+ * @param currency 货币代码（如 CNY、USD）
+ */
+
+    @JsonCreator()
+    public Money(@JsonProperty("amount") BigDecimal amount, @JsonProperty("currency") String currency) {
         Objects.requireNonNull(amount, "amount must not be null");
         if (amount.signum() < 0) {
             throw new IllegalArgumentException("amount must not be negative");
@@ -50,14 +70,17 @@ public class Money implements ValueObject {
         if (StrKit.isBlank(currency)) {
             throw new IllegalArgumentException("currency must not be blank");
         }
-        this.amount = amount.setScale(2, RoundingMode.HALF_UP);
-        this.currency = currency.trim().toUpperCase(Locale.ROOT);
+        amount = amount.setScale(2, RoundingMode.HALF_UP);
+        currency = currency.trim().toUpperCase(Locale.ROOT);
+        this.amount = amount;
+        this.currency = currency;
     }
 
     /**
      * 创建人民币金额。
-     * @param amount 金额
-     * @return 返回的 Money 结果
+     *
+     * @param amount 金额数值
+     * @return 人民币金额
      */
     public static Money cny(String amount) {
         return new Money(new BigDecimal(Objects.requireNonNull(amount, "amount must not be null")), "CNY");
@@ -65,25 +88,19 @@ public class Money implements ValueObject {
 
     /**
      * 创建指定货币的零金额。
+     *
      * @param currency 币种
-     * @return 返回的 Money 结果
+     * @return 零金额
      */
     public static Money zero(String currency) {
         return new Money(BigDecimal.ZERO, currency);
     }
 
-    public BigDecimal amount() {
-        return amount;
-    }
-
-    public String currency() {
-        return currency;
-    }
-
     /**
      * 金额相加（币种必须一致）。
-     * @param other 对比对象
-     * @return 新增后的Money
+     *
+     * @param other 另一金额
+     * @return 相加后的金额
      */
     public Money add(Money other) {
         Objects.requireNonNull(other, "other must not be null");
@@ -95,8 +112,9 @@ public class Money implements ValueObject {
 
     /**
      * 金额乘以整数因子。
-     * @param factor 因子
-     * @return 返回的 Money 结果
+     *
+     * @param factor 倍数
+     * @return 计算后的金额
      */
     public Money multiply(int factor) {
         if (factor < 0) {
@@ -107,15 +125,86 @@ public class Money implements ValueObject {
 
     /**
      * 应用折扣（百分比）。
-     * @param percent 百分比
-     * @return 返回的 Money 结果
+     *
+     * @param percent 折扣百分比
+     * @return 折扣金额
      */
     public Money discount(int percent) {
         if (percent < 0 || percent > 100) {
             throw new IllegalArgumentException("percent must be in [0,100]");
         }
-        BigDecimal factor = BigDecimal.valueOf(100 - percent)
-                .divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP);
+        BigDecimal factor = BigDecimal.valueOf(100 - percent).divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP);
         return new Money(amount.multiply(factor), currency);
+    }
+
+    /**
+     * 读取金额数值。
+     *
+     * @return 金额数值
+     */
+    @JsonProperty("amount")
+    public BigDecimal amount() {
+        return amount;
+    }
+
+    /**
+     * 读取币种。
+     *
+     * @return 币种
+     */
+    @JsonProperty("currency")
+    public String currency() {
+        return currency;
+    }
+
+    /** @return 金额数值 */
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    /** @return 币种 */
+    public String getCurrency() {
+        return currency;
+    }
+
+    /**
+     * 反序列化后恢复规范化金额对象。
+     *
+     * @return 规范化金额对象
+     * @throws ObjectStreamException 反序列化对象恢复失败时
+     */
+    private Object readResolve() throws ObjectStreamException {
+        try {
+            return new Money(amount, currency);
+        } catch (RuntimeException cause) {
+            InvalidObjectException failure = new InvalidObjectException(cause.getMessage());
+            failure.initCause(cause);
+            throw failure;
+        }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+            return false;
+        }
+        Money other = (Money) obj;
+        return Objects.equals(this.amount, other.amount) && Objects.equals(this.currency, other.currency);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 1;
+        result = 59 * result + (Objects.isNull(amount) ? 43 : amount.hashCode());
+        result = 59 * result + (Objects.isNull(currency) ? 43 : currency.hashCode());
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Money(amount=" + amount + ", currency=" + currency + ")";
     }
 }

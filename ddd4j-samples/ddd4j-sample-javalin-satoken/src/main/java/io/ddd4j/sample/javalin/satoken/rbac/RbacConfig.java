@@ -49,6 +49,7 @@ public final class RbacConfig {
 
     /**
      * 预置 RBAC 演示数据。
+     *
      * @param userRepository 用户仓储
      * @param roleRepository 角色仓储
      * @param permissionRepository 权限仓储
@@ -103,8 +104,9 @@ public final class RbacConfig {
     /**
      * 注册权限数据源：直接使用 {@link RbacService}（其自身实现了
      * {@link io.ddd4j.core.subject.SubjectDataProvider}）。
+     *
      * @param rbacService RBAC 服务
-     * @return 返回的 RbacService 结果
+     * @return RBAC 服务实例
      */
     public static RbacService subjectDataProvider(RbacService rbacService) {
         return rbacService;

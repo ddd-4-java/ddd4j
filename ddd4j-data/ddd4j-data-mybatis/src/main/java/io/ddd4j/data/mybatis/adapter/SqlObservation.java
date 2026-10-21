@@ -61,51 +61,106 @@ public final class SqlObservation {
         this.error = error;
     }
 
+    /**
+     * 返回 SQL 执行耗时。
+     *
+     * @return 执行耗时，单位为毫秒
+     */
     public long elapsedMillis() {
         return elapsedNanos / 1_000_000L;
     }
 
+    /**
+     * 返回 MyBatis 语句标识。
+     *
+     * @return MyBatis 语句标识
+     */
     @JsonProperty("statementId")
     public String statementId() {
         return statementId;
     }
 
+    /**
+     * 返回已执行的 SQL。
+     *
+     * @return 已执行的 SQL
+     */
     @JsonProperty("sql")
     public String sql() {
         return sql;
     }
 
+    /**
+     * 返回已排序的参数快照。
+     *
+     * @return 已排序的参数快照
+     */
     @JsonProperty("sortedParams")
     public List<String> sortedParams() {
         return sortedParams;
     }
 
+    /**
+     * 返回执行耗时。
+     *
+     * @return 执行耗时，单位为纳秒
+     */
     @JsonProperty("elapsedNanos")
     public long elapsedNanos() {
         return elapsedNanos;
     }
 
+    /**
+     * 返回执行异常。
+     *
+     * @return 执行异常；成功时为空
+     */
     @JsonProperty("error")
     public Throwable error() {
         return error;
     }
 
+    /**
+     * 返回 MyBatis 语句标识，供 Bean 调用方使用。
+     *
+     * @return MyBatis 语句标识
+     */
     public String getStatementId() {
         return statementId;
     }
 
+    /**
+     * 返回已执行的 SQL，供 Bean 调用方使用。
+     *
+     * @return 已执行的 SQL
+     */
     public String getSql() {
         return sql;
     }
 
+    /**
+     * 返回已排序的参数快照，供 Bean 调用方使用。
+     *
+     * @return 已排序的参数快照
+     */
     public List<String> getSortedParams() {
         return sortedParams;
     }
 
+    /**
+     * 返回执行耗时，供 Bean 调用方使用。
+     *
+     * @return 执行耗时，单位为纳秒
+     */
     public long getElapsedNanos() {
         return elapsedNanos;
     }
 
+    /**
+     * 返回执行异常，供 Bean 调用方使用。
+     *
+     * @return 执行异常；成功时为空
+     */
     public Throwable getError() {
         return error;
     }

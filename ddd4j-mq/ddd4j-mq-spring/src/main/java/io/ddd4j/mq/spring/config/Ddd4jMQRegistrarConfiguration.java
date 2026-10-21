@@ -27,8 +27,8 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.List;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -85,10 +85,12 @@ public class Ddd4jMQRegistrarConfiguration {
         return new MQListenerRegistrar(beanPostProcessor, mqClients, properties, serialization, storerProvider);
     }
 
-    /** 将当前启用的 MQ 客户端状态接入框架统一 Readiness。
-    * @param mqClients 列表数据
-    * @param properties 属性集合
-    * @return 返回的 ReadinessContributor 结果
+    /**
+     * 将当前启用的 MQ 客户端状态接入框架统一 Readiness。
+     *
+     * @param mqClients 已注册的消息客户端
+     * @param properties 消息模块配置
+     * @return 消息模块就绪检查项
      */
     @Bean
     public ReadinessContributor mqReadinessContributor(List<MQClient> mqClients, MQProperties properties) {
@@ -105,8 +107,7 @@ public class Ddd4jMQRegistrarConfiguration {
                 Map<String, String> details = new LinkedHashMap<>();
                 details.put("state", "MISSING");
                 details.put("reason", "configured MQ client not found");
-                return new ReadinessResult("mq-" + properties.getBroker(), false,
-                        details);
+                return new ReadinessResult("mq-" + properties.getBroker(), false, details);
             }
             return new MQReadinessContributor(selected.startupStatus()).check();
         };

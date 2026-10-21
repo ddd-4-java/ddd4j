@@ -72,9 +72,16 @@ public class InMemoryOrderRepository implements OrderRepository, DomainObjectMap
 
     @Override
     public List<Order> findAll() {
-        return rows.values().stream().map(this::toModel).collect(Collectors.toList());
+        return rows.values().stream().map(this::toModel)
+                .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
     }
 
+    /**
+     * 保存订单聚合。
+     *
+     * @param aggregate 订单聚合
+     * @return 保存后的订单
+     */
     @Override
     public Order save(Order aggregate) {
         Objects.requireNonNull(aggregate, "aggregate must not be null");
@@ -82,6 +89,11 @@ public class InMemoryOrderRepository implements OrderRepository, DomainObjectMap
         return aggregate;
     }
 
+    /**
+     * 删除指定订单。
+     *
+     * @param id 订单标识
+     */
     @Override
     public void deleteById(String id) {
         if (StrKit.isNotBlank(id)) {
@@ -91,6 +103,12 @@ public class InMemoryOrderRepository implements OrderRepository, DomainObjectMap
 
     // ========================= DomainObjectMapper<Order, OrderPO> =========================
 
+    /**
+     * 将持久化对象转换为订单聚合。
+     *
+     * @param persistenceObject 持久化对象
+     * @return 订单聚合
+     */
     @Override
     public Order toModel(OrderPO persistenceObject) {
         Objects.requireNonNull(persistenceObject, "persistenceObject must not be null");
@@ -109,6 +127,12 @@ public class InMemoryOrderRepository implements OrderRepository, DomainObjectMap
         );
     }
 
+    /**
+     * 将订单聚合转换为持久化对象。
+     *
+     * @param model 订单聚合
+     * @return 持久化对象
+     */
     @Override
     public OrderPO toPersistenceObject(Order model) {
         Objects.requireNonNull(model, "model must not be null");
@@ -121,7 +145,8 @@ public class InMemoryOrderRepository implements OrderRepository, DomainObjectMap
                 .status(model.status().name())
                 .totalAmount(totalAmount.amount())
                 .currency(totalAmount.currency())
-                .lines(model.lines().stream().map(this::toLinePersistenceObject).collect(Collectors.toList()))
+                .lines(model.lines().stream().map(this::toLinePersistenceObject)
+                        .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList)))
                 .build();
     }
 

@@ -14,13 +14,15 @@
  */
 package io.ddd4j.core.auth.event;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Objects;
+
 import io.ddd4j.core.auth.AuthRequest;
-import lombok.Getter;
 
 import java.time.Instant;
-import java.util.Objects;
 
 /**
  * 登录失败事件（通用鉴权事件）。
@@ -31,60 +33,103 @@ import java.util.Objects;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.0.0
  */
-@Getter
 public final class AuthFailedEvent {
 
+    private static final long serialVersionUID = 0L;
+
     private final AuthRequest request;
+
     private final String reason;
+
     private final Instant occurredAt;
 
     /**
-     * 登录失败事件（通用鉴权事件）。
+     * 获取事件发生时间。
      *
-     * <p>由具体 {@link io.ddd4j.core.subject.Subject} 实现在登录校验失败时发布。
-     * 业务方可通过 {@link io.ddd4j.core.ddd.event.DomainEventPublisher} 订阅。
-     *
- * @param request 请求对象
- * @param reason 原因
- * @param occurredAt 发生时间
-     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
-     * @since 3.0.0
+     * @return 事件发生时间
      */
-    @JsonCreator
-    public AuthFailedEvent(@JsonProperty("request") AuthRequest request,
-                           @JsonProperty("reason") String reason,
-                           @JsonProperty("occurredAt") Instant occurredAt) {
+    public Instant getOccurredAt() {
+        return occurredAt;
+    }
+
+    /**
+     * 获取登录失败原因。
+     *
+     * @return 登录失败原因
+     */
+    public String getReason() {
+        return reason;
+    }
+
+    /**
+     * 获取登录请求。
+     *
+     * @return 登录请求
+     */
+    public AuthRequest getRequest() {
+        return request;
+    }
+
+    /**
+     * 创建AuthFailedEvent事件。
+     *
+     * @param request 登录请求
+     * @param reason 登录失败原因
+     * @param occurredAt 事件发生时间
+     */
+    @JsonCreator()
+    public AuthFailedEvent(@JsonProperty("request") AuthRequest request, @JsonProperty("reason") String reason, @JsonProperty("occurredAt") Instant occurredAt) {
         this.request = request;
         this.reason = reason;
         this.occurredAt = occurredAt;
     }
 
+    /**
+     * 获取用于 JSON 的登录请求。
+     *
+     * @return 用于 JSON 的登录请求
+     */
     @JsonProperty("request")
     public AuthRequest request() {
         return request;
     }
 
+    /**
+     * 获取用于 JSON 的登录失败原因。
+     *
+     * @return 用于 JSON 的登录失败原因
+     */
     @JsonProperty("reason")
     public String reason() {
         return reason;
     }
 
+    /**
+     * 获取用于 JSON 的事件发生时间。
+     *
+     * @return 用于 JSON 的事件发生时间
+     */
     @JsonProperty("occurredAt")
     public Instant occurredAt() {
         return occurredAt;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof AuthFailedEvent)) return false;
-        AuthFailedEvent that = (AuthFailedEvent) o;
-        return Objects.equals(request, that.request) && Objects.equals(reason, that.reason) && Objects.equals(occurredAt, that.occurredAt);
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+            return false;
+        }
+        AuthFailedEvent other = (AuthFailedEvent) obj;
+        return Objects.equals(this.request, other.request) && Objects.equals(this.reason, other.reason) && Objects.equals(this.occurredAt, other.occurredAt);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hashCode(request);
+        int result = 0;
+        result = 31 * result + Objects.hashCode(request);
         result = 31 * result + Objects.hashCode(reason);
         result = 31 * result + Objects.hashCode(occurredAt);
         return result;
@@ -92,7 +137,6 @@ public final class AuthFailedEvent {
 
     @Override
     public String toString() {
-        return "AuthFailedEvent[request=" + request + ", reason=" + reason + ", occurredAt=" + occurredAt + ']';
+        return "AuthFailedEvent[request=" + request + ", reason=" + reason + ", occurredAt=" + occurredAt + "]";
     }
-
 }

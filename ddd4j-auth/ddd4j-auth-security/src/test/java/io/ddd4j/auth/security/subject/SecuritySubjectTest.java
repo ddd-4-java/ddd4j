@@ -33,6 +33,9 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * 验证 Spring Security Subject 的身份解析与上下文生命周期。
+ */
 class SecuritySubjectTest {
 
     private SubjectDataProvider originalDataProvider;

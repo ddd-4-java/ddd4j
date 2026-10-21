@@ -43,20 +43,40 @@ public class Ddd4jMicronautWebConfiguration {
     private Duration idempotencyTtl = Duration.ofMinutes(5);
 
     // Micronaut 在 Lombok 之前分析配置元数据，因此 setter 必须显式存在于源码 AST 中。
+    /**
+     * 设置允许匿名访问的路径。
+     *
+     * @param publicPaths 公开路径列表
+     */
     public void setPublicPaths(List<String> publicPaths) {
         this.publicPaths = new ArrayList<>(Objects.requireNonNull(publicPaths, "publicPaths must not be null"));
     }
 
+    /**
+     * 设置默认认证模式。
+     *
+     * @param defaultAuthenticationMode 默认认证模式
+     */
     public void setDefaultAuthenticationMode(AuthenticationMode defaultAuthenticationMode) {
         this.defaultAuthenticationMode = Objects.requireNonNull(defaultAuthenticationMode,
                 "defaultAuthenticationMode must not be null");
     }
 
+    /**
+     * 设置幂等缓存名称。
+     *
+     * @param idempotencyCacheName 缓存名称
+     */
     public void setIdempotencyCacheName(String idempotencyCacheName) {
         this.idempotencyCacheName = Objects.requireNonNull(idempotencyCacheName,
                 "idempotencyCacheName must not be null");
     }
 
+    /**
+     * 设置幂等记录有效期。
+     *
+     * @param idempotencyTtl 有效期
+     */
     public void setIdempotencyTtl(Duration idempotencyTtl) {
         this.idempotencyTtl = Objects.requireNonNull(idempotencyTtl, "idempotencyTtl must not be null");
     }

@@ -107,7 +107,18 @@ public class PconlineRegionTemplate {
     }
 
     private static String trimWhitespace(String value) {
-        return Objects.isNull(value) ? null : value.trim();
+        if (Objects.isNull(value)) {
+            return null;
+        }
+        int start = 0;
+        int end = value.length();
+        while (start < end && Character.isWhitespace(value.charAt(start))) {
+            start++;
+        }
+        while (start < end && Character.isWhitespace(value.charAt(end - 1))) {
+            end--;
+        }
+        return value.substring(start, end);
     }
 
     /**

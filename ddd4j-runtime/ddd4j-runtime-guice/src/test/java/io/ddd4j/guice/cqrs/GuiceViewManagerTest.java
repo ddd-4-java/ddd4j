@@ -13,13 +13,23 @@
  * limitations under the License.
  */
 package io.ddd4j.guice.cqrs;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.ddd4j.core.cqrs.readmodel.DefaultProjectionPosition;
+import io.ddd4j.core.cqrs.readmodel.ProjectionMetrics;
+import io.ddd4j.core.cqrs.readmodel.ProjectionRunInfo;
 import io.ddd4j.core.cqrs.readmodel.ProjectionStatus;
 import io.ddd4j.core.cqrs.readmodel.ViewScheduler.ViewScheduleHandle;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.Instant;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -151,12 +161,12 @@ class GuiceViewManagerTest {
         manager.start();
         ProjectionStatus status = manager.getProjectionStatus("orders");
 
-        assertEquals("orders", status.getStreamId());
-        assertEquals(0L, status.getNextEventNumber());
-        assertTrue(status.isRunning());
-        assertNull(status.getLastRunAt());
-        assertEquals(0, status.getLastEventCount());
-        assertNull(status.getLastError());
+        assertEquals("orders", status.streamId());
+        assertEquals(0L, status.nextEventNumber());
+        assertTrue(status.running());
+        assertNull(status.lastRunAt());
+        assertEquals(0, status.lastEventCount());
+        assertNull(status.lastError());
     }
 
     @Test
@@ -169,14 +179,36 @@ class GuiceViewManagerTest {
 
         ProjectionStatus status = mgr.getProjectionStatus("orders");
 
-        assertEquals("orders", status.getStreamId());
-        assertEquals(42L, status.getNextEventNumber());
-        assertTrue(status.isRunning());
-        assertNull(status.getLastRunAt());
-        assertEquals(0, status.getLastEventCount());
-        assertNull(status.getLastError());
+        assertEquals("orders", status.streamId());
+        assertEquals(42L, status.nextEventNumber());
+        assertTrue(status.running());
+        assertNull(status.lastRunAt());
+        assertEquals(0, status.lastEventCount());
+        assertNull(status.lastError());
 
         mgr.stop();
+    }
+
+    @Test
+    void getProjectionStatus_withMetrics_returnsLastRunInfo() {
+        GuiceInMemoryProjectionPositionRepository repo = new GuiceInMemoryProjectionPositionRepository();
+        repo.save(new DefaultProjectionPosition("orders", 42L));
+        Instant lastRunAt = Instant.parse("2026-10-18T00:00:00Z");
+        ProjectionMetrics metrics = new ProjectionMetrics() {
+            @Override
+            public Optional<ProjectionRunInfo> getLastRunInfo(String streamId) {
+                return Optional.of(new ProjectionRunInfo(lastRunAt, 3, "last failure"));
+            }
+        };
+        GuiceViewManager mgr = new GuiceViewManager(2, repo, metrics);
+
+        ProjectionStatus status = mgr.getProjectionStatus("orders");
+
+        assertEquals("orders", status.streamId());
+        assertEquals(42L, status.nextEventNumber());
+        assertEquals(lastRunAt, status.lastRunAt());
+        assertEquals(3, status.lastEventCount());
+        assertEquals("last failure", status.lastError());
     }
 
     @Test
@@ -188,9 +220,9 @@ class GuiceViewManagerTest {
 
         ProjectionStatus status = mgr.getProjectionStatus("unknown");
 
-        assertEquals("unknown", status.getStreamId());
-        assertEquals(0L, status.getNextEventNumber());
-        assertTrue(status.isRunning());
+        assertEquals("unknown", status.streamId());
+        assertEquals(0L, status.nextEventNumber());
+        assertTrue(status.running());
 
         mgr.stop();
     }
@@ -199,6 +231,6 @@ class GuiceViewManagerTest {
     void getProjectionStatus_whenStopped_runningIsFalse() {
         ProjectionStatus status = manager.getProjectionStatus("orders");
 
-        assertFalse(status.isRunning());
+        assertFalse(status.running());
     }
 }

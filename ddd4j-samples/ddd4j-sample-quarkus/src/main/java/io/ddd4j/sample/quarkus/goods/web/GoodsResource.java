@@ -26,7 +26,15 @@ import io.ddd4j.sample.quarkus.goods.web.dto.UpdateGoodsRequest;
 import io.ddd4j.web.quarkus.TenantAwareResource;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -52,7 +60,7 @@ import java.util.Locale;
  *   <li>{@code GET    /goods/by-code}          - 按编码查询</li>
  * </ul>
  *
- * <h3>设计原则</h3>
+ * <h2>设计原则</h2>
  * <p>Resource 层只做协议适配（HTTP ↔ 应用服务入参 / 响应），不包含业务规则。
  * 所有业务方法都委托给 {@link GoodsApplicationService}。
  *
@@ -65,6 +73,7 @@ public class GoodsResource extends TenantAwareResource {
 
     private final GoodsApplicationService applicationService;
 
+    /** @param applicationService 商品应用服务 */
     @Inject
     public GoodsResource(GoodsApplicationService applicationService) {
         this.applicationService = applicationService;

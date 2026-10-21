@@ -32,6 +32,7 @@ public final class VertxOrderApplication {
     private VertxOrderApplication() {
     }
 
+    /** @param args 启动参数 */
     public static void main(String[] args) {
         Vertx vertx = Vertx.vertx();
         Ddd4jVertxRuntime runtime = Ddd4jVertxRuntime.create(vertx, Collections.emptyList());

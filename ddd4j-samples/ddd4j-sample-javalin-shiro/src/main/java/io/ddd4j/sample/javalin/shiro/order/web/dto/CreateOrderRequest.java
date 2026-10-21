@@ -14,33 +14,152 @@
  */
 package io.ddd4j.sample.javalin.shiro.order.web.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Objects;
 
 /**
  * 创建订单 REST 请求。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class CreateOrderRequest {
+
+    private static final long serialVersionUID = 0L;
+
     private String orderNo;
+
     private String buyerId;
+
     private String buyerName;
 
+    /**
+     * 创建空请求，供反序列化使用。
+     */
+    public CreateOrderRequest() {
+    }
+
+    /**
+     * 创建请求。
+     * @param orderNo 订单编号
+     * @param buyerId 买家 ID
+     * @param buyerName 买家名称
+     */
+    @JsonCreator()
+    public CreateOrderRequest(@JsonProperty("orderNo") String orderNo, @JsonProperty("buyerId") String buyerId, @JsonProperty("buyerName") String buyerName) {
+        this.orderNo = orderNo;
+        this.buyerId = buyerId;
+        this.buyerName = buyerName;
+    }
+
+    /**
+     * 读取订单编号。
+     * @return 订单编号
+     */
+    @JsonProperty("orderNo")
     public String orderNo() {
         return orderNo;
     }
 
+    /**
+     * 读取买家 ID。
+     * @return 买家 ID
+     */
+    @JsonProperty("buyerId")
     public String buyerId() {
         return buyerId;
     }
 
+    /**
+     * 读取买家名称。
+     * @return 买家名称
+     */
+    @JsonProperty("buyerName")
     public String buyerName() {
         return buyerName;
+    }
+
+    /**
+     * 读取订单编号。
+     * @return 订单编号
+     */
+    public String getOrderNo() {
+        return orderNo;
+    }
+
+    /**
+     * 设置订单编号。
+     * @param orderNo 订单编号
+     */
+    public void setOrderNo(String orderNo) {
+        this.orderNo = orderNo;
+    }
+
+    /**
+     * 读取买家 ID。
+     * @return 买家 ID
+     */
+    public String getBuyerId() {
+        return buyerId;
+    }
+
+    /**
+     * 设置买家 ID。
+     * @param buyerId 买家 ID
+     */
+    public void setBuyerId(String buyerId) {
+        this.buyerId = buyerId;
+    }
+
+    /**
+     * 读取买家名称。
+     * @return 买家名称
+     */
+    public String getBuyerName() {
+        return buyerName;
+    }
+
+    /**
+     * 设置买家名称。
+     * @param buyerName 买家名称
+     */
+    public void setBuyerName(String buyerName) {
+        this.buyerName = buyerName;
+    }
+
+    /**
+     * 判断对象是否可参与值比较。
+     * @param other 待比较对象
+     * @return 是否为同类请求
+     */
+    protected boolean canEqual(Object other) {
+        return other instanceof CreateOrderRequest;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (Objects.isNull(o) || !(o instanceof CreateOrderRequest)) {
+            return false;
+        }
+        CreateOrderRequest other = (CreateOrderRequest) o;
+        if (!other.canEqual(this)) {
+            return false;
+        }
+        return Objects.equals(this.getOrderNo(), other.getOrderNo()) && Objects.equals(this.getBuyerId(), other.getBuyerId()) && Objects.equals(this.getBuyerName(), other.getBuyerName());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 1;
+        result = 59 * result + (Objects.isNull(getOrderNo()) ? 43 : getOrderNo().hashCode());
+        result = 59 * result + (Objects.isNull(getBuyerId()) ? 43 : getBuyerId().hashCode());
+        result = 59 * result + (Objects.isNull(getBuyerName()) ? 43 : getBuyerName().hashCode());
+        return result;
     }
 
     @Override

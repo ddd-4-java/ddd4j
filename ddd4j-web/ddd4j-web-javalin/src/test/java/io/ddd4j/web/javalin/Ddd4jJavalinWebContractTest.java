@@ -16,6 +16,9 @@ package io.ddd4j.web.javalin;
 
 import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.api.R;
+import io.ddd4j.core.health.ReadinessResult;
+import io.ddd4j.core.health.RuntimeReadinessRegistry;
+import io.ddd4j.web.core.health.ReadinessEndpoint;
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.constant.SpiKeys;
@@ -39,6 +42,7 @@ import io.ddd4j.web.testkit.WebContractResponse;
 import io.javalin.Javalin;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -50,6 +54,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -57,6 +62,7 @@ class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
 
     private Javalin app;
     private WebContractClient contractClient;
+    private RuntimeReadinessRegistry readinessRegistry;
 
     @BeforeEach
     void setUp() {
@@ -67,9 +73,10 @@ class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
 
         WebRequestLifecycle requestLifecycle = new WebRequestLifecycle(new BearerSubjectAuthenticator(),
                 WebAccessPolicy.requiredExcept(path -> !WebContractPaths.PROTECTED.equals(path)));
+        readinessRegistry = new RuntimeReadinessRegistry();
         Ddd4jJavalinWeb ddd4jWeb = new Ddd4jJavalinWeb(new WebRequestContextFactory(), requestLifecycle,
                 new DefaultWebExceptionTranslator(),
-                new WebIdempotencyLifecycle(new CacheIdempotencyGuard("javalin-contract")));
+                new WebIdempotencyLifecycle(new CacheIdempotencyGuard("javalin-contract")), readinessRegistry);
         app = Javalin.create(config -> config.showJavalinBanner = false);
         ddd4jWeb.configure(app);
         registerContractRoutes(app);
@@ -90,6 +97,19 @@ class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
     @Override
     protected WebContractClient client() {
         return contractClient;
+    }
+
+    @Test
+    void readinessEndpointReflectsRegistryWithoutLeakingDetails() {
+        WebContractResponse ready = client().request("GET", ReadinessEndpoint.PATH, Collections.emptyMap(), null);
+        assertThat(ready.status()).isEqualTo(200);
+        assertThat(ready.body()).contains("\"ready\":true");
+
+        readinessRegistry.register(() -> ReadinessResult.unavailable("database", "secret diagnostic"));
+        WebContractResponse unavailable = client().request("GET", ReadinessEndpoint.PATH, Collections.emptyMap(), null);
+        assertThat(unavailable.status()).isEqualTo(503);
+        assertThat(unavailable.body()).contains("\"ready\":false")
+                .doesNotContain("database", "secret diagnostic");
     }
 
     private void registerContractRoutes(Javalin javalinApp) {

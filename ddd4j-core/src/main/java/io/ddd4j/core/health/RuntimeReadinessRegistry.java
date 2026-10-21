@@ -27,10 +27,18 @@ public final class RuntimeReadinessRegistry {
 
     private final List<ReadinessContributor> contributors = new CopyOnWriteArrayList<>();
 
+    /**
+     * 创建运行时就绪检查注册表。
+     */
     public RuntimeReadinessRegistry() {
         this(Collections.emptyList());
     }
 
+    /**
+     * 使用现有贡献者创建运行时就绪检查注册表。
+     *
+     * @param contributors 初始就绪检查贡献者
+     */
     public RuntimeReadinessRegistry(Collection<? extends ReadinessContributor> contributors) {
         registerAll(contributors);
     }

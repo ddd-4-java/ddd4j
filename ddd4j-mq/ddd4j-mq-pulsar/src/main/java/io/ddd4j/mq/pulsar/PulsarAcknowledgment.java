@@ -29,6 +29,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * <p>包装了 {@link Consumer} 和收到的 {@link Message}（Pulsar 消息，非 JMS 消息）。
  * Pulsar nack 语义：{@link Consumer#negativeAcknowledge(Message)} 重新投递消息（带可选延迟），
  * {@link Consumer#acknowledge(Message)} 确认消息。
+ * 请求不重投的否定确认无法映射到 Pulsar 原生 nack，会显式失败并保留未确认状态。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
@@ -134,6 +135,9 @@ public class PulsarAcknowledgment implements Acknowledgment {
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public void nack(boolean multiple, boolean requeue) {
+        if (!requeue) {
+            throw new UnsupportedOperationException("Pulsar negative acknowledgment always redelivers");
+        }
         runOnce(() -> ((Consumer) consumer).negativeAcknowledge(message));
     }
 

@@ -48,7 +48,7 @@ import java.util.List;
  *   <li>{@code GET /query/orders/count}           - 统计订单数量</li>
  * </ul>
  *
- * <h3>设计原则</h3>
+ * <h2>设计原则</h2>
  * <p>查询端不修改聚合状态，只读取数据。
  * 通过 {@link OrderCacheService} 实现缓存优先查询，
  * 展示 ddd4j-cache 在 Quarkus CDI 下的集成方式。
@@ -63,6 +63,10 @@ public class OrderQueryResource extends TenantAwareResource {
     private final OrderCacheService cacheService;
     private final OrderRepository repository;
 
+    /**
+     * @param cacheService 订单查询缓存
+     * @param repository 订单仓储
+     */
     @Inject
     public OrderQueryResource(OrderCacheService cacheService, OrderRepository repository) {
         this.cacheService = cacheService;

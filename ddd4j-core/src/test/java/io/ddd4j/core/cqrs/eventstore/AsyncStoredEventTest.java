@@ -14,7 +14,18 @@
  */
 package io.ddd4j.core.cqrs.eventstore;
 
-import io.ddd4j.core.ddd.event.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import java.util.Objects;
+
+import io.ddd4j.core.ddd.event.AggregateRootId;
+import io.ddd4j.core.ddd.event.DomainEvent;
+import io.ddd4j.core.ddd.event.EntityIdPath;
+import io.ddd4j.core.ddd.event.EntityType;
+import io.ddd4j.core.ddd.event.EventId;
+import io.ddd4j.core.ddd.event.StringEntityType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -23,13 +34,16 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.time.ZonedDateTime;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * {@link AsyncStoredEvent} 构造契约测试。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 2.0.x
+ * @since 1.0.x
  */
 class AsyncStoredEventTest {
 
@@ -49,23 +63,6 @@ class AsyncStoredEventTest {
                 Arguments.of("aggregateId", 2),
                 Arguments.of("timestamp", 3),
                 Arguments.of("payload", 4));
-    }
-
-    private static AsyncStoredEvent newAsyncStoredEventWithNullAt(int nullIndex) {
-        switch (nullIndex) {
-            case 0:
-                return new AsyncStoredEvent(null, AGGREGATE_TYPE, AGGREGATE_ID, VERSION, POSITION, TIMESTAMP, new TestEvent(), null, null);
-            case 1:
-                return new AsyncStoredEvent(EVENT_ID, null, AGGREGATE_ID, VERSION, POSITION, TIMESTAMP, new TestEvent(), null, null);
-            case 2:
-                return new AsyncStoredEvent(EVENT_ID, AGGREGATE_TYPE, null, VERSION, POSITION, TIMESTAMP, new TestEvent(), null, null);
-            case 3:
-                return new AsyncStoredEvent(EVENT_ID, AGGREGATE_TYPE, AGGREGATE_ID, VERSION, POSITION, null, new TestEvent(), null, null);
-            case 4:
-                return new AsyncStoredEvent(EVENT_ID, AGGREGATE_TYPE, AGGREGATE_ID, VERSION, POSITION, TIMESTAMP, null, null, null);
-            default:
-                throw new IllegalArgumentException("unexpected null index: " + nullIndex);
-        }
     }
 
     @ParameterizedTest(name = "constructor rejects null {0}")
@@ -102,20 +99,33 @@ class AsyncStoredEventTest {
         assertSame(CAUSATION_ID, storedEvent.causationId());
     }
 
+    private static AsyncStoredEvent newAsyncStoredEventWithNullAt(int nullIndex) {
+        switch (nullIndex) {
+            case 0:
+                return new AsyncStoredEvent(null, AGGREGATE_TYPE, AGGREGATE_ID, VERSION, POSITION, TIMESTAMP, new TestEvent(), null, null);
+            case 1:
+                return new AsyncStoredEvent(EVENT_ID, null, AGGREGATE_ID, VERSION, POSITION, TIMESTAMP, new TestEvent(), null, null);
+            case 2:
+                return new AsyncStoredEvent(EVENT_ID, AGGREGATE_TYPE, null, VERSION, POSITION, TIMESTAMP, new TestEvent(), null, null);
+            case 3:
+                return new AsyncStoredEvent(EVENT_ID, AGGREGATE_TYPE, AGGREGATE_ID, VERSION, POSITION, null, new TestEvent(), null, null);
+            case 4:
+                return new AsyncStoredEvent(EVENT_ID, AGGREGATE_TYPE, AGGREGATE_ID, VERSION, POSITION, TIMESTAMP, null, null, null);
+            default:
+                throw new IllegalArgumentException("unexpected null index: " + nullIndex);
+        }
+    }
+
     /**
      * 测试聚合根标识：满足 {@link AggregateRootId} 契约。
      */
-    public static final class TestAggregateRootId implements AggregateRootId {
-        private static final EntityType TYPE = new StringEntityType("Order");
+    final static class TestAggregateRootId implements AggregateRootId {
+
+        private static final long serialVersionUID = 0L;
+
         private final String value;
 
-        public TestAggregateRootId(String value) {
-            this.value = value;
-        }
-
-        public String value() {
-            return value;
-        }
+        private static final EntityType TYPE = new StringEntityType("TestAggregate");
 
         @Override
         public EntityType getType() {
@@ -130,6 +140,40 @@ class AsyncStoredEventTest {
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
+        }
+
+        @JsonCreator()
+        TestAggregateRootId(@JsonProperty("value") String value) {
+            this.value = value;
+        }
+
+        @JsonProperty("value")
+        public String value() {
+            return value;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+                return false;
+            }
+            TestAggregateRootId other = (TestAggregateRootId) obj;
+            return Objects.equals(this.value, other.value);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = 0;
+            result = 31 * result + Objects.hashCode(value);
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "TestAggregateRootId[value=" + value + "]";
         }
     }
 

@@ -15,6 +15,9 @@
 
 package io.ddd4j.mq.redisstream;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Map;
 import java.util.Objects;
 
@@ -41,28 +44,51 @@ public final class RedisStreamRecord {
      * @param id            消息条目 ID
      * @param fields        消息字段
      * @param nativeMessage 底层原生消息对象
-     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
      */
 
-    public RedisStreamRecord(String stream, String id, Map<String, String> fields, Object nativeMessage) {
+    @JsonCreator
+    public RedisStreamRecord(@JsonProperty("stream") String stream,
+                             @JsonProperty("id") String id,
+                             @JsonProperty("fields") Map<String, String> fields,
+                             @JsonProperty("nativeMessage") Object nativeMessage) {
         this.stream = stream;
         this.id = id;
         this.fields = fields;
         this.nativeMessage = nativeMessage;
     }
 
+    /**
+     * 读取Redis Stream 名称。
+     *
+     * @return Redis Stream 名称
+     */
     public String stream() {
         return stream;
     }
 
+    /**
+     * 读取Stream 记录 ID。
+     *
+     * @return Stream 记录 ID
+     */
     public String id() {
         return id;
     }
 
+    /**
+     * 读取消息字段。
+     *
+     * @return 消息字段
+     */
     public Map<String, String> fields() {
         return fields;
     }
 
+    /**
+     * 读取底层原生消息对象。
+     *
+     * @return 底层原生消息对象
+     */
     public Object nativeMessage() {
         return nativeMessage;
     }
@@ -96,18 +122,38 @@ public final class RedisStreamRecord {
                 + ", nativeMessage=" + nativeMessage + ']';
     }
 
+    /**
+     * 读取Redis Stream 名称。
+     *
+     * @return Redis Stream 名称
+     */
     public String getStream() {
         return stream;
     }
 
+    /**
+     * 读取Stream 记录 ID。
+     *
+     * @return Stream 记录 ID
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * 读取消息字段。
+     *
+     * @return 消息字段
+     */
     public Map<String, String> getFields() {
         return fields;
     }
 
+    /**
+     * 读取底层原生消息对象。
+     *
+     * @return 底层原生消息对象
+     */
     public Object getNativeMessage() {
         return nativeMessage;
     }
