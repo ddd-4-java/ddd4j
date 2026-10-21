@@ -16,6 +16,8 @@ package io.ddd4j.mq.mqttmica;
 
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -26,10 +28,21 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class MicaMqttAcknowledgmentContractTest {
 
     @Test
-    void shouldMarkNackAsHandledBecauseMicaHasNoNativeRedelivery() {
+    void requeueRequestsFailWithoutClaimingAcknowledgment() {
         MicaMqttAcknowledgment acknowledgment = new MicaMqttAcknowledgment(11L, "orders/paid", null);
 
-        acknowledgment.nack(true);
+        assertThrows(UnsupportedOperationException.class, () -> acknowledgment.nack(true));
+        assertThrows(UnsupportedOperationException.class, () -> acknowledgment.reject(true));
+        assertThrows(UnsupportedOperationException.class, () -> acknowledgment.recover(true));
+
+        assertFalse(acknowledgment.isAcknowledged());
+    }
+
+    @Test
+    void nackWithoutRequeueMarksMessageHandled() {
+        MicaMqttAcknowledgment acknowledgment = new MicaMqttAcknowledgment(12L, "orders/paid", null);
+
+        acknowledgment.nack(false);
 
         assertTrue(acknowledgment.isAcknowledged());
     }

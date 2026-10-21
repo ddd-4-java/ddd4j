@@ -25,6 +25,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * mica-mqtt 手动确认映射实现。
  *
  * <p>mica-mqtt 在 QoS &gt; 0 时由内部 PUBACK 链路自动处理；本 ack 端口仅作为"已处理"标记位。
+ * 请求 Broker 重投时显式抛出异常，不将消息伪装成已确认。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
@@ -116,7 +117,10 @@ public class MicaMqttAcknowledgment implements Acknowledgment {
 
     @Override
     public void nack(boolean multiple, boolean requeue) {
-        // mica 客户端层无原生 nack；仅标记已处理
+        if (requeue) {
+            throw new UnsupportedOperationException("mica-mqtt does not support broker redelivery");
+        }
+        // mica 客户端层无原生 nack；不重投时仅标记已处理。
         runOnce();
     }
 
