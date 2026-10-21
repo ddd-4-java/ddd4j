@@ -42,6 +42,11 @@
             <groupId>org.apache.pulsar</groupId>
             <artifactId>pulsar-client</artifactId>
             <exclusions>
+                <!-- 使用基础层已提供的 jdk18on 安全版本，避免旧 PKIX 实现重复进入运行时。 -->
+                <exclusion>
+                    <groupId>org.bouncycastle</groupId>
+                    <artifactId>bcpkix-jdk15on</artifactId>
+                </exclusion>
                 <!-- 旧 Pulsar 引入的 JCIP 注解无可靠许可证元数据，运行时不需要该注解包。 -->
                 <exclusion>
                     <groupId>net.jcip</groupId>
