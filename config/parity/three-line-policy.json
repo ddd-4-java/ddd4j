@@ -112,7 +112,7 @@
     {
       "path": "config/license-selections.tsv",
       "sha256ByJdk": {
-        "8": "7af2b94235e32453d06e897e68181dac717a1f6d409fb39f8cb69c7ad1aaa273",
+        "8": "91aad68474dc8f4464c3fd9337f0648b9f5468b76595c7a9ea7cb0113ef0af07",
         "17": "825cc13db26ce2bfe514ac4d093b2da16d8bb6ddbe2c92c82aa9db008bf0d40a",
         "21": "597610af254907c6f8116cf45a13a20a531c40b03ef09ed21fb6710789648a08"
       },
