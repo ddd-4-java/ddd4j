@@ -85,7 +85,7 @@ public final class TdmqAcknowledgment implements Acknowledgment {
     }
 
     @Override
-    public void ack(boolean multiple) {
+    public synchronized void ack(boolean multiple) {
         ensureNotAcknowledged();
         ackCallback.accept(true);
         acknowledged.set(true);
@@ -98,7 +98,7 @@ public final class TdmqAcknowledgment implements Acknowledgment {
     }
 
     @Override
-    public void nack(boolean multiple, boolean requeue) {
+    public synchronized void nack(boolean multiple, boolean requeue) {
         ensureNotAcknowledged();
         ackCallback.accept(requeue);
         acknowledged.set(true);
