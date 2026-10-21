@@ -12,9 +12,9 @@ permissions:
   contents: read
 
 concurrency:
-  # A newer branch push compares all three current SHAs and supersedes older push runs.
+  # A newer push supersedes only runs from the same branch.
   # Manual runs remain independent for frozen evidence collection.
-  group: three-line-convergence-${{ github.event_name == 'workflow_dispatch' && github.run_id || 'all-lines' }}
+  group: three-line-convergence-${{ github.event_name == 'workflow_dispatch' && github.run_id || github.ref }}
   cancel-in-progress: true
 
 jobs:
