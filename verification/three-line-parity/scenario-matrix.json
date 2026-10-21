@@ -2793,11 +2793,11 @@
     },
     {
       "id": "BROKER-TDMQ-PULSAR-COMPAT-PROTOCOL",
-      "description": "本地 Pulsar 容器验证 TDMQ serviceUrl 配置后的跨客户端协议投递和业务因果头；不代表腾讯云鉴权与云端验收",
+      "description": "本地 Pulsar 容器验证 TDMQ serviceUrl 配置后的跨客户端协议投递、失败重投和业务因果头；不代表腾讯云鉴权与云端验收",
       "caseNames": {
-        "1.0.x": ["configuredBrokerDeliversBetweenIndependentClientsWithCausality"],
-        "2.0.x": ["configuredBrokerDeliversBetweenIndependentClientsWithCausality"],
-        "3.0.x": ["configuredBrokerDeliversBetweenIndependentClientsWithCausality"]
+        "1.0.x": ["configuredBrokerDeliversBetweenIndependentClientsWithCausality", "failedConsumerIsRedeliveredWithStableBusinessId"],
+        "2.0.x": ["configuredBrokerDeliversBetweenIndependentClientsWithCausality", "failedConsumerIsRedeliveredWithStableBusinessId"],
+        "3.0.x": ["configuredBrokerDeliversBetweenIndependentClientsWithCausality", "failedConsumerIsRedeliveredWithStableBusinessId"]
       },
       "lines": {
         "1.0.x": {"status": "supported", "tests": ["ddd4j-mq/ddd4j-mq-tdmq/src/test/java/io/ddd4j/mq/tdmq/TdmqPulsarProtocolIntegrationTest.java"]},
