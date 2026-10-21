@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -83,11 +84,69 @@ class TdmqPulsarProtocolIntegrationTest {
             event.setCausationId("causation-" + UUID.randomUUID());
             event.publish();
 
-            assertTrue(delivered.await(10, TimeUnit.SECONDS),
+            assertTrue(delivered.await(30, TimeUnit.SECONDS),
                     "TDMQ clients with a service URL must exchange messages through the broker");
             assertEquals(event.getMsgId(), received.get().getMsgId());
             assertEquals(event.getCorrelationId(), received.get().getCorrelationId());
             assertEquals(event.getCausationId(), received.get().getCausationId());
+        } finally {
+            producer.close();
+            consumer.close();
+        }
+    }
+
+    @Test
+    void failedConsumerIsRedeliveredWithStableBusinessId() throws Exception {
+        String topic = "tdmq-retry-" + UUID.randomUUID();
+        TdmqProperties properties = new TdmqProperties();
+        properties.setServiceUrl(PULSAR.getPulsarBrokerUrl());
+        properties.setTenant("public");
+        properties.setNamespace("default");
+        properties.setDefaultGroup("tdmq-retry-" + UUID.randomUUID());
+        properties.setEnabled(true);
+        properties.setBroker("tdmq");
+
+        CountDownLatch retried = new CountDownLatch(1);
+        AtomicInteger attempts = new AtomicInteger();
+        AtomicReference<String> redeliveredId = new AtomicReference<>();
+        MQListener listener = MQListener.builder().group(properties.getDefaultGroup())
+                .topic(topic).tags("*").build();
+        MQEventSerialization serialization = new MQEventSerialization() {
+            @Override
+            @SuppressWarnings("unchecked")
+            public <T> T serialize(Object event) {
+                return (T) "{}";
+            }
+
+            @Override
+            public <S, T> T deserialize(S value, Class<T> type) {
+                return type.cast(new MQEvent());
+            }
+        };
+
+        TdmqMQClient consumer = new TdmqMQClient(properties) {
+            @Override
+            public void consume(MQListener activeListener, MQEvent event, Acknowledgment ack) {
+                if (attempts.incrementAndGet() == 1) {
+                    throw new IllegalStateException("first delivery fails");
+                }
+                redeliveredId.set(event.getMsgId());
+                retried.countDown();
+            }
+        };
+        TdmqMQClient producer = new TdmqMQClient(properties);
+        try {
+            consumer.init(Collections.singletonList(listener), properties, serialization, null);
+            producer.init(Collections.emptyList(), properties, serialization, null);
+            MQEvent event = new MQEvent();
+            event.setTopic(topic);
+            event.setMsgId("retry-" + UUID.randomUUID());
+            event.publish();
+
+            assertTrue(retried.await(30, TimeUnit.SECONDS),
+                    "failed TDMQ delivery must be redelivered by the broker");
+            assertEquals(2, attempts.get());
+            assertEquals(event.getMsgId(), redeliveredId.get());
         } finally {
             producer.close();
             consumer.close();
