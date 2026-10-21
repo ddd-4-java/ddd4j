@@ -32,6 +32,7 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.Method;
 import java.util.Collections;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentCaptor.forClass;
@@ -51,6 +52,11 @@ class MqttAdapterContractTest {
         MqttAcknowledgment acknowledgment = new MqttAcknowledgment(message, "orders/paid");
 
         assertThrows(UnsupportedOperationException.class, () -> acknowledgment.nack(true));
+        assertThrows(UnsupportedOperationException.class, () -> acknowledgment.reject(true));
+        assertThrows(UnsupportedOperationException.class, () -> acknowledgment.recover(true));
+        assertFalse(acknowledgment.isAcknowledged());
+
+        acknowledgment.ack();
         assertTrue(acknowledgment.isAcknowledged());
     }
 

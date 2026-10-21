@@ -30,6 +30,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  * <p>SQS 没有原生 ack 语义：ack 等价于 {@code deleteMessage(receiptHandle)}，nack(requeue=true)
  * 等价于 {@code changeMessageVisibility(receiptHandle, 0)}（让消息立即可被另一消费者接收）。
+ * 配置禁用重投时，请求重投会显式失败，不会删除消息。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
@@ -145,7 +146,10 @@ public class SqsAcknowledgment implements Acknowledgment {
 
     @Override
     public void nack(boolean multiple, boolean requeue) {
-        if (requeue && requeueOnNack) {
+        if (requeue && !requeueOnNack) {
+            throw new UnsupportedOperationException("SQS requeue on nack is disabled");
+        }
+        if (requeue) {
             runOnce(() -> client.changeMessageVisibility(b -> b
                     .queueUrl(queueUrl).receiptHandle(receiptHandle).visibilityTimeout(0)));
         } else {
