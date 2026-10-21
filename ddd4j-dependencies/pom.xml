@@ -124,7 +124,7 @@
         <commons-jexl3.version>3.6.3</commons-jexl3.version>
         <commons-jexl.version>2.1.1</commons-jexl.version>
         <commons-jxpath.version>1.4.0</commons-jxpath.version>
-        <commons-lang3-jdk8.version>3.17.0</commons-lang3-jdk8.version>
+        <commons-lang3-jdk8.version>3.18.0</commons-lang3-jdk8.version>
         <commons-lang3.version>3.20.0</commons-lang3.version>
         <commons-lang.version>2.6</commons-lang.version>
         <commons-logging.version>1.4.0</commons-logging.version>
