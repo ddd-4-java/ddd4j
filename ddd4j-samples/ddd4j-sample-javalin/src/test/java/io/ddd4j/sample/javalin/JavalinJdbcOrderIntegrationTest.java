@@ -61,6 +61,8 @@ class JavalinJdbcOrderIntegrationTest {
                     "{\"goodsId\":\"sku-1\",\"goodsName\":\"Book\",\"quantity\":2,\"unitPrice\":19.90}", null).status);
             assertEquals(200, request(base, token, "POST", "/api/orders/" + orderId + "/pay",
                     "", "payment-" + orderId).status);
+            assertEquals(200, request(base, token, "POST", "/api/orders/" + orderId + "/pay",
+                    "", "payment-" + orderId).status);
             Response found = request(base, token, "GET", "/api/orders/" + orderId, null, null);
             assertEquals(200, found.status);
             assertTrue(found.body.contains("\"status\":\"PAID\""));
@@ -70,6 +72,9 @@ class JavalinJdbcOrderIntegrationTest {
                 TimeUnit.MILLISECONDS.sleep(50);
             }
             assertTrue(published.stream().anyMatch(message -> OrderPaidEvent.class.getName().equals(message.eventType())));
+            assertEquals(1, published.stream()
+                    .filter(message -> OrderPaidEvent.class.getName().equals(message.eventType()))
+                    .count(), "repeated payment must not publish a second paid event");
         }
     }
 
