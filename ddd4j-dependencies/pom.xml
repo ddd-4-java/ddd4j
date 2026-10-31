@@ -559,6 +559,7 @@
         <!-- Shiro 2.x requires JDK11; feature/1.0.x remains a JDK8 release line. -->
         <shiro.version>1.13.0</shiro.version>
         <sitemesh3.version>3.0.1</sitemesh3.version>
+        <snappy-java.version>1.1.10.9</snappy-java.version>
         <skywalking-toolkit.version>9.7.0</skywalking-toolkit.version>
         <skywalking.version>10.0.1</skywalking.version>
         <slf4j-legacy.version>1.7.36</slf4j-legacy.version>
@@ -7406,6 +7407,11 @@
                 <groupId>org.xerial</groupId>
                 <artifactId>sqlite-jdbc</artifactId>
                 <version>${sqlite-jdbc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.xerial.snappy</groupId>
+                <artifactId>snappy-java</artifactId>
+                <version>${snappy-java.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.unboundid</groupId>
