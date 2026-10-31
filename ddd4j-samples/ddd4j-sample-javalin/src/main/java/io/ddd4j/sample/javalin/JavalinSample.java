@@ -29,6 +29,7 @@ import io.ddd4j.sample.javalin.order.web.OrderController;
 import io.ddd4j.sample.javalin.spi.DefaultI18nProvider;
 import io.ddd4j.sample.javalin.spi.NoOpDomainEventPublisher;
 import io.ddd4j.sample.order.application.OrderApplicationService;
+import io.ddd4j.sample.order.jdbc.JdbcOrderSampleRuntime;
 import io.ddd4j.web.javalin.Ddd4jJavalinWeb;
 import io.javalin.Javalin;
 import io.javalin.json.JavalinJackson;
@@ -57,6 +58,24 @@ public final class JavalinSample {
      * @return 已启动的 Javalin 应用
      */
     public static JavalinApplication start(int port) {
+        JavalinOrderAdapters adapters = new JavalinOrderAdapters();
+        OrderApplicationService service = new OrderApplicationService(adapters, adapters, adapters, adapters);
+        return start(port, service, null);
+    }
+
+    /**
+     * 使用已启动的 JDBC 订单运行实例提供 HTTP 服务；关闭返回句柄时一并停止 Outbox 工作器。
+     * @param port HTTP 监听端口
+     * @param runtime 已启动且所有权交给返回句柄的 JDBC 运行实例
+     * @return 已启动的 Javalin 应用
+     */
+    public static JavalinApplication startJdbc(int port, JdbcOrderSampleRuntime runtime) {
+        Objects.requireNonNull(runtime, "runtime must not be null");
+        return start(port, runtime.applicationService(), runtime);
+    }
+
+    private static JavalinApplication start(int port, OrderApplicationService service,
+                                            JdbcOrderSampleRuntime jdbcRuntime) {
         DomainEventPublisher eventPublisher = new NoOpDomainEventPublisher();
         InMemorySubject subject = new InMemorySubject(event -> log.debug("Authentication event: {}", event));
         String token = subject.login(AuthRequest.of("sample-user").setPrincipal(new AuthPrincipal()
@@ -68,11 +87,8 @@ public final class JavalinSample {
                 .register(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class, eventPublisher)
                 .register(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class, new InMemorySubjectProvider(subject))
                 .register(SpiKeys.I18N_PROVIDER, I18nProvider.class, new DefaultI18nProvider());
-        spiScope.start();
-
         try {
-            JavalinOrderAdapters adapters = new JavalinOrderAdapters();
-            OrderApplicationService service = new OrderApplicationService(adapters, adapters, adapters, adapters);
+            spiScope.start();
             OrderController controller = new OrderController(service);
             Javalin app = Javalin.create(config -> {
                 config.startup.showJavalinBanner = false;
@@ -81,9 +97,15 @@ public final class JavalinSample {
                 config.routes.apiBuilder(controller::routes);
             });
             app.start(port);
-            return new JavalinApplication(app, token, spiScope);
+            return new JavalinApplication(app, token, spiScope, jdbcRuntime);
         } catch (RuntimeException exception) {
-            spiScope.close();
+            try {
+                if (Objects.nonNull(jdbcRuntime)) {
+                    jdbcRuntime.close();
+                }
+            } finally {
+                spiScope.close();
+            }
             throw exception;
         }
     }
@@ -97,18 +119,26 @@ public final class JavalinSample {
 
         private final SpiRegistrationScope spiScope;
 
+        private final JdbcOrderSampleRuntime jdbcRuntime;
+
         /**
          * @param app Javalin 服务实例
          * @param token 演示登录令牌
          * @param spiScope SPI 注册作用域
          */
         public JavalinApplication(Javalin app, String token, SpiRegistrationScope spiScope) {
+            this(app, token, spiScope, null);
+        }
+
+        private JavalinApplication(Javalin app, String token, SpiRegistrationScope spiScope,
+                                   JdbcOrderSampleRuntime jdbcRuntime) {
             Objects.requireNonNull(app, "app must not be null");
             Objects.requireNonNull(token, "token must not be null");
             Objects.requireNonNull(spiScope, "spiScope must not be null");
             this.app = app;
             this.token = token;
             this.spiScope = spiScope;
+            this.jdbcRuntime = jdbcRuntime;
         }
 
         @Override
@@ -116,7 +146,13 @@ public final class JavalinSample {
             try {
                 app.stop();
             } finally {
-                spiScope.close();
+                try {
+                    if (Objects.nonNull(jdbcRuntime)) {
+                        jdbcRuntime.close();
+                    }
+                } finally {
+                    spiScope.close();
+                }
             }
         }
 
