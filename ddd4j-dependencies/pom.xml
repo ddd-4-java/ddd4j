@@ -170,7 +170,6 @@
         <docx4j.version>11.5.14</docx4j.version>
         <dom4j2.version>2.2.0</dom4j2.version>
         <dozer-core.version>7.0.0</dozer-core.version>
-        <dozer-extra-converters.version>1.0.x.20260630-SNAPSHOT</dozer-extra-converters.version>
         <dozer-proto3.version>6.5.2</dozer-proto3.version>
         <dozer-spring4.version>${dozer-core.version}</dozer-spring4.version>
         <dozer.version>5.5.1</dozer.version>
@@ -286,6 +285,7 @@
         <glassfish-jstl.version>3.0.1</glassfish-jstl.version>
         <goeasy.version>0.4.2</goeasy.version>
         <google-api-client.version>2.9.0</google-api-client.version>
+        <google-api-services-androidpublisher.version>v3-rev142-1.25.0</google-api-services-androidpublisher.version>
         <google-auth-library.version>1.48.0</google-auth-library.version>
         <google-cloud-translate.version>2.93.0</google-cloud-translate.version>
         <google-code-aviator.version>5.4.3</google-code-aviator.version>
@@ -612,6 +612,7 @@
         <schemacrawler-hana.version>${schemacrawler.version}</schemacrawler-hana.version>
         <schemacrawler-hsqldb.version>${schemacrawler.version}</schemacrawler-hsqldb.version>
         <schemacrawler-mysql.version>${schemacrawler.version}</schemacrawler-mysql.version>
+        <schemacrawler-oracle.version>${schemacrawler.version}</schemacrawler-oracle.version>
         <schemacrawler-postgresql.version>${schemacrawler.version}</schemacrawler-postgresql.version>
         <schemacrawler-sapiq.version>${schemacrawler.version}</schemacrawler-sapiq.version>
         <schemacrawler-sqlite.version>${schemacrawler.version}</schemacrawler-sqlite.version>
@@ -3390,12 +3391,6 @@
                 <groupId>com.github.dozermapper</groupId>
                 <artifactId>dozer-core</artifactId>
                 <version>${dozer-core.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.github.hiwepy/dozer-extra-converters -->
-            <dependency>
-                <groupId>io.github.easy4j</groupId>
-                <artifactId>dozer-extra-converters</artifactId>
-                <version>${dozer-extra-converters.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.github.dozermapper/dozer-proto3 -->
             <dependency>
