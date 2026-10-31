@@ -1669,9 +1669,9 @@
     {
       "path": "ddd4j-samples/ddd4j-sample-javalin/src/main/java/io/ddd4j/sample/javalin/JavalinSample.java",
       "sourceSha256": [
-        "4e2affd56c44ca4ae8f71c9e51d55fcead9a0c5534e81df24947f294b344b256",
-        "3e8c63b19fd377b5d9ec2ead64a949922abca15e57ff7d9028d0f4e2acddba75",
-        "096c5477589250b3fdc1caf1727ec7bdb8a07d31e79810d66b087a516e09eed9"
+        "3d0ad4b4d2e0068023a1e51f4e2963e7b6ae5bea34b93305573603c6b89a09fa",
+        "d6e691a497784483aa7b553a8eda0d768f86b5422920d83b67715c78e9334bc7",
+        "b86a9208b80dd65bb52789ead67b06a2577abda65cfa5a8017ef730eccf4240d"
       ],
       "evidence": "ddd4j-samples/ddd4j-sample-javalin/src/test/java/io/ddd4j/sample/javalin/order/web/OrderControllerTest.java",
       "testSha256ByJdk": {
@@ -1679,7 +1679,7 @@
         "17": "e799ea911a7c304c142bab33150be55006ec867e71a163ba3195af83c93f5c0a",
         "21": "4efaaa07f2407487a59a7b08372a463d54f666bdceadd8d41e34f61c4891a7c7"
       },
-      "reason": "三线均启动 Javalin 示例并提供相同订单、鉴权、幂等和请求上下文行为；JDK 8 使用 Javalin 4 和 Jackson 2 配置，JDK 17/21 使用 Javalin 7 及各线 Jackson 2/3 配置。高线删除运行句柄多余 JSON 注解和无效反序列化钩子。OrderControllerTest 各 4 项真实 HTTP 测试及 JavalinApplicationContractTest 各 2 项值契约测试通过；源码与 HTTP 测试哈希锁定。"
+      "reason": "三线均启动 Javalin 示例并提供相同订单、鉴权、幂等和请求上下文行为；新增 startJdbc 将同一 JDBC 订单服务接入 HTTP，关闭句柄时停止可靠 Outbox 工作器。JDK 8 使用 Javalin 4 和 Jackson 2 配置，JDK 17/21 使用 Javalin 7 及各线 Jackson 2/3 配置。OrderControllerTest 各 4 项、JavalinApplicationContractTest 各 2 项和 JavalinJdbcOrderIntegrationTest 各 1 项通过；源码与测试哈希锁定。"
     },
     {
       "path": "ddd4j-web/ddd4j-web-vertx/src/main/java/io/ddd4j/web/vertx/Ddd4jVertxWeb.java",
@@ -4112,6 +4112,22 @@
     }
   ],
   "platformTestSyntaxMappings": [
+    {
+      "path": "ddd4j-samples/ddd4j-sample-javalin/src/test/java/io/ddd4j/sample/javalin/JavalinJdbcOrderIntegrationTest.java",
+      "productionPath": "ddd4j-samples/ddd4j-sample-javalin/src/main/java/io/ddd4j/sample/javalin/JavalinSample.java",
+      "sourceSha256": [
+        "d9103a99897ebe943f6c9f842f840c4a46a4f7a80a2560ab5f3e48bd4315c98f",
+        "71e6c57d2e14126a39f8930b7c01fbdf1e1034d8d03e137cc992e6d584f99fca",
+        "e0c749f14feba7caeecf32c8b0e7d3d597279531883f5ba0b90e234260f9fe54"
+      ],
+      "productionSha256": [
+        "3d0ad4b4d2e0068023a1e51f4e2963e7b6ae5bea34b93305573603c6b89a09fa",
+        "d6e691a497784483aa7b553a8eda0d768f86b5422920d83b67715c78e9334bc7",
+        "b86a9208b80dd65bb52789ead67b06a2577abda65cfa5a8017ef730eccf4240d"
+      ],
+      "testMethods": ["httpOrderPersistsAndPublishesOutbox"],
+      "reason": "三线真实 PostgreSQL HTTP 场景各 1 项：创建、加商品、支付、读模型与可靠 Outbox 发布。JDK 8 使用 HttpURLConnection，JDK 17/21 使用 HttpClient；Jackson 与 Flyway 依赖各自适配，测试和生产源码逐线哈希锁定。"
+    },
     {
       "path": "ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautContextTest.java",
       "productionPath": "ddd4j-web/ddd4j-web-micronaut/src/main/java/io/ddd4j/web/micronaut/Ddd4jMicronautContext.java",
