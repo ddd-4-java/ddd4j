@@ -4116,9 +4116,9 @@
       "path": "ddd4j-samples/ddd4j-sample-javalin/src/test/java/io/ddd4j/sample/javalin/JavalinJdbcOrderIntegrationTest.java",
       "productionPath": "ddd4j-samples/ddd4j-sample-javalin/src/main/java/io/ddd4j/sample/javalin/JavalinSample.java",
       "sourceSha256": [
-        "d9103a99897ebe943f6c9f842f840c4a46a4f7a80a2560ab5f3e48bd4315c98f",
-        "71e6c57d2e14126a39f8930b7c01fbdf1e1034d8d03e137cc992e6d584f99fca",
-        "e0c749f14feba7caeecf32c8b0e7d3d597279531883f5ba0b90e234260f9fe54"
+        "838a3485b4649d59206bb688d4bf9966cf4113eaf150a62f19d4536fbb841201",
+        "c098400ec8f76275fc9fe47828e7b91c0af3b2c29802c69b6f883d15ffcd4ede",
+        "3dc372fbd40eebecee4deea9fb81b012be603b1fc5e193804358533ba243299e"
       ],
       "productionSha256": [
         "3d0ad4b4d2e0068023a1e51f4e2963e7b6ae5bea34b93305573603c6b89a09fa",
@@ -4126,7 +4126,7 @@
         "b86a9208b80dd65bb52789ead67b06a2577abda65cfa5a8017ef730eccf4240d"
       ],
       "testMethods": ["httpOrderPersistsAndPublishesOutbox"],
-      "reason": "三线真实 PostgreSQL HTTP 场景各 1 项：创建、加商品、支付、读模型与可靠 Outbox 发布。JDK 8 使用 HttpURLConnection，JDK 17/21 使用 HttpClient；Jackson 与 Flyway 依赖各自适配，测试和生产源码逐线哈希锁定。"
+      "reason": "三线真实 PostgreSQL HTTP 场景各 1 项：创建、加商品、支付、相同幂等键重复支付、读模型；支付事件首次发送失败后由可靠 Outbox 重试成功且仅一次发布。JDK 8 使用 HttpURLConnection，JDK 17/21 使用 HttpClient；Jackson 与 Flyway 依赖各自适配，测试和生产源码逐线哈希锁定。"
     },
     {
       "path": "ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautContextTest.java",

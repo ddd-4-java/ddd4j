@@ -24,6 +24,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -44,8 +45,15 @@ class JavalinJdbcOrderIntegrationTest {
         source.setPassword(POSTGRES.getPassword());
         Flyway.configure().dataSource(source).locations("classpath:db/migration").load().migrate();
         List<OutboxMessage> published = new CopyOnWriteArrayList<>();
+        AtomicInteger paidAttempts = new AtomicInteger();
         JdbcOrderSampleRuntime runtime = JdbcOrderSampleRuntime.start(source, new ObjectMapper(),
-                new JavalinOrderAdapters(), published::add, "javalin-http-it", 100,
+                new JavalinOrderAdapters(), message -> {
+                    if (OrderPaidEvent.class.getName().equals(message.eventType())
+                            && paidAttempts.incrementAndGet() == 1) {
+                        throw new IllegalStateException("first paid event send failed");
+                    }
+                    published.add(message);
+                }, "javalin-http-it", 100,
                 Duration.ofMillis(50), Clock.systemUTC());
         try (JavalinSample.JavalinApplication application = JavalinSample.startJdbc(0, runtime)) {
             String base = "http://127.0.0.1:" + application.app().port();
@@ -59,6 +67,8 @@ class JavalinJdbcOrderIntegrationTest {
                     "{\"goodsId\":\"sku-1\",\"goodsName\":\"Book\",\"quantity\":2,\"unitPrice\":19.90}", null).statusCode());
             assertEquals(200, post(client, base, application.token(), "/api/orders/" + orderId + "/pay",
                     "", "payment-" + orderId).statusCode());
+            assertEquals(200, post(client, base, application.token(), "/api/orders/" + orderId + "/pay",
+                    "", "payment-" + orderId).statusCode());
             HttpRequest query = HttpRequest.newBuilder(URI.create(base + "/api/orders/" + orderId))
                     .header("Authorization", "Bearer " + application.token()).GET().build();
             HttpResponse<String> found = client.send(query, HttpResponse.BodyHandlers.ofString());
@@ -70,6 +80,10 @@ class JavalinJdbcOrderIntegrationTest {
                 TimeUnit.MILLISECONDS.sleep(50);
             }
             assertTrue(published.stream().anyMatch(message -> OrderPaidEvent.class.getName().equals(message.eventType())));
+            assertEquals(1, published.stream()
+                    .filter(message -> OrderPaidEvent.class.getName().equals(message.eventType()))
+                    .count(), "repeated payment must not publish a second paid event");
+            assertTrue(paidAttempts.get() >= 2, "failed paid event send must be retried");
         }
     }
 
