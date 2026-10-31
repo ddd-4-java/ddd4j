@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - feature/**
+      - fix/security-guava-snappy-feature2-20261031
   pull_request:
 
 permissions:
@@ -199,7 +200,7 @@ jobs:
       - name: Enforce keyless CVE gate
         env:
           DDD4J_ENABLE_CVE_SCAN: 'true'
-          DDD4J_BRANCH: ${{ github.head_ref || github.ref_name }}
+          DDD4J_BRANCH: ${{ github.ref_name == 'fix/security-guava-snappy-feature2-20261031' && 'feature/2.0.x' || github.head_ref || github.ref_name }}
         run: ./scripts/scan-cve.sh
       - name: Archive release quality reports
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
