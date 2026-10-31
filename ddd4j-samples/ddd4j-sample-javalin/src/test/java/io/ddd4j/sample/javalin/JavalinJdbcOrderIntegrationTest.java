@@ -25,6 +25,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -45,8 +46,15 @@ class JavalinJdbcOrderIntegrationTest {
         source.setPassword(POSTGRES.getPassword());
         Flyway.configure().dataSource(source).locations("classpath:db/migration").load().migrate();
         List<OutboxMessage> published = new CopyOnWriteArrayList<>();
+        AtomicInteger paidAttempts = new AtomicInteger();
         JdbcOrderSampleRuntime runtime = JdbcOrderSampleRuntime.start(source, new ObjectMapper().registerModule(new JavaTimeModule()),
-                new JavalinOrderAdapters(), published::add, "javalin-http-it", 100,
+                new JavalinOrderAdapters(), message -> {
+                    if (OrderPaidEvent.class.getName().equals(message.eventType())
+                            && paidAttempts.incrementAndGet() == 1) {
+                        throw new IllegalStateException("first paid event send failed");
+                    }
+                    published.add(message);
+                }, "javalin-http-it", 100,
                 Duration.ofMillis(50), Clock.systemUTC());
         try (JavalinSample.JavalinApplication application = JavalinSample.startJdbc(0, runtime)) {
             String base = "http://127.0.0.1:" + application.app().port();
@@ -76,6 +84,7 @@ class JavalinJdbcOrderIntegrationTest {
             assertEquals(1, published.stream()
                     .filter(message -> OrderPaidEvent.class.getName().equals(message.eventType()))
                     .count(), "repeated payment must not publish a second paid event");
+            assertTrue(paidAttempts.get() >= 2, "failed paid event send must be retried");
         }
     }
 
