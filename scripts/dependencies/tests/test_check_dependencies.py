@@ -9,6 +9,19 @@ spec.loader.exec_module(checker)
 
 
 class PolicyTests(unittest.TestCase):
+    def test_feature_2_mybatis_versions_remain_compatible(self):
+        import json
+        policy_file = pathlib.Path(__file__).parents[3] / '.github' / 'dependency-policy.json'
+        policy = checker.resolve_policy(json.loads(policy_file.read_text()), 'feature/2.0.x')
+        fixed = policy['fixed_properties']
+        self.assertEqual(fixed['mybatis.version'], '3.5.19')
+        self.assertEqual(fixed['mybatis-plus.version'], '3.5.17')
+        self.assertEqual(fixed['mybatis-spring.version'], '3.0.5')
+        commands = checker.update_commands(policy)
+        for name in ('mybatis.version', 'mybatis-plus.version', 'mybatis-spring.version'):
+            self.assertIn(name, next(arg for arg in commands[0] if arg.startswith('-DexcludeProperties=')))
+            self.assertTrue(any('-Dproperty=' + name in command for command in commands[2:]))
+
     def test_latest_update_uses_supported_prerelease_filter(self):
         policy = checker.resolve_policy({}, 'feature/1.0.x')
         commands = checker.update_commands(policy)
