@@ -177,7 +177,7 @@
         <dozer-proto3.version>6.5.2</dozer-proto3.version>
         <dozer-spring4.version>${dozer-core.version}</dozer-spring4.version>
         <dozer.version>5.5.1</dozer.version>
-        <dreamina-java-sdk.version>2.0.x.20260630-SNAPSHOT</dreamina-java-sdk.version>
+        <dreamina-java-sdk.version>2.0.x.20260830-SNAPSHOT</dreamina-java-sdk.version>
         <dropwizard-bom.version>5.0.2</dropwizard-bom.version>
         <dropwizard-metrics-influxdb.version>1.3.4</dropwizard-metrics-influxdb.version>
         <dropwizard-metrics.version>4.2.39</dropwizard-metrics.version>
