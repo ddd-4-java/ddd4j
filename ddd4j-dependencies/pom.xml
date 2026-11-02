@@ -166,7 +166,7 @@
         <dozer-proto3.version>6.5.2</dozer-proto3.version>
         <dozer-spring4.version>${dozer-core.version}</dozer-spring4.version>
         <dozer.version>5.5.1</dozer.version>
-        <dreamina-java-sdk.version>1.0.x.20260630-SNAPSHOT</dreamina-java-sdk.version>
+        <dreamina-java-sdk.version>1.0.x.20260830-SNAPSHOT</dreamina-java-sdk.version>
         <dropwizard2-jersey.version>2.41</dropwizard2-jersey.version>
         <dropwizard2-metrics.version>4.2.25</dropwizard2-metrics.version>
         <!-- Dropwizard 2.1.12：Dropwizard 3+ 弃用 JDK8，2.x 为 javax/jetty9 线（BOM=dropwizard-bom；
