@@ -1,0 +1,115 @@
+name: Spring version alignment
+
+on:
+  push:
+    branches: [feature/1.0.x, feature/2.0.x, feature/3.0.x]
+  pull_request:
+    branches: [feature/1.0.x, feature/2.0.x, feature/3.0.x]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: spring-alignment-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      matrix: ${{ steps.revisions.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.11'
+      - name: Test Spring alignment checker and workflow contract
+        run: python3 -m unittest -v scripts/test_spring_version_alignment.py scripts/test_spring_alignment_workflow.py
+      - name: Freeze all three branch inputs
+        id: revisions
+        env:
+          TARGET_BRANCH: ${{ github.base_ref || github.ref_name }}
+          EVENT_SHA: ${{ github.sha }}
+        run: |
+          python3 - <<'PY'
+          import importlib.util
+          import json
+          import os
+          import subprocess
+          from pathlib import Path
+          spec = importlib.util.spec_from_file_location('checker', 'scripts/verify_spring_version_alignment.py')
+          checker = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(checker)
+          def lookup(branch):
+              rows = subprocess.check_output(['git', 'ls-remote', 'origin', 'refs/heads/' + branch], text=True).split()
+              return rows[0] if rows else ''
+          matrix = checker.resolve_matrix(os.environ['TARGET_BRANCH'], os.environ['EVENT_SHA'], lookup)
+          with Path(os.environ['GITHUB_OUTPUT']).open('a') as output:
+              output.write('matrix=' + json.dumps(matrix) + '\n')
+          with Path(os.environ['GITHUB_STEP_SUMMARY']).open('a') as summary:
+              summary.write('| Branch | JDK | Immutable SHA |\n|---|---|---|\n')
+              for row in matrix['include']:
+                  summary.write(f"| {row['branch']} | {row['jdk']} | {row['sha']} |\n")
+          PY
+
+  check:
+    needs: prepare
+    name: Spring alignment (${{ matrix.line }}, JDK ${{ matrix.jdk }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.prepare.outputs.matrix) }}
+    steps:
+      - name: Check out event checker
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          path: controller
+          persist-credentials: false
+      - name: Check out frozen target line
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ matrix.sha }}
+          path: project
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.11'
+      - name: Install required branch JDK
+        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.jdk }}
+          overwrite-settings: false
+      - name: Configure existing Maven credentials
+        env:
+          MAVEN_SETTINGS_XML: ${{ secrets.MAVEN_SETTINGS_XML }}
+        run: |
+          python3 - <<'PY'
+          import importlib.util
+          import os
+          from pathlib import Path
+          spec = importlib.util.spec_from_file_location('dependencies', 'controller/scripts/dependencies/check_dependencies.py')
+          dependencies = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(dependencies)
+          settings = Path.home() / '.m2/settings.xml'
+          dependencies.configure_settings(os.environ.get('MAVEN_SETTINGS_XML', ''), settings)
+          dependencies.ensure_central_fallback(settings)
+          PY
+      - name: Verify every effective Spring dependency and line baseline
+        env:
+          TARGET_LINE: ${{ matrix.line }}
+          REPORT_DIR: ${{ runner.temp }}/spring-alignment
+        run: >-
+          python3 controller/scripts/verify_spring_version_alignment.py
+          --root project --line "$TARGET_LINE" --output "$REPORT_DIR"
+      - name: Upload Spring alignment models and errors
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: spring-alignment-${{ matrix.line }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/spring-alignment/
+          if-no-files-found: error
+          retention-days: 14
