@@ -23,7 +23,7 @@ class UniformContract(unittest.TestCase):
         self.assertIn('io.micronaut*:*', jdk17['exclude'])
         self.assertEqual(jdk21['fixed_properties'].get('vertx-compat4.version'), '4.5.35')
         self.assertNotIn('vertx-compat4.version', jdk8['fixed_properties'])
-        self.assertNotIn('vertx-compat4.version', jdk17['fixed_properties'])
+        self.assertEqual(jdk17['fixed_properties'].get('vertx-compat4.version'), '4.5.36')
 
     def test_pattern_applies_without_exact_branch_entry(self):
         policy = checker.resolve_policy({'branches': {'feature/*': {'fixed_properties': {'v': '2'}}}}, 'feature/new')
@@ -206,7 +206,8 @@ class UniformContract(unittest.TestCase):
         repository = pathlib.Path(__file__).parents[3]
         raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
         self.assertEqual(checker.resolve_policy(raw, 'feature/1.0.x')['fixed_properties'].get('vertx.version'), '4.5.35')
-        for branch in ('feature/2.0.x', 'feature/3.0.x'):
+        self.assertEqual(checker.resolve_policy(raw, 'feature/2.0.x')['fixed_properties'].get('vertx.version'), '5.2.3')
+        for branch in ('feature/3.0.x',):
             self.assertNotIn('vertx.version', checker.resolve_policy(raw, branch)['fixed_properties'])
 
     def test_jdk8_helidon_loader_keeps_java8_bytecode(self):
@@ -226,7 +227,10 @@ class UniformContract(unittest.TestCase):
         self.assertIn('org.eclipse.microprofile.config:microprofile-config-api',
                       checker.resolve_policy(raw, 'feature/1.0.x')['exclude'])
         for branch in ('feature/2.0.x', 'feature/3.0.x'):
-            self.assertNotIn('quarkus.version', checker.resolve_policy(raw, branch)['fixed_properties'])
+            if branch == 'feature/2.0.x':
+                self.assertEqual(checker.resolve_policy(raw, branch)['fixed_properties'].get('quarkus.version'), '3.40.1.2')
+            else:
+                self.assertNotIn('quarkus.version', checker.resolve_policy(raw, branch)['fixed_properties'])
             self.assertNotIn('org.eclipse.microprofile.config:microprofile-config-api',
                              checker.resolve_policy(raw, branch)['exclude'])
 
@@ -309,7 +313,8 @@ class UniformContract(unittest.TestCase):
         raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
         name = 'artemis.version'
         self.assertEqual(checker.resolve_policy(raw, 'feature/1.0.x')['fixed_properties'].get(name), '2.19.0')
-        for branch in ('feature/2.0.x', 'feature/3.0.x'):
+        self.assertEqual(checker.resolve_policy(raw, 'feature/2.0.x')['fixed_properties'].get(name), '2.57.0')
+        for branch in ('feature/3.0.x',):
             self.assertNotIn(name, checker.resolve_policy(raw, branch)['fixed_properties'])
 
     def test_jdk8_kafka_client_keeps_java8_bytecode(self):
@@ -369,7 +374,7 @@ class UniformContract(unittest.TestCase):
         repository = pathlib.Path(__file__).parents[3]
         raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
         jdk17 = checker.resolve_policy(raw, 'feature/2.0.x')['fixed_properties']
-        expected = {'helidon-bom.version': '3.2.21',
+        expected = {'helidon-bom.version': '3.2.22',
                     'helidon-jakarta-annotation.version': '2.0.0',
                     'helidon-jakarta-cdi.version': '3.0.0',
                     'helidon-jakarta-inject.version': '2.0.0',
@@ -426,7 +431,8 @@ class UniformContract(unittest.TestCase):
         jdk21 = checker.resolve_policy(raw, 'feature/3.0.x')
         self.assertEqual(jdk21['fixed_properties'].get('vertx-compat4.version'), '4.5.35')
         self.assertTrue(coordinates.isdisjoint(jdk21['fixed_dependencies']))
-        for branch in ('feature/1.0.x', 'feature/2.0.x'):
+        self.assertEqual(checker.resolve_policy(raw, 'feature/2.0.x')['fixed_properties'].get('vertx-compat4.version'), '4.5.36')
+        for branch in ('feature/1.0.x',):
             self.assertNotIn('vertx-compat4.version',
                              checker.resolve_policy(raw, branch)['fixed_properties'])
 

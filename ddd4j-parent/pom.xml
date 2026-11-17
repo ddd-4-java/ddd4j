@@ -60,18 +60,6 @@
 
     </properties>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>io.micrometer</groupId>
-                <artifactId>micrometer-bom</artifactId>
-                <version>${micrometer.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <dependencies>
         <!-- For Lombok -->
         <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->

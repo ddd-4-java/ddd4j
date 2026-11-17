@@ -22,7 +22,7 @@
 
         <!-- Third-Party Dependencies -->
         <activation.version>1.1.1</activation.version>
-        <activemq.version>6.2.0</activemq.version>
+        <activemq.version>6.2.10</activemq.version>
         <agora-java-sdk.version>2.0.x.20260630-SNAPSHOT</agora-java-sdk.version>
         <akka-http.version>10.5.3</akka-http.version>
         <akka.version>2.8.8</akka.version>
@@ -56,7 +56,7 @@
         <auth0-jwks-rsa.version>0.24.1</auth0-jwks-rsa.version>
         <awaitility.version>4.2.2</awaitility.version>
         <aws-java-sdk.version>1.12.797</aws-java-sdk.version>
-        <awssdk.version>2.30.0</awssdk.version>
+        <awssdk.version>2.59.2</awssdk.version>
         <axiom.version>2.0.0</axiom.version>
         <axis2-api.version>1.4.1</axis2-api.version>
         <axis2-jaxbri.version>1.7.9</axis2-jaxbri.version>
@@ -65,6 +65,7 @@
         <axis-wsdl4j.version>1.5.1</axis-wsdl4j.version>
         <axis.version>1.4</axis.version>
         <azure-ai-openai.version>1.0.0-beta.16</azure-ai-openai.version>
+        <azure-security-keyvault-keys.version>4.13.0</azure-security-keyvault-keys.version>
         <batik-js.version>1.8</batik-js.version>
         <batik.version>1.19</batik.version>
         <bcmail.version>${bcprov.version}</bcmail.version>
@@ -88,6 +89,7 @@
         <canal-client-plus-sdk.version>2.0.x.20260630-SNAPSHOT</canal-client-plus-sdk.version>
         <canal.version>1.1.8</canal.version>
         <cas-client.version>4.0.4</cas-client.version>
+        <cassandra-compat3.version>3.11.19</cassandra-compat3.version>
         <cassandra-driver.version>4.19.2</cassandra-driver.version>
         <cglib.version>3.3.0</cglib.version>
         <checker-framework.version>3.55.1</checker-framework.version>
@@ -182,6 +184,7 @@
         <dropwizard-metrics-influxdb.version>1.3.4</dropwizard-metrics-influxdb.version>
         <dropwizard-metrics.version>4.2.39</dropwizard-metrics.version>
         <druid.version>1.2.28</druid.version>
+        <dubbo-compat2.version>2.6.12</dubbo-compat2.version>
         <dubbo.version>3.2.17</dubbo.version>
         <dynamic-datasource.version>4.6.0</dynamic-datasource.version>
         <dynamic-tp.version>1.2.2-x</dynamic-tp.version>
@@ -229,6 +232,7 @@
         <google-j2objc-annotations.version>3.1</google-j2objc-annotations.version>
         <google-libraries-bom.version>26.84.0</google-libraries-bom.version>
         <google-oauth-client.version>1.39.0</google-oauth-client.version>
+        <graalvm-sdk.version>25.0.4.1</graalvm-sdk.version>
         <grizzly.version>4.1.0-M1</grizzly.version>
         <groovy.version>5.0.3</groovy.version>
         <grpc-bom.version>1.82.1</grpc-bom.version>
@@ -240,6 +244,7 @@
         <h2.version>2.5.252</h2.version>
         <hadoop.version>3.5.0</hadoop.version>
         <hamcrest.version>3.0</hamcrest.version>
+        <handlebars.version>4.5.8</handlebars.version>
         <hanlp-restful.version>0.0.15</hanlp-restful.version>
         <hanlp.version>portable-1.8.4</hanlp.version>
         <hazelcast.version>5.7.0</hazelcast.version>
@@ -255,9 +260,10 @@
         <hermes-java-sdk.version>2.0.x.20260630-SNAPSHOT</hermes-java-sdk.version>
         <hibernate4-sqlite-dialect.version>0.1.2</hibernate4-sqlite-dialect.version>
         <hibernate-validator.version>8.0.6.Final</hibernate-validator.version>
-        <hibernate.version>6.6.40.Final</hibernate.version>
+        <hibernate.version>6.6.59.Final</hibernate.version>
         <hikaricp.version>7.1.0</hikaricp.version>
         <hitool.version>2.0.x.20260630-SNAPSHOT</hitool.version>
+        <hk2.version>3.0.6</hk2.version>
         <hsqldb.version>2.7.4</hsqldb.version>
         <htmlparser.version>2.1</htmlparser.version>
         <htmlunit.version>4.21.0</htmlunit.version>
@@ -334,7 +340,7 @@
         <jcifs-pool.version>2.0.x.20260630-SNAPSHOT</jcifs-pool.version>
         <jcifs.version>3.0.2</jcifs.version>
         <jcl.version>1.1</jcl.version>
-        <jdbi.version>3.45.4</jdbi.version>
+        <jdbi.version>3.55.0</jdbi.version>
         <jdom2.version>2.0.6.1</jdom2.version>
         <jedis.version>7.5.2</jedis.version>
         <jersey.version>3.1.11</jersey.version>
@@ -374,7 +380,7 @@
         <just-auth.version>1.16.7</just-auth.version>
         <jwt-issuer.version>2.0.x.20260630-SNAPSHOT</jwt-issuer.version>
         <jxl.version>2.6.12</jxl.version>
-        <kafka.version>4.3.1</kafka.version>
+        <kafka.version>4.4.0</kafka.version>
         <kaptcha.version>0.0.9</kaptcha.version>
         <keycloak.version>26.0.11</keycloak.version>
         <kimi-java-sdk.version>2.0.x.20260630-SNAPSHOT</kimi-java-sdk.version>
@@ -393,17 +399,19 @@
         <libphonenumber-geocoder.version>3.33</libphonenumber-geocoder.version>
         <libphonenumber-prefixmapper.version>3.33</libphonenumber-prefixmapper.version>
         <libphonenumber.version>9.0.33</libphonenumber.version>
+        <libthrift.version>0.25.0</libthrift.version>
         <liquibase.version>4.33.0</liquibase.version>
         <liteflow.version>2.16.3.1</liteflow.version>
         <lock4j.version>2.2.7</lock4j.version>
         <log4j2.version>2.26.1</log4j2.version>
-        <logback.version>1.5.38</logback.version>
+        <logback.version>1.6.6</logback.version>
         <lz4-java.version>1.12.0</lz4-java.version>
         <management-core.version>2.1.30.4.43</management-core.version>
         <mapstruct.version>1.6.3</mapstruct.version>
         <mariadb.version>4.0.0</mariadb.version>
         <markdown.version>1.11.1</markdown.version>
         <mchange-commons-java.version>0.6.0</mchange-commons-java.version>
+        <mcp-compat0.version>0.18.5</mcp-compat0.version>
         <mercadopago-sdk-java.version>2.9.2</mercadopago-sdk-java.version>
         <metadata-extractor.version>2.20.0</metadata-extractor.version>
         <metrics-biz.version>2.0.x.20260630-SNAPSHOT</metrics-biz.version>
@@ -412,11 +420,12 @@
         <metrics-resteasy.version>2.0.x.20260630-SNAPSHOT</metrics-resteasy.version>
         <metrics-sigar2.version>2.0.x.20260630-SNAPSHOT</metrics-sigar2.version>
         <mica-mqtt.version>2.6.6</mica-mqtt.version>
-        <micrometer-tracing.version>1.6.1</micrometer-tracing.version>
-        <micrometer.version>1.17.1</micrometer.version>
+        <micrometer.version>1.7.2</micrometer.version>
+        <micrometer-tracing.version>${micrometer.version}</micrometer-tracing.version>
         <micronaut.core.version>4.10.26</micronaut.core.version>
         <micronaut.version>4.10.17</micronaut.version>
         <milvus.version>3.0.4</milvus.version>
+        <mina-compat2.version>2.0.31</mina-compat2.version>
         <minio.version>8.6.0</minio.version>
         <mockito.version>5.23.0</mockito.version>
         <mongo-java-driver.version>3.12.14</mongo-java-driver.version>
@@ -460,7 +469,7 @@
         <ofdrw.version>2.4.0</ofdrw.version>
         <okhttp3-extension.version>2.0.x.20260630-SNAPSHOT</okhttp3-extension.version>
         <okhttp3-metrics-prometheus.version>2.0.x.20260630-SNAPSHOT</okhttp3-metrics-prometheus.version>
-        <okhttp.version>4.12.0</okhttp.version>
+        <okhttp.version>4.12.1</okhttp.version>
         <ons-client.version>2.0.11.Final</ons-client.version>
         <openclaw-java-sdk.version>2.0.x.20260630-SNAPSHOT</openclaw-java-sdk.version>
         <opencli-java-sdk.version>2.0.x.20260630-SNAPSHOT</opencli-java-sdk.version>
@@ -468,6 +477,7 @@
         <opencv-sdk.version>2.0.x.20260630-SNAPSHOT</opencv-sdk.version>
         <openhtmltopdf.version>1.1.75</openhtmltopdf.version>
         <opensearch.version>3.9.0</opensearch.version>
+        <opentelemetry-javaagent.version>2.33.1</opentelemetry-javaagent.version>
         <opentelemetry.version>1.68.0</opentelemetry.version>
         <opentest4j.version>1.3.0</opentest4j.version>
         <opentracing.version>0.33.0</opentracing.version>
@@ -512,11 +522,12 @@
         <picocli.version>4.7.7</picocli.version>
         <pinyin4j.version>2.5.1</pinyin4j.version>
         <playwright-extension.version>2.0.x.20260630-SNAPSHOT</playwright-extension.version>
+        <plexus-component-annotations.version>2.1.0</plexus-component-annotations.version>
         <plexus-utils.version>3.6.2</plexus-utils.version>
         <png-encoder.version>1.5</png-encoder.version>
         <poi.version>5.5.1</poi.version>
         <pooled-jms.version>3.1.8</pooled-jms.version>
-        <postgresql.version>42.7.13</postgresql.version>
+        <postgresql.version>42.7.14</postgresql.version>
         <powerjob-client.version>5.1.2</powerjob-client.version>
         <prometheus-client.version>1.8.0</prometheus-client.version>
         <prometheus-simpleclient.version>0.16.0</prometheus-simpleclient.version>
@@ -529,6 +540,8 @@
         <qcloud-cos-api.version>5.6.269</qcloud-cos-api.version>
         <qiniu-java-sdk.version>7.19.0</qiniu-java-sdk.version>
         <qlexpress.version>4.1.2</qlexpress.version>
+        <quarkus-agroal.version>3.2.1</quarkus-agroal.version>
+        <quarkus-hibernate.version>7.4.9.Final</quarkus-hibernate.version>
         <quarkus.version>3.40.1.2</quarkus.version>
         <quarkus-bom.version>${quarkus.version}</quarkus-bom.version>
         <quartz.version>2.5.2</quartz.version>
@@ -612,7 +625,7 @@
         <shiro-sample.version>${shiro.version}</shiro-sample.version>
         <shiro-thymeleaf.version>2.1.0</shiro-thymeleaf.version>
         <shiro-weixin.version>2.0.x.20260630-SNAPSHOT</shiro-weixin.version>
-        <shiro.version>2.2.1</shiro.version>
+        <shiro.version>3.0.2</shiro.version>
         <sitemesh3.version>3.0.1</sitemesh3.version>
         <skywalking-toolkit.version>9.7.0</skywalking-toolkit.version>
         <skywalking.version>10.0.1</skywalking.version>
@@ -824,6 +837,66 @@
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-bom -->
             <!-- Netty BOM：Netty 网络框架各模块的版本清单（Buffer/Codec/Transport/Handler 等）。 -->
             <dependency>
+                <groupId>org.glassfish.jersey</groupId>
+                <artifactId>jersey-bom</artifactId>
+                <version>${jersey.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.hk2</groupId>
+                <artifactId>hk2-bom</artifactId>
+                <version>${hk2.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.dropwizard.metrics</groupId>
+                <artifactId>metrics-bom</artifactId>
+                <version>${dropwizard-metrics.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>jaxb-bom</artifactId>
+                <version>${glassfish-jaxb.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate.orm</groupId>
+                <artifactId>hibernate-platform</artifactId>
+                <version>${hibernate.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.graalvm.sdk</groupId>
+                <artifactId>nativeimage</artifactId>
+                <version>${graalvm-sdk.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.graalvm.sdk</groupId>
+                <artifactId>word</artifactId>
+                <version>${graalvm-sdk.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-core</artifactId>
+                <version>${maven.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-plugin-api</artifactId>
+                <version>${maven.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-component-annotations</artifactId>
+                <version>${plexus-component-annotations.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-bom</artifactId>
                 <version>${netty.version}</version>
@@ -850,6 +923,68 @@
                 <version>${vertx.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>bom</artifactId>
+                <version>${awssdk.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>okhttp-bom</artifactId>
+                <version>${okhttp.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jdbi</groupId>
+                <artifactId>jdbi3-bom</artifactId>
+                <version>${jdbi.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- 导入平台的兼容旧线也使用已修复的公开版本，属性统一归属本 POM。 -->
+            <dependency>
+                <groupId>com.azure</groupId>
+                <artifactId>azure-security-keyvault-keys</artifactId>
+                <version>${azure-security-keyvault-keys.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cassandra</groupId>
+                <artifactId>cassandra-all</artifactId>
+                <version>${cassandra-compat3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>dubbo</artifactId>
+                <version>${dubbo-compat2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.jknack</groupId>
+                <artifactId>handlebars</artifactId>
+                <version>${handlebars.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.thrift</groupId>
+                <artifactId>libthrift</artifactId>
+                <version>${libthrift.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.mina</groupId>
+                <artifactId>mina-core</artifactId>
+                <version>${mina-compat2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.modelcontextprotocol.sdk</groupId>
+                <artifactId>mcp-core</artifactId>
+                <version>${mcp-compat0.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.opentelemetry.javaagent</groupId>
+                <artifactId>opentelemetry-javaagent</artifactId>
+                <version>${opentelemetry-javaagent.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.projectreactor</groupId>
@@ -1576,13 +1711,6 @@
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/software.amazon.awssdk/bom -->
             <!-- AWS SDK BOM：AWS Java v2 SDK 的版本清单，统一管理所有 AWS 服务模块版本。 -->
-            <dependency>
-                <groupId>software.amazon.awssdk</groupId>
-                <artifactId>bom</artifactId>
-                <version>${awssdk.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.zipkin.brave/brave-bom -->
             <!-- Brave BOM：Zipkin Brave 分布式追踪库的版本清单，提供 Brave 核心及周边组件统一版本。 -->
             <dependency>
@@ -4081,13 +4209,6 @@
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.hibernate.orm/hibernate-platform -->
             <!-- Hibernate Platform：Hibernate ORM 6.x 各模块的版本清单。 -->
-            <dependency>
-                <groupId>org.hibernate.orm</groupId>
-                <artifactId>hibernate-platform</artifactId>
-                <version>${hibernate.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.hibernate.validator/hibernate-validator -->
             <!-- Hibernate Validator：Bean Validation (JSR 380) 参考实现（@NotNull、@Size 等验证注解）。 -->
             <dependency>
@@ -4784,7 +4905,7 @@
             <dependency>
                 <groupId>jakarta.persistence</groupId>
                 <artifactId>jakarta.persistence-api</artifactId>
-                <version>${jakarta.persistence-api.version}</version>
+                <version>${spring6-jakarta-persistence.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/jakarta.servlet/jakarta.servlet-api -->
             <!-- Jakarta Servlet API：Jakarta Servlet 规范接口（HTTP 请求处理、过滤器、监听器）。 -->
@@ -5090,13 +5211,6 @@
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.glassfish.jaxb/jaxb-bom -->
             <!-- JAXB BOM (GlassFish)：GlassFish JAXB XML 绑定库各模块的版本清单。 -->
-            <dependency>
-                <groupId>org.glassfish.jaxb</groupId>
-                <artifactId>jaxb-bom</artifactId>
-                <version>${glassfish-jaxb.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/jaxen/jaxen -->
             <!-- Jaxen：通用 Java XPath 引擎（支持 DOM、JDOM、dom4j 等多种 XML 模型）。 -->
             <dependency>
@@ -5191,13 +5305,6 @@
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.glassfish.jersey/jersey-bom -->
             <!-- Jersey BOM：GlassFish Jersey（JAX-RS 参考实现）各模块的版本清单。 -->
-            <dependency>
-                <groupId>org.glassfish.jersey</groupId>
-                <artifactId>jersey-bom</artifactId>
-                <version>${jersey.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <!-- https://mvnrepository.com/artifact/com.alicp.jetcache/jetcache-anno -->
             <!-- JetCache Anno：JetCache 基于注解的缓存增强实现。 -->
             <dependency>
@@ -6921,13 +7028,6 @@
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp-bom -->
             <!-- OkHttp BOM：Square OkHttp HTTP 客户端各模块的版本清单（支持 HTTP/2、WebSocket）。 -->
-            <dependency>
-                <groupId>com.squareup.okhttp3</groupId>
-                <artifactId>okhttp-bom</artifactId>
-                <version>${okhttp.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/okhttp3-extension -->
             <!-- Easy4J OkHttp3 Extension：Easy4J 对 OkHttp3 的增强扩展（拦截器、重试、指标等）。 -->
             <dependency>

@@ -28,8 +28,19 @@ def owner():
              'asm.version': '9.11.1', 'jackson3.version': '3.3.0', 'artemis.version': '2.57.0',
              'vertx.version': '5.2.3', 'vertx-compat4.version': '4.5.36',
              'netty-tcnative.version': '2.0.85.Final', 'logback.version': '1.5.38'}
+    props['helidon-jersey.version'] = '3.0.18'
+    props['quarkus-hibernate.version'] = '7.4.9.Final'
+    props['quarkus-agroal.version'] = '3.2.1'
+    props['hibernate.version'] = '6.6.59.Final'
+    props['jakarta.persistence-api.version'] = '3.2.0'
     return model('ddd4j-dependencies', [('io.projectreactor', 'reactor-core', '3.8.8'),
-                 ('io.vertx', 'vertx-core', '5.2.3'), ('io.vertx', 'vertx-docgen-processor', '0.9.9')],
+                 ('io.vertx', 'vertx-core', '5.2.3'), ('io.vertx', 'vertx-docgen-processor', '0.9.9'),
+                 ('org.glassfish.jersey.core', 'jersey-common', '3.1.12'),
+                 ('org.glassfish.hk2', 'hk2-locator', '3.0.6'),
+                 ('io.dropwizard.metrics', 'metrics-core', '4.2.39'),
+                 ('org.glassfish.jaxb', 'jaxb-runtime', '4.0.9'),
+                 ('org.hibernate.orm', 'hibernate-graalvm', '6.6.59.Final'),
+                 ('jakarta.persistence', 'jakarta.persistence-api', '3.1.0')],
                  ''.join(f'<{k}>{v}</{k}>' for k, v in props.items()))
 
 
@@ -60,7 +71,7 @@ class DependencyFamilyAlignmentTest(unittest.TestCase):
     def test_accepts_explicit_runtime_compatibility_line(self):
         deps = [('io.netty', 'netty-common', '4.1.141.Final'),
                 ('io.vertx', 'vertx-core', '4.5.36'), ('io.netty', 'netty-tcnative-classes', '2.0.85.Final')]
-        self.assertEqual([], self.check(deps, 'ddd4j-runtime-quarkus')['errors'])
+        self.assertEqual([], self.check([], 'ddd4j-runtime-quarkus', actual=deps)['errors'])
 
     def test_rejects_native_classifier_old_core(self):
         item = tree('ddd4j-runtime-quarkus', [('io.netty', 'netty-transport-native-epoll', '4.1.128.Final')])
@@ -82,6 +93,40 @@ class DependencyFamilyAlignmentTest(unittest.TestCase):
 
     def test_rejects_unapproved_netty_generation(self):
         self.assertTrue(self.check([('io.netty', 'netty-common', '5.0.0')])['errors'])
+
+    def test_platform_cannot_downgrade_observability_or_aws_management(self):
+        for group, artifact, fixed, old in (
+                ('io.opentelemetry', 'opentelemetry-api', '1.68.0', '1.54.1'),
+                ('io.micrometer', 'micrometer-core', '1.17.1', '1.15.4'),
+                ('software.amazon.awssdk', 'cloudfront', '2.59.2', '2.31.66')):
+            with self.subTest(group=group):
+                base = owner()
+                base.find('dependencyManagement/dependencies').append(model('x', [(group, artifact, fixed)]).find('dependencyManagement/dependencies/dependency'))
+                models = {'ddd4j-dependencies': base, 'sample': model('sample', [(group, artifact, old)])}
+                self.assertTrue(FAMILY.audit(models, {'sample': tree('sample')}, {'sample'})['errors'])
+
+    def test_rejects_jersey_and_hk2_javax_generation(self):
+        for g, a in [('org.glassfish.jersey.core', 'jersey-common'), ('org.glassfish.hk2', 'hk2-locator')]:
+            self.assertTrue(self.check([(g, a, '2.46')])['errors'])
+
+    def test_helidon_can_explicitly_choose_jersey30_from_central_property(self):
+        self.assertEqual([], self.check([], 'ddd4j-runtime-helidon',
+                         actual=[('org.glassfish.jersey.core', 'jersey-common', '3.0.18')])['errors'])
+
+    def test_platform_cannot_downgrade_metrics_jaxb_or_split_hibernate(self):
+        for group, artifact, old in [('io.dropwizard.metrics', 'metrics-core', '4.0.1'),
+                                     ('org.glassfish.jaxb', 'jaxb-runtime', '2.3.9'),
+                                     ('org.hibernate.orm', 'hibernate-graalvm', '6.6.40.Final')]:
+            with self.subTest(group=group):
+                self.assertTrue(self.check([(group, artifact, old)])['errors'])
+
+    def test_spring6_cannot_receive_jpa32(self):
+        self.assertTrue(self.check([], 'ddd4j-runtime-spring',
+                        actual=[('jakarta.persistence', 'jakarta.persistence-api', '3.2.0')])['errors'])
+
+    def test_quarkus_can_explicitly_choose_platform_jpa32(self):
+        self.assertEqual([], self.check([], 'ddd4j-runtime-quarkus',
+                         actual=[('jakarta.persistence', 'jakarta.persistence-api', '3.2.0')])['errors'])
 
     def test_missing_tree_fails_closed(self):
         self.assertTrue(FAMILY.audit({'ddd4j-dependencies': owner()}, {}, {'demo'})['errors'])
@@ -120,6 +165,20 @@ class DependencyFamilyAlignmentTest(unittest.TestCase):
             trees['demo']['children'][0]['classifier'] = 'tests'
             result = FAMILY.audit_bytecode(trees, root)
             self.assertEqual('bytecode-jdk', result['errors'][0]['code'])
+
+    def test_functional_module_cannot_add_its_own_management(self):
+        self.assertTrue(hasattr(FAMILY, 'source_management_errors'))
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / 'pom.xml').write_text('<project><dependencyManagement/></project>')
+            self.assertTrue(FAMILY.source_management_errors(root, {'sample': '.'}))
+
+    def test_central_version_owner_can_manage_dependencies(self):
+        self.assertTrue(hasattr(FAMILY, 'source_management_errors'))
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / 'pom.xml').write_text('<project><dependencyManagement/></project>')
+            self.assertEqual([], FAMILY.source_management_errors(root, {'ddd4j-dependencies': '.'}))
 
 
 class FamilyWorkflowTest(unittest.TestCase):

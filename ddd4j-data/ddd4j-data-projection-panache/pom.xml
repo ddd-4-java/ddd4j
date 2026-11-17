@@ -19,70 +19,6 @@
     </description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
-    <dependencyManagement>
-        <dependencies>
-            <!-- 保持共享补丁版本优先；运行时专用兼容线仍在依赖父 POM 集中定义。 -->
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-bom</artifactId>
-                <version>${netty-compat4.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>io.vertx</groupId>
-                <artifactId>vertx-dependencies</artifactId>
-                <version>${vertx-compat4.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.ow2.asm</groupId>
-                <artifactId>asm-bom</artifactId>
-                <version>${asm.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>tools.jackson</groupId>
-                <artifactId>jackson-bom</artifactId>
-                <version>${jackson3.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>io.projectreactor</groupId>
-                <artifactId>reactor-bom</artifactId>
-                <version>${reactor-bom.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <!-- Keep shared Jackson 2 security fixes ahead of the framework BOM. -->
-            <dependency>
-                <groupId>com.fasterxml.jackson</groupId>
-                <artifactId>jackson-bom</artifactId>
-                <version>${jackson-bom.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <!-- Quarkus 平台 BOM（模块级再导入，= ddd4j-dependencies 同款 ${quarkus.version}）：
-                 与 ddd4j-data-event-store-panache（Task 5.1）同款 parent-chain 防御，实测必要
-                 （非冗余）。父 BOM 链中更早的 import 已把 hibernate-core 管理为面向 Framework 7
-                 线的版本，压过 quarkus-bom 的对齐版——Quarkus 运行时按其自带 hibernate-orm 编译，
-                 混版实测 @QuarkusTest 启动即 NoClassDefFoundError（Task 5.2 IT 实证教训）。
-                 模块级 import 优先于父链管理项生效，使本模块的 Quarkus 全家桶
-                 （hibernate-core、jakarta.persistence 等）整链对齐 quarkus-bom，
-                 独立于 -jpa 模块的任何版本钉。 -->
-            <dependency>
-                <groupId>io.quarkus.platform</groupId>
-                <artifactId>quarkus-bom</artifactId>
-                <version>${quarkus.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <dependencies>
         <!-- For DDD4j -->
         <dependency>
@@ -97,6 +33,16 @@
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-hibernate-orm-panache</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.agroal</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.hibernate.orm</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- ======== Test ======== -->
@@ -111,6 +57,101 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-jdbc-h2</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.agroal</groupId>
+            <artifactId>agroal-api</artifactId>
+            <version>${quarkus-agroal.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.agroal</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.hibernate.orm</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>io.agroal</groupId>
+            <artifactId>agroal-narayana</artifactId>
+            <version>${quarkus-agroal.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.agroal</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.hibernate.orm</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>io.agroal</groupId>
+            <artifactId>agroal-pool</artifactId>
+            <version>${quarkus-agroal.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.agroal</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.hibernate.orm</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${quarkus-hibernate.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.agroal</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.hibernate.orm</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-graalvm</artifactId>
+            <version>${quarkus-hibernate.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.agroal</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.hibernate.orm</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-jcache</artifactId>
+            <version>${quarkus-hibernate.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.agroal</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.hibernate.orm</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+            <version>${jakarta.persistence-api.version}</version>
         </dependency>
     </dependencies>
 

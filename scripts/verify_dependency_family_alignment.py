@@ -38,8 +38,22 @@ def audit(models, trees, expected_projects):
     vertx = {spring.identity(d): d.findtext('version', '') for d in
              base.findall('./dependencyManagement/dependencies/dependency')
              if d.findtext('groupId', '') == 'io.vertx'}
+    shared = {spring.identity(d): d.findtext('version', '') for d in
+              base.findall('./dependencyManagement/dependencies/dependency')
+              if d.findtext('groupId', '') in ('io.opentelemetry', 'io.micrometer',
+                                               'software.amazon.awssdk', 'org.jdbi',
+                                               'org.glassfish.hk2', 'org.glassfish.hk2.external',
+                                               'io.dropwizard.metrics', 'org.glassfish.jaxb',
+                                               'org.hibernate.orm', 'io.agroal', 'org.graalvm.sdk',
+                                               'org.apache.maven') or
+              d.findtext('groupId', '').startswith('org.glassfish.jersey')}
     if ('io.projectreactor', 'reactor-core') not in reactor:
         errors.append({'code': 'missing-reactor-management'})
+    jpa = next((d.findtext('version', '') for d in base.findall('./dependencyManagement/dependencies/dependency')
+                if spring.identity(d)[:2] == ('jakarta.persistence', 'jakarta.persistence-api')), '')
+    if not props.get('hibernate.version', '').startswith('6.6.') or jpa != '3.1.0':
+        errors.append({'code': 'spring6-orm-baseline', 'hibernate': props.get('hibernate.version'),
+                       'jpa': jpa, 'expected': 'Hibernate 6.6.x / JPA 3.1.0'})
     for key in (*PROPERTY_FAMILIES.values(), 'netty.version', 'netty-compat4.version',
                 'vertx.version', 'vertx-compat4.version'):
         if not props.get(key) or '${' in props[key]:
@@ -51,8 +65,17 @@ def audit(models, trees, expected_projects):
         expected = None
         if group in PROPERTY_FAMILIES:
             expected = props.get(PROPERTY_FAMILIES[group])
+        elif (group, artifact, kind, classifier) in shared:
+            expected = shared[(group, artifact, kind, classifier)]
+            if group.startswith('org.glassfish.jersey') and 'helidon' in module and scope != 'managed':
+                expected = props.get('helidon-jersey.version')
+            elif group in ('org.hibernate.orm', 'io.agroal') and 'panache' in module and scope != 'managed':
+                expected = props.get('quarkus-hibernate.version' if group == 'org.hibernate.orm' else 'quarkus-agroal.version')
         elif group == 'ch.qos.logback' and artifact in ('logback-core', 'logback-classic'):
             expected = props.get('logback.version')
+        elif group == 'jakarta.persistence' and artifact == 'jakarta.persistence-api':
+            expected = props.get('jakarta.persistence-api.version') if scope != 'managed' and any(
+                name in module for name in ('quarkus', 'panache')) else jpa
         elif group == 'org.apache.activemq' and artifact.startswith('artemis-'):
             # 官方新 BOM 暂保留旧组名的 relocation 元数据；实际声明必须迁移。
             expected = props.get('artemis.version') if scope == 'managed' else 'migrate to org.apache.artemis:' + props.get('artemis.version', '')
@@ -60,14 +83,13 @@ def audit(models, trees, expected_projects):
             expected = reactor.get((group, artifact))
         elif group == 'io.vertx':
             expected = vertx.get((group, artifact, kind, classifier))
-            if expected and re.match(r'^[45]\.', expected) and any(name in module for name in ('quarkus', 'micronaut', 'panache')) and (scope == 'resolved' or version.startswith('4.')):
+            if expected and re.match(r'^[45]\.', expected) and any(name in module for name in ('quarkus', 'micronaut', 'panache')) and scope != 'managed':
                 expected = props.get('vertx-compat4.version')
         elif group == 'io.netty' and artifact.startswith('netty-tcnative'):
             expected = props.get('netty-tcnative.version')
         elif group == 'io.netty':
-            # 兼容模块的管理目录仍可包含仅存在于 4.2 的未使用组件。
-            # 实际类路径必须完整采用该运行时支持的一条线，不能如此豁免。
-            compat = compatibility_runtime(module) and (scope == 'resolved' or version.startswith('4.1.'))
+            # 管理表统一归属中央；兼容运行时通过排除和显式依赖选用 4.1。
+            compat = compatibility_runtime(module) and scope != 'managed'
             expected = props.get('netty-compat4.version' if compat else 'netty.version')
         if expected is not None:
             item = dict(module=module, scope=scope, coordinate=group + ':' + artifact,
@@ -131,12 +153,21 @@ def audit_bytecode(trees, repository):
     return {'errors': errors, 'artifacts': rows}
 
 
+def source_management_errors(root, projects):
+    return [{'code': 'module-dependency-management', 'module': name,
+             'message': 'use central management, exclusions and explicit dependencies'}
+            for name, folder in projects.items()
+            if name not in ('ddd4j-dependencies', 'ddd4j-bom') and
+            spring.xml(root / folder / 'pom.xml').find('dependencyManagement') is not None]
+
+
 def run(args):
     root, output = args.root.resolve(), args.output.resolve()
     output.mkdir(parents=True, exist_ok=True)
     result = {'status': 'FAIL', 'errors': []}
     try:
         projects, paths = spring.discover_projects(root)
+        result['errors'].extend(source_management_errors(root, projects))
         before = spring.fingerprint(paths)
         spring_output = output / 'spring'
         status = spring.run(SimpleNamespace(root=root, output=spring_output, line='2.0.x',
