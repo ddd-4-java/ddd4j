@@ -27,11 +27,11 @@
         <!--
           Apache ActiveMQ Artemis 原生客户端。
           Apache ActiveMQ 6.x 起已迁移到 Artemis 命名空间。
-          版本由 artemis-bom (${artemis.version}=2.44.0) 统一管理。
+          版本由集中定义的 artemis-bom 统一管理。
           注：MQBrokerType.ACTIVEMQ 同时兼容 Classic v5 与 Artemis v6+/v2.x。
         -->
         <dependency>
-            <groupId>org.apache.activemq</groupId>
+            <groupId>org.apache.artemis</groupId>
             <artifactId>artemis-jakarta-client</artifactId>
         </dependency>
         <dependency>

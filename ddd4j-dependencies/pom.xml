@@ -46,8 +46,8 @@
         <apiguardian-api.version>1.1.2</apiguardian-api.version>
         <appium.version>10.1.1</appium.version>
         <archunit.version>1.4.2</archunit.version>
-        <artemis.version>2.44.0</artemis.version>
-        <asm.version>9.10.1</asm.version>
+        <artemis.version>2.57.0</artemis.version>
+        <asm.version>9.11.1</asm.version>
         <asmsupport.version>0.4.3</asmsupport.version>
         <aspectj.version>1.9.25.1</aspectj.version>
         <assertj.version>3.27.7</assertj.version>
@@ -215,7 +215,7 @@
         <geodesy.version>1.1.3</geodesy.version>
         <geoip2.version>5.1.0</geoip2.version>
         <glassfish-el.version>3.0.4</glassfish-el.version>
-        <glassfish-jaxb.version>4.0.6</glassfish-jaxb.version>
+        <glassfish-jaxb.version>4.0.9</glassfish-jaxb.version>
         <glassfish-jstl.version>3.0.1</glassfish-jstl.version>
         <goeasy.version>0.4.2</goeasy.version>
         <google-api-client.version>2.9.0</google-api-client.version>
@@ -237,7 +237,7 @@
         <guava.version>33.8.0-jre</guava.version>
         <guerlab-sms.version>2.5.0</guerlab-sms.version>
         <guice.version>7.0.0</guice.version>
-        <h2.version>2.4.240</h2.version>
+        <h2.version>2.5.252</h2.version>
         <hadoop.version>3.5.0</hadoop.version>
         <hamcrest.version>3.0</hamcrest.version>
         <hanlp-restful.version>0.0.15</hanlp-restful.version>
@@ -245,7 +245,7 @@
         <hazelcast.version>5.7.0</hazelcast.version>
         <hbase.version>3.0.0-beta-1</hbase.version>
         <hdrhistogram.version>2.2.2</hdrhistogram.version>
-        <helidon-bom.version>3.2.18</helidon-bom.version>
+        <helidon-bom.version>3.2.22</helidon-bom.version>
         <helidon-jakarta-annotation.version>2.0.0</helidon-jakarta-annotation.version>
         <helidon-jakarta-cdi.version>3.0.0</helidon-jakarta-cdi.version>
         <helidon-jakarta-inject.version>2.0.0</helidon-jakarta-inject.version>
@@ -285,7 +285,7 @@
         <ishumei-java-sdk.version>2.0.x.20260630-SNAPSHOT</ishumei-java-sdk.version>
         <istack.version>4.2.0</istack.version>
         <istio-client.version>1.7.7.1</istio-client.version>
-        <jackson3.version>3.2.3</jackson3.version>
+        <jackson3.version>3.3.0</jackson3.version>
         <jackson-bom.version>${jackson.version}</jackson-bom.version>
         <jackson-extension.version>2.0.x.20260630-SNAPSHOT</jackson-extension.version>
         <jackson.version>2.23.0</jackson.version>
@@ -397,7 +397,7 @@
         <liteflow.version>2.16.3.1</liteflow.version>
         <lock4j.version>2.2.7</lock4j.version>
         <log4j2.version>2.26.1</log4j2.version>
-        <logback.version>1.6.6</logback.version>
+        <logback.version>1.5.38</logback.version>
         <lz4-java.version>1.12.0</lz4-java.version>
         <management-core.version>2.1.30.4.43</management-core.version>
         <mapstruct.version>1.6.3</mapstruct.version>
@@ -447,13 +447,14 @@
         <mybatis-velocity.version>2.3.1</mybatis-velocity.version>
         <mybatis.version>3.5.19</mybatis.version>
         <mysql-binlog-connector-java.version>0.30.3</mysql-binlog-connector-java.version>
-        <mysql.version>9.7.0</mysql.version>
+        <mysql.version>26.10.0</mysql.version>
         <nacos.client.version>3.2.2</nacos.client.version>
         <neethi.version>3.2.2</neethi.version>
         <neo4j-java-driver.version>5.28.10</neo4j-java-driver.version>
+        <netty-compat4.version>4.1.141.Final</netty-compat4.version>
         <netty-socketio.version>2.0.14</netty-socketio.version>
         <netty-tcnative.version>2.0.85.Final</netty-tcnative.version>
-        <netty.version>4.2.20.Final</netty.version>
+        <netty.version>4.2.21.Final</netty.version>
         <nimbus-jose-jwt.version>10.9.1</nimbus-jose-jwt.version>
         <objenesis.version>3.5</objenesis.version>
         <ofdrw.version>2.4.0</ofdrw.version>
@@ -515,7 +516,7 @@
         <png-encoder.version>1.5</png-encoder.version>
         <poi.version>5.5.1</poi.version>
         <pooled-jms.version>3.1.8</pooled-jms.version>
-        <postgresql.version>42.7.12</postgresql.version>
+        <postgresql.version>42.7.13</postgresql.version>
         <powerjob-client.version>5.1.2</powerjob-client.version>
         <prometheus-client.version>1.8.0</prometheus-client.version>
         <prometheus-simpleclient.version>0.16.0</prometheus-simpleclient.version>
@@ -703,7 +704,8 @@
         <validation-api-extension.version>2.0.x.20260630-SNAPSHOT</validation-api-extension.version>
         <vault-java-driver.version>6.2.2</vault-java-driver.version>
         <velocity.version>2.4.1</velocity.version>
-        <vertx.version>5.1.5</vertx.version>
+        <vertx-compat4.version>4.5.36</vertx-compat4.version>
+        <vertx.version>5.2.3</vertx.version>
         <webcollector.version>2.74-alpha</webcollector.version>
         <webjars-locator-core.version>0.59</webjars-locator-core.version>
         <webjars-locator-lite.version>1.1.2</webjars-locator-lite.version>
@@ -815,6 +817,37 @@
                 <groupId>io.opentelemetry</groupId>
                 <artifactId>opentelemetry-bom</artifactId>
                 <version>${opentelemetry.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- 共享组件优先于运行时平台 BOM；每个家族整体对齐，避免按坐标拼接版本。 -->
+            <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-bom -->
+            <!-- Netty BOM：Netty 网络框架各模块的版本清单（Buffer/Codec/Transport/Handler 等）。 -->
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-bom</artifactId>
+                <version>${netty.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.ow2.asm</groupId>
+                <artifactId>asm-bom</artifactId>
+                <version>${asm.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>tools.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson3.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.vertx</groupId>
+                <artifactId>vertx-dependencies</artifactId>
+                <version>${vertx.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -1137,10 +1170,10 @@
                 <artifactId>archunit-junit5</artifactId>
                 <version>${archunit.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.apache.activemq/artemis-bom -->
+            <!-- Apache Artemis 2.50+ 使用独立项目坐标，Classic ActiveMQ 仍保留原组名。 -->
             <!-- Apache ActiveMQ Artemis：高性能异步消息中间件，支持 AMQP、MQTT、STOMP 等多种协议。 -->
             <dependency>
-                <groupId>org.apache.activemq</groupId>
+                <groupId>org.apache.artemis</groupId>
                 <artifactId>artemis-bom</artifactId>
                 <version>${artemis.version}</version>
                 <type>pom</type>
@@ -6736,19 +6769,104 @@
                 <artifactId>neo4j-java-driver</artifactId>
                 <version>${neo4j-java-driver.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-bom -->
-            <!-- Netty BOM：Netty 网络框架各模块的版本清单（Buffer/Codec/Transport/Handler 等）。 -->
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-bom</artifactId>
-                <version>${netty.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-codec-base</artifactId>
                 <version>${netty.version}</version>
+            </dependency>
+            <!-- Netty 4.2 专有坐标（含原生 classifier）显式跟随中央补丁，防止子平台 BOM 降级目录项。 -->
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec-classes-quic</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec-compression</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec-http3</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec-marshalling</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec-native-quic</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec-native-quic</artifactId>
+                <version>${netty.version}</version>
+                <classifier>linux-aarch_64</classifier>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec-native-quic</artifactId>
+                <version>${netty.version}</version>
+                <classifier>linux-x86_64</classifier>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec-native-quic</artifactId>
+                <version>${netty.version}</version>
+                <classifier>osx-aarch_64</classifier>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec-native-quic</artifactId>
+                <version>${netty.version}</version>
+                <classifier>osx-x86_64</classifier>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec-native-quic</artifactId>
+                <version>${netty.version}</version>
+                <classifier>windows-x86_64</classifier>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec-protobuf</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-pkitesting</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-transport-classes-io_uring</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-transport-native-io_uring</artifactId>
+                <version>${netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-transport-native-io_uring</artifactId>
+                <version>${netty.version}</version>
+                <classifier>linux-aarch_64</classifier>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-transport-native-io_uring</artifactId>
+                <version>${netty.version}</version>
+                <classifier>linux-riscv64</classifier>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-transport-native-io_uring</artifactId>
+                <version>${netty.version}</version>
+                <classifier>linux-x86_64</classifier>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.corundumstudio.socketio/netty-socketio -->
             <!-- Netty-SocketIO：基于 Netty 的 Socket.IO 服务端实现（实时双向通信）。 -->
@@ -9416,6 +9534,98 @@
                 <groupId>org.apache.velocity</groupId>
                 <artifactId>velocity-engine-scripting</artifactId>
                 <version>${velocity.version}</version>
+            </dependency>
+            <!-- Quarkus 测试夹具的 classifier 不在 Vert.x BOM 中，仍需显式跟随 4.x 兼容补丁。 -->
+            <dependency>
+                <groupId>io.vertx</groupId>
+                <artifactId>vertx-codegen</artifactId>
+                <version>${vertx-compat4.version}</version>
+                <type>jar</type>
+                <classifier>tests</classifier>
+            </dependency>
+            <dependency>
+                <groupId>io.vertx</groupId>
+                <artifactId>vertx-consul-client</artifactId>
+                <version>${vertx-compat4.version}</version>
+                <type>jar</type>
+                <classifier>tests</classifier>
+            </dependency>
+            <dependency>
+                <groupId>io.vertx</groupId>
+                <artifactId>vertx-core</artifactId>
+                <version>${vertx-compat4.version}</version>
+                <type>jar</type>
+                <classifier>tests</classifier>
+            </dependency>
+            <dependency>
+                <groupId>io.vertx</groupId>
+                <artifactId>vertx-mail-client</artifactId>
+                <version>${vertx-compat4.version}</version>
+                <type>jar</type>
+                <classifier>tests</classifier>
+            </dependency>
+            <dependency>
+                <groupId>io.vertx</groupId>
+                <artifactId>vertx-mongo-client</artifactId>
+                <version>${vertx-compat4.version}</version>
+                <type>jar</type>
+                <classifier>tests</classifier>
+            </dependency>
+            <dependency>
+                <groupId>io.vertx</groupId>
+                <artifactId>vertx-service-discovery</artifactId>
+                <version>${vertx-compat4.version}</version>
+                <type>jar</type>
+                <classifier>tests</classifier>
+            </dependency>
+            <dependency>
+                <groupId>io.vertx</groupId>
+                <artifactId>vertx-sql-client</artifactId>
+                <version>${vertx-compat4.version}</version>
+                <type>jar</type>
+                <classifier>tests</classifier>
+            </dependency>
+            <dependency>
+                <groupId>io.vertx</groupId>
+                <artifactId>vertx-web</artifactId>
+                <version>${vertx-compat4.version}</version>
+                <type>jar</type>
+                <classifier>tests</classifier>
+            </dependency>
+            <dependency>
+                <groupId>io.vertx</groupId>
+                <artifactId>vertx-web-templ-freemarker</artifactId>
+                <version>${vertx-compat4.version}</version>
+                <type>jar</type>
+                <classifier>tests</classifier>
+            </dependency>
+            <dependency>
+                <groupId>io.vertx</groupId>
+                <artifactId>vertx-web-templ-httl</artifactId>
+                <version>${vertx-compat4.version}</version>
+                <type>jar</type>
+                <classifier>tests</classifier>
+            </dependency>
+            <dependency>
+                <groupId>io.vertx</groupId>
+                <artifactId>vertx-web-templ-jte</artifactId>
+                <version>${vertx-compat4.version}</version>
+                <type>jar</type>
+                <classifier>tests</classifier>
+            </dependency>
+            <dependency>
+                <groupId>io.vertx</groupId>
+                <artifactId>vertx-web-templ-rocker</artifactId>
+                <version>${vertx-compat4.version}</version>
+                <type>jar</type>
+                <classifier>tests</classifier>
+            </dependency>
+            <dependency>
+                <groupId>io.vertx</groupId>
+                <artifactId>vertx-web-templ-rythm</artifactId>
+                <version>${vertx-compat4.version}</version>
+                <type>jar</type>
+                <classifier>tests</classifier>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.vertx/vertx-stack-depchain -->
             <!-- Vert.x Stack：Eclipse Vert.x 响应式应用框架各模块的依赖链 BOM。 -->
