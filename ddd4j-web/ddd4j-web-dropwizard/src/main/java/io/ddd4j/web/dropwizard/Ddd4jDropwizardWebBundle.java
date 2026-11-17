@@ -14,6 +14,7 @@
  */
 package io.ddd4j.web.dropwizard;
 
+import io.ddd4j.dropwizard.Ddd4jLogbackAccessRequestLogFactory;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.core.ConfiguredBundle;
 import io.dropwizard.core.setup.Bootstrap;
@@ -53,6 +54,9 @@ public final class Ddd4jDropwizardWebBundle<C extends Configuration> implements 
     public void run(C configuration, Environment environment) {
         Ddd4jDropwizardWebConfiguration webConfiguration = Objects.requireNonNull(
                 configurationResolver.apply(configuration), "web configuration must not be null");
+        if (Objects.nonNull(configuration)) {
+            Ddd4jLogbackAccessRequestLogFactory.configure(configuration);
+        }
         environment.jersey().register(new Ddd4jDropwizardRequestFilter(webConfiguration));
         environment.jersey().register(new Ddd4jDropwizardResponseFilter());
         Ddd4jDropwizardExceptionMapper exceptionMapper = new Ddd4jDropwizardExceptionMapper();

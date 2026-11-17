@@ -121,7 +121,7 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-buffer</artifactId>
-            <version>${netty-compat4.version}</version>
+            <version>${netty-4_1.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>io.netty</groupId>
@@ -132,7 +132,7 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-codec</artifactId>
-            <version>${netty-compat4.version}</version>
+            <version>${netty-4_1.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>io.netty</groupId>
@@ -143,7 +143,7 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-codec-dns</artifactId>
-            <version>${netty-compat4.version}</version>
+            <version>${netty-4_1.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>io.netty</groupId>
@@ -154,7 +154,7 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-codec-haproxy</artifactId>
-            <version>${netty-compat4.version}</version>
+            <version>${netty-4_1.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>io.netty</groupId>
@@ -165,7 +165,7 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-codec-http</artifactId>
-            <version>${netty-compat4.version}</version>
+            <version>${netty-4_1.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>io.netty</groupId>
@@ -176,7 +176,7 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-codec-http2</artifactId>
-            <version>${netty-compat4.version}</version>
+            <version>${netty-4_1.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>io.netty</groupId>
@@ -187,7 +187,7 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-codec-socks</artifactId>
-            <version>${netty-compat4.version}</version>
+            <version>${netty-4_1.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>io.netty</groupId>
@@ -198,7 +198,7 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-common</artifactId>
-            <version>${netty-compat4.version}</version>
+            <version>${netty-4_1.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>io.netty</groupId>
@@ -209,7 +209,7 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-handler</artifactId>
-            <version>${netty-compat4.version}</version>
+            <version>${netty-4_1.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>io.netty</groupId>
@@ -220,7 +220,7 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-handler-proxy</artifactId>
-            <version>${netty-compat4.version}</version>
+            <version>${netty-4_1.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>io.netty</groupId>
@@ -231,7 +231,7 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-resolver</artifactId>
-            <version>${netty-compat4.version}</version>
+            <version>${netty-4_1.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>io.netty</groupId>
@@ -242,7 +242,7 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-resolver-dns</artifactId>
-            <version>${netty-compat4.version}</version>
+            <version>${netty-4_1.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>io.netty</groupId>
@@ -264,7 +264,7 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-transport</artifactId>
-            <version>${netty-compat4.version}</version>
+            <version>${netty-4_1.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>io.netty</groupId>
@@ -275,7 +275,7 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-transport-native-unix-common</artifactId>
-            <version>${netty-compat4.version}</version>
+            <version>${netty-4_1.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>io.netty</groupId>

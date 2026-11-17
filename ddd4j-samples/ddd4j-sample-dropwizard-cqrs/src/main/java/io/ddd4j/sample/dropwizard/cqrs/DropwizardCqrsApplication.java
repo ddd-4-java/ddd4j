@@ -14,6 +14,7 @@
  */
 package io.ddd4j.sample.dropwizard.cqrs;
 
+import io.ddd4j.dropwizard.Ddd4jLogbackAccessRequestLogFactory;
 import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.core.cqrs.command.DefaultCommandBus;
 import io.ddd4j.core.cqrs.eventstore.InMemoryEventStore;
@@ -86,6 +87,7 @@ public class DropwizardCqrsApplication extends Application<DropwizardCqrsConfigu
 
     @Override
     public void run(DropwizardCqrsConfiguration configuration, Environment environment) {
+        Ddd4jLogbackAccessRequestLogFactory.configure(configuration);
         environment.jersey().register(new OrderResource());
         VIEW_MANAGER.start();
     }

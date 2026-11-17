@@ -1,0 +1,30 @@
+scope,coordinate,version,advisory,cve,same_coordinate_fixed_versions,reason,source
+managed-only-in-snapshot,org.bouncycastle:bcprov-jdk15on,1.70,GHSA-4h8f-2wvx-gg5w,CVE-2024-34447,1.78,旧坐标止于1.70，需消费方迁移到bcprov-jdk18on；现代坐标已单独管理。,https://osv.dev/vulnerability/GHSA-4h8f-2wvx-gg5w
+managed-only-in-snapshot,org.bouncycastle:bcprov-jdk15on,1.70,GHSA-8xfc-gm6g-vgpv,CVE-2024-29857,1.78,旧坐标止于1.70，需消费方迁移到bcprov-jdk18on；现代坐标已单独管理。,https://osv.dev/vulnerability/GHSA-8xfc-gm6g-vgpv
+managed-only-in-snapshot,org.bouncycastle:bcprov-jdk15on,1.70,GHSA-hr8g-6v94-x4m9,CVE-2023-33201,,旧坐标止于1.70，需消费方迁移到bcprov-jdk18on；现代坐标已单独管理。,https://osv.dev/vulnerability/GHSA-hr8g-6v94-x4m9
+managed-only-in-snapshot,org.bouncycastle:bcprov-jdk15on,1.70,GHSA-v435-xc8x-wvr9,CVE-2024-30171,1.78,旧坐标止于1.70，需消费方迁移到bcprov-jdk18on；现代坐标已单独管理。,https://osv.dev/vulnerability/GHSA-v435-xc8x-wvr9
+managed-only-in-snapshot,org.bouncycastle:bcprov-jdk15on,1.70,GHSA-wjxj-5m7g-mg7q,CVE-2023-33202,,旧坐标止于1.70，需消费方迁移到bcprov-jdk18on；现代坐标已单独管理。,https://osv.dev/vulnerability/GHSA-wjxj-5m7g-mg7q
+managed-only-in-snapshot,commons-configuration:commons-configuration,1.10,GHSA-pvp8-3xj6-8c6x,CVE-2025-46392,,1.x兼容入口无同坐标修复，迁移configuration2涉及API和包名。,https://osv.dev/vulnerability/GHSA-pvp8-3xj6-8c6x
+managed-only-in-snapshot,commons-httpclient:commons-httpclient,3.1,GHSA-3832-9276-x7gf,CVE-2012-5783,,3.x旧坐标无修复发行版，需迁移HttpClient4/5。,https://osv.dev/vulnerability/GHSA-3832-9276-x7gf
+managed-only-in-snapshot,commons-lang:commons-lang,2.6,GHSA-j288-q9x7-2f5v,CVE-2025-48924,,2.x旧包名需迁移到lang3，不能给旧坐标填写3.x版本。,https://osv.dev/vulnerability/GHSA-j288-q9x7-2f5v
+managed-only-in-snapshot,org.apache.derby:derby,10.16.1.1,GHSA-rcjc-c4pj-xxrp,CVE-2022-46337,"10.14.2.1,10.15.2.1,10.16.1.2",JDK17兼容线的公告修复版本未从公开仓库取得；10.17要求JDK21。,https://osv.dev/vulnerability/GHSA-rcjc-c4pj-xxrp
+managed-only-in-snapshot,org.hibernate.reactive:hibernate-reactive-core,2.4.17.Final,GHSA-frpp-8pwq-hjrx,CVE-2025-14969,4.2.1,修复需Reactive4.x及配套ORM迁移，不能破坏Spring6默认Hibernate6.6平台。,https://osv.dev/vulnerability/GHSA-frpp-8pwq-hjrx
+managed-only-in-snapshot,org.jsonschema2pojo:jsonschema2pojo-core,1.0.2,GHSA-66rc-vg9f-48m7,CVE-2025-3588,,公告库未提供修复发行版；未改代码生成链，需上游确认或迁移。,https://osv.dev/vulnerability/GHSA-66rc-vg9f-48m7
+managed-only-in-snapshot,dev.langchain4j:langchain4j-mariadb,1.0.1-beta6,GHSA-2mfg-cc43-9pcj,CVE-2026-55405,"1.11.8-beta19,1.16.3-beta26,1.2.1-beta8,1.5.1-beta11",公告修复在beta集成线，本轮未新增预发布升级候选。,https://osv.dev/vulnerability/GHSA-2mfg-cc43-9pcj
+managed-only-in-snapshot,dev.langchain4j:langchain4j-pgvector,1.0.1-beta6,GHSA-2mfg-cc43-9pcj,CVE-2026-55405,"1.11.8-beta19,1.16.3-beta26,1.2.1-beta8,1.5.1-beta11",公告修复在beta集成线，本轮未新增预发布升级候选。,https://osv.dev/vulnerability/GHSA-2mfg-cc43-9pcj
+managed-only-in-snapshot,io.modelcontextprotocol.sdk:mcp-core,0.18.5,GHSA-8jxr-pr72-r468,CVE-2026-35568,1.0.0,已升0.18.5；剩余公告修复要求SDK1.x，需要API迁移。,https://osv.dev/vulnerability/GHSA-8jxr-pr72-r468
+managed-only-in-snapshot,mysql:mysql-connector-java,8.0.33,GHSA-m6vm-37g8-gqvh,CVE-2023-22102,,旧坐标止于8.0.33，需要消费方改用com.mysql:mysql-connector-j。,https://osv.dev/vulnerability/GHSA-m6vm-37g8-gqvh
+managed-only-in-snapshot,ca.juliusdavies:not-yet-commons-ssl,0.3.9,GHSA-cmxj-wx9v-52qr,CVE-2014-3604,0.3.15,公告列出的修复版本未从该公开坐标取得，需迁移TLS实现。,https://osv.dev/vulnerability/GHSA-cmxj-wx9v-52qr
+managed-only-in-snapshot,com.querydsl:querydsl-apt,5.1.0,GHSA-6q3q-6v5j-h6vg,CVE-2024-49203,,原com.querydsl坐标需迁移维护中的替代发行线，涉及坐标与注解处理配置。,https://osv.dev/vulnerability/GHSA-6q3q-6v5j-h6vg
+managed-only-in-snapshot,com.querydsl:querydsl-jpa,5.1.0,GHSA-6q3q-6v5j-h6vg,CVE-2024-49203,,原com.querydsl坐标需迁移维护中的替代发行线，需验证JPA兼容性。,https://osv.dev/vulnerability/GHSA-6q3q-6v5j-h6vg
+managed-only-in-snapshot,org.jboss.resteasy:resteasy-netty4-cdi,6.2.19.Final,GHSA-5wpr-cj9p-959r,CVE-2024-9622,,公告库未列修复发行版；需上游修复或迁移此旧适配器。,https://osv.dev/vulnerability/GHSA-5wpr-cj9p-959r
+actual-in-snapshot,org.apache.shiro:shiro-core,2.2.1,GHSA-m8g6-vrr2-x7ff,CVE-2026-56130,3.0.0,2.2.1仍命中RememberMe公告；3.x迁移会影响凭据契约，本轮不改认证业务。,https://osv.dev/vulnerability/GHSA-m8g6-vrr2-x7ff
+actual-in-snapshot,org.apache.shiro:shiro-web,2.2.1,GHSA-m8g6-vrr2-x7ff,CVE-2026-56130,3.0.0,同一RememberMe公告，保留2.x兼容性；不能称为已修复。,https://osv.dev/vulnerability/GHSA-m8g6-vrr2-x7ff
+actual-in-snapshot,org.springframework:spring-webflux,6.2.19,GHSA-9qf2-26p9-2q2q,CVE-2026-47892,7.0.9,6.2.20为企业渠道；保持公开Spring6.2.19并列出触发条件。,https://osv.dev/vulnerability/GHSA-9qf2-26p9-2q2q
+actual-in-snapshot,org.springframework:spring-webflux,6.2.19,GHSA-j9f9-w8pj-32f8,CVE-2026-47890,7.0.9,6.2.20为企业渠道；保持公开Spring6.2.19并列出触发条件。,https://osv.dev/vulnerability/GHSA-j9f9-w8pj-32f8
+actual-in-snapshot,org.springframework:spring-webmvc,6.2.19,GHSA-j9f9-w8pj-32f8,CVE-2026-47890,7.0.9,6.2.20为企业渠道；保持公开Spring6.2.19并列出触发条件。,https://osv.dev/vulnerability/GHSA-j9f9-w8pj-32f8
+actual-in-snapshot,org.springframework:spring-webmvc,6.2.19,GHSA-pc63-qcmh-9cmg,CVE-2026-47884,7.0.9,6.2.20为企业渠道；保持公开Spring6.2.19并列出触发条件。,https://osv.dev/vulnerability/GHSA-pc63-qcmh-9cmg
+managed-only-in-snapshot,io.undertow:undertow-core,2.3.27.Final,GHSA-3x3v-w654-m28m,CVE-2026-3260,,公告库未列修复区间，保留记录，不能按升级即已修复处理。,https://osv.dev/vulnerability/GHSA-3x3v-w654-m28m
+actual-in-snapshot,org.springframework:spring-expression,6.2.19,CVE-2026-59283,CVE-2026-59283,6.2.20 (enterprise),SimpleEvaluationContext与SpEL编译器组合；公开6.x无该补丁。,https://spring.io/security/cve-2026-59283/
+actual-in-snapshot,org.springframework.security:spring-security-crypto,6.5.11,CVE-2026-47842,CVE-2026-47842,6.5.12 (enterprise),AesBytesEncryptor固定IV；调整加密还需考虑旧密文兼容。,https://spring.io/security/cve-2026-47842/
+actual-in-snapshot,org.springframework.data:spring-data-jpa,3.5.13,CVE-2026-47834,CVE-2026-47834,3.5.14 (enterprise),不可信Sort/Pageable进入原生SQL；需排序白名单与消费方核查。,https://spring.io/security/cve-2026-47834/

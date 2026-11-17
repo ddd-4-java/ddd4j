@@ -20,11 +20,9 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.SynchronousSink;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 /**
  * 投影分发门面（core 投影契约之上的薄封装）。
@@ -197,9 +195,8 @@ public class ProjectionDispatcher {
     }
 
     private Collection<String> eventTypeNames(ProjectionHandler handler) {
-        return Collections.unmodifiableList(handler.eventTypes().stream()
-                .map(Class::getSimpleName)
-                .collect(Collectors.toList()));
+        return handler.eventTypes().stream()
+                .map(Class::getSimpleName).toList();
     }
 
     /**

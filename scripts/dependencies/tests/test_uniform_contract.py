@@ -90,7 +90,7 @@ class UniformContract(unittest.TestCase):
         jdk17 = checker.resolve_policy(raw, 'feature/2.0.x')['fixed_properties']
         self.assertEqual(jdk17.get('hibernate-validator.version'), '8.0.6.Final')
         self.assertEqual(jdk17.get('jersey.version'), '3.1.12')
-        self.assertEqual(jdk17.get('logback.version'), '1.5.38')
+        self.assertEqual(jdk17.get('logback.version'), '1.6.7')
         self.assertFalse(any(value in jdk21['exclude'] for value in expected))
 
     def test_jdk21_micronaut_family_remains_on_supported_java_line(self):
@@ -169,13 +169,20 @@ class UniformContract(unittest.TestCase):
         self.assertEqual(jdk8['fixed_properties'].get('logback-slf4j2.version'), '1.3.14')
         self.assertEqual(jdk8['fixed_properties'].get('slf4j-legacy.version'), '1.7.36')
         self.assertEqual(checker.resolve_policy(raw, 'feature/2.0.x')['fixed_properties'].get('logback.version'),
-                         '1.5.38')
+                         '1.6.7')
 
     def test_jdk17_mybatis_stays_on_spring6_line(self):
         repository = pathlib.Path(__file__).parents[3]
         raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
         fixed = checker.resolve_policy(raw, 'feature/2.0.x')['fixed_properties']
         self.assertEqual(fixed.get('mybatis-spring.version'), '3.0.6')
+
+    def test_jdk17_micrometer_metrics_and_tracing_are_pinned_separately(self):
+        repository = pathlib.Path(__file__).parents[3]
+        raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
+        fixed = checker.resolve_policy(raw, 'feature/2.0.x')['fixed_properties']
+        self.assertEqual(fixed.get('micrometer.version'), '1.17.2')
+        self.assertEqual(fixed.get('micrometer-tracing.version'), '1.7.2')
 
     def test_jdk8_javalin_remains_on_java8_bytecode(self):
         repository = pathlib.Path(__file__).parents[3]

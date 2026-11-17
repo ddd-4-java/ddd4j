@@ -14,6 +14,7 @@
  */
 package io.ddd4j.data.projection.dropwizard;
 
+import io.ddd4j.dropwizard.Ddd4jLogbackAccessRequestLogFactory;
 import io.ddd4j.core.cqrs.readmodel.*;
 import io.dropwizard.core.Application;
 import io.dropwizard.core.Configuration;
@@ -146,6 +147,7 @@ class DropwizardProjectionSchedulerIT {
 
         @Override
         public void run(Configuration configuration, Environment environment) {
+            Ddd4jLogbackAccessRequestLogFactory.configure(configuration);
             Collection<ProjectionView<?>> views = List.of(
                     new ProjectionViewStub("test-view-1", "0/5 * * * * *"),
                     new ProjectionViewStub("test-view-2", "0/10 * * * * *")

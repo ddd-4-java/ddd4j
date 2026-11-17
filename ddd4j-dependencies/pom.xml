@@ -71,6 +71,7 @@
         <bcmail.version>${bcprov.version}</bcmail.version>
         <bcpg.version>${bcprov.version}</bcpg.version>
         <bcpkix.version>${bcprov.version}</bcpkix.version>
+        <bouncycastle-lts.version>2.73.13</bouncycastle-lts.version>
         <bcprov.version>1.87</bcprov.version>
         <bctls.version>${bcprov.version}</bctls.version>
         <beetl.version>3.21.2.RELEASE</beetl.version>
@@ -366,7 +367,7 @@
         <jsch.version>2.28.3</jsch.version>
         <json-path.version>2.10.0</json-path.version>
         <json-schema-validator.version>2.2.14</json-schema-validator.version>
-        <json-smart.version>2.6.0</json-smart.version>
+        <json-smart.version>2.6.1</json-smart.version>
         <json.version>20260814</json.version>
         <jsonassert.version>1.5.3</jsonassert.version>
         <jsonschema.version>4.38.0</jsonschema.version>
@@ -404,7 +405,7 @@
         <liteflow.version>2.16.3.1</liteflow.version>
         <lock4j.version>2.2.7</lock4j.version>
         <log4j2.version>2.26.1</log4j2.version>
-        <logback.version>1.6.6</logback.version>
+        <logback.version>1.6.7</logback.version>
         <lz4-java.version>1.12.0</lz4-java.version>
         <management-core.version>2.1.30.4.43</management-core.version>
         <mapstruct.version>1.6.3</mapstruct.version>
@@ -420,8 +421,8 @@
         <metrics-resteasy.version>2.0.x.20260630-SNAPSHOT</metrics-resteasy.version>
         <metrics-sigar2.version>2.0.x.20260630-SNAPSHOT</metrics-sigar2.version>
         <mica-mqtt.version>2.6.6</mica-mqtt.version>
-        <micrometer.version>1.7.2</micrometer.version>
-        <micrometer-tracing.version>${micrometer.version}</micrometer-tracing.version>
+        <micrometer.version>1.17.2</micrometer.version>
+        <micrometer-tracing.version>1.7.2</micrometer-tracing.version>
         <micronaut.core.version>4.10.26</micronaut.core.version>
         <micronaut.version>4.10.17</micronaut.version>
         <milvus.version>3.0.4</milvus.version>
@@ -460,7 +461,7 @@
         <nacos.client.version>3.2.2</nacos.client.version>
         <neethi.version>3.2.2</neethi.version>
         <neo4j-java-driver.version>5.28.10</neo4j-java-driver.version>
-        <netty-compat4.version>4.1.141.Final</netty-compat4.version>
+        <netty-4_1.version>4.1.141.Final</netty-4_1.version>
         <netty-socketio.version>2.0.14</netty-socketio.version>
         <netty-tcnative.version>2.0.85.Final</netty-tcnative.version>
         <netty.version>4.2.21.Final</netty.version>
@@ -754,7 +755,7 @@
         <zipkin-reporter.version>3.5.1</zipkin-reporter.version>
         <zkclient.version>0.11</zkclient.version>
         <zookeeper.version>3.9.5</zookeeper.version>
-        <zstd-jni.version>1.5.7-11</zstd-jni.version>
+        <zstd-jni.version>1.5.7-28</zstd-jni.version>
         <zxing-extension.version>2.0.x.20260630-SNAPSHOT</zxing-extension.version>
         <zxing.version>3.5.4</zxing.version>
 
@@ -819,6 +820,21 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <!-- 指标与追踪独立选版，优先于 Hibernate / Boot / Quarkus 等平台 BOM。 -->
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-bom</artifactId>
+                <version>${micrometer.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-tracing-bom</artifactId>
+                <version>${micrometer-tracing.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson</groupId>
                 <artifactId>jackson-bom</artifactId>
@@ -863,6 +879,22 @@
                 <version>${glassfish-jaxb.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <!-- Jakarta JAXB 运行时与 BOM 同版，直接管理优先于所有平台导入。 -->
+            <dependency>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>jaxb-runtime</artifactId>
+                <version>${glassfish-jaxb.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>jaxb-core</artifactId>
+                <version>${glassfish-jaxb.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>txw2</artifactId>
+                <version>${glassfish-jaxb.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.hibernate.orm</groupId>
@@ -1616,6 +1648,22 @@
                 <groupId>org.apache.xmlgraphics</groupId>
                 <artifactId>batik-xml</artifactId>
                 <version>${batik.version}</version>
+            </dependency>
+            <!-- NATS 使用 BC LTS；独立于 jdk18on 发行线，避免旧传递版本回流。 -->
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-lts8on</artifactId>
+                <version>${bouncycastle-lts.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcutil-lts8on</artifactId>
+                <version>${bouncycastle-lts.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcpkix-lts8on</artifactId>
+                <version>${bouncycastle-lts.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.bouncycastle/bcjmail-jdk18on -->
             <!-- Bouncy Castle JMail JDK18+：Bouncy Castle 在 JDK 18+ 上的 JMail 实现（S/MIME 邮件加密）。 -->
@@ -4199,14 +4247,6 @@
                 <artifactId>hermes-java-sdk</artifactId>
                 <version>${hermes-java-sdk.version}</version>
             </dependency>
-            <!-- Micrometer must precede imported BOMs that manage older metrics modules. -->
-            <dependency>
-                <groupId>io.micrometer</groupId>
-                <artifactId>micrometer-bom</artifactId>
-                <version>${micrometer.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.hibernate.orm/hibernate-platform -->
             <!-- Hibernate Platform：Hibernate ORM 6.x 各模块的版本清单。 -->
             <!-- Source: https://mvnrepository.com/artifact/org.hibernate.validator/hibernate-validator -->
@@ -5609,6 +5649,11 @@
                 <artifactId>json-smart</artifactId>
                 <version>${json-smart.version}</version>
             </dependency>
+            <dependency>
+                <groupId>net.minidev</groupId>
+                <artifactId>accessors-smart</artifactId>
+                <version>${json-smart.version}</version>
+            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.skyscreamer/jsonassert -->
             <!-- JSONAssert：JUnit JSON 断言库，支持非严格模式的 JSON 对比。 -->
             <dependency>
@@ -6493,15 +6538,6 @@
                 <groupId>io.micrometer</groupId>
                 <artifactId>micrometer-registry-stackdriver</artifactId>
                 <version>${micrometer.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/io.micrometer/micrometer-tracing-bom -->
-            <!-- Micrometer Tracing BOM：Micrometer 分布式追踪各模块的版本清单。 -->
-            <dependency>
-                <groupId>io.micrometer</groupId>
-                <artifactId>micrometer-tracing-bom</artifactId>
-                <version>${micrometer-tracing.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <!-- BOMs 必须置于 micronaut-platform 之前，Maven 4 中先声明优先 -->
             <!-- Javalin BOM（控制 Jetty 版本） -->
@@ -8578,6 +8614,21 @@
                 <groupId>net.javacrumbs.shedlock</groupId>
                 <artifactId>shedlock-spring</artifactId>
                 <version>${shedlock.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-config-ogdl</artifactId>
+                <version>${shiro.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-crypto-cipher</artifactId>
+                <version>${shiro.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.shiro</groupId>
+                <artifactId>shiro-event</artifactId>
+                <version>${shiro.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.shiro/shiro-cache -->
             <!-- Shiro Cache：Apache Shiro 的缓存抽象模块。 -->

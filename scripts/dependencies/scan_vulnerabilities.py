@@ -5,6 +5,7 @@ import argparse
 import json
 import os
 import subprocess
+import shutil
 from pathlib import Path
 import sys
 import xml.etree.ElementTree as ET
@@ -96,11 +97,38 @@ def reactor_sbom(root, output):
     return manifest
 
 
+def prepare_jdk17_inventories(root, output):
+    """扫描导入 BOM 的全部有效管理版本，同时验证实际类路径及兼容边界。"""
+    family = output / 'dependency-families'
+    env = os.environ.copy()
+    if env.get('BUILD_JAVA_HOME'):
+        env['JAVA_HOME'] = env['BUILD_JAVA_HOME']
+        env['PATH'] = str(Path(env['JAVA_HOME']) / 'bin') + os.pathsep + env.get('PATH', '')
+    subprocess.run([sys.executable, str(root / 'scripts/verify_dependency_family_alignment.py'),
+                    '--root', str(root), '--output', str(family)], env=env, check=True)
+    summary = json.loads((family / 'summary.json').read_text())
+    if summary.get('status') != 'PASS' or summary.get('errors') or not summary.get('projects') or summary.get('projects') != summary.get('trees'):
+        raise ValueError('Incomplete JDK 17 dependency models or trees')
+    targets = []
+    for name in ('managed', 'reactor'):
+        source = family / (name + '-bom.cdx.json')
+        data = json.loads(source.read_text())
+        if data.get('bomFormat') != 'CycloneDX' or not data.get('components'):
+            raise ValueError('Empty JDK 17 dependency inventory: ' + name)
+        target = output / source.name
+        shutil.copyfile(source, target)
+        targets.append(target)
+    return tuple(targets)
+
+
 def scan(root, output, line, threshold):
     output.mkdir(parents=True, exist_ok=True)
-    manifest = output / 'managed-bom.cdx.json'
-    manifest.write_text(json.dumps(create_sbom(root / 'ddd4j-dependencies/pom.xml', line)), encoding='utf-8')
-    reactor_manifest = reactor_sbom(root, output)
+    if line.removeprefix('feature/') == '2.0.x':
+        manifest, reactor_manifest = prepare_jdk17_inventories(root, output)
+    else:
+        manifest = output / 'managed-bom.cdx.json'
+        manifest.write_text(json.dumps(create_sbom(root / 'ddd4j-dependencies/pom.xml', line)), encoding='utf-8')
+        reactor_manifest = reactor_sbom(root, output)
     reactor_report = output / 'trivy.json'
     bom_report = output / 'managed-bom-trivy.json'
     commands = (

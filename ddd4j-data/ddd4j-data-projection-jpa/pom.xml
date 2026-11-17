@@ -82,6 +82,18 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <version>${spring-boot-it.version}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.vaadin.external.google</groupId>
+                    <artifactId>android-json</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- JSONassert 继续使用稳定版；由 org.json 提供 JSON API，避免旧 Android JSON。 -->
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <scope>test</scope>
         </dependency>
         <!-- Hibernate ORM：测试栈运行时显式钉 6.6.40.Final（Boot 3.4/3.5 ＝ Spring 6.2 线）。
              此钉为实测必要（非冗余，与 ddd4j-data-event-store-jpa 同款）：本模块 BOM 链实际

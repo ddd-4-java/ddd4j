@@ -45,7 +45,7 @@
             <artifactId>hibernate-core</artifactId>
             <exclusions>
                 <exclusion>
-                    <groupId>org.glassfish</groupId>
+                    <groupId>org.glassfish.jaxb</groupId>
                     <artifactId>jaxb-runtime</artifactId>
                 </exclusion>
             </exclusions>

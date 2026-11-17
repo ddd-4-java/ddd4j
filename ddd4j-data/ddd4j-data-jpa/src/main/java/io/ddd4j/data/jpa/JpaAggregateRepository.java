@@ -64,8 +64,6 @@ import java.util.stream.Collectors;
 public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID extends Serializable>
         implements Repository<M, ID>, DomainObjectMapper<M, P>, Serializable {
 
-    private static final long serialVersionUID = 1L;
-
     /** JPA 实体管理器。 */
     protected final EntityManager entityManager;
     /** 领域模型类型。 */
@@ -175,7 +173,7 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
         return Optional.ofNullable(entityManager
                         .createQuery("SELECT p FROM " + persistenceClass.getSimpleName() + " p", persistenceClass)
                         .setMaxResults(1)
-                        .getSingleResultOrNull())
+                        .getSingleResult())
                 .map(this::toModel);
     }
 
@@ -233,7 +231,7 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
         applyOrder(criteriaQuery, criteriaBuilder, root, query);
         return Optional.ofNullable(entityManager.createQuery(criteriaQuery)
                         .setMaxResults(1)
-                        .getSingleResultOrNull())
+                        .getSingleResult())
                 .map(this::toModel);
     }
 
@@ -248,7 +246,6 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<Map<String, Object>> maps(Query<M> query) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Tuple> cq = cb.createTupleQuery();

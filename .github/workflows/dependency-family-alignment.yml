@@ -33,6 +33,10 @@ jobs:
       - name: Verify gate regressions
         run: >-
           python3 -m unittest discover -s scripts -p 'test_dependency_family_alignment.py' -v
+      - name: Check source version ownership and BOM priority before Maven
+        run: >-
+          python3 scripts/verify_dependency_family_alignment.py --source-only
+          --output "$RUNNER_TEMP/dependency-families-source"
       - name: Configure existing Maven repositories
         env:
           MAVEN_SETTINGS_XML: ${{ secrets.MAVEN_SETTINGS_XML }}
@@ -62,6 +66,7 @@ jobs:
         with:
           name: jdk17-dependency-families-${{ github.run_id }}
           path: |
+            ${{ runner.temp }}/dependency-families-source/
             ${{ runner.temp }}/dependency-families/
             **/target/surefire-reports/
             **/target/failsafe-reports/

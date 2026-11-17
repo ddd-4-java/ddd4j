@@ -21,6 +21,30 @@
         <dependency>
             <groupId>io.github.easy4j</groupId>
             <artifactId>easyexcel</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.ehcache</groupId>
+                    <artifactId>ehcache</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- 与 Jakarta JAXB 4 配套，避免默认 javax 变体带回 JAXB 2.x。 -->
+        <dependency>
+            <groupId>org.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+            <version>${ehcache3.version}</version>
+            <classifier>jakarta</classifier>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.glassfish.jaxb</groupId>
+                    <artifactId>jaxb-runtime</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>${glassfish-jaxb.version}</version>
         </dependency>
         <!-- For ddd4j-core: 复用 BizRuntimeException / I18nKit 等基础设施 -->
         <dependency>

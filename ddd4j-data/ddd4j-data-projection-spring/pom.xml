@@ -54,6 +54,18 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <version>${spring-boot-it.version}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.vaadin.external.google</groupId>
+                    <artifactId>android-json</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- JSONassert 继续使用稳定版；由 org.json 提供 JSON API，避免旧 Android JSON。 -->
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

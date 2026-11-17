@@ -6,6 +6,8 @@ import xml.etree.ElementTree as ET
 import tempfile
 import struct
 import zipfile
+from types import SimpleNamespace
+from unittest.mock import patch
 
 
 CHECKER = Path(__file__).with_name('verify_dependency_family_alignment.py')
@@ -24,10 +26,14 @@ def model(name, deps=(), props=''):
 
 
 def owner():
-    props = {'netty.version': '4.2.21.Final', 'netty-compat4.version': '4.1.141.Final',
+    props = {'netty.version': '4.2.21.Final', 'netty-4_1.version': '4.1.141.Final',
              'asm.version': '9.11.1', 'jackson3.version': '3.3.0', 'artemis.version': '2.57.0',
              'vertx.version': '5.2.3', 'vertx-compat4.version': '4.5.36',
-             'netty-tcnative.version': '2.0.85.Final', 'logback.version': '1.5.38'}
+             'netty-tcnative.version': '2.0.85.Final', 'logback.version': '1.6.7'}
+    props.update({'json-smart.version': '2.6.1', 'zstd-jni.version': '1.5.7-28',
+                  'json.version': '20260814', 'bouncycastle-lts.version': '2.73.13',
+                  'glassfish-jaxb.version': '4.0.9', 'shiro.version': '3.0.2'})
+    props.update({'micrometer.version': '1.17.2', 'micrometer-tracing.version': '1.7.2'})
     props['helidon-jersey.version'] = '3.0.18'
     props['quarkus-hibernate.version'] = '7.4.9.Final'
     props['quarkus-agroal.version'] = '3.2.1'
@@ -39,6 +45,7 @@ def owner():
                  ('org.glassfish.hk2', 'hk2-locator', '3.0.6'),
                  ('io.dropwizard.metrics', 'metrics-core', '4.2.39'),
                  ('org.glassfish.jaxb', 'jaxb-runtime', '4.0.9'),
+                 ('io.micrometer', 'context-propagation', '1.2.1'),
                  ('org.hibernate.orm', 'hibernate-graalvm', '6.6.59.Final'),
                  ('jakarta.persistence', 'jakarta.persistence-api', '3.1.0')],
                  ''.join(f'<{k}>{v}</{k}>' for k, v in props.items()))
@@ -73,6 +80,10 @@ class DependencyFamilyAlignmentTest(unittest.TestCase):
                 ('io.vertx', 'vertx-core', '4.5.36'), ('io.netty', 'netty-tcnative-classes', '2.0.85.Final')]
         self.assertEqual([], self.check([], 'ddd4j-runtime-quarkus', actual=deps)['errors'])
 
+    def test_current_micronaut_http_requires_netty42(self):
+        self.assertEqual([], self.check([], 'ddd4j-web-micronaut', actual=[
+            ('io.netty', 'netty-transport', '4.2.21.Final'), ('io.vertx', 'vertx-core', '5.2.3')])['errors'])
+
     def test_rejects_native_classifier_old_core(self):
         item = tree('ddd4j-runtime-quarkus', [('io.netty', 'netty-transport-native-epoll', '4.1.128.Final')])
         item['children'][0]['classifier'] = 'linux-x86_64'
@@ -97,13 +108,57 @@ class DependencyFamilyAlignmentTest(unittest.TestCase):
     def test_platform_cannot_downgrade_observability_or_aws_management(self):
         for group, artifact, fixed, old in (
                 ('io.opentelemetry', 'opentelemetry-api', '1.68.0', '1.54.1'),
-                ('io.micrometer', 'micrometer-core', '1.17.1', '1.15.4'),
+                ('io.micrometer', 'micrometer-core', '1.17.2', '1.15.4'),
                 ('software.amazon.awssdk', 'cloudfront', '2.59.2', '2.31.66')):
             with self.subTest(group=group):
                 base = owner()
                 base.find('dependencyManagement/dependencies').append(model('x', [(group, artifact, fixed)]).find('dependencyManagement/dependencies/dependency'))
                 models = {'ddd4j-dependencies': base, 'sample': model('sample', [(group, artifact, old)])}
                 self.assertTrue(FAMILY.audit(models, {'sample': tree('sample')}, {'sample'})['errors'])
+
+    def test_rejects_central_micrometer_mix_even_when_every_module_matches_it(self):
+        mixed = [('io.micrometer', 'micrometer-core', '1.10.4'),
+                 ('io.micrometer', 'micrometer-registry-prometheus', '1.7.2')]
+        base = owner()
+        for dep in model('x', mixed).findall('dependencyManagement/dependencies/dependency'):
+            base.find('dependencyManagement/dependencies').append(dep)
+        models = {'ddd4j-dependencies': base, 'sample': model('sample', mixed)}
+        errors = FAMILY.audit(models, {'sample': tree('sample', mixed)}, {'sample'})['errors']
+        for artifact in ('micrometer-core', 'micrometer-registry-prometheus'):
+            self.assertTrue(any(e.get('module') == 'ddd4j-dependencies' and
+                                e.get('coordinate') == 'io.micrometer:' + artifact and
+                                e.get('expected') == '1.17.2' for e in errors))
+
+    def test_metrics_and_tracing_keep_independent_versions(self):
+        deps = [('io.micrometer', 'micrometer-core', '1.17.2'),
+                ('io.micrometer', 'micrometer-observation', '1.17.2'),
+                ('io.micrometer', 'micrometer-registry-prometheus', '1.17.2'),
+                ('io.micrometer', 'micrometer-registry-prometheus-simpleclient', '1.17.2'),
+                ('io.micrometer', 'micrometer-tracing', '1.7.2'),
+                ('io.micrometer', 'micrometer-tracing-bridge-otel', '1.7.2'),
+                ('io.micrometer', 'context-propagation', '1.2.1')]
+        self.assertEqual([], self.check(deps)['errors'])
+
+    def test_tracing_cannot_use_metrics_version(self):
+        errors = self.check([('io.micrometer', 'micrometer-tracing-bridge-otel', '1.17.2')])['errors']
+        self.assertTrue(any(e.get('expected') == '1.7.2' for e in errors))
+
+    def test_rejects_old_tracing_even_when_central_management_matches(self):
+        deps = [('io.micrometer', 'micrometer-tracing', '1.6.1')]
+        base = owner()
+        base.find('dependencyManagement/dependencies').append(
+            model('x', deps).find('dependencyManagement/dependencies/dependency'))
+        errors = FAMILY.audit({'ddd4j-dependencies': base}, {}, set())['errors']
+        self.assertTrue(any(e.get('coordinate') == 'io.micrometer:micrometer-tracing' and
+                            e.get('expected') == '1.7.2' for e in errors))
+
+    def test_central_jaxb_core_cannot_be_its_own_wrong_baseline(self):
+        base = owner()
+        base.find('dependencyManagement/dependencies').append(model('x', [
+            ('org.glassfish.jaxb', 'jaxb-core', '2.3.9')]).find('dependencyManagement/dependencies/dependency'))
+        errors = FAMILY.audit({'ddd4j-dependencies': base}, {}, set())['errors']
+        self.assertTrue(any(e.get('coordinate') == 'org.glassfish.jaxb:jaxb-core' and
+                            e.get('expected') == '4.0.9' for e in errors))
 
     def test_rejects_jersey_and_hk2_javax_generation(self):
         for g, a in [('org.glassfish.jersey.core', 'jersey-common'), ('org.glassfish.hk2', 'hk2-locator')]:
@@ -127,6 +182,61 @@ class DependencyFamilyAlignmentTest(unittest.TestCase):
     def test_quarkus_can_explicitly_choose_platform_jpa32(self):
         self.assertEqual([], self.check([], 'ddd4j-runtime-quarkus',
                          actual=[('jakarta.persistence', 'jakarta.persistence-api', '3.2.0')])['errors'])
+
+    def test_logback16_is_blocked_for_current_dropwizard_baseline(self):
+        base = owner()
+        base.find('properties/logback.version').text = '1.6.6'
+        self.assertTrue(FAMILY.audit({'ddd4j-dependencies': base}, {}, set())['errors'])
+
+    def test_inventory_includes_imported_management_even_when_unused(self):
+        self.assertTrue(hasattr(FAMILY, 'inventories'))
+        models = {'ddd4j-dependencies': owner(), 'sample': model('sample', [('unused', 'library', '1')])}
+        inventory = FAMILY.inventories(models, {'sample': tree('sample', [('used', 'library', '2')])})
+        self.assertIn('unused:library:1', {c['group'] + ':' + c['name'] + ':' + c['version']
+                                        for c in inventory['managed']['components']})
+        self.assertNotIn('unused:library:1', {c['group'] + ':' + c['name'] + ':' + c['version']
+                                           for c in inventory['reactor']['components']})
+
+    def test_managed_ranges_are_recorded_as_policies_instead_of_fake_releases(self):
+        self.assertTrue(hasattr(FAMILY, 'inventories'))
+        inventory = FAMILY.inventories({'sample': model('sample', [('unused', 'library', '[1,2)')])}, {})
+        self.assertEqual([], inventory['managed']['components'])
+        self.assertEqual('[1,2)', inventory['unresolved_management'][0]['version'])
+
+    def test_rejects_legacy_android_json_even_in_test_scope(self):
+        result = self.check([], actual=[('com.vaadin.external.google', 'android-json', '0.0.20131108.vaadin1')])
+        self.assertTrue(any(error['code'] == 'obsolete-json-provider' for error in result['errors']))
+
+    def test_rejects_old_security_dependencies_from_transitive_boms(self):
+        for dependency in [('net.minidev', 'json-smart', '2.6.0'),
+                           ('net.minidev', 'accessors-smart', '2.6.0'),
+                           ('org.bouncycastle', 'bcprov-lts8on', '2.73.12.1'),
+                           ('com.github.luben', 'zstd-jni', '1.5.7-11'),
+                           ('org.apache.shiro', 'shiro-core', '2.2.1'),
+                           ('ch.qos.logback', 'logback-classic', '1.5.38'),
+                           ('org.glassfish.jaxb', 'jaxb-runtime', '2.3.9')]:
+            with self.subTest(dependency=dependency):
+                self.assertTrue(self.check([], actual=[dependency])['errors'])
+
+    def test_rejects_shared_property_downgrade_even_without_version_drift(self):
+        base = owner()
+        base.find('properties/logback.version').text = '1.5.38'
+        result = FAMILY.audit({'ddd4j-dependencies': base}, {}, set())
+        self.assertTrue(any(error['code'] == 'security-baseline' for error in result['errors']))
+
+    def test_rejects_default_ehcache_variant_with_jakarta_jaxb(self):
+        result = self.check([], actual=[('org.ehcache', 'ehcache', '3.12.0')])
+        self.assertTrue(any(error['code'] == 'javax-jaxb-consumer' for error in result['errors']))
+
+    def test_accepts_upgraded_security_dependencies(self):
+        dependencies = [('net.minidev', 'json-smart', '2.6.1'),
+                        ('net.minidev', 'accessors-smart', '2.6.1'),
+                        ('org.bouncycastle', 'bcprov-lts8on', '2.73.13'),
+                        ('com.github.luben', 'zstd-jni', '1.5.7-28'),
+                        ('org.apache.shiro', 'shiro-core', '3.0.2'),
+                        ('ch.qos.logback', 'logback-classic', '1.6.7'),
+                        ('org.glassfish.jaxb', 'jaxb-runtime', '4.0.9')]
+        self.assertEqual([], self.check([], actual=dependencies)['errors'])
 
     def test_missing_tree_fails_closed(self):
         self.assertTrue(FAMILY.audit({'ddd4j-dependencies': owner()}, {}, {'demo'})['errors'])
@@ -181,6 +291,69 @@ class DependencyFamilyAlignmentTest(unittest.TestCase):
             self.assertEqual([], FAMILY.source_management_errors(root, {'ddd4j-dependencies': '.'}))
 
 
+class MicrometerSourceOwnershipTest(unittest.TestCase):
+    def write_owner(self, root, late=False, tracing='1.7.2'):
+        folder = root / 'ddd4j-dependencies'
+        folder.mkdir()
+        def bom(group, artifact, version):
+            return (f'<dependency><groupId>{group}</groupId><artifactId>{artifact}</artifactId>'
+                    f'<version>{version}</version><type>pom</type><scope>import</scope></dependency>')
+        platform = bom('org.hibernate.orm', 'hibernate-platform', '6.6.59.Final')
+        metrics = bom('io.micrometer', 'micrometer-bom', '${micrometer.version}')
+        trace = bom('io.micrometer', 'micrometer-tracing-bom', '${micrometer-tracing.version}')
+        imports = platform + metrics + trace if late else metrics + trace + platform
+        (folder / 'pom.xml').write_text(
+            '<project><properties><micrometer.version>1.17.2</micrometer.version>'
+            f'<micrometer-tracing.version>{tracing}</micrometer-tracing.version></properties>'
+            f'<dependencyManagement><dependencies>{imports}</dependencies></dependencyManagement></project>')
+
+    def test_shared_boms_precede_hibernate(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.write_owner(root)
+            self.assertEqual([], FAMILY.source_bom_errors(root))
+
+    def test_hibernate_cannot_precede_metrics_or_tracing(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.write_owner(root, late=True)
+            errors = FAMILY.source_bom_errors(root)
+            self.assertEqual({'micrometer-bom', 'micrometer-tracing-bom'},
+                             {e['artifact'] for e in errors if e['code'] == 'micrometer-bom-priority'})
+
+    def test_tracing_property_cannot_alias_metrics(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.write_owner(root, tracing='${micrometer.version}')
+            self.assertTrue(any(e.get('property') == 'micrometer-tracing.version'
+                                for e in FAMILY.source_bom_errors(root)))
+
+    def test_wrong_bom_version_property_is_rejected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.write_owner(root)
+            pom = root / 'ddd4j-dependencies/pom.xml'
+            pom.write_text(pom.read_text().replace(
+                '<version>${micrometer-tracing.version}</version>',
+                '<version>${micrometer.version}</version>'))
+            self.assertTrue(any(e['code'] == 'micrometer-bom-owner' for e in FAMILY.source_bom_errors(root)))
+
+    def test_source_only_reports_failure_without_calling_maven(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.write_owner(root, late=True)
+            args = SimpleNamespace(root=root, output=root / 'report', source_only=True)
+            with patch.object(FAMILY.spring, 'discover_projects', return_value=(
+                    {'ddd4j-dependencies': 'ddd4j-dependencies'}, [])), \
+                    patch.object(FAMILY.spring, 'run', side_effect=AssertionError('Maven must not run')), \
+                    patch.object(FAMILY.subprocess, 'run', side_effect=AssertionError('Maven must not run')):
+                self.assertEqual(1, FAMILY.run(args))
+            import json
+            report = json.loads((args.output / 'summary.json').read_text())
+            self.assertEqual('source-only', report['verification'])
+            self.assertEqual('FAIL', report['status'])
+
+
 class FamilyWorkflowTest(unittest.TestCase):
     def test_jdk17_workflow_preserves_failure_and_runs_real_checks(self):
         path = Path(__file__).parents[1] / '.github/workflows/dependency-family-alignment.yml'
@@ -191,6 +364,7 @@ class FamilyWorkflowTest(unittest.TestCase):
                          './mvnw -B -ntp verify', 'if: always()', 'if-no-files-found: error'):
             self.assertIn(required, text)
         self.assertNotIn('continue-on-error', text)
+        self.assertLess(text.index('--source-only'), text.index('-DskipTests install'))
 
 
 if __name__ == '__main__':

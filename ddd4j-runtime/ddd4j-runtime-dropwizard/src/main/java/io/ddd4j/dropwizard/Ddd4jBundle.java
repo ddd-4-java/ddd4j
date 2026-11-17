@@ -90,6 +90,7 @@ public final class Ddd4jBundle<C extends Configuration> implements ConfiguredBun
     public void run(C configuration, Environment environment) {
         Objects.requireNonNull(configuration, "configuration must not be null");
         Objects.requireNonNull(environment, "environment must not be null");
+        Ddd4jLogbackAccessRequestLogFactory.configure(configuration);
         DropwizardDomainEventPublisher publisher = new DropwizardDomainEventPublisher(listeners);
         SubjectProvider effectiveSubject = Objects.nonNull(subjectProvider)
                 ? subjectProvider

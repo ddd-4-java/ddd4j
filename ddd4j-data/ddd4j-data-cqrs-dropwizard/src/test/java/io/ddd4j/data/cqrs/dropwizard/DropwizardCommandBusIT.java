@@ -14,6 +14,7 @@
  */
 package io.ddd4j.data.cqrs.dropwizard;
 
+import io.ddd4j.dropwizard.Ddd4jLogbackAccessRequestLogFactory;
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.Result;
@@ -224,6 +225,7 @@ class DropwizardCommandBusIT {
 
         @Override
         public void run(Configuration configuration, Environment environment) {
+            Ddd4jLogbackAccessRequestLogFactory.configure(configuration);
             this.busFromRun = DropwizardCommandBus.create(this, discover());
         }
 

@@ -12,6 +12,33 @@ spec.loader.exec_module(scanner)
 
 
 class ScannerTests(unittest.TestCase):
+    def test_jdk17_scan_uses_complete_effective_catalog(self):
+        self.assertTrue(hasattr(scanner, 'prepare_jdk17_inventories'))
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            output = root / 'reports'
+            output.mkdir()
+            manifests = []
+            for scope in ('managed', 'reactor'):
+                path = output / (scope + '-bom.cdx.json')
+                component = {'group': 'imported', 'name': scope, 'version': '1',
+                             'purl': 'pkg:maven/imported/' + scope + '@1'}
+                path.write_text(json.dumps({'components': [component]}))
+                manifests.append(path)
+
+            def execute(command, **kwargs):
+                report = Path(command[command.index('--output') + 1])
+                component = json.loads(Path(command[-1]).read_text())['components'][0]
+                report.write_text(json.dumps({'Results': [{'Target': command[-1],
+                    'Packages': [{'Identifier': {'PURL': component['purl']}}]}]}))
+
+            with patch.object(scanner, 'prepare_jdk17_inventories', return_value=tuple(manifests)) as prepare, \
+                    patch.object(scanner, 'create_sbom') as legacy, \
+                    patch.object(scanner.subprocess, 'run', side_effect=execute):
+                self.assertEqual(0, scanner.scan(root, output, 'feature/2.0.x', 7))
+                prepare.assert_called_once_with(root, output)
+                legacy.assert_not_called()
+
     def test_reactor_sbom_records_exact_component_module_origins(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory) / 'project'
@@ -110,7 +137,7 @@ class ScannerTests(unittest.TestCase):
 
             with patch.object(scanner, 'create_sbom', return_value={'components': components}), \
                     patch.object(scanner.subprocess, 'run', side_effect=execute) as run:
-                self.assertEqual(scanner.scan(root, output, 'feature/2.0.x', 7), 0)
+                self.assertEqual(scanner.scan(root, output, 'feature/1.0.x', 7), 0)
             self.assertEqual(run.call_count, 3)
             self.assertEqual(len(json.loads((output / 'managed-bom.cdx.json').read_text())['components']), 2)
             self.assertTrue((output / 'reactor-bom.cdx.json').is_file())
@@ -138,7 +165,7 @@ class ScannerTests(unittest.TestCase):
             with patch.object(scanner, 'create_sbom', return_value={'components': [{'name': 'a'}]}), \
                     patch.object(scanner.subprocess, 'run', side_effect=execute) as run:
                 with self.assertRaises(ValueError):
-                    scanner.scan(root, output, 'feature/2.0.x', 7)
+                    scanner.scan(root, output, 'feature/1.0.x', 7)
             self.assertFalse(stale.exists())
             self.assertEqual(run.call_count, 1)
 

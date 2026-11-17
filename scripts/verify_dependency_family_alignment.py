@@ -9,6 +9,7 @@ import re
 import subprocess
 import sys
 from types import SimpleNamespace
+from urllib.parse import quote
 import zipfile
 
 import verify_spring_version_alignment as spring
@@ -20,10 +21,40 @@ PROPERTY_FAMILIES = {
     'org.ow2.asm': 'asm.version', 'tools.jackson.core': 'jackson3.version',
     'org.apache.artemis': 'artemis.version',
 }
+SECURITY_FAMILIES = {
+    ('net.minidev', 'json-smart'): ('json-smart.version', '2.6.1'),
+    ('net.minidev', 'accessors-smart'): ('json-smart.version', '2.6.1'),
+    ('com.github.luben', 'zstd-jni'): ('zstd-jni.version', '1.5.7-28'),
+    ('org.json', 'json'): ('json.version', '20260814'),
+    ('ch.qos.logback', 'logback-classic'): ('logback.version', '1.6.7'),
+    ('ch.qos.logback', 'logback-core'): ('logback.version', '1.6.7'),
+    ('org.glassfish.jaxb', 'jaxb-runtime'): ('glassfish-jaxb.version', '4.0.9'),
+    ('org.glassfish.jaxb', 'jaxb-core'): ('glassfish-jaxb.version', '4.0.9'),
+    ('org.glassfish.jaxb', 'txw2'): ('glassfish-jaxb.version', '4.0.9'),
+    ('org.glassfish.jaxb', 'jaxb-xjc'): ('glassfish-jaxb.version', '4.0.9'),
+    ('org.glassfish.jaxb', 'jaxb-jxc'): ('glassfish-jaxb.version', '4.0.9'),
+}
+for _artifact in ('bcprov-lts8on', 'bcutil-lts8on', 'bcpkix-lts8on'):
+    SECURITY_FAMILIES[('org.bouncycastle', _artifact)] = ('bouncycastle-lts.version', '2.73.13')
+MICROMETER_BASELINES = {'micrometer.version': '1.17.2', 'micrometer-tracing.version': '1.7.2'}
+MICROMETER_METRICS = {
+    'micrometer-core', 'micrometer-commons', 'micrometer-observation',
+    'micrometer-observation-test', 'micrometer-test', 'micrometer-jakarta9',
+    'micrometer-java11', 'micrometer-java21', 'micrometer-jetty11', 'micrometer-jetty12',
+}
+
+
+def micrometer_property(artifact):
+    # 同一 groupId 下指标、追踪和 context-propagation 的发行版本互相独立。
+    if artifact.startswith('micrometer-tracing'):
+        return 'micrometer-tracing.version'
+    if artifact in MICROMETER_METRICS or artifact.startswith('micrometer-registry-'):
+        return 'micrometer.version'
+    return None
 
 
 def compatibility_runtime(module):
-    return any(name in module for name in ('quarkus', 'helidon', 'micronaut', 'panache'))
+    return any(name in module for name in ('quarkus', 'helidon', 'panache'))
 
 
 def audit(models, trees, expected_projects):
@@ -54,7 +85,15 @@ def audit(models, trees, expected_projects):
     if not props.get('hibernate.version', '').startswith('6.6.') or jpa != '3.1.0':
         errors.append({'code': 'spring6-orm-baseline', 'hibernate': props.get('hibernate.version'),
                        'jpa': jpa, 'expected': 'Hibernate 6.6.x / JPA 3.1.0'})
-    for key in (*PROPERTY_FAMILIES.values(), 'netty.version', 'netty-compat4.version',
+    for key, minimum in {*SECURITY_FAMILIES.values(), ('shiro.version', '3.0.2'),
+                         *MICROMETER_BASELINES.items()}:
+        actual = props.get(key, '')
+        version = tuple(int(part) for part in re.findall(r'\d+', actual))
+        if not re.fullmatch(r'\d+(?:[.-]\d+)*', actual) or version < tuple(
+                int(part) for part in re.findall(r'\d+', minimum)):
+            errors.append({'code': 'security-baseline', 'property': key,
+                           'actual': actual, 'minimum': minimum})
+    for key in (*PROPERTY_FAMILIES.values(), 'netty.version', 'netty-4_1.version',
                 'vertx.version', 'vertx-compat4.version'):
         if not props.get(key) or '${' in props[key]:
             errors.append({'code': 'missing-shared-property', 'property': key})
@@ -63,7 +102,20 @@ def audit(models, trees, expected_projects):
 
     def check(module, group, artifact, version, scope, classifier='', path=None, kind='jar'):
         expected = None
-        if group in PROPERTY_FAMILIES:
+        if (group, artifact) == ('com.vaadin.external.google', 'android-json') and scope != 'managed':
+            errors.append({'code': 'obsolete-json-provider', 'module': module, 'scope': scope,
+                           'coordinate': group + ':' + artifact, 'actual': version, 'path': path})
+        if (group, artifact) == ('org.ehcache', 'ehcache') and scope != 'managed' and classifier != 'jakarta':
+            errors.append({'code': 'javax-jaxb-consumer', 'module': module, 'scope': scope,
+                           'coordinate': group + ':' + artifact, 'classifier': classifier, 'path': path})
+        if group == 'io.micrometer' and micrometer_property(artifact):
+            # 独立校验中央有效表本身，不能以已被 Hibernate 等 BOM 覆盖的表为正确基线。
+            expected = props.get(micrometer_property(artifact))
+        elif (group, artifact) in SECURITY_FAMILIES:
+            expected = props.get(SECURITY_FAMILIES[(group, artifact)][0])
+        elif group == 'org.apache.shiro':
+            expected = props.get('shiro.version')
+        elif group in PROPERTY_FAMILIES:
             expected = props.get(PROPERTY_FAMILIES[group])
         elif (group, artifact, kind, classifier) in shared:
             expected = shared[(group, artifact, kind, classifier)]
@@ -83,14 +135,14 @@ def audit(models, trees, expected_projects):
             expected = reactor.get((group, artifact))
         elif group == 'io.vertx':
             expected = vertx.get((group, artifact, kind, classifier))
-            if expected and re.match(r'^[45]\.', expected) and any(name in module for name in ('quarkus', 'micronaut', 'panache')) and scope != 'managed':
+            if expected and re.match(r'^[45]\.', expected) and any(name in module for name in ('quarkus', 'panache')) and scope != 'managed':
                 expected = props.get('vertx-compat4.version')
         elif group == 'io.netty' and artifact.startswith('netty-tcnative'):
             expected = props.get('netty-tcnative.version')
         elif group == 'io.netty':
             # 管理表统一归属中央；兼容运行时通过排除和显式依赖选用 4.1。
             compat = compatibility_runtime(module) and scope != 'managed'
-            expected = props.get('netty-compat4.version' if compat else 'netty.version')
+            expected = props.get('netty-4_1.version' if compat else 'netty.version')
         if expected is not None:
             item = dict(module=module, scope=scope, coordinate=group + ':' + artifact,
                         classifier=classifier, actual=version, expected=expected)
@@ -161,6 +213,74 @@ def source_management_errors(root, projects):
             spring.xml(root / folder / 'pom.xml').find('dependencyManagement') is not None]
 
 
+def source_bom_errors(root):
+    owner = spring.xml(root / 'ddd4j-dependencies/pom.xml')
+    props = spring.properties(owner)
+    errors = []
+    for key, minimum in MICROMETER_BASELINES.items():
+        actual = props.get(key, '')
+        if not re.fullmatch(r'\d+\.\d+\.\d+', actual) or tuple(map(int, actual.split('.'))) < tuple(
+                map(int, minimum.split('.'))):
+            errors.append({'code': 'micrometer-source-baseline', 'property': key,
+                           'actual': actual, 'minimum': minimum})
+    imports = [dep for dep in owner.findall('./dependencyManagement/dependencies/dependency')
+               if dep.findtext('type', 'jar') == 'pom' and dep.findtext('scope', '') == 'import']
+    platforms = {'hibernate-platform', 'spring-boot-dependencies', 'debezium-bom',
+                 'dropwizard-bom', 'helidon-bom', 'micronaut-platform', 'quarkus-bom'}
+    for artifact, key in (('micrometer-bom', 'micrometer.version'),
+                          ('micrometer-tracing-bom', 'micrometer-tracing.version')):
+        found = [(i, dep) for i, dep in enumerate(imports)
+                 if dep.findtext('groupId', '') == 'io.micrometer' and
+                 dep.findtext('artifactId', '') == artifact]
+        if len(found) != 1:
+            errors.append({'code': 'micrometer-bom-count', 'artifact': artifact, 'actual': len(found)})
+            continue
+        index, dep = found[0]
+        if dep.findtext('version', '') != '${' + key + '}':
+            errors.append({'code': 'micrometer-bom-owner', 'artifact': artifact, 'property': key})
+        earlier = [d.findtext('artifactId', '') for d in imports[:index]
+                   if d.findtext('artifactId', '') in platforms]
+        if earlier:
+            errors.append({'code': 'micrometer-bom-priority', 'artifact': artifact, 'earlier': earlier})
+    return errors
+
+
+def inventories(models, trees):
+    result = {'unresolved_management': []}
+    for scope in ('managed', 'reactor'):
+        components, origins = {}, {}
+
+        def add(group, artifact, version, module):
+            if group == 'io.ddd4j':
+                return
+            if not version or '${' in version or version.startswith(('[', '(')) or version in ('LATEST', 'RELEASE'):
+                if scope == 'reactor':
+                    raise ValueError(f'unresolved actual dependency: {group}:{artifact}:{version}')
+                result['unresolved_management'].append(dict(module=module, group=group,
+                                                           artifact=artifact, version=version))
+                return
+            purl = f"pkg:maven/{quote(group, safe='.')}/{quote(artifact, safe='')}@{quote(version, safe='.-_')}"
+            components[purl] = dict(type='library', group=group, name=artifact, version=version,
+                                    purl=purl, **{'bom-ref': purl})
+            origins.setdefault(purl, set()).add(module)
+
+        if scope == 'managed':
+            for module, model in models.items():
+                for dep in model.findall('./dependencyManagement/dependencies/dependency'):
+                    add(dep.findtext('groupId', ''), dep.findtext('artifactId', ''), dep.findtext('version', ''), module)
+        else:
+            def visit(node, module):
+                add(node.get('groupId', ''), node.get('artifactId', ''), node.get('version', ''), module)
+                for child in node.get('children', []):
+                    visit(child, module)
+            for module, tree in trees.items():
+                visit(tree, module)
+        result[scope] = dict(bomFormat='CycloneDX', specVersion='1.5', version=1,
+                             components=[components[key] for key in sorted(components)])
+        result[scope + '_origins'] = {key: sorted(value) for key, value in sorted(origins.items())}
+    return result
+
+
 def run(args):
     root, output = args.root.resolve(), args.output.resolve()
     output.mkdir(parents=True, exist_ok=True)
@@ -168,6 +288,15 @@ def run(args):
     try:
         projects, paths = spring.discover_projects(root)
         result['errors'].extend(source_management_errors(root, projects))
+        result['errors'].extend(source_bom_errors(root))
+        if getattr(args, 'source_only', False):
+            result.update(projects=len(projects), verification='source-only')
+            result['status'] = 'FAIL' if result['errors'] else 'PASS'
+            (output / 'summary.json').write_text(json.dumps(result, indent=2) + '\n')
+            print(f"Dependency source: {result['status']}; {len(result['errors'])} errors; {output}")
+            for error in result['errors'][:15]:
+                print(json.dumps(error, ensure_ascii=False))
+            return int(bool(result['errors']))
         before = spring.fingerprint(paths)
         spring_output = output / 'spring'
         status = spring.run(SimpleNamespace(root=root, output=spring_output, line='2.0.x',
@@ -191,6 +320,11 @@ def run(args):
         audited = audit(models, trees, set(projects))
         result['errors'].extend(audited.pop('errors'))
         result.update(audited)
+        inventory = inventories(models, trees)
+        for scope in ('managed', 'reactor'):
+            (output / (scope + '-bom.cdx.json')).write_text(json.dumps(inventory[scope], indent=2) + '\n')
+            (output / (scope + '-component-origins.json')).write_text(json.dumps(inventory[scope + '_origins'], indent=2) + '\n')
+        (output / 'unresolved-managed-policies.json').write_text(json.dumps(inventory['unresolved_management'], indent=2) + '\n')
         if args.check_bytecode:
             checked = audit_bytecode(trees, args.repository.resolve())
             result['errors'].extend(checked['errors'])
@@ -212,6 +346,8 @@ def run(args):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--source-only', action='store_true',
+                        help='只检查源码版本归属和 BOM 顺序，不调用 Maven')
     parser.add_argument('--root', type=Path, default=Path.cwd())
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--maven-arg', action='append', default=[])
