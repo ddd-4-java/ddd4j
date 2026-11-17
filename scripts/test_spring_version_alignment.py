@@ -4,7 +4,9 @@ import copy
 import importlib.util
 from pathlib import Path
 import tempfile
+from types import SimpleNamespace
 import unittest
+from unittest.mock import patch
 import xml.etree.ElementTree as ET
 
 
@@ -107,10 +109,36 @@ class SpringAlignmentTest(unittest.TestCase):
             models[name].find("dependencyManagement/dependencies/dependency[artifactId='spring-data-jpa']/version").text = "3.5.13"
         self.assertTrue(self.errors(models, "3.0.x"))
 
+    def test_spring_data_bom_contains_different_component_major_versions(self):
+        models = fixture()
+        for project in (models["ddd4j-dependencies"], models["sample"]):
+            for artifact, version in (("spring-data-mongodb", "4.5.13"),
+                                      ("spring-data-neo4j", "7.5.13")):
+                dep = ET.SubElement(project.find("dependencyManagement/dependencies"), "dependency")
+                for key, value in (("groupId", "org.springframework.data"),
+                                   ("artifactId", artifact), ("version", version)):
+                    ET.SubElement(dep, key).text = value
+        self.assertEqual([], self.errors(models))
+
     def test_java8_final_public_spring_version_is_fixed(self):
         models = fixture("1.0.x")
         models["ddd4j-dependencies"].find("properties/spring-framework.version").text = "5.3.38"
         self.assertTrue(self.errors(models, "1.0.x"))
+
+    def test_java8_data_r2dbc_can_have_an_independent_major(self):
+        models = fixture("1.0.x")
+        for name in ("ddd4j-dependencies", "sample"):
+            dep = ET.SubElement(models[name].find("dependencyManagement/dependencies"), "dependency")
+            for key, value in (("groupId", "org.springframework.data"),
+                               ("artifactId", "spring-data-r2dbc"), ("version", "1.5.18")):
+                ET.SubElement(dep, key).text = value
+        self.assertEqual([], self.errors(models, "1.0.x"))
+
+    def test_security_modules_match_the_canonical_patch_not_only_major(self):
+        models = fixture()
+        for name in ("ddd4j-dependencies", "sample"):
+            models[name].find("dependencyManagement/dependencies/dependency[artifactId='spring-security-core']/version").text = "6.5.10"
+        self.assertTrue(self.errors(models))
 
     def test_wrong_java_and_compiler_baselines_are_rejected(self):
         for key in ("java.version", "maven.compiler.source", "maven.compiler.target"):
@@ -136,6 +164,19 @@ class SpringAlignmentTest(unittest.TestCase):
     def test_unresolved_version_is_not_success(self):
         models = fixture()
         models["sample"].find("dependencyManagement/dependencies/dependency/version").text = "${unknown}"
+        self.assertTrue(self.errors(models))
+
+    def test_unresolved_shared_property_is_rejected_even_when_unused(self):
+        models = fixture()
+        for name in ("ddd4j-dependencies", "sample"):
+            ET.SubElement(models[name].find("properties"), "spring-batch.version").text = "${missing}"
+        self.assertTrue(self.errors(models))
+
+    def test_prerelease_spring_companion_is_rejected(self):
+        models = fixture()
+        for name in ("ddd4j-dependencies", "sample"):
+            models[name].find("properties/spring-security.version").text = "6.5.12-RC1"
+            models[name].find("dependencyManagement/dependencies/dependency[artifactId='spring-security-core']/version").text = "6.5.12-RC1"
         self.assertTrue(self.errors(models))
 
     def test_non_spring_library_versions_are_outside_this_gate(self):
@@ -164,6 +205,19 @@ class SpringAlignmentTest(unittest.TestCase):
             with self.assertRaises(ValueError):
                 checker.read_models([path, path])
 
+    def test_maven4_subprojects_are_included_in_expected_coverage(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp).resolve()
+            child = root / "child"
+            child.mkdir()
+            (root / "pom.xml").write_text(
+                '<project xmlns="http://maven.apache.org/POM/4.1.0"><artifactId>root</artifactId>'
+                '<subprojects><subproject>child</subproject></subprojects></project>')
+            (child / "pom.xml").write_text('<project><artifactId>child</artifactId></project>')
+            projects, paths = checker.discover_projects(root)
+            self.assertEqual({"root", "child"}, set(projects))
+            self.assertEqual(2, len(paths))
+
     def test_matrix_freezes_all_three_lines_and_uses_event_commit(self):
         for number in (1, 2, 3):
             branch = f"feature/{number}.0.x"
@@ -177,6 +231,31 @@ class SpringAlignmentTest(unittest.TestCase):
             checker.resolve_matrix("feature/2.0.x", "a" * 40, lambda ref: "")
         with self.assertRaises(ValueError):
             checker.resolve_matrix("main", "a" * 40, lambda ref: "b" * 40)
+
+    def test_maven_failure_cannot_reuse_a_stale_effective_pom(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            ET.ElementTree(fixture()["ddd4j"]).write(root / "pom.xml")
+            output = root / "report"
+            output.mkdir()
+            stale = output / "effective-1.xml"
+            stale.write_text("<project/>")
+            args = SimpleNamespace(root=root, output=output, line="2.0.x", batch_size=25, maven_arg=[])
+            java = SimpleNamespace(stderr="java.specification.version = 17", stdout="")
+            with patch.object(checker.subprocess, "run", side_effect=[java, SimpleNamespace(returncode=3)]):
+                self.assertEqual(1, checker.run(args))
+            self.assertFalse(stale.exists())
+            self.assertIn('"status": "FAIL"', (output / "summary.json").read_text())
+
+    def test_wrong_runtime_jdk_fails_before_maven(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            ET.ElementTree(fixture()["ddd4j"]).write(root / "pom.xml")
+            args = SimpleNamespace(root=root, output=root / "report", line="2.0.x", batch_size=25, maven_arg=[])
+            java = SimpleNamespace(stderr="java.specification.version = 21", stdout="")
+            with patch.object(checker.subprocess, "run", return_value=java) as process:
+                self.assertEqual(1, checker.run(args))
+                self.assertEqual(1, process.call_count)
 
 
 if __name__ == "__main__":
