@@ -44,6 +44,52 @@ echo -e "${YELLOW}① 校验所有子模块使用 \${revision} 版本占位符${
 fail_count=0
 total_modules=0
 
+# 版本属性只允许一个维护位置；相同值的父子重复定义也会在后续升级时漂移。
+duplicate_properties=$(python3 - "pom.xml" "ddd4j-dependencies/pom.xml" <<'PY'
+import sys
+import xml.etree.ElementTree as ET
+
+def properties(path):
+    root = ET.parse(path).getroot()
+    namespace = root.tag.partition("}")[0] + "}" if "}" in root.tag else ""
+    properties = root.find(namespace + "properties")
+    if properties is None:
+        return {}
+    return {element.tag.rsplit("}", 1)[-1]: (element.text or "").strip()
+            for element in properties}
+
+parent = properties(sys.argv[1])
+dependencies = properties(sys.argv[2])
+for name in sorted(parent.keys() & dependencies.keys()):
+    if name.endswith(".version"):
+        print(f"{name}: pom.xml={parent[name]}, ddd4j-dependencies/pom.xml={dependencies[name]}")
+if parent.get("revision", "").startswith("2.0.x"):
+    if parent.get("java.version") != "17":
+        print("java.version: 2.0.x requires JDK 17")
+    if not dependencies.get("jakarta-servlet.version", "").startswith("6."):
+        print("jakarta-servlet.version: 2.0.x requires Jakarta Servlet 6.x")
+    compatible = {
+        "spring-framework.version": "6.", "spring-security.version": "6.",
+        "spring-amqp.version": "3.", "spring-authorization-server.version": "1.",
+        "spring-batch.version": "5.", "spring-boot3-it.version": "3.",
+        "spring-data-bom.version": "2025.0.", "spring-graphql.version": "1.",
+        "spring-hateoas.version": "2.", "spring-integration.version": "6.",
+        "spring-kafka.version": "3.", "spring-ldap.version": "3.",
+        "spring-pulsar.version": "1.", "spring-restdocs.version": "3.",
+        "spring-session.version": "3.", "spring-ws.version": "4.",
+    }
+    for name, prefix in compatible.items():
+        value = dependencies.get(name)
+        if (value is not None or name == "spring-framework.version") and not (value or "").startswith(prefix):
+            print(f"{name}: 2.0.x Spring 6 requires {prefix}x, found {value}")
+PY
+)
+if [ -n "$duplicate_properties" ]; then
+  echo -e "${RED}  ❌ 版本属性归属或平台边界错误：${NC}"
+  echo "$duplicate_properties"
+  fail_count=$((fail_count + 1))
+fi
+
 while IFS= read -r pom; do
   total_modules=$((total_modules + 1))
   # 只检查内部依赖；Maven 4 子模块的固定父 POM 版本是构建配置。
@@ -100,11 +146,11 @@ done
 echo ""
 echo "================================"
 echo -e "扫描模块总数: ${total_modules}"
-echo -e "阻塞问题数（硬编码版本）: ${RED}${fail_count}${NC}"
+echo -e "阻塞问题数（版本漂移）: ${RED}${fail_count}${NC}"
 echo -e "警告数（BOM 缺失）: ${YELLOW}${warn_count}${NC}"
 
 if [ "$fail_count" -eq 0 ]; then
-  echo -e "${GREEN}✅ 阻塞检查通过（硬编码版本问题已修复）${NC}"
+  echo -e "${GREEN}✅ 阻塞检查通过（无重复属性或硬编码版本）${NC}"
   if [ "$warn_count" -gt 0 ]; then
     echo -e "${YELLOW}⚠️  建议补充 BOM（见警告）${NC}"
   fi

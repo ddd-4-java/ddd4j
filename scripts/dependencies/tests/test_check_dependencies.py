@@ -15,8 +15,8 @@ class PolicyTests(unittest.TestCase):
         policy = checker.resolve_policy(json.loads(policy_file.read_text()), 'feature/2.0.x')
         fixed = policy['fixed_properties']
         self.assertEqual(fixed['mybatis.version'], '3.5.19')
-        self.assertEqual(fixed['mybatis-plus.version'], '3.5.17')
-        self.assertEqual(fixed['mybatis-spring.version'], '3.0.5')
+        self.assertEqual(fixed['mybatis-plus.version'], '3.5.18.1')
+        self.assertEqual(fixed['mybatis-spring.version'], '3.0.6')
         commands = checker.update_commands(policy)
         for name in ('mybatis.version', 'mybatis-plus.version', 'mybatis-spring.version'):
             self.assertIn(name, next(arg for arg in commands[0] if arg.startswith('-DexcludeProperties=')))

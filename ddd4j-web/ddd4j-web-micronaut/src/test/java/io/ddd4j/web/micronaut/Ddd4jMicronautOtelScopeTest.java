@@ -33,6 +33,7 @@ import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.trace.SdkTracerProvider;
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter;
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
+import io.opentelemetry.sdk.trace.export.SpanExporter;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
@@ -137,7 +138,8 @@ class Ddd4jMicronautOtelScopeTest {
     @Test
     void filterMustCloseOtelScopeOnCallingThread() throws Exception {
         resetOpenTelemetry();
-        SdkTracerProvider tracerProvider = SdkTracerProvider.builder().build();
+        SdkTracerProvider tracerProvider = SdkTracerProvider.builder()
+                .addSpanProcessor(SimpleSpanProcessor.create(SpanExporter.composite())).build();
         OpenTelemetrySdk.builder().setTracerProvider(tracerProvider).buildAndRegisterGlobal();
         ExecutorService executor = Executors.newSingleThreadExecutor();
         try {

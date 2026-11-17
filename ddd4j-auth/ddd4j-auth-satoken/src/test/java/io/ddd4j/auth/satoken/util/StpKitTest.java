@@ -164,6 +164,6 @@ class StpKitTest {
         assertNotNull(StpKit.DEFAULT);
         assertNotNull(StpKit.ADMIN);
         assertNotNull(StpKit.USER);
-        assertNotNull(StpKit.XXX);
+        assertNotNull(StpKit.GUEST);
     }
 }

@@ -18,7 +18,7 @@ class UniformContract(unittest.TestCase):
         jdk21 = checker.resolve_policy(raw, 'feature/3.0.x')
         self.assertEqual(jdk8['fixed_properties'].get('hikaricp-jdk8.version'), '4.0.3')
         self.assertEqual(jdk8['fixed_properties'].get('mybatis-spring.version'), '2.1.2')
-        self.assertEqual(jdk17['fixed_properties'].get('mybatis-spring.version'), '3.0.5')
+        self.assertEqual(jdk17['fixed_properties'].get('mybatis-spring.version'), '3.0.6')
         self.assertEqual(jdk17['fixed_properties'].get('micronaut.version'), '4.10.21')
         self.assertIn('io.micronaut*:*', jdk17['exclude'])
         self.assertEqual(jdk21['fixed_properties'].get('vertx-compat4.version'), '4.5.35')
@@ -175,7 +175,7 @@ class UniformContract(unittest.TestCase):
         repository = pathlib.Path(__file__).parents[3]
         raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
         fixed = checker.resolve_policy(raw, 'feature/2.0.x')['fixed_properties']
-        self.assertEqual(fixed.get('mybatis-spring.version'), '3.0.5')
+        self.assertEqual(fixed.get('mybatis-spring.version'), '3.0.6')
 
     def test_jdk8_javalin_remains_on_java8_bytecode(self):
         repository = pathlib.Path(__file__).parents[3]

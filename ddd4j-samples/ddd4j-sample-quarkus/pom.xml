@@ -32,6 +32,14 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- 保留共享 OpenTelemetry 安全修复，避免 Quarkus 平台将 API 降回旧版。 -->
+            <dependency>
+                <groupId>io.opentelemetry</groupId>
+                <artifactId>opentelemetry-bom</artifactId>
+                <version>${opentelemetry.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <!-- Keep shared Jackson 2 security fixes ahead of the framework BOM. -->
             <dependency>
                 <groupId>com.fasterxml.jackson</groupId>

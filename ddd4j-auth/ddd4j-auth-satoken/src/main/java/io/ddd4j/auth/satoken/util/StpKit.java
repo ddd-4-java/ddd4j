@@ -47,9 +47,9 @@ public class StpKit {
     public static final StpLogic USER = new StpLogic("user");
 
     /**
-     * XX 会话对象，（项目中有多少套账号表，就声明几个 StpLogic 会话对象）
+     * 访客会话对象，管理 User 表所有账号的登录、权限认证
      */
-    public static final StpLogic XXX = new StpLogic("xx");
+    public static final StpLogic GUEST = new StpLogic("guest");
 
     /**
      * 获取当前会话账号id, 并转换为 long 类型

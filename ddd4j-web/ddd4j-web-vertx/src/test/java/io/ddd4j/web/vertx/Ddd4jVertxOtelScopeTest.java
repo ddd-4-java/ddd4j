@@ -27,6 +27,8 @@ import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.trace.SdkTracerProvider;
+import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
+import io.opentelemetry.sdk.trace.export.SpanExporter;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
 import io.vertx.ext.web.Router;
@@ -60,7 +62,8 @@ class Ddd4jVertxOtelScopeTest {
     @Test
     void responseEndMustCloseOtelScopeOnEventLoop() throws Exception {
         resetOpenTelemetry();
-        SdkTracerProvider tracerProvider = SdkTracerProvider.builder().build();
+        SdkTracerProvider tracerProvider = SdkTracerProvider.builder()
+                .addSpanProcessor(SimpleSpanProcessor.create(SpanExporter.composite())).build();
         OpenTelemetrySdk.builder().setTracerProvider(tracerProvider).buildAndRegisterGlobal();
         Vertx vertx = Vertx.vertx();
         HttpServer server = null;

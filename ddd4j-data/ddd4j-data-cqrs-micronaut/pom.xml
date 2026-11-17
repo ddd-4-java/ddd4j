@@ -21,6 +21,14 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- 模块级平台 BOM 可覆盖父链管理项，优先保留共享 Spring 版本。 -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-framework-bom</artifactId>
+                <version>${spring-framework.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <!-- Keep shared Jackson 2 security fixes ahead of the framework BOM. -->
             <dependency>
                 <groupId>com.fasterxml.jackson</groupId>

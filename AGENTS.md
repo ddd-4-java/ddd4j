@@ -78,3 +78,12 @@
 5. 优先更新集中管理位置中已有的版本号或属性；任务未要求时，不向具体模块新增版本属性，不分散已有版本事实源。
 6. 修改后执行 `./mvnw compile` 或受影响模块的等价构建，并运行受影响行为回归及项目要求的依赖、BOM 和模型检查；编译通过不代替兼容性或业务验收。
 7. 报告实际更新的坐标、版本和验证结果；环境阻塞或未执行的检查明确说明，不宣称已通过。
+
+
+# Git 各个分支要求
+
+1.0.x 适配 JDK 1.8 的三方组件版本、Maven依赖配置、Java 语法，版本号：1.0.x.20260630-SNAPSHOT，如果需要Spring，则Spring版本为 5.3.x 终版，javax.servlet 4.x/Java EE 8\
+2.0.x 适配 JDK 17 的三方组件版本、Maven依赖配置、Java 语法，版本号：2.0.x.20260630-SNAPSHOT，如果需要Spring，则Spring版本为 6.x 最新，jakarta.servlet 6.x/ Jakarta EE 10\
+3.0.x 适配 JDK 21 的三方组件版本、Maven依赖配置、Java 语法，版本号：3.0.x.20260630-SNAPSHOT，如果需要Spring，则Spring版本为 7.x 最新，jakarta.servlet 6.x / Jakarta EE 10
+
+

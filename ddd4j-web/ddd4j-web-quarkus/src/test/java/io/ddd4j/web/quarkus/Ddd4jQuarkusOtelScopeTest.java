@@ -26,6 +26,8 @@ import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.trace.SdkTracerProvider;
+import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
+import io.opentelemetry.sdk.trace.export.SpanExporter;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerResponseContext;
 import jakarta.ws.rs.core.MultivaluedHashMap;
@@ -98,7 +100,8 @@ class Ddd4jQuarkusOtelScopeTest {
     @Test
     void idempotencyCompletionFailureMustStillCloseRequestScopes() throws Exception {
         resetOpenTelemetry();
-        SdkTracerProvider tracerProvider = SdkTracerProvider.builder().build();
+        SdkTracerProvider tracerProvider = SdkTracerProvider.builder()
+                .addSpanProcessor(SimpleSpanProcessor.create(SpanExporter.composite())).build();
         OpenTelemetrySdk.builder().setTracerProvider(tracerProvider).buildAndRegisterGlobal();
         ExecutorService executor = Executors.newSingleThreadExecutor();
         try {
@@ -146,7 +149,8 @@ class Ddd4jQuarkusOtelScopeTest {
     @Test
     void authenticationFailureMustCloseRequestOtelScopeImmediately() throws Exception {
         resetOpenTelemetry();
-        SdkTracerProvider tracerProvider = SdkTracerProvider.builder().build();
+        SdkTracerProvider tracerProvider = SdkTracerProvider.builder()
+                .addSpanProcessor(SimpleSpanProcessor.create(SpanExporter.composite())).build();
         OpenTelemetrySdk.builder().setTracerProvider(tracerProvider).buildAndRegisterGlobal();
         ExecutorService executor = Executors.newSingleThreadExecutor();
         try {

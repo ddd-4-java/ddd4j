@@ -47,6 +47,8 @@ import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
 import io.opentelemetry.context.propagation.ContextPropagators;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.trace.SdkTracerProvider;
+import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
+import io.opentelemetry.sdk.trace.export.SpanExporter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -89,7 +91,8 @@ class Ddd4jWebFluxContractTest {
     @BeforeEach
     void setUpOpenTelemetry() throws Exception {
         resetOpenTelemetry();
-        tracerProvider = SdkTracerProvider.builder().build();
+        tracerProvider = SdkTracerProvider.builder()
+                .addSpanProcessor(SimpleSpanProcessor.create(SpanExporter.composite())).build();
         OpenTelemetrySdk.builder()
                 .setTracerProvider(tracerProvider)
                 .setPropagators(ContextPropagators.create(W3CTraceContextPropagator.getInstance()))
