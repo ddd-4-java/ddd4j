@@ -17,7 +17,6 @@ package io.ddd4j.auth.satoken.util;
 import cn.dev33.satoken.SaManager;
 import cn.dev33.satoken.stp.StpLogic;
 import cn.dev33.satoken.stp.StpUtil;
-import io.ddd4j.auth.satoken.SaConstants;
 import io.ddd4j.core.constant.AuthConstants;
 import io.ddd4j.kit.lang.FunctionKit;
 import io.ddd4j.kit.lang.JsonKit;
@@ -148,61 +147,7 @@ public class StpKit {
      * @return 机构 ID
      */
     public static Long getOrgIdAsLong() {
-        return getExtraAs(SaConstants.PAYLOAD_INFO_ID, FunctionKit.TO_LONG);
-    }
-
-    /**
-     * 获取当前会话的校区组织 ID（String 类型）。
-     *
-     * @return 校区组织 ID
-     */
-    public static String getXqOrgIdAsString() {
-        return getExtraAs(SaConstants.PAYLOAD_XQ_ORG_ID, FunctionKit.TO_STRING);
-    }
-
-    /**
-     * 获取当前会话的校区组织 ID（Integer 类型）。
-     *
-     * @return 校区组织 ID
-     */
-    public static Integer getXqOrgIdAsInteger() {
-        return getExtraAs(SaConstants.PAYLOAD_XQ_ORG_ID, FunctionKit.TO_INTEGER);
-    }
-
-    /**
-     * 获取当前会话的校区组织 ID（Long 类型）。
-     *
-     * @return 校区组织 ID
-     */
-    public static Long getXqOrgIdAsLong() {
-        return getExtraAs(SaConstants.PAYLOAD_XQ_ORG_ID, FunctionKit.TO_LONG);
-    }
-
-    /**
-     * 获取当前会话的信息条目 ID（Long 类型）。
-     *
-     * @return 信息条目 ID
-     */
-    public static Long getInfoIdAsLong() {
         return getExtraAs(AuthConstants.FIELD_ORG_ID, FunctionKit.TO_LONG);
-    }
-
-    /**
-     * 获取当前会话的信息条目 ID（String 类型）。
-     *
-     * @return 信息条目 ID
-     */
-    public static String getInfoIdAsString() {
-        return getExtraAs(SaConstants.PAYLOAD_INFO_ID, FunctionKit.TO_STRING);
-    }
-
-    /**
-     * 获取当前会话的信息条目 ID（Integer 类型）。
-     *
-     * @return 信息条目 ID
-     */
-    public static Integer getInfoIdAsInteger() {
-        return getExtraAs(SaConstants.PAYLOAD_INFO_ID, FunctionKit.TO_INTEGER);
     }
 
     /**
@@ -211,7 +156,7 @@ public class StpKit {
      * @return 角色 ID
      */
     public static Object getRoleId() {
-        return StpUtil.getExtra(SaConstants.PAYLOAD_INFO_ID);
+        return StpUtil.getExtra(AuthConstants.FIELD_ROLE_ID);
     }
 
     /**
@@ -239,24 +184,6 @@ public class StpKit {
      */
     public static Long getRoleIdAsLong() {
         return getExtraAs(AuthConstants.FIELD_ROLE_ID, FunctionKit.TO_LONG);
-    }
-
-    /**
-     * 获取当前会话的学校/校区代码（String 类型）。
-     *
-     * @return 学校代码
-     */
-    public static String getXxdmAsString() {
-        return getExtraAs(SaConstants.PAYLOAD_SCHOOL_CODE, FunctionKit.TO_STRING);
-    }
-
-    /**
-     * 获取当前会话的身份标识 ID（Integer 类型）。
-     *
-     * @return 身份标识 ID
-     */
-    public static Integer getIdentityIdAsInteger() {
-        return getExtraAs(SaConstants.PAYLOAD_IDENTITY_ID, FunctionKit.TO_INTEGER);
     }
 
     /**

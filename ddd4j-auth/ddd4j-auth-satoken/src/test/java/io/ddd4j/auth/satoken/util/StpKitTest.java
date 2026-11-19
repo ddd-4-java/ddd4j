@@ -76,11 +76,11 @@ class StpKitTest {
         Map<String, Object> extras = new HashMap<>();
         extras.put(AuthConstants.FIELD_USER_ID, 1001L);
         extras.put(AuthConstants.FIELD_ORG_ID, 10L);
-        extras.put(AuthConstants.FIELD_ROLE_ID, "role-7");
-        extras.put(SaConstants.PAYLOAD_XQ_ORG_ID, 5L);
-        extras.put(SaConstants.PAYLOAD_INFO_ID, 42L);
-        extras.put(SaConstants.PAYLOAD_SCHOOL_CODE, "110101");
-        extras.put(SaConstants.PAYLOAD_IDENTITY_ID, 2);
+        extras.put(AuthConstants.FIELD_ROLE_ID, 7L);
+        extras.put("tenant_id", "tenant-1");
+        extras.put("appId", "app-1");
+        extras.put("roleCode", "operator");
+        extras.put("roleType", "custom");
         extras.put("custom-key", "custom-value");
         StpUtil.login(1001L, new SaLoginParameter().setTimeout(600).setExtraData(extras));
     }
@@ -105,24 +105,30 @@ class StpKitTest {
     }
 
     @Test
-    void orgRoleAndSchoolAccessorsReadExtraData() {
+    void orgAndRoleAccessorsReadTheirOwnClaims() {
         loginWithExtras();
 
         assertEquals(10L, ((Number) StpKit.getOrgId()).longValue());
         assertEquals("10", StpKit.getOrgIdAsString());
-        assertEquals("role-7", StpKit.getRoleIdAsString());
-        assertEquals("5", StpKit.getXqOrgIdAsString());
         assertEquals(Integer.valueOf(10), StpKit.getOrgIdAsInteger());
-        assertEquals(42L, StpKit.getOrgIdAsLong().longValue());
-        assertEquals(Integer.valueOf(5), StpKit.getXqOrgIdAsInteger());
-        assertEquals(5L, StpKit.getXqOrgIdAsLong().longValue());
-        assertEquals(Integer.valueOf(42), StpKit.getInfoIdAsInteger());
-        assertEquals(42L, ((Number) StpKit.getRoleId()).longValue());
-        assertEquals(Integer.valueOf(42), StpKit.getInfoIdAsInteger());
-        assertEquals(10L, StpKit.getInfoIdAsLong().longValue());
-        assertEquals("42", StpKit.getInfoIdAsString());
-        assertEquals("110101", StpKit.getXxdmAsString());
-        assertEquals(Integer.valueOf(2), StpKit.getIdentityIdAsInteger());
+        assertEquals(10L, StpKit.getOrgIdAsLong().longValue());
+        assertEquals(7L, ((Number) StpKit.getRoleId()).longValue());
+        assertEquals("7", StpKit.getRoleIdAsString());
+        assertEquals(Integer.valueOf(7), StpKit.getRoleIdAsInteger());
+        assertEquals(7L, StpKit.getRoleIdAsLong().longValue());
+    }
+
+    @Test
+    void commonPayloadConstantsResolveClaimsWithoutChangingExistingKeys() {
+        loginWithExtras();
+
+        assertEquals("tenant-1", StpKit.getExtraAsString(SaConstants.PAYLOAD_TENANT_ID));
+        assertEquals("app-1", StpKit.getExtraAsString(SaConstants.PAYLOAD_APP_ID));
+        assertEquals("operator", StpKit.getExtraAsString(SaConstants.PAYLOAD_ROLE_CODE));
+        assertEquals("custom", StpKit.getExtraAsString(SaConstants.PAYLOAD_ROLE_TYPE));
+        assertEquals("uid", SaConstants.PAYLOAD_USER_ID);
+        assertEquals("rid", SaConstants.PAYLOAD_ROLE_ID);
+        assertEquals("org_id", SaConstants.PAYLOAD_ORG_ID);
     }
 
     @Test

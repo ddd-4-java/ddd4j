@@ -30,12 +30,26 @@
 2. 配置 Sa-Token 基本属性（如 Token 风格、过期时间、是否 JWT 等）
 3. 在登录成功后，写入必要的扩展载荷（如用户、机构、角色等）
 
-## 5. 载荷读取示例
+## 5. 通用载荷字段与读取示例
+
+| 字段 | Sa-Token 常量 | 键值 |
+|---|---|---|
+| 租户 ID | `SaConstants.PAYLOAD_TENANT_ID` | `tenant_id` |
+| 应用 ID | `SaConstants.PAYLOAD_APP_ID` | `appId` |
+| 角色 ID | `SaConstants.PAYLOAD_ROLE_ID` | `rid` |
+| 角色编码 | `SaConstants.PAYLOAD_ROLE_CODE` | `roleCode` |
+| 角色类型 | `SaConstants.PAYLOAD_ROLE_TYPE` | `roleType` |
+| 用户 ID | `SaConstants.PAYLOAD_USER_ID` | `uid` |
+| 机构 ID | `SaConstants.PAYLOAD_ORG_ID` | `org_id` |
+
+键值由 `AuthConstants` 统一维护。读取器按各自字段取值，组织 ID 与角色 ID 分别使用 `org_id` 和 `rid`。应用专用载荷键由应用维护，通过 `StpKit.getExtraAs(...)` 读取。接入使用 `user_id` 等其他键名的存量令牌时，在接入层完成字段映射。
 
 ```java
 String userId = StpKit.getUserIdAsString();
 Long orgId = StpKit.getOrgIdAsLong();
 String roleId = StpKit.getRoleIdAsString();
+String tenantId = StpKit.getExtraAsString(SaConstants.PAYLOAD_TENANT_ID);
+String roleType = StpKit.getExtraAsString(SaConstants.PAYLOAD_ROLE_TYPE);
 ```
 
 ## 6. 临时授权码（一次性 Token）

@@ -25,8 +25,7 @@ package io.ddd4j.core.constant;
  *   <li>鉴权请求/响应常见字段名</li>
  * </ul>
  *
- * <p>各鉴权实现（sa-token/shiro/security）的**业务字段名映射**（如 sa-token 的
- * "PAYLOAD_SCHOOL_CODE" = "xxdm"）由各自实现内部维护，不应进入本类。
+ * <p>应用专用的载荷字段由应用维护。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.0.0
@@ -124,7 +123,7 @@ public final class AuthConstants {
      */
     public static final String HEADER_SIGNATURE = "signature";
     /**
-     * 用户 ID 字段名（loginId）。
+     * 用户 ID 字段名。
      */
     public static final String FIELD_USER_ID = "uid";
 
@@ -137,6 +136,18 @@ public final class AuthConstants {
      * 角色 ID 字段名。
      */
     public static final String FIELD_ROLE_ID = "rid";
+    /**
+     * 角色编码字段名。
+     */
+    public static final String FIELD_ROLE_CODE = "roleCode";
+    /**
+     * 角色类型字段名。
+     */
+    public static final String FIELD_ROLE_TYPE = "roleType";
+    /**
+     * 租户 ID 字段名。
+     */
+    public static final String FIELD_TENANT_ID = "tenant_id";
     /**
      * 机构 ID 字段名。
      */
