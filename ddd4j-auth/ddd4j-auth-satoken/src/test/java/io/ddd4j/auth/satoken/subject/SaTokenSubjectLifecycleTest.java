@@ -35,11 +35,15 @@ import io.ddd4j.auth.satoken.config.SaTokenSecurityProperties;
 import io.ddd4j.core.auth.AuthLogoutMode;
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.auth.AuthRequest;
+import io.ddd4j.core.auth.AuthReplacedLoginExitMode;
+import io.ddd4j.core.auth.AuthReplacedRange;
 import io.ddd4j.core.auth.session.AuthCookieConfig;
 import io.ddd4j.core.auth.session.AuthSessionConfig;
 import io.ddd4j.core.exception.AccountDisabledException;
 import io.ddd4j.core.exception.NotLoggedInException;
+import io.ddd4j.core.subject.Subject;
 import io.ddd4j.core.subject.SubjectDataProvider;
+import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.core.util.SubjectKit;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -62,6 +66,7 @@ class SaTokenSubjectLifecycleTest {
     private SaTokenDao originalDao;
     private StpLogic originalLogic;
     private SubjectDataProvider originalDataProvider;
+    private SubjectProvider originalProvider;
 
     @BeforeEach
     void setUp() {
@@ -69,6 +74,7 @@ class SaTokenSubjectLifecycleTest {
         originalDao = SaManager.getSaTokenDao();
         originalLogic = StpUtil.stpLogic;
         originalDataProvider = SubjectKit.dataProvider;
+        originalProvider = SubjectKit.subjectProvider;
         SaManager.setConfig(new SaTokenConfig()
                 .setJwtSecretKey("ddd4j-satoken-lifecycle-test-secret")
                 .setIsPrint(false)
@@ -84,6 +90,7 @@ class SaTokenSubjectLifecycleTest {
         SaManager.setSaTokenDao(originalDao);
         SaManager.setConfig(originalConfig);
         SubjectKit.setDataProvider(originalDataProvider);
+        SubjectKit.register(originalProvider);
     }
 
     private SaTokenSubject subject() {
@@ -104,6 +111,7 @@ class SaTokenSubjectLifecycleTest {
         AuthSessionConfig sessionConfig = new AuthSessionConfig();
         sessionConfig.setTimeout(600);
         sessionConfig.setDeviceType("PC");
+        sessionConfig.setDeviceId("managed-device");
         sessionConfig.setActiveTimeout(300L);
         sessionConfig.setConcurrent(true);
         sessionConfig.setShare(true);
@@ -124,7 +132,9 @@ class SaTokenSubjectLifecycleTest {
 
         String token = subject().login(request);
 
-        assertNotNull(token);
+        assertEquals("preset-token-1", token);
+        assertNotNull(SaManager.getSaTokenDao().getSession(StpUtil.stpLogic.splicingKeyTokenSession(token)));
+        assertEquals("managed-device", StpUtil.stpLogic.getTerminalInfoByToken(token).getDeviceId());
         assertTrue(StpUtil.isLogin(1001L));
         assertEquals("user-1001", subject().getPrincipalByLoginId(1001L).getUserId());
     }
@@ -253,6 +263,100 @@ class SaTokenSubjectLifecycleTest {
         assertEquals(token, refreshed);
         assertTrue(SaManager.getSaTokenDao().getTimeout(
                 StpUtil.stpLogic.splicingKeyTokenValue(token)) >= 60);
+    }
+
+    @Test
+    void defaultSessionInheritsConfiguredTokenTtl() {
+        SaManager.getConfig().setTimeout(300);
+        String token = login("ttl-default");
+
+        long ttl = StpUtil.stpLogic.getTokenTimeout(token);
+        assertTrue(ttl > 0 && ttl <= 300, "Expected configured finite TTL, got " + ttl);
+    }
+
+    @Test
+    void explicitPermanentSessionRetainsItsMeaning() {
+        SaManager.getConfig().setTimeout(300);
+        String token = subject().login(AuthRequest.of("ttl-permanent")
+                .setSessionConfig(new AuthSessionConfig().setTimeout(-1)));
+
+        assertEquals(SaTokenDao.NEVER_EXPIRE, StpUtil.stpLogic.getTokenTimeout(token));
+    }
+
+    @Test
+    void refreshRejectsRevokedToken() {
+        String token = login("refresh-revoked");
+        StpUtil.stpLogic.logoutByTokenValue(token);
+
+        assertThrows(NotLoggedInException.class, () -> subject().refresh());
+    }
+
+    @Test
+    void providerKeepsSameLoginIdInTwoRealmsIsolated() {
+        SaTokenSubjectProvider provider = new SaTokenSubjectProvider();
+        Subject admin = provider.getSubject("admin");
+        Subject user = provider.getSubject("user");
+
+        String adminToken = admin.login(AuthRequest.of("shared-id")
+                .setPrincipal(principal("shared-id").setUserId("admin")));
+        String userToken = user.login(AuthRequest.of("shared-id")
+                .setPrincipal(principal("shared-id").setUserId("user")));
+
+        assertEquals("admin", admin.verify(adminToken).getUserId());
+        assertEquals("user", user.verify(userToken).getUserId());
+        assertNull(admin.verify(userToken));
+        assertNull(user.verify(adminToken));
+        SubjectKit.register(provider);
+        SubjectKit.setDataProvider(new SubjectDataProvider() {
+            @Override
+            public List<String> getPermissionList(AuthPrincipal principal) {
+                return List.of(principal.getUserId() + ":read");
+            }
+        });
+        SaTokenSubjectDataBridge bridge = new SaTokenSubjectDataBridge();
+        assertEquals(List.of("admin:read"), bridge.getPermissionList("shared-id", "admin"));
+        assertEquals(List.of("user:read"), bridge.getPermissionList("shared-id", "user"));
+        admin.logout("shared-id");
+        assertNull(admin.verify(adminToken));
+        assertNotNull(user.verify(userToken));
+    }
+
+    @Test
+    void loginAppliesReplacementAcrossDeviceTypes() {
+        AuthSessionConfig oldDevice = new AuthSessionConfig().setDeviceType("desktop");
+        String oldToken = subject().login(AuthRequest.of("replace-device")
+                .setSessionConfig(oldDevice).setPrincipal(principal("replace-device")));
+
+        AuthSessionConfig newDevice = new AuthSessionConfig().setDeviceType("mobile").setConcurrent(false)
+                .setReplacedLoginExitMode(AuthReplacedLoginExitMode.NEW_DEVICE)
+                .setReplacedRange(AuthReplacedRange.ALL_DEVICE_TYPE);
+        String newToken = subject().login(AuthRequest.of("replace-device")
+                .setSessionConfig(newDevice).setPrincipal(principal("replace-device")));
+
+        assertNull(subject().verify(oldToken));
+        assertNotNull(subject().verify(newToken));
+    }
+
+    @Test
+    void refreshRejectsMissingTerminalWithoutCreatingSession() {
+        login("refresh-missing-terminal");
+        SaManager.getSaTokenDao().deleteSession(StpUtil.stpLogic.splicingKeySession("refresh-missing-terminal"));
+
+        assertThrows(NotLoggedInException.class, () -> subject().refresh());
+        assertNull(subject().getPrincipalByLoginId("refresh-missing-terminal"));
+    }
+
+    @Test
+    void frozenTokenCannotRefreshAndCanStillBeRevoked() {
+        SaManager.getConfig().setActiveTimeout(60);
+        String token = login("refresh-frozen");
+        String activityKey = StpUtil.stpLogic.splicingKeyLastActiveTime(token);
+        SaManager.getSaTokenDao().update(activityKey, "1");
+
+        assertThrows(NotLoggedInException.class, () -> subject().refresh());
+        subject().logout();
+        assertNull(SaManager.getSaTokenDao().get(StpUtil.stpLogic.splicingKeyTokenValue(token)));
+        assertNull(SaManager.getSaTokenDao().get(activityKey));
     }
 
     @Test

@@ -37,11 +37,11 @@ public class SaTokenSubjectProvider implements SubjectProvider {
     /**
      * 按账号体系获取 Subject（对齐 Sa-Token {@code SaManager.getStpLogic(loginType)}）。
      *
-     * <p>本实现返回的 Subject 内部会按 realm 选择对应的 StpLogic。
+     * <p>返回绑定指定账号体系的 Subject。
      */
     @Override
     public Subject getSubject(String realm) {
-        return new SaTokenSubject();
+        return new SaTokenSubject(realm);
     }
 
 }

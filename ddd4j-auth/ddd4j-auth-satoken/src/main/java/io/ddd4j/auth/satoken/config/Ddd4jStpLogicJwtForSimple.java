@@ -41,6 +41,7 @@ public class Ddd4jStpLogicJwtForSimple extends StpLogicJwtForSimple {
     /** JWT 受众声明名称。 */
     public static final String AUDIENCE_CLAIM = "aud";
 
+    private final String signingSecret;
     private final String issuer;
     private final String audience;
 
@@ -51,8 +52,14 @@ public class Ddd4jStpLogicJwtForSimple extends StpLogicJwtForSimple {
      */
     public Ddd4jStpLogicJwtForSimple(SaTokenSecurityProperties properties) {
         super(properties.getLoginType());
+        this.signingSecret = properties.getJwtSecretKey();
         this.issuer = properties.getJwtIssuer();
         this.audience = properties.getJwtAudience();
+    }
+
+    @Override
+    public String jwtSecretKey() {
+        return signingSecret;
     }
 
     @Override

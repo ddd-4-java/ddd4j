@@ -14,6 +14,10 @@
  */
 package io.ddd4j.core.auth;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import io.ddd4j.core.auth.session.AuthSessionConfig;
 import io.ddd4j.core.subject.Subject;
 import lombok.Data;
@@ -109,6 +113,7 @@ public class AuthRequest {
      *
      * @return Token 有效期，单位为秒
      */
+    @JsonIgnore
     public long getTimeout() {
         return sessionConfig.getTimeout();
     }
@@ -119,9 +124,17 @@ public class AuthRequest {
      * @param timeout 有效期秒数，-1 表示永久
      * @return 当前登录请求
      */
+    @JsonSetter("timeout")
     public AuthRequest setTimeout(long timeout) {
         sessionConfig.setTimeout(timeout);
         return this;
+    }
+
+    @JsonGetter("timeout")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Long serializedTimeout() {
+        return Objects.nonNull(sessionConfig) && sessionConfig.hasTimeoutOverride()
+                ? sessionConfig.getTimeout() : null;
     }
 
     /**

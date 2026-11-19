@@ -49,3 +49,12 @@ String roleId = StpKit.getRoleIdAsString();
 - 在业务层优先通过 `SubjectKit` 读取认证主体和权限语义，必要时再使用 `StpUtil`/`StpKit`
 - 对 JWT 载荷的扩展键使用 `SaConstants` 约定字段，避免语义不一致
 - 对管理端/移动端区分 `deviceType`，用于风控与日志聚合
+
+## 8. P0 会话契约（2.0.x）
+
+- Sa-Token 依赖由中心 BOM 统一至 1.46.0。三个下游脚手架的装配维持现有接口。
+- JWT Simple 的签发与验签使用已校验的密钥、issuer 和 audience。服务端 Token 映射决定到期与撤销。
+- 按 realm 获取的 Subject 对同一账号体系执行会话读写、鉴权、刷新和注销。原生权限桥依据 loginType 加载主体。
+- 登录基于当前账号体系的参数构建器。未指定的长期有效期沿用逻辑配置，显式 -1 仍表示永久。映射设备标识、挤占策略、预定令牌和立即创建 Token-Session。
+- refresh 续期当前有效凭证，成功返回同一令牌。无令牌、撤销、冻结或缺少完整会话时抛出未登录异常。续期保留最后活跃时间。
+- 验收包括同 ID 的 admin/user、真实 Redis 中的键与 TTL、刷新及注销后凭证失效。

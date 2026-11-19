@@ -14,6 +14,7 @@
  */
 package io.ddd4j.auth.satoken.util;
 
+import cn.dev33.satoken.SaManager;
 import cn.dev33.satoken.stp.StpLogic;
 import cn.dev33.satoken.stp.StpUtil;
 import io.ddd4j.auth.satoken.SaConstants;
@@ -39,12 +40,12 @@ public class StpKit {
     /**
      * Admin 会话对象，管理 Admin 表所有账号的登录、权限认证
      */
-    public static final StpLogic ADMIN = new StpLogic("admin");
+    public static final StpLogic ADMIN = SaManager.getStpLogic("admin");
 
     /**
      * User 会话对象，管理 User 表所有账号的登录、权限认证
      */
-    public static final StpLogic USER = new StpLogic("user");
+    public static final StpLogic USER = SaManager.getStpLogic("user");
 
     /**
      * 访客会话对象，管理 User 表所有账号的登录、权限认证

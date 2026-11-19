@@ -14,6 +14,8 @@
  */
 package io.ddd4j.core.auth;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.ddd4j.core.auth.session.AuthSessionConfig;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -62,6 +64,31 @@ class AuthRequestTest {
 
         assertThat(result).isSameAs(request);
         assertThat(request.getTimeout()).isEqualTo(600L);
+    }
+
+    @Test
+    void sessionConfigRoundTripDistinguishesInheritedAndPermanentTtl() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        AuthSessionConfig inherited = new AuthSessionConfig();
+        AuthSessionConfig permanent = new AuthSessionConfig().setTimeout(-1);
+
+        assertThat(mapper.readValue(mapper.writeValueAsString(inherited), AuthSessionConfig.class)
+                .hasTimeoutOverride()).isFalse();
+        assertThat(mapper.readValue(mapper.writeValueAsString(permanent), AuthSessionConfig.class)
+                .hasTimeoutOverride()).isTrue();
+    }
+
+    @Test
+    void requestOmitsInheritedTimeoutAndPreservesExplicitFlatCompatibility() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+
+        assertThat(mapper.readTree(mapper.writeValueAsString(AuthRequest.of("u1"))).has("timeout"))
+                .isFalse();
+        assertThat(mapper.readTree(mapper.writeValueAsString(AuthRequest.of("u1").setTimeout(-1)))
+                .get("timeout").asLong()).isEqualTo(-1);
+        AuthRequest legacy = mapper.readValue("{\"loginId\":\"u1\",\"timeout\":-1}", AuthRequest.class);
+        assertThat(legacy.getSessionConfig().hasTimeoutOverride()).isTrue();
+        assertThat(legacy.getTimeout()).isEqualTo(-1);
     }
 
     @Test

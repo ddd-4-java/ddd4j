@@ -64,6 +64,20 @@ class SaTokenSecurityConfigurerTest {
     }
 
     @Test
+    void configureBindsValidatedSecretToSigningLogic() {
+        String secret = "a-dedicated-test-signing-secret-of-32-bytes";
+        SaTokenSecurityProperties properties = new SaTokenSecurityProperties();
+        properties.setAuthenticationMode(SaTokenAuthenticationMode.JWT_SIMPLE);
+        properties.setJwtSecretKey(secret);
+        properties.setJwtIssuer("orders");
+        properties.setJwtAudience("clients");
+
+        StpLogic logic = SaTokenSecurityConfigurer.configure(properties);
+
+        assertThat(((Ddd4jStpLogicJwtForSimple) logic).jwtSecretKey()).isEqualTo(secret);
+    }
+
+    @Test
     void configure_shouldRejectJwtWithoutProductionSecret() {
         SaTokenSecurityProperties properties = new SaTokenSecurityProperties();
         properties.setAuthenticationMode(SaTokenAuthenticationMode.JWT_SIMPLE);

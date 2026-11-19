@@ -1,0 +1,3 @@
+# Ddd4j 认证主体保存在 Sa-Token Account-Session 中。
+io.ddd4j.core.auth.AuthPrincipal
+io.ddd4j.core.auth.AuthPrincipal$RolePair
