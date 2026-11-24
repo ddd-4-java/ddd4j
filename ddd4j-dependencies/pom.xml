@@ -694,7 +694,7 @@
         <twilio.version>10.8.0</twilio.version>
         <unboundid-ldapsdk.version>6.0.11</unboundid-ldapsdk.version>
         <undertow-metrics.version>3.0.x.20260630-SNAPSHOT</undertow-metrics.version>
-        <undertow.version>2.3.21.Final</undertow.version>
+        <undertow.version>2.3.25.Final</undertow.version>
         <unirest-java.version>4.10.0</unirest-java.version>
         <UserAgentUtils.version>1.21</UserAgentUtils.version>
         <validation-api-extension.version>3.0.x.20260630-SNAPSHOT</validation-api-extension.version>
@@ -7431,22 +7431,22 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context-support</artifactId>
-                <version>7.0.8</version>
+                <version>${spring-framework.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-orm</artifactId>
-                <version>7.0.8</version>
+                <version>${spring-framework.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-tx</artifactId>
-                <version>7.0.8</version>
+                <version>${spring-framework.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-websocket</artifactId>
-                <version>7.0.8</version>
+                <version>${spring-framework.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.data</groupId>
