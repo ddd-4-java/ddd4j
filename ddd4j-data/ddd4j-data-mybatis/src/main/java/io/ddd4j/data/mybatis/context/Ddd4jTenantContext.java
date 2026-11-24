@@ -1,6 +1,7 @@
 package io.ddd4j.data.mybatis.context;
 
 import io.ddd4j.core.constant.ContextConstants;
+import io.ddd4j.core.context.Contexts;
 import io.ddd4j.core.context.ThreadContext;
 import java.util.Objects;
 
@@ -18,7 +19,7 @@ public class Ddd4jTenantContext {
      * @return 当前租户标识，无租户时返回 null
      */
     public Object getCurrentTenantId() {
-        return ThreadContext.get(ContextConstants.TENANT_ID);
+        return Contexts.get(ContextConstants.TENANT_ID, Object.class);
     }
 
     /**
@@ -38,6 +39,7 @@ public class Ddd4jTenantContext {
     public void clear() {
         ThreadContext.remove(ContextConstants.TENANT_ID);
     }
+
     /**
      * 提供与 DDD4J 共享租户状态的增强组件上下文。
      *
@@ -58,9 +60,16 @@ public class Ddd4jTenantContext {
     }
 
     /** 兼容既有 Ddd4jTenantContext.Scope 的薄包装。 */
-    public final class Scope implements AutoCloseable {
+    public static final class Scope implements AutoCloseable {
         private final org.apache.ibatis.enhance.context.TenantContext.Scope scope;
-        private Scope(org.apache.ibatis.enhance.context.TenantContext.Scope scope) { this.scope = scope; }
-        @Override public void close() { scope.close(); }
+
+        private Scope(org.apache.ibatis.enhance.context.TenantContext.Scope scope) {
+            this.scope = scope;
+        }
+
+        @Override
+        public void close() {
+            scope.close();
+        }
     }
 }

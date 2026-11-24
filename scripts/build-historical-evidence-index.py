@@ -34,7 +34,9 @@ def indexed_paths(root, line):
     revision = pom.findtext("{*}properties/{*}revision")
     if not revision or not revision.startswith(line + "."):
         raise ValueError(f"{line}: root Maven revision does not match the requested line")
-    paths = git(root, "ls-files", "-z", "--", *SOURCE_DIRS).split(b"\0")
+    # Enumerate the same committed tree used to read the evidence contents.
+    paths = git(root, "ls-tree", "-r", "--name-only", "-z", "HEAD", "--",
+                *SOURCE_DIRS).split(b"\0")
     return [path.decode("utf-8") for path in sorted(path for path in paths if path)
             if path.decode("utf-8") not in (INDEX_DOCUMENT, ACTIVE_PLAN)
             and path.endswith(b".md")]

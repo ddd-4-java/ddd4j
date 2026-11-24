@@ -14,8 +14,12 @@
  */
 package io.ddd4j.data.mybatis.repository.impl;
 
+import io.ddd4j.core.cqrs.query.Query;
+import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.data.mybatis.repository.MybatisAggregateRepository;
 import org.apache.ibatis.enhance.mapper.EnhanceMapper;
+
+import java.io.Serializable;
 
 /**
  * 业务方入口基类（对齐 mybatisplus 模块的 BaseRepositoryImpl）。
@@ -31,11 +35,6 @@ import org.apache.ibatis.enhance.mapper.EnhanceMapper;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 4.0.0
  */
-public abstract class BaseRepositoryImpl<
-        MP extends EnhanceMapper<P>,
-        M extends io.ddd4j.core.ddd.model.AggregateRoot<?>,
-        P,
-        Q extends io.ddd4j.core.cqrs.query.Query<M>,
-        ID extends java.io.Serializable>
+public abstract class BaseRepositoryImpl<MP extends EnhanceMapper<P>, M extends AggregateRoot<?>, P, Q extends Query<M>, ID extends Serializable>
         extends MybatisAggregateRepository<MP, M, P, Q, ID> {
 }
