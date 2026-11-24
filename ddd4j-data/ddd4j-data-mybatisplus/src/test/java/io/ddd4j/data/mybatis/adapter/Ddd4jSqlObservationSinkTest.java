@@ -63,4 +63,22 @@ class Ddd4jSqlObservationSinkTest {
 
         assertThat(discovered).isTrue();
     }
+
+    @Test
+    void shouldForwardObservationDiscoveredThroughUpstreamServiceLoader() {
+        com.baomidou.mybatisplus.enhance.observation.SqlObservationSink sink = ServiceLoader
+                .load(com.baomidou.mybatisplus.enhance.observation.SqlObservationSink.class)
+                .stream()
+                .map(ServiceLoader.Provider::get)
+                .filter(Ddd4jSqlObservationSink.class::isInstance)
+                .findFirst()
+                .orElseThrow();
+
+        sink.accept(new com.baomidou.mybatisplus.enhance.observation.SqlObservation(
+                "OrderMapper.select", "SELECT  *\nFROM orders", 3_500_000L, null));
+
+        assertThat(ThreadContext.<Object>get(ContextConstants.PREPARING_SQL))
+                .isEqualTo("SELECT * FROM orders");
+        assertThat(ThreadContext.<Object>get(ContextConstants.LAST_SQL_SPENDS)).isEqualTo(3L);
+    }
 }

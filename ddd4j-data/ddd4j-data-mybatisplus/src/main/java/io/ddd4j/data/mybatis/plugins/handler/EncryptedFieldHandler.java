@@ -17,9 +17,9 @@ package io.ddd4j.data.mybatis.plugins.handler;
 /**
  * MyBatis-Plus 字段透明加密桥接契约。
  *
- * <p>由 ddd4j 自己维护，避免把未发布增强库的接口暴露给应用代码。</p>
+ * <p>由 ddd4j 自己维护，保留旧入口，实际字段契约复用增强组件。</p>
  */
-public interface EncryptedFieldHandler {
+public interface EncryptedFieldHandler extends com.baomidou.mybatisplus.enhance.crypto.handler.EncryptedFieldHandler {
 
     /**
      * 加密字段值。
@@ -28,6 +28,7 @@ public interface EncryptedFieldHandler {
      * @param value 待加密的原始值
      * @return 加密后的字符串
      */
+    @Override
     <T> String encrypt(T value);
 
     /**
@@ -38,6 +39,7 @@ public interface EncryptedFieldHandler {
      * @param resultType 目标类型
      * @return 解密后的对象
      */
+    @Override
     <T> T decrypt(String value, Class<T> resultType);
 
     /**
@@ -47,5 +49,6 @@ public interface EncryptedFieldHandler {
      * @param value 待计算的原始值
      * @return 摘要字符串
      */
+    @Override
     <T> String hmac(T value);
 }

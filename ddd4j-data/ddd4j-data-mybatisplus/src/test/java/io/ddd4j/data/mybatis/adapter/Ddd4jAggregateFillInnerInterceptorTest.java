@@ -26,11 +26,6 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * 类型说明。
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 3.0.x
- */
 class Ddd4jAggregateFillInnerInterceptorTest {
 
     @Test
@@ -46,22 +41,26 @@ class Ddd4jAggregateFillInnerInterceptorTest {
         assertThat(query.filled.get(0)).isSameAs(aggregate);
     }
 
-    /** 记录填充结果的测试查询对象，用于断言拦截器回调。 */
+    @Test
+    void shouldUseEnhanceParameterNormalizationForMapperCollections() {
+        TrackingQuery query = new TrackingQuery();
+        TestAggregate aggregate = new TestAggregate("collection");
+        new Ddd4jAggregateFillInnerInterceptor().afterQuery(
+                Map.of("queries", List.of(query)), List.of(aggregate));
+        assertThat(query.filled).hasSize(1);
+        assertThat(query.filled.get(0)).isSameAs(aggregate);
+    }
+
     static final class TrackingQuery extends Query<TestAggregate> {
 
         private List<? extends AggregateRoot<?>> filled;
 
-        /**
-         * 执行处理逻辑。
-         * @param models models 参数。
-         */
         @Override
         public void doFills(List<? extends AggregateRoot<?>> models) {
             this.filled = models;
         }
     }
 
-    /** 测试用聚合根，标识固定为构造传入值。 */
     static final class TestAggregate extends AggregateRoot<String> {
 
         private final String id;
@@ -70,10 +69,6 @@ class Ddd4jAggregateFillInnerInterceptorTest {
             this.id = id;
         }
 
-        /**
-         * id() 方法。
-         * @return 结果字符串。
-         */
         @Override
         public String id() {
             return id;

@@ -14,6 +14,8 @@
  */
 package io.ddd4j.guice;
 
+import org.apache.ibatis.session.SqlSessionManager;
+
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -240,7 +242,7 @@ class Ddd4jGuiceModuleTest {
         assertNotNull(session);
 
         module.initRepositories(injector);
-        session.close();
+        assertFalse(((SqlSessionManager) session).isManagedSessionStarted());
     }
 
     @Test

@@ -17,17 +17,17 @@ package io.ddd4j.guice;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.MybatisSqlSessionFactoryBuilder;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
+import com.baomidou.mybatisplus.enhance.plugins.MybatisPlusEnhanceInterceptor;
+import io.ddd4j.data.mybatis.config.Ddd4jMybatisPlusConfigurer;
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import io.ddd4j.data.mybatis.plugins.inner.Ddd4jAggregateFillInnerInterceptor;
 import io.ddd4j.data.mybatis.repository.impl.BaseRepositoryImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionManager;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 
@@ -36,6 +36,7 @@ import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -54,6 +55,7 @@ public class Ddd4jMybatisGuiceModule extends AbstractModule {
      * 数据源
      */
     private final DataSource dataSource;
+    private Ddd4jMybatisPlusConfigurer configurer = new Ddd4jMybatisPlusConfigurer();
     /**
      * 注册的 Mapper 接口集
      */
@@ -99,6 +101,17 @@ public class Ddd4jMybatisGuiceModule extends AbstractModule {
     /**
      * configure() 方法。
      */
+    /**
+     * 配置当前会话工厂使用的增强能力。
+     *
+     * @param configurer 构建 MyBatis-Plus 增强链的装配器
+     * @return 当前 Guice 模块
+     */
+    public Ddd4jMybatisGuiceModule enhancements(Ddd4jMybatisPlusConfigurer configurer) {
+        this.configurer = Objects.requireNonNull(configurer, "configurer");
+        return this;
+    }
+
     @Override
     protected void configure() {
         for (Class<?> repositoryImpl : repositoryToMapper.keySet()) {
@@ -124,8 +137,7 @@ public class Ddd4jMybatisGuiceModule extends AbstractModule {
                 log.debug("Injected mapper {} into repository {}",
                         mapperInterface.getSimpleName(), repositoryImpl.getSimpleName());
             } catch (Exception exception) {
-                log.warn("Failed to inject mapper into {}: {}", repositoryImpl.getSimpleName(),
-                        exception.getMessage());
+                log.warn("Failed to inject mapper into {}: {}", repositoryImpl.getSimpleName(), exception.getMessage());
             }
         }
         log.info("Repository mapper injection completed: {} repositories", repositoryToMapper.size());
@@ -146,10 +158,8 @@ public class Ddd4jMybatisGuiceModule extends AbstractModule {
             }
         }
 
-        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
-        interceptor.addInnerInterceptor(new PaginationInnerInterceptor());
+        MybatisPlusEnhanceInterceptor interceptor = configurer.build();
         configuration.addInterceptor(interceptor);
-        configuration.addInterceptor(new Ddd4jAggregateFillInnerInterceptor());
         configuration.setEnvironment(new Environment("ddd4j-runtime-guice", new JdbcTransactionFactory(), dataSource));
 
         SqlSessionFactory factory = new MybatisSqlSessionFactoryBuilder().build(configuration);
@@ -165,6 +175,6 @@ public class Ddd4jMybatisGuiceModule extends AbstractModule {
     @Provides
     @Singleton
     public SqlSession sqlSession(SqlSessionFactory sqlSessionFactory) {
-        return sqlSessionFactory.openSession(true);
+        return SqlSessionManager.newInstance(sqlSessionFactory);
     }
 }

@@ -25,8 +25,8 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * 可透传的线程上下文容器。
  *
- * <p>上下文通过 {@link TransmittableThreadLocal} 在线程池任务间透传。透传时会复制资源 Map，
- * 避免父线程和异步任务共享同一个可变容器；Map 中的业务对象保持引用语义，不进行深拷贝。</p>
+ * <p>上下文通过 {@link TransmittableThreadLocal} 在线程池任务间透传。子线程继承资源时以及线程池
+ * 捕获任务上下文时均会复制资源 Map。Map 中的业务对象保持引用语义，不进行深拷贝。</p>
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
@@ -47,18 +47,7 @@ public class ThreadContext {
      * 线程变量池
      */
     private static final TransmittableThreadLocal<Map<Object, Object>> THREAD_LOCAL_POOL =
-            new TransmittableThreadLocal<>() {
-                /**
-                 * 线程池任务透传时复制父线程资源 Map，避免父子线程共享同一可变容器。
-                 *
-                 * @param parentValue 父线程的资源 Map
-                 * @return 复制后的资源 Map
-                 */
-                @Override
-                public Map<Object, Object> copy(Map<Object, Object> parentValue) {
-                    return copyResources(parentValue);
-                }
-            };
+            TransmittableThreadLocal.withInitialAndCopier(() -> null, ThreadContext::copyResources);
 
     // ========================= Object Key API =========================
 

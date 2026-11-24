@@ -22,12 +22,16 @@ import java.util.Objects;
 /**
  * 将 MyBatis-Plus SQL 观测结果写入 ddd4j 请求上下文。
  */
-public class Ddd4jSqlObservationSink implements SqlObservationSink {
+public class Ddd4jSqlObservationSink implements SqlObservationSink, com.baomidou.mybatisplus.enhance.observation.SqlObservationSink {
 
-    /**
-     * 消费输入。
-     * @param observation observation 参数。
-     */
+    @Override
+    public void accept(com.baomidou.mybatisplus.enhance.observation.SqlObservation observation) {
+        if (Objects.nonNull(observation)) {
+            accept(new SqlObservation(observation.getMappedStatementId(), observation.getSql(),
+                    observation.getElapsedNanos(), observation.getFailure()));
+        }
+    }
+
     @Override
     public void accept(SqlObservation observation) {
         if (Objects.isNull(observation)) {
