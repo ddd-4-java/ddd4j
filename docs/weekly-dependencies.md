@@ -9,10 +9,10 @@
 - 使用被检查分支的策略文件；分支可独立调整。`branches` 使用 glob，按配置顺序合并，后面的固定版本覆盖前面的固定版本，排除列表累加。
 - 固定版本优先于排除：`fixed_properties` 或 `fixed_dependencies` 强制指定版本，允许降级；`exclude` 和 `exclude_properties` 保留版本；其余源码控制的依赖、BOM、外部父版本使用仓库可取得的最新稳定版本，允许 major/minor/patch。项目版本、Java/Maven 工具链及 reactor 版本保持原契约。不在 POM 使用 LATEST。
 - Versions Maven Plugin 2.23.0 更新属性和依赖字面量。外部父 POM 中本项目显式引用的版本属性，从 effective POM 解析后在根 POM 覆盖；排除项及共享属性受保护。BOM 隐式管理及传递依赖通过 BOM 升级取得版本，不改写上游 BOM。非属性形式的构建插件升级不在本次依赖更新范围。
-- 先构建/测试并扫描当前依赖，再在临时检出中更新、构建/测试并扫描候选。固定项和排除项仍参与直接、传递、test、provided 漏洞扫描。扫描使用 Java 21，构建沿用分支 JDK 和 Wrapper；无 Wrapper 使用经 SHA-512 校验的 Maven 3.9.16 / 4.0.0-rc-7。
+- 先构建、测试并扫描当前依赖，再在临时检出中更新、构建、测试并扫描候选。Maven 构建与 SBOM 生成沿用目标分支的 JDK 和 Wrapper。Trivy 扫描 reactor 解析的直接、传递、test 和 provided 依赖，也扫描 BOM 直接管理的版本。固定项和升级排除项均纳入扫描。缺少 Wrapper 时使用经 SHA-512 校验的 Maven 3.9.16 或 4.0.0-rc-7。
 - CVSS >= 7、构建/测试失败、策略未生效、解析或扫描失败、报告丢失或为空均失败。即使候选通过，原依赖漏洞仍保留失败状态。兼容旧工程时禁用 Enforcer，因此不能宣称通过完整发布门禁；已有独立发布/安全 CI 保留。
 - 无根 POM 分支记录 `not-applicable-no-maven-project`，不宣称完成 Maven 扫描。每分支记录 SHA、阶段日志、策略、补丁、扫描报告和单元测试报告，失败也上传，保留 30 天。
-- push/PR 仅运行无凭据控制器测试与策略校验；schedule/手动运行检查全部分支。手动 `dry_run` 默认 true，仍更新临时 POM、构建和扫描，但不创建 PR。定时任务仅为通过的候选提出升级 PR，不自动合并。合并后源码依赖才真正更新。
+- push 和 PR 运行无凭据的控制器测试与策略校验。定时任务检查全部适用分支，手动运行可通过 `target_branch` 指定一个分支。手动 `dry_run` 默认开启，候选构建和扫描在临时检出中完成。定时任务为通过的候选提出升级 PR，依赖版本在人工合并后才生效。
 
 ## 配置示例
 

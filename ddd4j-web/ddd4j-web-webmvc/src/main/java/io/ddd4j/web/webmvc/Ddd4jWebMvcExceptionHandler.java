@@ -14,13 +14,18 @@
  */
 package io.ddd4j.web.webmvc;
 
+import io.ddd4j.core.api.ApiCode;
 import io.ddd4j.core.api.R;
+import io.ddd4j.core.exception.AuthenticationException;
+import io.ddd4j.core.exception.AuthorizationException;
 import io.ddd4j.web.core.error.WebError;
 import io.ddd4j.web.core.error.WebExceptionTranslator;
 import io.ddd4j.web.error.BaseErrorConfiguration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -29,8 +34,8 @@ import java.util.Objects;
 /**
  * 将 WebMVC 异常统一翻译为真实 HTTP 状态和 {@link R} 响应体。
  *
- * <p>翻译、5xx 日志与响应体构造复用 {@link BaseErrorConfiguration}，此处只保留
- * Spring MVC 的 {@code @ExceptionHandler} 响应写出。
+ * <p>Spring MVC 请求通过注入的翻译器构造响应。认证响应方法也可由调用方直接使用，
+ * 此时按框架默认状态与消息构造响应。
  */
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @RestControllerAdvice
@@ -48,6 +53,30 @@ public class Ddd4jWebMvcExceptionHandler extends BaseErrorConfiguration {
     @Override
     protected String frameworkName() {
         return "WebMVC";
+    }
+
+    /**
+     * 为直接调用方构造默认认证失败响应。
+     *
+     * @param exception 认证失败异常
+     * @return 使用异常消息或默认说明的 401 响应
+     */
+    public ResponseEntity<R<String>> authenticationFailed(AuthenticationException exception) {
+        String message = exception.getMessage();
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                ApiCode.UNAUTHORIZED.toResponse(StringUtils.hasText(message) ? message : ApiCode.UNAUTHORIZED.getReason()));
+    }
+
+    /**
+     * 为直接调用方构造默认授权失败响应。
+     *
+     * @param exception 授权失败异常
+     * @return 使用异常消息或默认说明的 403 响应
+     */
+    public ResponseEntity<R<String>> authorizationFailed(AuthorizationException exception) {
+        String message = exception.getMessage();
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+                ApiCode.FORBIDDEN.toResponse(StringUtils.hasText(message) ? message : ApiCode.FORBIDDEN.getReason()));
     }
 
     /**

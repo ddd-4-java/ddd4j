@@ -7,6 +7,11 @@ on:
       - feature/2.0.x
       - feature/3.0.x
   workflow_dispatch:
+    inputs:
+      scenario_baseline_sha:
+        description: Previously verified Git commit containing the scenario matrix
+        type: string
+        required: false
 
 permissions:
   contents: read
@@ -31,6 +36,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           path: driver
+          fetch-depth: 2
 
       - name: Resolve three immutable inputs
         id: revisions
@@ -90,6 +96,74 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Run convergence gate regression tests
+        working-directory: driver
+        env:
+          DDD4J_JDK21_HOME: ${{ env.JAVA_HOME_21_X64 }}
+          PYTHONDONTWRITEBYTECODE: '1'
+          PYTHONPATH: scripts
+        run: >-
+          python3 -m unittest -q
+          scripts/test_three_line_convergence.py
+          scripts/test_dependency_alignment.py
+          scripts/test_three_line_product_docs.py
+          scripts/test_build_historical_evidence_index.py
+          scripts/test_three_line_type_mappings.py
+          scripts/test_workflow_line_baseline.py
+          scripts/test_platform_cdi_resources.py
+          scripts.test_three_line_structure_inventory.ThreeLineInventoryTest.test_missing_production_type_and_test_are_both_open
+          scripts.test_three_line_structure_inventory.ThreeLineInventoryTest.test_changed_error_code_fails_inventory_gate
+          scripts.test_three_line_structure_inventory.ThreeLineInventoryTest.test_old_target_class_does_not_count_as_current_api
+          scripts.test_three_line_structure_inventory.ThreeLineInventoryTest.test_exact_platform_api_allows_jvm_generic_wildcard_but_not_descriptor_glob
+
+      - name: Prepare committed scenario baseline
+        shell: bash
+        env:
+          SCENARIO_BEFORE: ${{ github.event.before }}
+          SCENARIO_OVERRIDE: ${{ inputs.scenario_baseline_sha }}
+        run: |
+          set -euo pipefail
+          matrix_path=verification/three-line-parity/scenario-matrix.json
+          evidence_dir=target/three-line-convergence
+          baseline="$evidence_dir/scenario-baseline.json"
+          mkdir -p "$evidence_dir"
+          : > "$baseline"
+
+          if [[ -n "$SCENARIO_OVERRIDE" && "$SCENARIO_OVERRIDE" == "$GITHUB_SHA" ]]; then
+            echo "The candidate commit cannot be used as its own scenario baseline." >&2
+            exit 1
+          fi
+          baseline_sha="${SCENARIO_OVERRIDE:-$SCENARIO_BEFORE}"
+          if [[ -z "$baseline_sha" && "$GITHUB_EVENT_NAME" == 'workflow_dispatch' ]]; then
+            baseline_sha="$(git -C driver rev-parse --verify HEAD^ 2>/dev/null || true)"
+          fi
+          if [[ -n "$baseline_sha" && "$baseline_sha" != '0000000000000000000000000000000000000000' ]]; then
+            if [[ ! "$baseline_sha" =~ ^[0-9a-f]{40}$ ]]; then
+              echo "Scenario baseline must be a full Git commit SHA." >&2
+              exit 1
+            fi
+            if ! git -C driver cat-file -e "$baseline_sha^{commit}" 2>/dev/null; then
+              git -C driver fetch --no-tags --depth=1 origin "$baseline_sha"
+            fi
+            if git -C driver cat-file -e "$baseline_sha:$matrix_path" 2>/dev/null; then
+              git -C driver show "$baseline_sha:$matrix_path" > "$baseline"
+            fi
+          fi
+
+          if [[ ! -s "$baseline" ]]; then
+            if [[ -n "$SCENARIO_OVERRIDE" ]]; then
+              echo "The requested commit does not contain a scenario matrix." >&2
+              exit 1
+            fi
+            # The initial shared baseline predates the matrix on the Java 8 branch.
+            baseline_sha='79e9a9abe1c92606d256d4ca92bfd54fdd9cb9e5'
+            if ! git -C line-17 cat-file -e "$baseline_sha:$matrix_path" 2>/dev/null; then
+              git -C line-17 fetch --no-tags --depth=1 origin "$baseline_sha"
+            fi
+            git -C line-17 show "$baseline_sha:$matrix_path" > "$baseline"
+          fi
+          printf '%s\n' "$baseline_sha" > "$evidence_dir/scenario-baseline.commit"
+
       - name: Check unresolved three-line inventory on push
         if: github.event_name == 'push'
         run: |
@@ -133,6 +207,7 @@ jobs:
               "${{ steps.revisions.outputs.sha_3 }}" \
             --policy driver/config/parity/three-line-policy.json \
             --redis-native-url redis://127.0.0.1:16379 \
+            --scenario-baseline target/three-line-convergence/scenario-baseline.json \
             --output target/three-line-convergence \
             --phase verify
 

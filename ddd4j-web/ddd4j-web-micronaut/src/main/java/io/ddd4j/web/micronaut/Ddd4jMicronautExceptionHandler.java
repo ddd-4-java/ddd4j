@@ -24,6 +24,8 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Objects;
+
 /**
  * Micronaut 全局异常到 ddd4j R 响应的映射。
  *
@@ -33,6 +35,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Singleton
 public final class Ddd4jMicronautExceptionHandler extends BaseErrorConfiguration implements ExceptionHandler<Throwable, HttpResponse<?>> {
+
+    // 为 Netty 默认 4096 字节状态行预留 HTTP 版本、状态码和分隔符。
+    private static final int MAX_REASON_LENGTH = 4080;
 
     /**
      * 使用默认异常翻译器创建处理器。
@@ -63,6 +68,11 @@ public final class Ddd4jMicronautExceptionHandler extends BaseErrorConfiguration
             log.error("Unhandled {} request failure: {} {}", frameworkName(), request.getMethodName(),
                     request.getPath(), exception);
         }
-        return HttpResponse.status(error.status(), error.message()).body(toResponse(error));
+        String reason = error.message();
+        if (Objects.nonNull(reason)
+                && (reason.length() > MAX_REASON_LENGTH || reason.indexOf('\r') >= 0 || reason.indexOf('\n') >= 0)) {
+            reason = null;
+        }
+        return HttpResponse.status(error.status(), reason).body(toResponse(error));
     }
 }

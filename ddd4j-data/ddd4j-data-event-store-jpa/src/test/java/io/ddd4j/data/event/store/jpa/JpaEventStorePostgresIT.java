@@ -36,6 +36,7 @@ import jakarta.persistence.RollbackException;
 
 import java.sql.Connection;
 import java.util.List;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -67,7 +68,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class JpaEventStorePostgresIT {
 
     @Container
-    static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:16-alpine");
+    static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:16-alpine")
+            // 仅测试事务和连接重开；跨进程持久性由文件数据库用例单独验证。
+            .withTmpFs(Collections.singletonMap("/var/lib/postgresql/data", "rw"));
 
     private static EntityManagerFactory entityManagerFactory;
 

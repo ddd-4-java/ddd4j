@@ -345,6 +345,8 @@ class MicrometerSourceOwnershipTest(unittest.TestCase):
             args = SimpleNamespace(root=root, output=root / 'report', source_only=True)
             with patch.object(FAMILY.spring, 'discover_projects', return_value=(
                     {'ddd4j-dependencies': 'ddd4j-dependencies'}, [])), \
+                    patch.object(FAMILY.owners, 'load_policy', return_value={}), \
+                    patch.object(FAMILY.owners, 'source_errors', return_value=[]), \
                     patch.object(FAMILY.spring, 'run', side_effect=AssertionError('Maven must not run')), \
                     patch.object(FAMILY.subprocess, 'run', side_effect=AssertionError('Maven must not run')):
                 self.assertEqual(1, FAMILY.run(args))

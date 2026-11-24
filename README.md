@@ -16,6 +16,7 @@
 <p align="center">
   <a href="README.en.md">English</a> ·
   <a href="ddd4j-samples/README.md">示例工程</a> ·
+  <a href="REFACTOR_MIGRATION.md">接入与迁移</a> ·
   <a href="docs/8、ddd4j-Architecture.zh_CN.md">系统架构</a> ·
   <a href="docs/5、ddd4j-技术方案与路线.md">技术方案</a> ·
   <a href="docs/superpowers/plans/2026-09-10-mq-startup-lifecycle.md">MQ 启动生命周期</a>
@@ -50,8 +51,9 @@
   <img src="assets/ddd4j-architecture-v2.png" alt="ddd4j：命令、聚合、事件存储、读模型、Outbox 与消息客户端的可靠运行时链路" width="100%" />
 </p>
 
-> **运行时主链路**：Command → Aggregate → Event Store → Projection / Query View。
-> 领域事件与业务写 **同事务**进入 Outbox，再由 Dispatcher 安全发布到消息基础设施。
+> 默认 DDD 应用可直接通过应用服务调用聚合和仓储。
+> 启用事件溯源和独立读模型时，可采用 `Command → Aggregate → Event Store → Projection / Query View`。
+> 需要可靠消息投递时，事件与业务写在同一事务中进入 Outbox，由 Dispatcher 发布。
 
 ### 2.1 三层架构分离
 
@@ -95,8 +97,8 @@
   （统一领域仓储，对齐 BaseMapper）
 - ✅ **MQ 统一抽象**：保留 `ddd4j-mq-core` 纯 Java SPI + `ddd4j-mq-spring` 桥接，以及 Kafka / RabbitMQ / RocketMQ / Redis
   Stream / NATS / Pulsar / ActiveMQ / MQTT / ONS / SQS / TDMQ / Disruptor 等 12 个实现
-- ✅ **多框架运行时绑定**：`ddd4j-runtime` 聚合 Spring / Quarkus / Guice / Micronaut / Vert.x / Helidon / Dropwizard /
-  Testkit；Web 侧由对应的 `ddd4j-web-*` 模块承载
+- ✅ **多框架运行时绑定**：`ddd4j-runtime` 聚合 Spring / Guice（配套 Javalin）/ Quarkus / Micronaut / Helidon / Vert.x / Dropwizard。
+  `ddd4j-runtime-testkit` 提供共享测试支持，Web 接入由对应的 `ddd4j-web-*` 模块提供。
 - ✅ **ArchUnit 编译期守护**：9 条架构边界规则，CI 阶段强制执行分层纪律
 - ✅ **COLA / Clean Architecture 支持**：注解驱动的架构规范检查
 - ✅ **MQ 启动生命周期（2026-09 新增）**：LIFO 资源关闭 + checkpoint / rollback + 启动状态机 NEW / STARTING / READY /
@@ -131,10 +133,10 @@ ddd4j 当前 **三条主线并行演化**，HEAD 同步最新同语义提交：
 | `ddd4j-web`          | Web 层抽象          | WebMVC / WebFlux / Javalin / Quarkus / Vert.x / Micronaut / Helidon / Dropwizard 适配                                                 |
 | `ddd4j-auth`         | 认证授权抽象        | `Subject` SPI + Sa-Token / Security / Shiro 实现                                                                                      |
 | `ddd4j-cache`        | 缓存抽象            | 缓存 SPI 及实现                                                                                                                       |
-| `ddd4j-runtime`      | 多框架运行时绑定    | Spring / Quarkus / Guice / Micronaut / Vert.x / Helidon / Dropwizard / Testkit                                                        |
+| `ddd4j-runtime`      | 多框架运行时绑定    | Spring / Guice / Quarkus / Micronaut / Helidon / Vert.x / Dropwizard，加共享测试支持 testkit                                                        |
 | `ddd4j-extensions`   | 跨领域扩展          | akka / excel / jackson / license / monitor / pf4j / qlexpress / validation                                                            |
 | `ddd4j-parent`       | Maven 父 POM        | 编译 / 打包 / 发布规则                                                                                                                |
-| `ddd4j-samples`      | 示例工程            | 共享 Order 业务内核 + 9 种运行时示例                                                                                                  |
+| `ddd4j-samples`      | 示例工程            | 共享 Order 业务内核，七个平台各有默认 DDD、CQRS、Sa-Token、Shiro 示例，共 28 项                                                                                                  |
 
 ## 6. 模块结构树
 
@@ -153,12 +155,9 @@ ddd4j 当前 **三条主线并行演化**，HEAD 同步最新同语义提交：
 |------ddd4j-data-mybatis                 # 纯 MyBatis 实现
 |------ddd4j-data-jpa                     # JPA Criteria 实现
 |------ddd4j-data-crypto                  # 加解密策略
-|------ddd4j-data-datascope               # 数据权限
 |------ddd4j-data-external                # 外部服务
 |------ddd4j-data-logs                    # API 操作日志
-|------ddd4j-data-cqrs-*                  # CQRS 适配（spring/guice/quarkus/vertx/javalin/micronaut/helidon/dropwizard）
-|------ddd4j-data-event-store-*           # EventStore 实现（esdb/jdbi/jpa/panache/r2dbc）
-|------ddd4j-data-projection-*            # Projection 调度（spring/guice/quarkus/vertx/javalin/micronaut/helidon/dropwizard/jpa/jdbi/r2dbc/panache）
+|------ddd4j-data-event-store-*           # 事件存储及同技术投影位置存储（ESDB 仅事件存储）
 |----ddd4j-mq                             # 消息队列抽象
 |------ddd4j-mq-core                      # 纯 Java MQ SPI
 |------ddd4j-mq-spring                    # Spring Messaging 桥接
@@ -180,6 +179,8 @@ ddd4j 当前 **三条主线并行演化**，HEAD 同步最新同语义提交：
 |                          dropwizard,dropwizard-cqrs}
 ```
 
+数据权限 Bean Validation 约束已并入 `ddd4j-extension-validation`；原 Java 包名保持兼容，Maven 坐标迁移与 Easy4j 集成说明见 [Validation 扩展](ddd4j-extensions/ddd4j-extension-validation/README.md)。
+
 ## 7. 多框架运行时绑定
 
 | 框架        | 运行时绑定                 | DI 容器              | 事件发布                | Web 框架             |
@@ -191,6 +192,8 @@ ddd4j 当前 **三条主线并行演化**，HEAD 同步最新同语义提交：
 | Vert.x      | `ddd4j-runtime-vertx`      | 显式 Runtime         | Vert.x EventBus         | Vert.x Web           |
 | Helidon     | `ddd4j-runtime-helidon`    | CDI / BeanManager    | CDI Event               | Helidon WebServer    |
 | Dropwizard  | `ddd4j-runtime-dropwizard` | 显式 Bundle          | Listener 集合           | Jersey               |
+
+需要 CQRS 时，使用上表对应的运行时。命令总线和投影装配由所选 runtime 提供，持久化实现按需从 `ddd4j-data` 引入。默认 DDD 示例直接使用业务仓储。各平台用法见[示例总览](ddd4j-samples/README.md)。
 
 ## 8. ArchUnit 架构边界守护
 
@@ -236,7 +239,7 @@ ddd4j 内置 9 条 ArchUnit 规则，在 CI 阶段强制执行架构纪律：
     <!-- 数据层（按需） -->
     <dependency>
         <groupId>io.ddd4j</groupId>
-        <artifactId>ddd4j-data-mybatis</artifactId>
+        <artifactId>ddd4j-data-mybatisplus</artifactId>
     </dependency>
     <!-- Web 层（按需） -->
     <dependency>
@@ -254,7 +257,7 @@ ddd4j 内置 9 条 ArchUnit 规则，在 CI 阶段强制执行架构纪律：
 ### 9.2 普通充血模型与 PO 分离
 
 ddd4j 的普通 DDD 主路径 **不要求**领域模型继承 MyBatis-Plus 的 `Model`，也不要求通过固定前缀或固定父类识别模型。领域层只依赖
-`ddd4j-core`，基础设施层再用 `ddd4j-data-mybatis` 适配 MyBatis-Plus。
+`ddd4j-core`，基础设施层再用 `ddd4j-data-mybatisplus` 适配 MyBatis-Plus。
 
 ```java
 import io.ddd4j.core.ddd.model.AggregateRoot;
@@ -294,7 +297,7 @@ import io.ddd4j.core.ddd.repository.Repository;
 
 import java.util.Optional;
 
-public interface OrderRepository extends Repository<Order, OrderPO, Long> {
+public interface OrderRepository extends Repository<Order, Long> {
     Optional<Order> findByOrderNo(String orderNo);
 }
 ```
@@ -306,10 +309,13 @@ import io.ddd4j.kit.lang.StrKit;
 
 import java.util.Optional;
 
-public class MybatisOrderRepository extends MybatisAggregateRepository<Order, OrderPO, Long>
+interface OrderMapper extends BaseMapper<OrderPO> { }
+class OrderQuery extends io.ddd4j.core.cqrs.query.Query<Order> { }
+
+public class MybatisOrderRepository extends MybatisAggregateRepository<Order, Long>
         implements OrderRepository {
 
-    public MybatisOrderRepository(BaseMapper<OrderPO> mapper) {
+    public MybatisOrderRepository(OrderMapper mapper) {
         super(mapper);
     }
 
@@ -318,9 +324,8 @@ public class MybatisOrderRepository extends MybatisAggregateRepository<Order, Or
         if (StrKit.isBlank(orderNo)) {
             return Optional.empty();
         }
-        return Optional.ofNullable(lambdaQuery()
-                        .eq(OrderPO::getOrderNo, orderNo)
-                        .one())
+        return Optional.ofNullable(getBaseMapper().selectOne(lambdaQueryWrapper()
+                        .eq(OrderPO::getOrderNo, orderNo)))
                 .map(this::toModel);
     }
 

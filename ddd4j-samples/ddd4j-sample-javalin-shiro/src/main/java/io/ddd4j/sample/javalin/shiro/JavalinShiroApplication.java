@@ -15,6 +15,16 @@
 package io.ddd4j.sample.javalin.shiro;
 
 import com.google.inject.Guice;
+import io.ddd4j.guice.Ddd4jGuiceModule;
+import io.ddd4j.core.subject.Subject;
+import io.ddd4j.core.ddd.repository.Repository;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import io.javalin.json.JavalinJackson;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.EnumSet;
+import jakarta.servlet.DispatcherType;
+import org.eclipse.jetty.ee10.servlet.FilterHolder;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import io.ddd4j.auth.shiro.subject.ShiroSubjectProvider;
@@ -86,6 +96,23 @@ public class JavalinShiroApplication {
      * @param args 命令行参数
      */
     public static void main(String[] args) {
+        start(PORT);
+    }
+
+    /**
+     * @param port HTTP 端口
+     * @return 可关闭的真实应用
+     */
+    public static Application start(int port) {
+        return start(port, ignored -> { });
+    }
+
+    static Application start(int port, Consumer<Optional<String>> observer) {
+        return start(port, observer, config -> { });
+    }
+
+    static Application start(int port, Consumer<Optional<String>> observer,
+                             Consumer<io.javalin.config.JavalinConfig> configure) {
         // ==================== 1. 初始化 RBAC + Shiro SecurityManager ====================
         // 先构造 RBAC 仓储和种子数据（Shiro 与 Guice 共享同一份数据）
         InMemoryUserRepository userRepository = new InMemoryUserRepository();
@@ -95,41 +122,43 @@ public class JavalinShiroApplication {
         RbacConfig.initSeedData(rbacService);
 
         // 初始化 Shiro SecurityManager（基于 RBAC Realm）
-        AuthConfig.initShiro(userRepository, roleRepository, rbacService);
+        NativeAuthLifecycle lifecycle = new NativeAuthLifecycle(new org.apache.shiro.mgt.DefaultSecurityManager(
+                new AuthConfig.RbacRealm(userRepository, roleRepository, rbacService)), observer);
+        try {
 
         // ==================== 2. 创建 Guice 注入器（共享 RBAC 仓储）====================
         Module authModule = new AuthModule(userRepository, roleRepository, permissionRepository, rbacService);
-        Injector injector = Guice.createInjector(authModule);
+        Injector injector = Guice.createInjector(Ddd4jGuiceModule.basic(), authModule, new com.google.inject.AbstractModule() {
+            @Override protected void configure() {
+                bind(Subject.class).toInstance(new io.ddd4j.auth.shiro.subject.ShiroSubject());
+            }
+        });
+        lifecycle.attach(injector);
 
-        // ==================== 3. 把 4 个核心 SPI 注入到 BaseContext ====================
-        SubjectProvider subjectProvider = new ShiroSubjectProvider();
-        BaseContext.inject(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class, subjectProvider);
-        SubjectKit.register(subjectProvider);
-
-        SubjectDataProvider subjectDataProvider = injector.getInstance(SubjectDataProvider.class);
-        SubjectKit.setDataProvider(subjectDataProvider);
-
-        DomainEventPublisher domainEventPublisher = new NoOpDomainEventPublisher();
-        BaseContext.inject(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class, domainEventPublisher);
-
-        I18nProvider i18nProvider = new DefaultI18nProvider();
-        BaseContext.inject(SpiKeys.I18N_PROVIDER, I18nProvider.class, i18nProvider);
-
-        SubjectKit.setStrategy(SubjectStrategy.instance);
-
-        // ==================== 3.7 注册 Goods 仓储到 RepositoryRegistry（充血查询需要） ====================
-        RepositoryRegistry.register(Goods.class, new InMemoryGoodsRepository());
+        lifecycle.repositories.register(RepositoryRegistry.key(Goods.class), Repository.class,
+                injector.getInstance(io.ddd4j.sample.javalin.shiro.goods.domain.GoodsRepository.class));
+        lifecycle.repositories.start();
+        var adapters = new io.ddd4j.sample.order.local.InMemoryOrderAdapters();
+        var sharedOrders = new io.ddd4j.sample.order.application.OrderApplicationService(adapters, adapters, adapters, adapters);
 
         // ==================== 4. 获取 RBAC 控制器与 Resource 实例 ====================
         AuthenticationController authController = injector.getInstance(AuthenticationController.class);
         AuthorizationController authzController = injector.getInstance(AuthorizationController.class);
-        OrderResource orderResource = injector.getInstance(OrderResource.class);
+        OrderResource orderResource = new OrderResource(sharedOrders, adapters);
         GoodsResource goodsResource = injector.getInstance(GoodsResource.class);
         GoodsQueryResource goodsQueryResource = injector.getInstance(GoodsQueryResource.class);
 
         // ==================== 5. 启动 Javalin 并注册路由 ====================
         Javalin app = Javalin.create(javalinConfig -> {
             javalinConfig.startup.showJavalinBanner = false;
+            javalinConfig.routes.before(lifecycle::authenticateOrder);
+            configure.accept(javalinConfig);
+            javalinConfig.jsonMapper(new JavalinJackson(JsonMapper.builder().findAndAddModules().build(), false));
+            javalinConfig.jetty.modifyServletContextHandler(context -> context.addFilter(
+                    new FilterHolder(lifecycle), "/*", EnumSet.of(DispatcherType.REQUEST, DispatcherType.ASYNC)));
+            javalinConfig.routes.exception(Exception.class, (failure, ctx) -> ctx.status(500).json(
+                    io.ddd4j.core.api.R.of(500, failure.getMessage())));
+            javalinConfig.routes.beforeMatched(lifecycle::authorizeMatchedOrder);
             javalinConfig.routes.apiBuilder(() -> {
                 // ========== Authentication 路由 ==========
                 ApiBuilder.post("/auth/login", authController::login);
@@ -181,8 +210,29 @@ public class JavalinShiroApplication {
             });
         });
 
-        app.start(PORT);
+        lifecycle.attach(app);
+        app.start(port);
         log.info("Javalin + Shiro + RBAC 鉴权 + DDD 业务示例启动于 http://localhost:{}", PORT);
+        return new Application(lifecycle);
+        } catch (RuntimeException | Error failure) {
+            try {
+                lifecycle.close();
+            } catch (RuntimeException | Error cleanup) {
+                if (cleanup != failure) {
+                    failure.addSuppressed(cleanup);
+                }
+            }
+            throw failure;
+        }
+    }
+
+    /** 可关闭的实际 Javalin/Guice 应用句柄。 */
+    public static final class Application implements AutoCloseable {
+        private final NativeAuthLifecycle lifecycle;
+        private Application(NativeAuthLifecycle lifecycle) { this.lifecycle = lifecycle; }
+        /** @return 实际 HTTP 应用 */
+        public Javalin app() { return lifecycle.app(); }
+        @Override public void close() { lifecycle.close(); }
     }
 
     // ==================== 示例 SPI 实现（仅本示例使用） ====================

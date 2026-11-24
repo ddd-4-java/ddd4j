@@ -25,6 +25,8 @@ import io.ddd4j.quarkus.command.QuarkusCommandBus;
 import io.ddd4j.runtime.testkit.AbstractCqrsRuntimeContractTest;
 import io.ddd4j.runtime.testkit.CqrsRuntimeContract;
 
+import jakarta.enterprise.inject.Instance;
+
 import java.lang.reflect.Field;
 import java.util.Map;
 
@@ -35,7 +37,7 @@ import java.util.Map;
  * <p>
  * 装配方式：
  * <ul>
- *   <li>CommandBus：{@link QuarkusCommandBus}，通过反射注入 executorMap 绕过 CDI 依赖</li>
+ *   <li>CommandBus：{@link QuarkusCommandBus}，通过反射注入 CDI Instance 绕过 CDI 依赖</li>
  *   <li>ViewManager：{@link QuarkusJpaViewManager}，直接实例化（无 CDI 依赖）</li>
  *   <li>ViewScheduler：{@link NoopViewScheduler}（Quarkus 的 Quartz 调度器在纯单测中不可用）</li>
  *   <li>PositionRepository：{@link InMemoryProjectionPositionRepository}（避免 JPA 重量级装配）</li>
@@ -89,22 +91,18 @@ class QuarkusCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
     }
 
     /**
-     * 通过反射注入 executorMap，绕过 CDI Instance 依赖。
+     * 通过反射注入 CDI Instance，绕过 CDI Instance 依赖。
      */
     @SuppressWarnings("unchecked")
     private void injectExecutors(QuarkusCommandBus commandBus, CommandExecutor<?>... executors) {
         try {
-            Field mapField = QuarkusCommandBus.class.getDeclaredField("executorMap");
-            mapField.setAccessible(true);
-            Map<Class<? extends Command>, CommandExecutor<?>> executorMap =
-                    (Map<Class<? extends Command>, CommandExecutor<?>>) mapField.get(commandBus);
-            for (CommandExecutor<?> executor : executors) {
-                for (Class<? extends Command> cmdType : executor.supportedCommands()) {
-                    executorMap.put(cmdType, executor);
-                }
-            }
+            Field field = QuarkusCommandBus.class.getDeclaredField("executors");
+            field.setAccessible(true);
+            Instance<CommandExecutor<?>> instance = org.mockito.Mockito.mock(Instance.class);
+            org.mockito.Mockito.when(instance.iterator()).thenAnswer(ignored -> java.util.Arrays.asList(executors).iterator());
+            field.set(commandBus, instance);
         } catch (ReflectiveOperationException ex) {
-            throw new IllegalStateException("Failed to inject executors into QuarkusCommandBus", ex);
+            throw new IllegalStateException(ex);
         }
     }
 

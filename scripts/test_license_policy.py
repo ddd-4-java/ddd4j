@@ -127,5 +127,19 @@ g:a:1\tApache-2.0 OR MIT\tApache-2.0\thttps://github.com/example/p/blob/v1/LICEN
         ))
 
 
+    def test_rejects_build_tool_exclusions_for_components_in_sbom(self):
+        entry = InventoryEntry("g:library:1", ("Apache-2.0",), "Library")
+        for reason in ("provided by runtime", "optional integration", "test dependency"):
+            with self.subTest(reason=reason):
+                errors = verify_policy(
+                    [entry], {}, sbom_coordinates={entry.coordinate},
+                    build_tool_exclusions={entry.coordinate: reason},
+                )
+                self.assertEqual(
+                    ["build-tool exclusion overlaps published SBOM: g:library:1"],
+                    errors,
+                )
+
+
 if __name__ == "__main__":
     unittest.main()

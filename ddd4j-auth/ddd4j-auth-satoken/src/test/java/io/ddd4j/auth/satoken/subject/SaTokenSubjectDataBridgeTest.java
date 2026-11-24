@@ -14,6 +14,11 @@
  */
 package io.ddd4j.auth.satoken.subject;
 
+import cn.dev33.satoken.SaManager;
+import cn.dev33.satoken.dao.SaTokenDao;
+import cn.dev33.satoken.dao.SaTokenDaoDefaultImpl;
+import cn.dev33.satoken.stp.StpLogic;
+import cn.dev33.satoken.stp.StpUtil;
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.subject.Subject;
 import io.ddd4j.core.subject.SubjectDataProvider;
@@ -26,7 +31,9 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -34,6 +41,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * 验证 Sa-Token 权限和角色数据桥接契约。
  */
 class SaTokenSubjectDataBridgeTest {
+
+    private static final String SHARED_LOGIN_ID = "data-bridge-shared-account";
+    private static final String ADMIN_REALM = "data-bridge-admin-realm";
+    private static final String UNKNOWN_REALM = "data-bridge-unknown-realm";
 
     private final SaTokenSubjectDataBridge bridge = new SaTokenSubjectDataBridge();
     private SubjectProvider originalProvider;
@@ -117,5 +128,93 @@ class SaTokenSubjectDataBridgeTest {
         List<String> roles = bridge.getRoleList("ghost", "login");
 
         assertTrue(roles.isEmpty());
+    }
+
+    @Test
+    void getPermissionListUsesRequestedLoginType() {
+        withRealmSessions(new SaTokenSubjectProvider(), defaultLogic -> assertAll(
+                () -> assertEquals(Collections.singletonList("customer:read"),
+                        bridge.getPermissionList(SHARED_LOGIN_ID, defaultLogic.getLoginType())),
+                () -> assertEquals(Collections.singletonList("operator:read"),
+                        bridge.getPermissionList(SHARED_LOGIN_ID, ADMIN_REALM))));
+    }
+
+    @Test
+    void getRoleListUsesRequestedLoginType() {
+        withRealmSessions(new SaTokenSubjectProvider(), defaultLogic -> assertAll(
+                () -> assertEquals(Collections.singletonList("customer"),
+                        bridge.getRoleList(SHARED_LOGIN_ID, defaultLogic.getLoginType())),
+                () -> assertEquals(Collections.singletonList("operator"),
+                        bridge.getRoleList(SHARED_LOGIN_ID, ADMIN_REALM))));
+    }
+
+    @Test
+    void missingAccountAndLoginTypeReturnEmptyLists() {
+        withRealmSessions(new SaTokenSubjectProvider(), defaultLogic -> assertAll(
+                () -> assertTrue(bridge.getPermissionList("missing-account", ADMIN_REALM).isEmpty()),
+                () -> assertTrue(bridge.getRoleList("missing-account", ADMIN_REALM).isEmpty()),
+                () -> assertTrue(bridge.getPermissionList(SHARED_LOGIN_ID, UNKNOWN_REALM).isEmpty()),
+                () -> assertTrue(bridge.getRoleList(SHARED_LOGIN_ID, UNKNOWN_REALM).isEmpty())));
+    }
+
+    @Test
+    void blankLoginTypesUseDefaultAccountSessions() {
+        withRealmSessions(new SaTokenSubjectProvider(), defaultLogic -> {
+            for (String loginType : Arrays.asList(null, "", " ")) {
+                assertEquals(Collections.singletonList("customer:read"),
+                        bridge.getPermissionList(SHARED_LOGIN_ID, loginType));
+                assertEquals(Collections.singletonList("customer"), bridge.getRoleList(SHARED_LOGIN_ID, loginType));
+                assertTrue(bridge.getPermissionList("missing-account", loginType).isEmpty());
+                assertTrue(bridge.getRoleList("missing-account", loginType).isEmpty());
+            }
+        });
+    }
+
+    @Test
+    void dataSubjectProviderUsesRequestedLoginType() {
+        withRealmSessions(new SaTokenDataSubjectProvider(), defaultLogic -> assertAll(
+                () -> assertEquals(Collections.singletonList("customer:read"),
+                        bridge.getPermissionList(SHARED_LOGIN_ID, defaultLogic.getLoginType())),
+                () -> assertEquals(Collections.singletonList("operator:read"),
+                        bridge.getPermissionList(SHARED_LOGIN_ID, ADMIN_REALM)),
+                () -> assertEquals(Collections.singletonList("customer"),
+                        bridge.getRoleList(SHARED_LOGIN_ID, defaultLogic.getLoginType())),
+                () -> assertEquals(Collections.singletonList("operator"),
+                        bridge.getRoleList(SHARED_LOGIN_ID, ADMIN_REALM))));
+    }
+
+    /**
+     * 使用独立内存仓储为默认和管理账号体系写入同一登录 ID 的不同主体。
+     */
+    private void withRealmSessions(SubjectProvider provider, Consumer<StpLogic> verify) {
+        SaTokenDao originalDao = SaManager.getSaTokenDao();
+        try {
+            SaManager.setSaTokenDao(new SaTokenDaoDefaultImpl());
+            StpLogic defaultLogic = StpUtil.stpLogic;
+            storeRealmPrincipal(defaultLogic, "customer");
+            storeRealmPrincipal(SaManager.getStpLogic(ADMIN_REALM), "operator");
+            SubjectKit.register(provider);
+            SubjectKit.setDataProvider(new SubjectDataProvider() {
+                @Override
+                public List<String> getPermissionList(AuthPrincipal principal) {
+                    return Collections.singletonList(principal.getUserId() + ":read");
+                }
+
+                @Override
+                public List<String> getRoleList(AuthPrincipal principal) {
+                    return Collections.singletonList(String.valueOf(principal.getRoleId()));
+                }
+            });
+            verify.accept(defaultLogic);
+        } finally {
+            SaManager.removeStpLogic(ADMIN_REALM);
+            SaManager.removeStpLogic(UNKNOWN_REALM);
+            SaManager.setSaTokenDao(originalDao);
+        }
+    }
+
+    private void storeRealmPrincipal(StpLogic logic, String identity) {
+        AuthPrincipal principal = new AuthPrincipal().setLoginId(SHARED_LOGIN_ID).setUserId(identity).setRoleId(identity);
+        logic.getSessionByLoginId(SHARED_LOGIN_ID).set(SaTokenSubject.PRINCIPAL_KEY, principal);
     }
 }

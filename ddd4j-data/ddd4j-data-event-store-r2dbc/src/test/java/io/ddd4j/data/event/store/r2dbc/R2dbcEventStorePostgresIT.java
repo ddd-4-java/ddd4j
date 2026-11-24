@@ -34,6 +34,7 @@ import io.r2dbc.spi.Connection;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,7 +56,8 @@ class R2dbcEventStorePostgresIT {
     private static final String ORDER_TYPE = "Order";
 
     @Container
-    static final PostgreSQLContainer POSTGRES = new PostgreSQLContainer("postgres:16-alpine");
+    static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:16-alpine")
+            .withTmpFs(Map.of("/var/lib/postgresql/data", "rw"));
 
     private PostgresqlConnectionFactory connectionFactory;
     private R2dbcEventStore eventStore;

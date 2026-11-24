@@ -14,12 +14,19 @@
  */
 package io.ddd4j.micronaut;
 
+import io.ddd4j.core.cqrs.readmodel.ViewManager;
 import io.ddd4j.runtime.testkit.AbstractRuntimeContractTest;
 import io.ddd4j.runtime.testkit.RuntimeContract;
 import io.ddd4j.runtime.testkit.RuntimeContractAdapter;
 import io.ddd4j.runtime.testkit.RuntimeFixtures;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /** Micronaut 生命周期和就绪状态的运行时契约。 */
@@ -33,6 +40,74 @@ class Ddd4jMicronautRuntimeTest extends AbstractRuntimeContractTest {
 
         assertTrue(runtime.readiness().contributors().isEmpty());
         runtime.close();
+    }
+
+    @Test
+    void startupErrorStopsPartiallyStartedViewAndPreservesCleanupFailure() {
+        LinkageError startup = new LinkageError("projection start failed");
+        IllegalStateException cleanup = new IllegalStateException("projection stop failed");
+        FailingViewManager manager = new FailingViewManager(() -> { throw startup; }, () -> { throw cleanup; });
+
+        LinkageError failure = assertThrows(LinkageError.class, runtimeWithView(manager)::start);
+
+        assertSame(startup, failure);
+        assertFalse(manager.isRunning());
+        assertEquals(1, manager.stopCalls);
+        assertEquals(1, failure.getSuppressed().length);
+        assertSame(cleanup, failure.getSuppressed()[0]);
+    }
+
+    @Test
+    void startupAndCleanupThrowingSameExceptionPreservesItsIdentity() {
+        IllegalStateException shared = new IllegalStateException("projection failed");
+        FailingViewManager manager = new FailingViewManager(() -> { throw shared; }, () -> { throw shared; });
+
+        IllegalStateException failure = assertThrows(IllegalStateException.class, runtimeWithView(manager)::start);
+
+        assertSame(shared, failure);
+        assertFalse(manager.isRunning());
+        assertEquals(1, manager.stopCalls);
+        assertEquals(0, failure.getSuppressed().length);
+    }
+
+    private Ddd4jMicronautRuntime runtimeWithView(ViewManager manager) {
+        RuntimeFixtures fixtures = new RuntimeFixtures();
+        return new Ddd4jMicronautRuntime(fixtures.publisher(), fixtures.subjectProvider(), fixtures.i18nProvider(),
+                fixtures.commandBus(), Collections.emptyList(), manager);
+    }
+
+    private static final class FailingViewManager implements ViewManager {
+        private final Runnable startFailure;
+        private final Runnable stopFailure;
+        private boolean running;
+        private int stopCalls;
+
+        private FailingViewManager(Runnable startFailure, Runnable stopFailure) {
+            this.startFailure = startFailure;
+            this.stopFailure = stopFailure;
+        }
+
+        @Override
+        public void start() {
+            running = true;
+            startFailure.run();
+        }
+
+        @Override
+        public void stop() {
+            running = false;
+            stopCalls++;
+            stopFailure.run();
+        }
+
+        @Override
+        public boolean isRunning() {
+            return running;
+        }
+
+        @Override
+        public void triggerOnce() {
+        }
     }
 
     @Override

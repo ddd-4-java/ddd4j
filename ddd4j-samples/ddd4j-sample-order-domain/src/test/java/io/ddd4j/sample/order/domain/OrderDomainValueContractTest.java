@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -39,6 +40,16 @@ class OrderDomainValueContractTest {
         assertTrue(query.toString().startsWith("OrderQuery("));
         assertThrows(IllegalArgumentException.class,
                 () -> new OrderQuery("buyer-1", OrderStatus.DRAFT, 0, 20));
+    }
+
+    @Test
+    void orderQueryRetainsValueContractWhenJsonOmitsStatus() {
+        OrderQuery query = JsonKit.toObject("{\"buyerId\":\"buyer-1\",\"page\":1,\"size\":20}", OrderQuery.class);
+
+        assertEquals(new OrderQuery("buyer-1", null, 1, 20), query);
+        assertNull(query.status());
+        assertEquals(79724092, query.hashCode());
+        assertEquals("OrderQuery(buyerId=buyer-1, status=null, page=1, size=20)", query.toString());
     }
 
     @Test

@@ -38,6 +38,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.time.Duration;
 import java.util.List;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
@@ -51,7 +52,8 @@ class JdbcOrderAtomicityTest {
 
     @Container
     private static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>(
-            DockerImageName.parse("postgres:16-alpine"));
+            DockerImageName.parse("postgres:16-alpine"))
+            .withTmpFs(Collections.singletonMap("/var/lib/postgresql/data", "rw,size=512m"));
 
     private static PGSimpleDataSource dataSource;
 

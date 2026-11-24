@@ -8,9 +8,9 @@ package io.ddd4j.web.webmvc.error;
 import io.ddd4j.core.api.ApiCode;
 import io.ddd4j.core.api.R;
 import io.ddd4j.web.webmvc.config.ServerI18nProperties;
+import org.springframework.extension.context.NestedMessageSource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.util.ReflectionTestUtils;
 import jakarta.validation.ConstraintDeclarationException;
 import jakarta.validation.ConstraintDefinitionException;
 import jakarta.validation.ConstraintViolationException;
@@ -30,10 +30,9 @@ class ValidationExceptionParityTest {
 
     @BeforeEach
     void setUp() {
-        handler = new GlobalExceptionHandler();
         ServerI18nProperties properties = new ServerI18nProperties();
         properties.setEnabled(false);
-        ReflectionTestUtils.setField(handler, "serverI18NProperties", properties);
+        handler = new GlobalExceptionHandler(new NestedMessageSource(), properties);
     }
 
     @Test

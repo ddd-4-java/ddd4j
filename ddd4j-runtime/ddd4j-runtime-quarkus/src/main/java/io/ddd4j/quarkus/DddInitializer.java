@@ -20,6 +20,7 @@ import io.ddd4j.core.util.I18nKit;
 import io.ddd4j.core.util.SubjectKit;
 import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.runtime.StartupEvent;
+import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
@@ -48,10 +49,14 @@ public class DddInitializer {
      */
     @Inject
     SubjectProvider subjectProvider;
+    private boolean started;
     private SubjectProvider previousSubjectProvider;
     private I18nProvider previousI18nProvider;
 
-    void onStart(@Observes StartupEvent event) {
+    synchronized void onStart(@Observes StartupEvent event) {
+        if (started) {
+            return;
+        }
         previousI18nProvider = I18nKit.getProvider();
         I18nKit.register(i18nProvider);
         log.info("Registered I18nProvider for Quarkus CDI");
@@ -59,9 +64,19 @@ public class DddInitializer {
         previousSubjectProvider = SubjectKit.subjectProvider;
         SubjectKit.register(subjectProvider);
         log.info("Registered SubjectProvider for Quarkus CDI");
+        started = true;
     }
 
-    void onStop(@Observes ShutdownEvent event) {
+    synchronized void onStop(@Observes ShutdownEvent event) {
+        restoreProviders();
+    }
+
+    @PreDestroy
+    synchronized void restoreProviders() {
+        if (!started) {
+            return;
+        }
+        started = false;
         if (Objects.equals(SubjectKit.subjectProvider, subjectProvider)) {
             SubjectKit.register(previousSubjectProvider);
         }

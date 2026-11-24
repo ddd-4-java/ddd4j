@@ -103,10 +103,10 @@ public class TypedEventDispatcher {
     }
 
     private Map<String, TypedEventHandler<?>> indexHandlers(Collection<? extends TypedEventHandler<?>> eventHandlers) {
-        Map<String, TypedEventHandler<?>> indexedHandlers = new LinkedHashMap<>();
         if (CollKit.isEmpty(eventHandlers)) {
-            return Collections.unmodifiableMap(new LinkedHashMap<>(indexedHandlers));
+            return Collections.emptyMap();
         }
+        Map<String, TypedEventHandler<?>> indexedHandlers = new LinkedHashMap<>();
         for (TypedEventHandler<?> handler : eventHandlers) {
             TypedEventHandler<?> safeHandler = Objects.requireNonNull(handler, "handler must not be null");
             if (StrKit.isBlank(safeHandler.getEventType())) {
@@ -114,7 +114,7 @@ public class TypedEventDispatcher {
             }
             indexedHandlers.put(safeHandler.getEventType(), safeHandler);
         }
-        return Collections.unmodifiableMap(new LinkedHashMap<>(indexedHandlers));
+        return Collections.unmodifiableMap(indexedHandlers);
     }
 
     private <E> void invoke(TypedEventHandler<E> handler, Object event) {

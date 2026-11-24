@@ -14,6 +14,8 @@
  */
 package io.ddd4j.sample.javalin.cqrs.goods.web;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.ddd4j.sample.javalin.cqrs.TestSupport;
 import io.javalin.Javalin;
 import org.junit.jupiter.api.*;
@@ -39,6 +41,8 @@ class GoodsControllerTest {
     private static final String PREFIX = "/api/goods";
     private static final String QUERY = "/api/goods/query";
 
+    private static final ObjectMapper JSON = new ObjectMapper();
+
     private static Javalin app;
     private static HttpClient httpClient;
     private static String baseUrl;
@@ -46,7 +50,7 @@ class GoodsControllerTest {
     @BeforeAll
     static void startApp() {
         app = TestSupport.start();
-        baseUrl = "http://localhost:" + app.port();
+        baseUrl = "http://127.0.0.1:" + app.port();
         httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
     }
 
@@ -55,6 +59,20 @@ class GoodsControllerTest {
         if (Objects.nonNull(app)) {
             app.stop();
         }
+    }
+
+    private JsonNode queryData(HttpResponse<String> response) throws Exception {
+        assertEquals(200, response.statusCode(), response.body());
+        JsonNode body = JSON.readTree(response.body());
+        assertEquals(0, body.path("code").asInt(-1), response.body());
+        return body.path("data");
+    }
+
+    private String createFixture(String code, String name, String price) throws Exception {
+        HttpResponse<String> created = postJson(PREFIX,
+                "{\"code\":\"" + code + "\",\"name\":\"" + name + "\",\"price\":" + price + ",\"stock\":1}");
+        assertEquals(201, created.statusCode(), created.body());
+        return extractId(created.body());
     }
 
     private static String extractId(String body) {
@@ -77,7 +95,7 @@ class GoodsControllerTest {
     void resetServerState() {
         app.stop();
         app = TestSupport.start();
-        baseUrl = "http://localhost:" + app.port();
+        baseUrl = "http://127.0.0.1:" + app.port();
     }
 
     private HttpResponse<String> postJson(String path, String body) throws Exception {
@@ -252,66 +270,101 @@ class GoodsControllerTest {
     @Test
     void getById_invalidId_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> r = get(PREFIX + "/not-a-number");
-        assertTrue(r.statusCode() >= 400);
+        assertEquals(400, r.statusCode(), r.body());
     }
 
     @Test
     void getByCode_validCode_shouldReturnOk() throws Exception {
-        postJson(PREFIX, "{\"code\":\"SKU-040\",\"name\":\"X\",\"price\":1.00,\"stock\":1}");
-        HttpResponse<String> r = get(PREFIX + "/by-code?code=SKU-040");
-        // 路由阴影：/by-code 被 /{id} 拦截
-        assertTrue(r.statusCode() >= 200);
+        String id = createFixture("SKU-040", "X", "1.00");
+        JsonNode goods = queryData(get(PREFIX + "/by-code?code=SKU-040"));
+        assertEquals(id, goods.path("id").asText());
+        assertEquals("SKU-040", goods.path("code").asText());
     }
 
     @Test
     void getByCode_unknownCode_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> r = get(PREFIX + "/by-code?code=DOES_NOT_EXIST");
-        assertTrue(r.statusCode() >= 400);
+        assertEquals(400, r.statusCode(), r.body());
     }
 
     // =================== 6) 充血查询（page/list/count）====================
 
     @Test
     void pageQuery_shouldReturnAny() throws Exception {
-        HttpResponse<String> r = get(PREFIX + "/page?current=1&size=10");
-        assertTrue(r.statusCode() >= 200);
+        createFixture("SKU-041", "Page", "1.00");
+        JsonNode page = queryData(get(PREFIX + "/page?current=1&size=10"));
+        assertEquals(1, page.path("current").asInt(-1));
+        assertEquals(10, page.path("size").asInt(-1));
+        assertEquals(1, page.path("total").asInt(-1));
+        JsonNode rows = page.path("records");
+        assertEquals(1, rows.size());
+        assertEquals("SKU-041", rows.path(0).path("code").asText());
     }
 
     @Test
     void pageQuery_withCode_shouldReturnAny() throws Exception {
-        postJson(PREFIX, "{\"code\":\"SKU-PQ\",\"name\":\"X\",\"price\":1.00,\"stock\":1}");
-        HttpResponse<String> r = get(PREFIX + "/page?code=SKU-PQ");
-        assertTrue(r.statusCode() >= 200);
+        createFixture("SKU-PQ", "X", "1.00");
+        createFixture("SKU-PQ-OTHER", "X", "1.00");
+        JsonNode rows = queryData(get(PREFIX + "/page?code=SKU-PQ")).path("records");
+        assertEquals(1, rows.size());
+        assertEquals("SKU-PQ", rows.path(0).path("code").asText());
     }
 
     @Test
     void pageQuery_withOrderBys_shouldReturnAny() throws Exception {
-        HttpResponse<String> r = get(PREFIX + "/page?orderBys=price_DESC&current=1&size=10");
-        assertTrue(r.statusCode() >= 200);
+        createFixture("SKU-ORDER-LOW", "X", "1.00");
+        createFixture("SKU-ORDER-HIGH", "X", "2.00");
+        JsonNode rows = queryData(get(PREFIX + "/page?orderBys=price_DESC&current=1&size=10")).path("records");
+        assertEquals(2, rows.size());
+        assertEquals("SKU-ORDER-HIGH", rows.path(0).path("code").asText());
+        assertEquals("SKU-ORDER-LOW", rows.path(1).path("code").asText());
     }
 
     @Test
     void listQuery_shouldReturnAny() throws Exception {
-        HttpResponse<String> r = get(PREFIX + "/list");
-        assertTrue(r.statusCode() >= 200);
+        createFixture("SKU-LS", "X", "1.00");
+        JsonNode goods = queryData(get(PREFIX + "/list"));
+        assertEquals(1, goods.size());
+        assertEquals("SKU-LS", goods.path(0).path("code").asText());
     }
 
     @Test
     void listQuery_byStatus_shouldReturnAny() throws Exception {
-        HttpResponse<String> r = get(PREFIX + "/list?status=ON_SALE");
-        assertTrue(r.statusCode() >= 200);
+        createFixture("SKU-LS-DRAFT", "X", "1.00");
+        String deletedId = createFixture("SKU-LS-DEL", "X", "1.00");
+        assertEquals(200, delete(PREFIX + "/" + deletedId).statusCode());
+
+        JsonNode goods = queryData(get(PREFIX + "/list?status=DRAFT"));
+        assertEquals(1, goods.size());
+        assertEquals("SKU-LS-DRAFT", goods.path(0).path("code").asText());
+        assertEquals("DRAFT", goods.path(0).path("status").asText());
     }
 
     @Test
     void countQuery_shouldReturnAny() throws Exception {
-        HttpResponse<String> r = get(PREFIX + "/count");
-        assertTrue(r.statusCode() >= 200);
+        createFixture("SKU-CT1", "X", "1.00");
+        createFixture("SKU-CT2", "X", "1.00");
+        assertEquals(2, queryData(get(PREFIX + "/count")).asLong(-1));
     }
 
     @Test
     void countQuery_byStatus_shouldReturnAny() throws Exception {
-        HttpResponse<String> r = get(PREFIX + "/count?status=DRAFT");
-        assertTrue(r.statusCode() >= 200);
+        createFixture("SKU-CT-DRAFT", "X", "1.00");
+        String deletedId = createFixture("SKU-CT-DEL", "X", "1.00");
+        assertEquals(200, delete(PREFIX + "/" + deletedId).statusCode());
+        assertEquals(1, queryData(get(PREFIX + "/count?status=DRAFT")).asLong(-1));
+    }
+
+    @Test
+    void queryInvalidParameters_shouldReturnBadRequest() throws Exception {
+        HttpResponse<String> code = get(PREFIX + "/by-code");
+        assertEquals(400, code.statusCode(), code.body());
+        HttpResponse<String> page = get(PREFIX + "/page?current=bad");
+        assertEquals(400, page.statusCode(), page.body());
+        HttpResponse<String> list = get(PREFIX + "/list?status=BAD");
+        assertEquals(400, list.statusCode(), list.body());
+        HttpResponse<String> count = get(PREFIX + "/count?priceMax=bad");
+        assertEquals(400, count.statusCode(), count.body());
     }
 
     // =================== 7) CQRS 读侧 ====================

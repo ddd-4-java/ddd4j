@@ -39,22 +39,28 @@ import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.web.core.idempotency.IdempotencyGuard;
 import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
 import io.ddd4j.web.core.error.WebError;
+import io.ddd4j.extension.otel.HttpSpan;
 import io.ddd4j.web.webflux.error.GlobalErrorAttributes;
 import io.ddd4j.web.webflux.error.GlobalErrorWebExceptionHandler;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
 import io.opentelemetry.context.propagation.ContextPropagators;
+import io.opentelemetry.context.Context;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.trace.SdkTracerProvider;
-import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
-import io.opentelemetry.sdk.trace.export.SpanExporter;
+import io.opentelemetry.sdk.trace.ReadWriteSpan;
+import io.opentelemetry.sdk.trace.ReadableSpan;
+import io.opentelemetry.sdk.trace.SpanProcessor;
+import io.opentelemetry.sdk.trace.data.SpanData;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 import org.springframework.mock.web.server.MockServerWebExchange;
+import org.springframework.web.server.handler.ExceptionHandlingWebHandler;
 import reactor.core.publisher.Mono;
 import reactor.core.Disposable;
 import reactor.core.scheduler.Schedulers;
@@ -62,6 +68,7 @@ import reactor.core.scheduler.Schedulers;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.CountDownLatch;
 import java.time.Duration;
@@ -74,6 +81,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class Ddd4jWebFluxContractTest {
 
     private SdkTracerProvider tracerProvider;
+    private final CompletableFuture<SpanData> endedSpan = new CompletableFuture<>();
 
     private static void resetOpenTelemetry() throws Exception {
         GlobalOpenTelemetry.resetForTest();
@@ -92,7 +100,26 @@ class Ddd4jWebFluxContractTest {
     void setUpOpenTelemetry() throws Exception {
         resetOpenTelemetry();
         tracerProvider = SdkTracerProvider.builder()
-                .addSpanProcessor(SimpleSpanProcessor.create(SpanExporter.composite())).build();
+                .addSpanProcessor(new SpanProcessor() {
+                    @Override
+                    public void onStart(Context parentContext, ReadWriteSpan span) {
+                    }
+
+                    @Override
+                    public boolean isStartRequired() {
+                        return false;
+                    }
+
+                    @Override
+                    public void onEnd(ReadableSpan span) {
+                        endedSpan.complete(span.toSpanData());
+                    }
+
+                    @Override
+                    public boolean isEndRequired() {
+                        return true;
+                    }
+                }).build();
         OpenTelemetrySdk.builder()
                 .setTracerProvider(tracerProvider)
                 .setPropagators(ContextPropagators.create(W3CTraceContextPropagator.getInstance()))
@@ -140,17 +167,27 @@ class Ddd4jWebFluxContractTest {
     }
 
     @Test
-    void shouldWriteCustomHttpStatusWithoutLosingErrorBody() {
+    void shouldWriteCustomHttpStatusWithoutLosingErrorBody() throws Exception {
         GlobalErrorWebExceptionHandler handler = new GlobalErrorWebExceptionHandler(new GlobalErrorAttributes(),
                 new ObjectMapper(), ignored -> new WebError(599, 599, "custom status", null));
         MockServerWebExchange exchange = MockServerWebExchange.from(MockServerHttpRequest.get("/orders"));
 
-        handler.handle(exchange, new IllegalStateException("custom status")).block();
+        Ddd4jWebFluxFilter filter = new Ddd4jWebFluxFilter(new BearerSubjectAuthenticator(), path -> true);
+        IllegalStateException failure = new IllegalStateException("custom status");
+        ExceptionHandlingWebHandler pipeline = new ExceptionHandlingWebHandler(
+                request -> filter.filter(request, ignored -> Mono.error(failure)), Collections.singletonList(handler));
+
+        pipeline.handle(exchange).block(Duration.ofSeconds(5));
+        assertEquals(599, exchange.getResponse().getStatusCode().value());
 
         String body = exchange.getResponse().getBodyAsString().block();
         assertNotNull(body);
         assertTrue(body.contains("599"));
         assertTrue(body.contains("custom status"));
+
+        SpanData span = endedSpan.get(5, TimeUnit.SECONDS);
+        assertEquals("599", span.getAttributes().get(HttpSpan.ATTR_HTTP_STATUS));
+        assertEquals(StatusCode.ERROR, span.getStatus().getStatusCode());
     }
 
     @Test

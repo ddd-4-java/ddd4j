@@ -18,6 +18,7 @@ import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.Result;
+import io.ddd4j.core.cqrs.command.DefaultCommandBus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.context.ApplicationContext;
@@ -26,7 +27,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 
 /**
  * Spring 命令总线。
@@ -59,10 +63,18 @@ import java.util.concurrent.ConcurrentHashMap;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class SpringCommandBus implements CommandBus, SmartInitializingSingleton {
 
-    /**
-     * 命令类型到执行器的路由映射
-     */
-    private final Map<Class<? extends Command>, CommandExecutor<?>> executorMap = new ConcurrentHashMap<>();
+    // 只在完整发现成功后发布快照；路由和执行完全归共享内核。
+    private volatile DiscoveredCommands discovered;
+
+    private static final class DiscoveredCommands {
+        private final DefaultCommandBus delegate;
+        private final Set<Class<? extends Command>> types;
+
+        private DiscoveredCommands(DefaultCommandBus delegate, Set<Class<? extends Command>> types) {
+            this.delegate = delegate;
+            this.types = Set.copyOf(types);
+        }
+    }
 
     /**
      * Spring 应用上下文
@@ -88,19 +100,25 @@ public class SpringCommandBus implements CommandBus, SmartInitializingSingleton 
     @Override
     public void afterSingletonsInstantiated() {
         Map<String, CommandExecutor> beans = applicationContext.getBeansOfType(CommandExecutor.class);
+        List<CommandExecutor<?>> snapshots = new ArrayList<>();
+        Set<Class<? extends Command>> types = new HashSet<>();
         for (CommandExecutor executor : beans.values()) {
-            for (Object obj : executor.supportedCommands()) {
-                Class<? extends Command> commandType = (Class<? extends Command>) obj;
-                CommandExecutor<?> previous = executorMap.putIfAbsent(commandType, executor);
-                if (Objects.nonNull(previous)) {
-                    throw new IllegalStateException("Multiple executors found for command: " + commandType.getName());
-                } else {
-                    log.info("注册命令执行器: {} -> {}", commandType.getName(),
-                            executor.getClass().getSimpleName());
+            Set<Class<? extends Command>> supported = Set.copyOf(executor.supportedCommands());
+            types.addAll(supported);
+            snapshots.add(new CommandExecutor<Command>() {
+                @Override
+                public Set<Class<? extends Command>> supportedCommands() {
+                    return supported;
                 }
-            }
+
+                @Override
+                public Result execute(Command command) {
+                    return executor.execute(command);
+                }
+            });
         }
-        log.info("SpringCommandBus 初始化完成，共注册 {} 个执行器", executorMap.size());
+        discovered = new DiscoveredCommands(new DefaultCommandBus(snapshots), types);
+        log.info("SpringCommandBus 初始化完成，共注册 {} 个命令类型", types.size());
     }
 
     /**
@@ -122,13 +140,13 @@ public class SpringCommandBus implements CommandBus, SmartInitializingSingleton 
             throw new IllegalArgumentException("Command cannot be null");
         }
 
-        CommandExecutor executor = executorMap.get(command.getClass());
-        if (Objects.isNull(executor)) {
+        DiscoveredCommands snapshot = discovered;
+        if (Objects.isNull(snapshot) || !snapshot.types.contains(command.getClass())) {
             throw new IllegalStateException(
                     "No executor found for command: " + command.getClass().getName()
                             + ". Ensure the executor bean implements CommandExecutor interface "
                             + "and its supportedCommands() includes this command type.");
         }
-        return (Result<R>) executor.execute(command);
+        return snapshot.delegate.execute(command);
     }
 }

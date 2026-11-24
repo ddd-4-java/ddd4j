@@ -6,6 +6,8 @@
 package io.ddd4j.sample.vertx;
 
 import io.ddd4j.sample.vertx.VertxOrderRoutes.TokenResponse;
+import io.vertx.core.json.Json;
+import io.vertx.core.json.JsonObject;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -26,5 +28,13 @@ class VertxTokenResponseContractTest {
         assertNotEquals(response, new TokenResponse("token-2"));
         assertEquals("VertxOrderRoutes.TokenResponse(token=token-1)", response.toString());
         assertTrue(response.toString().contains("token=token-1"));
+    }
+
+    @Test
+    void tokenResponseRoundTripsUsingOnlyTheTokenField() {
+        TokenResponse response = new TokenResponse("token-1");
+        String json = Json.encode(response);
+        assertEquals(new JsonObject().put("token", "token-1"), new JsonObject(json));
+        assertEquals(response, Json.decodeValue(json, TokenResponse.class));
     }
 }

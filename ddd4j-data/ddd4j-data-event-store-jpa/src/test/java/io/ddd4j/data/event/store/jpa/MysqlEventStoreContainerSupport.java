@@ -18,6 +18,8 @@ import org.testcontainers.DockerClientFactory;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
+import java.util.Collections;
+
 /**
  * MySQL 容器进程级单例夹具（同一 JVM 内全部 IT 共享一个容器，仅启动一次）。
  *
@@ -31,6 +33,8 @@ final class MysqlEventStoreContainerSupport {
      * 进程级单例 MySQL 8 容器（官方 testcontainers MySQL 模块镜像）。
      */
     static final MySQLContainer<?> MYSQL = new MySQLContainer<>(DockerImageName.parse("mysql:8.0.36"))
+            // 临时数据库事务/客户端重连测试；不用于证明跨容器重启持久性。
+            .withTmpFs(Collections.singletonMap("/var/lib/mysql", "rw"))
             .withUrlParam("allowPublicKeyRetrieval", "true")
             .withUrlParam("useSSL", "false");
 

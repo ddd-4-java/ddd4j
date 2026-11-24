@@ -37,7 +37,6 @@ public @interface ApiIdempotent {
      * type为Args时自动获取 @RequestMapping、@PostMapping、@GetMapping、@PutMapping、@DeleteMapping、@PatchMapping 的 value 值；
      * type为Token时该值用于告诉拦截器取值的参数名
      *
-     * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
      * @return 幂等键或 Token 参数名
      */
     String value() default "";

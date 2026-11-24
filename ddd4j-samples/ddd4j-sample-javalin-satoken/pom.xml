@@ -18,6 +18,10 @@
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
+        <dependency><groupId>cn.dev33</groupId><artifactId>sa-token-jakarta-servlet</artifactId></dependency>
+        <dependency><groupId>io.ddd4j</groupId><artifactId>ddd4j-sample-order-local</artifactId><version>${revision}</version></dependency>
+        <dependency><groupId>io.ddd4j</groupId><artifactId>ddd4j-sample-order-testkit</artifactId><version>${revision}</version><scope>test</scope></dependency>
+        <dependency><groupId>com.fasterxml.jackson.datatype</groupId><artifactId>jackson-datatype-jsr310</artifactId></dependency>
         <!-- ddd4j core：核心 DDD/CQRS 抽象（API、Page、Repository、AggregateRoot 等） -->
         <dependency>
             <groupId>io.ddd4j</groupId>

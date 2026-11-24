@@ -19,11 +19,11 @@ import io.ddd4j.sample.micronaut.cqrs.repository.EventSourcingOrderRepository;
 import io.ddd4j.sample.order.domain.Order;
 import io.ddd4j.sample.order.domain.event.OrderCreatedEvent;
 import io.ddd4j.sample.order.domain.event.OrderPaidEvent;
+import io.micronaut.context.annotation.Bean;
 import jakarta.inject.Singleton;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -37,6 +37,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 从 EventSourcingOrderRepository 获取订单详情，维护内存读模型。
  */
 @Singleton
+@Bean(typed = OrderSummaryView.class)
 public class OrderSummaryView implements ProjectionView<Object> {
 
     private static final String NAME = "order-summary-view";

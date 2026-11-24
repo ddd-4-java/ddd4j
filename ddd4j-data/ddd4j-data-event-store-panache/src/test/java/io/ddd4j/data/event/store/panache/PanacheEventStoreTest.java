@@ -17,14 +17,18 @@ import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityIdPath;
 import io.ddd4j.core.ddd.event.EntityType;
+import io.ddd4j.core.ddd.event.EventId;
 import io.ddd4j.core.ddd.event.StringEntityType;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
 import org.hibernate.cfg.Configuration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -119,6 +123,62 @@ class PanacheEventStoreTest {
         assertThat(events).hasSize(2);
         assertThat(events.get(0).position()).isLessThan(events.get(1).position());
         assertThat(eventStore.readAll(events.get(1).position(), 10)).hasSize(1);
+    }
+
+    @Test
+    void appendRejectionShouldLeaveCallerTransactionAndFlushedChangesIntact() {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-caller-transaction");
+        OrderCreatedEvent original = new OrderCreatedEvent(orderId);
+        eventStore.append(ORDER_TYPE, orderId, Collections.singletonList(original), 0);
+
+        EntityTransaction caller = entityManager.getTransaction();
+        caller.begin();
+        try {
+            PanacheStoredEventEntity existing = entityManager.createQuery(
+                    "SELECT e FROM PanacheStoredEventEntity e", PanacheStoredEventEntity.class).getSingleResult();
+            EventId callerCorrelation = new OrderCreatedEvent(orderId).getEventId();
+            existing.correlationId = callerCorrelation.asString();
+            entityManager.flush();
+
+            assertThatThrownBy(() -> eventStore.append(
+                    ORDER_TYPE, orderId, Collections.singletonList(new OrderCreatedEvent(orderId)), 1))
+                    .isInstanceOf(IllegalStateException.class);
+            assertThat(caller.isActive()).as("caller transaction survives rejected append").isTrue();
+            caller.commit();
+
+            entityManager.clear();
+            List<StoredEvent> committed = eventStore.read(ORDER_TYPE, orderId);
+            assertThat(committed).extracting(StoredEvent::version).containsExactly(1L);
+            assertThat(committed.get(0).eventId()).isEqualTo(original.getEventId());
+            assertThat(committed.get(0).correlationId()).isEqualTo(callerCorrelation);
+        } finally {
+            if (caller.isActive()) {
+                caller.rollback();
+            }
+        }
+    }
+
+    @Test
+    void failureAfterFlushingFirstEventShouldRollBackEntireBatch() {
+        TestAggregateRootId orderId = new TestAggregateRootId("order-failed-batch");
+        OrderCreatedEvent first = new OrderCreatedEvent(orderId);
+        IllegalArgumentException failure = new IllegalArgumentException("invalid second event");
+        DomainEvent<TestAggregateRootId> invalid = new DomainEvent<TestAggregateRootId>(new EntityIdPath(orderId)) {
+            @Override
+            public EventId getEventId() {
+                entityManager.flush();
+                throw failure;
+            }
+        };
+
+        assertThatThrownBy(() -> eventStore.append(ORDER_TYPE, orderId, Arrays.asList(first, invalid), 0))
+                .isSameAs(failure);
+        assertThat(entityManager.getTransaction().isActive()).isFalse();
+        assertThat(eventStore.read(ORDER_TYPE, orderId)).isEmpty();
+        assertThat(eventStore.readAll(0, 10)).isEmpty();
+
+        eventStore.append(ORDER_TYPE, orderId, Collections.singletonList(first), 0);
+        assertThat(eventStore.readAll(0, 10)).extracting(StoredEvent::position).containsExactly(1L);
     }
 
     final static class TestAggregateRootId implements AggregateRootId {

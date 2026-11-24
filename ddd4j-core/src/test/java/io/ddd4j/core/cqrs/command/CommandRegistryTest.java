@@ -18,6 +18,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -77,13 +79,15 @@ class CommandRegistryTest {
 
     @Test
     void conflictingBatchRegistrationIsRejectedEntirely() {
-        registry.register(new CreateOrderCmdExe());
+        CreateOrderCmdExe original = new CreateOrderCmdExe();
+        registry.register(original);
         OrderLifecycleCmdExe multiTypeExecutor = new OrderLifecycleCmdExe();
 
         IllegalStateException ex = assertThrows(IllegalStateException.class,
                 () -> registry.register(multiTypeExecutor));
 
         assertThat(ex).hasMessageContaining(CreateOrderCommand.class.getName());
+        assertSame(original, registry.findExecutor(CreateOrderCommand.class));
         assertNull(registry.findExecutor(CancelOrderCommand.class),
                 "non-conflicting types of the rejected executor must NOT be registered (all-or-nothing)");
         assertThat(registry.executors())
@@ -116,6 +120,35 @@ class CommandRegistryTest {
         assertThat(registry.executors())
                 .hasSize(3)
                 .containsOnlyOnce(multiTypeExecutor);
+    }
+
+    @Test
+    void executorsCollectionIsASnapshotOfCompletedRegistrations() {
+        CreateOrderCmdExe original = new CreateOrderCmdExe();
+        registry.register(original);
+        Collection<CommandExecutor<?>> snapshot = registry.executors();
+        CancelOrderCmdExe later = new CancelOrderCmdExe();
+
+        registry.register(later);
+
+        assertThat(snapshot).containsExactly(original);
+        assertThat(registry.executors()).containsExactlyInAnyOrder(original, later);
+    }
+
+    @Test
+    void registeringTheSameExecutorTwicePreservesTheOriginalRegistration() {
+        CreateOrderCmdExe original = new CreateOrderCmdExe();
+        registry.register(original);
+
+        assertThrows(IllegalStateException.class, () -> registry.register(original));
+
+        assertSame(original, registry.findExecutor(CreateOrderCommand.class));
+        assertThat(registry.executors()).containsExactly(original);
+    }
+
+    @Test
+    void findExecutorRejectsNullCommandType() {
+        assertThrows(NullPointerException.class, () -> registry.findExecutor(null));
     }
 
     static class CreateOrderCommand implements Command {
@@ -164,8 +197,8 @@ class CommandRegistryTest {
 
         @Override
         public Set<Class<? extends Command>> supportedCommands() {
-            return new HashSet<>(Arrays.<Class<? extends Command>>asList(
-                    CreateOrderCommand.class, CancelOrderCommand.class));
+            return new LinkedHashSet<>(Arrays.<Class<? extends Command>>asList(
+                    CancelOrderCommand.class, CreateOrderCommand.class));
         }
 
         @Override

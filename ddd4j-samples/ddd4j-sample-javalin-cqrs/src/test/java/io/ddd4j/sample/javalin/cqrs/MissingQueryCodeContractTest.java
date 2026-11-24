@@ -1,6 +1,5 @@
 package io.ddd4j.sample.javalin.cqrs;
 
-import io.javalin.Javalin;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,16 +15,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /** 验证查询失败响应保留既有字符串错误码及 HTTP 状态。 */
 class MissingQueryCodeContractTest {
-    private Javalin app;
+    private JavalinCqrsApplication.Application application;
 
     @BeforeEach
     void startApp() {
-        app = TestSupport.start();
+        application = JavalinCqrsApplication.start(0, null);
     }
 
     @AfterEach
     void stopApp() {
-        app.stop();
+        application.close();
     }
 
     @Test
@@ -44,7 +43,7 @@ class MissingQueryCodeContractTest {
     }
 
     private void assertMissing(String path, int status) throws Exception {
-        HttpRequest request = HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + app.port() + path)).GET().build();
+        HttpRequest request = HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + application.app().port() + path)).GET().build();
         HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
         var code = new ObjectMapper().readTree(response.body()).get("code");
         assertEquals(status, response.statusCode(), response.body());

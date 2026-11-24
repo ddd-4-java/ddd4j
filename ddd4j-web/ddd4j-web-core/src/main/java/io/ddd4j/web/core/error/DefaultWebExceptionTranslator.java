@@ -14,6 +14,9 @@
  */
 package io.ddd4j.web.core.error;
 
+import io.ddd4j.core.api.ApiCode;
+import io.ddd4j.core.exception.AuthenticationException;
+import io.ddd4j.core.exception.AuthorizationException;
 import io.ddd4j.core.exception.BizRuntimeException;
 import io.ddd4j.core.exception.IdempotentException;
 import io.ddd4j.core.exception.ParamException;
@@ -50,8 +53,15 @@ public final class DefaultWebExceptionTranslator implements WebExceptionTranslat
     @Override
     public WebError translate(Throwable throwable) {
         Throwable cause = Objects.requireNonNull(throwable, "throwable must not be null");
-        if (cause instanceof WebStatusException exception) {
+        if (cause instanceof WebStatusException) {
+            WebStatusException exception = (WebStatusException) cause;
             return new WebError(exception.getStatus(), exception.getCode(), message(exception), exception.getData());
+        }
+        if (cause instanceof AuthenticationException) {
+            return authError(ApiCode.UNAUTHORIZED, cause);
+        }
+        if (cause instanceof AuthorizationException) {
+            return authError(ApiCode.FORBIDDEN, cause);
         }
         if (cause instanceof IdempotentException) {
             return error(CONFLICT, cause);
@@ -69,7 +79,8 @@ public final class DefaultWebExceptionTranslator implements WebExceptionTranslat
         if (cause instanceof SecurityException) {
             return error(FORBIDDEN, cause);
         }
-        if (cause instanceof BizRuntimeException exception) {
+        if (cause instanceof BizRuntimeException) {
+            BizRuntimeException exception = (BizRuntimeException) cause;
             int status = normalizeStatus(exception.getCode());
             return new WebError(status, Objects.nonNull(exception.getCode()) ? exception.getCode() : status,
                     message(exception), null);
@@ -79,6 +90,12 @@ public final class DefaultWebExceptionTranslator implements WebExceptionTranslat
 
     private WebError error(int status, Throwable throwable) {
         return new WebError(status, status, message(throwable), null);
+    }
+
+    private WebError authError(ApiCode code, Throwable failure) {
+        int status = code.getCode();
+        String message = failure.getMessage();
+        return new WebError(status, status, StrKit.isBlank(message) ? code.getReason() : message, null);
     }
 
     private String message(Throwable throwable) {

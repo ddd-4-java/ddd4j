@@ -31,8 +31,9 @@ jobs:
           java-version: '17'
           overwrite-settings: false
       - name: Verify gate regressions
-        run: >-
+        run: |
           python3 -m unittest discover -s scripts -p 'test_dependency_family_alignment.py' -v
+          python3 -m unittest discover -s scripts -p 'test_dependency_version_owners.py' -v
       - name: Check source version ownership and BOM priority before Maven
         run: >-
           python3 scripts/verify_dependency_family_alignment.py --source-only
@@ -54,7 +55,7 @@ jobs:
           PY
       - name: Build all reactor artifacts for fresh dependency resolution
         run: ./mvnw -B -ntp -DskipTests install
-      - name: Verify Spring baseline, effective families, resolved trees and JDK bytecode
+      - name: Verify upstream BOM ownership, Spring baseline, resolved trees and JDK bytecode
         run: >-
           python3 scripts/verify_dependency_family_alignment.py
           --output "$RUNNER_TEMP/dependency-families" --check-bytecode

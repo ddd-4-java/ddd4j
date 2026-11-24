@@ -11,14 +11,13 @@ SCRIPT = pathlib.Path(__file__).with_name("check-bom-alignment.sh")
 
 
 class BomAlignmentTest(unittest.TestCase):
-    def run_fixture(self, version, namespace, parent_version=None, root_properties="", dependency_properties=""):
+    def run_fixture(self, version, namespace, parent_version=None, root_properties="",
+                    dependency_properties="", orphan_poms=False, broken_module=None, profile=False):
         with tempfile.TemporaryDirectory() as directory:
             root = pathlib.Path(directory)
             scripts = root / "scripts"
             scripts.mkdir()
             shutil.copy2(SCRIPT, scripts / SCRIPT.name)
-            (root / "pom.xml").write_text(
-                f"<project><properties>{root_properties}</properties></project>")
             dependencies = root / "ddd4j-dependencies"
             dependencies.mkdir()
             (dependencies / "pom.xml").write_text(
@@ -26,21 +25,40 @@ class BomAlignmentTest(unittest.TestCase):
             bom = root / "ddd4j-bom"
             bom.mkdir()
             (bom / "pom.xml").write_text("<project/>")
-            module = root / "sample"
+            modules, entry = ("subprojects", "subproject") if namespace == "4.1.0" else ("modules", "module")
+            root_declaration = f"<{modules}><{entry}>group</{entry}></{modules}>"
+            (root / "pom.xml").write_text(
+                f"<project><properties>{root_properties}</properties>{root_declaration}</project>")
+            group = root / "group"
+            group.mkdir()
+            (group / "pom.xml").write_text(
+                f"<project><{modules}><{entry}>sample</{entry}></{modules}></project>")
+            module = group / "sample"
             module.mkdir()
             parent = ("  <parent><groupId>io.ddd4j</groupId>"
                       "<artifactId>ddd4j-dependencies</artifactId>"
                       f"<version>{parent_version}</version></parent>\n") if parent_version else ""
-            (module / "pom.xml").write_text(
+            profile_start = "<profiles><profile><id>optional</id>" if profile else ""
+            profile_end = "</profile></profiles>" if profile else ""
+            model = (
                 f'<project xmlns="http://maven.apache.org/POM/{namespace}">\n'
-                + parent +
+                + parent + profile_start +
                 '  <dependencies><dependency>\n'
                 '    <groupId>io.ddd4j</groupId>\n'
                 '    <artifactId>ddd4j-core</artifactId>\n'
                 '    <scope>compile</scope>\n'
                 f'    <version>{version}</version>\n'
                 '  </dependency></dependencies>\n'
-                '</project>\n')
+                + profile_end + '</project>\n')
+            if broken_module != "missing":
+                (module / "pom.xml").write_text("<project>" if broken_module == "malformed" else model)
+            if orphan_poms:
+                consumer = module / "src/test/resources/consumer"
+                consumer.mkdir(parents=True)
+                (consumer / "pom.xml").write_text(model.replace(version, "9.9.9"))
+                evidence = root / ".superpowers/history"
+                evidence.mkdir(parents=True)
+                (evidence / "pom.xml").write_text("<project>")
             return subprocess.run(["bash", str(scripts / SCRIPT.name)],
                                   cwd=root, capture_output=True, text=True, check=False)
 
@@ -49,7 +67,26 @@ class BomAlignmentTest(unittest.TestCase):
             with self.subTest(namespace=namespace):
                 result = self.run_fixture("9.9.9", namespace)
                 self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
-                self.assertIn("sample/pom.xml", result.stdout)
+                self.assertIn("group/sample/pom.xml", result.stdout)
+
+    def test_skips_standalone_consumer_and_archive_poms(self):
+        for namespace in ("4.0.0", "4.1.0"):
+            with self.subTest(namespace=namespace):
+                result = self.run_fixture("${revision}", namespace, orphan_poms=True)
+                self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+                self.assertIn("扫描模块总数: 3", result.stdout)
+
+    def test_declared_missing_or_malformed_module_fails_closed(self):
+        for broken in ("missing", "malformed"):
+            with self.subTest(broken=broken):
+                result = self.run_fixture("${revision}", "4.1.0", broken_module=broken)
+                self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+                self.assertIn("group/sample/pom.xml", result.stderr)
+
+    def test_hardcoded_profile_dependency_in_reactor_still_fails(self):
+        result = self.run_fixture("9.9.9", "4.0.0", profile=True)
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        self.assertIn("group/sample/pom.xml", result.stdout)
 
     def test_revision_placeholder_passes(self):
         result = self.run_fixture("${revision}", "4.0.0")

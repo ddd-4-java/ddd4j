@@ -16,10 +16,6 @@ package io.ddd4j.sample.helidon;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.helidon.microprofile.tests.junit5.AddBean;
-import io.helidon.microprofile.tests.junit5.AddConfig;
-import io.helidon.microprofile.tests.junit5.HelidonTest;
-import jakarta.inject.Inject;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.client.Invocation;
 import jakarta.ws.rs.client.WebTarget;
@@ -31,19 +27,33 @@ import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@HelidonTest
-@AddBean(HelidonOrderApplication.class)
-@AddBean(HelidonOrderBeans.class)
-@AddConfig(key = "ddd4j.web.public-paths", value = "/api/auth/**")
 class HelidonOrderResourceTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @Inject
-    private WebTarget target;
+    private static WebTarget target;
+    private static io.helidon.microprofile.server.Server server;
+    private static jakarta.ws.rs.client.Client client;
+    @org.junit.jupiter.api.BeforeAll
+    static void startRequiredProduct() {
+        System.setProperty("ddd4j.web.authentication-mode","REQUIRED");
+        server=HelidonOrderApplication.start(0);
+        client=jakarta.ws.rs.client.ClientBuilder.newClient();
+        target=client.target("http://127.0.0.1:"+server.port());
+    }
+    @org.junit.jupiter.api.AfterAll
+    static void stopRequiredProduct() {
+        if (Objects.nonNull(client)) { client.close(); }
+        if (Objects.nonNull(server)) { server.stop(); }
+        System.clearProperty("ddd4j.web.authentication-mode");
+    }
 
     @Test
     void shouldRunSharedOrderUseCasesThroughHelidonHttp() throws Exception {
+        Response anonymous = request("POST", "/api/orders", null,
+                "{\"orderNo\":\"anonymous\",\"buyerId\":\"buyer-1\",\"buyerName\":\"Alice\"}");
+        assertThat(anonymous.getStatus()).isEqualTo(401);
+        anonymous.close();
         String token = issueToken();
         Response create = request("POST", "/api/orders", token,
                 "{\"orderNo\":\"HELIDON-001\",\"buyerId\":\"buyer-1\",\"buyerName\":\"Alice\"}");

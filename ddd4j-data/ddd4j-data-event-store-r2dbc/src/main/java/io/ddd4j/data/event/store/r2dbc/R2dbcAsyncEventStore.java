@@ -157,6 +157,7 @@ public class R2dbcAsyncEventStore implements AsyncEventStore {
      *
      * <p>乐观锁校验、position 分配与全部事件写入在同一事务内原子完成；
      * 版本冲突以 {@link AggregateVersionConflictException} 错误信号终止并整体回滚。
+     * 订阅在提交前取消时，回滚事务后再释放连接。
      */
     @Override
     public Mono<Void> append(String aggregateType, AggregateRootId aggregateId,
@@ -186,10 +187,14 @@ public class R2dbcAsyncEventStore implements AsyncEventStore {
                         })
                         .then(Mono.from(connection.commitTransaction())),
                 connection -> Mono.from(connection.close()),
-                (connection, error) -> Mono.from(connection.rollbackTransaction())
-                        .onErrorResume(ignored -> Mono.empty())
-                        .then(Mono.from(connection.close())),
-                connection -> Mono.from(connection.close())));
+                (connection, error) -> rollbackAndClose(connection),
+                this::rollbackAndClose));
+    }
+
+    private Mono<Void> rollbackAndClose(Connection connection) {
+        return Mono.defer(() -> Mono.from(connection.rollbackTransaction()))
+                .onErrorResume(ignored -> Mono.empty())
+                .then(Mono.defer(() -> Mono.from(connection.close())));
     }
 
     /**

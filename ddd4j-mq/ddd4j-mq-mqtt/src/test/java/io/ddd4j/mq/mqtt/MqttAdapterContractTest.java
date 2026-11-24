@@ -13,9 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.mq.mqtt;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.mock;
 
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.mq.MQProperties;
@@ -28,6 +25,7 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
@@ -37,7 +35,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentCaptor.forClass;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 class MqttAdapterContractTest {
 
@@ -47,14 +47,16 @@ class MqttAdapterContractTest {
     }
 
     @Test
-    void shouldTreatMessageIdAsPayloadConcernAndRejectNativeNack() {
+    void shouldRejectUnsupportedOperationsWithoutAcknowledgingAndAllowAck() {
         MqttMessage message = new MqttMessage("body".getBytes());
         MqttAcknowledgment acknowledgment = new MqttAcknowledgment(message, "orders/paid");
 
         assertThrows(UnsupportedOperationException.class, () -> acknowledgment.nack(true));
+        assertFalse(acknowledgment.isAcknowledged(), "nack must leave the message unacknowledged");
         assertThrows(UnsupportedOperationException.class, () -> acknowledgment.reject(true));
+        assertFalse(acknowledgment.isAcknowledged(), "reject must leave the message unacknowledged");
         assertThrows(UnsupportedOperationException.class, () -> acknowledgment.recover(true));
-        assertFalse(acknowledgment.isAcknowledged());
+        assertFalse(acknowledgment.isAcknowledged(), "recover must leave the message unacknowledged");
 
         acknowledgment.ack();
         assertTrue(acknowledgment.isAcknowledged());
@@ -84,7 +86,7 @@ class MqttAdapterContractTest {
                 return type.cast(event);
             }
         }, null);
-        org.mockito.ArgumentCaptor<MqttCallback> callback = forClass(MqttCallback.class);
+        ArgumentCaptor<MqttCallback> callback = forClass(MqttCallback.class);
         verify(mqttClient).setCallback(callback.capture());
         MqttMessage message = new MqttMessage("{}".getBytes());
         message.setQos(1);

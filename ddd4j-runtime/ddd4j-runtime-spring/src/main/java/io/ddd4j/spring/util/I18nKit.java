@@ -277,7 +277,7 @@ public class I18nKit {
      * @return 本地化消息
      */
     public static String getMessage(String key, String[] args) {
-        return SpringContextUtils.getContext().getApplicationContext().getBean(NestedMessageSource.class).getMessage(key, args, LocaleContextHolder.getLocale());
+        return messageSource().getMessage(key, args, LocaleContextHolder.getLocale());
     }
 
     /**
@@ -289,6 +289,10 @@ public class I18nKit {
      * @return 本地化消息
      */
     public static String getMessage(String key, String[] args, String defaultMsg) {
-        return SpringContextUtils.getContext().getApplicationContext().getBean(NestedMessageSource.class).getMessage(key, args, defaultMsg, LocaleContextHolder.getLocale());
+        return messageSource().getMessage(key, args, defaultMsg, LocaleContextHolder.getLocale());
+    }
+
+    private static NestedMessageSource messageSource() {
+        return SpringContextUtils.getContext().getApplicationContext().getBean(NestedMessageSource.class);
     }
 }

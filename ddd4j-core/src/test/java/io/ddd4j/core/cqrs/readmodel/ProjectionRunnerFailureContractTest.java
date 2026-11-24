@@ -8,6 +8,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
+import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -56,6 +62,55 @@ class ProjectionRunnerFailureContractTest {
 
         verify(metrics).onRunFailed("orders", failure);
         verify(positions, never()).updateProjectionPosition(any(), anyLong());
+    }
+
+    @Test
+    void gapFailureDoesNotCommitSourceEndAndReleasesGuard() {
+        ProjectionService service = new DefaultProjectionService(new InMemoryProjectionPositionRepository());
+        service.updateProjectionPosition("orders", 10);
+        ProjectionRunner<String> runner = new ProjectionRunner<>(service,
+                (id, from, size, types) -> new EventChunk<>(List.of("event-11", "event-19"), 20));
+        assertThatThrownBy(() -> runner.runOnce(view(new IllegalStateException("write failed"))))
+                .hasMessage("write failed");
+        assertThat(service.readProjectionPosition("orders")).isEqualTo(10);
+        assertThat(runner.getProjectionStatus("orders").running()).isFalse();
+        runner.runOnce(view(null));
+        assertThat(service.readProjectionPosition("orders")).isEqualTo(20);
+    }
+
+    @Test
+    void checkpointFailureReplaysBlockAndConsumerIdempotencyAvoidsDuplicateEffects() {
+        InMemoryProjectionPositionRepository repository = new InMemoryProjectionPositionRepository();
+        DefaultProjectionService persisted = new DefaultProjectionService(repository);
+        persisted.updateProjectionPosition("orders", 10);
+        AtomicBoolean failSave = new AtomicBoolean(true);
+        ProjectionService failing = new DefaultProjectionService(repository) {
+            @Override
+            public ProjectionPosition updateProjectionPosition(String id, long next) {
+                if (failSave.getAndSet(false)) {
+                    throw new IllegalStateException("checkpoint write failed");
+                }
+                return super.updateProjectionPosition(id, next);
+            }
+        };
+        Set<String> effects = new HashSet<>();
+        java.util.concurrent.atomic.AtomicInteger attempts = new java.util.concurrent.atomic.AtomicInteger();
+        ProjectionView<String> idempotent = new ProjectionRunnerTest.TestView("orders", null, 100, List.of("created")) {
+            @Override
+            public void handleEvents(Collection<String> events) {
+                attempts.incrementAndGet();
+                effects.addAll(events);
+            }
+        };
+        ProjectionRunner<String> runner = new ProjectionRunner<>(failing,
+                (id, from, size, types) -> new EventChunk<>(List.of("event-11", "event-19"), 20));
+        assertThatThrownBy(() -> runner.runOnce(idempotent)).hasMessage("checkpoint write failed");
+        assertThat(persisted.readProjectionPosition("orders")).isEqualTo(10);
+        assertThat(effects).hasSize(2); // 跨存储副作用不会被内核自动回滚。
+        runner.runOnce(idempotent);
+        assertThat(attempts).hasValue(2);
+        assertThat(effects).hasSize(2); // 去重由业务消费者提供，不代表 exactly-once。
+        assertThat(persisted.readProjectionPosition("orders")).isEqualTo(20);
     }
 
     private static ProjectionView<String> view(RuntimeException failure) {

@@ -55,7 +55,9 @@ public class HelidonOrderResource {
 
     private final OrderApplicationService applicationService;
 
-    /** @param applicationService 订单应用服务 */
+    /**
+ * @param applicationService 订单应用服务
+ */
     @Inject
     public HelidonOrderResource(OrderApplicationService applicationService) {
         this.applicationService = Objects.requireNonNull(applicationService, "applicationService must not be null");
@@ -126,7 +128,23 @@ public class HelidonOrderResource {
         return R.ok(applicationService.find(orderId));
     }
 
-    /** 创建订单的 HTTP 请求。 */
+    /**
+ * @param buyerId 买家
+ * @param status 状态
+ * @param page 页码
+ * @param size 页大小
+ * @return 过滤后的订单
+ */
+    @GET @Path("/orders")
+    public R<java.util.List<OrderReadModel>> query(@jakarta.ws.rs.QueryParam("buyerId") String buyerId,
+            @jakarta.ws.rs.QueryParam("status") io.ddd4j.sample.order.domain.OrderStatus status,
+            @jakarta.ws.rs.QueryParam("page") @jakarta.ws.rs.DefaultValue("1") int page,
+            @jakarta.ws.rs.QueryParam("size") @jakarta.ws.rs.DefaultValue("100") int size) {
+        return R.ok(applicationService.query(new io.ddd4j.sample.order.domain.OrderQuery(buyerId,status,page,size)));
+    }
+
+    /** 创建订单的 HTTP 请求。
+ */
     @Data
     public static class CreateOrderRequest {
 
@@ -135,7 +153,8 @@ public class HelidonOrderResource {
         private String buyerName;
     }
 
-    /** 添加订单明细的 HTTP 请求。 */
+    /** 添加订单明细的 HTTP 请求。
+ */
     @Data
     public static class AddOrderLineRequest {
 
@@ -145,26 +164,33 @@ public class HelidonOrderResource {
         private BigDecimal unitPrice;
     }
 
-    /** 登录令牌响应。 */
+    /** 登录令牌响应。
+ */
     public final static class TokenResponse {
 
         private static final long serialVersionUID = 0L;
 
         private final String token;
 
-        /** @param token 登录令牌 */
+        /**
+ * @param token 登录令牌
+ */
         @JsonCreator()
         public TokenResponse(@JsonProperty("token") String token) {
             this.token = token;
         }
 
-        /** @return 登录令牌 */
+        /**
+ * @return 登录令牌
+ */
         @JsonProperty("token")
         public String token() {
             return token;
         }
 
-        /** @return 登录令牌，供 JSON-B 按 Bean 属性序列化 */
+        /**
+ * @return 登录令牌，供 JSON-B 按 Bean 属性序列化
+ */
         @JsonbProperty("token")
         public String getToken() {
             return token;

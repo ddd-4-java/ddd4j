@@ -1,39 +1,31 @@
 # ddd4j-sample-micronaut-cqrs
 
-Micronaut CQRS 集成示例：演示在 Micronaut 运行时下完整的 CQRS 流程。
+Micronaut CQRS 样例提供默认内存流程和显式 PostgreSQL 流程。
 
-## 架构
+## 启动
 
-- **写侧**：Command -> CommandHandler -> Aggregate -> InMemoryEventStore
-- **读侧**：InMemoryEventStore -> ViewManager -> ProjectionView -> OrderSummaryView（内存读模型）
+使用当前分支对应的 JDK，按[运行时类路径构建说明](../README.md#启动默认订单示例)打包本模块，然后运行 `io.ddd4j.sample.micronaut.cqrs.MicronautCqrsApplication`。
 
-## 关键组件
+## 默认内存入口
 
-| 组件                           | 说明                                                  |
-|--------------------------------|-------------------------------------------------------|
-| `CreateOrderCommand`           | 创建订单命令                                          |
-| `CreateOrderCommandHandler`    | 命令执行器（@Singleton + @CommandHandler）            |
-| `EventSourcingOrderRepository` | 事件溯源仓储（@Singleton，基于 InMemoryEventStore）   |
-| `OrderSummaryView`             | 投影视图（@Singleton，内存读模型）                    |
-| `InMemoryEventStore`           | 内存事件存储（ConcurrentHashMap，按聚合 ID 存储事件） |
-| `CommandBus`                   | 内存命令总线（命令类型 -> 处理器路由）                |
-| `ViewManager`                  | 内存视图管理器（定时触发投影，维护读模型）            |
-| `OrderController`              | REST 控制器（Micronaut @Controller）                  |
+- `POST /orders` 通过命令总线写入内存事件。
+- `GET /orders/{id}` 返回由定时投影生成的订单摘要，保留 `createdAt` 字段。
+- Micronaut Context 负责停止内存投影调度器。
 
-## 实现说明
+## S04 PostgreSQL 入口
 
-本示例使用 **内存实现** 代替框架 CQRS 模块（`ddd4j-data-event-store`、
-`ddd4j-data-cqrs-*`、`ddd4j-data-projection-*`），因为这些模块在 `feature/3.0.x`
-分支上尚未完成 3.0.x 迁移。当框架模块完成后，本示例将切换到框架提供的
-`PlainEventStore`、`PlainProjectionPositionRepository` 等实现。
+设置 `ddd4j.cqrs.projection.enabled=true`、`sample.jdbc.url`、`sample.jdbc.user`、`sample.jdbc.password`。默认 `sample.jpa.schema=validate`。启动前为专用样例库准备 [Order JDBC 迁移](../ddd4j-sample-order-jdbc/src/main/resources/db/migration/)及 JPA EventStore、ProjectionPosition 对应表。测试中的 `S04DatabaseFixture` 只用于初始化隔离数据库。
+
+- `POST /sample/orders` 创建订单，`POST /sample/orders/lines` 增加明细，`POST /sample/orders/{id}/payment?key=...` 支付。
+- `GET /sample/orders/{id}` 和 `POST /sample/orders/query` 仅读取独立六字段投影。单条记录尚未投影时返回 404。
+- `POST /sample/projections/orders/run` 立即执行与后台相同的投影。默认每 5 秒运行，`sample.projection.cron` 接受原生六字段数字 cron。
+
+订单与 Outbox 在同一 JDBC 本地事务内提交。单实例中继先在 JPA ResourceLocal 事务中追加事件，再确认 Outbox。确认失败后用原 Outbox ID 去重。查询 UPSERT 提交后独立提交检查点，检查点失败时重放同一批次。
+
+事件读取按全局位置分页，仅把 `Order` 聚合事件送入投影。游标始终取完整源批次末尾的 `position + 1`，可越过位置空洞和仅包含可反序列化的非 `Order` 事件的批次。JPA 会先解码整页，无法加载的事件类型或损坏的载荷仍会触发读取失败，检查点保持原位。订单投影根据已提交写状态刷新当前查询快照。持久模式适用于独占此 Outbox 的单实例进程，Context 负责停止投影调度并关闭 JPA 工厂。
 
 ## 运行测试
 
 ```bash
-mvn test -pl ddd4j-samples/ddd4j-sample-micronaut-cqrs
+./mvnw -pl ddd4j-samples/ddd4j-sample-micronaut-cqrs -am test
 ```
-
-## REST 端点
-
-- `POST /orders` - 创建订单（写侧）
-- `GET /orders/{id}` - 查询订单摘要（读侧）

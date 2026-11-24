@@ -66,6 +66,20 @@ public final class OrderResponse {
     }
 
     /**
+     * @param order 共享订单聚合
+     * @return 保留既有 JSON 字段的响应
+     */
+    public static OrderResponse from(io.ddd4j.sample.order.domain.Order order) {
+        var total = order.totalAmount();
+        List<OrderLineResponse> rows = java.util.Collections.unmodifiableList(order.lines().stream()
+                .map(line -> new OrderLineResponse(line.id(), line.goodsId(), line.goodsName(), line.quantity(),
+                        line.unitPrice().amount().toPlainString(), line.unitPrice().currency()))
+                .collect(java.util.stream.Collectors.toList()));
+        return new OrderResponse(order.id(), order.orderNo(), order.buyerId(), order.buyerName(),
+                OrderStatus.valueOf(order.status().name()), total.amount().toPlainString(), total.currency(), rows);
+    }
+
+    /**
      * 订单行响应数据。
      */
     public final static class OrderLineResponse {

@@ -15,7 +15,6 @@
 package io.ddd4j.auth.datascope;
 
 import io.ddd4j.auth.datascope.annotation.RequiresDataPermissions;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.extension.utils.SpringContextUtils;
 
 import jakarta.validation.ConstraintValidator;
@@ -29,31 +28,19 @@ import java.util.Objects;
  * @author ddd4j
  * @see RequiresDataPermissions
  */
-@Slf4j
 public class RequiresDataPermissionsValidator implements ConstraintValidator<RequiresDataPermissions, Object> {
 
-    private String dataType;
-    private DataScopeProvider provider;
+    private io.ddd4j.data.datascope.RequiresDataPermissionsValidator delegate;
 
     @Override
     public void initialize(RequiresDataPermissions annotation) {
-        this.dataType = annotation.dataType();
-        this.provider = SpringContextUtils.getContext().getApplicationContext().getBean(DataScopeProvider.class);
+        DataScopeProvider provider = SpringContextUtils.getContext().getApplicationContext().getBean(DataScopeProvider.class);
+        this.delegate = new io.ddd4j.data.datascope.RequiresDataPermissionsValidator(provider, annotation.dataType());
     }
 
     @Override
     public boolean isValid(Object data, ConstraintValidatorContext constraintValidatorContext) {
-        // Check if the data has value
-        if (Objects.isNull(data)) {
-            return Boolean.FALSE;
-        }
-        // Get the data permission provider
-        if (Objects.isNull(provider)) {
-            log.warn("DataScopeProvider is not found.");
-            return Boolean.FALSE;
-        }
-        // Check if the data has permissions
-        return provider.hasPermissions(dataType, data);
+        return Objects.nonNull(delegate) && delegate.isValid(data, constraintValidatorContext);
     }
 
 }

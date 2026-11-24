@@ -34,7 +34,7 @@ public final class QrCodeBatchResult {
      * @param items 批量项目结果
      */
     public QrCodeBatchResult(List<QrCodeBatchItemResult> items) {
-        this.items = Collections.unmodifiableList(new ArrayList<QrCodeBatchItemResult>(items));
+        this.items = Collections.unmodifiableList(new ArrayList<>(items));
     }
 
     /**

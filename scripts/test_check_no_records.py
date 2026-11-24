@@ -1,4 +1,8 @@
 import unittest
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
 
 from check_no_records import declarations
 
@@ -27,6 +31,37 @@ class A { void record() {} int record = 1; }
 
     def test_reports_line_after_comment(self):
         self.assertEqual(list(declarations('/* one\ntwo */\nrecord One() {}')), [(3, 'One')])
+
+
+class DefaultDiscoveryTest(unittest.TestCase):
+    def run_checker(self, root):
+        return subprocess.run([sys.executable, str(Path(__file__).with_name('check_no_records.py').resolve())],
+                              cwd=root, capture_output=True, text=True)
+
+    def test_deleted_tracked_java_does_not_crash(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            subprocess.run(['git', 'init', '-q', directory], check=True)
+            source = root / 'Deleted.java'
+            source.write_text('class Deleted {}')
+            subprocess.run(['git', '-C', directory, 'add', 'Deleted.java'], check=True)
+            source.unlink()
+            result = self.run_checker(root)
+            self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_new_untracked_java_is_checked_but_ignored_output_is_not(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            subprocess.run(['git', 'init', '-q', directory], check=True)
+            (root / '.gitignore').write_text('target/\n')
+            (root / 'target').mkdir()
+            (root / 'target' / 'Ignored.java').write_text('record Ignored() {}')
+            self.assertEqual(self.run_checker(root).returncode, 0)
+            (root / 'New.java').write_text('record New() {}')
+            result = self.run_checker(root)
+            self.assertEqual(result.returncode, 1, result.stdout)
+            self.assertIn('New.java:1:', result.stdout)
+            self.assertNotIn('Ignored.java', result.stdout)
 
 
 if __name__ == '__main__':

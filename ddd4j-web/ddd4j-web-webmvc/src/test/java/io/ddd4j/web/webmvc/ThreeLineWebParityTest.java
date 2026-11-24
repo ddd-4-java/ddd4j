@@ -24,6 +24,7 @@ import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.web.webmvc.annotation.FeignHeader;
 import io.ddd4j.web.webmvc.config.BaseWebConfig;
 import io.ddd4j.web.webmvc.config.ServerI18nProperties;
+import org.springframework.extension.context.NestedMessageSource;
 import io.ddd4j.web.webmvc.error.GlobalExceptionHandler;
 import io.ddd4j.web.webmvc.interceptor.BaseWebInterceptor;
 import io.ddd4j.web.webmvc.interceptor.FeignHeaderInterceptor;
@@ -31,7 +32,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.MethodParameter;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -134,7 +134,8 @@ class ThreeLineWebParityTest {
 
     @Test
     void missingHeaderResponsePreservesStatusAndMessageWithOrWithoutI18n() throws Exception {
-        GlobalExceptionHandler handler = new GlobalExceptionHandler() {
+        ServerI18nProperties properties = new ServerI18nProperties();
+        GlobalExceptionHandler handler = new GlobalExceptionHandler(new NestedMessageSource(), properties) {
             @Override
             protected void logException(Exception exception) {
             }
@@ -144,8 +145,6 @@ class ThreeLineWebParityTest {
                 return "localized header message";
             }
         };
-        ServerI18nProperties properties = new ServerI18nProperties();
-        ReflectionTestUtils.setField(handler, "serverI18NProperties", properties);
         MissingRequestHeaderException exception = new MissingRequestHeaderException("X-Parity",
                 new MethodParameter(ThreeLineWebParityTest.class.getDeclaredMethod("headerEndpoint", String.class), 0));
         for (boolean enabled : new boolean[]{false, true}) {

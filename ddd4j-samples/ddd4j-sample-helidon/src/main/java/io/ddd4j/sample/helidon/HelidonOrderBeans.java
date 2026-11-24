@@ -15,6 +15,7 @@
 package io.ddd4j.sample.helidon;
 
 import io.ddd4j.cache.CacheKit;
+import io.ddd4j.core.cache.Cache;
 import io.ddd4j.sample.order.application.OrderApplicationService;
 import io.ddd4j.sample.order.local.InMemoryOrderAdapters;
 import jakarta.annotation.PostConstruct;
@@ -32,14 +33,16 @@ public class HelidonOrderBeans {
     private static final String IDEMPOTENCY_CACHE_NAME = "ddd4j-web-idempotency";
     private static final long IDEMPOTENCY_CACHE_TTL_SECONDS = 300L;
 
+    private Cache<String, Object> ownedIdempotencyCache;
+
     @PostConstruct
     void initializeIdempotencyCache() {
-        CacheKit.build(IDEMPOTENCY_CACHE_NAME, IDEMPOTENCY_CACHE_TTL_SECONDS);
+        ownedIdempotencyCache = CacheKit.buildLocalIfAbsent(IDEMPOTENCY_CACHE_NAME, IDEMPOTENCY_CACHE_TTL_SECONDS);
     }
 
     @PreDestroy
     void destroyIdempotencyCache() {
-        CacheKit.unregister(IDEMPOTENCY_CACHE_NAME);
+        CacheKit.unregisterLocalIfOwned(IDEMPOTENCY_CACHE_NAME, ownedIdempotencyCache);
     }
 
     @Produces

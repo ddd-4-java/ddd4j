@@ -45,7 +45,7 @@ class VertxOrderCqrsIT {
     void setUp(Vertx vertx, VertxTestContext testContext) {
         VertxCqrsApplication.READ_VIEW.clear();
         Router router = VertxCqrsApplication.createRouter(vertx);
-        vertx.createHttpServer().requestHandler(router).listen(0)
+        vertx.createHttpServer().requestHandler(router).listen(0, "127.0.0.1")
                 .onSuccess(server -> {
                     port = server.actualPort();
                     testContext.completeNow();
@@ -57,7 +57,7 @@ class VertxOrderCqrsIT {
     @DisplayName("POST /orders 创建订单 -> 返回 201 + orderId")
     void createOrder_thenProjection() throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:" + port + "/orders"))
+                .uri(URI.create("http://127.0.0.1:" + port + "/orders"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(
                         "{\"orderNo\":\"ORD-001\",\"buyerId\":\"B001\",\"buyerName\":\"Alice\"}"))
@@ -75,7 +75,7 @@ class VertxOrderCqrsIT {
     void getOrder_fromReadModel() throws Exception {
         // 先创建订单
         HttpRequest createReq = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:" + port + "/orders"))
+                .uri(URI.create("http://127.0.0.1:" + port + "/orders"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(
                         "{\"orderNo\":\"ORD-002\",\"buyerId\":\"B002\",\"buyerName\":\"Bob\"}"))
@@ -88,7 +88,7 @@ class VertxOrderCqrsIT {
 
         // 查询读模型
         HttpRequest getReq = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:" + port + "/orders/" + orderId))
+                .uri(URI.create("http://127.0.0.1:" + port + "/orders/" + orderId))
                 .GET()
                 .build();
         HttpResponse<String> getResp = httpClient.send(getReq, HttpResponse.BodyHandlers.ofString());
@@ -103,7 +103,7 @@ class VertxOrderCqrsIT {
     @DisplayName("幂等性：同一 orderNo 重复创建 -> 返回 409 Conflict")
     void createOrder_idempotent() throws Exception {
         HttpRequest first = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:" + port + "/orders"))
+                .uri(URI.create("http://127.0.0.1:" + port + "/orders"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(
                         "{\"orderNo\":\"ORD-003\",\"buyerId\":\"B003\",\"buyerName\":\"Charlie\"}"))
@@ -111,7 +111,7 @@ class VertxOrderCqrsIT {
         httpClient.send(first, HttpResponse.BodyHandlers.ofString());
 
         HttpRequest second = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:" + port + "/orders"))
+                .uri(URI.create("http://127.0.0.1:" + port + "/orders"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(
                         "{\"orderNo\":\"ORD-003\",\"buyerId\":\"B003\",\"buyerName\":\"Charlie\"}"))

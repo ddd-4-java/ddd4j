@@ -17,10 +17,11 @@ package io.ddd4j.core.context;
 import io.ddd4j.core.constant.SpiKeys;
 import lombok.experimental.UtilityClass;
 
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * 全局基础上下文容器（纯 Java，零框架依赖）。
@@ -78,7 +79,7 @@ public class BaseContext {
      * 所有键（SPI key 与通用 KV）共存于同一 {@link ConcurrentHashMap}，由调用方通过 key 前缀
      * 区分用途（SPI key 以 {@code ddd4j.spi.} 前缀，参见 {@link SpiKeys}）。
      */
-    private static final Map<String, Object> GLOBAL = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<String, ContextEntry> GLOBAL = new ConcurrentHashMap<>();
 
     // ============================================================
     // 推荐 API：SPI 服务（类型安全，3.0.0+）
@@ -116,7 +117,7 @@ public class BaseContext {
                     "SPI service must be instance of " + type.getName()
                             + ", but was " + value.getClass().getName());
         }
-        GLOBAL.put(key, value);
+        GLOBAL.put(key, new ContextEntry(value));
     }
 
     /**
@@ -140,7 +141,7 @@ public class BaseContext {
         if (Objects.isNull(key) || Objects.isNull(type)) {
             return Optional.empty();
         }
-        Object value = GLOBAL.get(key);
+        Object value = contextValue(GLOBAL.get(key));
         if (Objects.isNull(value) || !type.isInstance(value)) {
             return Optional.empty();
         }
@@ -160,7 +161,100 @@ public class BaseContext {
         if (Objects.isNull(key)) {
             return Optional.empty();
         }
-        return Optional.ofNullable(GLOBAL.remove(key));
+        return Optional.ofNullable(contextValue(GLOBAL.remove(key)));
+    }
+
+    /**
+     * 当前值与预期实例一致时，原子更新全局注册。
+     *
+     * @param key 全局注册键，不能为空
+     * @param expected 预期实例，{@code null} 表示键尚未注册
+     * @param replacement 替换实例，{@code null} 表示删除注册
+     * @return 是否匹配并执行更新
+     */
+    public boolean replaceIfCurrent(String key, Object expected, Object replacement) {
+        AtomicBoolean matched = new AtomicBoolean();
+        GLOBAL.compute(key, (ignored, current) -> {
+            if (contextValue(current) != expected) {
+                return current;
+            }
+            matched.set(true);
+            return Objects.isNull(replacement) ? null : new ContextEntry(replacement);
+        });
+        return matched.get();
+    }
+
+    /**
+     * 注册启动期间使用的值，并返回可提交或回滚的本次注册。
+     *
+     * @param key 全局注册键，不能为空
+     * @param value 注册值，不能为空
+     * @return 仅控制本次写入的注册句柄
+     */
+    public Registration registerForRollback(String key, Object value) {
+        ContextEntry entry = new ContextEntry(value);
+        GLOBAL.compute(key, (ignored, current) -> {
+            entry.previous = current;
+            return entry;
+        });
+        return new Registration(key, entry);
+    }
+
+    private static Object contextValue(ContextEntry entry) {
+        return Objects.isNull(entry) ? null : entry.value;
+    }
+
+    private static final class ContextEntry {
+        private final Object value;
+        // 同一键的 compute 回调负责访问和修改回滚链。
+        private ContextEntry previous;
+        private boolean rolledBack;
+
+        private ContextEntry(Object value) {
+            this.value = Objects.requireNonNull(value);
+        }
+    }
+
+    /** 一次待提交的全局注册。查找方法继续返回原始注册值。 */
+    public static final class Registration {
+        private final String key;
+        private final ContextEntry entry;
+        private boolean pending = true;
+
+        private Registration(String key, ContextEntry entry) {
+            this.key = key;
+            this.entry = entry;
+        }
+
+        /** 确认本次写入并释放之前的注册。重复调用无效。 */
+        public void commit() {
+            GLOBAL.compute(key, (ignored, current) -> {
+                if (pending) {
+                    pending = false;
+                    entry.previous = null;
+                }
+                return current;
+            });
+        }
+
+        /** 撤销本次写入。存在较新的写入时，仅标记本次注册为已回滚。 */
+        public void rollback() {
+            GLOBAL.compute(key, (ignored, current) -> {
+                if (!pending) {
+                    return current;
+                }
+                pending = false;
+                entry.rolledBack = true;
+                if (current != entry) {
+                    return current;
+                }
+                ContextEntry previous = entry.previous;
+                while (Objects.nonNull(previous) && previous.rolledBack) {
+                    previous = previous.previous;
+                }
+                return previous;
+            });
+        }
     }
 
     // ============================================================
@@ -184,7 +278,7 @@ public class BaseContext {
         if (Objects.isNull(key)) {
             throw new IllegalArgumentException("key cannot be null");
         }
-        GLOBAL.put(String.valueOf(key), value);
+        GLOBAL.put(String.valueOf(key), new ContextEntry(value));
     }
 
     /**
@@ -202,7 +296,7 @@ public class BaseContext {
         if (Objects.isNull(key)) {
             return null;
         }
-        return (V) GLOBAL.get(String.valueOf(key));
+        return (V) contextValue(GLOBAL.get(String.valueOf(key)));
     }
 
     /**

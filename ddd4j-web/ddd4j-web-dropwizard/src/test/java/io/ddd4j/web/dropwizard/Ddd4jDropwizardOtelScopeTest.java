@@ -17,6 +17,12 @@ import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.doAnswer;
 
+import io.ddd4j.cache.CacheKit;
+import io.ddd4j.core.context.ThreadContext;
+import io.ddd4j.web.core.context.WebContextScope;
+import io.ddd4j.web.core.context.WebHeaders;
+import io.ddd4j.web.core.idempotency.CacheIdempotencyGuard;
+import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.extension.otel.Ddd4jOtel;
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
 import io.ddd4j.web.core.auth.WebAccessPolicy;
@@ -30,6 +36,7 @@ import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
 import io.opentelemetry.sdk.trace.export.SpanExporter;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerResponseContext;
+import jakarta.ws.rs.core.MultivaluedMap;
 import jakarta.ws.rs.core.MultivaluedHashMap;
 import jakarta.ws.rs.core.UriInfo;
 import org.junit.jupiter.api.Test;
@@ -43,6 +50,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -89,6 +99,41 @@ class Ddd4jDropwizardOtelScopeTest {
         Field available = Ddd4jOtel.class.getDeclaredField("available");
         available.setAccessible(true);
         available.setBoolean(null, false);
+    }
+
+    @Test
+    void headerWriteFailureRestoresOuterContextAndAllowsRetry() {
+        String cacheName = "dropwizard-header-failure";
+        CacheKit.build(cacheName, 300L);
+        try {
+            ThreadContext.put(WebContextScope.REQUEST_ID, "outer");
+            ContainerRequestContext request = request();
+            when(request.getHeaderString(WebHeaders.REQUEST_ID)).thenReturn("inner");
+            when(request.getHeaderString(WebHeaders.IDEMPOTENCY_KEY)).thenReturn("retry-key");
+            Ddd4jDropwizardRequestFilter requestFilter = new Ddd4jDropwizardRequestFilter(
+                    new WebRequestContextFactory(),
+                    new WebRequestLifecycle(new BearerSubjectAuthenticator(), WebAccessPolicy.disabled()),
+                    new WebIdempotencyLifecycle(new CacheIdempotencyGuard(cacheName)));
+            Ddd4jDropwizardResponseFilter responseFilter = new Ddd4jDropwizardResponseFilter();
+            ContainerResponseContext failedResponse = response();
+            IllegalStateException failure = new IllegalStateException("headers already committed");
+            @SuppressWarnings("unchecked")
+            MultivaluedMap<String, Object> headers = mock(MultivaluedMap.class);
+            doThrow(failure).when(headers).putSingle(WebHeaders.REQUEST_ID, "inner");
+            when(failedResponse.getHeaders()).thenReturn(headers);
+
+            requestFilter.filter(request);
+            assertEquals("inner", ThreadContext.get(WebContextScope.REQUEST_ID));
+            assertSame(failure, assertThrows(IllegalStateException.class,
+                    () -> responseFilter.filter(request, failedResponse)));
+            assertEquals("outer", ThreadContext.get(WebContextScope.REQUEST_ID));
+            requestFilter.filter(request);
+            responseFilter.filter(request, response());
+            assertEquals("outer", ThreadContext.get(WebContextScope.REQUEST_ID));
+        } finally {
+            ThreadContext.clear();
+            CacheKit.unregister(cacheName);
+        }
     }
 
     @Test

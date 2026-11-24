@@ -3,6 +3,126 @@
   "scope": "partial-inventory",
   "scenarios": [
     {
+      "id": "DATA-MYBATISPLUS-QUERY-CALLBACK",
+      "description": "独立查询回调支持真实 Mapper 查询及四参和六参 Executor 入口。",
+      "caseNames": {
+        "1.0.x": [
+          "registersCallbackInPlainMyBatisAndFillsOnce",
+          "interceptsSixArgumentQuery",
+          "interceptsInvocationAndFillsRealQueryResult"
+        ],
+        "2.0.x": [
+          "registersCallbackInPlainMyBatisAndFillsOnce",
+          "interceptsSixArgumentQuery",
+          "interceptsInvocationAndFillsRealQueryResult"
+        ],
+        "3.0.x": [
+          "registersCallbackInPlainMyBatisAndFillsOnce",
+          "interceptsSixArgumentQuery",
+          "interceptsInvocationAndFillsRealQueryResult"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/guice/Ddd4jAggregateFillPluginContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/guice/Ddd4jAggregateFillPluginContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/guice/Ddd4jAggregateFillPluginContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "DATA-MYBATISPLUS-AGGREGATE-RESULT",
+      "description": "真实 Mapper 查询通过 Guice 增强链或直接装配的 MyBatis 插件回填一次。",
+      "caseNames": {
+        "1.0.x": [
+          "fillsMapperAggregateExactlyOnceThroughGuiceAfterARealQuery",
+          "preservesDefaultPropertiesAndFillsThroughNativeMyBatisPlugin"
+        ],
+        "2.0.x": [
+          "fillsMapperAggregateExactlyOnceThroughGuiceAfterARealQuery",
+          "preservesDefaultPropertiesAndFillsThroughNativeMyBatisPlugin"
+        ],
+        "3.0.x": [
+          "fillsMapperAggregateExactlyOnceThroughGuiceAfterARealQuery",
+          "preservesDefaultPropertiesAndFillsThroughNativeMyBatisPlugin"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/guice/Ddd4jMybatisAggregateFillBehaviorTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/guice/Ddd4jMybatisAggregateFillBehaviorTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/guice/Ddd4jMybatisAggregateFillBehaviorTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "DATA-MYBATISPLUS-PERMISSION-READ-WRITE",
+      "description": "权限在分页前生效，查询记录、COUNT 和单表写入统一受限，且两个权限配置入口互斥。",
+      "caseNames": {
+        "1.0.x": [
+          "dataScopeConstrainsSelectCountUpdateAndDelete",
+          "structuredPermissionUsesTheSameExecutionChain",
+          "rejectsConfigurationOfBothPermissionInputsInEitherOrder"
+        ],
+        "2.0.x": [
+          "dataScopeConstrainsSelectCountUpdateAndDelete",
+          "structuredPermissionUsesTheSameExecutionChain",
+          "rejectsConfigurationOfBothPermissionInputsInEitherOrder"
+        ],
+        "3.0.x": [
+          "dataScopeConstrainsSelectCountUpdateAndDelete",
+          "structuredPermissionUsesTheSameExecutionChain",
+          "rejectsConfigurationOfBothPermissionInputsInEitherOrder"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/guice/Ddd4jDataPermissionBehaviorTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/guice/Ddd4jDataPermissionBehaviorTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/guice/Ddd4jDataPermissionBehaviorTest.java"
+          ]
+        }
+      }
+    },
+    {
       "id": "AUTH-DATASCOPE-VALIDATION-DISCOVERY",
       "description": "各线 Bean Validation 提供者能发现数据权限注解约束；JDK 8 适配 javax，JDK 17/21 适配 jakarta，不混同实际权限判定",
       "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-datascope-validation-aligned/report.json",
@@ -386,9 +506,21 @@
       "id": "BROKER-NATS-NATIVE",
       "description": "真实 NATS JetStream 的文件存储发布、Header、消费确认及注入连接归属",
       "caseNames": {
-        "1.0.x": ["natsPropertiesConnectsAndJetStreamAcknowledgesPublish", "natsAdapterPublishesStableHeaderThroughJetStream", "natsAdapterConsumesJetStreamMessageAndKeepsInjectedConnectionOpen"],
-        "2.0.x": ["natsPropertiesConnectsAndJetStreamAcknowledgesPublish", "natsAdapterPublishesStableHeaderThroughJetStream", "natsAdapterConsumesJetStreamMessageAndKeepsInjectedConnectionOpen"],
-        "3.0.x": ["natsPropertiesConnectsAndJetStreamAcknowledgesPublish", "natsAdapterPublishesStableHeaderThroughJetStream", "natsAdapterConsumesJetStreamMessageAndKeepsInjectedConnectionOpen"]
+        "1.0.x": [
+          "natsPropertiesConnectsAndJetStreamAcknowledgesPublish",
+          "natsAdapterPublishesStableHeaderThroughJetStream",
+          "natsAdapterConsumesJetStreamMessageAndKeepsInjectedConnectionOpen"
+        ],
+        "2.0.x": [
+          "natsPropertiesConnectsAndJetStreamAcknowledgesPublish",
+          "natsAdapterPublishesStableHeaderThroughJetStream",
+          "natsAdapterConsumesJetStreamMessageAndKeepsInjectedConnectionOpen"
+        ],
+        "3.0.x": [
+          "natsPropertiesConnectsAndJetStreamAcknowledgesPublish",
+          "natsAdapterPublishesStableHeaderThroughJetStream",
+          "natsAdapterConsumesJetStreamMessageAndKeepsInjectedConnectionOpen"
+        ]
       },
       "lines": {
         "1.0.x": {
@@ -558,9 +690,27 @@
       "id": "BROKER-RABBITMQ-NATIVE",
       "description": "真实 RabbitMQ 的原生 AMQP 消息 ID/因果 Header 往返、确认关联 ID、失败重投、关闭后发布和适配器生命周期",
       "caseNames": {
-        "1.0.x": ["failedListenerShouldBeNackedAndRedeliveredByTheBroker", "nativeAcknowledgmentShouldRequeueThenPermanentlyConfirm", "requiredListenerDeclarationFailureShouldRollBackOwnedChannels", "optionalListenerDeclarationFailureShouldKeepProducerAvailable", "closingDuringUnacknowledgedDeliveryShouldReleaseAndRequeue"],
-        "2.0.x": ["failedListenerShouldBeNackedAndRedeliveredByTheBroker", "nativeAcknowledgmentShouldRequeueThenPermanentlyConfirm", "requiredListenerDeclarationFailureShouldRollBackOwnedChannels", "optionalListenerDeclarationFailureShouldKeepProducerAvailable", "closingDuringUnacknowledgedDeliveryShouldReleaseAndRequeue"],
-        "3.0.x": ["failedListenerShouldBeNackedAndRedeliveredByTheBroker", "nativeAcknowledgmentShouldRequeueThenPermanentlyConfirm", "requiredListenerDeclarationFailureShouldRollBackOwnedChannels", "optionalListenerDeclarationFailureShouldKeepProducerAvailable", "closingDuringUnacknowledgedDeliveryShouldReleaseAndRequeue"]
+        "1.0.x": [
+          "failedListenerShouldBeNackedAndRedeliveredByTheBroker",
+          "nativeAcknowledgmentShouldRequeueThenPermanentlyConfirm",
+          "requiredListenerDeclarationFailureShouldRollBackOwnedChannels",
+          "optionalListenerDeclarationFailureShouldKeepProducerAvailable",
+          "closingDuringUnacknowledgedDeliveryShouldReleaseAndRequeue"
+        ],
+        "2.0.x": [
+          "failedListenerShouldBeNackedAndRedeliveredByTheBroker",
+          "nativeAcknowledgmentShouldRequeueThenPermanentlyConfirm",
+          "requiredListenerDeclarationFailureShouldRollBackOwnedChannels",
+          "optionalListenerDeclarationFailureShouldKeepProducerAvailable",
+          "closingDuringUnacknowledgedDeliveryShouldReleaseAndRequeue"
+        ],
+        "3.0.x": [
+          "failedListenerShouldBeNackedAndRedeliveredByTheBroker",
+          "nativeAcknowledgmentShouldRequeueThenPermanentlyConfirm",
+          "requiredListenerDeclarationFailureShouldRollBackOwnedChannels",
+          "optionalListenerDeclarationFailureShouldKeepProducerAvailable",
+          "closingDuringUnacknowledgedDeliveryShouldReleaseAndRequeue"
+        ]
       },
       "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-14-rabbit-native-causality/report.json",
       "lastEvidenceSha256": "25f58ee3a4104df808fc0b44b1cfa10d0375a088f852994d8375cb9475a8cb9e",
@@ -791,9 +941,24 @@
       "id": "CORE-EVENT-PAYLOAD-STRONG-ROUNDTRIP",
       "description": "三线按本线 Jackson 版本保留事件 ID、时间、实体路径和因果元数据；不接受 @class 选择目标类型，坏 JSON 保留原异常",
       "caseNames": {
-        "1.0.x": ["roundTripRestoresConcreteEventWithZonedDateTimeTimestamp", "causalityMetadataUsesHyphenatedPayloadFields", "unknownClassMarkerCannotChooseTheDeserializedType", "deserializeThrowsIllegalStateExceptionOnMalformedJson"],
-        "2.0.x": ["roundTripRestoresConcreteEventWithZonedDateTimeTimestamp", "causalityMetadataUsesHyphenatedPayloadFields", "unknownClassMarkerCannotChooseTheDeserializedType", "deserializeThrowsIllegalStateExceptionOnMalformedJson"],
-        "3.0.x": ["roundTripRestoresConcreteEventWithZonedDateTimeTimestamp", "causalityMetadataUsesHyphenatedPayloadFields", "unknownClassMarkerCannotChooseTheDeserializedType", "deserializeThrowsIllegalStateExceptionOnMalformedJson"]
+        "1.0.x": [
+          "roundTripRestoresConcreteEventWithZonedDateTimeTimestamp",
+          "causalityMetadataUsesHyphenatedPayloadFields",
+          "unknownClassMarkerCannotChooseTheDeserializedType",
+          "deserializeThrowsIllegalStateExceptionOnMalformedJson"
+        ],
+        "2.0.x": [
+          "roundTripRestoresConcreteEventWithZonedDateTimeTimestamp",
+          "causalityMetadataUsesHyphenatedPayloadFields",
+          "unknownClassMarkerCannotChooseTheDeserializedType",
+          "deserializeThrowsIllegalStateExceptionOnMalformedJson"
+        ],
+        "3.0.x": [
+          "roundTripRestoresConcreteEventWithZonedDateTimeTimestamp",
+          "causalityMetadataUsesHyphenatedPayloadFields",
+          "unknownClassMarkerCannotChooseTheDeserializedType",
+          "deserializeThrowsIllegalStateExceptionOnMalformedJson"
+        ]
       },
       "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-14-event-payload-test-strengthening/report.json",
       "lastEvidenceSha256": "84daf4c41e3eb43f3255bb9f9505c61636d6afccba9389ec3bb34e8b0c491970",
@@ -1079,12 +1244,65 @@
       }
     },
     {
+      "id": "CORE-PROJECTION-RESUME-AND-STREAM-GUARD",
+      "description": "投影从已保存的位点继续读取。同一流拒绝递归进入和并发执行，不同流可以并行。",
+      "caseNames": {
+        "1.0.x": [
+          "filteredGapUsesSourcePositionAndResumesFromSavedCheckpoint",
+          "sameStreamRecursiveExecutionIsRejectedAndGuardIsReleased",
+          "concurrentCallsShareStreamGuardButDifferentStreamsCanRun"
+        ],
+        "2.0.x": [
+          "filteredGapUsesSourcePositionAndResumesFromSavedCheckpoint",
+          "sameStreamRecursiveExecutionIsRejectedAndGuardIsReleased",
+          "concurrentCallsShareStreamGuardButDifferentStreamsCanRun"
+        ],
+        "3.0.x": [
+          "filteredGapUsesSourcePositionAndResumesFromSavedCheckpoint",
+          "sameStreamRecursiveExecutionIsRejectedAndGuardIsReleased",
+          "concurrentCallsShareStreamGuardButDifferentStreamsCanRun"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunnerTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunnerTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunnerTest.java"
+          ]
+        }
+      }
+    },
+    {
       "id": "CORE-PROJECTION-RUNNER-BEHAVIOR",
       "description": "单次投影处理、空块位点推进、非法输入和多视图失败隔离在三条线保持相同可观察行为",
       "caseNames": {
-        "1.0.x": ["runOnce_chunk为空但nextEventNumber前进_仍应推进位置", "runOnce_view为null_应抛NullPointerException", "runAllIsolated_其中一个视图抛异常_应继续执行后续视图"],
-        "2.0.x": ["runOnce_chunk为空但nextEventNumber前进_仍应推进位置", "runOnce_view为null_应抛NullPointerException", "runAllIsolated_其中一个视图抛异常_应继续执行后续视图"],
-        "3.0.x": ["runOnce_chunk为空但nextEventNumber前进_仍应推进位置", "runOnce_view为null_应抛NullPointerException", "runAllIsolated_其中一个视图抛异常_应继续执行后续视图"]
+        "1.0.x": [
+          "runOnce_chunk为空但nextEventNumber前进_仍应推进位置",
+          "runOnce_view为null_应抛NullPointerException",
+          "runAllIsolated_其中一个视图抛异常_应继续执行后续视图"
+        ],
+        "2.0.x": [
+          "runOnce_chunk为空但nextEventNumber前进_仍应推进位置",
+          "runOnce_view为null_应抛NullPointerException",
+          "runAllIsolated_其中一个视图抛异常_应继续执行后续视图"
+        ],
+        "3.0.x": [
+          "runOnce_chunk为空但nextEventNumber前进_仍应推进位置",
+          "runOnce_view为null_应抛NullPointerException",
+          "runAllIsolated_其中一个视图抛异常_应继续执行后续视图"
+        ]
       },
       "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-14-projection-runner-test-union/report.json",
       "lastEvidenceSha256": "dbefa6e572e4c13ab1032c144bad7fa3971bbd4c8d78c0fda9b76e13baa1bbdb",
@@ -1190,9 +1408,21 @@
       "id": "CORE-REPOSITORY-REGISTRY",
       "description": "三线相同的注册表仓储优先级、查询映射、撤销/清空、缺失错误与内存仓储读写契约",
       "caseNames": {
-        "1.0.x": ["threadContext_shouldOverrideBaseContext", "repository_shouldFallbackToBaseContextAfterThreadRemoved", "registerWithQuery_shouldResolveBothAggregateAndQuery"],
-        "2.0.x": ["threadContext_shouldOverrideBaseContext", "repository_shouldFallbackToBaseContextAfterThreadRemoved", "registerWithQuery_shouldResolveBothAggregateAndQuery"],
-        "3.0.x": ["threadContext_shouldOverrideBaseContext", "repository_shouldFallbackToBaseContextAfterThreadRemoved", "registerWithQuery_shouldResolveBothAggregateAndQuery"]
+        "1.0.x": [
+          "threadContext_shouldOverrideBaseContext",
+          "repository_shouldFallbackToBaseContextAfterThreadRemoved",
+          "registerWithQuery_shouldResolveBothAggregateAndQuery"
+        ],
+        "2.0.x": [
+          "threadContext_shouldOverrideBaseContext",
+          "repository_shouldFallbackToBaseContextAfterThreadRemoved",
+          "registerWithQuery_shouldResolveBothAggregateAndQuery"
+        ],
+        "3.0.x": [
+          "threadContext_shouldOverrideBaseContext",
+          "repository_shouldFallbackToBaseContextAfterThreadRemoved",
+          "registerWithQuery_shouldResolveBothAggregateAndQuery"
+        ]
       },
       "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-14-repository-registry-alignment/contract-report.json",
       "lastEvidenceSha256": "ae02e8136dee07e4679a4fbba8259823f483e058bf05dd795aa29d70efd9d34f",
@@ -1409,61 +1639,89 @@
     {
       "id": "DATA-CQRS-SPRING",
       "description": "Spring 命令路由、冲突装配、未知命令与事务代理以及模块独立性",
-      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-spring-test-lines/report.json",
-      "lastEvidenceSha256": "f1b4ebbd7b66bc18fedcfd90e07d0b1fd309b2b93a72feb83979bcfa308e48ea",
       "lines": {
         "1.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-cqrs-spring/src/test/java/io/ddd4j/data/cqrs/spring/SpringCommandBusIT.java",
-            "ddd4j-data/ddd4j-data-cqrs-spring/src/test/java/io/ddd4j/data/cqrs/spring/arch/CqrsSpringModuleIndependenceTest.java"
+            "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/data/cqrs/spring/SpringCommandBusIT.java",
+            "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/data/cqrs/spring/arch/CqrsSpringModuleIndependenceTest.java"
           ]
         },
         "2.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-cqrs-spring/src/test/java/io/ddd4j/data/cqrs/spring/SpringCommandBusIT.java",
-            "ddd4j-data/ddd4j-data-cqrs-spring/src/test/java/io/ddd4j/data/cqrs/spring/arch/CqrsSpringModuleIndependenceTest.java"
+            "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/data/cqrs/spring/SpringCommandBusIT.java",
+            "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/data/cqrs/spring/arch/CqrsSpringModuleIndependenceTest.java"
           ]
         },
         "3.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-cqrs-spring/src/test/java/io/ddd4j/data/cqrs/spring/SpringCommandBusIT.java",
-            "ddd4j-data/ddd4j-data-cqrs-spring/src/test/java/io/ddd4j/data/cqrs/spring/arch/CqrsSpringModuleIndependenceTest.java"
+            "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/data/cqrs/spring/SpringCommandBusIT.java",
+            "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/data/cqrs/spring/arch/CqrsSpringModuleIndependenceTest.java"
           ]
         }
       }
     },
     {
       "id": "DATA-MYBATIS-SQL-OBSERVATION-JSON",
-      "description": "三线按各自 Jackson 版本将 SQL 观测值写入 JSON 并还原全部观测字段；不涉及数据库或远端服务",
+      "description": "三线使用各自的 Jackson 版本往返 SQL 观测值，验证默认序列化及关闭 Bean getter 自动发现后仍保留字段",
+      "caseNames": {
+        "1.0.x": [
+          "jsonRoundTripPreservesObservationFields",
+          "jsonRoundTripWithOnlyExplicitJsonProperties",
+          "beanGetterCustomizationStillHidesOrRenamesSql"
+        ],
+        "2.0.x": [
+          "jsonRoundTripPreservesObservationFields",
+          "jsonRoundTripWithOnlyExplicitJsonProperties"
+        ],
+        "3.0.x": [
+          "jsonRoundTripPreservesObservationFields",
+          "jsonRoundTripWithOnlyExplicitJsonProperties"
+        ]
+      },
       "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-14-sql-observation-json/report.json",
       "lastEvidenceSha256": "290e6a2b7f4f795821d521da8b0eba03f702c43229243f8ba7ba29aadf6a6d45",
       "lines": {
         "1.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-mybatis/src/test/java/io/ddd4j/data/mybatis/adapter/SqlObservationJsonContractTest.java"
+            "ddd4j-data/ddd4j-data-mybatis/src/test/java/io/ddd4j/data/mybatis/plugins/observation/SqlObservationJsonContractTest.java"
           ]
         },
         "2.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-mybatis/src/test/java/io/ddd4j/data/mybatis/adapter/SqlObservationJsonContractTest.java"
+            "ddd4j-data/ddd4j-data-mybatis/src/test/java/io/ddd4j/data/mybatis/plugins/observation/SqlObservationJsonContractTest.java"
           ]
         },
         "3.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-mybatis/src/test/java/io/ddd4j/data/mybatis/adapter/SqlObservationJsonContractTest.java"
+            "ddd4j-data/ddd4j-data-mybatis/src/test/java/io/ddd4j/data/mybatis/plugins/observation/SqlObservationJsonContractTest.java"
           ]
         }
       }
     },
     {
       "id": "DATA-MYBATISPLUS-SQL-OBSERVATION-JSON",
-      "description": "三线按各自 Jackson 版本将 MyBatis-Plus SQL 观测值写入 JSON 并还原语句、SQL、耗时与空异常；不涉及数据库或远端服务",
+      "description": "三线使用各自的 Jackson 版本往返 MyBatis-Plus SQL 观测值，验证默认序列化及关闭 Bean getter 自动发现后仍保留字段",
+      "caseNames": {
+        "1.0.x": [
+          "jsonRoundTripPreservesObservationFields",
+          "jsonRoundTripWithOnlyExplicitJsonProperties",
+          "beanGetterCustomizationStillHidesOrRenamesSql"
+        ],
+        "2.0.x": [
+          "jsonRoundTripPreservesObservationFields",
+          "jsonRoundTripWithOnlyExplicitJsonProperties"
+        ],
+        "3.0.x": [
+          "jsonRoundTripPreservesObservationFields",
+          "jsonRoundTripWithOnlyExplicitJsonProperties"
+        ]
+      },
       "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-14-mybatisplus-sql-observation-json/report.json",
       "lastEvidenceSha256": "4704e33f8f03ac89560e3664311493e3b1bd9a68431ba5d130c5e30f84967004",
       "lines": {
@@ -1546,19 +1804,19 @@
         "1.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-cqrs-helidon/src/test/java/io/ddd4j/data/cqrs/helidon/HelidonCommandBusIT.java"
+            "ddd4j-runtime/ddd4j-runtime-helidon/src/test/java/io/ddd4j/helidon/command/HelidonCommandBusTest.java"
           ]
         },
         "2.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-cqrs-helidon/src/test/java/io/ddd4j/data/cqrs/helidon/HelidonCommandBusIT.java"
+            "ddd4j-runtime/ddd4j-runtime-helidon/src/test/java/io/ddd4j/helidon/command/HelidonCommandBusTest.java"
           ]
         },
         "3.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-cqrs-helidon/src/test/java/io/ddd4j/data/cqrs/helidon/HelidonCommandBusIT.java"
+            "ddd4j-runtime/ddd4j-runtime-helidon/src/test/java/io/ddd4j/helidon/command/HelidonCommandBusTest.java"
           ]
         }
       }
@@ -1570,21 +1828,26 @@
         "1.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-projection-helidon/src/test/java/io/ddd4j/data/projection/helidon/HelidonProjectionSchedulerIT.java"
+            "ddd4j-runtime/ddd4j-runtime-helidon/src/test/java/io/ddd4j/helidon/cqrs/HelidonCqrsRuntimeContractTest.java"
           ]
         },
         "2.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-projection-helidon/src/test/java/io/ddd4j/data/projection/helidon/HelidonProjectionSchedulerIT.java"
+            "ddd4j-runtime/ddd4j-runtime-helidon/src/test/java/io/ddd4j/helidon/cqrs/HelidonCqrsRuntimeContractTest.java"
           ]
         },
         "3.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-projection-helidon/src/test/java/io/ddd4j/data/projection/helidon/HelidonProjectionSchedulerIT.java"
+            "ddd4j-runtime/ddd4j-runtime-helidon/src/test/java/io/ddd4j/helidon/cqrs/HelidonCqrsRuntimeContractTest.java"
           ]
         }
+      },
+      "caseNames": {
+        "1.0.x": "realScheduledTaskRunsOncePerRegistrationAndCancelsOnStop",
+        "2.0.x": "realScheduledTaskRunsOncePerRegistrationAndCancelsOnStop",
+        "3.0.x": "realScheduledTaskRunsOncePerRegistrationAndCancelsOnStop"
       }
     },
     {
@@ -1699,6 +1962,41 @@
       }
     },
     {
+      "id": "DATA-JPA-EVENTSTORE-HOST-EVENT-LOADER",
+      "description": "JPA 事件存储在独立部署的宿主应用中回读由线程上下文类加载器提供的事件，保留具体事件类型及反序列化载荷",
+      "caseNames": {
+        "1.0.x": [
+          "reopenedStoreShouldReadHostEventFromContextClassLoader"
+        ],
+        "2.0.x": [
+          "reopenedStoreShouldReadHostEventFromContextClassLoader"
+        ],
+        "3.0.x": [
+          "reopenedStoreShouldReadHostEventFromContextClassLoader"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/event/store/jpa/JpaEventStoreTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/event/store/jpa/JpaEventStoreTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/event/store/jpa/JpaEventStoreTest.java"
+          ]
+        }
+      }
+    },
+    {
       "id": "DATA-PCONLINE-HTTP-CONTRACT",
       "description": "太平洋网络 IP 适配器三线本地 HTTP、缓存 TTL、失败及非法 IP 契约；不代表远端服务",
       "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-pconline-http-contract/report.json",
@@ -1728,27 +2026,33 @@
       "id": "DATA-PROJECTION-IMMUTABLE-READER-EVENT-TYPES",
       "description": "投影读取器收到不可变的事件类型名快照，不能通过修改读取参数改变后续过滤",
       "caseNames": {
-        "1.0.x": ["chunkReaderReceivesImmutableEventTypeNames"],
-        "2.0.x": ["chunkReaderReceivesImmutableEventTypeNames"],
-        "3.0.x": ["chunkReaderReceivesImmutableEventTypeNames"]
+        "1.0.x": [
+          "chunkReaderReceivesImmutableEventTypeNames"
+        ],
+        "2.0.x": [
+          "chunkReaderReceivesImmutableEventTypeNames"
+        ],
+        "3.0.x": [
+          "chunkReaderReceivesImmutableEventTypeNames"
+        ]
       },
       "lines": {
         "1.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-projection/src/test/java/io/ddd4j/data/projection/ProjectionDispatcherTest.java"
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/handler/ProjectionDispatcherTest.java"
           ]
         },
         "2.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-projection/src/test/java/io/ddd4j/data/projection/ProjectionDispatcherTest.java"
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/handler/ProjectionDispatcherTest.java"
           ]
         },
         "3.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-projection/src/test/java/io/ddd4j/data/projection/ProjectionDispatcherTest.java"
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/handler/ProjectionDispatcherTest.java"
           ]
         }
       }
@@ -1762,22 +2066,22 @@
         "1.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/ProjectionPositionJpaIT.java",
-            "ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/arch/ProjectionJpaModuleIndependenceTest.java"
+            "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/projection/jpa/ProjectionPositionJpaIT.java",
+            "ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/projection/jpa/arch/ProjectionJpaModuleIndependenceTest.java"
           ]
         },
         "2.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/ProjectionPositionJpaIT.java",
-            "ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/arch/ProjectionJpaModuleIndependenceTest.java"
+            "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/projection/jpa/ProjectionPositionJpaIT.java",
+            "ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/projection/jpa/arch/ProjectionJpaModuleIndependenceTest.java"
           ]
         },
         "3.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/ProjectionPositionJpaIT.java",
-            "ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/arch/ProjectionJpaModuleIndependenceTest.java"
+            "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/projection/jpa/ProjectionPositionJpaIT.java",
+            "ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/projection/jpa/arch/ProjectionJpaModuleIndependenceTest.java"
           ]
         }
       }
@@ -1789,78 +2093,124 @@
         "1.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-projection/src/test/java/io/ddd4j/data/projection/ProjectionHandlerRegistryTest.java",
-            "ddd4j-data/ddd4j-data-projection/src/test/java/io/ddd4j/data/projection/ProjectionDispatcherTest.java",
-            "ddd4j-data/ddd4j-data-projection/src/test/java/io/ddd4j/data/projection/arch/ProjectionModuleIndependenceTest.java"
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/handler/ProjectionHandlerRegistryTest.java",
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/handler/ProjectionDispatcherTest.java",
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/handler/arch/ProjectionModuleIndependenceTest.java"
           ]
         },
         "2.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-projection/src/test/java/io/ddd4j/data/projection/ProjectionHandlerRegistryTest.java",
-            "ddd4j-data/ddd4j-data-projection/src/test/java/io/ddd4j/data/projection/ProjectionDispatcherTest.java",
-            "ddd4j-data/ddd4j-data-projection/src/test/java/io/ddd4j/data/projection/arch/ProjectionModuleIndependenceTest.java"
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/handler/ProjectionHandlerRegistryTest.java",
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/handler/ProjectionDispatcherTest.java",
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/handler/arch/ProjectionModuleIndependenceTest.java"
           ]
         },
         "3.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-projection/src/test/java/io/ddd4j/data/projection/ProjectionHandlerRegistryTest.java",
-            "ddd4j-data/ddd4j-data-projection/src/test/java/io/ddd4j/data/projection/ProjectionDispatcherTest.java",
-            "ddd4j-data/ddd4j-data-projection/src/test/java/io/ddd4j/data/projection/arch/ProjectionModuleIndependenceTest.java"
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/handler/ProjectionHandlerRegistryTest.java",
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/handler/ProjectionDispatcherTest.java",
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/handler/arch/ProjectionModuleIndependenceTest.java"
           ]
         }
+      }
+    },
+    {
+      "id": "DATA-PROJECTION-REGISTRY-NULL-TYPE",
+      "description": "注册投影处理器时含 null 事件类型必须先以相同 NullPointerException 契约拒绝，且不得留下半注册状态；三线保留各自 JDK/依赖",
+      "lastEvidence": "/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-14-projection-registry-null/report.json",
+      "lastEvidenceSha256": "8b24c059c8dc27785ed144a6f5b52a29d2092f5caf4bc50ab9d73e37b90ec555",
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/handler/ProjectionHandlerRegistryTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/handler/ProjectionHandlerRegistryTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/handler/ProjectionHandlerRegistryTest.java"
+          ]
+        }
+      },
+      "caseNames": {
+        "1.0.x": "registerRejectsNullEventTypeBeforeRegisteringAnyType",
+        "2.0.x": "registerRejectsNullEventTypeBeforeRegisteringAnyType",
+        "3.0.x": "registerRejectsNullEventTypeBeforeRegisteringAnyType"
       }
     },
     {
       "id": "DATA-PROJECTION-SPRING",
-      "description": "Spring 投影调度与生命周期以及模块独立性",
-      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-spring-test-lines/report.json",
-      "lastEvidenceSha256": "f1b4ebbd7b66bc18fedcfd90e07d0b1fd309b2b93a72feb83979bcfa308e48ea",
+      "description": "Spring 原生 Cron 调度、已有位置续跑与关闭资源",
       "lines": {
         "1.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-projection-spring/src/test/java/io/ddd4j/data/projection/spring/SpringProjectionSchedulerIT.java",
-            "ddd4j-data/ddd4j-data-projection-spring/src/test/java/io/ddd4j/data/projection/spring/arch/ProjectionSpringModuleIndependenceTest.java"
+            "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/cqrs/SpringCqrsRuntimeContractTest.java"
           ]
         },
         "2.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-projection-spring/src/test/java/io/ddd4j/data/projection/spring/SpringProjectionSchedulerIT.java",
-            "ddd4j-data/ddd4j-data-projection-spring/src/test/java/io/ddd4j/data/projection/spring/arch/ProjectionSpringModuleIndependenceTest.java"
+            "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/cqrs/SpringCqrsRuntimeContractTest.java"
           ]
         },
         "3.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-projection-spring/src/test/java/io/ddd4j/data/projection/spring/SpringProjectionSchedulerIT.java",
-            "ddd4j-data/ddd4j-data-projection-spring/src/test/java/io/ddd4j/data/projection/spring/arch/ProjectionSpringModuleIndependenceTest.java"
+            "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/cqrs/SpringCqrsRuntimeContractTest.java"
           ]
         }
+      },
+      "caseNames": {
+        "1.0.x": [
+          "basicContextDoesNotActivatePersistenceOrProjection",
+          "enabledProjectionRecoversPositionRunsNativeCronAndClosesResources"
+        ],
+        "2.0.x": [
+          "basicContextDoesNotActivatePersistenceOrProjection",
+          "enabledProjectionRecoversPositionRunsNativeCronAndClosesResources"
+        ],
+        "3.0.x": [
+          "basicContextDoesNotActivatePersistenceOrProjection",
+          "enabledProjectionRecoversPositionRunsNativeCronAndClosesResources"
+        ]
       }
     },
     {
       "id": "DATA-QUARKUS-COMMAND-BUS",
-      "description": "Quarkus ArC 命令执行器发现、路由及冲突拒绝",
+      "description": "Quarkus ArC 命令发现与路由、请求上下文、应用总线覆盖及冲突拒绝",
       "lines": {
         "1.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-cqrs-quarkus/src/test/java/io/ddd4j/data/cqrs/quarkus/QuarkusCommandBusIT.java"
+            "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/command/QuarkusCommandBusIT.java",
+            "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/command/QuarkusCommandBusTest.java",
+            "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/command/QuarkusCommandBusOverrideTest.java"
           ]
         },
         "2.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-cqrs-quarkus/src/test/java/io/ddd4j/data/cqrs/quarkus/QuarkusCommandBusIT.java"
+            "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/command/QuarkusCommandBusIT.java",
+            "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/command/QuarkusCommandBusTest.java",
+            "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/command/QuarkusCommandBusOverrideTest.java"
           ]
         },
         "3.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-cqrs-quarkus/src/test/java/io/ddd4j/data/cqrs/quarkus/QuarkusCommandBusIT.java"
+            "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/command/QuarkusCommandBusIT.java",
+            "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/command/QuarkusCommandBusTest.java",
+            "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/command/QuarkusCommandBusOverrideTest.java"
           ]
         }
       }
@@ -1908,19 +2258,19 @@
         "1.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-projection-panache/src/test/java/io/ddd4j/data/projection/panache/QuarkusProjectionPositionRepositoryIT.java"
+            "ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/projection/panache/QuarkusProjectionPositionRepositoryIT.java"
           ]
         },
         "2.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-projection-panache/src/test/java/io/ddd4j/data/projection/panache/QuarkusProjectionPositionRepositoryIT.java"
+            "ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/projection/panache/QuarkusProjectionPositionRepositoryIT.java"
           ]
         },
         "3.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-projection-panache/src/test/java/io/ddd4j/data/projection/panache/QuarkusProjectionPositionRepositoryIT.java"
+            "ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/projection/panache/QuarkusProjectionPositionRepositoryIT.java"
           ]
         }
       }
@@ -1932,21 +2282,26 @@
         "1.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-projection-quarkus/src/test/java/io/ddd4j/data/projection/quarkus/QuarkusProjectionSchedulerIT.java"
+            "ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/projection/panache/QuarkusDurableProjectionIT.java"
           ]
         },
         "2.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-projection-quarkus/src/test/java/io/ddd4j/data/projection/quarkus/QuarkusProjectionSchedulerIT.java"
+            "ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/projection/panache/QuarkusDurableProjectionIT.java"
           ]
         },
         "3.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-projection-quarkus/src/test/java/io/ddd4j/data/projection/quarkus/QuarkusProjectionSchedulerIT.java"
+            "ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/projection/panache/QuarkusDurableProjectionIT.java"
           ]
         }
+      },
+      "caseNames": {
+        "1.0.x": "historicalPositionFailureRollbackRetryAndSingleScheduler",
+        "2.0.x": "historicalPositionFailureRollbackRetryAndSingleScheduler",
+        "3.0.x": "historicalPositionFailureRollbackRetryAndSingleScheduler"
       }
     },
     {
@@ -2258,6 +2613,47 @@
           "tests": [
             "ddd4j-mq/ddd4j-mq-kafka/src/test/java/io/ddd4j/mq/kafka/KafkaAcknowledgmentContractTest.java",
             "ddd4j-mq/ddd4j-mq-kafka/src/test/java/io/ddd4j/mq/kafka/KafkaMQClientDurabilityContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "MQ-CLIENT-STARTUP-ROLLBACK-OWNERSHIP",
+      "description": "MQ 启动失败回滚保留后续成功注册和回调重复写入的同一实例，两次重叠失败后恢复仍有效的发布器及配置",
+      "caseNames": {
+        "1.0.x": [
+          "failedProducerKeepsNewerClientUsingTheSameContextInstances",
+          "failedProducerKeepsPlainReinjectionOfItsSerializer",
+          "overlappingFailuresRestoreHealthyContextAndPublisher"
+        ],
+        "2.0.x": [
+          "failedProducerKeepsNewerClientUsingTheSameContextInstances",
+          "failedProducerKeepsPlainReinjectionOfItsSerializer",
+          "overlappingFailuresRestoreHealthyContextAndPublisher"
+        ],
+        "3.0.x": [
+          "failedProducerKeepsNewerClientUsingTheSameContextInstances",
+          "failedProducerKeepsPlainReinjectionOfItsSerializer",
+          "overlappingFailuresRestoreHealthyContextAndPublisher"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/MQClientInitializationContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/MQClientInitializationContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/MQClientInitializationContractTest.java"
           ]
         }
       }
@@ -2766,9 +3162,18 @@
       "id": "BROKER-SQS-COMPAT-PROTOCOL",
       "description": "ElasticMQ 容器上的 SQS 兼容协议发布、消费、消息 ID/因果头还原、失败重投及确认删除；不代表 AWS 云端验收",
       "caseNames": {
-        "1.0.x": ["publishesConsumesAndDeletesMessageThroughSqsProtocol", "redeliversAfterListenerFailureAndDeletesAfterSuccess"],
-        "2.0.x": ["publishesConsumesAndDeletesMessageThroughSqsProtocol", "redeliversAfterListenerFailureAndDeletesAfterSuccess"],
-        "3.0.x": ["publishesConsumesAndDeletesMessageThroughSqsProtocol", "redeliversAfterListenerFailureAndDeletesAfterSuccess"]
+        "1.0.x": [
+          "publishesConsumesAndDeletesMessageThroughSqsProtocol",
+          "redeliversAfterListenerFailureAndDeletesAfterSuccess"
+        ],
+        "2.0.x": [
+          "publishesConsumesAndDeletesMessageThroughSqsProtocol",
+          "redeliversAfterListenerFailureAndDeletesAfterSuccess"
+        ],
+        "3.0.x": [
+          "publishesConsumesAndDeletesMessageThroughSqsProtocol",
+          "redeliversAfterListenerFailureAndDeletesAfterSuccess"
+        ]
       },
       "lines": {
         "1.0.x": {
@@ -2795,14 +3200,38 @@
       "id": "BROKER-TDMQ-PULSAR-COMPAT-PROTOCOL",
       "description": "本地 Pulsar 容器验证 TDMQ serviceUrl 配置后的跨客户端协议投递、失败重投和业务因果头；不代表腾讯云鉴权与云端验收",
       "caseNames": {
-        "1.0.x": ["configuredBrokerDeliversBetweenIndependentClientsWithCausality", "failedConsumerIsRedeliveredWithStableBusinessId"],
-        "2.0.x": ["configuredBrokerDeliversBetweenIndependentClientsWithCausality", "failedConsumerIsRedeliveredWithStableBusinessId"],
-        "3.0.x": ["configuredBrokerDeliversBetweenIndependentClientsWithCausality", "failedConsumerIsRedeliveredWithStableBusinessId"]
+        "1.0.x": [
+          "configuredBrokerDeliversBetweenIndependentClientsWithCausality",
+          "failedConsumerIsRedeliveredWithStableBusinessId"
+        ],
+        "2.0.x": [
+          "configuredBrokerDeliversBetweenIndependentClientsWithCausality",
+          "failedConsumerIsRedeliveredWithStableBusinessId"
+        ],
+        "3.0.x": [
+          "configuredBrokerDeliversBetweenIndependentClientsWithCausality",
+          "failedConsumerIsRedeliveredWithStableBusinessId"
+        ]
       },
       "lines": {
-        "1.0.x": {"status": "supported", "tests": ["ddd4j-mq/ddd4j-mq-tdmq/src/test/java/io/ddd4j/mq/tdmq/TdmqPulsarProtocolIntegrationTest.java"]},
-        "2.0.x": {"status": "supported", "tests": ["ddd4j-mq/ddd4j-mq-tdmq/src/test/java/io/ddd4j/mq/tdmq/TdmqPulsarProtocolIntegrationTest.java"]},
-        "3.0.x": {"status": "supported", "tests": ["ddd4j-mq/ddd4j-mq-tdmq/src/test/java/io/ddd4j/mq/tdmq/TdmqPulsarProtocolIntegrationTest.java"]}
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-tdmq/src/test/java/io/ddd4j/mq/tdmq/TdmqPulsarProtocolIntegrationTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-tdmq/src/test/java/io/ddd4j/mq/tdmq/TdmqPulsarProtocolIntegrationTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-tdmq/src/test/java/io/ddd4j/mq/tdmq/TdmqPulsarProtocolIntegrationTest.java"
+          ]
+        }
       }
     },
     {
@@ -2906,13 +3335,13 @@
       "description": "Paho MQTT 不支持的 nack/reject/recover 均保留未确认状态，后续 ack 仍可完成；此项不代表真实 Broker 故障验收",
       "caseNames": {
         "1.0.x": [
-          "shouldTreatMessageIdAsPayloadConcernAndRejectNativeNack"
+          "shouldRejectUnsupportedOperationsWithoutAcknowledgingAndAllowAck"
         ],
         "2.0.x": [
-          "shouldTreatMessageIdAsPayloadConcernAndRejectNativeNack"
+          "shouldRejectUnsupportedOperationsWithoutAcknowledgingAndAllowAck"
         ],
         "3.0.x": [
-          "shouldTreatMessageIdAsPayloadConcernAndRejectNativeNack"
+          "shouldRejectUnsupportedOperationsWithoutAcknowledgingAndAllowAck"
         ]
       },
       "lines": {
@@ -3027,7 +3456,6 @@
       "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-14-order-outbox-worker/report.json",
       "lastEvidenceSha256": "4aba8fa83543f8b64e9a3dd99cbcafca0ecc1cde41625bf4505afab3032d1f1d"
     },
-
     {
       "id": "ORDER-JDBC-ATOMICITY",
       "description": "真实 PostgreSQL 事务中订单写入后、Outbox 写入后或读模型写入后故障，订单、Outbox 与读模型一起回滚",
@@ -3196,9 +3624,21 @@
       "id": "OUTBOX-REDELIVERY",
       "description": "租约接管、发送重试与确认丢失",
       "caseNames": {
-        "1.0.x": ["shouldTransferExpiredLeaseAndRejectStaleOwner", "shouldRetryFailedSendAndPublishToKafka", "shouldRedeliverToKafkaAfterConfirmationIsLost"],
-        "2.0.x": ["shouldTransferExpiredLeaseAndRejectStaleOwner", "shouldRetryFailedSendAndPublishToKafka", "shouldRedeliverToKafkaAfterConfirmationIsLost"],
-        "3.0.x": ["shouldTransferExpiredLeaseAndRejectStaleOwner", "shouldRetryFailedSendAndPublishToKafka", "shouldRedeliverToKafkaAfterConfirmationIsLost"]
+        "1.0.x": [
+          "shouldTransferExpiredLeaseAndRejectStaleOwner",
+          "shouldRetryFailedSendAndPublishToKafka",
+          "shouldRedeliverToKafkaAfterConfirmationIsLost"
+        ],
+        "2.0.x": [
+          "shouldTransferExpiredLeaseAndRejectStaleOwner",
+          "shouldRetryFailedSendAndPublishToKafka",
+          "shouldRedeliverToKafkaAfterConfirmationIsLost"
+        ],
+        "3.0.x": [
+          "shouldTransferExpiredLeaseAndRejectStaleOwner",
+          "shouldRetryFailedSendAndPublishToKafka",
+          "shouldRedeliverToKafkaAfterConfirmationIsLost"
+        ]
       },
       "lines": {
         "1.0.x": {
@@ -3249,9 +3689,15 @@
       "id": "PROJECTION-JPA-IMMUTABLE-SNAPSHOT",
       "description": "JPA 投影位置 findAll 返回不可修改的值对象快照；各线保留自身 JDK 与 JPA 依赖",
       "caseNames": {
-        "1.0.x": ["findAllReturnsAnImmutablePositionSnapshot"],
-        "2.0.x": ["findAllReturnsAnImmutablePositionSnapshot"],
-        "3.0.x": ["findAllReturnsAnImmutablePositionSnapshot"]
+        "1.0.x": [
+          "findAllReturnsAnImmutablePositionSnapshot"
+        ],
+        "2.0.x": [
+          "findAllReturnsAnImmutablePositionSnapshot"
+        ],
+        "3.0.x": [
+          "findAllReturnsAnImmutablePositionSnapshot"
+        ]
       },
       "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-projection-jpa-convergence/report.json",
       "lastEvidenceSha256": "913f193c4cc6e54acb61f3243aa0d4150398c101912fa68f7894e23c598b8797",
@@ -3259,19 +3705,19 @@
         "1.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/ProjectionPositionJpaIT.java"
+            "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/projection/jpa/ProjectionPositionJpaIT.java"
           ]
         },
         "2.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/ProjectionPositionJpaIT.java"
+            "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/projection/jpa/ProjectionPositionJpaIT.java"
           ]
         },
         "3.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/ProjectionPositionJpaIT.java"
+            "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/projection/jpa/ProjectionPositionJpaIT.java"
           ]
         }
       }
@@ -3285,19 +3731,19 @@
         "1.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/JpaProjectionPositionRepositoryTest.java"
+            "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/projection/jpa/JpaProjectionPositionRepositoryTest.java"
           ]
         },
         "2.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/JpaProjectionPositionRepositoryTest.java"
+            "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/projection/jpa/JpaProjectionPositionRepositoryTest.java"
           ]
         },
         "3.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/JpaProjectionPositionRepositoryTest.java"
+            "ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/projection/jpa/JpaProjectionPositionRepositoryTest.java"
           ]
         }
       }
@@ -3353,6 +3799,62 @@
     {
       "id": "RUNTIME-MICRONAUT-CQRS-CORE",
       "description": "Micronaut 运行时承载 core CQRS 的命令路由、投影位置与 ViewManager 生命周期；不代表框架级适配器",
+      "caseNames": {
+        "1.0.x": [
+          "cronRetainsLegacyLocalWallTimeAtDstGap",
+          "explicitProjectionRejectsMemoryAndNoopBeforeScheduling",
+          "explicitProjectionWithoutDependenciesFailsAtNativeStartup",
+          "generatedHandlerDiscoveryPreservesSnapshotAndFailureIdentity",
+          "nativeBasicContextUsesSnapshotBusAndNoProjection",
+          "nativeContextCloseRestoresPriorSpi",
+          "nativePartialStartupRetriesCancellationAndPreservesPriorSpi",
+          "sharedCronRetainsNumericGrammarAndFindsAnnualSchedule",
+          "shouldOverwriteProjectionPositionOnUpdate",
+          "shouldReportNotRunningAfterStop",
+          "shouldReportRunningAfterStart",
+          "shouldRouteCommandAToExecutorA",
+          "shouldRouteCommandBToExecutorB",
+          "shouldThrowWhenCommandIsNull",
+          "shouldThrowWhenCommandNotRegistered",
+          "shouldWriteAndReadBackProjectionPosition"
+        ],
+        "2.0.x": [
+          "cronRetainsLegacyLocalWallTimeAtDstGap",
+          "explicitProjectionRejectsMemoryAndNoopBeforeScheduling",
+          "explicitProjectionWithoutDependenciesFailsAtNativeStartup",
+          "generatedHandlerDiscoveryPreservesSnapshotAndFailureIdentity",
+          "nativeBasicContextUsesSnapshotBusAndNoProjection",
+          "nativeContextCloseRestoresPriorSpi",
+          "nativePartialStartupRetriesCancellationAndPreservesPriorSpi",
+          "sharedCronRetainsNumericGrammarAndFindsAnnualSchedule",
+          "shouldOverwriteProjectionPositionOnUpdate",
+          "shouldReportNotRunningAfterStop",
+          "shouldReportRunningAfterStart",
+          "shouldRouteCommandAToExecutorA",
+          "shouldRouteCommandBToExecutorB",
+          "shouldThrowWhenCommandIsNull",
+          "shouldThrowWhenCommandNotRegistered",
+          "shouldWriteAndReadBackProjectionPosition"
+        ],
+        "3.0.x": [
+          "cronRetainsLegacyLocalWallTimeAtDstGap",
+          "explicitProjectionRejectsMemoryAndNoopBeforeScheduling",
+          "explicitProjectionWithoutDependenciesFailsAtNativeStartup",
+          "generatedHandlerDiscoveryPreservesSnapshotAndFailureIdentity",
+          "nativeBasicContextUsesSnapshotBusAndNoProjection",
+          "nativeContextCloseRestoresPriorSpi",
+          "nativePartialStartupRetriesCancellationAndPreservesPriorSpi",
+          "sharedCronRetainsNumericGrammarAndFindsAnnualSchedule",
+          "shouldOverwriteProjectionPositionOnUpdate",
+          "shouldReportNotRunningAfterStop",
+          "shouldReportRunningAfterStart",
+          "shouldRouteCommandAToExecutorA",
+          "shouldRouteCommandBToExecutorB",
+          "shouldThrowWhenCommandIsNull",
+          "shouldThrowWhenCommandNotRegistered",
+          "shouldWriteAndReadBackProjectionPosition"
+        ]
+      },
       "lines": {
         "1.0.x": {
           "status": "supported",
@@ -3442,6 +3944,126 @@
           "status": "supported",
           "tests": [
             "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/cqrs/QuarkusRuntimeLifecycleTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-DROPWIZARD-CQRS-ORDER-REQUEST-JSON",
+      "description": "Dropwizard CQRS 使用原生 Jackson 按 orderNo、buyerId、buyerName 读写同一个订单请求。",
+      "caseNames": {
+        "1.0.x": [
+          "requestReadsAndWritesTheOrderFields"
+        ],
+        "2.0.x": [
+          "requestReadsAndWritesTheOrderFields"
+        ],
+        "3.0.x": [
+          "requestReadsAndWritesTheOrderFields"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-dropwizard-cqrs/src/test/java/io/ddd4j/sample/dropwizard/cqrs/web/CreateOrderRequestContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-dropwizard-cqrs/src/test/java/io/ddd4j/sample/dropwizard/cqrs/web/CreateOrderRequestContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-dropwizard-cqrs/src/test/java/io/ddd4j/sample/dropwizard/cqrs/web/CreateOrderRequestContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-DROPWIZARD-CQRS-DURABLE-REQUEST-FIELDS",
+      "description": "持久订单创建和添加明细转换有效命令，未知字段在命令分派前拒绝。",
+      "caseNames": {
+        "1.0.x": [
+          "createDispatchesConvertedCommandAndReturnsCreatedOrderId",
+          "lineDispatchesConvertedCommandUsingPathOrderId",
+          "createRejectsUnknownFieldBeforeDispatch",
+          "lineRejectsUnknownFieldBeforeDispatch"
+        ],
+        "2.0.x": [
+          "createDispatchesConvertedCommandAndReturnsCreatedOrderId",
+          "lineDispatchesConvertedCommandUsingPathOrderId",
+          "createRejectsUnknownFieldBeforeDispatch",
+          "lineRejectsUnknownFieldBeforeDispatch"
+        ],
+        "3.0.x": [
+          "createDispatchesConvertedCommandAndReturnsCreatedOrderId",
+          "lineDispatchesConvertedCommandUsingPathOrderId",
+          "createRejectsUnknownFieldBeforeDispatch",
+          "lineRejectsUnknownFieldBeforeDispatch"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-dropwizard-cqrs/src/test/java/io/ddd4j/sample/dropwizard/cqrs/persistent/PersistentOrderRequestFieldsTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-dropwizard-cqrs/src/test/java/io/ddd4j/sample/dropwizard/cqrs/persistent/PersistentOrderRequestFieldsTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-dropwizard-cqrs/src/test/java/io/ddd4j/sample/dropwizard/cqrs/persistent/PersistentOrderRequestFieldsTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-DROPWIZARD-TOKEN-RESPONSE-JSON",
+      "description": "Dropwizard 原生 Jackson 生成仅有 token 字段的 JSON，原生及标准 Jackson 客户端均可读回，包括 null 和缺失字段。",
+      "caseNames": {
+        "1.0.x": [
+          "tokenResponseWritesOnlyTheTokenField",
+          "tokenResponseRoundTripsUsingOnlyTheTokenField",
+          "tokenResponseAcceptsExplicitAndMissingNullValues"
+        ],
+        "2.0.x": [
+          "tokenResponseWritesOnlyTheTokenField",
+          "tokenResponseRoundTripsUsingOnlyTheTokenField",
+          "tokenResponseAcceptsExplicitAndMissingNullValues"
+        ],
+        "3.0.x": [
+          "tokenResponseWritesOnlyTheTokenField",
+          "tokenResponseRoundTripsUsingOnlyTheTokenField",
+          "tokenResponseAcceptsExplicitAndMissingNullValues"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-dropwizard/src/test/java/io/ddd4j/sample/dropwizard/TokenResponseContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-dropwizard/src/test/java/io/ddd4j/sample/dropwizard/TokenResponseContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-dropwizard/src/test/java/io/ddd4j/sample/dropwizard/TokenResponseContractTest.java"
           ]
         }
       }
@@ -3807,6 +4429,35 @@
       }
     },
     {
+      "id": "RUNTIME-MICRONAUT-PROJECTION-RESCHEDULE",
+      "description": "首次执行同步完成并重新提交时，取消句柄必须取消最新的调度任务",
+      "caseNames": {
+        "1.0.x": "completedInitialSubmissionCannotReplaceRescheduledFuture",
+        "2.0.x": "completedInitialSubmissionCannotReplaceRescheduledFuture",
+        "3.0.x": "completedInitialSubmissionCannotReplaceRescheduledFuture"
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-runtime/ddd4j-runtime-micronaut/src/test/java/io/ddd4j/micronaut/cqrs/MicronautProjectionSchedulerRaceTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-runtime/ddd4j-runtime-micronaut/src/test/java/io/ddd4j/micronaut/cqrs/MicronautProjectionSchedulerRaceTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-runtime/ddd4j-runtime-micronaut/src/test/java/io/ddd4j/micronaut/cqrs/MicronautProjectionSchedulerRaceTest.java"
+          ]
+        }
+      }
+    },
+    {
       "id": "SAMPLE-MICRONAUT-CQRS",
       "description": "Micronaut 命令创建、事件投影、读模型查询及重复订单冲突",
       "lines": {
@@ -3912,6 +4563,132 @@
       }
     },
     {
+      "id": "SAMPLE-QUARKUS-SATOKEN-ORDER",
+      "description": "Quarkus Sa-Token 原生 HTTP 验证订单读写权限、共享订单查询与支付、退出令牌失效、断连上下文清理，以及 Bearer 认证方案大小写与分隔空格。",
+      "caseNames": {
+        "1.0.x": [
+          "authorizedOrderUsesSharedStoreThroughPaymentAndLogout",
+          "disconnectedOrderReadCleansNativeContextOnDispatchThread",
+          "unauthorizedRequestsCannotReadOrCreateOrders",
+          "bearerSchemeCaseDoesNotChangeProtectedOrderReads",
+          "bearerSeparatorSpacesDoNotChangeProtectedOrderReads"
+        ],
+        "2.0.x": [
+          "authorizedOrderUsesSharedStoreThroughPaymentAndLogout",
+          "disconnectedOrderReadCleansNativeContextOnDispatchThread",
+          "unauthorizedRequestsCannotReadOrCreateOrders",
+          "bearerSchemeCaseDoesNotChangeProtectedOrderReads",
+          "bearerSeparatorSpacesDoNotChangeProtectedOrderReads"
+        ],
+        "3.0.x": [
+          "authorizedOrderUsesSharedStoreThroughPaymentAndLogout",
+          "disconnectedOrderReadCleansNativeContextOnDispatchThread",
+          "unauthorizedRequestsCannotReadOrCreateOrders",
+          "bearerSchemeCaseDoesNotChangeProtectedOrderReads",
+          "bearerSeparatorSpacesDoNotChangeProtectedOrderReads"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-quarkus-satoken/src/test/java/io/ddd4j/sample/quarkus/satoken/NativeSharedOrderAuthTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-quarkus-satoken/src/test/java/io/ddd4j/sample/quarkus/satoken/NativeSharedOrderAuthTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-quarkus-satoken/src/test/java/io/ddd4j/sample/quarkus/satoken/NativeSharedOrderAuthTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-QUARKUS-SHIRO-ORDER",
+      "description": "Quarkus Shiro 原生 HTTP 验证订单权限、共享订单存储、退出令牌失效及断连请求恢复此前原生主体。",
+      "caseNames": {
+        "1.0.x": [
+          "anonymousAndReadOnlyRequestsDoNotCreateOrders",
+          "disconnectedReadRestoresThePrecedingNativeSubjectByIdentity",
+          "disconnectedReadClearsRequestSubjectOnItsDispatchThread",
+          "authorizedOrderUsesSharedStoreAndSessionLogoutRevokesAccess"
+        ],
+        "2.0.x": [
+          "anonymousAndReadOnlyRequestsDoNotCreateOrders",
+          "disconnectedReadRestoresThePrecedingNativeSubjectByIdentity",
+          "disconnectedReadClearsRequestSubjectOnItsDispatchThread",
+          "authorizedOrderUsesSharedStoreAndSessionLogoutRevokesAccess"
+        ],
+        "3.0.x": [
+          "anonymousAndReadOnlyRequestsDoNotCreateOrders",
+          "disconnectedReadRestoresThePrecedingNativeSubjectByIdentity",
+          "disconnectedReadClearsRequestSubjectOnItsDispatchThread",
+          "authorizedOrderUsesSharedStoreAndSessionLogoutRevokesAccess"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/test/java/io/ddd4j/sample/quarkus/shiro/NativeSharedOrderAuthTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/test/java/io/ddd4j/sample/quarkus/shiro/NativeSharedOrderAuthTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/test/java/io/ddd4j/sample/quarkus/shiro/NativeSharedOrderAuthTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-QUARKUS-SATOKEN-PROVIDER-OWNERSHIP",
+      "description": "Quarkus Sa-Token CDI 停机恢复先前的权限提供者，并保留已由其他调用方替换的提供者。",
+      "caseNames": {
+        "1.0.x": [
+          "shutdownRestoresPreviousProviderAndPreservesAReplacement"
+        ],
+        "2.0.x": [
+          "shutdownRestoresPreviousProviderAndPreservesAReplacement"
+        ],
+        "3.0.x": [
+          "shutdownRestoresPreviousProviderAndPreservesAReplacement"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-quarkus-satoken/src/test/java/io/ddd4j/sample/quarkus/satoken/rbac/RbacProviderOwnershipTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-quarkus-satoken/src/test/java/io/ddd4j/sample/quarkus/satoken/rbac/RbacProviderOwnershipTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-quarkus-satoken/src/test/java/io/ddd4j/sample/quarkus/satoken/rbac/RbacProviderOwnershipTest.java"
+          ]
+        }
+      }
+    },
+    {
       "id": "SAMPLE-QUARKUS-SATOKEN",
       "description": "Quarkus Sa-Token 鉴权样例的 HTTP 登录、角色权限与业务资源访问",
       "lines": {
@@ -3987,9 +4764,18 @@
       "id": "WEB-AUTH-ASYNC",
       "description": "WebFlux 异步取消后租户与认证上下文清理",
       "caseNames": {
-        "1.0.x": ["shouldReleaseIdempotencyLeaseAndRequestContextOnCancellation", "shouldClearAuthenticatedSubjectAfterCancellationAndRejectMissingBearer"],
-        "2.0.x": ["shouldReleaseIdempotencyLeaseAndRequestContextOnCancellation", "shouldClearAuthenticatedSubjectAfterCancellationAndRejectMissingBearer"],
-        "3.0.x": ["shouldReleaseIdempotencyLeaseAndRequestContextOnCancellation", "shouldClearAuthenticatedSubjectAfterCancellationAndRejectMissingBearer"]
+        "1.0.x": [
+          "shouldReleaseIdempotencyLeaseAndRequestContextOnCancellation",
+          "shouldClearAuthenticatedSubjectAfterCancellationAndRejectMissingBearer"
+        ],
+        "2.0.x": [
+          "shouldReleaseIdempotencyLeaseAndRequestContextOnCancellation",
+          "shouldClearAuthenticatedSubjectAfterCancellationAndRejectMissingBearer"
+        ],
+        "3.0.x": [
+          "shouldReleaseIdempotencyLeaseAndRequestContextOnCancellation",
+          "shouldClearAuthenticatedSubjectAfterCancellationAndRejectMissingBearer"
+        ]
       },
       "lastEvidence": "/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-16-webflux-cancel-contract-parity/report.json",
       "lastEvidenceSha256": "e5ce20705e95302c4c323e54049db9afef009fbdde5262bbab3d333bbccf9c6d",
@@ -4045,9 +4831,15 @@
       "id": "WEB-IDEMPOTENCY-FRACTIONAL-TTL",
       "description": "正数毫秒级幂等 TTL 写入秒级缓存前向上取整；租约完成沿用相同过期秒数。本地 CAS 缓存接口测试，不代替 Redis 原生集成",
       "caseNames": {
-        "1.0.x": ["positiveFractionalSecondTtlNeverExpiresAtZeroSeconds"],
-        "2.0.x": ["positiveFractionalSecondTtlNeverExpiresAtZeroSeconds"],
-        "3.0.x": ["positiveFractionalSecondTtlNeverExpiresAtZeroSeconds"]
+        "1.0.x": [
+          "positiveFractionalSecondTtlNeverExpiresAtZeroSeconds"
+        ],
+        "2.0.x": [
+          "positiveFractionalSecondTtlNeverExpiresAtZeroSeconds"
+        ],
+        "3.0.x": [
+          "positiveFractionalSecondTtlNeverExpiresAtZeroSeconds"
+        ]
       },
       "lastEvidence": "/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-16-web-idempotency-fractional-ttl/report.json",
       "lastEvidenceSha256": "ee361c0cc9eeb9155a1911bf86e98b1ee5c58b841ad3b288a3ad81414de5003a",
@@ -4076,9 +4868,15 @@
       "id": "WEB-IDEMPOTENCY-SCOPE-COMPLETE-CLOSE-RACE",
       "description": "异步取消与完成并发时，作用域关闭不得在完成尚未返回时释放同一租约。本地受控并发测试，不代替 WebFlux 真实请求取消验收",
       "caseNames": {
-        "1.0.x": ["closeCannotReleaseLeaseWhileCompletionIsInProgress"],
-        "2.0.x": ["closeCannotReleaseLeaseWhileCompletionIsInProgress"],
-        "3.0.x": ["closeCannotReleaseLeaseWhileCompletionIsInProgress"]
+        "1.0.x": [
+          "closeCannotReleaseLeaseWhileCompletionIsInProgress"
+        ],
+        "2.0.x": [
+          "closeCannotReleaseLeaseWhileCompletionIsInProgress"
+        ],
+        "3.0.x": [
+          "closeCannotReleaseLeaseWhileCompletionIsInProgress"
+        ]
       },
       "lastEvidence": "/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-16-web-idempotency-scope-race/report.json",
       "lastEvidenceSha256": "4a0bc3fe6e5bf68efc1073f0f874d9c992852654c22ed630803fc00771ffdea4",
@@ -4415,7 +5213,7 @@
         "2.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-web/ddd4j-web-validation/src/test/java/io/ddd4j/web/validation/ValidationContractTest.java"
+            "ddd4j-extensions/ddd4j-extension-validation/src/test/java/io/ddd4j/extension/validation/ValidationContractTest.java"
           ]
         },
         "3.0.x": {
@@ -4486,14 +5284,44 @@
       "lastEvidence": "/Users/wandl/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-16-current-parity/r2dbc-postgres-contract-report.json",
       "lastEvidenceSha256": "1ad4fe5f7e5b1b5c04228c73884f98d35f07f52966294f6cea3796689ebdb3c5",
       "caseNames": {
-        "1.0.x": ["appendAndReadShouldRoundTripTypedMetadataOnPostgres", "versionRangeAndAggregateTypeIsolationShouldFollowCoreContractOnPostgres", "readAllShouldPreserveGlobalPositionOrderOnPostgres", "appendWithStaleVersionShouldRejectOnPostgres"],
-        "2.0.x": ["appendAndReadShouldRoundTripTypedMetadataOnPostgres", "versionRangeAndAggregateTypeIsolationShouldFollowCoreContractOnPostgres", "readAllShouldPreserveGlobalPositionOrderOnPostgres", "appendWithStaleVersionShouldRejectOnPostgres"],
-        "3.0.x": ["appendAndReadShouldRoundTripTypedMetadataOnPostgres", "versionRangeAndAggregateTypeIsolationShouldFollowCoreContractOnPostgres", "readAllShouldPreserveGlobalPositionOrderOnPostgres", "appendWithStaleVersionShouldRejectOnPostgres"]
+        "1.0.x": [
+          "appendAndReadShouldRoundTripTypedMetadataOnPostgres",
+          "versionRangeAndAggregateTypeIsolationShouldFollowCoreContractOnPostgres",
+          "readAllShouldPreserveGlobalPositionOrderOnPostgres",
+          "appendWithStaleVersionShouldRejectOnPostgres"
+        ],
+        "2.0.x": [
+          "appendAndReadShouldRoundTripTypedMetadataOnPostgres",
+          "versionRangeAndAggregateTypeIsolationShouldFollowCoreContractOnPostgres",
+          "readAllShouldPreserveGlobalPositionOrderOnPostgres",
+          "appendWithStaleVersionShouldRejectOnPostgres"
+        ],
+        "3.0.x": [
+          "appendAndReadShouldRoundTripTypedMetadataOnPostgres",
+          "versionRangeAndAggregateTypeIsolationShouldFollowCoreContractOnPostgres",
+          "readAllShouldPreserveGlobalPositionOrderOnPostgres",
+          "appendWithStaleVersionShouldRejectOnPostgres"
+        ]
       },
       "lines": {
-        "1.0.x": {"status": "supported", "tests": ["ddd4j-data/ddd4j-data-event-store-r2dbc/src/test/java/io/ddd4j/data/event/store/r2dbc/R2dbcEventStorePostgresIT.java"]},
-        "2.0.x": {"status": "supported", "tests": ["ddd4j-data/ddd4j-data-event-store-r2dbc/src/test/java/io/ddd4j/data/event/store/r2dbc/R2dbcEventStorePostgresIT.java"]},
-        "3.0.x": {"status": "supported", "tests": ["ddd4j-data/ddd4j-data-event-store-r2dbc/src/test/java/io/ddd4j/data/event/store/r2dbc/R2dbcEventStorePostgresIT.java"]}
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-event-store-r2dbc/src/test/java/io/ddd4j/data/event/store/r2dbc/R2dbcEventStorePostgresIT.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-event-store-r2dbc/src/test/java/io/ddd4j/data/event/store/r2dbc/R2dbcEventStorePostgresIT.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-data/ddd4j-data-event-store-r2dbc/src/test/java/io/ddd4j/data/event/store/r2dbc/R2dbcEventStorePostgresIT.java"
+          ]
+        }
       }
     },
     {
@@ -4509,15 +5337,2910 @@
       "lines": {
         "1.0.x": {
           "status": "supported",
-          "tests": ["ddd4j-extensions/ddd4j-extension-validation/src/test/java/io/ddd4j/extension/validation/FileValidationResultContractTest.java"]
+          "tests": [
+            "ddd4j-extensions/ddd4j-extension-validation/src/test/java/io/ddd4j/extension/validation/FileValidationResultContractTest.java"
+          ]
         },
         "2.0.x": {
           "status": "supported",
-          "tests": ["ddd4j-extensions/ddd4j-extension-validation/src/test/java/io/ddd4j/extension/validation/FileValidationResultContractTest.java"]
+          "tests": [
+            "ddd4j-extensions/ddd4j-extension-validation/src/test/java/io/ddd4j/extension/validation/FileValidationResultContractTest.java"
+          ]
         },
         "3.0.x": {
           "status": "supported",
-          "tests": ["ddd4j-extensions/ddd4j-extension-validation/src/test/java/io/ddd4j/extension/validation/FileValidationResultContractTest.java"]
+          "tests": [
+            "ddd4j-extensions/ddd4j-extension-validation/src/test/java/io/ddd4j/extension/validation/FileValidationResultContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-JAVALIN-SATOKEN-PROVIDER-FAILURE-CLEANUP",
+      "description": "Javalin Sa-Token 解析主体异常时原异常传播、请求链不派发、恢复已有框架和原生上下文并通知一次完成",
+      "caseNames": {
+        "1.0.x": "restoresCallerBindingsWhenSubjectProviderThrows",
+        "2.0.x": "restoresCallerBindingsWhenSubjectProviderThrows",
+        "3.0.x": "restoresCallerBindingsWhenSubjectProviderThrows"
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/NativeAuthLifecycleTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/NativeAuthLifecycleTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/NativeAuthLifecycleTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-JAVALIN-SHIRO-PROVIDER-FAILURE-CLEANUP",
+      "description": "Javalin Shiro 解析主体异常时原异常传播、请求链不派发、恢复已有框架和原生上下文并通知一次完成",
+      "caseNames": {
+        "1.0.x": "restoresCallerBindingsWhenSubjectProviderThrows",
+        "2.0.x": "restoresCallerBindingsWhenSubjectProviderThrows",
+        "3.0.x": "restoresCallerBindingsWhenSubjectProviderThrows"
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/NativeAuthLifecycleTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/NativeAuthLifecycleTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/NativeAuthLifecycleTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-AUTH-ENGINE-FALLBACK-REJECTION",
+      "description": "样例认证断言拒绝未知及缺失的引擎，且不访问客户端",
+      "caseNames": {
+        "1.0.x": "rejectsUnknownAndMissingEngineBeforeCallingDriver",
+        "2.0.x": "rejectsUnknownAndMissingEngineBeforeCallingDriver",
+        "3.0.x": "rejectsUnknownAndMissingEngineBeforeCallingDriver"
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-order-testkit/src/test/java/io/ddd4j/sample/order/testkit/SampleContractAssertionsTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-order-testkit/src/test/java/io/ddd4j/sample/order/testkit/SampleContractAssertionsTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-order-testkit/src/test/java/io/ddd4j/sample/order/testkit/SampleContractAssertionsTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-HTTP-DRIVER-BAD-JSON-CAUSE",
+      "description": "样例两种 HTTP 驱动在真实回环收到损坏的 JSON 时保持 IllegalStateException 和原始解析异常",
+      "caseNames": {
+        "1.0.x": [
+          "envelopeDriverWrapsMalformedJsonWithItsCause",
+          "bareDriverWrapsMalformedJsonWithItsCause"
+        ],
+        "2.0.x": [
+          "envelopeDriverWrapsMalformedJsonWithItsCause",
+          "bareDriverWrapsMalformedJsonWithItsCause"
+        ],
+        "3.0.x": [
+          "envelopeDriverWrapsMalformedJsonWithItsCause",
+          "bareDriverWrapsMalformedJsonWithItsCause"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-order-testkit/src/test/java/io/ddd4j/sample/order/testkit/SampleHttpTransportTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-order-testkit/src/test/java/io/ddd4j/sample/order/testkit/SampleHttpTransportTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-order-testkit/src/test/java/io/ddd4j/sample/order/testkit/SampleHttpTransportTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-HTTP-DRIVER-INTERRUPTION",
+      "description": "三线样例 HTTP 保留中断标记和异常原因，并在等待响应时关闭实际回环连接",
+      "caseNames": {
+        "1.0.x": [
+          "nativeDriversRestoreInterruptAndKeepTheOriginalCause",
+          "nativePublicTransportConvertsInterruptionToIoAndRestoresFlag",
+          "interruptClosesActiveConnectionBeforeThePeerResponds"
+        ],
+        "2.0.x": [
+          "nativeDriversRestoreInterruptAndKeepTheOriginalCause",
+          "nativePublicTransportConvertsInterruptionToIoAndRestoresFlag",
+          "interruptClosesActiveConnectionBeforeThePeerResponds"
+        ],
+        "3.0.x": [
+          "nativeDriversRestoreInterruptAndKeepTheOriginalCause",
+          "nativePublicTransportConvertsInterruptionToIoAndRestoresFlag",
+          "interruptClosesActiveConnectionBeforeThePeerResponds"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-order-testkit/src/test/java/io/ddd4j/sample/order/testkit/SampleHttpTransportInterruptionTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-order-testkit/src/test/java/io/ddd4j/sample/order/testkit/SampleHttpTransportInterruptionTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-order-testkit/src/test/java/io/ddd4j/sample/order/testkit/SampleHttpTransportInterruptionTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-SPRING-DURABLE-CQRS-SHARED-EVENT-SOURCE",
+      "description": "Spring 持久订单投影越过非订单事件，按原始事件页尾保存位置；无效订单事件回滚本批且保留先前读模型和检查点",
+      "caseNames": {
+        "1.0.x": [
+          "sourcePagesConsumeOnlyOrdersAndRetainPriorStateOnFailure",
+          "danglingOrderRollsBackProjectionThroughHttp",
+          "absentProjectionAndOutboxWiringUseNativeHttp",
+          "emptyCommandResultsUseCommonMissingOrderMessage"
+        ],
+        "2.0.x": [
+          "sourcePagesConsumeOnlyOrdersAndRetainPriorStateOnFailure",
+          "danglingOrderRollsBackProjectionThroughHttp",
+          "absentProjectionAndOutboxWiringUseNativeHttp",
+          "emptyCommandResultsUseCommonMissingOrderMessage"
+        ],
+        "3.0.x": [
+          "sourcePagesConsumeOnlyOrdersAndRetainPriorStateOnFailure",
+          "danglingOrderRollsBackProjectionThroughHttp",
+          "absentProjectionAndOutboxWiringUseNativeHttp",
+          "emptyCommandResultsUseCommonMissingOrderMessage"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-spring-cqrs/src/test/java/io/ddd4j/sample/spring/cqrs/SpringCqrsHttpPersistenceTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-spring-cqrs/src/test/java/io/ddd4j/sample/spring/cqrs/SpringCqrsHttpPersistenceTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-spring-cqrs/src/test/java/io/ddd4j/sample/spring/cqrs/SpringCqrsHttpPersistenceTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-JAVALIN-DURABLE-CQRS-SHARED-EVENT-SOURCE",
+      "description": "Javalin 持久订单投影越过非订单事件，按原始事件页尾保存位置；无效订单事件回滚本批且保留先前读模型和检查点",
+      "caseNames": {
+        "1.0.x": [
+          "sourcePagesConsumeOnlyOrdersAndRetainPriorStateOnFailure",
+          "projectionEventTypesRemainEmptyForNullLookup"
+        ],
+        "2.0.x": [
+          "sourcePagesConsumeOnlyOrdersAndRetainPriorStateOnFailure",
+          "projectionEventTypesRemainEmptyForNullLookup"
+        ],
+        "3.0.x": [
+          "sourcePagesConsumeOnlyOrdersAndRetainPriorStateOnFailure",
+          "projectionEventTypesRemainEmptyForNullLookup"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/SharedCqrsHttpTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/SharedCqrsHttpTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/SharedCqrsHttpTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-SPRING-DEFAULT-MVC-WEBFLUX",
+      "description": "默认 Spring 样例的真实 MVC/WebFlux 订单与 WebFlux locale 契约",
+      "caseNames": {
+        "1.0.x": [
+          "mvc",
+          "webflux"
+        ],
+        "2.0.x": [
+          "mvc",
+          "webflux"
+        ],
+        "3.0.x": [
+          "mvc",
+          "webflux"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-spring/src/test/java/io/ddd4j/sample/spring/SpringOrderHttpTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-spring/src/test/java/io/ddd4j/sample/spring/SpringOrderHttpTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-spring/src/test/java/io/ddd4j/sample/spring/SpringOrderHttpTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-SPRING-DEFAULT-POSTGRES-REOPEN",
+      "description": "默认 Spring 样例真实 PostgreSQL 事务与同库应用重开",
+      "caseNames": {
+        "1.0.x": "defaultPersistenceSurvivesApplicationReopen",
+        "2.0.x": "defaultPersistenceSurvivesApplicationReopen",
+        "3.0.x": "defaultPersistenceSurvivesApplicationReopen"
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-spring/src/test/java/io/ddd4j/sample/spring/SpringOrderPostgresTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-spring/src/test/java/io/ddd4j/sample/spring/SpringOrderPostgresTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-spring/src/test/java/io/ddd4j/sample/spring/SpringOrderPostgresTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-ORDER-EXPLICIT-JSON-FIELDS",
+      "description": "共享订单命令、读模型和 Outbox 值在关闭 Bean getter 自动发现时保留 JSON 字段，Java 8 保持既有 MixIn 隐藏和改名行为",
+      "caseNames": {
+        "1.0.x": [
+          "createCommandRetainsAllFieldsWithBeanDiscoveryDisabled",
+          "addLineRetainsAllFieldsWithBeanDiscoveryDisabled",
+          "readModelRetainsAllFieldsWithBeanDiscoveryDisabled",
+          "dispatchResultRetainsAllFieldsWithBeanDiscoveryDisabled",
+          "outboxMessageRetainsAllFieldsWithBeanDiscoveryDisabled",
+          "beanGetterMixInsStillHideOrRenameTheBuyerName"
+        ],
+        "2.0.x": [
+          "createCommandRetainsAllFieldsWithBeanDiscoveryDisabled",
+          "addLineRetainsAllFieldsWithBeanDiscoveryDisabled",
+          "readModelRetainsAllFieldsWithBeanDiscoveryDisabled",
+          "dispatchResultRetainsAllFieldsWithBeanDiscoveryDisabled",
+          "outboxMessageRetainsAllFieldsWithBeanDiscoveryDisabled"
+        ],
+        "3.0.x": [
+          "createCommandRetainsAllFieldsWithBeanDiscoveryDisabled",
+          "addLineRetainsAllFieldsWithBeanDiscoveryDisabled",
+          "readModelRetainsAllFieldsWithBeanDiscoveryDisabled",
+          "dispatchResultRetainsAllFieldsWithBeanDiscoveryDisabled",
+          "outboxMessageRetainsAllFieldsWithBeanDiscoveryDisabled"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-order-application/src/test/java/io/ddd4j/sample/order/application/OrderExplicitJsonContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-order-application/src/test/java/io/ddd4j/sample/order/application/OrderExplicitJsonContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-order-application/src/test/java/io/ddd4j/sample/order/application/OrderExplicitJsonContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-JAVALIN-CQRS-DEFAULT-SCHEDULED-WIRING",
+      "description": "Javalin 无 JDBC 时保留旧订单入口；显式持久模式用 Guice 后台调度投影、维持独立路由与同库重开",
+      "caseNames": {
+        "1.0.x": [
+          "defaultModeKeepsAnonymousLegacyOrderRoutesAndOmitsDurableRoutes",
+          "scheduledDurableModeProjectsWithoutManualTriggerAndKeepsLegacyStoreSeparate"
+        ],
+        "2.0.x": [
+          "defaultModeKeepsAnonymousLegacyOrderRoutesAndOmitsDurableRoutes",
+          "scheduledDurableModeProjectsWithoutManualTriggerAndKeepsLegacyStoreSeparate"
+        ],
+        "3.0.x": [
+          "defaultModeKeepsAnonymousLegacyOrderRoutesAndOmitsDurableRoutes",
+          "scheduledDurableModeProjectsWithoutManualTriggerAndKeepsLegacyStoreSeparate"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/JavalinCqrsWiringContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/JavalinCqrsWiringContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/JavalinCqrsWiringContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-JAVALIN-CQRS-REJECTS-INVALID-JDBC-URL",
+      "description": "Javalin CQRS 主入口拒绝仅含不换行空格的非法 JDBC URL，保留驱动错误和非零退出状态",
+      "caseNames": {
+        "1.0.x": "refusesNonBreakingSpaceJdbcUrlWithoutFallingBackToMemory",
+        "2.0.x": "refusesNonBreakingSpaceJdbcUrlWithoutFallingBackToMemory",
+        "3.0.x": "refusesNonBreakingSpaceJdbcUrlWithoutFallingBackToMemory"
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/JavalinCqrsJdbcUrlContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/JavalinCqrsJdbcUrlContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/JavalinCqrsJdbcUrlContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "WEB-JAVALIN-FAILURE-EVENT-INCOMING-HTTP-METHOD",
+      "description": "Javalin 失败事件在 HTTP 方法覆写路由时仍保留原始 Servlet 方法、实际路径和异常身份",
+      "caseNames": {
+        "1.0.x": [
+          "publishesRequestFailureWithStableHttpMethod",
+          "keepsIncomingHttpMethodWhenNativeRoutingOverridesIt"
+        ],
+        "2.0.x": [
+          "publishesRequestFailureWithStableHttpMethod",
+          "keepsIncomingHttpMethodWhenNativeRoutingOverridesIt"
+        ],
+        "3.0.x": [
+          "publishesRequestFailureWithStableHttpMethod",
+          "keepsIncomingHttpMethodWhenNativeRoutingOverridesIt"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-javalin/src/test/java/io/ddd4j/web/javalin/BaseHandlerFailureEventTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-javalin/src/test/java/io/ddd4j/web/javalin/BaseHandlerFailureEventTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-javalin/src/test/java/io/ddd4j/web/javalin/BaseHandlerFailureEventTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "EXTENSION-QLEXPRESS-EXECUTION-JSON",
+      "description": "QLExpress 执行成功和失败结果可经 JsonKit 写入并读回。",
+      "caseNames": {
+        "1.0.x": [
+          "successAndFailureRoundTripThroughJson"
+        ],
+        "2.0.x": [
+          "successAndFailureRoundTripThroughJson"
+        ],
+        "3.0.x": [
+          "successAndFailureRoundTripThroughJson"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-extensions/ddd4j-extension-qlexpress/src/test/java/io/ddd4j/extension/qlexpress/model/QLExpressExecutionResultJsonContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-extensions/ddd4j-extension-qlexpress/src/test/java/io/ddd4j/extension/qlexpress/model/QLExpressExecutionResultJsonContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-extensions/ddd4j-extension-qlexpress/src/test/java/io/ddd4j/extension/qlexpress/model/QLExpressExecutionResultJsonContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "EXTENSION-QLEXPRESS-VALIDATION-JSON",
+      "description": "QLExpress 校验结果经 JsonKit 往返并保留校验状态和中文错误消息。",
+      "caseNames": {
+        "1.0.x": [
+          "validationResultRoundTripsThroughJson"
+        ],
+        "2.0.x": [
+          "validationResultRoundTripsThroughJson"
+        ],
+        "3.0.x": [
+          "validationResultRoundTripsThroughJson"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-extensions/ddd4j-extension-qlexpress/src/test/java/io/ddd4j/extension/qlexpress/model/QLExpressValidationResultJsonContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-extensions/ddd4j-extension-qlexpress/src/test/java/io/ddd4j/extension/qlexpress/model/QLExpressValidationResultJsonContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-extensions/ddd4j-extension-qlexpress/src/test/java/io/ddd4j/extension/qlexpress/model/QLExpressValidationResultJsonContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "WEB-CORE-VALUE-SEMANTICS",
+      "description": "Web Core 请求上下文、原始异常、幂等租约、错误响应及就绪状态保留共同值语义。",
+      "caseNames": {
+        "1.0.x": [
+          "equivalentRequestDataCanFindTheSameRequestEntry",
+          "errorValueDistinguishesHttpStatus",
+          "leaseOwnerIsPartOfIdempotencyIdentity",
+          "normalizedRequestContextHasStableValueIdentity",
+          "readinessValueDistinguishesHealthyAndUnhealthyResponses",
+          "requestFailuresRetainTheOriginalCauseAsPartOfIdentity"
+        ],
+        "2.0.x": [
+          "equivalentRequestDataCanFindTheSameRequestEntry",
+          "errorValueDistinguishesHttpStatus",
+          "leaseOwnerIsPartOfIdempotencyIdentity",
+          "normalizedRequestContextHasStableValueIdentity",
+          "readinessValueDistinguishesHealthyAndUnhealthyResponses",
+          "requestFailuresRetainTheOriginalCauseAsPartOfIdentity"
+        ],
+        "3.0.x": [
+          "equivalentRequestDataCanFindTheSameRequestEntry",
+          "errorValueDistinguishesHttpStatus",
+          "leaseOwnerIsPartOfIdempotencyIdentity",
+          "normalizedRequestContextHasStableValueIdentity",
+          "readinessValueDistinguishesHealthyAndUnhealthyResponses",
+          "requestFailuresRetainTheOriginalCauseAsPartOfIdentity"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-core/src/test/java/io/ddd4j/web/core/WebValueSemanticsTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-core/src/test/java/io/ddd4j/web/core/WebValueSemanticsTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-core/src/test/java/io/ddd4j/web/core/WebValueSemanticsTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "WEB-CORE-AUTHENTICATION-VALUE",
+      "description": "Web Core 认证结果保留令牌访问和值相等、哈希协定。",
+      "caseNames": {
+        "1.0.x": [
+          "equalResultsHaveEqualHashAndReadableToken"
+        ],
+        "2.0.x": [
+          "equalResultsHaveEqualHashAndReadableToken"
+        ],
+        "3.0.x": [
+          "equalResultsHaveEqualHashAndReadableToken"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-core/src/test/java/io/ddd4j/web/core/auth/AuthenticationValueContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-core/src/test/java/io/ddd4j/web/core/auth/AuthenticationValueContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-core/src/test/java/io/ddd4j/web/core/auth/AuthenticationValueContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "MQ-DELIVERY-POLICY-JSON-PROPERTIES",
+      "description": "MQ 投递策略存储五个明确字段，即使 Jackson 关闭 getter 自动发现也可读回。",
+      "caseNames": {
+        "1.0.x": [
+          "jacksonRoundTripPreservesReliableDeliveryPolicy",
+          "explicitJsonPropertiesRemainAvailableWithGetterDiscoveryDisabled"
+        ],
+        "2.0.x": [
+          "jacksonRoundTripPreservesReliableDeliveryPolicy",
+          "explicitJsonPropertiesRemainAvailableWithGetterDiscoveryDisabled"
+        ],
+        "3.0.x": [
+          "jacksonRoundTripPreservesReliableDeliveryPolicy",
+          "explicitJsonPropertiesRemainAvailableWithGetterDiscoveryDisabled"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/delivery/MQDeliveryPolicyValueContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/delivery/MQDeliveryPolicyValueContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/delivery/MQDeliveryPolicyValueContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "MQ-LISTENER-SUPPORTED-STRATEGIES",
+      "description": "MQ 监听器保留已配置策略，默认策略是不可修改的空列表，查询空值不匹配。",
+      "caseNames": {
+        "1.0.x": [
+          "absentSupportsReturnsAnImmutableEmptyListThatMatchesNoStrategy",
+          "configuredSupportsKeepsTheDeclaredStrategies"
+        ],
+        "2.0.x": [
+          "absentSupportsReturnsAnImmutableEmptyListThatMatchesNoStrategy",
+          "configuredSupportsKeepsTheDeclaredStrategies"
+        ],
+        "3.0.x": [
+          "absentSupportsReturnsAnImmutableEmptyListThatMatchesNoStrategy",
+          "configuredSupportsKeepsTheDeclaredStrategies"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/listener/MQListenerSupportsContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/listener/MQListenerSupportsContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/listener/MQListenerSupportsContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-HELIDON-CQRS-DEFAULT-ROUTES",
+      "description": "Helidon CQRS 默认仅启用内存订单。生产入口验证两条持久路径尚未注册，内存订单返回创建成功。",
+      "caseNames": {
+        "1.0.x": [
+          "disabledProjectionLeavesDurableRoutesUnregistered"
+        ],
+        "2.0.x": [
+          "disabledProjectionLeavesDurableRoutesUnregistered"
+        ],
+        "3.0.x": [
+          "disabledProjectionLeavesDurableRoutesUnregistered"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-helidon-cqrs/src/test/java/io/ddd4j/sample/helidon/cqrs/NativeCqrsModeTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-helidon-cqrs/src/test/java/io/ddd4j/sample/helidon/cqrs/NativeCqrsModeTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-helidon-cqrs/src/test/java/io/ddd4j/sample/helidon/cqrs/NativeCqrsModeTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-MICRONAUT-CQRS-DEFAULT-DISCOVERY",
+      "description": "Micronaut CQRS 默认模式发现容器注册的命令，内存订单可创建，持久路由和数据源按需装配。",
+      "caseNames": {
+        "1.0.x": [
+          "defaultModeDiscoversCommandsWithoutDurableRoutes"
+        ],
+        "2.0.x": [
+          "defaultModeDiscoversCommandsWithoutDurableRoutes"
+        ],
+        "3.0.x": [
+          "defaultModeDiscoversCommandsWithoutDurableRoutes"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-micronaut-cqrs/src/test/java/io/ddd4j/sample/micronaut/cqrs/NativeDefaultCqrsModeTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-micronaut-cqrs/src/test/java/io/ddd4j/sample/micronaut/cqrs/NativeDefaultCqrsModeTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-micronaut-cqrs/src/test/java/io/ddd4j/sample/micronaut/cqrs/NativeDefaultCqrsModeTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-DROPWIZARD-CQRS-MEMORY-RESTART",
+      "description": "Dropwizard CQRS 同一应用由持久模式重启到内存模式时关闭旧 JPA 工厂及旧路由，内存业务可用。",
+      "caseNames": {
+        "1.0.x": [
+          "reusedApplicationDropsDurableRoutesWhenRestartedWithoutJdbc"
+        ],
+        "2.0.x": [
+          "reusedApplicationDropsDurableRoutesWhenRestartedWithoutJdbc"
+        ],
+        "3.0.x": [
+          "reusedApplicationDropsDurableRoutesWhenRestartedWithoutJdbc"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-dropwizard-cqrs/src/test/java/io/ddd4j/sample/dropwizard/cqrs/persistent/PersistentOrderHttpTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-dropwizard-cqrs/src/test/java/io/ddd4j/sample/dropwizard/cqrs/persistent/PersistentOrderHttpTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-dropwizard-cqrs/src/test/java/io/ddd4j/sample/dropwizard/cqrs/persistent/PersistentOrderHttpTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "WEB-DEFAULT-AUTH-ERROR-TRANSLATION",
+      "description": "默认 Web 翻译器为认证失败、授权失败分别返回 401、403 和消息，空消息使用各自默认说明。",
+      "caseNames": {
+        "1.0.x": [
+          "authenticationErrorsUseUnauthorizedStatusAndReason",
+          "authorizationErrorsUseForbiddenStatusAndReason"
+        ],
+        "2.0.x": [
+          "authenticationErrorsUseUnauthorizedStatusAndReason",
+          "authorizationErrorsUseForbiddenStatusAndReason"
+        ],
+        "3.0.x": [
+          "authenticationErrorsUseUnauthorizedStatusAndReason",
+          "authorizationErrorsUseForbiddenStatusAndReason"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-core/src/test/java/io/ddd4j/web/core/error/DefaultWebExceptionTranslatorTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-core/src/test/java/io/ddd4j/web/core/error/DefaultWebExceptionTranslatorTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-core/src/test/java/io/ddd4j/web/core/error/DefaultWebExceptionTranslatorTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "WEB-MVC-DEFAULT-AUTH-ERROR-RESPONSE",
+      "description": "Spring WebMVC 标准异常处理验证认证失败与授权失败的实际 HTTP 状态、响应业务码及消息。",
+      "caseNames": {
+        "1.0.x": [
+          "expiredTokenUsesUnauthorizedHttpStatusAndKeepsMessage",
+          "missingPermissionUsesForbiddenHttpStatusAndDefaultReason"
+        ],
+        "2.0.x": [
+          "expiredTokenUsesUnauthorizedHttpStatusAndKeepsMessage",
+          "missingPermissionUsesForbiddenHttpStatusAndDefaultReason"
+        ],
+        "3.0.x": [
+          "expiredTokenUsesUnauthorizedHttpStatusAndKeepsMessage",
+          "missingPermissionUsesForbiddenHttpStatusAndDefaultReason"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/error/DefaultWebMvcAuthErrorContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/error/DefaultWebMvcAuthErrorContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/error/DefaultWebMvcAuthErrorContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-VERTX-CQRS-ORDER-IDENTITY-JSON",
+      "description": "Vert.x CQRS 实际仓储生成的聚合 ID 可经现有 JSON 格式读回，并定位同一事件流。",
+      "caseNames": {
+        "1.0.x": [
+          "storedOrderIdentitySurvivesJsonRoundTrip"
+        ],
+        "2.0.x": [
+          "storedOrderIdentitySurvivesJsonRoundTrip"
+        ],
+        "3.0.x": [
+          "storedOrderIdentitySurvivesJsonRoundTrip"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-vertx-cqrs/src/test/java/io/ddd4j/sample/vertx/cqrs/repository/EventSourcingOrderRepositoryContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-vertx-cqrs/src/test/java/io/ddd4j/sample/vertx/cqrs/repository/EventSourcingOrderRepositoryContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-vertx-cqrs/src/test/java/io/ddd4j/sample/vertx/cqrs/repository/EventSourcingOrderRepositoryContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "WEB-MVC-AUTH-CUSTOM-TRANSLATOR",
+      "description": "标准 Spring WebMVC advice 尊重自定义翻译器的 HTTP 状态、错误码和数据，直接调用方法仍生成框架默认响应。",
+      "caseNames": {
+        "1.0.x": [
+          "mvcDispatchUsesTheInjectedTranslatorForBothAuthFailures",
+          "directAuthResponseMethodsKeepDefaultResponseContract",
+          "webApplicationContextUsesCustomTranslatorWithBothLegacyAdvices"
+        ],
+        "2.0.x": [
+          "mvcDispatchUsesTheInjectedTranslatorForBothAuthFailures",
+          "directAuthResponseMethodsKeepDefaultResponseContract",
+          "webApplicationContextUsesCustomTranslatorWithBothLegacyAdvices"
+        ],
+        "3.0.x": [
+          "mvcDispatchUsesTheInjectedTranslatorForBothAuthFailures",
+          "directAuthResponseMethodsKeepDefaultResponseContract",
+          "webApplicationContextUsesCustomTranslatorWithBothLegacyAdvices"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/error/DefaultWebMvcAuthErrorContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/error/DefaultWebMvcAuthErrorContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/error/DefaultWebMvcAuthErrorContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "WEB-MVC-LEGACY-TYPED-AUTH-RESPONSE",
+      "description": "两个旧 Spring MVC advice 将认证失败和授权失败映射为 401 或 403，普通业务错误响应依照既有规则。",
+      "caseNames": {
+        "1.0.x": [
+          "globalHandlerAuthenticationUsesUnauthorizedStatus",
+          "globalHandlerAuthorizationUsesForbiddenStatus",
+          "globalHandlerKeepsLegacyBusinessFailureResponse",
+          "globalRestAuthenticationUsesUnauthorizedStatus",
+          "globalRestAuthorizationUsesForbiddenStatus",
+          "globalRestKeepsLegacyBusinessFailureResponse"
+        ],
+        "2.0.x": [
+          "globalHandlerAuthenticationUsesUnauthorizedStatus",
+          "globalHandlerAuthorizationUsesForbiddenStatus",
+          "globalHandlerKeepsLegacyBusinessFailureResponse",
+          "globalRestAuthenticationUsesUnauthorizedStatus",
+          "globalRestAuthorizationUsesForbiddenStatus",
+          "globalRestKeepsLegacyBusinessFailureResponse"
+        ],
+        "3.0.x": [
+          "globalHandlerAuthenticationUsesUnauthorizedStatus",
+          "globalHandlerAuthorizationUsesForbiddenStatus",
+          "globalHandlerKeepsLegacyBusinessFailureResponse",
+          "globalRestAuthenticationUsesUnauthorizedStatus",
+          "globalRestAuthorizationUsesForbiddenStatus",
+          "globalRestKeepsLegacyBusinessFailureResponse"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/error/LegacyWebMvcAuthAdviceContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/error/LegacyWebMvcAuthAdviceContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/error/LegacyWebMvcAuthAdviceContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "AUTH-SPRING-TYPED-ERROR-DISPATCH",
+      "description": "Spring 解析并调用 Sa-Token advice，按认证、授权类型返回对应响应，保留 SDK 错误码及不匹配异常的分派关系。",
+      "caseNames": {
+        "1.0.x": [
+          "springDispatchPreservesSaTokenSdkCodeAndMessage",
+          "springDispatchesAuthenticationFailureWithExplicitOrDefaultMessage",
+          "springDispatchesAuthorizationFailureWithExplicitOrDefaultMessage",
+          "springLeavesUnrelatedFailuresUnmapped"
+        ],
+        "2.0.x": [
+          "springDispatchPreservesSaTokenSdkCodeAndMessage",
+          "springDispatchesAuthenticationFailureWithExplicitOrDefaultMessage",
+          "springDispatchesAuthorizationFailureWithExplicitOrDefaultMessage",
+          "springLeavesUnrelatedFailuresUnmapped"
+        ],
+        "3.0.x": [
+          "springDispatchPreservesSaTokenSdkCodeAndMessage",
+          "springDispatchesAuthenticationFailureWithExplicitOrDefaultMessage",
+          "springDispatchesAuthorizationFailureWithExplicitOrDefaultMessage",
+          "springLeavesUnrelatedFailuresUnmapped"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-auth/ddd4j-auth-spring/src/test/java/io/ddd4j/auth/spring/SaTokenExceptionDispatchContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-auth/ddd4j-auth-spring/src/test/java/io/ddd4j/auth/spring/SaTokenExceptionDispatchContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-auth/ddd4j-auth-spring/src/test/java/io/ddd4j/auth/spring/SaTokenExceptionDispatchContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "AUTH-SATOKEN-RUNTIME-REGISTRATION",
+      "description": "可选 Sa-Token 装配保存 SDK 组件归属，验证共享与外部替换、失败回滚、恢复重试及正常关闭。",
+      "caseNames": {
+        "1.0.x": [
+          "customLogicAndPermissionSourceTakePrecedence",
+          "closeLeavesTheExternalReplacementAfterPreviousDaoInitializationFails",
+          "sharingTheSameCustomLogicKeepsItsOwnerLiveAndPreservesNativeNotifications",
+          "customLogicLeavesTheRealmInstalledByAnSdkListener",
+          "sharingTheSameJsonTemplateKeepsItsOwnerLiveWithoutRepublishing",
+          "replacingTheDefaultLogicLeavesTheOtherBorrowedRealmProtected",
+          "closeRetriesInitializationOfTheAlreadyPublishedPreviousDao",
+          "disjointRegistrationAndExternallyReplacedDaoRemainUsable",
+          "failedDaoInitRollsBackInstalledDaoAndOtherOwnedSlots",
+          "securityStartFailureLeavesTheRealmInstalledByAnSdkListener",
+          "emptyDaoSlotIsRestoredWithoutInstallingAnImplicitDefault",
+          "failedDaoDestroyDoesNotSkipJsonRestoration",
+          "failedStartKeepsPrimaryFailureAndAllowsCleanupRetry",
+          "sessionConfigOverridesDefaultsAndRestoresOwnedComponents",
+          "closingDependentOuterRegistrationBeforeInnerKeepsBothLive",
+          "failureInAnSdkListenerRestoresTheOwnedCustomLogic",
+          "externalDaoReplacementLetsTheOldOwnerCloseBeforeItsBorrower",
+          "sharingTheSameDaoKeepsItsOwnerLiveUntilAllBorrowersClose"
+        ],
+        "2.0.x": [
+          "customLogicAndPermissionSourceTakePrecedence",
+          "closeLeavesTheExternalReplacementAfterPreviousDaoInitializationFails",
+          "sharingTheSameCustomLogicKeepsItsOwnerLiveAndPreservesNativeNotifications",
+          "customLogicLeavesTheRealmInstalledByAnSdkListener",
+          "sharingTheSameJsonTemplateKeepsItsOwnerLiveWithoutRepublishing",
+          "replacingTheDefaultLogicLeavesTheOtherBorrowedRealmProtected",
+          "closeRetriesInitializationOfTheAlreadyPublishedPreviousDao",
+          "disjointRegistrationAndExternallyReplacedDaoRemainUsable",
+          "failedDaoInitRollsBackInstalledDaoAndOtherOwnedSlots",
+          "securityStartFailureLeavesTheRealmInstalledByAnSdkListener",
+          "emptyDaoSlotIsRestoredWithoutInstallingAnImplicitDefault",
+          "failedDaoDestroyDoesNotSkipJsonRestoration",
+          "failedStartKeepsPrimaryFailureAndAllowsCleanupRetry",
+          "sessionConfigOverridesDefaultsAndRestoresOwnedComponents",
+          "closingDependentOuterRegistrationBeforeInnerKeepsBothLive",
+          "failureInAnSdkListenerRestoresTheOwnedCustomLogic",
+          "externalDaoReplacementLetsTheOldOwnerCloseBeforeItsBorrower",
+          "sharingTheSameDaoKeepsItsOwnerLiveUntilAllBorrowersClose"
+        ],
+        "3.0.x": [
+          "customLogicAndPermissionSourceTakePrecedence",
+          "closeLeavesTheExternalReplacementAfterPreviousDaoInitializationFails",
+          "sharingTheSameCustomLogicKeepsItsOwnerLiveAndPreservesNativeNotifications",
+          "customLogicLeavesTheRealmInstalledByAnSdkListener",
+          "sharingTheSameJsonTemplateKeepsItsOwnerLiveWithoutRepublishing",
+          "replacingTheDefaultLogicLeavesTheOtherBorrowedRealmProtected",
+          "closeRetriesInitializationOfTheAlreadyPublishedPreviousDao",
+          "disjointRegistrationAndExternallyReplacedDaoRemainUsable",
+          "failedDaoInitRollsBackInstalledDaoAndOtherOwnedSlots",
+          "securityStartFailureLeavesTheRealmInstalledByAnSdkListener",
+          "emptyDaoSlotIsRestoredWithoutInstallingAnImplicitDefault",
+          "failedDaoDestroyDoesNotSkipJsonRestoration",
+          "failedStartKeepsPrimaryFailureAndAllowsCleanupRetry",
+          "sessionConfigOverridesDefaultsAndRestoresOwnedComponents",
+          "closingDependentOuterRegistrationBeforeInnerKeepsBothLive",
+          "failureInAnSdkListenerRestoresTheOwnedCustomLogic",
+          "externalDaoReplacementLetsTheOldOwnerCloseBeforeItsBorrower",
+          "sharingTheSameDaoKeepsItsOwnerLiveUntilAllBorrowersClose"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-auth/ddd4j-auth-satoken/src/test/java/io/ddd4j/auth/satoken/config/SaTokenRuntimeRegistrationTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-auth/ddd4j-auth-satoken/src/test/java/io/ddd4j/auth/satoken/config/SaTokenRuntimeRegistrationTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-auth/ddd4j-auth-satoken/src/test/java/io/ddd4j/auth/satoken/config/SaTokenRuntimeRegistrationTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "AUTH-SATOKEN-JWT-SIGNING-KEY-ISOLATION",
+      "description": "JWT Simple 使用构造时的实例密钥完成签发与验证，并校验配置的签发方、受众和登录域。",
+      "caseNames": {
+        "1.0.x": [
+          "eachInstanceIssuesAndValidatesWithItsConfiguredKey",
+          "validSignatureStillRequiresExpectedIssuerAudienceAndRealm"
+        ],
+        "2.0.x": [
+          "eachInstanceIssuesAndValidatesWithItsConfiguredKey",
+          "validSignatureStillRequiresExpectedIssuerAudienceAndRealm"
+        ],
+        "3.0.x": [
+          "eachInstanceIssuesAndValidatesWithItsConfiguredKey",
+          "validSignatureStillRequiresExpectedIssuerAudienceAndRealm"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-auth/ddd4j-auth-satoken/src/test/java/io/ddd4j/auth/satoken/config/Ddd4jStpLogicJwtForSimpleTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-auth/ddd4j-auth-satoken/src/test/java/io/ddd4j/auth/satoken/config/Ddd4jStpLogicJwtForSimpleTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-auth/ddd4j-auth-satoken/src/test/java/io/ddd4j/auth/satoken/config/Ddd4jStpLogicJwtForSimpleTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "AUTH-CORE-PUBLIC-FIELD-KEYS",
+      "description": "三线发布的认证业务字段短键及 JWT Claim 键保持相同字面值。",
+      "caseNames": {
+        "1.0.x": [
+          "publishedFieldKeysKeepTheirLiteralValues",
+          "claimKeysExposeThePublishedJwtNames"
+        ],
+        "2.0.x": [
+          "publishedFieldKeysKeepTheirLiteralValues",
+          "claimKeysExposeThePublishedJwtNames"
+        ],
+        "3.0.x": [
+          "publishedFieldKeysKeepTheirLiteralValues",
+          "claimKeysExposeThePublishedJwtNames"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/constant/AuthConstantsTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/constant/AuthConstantsTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/constant/AuthConstantsTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "AUTH-SATOKEN-PAYLOAD-KEYS",
+      "description": "Sa-Token 通用及既有学校业务载荷键以公开字面值提供。",
+      "caseNames": {
+        "1.0.x": [
+          "generalPayloadKeysKeepTheirLiteralValues",
+          "schoolPayloadKeysKeepTheirLiteralValues"
+        ],
+        "2.0.x": [
+          "generalPayloadKeysKeepTheirLiteralValues",
+          "schoolPayloadKeysKeepTheirLiteralValues"
+        ],
+        "3.0.x": [
+          "generalPayloadKeysKeepTheirLiteralValues",
+          "schoolPayloadKeysKeepTheirLiteralValues"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-auth/ddd4j-auth-satoken/src/test/java/io/ddd4j/auth/satoken/SaConstantsTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-auth/ddd4j-auth-satoken/src/test/java/io/ddd4j/auth/satoken/SaConstantsTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-auth/ddd4j-auth-satoken/src/test/java/io/ddd4j/auth/satoken/SaConstantsTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-SPRING-SATOKEN-HTTP-AUTH",
+      "description": "Spring Sa-Token 样例验证 HTTP 登录、授权、退出与同线程请求身份清理，覆盖默认和非根 Servlet context path。",
+      "caseNames": {
+        "1.0.x": [
+          "nativeAuthAndRequestCleanup",
+          "nativeAuthWithContextPathAndRequestCleanup"
+        ],
+        "2.0.x": [
+          "nativeAuthAndRequestCleanup",
+          "nativeAuthWithContextPathAndRequestCleanup"
+        ],
+        "3.0.x": [
+          "nativeAuthAndRequestCleanup",
+          "nativeAuthWithContextPathAndRequestCleanup"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-spring-satoken/src/test/java/io/ddd4j/sample/spring/satoken/SpringSatokenHttpTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-spring-satoken/src/test/java/io/ddd4j/sample/spring/satoken/SpringSatokenHttpTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-spring-satoken/src/test/java/io/ddd4j/sample/spring/satoken/SpringSatokenHttpTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-SPRING-SHIRO-HTTP-AUTH",
+      "description": "Spring Shiro 样例验证 HTTP 登录、授权、退出与同线程请求身份清理，覆盖默认和非根 Servlet context path。",
+      "caseNames": {
+        "1.0.x": [
+          "nativeAuthAndRequestCleanup",
+          "nativeAuthWithContextPathAndRequestCleanup"
+        ],
+        "2.0.x": [
+          "nativeAuthAndRequestCleanup",
+          "nativeAuthWithContextPathAndRequestCleanup"
+        ],
+        "3.0.x": [
+          "nativeAuthAndRequestCleanup",
+          "nativeAuthWithContextPathAndRequestCleanup"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-spring-shiro/src/test/java/io/ddd4j/sample/spring/shiro/SpringShiroHttpTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-spring-shiro/src/test/java/io/ddd4j/sample/spring/shiro/SpringShiroHttpTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-spring-shiro/src/test/java/io/ddd4j/sample/spring/shiro/SpringShiroHttpTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "AUTH-SATOKEN-REALM-SESSION-TTL",
+      "description": "指定 realm 隔离同名账号的令牌和会话。省略有效期时继承 SDK，显式 -1 表示永久。",
+      "caseNames": {
+        "1.0.x": [
+          "providerUsesRegisteredRealmForSessionsAndAccountOperations",
+          "omittedSessionTimeoutUsesConfiguredTtl",
+          "explicitPermanentAndFiniteTimeoutsOverrideSdkTimeout",
+          "trustedDeviceLookupUsesTheSelectedRealmAndLoginAccount"
+        ],
+        "2.0.x": [
+          "providerKeepsSameLoginIdInTwoRealmsIsolated",
+          "defaultSessionInheritsConfiguredTokenTtl",
+          "explicitPermanentSessionRetainsItsMeaning"
+        ],
+        "3.0.x": [
+          "providerKeepsSameLoginIdInTwoRealmsIsolated",
+          "defaultSessionInheritsConfiguredTokenTtl",
+          "explicitPermanentSessionRetainsItsMeaning"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-auth/ddd4j-auth-satoken/src/test/java/io/ddd4j/auth/satoken/subject/SaTokenSubjectLifecycleTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-auth/ddd4j-auth-satoken/src/test/java/io/ddd4j/auth/satoken/subject/SaTokenSubjectLifecycleTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-auth/ddd4j-auth-satoken/src/test/java/io/ddd4j/auth/satoken/subject/SaTokenSubjectLifecycleTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "CORE-AUTH-REQUEST-JSON-TTL",
+      "description": "认证请求 JSON 区分省略有效期和显式永久，保留登录标识和旧顶层 timeout 的读入语义。",
+      "caseNames": {
+        "1.0.x": [
+          "sessionConfigJsonDistinguishesInheritedAndExplicitTimeout",
+          "requestJsonPreservesOmittedTimeoutAndReadsLegacyFlatTimeout"
+        ],
+        "2.0.x": [
+          "sessionConfigRoundTripDistinguishesInheritedAndPermanentTtl",
+          "requestOmitsInheritedTimeoutAndPreservesExplicitFlatCompatibility",
+          "strictRequestRoundTripPreservesLoginIdAndTimeoutPresence",
+          "strictRequestTreatsComputedLoginIdAsReadOnly"
+        ],
+        "3.0.x": [
+          "sessionConfigRoundTripDistinguishesInheritedAndPermanentTtl",
+          "requestOmitsInheritedTimeoutAndPreservesExplicitFlatCompatibility",
+          "strictRequestRoundTripPreservesLoginIdAndTimeoutPresence",
+          "strictRequestTreatsComputedLoginIdAsReadOnly"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/auth/AuthRequestTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/auth/AuthRequestTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-core/src/test/java/io/ddd4j/core/auth/AuthRequestTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "AUTH-SATOKEN-TOKEN-BOUND-DATA-IDENTITY",
+      "description": "同名账号的可选 Sa-Token 数据身份使用各自令牌会话。无效、撤销或校验失败的当前令牌不得借用共享主体与权限。已验证身份可在请求结束后交给审计。",
+      "caseNames": {
+        "1.0.x": [
+          "aFailedRebindDoesNotLeaveThePreviousRequestIdentity",
+          "accountSessionCannotSupplyMissingTokenIdentity",
+          "auditProjectsTheValidatedIdentityAfterRequestCompletion",
+          "clearsBindingWhenTheRequestTokenChanges",
+          "clearsBindingWhenTheTokenIsRevoked",
+          "explicitOtherAccountLookupSupportsNoCredentialOrAValidScopedCredential",
+          "identityFieldsWithoutATokenSessionPrincipalGrantNoAuthority",
+          "isolatesTwoTokensOfTheSameAccount",
+          "jwtAudienceRotationRejectsCurrentPrincipalAndPermissionsEvenWithAnActiveMapping",
+          "malformedAuthorizationHeaderCannotBeTreatedAsNoCredential",
+          "missingTokenContextCannotInheritAnotherTokensPrincipal",
+          "optionalProviderRejectsPresetTokensAndKeepsCallerConfiguration",
+          "validatesRequestTargetsAgainstTokenSession",
+          "verifiesAndReadsTheExistingBootTokenSessionFormat"
+        ],
+        "2.0.x": [
+          "aFailedRebindDoesNotLeaveThePreviousRequestIdentity",
+          "accountSessionCannotSupplyMissingTokenIdentity",
+          "auditProjectsTheValidatedIdentityAfterRequestCompletion",
+          "clearsBindingWhenTheRequestTokenChanges",
+          "clearsBindingWhenTheTokenIsRevoked",
+          "explicitOtherAccountLookupSupportsNoCredentialOrAValidScopedCredential",
+          "identityFieldsWithoutATokenSessionPrincipalGrantNoAuthority",
+          "isolatesTwoTokensOfTheSameAccount",
+          "jwtAudienceRotationRejectsCurrentPrincipalAndPermissionsEvenWithAnActiveMapping",
+          "malformedAuthorizationHeaderCannotBeTreatedAsNoCredential",
+          "missingTokenContextCannotInheritAnotherTokensPrincipal",
+          "optionalProviderRejectsPresetTokensAndKeepsCallerConfiguration",
+          "validatesRequestTargetsAgainstTokenSession",
+          "verifiesAndReadsTheExistingBootTokenSessionFormat"
+        ],
+        "3.0.x": [
+          "aFailedRebindDoesNotLeaveThePreviousRequestIdentity",
+          "accountSessionCannotSupplyMissingTokenIdentity",
+          "auditProjectsTheValidatedIdentityAfterRequestCompletion",
+          "clearsBindingWhenTheRequestTokenChanges",
+          "clearsBindingWhenTheTokenIsRevoked",
+          "explicitOtherAccountLookupSupportsNoCredentialOrAValidScopedCredential",
+          "identityFieldsWithoutATokenSessionPrincipalGrantNoAuthority",
+          "isolatesTwoTokensOfTheSameAccount",
+          "jwtAudienceRotationRejectsCurrentPrincipalAndPermissionsEvenWithAnActiveMapping",
+          "malformedAuthorizationHeaderCannotBeTreatedAsNoCredential",
+          "missingTokenContextCannotInheritAnotherTokensPrincipal",
+          "optionalProviderRejectsPresetTokensAndKeepsCallerConfiguration",
+          "validatesRequestTargetsAgainstTokenSession",
+          "verifiesAndReadsTheExistingBootTokenSessionFormat"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-auth/ddd4j-auth-satoken/src/test/java/io/ddd4j/auth/satoken/subject/SaTokenDataIdentityContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-auth/ddd4j-auth-satoken/src/test/java/io/ddd4j/auth/satoken/subject/SaTokenDataIdentityContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-auth/ddd4j-auth-satoken/src/test/java/io/ddd4j/auth/satoken/subject/SaTokenDataIdentityContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-JAVALIN-SHIRO-STANDALONE-GUICE",
+      "description": "无参 Guice 模块初始化一次演示数据，同一模块重装保持数据，独立实例隔离。",
+      "caseNames": {
+        "1.0.x": [
+          "bindsSeededRepositoriesServiceAndSubjectDataProvider",
+          "isolatesStandaloneModulesAndDoesNotReseedOnReinstallation"
+        ],
+        "2.0.x": [
+          "bindsSeededRepositoriesServiceAndSubjectDataProvider",
+          "isolatesStandaloneModulesAndDoesNotReseedOnReinstallation"
+        ],
+        "3.0.x": [
+          "bindsSeededRepositoriesServiceAndSubjectDataProvider",
+          "isolatesStandaloneModulesAndDoesNotReseedOnReinstallation"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/config/AuthModuleInjectionContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/config/AuthModuleInjectionContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/config/AuthModuleInjectionContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-JAVALIN-SHIRO-NATIVE-LIFECYCLE-FAILURE",
+      "description": "Guice 运行时关闭或 Shiro 会话初始化失败时保留异常，并恢复调用方的原生及框架上下文。",
+      "caseNames": {
+        "1.0.x": [
+          "closeRestoresCallerStateWhenOwnedRuntimeThrows",
+          "restoresCallerBindingsWhenNativeSessionLookupThrows"
+        ],
+        "2.0.x": [
+          "closeRestoresCallerStateWhenOwnedRuntimeThrows",
+          "restoresCallerBindingsWhenNativeSessionLookupThrows"
+        ],
+        "3.0.x": [
+          "closeRestoresCallerStateWhenOwnedRuntimeThrows",
+          "restoresCallerBindingsWhenNativeSessionLookupThrows"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/NativeAuthLifecycleTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/NativeAuthLifecycleTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/NativeAuthLifecycleTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-JAVALIN-SHIRO-STARTUP-ROLLBACK",
+      "description": "原生 Jetty 启动事件失败且关闭事件也失败时，保留原始异常、附带清理异常并归还原有绑定。",
+      "caseNames": {
+        "1.0.x": [
+          "startupFailureKeepsItsCauseWhenServerCleanupAlsoFails"
+        ],
+        "2.0.x": [
+          "startupFailureKeepsItsCauseWhenServerCleanupAlsoFails"
+        ],
+        "3.0.x": [
+          "startupFailureKeepsItsCauseWhenServerCleanupAlsoFails"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/NativeAuthHttpTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/NativeAuthHttpTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/NativeAuthHttpTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-MICRONAUT-SATOKEN-AUTH-BEFORE-VALIDATION",
+      "description": "原生 HTTP 支付请求缺少必填参数时，匿名返回 401，无写权限返回 403，具备写权限返回 400。",
+      "caseNames": {
+        "1.0.x": [
+          "authorizationPrecedesRequiredPaymentParameter"
+        ],
+        "2.0.x": [
+          "authorizationPrecedesRequiredPaymentParameter"
+        ],
+        "3.0.x": [
+          "authorizationPrecedesRequiredPaymentParameter"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-micronaut-satoken/src/test/java/io/ddd4j/sample/micronaut/satoken/NativeAuthHttpTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-micronaut-satoken/src/test/java/io/ddd4j/sample/micronaut/satoken/NativeAuthHttpTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-micronaut-satoken/src/test/java/io/ddd4j/sample/micronaut/satoken/NativeAuthHttpTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-MICRONAUT-SHIRO-AUTH-BEFORE-VALIDATION",
+      "description": "原生 HTTP 支付请求缺少必填参数时，匿名返回 401，无写权限返回 403，具备写权限返回 400。",
+      "caseNames": {
+        "1.0.x": [
+          "authorizationPrecedesRequiredPaymentParameter"
+        ],
+        "2.0.x": [
+          "authorizationPrecedesRequiredPaymentParameter"
+        ],
+        "3.0.x": [
+          "authorizationPrecedesRequiredPaymentParameter"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-micronaut-shiro/src/test/java/io/ddd4j/sample/micronaut/shiro/NativeAuthHttpTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-micronaut-shiro/src/test/java/io/ddd4j/sample/micronaut/shiro/NativeAuthHttpTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-micronaut-shiro/src/test/java/io/ddd4j/sample/micronaut/shiro/NativeAuthHttpTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-MICRONAUT-SATOKEN-BEARER-SCHEME",
+      "description": "同一会话令牌使用 Bearer 大小写变体和多个分隔空格读取同一订单。BearerX、缺失和无效凭据返回 401。",
+      "caseNames": {
+        "1.0.x": [
+          "bearerSchemeCaseDoesNotChangeOrderAuthorization"
+        ],
+        "2.0.x": [
+          "bearerSchemeCaseDoesNotChangeOrderAuthorization"
+        ],
+        "3.0.x": [
+          "bearerSchemeCaseDoesNotChangeOrderAuthorization"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-micronaut-satoken/src/test/java/io/ddd4j/sample/micronaut/satoken/NativeAuthHttpTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-micronaut-satoken/src/test/java/io/ddd4j/sample/micronaut/satoken/NativeAuthHttpTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-micronaut-satoken/src/test/java/io/ddd4j/sample/micronaut/satoken/NativeAuthHttpTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-MICRONAUT-SHIRO-BEARER-SCHEME",
+      "description": "同一会话令牌使用 Bearer 大小写变体和多个分隔空格读取同一订单。BearerX、缺失和无效凭据返回 401。",
+      "caseNames": {
+        "1.0.x": [
+          "bearerSchemeCaseDoesNotChangeOrderAuthorization"
+        ],
+        "2.0.x": [
+          "bearerSchemeCaseDoesNotChangeOrderAuthorization"
+        ],
+        "3.0.x": [
+          "bearerSchemeCaseDoesNotChangeOrderAuthorization"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-micronaut-shiro/src/test/java/io/ddd4j/sample/micronaut/shiro/NativeAuthHttpTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-micronaut-shiro/src/test/java/io/ddd4j/sample/micronaut/shiro/NativeAuthHttpTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-micronaut-shiro/src/test/java/io/ddd4j/sample/micronaut/shiro/NativeAuthHttpTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-HELIDON-SATOKEN-BEARER-SCHEME",
+      "description": "同一有效令牌的 Bearer 方案大小写和分隔空格变体可读取同一订单及主体。BearerX、无效凭据及仅原生头返回 401。实际 TCP 断连按请求标识关联 Jersey FINISHED 清理。",
+      "caseNames": {
+        "1.0.x": [
+          "bearerSchemeCaseDoesNotChangeOrderAuthorization",
+          "actualNativeAuthenticationAndSharedOrder"
+        ],
+        "2.0.x": [
+          "bearerSchemeCaseDoesNotChangeOrderAuthorization",
+          "actualNativeAuthenticationAndSharedOrder"
+        ],
+        "3.0.x": [
+          "bearerSchemeCaseDoesNotChangeOrderAuthorization",
+          "actualNativeAuthenticationAndSharedOrder"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-helidon-satoken/src/test/java/io/ddd4j/sample/helidon/satoken/NativeAuthHttpTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-helidon-satoken/src/test/java/io/ddd4j/sample/helidon/satoken/NativeAuthHttpTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-helidon-satoken/src/test/java/io/ddd4j/sample/helidon/satoken/NativeAuthHttpTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-HELIDON-SHIRO-BEARER-SCHEME",
+      "description": "同一有效令牌的 Bearer 方案大小写和分隔空格变体可读取同一订单。BearerX 和无效凭据返回 401。实际 TCP 断连按请求标识关联 Jersey FINISHED 清理。",
+      "caseNames": {
+        "1.0.x": [
+          "bearerSchemeCaseDoesNotChangeOrderAuthorization",
+          "actualNativeAuthenticationAndSharedOrder"
+        ],
+        "2.0.x": [
+          "bearerSchemeCaseDoesNotChangeOrderAuthorization",
+          "actualNativeAuthenticationAndSharedOrder"
+        ],
+        "3.0.x": [
+          "bearerSchemeCaseDoesNotChangeOrderAuthorization",
+          "actualNativeAuthenticationAndSharedOrder"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-helidon-shiro/src/test/java/io/ddd4j/sample/helidon/shiro/NativeAuthHttpTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-helidon-shiro/src/test/java/io/ddd4j/sample/helidon/shiro/NativeAuthHttpTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-helidon-shiro/src/test/java/io/ddd4j/sample/helidon/shiro/NativeAuthHttpTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-VERTX-SATOKEN-BEARER-SCHEME",
+      "description": "Bearer 大小写与一、二、四个分隔空格返回同一订单和只读主体。合法 Authorization 优先于另一个有效原生令牌，原生头回退和拒绝行为继续验证。真实断连后应用停机等待已接纳请求完成并按标识恢复上下文。",
+      "caseNames": {
+        "1.0.x": [
+          "bearerSchemeCaseDoesNotChangeOrderAuthorization",
+          "disconnectWaitsForActualWorkerCompletionAndCloseDrainsIt"
+        ],
+        "2.0.x": [
+          "bearerSchemeCaseDoesNotChangeOrderAuthorization",
+          "disconnectWaitsForActualWorkerCompletionAndCloseDrainsIt"
+        ],
+        "3.0.x": [
+          "bearerSchemeCaseDoesNotChangeOrderAuthorization",
+          "disconnectWaitsForActualWorkerCompletionAndCloseDrainsIt"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-vertx-satoken/src/test/java/io/ddd4j/sample/vertx/satoken/NativeAuthHttpTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-vertx-satoken/src/test/java/io/ddd4j/sample/vertx/satoken/NativeAuthHttpTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-vertx-satoken/src/test/java/io/ddd4j/sample/vertx/satoken/NativeAuthHttpTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-VERTX-SHIRO-BEARER-SCHEME",
+      "description": "Bearer 大小写与一、二、四个分隔空格返回同一订单和只读主体。匿名、错误方案和无效令牌返回 401。真实断连后应用停机等待已接纳请求完成并按标识恢复上下文。",
+      "caseNames": {
+        "1.0.x": [
+          "bearerSchemeCaseDoesNotChangeOrderAuthorization",
+          "disconnectWaitsForActualWorkerCompletionAndCloseDrainsIt"
+        ],
+        "2.0.x": [
+          "bearerSchemeCaseDoesNotChangeOrderAuthorization",
+          "disconnectWaitsForActualWorkerCompletionAndCloseDrainsIt"
+        ],
+        "3.0.x": [
+          "bearerSchemeCaseDoesNotChangeOrderAuthorization",
+          "disconnectWaitsForActualWorkerCompletionAndCloseDrainsIt"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-vertx-shiro/src/test/java/io/ddd4j/sample/vertx/shiro/NativeAuthHttpTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-vertx-shiro/src/test/java/io/ddd4j/sample/vertx/shiro/NativeAuthHttpTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-vertx-shiro/src/test/java/io/ddd4j/sample/vertx/shiro/NativeAuthHttpTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-DROPWIZARD-SATOKEN-BEARER-SCHEME",
+      "description": "独立连接下 Bearer 大小写及一、二、四个分隔空格读取同一订单。双有效请求头按 Bearer 所属读者授权。带分隔空格的登出撤销原读者，写者仍可查询。真实断连后按请求标识完成清理再关闭原生所有者。",
+      "caseNames": {
+        "1.0.x": [
+          "bearerSchemeCaseDoesNotChangeOrderAuthorization",
+          "disconnectedRequestFinishesBeforeNativeOwnerStops"
+        ],
+        "2.0.x": [
+          "bearerSchemeCaseDoesNotChangeOrderAuthorization",
+          "disconnectedRequestFinishesBeforeNativeOwnerStops"
+        ],
+        "3.0.x": [
+          "bearerSchemeCaseDoesNotChangeOrderAuthorization",
+          "disconnectedRequestFinishesBeforeNativeOwnerStops"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-dropwizard-satoken/src/test/java/io/ddd4j/sample/dropwizard/satoken/NativeAuthHttpTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-dropwizard-satoken/src/test/java/io/ddd4j/sample/dropwizard/satoken/NativeAuthHttpTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-dropwizard-satoken/src/test/java/io/ddd4j/sample/dropwizard/satoken/NativeAuthHttpTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-DROPWIZARD-SHIRO-BEARER-SCHEME",
+      "description": "独立连接下 Bearer 大小写及一、二、四个分隔空格读取同一订单。带分隔空格的登出撤销原读者，写者仍可查询。匿名和无效令牌继续拒绝。真实断连后按请求标识完成清理再关闭原生所有者。",
+      "caseNames": {
+        "1.0.x": [
+          "bearerSchemeCaseDoesNotChangeOrderAuthorization",
+          "disconnectedRequestFinishesBeforeNativeOwnerStops"
+        ],
+        "2.0.x": [
+          "bearerSchemeCaseDoesNotChangeOrderAuthorization",
+          "disconnectedRequestFinishesBeforeNativeOwnerStops"
+        ],
+        "3.0.x": [
+          "bearerSchemeCaseDoesNotChangeOrderAuthorization",
+          "disconnectedRequestFinishesBeforeNativeOwnerStops"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-dropwizard-shiro/src/test/java/io/ddd4j/sample/dropwizard/shiro/NativeAuthHttpTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-dropwizard-shiro/src/test/java/io/ddd4j/sample/dropwizard/shiro/NativeAuthHttpTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-dropwizard-shiro/src/test/java/io/ddd4j/sample/dropwizard/shiro/NativeAuthHttpTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "WEBMVC-NOARG-EXCEPTION-HANDLER-405",
+      "description": "独立创建无参 MVC 异常处理器，直接处理不支持的请求方法并返回含请求方法和受支持方法的 405 业务响应。",
+      "caseNames": {
+        "1.0.x": [
+          "noArgumentConstructorHandlesUnsupportedMethodWithoutSpringInjection"
+        ],
+        "2.0.x": [
+          "noArgumentConstructorHandlesUnsupportedMethodWithoutSpringInjection"
+        ],
+        "3.0.x": [
+          "noArgumentConstructorHandlesUnsupportedMethodWithoutSpringInjection"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/error/GlobalExceptionHandlerTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/error/GlobalExceptionHandlerTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/error/GlobalExceptionHandlerTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "AUTH-SATOKEN-CAMPUS-SCHOOL-IDENTITY-CLAIMS",
+      "description": "Sa-Token 主体读取独立的校区组织、学校代码和身份标识扩展字段，并返回约定的 Java 类型。",
+      "caseNames": {
+        "1.0.x": [
+          "orgRoleAndSchoolAccessorsReadExtraData"
+        ],
+        "2.0.x": [
+          "campusSchoolAndIdentityAccessorsReadDocumentedClaims"
+        ],
+        "3.0.x": [
+          "orgRoleAndSchoolAccessorsReadExtraData"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-auth/ddd4j-auth-satoken/src/test/java/io/ddd4j/auth/satoken/util/StpKitTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-auth/ddd4j-auth-satoken/src/test/java/io/ddd4j/auth/satoken/util/StpKitTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-auth/ddd4j-auth-satoken/src/test/java/io/ddd4j/auth/satoken/util/StpKitTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "WEB-TESTKIT-RESPONSE-VALUE-AND-JSON",
+      "description": "Web 契约响应快照在三线具有一致的哈希与文本表示，Jackson 往返保留状态、响应头和响应体。",
+      "caseNames": {
+        "1.0.x": [
+          "responseValueHasTheSameHashAndTextOnEveryLine",
+          "responseJsonRoundTripPreservesItsValue"
+        ],
+        "2.0.x": [
+          "responseValueHasTheSameHashAndTextOnEveryLine",
+          "responseJsonRoundTripPreservesItsValue"
+        ],
+        "3.0.x": [
+          "responseValueHasTheSameHashAndTextOnEveryLine",
+          "responseJsonRoundTripPreservesItsValue"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-testkit/src/test/java/io/ddd4j/web/testkit/WebContractResponseValueContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-testkit/src/test/java/io/ddd4j/web/testkit/WebContractResponseValueContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-testkit/src/test/java/io/ddd4j/web/testkit/WebContractResponseValueContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-ORDER-QUERY-VALUE-WITHOUT-STATUS",
+      "description": "共享订单查询反序列化省略状态的 JSON 时保留空状态，三线产生相同的值哈希和文本。",
+      "caseNames": {
+        "1.0.x": [
+          "orderQueryRetainsValueContractWhenJsonOmitsStatus"
+        ],
+        "2.0.x": [
+          "orderQueryRetainsValueContractWhenJsonOmitsStatus"
+        ],
+        "3.0.x": [
+          "orderQueryRetainsValueContractWhenJsonOmitsStatus"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-order-domain/src/test/java/io/ddd4j/sample/order/domain/OrderDomainValueContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-order-domain/src/test/java/io/ddd4j/sample/order/domain/OrderDomainValueContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-order-domain/src/test/java/io/ddd4j/sample/order/domain/OrderDomainValueContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "AUTH-SATOKEN-DATA-BRIDGE-REALM-ISOLATION",
+      "description": "同一登录 ID 在不同账号体系中按请求域返回权限及角色，未知域返回空结果，空域保持默认账号体系。",
+      "caseNames": {
+        "1.0.x": [
+          "blankLoginTypesUseDefaultAccountSessions",
+          "dataSubjectProviderUsesRequestedLoginType",
+          "getPermissionListUsesRequestedLoginType",
+          "getRoleListUsesRequestedLoginType",
+          "missingAccountAndLoginTypeReturnEmptyLists"
+        ],
+        "2.0.x": [
+          "blankLoginTypesUseDefaultAccountSessions",
+          "dataSubjectProviderUsesRequestedLoginType",
+          "getPermissionListUsesRequestedLoginType",
+          "getRoleListUsesRequestedLoginType",
+          "missingAccountAndLoginTypeReturnEmptyLists"
+        ],
+        "3.0.x": [
+          "blankLoginTypesUseDefaultAccountSessions",
+          "dataSubjectProviderUsesRequestedLoginType",
+          "getPermissionListUsesRequestedLoginType",
+          "getRoleListUsesRequestedLoginType",
+          "missingAccountAndLoginTypeReturnEmptyLists"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-auth/ddd4j-auth-satoken/src/test/java/io/ddd4j/auth/satoken/subject/SaTokenSubjectDataBridgeTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-auth/ddd4j-auth-satoken/src/test/java/io/ddd4j/auth/satoken/subject/SaTokenSubjectDataBridgeTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-auth/ddd4j-auth-satoken/src/test/java/io/ddd4j/auth/satoken/subject/SaTokenSubjectDataBridgeTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "AUTH-SATOKEN-NATIVE-LOGIN-SESSION-OPTIONS",
+      "description": "Sa-Token 登录支持设备 ID、即时 Token-Session、当前设备类型与跨设备类型替换范围。",
+      "caseNames": {
+        "1.0.x": [
+          "loginRegistersConfiguredDeviceId",
+          "loginCreatesTokenSessionOnlyForEagerLogin",
+          "loginAppliesReplacementAcrossDeviceTypes",
+          "loginReplacesOnlyCurrentDeviceTypeByDefault"
+        ],
+        "2.0.x": [
+          "loginRegistersConfiguredDeviceId",
+          "loginCreatesTokenSessionOnlyForEagerLogin",
+          "loginAppliesReplacementAcrossDeviceTypes",
+          "loginReplacesOnlyCurrentDeviceTypeByDefault"
+        ],
+        "3.0.x": [
+          "loginRegistersConfiguredDeviceId",
+          "loginCreatesTokenSessionOnlyForEagerLogin",
+          "loginAppliesReplacementAcrossDeviceTypes",
+          "loginReplacesOnlyCurrentDeviceTypeByDefault"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-auth/ddd4j-auth-satoken/src/test/java/io/ddd4j/auth/satoken/subject/SaTokenSubjectLifecycleTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-auth/ddd4j-auth-satoken/src/test/java/io/ddd4j/auth/satoken/subject/SaTokenSubjectLifecycleTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-auth/ddd4j-auth-satoken/src/test/java/io/ddd4j/auth/satoken/subject/SaTokenSubjectLifecycleTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-JAVALIN-SATOKEN-MISSING-ORDER-DIAGNOSTIC",
+      "description": "Javalin Sa-Token 登录后查询缺失订单 ID、订单号和折扣预览，返回 HTTP 500、业务码 500 和 order not found。",
+      "caseNames": {
+        "1.0.x": [
+          "missingSharedOrderReturnsTheOrderDiagnostic"
+        ],
+        "2.0.x": [
+          "missingSharedOrderReturnsTheOrderDiagnostic"
+        ],
+        "3.0.x": [
+          "missingSharedOrderReturnsTheOrderDiagnostic"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/NativeAuthHttpTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/NativeAuthHttpTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/NativeAuthHttpTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-JAVALIN-SHIRO-MISSING-ORDER-DIAGNOSTIC",
+      "description": "Javalin Shiro 登录后查询缺失订单 ID、订单号和折扣预览，返回 HTTP 500、业务码 500 和 order not found。",
+      "caseNames": {
+        "1.0.x": [
+          "missingSharedOrderReturnsTheOrderDiagnostic"
+        ],
+        "2.0.x": [
+          "missingSharedOrderReturnsTheOrderDiagnostic"
+        ],
+        "3.0.x": [
+          "missingSharedOrderReturnsTheOrderDiagnostic"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/NativeAuthHttpTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/NativeAuthHttpTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/NativeAuthHttpTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-VERTX-TOKEN-RESPONSE-JSON",
+      "description": "Vert.x 原生 JSON 中的令牌响应仅有 token 字段，支持按同一字段读回并保留值对象契约。",
+      "caseNames": {
+        "1.0.x": [
+          "tokenResponseKeepsBeanAndComponentAccessors",
+          "tokenResponseRoundTripsUsingOnlyTheTokenField"
+        ],
+        "2.0.x": [
+          "tokenResponseKeepsBeanAndComponentAccessors",
+          "tokenResponseRoundTripsUsingOnlyTheTokenField"
+        ],
+        "3.0.x": [
+          "tokenResponseKeepsBeanAndComponentAccessors",
+          "tokenResponseRoundTripsUsingOnlyTheTokenField"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-vertx/src/test/java/io/ddd4j/sample/vertx/VertxTokenResponseContractTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-vertx/src/test/java/io/ddd4j/sample/vertx/VertxTokenResponseContractTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-vertx/src/test/java/io/ddd4j/sample/vertx/VertxTokenResponseContractTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "WEB-VERTX-IDEMPOTENCY-TERMINATION",
+      "description": "服务端提前结束及客户端真实 TCP 重置均释放未使用的幂等租约。TCP 重置后同键重试成功，成功后的重复提交返回 409。",
+      "caseNames": {
+        "1.0.x": [
+          "serverSideEarlyResponseReleasesUnusedLeaseOnWorker",
+          "tcpResetDuringIdempotencyAcquisitionReleasesLeaseAndAllowsSameKeyRetry"
+        ],
+        "2.0.x": [
+          "serverSideEarlyResponseReleasesUnusedLeaseOnWorker",
+          "tcpResetDuringIdempotencyAcquisitionReleasesLeaseAndAllowsSameKeyRetry"
+        ],
+        "3.0.x": [
+          "serverSideEarlyResponseReleasesUnusedLeaseOnWorker",
+          "tcpResetDuringIdempotencyAcquisitionReleasesLeaseAndAllowsSameKeyRetry"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-vertx/src/test/java/io/ddd4j/web/vertx/Ddd4jVertxEarlyResponseTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-vertx/src/test/java/io/ddd4j/web/vertx/Ddd4jVertxEarlyResponseTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-vertx/src/test/java/io/ddd4j/web/vertx/Ddd4jVertxEarlyResponseTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "WEBFLUX-REQUEST-CONTEXT-DOWNSTREAM-SCOPE",
+      "description": "原生 Reactor 请求链仅在下游携带同一 exchange、request 和 response，并保留外层上下文。",
+      "caseNames": {
+        "1.0.x": [
+          "suppliesTheExistingRequestContextKeysOnlyDownstream"
+        ],
+        "2.0.x": [
+          "suppliesTheExistingRequestContextKeysOnlyDownstream"
+        ],
+        "3.0.x": [
+          "suppliesTheExistingRequestContextKeysOnlyDownstream"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-webflux/src/test/java/io/ddd4j/web/webflux/DefaultWebFluxConfigurationRequestContextTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-webflux/src/test/java/io/ddd4j/web/webflux/DefaultWebFluxConfigurationRequestContextTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-webflux/src/test/java/io/ddd4j/web/webflux/DefaultWebFluxConfigurationRequestContextTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "MQ-SQS-REQUIRED-LISTENER-ROLLBACK",
+      "description": "SQS 启动回滚等待已进入 SDK 的发送，迟到回调保持原接收客户端，并按自有或借用资源的所有权重试。",
+      "caseNames": {
+        "1.0.x": [
+          "lateFailedCallbackResetsVisibilityOnTheReceivingClientAfterRollback",
+          "requiredListenerRollbackAllowsSameAdapterToRestartWithNewOwnedClient",
+          "requiredListenerRollbackLeavesBorrowedClientOpenForRetry",
+          "requiredListenerRollbackWaitsForAnInFlightSendBeforeClosingOwnedClient"
+        ],
+        "2.0.x": [
+          "lateFailedCallbackResetsVisibilityOnTheReceivingClientAfterRollback",
+          "requiredListenerRollbackAllowsSameAdapterToRestartWithNewOwnedClient",
+          "requiredListenerRollbackLeavesBorrowedClientOpenForRetry",
+          "requiredListenerRollbackWaitsForAnInFlightSendBeforeClosingOwnedClient"
+        ],
+        "3.0.x": [
+          "lateFailedCallbackResetsVisibilityOnTheReceivingClientAfterRollback",
+          "requiredListenerRollbackAllowsSameAdapterToRestartWithNewOwnedClient",
+          "requiredListenerRollbackLeavesBorrowedClientOpenForRetry",
+          "requiredListenerRollbackWaitsForAnInFlightSendBeforeClosingOwnedClient"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-sqs/src/test/java/io/ddd4j/mq/sqs/SqsClientLifecycleTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-sqs/src/test/java/io/ddd4j/mq/sqs/SqsClientLifecycleTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-sqs/src/test/java/io/ddd4j/mq/sqs/SqsClientLifecycleTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "MQ-ONS-REQUIRED-CONSUMER-RETRY",
+      "description": "必需消费者启动失败后，自有生产者关闭一次，原发布句柄失效，同一实例重新启动后使用新生产者。",
+      "caseNames": {
+        "1.0.x": [
+          "requiredConsumerFailureAllowsRetryWithNewOwnedProducer",
+          "rolledBackPublisherRejectsSendsAfterSuccessfulRetry"
+        ],
+        "2.0.x": [
+          "requiredConsumerFailureAllowsRetryWithNewOwnedProducer",
+          "rolledBackPublisherRejectsSendsAfterSuccessfulRetry"
+        ],
+        "3.0.x": [
+          "requiredConsumerFailureAllowsRetryWithNewOwnedProducer",
+          "rolledBackPublisherRejectsSendsAfterSuccessfulRetry"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-ons/src/test/java/io/ddd4j/mq/ons/OnsRollbackRetryTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-ons/src/test/java/io/ddd4j/mq/ons/OnsRollbackRetryTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-ons/src/test/java/io/ddd4j/mq/ons/OnsRollbackRetryTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "MQ-ONS-SEND-DRAIN-AND-OWNERSHIP",
+      "description": "回滚拒绝迟到发送并等待已受理的同步发送，自建 SDK 由适配器关闭，借用 SDK 继续由调用方管理。",
+      "caseNames": {
+        "1.0.x": [
+          "rolledBackPublisherChecksRetirementAfterSerialization",
+          "closedPublisherChecksBorrowedOwnershipAfterSerialization",
+          "rollbackDrainsAnAdmittedNativeSendBeforeShuttingDown"
+        ],
+        "2.0.x": [
+          "rolledBackPublisherChecksRetirementAfterSerialization",
+          "closedPublisherChecksBorrowedOwnershipAfterSerialization",
+          "rollbackDrainsAnAdmittedNativeSendBeforeShuttingDown"
+        ],
+        "3.0.x": [
+          "rolledBackPublisherChecksRetirementAfterSerialization",
+          "closedPublisherChecksBorrowedOwnershipAfterSerialization",
+          "rollbackDrainsAnAdmittedNativeSendBeforeShuttingDown"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-ons/src/test/java/io/ddd4j/mq/ons/OnsSendDrainTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-ons/src/test/java/io/ddd4j/mq/ons/OnsSendDrainTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-ons/src/test/java/io/ddd4j/mq/ons/OnsSendDrainTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "MQ-ONS-PUBLISH-SERIALIZATION",
+      "description": "原生同步发送和发送日志共用同一份已序列化消息。",
+      "caseNames": {
+        "1.0.x": [
+          "successfulNativeSendUsesOneSerializationForPayloadAndLog"
+        ],
+        "2.0.x": [
+          "successfulNativeSendUsesOneSerializationForPayloadAndLog"
+        ],
+        "3.0.x": [
+          "successfulNativeSendUsesOneSerializationForPayloadAndLog"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-ons/src/test/java/io/ddd4j/mq/ons/OnsPublishSerializationTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-ons/src/test/java/io/ddd4j/mq/ons/OnsPublishSerializationTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-mq/ddd4j-mq-ons/src/test/java/io/ddd4j/mq/ons/OnsPublishSerializationTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-JAVALIN-SA-TOKEN-ORDER-AUTH-DENIAL-ENVELOPE",
+      "description": "Javalin SA-TOKEN 样例的已匹配订单路径返回 JSON 格式的 401 和 403，权限拒绝保持订单状态。",
+      "caseNames": {
+        "1.0.x": [
+          "orderAuthorizationDenialsUseTheOrderEnvelope"
+        ],
+        "2.0.x": [
+          "orderAuthorizationDenialsUseTheOrderEnvelope"
+        ],
+        "3.0.x": [
+          "orderAuthorizationDenialsUseTheOrderEnvelope"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/NativeAuthHttpTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/NativeAuthHttpTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/NativeAuthHttpTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-JAVALIN-SHIRO-ORDER-AUTH-DENIAL-ENVELOPE",
+      "description": "Javalin SHIRO 样例的已匹配订单路径返回 JSON 格式的 401 和 403，权限拒绝保持订单状态。",
+      "caseNames": {
+        "1.0.x": [
+          "orderAuthorizationDenialsUseTheOrderEnvelope"
+        ],
+        "2.0.x": [
+          "orderAuthorizationDenialsUseTheOrderEnvelope"
+        ],
+        "3.0.x": [
+          "orderAuthorizationDenialsUseTheOrderEnvelope"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/NativeAuthHttpTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/NativeAuthHttpTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/NativeAuthHttpTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-QUARKUS-SHIRO-BLANK-RUNTIME-PERMISSION",
+      "description": "Quarkus Shiro 样例登录后查询缺失或空白权限时回传原输入和 has=false。",
+      "caseNames": {
+        "1.0.x": [
+          "shouldTreatMissingRuntimePermissionAsNotGranted",
+          "shouldTreatBlankRuntimePermissionAsNotGranted"
+        ],
+        "2.0.x": [
+          "shouldTreatMissingRuntimePermissionAsNotGranted",
+          "shouldTreatBlankRuntimePermissionAsNotGranted"
+        ],
+        "3.0.x": [
+          "shouldTreatMissingRuntimePermissionAsNotGranted",
+          "shouldTreatBlankRuntimePermissionAsNotGranted"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/test/java/io/ddd4j/sample/quarkus/shiro/RbacResourceTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/test/java/io/ddd4j/sample/quarkus/shiro/RbacResourceTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/test/java/io/ddd4j/sample/quarkus/shiro/RbacResourceTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-MICRONAUT-SA-TOKEN-UNMATCHED-ROUTE-STATUS",
+      "description": "Micronaut SA-TOKEN 样例由框架返回未匹配请求的 404 和 405。",
+      "caseNames": {
+        "1.0.x": [
+          "unmatchedRoutesKeepNativeHttpStatus"
+        ],
+        "2.0.x": [
+          "unmatchedRoutesKeepNativeHttpStatus"
+        ],
+        "3.0.x": [
+          "unmatchedRoutesKeepNativeHttpStatus"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-micronaut-satoken/src/test/java/io/ddd4j/sample/micronaut/satoken/NativeAuthHttpTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-micronaut-satoken/src/test/java/io/ddd4j/sample/micronaut/satoken/NativeAuthHttpTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-micronaut-satoken/src/test/java/io/ddd4j/sample/micronaut/satoken/NativeAuthHttpTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-MICRONAUT-SHIRO-UNMATCHED-ROUTE-STATUS",
+      "description": "Micronaut SHIRO 样例由框架返回未匹配请求的 404 和 405。",
+      "caseNames": {
+        "1.0.x": [
+          "unmatchedRoutesKeepNativeHttpStatus"
+        ],
+        "2.0.x": [
+          "unmatchedRoutesKeepNativeHttpStatus"
+        ],
+        "3.0.x": [
+          "unmatchedRoutesKeepNativeHttpStatus"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-micronaut-shiro/src/test/java/io/ddd4j/sample/micronaut/shiro/NativeAuthHttpTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-micronaut-shiro/src/test/java/io/ddd4j/sample/micronaut/shiro/NativeAuthHttpTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-micronaut-shiro/src/test/java/io/ddd4j/sample/micronaut/shiro/NativeAuthHttpTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SPRING-MVC-JACKSON-ERROR-HANDLER-ONCE",
+      "description": "Spring MVC 全局异常处理只登记一次 Jackson 异常类型。",
+      "caseNames": {
+        "1.0.x": [
+          "jsonExceptionHandlerRegistersJacksonExceptionOnce"
+        ],
+        "2.0.x": [
+          "jsonExceptionHandlerRegistersJacksonExceptionOnce"
+        ],
+        "3.0.x": [
+          "jsonExceptionHandlerRegistersJacksonExceptionOnce"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/error/GlobalExceptionHandlerTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/error/GlobalExceptionHandlerTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/error/GlobalExceptionHandlerTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-HELIDON-SA-TOKEN-NATIVE-ALLOW-HEADER",
+      "description": "Helidon SA-TOKEN 样例转换 405 JSON 时保留原生 Allow 响应头。",
+      "caseNames": {
+        "1.0.x": [
+          "unsupportedOrderMethodPreservesNativeAllowHeader"
+        ],
+        "2.0.x": [
+          "unsupportedOrderMethodPreservesNativeAllowHeader"
+        ],
+        "3.0.x": [
+          "unsupportedOrderMethodPreservesNativeAllowHeader"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-helidon-satoken/src/test/java/io/ddd4j/sample/helidon/satoken/NativeAuthHttpTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-helidon-satoken/src/test/java/io/ddd4j/sample/helidon/satoken/NativeAuthHttpTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-helidon-satoken/src/test/java/io/ddd4j/sample/helidon/satoken/NativeAuthHttpTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-HELIDON-SHIRO-NATIVE-ALLOW-HEADER",
+      "description": "Helidon SHIRO 样例转换 405 JSON 时保留原生 Allow 响应头。",
+      "caseNames": {
+        "1.0.x": [
+          "unsupportedOrderMethodPreservesNativeAllowHeader"
+        ],
+        "2.0.x": [
+          "unsupportedOrderMethodPreservesNativeAllowHeader"
+        ],
+        "3.0.x": [
+          "unsupportedOrderMethodPreservesNativeAllowHeader"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-helidon-shiro/src/test/java/io/ddd4j/sample/helidon/shiro/NativeAuthHttpTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-helidon-shiro/src/test/java/io/ddd4j/sample/helidon/shiro/NativeAuthHttpTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-helidon-shiro/src/test/java/io/ddd4j/sample/helidon/shiro/NativeAuthHttpTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-DROPWIZARD-SA-TOKEN-NATIVE-ALLOW-HEADER",
+      "description": "Dropwizard SA-TOKEN 样例转换 405 JSON 时保留原生 Allow 响应头。",
+      "caseNames": {
+        "1.0.x": [
+          "unsupportedOrderMethodPreservesNativeAllowHeader"
+        ],
+        "2.0.x": [
+          "unsupportedOrderMethodPreservesNativeAllowHeader"
+        ],
+        "3.0.x": [
+          "unsupportedOrderMethodPreservesNativeAllowHeader"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-dropwizard-satoken/src/test/java/io/ddd4j/sample/dropwizard/satoken/NativeAuthHttpTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-dropwizard-satoken/src/test/java/io/ddd4j/sample/dropwizard/satoken/NativeAuthHttpTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-dropwizard-satoken/src/test/java/io/ddd4j/sample/dropwizard/satoken/NativeAuthHttpTest.java"
+          ]
+        }
+      }
+    },
+    {
+      "id": "SAMPLE-DROPWIZARD-SHIRO-NATIVE-ALLOW-HEADER",
+      "description": "Dropwizard SHIRO 样例转换 405 JSON 时保留原生 Allow 响应头。",
+      "caseNames": {
+        "1.0.x": [
+          "unsupportedOrderMethodPreservesNativeAllowHeader"
+        ],
+        "2.0.x": [
+          "unsupportedOrderMethodPreservesNativeAllowHeader"
+        ],
+        "3.0.x": [
+          "unsupportedOrderMethodPreservesNativeAllowHeader"
+        ]
+      },
+      "lines": {
+        "1.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-dropwizard-shiro/src/test/java/io/ddd4j/sample/dropwizard/shiro/NativeAuthHttpTest.java"
+          ]
+        },
+        "2.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-dropwizard-shiro/src/test/java/io/ddd4j/sample/dropwizard/shiro/NativeAuthHttpTest.java"
+          ]
+        },
+        "3.0.x": {
+          "status": "supported",
+          "tests": [
+            "ddd4j-samples/ddd4j-sample-dropwizard-shiro/src/test/java/io/ddd4j/sample/dropwizard/shiro/NativeAuthHttpTest.java"
+          ]
         }
       }
     }

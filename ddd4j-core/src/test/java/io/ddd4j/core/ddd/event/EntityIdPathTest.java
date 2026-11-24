@@ -17,6 +17,12 @@ package io.ddd4j.core.ddd.event;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.ObjectStreamClass;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -32,6 +38,25 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
  * @since 4.0.0
  */
 class EntityIdPathTest {
+
+    @Test
+    void serializedPathUsesListTypesReadableOnJava8() throws Exception {
+        EntityIdPath path = new EntityIdPath(new StringEntityId("order/1"), new StringEntityId("line:1"));
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        try (ObjectOutputStream output = new ObjectOutputStream(bytes)) {
+            output.writeObject(path);
+        }
+
+        try (ObjectInputStream input = new ObjectInputStream(new ByteArrayInputStream(bytes.toByteArray())) {
+            @Override
+            protected Class<?> resolveClass(ObjectStreamClass descriptor) throws IOException, ClassNotFoundException {
+                assertThat(descriptor.getName()).isNotEqualTo("java.util.CollSer");
+                return super.resolveClass(descriptor);
+            }
+        }) {
+            assertThat(input.readObject()).isEqualTo(path);
+        }
+    }
 
     @Test
     void sourceListAndReturnedIteratorCannotMutateThePath() {
@@ -184,6 +209,30 @@ class EntityIdPathTest {
 
         EntityIdPath restored = EntityIdPath.valueOf(serialized);
         assertThat(restored.last().asString()).isEqualTo("a\\b");
+    }
+
+    @Test
+    void separatorAfterEscapedBackslashesKeepsEachEntitySegment() {
+        EntityIdPath original = new EntityIdPath(
+                new StringEntityId("order\\"),
+                new StringEntityId("line\\/2"),
+                new StringEntityId("item:3"));
+
+        EntityIdPath restored = EntityIdPath.valueOf(original.asString());
+
+        assertThat(restored.size()).isEqualTo(3);
+        assertThat(restored).isEqualTo(original);
+    }
+
+    @Test
+    void separatorAfterEscapedBackslashesStillRejectsTrailingEmptySegment() {
+        String validPath = new EntityIdPath(new StringEntityId("order\\")).asString();
+        String malformedPath = validPath + EntityIdPath.PATH_SEPARATOR;
+
+        assertThat(EntityIdPath.isValid(validPath)).isTrue();
+        assertThat(EntityIdPath.isValid(malformedPath)).isFalse();
+        assertThatIllegalArgumentException().isThrownBy(() -> EntityIdPath.valueOf(malformedPath))
+                .withMessageContaining("blank segment");
     }
 
     @Test

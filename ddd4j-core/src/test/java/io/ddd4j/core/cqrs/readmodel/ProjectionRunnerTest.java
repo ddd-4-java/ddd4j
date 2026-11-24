@@ -112,6 +112,85 @@ class ProjectionRunnerTest {
         }
     }
 
+    @Test
+    void filteredGapUsesSourcePositionAndResumesFromSavedCheckpoint() {
+        ProjectionService service = new DefaultProjectionService(new InMemoryProjectionPositionRepository());
+        service.updateProjectionPosition("gap", 10);
+        List<Long> starts = new java.util.ArrayList<>();
+        ProjectionRunner<String> shared = new ProjectionRunner<>(service, (id, from, size, types) -> {
+            starts.add(from);
+            return from == 10 ? new EventChunk<>(Arrays.asList("event-11", "event-19"), 20)
+                    : EventChunk.empty(from);
+        });
+        TestView view = new TestView("gap", null, 100, Collections.singletonList("created"));
+        shared.runOnce(view);
+        shared.runOnce(view);
+        assertThat(service.readProjectionPosition("gap")).isEqualTo(20);
+        assertThat(starts).containsExactly(10L, 20L);
+        assertThat(view.handled).containsExactly("event-11", "event-19");
+    }
+
+    @Test
+    void sameStreamRecursiveExecutionIsRejectedAndGuardIsReleased() {
+        ProjectionService service = new DefaultProjectionService(new InMemoryProjectionPositionRepository());
+        ProjectionRunner<String> shared = new ProjectionRunner<>(service,
+                (id, from, size, types) -> new EventChunk<>(Collections.singletonList("event"), from + 1));
+        AtomicInteger calls = new AtomicInteger();
+        TestView view = new TestView("guard", null, 100, Collections.singletonList("created")) {
+            @Override
+            public void handleEvents(Collection<String> events) {
+                if (calls.incrementAndGet() == 1) {
+                    assertThatThrownBy(() -> shared.runOnce(this))
+                            .isInstanceOf(IllegalStateException.class).hasMessageContaining("guard");
+                }
+            }
+        };
+        shared.runOnce(view);
+        shared.runOnce(view);
+        assertThat(calls).hasValue(2);
+        assertThat(service.readProjectionPosition("guard")).isEqualTo(2);
+    }
+
+    @Test
+    void concurrentCallsShareStreamGuardButDifferentStreamsCanRun() throws Exception {
+        ProjectionService service = new DefaultProjectionService(new InMemoryProjectionPositionRepository());
+        ProjectionRunner<String> shared = new ProjectionRunner<>(service,
+                (id, from, size, types) -> new EventChunk<>(Collections.singletonList("event"), from + 1));
+        java.util.concurrent.CountDownLatch entered = new java.util.concurrent.CountDownLatch(1);
+        java.util.concurrent.CountDownLatch release = new java.util.concurrent.CountDownLatch(1);
+        TestView blocked = new TestView("blocked", "same-stream", 100, Collections.emptyList()) {
+            @Override
+            public void handleEvents(Collection<String> events) {
+                entered.countDown();
+                try {
+                    if (!release.await(5, java.util.concurrent.TimeUnit.SECONDS)) {
+                        throw new IllegalStateException("test timed out");
+                    }
+                } catch (InterruptedException failure) {
+                    Thread.currentThread().interrupt();
+                    throw new IllegalStateException(failure);
+                }
+            }
+        };
+        java.util.concurrent.ExecutorService executor = java.util.concurrent.Executors.newSingleThreadExecutor();
+        try {
+            java.util.concurrent.Future<?> active = executor.submit(() -> shared.runOnce(blocked));
+            assertThat(entered.await(5, java.util.concurrent.TimeUnit.SECONDS)).isTrue();
+            assertThat(shared.getProjectionStatus("same-stream").running()).isTrue();
+            assertThatThrownBy(() -> shared.runOnce(new TestView("alias", "same-stream", 100, Collections.emptyList())))
+                    .isInstanceOf(IllegalStateException.class);
+            shared.runOnce(new TestView("independent", null, 100, Collections.emptyList()));
+            assertThat(service.readProjectionPosition("independent")).isEqualTo(1);
+            release.countDown();
+            active.get(5, java.util.concurrent.TimeUnit.SECONDS);
+            assertThat(shared.getProjectionStatus("same-stream").running()).isFalse();
+            assertThat(service.readProjectionPosition("same-stream")).isEqualTo(1);
+        } finally {
+            release.countDown();
+            executor.shutdownNow();
+        }
+    }
+
     @Nested
     @DisplayName("构造器")
     class Constructor {

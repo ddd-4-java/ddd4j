@@ -399,19 +399,35 @@ public class JpaEventStore implements EventStore {
     /**
      * 解析存储的事件类。
      *
-     * <p>读取存储的事件类；类不存在时失败，不回退为无类型数据。
+     * <p>优先使用存储组件的加载器，找不到事件类时尝试宿主线程的上下文加载器。
      *
      * @param eventType 事件类型全限定名
      * @return 领域事件类型
-     * @throws IllegalStateException 事件类不存在
+     * @throws IllegalStateException 事件类不存在或不是领域事件
      */
     @SuppressWarnings("unchecked")
     private Class<? extends DomainEvent<?>> resolveEventType(String eventType) {
+        ClassLoader definingLoader = JpaEventStore.class.getClassLoader();
+        Class<?> eventClass;
         try {
-            return (Class<? extends DomainEvent<?>>) Class.forName(eventType);
+            eventClass = Class.forName(eventType, false, definingLoader);
         } catch (ClassNotFoundException exception) {
-            throw new IllegalStateException("Unknown event type: " + eventType, exception);
+            // 独立部署的宿主应用可能使用单独的加载器加载领域事件。
+            ClassLoader contextLoader = Thread.currentThread().getContextClassLoader();
+            if (Objects.isNull(contextLoader) || contextLoader == definingLoader) {
+                throw new IllegalStateException("Unknown event type: " + eventType, exception);
+            }
+            try {
+                eventClass = Class.forName(eventType, false, contextLoader);
+            } catch (ClassNotFoundException contextException) {
+                exception.addSuppressed(contextException);
+                throw new IllegalStateException("Unknown event type: " + eventType, exception);
+            }
         }
+        if (!DomainEvent.class.isAssignableFrom(eventClass)) {
+            throw new IllegalStateException("Invalid event type: " + eventType);
+        }
+        return (Class<? extends DomainEvent<?>>) eventClass;
     }
 
     private enum TransactionMode {

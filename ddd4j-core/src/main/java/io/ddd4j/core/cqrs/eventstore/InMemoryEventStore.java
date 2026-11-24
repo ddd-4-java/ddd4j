@@ -13,20 +13,19 @@
  * limitations under the License.
  */
 package io.ddd4j.core.cqrs.eventstore;
-import java.util.NavigableMap;
-import java.util.Map;
-import java.util.List;
-import java.util.Collections;
-import java.util.ArrayList;
 
 import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.DomainEvent;
 
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.NavigableMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * 内存事件存储默认实现（CQRS 写侧）。
@@ -49,35 +48,49 @@ public class InMemoryEventStore implements EventStore {
     /**
      * 全局 position → StoredEvent 索引（用于 readAll 高效分页）。
      */
-    private final NavigableMap<Long, StoredEvent> positionIndex = new java.util.concurrent.ConcurrentSkipListMap<>();
+    private final NavigableMap<Long, StoredEvent> positionIndex = new ConcurrentSkipListMap<>();
 
-    private final AtomicLong globalPosition = new AtomicLong(0);
+    private long globalPosition;
 
     @Override
     public synchronized void append(String aggregateType, AggregateRootId aggregateId,
                                     List<? extends DomainEvent<?>> events, long expectedVersion) {
         String streamKey = streamKey(aggregateType, aggregateId);
-        List<StoredEvent> existing = store.computeIfAbsent(streamKey, k -> new CopyOnWriteArrayList<>());
-        long actualVersion = existing.size();
-        if (actualVersion != expectedVersion) {
-            throw new AggregateVersionConflictException(aggregateType, aggregateId.asString(), expectedVersion, actualVersion);
-        }
+        verifyVersion(streamKey, aggregateType, aggregateId, expectedVersion);
+        // 先构造完整批次，确保事件无效时不会写入半批或消耗全局位置。
+        long initialPosition = globalPosition;
+        List<StoredEvent> batch = new ArrayList<>(events.size());
         long version = expectedVersion;
+        long position = initialPosition;
         for (DomainEvent<?> event : events) {
-            long position = globalPosition.incrementAndGet();
-            StoredEvent storedEvent = new StoredEvent(
+            batch.add(new StoredEvent(
                     event.getEventId(),
                     aggregateType,
                     aggregateId,
                     ++version,
-                    position,
+                    ++position,
                     ZonedDateTime.now(),
                     event,
                     event.getCorrelationId(),
-                    event.getCausationId());
-            existing.add(storedEvent);
-            positionIndex.put(position, storedEvent);
+                    event.getCausationId()));
         }
+
+        // 元数据读取可能重入追加。提交前复核流版本，并避开嵌套提交已经使用的位置。
+        verifyVersion(streamKey, aggregateType, aggregateId, expectedVersion);
+        if (globalPosition != initialPosition) {
+            position = globalPosition;
+            for (int i = 0; i < batch.size(); i++) {
+                StoredEvent event = batch.get(i);
+                batch.set(i, new StoredEvent(event.eventId(), aggregateType, aggregateId, event.version(),
+                        ++position, event.timestamp(), event.payload(), event.correlationId(), event.causationId()));
+            }
+        }
+
+        store.computeIfAbsent(streamKey, k -> new CopyOnWriteArrayList<>()).addAll(batch);
+        for (StoredEvent storedEvent : batch) {
+            positionIndex.put(storedEvent.position(), storedEvent);
+        }
+        globalPosition = position;
     }
 
     @Override
@@ -110,6 +123,14 @@ public class InMemoryEventStore implements EventStore {
             count++;
         }
         return result;
+    }
+
+    private void verifyVersion(String streamKey, String aggregateType, AggregateRootId aggregateId,
+                               long expectedVersion) {
+        long actualVersion = store.getOrDefault(streamKey, Collections.emptyList()).size();
+        if (actualVersion != expectedVersion) {
+            throw new AggregateVersionConflictException(aggregateType, aggregateId.asString(), expectedVersion, actualVersion);
+        }
     }
 
     private String streamKey(String aggregateType, AggregateRootId aggregateId) {

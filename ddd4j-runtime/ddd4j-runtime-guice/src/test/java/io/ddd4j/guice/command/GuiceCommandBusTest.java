@@ -114,6 +114,64 @@ class GuiceCommandBusTest {
         assertThrows(IllegalStateException.class, () -> new GuiceCommandBus(java.util.Arrays.asList(executor1, executor2)));
     }
 
+    @Test
+    void dynamicDiscoveryCachesRoutesAndPreservesResultIdentity() {
+        Set<Class<? extends Command>> types = new java.util.LinkedHashSet<>();
+        types.add(TestCommand.class);
+        Result<?> expected = Result.ok("dynamic");
+        CommandExecutor<Command> executor = new CommandExecutor<>() {
+            public Set<Class<? extends Command>> supportedCommands() { return types; }
+            public Result execute(Command command) { return expected; }
+        };
+        GuiceCommandBus bus = new GuiceCommandBus(java.util.List.of(executor));
+        types.add(AnotherCommand.class);
+        assertSame(expected, bus.execute(new AnotherCommand()));
+        types.clear();
+        assertSame(expected, bus.execute(new AnotherCommand()));
+        assertSame(expected, bus.execute(new TestCommand()));
+    }
+
+    @Test
+    void routingUsesSharedCommandEngine() {
+        assertTrue(io.ddd4j.core.cqrs.command.DefaultCommandBus.class.isAssignableFrom(GuiceCommandBus.class));
+    }
+
+    @Test
+    void initiallyEmptyExecutorsStayUndiscoverableAndExceptionsAreUnchanged() {
+        Set<Class<? extends Command>> empty = new java.util.HashSet<>();
+        CommandExecutor<Command> absent = new CommandExecutor<>() {
+            public Set<Class<? extends Command>> supportedCommands() { return empty; }
+            public Result execute(Command command) { throw new AssertionError("must stay undiscovered"); }
+        };
+        GuiceCommandBus bus = new GuiceCommandBus(java.util.List.of(absent));
+        empty.add(TestCommand.class);
+        assertThrows(IllegalStateException.class, () -> bus.execute(new TestCommand()));
+        IllegalStateException failure = new IllegalStateException("business failure");
+        CommandExecutor<TestCommand> throwing = new CommandExecutor<>() {
+            public Set<Class<? extends Command>> supportedCommands() { return Set.of(TestCommand.class); }
+            public Result execute(TestCommand command) { throw failure; }
+        };
+        assertSame(failure, assertThrows(IllegalStateException.class,
+                () -> new GuiceCommandBus(java.util.List.of(throwing)).execute(new TestCommand())));
+    }
+
+    @Test
+    void initialSupportedCommandsIsReadOnlyOnceBeforeDynamicMiss() {
+        java.util.concurrent.atomic.AtomicInteger calls = new java.util.concurrent.atomic.AtomicInteger();
+        CommandExecutor<Command> executor = new CommandExecutor<>() {
+            public Set<Class<? extends Command>> supportedCommands() {
+                return calls.incrementAndGet() == 1 ? Set.of(TestCommand.class) : Set.of(AnotherCommand.class);
+            }
+            public Result execute(Command command) { return Result.ok(); }
+        };
+        GuiceCommandBus bus = new GuiceCommandBus(java.util.List.of(executor));
+        assertEquals(1, calls.get());
+        assertTrue(bus.execute(new AnotherCommand()).isSuccess());
+        assertEquals(2, calls.get());
+        assertTrue(bus.execute(new TestCommand()).isSuccess());
+        assertEquals(2, calls.get());
+    }
+
     // Test command classes
     private static class TestCommand implements Command {
     }

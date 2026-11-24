@@ -18,6 +18,7 @@ import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
+import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
@@ -33,6 +34,7 @@ import java.util.Optional;
  * @since 2.0.x
  */
 @ApplicationScoped
+@Typed(QuarkusJpaProjectionPositionRepository.class)
 public class QuarkusJpaProjectionPositionRepository implements ProjectionPositionRepository {
 
     @Inject
@@ -47,8 +49,7 @@ public class QuarkusJpaProjectionPositionRepository implements ProjectionPositio
     @Override
     public List<ProjectionPosition> findAll() {
         return manager().createQuery("select p from QuarkusJpaProjectionPosition p",
-                        QuarkusJpaProjectionPosition.class)
-                .getResultList().stream()
+                QuarkusJpaProjectionPosition.class).getResultList().stream()
                 .map(position -> (ProjectionPosition) position)
                 .collect(java.util.stream.Collectors.toList());
     }
@@ -56,22 +57,23 @@ public class QuarkusJpaProjectionPositionRepository implements ProjectionPositio
     @Override
     @Transactional
     public ProjectionPosition save(ProjectionPosition position) {
-        QuarkusJpaProjectionPosition entity = (QuarkusJpaProjectionPosition) position;
-        QuarkusJpaProjectionPosition current = manager().find(QuarkusJpaProjectionPosition.class, entity.getStreamId());
-        if (Objects.isNull(current)) {
-            manager().persist(entity);
+        QuarkusJpaProjectionPosition entity = position instanceof QuarkusJpaProjectionPosition
+                ? (QuarkusJpaProjectionPosition) position
+                : new QuarkusJpaProjectionPosition(position.getStreamId(), position.getNextEventNumber());
+        EntityManager entityManager = manager();
+        if (Objects.isNull(entityManager.find(QuarkusJpaProjectionPosition.class, entity.getStreamId()))) {
+            entityManager.persist(entity);
             return entity;
         }
-        return manager().merge(entity);
+        return entityManager.merge(entity);
     }
 
     @Override
     @Transactional
     public void deleteByStreamId(String streamId) {
-        QuarkusJpaProjectionPosition entity = manager().find(QuarkusJpaProjectionPosition.class, streamId);
-        if (Objects.nonNull(entity)) {
-            manager().remove(entity);
-        }
+        EntityManager entityManager = manager();
+        Optional.ofNullable(entityManager.find(QuarkusJpaProjectionPosition.class, streamId))
+                .ifPresent(entityManager::remove);
     }
 
     @Override
@@ -79,8 +81,7 @@ public class QuarkusJpaProjectionPositionRepository implements ProjectionPositio
     public void resetToZero(String streamId) {
         manager().createQuery("update QuarkusJpaProjectionPosition p set p.nextEventNumber = 0 "
                         + "where p.streamId = :streamId")
-                .setParameter("streamId", streamId)
-                .executeUpdate();
+                .setParameter("streamId", streamId).executeUpdate();
     }
 
     private EntityManager manager() {

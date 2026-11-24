@@ -15,13 +15,22 @@
 package io.ddd4j.cache;
 
 import io.ddd4j.cache.CacheKit.LocalCacheType;
+import io.ddd4j.core.cache.Cache;
 import io.ddd4j.core.cache.CacheStats;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -220,6 +229,61 @@ class CacheKitTest {
         CacheKit.setDefaultType(LocalCacheType.GUAVA);
 
         assertThat(CacheKit.getDefaultType()).isEqualTo(LocalCacheType.GUAVA);
+    }
+
+    @Test
+    void concurrentBuildersReturnExactlyOneOwnedRegistration() throws Exception {
+        int clients = 8;
+        CyclicBarrier start = new CyclicBarrier(clients);
+        ExecutorService pool = Executors.newFixedThreadPool(clients);
+        try {
+            List<Future<Cache<String, Object>>> attempts = new ArrayList<>();
+            for (int i = 0; i < clients; i++) {
+                attempts.add(pool.submit(() -> {
+                    start.await(10, TimeUnit.SECONDS);
+                    return CacheKit.buildLocalIfAbsent(BIZ, 300);
+                }));
+            }
+            List<Cache<String, Object>> owners = new ArrayList<>();
+            for (Future<Cache<String, Object>> attempt : attempts) {
+                Cache<String, Object> owned = attempt.get(10, TimeUnit.SECONDS);
+                if (Objects.nonNull(owned)) {
+                    owners.add(owned);
+                }
+            }
+            assertThat(owners).hasSize(1);
+            assertThat(CacheKit.getCache(BIZ)).isSameAs(owners.get(0));
+        } finally {
+            pool.shutdownNow();
+        }
+    }
+
+    @Test
+    void releasingOldOwnerPreservesReplacementAndItsData() {
+        Cache<String, Object> owned = CacheKit.buildLocalIfAbsent(BIZ, 300);
+        Cache<String, Object> replacement = new InMemoryCache(new HashMap<>());
+        replacement.put("key", "external");
+        CacheKit.register(BIZ, replacement);
+
+        assertThat(CacheKit.buildLocalIfAbsent(BIZ, 300)).isNull();
+        CacheKit.unregisterLocalIfOwned(BIZ, null);
+        CacheKit.unregisterLocalIfOwned(BIZ, owned);
+        assertThat(CacheKit.getCache(BIZ)).isSameAs(replacement);
+        assertThat((Object) CacheKit.get(BIZ, "key")).isEqualTo("external");
+    }
+
+    @Test
+    void releasingOrdinaryCacheExposesAndBorrowsSameNameLoadingCache() {
+        Cache<String, Object> owned = CacheKit.buildLocalIfAbsent(BIZ, 300);
+        Cache<String, Object> loading = new InMemoryCache(new HashMap<>());
+        CacheKit.registerLoading(BIZ, loading);
+        assertThat(CacheKit.getCache(BIZ)).isSameAs(owned);
+
+        CacheKit.unregisterLocalIfOwned(BIZ, owned);
+        assertThat(CacheKit.getCache(BIZ)).isSameAs(loading);
+        assertThat(CacheKit.buildLocalIfAbsent(BIZ, 300)).isNull();
+        CacheKit.unregisterLocalIfOwned(BIZ, owned);
+        assertThat(CacheKit.getCache(BIZ)).isSameAs(loading);
     }
 
     // ========================= Fixtures =========================

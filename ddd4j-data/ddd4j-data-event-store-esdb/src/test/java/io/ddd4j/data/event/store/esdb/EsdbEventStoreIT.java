@@ -42,6 +42,7 @@ import org.testcontainers.utility.DockerImageName;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -55,6 +56,9 @@ class EsdbEventStoreIT {
     @Container
     static final GenericContainer<?> ESDB = new GenericContainer<>(DockerImageName.parse("eventstore/eventstore:24.10.0-bookworm-slim"))
             .withExposedPorts(2113)
+            // MEM_DB 测试不验证跨容器持久性；隔离临时锁文件与测试数据。
+            .withTmpFs(Map.of("/tmp", "rw,mode=1777",
+                    "/var/lib/eventstore", "rw,uid=1000,gid=1000,mode=0700"))
             .withEnv("EVENTSTORE_CLUSTER_SIZE", "1")
             .withEnv("EVENTSTORE_RUN_PROJECTIONS", "All")
             .withEnv("EVENTSTORE_START_STANDARD_PROJECTIONS", "true")

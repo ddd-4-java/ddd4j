@@ -67,6 +67,7 @@ public class HelidonCqrsBeans {
 
     @Produces
     @ApplicationScoped
+    @jakarta.enterprise.inject.Typed(InMemoryEventChunkReader.class)
     InMemoryEventChunkReader chunkReader(InMemoryEventStore eventStore) {
         return new InMemoryEventChunkReader(eventStore);
     }
@@ -85,18 +86,20 @@ public class HelidonCqrsBeans {
 
     @Produces
     @ApplicationScoped
-    CommandBus commandBus(CreateOrderCommandHandler commandHandler) {
-        return new DefaultCommandBus(Collections.singletonList(commandHandler));
+    CommandBus commandBus(CreateOrderCommandHandler commandHandler, io.ddd4j.sample.helidon.cqrs.shared.OrderCommandExecutor shared) {
+        return new DefaultCommandBus(java.util.List.of(commandHandler, shared));
     }
 
     @Produces
     @ApplicationScoped
+    @jakarta.enterprise.inject.Typed(OrderSummaryView.class)
     OrderSummaryView orderSummaryView(EventSourcingOrderRepository orderRepository) {
         return new OrderSummaryView(orderRepository);
     }
 
     @Produces
     @ApplicationScoped
+    @jakarta.enterprise.inject.Typed(InMemoryViewManager.class)
     InMemoryViewManager viewManager(InMemoryEventChunkReader chunkReader, OrderSummaryView orderSummaryView) {
         InMemoryViewManager mgr = new InMemoryViewManager(chunkReader);
         mgr.register(orderSummaryView);

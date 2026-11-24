@@ -31,6 +31,7 @@
     </properties>
 
     <dependencies>
+        <dependency><groupId>io.ddd4j</groupId><artifactId>ddd4j-sample-order-testkit</artifactId><version>${revision}</version><scope>test</scope></dependency>
         <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-sample-order-application</artifactId>
@@ -106,19 +107,7 @@
             <artifactId>quarkus-arc</artifactId>
         </dependency>
 
-        <!-- CQRS read-model scheduling is an application-selected infrastructure concern. -->
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-quartz</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>io.netty</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <!-- ================= 测试依赖 ================= -->
+<!-- ================= 测试依赖 ================= -->
         <!-- Quarkus 集成测试支持 -->
         <dependency>
             <groupId>io.quarkus</groupId>

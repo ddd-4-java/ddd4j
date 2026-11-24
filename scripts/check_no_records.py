@@ -74,12 +74,13 @@ def declarations(source):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('paths', nargs='*', type=Path, help='默认检查当前仓库全部已跟踪 Java 文件')
+    parser.add_argument('paths', nargs='*', type=Path, help='默认检查当前仓库现存已跟踪和未忽略的新 Java 文件')
     args = parser.parse_args()
     paths = args.paths
     if not paths:
-        result = subprocess.run(['git', 'ls-files', '-z', '--', '*.java'], capture_output=True, check=True)
-        paths = [Path(path.decode()) for path in result.stdout.split(b'\0') if path]
+        result = subprocess.run(['git', 'ls-files', '--cached', '--others', '--exclude-standard', '-z', '--', '*.java'], capture_output=True, check=True)
+        paths = sorted({Path(path.decode()) for path in result.stdout.split(b'\0')
+                        if path and Path(path.decode()).is_file()})
     failures = 0
     for path in paths:
         candidates = sorted(path.rglob('*.java')) if path.is_dir() else [path]

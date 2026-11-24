@@ -36,6 +36,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
 /**
@@ -55,8 +57,8 @@ public class OnsMQClient implements MQClient {
     private final List<com.aliyun.openservices.ons.api.Consumer> consumers = new CopyOnWriteArrayList<>();
     private final MQClientLifecycle lifecycle = new MQClientLifecycle();
     private final MQStartupStatus startupStatus = new MQStartupStatus("ons");
-    private volatile Producer producer;
-    private volatile boolean producerStarted;
+    private final Producer injectedProducer;
+    private volatile ProducerSession producerSession;
     private volatile boolean closed;
 
     /**
@@ -65,7 +67,7 @@ public class OnsMQClient implements MQClient {
      * @param properties ONS 配置
      */
     public OnsMQClient(OnsProperties properties) {
-        this.properties = Objects.requireNonNull(properties, "properties");
+        this(null, properties);
     }
 
     /**
@@ -78,7 +80,7 @@ public class OnsMQClient implements MQClient {
      */
     public OnsMQClient(Producer producer, OnsProperties properties) {
         this.properties = Objects.requireNonNull(properties, "properties");
-        this.producer = producer;
+        this.injectedProducer = producer;
     }
 
     static String messageId(Message message) {
@@ -138,36 +140,20 @@ public class OnsMQClient implements MQClient {
             throw new IllegalStateException("ONS client is closed");
         }
         try {
-            boolean owned = Objects.isNull(producer);
-            Producer p = owned ? createProducer(properties.sessionProperties(properties.getProducerId())) : producer;
-            if (!producerStarted) {
-                try {
-                    p.start();
-                    if (owned) {
-                        lifecycle.register("ons-producer", p::shutdown);
-                    }
-                } catch (RuntimeException | Error exception) {
-                    if (owned) {
-                        try {
-                            p.shutdown();
-                        } catch (RuntimeException | Error shutdownFailure) {
-                            exception.addSuppressed(shutdownFailure);
-                        }
-                    }
-                    throw exception;
-                }
-                this.producer = p;
-                this.producerStarted = true;
+            if (Objects.isNull(producerSession) || !producerSession.isActive()) {
+                producerSession = startProducer();
             }
+            ProducerSession session = producerSession;
             return event -> {
-                if (closed) {
-                    throw new IllegalStateException("ONS client is closed");
-                }
+                session.checkAvailable();
+                String topic;
+                Message msg;
+                String serialized;
                 try {
-                    String topic = resolveTopic(event, mqProperties);
+                    topic = resolveTopic(event, mqProperties);
                     String tag = event.getTag();
-                    Message msg = new Message(topic, tag, event.getMsgId(),
-                            serialization().serialize(event).toString().getBytes(StandardCharsets.UTF_8));
+                    serialized = serialization().serialize(event).toString();
+                    msg = new Message(topic, tag, event.getMsgId(), serialized.getBytes(StandardCharsets.UTF_8));
                     msg.setKey(event.getMsgId());
                     if (Objects.nonNull(event.getTenantId())) {
                         msg.putUserProperties(MessageHeaders.HEADER_TENANT_ID, event.getTenantId());
@@ -175,8 +161,18 @@ public class OnsMQClient implements MQClient {
                     for (Map.Entry<String, String> header : event.headerMap().entrySet()) {
                         msg.putUserProperties(header.getKey(), header.getValue());
                     }
-                    p.send(msg);
-                    logger().info("Publish MQ [{}]: {}", topic, serialization().serialize(event));
+                } catch (Exception ex) {
+                    throw new IllegalStateException("Publish ONS event failed", ex);
+                }
+
+                session.beginSend();
+                try {
+                    try {
+                        session.producer.send(msg);
+                    } finally {
+                        session.endSend();
+                    }
+                    logger().info("Publish MQ [{}]: {}", topic, serialized);
                 } catch (Exception ex) {
                     throw new IllegalStateException("Publish ONS event failed", ex);
                 }
@@ -184,6 +180,35 @@ public class OnsMQClient implements MQClient {
         } catch (Exception ex) {
             throw new IllegalStateException("Init ONS producer failed", ex);
         }
+    }
+
+    private ProducerSession startProducer() {
+        boolean owned = Objects.isNull(injectedProducer);
+        Producer producer = owned
+                ? createProducer(properties.sessionProperties(properties.getProducerId()))
+                : injectedProducer;
+        ProducerSession session = new ProducerSession(producer);
+        try {
+            producer.start();
+            if (owned) {
+                lifecycle.register("ons-producer", session::shutdown);
+                if (!session.isActive()) {
+                    throw new IllegalStateException("ONS producer is no longer active");
+                }
+            }
+        } catch (RuntimeException | Error exception) {
+            if (owned) {
+                try {
+                    session.shutdown();
+                } catch (RuntimeException | Error shutdownFailure) {
+                    if (exception != shutdownFailure) {
+                        exception.addSuppressed(shutdownFailure);
+                    }
+                }
+            }
+            throw exception;
+        }
+        return session;
     }
 
     com.aliyun.openservices.ons.api.Consumer createConsumer(Properties sessionProperties) {
@@ -270,8 +295,73 @@ public class OnsMQClient implements MQClient {
             lifecycle.close();
         } finally {
             consumers.clear();
-            producerStarted = false;
+            producerSession = null;
             startupStatus.stopped();
+        }
+    }
+
+    private final class ProducerSession {
+        private final Producer producer;
+        private final ReentrantLock sendLock = new ReentrantLock();
+        private final Condition sendsFinished = sendLock.newCondition();
+        private volatile boolean active = true;
+        private int inFlight;
+
+        private ProducerSession(Producer producer) {
+            this.producer = producer;
+        }
+
+        private boolean isActive() {
+            return active;
+        }
+
+        private void checkAvailable() {
+            if (closed) {
+                throw new IllegalStateException("ONS client is closed");
+            }
+            if (!active || producerSession != this) {
+                throw new IllegalStateException("ONS producer is no longer active");
+            }
+        }
+
+        private void beginSend() {
+            sendLock.lock();
+            try {
+                // 序列化完成后重新确认会话仍有效，再受理本次 SDK 发送。
+                checkAvailable();
+                inFlight++;
+            } finally {
+                sendLock.unlock();
+            }
+        }
+
+        private void endSend() {
+            sendLock.lock();
+            try {
+                inFlight--;
+                if (!active && inFlight == 0) {
+                    sendsFinished.signalAll();
+                }
+            } finally {
+                sendLock.unlock();
+            }
+        }
+
+        private void shutdown() {
+            sendLock.lock();
+            try {
+                if (!active) {
+                    return;
+                }
+                // 回滚持有生命周期锁，此处只等待已受理的发送，不获取适配器锁。
+                active = false;
+                while (inFlight > 0) {
+                    sendsFinished.awaitUninterruptibly();
+                }
+            } finally {
+                sendLock.unlock();
+            }
+            producer.shutdown();
         }
     }
 }

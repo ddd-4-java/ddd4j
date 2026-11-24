@@ -76,4 +76,50 @@ class ContextLookupTest {
         BaseContext.remove(testKey);
         assertFalse(BaseContext.contains(testKey));
     }
+
+    @Test
+    void plainContextWritesSupersedePendingRegistrationEvenForSameInstance() {
+        Object service = new Object();
+        BaseContext.Registration first = BaseContext.registerForRollback(testKey, service);
+        BaseContext.inject(testKey, Object.class, service);
+        first.rollback();
+        assertSame(service, BaseContext.get(testKey, Object.class).orElse(null));
+
+        BaseContext.Registration second = BaseContext.registerForRollback(testKey, service);
+        assertSame(service, BaseContext.remove(testKey).orElse(null));
+        second.rollback();
+        assertFalse(BaseContext.contains(testKey));
+
+        BaseContext.Registration third = BaseContext.registerForRollback(testKey, service);
+        assertTrue(BaseContext.replaceIfCurrent(testKey, service, service));
+        third.rollback();
+        assertSame(service, BaseContext.get(testKey));
+    }
+
+    @Test
+    void rollbackCanRestoreDisplacedRegistrationThatCommitted() {
+        Object service = new Object();
+        BaseContext.Registration first = BaseContext.registerForRollback(testKey, service);
+        BaseContext.Registration second = BaseContext.registerForRollback(testKey, new Object());
+
+        first.commit();
+        first.rollback();
+        second.rollback();
+        second.rollback();
+
+        assertSame(service, BaseContext.get(testKey));
+    }
+
+    @Test
+    void clearPreventsRollbackFromRestoringPreviousRegistrations() {
+        BaseContext.inject(testKey, new Object());
+        BaseContext.Registration first = BaseContext.registerForRollback(testKey, new Object());
+        BaseContext.Registration second = BaseContext.registerForRollback(testKey, new Object());
+
+        BaseContext.clear();
+        first.rollback();
+        second.rollback();
+
+        assertFalse(BaseContext.contains(testKey));
+    }
 }

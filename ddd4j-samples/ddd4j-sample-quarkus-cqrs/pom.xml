@@ -29,7 +29,20 @@
         <failsafe-plugin.version>${quarkus-failsafe-plugin.version}</failsafe-plugin.version>
     </properties>
 
+    <!-- 持久化入口沿用已接受 Panache 的中央 Quarkus ORM/Agroal 版本族。 -->
     <dependencies>
+        <dependency><groupId>io.ddd4j</groupId><artifactId>ddd4j-sample-order-jdbc</artifactId><version>${revision}</version></dependency>
+        <dependency><groupId>io.ddd4j</groupId><artifactId>ddd4j-sample-order-local</artifactId><version>${revision}</version></dependency>
+        <dependency><groupId>io.ddd4j</groupId><artifactId>ddd4j-data-event-store-jpa</artifactId><version>${revision}</version></dependency>
+        <dependency><groupId>io.ddd4j</groupId><artifactId>ddd4j-data-event-store-panache</artifactId><version>${revision}</version></dependency>
+        <dependency><groupId>io.quarkus</groupId><artifactId>quarkus-rest-jackson</artifactId></dependency>
+        <dependency><groupId>io.quarkus</groupId><artifactId>quarkus-jdbc-postgresql</artifactId></dependency>
+        <dependency><groupId>io.quarkus</groupId><artifactId>quarkus-quartz</artifactId></dependency>
+        <dependency><groupId>io.ddd4j</groupId><artifactId>ddd4j-sample-order-testkit</artifactId><version>${revision}</version><scope>test</scope></dependency>
+        <dependency><groupId>org.flywaydb</groupId><artifactId>flyway-core</artifactId><scope>test</scope></dependency>
+        <dependency><groupId>org.flywaydb</groupId><artifactId>flyway-database-postgresql</artifactId><scope>test</scope></dependency>
+        <dependency><groupId>org.testcontainers</groupId><artifactId>postgresql</artifactId><scope>test</scope></dependency>
+
         <!-- ================= ddd4j 核心依赖 ================= -->
         <!-- 纯 Java 业务契约：BaseContext、Contexts、SPI 接口、聚合根基类、ProjectionView -->
         <dependency>
@@ -377,6 +390,31 @@
             <groupId>jakarta.persistence</groupId>
             <artifactId>jakarta.persistence-api</artifactId>
             <version>${jakarta.persistence-api.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${quarkus-hibernate.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-graalvm</artifactId>
+            <version>${quarkus-hibernate.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-jcache</artifactId>
+            <version>${quarkus-hibernate.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.agroal</groupId>
+            <artifactId>agroal-api</artifactId>
+            <version>${quarkus-agroal.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.agroal</groupId>
+            <artifactId>agroal-pool</artifactId>
+            <version>${quarkus-agroal.version}</version>
         </dependency>
     </dependencies>
 

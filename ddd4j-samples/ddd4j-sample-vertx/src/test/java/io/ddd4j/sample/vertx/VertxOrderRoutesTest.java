@@ -36,6 +36,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class VertxOrderRoutesTest {
 
@@ -67,6 +68,16 @@ class VertxOrderRoutesTest {
         if (Objects.nonNull(vertx)) {
             await(vertx.close());
         }
+    }
+
+    @Test
+    void shouldRejectNullAuthenticationModeWithStableMessage() {
+        InMemoryOrderAdapters adapters = new InMemoryOrderAdapters();
+        OrderApplicationService applicationService = new OrderApplicationService(adapters, adapters, adapters,
+                adapters, adapters);
+        assertThatThrownBy(() -> VertxOrderRoutes.router(vertx, applicationService, null))
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("mode must not be null");
     }
 
     @Test

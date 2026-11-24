@@ -170,11 +170,11 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
 
     @Override
     public Optional<M> findFirst() {
-        return Optional.ofNullable(entityManager
-                        .createQuery("SELECT p FROM " + persistenceClass.getSimpleName() + " p", persistenceClass)
-                        .setMaxResults(1)
-                        .getSingleResult())
-                .map(this::toModel);
+        List<P> results = entityManager
+                .createQuery("SELECT p FROM " + persistenceClass.getSimpleName() + " p", persistenceClass)
+                .setMaxResults(1)
+                .getResultList();
+        return results.isEmpty() ? Optional.empty() : Optional.ofNullable(results.get(0)).map(this::toModel);
     }
 
     @Override
@@ -229,10 +229,10 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
         Root<P> root = criteriaQuery.from(persistenceClass);
         applyWhere(criteriaQuery, buildPredicates(criteriaBuilder, root, query));
         applyOrder(criteriaQuery, criteriaBuilder, root, query);
-        return Optional.ofNullable(entityManager.createQuery(criteriaQuery)
-                        .setMaxResults(1)
-                        .getSingleResult())
-                .map(this::toModel);
+        List<P> results = entityManager.createQuery(criteriaQuery)
+                .setMaxResults(1)
+                .getResultList();
+        return results.isEmpty() ? Optional.empty() : Optional.ofNullable(results.get(0)).map(this::toModel);
     }
 
     @Override

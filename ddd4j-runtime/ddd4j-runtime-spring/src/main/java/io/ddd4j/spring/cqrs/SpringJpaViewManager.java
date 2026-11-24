@@ -16,6 +16,9 @@ package io.ddd4j.spring.cqrs;
 import io.ddd4j.core.cqrs.readmodel.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.ContextClosedEvent;
+import java.util.Map;
+import java.util.Objects;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.TaskScheduler;
 
@@ -101,9 +104,28 @@ public class SpringJpaViewManager implements ViewManager {
 
     @Override
     public void stop() {
-        if (running.compareAndSet(true, false)) {
-            handles.values().forEach(ViewScheduler.ViewScheduleHandle::cancel);
-            handles.clear();
+        boolean wasRunning = running.getAndSet(false);
+        Throwable firstFailure = null;
+        for (Map.Entry<String, ViewScheduler.ViewScheduleHandle> entry : handles.entrySet()) {
+            ViewScheduler.ViewScheduleHandle handle = entry.getValue();
+            try {
+                handle.cancel();
+                handles.remove(entry.getKey(), handle);
+            } catch (RuntimeException | Error failure) {
+                if (Objects.isNull(firstFailure)) {
+                    firstFailure = failure;
+                } else if (firstFailure != failure) {
+                    firstFailure.addSuppressed(failure);
+                }
+            }
+        }
+        if (firstFailure instanceof RuntimeException) {
+            throw (RuntimeException) firstFailure;
+        }
+        if (firstFailure instanceof Error) {
+            throw (Error) firstFailure;
+        }
+        if (wasRunning) {
             log.info("SpringJpaViewManager stopped");
         }
     }
@@ -132,12 +154,12 @@ public class SpringJpaViewManager implements ViewManager {
      */
     @Override
     public ProjectionStatus getProjectionStatus(String streamId) {
-        if (positionRepository == null) {
+        if (Objects.isNull(positionRepository)) {
             return ProjectionStatus.baseline(streamId, isRunning());
         }
         Optional<ProjectionPosition> position = positionRepository.findByStreamId(streamId);
         long nextEventNumber = position.map(ProjectionPosition::getNextEventNumber).orElse(0L);
-        if (projectionMetrics != null) {
+        if (Objects.nonNull(projectionMetrics)) {
             return projectionMetrics.getLastRunInfo(streamId)
                     .map(info -> new ProjectionStatus(streamId, nextEventNumber, isRunning(),
                             info.lastRunAt(), info.lastEventCount(), info.lastError()))
@@ -172,4 +194,10 @@ public class SpringJpaViewManager implements ViewManager {
     public void onContextRefreshed() {
         start();
     }
+    /** Spring 上下文关闭时释放手工注册任务，保留子类的停止扩展点。 */
+    @EventListener(ContextClosedEvent.class)
+    public void onContextClosed() {
+        stop();
+    }
+
 }

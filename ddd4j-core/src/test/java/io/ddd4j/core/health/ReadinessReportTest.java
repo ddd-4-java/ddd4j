@@ -58,6 +58,32 @@ class ReadinessReportTest {
         });
     }
 
+
+    @Test
+    void check_shouldReportAnonymousContributorFailuresWithoutInterruptingOtherChecks() {
+        ReadinessContributor rejected = new ReadinessContributor() {
+            @Override
+            public ReadinessResult check() {
+                throw new IllegalStateException("internal diagnostic");
+            }
+        };
+        ReadinessContributor absent = new ReadinessContributor() {
+            @Override
+            public ReadinessResult check() {
+                return null;
+            }
+        };
+
+        ReadinessReport report = ReadinessReport.check(Arrays.asList(
+                rejected, absent, () -> ReadinessResult.ready("cache")));
+
+        assertThat(report.ready()).isFalse();
+        assertThat(report.results()).containsExactly(
+                ReadinessResult.unavailable("ReadinessContributor", "check failed"),
+                ReadinessResult.unavailable("ReadinessContributor", "empty result"),
+                ReadinessResult.ready("cache"));
+    }
+
     @Test
     void resultAndReport_shouldKeepImmutableSnapshots() {
         Map<String, String> details = new HashMap<>();

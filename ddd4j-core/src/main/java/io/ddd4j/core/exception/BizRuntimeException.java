@@ -19,12 +19,13 @@ import io.ddd4j.core.api.ApiCode;
 import io.ddd4j.core.util.I18nKit;
 import lombok.Getter;
 
+import java.io.Serial;
 import java.util.Objects;
 
 /**
  * 业务运行时异常（ddd4j 核心异常基类）。
  * <p>
- * 合并了原 {@code ServiceException} 的 i18n 能力：所有 message 参数会先经过
+ * 合并了原 {@code ServiceException} 的 i18n 能力：公开构造器的 message 参数会先经过
  * {@link I18nKit#get(String, Object...)} 国际化处理，再传给父类。
  * <p>
  * 支持两种 message 风格：
@@ -38,6 +39,9 @@ import java.util.Objects;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public class BizRuntimeException extends RuntimeException {
+
+    @Serial
+    private static final long serialVersionUID = 6537688993883872154L;
 
     /**
      * 业务错误码。
@@ -54,6 +58,17 @@ public class BizRuntimeException extends RuntimeException {
      */
     @Getter
     private Object[] args;
+
+    /**
+     * 为包内已有业务异常保留调用方传入的消息原文。
+     *
+     * @param message 原始消息
+     * @param code 预定义业务码
+     */
+    BizRuntimeException(String message, ApiCode code) {
+        super(message);
+        this.code = code.getCode();
+    }
 
     /**
      * 创建可国际化的业务运行时异常。

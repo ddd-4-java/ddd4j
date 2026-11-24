@@ -31,6 +31,11 @@ import java.time.Instant;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -50,6 +55,73 @@ class SpringJpaViewManagerTest {
 
     @Mock
     private ProjectionMetrics projectionMetrics;
+
+    @Test
+    void contextCloseCancelsManualSchedulesAndKeepsSubclassTrigger() {
+        java.util.concurrent.atomic.AtomicBoolean cancelled = new java.util.concurrent.atomic.AtomicBoolean();
+        java.util.concurrent.atomic.AtomicInteger triggered = new java.util.concurrent.atomic.AtomicInteger();
+        ViewScheduler ownedScheduler = (name, cron, task) -> new ViewScheduler.ViewScheduleHandle() {
+            public void cancel() { cancelled.set(true); }
+            public boolean isActive() { return !cancelled.get(); }
+        };
+        SpringJpaViewManager manager = new SpringJpaViewManager(ownedScheduler) {
+            @Override
+            public void triggerOnce() { triggered.incrementAndGet(); }
+        };
+        try (org.springframework.context.annotation.AnnotationConfigApplicationContext context =
+                     new org.springframework.context.annotation.AnnotationConfigApplicationContext()) {
+            context.registerBean("manual", SpringJpaViewManager.class, () -> manager);
+            context.refresh();
+            assertThat(manager.isRunning()).isTrue();
+            manager.schedule("manual", "0 0 0 * * *", manager::triggerOnce);
+            manager.triggerOnce();
+            assertThat(triggered.get()).isEqualTo(1);
+        }
+        assertThat(manager.isRunning()).isFalse();
+        assertThat(cancelled.get()).isTrue();
+    }
+
+
+    @Test
+    void stopCancelsHandleRegisteredBeforeStart() {
+        ViewScheduler.ViewScheduleHandle handle = mock(ViewScheduler.ViewScheduleHandle.class);
+        Runnable task = () -> { };
+        when(scheduler.schedule("early", "0 0 0 * * *", task)).thenReturn(handle);
+        SpringJpaViewManager manager = new SpringJpaViewManager(scheduler);
+        manager.schedule("early", "0 0 0 * * *", task);
+
+        manager.stop();
+        manager.stop();
+
+        verify(handle).cancel();
+        assertThat(manager.isRunning()).isFalse();
+    }
+
+    @Test
+    void stopCleansOtherHandlesAndCanRetryFailedCancellation() {
+        ViewScheduler.ViewScheduleHandle bad = mock(ViewScheduler.ViewScheduleHandle.class);
+        ViewScheduler.ViewScheduleHandle good = mock(ViewScheduler.ViewScheduleHandle.class);
+        Runnable task = () -> { };
+        LinkageError failure = new LinkageError("schedule transport unavailable");
+        doThrow(failure).doNothing().when(bad).cancel();
+
+        SpringJpaViewManager manager = new SpringJpaViewManager(scheduler);
+        manager.start();
+        when(scheduler.schedule("a", "0 0 0 * * *", task)).thenReturn(bad);
+        when(scheduler.schedule("b", "0 0 0 * * *", task)).thenReturn(good);
+        manager.schedule("a", "0 0 0 * * *", task);
+        manager.schedule("b", "0 0 0 * * *", task);
+
+        assertThatThrownBy(manager::stop).isSameAs(failure);
+        assertThat(manager.isRunning()).isFalse();
+        verify(good).cancel();
+
+        manager.stop();
+        manager.stop();
+
+        verify(bad, times(2)).cancel();
+        verify(good).cancel();
+    }
 
     /** 针对 {@code getProjectionStatus} 投影状态查询行为的嵌套测试组。 */
     @Nested

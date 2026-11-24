@@ -27,11 +27,15 @@ import io.ddd4j.sample.quarkus.order.infrastructure.QuarkusOrderAdapters;
 import io.ddd4j.sample.quarkus.spi.SampleSubjectProvider;
 import io.ddd4j.web.core.context.WebHeaders;
 import io.quarkus.test.junit.QuarkusTest;
+import io.quarkus.test.junit.QuarkusTestProfile;
+import io.quarkus.test.junit.TestProfile;
 import io.restassured.http.ContentType;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.Map;
 
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,7 +46,16 @@ import static org.hamcrest.Matchers.notNullValue;
  * Shared Order kernel and HTTP contract verification for Quarkus.
  */
 @QuarkusTest
+@TestProfile(OrderResourceTest.BearerProfile.class)
 class OrderResourceTest {
+    /** 显式启用既有可选认证策略，保留原有 401 和授权路由契约。 */
+    public static class BearerProfile implements QuarkusTestProfile {
+        @Override
+        public Map<String, String> getConfigOverrides() {
+            return Collections.singletonMap("ddd4j.quarkus.web.bearer-required", "true");
+        }
+    }
+
 
     @Inject
     OrderApplicationService applicationService;

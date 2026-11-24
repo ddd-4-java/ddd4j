@@ -62,7 +62,11 @@ public class RbacConfig {
     /**
      * 应用启动时初始化演示数据。
      */
+    private SubjectDataProvider previousData;
+    private SubjectDataProvider ownedData;
+
     void onStart(@Observes StartupEvent event) {
+        previousData = SubjectKit.dataProvider;
         reset();
     }
 
@@ -99,7 +103,12 @@ public class RbacConfig {
         userRepository.save(new User("u-disabled", "disabled", "已禁用用户", "123456",
                 new HashSet<>(java.util.Arrays.asList("user")), true));
 
-        SubjectKit.setDataProvider(subjectDataProvider());
+        ownedData = subjectDataProvider();
+        SubjectKit.setDataProvider(ownedData);
+    }
+
+    void onStop(@Observes io.quarkus.runtime.ShutdownEvent event) {
+        if (SubjectKit.dataProvider == ownedData) { SubjectKit.setDataProvider(previousData); }
     }
 
     /**

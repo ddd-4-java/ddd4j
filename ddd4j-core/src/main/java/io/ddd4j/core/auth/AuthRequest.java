@@ -17,6 +17,7 @@ package io.ddd4j.core.auth;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import io.ddd4j.core.auth.session.AuthSessionConfig;
 import io.ddd4j.core.subject.Subject;
@@ -103,6 +104,7 @@ public class AuthRequest {
      *
      * @return 登录标识的字符串形式，未设置时为 null
      */
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public String getLoginIdAsString() {
         return Objects.isNull(loginId) ? null : String.valueOf(loginId);
     }

@@ -226,8 +226,8 @@ com.mchange:mchange-commons-java,0.6.0,bytecode-pass,0.6.0,bytecode-pass,,absent
 com.mercadopago:sdk-java,2.9.2,bytecode-pass,2.9.2,bytecode-pass,2.9.2,bytecode-pass,
 com.microsoft.sqlserver:mssql-jdbc,6.2.1.jre7,bytecode-pass,12.10.2.jre11,bytecode-pass,12.10.2.jre11,bytecode-pass,
 com.mysql:mysql-connector-j,9.7.0,bytecode-pass,9.7.0,bytecode-pass,9.7.0,bytecode-pass,
-com.netflix.hystrix:hystrix-core,1.5.18,bytecode-pass,1.5.18,bytecode-pass,1.5.18,bytecode-pass,
-com.netflix.hystrix:hystrix-metrics-event-stream,1.5.18,bytecode-pass,1.5.18,bytecode-pass,1.5.18,bytecode-pass,
+com.netflix.hystrix:hystrix-core,1.5.18,bytecode-pass,,removed-unused,1.5.18,bytecode-pass,2026-11-18: JDK17 unused legacy management removed; no runtime/test verification
+com.netflix.hystrix:hystrix-metrics-event-stream,1.5.18,bytecode-pass,,removed-unused,1.5.18,bytecode-pass,2026-11-18: JDK17 unused legacy management removed; no runtime/test verification
 com.nimbusds:nimbus-jose-jwt,10.9.1,bytecode-pass,10.9.1,bytecode-pass,10.9.1,bytecode-pass,
 com.octo.captcha:jcaptcha,2.0-alpha-1,bytecode-pass,2.0-alpha-1,bytecode-pass,2.0-alpha-1,bytecode-pass,
 com.octo.captcha:jcaptcha-api,2.0-alpha-1,bytecode-pass,2.0-alpha-1,bytecode-pass,2.0-alpha-1,bytecode-pass,
@@ -330,7 +330,7 @@ commons-dbutils:commons-dbutils,1.8.1,bytecode-pass,1.8.1,bytecode-pass,1.8.1,by
 commons-digester:commons-digester,2.1,bytecode-pass,2.1,bytecode-pass,2.1,bytecode-pass,
 commons-discovery:commons-discovery,0.5,bytecode-pass,0.5,bytecode-pass,0.5,bytecode-pass,
 commons-fileupload:commons-fileupload,1.6.0,bytecode-pass,1.6.0,bytecode-pass,1.6.0,bytecode-pass,
-commons-httpclient:commons-httpclient,3.1,bytecode-pass,3.1,bytecode-pass,3.1,bytecode-pass,
+commons-httpclient:commons-httpclient,3.1,bytecode-pass,,removed-unused,3.1,bytecode-pass,2026-11-18: JDK17 unused legacy management removed; no runtime/test verification
 commons-io:commons-io,2.22.0,bytecode-pass,2.22.0,bytecode-pass,2.22.0,bytecode-pass,
 commons-jxpath:commons-jxpath,1.4.0,bytecode-pass,1.4.0,bytecode-pass,1.4.0,bytecode-pass,
 commons-lang:commons-lang,2.6,bytecode-pass,2.6,bytecode-pass,2.6,bytecode-pass,
@@ -469,7 +469,7 @@ io.github.openfeign.form:feign-form-spring,3.8.0,bytecode-pass,,replacement,,rep
 io.github.openfeign:feign-core,11.10,bytecode-pass,13.13,bytecode-pass,13.13,bytecode-pass,
 io.github.openfeign:feign-form,,replacement,13.13,bytecode-pass,13.13,bytecode-pass,
 io.github.openfeign:feign-form-spring,,replacement,13.13,bytecode-pass,13.13,bytecode-pass,
-io.github.openfeign:feign-hystrix,11.10,bytecode-pass,13.13,bytecode-pass,13.13,bytecode-pass,
+io.github.openfeign:feign-hystrix,11.10,bytecode-pass,,removed-unused,13.13,bytecode-pass,2026-11-18: JDK17 unused legacy management removed; no runtime/test verification
 io.github.openfeign:feign-okhttp,11.10,bytecode-pass,13.13,bytecode-pass,13.13,bytecode-pass,
 io.github.openfeign:feign-slf4j,11.10,bytecode-pass,13.13,bytecode-pass,13.13,bytecode-pass,
 io.github.openhtmltopdf:openhtmltopdf-core,1.1.75,bytecode-pass,1.1.75,bytecode-pass,1.1.75,bytecode-pass,
@@ -493,11 +493,11 @@ io.github.resilience4j:resilience4j-framework-common,1.7.1,bytecode-pass,2.4.0,b
 io.github.resilience4j:resilience4j-kotlin,1.7.1,bytecode-pass,2.4.0,bytecode-pass,2.4.0,bytecode-pass,
 io.github.resilience4j:resilience4j-metrics,1.7.1,bytecode-pass,2.4.0,bytecode-pass,2.4.0,bytecode-pass,
 io.github.resilience4j:resilience4j-micrometer,1.7.1,bytecode-pass,2.4.0,bytecode-pass,2.4.0,bytecode-pass,
-io.github.resilience4j:resilience4j-prometheus,1.7.1,bytecode-pass,1.7.1,bytecode-pass,1.7.1,bytecode-pass,
+io.github.resilience4j:resilience4j-prometheus,1.7.1,bytecode-pass,,removed-unused,1.7.1,bytecode-pass,2026-11-18: JDK17 unused legacy management removed; no runtime/test verification
 io.github.resilience4j:resilience4j-ratelimiter,1.7.1,bytecode-pass,2.4.0,bytecode-pass,2.4.0,bytecode-pass,
-io.github.resilience4j:resilience4j-ratpack,1.7.1,bytecode-pass,1.7.1,bytecode-pass,1.7.1,bytecode-pass,
+io.github.resilience4j:resilience4j-ratpack,1.7.1,bytecode-pass,,removed-unused,1.7.1,bytecode-pass,2026-11-18: JDK17 unused legacy management removed; no runtime/test verification
 io.github.resilience4j:resilience4j-reactor,1.7.1,bytecode-pass,2.4.0,bytecode-pass,2.4.0,bytecode-pass,
-io.github.resilience4j:resilience4j-retrofit,1.7.1,bytecode-pass,1.7.1,bytecode-pass,1.7.1,bytecode-pass,
+io.github.resilience4j:resilience4j-retrofit,1.7.1,bytecode-pass,,removed-unused,1.7.1,bytecode-pass,2026-11-18: JDK17 unused legacy management removed; no runtime/test verification
 io.github.resilience4j:resilience4j-retry,1.7.1,bytecode-pass,2.4.0,bytecode-pass,2.4.0,bytecode-pass,
 io.github.resilience4j:resilience4j-rxjava2,1.7.1,bytecode-pass,2.4.0,bytecode-pass,2.4.0,bytecode-pass,
 io.github.resilience4j:resilience4j-rxjava3,1.7.1,bytecode-pass,2.4.0,bytecode-pass,2.4.0,bytecode-pass,
@@ -651,11 +651,11 @@ javax.jms:javax.jms-api,2.0.1,bytecode-pass,,replacement,,replacement,
 javax.jws:javax.jws-api,1.1,bytecode-pass,,replacement,,replacement,
 javax.money:money-api,1.1,bytecode-pass,1.1,bytecode-pass,1.1,bytecode-pass,
 javax.persistence:javax.persistence-api,2.2,bytecode-pass,2.2,bytecode-pass,2.2,bytecode-pass,
-javax.servlet:javax.servlet-api,4.0.1,bytecode-pass,3.0.1,bytecode-pass,3.0.1,bytecode-pass,
-javax.validation:validation-api,2.0.1.Final,bytecode-pass,2.0.1.Final,bytecode-pass,,replacement,
+javax.servlet:javax.servlet-api,4.0.1,bytecode-pass,,removed-unused,3.0.1,bytecode-pass,2026-11-18: JDK17 unused legacy management removed; no runtime/test verification
+javax.validation:validation-api,2.0.1.Final,bytecode-pass,,removed-unused,,replacement,2026-11-18: JDK17 unused legacy management removed; no runtime/test verification
 javax.websocket:javax.websocket-api,1.1,bytecode-pass,,replacement,,replacement,
 javax.ws.rs:javax.ws.rs-api,2.1.1,bytecode-pass,,replacement,,replacement,
-javax.xml.stream:stax-api,1.0-2,bytecode-pass,1.0-2,bytecode-pass,1.0-2,bytecode-pass,
+javax.xml.stream:stax-api,1.0-2,bytecode-pass,,removed-unused,1.0-2,bytecode-pass,2026-11-18: JDK17 unused legacy management removed; no runtime/test verification
 javazoom:jlayer,1.0.1,bytecode-pass,1.0.1,bytecode-pass,1.0.1,bytecode-pass,
 jaxen:jaxen,2.0.0,bytecode-pass,2.0.0,bytecode-pass,2.0.0,bytecode-pass,
 joda-time:joda-time,2.14.2,bytecode-pass,2.14.2,bytecode-pass,2.14.2,bytecode-pass,
@@ -741,16 +741,16 @@ org.apache.curator:curator-x-discovery-server,5.9.0,bytecode-pass,5.9.0,bytecode
 org.apache.cxf:cxf-core,3.5.11,bytecode-pass,4.2.2,bytecode-pass,4.2.2,bytecode-pass,
 org.apache.cxf:cxf-rt-bindings-coloc,3.5.11,bytecode-pass,4.2.2,bytecode-pass,4.2.2,bytecode-pass,
 org.apache.cxf:cxf-rt-bindings-corba,3.5.11,bytecode-pass,4.2.2,bytecode-pass,4.2.2,bytecode-pass,
-org.apache.cxf:cxf-rt-bindings-http,2.5.11,bytecode-pass,2.5.11,bytecode-pass,2.5.11,bytecode-pass,
-org.apache.cxf:cxf-rt-bindings-jbi,2.4.10,bytecode-pass,2.4.10,bytecode-pass,2.4.10,bytecode-pass,
-org.apache.cxf:cxf-rt-bindings-object,3.1.18,bytecode-pass,3.1.18,bytecode-pass,3.1.18,bytecode-pass,
+org.apache.cxf:cxf-rt-bindings-http,2.5.11,bytecode-pass,,removed-unused,2.5.11,bytecode-pass,2026-11-18: JDK17 unused legacy management removed; no runtime/test verification
+org.apache.cxf:cxf-rt-bindings-jbi,2.4.10,bytecode-pass,,removed-unused,2.4.10,bytecode-pass,2026-11-18: JDK17 unused legacy management removed; no runtime/test verification
+org.apache.cxf:cxf-rt-bindings-object,3.1.18,bytecode-pass,,removed-unused,3.1.18,bytecode-pass,2026-11-18: JDK17 unused legacy management removed; no runtime/test verification
 org.apache.cxf:cxf-rt-bindings-soap,3.5.11,bytecode-pass,4.2.2,bytecode-pass,4.2.2,bytecode-pass,
 org.apache.cxf:cxf-rt-bindings-xml,3.5.11,bytecode-pass,4.2.2,bytecode-pass,4.2.2,bytecode-pass,
 org.apache.cxf:cxf-rt-databinding-aegis,3.5.11,bytecode-pass,4.2.2,bytecode-pass,4.2.2,bytecode-pass,
 org.apache.cxf:cxf-rt-databinding-jaxb,3.5.11,bytecode-pass,4.2.2,bytecode-pass,4.2.2,bytecode-pass,
-org.apache.cxf:cxf-rt-databinding-jibx,3.1.18,bytecode-pass,3.1.18,bytecode-pass,3.1.18,bytecode-pass,
-org.apache.cxf:cxf-rt-databinding-sdo,3.1.18,bytecode-pass,3.1.18,bytecode-pass,3.1.18,bytecode-pass,
-org.apache.cxf:cxf-rt-databinding-xmlbeans,3.1.18,bytecode-pass,3.1.18,bytecode-pass,3.1.18,bytecode-pass,
+org.apache.cxf:cxf-rt-databinding-jibx,3.1.18,bytecode-pass,,removed-unused,3.1.18,bytecode-pass,2026-11-18: JDK17 unused legacy management removed; no runtime/test verification
+org.apache.cxf:cxf-rt-databinding-sdo,3.1.18,bytecode-pass,,removed-unused,3.1.18,bytecode-pass,2026-11-18: JDK17 unused legacy management removed; no runtime/test verification
+org.apache.cxf:cxf-rt-databinding-xmlbeans,3.1.18,bytecode-pass,,removed-unused,3.1.18,bytecode-pass,2026-11-18: JDK17 unused legacy management removed; no runtime/test verification
 org.apache.cxf:cxf-rt-features-clustering,3.5.11,bytecode-pass,4.2.2,bytecode-pass,4.2.2,bytecode-pass,
 org.apache.cxf:cxf-rt-frontend-jaxrs,3.5.11,bytecode-pass,4.2.2,bytecode-pass,4.2.2,bytecode-pass,
 org.apache.cxf:cxf-rt-frontend-jaxws,3.5.11,bytecode-pass,4.2.2,bytecode-pass,4.2.2,bytecode-pass,
@@ -762,7 +762,7 @@ org.apache.cxf:cxf-rt-rs-extension-reactor,3.5.11,bytecode-pass,4.2.2,bytecode-p
 org.apache.cxf:cxf-rt-rs-security-cors,3.5.11,bytecode-pass,4.2.2,bytecode-pass,4.2.2,bytecode-pass,
 org.apache.cxf:cxf-rt-rs-security-jose,3.5.11,bytecode-pass,4.2.2,bytecode-pass,4.2.2,bytecode-pass,
 org.apache.cxf:cxf-rt-rs-security-jose-jaxrs,3.5.11,bytecode-pass,4.2.2,bytecode-pass,4.2.2,bytecode-pass,
-org.apache.cxf:cxf-rt-rs-security-oauth,3.4.10,bytecode-pass,3.4.10,bytecode-pass,3.4.10,bytecode-pass,
+org.apache.cxf:cxf-rt-rs-security-oauth,3.4.10,bytecode-pass,,removed-unused,3.4.10,bytecode-pass,2026-11-18: JDK17 unused legacy management removed; no runtime/test verification
 org.apache.cxf:cxf-rt-rs-security-oauth2,3.5.11,bytecode-pass,4.2.2,bytecode-pass,4.2.2,bytecode-pass,
 org.apache.cxf:cxf-rt-rs-security-sso-oidc,3.5.11,bytecode-pass,4.2.2,bytecode-pass,4.2.2,bytecode-pass,
 org.apache.cxf:cxf-rt-rs-security-sso-saml,3.5.11,bytecode-pass,4.2.2,bytecode-pass,4.2.2,bytecode-pass,
@@ -781,13 +781,13 @@ org.apache.cxf:cxf-rt-ws-mex,3.5.11,bytecode-pass,4.2.2,bytecode-pass,4.2.2,byte
 org.apache.cxf:cxf-rt-ws-policy,3.5.11,bytecode-pass,4.2.2,bytecode-pass,4.2.2,bytecode-pass,
 org.apache.cxf:cxf-rt-ws-rm,3.5.11,bytecode-pass,4.2.2,bytecode-pass,4.2.2,bytecode-pass,
 org.apache.cxf:cxf-rt-ws-security,3.5.11,bytecode-pass,4.2.2,bytecode-pass,4.2.2,bytecode-pass,
-org.apache.derby:derby,10.14.2.0,bytecode-pass,,unsupported-absent,10.17.1.0,bytecode-pass,
-org.apache.derby:derbyLocale_zh_CN,10.14.2.0,bytecode-pass,,unsupported-absent,10.17.1.0,bytecode-pass,
-org.apache.derby:derbyclient,10.14.2.0,bytecode-pass,,unsupported-absent,10.17.1.0,bytecode-pass,
-org.apache.derby:derbynet,10.14.2.0,bytecode-pass,,unsupported-absent,10.17.1.0,bytecode-pass,
-org.apache.derby:derbyoptionaltools,10.14.2.0,bytecode-pass,,unsupported-absent,10.17.1.0,bytecode-pass,
-org.apache.derby:derbyshared,,absent,,unsupported-absent,10.17.1.0,bytecode-pass,
-org.apache.derby:derbytools,10.14.2.0,bytecode-pass,,unsupported-absent,10.17.1.0,bytecode-pass,
+org.apache.derby:derby,10.14.2.0,bytecode-pass,,removed-unused,10.17.1.0,bytecode-pass,2026-11-18: JDK17 unused legacy management removed; no runtime/test verification
+org.apache.derby:derbyLocale_zh_CN,10.14.2.0,bytecode-pass,,removed-unused,10.17.1.0,bytecode-pass,2026-11-18: JDK17 unused legacy management removed; no runtime/test verification
+org.apache.derby:derbyclient,10.14.2.0,bytecode-pass,,removed-unused,10.17.1.0,bytecode-pass,2026-11-18: JDK17 unused legacy management removed; no runtime/test verification
+org.apache.derby:derbynet,10.14.2.0,bytecode-pass,,removed-unused,10.17.1.0,bytecode-pass,2026-11-18: JDK17 unused legacy management removed; no runtime/test verification
+org.apache.derby:derbyoptionaltools,10.14.2.0,bytecode-pass,,removed-unused,10.17.1.0,bytecode-pass,2026-11-18: JDK17 unused legacy management removed; no runtime/test verification
+org.apache.derby:derbyshared,,absent,,removed-unused,10.17.1.0,bytecode-pass,2026-11-18: JDK17 unused legacy management removed; no runtime/test verification
+org.apache.derby:derbytools,10.14.2.0,bytecode-pass,,removed-unused,10.17.1.0,bytecode-pass,2026-11-18: JDK17 unused legacy management removed; no runtime/test verification
 org.apache.flink:flink-cdc-common,,absent,3.6.0-2.2,bytecode-pass,3.6.0-2.2,bytecode-pass,
 org.apache.flink:flink-clients,,absent,2.2.1,bytecode-pass,2.2.1,bytecode-pass,
 org.apache.flink:flink-core,,absent,2.2.1,bytecode-pass,2.2.1,bytecode-pass,
@@ -809,18 +809,18 @@ org.apache.httpcomponents.client5:httpclient5-fluent,5.4.4,bytecode-pass,5.4.4,b
 org.apache.httpcomponents.core5:httpcore5,5.4.3,bytecode-pass,5.4.3,bytecode-pass,5.4.4,bytecode-pass,
 org.apache.httpcomponents.core5:httpcore5-h2,5.4.3,bytecode-pass,5.4.3,bytecode-pass,5.4.4,bytecode-pass,
 org.apache.httpcomponents.core5:httpcore5-reactive,5.4.3,bytecode-pass,5.4.3,bytecode-pass,5.4.4,bytecode-pass,
-org.apache.httpcomponents:httpasyncclient,4.1.5,bytecode-pass,4.1.5,bytecode-pass,4.1.5,bytecode-pass,
-org.apache.httpcomponents:httpasyncclient-cache,4.1.5,bytecode-pass,4.1.5,bytecode-pass,4.1.5,bytecode-pass,
-org.apache.httpcomponents:httpasyncclient-osgi,4.1.5,bytecode-pass,4.1.5,bytecode-pass,4.1.5,bytecode-pass,
+org.apache.httpcomponents:httpasyncclient,4.1.5,bytecode-pass,,removed-unused,4.1.5,bytecode-pass,2026-11-18: JDK17 unused legacy management removed; no runtime/test verification
+org.apache.httpcomponents:httpasyncclient-cache,4.1.5,bytecode-pass,,removed-unused,4.1.5,bytecode-pass,2026-11-18: JDK17 unused legacy management removed; no runtime/test verification
+org.apache.httpcomponents:httpasyncclient-osgi,4.1.5,bytecode-pass,,removed-unused,4.1.5,bytecode-pass,2026-11-18: JDK17 unused legacy management removed; no runtime/test verification
 org.apache.httpcomponents:httpclient,4.5.14,bytecode-pass,4.5.14,bytecode-pass,4.5.14,bytecode-pass,
 org.apache.httpcomponents:httpclient-cache,4.5.14,bytecode-pass,4.5.14,bytecode-pass,4.5.14,bytecode-pass,
-org.apache.httpcomponents:httpcomponents-asyncclient,4.1.5,pom,4.1.5,pom,4.1.5,pom,
+org.apache.httpcomponents:httpcomponents-asyncclient,4.1.5,pom,,removed-unused,4.1.5,pom,2026-11-18: JDK17 unused legacy management removed; no runtime/test verification
 org.apache.httpcomponents:httpcomponents-client,4.5.14,pom,4.5.14,pom,4.5.14,pom,
 org.apache.httpcomponents:httpcomponents-core,4.4.16,pom,4.4.16,pom,4.4.16,pom,
 org.apache.httpcomponents:httpcore,4.4.16,bytecode-pass,4.4.16,bytecode-pass,4.4.16,bytecode-pass,
 org.apache.httpcomponents:httpcore-ab,4.4.16,bytecode-pass,4.4.16,bytecode-pass,4.4.16,bytecode-pass,
-org.apache.httpcomponents:httpcore-nio,4.4.16,bytecode-pass,4.4.16,bytecode-pass,4.4.16,bytecode-pass,
-org.apache.httpcomponents:httpcore-osgi,4.4.16,bytecode-pass,4.4.16,bytecode-pass,4.4.16,bytecode-pass,
+org.apache.httpcomponents:httpcore-nio,4.4.16,bytecode-pass,,removed-unused,4.4.16,bytecode-pass,2026-11-18: JDK17 unused legacy management removed; no runtime/test verification
+org.apache.httpcomponents:httpcore-osgi,4.4.16,bytecode-pass,,removed-unused,4.4.16,bytecode-pass,2026-11-18: JDK17 unused legacy management removed; no runtime/test verification
 org.apache.httpcomponents:httpmime,4.5.14,bytecode-pass,4.5.14,bytecode-pass,4.5.14,bytecode-pass,
 org.apache.hudi:hudi-common,,absent,1.2.0,bytecode-pass,1.2.0,bytecode-pass,
 org.apache.hudi:hudi-spark4.0-bundle_2.13,,absent,1.2.0,bytecode-pass,1.2.0,bytecode-pass,
@@ -944,8 +944,8 @@ org.apache.sshd:sshd-pam,0.11.1-atlassian-1,bytecode-pass,0.11.1-atlassian-1,byt
 org.apache.sshd:sshd-putty,3.0.0-M2,bytecode-pass,3.0.0-M2,bytecode-pass,3.0.0-M2,bytecode-pass,
 org.apache.sshd:sshd-scp,3.0.0-M2,bytecode-pass,3.0.0-M2,bytecode-pass,3.0.0-M2,bytecode-pass,
 org.apache.sshd:sshd-sftp,3.0.0-M2,bytecode-pass,2.14.0,bytecode-pass,2.14.0,bytecode-pass,
-org.apache.tika:tika-core,2.9.4,bytecode-pass,3.3.2,bytecode-pass,3.3.2,bytecode-pass,
-org.apache.tika:tika-parsers-standard-package,2.9.4,bytecode-pass,3.3.2,bytecode-pass,3.3.2,bytecode-pass,
+org.apache.tika:tika-core,2.9.4,bytecode-pass,4.0.0,bytecode-pass,3.3.2,bytecode-pass,
+org.apache.tika:tika-parsers-standard-package,2.9.4,bytecode-pass,4.0.0,pom,3.3.2,bytecode-pass,
 org.apache.tomcat.embed:tomcat-embed-core,,absent,11.0.15,bytecode-pass,11.0.15,bytecode-pass,
 org.apache.tomcat.embed:tomcat-embed-el,,absent,11.0.15,bytecode-pass,11.0.15,bytecode-pass,
 org.apache.tomcat.embed:tomcat-embed-websocket,,absent,11.0.15,bytecode-pass,11.0.15,bytecode-pass,
@@ -1001,7 +1001,7 @@ org.bouncycastle:bcpg-jdk15to18,1.84,bytecode-pass,1.84,bytecode-pass,1.84,bytec
 org.bouncycastle:bcpg-jdk18on,1.84,bytecode-pass,1.84,bytecode-pass,1.84,bytecode-pass,
 org.bouncycastle:bcpkix-jdk15to18,1.84,bytecode-pass,1.84,bytecode-pass,1.84,bytecode-pass,
 org.bouncycastle:bcpkix-jdk18on,1.84,bytecode-pass,1.84,bytecode-pass,1.84,bytecode-pass,
-org.bouncycastle:bcprov-jdk15on,1.70,bytecode-pass,1.70,bytecode-pass,1.70,bytecode-pass,
+org.bouncycastle:bcprov-jdk15on,1.70,bytecode-pass,,removed-unused,1.70,bytecode-pass,2026-11-18: JDK17 unused legacy management removed; no runtime/test verification
 org.bouncycastle:bcprov-jdk15to18,1.84,bytecode-pass,1.84,bytecode-pass,1.84,bytecode-pass,
 org.bouncycastle:bcprov-jdk18on,1.84,bytecode-pass,1.84,bytecode-pass,1.84,bytecode-pass,
 org.bouncycastle:bctls-jdk15to18,1.84,bytecode-pass,1.84,bytecode-pass,1.84,bytecode-pass,
@@ -1349,5 +1349,5 @@ ws.schild:jave-nativebin-win64,3.5.0,bytecode-pass,3.5.0,bytecode-pass,3.5.0,byt
 wsdl4j:wsdl4j,1.6.3,bytecode-pass,1.6.3,bytecode-pass,1.6.3,bytecode-pass,
 xalan:serializer,2.7.3,bytecode-pass,2.7.3,bytecode-pass,2.7.3,bytecode-pass,
 xalan:xalan,2.7.3,bytecode-pass,2.7.3,bytecode-pass,2.7.3,bytecode-pass,
-xml-apis:xml-apis,2.0.2,bytecode-pass,2.0.2,bytecode-pass,2.0.2,bytecode-pass,
+xml-apis:xml-apis,2.0.2,bytecode-pass,,removed-unused,2.0.2,bytecode-pass,2026-11-18: JDK17 unused legacy management removed; no runtime/test verification
 xyz.raylab:jooq-plus,,unsupported,,excluded,,excluded,JDK 8: 发布 JAR 的基础字节码超过 JDK 8；不能由提高构建 JVM 绕过本版本线约束

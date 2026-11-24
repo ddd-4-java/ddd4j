@@ -21,7 +21,16 @@ import io.ddd4j.core.context.SpiRegistrationScope;
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
-import io.ddd4j.core.cqrs.command.DefaultCommandBus;
+import io.ddd4j.vertx.command.VertxCommandBus;
+import io.ddd4j.vertx.cqrs.VertxProjectionViewManager;
+import io.ddd4j.core.cqrs.readmodel.DefaultProjectionService;
+import io.ddd4j.core.cqrs.readmodel.EventChunkReader;
+import io.ddd4j.core.cqrs.readmodel.InMemoryProjectionPositionRepository;
+import io.ddd4j.core.cqrs.readmodel.NoopEventChunkReader;
+import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
+import io.ddd4j.core.cqrs.readmodel.ProjectionRunner;
+import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
+import io.ddd4j.core.cqrs.readmodel.ProjectionView;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.health.ReadinessContributor;
 import io.ddd4j.core.health.RuntimeReadinessRegistry;
@@ -35,6 +44,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 
 /**
@@ -42,6 +52,7 @@ import java.util.concurrent.Callable;
  */
 public final class Ddd4jVertxRuntime implements AutoCloseable {
 
+    private VertxProjectionViewManager projectionManager;
     private final Vertx vertx;
     private final SpiRegistrationScope registrations;
     private final SubjectKitRegistrationScope subjectRegistration;
@@ -92,10 +103,94 @@ public final class Ddd4jVertxRuntime implements AutoCloseable {
      * @return 显式运行时
      */
     public static Ddd4jVertxRuntime create(Vertx vertx, Collection<CommandExecutor<?>> executors) {
+        CommandBus commandBus = VertxCommandBus.create(vertx, executors);
         VertxDomainEventPublisher publisher = new VertxDomainEventPublisher(vertx);
         SubjectProvider subjectProvider = new InMemorySubjectProvider(new InMemorySubject(publisher::publish));
         return new Ddd4jVertxRuntime(vertx, publisher, subjectProvider, I18nProvider.DEFAULT,
-                new DefaultCommandBus(executors));
+                commandBus);
+    }
+
+    /** 显式创建持久投影运行时；缺少实际 reader/store 时在发布 SPI 或注册 timer 前拒绝。
+     * 存储和 Vertx 均由调用方拥有；不推导 ORM、事务或业务 schema。
+     * @param <E> 事件类型
+     * @param vertx 调用方原生实例
+     * @param executors 命令执行器
+     * @param repository 持久位置仓储（禁止内存兜底）
+     * @param reader 实际事件读取器（禁止空实现兜底）
+     * @param views 视图快照
+     * @return 未启动运行时
+     */
+    public static <E> Ddd4jVertxRuntime createWithProjection(Vertx vertx,
+            Collection<CommandExecutor<?>> executors, ProjectionPositionRepository repository,
+            EventChunkReader<E> reader, Collection<? extends ProjectionView<E>> views) {
+        ProjectionRunner<E> runner = projectionRunner(repository, reader);
+        @SuppressWarnings("unchecked")
+        Collection<ProjectionView<?>> actualViews = (Collection<ProjectionView<?>>) (Collection<?>) views;
+        VertxProjectionViewManager manager = VertxProjectionViewManager.create(vertx, actualViews, runner);
+        return attachProjection(vertx, executors, manager);
+    }
+
+    /**
+     * 使用调用方借用的调度器创建显式持久投影；可在完整 Runner 任务边界实施应用排空。
+     * 关闭只取消本运行时的 handles，不关闭借用调度器，也不等待已进入的任务。
+     * @param <E> 事件类型
+     * @param vertx 调用方原生实例
+     * @param executors 命令执行器
+     * @param repository 持久位置仓储
+     * @param reader 实际事件读取器
+     * @param views 视图快照
+     * @param scheduler 调用方拥有并负责关闭的调度器
+     * @return 未启动运行时
+     */
+    public static <E> Ddd4jVertxRuntime createWithProjection(Vertx vertx,
+            Collection<CommandExecutor<?>> executors, ProjectionPositionRepository repository,
+            EventChunkReader<E> reader, Collection<? extends ProjectionView<E>> views, ViewScheduler scheduler) {
+        ProjectionRunner<E> runner = projectionRunner(repository, reader);
+        Objects.requireNonNull(scheduler, "Explicit projection requires a scheduler");
+        @SuppressWarnings("unchecked")
+        Collection<ProjectionView<?>> actualViews = (Collection<ProjectionView<?>>) (Collection<?>) views;
+        VertxProjectionViewManager manager = new VertxProjectionViewManager(scheduler, runner, actualViews);
+        return attachProjection(vertx, executors, manager);
+    }
+
+    private static <E> ProjectionRunner<E> projectionRunner(ProjectionPositionRepository repository,
+            EventChunkReader<E> reader) {
+        Objects.requireNonNull(repository, "Explicit projection requires a position repository");
+        Objects.requireNonNull(reader, "Explicit projection requires an event reader");
+        if (repository instanceof InMemoryProjectionPositionRepository || reader instanceof NoopEventChunkReader<?>) {
+            throw new IllegalArgumentException("Explicit durable projection requires a real reader and persistent repository");
+        }
+        return new ProjectionRunner<>(new DefaultProjectionService(repository), reader);
+    }
+
+    private static Ddd4jVertxRuntime attachProjection(Vertx vertx,
+            Collection<CommandExecutor<?>> executors, VertxProjectionViewManager manager) {
+        try {
+            Ddd4jVertxRuntime runtime = create(vertx, executors);
+            runtime.projectionManager = manager;
+            return runtime;
+        } catch (RuntimeException failure) {
+            manager.close();
+            throw failure;
+        }
+    }
+
+    /** @return 显式启用时的唯一管理器；基础模式为空 */
+    public Optional<VertxProjectionViewManager> projectionManager() {
+        return Optional.ofNullable(projectionManager);
+    }
+
+    /** 在原生 worker 上执行一次投影，Future 保留失败；不阻塞事件循环。
+     * @return 本轮投影完成结果
+     */
+    public Future<Void> triggerProjections() {
+        if (Objects.isNull(projectionManager)) {
+            return Future.failedFuture(new IllegalStateException("Projection is not enabled"));
+        }
+        return executeBlocking(() -> {
+            projectionManager.triggerOnce();
+            return null;
+        });
     }
 
     /**
@@ -111,8 +206,22 @@ public final class Ddd4jVertxRuntime implements AutoCloseable {
      * 启动全局 SPI 与主体注册。
      */
     public void start() {
-        registrations.start();
-        subjectRegistration.start();
+        try {
+            if (Objects.nonNull(projectionManager)) {
+                projectionManager.start();
+            }
+            registrations.start();
+            subjectRegistration.start();
+        } catch (RuntimeException | Error failure) {
+            try {
+                close();
+            } catch (RuntimeException | Error cleanupFailure) {
+                if (failure != cleanupFailure) {
+                    failure.addSuppressed(cleanupFailure);
+                }
+            }
+            throw failure;
+        }
     }
 
     /**
@@ -134,7 +243,16 @@ public final class Ddd4jVertxRuntime implements AutoCloseable {
 
     @Override
     public void close() {
-        subjectRegistration.close();
-        registrations.close();
+        try {
+            if (Objects.nonNull(projectionManager)) {
+                projectionManager.close();
+            }
+        } finally {
+            try {
+                subjectRegistration.close();
+            } finally {
+                registrations.close();
+            }
+        }
     }
 }

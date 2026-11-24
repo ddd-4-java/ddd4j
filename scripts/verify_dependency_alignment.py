@@ -74,13 +74,13 @@ def profile_dependencies(path):
     return result
 
 
-def module_dependencies(root):
-    """列出模块默认声明的精确依赖变体；BOM 清单和非激活 profile 不计入。"""
+def module_dependencies(root, *, versions=None):
+    """列出默认声明的依赖变体，可按目标版本排除明确使用其他版本的模块。"""
     import xml.etree.ElementTree as ET
     result = {}
     for directory, children, files in os.walk(root):
         children[:] = [child for child in children if child not in
-                       ('.git', '.codegraph', 'target', 'node_modules')]
+                       ('.git', '.codegraph', '.superpowers', 'target', 'node_modules')]
         path = Path(directory) / 'pom.xml'
         if 'pom.xml' not in files or path == root / 'ddd4j-dependencies/pom.xml':
             continue
@@ -92,6 +92,15 @@ def module_dependencies(root):
             if not group or not artifact:
                 continue
             key = (group, artifact, row.get('type', 'jar'), row.get('classifier', ''))
+            if versions is not None:
+                expected = versions.get(key)
+                if expected is None:
+                    continue
+                declared = (row.get('version') or '').strip()
+                if (declared and declared not in ('LATEST', 'RELEASE')
+                        and '${' not in declared and not declared.startswith(('[', '('))
+                        and declared != expected):
+                    continue
             result.setdefault(key, []).append(str(path.relative_to(root)))
     return {key: sorted(paths) for key, paths in result.items()}
 
@@ -116,6 +125,82 @@ def resolved_property(value, properties):
     return value
 
 
+def cached_artifact(relative, repository, extra_cache):
+    """只查精确本地坐标；标准 Maven 缓存优先于 flat 候选缓存。"""
+    path = repository / relative
+    if path.is_file():
+        return path
+    if extra_cache:
+        path = extra_cache / str(relative).replace('/', '__')
+        if path.is_file():
+            return path
+    return None
+
+
+def published_pom(path, group, artifact, version, packaging):
+    """核对发布 POM 的 GAV，仅允许直接 parent 提供 group/version 字面值。"""
+    import xml.etree.ElementTree as ET
+    if path is None:
+        return None
+    try:
+        project = ET.parse(path).getroot()
+    except (OSError, ET.ParseError):
+        return None
+    namespace = project.tag.partition('}')[0] + '}' if '}' in project.tag else ''
+    if project.tag != namespace + 'project':
+        return None
+
+    def text(name):
+        value = project.findtext('/'.join(namespace + part for part in name.split('/')))
+        return value.strip() if value is not None else None
+
+    actual_group = text('groupId')
+    actual_version = text('version')
+    if actual_group is None:
+        actual_group = text('parent/groupId')
+    if actual_version is None:
+        actual_version = text('parent/version')
+    if ((actual_group, text('artifactId'), actual_version) != (group, artifact, version)
+            or (text('packaging') or 'jar') != packaging):
+        return None
+    return project, namespace
+
+
+def relocated_group_jar(key, version, managed, repository, extra_cache):
+    """只接受同 artifact/version 的单跳 group 迁移，且目标须由本线 effective BOM 管理。"""
+    group, artifact, _, classifier = key
+    if classifier or not re.fullmatch(r'[A-Za-z0-9_.-]+', version):
+        return None
+    relative = Path(group.replace('.', '/')) / artifact / version / f'{artifact}-{version}.pom'
+    source = published_pom(cached_artifact(relative, repository, extra_cache),
+                           group, artifact, version, 'pom')
+    if source is None:
+        return None
+    project, namespace = source
+    relocation = project.find(namespace + 'distributionManagement/' + namespace + 'relocation')
+    if relocation is None:
+        return None
+    destination = {child.tag.removeprefix(namespace): (child.text or '').strip()
+                   for child in relocation}
+    target_group = destination.get('groupId', '')
+    if (not re.fullmatch(r'[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]+)*', target_group)
+            or target_group == group
+            or destination.get('artifactId', artifact) != artifact
+            or destination.get('version', version) != version
+            or managed.get((target_group, artifact, 'jar', ''), {}).get('version') != version):
+        return None
+    target_relative = Path(target_group.replace('.', '/')) / artifact / version
+    target = published_pom(cached_artifact(target_relative / f'{artifact}-{version}.pom',
+                                           repository, extra_cache),
+                           target_group, artifact, version, 'jar')
+    if target is None:
+        return None
+    target_project, target_namespace = target
+    if target_project.find(target_namespace + 'distributionManagement/' + target_namespace + 'relocation') is not None:
+        return None
+    return cached_artifact(target_relative / f'{artifact}-{version}.jar', repository, extra_cache)
+
+
 def verify(roots, effective_paths, policy, repository, extra_cache, strict):
     direct = [dependencies(root / 'ddd4j-dependencies/pom.xml') for root in roots]
     profiles = [profile_dependencies(root / 'ddd4j-dependencies/pom.xml') for root in roots]
@@ -124,6 +209,7 @@ def verify(roots, effective_paths, policy, repository, extra_cache, strict):
     errors, unknown, rows = [], [], []
     for index, root in enumerate(roots):
         jdk = (8, 17, 21)[index]
+        component_line = ('1.0.x', '2.0.x', '3.0.x')[index]
         properties = {**pom_properties(root / 'pom.xml'),
                       **pom_properties(root / 'ddd4j-dependencies/pom.xml')}
         for key, dependency in direct[index].items():
@@ -135,6 +221,9 @@ def verify(roots, effective_paths, policy, repository, extra_cache, strict):
                 label = 'dependency'
             elif starter_lines:
                 expected = starter_lines[str(jdk)] + '.20260630-SNAPSHOT'
+                label = 'Easy4J'
+            elif key[0] == 'io.github.easy4j':
+                expected = component_line + '.20260630-SNAPSHOT'
                 label = 'Easy4J'
             else:
                 # Third-party versions follow their provider, never the DDD4J branch name.
@@ -226,14 +315,19 @@ def verify(roots, effective_paths, policy, repository, extra_cache, strict):
                 continue
             group, artifact, _, classifier = key
             relative = Path(group.replace('.', '/')) / artifact / version / f'{artifact}-{version}{"-" + classifier if classifier else ""}.jar'
-            jar = repository / relative
-            if not jar.exists() and extra_cache:
-                jar = extra_cache / str(relative).replace('/', '__')
-            if not jar.exists():
+            jar = cached_artifact(relative, repository, extra_cache)
+            relocated = jar is None
+            if relocated:
+                jar = relocated_group_jar(key, version, effective[i], repository, extra_cache)
+            if jar is None:
                 unknown.append(f'JDK {jdk}: {display_coordinate}:{version}')
                 rows.append([display_coordinate, jdk, version, 'unverified-artifact', '', ''])
                 continue
             counts = bytecode(jar)
+            if relocated and not counts:
+                unknown.append(f'JDK {jdk}: {display_coordinate}:{version}')
+                rows.append([display_coordinate, jdk, version, 'unverified-artifact', '', str(jar)])
+                continue
             minimum = max(counts, default=0)
             if group == 'io.github.easy4j' and not counts:
                 errors.append(f'JDK {jdk}: {coordinate}:{version} JAR has no base classes')
@@ -273,20 +367,28 @@ def main():
         writer.writerows(rows)
     report = {'errors': errors, 'unverified_artifacts': unknown, 'rows': len(rows)}
     (args.output / 'result.json').write_text(json.dumps(report, indent=2, ensure_ascii=False) + '\n')
-    usage = [module_dependencies(root) for root in args.roots]
-    declared_unverified = []
+    missing_versions = {jdk: {} for jdk in (8, 17, 21)}
+    candidates = []
     for coordinate, jdk, version, status, _, _ in rows:
         if status != 'unverified-artifact':
             continue
         parts = coordinate.split(':')
         key = (parts[0], parts[1], parts[2], parts[3]) if len(parts) == 4 else (parts[0], parts[1], 'jar', '')
-        modules = usage[(8, 17, 21).index(jdk)].get(key, [])
+        missing_versions[jdk][key] = version
+        candidates.append((jdk, coordinate, version, key))
+    usage = {jdk: module_dependencies(root, versions=missing_versions[jdk])
+             for jdk, root in zip((8, 17, 21), args.roots)}
+    declared_unverified = []
+    for jdk, coordinate, version, key in candidates:
+        modules = usage[jdk].get(key, [])
         if modules:
             declared_unverified.append({'jdk': jdk, 'coordinate': coordinate,
                                         'version': version, 'modules': modules})
     (args.output / 'module-usage.json').write_text(json.dumps({
-        'scope': 'Direct dependencies in default project dependencies, with exact type and classifier. '
-                 'This excludes profiles, inheritance and transitive dependencies; non-matches are not waivers.',
+        'scope': 'Direct declarations with exact type and classifier in default project dependencies. '
+                 'Excludes archived Superpowers evidence and differing literal versions. '
+                 'Managed, property and dynamic versions remain candidates until effective-model resolution. '
+                 'This report does not change strict catalog validation.',
         'declared_unverified': declared_unverified,
         'declared_unverified_count': len(declared_unverified),
         'catalog_unverified_count': len(unknown),

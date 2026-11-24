@@ -14,12 +14,14 @@
  */
 package io.ddd4j.sample.helidon.cqrs;
 
+import io.ddd4j.sample.helidon.cqrs.shared.SharedOrderResource;
 import io.ddd4j.sample.helidon.cqrs.web.OrderResource;
+import io.ddd4j.web.helidon.Ddd4jHelidonExceptionMapper;
+import io.ddd4j.web.helidon.Ddd4jHelidonIllegalStateExceptionMapper;
 import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.core.Application;
 
 import java.util.Set;
-import java.util.Collections;
 
 /**
  * Helidon JAX-RS 应用声明。
@@ -29,6 +31,11 @@ public class HelidonCqrsJaxRsApplication extends Application {
 
     @Override
     public Set<Class<?>> getClasses() {
-        return Collections.<Class<?>>singleton(OrderResource.class);
+        if (!HelidonCqrsApplication.durableProjectionEnabled()) {
+            return Set.of(OrderResource.class, Ddd4jHelidonExceptionMapper.class,
+                    Ddd4jHelidonIllegalStateExceptionMapper.class);
+        }
+        return Set.of(OrderResource.class, SharedOrderResource.class, Ddd4jHelidonExceptionMapper.class,
+                Ddd4jHelidonIllegalStateExceptionMapper.class);
     }
 }

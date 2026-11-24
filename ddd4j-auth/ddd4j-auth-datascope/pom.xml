@@ -15,6 +15,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-extension-validation</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>io.github.easy4j</groupId>
             <artifactId>spring-extension</artifactId>
         </dependency>

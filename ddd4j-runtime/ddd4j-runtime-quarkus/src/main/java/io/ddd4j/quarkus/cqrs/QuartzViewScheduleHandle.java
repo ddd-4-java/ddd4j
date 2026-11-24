@@ -15,12 +15,16 @@
 package io.ddd4j.quarkus.cqrs;
 
 import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
-import lombok.extern.slf4j.Slf4j;
+import org.quartz.CronScheduleBuilder;
+import org.quartz.JobBuilder;
+import org.quartz.JobDetail;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.UUID;
 
 /**
  * Quartz 调度句柄。
@@ -31,7 +35,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
-@Slf4j
 class QuartzViewScheduleHandle implements ViewScheduler.ViewScheduleHandle {
 
     /**
@@ -45,28 +48,58 @@ class QuartzViewScheduleHandle implements ViewScheduler.ViewScheduleHandle {
     /**
      * 活跃状态标志
      */
-    private final AtomicBoolean active = new AtomicBoolean(true);
+    private volatile boolean active = true;
 
     QuartzViewScheduleHandle(Scheduler scheduler, String identity) {
         this.scheduler = scheduler;
         this.identity = identity;
     }
 
-    @Override
-    public void cancel() {
-        if (active.compareAndSet(true, false)) {
-            try {
-                scheduler.deleteJob(new JobKey(identity + "-job"));
-            } catch (SchedulerException ex) {
-                log.warn("Failed to cancel scheduled view job '{}'", identity, ex);
-            } finally {
+
+    static QuartzViewScheduleHandle schedule(Scheduler scheduler, String viewName, String cron, Runnable task) {
+        String identity = viewName + "-" + UUID.randomUUID();
+        JobDetail job = JobBuilder.newJob(RunnableJob.class)
+                .withIdentity(identity + "-job")
+                .usingJobData(QuarkusViewScheduler.TASK_KEY, identity)
+                .storeDurably().build();
+        Trigger trigger = TriggerBuilder.newTrigger()
+                .withIdentity(identity + "-trigger")
+                .withSchedule(CronScheduleBuilder.cronSchedule(cron)).build();
+        RunnableHolder.put(identity, task);
+        boolean scheduled = false;
+        try {
+            scheduler.scheduleJob(job, trigger);
+            scheduled = true;
+            return new QuartzViewScheduleHandle(scheduler, identity);
+        } catch (SchedulerException failure) {
+            throw new IllegalStateException("Failed to schedule view '" + viewName + "' with cron '" + cron + "'", failure);
+        } finally {
+            if (!scheduled) {
                 RunnableHolder.remove(identity);
             }
         }
     }
 
     @Override
+    public synchronized void cancel() {
+        if (!active) {
+            return;
+        }
+        active = false;
+        boolean deleted = false;
+        try {
+            scheduler.deleteJob(new JobKey(identity + "-job"));
+            deleted = true;
+        } catch (SchedulerException failure) {
+            throw new IllegalStateException("Failed to cancel scheduled view job '" + identity + "'", failure);
+        } finally {
+            active = !deleted;
+            RunnableHolder.remove(identity);
+        }
+    }
+
+    @Override
     public boolean isActive() {
-        return active.get();
+        return active;
     }
 }

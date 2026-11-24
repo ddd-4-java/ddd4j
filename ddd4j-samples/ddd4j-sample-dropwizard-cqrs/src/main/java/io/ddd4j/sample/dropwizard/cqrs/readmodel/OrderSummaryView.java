@@ -110,8 +110,10 @@ public class OrderSummaryView implements ProjectionView<Object> {
     /**
      * 按订单标识读取视图。
      *
-     * @param orderId 订单标识
-     * @return 订单摘要视图实体
+     *
+ * @param orderId 订单标识
+     *
+ * @return 订单摘要视图实体
      */
     public OrderSummaryViewEntity findById(String orderId) {
         return store.get(orderId);

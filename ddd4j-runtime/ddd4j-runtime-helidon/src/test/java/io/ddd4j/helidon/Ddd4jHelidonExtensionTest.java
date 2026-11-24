@@ -14,6 +14,12 @@
  */
 package io.ddd4j.helidon;
 
+import io.ddd4j.core.constant.SpiKeys;
+import io.ddd4j.core.context.BaseContext;
+import io.ddd4j.core.cqrs.readmodel.ViewManager;
+import io.ddd4j.core.i18n.I18nProvider;
+import io.ddd4j.core.subject.SubjectProvider;
+import io.ddd4j.core.util.SubjectKit;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -29,11 +35,21 @@ import jakarta.enterprise.inject.spi.BeanManager;
 import jakarta.enterprise.inject.spi.BeforeShutdown;
 
 import java.util.Collections;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -51,6 +67,71 @@ class Ddd4jHelidonExtensionTest {
 
     @Mock
     private BeforeShutdown beforeShutdown;
+
+    @Test
+    void rollsBackRuntimeAndReferencesOnExplicitProjectionStartupError() {
+        String key = "ddd4j.cqrs.projection.enabled";
+        SubjectProvider previousSubject = SubjectKit.subjectProvider;
+        Optional<SubjectProvider> previousSpi = BaseContext.get(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class);
+        ViewManager manager = mock(ViewManager.class);
+        CreationalContext<ViewManager> reference = bind(ViewManager.class, manager);
+        LinkageError startupError = new LinkageError("projection scheduler unavailable");
+        doThrow(startupError).when(manager).start();
+        Ddd4jHelidonExtension extension = new Ddd4jHelidonExtension();
+        String previousValue = System.setProperty(key, "true");
+
+        try {
+            assertSame(startupError, assertThrows(LinkageError.class,
+                    () -> extension.start(afterDeploymentValidation, beanManager)));
+            assertSame(previousSubject, SubjectKit.subjectProvider);
+            assertEquals(previousSpi, BaseContext.get(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class));
+            verify(reference).release();
+        } finally {
+            extension.stop(beforeShutdown);
+            if (Objects.isNull(previousValue)) {
+                System.clearProperty(key);
+            } else {
+                System.setProperty(key, previousValue);
+            }
+        }
+    }
+
+    @Test
+    void releasesRemainingReferencesAndKeepsFirstShutdownFailure() {
+        CreationalContext<SubjectProvider> first = bind(SubjectProvider.class, mock(SubjectProvider.class));
+        CreationalContext<I18nProvider> second = bind(I18nProvider.class, I18nProvider.DEFAULT);
+        LinkageError firstFailure = new LinkageError("first context release failed");
+        IllegalStateException secondFailure = new IllegalStateException("second context release failed");
+        doThrow(firstFailure).when(first).release();
+        doThrow(secondFailure).when(second).release();
+        Ddd4jHelidonExtension extension = new Ddd4jHelidonExtension();
+        extension.start(afterDeploymentValidation, beanManager);
+
+        try {
+            LinkageError thrown = assertThrows(LinkageError.class, () -> extension.stop(beforeShutdown));
+            assertSame(firstFailure, thrown);
+            assertArrayEquals(new Throwable[]{secondFailure}, thrown.getSuppressed());
+            assertDoesNotThrow(() -> extension.stop(beforeShutdown));
+            verify(first).release();
+            verify(second).release();
+        } finally {
+            reset(first, second);
+            extension.stop(beforeShutdown);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> CreationalContext<T> bind(Class<T> type, T instance) {
+        Bean<T> bean = mock(Bean.class);
+        CreationalContext<T> context = mock(CreationalContext.class);
+        Set<Bean<?>> beans = Collections.singleton(bean);
+        lenient().when(beanManager.getBeans(type)).thenReturn(beans);
+        doReturn(bean).when(beanManager).resolve(beans);
+        when(bean.getTypes()).thenReturn(Collections.singleton(type));
+        when(beanManager.createCreationalContext(bean)).thenReturn(context);
+        when(beanManager.getReference(bean, type, context)).thenReturn(instance);
+        return context;
+    }
 
     @Test
     void registerReadinessRegistryAddsBean() {

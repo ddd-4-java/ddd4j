@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -57,6 +58,9 @@ public class ProjectionRunner<E> {
 
     private final ProjectionMetrics metrics;
 
+    // 同一运行器内按检查点标识互斥；不替代跨实例锁或数据库事务。
+    private final Set<String> runningStreams = ConcurrentHashMap.newKeySet();
+
     /**
      * 视图名 → 连续失败计数（视图恢复成功后清零）。
      */
@@ -91,13 +95,17 @@ public class ProjectionRunner<E> {
      *
      * @param view 投影视图
      * @return 本次读取出的事件块
+     * @throws IllegalStateException 同一运行器中该流已有执行，调用方可稍后重试
      */
     public EventChunk<E> runOnce(ProjectionView<E> view) {
         ProjectionView<E> projectionView = validateView(view);
         String streamId = projectionView.getStreamId();
-        metrics.onRunStarted(streamId);
+        if (!runningStreams.add(streamId)) {
+            throw new IllegalStateException("Projection already running for stream: " + streamId);
+        }
         long startNanos = System.nanoTime();
         try {
+            metrics.onRunStarted(streamId);
             long previousPosition = projectionService.readProjectionPosition(streamId);
             EventChunk<E> chunk = chunkReader.read(
                     streamId,
@@ -120,7 +128,24 @@ public class ProjectionRunner<E> {
         } catch (RuntimeException ex) {
             metrics.onRunFailed(streamId, ex);
             throw ex;
+        } finally {
+            runningStreams.remove(streamId);
         }
+    }
+
+    /**
+     * 查询共享执行状态，运行标志仅表示本运行器中该流正在执行。
+     * @param streamId 检查点标识
+     * @return 包含当前持久位置的状态快照；不是分布式锁状态
+     */
+    public ProjectionStatus getProjectionStatus(String streamId) {
+        Objects.requireNonNull(streamId, "streamId must not be null");
+        long position = projectionService.readProjectionPosition(streamId);
+        boolean running = runningStreams.contains(streamId);
+        return metrics.getLastRunInfo(streamId)
+                .map(info -> new ProjectionStatus(streamId, position, running,
+                        info.getLastRunAt(), info.getLastEventCount(), info.getLastError()))
+                .orElseGet(() -> new ProjectionStatus(streamId, position, running, null, 0, null));
     }
 
     /**

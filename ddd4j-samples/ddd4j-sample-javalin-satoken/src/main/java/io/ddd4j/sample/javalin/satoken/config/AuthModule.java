@@ -15,6 +15,7 @@
 package io.ddd4j.sample.javalin.satoken.config;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Singleton;
 import io.ddd4j.core.subject.SubjectDataProvider;
 import io.ddd4j.sample.javalin.satoken.goods.application.GoodsApplicationService;
 import io.ddd4j.sample.javalin.satoken.goods.domain.GoodsRepository;
@@ -78,7 +79,7 @@ public class AuthModule extends AbstractModule {
         bind(OrderResource.class);
 
         // ========================= Goods 模块 =========================
-        bind(GoodsRepository.class).to(InMemoryGoodsRepository.class);
+        bind(GoodsRepository.class).to(InMemoryGoodsRepository.class).in(Singleton.class);
         bind(GoodsApplicationService.class);
         bind(GoodsResource.class);
         bind(GoodsQueryResource.class);

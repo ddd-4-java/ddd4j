@@ -15,6 +15,7 @@
 package io.ddd4j.sample.quarkus.satoken.goods.web;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import io.ddd4j.core.api.Page;
 import io.ddd4j.core.api.R;
 import io.ddd4j.sample.quarkus.satoken.goods.application.GoodsApplicationService;
 import io.ddd4j.sample.quarkus.satoken.goods.domain.Goods;
@@ -25,6 +26,9 @@ import io.ddd4j.sample.quarkus.satoken.goods.web.dto.UpdateGoodsRequest;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * 商品 JAX-RS 资源（写侧）。
@@ -38,15 +42,27 @@ import jakarta.ws.rs.core.MediaType;
 public class GoodsResource {
 
     private final GoodsApplicationService applicationService;
+    private final GoodsQueryResource queryResource;
+
+    /**
+     * 保留单参数构造入口，供现有直接调用方使用。
+     *
+     * @param applicationService 商品应用服务
+     */
+    public GoodsResource(GoodsApplicationService applicationService) {
+        this(applicationService, new GoodsQueryResource(applicationService));
+    }
 
     /**
      * 创建商品写入资源。
      *
      * @param applicationService 商品应用服务
+     * @param queryResource 商品查询逻辑
      */
     @Inject
-    public GoodsResource(GoodsApplicationService applicationService) {
+    public GoodsResource(GoodsApplicationService applicationService, GoodsQueryResource queryResource) {
         this.applicationService = applicationService;
+        this.queryResource = queryResource;
     }
 
     /**
@@ -127,4 +143,52 @@ public class GoodsResource {
     public R<Goods> getByCode(@QueryParam("code") String code) {
         return R.ok(applicationService.getByCode(code));
     }
+    /**
+     * 保留既有 Java 分页入口，HTTP 绑定由 GoodsQueryResource 持有。
+     *
+     * @param current 当前页码
+     * @param size 每页数量
+     * @param code 商品编码
+     * @param nameLike 名称模糊匹配条件
+     * @param status 商品状态
+     * @param priceMin 最低价格
+     * @param priceMax 最高价格
+     * @param orderBys 排序字段
+     * @return 商品分页响应
+     */
+    public R<Page<Goods>> page(Long current, Long size, String code, String nameLike, String status,
+                               BigDecimal priceMin, BigDecimal priceMax, String orderBys) {
+        return queryResource.page(current, size, code, nameLike, status, priceMin, priceMax, orderBys);
+    }
+
+    /**
+     * 保留既有 Java 列表入口，复用实际查询资源。
+     *
+     * @param code 商品编码
+     * @param nameLike 名称模糊匹配条件
+     * @param status 商品状态
+     * @param priceMin 最低价格
+     * @param priceMax 最高价格
+     * @param orderBys 排序字段
+     * @return 商品列表响应
+     */
+    public R<List<Goods>> list(String code, String nameLike, String status, BigDecimal priceMin,
+                               BigDecimal priceMax, String orderBys) {
+        return queryResource.list(code, nameLike, status, priceMin, priceMax, orderBys);
+    }
+
+    /**
+     * 保留既有 Java 计数入口，复用实际查询资源。
+     *
+     * @param code 商品编码
+     * @param nameLike 名称模糊匹配条件
+     * @param status 商品状态
+     * @param priceMin 最低价格
+     * @param priceMax 最高价格
+     * @return 商品数量响应
+     */
+    public R<Long> count(String code, String nameLike, String status, BigDecimal priceMin, BigDecimal priceMax) {
+        return queryResource.count(code, nameLike, status, priceMin, priceMax);
+    }
+
 }

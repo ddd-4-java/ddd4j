@@ -42,6 +42,12 @@ public final class SaTokenSecurityConfigurer {
      * @return 当前默认账号体系的 StpLogic
      */
     public static StpLogic configure(SaTokenSecurityProperties properties) {
+        StpLogic logic = createConfiguredLogic(properties);
+        StpUtil.setStpLogic(logic);
+        return logic;
+    }
+
+    static StpLogic createConfiguredLogic(SaTokenSecurityProperties properties) {
         Objects.requireNonNull(properties, "properties must not be null");
         properties.validate();
 
@@ -52,10 +58,8 @@ public final class SaTokenSecurityConfigurer {
         // JWT Simple 的撤销依赖 token session/mapping，禁止关闭该检查。
         config.setTokenSessionCheckLogin(true);
 
-        StpLogic logic = properties.getAuthenticationMode() == SaTokenAuthenticationMode.JWT_SIMPLE
+        return properties.getAuthenticationMode() == SaTokenAuthenticationMode.JWT_SIMPLE
                 ? new Ddd4jStpLogicJwtForSimple(properties)
                 : new StpLogic(properties.getLoginType());
-        StpUtil.setStpLogic(logic);
-        return logic;
     }
 }

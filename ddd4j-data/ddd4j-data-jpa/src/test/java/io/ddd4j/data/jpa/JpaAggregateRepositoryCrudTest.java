@@ -14,13 +14,22 @@
  */
 package io.ddd4j.data.jpa;
 
+import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.model.AggregateRoot;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * {@link JpaAggregateRepository} 仓储方法测试。
@@ -71,6 +80,36 @@ class JpaAggregateRepositoryCrudTest {
         EntityManager em = repository.getEntityManager();
         assertNotNull(em);
         assertSame(entityManager, em);
+    }
+
+    @Test
+    void findFirstReturnsEmptyWhenTableHasNoRows() {
+        TypedQuery<OrderPO> query = queryWithNoRows();
+        when(entityManager.createQuery("SELECT p FROM OrderPO p", OrderPO.class)).thenReturn(query);
+
+        assertEquals(Optional.empty(), repository.findFirst());
+    }
+
+    @Test
+    void findFirstWithCriteriaReturnsEmptyWhenNoRowMatches() {
+        CriteriaBuilder builder = mock(CriteriaBuilder.class);
+        @SuppressWarnings("unchecked")
+        CriteriaQuery<OrderPO> criteria = mock(CriteriaQuery.class);
+        when(entityManager.getCriteriaBuilder()).thenReturn(builder);
+        when(builder.createQuery(OrderPO.class)).thenReturn(criteria);
+        TypedQuery<OrderPO> query = queryWithNoRows();
+        when(entityManager.createQuery(criteria)).thenReturn(query);
+
+        assertEquals(Optional.empty(), repository.findFirst(new Query<Order>() { }));
+    }
+
+    private TypedQuery<OrderPO> queryWithNoRows() {
+        @SuppressWarnings("unchecked")
+        TypedQuery<OrderPO> query = mock(TypedQuery.class);
+        when(query.setMaxResults(1)).thenReturn(query);
+        when(query.getResultList()).thenReturn(Collections.emptyList());
+        when(query.getSingleResult()).thenThrow(new NoResultException("empty result"));
+        return query;
     }
 
     // =================== 辅助类 ===================

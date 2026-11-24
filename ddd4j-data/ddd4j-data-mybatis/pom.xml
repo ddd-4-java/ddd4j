@@ -13,8 +13,7 @@
     <artifactId>ddd4j-data-mybatis</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>ddd4j 数据层 - MyBatis 官方实现（零 MyBatis-Plus 依赖）：纯 MyBatis 3.x 风格的 RichRepository 实现， 通过
-        ddd4j 自有 Mapper 与扩展 SPI 适配 ddd4j-core 的 Repository SPI。 等保数据加密通过自定义加密拦截器 +
-        ddd4j-data-crypto 实现。
+        ddd4j 自有 Mapper 与扩展 SPI 适配 ddd4j-core 的 Repository SPI。 字段加解密和签名使用 mybatis-enhance-extension。
     </description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
@@ -31,12 +30,6 @@
             <artifactId>ddd4j-kit</artifactId>
             <version>${revision}</version>
         </dependency>
-        <!-- 加解密策略 SPI -->
-        <dependency>
-            <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-data-crypto</artifactId>
-            <version>${revision}</version>
-        </dependency>
         <!-- ddd4j 统一注解（orm: BizKey/OnCreate/OnUpdate/TenantId/SystemId/OrderBy） -->
         <dependency>
             <groupId>io.ddd4j</groupId>
@@ -47,6 +40,10 @@
         <dependency>
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.easy4j</groupId>
+            <artifactId>mybatis-enhance-extension</artifactId>
         </dependency>
         <!-- JSqlParser: SQL 解析/改写（租户拦截器/数据权限拦截器） -->
         <dependency>
@@ -59,6 +56,11 @@
                     <artifactId>jmh-core</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -79,6 +81,7 @@
                                 <bannedDependencies>
                                     <searchTransitive>true</searchTransitive>
                                     <excludes>
+                                        <exclude>io.ddd4j:ddd4j-data-mybatisplus</exclude>
                                         <exclude>org.springframework:*</exclude>
                                         <exclude>org.springframework.*:*</exclude>
                                         <exclude>org.mybatis:mybatis-spring</exclude>

@@ -37,8 +37,11 @@ public final class CreateOrderCommand implements Command {
     private final String buyerName;
 
     /**
+ *
  * @param orderNo 订单编号
+ *
  * @param buyerId 买家 ID
+ *
  * @param buyerName 买家名称
  */
 

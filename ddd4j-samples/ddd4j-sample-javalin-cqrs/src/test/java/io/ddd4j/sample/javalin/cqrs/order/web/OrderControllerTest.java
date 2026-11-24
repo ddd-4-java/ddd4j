@@ -44,7 +44,7 @@ class OrderControllerTest {
     @BeforeAll
     static void startApp() {
         app = TestSupport.start();
-        baseUrl = "http://localhost:" + app.port();
+        baseUrl = "http://127.0.0.1:" + app.port();
         httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
     }
 
@@ -69,7 +69,7 @@ class OrderControllerTest {
     void resetServerState() {
         app.stop();
         app = TestSupport.start();
-        baseUrl = "http://localhost:" + app.port();
+        baseUrl = "http://127.0.0.1:" + app.port();
     }
 
     private HttpResponse<String> postJson(String path, String body) throws Exception {

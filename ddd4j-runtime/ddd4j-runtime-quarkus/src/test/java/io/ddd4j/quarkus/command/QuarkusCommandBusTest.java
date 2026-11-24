@@ -26,9 +26,7 @@ import io.ddd4j.core.cqrs.command.Result;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Field;
 import java.util.Collections;
-import java.util.Map;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -44,16 +42,43 @@ class QuarkusCommandBusTest {
 
     private QuarkusCommandBus commandBus;
 
+    private final java.util.List<CommandExecutor<?>> discovered = new java.util.ArrayList<>();
+
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         commandBus = new QuarkusCommandBus();
-        // 通过反射注入 executorMap，绕过 CDI Instance 依赖
-        Field mapField = QuarkusCommandBus.class.getDeclaredField("executorMap");
-        mapField.setAccessible(true);
-        @SuppressWarnings("unchecked")
-        Map<Class<? extends Command>, CommandExecutor<?>> executorMap =
-                (Map<Class<? extends Command>, CommandExecutor<?>>) mapField.get(commandBus);
-        executorMap.put(TestCommand.class, new TestCommandExecutor());
+        discovered.add(new TestCommandExecutor());
+        commandBus.executors = org.mockito.Mockito.mock(jakarta.enterprise.inject.Instance.class);
+        org.mockito.Mockito.when(commandBus.executors.iterator()).thenAnswer(ignored -> discovered.iterator());
+        org.mockito.Mockito.doCallRealMethod().when(commandBus.executors).forEach(org.mockito.ArgumentMatchers.any());
+        commandBus.onStart(new io.quarkus.runtime.StartupEvent());
+    }
+
+    @Test
+    void startupRejectsDuplicateExecutors() {
+        discovered.add(new TestCommandExecutor());
+        assertThatThrownBy(() -> commandBus.onStart(new io.quarkus.runtime.StartupEvent()))
+                .isInstanceOf(IllegalStateException.class).hasMessageContaining(TestCommand.class.getName());
+    }
+
+    @Test
+    void discoversLateCdiExecutorAndCachesItsRoute() {
+        discovered.add(new FailCommandExecutor());
+        Result<?> first = commandBus.execute(new FailCommand());
+        discovered.clear();
+        assertThat(commandBus.execute(new FailCommand()).getMessage()).isEqualTo(first.getMessage());
+    }
+
+    @Test
+    void propagatesExecutorExceptionWithoutWrapping() {
+        IllegalStateException failure = new IllegalStateException("application failure");
+        discovered.add(new FailCommandExecutor() {
+            @Override
+            public Result<String> execute(FailCommand command) {
+                throw failure;
+            }
+        });
+        assertThatThrownBy(() -> commandBus.execute(new FailCommand())).isSameAs(failure);
     }
 
     @Test
@@ -90,17 +115,7 @@ class QuarkusCommandBusTest {
 
     @Test
     void executeShouldReturnFailureResultWhenExecutorReturnsFail() {
-        // 注册一个返回失败结果的执行器
-        try {
-            Field mapField = QuarkusCommandBus.class.getDeclaredField("executorMap");
-            mapField.setAccessible(true);
-            @SuppressWarnings("unchecked")
-            Map<Class<? extends Command>, CommandExecutor<?>> executorMap =
-                    (Map<Class<? extends Command>, CommandExecutor<?>>) mapField.get(commandBus);
-            executorMap.put(FailCommand.class, new FailCommandExecutor());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        discovered.add(new FailCommandExecutor());
 
         Result<String> result = commandBus.execute(new FailCommand());
 

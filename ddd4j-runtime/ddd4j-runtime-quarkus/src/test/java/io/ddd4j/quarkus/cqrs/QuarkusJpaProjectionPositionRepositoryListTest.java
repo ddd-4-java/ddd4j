@@ -18,6 +18,7 @@ import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
 import jakarta.enterprise.inject.Instance;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
+import jakarta.persistence.Query;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -30,6 +31,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.never;
+import static org.mockito.ArgumentMatchers.any;
 
 /** 验证投影位置查询返回可修改的独立结果快照。 */
 @ExtendWith(MockitoExtension.class)
@@ -59,4 +64,46 @@ class QuarkusJpaProjectionPositionRepositoryListTest {
         assertThat(snapshot).isEmpty();
         assertThat(repository.findAll()).hasSize(1);
     }
+    @Test
+    void saveKeepsLegacyEntityIdentityAndMergeResult() {
+        when(entityManagers.get()).thenReturn(manager);
+        QuarkusJpaProjectionPositionRepository repository = new QuarkusJpaProjectionPositionRepository();
+        repository.entityManagers = entityManagers;
+        QuarkusJpaProjectionPosition newPosition = new QuarkusJpaProjectionPosition("orders", 7L);
+        assertThat(repository.save(newPosition)).isSameAs(newPosition);
+        verify(manager).persist(newPosition);
+        QuarkusJpaProjectionPosition managed = new QuarkusJpaProjectionPosition("orders", 9L);
+        when(manager.find(QuarkusJpaProjectionPosition.class, "orders")).thenReturn(managed);
+        when(manager.merge(newPosition)).thenReturn(managed);
+        assertThat(repository.save(newPosition)).isSameAs(managed);
+    }
+
+    @Test
+    void missingResetRetainsUpdateOnlySemantics() {
+        when(entityManagers.get()).thenReturn(manager);
+        Query update = mock(Query.class);
+        when(manager.createQuery("update QuarkusJpaProjectionPosition p set p.nextEventNumber = 0 "
+                + "where p.streamId = :streamId")).thenReturn(update);
+        when(update.setParameter("streamId", "missing")).thenReturn(update);
+        QuarkusJpaProjectionPositionRepository repository = new QuarkusJpaProjectionPositionRepository();
+        repository.entityManagers = entityManagers;
+        repository.resetToZero("missing");
+        verify(update).executeUpdate();
+        verify(manager, never()).persist(any());
+        verify(manager, never()).clear();
+    }
+
+    @Test
+    void deleteOnlyRemovesAnExistingEntity() {
+        when(entityManagers.get()).thenReturn(manager);
+        QuarkusJpaProjectionPositionRepository repository = new QuarkusJpaProjectionPositionRepository();
+        repository.entityManagers = entityManagers;
+        repository.deleteByStreamId("missing");
+        verify(manager, never()).remove(any());
+        QuarkusJpaProjectionPosition managed = new QuarkusJpaProjectionPosition("orders", 9L);
+        when(manager.find(QuarkusJpaProjectionPosition.class, "orders")).thenReturn(managed);
+        repository.deleteByStreamId("orders");
+        verify(manager).remove(managed);
+    }
+
 }

@@ -17,18 +17,14 @@ package io.ddd4j.quarkus.cqrs;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
 import jakarta.enterprise.inject.Instance;
-import io.quarkus.scheduler.Scheduled;
 import org.junit.jupiter.api.Test;
 
-import java.io.InputStream;
-import java.util.Properties;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -39,22 +35,8 @@ class QuarkusJpaProjectionServiceContractTest {
 
     @Test
     void usesThirtySecondDefaultCron() throws Exception {
-        Scheduled scheduled = QuarkusJpaProjectionService.class.getDeclaredMethod("scheduled")
-                .getAnnotation(Scheduled.class);
-        String expression = scheduled.cron();
-        String defaultCron;
-        if (expression.startsWith("${")) {
-            defaultCron = expression.substring(expression.indexOf(':') + 1, expression.length() - 1);
-        } else {
-            String property = expression.substring(1, expression.length() - 1);
-            try (InputStream stream = getClass().getResourceAsStream("/application.properties")) {
-                assertNotNull(stream);
-                Properties properties = new Properties();
-                properties.load(stream);
-                defaultCron = properties.getProperty(property);
-            }
-        }
-        assertEquals("*/30 * * * * ?", defaultCron);
+        assertEquals("*/30 * * * * ?", QuarkusJpaViewManager.DEFAULT_CRON);
+        assertEquals("ddd4j.quarkus.cqrs.projection.cron", QuarkusJpaViewManager.CRON_KEY);
     }
 
     @Test

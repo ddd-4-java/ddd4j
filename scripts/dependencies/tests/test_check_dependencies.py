@@ -69,6 +69,63 @@ class PolicyTests(unittest.TestCase):
         self.assertTrue(pathlib.Path(command[1]).is_file())
         self.assertFalse(any(arg.startswith('-Dexcludes') for arg in command))
 
+class GitPomScopeTests(unittest.TestCase):
+    def setUp(self):
+        import subprocess
+        import tempfile
+
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        self.root = pathlib.Path(directory.name)
+
+        def git(*args):
+            subprocess.run(['git', *args], cwd=self.root, capture_output=True, check=True)
+
+        self.git = git
+        self.git('init', '--quiet')
+        (self.root / '.gitignore').write_text('.superpowers/\n')
+        self.write_pom('pom.xml', '<project xmlns="http://maven.apache.org/POM/4.0.0"/>')
+
+    def write_pom(self, name, contents):
+        pom = self.root / name
+        pom.parent.mkdir(parents=True, exist_ok=True)
+        pom.write_text(contents, encoding='utf-8')
+
+    def test_declaration_checks_keep_unignored_and_tracked_poms_outside_reactor(self):
+        self.write_pom('.superpowers/archived proposals/pom.xml', '<project')
+        self.write_pom('target/generated/pom.xml', '<project')
+        tracked = '.superpowers/tracked example/pom.xml'
+        self.write_pom(tracked, '''<project xmlns="http://maven.apache.org/POM/4.0.0">
+            <properties><tracked.version>1</tracked.version></properties></project>''')
+        self.git('add', '--force', '--', tracked)
+        untracked = '备用样例/pom.xml'
+        self.write_pom(untracked, '''<project xmlns="http://maven.apache.org/POM/4.0.0">
+            <properties><untracked.version>2</untracked.version></properties></project>''')
+        policy = checker.resolve_policy({'fixed_properties': {'tracked.version': '1', 'untracked.version': '2'}}, 'main')
+
+        checker.protected_properties(self.root, policy)
+        versions = checker.declared_versions(self.root)
+        self.assertEqual(versions[(tracked, '#tracked.version', 0)], '1')
+        self.assertEqual(versions[(untracked, '#untracked.version', 0)], '2')
+        checker.validate_updates(self.root, policy, versions)
+        checker.materialize_inherited_properties(self.root, policy, self.root / 'pom.xml')
+
+    def test_malformed_project_poms_still_fail_declaration_checks(self):
+        from xml.etree.ElementTree import ParseError
+
+        policy = checker.resolve_policy({}, 'main')
+        self.write_pom('untracked example/pom.xml', '<project')
+        with self.assertRaises(ParseError):
+            checker.protected_properties(self.root, policy)
+        (self.root / 'untracked example/pom.xml').unlink()
+
+        tracked = '.superpowers/tracked example/pom.xml'
+        self.write_pom(tracked, '<project')
+        self.git('add', '--force', '--', tracked)
+        with self.assertRaises(ParseError):
+            checker.protected_properties(self.root, policy)
+
+
 class ValidationTests(unittest.TestCase):
     def test_inherited_alias_property_is_not_upgraded_as_an_independent_version(self):
         import tempfile

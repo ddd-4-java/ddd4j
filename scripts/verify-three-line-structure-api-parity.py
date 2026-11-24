@@ -39,7 +39,10 @@ PLATFORM_IMPORT_NAMESPACES = tuple((old, new) for old, new in (
 ))
 CDI_PLATFORM_DESCRIPTORS = {
     "ddd4j-runtime/ddd4j-runtime-quarkus/src/main/resources/META-INF/beans.xml": ("4.0", "4_0"),
+    "ddd4j-data/ddd4j-data-event-store-panache/src/main/resources/META-INF/beans.xml": ("4.0", None),
     "ddd4j-samples/ddd4j-sample-helidon-cqrs/src/main/resources/META-INF/beans.xml": ("3.0", "3_0"),
+    "ddd4j-samples/ddd4j-sample-helidon-satoken/src/main/resources/META-INF/beans.xml": ("3.0", None),
+    "ddd4j-samples/ddd4j-sample-helidon-shiro/src/main/resources/META-INF/beans.xml": ("3.0", None),
 }
 HELIDON_CDI_SERVICE_PREFIX = (
     "ddd4j-runtime/ddd4j-runtime-helidon/src/main/resources/META-INF/services/"
@@ -185,7 +188,7 @@ def platform_config_matches(path: str, roots: list[pathlib.Path]) -> bool:
 
 
 def cdi_descriptor_platform_match(path: str, roots: list[pathlib.Path]) -> bool:
-    """只认可两处已知 CDI 描述符的 Java EE 到 Jakarta EE schema 迁移。"""
+    """只认可逐路径登记的 CDI 描述符从 Java EE 到 Jakarta EE 的迁移。"""
     if path not in CDI_PLATFORM_DESCRIPTORS:
         return False
     version, suffix = CDI_PLATFORM_DESCRIPTORS[path]
@@ -193,14 +196,15 @@ def cdi_descriptor_platform_match(path: str, roots: list[pathlib.Path]) -> bool:
     modern_namespace = "https://jakarta.ee/xml/ns/jakartaee"
     schema_attribute = "{http://www.w3.org/2001/XMLSchema-instance}schemaLocation"
     legacy_attributes = {"bean-discovery-mode": "annotated", "version": "2.0"}
-    if "helidon-cqrs" in path:
+    if path.startswith("ddd4j-samples/ddd4j-sample-helidon-"):
         legacy_attributes[schema_attribute] = (
             f"{legacy_namespace} {legacy_namespace}/beans_2_0.xsd")
     modern_attributes = {
         "bean-discovery-mode": "annotated",
         "version": version,
-        schema_attribute: f"{modern_namespace} {modern_namespace}/beans_{suffix}.xsd",
     }
+    if suffix is not None:
+        modern_attributes[schema_attribute] = f"{modern_namespace} {modern_namespace}/beans_{suffix}.xsd"
     for index, root in enumerate(roots):
         try:
             document = ET.parse(root / path).getroot()
@@ -235,12 +239,18 @@ def helidon_cdi_service_platform_match(path: str, roots: list[pathlib.Path]) -> 
     return True
 
 
+def mismatched_platform_jdks(actual: list[str | None], expected: list[str | None]) -> str:
+    return ", ".join(jdk for jdk, current, locked in zip(("8", "17", "21"), actual, expected)
+                     if current != locked)
+
+
 def validate_platform_dependency_config_files(
         mappings: list[dict], snapshots: list[dict[str, str]]) -> dict[str, dict]:
     """只允许逐线哈希锁定的依赖治理配置差异，内容变化须重新审查。"""
     license_governance = {"config/license-selections.tsv",
                           "config/license-build-tool-exclusions.tsv"}
     validated = {}
+    stale = []
     for item in mappings:
         path = item.get("path")
         hashes = item.get("sha256ByJdk")
@@ -261,8 +271,11 @@ def validate_platform_dependency_config_files(
             raise ValueError(f"invalid platform dependency config hashes: {path}")
         actual = [snapshot.get(path) for snapshot in snapshots]
         if actual != expected:
-            raise ValueError(f"stale platform dependency config mapping: {path}")
+            jdks = mismatched_platform_jdks(actual, expected)
+            stale.append(f"stale platform dependency config mapping: {path} (JDK {jdks})")
         validated[path] = item
+    if stale:
+        raise ValueError("\n".join(stale))
     return validated
 
 
@@ -275,6 +288,8 @@ def validate_platform_build_config_files(
                "config/apache-2.0-header.txt",
                "ddd4j-data/ddd4j-data-event-store-jpa/src/test/resources/META-INF/persistence.xml",
                "ddd4j-data/ddd4j-data-event-store-panache/src/main/resources/META-INF/beans.xml",
+               "ddd4j-data/ddd4j-data-event-store-panache/src/test/resources/application.properties",
+               "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/main/resources/application.properties",
                "ddd4j-samples/ddd4j-sample-helidon/src/main/resources/META-INF/beans.xml"}
     validated = {}
     for item in mappings:
@@ -322,6 +337,7 @@ def validate_platform_tool_scripts(
         "scripts/verify-java8-source-compatibility.sh",
     }
     validated = {}
+    stale = []
     for item in mappings:
         path = item.get("path")
         hashes = item.get("sha256ByJdk")
@@ -341,9 +357,13 @@ def validate_platform_tool_scripts(
                 or any(value is not None and not re.fullmatch(r"[0-9a-f]{64}", value)
                        for value in expected)):
             raise ValueError(f"invalid platform tool script hashes: {path}")
-        if [snapshot.get(path) for snapshot in snapshots] != expected:
-            raise ValueError(f"stale platform tool script: {path}")
+        actual = [snapshot.get(path) for snapshot in snapshots]
+        if actual != expected:
+            jdks = mismatched_platform_jdks(actual, expected)
+            stale.append(f"stale platform tool script: {path} (JDK {jdks})")
         validated[path] = item
+    if stale:
+        raise ValueError("\n".join(stale))
     return validated
 
 
@@ -605,7 +625,8 @@ def task_for_difference(path: str, category: str) -> str:
     return "T00"
 
 
-def source_api(root: pathlib.Path, paths: dict[str, str], output: pathlib.Path) -> dict[str, str]:
+def source_api(root: pathlib.Path, paths: dict[str, str], output: pathlib.Path,
+               enum_symbols=()) -> dict[str, str]:
     """使用 JDK Compiler Tree API 从当前源码提取显式方法，不消费 CodeGraph 缓存。"""
     java_home = os.environ.get("DDD4J_JDK21_HOME")
     if not java_home:
@@ -619,15 +640,47 @@ def source_api(root: pathlib.Path, paths: dict[str, str], output: pathlib.Path) 
     source_paths = sorted(path for path in paths if path.endswith(".java") and "/src/main/java/" in path)
     if not source_paths:
         return {}
+    requested_enums = set(enum_symbols)
+    options = ["--enum-witnesses"] if requested_enums else []
     completed = subprocess.run([str(jdk / "bin/java"), "-cp", str(classes),
-                                "ThreeLineSourceApiScanner", str(root)],
+                                "ThreeLineSourceApiScanner", str(root), *options],
                                input="\n".join(source_paths) + "\n", capture_output=True,
                                text=True, check=True)
     declarations = {}
     for line in completed.stdout.splitlines():
         path, symbol, value = line.split("\t", 2)
-        declarations[path + "#" + symbol] = value
+        if path.startswith("@enum:"):
+            # 合成枚举证明仅供策略精确请求；普通源码 API 清单保持原状。
+            key = path.removeprefix("@enum:") + "#" + symbol
+            if key in requested_enums:
+                declarations[key] = value
+        else:
+            declarations[path + "#" + symbol] = value
     return declarations
+
+
+def platform_api_mappings(policy: dict[str, object], module: str | None = None) -> list[dict]:
+    """复用同一精确成员验证入口；单中线映射必须明确固定源码声明。"""
+    middle = policy.get("platformApiMembersOnlyOnJdk17", [])
+    for item in middle:
+        if module and not item.get("sourceSymbol", "").startswith(module + "/"):
+            continue
+        declaration = item.get("sourceDeclaration")
+        if not isinstance(declaration, str) or not declaration.strip():
+            raise ValueError(f"missing exact JDK17 API source declaration: {item.get('sourceSymbol', '')}")
+    mappings = (policy.get("platformApiMembersMissingOnJdk8", [])
+                + policy.get("platformApiMembersOnlyOnJdk8", []) + middle)
+    return ([item for item in mappings if item["sourceSymbol"].startswith(module + "/")]
+            if module else mappings)
+
+
+def single_line_source_api_matches(source: dict | None, item: dict | None, line: int) -> bool:
+    """只有指定线源码声明精确相同且另外两线均缺失才匹配。"""
+    keys = ("jdk8", "jdk17", "jdk21")
+    return bool(source and item and isinstance(item.get("sourceDeclaration"), str)
+                and item["sourceDeclaration"].strip()
+                and source.get(keys[line]) == item["sourceDeclaration"]
+                and all(source.get(key) == "MISSING" for index, key in enumerate(keys) if index != line))
 
 
 def validate_platform_api_mappings(mappings: list[dict], roots: list[pathlib.Path]) -> list[dict]:
@@ -808,13 +861,63 @@ def validate_platform_cdi_resources_only_on_jdk8(items: list[dict],
     return validated
 
 
+def valid_sha256(value: object) -> bool:
+    return isinstance(value, str) and re.fullmatch(r"[0-9a-f]{64}", value) is not None
+
+
+def validate_platform_files_only_on_jdk17(
+        mapping: dict | None, roots: list[pathlib.Path]) -> dict[str, str]:
+    """锁定 Java 17 的 Dropwizard 访问日志适配及三线原生契约。"""
+    if mapping is None:
+        return {}
+
+    runtime = "ddd4j-runtime/ddd4j-runtime-dropwizard/src/"
+    package = "java/io/ddd4j/dropwizard/"
+    allowed_sources = {
+        runtime + "main/" + package + "Ddd4jLogbackAccessRequestLayout.java",
+        runtime + "main/" + package + "Ddd4jLogbackAccessRequestLogFactory.java",
+        runtime + "test/" + package + "Ddd4jLogbackAccessRequestLogFactoryTest.java",
+    }
+    required_counterparts = {
+        runtime + "main/" + package + "Ddd4jBundle.java",
+        runtime + "test/" + package + "Ddd4jBundleTest.java",
+        "ddd4j-samples/ddd4j-sample-dropwizard/src/test/java/"
+        "io/ddd4j/sample/dropwizard/NativeDefaultTest.java",
+        "ddd4j-samples/ddd4j-sample-dropwizard/src/main/java/"
+        "io/ddd4j/sample/dropwizard/DropwizardOrderApplication.java",
+        "ddd4j-samples/ddd4j-sample-dropwizard/src/main/resources/dropwizard-order.yml",
+    }
+    jdks = ("8", "17", "21")
+    if not isinstance(mapping, dict) or set(mapping) != {"sources", "counterparts", "reason"}:
+        raise ValueError("invalid JDK 17-only platform file mapping")
+    sources, counterparts, reason = mapping["sources"], mapping["counterparts"], mapping["reason"]
+    if (not isinstance(sources, dict) or set(sources) != allowed_sources
+            or not all(valid_sha256(digest) for digest in sources.values())
+            or not isinstance(counterparts, dict) or set(counterparts) != required_counterparts
+            or any(not isinstance(hashes, dict) or set(hashes) != set(jdks)
+                   or not all(valid_sha256(digest) for digest in hashes.values())
+                   for hashes in counterparts.values())
+            or not isinstance(reason, str) or not reason.strip()):
+        raise ValueError("invalid JDK 17-only platform file mapping")
+
+    for path, expected in sources.items():
+        files = [root / path for root in roots]
+        if (not files[1].is_file() or hashlib.sha256(files[1].read_bytes()).hexdigest() != expected
+                or any(file.exists() or file.is_symlink() for file in (files[0], files[2]))):
+            raise ValueError(f"stale JDK 17-only platform file: {path}")
+    for path, hashes in counterparts.items():
+        for root, jdk in zip(roots, jdks):
+            file = root / path
+            if not file.is_file() or hashlib.sha256(file.read_bytes()).hexdigest() != hashes[jdk]:
+                raise ValueError(f"stale JDK 17-only platform file: {path} (JDK {jdk})")
+
+    evidence = "; ".join(sorted(counterparts))
+    return dict.fromkeys(sources, evidence)
+
+
 def validate_platform_tests_only_on_jdk8(items: list[dict],
                                          roots: list[pathlib.Path]) -> dict[str, dict]:
     """锁定低线专用测试及三线对应容器契约，避免用宽泛排除掩盖测试缺失。"""
-    def valid_sha256(value: object) -> bool:
-        return (isinstance(value, str) and len(value) == 64
-                and all(char in "0123456789abcdef" for char in value))
-
     validated = {}
     for item in items:
         path = pathlib.PurePosixPath(item.get("path", ""))
@@ -848,12 +951,8 @@ def validate_platform_test_namespace_mappings(
         mappings: list[dict], roots: list[pathlib.Path]) -> dict[str, dict]:
     """仅接受已列明架构规则中精确的 Java EE/Jakarta EE 命名空间替换。"""
     allowed = {
-        "ddd4j-data/ddd4j-data-cqrs-helidon/src/test/java/"
-        "io/ddd4j/data/cqrs/helidon/arch/CqrsHelidonModuleIndependenceTest.java",
-        "ddd4j-data/ddd4j-data-projection-helidon/src/test/java/"
-        "io/ddd4j/data/projection/helidon/arch/ProjectionHelidonModuleIndependenceTest.java",
-        "ddd4j-data/ddd4j-data-cqrs-quarkus/src/test/java/"
-        "io/ddd4j/data/cqrs/quarkus/arch/CqrsQuarkusModuleIndependenceTest.java",
+        "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/"
+        "io/ddd4j/quarkus/command/arch/CqrsQuarkusModuleIndependenceTest.java",
     }
     validated = {}
     for item in mappings:
@@ -918,7 +1017,7 @@ def compiled_api_gate(roots: list[pathlib.Path], output: pathlib.Path,
                    for left, right in ((1, 2), (2, 3), (1, 3))}
     source_by_symbol = {row["path"]: row for row in source_rows if row["category"] == "api"}
     adapted = []
-    adapted_only_on_jdk8 = []
+    adapted_single_line = {0: [], 1: []}
     adapted_bridges = []
     stale = []
     for item in policy.get("platformApiMembersMissingOnJdk8", []):
@@ -939,31 +1038,36 @@ def compiled_api_gate(roots: list[pathlib.Path], output: pathlib.Path,
                 adapted_bridges.append(bridge)
         else:
             stale.append(bridge if explicit_matches and bridge else entry)
-    for item in policy.get("platformApiMembersOnlyOnJdk8", []):
-        if module and not item["sourceSymbol"].startswith(module + "/"):
-            continue
-        entry = item["compiledEntry"]
-        source = source_by_symbol.get(item["sourceSymbol"])
-        if (entry in api_sets[0] and entry not in api_sets[1] and entry not in api_sets[2]
-                and source and source["jdk8"] == item.get("sourceDeclaration")
-                and source["jdk17"] == source["jdk21"] == "MISSING"):
-            adapted_only_on_jdk8.append(item)
-        else:
-            stale.append(entry)
+    for line, registry in ((0, "platformApiMembersOnlyOnJdk8"),
+                           (1, "platformApiMembersOnlyOnJdk17")):
+        for item in policy.get(registry, []):
+            if module and not item["sourceSymbol"].startswith(module + "/"):
+                continue
+            entry = item["compiledEntry"]
+            source = source_by_symbol.get(item["sourceSymbol"])
+            if (entry in api_sets[line]
+                    and all(entry not in api for index, api in enumerate(api_sets) if index != line)
+                    and single_line_source_api_matches(source, item, line)):
+                adapted_single_line[line].append(item)
+            else:
+                stale.append(entry)
     accepted_high = {item["compiledEntry"] for item in adapted} | set(adapted_bridges)
-    accepted_low = {item["compiledEntry"] for item in adapted_only_on_jdk8}
+    accepted_low = {item["compiledEntry"] for item in adapted_single_line[0]}
+    accepted_middle = {item["compiledEntry"] for item in adapted_single_line[1]}
     unresolved = {
         pair: {"only_left": [entry for entry in diff["only_left"]
-                              if not (pair in ("1-2", "1-3") and entry in accepted_low)],
+                              if not ((pair in ("1-2", "1-3") and entry in accepted_low)
+                                      or (pair == "2-3" and entry in accepted_middle))],
                "only_right": [entry for entry in diff["only_right"]
-                              if not (pair in ("1-2", "1-3") and entry in accepted_high)]}
+                              if not ((pair in ("1-2", "1-3") and entry in accepted_high)
+                                       or (pair == "1-2" and entry in accepted_middle))]}
         for pair, diff in differences.items()
     }
     passed = not stale and all(not pair["only_left"] and not pair["only_right"]
                                for pair in unresolved.values())
     result = {"status": "PASS" if passed else "FAIL", "compiles": results,
               "apiCounts": [len(api) for api in api_sets], "pairs": differences,
-              "platformAdaptations": adapted + adapted_only_on_jdk8,
+              "platformAdaptations": adapted + adapted_single_line[0] + adapted_single_line[1],
               "platformCompilerBridges": adapted_bridges,
               "stalePlatformApiMappings": stale,
               "unresolved": unresolved}
@@ -1022,17 +1126,21 @@ def classify_declared_platform_api(rows: list[dict[str, str]], policy: dict[str,
                policy.get("platformApiMembersMissingOnJdk8", [])}
     only_jdk8 = {item["sourceSymbol"]: item for item in
                  policy.get("platformApiMembersOnlyOnJdk8", [])}
+    only_jdk17 = {item["sourceSymbol"]: item for item in
+                  policy.get("platformApiMembersOnlyOnJdk17", [])}
     for row in rows:
         if row["category"] != "api" or row["status"] != "OPEN":
             continue
         absent = missing.get(row["path"])
         present = only_jdk8.get(row["path"])
+        middle = only_jdk17.get(row["path"])
         if ((absent and row["jdk8"] == "MISSING" and row["jdk17"] != "MISSING"
              and row["jdk17"] == row["jdk21"])
                 or (present and row["jdk8"] == present.get("sourceDeclaration")
-                    and row["jdk17"] == row["jdk21"] == "MISSING")):
+                    and row["jdk17"] == row["jdk21"] == "MISSING")
+                or single_line_source_api_matches(row, middle, 1)):
             row["status"] = "PLATFORM_API_PENDING_COMPILE"
-            row["evidence"] = (absent or present)["evidence"]
+            row["evidence"] = (absent or present or middle)["evidence"]
 
 
 def inventory_gate(roots: list[pathlib.Path], output: pathlib.Path, policy_path: pathlib.Path,
@@ -1041,12 +1149,12 @@ def inventory_gate(roots: list[pathlib.Path], output: pathlib.Path, policy_path:
     if policy.get("schemaVersion") != 1:
         raise ValueError("unsupported three-line policy schema")
     validate_type_mappings(policy.get("typeMappings", []), roots)
-    validate_platform_api_mappings(
-        policy.get("platformApiMembersMissingOnJdk8", [])
-        + policy.get("platformApiMembersOnlyOnJdk8", []), roots)
+    validate_platform_api_mappings(platform_api_mappings(policy), roots)
     platform = {item["path"]: item for item in policy.get("platformItemsMissingOnJdk8", [])}
     platform_only_jdk8 = validate_platform_files_only_on_jdk8(
         policy.get("platformFilesOnlyOnJdk8", []), roots)
+    platform_only_jdk17 = validate_platform_files_only_on_jdk17(
+        policy.get("platformFilesOnlyOnJdk17"), roots)
     platform_resources_only_jdk8 = validate_platform_resources_only_on_jdk8(
         policy.get("platformResourcesOnlyOnJdk8", []), roots)
     platform_cdi_resources_only_jdk8 = validate_platform_cdi_resources_only_on_jdk8(
@@ -1070,14 +1178,21 @@ def inventory_gate(roots: list[pathlib.Path], output: pathlib.Path, policy_path:
     historical_sections = validate_historical_document_sections(
         policy.get("historicalDocumentSections", []), roots)
     snapshots = [inventory_files(root) for root in roots]
-    dependency_configs = validate_platform_dependency_config_files(
-        policy.get("platformDependencyConfigFiles", []), snapshots)
-    build_configs = validate_platform_build_config_files(
-        policy.get("platformBuildConfigFiles", []), snapshots)
-    tool_scripts = validate_platform_tool_scripts(
-        policy.get("platformToolScripts", []), snapshots)
-    workflow_configs = validate_platform_workflow_files(
-        policy.get("platformWorkflowFiles", []), roots, snapshots)
+    configuration_mappings = []
+    errors = []
+    for field, validate, args in (
+        ("platformDependencyConfigFiles", validate_platform_dependency_config_files, (snapshots,)),
+        ("platformBuildConfigFiles", validate_platform_build_config_files, (snapshots,)),
+        ("platformToolScripts", validate_platform_tool_scripts, (snapshots,)),
+        ("platformWorkflowFiles", validate_platform_workflow_files, (roots, snapshots)),
+    ):
+        try:
+            configuration_mappings.append(validate(policy.get(field, []), *args))
+        except ValueError as error:
+            errors.append(str(error))
+    if errors:
+        raise ValueError("\n".join(errors))
+    dependency_configs, build_configs, tool_scripts, workflow_configs = configuration_mappings
     rows = []
     for path in sorted(set().union(*(snapshot.keys() for snapshot in snapshots))):
         values = [snapshot.get(path) for snapshot in snapshots]
@@ -1129,6 +1244,9 @@ def inventory_gate(roots: list[pathlib.Path], output: pathlib.Path, policy_path:
         elif path in platform_only_jdk8 and values[0] is not None and values[1] is None and values[2] is None:
             status = "PLATFORM_ADAPTED"
             evidence = platform_only_jdk8[path]["evidence"]
+        elif path in platform_only_jdk17:
+            status = "PLATFORM_ADAPTED"
+            evidence = platform_only_jdk17[path]
         elif (path in platform_resources_only_jdk8 and values[0] is not None
               and values[1] is None and values[2] is None):
             status = "PLATFORM_ADAPTED"
@@ -1187,7 +1305,9 @@ def inventory_gate(roots: list[pathlib.Path], output: pathlib.Path, policy_path:
                      "jdk21": values[2] or "MISSING", "reason": reason,
                      "status": status, "task": task_for_difference(path, category), "evidence": evidence})
     output.mkdir(parents=True, exist_ok=True)
-    apis = [source_api(root, snapshot, output) for root, snapshot in zip(roots, snapshots)]
+    enum_symbols = [item["sourceSymbol"] for item in policy.get("platformApiMembersOnlyOnJdk8", [])]
+    apis = [source_api(root, snapshot, output, enum_symbols=enum_symbols)
+            for root, snapshot in zip(roots, snapshots)]
     for symbol in sorted(set().union(*(api.keys() for api in apis))):
         values = [api.get(symbol) for api in apis]
         if values[0] == values[1] == values[2]:
@@ -1289,24 +1409,36 @@ def normalize_descriptor(value: str, mappings=(), line: str = "") -> str:
 
 def validate_type_mappings(mappings, roots: list[pathlib.Path]) -> None:
     """在源码清单阶段即拒绝无证据、重复或过宽映射。"""
+    versions = ("1.0.x", "2.0.x", "3.0.x")
+    if len(roots) != len(versions):
+        raise ValueError("type mapping evidence requires all three line roots")
     identifiers = set()
     for mapping in mappings:
         identifier = mapping.get("id", "")
         if identifier in identifiers:
             raise ValueError(f"duplicate type mapping id: {identifier}")
         identifiers.add(identifier)
-        evidence = pathlib.PurePosixPath(mapping.get("evidence", ""))
-        if evidence.is_absolute() or ".." in evidence.parts:
-            raise ValueError(f"invalid type mapping evidence path: {evidence}")
-        if not all((root / evidence).is_file() for root in roots):
-            raise ValueError(f"type mapping evidence missing in a line: {evidence}")
+        evidence = mapping.get("evidence")
+        if isinstance(evidence, str):
+            evidence = dict.fromkeys(versions, evidence)
+        if not isinstance(evidence, dict) or evidence.keys() != set(versions):
+            raise ValueError(f"invalid type mapping evidence for {identifier}: expected one path per line")
+        for version, root in zip(versions, roots):
+            relative_path = evidence[version]
+            if not isinstance(relative_path, str) or not relative_path.strip():
+                raise ValueError(f"invalid type mapping evidence path for {identifier} in {version}: {relative_path!r}")
+            path = pathlib.PurePosixPath(relative_path)
+            if path.is_absolute() or ".." in path.parts:
+                raise ValueError(f"invalid type mapping evidence path for {identifier} in {version}: {path}")
+            if not (root / path).is_file():
+                raise ValueError(f"type mapping evidence missing for {identifier} in {version}: {path}")
         if mapping.get("aliases"):
             alias_evidence = pathlib.PurePosixPath(mapping.get("aliasEvidence", ""))
             if alias_evidence.is_absolute() or ".." in alias_evidence.parts:
                 raise ValueError(f"invalid type mapping alias evidence path: {alias_evidence}")
             if not all((root / alias_evidence).is_file() for root in roots):
                 raise ValueError(f"type mapping alias evidence missing in a line: {alias_evidence}")
-    for version in ("1.0.x", "2.0.x", "3.0.x"):
+    for version in versions:
         normalize_descriptor("", mappings, version)
 
 
@@ -1341,6 +1473,12 @@ def validate_platform_content_mappings(mappings, roots: list[pathlib.Path]) -> d
              "import tools.jackson.databind.json.JsonMapper;"),
         }
         exact_test_adaptations = {
+            ("ddd4j-mq/ddd4j-mq-pulsar/src/test/java/io/ddd4j/mq/pulsar/PulsarContainerIntegrationTest.java",
+             'import java.time.Duration;\nimport java.util.Collections;',
+             'import java.util.Collections;\nimport java.util.Map;', ("2.0.x", "3.0.x")),
+            ("ddd4j-mq/ddd4j-mq-pulsar/src/test/java/io/ddd4j/mq/pulsar/PulsarContainerIntegrationTest.java",
+             'new PulsarContainer(DockerImageName.parse("apachepulsar/pulsar:2.10.6"))\n            .withStartupTimeout(Duration.ofSeconds(60));',
+             'new PulsarContainer(DockerImageName.parse("apachepulsar/pulsar:4.2.4"))\n            .withTmpFs(Map.of("/pulsar/data", "rw,mode=1777", "/pulsar/logs", "rw,mode=1777"));', ("2.0.x", "3.0.x")),
             ("ddd4j-data/ddd4j-data-event-store-jdbi/src/test/java/io/ddd4j/data/event/store/jdbi/MysqlEventStoreContainerSupport.java",
              "import org.testcontainers.containers.MySQLContainer;",
              "import org.testcontainers.mysql.MySQLContainer;", ("3.0.x",)),
@@ -1353,7 +1491,7 @@ def validate_platform_content_mappings(mappings, roots: list[pathlib.Path]) -> d
             ("ddd4j-web/ddd4j-web-webflux/src/test/java/io/ddd4j/web/webflux/ApiVersionWebFilterTest.java",
              "new GlobalErrorWebExceptionHandler(new GlobalErrorAttributes(), new ObjectMapper(),",
              "new GlobalErrorWebExceptionHandler(new GlobalErrorAttributes(), JsonMapper.builder().build(),", ("3.0.x",)),
-            ("ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/TestApp.java",
+            ("ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/projection/jpa/TestApp.java",
              "import org.springframework.boot.autoconfigure.domain.EntityScan;",
              "import org.springframework.boot.persistence.autoconfigure.EntityScan;", ("3.0.x",)),
             ("ddd4j-mq/ddd4j-mq-rabbitmq/src/test/java/io/ddd4j/mq/rabbitmq/RabbitMQContainerIntegrationTest.java",
@@ -1365,7 +1503,7 @@ def validate_platform_content_mappings(mappings, roots: list[pathlib.Path]) -> d
             ("ddd4j-core/src/test/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunInfoValueContractTest.java",
              "ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();",
              "JsonMapper mapper = JsonMapper.builder().findAndAddModules().build();", ("3.0.x",)),
-            ("ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/arch/ProjectionJpaModuleIndependenceTest.java",
+            ("ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/projection/jpa/arch/ProjectionJpaModuleIndependenceTest.java",
              '                            "javax..",\n', "", ("2.0.x", "3.0.x")),
             ("ddd4j-runtime/ddd4j-runtime-helidon/src/test/java/io/ddd4j/helidon/HelidonServerBootTest.java",
              "server.cdiContainer().select(RuntimeReadinessRegistry.class).get()",
@@ -1375,11 +1513,7 @@ def validate_platform_content_mappings(mappings, roots: list[pathlib.Path]) -> d
              "import org.springframework.boot.autoconfigure.domain.EntityScan;",
              "import org.springframework.boot.persistence.autoconfigure.EntityScan;",
              ("3.0.x",)),
-            ("ddd4j-data/ddd4j-data-projection-panache/src/test/java/io/ddd4j/data/projection/panache/arch/ProjectionPanacheModuleIndependenceTest.java",
-             '                            "javax..",',
-             '                            "jakarta..",',
-             ("2.0.x", "3.0.x")),
-            ("ddd4j-data/ddd4j-data-projection-quarkus/src/test/java/io/ddd4j/data/projection/quarkus/arch/ProjectionQuarkusModuleIndependenceTest.java",
+            ("ddd4j-data/ddd4j-data-event-store-panache/src/test/java/io/ddd4j/data/projection/panache/arch/ProjectionPanacheModuleIndependenceTest.java",
              '                            "javax..",',
              '                            "jakarta..",',
              ("2.0.x", "3.0.x")),
@@ -1694,14 +1828,57 @@ def platform_syntax_matches(path: str, roots: list[pathlib.Path], mapping: dict)
 
 
 def class_files(root: pathlib.Path) -> dict[str, pathlib.Path]:
-    result = {}
-    for file in root.glob("**/target/classes/**/*.class"):
-        relative = file.relative_to(root).as_posix()
-        module, class_name = relative.split("/target/classes/", 1)
-        class_name = class_name.removesuffix(".class")
-        if GENERATED_CLASS.search(class_name):
+    """仅扫描当前 Git 工作树中默认 reactor 可达模块的编译输出。"""
+    listed = subprocess.check_output([
+        "git", "-C", str(root), "ls-files", "-z", "--cached", "--others", "--exclude-standard"
+    ])
+    live_poms = set()
+    for raw_path in set(listed.split(b"\0")) - {b""}:
+        pom = pathlib.PurePosixPath(os.fsdecode(raw_path))
+        if (pom.name != "pom.xml"
+                or any(part in {".superpowers", ".codegraph", ".git", "target", "output"}
+                       for part in pom.parts)
+                or not (root / pom).is_file()):
             continue
-        result[f"{module}|{class_name}"] = file
+        live_poms.add(pom)
+    modules = set()
+    visited = set()
+    pending = [pathlib.PurePosixPath("pom.xml")]
+    while pending:
+        pom = pending.pop()
+        if pom not in live_poms or pom in visited:
+            continue
+        visited.add(pom)
+        project = ET.parse(root / pom).getroot()
+        modules.add(pom.parent)
+        # Maven 3/4 的默认聚合声明；不把测试资源中的独立消费者 POM 当成 reactor。
+        for container in project:
+            child_name = {"modules": "module", "subprojects": "subproject"}.get(
+                container.tag.rsplit("}", 1)[-1])
+            if child_name is None:
+                continue
+            for child in container:
+                name = (child.text or "").strip()
+                if child.tag.rsplit("}", 1)[-1] != child_name or not name:
+                    continue
+                candidate = root / pom.parent / name
+                if candidate.name != "pom.xml":
+                    candidate /= "pom.xml"
+                try:
+                    relative = candidate.resolve().relative_to(root.resolve())
+                except ValueError:
+                    continue
+                pending.append(pathlib.PurePosixPath(relative.as_posix()))
+    result = {}
+    for module in sorted(modules):
+        classes = root / module / "target/classes"
+        for file in classes.rglob("*.class"):
+            if not file.is_file():
+                continue
+            class_name = file.relative_to(classes).as_posix().removesuffix(".class")
+            if GENERATED_CLASS.search(class_name):
+                continue
+            result[f"{module.as_posix()}|{class_name}"] = file
     return result
 
 
@@ -1718,6 +1895,7 @@ def javap_api(classes: dict[str, pathlib.Path], mappings=(), version_line: str =
         chunk = entries[offset:offset + 100]
         output = run("javap", "-protected", "-s", "-v", *[str(file) for _, file in chunk])
         declaration = ""
+        classfile = ""
         identity = ""
         pending = ""
         parameter_names = []
@@ -1754,6 +1932,12 @@ def javap_api(classes: dict[str, pathlib.Path], mappings=(), version_line: str =
 
         for raw_line in output.splitlines() + [""]:
             line = raw_line.strip()
+            if raw_line.startswith("Classfile "):
+                classfile = os.path.abspath(raw_line.removeprefix("Classfile "))
+                continue
+            if raw_line == "}":
+                finish_method()
+                continue
             if reading_parameters:
                 if not line:
                     reading_parameters = False
@@ -1779,8 +1963,18 @@ def javap_api(classes: dict[str, pathlib.Path], mappings=(), version_line: str =
                       if raw_line == raw_line.lstrip() else None)
             if header:
                 finish_method()
-                candidates = identities_by_binary_name.get(header.group(1), [])
-                identity = candidates[0] if line.startswith("public ") and len(candidates) == 1 else ""
+                origin, classfile = classfile, ""
+                identity = ""
+                if line.startswith("public "):
+                    candidates = identities_by_binary_name.get(header.group(1), [])
+                    if len(candidates) > 1:
+                        candidates = [candidate for candidate in candidates
+                                      if os.path.abspath(classes[candidate]) == origin]
+                        if len(candidates) != 1:
+                            location = origin or "<missing Classfile>"
+                            raise ValueError(f"cannot identify javap class {header.group(1)} at {location}")
+                    if candidates:
+                        identity = candidates[0]
                 continue
             if line.startswith(("public ", "protected ")) and line.endswith(";"):
                 finish_method()
@@ -1848,15 +2042,15 @@ def module_compiled_api_gate(roots: list[pathlib.Path], output: pathlib.Path,
     if policy.get("schemaVersion") != 1:
         raise ValueError("unsupported three-line policy schema")
     validate_type_mappings(policy.get("typeMappings", []), roots)
-    platform_api = (policy.get("platformApiMembersMissingOnJdk8", [])
-                    + policy.get("platformApiMembersOnlyOnJdk8", []))
-    validate_platform_api_mappings(
-        [item for item in platform_api if item["sourceSymbol"].startswith(module + "/")], roots)
+    platform_api = platform_api_mappings(policy, module)
+    validate_platform_api_mappings(platform_api, roots)
     output.mkdir(parents=True, exist_ok=True)
     snapshots = [{path: digest for path, digest in inventory_files(root).items()
                   if path.startswith(module + "/")}
                  for root in roots]
-    apis = [source_api(root, snapshot, output) for root, snapshot in zip(roots, snapshots)]
+    enum_symbols = [item["sourceSymbol"] for item in policy.get("platformApiMembersOnlyOnJdk8", [])]
+    apis = [source_api(root, snapshot, output, enum_symbols=enum_symbols)
+            for root, snapshot in zip(roots, snapshots)]
     rows = []
     for symbol in sorted(set().union(*(api.keys() for api in apis))):
         values = [api.get(symbol) for api in apis]

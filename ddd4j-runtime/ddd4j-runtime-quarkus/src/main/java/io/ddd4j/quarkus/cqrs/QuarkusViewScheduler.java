@@ -15,19 +15,14 @@
 package io.ddd4j.quarkus.cqrs;
 
 import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
+import io.quarkus.arc.DefaultBean;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
-import jakarta.inject.Inject;
+import jakarta.enterprise.inject.spi.CDI;
+import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
-import org.quartz.CronScheduleBuilder;
-import org.quartz.JobBuilder;
-import org.quartz.JobDetail;
 import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
 
-import java.util.UUID;
 
 /**
  * Quarkus CQRS 视图调度器。
@@ -40,6 +35,7 @@ import java.util.UUID;
  */
 @Slf4j
 @ApplicationScoped
+@DefaultBean
 public class QuarkusViewScheduler implements ViewScheduler {
 
     /**
@@ -47,44 +43,30 @@ public class QuarkusViewScheduler implements ViewScheduler {
      */
     static final String TASK_KEY = "ddd4j.task";
 
-    /**
-     * Quartz 调度器
-     */
-    @Inject
-    Instance<Scheduler> schedulers;
-
     @Override
     public ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
-        Scheduler scheduler = scheduler();
-        String identity = viewName + "-" + UUID.randomUUID();
         try {
-            JobDetail job = JobBuilder.newJob(RunnableJob.class)
-                    .withIdentity(identity + "-job")
-                    .usingJobData(TASK_KEY, identity)
-                    .storeDurably()
-                    .build();
-            RunnableHolder.put(identity, task);
-
-            Trigger trigger = TriggerBuilder.newTrigger()
-                    .withIdentity(identity + "-trigger")
-                    .withSchedule(CronScheduleBuilder.cronSchedule(cron))
-                    .build();
-
-            scheduler.scheduleJob(job, trigger);
-            log.info("Scheduled view '{}' with cron '{}'", viewName, cron);
-            return new QuartzViewScheduleHandle(scheduler, identity);
-        } catch (SchedulerException ex) {
-            throw new IllegalStateException("Failed to schedule view '" + viewName + "' with cron '" + cron + "'", ex);
+            return NativeQuartz.schedule(viewName, cron, task);
+        } catch (NoClassDefFoundError missingQuartz) {
+            throw new IllegalStateException("Quartz Scheduler is unavailable; add the quarkus-quartz extension", missingQuartz);
         }
     }
 
-    private Scheduler scheduler() {
-        if (schedulers.isUnsatisfied()) {
-            throw new IllegalStateException("Quartz Scheduler is unavailable; add the quarkus-quartz extension");
+    // 将选装 Quartz 的链接边界放在真实 schedule 调用内，ArC 发现外层 Bean 时不加载 Quartz 类型。
+    private static final class NativeQuartz {
+        private static ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
+            Instance<io.quarkus.quartz.QuartzScheduler> schedulers = CDI.current()
+                    .select(io.quarkus.quartz.QuartzScheduler.class);
+            if (!schedulers.isResolvable()) {
+                throw new IllegalStateException("A unique Quarkus QuartzScheduler is required; add quarkus-quartz");
+            }
+            Scheduler scheduler = schedulers.get().getScheduler();
+            if (Objects.isNull(scheduler)) {
+                throw new IllegalStateException("Quartz is disabled or not initialized for programmatic projection scheduling");
+            }
+            QuartzViewScheduleHandle handle = QuartzViewScheduleHandle.schedule(scheduler, viewName, cron, task);
+            log.info("Scheduled view '{}' with cron '{}'", viewName, cron);
+            return handle;
         }
-        if (schedulers.isAmbiguous()) {
-            throw new IllegalStateException("Multiple Quartz Scheduler beans are available");
-        }
-        return schedulers.get();
     }
 }

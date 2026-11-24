@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import java.util.Objects;
 
 import io.ddd4j.core.api.R;
+import io.ddd4j.kit.lang.StrKit;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -132,7 +133,7 @@ public class AuthenticationResource {
         rbacService.requireLogin();
         Map<String, Object> result = new HashMap<>();
         result.put("permission", permission);
-        result.put("has", rbacService.hasPermission(permission));
+        result.put("has", StrKit.isNotBlank(permission) && rbacService.hasPermission(permission));
         return R.ok(result);
     }
 

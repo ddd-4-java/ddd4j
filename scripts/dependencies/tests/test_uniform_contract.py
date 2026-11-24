@@ -414,13 +414,14 @@ class UniformContract(unittest.TestCase):
             self.assertNotIn('quartz.version', other['fixed_properties'])
             self.assertTrue(java8_api.isdisjoint(other['exclude']))
 
-    def test_jdk8_shiro_keeps_java8_bytecode(self):
+    def test_shiro_keeps_line_specific_version_pins(self):
         repository = pathlib.Path(__file__).parents[3]
         raw = checker.json.loads((repository / '.github/dependency-policy.json').read_text())
         self.assertEqual(checker.resolve_policy(raw, 'feature/1.0.x')['fixed_properties'].get('shiro.version'),
                          '1.13.0')
-        for branch in ('feature/2.0.x', 'feature/3.0.x'):
-            self.assertNotIn('shiro.version', checker.resolve_policy(raw, branch)['fixed_properties'])
+        self.assertEqual(checker.resolve_policy(raw, 'feature/2.0.x')['fixed_properties'].get('shiro.version'),
+                         '3.0.2')
+        self.assertNotIn('shiro.version', checker.resolve_policy(raw, 'feature/3.0.x')['fixed_properties'])
 
     def test_jdk8_guice_keeps_javax_inject(self):
         repository = pathlib.Path(__file__).parents[3]

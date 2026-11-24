@@ -43,7 +43,7 @@ class HelidonOrderCqrsIT {
     private WebTarget webTarget;
 
     @Inject
-    private ViewManager viewManager;
+    private io.ddd4j.sample.helidon.cqrs.readmodel.InMemoryViewManager viewManager;
 
     @Test
     @DisplayName("POST /orders 创建订单 -> 返回 201 + orderId")

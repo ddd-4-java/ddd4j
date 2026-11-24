@@ -94,26 +94,31 @@ public final class MQDeliveryPolicy {
     }
 
     /** @return 投递租约时长 */
+    @JsonProperty("leaseDuration")
     public Duration leaseDuration() {
         return leaseDuration;
     }
 
     /** @return 最多投递尝试次数 */
+    @JsonProperty("maxAttempts")
     public int maxAttempts() {
         return maxAttempts;
     }
 
     /** @return 初始退避时长 */
+    @JsonProperty("initialBackoff")
     public Duration initialBackoff() {
         return initialBackoff;
     }
 
     /** @return 最大退避时长 */
+    @JsonProperty("maxBackoff")
     public Duration maxBackoff() {
         return maxBackoff;
     }
 
     /** @return 退避抖动系数 */
+    @JsonProperty("jitterFactor")
     public double jitterFactor() {
         return jitterFactor;
     }

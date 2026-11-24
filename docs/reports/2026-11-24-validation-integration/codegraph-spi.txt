@@ -1,0 +1,245 @@
+**Exploration: UploadFileAdapters FileContentCheckStrategy**
+
+Found 18 symbols across 2 files.
+
+**Blast radius — what depends on these (update/verify before editing)**
+
+- `UploadFileAdapters` (src/main/java/io/github/easy4j/validation/file/UploadFileAdapters.java:23) — 1 caller in `src/main/java/io/github/easy4j/validation/constraintvalidators/FileValidationEngine.java`; no tests found within 3 caller hops
+- `FileContentCheckStrategy` (src/main/java/io/github/easy4j/validation/provider/FileContentCheckStrategy.java:42) — 1 caller in `src/main/java/io/github/easy4j/validation/provider/FileContentCheckStrategy.java`; no tests found within 3 caller hops
+- `FileContentCheckStrategy` (src/main/java/io/github/easy4j/validation/provider/FileContentCheckStrategy.java:30) — 18 callers in `src/main/java/io/github/easy4j/validation/constraintvalidators/FileNotEmptyValidator.java`, `src/main/java/io/github/easy4j/validation/constraintvalidators/FilesNotEmptyValidator.java`, `src/main/java/io/github/easy4j/validation/file/FileValidationService.java`, `src/main/java/io/github/easy4j/validation/constraintvalidators/FileValidationEngine.java` +1 more; tests: `src/test/java/io/github/easy4j/validation/file/FileValidationServiceTest.java`, `src/test/java/io/github/easy4j/validation/FileContentCheckStrategyTest.java`
+- `check` (src/main/java/io/github/easy4j/validation/provider/FileContentCheckStrategy.java:107) — 2 callers in `src/main/java/io/github/easy4j/validation/file/FileValidationService.java`; tests: `src/test/java/io/github/easy4j/validation/FileContentCheckStrategyTest.java`
+
+**Source Code**
+
+> The code below is the **verbatim, current on-disk source** of these files — re-read from disk on this call and line-numbered, byte-for-byte identical to what the Read tool returns. It is NOT a summary, outline, or stale cache. Treat each block as a Read you have already performed: do not Read a file shown here.
+
+**`src/main/java/io/github/easy4j/validation/provider/FileContentCheckStrategy.java`** — FileContentCheckStrategy(method), FileContentCheckStrategy(class), check(method), <Comparator$anon@46>(class), normalize(method), +6 more
+
+```java
+1	package io.github.easy4j.validation.provider;
+2	
+3	import io.github.easy4j.validation.file.UploadFile;
+4	import org.apache.commons.lang3.StringUtils;
+5	
+6	import java.util.Collections;
+7	import java.util.ArrayList;
+8	import java.util.Comparator;
+9	import java.util.LinkedHashMap;
+10	import java.util.List;
+11	import java.util.Locale;
+12	import java.util.Map;
+13	import java.util.Objects;
+14	import java.util.ServiceConfigurationError;
+15	import java.util.ServiceLoader;
+16	
+17	/**
+18	 * Strategy that selects the appropriate {@link FileContentCheckProvider} based on the file
+19	 * extension and delegates content checks to it.
+20	 *
+21	 * <p>Providers are keyed by their {@link FileContentCheckProvider#support()} extension
+22	 * (normalized to lower-case, without a leading dot).  A wildcard provider with support
+23	 * A wildcard provider of the form {@code "*&#47;*"} acts as a catch-all fallback.  Duplicate extensions are rejected at
+24	 * construction time.</p>
+25	 *
+26	 * @author <a href="https://github.com/loong10k">Loong Wan</a>
+27	 * @since 3.0.0
+28	 * @see FileContentCheckProvider
+29	 */
+30	public final class FileContentCheckStrategy {
+31	
+32	    private static final String WILDCARD = "*/*";
+33	
+34	    private final Map<String, FileContentCheckProvider> providers;
+35	
+36	    /**
+37	     * Creates a new strategy backed by the given providers.
+38	     *
+39	     * @param providers the content check providers (may be {@code null} or empty)
+40	     * @throws IllegalArgumentException if two providers declare the same extension
+41	     */
+42	    public FileContentCheckStrategy(List<FileContentCheckProvider> providers) {
+43	        Map<String, FileContentCheckProvider> mappings = new LinkedHashMap<String, FileContentCheckProvider>();
+44	        if (Objects.nonNull(providers)) {
+45	            List<FileContentCheckProvider> sortedProviders = new ArrayList<FileContentCheckProvider>(providers);
+46	            Collections.sort(sortedProviders, new Comparator<FileContentCheckProvider>() {
+47	                @Override
+48	                public int compare(FileContentCheckProvider left, FileContentCheckProvider right) {
+49	                    return left.getClass().getName().compareTo(right.getClass().getName());
+50	                }
+51	            });
+52	            for (FileContentCheckProvider provider : sortedProviders) {
+53	                if (Objects.nonNull(provider) && StringUtils.isNotBlank(provider.support())) {
+54	                    String support = normalize(provider.support());
+55	                    FileContentCheckProvider existing = mappings.get(support);
+56	                    if (Objects.nonNull(existing)) {
+57	                        throw new IllegalArgumentException("Duplicate file content check providers for support: " + support);
+58	                    }
+59	                    if (Objects.isNull(existing)) {
+60	                        mappings.put(support, provider);
+61	                    }
+62	                }
+63	            }
+64	        }
+65	        this.providers = Collections.unmodifiableMap(mappings);
+66	    }
+67	
+68	    /**
+69	     * 加载当前线程上下文类加载器可见的 SPI 内容检查提供者。
+70	     *
+71	     * @return 内容检查策略
+72	     */
+73	    public static FileContentCheckStrategy load() {
+74	        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+75	        ServiceLoader<FileContentCheckProvider> loader = Objects.nonNull(classLoader)
+76	                ? ServiceLoader.load(FileContentCheckProvider.class, classLoader)
+77	                : ServiceLoader.load(FileContentCheckProvider.class);
+78	        List<FileContentCheckProvider> providers = new ArrayList<FileContentCheckProvider>();
+79	        try {
+80	            for (FileContentCheckProvider provider : loader) {
+81	                providers.add(provider);
+82	            }
+83	        } catch (ServiceConfigurationError error) {
+84	            throw new IllegalStateException("Unable to load file content check providers", error);
+85	        }
+86	        return new FileContentCheckStrategy(providers);
+87	    }
+88	
+89	    /**
+90	     * 判断指定扩展名是否存在内容检查提供者或通配提供者。
+91	     *
+92	     * @param extension 文件扩展名
+93	     * @return 是否存在可用提供者
+94	     */
+95	    public boolean hasProvider(String extension) {
+96	        return Objects.nonNull(findProvider(extension));
+97	    }
+98	
+99	    /**
+100	     * Delegates the content check to the provider matching the given extension (or the
+101	     * wildcard fallback).
+102	     *
+103	     * @param extension the file extension (without a leading dot)
+104	     * @param uploadFile the uploaded file to check
+105	     * @return {@code true} if the content passes the check, or no provider matches
+106	     */
+107	    public boolean check(String extension, UploadFile uploadFile) {
+108	        FileContentCheckProvider provider = findProvider(extension);
+109	        return Objects.nonNull(provider) && Boolean.TRUE.equals(provider.check(uploadFile));
+110	    }
+111	
+112	    private FileContentCheckProvider findProvider(String extension) {
+113	        FileContentCheckProvider provider = providers.get(normalize(extension));
+114	        return Objects.nonNull(provider) ? provider : providers.get(WILDCARD);
+115	    }
+116	
+117	    private String normalize(String value) {
+118	        if (StringUtils.isBlank(value)) {
+119	            return "";
+120	        }
+121	        String normalized = StringUtils.trim(value).toLowerCase(Locale.ROOT);
+122	        return normalized.startsWith(".") ? normalized.substring(1) : normalized;
+123	    }
+124	}
+```
+
+**`src/main/java/io/github/easy4j/validation/file/UploadFileAdapters.java`** — UploadFileAdapters(class), UploadFileAdapters(method), adapt(method), loadAdapters(method), reload(method), +2 more
+
+```java
+1	package io.github.easy4j.validation.file;
+2	
+3	import java.util.ArrayList;
+4	import java.util.Collections;
+5	import java.util.List;
+6	import java.util.Objects;
+7	import java.util.ServiceConfigurationError;
+8	import java.util.ServiceLoader;
+9	
+10	/**
+11	 * Registry that discovers and delegates to {@link UploadFileAdapter} implementations via
+12	 * the Java {@link ServiceLoader} SPI mechanism.
+13	 *
+14	 * <p>If the value is already an {@link UploadFile} it is returned directly.  Otherwise
+15	 * the registered adapters are consulted; if exactly one adapter supports the value it is
+16	 * used, and if more than one matches an {@link IllegalStateException} is thrown to signal
+17	 * ambiguity.</p>
+18	 *
+19	 * @author <a href="https://github.com/loong10k">Loong Wan</a>
+20	 * @since 3.0.0
+21	 * @see UploadFileAdapter
+22	 */
+23	public final class UploadFileAdapters {
+24	
+25	    private static volatile List<UploadFileAdapter> adapters = loadAdapters();
+26	
+27	    private UploadFileAdapters() {
+28	    }
+29	
+30	    /**
+31	     * Adapts the given value to an {@link UploadFile}.
+32	     *
+33	     * <p>If the value is already an {@link UploadFile} it is returned as-is.  If exactly one
+34	     * SPI adapter supports the value, the adapter is used.  If more than one adapter matches,
+35	     * an {@link IllegalStateException} is thrown.</p>
+36	     *
+37	     * @param value the raw upload object (may be {@code null})
+38	     * @return the adapted upload file, or {@code null} if no adapter supports the value
+39	     * @throws IllegalStateException if more than one adapter supports the value
+40	     */
+41	    public static UploadFile adapt(Object value) {
+42	        if (value instanceof UploadFile) {
+43	            return (UploadFile) value;
+44	        }
+45	        UploadFileAdapter selected = null;
+46	        for (UploadFileAdapter adapter : adapters) {
+47	            if (adapter.supports(value)) {
+48	                if (Objects.nonNull(selected)) {
+49	                    throw new IllegalStateException("Ambiguous upload file adapters: "
+50	                            + selected.getClass().getName() + " and " + adapter.getClass().getName());
+51	                }
+52	                selected = adapter;
+53	            }
+54	        }
+55	        return Objects.nonNull(selected) ? selected.adapt(value) : null;
+56	    }
+57	
+58	    /**
+59	     * 按当前线程上下文类加载器重新加载 SPI 适配器。
+60	     *
+61	     * <p>适用于插件热加载或测试替换类加载器后的显式刷新。</p>
+62	     */
+63	    public static synchronized void reload() {
+64	        adapters = loadAdapters();
+65	    }
+66	
+67	    private static List<UploadFileAdapter> loadAdapters() {
+68	        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+69	        ServiceLoader<UploadFileAdapter> loader = Objects.nonNull(classLoader)
+70	                ? ServiceLoader.load(UploadFileAdapter.class, classLoader)
+71	                : ServiceLoader.load(UploadFileAdapter.class);
+72	        List<UploadFileAdapter> adapters = new ArrayList<UploadFileAdapter>();
+73	        try {
+74	            for (UploadFileAdapter adapter : loader) {
+75	                adapters.add(adapter);
+76	            }
+77	        } catch (ServiceConfigurationError error) {
+78	            throw new IllegalStateException("Unable to load upload file adapters", error);
+79	        }
+80	        adapters.sort((left, right) -> left.getClass().getName().compareTo(right.getClass().getName()));
+81	        return Collections.unmodifiableList(adapters);
+82	    }
+83	}
+```
+
+**Not shown above — explore these names for their source**
+
+- src/main/java/io/github/easy4j/validation/file/FileValidationService.java: check:115, FileValidationService:15, validate:44, io.github.easy4j.validation.file:1, FileValidationService:31, checkContent:95, +2 more
+- src/main/java/io/github/easy4j/validation/provider/FileContentCheckProvider.java: check:24, support:33, FileContentCheckProvider:16, io.github.easy4j.validation.provider:1
+- src/main/java/io/github/easy4j/validation/file/UploadFileAdapter.java: UploadFileAdapter:14, adapt:30, supports:22, io.github.easy4j.validation.file:1
+- src/test/java/io/github/easy4j/validation/file/FileValidationServiceTest.java: io.github.easy4j.validation.file:1, legacyGenericWordContainerIsConfinedToConstraintCompatibility:90, onlyConstraintModeUsesFilenameMimeAndSkipsUnrestrictedDetection:62, additionalBusinessRulesRunOnlyAfterBasicRulesAndSpiPass:126, contentRejectionKeepsDetectedTypeAndReadErrorFailsClosed:102, check:105, +1 more
+- src/main/java/io/github/easy4j/validation/file/DetectedFileType.java: DetectedFileType:6, equals:7, toString:7, getMimeType:9, hashCode:7, getExtension:8, +1 more
+- src/main/java/io/github/easy4j/validation/constraintvalidators/FileValidationEngine.java: io.github.easy4j.validation.constraintvalidators:1, isValid:30, FileValidationEngine:17, FileValidationEngine:21
+- src/test/java/io/github/easy4j/validation/FileContentCheckStrategyTest.java: io.github.easy4j.validation:1, shouldRejectDuplicateProviders:30, shouldUseConfiguredProviderAndFailWhenNoProviderMatches:18, check:38, <FileContentCheckProvider$anon@37>:37, provider:36
+- src/main/java/io/github/easy4j/validation/file/UploadFile.java: UploadFile:15, getSize:50, getName:22, getInputStream:66, getBytes:58, getOriginalFilename:29, +1 more
+- src/test/java/io/github/easy4j/validation/file/UploadFileAdaptersTest.java: shouldRejectAmbiguousAdaptersAndSupportExplicitReload:11, adapt:27, adapt:39, supports:34, supports:22, HighPriorityAdapter:21, +3 more
+- src/main/java/io/github/easy4j/validation/constraintvalidators/FilesNotEmptyValidator.java: isValid:32, io.github.easy4j.validation.constraintvalidators:1, contentCheckStrategy:23
+- ... and 7 more files

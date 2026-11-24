@@ -4,13 +4,20 @@
 
 ## 运行与登录
 
-从仓库根目录，使用该分支对应的 JDK 运行 HTTP/RBAC 测试：
+从仓库根目录，使用本线 JDK 运行 HTTP 和 RBAC 测试。
 
 ~~~bash
 ./mvnw -pl ddd4j-samples/ddd4j-sample-quarkus-satoken -am test
 ~~~
 
-应用配置端口为 8083。应用启动后，可使用 RbacConfig 创建的样例账号 admin/123456 登录；POST /auth/login 接受 JSON 用户名和密码，响应顶层包含 token：
+构建并启动本地示例：
+
+~~~bash
+./mvnw -pl ddd4j-samples/ddd4j-sample-quarkus-satoken -am package
+java -jar ddd4j-samples/ddd4j-sample-quarkus-satoken/target/quarkus-app/quarkus-run.jar
+~~~
+
+应用配置端口为 8083。应用启动后，可使用 RbacConfig 创建的样例账号 admin/123456 登录；POST /auth/login 接受 JSON 用户名和密码，响应顶层含有 `token`。
 
 ~~~bash
 curl -s -X POST http://localhost:8083/auth/login \
@@ -58,6 +65,8 @@ Sa-Token 资源以鉴权注解保护接口，业务层通过 SubjectKit 访问�
 
 **curl 示例**
 
+将登录响应中的令牌赋给 `TOKEN`，用创建订单返回的 `data.id` 替换 `{id}`。
+
 ```bash
 # 1) 创建商品
 curl -X POST 'http://localhost:8083/api/goods' \
@@ -66,21 +75,25 @@ curl -X POST 'http://localhost:8083/api/goods' \
 
 # 2) 创建草稿订单
 curl -X POST 'http://localhost:8083/orders' \
+  -H "Authorization: Bearer $TOKEN" \
   -H 'Content-Type: application/json' \
   -d '{"orderNo":"O-2026-0001","buyerId":"10001","buyerName":"Alice"}'
 
 # 3) 添加订单行
 curl -X POST 'http://localhost:8083/orders/{id}/lines' \
+  -H "Authorization: Bearer $TOKEN" \
   -H 'Content-Type: application/json' \
   -d '{"goodsId":"1001","goodsName":"iPhone 15","quantity":1,"unitPrice":5999.00}'
 
 # 4) 支付 → 发货；取消使用另一笔未发货订单
-curl -X POST 'http://localhost:8083/orders/{id}/pay'
-curl -X POST 'http://localhost:8083/orders/{id}/ship'
+curl -X POST 'http://localhost:8083/orders/{id}/pay' \
+  -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json'
+curl -X POST 'http://localhost:8083/orders/{id}/ship' \
+  -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json'
 # 另一笔未发货订单可调用 POST /orders/{id}/cancel
 
 # 5) 折扣预览
-curl 'http://localhost:8083/orders/{id}/discount'
+curl 'http://localhost:8083/orders/{id}/discount' -H "Authorization: Bearer $TOKEN"
 
 # 6) 商品分页查询
 curl 'http://localhost:8083/api/goods/page?current=1&size=10&status=ON_SALE&orderBys=price_DESC'
@@ -100,3 +113,11 @@ curl 'http://localhost:8083/api/goods/page?current=1&size=10&status=ON_SALE&orde
 - [ddd4j 主项目](https://github.com/ddd-4-java/ddd4j)
 - [ddd4j-auth 模块](../../ddd4j-auth/pom.xml)
 - [SubjectKit 源码](../../ddd4j-core/src/main/java/io/ddd4j/core/util/SubjectKit.java)
+
+## S03 原生共享订单入口
+
+原 `/orders`、Goods、RBAC 路由和 JSON DTO 保留。实际 CDI 入口复用 `ddd4j-sample-order-application` 与 `ddd4j-sample-order-local`，订单内存存储仅供演示，不证明持久化；旧直接构造器保留供既有消费者/测试使用。查询仍返回原完整明细和币种，折扣规则沿用原领域服务。
+
+所有订单请求需要原生登录；写操作需要 `order:pay`，取消需要 `order:cancel`。权限基于原生已匹配资源方法，拒绝发生在业务写入前。`admin/123456` 有写/取消权限，`user/123456` 默认只读，演示账户仅用于本地样例。实际登录、角色/权限、退出令牌失效均由现有 native 引擎处理。
+
+Quarkus 1 使用 RESTEasy Classic 的请求完成回调，Quarkus 3 使用 Quarkus REST 的请求完成回调。响应过滤器和完成回调按请求所有权释放自身的 Sa-Token 上下文，并恢复请求前的上下文。各版本的同步 HTTP、鉴权拒绝、退出失效、断连及 JVM 启停验证见 [R14 实施计划](../../docs/superpowers/plans/2026-10-10-three-line-product-convergence.md#r14三线存储和多平台完整验收)。

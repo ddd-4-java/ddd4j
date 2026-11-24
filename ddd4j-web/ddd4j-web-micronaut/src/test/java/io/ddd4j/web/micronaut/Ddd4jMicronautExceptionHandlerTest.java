@@ -14,11 +14,14 @@
  */
 package io.ddd4j.web.micronaut;
 
+import io.ddd4j.core.api.R;
 import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
 import io.ddd4j.web.core.error.WebExceptionTranslator;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import org.junit.jupiter.api.Test;
+
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
@@ -84,5 +87,37 @@ class Ddd4jMicronautExceptionHandlerTest {
         HttpResponse<?> response = handler.handle(request, ex);
 
         assertThat(response.getStatus().getCode()).isEqualTo(403);
+    }
+
+    @Test
+    void retainsSingleLineReasonAndErrorEnvelope() {
+        HttpResponse<?> response = new Ddd4jMicronautExceptionHandler().handle(
+                HttpRequest.GET("/conflict"), new IllegalStateException("inventory is locked"));
+
+        assertThat(response.code()).isEqualTo(409);
+        assertThat(response.reason()).isEqualTo("inventory is locked");
+        assertThat(((R<?>) response.body()).getMsg()).isEqualTo("inventory is locked");
+    }
+
+    @Test
+    void keepsMultilineErrorInBodyAndUsesStandardReason() {
+        String message = "inventory is locked\r\ntry again later";
+        HttpResponse<?> response = new Ddd4jMicronautExceptionHandler().handle(
+                HttpRequest.GET("/conflict"), new IllegalStateException(message));
+
+        assertThat(response.code()).isEqualTo(409);
+        assertThat(response.reason()).isEqualTo("Conflict");
+        assertThat(((R<?>) response.body()).getMsg()).isEqualTo(message);
+    }
+
+    @Test
+    void longErrorKeepsBodyAndUsesStandardReason() {
+        String message = String.join("", Collections.nCopies(4081, "x"));
+        HttpResponse<?> response = new Ddd4jMicronautExceptionHandler().handle(
+                HttpRequest.GET("/conflict"), new IllegalStateException(message));
+
+        assertThat(response.code()).isEqualTo(409);
+        assertThat(response.reason()).hasSize("Conflict".length()).isEqualTo("Conflict");
+        assertThat(((R<?>) response.body()).getMsg()).isEqualTo(message);
     }
 }

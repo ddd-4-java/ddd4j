@@ -38,6 +38,7 @@ class MicronautOrderControllerTest {
     void shouldRunSharedOrderUseCasesThroughMicronautHttp() throws Exception {
         Map<String, Object> properties = Map.of(
                 "micronaut.server.port", -1,
+                "ddd4j.web.default-authentication-mode", "REQUIRED",
                 "ddd4j.web.public-paths", List.of("/api/auth/**")
         );
         try (EmbeddedServer server = ApplicationContext.run(EmbeddedServer.class, properties)) {
@@ -67,6 +68,26 @@ class MicronautOrderControllerTest {
             assertThat(successfulPayment.statusCode()).withFailMessage(successfulPayment.body()).isEqualTo(200);
             assertThat(objectMapper.readTree(successfulPayment.body()).path("data").path("status").asText())
                     .isEqualTo("PAID");
+        }
+    }
+
+    @Test
+    void defaultSupportsDirectBusinessWithoutAuthenticationOrProjection() throws Exception {
+        try (EmbeddedServer server = ApplicationContext.run(EmbeddedServer.class, Map.of("micronaut.server.port", -1))) {
+            String base = "http://127.0.0.1:" + server.getPort();
+            HttpClient client = HttpClient.newHttpClient();
+            HttpResponse<String> created = request(client, base, "POST", "/api/orders", null,
+                    "{\"orderNo\":\"DIRECT-001\",\"buyerId\":\"b1\",\"buyerName\":\"Buyer\"}");
+            assertThat(created.statusCode()).withFailMessage(created.body()).isEqualTo(201);
+            String id = objectMapper.readTree(created.body()).path("data").path("id").asText();
+            assertThat(request(client, base, "POST", "/api/orders/" + id + "/lines", null,
+                    "{\"goodsId\":\"g1\",\"goodsName\":\"Book\",\"quantity\":2,\"unitPrice\":10}").statusCode()).isEqualTo(200);
+            var found = request(client, base, "GET", "/api/orders/" + id, null, null);
+            assertThat(objectMapper.readTree(found.body()).path("data").path("totalAmount").decimalValue()).isEqualByComparingTo("20");
+            io.ddd4j.sample.order.testkit.SampleContractAssertions.defaultOrder(
+                    new io.ddd4j.sample.order.testkit.EnvelopeOrderHttpDriver(base, "/api/orders", Map.of()), "MICRONAUT-S00-DIRECT");
+            assertThat(server.getApplicationContext().containsBean(io.ddd4j.core.cqrs.readmodel.ProjectionRunner.class)).isFalse();
+            assertThat(server.getApplicationContext().containsBean(io.ddd4j.core.cqrs.eventstore.EventStore.class)).isFalse();
         }
     }
 

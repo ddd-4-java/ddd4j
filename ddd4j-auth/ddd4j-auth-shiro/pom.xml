@@ -46,6 +46,16 @@
         <dependency>
             <groupId>io.github.easy4j</groupId>
             <artifactId>shiro-extension-core</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.shiro</groupId>
+                    <artifactId>shiro-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.shiro</groupId>
+                    <artifactId>shiro-web</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.shiro</groupId>

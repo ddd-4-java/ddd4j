@@ -18,8 +18,10 @@ import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.web.core.context.WebRequestContext;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * 基于精确路径和 {@code /**} 前缀模式的访问策略。
@@ -38,11 +40,11 @@ public final class PathWebAccessPolicy implements WebAccessPolicy {
      */
     public PathWebAccessPolicy(Collection<String> disabledPatterns, AuthenticationMode defaultMode) {
         Objects.requireNonNull(disabledPatterns, "disabledPatterns must not be null");
-        this.disabledPatterns = disabledPatterns.stream()
+        this.disabledPatterns = Collections.unmodifiableList(disabledPatterns.stream()
                 .filter(StrKit::isNotBlank)
                 .map(String::trim)
                 .distinct()
-                .toList();
+                .collect(Collectors.toList()));
         this.defaultMode = Objects.requireNonNull(defaultMode, "defaultMode must not be null");
     }
 

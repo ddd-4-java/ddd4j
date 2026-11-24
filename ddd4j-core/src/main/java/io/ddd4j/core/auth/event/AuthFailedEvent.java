@@ -14,15 +14,13 @@
  */
 package io.ddd4j.core.auth.event;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.util.Objects;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.core.auth.AuthRequest;
+import lombok.Getter;
 
 import java.time.Instant;
+import java.util.Objects;
 
 /**
  * 登录失败事件（通用鉴权事件）。
@@ -33,42 +31,17 @@ import java.time.Instant;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.0.0
  */
+@Getter
 public final class AuthFailedEvent {
 
-    private static final long serialVersionUID = 0L;
-
+    /** 获取登录请求。 */
     private final AuthRequest request;
 
+    /** 获取登录失败原因。 */
     private final String reason;
 
+    /** 获取事件发生时间。 */
     private final Instant occurredAt;
-
-    /**
-     * 获取事件发生时间。
-     *
-     * @return 事件发生时间
-     */
-    public Instant getOccurredAt() {
-        return occurredAt;
-    }
-
-    /**
-     * 获取登录失败原因。
-     *
-     * @return 登录失败原因
-     */
-    public String getReason() {
-        return reason;
-    }
-
-    /**
-     * 获取登录请求。
-     *
-     * @return 登录请求
-     */
-    public AuthRequest getRequest() {
-        return request;
-    }
 
     /**
      * 创建AuthFailedEvent事件。
@@ -77,12 +50,15 @@ public final class AuthFailedEvent {
      * @param reason 登录失败原因
      * @param occurredAt 事件发生时间
      */
-    @JsonCreator()
-    public AuthFailedEvent(@JsonProperty("request") AuthRequest request, @JsonProperty("reason") String reason, @JsonProperty("occurredAt") Instant occurredAt) {
+    @JsonCreator
+    public AuthFailedEvent(@JsonProperty("request") AuthRequest request,
+                           @JsonProperty("reason") String reason,
+                           @JsonProperty("occurredAt") Instant occurredAt) {
         this.request = request;
         this.reason = reason;
         this.occurredAt = occurredAt;
     }
+
 
     /**
      * 获取用于 JSON 的登录请求。
@@ -119,17 +95,16 @@ public final class AuthFailedEvent {
         if (this == obj) {
             return true;
         }
-        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+        if (!(obj instanceof AuthFailedEvent)) {
             return false;
         }
-        AuthFailedEvent other = (AuthFailedEvent) obj;
-        return Objects.equals(this.request, other.request) && Objects.equals(this.reason, other.reason) && Objects.equals(this.occurredAt, other.occurredAt);
+        AuthFailedEvent that = (AuthFailedEvent) obj;
+        return Objects.equals(request, that.request) && Objects.equals(reason, that.reason) && Objects.equals(occurredAt, that.occurredAt);
     }
 
     @Override
     public int hashCode() {
-        int result = 0;
-        result = 31 * result + Objects.hashCode(request);
+        int result = Objects.hashCode(request);
         result = 31 * result + Objects.hashCode(reason);
         result = 31 * result + Objects.hashCode(occurredAt);
         return result;
@@ -137,6 +112,7 @@ public final class AuthFailedEvent {
 
     @Override
     public String toString() {
-        return "AuthFailedEvent[request=" + request + ", reason=" + reason + ", occurredAt=" + occurredAt + "]";
+        return "AuthFailedEvent[request=" + request + ", reason=" + reason + ", occurredAt=" + occurredAt + ']';
     }
+
 }

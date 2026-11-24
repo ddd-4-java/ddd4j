@@ -16,6 +16,8 @@ package io.ddd4j.web.webmvc.core;
 
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.api.ApiCode;
+import io.ddd4j.core.exception.AuthenticationException;
+import io.ddd4j.core.exception.AuthorizationException;
 import io.ddd4j.core.exception.BizRuntimeException;
 import io.ddd4j.core.exception.ValidateException;
 import io.ddd4j.core.util.ExceptionKit;
@@ -23,10 +25,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -98,6 +102,28 @@ public class GlobalRestExceptionAdvice {
     public R<String> handle(HttpServletRequest request, NoHandlerFoundException e) {
         log.error("", e);
         return R.of(404, "地址错误！！！" + request.getRequestURI() + "非法访问!");
+    }
+
+    /**
+     * @param exception 认证失败异常
+     * @return 使用异常消息或默认说明的 401 响应
+     */
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<R<String>> authenticationFailed(AuthenticationException exception) {
+        String message = exception.getMessage();
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                ApiCode.UNAUTHORIZED.toResponse(StringUtils.hasText(message) ? message : ApiCode.UNAUTHORIZED.getReason()));
+    }
+
+    /**
+     * @param exception 授权失败异常
+     * @return 使用异常消息或默认说明的 403 响应
+     */
+    @ExceptionHandler(AuthorizationException.class)
+    public ResponseEntity<R<String>> authorizationFailed(AuthorizationException exception) {
+        String message = exception.getMessage();
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+                ApiCode.FORBIDDEN.toResponse(StringUtils.hasText(message) ? message : ApiCode.FORBIDDEN.getReason()));
     }
 
     /**

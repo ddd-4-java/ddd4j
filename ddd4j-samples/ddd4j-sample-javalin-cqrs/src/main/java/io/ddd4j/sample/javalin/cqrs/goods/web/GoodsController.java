@@ -19,12 +19,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 import io.ddd4j.core.api.R;
+import io.ddd4j.core.exception.BizRuntimeException;
+import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.sample.javalin.cqrs.goods.application.GoodsApplicationService;
 import io.ddd4j.sample.javalin.cqrs.goods.domain.Goods;
 import io.ddd4j.sample.javalin.cqrs.goods.domain.GoodsId;
 import io.ddd4j.sample.javalin.cqrs.goods.domain.GoodsQuery;
 import io.ddd4j.sample.javalin.cqrs.goods.domain.GoodsStatus;
 import io.javalin.apibuilder.EndpointGroup;
+import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 
 import java.math.BigDecimal;
@@ -80,20 +83,24 @@ public class GoodsController {
         if (Objects.nonNull(ctx.queryParam("nameLike"))) {
             query.setNameLike(ctx.queryParam("nameLike"));
         }
-        if (Objects.nonNull(ctx.queryParam("status"))) {
-            query.setStatus(GoodsStatus.valueOf(ctx.queryParam("status")));
-        }
-        if (Objects.nonNull(ctx.queryParam("priceMin"))) {
-            query.setPriceMin(new BigDecimal(ctx.queryParam("priceMin")));
-        }
-        if (Objects.nonNull(ctx.queryParam("priceMax"))) {
-            query.setPriceMax(new BigDecimal(ctx.queryParam("priceMax")));
+        try {
+            if (Objects.nonNull(ctx.queryParam("status"))) {
+                query.setStatus(GoodsStatus.valueOf(ctx.queryParam("status")));
+            }
+            if (Objects.nonNull(ctx.queryParam("priceMin"))) {
+                query.setPriceMin(new BigDecimal(ctx.queryParam("priceMin")));
+            }
+            if (Objects.nonNull(ctx.queryParam("priceMax"))) {
+                query.setPriceMax(new BigDecimal(ctx.queryParam("priceMax")));
+            }
+        } catch (IllegalArgumentException invalidFilter) {
+            throw new BadRequestResponse("invalid goods status or price filter");
         }
         if (Objects.nonNull(ctx.queryParam("current"))) {
-            query.setCurrent(Long.parseLong(ctx.queryParam("current")));
+            query.setCurrent(ctx.queryParamAsClass("current", Long.class).get());
         }
         if (Objects.nonNull(ctx.queryParam("size"))) {
-            query.setSize(Long.parseLong(ctx.queryParam("size")));
+            query.setSize(ctx.queryParamAsClass("size", Long.class).get());
         }
         if (Objects.nonNull(ctx.queryParam("orderBys"))) {
             query.setOrderBys(ctx.queryParam("orderBys"));
@@ -137,16 +144,18 @@ public class GoodsController {
             ctx.json(R.ok());
         });
 
-        // GET /api/goods/{id} —— 按 ID 查询
-        get("/api/goods/{id}", ctx -> {
-            Long id = ctx.pathParamAsClass("id", Long.class).get();
-            ctx.json(R.ok(applicationService.getById(GoodsId.of(id))));
-        });
-
+        // 固定查询路径先于 /api/goods/{id} 注册，避免被当作商品 ID。
         // GET /api/goods/by-code?code=xxx —— 按编码查询
         get("/api/goods/by-code", ctx -> {
-            String code = ctx.queryParam("code");
-            ctx.json(R.ok(applicationService.getByCode(code)));
+            String code = ctx.queryParamAsClass("code", String.class)
+                    .check(StrKit::isNotBlank, "goods code must not be blank").get();
+            Goods goods;
+            try {
+                goods = applicationService.getByCode(code);
+            } catch (BizRuntimeException missingGoods) {
+                throw new BadRequestResponse("goods code not found");
+            }
+            ctx.json(R.ok(goods));
         });
 
         // GET /api/goods/page —— 充血分页查询
@@ -166,6 +175,12 @@ public class GoodsController {
         get("/api/goods/count", ctx -> {
             GoodsQuery query = bindQuery(ctx);
             ctx.json(R.ok(applicationService.countQuery(query)));
+        });
+
+        // GET /api/goods/{id} —— 按 ID 查询
+        get("/api/goods/{id}", ctx -> {
+            Long id = ctx.pathParamAsClass("id", Long.class).get();
+            ctx.json(R.ok(applicationService.getById(GoodsId.of(id))));
         });
     }
 

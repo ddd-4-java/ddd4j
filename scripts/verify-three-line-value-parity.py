@@ -10,7 +10,7 @@ import sys
 
 SOURCES = [
     "ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/ProjectionRunInfo.java",
-    "ddd4j-data/ddd4j-data-mybatis/src/main/java/io/ddd4j/data/mybatis/adapter/SqlObservation.java",
+    "ddd4j-data/ddd4j-data-mybatis/src/main/java/io/ddd4j/data/mybatis/plugins/observation/SqlObservation.java",
     "ddd4j-mq/ddd4j-mq-redis-stream/src/main/java/io/ddd4j/mq/redisstream/RedisStreamRecord.java",
     "ddd4j-extensions/ddd4j-extension-qlexpress/src/main/java/io/ddd4j/extension/qlexpress/model/QLExpressValidationResult.java",
 ]

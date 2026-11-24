@@ -76,11 +76,11 @@ public final class BearerSubjectAuthenticator {
     }
 
     /**
-     * 尽力认证：无法解析出令牌时返回 {@link Optional#empty()}，不抛出异常。
+     * 解析 Authorization 头，并验证解析出的 Bearer Token。
      *
      * @param authorization 原始 Authorization 头值
-     * @return 认证结果；令牌缺失或认证失败时为空
-     * @throws WebStatusException Subject SPI 不可用或令牌无效时抛出
+     * @return 认证结果。如果未解析出 Bearer Token，返回 {@link Optional#empty()}
+     * @throws WebStatusException 已解析出令牌且 Subject SPI 不可用，或令牌无效或过期时抛出
      */
     public Optional<Authentication> authenticateOptional(String authorization) {
         return tokenResolver.resolve(authorization).map(this::authenticateToken);

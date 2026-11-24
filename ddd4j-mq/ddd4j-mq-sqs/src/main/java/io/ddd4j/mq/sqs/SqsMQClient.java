@@ -62,7 +62,7 @@ public class SqsMQClient implements MQClient {
     private final MQStartupStatus startupStatus = new MQStartupStatus("sqs");
     private final ReentrantReadWriteLock sendLifecycleLock = new ReentrantReadWriteLock(true);
     private final ReentrantReadWriteLock receiveLifecycleLock = new ReentrantReadWriteLock(true);
-    private SqsClient client;
+    private volatile SqsClient client;
     private boolean receiveDrainRegistered;
     private volatile boolean closed;
 
@@ -135,21 +135,14 @@ public class SqsMQClient implements MQClient {
 
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
-        initializeClient();
-        return event -> {
-            sendLifecycleLock.readLock().lock();
-            try {
-                if (closed) {
-                    throw new IllegalStateException("SQS client is closed");
-                }
-                publish(event);
-            } finally {
-                sendLifecycleLock.readLock().unlock();
-            }
-        };
+        SqsClient publisherClient = initializeClient();
+        return event -> publish(publisherClient, event);
     }
 
-    private void publish(MQEvent event) {
+    private void publish(SqsClient publisherClient, MQEvent event) {
+        if (closed || client != publisherClient) {
+            throw new IllegalStateException("SQS client is closed");
+        }
         try {
             String queueUrl = event.getTopic();
             Map<String, MessageAttributeValue> attrs = new HashMap<>();
@@ -169,11 +162,21 @@ public class SqsMQClient implements MQClient {
                 attrs.put(header.getKey(), attrValue(header.getValue()));
             }
             String payload = serialization().serialize(event).toString();
-            client.sendMessage(SendMessageRequest.builder()
+            SendMessageRequest request = SendMessageRequest.builder()
                     .queueUrl(queueUrl)
                     .messageBody(payload)
                     .messageAttributes(attrs)
-                    .build());
+                    .build();
+            // 序列化及日志在锁外，关闭只等待已经进入 SDK 的同步发送。
+            sendLifecycleLock.readLock().lock();
+            try {
+                if (closed || client != publisherClient) {
+                    throw new IllegalStateException("SQS client is closed");
+                }
+                publisherClient.sendMessage(request);
+            } finally {
+                sendLifecycleLock.readLock().unlock();
+            }
             logger().info("Publish MQ [{}]: {}", queueUrl, payload);
         } catch (Exception ex) {
             throw new IllegalStateException("Publish SQS event failed", ex);
@@ -189,7 +192,7 @@ public class SqsMQClient implements MQClient {
         if (properties.getPollIntervalMs() <= 0) {
             throw new IllegalArgumentException("SQS pollIntervalMs must be positive");
         }
-        initializeClient();
+        SqsClient consumerClient = initializeClient();
         AtomicBoolean running = new AtomicBoolean(true);
         ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor(r -> {
             Thread t = new Thread(r, "sqs-consumer-" + listener.getRouteExpression(this.defaultConcat()));
@@ -204,10 +207,10 @@ public class SqsMQClient implements MQClient {
                 List<Message> messages;
                 receiveLifecycleLock.readLock().lock();
                 try {
-                    if (closed) {
+                    if (closed || !running.get()) {
                         return;
                     }
-                    messages = client.receiveMessage(ReceiveMessageRequest.builder()
+                    messages = consumerClient.receiveMessage(ReceiveMessageRequest.builder()
                                     .queueUrl(queueUrl)
                                     .maxNumberOfMessages(properties.getMaxNumberOfMessages())
                                     .waitTimeSeconds(properties.getWaitTimeSeconds())
@@ -217,33 +220,37 @@ public class SqsMQClient implements MQClient {
                 } finally {
                     receiveLifecycleLock.readLock().unlock();
                 }
-                if (closed) {
+                if (closed || !running.get()) {
                     return;
                 }
                 for (Message message : messages) {
-                    handleMessage(message, queueUrl, listener);
+                    handleMessage(consumerClient, message, queueUrl, listener);
                 }
             } catch (Exception ex) {
                 logger().warn("SQS receive failed: binding={}", listener.getRouteExpression(this.defaultConcat()), ex);
             }
         }, 0, properties.getPollIntervalMs(), TimeUnit.MILLISECONDS);
         pollers.add(exec);
-        lifecycle.register("sqs-poller-" + listener.getRouteExpression(this.defaultConcat()), exec::shutdownNow);
+        lifecycle.register("sqs-poller-" + listener.getRouteExpression(this.defaultConcat()), () -> {
+            running.set(false);
+            exec.shutdownNow();
+            pollers.remove(exec);
+        });
         return true;
     }
 
-    private void handleMessage(Message message, String queueUrl, MQListener listener) {
+    private void handleMessage(SqsClient consumerClient, Message message, String queueUrl, MQListener listener) {
         String tag = attr(message, tagHeaderKey());
         if (!TagMatcher.match(tag, listener.getTags())) {
             try {
-                client.deleteMessage(b -> b.queueUrl(queueUrl).receiptHandle(message.receiptHandle()));
+                consumerClient.deleteMessage(b -> b.queueUrl(queueUrl).receiptHandle(message.receiptHandle()));
             } catch (Exception ex) {
                 logger().warn("SQS deleteMessage failed: binding={}", listener.getRouteExpression(this.defaultConcat()), ex);
             }
             return;
         }
         try {
-            SqsAcknowledgment ack = new SqsAcknowledgment(client, message, queueUrl, properties.isRequeueOnNack());
+            SqsAcknowledgment ack = new SqsAcknowledgment(consumerClient, message, queueUrl, properties.isRequeueOnNack());
             String tenantId = attr(message, MessageHeaders.HEADER_TENANT_ID);
             String payload = message.body();
             MQEvent event = serialization().deserialize(payload, listener.payloadType());
@@ -278,7 +285,7 @@ public class SqsMQClient implements MQClient {
             } catch (Throwable ex) {
                 logger().error("Consume MQ [{}] failed", listener.getRouteExpression(this.defaultConcat()), ex);
                 try {
-                    client.changeMessageVisibility(b -> b.queueUrl(queueUrl)
+                    consumerClient.changeMessageVisibility(b -> b.queueUrl(queueUrl)
                             .receiptHandle(message.receiptHandle())
                             .visibilityTimeout(0));
                 } catch (Exception ignore) {
@@ -287,7 +294,7 @@ public class SqsMQClient implements MQClient {
         } catch (Throwable ex) {
             logger().error("Consume MQ [{}] failed", listener.getRouteExpression(this.defaultConcat()), ex);
             try {
-                client.changeMessageVisibility(b -> b.queueUrl(queueUrl)
+                consumerClient.changeMessageVisibility(b -> b.queueUrl(queueUrl)
                         .receiptHandle(message.receiptHandle())
                         .visibilityTimeout(0));
             } catch (Exception ignore) {
@@ -303,25 +310,38 @@ public class SqsMQClient implements MQClient {
     /**
      * 首次使用生产者或消费者时创建自有客户端，避免两条初始化路径重复创建。
      */
-    private synchronized void initializeClient() {
+    private synchronized SqsClient initializeClient() {
         if (closed) {
             throw new IllegalStateException("SQS client is closed");
         }
-        if (Objects.isNull(client)) {
-            SqsClient ownedClient = Objects.requireNonNull(properties.client(), "SqsClient");
-            client = ownedClient;
-            lifecycle.register("sqs-client", ownedClient::close);
-        }
-        if (!receiveDrainRegistered) {
-            lifecycle.register("sqs-receive-drain", () -> {
-                receiveLifecycleLock.writeLock().lock();
-                try {
-                    // Wait for an in-flight native receive before closing the client.
-                } finally {
-                    receiveLifecycleLock.writeLock().unlock();
-                }
-            });
-            receiveDrainRegistered = true;
+        // 注册与回滚使用同一个监视器，避免新一轮初始化读到清理中的客户端。
+        synchronized (lifecycle) {
+            if (Objects.isNull(client)) {
+                SqsClient ownedClient = Objects.requireNonNull(properties.client(), "SqsClient");
+                client = ownedClient;
+                lifecycle.register("sqs-client", () -> {
+                    sendLifecycleLock.writeLock().lock();
+                    try {
+                        client = null;
+                        ownedClient.close();
+                    } finally {
+                        sendLifecycleLock.writeLock().unlock();
+                    }
+                });
+            }
+            if (!receiveDrainRegistered) {
+                receiveDrainRegistered = true;
+                lifecycle.register("sqs-receive-drain", () -> {
+                    receiveLifecycleLock.writeLock().lock();
+                    try {
+                        // 回滚移除此动作，下次初始化必须重新注册。
+                        receiveDrainRegistered = false;
+                    } finally {
+                        receiveLifecycleLock.writeLock().unlock();
+                    }
+                });
+            }
+            return client;
         }
     }
 
@@ -335,14 +355,15 @@ public class SqsMQClient implements MQClient {
                 return;
             }
             closed = true;
-            try {
-                lifecycle.close();
-            } finally {
-                pollers.clear();
-                startupStatus.stopped();
-            }
         } finally {
             sendLifecycleLock.writeLock().unlock();
+        }
+        // 回滚可能持有生命周期监视器等待发送，关闭进入生命周期前释放发送锁。
+        try {
+            lifecycle.close();
+        } finally {
+            pollers.clear();
+            startupStatus.stopped();
         }
     }
 }

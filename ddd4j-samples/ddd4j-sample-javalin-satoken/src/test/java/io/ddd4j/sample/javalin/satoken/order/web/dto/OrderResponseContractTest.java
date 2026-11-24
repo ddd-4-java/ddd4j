@@ -4,6 +4,7 @@ import io.ddd4j.sample.javalin.satoken.order.domain.model.Order;
 import io.ddd4j.sample.javalin.satoken.order.domain.model.OrderStatus;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -55,5 +56,19 @@ class OrderResponseContractTest {
         OrderResponse response = OrderResponse.from(order);
 
         assertThrows(UnsupportedOperationException.class, () -> response.lines().add(null));
+    }
+
+    @Test
+    void sharedResponseLinesAreImmutableSnapshotOfOrder() {
+        io.ddd4j.sample.order.domain.Order order = io.ddd4j.sample.order.domain.Order.draft(
+                "ORD-1", "BUYER-1", "buyer");
+        io.ddd4j.sample.order.domain.Money price =
+                io.ddd4j.sample.order.domain.Money.cny(new BigDecimal("12.50"));
+        order.addLine("SKU-1", "first", 1, price);
+        OrderResponse response = OrderResponse.from(order);
+
+        assertThrows(UnsupportedOperationException.class, () -> response.lines().clear());
+        order.addLine("SKU-2", "second", 1, price);
+        assertEquals(1, response.lines().size());
     }
 }

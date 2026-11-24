@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import cn.dev33.satoken.SaManager;
 import cn.dev33.satoken.config.SaTokenConfig;
+import cn.dev33.satoken.jwt.SaJwtUtil;
 import cn.dev33.satoken.dao.SaTokenDao;
 import cn.dev33.satoken.dao.SaTokenDaoDefaultImpl;
 import cn.dev33.satoken.stp.StpLogic;
@@ -28,11 +29,15 @@ import io.ddd4j.auth.satoken.SaConstants;
 import io.ddd4j.auth.satoken.config.SaTokenAuthenticationMode;
 import io.ddd4j.auth.satoken.config.SaTokenSecurityConfigurer;
 import io.ddd4j.auth.satoken.config.SaTokenSecurityProperties;
-import io.ddd4j.core.constant.AuthConstants;
+import io.ddd4j.auth.satoken.subject.SaTokenSubject;
+import io.ddd4j.core.auth.AuthRequest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -74,10 +79,10 @@ class StpKitTest {
 
     private void loginWithExtras() {
         Map<String, Object> extras = new HashMap<>();
-        extras.put(AuthConstants.FIELD_USER_ID, 1001L);
-        extras.put(AuthConstants.FIELD_ORG_ID, 10L);
-        extras.put(AuthConstants.FIELD_ROLE_ID, 7L);
-        extras.put("tenant_id", "tenant-1");
+        extras.put("userId", 1001L);
+        extras.put("orgId", 10L);
+        extras.put("roleId", 7L);
+        extras.put(SaConstants.PAYLOAD_TENANT_ID, "tenant-1");
         extras.put("appId", "app-1");
         extras.put("roleCode", "operator");
         extras.put("roleType", "custom");
@@ -118,10 +123,24 @@ class StpKitTest {
         assertEquals(7L, StpKit.getRoleIdAsLong().longValue());
     }
 
+    @ParameterizedTest
+    @CsvSource({"tenant_id,tenantId", "tenantId,tenant_id"})
+    void signedJwtPreservesSuppliedTenantKey(String suppliedKey, String absentKey) {
+        String token = new SaTokenSubject().login(AuthRequest.of("tenant-login").extra(suppliedKey, "tenant-1"));
+        StpLogic logic = StpUtil.stpLogic;
+        Map<String, Object> claims = SaJwtUtil.getPayloadsNotCheck(token, logic.getLoginType(), SaManager.getConfig().getJwtSecretKey());
+
+        assertEquals("tenant-1", claims.get(suppliedKey));
+        assertFalse(claims.containsKey(absentKey));
+        assertEquals("tenant-1", StpKit.getExtraAs(token, suppliedKey, String.class));
+    }
+
     @Test
     void commonPayloadConstantsResolveClaimsWithoutChangingExistingKeys() {
         loginWithExtras();
 
+        assertEquals("tenant-1", StpKit.getExtraAsString("tenant_id"));
+        assertEquals("tenant_id", SaConstants.PAYLOAD_TENANT_ID);
         assertEquals("tenant-1", StpKit.getExtraAsString(SaConstants.PAYLOAD_TENANT_ID));
         assertEquals("app-1", StpKit.getExtraAsString(SaConstants.PAYLOAD_APP_ID));
         assertEquals("operator", StpKit.getExtraAsString(SaConstants.PAYLOAD_ROLE_CODE));
@@ -132,11 +151,114 @@ class StpKitTest {
     }
 
     @Test
+    void typedIdAccessorsPreferDocumentedClaimsWhenBothKeyStylesExist() {
+        new SaTokenSubject().login(AuthRequest.of("mixed-keys")
+                .extra("uid", 11).extra("userId", 12)
+                .extra("org_id", 21).extra("orgId", 22)
+                .extra("rid", 31).extra("roleId", 32));
+
+        assertEquals("11", StpKit.getUserIdAsString());
+        assertEquals(21L, StpKit.getOrgIdAsLong().longValue());
+        assertEquals(31, StpKit.getRoleIdAsInteger().intValue());
+    }
+
+    @Test
+    void campusSchoolAndIdentityAccessorsReadDocumentedClaims() {
+        new SaTokenSubject().login(AuthRequest.of("campus-login")
+                .extra("xq_org_id", "042")
+                .extra("xxdm", "00123")
+                .extra("iden_id", "7")
+                .extra("org_id", 81));
+
+        assertAll(
+                () -> assertEquals("042", StpKit.class.getMethod("getXqOrgIdAsString").invoke(null)),
+                () -> assertEquals(Integer.valueOf(42), StpKit.class.getMethod("getXqOrgIdAsInteger").invoke(null)),
+                () -> assertEquals(Long.valueOf(42), StpKit.class.getMethod("getXqOrgIdAsLong").invoke(null)),
+                () -> assertEquals("00123", StpKit.class.getMethod("getXxdmAsString").invoke(null)),
+                () -> assertEquals(Integer.valueOf(7), StpKit.class.getMethod("getIdentityIdAsInteger").invoke(null)));
+    }
+
+    @Test
+    void campusSchoolAndIdentityAccessorsReturnNullForMissingClaims() {
+        loginWithExtras();
+
+        assertAll(
+                () -> assertNull(StpKit.class.getMethod("getXqOrgIdAsString").invoke(null)),
+                () -> assertNull(StpKit.class.getMethod("getXqOrgIdAsInteger").invoke(null)),
+                () -> assertNull(StpKit.class.getMethod("getXqOrgIdAsLong").invoke(null)),
+                () -> assertNull(StpKit.class.getMethod("getXxdmAsString").invoke(null)),
+                () -> assertNull(StpKit.class.getMethod("getIdentityIdAsInteger").invoke(null)));
+    }
+
+    @Test
+    void infoIdStringAndIntegerReadOnlyTheInfoClaim() {
+        String token = new SaTokenSubject().login(AuthRequest.of("info-login")
+                .extra("org_id", "81").extra("rid", "7")
+                .extra("infoId", "99").extra("info_id", "042"));
+        Map<String, Object> claims = SaJwtUtil.getPayloadsNotCheck(token,
+                StpUtil.stpLogic.getLoginType(), SaManager.getConfig().getJwtSecretKey());
+
+        assertEquals("042", claims.get("info_id"));
+        assertAll(
+                () -> assertEquals("042", StpKit.class.getMethod("getInfoIdAsString").invoke(null)),
+                () -> assertEquals(Integer.valueOf(42), StpKit.class.getMethod("getInfoIdAsInteger").invoke(null)));
+    }
+
+    @Test
+    void infoIdStringAndIntegerReturnNullWithoutTheInfoClaim() {
+        String token = new SaTokenSubject().login(AuthRequest.of("missing-info-login")
+                .extra("org_id", "81").extra("rid", "7").extra("infoId", "99"));
+        Map<String, Object> claims = SaJwtUtil.getPayloadsNotCheck(token,
+                StpUtil.stpLogic.getLoginType(), SaManager.getConfig().getJwtSecretKey());
+
+        assertFalse(claims.containsKey("info_id"));
+        assertAll(
+                () -> assertNull(StpKit.class.getMethod("getInfoIdAsString").invoke(null)),
+                () -> assertNull(StpKit.class.getMethod("getInfoIdAsInteger").invoke(null)));
+    }
+
+    @Test
+    void infoIdLongReadsHistoricalOrganizationClaimFromSignedToken() throws ReflectiveOperationException {
+        String token = new SaTokenSubject().login(AuthRequest.of("legacy-info-long")
+                .extra("org_id", "081").extra("orgId", "82").extra("info_id", "042"));
+        Map<String, Object> claims = SaJwtUtil.getPayloadsNotCheck(token,
+                StpUtil.stpLogic.getLoginType(), SaManager.getConfig().getJwtSecretKey());
+
+        assertEquals("081", claims.get("org_id"));
+        assertEquals("042", claims.get("info_id"));
+        var accessor = assertDoesNotThrow(() -> StpKit.class.getMethod("getInfoIdAsLong"));
+        assertEquals(Long.valueOf(81), accessor.invoke(null));
+    }
+
+    @Test
+    void infoIdLongReturnsNullWithoutHistoricalOrganizationClaim() throws ReflectiveOperationException {
+        String token = new SaTokenSubject().login(AuthRequest.of("legacy-info-long-missing")
+                .extra("orgId", "82").extra("info_id", "042"));
+        Map<String, Object> claims = SaJwtUtil.getPayloadsNotCheck(token,
+                StpUtil.stpLogic.getLoginType(), SaManager.getConfig().getJwtSecretKey());
+
+        assertFalse(claims.containsKey("org_id"));
+        var accessor = assertDoesNotThrow(() -> StpKit.class.getMethod("getInfoIdAsLong"));
+        assertNull(accessor.invoke(null));
+    }
+
+    @Test
+    void infoIdLongPreservesInvalidOrganizationClaimError() {
+        new SaTokenSubject().login(AuthRequest.of("legacy-info-long-invalid")
+                .extra("org_id", "invalid").extra("orgId", "82").extra("info_id", "042"));
+
+        var accessor = assertDoesNotThrow(() -> StpKit.class.getMethod("getInfoIdAsLong"));
+        var error = assertThrows(InvocationTargetException.class, () -> accessor.invoke(null));
+        assertInstanceOf(NumberFormatException.class, error.getCause());
+    }
+
+    @Test
     void getExtraAsAppliesMapperAndTypeConversion() {
         loginWithExtras();
 
         assertEquals("custom-value", StpKit.getExtraAsString("custom-key"));
-        assertEquals(10L, StpKit.getExtraAsLong(AuthConstants.FIELD_ORG_ID).longValue());
+        assertEquals(10L, StpKit.getExtraAsLong("orgId").longValue());
+        assertNull(StpKit.getExtraAs("org_id", Long.class));
         assertEquals("custom-value", StpKit.getExtraAs("custom-key", String.class));
         assertNull(StpKit.getExtraAs("missing-key", String.class));
         assertNull(StpKit.getExtraAsInteger("missing-key"));
@@ -150,7 +272,7 @@ class StpKitTest {
         StpKit kit = new StpKit();
 
         assertEquals("custom-value", kit.getExtraAsString(token, "custom-key"));
-        assertEquals(10L, StpKit.getExtraAsLong(token, AuthConstants.FIELD_ORG_ID).longValue());
+        assertEquals(10L, StpKit.getExtraAsLong(token, "orgId").longValue());
         assertEquals("custom-value", StpKit.getExtraAs(token, "custom-key", String.class));
         assertNull(StpKit.getExtraAs(token, "missing-key", String.class));
     }
@@ -162,7 +284,7 @@ class StpKitTest {
         StpKit kit = new StpKit();
 
         assertEquals("custom-value", kit.getExtraAsString(token, "custom-key"));
-        assertEquals(Integer.valueOf(1001), kit.getExtraAsInteger(token, AuthConstants.FIELD_USER_ID));
+        assertEquals(Integer.valueOf(1001), kit.getExtraAsInteger(token, "userId"));
     }
 
     @Test
@@ -170,6 +292,7 @@ class StpKitTest {
         assertNotNull(StpKit.DEFAULT);
         assertNotNull(StpKit.ADMIN);
         assertNotNull(StpKit.USER);
-        assertNotNull(StpKit.GUEST);
+        assertEquals("xx", StpKit.XXX.getLoginType());
+        assertSame(StpKit.XXX, SaManager.getStpLogic("xx", false));
     }
 }

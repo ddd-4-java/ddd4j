@@ -24,21 +24,15 @@
             <artifactId>ddd4j-core</artifactId>
             <version>${revision}</version>
         </dependency>
+        <!-- Stopwatch 是日志公开 API 的直接依赖，不再经由 WebMVC 引入。 -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
         <!-- For AOP（ApiOperationLogAspect 使用 @Aspect / @Around） -->
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
-        </dependency>
-        <!-- For Servlet（日志记录请求信息） -->
-        <dependency>
-            <groupId>jakarta.servlet</groupId>
-            <artifactId>jakarta.servlet-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-web-webmvc</artifactId>
-            <version>${revision}</version>
         </dependency>
     </dependencies>
 

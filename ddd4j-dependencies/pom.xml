@@ -94,7 +94,7 @@
         <cassandra-driver.version>4.19.2</cassandra-driver.version>
         <cglib.version>3.3.0</cglib.version>
         <checker-framework.version>3.55.1</checker-framework.version>
-        <classgraph.version>4.8.184</classgraph.version>
+        <classgraph.version>4.8.199</classgraph.version>
         <classmate.version>1.7.1</classmate.version>
         <claudecode-java-sdk.version>2.0.x.20260630-SNAPSHOT</claudecode-java-sdk.version>
         <clickhouse.version>0.9.8</clickhouse.version>
@@ -129,7 +129,6 @@
         <commons-exec.version>1.6.0</commons-exec.version>
         <commons-fileupload2.version>2.0.0-M4</commons-fileupload2.version>
         <commons-fileupload.version>1.6.0</commons-fileupload.version>
-        <commons-httpclient.version>3.1</commons-httpclient.version>
         <commons-imaging.version>1.0.0-alpha6</commons-imaging.version>
         <commons-io.version>2.22.0</commons-io.version>
         <commons-jci.version>1.1</commons-jci.version>
@@ -160,10 +159,9 @@
         <curator.version>5.9.0</curator.version>
         <cxf-rt-bytebuddy.version>2.0.x.20260630-SNAPSHOT</cxf-rt-bytebuddy.version>
         <cxf-rt-javassist.version>2.0.x.20260630-SNAPSHOT</cxf-rt-javassist.version>
-        <cxf.version>4.2.2</cxf.version>
+        <cxf.version>4.1.9</cxf.version>
         <db2jcc.version>12.1.5.0</db2jcc.version>
         <db-meta.version>0.0.1-Release</db-meta.version>
-        <derby.version>10.16.1.1</derby.version>
         <debezium.version>3.6.0.Final</debezium.version>
         <dependency-management-plugin.version>1.1.7</dependency-management-plugin.version>
         <dingtalk-sdk-extension.version>2.0.x.20260630-SNAPSHOT</dingtalk-sdk-extension.version>
@@ -236,7 +234,7 @@
         <graalvm-sdk.version>25.0.4.1</graalvm-sdk.version>
         <grizzly.version>4.1.0-M1</grizzly.version>
         <groovy.version>5.0.3</groovy.version>
-        <grpc-bom.version>1.82.1</grpc-bom.version>
+        <grpc-bom.version>${grpc.version}</grpc-bom.version>
         <grpc.version>1.82.1</grpc.version>
         <gson.version>2.14.0</gson.version>
         <guava.version>33.8.0-jre</guava.version>
@@ -268,7 +266,6 @@
         <hsqldb.version>2.7.4</hsqldb.version>
         <htmlparser.version>2.1</htmlparser.version>
         <htmlunit.version>4.21.0</htmlunit.version>
-        <httpasyncclient.version>4.1.5</httpasyncclient.version>
         <httpclient3-extension.version>2.0.x.20260630-SNAPSHOT</httpclient3-extension.version>
         <httpclient5.version>5.6.5</httpclient5.version>
         <httpclient-extension.version>2.0.x.20260630-SNAPSHOT</httpclient-extension.version>
@@ -279,7 +276,6 @@
         <httputils.version>2.0.x.20260630-SNAPSHOT</httputils.version>
         <hudi.version>1.2.0</hudi.version>
         <hutool.version>5.8.47</hutool.version>
-        <hystrix.version>1.5.18</hystrix.version>
         <i4jruntime.version>5.0.6</i4jruntime.version>
         <iceberg.version>1.11.0</iceberg.version>
         <icu4j.version>78.3</icu4j.version>
@@ -330,7 +326,6 @@
         <javassist.version>3.32.0-GA</javassist.version>
         <javax-cache.version>1.1.1</javax-cache.version>
         <javax-money.version>1.1</javax-money.version>
-        <javax-validation-api.version>2.0.1.Final</javax-validation-api.version>
         <jave.version>3.5.0</jave.version>
         <javers.version>7.11.4</javers.version>
         <jaxen.version>2.0.0</jaxen.version>
@@ -343,8 +338,8 @@
         <jcl.version>1.1</jcl.version>
         <jdbi.version>3.55.0</jdbi.version>
         <jdom2.version>2.0.6.1</jdom2.version>
-        <jedis.version>7.5.2</jedis.version>
-        <jersey.version>3.1.11</jersey.version>
+        <jedis.version>7.5.3</jedis.version>
+        <jersey.version>3.1.12</jersey.version>
         <jetbrains-annotations.version>26.1.0</jetbrains-annotations.version>
         <jetcache.version>2.8.0.RC</jetcache.version>
         <jetty-reactive-httpclient.version>4.1.4</jetty-reactive-httpclient.version>
@@ -360,7 +355,7 @@
         <joda-time.version>2.14.2</joda-time.version>
         <jodd-bean.version>5.1.6</jodd-bean.version>
         <jodd.version>5.3.0</jodd.version>
-        <jooq.version>3.19.30</jooq.version>
+        <jooq.version>3.19.40</jooq.version>
         <jpush-client.version>3.7.7</jpush-client.version>
         <jpush-jiguang-common.version>1.2.7</jpush-jiguang-common.version>
         <jruby.version>9.4.8.0</jruby.version>
@@ -390,7 +385,7 @@
         <knife4j.version>4.5.0</knife4j.version>
         <kotlin-coroutines.version>1.10.2</kotlin-coroutines.version>
         <kotlin-serialization.version>1.9.0</kotlin-serialization.version>
-        <kotlin-stdlib.version>2.0.21</kotlin-stdlib.version>
+        <kotlin-stdlib.version>${kotlin.version}</kotlin-stdlib.version>
         <kotlin.version>2.2.21</kotlin.version>
         <kubernetes-client.version>6.13.3</kubernetes-client.version>
         <kurrentdb-client.version>1.2.0</kurrentdb-client.version>
@@ -424,7 +419,8 @@
         <micrometer.version>1.17.2</micrometer.version>
         <micrometer-tracing.version>1.7.2</micrometer-tracing.version>
         <micronaut.core.version>4.10.26</micronaut.core.version>
-        <micronaut.version>4.10.17</micronaut.version>
+        <micronaut.sourcegen.version>1.8.5</micronaut.sourcegen.version>
+        <micronaut.version>4.10.21</micronaut.version>
         <milvus.version>3.0.4</milvus.version>
         <mina-compat2.version>2.0.31</mina-compat2.version>
         <minio.version>8.6.0</minio.version>
@@ -478,8 +474,13 @@
         <opencv-sdk.version>2.0.x.20260630-SNAPSHOT</opencv-sdk.version>
         <openhtmltopdf.version>1.1.75</openhtmltopdf.version>
         <opensearch.version>3.9.0</opensearch.version>
+        <opentelemetry-alpha.version>${opentelemetry.version}-alpha</opentelemetry-alpha.version>
+        <opentelemetry-instrumentation.version>2.33.1</opentelemetry-instrumentation.version>
+        <opentelemetry-instrumentation-alpha.version>${opentelemetry-instrumentation.version}-alpha</opentelemetry-instrumentation-alpha.version>
+        <opentelemetry-semconv.version>1.44.0</opentelemetry-semconv.version>
+        <opentelemetry-semconv-alpha.version>${opentelemetry-semconv.version}-alpha</opentelemetry-semconv-alpha.version>
         <opentelemetry-javaagent.version>2.33.1</opentelemetry-javaagent.version>
-        <opentelemetry.version>1.68.0</opentelemetry.version>
+        <opentelemetry.version>1.67.0</opentelemetry.version>
         <opentest4j.version>1.3.0</opentest4j.version>
         <opentracing.version>0.33.0</opentracing.version>
         <oracle-database.version>23.26.2.0.0</oracle-database.version>
@@ -600,7 +601,7 @@
         <seatunnel.version>2.3.13</seatunnel.version>
         <security-guard-sdk.version>2.0.x.20260630-SNAPSHOT</security-guard-sdk.version>
         <security-jwt-extension.version>2.0.x.20260630-SNAPSHOT</security-jwt-extension.version>
-        <selenium-htmlunit.version>${selenium.version}</selenium-htmlunit.version>
+        <selenium-htmlunit.version>4.39.0</selenium-htmlunit.version>
         <selenium.version>4.39.0</selenium.version>
         <sendgrid.version>4.10.3</sendgrid.version>
         <sentinel.version>1.8.10</sentinel.version>
@@ -614,7 +615,6 @@
         <shiro-dingtalk.version>2.0.x.20260630-SNAPSHOT</shiro-dingtalk.version>
         <shiro-extension.version>2.0.x.20260630-SNAPSHOT</shiro-extension.version>
         <shiro-freemarker.version>1.0.3</shiro-freemarker.version>
-        <shiro-hazelcast.version>${shiro.version}</shiro-hazelcast.version>
         <shiro-j2cache.version>2.0.x.20260630-SNAPSHOT</shiro-j2cache.version>
         <shiro-jwt.version>2.0.x.20260630-SNAPSHOT</shiro-jwt.version>
         <shiro-oauth.version>2.0.x.20260630-SNAPSHOT</shiro-oauth.version>
@@ -659,7 +659,7 @@
         <spring-framework.version>6.2.19</spring-framework.version>
         <spring-graphql.version>1.4.6</spring-graphql.version>
         <spring-hateoas.version>2.5.3</spring-hateoas.version>
-        <spring-initializr.version>0.24.0</spring-initializr.version>
+        <spring-initializr.version>0.23.0</spring-initializr.version>
         <spring-integration.version>6.5.10</spring-integration.version>
         <spring-javassist.version>2.0.x.20260630-SNAPSHOT</spring-javassist.version>
         <spring-kafka.version>3.3.16</spring-kafka.version>
@@ -700,13 +700,11 @@
         <thymeleaf-extras-springsecurity.version>3.1.3.RELEASE</thymeleaf-extras-springsecurity.version>
         <thymeleaf-layout-dialect.version>3.4.0</thymeleaf-layout-dialect.version>
         <thymeleaf.version>3.1.5.RELEASE</thymeleaf.version>
-        <tika-bom.version>3.3.2</tika-bom.version>
+        <tika-bom.version>4.0.0</tika-bom.version>
         <tio.version>3.8.6.v20240801-RELEASE</tio.version>
         <token-bucket.version>1.7</token-bucket.version>
-        <!-- 11.0.25：修复 2026 年披露的 16 条 Tomcat CVE（CVE-2026-24734/24880/29145/34483/
-             65905/65182/68525/43512~43515/41284/41293/25854/32990/34487 等，含请求走私与
-             OCSP 绕过），OSV 按 tomcat-embed-core 11.0.15 实测命中并逐条核对修复门槛 -->
-        <tomcat.version>11.0.25</tomcat.version>
+        <!-- Spring 6 / Boot 3 与 Servlet 6.0 容器使用 Tomcat 10.1 维护线。 -->
+        <tomcat.version>10.1.62</tomcat.version>
         <transmittable-thread-local.version>2.14.5</transmittable-thread-local.version>
         <truelicense.version>4.1.4</truelicense.version>
         <twilio.version>10.8.0</twilio.version>
@@ -740,7 +738,7 @@
         <xalan.version>2.7.3</xalan.version>
         <xdocreport.version>2.2.0</xdocreport.version>
         <xmemcached.version>2.4.9</xmemcached.version>
-        <xml-apis.version>2.0.2</xml-apis.version>
+        <wss4j.version>4.0.3</wss4j.version>
         <xmlbeans.version>5.3.0</xmlbeans.version>
         <xmlschema-core.version>2.3.2</xmlschema-core.version>
         <xmlunit2.version>2.12.0</xmlunit2.version>
@@ -781,7 +779,7 @@
         <maven-javancss-plugin.version>2.1</maven-javancss-plugin.version>
         <maven-jaxb2-plugin.version>3.3.0</maven-jaxb2-plugin.version>
         <maven-jdepend-plugin.version>2.2.0</maven-jdepend-plugin.version>
-        <maven-jetty-plugin.version>11.0.26</maven-jetty-plugin.version>
+        <maven-jetty-plugin.version>${jetty.version}</maven-jetty-plugin.version>
         <maven-license-plugin.version>2.7.1</maven-license-plugin.version>
         <maven-mybatis-generator-plugin.version>1.3.7</maven-mybatis-generator-plugin.version>
         <maven-nexus-m2settings-plugin.version>1.7.0</maven-nexus-m2settings-plugin.version>
@@ -798,6 +796,7 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- 组件自有 BOM 优先；跨组件运行时平台 BOM 放在末尾。 -->
             <!-- 平台契约优先于第三方 BOM，统一 Spring、Jackson、OTel 与 Reactor 的实际解析版本。 -->
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -835,10 +834,49 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/org.slf4j/slf4j-bom -->
+            <!-- SLF4J BOM：SLF4J 日志门面各模块的版本清单。 -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-bom</artifactId>
+                <version>${slf4j.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-bom -->
+            <!-- Log4j BOM：Apache Log4j 2 各模块的版本清单。 -->
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-bom</artifactId>
+                <version>${log4j2.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson</groupId>
                 <artifactId>jackson-bom</artifactId>
                 <version>${jackson-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>tools.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson3.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-bom</artifactId>
+                <version>${netty.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.ow2.asm</groupId>
+                <artifactId>asm-bom</artifactId>
+                <version>${asm.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -852,6 +890,139 @@
             <!-- 共享组件优先于运行时平台 BOM；每个家族整体对齐，避免按坐标拼接版本。 -->
             <!-- Source: https://mvnrepository.com/artifact/io.netty/netty-bom -->
             <!-- Netty BOM：Netty 网络框架各模块的版本清单（Buffer/Codec/Transport/Handler 等）。 -->
+            <dependency>
+                <groupId>io.opentelemetry</groupId>
+                <artifactId>opentelemetry-bom-alpha</artifactId>
+                <version>${opentelemetry-alpha.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.opentelemetry.instrumentation</groupId>
+                <artifactId>opentelemetry-instrumentation-bom</artifactId>
+                <version>${opentelemetry-instrumentation.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.opentelemetry.instrumentation</groupId>
+                <artifactId>opentelemetry-instrumentation-bom-alpha</artifactId>
+                <version>${opentelemetry-instrumentation-alpha.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.projectreactor</groupId>
+                <artifactId>reactor-bom</artifactId>
+                <version>${reactor-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/io.grpc/grpc-bom -->
+            <!-- gRPC BOM：gRPC 高性能 RPC 框架各模块的版本清单。 -->
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-bom</artifactId>
+                <version>${grpc-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-bom -->
+            <!-- Kotlin BOM：Kotlin 标准库和扩展的版本清单。 -->
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-bom</artifactId>
+                <version>${kotlin.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-bom -->
+            <!-- Kotlin Coroutines BOM：Kotlin 协程库的版本清单。 -->
+            <dependency>
+                <groupId>org.jetbrains.kotlinx</groupId>
+                <artifactId>kotlinx-coroutines-bom</artifactId>
+                <version>${kotlin-coroutines.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-serialization-bom -->
+            <!-- Kotlin Serialization BOM：Kotlin 序列化库的版本清单（JSON/CBOR/Protobuf 等格式）。 -->
+            <dependency>
+                <groupId>org.jetbrains.kotlinx</groupId>
+                <artifactId>kotlinx-serialization-bom</artifactId>
+                <version>${kotlin-serialization.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- JUnit 子模块版本对齐（与 Spring Boot 3.4 / junit-jupiter.version 一致） -->
+            <!-- Source: https://mvnrepository.com/artifact/org.junit/junit-bom -->
+            <!-- JUnit BOM：JUnit 5 Jupiter 各模块的版本清单（统一 API/Engine/Params/Platform 版本）。 -->
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit-jupiter.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/org.assertj/assertj-bom -->
+            <!-- AssertJ BOM：流式断言库 AssertJ 的版本清单，统一管理 AssertJ 各模块版本。 -->
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-bom</artifactId>
+                <version>${assertj.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/org.mockito/mockito-bom -->
+            <!-- Mockito BOM：Mockito 单元测试 Mock 框架各模块的版本清单。 -->
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-bom</artifactId>
+                <version>${mockito.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/org.testcontainers/testcontainers-bom -->
+            <!-- Testcontainers BOM：Docker 容器化集成测试框架各模块的版本清单。 -->
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>${testcontainers-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven</artifactId>
+                <version>${maven.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/org.apache.groovy/groovy-bom -->
+            <!-- Groovy BOM：Groovy 动态语言的版本清单，统一管理 Groovy 各模块版本。 -->
+            <dependency>
+                <groupId>org.apache.groovy</groupId>
+                <artifactId>groovy-bom</artifactId>
+                <version>${groovy.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- SourceGen 版本与 Micronaut Platform 的组件契约一致。 -->
+            <dependency>
+                <groupId>io.micronaut.sourcegen</groupId>
+                <artifactId>micronaut-sourcegen-bom</artifactId>
+                <version>${micronaut.sourcegen.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Micronaut 核心独立于平台发布，避免平台中的旧 Core 覆盖中央属性。 -->
+            <dependency>
+                <groupId>io.micronaut</groupId>
+                <artifactId>micronaut-core-bom</artifactId>
+                <version>${micronaut.core.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>org.glassfish.jersey</groupId>
                 <artifactId>jersey-bom</artifactId>
@@ -880,72 +1051,17 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            <!-- Jakarta JAXB 运行时与 BOM 同版，直接管理优先于所有平台导入。 -->
             <dependency>
-                <groupId>org.glassfish.jaxb</groupId>
-                <artifactId>jaxb-runtime</artifactId>
-                <version>${glassfish-jaxb.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.glassfish.jaxb</groupId>
-                <artifactId>jaxb-core</artifactId>
-                <version>${glassfish-jaxb.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.glassfish.jaxb</groupId>
-                <artifactId>txw2</artifactId>
-                <version>${glassfish-jaxb.version}</version>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-bom</artifactId>
+                <version>${cxf.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.hibernate.orm</groupId>
                 <artifactId>hibernate-platform</artifactId>
                 <version>${hibernate.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.graalvm.sdk</groupId>
-                <artifactId>nativeimage</artifactId>
-                <version>${graalvm-sdk.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.graalvm.sdk</groupId>
-                <artifactId>word</artifactId>
-                <version>${graalvm-sdk.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.maven</groupId>
-                <artifactId>maven-core</artifactId>
-                <version>${maven.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.maven</groupId>
-                <artifactId>maven-plugin-api</artifactId>
-                <version>${maven.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.plexus</groupId>
-                <artifactId>plexus-component-annotations</artifactId>
-                <version>${plexus-component-annotations.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-bom</artifactId>
-                <version>${netty.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.ow2.asm</groupId>
-                <artifactId>asm-bom</artifactId>
-                <version>${asm.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>tools.jackson</groupId>
-                <artifactId>jackson-bom</artifactId>
-                <version>${jackson3.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -976,6 +1092,430 @@
                 <version>${jdbi.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/org.apache.activemq/activemq-bom -->
+            <!-- Apache ActiveMQ：流行的开源消息中间件，实现了 JMS 1.1 规范，支持多种跨语言客户端和集群部署。 -->
+            <dependency>
+                <groupId>org.apache.activemq</groupId>
+                <artifactId>activemq-bom</artifactId>
+                <version>${activemq.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Apache Artemis 2.50+ 使用独立项目坐标，Classic ActiveMQ 仍保留原组名。 -->
+            <!-- Apache ActiveMQ Artemis：高性能异步消息中间件，支持 AMQP、MQTT、STOMP 等多种协议。 -->
+            <dependency>
+                <groupId>org.apache.artemis</groupId>
+                <artifactId>artemis-bom</artifactId>
+                <version>${artemis.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/software.amazon.awssdk/bom -->
+            <!-- AWS SDK BOM：AWS Java v2 SDK 的版本清单，统一管理所有 AWS 服务模块版本。 -->
+            <!-- Source: https://mvnrepository.com/artifact/io.zipkin.brave/brave-bom -->
+            <!-- Brave BOM：Zipkin Brave 分布式追踪库的版本清单，提供 Brave 核心及周边组件统一版本。 -->
+            <dependency>
+                <groupId>io.zipkin.brave</groupId>
+                <artifactId>brave-bom</artifactId>
+                <version>${brave.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- For Alibaba Cola -->
+            <!-- https://mvnrepository.com/artifact/com.alibaba.cola/cola-components-bom -->
+            <!-- Alibaba COLA Components BOM：阿里 COLA 架构的组件版本清单，提供 COLA 架构所需全套组件。 -->
+            <dependency>
+                <groupId>com.alibaba.cola</groupId>
+                <artifactId>cola-components-bom</artifactId>
+                <version>${cola.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/com.google.auth/google-auth-library-bom -->
+            <!-- Google Auth Library BOM：Google Cloud 凭证管理和 OAuth 2.0 认证库的版本清单。 -->
+            <dependency>
+                <groupId>com.google.auth</groupId>
+                <artifactId>google-auth-library-bom</artifactId>
+                <version>${google-auth-library.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/com.google.cloud/google-cloud-translate-bom -->
+            <!-- Google Cloud Translate BOM：Google Cloud Translation API 的版本清单。 -->
+            <dependency>
+                <groupId>com.google.cloud</groupId>
+                <artifactId>google-cloud-translate-bom</artifactId>
+                <version>${google-cloud-translate.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/com.google.http-client/google-http-client-bom -->
+            <!-- Google HTTP Client BOM：Google HTTP 客户端库的版本清单。 -->
+            <dependency>
+                <groupId>com.google.http-client</groupId>
+                <artifactId>google-http-client-bom</artifactId>
+                <version>${google-http-client.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/io.helidon/helidon-bom -->
+            <!-- Helidon BOM：Oracle Helidon 微服务框架各模块的版本清单。 -->
+            <dependency>
+                <groupId>io.helidon</groupId>
+                <artifactId>helidon-bom</artifactId>
+                <version>${helidon-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/org.apache.iceberg/iceberg-bom -->
+            <!-- Apache Iceberg BOM：Apache Iceberg 开放表格式各模块的版本清单（支持 ACID 事务和时间旅行）。 -->
+            <dependency>
+                <groupId>org.apache.iceberg</groupId>
+                <artifactId>iceberg-bom</artifactId>
+                <version>${iceberg.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/org.apache.cassandra/java-driver-bom -->
+            <!-- Cassandra Java Driver BOM：Apache Cassandra Java 驱动各模块的版本清单。 -->
+            <dependency>
+                <groupId>org.apache.cassandra</groupId>
+                <artifactId>java-driver-bom</artifactId>
+                <version>${cassandra-driver.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- 对齐 Jetty 核心及 EE10 家族，覆盖平台 BOM 传递的旧版本。 -->
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-bom</artifactId>
+                <version>${jetty.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty.ee10</groupId>
+                <artifactId>jetty-ee10-bom</artifactId>
+                <version>${jetty.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/org.jooq/jooq-bom -->
+            <!-- jOOQ BOM：jOOQ 数据库查询框架各模块的版本清单。 -->
+            <dependency>
+                <groupId>org.jooq</groupId>
+                <artifactId>jooq-bom</artifactId>
+                <version>${jooq.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- 专用组件 BOM 先于平台 BOM；Maven 的重复导入遵循先声明优先。 -->
+            <!-- Javalin BOM（控制 Jetty 版本） -->
+            <!-- Source: https://mvnrepository.com/artifact/io.javalin/javalin-bom -->
+            <!-- Javalin BOM：Javalin 轻量级 Web 框架的版本清单（基于 Jetty，支持 WebSocket/SSE）。 -->
+            <dependency>
+                <groupId>io.javalin</groupId>
+                <artifactId>javalin-bom</artifactId>
+                <version>${javalin.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/org.mongodb/mongodb-driver-bom -->
+            <!-- MongoDB Driver BOM：MongoDB Java 驱动各模块的版本清单（Sync/Async/Reactive）。 -->
+            <dependency>
+                <groupId>org.mongodb</groupId>
+                <artifactId>mongodb-driver-bom</artifactId>
+                <version>${mongodb.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- mybatis generator -->
+            <!-- Source: https://mvnrepository.com/artifact/org.mybatis.generator/mybatis-generator -->
+            <!-- mybatis generator -->
+            <!-- MyBatis Generator BOM：MyBatis 代码生成器各模块的版本清单（自动生成 Mapper/XML/Model）。 -->
+            <dependency>
+                <groupId>org.mybatis.generator</groupId>
+                <artifactId>mybatis-generator</artifactId>
+                <version>${mybatis-generator.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/com.oracle.database.jdbc/ojdbc-bom -->
+            <!-- Oracle JDBC BOM：Oracle 数据库 JDBC 驱动各模块的版本清单。 -->
+            <dependency>
+                <groupId>com.oracle.database.jdbc</groupId>
+                <artifactId>ojdbc-bom</artifactId>
+                <version>${oracle-database.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/io.prometheus/prometheus-metrics-bom -->
+            <!-- Prometheus Metrics BOM：Prometheus 监控指标库各模块的版本清单。 -->
+            <dependency>
+                <groupId>io.prometheus</groupId>
+                <artifactId>prometheus-metrics-bom</artifactId>
+                <version>${prometheus-client.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/org.apache.pulsar/pulsar-bom -->
+            <!-- Apache Pulsar BOM：Apache Pulsar 分布式消息流平台各模块的版本清单。 -->
+            <dependency>
+                <groupId>org.apache.pulsar</groupId>
+                <artifactId>pulsar-bom</artifactId>
+                <version>${pulsar.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/com.querydsl/querydsl-bom -->
+            <!-- QueryDSL BOM：QueryDSL 类型安全查询框架各模块的版本清单（JPA/JPA/MongoDB 等）。 -->
+            <dependency>
+                <groupId>com.querydsl</groupId>
+                <artifactId>querydsl-bom</artifactId>
+                <version>${querydsl.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/io.rest-assured/rest-assured-bom -->
+            <!-- REST Assured BOM：REST Assured 测试框架各模块的版本清单。 -->
+            <dependency>
+                <groupId>io.rest-assured</groupId>
+                <artifactId>rest-assured-bom</artifactId>
+                <version>${rest-assured.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/io.rsocket/rsocket-bom -->
+            <!-- RSocket BOM：RSocket 响应式二进制协议各模块的版本清单。 -->
+            <dependency>
+                <groupId>io.rsocket</groupId>
+                <artifactId>rsocket-bom</artifactId>
+                <version>${rsocket.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/cn.dev33/sa-token-bom -->
+            <!-- Sa-Token BOM：国产轻量级 Java 权限认证框架各模块的版本清单。 -->
+            <dependency>
+                <groupId>cn.dev33</groupId>
+                <artifactId>sa-token-bom</artifactId>
+                <version>${sa-token.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-bom -->
+            <!-- Selenium BOM：Selenium 浏览器自动化测试框架各模块的版本清单。 -->
+            <dependency>
+                <groupId>org.seleniumhq.selenium</groupId>
+                <artifactId>selenium-bom</artifactId>
+                <version>${selenium.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/io.prometheus/simpleclient_bom -->
+            <!-- Prometheus SimpleClient BOM：Prometheus 旧版 Java 客户端各模块的版本清单。 -->
+            <dependency>
+                <groupId>io.prometheus</groupId>
+                <artifactId>simpleclient_bom</artifactId>
+                <version>${prometheus-simpleclient.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/io.smallrye.reactive/smallrye-reactive-messaging-bom -->
+            <!-- SmallRye Reactive Messaging BOM：SmallRye 响应式消息传递框架版本清单（MicroProfile Reactive）。 -->
+            <dependency>
+                <groupId>io.smallrye.reactive</groupId>
+                <artifactId>smallrye-reactive-messaging-bom</artifactId>
+                <version>${smallrye-reactive-messaging-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/org.apache.tika/tika-bom -->
+            <!-- Apache Tika：Apache Tika™ 工具包能够检测并提取超过一千种不同文件类型（例如 PPT、XLS 和 PDF）的元数据和文本。
+                所有这些文件类型都可以通过单一界面进行解析，这使得 Tika 可用于搜索引擎索引、内容分析、翻译等诸多用途。 -->
+            <dependency>
+                <groupId>org.apache.tika</groupId>
+                <artifactId>tika-bom</artifactId>
+                <version>${tika-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/io.zipkin.reporter2/zipkin-reporter-bom -->
+            <!-- Zipkin Reporter BOM：Zipkin 追踪数据上报器各模块的版本清单。 -->
+            <dependency>
+                <groupId>io.zipkin.reporter2</groupId>
+                <artifactId>zipkin-reporter-bom</artifactId>
+                <version>${zipkin-reporter.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.github.resilience4j</groupId>
+                <artifactId>resilience4j-bom</artifactId>
+                <version>${resilience4j.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Jackson must precede imported BOMs that manage older Jackson modules. -->
+            <!-- Source: https://mvnrepository.com/artifact/io.debezium/debezium-bom -->
+            <!-- Debezium BOM：Debezium 变更数据捕获（CDC）平台的版本清单，统一管理 Debezium 组件版本。 -->
+            <dependency>
+                <groupId>io.debezium</groupId>
+                <artifactId>debezium-bom</artifactId>
+                <version>${debezium.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/io.dropwizard/dropwizard-bom -->
+            <!-- Dropwizard BOM：Dropwizard REST 微服务框架的版本清单。 -->
+            <dependency>
+                <groupId>io.dropwizard</groupId>
+                <artifactId>dropwizard-bom</artifactId>
+                <version>${dropwizard-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.dromara.dynamictp/dynamic-tp-dependencies -->
+            <!-- DynamicTp Dependencies：Dromara DynamicTp 动态线程池的版本清单。 -->
+            <dependency>
+                <groupId>org.dromara.dynamictp</groupId>
+                <artifactId>dynamic-tp-dependencies</artifactId>
+                <version>${dynamic-tp.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-mapreduce-client -->
+            <!-- Apache Hadoop MapReduce Client BOM：Hadoop MapReduce 客户端版本清单。 -->
+            <dependency>
+                <groupId>org.apache.hadoop</groupId>
+                <artifactId>hadoop-mapreduce-client</artifactId>
+                <version>${hadoop.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- 保留 Infinispan BOM 的组件版本，避免 Debezium 导入项覆盖。 -->
+            <dependency>
+                <groupId>org.infinispan</groupId>
+                <artifactId>infinispan-client-hotrod</artifactId>
+                <version>${infinispan.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.infinispan</groupId>
+                <artifactId>infinispan-component-annotations</artifactId>
+                <version>${infinispan.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.infinispan</groupId>
+                <artifactId>infinispan-core</artifactId>
+                <version>${infinispan.version}</version>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/org.infinispan/infinispan-bom -->
+            <!-- Infinispan BOM：Red Hat Infinispan 分布式缓存框架各模块的版本清单。 -->
+            <dependency>
+                <groupId>org.infinispan</groupId>
+                <artifactId>infinispan-bom</artifactId>
+                <version>${infinispan.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/io.spring.initializr/initializr-bom -->
+            <!-- Spring Initializr BOM：Spring 项目脚手架生成器（start.spring.io）的版本清单。 -->
+            <dependency>
+                <groupId>io.spring.initializr</groupId>
+                <artifactId>initializr-bom</artifactId>
+                <version>${spring-initializr.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/com.google.cloud/libraries-bom -->
+            <!-- Google Cloud Libraries BOM：Google Cloud 全家桶 SDK 的版本清单。 -->
+            <dependency>
+                <groupId>com.google.cloud</groupId>
+                <artifactId>libraries-bom</artifactId>
+                <version>${google-libraries-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- 与 Google Cloud Libraries BOM 26.84.0 对齐，避免 Hadoop 导入的旧版本优先。 -->
+            <dependency>
+                <groupId>com.google.cloud</groupId>
+                <artifactId>google-cloud-storage</artifactId>
+                <version>2.69.0</version>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/org.springframework.security/spring-security-bom -->
+            <!-- Spring Security BOM：Spring 安全框架各模块的版本清单（认证/授权/OAuth2/OIDC 等）。 -->
+            <!-- https://mvnrepository.com/artifact/io.projectreactor/reactor-bom -->
+            <!-- Reactor BOM：Project Reactor 响应式编程库的版本清单（Mono/Flux 核心及扩展）。 -->
+            <!-- Source: https://mvnrepository.com/artifact/io.micronaut.platform/micronaut-platform -->
+            <!-- Micronaut Platform：Micronaut 微服务框架的平台 BOM（编译时 DI、云原生、GraalVM 支持）。 -->
+            <dependency>
+                <groupId>io.micronaut.platform</groupId>
+                <artifactId>micronaut-platform</artifactId>
+                <version>${micronaut.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/io.quarkus.platform/quarkus-bom -->
+            <!-- Quarkus BOM：Quarkus 云原生 Java 框架各模块的版本清单。 -->
+            <dependency>
+                <groupId>io.quarkus.platform</groupId>
+                <artifactId>quarkus-bom</artifactId>
+                <version>${quarkus-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.opentelemetry.semconv</groupId>
+                <artifactId>opentelemetry-semconv</artifactId>
+                <version>${opentelemetry-semconv.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.opentelemetry.semconv</groupId>
+                <artifactId>opentelemetry-semconv-incubating</artifactId>
+                <version>${opentelemetry-semconv-alpha.version}</version>
+            </dependency>
+            <!-- Jakarta JAXB 运行时与 BOM 同版，直接管理优先于所有平台导入。 -->
+            <dependency>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>jaxb-runtime</artifactId>
+                <version>${glassfish-jaxb.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>jaxb-core</artifactId>
+                <version>${glassfish-jaxb.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>txw2</artifactId>
+                <version>${glassfish-jaxb.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.graalvm.sdk</groupId>
+                <artifactId>nativeimage</artifactId>
+                <version>${graalvm-sdk.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.graalvm.sdk</groupId>
+                <artifactId>word</artifactId>
+                <version>${graalvm-sdk.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-core</artifactId>
+                <version>${maven.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-plugin-api</artifactId>
+                <version>${maven.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-component-annotations</artifactId>
+                <version>${plexus-component-annotations.version}</version>
             </dependency>
             <!-- 导入平台的兼容旧线也使用已修复的公开版本，属性统一归属本 POM。 -->
             <dependency>
@@ -1019,13 +1559,6 @@
                 <version>${opentelemetry-javaagent.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.projectreactor</groupId>
-                <artifactId>reactor-bom</artifactId>
-                <version>${reactor-bom.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
                 <groupId>com.mchange</groupId>
                 <artifactId>c3p0</artifactId>
                 <version>${c3p0.version}</version>
@@ -1034,15 +1567,6 @@
                 <groupId>com.mchange</groupId>
                 <artifactId>mchange-commons-java</artifactId>
                 <version>${mchange-commons-java.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.apache.activemq/activemq-bom -->
-            <!-- Apache ActiveMQ：流行的开源消息中间件，实现了 JMS 1.1 规范，支持多种跨语言客户端和集群部署。 -->
-            <dependency>
-                <groupId>org.apache.activemq</groupId>
-                <artifactId>activemq-bom</artifactId>
-                <version>${activemq.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.activemq/activemq-console -->
             <!-- ActiveMQ Console：基于 Web 的 ActiveMQ 管理控制台，用于监控和管理消息代理、队列、主题等。 -->
@@ -1337,15 +1861,6 @@
                 <artifactId>archunit-junit5</artifactId>
                 <version>${archunit.version}</version>
             </dependency>
-            <!-- Apache Artemis 2.50+ 使用独立项目坐标，Classic ActiveMQ 仍保留原组名。 -->
-            <!-- Apache ActiveMQ Artemis：高性能异步消息中间件，支持 AMQP、MQTT、STOMP 等多种协议。 -->
-            <dependency>
-                <groupId>org.apache.artemis</groupId>
-                <artifactId>artemis-bom</artifactId>
-                <version>${artemis.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.ow2.asm/asm -->
             <!-- ASM：Java 字节码分析与操作框架，被 Spring/Hibernate 等大量框架使用进行运行时增强。 -->
             <dependency>
@@ -1380,15 +1895,6 @@
                 <groupId>org.aspectj</groupId>
                 <artifactId>aspectjweaver</artifactId>
                 <version>${aspectj.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.assertj/assertj-bom -->
-            <!-- AssertJ BOM：流式断言库 AssertJ 的版本清单，统一管理 AssertJ 各模块版本。 -->
-            <dependency>
-                <groupId>org.assertj</groupId>
-                <artifactId>assertj-bom</artifactId>
-                <version>${assertj.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.assertj/assertj-core -->
             <!-- AssertJ Core：Java 流式断言 API，断言错误描述可读性强，用于单元测试编写。 -->
@@ -1666,63 +2172,56 @@
                 <version>${bouncycastle-lts.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.bouncycastle/bcjmail-jdk18on -->
-            <!-- Bouncy Castle JMail JDK18+：Bouncy Castle 在 JDK 18+ 上的 JMail 实现（S/MIME 邮件加密）。 -->
+            <!-- Bouncy Castle JMail Java 1.8+：Bouncy Castle 在 Java 1.8+ 上的 JMail 实现（S/MIME 邮件加密）。 -->
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcjmail-jdk18on</artifactId>
                 <version>${bcmail.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.bouncycastle/bcmail-jdk15to18 -->
-            <!-- Bouncy Castle JMail JDK15-JDK18 过渡版：Bouncy Castle JMail 的旧到新 JDK 过渡实现。 -->
+            <!-- Bouncy Castle JMail Java 1.5–1.8 兼容版：Bouncy Castle JMail 的旧到新 JDK 过渡实现。 -->
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcmail-jdk15to18</artifactId>
                 <version>${bcmail.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.bouncycastle/bcpg-jdk15to18 -->
-            <!-- Bouncy Castle OpenPGP JDK15-JDK18 过渡版：Bouncy Castle OpenPGP（PGP 协议）的过渡版本。 -->
+            <!-- Bouncy Castle OpenPGP Java 1.5–1.8 兼容版：Bouncy Castle OpenPGP（PGP 协议）的过渡版本。 -->
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcpg-jdk15to18</artifactId>
                 <version>${bcpg.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.bouncycastle/bcpg-jdk18on -->
-            <!-- Bouncy Castle OpenPGP JDK18+：Bouncy Castle 在 JDK 18+ 上的 OpenPGP 实现。 -->
+            <!-- Bouncy Castle OpenPGP Java 1.8+：Bouncy Castle 在 Java 1.8+ 上的 OpenPGP 实现。 -->
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcpg-jdk18on</artifactId>
                 <version>${bcpg.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.bouncycastle/bcpkix-jdk15to18 -->
-            <!-- Bouncy Castle PKIX JDK15-JDK18 过渡版：Bouncy Castle PKIX（X.509 证书路径验证）的过渡实现。 -->
+            <!-- Bouncy Castle PKIX Java 1.5–1.8 兼容版：Bouncy Castle PKIX（X.509 证书路径验证）的过渡实现。 -->
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcpkix-jdk15to18</artifactId>
                 <version>${bcpkix.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.bouncycastle/bcpkix-jdk18on -->
-            <!-- Bouncy Castle PKIX JDK18+：Bouncy Castle PKIX 在 JDK 18+ 上的实现。 -->
+            <!-- Bouncy Castle PKIX Java 1.8+：Bouncy Castle PKIX 在 Java 1.8+ 上的实现。 -->
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcpkix-jdk18on</artifactId>
                 <version>${bcpkix.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk15on -->
-            <!-- Bouncy Castle Provider JDK15：旧版 Bouncy Castle 加密算法提供者（仅 JDK 15+）。 -->
-            <dependency>
-                <groupId>org.bouncycastle</groupId>
-                <artifactId>bcprov-jdk15on</artifactId>
-                <version>1.70</version>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk15to18 -->
-            <!-- Bouncy Castle Provider JDK15-JDK18 过渡版：Bouncy Castle 加密算法提供者的过渡版本。 -->
+            <!-- Bouncy Castle Provider Java 1.5–1.8 兼容版：Bouncy Castle 加密算法提供者的过渡版本。 -->
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcprov-jdk15to18</artifactId>
                 <version>${bcprov.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk18on -->
-            <!-- Bouncy Castle Provider JDK18+：Bouncy Castle 加密算法提供者（ JDK 18+）。 -->
+            <!-- Bouncy Castle Provider Java 1.8+：Bouncy Castle 加密算法提供者（ Java 1.8+）。 -->
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcprov-jdk18on</artifactId>
@@ -1730,14 +2229,14 @@
             </dependency>
             <!-- The Bouncy Castle Java APIs for TLS and DTLS, including a provider for the JSSE. -->
             <!-- Source: https://mvnrepository.com/artifact/org.bouncycastle/bctls-jdk15to18 -->
-            <!-- Bouncy Castle TLS JDK15-JDK18 过渡版：Bouncy Castle 的 TLS/DTLS 实现过渡版本，可作为 JSSE Provider。 -->
+            <!-- Bouncy Castle TLS Java 1.5–1.8 兼容版：Bouncy Castle 的 TLS/DTLS 实现过渡版本，可作为 JSSE Provider。 -->
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bctls-jdk15to18</artifactId>
                 <version>${bctls.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.bouncycastle/bctls-jdk18on -->
-            <!-- Bouncy Castle TLS JDK18+：Bouncy Castle 在 JDK 18+ 上的 TLS/DTLS 实现，可作为 JSSE Provider。 -->
+            <!-- Bouncy Castle TLS Java 1.8+：Bouncy Castle 在 Java 1.8+ 上的 TLS/DTLS 实现，可作为 JSSE Provider。 -->
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bctls-jdk18on</artifactId>
@@ -1756,17 +2255,6 @@
                 <groupId>com.gitee.Jmysy</groupId>
                 <artifactId>binlog4j-core</artifactId>
                 <version>${binlog4j.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/software.amazon.awssdk/bom -->
-            <!-- AWS SDK BOM：AWS Java v2 SDK 的版本清单，统一管理所有 AWS 服务模块版本。 -->
-            <!-- Source: https://mvnrepository.com/artifact/io.zipkin.brave/brave-bom -->
-            <!-- Brave BOM：Zipkin Brave 分布式追踪库的版本清单，提供 Brave 核心及周边组件统一版本。 -->
-            <dependency>
-                <groupId>io.zipkin.brave</groupId>
-                <artifactId>brave-bom</artifactId>
-                <version>${brave.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <!-- https://mvnrepository.com/artifact/io.buji/buji-pac4j -->
             <!-- Buji Pac4j：Pac4j 安全库与 Shiro 集成桥接，让 Shiro 拥有 OAuth、OIDC、SAML 等认证能力。 -->
@@ -1974,16 +2462,6 @@
                 <groupId>com.aliyun</groupId>
                 <artifactId>cloudauth20190307</artifactId>
                 <version>${aliyun-cloud-auth20190307.version}</version>
-            </dependency>
-            <!-- For Alibaba Cola -->
-            <!-- https://mvnrepository.com/artifact/com.alibaba.cola/cola-components-bom -->
-            <!-- Alibaba COLA Components BOM：阿里 COLA 架构的组件版本清单，提供 COLA 架构所需全套组件。 -->
-            <dependency>
-                <groupId>com.alibaba.cola</groupId>
-                <artifactId>cola-components-bom</artifactId>
-                <version>${cola.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/commons-attributes/commons-attributes-api -->
             <!-- Commons Attributes API：让 Java 拥有类似 C# 的注解编译期处理机制（已废弃，被 Java 标准注解取代）。 -->
@@ -2220,13 +2698,6 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-fileupload2-jakarta-servlet6</artifactId>
                 <version>${commons-fileupload2.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/commons-httpclient/commons-httpclient -->
-            <!-- Commons HttpClient：经典版 HTTP 客户端库（HTTP/1.1、Cookie、认证等，已被 Apache HttpComponents 取代）。 -->
-            <dependency>
-                <groupId>commons-httpclient</groupId>
-                <artifactId>commons-httpclient</artifactId>
-                <version>${commons-httpclient.version}</version>
             </dependency>
             <!-- Commons Imaging (previously Sanselan) is a pure-Java image library. -->
             <!-- Source: https://mvnrepository.com/artifact/org.apache.commons/commons-imaging -->
@@ -2580,27 +3051,6 @@
                 <artifactId>cxf-rt-bindings-corba</artifactId>
                 <version>${cxf.version}</version>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-bindings-http -->
-            <!-- Apache CXF HTTP Binding：CXF 的 HTTP 传输绑定。 -->
-            <dependency>
-                <groupId>org.apache.cxf</groupId>
-                <artifactId>cxf-rt-bindings-http</artifactId>
-                <version>2.5.11</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-bindings-jbi -->
-            <!-- Apache CXF JBI Binding：CXF 的 JBI（Java 业务集成）协议绑定。 -->
-            <dependency>
-                <groupId>org.apache.cxf</groupId>
-                <artifactId>cxf-rt-bindings-jbi</artifactId>
-                <version>2.4.10</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-bindings-object -->
-            <!-- Apache CXF Object Binding：CXF 的本地对象调用绑定。 -->
-            <dependency>
-                <groupId>org.apache.cxf</groupId>
-                <artifactId>cxf-rt-bindings-object</artifactId>
-                <version>3.1.18</version>
-            </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-bindings-soap -->
             <!-- Apache CXF SOAP Binding：CXF 的 SOAP 协议绑定。 -->
             <dependency>
@@ -2636,27 +3086,6 @@
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-databinding-jaxb</artifactId>
                 <version>${cxf.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-databinding-jibx -->
-            <!-- Apache CXF Databinding JiBX：CXF 的 JiBX 数据绑定实现。 -->
-            <dependency>
-                <groupId>org.apache.cxf</groupId>
-                <artifactId>cxf-rt-databinding-jibx</artifactId>
-                <version>3.1.18</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-databinding-sdo -->
-            <!-- Apache CXF Databinding SDO：CXF 的 SDO（服务数据对象）数据绑定实现。 -->
-            <dependency>
-                <groupId>org.apache.cxf</groupId>
-                <artifactId>cxf-rt-databinding-sdo</artifactId>
-                <version>3.1.18</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-databinding-xmlbeans -->
-            <!-- Apache CXF Databinding XMLBeans：CXF 的 XMLBeans 数据绑定实现。 -->
-            <dependency>
-                <groupId>org.apache.cxf</groupId>
-                <artifactId>cxf-rt-databinding-xmlbeans</artifactId>
-                <version>3.1.18</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-features-clustering -->
             <!-- Apache CXF Clustering Feature：CXF 的集群支持特性，提供故障转移能力。 -->
@@ -2753,13 +3182,6 @@
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-rs-security-jose-jaxrs</artifactId>
                 <version>${cxf.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-rs-security-oauth -->
-            <!-- Apache CXF JAX-RS OAuth 1.0a：CXF 的 OAuth 1.0a 认证支持。 -->
-            <dependency>
-                <groupId>org.apache.cxf</groupId>
-                <artifactId>cxf-rt-rs-security-oauth</artifactId>
-                <version>3.4.10</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.cxf/cxf-rt-rs-security-oauth2 -->
             <!-- Apache CXF JAX-RS OAuth 2.0：CXF 的 OAuth 2.0 认证支持。 -->
@@ -2882,6 +3304,37 @@
                 <artifactId>cxf-rt-ws-security</artifactId>
                 <version>${cxf.version}</version>
             </dependency>
+            <!-- CXF 4.1.9 要求 WSS4J 4.0.2 起；统一采用 JDK 17 兼容的安全补丁 4.0.3。 -->
+            <dependency>
+                <groupId>org.apache.wss4j</groupId>
+                <artifactId>wss4j-bindings</artifactId>
+                <version>${wss4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.wss4j</groupId>
+                <artifactId>wss4j-policy</artifactId>
+                <version>${wss4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.wss4j</groupId>
+                <artifactId>wss4j-ws-security-common</artifactId>
+                <version>${wss4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.wss4j</groupId>
+                <artifactId>wss4j-ws-security-dom</artifactId>
+                <version>${wss4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.wss4j</groupId>
+                <artifactId>wss4j-ws-security-stax</artifactId>
+                <version>${wss4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.wss4j</groupId>
+                <artifactId>wss4j-ws-security-policy-stax</artifactId>
+                <version>${wss4j.version}</version>
+            </dependency>
             <!-- https://mvnrepository.com/artifact/org.clojars.xumh/db-meta -->
             <!-- DB Meta：基于 Active Record 模式的 Java ORM 库。 -->
             <dependency>
@@ -2889,57 +3342,12 @@
                 <artifactId>db-meta</artifactId>
                 <version>${db-meta.version}</version>
             </dependency>
-            <!-- Jackson must precede imported BOMs that manage older Jackson modules. -->
-            <!-- Source: https://mvnrepository.com/artifact/io.debezium/debezium-bom -->
-            <!-- Debezium BOM：Debezium 变更数据捕获（CDC）平台的版本清单，统一管理 Debezium 组件版本。 -->
-            <dependency>
-                <groupId>io.debezium</groupId>
-                <artifactId>debezium-bom</artifactId>
-                <version>${debezium.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.spring.gradle/dependency-management-plugin -->
             <!-- Spring Dependency Management Plugin：在 Gradle 中提供 Maven 风格的依赖管理。 -->
             <dependency>
                 <groupId>io.spring.gradle</groupId>
                 <artifactId>dependency-management-plugin</artifactId>
                 <version>${dependency-management-plugin.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.derby</groupId>
-                <artifactId>derby</artifactId>
-                <version>${derby.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.derby</groupId>
-                <artifactId>derbyclient</artifactId>
-                <version>${derby.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.derby</groupId>
-                <artifactId>derbyLocale_zh_CN</artifactId>
-                <version>${derby.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.derby</groupId>
-                <artifactId>derbynet</artifactId>
-                <version>${derby.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.derby</groupId>
-                <artifactId>derbyoptionaltools</artifactId>
-                <version>${derby.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.derby</groupId>
-                <artifactId>derbyshared</artifactId>
-                <version>${derby.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.derby</groupId>
-                <artifactId>derbytools</artifactId>
-                <version>${derby.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.aliyun/dingtalk -->
             <!-- 钉钉 SDK：阿里钉钉开放平台 Java SDK。 -->
@@ -3110,15 +3518,6 @@
                 <artifactId>dozer-spring4</artifactId>
                 <version>${dozer-spring4.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/io.dropwizard/dropwizard-bom -->
-            <!-- Dropwizard BOM：Dropwizard REST 微服务框架的版本清单。 -->
-            <dependency>
-                <groupId>io.dropwizard</groupId>
-                <artifactId>dropwizard-bom</artifactId>
-                <version>${dropwizard-bom.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <!-- https://mvnrepository.com/artifact/com.izettle/dropwizard-metrics-influxdb -->
             <!-- Dropwizard Metrics InfluxDB：将 Dropwizard Metrics 推送到 InfluxDB 的桥接模块。 -->
             <dependency>
@@ -3153,15 +3552,6 @@
                 <groupId>com.baomidou</groupId>
                 <artifactId>dynamic-datasource-spring</artifactId>
                 <version>${dynamic-datasource.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/org.dromara.dynamictp/dynamic-tp-dependencies -->
-            <!-- DynamicTp Dependencies：Dromara DynamicTp 动态线程池的版本清单。 -->
-            <dependency>
-                <groupId>org.dromara.dynamictp</groupId>
-                <artifactId>dynamic-tp-dependencies</artifactId>
-                <version>${dynamic-tp.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/easydoc -->
             <!-- Easy4J EasyDoc：Easy4J 接口文档生成与聚合工具。 -->
@@ -3338,13 +3728,6 @@
             <dependency>
                 <groupId>io.github.openfeign</groupId>
                 <artifactId>feign-form-spring</artifactId>
-                <version>${feign.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/io.github.openfeign/feign-hystrix -->
-            <!-- OpenFeign Hystrix：Feign 与 Hystrix 断路器集成（已弃用，Hystrix 进入维护模式）。 -->
-            <dependency>
-                <groupId>io.github.openfeign</groupId>
-                <artifactId>feign-hystrix</artifactId>
                 <version>${feign.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/io.github.openfeign/feign-okhttp -->
@@ -3817,33 +4200,6 @@
                 <artifactId>google-api-services-androidpublisher</artifactId>
                 <version>${google-api-services-androidpublisher.version}</version>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/com.google.auth/google-auth-library-bom -->
-            <!-- Google Auth Library BOM：Google Cloud 凭证管理和 OAuth 2.0 认证库的版本清单。 -->
-            <dependency>
-                <groupId>com.google.auth</groupId>
-                <artifactId>google-auth-library-bom</artifactId>
-                <version>${google-auth-library.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.google.cloud/google-cloud-translate-bom -->
-            <!-- Google Cloud Translate BOM：Google Cloud Translation API 的版本清单。 -->
-            <dependency>
-                <groupId>com.google.cloud</groupId>
-                <artifactId>google-cloud-translate-bom</artifactId>
-                <version>${google-cloud-translate.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/com.google.http-client/google-http-client-bom -->
-            <!-- Google HTTP Client BOM：Google HTTP 客户端库的版本清单。 -->
-            <dependency>
-                <groupId>com.google.http-client</groupId>
-                <artifactId>google-http-client-bom</artifactId>
-                <version>${google-http-client.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <!-- https://mvnrepository.com/artifact/com.google.oauth-client/google-oauth-client -->
             <!-- Google OAuth Client：Google OAuth 2.0 客户端库，用于访问 Google API。 -->
             <dependency>
@@ -4022,24 +4378,6 @@
                 <artifactId>grizzly-websockets-server</artifactId>
                 <version>${grizzly.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.apache.groovy/groovy-bom -->
-            <!-- Groovy BOM：Groovy 动态语言的版本清单，统一管理 Groovy 各模块版本。 -->
-            <dependency>
-                <groupId>org.apache.groovy</groupId>
-                <artifactId>groovy-bom</artifactId>
-                <version>${groovy.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/io.grpc/grpc-bom -->
-            <!-- gRPC BOM：gRPC 高性能 RPC 框架各模块的版本清单。 -->
-            <dependency>
-                <groupId>io.grpc</groupId>
-                <artifactId>grpc-bom</artifactId>
-                <version>${grpc-bom.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <!-- gRPC 核心工件显式钉版（= grpc-bom 同版）：debezium-bom/dropwizard-bom 等更早
                  import 的 BOM 会把 grpc-core/api 压到 1.56.x（无 ForwardingChannelBuilder2），
                  与 grpc-netty-shaded 1.82.1 混版导致 esdb 客户端 NoClassDefFoundError；
@@ -4138,15 +4476,6 @@
                 <artifactId>hadoop-hdfs-native-client</artifactId>
                 <version>${hadoop.version}</version>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-mapreduce-client -->
-            <!-- Apache Hadoop MapReduce Client BOM：Hadoop MapReduce 客户端版本清单。 -->
-            <dependency>
-                <groupId>org.apache.hadoop</groupId>
-                <artifactId>hadoop-mapreduce-client</artifactId>
-                <version>${hadoop.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.hadoop/hadoop-mapreduce-client-jobclient -->
             <!-- Apache Hadoop MapReduce JobClient：提交 MapReduce 作业的客户端。 -->
             <dependency>
@@ -4231,15 +4560,6 @@
                 <artifactId>HdrHistogram</artifactId>
                 <version>${hdrhistogram.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/io.helidon/helidon-bom -->
-            <!-- Helidon BOM：Oracle Helidon 微服务框架各模块的版本清单。 -->
-            <dependency>
-                <groupId>io.helidon</groupId>
-                <artifactId>helidon-bom</artifactId>
-                <version>${helidon-bom.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/hermes-java-sdk -->
             <!-- Easy4J Hermes SDK：Easy4J 封装的 Hermes 消息队列 SDK。 -->
             <dependency>
@@ -4321,27 +4641,6 @@
                 <artifactId>htmlunit3-driver</artifactId>
                 <version>${selenium-htmlunit.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.apache.httpcomponents/httpasyncclient -->
-            <!-- Apache HttpAsyncClient：Apache 异步 HTTP 客户端（基于 NIO，支持 HTTP/1.1）。 -->
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpasyncclient</artifactId>
-                <version>${httpasyncclient.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.apache.httpcomponents/httpasyncclient-cache -->
-            <!-- Apache HttpAsyncClient Cache：异步 HTTP 客户端的缓存模块。 -->
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpasyncclient-cache</artifactId>
-                <version>${httpasyncclient.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.apache.httpcomponents/httpasyncclient-osgi -->
-            <!-- Apache HttpAsyncClient OSGi：异步 HTTP 客户端的 OSGi 打包版本。 -->
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpasyncclient-osgi</artifactId>
-                <version>${httpasyncclient.version}</version>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
             <!-- Apache HttpClient：Apache HTTP 客户端（同步，支持连接池、Cookie、认证）。 -->
             <dependency>
@@ -4391,14 +4690,6 @@
                 <artifactId>httpclient5-fluent</artifactId>
                 <version>${httpclient5.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcomponents-asyncclient -->
-            <!-- Apache HttpComponents AsyncClient：Apache 异步 HTTP 客户端聚合包。 -->
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpcomponents-asyncclient</artifactId>
-                <version>${httpasyncclient.version}</version>
-                <type>pom</type>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcomponents-client -->
             <!-- Apache HttpComponents Client：Apache HTTP 客户端聚合包。 -->
             <dependency>
@@ -4434,20 +4725,6 @@
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpcore-ab</artifactId>
-                <version>${httpcore.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcore-nio -->
-            <!-- Apache HttpCore NIO：Apache HTTP 核心的 NIO 异步传输模块。 -->
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpcore-nio</artifactId>
-                <version>${httpcore.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcore-osgi -->
-            <!-- Apache HttpCore OSGi：Apache HTTP 核心的 OSGi 打包版本。 -->
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpcore-osgi</artifactId>
                 <version>${httpcore.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.httpcomponents.core5/httpcore5 -->
@@ -4582,29 +4859,6 @@
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-system</artifactId>
                 <version>${hutool.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/com.netflix.hystrix/hystrix-core -->
-            <!-- Hystrix Core：Netflix 的断路器库，实现服务容错和熔断模式（已进入维护模式）。 -->
-            <dependency>
-                <groupId>com.netflix.hystrix</groupId>
-                <artifactId>hystrix-core</artifactId>
-                <version>${hystrix.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/com.netflix.hystrix/hystrix-metrics-event-stream -->
-            <!-- Hystrix Metrics Event Stream：Hystrix 指标事件流（SSE）输出模块。 -->
-            <dependency>
-                <groupId>com.netflix.hystrix</groupId>
-                <artifactId>hystrix-metrics-event-stream</artifactId>
-                <version>${hystrix.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.apache.iceberg/iceberg-bom -->
-            <!-- Apache Iceberg BOM：Apache Iceberg 开放表格式各模块的版本清单（支持 ACID 事务和时间旅行）。 -->
-            <dependency>
-                <groupId>org.apache.iceberg</groupId>
-                <artifactId>iceberg-bom</artifactId>
-                <version>${iceberg.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.ibm.icu/icu4j -->
             <!-- IBM ICU4J：IBM 国际化 Unicode 库，提供 Unicode 字符集、区域设置、日期格式化等。 -->
@@ -4782,15 +5036,6 @@
                 <artifactId>imap</artifactId>
                 <version>${angus-mail.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.infinispan/infinispan-bom -->
-            <!-- Infinispan BOM：Red Hat Infinispan 分布式缓存框架各模块的版本清单。 -->
-            <dependency>
-                <groupId>org.infinispan</groupId>
-                <artifactId>infinispan-bom</artifactId>
-                <version>${infinispan.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <!-- https://mvnrepository.com/artifact/com.influxdb/influxdb-client-java -->
             <!-- InfluxDB Client Java：InfluxDB 时序数据库官方 v2 Java 客户端。 -->
             <dependency>
@@ -4804,15 +5049,6 @@
                 <groupId>org.influxdb</groupId>
                 <artifactId>influxdb-java</artifactId>
                 <version>${influxdb-java.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/io.spring.initializr/initializr-bom -->
-            <!-- Spring Initializr BOM：Spring 项目脚手架生成器（start.spring.io）的版本清单。 -->
-            <dependency>
-                <groupId>io.spring.initializr</groupId>
-                <artifactId>initializr-bom</artifactId>
-                <version>${spring-initializr.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/ishumei-java-sdk -->
             <!-- Easy4J 数美 SDK：Easy4J 封装数美科技（业务反欺诈、内容审核）Java SDK。 -->
@@ -5019,11 +5255,6 @@
                 <version>${opencode-java-sdk.version}</version>
             </dependency>
             <dependency>
-                <groupId>javax.validation</groupId>
-                <artifactId>validation-api</artifactId>
-                <version>${javax-validation-api.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>tools.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
                 <version>${jackson3.version}</version>
@@ -5083,15 +5314,6 @@
                 <groupId>io.appium</groupId>
                 <artifactId>java-client</artifactId>
                 <version>${appium.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.apache.cassandra/java-driver-bom -->
-            <!-- Cassandra Java Driver BOM：Apache Cassandra Java 驱动各模块的版本清单。 -->
-            <dependency>
-                <groupId>org.apache.cassandra</groupId>
-                <artifactId>java-driver-bom</artifactId>
-                <version>${cassandra-driver.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.cassandra/java-driver-core -->
             <!-- Cassandra Java Driver Core：Apache Cassandra 分布式 NoSQL 数据库的 Java 驱动核心。 -->
@@ -5408,21 +5630,6 @@
                 <artifactId>jetcache-starter-redisson</artifactId>
                 <version>${jetcache.version}</version>
             </dependency>
-            <!-- 对齐 Jetty 核心及 EE10 家族，覆盖平台 BOM 传递的旧版本。 -->
-            <dependency>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-bom</artifactId>
-                <version>${jetty.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.eclipse.jetty.ee10</groupId>
-                <artifactId>jetty-ee10-bom</artifactId>
-                <version>${jetty.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-server -->
             <!-- Jetty Server：Eclipse Jetty 嵌入式 Web 服务器核心（Servlet 容器、HTTP/1.1/2）。 -->
             <dependency>
@@ -5570,15 +5777,6 @@
                 <artifactId>jooq</artifactId>
                 <version>${jooq.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.jooq/jooq-bom -->
-            <!-- jOOQ BOM：jOOQ 数据库查询框架各模块的版本清单。 -->
-            <dependency>
-                <groupId>org.jooq</groupId>
-                <artifactId>jooq-bom</artifactId>
-                <version>${jooq.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <!-- https://mvnrepository.com/artifact/org.jooq/jooq-codegen -->
             <!-- jOOQ Codegen：jOOQ 的代码生成工具，从数据库 Schema 自动生成 Java 数据库访问代码。 -->
             <dependency>
@@ -5716,16 +5914,6 @@
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>${junit.version}</version>
-            </dependency>
-            <!-- JUnit 子模块版本对齐（与 Spring Boot 3.4 / junit-jupiter.version 一致） -->
-            <!-- Source: https://mvnrepository.com/artifact/org.junit/junit-bom -->
-            <!-- JUnit BOM：JUnit 5 Jupiter 各模块的版本清单（统一 API/Engine/Params/Platform 版本）。 -->
-            <dependency>
-                <groupId>org.junit</groupId>
-                <artifactId>junit-bom</artifactId>
-                <version>${junit-jupiter.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
             <!-- JUnit Jupiter API：JUnit 5 的注解（@Test、@ParameterizedTest）和断言 API。 -->
@@ -5993,15 +6181,6 @@
                 <artifactId>knife4j-openapi3-ui</artifactId>
                 <version>${knife4j.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-bom -->
-            <!-- Kotlin BOM：Kotlin 标准库和扩展的版本清单。 -->
-            <dependency>
-                <groupId>org.jetbrains.kotlin</groupId>
-                <artifactId>kotlin-bom</artifactId>
-                <version>${kotlin.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-stdlib -->
             <!-- Kotlin Stdlib：Kotlin 标准库（集合、协程、IO 等基础工具）。 -->
             <dependency>
@@ -6015,24 +6194,6 @@
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib-jdk8</artifactId>
                 <version>${kotlin-stdlib.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-coroutines-bom -->
-            <!-- Kotlin Coroutines BOM：Kotlin 协程库的版本清单。 -->
-            <dependency>
-                <groupId>org.jetbrains.kotlinx</groupId>
-                <artifactId>kotlinx-coroutines-bom</artifactId>
-                <version>${kotlin-coroutines.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-serialization-bom -->
-            <!-- Kotlin Serialization BOM：Kotlin 序列化库的版本清单（JSON/CBOR/Protobuf 等格式）。 -->
-            <dependency>
-                <groupId>org.jetbrains.kotlinx</groupId>
-                <artifactId>kotlinx-serialization-bom</artifactId>
-                <version>${kotlin-serialization.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <!-- https://mvnrepository.com/artifact/io.kurrent/kurrentdb-client -->
             <!-- KurrentDB Client：EventStoreDB（事件溯源数据库）的 Java 客户端。 -->
@@ -6069,15 +6230,6 @@
                 <groupId>com.googlecode.libphonenumber</groupId>
                 <artifactId>libphonenumber</artifactId>
                 <version>${libphonenumber.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/com.google.cloud/libraries-bom -->
-            <!-- Google Cloud Libraries BOM：Google Cloud 全家桶 SDK 的版本清单。 -->
-            <dependency>
-                <groupId>com.google.cloud</groupId>
-                <artifactId>libraries-bom</artifactId>
-                <version>${google-libraries-bom.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.liquibase/liquibase-cdi -->
             <!-- Liquibase CDI：Liquibase 数据库版本管理工具的 CDI 集成模块。 -->
@@ -6220,15 +6372,6 @@
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-appserver</artifactId>
                 <version>${log4j2.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-bom -->
-            <!-- Log4j BOM：Apache Log4j 2 各模块的版本清单。 -->
-            <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-bom</artifactId>
-                <version>${log4j2.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-cassandra -->
             <!-- Log4j Cassandra：Log4j 2 的 Cassandra 日志存储 Appender。 -->
@@ -6539,17 +6682,6 @@
                 <artifactId>micrometer-registry-stackdriver</artifactId>
                 <version>${micrometer.version}</version>
             </dependency>
-            <!-- BOMs 必须置于 micronaut-platform 之前，Maven 4 中先声明优先 -->
-            <!-- Javalin BOM（控制 Jetty 版本） -->
-            <!-- Source: https://mvnrepository.com/artifact/io.javalin/javalin-bom -->
-            <!-- Javalin BOM：Javalin 轻量级 Web 框架的版本清单（基于 Jetty，支持 WebSocket/SSE）。 -->
-            <dependency>
-                <groupId>io.javalin</groupId>
-                <artifactId>javalin-bom</artifactId>
-                <version>${javalin.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.springframework/spring-framework-bom -->
             <!-- Spring Framework BOM：Spring 核心框架各模块的版本清单（IoC/AOP/MVC/Data/Web 等）。 -->
             <!-- Micronaut Platform 仍管理部分旧版 Boot 构件；显式对齐当前线的 Spring Boot 3.5 补丁版本。 -->
@@ -6578,19 +6710,6 @@
                 <artifactId>spring-boot-starter-web</artifactId>
                 <version>${spring-boot3-it.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.springframework.security/spring-security-bom -->
-            <!-- Spring Security BOM：Spring 安全框架各模块的版本清单（认证/授权/OAuth2/OIDC 等）。 -->
-            <!-- https://mvnrepository.com/artifact/io.projectreactor/reactor-bom -->
-            <!-- Reactor BOM：Project Reactor 响应式编程库的版本清单（Mono/Flux 核心及扩展）。 -->
-            <!-- Source: https://mvnrepository.com/artifact/io.micronaut.platform/micronaut-platform -->
-            <!-- Micronaut Platform：Micronaut 微服务框架的平台 BOM（编译时 DI、云原生、GraalVM 支持）。 -->
-            <dependency>
-                <groupId>io.micronaut.platform</groupId>
-                <artifactId>micronaut-platform</artifactId>
-                <version>${micronaut.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.milvus/milvus-sdk-java -->
             <!-- Milvus SDK Java：Milvus 向量数据库的 Java 客户端（用于 AI 向量相似性检索）。 -->
             <dependency>
@@ -6604,15 +6723,6 @@
                 <groupId>io.minio</groupId>
                 <artifactId>minio</artifactId>
                 <version>${minio.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.mockito/mockito-bom -->
-            <!-- Mockito BOM：Mockito 单元测试 Mock 框架各模块的版本清单。 -->
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-bom</artifactId>
-                <version>${mockito.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.mockito/mockito-junit-jupiter -->
             <!-- Mockito JUnit Jupiter：Mockito 与 JUnit 5 的集成扩展（自动初始化 Mock 注解）。 -->
@@ -6634,15 +6744,6 @@
                 <groupId>org.mongodb</groupId>
                 <artifactId>mongo-java-driver</artifactId>
                 <version>${mongo-java-driver.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.mongodb/mongodb-driver-bom -->
-            <!-- MongoDB Driver BOM：MongoDB Java 驱动各模块的版本清单（Sync/Async/Reactive）。 -->
-            <dependency>
-                <groupId>org.mongodb</groupId>
-                <artifactId>mongodb-driver-bom</artifactId>
-                <version>${mongodb.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.microsoft.sqlserver/mssql-jdbc -->
             <!-- MSSQL JDBC：微软 SQL Server 官方 JDBC 驱动。 -->
@@ -6681,17 +6782,6 @@
                 <groupId>org.mybatis.scripting</groupId>
                 <artifactId>mybatis-freemarker</artifactId>
                 <version>${mybatis-freemarker.version}</version>
-            </dependency>
-            <!-- mybatis generator -->
-            <!-- Source: https://mvnrepository.com/artifact/org.mybatis.generator/mybatis-generator -->
-            <!-- mybatis generator -->
-            <!-- MyBatis Generator BOM：MyBatis 代码生成器各模块的版本清单（自动生成 Mapper/XML/Model）。 -->
-            <dependency>
-                <groupId>org.mybatis.generator</groupId>
-                <artifactId>mybatis-generator</artifactId>
-                <version>${mybatis-generator.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.mybatis.caches/mybatis-hazelcast -->
             <!-- MyBatis Hazelcast Cache：MyBatis 的 Hazelcast 分布式缓存实现（二级缓存）。 -->
@@ -6776,6 +6866,10 @@
                 <version>${mybatis-plus-enhance.version}</version>
                 <type>pom</type>
             </dependency>
+            <dependency><groupId>io.github.easy4j</groupId><artifactId>mybatis-enhance-core</artifactId><version>${revision}</version></dependency>
+            <dependency><groupId>io.github.easy4j</groupId><artifactId>mybatis-enhance-extension</artifactId><version>${revision}</version></dependency>
+            <dependency><groupId>io.github.easy4j</groupId><artifactId>mybatis-enhance-annotation</artifactId><version>${revision}</version></dependency>
+            <dependency><groupId>io.github.easy4j</groupId><artifactId>mybatis-enhance-typehandler</artifactId><version>${revision}</version></dependency>
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>mybatis-plus-enhance-core</artifactId>
@@ -7052,15 +7146,6 @@
                 <groupId>org.objenesis</groupId>
                 <artifactId>objenesis</artifactId>
                 <version>${objenesis.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.oracle.database.jdbc/ojdbc-bom -->
-            <!-- Oracle JDBC BOM：Oracle 数据库 JDBC 驱动各模块的版本清单。 -->
-            <dependency>
-                <groupId>com.oracle.database.jdbc</groupId>
-                <artifactId>ojdbc-bom</artifactId>
-                <version>${oracle-database.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp-bom -->
             <!-- OkHttp BOM：Square OkHttp HTTP 客户端各模块的版本清单（支持 HTTP/2、WebSocket）。 -->
@@ -7669,15 +7754,6 @@
                 <artifactId>prefixmapper</artifactId>
                 <version>${libphonenumber-prefixmapper.version}</version>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/io.prometheus/prometheus-metrics-bom -->
-            <!-- Prometheus Metrics BOM：Prometheus 监控指标库各模块的版本清单。 -->
-            <dependency>
-                <groupId>io.prometheus</groupId>
-                <artifactId>prometheus-metrics-bom</artifactId>
-                <version>${prometheus-client.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java -->
             <!-- Protocol Buffers Java：Google Protocol Buffers 序列化框架的 Java 实现。 -->
             <dependency>
@@ -7721,15 +7797,6 @@
                 <groupId>com.cloudhopper.proxool</groupId>
                 <artifactId>proxool-cglib</artifactId>
                 <version>${proxool.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.apache.pulsar/pulsar-bom -->
-            <!-- Apache Pulsar BOM：Apache Pulsar 分布式消息流平台各模块的版本清单。 -->
-            <dependency>
-                <groupId>org.apache.pulsar</groupId>
-                <artifactId>pulsar-bom</artifactId>
-                <version>${pulsar.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.apache.pulsar/pulsar-client-api -->
             <!-- Pulsar Client API：Apache Pulsar 消息客户端 API 定义。 -->
@@ -7794,15 +7861,6 @@
                 <artifactId>qrcode-utils</artifactId>
                 <version>1.3</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/io.quarkus.platform/quarkus-bom -->
-            <!-- Quarkus BOM：Quarkus 云原生 Java 框架各模块的版本清单。 -->
-            <dependency>
-                <groupId>io.quarkus.platform</groupId>
-                <artifactId>quarkus-bom</artifactId>
-                <version>${quarkus-bom.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <!-- https://mvnrepository.com/artifact/org.quartz-scheduler/quartz -->
             <!-- Quartz Scheduler：Java 企业级任务调度框架（Cron 触发、集群、持久化）。 -->
             <dependency>
@@ -7816,15 +7874,6 @@
                 <groupId>org.quartz-scheduler</groupId>
                 <artifactId>quartz-jobs</artifactId>
                 <version>${quartz.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.querydsl/querydsl-bom -->
-            <!-- QueryDSL BOM：QueryDSL 类型安全查询框架各模块的版本清单（JPA/JPA/MongoDB 等）。 -->
-            <dependency>
-                <groupId>com.querydsl</groupId>
-                <artifactId>querydsl-bom</artifactId>
-                <version>${querydsl.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.r2dbc/r2dbc-h2 -->
             <!-- R2DBC H2：H2 内存数据库的响应式数据库连接 (R2DBC) 驱动。 -->
@@ -8018,13 +8067,6 @@
                 <artifactId>resilience4j-micrometer</artifactId>
                 <version>${resilience4j.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/io.github.resilience4j/resilience4j-prometheus -->
-            <!-- Resilience4j Prometheus：Resilience4j 的 Prometheus 指标导出（旧版）。 -->
-            <dependency>
-                <groupId>io.github.resilience4j</groupId>
-                <artifactId>resilience4j-prometheus</artifactId>
-                <version>1.7.1</version>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.resilience4j/resilience4j-ratelimiter -->
             <!-- Resilience4j RateLimiter：Resilience4j 的限流模式（限制请求速率）。 -->
             <dependency>
@@ -8032,26 +8074,12 @@
                 <artifactId>resilience4j-ratelimiter</artifactId>
                 <version>${resilience4j.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/io.github.resilience4j/resilience4j-ratpack -->
-            <!-- Resilience4j Ratpack：Resilience4j 与 Ratpack Web 框架的集成。 -->
-            <dependency>
-                <groupId>io.github.resilience4j</groupId>
-                <artifactId>resilience4j-ratpack</artifactId>
-                <version>1.7.1</version>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.resilience4j/resilience4j-reactor -->
             <!-- Resilience4j Reactor：Resilience4j 与 Project Reactor 的集成（响应式容错）。 -->
             <dependency>
                 <groupId>io.github.resilience4j</groupId>
                 <artifactId>resilience4j-reactor</artifactId>
                 <version>${resilience4j.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/io.github.resilience4j/resilience4j-retrofit -->
-            <!-- Resilience4j Retrofit：Resilience4j 与 Retrofit HTTP 客户端的集成。 -->
-            <dependency>
-                <groupId>io.github.resilience4j</groupId>
-                <artifactId>resilience4j-retrofit</artifactId>
-                <version>1.7.1</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.resilience4j/resilience4j-retry -->
             <!-- Resilience4j Retry：Resilience4j 的重试模式（指数退避、最大重试次数等）。 -->
@@ -8103,15 +8131,6 @@
                 <artifactId>rest-assured</artifactId>
                 <version>${rest-assured.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/io.rest-assured/rest-assured-bom -->
-            <!-- REST Assured BOM：REST Assured 测试框架各模块的版本清单。 -->
-            <dependency>
-                <groupId>io.rest-assured</groupId>
-                <artifactId>rest-assured-bom</artifactId>
-                <version>${rest-assured.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.rest-assured/rest-assured-common -->
             <!-- REST Assured Common：REST Assured 的公共工具模块。 -->
             <dependency>
@@ -8153,15 +8172,6 @@
                 <artifactId>rocketmq-extension-core</artifactId>
                 <version>${rocketmq-extension.version}</version>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/io.rsocket/rsocket-bom -->
-            <!-- RSocket BOM：RSocket 响应式二进制协议各模块的版本清单。 -->
-            <dependency>
-                <groupId>io.rsocket</groupId>
-                <artifactId>rsocket-bom</artifactId>
-                <version>${rsocket.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <!-- https://mvnrepository.com/artifact/io.reactivex.rxjava2/rxjava -->
             <!-- RxJava 2：Reactive Extensions 的 Java 实现（响应式编程库）。 -->
             <dependency>
@@ -8182,15 +8192,6 @@
                 <groupId>io.reactivex</groupId>
                 <artifactId>rxjava</artifactId>
                 <version>${rxjava.version}</version>
-            </dependency>
-            <!-- https://mvnrepository.com/artifact/cn.dev33/sa-token-bom -->
-            <!-- Sa-Token BOM：国产轻量级 Java 权限认证框架各模块的版本清单。 -->
-            <dependency>
-                <groupId>cn.dev33</groupId>
-                <artifactId>sa-token-bom</artifactId>
-                <version>${sa-token.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.sun.xml.messaging.saaj/saaj-impl -->
             <!-- SAAJ Impl：SOAP with Attachments API for Java (SAAJ) 的参考实现。 -->
@@ -8450,15 +8451,6 @@
                 <artifactId>security-jwt-extension</artifactId>
                 <version>${security-jwt-extension.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-bom -->
-            <!-- Selenium BOM：Selenium 浏览器自动化测试框架各模块的版本清单。 -->
-            <dependency>
-                <groupId>org.seleniumhq.selenium</groupId>
-                <artifactId>selenium-bom</artifactId>
-                <version>${selenium.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.sendgrid/sendgrid-java -->
             <!-- SendGrid Java：Twilio SendGrid 邮件发送服务的 Java SDK。 -->
             <dependency>
@@ -8700,12 +8692,11 @@
                 <artifactId>shiro-freemarker-tags</artifactId>
                 <version>${shiro-freemarker.version}</version>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/org.apache.shiro/shiro-hazelcast -->
-            <!-- Shiro Hazelcast：Apache Shiro 的 Hazelcast 分布式缓存会话存储。 -->
+            <!-- Shiro 3 通过 JCache 接入 Hazelcast 等缓存实现。 -->
             <dependency>
                 <groupId>org.apache.shiro</groupId>
-                <artifactId>shiro-hazelcast</artifactId>
-                <version>${shiro-hazelcast.version}</version>
+                <artifactId>shiro-jcache</artifactId>
+                <version>${shiro.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.github.easy4j/shiro-j2cache -->
             <!-- Easy4J Shiro J2Cache：Easy4J 的 Shiro J2Cache 二级缓存集成。 -->
@@ -8837,15 +8828,6 @@
                 <artifactId>simpleclient</artifactId>
                 <version>${prometheus-simpleclient.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/io.prometheus/simpleclient_bom -->
-            <!-- Prometheus SimpleClient BOM：Prometheus 旧版 Java 客户端各模块的版本清单。 -->
-            <dependency>
-                <groupId>io.prometheus</groupId>
-                <artifactId>simpleclient_bom</artifactId>
-                <version>${prometheus-simpleclient.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.github.ben-manes.caffeine/simulator -->
             <!-- Caffeine Simulator：Caffeine 缓存性能模拟测试工具。 -->
             <dependency>
@@ -8860,30 +8842,12 @@
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.slf4j/slf4j-bom -->
-            <!-- SLF4J BOM：SLF4J 日志门面各模块的版本清单。 -->
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-bom</artifactId>
-                <version>${slf4j.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.slf4j/slf4j-simple -->
             <!-- SLF4J Simple：SLF4J 的简单控制台日志实现（无配置，直接输出到 stderr）。 -->
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-simple</artifactId>
                 <version>${slf4j.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/io.smallrye.reactive/smallrye-reactive-messaging-bom -->
-            <!-- SmallRye Reactive Messaging BOM：SmallRye 响应式消息传递框架版本清单（MicroProfile Reactive）。 -->
-            <dependency>
-                <groupId>io.smallrye.reactive</groupId>
-                <artifactId>smallrye-reactive-messaging-bom</artifactId>
-                <version>${smallrye-reactive-messaging-bom.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.eclipse.angus/smtp -->
             <!-- Eclipse Angus SMTP：Jakarta Mail 的 SMTP 协议实现。 -->
@@ -9238,13 +9202,6 @@
                 <artifactId>ST4</artifactId>
                 <version>${antlr-st4.version}</version>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/javax.xml.stream/stax-api -->
-            <!-- StAX API：Java XML 流式解析 API（拉式解析器，比 SAX 更灵活）。 -->
-            <dependency>
-                <groupId>javax.xml.stream</groupId>
-                <artifactId>stax-api</artifactId>
-                <version>1.0-2</version>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.codehaus.woodstox/stax2-api -->
             <!-- StAX2 API：Woodstox 高性能 XML 解析器的扩展 StAX API。 -->
             <dependency>
@@ -9420,15 +9377,6 @@
                 <artifactId>tencentcloud-sdk-java-sms</artifactId>
                 <version>${tencentcloud-sdk-java-sms.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.testcontainers/testcontainers-bom -->
-            <!-- Testcontainers BOM：Docker 容器化集成测试框架各模块的版本清单。 -->
-            <dependency>
-                <groupId>org.testcontainers</groupId>
-                <artifactId>testcontainers-bom</artifactId>
-                <version>${testcontainers-bom.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.redis/testcontainers-redis -->
             <!-- Testcontainers Redis：Testcontainers 的 Redis 测试容器模块。 -->
             <dependency>
@@ -9518,6 +9466,76 @@
             <!-- Tomcat Annotations API：Apache Tomcat 的 Servlet 注解 API 模块。 -->
             <dependency>
                 <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-catalina</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-coyote</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-dbcp</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-el-api</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-jasper</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-jasper-el</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-jaspic-api</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-juli</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-servlet-api</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-util</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-util-scan</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-websocket</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>tomcat-websocket-api</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-jasper</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
                 <artifactId>tomcat-annotations-api</artifactId>
                 <version>${tomcat.version}</version>
             </dependency>
@@ -9585,16 +9603,6 @@
                 <groupId>global.namespace.truelicense</groupId>
                 <artifactId>truelicense-v1</artifactId>
                 <version>${truelicense.version}</version>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/org.apache.tika/tika-bom -->
-            <!-- Apache Tika：Apache Tika™ 工具包能够检测并提取超过一千种不同文件类型（例如 PPT、XLS 和 PDF）的元数据和文本。
-                所有这些文件类型都可以通过单一界面进行解析，这使得 Tika 可用于搜索引擎索引、内容分析、翻译等诸多用途。 -->
-            <dependency>
-                <groupId>org.apache.tika</groupId>
-                <artifactId>tika-bom</artifactId>
-                <version>${tika-bom.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
             <!-- t-io（mqtt-server sample 引用；org.tio 坐标已死，Central 仅存 org.t-io） -->
             <dependency>
@@ -9927,13 +9935,6 @@
                 <artifactId>xmemcached</artifactId>
                 <version>${xmemcached.version}</version>
             </dependency>
-            <!-- https://mvnrepository.com/artifact/xml-apis/xml-apis -->
-            <!-- XML APIs：Java XML 标准 API（SAX/DOM/StAX/JAXP 等接口定义）。 -->
-            <dependency>
-                <groupId>xml-apis</groupId>
-                <artifactId>xml-apis</artifactId>
-                <version>${xml-apis.version}</version>
-            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/io.rest-assured/xml-path -->
             <!-- REST Assured XML Path：REST Assured 的 XML 路径查询模块。 -->
             <dependency>
@@ -10047,15 +10048,6 @@
                 <artifactId>zip4j</artifactId>
                 <version>${zip4j.version}</version>
             </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/io.zipkin.reporter2/zipkin-reporter-bom -->
-            <!-- Zipkin Reporter BOM：Zipkin 追踪数据上报器各模块的版本清单。 -->
-            <dependency>
-                <groupId>io.zipkin.reporter2</groupId>
-                <artifactId>zipkin-reporter-bom</artifactId>
-                <version>${zipkin-reporter.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
             <!-- https://mvnrepository.com/artifact/com.101tec/zkclient -->
             <!-- ZkClient：Apache ZooKeeper 的高层封装客户端（自动重连、Watcher 管理、序列化）。 -->
             <dependency>
@@ -10075,6 +10067,47 @@
                 <groupId>org.apache.zookeeper</groupId>
                 <artifactId>zookeeper</artifactId>
                 <version>${zookeeper.version}</version>
+            </dependency>
+            <!-- ZooKeeper 测试制品与普通 JAR 使用同一发行版本，沿用 Hadoop 管理项的 exclusions。 -->
+            <dependency>
+                <groupId>org.apache.zookeeper</groupId>
+                <artifactId>zookeeper</artifactId>
+                <version>${zookeeper.version}</version>
+                <type>test-jar</type>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.jboss.netty</groupId>
+                        <artifactId>netty</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>jline</groupId>
+                        <artifactId>jline</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>io.netty</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.jetty</groupId>
+                        <artifactId>jetty-client</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>ch.qos.logback</groupId>
+                        <artifactId>logback-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>ch.qos.logback</groupId>
+                        <artifactId>logback-classic</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-log4j12</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.apache.zookeeper/zookeeper-prometheus-metrics -->
             <!-- ZooKeeper Prometheus Metrics：将 ZooKeeper 指标暴露为 Prometheus 格式。 -->
@@ -10105,13 +10138,6 @@
                 <version>${mybatis-plus.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>io.github.resilience4j</groupId>
-                <artifactId>resilience4j-bom</artifactId>
-                <version>${resilience4j.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
 
             <!-- 三线组件清单补齐：版本按当前 JDK 线集中管理。 -->
             <dependency>
@@ -10185,11 +10211,6 @@
                 <groupId>io.github.openhtmltopdf</groupId>
                 <artifactId>openhtmltopdf-mathml-support</artifactId>
                 <version>${openhtmltopdf.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
-                <version>3.0.1</version>
             </dependency>
         </dependencies>
         </dependencyManagement>
@@ -10456,11 +10477,11 @@
                     <artifactId>jdepend-maven-plugin</artifactId>
                     <version>${maven-jdepend-plugin.version}</version>
                 </plugin>
-                <!-- https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-maven-plugin -->
+                <!-- https://mvnrepository.com/artifact/org.eclipse.jetty.ee10/jetty-ee10-maven-plugin -->
                 <!-- Jetty Maven Plugin：在 Maven 中运行嵌入式 Jetty 服务器（开发调试用）。 -->
                 <plugin>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-maven-plugin</artifactId>
+                    <groupId>org.eclipse.jetty.ee10</groupId>
+                    <artifactId>jetty-ee10-maven-plugin</artifactId>
                     <version>${maven-jetty-plugin.version}</version>
                 </plugin>
                 <!-- https://mvnrepository.com/artifact/org.jooq/jooq-codegen-maven -->

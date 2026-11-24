@@ -232,19 +232,29 @@ sequenceDiagram
 | `EsdbEventStore`                           | `ddd4j-data/ddd4j-data-event-store-esdb/`    | KurrentDB / EventStoreDB                | 专用 ES DB       |
 | `PanacheEventStore`                        | `ddd4j-data/ddd4j-data-event-store-panache/` | Quarkus Panache（active record）        | Quarkus          |
 
-## 5. Projection 调度矩阵
+## 5. 投影调度与位置存储
 
-| 调度器                                | 位置                                           | 适合               |
-|:--------------------------------------|:-----------------------------------------------|:-------------------|
-| `QuarkusProjectionScheduler`          | `ddd4j-data/ddd4j-data-projection-quarkus/`    | Quarkus            |
-| `VertxProjectionScheduler`            | `ddd4j-data/ddd4j-data-projection-vertx/`      | Vert.x             |
-| `HelidonProjectionScheduler`          | `ddd4j-data/ddd4j-data-projection-helidon/`    | Helidon            |
-| `DropwizardProjectionScheduler`       | `ddd4j-data/ddd4j-data-projection-dropwizard/` | Dropwizard         |
-| `SpringProjectionScheduler`           | `ddd4j-data/ddd4j-data-projection-spring/`     | Spring             |
-| `JpaProjectionPositionRepository`     | `ddd4j-data/ddd4j-data-projection-jpa/`        | JPA 持久化增量位置 |
-| `JdbiProjectionPositionRepository`    | `ddd4j-data/ddd4j-data-projection-jdbi/`       | JDBI 持久化        |
-| `R2dbcProjectionPositionRepository`   | `ddd4j-data/ddd4j-data-projection-r2dbc/`      | R2DBC              |
-| `QuarkusProjectionPositionRepository` | `ddd4j-data/ddd4j-data-projection-panache/`    | Quarkus Panache    |
+需要独立读模型时，由所选 runtime 按需启用投影。`ddd4j-core` 提供 `ProjectionRunner`、`ProjectionHandlerRegistry` 和 `ProjectionDispatcher`，负责读取事件、分发处理和推进位置。
+
+| 框架 | 调度和生命周期所在构件 |
+|:---|:---|
+| Spring | `ddd4j-runtime-spring` |
+| Guice / Javalin | `ddd4j-runtime-guice` |
+| Quarkus | `ddd4j-runtime-quarkus` |
+| Micronaut | `ddd4j-runtime-micronaut` |
+| Helidon | `ddd4j-runtime-helidon` |
+| Vert.x | `ddd4j-runtime-vertx` |
+| Dropwizard | `ddd4j-runtime-dropwizard` |
+
+| 位置存储 | 所在构件 |
+|:---|:---|
+| JPA | `ddd4j-data-event-store-jpa` |
+| Jdbi | `ddd4j-data-event-store-jdbi` |
+| R2DBC | `ddd4j-data-event-store-r2dbc` |
+| Panache | `ddd4j-data-event-store-panache` |
+| Spring Data JPA | `ddd4j-runtime-spring` |
+
+旧的十二个独立投影 Maven 坐标已直接退役。各框架的启用方式见[多平台接入与迁移](../REFACTOR_MIGRATION.md#选择运行时和投影入口)。
 
 ## 6. 跨进程集成：Outbox + MQ
 

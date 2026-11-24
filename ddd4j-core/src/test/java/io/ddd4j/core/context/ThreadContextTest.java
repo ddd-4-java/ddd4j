@@ -23,14 +23,69 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class ThreadContextTest {
 
     @AfterEach
     void tearDown() {
         ThreadContext.clear();
+    }
+
+    @Test
+    void shouldIsolateMutableResourceMapOnPlainChildThread() throws Exception {
+        Object sharedValue = new Object();
+        ThreadContext.set("tenant-id", "tenant-a");
+        ThreadContext.set("shared-value", sharedValue);
+
+        FutureTask<Map<Object, Object>> task = new FutureTask<>(() -> {
+            assertThat((Object) ThreadContext.get("tenant-id")).isEqualTo("tenant-a");
+            ThreadContext.set("tenant-id", "tenant-b");
+            ThreadContext.set("child-only", true);
+            return ThreadContext.getResources();
+        });
+        Thread child = new Thread(task, "thread-context-child");
+        ThreadContext.set("parent-only", true);
+        child.start();
+        Map<Object, Object> childResources = task.get(5, TimeUnit.SECONDS);
+
+        assertThat(ThreadContext.getResources()).containsEntry("tenant-id", "tenant-a")
+                .doesNotContainKey("child-only");
+        assertThat(childResources).containsEntry("tenant-id", "tenant-b")
+                .containsEntry("child-only", true)
+                .doesNotContainKey("parent-only");
+        assertThat(childResources.get("shared-value")).isSameAs(sharedValue);
+    }
+
+    @Test
+    void shouldRestoreExistingWorkerContextAfterWrappedTaskFails() throws Exception {
+        ExecutorService raw = Executors.newSingleThreadExecutor();
+        ExecutorService wrapped = TtlExecutors.getTtlExecutorService(raw);
+        try {
+            raw.submit(() -> ThreadContext.set("tenant-id", "worker")).get(5, TimeUnit.SECONDS);
+            ThreadContext.set("tenant-id", "request");
+            IllegalStateException failure = new IllegalStateException("worker failure");
+
+            Future<?> failedTask = wrapped.submit(() -> {
+                assertThat((Object) ThreadContext.get("tenant-id")).isEqualTo("request");
+                try (ThreadContext.Scope ignored = ThreadContext.open()) {
+                    ThreadContext.set("tenant-id", "inner");
+                    ThreadContext.set("task-only", true);
+                    throw failure;
+                }
+            });
+
+            assertThatThrownBy(() -> failedTask.get(5, TimeUnit.SECONDS)).hasCause(failure);
+            assertThat(raw.submit(ThreadContext::getResources).get(5, TimeUnit.SECONDS))
+                    .containsOnlyKeys("tenant-id").containsEntry("tenant-id", "worker");
+            assertThat((Object) ThreadContext.get("tenant-id")).isEqualTo("request");
+        } finally {
+            raw.shutdownNow();
+        }
     }
 
     @Test

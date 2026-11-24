@@ -5,6 +5,7 @@
 package io.ddd4j.sample.javalin.cqrs.order.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.ddd4j.sample.javalin.cqrs.order.domain.model.Money;
 import io.ddd4j.sample.javalin.cqrs.order.web.OrderController.AddOrderLineRequest;
 import io.ddd4j.sample.javalin.cqrs.order.web.OrderController.CreateOrderRequest;
 import io.ddd4j.sample.javalin.cqrs.order.web.OrderController.OrderResponse;
@@ -101,5 +102,18 @@ class OrderDtoContractTest {
         assertEquals("AddOrderLineRequest[goodsId=G-2, goodsName=Other, quantity=3, unitPrice=12.00]", request.toString());
         ObjectMapper mapper = new ObjectMapper();
         assertEquals(request, mapper.readValue(mapper.writeValueAsString(request), AddOrderLineRequest.class));
+    }
+
+    @Test
+    void response_shouldPreserveNonNullMoneyThroughJson() throws Exception {
+        Money total = Money.cny("12.50");
+        OrderResponse response = new OrderResponse("1", "O-1", "B-1", "Buyer", "PAID", total, 2);
+        ObjectMapper mapper = new ObjectMapper();
+
+        OrderResponse readback = mapper.readValue(mapper.writeValueAsString(response), OrderResponse.class);
+
+        assertEquals(response, readback);
+        assertEquals(total, readback.totalAmount());
+        assertEquals(total, readback.getTotalAmount());
     }
 }

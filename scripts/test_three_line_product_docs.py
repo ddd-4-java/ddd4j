@@ -32,6 +32,10 @@ class ThreeLineProductDocsTest(unittest.TestCase):
                 document = root / "ddd4j-samples" / name / "README.md"
                 document.parent.mkdir(parents=True, exist_ok=True)
                 document.write_text("共同鉴权样例\n", encoding="utf-8")
+            (root / "REFACTOR_MIGRATION.md").write_text(
+                "[示例总览](ddd4j-samples/README.md)\n", encoding="utf-8")
+            (root / "ddd4j-samples/README.md").write_text(
+                "[Sa-Token](ddd4j-sample-quarkus-satoken/README.md)\n", encoding="utf-8")
             for name in ("README.md", "README.en.md"):
                 (root / name).write_text(
                     "[方案](docs/5、ddd4j-技术方案与路线.md) "
@@ -84,6 +88,44 @@ class ThreeLineProductDocsTest(unittest.TestCase):
         self.assertNotEqual(0, result.returncode)
         self.assertIn("ddd4j-samples/ddd4j-sample-quarkus-satoken/README.md", report["differences"])
 
+    def test_drift_in_current_migration_or_sample_guide_fails(self):
+        for relative in ("REFACTOR_MIGRATION.md", "ddd4j-samples/README.md"):
+            with self.subTest(relative=relative):
+                document = self.roots[1] / relative
+                before = document.read_text(encoding="utf-8")
+                document.write_text(before + "\n过时的接入说明\n", encoding="utf-8")
+                result, report = self.check()
+                self.assertNotEqual(0, result.returncode)
+                self.assertIn(relative, report["differences"])
+                document.write_text(before, encoding="utf-8")
+
+    def test_current_sample_matrix_requires_linked_readme(self):
+        relative = "ddd4j-samples/README.md"
+        target = "ddd4j-sample-vertx/README.md"
+        for root in self.roots:
+            (root / relative).write_text(f"[Vert.x]({target})\n", encoding="utf-8")
+            sample = root / "ddd4j-samples" / target
+            sample.parent.mkdir()
+            sample.write_text("Vert.x 运行说明\n", encoding="utf-8")
+        (self.roots[0] / "ddd4j-samples" / target).unlink()
+        result, report = self.check()
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn({"root": str(self.roots[0].resolve()), "source": relative,
+                       "target": target}, report["brokenLinks"])
+
+    def test_current_guides_allow_preserved_history_to_differ(self):
+        markers = {
+            "REFACTOR_MIGRATION.md": "\n---\n\n## 历史迁移记录\n",
+            "ddd4j-samples/README.md": "\n## 历史验收记录\n",
+        }
+        for relative, marker in markers.items():
+            with (self.roots[1] / relative).open("a", encoding="utf-8") as document:
+                document.write(marker + "\n[当时的构件记录](previous-run.md)\n")
+        result, report = self.check()
+        self.assertEqual(0, result.returncode, report)
+        for relative in markers:
+            self.assertEqual(1, len(set(report["documents"][relative])))
+
     def test_missing_document_and_broken_readme_link_fail(self):
         (self.roots[2] / "docs/7、ddd4j-领域模型设计.md").unlink()
         (self.roots[0] / "README.md").write_text("[方案](missing.md)\n", encoding="utf-8")
@@ -114,11 +156,72 @@ class ThreeLineProductDocsTest(unittest.TestCase):
         self.assertNotEqual(0, result.returncode)
         self.assertIn("5、ddd4j-技术方案与路线.md", report["differences"])
 
-    def test_missing_legacy_root_entry_fails(self):
-        (self.roots[1] / "8、ddd4j-Architecture.zh_CN.md").unlink()
+    def test_absent_middle_redirects_pass_without_dangling_links(self):
+        names = ("5、ddd4j-技术方案与路线.md", "6、ddd4j-产品与版本规划.md",
+                 "7、ddd4j-领域模型设计.md", "8、ddd4j-Architecture.zh_CN.md")
+        for name in names:
+            (self.roots[1] / name).unlink()
+        result, report = self.check()
+        self.assertEqual(0, result.returncode, report)
+        self.assertEqual({}, report["differences"])
+        self.assertEqual([], report["brokenLinks"])
+
+    def test_missing_jdk8_and_jdk21_redirects_still_fail(self):
+        for index in (0, 2):
+            for name in ("5、ddd4j-技术方案与路线.md", "6、ddd4j-产品与版本规划.md",
+                         "7、ddd4j-领域模型设计.md", "8、ddd4j-Architecture.zh_CN.md"):
+                with self.subTest(jdk=(8, 17, 21)[index], name=name):
+                    path = self.roots[index] / name
+                    text = path.read_text(encoding="utf-8")
+                    path.unlink()
+                    result, report = self.check()
+                    self.assertNotEqual(0, result.returncode)
+                    self.assertIn(name, report["differences"])
+                    self.assertIn({"root": str(self.roots[index].resolve()), "source": name,
+                                   "target": "MISSING"}, report["brokenLinks"])
+                    path.write_text(text, encoding="utf-8")
+
+    def test_any_present_middle_redirect_requires_exact_migrated_text(self):
+        for name in ("5、ddd4j-技术方案与路线.md", "6、ddd4j-产品与版本规划.md",
+                     "7、ddd4j-领域模型设计.md", "8、ddd4j-Architecture.zh_CN.md"):
+            with self.subTest(name=name):
+                path = self.roots[1] / name
+                original = path.read_text(encoding="utf-8")
+                path.write_text("旧正文\n", encoding="utf-8")
+                result, report = self.check()
+                self.assertNotEqual(0, result.returncode)
+                self.assertIn(name, report["differences"])
+                path.write_text(original, encoding="utf-8")
+
+    def test_readme_link_to_absent_middle_redirect_still_fails(self):
+        for name in ("5、ddd4j-技术方案与路线.md", "6、ddd4j-产品与版本规划.md",
+                     "7、ddd4j-领域模型设计.md", "8、ddd4j-Architecture.zh_CN.md"):
+            with self.subTest(name=name):
+                path = self.roots[1] / name
+                original = path.read_text(encoding="utf-8")
+                path.unlink()
+                (self.roots[1] / "README.md").write_text(f"[旧入口]({name})\n", encoding="utf-8")
+                result, report = self.check()
+                self.assertNotEqual(0, result.returncode)
+                self.assertIn({"root": str(self.roots[1].resolve()), "source": "README.md",
+                               "target": name}, report["brokenLinks"])
+                self.assertNotIn(name, report["differences"])
+                path.write_text(original, encoding="utf-8")
+
+    def test_absent_middle_redirect_does_not_make_canonical_document_optional(self):
+        name = "7、ddd4j-领域模型设计.md"
+        (self.roots[1] / name).unlink()
+        (self.roots[1] / "docs" / name).unlink()
         result, report = self.check()
         self.assertNotEqual(0, result.returncode)
-        self.assertIn("8、ddd4j-Architecture.zh_CN.md", report["differences"])
+        self.assertIn("docs/" + name, report["differences"])
+
+    def test_other_missing_middle_root_document_still_fails(self):
+        (self.roots[1] / "README.en.md").unlink()
+        result, report = self.check()
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn({"root": str(self.roots[1].resolve()), "source": "README.en.md",
+                       "target": "MISSING"}, report["brokenLinks"])
 
 
 if __name__ == "__main__":

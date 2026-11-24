@@ -71,7 +71,7 @@ public class OrderCacheService {
      * @return 按状态汇总的订单统计
      */
     @SuppressWarnings("unchecked")
-    public Map<String, Object> getOrderStats() {
+    public synchronized Map<String, Object> getOrderStats() {
         Object cached = CacheKit.get(BIZ_ORDER_STATS, STATS_KEY);
         if (cached instanceof Map) {
             log.debug("Cache hit: ORDER_STATS");
@@ -96,8 +96,8 @@ public class OrderCacheService {
      * @param buyerId 买家标识
      * @return 订单数量
      */
-    public long getBuyerOrderCount(String buyerId) {
-        String cacheKey = "buyer:" + buyerId;
+    public synchronized long getBuyerOrderCount(String buyerId) {
+        String cacheKey = buyerCountKey(buyerId);
         Object cached = CacheKit.get(BIZ_BUYER_ORDER_COUNT, cacheKey);
         if (cached instanceof Long) {
             log.debug("Cache hit: BUYER_ORDER_COUNT buyerId={}", buyerId);
@@ -117,7 +117,7 @@ public class OrderCacheService {
      * @param orderId 订单标识
      * @return 匹配的订单
      */
-    public Optional<Order> getOrderDetail(String orderId) {
+    public synchronized Optional<Order> getOrderDetail(String orderId) {
         if (Objects.isNull(orderId) || StrKit.isBlank(orderId)) {
             return Optional.empty();
         }
@@ -143,6 +143,22 @@ public class OrderCacheService {
         }
         CacheKit.put(BIZ_ORDER_DETAIL, order.id(), order);
         CacheKit.invalidate(BIZ_ORDER_STATS, STATS_KEY);
+    }
+
+    /**
+     * 在仓储成功保存后移除受影响的缓存，让下次读取重新加载当前值。
+     * 与本实例的读侧加载、回填串行，避免已开始的读重新写入旧快照。
+     *
+     * @param order 已保存的订单，用其订单 ID 和买家 ID 定位缓存
+     */
+    public synchronized void evictAfterSave(Order order) {
+        CacheKit.invalidate(BIZ_ORDER_DETAIL, order.id());
+        CacheKit.invalidate(BIZ_BUYER_ORDER_COUNT, buyerCountKey(order.buyerId()));
+        evictStats();
+    }
+
+    private static String buyerCountKey(String buyerId) {
+        return "buyer:" + buyerId;
     }
 
     /**

@@ -48,6 +48,45 @@ class PlatformCdiResourcesTest(unittest.TestCase):
             "reason": "JDK 8 CDI descriptor, with the same Arc scope contract in every line",
         }
 
+    def test_panache_descriptor_accepts_only_the_exact_cdi_schema_transition(self):
+        name = "ddd4j-data/ddd4j-data-event-store-panache/src/main/resources/META-INF/beans.xml"
+        modern = ('<beans xmlns="https://jakarta.ee/xml/ns/jakartaee" '
+                  'bean-discovery-mode="annotated" version="4.0"/>')
+        for root, content in zip(self.roots, (XML, modern, modern)):
+            descriptor = root / name
+            descriptor.parent.mkdir(parents=True)
+            descriptor.write_text(content, encoding="utf-8")
+
+        self.assertTrue(PARITY.cdi_descriptor_platform_match(name, self.roots))
+        for modified in (modern.replace("annotated", "all"),
+                         modern.replace("4.0", "3.0"),
+                         modern.replace("/>", "><alternatives/></beans>"),
+                         modern.replace("/>", ' extra="true"/>')):
+            with self.subTest(modified=modified):
+                (self.roots[2] / name).write_text(modified, encoding="utf-8")
+                self.assertFalse(PARITY.cdi_descriptor_platform_match(name, self.roots))
+
+    def test_helidon_auth_descriptors_only_adapt_the_cdi_schema(self):
+        legacy = XML.replace('bean-discovery-mode',
+                             'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '
+                             'xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee '
+                             'http://xmlns.jcp.org/xml/ns/javaee/beans_2_0.xsd" bean-discovery-mode')
+        modern = ('<beans xmlns="https://jakarta.ee/xml/ns/jakartaee" '
+                  'bean-discovery-mode="annotated" version="3.0"/>')
+        for auth in ("satoken", "shiro"):
+            name = f"ddd4j-samples/ddd4j-sample-helidon-{auth}/src/main/resources/META-INF/beans.xml"
+            with self.subTest(auth=auth):
+                for root, content in zip(self.roots, (legacy, modern, modern)):
+                    descriptor = root / name
+                    descriptor.parent.mkdir(parents=True)
+                    descriptor.write_text(content, encoding="utf-8")
+                self.assertTrue(PARITY.cdi_descriptor_platform_match(name, self.roots))
+                (self.roots[0] / name).write_text(XML, encoding="utf-8")
+                self.assertFalse(PARITY.cdi_descriptor_platform_match(name, self.roots))
+                (self.roots[0] / name).write_text(legacy, encoding="utf-8")
+                (self.roots[2] / name).write_text(modern.replace("annotated", "all"), encoding="utf-8")
+                self.assertFalse(PARITY.cdi_descriptor_platform_match(name, self.roots))
+
     def test_accepts_exact_descriptor_and_three_line_scope_evidence(self):
         result = PARITY.validate_platform_cdi_resources_only_on_jdk8(
             [self.mapping], self.roots)

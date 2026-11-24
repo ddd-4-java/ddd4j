@@ -15,6 +15,7 @@
 package io.ddd4j.sample.dropwizard;
 
 import io.ddd4j.web.dropwizard.Ddd4jDropwizardWebConfiguration;
+import io.ddd4j.web.core.auth.AuthenticationMode;
 import io.dropwizard.core.Configuration;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,6 +33,7 @@ public class DropwizardOrderConfiguration extends Configuration {
 
     private static Ddd4jDropwizardWebConfiguration defaultWebConfiguration() {
         Ddd4jDropwizardWebConfiguration configuration = new Ddd4jDropwizardWebConfiguration();
+        configuration.setDefaultAuthenticationMode(AuthenticationMode.DISABLED);
         configuration.setPublicPaths(Arrays.asList("/health", "/healthcheck/**", "/api/auth/**"));
         return configuration;
     }

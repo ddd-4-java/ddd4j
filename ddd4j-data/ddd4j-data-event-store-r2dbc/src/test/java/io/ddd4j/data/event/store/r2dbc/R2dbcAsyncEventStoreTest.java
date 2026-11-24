@@ -14,6 +14,7 @@
  */
 package io.ddd4j.data.event.store.r2dbc;
 
+import io.ddd4j.core.constant.EventStoreConstants;
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.AsyncStoredEvent;
 import io.ddd4j.core.ddd.event.AggregateRootId;
@@ -47,6 +48,7 @@ import reactor.test.StepVerifier;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -154,6 +156,95 @@ class R2dbcAsyncEventStoreTest {
         StepVerifier.create(eventStore.read(AGGREGATE_TYPE, orderId).count())
                 .assertNext(count -> assertThat(count).isEqualTo(1))
                 .verifyComplete();
+    }
+
+    @Test
+    void secondDatabaseInsertFailureRollsBackBatchAndAllowsVersionRetry() {
+        TestOrderId orderId = new TestOrderId("order-failed-batch");
+        OrderCreatedEvent committed = new OrderCreatedEvent(orderId, "customer-batch");
+        OrderItemAddedEvent first = new OrderItemAddedEvent(orderId, "valid-item", 1);
+        OrderItemAddedEvent second = new OrderItemAddedEvent(orderId, "rejected-item", 1);
+
+        StepVerifier.create(eventStore.append(AGGREGATE_TYPE, orderId, Flux.just(committed), 0))
+                .verifyComplete();
+
+        // 只拒绝批次的第二条 INSERT，第一条仍会进入同一数据库事务。
+        String rejectSecondInsert = "ALTER TABLE " + EventStoreConstants.TABLE_NAME
+                + " ADD CONSTRAINT CK_ASYNC_BATCH_VERSION CHECK (" + EventStoreConstants.COLUMN_VERSION + " <> 3)";
+        StepVerifier.create(Mono.from(sharedConnection.createStatement(rejectSecondInsert).execute())
+                        .flatMap(result -> Mono.from(result.getRowsUpdated()))
+                        .then())
+                .verifyComplete();
+
+        StepVerifier.create(eventStore.append(AGGREGATE_TYPE, orderId, Flux.just(first, second), 1))
+                .expectErrorSatisfies(error -> assertThat(error).hasMessageContaining("CK_ASYNC_BATCH_VERSION"))
+                .verify();
+
+        StepVerifier.create(eventStore.read(AGGREGATE_TYPE, orderId).map(AsyncStoredEvent::eventId))
+                .expectNext(committed.getEventId())
+                .verifyComplete();
+        StepVerifier.create(eventStore.readAll(1, 10).map(AsyncStoredEvent::position))
+                .expectNext(1L)
+                .verifyComplete();
+
+        StepVerifier.create(eventStore.append(AGGREGATE_TYPE, orderId, Flux.just(first), 1))
+                .verifyComplete();
+        StepVerifier.create(eventStore.read(AGGREGATE_TYPE, orderId).map(AsyncStoredEvent::eventId))
+                .expectNext(committed.getEventId(), first.getEventId())
+                .verifyComplete();
+        StepVerifier.create(eventStore.readAll(1, 10).map(AsyncStoredEvent::position))
+                .expectNext(1L, 2L)
+                .verifyComplete();
+    }
+
+    @Test
+    void cancellationBeforeCommitRollsBackWrittenBatchAndAllowsVersionRetry() {
+        Duration timeout = Duration.ofSeconds(5);
+        TestOrderId orderId = new TestOrderId("order-cancelled-batch");
+        OrderCreatedEvent committed = new OrderCreatedEvent(orderId, "customer-batch");
+        OrderItemAddedEvent first = new OrderItemAddedEvent(orderId, "first-item", 1);
+        OrderItemAddedEvent second = new OrderItemAddedEvent(orderId, "second-item", 1);
+        StepVerifier.create(eventStore.append(AGGREGATE_TYPE, orderId, Flux.just(committed), 0))
+                .expectComplete().verify(timeout);
+
+        CompletableFuture<Long> rowsBeforeCommit = new CompletableFuture<>();
+        CompletableFuture<Void> connectionReleased = new CompletableFuture<>();
+        R2dbcAsyncEventStore cancellableStore = new R2dbcAsyncEventStore(
+                new SingleConnectionFactory(new NoCloseConnection(sharedConnection) {
+                    @Override
+                    public Publisher<Void> commitTransaction() {
+                        // 用真实事务查询确认两条 INSERT 已完成，在提交前停住。
+                        return Mono.from(sharedConnection.createStatement(
+                                        "SELECT COUNT(*) FROM " + EventStoreConstants.TABLE_NAME).execute())
+                                .flatMap(result -> Mono.from(result.map((row, metadata) -> row.get(0, Long.class))))
+                                .doOnNext(rowsBeforeCommit::complete)
+                                .then(Mono.never());
+                    }
+
+                    @Override
+                    public Publisher<Void> close() {
+                        return Mono.fromRunnable(() -> {
+                            if (rowsBeforeCommit.isDone()) {
+                                connectionReleased.complete(null);
+                            }
+                        });
+                    }
+                }));
+
+        StepVerifier.create(cancellableStore.append(AGGREGATE_TYPE, orderId, Flux.just(first, second), 1))
+                .then(() -> assertThat(Mono.fromFuture(rowsBeforeCommit).block(timeout)).isEqualTo(3L))
+                .thenCancel().verify(timeout);
+        Mono.fromFuture(connectionReleased).block(timeout);
+
+        StepVerifier.create(eventStore.read(AGGREGATE_TYPE, orderId).map(AsyncStoredEvent::eventId))
+                .expectNext(committed.getEventId())
+                .expectComplete().verify(timeout);
+
+        StepVerifier.create(eventStore.append(AGGREGATE_TYPE, orderId, Flux.just(first, second), 1))
+                .expectComplete().verify(timeout);
+        StepVerifier.create(eventStore.readAll(1, 10).map(AsyncStoredEvent::position))
+                .expectNext(1L, 2L, 3L)
+                .expectComplete().verify(timeout);
     }
 
     @Test
@@ -414,7 +505,11 @@ class R2dbcAsyncEventStoreTest {
         private final NoCloseConnection wrapper;
 
         SingleConnectionFactory(Connection delegate) {
-            this.wrapper = new NoCloseConnection(delegate);
+            this(new NoCloseConnection(delegate));
+        }
+
+        SingleConnectionFactory(NoCloseConnection wrapper) {
+            this.wrapper = wrapper;
         }
 
         @Override

@@ -40,7 +40,7 @@ public class InMemoryViewManager implements ViewManager {
 
     private final ProjectionRunner<Object> runner;
     private final List<ProjectionView<Object>> views = new ArrayList<>();
-    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+    private ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     private final AtomicBoolean running = new AtomicBoolean(false);
 
     /**
@@ -65,8 +65,9 @@ public class InMemoryViewManager implements ViewManager {
     }
 
     @Override
-    public void start() {
+    public synchronized void start() {
         if (running.compareAndSet(false, true)) {
+            if (scheduler.isShutdown()) { scheduler = Executors.newSingleThreadScheduledExecutor(); }
             scheduler.scheduleAtFixedRate(this::triggerOnce, 5, 5, TimeUnit.SECONDS);
         }
     }
@@ -77,7 +78,7 @@ public class InMemoryViewManager implements ViewManager {
     }
 
     @Override
-    public void stop() {
+    public synchronized void stop() {
         running.set(false);
         scheduler.shutdownNow();
     }

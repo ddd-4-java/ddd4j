@@ -29,11 +29,21 @@ import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Dropwizard CQRS 集成示例启动入口。
  */
 public class DropwizardCqrsApplication extends Application<DropwizardCqrsConfiguration> {
+    private io.ddd4j.sample.dropwizard.cqrs.persistent.PersistentOrders persistent;
+    private javax.sql.DataSource suppliedSource;
+    /** 默认使用 YAML 或系统属性中的数据库配置。 */
+    public DropwizardCqrsApplication() { }
+    /** @param source 调用方拥有的已迁移数据源；与 main 共用其余全部装配 */
+    public DropwizardCqrsApplication(javax.sql.DataSource source) { this.suppliedSource = source; }
+    /** @return 已装配的持久场景，demo-memory 模式为空 */
+    public io.ddd4j.sample.dropwizard.cqrs.persistent.PersistentOrders persistent() { return persistent; }
+
 
     // 共享组件（手动装配，使用 core SPI）
     /**
@@ -74,8 +84,10 @@ public class DropwizardCqrsApplication extends Application<DropwizardCqrsConfigu
     /**
      * 启动 Dropwizard CQRS 示例应用。
      *
-     * @param args 命令行参数
-     * @throws Exception 应用启动失败时
+     *
+ * @param args 命令行参数
+     *
+ * @throws Exception 应用启动失败时
      */
     public static void main(String[] args) throws Exception {
         new DropwizardCqrsApplication().run(args);
@@ -83,12 +95,40 @@ public class DropwizardCqrsApplication extends Application<DropwizardCqrsConfigu
 
     @Override
     public void initialize(Bootstrap<DropwizardCqrsConfiguration> bootstrap) {
+        bootstrap.addBundle(new io.dropwizard.core.ConfiguredBundle<DropwizardCqrsConfiguration>() {
+            @Override public void run(DropwizardCqrsConfiguration configuration, Environment environment) {
+                javax.sql.DataSource source = suppliedSource;
+                if (Objects.isNull(source) && io.ddd4j.kit.lang.StrKit.isNotBlank(configuration.getJdbcUrl())) {
+                    var postgres = new org.postgresql.ds.PGSimpleDataSource();
+                    postgres.setUrl(configuration.getJdbcUrl()); postgres.setUser(configuration.getJdbcUser());
+                    postgres.setPassword(configuration.getJdbcPassword()); source = postgres;
+                }
+                if (Objects.nonNull(source)) {
+                    persistent = new io.ddd4j.sample.dropwizard.cqrs.persistent.PersistentOrders(source);
+                    environment.lifecycle().manage(persistent);
+                    persistent.bundle().run(configuration, environment);
+                } else {
+                    persistent = null;
+                    new io.ddd4j.dropwizard.Ddd4jBundle<DropwizardCqrsConfiguration>().run(configuration, environment);
+                }
+            }
+        });
+        bootstrap.addBundle(new io.ddd4j.web.dropwizard.Ddd4jDropwizardWebBundle<DropwizardCqrsConfiguration>(configuration -> {
+            var web = new io.ddd4j.web.dropwizard.Ddd4jDropwizardWebConfiguration();
+            web.setDefaultAuthenticationMode(io.ddd4j.web.core.auth.AuthenticationMode.DISABLED);
+            web.setIdempotencyEnabled(false); return web;
+        }));
     }
 
     @Override
     public void run(DropwizardCqrsConfiguration configuration, Environment environment) {
         Ddd4jLogbackAccessRequestLogFactory.configure(configuration);
         environment.jersey().register(new OrderResource());
-        VIEW_MANAGER.start();
+        if (Objects.nonNull(persistent)) { environment.jersey().register(persistent.resource()); }
+        // 旧静态 API 和内存 DTO 保留；原生 Managed 为旧调度配对停止。
+        environment.lifecycle().manage(new io.dropwizard.lifecycle.Managed() {
+            @Override public void start() { VIEW_MANAGER.start(); }
+            @Override public void stop() { VIEW_MANAGER.stop(); }
+        });
     }
 }

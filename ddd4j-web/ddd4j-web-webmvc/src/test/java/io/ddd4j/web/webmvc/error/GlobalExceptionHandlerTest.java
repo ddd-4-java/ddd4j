@@ -23,8 +23,10 @@ import io.ddd4j.core.exception.BizIOException;
 import io.ddd4j.core.exception.BizRuntimeException;
 import io.ddd4j.core.exception.IdempotentException;
 import io.ddd4j.web.webmvc.config.ServerI18nProperties;
+import org.springframework.extension.context.NestedMessageSource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -49,15 +51,41 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class GlobalExceptionHandlerTest {
 
+    @Test
+    void noArgumentConstructorHandlesUnsupportedMethodWithoutSpringInjection() {
+        GlobalExceptionHandler standaloneHandler = new GlobalExceptionHandler();
+        LinkedHashSet<String> supportedMethods = new LinkedHashSet<>();
+        supportedMethods.add("GET");
+        HttpRequestMethodNotSupportedException exception =
+                new HttpRequestMethodNotSupportedException("POST", supportedMethods);
+
+        R<String> response = standaloneHandler.httpRequestMethodNotSupportedException(exception);
+
+        assertThat(response.getCode()).isEqualTo(ApiCode.METHOD_NOT_ALLOWED.getCode());
+        assertThat(response.getMsg()).contains("POST", "GET");
+    }
+
     private GlobalExceptionHandler handler;
     private ServerI18nProperties properties;
 
     @BeforeEach
     void setUp() {
-        handler = new GlobalExceptionHandler();
         properties = new ServerI18nProperties();
         properties.setEnabled(false);
-        org.springframework.test.util.ReflectionTestUtils.setField(handler, "serverI18NProperties", properties);
+        handler = new GlobalExceptionHandler(new NestedMessageSource(), properties);
+    }
+
+    @Test
+    void noArgumentFactoryBeanUsesTheSpringMessageSource() {
+        NestedMessageSource customMessageSource = new NestedMessageSource();
+        try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext()) {
+            context.registerBean(NestedMessageSource.class, () -> customMessageSource);
+            context.registerBean(ServerI18nProperties.class, ServerI18nProperties::new);
+            context.registerBean(GlobalExceptionHandler.class, GlobalExceptionHandler::new);
+            context.refresh();
+            assertThat(context.getBean(GlobalExceptionHandler.class).getMessageSource())
+                    .isSameAs(customMessageSource);
+        }
     }
 
     // =================== 4xx 客户端错误 ===================

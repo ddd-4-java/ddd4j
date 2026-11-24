@@ -1,5 +1,63 @@
 {
   "replacements": {
+    "org.apache.shiro:shiro-hazelcast": {
+      "17": {
+        "coordinates": [
+          "org.apache.shiro:shiro-jcache",
+          "com.hazelcast:hazelcast",
+          "javax.cache:cache-api"
+        ],
+        "reason": "Shiro 3 上游改用 JCache。Java 17 可按需接入 Hazelcast JCache，Java 8 和 21 仍使用各自 Shiro 主版本。"
+      }
+    },
+    "org.apache.shardingsphere:shardingsphere-parser-sql-mysql": {
+      "8": {
+        "coordinates": [
+          "org.apache.shardingsphere:shardingsphere-parser-sql-engine-mysql"
+        ],
+        "reason": "JDK 8 BOM 使用 ShardingSphere 5.5.3 已发布的 sql-engine 方言构件，其他线保持各自的解析器坐标。"
+      }
+    },
+    "org.apache.shardingsphere:shardingsphere-parser-sql-opengauss": {
+      "8": {
+        "coordinates": [
+          "org.apache.shardingsphere:shardingsphere-parser-sql-engine-opengauss"
+        ],
+        "reason": "JDK 8 BOM 使用 ShardingSphere 5.5.3 已发布的 sql-engine 方言构件，其他线保持各自的解析器坐标。"
+      }
+    },
+    "org.apache.shardingsphere:shardingsphere-parser-sql-oracle": {
+      "8": {
+        "coordinates": [
+          "org.apache.shardingsphere:shardingsphere-parser-sql-engine-oracle"
+        ],
+        "reason": "JDK 8 BOM 使用 ShardingSphere 5.5.3 已发布的 sql-engine 方言构件，其他线保持各自的解析器坐标。"
+      }
+    },
+    "org.apache.shardingsphere:shardingsphere-parser-sql-postgresql": {
+      "8": {
+        "coordinates": [
+          "org.apache.shardingsphere:shardingsphere-parser-sql-engine-postgresql"
+        ],
+        "reason": "JDK 8 BOM 使用 ShardingSphere 5.5.3 已发布的 sql-engine 方言构件，其他线保持各自的解析器坐标。"
+      }
+    },
+    "org.apache.shardingsphere:shardingsphere-parser-sql-sql92": {
+      "8": {
+        "coordinates": [
+          "org.apache.shardingsphere:shardingsphere-parser-sql-engine-sql92"
+        ],
+        "reason": "JDK 8 BOM 使用 ShardingSphere 5.5.3 已发布的 sql-engine 方言构件，其他线保持各自的解析器坐标。"
+      }
+    },
+    "org.apache.shardingsphere:shardingsphere-parser-sql-sqlserver": {
+      "8": {
+        "coordinates": [
+          "org.apache.shardingsphere:shardingsphere-parser-sql-engine-sqlserver"
+        ],
+        "reason": "JDK 8 BOM 使用 ShardingSphere 5.5.3 已发布的 sql-engine 方言构件，其他线保持各自的解析器坐标。"
+      }
+    },
     "com.kingbase8.jdbc:kingbase8": {
       "8": {
         "coordinates": [
@@ -969,6 +1027,12 @@
     }
   },
   "unsupported": {
+    "org.graalvm.sdk:nativeimage": {
+      "8": {
+        "reason": "Google BOM 间接管理的构件包含 Java 11 基础字节码。Java 8 的 Maven Enforcer 拒绝将其直接或间接加入依赖树。",
+        "requires_jdk": 11
+      }
+    },
     "com.typesafe.akka:akka-remote_3": {
       "8": {
         "reason": "发布 JAR 的基础字节码超过 JDK 8；不能由提高构建 JVM 绕过本版本线约束",
@@ -1368,50 +1432,30 @@
       }
     },
     "io.swagger:swagger-hibernate-validations": {
-      "8": {
-        "reason": "io.swagger 当前 2.0.0-rc2 版本未发布此旧集成坐标；最后发布的 1.x 版本不与本线 rc2 核心混用，默认模块未使用",
-        "status": "unsupported-unpublished"
-      },
       "17": {
         "reason": "io.swagger 当前 2.0.0-rc2 版本未发布此旧集成坐标；最后发布的 1.x 版本不与本线 rc2 核心混用，默认模块未使用",
         "status": "unsupported-unpublished"
       }
     },
     "io.swagger:swagger-jaxrs": {
-      "8": {
-        "reason": "io.swagger 当前 2.0.0-rc2 版本未发布此旧集成坐标；最后发布的 1.x 版本不与本线 rc2 核心混用，默认模块未使用",
-        "status": "unsupported-unpublished"
-      },
       "17": {
         "reason": "io.swagger 当前 2.0.0-rc2 版本未发布此旧集成坐标；最后发布的 1.x 版本不与本线 rc2 核心混用，默认模块未使用",
         "status": "unsupported-unpublished"
       }
     },
     "io.swagger:swagger-jersey-jaxrs": {
-      "8": {
-        "reason": "io.swagger 当前 2.0.0-rc2 版本未发布此旧集成坐标；最后发布的 1.x 版本不与本线 rc2 核心混用，默认模块未使用",
-        "status": "unsupported-unpublished"
-      },
       "17": {
         "reason": "io.swagger 当前 2.0.0-rc2 版本未发布此旧集成坐标；最后发布的 1.x 版本不与本线 rc2 核心混用，默认模块未使用",
         "status": "unsupported-unpublished"
       }
     },
     "io.swagger:swagger-jersey2-jaxrs": {
-      "8": {
-        "reason": "io.swagger 当前 2.0.0-rc2 版本未发布此旧集成坐标；最后发布的 1.x 版本不与本线 rc2 核心混用，默认模块未使用",
-        "status": "unsupported-unpublished"
-      },
       "17": {
         "reason": "io.swagger 当前 2.0.0-rc2 版本未发布此旧集成坐标；最后发布的 1.x 版本不与本线 rc2 核心混用，默认模块未使用",
         "status": "unsupported-unpublished"
       }
     },
     "io.swagger:swagger-servlet": {
-      "8": {
-        "reason": "io.swagger 当前 2.0.0-rc2 版本未发布此旧集成坐标；最后发布的 1.x 版本不与本线 rc2 核心混用，默认模块未使用",
-        "status": "unsupported-unpublished"
-      },
       "17": {
         "reason": "io.swagger 当前 2.0.0-rc2 版本未发布此旧集成坐标；最后发布的 1.x 版本不与本线 rc2 核心混用，默认模块未使用",
         "status": "unsupported-unpublished"
@@ -1627,44 +1671,44 @@
     },
     "org.apache.derby:derby": {
       "17": {
-        "reason": "ddd4j JDK 17 reactor 未引用；该家族无已发布且修复当前 CVE 的 JDK 17 兼容版本，停止在 BOM 管理旧版",
-        "requires_jdk": 21
+        "reason": "2026-11-18 移除仓库未使用的旧管理声明；Apache Derby 已于 2025-10-10 退休；仓库未引用。替代方向：已有 H2 / HSQLDB 或应用所选数据库；不自动迁移数据",
+        "status": "unsupported-retired"
       }
     },
     "org.apache.derby:derbyclient": {
       "17": {
-        "reason": "ddd4j JDK 17 reactor 未引用；该家族无已发布且修复当前 CVE 的 JDK 17 兼容版本，停止在 BOM 管理旧版",
-        "requires_jdk": 21
+        "reason": "2026-11-18 移除仓库未使用的旧管理声明；Apache Derby 已于 2025-10-10 退休；仓库未引用。替代方向：已有 H2 / HSQLDB 或应用所选数据库；不自动迁移数据",
+        "status": "unsupported-retired"
       }
     },
     "org.apache.derby:derbyLocale_zh_CN": {
       "17": {
-        "reason": "ddd4j JDK 17 reactor 未引用；该家族无已发布且修复当前 CVE 的 JDK 17 兼容版本，停止在 BOM 管理旧版",
-        "requires_jdk": 21
+        "reason": "2026-11-18 移除仓库未使用的旧管理声明；Apache Derby 已于 2025-10-10 退休；仓库未引用。替代方向：已有 H2 / HSQLDB 或应用所选数据库；不自动迁移数据",
+        "status": "unsupported-retired"
       }
     },
     "org.apache.derby:derbynet": {
       "17": {
-        "reason": "ddd4j JDK 17 reactor 未引用；该家族无已发布且修复当前 CVE 的 JDK 17 兼容版本，停止在 BOM 管理旧版",
-        "requires_jdk": 21
+        "reason": "2026-11-18 移除仓库未使用的旧管理声明；Apache Derby 已于 2025-10-10 退休；仓库未引用。替代方向：已有 H2 / HSQLDB 或应用所选数据库；不自动迁移数据",
+        "status": "unsupported-retired"
       }
     },
     "org.apache.derby:derbyoptionaltools": {
       "17": {
-        "reason": "ddd4j JDK 17 reactor 未引用；该家族无已发布且修复当前 CVE 的 JDK 17 兼容版本，停止在 BOM 管理旧版",
-        "requires_jdk": 21
+        "reason": "2026-11-18 移除仓库未使用的旧管理声明；Apache Derby 已于 2025-10-10 退休；仓库未引用。替代方向：已有 H2 / HSQLDB 或应用所选数据库；不自动迁移数据",
+        "status": "unsupported-retired"
       }
     },
     "org.apache.derby:derbyshared": {
       "17": {
-        "reason": "ddd4j JDK 17 reactor 未引用；该家族无已发布且修复当前 CVE 的 JDK 17 兼容版本，停止在 BOM 管理旧版",
-        "requires_jdk": 21
+        "reason": "2026-11-18 移除仓库未使用的旧管理声明；Apache Derby 已于 2025-10-10 退休；仓库未引用。替代方向：已有 H2 / HSQLDB 或应用所选数据库；不自动迁移数据",
+        "status": "unsupported-retired"
       }
     },
     "org.apache.derby:derbytools": {
       "17": {
-        "reason": "ddd4j JDK 17 reactor 未引用；该家族无已发布且修复当前 CVE 的 JDK 17 兼容版本，停止在 BOM 管理旧版",
-        "requires_jdk": 21
+        "reason": "2026-11-18 移除仓库未使用的旧管理声明；Apache Derby 已于 2025-10-10 退休；仓库未引用。替代方向：已有 H2 / HSQLDB 或应用所选数据库；不自动迁移数据",
+        "status": "unsupported-retired"
       }
     },
     "org.apache.hive:hive-exec": {
@@ -1683,6 +1727,156 @@
       "17": {
         "reason": "ddd4j JDK 17 reactor 未引用；该家族无已发布且修复当前 CVE 的 JDK 17 兼容版本，停止在 BOM 管理旧版",
         "requires_jdk": 21
+      }
+    },
+    "org.apache.cxf:cxf-rt-bindings-http": {
+      "17": {
+        "reason": "2026-11-18 移除仓库未使用的旧管理声明；不属于 CXF 4.1 维护线；仓库 POM 和受管源码未引用。替代方向：CXF 4.1.9 的 SOAP/XML/JAXB/Aegis 或 OAuth2；按调用协议选择，不是二进制替换",
+        "status": "unsupported-retired"
+      }
+    },
+    "org.apache.cxf:cxf-rt-bindings-jbi": {
+      "17": {
+        "reason": "2026-11-18 移除仓库未使用的旧管理声明；不属于 CXF 4.1 维护线；仓库 POM 和受管源码未引用。替代方向：CXF 4.1.9 的 SOAP/XML/JAXB/Aegis 或 OAuth2；按调用协议选择，不是二进制替换",
+        "status": "unsupported-retired"
+      }
+    },
+    "org.apache.cxf:cxf-rt-bindings-object": {
+      "17": {
+        "reason": "2026-11-18 移除仓库未使用的旧管理声明；不属于 CXF 4.1 维护线；仓库 POM 和受管源码未引用。替代方向：CXF 4.1.9 的 SOAP/XML/JAXB/Aegis 或 OAuth2；按调用协议选择，不是二进制替换",
+        "status": "unsupported-retired"
+      }
+    },
+    "org.apache.cxf:cxf-rt-databinding-jibx": {
+      "17": {
+        "reason": "2026-11-18 移除仓库未使用的旧管理声明；不属于 CXF 4.1 维护线；仓库 POM 和受管源码未引用。替代方向：CXF 4.1.9 的 SOAP/XML/JAXB/Aegis 或 OAuth2；按调用协议选择，不是二进制替换",
+        "status": "unsupported-retired"
+      }
+    },
+    "org.apache.cxf:cxf-rt-databinding-sdo": {
+      "17": {
+        "reason": "2026-11-18 移除仓库未使用的旧管理声明；不属于 CXF 4.1 维护线；仓库 POM 和受管源码未引用。替代方向：CXF 4.1.9 的 SOAP/XML/JAXB/Aegis 或 OAuth2；按调用协议选择，不是二进制替换",
+        "status": "unsupported-retired"
+      }
+    },
+    "org.apache.cxf:cxf-rt-databinding-xmlbeans": {
+      "17": {
+        "reason": "2026-11-18 移除仓库未使用的旧管理声明；不属于 CXF 4.1 维护线；仓库 POM 和受管源码未引用。替代方向：CXF 4.1.9 的 SOAP/XML/JAXB/Aegis 或 OAuth2；按调用协议选择，不是二进制替换",
+        "status": "unsupported-retired"
+      }
+    },
+    "org.apache.cxf:cxf-rt-rs-security-oauth": {
+      "17": {
+        "reason": "2026-11-18 移除仓库未使用的旧管理声明；不属于 CXF 4.1 维护线；仓库 POM 和受管源码未引用。替代方向：CXF 4.1.9 的 SOAP/XML/JAXB/Aegis 或 OAuth2；按调用协议选择，不是二进制替换",
+        "status": "unsupported-retired"
+      }
+    },
+    "io.github.resilience4j:resilience4j-prometheus": {
+      "17": {
+        "reason": "2026-11-18 移除仓库未使用的旧管理声明；停留在 1.7.1 的旧集成；仓库未引用。替代方向：Resilience4j 2.4.0 的 micrometer / feign / reactor 等当前集成；不自动改写调用语义",
+        "status": "unsupported-retired"
+      }
+    },
+    "io.github.resilience4j:resilience4j-ratpack": {
+      "17": {
+        "reason": "2026-11-18 移除仓库未使用的旧管理声明；停留在 1.7.1 的旧集成；仓库未引用。替代方向：Resilience4j 2.4.0 的 micrometer / feign / reactor 等当前集成；不自动改写调用语义",
+        "status": "unsupported-retired"
+      }
+    },
+    "io.github.resilience4j:resilience4j-retrofit": {
+      "17": {
+        "reason": "2026-11-18 移除仓库未使用的旧管理声明；停留在 1.7.1 的旧集成；仓库未引用。替代方向：Resilience4j 2.4.0 的 micrometer / feign / reactor 等当前集成；不自动改写调用语义",
+        "status": "unsupported-retired"
+      }
+    },
+    "com.netflix.hystrix:hystrix-core": {
+      "17": {
+        "reason": "2026-11-18 移除仓库未使用的旧管理声明；Hystrix 已停止新版本发布；仓库未引用。替代方向：Resilience4j 2.4.0；需要显式选择超时、隔离和熔断策略，不是直接换包",
+        "status": "unsupported-retired"
+      }
+    },
+    "com.netflix.hystrix:hystrix-metrics-event-stream": {
+      "17": {
+        "reason": "2026-11-18 移除仓库未使用的旧管理声明；Hystrix 已停止新版本发布；仓库未引用。替代方向：Resilience4j 2.4.0；需要显式选择超时、隔离和熔断策略，不是直接换包",
+        "status": "unsupported-retired"
+      }
+    },
+    "io.github.openfeign:feign-hystrix": {
+      "17": {
+        "reason": "2026-11-18 移除仓库未使用的旧管理声明；未使用的 Hystrix 适配入口，会重新带回停维 Hystrix。替代方向：当前 OpenFeign 和 Resilience4j Feign 适配",
+        "status": "unsupported-retired"
+      }
+    },
+    "commons-httpclient:commons-httpclient": {
+      "17": {
+        "reason": "2026-11-18 移除仓库未使用的旧管理声明；HttpClient 3 已 EOL；仓库未引用。替代方向：已有 HttpClient 5；3.x 与 5.x 包名/API 不兼容，不能只改坐标",
+        "status": "unsupported-retired"
+      }
+    },
+    "org.bouncycastle:bcprov-jdk15on": {
+      "17": {
+        "reason": "2026-11-18 移除仓库未使用的旧管理声明；旧 jdk15on 发布线；仓库未引用。替代方向：现有 bcprov-jdk18on 1.87 或特定运行时所需的 LTS 2.73.13，不能同时注册重复 provider",
+        "status": "unsupported-retired"
+      }
+    },
+    "javax.servlet:javax.servlet-api": {
+      "17": {
+        "reason": "2026-11-18 移除仓库未使用的旧管理声明；旧 Servlet API 与本线 Jakarta 命名空间不符；仓库未引用。替代方向：中央已管理的 jakarta.servlet-api 6.x",
+        "status": "unsupported-retired"
+      }
+    },
+    "javax.validation:validation-api": {
+      "17": {
+        "reason": "2026-11-18 移除仓库未使用的旧管理声明；旧 Bean Validation 命名空间；仓库源码统一使用 Jakarta。替代方向：中央已管理的 jakarta.validation-api 与 Hibernate Validator 8",
+        "status": "unsupported-retired"
+      }
+    },
+    "javax.xml.stream:stax-api": {
+      "17": {
+        "reason": "2026-11-18 移除仓库未使用的旧管理声明；旧独立 StAX API；仓库未引用，JDK 17 已提供 java.xml。替代方向：JDK 17 java.xml 模块",
+        "status": "unsupported-retired"
+      }
+    },
+    "xml-apis:xml-apis": {
+      "17": {
+        "reason": "2026-11-18 移除仓库未使用的旧管理声明；旧独立 XML 标准 API；仓库未引用，JDK 17 已提供相关 API。替代方向：JDK 17 java.xml / jdk.xml.dom；独立的现代 XMLBeans 5.3.0 保留",
+        "status": "unsupported-retired"
+      }
+    },
+    "org.apache.httpcomponents:httpasyncclient": {
+      "17": {
+        "reason": "2026-11-18 移除未使用的旧异步 HTTP 管理声明；Apache 已宣布 HttpAsyncClient 4.1 / HttpCore NIO 4.4 EOL；仓库未引用此异步制品",
+        "status": "unsupported-retired"
+      }
+    },
+    "org.apache.httpcomponents:httpasyncclient-cache": {
+      "17": {
+        "reason": "2026-11-18 移除未使用的旧异步 HTTP 管理声明；Apache 已宣布 HttpAsyncClient 4.1 / HttpCore NIO 4.4 EOL；仓库未引用此异步制品",
+        "status": "unsupported-retired"
+      }
+    },
+    "org.apache.httpcomponents:httpasyncclient-osgi": {
+      "17": {
+        "reason": "2026-11-18 移除未使用的旧异步 HTTP 管理声明；Apache 已宣布 HttpAsyncClient 4.1 / HttpCore NIO 4.4 EOL；仓库未引用此异步制品",
+        "status": "unsupported-retired"
+      }
+    },
+    "org.apache.httpcomponents:httpcomponents-asyncclient": {
+      "17": {
+        "reason": "2026-11-18 移除未使用的旧异步 HTTP 管理声明；Apache 已宣布 HttpAsyncClient 4.1 / HttpCore NIO 4.4 EOL；仓库未引用此异步制品",
+        "status": "unsupported-retired"
+      }
+    },
+    "org.apache.httpcomponents:httpcore-nio": {
+      "17": {
+        "reason": "2026-11-18 移除未使用的旧异步 HTTP 管理声明；Apache 已宣布 HttpAsyncClient 4.1 / HttpCore NIO 4.4 EOL；仓库未引用此异步制品",
+        "status": "unsupported-retired"
+      }
+    },
+    "org.apache.httpcomponents:httpcore-osgi": {
+      "17": {
+        "reason": "2026-11-18 移除未使用的旧 OSGi 包；公开 OSGi POM 同时包含 HttpCore Classic 和已 EOL 的 HttpCore NIO；仓库未引用",
+        "status": "unsupported-retired"
       }
     }
   },
@@ -4329,6 +4523,31 @@
     "21": "2e730fb4"
   },
   "dependency_versions": {
+    "io.swagger:swagger-hibernate-validations": {
+      "8": "1.6.14",
+      "21": "1.6.16"
+    },
+    "io.swagger:swagger-jaxrs": {
+      "8": "1.6.14",
+      "21": "1.6.16"
+    },
+    "io.swagger:swagger-jersey-jaxrs": {
+      "8": "1.6.14",
+      "21": "1.6.16"
+    },
+    "io.swagger:swagger-jersey2-jaxrs": {
+      "8": "1.6.14",
+      "21": "1.6.16"
+    },
+    "io.swagger:swagger-servlet": {
+      "8": "1.6.14",
+      "21": "1.6.16"
+    },
+    "io.github.easy4j:jackson-extension": {
+      "8": "1.0.x.20260630",
+      "17": "2.0.x.20260630-SNAPSHOT",
+      "21": "3.0.x.20260630-SNAPSHOT"
+    },
     "io.github.easy4j:easyexcel": "5.0.1",
     "io.github.easy4j:easyexcel-parent": "5.0.1",
     "io.github.easy4j:easyexcel-core": "5.0.1",

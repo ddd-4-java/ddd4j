@@ -14,16 +14,14 @@
  */
 package io.ddd4j.core.auth.event;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.util.Objects;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.auth.AuthRequest;
+import lombok.Getter;
 
 import java.time.Instant;
+import java.util.Objects;
 
 /**
  * 登录成功事件（通用鉴权事件）。
@@ -42,53 +40,20 @@ import java.time.Instant;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.0.0
  */
+@Getter
 public final class AuthSucceededEvent {
 
-    private static final long serialVersionUID = 0L;
-
+    /** 获取登录请求。 */
     private final AuthRequest request;
 
+    /** 获取认证主体。 */
     private final AuthPrincipal principal;
 
+    /** 获取会话凭证。 */
     private final String token;
 
+    /** 获取事件发生时间。 */
     private final Instant occurredAt;
-
-    /**
-     * 获取事件发生时间。
-     *
-     * @return 事件发生时间
-     */
-    public Instant getOccurredAt() {
-        return occurredAt;
-    }
-
-    /**
-     * 获取认证主体。
-     *
-     * @return 认证主体
-     */
-    public AuthPrincipal getPrincipal() {
-        return principal;
-    }
-
-    /**
-     * 获取登录请求。
-     *
-     * @return 登录请求
-     */
-    public AuthRequest getRequest() {
-        return request;
-    }
-
-    /**
-     * 获取会话凭证。
-     *
-     * @return 会话凭证
-     */
-    public String getToken() {
-        return token;
-    }
 
     /**
      * 创建AuthSucceededEvent事件。
@@ -98,13 +63,18 @@ public final class AuthSucceededEvent {
      * @param token 会话凭证
      * @param occurredAt 事件发生时间
      */
-    @JsonCreator()
-    public AuthSucceededEvent(@JsonProperty("request") AuthRequest request, @JsonProperty("principal") AuthPrincipal principal, @JsonProperty("token") String token, @JsonProperty("occurredAt") Instant occurredAt) {
+    @JsonCreator
+    public AuthSucceededEvent(@JsonProperty("request") AuthRequest request,
+                              @JsonProperty("principal") AuthPrincipal principal,
+                              @JsonProperty("token") String token,
+                              @JsonProperty("occurredAt") Instant occurredAt) {
+
         this.request = request;
         this.principal = principal;
         this.token = token;
         this.occurredAt = occurredAt;
     }
+
 
     /**
      * 获取用于 JSON 的登录请求。
@@ -151,17 +121,16 @@ public final class AuthSucceededEvent {
         if (this == obj) {
             return true;
         }
-        if (Objects.isNull(obj) || getClass() != obj.getClass()) {
+        if (!(obj instanceof AuthSucceededEvent)) {
             return false;
         }
-        AuthSucceededEvent other = (AuthSucceededEvent) obj;
-        return Objects.equals(this.request, other.request) && Objects.equals(this.principal, other.principal) && Objects.equals(this.token, other.token) && Objects.equals(this.occurredAt, other.occurredAt);
+        AuthSucceededEvent that = (AuthSucceededEvent) obj;
+        return Objects.equals(request, that.request) && Objects.equals(principal, that.principal) && Objects.equals(token, that.token) && Objects.equals(occurredAt, that.occurredAt);
     }
 
     @Override
     public int hashCode() {
-        int result = 0;
-        result = 31 * result + Objects.hashCode(request);
+        int result = Objects.hashCode(request);
         result = 31 * result + Objects.hashCode(principal);
         result = 31 * result + Objects.hashCode(token);
         result = 31 * result + Objects.hashCode(occurredAt);
@@ -170,6 +139,7 @@ public final class AuthSucceededEvent {
 
     @Override
     public String toString() {
-        return "AuthSucceededEvent[request=" + request + ", principal=" + principal + ", token=" + token + ", occurredAt=" + occurredAt + "]";
+        return "AuthSucceededEvent[request=" + request + ", principal=" + principal + ", token=" + token + ", occurredAt=" + occurredAt + ']';
     }
+
 }

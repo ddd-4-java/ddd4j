@@ -84,7 +84,8 @@ public class AuthSessionConfig {
      */
     @JsonIgnore
     public long getTimeout() {
-        return Objects.requireNonNullElse(timeout, -1L);
+        Long configuredTimeout = timeout;
+        return Objects.nonNull(configuredTimeout) ? configuredTimeout : -1L;
     }
 
     /**

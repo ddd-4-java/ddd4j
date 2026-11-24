@@ -8,6 +8,8 @@
 - 保留已有未提交依赖更新；修改依赖管理、消除已确认依赖断裂所需的平台兼容接线、受影响测试、CI 和本变更文档，不改变业务逻辑、认证策略或持久化契约。
 - 第三方版本由 ddd4j-dependencies 集中定义。升级公开稳定版本，验证实际制品基础字节码不超过 Java 17。
 - 修复平台 BOM 覆盖：中央及子模块的 Reactor、ASM、Jackson 等管理结果与共享属性一致。
+- 2026-11-18 扩展到全部中央版本属性、直接管理项和导入 BOM：登记各 BOM 的组件归属，CI 用仅导入该 BOM 的独立参考模型检查家族版本，而非信任框架中央表；检查未定义/循环属性、重复坐标、独立组件误用属性和未登记的模块覆盖。仅在 CI 执行有效模型及依赖检查，本地仅做源码与公开元数据审查，不运行测试、构建或解析。
+- 后续经用户授权退出仓库未使用的旧 CXF、Resilience4j 集成、Hystrix、Derby、旧异步 HTTP 和旧 API：删除对应管理声明及无引用属性；维护中的组件保留 JDK 17 / Spring 6 公开发行线，补齐 CXF / WSS4J 配套版本。CI 必须阻断重新声明与传递引入，未使用的上游 BOM 管理元数据单列，不能从漏洞扫描中隐藏；组件矩阵记录退出状态，不伪记验证通过。不得改业务逻辑或运行本地测试。
 - Micrometer 指标库使用独立的 `micrometer.version=1.17.2`，Tracing 使用 `micrometer-tracing.version=1.7.2`，不得互相别名引用。两个 BOM 优先于 Hibernate、Boot、Quarkus 等运行时平台导入；CI 分别校验源码优先级、中央有效管理表及实际解析依赖，不能把中央自身已混版的结果作为正确基线。Context Propagation 等独立组件继续按各自 BOM 版本管理。
 - Netty 4.2 为默认线，属性为 `netty.version=4.2.21.Final`，当前 Micronaut HTTP 同样使用 4.2；Quarkus、Helidon 3 使用集中定义的 `netty-4_1.version=4.1.141.Final`。模块、CI 和策略统一引用对应属性。同一模块实际依赖不得混用两线或不同补丁。tcnative 等独立版本体系按各自 BOM 验证。
 - Quarkus 保持其 Vert.x 4 平台线，独立 Vert.x 与当前 Micronaut 适配使用 Vert.x 5；两线分别在中央定义补丁版本。

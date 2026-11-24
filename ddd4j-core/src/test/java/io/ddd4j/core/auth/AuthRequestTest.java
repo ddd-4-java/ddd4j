@@ -14,7 +14,9 @@
  */
 package io.ddd4j.core.auth;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import io.ddd4j.core.auth.session.AuthSessionConfig;
 import org.junit.jupiter.api.Test;
 
@@ -89,6 +91,39 @@ class AuthRequestTest {
         AuthRequest legacy = mapper.readValue("{\"loginId\":\"u1\",\"timeout\":-1}", AuthRequest.class);
         assertThat(legacy.getSessionConfig().hasTimeoutOverride()).isTrue();
         assertThat(legacy.getTimeout()).isEqualTo(-1);
+    }
+
+    @Test
+    void strictRequestRoundTripPreservesLoginIdAndTimeoutPresence() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode inherited = mapper.valueToTree(AuthRequest.of("actual"));
+        JsonNode permanent = mapper.valueToTree(AuthRequest.of("actual").setTimeout(-1));
+
+        assertThat(inherited.path("loginIdAsString").asText()).isEqualTo("actual");
+        assertThat(inherited.has("timeout")).isFalse();
+        assertThat(permanent.path("timeout").asLong()).isEqualTo(-1);
+
+        AuthRequest inheritedRoundTrip = mapper.treeToValue(inherited, AuthRequest.class);
+        AuthRequest permanentRoundTrip = mapper.treeToValue(permanent, AuthRequest.class);
+        assertThat(inheritedRoundTrip.getLoginId()).isEqualTo("actual");
+        assertThat(permanentRoundTrip.getLoginId()).isEqualTo("actual");
+        assertThat(inheritedRoundTrip.getSessionConfig().hasTimeoutOverride()).isFalse();
+        assertThat(permanentRoundTrip.getSessionConfig().hasTimeoutOverride()).isTrue();
+        assertThat(permanentRoundTrip.getTimeout()).isEqualTo(-1);
+    }
+
+    @Test
+    void strictRequestTreatsComputedLoginIdAsReadOnly() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        AuthRequest actual = mapper.readValue(
+                "{\"loginId\":\"actual\",\"loginIdAsString\":\"supplied\"}", AuthRequest.class);
+        AuthRequest computedOnly = mapper.readValue("{\"loginIdAsString\":\"supplied\"}", AuthRequest.class);
+
+        assertThat(actual.getLoginId()).isEqualTo("actual");
+        assertThat(actual.getLoginIdAsString()).isEqualTo("actual");
+        assertThat(computedOnly.getLoginId()).isNull();
+        assertThatThrownBy(() -> mapper.readValue("{\"unmapped\":true}", AuthRequest.class))
+                .isInstanceOf(UnrecognizedPropertyException.class);
     }
 
     @Test

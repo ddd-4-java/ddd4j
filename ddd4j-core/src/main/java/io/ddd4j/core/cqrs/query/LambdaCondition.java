@@ -14,30 +14,25 @@
  */
 package io.ddd4j.core.cqrs.query;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.io.InvalidObjectException;
-
-import java.io.ObjectStreamException;
-
 import io.ddd4j.kit.text.StrPool;
 
+import java.io.InvalidObjectException;
+import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * Lambda 查询条件记录（ORM 无关）。
+ * ORM 无关的 Lambda 查询条件。
  *
- * <p>存储从 {@link io.ddd4j.kit.lang.SFunction} 方法引用中解析出的属性名、操作符和值，
+ * <p>保存类型安全的 {@link PropertyRef}、操作符和值，
  * 由各 ORM 模块的 Repository 转换为原生查询条件。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
-
 public final class LambdaCondition implements Serializable {
 
     private static final long serialVersionUID = -4292780888118581043L;
@@ -58,13 +53,14 @@ public final class LambdaCondition implements Serializable {
     private final Object value;
 
     /**
- * @param propertyRef 类型安全属性引用
- * @param operator 操作符（如 {@code "="}、{@code "LIKE"}、{@code ">"}）
- * @param value 条件值
- */
-
-    @JsonCreator()
-    public LambdaCondition(@JsonProperty("propertyRef") PropertyRef propertyRef, @JsonProperty("operator") String operator, @JsonProperty("value") Object value) {
+     * @param propertyRef 类型安全属性引用
+     * @param operator 操作符（如 {@code "="}、{@code "LIKE"}、{@code ">"}）
+     * @param value 条件值
+     */
+    @JsonCreator
+    public LambdaCondition(@JsonProperty("propertyRef") PropertyRef propertyRef,
+                           @JsonProperty("operator") String operator,
+                           @JsonProperty("value") Object value) {
         Objects.requireNonNull(propertyRef, "propertyRef must not be null");
         Objects.requireNonNull(operator, "operator must not be null");
         this.propertyRef = propertyRef;
@@ -193,7 +189,9 @@ public final class LambdaCondition implements Serializable {
             return false;
         }
         LambdaCondition other = (LambdaCondition) obj;
-        return Objects.equals(this.propertyRef, other.propertyRef) && Objects.equals(this.operator, other.operator) && Objects.equals(this.value, other.value);
+        return Objects.equals(propertyRef, other.propertyRef)
+                && Objects.equals(operator, other.operator)
+                && Objects.equals(value, other.value);
     }
 
     @Override

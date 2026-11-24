@@ -34,10 +34,10 @@
             <artifactId>ddd4j-mq-core</artifactId>
             <version>${revision}</version>
         </dependency>
-        <!-- Ddd4j data-datascope (DataScopeProvider) -->
+        <!-- Ddd4j validation (DataScopeProvider) -->
         <dependency>
             <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-data-datascope</artifactId>
+            <artifactId>ddd4j-extension-validation</artifactId>
             <version>${revision}</version>
         </dependency>
         <!-- OpenTelemetry API (compile-only, runtime provided by agent) -->

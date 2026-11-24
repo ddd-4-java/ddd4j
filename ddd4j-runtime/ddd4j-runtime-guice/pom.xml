@@ -18,11 +18,16 @@
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
-        <!-- 默认操作日志实现引用 Servlet；运行环境提供，测试也须真实加载。 -->
         <dependency>
-            <groupId>jakarta.servlet</groupId>
-            <artifactId>jakarta.servlet-api</artifactId>
-            <scope>provided</scope>
+            <groupId>com.tngtech.archunit</groupId>
+            <artifactId>archunit-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- 仅旧 Javalin 静态工厂需要；纯 Guice 基础模式无需 HTTP。 -->
+        <dependency>
+            <groupId>io.javalin</groupId>
+            <artifactId>javalin</artifactId>
+            <optional>true</optional>
         </dependency>
         <!-- 跨版本日志回归使用统一管理的 Log4j2 SLF4J2 测试 provider。 -->
         <dependency>
@@ -51,21 +56,30 @@
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-cache</artifactId>
             <version>${revision}</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-data-crypto</artifactId>
             <version>${revision}</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-data-logs</artifactId>
             <version>${revision}</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-data-mybatisplus</artifactId>
             <version>${revision}</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>io.github.easy4j</groupId>
+            <artifactId>mybatis-plus-enhance-core</artifactId>
+            <optional>true</optional>
         </dependency>
         <!-- Google Guice -->
         <dependency>
@@ -107,6 +121,13 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
+                    <includes combine.children="append">
+                        <include>**/Test*.java</include>
+                        <include>**/*Test.java</include>
+                        <include>**/*Tests.java</include>
+                        <include>**/*TestCase.java</include>
+                        <include>**/JavalinCommandBusIT.java</include>
+                    </includes>
                     <systemPropertyVariables>
                         <slf4j.provider>org.apache.logging.slf4j.SLF4JServiceProvider</slf4j.provider>
                     </systemPropertyVariables>

@@ -16,6 +16,8 @@ package io.ddd4j.core.ddd.model;
 
 import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.DomainEvent;
+import io.ddd4j.core.ddd.event.DomainEventPublisher;
+import io.ddd4j.core.ddd.event.EntityId;
 import io.ddd4j.core.ddd.event.EntityIdPath;
 import io.ddd4j.core.ddd.event.EntityType;
 import io.ddd4j.core.ddd.event.EventHandler;
@@ -23,9 +25,13 @@ import io.ddd4j.core.ddd.event.StringEntityId;
 import io.ddd4j.core.ddd.event.StringEntityType;
 import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
+import io.ddd4j.core.constant.ContextConstants;
+import io.ddd4j.core.constant.SpiKeys;
+import io.ddd4j.core.context.ThreadContext;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,6 +41,35 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class AggregateRootTest {
+    @Test
+    void shouldPublishBufferedLocalEventsWithoutCommandBusEventStoreOrProjection() {
+        List<String> received = new ArrayList<>();
+        DomainEventPublisher publisher = new DomainEventPublisher() {
+            @Override
+            public <ID extends EntityId> void publish(DomainEvent<ID> event) {
+                if (event instanceof TestDomainEvent && event.tenantIn("tenant-a")) {
+                    received.add(((TestDomainEvent) event).getName());
+                    event.setResult("handled");
+                }
+            }
+        };
+        ThreadContext.inject(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class, publisher);
+        ThreadContext.set(ContextConstants.TENANT_ID, "tenant-a");
+        try {
+            TestAggregate aggregate = new TestAggregate("local-1");
+            aggregate.rename("renamed");
+            List<DomainEvent<?>> pending = aggregate.pullDomainEvents();
+            assertEquals("handled", pending.get(0).publish());
+            assertEquals(List.of("renamed"), received);
+            assertFalse(aggregate.hasDomainEvents());
+            ThreadContext.set(ContextConstants.TENANT_ID, "tenant-b");
+            new TestDomainEvent("other-tenant").publish();
+            assertEquals(List.of("renamed"), received);
+        } finally {
+            ThreadContext.clear();
+        }
+    }
+
     @Test
     void shouldCollectNewEventsButNotReplayHistory() {
         AppliedAggregate aggregate = new AppliedAggregate();

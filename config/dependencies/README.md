@@ -40,6 +40,7 @@
 - 三线的 Jedis 固定为最新 7.x `7.5.3`：8.x 移除了样例测试使用的 `JedisPooled`，7.5.3 JAR 保留该类且其字节码为 class 52。1.0.x 的 Helidon 服务发现构件固定为最新 1.4.x `1.4.19`（class 52）；自动升级到 Helidon 3.2.21 的 class 61 会破坏 JDK 8 编译。固定项照常扫描漏洞。
 - `io.github.easy4j:httpconn`、`httputils`、`metrics-druid` 的源码分别位于 [httpconn](https://github.com/easy-4-java/httpconn)、[httputils](https://github.com/easy-4-java/httputils)、[metrics-druid](https://github.com/easy-4-java/metrics-druid)；各线使用对应的 `1.0.x.20260630-SNAPSHOT`、`2.0.x.20260630-SNAPSHOT`、`3.0.x.20260630-SNAPSHOT` 构件。
 - `component-matrix.csv`：历史清单快照，用于比较；其中状态可能已过期。当前三线有效版本与检查状态以本次严格检查输出的 `components.csv` 和 `result.json` 为准。
+- Java 8 的 BOM 为 Derby 10.14.2.0 的六个既有坐标保留版本管理。包括 derby、derbyclient、derbynet、derbytools、derbyoptionaltools 和 derbyLocale_zh_CN。应用显式声明依赖后才引入该驱动或工具。本线严格检查仍核对构件和基础字节码。
 - SOAP 工具库实际制品为 `io.github.easy4j:soap-utils`；旧 BOM 中的 `soaputils` 是错误坐标。三线分别使用 1.0.x、2.0.x、3.0.x 构件，并由本线 JDK 验证字节码和单元测试。
 - 用户确认 `io.github.easy4j:disruptor-biz` 旧坐标归并到 `io.github.easy4j:disruptor-extension`。JDK 17/21 BOM 只管理各自版本的实际扩展构件；JDK 8 BOM 原本未声明 Easy4J 的这两个坐标，不因此新增依赖。历史组件矩阵仍保留旧快照，当前状态以严格依赖检查为准。
 - PF4J 旧坐标 `io.github.easy4j:pf4j3-extension` 已并入上游 `pf4j-extension` 项目；JDK 17/21 的有效构件分别是 `pf4j-extension-core`、`pf4j-extension-spring`、`pf4j-extension-update`，按实际能力选择。聚合 `pf4j-extension` 是 POM 而非 JAR。JDK 8 线当前未声明这些组件；此坐标迁移不改变其第三方依赖。
@@ -101,6 +102,9 @@ PYTHONPATH=ddd4j/scripts python3 ddd4j/scripts/format_dependency_properties.py \
 
 ## 状态的边界
 
+- Java 17 的 Shiro 3 应用可用 `org.apache.shiro:shiro-jcache` 接入 Hazelcast。应用显式引入 Shiro JCache 与 Hazelcast，选择 Hazelcast 的 JCache provider，再把其 `javax.cache.CacheManager` 交给 Shiro 的 `JCacheManager`。
+
+- `removed-unused` 表示本仓库未使用的旧管理声明已按授权从该 JDK 线移除，不是编译、字节码或回归通过。2026-11-18 的 JDK 17 清理及退出坐标见 [退出记录](../../docs/dependency-retirement-jdk17.md)；`unsupported-retired` 仍拒绝显式使用，依赖家族 CI 额外拒绝实际传递引入。
 - `bytecode-pass` 只证明检查到的基础 class 文件没有超过对应 JDK；不能证明传递依赖、反射、框架接口、自动配置或业务行为兼容。
 - `bytecode-empty` 表示 Easy4J 普通 JAR 没有基础 class；空壳不能证明组件实现或字节码兼容，严格检查报错。纯资源/原生库等第三方 JAR 不受此规则影响。
 - `replacement` 表示明确记录的组件坐标迁移或模块合并，不表示任意旧 SDK 与新 SDK 自动等价。

@@ -187,14 +187,28 @@ def scan_command(policy, output, root=Path('project'), branch=''):
             '--line', branch, '--threshold', str(policy['cvss_threshold'])]
 
 
+def project_poms(root):
+    """读取项目中已跟踪和未忽略的 POM；普通目录沿用文件系统扫描。"""
+    absolute_root = root.resolve()
+    if any((directory / '.git').exists() for directory in (absolute_root, *absolute_root.parents)):
+        listed = subprocess.check_output(
+            ['git', 'ls-files', '--cached', '--others', '--exclude-standard', '-z', '--', ':(glob)**/pom.xml'],
+            cwd=root)
+        candidates = {root / os.fsdecode(name) for name in listed.split(b'\0') if name}
+    else:
+        candidates = root.rglob('pom.xml')
+    return sorted(
+        pom for pom in candidates
+        if {'target', '.git'}.isdisjoint(pom.relative_to(root).parts) and pom.is_file()
+    )
+
+
 def protected_properties(root, policy):
     """展开属性排除规则，并保护引用其他版本属性的派生别名。"""
     names = set()
     shared = set()
     aliases = set()
-    for pom in root.rglob('pom.xml'):
-        if 'target' in pom.parts or '.git' in pom.parts:
-            continue
+    for pom in project_poms(root):
         tree = ET.parse(pom)
         ns = {'m': tree.getroot().tag.split('}')[0][1:]}
         for props in tree.findall('.//m:properties', ns):
@@ -237,9 +251,7 @@ def declared_versions(root):
         cache[pom] = values
         return values
 
-    for pom in sorted(root.rglob('pom.xml')):
-        if 'target' in pom.parts or '.git' in pom.parts:
-            continue
+    for pom in project_poms(root):
         tree = ET.parse(pom)
         ns = {'m': tree.getroot().tag.split('}')[0][1:]}
         values = properties(pom, set())
@@ -264,9 +276,7 @@ def validate_updates(root, policy, before):
     """固定规则必须实际生效；排除组件和保护属性必须保持版本。"""
     after = declared_versions(root)
     pinned_property_dependencies = set()
-    for pom in root.rglob('pom.xml'):
-        if 'target' in pom.parts or '.git' in pom.parts:
-            continue
+    for pom in project_poms(root):
         node = ET.parse(pom).getroot()
         ns = {'m': node.tag.split('}')[0][1:]}
         for index, dep in enumerate(node.findall('.//m:dependency', ns) + node.findall('.//m:parent', ns)):
@@ -297,9 +307,7 @@ def validate_updates(root, policy, before):
 def materialize_inherited_properties(root, policy, effective):
     """将本仓库显式引用的外部父属性覆盖到根 POM，保留排除共享属性。"""
     defined, referenced, protected = set(), set(), set()
-    for pom in root.rglob('pom.xml'):
-        if 'target' in pom.parts or '.git' in pom.parts:
-            continue
+    for pom in project_poms(root):
         node = ET.parse(pom).getroot()
         ns = {'m': node.tag.split('}')[0][1:]}
         for props in node.findall('.//m:properties', ns):

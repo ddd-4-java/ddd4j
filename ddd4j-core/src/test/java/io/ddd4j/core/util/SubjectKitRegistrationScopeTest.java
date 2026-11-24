@@ -59,4 +59,32 @@ class SubjectKitRegistrationScopeTest {
 
         assertThat(SubjectKit.subjectProvider).isSameAs(replacement);
     }
+
+
+    @Test
+    void shouldNotOverwriteEqualButDistinctProviderInstalledAfterStart() {
+        SubjectProvider current = new EqualProvider();
+        SubjectProvider replacement = new EqualProvider();
+        SubjectKit.register(originalProvider);
+
+        try (SubjectKitRegistrationScope scope = new SubjectKitRegistrationScope(current)) {
+            scope.start();
+            SubjectKit.register(replacement);
+            assertThat(replacement).isEqualTo(current).isNotSameAs(current);
+        }
+
+        assertThat(SubjectKit.subjectProvider).isSameAs(replacement);
+    }
+
+    private static final class EqualProvider implements SubjectProvider {
+        @Override
+        public boolean equals(Object obj) {
+            return obj instanceof EqualProvider;
+        }
+
+        @Override
+        public int hashCode() {
+            return EqualProvider.class.hashCode();
+        }
+    }
 }

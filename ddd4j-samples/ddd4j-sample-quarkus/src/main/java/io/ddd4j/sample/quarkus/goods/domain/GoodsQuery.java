@@ -13,11 +13,11 @@
  * limitations under the License.
  */
 package io.ddd4j.sample.quarkus.goods.domain;
-import io.ddd4j.kit.lang.SFunction;
 
 import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
+import io.ddd4j.kit.lang.SFunction;
 import io.ddd4j.kit.lang.StrKit;
 
 import java.math.BigDecimal;
@@ -109,12 +109,20 @@ public class GoodsQuery extends Query<Goods> {
         }
         boolean descending = "DESC".equalsIgnoreCase(tokens[1]);
         switch (tokens[0]) {
-            case "id" -> applyOrder(descending, Goods::id);
-            case "createTime" -> applyOrder(descending, Goods::getCreateTime);
-            case "updateTime" -> applyOrder(descending, Goods::getUpdateTime);
-            case "price" -> applyOrder(descending, Goods::getPrice);
-            default -> {
-            }
+            case "id":
+                applyOrder(descending, Goods::id);
+                break;
+            case "createTime":
+                applyOrder(descending, Goods::getCreateTime);
+                break;
+            case "updateTime":
+                applyOrder(descending, Goods::getUpdateTime);
+                break;
+            case "price":
+                applyOrder(descending, Goods::getPrice);
+                break;
+            default:
+                break;
         }
     }
 

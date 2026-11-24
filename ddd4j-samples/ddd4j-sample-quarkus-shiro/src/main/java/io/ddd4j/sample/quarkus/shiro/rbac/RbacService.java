@@ -83,7 +83,7 @@ public class RbacService {
                 .setRoles(buildRolePairs(user.getRoleCodes()))
                 .setPerms(aggregatePermissions(user.getRoleCodes()));
 
-        AuthRequest request = AuthRequest.of(user.getId()).setTimeout(7200);
+        AuthRequest request = AuthRequest.of(user.getId()).setTimeout(7200).extra("credential", password);
         request.setPrincipal(principal);
         String token = SubjectKit.login(request);
 

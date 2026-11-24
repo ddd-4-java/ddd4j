@@ -36,7 +36,7 @@ public final class ValueContractProbe {
                 new Class<?>[]{Instant.class, int.class, String.class},
                 new Object[]{Instant.EPOCH, 3, null}, new Object[]{null, 0, null},
                 new String[][]{{"lastRunAt", "getLastRunAt"}, {"lastEventCount", "getLastEventCount"}, {"lastError", "getLastError"}});
-        check("io.ddd4j.data.mybatis.adapter.SqlObservation",
+        check("io.ddd4j.data.mybatis.plugins.observation.SqlObservation",
                 new Class<?>[]{String.class, String.class, List.class, long.class, Throwable.class},
                 new Object[]{"statement", "select 1", Collections.emptyList(), 1000000L, null},
                 new Object[]{null, null, null, 0L, null},

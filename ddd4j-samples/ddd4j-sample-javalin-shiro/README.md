@@ -1,4 +1,46 @@
-# ddd4j-sample-javalin-shiro
+# Javalin Shiro 示例
+
+示例在 Guice 中装配 Shiro、`SubjectKit` 和共享订单服务。订单端点位于 `/orders`，支付和取消分别按 `order:pay`、`order:cancel` 检查权限。
+
+## 构建和启动
+
+在仓库根目录使用当前发行线的 JDK 和 Maven Wrapper。将 `<version>` 换成 `target` 中实际 JAR 的版本。主入口使用端口 `7000`，一次启动一个认证示例。
+
+```bash
+module=ddd4j-samples/ddd4j-sample-javalin-shiro
+./mvnw -pl "$module" -am -Dmaven.test.skip=true -Dmaven.javadoc.skip=true \
+  -DincludeScope=runtime -Dmdep.outputFile=target/runtime-classpath.txt \
+  package dependency:build-classpath
+java -cp "$module/target/ddd4j-sample-javalin-shiro-<version>.jar:$(cat "$module/target/runtime-classpath.txt")" \
+  io.ddd4j.sample.javalin.shiro.JavalinShiroApplication
+```
+
+## 登录、读取主体和退出
+
+本地演示账号为 `zhangsan / pass123`。登录返回的 `data.token` 用于后续请求，请将下方 `<token>` 替换为实际值。
+
+```bash
+base=http://127.0.0.1:7000
+curl -fsS -X POST "$base/auth/login" -H "Content-Type: application/json" \
+  -d '{"loginId":"zhangsan","password":"pass123"}'
+curl -fsS "$base/auth/me" -H "ddd4j-token: <token>"
+curl -fsS -X POST "$base/auth/logout" -H "ddd4j-token: <token>"
+```
+
+`GET /auth/me` 返回当前登录主体。退出后，用同一令牌请求 `/auth/me` 返回 401。
+
+## 请求和资源生命周期
+
+主入口 `main` 调用可关闭的 `start(int)` 装配 Javalin 和 Guice。同一个 JVM 中使用单个活动实例并配对启动和关闭。订单和认证演示数据存放在内存中。
+
+Shiro Realm 负责凭证、角色和权限。Servlet 请求结束时清除本次 Shiro 绑定，并恢复原主体和 ddd4j `ThreadContext`。
+
+原生 `NativeAuthHttpTest` 覆盖登录、订单操作、拒绝和退出，另有用例验证请求清理与启动失败恢复。
+
+<details>
+<summary>早期鉴权设计记录</summary>
+
+以下保留早期设计和示意代码。当前版本的启动和登录方式以上文为准。
 
 ## 鉴权示例（Javalin + Guice + Apache Shiro）
 
@@ -258,3 +300,5 @@ curl 'http://localhost:7000/api/goods/page?current=1&size=10&status=ON_SALE&orde
 - [ddd4j-auth 模块文档](https://github.com/ddd-4-java/ddd4j/tree/feature/2.0.x/ddd4j-auth)
 - [SubjectKit API 文档](https://github.com/ddd-4-java/ddd4j/blob/feature/2.0.x/ddd4j-core/src/main/java/io/ddd4j/core/util/SubjectKit.java)
 - [Apache Shiro 官方文档](https://shiro.apache.org/)
+
+</details>

@@ -133,9 +133,10 @@ class SqsAdapterContractTest {
         Message message = Message.builder().receiptHandle("receipt")
                 .body("{}").messageAttributes(attributes).build();
 
-        Method handle = SqsMQClient.class.getDeclaredMethod("handleMessage", Message.class, String.class, MQListener.class);
+        Method handle = SqsMQClient.class.getDeclaredMethod("handleMessage",
+                SqsClient.class, Message.class, String.class, MQListener.class);
         handle.setAccessible(true);
-        handle.invoke(adapter, message, "http://queue", listener);
+        handle.invoke(adapter, client, message, "http://queue", listener);
 
         assertEquals("native-correlation", probe.event.getCorrelationId());
         assertEquals("native-causation", probe.event.getCausationId());

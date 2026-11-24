@@ -48,8 +48,10 @@ public class OrderResource {
     /**
      * 接收创建订单请求并分发命令。
      *
-     * @param request 创建订单请求
-     * @return 创建结果
+     *
+ * @param request 创建订单请求
+     *
+ * @return 创建结果
      */
     @POST
     public Response createOrder(CreateOrderRequest request) {
@@ -71,8 +73,10 @@ public class OrderResource {
     /**
      * 读取订单。
      *
-     * @param id 订单标识
-     * @return 查询结果
+     *
+ * @param id 订单标识
+     *
+ * @return 查询结果
      */
     @GET
     @Path("/{id}")
@@ -102,9 +106,12 @@ public class OrderResource {
         /**
          * 创建订单创建请求。
          *
-         * @param orderNo 订单编号
-         * @param buyerId 买家标识
-         * @param buyerName 买家名称
+         *
+ * @param orderNo 订单编号
+         *
+ * @param buyerId 买家标识
+         *
+ * @param buyerName 买家名称
          */
         @JsonCreator()
         public CreateOrderRequest(@JsonProperty("orderNo") String orderNo, @JsonProperty("buyerId") String buyerId, @JsonProperty("buyerName") String buyerName) {

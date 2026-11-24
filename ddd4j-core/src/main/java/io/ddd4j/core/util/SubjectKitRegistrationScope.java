@@ -60,7 +60,7 @@ public final class SubjectKitRegistrationScope implements AutoCloseable {
         if (!started) {
             return;
         }
-        if (Objects.equals(SubjectKit.subjectProvider, subjectProvider)) {
+        if (SubjectKit.subjectProvider == subjectProvider) {
             SubjectKit.register(previousSubjectProvider);
         }
         previousSubjectProvider = null;

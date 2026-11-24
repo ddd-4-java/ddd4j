@@ -23,16 +23,27 @@ DOCUMENTS = (
     "superpowers/historical-evidence-index.md",
 )
 ROOT_REDIRECTS = DOCUMENTS[:4]
+# JDK17 已删除的四个根跳转页可缺席；docs/ 正文和指向旧页的真实链接仍严格检查。
+OPTIONAL_MIDDLE_ROOT_REDIRECTS = frozenset((
+    "5、ddd4j-技术方案与路线.md",
+    "6、ddd4j-产品与版本规划.md",
+    "7、ddd4j-领域模型设计.md",
+    "8、ddd4j-Architecture.zh_CN.md",
+))
 SHARED_SAMPLE_DOCUMENTS = (
     "ddd4j-samples/ddd4j-sample-quarkus-satoken/README.md",
     "ddd4j-samples/ddd4j-sample-quarkus-shiro/README.md",
 )
+SHARED_GUIDE_SECTIONS = {
+    "REFACTOR_MIGRATION.md": "\n---\n\n## 历史迁移记录\n",
+    "ddd4j-samples/README.md": "\n## 历史验收记录\n",
+}
 LINK = re.compile(r'(?:\]\(([^)]+)\)|(?:href|src)=["\']([^"\']+)["\'])')
 LOCAL_FILE_SUFFIXES = frozenset((".md", ".py", ".sh", ".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp"))
 
 
-def local_markdown_links(document: Path):
-    for match in LINK.finditer(document.read_text(encoding="utf-8")):
+def local_markdown_links(document: Path, content: str):
+    for match in LINK.finditer(content):
         raw = (match.group(1) or match.group(2)).strip().split(" ", 1)[0]
         parsed = urlsplit(raw)
         if parsed.scheme or parsed.netloc or not parsed.path:
@@ -46,11 +57,20 @@ def check(roots: list[Path], output: Path) -> int:
     differences = {}
     broken_links = []
     hashes = {}
-    for relative in (*("docs/" + name for name in DOCUMENTS), *SHARED_SAMPLE_DOCUMENTS):
+    shared = (*("docs/" + name for name in DOCUMENTS), *SHARED_SAMPLE_DOCUMENTS, *SHARED_GUIDE_SECTIONS)
+    shared_content = {}
+    for relative in shared:
         values = []
         for root in roots:
             document = root / relative
-            values.append(hashlib.sha256(document.read_bytes()).hexdigest() if document.is_file() else "MISSING")
+            if not document.is_file():
+                values.append("MISSING")
+                continue
+            content = document.read_bytes()
+            if relative in SHARED_GUIDE_SECTIONS:
+                content = content.partition(SHARED_GUIDE_SECTIONS[relative].encode("utf-8"))[0]
+            shared_content[document] = content
+            values.append(hashlib.sha256(content).hexdigest())
         hashes[relative] = values
         if len(set(values)) != 1 or "MISSING" in values:
             differences[relative] = values
@@ -58,22 +78,29 @@ def check(roots: list[Path], output: Path) -> int:
         expected = f"# 文档已迁移\n\n请阅读 [{name}](docs/{name})。\n"
         values = []
         mismatched = False
-        for root in roots:
+        for index, root in enumerate(roots):
             document = root / name
             values.append(hashlib.sha256(document.read_bytes()).hexdigest() if document.is_file() else "MISSING")
+            if (index == 1 and name in OPTIONAL_MIDDLE_ROOT_REDIRECTS
+                    and not document.exists() and not document.is_symlink()):
+                continue
             if not document.is_file() or document.read_text(encoding="utf-8") != expected:
                 mismatched = True
         hashes[name] = values
         if mismatched:
             differences[name] = values
-    for root in roots:
-        for relative in ("README.md", "README.en.md", *ROOT_REDIRECTS,
-                         *("docs/" + name for name in DOCUMENTS), *SHARED_SAMPLE_DOCUMENTS):
+    for index, root in enumerate(roots):
+        for relative in ("README.md", "README.en.md", *ROOT_REDIRECTS, *shared):
             document = root / relative
             if not document.is_file():
+                if (index == 1 and relative in OPTIONAL_MIDDLE_ROOT_REDIRECTS
+                        and not document.exists() and not document.is_symlink()):
+                    continue
                 broken_links.append({"root": str(root), "source": relative, "target": "MISSING"})
                 continue
-            for raw, target in local_markdown_links(document):
+            content = (shared_content[document].decode("utf-8")
+                       if document in shared_content else document.read_text(encoding="utf-8"))
+            for raw, target in local_markdown_links(document, content):
                 if not target.is_file():
                     broken_links.append({"root": str(root), "source": relative, "target": raw})
     status = "FAIL" if differences or broken_links else "PASS"

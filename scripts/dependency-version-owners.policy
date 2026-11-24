@@ -1,0 +1,1050 @@
+{
+  "jdk": 17,
+  "spring": 6,
+  "boms": [
+    {
+      "bom": "org.springframework:spring-framework-bom",
+      "property": "spring-framework.version",
+      "priority": 0,
+      "includes": [
+        "org.springframework:*"
+      ]
+    },
+    {
+      "bom": "org.springframework.security:spring-security-bom",
+      "property": "spring-security.version",
+      "priority": 1,
+      "includes": [
+        "org.springframework.security:*"
+      ]
+    },
+    {
+      "bom": "org.springframework.data:spring-data-bom",
+      "property": "spring-data-bom.version",
+      "priority": 2,
+      "includes": [
+        "org.springframework.data:*"
+      ]
+    },
+    {
+      "bom": "io.micrometer:micrometer-bom",
+      "property": "micrometer.version",
+      "priority": 3,
+      "includes": [
+        "io.micrometer:*"
+      ]
+    },
+    {
+      "bom": "io.micrometer:micrometer-tracing-bom",
+      "property": "micrometer-tracing.version",
+      "priority": 4,
+      "includes": [
+        "io.micrometer:*"
+      ]
+    },
+    {
+      "bom": "org.slf4j:slf4j-bom",
+      "property": "slf4j.version",
+      "priority": 5,
+      "includes": [
+        "org.slf4j:*"
+      ]
+    },
+    {
+      "bom": "org.apache.logging.log4j:log4j-bom",
+      "property": "log4j2.version",
+      "priority": 6,
+      "includes": [
+        "org.apache.logging.log4j:*"
+      ]
+    },
+    {
+      "bom": "com.fasterxml.jackson:jackson-bom",
+      "property": "jackson-bom.version",
+      "priority": 7,
+      "includes": [
+        "com.fasterxml.jackson*:*"
+      ]
+    },
+    {
+      "bom": "tools.jackson:jackson-bom",
+      "property": "jackson3.version",
+      "priority": 8,
+      "includes": [
+        "tools.jackson*:*"
+      ]
+    },
+    {
+      "bom": "io.netty:netty-bom",
+      "property": "netty.version",
+      "priority": 9,
+      "includes": [
+        "io.netty:*"
+      ],
+      "excludes": [
+        "io.netty:netty-tcnative*"
+      ]
+    },
+    {
+      "bom": "org.ow2.asm:asm-bom",
+      "property": "asm.version",
+      "priority": 10,
+      "includes": [
+        "org.ow2.asm:*"
+      ]
+    },
+    {
+      "bom": "io.opentelemetry:opentelemetry-bom",
+      "property": "opentelemetry.version",
+      "priority": 11,
+      "includes": [
+        "io.opentelemetry:*"
+      ]
+    },
+    {
+      "bom": "io.opentelemetry:opentelemetry-bom-alpha",
+      "property": "opentelemetry-alpha.version",
+      "priority": 12,
+      "includes": [
+        "io.opentelemetry:*"
+      ],
+      "version_suffix": "-alpha"
+    },
+    {
+      "bom": "io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom",
+      "property": "opentelemetry-instrumentation.version",
+      "priority": 13,
+      "includes": [
+        "io.opentelemetry.instrumentation:*"
+      ]
+    },
+    {
+      "bom": "io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom-alpha",
+      "property": "opentelemetry-instrumentation-alpha.version",
+      "priority": 14,
+      "includes": [
+        "io.opentelemetry.instrumentation:*",
+        "io.opentelemetry.semconv:*"
+      ]
+    },
+    {
+      "bom": "io.projectreactor:reactor-bom",
+      "property": "reactor-bom.version",
+      "priority": 15,
+      "includes": [
+        "io.projectreactor*:*"
+      ]
+    },
+    {
+      "bom": "io.grpc:grpc-bom",
+      "property": "grpc-bom.version",
+      "priority": 16,
+      "includes": [
+        "io.grpc:*"
+      ]
+    },
+    {
+      "bom": "org.jetbrains.kotlin:kotlin-bom",
+      "property": "kotlin.version",
+      "priority": 17,
+      "includes": [
+        "org.jetbrains.kotlin:*"
+      ]
+    },
+    {
+      "bom": "org.jetbrains.kotlinx:kotlinx-coroutines-bom",
+      "property": "kotlin-coroutines.version",
+      "priority": 18,
+      "includes": [
+        "org.jetbrains.kotlinx:kotlinx-coroutines-*"
+      ]
+    },
+    {
+      "bom": "org.jetbrains.kotlinx:kotlinx-serialization-bom",
+      "property": "kotlin-serialization.version",
+      "priority": 19,
+      "includes": [
+        "org.jetbrains.kotlinx:kotlinx-serialization-*"
+      ]
+    },
+    {
+      "bom": "org.junit:junit-bom",
+      "property": "junit-jupiter.version",
+      "priority": 20,
+      "includes": [
+        "org.junit.*:*"
+      ]
+    },
+    {
+      "bom": "org.assertj:assertj-bom",
+      "property": "assertj.version",
+      "priority": 21,
+      "includes": [
+        "org.assertj:*"
+      ]
+    },
+    {
+      "bom": "org.mockito:mockito-bom",
+      "property": "mockito.version",
+      "priority": 22,
+      "includes": [
+        "org.mockito:*"
+      ]
+    },
+    {
+      "bom": "org.testcontainers:testcontainers-bom",
+      "property": "testcontainers-bom.version",
+      "priority": 23,
+      "includes": [
+        "org.testcontainers:*"
+      ]
+    },
+    {
+      "bom": "org.apache.maven:maven",
+      "property": "maven.version",
+      "priority": 24,
+      "includes": [
+        "org.apache.maven:*",
+        "com.google.inject:guice:jar:classes"
+      ]
+    },
+    {
+      "bom": "org.apache.groovy:groovy-bom",
+      "property": "groovy.version",
+      "priority": 29,
+      "includes": [
+        "org.apache.groovy:*"
+      ]
+    },
+    {
+      "bom": "io.micronaut.sourcegen:micronaut-sourcegen-bom",
+      "property": "micronaut.sourcegen.version",
+      "priority": 29,
+      "includes": [
+        "io.micronaut.sourcegen:*"
+      ]
+    },
+    {
+      "bom": "io.micronaut:micronaut-core-bom",
+      "property": "micronaut.core.version",
+      "priority": 30,
+      "includes": [
+        "io.micronaut:*"
+      ]
+    },
+    {
+      "bom": "org.glassfish.jersey:jersey-bom",
+      "property": "jersey.version",
+      "priority": 100,
+      "includes": [
+        "org.glassfish.jersey*:*"
+      ]
+    },
+    {
+      "bom": "org.glassfish.hk2:hk2-bom",
+      "property": "hk2.version",
+      "priority": 100,
+      "includes": [
+        "org.glassfish.hk2*:*"
+      ]
+    },
+    {
+      "bom": "io.dropwizard.metrics:metrics-bom",
+      "property": "dropwizard-metrics.version",
+      "priority": 100,
+      "includes": [
+        "io.dropwizard.metrics:*"
+      ]
+    },
+    {
+      "bom": "org.glassfish.jaxb:jaxb-bom",
+      "property": "glassfish-jaxb.version",
+      "priority": 100,
+      "includes": [
+        "org.glassfish.jaxb:*",
+        "com.sun.xml.bind:*",
+        "jakarta.xml.bind:jakarta.xml.bind-api:jar:sources"
+      ]
+    },
+    {
+      "bom": "org.apache.cxf:cxf-bom",
+      "property": "cxf.version",
+      "priority": 100,
+      "includes": [
+        "org.apache.cxf:*"
+      ]
+    },
+    {
+      "bom": "org.hibernate.orm:hibernate-platform",
+      "property": "hibernate.version",
+      "priority": 100,
+      "includes": [
+        "org.hibernate.orm:*"
+      ]
+    },
+    {
+      "bom": "io.vertx:vertx-dependencies",
+      "property": "vertx.version",
+      "priority": 100,
+      "includes": [
+        "io.vertx:*"
+      ]
+    },
+    {
+      "bom": "software.amazon.awssdk:bom",
+      "property": "awssdk.version",
+      "priority": 100,
+      "includes": [
+        "software.amazon.awssdk:*"
+      ]
+    },
+    {
+      "bom": "com.squareup.okhttp3:okhttp-bom",
+      "property": "okhttp.version",
+      "priority": 100,
+      "includes": [
+        "com.squareup.okhttp3:*"
+      ]
+    },
+    {
+      "bom": "org.jdbi:jdbi3-bom",
+      "property": "jdbi.version",
+      "priority": 100,
+      "includes": [
+        "org.jdbi:*"
+      ]
+    },
+    {
+      "bom": "org.apache.activemq:activemq-bom",
+      "property": "activemq.version",
+      "priority": 100,
+      "includes": [
+        "org.apache.activemq:*"
+      ],
+      "excludes": [
+        "org.apache.activemq:artemis-*"
+      ]
+    },
+    {
+      "bom": "org.apache.artemis:artemis-bom",
+      "property": "artemis.version",
+      "priority": 100,
+      "includes": [
+        "org.apache.artemis:*",
+        "org.apache.activemq:artemis-*"
+      ]
+    },
+    {
+      "bom": "io.zipkin.brave:brave-bom",
+      "property": "brave.version",
+      "priority": 100,
+      "includes": [
+        "io.zipkin.brave:*"
+      ]
+    },
+    {
+      "bom": "com.alibaba.cola:cola-components-bom",
+      "property": "cola.version",
+      "priority": 100,
+      "includes": [
+        "com.alibaba.cola:*"
+      ]
+    },
+    {
+      "bom": "com.google.auth:google-auth-library-bom",
+      "property": "google-auth-library.version",
+      "priority": 100,
+      "includes": [
+        "com.google.auth:*"
+      ]
+    },
+    {
+      "bom": "com.google.cloud:google-cloud-translate-bom",
+      "property": "google-cloud-translate.version",
+      "priority": 100,
+      "includes": [
+        "com.google.cloud:google-cloud-translate*"
+      ]
+    },
+    {
+      "bom": "com.google.http-client:google-http-client-bom",
+      "property": "google-http-client.version",
+      "priority": 100,
+      "includes": [
+        "com.google.http-client:*"
+      ]
+    },
+    {
+      "bom": "io.helidon:helidon-bom",
+      "property": "helidon-bom.version",
+      "priority": 100,
+      "includes": [
+        "io.helidon*:*"
+      ]
+    },
+    {
+      "bom": "org.apache.iceberg:iceberg-bom",
+      "property": "iceberg.version",
+      "priority": 100,
+      "includes": [
+        "org.apache.iceberg:*"
+      ]
+    },
+    {
+      "bom": "org.apache.cassandra:java-driver-bom",
+      "property": "cassandra-driver.version",
+      "priority": 100,
+      "includes": [
+        "com.datastax.oss:*",
+        "org.apache.cassandra:*"
+      ]
+    },
+    {
+      "bom": "org.eclipse.jetty:jetty-bom",
+      "property": "jetty.version",
+      "priority": 100,
+      "includes": [
+        "org.eclipse.jetty:*",
+        "org.eclipse.jetty.http2:*",
+        "org.eclipse.jetty.http3:*",
+        "org.eclipse.jetty.quic:*",
+        "org.eclipse.jetty.websocket:*"
+      ]
+    },
+    {
+      "bom": "org.eclipse.jetty.ee10:jetty-ee10-bom",
+      "property": "jetty.version",
+      "priority": 100,
+      "includes": [
+        "org.eclipse.jetty.ee10*:*"
+      ]
+    },
+    {
+      "bom": "org.jooq:jooq-bom",
+      "property": "jooq.version",
+      "priority": 100,
+      "includes": [
+        "org.jooq:*"
+      ]
+    },
+    {
+      "bom": "io.javalin:javalin-bom",
+      "property": "javalin.version",
+      "priority": 100,
+      "includes": [
+        "io.javalin:*"
+      ]
+    },
+    {
+      "bom": "org.mongodb:mongodb-driver-bom",
+      "property": "mongodb.version",
+      "priority": 100,
+      "includes": [
+        "org.mongodb:*"
+      ]
+    },
+    {
+      "bom": "org.mybatis.generator:mybatis-generator",
+      "property": "mybatis-generator.version",
+      "priority": 100,
+      "includes": [
+        "org.mybatis.generator:*"
+      ],
+      "allow_empty": true
+    },
+    {
+      "bom": "com.oracle.database.jdbc:ojdbc-bom",
+      "property": "oracle-database.version",
+      "priority": 100,
+      "includes": [
+        "com.oracle.database*:*"
+      ]
+    },
+    {
+      "bom": "io.prometheus:prometheus-metrics-bom",
+      "property": "prometheus-client.version",
+      "priority": 100,
+      "includes": [
+        "io.prometheus:prometheus-metrics-*"
+      ]
+    },
+    {
+      "bom": "org.apache.pulsar:pulsar-bom",
+      "property": "pulsar.version",
+      "priority": 100,
+      "includes": [
+        "org.apache.pulsar*:*"
+      ]
+    },
+    {
+      "bom": "com.querydsl:querydsl-bom",
+      "property": "querydsl.version",
+      "priority": 100,
+      "includes": [
+        "com.querydsl:*"
+      ]
+    },
+    {
+      "bom": "io.rest-assured:rest-assured-bom",
+      "property": "rest-assured.version",
+      "priority": 100,
+      "includes": [
+        "io.rest-assured:*"
+      ]
+    },
+    {
+      "bom": "io.rsocket:rsocket-bom",
+      "property": "rsocket.version",
+      "priority": 100,
+      "includes": [
+        "io.rsocket:*"
+      ]
+    },
+    {
+      "bom": "cn.dev33:sa-token-bom",
+      "property": "sa-token.version",
+      "priority": 100,
+      "includes": [
+        "cn.dev33:*"
+      ]
+    },
+    {
+      "bom": "org.seleniumhq.selenium:selenium-bom",
+      "property": "selenium.version",
+      "priority": 100,
+      "includes": [
+        "org.seleniumhq.selenium:*"
+      ]
+    },
+    {
+      "bom": "io.prometheus:simpleclient_bom",
+      "property": "prometheus-simpleclient.version",
+      "priority": 100,
+      "includes": [
+        "io.prometheus:simpleclient*"
+      ]
+    },
+    {
+      "bom": "io.smallrye.reactive:smallrye-reactive-messaging-bom",
+      "property": "smallrye-reactive-messaging-bom.version",
+      "priority": 100,
+      "includes": [
+        "io.smallrye.reactive:smallrye-reactive-messaging-*"
+      ]
+    },
+    {
+      "bom": "org.apache.tika:tika-bom",
+      "property": "tika-bom.version",
+      "priority": 100,
+      "includes": [
+        "org.apache.tika:*"
+      ]
+    },
+    {
+      "bom": "io.zipkin.reporter2:zipkin-reporter-bom",
+      "property": "zipkin-reporter.version",
+      "priority": 100,
+      "includes": [
+        "io.zipkin.reporter2:*"
+      ]
+    },
+    {
+      "bom": "io.github.resilience4j:resilience4j-bom",
+      "property": "resilience4j.version",
+      "priority": 100,
+      "includes": [
+        "io.github.resilience4j:*"
+      ]
+    },
+    {
+      "bom": "io.debezium:debezium-bom",
+      "property": "debezium.version",
+      "priority": 200,
+      "includes": [
+        "io.debezium:*"
+      ]
+    },
+    {
+      "bom": "io.dropwizard:dropwizard-bom",
+      "property": "dropwizard-bom.version",
+      "priority": 200,
+      "includes": [
+        "io.dropwizard:*"
+      ]
+    },
+    {
+      "bom": "org.dromara.dynamictp:dynamic-tp-dependencies",
+      "property": "dynamic-tp.version",
+      "priority": 200,
+      "includes": [
+        "org.dromara.dynamictp:*"
+      ]
+    },
+    {
+      "bom": "org.apache.hadoop:hadoop-mapreduce-client",
+      "property": "hadoop.version",
+      "priority": 200,
+      "includes": [
+        "org.apache.hadoop:*",
+        "org.hsqldb:hsqldb:jar:jdk8"
+      ]
+    },
+    {
+      "bom": "org.infinispan:infinispan-bom",
+      "property": "infinispan.version",
+      "priority": 200,
+      "includes": [
+        "org.infinispan:*"
+      ]
+    },
+    {
+      "bom": "io.spring.initializr:initializr-bom",
+      "property": "spring-initializr.version",
+      "priority": 200,
+      "includes": [
+        "io.spring.initializr:*"
+      ]
+    },
+    {
+      "bom": "com.google.cloud:libraries-bom",
+      "property": "google-libraries-bom.version",
+      "priority": 200,
+      "includes": [
+        "com.google.cloud:*"
+      ],
+      "excludes": [
+        "com.google.cloud:google-cloud-translate*"
+      ]
+    },
+    {
+      "bom": "io.micronaut.platform:micronaut-platform",
+      "property": "micronaut.version",
+      "priority": 200,
+      "includes": [
+        "io.micronaut*:*"
+      ],
+      "excludes": [
+        "io.micronaut:*",
+        "io.micronaut.sourcegen:*"
+      ]
+    },
+    {
+      "bom": "io.quarkus.platform:quarkus-bom",
+      "property": "quarkus-bom.version",
+      "priority": 200,
+      "includes": [
+        "io.quarkus:*",
+        "io.quarkus.platform:*",
+        "io.vertx:vertx-codegen:jar:sources",
+        "io.vertx:vertx-codegen:jar:tck",
+        "io.vertx:vertx-codegen:jar:tck-sources"
+      ]
+    }
+  ],
+  "required_aliases": {
+    "grpc-bom.version": "${grpc.version}",
+    "kotlin-stdlib.version": "${kotlin.version}",
+    "maven-jetty-plugin.version": "${jetty.version}",
+    "opentelemetry-alpha.version": "${opentelemetry.version}-alpha",
+    "opentelemetry-instrumentation-alpha.version": "${opentelemetry-instrumentation.version}-alpha",
+    "opentelemetry-semconv-alpha.version": "${opentelemetry-semconv.version}-alpha"
+  },
+  "independent_properties": [
+    "micrometer.version",
+    "micrometer-tracing.version",
+    "selenium-htmlunit.version",
+    "opentelemetry-instrumentation.version",
+    "opentelemetry-javaagent.version"
+  ],
+  "compatible_lines": {
+    "spring-framework.version": "6.",
+    "spring-security.version": "6.",
+    "hibernate.version": "6.6.",
+    "tomcat.version": "10.1.",
+    "cxf.version": "4.1.",
+    "jooq.version": "3.19.",
+    "spring-initializr.version": "0.23.",
+    "micronaut.core.version": "4.",
+    "micronaut.version": "4.",
+    "wss4j.version": "4.0."
+  },
+  "central_overrides": {
+    "io.netty:netty-tcnative": "${netty-tcnative.version}",
+    "io.netty:netty-tcnative-boringssl-static": "${netty-tcnative.version}",
+    "io.netty:netty-tcnative-classes": "${netty-tcnative.version}",
+    "io.vertx:vertx-codegen:jar:tests": "${vertx-compat4.version}",
+    "io.vertx:vertx-consul-client:jar:tests": "${vertx-compat4.version}",
+    "io.vertx:vertx-core:jar:tests": "${vertx-compat4.version}",
+    "io.vertx:vertx-mail-client:jar:tests": "${vertx-compat4.version}",
+    "io.vertx:vertx-mongo-client:jar:tests": "${vertx-compat4.version}",
+    "io.vertx:vertx-service-discovery:jar:tests": "${vertx-compat4.version}",
+    "io.vertx:vertx-sql-client:jar:tests": "${vertx-compat4.version}",
+    "io.vertx:vertx-web:jar:tests": "${vertx-compat4.version}",
+    "io.vertx:vertx-web-templ-freemarker:jar:tests": "${vertx-compat4.version}",
+    "io.vertx:vertx-web-templ-httl:jar:tests": "${vertx-compat4.version}",
+    "io.vertx:vertx-web-templ-jte:jar:tests": "${vertx-compat4.version}",
+    "io.vertx:vertx-web-templ-rocker:jar:tests": "${vertx-compat4.version}",
+    "io.vertx:vertx-web-templ-rythm:jar:tests": "${vertx-compat4.version}"
+  },
+  "runtime_overrides": [
+    {
+      "modules": [
+        "*quarkus*",
+        "*helidon*",
+        "*panache*"
+      ],
+      "includes": [
+        "io.netty:*"
+      ],
+      "property": "netty-4_1.version",
+      "excludes": [
+        "io.netty:netty-tcnative*"
+      ]
+    },
+    {
+      "modules": [
+        "*quarkus*",
+        "*panache*"
+      ],
+      "includes": [
+        "io.vertx:*"
+      ],
+      "property": "vertx-compat4.version",
+      "default_prefixes": [
+        "4.",
+        "5."
+      ]
+    },
+    {
+      "modules": [
+        "*helidon*"
+      ],
+      "includes": [
+        "org.glassfish.jersey*:*"
+      ],
+      "property": "helidon-jersey.version"
+    },
+    {
+      "modules": [
+        "*quarkus*",
+        "*panache*"
+      ],
+      "includes": [
+        "org.hibernate.orm:*"
+      ],
+      "property": "quarkus-hibernate.version"
+    },
+    {
+      "modules": [
+        "*quarkus*",
+        "*panache*"
+      ],
+      "includes": [
+        "io.agroal:*"
+      ],
+      "property": "quarkus-agroal.version"
+    },
+    {
+      "modules": [
+        "*quarkus*",
+        "*panache*"
+      ],
+      "includes": [
+        "jakarta.persistence:jakarta.persistence-api"
+      ],
+      "property": "jakarta.persistence-api.version"
+    },
+    {
+      "modules": [
+        "*helidon*"
+      ],
+      "includes": [
+        "jakarta.annotation:jakarta.annotation-api"
+      ],
+      "property": "helidon-jakarta-annotation.version"
+    },
+    {
+      "modules": [
+        "*helidon*"
+      ],
+      "includes": [
+        "jakarta.enterprise:jakarta.enterprise.cdi-api"
+      ],
+      "property": "helidon-jakarta-cdi.version"
+    },
+    {
+      "modules": [
+        "*helidon*"
+      ],
+      "includes": [
+        "jakarta.inject:jakarta.inject-api"
+      ],
+      "property": "helidon-jakarta-inject.version"
+    },
+    {
+      "modules": [
+        "*helidon*"
+      ],
+      "includes": [
+        "jakarta.interceptor:jakarta.interceptor-api"
+      ],
+      "property": "helidon-jakarta-interceptor.version"
+    },
+    {
+      "modules": [
+        "*helidon*"
+      ],
+      "includes": [
+        "jakarta.ws.rs:jakarta.ws.rs-api"
+      ],
+      "property": "helidon-jakarta-ws-rs.version"
+    }
+  ],
+  "update_policy": {
+    "file": ".github/dependency-policy.json",
+    "branch": "feature/2.0.x"
+  },
+  "retired_dependencies": [
+    {
+      "coordinates": [
+        "org.apache.cxf:cxf-rt-bindings-http"
+      ],
+      "reason": "不属于 CXF 4.1 维护线；仓库 POM 和受管源码未引用",
+      "replacement": "CXF 4.1.9 的 SOAP/XML/JAXB/Aegis 或 OAuth2；按调用协议选择，不是二进制替换"
+    },
+    {
+      "coordinates": [
+        "org.apache.cxf:cxf-rt-bindings-jbi"
+      ],
+      "reason": "不属于 CXF 4.1 维护线；仓库 POM 和受管源码未引用",
+      "replacement": "CXF 4.1.9 的 SOAP/XML/JAXB/Aegis 或 OAuth2；按调用协议选择，不是二进制替换"
+    },
+    {
+      "coordinates": [
+        "org.apache.cxf:cxf-rt-bindings-object"
+      ],
+      "reason": "不属于 CXF 4.1 维护线；仓库 POM 和受管源码未引用",
+      "replacement": "CXF 4.1.9 的 SOAP/XML/JAXB/Aegis 或 OAuth2；按调用协议选择，不是二进制替换"
+    },
+    {
+      "coordinates": [
+        "org.apache.cxf:cxf-rt-databinding-jibx"
+      ],
+      "reason": "不属于 CXF 4.1 维护线；仓库 POM 和受管源码未引用",
+      "replacement": "CXF 4.1.9 的 SOAP/XML/JAXB/Aegis 或 OAuth2；按调用协议选择，不是二进制替换"
+    },
+    {
+      "coordinates": [
+        "org.apache.cxf:cxf-rt-databinding-sdo"
+      ],
+      "reason": "不属于 CXF 4.1 维护线；仓库 POM 和受管源码未引用",
+      "replacement": "CXF 4.1.9 的 SOAP/XML/JAXB/Aegis 或 OAuth2；按调用协议选择，不是二进制替换"
+    },
+    {
+      "coordinates": [
+        "org.apache.cxf:cxf-rt-databinding-xmlbeans"
+      ],
+      "reason": "不属于 CXF 4.1 维护线；仓库 POM 和受管源码未引用",
+      "replacement": "CXF 4.1.9 的 SOAP/XML/JAXB/Aegis 或 OAuth2；按调用协议选择，不是二进制替换"
+    },
+    {
+      "coordinates": [
+        "org.apache.cxf:cxf-rt-rs-security-oauth"
+      ],
+      "reason": "不属于 CXF 4.1 维护线；仓库 POM 和受管源码未引用",
+      "replacement": "CXF 4.1.9 的 SOAP/XML/JAXB/Aegis 或 OAuth2；按调用协议选择，不是二进制替换"
+    },
+    {
+      "coordinates": [
+        "io.github.resilience4j:resilience4j-prometheus"
+      ],
+      "reason": "停留在 1.7.1 的旧集成；仓库未引用",
+      "replacement": "Resilience4j 2.4.0 的 micrometer / feign / reactor 等当前集成；不自动改写调用语义"
+    },
+    {
+      "coordinates": [
+        "io.github.resilience4j:resilience4j-ratpack"
+      ],
+      "reason": "停留在 1.7.1 的旧集成；仓库未引用",
+      "replacement": "Resilience4j 2.4.0 的 micrometer / feign / reactor 等当前集成；不自动改写调用语义"
+    },
+    {
+      "coordinates": [
+        "io.github.resilience4j:resilience4j-retrofit"
+      ],
+      "reason": "停留在 1.7.1 的旧集成；仓库未引用",
+      "replacement": "Resilience4j 2.4.0 的 micrometer / feign / reactor 等当前集成；不自动改写调用语义"
+    },
+    {
+      "coordinates": [
+        "com.netflix.hystrix:hystrix-core",
+        "com.netflix.hystrix:*"
+      ],
+      "reason": "Hystrix 已停止新版本发布；仓库未引用",
+      "replacement": "Resilience4j 2.4.0；需要显式选择超时、隔离和熔断策略，不是直接换包"
+    },
+    {
+      "coordinates": [
+        "com.netflix.hystrix:hystrix-metrics-event-stream"
+      ],
+      "reason": "Hystrix 已停止新版本发布；仓库未引用",
+      "replacement": "Resilience4j 2.4.0；需要显式选择超时、隔离和熔断策略，不是直接换包"
+    },
+    {
+      "coordinates": [
+        "io.github.openfeign:feign-hystrix"
+      ],
+      "reason": "未使用的 Hystrix 适配入口，会重新带回停维 Hystrix",
+      "replacement": "当前 OpenFeign 和 Resilience4j Feign 适配"
+    },
+    {
+      "coordinates": [
+        "commons-httpclient:commons-httpclient"
+      ],
+      "reason": "HttpClient 3 已 EOL；仓库未引用",
+      "replacement": "已有 HttpClient 5；3.x 与 5.x 包名/API 不兼容，不能只改坐标"
+    },
+    {
+      "coordinates": [
+        "org.bouncycastle:bcprov-jdk15on",
+        "org.bouncycastle:*-jdk15on"
+      ],
+      "reason": "旧 jdk15on 发布线；仓库未引用",
+      "replacement": "现有 bcprov-jdk18on 1.87 或特定运行时所需的 LTS 2.73.13，不能同时注册重复 provider"
+    },
+    {
+      "coordinates": [
+        "javax.servlet:javax.servlet-api",
+        "javax.servlet:*",
+        "javax.servlet.jsp:*"
+      ],
+      "reason": "旧 Servlet API 与本线 Jakarta 命名空间不符；仓库未引用",
+      "replacement": "中央已管理的 jakarta.servlet-api 6.x"
+    },
+    {
+      "coordinates": [
+        "javax.validation:validation-api"
+      ],
+      "reason": "旧 Bean Validation 命名空间；仓库源码统一使用 Jakarta",
+      "replacement": "中央已管理的 jakarta.validation-api 与 Hibernate Validator 8"
+    },
+    {
+      "coordinates": [
+        "javax.xml.stream:stax-api"
+      ],
+      "reason": "旧独立 StAX API；仓库未引用，JDK 17 已提供 java.xml",
+      "replacement": "JDK 17 java.xml 模块"
+    },
+    {
+      "coordinates": [
+        "xml-apis:xml-apis"
+      ],
+      "reason": "旧独立 XML 标准 API；仓库未引用，JDK 17 已提供相关 API",
+      "replacement": "JDK 17 java.xml / jdk.xml.dom；独立的现代 XMLBeans 5.3.0 保留"
+    },
+    {
+      "coordinates": [
+        "org.apache.derby:derby",
+        "org.apache.derby:*"
+      ],
+      "reason": "Apache Derby 已于 2025-10-10 退休；仓库未引用",
+      "replacement": "已有 H2 / HSQLDB 或应用所选数据库；不自动迁移数据"
+    },
+    {
+      "coordinates": [
+        "org.apache.derby:derbyclient"
+      ],
+      "reason": "Apache Derby 已于 2025-10-10 退休；仓库未引用",
+      "replacement": "已有 H2 / HSQLDB 或应用所选数据库；不自动迁移数据"
+    },
+    {
+      "coordinates": [
+        "org.apache.derby:derbyLocale_zh_CN"
+      ],
+      "reason": "Apache Derby 已于 2025-10-10 退休；仓库未引用",
+      "replacement": "已有 H2 / HSQLDB 或应用所选数据库；不自动迁移数据"
+    },
+    {
+      "coordinates": [
+        "org.apache.derby:derbynet"
+      ],
+      "reason": "Apache Derby 已于 2025-10-10 退休；仓库未引用",
+      "replacement": "已有 H2 / HSQLDB 或应用所选数据库；不自动迁移数据"
+    },
+    {
+      "coordinates": [
+        "org.apache.derby:derbyoptionaltools"
+      ],
+      "reason": "Apache Derby 已于 2025-10-10 退休；仓库未引用",
+      "replacement": "已有 H2 / HSQLDB 或应用所选数据库；不自动迁移数据"
+    },
+    {
+      "coordinates": [
+        "org.apache.derby:derbyshared"
+      ],
+      "reason": "Apache Derby 已于 2025-10-10 退休；仓库未引用",
+      "replacement": "已有 H2 / HSQLDB 或应用所选数据库；不自动迁移数据"
+    },
+    {
+      "coordinates": [
+        "org.apache.derby:derbytools"
+      ],
+      "reason": "Apache Derby 已于 2025-10-10 退休；仓库未引用",
+      "replacement": "已有 H2 / HSQLDB 或应用所选数据库；不自动迁移数据"
+    },
+    {
+      "coordinates": [
+        "io.github.resilience4j:resilience4j-spring",
+        "io.github.resilience4j:resilience4j-spring-boot2",
+        "io.github.resilience4j:resilience4j-spring-cloud2"
+      ],
+      "reason": "2.4.0 已不发布旧 Spring 适配器，本线只使用 Spring 6 / Boot 3",
+      "replacement": "resilience4j-spring6 / resilience4j-spring-boot3"
+    },
+    {
+      "coordinates": [
+        "org.apache.httpcomponents:httpasyncclient"
+      ],
+      "reason": "Apache 已宣布 HttpAsyncClient 4.1 / HttpCore NIO 4.4 EOL；仓库未引用此异步制品",
+      "replacement": "已有 HttpClient 5.6.5 / HttpCore 5.4.3 的异步 API，不能将 4.x Jar 原地替换为 5.x"
+    },
+    {
+      "coordinates": [
+        "org.apache.httpcomponents:httpasyncclient-cache"
+      ],
+      "reason": "Apache 已宣布 HttpAsyncClient 4.1 / HttpCore NIO 4.4 EOL；仓库未引用此异步制品",
+      "replacement": "已有 HttpClient 5.6.5 / HttpCore 5.4.3 的异步 API，不能将 4.x Jar 原地替换为 5.x"
+    },
+    {
+      "coordinates": [
+        "org.apache.httpcomponents:httpasyncclient-osgi"
+      ],
+      "reason": "Apache 已宣布 HttpAsyncClient 4.1 / HttpCore NIO 4.4 EOL；仓库未引用此异步制品",
+      "replacement": "已有 HttpClient 5.6.5 / HttpCore 5.4.3 的异步 API，不能将 4.x Jar 原地替换为 5.x"
+    },
+    {
+      "coordinates": [
+        "org.apache.httpcomponents:httpcomponents-asyncclient"
+      ],
+      "reason": "Apache 已宣布 HttpAsyncClient 4.1 / HttpCore NIO 4.4 EOL；仓库未引用此异步制品",
+      "replacement": "已有 HttpClient 5.6.5 / HttpCore 5.4.3 的异步 API，不能将 4.x Jar 原地替换为 5.x"
+    },
+    {
+      "coordinates": [
+        "org.apache.httpcomponents:httpcore-nio"
+      ],
+      "reason": "Apache 已宣布 HttpAsyncClient 4.1 / HttpCore NIO 4.4 EOL；仓库未引用此异步制品",
+      "replacement": "已有 HttpClient 5.6.5 / HttpCore 5.4.3 的异步 API，不能将 4.x Jar 原地替换为 5.x"
+    },
+    {
+      "coordinates": [
+        "org.apache.httpcomponents:httpcore-osgi"
+      ],
+      "reason": "公开 OSGi POM 同时包含 HttpCore Classic 和已 EOL 的 HttpCore NIO；仓库未引用",
+      "replacement": "已有 HttpCore 5 / HttpClient 5；保留仍受安全维护的独立 HttpCore Classic 4.4"
+    }
+  ],
+  "family_properties": {
+    "org.apache.wss4j": "wss4j.version"
+  }
+}

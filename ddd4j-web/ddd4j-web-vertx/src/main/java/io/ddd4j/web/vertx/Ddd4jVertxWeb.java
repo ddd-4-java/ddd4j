@@ -211,14 +211,25 @@ public final class Ddd4jVertxWeb {
             WebRequestContext requestContext = Ddd4jVertxContext.request(routingContext).orElseThrow();
             routingContext.vertx().executeBlocking(() -> authenticate(routingContext, requestContext))
                     .onComplete(result -> routingContext.vertx().runOnContext(ignored -> {
+                        RequestState state = routingContext.get(STATE_KEY);
                         if (result.failed()) {
-                            routingContext.fail(result.cause());
+                            if (Objects.nonNull(state)) {
+                                routingContext.fail(result.cause());
+                            }
                             return;
                         }
                         AuthenticationResult authenticationResult = result.result();
+                        if (Objects.isNull(state)) {
+                            // 请求已结束，业务尚未执行。由工作线程释放迟到的租约。
+                            authenticationResult.idempotencyScope().ifPresent(scope ->
+                                    routingContext.vertx().executeBlocking(() -> {
+                                        scope.close();
+                                        return null;
+                                    }).onFailure(exception -> log.error("Unable to release unused Vert.x lease", exception)));
+                            return;
+                        }
                         authenticationResult.authentication().ifPresent(authentication ->
                                 Ddd4jVertxContext.bindSubject(routingContext, authentication.subject()));
-                        RequestState state = routingContext.get(STATE_KEY);
                         authenticationResult.idempotencyScope().ifPresent(state::idempotencyScope);
                         runWithSpan(routingContext.get(OTEL_SPAN_KEY), routingContext::next);
                     }));

@@ -225,6 +225,8 @@ def verify_policy(inventory, selections, sbom_coordinates=None, build_tool_exclu
     errors = []
     sbom_coordinates = sbom_coordinates or set()
     build_tool_exclusions = build_tool_exclusions or {}
+    for coordinate in sorted(sbom_coordinates.intersection(build_tool_exclusions)):
+        errors.append(f"build-tool exclusion overlaps published SBOM: {coordinate}")
     reported = {entry.coordinate for entry in inventory}
     for coordinate in sorted(set(selections) - reported):
         selection = selections[coordinate]
@@ -239,11 +241,7 @@ def verify_policy(inventory, selections, sbom_coordinates=None, build_tool_exclu
             or (len(normalized_set) > 1 and bool(normalized_set & CONDITIONAL_SPDX))
         )
         selection = selections.get(entry.coordinate)
-        exclusion_reason = build_tool_exclusions.get(entry.coordinate, "")
-        excluded = bool(exclusion_reason) and (
-            entry.coordinate not in sbom_coordinates
-            or any(marker in exclusion_reason.lower() for marker in ("provided", "optional", "test"))
-        )
+        excluded = entry.coordinate not in sbom_coordinates and build_tool_exclusions.get(entry.coordinate)
         if requires_selection and excluded:
             continue
         if requires_selection and selection is None:

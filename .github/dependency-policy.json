@@ -153,11 +153,27 @@
         "glassfish-jaxb.version": "4.0.9",
         "shiro.version": "3.0.2",
         "micrometer.version": "1.17.2",
-        "micrometer-tracing.version": "1.7.2"
+        "micrometer-tracing.version": "1.7.2",
+        "cxf.version": "4.1.9",
+        "tomcat.version": "10.1.62",
+        "jooq.version": "3.19.40",
+        "spring-initializr.version": "0.23.0",
+        "kotlin.version": "2.2.21",
+        "grpc.version": "1.82.1",
+        "selenium-htmlunit.version": "4.39.0",
+        "opentelemetry.version": "1.67.0",
+        "opentelemetry-instrumentation.version": "2.33.1",
+        "opentelemetry-semconv.version": "1.44.0",
+        "wss4j.version": "4.0.3"
       },
       "fixed_dependencies": {
         "com.lmax:disruptor": "4.0.0"
-      }
+      },
+      "exclude_properties": [
+        "opentelemetry-alpha.version",
+        "opentelemetry-instrumentation-alpha.version",
+        "opentelemetry-semconv-alpha.version"
+      ]
     },
     "feature/3.0.x": {
       "exclude": [

@@ -14,14 +14,12 @@
  */
 package io.ddd4j.auth.datascope;
 
-import java.util.Objects;
-
 /**
- * 数据权限提供者
+ * 旧 Spring 数据权限入口；保留匿名实现的默认方法并复用框架中立策略。
  *
  * @author ddd4j
  */
-public interface DataScopeProvider {
+public interface DataScopeProvider extends io.ddd4j.data.datascope.DataScopeProvider {
 
     /**
      * 获取数据权限
@@ -31,7 +29,7 @@ public interface DataScopeProvider {
      * @return 是否有数据权限
      */
     default boolean hasPermissions(String dataType, Object data) {
-        return Objects.nonNull(data);
+        return io.ddd4j.data.datascope.DataScopeProvider.nonNullAllowed().hasPermissions(dataType, data);
     }
 
 }

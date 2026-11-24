@@ -22,11 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/**
- * 类型说明。
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 1.0.x
- */
+/** 请求上下文构建与请求 ID 解析的兼容契约。 */
 class WebRequestContextFactoryTest {
 
     private static final RequestIdGenerator FIXED_ID = () -> "generated-request";
@@ -72,6 +68,6 @@ class WebRequestContextFactoryTest {
     void defaultFactoryUsesDefaults() {
         WebRequestContextFactory factory = new WebRequestContextFactory();
         WebRequestContext context = factory.create(requestData(null));
-        org.junit.jupiter.api.Assertions.assertFalse(context.requestId().trim().isEmpty());
+        assertFalse(context.requestId().trim().isEmpty());
     }
 }

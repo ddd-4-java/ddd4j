@@ -17,7 +17,6 @@ package io.ddd4j.core.context;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * 具备失败回滚和关闭清理能力的全局 SPI 注册作用域。
@@ -83,7 +82,7 @@ public final class SpiRegistrationScope implements AutoCloseable {
         private final String key;
         private final Class<T> type;
         private final T service;
-        private Optional<T> previous = Optional.empty();
+        private Object previous;
 
         private Registration(String key, Class<T> type, T service) {
             this.key = Objects.requireNonNull(key, "key must not be null");
@@ -92,21 +91,20 @@ public final class SpiRegistrationScope implements AutoCloseable {
         }
 
         private void install() {
-            previous = BaseContext.get(key, type);
+            // The shared key can be occupied by a legacy, untyped value.
+            previous = BaseContext.get(key);
             BaseContext.inject(key, type, service);
         }
 
         private void uninstall() {
-            BaseContext.get(key, type)
-                    .filter(current -> current == service)
-                    .ifPresent(ignored -> {
-                        if (previous.isPresent()) {
-                            BaseContext.inject(key, type, previous.orElseThrow());
-                        } else {
-                            BaseContext.remove(key);
-                        }
-                    });
-            previous = Optional.empty();
+            if (BaseContext.get(key) == service) {
+                if (Objects.nonNull(previous)) {
+                    BaseContext.inject(key, previous);
+                } else {
+                    BaseContext.remove(key);
+                }
+            }
+            previous = null;
         }
     }
 }

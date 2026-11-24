@@ -42,7 +42,7 @@
 | 用户 ID | `SaConstants.PAYLOAD_USER_ID` | `uid` |
 | 机构 ID | `SaConstants.PAYLOAD_ORG_ID` | `org_id` |
 
-键值由 `AuthConstants` 统一维护。读取器按各自字段取值，组织 ID 与角色 ID 分别使用 `org_id` 和 `rid`。应用专用载荷键由应用维护，通过 `StpKit.getExtraAs(...)` 读取。接入使用 `user_id` 等其他键名的存量令牌时，在接入层完成字段映射。
+键值由 `AuthConstants` 统一维护。签发时使用 `SaConstants.PAYLOAD_TENANT_ID` 写入标准租户字段 `tenant_id`；JWT Simple 会原样保留调用方传入的扩展键，通用读取器也按指定键精确取值。用户、机构、角色 ID 的专用读取方法优先读取表中约定的字段，缺值时兼容 `userId`、`orgId`、`roleId`。应用专用载荷键由应用维护，通过 `StpKit.getExtraAs(...)` 读取。接入使用 `user_id` 等其他键名的存量令牌时，在接入层完成字段映射。
 
 ```java
 String userId = StpKit.getUserIdAsString();

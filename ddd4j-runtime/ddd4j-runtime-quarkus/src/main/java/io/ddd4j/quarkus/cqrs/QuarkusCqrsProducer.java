@@ -14,7 +14,15 @@
  */
 package io.ddd4j.quarkus.cqrs;
 
-import io.ddd4j.core.cqrs.readmodel.*;
+import io.ddd4j.core.cqrs.readmodel.DefaultProjectionService;
+import io.ddd4j.core.cqrs.readmodel.EventChunkReader;
+import io.ddd4j.core.cqrs.readmodel.InMemoryProjectionPositionRepository;
+import io.ddd4j.core.cqrs.readmodel.NoopEventChunkReader;
+import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
+import io.ddd4j.core.cqrs.readmodel.ProjectionRunner;
+import io.ddd4j.core.cqrs.readmodel.ProjectionService;
+import jakarta.persistence.EntityManager;
+import org.eclipse.microprofile.config.ConfigProvider;
 import io.quarkus.arc.DefaultBean;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
@@ -29,17 +37,45 @@ import jakarta.inject.Singleton;
  */
 @ApplicationScoped
 public class QuarkusCqrsProducer {
+    void validateBootstrap(@jakarta.enterprise.event.Observes @jakarta.annotation.Priority(800) io.quarkus.runtime.StartupEvent event) {
+        String bootstrap = ConfigProvider.getConfig().getOptionalValue(
+                "ddd4j.quarkus.cqrs.projection.bootstrap-cron", String.class).orElse("off").stripLeading();
+        if (!"off".equalsIgnoreCase(bootstrap) && !"disabled".equalsIgnoreCase(bootstrap)) {
+            throw new IllegalStateException("projection.bootstrap-cron is reserved and must remain off or disabled");
+        }
+    }
+
 
     /**
      * 创建默认的内存投影位置仓库。
      *
      * @return 投影位置仓库
      */
+    public ProjectionPositionRepository projectionPositionRepository() {
+        return new InMemoryProjectionPositionRepository();
+    }
+
+    /** 按真实 ORM 选择旧 JPA 或内存默认；durable 禁止无持久仓储的回退。
+     * @param entityManagers 当前 ORM 实体管理器
+     * @param jpaRepositories 旧公开 JPA 适配器
+     * @return 当前唯一位置仓储
+     */
     @Produces
     @DefaultBean
     @Singleton
-    public ProjectionPositionRepository projectionPositionRepository() {
-        return new InMemoryProjectionPositionRepository();
+    public ProjectionPositionRepository selectedPositionRepository(Instance<EntityManager> entityManagers,
+            Instance<QuarkusJpaProjectionPositionRepository> jpaRepositories) {
+        if (entityManagers.isAmbiguous()) {
+            throw new IllegalStateException("Multiple EntityManager beans are available for projection storage");
+        }
+        if (entityManagers.isResolvable()) {
+            return jpaRepositories.get();
+        }
+        if ("durable".equals(ConfigProvider.getConfig().getOptionalValue(
+                "ddd4j.quarkus.cqrs.projection.mode", String.class).orElse("off"))) {
+            throw new IllegalStateException("Durable projection requires a persistent ProjectionPositionRepository or EntityManager");
+        }
+        return projectionPositionRepository();
     }
 
     /**

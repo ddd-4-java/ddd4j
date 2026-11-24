@@ -17,14 +17,18 @@ package io.ddd4j.micronaut;
 import io.ddd4j.cache.subject.InMemorySubject;
 import io.ddd4j.cache.subject.InMemorySubjectProvider;
 import io.ddd4j.core.cqrs.command.CommandBus;
-import io.ddd4j.core.cqrs.command.CommandExecutor;
-import io.ddd4j.core.cqrs.command.DefaultCommandBus;
+import io.ddd4j.core.cqrs.command.CommandRegistry;
+import io.ddd4j.micronaut.command.MicronautCommandBus;
+import io.micronaut.context.BeanContext;
+import io.ddd4j.micronaut.cqrs.MicronautProjectionViewManager;
+import io.ddd4j.core.cqrs.readmodel.ViewManager;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.health.ReadinessContributor;
 import io.ddd4j.core.health.RuntimeReadinessRegistry;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.micronaut.context.annotation.Context;
+import io.micronaut.context.annotation.Bean;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.context.event.ApplicationEventPublisher;
@@ -57,18 +61,28 @@ public class Ddd4jMicronautFactory {
     }
 
     @Singleton
+    @Requires(missingBeans = CommandRegistry.class)
+    CommandRegistry commandRegistry() {
+        return new CommandRegistry();
+    }
+
+    @Singleton
     @Requires(missingBeans = CommandBus.class)
-    CommandBus commandBus(Collection<CommandExecutor<?>> executors) {
-        return new DefaultCommandBus(executors);
+    CommandBus commandBus(BeanContext context, CommandRegistry registry) {
+        return new MicronautCommandBus(context, registry);
     }
 
     @Singleton
     @Context
+    @Bean(preDestroy = "close")
     Ddd4jMicronautRuntime runtime(DomainEventPublisher publisher, SubjectProvider subjectProvider,
                                   I18nProvider i18nProvider, CommandBus commandBus,
-                                  Collection<ReadinessContributor> readinessContributors) {
+                                  Collection<ReadinessContributor> readinessContributors, BeanContext context) {
+        MicronautProjectionViewManager.validateExplicitConfiguration(context);
+        ViewManager manager = MicronautProjectionViewManager.explicitlyEnabled(context)
+                ? context.getBean(ViewManager.class) : null;
         Ddd4jMicronautRuntime runtime = new Ddd4jMicronautRuntime(publisher, subjectProvider,
-                i18nProvider, commandBus, readinessContributors);
+                i18nProvider, commandBus, readinessContributors, manager);
         runtime.start();
         return runtime;
     }

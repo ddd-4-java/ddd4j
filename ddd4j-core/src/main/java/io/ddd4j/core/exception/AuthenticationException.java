@@ -14,6 +14,8 @@
  */
 package io.ddd4j.core.exception;
 
+import io.ddd4j.core.api.ApiCode;
+
 import java.io.Serial;
 
 /**
@@ -24,7 +26,7 @@ import java.io.Serial;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
-public class AuthenticationException extends RuntimeException {
+public class AuthenticationException extends BizRuntimeException {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -35,7 +37,7 @@ public class AuthenticationException extends RuntimeException {
      * @param message 错误消息
      */
     public AuthenticationException(String message) {
-        super(message);
+        super(message, ApiCode.UNAUTHORIZED);
     }
 
     /**
@@ -45,6 +47,7 @@ public class AuthenticationException extends RuntimeException {
      * @param cause 原始异常
      */
     public AuthenticationException(String message, Throwable cause) {
-        super(message, cause);
+        this(message);
+        super.initCause(cause);
     }
 }

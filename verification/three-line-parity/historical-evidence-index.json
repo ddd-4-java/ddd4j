@@ -17,9 +17,9 @@
     {
       "line": "1.0.x",
       "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/blocker-fix-brief.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "f9a843f537dc0841da207c7490c83473b99745799d7bc305ef97b1a9f2221e1a"
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "068f2a1c6e1c81b15ac09e612fca41309283bbbfdadaaa1b5737e6109fa141a0"
     },
     {
       "line": "1.0.x",
@@ -94,16 +94,16 @@
     {
       "line": "1.0.x",
       "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/optimize-guice-report.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "3ba4f41ed392569418a47b78acb945f22dbee8f8f28e451b1c9c81677db12856"
+      "sourceCommit": "5ba105c6c4be20312186c5f215dc9717c7396dba",
+      "sourceTime": "2026-10-10T02:51:17+08:00",
+      "sha256": "f1ed04a5c1fd0645daee06ac4e5e58ae321d09643405874a408f0c3cc48923ca"
     },
     {
       "line": "1.0.x",
       "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/optimize-otel-guice-report.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "5f5af0930b1d4ee6ac749fdfe9b76bf98a82b53ccd60adb4cc223a9eeaca7019"
+      "sourceCommit": "5ba105c6c4be20312186c5f215dc9717c7396dba",
+      "sourceTime": "2026-10-10T02:51:17+08:00",
+      "sha256": "8a1409631c839f2730db7c8ab7a834e21eacae53d11597d8fd9b593f4ad794f9"
     },
     {
       "line": "1.0.x",
@@ -150,9 +150,9 @@
     {
       "line": "1.0.x",
       "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-0.1-brief.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "5980fb32ffd5ad80c2465bfe157dac86efb724857590e31189be3fbdb97432d7"
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "4e3e038e88e4ea2e4db00d8e5aa8ab6be35a516e7cae11f5d87139800a6daab2"
     },
     {
       "line": "1.0.x",
@@ -164,16 +164,16 @@
     {
       "line": "1.0.x",
       "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-0.1-report.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "aac1eff7cd9fbb5c75a22dd6a124d4f0d9e584a077d800492b8d022524ebf1a1"
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "f69929b35eacf2f71ab53a041e19b60f9ba1aab7a843f2383b8a8e89d16b77f8"
     },
     {
       "line": "1.0.x",
       "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-0.2-brief.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "acd97ccf39f959bea80b2fc6f0f28de3894f91d6659fa24b74c7d79fde0722ed"
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "a64b49a39abd4a5c44a68e23173f17ac3be5c48fa33edaab2af6c46ea206ac23"
     },
     {
       "line": "1.0.x",
@@ -185,9 +185,9 @@
     {
       "line": "1.0.x",
       "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-0.3-brief.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "e331a1a8997cfc01d1e099288e0649fd3f5d7bc6363af8a4425345ab832df5ab"
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "15180f8891c2a58c9dbc147eb92a60681824ffce53cc60cc2363dbe67264a7dc"
     },
     {
       "line": "1.0.x",
@@ -199,9 +199,9 @@
     {
       "line": "1.0.x",
       "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-0.4-brief.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "269729904f1834da7c322682844673886c592a7b9b8b170440d5115c2ac023c8"
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "b602e72841f1ed00ac7c7c2133a61c7d8f0f76cba0c2f856c3776393f8593a12"
     },
     {
       "line": "1.0.x",
@@ -213,16 +213,16 @@
     {
       "line": "1.0.x",
       "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-0.4-report.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "8904471b95823d98c15c795582bf87cb7c22e0bdb998555878052b894e4a15a3"
+      "sourceCommit": "f74cad8cce71be0162bdd432cb6d42bf97e10891",
+      "sourceTime": "2026-10-10T12:59:18+08:00",
+      "sha256": "15543525fd54f28103d1e1f166f2e615d7149a7f20263802ee5104ceb8abd5e4"
     },
     {
       "line": "1.0.x",
       "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.1-brief.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "6255ab44d3c9b307808258429736fc361c8d46a511204df9724c739bd5a9c458"
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "542e8284cf7137a2e49fbc10b59125a5ca2a049dcc32525e7e8d6494c5592170"
     },
     {
       "line": "1.0.x",
@@ -234,9 +234,9 @@
     {
       "line": "1.0.x",
       "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.10-brief.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "78e6fd0a51e3a5dc0e516ccb6586ccdf89eb4343c3a167387dcd4a09cd7d0b5c"
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "6ae06c80aeff31cbcdf1d3b0a86ffcf83839e7e8c2fbc2e40dc7e23a74fdee1d"
     },
     {
       "line": "1.0.x",
@@ -248,23 +248,23 @@
     {
       "line": "1.0.x",
       "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.2-brief.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "ed8d4d5d881ca37aea305f26d58609f9d52a587289478752d70a3c591a493fd1"
+      "sourceCommit": "5ba105c6c4be20312186c5f215dc9717c7396dba",
+      "sourceTime": "2026-10-10T02:51:17+08:00",
+      "sha256": "3441cdb6ac2d3c914fb39b11b71cd1d1b5942afd4e8ee7e2151b8deae230eb5f"
     },
     {
       "line": "1.0.x",
       "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.2-report.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "81e4112960074f0d5c5802e4d9474bd5a8b067e5c56032b53cfcce599cdbf5bc"
+      "sourceCommit": "5ba105c6c4be20312186c5f215dc9717c7396dba",
+      "sourceTime": "2026-10-10T02:51:17+08:00",
+      "sha256": "1030bf66864cc60a2896751efbff65134b8612de87db390538b435de501c0dbe"
     },
     {
       "line": "1.0.x",
       "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.3-brief.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "211cb66a2b252b2aca33ae5b20270891882d490330b6f4659cab83a12e59a8ba"
+      "sourceCommit": "5ba105c6c4be20312186c5f215dc9717c7396dba",
+      "sourceTime": "2026-10-10T02:51:17+08:00",
+      "sha256": "d45dc6328658b796f77d1ca9a0899b79a410b1924d5c193f0c13f1354c7cccf7"
     },
     {
       "line": "1.0.x",
@@ -276,23 +276,23 @@
     {
       "line": "1.0.x",
       "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.4-brief.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "892ab1020bc8ff7196a9e5c32eda7fea661d95c3ab712c2121a678cd4416082a"
+      "sourceCommit": "5ba105c6c4be20312186c5f215dc9717c7396dba",
+      "sourceTime": "2026-10-10T02:51:17+08:00",
+      "sha256": "f8153a07c645dc53193587823ca33771e8fb80c52b69b7d76c238b4be9c1de96"
     },
     {
       "line": "1.0.x",
       "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.4-report.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "e6912aa8233c3fef2dfd12f6ed5d4881383de922cdec415dd250f206a956d217"
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "e6cd1d62af1afbe6266ade194b88fd42a34f7266021baf5495e3e5a2cf52fcda"
     },
     {
       "line": "1.0.x",
       "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.5-brief.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "120e1118f66869dae49123c86421f0ec51ffe7c6271996cf8981ad1bb0125f2b"
+      "sourceCommit": "5ba105c6c4be20312186c5f215dc9717c7396dba",
+      "sourceTime": "2026-10-10T02:51:17+08:00",
+      "sha256": "e2e8c70e002b07492931d1d04b09c68a26c66f578a67a87760ab7ab57c6da641"
     },
     {
       "line": "1.0.x",
@@ -304,9 +304,9 @@
     {
       "line": "1.0.x",
       "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.6-brief.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "92c09b2a54818fab1e4ef35201ec3bfb3a5f3a98f6c936b637da8d02b35bf182"
+      "sourceCommit": "5ba105c6c4be20312186c5f215dc9717c7396dba",
+      "sourceTime": "2026-10-10T02:51:17+08:00",
+      "sha256": "e29be01d8bf281df5c8c12a57eb0b2f599cc58bee3a9d299e4ee14834ed2b583"
     },
     {
       "line": "1.0.x",
@@ -318,9 +318,9 @@
     {
       "line": "1.0.x",
       "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.7-brief.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "f71ef977d6fb3b251240abefb2efcbef877f3c049260263e245fb1e100ee5040"
+      "sourceCommit": "5ba105c6c4be20312186c5f215dc9717c7396dba",
+      "sourceTime": "2026-10-10T02:51:17+08:00",
+      "sha256": "26d555cc3936da8ffc1e165bac83fe69aaa4d785da11337c12232a5eb46c7e98"
     },
     {
       "line": "1.0.x",
@@ -332,9 +332,9 @@
     {
       "line": "1.0.x",
       "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.8-brief.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "5b1b355d1a03d42ca2f72e9b0b8b798fa70f077c4d254225bfe8053f89798bc5"
+      "sourceCommit": "5ba105c6c4be20312186c5f215dc9717c7396dba",
+      "sourceTime": "2026-10-10T02:51:17+08:00",
+      "sha256": "2e714eab3720f08c2171158f0464de283576589b19f8f1b8ba05a5a6441825f5"
     },
     {
       "line": "1.0.x",
@@ -346,9 +346,9 @@
     {
       "line": "1.0.x",
       "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-1.9-brief.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "969c9fae8b95bfe41d28e7ab946293fc5ee60934b25fee0cbbe63d9b5837d92d"
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "26b78d8349e3420943648179a8270ac237403dc695c63abd7f4095ebcdacde83"
     },
     {
       "line": "1.0.x",
@@ -360,23 +360,23 @@
     {
       "line": "1.0.x",
       "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-2.1-brief.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "4a6beac735b5d634984aced2b6f56027bfff851146cc9bd19422f334d05abce9"
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "cd4f1120be16a82d3c7dbbe47cb56400fa96175d44b70f1d3e68ebb427cf5bd1"
     },
     {
       "line": "1.0.x",
       "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-2.1-report.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "3ab07d4324a28d15e99ac40de3e200cf12e428cbee415f6a6bcaf24b3c9f7554"
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "8679528f1a90e352387a985c3c8869e30e3747ea52682252f76515b1d1140cdc"
     },
     {
       "line": "1.0.x",
       "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-2.2-brief.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "e5eb87272c17e3e2fc73a143c15d9856017861f37b3d590cc6bb25befea35bcb"
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "0550f1363a2e0d5b8b20f51f8454bc89fedb21c559786c150f0ad3f03d114c44"
     },
     {
       "line": "1.0.x",
@@ -388,9 +388,9 @@
     {
       "line": "1.0.x",
       "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-2.3-brief.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "0c98ddffa00e2e0b428ef6b2688242f82a717ec57aa142d7296bf4b9260504b4"
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "3a4f739c68520c7af0f1cde21faf1f7fe03a12b7415b1242aa29d96675fffcc4"
     },
     {
       "line": "1.0.x",
@@ -402,9 +402,9 @@
     {
       "line": "1.0.x",
       "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-2.4-brief.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "44783a35c9ef838ec082d28567270d24ec947be5bdeea29f27415a754d74afd3"
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "a71e198945d16812d00ff25a1be8d89f4f95661eb4c5627a6e9c40fd07eeaef5"
     },
     {
       "line": "1.0.x",
@@ -416,9 +416,9 @@
     {
       "line": "1.0.x",
       "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-2.5-brief.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "e49ea12282dbca4c28a70db9e0ac86f2e4dfaee2b8d22ce3edbd496060485a5a"
+      "sourceCommit": "f74cad8cce71be0162bdd432cb6d42bf97e10891",
+      "sourceTime": "2026-10-10T12:59:18+08:00",
+      "sha256": "d0ce3e4aa49baf3ebb29ded6031e4ee8bb016de41187786748f3775a368603c8"
     },
     {
       "line": "1.0.x",
@@ -430,9 +430,9 @@
     {
       "line": "1.0.x",
       "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-3.1-brief.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "144eddf5f3ada94f38bf1893e237e62f964237cb81c9a9e799a67e40ca707c5b"
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "4f1b833c08c13a93c9da4cba7b64d790760a17e6dea35477a9f23b423b50f8a6"
     },
     {
       "line": "1.0.x",
@@ -444,9 +444,9 @@
     {
       "line": "1.0.x",
       "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-3.2-brief.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "43e90596edbdfd2789b2db082d21fc8b2d9dfe74b5c3de42e5466e6ff9d2277c"
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "865cec10c7187b06aeb82a524c5378d8dd448883d9d01e55ff3dfbb9f5400d78"
     },
     {
       "line": "1.0.x",
@@ -458,9 +458,9 @@
     {
       "line": "1.0.x",
       "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-3.3-brief.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "849c2265a14787094cc10031e57f644a53db5e6c5777b08cf7a883acd3d7589e"
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "f95ffcde6bac1776091e58093860b4d1414fdacb0c4ed0f55797c09fba5bf90a"
     },
     {
       "line": "1.0.x",
@@ -521,9 +521,9 @@
     {
       "line": "1.0.x",
       "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-4.4-report.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "80062a6c839463812574697b03a5baf746b543f5e934b019a0624fe700f5a044"
+      "sourceCommit": "5ba105c6c4be20312186c5f215dc9717c7396dba",
+      "sourceTime": "2026-10-10T02:51:17+08:00",
+      "sha256": "78b1a491d19e8d55ad7c67a39c774f7d22f6d8de6dc6b030bb0dd710b865fe61"
     },
     {
       "line": "1.0.x",
@@ -780,9 +780,9 @@
     {
       "line": "1.0.x",
       "path": ".superpowers/sdd/2026-08-24-multi-runtime-self-implementation/task-9.1-9.3-brief.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "fc1e0fefe529e19604913132eb02afe95fb2ec4dd7e05ae38af58882603c6bb2"
+      "sourceCommit": "5ba105c6c4be20312186c5f215dc9717c7396dba",
+      "sourceTime": "2026-10-10T02:51:17+08:00",
+      "sha256": "6c1efb6adb13070a94b7c79052334159115952479c748455d522e0e67e5961dc"
     },
     {
       "line": "1.0.x",
@@ -794,16 +794,16 @@
     {
       "line": "1.0.x",
       "path": "docs/architecture/cloud-agents-migration-evidence.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "dda391e71040860e3a9af897d0ae12cc7e8cd8d82f6a89ba50dad9a5e1658bbc"
+      "sourceCommit": "f74cad8cce71be0162bdd432cb6d42bf97e10891",
+      "sourceTime": "2026-10-10T12:59:18+08:00",
+      "sha256": "c89f45c59129fc71b0c46d3b609481110d919faab2c4f959f9cc7ec58f919e34"
     },
     {
       "line": "1.0.x",
       "path": "docs/architecture/cloud-exception-contract-audit.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "2ac4035d1ca42c66ac14ea72158b565c1d775ada002649e1806ef98ef535bf38"
+      "sourceCommit": "f74cad8cce71be0162bdd432cb6d42bf97e10891",
+      "sourceTime": "2026-10-10T12:59:18+08:00",
+      "sha256": "5154acbaeb50e4b837b561c467319f59a4e5ef49a92632f13dc6f80a6fcd26ad"
     },
     {
       "line": "1.0.x",
@@ -822,16 +822,16 @@
     {
       "line": "1.0.x",
       "path": "docs/architecture/shiro-real-provider-audit.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "1334efb11f7bc40df320b68815747d7dae45cf4341ff21d98be5d8fd63f449af"
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "d367655cf3d90a279fec35d1f6376420d24446b8543691ddd64a176e7397db83"
     },
     {
       "line": "1.0.x",
       "path": "docs/migrations/truelicense4-framework-consumer-audit.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "ce556bd61e961c89e08dd744dce870e0d068c5b320f307f42c5b57d306860c2a"
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "286251a4f6bcfcb541998f497b4555f5b1ba8c4839db8914fda4c293b2206057"
     },
     {
       "line": "1.0.x",
@@ -941,16 +941,16 @@
     {
       "line": "1.0.x",
       "path": "docs/superpowers/plans/2026-08-24-fuin-reference-self-implementation.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "20076d704505db50f4560f331ff57a7a9cbb997e94ba6eab44b8cba59950b98e"
+      "sourceCommit": "f74cad8cce71be0162bdd432cb6d42bf97e10891",
+      "sourceTime": "2026-10-10T12:59:18+08:00",
+      "sha256": "2ac1b9345c2dcf71b4923ae2fd1b40b22d3c560b279254fb2abed9c7d722ecec"
     },
     {
       "line": "1.0.x",
       "path": "docs/superpowers/plans/2026-08-24-multi-runtime-self-implementation.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "752dec1a1f1f3897e826b40684c5a32ab5732041649c6a3508a3432826586fbd"
+      "sourceCommit": "f74cad8cce71be0162bdd432cb6d42bf97e10891",
+      "sourceTime": "2026-10-10T12:59:18+08:00",
+      "sha256": "5e29d28d088528930385f5a0e590d18b729b1c9918e3db7e54bf3ca7628d447a"
     },
     {
       "line": "1.0.x",
@@ -997,9 +997,9 @@
     {
       "line": "1.0.x",
       "path": "docs/superpowers/plans/2026-09-08-explicit-jpa-transaction-participation.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "082adba8d5dc09bbeb2910c4e8613a28c753f60dd230ef40aceed4160a236b63"
+      "sourceCommit": "f74cad8cce71be0162bdd432cb6d42bf97e10891",
+      "sourceTime": "2026-10-10T12:59:18+08:00",
+      "sha256": "7e7cffe1f45831edc66f05dc810c20c16df3e0eb2ccca0988367433eef10a970"
     },
     {
       "line": "1.0.x",
@@ -1011,16 +1011,16 @@
     {
       "line": "1.0.x",
       "path": "docs/superpowers/plans/2026-09-10-license-gate-hardening.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "225493f1bb23cece4c162fa3198dcb264d4b21725dd0bf421c4e186fea86d149"
+      "sourceCommit": "f74cad8cce71be0162bdd432cb6d42bf97e10891",
+      "sourceTime": "2026-10-10T12:59:18+08:00",
+      "sha256": "f8fe653117d0a4fa78c5ace99ca7d2a7e780998170328c17c7e3d58c7d4415bc"
     },
     {
       "line": "1.0.x",
       "path": "docs/superpowers/plans/2026-09-10-mq-startup-lifecycle.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "8273355def751b422c776cb4bc4bcd4930e210029dc374632dae51068c8d27b4"
+      "sourceCommit": "f74cad8cce71be0162bdd432cb6d42bf97e10891",
+      "sourceTime": "2026-10-10T12:59:18+08:00",
+      "sha256": "9233b49514f2fe3eb2684671d84d034e08330de4caae8bd256d70e942419cb39"
     },
     {
       "line": "1.0.x",
@@ -1074,9 +1074,9 @@
     {
       "line": "1.0.x",
       "path": "docs/superpowers/specs/2026-07-01-ddd4j-full-architecture-review-design.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "175557fc9d7fa443c6b4a5993c3501537a45fc9ed6061ef554120037862e53cb"
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "340236b3621d28ba8e5c2cdf5ed0caaf5d7d20cc787371229a00a902bb5b6501"
     },
     {
       "line": "1.0.x",
@@ -1144,9 +1144,9 @@
     {
       "line": "1.0.x",
       "path": "docs/superpowers/specs/2026-09-06-three-line-parity.md",
-      "sourceCommit": "0ab39539133c0fd3c2a4fa34253934df1fb5aa71",
-      "sourceTime": "2026-10-15T20:54:02+08:00",
-      "sha256": "3dce7deb998a6e64a6a8b4596d716c0bb84d925d38e2ad721a54296f4c70b706"
+      "sourceCommit": "5ba105c6c4be20312186c5f215dc9717c7396dba",
+      "sourceTime": "2026-10-10T02:51:17+08:00",
+      "sha256": "1045accf70599d2c0eff2e75f8669b1a4a3d543ecff2d8ab1864075b795deebc"
     },
     {
       "line": "1.0.x",
@@ -1186,9 +1186,9 @@
     {
       "line": "1.0.x",
       "path": "docs/superpowers/specs/2026-09-15-ddd4j-family-logo-system-design.md",
-      "sourceCommit": "b7b229eb0929bab0240d4329bacec38b5c27df28",
-      "sourceTime": "2026-10-15T01:48:04+08:00",
-      "sha256": "e1e8f47fee04b1b5c80ed7266858fd1b198f2ec63a75aa8e4dd2c5d8942182f6"
+      "sourceCommit": "fafcbbde0c1b955a09561275de4f2f3564263a00",
+      "sourceTime": "2026-10-10T01:46:25+08:00",
+      "sha256": "41b131061c541ad6721388ce541b4df573e867d8150b0af2945019ff5b5030e2"
     },
     {
       "line": "1.0.x",
@@ -1417,9 +1417,9 @@
     {
       "line": "2.0.x",
       "path": "docs/superpowers/specs/2026-07-02-satoken-auth-design.md",
-      "sourceCommit": "d848eb550f477d4ef6927465eb6e329dd7c85e7a",
-      "sourceTime": "2026-10-10T01:48:18+08:00",
-      "sha256": "d3553eba20e320a9a6f486c8a02bc8f9a57abbff15d3f34b39e6d01cb5e979bb"
+      "sourceCommit": "79e9a9abe1c92606d256d4ca92bfd54fdd9cb9e5",
+      "sourceTime": "2026-11-19T23:19:37+08:00",
+      "sha256": "cea24dbd3b8efa8412195c74865832fb279c509bfe9b84884608a58abf02b2ec"
     },
     {
       "line": "2.0.x",
@@ -1469,6 +1469,13 @@
       "sourceCommit": "5e6fac9d958d3634085d595f36d95a74c1405bc4",
       "sourceTime": "2026-10-10T14:02:47+08:00",
       "sha256": "dce6838ec3fd77b2f8c6aa432370d34772b3eabb72a0d5f0e77ebf55a315931e"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/superpowers/specs/2026-11-17-jdk17-dependency-alignment.md",
+      "sourceCommit": "fda1e4b1f4768a7cb9342c42fc86aa29f355dd01",
+      "sourceTime": "2026-11-18T00:07:36+08:00",
+      "sha256": "054f57b5ef239c43cd318ad8e6ce57a5c443d3029c9064599aef15c36a9e0dec"
     },
     {
       "line": "3.0.x",
@@ -1690,9 +1697,9 @@
     {
       "line": "3.0.x",
       "path": "docs/superpowers/specs/2026-07-02-satoken-auth-design.md",
-      "sourceCommit": "f558881115e4bc38a46af6dcaaf44333812050b4",
-      "sourceTime": "2026-10-10T02:55:04+08:00",
-      "sha256": "d3553eba20e320a9a6f486c8a02bc8f9a57abbff15d3f34b39e6d01cb5e979bb"
+      "sourceCommit": "c63cdf1073ec5202d817108e4b75c2eeb9791824",
+      "sourceTime": "2026-11-20T00:20:12+08:00",
+      "sha256": "f43e39451b34e300d86d0c113c98d6f3c31053f1d03a9fc8678d777ff81f434e"
     },
     {
       "line": "3.0.x",

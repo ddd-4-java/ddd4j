@@ -14,10 +14,7 @@
  */
 package io.ddd4j.sample.micronaut.cqrs;
 
-import io.ddd4j.core.cqrs.command.CommandBus;
-import io.ddd4j.core.cqrs.command.DefaultCommandBus;
 import io.ddd4j.core.cqrs.eventstore.InMemoryEventStore;
-import io.ddd4j.sample.micronaut.cqrs.command.CreateOrderCommandHandler;
 import io.ddd4j.sample.micronaut.cqrs.readmodel.InMemoryEventChunkReader;
 import io.ddd4j.sample.micronaut.cqrs.readmodel.InMemoryViewManager;
 import io.ddd4j.sample.micronaut.cqrs.readmodel.OrderSummaryView;
@@ -27,7 +24,6 @@ import io.micronaut.runtime.Micronaut;
 import io.micronaut.runtime.event.annotation.EventListener;
 import jakarta.inject.Singleton;
 
-import java.util.Collections;
 
 /**
  * Micronaut CQRS 集成示例启动入口。
@@ -46,7 +42,7 @@ public class MicronautCqrsApplication {
     }
 
     /**
-     * CQRS 组件装配工厂：向容器提供事件存储、事件分块读取器、命令总线与视图管理器。
+     * 向容器提供内存事件存储、事件分块读取器和视图管理器。命令总线由 Micronaut runtime 装配。
      */
     @Factory
     public static class CqrsConfig {
@@ -57,16 +53,13 @@ public class MicronautCqrsApplication {
         }
 
         @Singleton
+        @io.micronaut.context.annotation.Bean(typed = InMemoryEventChunkReader.class)
         InMemoryEventChunkReader chunkReader(InMemoryEventStore eventStore) {
             return new InMemoryEventChunkReader(eventStore);
         }
 
         @Singleton
-        CommandBus commandBus(CreateOrderCommandHandler handler) {
-            return new DefaultCommandBus(Collections.singletonList(handler));
-        }
-
-        @Singleton
+        @io.micronaut.context.annotation.Bean(typed = InMemoryViewManager.class, preDestroy = "stop")
         InMemoryViewManager viewManager(InMemoryEventChunkReader chunkReader,
                                         OrderSummaryView orderSummaryView) {
             InMemoryViewManager manager = new InMemoryViewManager(chunkReader);

@@ -266,6 +266,119 @@ class ThreeLineInventoryTest(unittest.TestCase):
         (self.roots[2] / path).unlink()
         self.assertEqual("OPEN", status(path))
 
+    def dropwizard_access_log_fixture(self):
+        runtime = "ddd4j-runtime/ddd4j-runtime-dropwizard/src/"
+        package = "java/io/ddd4j/dropwizard/"
+        owner_sources = {
+            runtime + "main/" + package + "Ddd4jLogbackAccessRequestLayout.java":
+                "final class Ddd4jLogbackAccessRequestLayout {}",
+            runtime + "main/" + package + "Ddd4jLogbackAccessRequestLogFactory.java":
+                "public class Ddd4jLogbackAccessRequestLogFactory { public void extra() {} }",
+            runtime + "test/" + package + "Ddd4jLogbackAccessRequestLogFactoryTest.java":
+                "class Ddd4jLogbackAccessRequestLogFactoryTest {}",
+        }
+        counterpart_contents = {
+            runtime + "main/" + package + "Ddd4jBundle.java": "class Ddd4jBundle {}",
+            runtime + "test/" + package + "Ddd4jBundleTest.java": "class Ddd4jBundleTest {}",
+            "ddd4j-samples/ddd4j-sample-dropwizard/src/test/java/"
+            "io/ddd4j/sample/dropwizard/NativeDefaultTest.java": "class NativeDefaultTest {}",
+            "ddd4j-samples/ddd4j-sample-dropwizard/src/main/java/"
+            "io/ddd4j/sample/dropwizard/DropwizardOrderApplication.java":
+                "class DropwizardOrderApplication {}",
+            "ddd4j-samples/ddd4j-sample-dropwizard/src/main/resources/dropwizard-order.yml":
+                "server:\n  requestLog:\n    appenders: []",
+        }
+
+        def sha(content):
+            return hashlib.sha256(content.encode()).hexdigest()
+
+        for path, content in owner_sources.items():
+            self.write(self.roots[1], path, content)
+        counterpart_hashes = {}
+        for path, content in counterpart_contents.items():
+            comment = "#" if path.endswith(".yml") else "//"
+            per_line = {jdk: f"{content} {comment} {jdk}" for jdk in ("8", "17", "21")}
+            for root, body in zip(self.roots, per_line.values()):
+                self.write(root, path, body)
+            counterpart_hashes[path] = {jdk: sha(body) for jdk, body in per_line.items()}
+        policy = json.loads(self.policy.read_text())
+        policy["platformFilesOnlyOnJdk17"] = {
+            "sources": {path: sha(content) for path, content in owner_sources.items()},
+            "counterparts": counterpart_hashes,
+            "reason": "JDK 17 access logging adapter verified by three lines",
+        }
+        self.policy.write_text(json.dumps(policy))
+        return policy, owner_sources, counterpart_contents
+
+    def test_jdk17_dropwizard_access_log_files_leave_api_differences_independent(self):
+        _, owner_sources, _ = self.dropwizard_access_log_fixture()
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = json.loads((output / "inventory.json").read_text())["differences"]
+        file_rows = [row for row in rows if row["path"] in owner_sources]
+        self.assertEqual(3, len(file_rows))
+        self.assertTrue(all(row["status"] == "PLATFORM_ADAPTED" for row in file_rows))
+        api_rows = [row for row in rows if row["path"].endswith("#extra()")]
+        self.assertEqual(1, len(api_rows))
+        self.assertEqual("OPEN", api_rows[0]["status"])
+
+    def test_jdk17_dropwizard_access_log_files_reject_stale_inputs(self):
+        _, owner_sources, counterpart_contents = self.dropwizard_access_log_fixture()
+        source_paths = list(owner_sources)
+        contract = next(path for path in counterpart_contents if path.endswith("NativeDefaultTest.java"))
+        sample_yaml = next(path for path in counterpart_contents if path.endswith("dropwizard-order.yml"))
+        sample_application = next(path for path in counterpart_contents
+                                  if path.endswith("DropwizardOrderApplication.java"))
+        cases = (
+            ("mutated production", self.roots[1], source_paths[0], "// changed"),
+            ("mutated owner test", self.roots[1], source_paths[2], "// changed"),
+            ("missing owner", self.roots[1], source_paths[1], None),
+            ("appears on JDK 8", self.roots[0], source_paths[0], owner_sources[source_paths[0]]),
+            ("appears on JDK 21", self.roots[2], source_paths[2], owner_sources[source_paths[2]]),
+            ("mutated JDK 8 contract", self.roots[0], contract, "// changed"),
+            ("missing JDK 21 contract", self.roots[2], contract, None),
+            ("mutated native YAML", self.roots[2], sample_yaml, "server: {}"),
+            ("mutated native startup", self.roots[1], sample_application, "class Other {}"),
+        )
+        for label, root, relative, new_content in cases:
+            with self.subTest(label=label):
+                path = root / relative
+                previous = path.read_text() if path.is_file() else None
+                if new_content is None:
+                    path.unlink()
+                else:
+                    self.write(root, relative, new_content)
+                try:
+                    result, _ = self.run_checker("inventory")
+                    self.assertNotEqual(0, result.returncode)
+                    self.assertIn(f"stale JDK 17-only platform file: {relative}", result.stderr)
+                finally:
+                    if previous is None:
+                        path.unlink()
+                    else:
+                        self.write(root, relative, previous)
+
+    def test_jdk17_dropwizard_access_log_files_reject_broadened_policy(self):
+        policy, owner_sources, counterpart_contents = self.dropwizard_access_log_fixture()
+        mapping = policy["platformFilesOnlyOnJdk17"]
+        original_source = next(iter(owner_sources))
+        original_contract = next(iter(counterpart_contents))
+        for field, original, replacement in (
+            ("sources", original_source, original_source.replace(".java", "*.java")),
+            ("sources", original_source, "ddd4j-core/src/main/java/example/Foo.java"),
+            ("counterparts", original_contract, "ddd4j-core/src/test/java/example/FooTest.java"),
+        ):
+            with self.subTest(field=field, replacement=replacement):
+                original_mapping = mapping[field].copy()
+                mapping[field][replacement] = mapping[field].pop(original)
+                self.policy.write_text(json.dumps(policy))
+                try:
+                    result, _ = self.run_checker("inventory")
+                    self.assertNotEqual(0, result.returncode)
+                    self.assertIn("invalid JDK 17-only platform file mapping", result.stderr)
+                finally:
+                    mapping[field] = original_mapping
+
     def test_jdk8_only_test_requires_locked_counterpart_contract(self):
         low_only = "ddd4j-core/src/test/java/example/LegacyContainerIT.java"
         counterpart = "ddd4j-core/src/test/java/example/ContainerIT.java"
@@ -477,6 +590,9 @@ class ThreeLineInventoryTest(unittest.TestCase):
         for root in self.roots:
             root.mkdir()
             subprocess.run(["git", "init", "-q", str(root)], check=True)
+            # 临时产物遵守当前 class_files 的默认 reactor 根 POM 契约。
+            self.write(root, "pom.xml", "<project><modules><module>ddd4j-core</module>"
+                       "<module>ddd4j-samples/demo</module></modules></project>")
             self.write(root, "ddd4j-core/pom.xml", "<project/>")
             self.write(root, "ddd4j-samples/demo/pom.xml", "<project/>")
             self.write(root, "ddd4j-core/src/main/java/example/Foo.java", "package example; public class Foo {}")
@@ -789,6 +905,43 @@ class ThreeLineInventoryTest(unittest.TestCase):
         result, _ = self.run_checker("inventory")
         self.assertNotEqual(0, result.returncode)
 
+    def test_reports_all_stale_dependency_policy_bindings_before_inventory(self):
+        config_paths = (
+            "config/dependencies/alignment-policy.json",
+            "config/dependencies/component-matrix.csv",
+        )
+        test_path = "scripts/dependencies/tests/test_uniform_contract.py"
+        policy = json.loads(self.policy.read_text())
+        jdks = ("8", "17", "21")
+        mappings = []
+        for path in (*config_paths, test_path):
+            contents = tuple(f"{path} on JDK {jdk}\n" for jdk in jdks)
+            for root, content in zip(self.roots, contents):
+                self.write(root, path, content)
+            mappings.append({
+                "path": path,
+                "sha256ByJdk": {
+                    jdk: hashlib.sha256(content.encode()).hexdigest()
+                    for jdk, content in zip(jdks, contents)
+                },
+                "evidence": "locked platform input",
+            })
+        policy["platformDependencyConfigFiles"] = mappings[:2]
+        policy["platformToolScripts"] = mappings[2:]
+        self.policy.write_text(json.dumps(policy))
+
+        self.write(self.roots[0], config_paths[0], "changed JDK 8 policy\n")
+        self.write(self.roots[1], config_paths[1], "changed JDK 17 matrix\n")
+        self.write(self.roots[2], config_paths[1], "changed JDK 21 matrix\n")
+        (self.roots[0] / test_path).unlink()
+        result, output = self.run_checker("inventory")
+
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn(f"stale platform dependency config mapping: {config_paths[0]} (JDK 8)", result.stderr)
+        self.assertIn(f"stale platform dependency config mapping: {config_paths[1]} (JDK 17, 21)", result.stderr)
+        self.assertIn(f"stale platform tool script: {test_path} (JDK 8)", result.stderr)
+        self.assertFalse((output / "inventory.json").exists())
+
     def test_license_governance_files_require_exact_line_hashes(self):
         paths = ("config/license-selections.tsv", "config/license-build-tool-exclusions.tsv")
         policy = json.loads(self.policy.read_text())
@@ -873,6 +1026,83 @@ class ThreeLineInventoryTest(unittest.TestCase):
         result, _ = self.run_checker("inventory")
         self.assertNotEqual(0, result.returncode)
 
+    def test_panache_projection_config_requires_exact_path_and_hashes(self):
+        path = "ddd4j-data/ddd4j-data-event-store-panache/src/test/resources/application.properties"
+        neighbor = path.replace("ddd4j-data-event-store-panache", "ddd4j-data-event-store-jpa")
+        base = "quarkus.datasource.db-kind=h2\n"
+        contents = (base + "quarkus.index-dependency.ddd4j-core.group-id=io.ddd4j\n"
+                    + "quarkus.index-dependency.ddd4j-core.artifact-id=ddd4j-core\n", base, base)
+        for root, content in zip(self.roots, contents):
+            self.write(root, path, content)
+            self.write(root, neighbor, content)
+        policy = json.loads(self.policy.read_text())
+        mapping = {
+            "path": path,
+            "sha256ByJdk": {
+                jdk: hashlib.sha256(content.encode()).hexdigest()
+                for jdk, content in zip(("8", "17", "21"), contents)
+            },
+            "evidence": "Quarkus 1 requires the core Jandex index for the legacy hierarchy",
+        }
+        policy["platformBuildConfigFiles"] = [mapping]
+        self.policy.write_text(json.dumps(policy))
+
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = {row["path"]: row for row in
+                json.loads((output / "inventory.json").read_text())["differences"]}
+        self.assertEqual("PLATFORM_CONFIG", rows[path]["status"])
+        self.assertEqual("OPEN", rows[neighbor]["status"])
+
+        self.write(self.roots[0], path, base)
+        result, _ = self.run_checker("inventory")
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn(f"stale platform build config mapping: {path}", result.stderr)
+
+        mapping["path"] = neighbor
+        self.policy.write_text(json.dumps(policy))
+        result, _ = self.run_checker("inventory")
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn(f"invalid platform build config mapping: {neighbor}", result.stderr)
+
+    def test_quarkus_cqrs_packaged_config_requires_exact_path_and_hashes(self):
+        path = "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/main/resources/application.properties"
+        neighbor = path.replace("sample-quarkus-cqrs", "sample-quarkus")
+        mode_property = "ddd4j.quarkus.cqrs.projection.mode=durable\n"
+        contents = ("%durable." + mode_property, mode_property, mode_property)
+        for root, content in zip(self.roots, contents):
+            self.write(root, path, content)
+            self.write(root, neighbor, content)
+        policy = json.loads(self.policy.read_text())
+        mapping = {
+            "path": path,
+            "sha256ByJdk": {
+                jdk: hashlib.sha256(content.encode()).hexdigest()
+                for jdk, content in zip(("8", "17", "21"), contents)
+            },
+            "evidence": "Exact Quarkus CQRS packaged profiles",
+        }
+        policy["platformBuildConfigFiles"] = [mapping]
+        self.policy.write_text(json.dumps(policy))
+
+        result, output = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+        rows = {entry["path"]: entry for entry in
+                json.loads((output / "inventory.json").read_text())["differences"]}
+        self.assertEqual("PLATFORM_CONFIG", rows[path]["status"])
+        self.assertEqual("OPEN", rows[neighbor]["status"])
+
+        self.write(self.roots[0], path, mode_property)
+        result, _ = self.run_checker("inventory")
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn(f"stale platform build config mapping: {path}", result.stderr)
+
+        mapping["path"] = neighbor
+        self.policy.write_text(json.dumps(policy))
+        result, _ = self.run_checker("inventory")
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn(f"invalid platform build config mapping: {neighbor}", result.stderr)
+
     def test_framework_resource_mappings_require_exact_line_inputs(self):
         resources = (
             ("ddd4j-data/ddd4j-data-event-store-jpa/src/test/resources/META-INF/persistence.xml",
@@ -908,13 +1138,13 @@ class ThreeLineInventoryTest(unittest.TestCase):
         result, _ = self.run_checker("inventory")
         self.assertNotEqual(0, result.returncode)
 
-    def test_helidon_arch_namespace_mapping_rejects_changed_rule(self):
-        path = ("ddd4j-data/ddd4j-data-cqrs-helidon/src/test/java/"
-                "io/ddd4j/data/cqrs/helidon/arch/CqrsHelidonModuleIndependenceTest.java")
+    def test_quarkus_arch_namespace_mapping_rejects_changed_rule(self):
+        path = ("ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/"
+                "io/ddd4j/quarkus/command/arch/CqrsQuarkusModuleIndependenceTest.java")
         contents = (
-            '@since 1.0.x\n@ArchTest "javax.." Javax API\n',
-            '@since 2.0.x\n@ArchTest "jakarta.." Jakarta API\n',
-            '@since 2.0.x\n@ArchTest "jakarta.." Jakarta API\n',
+            '@since 1.0.x\n@ArchTest "javax.." Javax API\n"jakarta.persistence.."\n"javax.persistence.."\n',
+            '@since 2.0.x\n@ArchTest "jakarta.." Jakarta API\n"jakarta.persistence.."\n"javax.persistence.."\n',
+            '@since 2.0.x\n@ArchTest "jakarta.." Jakarta API\n"jakarta.persistence.."\n"javax.persistence.."\n',
         )
         for root, content in zip(self.roots, contents):
             self.write(root, path, content)
@@ -925,7 +1155,7 @@ class ThreeLineInventoryTest(unittest.TestCase):
                 jdk: hashlib.sha256(content.encode()).hexdigest()
                 for jdk, content in zip(("8", "17", "21"), contents)
             },
-            "evidence": "Helidon Java EE/Jakarta architecture rule",
+            "evidence": "Quarkus Java EE/Jakarta architecture rule",
         }]
         self.policy.write_text(json.dumps(policy))
 
@@ -951,8 +1181,8 @@ class ThreeLineInventoryTest(unittest.TestCase):
         self.assertIn("invalid platform test namespace mapping", result.stderr)
 
     def test_quarkus_arch_namespace_mapping_requires_both_persistence_packages(self):
-        path = ("ddd4j-data/ddd4j-data-cqrs-quarkus/src/test/java/"
-                "io/ddd4j/data/cqrs/quarkus/arch/CqrsQuarkusModuleIndependenceTest.java")
+        path = ("ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/"
+                "io/ddd4j/quarkus/command/arch/CqrsQuarkusModuleIndependenceTest.java")
         contents = (
             '@since 1.0.x\n@ArchTest "javax.." Javax API\n'
             '"jakarta.persistence.."\n"javax.persistence.."\n',
@@ -1368,7 +1598,7 @@ class ThreeLineInventoryTest(unittest.TestCase):
 
     def test_exact_platform_test_adaptations_keep_other_test_content_identical(self):
         cases = [
-            ("ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/arch/ProjectionJpaModuleIndependenceTest.java",
+            ("ddd4j-data/ddd4j-data-event-store-jpa/src/test/java/io/ddd4j/data/projection/jpa/arch/ProjectionJpaModuleIndependenceTest.java",
              '                            "javax..",\n', "", ["2.0.x", "3.0.x"]),
             ("ddd4j-runtime/ddd4j-runtime-helidon/src/test/java/io/ddd4j/helidon/HelidonServerBootTest.java",
              "server.cdiContainer().select(RuntimeReadinessRegistry.class).get()",
@@ -1378,7 +1608,7 @@ class ThreeLineInventoryTest(unittest.TestCase):
              "import org.springframework.boot.autoconfigure.domain.EntityScan;",
              "import org.springframework.boot.persistence.autoconfigure.EntityScan;",
              ["3.0.x"]),
-            ("ddd4j-data/ddd4j-data-projection-jpa/src/test/java/io/ddd4j/data/projection/jpa/TestApp.java",
+            ("ddd4j-runtime/ddd4j-runtime-spring/src/test/java/io/ddd4j/spring/projection/jpa/TestApp.java",
              "import org.springframework.boot.autoconfigure.domain.EntityScan;",
              "import org.springframework.boot.persistence.autoconfigure.EntityScan;",
              ["3.0.x"]),
@@ -2153,6 +2383,333 @@ class ThreeLineInventoryTest(unittest.TestCase):
         self.assertEqual(0, result.returncode, result.stderr)
         report = json.loads((output / "inventory.json").read_text())
         self.assertFalse(any("target/classes" in row["path"] for row in report["differences"]))
+
+
+class EnumPlatformWitnessTest(unittest.TestCase):
+    """真实 javac AST 枚举证明只供精确的 Java8 平台成员规则使用。"""
+
+    SOURCE = "ddd4j-core/src/main/java/example/Outer.java"
+    OWNER = "example.Outer$Access"
+    DECLARATION = ("enum|public|implements=RouteRole|interfaceImports=example.RouteRole|"
+                   "constants=LOGIN,PAY,CANCEL")
+    MEMBERS = ("field:LOGIN", "field:PAY", "field:CANCEL", "values()", "valueOf(String)")
+    ENUM = ("package example; import example.RouteRole; public class Outer { "
+            "public enum Access implements RouteRole { LOGIN, PAY, CANCEL; "
+            "public static final Access ALIAS = PAY; } }")
+
+    def setUp(self):
+        self.temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temporary.cleanup)
+        self.base = Path(self.temporary.name)
+        self.roots = [self.base / name for name in ("jdk8", "jdk17", "jdk21")]
+        spec = importlib.util.spec_from_file_location("enum_parity", SCRIPT)
+        self.parity = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(self.parity)
+        for root in self.roots:
+            root.mkdir()
+            (root / "mvnw").write_text("fixture; Maven is never executed")
+            self.write(root, "ddd4j-core/src/main/java/example/RouteRole.java",
+                       "package example; public interface RouteRole {}")
+            self.write(root, self.SOURCE, "package example; public class Outer {}")
+        self.write(self.roots[0], self.SOURCE, self.ENUM)
+
+    @staticmethod
+    def write(root, path, text):
+        target = root / path
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(text)
+
+    def symbols(self, owner=None, members=None):
+        return [self.SOURCE + "#" + (owner or self.OWNER) + "#" + member
+                for member in (members or self.MEMBERS)]
+
+    def scan(self, root=None, symbols=None):
+        return self.parity.source_api(root or self.roots[0], {self.SOURCE: "current"},
+                                      self.base / "scanner", enum_symbols=symbols or self.symbols())
+
+    def test_real_enum_constants_and_implicit_methods_use_binary_owner(self):
+        declarations = self.scan()
+        for symbol, member in zip(self.symbols(), self.MEMBERS):
+            self.assertEqual(self.DECLARATION + "|member=" + member, declarations[symbol])
+        normal = self.parity.source_api(self.roots[0], {self.SOURCE: "current"}, self.base / "normal")
+        self.assertEqual(normal, {key: value for key, value in declarations.items()
+                                  if key not in self.symbols()})
+        self.assertFalse(any("field:ALIAS" in symbol for symbol in declarations))
+        self.assertFalse(any("Outer.Access#values" in symbol for symbol in declarations))
+
+    def test_enclosing_visibility_and_implicit_interface_enum_are_respected(self):
+        self.write(self.roots[0], self.SOURCE,
+                   "package example; public class Outer { "
+                   "private enum Hidden { PAY } class PackageHidden { public enum Access { PAY } } "
+                   "protected enum Protected { PAY } public interface Api { enum Public { PAY } } "
+                   "public void local() { class Local { public enum Access { PAY } } } }")
+        owners = ["example.Outer$Hidden", "example.Outer$PackageHidden$Access",
+                  "example.Outer$Protected", "example.Outer$Api$Public", "example.Outer$Local$Access"]
+        symbols = [self.SOURCE + "#" + owner + "#values()" for owner in owners]
+        declarations = self.scan(symbols=symbols)
+        self.assertNotIn(symbols[0], declarations)
+        self.assertNotIn(symbols[1], declarations)
+        self.assertNotIn(symbols[4], declarations)
+        self.assertIn("enum|protected|", declarations[symbols[2]])
+        self.assertIn("enum|public|", declarations[symbols[3]])
+
+    def test_class_fields_and_explicit_lookalike_methods_are_not_enum_witnesses(self):
+        self.write(self.roots[0], self.SOURCE,
+                   "package example; public class Outer { public static class Access { "
+                   "public static final Access PAY = new Access(); "
+                   "public static Access[] values() { return null; } "
+                   "public static Access valueOf(String name) { return null; } } }")
+        declarations = self.scan()
+        self.assertTrue(all(symbol not in declarations for symbol in self.symbols()))
+
+    def test_unlisted_members_and_relocated_owner_have_no_witness(self):
+        requested = self.symbols() + self.symbols(owner="example.Other$Access") + self.symbols(
+            members=("field:ALIAS", "field:UNDECLARED", "missing()", "valueOf(Object)"))
+        declarations = self.scan(symbols=requested)
+        self.assertEqual(set(self.symbols()), set(requested) & declarations.keys())
+
+    def test_every_member_pins_constant_set_and_interface_import(self):
+        baseline = self.scan()
+        for changed in (self.ENUM.replace("LOGIN, PAY, CANCEL", "LOGIN, PAY, CANCEL, EXTRA"),
+                        self.ENUM.replace("LOGIN, PAY, CANCEL", "LOGIN, CANCEL, PAY"),
+                        self.ENUM.replace("implements RouteRole", "implements OtherRole"),
+                        self.ENUM.replace("import example.RouteRole", "import other.RouteRole")):
+            with self.subTest(source=changed):
+                self.write(self.roots[0], self.SOURCE, changed)
+                current = self.scan()
+                for symbol in self.symbols():
+                    self.assertNotEqual(baseline[symbol], current.get(symbol))
+
+    def compile_classes(self, root):
+        classes = root / "ddd4j-core/target/classes"
+        classes.mkdir(parents=True, exist_ok=True)
+        for stale in classes.rglob("*.class"):
+            stale.unlink()
+        java = (os.environ.get("DDD4J_JDK21_HOME")
+                or self.parity.run("/usr/libexec/java_home", "-v", "21").strip())
+        sources = list((root / "ddd4j-core/src/main/java").rglob("*.java"))
+        subprocess.run([java + "/bin/javac", "-parameters", "-d", str(classes), *map(str, sources)],
+                       check=True, capture_output=True, text=True)
+        return {"ddd4j-core|" + path.relative_to(classes).as_posix()[:-6]: path
+                for path in classes.rglob("*.class")}
+
+    def test_exact_platform_gate_requires_independent_source_and_compiled_absence(self):
+        # Real bytes and real AST are independent inputs; no Maven or Javalin shadow types.
+        self.write(self.roots[0], self.SOURCE, self.ENUM.replace("public static final Access ALIAS = PAY;", ""))
+        classes = [self.compile_classes(root) for root in self.roots]
+        low_api = self.parity.javap_api(classes[0])
+        witnesses = self.scan()
+        items = []
+        evidence = "ddd4j-core/src/test/java/example/RoleContractTest.java"
+        for root in self.roots:
+            self.write(root, evidence, "class RoleContractTest {}")
+        for member, symbol in zip(self.MEMBERS, self.symbols()):
+            method = member.split("(", 1)[0]
+            entry = next(value for value in low_api if value.startswith(
+                "ddd4j-core|example/Outer$Access|" + method + "|"))
+            items.append(dict(sourceSymbol=symbol, sourceDeclaration=self.DECLARATION + "|member=" + member,
+                              compiledEntry=entry, evidence=evidence, reason="exact native enum binding"))
+        policy = {"platformApiMembersOnlyOnJdk8": items}
+        self.parity.validate_platform_api_mappings(items, self.roots)
+
+        def gate():
+            (self.base / "gate").mkdir(exist_ok=True)
+            apis = [self.scan(root) for root in self.roots]
+            rows = [{"category": "api", "path": symbol,
+                     **{key: api.get(symbol, "MISSING") for key, api in zip(
+                         ("jdk8", "jdk17", "jdk21"), apis)}} for symbol in self.symbols()]
+            with mock.patch.object(self.parity, "compile_roots", return_value=[]), mock.patch.object(
+                    self.parity, "class_files", side_effect=classes):
+                self.parity.compiled_api_gate(self.roots, self.base / "gate", policy, rows)
+            return json.loads((self.base / "gate/compiled-api.json").read_text())
+
+        self.assertEqual("PASS", gate()["status"])
+        for changed in (self.ENUM.replace("public enum", "private enum"),
+                        self.ENUM.replace("Outer", "Relocated"),
+                        self.ENUM.replace("LOGIN, PAY, CANCEL", "LOGIN, PAY, CANCEL, EXTRA"),
+                        self.ENUM.replace("implements RouteRole", "implements OtherRole"),
+                        "package example; public class Outer { public static class Access { "
+                        "public static final Access PAY = new Access(); } }"):
+            self.write(self.roots[0], self.SOURCE, changed)
+            report = gate()
+            self.assertEqual("FAIL", report["status"])
+            self.assertEqual(5, len(report["stalePlatformApiMappings"]))
+        self.write(self.roots[0], self.SOURCE, self.ENUM)
+        # Source-only upper presence must fail even with unchanged absent upper class bytes.
+        self.write(self.roots[1], self.SOURCE, self.ENUM)
+        self.assertEqual("FAIL", gate()["status"])
+        self.write(self.roots[1], self.SOURCE, "package example; public class Outer {}")
+        # Compiled upper presence must independently fail with absent upper AST declaration.
+        classes[2] = classes[0]
+        self.assertEqual("FAIL", gate()["status"])
+
+
+class Jdk17OnlyPlatformApiTest(unittest.TestCase):
+    """单中线 API 适配必须同时固定独立源码及真实 JVM 条目。"""
+
+    SOURCE = "ddd4j-core/src/main/java/example/Factory.java"
+    CONFIG = "ddd4j-core/src/main/java/example/Configuration.java"
+    EVIDENCE = "ddd4j-core/src/test/java/example/FactoryContractTest.java"
+    FACTORY = ("package example; public class Factory { public Factory() {} "
+               "public String build(String name) { return name; } "
+               "public void configure(Configuration configuration) {} }")
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        cls.addClassCleanup(cls.temporary.cleanup)
+        cls.base = Path(cls.temporary.name)
+        cls.roots = [cls.base / name for name in ("jdk8", "jdk17", "jdk21")]
+        spec = importlib.util.spec_from_file_location("jdk17_only_parity", SCRIPT)
+        cls.parity = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(cls.parity)
+        java = (os.environ.get("DDD4J_JDK21_HOME")
+                or cls.parity.run("/usr/libexec/java_home", "-v", "21").strip())
+        cls.classes = []
+        cls.apis = []
+        cls.sources = []
+        for index, root in enumerate(cls.roots):
+            (root / "mvnw").parent.mkdir(parents=True)
+            (root / "mvnw").write_text("fixture only; no Maven")
+            for path, text in ((cls.CONFIG, "package example; public class Configuration { public Configuration() {} }"),
+                               (cls.EVIDENCE, "class FactoryContractTest {}")):
+                target = root / path
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_text(text)
+            if index == 1:
+                (root / cls.SOURCE).write_text(cls.FACTORY)
+            files = sorted((root / "ddd4j-core/src/main/java").rglob("*.java"))
+            classes = root / "ddd4j-core/target/classes"
+            classes.mkdir(parents=True)
+            subprocess.run([java + "/bin/javac", "-parameters", "-d", str(classes), *map(str, files)],
+                           check=True, capture_output=True, text=True)
+            compiled = {"ddd4j-core|" + path.relative_to(classes).as_posix()[:-6]: path
+                        for path in classes.rglob("*.class")}
+            cls.classes.append(compiled)
+            cls.apis.append(cls.parity.javap_api(compiled))
+            cls.sources.append(cls.parity.source_api(root, {str(p.relative_to(root)): "current" for p in files},
+                                                    cls.base / "source"))
+        cls.symbols = sorted(symbol for symbol in cls.sources[1] if "#example.Factory#" in symbol)
+        assert len(cls.symbols) == 3
+        cls.items = []
+        for symbol in cls.symbols:
+            method = symbol.split("#", 2)[2].split("(", 1)[0]
+            entry = next(entry for entry in cls.apis[1]
+                         if entry.startswith("ddd4j-core|example/Factory|" + method + "|"))
+            cls.items.append({"sourceSymbol": symbol, "sourceDeclaration": cls.sources[1][symbol],
+                              "compiledEntry": entry, "evidence": cls.EVIDENCE,
+                              "reason": "native factory signature is only needed on Java17"})
+
+    def setUp(self):
+        self.policy = {"platformApiMembersOnlyOnJdk17": [dict(item) for item in self.items]}
+        self.rows = [{"category": "api", "path": symbol, "status": "OPEN", "evidence": "",
+                      **{key: api.get(symbol, "MISSING") for key, api in zip(
+                          ("jdk8", "jdk17", "jdk21"), self.sources)}} for symbol in self.symbols]
+        self.api_sets = [set(api) for api in self.apis]
+
+    def gate(self, pair_diffs=None):
+        output = self.base / "gate"
+        output.mkdir(exist_ok=True)
+        with mock.patch.object(self.parity, "compile_roots", return_value=[]), mock.patch.object(
+                self.parity, "class_files", side_effect=self.classes), mock.patch.object(
+                self.parity, "javap_api", side_effect=self.api_sets):
+            if pair_diffs is None:
+                self.parity.compiled_api_gate(self.roots, output, self.policy, self.rows)
+            else:
+                with mock.patch.object(self.parity, "pair_diff", side_effect=pair_diffs):
+                    self.parity.compiled_api_gate(self.roots, output, self.policy, self.rows)
+        return json.loads((output / "compiled-api.json").read_text())
+
+    def test_real_middle_factory_entries_keep_raw_diffs_and_only_correct_directions_are_accepted(self):
+        report = self.gate()
+        self.assertEqual("PASS", report["status"])
+        entries = {item["compiledEntry"] for item in self.items}
+        self.assertEqual(entries, set(report["pairs"]["1-2"]["only_right"]))
+        self.assertEqual(entries, set(report["pairs"]["2-3"]["only_left"]))
+        self.assertEqual({"only_left": [], "only_right": []}, report["pairs"]["1-3"])
+        self.assertTrue(all(not values[side] for values in report["unresolved"].values()
+                            for side in ("only_left", "only_right")))
+        self.assertEqual(3, len(report["platformAdaptations"]))
+
+    def test_source_only_drift_and_both_unexpected_source_positions_are_rejected(self):
+        for key, value in (("jdk17", "changed|public|name"), ("jdk8", "unexpected"), ("jdk21", "unexpected")):
+            with self.subTest(line=key):
+                before = self.rows[0][key]
+                self.rows[0][key] = value
+                report = self.gate()
+                self.assertEqual("FAIL", report["status"])
+                self.assertIn(self.items[0]["compiledEntry"], report["stalePlatformApiMappings"])
+                self.rows[0][key] = before
+
+    def test_compiled_only_drift_and_both_unexpected_compiled_positions_are_rejected(self):
+        entry = self.items[0]["compiledEntry"]
+        for index in (0, 1, 2):
+            with self.subTest(line=index):
+                original = set(self.api_sets[index])
+                if index == 1:
+                    self.api_sets[index].remove(entry)
+                else:
+                    self.api_sets[index].add(entry)
+                report = self.gate()
+                self.assertEqual("FAIL", report["status"])
+                self.assertIn(entry, report["stalePlatformApiMappings"])
+                self.api_sets[index] = original
+
+    def test_wrong_directions_and_one_three_pair_never_receive_middle_exemption(self):
+        entry = self.items[0]["compiledEntry"]
+        wrong = [{"only_left": [entry], "only_right": []},
+                 {"only_left": [], "only_right": [entry]},
+                 {"only_left": [entry], "only_right": [entry]}]
+        report = self.gate(wrong)
+        self.assertEqual("FAIL", report["status"])
+        self.assertEqual(wrong, list(report["unresolved"].values()))
+
+    def test_same_class_unregistered_member_is_not_masked(self):
+        unlisted = next(iter(self.api_sets[1] - self.api_sets[0])).replace("|build|", "|unregistered|")
+        if "|unregistered|" not in unlisted:
+            unlisted = "ddd4j-core|example/Factory|unregistered|()V|generic=|throws=|constant=|params="
+        self.api_sets[1].add(unlisted)
+        report = self.gate()
+        self.assertEqual("FAIL", report["status"])
+        self.assertEqual([unlisted], report["unresolved"]["1-2"]["only_right"])
+        self.assertEqual([unlisted], report["unresolved"]["2-3"]["only_left"])
+
+    def test_source_inventory_stays_pending_until_compilation_and_rejects_drift(self):
+        self.parity.classify_declared_platform_api(self.rows, self.policy)
+        self.assertTrue(all(row["status"] == "PLATFORM_API_PENDING_COMPILE" for row in self.rows))
+        self.rows[0]["status"] = "OPEN"
+        self.rows[0]["jdk21"] = "unexpected"
+        self.parity.classify_declared_platform_api(self.rows, self.policy)
+        self.assertEqual("OPEN", self.rows[0]["status"])
+
+    def test_same_strict_validator_requires_declaration_and_three_line_evidence(self):
+        combined = self.parity.platform_api_mappings(self.policy)
+        self.assertEqual(self.policy["platformApiMembersOnlyOnJdk17"], combined)
+        self.parity.validate_platform_api_mappings(combined, self.roots)
+        for declaration in (None, "", "  ", 123):
+            with self.subTest(declaration=declaration):
+                self.policy["platformApiMembersOnlyOnJdk17"][0]["sourceDeclaration"] = declaration
+                with self.assertRaises(ValueError):
+                    self.parity.platform_api_mappings(self.policy)
+        self.policy["platformApiMembersOnlyOnJdk17"][0] = dict(self.items[0])
+        malformed = dict(self.items[0], compiledEntry=self.items[0]["compiledEntry"].replace("example/Factory", "example/Wrong"))
+        with self.assertRaises(ValueError):
+            self.parity.validate_platform_api_mappings([malformed], self.roots)
+        (self.roots[2] / self.EVIDENCE).rename(self.roots[2] / (self.EVIDENCE + ".hidden"))
+        try:
+            with self.assertRaises(ValueError):
+                self.parity.validate_platform_api_mappings(self.items, self.roots)
+        finally:
+            (self.roots[2] / (self.EVIDENCE + ".hidden")).rename(self.roots[2] / self.EVIDENCE)
+
+    def test_successful_compile_upgrades_pending_source_rows(self):
+        self.parity.classify_declared_platform_api(self.rows, self.policy)
+        self.assertTrue(all(row["status"] == "PLATFORM_API_PENDING_COMPILE" for row in self.rows))
+        self.assertEqual("PASS", self.gate()["status"])
+        with mock.patch.object(self.parity, "class_files", side_effect=self.classes):
+            self.parity.classify_compiled_source_api(self.rows, self.roots, self.base / "gate",
+                                                    {"artifact": "compiled-api.json"})
+        self.assertTrue(all(row["status"] == "PLATFORM_API_ADAPTED" for row in self.rows), self.rows)
 
 
 if __name__ == "__main__":

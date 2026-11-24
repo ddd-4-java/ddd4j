@@ -14,12 +14,14 @@
  */
 package io.ddd4j.sample.vertx.cqrs;
 
+import cn.hutool.core.util.StrUtil;
 import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.core.cqrs.command.DefaultCommandBus;
 import io.ddd4j.core.cqrs.command.Result;
 import io.ddd4j.core.cqrs.eventstore.InMemoryEventStore;
 import io.ddd4j.sample.vertx.cqrs.command.CreateOrderCommand;
 import io.ddd4j.sample.vertx.cqrs.command.CreateOrderCommandHandler;
+import io.ddd4j.sample.vertx.cqrs.persistent.PersistentOrders;
 import io.ddd4j.sample.vertx.cqrs.readmodel.InMemoryEventChunkReader;
 import io.ddd4j.sample.vertx.cqrs.readmodel.InMemoryViewManager;
 import io.ddd4j.sample.vertx.cqrs.readmodel.OrderSummaryView;
@@ -27,12 +29,16 @@ import io.ddd4j.sample.vertx.cqrs.repository.EventSourcingOrderRepository;
 import io.vertx.core.Vertx;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
+import lombok.extern.slf4j.Slf4j;
+import org.postgresql.ds.PGSimpleDataSource;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Vert.x CQRS 集成示例启动入口。
  */
+@Slf4j
 public class VertxCqrsApplication {
 
     // 共享组件（手动装配，使用 core SPI）
@@ -124,15 +130,26 @@ public class VertxCqrsApplication {
     }
 
     /**
-     * 启动 Vert.x CQRS 示例应用。
+     * 启动使用 JDBC 的 Vert.x CQRS 示例应用。
      *
      * @param args 命令行参数
      */
     public static void main(String[] args) {
-        Vertx vertx = Vertx.vertx();
-        Router router = createRouter(vertx);
-        VIEW_MANAGER.start();
-        vertx.createHttpServer().requestHandler(router).listen(8085)
-                .onSuccess(server -> System.out.println("Vert.x CQRS server started on port " + server.actualPort()));
+        String url = Objects.requireNonNull(System.getProperty("sample.jdbc.url"), "sample.jdbc.url required");
+        if (StrUtil.isBlank(url)) {
+            throw new IllegalArgumentException("sample.jdbc.url required");
+        }
+        PGSimpleDataSource source = new PGSimpleDataSource();
+        source.setUrl(url);
+        source.setUser(System.getProperty("sample.jdbc.user"));
+        source.setPassword(System.getProperty("sample.jdbc.password"));
+        PersistentOrders app = PersistentOrders.start(Integer.getInteger("sample.port", 8085), source,
+                System.getProperty("sample.jpa.schema", "validate"))
+                .toCompletionStage().toCompletableFuture().join();
+        log.info("Vert.x CQRS listening {} (persistent)", app.port());
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            app.close().toCompletionStage().toCompletableFuture().join();
+            log.info("VERTX_CQRS_CLOSED");
+        }, "vertx-cqrs-close"));
     }
 }

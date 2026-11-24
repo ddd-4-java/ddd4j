@@ -2,6 +2,7 @@ import importlib.util
 import hashlib
 import io
 from pathlib import Path
+import runpy
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -77,3 +78,52 @@ class BootstrapClasspathTest(unittest.TestCase):
             target.with_suffix('.jar.sha256').write_text('0' * 64)
             with self.assertRaises(ValueError):
                 module.bootstrap(Path(directory))
+
+
+    def write_jar(self, target, data):
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(data)
+
+    def driver(self):
+        script = Path(__file__).with_name('verify-three-line-convergence.py')
+        return runpy.run_path(str(script))['value_probe_classpaths']
+
+    def test_driver_uses_verified_cache_for_all_jdks_despite_newer_jar(self):
+        module = self.module()
+        classpaths = self.driver()
+        data = self.jar()
+        with tempfile.TemporaryDirectory() as directory:
+            repository = Path(directory)
+            target = repository / module.RELATIVE
+            newer = target.parent.parent / '999.99' / 'jackson-annotations-999.99.jar'
+            self.write_jar(target, data)
+            self.write_jar(newer, data + b'other artifact')
+            # Substitute the test fixture's pin at the bootstrap module boundary.
+            with patch.object(module, 'CHECKSUM', hashlib.sha256(data).hexdigest()), \
+                    patch('runpy.run_path', return_value=vars(module)), \
+                    patch('urllib.request.urlopen', side_effect=AssertionError('unexpected network')):
+                self.assertEqual(list(classpaths(repository)), [str(target)] * 3)
+
+    def test_driver_rejects_tampered_pinned_jar_with_valid_header(self):
+        module = self.module()
+        classpaths = self.driver()
+        with tempfile.TemporaryDirectory() as directory:
+            repository = Path(directory)
+            target = repository / module.RELATIVE
+            self.write_jar(target, self.jar())
+            target.with_suffix('.jar.sha256').write_text(module.CHECKSUM + '\n')
+            with patch('urllib.request.urlopen', side_effect=AssertionError('unexpected network')):
+                with self.assertRaisesRegex(ValueError, 'SHA-256 mismatch'):
+                    list(classpaths(repository))
+
+    def test_driver_rejects_missing_pinned_jar_even_if_other_jar_is_compatible(self):
+        module = self.module()
+        classpaths = self.driver()
+        with tempfile.TemporaryDirectory() as directory:
+            repository = Path(directory)
+            target = repository / module.RELATIVE
+            alternate = target.parent.parent / '2.21' / 'jackson-annotations-2.21.jar'
+            self.write_jar(alternate, self.jar())
+            with patch('urllib.request.urlopen', side_effect=AssertionError('unexpected network')):
+                with self.assertRaisesRegex(ValueError, 'Missing pinned Jackson annotations'):
+                    list(classpaths(repository))

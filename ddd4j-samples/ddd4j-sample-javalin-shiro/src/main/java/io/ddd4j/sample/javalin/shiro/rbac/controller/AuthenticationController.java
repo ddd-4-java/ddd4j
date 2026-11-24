@@ -89,6 +89,7 @@ public class AuthenticationController {
         // 3. 通过 SubjectKit 登录
         AuthRequest request = AuthRequest.of(user.loginId()).setTimeout(7200);
         request.setPrincipal(principal);
+        request.extra("credential", req.password());
         String token = SubjectKit.login(request);
 
         Map<String, Object> result = Map.of(

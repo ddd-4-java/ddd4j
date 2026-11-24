@@ -67,9 +67,13 @@ class ThreeLineTypeMappingTest(unittest.TestCase):
             MODULE.normalize_descriptor("(Lcom/fasterxml/jackson/databind/ObjectMapper;)V", mappings, "2.0.x"),
             MODULE.normalize_descriptor("(Ltools/jackson/databind/ObjectMapper;)V", mappings, "3.0.x"),
         )
-        self.assertNotEqual(
+        self.assertEqual(
             MODULE.normalize_descriptor("()Lcom/fasterxml/jackson/databind/JsonNode;", mappings, "2.0.x"),
             MODULE.normalize_descriptor("()Ltools/jackson/databind/JsonNode;", mappings, "3.0.x"),
+        )
+        self.assertNotEqual(
+            MODULE.normalize_descriptor("()Lcom/fasterxml/jackson/databind/node/ObjectNode;", mappings, "2.0.x"),
+            MODULE.normalize_descriptor("()Ltools/jackson/databind/node/ObjectNode;", mappings, "3.0.x"),
         )
         for old_type, new_type in (
             ("com/fasterxml/jackson/databind/JavaType", "tools/jackson/databind/JavaType"),
@@ -122,6 +126,7 @@ class ThreeLineTypeMappingTest(unittest.TestCase):
         mappings = policy["typeMappings"]
         for old_type, new_type in (
             ("javax/persistence/EntityManager", "jakarta/persistence/EntityManager"),
+            ("javax/persistence/EntityManagerFactory", "jakarta/persistence/EntityManagerFactory"),
             ("javax/enterprise/inject/Instance", "jakarta/enterprise/inject/Instance"),
         ):
             self.assertEqual(
@@ -129,7 +134,7 @@ class ThreeLineTypeMappingTest(unittest.TestCase):
                 MODULE.normalize_descriptor(f"(L{new_type};)V", mappings, "2.0.x"),
             )
         for old_type, new_type in (
-            ("javax/persistence/EntityManagerFactory", "jakarta/persistence/EntityManagerFactory"),
+            ("javax/persistence/TypedQuery", "jakarta/persistence/TypedQuery"),
             ("javax/enterprise/inject/InstanceHandle", "jakarta/enterprise/inject/InstanceHandle"),
         ):
             self.assertNotEqual(
@@ -243,6 +248,50 @@ class ThreeLineTypeMappingTest(unittest.TestCase):
                 root.mkdir()
             with self.assertRaises(ValueError):
                 MODULE.validate_type_mappings([self.mapping], roots)
+
+    def test_mapping_evidence_can_move_between_release_lines(self):
+        evidence = {
+            "1.0.x": "legacy/src/test/java/ProviderTest.java",
+            "2.0.x": "extensions/src/test/java/ProviderTest.java",
+            "3.0.x": "legacy/src/test/java/ProviderTest.java",
+        }
+        mapping = dict(self.mapping, evidence=evidence)
+        with tempfile.TemporaryDirectory() as directory:
+            roots = [Path(directory) / line for line in evidence]
+            for root, relative_path in zip(roots, evidence.values()):
+                test = root / relative_path
+                test.parent.mkdir(parents=True)
+                test.write_text("test")
+            MODULE.validate_type_mappings([mapping], roots)
+
+            (roots[1] / evidence["2.0.x"]).unlink()
+            for root in roots[::2]:
+                test = root / evidence["2.0.x"]
+                test.parent.mkdir(parents=True)
+                test.write_text("test")
+            with self.assertRaisesRegex(ValueError, r"missing.*2\.0\.x"):
+                MODULE.validate_type_mappings([mapping], roots)
+
+    def test_line_specific_mapping_evidence_rejects_invalid_entries(self):
+        evidence = dict.fromkeys(("1.0.x", "2.0.x", "3.0.x"), self.mapping["evidence"])
+        invalid = (
+            {line: path for line, path in evidence.items() if line != "2.0.x"},
+            dict(evidence, unknown=self.mapping["evidence"]),
+            dict(evidence, **{"2.0.x": ""}),
+            dict(evidence, **{"2.0.x": 17}),
+            dict(evidence, **{"2.0.x": "/tmp/ProviderTest.java"}),
+            dict(evidence, **{"2.0.x": "../ProviderTest.java"}),
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            roots = [Path(directory) / line for line in evidence]
+            for root in roots:
+                test = root / self.mapping["evidence"]
+                test.parent.mkdir(parents=True)
+                test.write_text("test")
+            for entry in invalid:
+                with self.subTest(evidence=entry):
+                    with self.assertRaisesRegex(ValueError, r"invalid type mapping evidence"):
+                        MODULE.validate_type_mappings([dict(self.mapping, evidence=entry)], roots)
 
     def test_own_api_and_duplicate_ids_cannot_be_mapped(self):
         with tempfile.TemporaryDirectory() as directory:

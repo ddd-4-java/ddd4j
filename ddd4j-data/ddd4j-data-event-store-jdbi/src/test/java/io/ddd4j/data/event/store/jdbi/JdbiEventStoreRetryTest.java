@@ -13,12 +13,15 @@ import java.util.Objects;
 import io.ddd4j.core.constant.EventStoreConstants;
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
+import io.ddd4j.core.cqrs.eventstore.StoredEvent;
 import io.ddd4j.core.ddd.event.AggregateRootId;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.EntityIdPath;
 import io.ddd4j.core.ddd.event.EntityType;
+import io.ddd4j.core.ddd.event.EventId;
 import io.ddd4j.core.ddd.event.StringEntityType;
 import org.jdbi.v3.core.Jdbi;
+import org.jdbi.v3.core.statement.SqlLogger;
 import org.jdbi.v3.core.statement.SqlStatements;
 import org.jdbi.v3.core.statement.StatementContext;
 import org.junit.jupiter.api.AfterEach;
@@ -26,10 +29,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -39,13 +48,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class JdbiEventStoreRetryTest {
 
     private static final String ORDER_TYPE = "Order";
+    private String jdbcUrl;
     private Jdbi jdbi;
     private RecordingSleeper sleeper;
     private EventStore eventStore;
 
     @BeforeEach
     void setUp() {
-        jdbi = Jdbi.create("jdbc:h2:mem:jdbi_retry_" + System.nanoTime() + ";DB_CLOSE_DELAY=-1");
+        jdbcUrl = "jdbc:h2:mem:jdbi_retry_" + System.nanoTime() + ";DB_CLOSE_DELAY=-1";
+        jdbi = Jdbi.create(jdbcUrl);
         sleeper = new RecordingSleeper();
         eventStore = new JdbiEventStore(jdbi, new EventStoreRetry(5, 1L, sleeper));
     }
@@ -70,7 +81,7 @@ class JdbiEventStoreRetryTest {
     @Test
     void positionConflictShouldRetryAndPersistTypedEvent() {
         AtomicInteger insertCount = new AtomicInteger();
-        jdbi.getConfig(SqlStatements.class).setSqlLogger(new org.jdbi.v3.core.statement.SqlLogger() {
+        jdbi.getConfig(SqlStatements.class).setSqlLogger(new SqlLogger() {
             @Override
             public void logBeforeExecution(StatementContext context) {
                 if (context.getRenderedSql().toUpperCase().startsWith("INSERT") && insertCount.incrementAndGet() == 1) {
@@ -84,6 +95,96 @@ class JdbiEventStoreRetryTest {
 
         assertTrue(sleeper.calls.get() >= 1);
         assertEquals(1, eventStore.read(ORDER_TYPE, orderId).size());
+    }
+
+    @Test
+    void secondEventFailureRollsBackFirstInsertAndKeepsVersionAndPositionAvailable() {
+        TestAggregateRootId orderId = new TestAggregateRootId("partly-executed-batch");
+        TestEvent committed = new TestEvent(orderId);
+        eventStore.append(ORDER_TYPE, orderId, Collections.singletonList(committed), 0);
+
+        AtomicInteger successfulInserts = new AtomicInteger();
+        jdbi.getConfig(SqlStatements.class).setSqlLogger(new SqlLogger() {
+            @Override
+            public void logAfterExecution(StatementContext context) {
+                if (context.getRenderedSql().startsWith("INSERT")) {
+                    successfulInserts.incrementAndGet();
+                }
+            }
+        });
+        TestEvent first = new TestEvent(orderId);
+        IllegalArgumentException invalidEventId = new IllegalArgumentException("invalid event id");
+        DomainEvent<TestAggregateRootId> invalid = new DomainEvent<TestAggregateRootId>(new EntityIdPath(orderId)) {
+            @Override
+            public EventId getEventId() {
+                throw invalidEventId;
+            }
+        };
+
+        assertSame(invalidEventId, assertThrows(IllegalArgumentException.class,
+                () -> eventStore.append(ORDER_TYPE, orderId, Arrays.asList(first, invalid), 1)));
+        assertEquals(1, successfulInserts.get(), "first event reached the database before the failure");
+        assertEquals(0, sleeper.calls.get(), "invalid data must not be retried");
+        assertEquals(1, eventStore.read(ORDER_TYPE, orderId).size());
+        assertEquals(1, eventStore.readAll(1, 10).size());
+
+        TestEvent second = new TestEvent(orderId);
+        eventStore.append(ORDER_TYPE, orderId, Arrays.asList(first, second), 1);
+        List<StoredEvent> events = eventStore.readAll(1, 10);
+        assertEquals(3, events.size());
+        assertEquals(committed.getEventId(), events.get(0).eventId());
+        assertEquals(first.getEventId(), events.get(1).eventId());
+        assertEquals(second.getEventId(), events.get(2).eventId());
+        assertEquals(2L, events.get(1).version());
+        assertEquals(2L, events.get(1).position());
+        assertEquals(3L, events.get(2).version());
+        assertEquals(3L, events.get(2).position());
+    }
+
+    @Test
+    void databasePositionCollisionRetriesWholeBatchAgainstCommittedPosition() {
+        TestAggregateRootId orderId = new TestAggregateRootId("batch-after-collision");
+        TestAggregateRootId competingId = new TestAggregateRootId("independent-transaction");
+        EventStore competingStore = new JdbiEventStore(Jdbi.create(jdbcUrl));
+        competingStore.read(ORDER_TYPE, competingId);
+        TestEvent competingEvent = new TestEvent(competingId);
+        AtomicInteger insertAttempts = new AtomicInteger();
+        AtomicReference<SQLException> insertError = new AtomicReference<>();
+        jdbi.getConfig(SqlStatements.class).setSqlLogger(new SqlLogger() {
+            @Override
+            public void logBeforeExecution(StatementContext context) {
+                if (context.getRenderedSql().startsWith("INSERT") && insertAttempts.incrementAndGet() == 1) {
+                    // The first transaction has chosen its position. Commit another connection's write first.
+                    competingStore.append(ORDER_TYPE, competingId, Collections.singletonList(competingEvent), 0);
+                }
+            }
+
+            @Override
+            public void logException(StatementContext context, SQLException failure) {
+                if (context.getRenderedSql().startsWith("INSERT")) {
+                    insertError.set(failure);
+                }
+            }
+        });
+        TestEvent first = new TestEvent(orderId);
+        TestEvent second = new TestEvent(orderId);
+
+        eventStore.append(ORDER_TYPE, orderId, Arrays.asList(first, second), 0);
+
+        assertNotNull(insertError.get(), "H2 must reject the stale global position");
+        assertEquals("23505", insertError.get().getSQLState());
+        assertEquals(1, sleeper.calls.get());
+        assertEquals(3, insertAttempts.get(), "one rejected INSERT and both batch events retried");
+        List<StoredEvent> events = eventStore.readAll(1, 10);
+        assertEquals(3, events.size());
+        assertEquals(competingEvent.getEventId(), events.get(0).eventId());
+        assertEquals(1L, events.get(0).position());
+        assertEquals(first.getEventId(), events.get(1).eventId());
+        assertEquals(1L, events.get(1).version());
+        assertEquals(2L, events.get(1).position());
+        assertEquals(second.getEventId(), events.get(2).eventId());
+        assertEquals(2L, events.get(2).version());
+        assertEquals(3L, events.get(2).position());
     }
 
     static final class RecordingSleeper implements EventStoreRetry.Sleeper {

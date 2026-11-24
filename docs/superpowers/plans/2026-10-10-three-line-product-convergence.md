@@ -11,7 +11,1086 @@
 
 **Spec:** 延续 `docs/superpowers/specs/2026-09-06-three-line-parity.md`。该规格当前存在于 1.0.x；T00 将其增量补充并同步到三线，保留历史验收记录。禁止 record 的既有规格继续生效。本文是该规格的后续执行计划，不初始化 OpenSpec/Spec Kit。
 
-**Status:** 执行中。T00—T10 已有局部实现与验证；当前 Java 源码和 JDBI 原生数据库时区用例的三线默认根 reactor 均通过 `clean verify`（JDK 8 首次 Testcontainers Ryuk 启动故障后完整重跑通过）。严格结构/依赖目录/场景门禁仍失败，独立平台与远端 CI 验收未完成；T00—T11 均未达到整项验收。三线各自保留 JDK、Maven 与第三方依赖适配，仅以自有逻辑和可观察行为收敛。
+**2026-11-18 模块收敛进度**　[架构收敛设计](../../architecture/architecture.md#architecture-convergence-20261118)定义目标与验收契约，[R00—R15](#architecture-convergence-tasks-20261118)记录本轮实施证据。R00—R13 与 S00—S07 已完成分项审查，三线整体验收仍在 R14。原 Status、T 任务与历史验证记录保留各自的时点和范围。
+
+**Status:** 执行中。十二个独立投影模块及其旧 Maven 坐标已在三线工作副本直接退出，应用按需使用现行 runtime、core 和存储模块。退役后的归档基线已通过 Java 8、17、21 默认根 reactor、独立样例 reactor、严格依赖检查和显式本地场景。后续改动及其定向证据按 R14 记录。跨线源码及 JVM API 差异、三条真实云 Broker 场景与远端 CI 仍待验收。三线各自保留 JDK、Maven 与第三方依赖适配。
+
+<a id="architecture-convergence-tasks-20261118"></a>
+
+## 2026-11-18 模块架构收敛任务 R00—R15、S00—S07（实施中）
+
+### 目标、执行边界与原计划衔接
+
+**Goal:** 保留原版简洁用法和全部已有能力，将 14 个 CQRS/投影平台模块的实现归入七个现有 runtime，明确按需启用、兼容和退出条件。
+
+**Architecture:** 统一命令和投影执行规则，保留四种投影进度存储、五种 EventStore、全部现有 ORM/MQ/Web/Auth/扩展。平台投影通过 runtime 接入。剩余旧 CQRS 入口在退出前委派给同一实现。
+
+**Tech Stack:** 继续使用各线 JDK 8/17/21、Maven Wrapper、JUnit、现有平台测试和数据库集成设施；按各线实际 JDK/Wrapper 运行目标验证；不安装或升级工具。
+
+**Spec:** 本节只实现[2026-11-18 架构收敛设计及 AC01—AC12](../../architecture/architecture.md#architecture-convergence-20261118)。原三线规格继续约束共同 API、行为及平台差异；不重复创建 specification/plan/tasks。
+
+**Status:** 十二个独立投影构件已完成 R15 的本地退出批次。R14 继续三线整体验收，R15 跟踪剩余旧 CQRS。分项审查、三线基线、冻结客户端和数据夹具见 R00—R13。用户确认当前业务迁移清单为空。提交、推送、发布、部署和数据迁移按实际授权执行。
+
+### 全局约束
+
+本轮用户已明确指定 `superpowers:subagent-driven-development`：每项实施后由独立任务审查确认规格与质量，再推进依赖项；最终执行整体验证与审查。该指定适用于本轮 R/S 任务，覆盖文首历史执行方式说明。沿用当前授权 checkout，不使用 worktree；不因技能默认流程自动提交或切分支。
+
+- 共同能力取有效并集；不删除平台、业务能力、有效测试或既有调用方式来降低模块数。
+- 7 个 runtime 按 Spring → Guice → Quarkus → Micronaut → Helidon → Vert.x → Dropwizard 验收。Guice 阶段验证配套的 Javalin Web 接入和四个示例。Spring 阶段验证共用 Spring runtime 的 WebMVC、WebFlux 两种接入。验收矩阵包含 7 个运行时实现和 8 种 Web 接入，`ddd4j-runtime-testkit` 提供公共测试支持。
+- 三线 JDK 固定为 8/17/21，继续禁止 Java record；各线依赖及 `javax`/`jakarta` 适配分别维护，不为统一而升级 JDK。
+- 不使用 worktree，不覆盖当前未提交修改，不自动创建或切换分支。现有隔离副本与跨线执行方式延续本计划 T00 的授权边界。
+- 只在必要的既有模块内增量修改；Boot 自动装配仍在具体脚手架，core 不依赖 runtime、ORM 或外部脚手架。
+- 投影旧构件按 R15 直接退出。七个旧 CQRS 坐标按 R15 第三批直接退出。每个全限定类名由一个实际构件提供。
+- 新基础入口按需启用；旧入口保持已确认行为。既有鉴权、数据权限、投影、消息等配置不能被静默关闭。
+- 不新增表/字段、不执行 DDL、不重置投影位置、不默认全量重放。出现数据迁移需求先明确差异和授权，不混入模块重排。
+- 正确的历史行为先记录基线；新增/修复行为使用失败测试→最小修改→通过验证。环境失败与行为失败分开，不制造或虚构 RED。
+- 步骤只有对应实现与验证完成才勾选；零测试、跳过、旧 target、历史 CI 和仅编译通过均不能代替所要求的行为证据。
+
+data 初始 POM 有 31 项，七个旧平台投影退出后为 24 项，全部十二个独立投影模块退出后为 19 项。剩余旧 CQRS 模块按 R15 验收。样例按七框架、每框架四入口建设，共 28 个场景，现均已纳入构建。R14 汇总三线实际运行及独立样例结果。下表“POM 现状”记录各任务的初始基线。
+
+### Review Focus
+
+| 输入或失败路径 | 必须保持的行为 | 测试责任 |
+|---|---|---|
+| 旧坐标、新 runtime 和兼容构件同时在 classpath | 无重复类、Bean、实体或调度任务；旧二进制可链接 | R06—R13，旧/新/混合消费者 |
+| 命令抛异常或返回既有失败结果 | 返回/异常与事务结果符合原契约；不因委派改变回滚策略 | R02、R06，各平台命令契约 |
+| 过滤后事件位置有间隙，同事件被两个 View 订阅 | 采用源 next position，每个视图独立推进；失败不跳过 | R03，ProjectionRunner/Dispatcher/Registry 测试 |
+| 新基础配置、旧自动装配、显式启用但缺事件源 | 基础模式无副作用；旧模式不改变；错误配置明确失败 | R06—R13，平台启动与配置兼容测试 |
+| R2DBC/WebFlux/Vert.x 上同步数据库调用、取消或关闭 | 不在事件循环阻塞；上下文清理、取消和资源释放符合原契约 | R06、R11、R14，响应式与生命周期测试 |
+
+### 前置关系与 14 个模块的顺序
+
+```mermaid
+flowchart TD
+    R00["R00 基线与兼容清单"] --> R01["R01 原版用法回归"]
+    R01 --> R02["R02 唯一命令内核"]
+    R02 --> R03["R03 唯一投影内核"]
+    R03 --> R04["R04 JPA 存储边界"]
+    R04 --> R05["R05 日志依赖边界"]
+    R05 --> R06["R06 Spring：M01→M02"]
+    R06 --> R07["R07 Guice/Javalin：M03→M04"]
+    R07 --> R08["R08 Quarkus：M05→M06"]
+    R08 --> R09["R09 Micronaut：M07→M08"]
+    R09 --> R10["R10 Helidon：M09→M10"]
+    R10 --> R11["R11 Vert.x：M11→M12"]
+    R11 --> R12["R12 Dropwizard：M13→M14"]
+    R12 --> R13["R13 完整消费者与兼容验收"]
+    R13 --> R14["R14 三线与能力矩阵"]
+    R14 --> R15["R15 旧实现退出"]
+```
+
+| 顺序 | 任务 | 原模块 | 目标模块 | 本批特有验收 |
+|---|---|---|---|---|
+| M01 | R06 | `ddd4j-data-cqrs-spring` | `ddd4j-runtime-spring` | 唯一 CommandBus、重复 Bean 检测、事务契约 |
+| M02 | R06 | `ddd4j-data-projection-spring` | `ddd4j-runtime-spring` | SmartLifecycle 单次启动/停止；MVC/WebFlux 分别验证 |
+| M03 | R07 | `ddd4j-data-cqrs-javalin` | `ddd4j-runtime-guice` | Guice 执行器绑定与旧手动注册均兼容 |
+| M04 | R07 | `ddd4j-data-projection-javalin` | `ddd4j-runtime-guice` | 基础 Injector 不默认安装投影；关闭释放所拥有资源 |
+| M05 | R08 | `ddd4j-data-cqrs-quarkus` | `ddd4j-runtime-quarkus` | CDI 收集无重复 Bean，执行上下文正确 |
+| M06 | R08 | `ddd4j-data-projection-quarkus` | `ddd4j-runtime-quarkus` | CDI 生命周期、Panache/位置存储、重启恢复 |
+| M07 | R09 | `ddd4j-data-cqrs-micronaut` | `ddd4j-runtime-micronaut` | 容器发现与命令分发等价 |
+| M08 | R09 | `ddd4j-data-projection-micronaut` | `ddd4j-runtime-micronaut` | Context 启停无重复任务、无静默 Noop 回退 |
+| M09 | R10 | `ddd4j-data-cqrs-helidon` | `ddd4j-runtime-helidon` | CDI 绑定与命令契约等价 |
+| M10 | R10 | `ddd4j-data-projection-helidon` | `ddd4j-runtime-helidon` | 启停、事务接入和调度语义保持 |
+| M11 | R11 | `ddd4j-data-cqrs-vertx` | `ddd4j-runtime-vertx` | 异步命令/上下文行为保持，事件循环不阻塞 |
+| M12 | R11 | `ddd4j-data-projection-vertx` | `ddd4j-runtime-vertx` | 调度/取消/关闭与响应式存储边界正确 |
+| M13 | R12 | `ddd4j-data-cqrs-dropwizard` | `ddd4j-runtime-dropwizard` | Bundle 收集和执行器注册等价 |
+| M14 | R12 | `ddd4j-data-projection-dropwizard` | `ddd4j-runtime-dropwizard` | Managed 生命周期、启动失败清理、单次调度 |
+
+每个 M 项均须有原模块到目标模块的类/API/配置映射、旧入口委派、测试迁移和证据记录；不能用整批编译成功替代逐项验收。
+
+### R00：固定业务基线和兼容迁移清单
+
+**Files:** 增量维护根 `REFACTOR_MIGRATION.md`、本计划和 `docs/architecture/architecture.md`；读取 14 个旧模块、七个 runtime、对应 POM/配置/测试，不修改无关工作。
+
+**Interfaces:** 消费当前公开 API、旧 GAV 和实际启动入口；产出 M01—M14 的兼容清单与 AC01—AC12 的证据索引，供全部后续任务使用。
+
+- [x] 记录三线源码基线、JDK/Wrapper、现有支持组合及消费者；为每个 M 项列明旧类/构造器/方法、Bean 名/限定符、配置键、实体扫描、目标所有者和调用者。
+- [x] 固定可运行的旧消费者构件和序列化/事件/投影位置样本；旧构件与候选构件使用隔离的本地解析目录，防止同版本 SNAPSHOT 覆盖基线。
+- [x] 逐项记录“新基础入口默认不启用”“旧入口保持行为”“显式启用条件”的现有键和迁移映射，不假定开关已经存在；列明必须补充的显式依赖。
+- [x] 将 AC01—AC12 对应到现有或拟新增测试，确认四种位置存储、五种 EventStore、原有认证/MQ/扩展场景均有保留去向；无消费者信息的旧坐标保持可用，不能推断无人使用。
+
+**验收：** 14 行兼容清单完整，原版用法及有效能力没有被标记为删除；后续任务无须重新选择公开 API 或存储格式。仅完成清单不算迁移通过。
+
+**2026-11-18 R00 验收。** 三线已固定旧构件、客户端、旧格式数据和独立解析目录，兼容清单与验收索引通过独立审查（C0/I0/M2）。JDK21 冻结自原提交 `970f8fe`。JDK8 原提交 `6bca665` 因缺少指定的 Easy4J BOM 停在 Maven 模型解析。可运行的 JDK8 基线来自候选适配前冻结的工作快照，其中 9 个旧模块的生产源码与原提交不同。JDK8 和 JDK21 各有 18 个旧构件、14 个可运行的旧客户端及 11 个旧格式夹具。客户端和夹具用于后续候选兼容及回退验证。报告位于本计划证据目录的 `task-R00-cross-line-review.md`。
+
+### R01：固定并保持原版简洁用法
+
+**Files:** `ddd4j-core/src/main/java/io/ddd4j/core/ddd/model/AggregateRoot.java`、`ddd4j-core/src/main/java/io/ddd4j/core/cqrs/query/Query.java`；测试沿用 `AggregateRootTest.java`、`QueryRichMethodsTest.java` 及 `ddd4j-data/ddd4j-data-mybatisplus/src/test/java/io/ddd4j/data/mybatis/repository/MybatisAggregateRepositoryCrudTest.java`。
+
+**Interfaces:** 保持现有模型、Query、RepositoryRegistry 的公开签名；本轮以现有用法回归为主，不主动重构 AggregateRoot/Query。只有具体 data 集成问题确实要求时，才作保持公开契约的最小修改。
+
+- [x] 补充并运行保存/更新、one/list/page/exist、对象转换/填充、租户及本地事件基线，明确这些用例不注册 CommandBus、EventStore 或 Projection。
+- [x] 先按原用法回归记录结果；仅修复实际暴露、影响本轮 data 集成的问题，不展开独立 core 重构，保留现有公开方法、返回值和异常行为。
+- [x] 运行 `./mvnw -pl ddd4j-core,ddd4j-data/ddd4j-data-mybatisplus -am verify`，记录实际执行的单测/数据库用例及跳过原因。
+
+**验收：** AC01 通过；原版调用体验有真实持久化证据，不能仅以 mock 或源码未变判定。
+
+**2026-11-18 本轮证据：** R01 已通过独立规格与质量审查；仅修复 MyBatis-Plus 仓储泛型解析的三个索引。定向真实 RED 63项/3错误 → GREEN 63项全通过；必需 `-am verify` 654项，0失败/错误/跳过，含 MySQL8.4 的8项真实用例。报告与审查：`.superpowers/sdd/2026-10-10-three-line-product-convergence/task-R01-{report,review}.md`。第三方 SQL 解析器的 JaCoCo 插桩异常已记录，功能测试通过不等于该第三方类覆盖率有效。R00旧构件、R13兼容及R14三线/平台证据继续开放。
+
+### R02：统一命令分发内核
+
+**Files:** `ddd4j-core/src/main/java/io/ddd4j/core/cqrs/command/DefaultCommandBus.java`、`CommandRegistry.java`；现有 `CommandRegistryTest.java`，拟新增同测试包下的 `DefaultCommandBusCompatibilityTest.java`。
+
+**Interfaces:** 复用现行 `CommandBus`/`CommandExecutor` 签名；registry 负责收集校验，最终路由与执行规则由 `DefaultCommandBus` 承担。
+
+- [x] 为重复注册、未匹配命令、成功结果、既有失败结果和执行异常补充契约测试；与旧平台入口比较可观察结果，新增目标先确认行为失败。
+- [x] 消除重复路由规则，保留错误模型；事务由各平台接入，不擅自改变失败结果是否回滚的既有契约。
+- [x] 运行 `./mvnw -pl ddd4j-core -am verify`，将事务断言交给 R06—R12 的真实平台用例，不能在此宣称全部事务已验证。
+
+**验收：** 为 AC02 提供唯一执行规则；平台迁移只需要接入发现与事务，不再实现另一套分发。
+
+**2026-11-18 本轮证据：** R02 共享内核契约回归已通过独立规格/质量审查，生产代码未改；定向23项、必需verify620项，均0失败/错误/跳过。既有正确行为首次即GREEN，不伪造RED。旧data-cqrs入口已继承共享总线；runtime重复路由及空值/动态补查/发现时序差异由R06—R12逐平台处理，本项不代表全平台唯一实现或事务已经验收。详见 `.superpowers/sdd/2026-10-10-three-line-product-convergence/task-R02-{report,review}.md`。
+
+### R03：统一投影执行与恢复规则
+
+**Files:** core 的 `cqrs/readmodel/ProjectionRunner.java`、`ProjectionView.java`、`ViewManager.java`、`ViewScheduler.java`；`ddd4j-core/src/main/java/io/ddd4j/core/cqrs/readmodel/handler/ProjectionDispatcher.java`、`ProjectionHandlerRegistry.java`；对应 `ProjectionRunnerTest.java`、`ProjectionRunnerFailureContractTest.java`、`ProjectionDispatcherTest.java`、`ProjectionHandlerRegistryTest.java`。
+
+**Interfaces:** 沿用 `ProjectionView`、`EventChunkReader`、`ProjectionPositionRepository`、`ViewScheduler`；Handler 入口适配为 View，共用内核。保留 `schedule(viewName, cron, task)` 的任务取消句柄契约。
+
+- [x] 增加有间隙位置用例：初始位置 10，过滤后只有两条事件、源返回 next position 20，成功后必须保存 20；失败不得直接推进到 20。
+- [x] 增加同事件驱动两个独立 View、历史位置续跑、同库写入/位置保存失败、跨存储重投幂等、重复启动/停止以及 CRON/时区兼容用例。
+- [x] 统一拉取、处理和位置推进规则，旧 Dispatcher 委派；公共视图状态/重入保护共享，平台保留调度与线程差异，不再复制 CRON 解析。
+- [x] 公共投影契约已验收。现行复跑命令为 `./mvnw -pl ddd4j-core -am verify`。真实事务和存储断言由 R04、R06—R12 继续验证。
+
+**验收：** AC03 的共同规则通过；AC04/AC09 的测试已分配到实际存储和平台，不能因统一了接口而宣称原子性或 exactly-once。
+
+**2026-11-18 本轮证据：** R03 共享层及Fix1已通过独立审查。新增source-aware Handler→View→Runner、独立视图扇出、同实例stream重入保护、共享生命周期与数值六段CRON。初轮必需verify660项全通过；审查发现注册metadata漂移可跳事件，Fix1真实RED27项/3失败→影响范围GREEN32项全通过，复审I1已关闭。660项与旧M04/API探针是Fix1前快照，当前增量32项覆盖修改，未冒充最终全量重跑。legacy裸事件分支为保留旧positions/service顺序仍计数+1，不能声称源位置安全；七平台采用、原生方言/事务、实际存储与回退继续由R04/R06—R13验收。报告及Fix1审查见 `.superpowers/sdd/2026-10-10-three-line-product-convergence/task-R03-{report,fix1-review}.md`。
+
+### R04：归并 JPA 投影存储并明确平台边界
+
+**Files:** `ddd4j-data/ddd4j-data-event-store-jpa/` 中的 JPA 位置存储与 `ddd4j-runtime/ddd4j-runtime-spring/` 中的 Spring Data 适配。对应测试为 `EntityManagerProjectionPositionRepositoryTest.java`、`ProjectionJpaModuleIndependenceTest.java`、`JpaProjectionPositionRepositoryTest.java` 和 `ProjectionPositionJpaIT.java`。Quarkus 装配归 R08。
+
+**Interfaces:** `ProjectionPositionRepository` 和既有实体/构造器兼容清单；公共持久化以 JPA API 为边界，Spring Data/Boot 装配放在具体 Spring 接入层。脚手架变更先定位实际拥有仓库和指令，不在本仓库虚构 starter。
+
+- [x] 用旧位置样本和旧构造路径验证读取、更新、reset 的既有语义、查询快照可修改性及事务失败；补非 Spring JPA 和 Spring Data 兼容用例。
+- [x] 将存储实现归入 data，统一实体映射，保留旧 API 委派或必要显式依赖；不得默认改变表名、列名、stream key 或重复扫描实体。
+- [x] 持久化和事务契约已验收。现行复跑命令为 `./mvnw -pl ddd4j-data/ddd4j-data-event-store-jpa,ddd4j-runtime/ddd4j-runtime-spring -am verify`。非 Spring 类加载证据见 R08/R13。
+
+**验收：** AC04/AC06/AC09 对 JPA 的断言有证据；移走类但仍强绑 Spring 容器不算通过。
+
+**2026-11-18 本轮证据：** R04 已通过独立审查（Critical/Important 均为 0）。JPA 中立入口和公共持久化操作归 data，旧 SpringData 构造器、实体映射及序列化字段按兼容裁定保留；Quarkus 旧立面委派。规定 verify 734 项、Quarkus 受影响契约 4 项均无失败、错误或跳过；7 项隔离探针实际运行，包含无 Spring JVM、旧字节与旧库副本读取、事件/位置同事务失败回滚及提交后重开。该 verify 同时覆盖 R03 Fix1 后的 core 530 项与公共 projection 32 项。真实平台扫描/JTA、混合依赖、完整回退、JDK8/21 仍分别由 R06/R08/R13/R14 验收。报告与独立审查：`.superpowers/sdd/2026-10-10-three-line-product-convergence/task-R04-{report,review}.md`。
+
+### R05：解除日志对 WebMVC 的反向依赖
+
+**Files:** `ddd4j-data/ddd4j-data-logs/`、`ddd4j-web/ddd4j-web-webmvc/`、`ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/guice/Ddd4jLogsGuiceModule.java`；拟在 Guice 测试包新增 `GuiceOptionalCapabilitiesTest.java`。
+
+**Interfaces:** 保留操作日志处理 API，HTTP/切面数据采集由 Web 接入负责；Guice 的日志/ORM 专用装配成为显式选择，旧安装入口继续兼容。
+
+- [x] 添加隔离 classpath 的日志装配用例：没有 Spring WebMVC 也能使用日志处理；显式启用日志时日志字段及异常采集行为保持。基础 Injector 移除未选择 ORM 依赖的用例由 R07 完成，不作为本任务提前通过的条件。
+- [x] 解除 `data-logs → web-webmvc` 的反向依赖，调整对应平台装配；仅声明 optional 而基础入口仍加载缺失类型视为失败。
+- [x] 运行 `./mvnw -pl ddd4j-data/ddd4j-data-logs,ddd4j-web/ddd4j-web-webmvc,ddd4j-runtime/ddd4j-runtime-guice -am verify`，保存依赖解析与类加载证据。
+
+**验收：** AC06 的 Guice/日志边界通过；日志能力保留，基础启动不再被迫携带 WebMVC。
+
+**2026-11-18 本轮证据：** R05 已通过独立审查（Critical/Important 均为 0）。`data-logs → web-webmvc` 已解除，日志读取既有 ThreadContext，WebMVC 可选桥保留请求参数/头优先级、URI/IP、日志扩展点及异常/MDC 契约。定向 10 项和规定 verify 1,274 项均无失败、错误、跳过；真实隔离 JVM 分别验证无 Spring/WebMVC/Servlet 的日志调用、无日志依赖的 MVC 请求分派。4 个旧公开/受保护 API 描述符一致，同一合成旧客户端字节在旧/候选环境运行成功。Guice 基础 ORM 选择留 R07，三线和完整消费者兼容仍留 R13/R14；报告及审查见 `.superpowers/sdd/2026-10-10-three-line-product-convergence/task-R05-{report,review}.md`。
+
+### R06—R12：逐平台执行同一迁移流程
+
+**Files:** 每个任务只修改 M 表中本批的两个旧模块、目标 runtime 的生产/测试/资源/POM、受影响 Web/样例和兼容清单。两个旧模块的源码不能在目标模块留第二份同名类。所需内部公共代码归 R02/R03 的共同实现。
+
+**Interfaces:** 消费 R02/R03 的命令/投影规则、R04/R05 的存储与依赖边界；产出可独立使用的目标 runtime 和委派到它的旧入口。每个平台必须完成下列步骤再进入下一批：
+
+1. 先运行并补充旧/新入口、重复注册、事务/错误、基础/显式启用/缺配置、历史位置恢复与启停用例；新增目标确认失败原因。
+2. 先迁移该批奇数 M 项的命令实现并通过命令契约，再迁移偶数 M 项的投影装配；存储实现不回流 runtime。
+3. 在本批同步提供旧公开类/配置/坐标的兼容委派及必要依赖说明；Bean 名、限定符、扫描、资源文件和生命周期一起迁移。
+4. 运行下表命令和对应真实平台启动用例，核对实际执行的测试数量及报告；基础模式无投影任务，显式启用处理真实事件，关闭释放资源。
+5. 更新 M 清单的证据与回退结果，确认单一视图没有旧/新两套调度同时生效。保留旧构件和映射，尚不删除旧模块。
+
+以上是每个平台都要执行的步骤，不是一次执行即可覆盖七个平台；下面复选项表示整批验收。
+
+以下命令使用 R15 退役十二个旧投影模块后的现行坐标。原始报告保留当次执行命令。
+
+| 任务 | 必须扩展的现有 runtime 测试文件（相对目标模块） | 现行复跑命令（仓库根目录） |
+|---|---|---|
+| R06 | `src/test/java/io/ddd4j/spring/command/SpringCommandBusTest.java`、`src/test/java/io/ddd4j/spring/cqrs/SpringCqrsRuntimeContractTest.java`、`SpringJpaViewManagerTest.java` | `./mvnw -pl ddd4j-data/ddd4j-data-cqrs-spring,ddd4j-runtime/ddd4j-runtime-spring,ddd4j-web/ddd4j-web-webmvc,ddd4j-web/ddd4j-web-webflux -am verify` |
+| R07 | `src/test/java/io/ddd4j/guice/command/GuiceCommandBusTest.java`、`src/test/java/io/ddd4j/guice/cqrs/GuiceCqrsRuntimeContractTest.java`、`GuiceViewManagerTest.java` | `./mvnw -pl ddd4j-data/ddd4j-data-cqrs-javalin,ddd4j-runtime/ddd4j-runtime-guice,ddd4j-web/ddd4j-web-javalin -am verify` |
+| R08 | `src/test/java/io/ddd4j/quarkus/command/QuarkusCommandBusTest.java`、`src/test/java/io/ddd4j/quarkus/cqrs/QuarkusCqrsRuntimeContractTest.java`、`QuarkusJpaProjectionServiceContractTest.java` | `./mvnw -pl ddd4j-data/ddd4j-data-cqrs-quarkus,ddd4j-runtime/ddd4j-runtime-quarkus,ddd4j-data/ddd4j-data-event-store-panache,ddd4j-web/ddd4j-web-quarkus -am verify` |
+| R09 | `src/test/java/io/ddd4j/micronaut/cqrs/MicronautCqrsRuntimeContractTest.java` | `./mvnw -pl ddd4j-data/ddd4j-data-cqrs-micronaut,ddd4j-runtime/ddd4j-runtime-micronaut,ddd4j-web/ddd4j-web-micronaut -am verify` |
+| R10 | `src/test/java/io/ddd4j/helidon/cqrs/HelidonCqrsRuntimeContractTest.java` | `./mvnw -pl ddd4j-data/ddd4j-data-cqrs-helidon,ddd4j-runtime/ddd4j-runtime-helidon,ddd4j-web/ddd4j-web-helidon -am verify` |
+| R11 | `src/test/java/io/ddd4j/vertx/cqrs/VertxCqrsRuntimeContractTest.java` | `./mvnw -pl ddd4j-data/ddd4j-data-cqrs-vertx,ddd4j-runtime/ddd4j-runtime-vertx,ddd4j-data/ddd4j-data-event-store-r2dbc,ddd4j-web/ddd4j-web-vertx -am verify` |
+| R12 | `src/test/java/io/ddd4j/dropwizard/cqrs/DropwizardCqrsRuntimeContractTest.java`、`src/test/java/io/ddd4j/dropwizard/Ddd4jBundleCollectionContractTest.java` | `./mvnw -pl ddd4j-data/ddd4j-data-cqrs-dropwizard,ddd4j-runtime/ddd4j-runtime-dropwizard,ddd4j-web/ddd4j-web-dropwizard -am verify` |
+
+表内简写的测试文件位于同一行前述 `cqrs/` 测试包；新增测试名称由用例说明约束，不另建一套平台契约。共同场景优先扩展 `ddd4j-runtime/ddd4j-runtime-testkit/src/main/java/io/ddd4j/runtime/testkit/AbstractCqrsRuntimeContractTest.java`，不得通过修改共同测试来放宽失败平台的行为要求。
+
+- [x] R06 / M01—M02：Spring 命令唯一性和真实事务用例通过；投影基础模式无 JPA/事件源要求，MVC 与 WebFlux 分别验证。
+- [x] R07 / M03—M04：Guice/Javalin 的基础、旧安装和显式启用三条路径通过；新基础 Injector 无未选择的 ORM/WebMVC 依赖，显式持久化模式无静默 Noop/内存位置回退；旧安装的既有默认行为通过兼容委派保留并明确记录。
+- [x] R08 / M05—M06：Quarkus 的 CDI 装配、Panache/历史位置、非 Spring JPA 和启动关闭通过；保留现有支持的构建形态。
+- [x] R09 / M07—M08：Micronaut 的容器发现、配置选择、命令/投影与 Context 关闭通过。初轮审查与 Fix1 复审通过；旧投影 GAV 保留公开 SPI 传递依赖，独立消费者编译/运行通过。原生 Context 部分调度后失败、取消重试及原 SPI 恢复已在 R14 用具名用例三线验收；R09 运行时夹具使用 JPA ResourceLocal/H2。S04 持久样例后台运行使用真 PostgreSQL。
+- [x] R10 / M09—M10：Helidon SE 兼容与 MP CDI 显式装配、共享引擎及启停通过独立审查。事务证据为应用 JDBC/H2 边界，未验证 JTA；借用调度器在 MP 关闭后仍可接受并实际执行新任务，R14 已在三线原生容器验证。持久数据回退见 R13。
+- [x] R11 / M11—M12：Vert.x 上下文、排队取消/已执行业务边界、关闭、事件循环及借用资源检查通过；CRON 兼容修复经定向复审，C0/I0/M0。同步调用仍须进入 worker，S06 业务样例已另行通过审查。
+- [x] R12 / M13—M14：Dropwizard 的 Bundle、Managed 生命周期、重复启动和启动失败清理通过独立审查；S07业务/Auth和R13完整持久回退继续开放。
+
+**验收：** 每批满足本批 M 表特有条件及 AC02—AC09 的适用部分；缺少真实平台或外部服务证据时维持未完成，不以其他平台的结果替代。
+
+**2026-11-18 R06 证据：** M01/M02 已独立审查并修复非 singleton 自定义 Bean 漏判。三个旧公开类由 runtime-spring 唯一提供，旧两坐标保留转接主 JAR；新增显式装配，保留原有效扫描、构造器、事务及 Spring cron。初轮规定 verify 1,226 项、15 种实际 JAR 激活组合、冻结 M01/M02 字节码运行均通过；这些为 Fix1 前构件证据。Fix1 当前四文件由 24 项定向测试验证（真实 RED 后全绿），复审关闭 P2；没有把初轮 JAR/全量结果冒充最终构件验证。MVC/WebFlux 为真实 Tomcat HTTP，WebFlux 限 Servlet 适配；S01 将基于当前源码重建消费，R13/R14 完整兼容和三线门禁仍开放。详见 `.superpowers/sdd/2026-10-10-three-line-product-convergence/task-R06-{report,fix1-review}.md`。
+
+**2026-11-18 R07 证据：** M03/M04 已通过独立审查及 I1 复审。三个旧公开类由 runtime-guice 唯一提供，两个旧坐标保留；基础 `basic()` 与显式投影入口分开，保留旧内存/Noop 默认、动态命令补查和原生调度语义。初轮规定 verify 1,227 项、230套件全通过；冻结 M03/M04 旧客户端在实际候选 JAR 上运行成功，九个旧公开描述符保留。审查发现失败创建会遗留全局 Injector，Fix1 将显式能力启动前置于全局发布：六组真实 RED 后，定向50项及当前 runtime scoped verify 106项/18套件全通过，当前JAR旧客户端回放也通过。1,227项为Fix1前证据，不冒称修复后全套重跑。独立JVM剥离依赖、真实HTTP/执行器事务及冻结位置10→20接续已验证；S02四场景、三线和完整消费者回退仍开放。详见 `.superpowers/sdd/2026-10-10-three-line-product-convergence/task-R07-{report,fix1-review}.md`。
+
+**2026-11-18 R08 证据：** M05/M06 已通过独立审查及 Fix1 复审。旧两个 GAV 保留薄 CDI facade，真实实现归 runtime；基础模式无 Quartz/ORM/source 要求，旧配置及请求上下文、Panache/JTA、失败启动清理均有原生 JVM 证据。初轮规定 verify 与恢复命令去重1,170项，是后续修复前的证据。Fix1 普通已执行回归74项通过，新增 mixed 专属用例在默认命令中跳过1项，附加 profile 实际执行1/1且零跳过；修复后20条实际 JAR 定点构建/运行结果符合预期，单视图单 numeric 任务、严格缺配置拒绝和历史位置10→20→第二进程20均有断言。原冻结 M05/M06 字节码4次运行保留原验证时点。运行时异常清理的已知 warning 仍列为 Minor；S03、R13/R14、GraalVM native-image、远端CI/生产未由本批代验。详见 `.superpowers/sdd/2026-10-10-three-line-product-convergence/task-R08-{report,fix1-review}.md`。
+
+**R08 当前投影门禁**　三线默认验证由 Panache 的 `QuarkusDurableProjectionIT` 承担。场景矩阵要求本线实际执行 `historicalPositionFailureRollbackRetryAndSingleScheduler`，核对位点恢复、JTA 回滚、失败重试、单个 Quartz 任务和停机取消。
+
+**2026-11-18 R10 证据：** Helidon 两旧坐标及 runtime 已通过独立审查（C0/I0/M1）。旧 SE 的 ServiceLoader/人工启停与公开传递依赖保留，真实最小消费者不要求 CDI；MP 默认无投影资源，显式启用使用唯一真实来源/位置，支持正常作用域与具体泛型 producer，原代理保留。部分启动失败确实达到第二次调度并取消首个句柄、恢复此前 SPI；自有线程执行及退出有实证。初次规定 verify 1,106 项、后续取消修复57项、最终 runtime/web 41项按时点分别记录，不能相加；最终11次原生运行全部退出0，覆盖旧SE、typed/raw、旧新混合、历史位置10→20及重开无重放。应用 JDBC/H2 提交与回滚不代表 JTA；借用调度器关闭后的现有探针仅 schedule/cancel，强化实际执行断言列为 R14 非阻塞验证项。新写入数据切回旧构件的完整链路仍属 R13，S05业务样例仍待验收。报告与审查：`.superpowers/sdd/2026-10-10-three-line-product-convergence/task-R10-{report,review}.md`。
+
+**2026-11-18 R11 证据：** Vert.x 两旧坐标与 runtime 迁移通过独立审查及 Fix1 复审（C0/I0/M0）。旧同步接口/公开传递依赖保留，基础零投影，显式投影使用原生 timer→worker；上下文、排队取消、部分启动回滚、stop 重启和终止 close、借用资源均有证据。初次205 suites/1,114 tests与close修复后56项按时点记录；原15次native及6次冻结回放属于Fix1前core。复审发现旧超字段宽度正步长误拒绝，最小修复共享parser并防int溢出：真实RED后6项GREEN，当前旧/新/混合6次CRON/工厂运行及2次冻结M12回放exit0；未重复大矩阵，也不把历史证明冒称当前core全量重跑。R13完整持久回退、R14三线/record/OWASP及S06四样例仍开放。报告与复审：`.superpowers/sdd/2026-10-10-three-line-product-convergence/task-R11-{report,review}.md`。
+
+**2026-11-18 R12 证据：** Dropwizard 两旧坐标与 runtime 已通过独立规格/质量审查（C0/I0/M1）。旧静态工厂及手动启停保留，默认Bundle零投影，显式依赖校验和真实Managed负责启停、部分失败回滚及前任所有者恢复；自有池有界关闭、借用池实际回调验证各自边界。规定22模块verify一次1,123项通过，最后线程退出断言仅定向6项重验；当前生产JAR未随断言修改。五个独立Maven消费者解析/公开API编译通过，旧/新/混合18种原生模式与6次冻结M13/M14回放成功；历史位置10→失败保持→重试20及独立JVM重开有证据。reactor与parentless实际依赖版本分别记录，既有logback-access/CDS告警为非阻塞Minor。S07四业务入口、R13候选写入后旧实现继续读写、R14三线/安全与整体门禁均不由本批代验。详见 `.superpowers/sdd/2026-10-10-three-line-product-convergence/task-R12-{report,review}.md`。
+
+### S00—S07：七框架样例与公共验收
+
+**依赖与事实源：** 延续本活动计划和 AC01—AC12，不另建规格。S00 固定共享 Order 业务与验收；S01—S07 随 R06—R12 按 Spring → Guice/Javalin → Quarkus → Micronaut → Helidon → Vert.x → Dropwizard 推进。每框架 default、cqrs、satoken、shiro 是四个独立入口，共28；共享 order-* 和 Spring MVC/WebFlux 两形态不额外凑数。R14、R15 必须消费全部28场景结果。
+
+**Files:** `ddd4j-samples/pom.xml`、各样例模块、共享 order-domain/application/testkit 和必要的外部 Boot 接入；先核实外部仓库规范，不将 Boot 自动配置复制到 core。保留初始16入口及有效测试，补初始12项缺失入口；S01已补4项，S04、S05、S06及S07各补2项，当前28项全部纳管并通过各批独立审查。
+
+**每个框架共用验收：** default 保存/更新/查询且无强制 bus/ES/projection/MQ/auth；cqrs 命令→持久化/事件→投影→查询及失败不越过位置、重试恢复；satoken/shiro 分别验证登录、认证通过、授权允许/拒绝、退出后令牌失效、异常与请求结束后上下文清理。必须通过真实框架启动与HTTP/业务调用，测试存在或构建通过不算运行验收。共享业务复用，平台特有生命周期保持。
+
+| 任务 | 框架 / 承接 | POM 现状 | 本批交付 |
+|---|---|---|---|
+| S00 | 共享业务及验收 / R00—R03 | order-* 7项；不计28 | 固定4类场景契约、输入/断言/失败恢复/证据格式，复用order-testkit |
+| S01 | Spring / R06 | 4项已新增并纳管 | 新增default/cqrs/satoken/shiro；复用外部Boot装配，MVC/WebFlux分别验证 |
+| S02 | Guice/Javalin / R07 | 4项已存在 | 保留入口并验证基础/旧安装/显式启用及4类业务场景 |
+| S03 | Quarkus / R08 | 4项已存在 | 保留CDI/构建形态，验证4类业务场景与重启恢复 |
+| S04 | Micronaut / R09 | default/cqrs存在；auth2缺 | 补satoken/shiro并验证编译期发现、HTTP和Context关闭 |
+| S05 | Helidon / R10 | default/cqrs存在；auth2缺 | 补satoken/shiro并验证当前Helidon形态、生命周期和HTTP |
+| S06 | Vert.x / R11 | default/cqrs存在；auth2缺 | 补satoken/shiro，验证异步/取消/线程和上下文清理 |
+| S07 | Dropwizard / R12 | default/cqrs存在；auth2缺 | 补satoken/shiro，验证Bundle/Managed启停和启动失败清理 |
+
+- [x] S00：共享输入、断言、失败/恢复和证据格式形成可执行测试，保留现有业务能力。
+- [x] S01：Spring四入口及MVC/WebFlux真实业务验收（默认例验证两种接入；两认证例当前证据为MVC，未声称认证WebFlux通过）。
+- [x] S02：Guice/Javalin四入口真实业务验收（单活动原生应用/配对关闭；持久CQRS与兼容内存路由分别验证）。
+- [x] S03：Quarkus四入口真实业务验收（同步原生REST；默认/auth为内存示例，CQRS真实持久查询和同库跨JVM重开）。
+- [x] S04：Micronaut四入口真实业务验收。独立规格/质量审查通过；9项样例测试及46项实际 main HTTP 断言、PostgreSQL 容器与应用同库重开通过。全仓 record 检查和 OWASP 限制保留至 R14。
+- [x] S05：Helidon四入口主线通过独立规格/质量审查；当前10项样例测试、5次真实main与46项HTTP、同库容器/应用重开通过。R14 已按请求标识逐一关联断连与 FINISHED 清理，Sa-Token 和 Shiro 在三线合计六次原生验证。
+- [x] S06：Vert.x四入口通过独立审查及Fix1复审，C0/I0/M0；默认/持久CQRS/两原生认证主线成立，已进入请求和原生timer任务排空后关闭资源。数据库容器重启不在当前tmpfs证据内。
+- [x] S07：Dropwizard四入口真实业务、持久失败恢复及原生认证/生命周期通过独立审查。
+
+**验证方式：** 各线以本线 JDK/Wrapper 对本批四个真实 reactor 模块执行 `-pl ... -am verify`，再运行平台启动与HTTP/持久化场景；记录模块/GAV、源码指纹、命令、测试数、跳过、日志与关闭结果。尚未创建的模块路径是待交付项，不给出可运行承诺。R00只盘点，不生成样例代码或勾选S任务。
+
+**2026-11-18 S00 证据：** 三个窄驱动接口及共享断言已经独立审查通过，新增 15 项检错测试，受影响 verify 共 675 项，均无失败、错误、跳过。CQRS 夹具用真实公共 Runner 与独立查询存储验证源游标 10→10→40 的失败重试；认证部分为受控 double 的断言验证。既有 OrderScenario、业务、POM 和旧测试未改；没有新增场景引擎或依赖。真实平台启动/HTTP/原生认证由 S01—S07 各自验收。报告及审查：`.superpowers/sdd/2026-10-10-three-line-product-convergence/task-S00-{report,review}.md`。
+
+**2026-11-18 S01 证据：** 四个独立 Spring 入口复用共享 Order 与外部真实 Boot 源构件，已通过独立审查及 I1 复审。默认例有实际 MVC/WebFlux HTTP，CQRS 有 PostgreSQL 失败重试、应用/EMF 重开和独立查询证据。初次规定 verify 的 1,466 项测试全通过，但命令因五条字段 Javadoc 缺失退出1；仅补注释后正常 resume 三模块 verify 退出0，不能描述为一次完整命令成功。六次打包 JAR 启动属于初轮证据；随后两认证例修复 context path 授权绕过，真实 RED 4项/2失败→GREEN 4项全通过，并用两份新 JAR 验证 `/sample` 下只读创建/取消403、退出失效401。认证证据限MVC，外部完整Javadoc、漏洞扫描、远端CI、宿主机/数据库容器耐久和跨进程支付幂等仍未验证。详见 `.superpowers/sdd/2026-10-10-three-line-product-convergence/task-S01-{report,fix1-review}.md`，旧证据未冒充当前auth构件验证。
+
+**2026-11-18 S02 证据：** 四个既有 Javalin 入口复用共享 Order，已通过独立审查及 I1 复审。default 提供无强制认证/CQRS的简单入口，保留旧 authenticated/JDBC API；CQRS 使用真实 PostgreSQL、源游标、独立查询、失败重试及应用/EMF 重开，旧 Order/Goods 内存路由另行保留兼容。初轮规定 verify 为40模块、1,976项全部通过，此为 DAO/权限后续修复前证据；当前受影响认证模块完整 verify 为 Sa-Token201、Shiro157，均0失败/错误/跳过。当前生产JAR使用各自POM runtime依赖启动，权限拒绝/允许、真实订单状态、关闭端口及自然退出通过。I1使用Javalin实际匹配路由消除尾斜杠取消越权；两次旧RBAC响应异常保留，诊断后完整绿灯不表示未知根因已解决。在线check、三线/完整消费者、任意多应用乱序关闭和生产部署仍未验收。详见 `.superpowers/sdd/2026-10-10-three-line-product-convergence/task-S02-{report,fix1-review}.md`。
+
+**2026-11-18 S03 证据：** 四个既有 Quarkus 入口已通过独立审查（Critical/Important均0）。default保留原`/api/orders`，默认不强制Bearer；显式Bearer策略和原Web幂等检查保留。两认证例复用共享Order并验证真实原生身份/允许拒绝/错误密码/退出/异常与客户端断开清理；Shiro原匿名`GET /orders`列表仍为公开只读例外。CQRS保留旧内存路由/DTO，`/sample/orders`使用已有JDBC/Outbox、JTA事件源、Panache位置及独立六字段查询；真实查询提交后检查点失败仍4、重试24，以及事件3/pending3→重试事件3/pending0均有证据。四样例当前有效测试244项（45/85/58/56）无失败、错误、跳过；规定verify经历缓存环境、Javadoc和Shiro兼容失败后正常受影响续跑完成，不能称单次完整命令成功。实际fast-jar共5次运行（含CQRS同库重开），依赖无测试库，内部47个依赖实例与本轮reactor构件一致；同库重开events3/next4/queries1不变，均主动SIGTERM143并释放端口。单实例中继、同步REST、内存会话及跨资源幂等恢复边界保留；CI/native-image/三线/完整消费者与生产仍由后续门禁处理。报告与审查：`.superpowers/sdd/2026-10-10-three-line-product-convergence/task-S03-{report,review}.md`。
+
+**2026-11-18 S04 证据：** Micronaut 四入口已通过独立审查（C0/I0/M1）。default 保留原 `/api/orders`，默认可选认证，显式 REQUIRED Bearer 与幂等契约保留；两认证例使用原生引擎、同源权限数据和 Micronaut 原生线程上下文传播，验证允许/拒绝、真实业务错误、注销及断连清理。CQRS 保留旧 `/orders` 内存 DTO，`/sample/orders` 使用既有六字段独立查询和 ResourceLocal/JDBC 持久链路，验证查询/确认/检查点失败恢复及源游标。最终有效248 suites/1,361 tests无失败/错误/跳过，其中样例仅9项；原 Javadoc 与 stale SNAPSHOT 失败、正常续跑及 import-only 跳测试打包均按时点记录。当前生产JAR完成46项HTTP断言，5次成功main以SIGTERM143结束并释放端口；另一次旧数据库动态端口启动失败exit1保留。宿主机挂载PG容器重启及应用重开后订单PAID/20、检查点4不变。单实例、独占事件库/Outbox、同步JSON与跨资源幂等边界保留；模块README已补充事件库独占表述，文档增量待最终审查。全仓record检查受既有删除路径影响、OWASP被继承配置跳过，均未声称通过。报告与审查：`.superpowers/sdd/2026-10-10-three-line-product-convergence/task-S04-{report,review}.md`。
+
+**2026-11-18 S05 证据：** Helidon 四入口通过独立审查（C0/I0/M1），默认入口补齐生产 CDI 发现，原 Bearer/支付契约保留；两认证例使用真实引擎及权限，CQRS 使用既有持久源/独立读表并保留旧内存 DTO。规定38模块 verify 一次成功、249 suites/1,342 tests全通过；随后修复SaToken nullable权限数据源恢复，受影响两认证模块3项通过，当前四样例共10项，未把初轮全量当作修复后重跑。控制器核对52文件增量、75当前样例文件、34集成输入及576运行classpath实例，47个内部依赖与当前target一致；实际5个main/46次HTTP、同PG容器重启与应用重开后检查点4不变，进程均SIGTERM143且端口关闭。两认证各24次FINISHED是聚合证据，未与断连请求精确关联，R14补专属完成信号；产品同步cleanup未发现缺陷。旧S04同类nullable provider恢复问题单列最终定点修复，不扩大本批范围。单实例专用事件库/Outbox、独立事务、同步JAX-RS、全仓record及OWASP边界保留。报告与审查：`.superpowers/sdd/2026-10-10-three-line-product-convergence/task-S05-{report,review}.md`。
+
+
+**2026-11-18 S06 证据：** 四入口沿用共享Order，新增两个认证模块；默认保留旧REQUIRED router并提供直接业务main，CQRS沿用旧/orders五字段与public内存API，通过既有JDBC/Outbox/JPA和R11 Runner实现独立持久查询。初轮verify在Javadoc失败后仅续跑四样例，245去重suites/1,329 tests全通过，四样例当时20项；六次实际main/38次HTTP、查询失败checkpoint0→重试4→独立JVM重开4及独立timer推进2有证据。独立审查发现关闭未等待worker，Fix1以两个确定性RED修复：runtime可选借用ViewScheduler六参入口保持原五参语义，应用封闭准入、等待请求与完整timer Runnable后释放资源；受影响runtime/default/CQRS正常verify32项通过。当前default callable-held探针、产品main和CQRS真实SQL锁下timer关闭均通过，两个新main均143、驱动0，完整日志可区分。旧1,329与auth结果未冒充新runtime全量重验。初轮Docker卷失败、busy409驱动失败和首次CQRS日志覆盖已披露；tmpfs只证明同运行库JVM重开，永久阻塞任务没有强制关闭超时。报告与两轮审查：`.superpowers/sdd/2026-10-10-three-line-product-convergence/task-S06-{report,review}.md`。
+
+
+**2026-11-18 S07 证据：** Dropwizard四入口通过独立规格/质量审查（C0/I0/M3）。默认匿名业务/显式旧认证保留；CQRS旧静态内存接口和createdAt DTO保留，新增持久/sample/orders复用共享Order、Outbox、JPA事件/位置和R12 Runner，查询不回退写侧。两原生认证验证真实权限、退出失效、异常与逐请求断连清理；Jetty锁阻塞HTTP、自有timer及失败启动验证期限内关闭顺序。规定verify初轮因Javadoc格式失败后仅恢复三模块，去重253类/1,348项全部通过，当前四样例26项；5次实际main JVM、36次HTTP通过，持久失败位置0→重试4→同库新JVM保持PAID/4。SIGTERM退出143，tmpfs不证明DB重启；R12自有池5秒/Jetty30秒边界、OWASP跳过及版本告警明确保留。两个宽泛错误断言和两处平台注释列入R14定点收尾，已有main精确400证据。报告与审查见 `.superpowers/sdd/2026-10-10-three-line-product-convergence/task-S07-{report,review}.md`。
+
+## 用户确认的当前业务消费者状态（2026-11-18）
+R00/R13 历史基线包含 14 个旧平台坐标。当时使用冻结客户端、独立 Maven 消费者和持久化数据夹具验证行为。用户已确认框架暂无业务消费者。旧投影坐标及其兼容验收随后按 [R15 投影退出批次](#第二批五个通用投影模块退出)结束。剩余旧 CQRS 坐标继续采用 R15 对应任务。
+
+### R13：完成旧坐标、公开 API 与外部消费者兼容验收
+
+本节记录投影退役前的验收。现行投影交付以 R15 的两批退出条目为准。
+
+**Files:** 14 个兼容模块的 POM/资源、目标 runtime 与受影响存储模块；`REFACTOR_MIGRATION.md`、BOM 和真实拥有装配的脚手架文档。独立消费者夹具位于 `ddd4j-runtime/ddd4j-runtime-testkit/src/test/resources/convergence-consumers/`。testkit 为测试支撑，不计入七个 runtime 实现。
+
+**Interfaces:** 对每个 M 项消费固定的旧 GAV/API/配置和新实际构件，产出“旧入口/新入口/混合依赖”三组可复现报告；不以 Maven relocation 声明本身证明二进制兼容。
+
+- [x] 为七个平台分别建立旧入口、新基础入口、旧新坐标共存的独立消费者；使用实际构件解析，检查重复类、Bean、实体、调度任务和所需依赖。
+- [x] 用旧基线编译的客户端在候选构件集上运行，客户端不重新编译；另做新客户端源码编译、旧配置/Bean 标识与序列化样本测试，分别记录源兼容和二进制兼容。
+- [x] 显式列出原传递依赖转直接依赖、旧配置到新配置、旧实体到新提供模块的变化；已有启用行为保持，缺配置和内存演示模式可区分。
+- [x] 用历史位置启动、处理新事件、停机并回退到上一兼容构件/配置，确认无重复调度、位置清零或不可读数据；若产生不兼容写入，先阻止退出旧实现并处理兼容，不能将测试标为通过。
+- [x] 将 `auth-datascope` 的旧接口委派和其他保留模块的依赖调整纳入受影响回归；不合并两种 License 格式或两种 validation 职责。四种位置存储、五种 EventStore 的场景逐项保留。
+
+**验证方式：** 在隔离的本地 Maven 解析目录构建候选构件，再在 reactor 外执行各消费者的 `verify` 和旧客户端运行；具体 GAV、命令、classpath、退出码和报告位置写入 M 清单。原已支持消费者未验证时保持 OPEN，不撤回旧发布构件。
+
+**验收：** AC08—AC10/AC12 的兼容证据完整；仅有新源码编译通过不算旧客户端兼容。
+
+**2026-11-18 R13 验收：** 当前 JDK17 兼容批次通过独立规格与质量审查（C0/I0/M2）。35 个独立 Maven 消费闭包构建通过且无重复产品类；28 次冻结旧客户端运行、14 次独立源码编译、74 次当前原生进程验证通过，另复用完整 classpath 哈希相同的 12 次 Dropwizard 证据。七个平台完成候选写入→完整旧实现续写→候选续写，位置依次 10→21→22→23；auth 旧 SPI 桥接保留默认和自定义规则。控制器核验了 30 个产物、417 份 Java 源文件及 93 个冻结输入。58 项必需 JUnit 通过；依赖准备另有 60 项通过和 1 项 ESDB 容器启动错误，不能宣称全部后端通过。JDK8/21、完整存储矩阵、CI 和旧实现退出继续由 R14/R15 管理。早期夹具失败日志缺失与继承的 logback 告警已披露。证据及独立审查：`.superpowers/sdd/2026-10-10-three-line-product-convergence/task-R13-{report,review}.md`。
+
+### R14：三线、存储和多平台完整验收
+
+**Files:** 各线实际工作副本中的受影响实现/测试/POM、`config/parity/three-line-policy.json`、现有场景矩阵和 CI 配置；按 T00/T10 现有方式增量维护，不另建一套豁免机制。
+
+**Interfaces:** 消费 R00 的支持矩阵、M 清单和 AC01—AC12；输出对应源码指纹的三线本地、容器、独立消费者与远端 CI 状态。
+
+- [ ] 将有效公共实现/API/测试适配到 JDK 8/17/21，保留本线依赖和命名空间差异；不因某平台暂时无法运行而删除能力或放宽门禁。
+- [x] 运行四种投影位置存储和五种 EventStore 的契约/真实后端用例，以及七个 runtime、八种 Web 接入和 S00—S07 的全部 28 个独立样例场景；复用公共测试，逐项证明已支持组合，不能宣称所有理论排列均已通过。
+- [ ] 各线使用本线 Wrapper/JDK 执行 `clean verify` 和已有结构/API/依赖/场景门禁；执行 `python3 scripts/check_no_records.py` 及检查器自测。采集实际测试数、失败/跳过、环境问题和输入指纹。
+- [ ] 按授权状态核验远端 CI；未获推送授权或未运行 CI 时保留“未验证”，本地通过不自动关闭 T10/T11。原版简洁用法与高级增强路径分别给出验收证据。
+
+**验收：** AC01—AC11 适用证据齐全且无未解释差异；远端/真实服务缺口不隐藏。十二个旧投影模块按 R15 的两个退出批次独立验证。整体交付仍需完成 R14。
+
+**2026-11-20 投影退役后的 121 模块根构建与 Spring 投影回归**　三条线在各自冻结源码中完成本线 JDK 和 Maven Wrapper 的默认 `clean verify`。Java 8、17、21 分别执行 3,392、3,453、3,440 项测试，各生成 107 份 Javadoc，Maven 退出码均为 0。Java 8 Javalin 夹具使用回环地址和系统分配的端口，此前挂起的幂等用例在根构建中通过。三次根构建的 Spring runtime 只执行了既有的 JPA 集成测试，随后修正三线的 Surefire 测试匹配。三线定向构建各通过 73 项 Spring runtime 测试，其中此前缺少报告的三个投影场景合计 18 项。定向验证和根构建属于不同源码快照，当前 R14 仍需整体验收。根构建证据位于 `R14-evidence/r14-current-121-module-reactors/` 下的 `jdk8-loopback`、`jdk17-isolated-port` 和 `jdk21-isolated-port`。Spring 复验见 `R14-evidence/r14-spring-runtime-test-discovery/`。
+
+**同批本地场景与编译 API**　将冻结根构建和显式场景报告与三线 Spring 定向结果逐项核对，各线 268 个受支持的本地测试绑定均有报告。Java 8、17、21 分别执行 1,275、1,251、1,252 项绑定内的去重用例。每条线的真实云 Broker 验收仍待执行。正式编译 API 比对使用三个根构建的实际 class 文件，仍有 57 个唯一待对齐条目，源码清单仍有 325 条 OPEN。证据见 `R14-evidence/r14-current-121-module-reactors/supported-local-scenario-bindings.json` 和同目录的 `compiled-api/`。
+
+**认证常量的原生定向验证**　按当批编译 API 基线逐项核对，原有 32 个认证常量差异已在当前三线 JAR 中消除。Java 8、17、21 分别通过 54、67、64 项定向测试，独立复审通过。Java 17 保留原有 JWT 签发和读取行为。剩余认证访问器、会话与数据身份继续按 R14 验收。定向证据见 `R14-evidence/r14-auth-key-contract/verification.json`。
+
+**显式登录域与会话有效期**　Java 8 的 Sa-Token realm 通过 SubjectProvider 装配。同名账号的令牌、主体、续期和设备归属随所选 realm 隔离。Java 8 原生定向构建通过 821 项，后续追加的生命周期类通过 34 项。省略有效期时继承 SDK，显式 `-1` 表示永久。Java 17、21 的严格 Jackson 请求回放各通过 16 项，现有计算字段继续序列化，未扩大未知字段接受范围。Jackson 对字面 `null` 的处理按各线已有版本行为保留。两个场景共绑定 20 个已有执行记录的具名用例。证据见 `R14-evidence/r14-jdk8-session-realm/`。
+
+**可选 Sa-Token 数据身份**　三线按各自令牌读取数据身份和当前主体。缺失主体、轮换校验失败、撤销或凭证前缀错误时拒绝当前主体及权限。后台显式账号查询和已验证身份的请求后审计保留。Java 8、17、21 模块原生测试分别通过 67、69、70 项，各含 14 个数据身份契约。三个公开类的 15 项 JVM 成员一致。三份归档 JAR 的对应功能类与原生测试执行的 class 文件逐字节一致。该次更新后三线场景清单各 209 项，原有清单保留。证据见 `R14-evidence/r14-token-data-identity-parity/credential-bound-status/`。
+
+**认证 JVM 签名定向复查**　以本线已执行原生测试的当前 class 文件重新比对历史 57 个未对齐条目的八个类型。49 个条目已经对齐，余下八个均为 `StpKit` 的学籍、校区与身份访问器。角色和学籍字段实际取值的确认仍独立进行。证据见 `R14-evidence/r14-current-121-module-reactors/current-auth-member-recheck/verification.json`。
+
+**Javalin Shiro 独立 Guice 装配**　无参模块为独立样例创建同一组仓储和 RBAC 服务，演示数据初始化一次。调用方传入仓储与服务时保持原所有权。Java 8、17、21 各复现两个无参构造失败，修复后各通过 81 项定向测试，其中包含按原生 HTTP 验证的订单、商品与鉴权路径。独立复审通过。证据见 `R14-evidence/r14-javalin-shiro-standalone-module/`。
+
+**Java 17 Shiro 依赖收敛**　从 Easy4J 扩展排除重复传入的 Shiro core/web 2.2.1 Jakarta，原有直依赖版本保持 3.0.2。实际 Maven 依赖树和两份原生测试报告均只包含一份各自的 3.0.2。12 项主体测试及两项 Spring HTTP 测试通过。证据见 `R14-evidence/r14-jdk17-spring-shiro-classpath/verification.json`。
+
+**Javalin Shiro 原生生命周期合并验证**　真实 Guice 关闭抛异常、Shiro 会话读取抛异常、Jetty 启动与回滚同时失败，均验证先前调用方的状态恢复和原始异常传播。Java 8 已有对应清理路径，Java 17/21 补齐。三线按完整当前输入各通过 16 项，涵盖原生 HTTP、关闭/请求上下文、Guice 装配和订单路由。该批增加三个场景、15 个具名用例绑定，场景矩阵更新至 212 项。独立复审通过。证据见 `R14-evidence/r14-javalin-shiro-native-close/combined-latest/`。
+
+**Quarkus Sa-Token HTTP 认证方案**　三线以同一有效令牌原生复现 `Bearer` 可读单、`bearer` 返回 401。过滤器统一按大小写无关匹配认证方案，三种写法读取同一订单并返回相同数据，`BearerX` 仍返回 401。Java 8、17、21 各通过六项原生定向测试，覆盖原有匿名拒绝、退出与断连清理。现有 Quarkus Sa-Token 订单场景新增一条具名用例，Classic 和 Reactive 继续使用各自的请求完成机制。证据见 `R14-evidence/r14-quarkus-satok-bearer-scheme/`。
+
+**Micronaut 原生鉴权与参数校验顺序**　支付请求缺少必填参数 `key` 时，Java 8 的 Sa-Token 与 Shiro 原先都先返回 400。现在 Micronaut 3 依据已匹配路由的注解先鉴权，再返回必填参数校验结果。原 AOP 仍在控制器线程复查权限并恢复原生会话。三线实测匿名 401、无写权限 403、有写权限 400，各通过 11 项 HTTP 和会话资源测试。Java 8 两个样例的独立进程还验证未知路径 404、错误方法 405、错误登录 401 和公开登录签发令牌。两条新场景绑定实际 HTTP 用例，矩阵现有 214 项。证据见 `R14-evidence/r14-micronaut-auth-before-binding/`。
+
+**Micronaut 原生 Bearer 认证方案**　三线 Sa-Token 与 Shiro 示例原先均拒绝小写及混合大小写的方案名称。现按大小写无关方式识别 `Bearer `，原样传递令牌。三种写法使用同一会话读取相同订单，`BearerX` 与无凭据请求继续返回 401。Sa-Token 保持原生令牌头回退及 Cookie 策略。Java 8、17、21 各通过 13 项原生 HTTP 和会话资源测试，前一批鉴权顺序用例继续通过。新增两个可执行场景后，三线矩阵共 216 项。证据见 `R14-evidence/r14-micronaut-bearer-scheme/`。
+
+**Helidon 原生 Bearer 认证方案**　三线以同一有效令牌验证小写和混合大小写的方案名称。修复前 Shiro 读单返回 401，Sa-Token 读单已成功但 `/auth/me` 返回 500。两个适配器现按方案名称大小写无关匹配，三种写法读回同一订单，Sa-Token 返回同一主体。匿名、`BearerX` 以及只使用 Sa-Token 原生令牌头的受保护读单仍返回 401。三线各通过 12 项原生 HTTP 和会话所有权测试，两个样例的公开 JVM 签名无变化。三线矩阵新增两条已执行场景，现有 218 项。证据见 `R14-evidence/r14-helidon-bearer-scheme/`。
+
+**Vert.x 原生 Bearer 认证方案**　三线 Sa-Token 与 Shiro 原先都把小写和混合大小写方案的读单请求返回为 401。Sa-Token 同时收到混合大小写 Authorization 和有效原生令牌头时还会选中原生头的另一个账号。更新后，三种方案写法在实际工作线程均绑定同一个只读主体并读回同一订单。合法 Authorization 保持优先，无有效 Bearer 时继续按原规则读取原生令牌头。三线各通过 19 项原生 HTTP 和会话所有权测试，两个样例的公开 JVM 签名无变化。新增两条真实执行场景，三线矩阵共 220 项。证据见 `R14-evidence/r14-vertx-bearer-scheme/`。
+
+**Dropwizard 原生 Bearer 认证方案与登出**　三线分别以独立 HTTP 连接验证相同真实令牌。修复前 Sa-Token 的小写和混合方案读单返回 403，双请求头可能使用另一个账号，混合方案登出后旧会话仍可读单。Shiro 的小写和混合方案读单与登出被拒绝。两个原生适配器只调整方案名称的大小写匹配。修复后，三种写法读回同一订单，Sa-Token 保持 Authorization 优先和原有拒绝行为，混合方案登出使原令牌失效。三线各通过 21 项 HTTP 和所有权测试，样例公开 JVM 签名无变化。加入两条已执行场景，三线矩阵现有 222 项。证据见 `R14-evidence/r14-dropwizard-bearer-scheme/`。
+
+**2026-11-20 三线整仓和显式场景复验**　各线使用本线 Wrapper 与 JDK，在对应源码快照中完成 126 模块默认 `clean verify`。Java 8、17、21 分别通过 3,391、3,465、3,453 项测试，各生成 112 份 Javadoc。失败、错误、跳过及 Javadoc 抑制错误均为零。三线分别实跑 EventStore 容量和本地 Redis Streams，Java 8 另实跑 Quarkus `durable-order`。三线各匹配 246 个测试绑定，对应 220、211、211 份唯一测试报告，相应报告分别包含 1,193、1,169、1,170 项已执行测试。阶段结果和冻结输入见 `R14-evidence/r14-current-acceptance-reactors/jdk{8,17,21}/`。AWS、ONS 和 TDMQ 的真实云服务场景仍待运行。
+
+**2026-11-20 三线独立样例复验**　各线先将 90 个非样例项目装入独立 Maven 缓存，再单独对样例 POM 运行 `clean verify`。35 个样例及共享模块、1 个聚合模块和 28 个框架模式均通过。Java 8、17、21 分别运行 1,005、1,010、1,010 项测试，零失败、错误或跳过。Java 8 在临时 Maven 配置中补齐 Quarkus 插件已有的仓库身份，Java 21 首次 Javalin PostgreSQL 测试遇到容器清理服务握手失败，重跑使用同一批依赖，并仅在测试进程中指定 `127.0.0.1` 后通过。结果见 `R14-evidence/r14-current-acceptance-reactors/jdk8/detached-samples-retry/` 和同目录下 Java 17、21 的 `detached-samples/`。
+
+**2026-11-20 结构与已编译 API 复验**　用上述构建的实际 class 文件测得 234 条样例源码声明差异的编译签名等价。Dropwizard 三个 Java 17 专用访问日志文件已按实际配置和运行行为精确登记，登记仅影响源码分类。应用后 2,331 条盘点记录剩 375 条 OPEN，三线结构检查器自测分别通过 96、94、94 项。跨线 JVM API 门禁仍失败，剩余 81 个不同签名或常量条目分布于 Sa-Token（51）、core（21）、WebMVC（7）与 Auth Spring（2）。对三线现行构件分别加载原生 MockMvc advice 的诊断已复现认证异常响应差异。证据见 `R14-evidence/r14-current-acceptance-reactors/compiled-api/`、`R14-evidence/r14-dropwizard-source-binding-reviewed/live-inventory/reconciled-gate.json` 和 `R14-evidence/r14-current-auth-api-audit.md`。R14 与 T11 继续开放。
+
+**2026-11-20 Spring WebMVC 显式消息源入口**　Java 8 和 21 补齐 `GlobalExceptionHandler(NestedMessageSource, ServerI18nProperties)`。两线先各复现一项缺少构造器的失败，随后通过 27 和 28 项定向测试，覆盖显式消息源的本地化响应和 Spring 无参工厂注入。本次构造器 JVM 描述符与 Java 17 现有构件一致。独立审查无阻塞或重要项。认证响应和三线整体编译 API 门禁继续开放。证据见 `R14-evidence/r14-spring-message-source-api/`。
+
+**2026-11-20 Javalin CQRS 历史金额流与样例说明**　Java 8、17、21 分别通过 19、22、22 项金额及订单 DTO 契约测试。Java 8 实际读回旧发布的 434 字节样本，得到 3.50 CNY。三线策略绑定了 Java 8 专用测试和共有金额测试的精确源码哈希，两个错误哈希均被拒绝。历史二进制资源及高线补充测试仍留在原目录，待结构门禁分别处理。Helidon、Vert.x 的 CQRS、Sa-Token、Shiro 共六份样例说明三线一致，Java 17 恢复了四个旧文档跳转。本轮十二条 OPEN 差异退出编译前源码盘点，现剩 599 条。三线禁止 record 检查通过。证据见 `R14-evidence/r14-javalin-serialization-contracts/` 与 `R14-evidence/r14-sample-docs-convergence/final-delta.json`。
+
+**2026-11-20 Quarkus 认证样例跨线回归**　补齐 Sa-Token 和 Shiro 的五条缺失测试路径，覆盖共享订单、真实断连清理和启停时的权限提供者归属。Java 8、17、21 分别通过 17、18、18 项定向测试，失败、错误、跳过均为零。Classic 的测试观察器在已有清理回调执行后读取上下文，Reactive 使用自身原生请求完成回调。两个认证入口及 Sa-Token 提供者归属共三个场景新增 24 个具名用例绑定。证据见 `R14-evidence/r14-quarkus-order-auth-contracts/`。
+
+**2026-11-20 Dropwizard JSON 与认证样例说明**　两份 Dropwizard 契约测试三线统一，验证订单请求的三个 JSON 字段及令牌响应只输出 `token`。三线各通过 11 项定向测试，两个场景新增六个具名用例绑定。Javalin 与 Micronaut 的 Sa-Token 和 Shiro 四份说明三线一致。Javalin 的说明使用实际主类、端口与登录数据，构建命令完成语法检查，并核对了现行源码对应的 JAR 和原生测试报告。Micronaut 复用现有构件完成六次本机启动及 108 项 HTTP 检查，实测确认分页必须提供 `page`、`size`，Java 8 的离线类路径解析使用隔离缓存补齐父 POM。场景清单增至 185 项，原有 180 项逐项保留，三条真实云 Broker 仍待验收。编译前源码盘点从 599 条 OPEN 降至 592 条，无新增 OPEN。证据见 `R14-evidence/r14-dropwizard-wire-contracts/`、`r14-javalin-auth-sample-docs/` 和 `r14-micronaut-auth-docs/`。
+
+**2026-11-20 Helidon CQRS 默认路由**　实际生产入口在 Java 17 修改前对持久订单路径的 OPTIONS 返回 200。按现有 `ddd4j.cqrs.projection.enabled` 开关统一装配后，默认模式两条持久路径均为 404，内存订单仍返回 201。显式启用后，真实 PostgreSQL 的失败重试、进度持久化和同库重开通过。三线各通过 5 项原生测试。复核通过，覆盖缺省与显式 true 两个配置，显式 false 沿用同一禁用判断。见 `R14-evidence/r14-helidon-cqrs-parity/verification.json`。
+
+**2026-11-20 QLExpress、Web Core 与 MQ Core 契约**　Java 8 先复现 QLExpress 执行及校验结果的两项 JSON 读回失败，补齐两种结果对象的 Jackson 映射后，三线各通过 12 项。原 Java 8 构件与修订构件的公开 JVM 描述符和默认 JSON 字段及值相同。QLExpress 说明改用三线可运行的集合用法。Web Core 四份测试三线源码一致，每线 29 个测试类、151 个具名用例通过。MQ Core 统一投递配置字段、Outbox 诊断格式和缺省监听器策略，每线通过 35 项，同一四个公开类型的二进制签名核对一致。两条不再需要的精确语法登记已移除。见 `R14-evidence/r14-qlexpress-values/`、`r14-web-core-value-contracts/` 和 `r14-mq-core-behavior-parity/`。
+
+**2026-11-20 场景与结构进度**　该批新增七个场景、42 个已执行具名用例绑定，三线 192 项清单一致，前 185 项逐一保留。编译前源码 OPEN 从 592 条降至 578 条，无新增。三线禁止 record 检查通过。三条真实云 Broker 仍待验收，完整编译 API 与 CI 状态沿用各自门禁。证据见 `R14-evidence/r14-helidon-cqrs-parity/combined-current/`。
+
+**2026-11-20 Web 默认认证错误**　原生 RED 三线各复现两项失败。Java 8 和 21 的默认翻译把认证与授权类型当成 500，Java 17 空消息采用内部错误说明。默认翻译器现按 `ApiCode` 区分 401 和 403，保留非空消息，空白使用对应说明。实际 MockMvc 验证 HTTP 状态、业务码和消息，Java 8、17、21 分别通过 45、48、46 项，实际选中的 20 个模块、446 份生产及 POM 输入逐线与工作区一致。公开 JVM 描述符一致。证据覆盖默认翻译器与标准 WebMVC advice，自定义及旧 advice 仍独立验收。见 `R14-evidence/r14-web-auth-error-translation/verification.json`。
+
+**2026-11-20 CQRS 三平台定向修复**　Micronaut 移除 Java 8 样例自建命令总线，默认模式发现容器执行器且无需数据源，持久路由按开关装配，每线 6 项。Vert.x 修复 Java 8 实际仓储生成的 ID 无法从 JSON 读回，历史 wire 字段、公开描述符及 UID 保持一致，每线 13 项。Dropwizard 同一应用从持久模式重启到内存模式时清除旧持久引用，每线 7 项，验证旧 JPA 工厂关闭、两条持久路由缺失、内存订单写入。三组均使用各线实际 Maven/JDK 和已更新的当前依赖，保留真实 PostgreSQL 失败重试和同库重开证明。Dropwizard 扩展测试后仅刷新既有投影适配证据的三个测试摘要。见 `R14-evidence/r14-{micronaut-cqrs-behavior,vertx-cqrs-behavior,dropwizard-cqrs-behavior}/`。
+
+**2026-11-20 当前场景与源码盘点**　新增五个场景，21 个具名用例绑定已按现行报告核对。三线同一清单 197 项，原 192 项逐一保留。编译前源码 OPEN 为 577，比前次减少一项，无新增。禁止 record 检查与变更文件空白检查通过。三条真实云 Broker、完整跨线编译 API 和远端 CI 继续开放。见 `R14-evidence/r14-web-auth-error-translation/combined-current/`。
+
+**2026-11-20 Spring WebMVC 标准与旧版认证处理**　Java 17 的真实 MockMvc 反例验证标准处理器绕过注入翻译器，将自定义 409 响应返回为 401。三线标准请求分派现统一使用注入翻译器，两个直接调用方法生成既有默认 401/403。两个旧 advice 从 Java 17 移植同一认证及授权协议，Java 8 和 21 各有四项原生 RED 显示旧通路返回 HTTP 200。合并定向验证分别通过 30、33、31 项，三线核对六个公开方法的 JVM 描述符。同一 Spring WebApplicationContext 同时显式装配标准及两个旧 advice 时，额外每线五项通过，自定义 HTTP 状态、码、消息与附带数据均保留。见 `R14-evidence/r14-webmvc-custom-auth-translation/` 与 `r14-legacy-webmvc-auth-advices/`。
+
+**2026-11-20 Auth Spring 认证异常分派**　Java 8、17、21 各通过 7 项测试。Spring 实际解析并调用认证、授权及 Sa-Token SDK 异常处理器。SDK 的错误码与消息保持，其他异常继续由调用方处理。三线复验包含最终 Sa-Token 装配源码。证据见 `R14-evidence/r14-auth-spring-error-compat/verification-integrated.json`。
+
+**2026-11-20 Sa-Token 可选运行时装配**　Java 8、17、21 分别通过 34、35、35 项定向测试，其中各有 18 项注册用例。关闭时只恢复自身持有的 SDK 组件。仍被其他装配借用时拒绝提前关闭，旧 DAO 恢复后初始化失败可重试，SDK 监听器接管的登录域和默认逻辑得到保留。三线的 13 个公开 JVM 描述符一致，复核通过。投影源码迁移后重新核对 201 项活动场景，四个认证场景的 93 个具名绑定与原始测试报告相符。真实云 Broker 三项仍待验收。证据见 `R14-evidence/r14-satok-runtime-registration/verification.json` 与同目录 `after-projection-consolidation/`。
+
+**2026-11-20 JWT Simple 实例签名密钥**　Java 8 原生 SDK 1.44.0 用实例密钥验证同实例签发的令牌时复现两项断言失败。现与 Java 17、21 一致，在构造时保存实例密钥，签发、声明校验和 SDK 扩展声明读取均按该密钥处理。三线使用各自 Wrapper 与 SDK 各通过 24 项定向测试，包含两项 JWT、十八项可选装配和四项 Spring 异常分派。JWT 类公开 JVM 描述符一致，独立复核通过。三线清单增至 202 项，新增六个具名用例绑定。证据见 `R14-evidence/r14-jwt-signing-key-isolation/three-line-verification.json`。
+
+**2026-11-20 投影合并后 Java 17 定向 verify**　已移除十二个旧投影坐标的现行源码以 Java 17 Wrapper 定向执行 `clean verify`。公共投影、四种检查点存储及 Spring、Quarkus 运行时合计通过 235 项测试，零失败、错误或跳过，七个相关模块分别生成 Javadoc。选定模块的源码和 POM 与构建输入一致。证据见 `R14-evidence/r14-post-consolidation-verify/targeted-verification.json`。全根复验和 CI 继续开放。
+
+**2026-11-20 投影退场后的现行依赖和整仓复验**　Java 8、17、21 分别以本线 Wrapper 生成当前 effective POM。补齐并核验 13 个 Maven Central 发布 JAR 后，严格依赖检查通过 4,590 条记录，零错误、零未验证构件。Java 17 的 126 模块 `clean verify` 已执行 3,447 项测试，发现 Javalin Sa-Token 样例 9 项请求上下文错误，以及 WebMVC 和 Auth Spring 的 3 处 Javadoc 缺失。后两模块补齐注释后，24 模块定向 `clean verify` 通过。该整仓运行中跳过的本地 Redis 契约另用原输入和临时 Redis 运行，SESSION 与 JWT Simple 两项均通过。Java 8 整仓运行执行 2,411 项测试，Javadoc 无法解析共享订单 DTO 的 Lombok `onMethod_`，其下游样例随后跳过。Java 21 整仓运行使用下述 Javalin 修复后的源码。报告见 `R14-evidence/r14-dependency-models-after-projection-retirement/`、`R14-evidence/r14-reactors-after-projection-retirement-current/` 和 `R14-evidence/r14-jdk17-auth-javadoc/`。
+
+**2026-11-20 Java 17 和 21 的 Javalin Sa-Token 1.46 接入**　样例以 SDK 的 Jakarta Servlet 适配器直接绑定应用持有的请求上下文，保留调用方已注册的 SDK 工厂。两线各通过 209 项测试，包括真实 HTTP 登录和身份查询，以及主体解析失败后恢复调用方上下文。Java 17 的实际打包应用验证了匿名拒绝、登录、创建订单与读回、退出和旧令牌失效。报告见 `R14-evidence/r14-javalin-satoken-146-context/` 和 `R14-evidence/r14-jdk21-javalin-satoken-146-context/`。
+
+**2026-11-20 Java 8 共享订单 DTO 文档构建和 Java 17 Spring 样例补验**　五个 Java 8 DTO 以 22 个显式 Bean getter 保持 `@JsonProperty` 的原有作用位置。九模块定向 `clean verify` 通过 675 项测试且生成零告警 Javadoc JAR。实际 Java 8 类文件保留成员描述符、指令和 Jackson 注解，显式 getter 省去 `lombok.Generated` 类文件标记。Java 17 四个 Spring 模式补验通过 15 项，覆盖 HTTP、PostgreSQL、Sa-Token 和 Shiro。Sa-Token 样例补齐同版本发布构件后单独验证，其他三个样例的本次成功报告直接复用。报告见 `R14-evidence/r14-jdk8-order-dto-javadoc/` 和 `R14-evidence/r14-jdk17-spring-samples-after-javadoc/`。
+
+**2026-11-20 Java 8 样例与 Java 21 整仓复验**　Java 8 补验全部 28 个框架样例入口，均有原生测试报告，含共享模块在内的默认检验实际通过 1,005 项。补验的测试筛选参数还选中了默认 reactor 已排除的 Quarkus 持久用例，该用例在默认模式跳过。启用 `durable-order` profile 后，该用例及两项边界测试均通过。Java 21 整仓执行 3,392 项测试，Spring Boot 4 样例的 Sa-Token Servlet 组件 1.45.0 与 1.46.0 混用，两个真实 HTTP 测试返回 500。Javalin 的一项上下文测试在原整仓中失败，同一源码的 16 模块定向 `clean verify` 通过 1,061 项，原始失败记录保留，原因尚未确定。报告见 `R14-evidence/r14-jdk8-samples-after-dto-javadoc/`、`R14-evidence/r14-reactors-after-projection-retirement-current/` 和 `R14-evidence/r14-jdk21-javalin-web-context/`。
+
+**2026-11-20 整仓 Redis 验收接入**　总入口使用工作流已有的本地临时 Redis 为 Maven 传入认证测试端口。仅支持与认证测试一致的无认证 IPv4 loopback DB 0。Redis Streams 继续接收原始 URL。三线各通过 27 项门禁自测，跳过测试仍使整仓验收失败。Java 17 和 21 在临时 Redis 上各实测 SESSION 与 JWT Simple 两项均通过。完整三线复验另行记录。报告见 `R14-evidence/r14-redis-native-gate/` 和 `R14-evidence/r14-jdk21-auth-redis/`。
+
+**2026-11-20 Java 21 Spring Boot 4 Sa-Token 依赖对齐**　样例排除外部鉴权模块传入的 Boot 3 starter，使用本线统一版本引入官方 Boot 4 starter。独立复现原有两项 HTTP 500，两项修复后原生测试均通过。可执行 JAR 的运行库包含八个 1.46.0 Sa-Token 构件，实际启动后的十项 `/sample` 请求均通过，验证了认证拒绝、授权拒绝、登录和退出后旧令牌失效。报告见 `R14-evidence/r14-jdk21-spring-satoken-146/`。
+
+**2026-11-20 Quarkus 独立部署的 JPA 事件回读**　修复 Java 21 独立构建中读取 `OrderOutboxEvent` 时找不到宿主事件类的问题。三线 JPA 先用存储组件的类加载器，缺类时再用宿主线程的上下文类加载器。隔离类加载器用例在修复前逐线复现，修复后三线 JPA 打包各通过 52、52、53 项，包含 PostgreSQL 和 MySQL。Quarkus/JTA 托管事务回归各通过 4 项。Java 8 的 Quarkus reactor 打包、Java 17 和 21 的独立 Quarkus 构建各通过 3 项。三线 JVM 产物分别使用各自的 PostgreSQL 实例完成重启续读检查，读回已支付订单并保留重启前的投影位置。Java 8 另验证无关聚合的事件只推进位置。场景矩阵增加隔离类加载器回读用例。报告见 `R14-evidence/r14-quarkus-jpa-event-loader/`。
+
+**2026-11-20 MQ 启动失败回滚**　三线分别复现同一实例被后续成功启动使用、应用回调重新注入同一实例、两次交叠启动先后失败三种缺陷。上下文写入按注册归属回滚，发布器回滚跳过已失败的启动，正常关闭仍只移除自身注册。三线定向测试通过 121、122、122 项，包含每线全部 16 项初始化用例。`MQClient` 原公开方法签名保持一致，`BaseContext` 增加可提交和回滚的注册入口。空序列化器在安装启动上下文前即被拒绝。场景矩阵增加三条具名回归，完整后端和远端 CI 继续按 R14 验收。报告见 `R14-evidence/r14-mq-overlap-ownership/`。
+
+**当前 JDK17 根构建证据（2026-11-18）**　默认 reactor 的离线 `clean verify` 到达全部 133 个模块，129 个成功，4 个失败。共归档 3,307 项测试，0 项断言失败、4 项错误、1 项由属性控制的跳过。35 个样例子模块共 902 项测试通过，包含 28 个业务场景与共享模块。跳过的 Quarkus mixed-durable 场景已另用对应 profile 验证 1 项通过。四个错误来自 Kafka、RocketMQ、SQS、TDMQ 的测试容器启动，其中 SQS 的镜像解包日志明确记录 Docker 存储空间不足。构建期间 Dropwizard Bundle 的唯一输入差异为 Javadoc 换行，离线构建也跳过了需要联网的检查。证据汇总见计划工作目录的 `R14-evidence/controller-jdk17-current-root-clean-verify-audit.json`。R14 继续保留未勾选状态。后续用同一镜像重跑原生 Kafka、RocketMQ 和 TDMQ 测试，共 5 项通过。原根构建结果仍保留。
+
+**JDK21 兼容构件证据（2026-11-18）**　干净安装暴露出两个旧 Javalin GAV 因继承空 JAR 跳过规则而无法安装。两个坐标现在显式生成无类文件的 JAR，原公开类型仍由 `ddd4j-runtime-guice` 提供。JDK21 干净安装核验 21 个产物。35 个独立消费者构建、28 次冻结旧客户端运行、14 次旧源码编译均通过，核验的 21 个公开类型保留 89 个旧签名。JDK17 已验证这两个坐标的干净安装。JDK8、完整根构建和其他 R14 门禁仍需各自的实际结果。
+
+**补充原生证据（2026-11-18）**　JDK21 同镜像定向重验的 RocketMQ 和 TDMQ 各通过 2 项。Quarkus 混用例以原测试源码在 reactor 外运行，依赖当前旧 GAV、runtime 和 Panache，真实 H2/JTA 测试通过 1 项。原 Maven4 reactor profile 的生成模型仍遗漏测试所需依赖，保留独立失败记录。JDK8 根构建归档 2,430 项测试，1 项失败、4 项错误，另有未进入测试的下游模块。JDK8 已修复三个旧投影坐标的共享 SPI 依赖闭包。重新干净安装 21 个构件后，35 个独立消费者、28 次冻结旧客户端运行、14 次旧源码编译全部通过。核验的 21 个公开类型保留 87 个旧签名。
+
+**三线旧数据回退**　JDK8 和 JDK21 各以当前构件只读打开同线冻结的 11 个旧数据夹具，原哈希保持一致。沿用 JDK17 的七平台三步验收，两线各 21 次进程重放全部通过，检查点依次从 10 推进到 21、22、23。已核对中间进程加载完整旧实现。JDK8 夹具来自 R00 已接受的迁移前工作快照。
+
+**JDK8 样例与契约补验（2026-11-18）**　Guice/Javalin 的原 CQRS 商品接口在实际 HTTP 运行中通过 37 项。Quarkus 1 的默认、CQRS、Sa-Token 与 Web CDI 各通过 1 项。Shiro 样例将商品查询统一到原商品路由并在启动时注册内存仓储，原生商品查询及权限合计 48 项通过。Sa-Token 配置的权限列表不可修改契约通过 1 项。补回低线原有契约用例后，EL、MQ 消息头和 Web JSON 合计 5 项通过。低线文件校验结果接入已有 Jackson 属性映射，JSON 回读保留原有三个字段，字符串输出对齐字段名，原模块回归 7 项通过。该批测试均无跳过。
+
+**JDK8 共享 JDBC 订单样例**　恢复共享 `JdbcOrderSampleRuntime`，复用同一 JDBC 事务端口、订单应用服务及可靠 Outbox Worker。既有 PostgreSQL/Redis/Kafka 联测已改走该入口，并通过 JDK 8 测试编译。原三线源码映射通过，事务、Outbox 读取、发布与调度的定向回归共 9 项通过。原生联测待 Docker 恢复。
+
+**JDK21 Quarkus 混合持久化 reactor**　Maven 4 Wrapper 需要将启用的 profile 显式传给 Quarkus 内嵌解析器。修正该 profile 内三个 Hibernate 管理项，使其引用本线已有版本属性。按模块说明运行原三模块 reactor，真实 ArC、JTA、Panache、H2 和 Quartz 用例 1 项通过，无跳过。默认调度用例 6 项通过。此前省略 profile 转交的失败与 reactor 外运行均保留原记录。
+
+**JDK8 TDMQ**　配置服务 URL 时接入已有 Pulsar 适配器，沿用 Pulsar 2.10.6，保留手动注入和无 URL 的本地路径。TDMQ 与 Pulsar 适配器的定向回归共 15 项通过。三线原生 TDMQ 测试的挂载与断言一致，原检查只允许镜像版本有差异。JDK8 两项真实 Broker 用例已编译，待 Docker 恢复后执行。
+
+**Quarkus Sa-Token 商品查询**　JDK8 统一商品查询路由，三线均在启动时注册商品查询仓储。原生 HTTP 验证由修复前的 404（JDK8）和 500（JDK17/21）恢复到 200。商品查询、CDI 和 RBAC 三线各 49 项通过。
+
+**三线静态证据（2026-11-18）**　原检查器通过 249 条历史证据索引、五项低线 CDI 声明、12 项低线专有测试对应关系，以及 JDBC 运行接线和 TDMQ 原生测试的精确内容映射。三线同步了公共架构、R/S 任务正文、历史说明及 Quarkus 鉴权样例的运行文档。产品文档差异从 13 处降到 4 处，均为主线已删除的旧根目录文档入口。完整结构的 180 条语法映射声明已通过存在性和格式检查，结构验收仍停在测试与实现的绑定检查。两条旧 Javalin 坐标已用三线实测更新到 Guice runtime 中的实现。Javalin JDBC 历史测试已恢复，当前实现与历史锁定输入仍有差异，整体验收保留待验证状态。
+
+**JDK8 历史契约恢复**　从可定位的 Git 对象按原 SHA-256 恢复 48 个已有测试文件。16 个样例测试的 25 项契约均通过，包含受影响路径的 118 项定向回归。同期验证了 Javalin CQRS 旧 Money 序列化流可重新读取。32 个其他模块的恢复测试及两个已有 Javalin 集成测试共计 34 个测试类、65 个用例通过，分批运行以覆盖实际失败和未执行的用例。修复涉及运行时集合快照、QLExpress 函数表、文件校验空值、Helidon 路径、WebFlux WebJars 和 WebMVC 客户端地址。Javalin 两个旧坐标的命令与调度契约在三线各通过 7 项，保留原测试并覆盖启动失败复位。
+
+**JDK8 Javalin 默认与可选入口**　默认 main 使用匿名内存订单例，保留原 `start(int)` 的 Bearer 调用。新增 `startJdbc` 复用共享 JDBC 运行时并接管其生命周期，原生 Javalin 定向 48 项通过，覆盖匿名创建与查询、旧鉴权、正常关闭和端口占用时关闭真实 Outbox 工作器。原 PostgreSQL 集成测试按历史哈希恢复，Java 8 编译通过，等待本机 Docker 恢复后实测。
+
+**JDK8 Quarkus Shiro 共享订单**　真实 RESTEasy 首先按资源方法鉴权，再写共享订单应用服务，保留匿名列表与旧订单响应字段。采用本线 RESTEasy 完成回调释放请求所持 Subject，沿用现有原生 Shiro 认证。按 Quarkus 1 BOM 在样例内选用含 `javax.inject` 的 API，修复可运行产物中的 Arc 启动缺件。54 项样例测试通过，实际打包产物另通过 11 项 HTTP 验证，覆盖创建、加商品、支付、查询、401/403、退出失效与进程关闭。 后续 4 项定向测试全部通过，其中两项用真实 Shiro 令牌触发 TCP 断连，在原请求线程验证清除本次 Subject 和按身份恢复既有 Subject。
+
+**JDK8 Quarkus 默认样例**　默认匿名调用共享 `/api/orders`，Bearer 通过显式配置启用，原 401 和令牌鉴权用例继续执行。保留现有幂等请求头和样例缓存。移除样例直接 Quartz 依赖，并在 Web 依赖边排除其传递引入。标准 JDK8 打包通过 44 项测试，实际 JVM 通过 6 项匿名订单 HTTP 验证并关闭端口，产物没有捆绑 Quartz。
+
+**JDK8 Quarkus Sa-Token 共享订单**　实际鉴权发生在订单业务执行前。共享订单存储、原有 DTO、公共 Goods 路由与旧 RBAC 合同均验证通过，真实线程上下文在 RESTEasy Classic 请求完成时复位。同一线程上的本地 TCP 断连用例确认了上下文清理。标准 JDK8 打包通过 58 项测试，实际 JVM 通过 14 项 HTTP 验证，覆盖权限拒绝、创建、加商品、支付、查询与退出后旧令牌失效。
+
+**JDK8 Quarkus CQRS 双模式构件**　默认保留 `/orders` 写入、`/query/orders` 查询和 `/api/orders/query` 缓存读侧。按 Quarkus 1 BOM 修复实际 fast-jar 的 Arc 注入依赖后，内存模式 80 项测试通过，实际 JVM 验证 8 项 HTTP 检查，覆盖写入、支付、查询、统计、关闭端口以及默认入口不启用持久命令。显式 `-Pdurable-order -Dquarkus.profile=durable` 构件打包成功，三个持久 CDI Bean 只由该 profile 生成，原生 PostgreSQL 用例以 Java 8 编译。PostgreSQL 运行时验收等本机 Docker 恢复。
+
+**JDK8 Guice/Javalin 认证样例**　Sa-Token 和 Shiro 通过原生 Javalin 4/Jetty HTTP 接入共享订单，保留已有 DTO、RBAC 与 Goods 路径。两种样例分别完成 183 项和 140 项 JDK8 定向打包测试，覆盖真实登录、订单读写、权限检查、业务异常、退出失效、TCP 断连清理及启动失败恢复。Sa-Token 对取消路径的两种尾斜杠形式分别验证拒绝和授予权限后的成功行为。验收沿用 S02 的单活动应用与配对关闭范围。两份 Java 8 构件、测试 XML 和源码哈希记录在 R14 证据目录，已更新七平台 28 场景当前证据。
+
+**JDK8 Vert.x 和 Dropwizard 默认样例**　Vert.x 以匿名方式启动共享订单，保留旧路由工厂的 Bearer 要求。5 项打包测试通过，真实 TCP 断连后关闭等待已接纳的订单操作提交。独立运行 Java 8 构件通过 6 项 HTTP 检查，进程正常关闭并释放端口。Dropwizard 的程序化默认和随包 YAML 均允许匿名下单，显式 `REQUIRED` 保留 Bearer 鉴权。7 项打包测试通过，含 5 项原生测试，覆盖创建、加商品、支付、读回、幂等缓存隔离及绑定失败清理。两条证据已纳入当前 28 场景索引。
+
+**JDK8 Micronaut 和 Helidon 默认样例**　两个默认样例均通过匿名创建、添加明细、支付和查询，显式 `REQUIRED` 保留原 Bearer 入口。Micronaut 打包 2 项通过，独立启动默认和 `REQUIRED` JVM 共通过 15 项 HTTP 检查并释放端口，默认容器未装配事件存储或投影。Helidon 增补原生 JAX-RS 主入口及共享订单筛选，打包 4 项通过。独立 Java 8 构件通过 7 项 HTTP 检查并关闭 CDI 与端口，真实绑定冲突用例验证恢复原 SubjectProvider。两条证据已纳入当前 28 场景索引。
+
+**三线依赖检查**　修复真实工作区扫描误读归档 POM 的异常。默认模块诊断继续按 groupId、artifactId、type 和 classifier 匹配，并排除明确声明其他版本的模块。发布目录仍按原严格规则检查。三线使用各自 Wrapper 重新生成有效 BOM，实际严格报告包含 2,210 个错误，其中 2,173 个构件待验证。诊断保留的三个候选坐标涉及十处声明，逐一取模块有效 POM 后确认实际版本均有本地构件，基础字节码符合 Java 8。三线依赖检查器测试分别通过 27、43、43 项，禁用 record 扫描与自测也均通过。
+
+**BOM 坐标补验**　Java 8 恢复已取得并核过基础字节码的对应 Easy4J 构件，统一 Commons SSL 与 HBase shaded 的真实坐标。ShardingSphere 5.5.3 的六个 `sql-engine` 方言构件均已发布并通过 Java 8 字节码检查，Java 17 和 21 继续使用各自已选坐标。旧 Derby 条目的 Java 17 退休记录沿用当前主线策略。Java 8 的 C3P0 0.14.0 实际初始化报错，采用的 0.14.1 与 mchange 0.6.1 通过 H2 连接、查询及连接池关闭。当前严格报告的 17 条缺失坐标全部消除，仍有 2,180 个错误，其中 2,160 项构件待验证。三线检查器测试分别通过 29、45、45 项。
+
+**Java 8 发布目录边界**　保留已发布并通过基础字节码检查的五个 Swagger 1.6.14 构件，修正旧发布候选的策略记录。默认 JVM 目录移除六条当前版本未发布的 JAR 声明，以及四条 Android Cronet 的 JAR 声明。Android 应用仍可从 Google Maven 取得对应 AAR。三线检查器测试分别通过 31、45、45 项，该轮严格错误数为 2,165，其中 2,160 项构件待验证。
+
+**TongWeb 与 GraalVM 验收**　Java 8 候选 BOM 已撤除四条 TongWeb 默认管理声明，三线统一按 T03 由应用方在私有仓库中显式接入。Java 8 依赖检查器通过 32 项。使用本线 Wrapper 和 JDK 先编译，再解析实际默认运行时依赖树，133 个模块全部通过，覆盖此前未解析的 Spring 默认、Sa-Token 和 Shiro 示例。运行时依赖树无 `nativeimage` 或 `word`。有效 BOM 中的 `nativeimage:25.0.0` 仍含 Java 11 字节码，保持严格门禁报告。
+
+**构件字节码补验**　从 Maven Central、SciJava、Clojars 和 Terracotta 取得 1,163 个缺少证据的精确构件。校验发布仓库摘要，执行三线严格检查，补齐 1,985 项管理记录。该轮严格错误数从 2,161 降到 176，报告位于 `R14-evidence/r14-artifact-verification`。
+
+**剩余公开构件验收**　Java 17 的两条 Artemis 旧坐标按发布 POM 迁移至同版本的 `org.apache.artemis`，严格检查器继续核验目标 JAR 字节码。Java 8 的 PostgreSQL 适配由 `flyway-core:8.5.13` 加载，金仓使用厂商发布的 `cn.com.kingbase:kingbase8:8.6.0` 并通过 JDBC 驱动注册核验。Java 17 的 Shiro 3 按需通过 `shiro-jcache:3.0.2` 接入 Hazelcast，单节点实际通过写入、读取和删除。Atlassian 仓库提供的原版本 `sshd-pam` 已校验摘要及三线字节码。三线检查器测试通过 42、55、55 项。该轮严格检查有 168 个错误，包含 167 个 Easy4J 快照待核验和 1 项 GraalVM 的 Java 8 字节码不兼容，报告位于 `R14-evidence/r14-final-public-coordinates`。
+
+**Easy4J 快照核验**　167 项全部通过字节码检查，其中 133 个从配置的 Maven 仓库取回并核对时间戳元数据与发布校验值，18 个为已有本地构件，16 个为上游精确 Git 提交的本地构建。Java 21 已发布的 Easy4J `shiro-extension-spring` 中 `getHost` 使用 `javax.servlet`。从已有 Jakarta 提交构建该提供方后，未修改的 Shiro OAuth 源码成功打包两个原坐标候选构件。构建跳过上游测试，34 个本地构件的远端发布仍待确认。该轮三线严格错误数从 168 降到 1，剩余项为 Google BOM 引入的 `nativeimage:25.0.0` 包含 Java 11 字节码。实际 Maven 3.9.16 验证表明在 BOM import 中声明该坐标的排除仍会产生有效管理条目。报告位于 `R14-evidence/r14-easy4j-snapshot-closure`。
+
+**Java 8 GraalVM 依赖边界**　Java 8 BOM 的 4,619 条有效依赖管理记录与调整前一致。三线目录把继承的 `nativeimage:25.0.0` 在 Java 8 标记为 `unsupported-catalog-only`，记录 Java 11 基础字节码要求。Java 8 原 Maven Enforcer 在 `verify` 阶段拒绝直接和传递引入 `nativeimage`、`word`。三个负向夹具均触发该规则，Java 8 的 `graal-sdk:21.0.0` 和 Java 17 的直接 `nativeimage` 夹具均通过。Java 8 默认 reactor 全部 133 个模块通过编译和该条 Enforcer 检查。三线依赖检查器测试通过 43、55、55 项，使用精确候选缓存核验的三线严格依赖报告为 0 个错误、0 个未核验构件。报告位于 `R14-evidence/r14-jdk8-native-image-boundary`。
+
+**三线文档与编译 API 复验**　产品文档检查按已提交的 Java 17 目录迁移校验旧跳转入口，正式正文和本地链接均为 0 项差异。三线各 133 个默认 reactor 模块通过 `clean compile`，值契约探针三线通过。API 扫描沿 Maven 3 的 `modules` 及 Maven 4 的 `subprojects` 只比较当前默认 reactor，每线 117 个模块产出类文件。现有 20 项平台 API 映射通过。编译 API 门禁仍有 96 条去重后的差异成员，其中 86 条在样例、2 条在 Sa-Token、3 条在 Dropwizard runtime、5 条在 WebMVC。`ddd4j-data` 在本次默认 reactor 的编译成员比较中无未解释差异。总报告位于 `R14-evidence/r14-structure-api-current`。
+
+**样例平台类型与 Java 8 DTO 契约**　对 `JsonNode` 和 `EntityManagerFactory` 按精确类型补充三线编译签名映射。三条线各自的 HTTP JSON 与 H2 JPA 契约通过 24、26、27 项，七个 CQRS 样例的 Outbox 载荷在三条线均反序列化并得到一致的 JSON 结果。映射解释 54 条成员差异。Java 8 Javalin CQRS 的四个 DTO 恢复原有子类相等性和哈希契约，11 项 DTO 契约及 35 项原生 HTTP 回归通过。重新干净编译 Java 8 的 133 个模块后，三线编译 API 的未解释成员从 96 降至 38，其中 28 条在样例。报告位于 `R14-evidence/r14-sample-api-namespaces`。
+
+**结构绑定复核**　原结构门禁仍在 Javalin PostgreSQL 集成测试与当前实现的绑定处拒绝通过。逐项复核 55 条平台测试语法绑定，49 条与当前源码指纹不符，该轮另有 14 条辅助、平台配置、工具或工作流声明需重验。独立诊断清单用于定位其余差异，原结构政策继续要求逐项验证后更新绑定。
+
+**共享 HTTP 传输与 Javalin 测试辅助绑定**　Java 17 和 21 的两种订单 HTTP 驱动复用同一个 `SampleHttpTransport` 发送请求，兼容 Java 8 公开方法及响应形状。三线各通过 6 项真实回环 HTTP 契约，Java 17/21 本批各通过 24 项回归。测试覆盖额外请求头、字符集、空请求体与 JSON `null`、鉴权结果及高线中断处理。新编译产物消除测试工具模块剩余 3 条签名差异，三线编译 API 未解释成员降到 35。CQRS、Sa-Token 和 Shiro 三组 Javalin HTTP 契约在每条线分别通过 35、36、32 项，据实更新三个测试辅助绑定的源码与契约指纹。报告位于 `R14-evidence/r14-sample-http-transport`。
+
+**Quarkus 商品查询入口与 Micronaut 认证适配**　Java 17/21 的 Quarkus Sa-Token 样例补回 `GoodsResource` 双参数构造器和 `page`、`list`、`count` 三个 Java 调用入口，复用既有商品查询资源，三个 HTTP GET 路径各保留一个绑定。Java 8/17/21 整模块分别通过 61、63、63 项，覆盖直接调用、CDI、HTTP 过滤、排序和分页。Micronaut Sa-Token 与 Shiro 的原生认证契约三线共通过 6 项，覆盖登录、订单权限、登出及请求结束后线程状态恢复。据此按完整 JVM 签名登记 Micronaut 4 两种样例的 4 个原生回调成员。三线各 133 个 reactor 模块通过 `clean compile`，编译 API 未解释差异从 35 条降至 27 条。源码结构门禁仍在 Javalin PostgreSQL 绑定处失败。证据位于 `R14-evidence/r14-quarkus-satoken-goods/verification.json`。
+
+**Javalin 认证样例的订单装配**　Sa-Token 与 Shiro 样例三线补齐 4 个共享订单工厂及构造入口，沿用各自的原生路由鉴权。两种样例新增授权 HTTP 折扣测试，确认默认策略和调用方传入的策略均实际生效。Java 8 分批通过 327 项，Java 17/21 各通过 362 项。完成三条既有测试绑定及两条源码适配声明的复验，测试方法清单与原记录一致。三线各 133 个模块通过 `clean compile`，编译 API 未解释差异从 27 条降至 23 条，其中 Javalin 剩余 9 条来自低线的原生角色枚举及其生成成员。源码结构门禁仍卡在独立的 PostgreSQL 测试绑定。证据位于 `R14-evidence/r14-javalin-order-route-api/verification.json`。
+
+**Javalin 原生角色枚举的三线校验**　Java 8 使用 Javalin 4 路由角色传递权限，高两线在 Javalin 匹配端点后选择权限。三线原生 HTTP 共通过 34 项，覆盖登录、取消权限、尾斜杠和会话清理。沿用平台 API 的精确登记规则，源码扫描器从实际枚举声明提取 5 个常量及 4 个编译器生成方法的依据，每项继续校验完整 JVM 签名和高线缺失。复用逐类指纹一致的三线编译产物，未解释差异从 23 条降至 14 条。Javalin 编译 API 的平台差异均已核实，结构门禁仍卡在独立的 Javalin PostgreSQL 测试绑定。证据位于 `R14-evidence/r14-javalin-native-role-api/verification.json`。
+
+**WebMVC 可选操作日志桥三线补齐**　Java 8 补齐 Spring MVC 5 和 javax Servlet 的操作日志请求采集器，借助现有 ServiceLoader 和可选日志依赖保留请求 ID 优先级、URI/IP、上下文回退和日志扩展点。三线修正通用 logs 忽略规则对实际 Java 源码、测试和隔离探针的误匹配。三条线整模块打包回归通过 71、72、72 项，独立 JVM 用本轮打包产物验证启用日志的 SPI 和省略日志模块的 MVC 分派。Java 8 全默认 reactor 干净编译通过，高两线复用指纹一致的编译产物。编译 API 未解释差异从 14 条降至 9 条，WebMVC 的 5 条已消除。结构门禁仍在独立的 Javalin PostgreSQL 测试绑定处失败。证据位于 `R14-evidence/r14-webmvc-log-bridge/verification.json`。
+
+**Dropwizard 访问日志的 Java 17 适配**　当前原生类路径复现 Dropwizard 5.0.2 与 Logback 1.6.7 默认工厂启动时缺少 `DEFAULT_CONVERTER_MAP`。同一类路径通过已实现适配器正常创建工厂，Java 8 和 21 各线原生工厂可直接构建。三线原生配置及 HTTP 契约共通过 26 项，三线实际产生订单访问日志。按完整 JVM 签名和精确源码归属登记 3 个 Java 17 原生成员，门禁逐项核对其他两线的声明和编译条目。编译 API 未解释差异从 9 条降至 6 条，原始字节码差异保留于报告。结构门禁仍卡在独立的 Javalin PostgreSQL 测试绑定。证据位于 `R14-evidence/r14-dropwizard-native-log-api/verification.json`。
+
+**Vert.x 运行时与样例契约复验**　六个 Vert.x 目标模块在三线分别通过 12 套、51 项定向验证，包含命令路由、投影生命周期、Web 请求和默认、内存 CQRS、Sa-Token、Shiro 样例。复验运行时和 Web 源码绑定、继承式 CQRS 测试绑定。高两线恢复默认订单样例空认证模式的错误消息，三线共同令牌断言和路由回归各通过 3 项，默认样例 12 个编译 API 条目逐项一致，复验该样例既有源码绑定。Java 8 的 CQRS main 无 JDBC 时走旧内存演示，高两线要求显式 JDBC 配置，入口差异继续待处理。本批验证覆盖当前内存及本地 HTTP 路径，PostgreSQL 和原结构门禁的 Javalin JDBC 绑定仍待验收。证据位于 `R14-evidence/r14-vertx-contract-bindings/verification.json`。
+
+**Spring 样例响应式配置 API 补齐**　Java 8 补齐公开配置类和 `localeContextResolver()`，命名备用 Bean 直接采用三条 Spring 线的原生 AcceptHeader 解析器。真实 Boot 上下文验证原 X-Language 解析器依然用于请求，备用 Bean 解析 Accept-Language，Servlet 模式隔离。三线样例分别通过 4、5、5 项，Java 17/21 覆盖完整 MVC/WebFlux HTTP 路径。原 Java 8 WebFlux HTTP 复验仍由 Easy4J `ReactiveRequestContextFilter` 调用 `Mono.subscriberContext` 触发链接错误。三线各 133 个模块干净编译，未解释 API 从 6 条降至 4 条。结构校验仍卡在 Javalin PostgreSQL 测试绑定。证据位于 `R14-evidence/r14-spring-reactive-sample-api/verification.json`。
+
+**Sa-Token 数据桥与样例契约复验**　原生定向验证涵盖 auth、Javalin 和 Quarkus 三个目标模块，三条 JDK 线各 13 套、84 项全通过。基于当前源码及原生报告更新权限角色数据桥、两份商品查询和四份请求 DTO 的 7 条既有源码绑定。独立 JVM 确认 Java 8/21 的 `XXX` 会注册 `xx`，Java 17 的 `GUEST` 会注册 `guest`，各自初始化都会替换同名已注册对象。现有两条字段 API 差异继续 OPEN，避免未经明确契约改变默认会话类型注册行为。原结构校验仍卡在 Javalin PostgreSQL 测试绑定。证据位于 `R14-evidence/r14-satoken-contract-bindings/verification.json`。
+
+**CQRS 运行时与事件存储契约复验**　Java 8/17/21 分别通过 111、114、115 项定向回归。按当前源码和继承的测试断言更新 Dropwizard、Micronaut、Helidon 的三条绑定。Java 8 的 Panache 三种读取结果在 H2 回归中复现可修改问题，修正后同一组四项 H2 契约在三线均通过，更新该存储的源码绑定。Panache 模块的 24 个编译 API 条目在三线一致，且修正前后一致。独立 H2 探针追加两条事件后，Java 8 保留调用方此前加载的实体，高两线将其分离。涉及该差异的 JPA 独立事务契约待判定，现有托管事务用例实际使用 JpaEventStore，其旧 Panache 绑定仍待修正。原结构门禁仍在 Javalin PostgreSQL 测试绑定处失败。证据位于 `R14-evidence/r14-cqrs-storage-bindings/verification.json`。
+
+**Docker 恢复后的 PostgreSQL 验收**　当前 Docker 可以运行已有镜像。三线 Javalin 订单 HTTP 与 Outbox 各 1 项通过，覆盖同幂等键重复支付以及首次发送失败后重试。Java 17/21 修复端口冲突时清空调用线程上下文的问题，两线均先复现两项失败，再通过各 55 项非 Docker 测试和各 11 项最终定向验证。Javalin 入口及应用句柄的 12 个公开 JVM 成员三线一致。三线共享 JDBC 基础设施测试各 9 项、Panache PostgreSQL 各 1 项通过，真实共享测试同时使用 Redis 和 Kafka。复验 Javalin 源码和测试、共享 JDBC 测试、Panache PostgreSQL 测试共四条既有绑定。Java 8 Quarkus 修正持久化 profile 的测试模型缓存、显式数据库资源接线和 Quartz Bean 保留。默认 CDI 和资源范围测试 2 项通过，默认测试模型省略 Panache 投影和 PostgreSQL 驱动。切换持久化 profile 并执行标准 clean test 后，真实 PostgreSQL 场景 1 项通过。当前结构门禁已越过 Javalin，下一处拒绝为 Micronaut Web 上下文测试绑定。证据位于 `R14-evidence/r14-docker-recovery/verification.json`。
+
+**Micronaut Web 和核心值契约复验**　Java 8 恢复 Micronaut 请求上下文的 Jackson 构造映射，修复前的真实 JSON 往返报缺少 Creator，修复后保留原 Micronaut 3 传播方式及公开 JVM 签名。三条 JDK 线的原生 Web 模块分别通过 41、42、42 项，包含各 9 项上下文和 3 项值契约。Java 8 按既有发行分支提交恢复 PropertyRef 与 LambdaCondition 的历史序列化 UID，并补回诊断顺序与就绪哈希断言。三线核心定向分别通过 24、25、25 项，三线均与从历史源码构建的 Java 8 类型进行 Java 序列化双向回读。API 响应测试补齐 Java 8 缺少的四项旧断言，三线各 19 项通过。更新四条既有源码及测试绑定，结构门禁继续在 ProjectionHandlerRegistryTest 处失败。证据见 `R14-evidence/r14-micronaut-context-binding/verification.json`、`R14-evidence/r14-core-value-compatibility/verification.json`。
+
+**投影注册分发与独立 JPA 写入复验**　注册和分派的两份生产源码在三线逐字一致。注册先复制订阅声明再完整校验，保留不可变快照、注册顺序和同事件多订阅者。三线在非法订阅导致读取、处理或推进检查点前以同一消息拒绝。原生定向分别通过 63、62、62 项，另精确运行 Runner 外层五项测试，三线均验证源位置间隙、递归及并发防护和失败隔离。更新两条投影测试绑定，原结构门禁已推进至 Javalin 默认样例 GoodsControllerTest。Java 8 对照发行分支恢复独立写入两处上下文清理和聚合 ID 的字符串 JSON 表示，原 H2 两处失败均已复验。JPA 三线分别通过 49、50、51 项，涵盖真实 PostgreSQL、MySQL 及 Spring 事务，Java 8 Quarkus 托管事务另通过 4 项。独立 H2 探针确认调用方已加载的实体在第二次独立追加后被分离，两次写入均保留。Java 8 历史读取列表可变性和旧 Quarkus 测试绑定归属继续单独跟踪。证据见 `R14-evidence/r14-projection-runtime-parity/verification.json`、`R14-evidence/r14-jpa-independent-context/verification.json`。
+
+**Javalin 控制器、就绪端点与事件契约复验**　Java 8 恢复普通与 CQRS 商品控制器及默认订单控制器的发行实现，三个生产类三线逐字一致。订单响应原生 JSON 回读先因缺少 Creator 失败，修复后 Java 8 七套共 88 项通过。上两线各通过 79 项商品 HTTP 和 DTO 定向测试，默认订单四项 HTTP 和三项 DTO 复用同源原生结果。商品用例证明既有契约，旧测试明确接受部分 by-code、page、list、count 路由被 ID 规则拦截，是否调整该行为待确认。三线保留各自 Jackson 默认未知字段行为，事件与实际 Javalin/OTel 定向分别通过 30、34、34 项。Java 8 补齐七项 Web 契约，另行验证就绪状态 200、503 及不返回诊断详情。更新八条既有源码及测试绑定，结构门禁继续在 QuarkusCommandBusIT 拒绝。证据见 `R14-evidence/r14-javalin-goods-bindings/verification.json`、`R14-evidence/r14-event-and-javalin-trace/verification.json`。
+
+**Quarkus 命令总线与 EventStoreDB 契约复验**　Quarkus 命令总线在 Java 8、17、21 各通过 28 项定向测试。真实 ArC 容器验证旧门面是唯一生效的命令总线，并在调用时激活请求上下文、退出时恢复上下文。Java 8 EventStoreDB 恢复已发布的不可变读取、拒绝 JSON null 元数据和重建聚合 ID 的稳定字符串。Java 8 定向 14 项通过，包含两套真实容器夹具，高两线各 12 项通过，失败、错误及跳过均为零。更新两条既有 Quarkus 绑定与四条既有 ESDB 绑定。严格三线结构门禁首个失败项现为 JpaEventStoreIT。证据见 `R14-evidence/r14-quarkus-commandbus/verification.json`、`R14-evidence/r14-native-event-store-contracts/esdb-bindings-verification.json`。
+
+**JPA、R2DBC 和 JDBI 复验**　Java 8 补回 JPA 并发追加用例，真实 PostgreSQL 验证已有事件行锁在前一事务提交前阻止下一次全局位置分配，三线 PostgreSQL 各通过 8 项。JPA 源码与 Java 8 已锁定发行版等价，返回列表的历史可变性未由 SPI 承诺，本次保留各线行为。三线 Quarkus/JTA 和 H2 各通过 4 项托管事务用例，验收绑定改为该用例实际调用的 JpaEventStore。R2DBC 同步实现三线逐字一致，三线各通过 4 项 PostgreSQL 和 2 项单元回归。Java 8 JDBI 恢复 UTC 显式 JDBC 绑定、初始化失败后可重试、缺失时间戳诊断以及重建聚合 ID 的 JSON 与历史序列化 UID。Java 8 H2 与重试验证 38 项通过，三线 PostgreSQL 和 MySQL 各通过 5 项定位测试。整秒跨时区用例通过，公共 JVM 签名与生产 SQL 按原样保留。按当前运行证据更新 10 条既有绑定。严格结构门禁首个失败项现为 MybatisAggregateRepositoryMySQLTest。证据见 `R14-evidence/r14-native-event-store-contracts/relational-bindings-verification.json`、`R14-evidence/r14-native-event-store-contracts/jdbi-bindings-verification.json`。
+
+**MyBatis-Plus 原版用法复验**　Java 8、17、21 各通过 24 项仓储、查询翻译和泛型定向验证，以及 8 项真实 MySQL 8.4 测试。使用原版模型与 Query 直接验证保存更新、单条查询、列表分页、转换填充和租户隔离，无需装配 CQRS。依据当前结果更新两条既有绑定。严格结构门禁首个失败项现为 JdbcOrderAtomicityTest。证据见 `R14-evidence/r14-native-event-store-contracts/mybatis-bindings-verification.json`。
+
+**订单事务与 Kafka 复验**　Java 8、17、21 各通过三项真实 PostgreSQL 事务用例。在真实写入订单、Outbox 或投影之后注入失败，三张表均回滚。Java 8 订单应用服务改为显式导入，三线执行逻辑经词法比较一致。Kafka 三线各通过 15 项，含真实 Kafka 3.9.1 消息往返、消费者组退出、因果头、确认与生命周期。Java 8 确认用例补回仅提交目标分区且 offset 为下一条消息位置的精确断言。更新三条既有绑定，证据见 `R14-evidence/r14-native-event-store-contracts/order-and-kafka-bindings-verification.json`。
+
+**Dropwizard 旧入口与 Helidon 扩展复验**　Dropwizard 三线各通过 37 项真实框架及模块测试，旧命令总线和投影门面继续委派到原生运行时。两个旧模块各有四项测试，含部分启动失败后的异常与运行状态复位。Helidon 三线各通过 20 项，含真实 MP/CDI 启动、readiness Bean 注册与调度生命周期。显式启用投影缺少事件来源和持久位置时，三线均校验启动错误的准确诊断。更新六条既有绑定，严格结构门禁首个失败项现为 MissingQueryCodeContractTest。证据见 `R14-evidence/r14-native-event-store-contracts/dropwizard-legacy-bindings-verification.json`、`R14-evidence/r14-native-event-store-contracts/helidon-extension-bindings-verification.json`。
+
+**Javalin 查询、Dropwizard Web 与 Helidon 订单复验**　Javalin 缺失查询用例改为启动并关闭真实生产应用。三线商品 ID、商品编码和订单缺失的 HTTP 状态依次为 404、200、200，响应 code 均为字符串 404。各线另通过 35 项订单控制器、37 项商品控制器及 2 项共享 CQRS 回归，持久化用例覆盖真实 PostgreSQL 投影失败重试与重开。Dropwizard 三线各 5 项 Web Bundle 注册用例通过，Java 17 复验 Logback 工厂并产生真实订单访问日志。Helidon Java 8/17/21 原生 HTTP 分别通过 4、2、2 项，显式 REQUIRED 均拒绝匿名写入并验证非空订单 ID，默认模式匿名下单及过滤查询通过。更新六条既有绑定。该批结束时严格结构门禁首个失败项为 MicronautOrderControllerTest。证据见 `R14-evidence/r14-native-event-store-contracts/sample-web-entry-bindings-verification.json`。
+
+**Micronaut 订单、事件载荷与请求追踪复验**　Micronaut 三线各通过普通订单 2 项、旧内存 CQRS 3 项及真实 PostgreSQL 持久用例 1 项。测试覆盖默认匿名、显式鉴权、投影失败重试及重开。Java 8 恢复事件载荷已发布的 12 项测试，三线 12 项与共同载荷契约 2 项均通过，生产序列化器沿用各线现有实现。Java 8 Micronaut 前置认证失败原生复现 span 未结束，恢复已发布的异常记录与结束逻辑后，三线过滤器 4 项、OTel 3 项和 Web 契约 7 项均通过。恢复 Java 8 共享 Web 契约客户端的原 Javadoc，执行逻辑与旧绑定一致。该批更新七条既有绑定。严格结构门禁当前首个失败项为 Javalin Shiro OrderResourceTest。证据见 `R14-evidence/r14-native-event-store-contracts/micronaut-order-bindings-verification.json`、`R14-evidence/r14-native-event-store-contracts/event-serializer-bindings-verification.json`、`R14-evidence/r14-native-event-store-contracts/micronaut-filter-bindings-verification.json`。
+
+**Shiro 值契约与三线 Web 绑定复验**　Java 8 恢复金额与折扣值对象已发布的 Jackson 往返，保留金额 Java 序列化 UID 及反序列化校验。Java 8 先复现两个 JSON 回读失败，恢复后 46 项通过。三线各通过 35 项原订单 HTTP 与 5 项值契约，另行通过真实共享订单、鉴权及折扣装配。恢复 Vert.x Java 8 上下文测试的原有初始化结构、Quarkus 架构测试对两种 Persistence 命名空间的禁止规则，以及低线 Quarkus RESTEasy 与 MVC 配置类的原 Javadoc。原生 Web 和相关规则按同一范围三线各通过 55 项，MVC 配置类另由 WebJars 直接测试验证，HTTP 仍为 standalone MockMvc 契约。两份正式政策均通过 55 条平台测试绑定及 3 条命名空间绑定的逐项检查。严格结构门禁已推进到 config/license-selections.tsv。证据见 `R14-evidence/r14-native-event-store-contracts/shiro-order-bindings-verification.json`、`R14-evidence/r14-native-event-store-contracts/restored-web-bindings-verification.json`。
+
+**Helidon CDI 构件复验**　三线样例本地 package 通过。逐一打开 JAR 核对 META-INF/beans.xml，Java 8 的 Java EE CDI 2.0 描述符和 Java 17/21 的 Jakarta CDI 3.0 描述符均与源码逐字一致。结合此前同源的实际 Helidon 订单 HTTP 测试，刷新 Helidon 样例 CDI 构建资源的单条现有绑定。Java 8 三份发布相关 workflow 的 actionlint 通过，远端 CI 待验收。证据见 `R14-evidence/r14-native-event-store-contracts/helidon-archive-resource-verification.json`。
+
+**Java 8 许可清单复验**　按上游固定版本 POM 修正 EPL 1.0 归一化，回归测试先复现误判，再通过全部 10 项。Maven 重新生成 981 项依赖清单及 822 项组件的聚合 SBOM。修正 4 项仍在用的 EPL 选择，移除 6 项两份报告均未出现的旧版本，恢复 32 项已有审核记录，为 3 项当前版本补充固定 POM 证据，恢复已证实未进入聚合 SBOM 的 MXParser 单坐标排除。现有许可校验通过。聚合 SBOM 中另有 5 项仍命中历史 provided 豁免，发布范围待独立复核。许可报告插件对两个 reactor 内测试依赖仍有警告。严格结构检查继续在 `config/dependencies/alignment-policy.json` 报映射陈旧。证据见 `R14-evidence/r14-jdk8-license-governance/verification.json`。
+
+**三线依赖与 BOM 校验复验**　用各线原生 JDK 和 Wrapper 重建 effective POM。补回 Java 8 策略中缺失的精确坐标映射和明确的发布边界，恢复仍在用的 15 项低线构件基线，保留 Flyway 独立 PostgreSQL 插件从 Java 17 开始的范围。四项缺失 Log4j JAR 按 Maven Central 发布校验和补齐。三线现有严格构件检查均为 0 错误、0 未核验。BOM 校验跟随 Maven 3 和 Maven 4 实际声明，各覆盖 133 个 POM，阻塞问题均为 0。回归分别通过 6、12、6 项。Java 8 保留原有 ddd4j-ddd-rules 非阻塞警告。Java 8 的 133 份当前默认运行时依赖树均无 Derby，但其 6 个受管理坐标与历史退出记录冲突。相关策略与低线历史组件矩阵仍待独立复核，结构映射保持待验收。证据见 `R14-evidence/r14-dependency-policy-bindings/verification.json`。
+
+**依赖治理工具与 API 版本复验**　修正 Java 17 周更策略测试，使 Shiro 同时断言 Java 8 的 1.13.0、Java 17 的 3.0.2 及 Java 21 策略无固定版本。原测试先复现 1 项失败，修复后 Java 17 依赖治理 74 项单测全部通过，刷新中线现有工具绑定。Java 8 Web 核心使用实际 Maven 类路径运行 5 套 API 版本测试，共 29 项通过。旧隔离脚本原字节归档，原生 Surefire 报告保留。低线周更实际入口的固定规则及测试覆盖与发行参考存在差异，其中 10 个参考版本与当前中央 POM 不同。低线 11 项自测通过，发布参考有 50 项，两份周更 workflow 静态校验通过。低线策略、控制器、扫描器复核仍开放，结构门禁仍报 alignment-policy 映射过期。证据见 `R14-evidence/r14-structural-governance-bindings/verification.json`。
+
+**三线发布依赖许可复验**　三个版本线的实际 Maven 依赖清单及聚合 SBOM 均通过仓库许可校验。发布 SBOM 中仍列为构建豁免的坐标分别为 5、1、1 项，核对固定版本 POM 及源码包后全部移出豁免并登记许可选择。校验器现在对发布范围内的任何豁免立即报错，三线各 11 项回归通过。Java 17 清除两份报告均未出现的 40 项旧记录，为 29 个当前版本补齐上游 POM 证据。12 项 Jersey 选择其主代码适用的 EPL-2.0，并记录随附第三方代码的独立许可。MySQL 26.10.0 经 133 个模块运行时依赖树及 SBOM 验证仅保留测试范围记录。许可记录的逐线哈希已更新，严格结构门禁仍卡在依赖对齐策略的映射。证据见 `R14-evidence/r14-jdk8-license-governance/distribution-scope/verification.json`。
+
+**Vert.x CQRS 真实主入口复验**　Java 8、17、21 的 CQRS 主入口均要求显式 JDBC URL，缺失或空白时在创建运行时资源前报错。三线保留七个原公开内存对象和 createRouter，恢复无需捕获受检异常的 main 调用契约。三线定向测试分别通过 7、9、9 项，使用实际打包 JAR 编译旧调用方并核对公开 JVM 签名。Java 8 补齐已有的 SLF4J runtime 实现，复用中央管理版本。三线分别以生产运行时类路径连接一次性 PostgreSQL。重复订单返回 409，投影前查询返回 404。实际锁冲突导致投影 409 与检查点 0。解除后重试推进到 2，查询保留五个字段，同库重开结果一致。起停均使用原生进程，六次关闭均记录完成。刷新现有源码绑定与两份精确测试证据。完整结构检查和其他 R14 验收仍开放。证据见 `R14-evidence/r14-vertx-cqrs-main/verification.json`。
+
+**Java 8 Vert.x 命令与 Sa-Token 登录域复核**　恢复远端 1.0.x 已有的命令及读模型契约测试。新增的历史 JSON 回读断言实际复现 Jackson 缺少创建器，恢复同一发行实现的注解、值语义与序列化 UID 后，Java 8 的 9 项定向回归通过，公开 JVM 签名一致。命令生产类和事件类型测试三线逐字一致，命令测试仅 Java 21 的 ObjectMapper import 按 Jackson 3 精确适配。三条远端发行线的 StpKit 均注册 XXX/xx，当前 Java 17 本地 GUEST/guest 会覆盖应用预先注册的 guest。在真实 Java 17 Sa-Token 类路径下隔离编译远端源码，确认原 XXX 调用方可编译，初始化保留应用的 guest 并按历史行为重新登记 xx。登录域待确认，先保留当前认证生产代码。证据见 `R14-evidence/r14-login-realms-and-vertx-contract/`。
+
+**三线完整编译 API 复验**　当前 Java 8、17、21 各自完成全部 133 个默认 Maven 模块的 clean compile，三线均通过 record 声明检查。按实际 reactor 核对每线 117 个产出 class 的模块，包含 7 个运行时以及 28 个默认、CQRS、Sa-Token 和 Shiro 样例。现有 36 项精确平台映射全部命中，无陈旧配置。未解决的编译 API 从 4 项降到 2 项，Vert.x CQRS main 的两条受检异常差异已消除，Java 8 与 Java 21 无未解释成员差异。剩余为 Sa-Token StpKit 的 XXX/GUEST，涉及实际登录域选择，编译 API 门禁保持失败。完整结构与容器联测仍由 R14 独立验收。证据见 `R14-evidence/r14-current-complete-jvm-api/verification.json`。
+
+**Java 8 CI 与周更漏洞报告复验**　恢复 Verify 的三套 JDK 检查环境，产品 Maven 构建使用 Java 8。CI 负责运行 16 个目标模块的集成测试、独立 Redis Streams 原生测试，并用 Surefire XML 验证 11 套 Broker 测试和 JPA MySQL 三个用例确已执行。三线汇总工作流按分支取消更早的推送运行，手动运行按各次运行编号隔离。周更 Trivy 报告按 Maven group、artifact、version 核对覆盖范围，重复包无法冒充缺失版本。恢复低线 SQS 的两项 ElasticMQ 用例和测试范围依赖，真实 Java 8 离线 test-compile 通过 8 个相关模块。本地工作流自测 39 项、结构与类型自测 69 项、MQ/Web 3 项和覆盖报告 4 项均通过，JPA 报告检查通过 7 个合成场景。真实容器、Trivy 和远端 CI 验收仍开放。证据见 `R14-evidence/r14-jdk8-workflow-native-gates/`。
+
+**Java 8 发布候选漏洞检查复验**　Verify 与受保护的 Release Candidate 恢复使用固定版本 Trivy，并按本线策略在 CVSS 7.0 及以上时报错。扫描输入包括默认 Maven reactor 解析的依赖和 BOM 直接管理的版本，报告按精确 GAV 校验覆盖。候选工作流先配置现有 Maven 私库凭据，完成测试后安装本次 reactor 构件。报告保存在 Maven 构建目录外，已用真实 Maven clean 证实六类报告均可保留。当前 Corretto 8 通过本地文件镜像生成全部 133 个项目的 CycloneDX 输出，汇总 121 个 JAR 模块的 957 个唯一 GAV，并枚举 BOM 直接管理的 1,051 个 GAV。工作流自测 41 项、依赖脚本自测 33 项及报告覆盖自测 4 项通过。由于本机缺少 Trivy，真实漏洞扫描及远端 CI 仍待验收。证据见 `R14-evidence/r14-jdk8-keyless-cve/verification.json`。
+
+**三线汇总预检与值对象探针复验**　三线汇总工作流与锁定版本逐字一致。推送先执行严格盘点，检测到 OPEN 差异时保留原有报告并报错。Java 8 的默认盘点及原有 verify 判定已通过回归。三线值对象探针统一使用核对 SHA-256 的 Jackson annotations 2.22，从空缓存准备后也仅选用这个坐标。实际使用三个 JDK 编译并执行四个值对象探针，三线输出一致。低线结构和 API 元数据自测共 71 项，工作流自测 42 项，每线依赖准备自测 9 项均通过。真实完整预检仍开放。低线校验器拒绝已登记的 Dropwizard 配置导入规则，较新版校验器在依赖配置 `alignment-policy.json` 的当前内容与锁定摘要不符时失败。证据见 `R14-evidence/r14-three-line-cold-runner/verification.json`。
+
+**三线共享检查器与 Java 8 场景补验**　Java 8 的结构/API 校验器、源码扫描器、汇总入口、历史索引与产品文档检查器已和两条高线对齐。结构 90 项、汇总及历史索引 25 项、产品文档 16 项自测通过，实际核对 249 条历史索引。恢复了投影、Jdbi 与 Javalin 鉴权样例中缺失的七个测试文件。Javalin 的 Sa-Token 和 Shiro 样例定向复现六个 JSON 反序列化错误，补回受影响订单命令、响应和嵌套订单行原有的 Jackson 构造入口后，8 项 JSON 与值契约测试通过，八个类型的公开 JVM 签名一致。同一汇总入口核验 Java 8 五个场景共 61 项真实测试均通过。全量矩阵文件仍有跨线差异，八个已指定的方法仍待恢复。真实汇总盘点的输入稳定，产品文档和历史索引通过，结构停在依赖配置的锁定摘要差异。证据见 `R14-evidence/r14-common-structure-driver/verification.json`。
+
+**三线共用场景矩阵与 Java 8 契约复验**　三线现在使用逐字一致的 164 行场景清单，保留原 162 项及各线状态，并明确登记投影空类型注册、位点恢复及同流并发保护。实际三线验证这两组投影契约共通过 127 项。补齐 Java 8 缺失的八个指定方法，复验 Pulsar、SQS、TDMQ 确认语义，Web 幂等租期和取消释放，以及 Dropwizard 命令 JSON 往返。Java 8 的 Web 176 项、MQ 25 项、Dropwizard 3 项均通过，Dropwizard 公开 JVM 签名一致。汇总校验器从本次报告匹配 171 项所选三线场景测试。完整矩阵按原规则保持 BLOCKED，三线均保留 BROKER-ADAPTERS 待验收记录。实际 Broker 联测、云端场景及远端 CI 仍开放。证据见 `R14-evidence/r14-shared-matrix-methods/verification.json`。
+
+**受影响模块 API 与 Java 8 依赖周更复验**　三线使用各自的 JDK、Wrapper 和本地缓存，对近期修订涉及的 Pulsar、SQS、TDMQ、Web Core、WebFlux、Dropwizard CQRS 和两份 Javalin 鉴权样例进行清理编译。使用同一编译 API 比对器核验八个模块，均无未解释 JVM API 差异或失效的平台映射。三线 record 检查通过，清理前保全 50 份可核对的 Surefire 报告。Java 8 周更工作流和检查器恢复锁定版本的无密钥 Trivy 流程，分别扫描当前与候选依赖。依赖脚本 38 项和工作流 43 项检查通过。当前低线周更策略仍缺部分锁定分支固定规则。真实漏洞库扫描、远端调度和完整三线验收待完成，Docker 复查仍无可用空间。证据见 `R14-evidence/r14-weekly-and-affected-api/verification.json`。
+
+**周更规则与当前 Maven 声明复验**　对照锁定周更策略和三个当前工作区的 POM，补回 Java 8 分支策略文件中 52 个与现有声明相符的固定属性、3 个 Helidon 固定坐标和 10 条既有分支排除规则。另有 18 个历史固定值与当前声明存在差异，保留待核对项。三线检查器共享同一个 POM 选择逻辑，在 Git 工作区使用已跟踪和未忽略的现有文件，可纳入 reactor 外的有效声明。中线原先误读忽略归档中的畸形 POM，修复后实际三个工作区通过周更策略的声明和保护规则校验，共核对 469 份 POM。低、中、高线分别通过 41、76、73 项依赖脚本自测。完整依赖对齐门禁及真实周更调度仍待验收。证据见 `R14-evidence/r14-weekly-pins-and-policy/verification.json`。
+
+**14 个旧 Maven 坐标与基础接入复验**　使用 Java 8、17、21 各自的 Maven Wrapper 从当前源码重建 14 个兼容构件和 7 个平台运行时。三线共通过 105 个独立 Maven 消费项目、84 次冻结旧二进制运行和 42 次冻结旧源码编译。每条线的 21 个旧公开类型均只有一个实际类文件来源。所有新基础入口均排除 14 个旧坐标。每条线有 6 个基础入口没有引入共享投影构件。Quarkus 基础入口仍传递引入共享 JPA 和投影类型，三线实际启动测试均确认投影 Runner 未注册且调度器无任务。证据见 `R14-evidence/r14-current-legacy-coordinate-closures/all-line-closure-and-quarkus-verification.json`。
+
+**三线当前旧数据回退复验**　Java 8、17、21 使用当前产物和各线冻结旧产物，对七个运行时执行 21 组当前实现、完整旧实现、当前实现的 H2 重放，63 次独立 JVM 运行全部通过。每组沿用同一数据库副本，检查点从 10 依次推进到 21、22、23。21 次末态只读检查确认表结构及最初 20 条事件保持一致，最终 JSON 载荷与 Java 检查点可读取。各线另外通过冻结数据读取，33 份原始输入哈希保持一致。证据见 `R14-evidence/r14-current-legacy-data-rollback/summary.json`。
+
+**Javalin 商品样例查询复验**　普通与 CQRS 样例的商品控制器均将 `by-code`、`page`、`list`、`count` GET 路由放在参数路由之前。三线修复前各有 22 项有效查询断言收到 400，修复后各通过 86 项测试，无失败或跳过。三线另外在真实 CQRS 应用内各通过 12 项 HTTP 检查，验证有效查询、坏输入 400 及原缓存查询的缺失响应。各线默认样例继续直接运行订单，README 指向实际订单入口，并说明商品控制器的独立装配。已更新两条商品源码测试绑定及两条对应的 Java 8 测试客户端绑定。证据见 `R14-evidence/r14-current-javalin-goods-query/`。
+
+**T03 三线当前严格依赖复验**　使用三线各自 Wrapper/JDK 生成当前有效 BOM，复验 4566 条组件与版本线记录，0 错误、0 未验证构件。记录绑定 2374 个实际扫描 JAR 和 4 个坐标迁移 POM。Java 17/21 检查器补齐普通 Easy4J 坐标的产品线约束，继续优先使用现有显式版本和 Boot starter 策略。错线夹具三线均被拒绝，检查器分别通过 43、56、56 项，引导器通过 9 项。Java 8 Dropwizard 样例最终 POM 生效后复验两种实际检查器，源输入稳定、有效 BOM 和结果一致。结构锁和漏洞扫描仍各自验收。证据见 `R14-evidence/r14-current-strict-dependencies/post-dropwizard-runtime/verification.json`。
+
+**七框架默认样例与运行说明**　三线均用本线 Wrapper 打包，实际启动 Spring MVC、Quarkus、Micronaut、Helidon、Vert.x、Dropwizard 的 18 个独立 JVM，逐项验证匿名创建、同一订单查询和关闭。Guice/Javalin 三线使用与 `main` 同装配的 `startBasic(0)` 执行同样的真实 HTTP 流程，固定 7000 端口由系统进程占用。Java 8 Dropwizard 默认样例补齐运行时 Logback 和 `javax.inject` 作用域，保持现有坐标和版本，实际主入口和 7 项样例测试通过。三线样例索引各链接 28 个实际 Maven 模块并共用默认启动说明。按实际 JAR 修正了 Java 8、21 的 Spring 样例版本说明。证据见 `R14-evidence/r14-default-launcher-matrix/`。
+
+**七框架鉴权样例复验**　Java 8、17、21 各运行七个框架的 Sa-Token 和 Shiro 样例，实际运行构件共 42 组，419 项 HTTP 检查通过。各组验证匿名拒绝、真实登录、权限不足、授权业务操作与退出后旧凭证失效。Spring 沿用只读账号验证授权查询，其余框架验证下单及原订单读回。36 组使用主入口，6 组 Javalin 调用同装配的生产启动和关闭入口并使用隔离端口。Java 8 Dropwizard 两个样例把既有 Logback 依赖移到运行时，Javalin Sa-Token 样例在初始化自有 DAO 前安装既有配置，消除关闭后遗留的缓存线程。Java 8 相关回归 15 项通过。样例索引的 42 个鉴权入口均有对应说明，官方产品文档检查通过。按最终 POM 再跑两个 T03 检查入口，4566 条记录无错误和未验证构件。证据见 `R14-evidence/r14-auth-current-launchers/verification.json`。
+
+**CQRS 样例当前打包复验**　三条发布线共检查 21 个原生打包入口。Micronaut、Helidon、Dropwizard 的 9 个内存异步投影流程均验证同一订单从创建 201、投影前查询 404 到投影后查询 200。Java 8 Quarkus 的普通内存查询返回正确订单数据，实际日志为 0 次详情缓存命中。三条线的 Javalin 包均验证读缓存刷新。8 个 PostgreSQL 入口已做启动预检，其中 Java 8 Spring、Vert.x 验证缺失 JDBC 配置时报错，高两线 Spring、Vert.x、Quarkus 在隔离本地地址验证数据库连接失败。当前 PostgreSQL 成功运行证据仍待补充，历史用例按当次构建输入归档。证据见 `R14-evidence/r14-cqrs-current-launchers/verification.json`。
+
+**CQRS 样例修复与文档**　三线 Javalin 均复现支付后暖缓存仍返回 `DRAFT/0`。修复后，保存成功使详情、统计和买家计数失效，实际打包读回 `PAID/1`。三线各通过 78 项定向回归。Java 8 Dropwizard 将既有 Logback、`javax.inject`、`javax.annotation-api` 的四项依赖移到运行时，沿用原版本。无配置文件的 `server` 和隔离配置均通过内存投影流程，7 项原有测试通过。两种 T03 检查器对最终 POM 复验通过。三线 84 个样例模块现均有独立 README，说明内存和 PostgreSQL 运行路径，官方产品文档检查通过。
+
+**当前三线编译与样例证据**　三个发布线分别用原生 JDK 和 Maven Wrapper 在隔离快照中重新编译默认 reactor，各通过 133 个模块。每线核对 117 个产出 class 的模块，三线均通过 record 声明检查。完整 JVM API 比对仍有两条未解决的公开字段记录。Java 8、21 的 Sa-Token 为 `StpKit.XXX` 和登录域 `xx`，Java 17 为 `StpKit.GUEST` 和 `guest`。36 项现有平台映射均命中，登录域决策仍待确认。三线 84 个样例的 POM 和生产源码均与对应打包运行证据匹配。默认和鉴权样例已核对实际行为，CQRS 按实际内存流程、读缓存行为和 PostgreSQL 启动预检分别记录。21 个当前持久化 CQRS 路径仍需成功运行证据。证据见 `R14-evidence/r14-current-full-api-after-cqrs/verification.json` 和 `R14-evidence/r14-current-sample-acceptance.json`。
+
+**结构与发布工作流复核**　Java 8 Deploy 的三个 Action 恢复使用原先锁定的提交。Release Candidate 和 Verify 的 Java 8 摘要更新为已有验收证据绑定的工作流字节。三份 Java 8 工作流通过 actionlint，三线的九份工作流文件均通过现有摘要和产品线标记检查。完整结构门禁仍停在依赖策略摘要。依赖组件矩阵和 Java 8 统一依赖测试的锁定也仍待处理。用当前策略复跑锁定版本的 50 项依赖测试，13 项因历史版本规则差异失败。真实漏洞扫描和远端 CI 仍待验收。证据见 `R14-evidence/r14-current-structure-diagnosis/`。
+
+**三线数据模块构建复验**　14 个兼容模块、共享投影和 5 个 EventStore 模块连同上游依赖，在每条发布线上选中相同的 40 个 reactor 模块。使用本线 JDK 和 Wrapper 执行离线 `clean verify`。Java 8 和 Java 17 的 40 个模块均通过，分别报告 1,333 和 1,365 项测试，各有 1 项显式混用 profile 测试由默认构建跳过。高两线首次并行构建的 Quarkus 测试争用 8081，改用独立测试端口后消除。Java 21 在重验中报告 1,362 项测试，1 项同类跳过，JDBI PostgreSQL 的 5 项用例在建立 SSL 连接时收到 EOF。同一份源码的上一轮这 5 项已通过，两次报告均归档，Java 21 集成构建保持待验收。证据见 `R14-evidence/r14-current-data-verify-summary.json`。
+
+**Java 8 JPA 与 Quarkus 回归**　Java 8 的 JPA 检查点仓库 `findAll()` 沿用同模块的 JDK 集合写法，保留查询返回顺序、不可修改列表和独立快照。6 项架构检查、4 项实际 H2 仓储测试通过，公开 JVM 签名一致。Java 8 的旧 Quarkus 生命周期测试复用已有 `LegacyCronProfile`，显式验证启动与关闭。运行时 55 项通过，包括默认接入的空任务状态和启用后真实 Quartz 回调与取消。三线另外各用既有 `mixed-durable-test` profile 运行 1 项真实 Quarkus H2/JTA 用例，全部通过。Java 21 按现有文档转发 Maven 4 profile，测试类路径使用本次 reactor 构建的依赖。证据见 `R14-evidence/r14-current-projection-jpa-independence/verification.json`、`R14-evidence/r14-current-jdk8-quarkus-lifecycle/verification.json` 和 `R14-evidence/r14-current-data-verify-summary.json`。
+
+**Java 17 组件矩阵结构绑定**　将中线已有的 32 条旧依赖退出记录对应摘要同步到规范结构策略。当前严格依赖证据绑定同一份组件矩阵。现有结构检查仍拒绝 Java 8 组件矩阵和三线依赖对齐策略的摘要差异。证据见 `R14-evidence/r14-current-structure-diagnosis/jdk17-component-matrix-lock-verification.json`。
+
+**四种投影位点仓库复验**　Java 8、17、21 每线均有 47 项通过证据，涵盖 JPA 19 项、JDBI 8 项、R2DBC 8 项和 Panache 12 项。使用本线 Wrapper 和原生 JDK，覆盖真实 H2 位点读写、事务和依赖边界。Java 8 补回高线既有的两项断言。Spring Data JPA 返回保留查询顺序的不可修改快照，后来修改实体时快照保持独立。Panache 返回可修改的独立列表，清空列表后库中记录仍可读取。Java 8 的 Panache 12 项来自原五套件的 11 项和补齐后直接 H2 套件的 5 项，直接套件原有的 4 项按最新结果计一次。其他数据库后端仍按各自用例验收。证据见 `R14-evidence/r14-current-four-position-stores-summary.json`。
+
+**JPA 和 Quarkus 投影结构复核**　恢复的 Spring Data JPA 测试三线逐字一致。按原校验器记录 JPA 命名空间、JDK 集合写法、Quarkus 1/3 启停观察者及测试装配的逐文件适配。三线真实 ArC 调度、H2/JTA 混用、真实仓储和依赖边界报告与现有源码逐线匹配。12 个原 OPEN 文件路径已由原规则识别，其中 11 个为平台适配，1 个达成逐字一致。独立诊断清单仍有 970 条 OPEN。官方完整结构门禁仍在依赖对齐策略摘要处退出，Java 8 组件矩阵和统一依赖测试也继续按原锁定规则验收。证据见 `R14-evidence/r14-current-storage-structure/`。
+
+**共享投影失败隔离与调度清理**　Java 8 的熔断指标回调原会因运行时异常中止同批次。修复后与高两线一致，失败视图不推进检查点，后续视图继续处理。三条线的共享视图管理器在部分启动遇到 `LinkageError` 时清理已注册任务，停止时某个句柄失败仍会继续取消其他句柄。原异常对象继续传回，失败句柄保留供重试。Java 8 实际复现熔断异常和两种活跃句柄残留，随后分别通过回归。分发器统一使用单份私有不可修改索引，保留重复类型最后一次注册和原公开签名。各线保留已有事件块列表实现，保持 `null` 成员查询行为。证据见 `R14-evidence/r14-shared-projection-runner-structure/` 和 `R14-evidence/r14-view-manager-structure/`。
+
+**七个 runtime 当前核心契约与结构**　三条发布线用本线 Wrapper 与原生 JDK 各通过 145 项测试，包括七个 runtime 的 96 项命令路由、位点和生命周期契约，以及 49 项共享核心回归。匹配本轮最终投影源码，0 失败、0 错误、0 跳过。按原规则处理 14 个旧 OPEN 路径，其中 8 个平台适配、5 个逐字相同、1 个源码标记一致。移出已无分线差异的分发器适配声明。单独诊断清单还有 956 条 OPEN。官方结构门禁仍停在依赖对齐策略摘要，完整根构建和实际容器验收另行保留。证据见 `R14-evidence/r14-current-seven-runtime-core-regressions/verification.json` 和 `R14-evidence/r14-current-shared-core-structure/classification-verification-final.json`。
+
+**Spring、Guice/Javalin 与 Quarkus 调度故障清理**　Spring 停止时会取消启动前已登记的手工投影句柄，单个句柄失败时继续清理其余任务并保留重试。Java 8 恢复 JPA 位点返回顺序与不可修改契约。Guice 启动遇到 `LinkageError` 会清理自有调度，停止时代理句柄失败也会释放自有线程池，再次关闭会重试失败句柄。Quarkus 显式启用 Quartz 后，作业提交报错会解绑回调，删除报错后保留句柄供重试，同步重入不会重复删除。Java 8 实际复现了三组共七项断言失败，修复后通过。三条线在顺序启停和故障重试范围内各通过 84 项原生测试，包括 Spring 29、Guice/Javalin 46、Quarkus 9，覆盖默认接入、显式投影、实际 HTTP/H2 和真实 Quartz 回调与停止。并发启停和 Quartz 后端提交后再报错的任务行状态继续分别验收。
+
+**原生装配结构复核**　保持原有结构分类规则，逐线绑定本次通过的源码与测试。18 个旧 OPEN 路径已识别，其中 15 个平台适配、3 个逐字相同。诊断清单还有 938 条 OPEN。官方完整结构门禁仍在依赖对齐策略摘要处退出。证据见 `R14-evidence/r14-current-native-wiring-structure/verification.json`。
+
+**Micronaut、Helidon、Vert.x 与 Dropwizard 启动回滚**　Micronaut 在显式启用并发生第二次调度失败时，重试取消先前的句柄，保留原异常和已有命令 SPI。原生 `ApplicationContext` 用例使用可控调度器和测试数据端口。Helidon 启动抛出 `LinkageError` 时恢复 SPI 并释放 CDI 引用。关闭时继续释放其余引用，后续失败附加到原异常。Vert.x 启动失败时重试取消失败句柄，调用方的 Vert.x 与借用调度器保持可用。Dropwizard 启动失败时恢复原 SPI，终止自有投影线程池，并避免把原异常附加给自身。三条线用本线 Wrapper 和原生 JDK 各通过 80 项，Micronaut 21、Helidon 23、Vert.x 与 Dropwizard 合计 36，无失败、错误或跳过。Java 8 的 Dropwizard 默认就绪断言从既有高线路径补回，重复执行的测试按一次计。公开 JVM 签名均通过逐线核对。证据见 `R14-evidence/r14-current-later-native-wiring-structure/verification.json`。
+
+**后四种 runtime 结构复验**　复用原有逐线源码和测试验收规则，处理 10 个原有 OPEN 文件路径。诊断清单还剩 928 条。官方完整结构门禁仍在依赖对齐策略摘要处退出。当前证据覆盖顺序启停、部分失败后的资源清理与重试。实际持久化与容器联测按各自用例验收。
+
+**七个 runtime 的共享 SPI 与上下文恢复**　普通关闭和部分注册失败现在恢复原全局键值，包括与刚注册类型不同的前值。主体提供者的关闭按对象身份判断所有权，保留应用随后装入的等值但不同对象。嵌套顺序覆盖 LIFO，原有显式上下文清除继续保留。普通子线程与包装任务使用独立资源 Map，Map 内业务对象保持原引用。Java 8 原生重现后，三线以最终源码各通过 28 项 SPI 与上下文集成测试，七个 runtime 均执行原有服务注册与关闭契约。单独的 30 项线程上下文、Web 作用域和 Vert.x worker 用例在三线通过。
+
+**就绪报告、国际化与结构复验**　匿名就绪检查器返回空或抛出运行时异常时，仍产生安全的未就绪条目，继续执行后续检查器。国际化回退只匹配模板占位符，参数中的花括号保留。Java 8 原生复现一项断言失败和一项就绪报告异常，修复后三线各通过 18 项就绪与国际化测试。公开 JVM 签名逐线一致。按原结构规则处理 5 个旧 OPEN 路径，诊断还剩 923 条。官方完整结构门禁仍在依赖对齐策略摘要处退出。证据见 `R14-evidence/r14-current-shared-context-structure/verification.json`。
+
+**命令契约复验**　三线各通过 26 项核心命令测试。Java 8 补齐重复注册、执行器集合快照和空类型查找，三线验证注册冲突不留下部分路由，命令发现失败可重试，执行异常按原对象传播。三线还各通过 154 项 runtime 与旧 CQRS 坐标测试，执行的方法一致，覆盖七个 runtime、旧坐标命令入口，以及 Spring 事务。Java 8 的 Quarkus 未注册命令用例现在检查与高线相同的异常类型和诊断文本。证据见 `R14-evidence/r14-current-command-core-contracts/summary.json` 和 `R14-evidence/r14-current-command-runtime-contracts/verification.json`。
+
+**内存事件存储批次失败与重试**　三线均复现批次后续事件构造失败时前序事件已写入。修复后先构造整批，任何一条构造失败时均保留已提交事件和下一全局位置，调用方可以用原期望版本重试。元数据回调追加到不同聚合时，两次提交各有独立全局位置。若回调提交到同一聚合，外层按已提交版本报告冲突。Java 8 补回四条原有存储契约，三线各通过 49 项内存事件存储及记录格式测试。`javap` 核对公开与受保护签名一致。证据见 `R14-evidence/r14-current-eventstore-core-contracts/verification.json`。
+
+**命令与事件存储结构复验**　按原规则处理 14 个旧 OPEN 路径，其中 6 个平台适配、6 个逐字相同、2 个源码标记一致。隔离诊断清单剩 909 条 OPEN。官方完整结构门禁仍在 `config/dependencies/alignment-policy.json` 的摘要校验处退出。证据见 `R14-evidence/r14-current-command-runtime-contracts/structure-verification.json`。
+
+**JPA 与 R2DBC 本地复验**　Java 8 补回 JPA 映射测试及供应用显式引用的 Hibernate JDBC 批量配置样例。三线构件均包含相同的样例字节及本线持久化命名空间。原生 Wrapper 打包分别通过 48、48、49 项，覆盖映射、H2 读写、事务参与以及 R2DBC 异步版本、时间和载荷恢复。Java 21 多一项重复读取后聚合标识相等的断言。按现有规则处理 5 个旧 OPEN 路径，隔离诊断剩 904 条。证据见 `R14-evidence/r14-current-jpa-r2dbc-contracts/`。
+
+**依赖策略与历史测试复验**　Java 17、21 各用本线有效 BOM 和现行策略重跑严格构件检查，分别核对 4569、4566 条记录，错误与未核验构件均为 0。两个活动结构策略同步这两条线的摘要，保留 Java 8 原验收摘要。Java 8 原样恢复 28 项历史规则测试并保留现有 12 项，统一套件 40 项、依赖脚本 69 项均通过。原锁定的 50 项历史测试回放仍有 13 项版本规则失败。官方结构检查继续拒绝当前 Java 8 对齐策略摘要，低线组件矩阵与历史测试摘要也待验收。证据见 `R14-evidence/r14-alignment-lock-admission/` 和 `R14-evidence/r14-current-low-uniform-coverage/`。
+
+**共享订单与 CQRS 样例复验**　Java 8 恢复共享订单 `Money` 的 Jackson 构造入口。原生测试复现了金额回读失败，修复后三线各通过 19 项，并核对原公开与受保护签名和序列化 UID。Java 8 补回 Micronaut、Helidon 和 Dropwizard 的事件类型快照测试，和 Vert.x 一同验证事件名称、固定长度及独立快照。四个框架的订单与投影用例每条线各通过 16 项。证据见 `R14-evidence/r14-current-shared-order-sample-contracts/` 和 `R14-evidence/r14-current-cqrs-sample-event-types/`。
+
+**Javalin 鉴权样例复验**　Java 8 原生复现八项失败，覆盖金额 JSON 回读、订单空明细、响应行快照和用户请求字符串输出密码。修复保留 24 个类和嵌套类的公开与受保护 JVM 签名。三条线各覆盖 314 个实际通过的用例。Java 8 使用补跑的六项 Shiro HTTP 报告替换原四项报告，验证两个取消路径的权限与订单状态，以及应用关闭后的调用线程上下文。六条现有规则覆盖范围内的源码适配按当前实现和测试摘要核验。证据见 `R14-evidence/r14-current-javalin-auth-sample-contracts/`。
+
+**当前三线全量编译与结构诊断**　JDK 8、17、21 的 133 个默认 reactor 模块分别在隔离副本全部干净编译，原工作区构件和报告完整保留。原有结构校验器使用三线当前 class 文件证明 255 条源码签名差异的 JVM API 等价，其中 245 条属于样例。隔离编译诊断剩 619 条 OPEN，已登记的 36 个平台 API 映射仍命中。编译 API 仍有 Sa-Token `StpKit.GUEST` 与 `StpKit.XXX` 两条未解释字段记录，正式结构检查仍在 Java 8 依赖策略摘要处退出。证据见 `R14-evidence/r14-current-sample-compiled-structure/verification.json`。
+
+**当前 Javalin 鉴权构件回放**　三线按当前源码重新打包 Sa-Token 与 Shiro 样例，各构建 24 个模块。六个启动实例使用生产 `start` 和 `close` 入口以及回环动态端口，实际通过 57 项 HTTP 检查，覆盖登录、权限拒绝、授权订单操作和退出。六个进程均正常退出，端口关闭。每个实例使用本轮生成的九个 reactor JAR。证据见 `R14-evidence/r14-current-javalin-auth-packaged-replay/verification.json`。
+
+**Dropwizard 与 Vert.x 凭证拒绝与清理**　Java 8 原生复现两个 Shiro 样例在缺用户名时返回 500。三线均改为沿用既有 401 响应。三线每线 18 项通过，包含缺用户名、缺密码、业务失败、断连清理和原生所有权恢复，公开与受保护 JVM 签名核对一致。按原规则核对 14 个源码适配及 8 个实际测试路径，隔离源码盘点从 874 项减至 852 项。证据见 `R14-evidence/r14-current-dropwizard-vertx-auth-boundary/`。
+
+**Micronaut 取消权限与线程清理**　原生拦截器或过滤器从框架实际命中的处理方法识别取消操作。Sa-Token 和 Shiro 三线均验证两种入口使用同一权限，拒绝后读回订单仍为 `DRAFT`，获授权后为 `CANCELLED`。三线每线 4 项实际通过，公开与受保护签名核对一致，断连清理对应到具体请求。并行复验中 Java 8 Helidon Sa-Token 首个请求有一次返回 404。相同源码单独复跑两项通过，间歇结果的原因待确认。证据见 `R14-evidence/r14-current-helidon-micronaut-auth-boundary/`。
+
+**七平台当前鉴权构件矩阵**　三条发布线各完成 14 组 Sa-Token 和 Shiro 的实际打包启动，共 42 组与 425 项 HTTP 检查。六平台每线使用原生 Wrapper 构建 53 个 reactor 模块，使用本轮产出的应用及运行依赖执行 368 项检查。Javalin 的 57 项报告重新核对源码和运行依赖摘要。三线 Dropwizard 与 Vert.x 的 Shiro 构件分别验证缺用户名返回 401。所有实例验证登录、权限拒绝、授权订单操作、退出后同一会话失效，并在关闭后释放回环监听端口。Spring 鉴权构件本轮覆盖 WebMVC。证据见 `R14-evidence/r14-current-auth-package-matrix/verification.json`。
+
+**Helidon Java 8 首次请求复验**　Sa-Token 样例使用原失败报告对应的同一源码，三次原生 Wrapper 运行各通过 HTTP 鉴权与原生所有权两项，共 6 项，当前打包入口也通过。Helidon MP 1.4.19 的本地字节码确认显式 Jersey 应用在构建 WebServer 前注册到 `/` 根路径。原 404 留存，发生原因待确认。证据见 `R14-evidence/r14-current-helidon8-fixture-stability/verification.json`。
+
+**七平台当前默认构件**　三条发布线各用原生 Wrapper 打包 50 个样例及上游模块，21 个默认实例首次运行均通过匿名创建和按 ID 读回同一 `DRAFT` 订单，共 42 项 HTTP 检查，退出后监听端口均关闭。18 个实例使用生产 `main`。Javalin 的 7000 端口已被占用，三线使用产品 `startBasic(0)` 与 `close()`，探针访问回环地址，Jetty 通配监听已记录。证据见 `R14-evidence/r14-current-default-packages/verification.json`。 默认装配的实际模块、启用条件与源码摘要见 `R14-evidence/r14-current-default-boundaries/verification.json`。
+
+**当前 CQRS 构件与内存路径**　三线全部 21 个 CQRS 模块打包成功。13 个构件直接运行通过，涵盖 Micronaut、Helidon、Dropwizard 三线共九个异步投影流程，Javalin 三个缓存刷新流程，以及 Java 8 Quarkus 兼容查询。异步投影验证同一订单创建后查询先返回 404，再返回带正确订单内容的 200。Javalin 验证查询缓存预热后加明细、支付并读回 `PAID`。Javalin 的 Jetty 通配监听和回环请求地址均有记录。13 个实例退出后均释放监听端口。证据见 `R14-evidence/r14-current-cqrs-packages-loopback/verification.json`。
+
+**当前 84 个样例构件复核**　对照三线 reactor、当前源码和实际 JAR，七平台四种场景共 84 个构件均已打包。其中 76 个当前构件完成实际启动与业务验证。Spring 和 Vert.x 三线以及 Quarkus 高两线的八个 PostgreSQL 启动入口待重验，各模块的实际持久化和 Broker 契约按 R14 单独验收。证据见 `R14-evidence/r14-current-sample-modes/verification.json`。
+
+**R2DBC 与 JDBI 批次事务复验**　R2DBC 在本线实际 H2 数据库中以约束拒绝第二条 INSERT，验证整批回滚、已提交事件及全局位置保留，随后以原期望版本重试成功。三线各通过 13 项。JDBI 首条 INSERT 实际执行后让第二条失败，验证整批回滚与连续位置。另以两条 H2 连接交错提交触发真实 SQLState `23505`，按原期望版本退避一次后成功。三线分别通过 47、37、37 项。证据见 `R14-evidence/r14-current-r2dbc-batch-rollback/` 与 `R14-evidence/r14-current-jdbi-atomicity-contract/`。
+
+**R2DBC 取消回滚复验**　三线先在原生 H2 复现两条 INSERT 已执行、尚未发出 COMMIT 时取消，连接归还后事务中仍留有额外事件。取消与异常现在共用显式回滚和连接释放流程。三线各通过 14 项，验证原期望版本与连续全局位置可重用，逐线核对公开与受保护 JVM 签名未变。本次断言覆盖 COMMIT 发出前的取消，当前 PostgreSQL 驱动待复验。证据见 `R14-evidence/r14-current-r2dbc-cancellation/verification.json`。
+
+**Panache 事务所有权复验**　三线原生复现追加拒绝时把调用方已执行 `flush()` 的外层事务回滚。修复后，遇到已有事务时仍抛 `IllegalStateException`，调用方可以提交此前的修改。H2 也验证先写一条再失败的整个批次回滚及安全重试。三线各通过 24 项，包含每线四项现有 Quarkus/JPA 托管事务测试。公开 JVM 签名前后一致。当前 PostgreSQL 运行待复验。证据见 `R14-evidence/r14-current-panache-atomicity-contract/verification.json`。
+
+**存储相关结构复验**　更新当前三线已验证的存储绑定，JDBI 重试工具按原规则确认平台语法适配，隔离源码盘点从 852 项减为 851 项。官方结构检查仍在 Java 8 对齐策略摘要处退出。本机只发现 PostgreSQL 客户端工具，八个样例的 PostgreSQL 启动验收保持待执行。证据见 `R14-evidence/r14-current-persistence-gates/verification.json`。
+
+**Quarkus 投影装配三线复验**　三线各通过 35 项，覆盖默认启动不注册投影任务、旧 Quartz cron 只注册一个任务并可取消、投影位置读取，以及原生 ArC、JPA 与 H2 的持久投影回滚和重试。cron 属性表达式和空白处理沿用本线 Quarkus，此次结果覆盖实测输入。Java 8 补回投影位置实体的 JPA 命名空间、表及列名断言，原有用例仍执行。四个公开类型除本线 CDI/JPA 命名空间外的公开与受保护 JVM 签名一致。现有规则按源码和实测绑定四个生产路径及两个测试夹具，隔离诊断 OPEN 从 851 降至 845。正式结构检查仍在 Java 8 依赖策略摘要处退出。证据见 `R14-evidence/r14-current-quarkus-projection-bootstrap-parity/verification.json`。
+
+**核心认证事件与查询值复验**　三条线的登录成功和失败事件统一使用既有 Lombok getter 实现，保留组件式访问器与 Jackson 构造入口。三线各通过同一组 45 项原生测试，覆盖认证事件 JSON 字段和值语义、内存 Subject 发布及查询构造。Java 8 补回两个已有查询用例。对四个公开类型逐线核对编译描述符。使用当前三线构件和冻结的历史数据完成 15 次 Java 序列化读取，覆盖三线互读及与历史实现双向读写。隔离结构盘点从 845 降至 834，正式门禁仍停在 Java 8 依赖策略摘要。证据见 `R14-evidence/r14-current-query-auth-core-parity/verification.json`。
+
+**Java 8 WebFlux 可选追踪与 HTTP 599**　Java 8 原生复现无可选追踪时向 Spring 请求属性写入 null，以及枚举无法表示 599 导致错误响应中断。修复后，在省略 OTel API 和扩展的独立 JVM 中，三线均完成公开请求、读取 Reactor 请求上下文并原样传递业务异常。Spring 5 使用原生数字状态接口，三线核对实际 599 及响应体中的业务码和消息。最终各通过 34 项，含进程内 WebFlux HTTP 契约，公开与受保护 JVM 签名前后一致。Spring Boot 样例的 Easy4J 链接错误继续待验收。隔离盘点 834 降至 829，正式门禁仍停在 Java 8 依赖策略摘要。证据见 `R14-evidence/r14-current-webflux-optional-tracing/verification.json`。
+
+**WebFlux 599 追踪复验**　Spring 原生异常处理链返回 599 时，Java 8 修复前捕获的 OpenTelemetry span 状态属性为 200。改用 Spring 5 的原始数字状态后，三线均验证 HTTP 状态 599、响应消息、span 状态属性 599 和 ERROR。三线状态契约各 8 项通过，受影响的 Java 8 模块回归共 34 项。实际 SDK 在进程内捕获结束 span，Boot 样例和远端 exporter 单列验收。过滤器公开与受保护 JVM 签名核对一致。证据见 `R14-evidence/r14-current-webflux-digital-trace-status/verification.json`。
+
+**R2DBC 检查点写入失败与恢复**　共享 ProjectionRunner 先处理事件，真实 H2 约束再拒绝写入位置 17。从数据库重读仍为已提交位置 11。移除故障后，用新建运行器和仓储从 11 重试，下一次再新建实例读到 17。三次读取起点为 11、11、17，事件实际处理两次。三条线各通过 9 项，其中 6 项真实 H2 仓储用例和 3 项架构检查。其余后端和进程重启证据仍按对应验收记录。证据见 `R14-evidence/r14-current-r2dbc-checkpoint-retry/verification.json`。
+
+**R2DBC 检查点跨进程恢复**　使用本线已编译的共享执行器、R2DBC 仓储和文件型 H2，Java 8、17、21 各运行三次独立进程，每条线三次进程共用其数据库文件。第一次处理事件后由 H2 拒绝保存 17，退出前确认持久位置 11。第二次启动时从磁盘读取 11，重试成功推进至 17。第三次从磁盘读取 17，未再次处理该批。九个进程均正常退出，本次验收覆盖正常退出后的恢复。证据见 `R14-evidence/r14-current-r2dbc-checkpoint-process-recovery/verification.json`。
+
+**R2DBC 检查点强制终止恢复**　三条 JDK 线各在两处强制终止测试 JVM。事件处理器已收到事件、检查点尚未写入时终止，独立进程从磁盘读回 11，重放一次并推进至 17。检查点写入成功、执行器尚未返回时终止，独立进程从磁盘读回 17，处理器调用次数为 0。六个测试进程均由父进程实际发送 SIGKILL，六个恢复进程正常退出。覆盖文件型 H2 在两处明确边界的恢复，数据库写入中途终止及业务副作用与检查点的事务原子性仍属独立场景。证据见 `R14-evidence/r14-current-r2dbc-checkpoint-process-recovery/abrupt-termination/verification.json`。
+
+**七个 runtime 与 14 个旧坐标三线复验**　三线各用本线 Wrapper 对 21 个目标模块运行 clean verify，所有已有 Test 与 IT 均有报告，每线产出 21 个主 JAR。同一平台的 runtime、旧 CQRS 和旧 projection 构件间没有重复类。默认流程分别通过 436、442、438 项，各有一项按设计延后到混合持久化 profile。三线按原说明另外运行该 Quarkus 用例，各通过 1 项。Java 8 补回已有 Spring 事件发布、国际化、空表单签名及 Micronaut 调度竞态四个套件，定向通过 6 项。分开计入默认、profile 和补齐测试后，三线实际通过 443、443、439 项。隔离结构盘点 829 降至 825，正式门禁仍停在 Java 8 依赖策略摘要。证据见 `R14-evidence/r14-current-twenty-one-migration-modules/verification.json`。
+
+**三线当前构件的独立消费者复验**　从当前源码在三份独立本地 Maven 仓库安装候选构件，目标 21 个主 JAR 的类字节逐一匹配已验证构件。每个框架验证只依赖旧命令、只依赖旧投影、两个旧坐标组合、新 runtime 基础接入及混用五种配置。三线共通过 105 个独立 Maven 构建、84 次冻结旧二进制运行、42 次旧源码编译和 42 组 API 比较。各依赖树中的产品 JAR 和 POM 都能追溯到本轮安装，未发现重复产品类。每线 21 个旧公开类型均由一个构件提供，旧公开和受保护签名分别保留 87、87、89 个。新基础入口均未引入旧坐标，Quarkus 基础入口仍带共享位置与 JPA 类型。证据见 `R14-evidence/r14-current-external-maven-replay/verification.json`。
+
+**三线默认 reactor 编译与 JVM API 盘点**　Java 8、17、21 各用本线 Wrapper 从独立源码副本执行 `clean compile`，默认 reactor 均为 133/133 个模块通过。以原结构检查器和临时诊断策略比较本轮字节码，已有三项 Java 8 依赖配置与脚本摘要问题暂从诊断输入排除，正式策略继续校验。相比此前仅源码盘点，248 项被编译 API 证实等价，诊断 OPEN 从 825 减至 577。编译 API 仍有 Sa-Token `StpKit.GUEST` 与 `StpKit.XXX` 两个待确认字段差异。证据见 `R14-evidence/r14-current-default-reactor-api-census/verification.json`。
+
+**JPA 仓储空查询结果**　在上述三线编译盘点之后，Java 17 用 Hibernate/H2 复现两个 `findFirst` 入口的 `NoResultException`，包括空表和条件零命中。修复复用 Java 8 已有的限定一行后读取列表的方式，空结果返回 `Optional.empty()`。Hibernate/H2 验证两个空结果和两个命中后的聚合映射。三条线 JPA 定向套件各 12 项通过，Java 17 的公开和受保护 JVM 签名与修复前一致。证据见 `R14-evidence/r14-current-jpa-findfirst-contract/`。
+
+**Java 8 独立消费者夹具补齐**　Java 8 仓库已恢复七平台五种依赖组合的 35 份独立 POM。POM 和现有客户端源码逐一匹配上轮通过的 35 份原生 Maven 输入，各 POM 直接引用本线构件。三线默认 reactor 仍各有 133 个模块，消费者夹具在独立目录运行。三线 README 提供同一套构建和运行步骤。在 Java 8 干净源码副本执行示例，先将 Spring runtime 与一对旧坐标安装到空的隔离仓库，再在独立目录构建 `spring/old`，两次 Maven 调用实际通过。35 项缺失 POM 在结构诊断中转为平台配置。证据见 `R14-evidence/r14-jdk8-consumer-fixtures-in-repo/verification.json`。
+
+**EntityIdPath 的 Java 序列化回退**　原生 JVM 复现 Java 17 和 21 写入的旧对象流含 Java 8 缺失的 `java.util.CollSer`。高两线保留原序列化字段和版本号，写出 Java 8 可读取的列表快照。修复后，新对象流三线互读 9 组均通过，高线读取并重写既有流后可由 Java 8 读取，修复前的三线构件也可读取修复后的高线流。已有高线对象流须先由修复后的高线重写，再交给 Java 8。三线定向测试各 50 项，30 次 JVM 运行全部通过，公开和受保护 JVM 签名一致。证据见 `R14-evidence/r14-current-entity-id-path-serialization/verification.json`。
+
+**示例总览与默认启动命令**　三线 README 的 28 个场景链接逐一对应本线模块声明与运行说明。使用 README 的 Maven 构建命令打包 Vert.x 默认示例，各线实际运行类路径包含当轮构建的 10 个上游产品 JAR。在独立 Java 8、17、21 进程启动主类，动态回环端口均实际返回匿名创建 201、读取同一 DRAFT 订单 200，进程退出时端口释放。README 同步区分平台验收、三线 R14 和 Java 8 Spring WebFlux 的上游依赖限制。证据见 `R14-evidence/r14-current-default-readme-entry/verification.json`。
+
+**根目录接入与迁移指南**　三线根 README 同步列出七个运行时和 28 个样例，testkit 归共享测试。默认入口直接使用应用服务和仓储，事件溯源、投影及可靠消息按需装配。迁移指南逐项列出 14 个保留坐标、七个平台实际投影入口、位置仓储选择和停机回退。按三线 POM 及运行时源码核对当前入口，引用已验的独立消费者结果。Java 17 工作区保留原逐批迁移和审查记录。证据见 `R14-evidence/r14-migration-guide/verification.json`。
+
+**正式结构检查汇总前置差异**　三线校验器在完整 inventory 和 verify 入口一次列出依赖策略、组件矩阵及历史测试的锁定差异。正式策略实测两种入口均退出 1，在生成清单或启动编译前报告 Java 8 的 `alignment-policy.json`、`component-matrix.csv` 和 `test_uniform_contract.py`。本次修改仅完善诊断，仍按原摘要锁定判定。证据见 `R14-evidence/r14-structure-config-preflight/official-preflight-verification.json`。
+
+**基础 DDD 仓储和本地事件**　Java 8 补回五项已有用例。两项覆盖同一领域模型的持久映射缓存复用、隔离、清理重建及无效输入，三项覆盖聚合事件缓冲、空事件保护和带租户过滤的直接本地发布。三线使用本线 JDK 运行 core 和 MyBatis-Plus 查询及 CRUD 定向测试各 50 项，Java 8 聚合用例补齐后独立复跑。三类公共类型的 37 个公开及受保护 JVM 描述符逐线一致。现行结构策略使用实际源码及测试摘要登记已证实的差异，隔离检查确认涉及的四个文件。证据见 `R14-evidence/r14-current-domain-repository-contracts/verification.json`。
+
+**完整领域事件的跨版本回放**　以带实体路径、事件 ID、关联 ID、因果 ID、聚合版本、时间点和业务金额的合成订单事件验证。三线各自产出 Java 对象流和 `EventPayloadSerializer` JSON，两个格式分别通过 9 组真实 JVM 互读。每次读取后调用 `AggregateRoot.loadFromHistory`，订单金额按处理器恢复，未重复排入待发送队列。修复前高线的 Java 对象流在 Java 8 直接读取时复现两次 CollSer 缺失，经修复后的对应高线读取并重写，两份完整事件均可在 Java 8 回放。证据用当前原生编译构件和修复前隔离构件，覆盖本地事件格式和聚合回放。证据见 `R14-evidence/r14-current-complete-domain-event-replay/verification.json`。
+
+**实体 ID 路径转义与回放**　三线原生复现 ID 末尾的双反斜杠遮住真实分隔符，导致下一段并入当前值，尾部空段也可能误通过校验。解析改为逐段扫描转义序列，成对反斜杠后的斜杠可以分段，值内转义的斜杠保留。三线定向回归各 49 项通过，公开及受保护 JVM 签名一致。含末尾反斜杠和内部反斜杠/斜杠的完整事件通过 9 组 Java 与 9 组 JSON 互读及聚合回放。修复前按框架格式写出的 JSON 也验证了 Java 8 读取。证据见 `R14-evidence/r14-current-entity-path-escapes/verification.json`。
+
+**JPA 持久事件关闭重开**　三线的实际 `JpaEventStore` 使用各自 Hibernate/H2。用修复前 core 写入末尾带反斜杠的完整事件后关闭 JVM。另起进程以旧解析器读取，三线均复现事件字段异常。修复版另起进程只读同一 H2 文件，核对持久 JSON、事件 ID、版本、位置、路径和业务状态，并成功回放聚合。三份数据库在两个读取进程前后的摘要一致。Java 8、17、21 的相关 JPA 定向用例分别通过 36、36、37 项。证据覆盖每线的文件型 H2 关闭重开，见 `R14-evidence/r14-current-jpa-escaped-path-restart/verification.json`。
+
+**JDBI 和 R2DBC 文件事件重开**　分别使用两种本线原生 EventStore 和其实际 H2 驱动，在 Java 8、17、21 用修复前 core 写入带反斜杠边界的完整事件。每组让旧、修复版两个进程读取原文件的相同副本。旧版六组均复现路径字段错读，修复版六组均恢复类型化路径、事件 ID、版本和位置并成功回放。对两个进程后的副本分别做独立只读 JDBC 行审计，共 12 次，原始 payload 与行字段一致，保留的种子文件摘要一致。两存储的现行原生定向测试各线合计 35、33、33 项，证据见 `R14-evidence/r14-current-jdbi-r2dbc-escaped-path-restart/verification.json`。
+
+**Panache 文件事件重开**　Java 8、17、21 各执行 24 项原生定向测试，含四项 Quarkus 托管事务参与测试。另用同一现行 PanacheEventStore 和 H2 驱动，在每条线上先由修复前 core 写入文件型 H2 并关闭。旧解析器在新进程只读重开时三次复现路径字段错读，修复版三次读回类型化路径及事件元数据，并经 `AggregateRoot.loadFromHistory` 恢复订单状态。两个读取进程均读取原文件，文件与原始 JSON 摘要一致。证据见 `R14-evidence/r14-current-panache-escaped-path-restart/verification.json`。
+
+**现行迁移指南与示例入口门禁**　文档校验现在比较三线的现行迁移指南和示例总览，并验证总览指向七个平台的 28 个运行说明。此前 Java 8 的示例总览正文与两条高线有差异，现已对齐，原分批验收记录仍保留。新增回归证明任一指南正文漂移或样例入口失效会使门禁返回失败。实际三线文档检查通过，正文差异和断链均为 0。证据见 `R14-evidence/r14-current-product-entry-gate/verification.json`。
+
+**查询属性与条件的三线兼容**　`PropertyRef` 与 `LambdaCondition` 统一为一份共同源码。Java 8、17、21 各通过 64 项查询值、JPA 与 MyBatis-Plus 定向用例。两个类型的 29 个公开及受保护 JVM 签名逐线保持一致。三条线分别用各自的 Jackson 和 JDK 写出普通条件与两种排序条件，每条线的改动前后 JSON 和 Java 对象流均字节一致。21 个独立读取进程验证三线当前构件互读改动前后的两种格式，以及每条线的旧实现可读本线新输出。证据见 `R14-evidence/r14-current-query-value-source/verification.json`。
+
+**Java 8 周更依赖测试恢复**　从锁定 Git 版本补回缺失的 13 项断言，保留全部 50 项历史测试及 3 项新增测试，并核对共同方法的断言内容一致。按现有周更工作流执行完整本地依赖测试，82 项中 69 项通过，13 项精确版本约束失败。中高线结构策略仅更新原有 Java 8 测试脚本的摘要记录，变造摘要仍被拒绝。正式结构盘点依原规则退出 1，前置失败由三份缩为 Java 8 的 `alignment-policy.json` 与 `component-matrix.csv` 两份。依赖版本决策和周更失败继续待验收。证据见 `R14-evidence/r14-jdk8-uniform-contract-complete/verification.json`。
+
+**Java 8 Quarkus 持久版打包**　使用本线 Corretto 8 和 Maven Wrapper 在干净源码副本启用 `durable-order` 与 `durable`，产出 `target/durable-order/quarkus-app/quarkus-run.jar`。实际运行依赖包含 PostgreSQL 驱动、Panache 位点适配器和 Quartz，生成了订单资源、存储、命令、事件与投影的五个 Java 8 Arc Bean。首次 `-DskipTests` 被上游 JPA 显式配置覆盖，已中止；随后使用显式测试跳过与选择参数完成纯打包。原工作区构件和报告的摘要保持一致。当前证明覆盖构建期装配，PostgreSQL 启动、事务与重开待实际验收。证据见 `R14-evidence/r14-current-jdk8-quarkus-durable-package/verification.json`。
+
+**Java 8 Quarkus 样例启动说明**　README 的默认内存和可选持久两条打包命令现使用 `-Dmaven.test.skip=true clean package`。按两条命令用 Corretto 8 和本线 Wrapper 实际构建，均退出 0，未执行上游测试；默认包未生成持久投影 Bean，持久包生成对应 Bean。用本次默认包实际启动 JVM，创建订单与查询同一订单均返回 HTTP 200，进程正常退出并释放端口。PostgreSQL 的 `NativeSharedCqrsTest` 命令继续作为独立验收入口。证据见 `R14-evidence/r14-jdk8-quarkus-cqrs-start-guide/verification.json`。
+
+**历史记录 · R08 混合持久化门禁（退役前）**　`verify-three-line-convergence.py` 在每条线的根构建通过、默认场景报告采集后执行 `mixed-durable-test`。Java 21 显式转交 Maven profile。每条线必须为 `oneNativeTaskUpdatesRealStoreAndCloses` 生成新的成功 XML，默认、缺失、陈旧或跳过的报告均不接受。根构建继续独立校验 Javadoc，附加阶段只复验混合持久化。使用三线原生 JDK 和 Maven Wrapper 实际执行此子门禁，每线 1 项通过、0 跳过。证据见 `R14-evidence/r14-quarkus-mixed-required-gate/verification.json`。
+
+**实体路径序列化文档恢复严格构建**　定位 R08 首次 Java 17 打包失败的源警告为 `EntityIdPath.writeObject` 缺少序列化说明。Java 17、21 补齐该方法的 Javadoc，文档记录原 `entityIds` 字段以 Java 8 可读的列表快照写出。原实现逐字核对一致。三线用各自 JDK 和 Wrapper 通过 `ddd4j-core -am` 严格打包并生成 Javadoc JAR，无 Javadoc 失败或缺失报告。同步两份现行策略中的源码摘要，保留原测试摘要和构建告警规则。证据见 `R14-evidence/r14-entity-path-serialized-form-docs/verification.json`。
+
+**默认 reactor 文档打包复核**　按 Sa-Token 恢复前的源码快照，Java 17、21 各通过默认根 `package`，117 个生产 Java 模块各生成本次 Javadoc JAR。Java 8 到 Javalin CQRS 样例时因 `BaseContext#inject` 引用失效退出，只生成 81 个附件。此轮显式跳过测试，证据见 `R14-evidence/r14-current-root-javadoc-package/summary.json`。
+
+**恢复已发布的 Sa-Token 登录域**　经确认，三线使用 `StpKit.XXX` 注册 `xx`。Java 17 源码恢复到远端发布分支的相同字节，三线定向用例各通过 45 项。用归档的已发布源码编译并冻结旧调用方，修复前 Java 17 实际报 `NoSuchFieldError: XXX`，修复后三线均正常访问该字段。原生探针证实初始化按原发布语义接管同名 `xx` 注册，独立的 `guest` 注册仍由调用方持有。`StpKit` 三线公开与受保护 JVM 描述符一致。证据见 `R14-evidence/r14-satoken-published-xx-realm/verification.json`。
+
+**本机 Docker 恢复后的实际补验**　容器根文件系统有约 13.6 GiB 可用且通过写入探针。Java 8 的 Quarkus 持久样例在 PostgreSQL 上通过 1 项原生用例。生产包使用同一数据库启动两个独立 JVM，重开读回同一笔已支付订单。两次快照均为事件 3 条、下一位置 4、读模型 1 条，手动触发未重播。Java 8 Pulsar、TDMQ 各通过 2 项本地 Broker 测试。三线 SQS 各通过 2 项 ElasticMQ 测试，缓存镜像摘要与发布记录相符。证据见 `R14-evidence/r14-recovered-local-postgresql/verification.json`。
+
+**Quarkus 默认测试发现与附加 profile**　三线默认 Surefire 精确排除只在 `mixed-durable-test` 执行的用例，各有原来的 9 项测试通过且零跳过。随后显式 profile 每线各通过 1 项。Java 8 实际复现默认测试留下的 Quarkus 1.13 应用模型让混用模式缺少持久仓储。低线仅在该 profile 初始化时清除一个生成模型文件，同一副本重验通过，默认测试报告摘要保持一致。证据见 `R14-evidence/r14-quarkus-profile-default-discovery/verification.json`。
+
+**Java 8 默认根文档包复验**　修复 Javalin CQRS 的失效 Javadoc 引用，使说明指向实际使用的 `SpiRegistrationScope`。用 Java 8 和本线 Wrapper 重跑默认根打包，117 个生产 Java 模块均生成新 Javadoc JAR。该命令跳过测试。两个既有源码绑定以原校验器核对通过。证据见 `R14-evidence/r14-quarkus-profile-default-discovery/jdk8-default-javadoc-verification.json`。
+
+**当前 CQRS 构件 PostgreSQL 同库重开**　Spring 和 Vert.x 各三线、Quarkus Java 17 和 21 均用当轮构件通过，共 8 组、16 次应用启动、144 条 HTTP 请求记录，包括轮询。Spring/Quarkus 五组重开后读回同一订单，手动触发投影后事件数、下一位置、读模型数和 PostgreSQL 行版本保持一致。Vert.x 三组由数据库表锁触发语句超时，位点停在 0，解锁重试推进到 2，重开后读回相同数据与位点，关闭钩子完成。由独立审查复算构建与构件摘要。证据见 `R14-evidence/r14-current-cqrs-postgresql/verification.json`。
+
+**三线编译 API 与结构缺口**　三线各 133 个默认模块以本线 JDK 和 Wrapper 干净编译成功。编译后公开和受保护 API 没有未解释差异，36 项平台映射已匹配。诊断副本仅移除两条尚未核定的 Java 8 依赖文件摘要约束，仍有 529 条其他结构差异待解释。正式结构策略继续保持原门槛。三线 Java 记录类型检查器各通过 7 项自测。编译证据见 `R14-evidence/r14-current-api-after-published-realm/verification.json`。
+
+**Java 17 Javalin CQRS 测试端口**　根构建通过本轮镜像相关测试，在样例访问本地支付接口时停住。线程栈和套接字归属确认测试服务的通配监听与已有 IDE IPv4 监听重叠。Java 17 与其他两线一致，在测试中显式绑定并访问 `127.0.0.1`，三个测试文件其余内容经反向摘要验证相同。定向验证 73 项均通过，无失败、错误或跳过。75 次连接器启动均为回环监听。证据见 `R14-evidence/r14-current-native-root-verify/jdk17-javalin-loopback/verification.json`。
+
+**Java 8 默认根构建复验**　原生 `clean verify` 到达第 115 个模块，共执行 3,180 项测试，生成 98 个新 Javadoc 附件。Spring 的 `SpringOrderHttpTest.webflux` 因 Easy4J `ReactiveRequestContextFilter` 引用缺失的 `Mono.subscriberContext` 返回 HTTP 500，Maven 退出 1。低线 Quarkus CQRS 默认测试另有 1 项只在持久 profile 启用的跳过，该用例的真实 PostgreSQL 证据单列于上文。根构建报告见 `R14-evidence/r14-current-native-root-verify/jdk8/verification.json`。
+
+**Java 17 和 Java 21 根构建端口与验收结果**　Java 17 修复后的默认构建完整通过 Javalin CQRS。并行运行与 Java 21 错用同一个 Quarkus 测试端口 8081，导致 Java 17 的 Shiro 样例报两个启动错误，结束于 `2,964` 个已执行用例和 112 个文档附件。Java 21 按本线 Wrapper 原生完成全部 133 个默认模块，执行 3,378 项测试，零失败、错误或跳过，生成 117 个新 Javadoc 附件。Java 17 随后以同一个默认命令串行完成全部 133 个模块，3,381 项测试零失败、错误或跳过，117 个新 Javadoc 附件齐全。证据见 `R14-evidence/r14-current-native-root-verify/` 的各轮独立报告。
+
+**正式结构与历史依赖矩阵复核**　Java 17 Javalin 的既有测试绑定只刷新两个高线策略中的 5 个 Java 17 摘要字段，四类原规则校验通过。正式结构运行仍在 Java 8 的两个依赖文件摘要处退出。对低线组件矩阵相对锁定 Git 基线变动的 28 个坐标，使用三线本线 Wrapper 重新生成的 effective BOM 对照出 27 处缺项、版本或状态差异。旧矩阵和两条正式摘要约束均保留。证据见 `R14-evidence/r14-current-native-root-verify/structure-after-javalin/verification.json` 和 `R14-evidence/r14-current-native-root-verify/matrix-jdk8/verification.json`。
+
+**Java 8 默认根构建的后续模块**　对受 Spring WebFlux 中止影响而没有 Surefire XML 的 18 个模块，以本线 JDK 和 Wrapper 独立执行默认 `clean verify`。18 个目标模块共 131 项测试通过，零失败、错误或跳过。该补跑保留在独立报告中。证据见 `R14-evidence/r14-jdk8-remaining-default-modules-retry/verification.json`。
+
+**Java 8 Quarkus CQRS 持久样例门禁**　三线总门禁增加必需的低线 `durable-order` 阶段，独立核验 `durableSourceProjectionFailureRetryAndSparsePosition` 的新 XML。缺失、陈旧、跳过及错误方法报告均失败。Java 8 在同一副本先运行默认 80 项，再以显式 profile 运行真实 PostgreSQL 1 项，均通过，8 份默认 XML 摘要一致。Quarkus 1.13 的 profile 初始化仅删除共用的 `test-app-model.dat`。同版本 Maven Clean 插件夹具复现并验证了独立 clean 行为，实际 PostgreSQL 原生测试再验证残留模型能重新生成。证据见 `R14-evidence/r14-jdk8-quarkus-durable-gate/`。
+
+**三线显式 EventStore 容量与 Redis Streams 场景**　各线以本线 JDK 和 Wrapper 运行已有专用命令。EventStore 各生成 3 组、每组 2,000 次追加的容量报告。Redis 通过仅绑定回环的 Redis 7.2 容器执行原生测试，每线 5 项通过，再独立执行 10 项客户端用例。三线各 15 项测试均通过，原矩阵的三个 Redis 场景全部匹配新 XML。证据见 `R14-evidence/r14-current-explicit-scenarios/combined-verification.json`。
+
+**Java 8 历史组件快照与依赖策略摘要**　历史 CSV 的本地改动涉及 12 个 Easy4J 坐标，已按三线当轮有效 POM 和实际 JAR 复核。此前 27 处差异均来自本线 HEAD 继承的历史行。按仓库说明保留历史数据并更新精确摘要，验证器仍拒绝摘要篡改。证据见 R14-evidence/r14-jdk8-historical-component-matrix/verification.json。
+
+**Java 8 Derby 可选兼容裁定**　用户确认保留现行 BOM 的 6 个 Derby 10.14.2.0 管理坐标供应用显式引入。当前本线依赖策略对三线新生成的有效 BOM 严格检查 4,563 条记录，零错误和未核验构件。隔离恢复旧摘要的六条退出规则时，校验器产生同一组六个错误。实际规则继续要求这六个构件在 Java 8 基线受管理并核验字节码。按本次裁定更新两条高线策略中的 Java 8 精确摘要。证据见 R14-evidence/r14-jdk8-derby-policy-decision/reviewed-cache/verification.json。
+
+**Spring 运行时工具类源码对齐**　三线的 I18nKit 两个消息入口统一使用既有 Easy4J 消息源查找，Java 8 SignKit 的空表单判断采用两条高线已有的相同语义。三线定向测试各 4 项全部通过，两个工具类公开 JVM 签名一致，诊断盘点识别源码词法等价。证据见 R14-evidence/r14-spring-utility-source-alignment/verification.json。
+
+**三线正式结构与 JVM API 复核**　以完整现行策略运行原校验器，所有依赖文件的摘要检查通过。三条线各用本线 JDK 和 Wrapper 完成 133 个默认模块的干净编译。编译后 API 检查通过，未发现未解释的公开或受保护 JVM 签名差异。正式结构盘点仍有 525 条 OPEN，校验器继续以失败退出。证据见 R14-evidence/r14-current-official-structure-api/verification.json。
+
+**Quarkus、Panache 与 Helidon 定向复核**　三线以本线 JDK 和 Wrapper 各通过 12 项，共 36 项，零失败、错误或跳过。Quarkus 对齐初始化和关闭注解的导入写法，Helidon 对齐迁移测试的输入集合，Panache 复核旧 JPA 位置访问及持久投影的历史位点、回滚重试、调度唯一性和命令事务。原生持久测试通过 CDI 使用 runtime-quarkus 的 `QuarkusJpaViewManager`，实际后端为 H2。证据见 `R14-evidence/r14-quarkus-panache-helidon-source-alignment/verification.json`。
+
+**Panache 版本差异与正式源码盘点**　CDI 描述符的精确匹配覆盖一个指定文件，继续要求 Java 8 使用 Java EE 2.0，Java 17 和 21 使用 Jakarta EE 4.0。新增夹具在旧规则下实际失败，修正后各线 7 项通过。结构盘点检查器整套 89 项通过。两个高线策略仅新增一条持久测试映射，绑定三个实际源码摘要、对应生产入口和两个已执行测试。独立审查通过。正式源码盘点经逐项核对减少 9 条 OPEN，由 773 降至 764，未新增 OPEN。隔离移除 Java 8 测试的两条索引配置时，Quarkus 1.13 因 Jandex 缺少 `ProjectionPosition` 而启动失败，两条配置继续保留。证据见 `R14-evidence/r14-quarkus-panache-helidon-source-alignment/` 中的盘点差异和隔离报告。
+
+**四个领域事件值类型源码收敛**　`AggregateVersion`、`EventId`、`EventType` 和 `StringEntityType` 三线使用同一份 Java 8 兼容源码。各线通过 32 项定向用例，共 96 项，零失败、错误或跳过。修改前后 JVM 签名、对象序列化版本和字段描述符一致，样本对象流字节一致。删除各线四条已失效的差异映射。证据见 `R14-evidence/r14-event-value-source-alignment/verification.json`。
+
+**恢复 Java 8 Spring WebFlux 的真实端口验收**　低线基线执行了相关 13 项测试，缺少 WebFlux 基础和显式投影模式的 HTTP 用例。三线统一该用例和 Spring 的三个运行时测试文件。Java 8 仅新增测试依赖，按本线既有版本运行 Tomcat 9.0.121，Java 17 和 21 使用各自 Tomcat。三线各通过 14 项测试，覆盖真实回环 HTTP、命令执行、显式投影位点推进和独立 JVM 的无 JPA 启动，无失败、错误或跳过。独立审查没有严重或重要问题。正式源码盘点减少 8 条待解释差异，由 764 降至 756，未新增。Java 8 Spring Boot 样例的 Easy4J WebFlux 联动仍需单独完成。证据见 `R14-evidence/r14-spring-reactive-runtime-parity/`。
+
+**Javalin 默认样例三线验收**　三线各通过 59 项，共 177 项。每条线实际使用 PostgreSQL 16 执行订单持久化、Outbox 发布重试与支付幂等用例，并用 HTTP 验证纯内存入口及显式 JDBC 启停。Java 8 的订单、Outbox 和读模型列表统一为不可修改的快照，补回共享流程契约时仅引入既有 testkit 的测试范围依赖。该模块的 6 条待解释差异已清除。证据见 `R14-evidence/r14-javalin-default-source-alignment/README.md`。
+
+**Javalin CQRS 的只读快照、历史金额和持久投影**　三线分别通过 106、109、109 项，无失败、错误或跳过，包含实际 PostgreSQL 的投影失败、位点提交失败、重试及关闭后重开。Java 8 恢复历史 Money 和订单命令哈希，读不到投影时恢复三线共同的 HTTP 响应消息。内存仓储 `findAll()` 返回只读快照，调用方需要修改列表时先复制。三线分别读回本线的历史 Money 对象流，保留各线发布的序列化 UID。Java 8 的持久化对象 `OrderPO` 明细列表仍可修改，两条高线为只读。当前 CQRS 仍有 15 条待解释源码及测试差异，包括新增的 Java 8 专属历史流夹具。证据见 `R14-evidence/r14-javalin-cqrs-current-alignment/report.md` 和更新后的正式编译盘点。
+
+**Javalin Sa-Token 会话存储归属**　Java 17 和 21 原生复现启动销毁调用方已注册 DAO。三线补齐的测试确认实际登录使用调用方存储且关闭后保留其状态。实际 SDK 监听器也在三线复现两条异常路径，修复后恢复组件失败仍释放本实例拥有的 DAO，启动和回滚抛出同一个异常时保留原异常。各线通过 40 项测试，共 120 项，独立复核通过。证据见 `R14-evidence/r14-javalin-satoken-dao-ownership/verification.json` 和 `FIX1.md`。
+
+**当前三线正式编译与结构复验**　三条线各用本线 Wrapper 和 JDK 干净编译全部 133 个默认模块。完整 JVM API 门槛通过，无未解释公开或受保护成员差异。对照前一次正式编译阶段盘点，OPEN 由 525 降至 496，消除 30 条，新增 1 条为 Java 8 的 Money 历史流夹具。Money 已有平台源码规则仅按本次原生测试和历史回读更新精确指纹。证据见 `R14-evidence/r14-guice-javalin-official-structure-api/compiled-inventory-delta.json`。
+
+**Quarkus 运行时、Web 与默认样例复验**　三线运行时和 Web 分别通过 31、29、29 项。三线共用的 CDI 启停契约保留 Java 8 历史 IT 入口并逐文件锁定。原生 Quartz 证明 Java 8 关闭其自有调度器，Java 17/21 只移除自己的任务并保留平台调度器。恢复 Java 8 的公开路径解析和分页转换契约。三线旧投影示例明确应用须显式依赖 `quarkus-quartz`。默认样例修正启动提示和真实路由的差异，各通过 45 项测试及 14 项独立 JVM HTTP 检查，模块 7 条待解释差异归零。证据见 `R14-evidence/r14-quarkus-runtime-web-contract/verification.json` 和 `R14-evidence/r14-quarkus-default-sample-contract/README.md`。
+
+**Quarkus CQRS 兼容与当前持久投影**　初次样例回归分别通过 84、85、85 项，Java 8 补齐拒绝空订单行和只读响应快照，README 使用实际旧路由。后续三线均在真实 PostgreSQL 复现混合事件导致 HTTP 500。当前订单投影按聚合类型筛选已解码事件，依据扫描页尾推进全局检查点。错误类型的 `Order` 载荷仍失败且保持位点。Java 8 缺失写模型时返回三线共同的 HTTP 404 和 `No value present`，恢复后可重试。最终定向 PostgreSQL 用例各通过 1 项。当前构件独立启动及重开共 6 次、24 条 HTTP 请求，非订单事件位于 10 时位点从 4 推进到 11，订单读模型行版本保持。底层读页在筛选前解码，无法解码的历史载荷仍会报错。证据见 `R14-evidence/r14-quarkus-cqrs-sample-contract/followup-native-summary.json` 与 `packaged-durable-followup/summary.json`。
+
+**Quarkus 原生鉴权资源归属**　Sa-Token 三线分别通过 67、66、66 项，Shiro 分别通过 59、57、57 项，无失败、错误或跳过。Sa-Token 借用已注册的存储，真实注册监听器失败时执行回滚。Java 8 的 RBAC 观察器恢复已有数据提供者并保留后续替换实例。Shiro 按进程级管理器识别资源归属，保留线程绑定和后续接管的管理器。六个当前应用构件通过 68 项 HTTP 验证并关闭。Shiro 旧版直接构造路径的列表可变性仍分线。证据见 `R14-evidence/r14-quarkus-auth-sample-contract/final-scope.json`。
+
+**Quarkus 三线正式编译与结构盘点**　三线各干净编译 133 个默认模块，正式 JVM API 检查通过。以同口径的上次编译阶段盘点为基线，OPEN 从 496 降至 471，消除 26 条，新增 Java 8 专属 RBAC 资源归属测试 1 条。按实际测试更新既有精确规则，覆盖旧生命周期 IT、订单查询指纹和 Shiro 进程管理器适配。证据见 `R14-evidence/r14-quarkus-official-structure-api/compiled-inventory-delta.json`。
+
+**Micronaut Web、运行时与默认样例**　三线各通过 43 项定向测试。Java 17 实测异常消息含换行时 HTTP 409 变成 500，Java 8 对普通单行消息未保留自定义状态说明。三线保留合法短状态说明，对含换行或过长的说明使用标准状态短语，完整业务消息仍保留在 JSON 中。真实 HTTP 用例以 5,020 字符验证 409 和完整消息。默认样例文档补齐 `/api/orders`、端口 `8083`、`Idempotency-Key` 与显式 REQUIRED 策略。证据见 `R14-evidence/r14-micronaut-web-default-contract/reason-limit-verification.json`。
+
+**Micronaut CQRS 持久与恢复**　三线各通过 4 项定向测试，覆盖历史内存用例和真实 PostgreSQL。订单投影筛选已解码的非订单事件，按完整扫描页尾推进全局位点，错误类型的订单事件失败后仍可在同一位置重试。Java 8 对缺失写模型恢复 `No value present`。三线打包构件各两次独立启动并访问同一数据库，合计 27 个 HTTP 请求，订单 `PAID`、金额 `119.80`、3 条事件和位点 4 一致，再次触发后查询行版本未变。无法解码的事件仍由仓储报错。证据见 `R14-evidence/r14-micronaut-cqrs-contract/verification.json`。
+
+**Micronaut Sa-Token 与 Shiro**　三线各通过 9 项定向测试，6 个鉴权样例打包进程共完成 64 项 HTTP 检查，覆盖登录、鉴权、退出和端口释放。Sa-Token 复用调用方已注册的 DAO，清理仅释放自身注册的实例，并在监听器异常后恢复调用方绑定。借用 DAO 时要求会话命名空间独占，同名应用需隔离数据空间。Shiro 按请求显式绑定样例自己的管理器，请求结束后恢复调用方线程绑定，关闭时仅销毁样例自己的实例。Java 8 使用 Micronaut AOP，高两线使用原生过滤器。打包 HTTP 验证使用当时的 Web 依赖，合入后又完成了三线定向 Web 验证和整体编译。证据见 `R14-evidence/r14-micronaut-auth-contract/verification.md`。
+
+**Micronaut 三线正式编译与结构盘点**　三线各干净编译 133 个默认模块，正式 JVM API 检查通过，0 条未解释的编译 API 差异。按同口径比较，正式结构盘点 OPEN 从 471 降到 461，减少 10 条，无新增。其中 Java 8 的四条专属 AOP 适配以精确源码指纹登记，其余差异通过公共文档、夹具和已验证的平台映射收敛。证据见 `R14-evidence/r14-micronaut-official-structure-api/compiled-inventory-delta.json`。
+
+**Helidon Web、运行时与默认样例**　三线各通过 48 项定向测试，覆盖原生 CDI 启停、真实端口冲突、匿名订单、显式 REQUIRED Bearer 和已有 Web 契约。真实端口冲突在各版本由不同框架异常包装，统一以底层绑定异常与调用方 SPI 恢复验证。六个打包进程分别在默认和 REQUIRED 模式共通过 48 个 HTTP 请求并释放端口。证据见 `R14-evidence/r14-helidon-web-default-contract/verification.json`。
+
+**Helidon 默认样例的缓存归属**　三线先复现停服后调用方已注册的缓存被清除。首轮候选又实测会清除运行期间注册的同名加载缓存。补充的两个 CacheKit 方法按键安装新实例并返回所有权，释放时仅以实例身份移除普通缓存，调用方替换的普通缓存及独立加载缓存仍可使用。缓存模块三线各通过 27 项测试，包含 8 个并发创建者仅一个获得新实例。编译 API 仅新增这两项方法。独立复审无严重或重要问题。证据见 `R14-evidence/r14-helidon-idempotency-cache-ownership/verification.json`。
+
+**Helidon CQRS 持久与恢复**　三线各通过 5 项原生测试。打包应用按发行线使用独立 PostgreSQL，分别启动和同库重开，共通过 33 个 HTTP 请求。第 10 位非订单事件使全局位点从 4 推进到 11，订单读模型行版本保持。缺失写模型返回 HTTP 404 和 `No value present`，修复数据后可在原位重试。同库重开后订单仍为 `PAID`，金额 `119.80`。类型错误的 `Order` 载荷仍失败，底层先解码整页。证据见 `R14-evidence/r14-helidon-cqrs-contract/verification.json`。
+
+**Helidon Sa-Token 与 Shiro**　三线各通过 10 项原生测试，六个打包进程共通过 64 项 HTTP 检查。Sa-Token 复用调用方 DAO 并处理异常监听器清理，借用时会话命名空间须独占。Shiro 在同步请求中绑定自身管理器，结束后恢复调用方线程绑定。用同一请求标识确认客户端断连后的 FINISHED 事件已清理原生和 DDD 上下文。历史 Java 8 偶发首次 404 本轮未再出现，成因待查。CQRS 与鉴权独立构件验证发生在缓存接口增量之前。证据见 `R14-evidence/r14-helidon-auth-contract/verification.json`。
+
+**Helidon 三线正式编译与结构盘点**　三线各干净编译 133 个默认模块，正式 JVM API 检查通过。按同口径比较，正式待处理结构差异从 461 条降到 456 条，移出待处理清单 6 条。新增 1 条 Shiro 测试差异，对应两代 Jersey 的 `ContainerRequest` 构造器签名。Web 映射和原生测试以当前三线精确指纹登记，其他版本差异仍须继续核验。证据见 `R14-evidence/r14-helidon-official-structure-api/compiled-inventory-delta.json`。
+
+**Vert.x 运行时与默认样例**　三线各通过 27 项定向测试。Java 17/21 的无效端口监听原先同步抛异常，现由同一关闭路径释放 HTTP、运行时和 Vert.x，并以失败 Future 返回原异常。原生测试验证占用端口的应用仍能响应，以及客户端断开后等待已接纳订单完成。三线打包主入口共验证 18 个 HTTP 请求和关闭顺序。默认仍可匿名运行，原路由工厂继续要求 Bearer。证据见 `R14-evidence/r14-vertx-default-contract/verification.json`。
+
+**Vert.x Web 幂等生命周期**　三线各通过 23 项原生测试。实际 HTTP 204 提前结束时，原实现抛出回调空指针且未释放随后获取的租约。修复后由工作线程释放，未标记业务完成，也未派发后续业务。保留普通请求成功后同键重试返回 409。旧回归使用服务端提前响应。后续在同一测试类补上真实 TCP 重置及同键重试，见下文三线补验证据。证据见 `R14-evidence/r14-vertx-web-contract/jdk{8,17,21}-green/result.json`。
+
+**Vert.x CQRS 持久、恢复与启动回滚**　三线各有 12 项有效原生测试。三个独立 PostgreSQL 上的最终构件共通过 39 个 HTTP 请求，覆盖真实锁超时后位点保持、重试和同库重开。非订单事件使位点从 4 推进到 11，订单行版本不变。无法解码的历史事件仍会阻止页推进。占用端口和越界端口均在 JPA 清理后返回原异常，三次独立越界启动均以退出码 1 自行退出。旧内存 HTTP 用例改用一致的 IPv4 回环监听和访问后，三线各 3 项通过。首次 Java 8 连接重置与 Java 21 意外 200 的根因仍未证实。独立复审无严重或重要问题，清理异常分支未单独注入故障。证据见 `R14-evidence/r14-vertx-cqrs-contract/verification.json`。
+
+**Vert.x Sa-Token 与 Shiro**　三线各通过 17 项原生测试。六个打包进程使用最终共享 Web 构件，共完成 61 个独立 HTTP 检查，退出后原令牌失效，全部回环端口释放。Sa-Token 复用调用方 DAO，在原生监听器抛异常时恢复全局提供器及配置，并在工作线程中恢复前一请求上下文。借用 DAO 要求会话命名空间独占。Shiro 使用工作线程绑定自身管理器和主体，结束时恢复旧绑定并保留调用方后续绑定。也验证了真实监听失败、客户端断连及排空关闭。证据见 `R14-evidence/r14-vertx-auth-contract/verification.json`。
+
+**Vert.x 三线编译与结构盘点**　三线各干净编译 133 个默认模块，正式 JVM API 检查通过。正式结构待处理项由 456 条降为 454 条，移出 3 条。新增 1 条 Shiro HTTP 测试差异，对应 Java 8 使用共享测试客户端、高两线使用 JDK HTTP 客户端及相应语法。Web、CQRS 旧内存测试和鉴权样例的既有平台映射已更新为本轮精确指纹。结构盘点使用最终测试夹具，生产源码和原生编译类文件逐项核对一致。证据见 `R14-evidence/r14-vertx-official-structure-api/compiled-inventory-delta.json`。
+
+**Dropwizard 默认样例**　Java 8/17/21 分别通过 9、10、10 项。显式关闭 Web 幂等后跳过缓存创建，停止时仅释放该实例创建且仍注册的普通缓存。三线原生测试复现并修复了应用误删调用方替换缓存和同名加载缓存。六个打包进程在匿名和 REQUIRED Bearer 两种配置下通过 36 个 HTTP 请求，应用及管理端口均释放。默认示例仍用匿名内存订单。证据见 `R14-evidence/r14-dropwizard-default-contract/verification.json`。
+
+**Dropwizard Web 与运行时**　Java 8/17/21 分别通过 52、56、52 项，其中 Java 17 额外覆盖本线 Logback 访问日志适配。使用原生 Dropwizard/Jetty 验证启动、停止、重启及部分启动失败。向 JAX-RS 响应头写入注入故障后三线保留原异常，恢复外层线程上下文并释放幂等租约，同键可重试。该异常验证采用接口故障注入。证据见 `R14-evidence/r14-dropwizard-web-runtime-contract/summary.json`。
+
+**Dropwizard CQRS**　三线分别通过 11、13、13 项原生测试。三个独立 PostgreSQL 的最终打包入口共通过 45 个 HTTP 请求。锁超时后保留位点，重试后通过。同库重开仍读到 `PAID`、金额 `119.80`，第 10 位非订单事件使位点从 4 推进至 11 而未重写订单行。订单载荷类型错误仍返回 500 并保留位点，整页解码失败同样会阻止推进。三次非法 cron 启动均关闭 JPA 工厂并以退出码 1 自行结束。证据见 `R14-evidence/r14-dropwizard-cqrs-contract/verification.json`。
+
+**Dropwizard Sa-Token 与 Shiro**　三线共通过 57 项原生测试，六个最终打包入口共通过 61 个 HTTP 检查。Sa-Token 复用调用方 DAO，并处理 SDK 注册和清理监听器异常。Shiro 请求使用自身的管理器及主体，恢复调用方原线程绑定。借用 DAO 时要求会话命名空间独占。两个样例均验证禁用幂等仍可原生登录、退出时只释放自己拥有的缓存，以及客户端断连后等待已接纳操作结束。证据见 `R14-evidence/r14-dropwizard-auth-contract/final-summary.json`。
+
+**Dropwizard 三线编译与结构盘点**　三线各干净编译 133 个默认模块，正式 JVM API 检查通过。正式结构待处理项由 454 条变为 445 条，移出 9 条，新增 0 条。对实际使用的原生包和适配测试记录精确指纹。证据见 `R14-evidence/r14-dropwizard-official-structure-api/compiled-inventory-delta.json`。
+
+**最近一轮根构建**　Java 8 的对应隔离快照完成 133 个默认模块，执行 3,405 项测试并生成 117 份 Javadoc。Java 17 的对应隔离快照完成 133 个默认模块，执行 3,454 项测试并生成 117 份 Javadoc。Java 21 的对应隔离快照完成 133 个默认模块，执行 3,451 项测试并生成 117 份 Javadoc。 Java 8 的最新根构建通过上一轮失败的 Javalin Shiro 测试和 Pulsar/TDMQ 真实 Broker 测试。三线根构建分别对应当轮源码指纹，后续合入的第六批与 Pconline 修复见单独证据。根构建记录见 `R14-evidence/r14-native-after-javalin-loopback-and-parity-5/jdk8/verification.json`、`R14-evidence/r14-native-after-pulsar-and-owner-wave-4/jdk17/verification.json` 及 `R14-evidence/r14-native-reactors-after-wave-2/jdk21/verification.json`。
+
+**样例归档与重放**　Java 8、17、21 各用本线 JDK 启动七平台的默认、CQRS、Sa-Token、Shiro 样例，84 个归档构件的运行场景全部通过。21 个默认样例完成 42 项 HTTP 检查，创建并读回同一笔草稿订单。42 个认证样例完成 425 项 HTTP 断言，覆盖登录、受保护接口、退出和原凭据失效。13 个内存或缓存 CQRS 场景完成 253 次本地 HTTP 请求。其余 8 个 CQRS 场景使用本地 PostgreSQL，覆盖三线 Spring 和 Vert.x、Java 17/21 Quarkus 的写入、重启和投影位置校验，共 16 次 JVM 启动、144 次 HTTP 请求，8 个测试容器已清理。Java 8 Quarkus 计入内存或缓存场景。Spring 和 Quarkus 分别运行归档可执行 JAR 和 fast-jar，其余五个平台使用本线 Maven 导出的生产类路径。运行证据逐项绑定各线归档源码指纹和构件哈希，覆盖本地 HTTP 和本地 PostgreSQL。证据见 `R14-evidence/r14-archived-full-sample-grid/verification.json`。
+
+**四种投影位置存储与五种 EventStore 归档核验**　从三线原生根构建保留 27 个模块构件和 115 份原始 JUnit 报告，Java 8、17、21 分别通过 213、201、202 项测试。四种投影位置存储每线各有 29 项真实 H2 集成用例，Panache 由 Quarkus CDI/JTA 驱动。五种 EventStore 三线分别通过 42、40、40 项归档后端集成用例，覆盖相应模块的 H2、MySQL、PostgreSQL 和 EventStoreDB。模块 POM、源码和测试资源与当前工作副本逐一核对一致。运行对应各自根构建的依赖快照。证据见 `R14-evidence/r14-archived-storage-contract-grid/verification.json`。
+
+**共享 Web 路径与错误转换**　统一免认证路径匹配、HTTP 异常转换及错误响应基类的三线源码。路径仍按原顺序去除空白、修剪并去重，精确和前缀匹配规则保持。Web Core 及八种 Web 接入的原生定向契约在修改前后逐线执行，Java 8、17、21 各通过 98、99、99 项，零失败、错误和跳过。三个类型的公开及受保护 JVM 签名经逐线核对一致，移除两条已无需的语法适配记录。证据见 `R14-evidence/r14-web-core-policy-and-errors/verification.json`。
+
+**Javalin 认证初始化异常清理**　Java 17/21 两种认证样例原先会在解析主体抛异常时遗留本次请求的框架和原生上下文。将主体绑定纳入已有清理范围，保留原错误并停止派发。两高线原生 Surefire 的四个回归组合均复现，三线检测非空调用方上下文恢复、错误对象保持和完成回调。Java 8 沿用原应用源码。两种样例的生命周期、HTTP 和订单接线三线分别通过 18、18、18 项。补齐 Shiro 测试夹具的清理并通过同一 JVM 内的 HTTP 回归。证据见 `R14-evidence/r14-javalin-auth-source-parity/native-maven/verification.json` 和 `R14-evidence/r14-javalin-auth-source-parity/native-maven-jdk8/verification.json`。
+
+**样例快速入门与验收映射**　样例总览同步 Java 8 Spring 默认入口已完成 MVC 和显式 WebFlux 的 HTTP 验收，保留直接调用旧 Easy4J 上下文访问器的依赖边界。Dropwizard CQRS 运行说明写明从仓库根目录使用的 YAML 相对路径和两组端口。以三线归档构件执行原生配置校验，高两线原文档路径确实失败，修订路径均通过。把两种 Javalin 认证的主体解析失败恢复用例逐个加入三线场景矩阵，并绑定原生测试方法。证据见 `R14-evidence/r14-sample-quickstart-reconciliation/verification.json` 和 `native-auth-scenario-matrix.json`。
+
+**共享样例断言和 HTTP 客户端**　认证断言在访问客户端前拒绝未知或空引擎。高两线原先在空输入时抛出 NPE，本轮用原 Java 8 的契约统一。Java 21 的共享订单客户端在收到无效 JSON 时保留原始解析错误作为 IllegalStateException 的原因，与 Java 8/17 的错误约定一致。三线共用认证断言源码，分别通过 25、27、27 项 testkit 回归，Javalin 默认、Sa-Token、Shiro 和 Micronaut Sa-Token 的实际本地样例测试各线另通过 15 项。三个目标测试方法进入三线场景矩阵。证据见 `R14-evidence/r14-shared-sample-contract-parity/candidate-verification.json` 和同目录的原始报告。
+
+**待验收**　最新工作副本用各线 Wrapper 和 JDK 干净编译，每线通过 133 个模块。正式 JVM API 比较通过，未解释签名与过期 API 映射均为 0。正式结构待处理项从 389 降到 382，关闭 9 项，新增 2 项是两种 Javalin 认证回归在旧、新 Servlet 和 SDK 下的测试源码差异。三线值对象探针与产品文档检查也通过。Java 17 的实际依赖家族检查覆盖 133 棵依赖树和 76 个上游 BOM，零错误。完整结构、场景及远端 CI 继续按 R14 门槛验收，R15 仍以 R14 验收为前置条件。证据见 `R14-evidence/r14-official-compiled-after-auth-and-shared-web/verification.json`、`compiled-delta.json` 和 `values/results.json`。
+
+**三线本地基线及持久投影补验**　三线各完成 133 个模块的独立根构建，分别运行 3,411、3,460、3,457 项测试。每线 167 项适用本地场景及既有编译 API 门禁通过。随后发现 Spring、Javalin 持久订单样例会尝试处理共享事件源中的其他聚合。在原生 PostgreSQL 上三线各复现两个失败。修复后只将可正常读取的订单事件交给订单处理器，仍按原始事件页尾推进检查点；订单载荷处理失败时保留原位置和上一批读模型。修复后的两个样例测试类三线共通过 15 项测试，并在场景矩阵登记两个必跑场景。另登记六个已有持久适配的精确源码与测试指纹，Java 8 Quarkus 限 durable profile。前述根构建早于本次样例修复。远端 CI 和真实云 Broker 门禁仍待验收，R15 尚未进入。证据见 `R14-evidence/r14-native-full-verify-current/overall-local-evidence.json`、`R14-evidence/r14-cqrs-projection-body-proof/native-red-green/integration.json`。
+
+**SQL 观测的 JSON 契约**　关闭 Jackson 的 Bean getter 自动发现时，Java 8 原先会丢失 MyBatis 和 MyBatis-Plus 的观测字段。Java 8 在原有 Bean getter 上显式声明 JSON 字段，并复验调用方通过 MixIn 隐藏或改名的行为。三线均通过默认序列化与 getter 关闭两种模式的往返测试。已补齐 Java 8 的字段加密处理器测试，并按实际三线监听器回归更新 JPA 监听器的源码指纹。此次 SQL 观测、上下文 sink 与字段加密定向回归共 35 项，新增 JSON 用例进入既有场景；JPA 监听器沿用当前源码的三线 9 项原始测试证据。证据见 `R14-evidence/r14-data-observation-parity/verification.json` 与 `R14-evidence/r14-jpa-listener-current-evidence/verification.json`。
+
+**CQRS 旧构件契约**　三线对齐 Spring 命令处理器测试和 Helidon 测试夹具中可共用的类型与集合写法，保留现有事务及命令冲突断言。Dropwizard 的 Java 8 历史 EL 测试名保留，三线现有 EL 用例继续验证各自原生 provider。使用各线实际构建类路径和 JDK 重新编译并执行定向验证，共 25 项通过。证据见 `R14-evidence/r14-legacy-cqrs-test-proof/legacy-summary.json`。
+
+**Jdbi 与 Panache 持久化回归**　三线共用 Jdbi 重试测试，保留 SQL cause 链、重试耗尽和线程中断断言。三线重试及共享分类器共通过 75 项。Java 8 MySQL 测试显式导入和 Java 17 容器夹具调整分别以真实 MySQL 8.0.36 通过 5 项。Panache EventStore 仅统一配置注释。Java 8 投影模块仍需对旧 JPA 实体层次做 Jandex 索引。隔离移除该配置复现原生 CDI 启动失败，保留时三线持久投影各通过 12 项。检查器按原有规则锁定该确切配置路径及三个文件指纹。证据见 `R14-evidence/r14-persistent-store-test-parity/README.md`。
+
+**Spring 和 Javalin 的投影失败边界**　三线用有效事件指向缺失订单写模型，在真实 PostgreSQL 上验证 Spring 返回 HTTP 404 和错误码 404，保留检查点与已提交读模型。Java 8 的错误诊断对齐为 No value present；Java 8/17 继续输出 data:null，Java 21 保留既有省略方式。Javalin 三线的空事件类型过滤兼容 contains(null)，集合仍拒绝修改。原生 JDK 逐线通过 3 项 Spring 和 4 项 Javalin 用例，两个新增用例进入既有场景矩阵。证据见 `R14-evidence/r14-sample-projection-accessor-boundaries/report.md`。
+
+**Spring 默认入口三线打包复验**　三线直接启动默认 JAR 均进入 MVC 及 demo-memory。显式 WebFlux 命令带 demo-memory 时，三线也能启动。六次启动共验证 36 项订单 HTTP 检查和端口释放。按现有启动选项记录两种入口，为真实 MVC/WebFlux 和 PostgreSQL 同库重开登记两个具名场景，三线原生报告共 9 项。三线样例 README 统一启动说明并保留各发行线的源码安装与依赖记录。证据见 `R14-evidence/r14-spring-default-parity/verification.json`。
+
+**Spring CQRS 原生装配和查询契约**　三线继续使用现有命令总线、JPA 工厂和各线 Jackson 适配。定向验证覆盖工厂启停、带时间的 Outbox 载荷往返，以及订单记录和 Outbox 同一事务回滚。Java 8 的未投影或缺失订单查询对齐既有 404 诊断，保留各发行线原有响应形态。三线各通过 5 项，含每线 4 项真实 HTTP/PostgreSQL 测试和 1 项空命令结果探针。结构检查器本轮已完成全部自测，Java 8、17、21 分别通过 92、90、90 项。证据见 `R14-evidence/r14-spring-cqrs-wiring-parity/report.md` 与 `R14-evidence/r14-persistent-store-test-parity/integrated-checker-tests.json`。
+
+**共享订单 DTO 的显式 JSON 属性**　五个应用层值类型在 Java 8 关闭 Jackson getter 自动发现时原先输出空字段。改为对现有 Bean getter 显式标注属性，保留调用方 MixIn 隐藏和改名。已有默认 JSON、真实时间、值语义及新字段契约三线共通过 43 项。五个类前后 JVM 方法描述符及指令对照一致，Lombok 生成方法顺序允许变化。高两线保留现有实现，OrderQuery 原有散列行为另行验收。证据见 `R14-evidence/r14-shared-order-json-getters/verification.json`。
+
+**Javalin CQRS 的默认与后台调度装配**　三线用真实 Javalin 验证默认内存订单入口。开启 PostgreSQL 持久模式后，Guice 在没有手动触发时投影已支付订单并推进检查点。同库重开可读回订单和位置，旧路由继续使用独立存储。三线各通过 2 项，Java 8 使用本轮五个最新订单 DTO 编译产物复验。两个控制器对齐共同调用和错误语义，依赖 Hibernate/Jakarta 的资源装配保持逐线适配。证据见 `R14-evidence/r14-javalin-cqrs-wiring-parity/wiring-summary.json`。
+
+**Javalin CQRS JDBC URL 的启动边界**　三线复用 StrKit.hasText 选择内存或 JDBC 模式。真实 JVM 共复验 12 次。省略或普通空白继续启动内存入口，非空无效 URL 和仅含 U+00A0 的配置由 JDBC 驱动拒绝启动。Java 8 基线的 NBSP 回退已通过独立子进程测试复现，永久回归三线通过。两个绑定主类的策略记录均已刷新，原缺失路由测试指纹保留。证据见 `R14-evidence/r14-javalin-cqrs-wiring-parity/jdbc-url-whitespace/strkit/verification.json`。
+
+**Javalin 失败事件的原始 HTTP 方法**　三线接收 POST 方法覆写到 PUT 的真实请求时，仍走 PUT 路由；失败日志和失败事件记录收到的 POST。高两线原生基线误记为 PUT，修复后保留真实请求路径、同一异常和单次发布。三线共 6 项回环契约通过。未规范化的小写动词由各 Javalin 版本在路由前处理。证据见 `R14-evidence/r14-javalin-web-base-handler/report.md`。
+
+**2026-11-20 样例复验**　Java 8 的 Spring 四个样例均完成定向 `clean verify`，实际通过 15 项，包含 HTTP、PostgreSQL、Sa-Token 与 Shiro。独立 `validate` 的 Boot 2.7 SNAPSHOT BOM 解析结果保留。Javalin Java 8 的两个旧订单源码与高线通过 token 等价审查，真实 Maven 定向 18 项均通过。固定旧 Java 8 对象流可回读，跨 JDK 8/高线的原有 AggregateRoot UID 差异单独记录。
+
+**2026-11-20 Quarkus CQRS**　统一三线 PostgreSQL 夹具、只读命令集合的 null 查询和空结果诊断。四个实际构建模式共通过 11 项测试。Java 8 默认启动内存样例，Java 8 显式持久模式及 Java 17/21 默认构件均用真实 PostgreSQL 验证支付、稀疏投影和同库重开，下一位置均为 11。Java 21 Maven 4 根 reactor 与该 reactor 构建的实际应用通过，独立模块 Maven 的测试类加载限制见 `R14-evidence/r14-quarkus-durable-wiring/integrated/report.md`。共同策略登记了已验证的配置、源码和测试指纹。
+
+**2026-11-20 本地 Broker 报告复核**　三线各核对 11 套件、34 项，包含 ElasticMQ 兼容协议和 Java 8 Pulsar 容器，归档报告和受影响源码一致。AWS SQS、阿里云 ONS、腾讯云 TDMQ 及其余故障和竞争场景仍待验收。证据见 `R14-evidence/r14-local-broker-deferred-gate-audit/verification.json`。
+
+**2026-11-20 共享样例 HTTP 中断**　Java 8 保留 Apache HC5 的请求与响应语义，使用有界请求执行并取消正在使用的连接。三线各 12 项原生 Wrapper 测试通过，每线三个具名中断场景实际执行。实测 DNS 成功迟返回后未建立连接，线程名额释放后请求可恢复，原 HTTP 请求头顺序、压缩响应和 HTTPS 验证保持。Java 8 最多 8 个在执行请求，等待执行名额最长 20 秒，连接和读取继续使用既有 HC5 设定。testkit 的三线编译 API 一致。两个 Helidon 认证样例的 CDI 版本差异由精确路径和 XML 配置规则识别。证据见 `R14-evidence/r14-shared-http-interruption-contract/verified-socket-candidate/maven-8-17-21/verification.json`。
+
+**2026-11-20 Dropwizard 与 WebMVC 复验**　三线 Dropwizard CQRS 统一使用同一份 YAML 和启动说明。Java 8 当前 Maven 构件通过 6 项 CQRS 与持久 HTTP 测试，原生 `check` 接受默认和显式配置。从仓库根目录使用共享配置启动，实际 HTTP 依次验证 404、建单 201、投影后 200，并释放应用和管理端口。手动启动使用当前样例 JAR 和摘要核对的归档依赖闭包。Java 17 WebMVC 恢复已发布的无参构造和 Spring 工厂 Bean 消息源注入。22 项当前 Maven 测试通过，既有客户端二进制在当前类文件上可运行，真实 MVC 401/403 和两种 Spring 注册方式均通过。Spring 工厂 Bean 使用容器配置，双参构造继续支持独立调用。证据见 `R14-evidence/r14-dropwizard-shared-quickstart/verification.json` 和 `R14-evidence/r14-webmvc-noarg-abi/verification.json`。
+
+**Java 17 Sa-Token 扩展字段访问器**　补齐校区组织 ID、学校代码和身份标识的五个方法。Java 17 修复前两项用例复现方法缺失，修复后七模块定向 Maven 测试共通过 836 项，其中 Sa-Token 143 项，含本机真实 Redis 两项。三个 JDK 的 StpKit 编译产物定向比对确认五个方法的描述符已经一致，学籍读取仍有三个待对齐签名。三线场景矩阵加入一条现有实际通过的字段回归，从 223 项增至 224 项。整仓与独立样例结果仍对应归档基线。证据见 `R14-evidence/r14-post-platform-auth-reactors/stpkit-campus-school-identity/integration.json`。
+
+**Java 8 Web 响应值契约**　对齐 WebContractResponse 的 Jackson 构造映射、值哈希与文本表示。Java 8 先复现哈希不一致和 Jackson 无法构造，再通过 54 项定向测试，包括响应快照 2 项和八种 Web 适配器 52 项。Java 17/21 的相同两项契约已有当前匹配的原生报告。11 个公开 JVM 签名、JSON 字段及响应头集合引用保持。文本格式现包含状态、响应头和响应体。三线场景矩阵已追加这一具名回归。证据见 `R14-evidence/r14-post-platform-auth-reactors/web-contract-response-value/integration.json`。
+
+**Java 8 Sa-Token 登录域桥接**　权限和角色查询按 loginType 获取对应 Subject。Java 8 原生用例先复现管理域和未知域读取默认域数据，修复后三线分别通过 79、87、82 项。具名用例覆盖同一登录 ID 的不同域角色和权限、未知账号和域、空域的默认行为，以及两种原生主体提供者。公开 JVM 签名保持。现有精确语法映射已核对并更新指纹，Java 8 与高线的空列表写法分开维护。证据见 `R14-evidence/r14-post-platform-auth-reactors/satoken-realm-bridge/integration.json`。
+
+**共享 OrderQuery 值契约**　Java 8 恢复三线共同的 OrderQuery 实现及显式 Jackson 属性声明。三线加入同一个缺省状态回归，查询状态仍为 null，哈希和文本一致。Java 8 修复前复现固定输入哈希偏差，修复后三线订单领域与应用层分别通过 26、25、25 项，12 个公开 JVM 成员保持。非空枚举的实例哈希由各 JVM 决定。证据见 `R14-evidence/r14-post-platform-auth-reactors/order-query-value-parity/integration.json`。
+
+**Java 8 Sa-Token 原生登录参数**　设备 ID、即时 Token-Session 和跨设备替换范围交给原生 SDK。Java 8 原用例分别复现三个配置未生效，修复后原生 realm 默认值、账号绑定和 JWT 签名回归通过。Java 8、17、21 的 Sa-Token 测试分别通过 144、151、146 项，高两线各含 2 项本机真实 Redis。Sa-Token 1.44 的预设令牌路径可跳过生成阶段的唯一性检查，Java 8 保持原分配流程。高线传入未签发的 JWT 预设值的失败已单独复现，预设令牌与 1.44 缺少的替换退出模式继续单独验收。证据见 `R14-evidence/r14-post-platform-auth-reactors/satoken-native-login-options/integration.json`。
+
+**Javalin 认证样例查无订单诊断**　以 Java 8 Sa-Token 已有的 order not found 为共同诊断。三线 Sa-Token 和 Shiro 登录后按订单 ID、订单号查询及预览缺失订单折扣，共 18 次真实 HTTP 请求返回 HTTP 500、业务码 500 和原有六字段 R 响应。三线定向测试分别 292、293、293 项通过，Shiro 原订单套件每线 35 项。公开 JVM 描述符保持，既有 Shiro 源码和对应测试的精确策略映射已复验。两种认证模式按具名回归分别登记。证据见 `R14-evidence/r14-post-platform-auth-reactors/javalin-auth-missing-order/integration.json`。
+
+**Quarkus Sa-Token 的 Bearer 分隔空格**　真实订单读取验证正常分隔可读，同一令牌在两个分隔空格时原先三线均返回 401。现有过滤器清理提取值后，两个、四个分隔空格和混合大小写均读取同一订单。裸方案、错误方案及无效令牌仍返回 401，原生请求头和匹配 Bearer 的优先级已复验。Java 8、17、21 分别通过 115、120、115 项定向测试，公开 JVM 描述符一致。回归追加到现有 Quarkus Sa-Token 订单场景。证据见 `R14-evidence/r14-post-platform-auth-reactors/quarkus-satoken-bearer-spacing/integration.json`。
+
+**Quarkus 持久样例后台投影**　Java 8 以当前源码显式打包 durable-order，Java 17/21 使用已核对运行依赖源码及构建输入摘要的原生默认持久构件。三线各在独立 PostgreSQL 16.16 通过真实 HTTP 完成创建、加明细、支付和查询，后台中继与投影自动生成 119.80 的 PAID 读模型。Java 8、17、21 从支付到首次读出 PAID 分别为 9.154、8.385、8.366 秒。每个进程实测一个中继任务和一个投影任务，三个事件位置为 1、2、3，三条 Outbox 均为 PUBLISHED，检查点为 4，额外调度周期内数据库快照稳定。首次探针修正了事件信封解析与包输入范围，最后三线运行证据已独立复核。证据见 `R14-evidence/r14-post-platform-auth-reactors/quarkus-durable-auto-projection/verification.json`。
+
+**Micronaut 原生认证的 Bearer 分隔空格**　Sa-Token 和 Shiro 三线均在真实 HTTP 复现两个或四个分隔空格导致 401。现有提取位置修正后，变体读取同一订单和 JSON 数据，缺失及无效凭据返回 401。Java 8、17、21 最终定向测试通过 59、63、58 项。原具名方法和 JSON 结构比较已验证，共同清单保持这两个已有场景。一次复跑使用了上一轮的编译类，已归档为无效，清理隔离构建目录后通过类文件指纹复核最终 RED 与 GREEN。原生 Micronaut 3 拦截器与 Micronaut 4 上下文继续按各线规则验证。证据见 `R14-evidence/r14-post-platform-auth-reactors/micronaut-bearer-spacing/integration.json`。
+
+**Micronaut 原生部分启动清理**　三线实际 ApplicationContext 启动时注入故障调度器，第二次调度失败后回退，第一个句柄首次取消失败后重试至失活，并保留原 CommandBus。当前 Micronaut、testkit、core 和其他相关源码及 POM 与原生归档输入匹配，实际报告每线通过 16 项，整个原套件在现有 R09 场景中按名称验收。证据见 `R14-evidence/r14-post-platform-auth-reactors/micronaut-native-partial-startup/verification.json`。
+
+**Micronaut PostgreSQL 持久样例后台投影**　三线在独立 PostgreSQL 16.16 上运行原生样例包，通过 HTTP 创建订单、添加明细、支付并查询，默认调度使 PAID 读模型分别在 4.929、5.008、5.016 秒出现。三条 Outbox 均为 PUBLISHED，事件位置 1、2、3，持久检查点 4。两次额外完整调度后行数据和事务标识一致。每线直接观察一个持久调度句柄和四次完成执行，中继位于相同调用栈。旧内存订单视图在独立线程运行，诊断解析按实际视图归属计数。Java 8 以当前输入重新打包，Java 17、21 复用核对当前编译内容的原生包。应用与临时数据库已关闭。证据见 `R14-evidence/r14-post-platform-auth-reactors/micronaut-durable-auto-projection/verification.json`。
+
+**Helidon MP 借用调度器的关闭边界**　Java 8、17、21 各启动真实 MP 容器，通过 CDI 借用调用方调度器。容器关闭时投影句柄变为非活动，随后同一调度器执行新回调，实测等待 974、969、953 毫秒。由调用方关闭后新句柄失活。每线核对 250 个生产输入、原生运行时构件与 CDI 服务注册，原始回调日志及类文件已复核。证据见 `R14-evidence/r14-post-platform-auth-reactors/helidon-borrowed-scheduler/verification.json`。
+
+**Helidon 原生认证与逐请求断连验收**　同一有效令牌使用两个或四个 Bearer 分隔空格，三线 Sa-Token 原先在 /auth/me 返回 500，Shiro 的受保护订单读取原先返回 401。两处原生适配均在现有提取点清理空白，修复后读取同一订单或主体。Java 8、17、21 分别通过 73、77、72 项定向测试。两种认证在三线均以持有请求的标识关联 Jersey FINISHED，实测原生及 DDD 上下文清理。两个已有场景均增加断连方法绑定，既有认证回归方法继续使用。证据见 `R14-evidence/r14-post-platform-auth-reactors/helidon-bearer-spacing/integration.json`。
+
+**Helidon PostgreSQL 持久样例后台投影**　三线运行原生 Helidon MP 持久样例与独立 PostgreSQL 16.16。真实 HTTP 支付完成后只发查询，Java 8、17、21 分别在 4.842、4.771、4.712 秒读到 `PAID`，金额 119.80。三条 Outbox 均为 `PUBLISHED`，事件位置为 1、2、3，检查点为 4。每线只注册一个持久调度任务，由同一 CDI 调度器执行并在容器退出时关闭。再完成两次调度后数据库行和行事务 ID 一致。Java 8 重建含当前订单查询实现的样例 JAR，Java 17 和 21 复用按当前编译结果和运行依赖核对的原生构件。独立复核通过，证据见 `R14-evidence/r14-post-platform-auth-reactors/helidon-durable-auto-projection/verification.json`。
+
+**Vert.x 默认样例令牌 JSON 与 Web 断连补验**　Java 8 原令牌响应可以写出 JSON，但按 token 字段读回失败。复用高两线的不可变 DTO 及显式 Jackson 构造映射后，三线各 8 项默认订单和令牌契约通过，编译后的六个公开 JVM 成员保持一致。另在真实 TCP 重置时观察到服务端终止事件。工作线程释放原租约，业务未派发，同键重试返回 201，下一次重复提交返回 409。三线各 24 项 Web 回归通过，Java 8 首次运行的既有 HTTP 读挂起留存线程转储，加入有界客户端超时后重跑通过。证据见 `R14-evidence/r14-post-platform-auth-reactors/vertx-token-response-json/integration.json` 和 `R14-evidence/r14-post-platform-auth-reactors/vertx-web-tcp/README.md`。
+
+**Vert.x PostgreSQL 持久订单后台投影**　三线以原生打包主程序和独立 PostgreSQL 16.16 运行。支付后只发查询，4.690、4.924、4.687 秒分别读到 PAID。默认五秒计时器由事件循环派发到工作线程，每线一个调度句柄完成四轮。每线 3 条对应的 PUBLISHED Outbox 和事件记录，检查点 vertx-orders 为 4，后续两轮数据库行及事务 ID 一致。Java 8 以当前 OrderQuery 重建订单领域 JAR，三线主程序构件经核对复用，HTTP 和调试端口释放，数据库容器均已清理。证据见 `R14-evidence/r14-post-platform-auth-reactors/vertx-durable-auto-projection/verification.json`。
+
+**Vert.x 原生认证分隔空格与断连**　三线 Sa-Token、Shiro 原先把有效 Bearer 后的两个、四个分隔空格带入令牌，真实请求返回 401。清理提取值后，两种认证均读到相同订单并绑定同一只读主体。Sa-Token 同时收到另一有效原生令牌时仍选择合法 Bearer。修正双请求头测试夹具后重做原生 RED、GREEN，三线各 19 项通过，原工作线程清理和关闭排空用例均保留。两种认证在三线各用真实 TCP 断连验证应用关闭等待已接纳业务，并按请求标识记录上下文恢复。证据见 `R14-evidence/r14-post-platform-auth-reactors/vertx-bearer-spacing/report.md`。
+
+**Dropwizard 默认令牌 JSON 与原生认证**　Java 8 默认样例的标准 Jackson 客户端曾无法读取服务原样输出的令牌对象。通过显式绑定 token 后，原生和标准解析器均读回相同字段，包括显式 null 和字段缺失。三线各 20 项通过，令牌 DTO 及两个 CQRS 对象的公开和受保护 JVM 签名一致。Java 8 标准解析器随之取消此前对裸字符串的隐式构造，实际 HTTP 继续使用对象载荷。Sa-Token 与 Shiro 原生鉴权补齐两个和四个 Bearer 分隔空格，三线各 21 项通过。两个 SDK 的带空格登出均使原读者的规范令牌返回 401，写者仍可读单。Sa-Token 双有效头按读者身份处理，六次已有真实断连用例继续通过。证据见 `R14-evidence/r14-post-platform-auth-reactors/dropwizard-wire-dto/verification.json` 和 `R14-evidence/r14-post-platform-auth-reactors/dropwizard-bearer-spacing/verification.json`。
+
+**Dropwizard PostgreSQL 持久订单后台投影**　三线的真实打包主入口在独立 PostgreSQL 16.16 上运行。支付后只发查询，Java 8、17、21 分别在 4.550、4.656、4.818 秒读到 PAID，金额 119.80。每线一项 Managed 所有的默认调度完成四轮，三条 Outbox 与位置 1、2、3 的事件逐条匹配并已发布，检查点为 4，两次额外调度后行及事务 ID 一致。真实退出先停调度再关存储，应用、管理、调试端口和数据库容器均已清理。Java 8 以当前 OrderQuery 源码重建共享域 JAR，高两线复用与当前构建字节一致的原生 JAR。证据见 `R14-evidence/r14-post-platform-auth-reactors/dropwizard-durable-auto-projection/verification.json`。
+
+**三线现行构件的依赖与编译门禁**　各线使用本线 Maven Wrapper 和 JDK 从当前源码对 121 个默认模块执行干净编译，三次构建均通过。正式 JVM API 比较仍有三项未对齐，均为 Java 17 的 `StpKit.getInfoIdAsInteger/Long/String`。编译后结构仍有 284 条 OPEN。当前三线实际有效依赖模型经严格检查共 4,590 项，错误和未核验构件均为零。Java 8 的 Derby 10.14.2.0 六个管理坐标通过字节码检查。编译、依赖与完整测试、远端 CI 分别记录。报告见 `R14-evidence/r14-post-platform-auth-reactors/current-compiled-api-after-dropwizard/verification.json` 和 `R14-evidence/r14-post-platform-auth-reactors/current-strict-dependencies-after-vertx/verification-supplemented.json`。
+
+**现行四种位置存储、五种 EventStore**　对照当前模块源码和 POM 指纹复用已执行的三线报告。每线四种位置存储通过 29 项数据库集成用例，五种 EventStore 的真实后端用例分别为 42、40、40 项，零失败、错误或跳过。现行矩阵绑定其中 17 个存储场景，三线均通过报告核验。Spring runtime 的测试发现 POM 使用当前补验指纹，JPA 位置的 7 项用例仍全部通过。旧 Java 21 JDBI PostgreSQL SSL EOF 已被 5 项实际通过的当前报告覆盖。存储子项证据见 `R14-evidence/r14-post-platform-auth-reactors/current-storage-evidence/verification.json`。
+
+**三条线的冻结基线和后续定向回归**　Java 8、17、21 用各自 Maven Wrapper 完成默认 `clean verify`，每线 121 个模块、107 份 Javadoc，分别执行 3,523、3,575、3,560 项测试。三条线同源快照各通过 298 个本地场景绑定，显式本地验证也全部通过，容量及 Redis Streams 另有原始报告，Java 8 还通过 Quarkus 持久样例 profile。随后三线应用 SQS 生命周期修复。候选在每线 Maven 下通过 16 项契约和生命周期测试，以及 2 项 ElasticMQ 发布、消费、失败重投和删除测试。工作副本中生产与测试源码的哈希和候选一致。WebFlux 请求上下文的三线具名用例原始报告均已核实，与四项 SQS 启动回滚用例一同纳入矩阵，现行场景从 232 增至 234 项，AWS SQS、阿里云 ONS 及腾讯云 TDMQ 场景仍待真实服务验收。完整根构建对应应用 SQS 修复前的冻结源码。详见 `R14-evidence/r14-post-platform-auth-reactors/current-full-verify/sequence-status.json` 和 `R14-evidence/r14-post-platform-auth-reactors/r14-verified-integration/verification.json`。
+
+**ONS 启动回滚、重试与发送排空**　三条线恢复失败后新建自有生产者并使旧发布句柄失效。回滚停止接收新发送并等待已受理的 SDK 同步调用，借用生产者的所有权仍由调用方管理。SDK 发送与日志共用一次序列化的消息。三线各通过 22 项原生 Maven 测试，现行矩阵追加三个 ONS 本地场景并核对原始测试报告。ONS 的真实服务和同一个适配器上的并发整体启动继续单列。详见 `R14-evidence/r14-post-platform-auth-reactors/ons-final-maven/integration.json`。
+
+**Javalin 两种认证样例的订单拒绝响应**　Java 8、17、21 的有效默认订单路由统一以 `R` JSON 返回未登录 401 和权限不足 403。三线生产入口的定向 Maven HTTP 测试分别通过 17、18、18 项。未匹配路径、未登记方法及两个认证入口的 28 个原生对照保持原响应。Java 8 沿用原生产响应实现，三线追加两个具名场景。非根上下文与忽略大小写属于各应用自定义路由配置，本次证据覆盖默认样例。详见 `R14-evidence/r14-post-platform-auth-reactors/javalin-auth-envelope-maven/integration.json`。
+
+**三线编译复核与 Javalin 入口适配**　Java 8、17、21 在受检 SQS、ONS 和 Javalin 源码快照上各完成 121 个模块的原生 `clean compile`。编译 API 仍有三个 Java 17 `StpKit` 历史访问器差异。正式比较记录 282 个 OPEN，此后依据三线现行 HTTP 原始报告刷新了两项既有 Javalin 入口的精确适配指纹。完整比较和定向映射的证据分别见 `R14-evidence/r14-post-platform-auth-reactors/current-compiled-api-after-broker-javalin/verification.json` 与 `R14-evidence/r14-post-platform-auth-reactors/javalin-auth-envelope-maven/application-mapping-refresh.json`。
+
+**Quarkus Shiro 样例的空权限查询**　登录后省略 permission 或传入空白时，响应统一为 HTTP 200 并回传原始输入与 `has=false`。非空权限仍由 Shiro 判定，登录校验在查询之前执行。三线实际 Quarkus 进程中共有 12 条目标请求由 500 变为 200，其余 159 条 Shiro 对照结果相同。三线各使用原生 Maven 执行配置和真实 HTTP 的 `RbacResourceTest`，分别通过 47、47、47 项。现行矩阵共 240 个场景，真实云 Broker 继续待验。详见 `R14-evidence/r14-post-platform-auth-reactors/quarkus-blank-permission-maven/integration.json`。
+
+**Micronaut 路由状态及 Spring MVC Jackson 异常登记**　Java 17、21 的 Micronaut Sa-Token 与 Shiro 样例恢复由框架对未匹配请求返回 404、405，保留 `Allow: POST` 以及匹配路由上的登录与权限检查。Java 8 的样例仅补回归。三线定向 Maven HTTP 测试分别通过 8、8、8 项。Spring MVC 的 Java 8 样例线路去掉重复 Jackson 异常注解值，同一具名测试在三个 JDK 上纳入场景矩阵，Java 8 的目标测试类实际通过 18 项。矩阵现为 247 个场景，真实 Broker 仍待验。见 `R14-evidence/r14-post-platform-auth-reactors/micronaut-spring-next-integration/verification.json`。
+
+**Helidon 405 响应头**　异常映射在返回原 JSON 错误结构时保留原生 Allow。Sa-Token 与 Shiro 样例的原生 Maven HTTP 测试在三线共通过 18 项。见 `R14-evidence/r14-post-platform-auth-reactors/micronaut-spring-next-integration/verification.json`。
+
+**Dropwizard 405 响应头**　异常映射在返回原 JSON 错误结构时保留原生 Allow。Sa-Token 与 Shiro 样例的原生 Maven HTTP 测试在三线共通过 42 项。见 `R14-evidence/r14-post-platform-auth-reactors/micronaut-spring-next-integration/verification.json`。
+
+**运行时回归合入与整仓基线**　四组定向回归已合入，现行场景为 247 项。Micronaut、Helidon、Vert.x、Dropwizard 的 JPA 检查点事务实现按各线现有依赖实现，四条精确源码和测试指纹已登记。归档的 240 场景源码快照中，Java 17 整仓 121 模块、3,589 项测试和 306 个本地场景绑定通过。同轮 Java 8 因磁盘空间耗尽退出，Java 21 在 Guice 定频测试出现等待超时。四个依赖该 runtime 的 Javalin 模块缺少本轮报告。两线整体重验仍开放。证据见 `R14-evidence/r14-post-platform-auth-reactors/current-full-verify-after-quarkus/sequence-status.json` 和 `R14-evidence/r14-post-platform-auth-reactors/persistent-position-jpa-lane-adaptation/integration.json`。
+
+**Java 8 整仓和 Guice 定频回归**　Java 8 用 247 项场景的工作区快照通过 121 模块、3,559 项测试和 107 个 Javadoc 模块，随后通过 313 个本地场景绑定。该快照保留定频测试原有写法。后续合入的测试改为等待实际回调，三线各通过 19 项定向 Maven 回归，生产调度实现保持一致。以 Spring 原始报告及 Helidon 六项继承 HTTP 契约刷新三条路由验证指纹，同时更新 Guice 测试指纹。场景矩阵维持 247 项。见 `R14-evidence/r14-post-platform-auth-reactors/java8-full-verify-after-247/sequence-status.json` 与 `R14-evidence/r14-post-platform-auth-reactors/guice-and-linked-locks-integration.json`。
+
+**Dropwizard 持久订单请求字段**　Java 21 的创建订单与增加明细在请求转换阶段拒绝未知字段，固定使用原异常翻译器识别的非法参数异常，合法 DTO 与路径订单 ID 的优先级按既有行为处理。候选先在三线实际资源方法中执行对照，Java 21 合入后通过 Maven 定向四项。真实 HTTP 响应、数据库与整仓验收继续单列。见 `R14-evidence/r14-post-platform-auth-reactors/dropwizard-durable-request-fields/native-maven-jdk21/verification.json`。
+
+**Java 21 持久订单的事件时间戳**　Helidon、Micronaut、Vert.x 与 Dropwizard 的 Outbox 维持数字秒写入，通过样例专用的 JPA 序列化器精确保留九位小数。已有数字与 ISO 文本两类历史载荷继续可读，外层事件时间保持 ISO。Helidon HTTP 的 CDI mapper 沿用既有生产方法。四个本线 Maven 样例 JAR 均在本机 PostgreSQL 16.16 通过实际组件回放，检查点为 0、3、4、4，空轮次保持位置。四个样例的打包入口随后各自在本机 PostgreSQL 实跑 HTTP、Outbox 中继和后台投影。12 条事件的数字时间戳在 Outbox 与事件库中逐条一致。Helidon、Dropwizard 两组在隔离验证时各替换一份当前异常映射类。Dropwizard 另通过未知字段 400 且写库快照不变，以及 405 允许方法检查。见 `R14-evidence/r14-post-platform-auth-reactors/durable-event-timestamp-format/integration.json`。 完整入口报告见 `R14-evidence/r14-post-platform-auth-reactors/jdk21-durable-native-main/verification.json`。
+
+**Java 8、17 持久订单的事件时间戳**　四个受影响平台各通过两条线的真实 PostgreSQL 适配器验证，再应用样例范围内的修复。原有数字时间字段和历史 ISO 读取能力保留，精确数字在 Outbox 读取、JPA 写入和回放阶段均验证。两线共改 16 个样例文件，四份三线样例源码指纹已同步。两条线均完成四个本线 Maven 样例打包，从各自原生产物在 PostgreSQL 16.16 复验八组通过。外层数字信封及内层业务事件分别通过固定九位小数的精确回放。Java 8 Micronaut 的部分历史运行依赖由同线归档和本机产物补齐，产物及依赖来源见 `durable-numeric-native-postgres-java8-java17/verification.json`。见 `R14-evidence/r14-post-platform-auth-reactors/durable-numeric-timestamp-java8-java17/integration.json`。
+
+**Java 21 当前 121 模块与具名场景**　本线 Wrapper 的 `clean verify` 完成 3,584 项测试，零失败、错误或跳过。独立执行 EventStore 容量和本地 Redis Streams，313 个具名测试绑定通过，261 份报告共含 1,454 项已执行测试。验证期间源码输入与快照一致，完成后刷新了四份样例源码指纹。远端 CI、真实云 Broker 和同线正式发行基线仍需按对应门禁记录。见 `R14-evidence/r14-post-platform-auth-reactors/java21-full-verify-after-durable-fixes/sequence-status.json`。
+
+**Java 8、17 当前 121 模块与具名场景**　本线 Wrapper 的 `clean verify` 分别完成 3,563 和 3,599 项测试，各生成 107 份 Javadoc，零失败、错误或跳过。两线各通过 314 个本地具名绑定，其中包含 Dropwizard 创建和明细未知字段校验。Java 8、17 分别有 271、262 份关联报告，含 1,480、1,461 项已执行测试。验证期间源码输入与快照一致。见 `R14-evidence/r14-post-platform-auth-reactors/java8-java17-full-verify-after-durable-fixes/sequence-status.json`。
+
+**Java 17 的 28 种独立样例**　首轮通过的 22 种保留原始报告。Spring 四种模式、Helidon Shiro 和 Quarkus CQRS 的同源码定向复验分别通过 15、5 和 87 项测试。逐模块核对 28 种模式的 180 份 XML，合计 979 项测试，零失败、错误或跳过，包含默认、CQRS、Sa-Token、Shiro 四种入口。首轮失败与后续复验分别归档。见 `R14-evidence/r14-post-platform-auth-reactors/current-independent-samples/jdk17-framework-modes-verification.json`。
+
+**三线独立样例复验及 Java 17 依赖变更后的复验**　七框架各四种入口在三条线共 84 组通过，Java 8、17、21 的框架样例分别核验 972、979、979 项测试，零失败、错误或跳过。Java 8 的 Boot 2.7 从已归档来源重建，四种 Spring 模式复验通过 15 项。Java 21 从独立样例 POM 完成当轮 36 项 Maven 构建。Java 17 的 Guice 和 MyBatis-Plus 后续有改动，重建同线 Easy4J 依赖后通过三个生产方定向用例，依赖该 runtime 的三个 Javalin 模式重新通过 494 项，另外 25 个模式沿用未受影响的报告。见 `R14-evidence/r14-post-platform-auth-reactors/current-gate-status.json` 的 `r14ThreeLineIndependentSampleAcceptance`。
+
+**Helidon 与 Java 17 MyBatis 接口的定向收敛**　Helidon 将三处 `Map` 参数统一到显式导入，消除六条源码签名差异。三线编译后的类字节保持一致，Java 17 当前资源类的 HTTP 与 PostgreSQL 测试通过六项。Java 17 MyBatis 恢复 `Interceptor`、`intercept(Invocation)` 和 `plugin(Object)`，沿用现有聚合填充逻辑。冻结客户端的三个 H2 场景由失败转为通过，Guice 仍只注册一个 Enhance 外层插件。独立审查和实际 Maven 定向六项通过，主工作副本已应用精确补丁与回归测试。增强链特有接口与签名继续按平台 API 核对。见 `R14-evidence/r14-post-platform-auth-reactors/current-gate-status.json`。
+
+**Java 17 两套 MyBatis 加密处理器声明**　原生 MyBatis 和 MyBatis-Plus 各恢复 `encrypt`、`decrypt`、`hmac` 三个历史抽象声明，保留各自上游接口及现有实现。隔离回归先复现反射拿不到声明，补丁后 10 项 Maven 测试通过，包括真实 H2 查询、加密缓存、篡改拒绝。独立复核确认三个工作文件采用定向验证的同一补丁。用三条线本次构建的 `Ddd4jMapper`、MyBatis 3.5.19 与同一 H2 夹具执行 24 组 XML SQL 调用。三线均支持 `list`，Java 8/21 另支持 `collection`，在开启实际参数名时还支持 `ids`。Java 17 由上游 `@Param("list")` 提供 `list` 和 `param1`。旧 XML 参数绑定差异继续开放。证据见 `R14-evidence/r14-post-platform-auth-reactors/r14-mybatis-handler-declarations/integration.json` 和 `R14-evidence/r14-post-platform-auth-reactors/r14-mybatis-batch-xml-contract/verification.json`。
+
+**按 Maven 构件识别同名 JVM 类**　旧比较器按二进制类名定位归属，MyBatis 与 MyBatis-Plus 的同名类成员被同时跳过。新规则使用 `javap -v` 的 `Classfile` 路径定位构件，缺少归属时失败。补丁和两项回归已同步三线。使用与当前源码匹配的原生 class 验证 114 项默认候选。修正检查器后识别出 35 个未解释成员，其中 8 个此前被遗漏。替换经原生复验的两个 Java 17 加密处理器 class 后，六个历史声明差异消除，剩 29 个成员，失效平台 API 映射为零。该证据分别复用整仓和定向构建的 class，完整 121 项正式 API 门禁保持开放。证据见 `R14-evidence/r14-post-platform-auth-reactors/r14-compiled-api-duplicate-binary-owner/integration.json` 和 `R14-evidence/r14-post-platform-auth-reactors/r14-current-default-native-api-final-owner/verification.json`。
+
+**租户、SQL 观测与信息条目 ID**　Java 17 两套 MyBatis 的租户上下文桥和 SQL 观测桥各登记两个上游类型的精确 JVM 成员。租户测试覆盖请求上下文与嵌套恢复，Java 8、17、21 分别通过 4、6、4 项。观测测试分别通过 10、14、8 项，Java 17 使用实际 ServiceLoader 发现 SPI 提供者并核对转发。`StpKit.getInfoIdAsString()` 与 `getInfoIdAsInteger()` 恢复已发布 SNAPSHOT 的 `info_id` 读取行为，Java 17 Sa-Token 模块实际通过 153 项，含签名 JWT 和本机 Redis。按当前源码绑定的原生 class 复核默认 114 项，未解释 JVM 成员从 29 减至 23，失效平台映射为零。`getInfoIdAsLong()` 的历史字段归属仍待确认。证据见 `R14-evidence/r14-post-platform-auth-reactors/r14-typed-mybatis-and-satoken-integration/integration.json` 和 `R14-evidence/r14-post-platform-auth-reactors/r14-default-native-api-after-typed-adapters-and-satoken/verification.json`。
+
+**Java 17 数据范围条件严格解析**　使用实际 Mapper 和本机 H2 复现不完整的数据范围条件被当作可执行条件，查询未受预期范围限制。改用现有 JSqlParser 的完整表达式解析后，Java 17 在 JDBC 执行前拒绝该条件。合法范围下的普通查询、OR、UNION 和更新结果一致，定向 Maven 从一项预期失败转为九项通过，公开 JVM 签名一致。Java 8 与 21 的现行组合查询和更新过滤另有差异，本次独立记录三线行为。证据见 `R14-evidence/r14-post-platform-auth-reactors/r14-mybatiplus-strict-scope-parser/integration.json` 与 `R14-evidence/r14-post-platform-auth-reactors/r14-mybatiplus-permission-native-parity/verification.json`。
+
+**Java 8、21 数据范围条件严格解析**　两线沿用本线 MyBatis-Plus 和 JSqlParser，在 JDBC 执行前拒绝不完整的配置范围条件。两线各有一项预期失败，修复后各通过四项原生 Maven 测试。H2 验证覆盖合法与空范围、组合查询和本线既有写入范围，公开 JVM 描述符一致。Java 8 的上游 Plus 增强构件另在隔离缓存原生构建，126 项测试通过，并用本线当前 MyBatis-Plus 与解析器验证单一外层拦截器和可选租户读取。该证据对应本地构件及明确的运行路径。见 `R14-evidence/r14-post-platform-auth-reactors/r14-mybatiplus-legacy-strict-scope/integration.json`、`r14-jdk8-plus-enhance-local-provenance/verification.json`。
+
+**Java 8、21 原生 MyBatis 显式 SQL**　业务实现 `Ddd4jQueryMapper` 后，现有仓储入口委派显式 SQL 执行条件查询、分页、计数、首项和删除。普通 `Ddd4jMapper` 继续使用本线历史入口和仓储覆盖。两线真实 H2 定向分别通过九项和八项，接口四个 JVM 成员与 Java 17 的原生归档一致，各线仓储原有 42 个公开或受保护成员一致。另以冻结的 Java 8 Mapper 客户端验证五个旧 CRUD 调用三线均能链接，Java 17 的上游接口在源码重编译时要求实现两个密文查询方法。见 `R14-evidence/r14-post-platform-auth-reactors/r14-native-query-mapper-legacy-parity/integration.json` 与 `r14-mybatis-frozen-crud-mapper-client/verification.json`。
+
+**JVM 成员泛型元数据**　比较器在类体闭合时结束末尾成员解析，避免类级签名覆盖方法的泛型。按实际原生 class 元数据修正两个 Java 8 Javalin 枚举方法和一个 Micronaut 桥方法的精确记录。44 项现有平台记录均匹配。使用复验的原生 class 覆盖默认 114 项，未解释成员由 23 降至 19，失效精确映射为零。见 `R14-evidence/r14-post-platform-auth-reactors/r14-javap-class-signature-boundary/integration.json` 和 `r14-default-native-api-with-class-signature-boundary/verification.json`。
+
+**MyBatis-Plus 组合查询的数据范围**　Java 8、21 在 MyBatis 建立缓存键之前收窄普通 SELECT 和各 UNION 分支，原生 H2 验证同一 SqlSession 切换范围、带绑定参数查询和 UNION 分页 COUNT。配置为空、显式忽略及这两条线的既有写入行为保持一致。候选曾覆盖同名 Mapper 参数，独立审查复现后已修正，分页 COUNT 复制参数时也沿用改写标记。两线各通过八项定向 Maven 测试。Java 17 沿用现有官方拦截器，在既有范围处理器给 OR 表达式分组，六项定向测试通过，H2 中查询以及该线已启用的写入过滤均按业务条件与范围取交集。三个补丁均经独立审查，工作区文件与当轮候选哈希一致。见 `R14-evidence/r14-post-platform-auth-reactors/r14-mybatiplus-compound-read-scope/integration.json` 和同目录下的 `jdk17/integration.json`。应用后用三条线当前源码的原生 Maven `clean verify` 构建 MyBatis-Plus 及编译依赖，共通过 22 项数据范围测试。三线均生成主 JAR 及 Javadoc，包内范围拦截器的 class 与 H2 验证使用的 class 逐字节一致。见 `R14-evidence/r14-post-platform-auth-reactors/r14-current-scope-native-package/verification.json`。
+
+**Java 21 MyBatis-Plus 增强构件来源**　固定同线 Easy4J 源码提交，通过本线 Maven Wrapper 在隔离仓库构建，上游核心和扩展共通过 126 项测试。用当前 MyBatis-Plus 3.5.17 和 JSQLParser 5.3 运行 DDD4J H2 探针，确认只注册一个增强外层拦截器，同一 SqlSession 进入及退出嵌套租户时返回对应数据，缺少租户时拒绝查询。结果覆盖手动装配的租户查询，发布与平台装配各自按原验收执行。见 `R14-evidence/r14-post-platform-auth-reactors/r14-jdk21-plus-enhance-local-provenance/verification.json`。
+
+**三线 121 个项目的归档构件 API 复核**　将各线原生默认构建的 114 个项目和七个单独构建的旧 CQRS 主 JAR 一并检查。Spring 和 Javalin 的两个旧主 JAR 由对应 runtime 提供原公开类。Java 17 当前 MyBatis 和 MyBatis-Plus 构件分别复验九项和 43 项，Plus 模块另有八项 MySQL 集成测试在该次构建跳过。恢复 Docker 后，以当前 Java 17 源码连接实际 MySQL 8.4 容器定向构建，八项原仓储契约均通过。见 `R14-evidence/r14-post-platform-auth-reactors/r14-java17-current-plus-mysql/verification.json`。两份 JAR 与原整仓归档相比，普通 MyBatis 类逐字节一致，Plus 仅聚合填充拦截器的 class 变化。七个旧 CQRS 坐标未增加 JVM 差异。检查器保留 20 个待处理成员，19 个是前次记录，第 20 个是 Java 8、21 直接声明的 `beforeQuery`。Java 17 从官方拦截器继承同一 JVM 描述符。同一份由 Java 8 编译、直接调用该方法的客户端在当前三线主 JAR 中成功链接，并用 H2 得到同一范围结果。正式检查器继续保留声明归属差异。见 `R14-evidence/r14-post-platform-auth-reactors/r14-frozen-before-query-client/verification.json`。精确平台映射失效数为零。证据记录默认构建与定向构件的来源，以及独立生产方的共享输入差异。现行三线单次构建、远端 CI 和正式发行基线各自验收。见 `R14-evidence/r14-post-platform-auth-reactors/r14-composite-native-api-121/verification.json`。
+
+**增强组件仓库发布链和正式基线**　已在配置的 Maven 仓库逐项复核。Java 8、21 的 Easy4J MyBatis-Plus core、extension 可下载，但其依赖的三个同线父 POM 或注解坐标未返回可用构件。空仓库依赖闭包是配置器及 Guice 显式装配采用的前置条件。另核对配置的私有 release 仓库，DDD4J BOM、依赖管理、core、两个 MyBatis 模块及 Guice 的六个元数据端点均返回 404，三线正式 API 比较继续等待可核实的同线非 SNAPSHOT 基线。证据见 `R14-evidence/r14-post-platform-auth-reactors/r14-plus-configurer-feasibility/report.md`。
+
+**Clean 与 COLA 架构测试**　三线各有 14 项测试通过。Java 17 用该次当前源码重新执行两套规则的四个测试类。Java 8 和 21 使用原生归档 XML，并核对规则模块、编译依赖与 Maven 输入。见 `R14-evidence/r14-post-platform-auth-reactors/r14-architecture-current-inputs/verification.json`。
+
+**Kafka 确认语义与源码清单分类**　三线保留原有确认实现，并在既有精确策略中刷新 Java 8 的源码指纹。原生归档的确认、生命周期、本地 Broker 和持久投递报告均与当前相关输入匹配。更新后，源码盘点 532 项 OPEN。复用现有检查器对已核对来源的三线归档 class 分类，其中 223 项源码 API 声明差异由编译结果解释，剩余 309 项源码差异继续开放。原始差异保留，严格 JVM 比较仍有 20 项待处理。见 `R14-evidence/r14-post-platform-auth-reactors/r14-kafka-ack-behavior-parity/integration.json` 和 `R14-evidence/r14-post-platform-auth-reactors/r14-composite-classified-source/classification.json`。
+
+**Java 17 当前 ORM 消费边界**　本线使用当前源码构建 33 个相关项目，五套独立 Maven 类路径及 JVM 探测全部通过。默认 Guice、实际 Javalin CQRS 样例保持可独立运行，样例 HTTP 商品查询返回 200 和业务码 0，两个默认入口均未加载 MyBatis。Plain 与 Plus 各自使用一条 ORM 链，运行真实 H2 查询并验证仓储注册。此结果覆盖本地原生消费，样例镜像及远端验收单独记录。见 `R14-evidence/r14-post-platform-auth-reactors/r14-current-data-consumer-dependency-boundary/verification.json`。
+
+**三线会话超时公共实现**　`AuthSessionConfig#getTimeout()` 统一读取一次配置值，沿用缺省 `-1`、显式 `-1`、零和正数的原有契约。三条线采用相同源码，各自的原生 JDK 回放通过 14、16、16 项请求配置测试。候选 class 与各线归档 class 的公开 API 元数据一致。应用后复验，源码清单原始 OPEN 为 531 项，复用归档 class 分类后剩 308 项，严格 JVM 门禁仍有 20 项待处理。见 `R14-evidence/r14-post-platform-auth-reactors/r14-core-common-auth-config-parity/session-single-read/integration.json` 与 `R14-evidence/r14-post-platform-auth-reactors/r14-after-common-auth-timeout/classification.json`。
+
+**Java 8、21 MyBatis-Plus 配置器隔离候选**　以两条线各自的 Easy4J 归档构件调用真实配置器。两线各有六个公开 JVM 声明与 Java 17 一致，并各通过 23 项普通和增强链的数据范围结果对照。各线另通过 11 项增强行为检查，包含租户切换、单次聚合填充、密文落库、重复读取及签名拒绝。候选经独立审查，当前正式模块继续使用原依赖。采用仍需核验私服缺失坐标、旧 DDD4J 密码处理器桥接、Guice 显式入口及正式 Maven 消费边界。见 `R14-evidence/r14-post-platform-auth-reactors/r14-plus-configurer-isolated-candidate/report.md`。
+
+**可选 Bearer 认证公开说明**　Java 17、21 已纠正 `authenticateOptional` 注释。未解析出令牌时返回空，已解析令牌在验证失败时会按既有契约拒绝。两条线的公开声明和方法体保持一致。三线各 44 项原生归档用例均与该次运行使用的源码和输入指纹匹配。见 `R14-evidence/r14-post-platform-auth-reactors/r14-common-bearer-subject-parity/authenticate-optional-javadoc-integration.json`。
+
+**ActiveMQ 客户端 ID 设置**　Java 8 和 21 的连接工厂现在只读取一次调用方提供的客户端 ID 配置，与 Java 17 的设定过程对齐。三线共有一条构造回归。Java 8 和 21 原完整构造器复现两次读取，修复后均通过，三线各通过两项真实本地 Artemis TCP 测试。Java 8 和 21 的候选 class 与各自 Maven 归档八项公开 API 元数据一致。既有精确策略仅更新本项，并分别绑定原生测试和构造回归。整合最新归档 class 后，原始源码清单有 530 项 OPEN，编译分类后有 307 项，严格 JVM 门禁有 20 项待处理。见 `R14-evidence/r14-post-platform-auth-reactors/r14-activemq-current-platform-parity/client-id-regression/final-factory-selection/integration.json` 与 `R14-evidence/r14-post-platform-auth-reactors/r14-after-activemq-current-selection/classification.json`。
+
+**Java 8 与 Java 21 的可选 MyBatis-Plus 和 Guice 组合候选**　两线分别使用原生 Maven 完成 13 个相关项目的 `clean install`，各通过 30 项测试，零失败、错误或跳过。独立 Maven 消费者验证基础 Guice、普通 MyBatis-Plus 和显式增强。默认路径未解析 Easy4J，显式路径只增加增强扩展、核心和注解。普通与显式路径通过相同的 23 项 H2 数据范围检查。显式 Guice/H2 验证租户隔离、提交、回滚、连接关闭和线程隔离，真实 SELECT、INSERT 和约束失败均进入 SQL 观测。已安装的 Java 8 与 Java 21 主 JAR 中，两类的 14 项公开 JVM 成员一致，其中七项对应现行待对齐条目。候选使用经校验的同线本机归档，正式源码和三线待对齐数量仍按现行门禁记录。私服冷缓存、远端 CI 和正式采用继续验收。证据见 `R14-evidence/r14-post-platform-auth-reactors/r14-jdk8-plus-guice-native-composition/verification.json`、同目录的 `strict-maven-api-verification.json` 及 `r14-jdk21-plus-guice-native-composition/verification.json`。
+
+**MyBatis-Plus 数据范围的查询与写入边界**　使用 Java 8 编译一次的同一客户端字节码，在各线实际 Maven 主 JAR 上直接调用 `beforeQuery` 和 `beforePrepare`，两条 JVM 调用在三线均成功。Java 17 的方法由本线 MyBatis-Plus 父类提供。正常 SELECT 的两阶段调用均从 H2 得到同一行。仅调用 `beforePrepare` 时，Java 8 和 21 会处理 SELECT，Java 17 由查询阶段处理。配置同一数据范围后，Java 17 的 UPDATE、DELETE 各影响一行，Java 8 和 21 各影响两行。三线的历史写入行为继续按现行入口记录，业务 Mapper 应显式表达跨线一致的写入授权。此次回放覆盖普通 MyBatis-Plus 路径，严格声明门禁和值域差异继续验收。见 `R14-evidence/r14-post-platform-auth-reactors/r14-frozen-prepare-hook/verification.json`。
+
+**Java 8、21 原生 MyBatis 可选增强候选**　同线 Easy4J 原生 Maven 各通过 59 项。DDD4J 隔离构建各通过 9、8 项，实际候选主 JAR 与 Java 17 的五个装配器 JVM 声明一致。默认独立消费者无需 Easy4J，显式消费者的 H2 查询、写入和 JDBC 约束失败进入原 DDD4J 观测上下文。导入本轮 BOM 的消费也通过，Java 8 显式增强仍解析 SLF4J 2.0.18，默认解析 1.7.36。原始候选在保持租户归属和普通字段映射两项 H2 场景失败；隔离上游修复后，两条线各通过 59 项原生测试，同一 DDD4J 候选各通过原八项 H2 场景和带引号列名的回放。已记录当前涉及的租户写入和映射行为，REUSE/BATCH、观测前置拒绝与 INFO 行为、无版本 BOM 消费和私服冷缓存继续验收。正式生产源码、API 门禁及发布未采用候选。见 `R14-evidence/r14-post-platform-auth-reactors/r14-plain-mybatis-native-candidates/report.md`。
+
+**Java 8、21 原生 MyBatis 的 SQL 观测**　用同一 H2 探针和真实 SLF4J 实现，在两线各复现三个失败。显式接收器仍触发默认 INFO，查询和更新的前置回调异常未送达。隔离修复保持无参日志回退，显式接收器按原顺序加入 SPI 接收器，未注册接收器时才启用默认日志。两种前置拒绝各产生一次事件，原始异常保留且未执行 JDBC 语句；两线各通过九项观测检查、59 项上游测试和原八项业务 H2 回放。实际 DDD4J 主 JAR 的请求上下文从漏记缺租户拒绝变为获得该事件，成功读写和约束失败继续可见，默认 SQL INFO 从每线三条降为零。两种变更类的公开 JVM 签名一致。动态 SQL 生成、游标和批量执行器另需按入口验证。仍需完成同线构件采用和私服解析。见 `R14-evidence/r14-post-platform-auth-reactors/r14-plain-mybatis-native-candidates/observation/report.md`。
+
+**Java 8、21 原生 MyBatis 的无版本 BOM 消费**　现有公共 BOM 能管理普通原生 MyBatis，显式声明增强扩展但省略版本时，两线模型均因缺版本失败。隔离候选新增同线扩展管理，Java 8 只在该依赖边排除传递 SLF4J API。两线普通、显式及交换声明顺序的无版本模型均解析并运行 H2。Java 8 三种模式都加载实际 SLF4J 1.7.36 日志实现，Java 21 保持 2.0.18。默认运行依赖的构件和版本集合一致，每线两个显式模式均通过八项既有回归。Java 8 已验证应用自行指定日志 API 仍能覆盖，单独使用 Easy4J 扩展的应用需自行提供日志 API。该版本管理尚未用于正式 BOM，私服冷缓存、远端发布及 R14 其余运行门禁继续验收。见 `R14-evidence/r14-post-platform-auth-reactors/r14-plain-mybatis-native-candidates/versionless-bom/report.md`。
+
+**当前默认 reactor 的三线编译复验**　以当前三线工作区冻结输入执行本线 Wrapper 的 `clean compile`。补齐可校验的公开缓存后，Java 8 根构建成功编译 95 个项目，七个 runtime 均产出 class；下游仍受本机 Easy4J 快照和公开依赖缺项影响。Java 17 单次根构建成功编译 117 个项目，四个 Spring 样例随后定向构建均通过。以同一输入汇总覆盖 121 项中的 120 项，Quarkus CQRS 样例仍需核验 Panache 部署依赖。Java 21 为部分编译，35 个项目产出 class，当前缓存未闭合 Spring 与 Shiro 的同线快照及若干公开依赖。当前未执行基于完整三线产物的源码和 JVM 门禁，未用这次编译代替 R14 的测试或远端验收。见 `R14-evidence/r14-post-platform-auth-reactors/r14-current-live-native-compile/report.md`。
+
+**Java 17 当前默认 reactor 单次编译通过**　隔离缓存按 3.40.1.2 确认 Panache、Quartz 及其他 Quarkus 扩展的 runtime/deployment 构件，同时补齐样例所需 Testcontainers、Flyway 和 Quarkus 测试依赖。Quarkus CQRS 定向原生构建 31 项通过。随后同一冻结源码的本线 Wrapper 单次 `clean compile` 全部 121 项通过，归档 107 个模块生成的 1,883 份 class。样例定向通过 3 项测试，含一项真实 PostgreSQL CQRS 测试与两项持久装配边界。Java 8 和 21、三线完整 API 比对与远端验收仍按 R14 执行。见 `R14-evidence/r14-post-platform-auth-reactors/r14-current-live-native-compile/jdk17-final/quarkus-cqrs/report.md`。
+
+**Java 21 的 Easy4J 上游恢复及当前根编译**　使用固定提交原生构建 Hitool 父 POM、Spring Extension 与 Shiro Extension Parent/Core。Spring、Shiro Core 分别通过 235 项和 43 项测试，离线独立 Maven 项目编译并实际加载同一构件。补齐原失败列出的 32 项公开构件后，Java 21 根构建到达 99/121 项，70 个模块产出 class，含五个 runtime。原缺失的 Spring Extension JAR 和 Shiro Extension 父 POM 已解析。框架及样例的后续公开依赖与代码生成分别按当轮日志记录。R14 仍未取得 Java 21 完整根构建和三线编译 API 证据。见 `R14-evidence/r14-post-platform-auth-reactors/r14-current-live-native-compile/jdk21-final/report.md`。
+
+**三线当前默认根构建编译完成（2026-11-24）**　Java 8 的四个原版本 Easy4J 快照及 Java 21 的五个原版本 Boot 快照均由固定提交原生构建，独立离线消费者确认 JAR 哈希。三条线使用各自 JDK 和 Wrapper 的单次默认 `clean compile` 均完成 121 项。各线均有 107 个项目产出 class，分别归档 2,012、1,883、1,867 份。Java 17 的租户上下文源码及测试出现工作区变更后重新冻结并完成整仓编译。Java 21 的 Quarkus CQRS 单独通过三项测试，其中一项实际运行 PostgreSQL 16，覆盖失败重试和检查点续跑。严格 JVM API 对照基于三次完整根编译，仍有 20 项未通过。整仓测试、私服冷缓存、真实云 Broker 和远端 CI 继续按 R14 验收。见 `R14-evidence/r14-post-platform-auth-reactors/r14-current-live-native-compile/public-recovery-8-21/report.md`。
+
+**Java 17 Sa-Token 历史访问器恢复**　以实际发布的时间戳快照和 Java 8、21 的同线编译产物确认，`StpKit.getInfoIdAsLong()` 读取 `org_id`。Java 17 恢复原签名，字段缺失时返回空，非法值保持原转换错误。隔离原生 Maven 先复现三项签名 JWT 用例因方法缺失而失败，随后 Sa-Token 的 156 项测试全部通过，包含本机 Redis。已独立审查并按已验证文件哈希应用。将该次原生 class 代入三条线各 121 项的归档后，严格 JVM API 差异由 20 项降至 19 项。本次归档对照覆盖这一个投入变更。见 `R14-evidence/r14-post-platform-auth-reactors/r14-satoken-current-api-close/integration.json` 及同目录下的 `archive-overlay/verification.json`。
+
+**原生 MyBatis 声明与 SQL 映射核验**　Java 17 的 H2 实测覆盖六种接口形态、96 组批量参数组合和 84 组映射调用。直接补五个 CRUD 声明会让原来由 `EnhanceMapper` 命名空间提供的五个 XML 映射失效。去掉 `@Param` 虽恢复部分 `collection`、`ids` 用法，也会丢失当前 `param1` 用法。五项声明及调用契约继续按原门禁处理。见 `R14-evidence/r14-post-platform-auth-reactors/r14-spring-current-mybatis-contract-audit/report.md`。
+
+**当前 Spring runtime 与四种样例实测**　Java 8、17、21 在各自 JDK 与 Wrapper 上各通过 88 项，共 264 项。包括真端口 MVC、WebFlux、本机 PostgreSQL 及两种鉴权样例。Java 17 首轮 WebFlux 返回 500，原因是 Maven 载入旧 Easy4J 快照调用已移除的 Reactor 方法。用固定上游提交原生恢复同版本构件，隔离旧缓存后复验通过，Surefire 实际载入的 JAR 与恢复构件哈希一致。发布源及远端 CI 继续按原任务验收。见 `R14-evidence/r14-post-platform-auth-reactors/r14-current-spring-runtime-and-sample-tests/report.md`。
+
+**当前 Guice/Javalin 运行时与四种样例**　Java 17 原生 Maven 通过七个目标模块 691 项，其中四种样例 553 项，CQRS 实际运行 PostgreSQL 16。Java 8 补验两种鉴权样例、Guice runtime 及 Plus 数据范围，共 496 项。Java 21 针对 Guice 装配与 Plus 数据范围通过 30 项。Java 8 的默认和 CQRS 样例及 Java 21 的四种样例通过源码、POM 闭包核对后沿用已有独立报告。见 `R14-evidence/r14-post-platform-auth-reactors/r14-current-guice-javalin-native/report.md`。
+
+**Guice 可选增强的私服冷缓存复验**　Java 8 和 21 的原生 Maven 从空缓存实际解析，均因同线 `mybatis-plus-enhance` 父 POM 缺失而失败。仅在隔离缓存补入经核验的同线原父 POM 后，两线均从私服解析其余四个坐标，通过真实 Guice 装配、数据范围和 SQL 观测三个 H2 探针。远端父 POM 发布与同一组构件的完整冷缓存验收仍开放，候选暂未接入正式依赖。见 `R14-evidence/r14-post-platform-auth-reactors/r14-current-guice-plus-closure-audit/jdk8/verification.json` 和同目录下的 `jdk21/verification.json`。
+
+**Quarkus 当前原生运行与架构规则**　Java 17 同一源码快照的两次 Maven 运行覆盖运行时、Web、Panache、旧 CQRS 生产方和四种样例，八个目标模块合计通过 388 项。首轮 Panache 缺少 H2 扩展部署构件，补齐同版本公开构件后 Panache 和 CQRS 补验通过。Java 21 清理 Panache POM 中五条历史 Surefire 类路径排除，恢复三个既有 ArchUnit 规则，Maven 4 的正常 `clean test` 通过 37 项，包含原有 34 项及真实 PostgreSQL/JTA。已独立复审并按候选哈希应用。Java 8 显式持久包在同一 PostgreSQL 16.16 上两次运行，重开读回原订单，新订单使后台投影检查点由 4 推进到 7。同一冻结输入的显式 `durable-order` 还通过三项具名测试，覆盖检查点回滚、重试和稀疏游标。见 `R14-evidence/r14-post-platform-auth-reactors/r14-current-quarkus-native/report.md`。
+
+**当前 Java 17 根测试与打包补验**　单次默认 `clean verify` 执行 3,640 项测试，零失败、错误或跳过，生成 739 份测试 XML 和 107 份 Javadoc。116 项 Maven 项目成功，五个样例因公开打包插件依赖缺项退出。补齐 12 个公开构件后，同一冻结输入的 43 项定向构建成功，五个目标均生成主 JAR。四个 Spring 包均核对了内嵌扩展哈希。随后补齐公开缓存后的单次全根复验见下条。原始失败及定向补验保留于 `R14-evidence/r14-post-platform-auth-reactors/r14-current-native-full-verify/report.md`。
+
+**Micronaut 当前原生调度、Web 与持久 CQRS**　Java 21 的 runtime、Web、旧 CQRS 生产方及 CQRS 样例共通过 81 项，包含 Context 部分启动后的取消重试、重排竞态、Reactor 租户上下文和真实 PostgreSQL。Java 8 的 23 项目标构建通过，实际 PostgreSQL 16.16 具名测试验证 Outbox 去重重试、检查点失败续跑及同库重开。三线运行时和四种样例的已有 XML、构建输入及持久启动回执按模块核对。见 `R14-evidence/r14-post-platform-auth-reactors/r14-current-micronaut-native/report.md`。
+
+**当前 Java 17 单次默认根 `clean verify` 通过**　补齐打包插件的公开依赖后，Java 17 使用本线 Wrapper 在同一冻结源码输入下一次完成 121 项，Maven 退出 0。共执行 3,640 项测试，零失败、错误或跳过，归档 739 份测试 XML、107 份 Javadoc 及实际编译 class。完整 R14 的其他两线当前根验证、远端 CI 和各自外部服务门禁继续记录。见 `R14-evidence/r14-post-platform-auth-reactors/r14-current-native-full-verify/jdk17-full-retry/verification.json`。
+
+**当前 Helidon 接入与样例复验**　Java 21 七个目标模块按原生 XML 核对 76 项。定向首轮缺 Helidon 测试依赖父 POM，并因临时监听地址覆盖改变端口占用测试条件。校验补齐六份公开父 POM，按项目默认绑定补验通过。Java 17 和 21 以当前 Maven 构件启动真实 MP 容器，验证容器退出后借用调度器仍执行回调。Java 8 认证原生测试通过 14 项，两个独立进程首个匿名请求均返回预期 401，历史 404 成因尚未确定。11 项平台场景的三线共 33 个绑定已与源文件及 XML 核对。见 `R14-evidence/r14-post-platform-auth-reactors/r14-current-helidon-native/report.md`。
+
+**当前 Java 21 默认根验证尝试**　实际执行 3,363 项测试，Micronaut Web 有一项首次 HTTP 请求在响应头前收到 EOF。三个完全匹配当前输入的定向重放均成功，连接关闭原因仍待定位。其余失败涉及公开依赖缓存，已校验补齐 20 个公开坐标和六份 Helidon 父 POM。单次根验证保持开放。见 `R14-evidence/r14-post-platform-auth-reactors/r14-current-native-full-verify/jdk21-attempt.md`。
+
+**2026-11-24 Vert.x 当前输入复验**　Java 8、17、21 的 Vert.x runtime、Web、CQRS、R2DBC 与四个框架示例各通过 118 项测试。Java 8 以核验过的 Reactor Netty POM 补齐测试依赖后，R2DBC 的 27 项重验通过。Java 21 在恢复导入的两个上游构件后，现行默认整仓中的 R2DBC 27 项通过。三线重新构建并启动持久 CQRS 入口，分别在 PostgreSQL 支付后 4.154、4.885、4.740 秒自动查到 PAID。三线各发布并持久化 3 条事件，`vertx-orders` 检查点达到 4，后两轮行版本稳定，手动投影调用为零。应用退出和验证资源回收均已核实。范围与摘要见 `R14-evidence/r14-post-platform-auth-reactors/r14-current-vertx-native/platform-revalidation.json`。
+
+**2026-11-24 Dropwizard 当前输入复验**　Java 8、17、21 的七个 Dropwizard 目标模块分别通过 118、121、117 项测试，零失败、错误或跳过。Java 8 补齐 HK2 和 Jackson YAML 发布依赖后，原 Bundle 两项错误及默认样例 YAML HTTP 错误均复验通过。Java 21 默认整仓第二次运行的 3,486 项测试无失败，补齐 Jersey、HttpComponents 缓存后另行通过 Dropwizard 的定向 `clean verify`。三线当前 Maven 打包样例在独立 PostgreSQL 自动投影，支付后分别在 5.003、4.834、4.784 秒读到 PAID，每线三个事件、检查点 4、四轮原生任务，且手动投影调用为零。定向结果与整仓验收独立记录。证据 `R14-evidence/r14-post-platform-auth-reactors/r14-current-dropwizard-durable/platform-revalidation.json`。
+
+**2026-11-24 三线当前本地构建复验**　Java 17、21 的默认根 `clean verify` 各一次完整通过 121 个模块，测试分别 3,640、3,603 项，零失败、错误或跳过。Java 8 的现行默认根复跑完成 119 个模块和 3,488 项测试，另外两个模块遇到离线依赖缺项。按原版本补齐后，Micronaut CQRS 的 6 项和 Quarkus CQRS 示例的 86 项全部通过并生成 Maven JAR。Java 8 的本地证据覆盖 121 个模块、合计 3,580 项，来自默认根报告与两次定向补验。Java 8 单次整仓、三线严格发布验收及远端与云环境结果分别跟踪。复算来源见 `R14-evidence/r14-post-platform-auth-reactors/r14-current-native-full-verify/three-line-current-local-coverage.json`。
+
+### R15：退出旧实现模块并保持可回退交付
+
+#### 第一批（历史记录）｜七个旧平台投影模块退出
+
+2026-11-19 用户确认当前无业务消费者，批准按现有 runtime 入口直接收敛七个旧投影坐标。旧坐标解析、旧投影二进制和旧新混用从本批交付门禁退出。下面原任务保留供剩余旧 CQRS 批次和整体交付查阅。R14 的完整三线、真实后端及 CI 验收继续记录独立结果。
+
+第一批结束时，data 中尚有五个独立投影模块，承担两种职责。`ddd4j-data-projection` 提供公共处理器注册和事件分发。Jdbi、JPA、Panache 与 R2DBC 提供按存储技术选择的投影位置持久化实现。投影运行与位置接口在 core，七个 runtime 承担平台接入。默认示例可直接运行，CQRS 示例按需选择投影与存储。
+
+- [x] 按 Spring、Guice/Javalin、Quarkus、Micronaut、Helidon、Vert.x、Dropwizard 顺序核对新入口。M02、M04、M06、M08、M10、M12、M14 已退出三线源码模块及 reactor/BOM，data 子模块由 31 个减为 24 个。
+- [x] 清理只用于旧投影坐标的夹具和门禁。现行场景使用 runtime 测试，Quarkus 原生 CDI、Quartz、Panache/JTA 覆盖单任务、回滚、重试与停机。Micronaut 原有调度竞态回归随实现归入 runtime。
+- [x] 三线 Maven 定向验证七个 runtime、公共 Handler 分发和四种位置存储，每线实际通过 196 项，共 588 项，均无失败、错误或跳过。验证 Spring、Helidon、Quarkus、Micronaut 四个指定场景的当轮报告。每线 28 个示例入口均仍纳入构建，示例 POM 均无已退出的旧投影坐标。
+
+本批定向结果见 `R15-evidence/projection-retirement/verification.json`。首次 Java 8 根验证在 Spring 样例所需的外部 Boot 2.7 SNAPSHOT BOM 离线解析处中断。后续三线均通过 126 模块默认构建和全部 28 种框架模式的独立样例构建，见 R14 当轮结果。远端 CI 按 R14 验收。
+
+#### 第二批｜五个通用投影模块退出
+
+框架暂无业务消费者，全部十二个独立投影坐标直接退出。旧坐标解析、坐标转接、兼容 JAR、冻结旧客户端及新旧投影混用测试退出本批验收。先将公共 Handler、Registry、Dispatcher 与测试迁入 core，再移动 JPA、Jdbi、R2DBC、Panache 的位置存储与真实数据库测试。Spring Data 事务适配与测试归 Spring runtime。随后切换七个 CQRS 样例、构建清单、BOM 和验证入口。验收聚焦现行接口的按需装配、读模型更新、失败重试和按已有检查点续跑，沿用位置表与列名。
+
+- [x] 三条线的源码目录、reactor、BOM、runtime 与样例依赖均已移除十二个旧投影构件，data 子模块由 24 个减为 19 个。三线现行 Maven POM 中旧投影坐标引用为零。七个 runtime 继续提供可选投影，七种框架各有默认、CQRS、Sa-Token 和 Shiro 入口。
+- [x] 公共注册和分发、四种位置存储、Spring Data 集成通过各自 JDK 原生回归。
+- [x] 样例使用现行依赖。验证 Quarkus 持久样例的实体选择，以及默认入口无需启用持久投影。
+
+Java 8、17、21 分别通过 262、241、238 项定向测试，零失败、错误或跳过。三线各完成七个 CQRS 样例构建，Quarkus 的默认订单 HTTP 与本地 PostgreSQL 持久测试均通过。Panache 仓储仅在构建时选择 `position-store=panache` 后参与 CDI 注入。证据见 `R15-evidence/projection-consolidation/verification.json`。R14 的远端 CI 和完整三线验收仍按原流程记录。
+
+**退役后复跑命令核验**　R03、R04 和 R06—R12 的九条复跑命令已切到现行 core、runtime 及 EventStore 路径。以三线真实 Maven Wrapper 分别执行有效模型检查，共用的 27 个当前模块均可选中。Java 17 对原 Spring 投影选择器进行了反证，Maven 拒绝已退役模块。本次证据范围是 Maven 模型和选择路径。见 `R14-evidence/r14-post-platform-auth-reactors/r14-retired-projection-plan-commands/model-retry-verification.json`。
+
+#### 第三批｜七个独立 CQRS 模块退出
+
+2026-11-24 用户确认 runtime 已承接 CQRS，七个 `ddd4j-data-cqrs-*` 独立 JAR 直接退出。框架当前无业务消费者，目标为现行 runtime 提供所需能力，旧坐标与可选独立发布入口一并退出。下节的冻结消费者和拆分发布方案是历史验证记录。保存历史发布和回退证据，正式发布及远端执行另按授权。
+
+- [x] 按 Spring → Guice/Javalin → Quarkus → Micronaut → Helidon → Vert.x → Dropwizard 逐一核对三线的独占源码、装配、配置和测试。现行 runtime 承接命令路由、重复注册、失败/异常、请求上下文及资源释放。已有存在唯一行为的场景由实际 runtime 提供，单一容器仅有一个有效命令入口。
+- [x] 移除七个 Maven 子项目及 BOM、发布、验证入口的现行引用。三线默认 reactor 目标为 114 个模块，data 目标为 12 个模块。七种 runtime 及每种四个示例继续纳入 reactor，持久化模块与位置数据保持原接入契约。
+- [x] 将 Spring、Helidon 和 Quarkus 原场景 ID 绑定到实际 runtime XML。所有移除路径相关策略、脚本、自测和检查器按证据重绑。使用当前依赖构件对现行 runtime 独立验证，各线检查不存在重复类、重复 Bean 或独立旧 CQRS 构件。
+- [x] 每线使用本线 JDK 和 Maven Wrapper 从头验证目标拓扑，复验七个平台的命令、生命周期和四种样例模式。现行资料统一使用 runtime 入口，归档旧路径、兼容及回退报告可继续追溯。
+
+**2026-11-24 第三批本地交付**　三条工作副本各由 121 个默认项目收敛到 114 个，data 直属 19 项收敛到 12 项。七个旧 CQRS POM、独立兼容坐标和单旧坐标夹具已退出。各线七个 runtime 的独立 Maven 消费均通过，共 21 项；同时核对实际 runtime JAR 的命令入口类字节和依赖树。Java 8、21 的默认根 `clean verify` 分别通过 3,561 和 3,585 项。Java 17 整仓首次运行在 Spring 的既有测试调度竞争处失败，调整测试定时与手动触发的顺序后三线定向通过。Java 17 重跑 Spring 及其六个未构建的下游，合并本地证据覆盖 114 项、合计 3,622 个测试。三条线的 Spring、Helidon、Quarkus 迁移场景各核对 23 项原生 XML。Java 17 单次整仓和 R14 的跨线、远端、云验收仍各自开放。证据 `R15-evidence/runtime-only-cqrs/three-line-runtime-only-verification.json`、`R15-evidence/runtime-only-cqrs/runtime-consumer-cache-recovery-jetty/overall-verification.json`。
+
+**2026-11-24 第三批当前源码复验**　三线用本线 JDK 和 Wrapper 单次 `clean verify`，Java 8、17、21 分别为 114、113、114 项和 3,560、3,623、3,584 项测试。每线七个 runtime 与 28 个样例的实际测试报告均已逐模块核对，各有 319 条本地测试绑定通过。Java 17 的 113 项含数据权限加入 validation 后的当前拓扑。见 `R15-evidence/runtime-only-cqrs/final-local-retirement-matrix/verification.json` 和 `post-validation-consolidation-scenarios/`。
+
+
+**现行入口文档核对**　三条线逐个检查工作副本，七个旧模块目录和 Maven POM 引用均已清零，七个 CQRS 样例引用实际提供能力的 runtime。三线中英文 README 及现行架构图已同步到该拓扑。
+
+#### 旧 CQRS 独立发布候选（历史记录）
+
+**Java 8 的 114 模块默认入口复验**　首轮只缺四种 Spring 模式所需的 Boot 2.7 构件。恢复构件后的整仓有 113 项 Maven 项目成功，Micronaut CQRS 在 Flyway 连接 PostgreSQL 时收到连接重置。同源码定向复验通过该模块的六项测试并打出 Javadoc JAR。两份原始证据覆盖 114 项和 3,510 项测试。随后用 `127.0.0.1` 固定本机容器回环，单次原生 Maven `clean verify` 的 114 项全部成功，完成 3,510 项测试并生成 102 份 Javadoc。见 `R15-evidence/legacy-cqrs-detached-default-jdk8-loopback/status.json`。Java 17 历史整仓成功后变化的 Guice 和 MyBatis-Plus 已定向验证。见 `R15-evidence/legacy-cqrs-detached-default-jdk8-boot-restored/reconciled-root-and-focus-verification.json`。
+
+**合并候选与独立复核**　隔离三线实际应用候选补丁，核对默认 114 项和独立七个生产方，原策略指纹拒绝新工作流，随补丁更新的策略通过。独立生产方检查当轮 XML 内的具名用例。发布预演在任何暂存写入前核对两个 Maven 入口的成员，API 检查要求当轮产物。三线共通过 33 组原生发布夹具，验证缺项、重复项、额外 profile 和旧 JAR 的拒绝路径。Spring 对齐另用三条线的 Maven Wrapper 验证集成与分离两种入口。正式入口切换仍按下列 R15 任务、R14 当轮验收与发布要求判定。见 `R15-evidence/legacy-cqrs-topology-adoption/combined-candidate/verification.json`。
+
+**Java 17 的 114 模块默认入口候选**　本线 Wrapper 的 `clean verify` 通过 3,547 项测试，生成 102 份 Javadoc，保留全部样例项目。隔离 Maven 缓存仅追加七份经校验的公开 Quarkus 文件。正式默认入口、发布门禁和远端运行仍待验。见 `R15-evidence/legacy-cqrs-detached-default-jdk17/status.json`。
+
+**Java 17 合并候选复验（2026-11-24）**　当前候选的单次原生 114 项默认构建有 99 项成功、4 项失败、11 项因上游失败而跳过。失败涉及原生 MyBatis 的 Javadoc、Guice 仓储夹具、订单样例 Kafka 建主题及 Quarkus 样例 HTTP 超时。保留原始日志和汇总。用现行源码及测试定向复验 Guice、原生订单基础设施和 Quarkus HTTP，五组共 35 项通过，零失败、错误或跳过。此结果覆盖本次复验的三个测试入口，114 项默认构建验收保持开放。证据见 `R15-evidence/legacy-cqrs-detached-default-jdk17-final-composition/status.json`、`R14-evidence/r14-post-platform-auth-reactors/r14-guice-repository-native-fixture/verification.json`。
+
+**MyBatis 构建及 API 复验**　补齐 Java 17 原生 MyBatis 和 MyBatis-Plus 的公开成员 Javadoc 后，两模块均生成 Javadoc。Guice 的加密测试按本线增强组件构造器使用显式测试密钥提供者，修正后 Java 17 原生 Maven 定向通过 26 项，含两项三线共用 H2 聚合填充测试。当前 Java 17 的目标 class 与精确 API 策略验收使用的 class 哈希相同。三条线接入共用用例，并登记 Java 17 的两个显式增强成员。正式结构、整仓和发布验收保持开放。证据见 `R14-evidence/r14-post-platform-auth-reactors/r14-java17-mybatis-docs-and-abi-refresh/verification.json` 和 `R14-evidence/r14-post-platform-auth-reactors/r14-mybatis-enhance-platform-abi/integration.json`。
+
+**Java 17 后续整仓及 Broker 定向复验**　整仓 114 项中 112 项成功，Pulsar 的两项原生用例因 Broker 断开而失败，TDMQ 随上游失败跳过。Pulsar 定向复验通过 10 项，TDMQ 首轮在容器启动时超时，单独复验通过 13 项，均生成各自的 Javadoc。三次构建的 395 份 Broker 相关源码与 Maven 输入哈希一致。按模块汇总覆盖 114 项、3,563 项测试和 102 份 Javadoc，整仓单次通过依然待验。证据见 `R15-evidence/legacy-cqrs-detached-default-jdk17-current-focused-recovery/reconciled-root-and-brokers.json`。
+
+**Java 17 冻结快照的单次整仓复验**　114 项默认构建候选在一次原生 `clean verify` 中成功，完成 3,572 项测试并生成 102 份 Javadoc。构建期间，工作区另有 `ApiIdempotent` 文档和 JaCoCo 代理对第三方词法分析器的配置变更。当前两处输入的定向 Maven 另通过 31 项，注解 class 与整仓归档逐字节一致，重新生成对应 Javadoc，本项目 Guice 覆盖率记录仍生成。整仓构建和变化后的定向证据按各自快照归档。见 `R15-evidence/legacy-cqrs-detached-default-jdk17-after-r14-scope-and-adapters/status.json` 和 `R14-evidence/r14-post-platform-auth-reactors/r14-java17-after-native-root-input-drift/joined-root-and-targeted.json`。
+
+**三线旧 CQRS 独立生产方测试**　每条线分别运行 Spring 7 项、Helidon 3 项、Quarkus 5 项，合计 45 项，零失败、错误或跳过。Java 21 Quarkus 的两项原生代码生成目标在显式离线解析下通过，随后在回环临时端口启动和停止。读到本次新生成的具名 Surefire XML 后才通过验收。正式 reactor 和发布拓扑仍待采用及复验。见 `R15-evidence/legacy-cqrs-detached-scenarios-java8/` 和 `R15-evidence/legacy-cqrs-detached-scenarios-java17-java21/verification.json`。
+
+**Java 17 当前源码的七个独立 CQRS 生产方**　重新构建二十个当前同线支持项目，七个旧 CQRS 模块与独立聚合器在一次原生 Maven `clean verify` 中通过，七个生产方执行 52 项测试，其中 Quarkus 九项，零失败、错误或跳过。七个主 JAR 和当轮报告均已归档。Java 17 的归档构件 API 复核改用这批 JAR。七个独立消费者使用当轮产物通过断网 Maven 验证，七个冻结客户端均执行成功，七份原客户端源码均重编译成功。远端发布预演和正式拓扑采用各自按门禁记录。见 `R15-evidence/legacy-cqrs-current-java17-producers/verification.json` 与同目录下的 `consumer-verification.json`。
+
+**R15 候选与当前策略的叠加复验**　以更新后的三线策略重新组合七个独立 CQRS 构件的候选补丁。三条线的默认 reactor 均为 114 项，独立入口均保有七个构件，发布清单的成员哈希一致。刷新后的 Kafka 指纹在合并候选中保持有效。BOM 检查、工作流和脚本 lint 及 44 项验证器测试通过。正式拓扑、发布和远端验收仍按原门禁执行。见 `R15-evidence/legacy-cqrs-topology-adoption/combined-candidate-after-kafka-policy-refresh/verification.json`。
+
+**三线完整独立构建与本地暂存**　Java 8、17、21 的七个兼容 CQRS 构件分别通过 53、52、52 项独立 Maven 测试，无失败、错误或跳过。每线七个主 JAR、六个源码 JAR、五个 Javadoc JAR。以本次打包产物实际写入断网文件 Maven 仓库，三线共 21 个独立消费者从预装同线支持依赖、初始无旧 CQRS 叶构件的隔离仓库解析并编译通过。Java 21 的默认 114 项候选通过 `clean verify`，执行 3,532 项测试并生成 102 份 Javadoc，使用本机 Redis 8.4.0。三线 GitHub 预演参数已接入标准 Maven Deploy 跳过属性，本地文件验证确认开启预演时不生成暂存构件。三线正式构建拓扑和发布验收仍开放。见 `R15-evidence/legacy-cqrs-detached-full-three-line.json`、`R15-evidence/legacy-cqrs-local-staging-three-lines.json`、`R15-evidence/legacy-cqrs-detached-default-jdk21/status.json`。
+
+**Java 8/17 的 Maven 3 构建模型及 Java 17 构件**　隔离默认入口各验证 114 个项目，独立描述符各选中 7 个旧模块与一个本地聚合器。Java 17 在断网的新可写仓库中通过七个旧构件的打包、本地安装、独立消费者及冻结旧客户端。Quarkus 代码生成与生产方测试需各自验收。此批尚未改变本线正式构建拓扑。见 `R15-evidence/legacy-cqrs-detached-maven3-model/verification.json` 与 `R15-evidence/legacy-cqrs-detached-packages-java17/network-denied/verification.json`。
+
+**Java 21 七个旧 CQRS 构件的断网验收**　系统断网后使用空的可写仓库和 49 份核验过的上游种子，七个旧模块独立打包和安装，七个无父 POM 的 Maven 消费项目独立验证通过。已安装产物的消费者 POM 仍解析各自的父 POM。全部七个冻结旧客户端通过，四个需要将原有 Mockito JAR 作为启动 agent。七条消费类路径的 DDD4J 类无重复。该轮略过 Quarkus 代码生成与生产方测试，暂未采用构建拓扑或执行发布。见 `R15-evidence/legacy-cqrs-detached-aggregate-packages/network-denied/combined-verification.json`。
+
+**Java 21 独立 CQRS 构建入口**　Maven 4 的独立聚合在离线模型验证中选中七个旧模块，默认入口验证 114 项并保留 35 个样例相关项目。两次验证均未复现原 profile 的消费者 POM 转换告警。Spring 旧构件已独立安装，父 POM 独立消费者及冻结 M01 客户端通过。首次七模块联跑的 Quarkus 代码生成子进程触发远程解析，结果不计入离线验收。各线正式构建拓扑仍按待验收状态处理。见 `R15-evidence/legacy-cqrs-detached-aggregate-packages/summary.md`。
+
+**七个旧 CQRS 模块的显式构建模型实验**　三线原生 Wrapper 离线验证各通过 121 个基线项目、114 个候选默认项目和 121 个显式启用项目，每线保持 35 个样例及共享项目。Java 21 原生 profile 使用 subprojects 时出现消费者 POM 版本转换警告。试用 modules 后，显式启用仍遗漏七个旧构件，已排除该写法。Spring、Helidon、Quarkus 的现有场景可以读取独立 Maven 构建的报告。用匹配源码的归档 XML 回放确认收集器会拒绝缺失或过期报告。候选实际编译、独立消费与发布未完成。见 `R15-evidence/legacy-cqrs-profile-model/verification.json` 和 `R15-evidence/legacy-cqrs-scenario-report-replay/verification.json`。
+
+**Java 8 Javalin 退出候选的模型复核**　同一隔离缓存中，候选和原始根直接执行 `validate` 均遇到三个 Spring 样例的父描述符错误。先执行项目现有的 flatten 目标后，候选 120 个模块均通过 `validate`。整仓 `clean verify` 及实际退出仍单独验收。见 `R15-evidence/cqrs-javalin-root-model-followup/verification.json`。
+
+
+**Javalin 旧 CQRS 产物的独立构建实验**　隔离副本仅从 data 默认聚合移出 Javalin 旧 CQRS 模块。Java 8、17、21 均用原 POM 独立安装原 GAV，各通过 6 项测试，独立 Maven 消费者和冻结 M03 客户端均成功。Java 17、21 各有 120 个默认项目通过 `validate`。Java 8 候选模型包含 120 个项目；根验证遇到 Spring 样例离线 BOM 解析失败，用原始 121 项模型复现同一问题。该实验未改变三条线的实际默认聚合，完整 `clean verify` 和发布路径仍单独验收。见 `R15-evidence/cqrs-javalin-detached-candidate/three-line-compatibility-summary.json`。
+
+三线实际完成 21 个独立旧 CQRS 坐标消费者验证，每个框架与 Java 版本组合各一项。全部使用独立 Maven 消费闭包并运行旧命令二进制，未引入已退役的投影坐标或重复 DDD4J 类。六个非 Quarkus 框架的旧客户端源码也在三条线重编译通过。完整应用启停和持久数据回退继续使用各平台的独立证据。报告位于 `R15-evidence/quarkus-sole-cqrs-current/verification.json` 和 `R15-evidence/six-sole-cqrs-current/verification.json`。
+
+本地静态盘点覆盖三线各 135 份 POM。七个旧 CQRS 坐标仍有聚合模块定义，现行 runtime、样例和其他生产 POM 未直接依赖它们。每个坐标仍有一份旧坐标消费者测试夹具。Java 8 的 BOM 管理其中五个，Helidon 和 Quarkus 旧坐标没有同线 BOM 条目。Java 17 和 21 的 BOM 管理全部七个。旧模块的类、资源和测试归属见 `R15-evidence/cqrs-coordinate-readiness/static-inventory.json`。这份盘点记录本地源码和 Maven 声明，旧消费者运行与回退继续按下列任务验收。
+
+**Files:** `ddd4j-data/pom.xml`、根 reactor/BOM/文档中相关引用、剩余旧 CQRS 模块的发布归属。
+
+**Interfaces:** 消费 R13/R14 报告和实际消费者迁移记录；产出旧实现退出清单。兼容构件仍需要时继续维护，不能把“退出独立实现”自动解释为“删除旧坐标”。
+
+- [ ] 逐项确认剩余旧 CQRS 模块的消费者迁移、API/配置/数据兼容、回退、当前三线证据和 S00—S07 全部 28 场景验收；任一项缺失则保留对应旧实现/兼容路径，记录具体未完成项。
+- [ ] 在已授权实施范围内移出完成迁移的重复实现和默认 reactor 项；测试随职责迁移，旧公开入口由兼容构件/委派继续承担。未确认的废弃期限不自行设定。
+- [ ] 验证 reactor 不再引用已移除路径、BOM/兼容构件能解析、旧新消费者仍可运行；已发布构件不删除，发布/部署另按授权执行。
+- [ ] 对照 AC12 和原 T11 完成定义记录结果；仅在全部必需证据到位后勾选完成，不因文档和模块数量达到目标而提前结束。
+
+### 证据记录、原任务映射与本次交付状态
+
+每个 M 项至少记录：三线源码/GAV 基线、迁移类与配置、旧/新实际提供模块、依赖变化、测试命令与报告、平台/数据库证据、消费者及回退结果、剩余缺口。记录放在既有迁移文档和证据索引，构建产物放既有证据目录或 target；本轮不创建空报告充数。
+
+| 新任务 | 衔接原任务 | 说明 |
+|---|---|---|
+| R00—R01 | T00/T01/T04 | 延续规格和原版/API 基线，不重建三线体系 |
+| R02—R04 | T04/T05 | 公共命令、投影、事务和存储契约 |
+| R05—R12 | T03/T06/T08 | 依赖边界、平台接入和样例；复用已有测试 |
+| R13 | T04/T08/T09 | 兼容构件、外部消费者和迁移文档 |
+| R14—R15 | T10/T11 | 三线门禁和旧实现退出；不降低既有完成定义 |
+
+2026-11-18 已进入授权实施；R00 静态清单见 `REFACTOR_MIGRATION.md`，证据与未完成项见 `.superpowers/sdd/2026-10-10-three-line-product-convergence/task-R00-report.md`。所有未满足实现和验证的 R/S 任务保持未勾选。旧 T 任务及以下历史执行记录不变；本节与旧自研计划的建模块方式冲突时，按本节引用的收敛设计实施，保留历史证据而不覆盖旧报告。
 
 ## 一、范围、基线与完成定义
 
@@ -226,11 +1305,23 @@ T03 某个上游坐标阻塞时，继续处理不依赖它的 T04—T09 子项�
 - [ ] 共同必需构建/测试移除大范围 samples/Quarkus 排除及 `continue-on-error`。需要外部云凭据的验证置于显式受保护作业，未执行则报告未验证，不能静默通过。
 - [ ] 为门禁加入故障注入回归：删除生产文件、删除测试映射、改变一个错误码、跨线 Easy4J 版本、缺报告、旧构件、变更指纹、扩大豁免范围，均必须被检测。
 
+**2026-11-20 本地验证**　现有故障注入测试已接到三线工作流的推送预检前，本地运行共通过 329 项，补充的 CDI 检查和 JDK 路径夹具分别通过。所有发布线的候选作业将报告写到 Maven `target` 之外，并沿用已有 Maven 仓库配置方式。三条 Wrapper 对隔离夹具实际执行 `clean`，均清理了 `target` 并保留 SBOM、许可证、CVE、API 四类报告。三线 `actionlint` 通过；远端 CI 为 NOT_RUN。证据见 `R14-evidence/r14-convergence-workflow-gates/verification.json`。
+
+**2026-11-20 场景基线门禁**　候选场景矩阵与已提交基线逐线核对，拒绝同步删除场景、状态降级和替换已登记的具名用例。允许保留原用例的文件迁移和已核对的 MQTT 重命名。CI 推送读取变更前提交，手动可指定既有 SHA，迁移前无矩阵的旧提交使用固定的 162 场景历史基线。三线各 26 项自测、7 种 Git 对象选择与拒绝检查通过，真实 `verify` 对缺失已登记场景提前失败并保留基线和输入指纹。当前 178 个场景对比基线无回退。整仓 `inventory` 的结构、正文、249 项历史索引通过，三条云 Broker 场景保持待验收。两条有已提交更新的历史文档索引按来源提交刷新。证据见 `R14-evidence/r14-convergence-scenario-baseline`。
+
+**2026-11-24 退役后门禁复验**　三线收敛检查器核对 Surefire/Failsafe XML 的用例归属、具名用例和实际计数，并识别重复归档。云 MQ 回执校验要求单份 JSON、唯一字段、纯主机名及不含凭据的证据 URI。三线各通过 29 项门禁单测及 9 项回执夹具，另用 2,446 份原生 XML 验证报告规则。见 `R15-evidence/runtime-only-cqrs/r14-gate-local-application/`。真实云 MQ 和远端 CI 尚未执行。
+
 **验收：** 本地总入口和 workflow 静态检查通过，故障注入全部失败如预期；远端 CI 如未触发，单列 NOT_RUN，不宣称已通过。
+
+**2026-11-24 同线 API 门禁修复**　三线以发布 reactor 为准核对主 JAR 及每个构件当轮生成的 JApiCmp XML。当前三线分别选择 72、70、72 个构件，各含五个发布的样例辅助库。Java 8 补齐实际 Maven 比较 profile，以 JApiCmp 0.24.2 保留 Maven 3.6.3 最低要求。Maven 版本结果从帮助插件输出文件读取。三线本线 Wrapper 使用合成基线运行真实比较，新增公开方法通过，删除公开方法触发二进制失败，未发布样例正常打包。工作流与基线守卫共 46 项测试通过。证据见 `R15-evidence/runtime-only-cqrs/same-line-api-release-scope/verification.json`。真实已发布同线基线仍待核实，远端 CI 保持待验。
+
+**2026-11-24 总体清单恢复**　历史索引按 Git HEAD 枚举和校验已提交归档，三线 249 条记录通过。三组校验接口的映射按发行线核对实际测试。Java 17 的验证扩展通过 13 项测试，Java 8 和 21 的校验模块输入与既有原生报告均一致。四条已失效的平台适配登记退出，实际缺失的文件在清单中保持 OPEN。结构、产品文档和历史索引均完成清单阶段，仍有 698 项 OPEN 源码与结构差异。见 `R15-evidence/runtime-only-cqrs/current-inventory-recovery/verification.json`。
+
+**2026-11-24 历史索引与类型映射 CI 回归接线**　三条线的收敛作业执行两套回归。门禁测试覆盖同名步骤出现在其他作业、折叠注释吞掉参数及换行隔开参数的情况。三线实际工作流命令共通过 455 项本地测试，并通过 actionlint。远端 CI 仍为待验。见 `R15-evidence/runtime-only-cqrs/current-jvm-remaining/ci-gate-regressions/verification.json`。
 
 ### T11：执行最终验收并形成三线交付包
 
-- [ ] 固定最终输入，在三个 JDK 下分别执行适用 reactor 的 `clean verify` 和独立样例 reactor；如本地依赖安装是必要前置，先执行并记录构件来源，再运行最终 clean 构建。
+- [x] 固定最终输入，在三个 JDK 下分别执行适用 reactor 的 `clean verify` 和独立样例 reactor；如本地依赖安装是必要前置，先执行并记录构件来源，再运行最终 clean 构建。
 - [ ] 根据 T02 核实的绑定执行全部必需 IT/profile，核对每个场景存在真实测试报告、执行数量和退出码，不允许缺失测试以成功命令代替。
 - [ ] 运行禁止 record、自测、BOM、依赖严格检查、架构规则、同线 API 兼容、跨线 API/行为/文档检查及 T10 总入口。
 - [ ] 审查三线变更，重点覆盖 Review Focus；复查没有混入无关格式化、用户修改或非必要依赖升级。
@@ -238,6 +1329,32 @@ T03 某个上游坐标阻塞时，继续处理不依赖它的 T04—T09 子项�
 - [ ] 只有满足完成定义才勾选本任务。未满足的门禁保持开放；后续提交授权到来时分别提交三线及必要上游，报告 SHA、远端核验、工作区与实际 CI，不能把本地报告标为远端 CI。
 
 **验收：** 可由另一工程师按相同输入重现结论；共同能力差异清零，保留差异全部可解释；无外部验证时不作生产就绪承诺。
+
+**2026-11-24 退役后本地场景复验**　三线各覆盖 114 个默认 Maven 项目及 250 个本地场景。Java 21 单次 `clean verify` 通过。Java 8、17 的整仓与 MyBatis-Plus、Guice、Javalin 定向补跑按成功模块合成，补跑使用核过哈希的同线 MyBatis 增强构件。三线覆盖 3,560、3,619、3,584 项构建测试，未见失败、错误或跳过。真实 Redis 及 EventStore 容量用例另行显式执行。三线值契约一致。严格公开 API 仍有 43 项集中在 MyBatis 与 MyBatis-Plus，严格依赖门禁仍有 4 个 Java 21 管理坐标差异及 2,442 项当前本机未核实的构件记录。同线发布兼容、远端 CI 和真实云服务验收继续开放。证据见 `R15-evidence/runtime-only-cqrs/current-native-scenarios/composed-validation.json`、`post-retirement-api/current-composite/summary.json` 与 `post-retirement-effective-catalog/local-rebind-verification.json`。
+
+**Java 17 固定生产构件后的整仓复验**　MyBatis-Plus 和 Guice 均通过。整仓 112 项成功，Dropwizard 订单重开后的 HTTP 状态断言及 Javalin Sa-Token 商品查询连接各失败一项。使用同一冻结源码与缓存，两个 HTTP 测试类的 33 项定向复验均通过，单次整仓状态保持开放。运行期间工作区另有 Tika 与 validation 扩展变更，以上证据绑定冻结输入。Java 8 的 Quarkus 单独用 `durable-order` 与本地 PostgreSQL 16.16 通过三项测试。三线各自的 Pulsar 容器和 SQS 本地 Broker 用例各通过两项。见 `R15-evidence/runtime-only-cqrs/jdk17-full-current-pinned-mybatis/`、`jdk17-current-frozen-http-replay/` 和 `current-quarkus-java8-durable/`。
+
+**2026-11-24 Java 8 与 17 单次整仓复验**　按各自 JDK 和 Wrapper 执行 `clean verify`。Java 8 的 114 项通过 3,560 项测试。Java 17 当前工作副本已将数据权限实现归入 validation，113 项通过 3,623 项测试，包含 validation 和 auth-datascope 的 23 项。两线测试均为零失败、错误和跳过。Java 17 当前 POM 已配置 Tika Microsoft 文件检测模块，原生 XML 核对了真实 DOCX／XLSX、改名拒绝及文件内容 SPI。见 `R15-evidence/runtime-only-cqrs/jdk8-full-current-pinned-mybatis/verification.json`、`jdk17-full-live-validation-consolidation/verification.json`。
+
+**2026-11-24 严格依赖与结构清单**　Java 21 的 `ddd4j-dependencies` 补齐 Plain MyBatis 增强的四个本线管理坐标。独立 Maven 消费者显式导入该目录 BOM 后解析到核验过的真实构件，14 个受影响默认依赖树对照一致。三线原生有效 POM 复跑严格检查，4,602 条记录中剩余 27 个 Easy4J SNAPSHOT 缺少当前可核验 JAR，模型与已核验 JAR 无额外错误。Tika 组件快照按 Java 17 的有效模型标注聚合 POM 类型并更新精确摘要，库存入口恢复通过。R14 的 JVM API、快照、远端 CI 和真实云 MQ 继续开放。见 `R15-evidence/runtime-only-cqrs/dependency-catalog-public-recovery/current-strict-verification.json` 与 `post-tika-evidence-inventory/`。
+
+
+**2026-11-24 当前场景与 JVM 声明复验**　Java 8、17 各 319 条已支持验证绑定的原生 XML 均可追溯，Redis 与 EventStore 显式执行通过。三线 JVM 声明仍有 73 个未对齐项。原有 MyBatis 系列 43 项，Java 17 数据权限类型跨构件迁移产生 23 项，`ValidatableFile` 接入 Easy4J 增加 7 项。Java 21 JVM 产物来自目录 BOM 补齐前的本线整仓，新增坐标已另行完成 Maven 模型与消费者核验。见 `R15-evidence/runtime-only-cqrs/post-validation-consolidation-scenarios/` 与 `post-retirement-api/validation-consolidation-diagnostic/summary.json`。
+
+
+**2026-11-24 Easy4J 依赖闭环与门禁状态**　此前待核实的 27 个 SNAPSHOT 中，22 个通过各线现有 Maven 仓库直接解析。另五个真实子 JAR 在隔离缓存中补入固定上游提交的 `jwt-issuer` 与 `pf4j-extension` 父 POM 后解析通过，原始冷缓存失败证据已保留。三线有效 BOM 的 strict-artifacts 共 4,602 条记录，零错误、零未核验，各线工作流静态检查和本线基准守卫均通过。当前 native class 的三线严格 API 仍有 73 项差异。真实 Bean Validation 对三线的正常授权、拒绝、空值、分组和消息得到一致结果。发布基线、依赖库冷缓存的父 POM、远端 CI 和真实云 MQ 继续单列。见 `R15-evidence/runtime-only-cqrs/current-strict-with-private-snapshots/current-strict-verification.json`、`datascope-equivalence-replay/` 和 `post-retirement-api/current-three-line-jvm/summary.json`。
+
+
+**2026-11-24 三线当前独立样例验收**　分别安装来自本轮冻结源码的 78、77、78 个非样例项目到各自临时 Maven 仓库。清除临时副本的项目构建输出后，从 `ddd4j-samples/pom.xml` 单独执行 `clean verify`。三线各通过 36 个样例 reactor 项目，覆盖 28 个框架场景，分别通过 1,056、1,062、1,062 项测试。零失败、错误或跳过。逐份实际测试报告确认使用临时仓库中的当前框架 JAR。见 `R15-evidence/runtime-only-cqrs/current-independent-samples/summary.json`。
+
+**2026-11-24 Easy4J 父 POM 本地发布演练**　对固定上游提交的 `jwt-issuer` Java 17 与 `pf4j-extension` Java 21 根 POM 分别运行非递归 Maven deploy，目标与解析镜像均限定本机文件。Maven 3 生成父 POM，Maven 4 生成消费者父 POM 和 build 分类 POM。两条上游当前 CI 都只执行 verify，现有证据无法还原历史发布调用。隔离缓存补入已核验父 POM 后，五个子构件的传递依赖解析通过。私服的冷缓存解析仍待验收。见 `R15-evidence/runtime-only-cqrs/local-parent-deploy-replay/verification.json` 和 `easy4j-configured-snapshot-replay/transitive-seeded-verification.json`。
+
+
+**2026-11-24 R14 本地存储与平台验收**　复核三条线当前构建归档中的原生测试 XML，四种投影位置存储和五种 EventStore 的具名用例全部通过。八种 Web 接入在 Java 8、17、21 分别通过 260、263、261 项。各线七个 runtime 均完成独立消费验证，各有 28 个独立样例场景通过。见 `R15-evidence/runtime-only-cqrs/current-storage-platform-evidence/verification.json`。R14 的发布基线、跨线 JVM 差异、远端和真实云验收仍开放。
+
+**2026-11-24 Java 17 新拓扑整仓与当前 JVM API**　Java 17 在 Web 校验迁移后的 112 个项目上执行本线 Maven Wrapper `clean verify`，3,616 项测试全绿，包含七个 runtime 与 28 个框架样例入口。Java 8、21 在本线当前源码各完成 114 项原生编译。严格 JVM 比较绑定该三线产物，核对生产输入无变化。Java 8 与 21 对齐，七个 runtime 也均对齐。共有 168 项未解释的 JVM 声明差异，125 项在校验与数据权限构件，43 项在 MyBatis 相关构件。真实发布基线、远端 CI 和云服务仍待验。见 `R15-evidence/runtime-only-cqrs/current-inventory-recovery/verification.json`。
+
+**2026-11-24 Java 17 冷仓构件和独立样例复验**　配置仓库从隔离 Maven 缓存解析的新 validation SNAPSHOT JAR、POM 与当前整仓测试实际加载的构件一致，传递解析通过。严格依赖清单使用该实际 JAR 复验 4,602 条记录，零错误、零未核实。Java 17 以当前 76 个框架项目在隔离仓库装配样例。首次独立 reactor 的 Spring CQRS 测试卡在 PostgreSQL 认证读，其余 27 个框架场景通过。相同构件下隔离复跑 Spring CQRS 的五项测试通过。合计覆盖 28 个场景和 1,062 项测试，一次整仓完成仍待验证。严格 API 的 168 项差异仍保持开放。两份专项规格对旧 API 退出的授权当前限于 Java 17。见 `R15-evidence/runtime-only-cqrs/current-jvm-remaining/verification.json`。
 
 ## 四、命令约定与证据保管
 

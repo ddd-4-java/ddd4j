@@ -24,12 +24,15 @@ import io.ddd4j.sample.javalin.satoken.order.application.CreateOrderCommand;
 import io.ddd4j.sample.javalin.satoken.order.application.OrderApplicationService;
 import io.ddd4j.sample.javalin.satoken.order.domain.model.Money;
 import io.ddd4j.sample.javalin.satoken.order.domain.model.Order;
+import io.ddd4j.sample.javalin.satoken.order.domain.service.OrderDomainService;
+import io.ddd4j.sample.javalin.satoken.order.infrastructure.InMemoryOrderRepository;
 import io.ddd4j.sample.javalin.satoken.order.web.dto.AddOrderLineRequest;
 import io.ddd4j.sample.javalin.satoken.order.web.dto.CreateOrderRequest;
 import io.ddd4j.sample.javalin.satoken.order.web.dto.OrderResponse;
 import io.javalin.apibuilder.EndpointGroup;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -60,12 +63,26 @@ import static io.javalin.apibuilder.ApiBuilder.post;
 public class OrderResource {
 
     private final OrderApplicationService orderApplicationService;
+    private io.ddd4j.sample.order.application.OrderApplicationService shared;
+    private io.ddd4j.sample.order.domain.OrderRepository repository;
+
+    /**
+     * @param shared 公共订单应用服务
+     * @param repository 同一共享写仓储
+     */
+    public OrderResource(io.ddd4j.sample.order.application.OrderApplicationService shared,
+                         io.ddd4j.sample.order.domain.OrderRepository repository) {
+        this.orderApplicationService = null;
+        this.shared = Objects.requireNonNull(shared);
+        this.repository = Objects.requireNonNull(repository);
+    }
 
     /**
      * 创建订单资源。
      *
      * @param orderApplicationService 订单应用服务
      */
+    @com.google.inject.Inject
     public OrderResource(OrderApplicationService orderApplicationService) {
         this.orderApplicationService = Objects.requireNonNull(orderApplicationService, "orderApplicationService must not be null");
     }
@@ -76,6 +93,9 @@ public class OrderResource {
      * @return 订单路由组
      */
     public EndpointGroup routes() {
+        if (Objects.nonNull(shared)) {
+            return sharedRoutes(shared, repository, new OrderDomainService(new InMemoryOrderRepository()));
+        }
         return () -> {
             // POST /orders —— 创建订单
             post("/orders", ctx -> {
@@ -142,6 +162,59 @@ public class OrderResource {
             get("/orders/{id}/discount", ctx -> {
                 String id = ctx.pathParam("id");
                 Money discounted = orderApplicationService.previewDiscount(id);
+                ctx.json(R.ok(new DiscountView(discounted.amount().toPlainString(), discounted.currency())));
+            });
+        };
+    }
+
+    /**
+     * 装配共享订单路由，沿用调用方提供的原折扣策略。
+     *
+     * @param shared 共享订单应用服务
+     * @param repository 同一共享写仓储
+     * @param discounts 原折扣策略
+     * @return 订单路由组
+     */
+    public static EndpointGroup sharedRoutes(io.ddd4j.sample.order.application.OrderApplicationService shared,
+                                              io.ddd4j.sample.order.domain.OrderRepository repository,
+                                              OrderDomainService discounts) {
+        return () -> {
+            post("/orders", ctx -> {
+                CreateOrderRequest req = ctx.bodyAsClass(CreateOrderRequest.class);
+                ctx.status(201).json(R.ok("order created", OrderResponse.from(shared.create(
+                        new io.ddd4j.sample.order.application.CreateOrderCommand(req.orderNo(), req.buyerId(), req.buyerName())))));
+            });
+            post("/orders/{id}/lines", ctx -> {
+                AddOrderLineRequest req = ctx.bodyAsClass(AddOrderLineRequest.class);
+                ctx.json(R.ok("order line added", OrderResponse.from(shared.addLine(
+                        new io.ddd4j.sample.order.application.AddOrderLineCommand(ctx.pathParam("id"), req.goodsId(),
+                                req.goodsName(), req.quantity(), req.unitPrice())))));
+            });
+            post("/orders/{id}/pay", ctx -> {
+                String id = ctx.pathParam("id");
+                String key = ctx.header("Idempotency-Key");
+                ctx.json(R.ok("order paid", OrderResponse.from(shared.pay(id,
+                        io.ddd4j.kit.lang.StrKit.isBlank(key) ? "legacy-payment-" + id : key))));
+            });
+            post("/orders/{id}/ship", ctx -> ctx.json(R.ok("order shipped", OrderResponse.from(shared.ship(ctx.pathParam("id"))))));
+            post("/orders/{id}/cancel", ctx -> ctx.json(R.ok("order cancelled", OrderResponse.from(shared.cancel(ctx.pathParam("id"))))));
+            get("/orders/by-order-no", ctx -> ctx.json(R.ok(OrderResponse.from(repository.findByOrderNo(ctx.queryParam("orderNo"))
+                    .orElseThrow(() -> new NoSuchElementException("order not found"))))));
+            get("/orders/{id}", ctx -> ctx.json(R.ok(OrderResponse.from(repository.findById(ctx.pathParam("id"))
+                    .orElseThrow(() -> new NoSuchElementException("order not found"))))));
+            get("/orders", ctx -> {
+                String buyer = ctx.queryParam("buyerId");
+                String status = ctx.queryParam("status");
+                ctx.json(R.ok(repository.findAll(0, Integer.MAX_VALUE).stream()
+                        .filter(order -> Objects.isNull(buyer) || buyer.equals(order.buyerId()))
+                        .filter(order -> Objects.isNull(status) || status.equals(order.status().name()))
+                        .map(OrderResponse::from).toList()));
+            });
+            get("/orders/{id}/discount", ctx -> {
+                var order = repository.findById(ctx.pathParam("id"))
+                        .orElseThrow(() -> new NoSuchElementException("order not found"));
+                Money discounted = discounts.calculateDiscount(order.buyerId(),
+                        new Money(order.totalAmount().amount(), order.totalAmount().currency()));
                 ctx.json(R.ok(new DiscountView(discounted.amount().toPlainString(), discounted.currency())));
             });
         };

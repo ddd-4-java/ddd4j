@@ -2,6 +2,8 @@
 
 > **2026-10-10 执行状态**：下文标注的 2026-09-24 HEAD、发布和门禁结论属于当时的历史快照，不代表本轮三线收敛验收。当前任务与未完成门禁见[三线产品收敛计划](./superpowers/plans/2026-10-10-three-line-product-convergence.md)，历史报告来源见[证据索引](./superpowers/historical-evidence-index.md)。
 
+> 当前收敛计划覆盖七个 runtime 实现。Guice 承担运行时装配，Javalin 提供其 HTTP 接入，testkit 独立用于测试。下文的历史八项表述按原规划保留。现行边界见[架构收敛设计](./architecture/architecture.md#architecture-convergence-20261118)。
+
 > **文档说明**：ddd4j 的产品级版本规划。把"三轨治理"从工程层面（[`5、ddd4j-技术方案与路线.md`](./5、ddd4j-技术方案与路线.md)
 >
 §2）正式纳入产品规划：发布节奏、版本矩阵、支持窗口、生态分层、升级路径、技术兼容性矩阵、商业兼容与支持政策。所有时点数字、定价、支持窗口基于"假设 /
@@ -276,7 +278,7 @@ import 的上游 BOM 文件读取。
 | 层                         | 代表                                                                                           | 仓库                                  | 关系                         |
 |:---------------------------|:-----------------------------------------------------------------------------------------------|:--------------------------------------|:-----------------------------|
 | **核心层（本仓库 ddd4j）** | ddd4j-core / ddd4j-data / ddd4j-mq / ddd4j-web / ddd4j-runtime / ddd4j-auth / ddd4j-extensions | `partme-ai/ddd4j`                     | Apache-2.0，框架无关         |
-| **脚手架层**               | ddd4j-boot / ddd4j-quarkus / ddd4j-javalin                                                     | redacted-legacy-family/ddd4j-{boot,quarkus,javalin}` | Apache-2.0，框架特定 starter |
+| **脚手架层**               | ddd4j-boot / ddd4j-quarkus / ddd4j-javalin                                                     | `ddd-4-java/ddd4j-{boot,quarkus,javalin}` | Apache-2.0，框架特定 starter |
 | **应用层（业务工程）**     | 用户自定义业务项目                                                                             | 用户自有仓库                          | 消费前两层                   |
 
 ### 7.2 商业模式与定价（⚠️ 见 §11 决策点 #5）

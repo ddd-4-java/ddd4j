@@ -53,45 +53,37 @@ ddd4j 通用基础层的架构分层遵循一个 **铁律**：
 | **路径**     | `ddd4j-runtime/ddd4j-runtime-spring/src/main/java/io/ddd4j/spring/`    |
 | **代码量**   | 26 个 Java 文件 / 2,980 行                                             |
 | **核心定位** | SPI 接口的 Spring 实现 + 上下文门面                                    |
-| **强依赖**   | `ddd4j-core` / `ddd4j-kit` / `ddd4j-annotation` + Spring Framework 6.x |
+| **强依赖**   | `ddd4j-core` / `ddd4j-kit` / `ddd4j-annotation` + 本发行线 BOM 管理的 Spring Framework |
 | **禁止内容** | `META-INF/spring.factories`、`@AutoConfiguration`、starter             |
 
 ---
 
 ## 二、激活方式
 
-### 2.1 一行注解激活（推荐）
-
-业务 Spring Boot 主类加一个 `@EnableDdd4j` 注解即可：
+普通 DDD 用法导入 `SpringCoreConfig` 即可。基础配置注册通用运行时 Bean，命令总线和投影按需启用。
+需要命令总线时，加入 `SpringCommandConfig`。
 
 ```java
-@SpringBootApplication
-@EnableDdd4j                    // ← 一行激活完整 DDD/CQRS 能力
-public class MyApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(MyApplication.class, args);
-    }
+@Configuration(proxyBeanMethods = false)
+@Import({SpringCoreConfig.class, SpringCommandConfig.class})
+public class ApplicationConfiguration {
 }
 ```
 
-### 2.2 显式 @Import（不推荐）
+需要投影时加入 `SpringProjectionConfig`，提供业务视图，并将 `ProjectionRunner` 接到实际的事件读取器和投影位点仓储。
+使用默认投影调度适配器时，提供 Spring 的 `TaskScheduler`。配置会复用调用方声明的 `CommandBus`、`ViewManager` 或 `ViewScheduler`。
+使用默认装配且缺少所需的 Bean 时，应用启动会报错。容器关闭时停止由 runtime 创建的投影任务。
 
-```java
-@SpringBootApplication
-@Import({ BaseCoreConfig.class, DddAutoConfiguration.class })
-public class MyApplication { ... }
-```
+这些入口可用于纯 Spring 和 Spring Boot 应用。若应用通过外部 `ddd4j-boot-*` starter 启用 DDD，沿用该 starter 的接入方式。
 
-### 2.3 纯 Spring（非 Boot）
+Spring 的命令侧装配由本模块提供。需要投影时，从 `SpringProjectionConfig` 接入。
+旧命令包和 runtime 命令包均声明名为 `springCommandBus` 的组件。同一应用使用一个显式配置入口或原有的单包扫描即可。
 
-```java
-@Configuration
-@Import(BaseCoreConfig.class)
-public class MyConfig { ... }
-```
-
-> `@EnableDdd4j` 属于具体框架脚手架的启用入口。`ddd4j-runtime-spring` / `ddd4j-runtime-quarkus` / `ddd4j-runtime-guice`
-> 只提供可复用 SPI 实现，不承载 Spring Boot starter 或自动装配。
+Spring Framework 版本由当前发行线的 BOM 管理。Java 8 使用 Spring 5 和 `javax.persistence`，其 runtime 保留
+Spring Data JPA 和 Persistence API 的传递依赖。Java 17 和 21 分别使用 Spring 6、Spring 7，使用
+`SpringJpaProjectionPositionRepository` 等 JPA 适配器时需显式引入对应的 Spring Data JPA 和 `jakarta.persistence` 技术栈。
+旧 JPA 适配器的构造器、实体表与字段映射保持兼容。配置 Spring 事务管理后，命令正常返回时提交，包括返回 `Result.fail` 的情况。
+符合 Spring 回滚规则的异常触发回滚。
 
 ---
 
@@ -164,9 +156,9 @@ public class SpringSubjectProvider implements SubjectProvider {
 
 ---
 
-## 四、DDD/CQRS 装配层 — 一行注解启用 ES + CQRS
+## 四、外部 Spring Boot starter 的历史装配示例
 
-`@EnableDdd4j` 自动激活 `DddAutoConfiguration`，提供：
+本节记录早期外部 `ddd4j-boot-*` starter 的装配方案。下面的 `@EnableDdd4j`、属性名和扫描器用于说明历史接法，当前 starter 用法以其自身文档为准。运行时的当前入口见[激活方式](#二激活方式)。
 
 ### 4.1 默认内存 EventStore（零配置启动）
 
@@ -357,10 +349,12 @@ public class SpringContext implements ApplicationContextAware {
 
 ## 七、与 ddd4j 其他模块的关系
 
+下图使用历史 Boot 接入示意。直接依赖本 runtime 的应用按[快速开始](#十快速开始)显式导入配置。
+
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                    业务 Spring Boot 项目                          │
-│                   @EnableDdd4j                                  │
+│             外部 starter 的历史 @EnableDdd4j                       │
 └─────────────────────────────┬───────────────────────────────────┘
                               │ 依赖
                               ▼
@@ -438,69 +432,32 @@ Quarkus/Javalin 项目结构相同**——这是 ddd4j 框架无关设计的核�
 </dependency>
 ```
 
-### 10.2 启用 ddd4j
+### 10.2 启用基础运行时
 
 ```java
-@SpringBootApplication
-@EnableDdd4j
+package example;
+
+import io.ddd4j.spring.config.SpringCoreConfig;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
 public class Application {
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+        try (AnnotationConfigApplicationContext context =
+                new AnnotationConfigApplicationContext(SpringCoreConfig.class)) {
+            System.out.println("DDD runtime ready: " + context.isActive());
+        }
     }
 }
 ```
 
-### 10.3 定义业务聚合根
+Spring Boot 应用可以在已有启动类上添加 `@Import(SpringCoreConfig.class)`。需要命令或投影时按[激活方式](#二激活方式)添加相应配置。
 
-```java
-// 纯 Java DDD，无 Spring 注解
-public class Order extends DddAggregateRoot<OrderId> {
-    private OrderId id;
-    private BigDecimal amount;
-    
-    public Order(OrderId id, BigDecimal amount) {
-        super();
-        apply(new OrderCreatedEvent.Builder().id(id).amount(amount).build());
-    }
-    
-    @ApplyEvent
-    public void applyEvent(OrderCreatedEvent event) {
-        this.id = event.getEntityId();
-        this.amount = event.getAmount();
-    }
-}
-```
+### 10.3 运行完整样例
 
-### 10.4 写命令处理器
-
-```java
-@Component
-public class CreateOrderCommandHandler {
-    @Autowired private OrderRepository repository;
-    @Autowired private DomainEventPublisher publisher;
-    
-    public void handle(CreateOrderCommand cmd) {
-        Order order = new Order(OrderId.generate(), cmd.getAmount());
-        repository.save(order);
-        publisher.publish(new OrderCreatedEvent(order));
-    }
-}
-```
-
-### 10.5 读查询
-
-```java
-@RestController
-@RequestMapping("/orders")
-public class OrderController extends BaseController {
-    @Autowired private OrderQueryService queryService;
-    
-    @GetMapping("/{id}")
-    public ApiRestResponse<Order> get(@PathVariable String id) {
-        return success(queryService.findById(id));
-    }
-}
-```
+- [默认订单示例](../../ddd4j-samples/ddd4j-sample-spring/README.md)
+- [CQRS 订单示例](../../ddd4j-samples/ddd4j-sample-spring-cqrs/README.md)
+- [Sa-Token 订单示例](../../ddd4j-samples/ddd4j-sample-spring-satoken/README.md)
+- [Shiro 订单示例](../../ddd4j-samples/ddd4j-sample-spring-shiro/README.md)
 
 ---
 

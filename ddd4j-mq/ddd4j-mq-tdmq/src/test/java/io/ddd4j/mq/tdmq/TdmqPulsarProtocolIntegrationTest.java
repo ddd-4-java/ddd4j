@@ -5,6 +5,7 @@
 package io.ddd4j.mq.tdmq;
 
 import io.ddd4j.core.context.BaseContext;
+import io.ddd4j.kit.lang.MapKit;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.event.MQEventSerialization;
 import io.ddd4j.mq.listener.MQListener;
@@ -31,7 +32,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class TdmqPulsarProtocolIntegrationTest {
 
     @Container
-    static final PulsarContainer PULSAR = new PulsarContainer(DockerImageName.parse("apachepulsar/pulsar:4.2.4"));
+    static final PulsarContainer PULSAR = new PulsarContainer(DockerImageName.parse("apachepulsar/pulsar:4.2.4"))
+            .withTmpFs(MapKit.builder("/pulsar/data", "rw,mode=1777")
+                    .put("/pulsar/logs", "rw,mode=1777").build());
 
     @AfterEach
     void clearContext() {

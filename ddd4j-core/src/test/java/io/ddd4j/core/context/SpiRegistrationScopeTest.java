@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class SpiRegistrationScopeTest {
 
@@ -59,6 +60,44 @@ class SpiRegistrationScopeTest {
         assertThat(BaseContext.get(KEY, Service.class)).contains(replacement);
     }
 
+
+    @Test
+    void shouldRestoreUntypedPredecessorAcrossNestedScopes() {
+        Object previous = new Object();
+        Service outerService = new Service("outer");
+        Service innerService = new Service("inner");
+        BaseContext.inject(KEY, previous);
+
+        try (SpiRegistrationScope outer = new SpiRegistrationScope().register(KEY, Service.class, outerService)) {
+            outer.start();
+            try (SpiRegistrationScope inner = new SpiRegistrationScope().register(KEY, Service.class, innerService)) {
+                inner.start();
+                assertThat(BaseContext.get(KEY, Service.class)).containsSame(innerService);
+            }
+            assertThat(BaseContext.get(KEY, Service.class)).containsSame(outerService);
+        }
+
+        Object restored = BaseContext.get(KEY);
+        assertThat(restored).isSameAs(previous);
+    }
+
+    @Test
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    void shouldRestoreUntypedPredecessorWhenLaterRegistrationFails() {
+        Object previous = new Object();
+        String invalidKey = KEY + ".invalid";
+        BaseContext.inject(KEY, previous);
+
+        try (SpiRegistrationScope scope = new SpiRegistrationScope()
+                .register(KEY, Service.class, new Service("installed"))
+                .register(invalidKey, (Class) Service.class, "wrong type")) {
+            assertThatThrownBy(scope::start).isInstanceOf(IllegalArgumentException.class);
+            Object restored = BaseContext.get(KEY);
+            assertThat(restored).isSameAs(previous);
+            assertThat(BaseContext.contains(invalidKey)).isFalse();
+        }
+    }
+
     private static final class Service {
         private final String name;
 
@@ -72,15 +111,19 @@ class SpiRegistrationScopeTest {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof Service)) return false;
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof Service)) {
+                return false;
+            }
             Service other = (Service) o;
             return Objects.equals(this.name, other.name);
         }
 
         @Override
         public int hashCode() {
-            return java.util.Objects.hash(name);
+            return Objects.hash(name);
         }
 
         @Override

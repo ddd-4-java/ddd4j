@@ -65,6 +65,21 @@ public final class VertxOrderRoutes {
      * @return 已注册订单路由的 Router
      */
     public static Router router(Vertx vertx, OrderApplicationService applicationService) {
+        return router(vertx, applicationService, AuthenticationMode.REQUIRED);
+    }
+
+    /**
+ * @param vertx 原生实例
+ * @param applicationService 共享订单服务
+ * @param mode 明确认证策略
+ * @return 订单路由
+ */
+    public static Router router(Vertx vertx, OrderApplicationService applicationService, AuthenticationMode mode) {
+        return router(vertx, applicationService, mode, null);
+    }
+
+    static Router router(Vertx vertx, OrderApplicationService applicationService, AuthenticationMode mode,
+            VertxOrderApplication lifecycle) {
         Vertx actualVertx = Objects.requireNonNull(vertx, "vertx must not be null");
         OrderApplicationService service = Objects.requireNonNull(applicationService,
                 "applicationService must not be null");
@@ -74,29 +89,29 @@ public final class VertxOrderRoutes {
         new Ddd4jVertxWeb(new WebRequestContextFactory(),
                 new WebRequestLifecycle(new BearerSubjectAuthenticator(),
                         new PathWebAccessPolicy(List.of("/health", "/api/auth/**"),
-                                AuthenticationMode.REQUIRED)),
+                                Objects.requireNonNull(mode, "mode must not be null"))),
                 new DefaultWebExceptionTranslator(), null, Json::encode).install(router);
         router.get("/health").handler(context -> respond(context, 200, R.ok("UP")));
-        router.post("/api/auth/tokens/:userId").handler(context -> execute(context, () -> {
+        router.post("/api/auth/tokens/:userId").handler(context -> execute(lifecycle, context, () -> {
             Subject subject = SubjectKit.getSubject();
             return R.ok(new TokenResponse(subject.login(AuthRequest.of(context.pathParam("userId")))));
         }, 200));
-        router.post("/api/orders").handler(context -> execute(context, () -> {
+        router.post("/api/orders").handler(context -> execute(lifecycle, context, () -> {
             JsonObject request = body(context);
             OrderReadModel order = service.find(service.create(new CreateOrderCommand(
                     request.getString("orderNo"), request.getString("buyerId"), request.getString("buyerName"))).id());
             return R.ok(order);
         }, 201));
-        router.get("/api/orders/:orderId").handler(context -> execute(context,
+        router.get("/api/orders/:orderId").handler(context -> execute(lifecycle, context,
                 () -> R.ok(service.find(context.pathParam("orderId"))), 200));
-        router.post("/api/orders/:orderId/lines").handler(context -> execute(context, () -> {
+        router.post("/api/orders/:orderId/lines").handler(context -> execute(lifecycle, context, () -> {
             JsonObject request = body(context);
             service.addLine(new AddOrderLineCommand(context.pathParam("orderId"), request.getString("goodsId"),
                     request.getString("goodsName"), request.getInteger("quantity"),
                     new BigDecimal(request.getValue("unitPrice").toString())));
             return R.ok(service.find(context.pathParam("orderId")));
         }, 200));
-        router.post("/api/orders/:orderId/pay").handler(context -> execute(context, () -> {
+        router.post("/api/orders/:orderId/pay").handler(context -> execute(lifecycle, context, () -> {
             String idempotencyKey = context.request().getHeader(WebHeaders.IDEMPOTENCY_KEY);
             if (StrKit.isBlank(idempotencyKey)) {
                 throw new WebStatusException(400, "Idempotency-Key is required");
@@ -115,9 +130,10 @@ public final class VertxOrderRoutes {
         return body;
     }
 
-    private static <T> void execute(RoutingContext context, Callable<T> operation, int status) {
-        Ddd4jVertxContext.executeBlocking(context, operation)
-                .onComplete(result -> context.vertx().runOnContext(ignored -> {
+    private static <T> void execute(VertxOrderApplication lifecycle, RoutingContext context, Callable<T> operation, int status) {
+        var task = Objects.isNull(lifecycle) ? Ddd4jVertxContext.executeBlocking(context, operation)
+                : lifecycle.execute(context, operation);
+        task.onComplete(result -> context.vertx().runOnContext(ignored -> {
                     if (result.failed()) {
                         context.fail(result.cause());
                         return;
@@ -138,19 +154,25 @@ public final class VertxOrderRoutes {
 
         private final String token;
 
-        /** @param token 登录令牌 */
+        /**
+ * @param token 登录令牌
+ */
         @JsonCreator()
         public TokenResponse(@JsonProperty("token") String token) {
             this.token = token;
         }
 
-        /** @return 登录令牌 */
+        /**
+ * @return 登录令牌
+ */
         @JsonProperty("token")
         public String token() {
             return token;
         }
 
-        /** @return 登录令牌 */
+        /**
+ * @return 登录令牌
+ */
         public String getToken() {
             return token;
         }

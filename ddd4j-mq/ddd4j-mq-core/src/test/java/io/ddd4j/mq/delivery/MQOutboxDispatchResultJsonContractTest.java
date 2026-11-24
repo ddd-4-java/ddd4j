@@ -22,6 +22,7 @@ class MQOutboxDispatchResultJsonContractTest {
         assertEquals(2, restored.getRescheduled());
         assertEquals(1, restored.getDead());
         assertEquals(1, restored.getConfirmationLost());
+        assertEquals(1, restored.confirmationLost());
         assertEquals("MQOutboxDispatchResult[claimed=5, published=1, rescheduled=2, dead=1, confirmationLost=1]", restored.toString());
     }
 }

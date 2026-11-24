@@ -39,11 +39,16 @@ public class OrderSummaryViewEntity {
     /**
      * 创建订单视图实体。
      *
-     * @param orderId 订单标识
-     * @param orderNo 订单编号
-     * @param buyerId 买家标识
-     * @param buyerName 买家名称
-     * @param status 订单状态
+     *
+ * @param orderId 订单标识
+     *
+ * @param orderNo 订单编号
+     *
+ * @param buyerId 买家标识
+     *
+ * @param buyerName 买家名称
+     *
+ * @param status 订单状态
      */
     public OrderSummaryViewEntity(String orderId, String orderNo, String buyerId, String buyerName, String status) {
         this.orderId = orderId;

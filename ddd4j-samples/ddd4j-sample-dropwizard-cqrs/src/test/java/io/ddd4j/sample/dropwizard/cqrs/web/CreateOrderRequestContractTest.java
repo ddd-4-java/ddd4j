@@ -1,6 +1,8 @@
 package io.ddd4j.sample.dropwizard.cqrs.web;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.ddd4j.sample.dropwizard.cqrs.command.CreateOrderCommand;
+import io.dropwizard.jackson.Jackson;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -27,5 +29,15 @@ class CreateOrderRequestContractTest {
         assertEquals(command.orderNo(), command.getOrderNo());
         assertEquals(command.buyerId(), command.getBuyerId());
         assertEquals(command.buyerName(), command.getBuyerName());
+    }
+
+    @Test
+    void requestReadsAndWritesTheOrderFields() throws Exception {
+        ObjectMapper mapper = Jackson.newObjectMapper();
+        String json = "{\"buyerName\":\"Buyer\",\"orderNo\":\"order-1\",\"buyerId\":\"buyer-1\"}";
+        OrderResource.CreateOrderRequest request = new OrderResource.CreateOrderRequest("order-1", "buyer-1", "Buyer");
+
+        assertEquals(request, mapper.readValue(json, OrderResource.CreateOrderRequest.class));
+        assertEquals(mapper.readTree(json), mapper.readTree(mapper.writeValueAsString(request)));
     }
 }

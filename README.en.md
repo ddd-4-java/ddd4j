@@ -16,6 +16,7 @@
 <p align="center">
   <a href="README.md">简体中文</a> ·
   <a href="ddd4j-samples/README.md">Samples</a> ·
+  <a href="REFACTOR_MIGRATION.md">Integration and Migration (Chinese)</a> ·
   <a href="docs/8、ddd4j-Architecture.zh_CN.md">System Architecture</a> ·
   <a href="docs/5、ddd4j-技术方案与路线.md">Technical Plan</a> ·
   <a href="docs/superpowers/plans/2026-09-10-mq-startup-lifecycle.md">MQ Startup Lifecycle</a>
@@ -48,9 +49,9 @@
   <img src="assets/ddd4j-architecture-v2.png" alt="ddd4j reliable runtime path: command, aggregate, event store, projection, outbox, and broker" width="100%" />
 </p>
 
-> **Core runtime path:** `Command → Aggregate → Event Store → Projection / Query View`. Domain events enter the
-> transactional Outbox in the same transaction as the business write, then a dispatcher publishes them safely to the
-> selected message broker.
+> A basic DDD application can use application services, aggregates, and repositories directly.
+> Applications that opt into event sourcing and separate read models can use `Command → Aggregate → Event Store → Projection / Query View`.
+> For reliable messaging, an outbox records events in the business transaction and a dispatcher publishes them to the selected broker.
 
 ### 2.1 Three-layer architecture
 
@@ -110,10 +111,10 @@ ddd4j evolves along **three active lines** in parallel; HEADs always push the sa
 | `ddd4j-web`          | web abstractions                   | WebMVC / WebFlux / Javalin / Quarkus / Vert.x / Micronaut / Helidon / Dropwizard                                                                        |
 | `ddd4j-auth`         | auth abstractions                  | `Subject` SPI + Sa-Token / Security / Shiro                                                                                                             |
 | `ddd4j-cache`        | cache abstractions                 | cache SPI and implementations                                                                                                                           |
-| `ddd4j-runtime`      | multi-framework runtime binders    | Spring / Quarkus / Guice / Micronaut / Vert.x / Helidon / Dropwizard / Testkit                                                                          |
+| `ddd4j-runtime`      | multi-framework runtime binders    | Spring / Guice / Quarkus / Micronaut / Helidon / Vert.x / Dropwizard with shared test support in testkit                                                                          |
 | `ddd4j-extensions`   | cross-domain extensions            | akka / excel / jackson / license / monitor / pf4j / qlexpress / qrcode / validation / otel                                                              |
 | `ddd4j-parent`       | Maven parent POM                   | build / package / release rules                                                                                                                         |
-| `ddd4j-samples`      | sample applications                | shared Order business kernel + 9 runtime samples                                                                                                        |
+| `ddd4j-samples`      | sample applications                | shared Order domain with 28 samples across seven runtimes, covering default DDD, CQRS, Sa-Token, and Shiro                                                                                                        |
 
 ## 5. Multi-runtime binding
 
@@ -126,6 +127,8 @@ ddd4j evolves along **three active lines** in parallel; HEADs always push the sa
 | Vert.x      | `ddd4j-runtime-vertx`      | explicit Runtime     | Vert.x EventBus         | Vert.x Web           |
 | Helidon     | `ddd4j-runtime-helidon`    | CDI / BeanManager    | CDI Event               | Helidon WebServer    |
 | Dropwizard  | `ddd4j-runtime-dropwizard` | explicit Bundle      | Listener collection     | Jersey               |
+
+To use CQRS, select the runtime for your framework from the table above. The runtime provides command bus and projection wiring. Choose persistence adapters from `ddd4j-data` as needed. The default DDD samples use application repositories directly. See the [sample guide](ddd4j-samples/README.md) for each framework.
 
 ## 6. ArchUnit boundary enforcement
 

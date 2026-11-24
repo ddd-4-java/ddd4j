@@ -5,6 +5,7 @@
 package io.ddd4j.sample.javalin.cqrs.order.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.ddd4j.sample.javalin.cqrs.order.domain.model.Money;
 import io.ddd4j.sample.javalin.cqrs.order.web.OrderCQRSQueryController.OrderResponse;
 import org.junit.jupiter.api.Test;
 
@@ -31,5 +32,18 @@ class OrderQueryResponseContractTest {
         assertEquals("OrderResponse[id=1, orderNo=O-1, buyerId=B-1, buyerName=Buyer, status=PAID, totalAmount=null, lineCount=2]", response.toString());
         ObjectMapper mapper = new ObjectMapper();
         assertEquals(response, mapper.readValue(mapper.writeValueAsString(response), OrderResponse.class));
+    }
+
+    @Test
+    void response_shouldPreserveNonNullMoneyThroughJson() throws Exception {
+        Money total = Money.cny("12.50");
+        OrderResponse response = new OrderResponse("1", "O-1", "B-1", "Buyer", "PAID", total, 2);
+        ObjectMapper mapper = new ObjectMapper();
+
+        OrderResponse readback = mapper.readValue(mapper.writeValueAsString(response), OrderResponse.class);
+
+        assertEquals(response, readback);
+        assertEquals(total, readback.totalAmount());
+        assertEquals(total, readback.getTotalAmount());
     }
 }

@@ -28,6 +28,15 @@ class I18nProviderDefaultContractTest {
                 I18nProvider.DEFAULT.getMessage("Order {} belongs to {}", 42, "tenant-a"));
     }
 
+
+    @Test
+    void unknownKeyShouldNotTreatBracesInArgumentsAsPlaceholders() {
+        assertEquals("Repository {} belongs to inventory",
+                I18nProvider.DEFAULT.getMessage("Repository {} belongs to {}", "{}", "inventory"));
+        assertEquals("{} plus {} and {}",
+                I18nProvider.DEFAULT.getMessage("{} plus {} and {}", "{}", "{}"));
+    }
+
     @Test
     void unknownKeyShouldRenderNullAndLeaveUnusedPlaceholder() {
         assertEquals("Value null / {}", I18nProvider.DEFAULT.getMessage("Value {} / {}", (Object) null));

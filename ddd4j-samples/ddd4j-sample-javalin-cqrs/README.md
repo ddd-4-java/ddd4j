@@ -1,5 +1,19 @@
 # ddd4j-sample-javalin-cqrs
 
+## S02 持久共享 Order 与兼容入口
+
+本模块保留原 `/api/orders`、`/api/orders/query/*`、`/api/goods` 及原 DTO。它们仍是 **内存/缓存兼容演示**，不能作为持久投影验收。原 Order DTO 包含 Money 与 lineCount，而既有共享查询表没有明细字段；为保留接口且不增加字段，仅 CQRS 使用明确的过渡主入口 `/sample/orders`。
+
+启动 `JavalinCqrsApplication.main` 时设置 JVM 属性 `sample.jdbc.url`、`sample.jdbc.username`、`sample.jdbc.password`，即调用同一个 `start(port, SharedCqrsRuntime)` 装配持久主场景；未设置 URL 或只填写普通空白时，启动旧内存示例。非空值原样交给 JDBC 驱动，含不换行空格 U+00A0 的无效 URL 会报错退出。已有订单表使用 order-jdbc 原迁移，事件表/位置表使用现有 JPA 映射，产品启动只 validate，未增加 SQL、表或业务字段。
+
+- POST `/sample/orders`、`/sample/orders/lines`、`/sample/orders/{id}/payment?key=...`：R07 `Ddd4jGuiceModule.basic()` 的 GuiceCommandBus → 共享 Order → JDBC 写模型/Outbox 同事务。
+- `Ddd4jProjectionGuiceModule` 显式接入真实事件读取器和 JPA 检查点，后台每 5 秒处理；POST `/sample/projections/orders/run` 可显式执行一次。
+- GET `/sample/orders/{id}`、POST `/sample/orders/query`：只读独立查询仓储，不回退写模型、Outbox 或 EventStore。
+- 中继单实例串行处理，按原 Outbox 消息 ID 去重；查询提交后再提交检查点，检查点失败依赖 UPSERT 重放。未声称跨库原子事务或多实例中继协议。
+
+`SharedCqrsHttpTest` 通过真实 PostgreSQL/Javalin/Guice 验证 S00 契约、投影失败、检查点提交失败、真实源位置空洞、重试和应用关闭/重开；同一启动中的旧 Order lineCount/Money 与 Goods 路由另做实际 HTTP 回归。测试关闭调度以控制批次，运行器仍是实际 R07 显式模块提供的公共 Runner。
+
+
 > ddd4j Javalin 平台的 **Order + Goods 双业务 / CQRS** 示例：第二轨（Order 充血模型） +
 > 第三轨（Goods Model/Query CRUD） + 命令/查询分离 + CacheKit 缓存读侧 +
 > 进程内事件总线 + Javalin EndpointGroup 路由。
@@ -16,69 +30,34 @@ Javalin 本身 **没有 DI 容器**，所以本示例在 `main` 中手动 new �
 | **第二轨**（充血模型）    | `order/`                   | `Order` 聚合根 + 5 个领域事件 + `OrderApplicationService`（手动 new） |
 | **第三轨**（Model/Query） | `goods/`                   | `Goods` PO + `RichRepository` + `GoodsQuery`（手动 new）              |
 | **CQRS 增强**             | `cache/` + 读侧 Controller | `CacheKit` 缓存读侧统计                                               |
-| **进程内事件总线**        | `event/`                   | `TypedEventDispatcher` 路由 `Order*Event` 到 `OrderEventListener`     |
+| **事件处理器示例**        | `event/`                   | `OrderEventListener` 提供可注册到 `TypedEventDispatcher` 的处理器     |
 
 ### Javalin 平台的 SPI 注入
 
-Javalin 没有 DI 容器，业务方只需在启动前调用 `Ddd4jSampleConfig.bootstrap()` 即可注入 4 个核心 SPI：
+`JavalinCqrsApplication.start(...)` 使用 `SpiRegistrationScope` 登记领域事件发布器、主体提供器和国际化提供器。关闭样例时恢复该作用域持有的注册。
 
-```java
-BaseContext.inject(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class, ...);
-BaseContext.inject(SpiKeys.MQ_EVENT_PUBLISHER,        MQEventPublisher.class,    new NoOpMQEventPublisher());
-BaseContext.inject(SpiKeys.SUBJECT_PROVIDER,          SubjectProvider.class,     new AnonymousSubjectProvider());
-BaseContext.inject(SpiKeys.I18N_PROVIDER,             I18nProvider.class,        new DefaultI18nProvider());
-```
-
-之后业务代码通过 `Contexts.injectOrThrow(KEY, type)` 按需查找， **零框架耦合**。
+业务代码通过 ddd4j 的 `Contexts` 获取这些 SPI。
 
 | 框架        | DI 容器  | ddd4j runtime 模块       | SPI 注入方式                                  |
 |-------------|----------|--------------------------|-----------------------------------------------|
 | Spring      | ✅       | `ddd4j-runtime-spring`   | 容器启动期扫描 `@Bean` 注入 BaseContext       |
 | Quarkus     | ✅ (CDI) | `ddd4j-runtime-quarkus`  | CDI Observer 启动期注入 BaseContext           |
 | Guice       | ✅       | `ddd4j-runtime-guice`    | `Ddd4jGuiceModule#configure` 注入 BaseContext |
-| **Javalin** | ❌       | **无**（业务方手动注入） | `main` 里调用 `bootstrap()`                   |
+| **Javalin** | ❌       | 默认样例手动装配         | `start` 内由 `SpiRegistrationScope` 登记         |
 
 ---
 
 ## 2. 演示的数据流
 
-```
-[REST] POST /api/orders           [REST] POST /api/goods
-        │                                  │
-        ▼                                  ▼
-OrderController                    GoodsController
-（EndpointGroup 注册）             （EndpointGroup 注册）
-        │                                  │
-        ▼                                  ▼
-OrderApplicationService            GoodsApplicationService
-        │                                  │
-        ▼                                  ▼
-OrderRepository.save               GoodsRepository.save
-        │                                  │
-        ├─> events for each               │
-        │   Order*Event                   │
-        ▼                                  ▼
-DomainEventPublisher.publish       GoodsCacheService.evictOnWrite
-        │                                  │
-        ▼                                  ▼
-TypedEventDispatcher                CacheKit.invalidate
-        │
-        ▼
-OrderEventListener
-（handlers 处理每种事件）
+订单兼容入口在保存成功后失效对应缓存。下一次查询从仓储加载最新值。
 
-[REST] GET /api/orders/query/stats   [REST] GET /api/goods/query/list
-        │                                    │
-        ▼                                    ▼
-OrderCQRSQueryController             GoodsReadController
-        │                                    │
-        ▼                                    ▼
-OrderCacheService                    GoodsCacheService
-   │ CacheKit.get → hit/miss              │ CacheKit.get → hit/miss
-   │ miss 时调用 repository.findAll       │ miss 时调用 goodsQuery
+```mermaid
+flowchart LR
+    Write[订单写请求] --> Save[保存订单]
+    Save --> Invalidate[失效订单详情、统计和买家计数]
+    Read[订单查询请求] --> Cache[CacheKit]
+    Cache -->|缓存未命中| Load[从订单仓储读取]
 ```
-
----
 
 ## 3. 项目结构
 
@@ -186,7 +165,7 @@ mvn -pl ddd4j/ddd4j-samples/ddd4j-sample-javalin-cqrs exec:java
 启动后会看到：
 
 ```
-[Bootstrap] SPI initialized: DomainEventPublisher / MQEventPublisher / SubjectProvider / I18nProvider
+[Bootstrap] DomainEventPublisher ready: NoOpDomainEventPublisher
 [Bootstrap] CacheKit domain initialized: order-stats / buyer-order-count / goods-detail / goods-list
 [Bootstrap] Repositories registered: Order / Goods
 Javalin (CQRS) started on http://localhost:7001
@@ -257,8 +236,7 @@ TypedEventHandler<OrderPaidEvent>     onPaid   = event -> log.info("订单已支
 // ...5 个事件分别处理
 ```
 
-`OrderApplicationService` 写完聚合后，通过 `DomainEventPublisher.publish` 发布事件到总线，
-`OrderEventListener` 自动接收并处理。
+内存兼容入口通过保存后的缓存失效来刷新读侧。应用使用事件分发时，可以将这些处理器注册到自己的 `TypedEventDispatcher`。
 
 ### 7.2 CacheKit 缓存读侧
 

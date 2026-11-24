@@ -16,7 +16,6 @@ package io.ddd4j.data.crypto.handler;
 
 import io.ddd4j.data.crypto.strategy.CryptoStrategy;
 import io.ddd4j.kit.lang.StrKit;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
@@ -29,14 +28,10 @@ import java.util.Objects;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 4.0.0
  */
-@Getter
 @Slf4j
 @SuppressWarnings("unchecked")
 public class Ddd4jFieldCryptoHandler {
 
-    /**
-     *  返回当前加解密策略。
-     */
     private final CryptoStrategy cryptoStrategy;
 
     /**
@@ -88,4 +83,12 @@ public class Ddd4jFieldCryptoHandler {
         }
     }
 
+    /**
+     * 返回当前加解密策略。
+     *
+     * @return 加解密策略
+     */
+    public CryptoStrategy getCryptoStrategy() {
+        return cryptoStrategy;
+    }
 }

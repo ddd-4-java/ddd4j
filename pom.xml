@@ -353,6 +353,12 @@
                             <goals>
                                 <goal>prepare-agent</goal>
                             </goals>
+                            <configuration>
+                                <!-- 仅排除第三方生成的超大词法方法；不改变本项目报告和覆盖率检查范围。 -->
+                                <excludes>
+                                    <exclude>net.sf.jsqlparser.parser.CCJSqlParserTokenManager</exclude>
+                                </excludes>
+                            </configuration>
                         </execution>
                         <execution>
                             <id>report</id>
@@ -584,6 +590,7 @@
                         <artifactId>japicmp-maven-plugin</artifactId>
                         <version>${maven-japicmp-plugin.version}</version>
                         <configuration>
+                            <skip>${maven.deploy.skip}</skip>
                             <oldVersion>
                                 <dependency>
                                     <groupId>${project.groupId}</groupId>

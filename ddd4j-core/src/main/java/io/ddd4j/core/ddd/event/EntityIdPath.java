@@ -18,10 +18,13 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.ddd4j.kit.lang.StrKit;
 
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -70,6 +73,20 @@ public final class EntityIdPath implements Serializable {
             throw new IllegalArgumentException("Entity identifier path must not contain null");
         }
         this.entityIds = List.copyOf(entityIds);
+    }
+
+    /**
+     * 写出 Java 8 可读取的实体标识路径，包括从历史对象流读回的路径。
+     *
+     * @param output 对象输出流
+     * @throws IOException 写入序列化字段失败时
+     * @serialData 原 {@code entityIds} 字段按独立的不可修改列表快照写出。
+     */
+    @Serial
+    private void writeObject(ObjectOutputStream output) throws IOException {
+        ObjectOutputStream.PutField fields = output.putFields();
+        fields.put("entityIds", Collections.unmodifiableList(new ArrayList<>(entityIds)));
+        output.writeFields();
     }
 
     /**
@@ -179,12 +196,18 @@ public final class EntityIdPath implements Serializable {
             throw new IllegalArgumentException("Entity id path must not be blank: '" + path + "'");
         }
         List<EntityId> parsed = new ArrayList<>();
-        // 关键：使用负向后瞻 (?<!\\) 匹配未被反斜杠转义的 '/'，避免值内被转义的
-        // '\/' 被误切为段分隔符。整体 unescape 后再切分会破坏段结构。
-        for (String rawSegment : path.split("(?<!\\\\)" + PATH_SEPARATOR, -1)) {
-            String segment = unescape(rawSegment);
-            parsed.add(parseSegment(segment, path));
+        int segmentStart = 0;
+        // 跳过转义字符，使成对的反斜杠之后仍可使用斜杠分段。
+        for (int index = 0; index < path.length(); index++) {
+            char current = path.charAt(index);
+            if (current == '\\') {
+                index++;
+            } else if (current == '/') {
+                parsed.add(parseSegment(unescape(path.substring(segmentStart, index)), path));
+                segmentStart = index + 1;
+            }
         }
+        parsed.add(parseSegment(unescape(path.substring(segmentStart)), path));
         return new EntityIdPath(parsed);
     }
 

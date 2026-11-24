@@ -1,5 +1,6 @@
 package io.ddd4j.mq.delivery;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.Test;
 
@@ -34,5 +35,23 @@ class MQDeliveryPolicyValueContractTest {
 
         assertEquals(5, mapper.readTree(json).size());
         assertEquals(policy, mapper.readValue(json, MQDeliveryPolicy.class));
+    }
+
+    @Test
+    void explicitJsonPropertiesRemainAvailableWithGetterDiscoveryDisabled() throws Exception {
+        MQDeliveryPolicy policy = MQDeliveryPolicy.productionDefault();
+        JsonMapper mapper = JsonMapper.builder()
+                .findAndAddModules()
+                .addMixIn(MQDeliveryPolicy.class, ExplicitGettersOnly.class)
+                .build();
+
+        String json = mapper.writeValueAsString(policy);
+
+        assertEquals(5, mapper.readTree(json).size());
+        assertEquals(policy, mapper.readValue(json, MQDeliveryPolicy.class));
+    }
+
+    @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE)
+    private abstract static class ExplicitGettersOnly {
     }
 }

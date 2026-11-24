@@ -16,10 +16,28 @@
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
+        <!-- BaseWebConfig 直接使用 PostConstruct，不通过可选 JPA 依赖获得注解 API。 -->
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+        </dependency>
+        <!-- R06: 真实 Servlet 容器验证 MVC/WebFlux 的运行时装配；不进入生产依赖。 -->
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-core</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-web-core</artifactId>
             <version>${revision}</version>
+        </dependency>
+        <!-- 日志 HTTP 采集桥接：消费者未选择日志时不强制携带日志模块。 -->
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-data-logs</artifactId>
+            <version>${revision}</version>
+            <optional>true</optional>
         </dependency>
         <!-- Spring 桥接层 -->
         <dependency>
@@ -114,6 +132,17 @@
             <groupId>org.pf4j</groupId>
             <artifactId>pf4j</artifactId>
             <optional>true</optional>
+        </dependency>
+        <!-- 日志桥接回归需要实际支持 MDC/访问日志的测试 provider。 -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j2-impl</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>

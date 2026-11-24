@@ -31,6 +31,7 @@ import io.ddd4j.core.ddd.event.EntityType;
 import io.ddd4j.core.ddd.event.StringEntityType;
 
 import java.util.List;
+import java.util.Map;
 
 import org.jdbi.v3.core.Jdbi;
 import org.junit.jupiter.api.AfterEach;
@@ -52,7 +53,8 @@ class JdbiEventStorePostgresIT {
     private static final String ORDER_TYPE = "Order";
 
     @Container
-    static final PostgreSQLContainer POSTGRES = new PostgreSQLContainer("postgres:16-alpine");
+    static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:16-alpine")
+            .withTmpFs(Map.of("/var/lib/postgresql/data", "rw"));
 
     private Jdbi jdbi;
     private EventStore eventStore;

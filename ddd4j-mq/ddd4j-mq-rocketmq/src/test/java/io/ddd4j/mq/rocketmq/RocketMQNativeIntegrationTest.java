@@ -35,6 +35,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.util.Collections;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -82,6 +83,8 @@ class RocketMQNativeIntegrationTest {
         broker = new FixedHostPortGenericContainer<>(IMAGE);
         broker.withNetwork(network)
                 .withEnv("NAMESRV_ADDR", "namesrv:9876")
+                .withTmpFs(Map.of("/home/rocketmq/store", "rw,size=2048m,uid=3000,gid=3000,mode=0700",
+                        "/home/rocketmq/logs", "rw,size=128m,uid=3000,gid=3000,mode=0700"))
                 .withCopyToContainer(Transferable.of(config), "/tmp/ddd4j-broker.conf")
                 .withFixedExposedPort(brokerPort, brokerPort)
                 .withCommand("sh", "mqbroker", "-c", "/tmp/ddd4j-broker.conf")

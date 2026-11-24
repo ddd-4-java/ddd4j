@@ -37,6 +37,7 @@ public class OrderDomainService {
      *
      * @param orderRepository 订单仓储
      */
+    @com.google.inject.Inject
     public OrderDomainService(OrderRepository orderRepository) {
         this.orderRepository = Objects.requireNonNull(orderRepository, "orderRepository must not be null");
     }

@@ -15,7 +15,16 @@
 package io.ddd4j.sample.javalin.cqrs;
 
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import io.ddd4j.core.context.SpiRegistrationScope;
+import io.ddd4j.core.ddd.repository.Repository;
+import io.ddd4j.core.cache.Cache;
+import io.ddd4j.sample.javalin.cqrs.shared.SharedCqrsRuntime;
+import io.ddd4j.sample.javalin.cqrs.shared.SharedOrderController;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.List;
 import io.ddd4j.cache.CacheKit;
+import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.context.Contexts;
@@ -91,25 +100,54 @@ public class JavalinCqrsApplication {
      */
     public static void main(String[] args) {
         int port = parsePort(args);
+        String url = System.getProperty("sample.jdbc.url");
+        if (!StrKit.hasText(url)) {
+            start(port, null);
+            log.info("Legacy memory demo only; set sample.jdbc.url/username/password for durable shared CQRS");
+            return;
+        }
+        var source = new org.postgresql.ds.PGSimpleDataSource();
+        source.setUrl(url);
+        source.setUser(System.getProperty("sample.jdbc.username"));
+        source.setPassword(System.getProperty("sample.jdbc.password"));
+        start(port, new SharedCqrsRuntime(source, "validate", true, java.util.function.UnaryOperator.identity()));
+    }
+
+    /**
+     * @param port HTTP 端口
+     * @param runtime 持久共享运行实例（null 表示原内存兼容模式）
+     * @return 可关闭应用
+     */
+    public static Application start(int port, SharedCqrsRuntime runtime) {
+        SpiRegistrationScope scope = new SpiRegistrationScope();
+        Map<String, Cache<String, Object>> previousCaches = new HashMap<>();
+        Map<String, Cache<String, Object>> ownedCaches = new HashMap<>();
+        List<String> cacheNames = List.of(OrderCacheService.BIZ_ORDER_STATS, OrderCacheService.BIZ_BUYER_ORDER_COUNT,
+                OrderCacheService.BIZ_ORDER_DETAIL, GoodsCacheService.BIZ_GOODS_DETAIL, GoodsCacheService.BIZ_GOODS_LIST);
+        cacheNames.forEach(name -> previousCaches.put(name, CacheKit.getCache(name)));
+        Javalin app = null;
+        try {
 
         // 1. 注入核心 SPI
-        BaseContext.inject(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class, new NoOpDomainEventPublisher());
-        BaseContext.inject(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class, new AnonymousSubjectProvider());
-        BaseContext.inject(SpiKeys.I18N_PROVIDER, I18nProvider.class, new DefaultI18nProvider());
+        scope.register(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class, new NoOpDomainEventPublisher());
+        scope.register(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class, new AnonymousSubjectProvider());
+        scope.register(SpiKeys.I18N_PROVIDER, I18nProvider.class, new DefaultI18nProvider());
 
         // 2. 注册仓储
         InMemoryOrderRepository orderRepository = new InMemoryOrderRepository();
-        RepositoryRegistry.register(Order.class, orderRepository);
+        scope.register(RepositoryRegistry.key(Order.class), Repository.class, orderRepository);
         InMemoryGoodsRepository goodsRepository = new InMemoryGoodsRepository();
-        RepositoryRegistry.register(Goods.class, goodsRepository);
+        scope.register(RepositoryRegistry.key(Goods.class), Repository.class, goodsRepository);
+        scope.start();
 
         // 3. 初始化 CacheKit 缓存域（CQRS 读侧缓存）
         initCaches();
+        cacheNames.forEach(name -> ownedCaches.put(name, CacheKit.getCache(name)));
 
         // 4. 构造应用服务 + 缓存服务
-        OrderApplicationService orderService = new OrderApplicationService(orderRepository);
-        GoodsApplicationService goodsService = new GoodsApplicationService(goodsRepository);
         OrderCacheService orderCacheService = new OrderCacheService(orderRepository);
+        OrderApplicationService orderService = new OrderApplicationService(orderRepository, orderCacheService);
+        GoodsApplicationService goodsService = new GoodsApplicationService(goodsRepository);
         GoodsCacheService goodsCacheService = new GoodsCacheService(goodsRepository);
 
         // 5. 注册订单事件监听器
@@ -124,8 +162,10 @@ public class JavalinCqrsApplication {
         GoodsReadController goodsReadController = new GoodsReadController(goodsCacheService, goodsRepository);
 
         // 7. 启动 Javalin
-        Javalin app = Javalin.create(javalinConfig -> {
+        app = Javalin.create(javalinConfig -> {
             javalinConfig.startup.showJavalinBanner = false;
+            javalinConfig.routes.exception(Exception.class, (failure, ctx) -> ctx.status(500).json(
+                    io.ddd4j.core.api.R.of(500, failure.getMessage())));
             javalinConfig.jsonMapper(new io.javalin.json.JavalinJackson(
                     JsonMapper.builder().findAndAddModules().build(), false));
             javalinConfig.routes.apiBuilder(() -> {
@@ -133,6 +173,9 @@ public class JavalinCqrsApplication {
                 orderQueryController.routes();
                 goodsController.routes();
                 goodsReadController.routes();
+                if (Objects.nonNull(runtime)) {
+                    new SharedOrderController(runtime).routes();
+                }
             });
         });
 
@@ -142,6 +185,45 @@ public class JavalinCqrsApplication {
 
         app.start(port);
         log.info("Javalin (CQRS) started on http://localhost:{}", port);
+        return new Application(app, scope, runtime, previousCaches, ownedCaches);
+        } catch (RuntimeException | Error failure) {
+            new Application(app, scope, runtime, previousCaches, ownedCaches).close();
+            throw failure;
+        }
+    }
+
+    /** 托管 HTTP、作用域和显式持久化运行实例。 */
+    public static final class Application implements AutoCloseable {
+        private final Javalin app;
+        private final SpiRegistrationScope scope;
+        private final SharedCqrsRuntime runtime;
+        private final Map<String, Cache<String, Object>> previous;
+        private final Map<String, Cache<String, Object>> owned;
+        private boolean closed;
+        private Application(Javalin app, SpiRegistrationScope scope, SharedCqrsRuntime runtime,
+                Map<String, Cache<String, Object>> previous, Map<String, Cache<String, Object>> owned) {
+            this.app = app; this.scope = scope; this.runtime = runtime; this.previous = previous; this.owned = owned;
+        }
+        /** @return 实际 Javalin 应用 */
+        public Javalin app() { return app; }
+        @Override public void close() {
+            try (var callerContext = io.ddd4j.core.context.ThreadContext.open()) {
+            if (closed) { return; }
+            closed = true;
+            try { if (Objects.nonNull(app)) { app.stop(); } }
+            finally {
+                scope.close();
+                owned.forEach((name, cache) -> {
+                    if (CacheKit.getCache(name) == cache) {
+                        if (Objects.nonNull(previous.get(name))) { CacheKit.register(name, previous.get(name)); }
+                        else { CacheKit.unregister(name); }
+                    }
+                });
+                if (Objects.nonNull(runtime)) { runtime.close(); }
+            }
+
+            }
+        }
     }
 
     /**

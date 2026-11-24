@@ -18,6 +18,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
+import io.ddd4j.sample.javalin.cqrs.cache.OrderCacheService;
 import io.ddd4j.sample.javalin.cqrs.order.domain.model.Money;
 import io.ddd4j.sample.javalin.cqrs.order.domain.model.Order;
 import io.ddd4j.sample.javalin.cqrs.order.domain.repository.OrderRepository;
@@ -36,6 +37,7 @@ import java.util.Objects;
 public class OrderApplicationService {
 
     private final OrderRepository repository;
+    private final OrderCacheService orderCache;
 
     /**
      * 创建订单应用服务。
@@ -43,7 +45,18 @@ public class OrderApplicationService {
      * @param repository 仓储实现
      */
     public OrderApplicationService(OrderRepository repository) {
+        this(repository, null);
+    }
+
+    /**
+     * 创建接入旧读侧缓存的订单应用服务。
+     *
+     * @param repository 仓储实现
+     * @param orderCache 读侧缓存服务，允许为空
+     */
+    public OrderApplicationService(OrderRepository repository, OrderCacheService orderCache) {
         this.repository = Objects.requireNonNull(repository, "repository must not be null");
+        this.orderCache = orderCache;
     }
 
     /**
@@ -55,8 +68,7 @@ public class OrderApplicationService {
     public Order createDraft(CreateOrderCommand command) {
         Objects.requireNonNull(command, "command must not be null");
         Order order = Order.draft(command.orderNo(), command.buyerId(), command.buyerName());
-        repository.save(order);
-        return order;
+        return save(order);
     }
 
     /**
@@ -73,8 +85,7 @@ public class OrderApplicationService {
                 ? Money.zero("CNY")
                 : Money.cny(command.unitPrice());
         order.addLine(command.goodsId(), command.goodsName(), command.quantity(), unitPrice);
-        repository.save(order);
-        return order;
+        return save(order);
     }
 
     /**
@@ -87,8 +98,7 @@ public class OrderApplicationService {
         Order order = repository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("order not found: " + orderId));
         order.pay();
-        repository.save(order);
-        return order;
+        return save(order);
     }
 
     /**
@@ -101,8 +111,7 @@ public class OrderApplicationService {
         Order order = repository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("order not found: " + orderId));
         order.ship();
-        repository.save(order);
-        return order;
+        return save(order);
     }
 
     /**
@@ -115,7 +124,14 @@ public class OrderApplicationService {
         Order order = repository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("order not found: " + orderId));
         order.cancel();
+        return save(order);
+    }
+
+    private Order save(Order order) {
         repository.save(order);
+        if (Objects.nonNull(orderCache)) {
+            orderCache.evictAfterSave(order);
+        }
         return order;
     }
 

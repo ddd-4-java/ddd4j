@@ -1,0 +1,148 @@
+**Exploration: PhoneValueValidator AllowedValuesValidator NumberValueValidator RegexpValidator ContainsValidator**
+
+Found 8 symbols across 2 files.
+
+**Blast radius — what depends on these (update/verify before editing)**
+
+- `NumberValueValidator` (src/main/java/io/github/easy4j/validation/constraintvalidators/NumberValueValidator.java:21) — 1 caller in `src/main/java/io/github/easy4j/validation/constraints/NumberValue.java`; no tests found within 3 caller hops
+- `PhoneValueValidator` (src/main/java/io/github/easy4j/validation/constraintvalidators/PhoneValueValidator.java:22) — 1 caller in `src/main/java/io/github/easy4j/validation/constraints/PhoneNumber.java`; no tests found within 3 caller hops
+- `ContainsValidator` (src/main/java/io/github/easy4j/validation/constraintvalidators/ContainsValidator.java:35) — 1 caller in `src/main/java/io/github/easy4j/validation/constraints/Contains.java`; no tests found within 3 caller hops
+- `RegexpValidator` (src/main/java/io/github/easy4j/validation/constraintvalidators/RegexpValidator.java:34) — 1 caller in `src/main/java/io/github/easy4j/validation/constraints/Regexp.java`; no tests found within 3 caller hops
+- `AllowedValuesValidator` (src/main/java/io/github/easy4j/validation/constraintvalidators/AllowedValuesValidator.java:22) — 1 caller in `src/main/java/io/github/easy4j/validation/constraints/AllowableValues.java`; no tests found within 3 caller hops
+
+**Source Code**
+
+> The code below is the **verbatim, current on-disk source** of these files — re-read from disk on this call and line-numbered, byte-for-byte identical to what the Read tool returns. It is NOT a summary, outline, or stale cache. Treat each block as a Read you have already performed: do not Read a file shown here.
+
+**`src/main/java/io/github/easy4j/validation/constraintvalidators/PhoneValueValidator.java`** — PhoneValueValidator(class), PHONE_NUMBER_UTIL(constant), initialize(method), isValid(method), io.github.easy4j.validation.constraintvalidators(namespace), +1 more
+
+```java
+1	package io.github.easy4j.validation.constraintvalidators;
+2	
+3	
+4	import com.google.i18n.phonenumbers.NumberParseException;
+5	import com.google.i18n.phonenumbers.PhoneNumberUtil;
+6	import com.google.i18n.phonenumbers.Phonenumber;
+7	import io.github.easy4j.validation.constraints.PhoneNumber;
+8	import jakarta.validation.ConstraintValidator;
+9	import jakarta.validation.ConstraintValidatorContext;
+10	
+11	import java.util.Objects;
+12	
+13	/**
+14	 * Validator for the {@link io.github.easy4j.validation.constraints.PhoneNumber} constraint.
+15	 *
+16	 * <p>Uses Google's {@code libphonenumber} to parse and validate the phone number against
+17	 * the configured default region.  {@code null} values are considered valid.</p>
+18	 *
+19	 * @author <a href="https://github.com/loong10k">Loong Wan</a>
+20	 * @since 3.0.0
+21	 */
+22	public class PhoneValueValidator implements ConstraintValidator<PhoneNumber, String> {
+23	
+24	    private static final PhoneNumberUtil PHONE_NUMBER_UTIL = PhoneNumberUtil.getInstance();
+25	
+26	    private PhoneNumber phoneValue;
+27	
+28	    @Override
+29	    public void initialize(PhoneNumber annotation) {
+30	        this.phoneValue = annotation;
+31	    }
+32	
+33	    @Override
+34	    public boolean isValid(String value, ConstraintValidatorContext constraintValidatorContext) {
+35	        if (Objects.isNull(value)) {
+36	            return true;
+37	        }
+38	        try {
+39	            Phonenumber.PhoneNumber referencePhoneNumber = PHONE_NUMBER_UTIL.parse(value, phoneValue.lang());
+40	            boolean flag = PHONE_NUMBER_UTIL.isValidNumber(referencePhoneNumber);
+41	            if (!flag) {
+42	                constraintValidatorContext.disableDefaultConstraintViolation();
+43	                constraintValidatorContext.buildConstraintViolationWithTemplate(phoneValue.message())
+44	                        .addConstraintViolation();
+45	            }
+46	            return flag;
+47	        } catch (NumberParseException e) {
+48	            constraintValidatorContext.disableDefaultConstraintViolation();
+49	            constraintValidatorContext.buildConstraintViolationWithTemplate(phoneValue.message())
+50	                    .addConstraintViolation();
+51	            return false;
+52	        }
+53	    }
+54	
+55	}
+```
+
+**`src/main/java/io/github/easy4j/validation/constraints/PhoneNumber.java`** — PhoneNumber(interface), io.github.easy4j.validation.constraints(namespace)
+
+```java
+1	package io.github.easy4j.validation.constraints;
+2	
+3	import io.github.easy4j.validation.constraintvalidators.PhoneValueValidator;
+4	import jakarta.validation.Constraint;
+5	import jakarta.validation.Payload;
+6	
+7	import java.lang.annotation.*;
+8	
+9	/**
+10	 * Constraint annotation that validates whether a string is a valid phone number.
+11	 *
+12	 * <p>Uses Google's {@code libphonenumber} library for parsing and validation.
+13	 * The default region is {@code "CN"} (China) and can be overridden via {@link #lang()}.</p>
+14	 *
+15	 * @author <a href="https://github.com/loong10k">Loong Wan</a>
+16	 * @since 3.0.0
+17	 * @see io.github.easy4j.validation.constraintvalidators.PhoneValueValidator
+18	 */
+19	@Documented
+20	@Retention(RetentionPolicy.RUNTIME)
+21	@Target({ElementType.METHOD, ElementType.FIELD, ElementType.CONSTRUCTOR, ElementType.PARAMETER, ElementType.TYPE_USE})
+22	@Constraint(validatedBy = {PhoneValueValidator.class})
+23	public @interface PhoneNumber {
+24	
+25	    /**
+26	     * The default region code (ISO 3166-1 alpha-2) used when the phone number does not
+27	     * include an international dialling prefix.
+28	     *
+29	     * @return the region code (e.g. {@code "CN"}, {@code "US"})
+30	     */
+31	    String lang() default "CN";
+32	
+33	    /**
+34	     * Reserved for future use.
+35	     *
+36	     * @return an optional value attribute
+37	     */
+38	    String value() default "";
+39	
+40	    /**
+41	     * @return the error message template shown when validation fails
+42	     */
+43	    String message();
+44	
+45	    /**
+46	     * @return the validation groups this constraint belongs to
+47	     */
+48	    Class<?>[] groups() default {};
+49	
+50	    /**
+51	     * @return the payload associated with this constraint
+52	     */
+53	    Class<? extends Payload>[] payload() default {};
+54	}
+```
+
+**Not shown above — explore these names for their source**
+
+- src/main/java/io/github/easy4j/validation/constraints/NumberValue.java: NumberValue:20, io.github.easy4j.validation.constraints:1
+- src/main/java/io/github/easy4j/validation/constraintvalidators/NumberValueValidator.java: NumberValueValidator:21, initialize:26, validate:45, isValid:32, io.github.easy4j.validation.constraintvalidators:1, numberValue:23
+- src/main/java/io/github/easy4j/validation/constraintvalidators/ContainsValidator.java: ContainsValidator:35, initialize:41, isValid:47, io.github.easy4j.validation.constraintvalidators:16
+- src/main/java/io/github/easy4j/validation/constraintvalidators/RegexpValidator.java: RegexpValidator:34, isValid:46, initialize:40, io.github.easy4j.validation.constraintvalidators:16
+- src/main/java/io/github/easy4j/validation/constraintvalidators/AllowedValuesValidator.java: AllowedValuesValidator:22, initialize:27, isValid:44, io.github.easy4j.validation.constraintvalidators:1
+- src/test/java/io/github/easy4j/validation/constraintvalidators/NumberValueValidatorTest.java: io.github.easy4j.validation.constraintvalidators:1, NumberValueValidatorTest:10, DecimalSample:49, Sample:40, shouldAcceptNullValue:28, shouldAcceptValidNumber:14, +2 more
+- src/test/java/io/github/easy4j/validation/constraintvalidators/PhoneValueValidatorTest.java: io.github.easy4j.validation.constraintvalidators:1, PhoneValueValidatorTest:10, USSample:46, Sample:37, shouldValidateWithDifferentRegion:31, shouldAcceptNullValue:26, +2 more
+- src/main/java/io/github/easy4j/validation/constraints/Contains.java: io.github.easy4j.validation.constraints:1, Contains:22
+- src/main/java/io/github/easy4j/validation/constraints/Regexp.java: io.github.easy4j.validation.constraints:16, Regexp:40
+- src/main/java/io/github/easy4j/validation/constraints/AllowableValues.java: io.github.easy4j.validation.constraints:1, AllowableValues:21
+- ... and 4 more files

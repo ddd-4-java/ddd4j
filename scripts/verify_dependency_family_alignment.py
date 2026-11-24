@@ -13,6 +13,7 @@ from urllib.parse import quote
 import zipfile
 
 import verify_spring_version_alignment as spring
+import dependency_version_owners as owners
 from verify_dependency_alignment import bytecode
 
 
@@ -57,8 +58,9 @@ def compatibility_runtime(module):
     return any(name in module for name in ('quarkus', 'helidon', 'panache'))
 
 
-def audit(models, trees, expected_projects):
+def audit(models, trees, expected_projects, contracts=None, owner_policy=None):
     errors, entries = [], []
+    retired_managed = {}
     base = models.get('ddd4j-dependencies')
     if base is None:
         return {'errors': [{'code': 'missing-version-owner'}], 'entries': []}
@@ -102,6 +104,18 @@ def audit(models, trees, expected_projects):
 
     def check(module, group, artifact, version, scope, classifier='', path=None, kind='jar'):
         expected = None
+        retired = owners.retired_rule(owner_policy or {}, group, artifact)
+        if retired is not None:
+            if scope == 'managed':
+                record = retired_managed.setdefault((group, artifact, version), {
+                    'coordinate': group + ':' + artifact, 'version': version,
+                    'reason': retired['reason'], 'modules': set()})
+                record['modules'].add(module)
+            else:
+                errors.append({'code': 'retired-dependency', 'module': module, 'scope': scope,
+                               'coordinate': group + ':' + artifact, 'actual': version,
+                               'type': kind, 'classifier': classifier, 'path': path,
+                               'reason': retired['reason'], 'replacement': retired['replacement']})
         if (group, artifact) == ('com.vaadin.external.google', 'android-json') and scope != 'managed':
             errors.append({'code': 'obsolete-json-provider', 'module': module, 'scope': scope,
                            'coordinate': group + ':' + artifact, 'actual': version, 'path': path})
@@ -143,6 +157,22 @@ def audit(models, trees, expected_projects):
             # 管理表统一归属中央；兼容运行时通过排除和显式依赖选用 4.1。
             compat = compatibility_runtime(module) and scope != 'managed'
             expected = props.get('netty-4_1.version' if compat else 'netty.version')
+        if contracts is not None:
+            # 来源独立的上游模型校验中央表自身，避免以被覆盖的中央表为基线。
+            contract = contracts.get((group, artifact, kind, classifier))
+            if contract is None and kind in ('jar', 'bundle', 'test-jar'):
+                contract = contracts.get((group, artifact, 'jar', ''))
+            if contract is not None:
+                expected = contract.get('managed_version', contract['version']) if scope == 'managed' else contract['version']
+            family_property = (owner_policy or {}).get('family_properties', {}).get(group)
+            if family_property:
+                expected = props.get(family_property)
+            if scope != 'managed':
+                override = owners.runtime_expected(owner_policy or {}, props, module, group, artifact, expected)
+                if override is not None:
+                    expected = override
+            if group == 'org.apache.activemq' and artifact.startswith('artemis-') and scope != 'managed':
+                expected = 'migrate to org.apache.artemis:' + props.get('artemis.version', '')
         if expected is not None:
             item = dict(module=module, scope=scope, coordinate=group + ':' + artifact,
                         classifier=classifier, actual=version, expected=expected)
@@ -174,7 +204,9 @@ def audit(models, trees, expected_projects):
             for child in node.get('children', []):
                 visit(child, path)
         visit(tree, [])
-    return {'errors': errors, 'entries': entries, 'projects': len(models), 'trees': len(trees)}
+    return {'errors': errors, 'entries': entries, 'projects': len(models), 'trees': len(trees),
+            'retired_managed_entries': [dict(value, modules=sorted(value['modules']))
+                                        for _, value in sorted(retired_managed.items())]}
 
 
 def audit_bytecode(trees, repository):
@@ -289,6 +321,8 @@ def run(args):
         projects, paths = spring.discover_projects(root)
         result['errors'].extend(source_management_errors(root, projects))
         result['errors'].extend(source_bom_errors(root))
+        policy = owners.load_policy(root)
+        result['errors'].extend(owners.source_errors(root, projects, policy))
         if getattr(args, 'source_only', False):
             result.update(projects=len(projects), verification='source-only')
             result['status'] = 'FAIL' if result['errors'] else 'PASS'
@@ -297,7 +331,18 @@ def run(args):
             for error in result['errors'][:15]:
                 print(json.dumps(error, ensure_ascii=False))
             return int(bool(result['errors']))
+        if result['errors']:
+            raise ValueError('source ownership failed; Maven verification was not started')
+        paths = [*paths, root / 'scripts' / owners.POLICY_NAME]
+        if policy.get('update_policy'):
+            paths.append(root / policy['update_policy']['file'])
         before = spring.fingerprint(paths)
+        reference_models = owners.collect_references(root, output, args.maven_arg, policy)
+        contracts = owners.contracts(root, reference_models, policy)
+        result['upstream_bom_count'] = len(reference_models)
+        (output / 'version-owners.json').write_text(json.dumps([
+            dict(group=key[0], artifact=key[1], type=key[2], classifier=key[3], **value)
+            for key, value in sorted(contracts.items())], ensure_ascii=False, indent=2) + '\n')
         spring_output = output / 'spring'
         status = spring.run(SimpleNamespace(root=root, output=spring_output, line='2.0.x',
                                             batch_size=25, maven_arg=args.maven_arg))
@@ -317,9 +362,11 @@ def run(args):
         if completed.returncode:
             raise ValueError('dependency tree resolution failed; see dependency-trees.log')
         trees = {p.stem: json.loads(p.read_text()) for p in tree_dir.glob('*.json')}
-        audited = audit(models, trees, set(projects))
+        audited = audit(models, trees, set(projects), contracts, policy)
         result['errors'].extend(audited.pop('errors'))
         result.update(audited)
+        (output / 'retired-managed-entries.json').write_text(json.dumps(
+            result.get('retired_managed_entries', []), ensure_ascii=False, indent=2) + '\n')
         inventory = inventories(models, trees)
         for scope in ('managed', 'reactor'):
             (output / (scope + '-bom.cdx.json')).write_text(json.dumps(inventory[scope], indent=2) + '\n')

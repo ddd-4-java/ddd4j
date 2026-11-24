@@ -14,6 +14,7 @@
  */
 package io.ddd4j.dropwizard;
 
+import com.google.common.collect.ImmutableList;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.ddd.event.EntityId;
@@ -36,9 +37,10 @@ public final class DropwizardDomainEventPublisher implements DomainEventPublishe
      * 使用指定事件监听器创建发布器。
      *
      * @param listeners 事件监听器
+     * @throws NullPointerException 监听器集合或其中任一元素为 null
      */
     public DropwizardDomainEventPublisher(Collection<Consumer<Object>> listeners) {
-        this.listeners = List.copyOf(Objects.requireNonNull(listeners, "listeners must not be null"));
+        this.listeners = ImmutableList.copyOf(Objects.requireNonNull(listeners, "listeners must not be null"));
     }
 
     @Override

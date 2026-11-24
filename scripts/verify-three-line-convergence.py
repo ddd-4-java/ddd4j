@@ -6,6 +6,7 @@ import hashlib
 import json
 import os
 import re
+import runpy
 import shutil
 import subprocess
 import sys
@@ -13,17 +14,23 @@ import tempfile
 import time
 import uuid
 import xml.etree.ElementTree as ET
-import zipfile
 from pathlib import Path
 
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 EXPECTED = ((8, "1.0.x"), (17, "2.0.x"), (21, "3.0.x"))
+SCENARIO_CASE_RENAMES = {
+    "MQ-MQTT-UNSUPPORTED-NACK": {
+        "shouldTreatMessageIdAsPayloadConcernAndRejectNativeNack":
+            "shouldRejectUnsupportedOperationsWithoutAcknowledgingAndAllowAck",
+    },
+}
 VERIFY_CHECKS = ("structure", "product-docs", "historical-index", "values", "effective-8", "effective-17",
                  "effective-21", "dependency-catalog", "dependencies", "reactor-8", "reactor-17", "reactor-21",
                  "capacity-8", "capacity-17", "capacity-21",
                  "redis-native-8", "redis-native-17", "redis-native-21",
-                 "scenario-matrix", "scenario-execution")
+                 "scenario-matrix", "scenario-execution",
+                 "quarkus-durable-sample-8")
 INVENTORY_CHECKS = ("structure", "product-docs", "historical-index", "values", "dependencies", "reactor",
                     "scenario-matrix")
 
@@ -71,23 +78,11 @@ def jdk_info(path, major):
 
 
 def value_probe_classpaths(repository, majors=(8, 17, 21)):
-    """Find a local Jackson annotations JAR whose base classes run on each target JDK."""
-    directory = repository / "com/fasterxml/jackson/core/jackson-annotations"
-    candidates = sorted(directory.glob("*/jackson-annotations-*.jar"), reverse=True)
-    for major in majors:
-        for jar in candidates:
-            if jar.name.endswith("-sources.jar") or jar.name.endswith("-javadoc.jar"):
-                continue
-            try:
-                with zipfile.ZipFile(jar) as archive:
-                    header = archive.read("com/fasterxml/jackson/annotation/JsonCreator.class")[:8]
-                if len(header) == 8 and header[:4] == b"\xca\xfe\xba\xbe" and int.from_bytes(header[6:8], "big") <= major + 44:
-                    yield str(jar)
-                    break
-            except (OSError, KeyError, zipfile.BadZipFile):
-                continue
-        else:
-            raise ValueError(f"missing Jackson annotations JAR compatible with JDK {major}")
+    """Use the same pinned and validated JDK 8 compatible JAR on each line."""
+    bootstrap = runpy.run_path(str(SCRIPT_DIR / "bootstrap-three-line-classpath.py"))
+    jar = bootstrap["cached_artifact"](repository)
+    for _ in majors:
+        yield str(jar)
 
 
 def combined_status(checks, phase, stable):
@@ -137,56 +132,186 @@ def valid_case_names(names):
             and len(set(names)) == len(names))
 
 
-def scenario_matrix(stage, roots):
+def validate_scenarios(data, roots=None):
+    scenarios = data["scenarios"]
+    if not isinstance(scenarios, list) or not scenarios:
+        raise ValueError("scenario list is empty or invalid")
+    versions = {version for _, version in EXPECTED}
+    seen = set()
+    pending = []
+    for row in scenarios:
+        scenario_id = row["id"]
+        if not isinstance(scenario_id, str) or not scenario_id.strip() or scenario_id in seen:
+            raise ValueError(f"invalid or duplicate scenario ID: {scenario_id}")
+        seen.add(scenario_id)
+        lines = row["lines"]
+        if not isinstance(lines, dict) or set(lines) != versions:
+            raise ValueError(f"invalid version lines for {scenario_id}")
+        case_names = row.get("caseNames", {})
+        if not isinstance(case_names, dict) or (
+                case_names and (set(case_names) != versions or
+                                any(not valid_case_names(names) for names in case_names.values()))):
+            raise ValueError(f"invalid case names for {scenario_id}")
+        for index, (_, version) in enumerate(EXPECTED):
+            mapping = lines[version]
+            status = mapping["status"]
+            label = f"{scenario_id} in {version}"
+            if status == "supported":
+                tests = mapping["tests"]
+                if not isinstance(tests, list) or not valid_case_names(tests):
+                    raise ValueError(f"invalid mapped tests for {label}")
+                if roots is not None and not all((roots[index] / file).is_file() for file in tests):
+                    raise ValueError(f"missing mapped test for {label}")
+                if case_names and len(tests) != 1:
+                    raise ValueError(f"case name requires one test file for {label}")
+            elif status in ("unsupported", "pending"):
+                reason = mapping.get("reason")
+                if not isinstance(reason, str) or not reason.strip():
+                    raise ValueError(f"missing {status} reason for {label}")
+                if status == "pending":
+                    pending.append(f"{scenario_id}:{version}")
+            else:
+                raise ValueError(f"invalid status for {label}")
+    return scenarios, pending
+
+
+def scenario_regressions(previous, current):
+    rank = {"unsupported": 0, "pending": 1, "supported": 2}
+    current_by_id = {row["id"]: row for row in current}
+    regressions = []
+    for old_row in previous:
+        scenario_id = old_row["id"]
+        new_row = current_by_id.get(scenario_id)
+        if new_row is None:
+            regressions.append(f"{scenario_id} removed")
+            continue
+        for _, version in EXPECTED:
+            old = old_row["lines"][version]
+            new = new_row["lines"][version]
+            label = f"{scenario_id}:{version}"
+            if rank[new["status"]] < rank[old["status"]]:
+                regressions.append(f"{label} {old['status']} -> {new['status']}")
+            elif old["status"] == "supported":
+                old_names = old_row.get("caseNames", {}).get(version, [])
+                new_names = new_row.get("caseNames", {}).get(version, [])
+                old_names = {old_names} if isinstance(old_names, str) else set(old_names)
+                new_names = {new_names} if isinstance(new_names, str) else set(new_names)
+                # A consolidated test suite can retain coverage through individually required cases.
+                if max(len(new["tests"]), len(new_names)) < max(len(old["tests"]), len(old_names)):
+                    regressions.append(f"{label} required test coverage reduced")
+                if len(new_names) < len(old_names):
+                    regressions.append(f"{label} required named cases reduced")
+                missing_names = old_names - new_names
+                renames = SCENARIO_CASE_RENAMES.get(scenario_id, {})
+                # A successor already required by the baseline cannot cover two former cases.
+                missing_names = {name for name in missing_names
+                                 if renames.get(name) not in new_names - old_names}
+                if missing_names:
+                    regressions.append(f"{label} required named cases removed: "
+                                       + ", ".join(sorted(missing_names)))
+    return regressions
+
+
+def scenario_matrix(stage, roots, baseline=None):
+    if baseline is not None:
+        try:
+            data = json.loads(baseline)
+            if type(data["schemaVersion"]) is not int or data["schemaVersion"] != 1:
+                raise ValueError("unsupported schemaVersion")
+            previous, _ = validate_scenarios(data)
+        except (KeyError, TypeError, ValueError) as error:
+            return {"status": "FAIL", "reason": f"invalid scenario baseline: {error}"}
+
     paths = [root / "verification/three-line-parity/scenario-matrix.json" for root in roots]
     missing = [str(path) for path in paths if not path.is_file()]
     if missing:
         return {"status": "FAIL", "reason": "T09 scenario matrix is missing",
                 "missing": missing}
-    hashes = [sha256(path) for path in paths]
+    contents = [path.read_bytes() for path in paths]
+    hashes = [hashlib.sha256(content).hexdigest() for content in contents]
     if len(set(hashes)) != 1:
         return {"status": "FAIL", "reason": "scenario matrix differs across version lines",
                 "sha256ByLine": dict(zip((version for _, version in EXPECTED), hashes))}
-    path = paths[2]
     try:
-        data = json.loads(path.read_text(encoding="utf-8"))
-        scenarios = data["scenarios"]
-        pending = []
-        if not scenarios or len({row["id"] for row in scenarios}) != len(scenarios):
-            raise ValueError("scenario IDs are empty or duplicated")
-        for row in scenarios:
-            case_names = row.get("caseNames", {})
-            if case_names and (set(case_names) != {version for _, version in EXPECTED}
-                               or any(not valid_case_names(names)
-                                      for names in case_names.values())):
-                raise ValueError(f"invalid case names for {row['id']}")
-            for index, (_, version) in enumerate(EXPECTED):
-                mapping = row["lines"][version]
-                if mapping["status"] == "supported":
-                    if not mapping["tests"] or not all((roots[index] / file).is_file()
-                                                        for file in mapping["tests"]):
-                        raise ValueError(f"missing mapped test for {row['id']} in {version}")
-                    if case_names and len(mapping["tests"]) != 1:
-                        raise ValueError(f"case name requires one test file for {row['id']} in {version}")
-                elif mapping["status"] == "unsupported":
-                    if not mapping.get("reason"):
-                        raise ValueError(f"missing platform reason for {row['id']} in {version}")
-                elif mapping["status"] == "pending":
-                    if not mapping.get("reason"):
-                        raise ValueError(f"missing pending reason for {row['id']} in {version}")
-                    pending.append(f"{row['id']}:{version}")
-                else:
-                    raise ValueError(f"invalid status for {row['id']} in {version}")
-    except (KeyError, TypeError, ValueError, json.JSONDecodeError) as error:
-        return {"status": "FAIL", "reason": str(error), "artifact": str(path)}
+        scenarios, pending = validate_scenarios(json.loads(contents[2]), roots)
+    except (KeyError, TypeError, ValueError) as error:
+        return {"status": "FAIL", "reason": str(error), "source": str(paths[2])}
+    if baseline is not None:
+        regressions = scenario_regressions(previous, scenarios)
+        if regressions:
+            return {"status": "FAIL", "reason": "scenario matrix regressed against baseline",
+                    "regressions": regressions, "pending": pending}
     artifact = stage / "scenario-matrix.json"
-    shutil.copy2(path, artifact)
+    artifact.write_bytes(contents[2])
     return {"status": "BLOCKED" if pending else "PASS", "pending": pending,
             "scenarios": len(scenarios), "artifact": artifact.name,
-            "artifactSha256": sha256(artifact)}
+            "artifactSha256": hashes[2]}
 
 
-def scenario_test_reports(root, scenarios, version, started_ns):
+def baseline_result(stage, roots, path, content):
+    if content is None:
+        return {"status": "FAIL", "baseline": str(path),
+                "reason": f"scenario baseline unavailable: {path}"}
+    artifact = stage / "scenario-baseline.json"
+    artifact.write_bytes(content)
+    return {**scenario_matrix(stage, roots, content),
+            "baseline": str(path), "baselineArtifact": artifact.name,
+            "baselineSha256": hashlib.sha256(content).hexdigest()}
+
+
+def read_scenario_baseline(path):
+    try:
+        return path.read_bytes()
+    except OSError:
+        return None
+
+
+def publish_report(stage, destination, report):
+    (stage / "report.json").write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n",
+                                       encoding="utf-8")
+    shutil.copytree(stage, destination)
+    print(f"three-line={report['status']} phase={report['phase']} runId={report['runId']} "
+          f"report={destination / 'report.json'}")
+    return 0 if report["status"] in ("PASS", "INVENTORY") else 1
+
+
+def test_suite_results(suite):
+    """Read Maven test evidence and reconcile its summary with its reported cases."""
+    xml = ET.parse(suite).getroot()
+    suite_class = suite.stem.removeprefix("TEST-")
+    namespace, _, element = xml.tag.rpartition("}")
+    if element != "testsuite" or xml.get("name") != suite_class:
+        raise ValueError("test suite name does not match the report filename")
+    prefix = namespace + "}" if namespace else ""
+    # Jupiter can report an enclosing class for nested tests. ArchUnit uses simple names.
+    class_names = {suite_class}
+    while "$" in suite_class:
+        suite_class = suite_class.rsplit("$", 1)[0]
+        class_names.add(suite_class)
+    class_names |= {name.rsplit(".", 1)[-1] for name in class_names}
+    cases = xml.findall(prefix + "testcase")
+    observed = {"tests": len(cases), "failures": 0, "errors": 0, "skipped": 0}
+    outcomes = {"failure": "failures", "error": "errors", "skipped": "skipped"}
+    passed_cases = set()
+    for case in cases:
+        name = case.get("name")
+        if not name or case.get("classname") not in class_names:
+            raise ValueError("testcase name or class does not match the report suite")
+        results = [outcomes[tag] for child in case
+                   if (tag := child.tag.removeprefix(prefix)) in outcomes]
+        if len(results) > 1:
+            raise ValueError(f"testcase {name} has multiple final outcomes")
+        if results:
+            observed[results[0]] += 1
+        else:
+            passed_cases.add(name)
+    declared = {key: int(xml.get(key, "0")) for key in observed}
+    if declared != observed:
+        raise ValueError(f"test counters do not match testcase outcomes: {declared} != {observed}")
+    return observed, passed_cases
+
+
+def scenario_test_reports(root, scenarios, version, started_ns, target="target"):
     """Match every supported scenario test to a fresh successful Surefire/Failsafe XML."""
     root = root.resolve()
     issues = []
@@ -210,7 +335,7 @@ def scenario_test_reports(root, scenarios, version, started_ns):
             prefix = "TEST-" + class_name
             suites = []
             for folder in ("surefire-reports", "failsafe-reports"):
-                for suite in (directory / "target" / folder).glob(prefix + "*.xml"):
+                for suite in (directory / target / folder).glob(prefix + "*.xml"):
                     if suite.name == prefix + ".xml" or suite.name.startswith(prefix + "$"):
                         suites.append(suite)
             if not suites:
@@ -218,6 +343,7 @@ def scenario_test_reports(root, scenarios, version, started_ns):
                 continue
             counts = {"tests": 0, "failures": 0, "errors": 0, "skipped": 0}
             artifacts = {}
+            source_reports = set()
             executed_cases = set()
             valid = True
             for suite in suites:
@@ -226,22 +352,23 @@ def scenario_test_reports(root, scenarios, version, started_ns):
                     valid = False
                     continue
                 try:
-                    xml = ET.parse(suite).getroot()
-                    values = {key: int(xml.get(key, "0")) for key in counts}
-                    if xml.tag.rsplit("}", 1)[-1] != "testsuite" or any(
-                            value < 0 for value in values.values()):
-                        raise ValueError("invalid test counts or XML root")
+                    values, passed_cases = test_suite_results(suite)
+                    digest = sha256(suite)
                 except (OSError, ValueError, ET.ParseError) as error:
                     issues.append(f"{row['id']}: invalid XML {suite}: {error}")
                     valid = False
                     continue
+                artifacts[str(suite.relative_to(root))] = digest
+                report_id = (directory, suite.name, digest)
+                if report_id in source_reports:
+                    continue
+                source_reports.add(report_id)
                 for key, value in values.items():
                     counts[key] += value
-                executed_cases.update(case.get("name") for case in xml.iter("testcase"))
-                artifacts[str(suite.relative_to(root))] = sha256(suite)
-                if suite not in counted_reports:
+                executed_cases.update(passed_cases)
+                if report_id not in counted_reports:
                     executed += values["tests"] - values["skipped"]
-                    counted_reports.add(suite)
+                    counted_reports.add(report_id)
             ran = counts["tests"] - counts["skipped"]
             if valid and (ran <= 0 or counts["failures"] or counts["errors"]
                           or counts["skipped"]):
@@ -285,6 +412,36 @@ def execute(name, command, stage, checks, cwd=None, env=None, required_artifacts
                     "log": log.name, "logSha256": sha256(log), "artifacts": artifacts,
                     "missingArtifacts": missing, "invalidArtifacts": invalid}
     return passed
+
+
+def verify_quarkus_sample_durable(root, stage, checks, environment):
+    name = "quarkus-durable-sample-8"
+    module = "ddd4j-samples/ddd4j-sample-quarkus-cqrs"
+    test = "io.ddd4j.sample.quarkus.cqrs.NativeSharedCqrsTest"
+    command = ["./mvnw", "-q", "-pl", module, "-am", "-Pdurable-order", f"-Dtest={test}",
+               "-Dsurefire.failIfNoSpecifiedTests=false", "test"]
+    started_ns = time.time_ns()
+    if not execute(name, command, stage, checks, cwd=root, env=environment):
+        return
+    source = f"{module}/src/test/java/{test.replace('.', '/')}.java"
+    scenario = {"id": "S03-POSTGRESQL-DURABLE",
+                "lines": {"1.0.x": {"status": "supported", "tests": [source]}},
+                "caseNames": {"1.0.x": "durableSourceProjectionFailureRetryAndSparsePosition"}}
+    collect_quarkus_profile_report(root, stage, checks, name, scenario, "1.0.x", started_ns,
+                                   "target/durable-order")
+
+
+def collect_quarkus_profile_report(root, stage, checks, name, scenario, version, started_ns, target):
+    reports = scenario_test_reports(root, [scenario], version, started_ns,
+                                    target=target)
+    checks[name]["testReports"] = reports
+    for record in reports["tests"]:
+        for relative in record["artifacts"]:
+            destination = stage / f"{name}-{Path(relative).name}"
+            shutil.copy2(root / relative, destination)
+            checks[name]["artifacts"][destination.name] = sha256(destination)
+    if reports["status"] != "PASS" or reports["executedTests"] != 1:
+        checks[name]["status"] = "FAIL"
 
 
 def default_reactor_modules(root):
@@ -341,10 +498,7 @@ def reactor_reports(root, started_ns):
                 issues.append(f"{relative}: stale Surefire XML {suite.name}")
                 continue
             try:
-                node = ET.parse(suite).getroot()
-                values = {name: int(node.get(name, "0")) for name in counts}
-                if node.tag.rsplit("}", 1)[-1] != "testsuite" or any(v < 0 for v in values.values()):
-                    raise ValueError("invalid test counts or XML root")
+                values, _ = test_suite_results(suite)
             except (OSError, ValueError, ET.ParseError) as error:
                 issues.append(f"{relative}: invalid Surefire XML {suite.name}: {error}")
                 continue
@@ -423,6 +577,11 @@ def validate_checkout(root, version, expected_sha=None):
 
 
 def run(args):
+    baseline_path = getattr(args, "scenario_baseline", None)
+    baseline = None
+    if baseline_path is not None:
+        baseline_path = baseline_path.absolute()
+        baseline = read_scenario_baseline(baseline_path)
     roots = [path.resolve() for path in args.roots]
     jdks = [path.resolve() for path in args.jdks]
     policy = args.policy.resolve()
@@ -441,9 +600,38 @@ def run(args):
     policy_before = sha256(policy)
     run_id = uuid.uuid4().hex
     output.mkdir(parents=True, exist_ok=True)
+    destination = output / run_id
+
+    def finish_report(stage, checks):
+        after = [git_input(root) for root in roots]
+        policy_after = sha256(policy)
+        stable = input_stable(before, after, policy_before, policy_after)
+        if baseline_path is not None:
+            baseline_after = read_scenario_baseline(baseline_path)
+            matrix_check = checks["scenario-matrix"]
+            matrix_check["baselineAfterSha256"] = (
+                hashlib.sha256(baseline_after).hexdigest() if baseline_after is not None else None)
+            if baseline != baseline_after:
+                stable = False
+                matrix_check.update(status="FAIL", reason="scenario baseline changed during verification")
+        report = {"schemaVersion": 1, "runId": run_id, "phase": args.phase,
+                  "status": combined_status(checks, args.phase, stable),
+                  "policy": str(policy), "policySha256": policy_before,
+                  "policyAfterSha256": policy_after,
+                  "roots": [{"path": str(root), "before": old, "after": new,
+                             "jdk": jdk, "wrapper": str(root / "mvnw")}
+                            for root, old, new, jdk in zip(roots, before, after, jdk_versions)],
+                  "inputStable": stable, "expectedShas": args.expected_shas,
+                  "checks": checks}
+        return publish_report(stage, destination, report)
+
     with tempfile.TemporaryDirectory(prefix="ddd4j-three-line-") as temporary:
         stage = Path(temporary)
         checks = {}
+        if baseline_path is not None:
+            checks["scenario-matrix"] = baseline_result(stage, roots, baseline_path, baseline)
+            if checks["scenario-matrix"]["status"] == "FAIL":
+                return finish_report(stage, checks)
         common = ["--roots", *map(str, roots)]
         structure = SCRIPT_DIR / "verify-three-line-structure-api-parity.py"
         structure_environment = os.environ.copy()
@@ -509,15 +697,20 @@ def run(args):
                 checks["dependencies"] = {"status": "BLOCKED", "reason": "effective POM missing"}
             reactor_starts = {}
             if reactors_can_run(checks):
+                reactor_command = ["./mvnw", "-q", "clean", "verify"]
+                # The Sa-Token Redis tests use unauthenticated DB 0 at 127.0.0.1.
+                local_redis = re.fullmatch(r"redis://127\.0\.0\.1:([0-9]{1,5})(?:/0?)?",
+                                           args.redis_native_url or "")
+                redis_port = int(local_redis[1]) if local_redis else 0
+                if 0 < redis_port <= 65535:
+                    reactor_command.append(f"-Dddd4j.test.redis.port={redis_port}")
                 for index, (root, jdk) in enumerate(zip(roots, jdks)):
                     environment = os.environ.copy()
                     environment["JAVA_HOME"] = str(jdk)
                     name = f"reactor-{EXPECTED[index][0]}"
                     started_ns = time.time_ns()
                     reactor_starts[EXPECTED[index][1]] = started_ns
-                    execute(name,
-                            ["./mvnw", "-q", "clean", "verify"], stage, checks,
-                            cwd=root, env=environment)
+                    execute(name, reactor_command, stage, checks, cwd=root, env=environment)
                     reports = reactor_reports(root, started_ns)
                     artifact = stage / f"{name}-reports.json"
                     artifact.write_text(json.dumps(reports, ensure_ascii=False, indent=2) + "\n",
@@ -586,7 +779,8 @@ def run(args):
                                                     "reason": "line reactor did not run"}
                     checks[f"redis-native-{major}"] = {"status": "BLOCKED",
                                                         "reason": "line reactor did not run"}
-            checks["scenario-matrix"] = scenario_matrix(stage, roots)
+            if baseline_path is None:
+                checks["scenario-matrix"] = scenario_matrix(stage, roots)
             if "artifact" in checks["scenario-matrix"] and len(reactor_starts) == 3:
                 scenarios = json.loads((stage / "scenario-matrix.json").read_text(
                     encoding="utf-8"))["scenarios"]
@@ -609,27 +803,16 @@ def run(args):
             else:
                 checks["scenario-execution"] = {
                     "status": "BLOCKED", "reason": "scenario matrix or reactor evidence missing"}
+            if "1.0.x" in reactor_starts:
+                verify_quarkus_sample_durable(roots[0], stage, checks,
+                                             {**os.environ, "JAVA_HOME": str(jdks[0])})
+            else:
+                checks["quarkus-durable-sample-8"] = {
+                    "status": "BLOCKED", "reason": "Java 8 reactor did not run"}
         else:
             for name in ("values", "dependencies", "reactor", "scenario-matrix"):
-                checks[name] = {"status": "NOT_RUN", "reason": "inventory phase"}
-        after = [git_input(root) for root in roots]
-        policy_after = sha256(policy)
-        stable = input_stable(before, after, policy_before, policy_after)
-        report = {"schemaVersion": 1, "runId": run_id, "phase": args.phase,
-                  "status": combined_status(checks, args.phase, stable),
-                  "policy": str(policy), "policySha256": policy_before,
-                  "policyAfterSha256": policy_after,
-                  "roots": [{"path": str(root), "before": old, "after": new,
-                             "jdk": jdk, "wrapper": str(root / "mvnw")}
-                            for root, old, new, jdk in zip(roots, before, after, jdk_versions)],
-                  "inputStable": stable, "expectedShas": args.expected_shas,
-                  "checks": checks}
-        (stage / "report.json").write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n",
-                                           encoding="utf-8")
-        destination = output / run_id
-        shutil.copytree(stage, destination)
-    print(f"three-line={report['status']} phase={args.phase} runId={run_id} report={destination / 'report.json'}")
-    return 0 if report["status"] in ("PASS", "INVENTORY") else 1
+                checks.setdefault(name, {"status": "NOT_RUN", "reason": "inventory phase"})
+        return finish_report(stage, checks)
 
 
 def main():
@@ -641,7 +824,10 @@ def main():
     parser.add_argument("--policy", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--phase", choices=("inventory", "verify"), required=True)
-    parser.add_argument("--redis-native-url", help="isolated Redis URL for native Stream scenarios")
+    parser.add_argument("--scenario-baseline", type=Path,
+                        help="immutable scenario matrix used to detect coverage regressions")
+    parser.add_argument("--redis-native-url",
+                        help="isolated Redis URL for native Stream scenarios and loopback reactor tests")
     args = parser.parse_args()
     try:
         return run(args)

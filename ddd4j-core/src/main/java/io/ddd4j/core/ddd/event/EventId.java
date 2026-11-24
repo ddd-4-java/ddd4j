@@ -17,7 +17,6 @@ package io.ddd4j.core.ddd.event;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.ddd4j.kit.lang.StrKit;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
@@ -27,7 +26,6 @@ import java.util.UUID;
  */
 public final class EventId implements Serializable {
 
-    @Serial
     private static final long serialVersionUID = 1L;
 
     /**
@@ -88,9 +86,10 @@ public final class EventId implements Serializable {
         if (this == object) {
             return true;
         }
-        if (!(object instanceof EventId that)) {
+        if (!(object instanceof EventId)) {
             return false;
         }
+        EventId that = (EventId) object;
         return Objects.equals(value, that.value);
     }
 

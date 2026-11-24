@@ -20,8 +20,17 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.MybatisSqlSessionFactoryBuilder;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
+import io.ddd4j.annotation.orm.TenantId;
+import io.ddd4j.core.api.Page;
+import io.ddd4j.core.constant.ContextConstants;
+import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.model.AggregateRoot;
+import io.ddd4j.core.ddd.repository.RepositoryRegistry;
+import io.ddd4j.core.exception.BizRuntimeException;
 import org.apache.ibatis.datasource.pooled.PooledDataSource;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.SqlSession;
@@ -29,6 +38,8 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.MySQLContainer;
@@ -39,8 +50,12 @@ import java.sql.Connection;
 import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * {@link MybatisAggregateRepository} 的 MySQL 集成测试。
@@ -58,7 +73,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 class MybatisAggregateRepositoryMySQLTest {
 
     @Container
-    private static final MySQLContainer MYSQL = new MySQLContainer("mysql:8.4")
+    private static final MySQLContainer<?> MYSQL = new MySQLContainer<>("mysql:8.4")
+            // 数据仅用于本轮集成验证，避免占用宿主 Docker 持久盘。
+            .withTmpFs(Map.of("/var/lib/mysql", "rw"))
             .withDatabaseName("ddd4j_it")
             .withUsername("ddd4j")
             .withPassword("ddd4j");
@@ -66,6 +83,7 @@ class MybatisAggregateRepositoryMySQLTest {
     private static SqlSessionFactory sqlSessionFactory;
     private static OrderMapper mapper;
     private static TestRepository repository;
+    private static SqlSession session;
 
     @BeforeAll
     static void setUp() throws Exception {
@@ -75,7 +93,9 @@ class MybatisAggregateRepositoryMySQLTest {
             stmt.execute("CREATE TABLE IF NOT EXISTS orders ("
                     + "id VARCHAR(64) PRIMARY KEY, "
                     + "order_status VARCHAR(32), "
-                    + "deleted_at DATETIME NULL)");
+                    + "deleted_at DATETIME NULL, "
+                    // 仅临时容器夹具；原有 status/deletedAt 不具备租户语义。
+                    + "tenant_id VARCHAR(64) NULL COMMENT '订单所属租户')");
         }
 
         // 2. 独立自举 MyBatis-Plus（无 Spring）
@@ -83,17 +103,35 @@ class MybatisAggregateRepositoryMySQLTest {
                 "com.mysql.cj.jdbc.Driver", MYSQL.getJdbcUrl(), MYSQL.getUsername(), MYSQL.getPassword());
         MybatisConfiguration configuration = new MybatisConfiguration();
         configuration.setEnvironment(new Environment("tc", new JdbcTransactionFactory(), dataSource));
+        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
+        configuration.addInterceptor(interceptor);
         configuration.addMapper(OrderMapper.class);
         sqlSessionFactory = new MybatisSqlSessionFactoryBuilder().build(configuration);
 
-        SqlSession session = sqlSessionFactory.openSession(true);
+        session = sqlSessionFactory.openSession(true);
         mapper = session.getMapper(OrderMapper.class);
         repository = new TestRepository(mapper);
     }
 
     @BeforeEach
     void cleanTable() {
+        ThreadContext.clear();
         mapper.delete(null);
+    }
+
+    @AfterEach
+    void clearContext() {
+        ThreadContext.clear();
+    }
+
+    @AfterAll
+    static void closeSession() {
+        if (Objects.nonNull(session)) {
+            session.close();
+        }
+        RepositoryRegistry.unregister(Order.class);
+        RepositoryRegistry.unregisterQuery(OrderQuery.class);
     }
 
     @Test
@@ -155,6 +193,76 @@ class MybatisAggregateRepositoryMySQLTest {
         assertThat(repository.findAll()).isEmpty();
     }
 
+    @Test
+    @DisplayName("原版模型与 Query：直接保存更新、单条列表分页和存在判断，无命令总线或事件存储")
+    void originalModelAndQueryUsagePersistsWithoutCqrsInfrastructure() {
+        Order first = new Order("simple-1", "CREATED", null);
+        assertThat(first.<Order>save()).isSameAs(first);
+        first.setStatus("PAID");
+        assertThat(first.<Order>update()).isSameAs(first);
+        new Order("simple-2", "PAID", null).save();
+        new Order("simple-3", "DRAFT", null).save();
+
+        assertThat(new OrderQuery().eq(Order::getId, "simple-1").one().getStatus()).isEqualTo("PAID");
+        assertThat(new OrderQuery().eq(Order::getStatus, "PAID").orderByAsc(Order::getId).list())
+                .extracting(Order::getId).containsExactly("simple-1", "simple-2");
+        Page<Order> page = new OrderQuery().eq(Order::getStatus, "PAID")
+                .orderByAsc(Order::getId).current(2).size(1).page();
+        assertThat(page.getTotal()).isEqualTo(2);
+        assertThat(page.getRecords()).extracting(Order::getId).containsExactly("simple-2");
+        assertThat(new OrderQuery().eq(Order::getStatus, "PAID").exist()).isTrue();
+        assertThat(new OrderQuery().eq(Order::getStatus, "MISSING").exist()).isFalse();
+        assertThat(new OrderQuery().eq(Order::getStatus, "MISSING").one()).isNull();
+        assertThatThrownBy(() -> new OrderQuery().eq(Order::getStatus, "MISSING").one("order missing"))
+                .isInstanceOf(BizRuntimeException.class).hasMessageContaining("order missing");
+        new Order("absent", "PAID", null).update();
+        assertThat(AggregateRoot.get(Order.class, "absent")).isEmpty();
+        assertThat(AggregateRoot.get(Order.class, "simple-1")).isPresent()
+                .get().extracting(Order::getStatus).isEqualTo("PAID");
+    }
+
+    @Test
+    @DisplayName("转换与填充：读回 PO 映射为领域对象，按需执行业务仓储填充")
+    void originalQueriesConvertAndFillPersistedModels() {
+        LocalDateTime deletedAt = LocalDateTime.of(2026, 11, 18, 8, 30);
+        new Order("fill-1", "PAID", deletedAt).save();
+
+        OrderPO po = mapper.selectById("fill-1");
+        assertThat(po.getStatus()).isEqualTo("PAID");
+        assertThat(po.getDeletedAt()).isEqualTo(deletedAt);
+        Order converted = repository.toModel(po);
+        assertThat(converted.getStatus()).isEqualTo("PAID");
+        assertThat(repository.toPersistenceObject(converted).getDeletedAt()).isEqualTo(deletedAt);
+        assertThat(new OrderQuery().one().getStatusLabel()).isNull();
+        assertThat(new OrderQuery().fills("statusLabel").one().getStatusLabel()).isEqualTo("已支付");
+        assertThat(new OrderQuery().fills("statusLabel").list()).extracting(Order::getStatusLabel)
+                .containsExactly("已支付");
+        assertThat(new OrderQuery().fills("statusLabel").page().getRecords())
+                .extracting(Order::getStatusLabel).containsExactly("已支付");
+        converted.fill(new OrderQuery().fills("statusLabel"));
+        assertThat(converted.getStatusLabel()).isEqualTo("已支付");
+    }
+
+    @Test
+    @DisplayName("租户：原版保存自动填租户，Query 单条列表分页和存在判断隔离租户")
+    void originalQueriesScopeRowsToCurrentTenant() {
+        ThreadContext.set(ContextConstants.TENANT_ID, "tenant-a");
+        new Order("tenant-a-1", "PAID", null).save();
+        ThreadContext.set(ContextConstants.TENANT_ID, "tenant-b");
+        new Order("tenant-b-1", "DRAFT", null).save();
+        assertThat(mapper.selectById("tenant-a-1").getTenantId()).isEqualTo("tenant-a");
+        assertThat(mapper.selectById("tenant-b-1").getTenantId()).isEqualTo("tenant-b");
+
+        ThreadContext.set(ContextConstants.TENANT_ID, "tenant-a");
+        assertThat(new OrderQuery().one().id()).isEqualTo("tenant-a-1");
+        assertThat(new OrderQuery().list()).extracting(Order::getId).containsExactly("tenant-a-1");
+        assertThat(new OrderQuery().page().getTotal()).isEqualTo(1);
+        assertThat(new OrderQuery().eq(Order::getStatus, "DRAFT").exist()).isFalse();
+        ThreadContext.set(ContextConstants.TENANT_ID, "tenant-b");
+        assertThat(new OrderQuery().list()).extracting(Order::getId).containsExactly("tenant-b-1");
+        assertThat(new OrderQuery().eq(Order::getStatus, "DRAFT").exist()).isTrue();
+    }
+
     // =================== 测试夹具 ===================
 
     static final class TestRepository
@@ -162,6 +270,17 @@ class MybatisAggregateRepositoryMySQLTest {
 
         TestRepository(OrderMapper mapper) {
             super(mapper, Order.class, OrderPO.class);
+        }
+
+        @Override
+        public void fill(Query<Order> query, List<Order> models) {
+            if (query.fill("statusLabel")) {
+                for (Order order : models) {
+                    if ("PAID".equals(order.getStatus())) {
+                        order.statusLabel = "已支付";
+                    }
+                }
+            }
         }
     }
 
@@ -176,6 +295,7 @@ class MybatisAggregateRepositoryMySQLTest {
         private String id;
         private String status;
         private LocalDateTime deletedAt;
+        private String statusLabel;
 
         Order() {
         }
@@ -211,6 +331,10 @@ class MybatisAggregateRepositoryMySQLTest {
             return deletedAt;
         }
 
+        String getStatusLabel() {
+            return statusLabel;
+        }
+
         public void setDeletedAt(LocalDateTime deletedAt) {
             this.deletedAt = deletedAt;
         }
@@ -227,6 +351,9 @@ class MybatisAggregateRepositoryMySQLTest {
 
         @TableField("deleted_at")
         private LocalDateTime deletedAt;
+
+        @TenantId
+        private String tenantId;
 
         OrderPO() {
         }
@@ -253,6 +380,14 @@ class MybatisAggregateRepositoryMySQLTest {
 
         public void setDeletedAt(LocalDateTime deletedAt) {
             this.deletedAt = deletedAt;
+        }
+
+        public String getTenantId() {
+            return tenantId;
+        }
+
+        public void setTenantId(String tenantId) {
+            this.tenantId = tenantId;
         }
     }
 }

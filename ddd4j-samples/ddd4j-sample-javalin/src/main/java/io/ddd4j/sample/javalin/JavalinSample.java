@@ -21,6 +21,7 @@ import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.auth.AuthRequest;
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.SpiRegistrationScope;
+import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectProvider;
@@ -31,6 +32,12 @@ import io.ddd4j.sample.javalin.spi.NoOpDomainEventPublisher;
 import io.ddd4j.sample.order.application.OrderApplicationService;
 import io.ddd4j.sample.order.jdbc.JdbcOrderSampleRuntime;
 import io.ddd4j.web.javalin.Ddd4jJavalinWeb;
+import io.ddd4j.web.core.auth.AuthenticationMode;
+import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
+import io.ddd4j.web.core.auth.PathWebAccessPolicy;
+import io.ddd4j.web.core.context.WebRequestContextFactory;
+import io.ddd4j.web.core.context.WebRequestLifecycle;
+import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
 import io.javalin.Javalin;
 import io.javalin.json.JavalinJackson;
 import lombok.extern.slf4j.Slf4j;
@@ -48,9 +55,8 @@ public final class JavalinSample {
 
     /** @param args 启动参数 */
     public static void main(String[] args) {
-        JavalinApplication application = start(7000);
-        log.info("Javalin Order sample started at http://localhost:{}; demo Bearer token: {}",
-                application.app().port(), application.token());
+        JavalinApplication application = startBasic(7000);
+        log.info("Javalin Order memory demo started at http://localhost:{}", application.app().port());
     }
 
     /**
@@ -61,6 +67,16 @@ public final class JavalinSample {
         JavalinOrderAdapters adapters = new JavalinOrderAdapters();
         OrderApplicationService service = new OrderApplicationService(adapters, adapters, adapters, adapters);
         return start(port, service, null);
+    }
+
+    /**
+     * 无认证、总线或后台资源的内存订单示例。
+     * @param port HTTP 监听端口
+     * @return 可关闭应用
+     */
+    public static JavalinApplication startBasic(int port) {
+        JavalinOrderAdapters adapters = new JavalinOrderAdapters();
+        return start(port, new OrderApplicationService(adapters, adapters, adapters, adapters), null, false);
     }
 
     /**
@@ -76,37 +92,57 @@ public final class JavalinSample {
 
     private static JavalinApplication start(int port, OrderApplicationService service,
                                             JdbcOrderSampleRuntime jdbcRuntime) {
+        return start(port, service, jdbcRuntime, true);
+    }
+
+    private static JavalinApplication start(int port, OrderApplicationService service,
+                                            JdbcOrderSampleRuntime jdbcRuntime, boolean demoAuth) {
         DomainEventPublisher eventPublisher = new NoOpDomainEventPublisher();
-        InMemorySubject subject = new InMemorySubject(event -> log.debug("Authentication event: {}", event));
-        String token = subject.login(AuthRequest.of("sample-user").setPrincipal(new AuthPrincipal()
-                .setLoginId("sample-user")
-                .setUserId("sample-user")
-                .setPerms(java.util.Set.of("order:read", "order:write"))));
+        String token = "";
 
         SpiRegistrationScope spiScope = new SpiRegistrationScope()
                 .register(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class, eventPublisher)
-                .register(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class, new InMemorySubjectProvider(subject))
                 .register(SpiKeys.I18N_PROVIDER, I18nProvider.class, new DefaultI18nProvider());
+        if (demoAuth) {
+            InMemorySubject subject = new InMemorySubject(event -> log.debug("Authentication event: {}", event));
+            token = subject.login(AuthRequest.of("sample-user").setPrincipal(new AuthPrincipal()
+                    .setLoginId("sample-user").setUserId("sample-user")
+                    .setPerms(java.util.Set.of("order:read", "order:write"))));
+            spiScope.register(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class, new InMemorySubjectProvider(subject));
+        }
+        Javalin app = null;
         try {
             spiScope.start();
             OrderController controller = new OrderController(service);
-            Javalin app = Javalin.create(config -> {
+            app = Javalin.create(config -> {
                 config.startup.showJavalinBanner = false;
                 config.jsonMapper(new JavalinJackson(JsonMapper.builder().findAndAddModules().build(), false));
-                new Ddd4jJavalinWeb().configure(config);
+                Ddd4jJavalinWeb web = demoAuth ? new Ddd4jJavalinWeb()
+                        : new Ddd4jJavalinWeb(new WebRequestContextFactory(), new WebRequestLifecycle(
+                                new BearerSubjectAuthenticator(), new PathWebAccessPolicy(java.util.List.of(),
+                                AuthenticationMode.DISABLED)), new DefaultWebExceptionTranslator(), null);
+                web.configure(config);
                 config.routes.apiBuilder(controller::routes);
             });
             app.start(port);
             return new JavalinApplication(app, token, spiScope, jdbcRuntime);
-        } catch (RuntimeException exception) {
+        } catch (RuntimeException | Error failure) {
             try {
-                if (Objects.nonNull(jdbcRuntime)) {
-                    jdbcRuntime.close();
-                }
-            } finally {
-                spiScope.close();
+                stop(app, spiScope, jdbcRuntime);
+            } catch (RuntimeException | Error cleanupFailure) {
+                failure.addSuppressed(cleanupFailure);
             }
-            throw exception;
+            throw failure;
+        }
+    }
+
+    private static void stop(Javalin app, SpiRegistrationScope spiScope, JdbcOrderSampleRuntime jdbcRuntime) {
+        try (ThreadContext.Scope callerContext = ThreadContext.open();
+             SpiRegistrationScope registrations = spiScope;
+             JdbcOrderSampleRuntime runtime = jdbcRuntime) {
+            if (Objects.nonNull(app)) {
+                app.stop();
+            }
         }
     }
 
@@ -143,17 +179,7 @@ public final class JavalinSample {
 
         @Override
         public void close() {
-            try {
-                app.stop();
-            } finally {
-                try {
-                    if (Objects.nonNull(jdbcRuntime)) {
-                        jdbcRuntime.close();
-                    }
-                } finally {
-                    spiScope.close();
-                }
-            }
+            stop(app, spiScope, jdbcRuntime);
         }
 
         /** @return Javalin 服务实例 */

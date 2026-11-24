@@ -47,21 +47,24 @@ public final class Ddd4jDropwizardResponseFilter implements ContainerResponseFil
     public void filter(ContainerRequestContext request, ContainerResponseContext response) {
         Object span = request.getProperty(Ddd4jDropwizardRequestFilter.OTEL_SPAN_PROPERTY);
         Object scope = request.getProperty(Ddd4jDropwizardRequestFilter.OTEL_SCOPE_PROPERTY);
-        try {
+        Object sessionValue = request.getProperty(Ddd4jDropwizardRequestFilter.SESSION_PROPERTY);
+        int status = 500;
+        try (SynchronousWebRequestSession session = sessionValue instanceof SynchronousWebRequestSession
+                ? (SynchronousWebRequestSession) sessionValue : null) {
             Object contextValue = request.getProperty(Ddd4jDropwizardRequestFilter.CONTEXT_PROPERTY);
             if (contextValue instanceof WebRequestContext context) {
                 response.getHeaders().putSingle(WebHeaders.REQUEST_ID, context.requestId());
                 response.getHeaders().putSingle(WebHeaders.TRACE_ID, context.traceId());
             }
-            Object sessionValue = request.getProperty(Ddd4jDropwizardRequestFilter.SESSION_PROPERTY);
-            if (sessionValue instanceof SynchronousWebRequestSession session) {
-                session.complete(response.getStatus() < 400);
+            status = response.getStatus();
+            if (Objects.nonNull(session)) {
+                session.complete(status < 400);
             }
         } finally {
             request.removeProperty(Ddd4jDropwizardRequestFilter.CONTEXT_PROPERTY);
             request.removeProperty(Ddd4jDropwizardRequestFilter.SESSION_PROPERTY);
             if (Objects.nonNull(span)) {
-                WebOtelSupport.endServerSpan(span, response.getStatus());
+                WebOtelSupport.endServerSpan(span, status);
             }
             closeScope(scope);
             request.removeProperty(Ddd4jDropwizardRequestFilter.OTEL_SPAN_PROPERTY);

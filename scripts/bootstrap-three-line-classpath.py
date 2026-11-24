@@ -48,15 +48,24 @@ def validate(data, checksum):
         raise ValueError('Jackson annotations bytecode is incompatible with JDK 8')
 
 
+def cached_artifact(repository):
+    """离线验证固定坐标下的缓存构件，返回值对象探针可使用的路径。"""
+    target = repository / RELATIVE
+    if not target.is_file():
+        raise ValueError(f'Missing pinned Jackson annotations at {target}. Run bootstrap-three-line-classpath.py first.')
+    checksum_path = target.with_suffix('.jar.sha256')
+    if checksum_path.is_file() and checksum_path.read_text().strip().lower() != CHECKSUM:
+        raise ValueError('Cached Jackson annotations checksum differs from pinned SHA-256')
+    validate(target.read_bytes(), CHECKSUM)
+    return target
+
+
 def bootstrap(repository):
-    """仅在完整验证后写入缓存，供原来的失败关闭探针检查器使用。"""
+    """仅在完整验证后写入缓存，供值对象探针使用。"""
     target = repository / RELATIVE
     checksum_path = target.with_suffix('.jar.sha256')
     if target.is_file() and checksum_path.is_file():
-        if checksum_path.read_text().strip().lower() != CHECKSUM:
-            raise ValueError('Cached Jackson annotations checksum differs from pinned SHA-256')
-        validate(target.read_bytes(), CHECKSUM)
-        return target
+        return cached_artifact(repository)
     data = download()
     validate(data, CHECKSUM)
     target.parent.mkdir(parents=True, exist_ok=True)

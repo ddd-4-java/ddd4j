@@ -30,6 +30,7 @@ import org.testcontainers.utility.DockerImageName;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -50,7 +51,9 @@ class KafkaMQClientRoundTripTest {
 
     @Container
     private static final KafkaContainer KAFKA = new KafkaContainer(
-            DockerImageName.parse("apache/kafka:3.9.1"));
+            DockerImageName.parse("apache/kafka:3.9.1"))
+            .withTmpFs(Map.of("/tmp/kafka-logs", "rw,size=512m,uid=1000,gid=1000",
+                    "/opt/kafka/logs", "rw,size=128m,uid=1000,gid=1000"));
 
     @Test
     @DisplayName("生产/消费往返：事件经 Kafka broker 送达监听器且负载完整")

@@ -1,0 +1,202 @@
+**Exploration: FileValidationEngine FileValidationService**
+
+Found 14 symbols across 2 files.
+
+**Blast radius — what depends on these (update/verify before editing)**
+
+- `FileValidationEngine` (src/main/java/io/github/easy4j/validation/constraintvalidators/FileValidationEngine.java:17) — 4 callers in `src/main/java/io/github/easy4j/validation/constraintvalidators/FileNotEmptyValidator.java`, `src/main/java/io/github/easy4j/validation/constraintvalidators/FilesNotEmptyValidator.java`; no tests found within 3 caller hops
+- `FileValidationService` (src/main/java/io/github/easy4j/validation/file/FileValidationService.java:15) — 8 callers in `src/main/java/io/github/easy4j/validation/constraintvalidators/FileValidationEngine.java`; tests: `src/test/java/io/github/easy4j/validation/file/FileValidationServiceTest.java`
+
+**Source Code**
+
+> The code below is the **verbatim, current on-disk source** of these files — re-read from disk on this call and line-numbered, byte-for-byte identical to what the Read tool returns. It is NOT a summary, outline, or stale cache. Treat each block as a Read you have already performed: do not Read a file shown here.
+
+**`src/main/java/io/github/easy4j/validation/file/FileValidationService.java`** — FileValidationService(method), FileValidationService(class), validate(method), ContentCheck(interface), checkContent(method), +2 more
+
+```java
+1	package io.github.easy4j.validation.file;
+2	
+3	import io.github.easy4j.validation.provider.FileContentCheckStrategy;
+4	import io.github.easy4j.validation.utils.MimetypeUtil;
+5	import org.apache.commons.io.FilenameUtils;
+6	
+7	import java.io.IOException;
+8	import java.util.Objects;
+9	import java.util.Optional;
+10	
+11	import static io.github.easy4j.validation.file.FileValidationResult.invalid;
+12	import static io.github.easy4j.validation.file.FileValidationPolicy.normalize;
+13	
+14	/** 注解与程序式入口共用的文件规则引擎；校验异常以拒绝结果返回。 */
+15	public final class FileValidationService {
+16	    private final FileTypeDetector detector;
+17	    private final FileContentCheckStrategy contentChecks;
+18	    private final ContentCheck additionalCheck;
+19	
+20	    /** 使用 Tika 和当前类加载器的内容检查 SPI。 */
+21	    public FileValidationService() {
+22	        this(new TikaFileTypeDetector(), FileContentCheckStrategy.load(), (file, type) -> true);
+23	    }
+24	
+25	    /**
+26	     * 创建显式装配的校验引擎。
+27	     * @param detector 内容类型检测器
+28	     * @param contentChecks 上游内容检查 SPI 策略
+29	     * @param additionalCheck 识别成功后执行的应用规则
+30	     */
+31	    public FileValidationService(FileTypeDetector detector, FileContentCheckStrategy contentChecks,
+32	                                 ContentCheck additionalCheck) {
+33	        this.detector = Objects.requireNonNull(detector, "detector must not be null");
+34	        this.contentChecks = Objects.requireNonNull(contentChecks, "contentChecks must not be null");
+35	        this.additionalCheck = Objects.requireNonNull(additionalCheck, "additionalCheck must not be null");
+36	    }
+37	
+38	    /**
+39	     * 校验文件；所有结果仅与本次文件和不可变策略有关。
+40	     * @param file 文件，可为空
+41	     * @param policy 文件策略
+42	     * @return 结构化结果，包含失败原因和已检测类型
+43	     */
+44	    public FileValidationResult validate(UploadFile file, FileValidationPolicy policy) {
+45	        Objects.requireNonNull(policy, "policy must not be null");
+46	        try {
+47	            if (Objects.isNull(file) || file.isEmpty()) {
+48	                return policy.isRequired() ? invalid(FileValidationFailure.EMPTY, null)
+49	                        : FileValidationResult.valid(null);
+50	            }
+51	            if ((policy.isConstraintCompatibility() || policy.getMaxSizeBytes() > 0)
+52	                    && file.getSize() > policy.getMaxSizeBytes()) {
+53	                return invalid(FileValidationFailure.SIZE_EXCEEDED, null);
+54	            }
+55	            boolean compatibility = policy.isConstraintCompatibility();
+56	            boolean unrestricted = policy.getAllowedExtensions().isEmpty() && policy.getAllowedMimeTypes().isEmpty();
+57	            if (compatibility && unrestricted) {
+58	                return checkContent(file, "", null);
+59	            }
+60	            String extension = normalize(FilenameUtils.getExtension(file.getOriginalFilename()), compatibility);
+61	            if (!policy.getAllowedExtensions().isEmpty() && !policy.getAllowedExtensions().contains(extension)) {
+62	                return invalid(FileValidationFailure.EXTENSION_NOT_ALLOWED, null);
+63	            }
+64	            DetectedFileType type = null;
+65	            String mime;
+66	            if (policy.isStrict()) {
+67	                Optional<DetectedFileType> detected = detector.detect(file);
+68	                if (detected.isEmpty()) {
+69	                    return invalid(FileValidationFailure.TYPE_UNDETECTABLE, null);
+70	                }
+71	                type = detected.get();
+72	                mime = normalize(type.getMimeType(), compatibility);
+73	                boolean legacyWord = compatibility && "doc".equals(extension)
+74	                        && "application/x-tika-msoffice".equals(mime);
+75	                if ((!compatibility || !policy.getAllowedExtensions().isEmpty())
+76	                        && !extension.equals(normalize(type.getExtension(), compatibility)) && !legacyWord) {
+77	                    return invalid(FileValidationFailure.SIGNATURE_MISMATCH, type);
+78	                }
+79	                if (legacyWord && policy.getAllowedMimeTypes().contains("application/msword")) {
+80	                    mime = "application/msword";
+81	                }
+82	            } else {
+83	                mime = normalize(compatibility ? MimetypeUtil.detectMimeType(file.getOriginalFilename())
+84	                        : file.getContentType(), compatibility);
+85	            }
+86	            if (!policy.getAllowedMimeTypes().isEmpty() && !policy.getAllowedMimeTypes().contains(mime)) {
+87	                return invalid(FileValidationFailure.MIME_TYPE_NOT_ALLOWED, type);
+88	            }
+89	            return checkContent(file, extension, type);
+90	        } catch (IOException | RuntimeException exception) {
+91	            return invalid(FileValidationFailure.READ_ERROR, null);
+92	        }
+93	    }
+94	
+95	    private FileValidationResult checkContent(UploadFile file, String extension, DetectedFileType type)
+96	            throws IOException {
+97	        if (contentChecks.hasProvider(extension) && !contentChecks.check(extension, file)) {
+98	            return invalid(FileValidationFailure.CONTENT_REJECTED, type);
+99	        }
+100	        if (Objects.nonNull(type) && !additionalCheck.check(file, type)) {
+101	            return invalid(FileValidationFailure.CONTENT_REJECTED, type);
+102	        }
+103	        return FileValidationResult.valid(type);
+104	    }
+105	
+106	    /** 应用附加内容规则；在基本规则和 SPI 检查通过后执行。 */
+107	    @FunctionalInterface
+108	    public interface ContentCheck {
+109	        /**
+110	         * @param file 上传文件
+111	         * @param type 已检测类型
+112	         * @return 是否接受
+113	         * @throws IOException 无法读取内容
+114	         */
+115	        boolean check(UploadFile file, DetectedFileType type) throws IOException;
+116	    }
+117	}
+```
+
+**`src/main/java/io/github/easy4j/validation/constraintvalidators/FileValidationEngine.java`** — FileValidationEngine(method), FileValidationEngine(class), isValid(method), io.github.easy4j.validation.constraintvalidators(namespace), service(field)
+
+```java
+1	package io.github.easy4j.validation.constraintvalidators;
+2	
+3	import cn.hutool.core.io.unit.DataSize;
+4	import cn.hutool.core.io.unit.DataUnit;
+5	import io.github.easy4j.validation.constraints.FileNotEmpty;
+6	import io.github.easy4j.validation.file.FileValidationPolicy;
+7	import io.github.easy4j.validation.file.FileValidationService;
+8	import io.github.easy4j.validation.file.TikaFileTypeDetector;
+9	import io.github.easy4j.validation.file.UploadFile;
+10	import io.github.easy4j.validation.file.UploadFileAdapters;
+11	import io.github.easy4j.validation.provider.FileContentCheckStrategy;
+12	import org.apache.commons.lang3.StringUtils;
+13	
+14	import java.util.Objects;
+15	
+16	/** 单文件和数组注解的适配器；所有文件规则由公共服务实现。 */
+17	final class FileValidationEngine {
+18	    private final FileValidationPolicy policy;
+19	    private final FileValidationService service;
+20	
+21	    FileValidationEngine(FileNotEmpty annotation, FileContentCheckStrategy contentChecks) {
+22	        long maxSize = StringUtils.isNotBlank(annotation.maxSize())
+23	                ? Math.max(0, DataSize.parse(annotation.maxSize(), DataUnit.BYTES).toBytes()) : Long.MAX_VALUE;
+24	        this.policy = FileValidationPolicy.builder().constraintCompatibility(true)
+25	                .required(annotation.required()).strict(annotation.strict()).maxSizeBytes(maxSize)
+26	                .allowedExtensions(annotation.extensions()).allowedMimeTypes(annotation.mimeTypes()).build();
+27	        this.service = new FileValidationService(new TikaFileTypeDetector(), contentChecks, (file, type) -> true);
+28	    }
+29	
+30	    boolean isValid(Object value) {
+31	        if (Objects.isNull(value)) {
+32	            return service.validate(null, policy).isValid();
+33	        }
+34	        UploadFile file = UploadFileAdapters.adapt(value);
+35	        return Objects.nonNull(file) && service.validate(file, policy).isValid();
+36	    }
+37	
+38	    boolean isValid(Object[] values) {
+39	        if (Objects.isNull(values) || values.length == 0) {
+40	            return !policy.isRequired();
+41	        }
+42	        for (Object value : values) {
+43	            if (!isValid(value)) {
+44	                return false;
+45	            }
+46	        }
+47	        return true;
+48	    }
+49	}
+```
+
+**Not shown above — explore these names for their source**
+
+- src/main/java/io/github/easy4j/validation/constraintvalidators/NumberValueValidator.java: validate:45, NumberValueValidator:21, isValid:32, initialize:26, io.github.easy4j.validation.constraintvalidators:1
+- src/main/java/io/github/easy4j/validation/utils/IdcardUtils2.java: valiDate:604, IdcardUtils2:19, validateIdCard15:226, MIN:41, verifyCode:38, CHINA_ID_MAX_LENGTH:25, +18 more
+- src/main/java/io/github/easy4j/validation/file/FileValidationPolicy.java: strict:132, required:123, constraintCompatibility:114, builder:49, Builder:100, FileValidationPolicy:30, +7 more
+- src/main/java/io/github/easy4j/validation/provider/FileContentCheckStrategy.java: FileContentCheckStrategy:30, load:73, FileContentCheckStrategy:42, check:107, hasProvider:95, WILDCARD:32, +3 more
+- src/main/java/io/github/easy4j/validation/file/UploadFile.java: UploadFile:15, getSize:50, getOriginalFilename:29, getContentType:36, isEmpty:43
+- src/main/java/io/github/easy4j/validation/file/FileValidationResult.java: valid:16, invalid:25, FileValidationResult:6
+- src/main/java/io/github/easy4j/validation/file/DetectedFileType.java: DetectedFileType:6, getMimeType:9, getExtension:8
+- src/main/java/io/github/easy4j/validation/constraintvalidators/FileNotEmptyValidator.java: initialize:27, isValid:32, FileNotEmptyValidator:20, io.github.easy4j.validation.constraintvalidators:1, validationEngine:25
+- src/main/java/io/github/easy4j/validation/constraintvalidators/FilesNotEmptyValidator.java: initialize:27, isValid:32, FilesNotEmptyValidator:20, io.github.easy4j.validation.constraintvalidators:1, validationEngine:25
+- src/main/java/io/github/easy4j/validation/file/TikaFileTypeDetector.java: TikaFileTypeDetector:13, detect:14, io.github.easy4j.validation.file:1
+- ... and 7 more files

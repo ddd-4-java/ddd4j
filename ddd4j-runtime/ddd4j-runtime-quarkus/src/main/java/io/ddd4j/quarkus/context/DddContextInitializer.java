@@ -25,6 +25,7 @@ import io.ddd4j.quarkus.Ddd4jQuarkusRuntime;
 import io.ddd4j.core.health.RuntimeReadinessRegistry;
 import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.runtime.StartupEvent;
+import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.Instance;
@@ -112,6 +113,11 @@ public class DddContextInitializer {
     }
 
     synchronized void onStop(@Observes ShutdownEvent event) {
+        closeRuntime();
+    }
+
+    @PreDestroy
+    synchronized void closeRuntime() {
         if (Objects.nonNull(runtime)) {
             runtime.close();
             runtime = null;

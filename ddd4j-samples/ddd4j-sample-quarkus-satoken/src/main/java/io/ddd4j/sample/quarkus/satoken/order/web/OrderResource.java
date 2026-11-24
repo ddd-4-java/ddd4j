@@ -35,6 +35,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -58,6 +59,7 @@ import java.util.stream.Collectors;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@cn.dev33.satoken.annotation.SaCheckLogin
 @Path("/orders")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -65,6 +67,11 @@ import java.util.stream.Collectors;
 public class OrderResource {
 
     private final OrderApplicationService orderApplicationService;
+    @Inject io.ddd4j.sample.order.application.OrderApplicationService shared;
+    @Inject io.ddd4j.sample.order.local.InMemoryOrderAdapters sharedStore;
+    @Inject io.ddd4j.sample.quarkus.satoken.order.domain.service.OrderDomainService discounts;
+    @jakarta.ws.rs.core.Context jakarta.ws.rs.core.UriInfo uriInfo;
+
 
     /**
      * 创建订单资源。
@@ -83,7 +90,12 @@ public class OrderResource {
      * @return 创建的订单响应
      */
     @POST
+    @cn.dev33.satoken.annotation.SaCheckPermission("order:pay")
     public R<OrderResponse> create(CreateOrderRequest request) {
+        if (Objects.nonNull(shared)) {
+            return R.ok("order created", OrderResponse.from(shared.create(new io.ddd4j.sample.order.application.CreateOrderCommand(
+                    request.orderNo(), request.buyerId(), request.buyerName()))));
+        }
         Order order = orderApplicationService.createDraft(
                 new CreateOrderCommand(request.orderNo(), request.buyerId(), request.buyerName())
         );
@@ -99,6 +111,7 @@ public class OrderResource {
     @GET
     @Path("/{id}")
     public R<OrderResponse> findById(@PathParam("id") String id) {
+        if (Objects.nonNull(shared)) { return R.ok(OrderResponse.from(sharedStore.findById(id).orElseThrow())); }
         Order order = orderApplicationService.findById(id);
         return R.ok(OrderResponse.from(order));
     }
@@ -112,6 +125,7 @@ public class OrderResource {
     @GET
     @Path("/by-order-no")
     public R<OrderResponse> findByOrderNo(@QueryParam("orderNo") String orderNo) {
+        if (Objects.nonNull(shared)) { return R.ok(OrderResponse.from(sharedStore.findByOrderNo(orderNo).orElseThrow())); }
         Order order = orderApplicationService.findByOrderNo(orderNo);
         return R.ok(OrderResponse.from(order));
     }
@@ -123,6 +137,14 @@ public class OrderResource {
      */
     @GET
     public R<List<OrderResponse>> listAll() {
+        if (Objects.nonNull(shared)) {
+            String buyer = uriInfo.getQueryParameters().getFirst("buyerId");
+            String status = uriInfo.getQueryParameters().getFirst("status");
+            return R.ok(sharedStore.findAll(0, Integer.MAX_VALUE).stream()
+                    .filter(order -> Objects.isNull(buyer) || buyer.equals(order.buyerId()))
+                    .filter(order -> Objects.isNull(status) || status.equals(order.status().name()))
+                    .map(OrderResponse::from).collect(Collectors.toList()));
+        }
         List<OrderResponse> items = orderApplicationService.listAll().stream()
                 .map(OrderResponse::from)
                 .collect(Collectors.toList());
@@ -138,7 +160,12 @@ public class OrderResource {
      */
     @POST
     @Path("/{id}/lines")
+    @cn.dev33.satoken.annotation.SaCheckPermission("order:pay")
     public R<OrderResponse> addLine(@PathParam("id") String id, AddOrderLineRequest request) {
+        if (Objects.nonNull(shared)) {
+            return R.ok("order line added", OrderResponse.from(shared.addLine(new io.ddd4j.sample.order.application.AddOrderLineCommand(
+                    id, request.goodsId(), request.goodsName(), request.quantity(), request.unitPrice()))));
+        }
         Order order = orderApplicationService.addLine(new AddOrderLineCommand(
                 id, request.goodsId(), request.goodsName(), request.quantity(), request.unitPrice()
         ));
@@ -153,7 +180,9 @@ public class OrderResource {
      */
     @POST
     @Path("/{id}/pay")
+    @cn.dev33.satoken.annotation.SaCheckPermission("order:pay")
     public R<OrderResponse> pay(@PathParam("id") String id) {
+        if (Objects.nonNull(shared)) { return R.ok("order paid", OrderResponse.from(shared.pay(id, "legacy-payment-" + id))); }
         Order order = orderApplicationService.pay(id);
         return R.ok("order paid", OrderResponse.from(order));
     }
@@ -166,7 +195,9 @@ public class OrderResource {
      */
     @POST
     @Path("/{id}/ship")
+    @cn.dev33.satoken.annotation.SaCheckPermission("order:pay")
     public R<OrderResponse> ship(@PathParam("id") String id) {
+        if (Objects.nonNull(shared)) { return R.ok("order shipped", OrderResponse.from(shared.ship(id))); }
         Order order = orderApplicationService.ship(id);
         return R.ok("order shipped", OrderResponse.from(order));
     }
@@ -179,7 +210,9 @@ public class OrderResource {
      */
     @POST
     @Path("/{id}/cancel")
+    @cn.dev33.satoken.annotation.SaCheckPermission("order:cancel")
     public R<OrderResponse> cancel(@PathParam("id") String id) {
+        if (Objects.nonNull(shared)) { return R.ok("order cancelled", OrderResponse.from(shared.cancel(id))); }
         Order order = orderApplicationService.cancel(id);
         return R.ok("order cancelled", OrderResponse.from(order));
     }
@@ -193,6 +226,12 @@ public class OrderResource {
     @GET
     @Path("/{id}/discount")
     public R<DiscountView> previewDiscount(@PathParam("id") String id) {
+        if (Objects.nonNull(shared)) {
+            var order = sharedStore.findById(id).orElseThrow();
+            Money total = new Money(order.totalAmount().amount(), order.totalAmount().currency());
+            Money discounted = discounts.calculateDiscount(order.buyerId(), total);
+            return R.ok(new DiscountView(discounted.amount().toPlainString(), discounted.currency()));
+        }
         Money discounted = orderApplicationService.previewDiscount(id);
         return R.ok(new DiscountView(discounted.amount().toPlainString(), discounted.currency()));
     }

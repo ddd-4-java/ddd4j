@@ -21,6 +21,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.ddd4j.core.cqrs.readmodel.DefaultProjectionPosition;
+import io.ddd4j.core.cqrs.readmodel.DefaultProjectionService;
+import io.ddd4j.core.cqrs.readmodel.EventChunk;
+import io.ddd4j.core.cqrs.readmodel.ProjectionRunner;
+import io.ddd4j.core.cqrs.readmodel.ProjectionView;
 import io.ddd4j.core.cqrs.readmodel.ProjectionMetrics;
 import io.ddd4j.core.cqrs.readmodel.ProjectionRunInfo;
 import io.ddd4j.core.cqrs.readmodel.ProjectionStatus;
@@ -30,11 +34,19 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
 import java.util.Optional;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class GuiceViewManagerTest {
+
+    private static final long CALLBACK_TIMEOUT_SECONDS = 5;
 
     private final GuiceViewManager manager = new GuiceViewManager();
 
@@ -64,27 +76,25 @@ class GuiceViewManagerTest {
     }
 
     @Test
-    void scheduleRunsTaskAndHandleCancels() throws Exception {
-        AtomicInteger runs = new AtomicInteger();
-        ViewScheduleHandle handle = manager.schedule("view-1", "0/1", runs::incrementAndGet);
+    void scheduleRunsTaskAndHandleCancels() throws InterruptedException {
+        CountDownLatch ran = new CountDownLatch(1);
+        ViewScheduleHandle handle = manager.schedule("view-1", "0/1", ran::countDown);
 
         assertTrue(manager.isRunning());
         assertNotNull(handle);
-        Thread.sleep(1500);
-        assertTrue(runs.get() >= 1);
+        assertTrue(ran.await(CALLBACK_TIMEOUT_SECONDS, TimeUnit.SECONDS), "Cron task did not run");
         assertTrue(handle.isActive());
         handle.cancel();
         assertFalse(handle.isActive());
     }
 
     @Test
-    void scheduleWithStarSlashNSucceeds() throws Exception {
-        AtomicInteger runs = new AtomicInteger();
-        ViewScheduleHandle handle = manager.schedule("view-1b", "*/2", runs::incrementAndGet);
+    void scheduleWithStarSlashNSucceeds() throws InterruptedException {
+        CountDownLatch ran = new CountDownLatch(1);
+        ViewScheduleHandle handle = manager.schedule("view-1b", "*/2", ran::countDown);
         assertTrue(manager.isRunning());
         assertNotNull(handle);
-        Thread.sleep(2500);
-        assertTrue(runs.get() >= 1);
+        assertTrue(ran.await(CALLBACK_TIMEOUT_SECONDS, TimeUnit.SECONDS), "Cron task did not run");
         handle.cancel();
     }
 
@@ -129,14 +139,13 @@ class GuiceViewManagerTest {
     }
 
     @Test
-    void scheduleAtFixedRateRunsTask() throws Exception {
-        AtomicInteger runs = new AtomicInteger();
-        ViewScheduleHandle handle = manager.scheduleAtFixedRate("view-7", 1, runs::incrementAndGet);
+    void scheduleAtFixedRateRunsTask() throws InterruptedException {
+        CountDownLatch runs = new CountDownLatch(2);
+        ViewScheduleHandle handle = manager.scheduleAtFixedRate("view-7", 1, runs::countDown);
 
         assertTrue(manager.isRunning());
         assertNotNull(handle);
-        Thread.sleep(1500);
-        assertTrue(runs.get() >= 1);
+        assertTrue(runs.await(CALLBACK_TIMEOUT_SECONDS, TimeUnit.SECONDS), "Fixed-rate task did not run twice");
         assertTrue(handle.isActive());
         handle.cancel();
         assertFalse(handle.isActive());
@@ -152,6 +161,112 @@ class GuiceViewManagerTest {
             manager.scheduleAtFixedRate("view-9", -1, () -> {
             });
         });
+    }
+
+    @Test
+    void stopCancelsOutstandingHandlesAndSupportsFreshRestart() {
+        ViewScheduleHandle first = manager.scheduleAtFixedRate("owned", 3600, () -> { });
+        manager.stop();
+        assertFalse(first.isActive());
+        ViewScheduleHandle second = manager.scheduleAtFixedRate("owned", 3600, () -> { });
+        assertTrue(second.isActive());
+        manager.close();
+        assertFalse(second.isActive());
+    }
+
+    @Test
+    void startupLinkageErrorCancelsOwnedTasksAndResetsRunningState() {
+        LinkageError failure = new LinkageError("view wiring failed");
+        AtomicReference<ViewScheduleHandle> scheduled = new AtomicReference<>();
+        AtomicReference<ViewScheduleHandle> owned = new AtomicReference<>();
+        GuiceInMemoryProjectionPositionRepository repo = new GuiceInMemoryProjectionPositionRepository();
+        ProjectionRunner<Object> runner = emptyRunner(repo);
+
+        try (GuiceViewManager managed = new GuiceViewManager(1, repo, runner,
+                Arrays.asList(view("first"), view("second"))) {
+            @Override
+            public ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
+                if ("second".equals(viewName)) {
+                    throw failure;
+                }
+                ViewScheduleHandle first = super.schedule(viewName, cron, task);
+                scheduled.set(first);
+                owned.set(scheduleAtFixedRate("local", 3600, () -> { }));
+                return first;
+            }
+        }) {
+            assertSame(failure, assertThrows(LinkageError.class, managed::start));
+            assertNotNull(scheduled.get());
+            assertNotNull(owned.get());
+            assertFalse(scheduled.get().isActive());
+            assertFalse(owned.get().isActive());
+            assertFalse(managed.isRunning());
+        }
+    }
+
+    @Test
+    void stopLinkageErrorStillCancelsOwnedTasksAndRetriesExternalHandle() {
+        LinkageError failure = new LinkageError("first cancellation failed");
+        AtomicInteger cancellationAttempts = new AtomicInteger();
+        GuiceInMemoryProjectionPositionRepository repo = new GuiceInMemoryProjectionPositionRepository();
+        ProjectionRunner<Object> runner = emptyRunner(repo);
+
+        try (GuiceViewManager managed = new GuiceViewManager(1, repo, runner, Collections.singletonList(view("external"))) {
+            @Override
+            public ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
+                return new ViewScheduleHandle() {
+                    @Override
+                    public void cancel() {
+                        if (cancellationAttempts.incrementAndGet() == 1) {
+                            throw failure;
+                        }
+                    }
+
+                    @Override
+                    public boolean isActive() {
+                        return cancellationAttempts.get() < 2;
+                    }
+                };
+            }
+        }) {
+            managed.start();
+            ViewScheduleHandle owned = managed.scheduleAtFixedRate("local", 3600, () -> { });
+
+            assertSame(failure, assertThrows(LinkageError.class, managed::stop));
+            assertFalse(managed.isRunning());
+            assertFalse(owned.isActive());
+            assertEquals(1, cancellationAttempts.get());
+            managed.close();
+            assertEquals(2, cancellationAttempts.get());
+        }
+    }
+
+    private static ProjectionRunner<Object> emptyRunner(GuiceInMemoryProjectionPositionRepository repository) {
+        return new ProjectionRunner<>(new DefaultProjectionService(repository),
+                (streamId, position, size, types) -> EventChunk.empty(position));
+    }
+
+    private static ProjectionView<Object> view(String name) {
+        return new ProjectionView<Object>() {
+            @Override
+            public String getName() {
+                return name;
+            }
+
+            @Override
+            public String getCron() {
+                return "0/3600";
+            }
+
+            @Override
+            public Collection<String> getEventTypes() {
+                return Collections.emptyList();
+            }
+
+            @Override
+            public void handleEvents(Collection<Object> events) {
+            }
+        };
     }
 
     // --- getProjectionStatus tests ---

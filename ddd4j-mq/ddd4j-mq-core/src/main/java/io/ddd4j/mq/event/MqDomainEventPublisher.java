@@ -95,8 +95,8 @@ public class MqDomainEventPublisher implements DomainEventPublisher {
 
     @Override
     public void publish(Object event) {
-        if (event instanceof DomainEvent<?> domainEvent) {
-            publish(domainEvent);
+        if (event instanceof DomainEvent<?>) {
+            publish((DomainEvent<?>) event);
         } else {
             log.warn("MqDomainEventPublisher received non-DomainEvent object, skipped: type={}",
                     Objects.nonNull(event) ? event.getClass().getName() : "null");

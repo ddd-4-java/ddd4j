@@ -19,10 +19,7 @@ import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import hitool.core.format.ByteUnitFormat;
 import io.ddd4j.core.api.R;
-import io.ddd4j.core.exception.BizCheckedException;
-import io.ddd4j.core.exception.BizIOException;
-import io.ddd4j.core.exception.BizRuntimeException;
-import io.ddd4j.core.exception.IdempotentException;
+import io.ddd4j.core.exception.*;
 import io.ddd4j.kit.web.IpKit;
 import io.ddd4j.web.webmvc.config.ServerI18nProperties;
 import io.ddd4j.web.webmvc.util.WebUtils;
@@ -85,8 +82,27 @@ public class GlobalExceptionHandler {
     @Getter
     @Autowired
     private NestedMessageSource messageSource;
+
     @Autowired
     private ServerI18nProperties serverI18NProperties;
+
+    /**
+     * 供独立使用场景创建异常处理器，默认关闭服务端国际化。
+     */
+    public GlobalExceptionHandler() {
+        this(new NestedMessageSource(), new ServerI18nProperties());
+    }
+
+    /**
+     * 使用指定的消息源和服务端国际化配置创建异常处理器。
+     *
+     * @param messageSource 用于解析本地化异常消息的消息源
+     * @param serverI18NProperties 控制国际化和异常详情返回的服务端配置
+     */
+    public GlobalExceptionHandler(NestedMessageSource messageSource, ServerI18nProperties serverI18NProperties) {
+        this.messageSource = messageSource;
+        this.serverI18NProperties = serverI18NProperties;
+    }
 
     // --- 4xx Client Error ---
 
@@ -742,6 +758,30 @@ public class GlobalExceptionHandler {
     }
 
     /*---------------------业务异常----------------------------*/
+
+    /**
+     * 将认证失败映射为未认证响应。
+     * @param exception 认证异常
+     * @return 携带异常消息或默认说明的 401 响应
+     */
+    @ExceptionHandler(AuthenticationException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public R<String> authenticationFailed(AuthenticationException exception) {
+        String message = exception.getMessage();
+        return ApiCode.UNAUTHORIZED.toResponse(StringUtils.isNotBlank(message) ? message : ApiCode.UNAUTHORIZED.getReason());
+    }
+
+    /**
+     * 将授权失败映射为禁止访问响应。
+     * @param exception 授权异常
+     * @return 携带异常消息或默认说明的 403 响应
+     */
+    @ExceptionHandler(AuthorizationException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public R<String> authorizationFailed(AuthorizationException exception) {
+        String message = exception.getMessage();
+        return ApiCode.FORBIDDEN.toResponse(StringUtils.isNotBlank(message) ? message : ApiCode.FORBIDDEN.getReason());
+    }
 
     /**
      * 500 (Internal Server Error)

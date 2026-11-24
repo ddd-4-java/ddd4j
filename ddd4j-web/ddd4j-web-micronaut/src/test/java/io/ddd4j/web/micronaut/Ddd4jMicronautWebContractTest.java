@@ -45,7 +45,12 @@ import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.time.Duration;
@@ -54,6 +59,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -109,6 +115,37 @@ class Ddd4jMicronautWebContractTest extends AbstractWebContractTest {
 
         assertEquals(200, response.status(), response.body());
         assertTrue(response.body().contains("tenant-async"));
+    }
+
+    @Test
+    void multilineErrorKeepsHttpStatusAndJsonMessage() {
+        WebContractResponse response = contractClient.request("GET", "/contract/errors/multiline",
+                java.util.Collections.emptyMap(), null);
+
+        assertEquals(409, response.status(), response.body());
+        assertTrue(response.body().contains("inventory is locked\\r\\ntry again later"), response.body());
+    }
+
+    @Test
+    void longErrorKeepsStatusLineAndFullJsonMessage() throws java.io.IOException {
+        URL url = new URL("http://127.0.0.1:" + server.getPort() + "/contract/errors/long");
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setConnectTimeout(5000);
+        connection.setReadTimeout(5000);
+        try {
+            assertEquals(409, connection.getResponseCode());
+            String reason = connection.getResponseMessage();
+            assertEquals("Conflict".length(), reason.length(), "status line must carry the standard reason");
+            assertEquals("Conflict", reason);
+            try (BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(connection.getErrorStream(), StandardCharsets.UTF_8))) {
+                String json = reader.lines().collect(Collectors.joining());
+                assertTrue(json.contains("\"msg\":\"" + MicronautContractController.LONG_ERROR + "\""),
+                        "response must contain the complete error message");
+            }
+        } finally {
+            connection.disconnect();
+        }
     }
 
     private SubjectProvider provider(Subject subject) {
@@ -189,6 +226,8 @@ class Ddd4jMicronautWebContractTest extends AbstractWebContractTest {
 
 @Controller("/contract")
 final class MicronautContractController {
+    static final String LONG_ERROR = "inventory is locked " + String.join("", java.util.Collections.nCopies(5000, "x"));
+
 
     @Get("/success")
     R<Map<String, String>> success() {
@@ -240,6 +279,12 @@ final class MicronautContractController {
 
     @Get("/errors/{type}")
     R<Void> error(String type) {
+        if ("long".equals(type)) {
+            throw new IllegalStateException(LONG_ERROR);
+        }
+        if ("multiline".equals(type)) {
+            throw new IllegalStateException("inventory is locked\r\ntry again later");
+        }
         throw switch (type) {
             case "bad-request" -> new IllegalArgumentException("bad request");
             case "forbidden" -> new SecurityException("forbidden");

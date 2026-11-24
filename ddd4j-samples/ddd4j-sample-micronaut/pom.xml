@@ -15,6 +15,8 @@
     </description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
     <dependencies>
+        <dependency><groupId>io.ddd4j</groupId><artifactId>ddd4j-sample-order-testkit</artifactId><version>${revision}</version><scope>test</scope></dependency>
+        <dependency><groupId>org.yaml</groupId><artifactId>snakeyaml</artifactId><scope>runtime</scope></dependency>
         <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-sample-order-application</artifactId>

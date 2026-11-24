@@ -19,5 +19,10 @@ import io.dropwizard.core.Configuration;
 /**
  * Dropwizard CQRS 配置。
  */
+@lombok.Getter @lombok.Setter
 public class DropwizardCqrsConfiguration extends Configuration {
+    // 没有 JDBC 配置时保留显式标记的旧 demo-memory。
+    private String jdbcUrl = System.getProperty("sample.jdbc.url");
+    private String jdbcUser = System.getProperty("sample.jdbc.user", "postgres");
+    private String jdbcPassword = System.getProperty("sample.jdbc.password", "postgres");
 }

@@ -240,7 +240,8 @@ class Ddd4jGuiceModuleTest {
         assertNotNull(session);
 
         module.initRepositories(injector);
-        session.close();
+        // 工厂注入的是线程安全管理代理，尚未打开任何托管事务或 JDBC 会话。
+        assertFalse(((org.apache.ibatis.session.SqlSessionManager) session).isManagedSessionStarted());
     }
 
     @Test

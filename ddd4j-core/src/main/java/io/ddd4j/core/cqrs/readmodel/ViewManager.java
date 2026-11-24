@@ -39,12 +39,12 @@ package io.ddd4j.core.cqrs.readmodel;
 public interface ViewManager {
 
     /**
-     * 启动视图管理器（注册所有 View + 启动调度）。
+     * 启动视图管理器（注册所有 View + 启动调度），重复启动不得重复注册任务。
      */
     void start();
 
     /**
-     * 停止视图管理器（取消所有调度任务）。
+     * 停止视图管理器（取消所有调度任务），重复停止幂等；不等于回滚正在运行的事务。
      */
     void stop();
 

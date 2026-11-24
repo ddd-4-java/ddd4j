@@ -24,8 +24,10 @@ import io.ddd4j.sample.quarkus.cqrs.order.domain.model.OrderLine;
 import io.ddd4j.sample.quarkus.cqrs.order.domain.model.OrderStatus;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * 稳定的订单 HTTP 表示，避免领域模型依赖 Jackson。
@@ -57,7 +59,11 @@ public final class OrderResponse {
     public static OrderResponse from(Order order) {
         Order source = Objects.requireNonNull(order, "order must not be null");
         Money total = source.totalAmount();
-        return new OrderResponse(source.id(), source.orderNo(), source.buyerId(), source.buyerName(), source.status(), total.amount(), total.currency(), java.util.Collections.unmodifiableList(source.lines().stream().map(OrderLineResponse::from).collect(java.util.stream.Collectors.toList())));
+        List<OrderLineResponse> lineResponses = source.lines().stream()
+                .map(OrderLineResponse::from)
+                .collect(Collectors.toList());
+        return new OrderResponse(source.id(), source.orderNo(), source.buyerId(), source.buyerName(), source.status(),
+                total.amount(), total.currency(), Collections.unmodifiableList(lineResponses));
     }
 
     /**

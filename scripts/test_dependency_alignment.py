@@ -15,6 +15,49 @@ def pom(artifact='demo', version='1', group='example'):
 
 
 class DependencyAlignmentTest(unittest.TestCase):
+    def test_jdk8_shardingsphere_uses_published_553_parser_coordinates(self):
+        policy = json.loads((Path(__file__).parents[1] /
+                             'config/dependencies/alignment-policy.json').read_text(encoding='utf-8'))
+        for dialect in ('mysql', 'opengauss', 'oracle', 'postgresql', 'sql92', 'sqlserver'):
+            prefix = 'org.apache.shardingsphere:shardingsphere-parser-sql-'
+            replacement = policy['replacements'][prefix + dialect]['8']
+            self.assertEqual([prefix + 'engine-' + dialect], replacement['coordinates'])
+
+    def test_jdk17_does_not_require_the_retired_derbyshared_entry(self):
+        policy = json.loads((Path(__file__).parents[1] /
+                             'config/dependencies/alignment-policy.json').read_text(encoding='utf-8'))
+        unsupported = policy['unsupported']['org.apache.derby:derbyshared']
+        self.assertEqual('unsupported-retired', unsupported['17']['status'])
+        self.assertNotIn('21', unsupported)
+
+    def test_direct_usage_ignores_superpowers_build_evidence(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            history = root / '.superpowers/sdd/archived-candidate'
+            history.mkdir(parents=True)
+            (history / 'pom.xml').write_text('<project><incomplete>')
+            module = root / 'feature'
+            module.mkdir()
+            (module / 'pom.xml').write_text(
+                pom().replace('<dependencyManagement>', '').replace('</dependencyManagement>', ''))
+            self.assertEqual(module_dependencies(root),
+                             {('example', 'demo', 'jar', ''): ['feature/pom.xml']})
+
+    def test_direct_usage_does_not_attribute_a_different_literal_version(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            key = ('example', 'demo', 'jar', '')
+            for name, version in (('literal-match', '2'), ('literal-other', '1'),
+                                  ('property', '${component.version}'), ('range', '[1,3)'),
+                                  ('release', 'RELEASE'), ('managed', '')):
+                module = root / name
+                module.mkdir()
+                project = pom(version=version).replace('<dependencyManagement>', '').replace('</dependencyManagement>', '')
+                (module / 'pom.xml').write_text(project.replace('<version></version>', ''))
+            self.assertEqual(module_dependencies(root, versions={key: '2'})[key],
+                             ['literal-match/pom.xml', 'managed/pom.xml', 'property/pom.xml',
+                              'range/pom.xml', 'release/pom.xml'])
+
     def test_required_baseline_uses_current_easy4j_coordinates(self):
         policy_path = Path(__file__).parents[1] / 'config/dependencies/alignment-policy.json'
         policy = json.loads(policy_path.read_text(encoding='utf-8'))
@@ -93,15 +136,16 @@ class DependencyAlignmentTest(unittest.TestCase):
             for jdk in jdks:
                 self.assertIn(jdk, policy['unsupported'].get(coordinate, {}), coordinate)
 
-    def test_swagger_legacy_integrations_do_not_claim_unpublished_release_candidates(self):
+    def test_swagger_legacy_integrations_keep_published_jdk8_versions(self):
         policy_path = Path(__file__).parents[1] / 'config/dependencies/alignment-policy.json'
         policy = json.loads(policy_path.read_text(encoding='utf-8'))
         artifacts = ('swagger-hibernate-validations', 'swagger-jaxrs',
                      'swagger-jersey-jaxrs', 'swagger-jersey2-jaxrs', 'swagger-servlet')
         for artifact in artifacts:
             coordinate = 'io.swagger:' + artifact
-            for jdk in ('8', '17'):
-                self.assertIn(jdk, policy['unsupported'].get(coordinate, {}), coordinate)
+            self.assertEqual('1.6.14', policy['dependency_versions'][coordinate]['8'])
+            self.assertNotIn('8', policy['unsupported'].get(coordinate, {}))
+            self.assertIn('17', policy['unsupported'].get(coordinate, {}), coordinate)
 
     def test_retired_logging_locking_cxf_and_pac4j_catalog_entries_are_bounded(self):
         policy_path = Path(__file__).parents[1] / 'config/dependencies/alignment-policy.json'
@@ -191,7 +235,7 @@ class DependencyAlignmentTest(unittest.TestCase):
                 root = base / str(index)
                 (root / 'ddd4j-dependencies').mkdir(parents=True)
                 path = root / 'ddd4j-dependencies/pom.xml'
-                path.write_text(pom('easyexcel', '5.0.1', 'io.github.easy4j'))
+                path.write_text(pom('slf4j-api', '1.7.36', 'org.slf4j'))
                 roots.append(root)
                 effective.append(path)
             errors, unknown, rows = verify(roots, effective, {}, base, None, False)
@@ -200,6 +244,10 @@ class DependencyAlignmentTest(unittest.TestCase):
             errors, _, _ = verify(roots, effective, {}, base, None, True)
             self.assertTrue(any('Unverified artifact:' in error for error in errors), errors)
             policy = {'dependency_versions': {'io.github.easy4j:easyexcel': '5.0.1'}}
+            for path in effective:
+                path.write_text(pom('easyexcel', '5.0.1', 'io.github.easy4j'))
+            errors, _, _ = verify(roots, effective, policy, base, None, False)
+            self.assertFalse(errors, errors)
             roots[0].joinpath('ddd4j-dependencies/pom.xml').write_text(
                 pom('easyexcel', '1.0.x.20260630-SNAPSHOT', 'io.github.easy4j'))
             errors, _, _ = verify(roots, effective, policy, base, None, False)
@@ -285,6 +333,24 @@ class DependencyAlignmentTest(unittest.TestCase):
                 pom(starter, '2.0.x.20260630-SNAPSHOT', 'io.github.easy4j'))
             errors, _, _ = verify(roots, effective, policy, base, None, False)
             self.assertTrue(any('expected 3.4.x.20260630-SNAPSHOT' in error for error in errors), errors)
+
+    def test_ordinary_easy4j_component_uses_owning_line_without_explicit_policy(self):
+        with tempfile.TemporaryDirectory() as temp:
+            base = Path(temp)
+            roots, effective = [], []
+            for index, version in enumerate(('1.0.x.20260630-SNAPSHOT',
+                                              '1.0.x.20260630-SNAPSHOT',
+                                              '3.0.x.20260630-SNAPSHOT')):
+                root = base / str(index)
+                path = root / 'ddd4j-dependencies/pom.xml'
+                path.parent.mkdir(parents=True)
+                path.write_text(pom('codex-java-sdk', version, 'io.github.easy4j'))
+                roots.append(root)
+                effective.append(path)
+            errors, _, _ = verify(roots, effective, {}, base, None, False)
+            self.assertEqual(1, len(errors), errors)
+            self.assertIn('JDK 17: Easy4J io.github.easy4j:codex-java-sdk', errors[0])
+            self.assertIn('expected 2.0.x.20260630-SNAPSHOT', errors[0])
 
     def test_explicit_component_version_is_enforced(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -607,6 +673,167 @@ class DependencyAlignmentTest(unittest.TestCase):
             errors, _, rows = verify(roots, effective, policy, base, None, False)
             self.assertEqual(errors, [])
             self.assertEqual(len(rows), 3)
+
+
+class PublishedGroupRelocationTest(unittest.TestCase):
+    """只接受已发布 POM 证明且本线 BOM 管理的单跳同版本 group 迁移。"""
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.base = Path(self.temp.name)
+        self.repository = self.base / 'repository'
+        self.cache = self.base / 'cache'
+        self.roots, self.effective = [], []
+        for index in range(3):
+            root = self.base / str(index)
+            (root / 'ddd4j-dependencies').mkdir(parents=True)
+            (root / 'ddd4j-dependencies/pom.xml').write_text(pom(group='old.publisher'))
+            effective = root / 'effective.xml'
+            effective.write_text(pom(group='old.publisher').replace('</dependencies>',
+                '<dependency><groupId>new.publisher</groupId><artifactId>demo</artifactId>'
+                '<version>1</version></dependency></dependencies>'))
+            self.roots.append(root)
+            self.effective.append(effective)
+        self.source_pom = self.artifact_path('old.publisher', 'pom')
+        self.target_pom = self.artifact_path('new.publisher', 'pom')
+        self.target_jar = self.artifact_path('new.publisher', 'jar')
+        self.source_pom.parent.mkdir(parents=True)
+        self.source_pom.write_text('''<project xmlns="http://maven.apache.org/POM/4.0.0">
+          <parent><groupId>old.publisher</groupId><artifactId>relocations-parent</artifactId>
+            <version>1</version></parent><artifactId>demo</artifactId><packaging>pom</packaging>
+          <distributionManagement><relocation><groupId>new.publisher</groupId>
+          </relocation></distributionManagement></project>''')
+        self.target_pom.parent.mkdir(parents=True)
+        self.target_pom.write_text('''<project xmlns="http://maven.apache.org/POM/4.0.0">
+          <parent><groupId>new.publisher</groupId><artifactId>publisher-parent</artifactId>
+            <version>1</version></parent><artifactId>demo</artifactId></project>''')
+        self.write_jar(self.target_jar, 8)
+
+    def artifact_path(self, group, extension):
+        return self.repository / group.replace('.', '/') / 'demo/1' / ('demo-1.' + extension)
+
+    def write_jar(self, path, jdk):
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with zipfile.ZipFile(path, 'w') as output:
+            output.writestr('example/Client.class', b'\xca\xfe\xba\xbe' + struct.pack('>HH', 0, jdk + 44))
+
+    def check(self, cache=None):
+        return verify(self.roots, self.effective, {}, self.repository, cache, True)
+
+    def old_row(self, rows, jdk=17):
+        return next(row for row in rows if row[:2] == ['old.publisher:demo', jdk])
+
+    def assert_unverified(self):
+        errors, unknown, rows = self.check()
+        self.assertIn('JDK 17: old.publisher:demo:1', unknown)
+        self.assertIn('Unverified artifact: JDK 17: old.publisher:demo:1', errors)
+        self.assertEqual('unverified-artifact', self.old_row(rows)[3])
+
+    def test_published_group_relocation_checks_destination_base_jar(self):
+        errors, unknown, rows = self.check()
+        self.assertEqual([], errors)
+        self.assertEqual([], unknown)
+        self.assertEqual(['bytecode-pass', 8, str(self.target_jar)], self.old_row(rows)[3:])
+
+    def test_flat_extra_cache_accepts_exact_poms_and_destination_jar(self):
+        self.cache.mkdir()
+        for source in (self.source_pom, self.target_pom, self.target_jar):
+            target = self.cache / str(source.relative_to(self.repository)).replace('/', '__')
+            source.replace(target)
+        errors, unknown, rows = self.check(self.cache)
+        self.assertEqual([], errors)
+        self.assertEqual([], unknown)
+        self.assertEqual('bytecode-pass', self.old_row(rows)[3])
+        self.assertTrue(self.old_row(rows)[5].endswith('new__publisher__demo__1__demo-1.jar'))
+
+    def test_direct_exact_jar_wins_over_relocation_even_if_cache_supplies_it(self):
+        self.write_jar(self.artifact_path('old.publisher', 'jar'), 21)
+        self.cache.mkdir()
+        self.artifact_path('old.publisher', 'jar').replace(
+            self.cache / 'old__publisher__demo__1__demo-1.jar')
+        errors, _, rows = self.check(self.cache)
+        self.assertEqual('bytecode-fail', self.old_row(rows)[3])
+        self.assertTrue(any('JDK 17: old.publisher:demo:1 contains Java 21' in e for e in errors))
+
+    def test_relocated_jar_above_line_jdk_still_fails(self):
+        self.write_jar(self.target_jar, 21)
+        errors, unknown, rows = self.check()
+        self.assertEqual([], unknown)
+        self.assertEqual('bytecode-fail', self.old_row(rows)[3])
+        self.assertTrue(any('JDK 17: old.publisher:demo:1 contains Java 21' in e for e in errors))
+
+    def test_each_missing_relocation_input_remains_unverified(self):
+        for path in (self.source_pom, self.target_pom, self.target_jar):
+            with self.subTest(path=path.name, group=path.parent.parent.parent):
+                content = path.read_bytes()
+                path.unlink()
+                try:
+                    self.assert_unverified()
+                finally:
+                    path.write_bytes(content)
+
+    def test_destination_must_be_managed_at_same_version_on_the_same_line(self):
+        original = self.effective[1].read_text()
+        destination = ('<dependency><groupId>new.publisher</groupId><artifactId>demo</artifactId>'
+                       '<version>1</version></dependency>')
+        for replacement in ('', destination.replace('<version>1</version>', '<version>2</version>')):
+            with self.subTest(replacement=replacement):
+                self.effective[1].write_text(original.replace(destination, replacement))
+                self.assert_unverified()
+        self.effective[1].write_text(original)
+
+    def test_source_pom_requires_exact_gav_explicit_pom_packaging_and_group_relocation(self):
+        original = self.source_pom.read_text()
+        invalid = (
+            original.replace('<groupId>old.publisher</groupId>', '<groupId>wrong.publisher</groupId>'),
+            original.replace('<artifactId>demo</artifactId>', '<artifactId>other</artifactId>'),
+            original.replace('<version>1</version>', '<version>2</version>'),
+            original.replace('<packaging>pom</packaging>', ''),
+            original.replace('<packaging>pom</packaging>', '<packaging>jar</packaging>'),
+            original.replace('<groupId>new.publisher</groupId>', '<groupId>old.publisher</groupId>'),
+            original.replace('<groupId>new.publisher</groupId>', ''),
+            original.replace('</relocation>', '<artifactId>other</artifactId></relocation>'),
+            original.replace('</relocation>', '<version>2</version></relocation>'),
+            original.replace('<version>1</version>', '<version>${revision}</version>'),
+            '<project><broken>',
+        )
+        for text in invalid:
+            with self.subTest(pom=text):
+                self.source_pom.write_text(text)
+                self.assert_unverified()
+        self.source_pom.write_text(original)
+
+    def test_explicit_same_artifact_and_version_in_relocation_are_accepted(self):
+        text = self.source_pom.read_text().replace('</relocation>',
+            '<artifactId>demo</artifactId><version>1</version></relocation>')
+        self.source_pom.write_text(text)
+        errors, unknown, _ = self.check()
+        self.assertEqual([], errors)
+        self.assertEqual([], unknown)
+
+    def test_destination_pom_requires_exact_gav_and_cannot_relocate_again(self):
+        original = self.target_pom.read_text()
+        invalid = (
+            original.replace('<groupId>new.publisher</groupId>', '<groupId>wrong.publisher</groupId>'),
+            original.replace('<artifactId>demo</artifactId>', '<artifactId>other</artifactId>'),
+            original.replace('<version>1</version>', '<version>2</version>'),
+            original.replace('</project>', '<packaging>pom</packaging></project>'),
+            original.replace('</project>', '<distributionManagement><relocation>'
+                             '<groupId>third.publisher</groupId></relocation></distributionManagement></project>'),
+            '<project><broken>',
+        )
+        for text in invalid:
+            with self.subTest(pom=text):
+                self.target_pom.write_text(text)
+                self.assert_unverified()
+        self.target_pom.write_text(original)
+
+    def test_empty_relocated_jar_cannot_satisfy_real_base_class_evidence(self):
+        with zipfile.ZipFile(self.target_jar, 'w') as output:
+            output.writestr('META-INF/versions/21/example/Client.class',
+                            b'\xca\xfe\xba\xbe' + struct.pack('>HH', 0, 65))
+        self.assert_unverified()
 
 
 if __name__ == '__main__':

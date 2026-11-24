@@ -42,6 +42,7 @@ public class GoodsQueryResource {
      *
      * @param applicationService 商品应用服务
      */
+    @com.google.inject.Inject
     public GoodsQueryResource(GoodsApplicationService applicationService) {
         this.applicationService = Objects.requireNonNull(applicationService, "applicationService must not be null");
     }

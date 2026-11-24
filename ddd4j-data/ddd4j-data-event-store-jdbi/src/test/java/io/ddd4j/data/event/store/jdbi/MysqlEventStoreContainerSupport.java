@@ -14,6 +14,7 @@
  */
 package io.ddd4j.data.event.store.jdbi;
 
+import java.util.Collections;
 import org.testcontainers.DockerClientFactory;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.utility.DockerImageName;
@@ -31,6 +32,7 @@ final class MysqlEventStoreContainerSupport {
      * 进程级单例 MySQL 8 容器（官方 testcontainers MySQL 模块镜像）。
      */
     static final MySQLContainer<?> MYSQL = new MySQLContainer<>(DockerImageName.parse("mysql:8.0.36"))
+            .withTmpFs(Collections.singletonMap("/var/lib/mysql", "rw"))
             .withUrlParam("allowPublicKeyRetrieval", "true")
             .withUrlParam("useSSL", "false");
 

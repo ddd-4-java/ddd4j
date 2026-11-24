@@ -16,6 +16,7 @@ package io.ddd4j.quarkus.cqrs;
 
 import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
+import io.quarkus.arc.DefaultBean;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
@@ -26,13 +27,14 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Quarkus CQRS 投影拉取服务。
  * <p>
- * 基于 {@code @Scheduled} 定时拉取投影事件，驱动 CQRS 读侧视图增量更新。
+ * 由视图管理器按原 cron 配置注册原生 Quartz 任务，保留旧子类拉取钩子。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
 @Slf4j
 @ApplicationScoped
+@DefaultBean
 public class QuarkusJpaProjectionService {
 
     /**
@@ -41,7 +43,8 @@ public class QuarkusJpaProjectionService {
     @Inject
     Instance<ProjectionPositionRepository> projectionPositionRepository;
 
-    @Scheduled(cron = "${ddd4j.quarkus.cqrs.projection.cron:*/30 * * * * ?}")
+    // 原生禁用声明使 NORMAL 模式保留 Quartz 编程式生命周期；此声明不创建业务任务。
+    @Scheduled(cron = "${ddd4j.quarkus.cqrs.projection.bootstrap-cron:off}")
     void scheduled() {
         runOnce();
     }

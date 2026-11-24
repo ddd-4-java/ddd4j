@@ -17,6 +17,11 @@ package io.ddd4j.web.core.error;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.ddd4j.core.exception.BizRuntimeException;
+import io.ddd4j.core.api.ApiCode;
+import io.ddd4j.core.exception.AuthenticationException;
+import io.ddd4j.core.exception.AuthorizationException;
+import io.ddd4j.core.exception.PermissionDeniedException;
+import io.ddd4j.core.exception.TokenExpiredException;
 import io.ddd4j.core.exception.IdempotentException;
 import io.ddd4j.core.exception.ParamException;
 import io.ddd4j.core.exception.ValidateException;
@@ -30,6 +35,26 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class DefaultWebExceptionTranslatorTest {
 
     private final DefaultWebExceptionTranslator translator = new DefaultWebExceptionTranslator();
+
+    @Test
+    void authenticationErrorsUseUnauthorizedStatusAndReason() {
+        assertAuthError(new TokenExpiredException("令牌已过期"), ApiCode.UNAUTHORIZED, "令牌已过期");
+        assertAuthError(new AuthenticationException(null), ApiCode.UNAUTHORIZED, ApiCode.UNAUTHORIZED.getReason());
+    }
+
+    @Test
+    void authorizationErrorsUseForbiddenStatusAndReason() {
+        assertAuthError(new PermissionDeniedException("无权查看订单"), ApiCode.FORBIDDEN, "无权查看订单");
+        assertAuthError(new AuthorizationException("  "), ApiCode.FORBIDDEN, ApiCode.FORBIDDEN.getReason());
+    }
+
+    private void assertAuthError(Throwable failure, ApiCode expected, String message) {
+        WebError error = translator.translate(failure);
+        assertEquals(expected.getCode().intValue(), error.status());
+        assertEquals(expected.getCode(), error.code());
+        assertEquals(message, error.message());
+        assertNull(error.data());
+    }
 
     @Test
     void translateWebStatusException() {

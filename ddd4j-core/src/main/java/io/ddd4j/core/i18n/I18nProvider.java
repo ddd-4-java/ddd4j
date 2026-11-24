@@ -86,15 +86,17 @@ public interface I18nProvider {
         if (Objects.isNull(args) || args.length == 0) {
             return message;
         }
-        String result = message;
+        StringBuilder formatted = new StringBuilder(message.length());
+        int start = 0;
         for (Object arg : args) {
-            int idx = result.indexOf("{}");
-            if (idx < 0) {
+            int placeholder = message.indexOf("{}", start);
+            if (placeholder < 0) {
                 break;
             }
-            result = result.substring(0, idx) + Objects.toString(arg, "null") + result.substring(idx + 2);
+            formatted.append(message, start, placeholder).append(Objects.toString(arg, "null"));
+            start = placeholder + 2;
         }
-        return result;
+        return start == 0 ? message : formatted.append(message, start, message.length()).toString();
     }
 
     /**

@@ -69,6 +69,7 @@ public class PanacheEventStore implements EventStore {
 
     /**
      * 以聚合类型和聚合标识追加事件；版本冲突使用统一异常表示，位置号冲突可重试。
+     * 追加操作自行管理资源本地事务，调用时 EntityManager 的事务须处于空闲状态。
      */
     @Override
     public void append(String aggregateType, AggregateRootId aggregateId,
@@ -82,6 +83,9 @@ public class PanacheEventStore implements EventStore {
 
         retry.execute("append(" + aggregateType + ":" + aggregateId.asString() + ")", () -> {
             EntityTransaction transaction = entityManager.getTransaction();
+            if (transaction.isActive()) {
+                throw new IllegalStateException("PanacheEventStore append requires an inactive transaction");
+            }
             try {
                 transaction.begin();
                 entityManager.clear();

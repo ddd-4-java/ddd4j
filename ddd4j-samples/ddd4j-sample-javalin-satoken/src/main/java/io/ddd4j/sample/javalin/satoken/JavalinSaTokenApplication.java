@@ -15,6 +15,16 @@
 package io.ddd4j.sample.javalin.satoken;
 
 import com.google.inject.Guice;
+import io.ddd4j.guice.Ddd4jGuiceModule;
+import io.ddd4j.core.subject.Subject;
+import io.ddd4j.core.ddd.repository.Repository;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import io.javalin.json.JavalinJackson;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.EnumSet;
+import jakarta.servlet.DispatcherType;
+import org.eclipse.jetty.ee10.servlet.FilterHolder;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
@@ -70,9 +80,34 @@ public class JavalinSaTokenApplication {
      * @param args 命令行参数
      */
     public static void main(String[] args) {
+        start(PORT);
+    }
+
+    /**
+     * @param port HTTP 端口
+     * @return 可关闭的真实应用
+     */
+    public static Application start(int port) {
+        return start(port, ignored -> { });
+    }
+
+    static Application start(int port, Consumer<Optional<String>> observer) {
+        return start(port, observer, config -> { });
+    }
+
+    static Application start(int port, Consumer<Optional<String>> observer,
+                             Consumer<io.javalin.config.JavalinConfig> configure) {
         // ==================== 1. 创建 Guice 注入器 ====================
+        NativeAuthLifecycle lifecycle = new NativeAuthLifecycle(observer);
+        try {
+            lifecycle.initializeSaToken();
         Module authModule = new AuthModule();
-        Injector injector = Guice.createInjector(authModule);
+        Injector injector = Guice.createInjector(Ddd4jGuiceModule.basic(), authModule, new com.google.inject.AbstractModule() {
+            @Override protected void configure() {
+                bind(Subject.class).toInstance(new io.ddd4j.auth.satoken.subject.SaTokenSubject());
+            }
+        });
+        lifecycle.attach(injector);
 
         // ==================== 2. 预置 RBAC 演示数据 ====================
         RbacConfig.initRbacData(
@@ -80,28 +115,30 @@ public class JavalinSaTokenApplication {
                 injector.getInstance(RoleRepository.class),
                 injector.getInstance(PermissionRepository.class));
 
-        // ==================== 3. 注册 SubjectKit 所需 SPI ====================
-        SubjectProvider subjectProvider = new GuiceSubjectProvider();
-        SubjectKit.register(subjectProvider);
-
-        SubjectDataProvider subjectDataProvider = injector.getInstance(SubjectDataProvider.class);
-        SubjectKit.setDataProvider(subjectDataProvider);
-
-        SubjectKit.setStrategy(SubjectStrategy.instance);
-
-        // ==================== 4. 注册 Goods 仓储到 RepositoryRegistry（充血查询需要） ====================
-        RepositoryRegistry.register(Goods.class, new InMemoryGoodsRepository());
+        lifecycle.repositories.register(RepositoryRegistry.key(Goods.class), Repository.class,
+                injector.getInstance(io.ddd4j.sample.javalin.satoken.goods.domain.GoodsRepository.class));
+        lifecycle.repositories.start();
+        var adapters = new io.ddd4j.sample.order.local.InMemoryOrderAdapters();
+        var sharedOrders = new io.ddd4j.sample.order.application.OrderApplicationService(adapters, adapters, adapters, adapters);
 
         // ==================== 5. 获取 RBAC 控制器与 Resource 实例 ====================
         AuthenticationController authController = injector.getInstance(AuthenticationController.class);
         AuthorizationController authzController = injector.getInstance(AuthorizationController.class);
-        OrderResource orderResource = injector.getInstance(OrderResource.class);
+        OrderResource orderResource = new OrderResource(sharedOrders, adapters);
         GoodsResource goodsResource = injector.getInstance(GoodsResource.class);
         GoodsQueryResource goodsQueryResource = injector.getInstance(GoodsQueryResource.class);
 
         // ==================== 6. 启动 Javalin 并注册路由 ====================
         Javalin app = Javalin.create(javalinConfig -> {
             javalinConfig.startup.showJavalinBanner = false;
+            javalinConfig.routes.before(lifecycle::authenticateOrder);
+            configure.accept(javalinConfig);
+            javalinConfig.jsonMapper(new JavalinJackson(JsonMapper.builder().findAndAddModules().build(), false));
+            javalinConfig.jetty.modifyServletContextHandler(context -> context.addFilter(
+                    new FilterHolder(lifecycle), "/*", EnumSet.of(DispatcherType.REQUEST, DispatcherType.ASYNC)));
+            javalinConfig.routes.exception(Exception.class, (failure, ctx) -> ctx.status(500).json(
+                    io.ddd4j.core.api.R.of(500, failure.getMessage())));
+            javalinConfig.routes.beforeMatched(lifecycle::authorizeMatchedOrder);
             javalinConfig.routes.apiBuilder(() -> {
                 // ========== Authentication 路由（/auth/*） ==========
                 authController.routes().addEndpoints();
@@ -118,13 +155,34 @@ public class JavalinSaTokenApplication {
             });
         });
 
-        app.start(PORT);
+        lifecycle.attach(app);
+        app.start(port);
         log.info("Javalin + Sa-Token + RBAC + DDD sample started at http://localhost:{}", PORT);
         log.info("Authentication endpoints: /auth/login, /auth/me, /auth/admin, /auth/users");
         log.info("Authorization endpoints: /rbac/admin/users, /rbac/admin/roles, /rbac/admin/permissions");
         log.info("Order endpoints: /orders, /orders/{id}, /orders/{id}/pay");
         log.info("Goods endpoints: /api/goods, /api/goods/page, /api/goods/list");
         log.info("Authorization examples: GET /auth/users, POST /auth/orders/{id}/pay, DELETE /auth/users/{id}");
+        return new Application(lifecycle);
+        } catch (RuntimeException | Error failure) {
+            try {
+                lifecycle.close();
+            } catch (RuntimeException | Error cleanupFailure) {
+                if (cleanupFailure != failure) {
+                    failure.addSuppressed(cleanupFailure);
+                }
+            }
+            throw failure;
+        }
+    }
+
+    /** 可关闭的实际 Javalin/Guice 应用句柄。 */
+    public static final class Application implements AutoCloseable {
+        private final NativeAuthLifecycle lifecycle;
+        private Application(NativeAuthLifecycle lifecycle) { this.lifecycle = lifecycle; }
+        /** @return 实际 HTTP 应用 */
+        public Javalin app() { return lifecycle.app(); }
+        @Override public void close() { lifecycle.close(); }
     }
 
 }

@@ -62,6 +62,7 @@ public class AuthenticationController {
      *
      * @param rbacService RBAC 服务
      */
+    @com.google.inject.Inject
     public AuthenticationController(RbacService rbacService) {
         this.rbacService = Objects.requireNonNull(rbacService, "rbacService must not be null");
     }

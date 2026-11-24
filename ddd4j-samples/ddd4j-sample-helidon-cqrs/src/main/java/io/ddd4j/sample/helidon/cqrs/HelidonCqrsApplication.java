@@ -14,6 +14,7 @@
  */
 package io.ddd4j.sample.helidon.cqrs;
 
+import io.ddd4j.helidon.Ddd4jHelidonConfig;
 import io.helidon.microprofile.server.Server;
 
 /**
@@ -24,15 +25,26 @@ import io.helidon.microprofile.server.Server;
  */
 public class HelidonCqrsApplication {
 
+    static boolean durableProjectionEnabled() {
+        return new Ddd4jHelidonConfig()
+                .value("ddd4j.cqrs.projection.enabled", Boolean.class)
+                .orElse(false);
+    }
+
+    /**
+ * @param port HTTP 端口
+ * @return 已启动真实 MP 服务
+ */
+    public static Server start(int port) {
+        return Server.builder().port(port).addApplication(new HelidonCqrsJaxRsApplication()).build().start();
+    }
     /**
      * 启动 Helidon CQRS 示例应用。
      *
      * @param args 命令行参数
      */
     public static void main(String[] args) {
-        Server.builder()
-                .addApplication(new HelidonCqrsJaxRsApplication())
-                .build()
-                .start();
+        Server server = start(Integer.getInteger("server.port",8080));
+        Runtime.getRuntime().addShutdownHook(new Thread(server::stop));
     }
 }

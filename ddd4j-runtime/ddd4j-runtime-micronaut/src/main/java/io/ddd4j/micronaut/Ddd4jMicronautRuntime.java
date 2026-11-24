@@ -17,6 +17,7 @@ package io.ddd4j.micronaut;
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.SpiRegistrationScope;
 import io.ddd4j.core.cqrs.command.CommandBus;
+import io.ddd4j.core.cqrs.readmodel.ViewManager;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.health.ReadinessContributor;
 import io.ddd4j.core.health.RuntimeReadinessRegistry;
@@ -35,6 +36,7 @@ import java.util.Objects;
  */
 public final class Ddd4jMicronautRuntime implements AutoCloseable {
 
+    private final ViewManager viewManager;
     private final SpiRegistrationScope registrations;
     private final SubjectKitRegistrationScope subjectRegistration;
     private final RuntimeReadinessRegistry readinessRegistry;
@@ -64,6 +66,14 @@ public final class Ddd4jMicronautRuntime implements AutoCloseable {
     public Ddd4jMicronautRuntime(DomainEventPublisher publisher, SubjectProvider subjectProvider,
                                  I18nProvider i18nProvider, CommandBus commandBus,
                                  Collection<? extends ReadinessContributor> readinessContributors) {
+        this(publisher, subjectProvider, i18nProvider, commandBus, readinessContributors, null);
+    }
+
+    /** 平台工厂在依赖验证后接入唯一视图生命周期。 */
+    Ddd4jMicronautRuntime(DomainEventPublisher publisher, SubjectProvider subjectProvider,
+                         I18nProvider i18nProvider, CommandBus commandBus,
+                         Collection<? extends ReadinessContributor> readinessContributors, ViewManager viewManager) {
+        this.viewManager = viewManager;
         this.registrations = new SpiRegistrationScope()
                 .register(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class,
                         Objects.requireNonNull(publisher, "publisher must not be null"))
@@ -82,8 +92,22 @@ public final class Ddd4jMicronautRuntime implements AutoCloseable {
      */
     @PostConstruct
     public void start() {
-        registrations.start();
-        subjectRegistration.start();
+        try {
+            if (Objects.nonNull(viewManager)) {
+                viewManager.start();
+            }
+            registrations.start();
+            subjectRegistration.start();
+        } catch (RuntimeException | Error failure) {
+            try {
+                close();
+            } catch (RuntimeException | Error cleanup) {
+                if (failure != cleanup) {
+                    failure.addSuppressed(cleanup);
+                }
+            }
+            throw failure;
+        }
     }
 
     /**
@@ -98,7 +122,13 @@ public final class Ddd4jMicronautRuntime implements AutoCloseable {
     @Override
     @PreDestroy
     public void close() {
-        subjectRegistration.close();
-        registrations.close();
+        try {
+            if (Objects.nonNull(viewManager)) {
+                viewManager.stop();
+            }
+        } finally {
+            subjectRegistration.close();
+            registrations.close();
+        }
     }
 }

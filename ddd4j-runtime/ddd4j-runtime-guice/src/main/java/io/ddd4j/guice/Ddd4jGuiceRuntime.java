@@ -14,7 +14,10 @@
  */
 package io.ddd4j.guice;
 
+import com.google.inject.Binding;
+import com.google.inject.Key;
 import com.google.inject.Inject;
+import io.ddd4j.guice.cqrs.GuiceViewManager;
 import com.google.inject.Injector;
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.SpiRegistrationScope;
@@ -35,6 +38,7 @@ import java.util.Objects;
  */
 public final class Ddd4jGuiceRuntime implements AutoCloseable {
 
+    private final Injector injector;
     private final SpiRegistrationScope registrations;
     private final RuntimeReadinessRegistry readinessRegistry;
 
@@ -66,7 +70,7 @@ public final class Ddd4jGuiceRuntime implements AutoCloseable {
     public Ddd4jGuiceRuntime(Injector injector, DomainEventPublisher publisher, SubjectProvider subjectProvider,
                              I18nProvider i18nProvider, CommandBus commandBus,
                              Collection<? extends ReadinessContributor> readinessContributors) {
-        GuiceContext.setInjector(Objects.requireNonNull(injector, "injector must not be null"));
+        this.injector = Objects.requireNonNull(injector, "injector must not be null");
         registrations = new SpiRegistrationScope()
                 .register(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class,
                         Objects.requireNonNull(publisher, "publisher must not be null"))
@@ -77,7 +81,14 @@ public final class Ddd4jGuiceRuntime implements AutoCloseable {
                 .register(SpiKeys.COMMAND_BUS, CommandBus.class,
                         Objects.requireNonNull(commandBus, "commandBus must not be null"));
         readinessRegistry = new RuntimeReadinessRegistry(readinessContributors);
+        // 显式能力先完成启动；失败时其自身回滚线程和句柄，尚未发布任何本实例全局状态。
+        Binding<Ddd4jProjectionGuiceModule.Startup> projectionStartup = injector.getExistingBinding(
+                Key.get(Ddd4jProjectionGuiceModule.Startup.class));
+        if (Objects.nonNull(projectionStartup)) {
+            projectionStartup.getProvider().get();
+        }
         start();
+        GuiceContext.setInjector(this.injector);
     }
 
     /** 启动 ddd4j 全局 SPI 注册。 */
@@ -96,7 +107,15 @@ public final class Ddd4jGuiceRuntime implements AutoCloseable {
 
     @Override
     public void close() {
-        registrations.close();
-        GuiceContext.clear();
+        try {
+            Binding<GuiceViewManager> binding = injector.getExistingBinding(
+                    Key.get(GuiceViewManager.class));
+            if (Objects.nonNull(binding)) {
+                binding.getProvider().get().close();
+            }
+        } finally {
+            registrations.close();
+            GuiceContext.clear();
+        }
     }
 }

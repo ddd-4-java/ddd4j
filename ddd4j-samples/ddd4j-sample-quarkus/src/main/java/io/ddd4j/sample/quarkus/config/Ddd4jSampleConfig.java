@@ -14,6 +14,7 @@
  */
 package io.ddd4j.sample.quarkus.config;
 
+import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectProvider;
@@ -89,14 +90,15 @@ public class Ddd4jSampleConfig {
      * @param event 启动事件
      */
     void onStart(@Observes StartupEvent event) {
+        CacheKit.build("ddd4j-web-idempotency",
+                builder -> builder.maximumSize(10000).expireAfterWriteSeconds(300));
         log.info("[Ddd4jSampleConfig] Quarkus started, verifying ddd4j SPI services...");
 
         logSPI("DomainEventPublisher", domainEventPublisher);
         logSPI("SubjectProvider", subjectProvider);
         logSPI("I18nProvider", i18nProvider);
 
-        log.info("[Ddd4jSampleConfig] Sample application is ready at http://localhost:8080");
-        log.info("[Ddd4jSampleConfig] Try: curl http://localhost:8080/orders/health");
+        log.info("[Ddd4jSampleConfig] Sample application is ready. Try GET /api/orders");
     }
 
     /**

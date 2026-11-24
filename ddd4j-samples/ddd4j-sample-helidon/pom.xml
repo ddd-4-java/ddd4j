@@ -24,6 +24,7 @@
     </properties>
 
     <dependencies>
+<dependency><groupId>io.ddd4j</groupId><artifactId>ddd4j-sample-order-testkit</artifactId><version>${revision}</version><scope>test</scope></dependency>
         <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-sample-order-application</artifactId>
@@ -78,6 +79,22 @@
             <groupId>jakarta.enterprise</groupId>
             <artifactId>jakarta.enterprise.cdi-api</artifactId>
             <version>${helidon.cdi.version}</version>
+        </dependency>
+        <!-- 显式选择 Helidon 3 的 Jakarta API，由当前运行时或应用的依赖树解析。 -->
+        <dependency>
+            <groupId>jakarta.inject</groupId>
+            <artifactId>jakarta.inject-api</artifactId>
+            <version>${helidon-jakarta-inject.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.interceptor</groupId>
+            <artifactId>jakarta.interceptor-api</artifactId>
+            <version>${helidon-jakarta-interceptor.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
+            <version>${helidon-jakarta-ws-rs.version}</version>
         </dependency>
         <dependency>
             <groupId>jakarta.annotation</groupId>

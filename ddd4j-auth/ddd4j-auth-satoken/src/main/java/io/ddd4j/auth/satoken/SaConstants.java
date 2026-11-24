@@ -19,7 +19,7 @@ import io.ddd4j.core.constant.AuthConstants;
 /**
  * Sa-Token 通用认证载荷字段。
  *
- * <p>字段键值由 {@link AuthConstants} 统一维护。应用专用载荷字段由各应用定义。
+ * <p>通用载荷键取自 {@link AuthConstants}，同时保留已发布的学校业务载荷键。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.0.0
@@ -27,13 +27,13 @@ import io.ddd4j.core.constant.AuthConstants;
 public final class SaConstants {
 
     /** 租户 ID。 */
-    public static final String PAYLOAD_TENANT_ID = AuthConstants.FIELD_TENANT_ID;
+    public static final String PAYLOAD_TENANT_ID = AuthConstants.CLAIM_TENANT_ID;
 
     /** 应用 ID。 */
     public static final String PAYLOAD_APP_ID = AuthConstants.FIELD_APP_ID;
 
     /** 角色 ID。 */
-    public static final String PAYLOAD_ROLE_ID = AuthConstants.FIELD_ROLE_ID;
+    public static final String PAYLOAD_ROLE_ID = AuthConstants.CLAIM_ROLE_ID;
 
     /** 角色编码。 */
     public static final String PAYLOAD_ROLE_CODE = AuthConstants.FIELD_ROLE_CODE;
@@ -42,10 +42,31 @@ public final class SaConstants {
     public static final String PAYLOAD_ROLE_TYPE = AuthConstants.FIELD_ROLE_TYPE;
 
     /** 用户 ID。 */
-    public static final String PAYLOAD_USER_ID = AuthConstants.FIELD_USER_ID;
+    public static final String PAYLOAD_USER_ID = AuthConstants.CLAIM_USER_ID;
 
     /** 机构 ID。 */
-    public static final String PAYLOAD_ORG_ID = AuthConstants.FIELD_ORG_ID;
+    public static final String PAYLOAD_ORG_ID = AuthConstants.CLAIM_ORG_ID;
+
+    /**
+     * JWT 学校/校区代码。
+     */
+    public static final String PAYLOAD_SCHOOL_CODE = "xxdm";
+    /**
+     * JWT 学区/校区组织 ID（与学校级组织 ID 区分）。
+     */
+    public static final String PAYLOAD_XQ_ORG_ID = "xq_org_id";
+    /**
+     * JWT 身份标识 ID。
+     */
+    public static final String PAYLOAD_IDENTITY_ID = "iden_id";
+    /**
+     * JWT 信息条目 ID。
+     */
+    public static final String PAYLOAD_INFO_ID = "info_id";
+    /**
+     * JWT 父级信息条目 ID。
+     */
+    public static final String PAYLOAD_PARENT_INFO_ID = "p_info_id";
 
     private SaConstants() {
     }

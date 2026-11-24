@@ -140,6 +140,51 @@ class SaTokenSubjectLifecycleTest {
     }
 
     @Test
+    void loginRegistersConfiguredDeviceId() {
+        String loginId = "registered-device-account";
+        String deviceId = "browser-installation-1";
+        AuthSessionConfig config = new AuthSessionConfig().setDeviceType("desktop").setDeviceId(deviceId);
+
+        String token = subject().login(AuthRequest.of(loginId).setSessionConfig(config));
+
+        assertEquals(deviceId, StpUtil.stpLogic.getTerminalInfoByToken(token).getDeviceId());
+        assertTrue(subject().isTrustDeviceId(loginId, deviceId));
+        assertFalse(subject().isTrustDeviceId(loginId, "different-installation"));
+    }
+
+    @Test
+    void loginCreatesTokenSessionOnlyForEagerLogin() {
+        StpLogic logic = StpUtil.stpLogic;
+        SaTokenDao dao = SaManager.getSaTokenDao();
+        String lazyToken = subject().login(AuthRequest.of("lazy-token-session"));
+        AuthSessionConfig eager = new AuthSessionConfig().setCreateTokenSessionNow(true);
+        String eagerToken = subject().login(AuthRequest.of("eager-token-session").setSessionConfig(eager));
+
+        assertNotNull(dao.getSession(logic.splicingKeySession("lazy-token-session")));
+        assertNotNull(dao.getSession(logic.splicingKeySession("eager-token-session")));
+        assertNull(dao.getSession(logic.splicingKeyTokenSession(lazyToken)));
+        assertNotNull(dao.getSession(logic.splicingKeyTokenSession(eagerToken)));
+    }
+
+    @Test
+    void loginReplacesOnlyCurrentDeviceTypeByDefault() {
+        String loginId = "replace-current-device-type";
+        AuthSessionConfig desktop = new AuthSessionConfig().setDeviceType("desktop");
+        AuthSessionConfig mobile = new AuthSessionConfig().setDeviceType("mobile");
+        String desktopToken = subject().login(AuthRequest.of(loginId)
+                .setSessionConfig(desktop).setPrincipal(principal(loginId)));
+        String oldMobileToken = subject().login(AuthRequest.of(loginId)
+                .setSessionConfig(mobile).setPrincipal(principal(loginId)));
+
+        String newMobileToken = subject().login(AuthRequest.of(loginId)
+                .setSessionConfig(mobile.setConcurrent(false)).setPrincipal(principal(loginId)));
+
+        assertNotNull(subject().verify(desktopToken));
+        assertNull(subject().verify(oldMobileToken));
+        assertNotNull(subject().verify(newMobileToken));
+    }
+
+    @Test
     void loginWithoutSessionConfigUsesDefaults() {
         String token = subject().login(new AuthRequest("user-2"));
 

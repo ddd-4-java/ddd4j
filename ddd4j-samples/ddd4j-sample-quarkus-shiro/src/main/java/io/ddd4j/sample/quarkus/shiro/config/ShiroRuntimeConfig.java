@@ -14,9 +14,13 @@
  */
 package io.ddd4j.sample.quarkus.shiro.config;
 
+import cn.hutool.core.util.ReflectUtil;
 import io.ddd4j.sample.quarkus.shiro.rbac.InMemoryRoleRepository;
 import io.ddd4j.sample.quarkus.shiro.rbac.InMemoryUserRepository;
 import io.quarkus.runtime.StartupEvent;
+import io.quarkus.runtime.ShutdownEvent;
+import org.apache.shiro.mgt.SecurityManager;
+import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
@@ -32,6 +36,7 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -49,8 +54,39 @@ public class ShiroRuntimeConfig {
     @Inject
     InMemoryRoleRepository roleRepository;
 
+    private SecurityManager previous;
+    private DefaultSecurityManager owned;
+
     void onStart(@Observes StartupEvent event) {
-        SecurityUtils.setSecurityManager(new DefaultSecurityManager(new RbacRealm(userRepository, roleRepository)));
+        previous = processManager();
+        owned = new DefaultSecurityManager(new RbacRealm(userRepository, roleRepository));
+        SecurityUtils.setSecurityManager(owned);
+    }
+
+    void onStop(@Observes ShutdownEvent event) {
+        destroy();
+    }
+
+    @PreDestroy
+    void destroy() {
+        DefaultSecurityManager current = owned;
+        owned = null;
+        if (Objects.isNull(current)) {
+            return;
+        }
+        try {
+            if (processManager() == current) {
+                SecurityUtils.setSecurityManager(previous);
+            }
+        } finally {
+            current.destroy();
+        }
+    }
+
+    private static SecurityManager processManager() {
+        // Shiro 的公开 getter 会优先返回线程绑定；这里只读取 setter 修改的静态槽。
+        return (SecurityManager) ReflectUtil.getStaticFieldValue(Objects.requireNonNull(
+                ReflectUtil.getField(SecurityUtils.class, "securityManager")));
     }
 
     private static final class RbacRealm extends AuthorizingRealm {
@@ -81,7 +117,10 @@ public class ShiroRuntimeConfig {
 
         @Override
         protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
-            return new SimpleAuthenticationInfo(token.getPrincipal(), token.getCredentials(), getName());
+            var user = userRepository.findById(String.valueOf(token.getPrincipal()))
+                    .orElseThrow(() -> new org.apache.shiro.authc.UnknownAccountException("unknown user"));
+            if (user.isDisabled()) { throw new org.apache.shiro.authc.DisabledAccountException("disabled user"); }
+            return new SimpleAuthenticationInfo(user.getId(), user.getPassword(), getName());
         }
     }
 }

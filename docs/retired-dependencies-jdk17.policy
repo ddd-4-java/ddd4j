@@ -1,0 +1,148 @@
+{
+  "branch": "feature/2.0.x",
+  "date": "2026-11-18",
+  "evidence": "tracked POM declarations and source references; public upstream BOM/POM and lifecycle notices; no tests/build/resolution",
+  "removed_dependencies": {
+    "org.apache.cxf:cxf-rt-bindings-http": {
+      "reason": "不属于 CXF 4.1 维护线；仓库 POM 和受管源码未引用",
+      "replacement": "CXF 4.1.9 的 SOAP/XML/JAXB/Aegis 或 OAuth2；按调用协议选择，不是二进制替换"
+    },
+    "org.apache.cxf:cxf-rt-bindings-jbi": {
+      "reason": "不属于 CXF 4.1 维护线；仓库 POM 和受管源码未引用",
+      "replacement": "CXF 4.1.9 的 SOAP/XML/JAXB/Aegis 或 OAuth2；按调用协议选择，不是二进制替换"
+    },
+    "org.apache.cxf:cxf-rt-bindings-object": {
+      "reason": "不属于 CXF 4.1 维护线；仓库 POM 和受管源码未引用",
+      "replacement": "CXF 4.1.9 的 SOAP/XML/JAXB/Aegis 或 OAuth2；按调用协议选择，不是二进制替换"
+    },
+    "org.apache.cxf:cxf-rt-databinding-jibx": {
+      "reason": "不属于 CXF 4.1 维护线；仓库 POM 和受管源码未引用",
+      "replacement": "CXF 4.1.9 的 SOAP/XML/JAXB/Aegis 或 OAuth2；按调用协议选择，不是二进制替换"
+    },
+    "org.apache.cxf:cxf-rt-databinding-sdo": {
+      "reason": "不属于 CXF 4.1 维护线；仓库 POM 和受管源码未引用",
+      "replacement": "CXF 4.1.9 的 SOAP/XML/JAXB/Aegis 或 OAuth2；按调用协议选择，不是二进制替换"
+    },
+    "org.apache.cxf:cxf-rt-databinding-xmlbeans": {
+      "reason": "不属于 CXF 4.1 维护线；仓库 POM 和受管源码未引用",
+      "replacement": "CXF 4.1.9 的 SOAP/XML/JAXB/Aegis 或 OAuth2；按调用协议选择，不是二进制替换"
+    },
+    "org.apache.cxf:cxf-rt-rs-security-oauth": {
+      "reason": "不属于 CXF 4.1 维护线；仓库 POM 和受管源码未引用",
+      "replacement": "CXF 4.1.9 的 SOAP/XML/JAXB/Aegis 或 OAuth2；按调用协议选择，不是二进制替换"
+    },
+    "io.github.resilience4j:resilience4j-prometheus": {
+      "reason": "停留在 1.7.1 的旧集成；仓库未引用",
+      "replacement": "Resilience4j 2.4.0 的 micrometer / feign / reactor 等当前集成；不自动改写调用语义"
+    },
+    "io.github.resilience4j:resilience4j-ratpack": {
+      "reason": "停留在 1.7.1 的旧集成；仓库未引用",
+      "replacement": "Resilience4j 2.4.0 的 micrometer / feign / reactor 等当前集成；不自动改写调用语义"
+    },
+    "io.github.resilience4j:resilience4j-retrofit": {
+      "reason": "停留在 1.7.1 的旧集成；仓库未引用",
+      "replacement": "Resilience4j 2.4.0 的 micrometer / feign / reactor 等当前集成；不自动改写调用语义"
+    },
+    "com.netflix.hystrix:hystrix-core": {
+      "reason": "Hystrix 已停止新版本发布；仓库未引用",
+      "replacement": "Resilience4j 2.4.0；需要显式选择超时、隔离和熔断策略，不是直接换包"
+    },
+    "com.netflix.hystrix:hystrix-metrics-event-stream": {
+      "reason": "Hystrix 已停止新版本发布；仓库未引用",
+      "replacement": "Resilience4j 2.4.0；需要显式选择超时、隔离和熔断策略，不是直接换包"
+    },
+    "io.github.openfeign:feign-hystrix": {
+      "reason": "未使用的 Hystrix 适配入口，会重新带回停维 Hystrix",
+      "replacement": "当前 OpenFeign 和 Resilience4j Feign 适配"
+    },
+    "commons-httpclient:commons-httpclient": {
+      "reason": "HttpClient 3 已 EOL；仓库未引用",
+      "replacement": "已有 HttpClient 5；3.x 与 5.x 包名/API 不兼容，不能只改坐标"
+    },
+    "org.bouncycastle:bcprov-jdk15on": {
+      "reason": "旧 jdk15on 发布线；仓库未引用",
+      "replacement": "现有 bcprov-jdk18on 1.87 或特定运行时所需的 LTS 2.73.13，不能同时注册重复 provider"
+    },
+    "javax.servlet:javax.servlet-api": {
+      "reason": "旧 Servlet API 与本线 Jakarta 命名空间不符；仓库未引用",
+      "replacement": "中央已管理的 jakarta.servlet-api 6.x"
+    },
+    "javax.validation:validation-api": {
+      "reason": "旧 Bean Validation 命名空间；仓库源码统一使用 Jakarta",
+      "replacement": "中央已管理的 jakarta.validation-api 与 Hibernate Validator 8"
+    },
+    "javax.xml.stream:stax-api": {
+      "reason": "旧独立 StAX API；仓库未引用，JDK 17 已提供 java.xml",
+      "replacement": "JDK 17 java.xml 模块"
+    },
+    "xml-apis:xml-apis": {
+      "reason": "旧独立 XML 标准 API；仓库未引用，JDK 17 已提供相关 API",
+      "replacement": "JDK 17 java.xml / jdk.xml.dom；独立的现代 XMLBeans 5.3.0 保留"
+    },
+    "org.apache.derby:derby": {
+      "reason": "Apache Derby 已于 2025-10-10 退休；仓库未引用",
+      "replacement": "已有 H2 / HSQLDB 或应用所选数据库；不自动迁移数据"
+    },
+    "org.apache.derby:derbyclient": {
+      "reason": "Apache Derby 已于 2025-10-10 退休；仓库未引用",
+      "replacement": "已有 H2 / HSQLDB 或应用所选数据库；不自动迁移数据"
+    },
+    "org.apache.derby:derbyLocale_zh_CN": {
+      "reason": "Apache Derby 已于 2025-10-10 退休；仓库未引用",
+      "replacement": "已有 H2 / HSQLDB 或应用所选数据库；不自动迁移数据"
+    },
+    "org.apache.derby:derbynet": {
+      "reason": "Apache Derby 已于 2025-10-10 退休；仓库未引用",
+      "replacement": "已有 H2 / HSQLDB 或应用所选数据库；不自动迁移数据"
+    },
+    "org.apache.derby:derbyoptionaltools": {
+      "reason": "Apache Derby 已于 2025-10-10 退休；仓库未引用",
+      "replacement": "已有 H2 / HSQLDB 或应用所选数据库；不自动迁移数据"
+    },
+    "org.apache.derby:derbyshared": {
+      "reason": "Apache Derby 已于 2025-10-10 退休；仓库未引用",
+      "replacement": "已有 H2 / HSQLDB 或应用所选数据库；不自动迁移数据"
+    },
+    "org.apache.derby:derbytools": {
+      "reason": "Apache Derby 已于 2025-10-10 退休；仓库未引用",
+      "replacement": "已有 H2 / HSQLDB 或应用所选数据库；不自动迁移数据"
+    },
+    "org.apache.httpcomponents:httpasyncclient": {
+      "reason": "Apache 已宣布 HttpAsyncClient 4.1 / HttpCore NIO 4.4 EOL；仓库未引用此异步制品",
+      "replacement": "已有 HttpClient 5.6.5 / HttpCore 5.4.3 的异步 API，不能将 4.x Jar 原地替换为 5.x"
+    },
+    "org.apache.httpcomponents:httpasyncclient-cache": {
+      "reason": "Apache 已宣布 HttpAsyncClient 4.1 / HttpCore NIO 4.4 EOL；仓库未引用此异步制品",
+      "replacement": "已有 HttpClient 5.6.5 / HttpCore 5.4.3 的异步 API，不能将 4.x Jar 原地替换为 5.x"
+    },
+    "org.apache.httpcomponents:httpasyncclient-osgi": {
+      "reason": "Apache 已宣布 HttpAsyncClient 4.1 / HttpCore NIO 4.4 EOL；仓库未引用此异步制品",
+      "replacement": "已有 HttpClient 5.6.5 / HttpCore 5.4.3 的异步 API，不能将 4.x Jar 原地替换为 5.x"
+    },
+    "org.apache.httpcomponents:httpcomponents-asyncclient": {
+      "reason": "Apache 已宣布 HttpAsyncClient 4.1 / HttpCore NIO 4.4 EOL；仓库未引用此异步制品",
+      "replacement": "已有 HttpClient 5.6.5 / HttpCore 5.4.3 的异步 API，不能将 4.x Jar 原地替换为 5.x"
+    },
+    "org.apache.httpcomponents:httpcore-nio": {
+      "reason": "Apache 已宣布 HttpAsyncClient 4.1 / HttpCore NIO 4.4 EOL；仓库未引用此异步制品",
+      "replacement": "已有 HttpClient 5.6.5 / HttpCore 5.4.3 的异步 API，不能将 4.x Jar 原地替换为 5.x"
+    },
+    "org.apache.httpcomponents:httpcore-osgi": {
+      "reason": "公开 OSGi POM 同时包含 HttpCore Classic 和已 EOL 的 HttpCore NIO；仓库未引用",
+      "replacement": "已有 HttpCore 5 / HttpClient 5；保留仍受安全维护的独立 HttpCore Classic 4.4"
+    }
+  },
+  "removed_properties": [
+    "commons-httpclient.version",
+    "hystrix.version",
+    "derby.version",
+    "javax-validation-api.version",
+    "xml-apis.version",
+    "httpasyncclient.version"
+  ],
+  "maintained_cxf_security": {
+    "cxf": "4.1.9",
+    "wss4j": "4.0.3",
+    "minimum_wss4j_for_cxf": "4.0.2"
+  }
+}

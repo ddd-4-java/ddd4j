@@ -18,6 +18,8 @@ import io.ddd4j.sample.javalin.shiro.order.domain.model.Money;
 import io.ddd4j.sample.javalin.shiro.order.domain.model.Order;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -33,6 +35,20 @@ class OrderResponseSnapshotContractTest {
         assertEquals(1, response.lines().size());
         assertThrows(UnsupportedOperationException.class, () -> response.lines().clear());
         order.addLine("SKU-2", "second", 1, Money.cny("2.00"));
+        assertEquals(1, response.lines().size());
+    }
+
+    @Test
+    void sharedResponseLinesAreImmutableSnapshotOfOrder() {
+        io.ddd4j.sample.order.domain.Order order = io.ddd4j.sample.order.domain.Order.draft(
+                "ORD-1", "BUYER-1", "buyer");
+        io.ddd4j.sample.order.domain.Money price =
+                io.ddd4j.sample.order.domain.Money.cny(new BigDecimal("12.50"));
+        order.addLine("SKU-1", "first", 1, price);
+        OrderResponse response = OrderResponse.from(order);
+
+        assertThrows(UnsupportedOperationException.class, () -> response.lines().clear());
+        order.addLine("SKU-2", "second", 1, price);
         assertEquals(1, response.lines().size());
     }
 }

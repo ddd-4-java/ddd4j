@@ -28,6 +28,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -42,7 +43,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class PulsarContainerIntegrationTest {
 
     @Container
-    static final PulsarContainer PULSAR = new PulsarContainer(DockerImageName.parse("apachepulsar/pulsar:4.2.4"));
+    static final PulsarContainer PULSAR = new PulsarContainer(DockerImageName.parse("apachepulsar/pulsar:4.2.4"))
+            .withTmpFs(Map.of("/pulsar/data", "rw,mode=1777", "/pulsar/logs", "rw,mode=1777"));
 
     @AfterEach
     void clearContext() {

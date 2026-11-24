@@ -49,10 +49,11 @@ public abstract class BaseHandler {
      * @param exception 捕获的异常
      */
     protected void logException(Context context, Exception exception) {
-        log.error("Exception in request [{} {}]", context.method(), context.path(), exception);
+        String method = context.req().getMethod();
+        String path = context.path();
+        log.error("Exception in request [{} {}]", method, path, exception);
         Contexts.get(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class)
-                .ifPresent(publisher -> publisher.publish(
-                        new WebRequestFailure(context.method().name(), context.path(), exception)));
+                .ifPresent(publisher -> publisher.publish(new WebRequestFailure(method, path, exception)));
     }
 
     /**

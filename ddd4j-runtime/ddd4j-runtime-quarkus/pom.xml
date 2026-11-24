@@ -19,6 +19,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.tngtech.archunit</groupId>
+            <artifactId>archunit-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-annotation</artifactId>
             <version>${revision}</version>
@@ -355,6 +360,19 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes combine.children="append">
+                        <include>**/Test*.java</include>
+                        <include>**/*Test.java</include>
+                        <include>**/*Tests.java</include>
+                        <include>**/*TestCase.java</include>
+                        <include>**/QuarkusCommandBusIT.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>io.smallrye</groupId>
                 <artifactId>jandex-maven-plugin</artifactId>

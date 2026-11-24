@@ -29,6 +29,7 @@ import io.ddd4j.core.ddd.event.StringEntityType;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.hibernate.cfg.Configuration;
@@ -48,7 +49,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 class PanacheEventStorePostgresIT {
 
     @Container
-    static final PostgreSQLContainer POSTGRES = new PostgreSQLContainer("postgres:16-alpine");
+    static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:16-alpine")
+            // 临时 schema/事件往返测试；跨容器重启的持久性由独立恢复场景验证。
+            .withTmpFs(Collections.singletonMap("/var/lib/postgresql/data", "rw"));
     private static final String ORDER_TYPE = "Order";
     private EntityManagerFactory entityManagerFactory;
     private EntityManager entityManager;

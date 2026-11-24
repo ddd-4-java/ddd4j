@@ -15,6 +15,7 @@
 
 package io.ddd4j.core.health;
 
+import io.ddd4j.kit.lang.StrKit;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -88,15 +89,21 @@ public final class ReadinessReport {
     }
 
     private static ReadinessResult checkContributor(ReadinessContributor contributor) {
+        String reason;
         try {
             ReadinessResult result = contributor.check();
-            if (result != null) {
+            if (Objects.nonNull(result)) {
                 return result;
             }
-            return ReadinessResult.unavailable(contributor.getClass().getSimpleName(), "empty result");
+            reason = "empty result";
         } catch (RuntimeException exception) {
-            return ReadinessResult.unavailable(contributor.getClass().getSimpleName(), "check failed");
+            reason = "check failed";
         }
+        String name = contributor.getClass().getSimpleName();
+        if (StrKit.isBlank(name)) {
+            name = ReadinessContributor.class.getSimpleName();
+        }
+        return ReadinessResult.unavailable(name, reason);
     }
 
     /**

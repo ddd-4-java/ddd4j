@@ -6,6 +6,10 @@
 logs/
 !ddd4j-data/ddd4j-data-logs/src/main/java/io/ddd4j/data/logs/
 !ddd4j-data/ddd4j-data-logs/src/main/java/io/ddd4j/data/logs/**
+!ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/logs/
+!ddd4j-web/ddd4j-web-webmvc/src/main/java/io/ddd4j/web/webmvc/logs/**
+!ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/logs/
+!ddd4j-web/ddd4j-web-webmvc/src/test/java/io/ddd4j/web/webmvc/logs/**
 log.*/
 
 # BlueJ files

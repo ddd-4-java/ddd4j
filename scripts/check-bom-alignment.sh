@@ -90,33 +90,61 @@ if [ -n "$duplicate_properties" ]; then
   fail_count=$((fail_count + 1))
 fi
 
-while IFS= read -r pom; do
-  total_modules=$((total_modules + 1))
-  # 只检查内部依赖；Maven 4 子模块的固定父 POM 版本是构建配置。
-  bad_versions=$(python3 - "$pom" <<'PY'
+# 只检查根 POM 声明的 Maven 3 模块和 Maven 4 子项目。
+reactor_report=$(python3 - <<'PY'
+from pathlib import Path
 import sys
 import xml.etree.ElementTree as ET
 
-root = ET.parse(sys.argv[1]).getroot()
-namespace = root.tag.partition("}")[0] + "}" if "}" in root.tag else ""
-bad = 0
-for element in root.iter(namespace + "dependency"):
-    group = element.find(namespace + "groupId")
-    artifact = element.find(namespace + "artifactId")
-    version = element.find(namespace + "version")
-    if group is None or artifact is None or version is None:
+root = Path.cwd()
+pending = [root / "pom.xml"]
+visited = set()
+failures = []
+while pending:
+    pom = pending.pop()
+    if pom in visited:
         continue
-    if group.text == "io.ddd4j" and artifact.text and artifact.text.startswith("ddd4j-"):
-        if version.text not in ("${revision}", "${project.version}"):
-            bad += 1
-print(bad)
+    try:
+        project = ET.parse(pom).getroot()
+    except (OSError, ET.ParseError) as error:
+        sys.exit(f"{pom.relative_to(root)}: 无法读取 reactor POM ({error})")
+    visited.add(pom)
+    namespace = project.tag.partition("}")[0] + "}" if "}" in project.tag else ""
+    if project.tag != namespace + "project":
+        sys.exit(f"{pom.relative_to(root)}: reactor POM 缺少 project 根节点")
+
+    # 包括 dependencyManagement 和 profile 内的依赖，排除父项目版本。
+    bad_versions = 0
+    for dependency in project.iter(namespace + "dependency"):
+        group = dependency.findtext(namespace + "groupId")
+        artifact = dependency.findtext(namespace + "artifactId", "")
+        version = dependency.findtext(namespace + "version")
+        if (group == "io.ddd4j" and artifact.startswith("ddd4j-")
+                and version is not None and version not in ("${revision}", "${project.version}")):
+            bad_versions += 1
+    if bad_versions:
+        failures.append((pom.relative_to(root), bad_versions))
+
+    for container, entry in (("modules", "module"), ("subprojects", "subproject")):
+        for module in project.findall(f"{namespace}{container}/{namespace}{entry}"):
+            path = (pom.parent / (module.text or "").strip()).resolve()
+            module_pom = path if path.is_file() else (path / "pom.xml").resolve()
+            if not module_pom.is_relative_to(root):
+                sys.exit(f"{pom.relative_to(root)}: reactor 模块超出仓库范围 ({module_pom})")
+            pending.append(module_pom)
+
+print(len(visited))
+for pom, count in sorted(failures):
+    print(f"./{pom} 包含 {count} 个硬编码 ddd4j-* 版本")
 PY
 )
-  if [ "$bad_versions" -gt 0 ]; then
-    echo -e "${RED}  ❌ $pom 包含 $bad_versions 个硬编码 ddd4j-* 版本${NC}"
+{
+  IFS= read -r total_modules
+  while IFS= read -r issue; do
+    echo -e "${RED}  ❌ $issue${NC}"
     fail_count=$((fail_count + 1))
-  fi
-done < <(find . -name "pom.xml" -not -path "*/target/*" -not -path "*/node_modules/*" -not -path "*/.flattened-pom.xml")
+  done
+} <<< "$reactor_report"
 
 echo ""
 echo -e "${YELLOW}② 校验关键 ddd4j-* 工件在 BOM 中存在（警告级，非阻塞）${NC}"

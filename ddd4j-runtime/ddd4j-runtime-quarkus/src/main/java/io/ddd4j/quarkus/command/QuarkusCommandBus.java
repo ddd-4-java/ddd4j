@@ -18,16 +18,19 @@ import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.Result;
+import io.ddd4j.core.cqrs.command.DefaultCommandBus;
+import io.quarkus.arc.DefaultBean;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.control.ActivateRequestContext;
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Map;
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Quarkus 命令总线。
@@ -40,31 +43,37 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Slf4j
 @ApplicationScoped
+@DefaultBean
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class QuarkusCommandBus implements CommandBus {
 
-    /**
-     * 命令类型到执行器的路由映射
-     */
-    private final Map<Class<? extends Command>, CommandExecutor<?>> executorMap = new ConcurrentHashMap<>();
-
-    /**
-     * CDI 命令执行器实例集
-     */
     @Inject
     Instance<CommandExecutor<?>> executors;
 
-    void onStart(@Observes StartupEvent event) {
-        for (CommandExecutor<?> executor : executors) {
-            for (Class<? extends Command> commandType : executor.supportedCommands()) {
-                CommandExecutor<?> previous = executorMap.putIfAbsent(commandType, executor);
-                if (Objects.nonNull(previous)) {
-                    throw new IllegalStateException("Multiple executors found for command: " + commandType.getName());
+    private volatile DefaultCommandBus delegate = createDelegate(List.of());
+
+    void onStart(@Observes @jakarta.annotation.Priority(900) StartupEvent event) {
+        List<CommandExecutor<?>> snapshot = new java.util.ArrayList<>();
+        executors.forEach(snapshot::add);
+        delegate = createDelegate(snapshot);
+    }
+
+    private DefaultCommandBus createDelegate(Collection<CommandExecutor<?>> snapshot) {
+        return new DefaultCommandBus(snapshot) {
+            @Override
+            protected CommandExecutor<?> resolveMissingExecutor(Class<? extends Command> commandType,
+                    Collection<CommandExecutor<?>> registeredExecutors) {
+                // ArC 的 Instance 可发现启动后才支持该命令的执行器；缓存和执行仍由 core 负责。
+                if (Objects.nonNull(executors)) {
+                    for (CommandExecutor<?> candidate : executors) {
+                        if (candidate.supportedCommands().contains(commandType)) {
+                            return candidate;
+                        }
+                    }
                 }
-                log.info("Registered command executor: {} -> {}", commandType.getName(), executor.getClass().getSimpleName());
+                return null;
             }
-        }
-        log.info("QuarkusCommandBus initialized with {} command types", executorMap.size());
+        };
     }
 
     /**
@@ -73,46 +82,25 @@ public class QuarkusCommandBus implements CommandBus {
      * @param command 命令对象
      * @return 执行结果
      */
+    @ActivateRequestContext
     public Result<?> executeVoid(Command command) {
         return execute(command);
     }
 
     /**
-     * 执行命令并返回结果。
+     * 在 CDI 请求上下文中执行命令并返回结果。
      *
      * @param command 命令对象
      * @param <R>     结果类型
      * @return 执行结果
      */
     @Override
+    @ActivateRequestContext
     public <R> Result<R> execute(Command command) {
         if (Objects.isNull(command)) {
             throw new IllegalArgumentException("Command cannot be null");
         }
 
-        CommandExecutor executor = findExecutor(command);
-        if (Objects.isNull(executor)) {
-            throw new IllegalStateException("No executor found for command: " + command.getClass().getName());
-        }
-        return (Result<R>) executor.execute(command);
-    }
-
-    private CommandExecutor<?> findExecutor(Command command) {
-        CommandExecutor<?> executor = executorMap.get(command.getClass());
-        if (Objects.nonNull(executor)) {
-            return executor;
-        }
-        if (Objects.isNull(executors)) {
-            return null;
-        }
-        for (CommandExecutor<?> candidate : executors) {
-            for (Class<? extends Command> commandType : candidate.supportedCommands()) {
-                if (commandType.equals(command.getClass())) {
-                    executorMap.put(commandType, candidate);
-                    return candidate;
-                }
-            }
-        }
-        return null;
+        return delegate.execute(command);
     }
 }

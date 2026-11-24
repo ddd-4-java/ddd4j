@@ -2,6 +2,7 @@
 
 import importlib.util
 import pathlib
+import tempfile
 import unittest
 from unittest.mock import patch
 
@@ -105,6 +106,110 @@ class StaticImportNormalizationTest(unittest.TestCase):
                                      "import static example.First.*;")
         self.assertNotEqual(parity.java_tokens_with_normalized_imports(wildcards),
                             parity.java_tokens_with_normalized_imports(explicit))
+
+
+class ClassFileScopeTest(unittest.TestCase):
+    """编译 API 只读取当前 Git 文件清单中仍有 POM 的模块输出。"""
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.root = pathlib.Path(self.temp.name)
+        self.poms = ["pom.xml", "ddd4j-core/pom.xml", "ddd4j-samples/ddd4j-sample-quarkus/pom.xml"]
+        self.core = self.write_class("ddd4j-core", "example/Core")
+        self.sample = self.write_class("ddd4j-samples/ddd4j-sample-quarkus", "example/Sample")
+        for name in self.poms:
+            self.write_pom(name)
+        self.write_pom("pom.xml", ["ddd4j-core", "ddd4j-samples/ddd4j-sample-quarkus"])
+
+    def write_pom(self, name, modules=()):
+        path = self.root / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        children = "".join("<module>" + module + "</module>" for module in modules)
+        path.write_text("<project><modelVersion>4.0.0</modelVersion><modules>" + children
+                        + "</modules></project>\n")
+
+    def write_class(self, module, binary_name):
+        path = self.root / module / "target/classes" / (binary_name + ".class")
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(b"class scanner fixture; javap is not invoked")
+        return path
+
+    def scan(self):
+        listed = b"\0".join(name.encode() for name in self.poms) + b"\0"
+        with patch.object(parity.subprocess, "check_output", return_value=listed):
+            return parity.class_files(self.root)
+
+    def expected_live(self):
+        return {"ddd4j-core|example/Core": self.core,
+                "ddd4j-samples/ddd4j-sample-quarkus|example/Sample": self.sample}
+
+    def test_ignored_archive_and_removed_pom_outputs_are_absent(self):
+        archive = ".superpowers/sdd/source-builds/upstream"
+        self.write_pom(archive + "/pom.xml")
+        self.write_class(archive, "foreign/Provider")
+        self.write_class("removed-module", "example/Removed")
+        self.poms.append("removed-module/pom.xml")  # Git still lists a deleted tracked POM.
+        self.write_pom("pom.xml", ["ddd4j-core", "ddd4j-samples/ddd4j-sample-quarkus", "removed-module"])
+        self.write_pom("unlisted-copy/pom.xml")
+        self.write_class("unlisted-copy", "foreign/Copy")
+
+        self.assertEqual(self.expected_live(), self.scan())
+
+    def test_current_root_pom_output_is_scanned_without_module_prefix_error(self):
+        root_class = self.write_class(".", "example/Root")
+        expected = dict(self.expected_live(), **{".|example/Root": root_class})
+
+        self.assertEqual(expected, self.scan())
+
+    def test_metadata_and_output_subtrees_are_not_live_modules_even_if_listed(self):
+        for module in (".superpowers/copy", ".codegraph/copy", ".git/copy",
+                       "ddd4j-core/target/copy", "output/copy"):
+            self.write_pom(module + "/pom.xml")
+            self.poms.append(module + "/pom.xml")
+            self.write_class(module, "foreign/Archived")
+        self.write_pom("pom.xml", ["ddd4j-core", "ddd4j-samples/ddd4j-sample-quarkus",
+                                  ".superpowers/copy", ".codegraph/copy", ".git/copy",
+                                  "ddd4j-core/target/copy", "output/copy"])
+
+        self.assertEqual(self.expected_live(), self.scan())
+
+    def test_generated_filter_is_preserved_but_named_member_classes_remain(self):
+        nested = self.write_class("ddd4j-core", "example/Core$Nested")
+        for binary_name in ("example/Core$1", "example/Core$Definition", "example/Core$Definition$Exec",
+                            "example/Core$Reference", "example/Core$Exec", "example/Core$InitializeInterceptor"):
+            self.write_class("ddd4j-core", binary_name)
+        expected = dict(self.expected_live(), **{"ddd4j-core|example/Core$Nested": nested})
+
+        self.assertEqual(expected, self.scan())
+
+    def test_nul_git_paths_keep_whitespace_and_untracked_live_modules(self):
+        module = "new module\nwith newline"
+        self.write_pom(module + "/pom.xml")
+        self.poms.append(module + "/pom.xml")
+        self.write_pom("pom.xml", ["ddd4j-core", "ddd4j-samples/ddd4j-sample-quarkus", module])
+        new_class = self.write_class(module, "example/New")
+        expected = dict(self.expected_live(), **{module + "|example/New": new_class})
+
+        self.assertEqual(expected, self.scan())
+
+    def test_only_default_reactor_descendants_include_nested_and_sample_modules(self):
+        self.poms.extend(["pom.xml", "nested/pom.xml", "nested/child/pom.xml",
+                          "ddd4j-core/src/test/resources/convergence-consumers/client/pom.xml"])
+        self.write_pom("nested/child/pom.xml")
+        self.write_pom("ddd4j-core/src/test/resources/convergence-consumers/client/pom.xml")
+        nested = self.write_class("nested/child", "example/Nested")
+        self.write_class("ddd4j-core/src/test/resources/convergence-consumers/client", "example/Consumer")
+        for container, item in (("modules", "module"), ("subprojects", "subproject")):
+            with self.subTest(container=container):
+                (self.root / "pom.xml").write_text(
+                    f"<project><{container}><{item}>ddd4j-core</{item}>"
+                    f"<{item}>ddd4j-samples/ddd4j-sample-quarkus</{item}>"
+                    f"<{item}>nested</{item}></{container}></project>")
+                (self.root / "nested/pom.xml").write_text(
+                    f"<project><{container}><{item}>child</{item}></{container}></project>")
+                expected = dict(self.expected_live(), **{"nested/child|example/Nested": nested})
+                self.assertEqual(expected, self.scan())
 
 
 if __name__ == "__main__":

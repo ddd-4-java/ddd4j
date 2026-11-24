@@ -25,6 +25,7 @@ import lombok.NoArgsConstructor;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -162,10 +163,10 @@ public class MQListener {
     /**
      * 返回策略匹配支持列表。
      *
-     * @return 支持列表，未配置时返回空列表
+     * @return 支持列表，未配置时返回不匹配任何策略的不可修改空列表
      */
     public List<String> supports() {
-        return Objects.isNull(supports) ? List.of() : supports;
+        return Objects.isNull(supports) ? Collections.emptyList() : supports;
     }
 
     /**

@@ -14,20 +14,15 @@
  */
 package io.ddd4j.core.cqrs.query;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.ddd4j.kit.lang.SFunction;
-import io.ddd4j.kit.lang.LambdaKit;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.io.InvalidObjectException;
-
-import java.io.ObjectStreamException;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.ddd4j.kit.lang.LambdaKit;
+import io.ddd4j.kit.lang.SFunction;
 import io.ddd4j.kit.lang.StrKit;
 
+import java.io.InvalidObjectException;
+import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -37,7 +32,6 @@ import java.util.Objects;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 4.0.0
  */
-
 public final class PropertyRef implements Serializable {
 
     private static final long serialVersionUID = -3906849612189306727L;
@@ -58,13 +52,14 @@ public final class PropertyRef implements Serializable {
     private final String property;
 
     /**
- * @param space 属性空间
- * @param ownerType 声明属性方法的类型
- * @param property Java 属性名
- */
-
-    @JsonCreator()
-    public PropertyRef(@JsonProperty("space") PropertySpace space, @JsonProperty("ownerType") Class<?> ownerType, @JsonProperty("property") String property) {
+     * @param space 属性空间
+     * @param ownerType 声明属性方法的类型
+     * @param property Java 属性名
+     */
+    @JsonCreator
+    public PropertyRef(@JsonProperty("space") PropertySpace space,
+                       @JsonProperty("ownerType") Class<?> ownerType,
+                       @JsonProperty("property") String property) {
         Objects.requireNonNull(space, "space must not be null");
         Objects.requireNonNull(ownerType, "ownerType must not be null");
         if (StrKit.isEmpty(property)) {
@@ -140,8 +135,10 @@ public final class PropertyRef implements Serializable {
         return Objects.equals(PropertySpace.PERSISTENCE, space);
     }
 
-    private static IllegalArgumentException incompatible(PropertySpace space, Class<?> ownerType, Class<?> expectedType) {
-        return new IllegalArgumentException("Query " + space + " property owner " + ownerType.getName() + " is incompatible with repository type " + expectedType.getName());
+    private static IllegalArgumentException incompatible(PropertySpace space, Class<?> ownerType,
+                                                         Class<?> expectedType) {
+        return new IllegalArgumentException("Query " + space + " property owner " + ownerType.getName()
+                + " is incompatible with repository type " + expectedType.getName());
     }
 
     /**
@@ -226,7 +223,9 @@ public final class PropertyRef implements Serializable {
             return false;
         }
         PropertyRef other = (PropertyRef) obj;
-        return Objects.equals(this.space, other.space) && Objects.equals(this.ownerType, other.ownerType) && Objects.equals(this.property, other.property);
+        return Objects.equals(space, other.space)
+                && Objects.equals(ownerType, other.ownerType)
+                && Objects.equals(property, other.property);
     }
 
     @Override

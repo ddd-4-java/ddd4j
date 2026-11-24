@@ -102,7 +102,9 @@ class OrderInfrastructureRoundTripTest {
 
     @Container
     private static final KafkaContainer KAFKA = new KafkaContainer(
-            DockerImageName.parse("apache/kafka:3.9.1"));
+            DockerImageName.parse("apache/kafka:3.9.1"))
+            .withTmpFs(Map.of("/tmp/kafka-logs", "rw,size=512m,uid=1000,gid=1000",
+                    "/opt/kafka/logs", "rw,size=128m,uid=1000,gid=1000"));
 
     private static DataSource dataSource;
 
