@@ -28,6 +28,14 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- 先导入版本线的 Spring Security BOM，防止 Boot 测试 BOM 覆盖既定版本。 -->
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-bom</artifactId>
+                <version>${spring-security.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <!-- 保持本线 Spring Framework 5.3 补丁基线，不让 Boot 测试 BOM 降回旧补丁。 -->
             <dependency>
                 <groupId>org.springframework</groupId>

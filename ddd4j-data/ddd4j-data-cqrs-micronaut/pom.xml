@@ -21,6 +21,14 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- Spring Framework 保持与 JDK 8 版本线一致，优先于 Micronaut BOM 中的旧版本。 -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-framework-bom</artifactId>
+                <version>${spring-framework.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <!-- Micronaut 平台 BOM（模块级再导入，= ddd4j-dependencies:6471 同款，引用根 pom:448 的
                  ${micronaut.version}=4.10.17，刻意不声明本地版本属性）：沿 -event-store-panache /
                  -cqrs-quarkus 实证的模式预防父链混版——模块级 import 优先于父链管理项生效，使本模块的
