@@ -14,6 +14,8 @@
  */
 package io.ddd4j.data.mybatis.adapter;
 
+import java.util.Arrays;
+
 import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.data.mybatis.plugins.inner.Ddd4jAggregateFillInnerInterceptor;
@@ -37,6 +39,16 @@ class Ddd4jAggregateFillInnerInterceptorTest {
 
         new Ddd4jAggregateFillInnerInterceptor().afterQuery(parameters, Collections.singletonList(aggregate));
 
+        assertThat(query.filled).hasSize(1);
+        assertThat(query.filled.get(0)).isSameAs(aggregate);
+    }
+
+    @Test
+    void shouldUseEnhanceParameterNormalizationForMapperCollections() {
+        TrackingQuery query = new TrackingQuery();
+        TestAggregate aggregate = new TestAggregate("collection");
+        new Ddd4jAggregateFillInnerInterceptor().afterQuery(
+                Collections.singletonMap("queries", Arrays.asList(query)), Arrays.asList(aggregate));
         assertThat(query.filled).hasSize(1);
         assertThat(query.filled.get(0)).isSameAs(aggregate);
     }

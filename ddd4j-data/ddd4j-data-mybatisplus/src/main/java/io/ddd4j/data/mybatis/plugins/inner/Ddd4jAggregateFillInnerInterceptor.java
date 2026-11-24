@@ -14,6 +14,8 @@
  */
 package io.ddd4j.data.mybatis.plugins.inner;
 
+import com.baomidou.mybatisplus.enhance.plugins.inner.EnhanceInnerInterceptor;
+import com.baomidou.mybatisplus.enhance.util.ParameterUtils;
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.model.AggregateRoot;
@@ -31,26 +33,24 @@ import org.apache.ibatis.session.RowBounds;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
+import java.util.Properties;
 
 /**
- * 在原生 MyBatis 查询完成后执行 ddd4j 聚合根填充。
+ * 通过原生 MyBatis 插件或 MyBatis-Plus 增强链填充 Mapper 直接返回的领域聚合根。
  *
- * <p>This adapter intentionally remains in ddd4j because {@link Query},
- * {@link AggregateRoot} and {@link Page} are ddd4j concepts.</p>
+ * <p>如果 Mapper 返回持久化对象，由仓储在转换为聚合根之后填充。</p>
  */
-@SuppressWarnings({"rawtypes", "unchecked"})
 @Intercepts({
         @Signature(type = Executor.class, method = "query", args = {
                 MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class}),
         @Signature(type = Executor.class, method = "query", args = {
                 MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class, CacheKey.class, BoundSql.class})
 })
-public class Ddd4jAggregateFillInnerInterceptor implements Interceptor {
+public class Ddd4jAggregateFillInnerInterceptor implements EnhanceInnerInterceptor, Interceptor {
 
     /**
-     * 执行原始查询后，填充结果中的聚合根。
+     * 执行原生 MyBatis 查询后，填充结果中的聚合根。
      *
      * @param invocation MyBatis 查询调用
      * @return 原始查询结果
@@ -77,13 +77,30 @@ public class Ddd4jAggregateFillInnerInterceptor implements Interceptor {
     }
 
     /**
+     * 保留原生 MyBatis 拦截器的默认配置行为。
+     *
+     * @param properties 插件配置
+     */
+    @Override
+    public void setProperties(Properties properties) {
+        Interceptor.super.setProperties(properties);
+    }
+
+    @Override
+    public List<Object> afterQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds,
+                                   ResultHandler<?> resultHandler, BoundSql boundSql, List<Object> results) {
+        afterQuery(parameter, results);
+        return results;
+    }
+
+    /**
      * 从查询参数中查找领域查询，并填充查询结果中的聚合根。
      *
      * @param parameter MyBatis 查询参数，可直接为 Query 或包含 Query 的 Map
      * @param results 查询结果
      */
     public void afterQuery(Object parameter, List<?> results) {
-        Query query = this.findQuery(parameter);
+        Query<?> query = this.findQuery(parameter);
         if (Objects.isNull(query) || Objects.isNull(results) || results.isEmpty()) {
             return;
         }
@@ -97,14 +114,9 @@ public class Ddd4jAggregateFillInnerInterceptor implements Interceptor {
     }
 
     private Query<?> findQuery(Object parameter) {
-        if (parameter instanceof Query<?>) {
-            return (Query<?>) parameter;
-        }
-        if (parameter instanceof Map<?, ?>) {
-            for (Object value : ((Map<?, ?>) parameter).values()) {
-                if (value instanceof Query<?>) {
-                    return (Query<?>) value;
-                }
+        for (Object candidate : ParameterUtils.extractParameters(parameter)) {
+            if (candidate instanceof Query<?>) {
+                return (Query<?>) candidate;
             }
         }
         return null;

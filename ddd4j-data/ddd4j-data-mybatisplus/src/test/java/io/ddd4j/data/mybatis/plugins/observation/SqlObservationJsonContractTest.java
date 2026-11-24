@@ -1,6 +1,8 @@
 package io.ddd4j.data.mybatis.plugins.observation;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,5 +19,23 @@ class SqlObservationJsonContractTest {
 
         assertThat(restored).isEqualTo(original);
         assertThat(restored.elapsedMillis()).isEqualTo(3L);
+    }
+
+    @Test
+    void jsonRoundTripWithOnlyExplicitJsonProperties() throws Exception {
+        SqlObservation original = new SqlObservation("OrderMapper.select", "SELECT * FROM orders", 3_500_000L, null);
+        ObjectMapper mapper = JsonMapper.builder()
+                .addMixIn(SqlObservation.class, ExplicitProperties.class)
+                .build();
+
+        String json = mapper.writeValueAsString(original);
+        SqlObservation restored = mapper.readValue(json, SqlObservation.class);
+
+        assertThat(restored).isEqualTo(original);
+        assertThat(mapper.readTree(json).has("error")).isTrue();
+    }
+
+    @JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE)
+    private abstract static class ExplicitProperties {
     }
 }

@@ -191,27 +191,27 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
     }
 
     /**
-     * 解析聚合根类型（泛型参数 M，索引 0 — 在子类 BaseRepositoryImpl 中索引变为 1）。
+     * 解析聚合根类型（泛型参数 M，索引 1；索引 0 是 Mapper 类型）。
      * @return 聚合根模型类型
      */
     protected Class<M> resolveModelClass() {
-        return (Class<M>) ReflectionKit.getSuperClassGenericType(this.getClass(), MybatisAggregateRepository.class, 0);
+        return (Class<M>) ReflectionKit.getSuperClassGenericType(this.getClass(), MybatisAggregateRepository.class, 1);
     }
 
     /**
-     * 解析持久化对象类型（泛型参数 P，索引 1 — 在子类 BaseRepositoryImpl 中索引变为 2）。
+     * 解析持久化对象类型（泛型参数 P，索引 2）。
      * @return 持久化对象类型
      */
     protected Class<P> resolvePersistenceObjectClass() {
-        return (Class<P>) ReflectionKit.getSuperClassGenericType(this.getClass(), MybatisAggregateRepository.class, 1);
+        return (Class<P>) ReflectionKit.getSuperClassGenericType(this.getClass(), MybatisAggregateRepository.class, 2);
     }
 
     /**
-     * 解析查询对象类型（泛型参数 Q，索引 2 — 在子类 BaseRepositoryImpl 中索引变为 3）。
+     * 解析查询对象类型（泛型参数 Q，索引 3）。
      * @return 查询对象类型
      */
     protected Class<? extends Query<M>> resolveQueryClass() {
-        return (Class<? extends Query<M>>) ReflectionKit.getSuperClassGenericType(this.getClass(), MybatisAggregateRepository.class, 2);
+        return (Class<? extends Query<M>>) ReflectionKit.getSuperClassGenericType(this.getClass(), MybatisAggregateRepository.class, 3);
     }
 
     /**
