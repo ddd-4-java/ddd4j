@@ -98,6 +98,14 @@ jobs:
           dependencies.configure_settings(os.environ.get('MAVEN_SETTINGS_XML', ''), settings)
           dependencies.ensure_central_fallback(settings)
           PY
+      - name: Install pinned MyBatis-Plus Enhance
+        if: matrix.line == '1.0.x' || matrix.line == '3.0.x'
+        env:
+          TARGET_LINE: ${{ matrix.line }}
+        run: |
+          if grep -q '<artifactId>mybatis-plus-enhance-extension</artifactId>' project/ddd4j-data/ddd4j-data-mybatisplus/pom.xml; then
+            bash controller/scripts/install-mybatis-plus-enhance.sh "$TARGET_LINE" project
+          fi
       - name: Verify every effective Spring dependency and line baseline
         env:
           TARGET_LINE: ${{ matrix.line }}

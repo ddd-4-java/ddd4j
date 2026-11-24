@@ -115,6 +115,17 @@ jobs:
           umask 077
           printf '%s' "$MAVEN_SETTINGS_XML" | base64 --decode > "$HOME/.m2/settings.xml"
 
+      - name: Install pinned MyBatis-Plus Enhance for integrated lines
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -q '<artifactId>mybatis-plus-enhance-extension</artifactId>' line-8/ddd4j-data/ddd4j-data-mybatisplus/pom.xml; then
+            JAVA_HOME="$JAVA_HOME_8_X64" bash driver/scripts/install-mybatis-plus-enhance.sh 1.0.x line-8
+          fi
+          if grep -q '<artifactId>mybatis-plus-enhance-extension</artifactId>' line-21/ddd4j-data/ddd4j-data-mybatisplus/pom.xml; then
+            JAVA_HOME="$JAVA_HOME_21_X64" bash driver/scripts/install-mybatis-plus-enhance.sh 3.0.x line-21
+          fi
+
       - name: Test and bootstrap cold-runner value probe classpath
         run: |
           python3 -m unittest discover -s driver/scripts -p test_bootstrap_three_line_classpath.py

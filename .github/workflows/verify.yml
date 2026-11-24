@@ -81,6 +81,8 @@ jobs:
           grep -A1 "2624322-snapshot-3EoOv3" "$HOME/.m2/settings.xml" | head -3 | sed 's/<password>.*/<password>***</'
 
 
+      - name: Install pinned MyBatis-Plus Enhance
+        run: bash scripts/install-mybatis-plus-enhance.sh 3.0.x .
       - name: Verify BOM publication contract
         run: ./scripts/check-bom-alignment.sh
       - name: Verify Java style guardrails
@@ -144,6 +146,8 @@ jobs:
           if [ "$HTTP_CODE" != "200" ]; then
             echo "::warning::Aliyun auth returned $HTTP_CODE - private snapshot deps may fail"
           fi
+      - name: Install pinned MyBatis-Plus Enhance
+        run: bash scripts/install-mybatis-plus-enhance.sh 3.0.x .
       - name: Install reactor dependencies without coverage enforcement
         run: ./mvnw -U -Denforcer.skip=true -B -DskipTests install
       - name: Enforce 90% line coverage on gated modules
@@ -184,6 +188,8 @@ jobs:
           if [ "$HTTP_CODE" != "200" ]; then
             echo "::warning::Aliyun auth returned $HTTP_CODE - private snapshot deps may fail"
           fi
+      - name: Install pinned MyBatis-Plus Enhance
+        run: bash scripts/install-mybatis-plus-enhance.sh 3.0.x .
       - name: Install reactor artifacts for plugin resolution
         run: ./mvnw -U -Denforcer.skip=true -B -Dmaven.test.skip=true -DskipITs -Dquarkus.build.skip=true install
       - name: Generate CycloneDX SBOM
@@ -240,6 +246,8 @@ jobs:
           if [ "$HTTP_CODE" != "200" ]; then
             echo "::warning::Aliyun auth returned $HTTP_CODE - private snapshot deps may fail"
           fi
+      - name: Install pinned MyBatis-Plus Enhance
+        run: bash scripts/install-mybatis-plus-enhance.sh 3.0.x .
       - name: Verify Docker daemon
         run: docker info
       # 容器化集成：Redis/MySQL/PostgreSQL/Kafka/RabbitMQ/NATS/MQTT/Artemis/Pulsar/RocketMQ。
