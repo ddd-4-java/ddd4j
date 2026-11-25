@@ -20,14 +20,11 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- Micronaut 平台 BOM（模块级再导入，= ddd4j-data-cqrs-micronaut 同款，引用根 pom:448 的
-                 ${micronaut.version}=4.10.17，刻意不声明本地版本属性）：沿 -event-store-panache /
-                 -cqrs-quarkus 实证的模式预防父链混版——模块级 import 优先于父链管理项生效，使本模块的
-                 Micronaut 全家桶整链由平台 BOM 对齐。 -->
+            <!-- 仅在模块内对齐 Micronaut 核心，Spring 版本由 DDD4J BOM 统一管理。 -->
             <dependency>
-                <groupId>io.micronaut.platform</groupId>
-                <artifactId>micronaut-platform</artifactId>
-                <version>${micronaut.version}</version>
+                <groupId>io.micronaut</groupId>
+                <artifactId>micronaut-core-bom</artifactId>
+                <version>${micronaut.core.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -42,13 +39,13 @@
             <version>${revision}</version>
         </dependency>
         <!-- Micronaut DI（BeanContext/@Singleton 构造型容器 API，jakarta.inject-api 随其传递；
-             平台 BOM 管理无版本） -->
+             核心 BOM 管理版本） -->
         <dependency>
             <groupId>io.micronaut</groupId>
             <artifactId>micronaut-inject</artifactId>
         </dependency>
         <!-- Micronaut Runtime（运行时装配件：micronaut-context/context-propagation/aop 等随其传递，
-             平台 BOM 管理无版本；适配器运行时栈整链对齐用） -->
+             核心 BOM 管理版本；适配器运行时栈整链对齐用） -->
         <dependency>
             <groupId>io.micronaut</groupId>
             <artifactId>micronaut-runtime</artifactId>
@@ -56,7 +53,7 @@
 
         <!-- ======== Test ======== -->
         <!-- Micronaut JUnit 5 集成（@MicronautTest 真实 BeanContext 引导；io.micronaut.test 组，
-             平台 BOM 管理） -->
+             测试扩展版本由父 BOM 管理） -->
         <dependency>
             <groupId>io.micronaut.test</groupId>
             <artifactId>micronaut-test-junit5</artifactId>
@@ -70,7 +67,7 @@
                  $Definition 类 + META-INF/services 的 BeanDefinitionReference 注册），
                  没有它 @Singleton 类对运行期 BeanContext 不可见。插件级配置同时作用于 main 与 test
                  编译（IT 的样例 view / @Factory 也需要生成 Bean 定义）。lombok 与根 pom:249 保持一致；
-                 micronaut-inject-java 版本由上方模块级平台 BOM 管理。 -->
+                 micronaut-inject-java 版本由上方模块级核心 BOM 管理。 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
