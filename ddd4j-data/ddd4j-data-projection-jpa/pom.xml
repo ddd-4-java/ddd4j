@@ -25,6 +25,14 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- Spring Security 跟随 DDD4J 基线，优先于模块导入的 Boot BOM。 -->
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-bom</artifactId>
+                <version>${spring-security.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <!-- 子模块局部覆盖父级 Boot 3 管理项，避免 Boot 4 starter 与 Boot 3 core 混装。 -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
