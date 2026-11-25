@@ -173,7 +173,7 @@
       "path": "config/dependencies/alignment-policy.json",
       "sha256ByJdk": {
         "8": "4cbf68191aa37a73b0dee5ad2eadfed00312d375470b757d877a94abe03ad84f",
-        "17": "b9ea709f417d8eb522c28c4c351e7b0aea6096fe786075fc0b3eb97c87ed673a",
+        "17": "5c02edc1065b1fa1d6d0e5f6654fd9de44c0baef07d297cc1120b12a35dc5113",
         "21": "b73247a301500dc73149bebe921471607413e2dbe737dfde473d928135c60b8a"
       },
       "evidence": "用户确认 Java 8 BOM 保留六个 Derby 10.14.2.0 管理坐标，供应用显式选择。当前 Java 8 策略使用当轮原生有效 POM 运行 T03 strict-artifacts，4563 条记录零错误、零未核验构件。Java 17 和 21 的独立策略继续按本线校验。"
@@ -182,8 +182,8 @@
       "path": "config/dependencies/component-matrix.csv",
       "sha256ByJdk": {
         "8": "28a424bfbe6692ce857e5b1dd8451de3bd4ed09e68dd0dad5cff11e15a22e8cd",
-        "17": "ea1fdce764568884159d64b5ff7a77c5d9486d3c08c5bf806850abb7be3f0891",
-        "21": "48cfd57cb7a221d0d6642786a0981b4c6776250da3f5fd9c3145dfbcb7643288"
+        "17": "5728a63ec71e217aeaf6a2aca26af175f731475df236782f624421099fcf46bb",
+        "21": "6be2eaa4a802acfce88f4a93645974843f5b14301f95ed516f9beaa58c782fd3"
       },
       "evidence": "按 config/dependencies/README.md 保留本线历史组件快照。Java 17 的 Tika 4.0.0 版本与标准解析器聚合 POM 类型来自实际 Maven 有效模型。当前状态以 T03 strict-artifacts 输出为准。本条仅锁定快照内容。"
     },
@@ -1618,7 +1618,11 @@
         "3.0.x": "jakarta.enterprise.inject.Instance"
       },
       "reason": "Quarkus 命令总线注入参数按本线 CDI API 适配，命令路由由三线集成测试验证",
-      "evidence": "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/command/QuarkusCommandBusIT.java"
+      "evidence": {
+        "1.0.x": "ddd4j-data/ddd4j-data-cqrs-quarkus/src/test/java/io/ddd4j/data/cqrs/quarkus/QuarkusCommandBusIT.java",
+        "2.0.x": "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/command/QuarkusCommandBusIT.java",
+        "3.0.x": "ddd4j-data/ddd4j-data-cqrs-quarkus/src/test/java/io/ddd4j/data/cqrs/quarkus/QuarkusCommandBusIT.java"
+      }
     },
     {
       "id": "cdi-bean-manager-namespace",
