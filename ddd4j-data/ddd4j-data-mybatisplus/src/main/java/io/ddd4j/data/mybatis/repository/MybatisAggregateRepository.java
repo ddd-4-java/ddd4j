@@ -42,7 +42,6 @@ import io.ddd4j.kit.lang.MappingKit;
 import io.ddd4j.kit.lang.StrKit;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.BatchResult;
@@ -214,6 +213,9 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
      * MyBatis-Plus 会按其自身规则重新绑定元数据。
      */
     private TableInfo resolveTableInfo(Class<P> type) {
+        if (Objects.isNull(type)) {
+            return null;
+        }
         TableInfo resolved = TableInfoHelper.getTableInfo(type);
         if (Objects.nonNull(resolved)) {
             return resolved;
@@ -732,7 +734,6 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
      * @param query 查询条件
      * @return 基础查询包装器
      */
-    @SuppressWarnings("unchecked")
     protected QueryWrapper<P> getBaseWrapper(Query<M> query) {
         QueryWrapper<P> wrapper = getDefaultWrapper(query.isIgnoreTenantId());
         applyConditions(wrapper, query);
@@ -746,10 +747,8 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
     /**
      * 将 Query.getWhereConditions() 转换为 MyBatis-Plus QueryWrapper 条件。
      */
-    @SuppressWarnings("unchecked")
     private void applyConditions(QueryWrapper<P> wrapper, Query<M> query) {
-        for (Object obj : query.getWhereConditions()) {
-            LambdaCondition condition = (LambdaCondition) obj;
+        for (LambdaCondition condition : query.getWhereConditions()) {
             String column = translateProperty(condition);
             switch (condition.operator()) {
                 case "=" -> wrapper.eq(column, condition.value());
@@ -774,8 +773,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
      * 将 Query.getOrderByConditions() 转换为 QueryWrapper 排序。
      */
     private void applyOrderBy(Query<M> query, QueryWrapper<P> wrapper) {
-        for (Object obj : query.getOrderByConditions()) {
-            LambdaCondition orderBy = (LambdaCondition) obj;
+        for (LambdaCondition orderBy : query.getOrderByConditions()) {
             String column = translateProperty(orderBy);
             wrapper.orderBy(true, "ASC".equals(orderBy.operator()), column);
         }
