@@ -27,6 +27,36 @@ class ThreeLineTypeMappingTest(unittest.TestCase):
             "evidence": "ddd4j-web/ddd4j-web-quarkus/src/test/java/ExampleTest.java",
         }
 
+    def test_type_mapping_requires_actual_evidence_in_each_line(self):
+        mapping = dict(self.mapping)
+        old_path = mapping.pop("evidence")
+        moved_path = "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/ExampleTest.java"
+        mapping["evidence"] = {
+            "1.0.x": old_path,
+            "2.0.x": moved_path,
+            "3.0.x": old_path,
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            roots = [Path(directory) / str(number) for number in (1, 2, 3)]
+            for root, evidence in zip(roots, mapping["evidence"].values()):
+                path = root / evidence
+                path.parent.mkdir(parents=True)
+                path.touch()
+            MODULE.validate_type_mappings([mapping], roots)
+
+            incomplete = dict(mapping, evidence={"1.0.x": old_path, "3.0.x": old_path})
+            with self.assertRaisesRegex(ValueError, "expected one path per line"):
+                MODULE.validate_type_mappings([incomplete], roots)
+            traversal = dict(mapping, evidence={
+                **mapping["evidence"], "2.0.x": "../" + moved_path,
+            })
+            with self.assertRaisesRegex(ValueError, "invalid type mapping evidence path"):
+                MODULE.validate_type_mappings([traversal], roots)
+
+            (roots[1] / moved_path).unlink()
+            with self.assertRaisesRegex(ValueError, "type mapping evidence missing .* in 2.0.x"):
+                MODULE.validate_type_mappings([mapping], roots)
+
     def test_unapproved_namespace_change_remains_visible(self):
         old = "(Ljavax/ws/rs/core/Response;)Ljavax/ws/rs/core/Response;"
         new = "(Ljakarta/ws/rs/core/Response;)Ljakarta/ws/rs/core/Response;"
