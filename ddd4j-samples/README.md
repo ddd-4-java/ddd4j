@@ -108,7 +108,9 @@ Order JDBC 样例提供 `ReliableOrderOutboxPublisher` 作为可靠 Outbox 发�
 
 持久模式仍使用现有 Order JDBC 迁移和 JPA 事件、检查点表。接口路径见各模块说明。持久示例将命令写入和读模型查询拆开，可观察投影前后的读取变化。
 
-三条线的当前源码和构建清单已移除 12 个独立投影构件。公共处理器注册和事件分发由 `ddd4j-core` 提供，各平台通过对应的 `ddd4j-runtime-*` 接入投影。需要持久化检查点时，按相应样例的 README 选择存储适配。剩余旧 CQRS 构件的退出条件见 [R15 实施清单](../docs/superpowers/plans/2026-10-10-three-line-product-convergence.md#r15退出旧实现模块并保持可回退交付)。
+各平台通过对应的 `ddd4j-runtime-*` 装配命令总线，并按需启用投影。Javalin 使用 `ddd4j-runtime-guice`。公共处理器注册和事件分发由 `ddd4j-core` 提供。需要持久化检查点时，按相应样例的 README 选择存储适配。
+
+Java 8、17、21 的源码和 Maven 构建已移除七个独立 CQRS 构件和十二个独立投影构件，旧坐标及兼容 JAR 一并退出。验收记录见 [R15 实施清单](../docs/superpowers/plans/2026-10-10-three-line-product-convergence.md#r15退出旧实现模块并保持可回退交付)。
 
 S01—S07 记录了分批持久化、失败重试和应用重开结果。当前三条发布线的整体验收见 [R14 实施清单](../docs/superpowers/plans/2026-10-10-three-line-product-convergence.md#r14三线存储和多平台完整验收)。
 

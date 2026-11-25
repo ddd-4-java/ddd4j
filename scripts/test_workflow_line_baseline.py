@@ -276,7 +276,15 @@ case " $* " in
     *" -Papi-compatibility "*)
         [[ " $* " == *" -Dddd4j.api.include=io.ddd4j.** "* ]] || exit 45
         [[ " $* " == *" clean verify "* ]] || exit 46
+        if [[ "$FIXTURE_API_FAILURE" == before-clean ]]; then
+            exit 19
+        fi
         rm -rf target
+        if [[ "$FIXTURE_API_FAILURE" == after-report ]]; then
+            mkdir -p ddd4j-core/target/japicmp
+            printf '<japicmp change="removed"/>\\n' > ddd4j-core/target/japicmp/verify-public-api-compatibility.xml
+            exit 27
+        fi
         for module in ddd4j-core ddd4j-samples/library; do
             mkdir -p "$module"/target/japicmp
             printf '<japicmp/>\\n' > "$module"/target/japicmp/verify-public-api-compatibility.xml
@@ -288,7 +296,7 @@ esac
             wrapper.chmod(0o755)
             reports = root / "target/release-quality/api"
             env = {**os.environ, "DDD4J_API_BASELINE_VERSION": baseline, "FIXTURE_VERSION": version,
-                   "FIXTURE_BASELINE_AVAILABLE": "yes"}
+                   "FIXTURE_BASELINE_AVAILABLE": "yes", "FIXTURE_API_FAILURE": ""}
             env.pop("DDD4J_REPORT_DIR", None)
             script = ["bash", str(root / "scripts" / "verify-api-compatibility.sh")]
             result = subprocess.run(script, env=env, capture_output=True, text=True, timeout=15)
@@ -305,6 +313,26 @@ esac
             result = subprocess.run(script, env=env, capture_output=True, text=True, timeout=15)
             self.assertEqual(1, result.returncode, result.stdout + result.stderr)
             self.assertIn("Missing primary JAR for sample-library", result.stderr)
+
+            for failure, exit_status, expected in (
+                ("after-report", 27, {"ddd4j-core.xml": '<japicmp change="removed"/>\n'}),
+                ("before-clean", 19, {}),
+            ):
+                with self.subTest(maven_failure=failure):
+                    report = "target/japicmp/verify-public-api-compatibility.xml"
+                    for folder in ("ddd4j-core", "ddd4j-samples/library", "ddd4j-samples/app"):
+                        stale = root / folder / report
+                        stale.parent.mkdir(parents=True, exist_ok=True)
+                        stale.write_text('<japicmp stale="true"/>\n')
+
+                    result = subprocess.run(
+                        script, env={**env, "FIXTURE_API_FAILURE": failure},
+                        capture_output=True, text=True, timeout=15)
+                    output = result.stdout + result.stderr
+                    self.assertEqual(exit_status, result.returncode, output)
+                    self.assertNotIn("[PASS]", output)
+                    self.assertEqual(expected, {p.name: p.read_text() for p in reports.glob("*.xml")})
+                    self.assertTrue((root / "ddd4j-samples/app" / report).is_file())
 
     def test_same_major_other_release_line_is_rejected_before_maven(self):
         line = {"1.8": "1", "17": "2", "21": "3"}[self.jdk]

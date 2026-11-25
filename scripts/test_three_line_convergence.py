@@ -7,6 +7,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import xml.etree.ElementTree as ET
 from pathlib import Path
 from unittest.mock import patch
 
@@ -106,6 +107,69 @@ class ThreeLineConvergenceTest(unittest.TestCase):
                     self.assertEqual(1, result["testReports"]["executedTests"])
                     self.assertEqual(1, len(result["artifacts"]))
 
+    def test_jdk8_mybatis_mysql_is_required(self):
+        name = "mybatisplus-mysql-8"
+        checks = {key: {"status": "PASS"} for key in MODULE.VERIFY_CHECKS}
+        self.assertIn(name, checks)
+        self.assertEqual("PASS", MODULE.combined_status(checks, "verify", True))
+        del checks[name]
+        self.assertEqual("BLOCKED", MODULE.combined_status(checks, "verify", True))
+
+    def test_jdk8_mybatis_mysql_requires_eight_fresh_named_cases_and_keeps_xml(self):
+        module = "ddd4j-data/ddd4j-data-mybatisplus"
+        java_class = "io.ddd4j.data.mybatis.repository.MybatisAggregateRepositoryMySQLTest"
+        cases = ("saveInsertsNewAggregate", "updateByIdUpdatesExistingOnly",
+                 "updateByIdDoesNotInsertWhenAbsent", "insertOrUpdateBehavesAsUpsert",
+                 "deleteByIdRemovesRow", "originalModelAndQueryUsagePersistsWithoutCqrsInfrastructure",
+                 "originalQueriesConvertAndFillPersistedModels", "originalQueriesScopeRowsToCurrentTenant")
+        for mode in ("missing", "stale", "skipped", "wrong-case", "extra-case", "maven-failure", "native"):
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                stage = root / "evidence"
+                stage.mkdir()
+                report = root / module / "target/surefire-reports" / f"TEST-{java_class}.xml"
+                report.parent.mkdir(parents=True)
+
+                def run_test(name, command, output, checks, cwd, env):
+                    self.assertEqual(root, cwd)
+                    self.assertEqual(stage, output)
+                    self.assertEqual({"JAVA_HOME": "/jdk8"}, env)
+                    self.assertEqual(["./mvnw", "-q", "-pl", module, "-am",
+                                      f"-Dtest={java_class}", "-Dsurefire.failIfNoSpecifiedTests=false", "test"],
+                                     command)
+                    if mode != "missing":
+                        reported = cases
+                        if mode == "wrong-case":
+                            reported = cases[:-1] + ("anotherTest",)
+                        if mode == "extra-case":
+                            reported += ("extraTest",)
+                        skipped = int(mode == "skipped")
+                        suite = ET.Element("testsuite", name=java_class, tests=str(len(reported)),
+                                           failures="0", errors="0", skipped=str(skipped))
+                        for index, case in enumerate(reported):
+                            item = ET.SubElement(suite, "testcase", name=case, classname=java_class)
+                            if skipped and index == 0:
+                                ET.SubElement(item, "skipped")
+                        ET.ElementTree(suite).write(report, encoding="utf-8")
+                        if mode == "stale":
+                            os.utime(report, ns=(1, 1))
+                    succeeded = mode != "maven-failure"
+                    checks[name] = {"status": "PASS" if succeeded else "FAIL", "artifacts": {},
+                                    "exitCode": 0 if succeeded else 1}
+                    return succeeded
+
+                checks = {}
+                with patch.object(MODULE, "execute", side_effect=run_test):
+                    MODULE.verify_mybatisplus_mysql_8(root, stage, checks, {"JAVA_HOME": "/jdk8"})
+                name = "mybatisplus-mysql-8"
+                result = checks[name]
+                self.assertEqual("PASS" if mode == "native" else "FAIL", result["status"])
+                if mode in ("native", "maven-failure"):
+                    self.assertEqual(8, result["testReports"]["executedTests"])
+                    saved = stage / f"{name}-{report.name}"
+                    self.assertEqual(report.read_bytes(), saved.read_bytes())
+                    self.assertEqual(MODULE.sha256(saved), result["artifacts"][saved.name])
+
     def test_missing_historical_index_blocks_both_phases(self):
         self.assertIn("historical-index", MODULE.INVENTORY_CHECKS)
         self.assertIn("historical-index", MODULE.VERIFY_CHECKS)
@@ -184,6 +248,9 @@ class ThreeLineConvergenceTest(unittest.TestCase):
                         roots=roots, jdks=roots, policy=policy, output=base / "reports",
                         phase="verify", expected_shas=None, redis_native_url=redis_url))
                     commands = {call.args[0]: call.args[1] for call in executed.call_args_list}
+                    mysql_call, = [call for call in executed.call_args_list if call.args[0] == "mybatisplus-mysql-8"]
+                    self.assertEqual(roots[0].resolve(), mysql_call.kwargs["cwd"])
+                    self.assertEqual(str(roots[0].resolve()), mysql_call.kwargs["env"]["JAVA_HOME"])
                     expected = ["./mvnw", "-q", "clean", "verify"]
                     if port is not None:
                         expected.append(f"-Dddd4j.test.redis.port={port}")

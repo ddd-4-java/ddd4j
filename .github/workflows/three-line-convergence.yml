@@ -109,6 +109,10 @@ jobs:
           scripts/test_three_line_product_docs.py
           scripts/test_build_historical_evidence_index.py
           scripts/test_three_line_type_mappings.py
+          scripts/test_performance_report.py
+          scripts/test_verify_cloud_mq_rc_evidence.py
+          scripts/test_sbom.py
+          scripts/test_license_policy.py
           scripts/test_workflow_line_baseline.py
           scripts/test_platform_cdi_resources.py
           scripts.test_three_line_structure_inventory.ThreeLineInventoryTest.test_missing_production_type_and_test_are_both_open

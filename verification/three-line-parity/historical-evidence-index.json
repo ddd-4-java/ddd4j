@@ -1332,6 +1332,20 @@
     },
     {
       "line": "2.0.x",
+      "path": "docs/superpowers/plans/2026-11-24-mybatis-enhance-integration.md",
+      "sourceCommit": "85a6dbac7658c1a2de2b79172219f98394af345e",
+      "sourceTime": "2026-11-24T19:21:51+08:00",
+      "sha256": "30f9d7916fbcf1fff5b8c2f7cc0be20add5053de543892026f620a5ed71d8c81"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/superpowers/plans/2026-11-24-validation-integration.md",
+      "sourceCommit": "85a6dbac7658c1a2de2b79172219f98394af345e",
+      "sourceTime": "2026-11-24T19:21:51+08:00",
+      "sha256": "092004b54012a818606d528c56b378164fa33d5b6164d64aa3ffa54cfa0f7867"
+    },
+    {
+      "line": "2.0.x",
       "path": "docs/superpowers/reports/2026-09-09-three-line-source-parity-audit.md",
       "sourceCommit": "9a24ba874d989eb987bc613f1f38b9e4d254e3c9",
       "sourceTime": "2026-10-15T00:58:38+08:00",
@@ -1417,9 +1431,9 @@
     {
       "line": "2.0.x",
       "path": "docs/superpowers/specs/2026-07-02-satoken-auth-design.md",
-      "sourceCommit": "79e9a9abe1c92606d256d4ca92bfd54fdd9cb9e5",
-      "sourceTime": "2026-11-19T23:19:37+08:00",
-      "sha256": "cea24dbd3b8efa8412195c74865832fb279c509bfe9b84884608a58abf02b2ec"
+      "sourceCommit": "85a6dbac7658c1a2de2b79172219f98394af345e",
+      "sourceTime": "2026-11-24T19:21:51+08:00",
+      "sha256": "9c1c1935134de7fd7931b4b7bef3539a1f2996667487217a5c646bc9cf5f19b8"
     },
     {
       "line": "2.0.x",
@@ -1445,9 +1459,9 @@
     {
       "line": "2.0.x",
       "path": "docs/superpowers/specs/2026-09-06-three-line-parity.md",
-      "sourceCommit": "bec99e6040561e4d8e79d5c2beb2e2a4583aa62d",
-      "sourceTime": "2026-10-15T20:54:03+08:00",
-      "sha256": "3dce7deb998a6e64a6a8b4596d716c0bb84d925d38e2ad721a54296f4c70b706"
+      "sourceCommit": "85a6dbac7658c1a2de2b79172219f98394af345e",
+      "sourceTime": "2026-11-24T19:21:51+08:00",
+      "sha256": "0abeb7e72d02f30086bdc137fe1eaa17275fed48a320b70dd93b54bf1bc79db8"
     },
     {
       "line": "2.0.x",
@@ -1473,9 +1487,23 @@
     {
       "line": "2.0.x",
       "path": "docs/superpowers/specs/2026-11-17-jdk17-dependency-alignment.md",
-      "sourceCommit": "fda1e4b1f4768a7cb9342c42fc86aa29f355dd01",
-      "sourceTime": "2026-11-18T00:07:36+08:00",
-      "sha256": "054f57b5ef239c43cd318ad8e6ce57a5c443d3029c9064599aef15c36a9e0dec"
+      "sourceCommit": "85a6dbac7658c1a2de2b79172219f98394af345e",
+      "sourceTime": "2026-11-24T19:21:51+08:00",
+      "sha256": "cb63b831a79c600601bf899cfd209321c9a987a0103b8ea01521f9b7c2778b82"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/superpowers/specs/2026-11-24-mybatis-enhance-integration.md",
+      "sourceCommit": "85a6dbac7658c1a2de2b79172219f98394af345e",
+      "sourceTime": "2026-11-24T19:21:51+08:00",
+      "sha256": "4f53248229cd45edd04786cfcc5ce4aa5864d0376cad738223d482c5561b081e"
+    },
+    {
+      "line": "2.0.x",
+      "path": "docs/superpowers/specs/2026-11-24-validation-integration.md",
+      "sourceCommit": "85a6dbac7658c1a2de2b79172219f98394af345e",
+      "sourceTime": "2026-11-24T19:21:51+08:00",
+      "sha256": "393a77a2958b54002fd5aff7b9dd57bf31602984b77772896efdfc26d011772b"
     },
     {
       "line": "3.0.x",

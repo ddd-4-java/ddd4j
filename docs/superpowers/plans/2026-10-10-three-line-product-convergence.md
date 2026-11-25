@@ -198,17 +198,17 @@ flowchart TD
 
 以上是每个平台都要执行的步骤，不是一次执行即可覆盖七个平台；下面复选项表示整批验收。
 
-以下命令使用 R15 退役十二个旧投影模块后的现行坐标。原始报告保留当次执行命令。
+上方步骤记录各平台迁移当时的实施路径。下表使用 R15 三批退出后的现行 runtime、Web 与存储坐标。原始报告保留当次执行命令。
 
 | 任务 | 必须扩展的现有 runtime 测试文件（相对目标模块） | 现行复跑命令（仓库根目录） |
 |---|---|---|
-| R06 | `src/test/java/io/ddd4j/spring/command/SpringCommandBusTest.java`、`src/test/java/io/ddd4j/spring/cqrs/SpringCqrsRuntimeContractTest.java`、`SpringJpaViewManagerTest.java` | `./mvnw -pl ddd4j-data/ddd4j-data-cqrs-spring,ddd4j-runtime/ddd4j-runtime-spring,ddd4j-web/ddd4j-web-webmvc,ddd4j-web/ddd4j-web-webflux -am verify` |
-| R07 | `src/test/java/io/ddd4j/guice/command/GuiceCommandBusTest.java`、`src/test/java/io/ddd4j/guice/cqrs/GuiceCqrsRuntimeContractTest.java`、`GuiceViewManagerTest.java` | `./mvnw -pl ddd4j-data/ddd4j-data-cqrs-javalin,ddd4j-runtime/ddd4j-runtime-guice,ddd4j-web/ddd4j-web-javalin -am verify` |
-| R08 | `src/test/java/io/ddd4j/quarkus/command/QuarkusCommandBusTest.java`、`src/test/java/io/ddd4j/quarkus/cqrs/QuarkusCqrsRuntimeContractTest.java`、`QuarkusJpaProjectionServiceContractTest.java` | `./mvnw -pl ddd4j-data/ddd4j-data-cqrs-quarkus,ddd4j-runtime/ddd4j-runtime-quarkus,ddd4j-data/ddd4j-data-event-store-panache,ddd4j-web/ddd4j-web-quarkus -am verify` |
-| R09 | `src/test/java/io/ddd4j/micronaut/cqrs/MicronautCqrsRuntimeContractTest.java` | `./mvnw -pl ddd4j-data/ddd4j-data-cqrs-micronaut,ddd4j-runtime/ddd4j-runtime-micronaut,ddd4j-web/ddd4j-web-micronaut -am verify` |
-| R10 | `src/test/java/io/ddd4j/helidon/cqrs/HelidonCqrsRuntimeContractTest.java` | `./mvnw -pl ddd4j-data/ddd4j-data-cqrs-helidon,ddd4j-runtime/ddd4j-runtime-helidon,ddd4j-web/ddd4j-web-helidon -am verify` |
-| R11 | `src/test/java/io/ddd4j/vertx/cqrs/VertxCqrsRuntimeContractTest.java` | `./mvnw -pl ddd4j-data/ddd4j-data-cqrs-vertx,ddd4j-runtime/ddd4j-runtime-vertx,ddd4j-data/ddd4j-data-event-store-r2dbc,ddd4j-web/ddd4j-web-vertx -am verify` |
-| R12 | `src/test/java/io/ddd4j/dropwizard/cqrs/DropwizardCqrsRuntimeContractTest.java`、`src/test/java/io/ddd4j/dropwizard/Ddd4jBundleCollectionContractTest.java` | `./mvnw -pl ddd4j-data/ddd4j-data-cqrs-dropwizard,ddd4j-runtime/ddd4j-runtime-dropwizard,ddd4j-web/ddd4j-web-dropwizard -am verify` |
+| R06 | `src/test/java/io/ddd4j/spring/command/SpringCommandBusTest.java`、`src/test/java/io/ddd4j/spring/cqrs/SpringCqrsRuntimeContractTest.java`、`SpringJpaViewManagerTest.java` | `./mvnw -pl ddd4j-runtime/ddd4j-runtime-spring,ddd4j-web/ddd4j-web-webmvc,ddd4j-web/ddd4j-web-webflux -am verify` |
+| R07 | `src/test/java/io/ddd4j/guice/command/GuiceCommandBusTest.java`、`src/test/java/io/ddd4j/guice/cqrs/GuiceCqrsRuntimeContractTest.java`、`GuiceViewManagerTest.java` | `./mvnw -pl ddd4j-runtime/ddd4j-runtime-guice,ddd4j-web/ddd4j-web-javalin -am verify` |
+| R08 | `src/test/java/io/ddd4j/quarkus/command/QuarkusCommandBusTest.java`、`src/test/java/io/ddd4j/quarkus/cqrs/QuarkusCqrsRuntimeContractTest.java`、`QuarkusJpaProjectionServiceContractTest.java` | `./mvnw -pl ddd4j-runtime/ddd4j-runtime-quarkus,ddd4j-data/ddd4j-data-event-store-panache,ddd4j-web/ddd4j-web-quarkus -am verify` |
+| R09 | `src/test/java/io/ddd4j/micronaut/cqrs/MicronautCqrsRuntimeContractTest.java` | `./mvnw -pl ddd4j-runtime/ddd4j-runtime-micronaut,ddd4j-web/ddd4j-web-micronaut -am verify` |
+| R10 | `src/test/java/io/ddd4j/helidon/cqrs/HelidonCqrsRuntimeContractTest.java` | `./mvnw -pl ddd4j-runtime/ddd4j-runtime-helidon,ddd4j-web/ddd4j-web-helidon -am verify` |
+| R11 | `src/test/java/io/ddd4j/vertx/cqrs/VertxCqrsRuntimeContractTest.java` | `./mvnw -pl ddd4j-runtime/ddd4j-runtime-vertx,ddd4j-data/ddd4j-data-event-store-r2dbc,ddd4j-web/ddd4j-web-vertx -am verify` |
+| R12 | `src/test/java/io/ddd4j/dropwizard/cqrs/DropwizardCqrsRuntimeContractTest.java`、`src/test/java/io/ddd4j/dropwizard/Ddd4jBundleCollectionContractTest.java` | `./mvnw -pl ddd4j-runtime/ddd4j-runtime-dropwizard,ddd4j-web/ddd4j-web-dropwizard -am verify` |
 
 表内简写的测试文件位于同一行前述 `cqrs/` 测试包；新增测试名称由用例说明约束，不另建一套平台契约。共同场景优先扩展 `ddd4j-runtime/ddd4j-runtime-testkit/src/main/java/io/ddd4j/runtime/testkit/AbstractCqrsRuntimeContractTest.java`，不得通过修改共同测试来放宽失败平台的行为要求。
 
@@ -1028,6 +1028,8 @@ Java 8、17、21 分别通过 262、241、238 项定向测试，零失败、错�
 
 **现行入口文档核对**　三条线逐个检查工作副本，七个旧模块目录和 Maven POM 引用均已清零，七个 CQRS 样例引用实际提供能力的 runtime。三线中英文 README 及现行架构图已同步到该拓扑。
 
+**2026-11-24 七个平台现行命令复验**　R06–R12 已去掉已退役 CQRS 坐标。三线各用本线 Wrapper 离线联合选择 17 个目标模块，连同上游的 38 项 Maven `validate` 全部通过。Java 21 的隔离复验使用四个已核对实际输入的同线缓存 JAR。见 `R15-evidence/runtime-only-cqrs/runtime-only-plan-replay-selectors/native/verification.json`。
+
 #### 旧 CQRS 独立发布候选（历史记录）
 
 **Java 8 的 114 模块默认入口复验**　首轮只缺四种 Spring 模式所需的 Boot 2.7 构件。恢复构件后的整仓有 113 项 Maven 项目成功，Micronaut CQRS 在 Flyway 连接 PostgreSQL 时收到连接重置。同源码定向复验通过该模块的六项测试并打出 Javadoc JAR。两份原始证据覆盖 114 项和 3,510 项测试。随后用 `127.0.0.1` 固定本机容器回环，单次原生 Maven `clean verify` 的 114 项全部成功，完成 3,510 项测试并生成 102 份 Javadoc。见 `R15-evidence/legacy-cqrs-detached-default-jdk8-loopback/status.json`。Java 17 历史整仓成功后变化的 Guice 和 MyBatis-Plus 已定向验证。见 `R15-evidence/legacy-cqrs-detached-default-jdk8-boot-restored/reconciled-root-and-focus-verification.json`。
@@ -1217,6 +1219,8 @@ T03 某个上游坐标阻塞时，继续处理不依赖它的 T04—T09 子项�
 
 **验收：** ddd4j 显式 Easy4J 普通组件坐标使用本线版本，Boot starter 使用对应 Boot 线版本并依赖对应组件线；映射、effective POM、构件来源与本地测试可追溯；本地构件验证和远端发布状态分开记录。
 
+**2026-11-24 Java 17 ORO 可选边界证据**　隔离 Maven 候选仅排除 ORO，实际依赖图只少该坐标，验证模块 13 项原生测试仍通过。独立消费者各执行四项验证。现行依赖可直接运行 Easy4j 的 `@Contains` 和 `@Regexp`。候选默认缺少 ORO 时两种注解都在校验非空值时报缺类，显式声明同一引擎后恢复原行为。可选边界只在隔离验证，等待确认依赖约定。见 `R15-evidence/runtime-only-cqrs/current-release-gates/validation-oro-optional-candidate/`。
+
 ### T04：统一核心 API、值对象与序列化契约
 
 **范围：** core/annotation/kit，关联公共异常、响应、缓存/加密公共契约及三个分支 API 差异项。
@@ -1319,6 +1323,21 @@ T03 某个上游坐标阻塞时，继续处理不依赖它的 T04—T09 子项�
 
 **2026-11-24 历史索引与类型映射 CI 回归接线**　三条线的收敛作业执行两套回归。门禁测试覆盖同名步骤出现在其他作业、折叠注释吞掉参数及换行隔开参数的情况。三线实际工作流命令共通过 455 项本地测试，并通过 actionlint。远端 CI 仍为待验。见 `R15-evidence/runtime-only-cqrs/current-jvm-remaining/ci-gate-regressions/verification.json`。
 
+
+**2026-11-24 发布候选本地门禁补齐**　三线工作区采用同一性能报告解析、SBOM 覆盖校验与 API 失败归档。性能工件须恰有一份 JSON，精确校验阈值、候选提交和报告结构。三线用实际工作流回归命令分别通过 177、184、184 项。最终 API 归档脚本各通过 20、14、14 项定向测试，三线原生 Maven 夹具均确认二进制破坏返回失败并保留本次 XML，Maven 在清理前失败时无旧报告。真实 CycloneDX Reactor 验证 SBOM 产生 770、772、760 个 Maven 坐标，同批许可证报告的现行策略三线分别仍有 1、4、3 项诊断。历史索引按当前 Git 提交核验 253 条。固定 Runner 实际性能报告、真实同线发布基线和远端 CI 保持开放。见 `R15-evidence/runtime-only-cqrs/current-release-gates/`。
+
+**2026-11-24 许可证清单完整性**　三线拒绝 SBOM 所列第三方构件缺失于许可证清单，并保留 Apache-1.1 的准确标识。各通过 19 项许可证与 SBOM 本地回归。Java 17 的 JNA 选择更新到实际 5.19.1，Java 21 退出现行清单和 SBOM 均未出现的三个 Vert.x 5.1.5 选择。重放冻结输入后，Java 8 保持 JWT 子 POM 元数据阻断。Java 17 保持 Jakarta Regexp 元数据、ORO Apache-1.1 及两条私有构件覆盖阻断。Java 21 保持三条私有构件覆盖阻断。ORO 的移除涉及 Easy4j 当前正则 API，按依赖行为单独验收。见 `R15-evidence/runtime-only-cqrs/current-release-gates/license-evidence/`。
+
+**2026-11-24 报告入口与 Java 8 依赖复验**　三线云 MQ 发布入口要求工件恰含一份 JSON，无效输入清除上次同名归档。三线各通过 11 项合成回归，真实 ONS/TDMQ 保持待验。发布 SBOM 还要求外部 Maven JAR 携带有效 SHA-256，各线 20 项回归通过。Java 8 冷缓存从现有配置取到 JWT JAR、子 POM 和父 POM。两个 POM 与冻结输入一致，JAR 压缩文件整体不同且 13 项解压内容一致。补齐实际由 DDD4J BOM 管理的 JJWT 0.13.0 构件后，真实 CycloneDX 和 Maven 许可证清单通过，SBOM 记录 773 个坐标。仅补 POM 的原生报告因两份 JAR 缺失被新门禁拒绝。见 `R15-evidence/runtime-only-cqrs/current-release-gates/`。
+
+**2026-11-24 Java 8 JWT 实际构件运行复验**　从配置仓库冷取的确切 JAR 已通过原生 SBOM、清单和许可证门禁。Java 8 的 `ddd4j-auth-security` 实际使用按 JJWT 0.11.2 编译的 Easy4j 发行件，BOM 将运行依赖解析为 0.13.0。上游原测试遇到签名接口编译冲突，其余 41 项测试的实际运行有 1 项失败和 29 项错误，包含签发时的 `NoSuchMethodError` 与解析时的 `NoClassDefFoundError`。隔离适配候选以本线 JDK 运行原上游测试 176 项，通过 173 项。旧 DEFLATE 与声明式密钥解析组合仍有三项失败。DDD4J 对应 Jackson 消费配置通过 46 项，构件方法字节码仍为 Java 8。运行兼容保持 OPEN。见 `R15-evidence/runtime-only-cqrs/current-release-gates/jdk8-jwt-license-native/configured-artifact-replay/`、`R15-evidence/runtime-only-cqrs/jjwt-java8-alignment-candidate/`。
+
+**2026-11-24 SNAPSHOT 许可证清单对账**　实际私仓确认五个 Easy4j JAR 字节与发布 SBOM 相同。三线采用原生 Maven 模板输出基准版本，并记录解析到的时间戳。原生清单分别保留 953、922、956 项许可证声明，外部发布坐标均完整覆盖。原严格策略 Java 8 和 21 通过，Java 17 仍阻断 Jakarta Regexp 和 ORO。隔离验证确切上游许可证元数据后，Java 17 的唯一阻断为 ORO Apache-1.1。见 `R15-evidence/runtime-only-cqrs/current-release-gates/jdk17-21-license-metadata-refresh/`。
+
+**2026-11-24 确切许可证声明补录**　三线接入同一份包含两个完整 Maven 版本的本地声明，生成时复制到临时目录。Java 8 和 21 原生清单逐字节一致，严格策略通过。Java 17 的 922 条记录只更新 Jakarta Regexp 1.4 与 ORO 2.0.8 的声明，仍按原策略拒绝 Apache-1.1 的 ORO。三线测试的原始 SBOM JSON、XML 均保持相同。见 `R15-evidence/runtime-only-cqrs/current-release-gates/jdk17-21-license-metadata-refresh/default-missing-metadata/`。
+
+**2026-11-24 受保护云 MQ 回执候选**　Java 17 的隔离补丁组装 ONS 和 TDMQ 探针、受保护作业、报告生成与发布入口。ONS 使用本线 Maven 构建 classpath，19 项离线检查通过。TDMQ 在本地真实 Pulsar 通过 14 项，受保护入口默认跳过一项。回执生成通过五项测试，合成报告经现行门禁校验并按原始字节归档。整合补丁已在隔离源码应用，两个工作流通过 actionlint。TDMQ 客户端默认关闭 TLS 主机名校验，实际云接入需核对私网、域名及厂商出口范围。真实 ONS、TDMQ、AWS SQS 和远端 CI 仍待验。见 `R15-evidence/runtime-only-cqrs/cloud-native-candidates/producer/verification.json`。
+
 ### T11：执行最终验收并形成三线交付包
 
 - [x] 固定最终输入，在三个 JDK 下分别执行适用 reactor 的 `clean verify` 和独立样例 reactor；如本地依赖安装是必要前置，先执行并记录构件来源，再运行最终 clean 构建。
@@ -1355,6 +1374,15 @@ T03 某个上游坐标阻塞时，继续处理不依赖它的 T04—T09 子项�
 **2026-11-24 Java 17 新拓扑整仓与当前 JVM API**　Java 17 在 Web 校验迁移后的 112 个项目上执行本线 Maven Wrapper `clean verify`，3,616 项测试全绿，包含七个 runtime 与 28 个框架样例入口。Java 8、21 在本线当前源码各完成 114 项原生编译。严格 JVM 比较绑定该三线产物，核对生产输入无变化。Java 8 与 21 对齐，七个 runtime 也均对齐。共有 168 项未解释的 JVM 声明差异，125 项在校验与数据权限构件，43 项在 MyBatis 相关构件。真实发布基线、远端 CI 和云服务仍待验。见 `R15-evidence/runtime-only-cqrs/current-inventory-recovery/verification.json`。
 
 **2026-11-24 Java 17 冷仓构件和独立样例复验**　配置仓库从隔离 Maven 缓存解析的新 validation SNAPSHOT JAR、POM 与当前整仓测试实际加载的构件一致，传递解析通过。严格依赖清单使用该实际 JAR 复验 4,602 条记录，零错误、零未核实。Java 17 以当前 76 个框架项目在隔离仓库装配样例。首次独立 reactor 的 Spring CQRS 测试卡在 PostgreSQL 认证读，其余 27 个框架场景通过。相同构件下隔离复跑 Spring CQRS 的五项测试通过。合计覆盖 28 个场景和 1,062 项测试，一次整仓完成仍待验证。严格 API 的 168 项差异仍保持开放。两份专项规格对旧 API 退出的授权当前限于 Java 17。见 `R15-evidence/runtime-only-cqrs/current-jvm-remaining/verification.json`。
+
+
+**2026-11-24 Java 17 独立样例单次复验**　同一冻结源码和 141 个已核对哈希的框架 JAR/POM 在独立 Maven 缓存运行一次 `clean verify`。原生日志显示 `BUILD SUCCESS`，36 个 Maven 项目全部成功，28 个框架模式覆盖 1,062 项测试，199 份本次 Surefire XML 已归档。外层归档工具遇到临时路径别名差异，随后从同次 Maven 日志和报告恢复证据，原生进程退出码未留存。Java 17 工作区后续 MyBatis 修改独立验证。三线场景矩阵字节一致，现行检查仍报告 Java 17 缺失旧文件校验结果字符串用例，严格跨线 API 与 R14 远端门禁保持开放。见 `R15-evidence/runtime-only-cqrs/current-independent-samples/jdk17-web-validation-single-verify/verification.json` 和 `R15-evidence/runtime-only-cqrs/current-release-gates/scenario-contract/after-synchronization.json`。
+
+**2026-11-24 T11 本地交接包**　归档三线原生构建证据、支持和场景矩阵、168 条冻结输入的 JVM 声明差异及当轮本地门禁。当前 MyBatis-Plus 源码变化使原 MySQL 平台测试映射过期，产品文档与 253 条历史索引核验通过。完整 verify 在 Java 17 文件校验字符串场景预检退出。真实同线发布基线、固定 Runner 性能报告、远端 CI 和真实云 MQ 仍开放。见 `R15-evidence/runtime-only-cqrs/T11-local-handoff/summary.md`。
+
+**2026-11-24 MyBatis 当前构建与结构清单**　Java 17 当前快照的八个项目定向 Maven 验证通过 758 项。三线现有证据各覆盖八项真实 MySQL 仓储测试，Java 8 使用本线 Wrapper 显式运行默认构建所排除的测试类。总入口新增必过项 `mybatisplus-mysql-8`，核对八个指定用例和当轮原始 XML。三线各通过 31 项总入口定向回归。退役失效的 MyBatis MySQL 测试语法适配登记，测试和仓储差异继续作为 OPEN。将两份已核对的逐线许可证及发布工作流配置绑定到实际摘要。新清单包含 2,407 项差异，717 项 OPEN，产品文档和历史索引通过。Java 17 旧文件校验字符串的完整场景预检仍失败。见 `R15-evidence/runtime-only-cqrs/mybatis-current-native/` 与 `R15-evidence/runtime-only-cqrs/mybatis-platform-mapping/adoption/`。
+
+**2026-11-24 场景与公开签名最新复核**　三线 251 个场景逐项校验，Java 17 以当前输入补跑三个 Guice 场景和八个具名用例。Java 8 和 21 的 250 个声明支持场景有对应本地报告。Java 17 旧文件结果字符串仍是唯一缺失源码绑定，原生 Maven 已验证旧方括号期望失败、现行 Easy4j 圆括号期望通过。最新严格 JVM 差异为 186 条，新增 18 条对应 Java 17 九个 MyBatis-Plus 泛型签名。另在当前 Java 17 原生回归复现了通配符 Query 误走按主键删除，旧查询重载候选通过 22 项 CRUD 用例，并记录了新子类覆盖的源码兼容影响。两个契约处理保持开放。见 `R15-evidence/runtime-only-cqrs/active-scenario-audit/` 与 `R15-evidence/runtime-only-cqrs/current-compiled-api-refresh/`。
 
 ## 四、命令约定与证据保管
 

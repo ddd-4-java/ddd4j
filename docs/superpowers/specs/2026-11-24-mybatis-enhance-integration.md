@@ -28,3 +28,15 @@ DDD4J 2.0.x 对接 io.github.easy4j 两套增强组件，保持 core 无 ORM/Spr
 
 ## 边界
 按当前 2.0.x 开发，不提交、推送、发布，不改数据库；i18n、INSERT IGNORE、TypeHandler 按需开放，不默认开启。
+
+## 聚合仓储收敛（2026-11-25）
+
+用户授权修复仓储泛型、批量接口与重复实现，并明确保留 `BaseRepositoryImpl` 作为业务仓储继承入口。公共实现统一在 `MybatisAggregateRepository`，入口类不重复解析泛型或覆盖 CRUD；`MybatisAggregateRepository` 组合 `BaseMapper<P>`，只实现领域仓储和模型映射契约，原生 PO 操作直接调用 Mapper。原生 MyBatis 模块及其他版本线不在此项范围内。
+
+- `M extends AggregateRoot<ID>`；错误的聚合/仓储 ID 组合必须在编译期被拒绝。删除绕过泛型的旧 get/list 及同义入口。
+- 领域 `saveBatch`、`updateBatchById`、`insertOrUpdateBatch` 调用组件已有集合 API；支持 Long、String 和继承声明的主键，不手写主键反射或批量 SQL 执行器。
+- 保存批量执行插入；更新批量只更新，缺失记录计 0；upsert 支持新增与更新。保留 DDD4J 填充和持久化字段回写；空集合返回空/0，非法元素在写入前拒绝。
+- 返回计数来自 JDBC BatchResult，SUCCESS_NO_INFO 按成功的一条语句计数，失败标记抛异常。MyBatis-Plus 的 retBool 不能表达领域 int 计数，允许最小结果适配。
+- 批量会话、提交和回滚直接遵循当前 BaseMapper 集合 API；不虚构自动加入调用方事务的承诺。成功写入后清除调用方 Mapper 会话的一级缓存。用真实 MySQL 验证批量落库、主键回填、写后读取和异常回滚。
+- 删除父类已有六个方法的重复实现、四个链式别名及旧 PO 批量包装；Guice 注入直接面向唯一仓储类，保留 mapper 注入能力。
+- 运行编译正负例、目标红绿测试、受影响模块与 Guice clean verify，以及无 record 门禁；既有工作区改动、分支和其他版本线保持。

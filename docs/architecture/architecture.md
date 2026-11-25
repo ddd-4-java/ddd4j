@@ -120,7 +120,7 @@ flowchart LR
 | `ddd4j-samples/*` | 保留 | 平台启动和特有示例保留；共用已有 Order domain/application/testkit，迁移测试而非删除测试 |
 | 根及分组聚合 POM、parent、dependencies、BOM | 保留 | 后续更新模块清单和依赖关系，不以删聚合文件冒充运行复杂度下降 |
 
-14 个模块按固定顺序迁移；同平台先命令侧再投影侧。具体步骤见任务 R06—R12。
+下表记录 14 个原平台模块的迁移顺序。同平台先迁移命令装配，再迁移投影装配。R06—R12 记录迁移过程，R15 记录旧坐标退出与现行入口验收。
 
 | 顺序 | 任务 | 原模块 | 目标运行时 |
 |---|---|---|---|
@@ -153,7 +153,7 @@ Spring 样例纳入本目录，复用外部 Boot 装配；Boot 自动配置不�
 
 | 现有职责 | 目标归属 | 兼容方式 |
 |---|---|---|
-| 命令发现、注册、路由 | `DefaultCommandBus` 承担唯一分发；runtime 收集执行器和绑定事务 | 旧总线类保留签名并委派，不维护第二套路由规则 |
+| 命令发现、注册、路由 | `DefaultCommandBus` 统一分发，runtime 收集执行器并接入平台事务 | 应用从对应 runtime 注入或创建 `CommandBus` |
 | 投影拉取、批处理、进度推进 | 复用 core 的 `ProjectionRunner`；`ProjectionDispatcher` 接入同一规则 | Handler 入口适配成 View，两种方式共用位置推进规则 |
 | 视图状态、重复启动保护、公共调度逻辑 | core 既有 readmodel 契约及必要的轻量默认实现；runtime 仅接平台生命周期/调度 | 共享公共规则，保留平台 CRON 语法、时区和线程语义的兼容验证 |
 | 投影实体、JPA 仓储 | 对应 data 存储模块 | runtime 中旧实体/仓储的公开引用按兼容清单迁移，不重复扫描实体 |
@@ -184,7 +184,7 @@ Spring 样例纳入本目录，复用外部 Boot 装配；Boot 自动配置不�
 
 ### 七个独立 CQRS 模块退出
 
-框架当前无业务项目依赖这七个旧坐标。Java 8、17、21 的现行平台入口统一使用原有七个 runtime。Spring、Guice/Javalin、Quarkus、Micronaut、Helidon、Vert.x 和 Dropwizard 的旧 CQRS 源码模块、Maven 坐标及独立发布入口全部退出。
+框架当前无业务项目依赖这七个旧坐标。Java 8、17、21 的现行平台入口统一使用原有七个 runtime。Spring、Guice/Javalin、Quarkus、Micronaut、Helidon、Vert.x 和 Dropwizard 的旧 CQRS 源码模块、Maven 坐标及独立发布入口全部退出。旧坐标转接、兼容 JAR 与旧坐标消费者验收随之退出。现行 Maven 依赖和样例使用上表的目标 runtime。
 
 保留各平台现场验证的命令注册、重复执行器拒绝、执行异常和事务传递，以及已有容器生命周期和请求上下文能力。runtime 中已有实现的边界测试继续有效，有独立行为的测试和装配资源随职责迁移。一个场景只装配一个有效的 CommandBus。应用可继续按需启用 CQRS，普通业务直接使用仓储。七种框架的 28 个示例、四种投影位置存储和五种 EventStore 继续覆盖现行入口。
 

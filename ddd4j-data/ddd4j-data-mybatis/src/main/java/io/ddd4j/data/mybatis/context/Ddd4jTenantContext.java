@@ -19,7 +19,7 @@ public class Ddd4jTenantContext {
      * @return 当前租户标识，无租户时返回 null
      */
     public Object getCurrentTenantId() {
-        return Contexts.get(ContextConstants.TENANT_ID, Object.class);
+        return ThreadContext.get(ContextConstants.TENANT_ID);
     }
 
     /**
@@ -61,15 +61,15 @@ public class Ddd4jTenantContext {
 
     /** 兼容既有 Ddd4jTenantContext.Scope 的薄包装。 */
     public static final class Scope implements AutoCloseable {
-        private final org.apache.ibatis.enhance.context.TenantContext.Scope scope;
+        private final org.apache.ibatis.enhance.context.TenantContext.Scope delegateScope;
 
         private Scope(org.apache.ibatis.enhance.context.TenantContext.Scope scope) {
-            this.scope = scope;
+            this.delegateScope = scope;
         }
 
         @Override
         public void close() {
-            scope.close();
+            delegateScope.close();
         }
     }
 }

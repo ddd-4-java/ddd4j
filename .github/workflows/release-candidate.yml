@@ -91,13 +91,9 @@ jobs:
           name: ${{ inputs.performance_artifact_name }}
           path: target/release-candidate-evidence/performance
       - name: Verify performance evidence
-        run: |
-          report_path="$(find target/release-candidate-evidence/performance -type f -name '*.json' -print -quit)"
-          if [[ -z "${report_path}" ]]; then
-            echo "Performance artifact does not contain a JSON report." >&2
-            exit 1
-          fi
-          DDD4J_PERFORMANCE_REPORT="${report_path}" ./scripts/verify-performance-report.sh
+        env:
+          DDD4J_PERFORMANCE_REPORT: target/release-candidate-evidence/performance
+        run: ./scripts/verify-performance-report.sh
       - name: Download protected cloud MQ evidence
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
@@ -106,13 +102,9 @@ jobs:
           name: ${{ inputs.cloud_mq_artifact_name }}
           path: target/release-candidate-evidence/cloud-mq
       - name: Verify ONS and TDMQ cloud evidence
-        run: |
-          report_path="$(find target/release-candidate-evidence/cloud-mq -type f -name '*.json' -print -quit)"
-          if [[ -z "${report_path}" ]]; then
-            echo "Cloud MQ artifact does not contain a JSON report." >&2
-            exit 1
-          fi
-          DDD4J_CLOUD_MQ_RC_REPORT="${report_path}" ./scripts/verify-cloud-mq-rc-evidence.sh
+        env:
+          DDD4J_CLOUD_MQ_RC_REPORT: target/release-candidate-evidence/cloud-mq
+        run: ./scripts/verify-cloud-mq-rc-evidence.sh
       - name: Verify generated artifacts did not modify the release candidate
         run: DDD4J_REQUIRE_CLEAN_WORKTREE=true ./scripts/verify-release-worktree.sh
       - name: Archive release-candidate evidence

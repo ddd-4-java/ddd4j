@@ -14,11 +14,18 @@
  */
 package io.ddd4j.guice;
 
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.enhance.crypto.key.CryptoKeyMaterial;
 import com.baomidou.mybatisplus.enhance.crypto.key.StaticCryptoKeyProvider;
 import com.baomidou.mybatisplus.enhance.plugins.MybatisPlusEnhanceInterceptor;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.model.AggregateRoot;
+import io.ddd4j.data.mybatis.repository.impl.BaseRepositoryImpl;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.session.SqlSession;
@@ -32,6 +39,42 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class Ddd4jMybatisGuiceModuleTest {
+    @Test
+    void injectsMapperIntoTheSingleAggregateRepository() {
+        JdbcDataSource source = new JdbcDataSource();
+        source.setURL("jdbc:h2:mem:repository_injection");
+        Ddd4jMybatisGuiceModule module = new Ddd4jMybatisGuiceModule(source)
+                .addMapper(RepositoryMapper.class)
+                .bindRepository(InjectedRepository.class, RepositoryMapper.class);
+        Injector injector = Guice.createInjector(module);
+        module.initRepositories(injector);
+        assertThat(injector.getInstance(InjectedRepository.class).getBaseMapper().ping()).isEqualTo(1);
+    }
+
+    public interface RepositoryMapper extends BaseMapper<RepositoryPo> {
+        @Select("SELECT 1")
+        int ping();
+    }
+
+    public static class RepositoryModel extends AggregateRoot<Long> {
+        @Override
+        public Long id() { return 1L; }
+    }
+
+    public static class RepositoryQuery extends Query<RepositoryModel> { }
+
+    @Getter
+    @Setter
+    public static class RepositoryPo {
+        @TableId
+        private Long id;
+    }
+
+    public static class InjectedRepository extends BaseRepositoryImpl<
+            RepositoryMapper, RepositoryModel, RepositoryPo, RepositoryQuery, Long> {
+        public InjectedRepository() { super(); }
+    }
+
 
     @Test
     void fillsMapperAggregateThroughTheEnhanceQueryChain() {

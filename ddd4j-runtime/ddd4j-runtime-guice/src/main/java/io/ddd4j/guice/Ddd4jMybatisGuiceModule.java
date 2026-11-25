@@ -23,7 +23,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import io.ddd4j.data.mybatis.repository.impl.BaseRepositoryImpl;
+import io.ddd4j.data.mybatis.repository.MybatisAggregateRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.SqlSession;
@@ -32,7 +32,6 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 
 import javax.sql.DataSource;
-import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -128,10 +127,9 @@ public class Ddd4jMybatisGuiceModule extends AbstractModule {
             Class<?> repositoryImpl = entry.getKey();
             Class<?> mapperInterface = entry.getValue();
             try {
-                BaseRepositoryImpl repository = (BaseRepositoryImpl) injector.getInstance(repositoryImpl);
+                MybatisAggregateRepository repository = (MybatisAggregateRepository) injector.getInstance(repositoryImpl);
                 Object mapper = sqlSession.getMapper(mapperInterface);
-                Method setMapper = BaseRepositoryImpl.class.getMethod("setBaseMapper", BaseMapper.class);
-                setMapper.invoke(repository, mapper);
+                repository.setBaseMapper((BaseMapper) mapper);
                 log.debug("Injected mapper {} into repository {}",
                         mapperInterface.getSimpleName(), repositoryImpl.getSimpleName());
             } catch (Exception exception) {

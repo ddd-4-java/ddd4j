@@ -58,3 +58,5 @@ DDD4J_CLOUD_MQ_RC_REPORT=/secure-artifacts/cloud-mq-rc.json \
 ```
 
 报告的 `commit` 必须等于候选提交；任一 broker 缺失、失败或证据字段不完整都会失败关闭。
+
+受保护作业可以在下载工件中附带 `ons.raw.log` 和 `tdmq.raw.log`。只要工件包含其中一份，就应各提供一份，并使两份日志的 SHA-256 与对应 broker 在报告中的 `rawLogSha256` 一致。仅提供 JSON 的工件通过 `evidenceUri` 引用单独保存的审计记录。

@@ -42,9 +42,9 @@
     {
       "path": ".github/workflows/release-candidate.yml",
       "sha256ByJdk": {
-        "8": "5126f0541e5cf229fed0cebe83d1ee265a65f78808247b2fbe57ebd255d39c5e",
-        "17": "2e4eeaca2b8676ce8480cdffe8bb107b7ea2e5bc64dc297178d4c6cbb45a5685",
-        "21": "6ea8c63a04d7a4636b15eec18131c49536a7d79b11d14a881df245c52c96c645"
+        "8": "4968f5b6f9e115c385d56380e80382ce125d3d5c24409ef2a9975cb5f4b4a96c",
+        "17": "f76be138c7942229ac81b94c85c9e44246ab48b1be136a85e49e0f2f1a3a213e",
+        "21": "5d798443144096c9485de9b14f3afea259f6a9c0bd6522380dc34a1e50d69fcd"
       },
       "evidence": "逐线 JDK、Easy4J 快照及发布基线已核对；文件 SHA-256 锁定，workflow lint 和实际 CI 独立验收"
     },
@@ -155,8 +155,8 @@
       "path": "config/license-selections.tsv",
       "sha256ByJdk": {
         "8": "0820d5b44920ee357eb88446bda238c09928f6bd7bcc91e87b2b821948d14323",
-        "17": "1d5cc976635e01d958294c290116d07ad3c6773d46022c9decf878086113314f",
-        "21": "89374e44a392f6e23188cd99e2c44ea17631e7a53e54843c30ab15f53d4b23e6"
+        "17": "facdd0b97b4ccae50790a8948a7e644ef4b85761573da614b15dc5e9ecb75293",
+        "21": "297c2d096efb49a96f307c92c5e23009471975421fa18ab7c3f44d8d104c02ac"
       },
       "evidence": "三线 SBOM/license 作业分别扫描各自的依赖版本；选择记录逐线哈希锁定，许可证核验仍须独立通过"
     },
@@ -7004,33 +7004,6 @@
         "payloadColumnShouldUsePortableTextType"
       ],
       "reason": "三线真实 PostgreSQL 容器各通过事件回读、版本冲突、跨时区时间戳、全局位置约束和 payload TEXT 列 5 项；JDK 8 与高两线的 Testcontainers/Jackson/JDK 集合 API 各自适配，生产 JDBI 适配器已有逐线源码锁定。"
-    },
-    {
-      "path": "ddd4j-data/ddd4j-data-mybatisplus/src/test/java/io/ddd4j/data/mybatis/repository/MybatisAggregateRepositoryMySQLTest.java",
-      "productionPath": "ddd4j-data/ddd4j-data-mybatisplus/src/main/java/io/ddd4j/data/mybatis/repository/MybatisAggregateRepository.java",
-      "sourceSha256": [
-        "b997e5e8e677a3e4076406ca8111c05f06f68553f7b895249ff8c27c8c7fad3a",
-        "6c5e4325348ea5ca1f6413f5c6cfd047e02a464856b875d4e68df4f08f08a316",
-        "0e9033b4e0d2a9df4894af3f100770eeeaf6e9549eb40d0ff4e032b83a73a0ed"
-      ],
-      "productionSha256": [
-        "203e181646cae13bb3b82d11415acbe09c46c1c030370cabf7659d7bf48fd056",
-        "d8368bd0eebcb8e825eef377c580b4814ae277221bc2ac8a5a45e0e9261c5b98",
-        "d8368bd0eebcb8e825eef377c580b4814ae277221bc2ac8a5a45e0e9261c5b98"
-      ],
-      "testMethods": [
-        "cleanTable",
-        "clearContext",
-        "saveInsertsNewAggregate",
-        "updateByIdUpdatesExistingOnly",
-        "updateByIdDoesNotInsertWhenAbsent",
-        "insertOrUpdateBehavesAsUpsert",
-        "deleteByIdRemovesRow",
-        "originalModelAndQueryUsagePersistsWithoutCqrsInfrastructure",
-        "originalQueriesConvertAndFillPersistedModels",
-        "originalQueriesScopeRowsToCurrentTenant"
-      ],
-      "reason": "三线真实 MySQL 8.4 各通过 8 项。除了 CRUD，原版模式用例验证直接保存更新、列表和分页、PO 转换及填充、租户隔离。各线保留 Testcontainers 模块和 JDK 集合语法。"
     },
     {
       "path": "ddd4j-samples/ddd4j-sample-order-jdbc/src/test/java/io/ddd4j/sample/order/jdbc/JdbcOrderAtomicityTest.java",

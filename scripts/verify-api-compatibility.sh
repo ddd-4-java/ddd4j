@@ -88,35 +88,54 @@ while IFS=$'\t' read -r artifact_id module_dir; do
   fi
 done <<< "${published_modules}"
 
+module_report="target/japicmp/verify-public-api-compatibility.xml"
+# Maven may fail before clean, leaving XML from a previous run.
+while IFS=$'\t' read -r artifact_id module_dir; do
+  rm -f -- "${module_dir}/${module_report}"
+done <<< "${published_modules}"
+
 echo "[INFO] Comparing published reactor JARs with ${BASELINE_VERSION}."
+maven_status=0
 ./mvnw -B -ntp -Papi-compatibility \
   -Dddd4j.api.baseline.version="${BASELINE_VERSION}" \
   -Dddd4j.api.include="io.ddd4j.**" \
-  -DskipTests clean verify
+  -DskipTests clean verify || maven_status=$?
 
 # Maven clean also removes the default report directory under target.
-mkdir -p "${REPORT_DIR}"
+if ! mkdir -p "${REPORT_DIR}"; then
+  exit "$((maven_status == 0 ? 1 : maven_status))"
+fi
 failures=0
 while IFS=$'\t' read -r artifact_id module_dir; do
-  current_jar="${module_dir}/target/${artifact_id}-${CURRENT_VERSION}.jar"
-  report_path="${module_dir}/target/japicmp/verify-public-api-compatibility.xml"
-  if [[ ! -f "${current_jar}" ]]; then
-    echo "[FAIL] Missing primary JAR for ${artifact_id}: ${current_jar}." >&2
-    failures=$((failures + 1))
-    continue
+  if ((maven_status == 0)); then
+    current_jar="${module_dir}/target/${artifact_id}-${CURRENT_VERSION}.jar"
+    if [[ ! -f "${current_jar}" ]]; then
+      echo "[FAIL] Missing primary JAR for ${artifact_id}: ${current_jar}." >&2
+      failures=$((failures + 1))
+      continue
+    fi
+    if ! jar tf "${current_jar}" | grep -E '^io/ddd4j/.+\.class$' >/dev/null; then
+      echo "[FAIL] No io.ddd4j classes found in ${current_jar}." >&2
+      failures=$((failures + 1))
+      continue
+    fi
   fi
-  if ! jar tf "${current_jar}" | grep -E '^io/ddd4j/.+\.class$' >/dev/null; then
-    echo "[FAIL] No io.ddd4j classes found in ${current_jar}." >&2
-    failures=$((failures + 1))
-    continue
-  fi
-  if [[ ! -s "${report_path}" ]]; then
+
+  report_path="${module_dir}/${module_report}"
+  if [[ -s "${report_path}" ]]; then
+    if ! cp "${report_path}" "${REPORT_DIR}/${artifact_id}.xml"; then
+      failures=$((failures + 1))
+    fi
+  elif ((maven_status == 0)); then
     echo "[FAIL] JApiCmp did not create a report for ${artifact_id}." >&2
     failures=$((failures + 1))
-    continue
   fi
-  cp "${report_path}" "${REPORT_DIR}/${artifact_id}.xml"
 done <<< "${published_modules}"
+
+if ((maven_status != 0)); then
+  echo "[FAIL] Maven API verification exited with status ${maven_status}. Available reports are in ${REPORT_DIR}." >&2
+  exit "${maven_status}"
+fi
 
 if ((failures > 0)); then
   echo "[FAIL] API compatibility failed for ${failures} module(s)." >&2

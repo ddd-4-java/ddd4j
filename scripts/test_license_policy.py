@@ -16,6 +16,27 @@ from license_policy import (
 
 class LicensePolicyTest(unittest.TestCase):
 
+    def test_blocks_apache_1_1_without_treating_it_as_apache_2(self):
+        coordinate = "oro:oro:2.0.8"
+        for name in ("Apache-1.1", "The Apache Software License, Version 1.1"):
+            with self.subTest(name=name):
+                self.assertEqual("Apache-1.1", normalize_license(name))
+                entry = InventoryEntry(coordinate, (name,), "Apache ORO")
+                self.assertEqual(
+                    [f"license requires an evidenced selection: {coordinate}"],
+                    verify_policy([entry], {}),
+                )
+
+    def test_reports_sbom_coordinates_missing_from_third_party_inventory(self):
+        existing = InventoryEntry("known:library:1.0", ("MIT",), "Library")
+        older_version = InventoryEntry("vendor:missing:1.0", ("MIT",), "Older version")
+        missing = "vendor:missing:2.0"
+        sbom = {existing.coordinate, missing, "io.ddd4j:ddd4j-core:2.0.0"}
+        self.assertEqual(
+            [f"published SBOM coordinate missing from license inventory: {missing}"],
+            verify_policy([existing, older_version], {}, sbom_coordinates=sbom),
+        )
+
     def test_distinguishes_epl_1_from_epl_2_in_upstream_declarations(self):
         self.assertEqual("EPL-1.0", normalize_license("Eclipse Public License 1.0"))
         self.assertEqual("EPL-1.0", normalize_license("Eclipse Public License, Version 1.0"))

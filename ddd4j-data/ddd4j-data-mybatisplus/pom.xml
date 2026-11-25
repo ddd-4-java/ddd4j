@@ -12,7 +12,7 @@
 
     <artifactId>ddd4j-data-mybatisplus</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>ddd4j 数据层 - MyBatis-Plus 实现：BaseRepositoryImpl 四泛型封装、TypeHandler 实现、拦截器。 字段加解密和签名使用 mybatis-plus-enhance-extension。
+    <description>ddd4j 数据层 - MyBatis-Plus 实现：聚合仓储组合 BaseMapper、TypeHandler 实现、拦截器。 字段加解密和签名使用 mybatis-plus-enhance-extension。
     </description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 

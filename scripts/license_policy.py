@@ -3,12 +3,13 @@
 
 import argparse
 import csv
-import json
 import re
 import sys
 from dataclasses import dataclass
 from pathlib import Path
 from urllib.parse import urlparse
+
+from sbom import load_sbom_coordinates
 
 
 ALLOWED_SPDX = {
@@ -97,6 +98,12 @@ def normalize_license(value):
         return "Public-Domain"
     if normalized == "mit-0":
         return "MIT-0"
+    legacy_apache = re.search(
+        r"\bapache(?: software)?(?: licen[cs]e)?[\s,(-]*(?:version\s*|v\.?\s*)?(1\.[01])\b",
+        normalized,
+    )
+    if legacy_apache:
+        return f"Apache-{legacy_apache.group(1)}"
     if "apache" in normalized or normalized in {"al 2.0", "apache 2"}:
         return "Apache-2.0"
     if normalized == "mit" or "mit license" in normalized:
@@ -179,17 +186,6 @@ def load_build_tool_exclusions(path):
     return result
 
 
-def load_sbom_coordinates(path):
-    document = json.loads(Path(path).read_text(encoding="utf-8"))
-    result = set()
-    for component in document.get("components", []):
-        purl = component.get("purl", "")
-        match = re.match(r"pkg:maven/([^/]+)/([^@]+)@([^?]+)", purl)
-        if match:
-            result.add(":".join(match.groups()))
-    return result
-
-
 def complete_coordinate(coordinate):
     parts = coordinate.split(":")
     return len(parts) == 3 and all(parts)
@@ -228,6 +224,9 @@ def verify_policy(inventory, selections, sbom_coordinates=None, build_tool_exclu
     for coordinate in sorted(sbom_coordinates.intersection(build_tool_exclusions)):
         errors.append(f"build-tool exclusion overlaps published SBOM: {coordinate}")
     reported = {entry.coordinate for entry in inventory}
+    for coordinate in sorted(sbom_coordinates - reported):
+        if not coordinate.startswith("io.ddd4j:"):
+            errors.append(f"published SBOM coordinate missing from license inventory: {coordinate}")
     for coordinate in sorted(set(selections) - reported):
         selection = selections[coordinate]
         if not complete_coordinate(selection.coordinate):
@@ -265,7 +264,7 @@ def main():
             load_sbom_coordinates(args.sbom),
             load_build_tool_exclusions(args.build_tool_exclusions),
         )
-    except (OSError, ValueError, json.JSONDecodeError) as error:
+    except (OSError, ValueError) as error:
         print(f"[FAIL] {error}", file=sys.stderr)
         return 1
     if errors:

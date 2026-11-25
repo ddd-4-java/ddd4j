@@ -30,7 +30,7 @@ VERIFY_CHECKS = ("structure", "product-docs", "historical-index", "values", "eff
                  "capacity-8", "capacity-17", "capacity-21",
                  "redis-native-8", "redis-native-17", "redis-native-21",
                  "scenario-matrix", "scenario-execution",
-                 "quarkus-durable-sample-8")
+                 "quarkus-durable-sample-8", "mybatisplus-mysql-8")
 INVENTORY_CHECKS = ("structure", "product-docs", "historical-index", "values", "dependencies", "reactor",
                     "scenario-matrix")
 
@@ -427,11 +427,35 @@ def verify_quarkus_sample_durable(root, stage, checks, environment):
     scenario = {"id": "S03-POSTGRESQL-DURABLE",
                 "lines": {"1.0.x": {"status": "supported", "tests": [source]}},
                 "caseNames": {"1.0.x": "durableSourceProjectionFailureRetryAndSparsePosition"}}
-    collect_quarkus_profile_report(root, stage, checks, name, scenario, "1.0.x", started_ns,
-                                   "target/durable-order")
+    collect_explicit_scenario_report(root, stage, checks, name, scenario, started_ns,
+                                     expected_tests=1, target="target/durable-order")
 
 
-def collect_quarkus_profile_report(root, stage, checks, name, scenario, version, started_ns, target):
+def verify_mybatisplus_mysql_8(root, stage, checks, environment):
+    name = "mybatisplus-mysql-8"
+    module = "ddd4j-data/ddd4j-data-mybatisplus"
+    test = "io.ddd4j.data.mybatis.repository.MybatisAggregateRepositoryMySQLTest"
+    command = ["./mvnw", "-q", "-pl", module, "-am", f"-Dtest={test}",
+               "-Dsurefire.failIfNoSpecifiedTests=false", "test"]
+    source = f"{module}/src/test/java/{test.replace('.', '/')}.java"
+    methods = [
+        "saveInsertsNewAggregate", "updateByIdUpdatesExistingOnly",
+        "updateByIdDoesNotInsertWhenAbsent", "insertOrUpdateBehavesAsUpsert",
+        "deleteByIdRemovesRow", "originalModelAndQueryUsagePersistsWithoutCqrsInfrastructure",
+        "originalQueriesConvertAndFillPersistedModels", "originalQueriesScopeRowsToCurrentTenant",
+    ]
+    scenario = {"id": "MYBATISPLUS-MYSQL-NATIVE",
+                "lines": {"1.0.x": {"status": "supported", "tests": [source]}},
+                "caseNames": {"1.0.x": methods}}
+    started_ns = time.time_ns()
+    execute(name, command, stage, checks, cwd=root, env=environment)
+    collect_explicit_scenario_report(root, stage, checks, name, scenario, started_ns,
+                                     expected_tests=len(methods))
+
+
+def collect_explicit_scenario_report(root, stage, checks, name, scenario, started_ns,
+                                     *, expected_tests, target="target"):
+    version = "1.0.x"
     reports = scenario_test_reports(root, [scenario], version, started_ns,
                                     target=target)
     checks[name]["testReports"] = reports
@@ -440,8 +464,10 @@ def collect_quarkus_profile_report(root, stage, checks, name, scenario, version,
             destination = stage / f"{name}-{Path(relative).name}"
             shutil.copy2(root / relative, destination)
             checks[name]["artifacts"][destination.name] = sha256(destination)
-    if reports["status"] != "PASS" or reports["executedTests"] != 1:
+    if reports["status"] != "PASS":
         checks[name]["status"] = "FAIL"
+    elif reports["executedTests"] != expected_tests:
+        checks[name].update(status="FAIL", reason=f"expected exactly {expected_tests} executed tests")
 
 
 def default_reactor_modules(root):
@@ -804,11 +830,12 @@ def run(args):
                 checks["scenario-execution"] = {
                     "status": "BLOCKED", "reason": "scenario matrix or reactor evidence missing"}
             if "1.0.x" in reactor_starts:
-                verify_quarkus_sample_durable(roots[0], stage, checks,
-                                             {**os.environ, "JAVA_HOME": str(jdks[0])})
+                jdk8_environment = {**os.environ, "JAVA_HOME": str(jdks[0])}
+                verify_quarkus_sample_durable(roots[0], stage, checks, jdk8_environment)
+                verify_mybatisplus_mysql_8(roots[0], stage, checks, jdk8_environment)
             else:
-                checks["quarkus-durable-sample-8"] = {
-                    "status": "BLOCKED", "reason": "Java 8 reactor did not run"}
+                for name in ("quarkus-durable-sample-8", "mybatisplus-mysql-8"):
+                    checks[name] = {"status": "BLOCKED", "reason": "Java 8 reactor did not run"}
         else:
             for name in ("values", "dependencies", "reactor", "scenario-matrix"):
                 checks.setdefault(name, {"status": "NOT_RUN", "reason": "inventory phase"})

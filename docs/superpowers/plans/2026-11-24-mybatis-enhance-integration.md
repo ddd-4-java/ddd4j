@@ -36,3 +36,12 @@
 - 上游使用 Corretto 17.0.21、已安装的 Maven 3.9.16 执行 `mvn -o install`：4 个 Maven 项目、162 项测试，0 失败/错误/跳过，产物仅安装到本机 Maven 缓存。扩展模块已安装 JAR 与本次构建 JAR 的 SHA-256 一致。上游自带 wrapper 缺失 `MavenWrapperMain`，未修改 wrapper 或安装新工具。
 - 随后从 DDD4J 正常入口执行 `./mvnw -o -pl ddd4j-data/ddd4j-data-mybatisplus,ddd4j-runtime/ddd4j-runtime-guice -am verify`：13 个 Maven 项目、938 项测试，0 失败/错误/跳过。其中 MyBatis-Plus 62 项（含 8 项真实 MySQL 测试）、Guice 117 项；Javadoc 门禁和 JaCoCo report 执行成功。此次验证直接消费本机新安装的上游产物，没有使用临时 classpath 替代正常依赖解析。
 - 上游整体 90% 覆盖率仍有原有告警（Core 47%、Extension 70%、Spring 19%，现有 `haltOnFailure=false` 未改）；未将构建成功当作整体覆盖率达标。两仓本次修改未提交、推送或远端发布，原有无关修改保留。
+
+## 聚合仓储收敛（2026-11-25）
+
+- [x] 添加错误 ID 编译负例和领域批量行为回归，记录红灯。
+- [x] 公共聚合仓储组合 BaseMapper，保留 BaseRepositoryImpl 业务入口，删除重复实现并迁移 Guice。
+- [x] 真实 MySQL 验证 Long/继承主键、批量写入/更新/upsert、写后读取和异常回滚；单元测试覆盖空集合与非法元素。
+- [x] 受影响 clean verify、无 record 检查、迁移说明和最终产物核验。
+
+最终结果：Corretto 17.0.21 下 13 个项目 `clean verify` 成功，953 项测试零失败、错误、跳过；其中 Plus 67 项（含 10 项 MySQL），Guice 127 项。保留 `BaseRepositoryImpl` 的原包名和五泛型入口，仅移除其重复泛型解析；两个入口均有 ID 编译正负例。无 record 检查及其 7 项自测通过，产物包含两个仓储类型。迁移说明见数据模块 README，详细证据见 `../../reports/2026-11-25-mybatis-repository-consolidation.md`。本次仅验证 2.0.x 本地结果，未提交、推送或远端发布。

@@ -5,10 +5,10 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 REPORT_PATH="${DDD4J_CLOUD_MQ_RC_REPORT:-}"
 OUTPUT_DIR="${DDD4J_REPORT_DIR:-${ROOT_DIR}/target/release-quality}/cloud-mq-rc"
 
-if [[ -z "${REPORT_PATH}" || ! -f "${REPORT_PATH}" ]]; then
-  echo "[FAIL] DDD4J_CLOUD_MQ_RC_REPORT must point to a cloud MQ release-candidate JSON report." >&2
-  exit 1
+if [[ "${OUTPUT_DIR}" != /* ]]; then
+  OUTPUT_DIR="${ROOT_DIR}/${OUTPUT_DIR}"
 fi
+archived_report="${OUTPUT_DIR}/cloud-mq-rc-report.json"
 
 if ! command -v jq >/dev/null 2>&1; then
   echo "[FAIL] jq is required to validate the cloud MQ report." >&2
@@ -23,14 +23,11 @@ fi
 
 candidate_report="$(mktemp)"
 trap 'rm -f -- "${candidate_report}"' EXIT
-if ! cp -- "${REPORT_PATH}" "${candidate_report}" 2>/dev/null; then
-  echo "[FAIL] Could not read the cloud MQ report." >&2
-  exit 1
-fi
-
-# Validate and archive the same bytes. Reject ambiguous JSON before jq can discard a duplicate member.
-if ! python3 - "${candidate_report}" >/dev/null 2>&1 <<'PYTHON'
+# Preserve a single snapshot for both validation and the archive.
+if ! python3 - "${REPORT_PATH}" "${candidate_report}" >/dev/null 2>&1 <<'PYTHON'
+import hashlib
 import json
+from pathlib import Path
 import sys
 from urllib.parse import parse_qsl, urlsplit
 
@@ -52,11 +49,22 @@ credential_parameters = {
     "accesskey", "access_key", "access_token", "client_secret", "password",
     "refresh_token", "secret", "secret_access_key", "secret_key", "session_token", "token",
 }
-with open(sys.argv[1], encoding="utf-8-sig") as report_file:
-    report = json.load(report_file, object_pairs_hook=unique_object, parse_constant=reject_constant)
+if not sys.argv[1]:
+    raise ValueError("missing report path")
+artifact = Path(sys.argv[1])
+source = artifact
+if artifact.is_dir():
+    reports = [path for path in artifact.rglob("*.json") if path.is_file()]
+    if len(reports) != 1:
+        raise ValueError("cloud MQ artifact must contain exactly one JSON report")
+    source = reports[0]
+raw_report = source.read_bytes()
+report = json.loads(raw_report.decode("utf-8-sig"), object_pairs_hook=unique_object,
+                    parse_constant=reject_constant)
 if not isinstance(report, dict):
     raise ValueError("expected one JSON report object")
-for execution in report.get("executions", []):
+executions = report.get("executions", [])
+for execution in executions:
     uri = urlsplit(execution["evidenceUri"])
     if "@" in uri.netloc:
         raise ValueError("URI contains user information")
@@ -64,11 +72,25 @@ for execution in report.get("executions", []):
         if any(key.casefold().replace("-", "_") in credential_parameters
                for key, _ in parse_qsl(parameters, keep_blank_values=True)):
             raise ValueError("URI contains a credential parameter")
+
+if artifact.is_dir():
+    broker_logs = {broker: list(artifact.rglob(f"{broker}.raw.log")) for broker in ("ons", "tdmq")}
+    if any(broker_logs.values()):
+        for broker, logs in broker_logs.items():
+            matches = [execution for execution in executions if execution["broker"] == broker]
+            if len(logs) != 1 or len(matches) != 1:
+                raise ValueError("expected one log and one record for each broker")
+            digest = hashlib.sha256(logs[0].read_bytes()).hexdigest()
+            if digest != matches[0]["rawLogSha256"]:
+                raise ValueError("broker log checksum differs from report")
+Path(sys.argv[2]).write_bytes(raw_report)
 PYTHON
 then
-  echo "[FAIL] Cloud MQ evidence is malformed or may expose credentials." >&2
+  rm -f -- "${archived_report}"
+  echo "[FAIL] Cloud MQ evidence requires one readable JSON report, matching attached logs and no credential fields." >&2
   exit 1
 fi
+rm -f -- "${archived_report}"
 
 cd "${ROOT_DIR}"
 head_commit="$(git rev-parse HEAD)"
@@ -102,5 +124,8 @@ if ! jq -e --arg commit "${head_commit}" --argjson required "${required_checks}"
 fi
 
 mkdir -p "${OUTPUT_DIR}"
-cp -- "${candidate_report}" "${OUTPUT_DIR}/cloud-mq-rc-report.json"
+if ! cp -- "${candidate_report}" "${archived_report}"; then
+  rm -f -- "${archived_report}"
+  exit 1
+fi
 echo "[PASS] ONS and TDMQ cloud release-candidate evidence matches ${head_commit}."
