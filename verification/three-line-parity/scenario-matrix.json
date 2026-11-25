@@ -4409,19 +4409,19 @@
         "1.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-web/ddd4j-web-validation/src/test/java/io/ddd4j/web/validation/ValidationContractTest.java"
+            "ddd4j-web/ddd4j-web-testkit/src/test/java/io/ddd4j/web/testkit/validation/ValidationContractTest.java"
           ]
         },
         "2.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-web/ddd4j-web-validation/src/test/java/io/ddd4j/web/validation/ValidationContractTest.java"
+            "ddd4j-web/ddd4j-web-testkit/src/test/java/io/ddd4j/web/testkit/validation/ValidationContractTest.java"
           ]
         },
         "3.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-web/ddd4j-web-validation/src/test/java/io/ddd4j/web/validation/ValidationContractTest.java"
+            "ddd4j-web/ddd4j-web-testkit/src/test/java/io/ddd4j/web/testkit/validation/ValidationContractTest.java"
           ]
         }
       }
@@ -4509,15 +4509,15 @@
       "lines": {
         "1.0.x": {
           "status": "supported",
-          "tests": ["ddd4j-extensions/ddd4j-extension-validation/src/test/java/io/ddd4j/extension/validation/FileValidationResultContractTest.java"]
+          "tests": ["ddd4j-web/ddd4j-web-testkit/src/test/java/io/ddd4j/web/testkit/validation/FileValidationServiceTest.java"]
         },
         "2.0.x": {
           "status": "supported",
-          "tests": ["ddd4j-extensions/ddd4j-extension-validation/src/test/java/io/ddd4j/extension/validation/FileValidationResultContractTest.java"]
+          "tests": ["ddd4j-web/ddd4j-web-testkit/src/test/java/io/ddd4j/web/testkit/validation/FileValidationServiceTest.java"]
         },
         "3.0.x": {
           "status": "supported",
-          "tests": ["ddd4j-extensions/ddd4j-extension-validation/src/test/java/io/ddd4j/extension/validation/FileValidationResultContractTest.java"]
+          "tests": ["ddd4j-web/ddd4j-web-testkit/src/test/java/io/ddd4j/web/testkit/validation/FileValidationServiceTest.java"]
         }
       }
     }

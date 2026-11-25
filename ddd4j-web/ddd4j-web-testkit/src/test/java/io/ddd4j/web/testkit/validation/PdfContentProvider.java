@@ -1,4 +1,4 @@
-package io.ddd4j.extension.validation;
+package io.ddd4j.web.testkit.validation;
 
 import io.github.easy4j.validation.file.UploadFile;
 import io.github.easy4j.validation.provider.FileContentCheckProvider;
