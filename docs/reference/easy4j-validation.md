@@ -1,23 +1,21 @@
-# Validation 扩展
+# Easy4j 校验接入
 
-本模块直接集成 `io.github.easy4j:validation-api-extension` 及 Office 解析器；数据权限约束也直接使用上游实现。
-通用校验注解、文件对象、策略、结果和 SPI 均使用 Easy4j 原生 API；DDD4J 不再定义另一套名字或转调包装。
-
-## 依赖
-
-使用 DDD4J BOM 管理版本后，引入：
+通过框架父 POM 继承，或显式导入 `io.ddd4j:ddd4j-dependencies` 管理依赖版本，然后直接声明组件。
 
 ```xml
 <dependency>
-    <groupId>io.ddd4j</groupId>
-    <artifactId>ddd4j-extension-validation</artifactId>
+    <groupId>io.github.easy4j</groupId>
+    <artifactId>validation-api-extension</artifactId>
+</dependency>
+<!-- 实际检测 Office 文件的应用额外引入 -->
+<dependency>
+    <groupId>org.apache.tika</groupId>
+    <artifactId>tika-parser-microsoft-module</artifactId>
+    <scope>runtime</scope>
 </dependency>
 ```
 
-`ddd4j-data-datascope` 已并入本模块，`ddd4j-web-validation` 已移除。
-升级时删除这两个旧依赖，避免旧类继续留在 classpath。
-文件检测依赖 Tika 4.0.0 Microsoft 解析模块及其传递依赖，未引入全量标准解析器。
-本模块不再依赖用于原包装对象的 `ddd4j-kit`。
+旧的 `io.ddd4j:ddd4j-extension-validation` 已移除。对应版本线的 Easy4j SNAPSHOT 已发布到阿里云私服。
 
 ## 直接使用组件
 
@@ -79,9 +77,4 @@ FileValidationResult result = new FileValidationService().validate(file, policy)
 
 未配置 Provider 必须报配置错误，不能默认放行；配置后 null 仍产生约束违规。旧 `nonNullAllowed()` 和默认 Provider Bean 已删除。这是明确的授权行为变更。SQL 数据范围机制保持其独立配置。
 
-本模块已无生产 Java 类型，保留 jar 依赖入口和 Office 解析器装配；auth 与 OTel 直接依赖上游权限契约。
-
-## 构件要求
-
-本次使用的 Easy4j snapshot 必须同时包含公共文件 API 和数据权限约束。消费项目必须取得对应构件，不能使用缺少这些类型的旧缓存。
-本地源码和测试通过不代表远端 snapshot 已发布。
+auth 与 OTel 直接依赖上游权限契约。

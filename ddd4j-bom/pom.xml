@@ -195,11 +195,6 @@
                 <artifactId>ddd4j-extension-monitor</artifactId>
                 <version>${revision}</version>
             </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-extension-validation</artifactId>
-                <version>${revision}</version>
-            </dependency>
 
             <!-- Ddd4j MQ Extensions -->
             <dependency>

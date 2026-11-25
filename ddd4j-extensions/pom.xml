@@ -26,7 +26,6 @@
         <module>ddd4j-extension-qrcode</module>
         <module>ddd4j-extension-qlexpress</module>
         <module>ddd4j-extension-monitor</module>
-        <module>ddd4j-extension-validation</module>
         <!-- 2026-09-04 从 1.0.x 同步：PF4J 插件 SPI 框架，三方保留 -->
         <module>ddd4j-extension-pf4j</module>
     </modules>

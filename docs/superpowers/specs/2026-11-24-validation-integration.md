@@ -63,3 +63,7 @@ flowchart LR
     V --> P[原 DataScope 约束与 Provider]
     A[auth / OTel] --> V
 ```
+
+## 退役空校验模块
+
+三条版本线移除旧校验构件及其 BOM/reactor 登记。直接依赖 Easy4j 的调用方按需配置 Microsoft 解析器。Web TestKit 保留基础约束、权限与真实文件的消费回归，校验依赖仅用于测试。

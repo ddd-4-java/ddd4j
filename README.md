@@ -134,7 +134,7 @@ ddd4j 当前 **三条主线并行演化**，HEAD 同步最新同语义提交：
 | `ddd4j-auth`         | 认证授权抽象        | `Subject` SPI + Sa-Token / Security / Shiro 实现                                                                                      |
 | `ddd4j-cache`        | 缓存抽象            | 缓存 SPI 及实现                                                                                                                       |
 | `ddd4j-runtime`      | 多框架运行时绑定    | Spring / Guice / Quarkus / Micronaut / Helidon / Vert.x / Dropwizard，加共享测试支持 testkit                                                        |
-| `ddd4j-extensions`   | 跨领域扩展          | akka / excel / jackson / license / monitor / pf4j / qlexpress / validation                                                            |
+| `ddd4j-extensions`   | 跨领域扩展          | akka / excel / jackson / license / monitor / pf4j / qlexpress                                                            |
 | `ddd4j-parent`       | Maven 父 POM        | 编译 / 打包 / 发布规则                                                                                                                |
 | `ddd4j-samples`      | 示例工程            | 共享 Order 业务内核，七个平台各有默认 DDD、CQRS、Sa-Token、Shiro 示例，共 28 项                                                                                                  |
 
@@ -163,14 +163,14 @@ ddd4j 当前 **三条主线并行演化**，HEAD 同步最新同语义提交：
 |------ddd4j-mq-spring                    # Spring Messaging 桥接
 |------ddd4j-mq-{kafka,rabbitmq,rocketmq,redis-stream,nats,pulsar,activemq,mqtt,mqtt-mica,ons,sqs,tdmq,disruptor}
 |----ddd4j-web                            # Web 抽象
-|------ddd4j-web-{webmvc,webflux,javalin,quarkus,vertx,micronaut,helidon,dropwizard,core,validation,testkit}
+|------ddd4j-web-{webmvc,webflux,javalin,quarkus,vertx,micronaut,helidon,dropwizard,core,testkit}
 |----ddd4j-auth                           # 认证 / 授权
 |------ddd4j-auth-{spring,satoken,security,shiro,datascope,license}
 |----ddd4j-cache                          # 缓存抽象
 |----ddd4j-runtime                         # 多框架运行时
 |------ddd4j-runtime-{spring,quarkus,guice,micronaut,vertx,helidon,dropwizard,testkit}
 |----ddd4j-extensions                     # 跨领域扩展
-|------ddd4j-extension-{akka,excel,jackson,license,monitor,pf4j,qlexpress,qrcode,validation,otel}
+|------ddd4j-extension-{akka,excel,jackson,license,monitor,pf4j,qlexpress,qrcode,otel}
 |----ddd4j-parent                         # 父 POM
 |----ddd4j-samples                        # 示例工程
 |--------ddd4j-sample-{order-*,javalin,javalin-cqrs,quarkus,quarkus-cqrs,quarkus-satoken,
@@ -179,7 +179,7 @@ ddd4j 当前 **三条主线并行演化**，HEAD 同步最新同语义提交：
 |                          dropwizard,dropwizard-cqrs}
 ```
 
-数据权限 Bean Validation 约束已并入 `ddd4j-extension-validation`；原 Java 包名保持兼容，Maven 坐标迁移与 Easy4j 集成说明见 [Validation 扩展](ddd4j-extensions/ddd4j-extension-validation/README.md)。
+文件校验与数据权限约束直接使用 Easy4j。依赖及配置见 [Easy4j 校验接入](docs/reference/easy4j-validation.md)。
 
 ## 7. 多框架运行时绑定
 

@@ -1769,9 +1769,9 @@
       },
       "reason": "JDK 8 的 Bean Validation 2 与 JDK 17/21 的 Jakarta Validation 3 使用精确 Payload 命名空间映射",
       "evidence": {
-        "1.0.x": "ddd4j-web/ddd4j-web-validation/src/test/java/io/ddd4j/web/validation/ValidationContractTest.java",
-        "2.0.x": "ddd4j-extensions/ddd4j-extension-validation/src/test/java/io/ddd4j/extension/validation/ValidationContractTest.java",
-        "3.0.x": "ddd4j-web/ddd4j-web-validation/src/test/java/io/ddd4j/web/validation/ValidationContractTest.java"
+        "1.0.x": "ddd4j-web/ddd4j-web-testkit/src/test/java/io/ddd4j/web/testkit/validation/ValidationContractTest.java",
+        "2.0.x": "ddd4j-web/ddd4j-web-testkit/src/test/java/io/ddd4j/web/testkit/validation/ValidationContractTest.java",
+        "3.0.x": "ddd4j-web/ddd4j-web-testkit/src/test/java/io/ddd4j/web/testkit/validation/ValidationContractTest.java"
       }
     },
     {
@@ -1783,9 +1783,9 @@
       },
       "reason": "自定义验证器在两代 Bean Validation 接口之间保留同一行为",
       "evidence": {
-        "1.0.x": "ddd4j-web/ddd4j-web-validation/src/test/java/io/ddd4j/web/validation/ValidationContractTest.java",
-        "2.0.x": "ddd4j-extensions/ddd4j-extension-validation/src/test/java/io/ddd4j/extension/validation/ValidationContractTest.java",
-        "3.0.x": "ddd4j-web/ddd4j-web-validation/src/test/java/io/ddd4j/web/validation/ValidationContractTest.java"
+        "1.0.x": "ddd4j-web/ddd4j-web-testkit/src/test/java/io/ddd4j/web/testkit/validation/ValidationContractTest.java",
+        "2.0.x": "ddd4j-web/ddd4j-web-testkit/src/test/java/io/ddd4j/web/testkit/validation/ValidationContractTest.java",
+        "3.0.x": "ddd4j-web/ddd4j-web-testkit/src/test/java/io/ddd4j/web/testkit/validation/ValidationContractTest.java"
       }
     },
     {
@@ -1797,9 +1797,9 @@
       },
       "reason": "自定义验证器上下文在两代 Bean Validation API 之间作精确类型映射",
       "evidence": {
-        "1.0.x": "ddd4j-web/ddd4j-web-validation/src/test/java/io/ddd4j/web/validation/ValidationContractTest.java",
-        "2.0.x": "ddd4j-extensions/ddd4j-extension-validation/src/test/java/io/ddd4j/extension/validation/ValidationContractTest.java",
-        "3.0.x": "ddd4j-web/ddd4j-web-validation/src/test/java/io/ddd4j/web/validation/ValidationContractTest.java"
+        "1.0.x": "ddd4j-web/ddd4j-web-testkit/src/test/java/io/ddd4j/web/testkit/validation/ValidationContractTest.java",
+        "2.0.x": "ddd4j-web/ddd4j-web-testkit/src/test/java/io/ddd4j/web/testkit/validation/ValidationContractTest.java",
+        "3.0.x": "ddd4j-web/ddd4j-web-testkit/src/test/java/io/ddd4j/web/testkit/validation/ValidationContractTest.java"
       }
     },
     {

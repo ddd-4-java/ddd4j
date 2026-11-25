@@ -44,3 +44,9 @@ CodeGraph 上游索引在用户授权后创建并检查为最新，72 文件、9
 以上为同一规格的后续修正；前述 903 项测试是修正前证据，不代表本轮验收。
 
 本轮：12 个 reactor clean verify 成功，897 项测试零失败/错误/跳过；validation 13 项。最终 JAR 只有 3 个 DataScope 类型；纯运行 classpath 的真实 DOCX/XLSX 校验通过。记录见报告“后续直接集成修正”。
+
+## 退役空校验模块
+
+- [x] 三线撤销旧模块坐标，回归迁至 Web TestKit。
+- [x] Javalin 和 Quarkus 直接使用 Easy4j 及 Office 解析器，Boot BOM 删除旧坐标。
+- [x] 三线受影响 reactor、Javalin 校验、Quarkus HTTP 上传及 Boot BOM 通过验证。
