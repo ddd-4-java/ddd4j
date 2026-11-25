@@ -1,5 +1,14 @@
 # Validation 整合实施记录
 
+## 数据权限下沉到 Easy4j（2026-11-25）
+
+- [x] 证明缺失 Provider 的默认放行缺陷，补齐上游及 Spring/OTel 行为测试。
+- [x] 上游唯一实现；DDD4J 删除重复类型并直接集成，更新接入说明。
+- [x] 补齐上游 2.0.x 必要的既有文件 API 前置；两仓三线适配与验证。
+- [x] 校验产物、分支一致性、工作区保护，记录最终证据。
+
+验收证据：`../../reports/2026-11-25-data-permissions-component.md`。
+
 规格：`../specs/2026-11-24-validation-integration.md`。
 
 - [x] 使用 CodeGraph 与当前源码核对 Easy4j 文件校验、上传模型、SPI 和 DDD4J 调用方。
