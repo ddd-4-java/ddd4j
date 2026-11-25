@@ -14,13 +14,14 @@
  */
 package io.ddd4j.extension.otel;
 
-import io.ddd4j.data.datascope.DataScopeProvider;
+import io.github.easy4j.validation.provider.DataScopeProvider;
 import io.opentelemetry.api.OpenTelemetry;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -57,11 +58,12 @@ class DataScopeSpanTest {
     }
 
     @Test
-    void evaluate_nonNullAllowedProvider_shouldCheckNullability() {
-        boolean result = DataScopeSpan.evaluate("Test", "valid-data", DataScopeProvider.nonNullAllowed());
+    void evaluate_shouldRespectApplicationPolicyForNullData() {
+        DataScopeProvider provider = (type, data) -> Objects.nonNull(data);
+        boolean result = DataScopeSpan.evaluate("Test", "valid-data", provider);
         assertThat(result).isTrue();
 
-        boolean nullResult = DataScopeSpan.evaluate("Test", null, DataScopeProvider.nonNullAllowed());
+        boolean nullResult = DataScopeSpan.evaluate("Test", null, provider);
         assertThat(nullResult).isFalse();
     }
 

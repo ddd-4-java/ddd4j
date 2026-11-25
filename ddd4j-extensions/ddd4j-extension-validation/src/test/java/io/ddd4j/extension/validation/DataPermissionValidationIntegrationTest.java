@@ -1,11 +1,13 @@
-package io.ddd4j.data.datascope;
+package io.ddd4j.extension.validation;
 
-import io.ddd4j.data.datascope.annotation.RequiresDataPermissions;
+import io.github.easy4j.validation.constraints.RequiresDataPermissions;
+import io.github.easy4j.validation.constraintvalidators.RequiresDataPermissionsValidator;
 import io.github.easy4j.validation.file.DefaultUploadFile;
 import io.github.easy4j.validation.constraints.FileNotEmpty;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorFactory;
 import jakarta.validation.Validation;
+import jakarta.validation.ValidationException;
 import jakarta.validation.ValidatorFactory;
 import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
 import org.junit.jupiter.api.Test;
@@ -14,9 +16,28 @@ import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /** 单个 validation 模块中执行数据权限与 Easy4j 文件约束。 */
 class DataPermissionValidationIntegrationTest {
+    @Test
+    void missingProviderMustNotAuthorizeNonNullData() {
+        try (ValidatorFactory factory = Validation.byDefaultProvider().configure()
+                .messageInterpolator(new ParameterMessageInterpolator()).buildValidatorFactory()) {
+            assertThatThrownBy(() -> factory.getValidator().validate(new Request("denied", "%PDF-1.7")))
+                    .isInstanceOf(ValidationException.class);
+        }
+    }
+
+    @Test
+    void missingProviderIsConfigurationErrorEvenForNullData() {
+        try (ValidatorFactory factory = Validation.byDefaultProvider().configure()
+                .messageInterpolator(new ParameterMessageInterpolator()).buildValidatorFactory()) {
+            assertThatThrownBy(() -> factory.getValidator().validate(new Request(null, "%PDF-1.7")))
+                    .isInstanceOf(ValidationException.class);
+        }
+    }
+
     @Test
     void realValidationUsesCustomProviderAlongsideEasy4jFileConstraint() {
         var configuration = Validation.byDefaultProvider().configure()

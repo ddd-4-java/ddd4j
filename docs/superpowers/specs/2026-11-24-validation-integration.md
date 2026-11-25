@@ -1,5 +1,21 @@
 # Validation 与 DataScope 整合
 
+## 数据权限下沉到 Easy4j（2026-11-25，当前授权）
+
+本次同时覆盖 validation-api-extension 与 DDD4J 的 1.0.x、2.0.x、3.0.x，覆盖下文历史阶段的保留包名和版本范围约束。本文继续作为两仓本次变更的唯一规格事实源。
+
+- 上游仅保留一套 constraints.RequiresDataPermissions、constraintvalidators.RequiresDataPermissionsValidator、provider.DataScopeProvider；不引入 DDD4J、Spring 或 ORM 依赖，不建立全局 Provider 注册表。
+- 未配置 Provider 时校验必须抛出配置异常，包括被校验值为 null 时；删除默认非空放行策略。配置后保持 null 拒绝、dataType 传递、groups/message/payload 和业务异常传播语义。
+- 普通 Bean Validation 通过现有 ConstraintValidatorFactory 显式提供 Provider；Spring 复用 LocalValidatorFactoryBean / SpringConstraintValidatorFactory 和标准 Inject 注入，保留应用定义策略和容器歧义检查，不实现重复工厂。
+- 删除 DDD4J validation、auth 中重复的注解、Provider、Validator，以及仅注册默认放行策略/静态上下文的旧配置。auth 保留 Spring 集成依赖入口；OTel 直接接收上游 Provider 并保留允许、拒绝、异常观测。
+- 两套旧注解包不提供兼容壳，消费者更新 import 并重编译。DDD4J validation 保留现有文件解析器集成；SQL 数据权限机制不在此次变更范围内。
+- 三条线分别使用 JDK 8/17/21，1.0.x 使用 javax，2.0.x/3.0.x 使用 jakarta。上游 2.0.x 补齐 DDD4J 已使用、其余两线已有的文件校验公共 API 前置，保留其已有依赖版本。
+- 真实 Bean Validation、Spring 容器注入/缺失/多 Provider、不同数据类型与并发隔离、文件约束并用、OTel 回归通过；核验实际消费构件和删除类型。保护所有原有未提交修改，不创建 worktree，不推送或远端发布。
+
+状态：本次权限下沉的实现和本地验证完成；测试、构件和分支交付证据见 `../../reports/2026-11-25-data-permissions-component.md`。未推送或远端发布。
+
+## 历史阶段记录（以下保留追溯，冲突以本次授权为准）
+
 状态：按用户明确要求取消 DDD4J 通用校验兼容包装，直接集成 Easy4j；本地实现与受影响验收完成，未提交或发布。本文是 DDD4J 与 validation-api-extension 本次整合的唯一规格事实源。
 
 ## 目标与边界

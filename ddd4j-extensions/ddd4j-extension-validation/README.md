@@ -1,6 +1,6 @@
 # Validation 扩展
 
-本模块直接集成 `io.github.easy4j:validation-api-extension`，额外提供 Easy4j 没有的业务数据权限约束。
+本模块直接集成 `io.github.easy4j:validation-api-extension` 及 Office 解析器；数据权限约束也直接使用上游实现。
 通用校验注解、文件对象、策略、结果和 SPI 均使用 Easy4j 原生 API；DDD4J 不再定义另一套名字或转调包装。
 
 ## 依赖
@@ -67,12 +67,21 @@ FileValidationResult result = new FileValidationService().validate(file, policy)
 
 ## 数据权限
 
-保留 `io.ddd4j.data.datascope` 下的 provider、validator 和注解，这是组件没有的业务扩展。
-`DataScopeProvider` 需要由业务提供，并通过构造器或 `ConstraintValidatorFactory` 显式接入。
-默认非空策略只是既有行为，不代表业务授权已经接入；仅在容器中注册 provider 不保证自动使用。
-本次直接集成修正不改变授权策略、SQL 数据范围或 Spring auth 装配行为。
+注解、Provider 和 Validator 统一由 Easy4j 提供，DDD4J 不再声明另一套类型：
+
+| 旧类型（data/auth 两套包） | 上游类型 |
+| --- | --- |
+| `annotation.RequiresDataPermissions` | `io.github.easy4j.validation.constraints.RequiresDataPermissions` |
+| `DataScopeProvider` | `io.github.easy4j.validation.provider.DataScopeProvider` |
+| `RequiresDataPermissionsValidator` | `io.github.easy4j.validation.constraintvalidators.RequiresDataPermissionsValidator` |
+
+更新 import 并重新编译消费者。普通 Bean Validation 通过现有 `ConstraintValidatorFactory` 显式传入 Provider；Spring 应用注册上游 Provider Bean 并使用原生 `LocalValidatorFactoryBean`，标准 `@Inject` 负责注入。不需要旧的 DataScopeAutoConfiguration、静态 SpringContextUtils 或重复工厂。
+
+未配置 Provider 必须报配置错误，不能默认放行；配置后 null 仍产生约束违规。旧 `nonNullAllowed()` 和默认 Provider Bean 已删除。这是明确的授权行为变更。SQL 数据范围机制保持其独立配置。
+
+本模块已无生产 Java 类型，保留 jar 依赖入口和 Office 解析器装配；auth 与 OTel 直接依赖上游权限契约。
 
 ## 构件要求
 
-本次使用的 Easy4j snapshot 包含公共文件 API。消费项目必须取得对应构件，不能使用缺少这些类型的旧缓存。
+本次使用的 Easy4j snapshot 必须同时包含公共文件 API 和数据权限约束。消费项目必须取得对应构件，不能使用缺少这些类型的旧缓存。
 本地源码和测试通过不代表远端 snapshot 已发布。
