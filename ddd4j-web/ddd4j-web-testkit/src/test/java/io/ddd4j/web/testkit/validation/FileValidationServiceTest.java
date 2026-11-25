@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.ddd4j.extension.validation;
+package io.ddd4j.web.testkit.validation;
 
 import java.util.Arrays;
 
@@ -41,6 +41,13 @@ import java.util.zip.ZipOutputStream;
 class FileValidationServiceTest {
 
     private final FileValidationService service = new FileValidationService();
+
+    @Test
+    void valueStringIncludesFieldNamesForSuccessAndFailure() {
+        assertThat(FileValidationResult.valid(null).toString()).contains("valid=true", "failure=null", "detectedType=null");
+        assertThat(FileValidationResult.invalid(FileValidationFailure.EMPTY, null).toString())
+                .contains("valid=false", "failure=EMPTY", "detectedType=null");
+    }
 
     @Test
     void shouldValidateSupportedDocumentSignatures() throws IOException {

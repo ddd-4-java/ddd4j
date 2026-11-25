@@ -52,3 +52,9 @@ CodeGraph 上游索引在用户授权后创建并检查为最新，72 文件、9
 - [x] 无 record、产物与依赖检查；记录分支证据。
 
 验收证据见 [本分支验证报告](../../reports/2026-11-25-validation-mybatis-cross-line.md)。
+
+## 退役空校验模块
+
+- [x] 三线撤销旧模块坐标，回归迁至 Web TestKit。
+- [x] Javalin 和 Quarkus 直接使用 Easy4j 及 Office 解析器，Boot BOM 删除旧坐标。
+- [x] 三线受影响 reactor、Javalin 校验、Quarkus HTTP 上传及 Boot BOM 通过验证。

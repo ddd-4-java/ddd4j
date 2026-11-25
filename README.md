@@ -132,7 +132,7 @@ ddd4j 当前 **三条主线并行演化**，HEAD 同步最新同语义提交：
 | `ddd4j-auth`         | 认证授权抽象        | `Subject` SPI + Sa-Token / Security / Shiro 实现                                                                                      |
 | `ddd4j-cache`        | 缓存抽象            | 缓存 SPI 及实现                                                                                                                       |
 | `ddd4j-runtime`      | 多框架运行时绑定    | Spring / Quarkus / Guice / Micronaut / Vert.x / Helidon / Dropwizard / Testkit                                                        |
-| `ddd4j-extensions`   | 跨领域扩展          | akka / excel / jackson / license / monitor / pf4j / qlexpress / validation                                                            |
+| `ddd4j-extensions`   | 跨领域扩展          | akka / excel / jackson / license / monitor / pf4j / qlexpress                                                            |
 | `ddd4j-parent`       | Maven 父 POM        | 编译 / 打包 / 发布规则                                                                                                                |
 | `ddd4j-samples`      | 示例工程            | 共享 Order 业务内核 + 9 种运行时示例                                                                                                  |
 
@@ -164,14 +164,14 @@ ddd4j 当前 **三条主线并行演化**，HEAD 同步最新同语义提交：
 |------ddd4j-mq-spring                    # Spring Messaging 桥接
 |------ddd4j-mq-{kafka,rabbitmq,rocketmq,redis-stream,nats,pulsar,activemq,mqtt,mqtt-mica,ons,sqs,tdmq,disruptor}
 |----ddd4j-web                            # Web 抽象
-|------ddd4j-web-{webmvc,webflux,javalin,quarkus,vertx,micronaut,helidon,dropwizard,core,validation,testkit}
+|------ddd4j-web-{webmvc,webflux,javalin,quarkus,vertx,micronaut,helidon,dropwizard,core,testkit}
 |----ddd4j-auth                           # 认证 / 授权
 |------ddd4j-auth-{spring,satoken,security,shiro,datascope,license}
 |----ddd4j-cache                          # 缓存抽象
 |----ddd4j-runtime                         # 多框架运行时
 |------ddd4j-runtime-{spring,quarkus,guice,micronaut,vertx,helidon,dropwizard,testkit}
 |----ddd4j-extensions                     # 跨领域扩展
-|------ddd4j-extension-{akka,excel,jackson,license,monitor,pf4j,qlexpress,qrcode,validation,otel}
+|------ddd4j-extension-{akka,excel,jackson,license,monitor,pf4j,qlexpress,qrcode,otel}
 |----ddd4j-parent                         # 父 POM
 |----ddd4j-samples                        # 示例工程
 |--------ddd4j-sample-{order-*,javalin,javalin-cqrs,quarkus,quarkus-cqrs,quarkus-satoken,

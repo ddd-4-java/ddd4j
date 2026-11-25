@@ -28,7 +28,6 @@
         <module>ddd4j-extension-qrcode</module>
         <module>ddd4j-extension-qlexpress</module>
         <module>ddd4j-extension-monitor</module>
-        <module>ddd4j-extension-validation</module>
         <!-- 1.0.x 独有扩展保留（Akka / Jackson 增强 / PF4J 插件 SPI） -->
         <module>ddd4j-extension-pf4j</module>
     </modules>
