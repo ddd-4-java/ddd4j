@@ -13,7 +13,7 @@ class SqlObservationJsonContractTest {
     void jsonRoundTripPreservesObservationFields() throws Exception {
         SqlObservation original = new SqlObservation(
                 "OrderMapper.select", "SELECT * FROM orders", 3_500_000L, null);
-        ObjectMapper mapper = new JsonMapper();
+        ObjectMapper mapper = new ObjectMapper();
 
         SqlObservation restored = mapper.readValue(mapper.writeValueAsString(original), SqlObservation.class);
 

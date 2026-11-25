@@ -13,31 +13,17 @@
  * limitations under the License.
  */
 package io.ddd4j.data.mybatis.repository;
-import io.ddd4j.kit.lang.MappingKit;
 
-import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.MybatisUtils;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
-import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
-import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
-import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
-import com.baomidou.mybatisplus.extension.repository.AbstractRepository;
-import com.baomidou.mybatisplus.extension.repository.IRepository;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import io.ddd4j.annotation.orm.*;
 import io.ddd4j.core.api.Page;
@@ -52,74 +38,41 @@ import io.ddd4j.core.ddd.model.metadata.DomainModelInfo;
 import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
 import io.ddd4j.kit.lang.BeanKit;
+import io.ddd4j.kit.lang.MappingKit;
 import io.ddd4j.kit.lang.StrKit;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
-import org.slf4j.Logger;
+import org.apache.ibatis.executor.BatchResult;
+import org.apache.ibatis.exceptions.PersistenceException;
 
 import java.io.Serializable;
+import java.sql.Statement;
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.Objects;
-import java.util.function.Function;
 
 /**
- * MyBatis-Plus 仓储抽象基类（PO↔Domain 映射 + 充血查询 + 自动填充）。
+ * MyBatis-Plus 聚合仓储：组合 Mapper，负责领域映射、查询翻译和业务字段填充。
  *
- * <h2>类继承链</h2>
- * <pre>{@code
- * MybatisAggregateRepository<MP, M, P, Q, ID>
- *   └─ extends AbstractRepository<MP, P>             // mybatis-plus-extension（无 Spring 依赖）
- *   └─ implements DomainObjectMapper<M, P>            // PO↔Domain 映射
- *   └─ implements Repository<M, ID>                   // ddd4j 聚合根仓储（含充血查询方法）
- * }</pre>
+ * <p>业务仓储可通过 {@link io.ddd4j.data.mybatis.repository.impl.BaseRepositoryImpl} 接入，
+ * 原生 PO CRUD 使用 {@link #getBaseMapper()}。
+ * 领域批量方法委托 {@link BaseMapper} 集合 API，不再继承面向 PO 的 Repository。
+ * 批量会话及事务行为遵循组件实现，本类不声明自动加入调用方事务。</p>
  *
- * <h3>充血查询与 COLA 合规</h3>
- * <p>充血查询对象 {@link Query}{@code <M>} 绑定<b>聚合根类型</b>（不是 PO），
- * 因此 Domain 层（如 ddd4j-boot-sample-layered 的 {@code UserQuery}）无需 import PO 类。
- * 字段引用 {@code User::getStatus} 由基础设施层（本类）翻译为 PO 列名
- * （{@code userPO.status}），翻译逻辑通过 {@code DomainModelHelper} 缓存的
- * {@link DomainModelInfo} 完成（{@code @DomainField} 注解 + 默认约定）。
- *
- * <h3>充血查询链路注册（父类构造器完成）</h3>
- * <p>本类在 3 个构造器中调用 {@link #registerToRepositoryRegistry()}，
- * 让所有继承本类的仓储自动注册到 {@link RepositoryRegistry}，
- * 实现 {@code new XxxQuery().list()} 充血查询零配置。
- *
- * <h3>为什么不直接继承 ServiceImpl</h3>
- * <p>{@code ServiceImpl.updateBatchById(Collection<T>)} 返回 {@code boolean}，
- * ddd4j {@code Repository.batchUpdateById(Collection<M>)} 返回 {@code int}，
- * 同时实现两者将触发 JLS §8.4.8.3 重复方法错误。
- *
- * @param <MP> MyBatis-Plus Mapper interface (extends {@code BaseMapper<P>})
- * @param <M>  aggregate root type（<b>领域模型，不是 PO</b>）
- * @param <P>  persistence object type, usually named {@code *PO}
- * @param <Q>  query object type (extends {@link Query}{@code <M>}) — <b>充血查询反向索引 key</b>
- * @param <ID> aggregate identity type
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 2.0.x
+ * @param <MP> Mapper 类型
+ * @param <M> 聚合根类型，必须使用同一个 ID 类型
+ * @param <P> 持久化对象类型
+ * @param <Q> 领域查询类型
+ * @param <ID> 聚合根标识类型
  */
+@Slf4j
 @SuppressWarnings("unchecked")
-public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M extends AggregateRoot<?>, P, Q extends Query<M>, ID extends Serializable>
-        extends AbstractRepository<MP, P>
+public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M extends AggregateRoot<ID>, P, Q extends Query<M>, ID extends Serializable>
         implements DomainObjectMapper<M, P>, Repository<M, ID> {
-
-    @Slf4j
-    private static final class ApplicationLog {
-
-        private ApplicationLog() {
-        }
-
-        private static Logger logger() {
-            return log;
-        }
-    }
 
     /**
      * MyBatis-Plus Mapper 实例（无 Spring 注入，业务方通过 {@code setBaseMapper(...)} 或构造器手动注入）。
@@ -171,7 +124,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
      * @param persistenceObjectClass 持久化对象类型
      */
     protected MybatisAggregateRepository(MP baseMapper, Class<M> modelClass, Class<P> persistenceObjectClass) {
-        this.configureTypes(modelClass, persistenceObjectClass, null);
+        this.configureTypes(modelClass, persistenceObjectClass, resolveQueryClass());
         this.setBaseMapper(baseMapper);
         this.registerToRepositoryRegistry();
     }
@@ -260,6 +213,9 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
      * MyBatis-Plus 会按其自身规则重新绑定元数据。
      */
     private TableInfo resolveTableInfo(Class<P> type) {
+        if (Objects.isNull(type)) {
+            return null;
+        }
         TableInfo resolved = TableInfoHelper.getTableInfo(type);
         if (Objects.nonNull(resolved)) {
             return resolved;
@@ -277,8 +233,8 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
      * {@link RepositoryRegistry#repositoryForQuery(Class)} → 通过 {@code Q.class} 找到本仓储。
      */
     protected void registerToRepositoryRegistry() {
-        Class<M> mc = resolveModelClass();
-        Class<? extends Query<M>> qc = resolveQueryClass();
+        Class<M> mc = modelClass;
+        Class<? extends Query<M>> qc = queryClass;
         if (Objects.nonNull(mc) && Objects.nonNull(qc)) {
             RepositoryRegistry.register(mc, qc, this);
         } else if (Objects.nonNull(mc)) {
@@ -287,9 +243,9 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
     }
 
     /**
-     * {@link IRepository} 抽象方法实现 —— 返回当前仓储持有的 MyBatis-Plus Mapper。
+     * 返回当前仓储持有的 Mapper；原生 PO 操作直接使用该组件。
+     * @return MyBatis-Plus Mapper
      */
-    @Override
     public MP getBaseMapper() {
         if (Objects.isNull(this.baseMapper)) {
             throw new IllegalStateException(
@@ -364,31 +320,21 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
                         + " does not exist on " + persistenceObjectClass().getName()));
     }
 
-    /**
-     * 配置 MyBatis-Plus 映射器。
-     *
-     * @param mapper MyBatis-Plus 映射器
-     */
-    public void setMapper(MP mapper) {
-        this.baseMapper = Objects.requireNonNull(mapper, "mapper must not be null");
-    }
-
     // ========================= MyBatis-Plus 原生 Wrapper API（CQRS 查询优势） =========================
-    // 以下方法暴露 MyBatis-Plus 的 QueryWrapper / LambdaQueryWrapper / UpdateWrapper / LambdaUpdateWrapper，
-    // 让业务方在需要复杂条件查询时直接使用原生链式 API，自动注入租户/系统隔离条件。
+    // 仅保留增加租户/系统条件的业务入口；其他 Wrapper 直接使用 MyBatis-Plus。
 
     /**
      * 创建带租户/系统隔离的 {@link QueryWrapper}（CQRS 读侧复杂查询入口）。
      *
      * <pre>{@code
-     * List<UserPO> list = repo.queryWrapper()
+     * QueryWrapper<UserPO> wrapper = repo.queryWrapper()
      *     .select("id", "name", "phone")
      *     .eq("status", "ACTIVE")
      *     .like("name", "张")
      *     .ge("create_time", startTime)
      *     .orderByDesc("create_time")
-     *     .last("LIMIT 10")
-     *     .getEntityList(getBaseMapper());
+     *     .last("LIMIT 10");
+     * List<UserPO> list = repo.getBaseMapper().selectList(wrapper);
      * }</pre>
      *
      * @return 已注入租户/系统条件的 QueryWrapper
@@ -405,114 +351,6 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
     public QueryWrapper<P> queryWrapperIgnoreTenant() {
         return getDefaultWrapper(true);
     }
-
-    /**
-     * 创建 {@link LambdaQueryWrapper}（类型安全的字段引用，编译期检查）。
-     *
-     * <pre>{@code
-     * UserPO user = repo.lambdaQuery()
-     *     .eq(UserPO::getPhone, "13800138000")
-     *     .one();
-     * }</pre>
-     *
-     * @return LambdaQueryWrapper（注意：Lambda 模式不自动注入租户/系统条件，
-     * 如需隔离请在链式调用中手动追加 {@code .eq(Entity::getTenantId, ThreadContext.get(...))}）
-     */
-    public LambdaQueryWrapper<P> lambdaQueryWrapper() {
-        return Wrappers.lambdaQuery(persistenceObjectClass());
-    }
-
-    /**
-     * 创建 {@link LambdaUpdateWrapper}（类型安全的更新条件，CQRS 写侧复杂更新入口）。
-     *
-     * <pre>{@code
-     * repo.lambdaUpdate()
-     *     .eq(UserPO::getStatus, "INACTIVE")
-     *     .set(UserPO::getStatus, "DELETED")
-     *     .update();
-     * }</pre>
-     *
-     * @return LambdaUpdateWrapper
-     */
-    public LambdaUpdateWrapper<P> lambdaUpdateWrapper() {
-        return Wrappers.lambdaUpdate(persistenceObjectClass());
-    }
-
-    /**
-     * 创建 {@link UpdateWrapper}（字符串字段名的更新条件）。
-     *
-     * <pre>{@code
-     * repo.updateWrapper()
-     *     .eq("status", "INACTIVE")
-     *     .set("status", "DELETED")
-     *     .update();
-     * }</pre>
-     *
-     * @return UpdateWrapper
-     */
-    public UpdateWrapper<P> updateWrapper() {
-        return new UpdateWrapper<>();
-    }
-
-    /**
-     * 创建 {@link QueryChainWrapper}（链式查询，自动执行）。
-     *
-     * <pre>{@code
-     * List<P> list = repo.queryChain().eq("status", "ACTIVE").list();
-     * long count = repo.queryChain().eq("status", "ACTIVE").count();
-     * }</pre>
-     *
-     * @return QueryChainWrapper（绑定到当前 mapper，链式调用末尾自动执行 SQL）
-     */
-    public QueryChainWrapper<P> queryChain() {
-        return new QueryChainWrapper<>(getBaseMapper());
-    }
-
-    /**
-     * 创建 {@link LambdaQueryChainWrapper}（类型安全的链式查询，自动执行）。
-     *
-     * <pre>{@code
-     * P user = repo.lambdaQueryChain().eq(P::getPhone, "13800138000").one();
-     * }</pre>
-     *
-     * @return LambdaQueryChainWrapper（绑定到当前 mapper）
-     */
-    public LambdaQueryChainWrapper<P> lambdaQueryChain() {
-        return new LambdaQueryChainWrapper<>(getBaseMapper());
-    }
-
-    /**
-     * 创建 {@link UpdateChainWrapper}（链式更新，自动执行）。
-     *
-     * <pre>{@code
-     * boolean success = repo.updateChain()
-     *     .eq("status", "INACTIVE")
-     *     .set("status", "DELETED")
-     *     .update();
-     * }</pre>
-     *
-     * @return UpdateChainWrapper（绑定到当前 mapper，链式调用末尾自动执行 UPDATE）
-     */
-    public UpdateChainWrapper<P> updateChain() {
-        return new UpdateChainWrapper<>(getBaseMapper());
-    }
-
-    /**
-     * 创建 {@link LambdaUpdateChainWrapper}（类型安全的链式更新，自动执行）。
-     *
-     * <pre>{@code
-     * boolean success = repo.lambdaUpdateChain()
-     *     .eq(P::getStatus, "INACTIVE")
-     *     .set(P::getStatus, "DELETED")
-     *     .update();
-     * }</pre>
-     *
-     * @return LambdaUpdateChainWrapper（绑定到当前 mapper）
-     */
-    public LambdaUpdateChainWrapper<P> lambdaUpdateChain() {
-        return new LambdaUpdateChainWrapper<>(getBaseMapper());
-    }
-
 
     /**
      * 获取聚合根模型类型。
@@ -532,123 +370,98 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return Objects.requireNonNull(persistenceObjectClass, "persistenceObjectClass must not be null");
     }
 
-    // ========================= IRepository 抽象方法实现（替代 CrudRepository 父类，去 Spring 依赖） =========================
-
     /**
-     * IRepository 抽象方法：单条 insert or update。
+     * 批量插入聚合根，并将生成的主键和填充字段回写到原对象。
+     * @param aggregates 聚合根集合；null 或空集合不执行 SQL
+     * @return 按输入顺序排列的原聚合根
      */
     @Override
-    public boolean saveOrUpdate(P entity) {
-        return getBaseMapper().insertOrUpdate(entity);
-    }
-
-    /**
-     * IRepository 抽象方法：{@link Wrapper} 查询单条（throwEx 决定抛异常还是返回 null）。
-     */
-    @Override
-    public P getOne(Wrapper<P> queryWrapper, boolean throwEx) {
-        return getBaseMapper().selectOne(queryWrapper, throwEx);
-    }
-
-    /**
-     * IRepository 抽象方法：{@link Wrapper} 查询单条（Optional 形式）。
-     */
-    @Override
-    public Optional<P> getOneOpt(Wrapper<P> queryWrapper, boolean throwEx) {
-        return Optional.ofNullable(getBaseMapper().selectOne(queryWrapper, throwEx));
-    }
-
-    /**
-     * IRepository 抽象方法：{@link Wrapper} 查询单条 Map。
-     */
-    @Override
-    public Map<String, Object> getMap(Wrapper<P> queryWrapper) {
-        return SqlHelper.getObject(this.log, getBaseMapper().selectMaps(queryWrapper));
-    }
-
-    /**
-     * IRepository 抽象方法：{@link Wrapper} 查询单条对象（带转换函数）。
-     */
-    @Override
-    public <V> V getObj(Wrapper<P> queryWrapper, Function<? super Object, V> mapper) {
-        List<V> list = listObjs(queryWrapper, mapper);
-        return SqlHelper.getObject(this.log, list);
-    }
-
-    /**
-     * IRepository 抽象方法：按 ID 删除（支持自动填充）。
-     */
-    @Override
-    public boolean removeById(Serializable id, boolean useFill) {
-        return SqlHelper.retBool(getBaseMapper().deleteById(id, useFill));
-    }
-
-    // ========================= CrudRepository 批量方法（PO 维度，无 Spring 依赖） =========================
-
-    /**
-     * 批量插入（对应 MyBatis-Plus {@code CrudRepository.saveBatch}，去 Spring 版本）。
-     * <p>JdbcBatch 执行 INSERT_ONE，事务由 {@code @Transactional} 在子类或调用方控制。
-     */
-    @Override
-    public boolean saveBatch(Collection<P> entityList, int batchSize) {
-        String sqlStatement = getSqlStatement(SqlMethod.INSERT_ONE);
-        return executeBatch(entityList, batchSize, (sqlSession, entity) -> sqlSession.insert(sqlStatement, entity));
-    }
-
-    /**
-     * 批量保存或更新（PO 维度）。
-     */
-    @Override
-    public boolean saveOrUpdateBatch(Collection<P> entityList, int batchSize) {
-        TableInfo tableInfoLocal = tableInfo();
-        if (Objects.isNull(tableInfoLocal)) {
-            throw new IllegalArgumentException(
-                    "error: can not execute. because can not find cache of TableInfo for entity " + this.getEntityClass());
+    public List<M> saveBatch(Collection<M> aggregates) {
+        List<M> models = batchModels(aggregates);
+        if (models.isEmpty()) {
+            return models;
         }
-        String keyProperty = tableInfoLocal.getKeyProperty();
-        if (!StringUtils.isNotEmpty(keyProperty)) {
-            throw new IllegalArgumentException(
-                    "error: can not execute. because can not find column for id from entity " + this.getEntityClass());
-        }
-        return SqlHelper.saveOrUpdateBatch(getSqlSessionFactory(), (Class<?>) this.getMapperClass(), this.log, entityList, batchSize,
-                (sqlSession, entity) -> {
-                    Object idVal = Objects.isNull(tableInfoLocal.getKeyProperty()) ? null : tableInfoLocal.getKeyProperty();
-                    try {
-                        Field keyField = entity.getClass().getDeclaredField(keyProperty);
-                        keyField.setAccessible(true);
-                        idVal = keyField.get(entity);
-                    } catch (Exception ignored) {
-                    }
-                    return StringUtils.isEmpty((String) idVal)
-                            || CollUtil.isEmpty(sqlSession.selectList(getSqlStatement(SqlMethod.SELECT_BY_ID), entity));
-                },
-                (sqlSession, entity) -> {
-                    MapperMethod.ParamMap<P> param = new MapperMethod.ParamMap<>();
-                    param.put(Constants.ENTITY, entity);
-                    return sqlSession.update(getSqlStatement(SqlMethod.UPDATE_BY_ID), param);
-                });
+        List<P> values = models.stream().map(this::toPersistenceObject).toList();
+        values.forEach(this::insertFill);
+        affectedRows(getBaseMapper().insert(values));
+        completeBatch(values, models);
+        return models;
     }
 
     /**
-     * 批量按 ID 更新（PO 维度）。
+     * 批量按 ID 更新；不存在的记录不插入。
+     * @param aggregates 待更新聚合根
+     * @return JDBC 影响行数；SUCCESS_NO_INFO 按一条成功语句计数
      */
     @Override
-    public boolean updateBatchById(Collection<P> entityList, int batchSize) {
-        String sqlStatement = getSqlStatement(SqlMethod.UPDATE_BY_ID);
-        return executeBatch(entityList, batchSize, (sqlSession, entity) -> {
-            MapperMethod.ParamMap<P> param = new MapperMethod.ParamMap<>();
-            param.put(Constants.ENTITY, entity);
-            return sqlSession.update(sqlStatement, param);
-        });
+    public int updateBatchById(Collection<M> aggregates) {
+        List<M> models = batchModels(aggregates);
+        if (models.isEmpty()) {
+            return 0;
+        }
+        List<P> values = models.stream().map(this::toPersistenceObject).toList();
+        values.forEach(this::updateFill);
+        int count = affectedRows(getBaseMapper().updateById(values));
+        completeBatch(values, models);
+        return count;
     }
 
     /**
-     * 获取 mapperStatementId（CrudRepository.getSqlStatement 的非 Spring 版本）。
-     * @return MyBatis-Plus 语句标识
-     * @param sqlMethod MyBatis-Plus SQL 方法
+     * 批量保存或更新；主键识别与批量执行由 Mapper 负责。
+     * @param aggregates 待保存聚合根
+     * @return JDBC 影响行数；SUCCESS_NO_INFO 按一条成功语句计数
      */
-    protected String getSqlStatement(SqlMethod sqlMethod) {
-        return SqlHelper.getSqlStatement(this.getMapperClass(), sqlMethod);
+    @Override
+    public int insertOrUpdateBatch(Collection<M> aggregates) {
+        List<M> models = batchModels(aggregates);
+        if (models.isEmpty()) {
+            return 0;
+        }
+        List<P> values = models.stream().map(this::toPersistenceObject).toList();
+        // 沿用单个聚合保存的业务填充规则；不重新实现组件的主键读取或批量执行。
+        for (int i = 0; i < models.size(); i++) {
+            if (shouldInsert(models.get(i))) {
+                insertFill(values.get(i));
+            } else {
+                updateFill(values.get(i));
+            }
+        }
+        int count = affectedRows(getBaseMapper().insertOrUpdate(values));
+        completeBatch(values, models);
+        return count;
+    }
+
+    private List<M> batchModels(Collection<M> aggregates) {
+        if (Objects.isNull(aggregates)) {
+            return Collections.emptyList();
+        }
+        // 在任何查询或写入前验证全部元素，避免半途才遇到非法输入。
+        return List.copyOf(aggregates);
+    }
+
+    private void completeBatch(List<P> values, List<M> models) {
+        // 组件批量写入使用独立会话，清除原会话缓存以保证下一次查询可见。
+        MybatisUtils.getMapperProxy(getBaseMapper()).getSqlSession().clearCache();
+        for (int i = 0; i < values.size(); i++) {
+            BeanKit.copy(values.get(i), models.get(i));
+        }
+    }
+
+    private int affectedRows(List<BatchResult> results) {
+        int total = 0;
+        // SqlHelper.retBool 只有布尔结果；领域接口需要计数并接受未命中更新的 0。
+        for (BatchResult result : results) {
+            for (int count : result.getUpdateCounts()) {
+                if (count == Statement.SUCCESS_NO_INFO) {
+                    total = Math.addExact(total, 1);
+                } else if (count < 0) {
+                    throw new PersistenceException("Batch statement failed: " + count);
+                } else {
+                    total = Math.addExact(total, count);
+                }
+            }
+        }
+        return total;
     }
 
     @Override
@@ -696,52 +509,11 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         return aggregate;
     }
 
-    /**
-     * 主键存在则更新，否则插入（与 {@link #save(Object)} 同为 upsert 语义）。
-     */
-    @Override
-    public M insertOrUpdate(M aggregate) {
-        return save(aggregate);
-    }
-
-    /**
-     * 更新聚合根。
-     *
-     * @param aggregate 聚合根
-     * @return 更新后的聚合根
-     */
-    public M update(M aggregate) {
-        return updateById(aggregate);
-    }
-
-    /**
-     * 插入或更新聚合根。
-     *
-     * @param aggregate 聚合根
-     * @return 保存后的聚合根
-     */
-    public M saveOrUpdate(M aggregate) {
-        return insertOrUpdate(aggregate);
-    }
-
     @Override
     public void deleteById(ID id) {
         if (Objects.nonNull(id)) {
             getBaseMapper().deleteById(id);
         }
-    }
-
-    /**
-     * 删除匹配的聚合根。
-     *
-     * @param id 聚合根标识
-     * @return 是否删除成功
-     */
-    public boolean delete(Serializable id) {
-        if (Objects.isNull(id)) {
-            return false;
-        }
-        return SqlHelper.retBool(getBaseMapper().deleteById(id));
     }
 
     /**
@@ -798,13 +570,13 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
     }
 
     @Override
-    public long count(Query query) {
+    public long count(Query<M> query) {
         Long count = getBaseMapper().selectCount(getBaseWrapper(query));
         return Objects.nonNull(count) ? count : 0L;
     }
 
     @Override
-    public Optional<M> findFirst(Query query) {
+    public Optional<M> findFirst(Query<M> query) {
         QueryWrapper<P> wrapper = getBaseWrapper(query);
         wrapper.last("LIMIT 1");
         List<P> persistenceObjects = getBaseMapper().selectList(wrapper);
@@ -817,14 +589,14 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
     }
 
     @Override
-    public List<M> findList(Query query) {
+    public List<M> findList(Query<M> query) {
         List<M> models = convert(getBaseMapper().selectList(getBaseWrapper(query)));
         fillIfNecessary(query, models);
         return models;
     }
 
     @Override
-    public List<Map<String, Object>> maps(Query query) {
+    public List<Map<String, Object>> maps(Query<M> query) {
         return getBaseMapper().selectMaps(getBaseWrapper(query));
     }
 
@@ -841,68 +613,8 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
     }
 
     @Override
-    public boolean deleteByQuery(Query query) {
+    public boolean deleteByQuery(Query<M> query) {
         return SqlHelper.retBool(getBaseMapper().delete(getBaseWrapper(query)));
-    }
-
-    /**
-     * 删除匹配的聚合根。
-     *
-     * @param query 查询条件
-     * @return 是否删除成功
-     */
-    public boolean delete(Query query) {
-        return deleteByQuery(query);
-    }
-
-    /**
-     * 按标识查询聚合根。
-     *
-     * @param id 聚合根标识
-     * @return 匹配的聚合根
-     */
-    public M get(Serializable id) {
-        return findById((ID) id).orElse(null);
-    }
-
-    /**
-     * 查询匹配的聚合根列表。
-     *
-     * @param query 查询条件
-     * @return 聚合根列表
-     */
-    public List<M> list(Query query) {
-        return findList(query);
-    }
-
-    /**
-     * 查询第一个匹配的聚合根。
-     *
-     * @param query 查询条件
-     * @return 首个匹配的聚合根
-     */
-    public M first(Query query) {
-        return findFirst(query).orElse(null);
-    }
-
-    /**
-     * 查询唯一匹配的聚合根。
-     *
-     * @param query 查询条件
-     * @return 唯一匹配的聚合根
-     */
-    public M one(Query query) {
-        return findFirst(query).orElse(null);
-    }
-
-    /**
-     * 检查匹配的聚合根是否存在。
-     *
-     * @param query 查询条件
-     * @return 是否存在匹配的聚合根
-     */
-    public boolean exist(Query query) {
-        return exists(query);
     }
 
     /**
@@ -1022,7 +734,6 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
      * @param query 查询条件
      * @return 基础查询包装器
      */
-    @SuppressWarnings("unchecked")
     protected QueryWrapper<P> getBaseWrapper(Query<M> query) {
         QueryWrapper<P> wrapper = getDefaultWrapper(query.isIgnoreTenantId());
         applyConditions(wrapper, query);
@@ -1036,10 +747,8 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
     /**
      * 将 Query.getWhereConditions() 转换为 MyBatis-Plus QueryWrapper 条件。
      */
-    @SuppressWarnings("unchecked")
     private void applyConditions(QueryWrapper<P> wrapper, Query<M> query) {
-        for (Object obj : query.getWhereConditions()) {
-            LambdaCondition condition = (LambdaCondition) obj;
+        for (LambdaCondition condition : query.getWhereConditions()) {
             String column = translateProperty(condition);
             switch (condition.operator()) {
                 case "=" -> wrapper.eq(column, condition.value());
@@ -1064,8 +773,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
      * 将 Query.getOrderByConditions() 转换为 QueryWrapper 排序。
      */
     private void applyOrderBy(Query<M> query, QueryWrapper<P> wrapper) {
-        for (Object obj : query.getOrderByConditions()) {
-            LambdaCondition orderBy = (LambdaCondition) obj;
+        for (LambdaCondition orderBy : query.getOrderByConditions()) {
             String column = translateProperty(orderBy);
             wrapper.orderBy(true, "ASC".equals(orderBy.operator()), column);
         }
@@ -1178,7 +886,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
             Object value = keyField.get(persistenceObject);
             return Objects.nonNull(value) ? value.toString() : null;
         } catch (IllegalAccessException | IllegalArgumentException exception) {
-            ApplicationLog.logger().error("获取当前实体对象的key值出现错误！", exception);
+            log.error("获取当前实体对象的key值出现错误！", exception);
             throw new IllegalArgumentException("获取当前实体对象的key值出现错误!");
         }
     }
@@ -1188,23 +896,12 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         if (Objects.isNull(ti.getKeyProperty())) {
             return;
         }
-        Field idField;
-        try {
-            idField = persistenceObjectClass().getDeclaredField(ti.getKeyProperty());
-            idField.setAccessible(true);
-        } catch (NoSuchFieldException e) {
-            return;
-        }
-        try {
-            Serializable id = (Serializable) idField.get(persistenceObject);
-            if (Objects.nonNull(id)) {
-                P updated = getBaseMapper().selectById(id);
-                if (Objects.nonNull(updated)) {
-                    BeanKit.copy(updated, aggregate);
-                }
+        Serializable id = (Serializable) ti.getPropertyValue(persistenceObject, ti.getKeyProperty());
+        if (Objects.nonNull(id)) {
+            P updated = getBaseMapper().selectById(id);
+            if (Objects.nonNull(updated)) {
+                BeanKit.copy(updated, aggregate);
             }
-        } catch (IllegalAccessException e) {
-            // ignore
         }
     }
 
@@ -1227,7 +924,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
                 }
             }
         } catch (IllegalAccessException ignored) {
-            ApplicationLog.logger().debug("Ignore insert fill failure: {}", ignored.getMessage());
+            log.debug("Ignore insert fill failure: {}", ignored.getMessage());
         }
     }
 
@@ -1239,7 +936,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
                 }
             }
         } catch (IllegalAccessException ignored) {
-            ApplicationLog.logger().debug("Ignore update fill failure: {}", ignored.getMessage());
+            log.debug("Ignore update fill failure: {}", ignored.getMessage());
         }
     }
 
@@ -1285,10 +982,13 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
     }
 
     private void fillDateField(Field field, P persistenceObject) throws IllegalAccessException {
-        if (field.getType().equals(LocalDateTime.class) && Objects.isNull(field.get(persistenceObject))) {
-            field.set(persistenceObject, LocalDateTime.now());
-        } else if (field.getType().equals(LocalDate.class) && Objects.isNull(field.get(persistenceObject))) {
-            field.set(persistenceObject, LocalDate.now());
+        if (Objects.nonNull(FieldUtils.readField(field, persistenceObject, true))) {
+            return;
+        }
+        if (field.getType().equals(LocalDateTime.class)) {
+            FieldUtils.writeField(field, persistenceObject, LocalDateTime.now(), true);
+        } else if (field.getType().equals(LocalDate.class)) {
+            FieldUtils.writeField(field, persistenceObject, LocalDate.now(), true);
         }
     }
 

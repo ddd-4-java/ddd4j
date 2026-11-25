@@ -14,47 +14,39 @@
  */
 package io.ddd4j.extension.validation;
 
+import io.github.easy4j.validation.file.DefaultUploadFile;
+import io.github.easy4j.validation.file.FileValidationService;
+import io.github.easy4j.validation.file.FileValidationPolicy;
+import io.github.easy4j.validation.file.FileValidationFailure;
+import io.github.easy4j.validation.file.FileValidationResult;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
-/**
- * 类型说明。
- * @author ddd4j
- * @since 3.0.x
- */
 class FileValidationServiceTest {
 
     private final FileValidationService service = new FileValidationService();
 
     @Test
-    void nullContentCheckerFailsAtConstruction() {
-        assertThatThrownBy(() -> new FileValidationService(file -> Optional.empty(),
-                Collections.singletonList(null)))
-                .isInstanceOf(NullPointerException.class);
-    }
-
-    @Test
     void shouldValidateSupportedDocumentSignatures() throws IOException {
         assertThat(validate("report.pdf", "application/pdf",
-                "%PDF-1.7\n".getBytes(StandardCharsets.US_ASCII)).valid()).isTrue();
+                "%PDF-1.7\n".getBytes(StandardCharsets.US_ASCII)).isValid()).isTrue();
         assertThat(validate("report.docx", "application/octet-stream",
-                ooxml("[Content_Types].xml", "word/document.xml")).valid()).isTrue();
+                ooxml("[Content_Types].xml", "word/document.xml")).isValid()).isTrue();
         assertThat(validate("report.xlsx", "application/octet-stream",
-                ooxml("[Content_Types].xml", "xl/workbook.xml")).valid()).isTrue();
-        assertThat(validate("report.doc", "application/octet-stream", ole("WordDocument")).valid()).isTrue();
-        assertThat(validate("report.xls", "application/octet-stream", ole("Workbook")).valid()).isTrue();
+                ooxml("[Content_Types].xml", "xl/workbook.xml")).isValid()).isTrue();
+        assertThat(validate("report.doc", "application/octet-stream", ole("WordDocument")).isValid()).isTrue();
+        assertThat(validate("report.xls", "application/octet-stream", ole("Workbook")).isValid()).isTrue();
     }
 
     @Test
@@ -64,8 +56,8 @@ class FileValidationServiceTest {
         FileValidationResult executable = validate("report.pdf", "application/pdf",
                 new byte[]{0x4D, 0x5A, 0x00, 0x00});
 
-        assertThat(renamed.failure()).isEqualTo(FileValidationFailure.SIGNATURE_MISMATCH);
-        assertThat(executable.failure()).isEqualTo(FileValidationFailure.TYPE_UNDETECTABLE);
+        assertThat(renamed.getFailure()).isEqualTo(FileValidationFailure.SIGNATURE_MISMATCH);
+        assertThat(executable.getFailure()).isEqualTo(FileValidationFailure.SIGNATURE_MISMATCH);
     }
 
     @Test
@@ -73,11 +65,18 @@ class FileValidationServiceTest {
         FileValidationPolicy optional = policyBuilder().required(false).build();
         FileValidationPolicy oneByte = policyBuilder().maxSizeBytes(1).build();
 
-        assertThat(service.validate(null, optional).valid()).isTrue();
-        assertThat(service.validate(file("report.pdf", "application/pdf", new byte[0]), policy()).failure())
+        assertThat(service.validate(null, optional).isValid()).isTrue();
+        assertThat(service.validate(file("report.pdf", "application/pdf", new byte[0]), policy()).getFailure())
                 .isEqualTo(FileValidationFailure.EMPTY);
-        assertThat(service.validate(file("report.pdf", "application/pdf", new byte[]{1, 2}), oneByte).failure())
+        assertThat(service.validate(file("report.pdf", "application/pdf", new byte[]{1, 2}), oneByte).getFailure())
                 .isEqualTo(FileValidationFailure.SIZE_EXCEEDED);
+    }
+
+    @Test
+    void shouldRejectMalformedOfficeContainer() throws IOException {
+        assertThat(validate("report.docx", "application/octet-stream",
+                malformedOoxml("[Content_Types].xml", "word/document.xml")).getFailure())
+                .isEqualTo(FileValidationFailure.SIGNATURE_MISMATCH);
     }
 
     private FileValidationResult validate(String fileName, String contentType, byte[] content) {
@@ -101,12 +100,29 @@ class FileValidationServiceTest {
                 .strict(true);
     }
 
-    private DefaultValidatableFile file(String fileName, String contentType, byte[] content) {
-        return new DefaultValidatableFile(fileName, contentType, content.length,
+    private DefaultUploadFile file(String fileName, String contentType, byte[] content) {
+        return new DefaultUploadFile("file", fileName, contentType, content.length,
                 () -> new ByteArrayInputStream(content));
     }
 
     private byte[] ooxml(String... entries) throws IOException {
+        try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+            if (java.util.Arrays.asList(entries).contains("word/document.xml")) {
+                try (XWPFDocument document = new XWPFDocument()) {
+                    document.createParagraph().createRun().setText("content");
+                    document.write(output);
+                }
+            } else {
+                try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+                    workbook.createSheet("data").createRow(0).createCell(0).setCellValue("content");
+                    workbook.write(output);
+                }
+            }
+            return output.toByteArray();
+        }
+    }
+
+    private byte[] malformedOoxml(String... entries) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         try (ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream)) {
             for (String entry : entries) {

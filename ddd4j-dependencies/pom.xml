@@ -779,6 +779,7 @@
         <maven-war-plugin.version>3.5.1</maven-war-plugin.version>
         <quarkus-failsafe-plugin.version>3.2.5</quarkus-failsafe-plugin.version>
         <quarkus-surefire-plugin.version>3.2.5</quarkus-surefire-plugin.version>
+        <tika.version>3.3.2</tika.version>
     </properties>
 
     <dependencyManagement>
@@ -7512,6 +7513,36 @@
                 <groupId>software.amazon.awssdk</groupId>
                 <artifactId>sqs</artifactId>
                 <version>2.30.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>mybatis-enhance-annotation</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>mybatis-enhance-core</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>mybatis-enhance-extension</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>mybatis-enhance-typehandler</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.tika</groupId>
+                <artifactId>tika-parser-microsoft-module</artifactId>
+                <version>${tika.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -11,8 +11,7 @@
 
     <artifactId>ddd4j-data-mybatisplus</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>ddd4j 数据层 - MyBatis-Plus 实现：BaseRepositoryImpl 四泛型封装、TypeHandler 实现、拦截器。 通过 ddd4j
-        自有字段加密、租户、观测 SPI 对接 MyBatis-Plus 官方扩展点， 将 ddd4j-data-crypto 的 CryptoStrategy 桥接为透明字段加解密能力。
+    <description>ddd4j 数据层 - MyBatis-Plus 实现：聚合仓储组合 BaseMapper、TypeHandler 实现、拦截器。 字段加解密和签名使用 mybatis-plus-enhance-extension。
     </description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
@@ -27,12 +26,6 @@
         <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-kit</artifactId>
-            <version>${revision}</version>
-        </dependency>
-        <!-- 加解密策略（CryptoStrategy SPI，桥接到 enhance EncryptedFieldHandler） -->
-        <dependency>
-            <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-data-crypto</artifactId>
             <version>${revision}</version>
         </dependency>
         <!-- MyBatis-Plus 核心 API：不使用会传递 mybatis-plus-spring 的聚合包 mybatis-plus -->
@@ -70,16 +63,12 @@
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-core</artifactId>
         </dependency>
-        <dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-crypto</artifactId>
-        </dependency>
         <!-- Commons Lang3 -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
-        <!-- DefaultEncryptedFieldHandler 直接使用 ObjectMapper -->
+        <!-- SQL 观测 JSON 契约 -->
         <dependency>
             <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>

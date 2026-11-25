@@ -18,12 +18,12 @@ import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.MybatisSqlSessionFactoryBuilder;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.enhance.plugins.MybatisPlusEnhanceInterceptor;
-import io.ddd4j.data.mybatis.config.Ddd4jMybatisPlusConfigurer;
+import io.ddd4j.data.mybatis.config.Ddd4jMybatisConfigurer;
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import io.ddd4j.data.mybatis.repository.impl.BaseRepositoryImpl;
+import io.ddd4j.data.mybatis.repository.MybatisAggregateRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.SqlSession;
@@ -32,7 +32,6 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 
 import javax.sql.DataSource;
-import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -55,7 +54,7 @@ public class Ddd4jMybatisGuiceModule extends AbstractModule {
      * 数据源
      */
     private final DataSource dataSource;
-    private Ddd4jMybatisPlusConfigurer configurer = new Ddd4jMybatisPlusConfigurer();
+    private Ddd4jMybatisConfigurer configurer = new Ddd4jMybatisConfigurer();
     /**
      * 注册的 Mapper 接口集
      */
@@ -99,15 +98,12 @@ public class Ddd4jMybatisGuiceModule extends AbstractModule {
     }
 
     /**
-     * configure() 方法。
-     */
-    /**
      * 配置当前会话工厂使用的增强能力。
      *
      * @param configurer 构建 MyBatis-Plus 增强链的装配器
      * @return 当前 Guice 模块
      */
-    public Ddd4jMybatisGuiceModule enhancements(Ddd4jMybatisPlusConfigurer configurer) {
+    public Ddd4jMybatisGuiceModule enhancements(Ddd4jMybatisConfigurer configurer) {
         this.configurer = Objects.requireNonNull(configurer, "configurer");
         return this;
     }
@@ -120,8 +116,9 @@ public class Ddd4jMybatisGuiceModule extends AbstractModule {
     }
 
     /**
-     * initRepositories() 方法。
-     * @param injector Guice 注入器。
+     * 将已注册 Mapper 注入对应 Repository。
+     *
+     * @param injector Guice 注入器
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     public void initRepositories(Injector injector) {
@@ -130,10 +127,9 @@ public class Ddd4jMybatisGuiceModule extends AbstractModule {
             Class<?> repositoryImpl = entry.getKey();
             Class<?> mapperInterface = entry.getValue();
             try {
-                BaseRepositoryImpl repository = (BaseRepositoryImpl) injector.getInstance(repositoryImpl);
+                MybatisAggregateRepository repository = (MybatisAggregateRepository) injector.getInstance(repositoryImpl);
                 Object mapper = sqlSession.getMapper(mapperInterface);
-                Method setMapper = BaseRepositoryImpl.class.getMethod("setBaseMapper", BaseMapper.class);
-                setMapper.invoke(repository, mapper);
+                repository.setBaseMapper((BaseMapper) mapper);
                 log.debug("Injected mapper {} into repository {}",
                         mapperInterface.getSimpleName(), repositoryImpl.getSimpleName());
             } catch (Exception exception) {
@@ -144,8 +140,9 @@ public class Ddd4jMybatisGuiceModule extends AbstractModule {
     }
 
     /**
-     * sqlSessionFactory() 方法。
-     * @return 方法执行结果。
+     * 创建包含已注册 Mapper 与拦截器的会话工厂。
+     *
+     * @return MyBatis 会话工厂
      */
     @Provides
     @Singleton
@@ -168,9 +165,10 @@ public class Ddd4jMybatisGuiceModule extends AbstractModule {
     }
 
     /**
-     * sqlSession() 方法。
-     * @param sqlSessionFactory sqlSessionFactory 参数。
-     * @return 方法执行结果。
+     * 从会话工厂创建按线程管理的会话代理。
+     *
+     * @param sqlSessionFactory MyBatis 会话工厂
+     * @return MyBatis 会话
      */
     @Provides
     @Singleton
