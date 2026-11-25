@@ -130,18 +130,18 @@
     {
       "path": "config/dependencies/alignment-policy.json",
       "sha256ByJdk": {
-        "8": "65999c1615dfee88a670b3416899a153a34b0bd86cd46019c3015ba30ee50cbf",
+        "8": "2002c291f52fcf283f2a9e26a71384f8c7fd2931ebca7e66a45096d396900b26",
         "17": "ef213f616f95855c56507a1fd060d6dbff826432f1de336baa0031a22b57239c",
-        "21": "d5e932e575753339d467d49734d6952de56de62e35145104beb2b08d73d6b253"
+        "21": "c78a9c6ed93523681bfa4d27e0dcbc314f720e1314cc02cf7f3b6e57f854b3cd"
       },
       "evidence": "三线分别执行 T03 strict-artifacts 门禁；这里仅豁免已哈希锁定的配置内容差异"
     },
     {
       "path": "config/dependencies/component-matrix.csv",
       "sha256ByJdk": {
-        "8": "ae636037a9748ce35d0a305ae0ee5f56c48f64db7d4525f4b8daf4221c215123",
+        "8": "491ee264ef93d5daf2d08589894f176fb4eae21f78db78048b1f666719f8046a",
         "17": "3a56eea707376105f8b0b32b5dd12fd5e01644fccd0c1decae1e36a222ee4674",
-        "21": "48cfd57cb7a221d0d6642786a0981b4c6776250da3f5fd9c3145dfbcb7643288"
+        "21": "6be2eaa4a802acfce88f4a93645974843f5b14301f95ed516f9beaa58c782fd3"
       },
       "evidence": "三线分别执行 T03 strict-artifacts 门禁；这里仅豁免已哈希锁定的组件矩阵差异"
     },
@@ -1182,7 +1182,11 @@
         "3.0.x": "jakarta.enterprise.inject.Instance"
       },
       "reason": "Quarkus 命令总线注入参数按本线 CDI API 适配，命令路由由三线集成测试验证",
-      "evidence": "ddd4j-data/ddd4j-data-cqrs-quarkus/src/test/java/io/ddd4j/data/cqrs/quarkus/QuarkusCommandBusIT.java"
+      "evidence": {
+        "1.0.x": "ddd4j-data/ddd4j-data-cqrs-quarkus/src/test/java/io/ddd4j/data/cqrs/quarkus/QuarkusCommandBusIT.java",
+        "2.0.x": "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/command/QuarkusCommandBusIT.java",
+        "3.0.x": "ddd4j-data/ddd4j-data-cqrs-quarkus/src/test/java/io/ddd4j/data/cqrs/quarkus/QuarkusCommandBusIT.java"
+      }
     },
     {
       "id": "cdi-bean-manager-namespace",
@@ -1242,7 +1246,11 @@
         "3.0.x": "io.dropwizard.core.Application"
       },
       "reason": "Dropwizard 应用基类在各版本中的精确包路径对应；命令总线装配另由三线测试验证",
-      "evidence": "ddd4j-data/ddd4j-data-cqrs-dropwizard/src/test/java/io/ddd4j/data/cqrs/dropwizard/DropwizardCommandBusIT.java"
+      "evidence": {
+        "1.0.x": "ddd4j-data/ddd4j-data-cqrs-dropwizard/src/test/java/io/ddd4j/data/cqrs/dropwizard/DropwizardCommandBusIT.java",
+        "2.0.x": "ddd4j-runtime/ddd4j-runtime-dropwizard/src/test/java/io/ddd4j/dropwizard/command/DropwizardCommandBusTest.java",
+        "3.0.x": "ddd4j-data/ddd4j-data-cqrs-dropwizard/src/test/java/io/ddd4j/data/cqrs/dropwizard/DropwizardCommandBusIT.java"
+      }
     },
     {
       "id": "dropwizard-configuration-package",

@@ -122,10 +122,10 @@
   {
     "property": "hsqldb.version",
     "jdk": 8,
-    "version": "2.5.2",
+    "version": "2.7.4",
     "max_base_class_jdk": 8,
-    "artifact_url": "https://repo.maven.apache.org/maven2/org/hsqldb/hsqldb/2.5.2/hsqldb-2.5.2.jar",
-    "sha256": "e4aa39c5afb318e8effdec80a0e6de7c9dacc453c1cf7666c515f29a16658dac"
+    "artifact_url": "https://repo.maven.apache.org/maven2/org/hsqldb/hsqldb/2.7.4/hsqldb-2.7.4-jdk8.jar",
+    "sha256": "ef5aadd0e7456bee48828b5e4655645ac306f937a7ec47e31e3fa3507c29b846"
   },
   {
     "property": "hikaricp.version",

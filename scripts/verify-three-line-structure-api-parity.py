@@ -1289,24 +1289,36 @@ def normalize_descriptor(value: str, mappings=(), line: str = "") -> str:
 
 def validate_type_mappings(mappings, roots: list[pathlib.Path]) -> None:
     """在源码清单阶段即拒绝无证据、重复或过宽映射。"""
+    versions = ("1.0.x", "2.0.x", "3.0.x")
+    if len(roots) != len(versions):
+        raise ValueError("type mapping evidence requires all three line roots")
     identifiers = set()
     for mapping in mappings:
         identifier = mapping.get("id", "")
         if identifier in identifiers:
             raise ValueError(f"duplicate type mapping id: {identifier}")
         identifiers.add(identifier)
-        evidence = pathlib.PurePosixPath(mapping.get("evidence", ""))
-        if evidence.is_absolute() or ".." in evidence.parts:
-            raise ValueError(f"invalid type mapping evidence path: {evidence}")
-        if not all((root / evidence).is_file() for root in roots):
-            raise ValueError(f"type mapping evidence missing in a line: {evidence}")
+        evidence = mapping.get("evidence")
+        if isinstance(evidence, str):
+            evidence = dict.fromkeys(versions, evidence)
+        if not isinstance(evidence, dict) or evidence.keys() != set(versions):
+            raise ValueError(f"invalid type mapping evidence for {identifier}: expected one path per line")
+        for version, root in zip(versions, roots):
+            relative_path = evidence[version]
+            if not isinstance(relative_path, str) or not relative_path.strip():
+                raise ValueError(f"invalid type mapping evidence path for {identifier} in {version}: {relative_path!r}")
+            path = pathlib.PurePosixPath(relative_path)
+            if path.is_absolute() or ".." in path.parts:
+                raise ValueError(f"invalid type mapping evidence path for {identifier} in {version}: {path}")
+            if not (root / path).is_file():
+                raise ValueError(f"type mapping evidence missing for {identifier} in {version}: {path}")
         if mapping.get("aliases"):
             alias_evidence = pathlib.PurePosixPath(mapping.get("aliasEvidence", ""))
             if alias_evidence.is_absolute() or ".." in alias_evidence.parts:
                 raise ValueError(f"invalid type mapping alias evidence path: {alias_evidence}")
             if not all((root / alias_evidence).is_file() for root in roots):
                 raise ValueError(f"type mapping alias evidence missing in a line: {alias_evidence}")
-    for version in ("1.0.x", "2.0.x", "3.0.x"):
+    for version in versions:
         normalize_descriptor("", mappings, version)
 
 
