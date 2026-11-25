@@ -14,6 +14,8 @@
  */
 package io.ddd4j.extension.otel;
 
+import io.github.easy4j.validation.provider.DataScopeProvider;
+
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.SpanKind;
@@ -22,7 +24,7 @@ import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Scope;
 
 /**
- * {@link io.ddd4j.data.datascope.DataScopeProvider} 数据作用域评估的 OTel Span 包装。
+ * {@link DataScopeProvider} 数据作用域评估的 OTel Span 包装。
  *
  * <p>为多租户过滤/数据权限评估提供 span 包装，
  * 无 OTel 时为 noop。
@@ -46,7 +48,7 @@ public final class DataScopeSpan {
      * @param provider DataScopeProvider 实例
      * @return 是否允许访问
      */
-    public static boolean evaluate(String dataType, Object data, io.ddd4j.data.datascope.DataScopeProvider provider) {
+    public static boolean evaluate(String dataType, Object data, DataScopeProvider provider) {
         if (!Ddd4jOtel.isAvailable()) {
             return provider.hasPermissions(dataType, data);
         }

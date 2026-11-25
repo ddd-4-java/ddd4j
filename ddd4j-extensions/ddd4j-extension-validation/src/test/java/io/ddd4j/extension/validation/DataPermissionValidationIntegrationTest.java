@@ -1,15 +1,13 @@
-package io.ddd4j.data.datascope;
+package io.ddd4j.extension.validation;
 
-import javax.validation.Validator;
-
-import javax.validation.Configuration;
-
-import io.ddd4j.data.datascope.annotation.RequiresDataPermissions;
+import io.github.easy4j.validation.constraints.RequiresDataPermissions;
+import io.github.easy4j.validation.constraintvalidators.RequiresDataPermissionsValidator;
 import io.github.easy4j.validation.file.DefaultUploadFile;
 import io.github.easy4j.validation.constraints.FileNotEmpty;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorFactory;
 import javax.validation.Validation;
+import javax.validation.ValidationException;
 import javax.validation.ValidatorFactory;
 import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
 import org.junit.jupiter.api.Test;
@@ -18,12 +16,31 @@ import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /** 单个 validation 模块中执行数据权限与 Easy4j 文件约束。 */
 class DataPermissionValidationIntegrationTest {
     @Test
+    void missingProviderMustNotAuthorizeNonNullData() {
+        try (ValidatorFactory factory = Validation.byDefaultProvider().configure()
+                .messageInterpolator(new ParameterMessageInterpolator()).buildValidatorFactory()) {
+            assertThatThrownBy(() -> factory.getValidator().validate(new Request("denied", "%PDF-1.7")))
+                    .isInstanceOf(ValidationException.class);
+        }
+    }
+
+    @Test
+    void missingProviderIsConfigurationErrorEvenForNullData() {
+        try (ValidatorFactory factory = Validation.byDefaultProvider().configure()
+                .messageInterpolator(new ParameterMessageInterpolator()).buildValidatorFactory()) {
+            assertThatThrownBy(() -> factory.getValidator().validate(new Request(null, "%PDF-1.7")))
+                    .isInstanceOf(ValidationException.class);
+        }
+    }
+
+    @Test
     void realValidationUsesCustomProviderAlongsideEasy4jFileConstraint() {
-        Configuration<?> configuration = Validation.byDefaultProvider().configure()
+        javax.validation.Configuration<?> configuration = Validation.byDefaultProvider().configure()
                 .messageInterpolator(new ParameterMessageInterpolator());
         ConstraintValidatorFactory defaults = configuration.getDefaultConstraintValidatorFactory();
         ConstraintValidatorFactory permissions = new ConstraintValidatorFactory() {
@@ -44,7 +61,7 @@ class DataPermissionValidationIntegrationTest {
             }
         };
         try (ValidatorFactory factory = configuration.constraintValidatorFactory(permissions).buildValidatorFactory()) {
-            Validator validator = factory.getValidator();
+            javax.validation.Validator validator = factory.getValidator();
             assertThat(validator.validate(new Request("allowed", "%PDF-1.7"))).isEmpty();
             assertThat(validator.validate(new Request("denied", "%PDF-1.7")))
                     .singleElement().satisfies(v -> {

@@ -34,11 +34,10 @@
             <artifactId>ddd4j-mq-core</artifactId>
             <version>${revision}</version>
         </dependency>
-        <!-- Ddd4j data-datascope (DataScopeProvider) -->
+        <!-- 数据权限契约直接来自 Easy4j，不携带 Office 解析器。 -->
         <dependency>
-            <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-extension-validation</artifactId>
-            <version>${revision}</version>
+            <groupId>io.github.easy4j</groupId>
+            <artifactId>validation-api-extension</artifactId>
         </dependency>
         <!-- OpenTelemetry API (compile-only, runtime provided by agent) -->
         <dependency>
