@@ -14,10 +14,11 @@
  */
 package io.ddd4j.data.mybatis.repository;
 
+import java.util.stream.Collectors;
+
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.context.ThreadContext;
-import io.ddd4j.core.cqrs.query.LambdaCondition;
 import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.core.ddd.model.DomainObjectMapper;
@@ -30,9 +31,8 @@ import io.ddd4j.kit.lang.StrKit;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
-import io.ddd4j.data.mybatis.mapper.Ddd4jMapper;
+import org.apache.ibatis.enhance.mapper.EnhanceMapper;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -45,10 +45,10 @@ import java.util.Objects;
 /**
  * 原生 MyBatis 轨道的聚合仓储基类（五泛型，对齐 mybatisplus 模块）。
  *
- * <p>通过 {@link Ddd4jMapper} 提供基础 CRUD，结合 ddd4j-core 的充血 {@link Query} 翻译
- * 和租户/系统隔离，适配 {@link Repository} SPI。不依赖 MyBatis-Plus。</p>
+ * <p>通过 {@link EnhanceMapper} 执行基础读写。具体仓储绑定条件查询、计数和删除 SQL；
+ * 基类负责分页、聚合与持久化对象的转换及查询结果回填。</p>
  *
- * @param <MP> Mapper 类型（须继承 {@link Ddd4jMapper} 并提供 SQL 映射）
+ * @param <MP> Mapper 类型（须继承 {@link EnhanceMapper} 并提供 SQL 映射）
  * @param <M>  聚合根类型
  * @param <P>  持久化对象类型
  * @param <Q>  充血查询类型
@@ -57,8 +57,8 @@ import java.util.Objects;
  * @since 4.0.0
  */
 @Slf4j
-@SuppressWarnings({"rawtypes", "unchecked"})
-public abstract class MybatisAggregateRepository<MP extends Ddd4jMapper<P>, M extends AggregateRoot<?>, P, Q extends Query<M>, ID extends Serializable>
+@SuppressWarnings({"unchecked"})
+public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M extends AggregateRoot<?>, P, Q extends Query<M>, ID extends Serializable>
         implements Repository<M, ID>, DomainObjectMapper<M, P>, Serializable {
 
     /** 聚合根模型类型。 */
@@ -78,9 +78,9 @@ public abstract class MybatisAggregateRepository<MP extends Ddd4jMapper<P>, M ex
 
     /** 根据泛型参数推断模型与持久化对象类型。 */
     protected MybatisAggregateRepository() {
-        this.modelClass = resolveClassArg(0);
-        this.persistenceClass = resolveClassArg(1);
-        this.queryClass = resolveClassArg(2);
+        this.modelClass = resolveClassArg(1);
+        this.persistenceClass = resolveClassArg(2);
+        this.queryClass = resolveClassArg(3);
         this.domainModelInfo = DomainModelHelper.getModelInfo(modelClass, persistenceClass, this::toColumn);
         registerToRegistry();
     }
@@ -166,14 +166,13 @@ public abstract class MybatisAggregateRepository<MP extends Ddd4jMapper<P>, M ex
     /**
      * 按标识删除。
      *
-     * <p>原生 MyBatis 的删除 SQL 由业务 Mapper 显式维护。为避免在仓储基类中猜测表名或主键列，
-     * 本默认实现明确拒绝删除；业务方可在具体仓储中覆盖该方法，或使用 MyBatis-Plus/JPA 轨道。
+     * <p>对有效主键调用具体仓储绑定的删除 SQL。</p>
      */
     @Override
     public void deleteById(ID id) {
-        throw new UnsupportedOperationException(
-                "Ddd4jMapper 不定义删除 SQL，请在业务仓储中显式实现 deleteById，"
-                        + "或改用 ddd4j-data-mybatisplus / ddd4j-data-jpa 模块");
+        if (Objects.nonNull(id)) {
+            deleteRow(id);
+        }
     }
 
     @Override
@@ -191,9 +190,10 @@ public abstract class MybatisAggregateRepository<MP extends Ddd4jMapper<P>, M ex
      */
     @Override
     public int deleteByIds(Collection<ID> ids) {
-        throw new UnsupportedOperationException(
-                "Ddd4jMapper 不定义批量删除 SQL，请在业务仓储中显式实现 deleteByIds，"
-                        + "或改用 ddd4j-data-mybatisplus / ddd4j-data-jpa 模块");
+        if (Objects.isNull(ids) || ids.isEmpty()) {
+            return 0;
+        }
+        return deleteRows(ids);
     }
 
     @Override
@@ -241,8 +241,7 @@ public abstract class MybatisAggregateRepository<MP extends Ddd4jMapper<P>, M ex
 
     @Override
     public Optional<M> findFirst() {
-        List<M> all = findAll();
-        return all.isEmpty() ? Optional.empty() : Optional.of(all.get(0));
+        return selectRows(null, 0, 1).stream().findFirst().map(this::toModel);
     }
 
     @Override
@@ -252,45 +251,39 @@ public abstract class MybatisAggregateRepository<MP extends Ddd4jMapper<P>, M ex
 
     @Override
     public long count() {
-        return baseMapper.selectList().size();
+        return countRows(null);
     }
 
     // ========================= 充血查询（需子类提供条件 SQL） =========================
 
     @Override
     public Page<M> page(Query<M> query) {
-        List<M> all = findList(query);
+        Objects.requireNonNull(query, "query");
         long current = Math.max(1L, query.getCurrent());
         long size = query.getSize();
-        long total = all.size();
-        if (size > 0) {
-            int from = (int) Math.min((current - 1) * size, total);
-            int to = (int) Math.min(from + size, total);
-            all = all.subList(from, to);
-        }
-        return Page.succeed(all, total, current, size);
+        long offset = size > 0 ? Math.multiplyExact(current - 1, size) : 0;
+        List<M> records = convert(selectRows(query, offset, size));
+        fill(query, records);
+        return Page.succeed(records, countRows(query), current, size);
     }
 
     @Override
     public long count(Query<M> query) {
-        return findList(query).size();
+        return countRows(Objects.requireNonNull(query, "query"));
     }
 
     @Override
     public Optional<M> findFirst(Query<M> query) {
-        List<M> list = findList(query);
+        List<M> list = convert(selectRows(Objects.requireNonNull(query, "query"), 0, 1));
+        fill(query, list);
         return list.isEmpty() ? Optional.empty() : Optional.of(list.get(0));
     }
 
     @Override
     public List<M> findList(Query<M> query) {
-        // 原生 MyBatis 无 Wrapper，通过内存过滤实现条件查询
-        // 生产环境建议子类覆盖此方法，通过 Mapper XML 的动态 SQL 实现
-        List<M> all = findAll();
-        return all.stream()
-                .filter(model -> matchesConditions(model, query))
-                .sorted((a, b) -> applySort(a, b, query))
-                .collect(java.util.stream.Collectors.toList());
+        List<M> records = convert(selectRows(Objects.requireNonNull(query, "query"), 0, -1));
+        fill(query, records);
+        return records;
     }
 
     @Override
@@ -329,6 +322,36 @@ public abstract class MybatisAggregateRepository<MP extends Ddd4jMapper<P>, M ex
     public void fill(Query<M> query, AggregateRoot<?> model) {
         // 业务仓储按需覆盖
     }
+
+    /**
+     * 执行业务 Mapper 的查询 SQL。实现须拒绝不能翻译的条件，并为分页指定稳定顺序。
+     * @param query 领域查询，null 表示无额外条件
+     * @param offset 从零开始的偏移量
+     * @param limit 最大行数，负数表示不分页
+     * @return 满足条件的持久化对象
+     */
+    protected abstract List<P> selectRows(Query<M> query, long offset, long limit);
+
+    /**
+     * 用与 selectRows 相同的过滤条件统计可见记录，忽略分页参数。
+     * @param query 领域查询，null 表示无额外条件
+     * @return 数据库中的匹配记录数
+     */
+    protected abstract long countRows(Query<M> query);
+
+    /**
+     * 执行业务 Mapper 的单条删除 SQL。
+     * @param id 非空主键
+     * @return 受影响行数
+     */
+    protected abstract int deleteRow(ID id);
+
+    /**
+     * 执行业务 Mapper 的批量删除 SQL。
+     * @param ids 非空主键集合
+     * @return 受影响行数
+     */
+    protected abstract int deleteRows(Collection<ID> ids);
 
     // ========================= DomainObjectMapper =========================
 
@@ -377,7 +400,7 @@ public abstract class MybatisAggregateRepository<MP extends Ddd4jMapper<P>, M ex
      * @return 数据库列名
      */
     protected String toColumn(String propertyName) {
-        if (StringUtils.isBlank(propertyName)) {
+        if (StrKit.isBlank(propertyName)) {
             return propertyName;
         }
         StringBuilder sb = new StringBuilder();
@@ -511,82 +534,6 @@ public abstract class MybatisAggregateRepository<MP extends Ddd4jMapper<P>, M ex
         }
     }
 
-    private boolean matchesConditions(M model, Query<M> query) {
-        for (LambdaCondition condition : query.getWhereConditions()) {
-            String property = condition.property();
-            Object expected = condition.value();
-            Object actual = getPropertyValue(model, property);
-            if (!matchesOperator(actual, expected, condition.operator())) {
-                return false;
-            }
-        }
-        // 租户隔离
-        if (!query.isIgnoreTenantId()) {
-            String tenantId = ThreadContext.get(ContextConstants.TENANT_ID);
-            if (Objects.nonNull(tenantId)) {
-                Object actualTenant = getPropertyValue(model, "tenantId");
-                return Objects.equals(tenantId, actualTenant);
-            }
-        }
-        return true;
-    }
-
-    private boolean matchesOperator(Object actual, Object expected, String operator) {
-        switch (operator) {
-            case "=":
-                return Objects.equals(actual, expected);
-            case "<>":
-                return !Objects.equals(actual, expected);
-            case "IS_NULL":
-                return Objects.isNull(actual);
-            case "IS_NOT_NULL":
-                return Objects.nonNull(actual);
-            case "LIKE":
-                return Objects.nonNull(actual) && actual.toString().contains(String.valueOf(expected));
-            case "IN":
-                return toCollection(expected).contains(actual);
-            case "NOT_IN":
-                return !toCollection(expected).contains(actual);
-            default:
-                return true;
-        }
-    }
-
-    private int applySort(M a, M b, Query<M> query) {
-        for (LambdaCondition condition : query.getOrderByConditions()) {
-            Object va = getPropertyValue(a, condition.property());
-            Object vb = getPropertyValue(b, condition.property());
-            int cmp = compareValues(va, vb);
-            if (cmp != 0) {
-                return "ASC".equals(condition.operator()) ? cmp : -cmp;
-            }
-        }
-        return 0;
-    }
-
-    private int compareValues(Object a, Object b) {
-        if (Objects.isNull(a) && Objects.isNull(b)) return 0;
-        if (Objects.isNull(a)) return -1;
-        if (Objects.isNull(b)) return 1;
-        if (a instanceof Comparable && b instanceof Comparable) {
-            return ((Comparable) a).compareTo(b);
-        }
-        return 0;
-    }
-
-    private Object getPropertyValue(Object bean, String property) {
-        try {
-            for (Field field : FieldUtils.getAllFieldsList(bean.getClass())) {
-                if (field.getName().equals(property)) {
-                    field.setAccessible(true);
-                    return field.get(bean);
-                }
-            }
-        } catch (IllegalAccessException ignored) {
-        }
-        return null;
-    }
-
     private Map<String, Object> toMap(M model) {
         Map<String, Object> map = new LinkedHashMap<>();
         for (Field field : FieldUtils.getAllFieldsList(model.getClass())) {
@@ -597,19 +544,6 @@ public abstract class MybatisAggregateRepository<MP extends Ddd4jMapper<P>, M ex
             }
         }
         return map;
-    }
-
-    private Collection<?> toCollection(Object value) {
-        if (value instanceof Collection<?>) {
-            return (Collection<?>) value;
-        }
-        if (value instanceof String) {
-            String str = (String) value;
-            if (StrKit.isNotEmpty(str)) {
-                return Arrays.asList(str.split(","));
-            }
-        }
-        return Collections.emptyList();
     }
 
     /**

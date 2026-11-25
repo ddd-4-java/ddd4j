@@ -16,7 +16,8 @@ package io.ddd4j.guice;
 
 import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.model.AggregateRoot;
-import io.ddd4j.data.mybatis.plugins.inner.Ddd4jAggregateFillInnerInterceptor;
+import com.baomidou.mybatisplus.enhance.plugins.inner.QueryResultCallbackInterceptor;
+import io.ddd4j.data.mybatis.repository.AggregateQueryResultFiller;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.mapping.Environment;
@@ -47,7 +48,7 @@ class Ddd4jMybatisAggregateFillBehaviorTest {
 
     @Test
     void preservesDefaultPropertiesAndFillsThroughNativeMyBatisPlugin() {
-        Interceptor interceptor = new Ddd4jAggregateFillInnerInterceptor();
+        Interceptor interceptor = new QueryResultCallbackInterceptor(new AggregateQueryResultFiller()::fill);
         Properties properties = new Properties();
         properties.setProperty("unused", "sentinel");
         interceptor.setProperties(properties);

@@ -14,10 +14,16 @@
  */
 package io.ddd4j.data.mybatis.repository;
 
+import java.util.Arrays;
+
 import java.util.Collections;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.IdType;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.MybatisSqlSessionFactoryBuilder;
@@ -98,6 +104,11 @@ class MybatisAggregateRepositoryMySQLTest {
                     + "deleted_at DATETIME NULL, "
                     // 仅临时容器夹具；原有 status/deletedAt 不具备租户语义。
                     + "tenant_id VARCHAR(64) NULL COMMENT '订单所属租户')");
+            stmt.execute("CREATE TABLE order_batch ("
+                    + "id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '订单主键', "
+                    + "name VARCHAR(40) COMMENT '订单名称', "
+                    + "created_at DATETIME(6) NULL COMMENT '创建时间', "
+                    + "updated_at DATETIME(6) NULL COMMENT '更新时间') COMMENT='批量仓储测试订单'");
         }
 
         // 2. 独立自举 MyBatis-Plus（无 Spring）
@@ -109,6 +120,7 @@ class MybatisAggregateRepositoryMySQLTest {
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
         configuration.addInterceptor(interceptor);
         configuration.addMapper(OrderMapper.class);
+        configuration.addMapper(BatchMapper.class);
         sqlSessionFactory = new MybatisSqlSessionFactoryBuilder().build(configuration);
 
         session = sqlSessionFactory.openSession(true);
@@ -120,6 +132,7 @@ class MybatisAggregateRepositoryMySQLTest {
     void cleanTable() {
         ThreadContext.clear();
         mapper.delete(null);
+        session.getMapper(BatchMapper.class).delete(null);
     }
 
     @AfterEach
@@ -263,6 +276,90 @@ class MybatisAggregateRepositoryMySQLTest {
         ThreadContext.set(ContextConstants.TENANT_ID, "tenant-b");
         assertThat(new OrderQuery().list()).extracting(Order::getId).containsExactly("tenant-b-1");
         assertThat(new OrderQuery().eq(Order::getStatus, "DRAFT").exist()).isTrue();
+    }
+
+    @Test
+    void longInheritedIdsSupportBatchInsertUpdateAndUpsert() {
+        BatchRepository batch = new BatchRepository(session.getMapper(BatchMapper.class));
+        BatchModel first = new BatchModel(null, "first");
+        BatchModel second = new BatchModel(null, "second");
+        assertThat(batch.saveBatch(Arrays.asList(first, second))).containsExactly(first, second);
+        assertThat(first.getId()).isNotNull();
+        assertThat(second.getId()).isNotNull().isNotEqualTo(first.getId());
+        assertThat(first.getCreatedAt()).isNotNull();
+        assertThat(batch.findById(first.getId()).orElseThrow(java.util.NoSuchElementException::new).getName()).isEqualTo("first");
+
+        first.setName("updated");
+        assertThat(batch.updateBatchById(Arrays.asList(first, new BatchModel(999999L, "absent")))).isEqualTo(1);
+        assertThat(first.getUpdatedAt()).isNotNull();
+        assertThat(batch.findById(first.getId()).orElseThrow(java.util.NoSuchElementException::new).getName()).isEqualTo("updated");
+        BatchModel third = new BatchModel(null, "third");
+        second.setName("upserted");
+        assertThat(batch.insertOrUpdateBatch(Arrays.asList(second, third))).isEqualTo(2);
+        assertThat(third.getId()).isNotNull();
+        assertThat(third.getCreatedAt()).isNotNull();
+        assertThat(second.getUpdatedAt()).isNotNull();
+        assertThat(batch.findById(second.getId()).orElseThrow(java.util.NoSuchElementException::new).getName()).isEqualTo("upserted");
+        // 组件批量 API 使用独立会话；从新的查询会话验证提交后的数据库状态。
+        try (SqlSession read = sqlSessionFactory.openSession()) {
+            BatchMapper persisted = read.getMapper(BatchMapper.class);
+            assertThat(persisted.selectById(first.getId()).getName()).isEqualTo("updated");
+            assertThat(persisted.selectById(second.getId()).getName()).isEqualTo("upserted");
+            assertThat(persisted.selectById(third.getId()).getName()).isEqualTo("third");
+            assertThat(persisted.selectById(999999L)).isNull();
+            assertThat(persisted.selectCount(null)).isEqualTo(3);
+        }
+    }
+
+    @Test
+    void failedBatchRollsBackEarlierStatements() {
+        BatchRepository batch = new BatchRepository(session.getMapper(BatchMapper.class));
+        assertThatThrownBy(() -> batch.saveBatch(Arrays.asList(
+                new BatchModel(777L, "first"), new BatchModel(777L, "duplicate"))))
+                .isInstanceOf(RuntimeException.class);
+        try (SqlSession read = sqlSessionFactory.openSession()) {
+            assertThat(read.getMapper(BatchMapper.class).selectCount(null)).isZero();
+        }
+    }
+
+    interface BatchMapper extends BaseMapper<BatchPo> { }
+
+    static final class BatchRepository
+            extends MybatisAggregateRepository<BatchMapper, BatchModel, BatchPo, BatchQuery, Long> {
+        BatchRepository(BatchMapper mapper) { super(mapper); }
+    }
+
+    static final class BatchQuery extends Query<BatchModel> { }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    public static class BatchModel extends AggregateRoot<Long> {
+        private Long id;
+        private String name;
+        private LocalDateTime createdAt;
+        private LocalDateTime updatedAt;
+        BatchModel(Long id, String name) { this.id = id; this.name = name; }
+        @Override
+        public Long id() { return id; }
+    }
+
+    @Getter
+    @Setter
+    public static class BatchIdentity {
+        @TableId(type = IdType.AUTO)
+        private Long id;
+    }
+
+    @Getter
+    @Setter
+    @TableName("order_batch")
+    public static class BatchPo extends BatchIdentity {
+        private String name;
+        @io.ddd4j.annotation.orm.OnCreate
+        private LocalDateTime createdAt;
+        @io.ddd4j.annotation.orm.OnUpdate
+        private LocalDateTime updatedAt;
     }
 
     // =================== 测试夹具 ===================

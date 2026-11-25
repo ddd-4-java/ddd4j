@@ -69,7 +69,7 @@
         <module>ddd4j-data-crypto</module>
         <module>ddd4j-data-logs</module>
         <module>ddd4j-data-external</module>
-        <module>ddd4j-data-datascope</module>
+
         <module>ddd4j-data-jpa</module>
     </modules>
 

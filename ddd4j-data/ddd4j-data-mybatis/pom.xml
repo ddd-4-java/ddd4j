@@ -18,27 +18,11 @@
     <artifactId>ddd4j-data-mybatis</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>ddd4j 数据层 - MyBatis 官方实现（零 MyBatis-Plus 依赖）：纯 MyBatis 3.x 风格的 RichRepository 实现， 通过
-        ddd4j 自有 Mapper 与扩展 SPI 适配 ddd4j-core 的 Repository SPI。 等保数据加密通过自定义加密拦截器 +
-        ddd4j-data-crypto 实现。
+        ddd4j 自有 Mapper 与扩展 SPI 适配 ddd4j-core 的 Repository SPI。 字段加解密和签名使用 mybatis-enhance-extension。
     </description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.assertj</groupId>
-            <artifactId>assertj-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <scope>test</scope>
-        </dependency>
         <!-- ddd4j 核心契约 -->
         <dependency>
             <groupId>io.ddd4j</groupId>
@@ -75,12 +59,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- 加解密策略 SPI -->
-        <dependency>
-            <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-data-crypto</artifactId>
-            <version>${revision}</version>
-        </dependency>
         <!-- ddd4j 统一注解（orm: BizKey/OnCreate/OnUpdate/TenantId/SystemId/OrderBy） -->
         <dependency>
             <groupId>io.ddd4j</groupId>
@@ -98,11 +76,14 @@
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.github.easy4j</groupId>
+            <artifactId>mybatis-enhance-extension</artifactId>
+        </dependency>
         <!-- JSqlParser: SQL 解析/改写（租户拦截器/数据权限拦截器） -->
         <dependency>
             <groupId>com.github.jsqlparser</groupId>
             <artifactId>jsqlparser</artifactId>
-            <version>${jsqlparser.version}</version>
             <exclusions>
                 <!-- JSqlParser 将仅用于其基准测试的 JMH 声明为 compile；ddd4j 运行时不需要它。 -->
                 <exclusion>
@@ -110,6 +91,27 @@
                     <artifactId>jmh-core</artifactId>
                 </exclusion>
             </exclusions>
+            <version>${jsqlparser.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

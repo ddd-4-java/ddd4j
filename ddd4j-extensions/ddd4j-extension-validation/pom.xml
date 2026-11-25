@@ -12,18 +12,25 @@
 
     <artifactId>ddd4j-extension-validation</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>Ddd4j framework-neutral uploaded-file validation core</description>
+    <description>Ddd4j validation integration and data-permission constraints</description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
         <dependency>
-            <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-kit</artifactId>
-            <version>${revision}</version>
+            <groupId>io.github.easy4j</groupId>
+            <artifactId>validation-api-extension</artifactId>
         </dependency>
+        <!-- Easy4j 的全量解析器为 provided；Office 检测只装配所需的 Tika 模块。 -->
+        <dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-parser-microsoft-module</artifactId>
+        </dependency>
+        <!-- 仅用于测试生成真实 OOXML 文件；Tika 检测器不需要这套文档对象模型。 -->
         <dependency>
             <groupId>org.apache.poi</groupId>
-            <artifactId>poi</artifactId>
+            <artifactId>poi-ooxml-lite</artifactId>
+            <version>${poi.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -35,7 +42,6 @@
             <artifactId>assertj-core</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- 测试期承接文件识别组件的 Log4j API 输出，不传递到生产消费者。 -->
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>

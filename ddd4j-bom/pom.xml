@@ -53,11 +53,6 @@
             </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-datascope</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
                 <artifactId>ddd4j-data-event-store-esdb</artifactId>
                 <version>${revision}</version>
             </dependency>
@@ -432,11 +427,6 @@
             </dependency>
 
             <!-- Ddd4j Web Extensions -->
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-web-validation</artifactId>
-                <version>${revision}</version>
-            </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
                 <artifactId>ddd4j-web-webflux</artifactId>
