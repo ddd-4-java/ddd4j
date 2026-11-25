@@ -28,6 +28,8 @@ import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import io.ddd4j.annotation.orm.TenantId;
+import io.ddd4j.annotation.orm.DomainField;
+import io.ddd4j.kit.lang.BeanKit;
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.context.ThreadContext;
@@ -107,6 +109,12 @@ class MybatisAggregateRepositoryMySQLTest {
                     + "updated_at DATETIME(6) NULL COMMENT '更新时间') COMMENT='批量仓储测试订单'");
         }
 
+        // 主键映射回归只使用临时容器中的订单夹具。
+        try (Connection conn = MYSQL.createConnection(""); Statement stmt = conn.createStatement()) {
+            stmt.execute("CREATE TABLE order_identity (order_pk BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '订单主键', "
+                    + "id BIGINT COMMENT '普通外部标识', name VARCHAR(40) COMMENT '订单名称') COMMENT='主键映射测试订单'");
+        }
+
         // 2. 独立自举 MyBatis-Plus（无 Spring）
         PooledDataSource dataSource = new PooledDataSource(
                 "com.mysql.cj.jdbc.Driver", MYSQL.getJdbcUrl(), MYSQL.getUsername(), MYSQL.getPassword());
@@ -117,6 +125,7 @@ class MybatisAggregateRepositoryMySQLTest {
         configuration.addInterceptor(interceptor);
         configuration.addMapper(OrderMapper.class);
         configuration.addMapper(BatchMapper.class);
+        configuration.addMapper(IdentityMapper.class);
         sqlSessionFactory = new MybatisSqlSessionFactoryBuilder().build(configuration);
 
         session = sqlSessionFactory.openSession(true);
@@ -483,6 +492,155 @@ class MybatisAggregateRepositoryMySQLTest {
 
         public void setTenantId(String tenantId) {
             this.tenantId = tenantId;
+        }
+    }
+
+    @Test
+    void namedInheritedKeyIsMappedBackToOriginalDomainObject() {
+        IdentityRepository identities = identityRepository();
+        IdentityOrder model = identityOrder(null, 901L, "created");
+
+        assertThat(identities.save(model)).isSameAs(model);
+        assertThat(model.id()).isNotNull().isNotEqualTo(901L);
+        assertThat(identities.findById(model.id()).get().getId()).isEqualTo(901L);
+        model.setName("updated");
+        identities.save(model);
+        assertThat(identities.count()).isEqualTo(1);
+        assertThat(identities.findById(model.id()).get().getName()).isEqualTo("updated");
+    }
+
+    @Test
+    void domainAndPersistenceQueriesUseAnnotatedPrimaryKeyColumn() {
+        IdentityRepository identities = identityRepository();
+        identities.getBaseMapper().insert(identities.toPersistenceObject(identityOrder(101L, 901L, "one")));
+        IdentityQuery query = new IdentityQuery();
+        query.eq(IdentityOrder::getBusinessId, 101L);
+
+        assertThat(identities.findList(query)).extracting(IdentityOrder::id).containsExactly(101L);
+        assertThat(identities.count(query)).isEqualTo(1);
+        assertThat(identities.page(query).getRecords()).extracting(IdentityOrder::id).containsExactly(101L);
+        query.select(IdentityOrder::getBusinessId);
+        assertThat(identities.maps(query).get(0)).containsEntry("order_pk", 101L);
+        IdentityQuery poQuery = new IdentityQuery();
+        poQuery.withPO(IdentityPO.class).eq(IdentityPO::getOrderKey, 101L);
+        assertThat(identities.findFirst(poQuery).get().id()).isEqualTo(101L);
+    }
+
+    @Test
+    void listConversionUsesExistingDomainObjectMapper() {
+        IdentityRepository identities = identityRepository();
+        identities.getBaseMapper().insert(identities.toPersistenceObject(identityOrder(101L, 901L, "one")));
+
+        assertThat(identities.findAll()).extracting(IdentityOrder::id).containsExactly(101L);
+    }
+
+    @Test
+    void batchOperationsPreserveNamedIdentityAndMappedBackfill() {
+        IdentityRepository identities = identityRepository();
+        IdentityOrder first = identityOrder(null, 901L, "first");
+        IdentityOrder second = identityOrder(null, 902L, "second");
+        List<IdentityOrder> models = java.util.Arrays.asList(first, second);
+
+        identities.saveBatch(models);
+        assertThat(first.id()).isNotNull().isNotEqualTo(901L);
+        assertThat(second.id()).isNotNull().isNotEqualTo(first.id());
+        first.setName("changed");
+        assertThat(identities.updateBatchById(models)).isEqualTo(2);
+        IdentityOrder third = identityOrder(null, first.id(), "new despite ordinary id");
+        assertThat(identities.insertOrUpdateBatch(java.util.Arrays.asList(first, third))).isEqualTo(2);
+        assertThat(third.id()).isNotNull().isNotEqualTo(first.id());
+        assertThat(identities.findById(first.id()).get().getName()).isEqualTo("changed");
+        assertThat(identities.findById(third.id()).get().getName()).isEqualTo("new despite ordinary id");
+    }
+
+    @Test
+    void conditionalUpdateAndDeleteUseMappedIdentity() {
+        IdentityRepository identities = identityRepository();
+        identities.getBaseMapper().insert(identities.toPersistenceObject(identityOrder(101L, 901L, "one")));
+        identities.getBaseMapper().insert(identities.toPersistenceObject(identityOrder(901L, 55L, "other")));
+        IdentityQuery query = new IdentityQuery();
+        query.eq(IdentityOrder::getBusinessId, 101L);
+        IdentityOrder patch = identityOrder(101L, 901L, "changed");
+
+        assertThat(identities.update(patch, query)).isTrue();
+        assertThat(patch.id()).isEqualTo(101L);
+        assertThat(identities.findById(101L).get().getName()).isEqualTo("changed");
+        assertThat(identities.deleteByQuery(query)).isTrue();
+        assertThat(identities.findById(101L)).isEmpty();
+        assertThat(identities.findById(901L)).isPresent();
+    }
+
+    private IdentityRepository identityRepository() {
+        IdentityMapper identityMapper = session.getMapper(IdentityMapper.class);
+        identityMapper.delete(null);
+        return new IdentityRepository(identityMapper);
+    }
+
+    private static IdentityOrder identityOrder(Long key, Long ordinaryId, String name) {
+        IdentityOrder model = new IdentityOrder();
+        model.setBusinessId(key);
+        model.setId(ordinaryId);
+        model.setName(name);
+        return model;
+    }
+
+    @Getter
+    @Setter
+    public static class IdentityModelBase extends AggregateRoot<Long> {
+        @DomainField(poField = "orderKey")
+        private Long businessId;
+
+        @Override
+        public Long id() {
+            return businessId;
+        }
+    }
+
+    @Getter
+    @Setter
+    public static class IdentityOrder extends IdentityModelBase {
+        private Long id;
+        private String name;
+    }
+
+    @Getter
+    @Setter
+    public static class IdentityPoBase {
+        @TableId(value = "order_pk", type = IdType.AUTO)
+        private Long orderKey;
+    }
+
+    @Getter
+    @Setter
+    @TableName("order_identity")
+    public static class IdentityPO extends IdentityPoBase {
+        private Long id;
+        private String name;
+    }
+
+    public interface IdentityMapper extends BaseMapper<IdentityPO> {
+    }
+
+    public static class IdentityQuery extends Query<IdentityOrder> {
+    }
+
+    static class IdentityRepository extends MybatisAggregateRepository<IdentityMapper, IdentityOrder, IdentityPO, IdentityQuery, Long> {
+        IdentityRepository(IdentityMapper mapper) {
+            super(mapper, IdentityOrder.class, IdentityPO.class);
+        }
+
+        @Override
+        public IdentityOrder toModel(IdentityPO po) {
+            IdentityOrder model = BeanKit.copy(po, IdentityOrder.class);
+            model.setBusinessId(po.getOrderKey());
+            return model;
+        }
+
+        @Override
+        public IdentityPO toPersistenceObject(IdentityOrder model) {
+            IdentityPO po = BeanKit.copy(model, IdentityPO.class);
+            po.setOrderKey(model.id());
+            return po;
         }
     }
 }

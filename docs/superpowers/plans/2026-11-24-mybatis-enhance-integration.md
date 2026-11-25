@@ -45,3 +45,12 @@
 - [x] 受影响 clean verify、无 record 检查、迁移说明和最终产物核验。
 
 最终结果：Corretto 17.0.21 下 13 个项目 `clean verify` 成功，953 项测试零失败、错误、跳过；其中 Plus 67 项（含 10 项 MySQL），Guice 127 项。保留 `BaseRepositoryImpl` 的原包名和五泛型入口，仅移除其重复泛型解析；两个入口均有 ID 编译正负例。无 record 检查及其 7 项自测通过，产物包含两个仓储类型。迁移说明见数据模块 README，详细证据见 `../../reports/2026-11-25-mybatis-repository-consolidation.md`。本次仅验证 2.0.x 本地结果，未提交、推送或远端发布。
+
+## 注解及元数据驱动的主键修复（2026-11-25）
+
+- [x] 添加原生 MyBatis 与 Plus 的真实 SQL 主键映射回归，记录红灯。
+- [x] 复用现有主键元数据与 DomainObjectMapper，修复读取、查询翻译、条件更新/删除和回填。
+- [x] 适配并验证 1.0.x / 2.0.x / 3.0.x，两模块、Guice 及依赖回归通过。
+- [x] 检查无 record、提交范围、工作区保护并记录三线证据。
+
+三线验证完成：JDK 8 / 17 / 21 下分别 1,308 / 975 / 1,308 项通过，无失败、错误、跳过；两模块分别 17 / 72 项。详细证据见 `../../reports/2026-11-25-mybatis-primary-key.md`。
