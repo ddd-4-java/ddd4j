@@ -38,6 +38,14 @@ flowchart TD
 
 领域 `insertOrUpdate(model)` 继续由 core `Repository` 的默认实现转调 `save(model)`。`queryWrapper` 和 `queryWrapperIgnoreTenant` 保留，它们包含 DDD4J 的默认上下文条件。
 
+## 主键与 Model/PO 映射
+
+领域身份由 `DomainModel.id()` 返回；PO 的字段、数据库列及生成策略由 MyBatis-Plus 的 `@TableId` / `TableInfo` 决定，支持父类声明的主键。实体中的普通 `id` 属性不会覆盖显式声明的主键。
+
+例如 Model 的 `businessId` 对应 PO 的 `orderKey`、数据库的 `order_pk`：在领域字段上使用 `@DomainField(poField = "orderKey")`，在 PO 上使用 `@TableId("order_pk")`。查询翻译会读取完整 TableInfo，包括主键。对象转换仍实现既有 `toModel` / `toPersistenceObject`；该注解不替代对象转换。单条、列表、批量及写后回填统一经过这些转换入口。
+
+原生 MyBatis 模块对应复用 ResultMap 的显式 ID 映射（XML `<id>` 或 `@Result(id = true)`），未声明时使用 insert 的 `keyProperty`，仍未声明才兼容 `id` 属性。主键值为空不会改用普通 `id`；多主键映射在写入前拒绝。若业务对原生 Mapper 另加代理装饰，仓储可覆盖 `persistenceIdProperty()` 提供对应属性。
+
 ## 领域批量契约
 
 - `saveBatch(Collection<M>)`：只插入，返回按输入顺序排列的原聚合根，并回写主键和填充字段。

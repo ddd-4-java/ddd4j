@@ -54,6 +54,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * MyBatis-Plus 聚合仓储：组合 Mapper，负责领域映射、查询翻译和业务字段填充。
@@ -185,6 +186,9 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
             // 充血查询 Domain→PO 字段映射元数据（缓存于 DomainModelHelper，零框架依赖）
             this.domainModelInfo = DomainModelHelper.getModelInfo(modelClass, persistenceObjectClass, poProperty -> {
                 if (Objects.nonNull(tableInfo)) {
+                    if (Objects.equals(poProperty, tableInfo.getKeyProperty())) {
+                        return tableInfo.getKeyColumn();
+                    }
                     for (TableFieldInfo tfi : tableInfo.getFieldList()) {
                         if (tfi.getProperty().equals(poProperty)) {
                             return tfi.getColumn();
@@ -443,7 +447,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         // 组件批量写入使用独立会话，清除原会话缓存以保证下一次查询可见。
         MybatisUtils.getMapperProxy(getBaseMapper()).getSqlSession().clearCache();
         for (int i = 0; i < values.size(); i++) {
-            BeanKit.copy(values.get(i), models.get(i));
+            BeanKit.copy(toModel(values.get(i)), models.get(i));
         }
     }
 
@@ -492,7 +496,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
             updateFill(persistenceObject);
             getBaseMapper().updateById(persistenceObject);
         }
-        BeanKit.copy(persistenceObject, aggregate);
+        BeanKit.copy(toModel(persistenceObject), aggregate);
         return aggregate;
     }
 
@@ -505,7 +509,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         P persistenceObject = toPersistenceObject(aggregate);
         updateFill(persistenceObject);
         getBaseMapper().updateById(persistenceObject);
-        BeanKit.copy(persistenceObject, aggregate);
+        BeanKit.copy(toModel(persistenceObject), aggregate);
         return aggregate;
     }
 
@@ -701,7 +705,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         if (Objects.isNull(persistenceObjects) || persistenceObjects.isEmpty()) {
             return new ArrayList<>();
         }
-        return BeanKit.copy(persistenceObjects, modelClass());
+        return persistenceObjects.stream().map(this::toModel).collect(Collectors.toList());
     }
 
     /**
@@ -900,7 +904,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
         if (Objects.nonNull(id)) {
             P updated = getBaseMapper().selectById(id);
             if (Objects.nonNull(updated)) {
-                BeanKit.copy(updated, aggregate);
+                BeanKit.copy(toModel(updated), aggregate);
             }
         }
     }

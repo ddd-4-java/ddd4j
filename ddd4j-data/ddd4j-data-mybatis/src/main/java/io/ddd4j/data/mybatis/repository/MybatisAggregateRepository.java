@@ -19,6 +19,7 @@ import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.model.AggregateRoot;
+import io.ddd4j.core.ddd.model.DomainModel;
 import io.ddd4j.core.ddd.model.DomainObjectMapper;
 import io.ddd4j.core.ddd.model.metadata.DomainModelHelper;
 import io.ddd4j.core.ddd.model.metadata.DomainModelInfo;
@@ -30,11 +31,22 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.apache.ibatis.binding.MapperMethod;
+import org.apache.ibatis.binding.MapperProxy;
 import org.apache.ibatis.enhance.mapper.EnhanceMapper;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.ResultFlag;
+import org.apache.ibatis.mapping.ResultMap;
+import org.apache.ibatis.mapping.ResultMapping;
+import org.apache.ibatis.reflection.MetaObject;
+import org.apache.ibatis.reflection.SystemMetaObject;
+import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.SqlSession;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -503,32 +515,69 @@ public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M 
      * @return 对象标识
      */
     protected Serializable extractId(Object entity) {
-        for (Field field : FieldUtils.getAllFieldsList(entity.getClass())) {
-            if ("id".equals(field.getName())) {
-                try {
-                    field.setAccessible(true);
-                    return (Serializable) field.get(entity);
-                } catch (IllegalAccessException e) {
-                    return null;
-                }
-            }
+        if (Objects.isNull(entity)) {
+            return null;
         }
-        return null;
+        if (entity instanceof DomainModel) {
+            return (Serializable) ((DomainModel<?>) entity).id();
+        }
+        return (Serializable) SystemMetaObject.forObject(entity).getValue(persistenceIdProperty());
     }
 
     private void setIdValue(P po, M template) {
-        Serializable id = extractId(template);
-        if (Objects.nonNull(id)) {
-            for (Field field : FieldUtils.getAllFieldsList(po.getClass())) {
-                if ("id".equals(field.getName())) {
-                    try {
-                        field.setAccessible(true);
-                        field.set(po, id);
-                    } catch (IllegalAccessException ignored) {
+        Serializable id = Objects.requireNonNull(extractId(template), "Matched model must have an identity");
+        SystemMetaObject.forObject(po).setValue(persistenceIdProperty(), id);
+    }
+
+    /**
+     * 复用 Mapper 已解析的主键映射；自定义 Mapper 装饰器可覆盖此方法提供其映射属性。
+     *
+     * @return ResultMap 的显式 ID 属性，或 insert 的 keyProperty；均未声明时兼容 id 约定
+     */
+    protected String persistenceIdProperty() {
+        if (Proxy.isProxyClass(baseMapper.getClass())
+                && Proxy.getInvocationHandler(baseMapper) instanceof MapperProxy) {
+            // MyBatis 没有公开 Mapper 对应的 SqlSession，使用其 MetaObject 读取代理上下文。
+            MetaObject proxy = SystemMetaObject.forObject(Proxy.getInvocationHandler(baseMapper));
+            Configuration configuration = ((SqlSession) proxy.getValue("sqlSession")).getConfiguration();
+            Class<?> mapperType = (Class<?>) proxy.getValue("mapperInterface");
+            Set<String> properties = new LinkedHashSet<>();
+            MappedStatement select = mappedStatement(configuration, mapperType, "selectById", Serializable.class);
+            for (ResultMap resultMap : select.getResultMaps()) {
+                if (persistenceClass.isAssignableFrom(resultMap.getType())) {
+                    for (ResultMapping mapping : resultMap.getIdResultMappings()) {
+                        // 未声明 ID 时 MyBatis 会将所有结果字段作为 idResultMappings，必须检查标志。
+                        if (mapping.getFlags().contains(ResultFlag.ID) && StrKit.isNotBlank(mapping.getProperty())) {
+                            properties.add(mapping.getProperty());
+                        }
                     }
-                    break;
                 }
             }
+            if (properties.isEmpty()) {
+                String[] keys = mappedStatement(configuration, mapperType, "insert", Object.class).getKeyProperties();
+                if (Objects.nonNull(keys)) {
+                    Collections.addAll(properties, keys);
+                }
+            }
+            if (properties.size() > 1) {
+                throw new IllegalStateException("Repository requires one primary-key property: " + properties);
+            }
+            if (!properties.isEmpty()) {
+                return properties.iterator().next();
+            }
+        }
+        return "id";
+    }
+
+    private MappedStatement mappedStatement(Configuration configuration, Class<?> mapperType,
+                                             String methodName, Class<?> parameterType) {
+        try {
+            // 由 MyBatis 自身处理继承 Mapper 的 statement 命名空间。
+            MapperMethod.SqlCommand command = new MapperMethod.SqlCommand(configuration, mapperType,
+                    mapperType.getMethod(methodName, parameterType));
+            return configuration.getMappedStatement(command.getName());
+        } catch (NoSuchMethodException exception) {
+            throw new IllegalStateException("Missing mapper method: " + methodName, exception);
         }
     }
 
