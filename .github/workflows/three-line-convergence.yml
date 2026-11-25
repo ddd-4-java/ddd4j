@@ -193,6 +193,12 @@ jobs:
           umask 077
           printf '%s' "$MAVEN_SETTINGS_XML" | base64 --decode > "$HOME/.m2/settings.xml"
 
+      - name: Install pinned Easy4J build dependencies
+        run: |
+          JAVA_HOME="$JAVA_HOME_8_X64" bash driver/scripts/install-mybatis-plus-enhance.sh 1.0.x line-8
+          JAVA_HOME="$JAVA_HOME_17_X64" bash driver/scripts/install-mybatis-plus-enhance.sh 2.0.x line-17
+          JAVA_HOME="$JAVA_HOME_21_X64" bash driver/scripts/install-mybatis-plus-enhance.sh 3.0.x line-21
+
       - name: Test and bootstrap cold-runner value probe classpath
         run: |
           python3 -m unittest discover -s driver/scripts -p test_bootstrap_three_line_classpath.py

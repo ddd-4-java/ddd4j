@@ -53,6 +53,8 @@ jobs:
           dependencies.configure_settings(os.environ.get('MAVEN_SETTINGS_XML', ''), settings)
           dependencies.ensure_central_fallback(settings)
           PY
+      - name: Install pinned Easy4J build dependencies
+        run: bash scripts/install-mybatis-plus-enhance.sh 2.0.x .
       - name: Build all reactor artifacts for fresh dependency resolution
         run: ./mvnw -B -ntp -DskipTests install
       - name: Verify upstream BOM ownership, Spring baseline, resolved trees and JDK bytecode
