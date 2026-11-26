@@ -57,48 +57,126 @@ for pom in $(find . -name "pom.xml" -not -path "*/target/*" -not -path "*/node_m
   fi
 done
 
+# 发布 BOM 必须覆盖参与构建的公开 Jar；示例及内部测试工具允许不登记。
 echo ""
-echo -e "${YELLOW}② 校验关键 ddd4j-* 工件在 BOM 中存在（警告级，非阻塞）${NC}"
-# 聚合 POM 不会作为依赖消费，避免将 ddd4j-data/mq/web/runtime 等聚合器误报为
-# 应进入 BOM 的工件。这里保留每个基础能力的公开入口作为回归锚点。
-required_artifacts=(
-  "ddd4j-core"
-  "ddd4j-annotation"
-  "ddd4j-kit"
-  "ddd4j-cache"
-  "ddd4j-ddd-rules"
-  "ddd4j-data-mybatis"
-  "ddd4j-mq-core"
-  "ddd4j-web-core"
-  "ddd4j-runtime-spring"
-)
-warn_count=0
-for art in "${required_artifacts[@]}"; do
-  if rg -q -F "<artifactId>$art</artifactId>" "$BOM_POM"; then
-    echo -e "${GREEN}  ✅ $art 在 BOM 中${NC}"
-  else
-    echo -e "${YELLOW}  ⚠️  $art 不在 BOM 中（建议补充到 dependencyManagement）${NC}"
-    warn_count=$((warn_count + 1))
-  fi
-done
+echo -e "${YELLOW}② 校验公开模块的 BOM 坐标完整性${NC}"
+if ! python3 - "$BOM_POM" <<'PY'
+from collections import Counter
+from functools import cache
+from pathlib import Path
+import sys
+import xml.etree.ElementTree as ET
+
+root = Path.cwd()
+internal_testkits = {"ddd4j-runtime-testkit", "ddd4j-web-testkit"}
+pending = [root / "pom.xml"]
+visited = set()
+reactor = set()
+public_jars = set()
+@cache
+def read_project(pom):
+    try:
+        project = ET.parse(pom).getroot()
+    except (OSError, ET.ParseError) as error:
+        sys.exit(f"{pom.relative_to(root)}: 无法读取 reactor POM ({error})")
+    if project.tag.rsplit("}", 1)[-1] != "project":
+        sys.exit(f"{pom.relative_to(root)}: reactor POM 缺少 project 根节点")
+    return project
+
+
+def group_id(project):
+    return project.findtext("{*}groupId", project.findtext("./{*}parent/{*}groupId"))
+
+
+@cache
+def skips_deploy(pom):
+    project = read_project(pom)
+    flag = project.findtext("./{*}properties/{*}maven.deploy.skip")
+    if flag is not None:
+        return flag.strip().lower() == "true"
+    parent = project.find("{*}parent")
+    relative = parent.findtext("{*}relativePath", "../pom.xml").strip() if parent is not None else ""
+    if not relative:
+        return False
+    parent_pom = (pom.parent / relative).resolve()
+    if parent_pom.is_dir():
+        parent_pom /= "pom.xml"
+    if parent_pom == pom or not parent_pom.is_relative_to(root) or not parent_pom.is_file():
+        return False
+    parent_project = read_project(parent_pom)
+    return (group_id(parent_project) == parent.findtext("{*}groupId")
+            and parent_project.findtext("{*}artifactId") == parent.findtext("{*}artifactId")
+            and skips_deploy(parent_pom))
+
+
+while pending:
+    pom = pending.pop()
+    if pom in visited:
+        continue
+    visited.add(pom)
+    project = read_project(pom)
+    deployment_skipped = skips_deploy(pom)
+    artifact = project.findtext("{*}artifactId")
+    group = group_id(project)
+    if group == "io.ddd4j" and artifact:
+        reactor.add(artifact)
+        if (project.findtext("{*}packaging", "jar") == "jar"
+                and not deployment_skipped and artifact not in internal_testkits):
+            public_jars.add(artifact)
+    children = (project.findall("./{*}modules/{*}module")
+                + project.findall("./{*}subprojects/{*}subproject"))
+    for child in children:
+        candidate = (pom.parent / child.text.strip()).resolve()
+        module_pom = candidate if candidate.is_file() else (candidate / "pom.xml").resolve()
+        if not module_pom.is_relative_to(root):
+            sys.exit(f"{pom.relative_to(root)}: reactor 模块超出仓库范围 ({module_pom})")
+        pending.append(module_pom)
+
+bom = ET.parse(sys.argv[1]).getroot()
+entries = bom.findall("./{*}dependencyManagement/{*}dependencies/{*}dependency")
+managed = set()
+declared = Counter()
+for entry in entries:
+    if entry.findtext("{*}groupId") != "io.ddd4j":
+        continue
+    artifact = entry.findtext("{*}artifactId")
+    packaging = entry.findtext("{*}type", "jar")
+    classifier = entry.findtext("{*}classifier", "")
+    declared[artifact, packaging, classifier] += 1
+    if (packaging == "jar" and not classifier and entry.findtext("{*}scope", "compile") == "compile"
+            and entry.findtext("{*}version") in ("${revision}", "${project.version}")):
+        managed.add(artifact)
+
+missing = sorted(public_jars - managed)
+stale = sorted({artifact for artifact, _, _ in declared} - reactor)
+duplicates = sorted(key for key, count in declared.items() if count > 1)
+for artifact in missing:
+    print(f"  ❌ BOM 未管理公开 Jar io.ddd4j:{artifact}")
+for artifact in stale:
+    print(f"  ❌ BOM 指向不存在的 reactor 模块 io.ddd4j:{artifact}")
+for artifact, packaging, classifier in duplicates:
+    print(f"  ❌ BOM 重复坐标 io.ddd4j:{artifact}:{packaging}:{classifier}")
+if missing or stale or duplicates:
+    sys.exit(1)
+print(f"  ✅ BOM 覆盖 {len(public_jars)} 个公开 Jar 坐标")
+PY
+then
+  fail_count=$((fail_count + 1))
+fi
 
 echo ""
 echo "================================"
 echo -e "扫描模块总数: ${total_modules}"
-echo -e "阻塞问题数（硬编码版本）: ${RED}${fail_count}${NC}"
-echo -e "警告数（BOM 缺失）: ${YELLOW}${warn_count}${NC}"
+echo -e "阻塞问题数: ${RED}${fail_count}${NC}"
 
 if [ "$fail_count" -eq 0 ]; then
-  echo -e "${GREEN}✅ 阻塞检查通过（硬编码版本问题已修复）${NC}"
-  if [ "$warn_count" -gt 0 ]; then
-    echo -e "${YELLOW}⚠️  建议补充 BOM（见警告）${NC}"
-  fi
+  echo -e "${GREEN}✅ 阻塞检查通过${NC}"
   exit 0
 else
-  echo -e "${RED}❌ 发现 ${fail_count} 个硬编码版本问题${NC}"
+  echo -e "${RED}❌ 发现 ${fail_count} 项阻塞问题${NC}"
   echo ""
   echo "修复建议："
   echo "  1. 子模块 pom.xml 中所有 ddd4j-* 依赖应省略 <version> 标签"
-  echo "  2. 版本号统一在 ddd4j-dependencies/pom.xml 的 <dependencyManagement> 中管理"
+  echo "  2. 在 ddd4j-bom/pom.xml 管理公开模块坐标，第三方版本由 ddd4j-dependencies/pom.xml 管理"
   exit 1
 fi
