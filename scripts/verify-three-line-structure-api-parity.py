@@ -726,14 +726,33 @@ def validate_platform_resources_only_on_jdk8(items: list[dict],
             raise ValueError(f"invalid JDK 8-only platform resource: {path_text}")
         old_annotation = f'@Scheduled(cron = "{{{property_name}}}")'
         new_annotation = f'@Scheduled(cron = "${{{property_name}:{default}}}")'
+        jdk17_manager = item.get("jdk17Manager")
+        if jdk17_manager is None:
+            matches_jdk17 = ((roots[1] / counterpart).is_file()
+                             and new_annotation in (roots[1] / counterpart).read_text())
+        else:
+            manager = roots[1] / jdk17_manager
+            allowed_manager = ("ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/"
+                               "io/ddd4j/quarkus/cqrs/QuarkusJpaViewManager.java")
+            if jdk17_manager != allowed_manager or not manager.is_file():
+                raise ValueError(f"invalid JDK 17 Quarkus scheduling counterpart: {jdk17_manager}")
+            manager_source = manager.read_text()
+            contract = (
+                f'CRON_KEY = "{property_name}"',
+                f'DEFAULT_CRON = "{default}"',
+                "config.getOptionalValue(CRON_KEY, String.class)",
+                ".orElse(DEFAULT_CRON)",
+                '.schedule("ddd4j-legacy-projection", cron,',
+            )
+            matches_jdk17 = all(marker in manager_source for marker in contract)
         if (not (roots[0] / path).is_file()
                 or hashlib.sha256((roots[0] / path).read_bytes()).hexdigest() != digest
                 or (roots[0] / path).read_text().strip() != f"{property_name}={default}"
                 or any((root / path).exists() for root in roots[1:])
                 or not all((root / counterpart).is_file() for root in roots)
                 or old_annotation not in (roots[0] / counterpart).read_text()
-                or any(new_annotation not in (root / counterpart).read_text()
-                       for root in roots[1:])
+                or not matches_jdk17
+                or new_annotation not in (roots[2] / counterpart).read_text()
                 or not all((root / evidence).is_file() for root in roots)):
             raise ValueError(f"stale JDK 8-only platform resource evidence: {path_text}")
         validated[path_text] = item
@@ -761,7 +780,14 @@ def validate_platform_cdi_resources_only_on_jdk8(items: list[dict],
                 or not item.get("reason")):
             raise ValueError(f"invalid JDK 8-only CDI descriptor: {source}")
         descriptor = roots[0] / path
-        tests = [root / evidence for root in roots]
+        jdk17_evidence = pathlib.PurePosixPath(item.get("jdk17Evidence", test))
+        if jdk17_evidence != evidence:
+            relocated_test = test.replace("/ddd4j-data-projection-panache/",
+                                          "/ddd4j-data-event-store-panache/", 1)
+            if ("/ddd4j-data-projection-panache/" not in test
+                    or jdk17_evidence.as_posix() != relocated_test):
+                raise ValueError(f"invalid JDK 17 CDI evidence relocation: {jdk17_evidence}")
+        tests = [roots[0] / evidence, roots[1] / jdk17_evidence, roots[2] / evidence]
         if (not descriptor.is_file()
                 or hashlib.sha256(descriptor.read_bytes()).hexdigest() != digest
                 or any((root / path).exists() for root in roots[1:])

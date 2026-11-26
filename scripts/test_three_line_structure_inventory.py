@@ -676,6 +676,47 @@ class ThreeLineInventoryTest(unittest.TestCase):
         self.assertNotEqual(0, result.returncode)
         self.assertIn("stale JDK 8-only platform file evidence", result.stderr)
 
+    def test_jdk17_quarkus_manager_must_keep_cron_contract(self):
+        resource = "ddd4j-runtime/ddd4j-runtime-quarkus/src/main/resources/application.properties"
+        counterpart = "ddd4j-runtime/demo/src/main/java/example/ProjectionService.java"
+        evidence = "ddd4j-runtime/demo/src/test/java/example/ProjectionContractTest.java"
+        manager = ("ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/"
+                   "io/ddd4j/quarkus/cqrs/QuarkusJpaViewManager.java")
+        prop = "ddd4j.quarkus.cqrs.projection.cron"
+        cron = "*/30 * * * * ?"
+        config = f"{prop}={cron}\n"
+        self.write(self.roots[0], resource, config)
+        self.write(self.roots[0], counterpart, f'class ProjectionService {{ @Scheduled(cron = "{{{prop}}}") void run() {{}} }}')
+        self.write(self.roots[1], counterpart, "class ProjectionService {}")
+        annotation = '@Scheduled(cron = "$' + f'{{{prop}:{cron}}}")'
+        self.write(self.roots[2], counterpart, "class ProjectionService { " + annotation + " void run() {} }")
+        for root in self.roots:
+            self.write(root, evidence, "class ProjectionContractTest {}")
+        source = (
+            'class QuarkusJpaViewManager {\n'
+            f'String CRON_KEY = "{prop}";\n'
+            f'String DEFAULT_CRON = "{cron}";\n'
+            'void run() {\n'
+            'config.getOptionalValue(CRON_KEY, String.class).orElse(DEFAULT_CRON);\n'
+            'scheduler.schedule("ddd4j-legacy-projection", cron, action);\n'
+            '}\n}\n'
+        )
+        self.write(self.roots[1], manager, source)
+        policy = json.loads(self.policy.read_text())
+        policy["platformResourcesOnlyOnJdk8"] = [{
+            "path": resource, "sha256": hashlib.sha256(config.encode()).hexdigest(),
+            "counterpart": counterpart, "evidence": evidence, "jdk17Manager": manager,
+            "property": prop, "default": cron, "reason": "Keep the same Quartz cron contract",
+        }]
+        self.policy.write_text(json.dumps(policy))
+        result, _ = self.run_checker("inventory")
+        self.assertEqual(0, result.returncode, result.stderr)
+
+        self.write(self.roots[1], manager, source.replace(cron, "0 * * * * ?"))
+        result, _ = self.run_checker("inventory")
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("stale JDK 8-only platform resource evidence", result.stderr)
+
     def test_jdk8_only_quarkus_cron_resource_requires_same_inline_default(self):
         resource = "ddd4j-runtime/ddd4j-runtime-quarkus/src/main/resources/application.properties"
         counterpart = ("ddd4j-runtime/ddd4j-runtime-quarkus/src/main/java/"
