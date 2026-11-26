@@ -43,7 +43,24 @@ checkout_dependency validation-api-extension "$validation_sha" "$source_dir/vali
 
 cd "$project_root"
 maven=(sh ./mvnw -B --no-transfer-progress -DskipTests -Djacoco.skip=true -Dgpg.skip=true)
-"${maven[@]}" -f "$source_dir/annotation/pom.xml" -pl mybatis-enhance-annotation -am install
-"${maven[@]}" -f "$source_dir/plus/pom.xml" -pl mybatis-plus-enhance-extension -am install
-"${maven[@]}" -f "$source_dir/validation/pom.xml" install
+
+install_dependency() {
+  local log="$source_dir/wrapper-install.log"
+  local attempt
+  for attempt in 1 2 3; do
+    if "${maven[@]}" "$@" 2>&1 | tee "$log"; then
+      return 0
+    fi
+    # Retry only Maven Wrapper distribution downloads; Maven build failures stay fatal.
+    if [[ "$attempt" == 3 ]] || ! grep -Eq '^wget: Failed to fetch https://(repo\.maven\.apache\.org/maven2/org/apache/maven/apache-maven/|archive\.apache\.org/dist/maven/)' "$log"; then
+      return 1
+    fi
+    echo "Retrying Maven Wrapper distribution download ($attempt/3)" >&2
+    sleep "$((attempt * 3))"
+  done
+}
+
+install_dependency -f "$source_dir/annotation/pom.xml" -pl mybatis-enhance-annotation -am install
+install_dependency -f "$source_dir/plus/pom.xml" -pl mybatis-plus-enhance-extension -am install
+install_dependency -f "$source_dir/validation/pom.xml" install
 echo "Installed MyBatis-Plus Enhance and Validation API Extension for $line"
