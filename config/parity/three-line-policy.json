@@ -200,34 +200,6 @@
   "platformResourcesOnlyOnJdk8": [],
   "platformCdiResourcesOnlyOnJdk8": [
     {
-      "path": "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/main/resources/META-INF/beans.xml",
-      "sha256": "eeda5bb2f3e034daa25fb64f2c7ff46c3055921f5e6bb012e5e575666f28ef6c",
-      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/test/java/io/ddd4j/sample/quarkus/shiro/goods/web/GoodsQueryResourceContractTest.java",
-      "testSha256": "1173758bafa46f057d886bad38e950c78531b5de215aef1b71a0668862fa3e44",
-      "reason": "Quarkus 1/JDK 8 的 Java EE 2.0 annotated beans.xml 为 CDI 发现入口；高两线 Quarkus 3/4 无该旧命名空间文件，三线共同 QuarkusTest 从 Arc 容器断言 GoodsResource 的 ApplicationScoped 作用域。"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-quarkus/src/main/resources/META-INF/beans.xml",
-      "sha256": "eeda5bb2f3e034daa25fb64f2c7ff46c3055921f5e6bb012e5e575666f28ef6c",
-      "evidence": "ddd4j-samples/ddd4j-sample-quarkus/src/test/java/io/ddd4j/sample/quarkus/goods/web/GoodsResourceCdiContractTest.java",
-      "testSha256": "9b7bd749e80f55cb6f94a6e31c3721a9f705439453470a401855c5c0fbb3f9a1",
-      "reason": "Quarkus 1/JDK 8 使用 Java EE 2.0 annotated beans.xml 作为 CDI 发现入口；高两线省略旧命名空间文件。三线共同 QuarkusTest 从 Arc 容器验证 GoodsResource 的 ApplicationScoped 作用域。"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/main/resources/META-INF/beans.xml",
-      "sha256": "eeda5bb2f3e034daa25fb64f2c7ff46c3055921f5e6bb012e5e575666f28ef6c",
-      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/test/java/io/ddd4j/sample/quarkus/cqrs/GoodsQueryCdiContractTest.java",
-      "testSha256": "a3a7433793273bdbb54b47c644e99f1f4881180a9d7a0817f60009f67baf7f2d",
-      "reason": "Quarkus 1/JDK 8 使用 Java EE 2.0 annotated beans.xml 启用 CDI；高两线省略旧命名空间文件。三线共同 QuarkusTest 从 Arc 容器验证 GoodsQueryResource 的 ApplicationScoped 作用域。"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-quarkus-satoken/src/main/resources/META-INF/beans.xml",
-      "sha256": "eeda5bb2f3e034daa25fb64f2c7ff46c3055921f5e6bb012e5e575666f28ef6c",
-      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-satoken/src/test/java/io/ddd4j/sample/quarkus/satoken/GoodsQueryCdiContractTest.java",
-      "testSha256": "f9279420524911d08f64b522732f9a237b790b083d7cbf3b057e3dfe210da4e8",
-      "reason": "Quarkus 1/JDK 8 使用 Java EE 2.0 annotated beans.xml 启用 CDI；高两线省略旧命名空间文件。三线共同 QuarkusTest 从 Arc 容器验证 GoodsQueryResource 的 ApplicationScoped 作用域。"
-    },
-    {
       "path": "ddd4j-web/ddd4j-web-quarkus/src/main/resources/META-INF/beans.xml",
       "sha256": "eeda5bb2f3e034daa25fb64f2c7ff46c3055921f5e6bb012e5e575666f28ef6c",
       "evidence": "ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusFilterCdiContractTest.java",
@@ -246,13 +218,13 @@
     "sources": {
       "ddd4j-runtime/ddd4j-runtime-dropwizard/src/main/java/io/ddd4j/dropwizard/Ddd4jLogbackAccessRequestLayout.java": "63c63044f1cf75dcd3876309cd319b7721f838850bace7ae8be8f1dd63116290",
       "ddd4j-runtime/ddd4j-runtime-dropwizard/src/main/java/io/ddd4j/dropwizard/Ddd4jLogbackAccessRequestLogFactory.java": "2d1fafb8fc94b2e7093bc35ec24a9c75d5d1bd907d6af41b8daf4051e3ffdc38",
-      "ddd4j-runtime/ddd4j-runtime-dropwizard/src/test/java/io/ddd4j/dropwizard/Ddd4jLogbackAccessRequestLogFactoryTest.java": "1acedeb5413e2ec82378645c31c1c028ac495475819bf5333eefb3bb21c640e5"
+      "ddd4j-runtime/ddd4j-runtime-dropwizard/src/test/java/io/ddd4j/dropwizard/Ddd4jLogbackAccessRequestLogFactoryTest.java": "55efd3d849a236d9276af2921e61b9e18646d36a2f6b010b948ad46011c227ec"
     },
     "counterparts": {
       "ddd4j-runtime/ddd4j-runtime-dropwizard/src/main/java/io/ddd4j/dropwizard/Ddd4jBundle.java": {
-        "8": "2047efc3997d60f8fbb0a89c7b1ff628a1ec45453e5b93ed9ba9e031b491b511",
-        "17": "7decb7185e7c3a67e541d36c0c65e40fc88f2d602349712b9bea4bc7c1cfe115",
-        "21": "b46560bb16e6bc3f448e27de8e85cbfe6d98282cd993e49ff21a7c615cff144c"
+        "8": "f658fbb594393aca39206a85b14d49353f83a69e2e6f6faaf70b4ee0cd3260a3",
+        "17": "fe0489825192826bd0e10badbc942af4c22b9207c128edb526ac1f967c302935",
+        "21": "36be887c8be5a9bc64a374445d58fe183e80f93b95db3709b518e0449b37d467"
       },
       "ddd4j-runtime/ddd4j-runtime-dropwizard/src/test/java/io/ddd4j/dropwizard/Ddd4jBundleTest.java": {
         "8": "fac496cd99b1e286fa7bf23d597619ebd6c0f2cd718093528b442cf639d9ed22",
@@ -260,14 +232,14 @@
         "21": "08111932536fd48de913f073dd4ab05a0bc15c23def1b8cf4696639e8d156c5d"
       },
       "ddd4j-samples/ddd4j-sample-dropwizard/src/test/java/io/ddd4j/sample/dropwizard/NativeDefaultTest.java": {
-        "8": "07f1d023d00bd4f3c19a3fa3029dfda4a0728eb06b9ca3248aa68e7b14df480a",
-        "17": "2f8cddba4aadc1354cd397ef307efb5e551718ecb08c0d96d4c50f09f4ea51c5",
-        "21": "c630de909f3bccc2c5ae851271bf5e4eced649cfb418165b7b25ee4937eef98d"
+        "8": "9e09c92f56c7ce050514cada47a91fec6e445d17e5bb70b02d5b4abc1326ab08",
+        "17": "a7e2205488bf308aea7d4cd642e04b19019af0c191f9791ad1d3f6615a238807",
+        "21": "a7e2205488bf308aea7d4cd642e04b19019af0c191f9791ad1d3f6615a238807"
       },
       "ddd4j-samples/ddd4j-sample-dropwizard/src/main/java/io/ddd4j/sample/dropwizard/DropwizardOrderApplication.java": {
-        "8": "9e6d45011f065d3988e6ba438cc9b669beba9feb88e8c262552503ecd209554f",
-        "17": "0e1afd39b2e54fbaa95317df6c64c85199aef143fc92992f4c81439cdbb30206",
-        "21": "0e1afd39b2e54fbaa95317df6c64c85199aef143fc92992f4c81439cdbb30206"
+        "8": "0124849c130bd57de7a25e17eabe5d8fc1ce5b836cfe90dad1e0e8d4c715851e",
+        "17": "db59a4335e6c57d254f5abf920efe214f864f9c14f413ce9e704a5cdf9ef8cfb",
+        "21": "db59a4335e6c57d254f5abf920efe214f864f9c14f413ce9e704a5cdf9ef8cfb"
       },
       "ddd4j-samples/ddd4j-sample-dropwizard/src/main/resources/dropwizard-order.yml": {
         "8": "45f8f54b9a41f11a7a1f6d5f7a57135c69b0820f9843938e75ae308356185495",
@@ -281,30 +253,30 @@
     {
       "path": "ddd4j-samples/ddd4j-sample-micronaut-satoken/src/main/java/io/ddd4j/sample/micronaut/satoken/NativeAuthenticated.java",
       "sha256": "65e9d022f542df2fe7197a27b5a60a3d237bc309e16d095b22ba6e390ff10de7",
-      "counterpart": "ddd4j-samples/ddd4j-sample-micronaut-satoken/src/main/java/io/ddd4j/sample/micronaut/satoken/NativeAuthFilter.java",
+      "counterpart": "ddd4j-samples/ddd4j-sample-micronaut-satoken/src/main/java/io/ddd4j/sample/micronaut/satoken/CatalogTradeController.java",
       "evidence": "ddd4j-samples/ddd4j-sample-micronaut-satoken/src/test/java/io/ddd4j/sample/micronaut/satoken/NativeAuthHttpTest.java",
-      "reason": "Micronaut 3 用路由方法注解和 AOP 管理控制器线程的原生主体，必填参数校验响应前由同平台 HttpFilter 鉴权。Micronaut 4 使用 ServerFilter 和可传播请求作用域。三线共用原生 HTTP 权限、参数校验与上下文清理契约。"
+      "reason": "JDK 8 Micronaut 3 在商品交易路由上用 AOP 建立并恢复原生主体；高两线由原生过滤器管理请求上下文。三线 HTTP 回归锁定权限和上下文清理。"
     },
     {
       "path": "ddd4j-samples/ddd4j-sample-micronaut-satoken/src/main/java/io/ddd4j/sample/micronaut/satoken/NativeAuthInterceptor.java",
-      "sha256": "5675c3e5660d5b8b062fd8e2c069aeb437a3897330286f941bb398ce6b159c61",
-      "counterpart": "ddd4j-samples/ddd4j-sample-micronaut-satoken/src/main/java/io/ddd4j/sample/micronaut/satoken/NativeAuthFilter.java",
+      "sha256": "ff4a6095932d93dd2dfd59d9d5b6e2a848e629c510830ba3ae20ed75629145bf",
+      "counterpart": "ddd4j-samples/ddd4j-sample-micronaut-satoken/src/main/java/io/ddd4j/sample/micronaut/satoken/CatalogTradeController.java",
       "evidence": "ddd4j-samples/ddd4j-sample-micronaut-satoken/src/test/java/io/ddd4j/sample/micronaut/satoken/NativeAuthHttpTest.java",
-      "reason": "Micronaut 3 用路由方法注解和 AOP 管理控制器线程的原生主体，必填参数校验响应前由同平台 HttpFilter 鉴权。Micronaut 4 使用 ServerFilter 和可传播请求作用域。三线共用原生 HTTP 权限、参数校验与上下文清理契约。"
+      "reason": "JDK 8 Micronaut 3 在商品交易路由上用 AOP 建立并恢复原生主体；高两线由原生过滤器管理请求上下文。三线 HTTP 回归锁定权限和上下文清理。"
     },
     {
       "path": "ddd4j-samples/ddd4j-sample-micronaut-shiro/src/main/java/io/ddd4j/sample/micronaut/shiro/NativeAuthenticated.java",
       "sha256": "9f583d1db3d850b97e2e291c3aa61bf4c7589b643222348eaf749c04dc9b3bd7",
-      "counterpart": "ddd4j-samples/ddd4j-sample-micronaut-shiro/src/main/java/io/ddd4j/sample/micronaut/shiro/NativeAuthFilter.java",
+      "counterpart": "ddd4j-samples/ddd4j-sample-micronaut-shiro/src/main/java/io/ddd4j/sample/micronaut/shiro/CatalogTradeController.java",
       "evidence": "ddd4j-samples/ddd4j-sample-micronaut-shiro/src/test/java/io/ddd4j/sample/micronaut/shiro/NativeAuthHttpTest.java",
-      "reason": "Micronaut 3 用路由方法注解和 AOP 管理控制器线程的原生主体，必填参数校验响应前由同平台 HttpFilter 鉴权。Micronaut 4 使用 ServerFilter 和可传播请求作用域。三线共用原生 HTTP 权限、参数校验与上下文清理契约。"
+      "reason": "JDK 8 Micronaut 3 在商品交易路由上用 AOP 建立并恢复原生主体；高两线由原生过滤器管理请求上下文。三线 HTTP 回归锁定权限和上下文清理。"
     },
     {
       "path": "ddd4j-samples/ddd4j-sample-micronaut-shiro/src/main/java/io/ddd4j/sample/micronaut/shiro/NativeAuthInterceptor.java",
-      "sha256": "4bad26d73b9c54cfc5af1cc02d8465730897002f20ff50e9b2f1baddf4649b42",
-      "counterpart": "ddd4j-samples/ddd4j-sample-micronaut-shiro/src/main/java/io/ddd4j/sample/micronaut/shiro/NativeAuthFilter.java",
+      "sha256": "38c30fe0f5232b2d37394390c5a79d6b9bb28531e4ee3a30d4638ec34dfc8940",
+      "counterpart": "ddd4j-samples/ddd4j-sample-micronaut-shiro/src/main/java/io/ddd4j/sample/micronaut/shiro/CatalogTradeController.java",
       "evidence": "ddd4j-samples/ddd4j-sample-micronaut-shiro/src/test/java/io/ddd4j/sample/micronaut/shiro/NativeAuthHttpTest.java",
-      "reason": "Micronaut 3 用路由方法注解和 AOP 管理控制器线程的原生主体，必填参数校验响应前由同平台 HttpFilter 鉴权。Micronaut 4 使用 ServerFilter 和可传播请求作用域。三线共用原生 HTTP 权限、参数校验与上下文清理契约。"
+      "reason": "JDK 8 Micronaut 3 在商品交易路由上用 AOP 建立并恢复原生主体；高两线由原生过滤器管理请求上下文。三线 HTTP 回归锁定权限和上下文清理。"
     },
     {
       "path": "ddd4j-web/ddd4j-web-quarkus/src/main/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebResponseFilter.java",
@@ -312,53 +284,17 @@
       "counterpart": "ddd4j-web/ddd4j-web-quarkus/src/main/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebFilter.java",
       "evidence": "ddd4j-web/ddd4j-web-quarkus/src/test/java/io/ddd4j/web/quarkus/Ddd4jQuarkusWebContractTest.java",
       "reason": "Quarkus 1.x 以独立 JAX-RS ContainerResponseFilter Provider 委托响应清理；Quarkus 高线在共同过滤器上使用 RESTEasy Reactive @ServerResponseFilter。三线运行共同 HTTP 契约，平台入口源码由 SHA-256 锁定"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/rbac/web/Java8Maps.java",
-      "sha256": "99c8fa21f362d154fe0a95cd6ffdc73df45d836483f7213943611a29bb0e1480",
-      "counterpart": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/rbac/web/AuthenticationController.java",
-      "evidence": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/rbac/web/Java8MapsContractTest.java",
-      "reason": "JDK 8 Sa-Token 样例用 Java8Maps.of 实现不可变响应 Map；高两线在相同控制器使用 Map.of。三线共同测试锁定 null、重复键与不可变行为，低线辅助类源码哈希锁定"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/rbac/controller/Java8Maps.java",
-      "sha256": "d5b4b47339b40410d0af3ebce71993781df20cf82439c03fe55e0f8224039b6a",
-      "counterpart": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/rbac/controller/AuthenticationController.java",
-      "evidence": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/rbac/controller/Java8MapsContractTest.java",
-      "reason": "JDK 8 Shiro 样例用 Java8Maps.of 实现不可变响应 Map；高两线在相同控制器使用 Map.of。三线共同测试锁定 null、重复键与不可变行为，低线辅助类源码哈希锁定"
     }
   ],
   "platformTestsOnlyOnJdk8": [
     {
-      "path": "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/order/domain/model/MoneyLegacySerializationTest.java",
-      "sha256": "3f0cbfa16176087e23cae054fba8904372eb01e36d14255577c9a432bc257900",
-      "counterpart": "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/order/domain/model/MoneyContractTest.java",
-      "counterpartSha256": [
-        "fb5d31d7fa90d4b3a7e9e496a619732d17fb52ef759948140d75056f542dccef",
-        "fb5d31d7fa90d4b3a7e9e496a619732d17fb52ef759948140d75056f542dccef",
-        "d6922b2e8cc33709da8de026839afb2720823e00266356ed9c32a23ed38dbba4"
-      ],
-      "reason": "Java 8 固定原发布 UID 并读回历史对象流。三线 MoneyContractTest 共同验证金额值、JSON 和本线 Java 序列化往返。"
-    },
-    {
-      "path": "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/cqrs/QuarkusRuntimeLifecycleIT.java",
-      "sha256": "ef6556950ef48e305cac193b4cce5bf69f29304fc96d756577da876c1921d352",
-      "counterpart": "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/cqrs/QuarkusRuntimeLifecycleTest.java",
-      "counterpartSha256": [
-        "7cd6e92d2db011c2425240825a0ee332c32948934480f84b037d36263ad3f9c2",
-        "48bf6075e84354a81496a6db2aa6b64308c520ba5149295706bb630f68e394cc",
-        "48bf6075e84354a81496a6db2aa6b64308c520ba5149295706bb630f68e394cc"
-      ],
-      "reason": "Java 8 历史 Surefire 入口保留 IT 类。三线共同的 QuarkusRuntimeLifecycleTest 与低线 IT 使用同一原生事件配置和同一组启动及关闭方法体，四份报告实际执行通过。"
-    },
-    {
       "path": "ddd4j-data/ddd4j-data-event-store-esdb/src/test/java/io/ddd4j/data/event/store/esdb/EsdbContainerSupport.java",
-      "sha256": "9af1829ef9376921eba38f053a9d25b64811b2982809b2288776219067278d9f",
+      "sha256": "69a6f22092fb4f5af473dc35b1ab0773efc51fb2ffbb4de5a14cd812838fab61",
       "counterpart": "ddd4j-data/ddd4j-data-event-store-esdb/src/test/java/io/ddd4j/data/event/store/esdb/EsdbEventStoreIT.java",
       "counterpartSha256": [
-        "fc71378c370ed7537cc240fd4ec1066a5aecc76f0443b5a5363aff0918395bf6",
-        "026330ecc279d42c09a504664b809a957040be822e54b946f442b1c21c913b3d",
-        "026330ecc279d42c09a504664b809a957040be822e54b946f442b1c21c913b3d"
+        "de61d64921ad554a618388c898d8172bd8dd17d3f651a07b77359aa785e51aac",
+        "b977a3acfdd7635c8906014539e45cf2e96f5b40cc209befb29e1d219db6af70",
+        "c9ecb12935984809c56b20cf76d55473ff3307b292f9915039ac22fcfc1c896e"
       ],
       "reason": "JDK 8 进程级单例 EventStoreDB 容器夹具；三线 EsdbEventStoreIT 均在真实容器执行，低线额外补充用例覆盖并发与因果元数据"
     },
@@ -367,119 +303,20 @@
       "sha256": "9919d78ab903abddac190e6feb18c8a107fa0b67b3c6b8127e38e06d067629af",
       "counterpart": "ddd4j-data/ddd4j-data-event-store-esdb/src/test/java/io/ddd4j/data/event/store/esdb/EsdbEventStoreIT.java",
       "counterpartSha256": [
-        "fc71378c370ed7537cc240fd4ec1066a5aecc76f0443b5a5363aff0918395bf6",
-        "026330ecc279d42c09a504664b809a957040be822e54b946f442b1c21c913b3d",
-        "026330ecc279d42c09a504664b809a957040be822e54b946f442b1c21c913b3d"
+        "de61d64921ad554a618388c898d8172bd8dd17d3f651a07b77359aa785e51aac",
+        "b977a3acfdd7635c8906014539e45cf2e96f5b40cc209befb29e1d219db6af70",
+        "c9ecb12935984809c56b20cf76d55473ff3307b292f9915039ac22fcfc1c896e"
       ],
       "reason": "JDK 8 补充容器契约验证并发冲突与因果元数据；高两线 EsdbEventStoreIT 包含相同断言并在真实容器执行"
     },
     {
-      "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/http/HttpClient.java",
-      "sha256": "d3ec82aef81cd3dc4cc05ed0626db4bcc2458c910ccf38258b554cfa8dc57440",
-      "counterpart": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/rbac/web/AuthenticationControllerTest.java",
-      "counterpartSha256": [
-        "5373726bfe7a71112db43205d6a2b5e13548590af8c5ea7e1818d3b812826567",
-        "699f69337c9a5a2e61677e266c751641d71ae763a107ae6979ad147d78bad71d",
-        "22404f5a2d9692722e27b91b7ef66177d98b475e03607fe3aa9a498d63768f30"
-      ],
-      "reason": "JDK 8 测试 HTTP 客户端适配；高两线使用 java.net.http，三线相同 AuthenticationControllerTest 31 项真实 HTTP 测试通过"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/http/HttpRequest.java",
-      "sha256": "c7201aa9612957c84607e195e22a1f364c178c571d7873987dfb06b0a904a9bc",
-      "counterpart": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/rbac/web/AuthenticationControllerTest.java",
-      "counterpartSha256": [
-        "5373726bfe7a71112db43205d6a2b5e13548590af8c5ea7e1818d3b812826567",
-        "699f69337c9a5a2e61677e266c751641d71ae763a107ae6979ad147d78bad71d",
-        "22404f5a2d9692722e27b91b7ef66177d98b475e03607fe3aa9a498d63768f30"
-      ],
-      "reason": "JDK 8 测试 HTTP 客户端适配；高两线使用 java.net.http，三线相同 AuthenticationControllerTest 31 项真实 HTTP 测试通过"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/http/HttpResponse.java",
-      "sha256": "edb0348021bd162d013a34d6a4d1b32463b9feb38ade880825c7a9fb0a7af194",
-      "counterpart": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/rbac/web/AuthenticationControllerTest.java",
-      "counterpartSha256": [
-        "5373726bfe7a71112db43205d6a2b5e13548590af8c5ea7e1818d3b812826567",
-        "699f69337c9a5a2e61677e266c751641d71ae763a107ae6979ad147d78bad71d",
-        "22404f5a2d9692722e27b91b7ef66177d98b475e03607fe3aa9a498d63768f30"
-      ],
-      "reason": "JDK 8 测试 HTTP 客户端适配；高两线使用 java.net.http，三线相同 AuthenticationControllerTest 31 项真实 HTTP 测试通过"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/http/HttpClient.java",
-      "sha256": "93a5ffa06808285fa1074748b4d14c43c79dd4ebed32aa4301033ffb2a03275e",
-      "counterpart": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/rbac/web/AuthControllerTest.java",
-      "counterpartSha256": [
-        "ebe260d652972bea453b2b16fc6445bf03bb5de95bc3fbb095037987811e1438",
-        "3efd8e8b487f6458db97e65f8d59a3146f3b9975c6eaaf76e56f079b7fcfc29b",
-        "746e1402c3d3eb6f483254eaabc022e56dd9a57bd9ce929342cc13899a52877c"
-      ],
-      "reason": "JDK 8 测试 HTTP 客户端适配；高两线使用 java.net.http，三线相同 AuthControllerTest 37 项真实 HTTP 测试通过"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/http/HttpRequest.java",
-      "sha256": "1b7f673704d5e779ba7d011805e06b1742d993fb9dafc5e512d34cf2452fddd0",
-      "counterpart": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/rbac/web/AuthControllerTest.java",
-      "counterpartSha256": [
-        "ebe260d652972bea453b2b16fc6445bf03bb5de95bc3fbb095037987811e1438",
-        "3efd8e8b487f6458db97e65f8d59a3146f3b9975c6eaaf76e56f079b7fcfc29b",
-        "746e1402c3d3eb6f483254eaabc022e56dd9a57bd9ce929342cc13899a52877c"
-      ],
-      "reason": "JDK 8 测试 HTTP 客户端适配；高两线使用 java.net.http，三线相同 AuthControllerTest 37 项真实 HTTP 测试通过"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/http/HttpResponse.java",
-      "sha256": "4caba9c64a8ee2e3fdf4f5ecb6b248eac04293db196f62961457731eee3b327e",
-      "counterpart": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/rbac/web/AuthControllerTest.java",
-      "counterpartSha256": [
-        "ebe260d652972bea453b2b16fc6445bf03bb5de95bc3fbb095037987811e1438",
-        "3efd8e8b487f6458db97e65f8d59a3146f3b9975c6eaaf76e56f079b7fcfc29b",
-        "746e1402c3d3eb6f483254eaabc022e56dd9a57bd9ce929342cc13899a52877c"
-      ],
-      "reason": "JDK 8 测试 HTTP 客户端适配；高两线使用 java.net.http，三线相同 AuthControllerTest 37 项真实 HTTP 测试通过"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/TestHttpClient.java",
-      "sha256": "609b3071d622662f42a175af5206c138ad7c20d200a6bc2c99a815220dddcf8a",
-      "counterpart": "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/goods/web/GoodsControllerTest.java",
-      "counterpartSha256": [
-        "ca74306fc2c6fdf404a9ba57f5344b5dd791b0688d48ce53c5d2e1fe69ce54bf",
-        "b0a9b77c7c0cbaef77443a0af7c822784fe8d501401daef83629bd6dc8c0e340",
-        "12a4ffb2ff00fea4f7c517d8970bbde9798add928c9aff466741412c78c6c121"
-      ],
-      "reason": "JDK 8 HTTP 测试客户端替代 java.net.http；三线 GoodsControllerTest 与 OrderControllerTest 均在真实 Javalin 服务上执行且无跳过"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-javalin/src/test/java/io/ddd4j/sample/javalin/TestHttpClient.java",
-      "sha256": "26b4e3ef9c69b0671b317833249dba6e6dc720d87af623ae9125cfeab63aa6ce",
-      "counterpart": "ddd4j-samples/ddd4j-sample-javalin/src/test/java/io/ddd4j/sample/javalin/goods/web/GoodsControllerTest.java",
-      "counterpartSha256": [
-        "078bededb78991237992e1bbe2217c3090740120eadaa4bf70908fb28cf7292d",
-        "3ce5b1c8e1dfc6687b9967c73b5859ae9182d8302a371725ed54e0c20edfa290",
-        "73b4143dd18e56272c8b90086b1a27fad0753b5a57db4558462e133fa7aea479"
-      ],
-      "reason": "JDK 8 HTTP 测试客户端替代 java.net.http；三线 GoodsControllerTest 与 OrderControllerTest 均在真实 Javalin 服务上执行且无跳过"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-vertx-cqrs/src/test/java/io/ddd4j/sample/vertx/cqrs/Jdk8HttpCompat.java",
-      "sha256": "1ef483217a467b0d15e48fb410e487aaef5ea28be834192aa335e95a408a8665",
-      "counterpart": "ddd4j-samples/ddd4j-sample-vertx-cqrs/src/test/java/io/ddd4j/sample/vertx/cqrs/VertxOrderCqrsIT.java",
-      "counterpartSha256": [
-        "47cd7a3451ac6c93823cc9c5262075f9c6c93c1b5c0a3bd599244d22f4e8f9ef",
-        "99b0c3c9552dc863c814e3dfc9a3cea3536f68b24ba1dd4dec64403719d465df",
-        "99b0c3c9552dc863c814e3dfc9a3cea3536f68b24ba1dd4dec64403719d465df"
-      ],
-      "reason": "JDK 8 HTTP 测试门面替代 java.net.http；三线 VertxOrderCqrsIT 均有 3 项真实 HTTP 测试通过且无跳过"
-    },
-    {
       "path": "ddd4j-data/ddd4j-data-event-store-r2dbc/src/test/java/io/ddd4j/data/event/store/r2dbc/PostgresEventStoreContainerSupport.java",
-      "sha256": "ae9508ebe92222a67346ec3a92fea4c62460b957c2c9e2d7b0a3fb265ec46107",
+      "sha256": "4391fdd7bbd84ef05b3a248cffe8705b25e19f1ed1280d8b0e602edb3734e663",
       "counterpart": "ddd4j-data/ddd4j-data-event-store-r2dbc/src/test/java/io/ddd4j/data/event/store/r2dbc/R2dbcEventStorePostgresIT.java",
       "counterpartSha256": [
         "94b83e2b1fd0b7533e146e6a779c91d7d257d041f211c61d5f7af309f75f5cd6",
-        "06e3e8b3ffac68d728fd067a613699996c7c8d164e6559636e74fa78649a9832",
-        "208324df9b5cd881274d7f9e2f1396bf75a0dd64143fababc4643709d6040c0c"
+        "135522200b45abaa4f0317712aa716b125d814a2334488a4d5dea355dae4681b",
+        "4f62b531d9d39f76fd2b18ca6250d4d2cfcee4ed923a3bda2df1fc84eb76916e"
       ],
       "reason": "JDK 8 PostgreSQL 进程级单例容器夹具；高两线使用 @Container；三线 R2dbcEventStorePostgresIT 各 4 项真实 PostgreSQL 测试通过且无跳过"
     }
@@ -500,20 +337,6 @@
       "reason": "三线相同空操作加解密、错误和 HMAC 契约测试，仅 JDK 21 线使用 Jackson 3 ObjectMapper import"
     },
     {
-      "path": "ddd4j-samples/ddd4j-sample-vertx-cqrs/src/test/java/io/ddd4j/sample/vertx/cqrs/VertxOrderCommandContractTest.java",
-      "replacements": [
-        {
-          "from": "import com.fasterxml.jackson.databind.ObjectMapper;",
-          "to": "import tools.jackson.databind.ObjectMapper;"
-        }
-      ],
-      "targetLines": [
-        "3.0.x"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-vertx-cqrs/src/test/java/io/ddd4j/sample/vertx/cqrs/VertxOrderCommandContractTest.java",
-      "reason": "三线命令 JSON 往返、访问器、相等性、哈希及字符串契约相同，仅 Java 21 的测试使用本线 Jackson 3 ObjectMapper 包名。"
-    },
-    {
       "path": "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/command/SampleCommandHandler.java",
       "replacements": [
         {
@@ -523,32 +346,6 @@
       ],
       "evidence": "ddd4j-runtime/ddd4j-runtime-quarkus/src/test/java/io/ddd4j/quarkus/command/QuarkusCommandBusIT.java",
       "reason": "三个版本通过对应 CDI 命名空间发现同一运行时命令执行器，只有 javax/jakarta 导入不同。"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/test/java/io/ddd4j/sample/quarkus/cqrs/event/OrderEventTest.java",
-      "replacements": [
-        {
-          "from": "import javax.inject.Inject;",
-          "to": "import jakarta.inject.Inject;"
-        }
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/test/java/io/ddd4j/sample/quarkus/cqrs/event/OrderEventTest.java",
-      "reason": "三线事件与 REST 断言逐字一致，构造相同请求体；仅 Quarkus CDI 的 javax/jakarta 注入命名空间不同。"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/main/java/io/ddd4j/sample/quarkus/cqrs/order/domain/service/OrderDomainService.java",
-      "replacements": [
-        {
-          "from": "import javax.enterprise.context.ApplicationScoped;",
-          "to": "import jakarta.enterprise.context.ApplicationScoped;"
-        },
-        {
-          "from": "import javax.inject.Inject;",
-          "to": "import jakarta.inject.Inject;"
-        }
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/test/java/io/ddd4j/sample/quarkus/cqrs/order/OrderCQRSQueryTest.java",
-      "reason": "取消草稿订单的业务逻辑和公开方法文档三线逐字一致；仅 CDI 注解命名空间随 Quarkus 版本适配，三线目标模块测试通过"
     },
     {
       "path": "ddd4j-web/ddd4j-web-quarkus/src/main/java/io/ddd4j/web/quarkus/AccessLogFilter.java",
@@ -642,7 +439,7 @@
           "to": "import io.dropwizard.core.Configuration;"
         }
       ],
-      "evidence": "ddd4j-samples/ddd4j-sample-dropwizard/src/test/java/io/ddd4j/sample/dropwizard/DropwizardOrderResourceTest.java",
+      "evidence": "ddd4j-samples/ddd4j-sample-dropwizard/src/test/java/io/ddd4j/sample/dropwizard/NativeDefaultTest.java",
       "reason": "Dropwizard 示例公开路径集合行为三线一致；仅框架 Configuration 包名随平台变化"
     },
     {
@@ -661,71 +458,6 @@
       "reason": "Helidon 示例资源集合行为三线一致；仅 JAX-RS 包名随平台变化"
     },
     {
-      "path": "ddd4j-samples/ddd4j-sample-helidon-cqrs/src/main/java/io/ddd4j/sample/helidon/cqrs/HelidonCqrsBeans.java",
-      "replacements": [
-        {
-          "from": "import javax.enterprise.context.ApplicationScoped;",
-          "to": "import jakarta.enterprise.context.ApplicationScoped;"
-        },
-        {
-          "from": "import javax.enterprise.context.BeforeDestroyed;",
-          "to": "import jakarta.enterprise.context.BeforeDestroyed;"
-        },
-        {
-          "from": "import javax.enterprise.context.Dependent;",
-          "to": "import jakarta.enterprise.context.Dependent;"
-        },
-        {
-          "from": "import javax.enterprise.context.Initialized;",
-          "to": "import jakarta.enterprise.context.Initialized;"
-        },
-        {
-          "from": "import javax.enterprise.event.Observes;",
-          "to": "import jakarta.enterprise.event.Observes;"
-        },
-        {
-          "from": "import javax.enterprise.inject.Instance;",
-          "to": "import jakarta.enterprise.inject.Instance;"
-        },
-        {
-          "from": "import javax.enterprise.inject.Produces;",
-          "to": "import jakarta.enterprise.inject.Produces;"
-        },
-        {
-          "from": "import javax.inject.Inject;",
-          "to": "import jakarta.inject.Inject;"
-        }
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-helidon-cqrs/src/test/java/io/ddd4j/sample/helidon/cqrs/HelidonOrderCqrsIT.java",
-      "reason": "Helidon CQRS 装配与单元素处理器集合三线相同；仅 CDI 包名按各线 Helidon 版本适配"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/main/java/io/ddd4j/sample/quarkus/cqrs/cache/OrderCacheService.java",
-      "replacements": [
-        {
-          "from": "import javax.enterprise.context.ApplicationScoped;",
-          "to": "import jakarta.enterprise.context.ApplicationScoped;"
-        },
-        {
-          "from": "import javax.inject.Inject;",
-          "to": "import jakarta.inject.Inject;"
-        }
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/test/java/io/ddd4j/sample/quarkus/cqrs/order/OrderCQRSQueryTest.java",
-      "reason": "Quarkus CQRS 缓存逻辑三线一致；仅 CDI import 随平台变化"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/main/java/io/ddd4j/sample/quarkus/shiro/order/infrastructure/InMemoryOrderRepository.java",
-      "replacements": [
-        {
-          "from": "import javax.enterprise.context.ApplicationScoped;",
-          "to": "import jakarta.enterprise.context.ApplicationScoped;"
-        }
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/test/java/io/ddd4j/sample/quarkus/shiro/RbacResourceTest.java",
-      "reason": "Quarkus Shiro 订单仓储逻辑三线一致；仅 CDI import 随平台变化"
-    },
-    {
       "path": "ddd4j-samples/ddd4j-sample-helidon-cqrs/src/main/java/io/ddd4j/sample/helidon/cqrs/HelidonCqrsJaxRsApplication.java",
       "replacements": [
         {
@@ -737,7 +469,7 @@
           "to": "import jakarta.ws.rs.core.Application;"
         }
       ],
-      "evidence": "ddd4j-samples/ddd4j-sample-helidon-cqrs/src/test/java/io/ddd4j/sample/helidon/cqrs/HelidonOrderCqrsIT.java",
+      "evidence": "ddd4j-samples/ddd4j-sample-helidon-cqrs/src/test/java/io/ddd4j/sample/helidon/cqrs/HelidonCatalogCqrsHttpTest.java",
       "reason": "Helidon CQRS 资源注册逻辑三线一致；仅 JAX-RS import 随平台变化"
     },
     {
@@ -871,20 +603,6 @@
       ],
       "evidence": "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/delivery/MQDeliveryPolicyValueContractTest.java",
       "reason": "三线相同可靠投递策略值与 JSON 契约，仅 JDK 21 线使用本线 Jackson 3 JsonMapper；其余测试正文逐字一致"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-order-jdbc/src/main/java/io/ddd4j/sample/order/jdbc/JdbcOrderSampleRuntime.java",
-      "targetLines": [
-        "3.0.x"
-      ],
-      "replacements": [
-        {
-          "from": "import com.fasterxml.jackson.databind.ObjectMapper;",
-          "to": "import tools.jackson.databind.ObjectMapper;"
-        }
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-order-jdbc/src/test/java/io/ddd4j/sample/order/jdbc/OrderInfrastructureRoundTripTest.java",
-      "reason": "三线共享 JDBC 订单可靠投递运行接线；JDK 21 线仅按 Jackson 3 的 ObjectMapper 包名适配"
     },
     {
       "path": "ddd4j-data/ddd4j-data-crypto/src/test/java/io/ddd4j/data/crypto/strategy/FlksecCryptoHttpContractTest.java",
@@ -1301,76 +1019,6 @@
       "reason": "三线资源生命周期断言相同；仅 CDI 注解命名空间按 Quarkus 版本适配"
     },
     {
-      "path": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/main/java/io/ddd4j/sample/quarkus/cqrs/goods/web/GoodsResource.java",
-      "replacements": [
-        {
-          "from": "import javax.enterprise.context.ApplicationScoped;",
-          "to": "import jakarta.enterprise.context.ApplicationScoped;"
-        },
-        {
-          "from": "import javax.inject.Inject;",
-          "to": "import jakarta.inject.Inject;"
-        },
-        {
-          "from": "import javax.ws.rs.Consumes;",
-          "to": "import jakarta.ws.rs.Consumes;"
-        },
-        {
-          "from": "import javax.ws.rs.DELETE;",
-          "to": "import jakarta.ws.rs.DELETE;"
-        },
-        {
-          "from": "import javax.ws.rs.GET;",
-          "to": "import jakarta.ws.rs.GET;"
-        },
-        {
-          "from": "import javax.ws.rs.POST;",
-          "to": "import jakarta.ws.rs.POST;"
-        },
-        {
-          "from": "import javax.ws.rs.PUT;",
-          "to": "import jakarta.ws.rs.PUT;"
-        },
-        {
-          "from": "import javax.ws.rs.Path;",
-          "to": "import jakarta.ws.rs.Path;"
-        },
-        {
-          "from": "import javax.ws.rs.PathParam;",
-          "to": "import jakarta.ws.rs.PathParam;"
-        },
-        {
-          "from": "import javax.ws.rs.Produces;",
-          "to": "import jakarta.ws.rs.Produces;"
-        },
-        {
-          "from": "import javax.ws.rs.QueryParam;",
-          "to": "import jakarta.ws.rs.QueryParam;"
-        },
-        {
-          "from": "import javax.ws.rs.core.MediaType;",
-          "to": "import jakarta.ws.rs.core.MediaType;"
-        },
-        {
-          "from": "import javax.ws.rs.core.Response;",
-          "to": "import jakarta.ws.rs.core.Response;"
-        }
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/test/java/io/ddd4j/sample/quarkus/cqrs/goods/web/GoodsResourceScopeContractTest.java",
-      "reason": "三线 CQRS 商品 REST 资源保持 ApplicationScoped 与相同 HTTP 契约；Quarkus 1 与高线仅 CDI/JAX-RS 导入命名空间不同"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/test/java/io/ddd4j/sample/quarkus/cqrs/goods/web/GoodsResourceScopeContractTest.java",
-      "replacements": [
-        {
-          "from": "import javax.enterprise.context.ApplicationScoped;",
-          "to": "import jakarta.enterprise.context.ApplicationScoped;"
-        }
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/test/java/io/ddd4j/sample/quarkus/cqrs/goods/web/GoodsResourceScopeContractTest.java",
-      "reason": "三线 CQRS 资源生命周期断言相同；仅 CDI 注解命名空间按 Quarkus 版本适配"
-    },
-    {
       "path": "ddd4j-samples/ddd4j-sample-quarkus/src/test/java/io/ddd4j/sample/quarkus/ResourceScopeContractTest.java",
       "replacements": [
         {
@@ -1379,17 +1027,6 @@
         }
       ],
       "evidence": "ddd4j-samples/ddd4j-sample-quarkus/src/test/java/io/ddd4j/sample/quarkus/ResourceScopeContractTest.java",
-      "reason": "同一组 Quarkus 资源生命周期契约测试仅按平台切换 CDI 注解命名空间"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/test/java/io/ddd4j/sample/quarkus/cqrs/ResourceScopeContractTest.java",
-      "replacements": [
-        {
-          "from": "import javax.enterprise.context.ApplicationScoped;",
-          "to": "import jakarta.enterprise.context.ApplicationScoped;"
-        }
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/test/java/io/ddd4j/sample/quarkus/cqrs/ResourceScopeContractTest.java",
       "reason": "同一组 Quarkus 资源生命周期契约测试仅按平台切换 CDI 注解命名空间"
     },
     {
@@ -1492,7 +1129,7 @@
       "path": "ddd4j-samples/ddd4j-sample-helidon-cqrs/pom.xml",
       "category": "helidon-sample",
       "decision": "supported",
-      "evidence": "ddd4j-samples/ddd4j-sample-helidon-cqrs/src/test/java/io/ddd4j/sample/helidon/cqrs/HelidonOrderCqrsIT.java"
+      "evidence": "ddd4j-samples/ddd4j-sample-helidon-cqrs/src/test/java/io/ddd4j/sample/helidon/cqrs/HelidonCatalogCqrsHttpTest.java"
     },
     {
       "path": "ddd4j-samples/ddd4j-sample-helidon/pom.xml",
@@ -1504,7 +1141,7 @@
       "path": "ddd4j-samples/ddd4j-sample-micronaut-cqrs/pom.xml",
       "category": "micronaut-sample",
       "decision": "supported",
-      "evidence": "ddd4j-samples/ddd4j-sample-micronaut-cqrs/src/test/java/io/ddd4j/sample/micronaut/cqrs/MicronautOrderCqrsIT.java"
+      "evidence": "ddd4j-samples/ddd4j-sample-micronaut-cqrs/src/test/java/io/ddd4j/sample/micronaut/cqrs/MicronautCatalogCqrsHttpTest.java"
     },
     {
       "path": "ddd4j-samples/ddd4j-sample-micronaut/pom.xml",
@@ -1516,7 +1153,7 @@
       "path": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/pom.xml",
       "category": "quarkus-sample",
       "decision": "supported",
-      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/test/java/io/ddd4j/sample/quarkus/cqrs/event/OrderEventTest.java"
+      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/test/java/io/ddd4j/sample/quarkus/cqrs/QuarkusCatalogCqrsHttpTest.java"
     },
     {
       "path": "ddd4j-samples/ddd4j-sample-quarkus-satoken/pom.xml",
@@ -1534,7 +1171,7 @@
       "path": "ddd4j-samples/ddd4j-sample-quarkus/pom.xml",
       "category": "quarkus-sample",
       "decision": "supported",
-      "evidence": "ddd4j-samples/ddd4j-sample-quarkus/src/test/java/io/ddd4j/sample/quarkus/OrderResourceTest.java"
+      "evidence": "ddd4j-samples/ddd4j-sample-quarkus/src/test/java/io/ddd4j/sample/quarkus/QuarkusCatalogHttpTest.java"
     },
     {
       "path": "ddd4j-web/ddd4j-web-helidon/pom.xml",
@@ -1843,8 +1480,8 @@
         "2.0.x": "com.fasterxml.jackson.databind.JsonNode",
         "3.0.x": "tools.jackson.databind.JsonNode"
       },
-      "reason": "订单事件载荷的 JsonNode 在 Jackson 2/3 间仅作精确类型映射，HTTP 查询与载荷契约由三线订单样例测试验证",
-      "evidence": "ddd4j-samples/ddd4j-sample-order-testkit/src/test/java/io/ddd4j/sample/order/testkit/EnvelopeOrderHttpDriverQueryTest.java"
+      "reason": "事件载荷的 JsonNode 在 Jackson 2/3 间作精确类型映射；三线 MQ 测试断言载荷的因果元数据及其与消息头的一致性",
+      "evidence": "ddd4j-mq/ddd4j-mq-core/src/test/java/io/ddd4j/mq/event/MQCausalityBrokerHeaderMustTest.java"
     },
     {
       "id": "jackson-objectmapper-namespace",
@@ -2284,100 +1921,6 @@
       "reason": "Java 8 复用 Apache HC5，保障中断取消、物理连接关闭和有界执行；高线使用原生 JDK HttpClient。三线真实回环验证同一中断契约。"
     },
     {
-      "path": "ddd4j-samples/ddd4j-sample-order-testkit/src/main/java/io/ddd4j/sample/order/testkit/EnvelopeOrderHttpDriver.java",
-      "sourceSha256": [
-        "03a5218461a6962b9662048301993f2e1efcf9f31b0e5ba04fb85a02d95af405",
-        "6325f933eca5f4735e9f3d42a3e97dd84702a2d8a91b016c436b1deb3035aae7",
-        "4a72c914896bc221bc1a439d054dc10e927df38c47008ecadf8fdb360acaaa95"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-order-testkit/src/test/java/io/ddd4j/sample/order/testkit/SampleHttpTransportInterruptionTest.java",
-      "testSha256": "fc2f4c4c1d77135062862f1b0f11c3a31c1b80ecfb64d6b4b1eca61c65543993",
-      "reason": "Java 8 使用 HC5 可中断入口，高线使用原生请求。三线保留 Envelope 的结果提取、错误响应及中断异常与线程标记。"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-order-testkit/src/main/java/io/ddd4j/sample/order/testkit/HttpOrderSampleDriver.java",
-      "sourceSha256": [
-        "39f55fc51bfda3660624c91fa62e2cc7278b69ee19e1a8abf734f2d4caa1c3d7",
-        "b771db27e1d024d210a0fb869c817514dd67a187720d917cc835e1051f448ebb",
-        "cd49961060fe7436d68dfabf8273895dc92c6f9c954af760f7df93243ddb26f8"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-order-testkit/src/test/java/io/ddd4j/sample/order/testkit/SampleHttpTransportInterruptionTest.java",
-      "testSha256": "fc2f4c4c1d77135062862f1b0f11c3a31c1b80ecfb64d6b4b1eca61c65543993",
-      "reason": "Java 8 使用 HC5 可中断入口，高线使用原生请求。三线保留普通正文的解析、错误响应及中断异常与线程标记。"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/main/java/io/ddd4j/sample/quarkus/cqrs/shared/OrderCommandExecutor.java",
-      "sourceSha256": [
-        "254026eddb9e9e17add0b17939f2cd3801583c8a9706f71891e844785bdbc211",
-        "a3ad7c7d84b800d3caa4639dab3874bf06a701f5e93eebb847d8af9217bb2044",
-        "a3ad7c7d84b800d3caa4639dab3874bf06a701f5e93eebb847d8af9217bb2044"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/test/java/io/ddd4j/sample/quarkus/cqrs/NativeSharedCqrsTest.java",
-      "testSha256ByJdk": {
-        "8": "0408cb04fc3442061abf4b451c368ffdce8b3bd3fe05c020318f546d09d4d38b",
-        "17": "53efd382d00f0626617e1992b58b47fc2f541f48e52be920da46e07b828c793b",
-        "21": "53efd382d00f0626617e1992b58b47fc2f541f48e52be920da46e07b828c793b"
-      },
-      "reason": "JDK 8 使用条件 CDI Bean、显式类型及 Guava。高线保留原生 CDI，候选命令集合仍只读，与 JDK 8 一样对 null 查询返回 false。三线真实 Quarkus 与 PostgreSQL 验证同一订单写链路；新增边界测试已执行。",
-      "additionalEvidence": [
-        {
-          "path": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/test/java/io/ddd4j/sample/quarkus/cqrs/shared/QuarkusDurableWiringBoundaryTest.java",
-          "testSha256": "b329495508cb72a67761d831c73c888b45347bbbd2a7ead3fe5b6a9dc6e40c07"
-        }
-      ]
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/main/java/io/ddd4j/sample/quarkus/cqrs/shared/OrderOutboxRelay.java",
-      "sourceSha256": [
-        "8dcc31b3686c4b4f1e8daa1e9aedc53cdb58c173e842f3e5d3274549a214abe4",
-        "ac9075cc7e6e81bd9706d5ac56a5f7a4bc531267732ee53cd070400d0e9736e7",
-        "ac9075cc7e6e81bd9706d5ac56a5f7a4bc531267732ee53cd070400d0e9736e7"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/test/java/io/ddd4j/sample/quarkus/cqrs/NativeSharedCqrsTest.java",
-      "testSha256ByJdk": {
-        "8": "0408cb04fc3442061abf4b451c368ffdce8b3bd3fe05c020318f546d09d4d38b",
-        "17": "53efd382d00f0626617e1992b58b47fc2f541f48e52be920da46e07b828c793b",
-        "21": "53efd382d00f0626617e1992b58b47fc2f541f48e52be920da46e07b828c793b"
-      },
-      "reason": "JDK 8 条件 CDI 激活及显式 OutboxMessage 类型，高线沿用 Jakarta 和 var。原生 PostgreSQL 验证 JTA 事件已提交但本地确认回滚后，原消息 ID 去重重试，确认不重复。"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/main/java/io/ddd4j/sample/quarkus/cqrs/shared/SharedOrderResource.java",
-      "sourceSha256": [
-        "55168ec372acbc428f41dd6182d40ffbd6af54a87ec0be0ddbb720321f0e5f08",
-        "c1272ab75e21c49f062d6c0b1086a3f13dc083f5a19998eb74575809fa7ced53",
-        "c1272ab75e21c49f062d6c0b1086a3f13dc083f5a19998eb74575809fa7ced53"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/test/java/io/ddd4j/sample/quarkus/cqrs/NativeSharedCqrsTest.java",
-      "testSha256ByJdk": {
-        "8": "0408cb04fc3442061abf4b451c368ffdce8b3bd3fe05c020318f546d09d4d38b",
-        "17": "53efd382d00f0626617e1992b58b47fc2f541f48e52be920da46e07b828c793b",
-        "21": "53efd382d00f0626617e1992b58b47fc2f541f48e52be920da46e07b828c793b"
-      },
-      "reason": "JDK 8 条件启用持久路由，沿用 javax REST。成功命令、查询和投影走现有路由；候选在空命令结果保留现代 Optional 的缺失诊断，已通过独立直接调用。三线真实 Quarkus HTTP/PostgreSQL 已验证原生业务链路。",
-      "additionalEvidence": [
-        {
-          "path": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/test/java/io/ddd4j/sample/quarkus/cqrs/shared/QuarkusDurableWiringBoundaryTest.java",
-          "testSha256": "b329495508cb72a67761d831c73c888b45347bbbd2a7ead3fe5b6a9dc6e40c07"
-        }
-      ]
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/main/java/io/ddd4j/sample/quarkus/cqrs/shared/SharedOrderStorage.java",
-      "sourceSha256": [
-        "c5d27717b13c3761835ecc31ddab59b46e29bac337c6aadd5c173c4226ee7ca4",
-        "ba30dc7db3be1022c64df7b77bfc598b7efd04be37f476452c49107812365dd8",
-        "a4dee80feca0db190e98d2b035db8e819f26b1f23561aea9d84abb571d4aaa9b"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/test/java/io/ddd4j/sample/quarkus/cqrs/NativeSharedCqrsTest.java",
-      "testSha256ByJdk": {
-        "8": "0408cb04fc3442061abf4b451c368ffdce8b3bd3fe05c020318f546d09d4d38b",
-        "17": "53efd382d00f0626617e1992b58b47fc2f541f48e52be920da46e07b828c793b",
-        "21": "53efd382d00f0626617e1992b58b47fc2f541f48e52be920da46e07b828c793b"
-      },
-      "reason": "JDK 8 低线条件激活与 javax CDI，高线 Jakarta。JDK 21 使用命名 Jackson 3 持久化 mapper，HTTP 沿用 Quarkus Jackson 2。真实 PostgreSQL/native CDI 证据覆盖独立查询、Outbox、JTA 重试和同库重开。"
-    },
-    {
       "path": "ddd4j-samples/ddd4j-sample-dropwizard/src/main/java/io/ddd4j/sample/dropwizard/DropwizardOrderApplication.java",
       "sourceSha256": [
         "9e6d45011f065d3988e6ba438cc9b669beba9feb88e8c262552503ecd209554f",
@@ -2526,21 +2069,6 @@
       "reason": "使用各线 javax 或 Jakarta Servlet 类型及局部变量写法。三线真实请求通过原生过滤器，验证权限或业务失败后工作线程上下文恢复。真实独立 HTTP 连接覆盖 Bearer 大小写和登出撤销。"
     },
     {
-      "path": "ddd4j-samples/ddd4j-sample-dropwizard-satoken/src/main/java/io/ddd4j/sample/dropwizard/satoken/AuthOrderResource.java",
-      "sourceSha256": [
-        "b35fe434934cbf2664ec1bdd819b7a6b20e1030fef84868c0e1dc0d6ddd58525",
-        "9778a4eaca1d2a29842f18a9bd0ca082e3b7b1de0f9a17cd1613cfc8bb346949",
-        "8e8bfde9297fd8275bd5172fd5dd564a43c59507082913d9553f00857448bba2"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-dropwizard-satoken/src/test/java/io/ddd4j/sample/dropwizard/satoken/NativeAuthHttpTest.java",
-      "testSha256ByJdk": {
-        "8": "effc3c7f88e153b76afd47fee3f88ed7331a3a87ac4cb1bc4e34275120827562",
-        "17": "8405bcb29460290f22818770c4cca2d63053c4d3aebb46d4e5d492cbc19a8eed",
-        "21": "f6e2d696a69415960af66d6954579d206a3705f11167774dbced0f825762c872"
-      },
-      "reason": "使用本线 JAX-RS、集合与 Jackson 2/3。三线真实 HTTP 验证不完整凭证拒绝、允许创建与读取、无权限写入拒绝、错误明细和退出。真实独立 HTTP 连接覆盖 Bearer 大小写和登出撤销。"
-    },
-    {
       "path": "ddd4j-samples/ddd4j-sample-dropwizard-shiro/src/main/java/io/ddd4j/sample/dropwizard/shiro/NativeAuth.java",
       "sourceSha256": [
         "25d7d5cf9a7ff07ac3bd396be249b12a6b779b32cc62eba006561cbc2f19fda9",
@@ -2584,21 +2112,6 @@
         "21": "22237a42190db82f829966a22176b1c157ea6b3e2dfc237fecfb2eefa41a3907"
       },
       "reason": "使用各线 javax 或 Jakarta Servlet 类型及局部变量写法。三线真实请求通过原生过滤器，验证权限或业务失败后工作线程上下文恢复。真实独立 HTTP 连接覆盖 Bearer 大小写和登出撤销。"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-dropwizard-shiro/src/main/java/io/ddd4j/sample/dropwizard/shiro/AuthOrderResource.java",
-      "sourceSha256": [
-        "87a7a71e564fbddbc67b39fe00103eeaa15538fe9e641895e0e76dbaff1aa76b",
-        "cb117a24a2f8b741bfafb121b40092bbae15c7d3fa862000d632d4c5ec7cf839",
-        "702aec59c8fcbd3a9698f75fc0f8c34ba3045e5e071121c3bdbf705a8dd08349"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-dropwizard-shiro/src/test/java/io/ddd4j/sample/dropwizard/shiro/NativeAuthHttpTest.java",
-      "testSha256ByJdk": {
-        "8": "723d31965c0bbab7763a7d7b8587fac228ecd21ae9c30a8a50531969cab8bea8",
-        "17": "a522b3a766bff7a5a44a4476f58d4c8ef56d97c4b75a1344460342289cc0568a",
-        "21": "22237a42190db82f829966a22176b1c157ea6b3e2dfc237fecfb2eefa41a3907"
-      },
-      "reason": "使用本线 JAX-RS、集合与 Jackson 2/3。三线真实 HTTP 验证不完整凭证拒绝、允许创建与读取、无权限写入拒绝、错误明细和退出。真实独立 HTTP 连接覆盖 Bearer 大小写和登出撤销。"
     },
     {
       "path": "ddd4j-samples/ddd4j-sample-dropwizard-shiro/src/main/java/io/ddd4j/sample/dropwizard/shiro/NativeScope.java",
@@ -2674,40 +2187,6 @@
         "21": "8cc81acd13bf294f292852082e8662b69891f6c1c98dacbce9e5fd7c4eb854d4"
       },
       "reason": "沿用各线原生框架入口、Java 8 集合及显式类型，三线真实 HTTP 验证权限、业务错误后清理、断连请求结束再关闭和启动失败后的原所有者恢复。校验 Bearer 方案大小写、分隔空格和实际工作线程主体。"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/order/domain/model/Money.java",
-      "sourceSha256": [
-        "99af8c846af6d8779a2b10f2b1103ba428967429724f73506b8ad31c1984ef12",
-        "179c30946e3badbf52264e5a09a0d3c0e515d519fa7b8a93f42b1ff151ee8420",
-        "179c30946e3badbf52264e5a09a0d3c0e515d519fa7b8a93f42b1ff151ee8420"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/order/domain/model/MoneyJsonContractTest.java",
-      "testSha256": "97dd27552bf44af45e9cc237a5cb44ad6c581b8bfc54764a06d2d4959844f9ef",
-      "reason": "Java 8 使用 Lombok 值方法，高两线显式实现。三线 Jackson 绑定保留 amount、currency，金额规范化和值哈希一致。",
-      "additionalEvidence": [
-        {
-          "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/order/domain/model/ValueHashContractTest.java",
-          "testSha256": "2066a05af40a4e34eb24349bf89f19e72a89292b3951bdd523191f71ee74223f"
-        }
-      ]
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/order/web/dto/OrderResponse.java",
-      "sourceSha256": [
-        "c29582241d9a5e2b143cd56ffd8952bf8b57e2692462e7051f49527399ae1879",
-        "9054fd2783d0f4020f4f09436922d5683c6b7ab6ab33bced23cf24d0588ae5d0",
-        "9054fd2783d0f4020f4f09436922d5683c6b7ab6ab33bced23cf24d0588ae5d0"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/order/web/dto/OrderResponseSnapshotContractTest.java",
-      "testSha256": "ffd1355cf6da4aaff55ddcfb1445c8ba04059c8503ac274a4378c9f86b8491f8",
-      "reason": "Java 8 用 Lombok 及不可修改的列表收集，高两线显式值方法及各自 Java 集合 API。两种订单入口快照均不可改，访问器和 JSON 测试通过。",
-      "additionalEvidence": [
-        {
-          "path": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/order/web/dto/OrderResponseContractTest.java",
-          "testSha256": "c0c64c38af78c77772bc4c029564500fba131a8bfb2cd758f6b5b4ef5617d5d9"
-        }
-      ]
     },
     {
       "path": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/rbac/controller/AuthorizationController.java",
@@ -3292,17 +2771,6 @@
       "reason": "Quarkus 1.x CDI 使用 javax.enterprise，Quarkus 3.x 使用 jakarta.enterprise；三线契约测试验证 DDD 构造型自动注册 ApplicationScoped、保留已有作用域并忽略非 DDD 类型"
     },
     {
-      "path": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/main/java/io/ddd4j/sample/quarkus/cqrs/goods/web/dto/GoodsQueryParameters.java",
-      "sourceSha256": [
-        "c010e0d5611eca51e3cd8b29f1a2065983a83f00a7f2e47dcd97267adfdf8dc9",
-        "dae1669d992082ce60f6037eb555ebbbb33d431611940fb1e3c3dc1613ffb134",
-        "23079300013892233bbbc24df60e32a98416c9d5dcb4859d829fac33db30bb82"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/test/java/io/ddd4j/sample/quarkus/cqrs/goods/web/dto/GoodsQueryParametersContractTest.java",
-      "testSha256": "99bf06cd18489262f6040d1f8a547263fad2f9ea8e98ed544f5555e108e825b6",
-      "reason": "JDK 8 使用 Java 8 switch 与 javax.ws.rs，JDK 17/21 使用 switch 箭头与 jakarta.ws.rs；三线相同契约测试验证筛选、排序字段和方向及非法字段拒绝"
-    },
-    {
       "path": "ddd4j-extensions/ddd4j-extension-monitor/src/main/java/io/ddd4j/extension/monitor/channel/feishu/FeishuClient.java",
       "sourceSha256": [
         "c450f2f5926ef9e8517429c6a44d2b7ee59721dfc77a57aa06512e1e9cc60722",
@@ -3728,27 +3196,6 @@
       "reason": "三线公钥加载与空别名异常逻辑相同；JDK 8 的显式 InputStream/Certificate 类型在高两线仅改为 var，共同签发、安装和验签测试及逐线源码哈希锁定该语法差异"
     },
     {
-      "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/order/web/dto/OrderResponse.java",
-      "sourceSha256": [
-        "45d7708c7f188f6e47efc018875ce70de4336bb1ffa3ffd4e53be7f87a20ce48",
-        "2381781f540ead43b3d2604736850a7c8149b7a1d79b8eea422f98e10b00a74b",
-        "2381781f540ead43b3d2604736850a7c8149b7a1d79b8eea422f98e10b00a74b"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/order/web/dto/OrderResponseContractTest.java",
-      "testSha256": "75d8d9fd3858440cb59c21353d68d3ab6a9d25884cfd82eeddb2dbd92fc2a899",
-      "reason": "Java 8 使用 Lombok 和 Collectors 的不可修改快照，高两线显式实现值方法并使用 Stream.toList。旧订单及共享订单的响应工厂均产生只读快照，构造器和组件访问保持兼容。",
-      "additionalEvidence": [
-        {
-          "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/order/web/dto/OrderResponseAccessorsTest.java",
-          "testSha256": "299f43de481130d89e94037592455ebf8e0a428b1687507bb171d80fdc9a4cb2"
-        },
-        {
-          "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/order/domain/model/ValueHashContractTest.java",
-          "testSha256": "2066a05af40a4e34eb24349bf89f19e72a89292b3951bdd523191f71ee74223f"
-        }
-      ]
-    },
-    {
       "path": "ddd4j-core/src/main/java/io/ddd4j/core/ddd/model/AggregateRoot.java",
       "sourceSha256": [
         "d7211294eb611dbee215b983fe1fffef510a663a14bf31f528c6c85e6e2fdefa",
@@ -3887,28 +3334,6 @@
       "reason": "1.0.x Lombok-generated methods and 2.0.x/3.0.x explicit methods with line-specific Jackson annotations preserve the tested constructor, bean/component accessors, subclass canEqual equality, getter-based hash, stable value hash and text contract; changing source or shared test reopens the difference"
     },
     {
-      "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/order/web/dto/AddOrderLineRequest.java",
-      "sourceSha256": [
-        "b57e3d526378dc484686e57b3124fb5117529993cfe45594ecaaef467618028d",
-        "d8d4e35aede85b7fa5ab591b0e9a40caafb7759a484c2b268f5fb93a31113af4",
-        "d8d4e35aede85b7fa5ab591b0e9a40caafb7759a484c2b268f5fb93a31113af4"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/order/web/dto/AddOrderLineRequestContractTest.java",
-      "testSha256": "3c72f68e5c639344f1345158c42b8b4a5b5bcdf1820f70a53334447c1c79e24b",
-      "reason": "1.0.x Lombok-generated bean/value methods and 2.0.x/3.0.x explicit methods plus line-specific Jackson annotations preserve the tested constructor, bean/component accessor, subclass equality/getter/hash and JSON round-trip contract; any source or shared test change reopens this difference"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/order/web/dto/CreateOrderRequest.java",
-      "sourceSha256": [
-        "53d71781c953a38515b2e1cdae3faa46acd1fa848f7d56d82fe62f5d09a59abb",
-        "3468aa6da5c1768d5855a9c7966f8b40bb773cdcd83fb9a5b9c6c7c7ab4803d2",
-        "3468aa6da5c1768d5855a9c7966f8b40bb773cdcd83fb9a5b9c6c7c7ab4803d2"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/order/web/dto/CreateOrderRequestContractTest.java",
-      "testSha256": "9d3433d815e04ecb2645eb3f1483158459837974a4f8a6efba20cac9aa96f117",
-      "reason": "1.0.x Lombok-generated methods and 2.0.x/3.0.x explicit methods with line-specific Jackson annotations preserve the tested constructor, bean/component accessors, subclass canEqual equality, getter-based hash, stable value hash and text contract; changing source or shared test reopens the difference"
-    },
-    {
       "path": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/goods/web/dto/CreateGoodsRequest.java",
       "sourceSha256": [
         "ca88613af8cbf337306805eb03488df00d9639da592b475e1a8406a92466512e",
@@ -3928,28 +3353,6 @@
       ],
       "evidence": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/goods/web/dto/UpdateGoodsRequestContractTest.java",
       "testSha256": "8b306f39d3d2fdcddea66b98595a632cfb7da1188291f670f00669e0ffd36b1c",
-      "reason": "1.0.x Lombok-generated methods and 2.0.x/3.0.x explicit methods with line-specific Jackson annotations preserve the tested constructor, bean/component accessors, subclass canEqual equality, getter-based hash, stable value hash and text contract; changing source or shared test reopens the difference"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/order/web/dto/AddOrderLineRequest.java",
-      "sourceSha256": [
-        "dfbb0f5332c0800f44e4a790812b31936769f3a1dc03d2c9fbd35244d9b75756",
-        "5d98a2b525067a5a9c16bed9bda87c762dbde7ed1149b7fc168daabedb2474bf",
-        "5d98a2b525067a5a9c16bed9bda87c762dbde7ed1149b7fc168daabedb2474bf"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/order/web/dto/AddOrderLineRequestContractTest.java",
-      "testSha256": "575b557c465fabf689e3b8b0db05abb39de4f3715350c7fbdd302e2fff150112",
-      "reason": "1.0.x Lombok-generated bean/value methods and 2.0.x/3.0.x explicit methods plus line-specific Jackson annotations preserve the tested constructor, bean/component accessor, subclass equality/getter/hash and JSON round-trip contract; any source or shared test change reopens this difference"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/order/web/dto/CreateOrderRequest.java",
-      "sourceSha256": [
-        "87d1b3ddb241599210598acf660e249b030b90ceb68aa54a10083af5e999ff26",
-        "90e3dc4e600f9af23244b508ef8934d7de1fd88e4ea166ec0927503b911a773a",
-        "90e3dc4e600f9af23244b508ef8934d7de1fd88e4ea166ec0927503b911a773a"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/order/web/dto/CreateOrderRequestContractTest.java",
-      "testSha256": "65894defe4c21ac5db7e31d929bf98108d776ac6965da967a46cbec0917bac99",
       "reason": "1.0.x Lombok-generated methods and 2.0.x/3.0.x explicit methods with line-specific Jackson annotations preserve the tested constructor, bean/component accessors, subclass canEqual equality, getter-based hash, stable value hash and text contract; changing source or shared test reopens the difference"
     },
     {
@@ -4119,55 +3522,6 @@
       "evidence": "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/eventstore/jackson/EventPayloadParityContractTest.java",
       "testSha256": "4e646fa716797eb5aa7692740739147108880f2214845705c7dc5278ce088430",
       "reason": "1.0.x/2.0.x 使用本线 Jackson 2 ObjectMapper.copy/configure，3.0.x 使用 Jackson 3 rebuild/disable/build；三线共同测试固定显式事件类型、未知字段兼容、拒绝 @class 类型选择和异常因果，既有本线测试验证 mapper 隔离"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-order-domain/src/main/java/io/ddd4j/sample/order/domain/Money.java",
-      "sourceSha256": [
-        "410b1b65b90b03cdbac884cdb5ca236cd3e87d098adb05ff77348f536d79e555",
-        "cf4804d228fdfbe62b96ac1bbb07ec5d3acc76e4390e2ba9cbd1d4565f9e9b1c",
-        "cf4804d228fdfbe62b96ac1bbb07ec5d3acc76e4390e2ba9cbd1d4565f9e9b1c"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-order-domain/src/test/java/io/ddd4j/sample/order/domain/OrderDomainValueContractTest.java",
-      "testSha256": "fc17c6bab69a2132b1e974a90576fdfb77b905754a4a87cba00c6e974adad9e0",
-      "reason": "Java 8 保留原 Lombok 值方法和隐式 UID -8848492078636310279，高两线保留显式值方法和 UID 0。Money 三线公开 JVM 签名一致，恢复原生 JSON 往返验收，Java 序列化保留各线 UID 及已验证值。",
-      "additionalEvidence": [
-        {
-          "path": "ddd4j-samples/ddd4j-sample-order-domain/src/test/java/io/ddd4j/sample/order/domain/MoneySerializationContractTest.java",
-          "testSha256": "c5ccab6896d41c8fa4b89cde680a2f6f18b268d9a0a2197832bd0ceecb7946aa"
-        }
-      ]
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/order/domain/model/Money.java",
-      "sourceSha256": [
-        "97d473e7922f75703874f8e2ae3ca9d69677a39ceafd5eb5ffa729825490da2f",
-        "f02dbdb24ebfd00fb5f0457ee98dc74adbefead1f7f51e9628f6fa679d6d2966",
-        "f02dbdb24ebfd00fb5f0457ee98dc74adbefead1f7f51e9628f6fa679d6d2966"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/order/OrderValueContractTest.java",
-      "testSha256": "470959851230a78ff7b897598e19075033583ba5f520f522f55ea8a467d18b61",
-      "reason": "三线显式值方法、JSON 构造器和共同金额契约一致；1.0.x 保留已发布 Java 序列化 UID 1545370294742823931，由 MoneyLegacySerializationTest 锁定；高两线 UID 为 0"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/main/java/io/ddd4j/sample/javalin/cqrs/order/domain/model/Money.java",
-      "sourceSha256": [
-        "0168d549ccc825ceac363c003513975eb1166bd8729aa09a1121b8071681c3b6",
-        "f104154dd6f3c9f095e0f73996384b3907a44a55557c35961ffe2934d1106a70",
-        "f104154dd6f3c9f095e0f73996384b3907a44a55557c35961ffe2934d1106a70"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/order/domain/model/MoneyContractTest.java",
-      "testSha256ByJdk": {
-        "8": "fb5d31d7fa90d4b3a7e9e496a619732d17fb52ef759948140d75056f542dccef",
-        "17": "fb5d31d7fa90d4b3a7e9e496a619732d17fb52ef759948140d75056f542dccef",
-        "21": "d6922b2e8cc33709da8de026839afb2720823e00266356ed9c32a23ed38dbba4"
-      },
-      "additionalEvidence": [
-        {
-          "path": "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/order/OrderValueAccessorsTest.java",
-          "testSha256": "d410f340424ac35a6f4f9b1824f78bf4466c99f1c582a5fa3e8c8b663c89a8cc"
-        }
-      ],
-      "reason": "三线恢复并核对既有金额值、哈希和 Jackson 2/3 契约。Java 8 维持原发布序列化 UID -8477704881210516506，两条高线维持 UID 0，三线各自读取本线历史对象流通过。"
     },
     {
       "path": "ddd4j-runtime/ddd4j-runtime-spring/src/main/java/io/ddd4j/spring/projection/jpa/JpaProjectionPositionRepository.java",
@@ -4352,21 +3706,6 @@
           "testSha256": "481098ed7026db9a86674fa08c1a3b07af954c8c156b97a1765f39ad11cb60bf"
         }
       ]
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/order/application/OrderApplicationService.java",
-      "sourceSha256": [
-        "6e259ad18cf5b14ba7430e43080f6ed05924f7fa4f9c1a04f7fedb060dcebf0d",
-        "e893b004db8d71fff700d6dd78cfabf6c688a16584bda9e1e7138c3556ac4c92",
-        "e893b004db8d71fff700d6dd78cfabf6c688a16584bda9e1e7138c3556ac4c92"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/order/web/OrderResourceTest.java",
-      "testSha256ByJdk": {
-        "8": "b8b49c00bab20e25436a3d9779554ab6b5c2b1ad76402ad455a3a988eb60143d",
-        "17": "f6ed2736ef24c62966df2a6acd2a6ed78201a57c0f58a3a1b9fb8b42fae1f160",
-        "21": "377249d4ce0a2b8e4c711344d1e350c12b115e51e809eb8d308427151541991e"
-      },
-      "reason": "三线 order 应用服务的业务语句一致；JDK 8 样例以手动装配，JDK 17/21 使用 jakarta.inject.Inject；各线资源 HTTP 契约 53 项通过，中文方法文档对齐"
     },
     {
       "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/goods/application/GoodsApplicationService.java",
@@ -4589,123 +3928,17 @@
       "reason": "三线远端主机名与 IP 地址、请求/响应头、认证错误和 OTel 会话契约已逐线测试；JDK 8 使用 RESTEasy Classic 的 javax ContainerRequestFilter/Vert.x 3 host()，JDK 17/21 使用 RESTEasy Reactive 的 Jakarta 过滤器/Vert.x 4+ hostAddress() 并在未解析地址时回退 host()。三线 Quarkus 定向测试各 10 项通过，源码和共同地址测试哈希锁定。"
     },
     {
-      "path": "ddd4j-samples/ddd4j-sample-order-local/src/main/java/io/ddd4j/sample/order/local/InMemoryOrderAdapters.java",
-      "sourceSha256": [
-        "d98aaaf2a180c2690750eff04b34fb69a28790feb50c3ebec2a05c884970509f",
-        "2a62435cbfdf43bbd3a19c85dcefcf83afe3204e252a3ec679dec20ffa05d2f2",
-        "2a62435cbfdf43bbd3a19c85dcefcf83afe3204e252a3ec679dec20ffa05d2f2"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-order-testkit/src/test/java/io/ddd4j/sample/order/testkit/InMemoryOrderAdaptersValueContractTest.java",
-      "testSha256": "bed99bebc8b14a9073085e091e28138457740821eb8a3189d4b20ef94d181fe2",
-      "reason": "三线订单、Outbox 和读模型查询均返回有内容的不可修改列表；JDK 8 使用 Collectors 收集后包装只读列表，JDK 17/21 使用 Stream.toList()。共同测试逐线通过，源码及测试哈希锁定。"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/main/java/io/ddd4j/sample/javalin/satoken/order/domain/model/Order.java",
-      "sourceSha256": [
-        "9f848d291407a00675c86dc35c0eb7972cb3ffaaf15a8a6a2b05c23560ef17c6",
-        "f7385302ba44571d3b57b0d2bc0ea78d43e76230bfcf166f1e5e4ee725d1ebc6",
-        "f7385302ba44571d3b57b0d2bc0ea78d43e76230bfcf166f1e5e4ee725d1ebc6"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/order/OrderValueContractTest.java",
-      "testSha256": "e00837481f0d63bfa9597f108f77bdd83f146a0e51a329ca0509207374f3599d",
-      "reason": "Java 8 的只读快照显式检查空行，高两线用 List.copyOf。三线订单值契约包含拒绝 null 行、值对象字段与折扣格式。"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/order/domain/model/Order.java",
-      "sourceSha256": [
-        "3c82d9309c17929ac48b981f77b3aa6190b8ec2b11f6a5657d206eb17b52b0e7",
-        "711e5648983e16c955ba4a0dc799a0d889e96e3eb3a82069e0d3c5896564f3f5",
-        "711e5648983e16c955ba4a0dc799a0d889e96e3eb3a82069e0d3c5896564f3f5"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/order/domain/model/OrderLinesContractTest.java",
-      "testSha256": "3ea3fb81d70c1c666c49d09e70a8980db38d900db6fa42f1dca30cc521cf83a6",
-      "reason": "三线订单聚合公开逻辑及中文文档一致；JDK 8 使用 Collections.emptyList() 与验证空元素后返回不可修改副本，JDK 17/21 使用 List.of() 和 List.copyOf()。共同测试逐线验证空元素拒绝及列表不可修改，源码与测试哈希锁定。"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-quarkus-satoken/src/main/java/io/ddd4j/sample/quarkus/satoken/order/domain/model/Order.java",
-      "sourceSha256": [
-        "71c2f048b94a764c2aea33140831da8fd10377a8c221248605808e5a63f043fd",
-        "300e2c26fc8cb9f8e56c7a09bee59dae255ecd75221ea0a5538523d235a8060b",
-        "300e2c26fc8cb9f8e56c7a09bee59dae255ecd75221ea0a5538523d235a8060b"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-satoken/src/test/java/io/ddd4j/sample/quarkus/satoken/order/domain/model/OrderLinesContractTest.java",
-      "testSha256": "e7f5ed83219016a1f1cfe6164fbb3333d5061147f8cb942c31a16db2fdc4c336",
-      "reason": "三线订单聚合公开逻辑及中文文档一致；JDK 8 使用 Collections.emptyList() 与验证空元素后返回不可修改副本，JDK 17/21 使用 List.of() 和 List.copyOf()。共同测试逐线验证空元素拒绝及列表不可修改，源码与测试哈希锁定。"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/main/java/io/ddd4j/sample/quarkus/shiro/order/domain/model/Order.java",
-      "sourceSha256": [
-        "9d9150b3f04f69a274adfe2e185772d0ed41efdf2b4854431488b813f63718f2",
-        "40ec8505615de3cb842820a515d70923c71db69dba32c8e975b32e172deae5e5",
-        "40ec8505615de3cb842820a515d70923c71db69dba32c8e975b32e172deae5e5"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/test/java/io/ddd4j/sample/quarkus/shiro/order/domain/model/OrderLinesContractTest.java",
-      "testSha256": "0c0bf9689b915801dbce83342be6ef31f152576dd3d445e249f949c02db1e460",
-      "reason": "三线订单聚合公开逻辑及中文文档一致；JDK 8 使用 Collections.emptyList() 与验证空元素后返回不可修改副本，JDK 17/21 使用 List.of() 和 List.copyOf()。共同测试逐线验证空元素拒绝及列表不可修改，源码与测试哈希锁定。"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/main/java/io/ddd4j/sample/quarkus/cqrs/order/web/OrderQueryResource.java",
-      "sourceSha256": [
-        "065c3cc46af70e180aaacf5bc2c43d0fb8fbde663eb5f0a88d9dc4cdafe29cdc",
-        "e286401bff94dae07fdc48b90f9a16262c6498a469d8cfdbb5dc28f526666067",
-        "e286401bff94dae07fdc48b90f9a16262c6498a469d8cfdbb5dc28f526666067"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/test/java/io/ddd4j/sample/quarkus/cqrs/order/web/OrderQueryListContractTest.java",
-      "testSha256ByJdk": {
-        "8": "757132180f2725d948174ad4230f942db3716286506eae2738512c3ad110b540",
-        "17": "5618182a514220aa6cb4e3463fc2a870d7801f1817653e21ed4b0a920295f4ae",
-        "21": "5618182a514220aa6cb4e3463fc2a870d7801f1817653e21ed4b0a920295f4ae"
-      },
-      "reason": "三线查询端点逻辑及文档一致；JDK 8 使用 javax CDI/JAX-RS、显式 instanceof/cast 与 Collections.emptyList()，JDK 17/21 使用 Jakarta、模式匹配及 List.of()。目标测试逐线验证内存仓库可变列表和非内存仓库不可变空列表及零计数；源码与测试哈希锁定。"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-dropwizard/src/main/java/io/ddd4j/sample/dropwizard/DropwizardOrderResource.java",
-      "sourceSha256": [
-        "a5376454709400bed2a17ba99054cd774583e078131f25fcf5676ecfe28d0643",
-        "db92cf6ba1a96fcfd40ab3fd7681c65aa54bc3033b96b979ae37251f5d1b5bcb",
-        "db92cf6ba1a96fcfd40ab3fd7681c65aa54bc3033b96b979ae37251f5d1b5bcb"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-dropwizard/src/test/java/io/ddd4j/sample/dropwizard/DropwizardOrderResourceTest.java",
-      "testSha256ByJdk": {
-        "8": "e2e16a1d153ae362769c9897b35b5b05660907573a25af735997d9737f588be3",
-        "17": "b1cf61c1130aa11cd155172191fd988d057e31a66f09ef829f5bbcde703a1eba",
-        "21": "652f25123e8e8673a6779e2e8e37c3d7846c13a52ed6aadc7ce6d536f82a8546"
-      },
-      "reason": "三线 Dropwizard 订单资源的登录、建单、加明细、幂等支付及嵌套 DTO 契约由目标资源测试逐线通过；JDK 8 使用 javax.ws.rs，JDK 17/21 使用 jakarta.ws.rs。源码及对应平台测试哈希锁定。 三线令牌回归使用原生及标准 Jackson 验证单字段 JSON 的读写和空值语义。",
-      "additionalEvidence": [
-        {
-          "path": "ddd4j-samples/ddd4j-sample-dropwizard/src/test/java/io/ddd4j/sample/dropwizard/TokenResponseContractTest.java",
-          "testSha256": "13b05f83275322dc0c88aabb8968c1b0fd6c11b554197af74805709332fdcc9b"
-        }
-      ]
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-dropwizard-cqrs/src/main/java/io/ddd4j/sample/dropwizard/cqrs/web/OrderResource.java",
-      "sourceSha256": [
-        "10b2e2bcf14e4749a23884bbe2d0ae6c1f5bcad7f8539d7c590d148e746b5c8d",
-        "98fb5f881139796d98a4e2e2d9395cbafbd71aa3f5924fc14d48394854d12ebf",
-        "98fb5f881139796d98a4e2e2d9395cbafbd71aa3f5924fc14d48394854d12ebf"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-dropwizard-cqrs/src/test/java/io/ddd4j/sample/dropwizard/cqrs/web/OrderResourceMapContractTest.java",
-      "testSha256ByJdk": {
-        "8": "0be68333c68b353b83073d1a40a65be63cf6e783f6af0c1be16ddb60fcfa1780",
-        "17": "9aa5035d24f7cf3e1fec1080bec14ef0c7a910a3d6268a13b3987a17ba954d93",
-        "21": "9aa5035d24f7cf3e1fec1080bec14ef0c7a910a3d6268a13b3987a17ba954d93"
-      },
-      "reason": "三线 Dropwizard CQRS 创建与重复订单响应均提供不可修改的 Map，目标测试逐线覆盖 201/409 响应；HTTP 资源集成测试逐线覆盖创建、查询和幂等冲突。JDK 8 使用 javax.ws.rs 与显式不可变 Map 构造，JDK 17/21 使用 jakarta.ws.rs 与 Map.of；源码及目标测试哈希锁定。"
-    },
-    {
       "path": "ddd4j-samples/ddd4j-sample-dropwizard-cqrs/src/main/java/io/ddd4j/sample/dropwizard/cqrs/DropwizardCqrsApplication.java",
       "sourceSha256": [
         "5a82d15d0917b8f1d4743546885892d3a7f2571421522c445515562532357d0a",
         "8b35bb6786b3ad06dcbe3c11b80bbd58984feab2bb62285dd9308a3fc0eba80a",
         "8b35bb6786b3ad06dcbe3c11b80bbd58984feab2bb62285dd9308a3fc0eba80a"
       ],
-      "evidence": "ddd4j-samples/ddd4j-sample-dropwizard-cqrs/src/test/java/io/ddd4j/sample/dropwizard/cqrs/DropwizardOrderCqrsIT.java",
+      "evidence": "ddd4j-samples/ddd4j-sample-dropwizard-cqrs/src/test/java/io/ddd4j/sample/dropwizard/cqrs/DropwizardCatalogCqrsHttpTest.java",
       "testSha256ByJdk": {
-        "8": "044aa78e2efaca62443c4a28817d3a68c9dfddbadf9c0e326a44c07d9388d7a2",
-        "17": "32f6aed62e717a612822b55c050f10a4c5fa9a86c78800aefa1ebb4b525bd2c0",
-        "21": "32f6aed62e717a612822b55c050f10a4c5fa9a86c78800aefa1ebb4b525bd2c0"
+        "8": "55aeec21dafdedabc4007b0d1e11a61be969653eab6e924683a159c62f73fe51",
+        "17": "d655a83ad62d0f4681cb119f98777bfc482072cfa2df7c34af8167ab53de96fd",
+        "21": "d655a83ad62d0f4681cb119f98777bfc482072cfa2df7c34af8167ab53de96fd"
       },
       "reason": "三线 CQRS 应用共享事件存储、命令总线、投影视图和资源注册逻辑一致，逐线 DropwizardOrderCqrsIT 各 3 项验证命令与查询集成路径。JDK 8 使用旧版 Dropwizard 包及 Collections.singletonList，JDK 17/21 使用新版包及 List.of；此测试不声称覆盖实际服务启动。源码及目标测试哈希锁定。"
     },
@@ -4716,11 +3949,11 @@
         "4f70d342c77c2cde62fa84425368401b03b410625f900c10b3603f22aca1bd5f",
         "4f70d342c77c2cde62fa84425368401b03b410625f900c10b3603f22aca1bd5f"
       ],
-      "evidence": "ddd4j-samples/ddd4j-sample-vertx-cqrs/src/test/java/io/ddd4j/sample/vertx/cqrs/VertxOrderCqrsIT.java",
+      "evidence": "ddd4j-samples/ddd4j-sample-vertx-cqrs/src/test/java/io/ddd4j/sample/vertx/cqrs/VertxCatalogCqrsHttpTest.java",
       "testSha256ByJdk": {
-        "8": "47cd7a3451ac6c93823cc9c5262075f9c6c93c1b5c0a3bd599244d22f4e8f9ef",
-        "17": "99b0c3c9552dc863c814e3dfc9a3cea3536f68b24ba1dd4dec64403719d465df",
-        "21": "99b0c3c9552dc863c814e3dfc9a3cea3536f68b24ba1dd4dec64403719d465df"
+        "8": "18a15e23269683acd596430871acaa7090578ae32ad4b8882029b06ee2b0deda",
+        "17": "2b158c39b76900fc96aa914bbe1d0a3bbe4071d2b887f598aaa17aa69fab764c",
+        "21": "e670dd17eec71fe41cdfaba4f926ea9b0e45e97a42e683461d741d32bd94529f"
       },
       "reason": "三线旧内存 createRouter 的创建、查询与幂等冲突契约分别复验。原生子 JVM 核对缺失或空白 JDBC URL 的失败行为和 main 无受检异常签名。当前打包主入口实际 PostgreSQL 复验覆盖 201/409、独立查询、投影失败检查点保持、重试、同库重开与关闭完成。JDK 8 使用 Collections.singletonList，JDK 17/21 使用 List.of。逐线源码与两份契约测试锁定。",
       "additionalEvidence": [
@@ -4767,37 +4000,11 @@
       "reason": "三线 MyBatis-Plus 聚合仓储各通过 20 项 CRUD、3 项查询翻译及 1 项默认泛型推断。仓储按 Mapper 之后的 M/P/Q 索引解析类型。真实 MySQL 三线各 8 项覆盖原版模型与 Query、转换填充、租户隔离和 CRUD，保留各线 JDK 集合与 switch 适配。"
     },
     {
-      "path": "ddd4j-samples/ddd4j-sample-helidon-cqrs/src/main/java/io/ddd4j/sample/helidon/cqrs/web/OrderResource.java",
-      "sourceSha256": [
-        "b0dcbbb01c96706d1ad6755614dd210944e86d43ea57ee3fc8232de828796d17",
-        "dbbd9b2b5d413b2ca676cb29fa61d672a853528c065af7893a410c661322f09f",
-        "dbbd9b2b5d413b2ca676cb29fa61d672a853528c065af7893a410c661322f09f"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-helidon-cqrs/src/test/java/io/ddd4j/sample/helidon/cqrs/HelidonOrderCqrsIT.java",
-      "testSha256ByJdk": {
-        "8": "2eb6eb029a44b55ee39d9159e6c256eefb1b78ad55df1ff888fe8ea4623f5400",
-        "17": "2ecbc79748b393866ce2f687601d45edcf6d2de725ab3f8ee9b4e547b59648aa",
-        "21": "2ecbc79748b393866ce2f687601d45edcf6d2de725ab3f8ee9b4e547b59648aa"
-      },
-      "reason": "三线 Helidon CQRS 的创建、读模型查询与重复订单冲突由 HTTP 集成测试逐线各 3 项验证；JDK 8 使用 javax 与不可修改的显式 Map 构造，JDK 17/21 使用 jakarta 与 Map.of。源码和目标测试哈希锁定。"
-    },
-    {
       "path": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/goods/application/GoodsApplicationService.java",
       "sourceSha256": [
         "abf18958992c91b749f6c8ce716a6e6ead37bbee82bf2af03961ec54f026b937",
         "8374960a80054e5a702034769482069b5853e55d9fea4b6cb58f9d1d8e883140",
         "8374960a80054e5a702034769482069b5853e55d9fea4b6cb58f9d1d8e883140"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/config/AuthModuleInjectionContractTest.java",
-      "testSha256": "ec05570006719fb988a97d6aa083f392f622681073f9db473f8c0f3372e670fb",
-      "reason": "生产逻辑相同，Java 8 使用 javax.inject，Java 17/21 使用 jakarta.inject，注释有所不同。三线 Guice 装配各四项原生测试及同批商品和订单资源回归通过。"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/order/application/OrderApplicationService.java",
-      "sourceSha256": [
-        "ae3b28711dceded9d8eddb8c17f6048f9fa9e3cb99e34316011f2b489b8d7f8d",
-        "b9c173fcdfa4176260671d05996b6e12752290e5750cb6d96f9a9aff2dc62396",
-        "b9c173fcdfa4176260671d05996b6e12752290e5750cb6d96f9a9aff2dc62396"
       ],
       "evidence": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/config/AuthModuleInjectionContractTest.java",
       "testSha256": "ec05570006719fb988a97d6aa083f392f622681073f9db473f8c0f3372e670fb",
@@ -4828,17 +4035,6 @@
       "evidence": "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/test/java/io/ddd4j/sample/quarkus/shiro/goods/web/GoodsQueryResourceContractTest.java",
       "testSha256": "1173758bafa46f057d886bad38e950c78531b5de215aef1b71a0668862fa3e44",
       "reason": "三线商品 REST 资源均显式使用应用级 CDI 生命周期，写入与查询路由保持一致；Quarkus 1 使用 javax 注解与 RESTEasy Classic，Quarkus 3 使用 jakarta 注解与 Quarkus REST。目标测试先验证高线默认 Singleton 与低线 ApplicationScoped 的真实差异，再在三线各通过 3 项 HTTP/CDI 契约及严格 Javadoc；源码和共同测试哈希锁定。"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/main/java/io/ddd4j/sample/quarkus/shiro/order/web/OrderResource.java",
-      "sourceSha256": [
-        "cffcdadeed793ceb732072a559a806860fcf2bfe530c1ae6c43d6c480c9c735e",
-        "19d48dad5ffafb0e288bf552b5c90dfa0693e2a0a71a183d69a7c791576c5dd8",
-        "19d48dad5ffafb0e288bf552b5c90dfa0693e2a0a71a183d69a7c791576c5dd8"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/test/java/io/ddd4j/sample/quarkus/shiro/order/web/OrderResourceContractTest.java",
-      "testSha256": "a9e0f139a1a60b7102984e62f0df00185a1359303f7532c05a99514a89535c56",
-      "reason": "三线订单 HTTP 端点、响应映射及方法文档一致；JDK 8 使用 javax JAX-RS、显式 CDI 作用域和 Collectors.toList，JDK 17/21 使用 jakarta JAX-RS 与 Stream.toList。逐行核对仅上述平台适配差异，源码哈希锁定；运行时端点仍由 Verify 独立验证。"
     },
     {
       "path": "ddd4j-samples/ddd4j-sample-quarkus-shiro/src/main/java/io/ddd4j/sample/quarkus/shiro/rbac/AuthorizationResource.java",
@@ -4892,11 +4088,11 @@
         "3f7d4fc211b31e53c31c79aa47256ab49b1f12b2f97e420248d0cc43cfd82652",
         "28aebea8968874baafadc3d010a0638af5edf0dc440dd413705a9fb46a93119d"
       ],
-      "evidence": "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/order/web/OrderControllerTest.java",
+      "evidence": "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/JavalinCatalogCqrsHttpTest.java",
       "testSha256ByJdk": {
-        "8": "dd4179359deb2c6312a6895a89759e8d88a2851ad2a458f9a2c0f16560b21d77",
-        "17": "053822380dbf2b91d1a00c488b0b9e5d6b86622fccd675e844d9e1e1fb8e39aa",
-        "21": "053822380dbf2b91d1a00c488b0b9e5d6b86622fccd675e844d9e1e1fb8e39aa"
+        "8": "6af5bfd2d005b0bc4adbb03ae48f7ba8bcc59bdd96f3a1b4574f473b10b79b6b",
+        "17": "1291cb761c6b60f420b2e2942ab9f8b2084415171ee221f6bb8c9e31ee747076",
+        "21": "1291cb761c6b60f420b2e2942ab9f8b2084415171ee221f6bb8c9e31ee747076"
       },
       "reason": "三线保留原内存入口及显式持久共享订单装配。当前打包运行验证内存暖缓存刷新，逐线 35 项订单控制器、3 项缺失响应和 2 项暖缓存回归通过。Javalin 和 Jackson API 按各线适配。PostgreSQL 流程由独立结果验收。 三线独立 JVM 实测未设置或普通空白继续启动原内存入口，非空无效 URL 及单独不换行空格明确启动失败；三线统一复用 StrKit.hasText。",
       "additionalEvidence": [
@@ -5089,21 +4285,6 @@
       "reason": "三线 Web Bundle 验证配置解析、过滤器和异常映射，每线 5 项。Java 17 在 Jersey 注册前安装本线兼容的 Logback 访问日志工厂，附本线工厂测试和真实订单访问日志。"
     },
     {
-      "path": "ddd4j-samples/ddd4j-sample-helidon/src/main/java/io/ddd4j/sample/helidon/HelidonOrderResource.java",
-      "sourceSha256": [
-        "1702b0e8add3feab1db7397d6f01df4e148ca38136665ceb99345d510b804d98",
-        "ef0211f445b7383a730727a1440988dc0115e74d97c3ce0491e7fd16f530fb5f",
-        "ef0211f445b7383a730727a1440988dc0115e74d97c3ce0491e7fd16f530fb5f"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-helidon/src/test/java/io/ddd4j/sample/helidon/HelidonOrderResourceTest.java",
-      "testSha256ByJdk": {
-        "8": "fe7bce2d64c275a98fb90827dbfbbc5cd1c6e61b5199cda8952e21b20616be27",
-        "17": "95fbd61b6a3a9421ef1e5d6a386eee09a77403a42b6bec6604036f101691eb7c",
-        "21": "3471b511f5681ad1bff213801d098093e9e539006906cf186bf7519c86f9c388"
-      },
-      "reason": "三线原生 Helidon 订单应用验证显式鉴权、身份令牌、创建订单、明细与支付，默认场景验证匿名操作及共享订单过滤查询。保留各线 JAX-RS/JSON-B 命名空间和原生服务。"
-    },
-    {
       "path": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/goods/web/GoodsResource.java",
       "sourceSha256": [
         "095413cc718bcc3eae429ad1307b0c507120ead22ff98d93a7136f2ff1f76300",
@@ -5117,111 +4298,6 @@
         "21": "744982819658ae2dd276388645359e155808b505eae3c84d65e9ddc24fb31f8c"
       },
       "reason": "三线 Javalin Shiro 商品 HTTP 路由契约各 32 项通过；JDK 8 采用 javax.inject，JDK 17/21 采用 jakarta.inject，路由业务行为一致。"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/order/web/OrderResource.java",
-      "sourceSha256": [
-        "a741975c4a0c3d09691f9a3f9738ac28d3560145cdf08dea8fc3c2c71825d9e0",
-        "da6e3760d6333b74d8781491b6a5e626b65cdf7631ab72fd6998118264b6af4f",
-        "da6e3760d6333b74d8781491b6a5e626b65cdf7631ab72fd6998118264b6af4f"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/order/web/OrderResourceTest.java",
-      "testSha256ByJdk": {
-        "8": "fec2dd49f9be0b5142565fea833cc8fcd78187a1490e08643880cecbe9b12f28",
-        "17": "9419da7da7ed3c957302e06da2a8236e7a43a0fe19652065d199a8c7ceb7cb22",
-        "21": "4abbf9129c20d92735e0e4f6956b00dc9fefaa02d6b4f49112a00b409ff8a3c8"
-      },
-      "reason": "三线保留 35 项旧订单资源 HTTP 验证。另以原生 Shiro 启动和订单装配测试验证共享订单及折扣。Java 8 维持 Javalin 4 RouteRole，并恢复折扣视图的 Jackson 构造与读方法契约。"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-micronaut-cqrs/src/main/java/io/ddd4j/sample/micronaut/cqrs/shared/OrderProjection.java",
-      "sourceSha256": [
-        "679d372489c29e95f3b43b8f2f572fe066afcdd03758defe3790735353c00d33",
-        "3aa34edcd5537d5b6aeddf5f5b11592457a826d36266de90e663f027c34d493f",
-        "d4a8146b21547f89601e9b5e3c2008d5521d0c1f010e0eb6a1405fd8ad9a2865"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-micronaut-cqrs/src/test/java/io/ddd4j/sample/micronaut/cqrs/NativePersistentOrderTest.java",
-      "testSha256ByJdk": {
-        "8": "b9459f2ba6353626f81d5d9e67b6f7b869a1506d2cc05fcd48c4006d673ee620",
-        "17": "63b92fe19ca89ce133d303caf82239642153797443dee166c259ab5b7f470201",
-        "21": "63b92fe19ca89ce133d303caf82239642153797443dee166c259ab5b7f470201"
-      },
-      "reason": "Java 8 使用 Hibernate Session 管理旧 JPA API 的资源关闭，并保留 Java 8 不可变集合、泛型与 Optional API。三线原生 PostgreSQL 验证订单、混合和非订单源批次、真实游标、失败重试及既有查询状态。 三线均验证历史数字和 ISO 文本，以及新事件九位小数精度。Java 8/17 保留 JPA 数字外层时间戳，Java 21 保留 ISO 外层时间戳。"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-helidon-cqrs/src/main/java/io/ddd4j/sample/helidon/cqrs/shared/OrderProjection.java",
-      "sourceSha256": [
-        "fc26f7cbc491a27ca4f588c797b6f945a311be5d24a756325567819a02b71483",
-        "aa0bb30d65a7dfd359d7e22fb750c7977c0db048eadd2bd2b096b50125fa4bc2",
-        "9b4efaeeacb6085c94462563fa16c72eb41f2de07b039bad414788da770d4f36"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-helidon-cqrs/src/test/java/io/ddd4j/sample/helidon/cqrs/NativePersistentOrderTest.java",
-      "testSha256ByJdk": {
-        "8": "81d929286a993a1c7f7a12fc00d5a8851eb630760557eb2573463a8df35353dc",
-        "17": "e02b4ef7f888e1e0f0f04508334dcc83d38485daec88d22026335ef8b48b28a0",
-        "21": "e02b4ef7f888e1e0f0f04508334dcc83d38485daec88d22026335ef8b48b28a0"
-      },
-      "reason": "Java 8 使用 Hibernate Session 管理旧 JPA API 的资源关闭，并保留 Java 8 不可变集合、泛型与 Optional API。三线原生 PostgreSQL 验证订单、混合和非订单源批次、真实游标、失败重试及既有查询状态。 三线均验证历史数字和 ISO 文本，以及新事件九位小数精度。Java 8/17 保留 JPA 数字外层时间戳，Java 21 保留 ISO 外层时间戳。"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-vertx-cqrs/src/main/java/io/ddd4j/sample/vertx/cqrs/persistent/OrderProjection.java",
-      "sourceSha256": [
-        "d124eca24e9f40ef60c8d0312826e1b64ef10117f00674feb572533e7f646468",
-        "29c1c93bef5d28297564a0213a534a2c66f5c90e223ea6d96ed85e75f6aaaa91",
-        "9c053169da1cd189d788e9615311c266cee75bcdb1e7ee335bfe0cfc9ab147e2"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-vertx-cqrs/src/test/java/io/ddd4j/sample/vertx/cqrs/persistent/PersistentOrderHttpTest.java",
-      "testSha256ByJdk": {
-        "8": "58b172f0ba9ce97294e34561417d196a55c76e46b2b9c48ab22feb29837a85bc",
-        "17": "56a84b6ec032d1c1072895e3e31cf120d68d8ef228610072a2585fd473286795",
-        "21": "56a84b6ec032d1c1072895e3e31cf120d68d8ef228610072a2585fd473286795"
-      },
-      "reason": "Java 8 使用 Hibernate Session、显式泛型与不可变集合。三线原生 PostgreSQL 验证订单、混合和非订单源批次、稀疏源位置、错误载荷保留原位置、检查点写入失败后的 UPSERT 重放和重开。 三线均验证历史数字和 ISO 文本，以及新事件九位小数精度。Java 8/17 保留 JPA 数字外层时间戳，Java 21 保留 ISO 外层时间戳。"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-dropwizard-cqrs/src/main/java/io/ddd4j/sample/dropwizard/cqrs/persistent/OrderProjection.java",
-      "sourceSha256": [
-        "a908c838efc0f3fba0ab4f39a56e354ff923ea45e4ef1b39478ce3716f740057",
-        "35b3413c8af38ce3364cd5a2607f37da6b53b79f8ede6b72a79bc7dddb6073a2",
-        "0b09622daaeab289c6ce87e1b36c11a911a7873e4ce5ec121e0fb5654339e697"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-dropwizard-cqrs/src/test/java/io/ddd4j/sample/dropwizard/cqrs/persistent/PersistentOrderHttpTest.java",
-      "testSha256ByJdk": {
-        "8": "2b5a32da392d280b3997eaa6146a6d7f24801d887141b944786d44d6cb6a20fb",
-        "17": "3e35a7f868d286bfef872efa247c8b53a76cfbca2848a0da65d5fba554ff7af8",
-        "21": "dda40415406fd33e1538643bbd79cdf2f65c94342d5c722d3f109a71ad14cc50"
-      },
-      "reason": "Java 8 使用 Hibernate Session、显式泛型与不可变集合。三线原生 PostgreSQL 验证订单、混合和非订单源批次、稀疏源位置、错误载荷保留原位置、检查点写入失败后的 UPSERT 重放和重开。 三线均验证历史数字和 ISO 文本，以及新事件九位小数精度。Java 8/17 保留 JPA 数字外层时间戳，Java 21 保留 ISO 外层时间戳。"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/main/java/io/ddd4j/sample/quarkus/cqrs/shared/OrderEventSource.java",
-      "sourceSha256": [
-        "ccf1466802ea25b0d7a0fb005132caec2d0e68bb961cb4708f1ec6937821b452",
-        "b5e84c1dbe26c9adeed64eb5045eb3516bc065845fb8e2313db7c01e673a28a7",
-        "0bf4af5413cf3a384f8f4fe940b11c8151b9e62adf7cd9f6d69c1bbd4639efc0"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/test/java/io/ddd4j/sample/quarkus/cqrs/NativeSharedCqrsTest.java",
-      "testSha256ByJdk": {
-        "8": "0408cb04fc3442061abf4b451c368ffdce8b3bd3fe05c020318f546d09d4d38b",
-        "17": "53efd382d00f0626617e1992b58b47fc2f541f48e52be920da46e07b828c793b",
-        "21": "53efd382d00f0626617e1992b58b47fc2f541f48e52be920da46e07b828c793b"
-      },
-      "reason": "仅对应持久 CQRS：JDK 8 通过已记录的 durable-order Maven profile 在构建期启用 CDI，不改变默认样例。三线真实 PostgreSQL 验证按订单聚合过滤、批次真实尾位置、错误订单载荷拒绝、JDBC 查询 UPSERT 与 JTA 检查点失败重放。"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/main/java/io/ddd4j/sample/quarkus/cqrs/shared/OrderProjection.java",
-      "sourceSha256": [
-        "2906f0547f7bcd2e154acf04b41a361ce8d874e1cfe702f57cc50ce1001c100f",
-        "fcae0a60ae3dcf427d15bc74ea46b28a5453bfc544f83040248352fae421d22e",
-        "fcae0a60ae3dcf427d15bc74ea46b28a5453bfc544f83040248352fae421d22e"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-quarkus-cqrs/src/test/java/io/ddd4j/sample/quarkus/cqrs/NativeSharedCqrsTest.java",
-      "testSha256ByJdk": {
-        "8": "0408cb04fc3442061abf4b451c368ffdce8b3bd3fe05c020318f546d09d4d38b",
-        "17": "53efd382d00f0626617e1992b58b47fc2f541f48e52be920da46e07b828c793b",
-        "21": "53efd382d00f0626617e1992b58b47fc2f541f48e52be920da46e07b828c793b"
-      },
-      "reason": "仅对应持久 CQRS：JDK 8 通过已记录的 durable-order Maven profile 在构建期启用 CDI，不改变默认样例。三线真实 PostgreSQL 验证按订单聚合过滤、批次真实尾位置、错误订单载荷拒绝、JDBC 查询 UPSERT 与 JTA 检查点失败重放。"
     },
     {
       "path": "ddd4j-data/ddd4j-data-mybatis/src/main/java/io/ddd4j/data/mybatis/plugins/observation/SqlObservation.java",
@@ -5254,36 +4330,6 @@
       "reason": "三线使用同一 JSON 字段。Java 8 显式标注原有 Bean getter，保留既有 Jackson MixIn 隐藏或重命名语义；Java 17/21 沿用本线已发布的显式访问器。实际执行默认及禁用 Bean getter 自动发现时的往返契约。"
     },
     {
-      "path": "ddd4j-samples/ddd4j-sample-spring-cqrs/src/main/java/io/ddd4j/sample/spring/cqrs/OrderProjection.java",
-      "sourceSha256": [
-        "b0a9d4667db396ac29623a77afd84107d637d87796fa92625e46e4f248045d60",
-        "47f7fc61ba9d781d971a4e5043cc47f0f1678ab6e1e25d91dc78bc5d59c864fc",
-        "709dce05dcfc3b35c1e3e5af2f9efb1b71c045dc6811b6982bca1b91b7b59500"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-spring-cqrs/src/test/java/io/ddd4j/sample/spring/cqrs/SpringCqrsHttpPersistenceTest.java",
-      "testSha256ByJdk": {
-        "8": "ffe4d6fcf4c9faa144cfc6f64bd44d1c6af34e042e63e17c90909aaf7e04aa80",
-        "17": "3028e32acbaa44c78a426b82b78a49c2d770e72b25d921a59d50eaef211c050c",
-        "21": "0a1f8c0b472138d1cc42a3e466d7fb1fb58287b323d843c367a12ecf4c412442"
-      },
-      "reason": "三线原生 Spring HTTP/PostgreSQL 证明源分页、读取和检查点故障重试、同库重开，以及订单存在可读事件但没有写模型时返回 404、错误码 404 和 No value present，之前的读模型及检查点保持。保留历史序列化形态，JDK 8/17 错误 data 为 null，JDK 21 现有 Jackson 3 转换器省略该字段。JDK 8 使用 Hibernate Session、显式资源管理和 Optional 异常供应者，高两线使用 Jakarta EntityManager、现代 Java 语法及各线 Spring Boot/Jackson API。"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/main/java/io/ddd4j/sample/javalin/cqrs/shared/OrderProjection.java",
-      "sourceSha256": [
-        "41e548ef60ff042d1a3bcd6402e1871887e27164d03fad9ba7ae578bdc8ff843",
-        "316f541f7b47444564c57bb9b82570224bc6308d03dee1b253696bf0bc2d63f2",
-        "1cb4c4ac9b0629d1d21210af7d7eb18648c9970995544917b57f41598f3fd722"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/SharedCqrsHttpTest.java",
-      "testSha256ByJdk": {
-        "8": "0b92c0bf712a5129df84481042226763793f84bba6665f7901541fc94c958bd4",
-        "17": "063dd333bf9f879c807505efc75b490a82abfa318ce267899de8dcdde1fbd8e0",
-        "21": "063dd333bf9f879c807505efc75b490a82abfa318ce267899de8dcdde1fbd8e0"
-      },
-      "reason": "三线原生 Javalin HTTP/PostgreSQL 证明独立持久查询、真实混合事件分页、查询和检查点故障恢复、同库重开及旧 HTTP 入口。公开视图三线对空过滤列表 contains(null) 返回 false，拒绝删除。保留 JDK 8 Hibernate Session 和兼容集合写法、高两线 Jakarta EntityManager 和现代 Java 语法、JDK 21 Jackson 3。"
-    },
-    {
       "path": "ddd4j-samples/ddd4j-sample-spring/src/main/java/io/ddd4j/sample/spring/SpringSampleApplication.java",
       "sourceSha256": [
         "10d9183cefafa1776b56f97b3c3ced60d70c78d926d321938631c1f0124d1e10",
@@ -5312,163 +4358,6 @@
         "21": "e39288232dea2a7897ddb0666727b46bae1dcd02983a1ee3729af95fc200f0e3"
       },
       "reason": "Java 8 提前导入 DDD4J 的 WebFlux 配置，Boot 2 继续提供原生基础装配。Java 17/21 手动继承本线原生委托配置并重命名原生默认 bean。三线真实 WebFlux HTTP 按 X-Language 解析，默认 MVC 保持可用。"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-spring-cqrs/src/main/java/io/ddd4j/sample/spring/cqrs/CqrsConfiguration.java",
-      "sourceSha256": [
-        "c57c69a4ea68e8c02a532ef8c92077de9b9a875c5496d4f5f61eebe6b89cc876",
-        "1e23aa9ecc62a2c5d1a06af16dadf7ed836df427523aa47f5a662f2bdf414fcc",
-        "a68a914bbd632186a69bab2082bc14405c7f5492f58f093e13abdd65b75c74e7"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-spring-cqrs/src/test/java/io/ddd4j/sample/spring/cqrs/SpringCqrsHttpPersistenceTest.java",
-      "testSha256ByJdk": {
-        "8": "ffe4d6fcf4c9faa144cfc6f64bd44d1c6af34e042e63e17c90909aaf7e04aa80",
-        "17": "3028e32acbaa44c78a426b82b78a49c2d770e72b25d921a59d50eaef211c050c",
-        "21": "0a1f8c0b472138d1cc42a3e466d7fb1fb58287b323d843c367a12ecf4c412442"
-      },
-      "reason": "三线原生 Spring/PostgreSQL 实测相同的命令总线发现、实体工厂启动和关闭、订单写侧和 JDBC Outbox 同事务回滚、真实 JDBC Outbox 到 JPA 事件源的带时间原始载荷往返、独立查询和同库重开。各线保留原生 javax/Jakarta EntityManagerFactory 和 Jackson 2 copy/findAndRegisterModules 或 Jackson 3 rebuild/findAndAddModules 装配方式。"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-spring-cqrs/src/main/java/io/ddd4j/sample/spring/cqrs/OrderController.java",
-      "sourceSha256": [
-        "7adf8a710532e75c1943ecbd14697ac61ee094b4ffc84facdcc7df4f6de8851d",
-        "2c5b36c8583bfe515e40544dcf00076b475fa56c62e751e778f564d624239f14",
-        "2c5b36c8583bfe515e40544dcf00076b475fa56c62e751e778f564d624239f14"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-spring-cqrs/src/test/java/io/ddd4j/sample/spring/cqrs/SpringCqrsHttpPersistenceTest.java",
-      "testSha256ByJdk": {
-        "8": "ffe4d6fcf4c9faa144cfc6f64bd44d1c6af34e042e63e17c90909aaf7e04aa80",
-        "17": "3028e32acbaa44c78a426b82b78a49c2d770e72b25d921a59d50eaef211c050c",
-        "21": "0a1f8c0b472138d1cc42a3e466d7fb1fb58287b323d843c367a12ecf4c412442"
-      },
-      "reason": "三线原生 HTTP 验证原样例六个请求入口、未投影/未创建订单均返回 404 和 No value present、投影后读取，守住查询不回退写侧。真实业务命令路由及响应通过，替代总线的空结果探针另外覆盖三个 Optional 错误分支。JDK 8 使用带消息异常供应者，高两线使用无参数 Optional.orElseThrow，保留各线已有 JSON null 字段编码。"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-order-application/src/main/java/io/ddd4j/sample/order/application/AddOrderLineCommand.java",
-      "sourceSha256": [
-        "6745696da1ec7339c77f1854c224d1c2a9f03725363b112ed590d38f0ec75b9a",
-        "0b7c8a95120626b8dc86c4235d027b0c71d0f0cb99d960e36d8300ed4f8461e3",
-        "0b7c8a95120626b8dc86c4235d027b0c71d0f0cb99d960e36d8300ed4f8461e3"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-order-application/src/test/java/io/ddd4j/sample/order/application/OrderExplicitJsonContractTest.java",
-      "testSha256ByJdk": {
-        "8": "ed633662b8ddd5ce7988a5f4a08277fa68796ceac75f88497f314374772273f0",
-        "17": "b3ee674defef57eaec0b21d47797c44dcbbfdf3d14b28c225c219dff58edeb7d",
-        "21": "f4ee188bed6206697f98a77f3f0557d60663aad707fbd462127b26eecfcc7461"
-      },
-      "reason": "五个共享订单 DTO 在本线 Jackson 关闭 Bean getter 自动发现时仍保留字段。Java 8 显式标注 Bean getter，兼容严格 Javadoc 并保留调用方 MixIn 隐藏或改名语义；高两线使用既有显式组件访问器。三线默认 JSON、值语义、非空时间往返及关闭自动发现后的字段通过实际原生测试。",
-      "additionalEvidence": [
-        {
-          "path": "ddd4j-samples/ddd4j-sample-order-application/src/test/java/io/ddd4j/sample/order/application/OrderApplicationValueContractTest.java",
-          "testSha256": "653538856cb74840aaeaa9eda4cd9cc785bb8ed849ce600fbe5a52e1b84b2fd9"
-        }
-      ]
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-order-application/src/main/java/io/ddd4j/sample/order/application/CreateOrderCommand.java",
-      "sourceSha256": [
-        "c74efeb230af79ef06e22f001ad04a3b4086d7d68fca16e89ed3d0628119f1d2",
-        "98c17a204eb38b21db17522781bc0b6977f86d3f41703c6f2d6061981d49a022",
-        "98c17a204eb38b21db17522781bc0b6977f86d3f41703c6f2d6061981d49a022"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-order-application/src/test/java/io/ddd4j/sample/order/application/OrderExplicitJsonContractTest.java",
-      "testSha256ByJdk": {
-        "8": "ed633662b8ddd5ce7988a5f4a08277fa68796ceac75f88497f314374772273f0",
-        "17": "b3ee674defef57eaec0b21d47797c44dcbbfdf3d14b28c225c219dff58edeb7d",
-        "21": "f4ee188bed6206697f98a77f3f0557d60663aad707fbd462127b26eecfcc7461"
-      },
-      "reason": "五个共享订单 DTO 在本线 Jackson 关闭 Bean getter 自动发现时仍保留字段。Java 8 显式标注 Bean getter，兼容严格 Javadoc 并保留调用方 MixIn 隐藏或改名语义；高两线使用既有显式组件访问器。三线默认 JSON、值语义、非空时间往返及关闭自动发现后的字段通过实际原生测试。",
-      "additionalEvidence": [
-        {
-          "path": "ddd4j-samples/ddd4j-sample-order-application/src/test/java/io/ddd4j/sample/order/application/OrderApplicationValueContractTest.java",
-          "testSha256": "653538856cb74840aaeaa9eda4cd9cc785bb8ed849ce600fbe5a52e1b84b2fd9"
-        }
-      ]
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-order-application/src/main/java/io/ddd4j/sample/order/application/OrderReadModel.java",
-      "sourceSha256": [
-        "f73da7c4221beb672a8ba86e8c46b8f118d87d64702512f2f1ff7be9d6039190",
-        "b5cdffa819391f44d3c81940a5e91f6c3f78b474e99f76992819347907765052",
-        "b5cdffa819391f44d3c81940a5e91f6c3f78b474e99f76992819347907765052"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-order-application/src/test/java/io/ddd4j/sample/order/application/OrderExplicitJsonContractTest.java",
-      "testSha256ByJdk": {
-        "8": "ed633662b8ddd5ce7988a5f4a08277fa68796ceac75f88497f314374772273f0",
-        "17": "b3ee674defef57eaec0b21d47797c44dcbbfdf3d14b28c225c219dff58edeb7d",
-        "21": "f4ee188bed6206697f98a77f3f0557d60663aad707fbd462127b26eecfcc7461"
-      },
-      "reason": "五个共享订单 DTO 在本线 Jackson 关闭 Bean getter 自动发现时仍保留字段。Java 8 显式标注 Bean getter，兼容严格 Javadoc 并保留调用方 MixIn 隐藏或改名语义；高两线使用既有显式组件访问器。三线默认 JSON、值语义、非空时间往返及关闭自动发现后的字段通过实际原生测试。",
-      "additionalEvidence": [
-        {
-          "path": "ddd4j-samples/ddd4j-sample-order-application/src/test/java/io/ddd4j/sample/order/application/OrderApplicationValueContractTest.java",
-          "testSha256": "653538856cb74840aaeaa9eda4cd9cc785bb8ed849ce600fbe5a52e1b84b2fd9"
-        }
-      ]
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-order-application/src/main/java/io/ddd4j/sample/order/application/OutboxDispatchResult.java",
-      "sourceSha256": [
-        "ee177ad1492ddf5fec7da29f1473e4a0865ada287f469dfd7bca7892ad46a3ce",
-        "6a95cb76479af3f7854fb34809fa54dfcf9ef4e8e29b54d6c48e6552ecad5391",
-        "6a95cb76479af3f7854fb34809fa54dfcf9ef4e8e29b54d6c48e6552ecad5391"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-order-application/src/test/java/io/ddd4j/sample/order/application/OrderExplicitJsonContractTest.java",
-      "testSha256ByJdk": {
-        "8": "ed633662b8ddd5ce7988a5f4a08277fa68796ceac75f88497f314374772273f0",
-        "17": "b3ee674defef57eaec0b21d47797c44dcbbfdf3d14b28c225c219dff58edeb7d",
-        "21": "f4ee188bed6206697f98a77f3f0557d60663aad707fbd462127b26eecfcc7461"
-      },
-      "reason": "五个共享订单 DTO 在本线 Jackson 关闭 Bean getter 自动发现时仍保留字段。Java 8 显式标注 Bean getter，兼容严格 Javadoc 并保留调用方 MixIn 隐藏或改名语义；高两线使用既有显式组件访问器。三线默认 JSON、值语义、非空时间往返及关闭自动发现后的字段通过实际原生测试。",
-      "additionalEvidence": [
-        {
-          "path": "ddd4j-samples/ddd4j-sample-order-application/src/test/java/io/ddd4j/sample/order/application/OrderApplicationValueContractTest.java",
-          "testSha256": "653538856cb74840aaeaa9eda4cd9cc785bb8ed849ce600fbe5a52e1b84b2fd9"
-        }
-      ]
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-order-application/src/main/java/io/ddd4j/sample/order/application/OutboxMessage.java",
-      "sourceSha256": [
-        "fba589f746a253b1352e824f21819a3240096016d5565ee570b31af32ffa9943",
-        "d510afd04a51de6f40c531b7bf2c5f21eda9a0a2ce2c62fc57bd25f805668954",
-        "d510afd04a51de6f40c531b7bf2c5f21eda9a0a2ce2c62fc57bd25f805668954"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-order-application/src/test/java/io/ddd4j/sample/order/application/OrderExplicitJsonContractTest.java",
-      "testSha256ByJdk": {
-        "8": "ed633662b8ddd5ce7988a5f4a08277fa68796ceac75f88497f314374772273f0",
-        "17": "b3ee674defef57eaec0b21d47797c44dcbbfdf3d14b28c225c219dff58edeb7d",
-        "21": "f4ee188bed6206697f98a77f3f0557d60663aad707fbd462127b26eecfcc7461"
-      },
-      "reason": "五个共享订单 DTO 在本线 Jackson 关闭 Bean getter 自动发现时仍保留字段。Java 8 显式标注 Bean getter，兼容严格 Javadoc 并保留调用方 MixIn 隐藏或改名语义；高两线使用既有显式组件访问器。三线默认 JSON、值语义、非空时间往返及关闭自动发现后的字段通过实际原生测试。",
-      "additionalEvidence": [
-        {
-          "path": "ddd4j-samples/ddd4j-sample-order-application/src/test/java/io/ddd4j/sample/order/application/OrderApplicationValueContractTest.java",
-          "testSha256": "653538856cb74840aaeaa9eda4cd9cc785bb8ed849ce600fbe5a52e1b84b2fd9"
-        }
-      ]
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/main/java/io/ddd4j/sample/javalin/cqrs/shared/SharedCqrsRuntime.java",
-      "sourceSha256": [
-        "295e4c780fb51cec26b54c983d97949e51dc4c5afe29b8c37586946a0d9d3324",
-        "dd42fe9fc6e4e1d23ed97905db539c3762b0d3bec3c0d65a249a7f3a79ab937f",
-        "7768b5cbef72ba39baa8b64bfea1e2ba3b1f0d1e7ce50b74229b4528163050d6"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/JavalinCqrsWiringContractTest.java",
-      "testSha256": "7fca09ea08951a9679e618f2cb1430c9757b564ed8247b4cdaea0aae2b79524a",
-      "reason": "保留 Hibernate 与 Jackson API 适配。三线原生 Guice 后台调度配合真实 Javalin 和 PostgreSQL，自动投影支付订单与检查点，在同库 validate 重开后可读取。旧内存订单路由仍可独立使用。"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/main/java/io/ddd4j/sample/javalin/cqrs/shared/PersistentPositions.java",
-      "sourceSha256": [
-        "2261d639310a37d9ebb75124dbf33a15f1b116b2ea23ce45c4ca2bfe49b2a11f",
-        "d085eb9a45164f25bfb5e131ac4d0e3bc7124142f4e48a61373bf8bec1927726",
-        "d085eb9a45164f25bfb5e131ac4d0e3bc7124142f4e48a61373bf8bec1927726"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/JavalinCqrsWiringContractTest.java",
-      "testSha256": "7fca09ea08951a9679e618f2cb1430c9757b564ed8247b4cdaea0aae2b79524a",
-      "reason": "Java 8 关闭 Hibernate Session，高两线关闭 Jakarta EntityManager，事务成功提交、失败回滚路径同构。三线原生 Guice/PostgreSQL 执行独立 stream 的保存、查询、列表、归零和删除，并验证后台投影检查点和同库重开。"
     },
     {
       "path": "ddd4j-samples/ddd4j-sample-spring-satoken/src/main/java/io/ddd4j/sample/spring/satoken/NativeAuthExceptionHandler.java",
@@ -5559,66 +4448,6 @@
         "21": "5abed493a6de2d63277835c1f2faa99fce246de3ac84f7e020ad5c4fdd8580bf"
       },
       "reason": "Java 8 的 Boot 2.7 样例运行时含 Spring JDBC 和 Hikari，内存样例排除数据源自动配置。Java 17/21 的样例运行包无该 JDBC/Hikari 组合。各线 HTTP 场景按预期启动和完成。"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-dropwizard-cqrs/src/main/java/io/ddd4j/sample/dropwizard/cqrs/persistent/PersistentPositions.java",
-      "sourceSha256": [
-        "7c4ab0d9dd9a484cf4286e2e118ba0ecddc1febfbbb54c7daa889461e8fe5de6",
-        "c1987e65e1edba73471fe4957c146f2385ceb2782cabf7e5dd8a80da690c8de6",
-        "c1987e65e1edba73471fe4957c146f2385ceb2782cabf7e5dd8a80da690c8de6"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-dropwizard-cqrs/src/test/java/io/ddd4j/sample/dropwizard/cqrs/persistent/PersistentOrderHttpTest.java",
-      "testSha256ByJdk": {
-        "8": "2b5a32da392d280b3997eaa6146a6d7f24801d887141b944786d44d6cb6a20fb",
-        "17": "3e35a7f868d286bfef872efa247c8b53a76cfbca2848a0da65d5fba554ff7af8",
-        "21": "dda40415406fd33e1538643bbd79cdf2f65c94342d5c722d3f109a71ad14cc50"
-      },
-      "reason": "Java 8 使用 javax.persistence 和 Hibernate Session，Java 17/21 使用 Jakarta EntityManager，两者均自动关闭资源，事务成功提交和失败回滚逻辑一致。三线 Dropwizard 契约测试覆盖检查点提交失败后保留旧位置及已提交读模型、重试推进及同库重开。三线原生调度在 PostgreSQL 上将检查点推进至 4，后续两轮保持稳定。"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-helidon-cqrs/src/main/java/io/ddd4j/sample/helidon/cqrs/shared/PersistentPositions.java",
-      "sourceSha256": [
-        "d154f9662281e79424ef4e8b78d656961cf53371c6f9247e014d1da5a3cdeda8",
-        "e1a5ad213d9f4ce048bfb23a449cb98c5297a55f41d12427795ce17bce8e24ab",
-        "e1a5ad213d9f4ce048bfb23a449cb98c5297a55f41d12427795ce17bce8e24ab"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-helidon-cqrs/src/test/java/io/ddd4j/sample/helidon/cqrs/NativePersistentOrderTest.java",
-      "testSha256ByJdk": {
-        "8": "81d929286a993a1c7f7a12fc00d5a8851eb630760557eb2573463a8df35353dc",
-        "17": "e02b4ef7f888e1e0f0f04508334dcc83d38485daec88d22026335ef8b48b28a0",
-        "21": "e02b4ef7f888e1e0f0f04508334dcc83d38485daec88d22026335ef8b48b28a0"
-      },
-      "reason": "Java 8 使用 javax.persistence 和 Hibernate Session，Java 17/21 使用 Jakarta EntityManager，两者均自动关闭资源，事务成功提交和失败回滚逻辑一致。三线 Helidon 契约测试覆盖检查点提交失败后保留旧位置及已提交读模型、重试推进及同库重开。三线原生调度在 PostgreSQL 上将检查点推进至 4，后续两轮保持稳定。"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-micronaut-cqrs/src/main/java/io/ddd4j/sample/micronaut/cqrs/shared/PersistentPositions.java",
-      "sourceSha256": [
-        "eea342596ff5293cbcd96261ecaff8d15b8010307545f635a9216ad36d890faf",
-        "903d003e01599d12608133e0bee3c7f6d89749df1a9f5a79a7df0d340d85c315",
-        "903d003e01599d12608133e0bee3c7f6d89749df1a9f5a79a7df0d340d85c315"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-micronaut-cqrs/src/test/java/io/ddd4j/sample/micronaut/cqrs/NativePersistentOrderTest.java",
-      "testSha256ByJdk": {
-        "8": "b9459f2ba6353626f81d5d9e67b6f7b869a1506d2cc05fcd48c4006d673ee620",
-        "17": "63b92fe19ca89ce133d303caf82239642153797443dee166c259ab5b7f470201",
-        "21": "63b92fe19ca89ce133d303caf82239642153797443dee166c259ab5b7f470201"
-      },
-      "reason": "Java 8 使用 javax.persistence 和 Hibernate Session，Java 17/21 使用 Jakarta EntityManager，两者均自动关闭资源，事务成功提交和失败回滚逻辑一致。三线 Micronaut 契约测试覆盖检查点提交失败后保留旧位置及已提交读模型、重试推进及同库重开。三线原生调度在 PostgreSQL 上将检查点推进至 4，后续两轮保持稳定。"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-vertx-cqrs/src/main/java/io/ddd4j/sample/vertx/cqrs/persistent/PersistentPositions.java",
-      "sourceSha256": [
-        "f0c93d88aeb7c183e0b67d99fd307967599b9323a0c3f2757317eff57f5c2d70",
-        "ebcf81b3bc8e81e7516227b1750639bdd6c9dcd531627b9bad455f4ee0932be2",
-        "ebcf81b3bc8e81e7516227b1750639bdd6c9dcd531627b9bad455f4ee0932be2"
-      ],
-      "evidence": "ddd4j-samples/ddd4j-sample-vertx-cqrs/src/test/java/io/ddd4j/sample/vertx/cqrs/persistent/PersistentOrderHttpTest.java",
-      "testSha256ByJdk": {
-        "8": "58b172f0ba9ce97294e34561417d196a55c76e46b2b9c48ab22feb29837a85bc",
-        "17": "56a84b6ec032d1c1072895e3e31cf120d68d8ef228610072a2585fd473286795",
-        "21": "56a84b6ec032d1c1072895e3e31cf120d68d8ef228610072a2585fd473286795"
-      },
-      "reason": "Java 8 使用 javax.persistence 和 Hibernate Session，Java 17/21 使用 Jakarta EntityManager，两者均自动关闭资源，事务成功提交和失败回滚逻辑一致。三线 Vert.x 契约测试覆盖检查点提交失败后保留旧位置及已提交读模型、重试推进及同库重开。三线原生调度在 PostgreSQL 上将检查点推进至 4，后续两轮保持稳定。"
     }
   ],
   "historicalDocumentSections": [
@@ -6236,24 +5065,6 @@
       "reason": "三线运行相同七项真实 Spring Data JPA/H2 用例，覆盖公开 Bean 名、原实体和表名、不可修改快照、原子增量、重置及流隔离。Java 8 与 Java 17/21 之间仅 JPA 导入位置及 javax/jakarta 命名空间不同。"
     },
     {
-      "path": "ddd4j-samples/ddd4j-sample-javalin/src/test/java/io/ddd4j/sample/javalin/JavalinJdbcOrderIntegrationTest.java",
-      "productionPath": "ddd4j-samples/ddd4j-sample-javalin/src/main/java/io/ddd4j/sample/javalin/JavalinSample.java",
-      "sourceSha256": [
-        "838a3485b4649d59206bb688d4bf9966cf4113eaf150a62f19d4536fbb841201",
-        "c098400ec8f76275fc9fe47828e7b91c0af3b2c29802c69b6f883d15ffcd4ede",
-        "3dc372fbd40eebecee4deea9fb81b012be603b1fc5e193804358533ba243299e"
-      ],
-      "productionSha256": [
-        "ab297fdc2bc0d4bf01bed3dde126db5d46d3c4a224834e44d27da6025351ec77",
-        "5cf85f31832a0e3a51222b682833c379480b1293980e3dc9da3ab6c1146c08fa",
-        "f532642b464091c5e4039989a2c0395e1c5ca3ea3f04be5d5b8fd449b96b4f35"
-      ],
-      "testMethods": [
-        "httpOrderPersistsAndPublishesOutbox"
-      ],
-      "reason": "三线真实 PostgreSQL HTTP 场景各 1 项：创建、加商品、支付、相同幂等键重复支付、读模型；支付事件首次发送失败后由可靠 Outbox 重试成功且仅一次发布。JDK 8 使用 HttpURLConnection，JDK 17/21 使用 HttpClient；Jackson 与 Flyway 依赖各自适配，测试和生产源码逐线哈希锁定。"
-    },
-    {
       "path": "ddd4j-web/ddd4j-web-micronaut/src/test/java/io/ddd4j/web/micronaut/Ddd4jMicronautContextTest.java",
       "productionPath": "ddd4j-web/ddd4j-web-micronaut/src/main/java/io/ddd4j/web/micronaut/Ddd4jMicronautContext.java",
       "sourceSha256": [
@@ -6279,32 +5090,6 @@
         "contextIdentityIncludesRequestAndSubject"
       ],
       "reason": "三线同名 9 项测试覆盖构造约束、访问器、请求作用域生命周期、当前上下文和对象身份，JDK 8/17/21 各 9 项通过；Micronaut 3 使用 ThreadLocal/ServerRequestContext 与 openContext，Micronaut 4 使用 PropagatedContext 与 updateThreadContext/restoreThreadContext。逐线测试及生产源码哈希锁定，生产 API 的平台差异另由编译门禁核验。"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-order-jdbc/src/test/java/io/ddd4j/sample/order/jdbc/OrderInfrastructureRoundTripTest.java",
-      "productionPath": "ddd4j-samples/ddd4j-sample-order-jdbc/src/main/java/io/ddd4j/sample/order/jdbc/JdbcOrderTransactionPort.java",
-      "sourceSha256": [
-        "2efb253bd9db17812f4b679920a50ab78f4f64a0ff8b47f2c054619fb360b91c",
-        "b541202a71289b91bce472a168f4bde14a4a13d1d97695ca3ad23bcb4b51251a",
-        "257a3106855ed62f2f9c3ebf39a12f6499f482efda9d702efc76f32961fd3f67"
-      ],
-      "productionSha256": [
-        "74ca3c4bb1abd7084da2846953ef9379ec436ed2e1f8393cb4531d0cb03402c2",
-        "a91d884692aed84d691cd5d381001a0e4ab42f2e90fea156d0ceba6ab95b65e6",
-        "74ca3c4bb1abd7084da2846953ef9379ec436ed2e1f8393cb4531d0cb03402c2"
-      ],
-      "testMethods": [
-        "shouldPersistProjectPublishAndDeduplicatePayment",
-        "shouldKeepCommittedPaymentIdempotentWhenRedisCompletionFails",
-        "shouldPreserveCausalHeadersAcrossJdbcOutboxClaim",
-        "shouldClaimConfirmRescheduleAndReplayReliableOutboxRecords",
-        "concurrentOwnersMustNotClaimTheSameActiveLease",
-        "shouldTransferExpiredLeaseAndRejectStaleOwner",
-        "shouldRedeliverToKafkaAfterConfirmationIsLost",
-        "shouldRedeliverToKafkaAfterConfirmationThrows",
-        "shouldRetryFailedSendAndPublishToKafka"
-      ],
-      "reason": "三线保持相同的 9 个 PostgreSQL/Redis/Kafka 订单、幂等、租约和 Outbox 集成场景及相同的失败诊断；JDK 8 使用 Collections/显式 JDBC 类型，JDK 17/21 使用 Map.of/List.of/var，JDK 21 Jackson 3 自动注册 Java Time 模块。逐线测试与事务端口源码 SHA-256 锁定；容器运行结果仍由独立 IT 门禁验收。"
     },
     {
       "path": "ddd4j-core/src/test/java/io/ddd4j/core/health/PlainValueContractTest.java",
@@ -6657,62 +5442,6 @@
       "reason": "三线生产 OrderController.java 逻辑词法等价，测试方法与 HTTP 断言一致；JDK 8 用 TestHttpClient，JDK 17/21 用 JDK HttpClient，并适配各自 Javalin 绑定地址。逐线哈希锁定。"
     },
     {
-      "path": "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/goods/web/GoodsControllerTest.java",
-      "productionPath": "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/main/java/io/ddd4j/sample/javalin/cqrs/goods/web/GoodsController.java",
-      "sourceSha256": [
-        "ca74306fc2c6fdf404a9ba57f5344b5dd791b0688d48ce53c5d2e1fe69ce54bf",
-        "b0a9b77c7c0cbaef77443a0af7c822784fe8d501401daef83629bd6dc8c0e340",
-        "12a4ffb2ff00fea4f7c517d8970bbde9798add928c9aff466741412c78c6c121"
-      ],
-      "productionSha256": [
-        "11a49afab4fcf5c6c4772d1d345c40569aee9c2ebdf0a424d62bdb4cf9d3bd3d",
-        "11a49afab4fcf5c6c4772d1d345c40569aee9c2ebdf0a424d62bdb4cf9d3bd3d",
-        "11a49afab4fcf5c6c4772d1d345c40569aee9c2ebdf0a424d62bdb4cf9d3bd3d"
-      ],
-      "testMethods": [
-        "resetServerState",
-        "create_shouldReturn201",
-        "create_thenGetById_shouldReturnSameCode",
-        "create_zeroStock_shouldBeOk",
-        "create_highPrice_shouldBeOk",
-        "create_decimalPrice_shouldPersist",
-        "update_shouldBeOk",
-        "update_thenGetById_shouldReturnNewName",
-        "update_nonexistentId_shouldReturn4xxOr5xx",
-        "update_invalidId_shouldReturn4xxOr5xx",
-        "changeStatus_toOnSale_shouldBeOk",
-        "changeStatus_toOffSale_shouldBeOk",
-        "changeStatus_invalidStatus_shouldReturn4xxOr5xx",
-        "delete_shouldReturnOk",
-        "delete_nonexistentId_shouldReturn4xxOr5xx",
-        "delete_invalidId_shouldReturn4xxOr5xx",
-        "getById_unknownId_shouldReturn4xxOr5xx",
-        "getById_invalidId_shouldReturn4xxOr5xx",
-        "getByCode_validCode_shouldReturnOk",
-        "getByCode_unknownCode_shouldReturn4xxOr5xx",
-        "pageQuery_shouldReturnAny",
-        "pageQuery_withCode_shouldReturnAny",
-        "pageQuery_withOrderBys_shouldReturnAny",
-        "listQuery_shouldReturnAny",
-        "listQuery_byStatus_shouldReturnAny",
-        "countQuery_shouldReturnAny",
-        "countQuery_byStatus_shouldReturnAny",
-        "queryInvalidParameters_shouldReturnBadRequest",
-        "queryById_shouldReturnOk",
-        "queryByCode_shouldReturnOk",
-        "queryByCode_unknownCode_shouldReturnOkOr404",
-        "queryList_shouldReturnOk",
-        "queryByStatus_shouldReturnOk",
-        "queryCount_shouldReturnOk",
-        "queryCacheStats_shouldReturnOk",
-        "queryById_unknownId_shouldReturn404",
-        "fullCrudLifecycle",
-        "multipleCreates_allShouldSucceed",
-        "getById_responseShape"
-      ],
-      "reason": "三线生产商品控制器逐字一致。真实 Javalin HTTP 覆盖有效静态查询、分页过滤和坏输入 400。JDK 8 使用 TestHttpClient，JDK 17/21 使用 JDK HttpClient。逐线哈希锁定。"
-    },
-    {
       "path": "ddd4j-core/src/test/java/io/ddd4j/core/ddd/event/DomainEventJsonTest.java",
       "productionPath": "ddd4j-core/src/main/java/io/ddd4j/core/ddd/event/DomainEvent.java",
       "sourceSha256": [
@@ -6980,26 +5709,6 @@
       "reason": "三线真实 PostgreSQL 容器各通过事件回读、版本冲突、跨时区时间戳、全局位置约束和 payload TEXT 列 5 项；JDK 8 与高两线的 Testcontainers/Jackson/JDK 集合 API 各自适配，生产 JDBI 适配器已有逐线源码锁定。"
     },
     {
-      "path": "ddd4j-samples/ddd4j-sample-order-jdbc/src/test/java/io/ddd4j/sample/order/jdbc/JdbcOrderAtomicityTest.java",
-      "productionPath": "ddd4j-samples/ddd4j-sample-order-application/src/main/java/io/ddd4j/sample/order/application/OrderApplicationService.java",
-      "sourceSha256": [
-        "3fe699e24128ecec99313141fb3664abc9056d3010105e05e7efb143c6f24a0d",
-        "56ed7d028741c238fe524e231ea2443a32570b6c5b7d51601c82143c2b51112a",
-        "8a2a5b81335eb7bddb7c6eb82de777e972a41b6d455d7e2de0fab9720cb982ee"
-      ],
-      "productionSha256": [
-        "e75f84699377718e574ad9832e989b1c1b0263abecbcf7a3cf24bfc2ba9eecdf",
-        "7b48ddb573af4beffbb59a14215bb94349ac423e20233389cd37611ca2f81b3c",
-        "7b48ddb573af4beffbb59a14215bb94349ac423e20233389cd37611ca2f81b3c"
-      ],
-      "testMethods": [
-        "failureAfterProjectionMustRollBackOrderOutboxAndReadModel",
-        "failureAfterOrderWriteMustRollBackTheWriteModel",
-        "failureAfterOutboxWriteMustRollBackOrderAndOutbox"
-      ],
-      "reason": "三线真实 PostgreSQL 各通过 3 项。真实 JDBC 写入订单、Outbox 或投影后注入失败，三张表均回滚。生产服务的执行逻辑三线一致，测试保留各线 Jackson 配置与容器 tmpfs。"
-    },
-    {
       "path": "ddd4j-runtime/ddd4j-runtime-guice/src/test/java/io/ddd4j/data/cqrs/javalin/JavalinCommandBusIT.java",
       "productionPath": "ddd4j-runtime/ddd4j-runtime-guice/src/main/java/io/ddd4j/data/cqrs/javalin/JavalinCommandBus.java",
       "sourceSha256": [
@@ -7226,28 +5935,6 @@
       "reason": "三线 Vert.x 本地事件总线各 1 项通过，断言接收体与发送事件为同一引用，因而没有 wire codec 参与；高两线测试夹具已移除 Jackson 注解及无关值语义，生产发布器规范化逻辑相同。"
     },
     {
-      "path": "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/MissingQueryCodeContractTest.java",
-      "productionPath": "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/main/java/io/ddd4j/sample/javalin/cqrs/JavalinCqrsApplication.java",
-      "sourceSha256": [
-        "1bb5c4bd5935451828eafab3196bfb247870d0fbcb40c6016da099af752e987d",
-        "a004d0b1157671d1a42b249fa88c37e2562a3b45d341619977956ae40f91f1c3",
-        "498ac2f0e6f4eb7f8eb99e24a66d9b46fb8eeec522529674ba9ee666403bdeba"
-      ],
-      "productionSha256": [
-        "de526677225e69c351b0022c1237b40e518760d0a7658a4a16b043a9413d2c1b",
-        "3f7d4fc211b31e53c31c79aa47256ab49b1f12b2f97e420248d0cc43cfd82652",
-        "28aebea8968874baafadc3d010a0638af5edf0dc440dd413705a9fb46a93119d"
-      ],
-      "testMethods": [
-        "startApp",
-        "stopApp",
-        "missingGoodsIdKeepsStringCode",
-        "missingGoodsCodeKeepsStringCode",
-        "missingOrderKeepsStringCode"
-      ],
-      "reason": "各线直接启动生产 JavalinCqrsApplication，验证缺失商品 ID、商品编码及订单的 HTTP 状态依次为 404、200、200 且 JSON code 为字符串 404。低线复用 TestHttpClient，高两线使用 JDK HTTP 和各自 Jackson API。"
-    },
-    {
       "path": "ddd4j-web/ddd4j-web-dropwizard/src/test/java/io/ddd4j/web/dropwizard/Ddd4jDropwizardWebBundleTest.java",
       "productionPath": "ddd4j-web/ddd4j-web-dropwizard/src/main/java/io/ddd4j/web/dropwizard/Ddd4jDropwizardWebBundle.java",
       "sourceSha256": [
@@ -7305,27 +5992,6 @@
         "defaultSupportsDirectBusinessWithoutAuthenticationOrProjection"
       ],
       "reason": "三线普通 Micronaut 样例各 2 项真实 HTTP。默认匿名模式可直接创建、查询、加明细和支付，无事件存储或投影；显式 REQUIRED 验证鉴权订单、金额、幂等键及支付。"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-micronaut-cqrs/src/test/java/io/ddd4j/sample/micronaut/cqrs/MicronautOrderCqrsIT.java",
-      "productionPath": "ddd4j-samples/ddd4j-sample-micronaut-cqrs/src/main/java/io/ddd4j/sample/micronaut/cqrs/web/OrderController.java",
-      "sourceSha256": [
-        "34a9c276d434756fdbfd2a2e3760c6726161be8f7f50168ba3c4cf60cf7da690",
-        "4fd3227b1e92505f6b40becb98362aa75e9401d26a6bd974ac3fb24d9f62b2f1",
-        "4fd3227b1e92505f6b40becb98362aa75e9401d26a6bd974ac3fb24d9f62b2f1"
-      ],
-      "productionSha256": [
-        "6aa638d613544f98ca82e272abed9ec186cd72a38983e7da512ebe2dd7e4c2cf",
-        "aeb038959afa87e17a900e9c6203eaf8ca0aef5864e26ade27664c9c42384fc4",
-        "aeb038959afa87e17a900e9c6203eaf8ca0aef5864e26ade27664c9c42384fc4"
-      ],
-      "testMethods": [
-        "cleanUp",
-        "createOrder_thenProjection",
-        "getOrder_fromReadModel",
-        "createOrder_idempotent"
-      ],
-      "reason": "三线各 3 项原生 Micronaut 内存 CQRS HTTP 兼容测试，验证创建投影、读模型查询及重复创建 409。另有独立 PostgreSQL NativePersistentOrderTest 验证生产共享持久化、投影重试和重开。"
     },
     {
       "path": "ddd4j-core/src/test/java/io/ddd4j/core/cqrs/eventstore/jackson/EventPayloadSerializerTest.java",
@@ -7484,59 +6150,6 @@
       "reason": "三线 Javalin Shiro 商品 HTTP 测试各 32 项通过，场景及方法一致；JDK 8 使用项目内 HTTP 客户端，高两线使用 JDK HttpClient，3.0.x 使用 127.0.0.1 监听地址。生产资源差异由 platformSyntaxMappings 锁定。"
     },
     {
-      "path": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/test/java/io/ddd4j/sample/javalin/shiro/order/web/OrderResourceTest.java",
-      "productionPath": "ddd4j-samples/ddd4j-sample-javalin-shiro/src/main/java/io/ddd4j/sample/javalin/shiro/order/web/OrderResource.java",
-      "sourceSha256": [
-        "fec2dd49f9be0b5142565fea833cc8fcd78187a1490e08643880cecbe9b12f28",
-        "9419da7da7ed3c957302e06da2a8236e7a43a0fe19652065d199a8c7ceb7cb22",
-        "4abbf9129c20d92735e0e4f6956b00dc9fefaa02d6b4f49112a00b409ff8a3c8"
-      ],
-      "productionSha256": [
-        "a741975c4a0c3d09691f9a3f9738ac28d3560145cdf08dea8fc3c2c71825d9e0",
-        "da6e3760d6333b74d8781491b6a5e626b65cdf7631ab72fd6998118264b6af4f",
-        "da6e3760d6333b74d8781491b6a5e626b65cdf7631ab72fd6998118264b6af4f"
-      ],
-      "testMethods": [
-        "resetServerState",
-        "createOrder_shouldReturn201",
-        "createOrder_thenGetById_shouldReturnSameOrder",
-        "getById_unknownId_shouldReturn4xxOr5xx",
-        "getByOrderNo_shouldReturnOrder",
-        "createOrder_buyerNameShouldPersist",
-        "createOrder_buyerIdShouldPersist",
-        "addLine_shouldIncludeLineInResponse",
-        "addLine_multipleLines_shouldAccumulate",
-        "addLine_toUnknownOrder_shouldReturn4xxOr5xx",
-        "addLine_quantity3_shouldPersist",
-        "addLine_unitPriceDecimal_shouldPersist",
-        "pay_orderWithoutLines_shouldReturn4xxOr5xx",
-        "pay_orderWithLines_shouldBePaid",
-        "pay_unknownOrder_shouldReturn4xx",
-        "pay_paidOrderTwice_secondShouldFail",
-        "ship_paidOrder_shouldBeShipped",
-        "ship_draftOrder_shouldReturn4xxOr5xx",
-        "ship_unknownOrder_shouldReturn4xx",
-        "ship_shippedOrderTwice_shouldFail",
-        "cancel_draftOrder_shouldBeCancelled",
-        "cancel_paidOrder_shouldBeCancelled",
-        "cancel_shippedOrder_shouldReturn4xxOr5xx",
-        "cancel_unknownOrder_shouldReturn4xx",
-        "cancel_cancelledOrderTwice_shouldNotConflict",
-        "listAll_shouldReturnOk",
-        "discount_unknownId_shouldReturn4xxOr5xx",
-        "discount_validId_shouldReturnOk",
-        "getById_returnsResponseShape",
-        "discount_containsAmount",
-        "fullLifecycle_createAddPayShip",
-        "multipleCreates_allShouldSucceed",
-        "listAll_multipleOrders_shouldReturnOk",
-        "addLine_differentGoodsIds_shouldPersist",
-        "fullLifecycle_createAddCancel",
-        "getById_responseIsValidJson"
-      ],
-      "reason": "三线旧 OrderApplicationService 订单 HTTP 各 35 项通过；真实共享路由及折扣策略另由 native 和装配契约验证。低线使用现有测试客户端与 127.0.0.1，各线保留 Javalin/Jackson 原生入口。"
-    },
-    {
       "path": "ddd4j-web/ddd4j-web-vertx/src/test/java/io/ddd4j/web/vertx/Ddd4jVertxContextTest.java",
       "productionPath": "ddd4j-web/ddd4j-web-vertx/src/main/java/io/ddd4j/web/vertx/Ddd4jVertxContext.java",
       "sourceSha256": [
@@ -7668,80 +6281,9 @@
         "webflux"
       ],
       "reason": "Java 8 使用 RestTemplate 与 finally，Java 17/21 使用 JDK HttpClient 与资源变量。Boot 4 的 WebServerApplicationContext 换包。三线测试执行同一订单契约、可选装配缺省检查以及实际响应 locale 断言。"
-    },
-    {
-      "path": "ddd4j-samples/ddd4j-sample-spring/src/test/java/io/ddd4j/sample/spring/SpringOrderPostgresTest.java",
-      "productionPath": "ddd4j-samples/ddd4j-sample-spring/src/main/java/io/ddd4j/sample/spring/SpringSampleApplication.java",
-      "sourceSha256": [
-        "5f907a3a06431204ddf845bcadab304ec0e54a12c692d7faa5070b8f9ac5b846",
-        "d4c0fd6cc8357c740095b699d916b4d223bc68eb35439a8672628b355850e054",
-        "5bf3e827a27627cd78451eab2e22fb4865f99fa4286a8a6a53703deed4d018f3"
-      ],
-      "productionSha256": [
-        "10d9183cefafa1776b56f97b3c3ced60d70c78d926d321938631c1f0124d1e10",
-        "10d9183cefafa1776b56f97b3c3ced60d70c78d926d321938631c1f0124d1e10",
-        "1e93657dabf03d5353f141f612033abe56ca33df04bda11b1196561b1374a8cb"
-      ],
-      "testMethods": [
-        "defaultPersistenceSurvivesApplicationReopen"
-      ],
-      "reason": "Java 8 使用显式类型、singletonMap 和 finally，Java 17/21 使用 var、Map.of 与资源变量。Boot 4 的 WebServerApplicationContext 换包。三线实际执行 Flyway 以及 PostgreSQL 上的订单业务与应用重开。"
     }
   ],
   "platformTestHelperMappings": [
-    {
-      "path": "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/TestSupport.java",
-      "sourceSha256": [
-        "c94a916f8e88fb1ed345236228572797e4b6b6fba153db08dcd5a6db63635da7",
-        "59cffd198889f234eb3a79494873ff5aeec7f94e5f3cac9dce440602d93cfc69",
-        "92a5a1f5b05af8744ffd7a8fb0b60410ea503dabf55884403a61704f67a39dfe"
-      ],
-      "contractPath": "ddd4j-samples/ddd4j-sample-javalin-cqrs/src/test/java/io/ddd4j/sample/javalin/cqrs/order/web/OrderControllerTest.java",
-      "contractSha256": [
-        "dd4179359deb2c6312a6895a89759e8d88a2851ad2a458f9a2c0f16560b21d77",
-        "053822380dbf2b91d1a00c488b0b9e5d6b86622fccd675e844d9e1e1fb8e39aa",
-        "053822380dbf2b91d1a00c488b0b9e5d6b86622fccd675e844d9e1e1fb8e39aa"
-      ],
-      "testMethods": [
-        "resetServerState",
-        "createOrder_shouldReturn201",
-        "createOrder_thenGetById_shouldReturnSameOrder",
-        "getById_unknownId_shouldReturn4xxOr5xx",
-        "createOrder_buyerNameShouldPersist",
-        "createOrder_buyerIdShouldPersist",
-        "getById_responseShape",
-        "multipleCreates_allShouldSucceed",
-        "getByOrderNo_shadowedByIdRoute",
-        "addLine_shouldIncludeLineInResponse",
-        "addLine_multipleLines_shouldAccumulate",
-        "addLine_toUnknownOrder_shouldReturn4xxOr5xx",
-        "addLine_quantity3_shouldPersist",
-        "addLine_unitPriceDecimal_shouldPersist",
-        "addLine_differentGoodsIds_shouldAccumulate",
-        "pay_orderWithoutLines_shouldReturn4xxOr5xx",
-        "pay_orderWithLines_shouldBePaid",
-        "pay_unknownOrder_shouldReturn4xx",
-        "pay_paidOrderTwice_secondShouldFail",
-        "ship_paidOrder_shouldBeShipped",
-        "ship_draftOrder_shouldReturn4xxOr5xx",
-        "ship_unknownOrder_shouldReturn4xx",
-        "ship_shippedOrderTwice_shouldFail",
-        "cancel_draftOrder_shouldBeCancelled",
-        "cancel_paidOrder_shouldBeCancelled",
-        "cancel_shippedOrder_shouldReturn4xxOr5xx",
-        "cancel_unknownOrder_shouldReturn4xx",
-        "queryList_shouldReturnOk",
-        "queryStats_shouldReturnOk",
-        "queryBuyerCount_shouldReturnOk",
-        "queryDetail_unknownId_shouldReturnOkWithFailure",
-        "queryStats_afterCreate_shouldBeOk",
-        "fullLifecycle_createAddPayShip",
-        "fullLifecycle_createAddCancel",
-        "getById_responseIsValidJson",
-        "listAll_multipleOrders_shouldReturnOk"
-      ],
-      "reason": "Javalin 4/7 与 Jackson 2/3 的测试启动、JSON 和路由注册适配；三线 CQRS 订单 HTTP 契约各 35 项通过。"
-    },
     {
       "path": "ddd4j-samples/ddd4j-sample-javalin-satoken/src/test/java/io/ddd4j/sample/javalin/satoken/TestSupport.java",
       "sourceSha256": [
