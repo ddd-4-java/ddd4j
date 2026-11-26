@@ -60,6 +60,8 @@ jobs:
         run: ./scripts/verify-release-worktree.sh
       - name: Verify DDD architecture rules
         run: ./scripts/verify-architecture.sh
+      - name: Install pinned Spring Boot 4 Web adapters
+        run: bash scripts/install-ddd4j-boot4-web.sh
       - name: Run unit and adapter contracts
         run: ./mvnw -B clean test -DskipITs
       - name: Verify build did not write generated files to source control
@@ -93,6 +95,8 @@ jobs:
           printf '%s' "$MAVEN_SETTINGS_XML" | base64 --decode > "$HOME/.m2/settings.xml"
       # 两步法：先全 reactor 安装依赖（不激活 coverage，避免未达标依赖模块触发 check），
       # 再对白名单模块强制 -Pcoverage verify。模块达标（LINE >= 90%）后加入白名单。
+      - name: Install pinned Spring Boot 4 Web adapters
+        run: bash scripts/install-ddd4j-boot4-web.sh
       - name: Install reactor dependencies without coverage enforcement
         run: ./mvnw -B -DskipTests install
       - name: Enforce 90% line coverage on gated modules
@@ -123,6 +127,8 @@ jobs:
           install -d -m 700 "$HOME/.m2"
           umask 077
           printf '%s' "$MAVEN_SETTINGS_XML" | base64 --decode > "$HOME/.m2/settings.xml"
+      - name: Install pinned Spring Boot 4 Web adapters
+        run: bash scripts/install-ddd4j-boot4-web.sh
       - name: Generate CycloneDX SBOM
         run: ./scripts/generate-sbom.sh
       - name: Generate third-party license inventory
