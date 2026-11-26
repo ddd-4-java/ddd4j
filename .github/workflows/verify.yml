@@ -99,6 +99,8 @@ jobs:
           scripts/test_three_line_structure_inventory.py
           scripts/test_three_line_compiled_api_metadata.py
           scripts/test_three_line_type_mappings.py
+      - name: Install pinned Spring Boot 4 Web adapters
+        run: bash scripts/install-ddd4j-boot4-web.sh
       - name: Run unit and adapter contracts
         run: ./mvnw -U -Denforcer.skip=true -B clean test -DskipITs
       - name: Verify shared MQ and Web version contracts
@@ -148,6 +150,8 @@ jobs:
           fi
       - name: Install pinned Easy4J build dependencies
         run: bash scripts/install-mybatis-plus-enhance.sh 3.0.x .
+      - name: Install pinned Spring Boot 4 Web adapters
+        run: bash scripts/install-ddd4j-boot4-web.sh
       - name: Install reactor dependencies without coverage enforcement
         run: ./mvnw -U -Denforcer.skip=true -B -DskipTests install
       - name: Enforce 90% line coverage on gated modules
@@ -190,6 +194,8 @@ jobs:
           fi
       - name: Install pinned Easy4J build dependencies
         run: bash scripts/install-mybatis-plus-enhance.sh 3.0.x .
+      - name: Install pinned Spring Boot 4 Web adapters
+        run: bash scripts/install-ddd4j-boot4-web.sh
       - name: Install reactor artifacts for plugin resolution
         run: ./mvnw -U -Denforcer.skip=true -B -Dmaven.test.skip=true -DskipITs -Dquarkus.build.skip=true install
       - name: Generate CycloneDX SBOM
