@@ -16,9 +16,10 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- Ddd4j Core -->
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-auth-spring</artifactId>
+                <artifactId>ddd4j-annotation</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
@@ -28,82 +29,17 @@
             </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-cqrs-dropwizard</artifactId>
+                <artifactId>ddd4j-core</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-cqrs-javalin</artifactId>
+                <artifactId>ddd4j-data</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-cqrs-micronaut</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-cqrs-spring</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-cqrs-vertx</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-event-store-esdb</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-jpa</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-mybatisplus</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-projection-dropwizard</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-projection-javalin</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-projection-jdbi</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-projection-jpa</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-projection-micronaut</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-projection-r2dbc</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-projection-spring</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-projection-vertx</artifactId>
+                <artifactId>ddd4j-ddd-rules</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
@@ -118,22 +54,7 @@
             </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-extension-license</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-extension-monitor</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-extension-otel</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-extension-qrcode</artifactId>
+                <artifactId>ddd4j-kit</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
@@ -143,138 +64,12 @@
             </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-mq-core</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-mq-spring</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-runtime-dropwizard</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-runtime-guice</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-runtime-micronaut</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-runtime-spring</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-runtime-testkit</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-runtime-vertx</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-web-core</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-web-dropwizard</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-web-javalin</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-web-micronaut</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-web-testkit</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-web-vertx</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-projection</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <!-- Ddd4j Core -->
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-annotation</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-core</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-kit</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-ddd-rules</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-event-store-jpa</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-event-store-jdbi</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-event-store-r2dbc</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-web</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
                 <artifactId>ddd4j-mq</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-monitor</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-ddd</artifactId>
+                <artifactId>ddd4j-web</artifactId>
                 <version>${revision}</version>
             </dependency>
 
@@ -299,8 +94,48 @@
                 <artifactId>ddd4j-auth-shiro</artifactId>
                 <version>${revision}</version>
             </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-auth-spring</artifactId>
+                <version>${revision}</version>
+            </dependency>
 
             <!-- Ddd4j Data Extensions -->
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-data-cqrs-dropwizard</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-data-cqrs-helidon</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-data-cqrs-javalin</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-data-cqrs-micronaut</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-data-cqrs-quarkus</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-data-cqrs-spring</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-data-cqrs-vertx</artifactId>
+                <version>${revision}</version>
+            </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
                 <artifactId>ddd4j-data-crypto</artifactId>
@@ -308,7 +143,37 @@
             </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-data-event-store-esdb</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-data-event-store-jdbi</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-data-event-store-jpa</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-data-event-store-panache</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-data-event-store-r2dbc</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
                 <artifactId>ddd4j-data-external</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-data-jpa</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
@@ -321,11 +186,118 @@
                 <artifactId>ddd4j-data-mybatis</artifactId>
                 <version>${revision}</version>
             </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-data-mybatisplus</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-data-projection</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-data-projection-dropwizard</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-data-projection-helidon</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-data-projection-javalin</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-data-projection-jdbi</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-data-projection-jpa</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-data-projection-micronaut</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-data-projection-panache</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-data-projection-quarkus</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-data-projection-r2dbc</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-data-projection-spring</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-data-projection-vertx</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <!-- Ddd4j General Extensions -->
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-extension-excel</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-extension-license</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-extension-monitor</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-extension-otel</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-extension-pf4j</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-extension-qlexpress</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-extension-qrcode</artifactId>
+                <version>${revision}</version>
+            </dependency>
 
             <!-- Ddd4j MQ Extensions -->
             <dependency>
                 <groupId>io.ddd4j</groupId>
                 <artifactId>ddd4j-mq-activemq</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-mq-core</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
@@ -380,6 +352,11 @@
             </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-mq-spring</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
                 <artifactId>ddd4j-mq-sqs</artifactId>
                 <version>${revision}</version>
             </dependency>
@@ -389,34 +366,89 @@
                 <version>${revision}</version>
             </dependency>
 
-            <!-- Ddd4j General Extensions -->
+            <!-- Ddd4j Runtime Bindings -->
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-extension-akka</artifactId>
+                <artifactId>ddd4j-runtime-dropwizard</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-extension-excel</artifactId>
+                <artifactId>ddd4j-runtime-guice</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-extension-jackson</artifactId>
+                <artifactId>ddd4j-runtime-helidon</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-extension-pf4j</artifactId>
+                <artifactId>ddd4j-runtime-micronaut</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-extension-qlexpress</artifactId>
+                <artifactId>ddd4j-runtime-quarkus</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-runtime-spring</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-runtime-testkit</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-runtime-vertx</artifactId>
                 <version>${revision}</version>
             </dependency>
 
             <!-- Ddd4j Web Extensions -->
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-web-core</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-web-dropwizard</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-web-helidon</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-web-javalin</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-web-micronaut</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-web-quarkus</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-web-testkit</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-web-vertx</artifactId>
+                <version>${revision}</version>
+            </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
                 <artifactId>ddd4j-web-webflux</artifactId>
@@ -428,6 +460,37 @@
                 <version>${revision}</version>
             </dependency>
 
+            <!-- 商品交易共享示例组件（可发布） -->
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-sample-order-adapter</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-sample-order-application</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-sample-order-domain</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-sample-order-jdbc</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-sample-order-start</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-sample-order-testkit</artifactId>
+                <version>${revision}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
