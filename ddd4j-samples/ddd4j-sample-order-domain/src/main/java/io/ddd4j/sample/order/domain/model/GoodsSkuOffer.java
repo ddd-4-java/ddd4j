@@ -8,8 +8,12 @@ import lombok.Value;
  */
 @Value
 public class GoodsSkuOffer implements ValueObject {
+    /** 目录规格主键。 */
     private Long skuId;
+    /** 下单时的商品名称。 */
     private String spuName;
+    /** 下单时的规格名称。 */
     private String skuName;
+    /** 成交单价，单位为分。 */
     private Long salePriceCent;
 }

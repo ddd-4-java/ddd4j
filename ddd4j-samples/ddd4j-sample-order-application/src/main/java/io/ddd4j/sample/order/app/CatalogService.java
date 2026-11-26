@@ -27,12 +27,19 @@ import io.ddd4j.sample.order.client.command.ChangeTradeOrderCmd;
 import lombok.RequiredArgsConstructor;
 import io.ddd4j.kit.lang.StrKit;
 
+/** 编排商品目录和交易用例，使用租户事务和领域事件完成状态变更。 */
 @RequiredArgsConstructor
 public class CatalogService {
     private final TradeSession.Transactions transactions;
     private final DomainEventPublisher publisher;
     private final Clock clock;
 
+    /**
+     * 创建商品及其初始规格。
+     *
+     * @param command 请求执行的业务命令
+     * @return 已持久化的商品
+     */
     public GoodsSpu create(CreateGoodsSpuCmd command) {
         String tenant = command.getTenantId();
         Long shopId = command.getShopId();
@@ -44,6 +51,12 @@ public class CatalogService {
         return transactions.execute(tenant, session -> session.goods().save(goods));
     }
 
+    /**
+     * 按门店可售规格创建交易订单。
+     *
+     * @param command 请求执行的业务命令
+     * @return 已持久化的订单
+     */
     public TradeOrder place(PlaceTradeOrderCmd command) {
         String tenant = command.getTenantId();
         Long shopId = command.getShopId();
@@ -67,6 +80,12 @@ public class CatalogService {
         return committed;
     }
 
+    /**
+     * 记录订单支付结果并发布领域事件。
+     *
+     * @param command 请求执行的业务命令
+     * @return 更新后的订单
+     */
     public TradeOrder confirmPayment(ConfirmTradePaymentCmd command) {
         String tenant = command.getTenantId();
         String orderNo = command.getOrderNo();
@@ -79,6 +98,12 @@ public class CatalogService {
                 LocalDateTime.now(clock).truncatedTo(ChronoUnit.MILLIS)));
     }
 
+    /**
+     * 按指令取消订单或完成履约。
+     *
+     * @param command 请求执行的业务命令
+     * @return 更新后的订单
+     */
     public TradeOrder change(ChangeTradeOrderCmd command) {
         switch (command.getAction()) {
             case CANCEL:
@@ -90,6 +115,14 @@ public class CatalogService {
         }
     }
 
+    /**
+     * 按指令取消订单或完成履约。
+     *
+     * @param tenant 租户编号
+     * @param orderNo 租户内订单编号
+     * @param transition 要执行的领域状态变更
+     * @return 更新后的订单
+     */
     private TradeOrder change(String tenant, String orderNo, UnaryOperator<TradeOrder> transition) {
         checkKey(tenant, orderNo);
         Changed result = transactions.execute(tenant, session -> {
@@ -111,11 +144,23 @@ public class CatalogService {
         List<io.ddd4j.core.ddd.event.DomainEvent<?>> events;
     }
 
+    /**
+     * 按业务编号读取租户商品。
+     *
+     * @param query 包含租户和业务编号的查询条件
+     * @return 查询到的商品
+     */
     public GoodsSpu goods(GoodsSpuQuery query) {
         checkKey(query.getTenantId(), query.getSpuCode());
         return transactions.execute(query.getTenantId(), session -> session.goods().findByCode(query.getSpuCode()));
     }
 
+    /**
+     * 按业务编号读取租户订单。
+     *
+     * @param query 包含租户和业务编号的查询条件
+     * @return 查询到的订单
+     */
     public TradeOrder order(TradeOrderQuery query) {
         checkKey(query.getTenantId(), query.getOrderNo());
         return transactions.execute(query.getTenantId(), session -> session.orders().findByOrderNo(query.getOrderNo()));

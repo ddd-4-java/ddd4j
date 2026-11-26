@@ -25,6 +25,7 @@ import java.util.Optional;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 
+/** 在同一个 MyBatis 会话中提供商品和交易仓储。 */
 @RequiredArgsConstructor
 public class MybatisRepositories implements TradeSession {
     private static final ObjectMapper JSON = new ObjectMapper();

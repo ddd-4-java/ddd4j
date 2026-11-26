@@ -71,7 +71,13 @@ public class TradeOrderItem implements Entity<Long> {
     private Integer deleted;
 
     /**
-     * 从目录报价构造独立的成交快照。
+     * 将成交时的商品规格、单价和数量保存为订单明细快照。
+     *
+     * @param tenant 租户编号
+     * @param lineNo 订单内行号
+     * @param offer 成交时的目录规格及价格
+     * @param quantity 购买数量
+     * @return 新的订单明细
      */
     public static TradeOrderItem fromOffer(String tenant, int lineNo, GoodsSkuOffer offer, Long quantity) {
         if (Objects.isNull(quantity) || quantity <= 0) {

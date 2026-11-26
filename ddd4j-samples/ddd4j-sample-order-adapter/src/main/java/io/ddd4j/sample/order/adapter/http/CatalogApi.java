@@ -28,26 +28,53 @@ import io.ddd4j.sample.order.app.executor.TradeOrderQueryHandler;
 import java.util.List;
 import io.ddd4j.sample.order.domain.gateway.DuplicateTradeKey;
 
+/** 商品交易应用服务的 HTTP 适配入口。 */
 public class CatalogApi implements CatalogEndpoints {
     private final CatalogCommands executor;
     private final CommandBus commands;
     private final QueryBus queries;
     private final ObjectMapper json = new ObjectMapper().findAndRegisterModules();
 
+    /**
+     * 组装商品交易用例入口。
+     *
+     * @param service 商品交易应用服务
+     */
     public CatalogApi(CatalogService service) {
         executor = new CatalogCommands(service);
         commands = new DefaultCommandBus(Collections.singletonList(executor));
         queries = new DefaultQueryBus(Arrays.asList(new GoodsSpuQueryHandler(service), new TradeOrderQueryHandler(service)));
     }
 
+    /**
+     * 获取商品交易命令执行器。
+     *
+     * @return 命令执行器
+     */
     public CatalogCommands executor() {
         return executor;
     }
 
+    /**
+     * 创建商品和初始规格。
+     *
+     * @param tenant 租户编号
+     * @param code 租户内业务编号
+     * @param body 请求 JSON 正文
+     * @return 业务操作响应
+     */
     public Reply createGoods(String tenant, String code, String body) {
         return createGoods(commands, tenant, code, body);
     }
 
+    /**
+     * 创建商品和初始规格。
+     *
+     * @param tenant 租户编号
+     * @param code 租户内业务编号
+     * @param command 已解析的业务命令
+     * @return 业务操作响应
+     */
     public Reply createGoods(String tenant, String code, CreateGoodsSpuCmd command) {
         return invoke(201, () -> create(commands, tenant, code, command));
     }
@@ -65,10 +92,26 @@ public class CatalogApi implements CatalogEndpoints {
         return bus.execute(command).data().orElseThrow(NoSuchElementException::new);
     }
 
+    /**
+     * 创建交易订单。
+     *
+     * @param tenant 租户编号
+     * @param code 租户内业务编号
+     * @param body 请求 JSON 正文
+     * @return 业务操作响应
+     */
     public Reply placeOrder(String tenant, String code, String body) {
         return placeOrder(commands, tenant, code, body);
     }
 
+    /**
+     * 创建交易订单。
+     *
+     * @param tenant 租户编号
+     * @param code 租户内业务编号
+     * @param command 已解析的业务命令
+     * @return 业务操作响应
+     */
     public Reply placeOrder(String tenant, String code, PlaceTradeOrderCmd command) {
         return invoke(201, () -> place(commands, tenant, code, command));
     }
@@ -86,6 +129,14 @@ public class CatalogApi implements CatalogEndpoints {
         return bus.execute(command).data().orElseThrow(NoSuchElementException::new);
     }
 
+    /**
+     * 确认订单支付。
+     *
+     * @param tenant 租户编号
+     * @param orderNo 租户内订单编号
+     * @param body 请求 JSON 正文
+     * @return 业务操作响应
+     */
     @Override
     public Reply confirmPayment(String tenant, String orderNo, String body) {
         return confirmPayment(commands, tenant, orderNo, body);
@@ -101,6 +152,14 @@ public class CatalogApi implements CatalogEndpoints {
         });
     }
 
+    /**
+     * 确认订单支付。
+     *
+     * @param tenant 租户编号
+     * @param orderNo 租户内订单编号
+     * @param amountCent 支付金额，单位为分
+     * @return 业务操作响应
+     */
     public Reply confirmPayment(String tenant, String orderNo, Long amountCent) {
         return confirmPayment(commands, tenant, orderNo, amountCent);
     }
@@ -109,10 +168,24 @@ public class CatalogApi implements CatalogEndpoints {
         return invoke(200, () -> bus.execute(new ConfirmTradePaymentCmd(tenant, orderNo, amountCent)).data().orElseThrow(NoSuchElementException::new));
     }
 
+    /**
+     * 取消指定订单。
+     *
+     * @param tenant 租户编号
+     * @param orderNo 租户内订单编号
+     * @return 业务操作响应
+     */
     public Reply cancelOrder(String tenant, String orderNo) {
         return changeOrder(commands, tenant, orderNo, ChangeTradeOrderCmd.Action.CANCEL);
     }
 
+    /**
+     * 完成指定订单的履约。
+     *
+     * @param tenant 租户编号
+     * @param orderNo 租户内订单编号
+     * @return 业务操作响应
+     */
     public Reply fulfillOrder(String tenant, String orderNo) {
         return changeOrder(commands, tenant, orderNo, ChangeTradeOrderCmd.Action.FULFILL);
     }
@@ -121,10 +194,24 @@ public class CatalogApi implements CatalogEndpoints {
         return invoke(200, () -> bus.execute(new ChangeTradeOrderCmd(tenant, orderNo, action)).data().orElseThrow(NoSuchElementException::new));
     }
 
+    /**
+     * 查询指定商品。
+     *
+     * @param tenant 租户编号
+     * @param code 租户内业务编号
+     * @return 业务操作响应
+     */
     public Reply goods(String tenant, String code) {
         return invoke(200, () -> queries.ask(new GoodsSpuQuery(tenant, code)));
     }
 
+    /**
+     * 查询指定订单。
+     *
+     * @param tenant 租户编号
+     * @param code 租户内业务编号
+     * @return 业务操作响应
+     */
     public Reply order(String tenant, String code) {
         return invoke(200, () -> queries.ask(new TradeOrderQuery(tenant, code)));
     }

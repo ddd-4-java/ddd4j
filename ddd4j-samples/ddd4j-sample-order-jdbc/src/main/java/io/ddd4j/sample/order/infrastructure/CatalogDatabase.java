@@ -30,6 +30,14 @@ public final class CatalogDatabase {
     private CatalogDatabase() {
     }
 
+    /**
+     * 初始化四表数据库并创建租户事务入口。
+     *
+     * @param url MySQL JDBC URL
+     * @param username 数据库用户名
+     * @param password 数据库密码
+     * @return 租户事务入口
+     */
     public static TradeSession.Transactions open(String url, String username, String password) {
         if (!url.startsWith("jdbc:mysql://")) {
             throw new IllegalArgumentException("CATALOG_JDBC_URL 必须指定专用 MySQL 数据库");
@@ -38,6 +46,12 @@ public final class CatalogDatabase {
         return open(source);
     }
 
+    /**
+     * 初始化四表数据库并创建租户事务入口。
+     *
+     * @param source 用于四表初始化及后续事务的数据源
+     * @return 租户事务入口
+     */
     public static TradeSession.Transactions open(DataSource source) {
         initializeSchema(source);
         Configuration config = new Configuration(new Environment("catalog", new JdbcTransactionFactory(), source));

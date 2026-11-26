@@ -18,6 +18,12 @@ public final class CatalogCqrs implements CatalogEndpoints {
     private final CatalogOrderView view;
     private final QueryBus projectedQueries;
 
+    /**
+     * 绑定框架命令总线和商品交易用例。
+     *
+     * @param api 商品交易入口
+     * @param commands 所用框架的命令总线
+     */
     public CatalogCqrs(CatalogApi api, CommandBus commands) {
         this.api = api;
         this.commands = commands;
@@ -63,10 +69,23 @@ public final class CatalogCqrs implements CatalogEndpoints {
         return api.projectedOrder(projectedQueries, tenant, code);
     }
 
+    /**
+     * 按已提交的订单快照重建读模型。
+     *
+     * @param tenant 租户编号
+     * @param code 租户内业务编号
+     * @return 业务操作响应
+     */
     public Reply project(String tenant, String code) {
         return api.project(view, tenant, code);
     }
 
+    /**
+     * 获取商品交易命令执行器。
+     *
+     * @param api 商品交易入口
+     * @return 命令执行器
+     */
     public static CommandExecutor<Command> executor(CatalogApi api) {
         return api.executor();
     }

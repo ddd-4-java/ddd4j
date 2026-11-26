@@ -95,7 +95,14 @@ public class GoodsSpu extends AggregateRoot<Long> {
     List<GoodsSku> skus;
 
     /**
-     * 建立在指定门店可售的不限量套餐。
+     * 创建指定门店的套餐商品并记录初始规格。
+     *
+     * @param tenant 租户编号
+     * @param code 业务编号
+     * @param name 业务名称
+     * @param shopId 门店主键
+     * @param sku 初始商品规格
+     * @return 新的商品聚合
      */
     public static GoodsSpu listPackage(String tenant, String code, String name, long shopId, GoodsSku sku) {
         requireText(tenant, 32);
@@ -118,7 +125,29 @@ public class GoodsSpu extends AggregateRoot<Long> {
         }
     }
 
-    /** 从已持久化数据恢复聚合，保留表结构允许的历史空值。 */
+    /**
+     * 从数据库快照恢复商品，保留历史数据允许的空值。
+     *
+     * @param id 数据库主键
+     * @param tenantId 租户编号
+     * @param spuCode 租户内 SPU 编号
+     * @param spuName 商品名称
+     * @param productKind 商品类型
+     * @param categoryId 类目编号
+     * @param imageUrls 商品图片地址
+     * @param applicableShopIds 适用门店编号列表
+     * @param reviewState 审核状态
+     * @param reviewNote 审核备注
+     * @param isVisible 可见标记
+     * @param isOnSale 上架标记
+     * @param createdBy 创建者编号
+     * @param createdTime 创建时间
+     * @param updatedBy 最近更新者编号
+     * @param updatedTime 最近更新时间
+     * @param deleted 逻辑删除标记
+     * @param skus 规格集合
+     * @return 恢复的商品聚合
+     */
     public static GoodsSpu restore(
             Long id, String tenantId, String spuCode,
             String spuName, String productKind, Long categoryId,

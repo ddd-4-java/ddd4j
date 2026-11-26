@@ -43,6 +43,12 @@ public final class CatalogOrderView
         requests.forEach(this::rebuild);
     }
 
+    /**
+     * 从已提交的订单快照重建读模型。
+     *
+     * @param request 指定租户和订单编号的查询
+     * @return 更新后的订单投影
+     */
     public TradeOrderSnapshot rebuild(TradeOrderQuery request) {
         String tenant = Objects.requireNonNull(request.getTenantId());
         String orderNo = Objects.requireNonNull(request.getOrderNo());
