@@ -9,6 +9,8 @@ import lombok.EqualsAndHashCode;
 @Value
 @EqualsAndHashCode(callSuper = false)
 public class TradeOrderQuery extends Query<TradeOrder> {
+    /** 租户编号。 */
     private String tenantId;
+    /** 租户内订单编号。 */
     private String orderNo;
 }

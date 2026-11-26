@@ -9,6 +9,11 @@ public class Reply {
     private int status;
     private JsonNode payload;
 
+    /**
+     * 获取序列化后的响应正文。
+     *
+     * @return 响应 JSON 正文
+     */
     public String getBody() {
         return payload.toString();
     }

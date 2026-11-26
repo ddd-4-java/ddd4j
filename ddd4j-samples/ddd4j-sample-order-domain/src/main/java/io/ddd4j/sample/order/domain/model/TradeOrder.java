@@ -100,10 +100,17 @@ public class TradeOrder extends AggregateRoot<Long> {
      * 逻辑删除：0 正常，1 已删除。
      */
     private Integer deleted;
+    /** 订单持有的明细快照。 */
     private List<TradeOrderItem> items;
 
     /**
-     * 下单金额由成交明细计算，状态由交易聚合初始化。
+     * 按明细快照计算金额并创建待支付订单。
+     *
+     * @param tenant 租户编号
+     * @param orderNo 租户内订单编号
+     * @param shopId 门店主键
+     * @param items 订单明细快照
+     * @return 新建的待支付订单
      */
     public static TradeOrder place(String tenant, String orderNo, long shopId, List<TradeOrderItem> items) {
         GoodsSpu.requireText(tenant, 32);
@@ -125,7 +132,11 @@ public class TradeOrder extends AggregateRoot<Long> {
     }
 
     /**
-     * 确认支付金额。相同支付事实的重复确认复用已保存状态。
+     * 记录已确认的支付金额和时间。
+     *
+     * @param amountCent 支付金额，单位为分
+     * @param paidAt 支付时间
+     * @return 支付确认后的订单
      */
     public TradeOrder confirmPayment(long amountCent, LocalDateTime paidAt) {
         if ("CONFIRMED".equals(orderState) && Objects.equals(paidAmountCent, amountCent)) {
@@ -142,6 +153,11 @@ public class TradeOrder extends AggregateRoot<Long> {
         return confirmed;
     }
 
+    /**
+     * 取消仍可取消的订单。
+     *
+     * @return 取消后的订单
+     */
     public TradeOrder cancel() {
         if ("CANCELLED".equals(orderState)) {
             return this;
@@ -157,6 +173,11 @@ public class TradeOrder extends AggregateRoot<Long> {
         return cancelled;
     }
 
+    /**
+     * 登记已确认订单的履约结果。
+     *
+     * @return 履约后的订单
+     */
     public TradeOrder fulfill() {
         if ("CONFIRMED".equals(orderState) && "FULFILLED".equals(fulfillmentState)) {
             return this;
@@ -169,7 +190,32 @@ public class TradeOrder extends AggregateRoot<Long> {
         return fulfilled;
     }
 
-    /** 从已持久化数据恢复聚合，保留表结构允许的历史空值。 */
+    /**
+     * 从数据库快照恢复订单，保留历史数据允许的空值。
+     *
+     * @param id 数据库主键
+     * @param tenantId 租户编号
+     * @param orderNo 租户内订单编号
+     * @param orderKind 订单类型
+     * @param fulfillmentMode 履约方式
+     * @param shopId 门店主键
+     * @param buyerId 买家编号
+     * @param orderState 订单状态
+     * @param fulfillmentState 履约状态
+     * @param refundState 退款状态
+     * @param placedTime 下单时间
+     * @param paidTime 支付时间
+     * @param grossAmountCent 订单总额，单位为分
+     * @param merchantDiscountCent 商家优惠，单位为分
+     * @param paidAmountCent 实付金额，单位为分
+     * @param createdBy 创建者编号
+     * @param createdTime 创建时间
+     * @param updatedBy 最近更新者编号
+     * @param updatedTime 最近更新时间
+     * @param deleted 逻辑删除标记
+     * @param items 订单明细快照
+     * @return 恢复的订单聚合
+     */
     public static TradeOrder restore(
             Long id, String tenantId, String orderNo,
             String orderKind, String fulfillmentMode, Long shopId,

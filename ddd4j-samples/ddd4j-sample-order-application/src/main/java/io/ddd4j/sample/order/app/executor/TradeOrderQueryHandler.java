@@ -6,6 +6,7 @@ import io.ddd4j.sample.order.client.query.TradeOrderQuery;
 import io.ddd4j.sample.order.domain.model.TradeOrder;
 import lombok.RequiredArgsConstructor;
 
+/** 处理租户内订单查询。 */
 @RequiredArgsConstructor
 public final class TradeOrderQueryHandler implements QueryHandler<TradeOrderQuery, TradeOrder> {
     private final CatalogService service;

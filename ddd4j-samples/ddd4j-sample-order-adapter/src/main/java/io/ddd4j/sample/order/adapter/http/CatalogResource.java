@@ -16,13 +16,31 @@ import jakarta.ws.rs.core.Response;
 public abstract class CatalogResource {
     private final CatalogEndpoints api;
 
+    /**
+     * 绑定商品交易 HTTP 路由。
+     *
+     * @param api 商品交易入口
+     */
     protected CatalogResource(CatalogEndpoints api) {
         this.api = api;
     }
 
+    /**
+     * 执行当前框架的请求鉴权。
+     *
+     * @param method 待鉴权的业务操作
+     */
     protected void authorize(String method) {
     }
 
+    /**
+     * 创建商品和初始规格。
+     *
+     * @param tenant 租户编号
+     * @param code 租户内业务编号
+     * @param body 请求 JSON 正文
+     * @return 业务操作响应
+     */
     @POST
     @Path("/goods/{code}")
     public Response createGoods(@HeaderParam("X-Tenant-Id") String tenant, @PathParam("code") String code, String body) {
@@ -31,6 +49,13 @@ public abstract class CatalogResource {
         return Response.status(result.getStatus()).type(MediaType.APPLICATION_JSON).entity(result.getBody()).build();
     }
 
+    /**
+     * 查询指定商品。
+     *
+     * @param tenant 租户编号
+     * @param code 租户内业务编号
+     * @return 业务操作响应
+     */
     @GET
     @Path("/goods/{code}")
     public Response goods(@HeaderParam("X-Tenant-Id") String tenant, @PathParam("code") String code) {
@@ -39,6 +64,14 @@ public abstract class CatalogResource {
         return Response.status(result.getStatus()).type(MediaType.APPLICATION_JSON).entity(result.getBody()).build();
     }
 
+    /**
+     * 创建交易订单。
+     *
+     * @param tenant 租户编号
+     * @param code 租户内业务编号
+     * @param body 请求 JSON 正文
+     * @return 业务操作响应
+     */
     @POST
     @Path("/orders/{code}")
     public Response placeOrder(@HeaderParam("X-Tenant-Id") String tenant, @PathParam("code") String code, String body) {
@@ -47,6 +80,14 @@ public abstract class CatalogResource {
         return Response.status(result.getStatus()).type(MediaType.APPLICATION_JSON).entity(result.getBody()).build();
     }
 
+    /**
+     * 确认订单支付。
+     *
+     * @param tenant 租户编号
+     * @param orderNo 租户内订单编号
+     * @param body 请求 JSON 正文
+     * @return 业务操作响应
+     */
     @POST
     @Path("/orders/{orderNo}/payment")
     public Response confirmPayment(@HeaderParam("X-Tenant-Id") String tenant,
@@ -56,6 +97,13 @@ public abstract class CatalogResource {
         return Response.status(reply.getStatus()).type(MediaType.APPLICATION_JSON).entity(reply.getBody()).build();
     }
 
+    /**
+     * 取消指定订单。
+     *
+     * @param tenant 租户编号
+     * @param orderNo 租户内订单编号
+     * @return 业务操作响应
+     */
     @POST
     @Path("/orders/{orderNo}/cancel")
     public Response cancelOrder(@HeaderParam("X-Tenant-Id") String tenant, @PathParam("orderNo") String orderNo) {
@@ -64,6 +112,13 @@ public abstract class CatalogResource {
         return Response.status(reply.getStatus()).type(MediaType.APPLICATION_JSON).entity(reply.getBody()).build();
     }
 
+    /**
+     * 完成指定订单的履约。
+     *
+     * @param tenant 租户编号
+     * @param orderNo 租户内订单编号
+     * @return 业务操作响应
+     */
     @POST
     @Path("/orders/{orderNo}/fulfill")
     public Response fulfillOrder(@HeaderParam("X-Tenant-Id") String tenant, @PathParam("orderNo") String orderNo) {
@@ -72,6 +127,13 @@ public abstract class CatalogResource {
         return Response.status(reply.getStatus()).type(MediaType.APPLICATION_JSON).entity(reply.getBody()).build();
     }
 
+    /**
+     * 查询指定订单。
+     *
+     * @param tenant 租户编号
+     * @param code 租户内业务编号
+     * @return 业务操作响应
+     */
     @GET
     @Path("/orders/{code}")
     public Response order(@HeaderParam("X-Tenant-Id") String tenant, @PathParam("code") String code) {
