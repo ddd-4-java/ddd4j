@@ -52,7 +52,7 @@ public final class NativeAuthFilter {
     if (!subject.isAuthenticated()) { return HttpResponse.unauthorized(); }
     boolean cancellation = routeMatch
       .flatMap(route -> route.getAnnotationMetadata().stringValue(Post.class))
-      .filter("/{id}/cancel"::equals).isPresent();
+      .filter("/orders/{orderNo}/cancel"::equals).isPresent();
     String permission = cancellation ? "order:cancel" : request.getPath().startsWith("/orders") && request.getMethodName().equals("POST")
       && !request.getPath().equals("/orders/query") ? "order:write" : "order:read";
     if (!subject.isPermitted(permission)) { return HttpResponse.status(io.micronaut.http.HttpStatus.FORBIDDEN); }

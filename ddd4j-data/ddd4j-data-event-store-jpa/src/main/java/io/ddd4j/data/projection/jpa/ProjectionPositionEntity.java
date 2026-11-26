@@ -54,14 +54,16 @@ public class ProjectionPositionEntity {
     @Column(name = "next_event_number", nullable = false)
     private long nextEventNumber;
 
-    /** 创建供 JPA 加载的空实体。 */
+    /**
+     * 创建供 JPA 加载的空实体。
+     */
     public ProjectionPositionEntity() {
     }
 
     /**
      * 创建投影消费位置实体。
      *
-     * @param streamId 投影流标识
+     * @param streamId        投影流标识
      * @param nextEventNumber 下一个待处理事件号
      */
     public ProjectionPositionEntity(String streamId, long nextEventNumber) {
@@ -79,22 +81,30 @@ public class ProjectionPositionEntity {
         return new ProjectionPositionEntity(streamId, 0L);
     }
 
-    /** @return 投影流标识 */
+    /**
+     * @return 投影流标识
+     */
     public String getStreamId() {
         return streamId;
     }
 
-    /** @param streamId 投影流标识 */
+    /**
+     * @param streamId 投影流标识
+     */
     public void setStreamId(String streamId) {
         this.streamId = streamId;
     }
 
-    /** @return 下一个待处理事件号 */
+    /**
+     * @return 下一个待处理事件号
+     */
     public long getNextEventNumber() {
         return nextEventNumber;
     }
 
-    /** @param nextEventNumber 下一个待处理事件号 */
+    /**
+     * @param nextEventNumber 下一个待处理事件号
+     */
     public void setNextEventNumber(long nextEventNumber) {
         this.nextEventNumber = nextEventNumber;
     }

@@ -13,9 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.mq.mqttmica;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.mock;
 
 import io.ddd4j.mq.message.MessageHeaders;
 import org.dromara.mica.mqtt.codec.MqttQoS;

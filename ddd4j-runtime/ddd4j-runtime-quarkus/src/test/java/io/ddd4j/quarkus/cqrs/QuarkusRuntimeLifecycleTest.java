@@ -21,19 +21,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestProfile(QuarkusRuntimeLifecycleTest.LegacyCronProfile.class)
 class QuarkusRuntimeLifecycleTest {
 
-    public static class LegacyCronProfile implements QuarkusTestProfile {
-        @Override
-        public Map<String, String> getConfigOverrides() {
-            return Collections.singletonMap(QuarkusJpaViewManager.CRON_KEY, "0/1 * * * * ?");
-        }
-    }
-
     @Inject
     QuarkusJpaViewManager viewManager;
-
     @Inject
     Event<StartupEvent> startupEvents;
-
     @Inject
     Event<ShutdownEvent> shutdownEvents;
 
@@ -49,5 +40,12 @@ class QuarkusRuntimeLifecycleTest {
         viewManager.start();
         shutdownEvents.fire(new ShutdownEvent());
         assertThat(viewManager.isRunning()).isFalse();
+    }
+
+    public static class LegacyCronProfile implements QuarkusTestProfile {
+        @Override
+        public Map<String, String> getConfigOverrides() {
+            return Collections.singletonMap(QuarkusJpaViewManager.CRON_KEY, "0/1 * * * * ?");
+        }
     }
 }

@@ -14,23 +14,12 @@
  */
 package io.ddd4j.core.cqrs.readmodel.handler;
 
-import io.ddd4j.core.cqrs.readmodel.DefaultProjectionPosition;
-import io.ddd4j.core.cqrs.readmodel.EventChunk;
-import io.ddd4j.core.cqrs.readmodel.EventChunkReader;
-import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
-import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
-import io.ddd4j.core.cqrs.readmodel.ProjectionRunner;
-import io.ddd4j.core.cqrs.readmodel.ProjectionService;
-import io.ddd4j.core.cqrs.readmodel.ProjectionView;
+import io.ddd4j.core.cqrs.readmodel.*;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.SynchronousSink;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -132,6 +121,7 @@ public class ProjectionDispatcher {
      * 从处理器自己的检查点拉取并处理一个完整源事件块。
      * 成功后按源块 nextEventNumber 提交；失败保留原位置，整块可能重投。
      * 处理顺序、位置推进、重入保护均由共享 Runner 执行。此入口使用 service 读写位置。
+     *
      * @param handler 独立视图处理器
      * @return 源返回的完整事件块（保留真实源位置）
      */
@@ -142,8 +132,9 @@ public class ProjectionDispatcher {
     /**
      * 对订阅该事件的每个独立视图运行一块，单个失败不阻止其余视图，最后传播首个失败。
      * 每个视图读取其全部订阅类型，避免共享检查点跳过其他订阅事件。
+     *
      * @param eventType 用于选择订阅视图的事件类型
-     * @param <E> 事件类型
+     * @param <E>       事件类型
      */
     public <E extends DomainEvent<?>> void runByEvent(Class<E> eventType) {
         RuntimeException firstFailure = null;
@@ -166,6 +157,7 @@ public class ProjectionDispatcher {
     /**
      * 将旧 Handler 入口适配为框架无关 View，固定本次名称、CRON、块大小和类型声明。
      * 已注册处理器的身份或订阅漂移时，在读取、处理和提交之前拒绝适配。
+     *
      * @param handler 业务处理器
      * @return 顺序处理块内事件的视图
      */

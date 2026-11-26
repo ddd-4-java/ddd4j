@@ -23,7 +23,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-/** 三线 JPA 监听器对标注字段和普通字段的加解密契约。 */
+/**
+ * 三线 JPA 监听器对标注字段和普通字段的加解密契约。
+ */
 class JpaEncryptFieldListenerContractTest {
 
     @Test

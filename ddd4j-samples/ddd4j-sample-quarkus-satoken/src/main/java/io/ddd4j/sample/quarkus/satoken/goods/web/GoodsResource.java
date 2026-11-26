@@ -14,7 +14,6 @@
  */
 package io.ddd4j.sample.quarkus.satoken.goods.web;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.api.R;
 import io.ddd4j.sample.quarkus.satoken.goods.application.GoodsApplicationService;
@@ -23,6 +22,7 @@ import io.ddd4j.sample.quarkus.satoken.goods.domain.GoodsId;
 import io.ddd4j.sample.quarkus.satoken.goods.domain.GoodsStatus;
 import io.ddd4j.sample.quarkus.satoken.goods.web.dto.CreateGoodsRequest;
 import io.ddd4j.sample.quarkus.satoken.goods.web.dto.UpdateGoodsRequest;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -35,10 +35,12 @@ import java.util.List;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+
 @Path("/api/goods")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @ApplicationScoped
+@io.quarkus.arc.properties.IfBuildProperty(name = "sample.goods.standalone", stringValue = "true")
 public class GoodsResource {
 
     private final GoodsApplicationService applicationService;
@@ -57,7 +59,7 @@ public class GoodsResource {
      * 创建商品写入资源。
      *
      * @param applicationService 商品应用服务
-     * @param queryResource 商品查询逻辑
+     * @param queryResource      商品查询逻辑
      */
     @Inject
     public GoodsResource(GoodsApplicationService applicationService, GoodsQueryResource queryResource) {
@@ -81,7 +83,7 @@ public class GoodsResource {
     /**
      * 更新商品。
      *
-     * @param id 商品标识
+     * @param id      商品标识
      * @param request 请求数据
      * @return 更新后的商品
      */
@@ -96,7 +98,7 @@ public class GoodsResource {
     /**
      * 调整商品状态。
      *
-     * @param id 商品标识
+     * @param id     商品标识
      * @param status 商品状态
      * @return 更新后的商品
      */
@@ -143,14 +145,15 @@ public class GoodsResource {
     public R<Goods> getByCode(@QueryParam("code") String code) {
         return R.ok(applicationService.getByCode(code));
     }
+
     /**
      * 保留既有 Java 分页入口，HTTP 绑定由 GoodsQueryResource 持有。
      *
-     * @param current 当前页码
-     * @param size 每页数量
-     * @param code 商品编码
+     * @param current  当前页码
+     * @param size     每页数量
+     * @param code     商品编码
      * @param nameLike 名称模糊匹配条件
-     * @param status 商品状态
+     * @param status   商品状态
      * @param priceMin 最低价格
      * @param priceMax 最高价格
      * @param orderBys 排序字段
@@ -164,9 +167,9 @@ public class GoodsResource {
     /**
      * 保留既有 Java 列表入口，复用实际查询资源。
      *
-     * @param code 商品编码
+     * @param code     商品编码
      * @param nameLike 名称模糊匹配条件
-     * @param status 商品状态
+     * @param status   商品状态
      * @param priceMin 最低价格
      * @param priceMax 最高价格
      * @param orderBys 排序字段
@@ -180,9 +183,9 @@ public class GoodsResource {
     /**
      * 保留既有 Java 计数入口，复用实际查询资源。
      *
-     * @param code 商品编码
+     * @param code     商品编码
      * @param nameLike 名称模糊匹配条件
-     * @param status 商品状态
+     * @param status   商品状态
      * @param priceMin 最低价格
      * @param priceMax 最高价格
      * @return 商品数量响应

@@ -340,6 +340,28 @@ public class ThreadContext {
         THREAD_LOCAL_POOL.remove();
     }
 
+    private static void ensureResourcesInitialized() {
+        if (Objects.isNull(THREAD_LOCAL_POOL.get())) {
+            THREAD_LOCAL_POOL.set(new ConcurrentHashMap<>(4));
+        }
+    }
+
+    private static Map<Object, Object> snapshotResources() {
+        return copyResources(THREAD_LOCAL_POOL.get());
+    }
+
+    private static Map<Object, Object> copyResources(Map<Object, Object> resources) {
+        return Objects.isNull(resources) ? null : new ConcurrentHashMap<>(resources);
+    }
+
+    private static void replaceResources(Map<Object, Object> resources) {
+        if (Objects.isNull(resources) || resources.isEmpty()) {
+            clear();
+            return;
+        }
+        THREAD_LOCAL_POOL.set(copyResources(resources));
+    }
+
     /**
      * 上下文作用域，配合 try-with-resources 使用。
      *
@@ -365,27 +387,5 @@ public class ThreadContext {
             replaceResources(previousResources);
             closed = true;
         }
-    }
-
-    private static void ensureResourcesInitialized() {
-        if (Objects.isNull(THREAD_LOCAL_POOL.get())) {
-            THREAD_LOCAL_POOL.set(new ConcurrentHashMap<>(4));
-        }
-    }
-
-    private static Map<Object, Object> snapshotResources() {
-        return copyResources(THREAD_LOCAL_POOL.get());
-    }
-
-    private static Map<Object, Object> copyResources(Map<Object, Object> resources) {
-        return Objects.isNull(resources) ? null : new ConcurrentHashMap<>(resources);
-    }
-
-    private static void replaceResources(Map<Object, Object> resources) {
-        if (Objects.isNull(resources) || resources.isEmpty()) {
-            clear();
-            return;
-        }
-        THREAD_LOCAL_POOL.set(copyResources(resources));
     }
 }

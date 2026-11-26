@@ -15,16 +15,12 @@
 
 package io.ddd4j.core.health;
 
-import io.ddd4j.kit.lang.StrKit;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.ddd4j.kit.lang.StrKit;
 import lombok.Getter;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * 多个 {@link ReadinessContributor} 的聚合结果。

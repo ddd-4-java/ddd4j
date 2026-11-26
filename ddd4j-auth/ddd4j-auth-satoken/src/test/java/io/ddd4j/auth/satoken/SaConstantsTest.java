@@ -23,6 +23,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class SaConstantsTest {
 
+    private static void assertKey(String name, String literal) throws ReflectiveOperationException {
+        Field field = SaConstants.class.getField(name);
+        assertEquals(String.class, field.getType(), name);
+        assertEquals(Modifier.PUBLIC | Modifier.STATIC | Modifier.FINAL, field.getModifiers(), name);
+        assertEquals(literal, field.get(null), name);
+    }
+
     @Test
     void generalPayloadKeysKeepTheirLiteralValues() throws ReflectiveOperationException {
         assertKey("PAYLOAD_TENANT_ID", "tenant_id");
@@ -41,12 +48,5 @@ class SaConstantsTest {
         assertKey("PAYLOAD_IDENTITY_ID", "iden_id");
         assertKey("PAYLOAD_INFO_ID", "info_id");
         assertKey("PAYLOAD_PARENT_INFO_ID", "p_info_id");
-    }
-
-    private static void assertKey(String name, String literal) throws ReflectiveOperationException {
-        Field field = SaConstants.class.getField(name);
-        assertEquals(String.class, field.getType(), name);
-        assertEquals(Modifier.PUBLIC | Modifier.STATIC | Modifier.FINAL, field.getModifiers(), name);
-        assertEquals(literal, field.get(null), name);
     }
 }

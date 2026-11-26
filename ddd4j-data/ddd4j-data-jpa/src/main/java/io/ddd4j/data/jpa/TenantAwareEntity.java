@@ -14,11 +14,7 @@
  */
 package io.ddd4j.data.jpa;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Id;
-import jakarta.persistence.IdClass;
-import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.PrePersist;
+import jakarta.persistence.*;
 
 import java.util.Objects;
 
@@ -35,12 +31,16 @@ import java.util.Objects;
 @IdClass(TenantAwareId.class)
 public abstract class TenantAwareEntity extends TenantAwareEntityBase {
 
-    /** 实体主键。 */
+    /**
+     * 实体主键。
+     */
     @Id
     @Column(name = "id")
     protected Long id;
 
-    /** 租户标识。 */
+    /**
+     * 租户标识。
+     */
     @Id
     @Column(name = "tenant_id")
     protected String tenantId;

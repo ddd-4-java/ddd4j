@@ -38,10 +38,27 @@ public final class QLExpressExecutionResult<T> {
     private final long elapsedNanos;
 
     /**
+     * @param success      是否成功
+     * @param value        表达式原始结果值
+     * @param errorCode    异常类型
+     * @param errorMessage 异常消息
+     * @param elapsedNanos 执行耗时，单位纳秒
+     */
+
+    @JsonCreator()
+    public QLExpressExecutionResult(@JsonProperty("success") boolean success, @JsonProperty("value") T value, @JsonProperty("errorCode") String errorCode, @JsonProperty("errorMessage") String errorMessage, @JsonProperty("elapsedNanos") long elapsedNanos) {
+        this.success = success;
+        this.value = value;
+        this.errorCode = errorCode;
+        this.errorMessage = errorMessage;
+        this.elapsedNanos = elapsedNanos;
+    }
+
+    /**
      * 创建成功执行结果。
      *
-     * @param <T> 结果类型
-     * @param value 表达式结果
+     * @param <T>          结果类型
+     * @param value        表达式结果
      * @param elapsedNanos 执行耗时（纳秒）
      * @return 成功结果
      */
@@ -52,8 +69,8 @@ public final class QLExpressExecutionResult<T> {
     /**
      * 创建失败执行结果。
      *
-     * @param <T> 结果类型
-     * @param errorCode 错误码
+     * @param <T>          结果类型
+     * @param errorCode    错误码
      * @param errorMessage 错误消息
      * @param elapsedNanos 执行耗时（纳秒）
      * @return 失败结果
@@ -105,23 +122,6 @@ public final class QLExpressExecutionResult<T> {
      */
     public boolean isSuccess() {
         return success;
-    }
-
-    /**
- * @param success 是否成功
- * @param value 表达式原始结果值
- * @param errorCode 异常类型
- * @param errorMessage 异常消息
- * @param elapsedNanos 执行耗时，单位纳秒
- */
-
-    @JsonCreator()
-    public QLExpressExecutionResult(@JsonProperty("success") boolean success, @JsonProperty("value") T value, @JsonProperty("errorCode") String errorCode, @JsonProperty("errorMessage") String errorMessage, @JsonProperty("elapsedNanos") long elapsedNanos) {
-        this.success = success;
-        this.value = value;
-        this.errorCode = errorCode;
-        this.errorMessage = errorMessage;
-        this.elapsedNanos = elapsedNanos;
     }
 
     /**

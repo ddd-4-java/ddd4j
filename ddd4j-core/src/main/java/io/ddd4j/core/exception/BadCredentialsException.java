@@ -47,7 +47,7 @@ public class BadCredentialsException extends AuthenticationException {
      * 使用错误消息创建凭据错误异常。
      *
      * @param message 错误消息
-     * @param cause 原始异常
+     * @param cause   原始异常
      */
     public BadCredentialsException(String message, Throwable cause) {
         super(message, cause);

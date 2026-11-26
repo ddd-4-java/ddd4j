@@ -15,12 +15,7 @@
 package io.ddd4j.data.event.store.jpa;
 
 import io.ddd4j.core.constant.EventStoreConstants;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.IdClass;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.*;
 
 import java.time.Instant;
 
@@ -93,6 +88,15 @@ public class StoredEventEntity {
     }
 
     /**
+     * 设置聚合标识。
+     *
+     * @param aggregateId 聚合标识
+     */
+    public void setAggregateId(String aggregateId) {
+        this.aggregateId = aggregateId;
+    }
+
+    /**
      * 返回聚合类型。
      *
      * @return 聚合类型
@@ -108,15 +112,6 @@ public class StoredEventEntity {
      */
     public void setAggregateType(String aggregateType) {
         this.aggregateType = aggregateType;
-    }
-
-    /**
-     * 设置聚合标识。
-     *
-     * @param aggregateId 聚合标识
-     */
-    public void setAggregateId(String aggregateId) {
-        this.aggregateId = aggregateId;
     }
 
     /**

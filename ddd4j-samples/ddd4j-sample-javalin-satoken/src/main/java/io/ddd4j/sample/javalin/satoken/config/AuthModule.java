@@ -22,11 +22,6 @@ import io.ddd4j.sample.javalin.satoken.goods.domain.GoodsRepository;
 import io.ddd4j.sample.javalin.satoken.goods.infrastructure.InMemoryGoodsRepository;
 import io.ddd4j.sample.javalin.satoken.goods.web.GoodsQueryResource;
 import io.ddd4j.sample.javalin.satoken.goods.web.GoodsResource;
-import io.ddd4j.sample.javalin.satoken.order.application.OrderApplicationService;
-import io.ddd4j.sample.javalin.satoken.order.domain.repository.OrderRepository;
-import io.ddd4j.sample.javalin.satoken.order.domain.service.OrderDomainService;
-import io.ddd4j.sample.javalin.satoken.order.infrastructure.InMemoryOrderRepository;
-import io.ddd4j.sample.javalin.satoken.order.web.OrderResource;
 import io.ddd4j.sample.javalin.satoken.rbac.RbacConfig;
 import io.ddd4j.sample.javalin.satoken.rbac.application.RbacService;
 import io.ddd4j.sample.javalin.satoken.rbac.domain.repository.PermissionRepository;
@@ -72,11 +67,6 @@ public class AuthModule extends AbstractModule {
         bind(AuthenticationController.class);
         bind(AuthorizationController.class);
 
-        // ========================= Order 模块 =========================
-        bind(OrderRepository.class).to(InMemoryOrderRepository.class);
-        bind(OrderDomainService.class);
-        bind(OrderApplicationService.class);
-        bind(OrderResource.class);
 
         // ========================= Goods 模块 =========================
         bind(GoodsRepository.class).to(InMemoryGoodsRepository.class).in(Singleton.class);

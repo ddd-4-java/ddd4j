@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 
-/** 原生 Sa-Token 权限数据及 MVC 入口拦截；演示账号仅授予读取订单权限。 */
+/** 原生 Sa-Token 权限数据及 MVC 入口拦截；演示只读和可写账号。 */
 @Configuration(proxyBeanMethods = false)
 public class SaTokenConfiguration implements WebMvcConfigurer {
     /**
@@ -22,6 +22,9 @@ public class SaTokenConfiguration implements WebMvcConfigurer {
     public StpInterface orderPermissions() {
         return new StpInterface() {
             @Override public List<String> getPermissionList(Object loginId, String loginType) {
+                if ("writer".equals(loginId)) {
+                    return List.of("order:read", "order:write");
+                }
                 return "alice".equals(loginId) ? List.of("order:read") : List.of();
             }
             @Override public List<String> getRoleList(Object loginId, String loginType) {
@@ -38,7 +41,7 @@ public class SaTokenConfiguration implements WebMvcConfigurer {
                 StpUtil.checkLogin();
                 String path = ServletRequestPathUtils.getCachedPathValue(request);
                 if (path.startsWith("/orders")) {
-                    String permission = "DELETE".equals(request.getMethod()) ? "order:cancel"
+                    String permission = ("DELETE".equals(request.getMethod()) || path.endsWith("/cancel")) ? "order:cancel"
                             : ("GET".equals(request.getMethod()) || path.endsWith("/query"))
                             ? "order:read" : "order:write";
                     StpUtil.checkPermission(permission);

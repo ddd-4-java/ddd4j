@@ -16,17 +16,23 @@ package io.ddd4j.core.ddd.event;
 
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class EventIdentifierValueContractTest {
+
+    private static Object roundTrip(Serializable value) throws Exception {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        try (ObjectOutputStream output = new ObjectOutputStream(bytes)) {
+            output.writeObject(value);
+        }
+        try (ObjectInputStream input = new ObjectInputStream(new ByteArrayInputStream(bytes.toByteArray()))) {
+            return input.readObject();
+        }
+    }
 
     @Test
     void aggregateVersionHasStableValueSemantics() throws Exception {
@@ -76,15 +82,5 @@ class EventIdentifierValueContractTest {
         assertThat(roundTrip(value)).isEqualTo(value);
         assertThat(EventId.valueOf(" ")).isNull();
         assertThatThrownBy(() -> new EventId(null)).isInstanceOf(NullPointerException.class);
-    }
-
-    private static Object roundTrip(Serializable value) throws Exception {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        try (ObjectOutputStream output = new ObjectOutputStream(bytes)) {
-            output.writeObject(value);
-        }
-        try (ObjectInputStream input = new ObjectInputStream(new ByteArrayInputStream(bytes.toByteArray()))) {
-            return input.readObject();
-        }
     }
 }

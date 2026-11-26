@@ -1,5 +1,22 @@
 # ddd4j-sample-javalin-cqrs
 
+## 当前商品交易入口
+
+此模块以 CQRS 方式运行共享商品交易。先按[示例总览](../README.md#启动默认订单示例)配置 MySQL。以下命令从仓库根目录运行，使用实际 Maven 版本替换 `<version>`。
+
+```bash
+module=ddd4j-samples/ddd4j-sample-javalin-cqrs
+./mvnw -pl "$module" -am -DskipTests -Dmaven.javadoc.skip=true -DincludeScope=runtime -Dmdep.outputFile=target/runtime-classpath.txt package dependency:build-classpath
+java -cp "$module/target/ddd4j-sample-javalin-cqrs-<version>.jar:$(cat "$module/target/runtime-classpath.txt")" io.ddd4j.sample.javalin.cqrs.JavalinCqrsApplication
+```
+
+业务请求携带 `X-Tenant-Id`。商品地址为 `/orders/catalog/goods/{spuCode}`，订单地址为 `/orders/catalog/orders/{orderNo}`。支付、取消和履约分别使用订单子路径 `/payment`、`/cancel`、`/fulfill`。
+
+写操作经命令总线执行。调用 `POST /orders/catalog/projections/orders/{orderNo}` 构建订单投影。
+
+<details>
+<summary>商品交易迁移前的说明</summary>
+
 ## S02 持久共享 Order 与兼容入口
 
 本模块保留原 `/api/orders`、`/api/orders/query/*`、`/api/goods` 及原 DTO。它们仍是 **内存/缓存兼容演示**，不能作为持久投影验收。原 Order DTO 包含 Money 与 lineCount，而既有共享查询表没有明细字段；为保留接口且不增加字段，仅 CQRS 使用明确的过渡主入口 `/sample/orders`。
@@ -273,3 +290,5 @@ CacheKit.invalidate(BIZ_ORDER_STATS, STATS_KEY);
 - 外部 `ddd4j-boot-samples/ddd4j-boot-sample-order` — Spring Boot CQRS 对照
 - [`ddd4j-sample-quarkus-cqrs`](../ddd4j-sample-quarkus-cqrs) — 同 CQRS 思路在 Quarkus 平台
 - ddd4j 核心抽象：`ddd4j-core`（`io.ddd4j.core.ddd.*`、`io.ddd4j.core.context.*`）
+
+</details>

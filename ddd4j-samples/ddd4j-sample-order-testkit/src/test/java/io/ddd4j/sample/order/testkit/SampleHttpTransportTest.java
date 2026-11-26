@@ -10,28 +10,23 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/** 真实 loopback 传输守护空体、JSON null、字符集、请求头及驱动错误语义。 */
+/**
+ * 真实 loopback 传输守护空体、JSON null、字符集、请求头及错误响应。
+ */
 class SampleHttpTransportTest {
-    private HttpServer server;
-    private String url;
     private final AtomicReference<String> receivedBody = new AtomicReference<>();
     private final AtomicReference<List<String>> receivedTrace = new AtomicReference<>();
     private final AtomicReference<String> responseBody = new AtomicReference<>("ok");
     private final AtomicReference<Charset> responseCharset = new AtomicReference<>(StandardCharsets.UTF_8);
     private final AtomicInteger status = new AtomicInteger(200);
+    private HttpServer server;
+    private String url;
 
     @BeforeEach
     void startServer() throws IOException {
@@ -110,59 +105,4 @@ class SampleHttpTransportTest {
                 Collections.emptyMap(), Collections.emptyMap(), null);
         assertEquals("café", response.body());
     }
-
-    @Test
-    void driversKeepDistinctNullBodiesAndSecurityMessages() {
-        EnvelopeOrderHttpDriver envelope = new EnvelopeOrderHttpDriver(url, "/orders", Collections.emptyMap());
-        HttpOrderSampleDriver bare = new HttpOrderSampleDriver(url);
-        responseBody.set("{\"data\":\"envelope\"}");
-        assertEquals("envelope", envelope.request("POST", "/orders", null, Collections.emptyMap()).asText());
-        assertEquals("", receivedBody.get());
-        responseBody.set("\"bare\"");
-        assertEquals("bare", bare.request("POST", "/orders", null, String.class));
-        assertEquals("null", receivedBody.get());
-        for (int denied : new int[] {401, 403}) {
-            status.set(denied);
-            responseBody.set("拒绝");
-            SecurityException envelopeFailure = assertThrows(SecurityException.class,
-                    () -> envelope.request("POST", "/orders", null, Collections.emptyMap()));
-            SecurityException bareFailure = assertThrows(SecurityException.class,
-                    () -> bare.request("POST", "/orders", null, String.class));
-            assertEquals("HTTP " + denied, envelopeFailure.getMessage());
-            assertEquals("拒绝", bareFailure.getMessage());
-        }
-    }
-
-    @Test
-    void envelopeDriverWrapsMalformedJsonWithItsCause() {
-        responseBody.set("{\"data\":");
-        EnvelopeOrderHttpDriver envelope = new EnvelopeOrderHttpDriver(url, "/orders", Collections.emptyMap());
-        IllegalStateException failure = assertThrows(IllegalStateException.class,
-                () -> envelope.request("GET", "/orders", null, Collections.emptyMap()));
-        assertNotNull(failure.getCause());
-    }
-
-    @Test
-    void bareDriverWrapsMalformedJsonWithItsCause() {
-        responseBody.set("\"unterminated");
-        HttpOrderSampleDriver bare = new HttpOrderSampleDriver(url);
-        IllegalStateException failure = assertThrows(IllegalStateException.class,
-                () -> bare.request("GET", "/orders", null, String.class));
-        assertNotNull(failure.getCause());
-    }
-
-    @Test
-    void driversPreserveOtherHttpErrorBodies() {
-        status.set(500);
-        responseBody.set("服务异常");
-        EnvelopeOrderHttpDriver envelope = new EnvelopeOrderHttpDriver(url, "/orders", Collections.emptyMap());
-        HttpOrderSampleDriver bare = new HttpOrderSampleDriver(url);
-        IllegalStateException envelopeFailure = assertThrows(IllegalStateException.class,
-                () -> envelope.request("GET", "/orders", null, Collections.emptyMap()));
-        IllegalStateException bareFailure = assertThrows(IllegalStateException.class,
-                () -> bare.request("GET", "/orders", null, String.class));
-        assertEquals("HTTP 500: 服务异常", envelopeFailure.getMessage());
-        assertEquals("HTTP 500: 服务异常", bareFailure.getMessage());
-    }
-
 }

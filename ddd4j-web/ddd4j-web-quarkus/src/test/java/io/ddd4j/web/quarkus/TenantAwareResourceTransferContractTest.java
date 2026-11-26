@@ -21,7 +21,9 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/** 租户资源分页转换的三线行为契约。 */
+/**
+ * 租户资源分页转换的三线行为契约。
+ */
 class TenantAwareResourceTransferContractTest {
 
     @Test

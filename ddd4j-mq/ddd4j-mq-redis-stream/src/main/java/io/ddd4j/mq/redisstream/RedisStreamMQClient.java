@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.mq.redisstream;
-import java.util.Objects;
 
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;

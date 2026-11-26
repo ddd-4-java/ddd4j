@@ -6,17 +6,22 @@ import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
-import java.net.URI;
-import java.util.Objects;
 import org.glassfish.jersey.internal.MapPropertiesDelegate;
 import org.glassfish.jersey.server.ContainerRequest;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
 
-/** 验证 Shiro 请求引擎和调用方引擎的所有权边界。 */
+import java.net.URI;
+import java.util.Objects;
+
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
+
+/**
+ * 验证 Shiro 请求引擎和调用方引擎的所有权边界。
+ */
 class NativeAuthOwnershipTest {
-    @Test void applicationKeepsCallerVmManager() {
+    @Test
+    void applicationKeepsCallerVmManager() {
         SecurityManager previous = (SecurityManager) ReflectUtil.getStaticFieldValue(
                 ReflectUtil.getField(SecurityUtils.class, "securityManager"));
         DefaultSecurityManager caller = new DefaultSecurityManager();
@@ -35,7 +40,8 @@ class NativeAuthOwnershipTest {
         }
     }
 
-    @Test void requestFiltersRestoreCallerThreadBindings() {
+    @Test
+    void requestFiltersRestoreCallerThreadBindings() {
         NativeAuth auth = new NativeAuth();
         DefaultSecurityManager caller = new DefaultSecurityManager();
         Subject originalSubject = ThreadContext.getSubject();

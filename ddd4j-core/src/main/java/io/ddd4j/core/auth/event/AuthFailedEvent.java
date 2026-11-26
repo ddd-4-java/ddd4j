@@ -34,20 +34,26 @@ import java.util.Objects;
 @Getter
 public final class AuthFailedEvent {
 
-    /** 获取登录请求。 */
+    /**
+     * 获取登录请求。
+     */
     private final AuthRequest request;
 
-    /** 获取登录失败原因。 */
+    /**
+     * 获取登录失败原因。
+     */
     private final String reason;
 
-    /** 获取事件发生时间。 */
+    /**
+     * 获取事件发生时间。
+     */
     private final Instant occurredAt;
 
     /**
      * 创建AuthFailedEvent事件。
      *
-     * @param request 登录请求
-     * @param reason 登录失败原因
+     * @param request    登录请求
+     * @param reason     登录失败原因
      * @param occurredAt 事件发生时间
      */
     @JsonCreator

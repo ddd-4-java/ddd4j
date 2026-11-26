@@ -17,11 +17,25 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class TdmqHeaderContractTest {
+
+    private static MQEventSerialization serialization(MQEvent payload) {
+        return new MQEventSerialization() {
+            @Override
+            @SuppressWarnings("unchecked")
+            public <S, T> T deserialize(S src, Class<T> dist) {
+                return (T) payload;
+            }
+
+            @Override
+            @SuppressWarnings("unchecked")
+            public <T> T serialize(Object src) {
+                return (T) "{}";
+            }
+        };
+    }
 
     @Test
     void inMemoryRouteShouldRestoreNativeHeadersOverPayloadMirror() throws Exception {
@@ -120,27 +134,12 @@ class TdmqHeaderContractTest {
             assertEquals("correlation-id", publishedHeaders.get().get("X-Correlation-Id"));
             assertEquals("causation-id", publishedHeaders.get().get("X-Causation-Id"));
             assertTrue(new TdmqMQClient.DeliveredMessage("id", "corr", new byte[0],
-                    null, ack -> { }).headers().isEmpty());
+                    null, ack -> {
+            }).headers().isEmpty());
         } finally {
             client.close();
             BaseContext.remove(MQClient.MQ_SERIALIZATION);
         }
-    }
-
-    private static MQEventSerialization serialization(MQEvent payload) {
-        return new MQEventSerialization() {
-            @Override
-            @SuppressWarnings("unchecked")
-            public <S, T> T deserialize(S src, Class<T> dist) {
-                return (T) payload;
-            }
-
-            @Override
-            @SuppressWarnings("unchecked")
-            public <T> T serialize(Object src) {
-                return (T) "{}";
-            }
-        };
     }
 
     public static class Probe {

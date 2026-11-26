@@ -14,12 +14,11 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-/** 三线太平洋网络 IP 适配器的本地 HTTP 与缓存契约。 */
+/**
+ * 三线太平洋网络 IP 适配器的本地 HTTP 与缓存契约。
+ */
 class PconlineRegionHttpContractTest {
 
     @Test

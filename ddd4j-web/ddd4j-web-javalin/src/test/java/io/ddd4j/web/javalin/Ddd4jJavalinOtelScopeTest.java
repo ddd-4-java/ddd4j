@@ -13,9 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.web.javalin;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import io.ddd4j.extension.otel.Ddd4jOtel;
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
@@ -27,9 +24,9 @@ import io.javalin.Javalin;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
+import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter;
 import io.opentelemetry.sdk.trace.SdkTracerProvider;
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
-import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;

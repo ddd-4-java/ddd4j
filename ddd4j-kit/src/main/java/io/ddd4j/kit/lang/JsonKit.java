@@ -33,11 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -51,7 +47,9 @@ import java.util.*;
 @Slf4j(topic = "### DDD4J-KIT : JsonKit ###")
 public class JsonKit {
 
-    /** 日期时间格式模板。 */
+    /**
+     * 日期时间格式模板。
+     */
 
     public static final String YYYYMMDDHHMMSS = "yyyy-MM-dd HH:mm:ss";
     /**
@@ -63,13 +61,19 @@ public class JsonKit {
      */
     public static final TypeReference<String> STRING_TYPE = new TypeReference<String>() {
     };
-    /** 整数 JSON 类型引用。 */
+    /**
+     * 整数 JSON 类型引用。
+     */
     public static final TypeReference<Integer> INTEGER_TYPE = new TypeReference<Integer>() {
     };
-    /** 长整数 JSON 类型引用。 */
+    /**
+     * 长整数 JSON 类型引用。
+     */
     public static final TypeReference<Long> LONG_TYPE = new TypeReference<Long>() {
     };
-    /** 双精度 JSON 类型引用。 */
+    /**
+     * 双精度 JSON 类型引用。
+     */
     public static final TypeReference<Double> DOUBLE_TYPE = new TypeReference<Double>() {
     };
     private static final String DATE_PATTERN = "yyyy-MM-dd";
@@ -124,7 +128,7 @@ public class JsonKit {
      *
      * @param datePattern     日期格式模式串
      * @param dateTimePattern 日期时间格式模式串
-     * @param timePattern      时间格式模式串
+     * @param timePattern     时间格式模式串
      * @return 按指定模式序列化时间类型的 ObjectMapper 实例
      */
     public static ObjectMapper buildObjectMapper(String datePattern, String dateTimePattern, String timePattern) {
@@ -265,7 +269,7 @@ public class JsonKit {
      *
      * @param object JSON 字符串或已转换的目标对象
      * @param clazz  目标类型
-     * @param <T> 目标类型
+     * @param <T>    目标类型
      * @return 转换后的对象；输入为空、空白或解析失败时返回 null
      */
     public static <T> T toObject(Object object, Class<T> clazz) {
@@ -293,7 +297,7 @@ public class JsonKit {
      *
      * @param object   JSON 字符串或已转换的目标对象
      * @param javaType 目标 Java 类型
-     * @param <T> 目标类型
+     * @param <T>      目标类型
      * @return 转换后的对象；输入为空、空白或解析失败时返回 null
      */
     public static <T> T toObject(Object object, JavaType javaType) {
@@ -321,7 +325,7 @@ public class JsonKit {
      *
      * @param object   JSON 数组字符串或已转换的列表
      * @param beanType 列表元素类型
-     * @param <T> 列表元素类型
+     * @param <T>      列表元素类型
      * @return 转换后的列表；输入为 null 时返回空列表，为空白字符串时返回 null
      */
     public static <T> List<T> toList(Object object, Class<T> beanType) {
@@ -350,7 +354,7 @@ public class JsonKit {
      *
      * @param object        JSON 字符串或已转换的目标对象
      * @param typeReference 目标类型引用
-     * @param <T> 目标类型
+     * @param <T>           目标类型
      * @return 转换后的对象；输入为空、空白或解析失败时返回 null
      */
     public static <T> T toPojo(Object object, TypeReference<T> typeReference) {
@@ -435,7 +439,7 @@ public class JsonKit {
      *
      * @param value     源对象
      * @param valueType 目标类型
-     * @param <T> 目标类型
+     * @param <T>       目标类型
      * @return 转换后的对象
      */
     public static <T> T toType(Object value, Class<T> valueType) {

@@ -13,9 +13,7 @@ import reactor.core.publisher.Mono;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.*;
 
 class DefaultWebFluxConfigurationRequestContextTest {
 
@@ -32,11 +30,11 @@ class DefaultWebFluxConfigurationRequestContextTest {
                     assertEquals("present", context.get("outer"));
                     return Mono.empty();
                 })).then(Mono.deferContextual(context -> {
-                    assertFalse(context.hasKey(ServerWebExchange.class));
-                    assertFalse(context.hasKey(ServerHttpRequest.class));
-                    assertFalse(context.hasKey(ServerHttpResponse.class));
-                    return Mono.empty();
-                })).contextWrite(context -> context.put("outer", "present")).block();
+            assertFalse(context.hasKey(ServerWebExchange.class));
+            assertFalse(context.hasKey(ServerHttpRequest.class));
+            assertFalse(context.hasKey(ServerHttpResponse.class));
+            return Mono.empty();
+        })).contextWrite(context -> context.put("outer", "present")).block();
     }
 
     @Test

@@ -76,6 +76,7 @@ public class KafkaMQClient implements MQClient {
      */
     private Producer<String, String> producer;
     private Callback callback;
+
     /**
      * 构造方法 1：注入原生 producer（runtime 自动装配用）。
      *
@@ -92,7 +93,7 @@ public class KafkaMQClient implements MQClient {
      * 构造方法 2：自行根据 properties 构造 producer（lazy）。
      *
      * @param properties Kafka 客户端配置
-     * @param callback 发布回调，可为 null
+     * @param callback   发布回调，可为 null
      */
     public KafkaMQClient(KafkaMQProperties properties, Callback callback) {
         this.properties = Objects.requireNonNull(properties, "KafkaMQ Properties is required");
@@ -343,6 +344,39 @@ public class KafkaMQClient implements MQClient {
     }
 
     /**
+     * 标记当前 poll 批次需要重试（handleRecord seek 回退后抛出）。
+     * 仅在消费者循环内部使用，不逃逸到外部调用方。
+     */
+    static final class BatchRetryException extends RuntimeException {
+        BatchRetryException(String message, Throwable cause) {
+            super(message, cause);
+        }
+    }
+
+    /**
+     * 异步发送回调（统一收口，不阻塞 producer.send()）。
+     */
+    public static final class SendCallback implements Callback {
+
+        private final String topic;
+        private final String payload;
+
+        SendCallback(String topic, String payload) {
+            this.topic = topic;
+            this.payload = payload;
+        }
+
+        @Override
+        public void onCompletion(RecordMetadata metadata, Exception exception) {
+            if (Objects.nonNull(exception)) {
+                log.error("Kafka send failed: topic={}, payload={}", topic, payload, exception);
+            } else if (log.isDebugEnabled()) {
+                log.debug("Kafka send success: topic={}, partition={}, offset={}", metadata.topic(), metadata.partition(), metadata.offset());
+            }
+        }
+    }
+
+    /**
      * 单个消费者及其执行器的生命周期，异常退出时立即释放原生资源。
      */
     private final class ConsumerWorker implements Runnable {
@@ -408,39 +442,6 @@ public class KafkaMQClient implements MQClient {
                 } finally {
                     executor.shutdown();
                 }
-            }
-        }
-    }
-
-    /**
-     * 标记当前 poll 批次需要重试（handleRecord seek 回退后抛出）。
-     * 仅在消费者循环内部使用，不逃逸到外部调用方。
-     */
-    static final class BatchRetryException extends RuntimeException {
-        BatchRetryException(String message, Throwable cause) {
-            super(message, cause);
-        }
-    }
-
-    /**
-     * 异步发送回调（统一收口，不阻塞 producer.send()）。
-     */
-    public static final class SendCallback implements Callback {
-
-        private final String topic;
-        private final String payload;
-
-        SendCallback(String topic, String payload) {
-            this.topic = topic;
-            this.payload = payload;
-        }
-
-        @Override
-        public void onCompletion(RecordMetadata metadata, Exception exception) {
-            if (Objects.nonNull(exception)) {
-                log.error("Kafka send failed: topic={}, payload={}", topic, payload, exception);
-            } else if (log.isDebugEnabled()) {
-                log.debug("Kafka send success: topic={}, partition={}, offset={}", metadata.topic(), metadata.partition(), metadata.offset());
             }
         }
     }

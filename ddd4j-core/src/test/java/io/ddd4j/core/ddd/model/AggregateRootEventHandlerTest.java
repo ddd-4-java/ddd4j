@@ -15,27 +15,15 @@
 
 package io.ddd4j.core.ddd.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.util.Objects;
-
-import io.ddd4j.core.ddd.event.DomainEvent;
-import io.ddd4j.core.ddd.event.AggregateRootId;
-import io.ddd4j.core.ddd.event.EntityIdPath;
-import io.ddd4j.core.ddd.event.EntityType;
-import io.ddd4j.core.ddd.event.EventHandler;
-import io.ddd4j.core.ddd.event.StringEntityType;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.ddd4j.core.ddd.event.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * {@link AggregateRoot} 事件处理器机制的全覆盖测试：{@code @EventHandler}
@@ -196,10 +184,13 @@ class AggregateRootEventHandlerTest {
         final static class CounterId implements AggregateRootId {
 
             private static final long serialVersionUID = 0L;
-
+            private static final EntityType TYPE = new StringEntityType("Counter");
             private final String value;
 
-            private static final EntityType TYPE = new StringEntityType("Counter");
+            @JsonCreator()
+            CounterId(@JsonProperty("value") String value) {
+                this.value = value;
+            }
 
             @Override
             public EntityType getType() {
@@ -214,11 +205,6 @@ class AggregateRootEventHandlerTest {
             @Override
             public String asTypedString() {
                 return TYPE.asString() + ":" + value;
-            }
-
-            @JsonCreator()
-            CounterId(@JsonProperty("value") String value) {
-                this.value = value;
             }
 
             @JsonProperty("value")

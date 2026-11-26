@@ -49,7 +49,7 @@ class MqttContainerIntegrationTest {
     static final GenericContainer<?> MOSQUITTO = new GenericContainer<>(
             DockerImageName.parse("eclipse-mosquitto:2.0.22"))
             .withCopyToContainer(Transferable.of(
-                    "listener 1883 0.0.0.0\nallow_anonymous true\npersistence false\n", 0644),
+                            "listener 1883 0.0.0.0\nallow_anonymous true\npersistence false\n", 0644),
                     "/mosquitto/config/mosquitto.conf")
             .withExposedPorts(1883)
             .waitingFor(Wait.forListeningPort())

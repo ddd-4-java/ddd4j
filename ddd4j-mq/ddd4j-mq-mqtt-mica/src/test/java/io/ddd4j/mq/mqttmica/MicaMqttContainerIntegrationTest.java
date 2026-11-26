@@ -46,7 +46,7 @@ class MicaMqttContainerIntegrationTest {
     static final GenericContainer<?> MOSQUITTO = new GenericContainer<>(
             DockerImageName.parse("eclipse-mosquitto:2.0.22"))
             .withCopyToContainer(Transferable.of(
-                    "listener 1883 0.0.0.0\nallow_anonymous true\npersistence false\n", 0644),
+                            "listener 1883 0.0.0.0\nallow_anonymous true\npersistence false\n", 0644),
                     "/mosquitto/config/mosquitto.conf")
             .withExposedPorts(1883)
             .waitingFor(Wait.forListeningPort())
@@ -147,10 +147,10 @@ class MicaMqttContainerIntegrationTest {
         private final String probeId;
         private final CountDownLatch probeReceived = new CountDownLatch(1);
         private final CountDownLatch received = new CountDownLatch(1);
+        private final LinkedBlockingQueue<MQEvent> events = new LinkedBlockingQueue<>();
         private volatile String messageId;
         private volatile String correlationId;
         private volatile String causationId;
-        private final LinkedBlockingQueue<MQEvent> events = new LinkedBlockingQueue<>();
 
         private RecordingListener(String probeId) {
             this.probeId = probeId;

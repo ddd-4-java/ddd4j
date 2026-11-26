@@ -38,8 +38,8 @@ public class LotteryKit {
     /**
      * 按权重随机抽取一个元素。
      *
-     * @param <T> 参与抽取的元素类型
-     * @param elements 参与抽取的元素集合（内部会先打乱顺序）
+     * @param <T>          参与抽取的元素类型
+     * @param elements     参与抽取的元素集合（内部会先打乱顺序）
      * @param quotaChecker 限额检查器：返回元素剩余可用数量，负数表示库存不足
      * @return 抽中的元素
      */
@@ -63,11 +63,11 @@ public class LotteryKit {
     /**
      * 在累积概率区间内定位抽中元素，限额不足时递归重抽。
      *
-     * @param <T> 参与抽取的元素类型
-     * @param totalWeight 权重总和（概率区间总量）
+     * @param <T>           参与抽取的元素类型
+     * @param totalWeight   权重总和（概率区间总量）
      * @param weightSection 各元素的累积概率区间边界（升序）
-     * @param elements 参与抽取的元素集合
-     * @param quotaChecker 限额检查器：返回元素剩余可用数量，负数表示库存不足
+     * @param elements      参与抽取的元素集合
+     * @param quotaChecker  限额检查器：返回元素剩余可用数量，负数表示库存不足
      * @return 抽中的元素
      */
     protected static <T extends LotteryElement> T lottery(float totalWeight, List<Float> weightSection, List<T> elements, Function<T, Long> quotaChecker) {

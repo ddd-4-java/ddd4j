@@ -22,10 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * {@link EventStoreRetry} 单元测试。
@@ -34,18 +31,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * 使用 {@link EventStoreRetry.Sleeper} 桩避免真实睡眠。
  */
 class EventStoreRetryTest {
-
-    /**
-     * 桩 Sleeper：仅记录调用次数与延迟，不真正睡眠。
-     */
-    static final class RecordingSleeper implements EventStoreRetry.Sleeper {
-        final List<Long> calls = new ArrayList<>();
-
-        @Override
-        public void sleep(long millis) {
-            calls.add(millis);
-        }
-    }
 
     @Test
     void 首次成功_不调用Sleeper() throws Exception {
@@ -219,13 +204,6 @@ class EventStoreRetryTest {
         }
     }
 
-    /** 仅用简单类名触发兼容路径；消息不含任何可重试关键字。 */
-    private static final class ConstraintViolationException extends RuntimeException {
-        private ConstraintViolationException(String message) {
-            super(message);
-        }
-    }
-
     @Test
     void nonRetriableException_thrownImmediately() {
         RecordingSleeper sleeper = new RecordingSleeper();
@@ -239,5 +217,26 @@ class EventStoreRetryTest {
 
         assertEquals(1, attempts.get());
         assertTrue(sleeper.calls.isEmpty());
+    }
+
+    /**
+     * 桩 Sleeper：仅记录调用次数与延迟，不真正睡眠。
+     */
+    static final class RecordingSleeper implements EventStoreRetry.Sleeper {
+        final List<Long> calls = new ArrayList<>();
+
+        @Override
+        public void sleep(long millis) {
+            calls.add(millis);
+        }
+    }
+
+    /**
+     * 仅用简单类名触发兼容路径；消息不含任何可重试关键字。
+     */
+    private static final class ConstraintViolationException extends RuntimeException {
+        private ConstraintViolationException(String message) {
+            super(message);
+        }
     }
 }

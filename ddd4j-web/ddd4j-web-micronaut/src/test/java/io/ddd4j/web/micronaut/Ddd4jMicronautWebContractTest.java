@@ -14,15 +14,13 @@
  */
 package io.ddd4j.web.micronaut;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.auth.AuthPrincipal;
-import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.constant.ContextConstants;
+import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.subject.Subject;
@@ -50,21 +48,17 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class Ddd4jMicronautWebContractTest extends AbstractWebContractTest {
 
@@ -165,6 +159,12 @@ class Ddd4jMicronautWebContractTest extends AbstractWebContractTest {
 
         private final int port;
 
+        @JsonCreator()
+        private MicronautContractClient(@JsonProperty("httpClient") HttpClient httpClient, @JsonProperty("port") int port) {
+            this.httpClient = httpClient;
+            this.port = port;
+        }
+
         @Override
         public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
             try {
@@ -179,12 +179,6 @@ class Ddd4jMicronautWebContractTest extends AbstractWebContractTest {
             } catch (Exception exception) {
                 throw new IllegalStateException("Micronaut contract request failed", exception);
             }
-        }
-
-        @JsonCreator()
-        private MicronautContractClient(@JsonProperty("httpClient") HttpClient httpClient, @JsonProperty("port") int port) {
-            this.httpClient = httpClient;
-            this.port = port;
         }
 
         @JsonProperty("httpClient")

@@ -23,7 +23,9 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-/** 认证业务端点响应的三线行为契约。 */
+/**
+ * 认证业务端点响应的三线行为契约。
+ */
 class AuthenticationResponseContractTest {
 
     @Test

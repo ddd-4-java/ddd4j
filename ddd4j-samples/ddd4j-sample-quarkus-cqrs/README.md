@@ -1,5 +1,22 @@
 # ddd4j-sample-quarkus-cqrs
 
+## 当前商品交易入口
+
+此模块以 CQRS 方式运行共享商品交易。先按[示例总览](../README.md#启动默认订单示例)配置 MySQL。以下命令从仓库根目录运行，使用实际 Maven 版本替换 `<version>`。
+
+```bash
+module=ddd4j-samples/ddd4j-sample-quarkus-cqrs
+./mvnw -pl "$module" -am -DskipTests -Dmaven.javadoc.skip=true package
+java -jar "$module/target/quarkus-app/quarkus-run.jar"
+```
+
+业务请求携带 `X-Tenant-Id`。商品地址为 `/orders/catalog/goods/{spuCode}`，订单地址为 `/orders/catalog/orders/{orderNo}`。支付、取消和履约分别使用订单子路径 `/payment`、`/cancel`、`/fulfill`。
+
+写操作经命令总线执行。调用 `POST /orders/catalog/projections/orders/{orderNo}` 构建订单投影。
+
+<details>
+<summary>商品交易迁移前的说明</summary>
+
 > Quarkus + ddd4j **Order + Goods 双业务 / CQRS** 示例：第二轨（Order 充血模型） +
 > 第三轨（Goods Model/Query CRUD） + 命令/查询分离 + CacheKit 缓存读侧 +
 > Quarkus CDI `@Observes` 事件桥接。
@@ -292,3 +309,5 @@ CDI 的共享订单服务通过现有 JDBC 适配器在同一本地事务提交�
 ## 10. 许可
 
 与 ddd4j 主项目一致：[Apache License 2.0](../../LICENSE)
+
+</details>

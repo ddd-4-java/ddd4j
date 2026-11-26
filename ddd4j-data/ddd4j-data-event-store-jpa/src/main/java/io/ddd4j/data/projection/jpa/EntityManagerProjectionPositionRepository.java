@@ -20,11 +20,17 @@ public final class EntityManagerProjectionPositionRepository implements Projecti
     private final EntityManager entityManager;
     private final JpaProjectionPositionStore<ProjectionPositionEntity> store;
 
-    /** @param entityManager 已配置 ProjectionPositionEntity 的实体管理器，由调用方管理生命周期 */
+    /**
+     * @param entityManager 已配置 ProjectionPositionEntity 的实体管理器，由调用方管理生命周期
+     */
     public EntityManagerProjectionPositionRepository(EntityManager entityManager) {
         this.entityManager = Objects.requireNonNull(entityManager, "entityManager must not be null");
         this.store = new JpaProjectionPositionStore<>(entityManager, ProjectionPositionEntity.class,
                 "ProjectionPositionEntity");
+    }
+
+    private static ProjectionPosition snapshot(ProjectionPositionEntity entity) {
+        return new DefaultProjectionPosition(entity.getStreamId(), entity.getNextEventNumber());
     }
 
     @Override
@@ -71,8 +77,9 @@ public final class EntityManagerProjectionPositionRepository implements Projecti
 
     /**
      * 数据库端自增已有流，并刷新该行保证读回最新值。
+     *
      * @param streamId 已存在的流标识
-     * @param delta 增量，保留旧入口接受零或负数的行为
+     * @param delta    增量，保留旧入口接受零或负数的行为
      * @return 更新后位置
      * @throws IllegalArgumentException 流不存在
      */
@@ -95,9 +102,5 @@ public final class EntityManagerProjectionPositionRepository implements Projecti
         if (!entityManager.isJoinedToTransaction()) {
             throw new TransactionRequiredException("an active caller-managed transaction is required");
         }
-    }
-
-    private static ProjectionPosition snapshot(ProjectionPositionEntity entity) {
-        return new DefaultProjectionPosition(entity.getStreamId(), entity.getNextEventNumber());
     }
 }

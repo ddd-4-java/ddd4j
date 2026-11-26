@@ -21,7 +21,9 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-/** 验证三线 RocketMQ 分区键策略保持相同业务行为。 */
+/**
+ * 验证三线 RocketMQ 分区键策略保持相同业务行为。
+ */
 class RocketMQPartitionKeyContractTest {
 
     @Test

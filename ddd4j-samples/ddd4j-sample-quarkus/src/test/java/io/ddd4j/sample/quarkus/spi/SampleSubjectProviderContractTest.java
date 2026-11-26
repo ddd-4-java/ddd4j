@@ -20,11 +20,11 @@ import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-/** 三线共同的示例认证主体权限契约。 */
+/**
+ * 三线共同的示例认证主体权限契约。
+ */
 class SampleSubjectProviderContractTest {
 
     @Test

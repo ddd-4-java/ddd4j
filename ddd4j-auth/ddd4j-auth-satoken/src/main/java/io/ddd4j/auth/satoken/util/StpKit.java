@@ -267,8 +267,8 @@ public class StpKit {
     /**
      * 获取当前 Token 的扩展信息, 并转换为 String 类型（此函数只在jwt模式下生效）
      *
-     * @return 账号id
      * @param key 扩展信息键
+     * @return 账号id
      */
     public static String getExtraAsString(String key) {
         return getExtraAs(key, FunctionKit.TO_STRING);
@@ -277,8 +277,8 @@ public class StpKit {
     /**
      * 获取当前 Token 的扩展信息,并转换为 int 类型（此函数只在jwt模式下生效）
      *
-     * @return 账号id
      * @param key 扩展信息键
+     * @return 账号id
      */
     public static Integer getExtraAsInteger(String key) {
         return getExtraAs(key, FunctionKit.TO_INTEGER);
@@ -287,8 +287,8 @@ public class StpKit {
     /**
      * 获取当前 Token 的扩展信息, 并转换为 long 类型（此函数只在jwt模式下生效）
      *
-     * @return 账号id
      * @param key 扩展信息键
+     * @return 账号id
      */
     public static Long getExtraAsLong(String key) {
         return getExtraAs(key, FunctionKit.TO_LONG);
@@ -315,8 +315,8 @@ public class StpKit {
      *
      * @param key       键值
      * @param valueType 转换类型
+     * @param <T>       扩展数据类型
      * @return 对应的扩展数据
-     * @param <T> 扩展数据类型
      */
     public static <T> T getExtraAs(String key, Class<T> valueType) {
         Object value = StpUtil.getExtra(key);
@@ -326,9 +326,9 @@ public class StpKit {
     /**
      * 获取当前 Token 的扩展信息, 并转换为 long 类型（此函数只在jwt模式下生效）
      *
-     * @return 账号id
      * @param tokenValue 指定的 Token 值
-     * @param key 扩展信息键
+     * @param key        扩展信息键
+     * @return 账号id
      */
     public static Long getExtraAsLong(String tokenValue, String key) {
         return getExtraAs(tokenValue, key, FunctionKit.TO_LONG);
@@ -337,11 +337,11 @@ public class StpKit {
     /**
      * 获取当前 Token 的扩展信息, 并通过自定义函数转换为指定类型（此函数只在jwt模式下生效）
      *
-     * @param key    缓存key
-     * @param mapper 对象转换函数
-     * @param <T>    指定的类型
-     * @return 转换函数转换后的对象
+     * @param key        缓存key
+     * @param mapper     对象转换函数
+     * @param <T>        指定的类型
      * @param tokenValue 指定的 Token 值
+     * @return 转换函数转换后的对象
      */
     public static <T> T getExtraAs(String tokenValue, String key, Function<Object, T> mapper) {
         Object obj = StpUtil.getExtra(tokenValue, key);
@@ -357,8 +357,8 @@ public class StpKit {
      * @param tokenValue 指定的 Token 值
      * @param key        键值
      * @param valueType  转换类型
+     * @param <T>        扩展数据类型
      * @return 对应的扩展数据
-     * @param <T> 扩展数据类型
      */
     public static <T> T getExtraAs(String tokenValue, String key, Class<T> valueType) {
         Object value = StpUtil.getExtra(tokenValue, key);
@@ -368,9 +368,9 @@ public class StpKit {
     /**
      * 获取当前 Token 的扩展信息, 并转换为 String 类型（此函数只在jwt模式下生效）
      *
-     * @return 账号id
      * @param tokenValue 指定的 Token 值
-     * @param key 扩展信息键
+     * @param key        扩展信息键
+     * @return 账号id
      */
     public String getExtraAsString(String tokenValue, String key) {
         return getExtraAs(tokenValue, key, FunctionKit.TO_STRING);
@@ -379,9 +379,9 @@ public class StpKit {
     /**
      * 获取当前 Token 的扩展信息,并转换为 int 类型（此函数只在jwt模式下生效）
      *
-     * @return 账号id
      * @param tokenValue 指定的 Token 值
-     * @param key 扩展信息键
+     * @param key        扩展信息键
+     * @return 账号id
      */
     public Integer getExtraAsInteger(String tokenValue, String key) {
         return getExtraAs(tokenValue, key, FunctionKit.TO_INTEGER);

@@ -10,12 +10,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-/** 验证 Jackson 2/3 下相同的公开 JSON 转换契约。 */
+/**
+ * 验证 Jackson 2/3 下相同的公开 JSON 转换契约。
+ */
 class JsonKitPublicContractTest {
 
     @Test

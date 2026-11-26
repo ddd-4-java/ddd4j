@@ -1,12 +1,8 @@
 package io.ddd4j.vertx.cqrs;
 
-import io.ddd4j.core.cqrs.readmodel.DefaultViewManager;
-import io.ddd4j.core.cqrs.readmodel.ProjectionRunner;
-import io.ddd4j.core.cqrs.readmodel.ProjectionStatus;
-import io.ddd4j.core.cqrs.readmodel.ProjectionView;
-import io.ddd4j.core.cqrs.readmodel.ViewManager;
-import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
+import io.ddd4j.core.cqrs.readmodel.*;
 import io.vertx.core.Vertx;
+
 import java.util.Collection;
 import java.util.Objects;
 
@@ -19,10 +15,12 @@ public class VertxProjectionViewManager implements ViewManager, AutoCloseable {
     private final VertxProjectionScheduler ownedScheduler;
     private volatile boolean closed;
 
-    /** 借用外部调度器，关闭时不关闭其资源。
+    /**
+     * 借用外部调度器，关闭时不关闭其资源。
+     *
      * @param scheduler 外部调度器
-     * @param runner 共享执行器
-     * @param views 视图快照
+     * @param runner    共享执行器
+     * @param views     视图快照
      */
     public VertxProjectionViewManager(ViewScheduler scheduler, ProjectionRunner<?> runner,
                                       Collection<ProjectionView<?>> views) {
@@ -37,9 +35,11 @@ public class VertxProjectionViewManager implements ViewManager, AutoCloseable {
         ownedScheduler = owned;
     }
 
-    /** 创建拥有自身 timer 的管理器，不自动启动。
-     * @param vertx 调用方实例
-     * @param views 视图集合
+    /**
+     * 创建拥有自身 timer 的管理器，不自动启动。
+     *
+     * @param vertx  调用方实例
+     * @param views  视图集合
      * @param runner 共享执行器
      * @return 未启动管理器
      */
@@ -61,14 +61,17 @@ public class VertxProjectionViewManager implements ViewManager, AutoCloseable {
         }
         delegate.start();
     }
+
     @Override
     public synchronized void stop() {
         delegate.stop();
     }
+
     @Override
     public boolean isRunning() {
         return delegate.isRunning();
     }
+
     @Override
     public synchronized void close() {
         closed = true;
@@ -80,6 +83,7 @@ public class VertxProjectionViewManager implements ViewManager, AutoCloseable {
             }
         }
     }
+
     @Override
     public void triggerOnce() {
         if (closed) {
@@ -87,6 +91,7 @@ public class VertxProjectionViewManager implements ViewManager, AutoCloseable {
         }
         delegate.triggerOnce();
     }
+
     @Override
     public ProjectionStatus getProjectionStatus(String streamId) {
         return delegate.getProjectionStatus(streamId);

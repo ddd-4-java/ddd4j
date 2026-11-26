@@ -36,7 +36,9 @@ import java.util.Objects;
 @Provider
 public final class Ddd4jHelidonExceptionMapper extends BaseErrorConfiguration implements ExceptionMapper<RuntimeException> {
 
-    /** 使用默认异常翻译器创建映射器。 */
+    /**
+     * 使用默认异常翻译器创建映射器。
+     */
     public Ddd4jHelidonExceptionMapper() {
         super();
     }

@@ -66,7 +66,7 @@ public final class Result<T> {
     /**
      * 成功结果（带数据）。
      *
-     * @param <T> 业务数据类型
+     * @param <T>  业务数据类型
      * @param data 业务数据
      * @return 携带数据的成功结果
      */
@@ -77,7 +77,7 @@ public final class Result<T> {
     /**
      * 失败结果。
      *
-     * @param <T> 业务数据类型
+     * @param <T>     业务数据类型
      * @param message 失败消息
      * @return 不带业务数据的失败结果
      */
@@ -88,8 +88,8 @@ public final class Result<T> {
     /**
      * 失败结果（带错误码）。
      *
-     * @param <T> 业务数据类型
-     * @param code 错误码
+     * @param <T>     业务数据类型
+     * @param code    错误码
      * @param message 失败消息
      * @return 带指定错误码的失败结果
      */

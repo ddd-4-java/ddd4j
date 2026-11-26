@@ -14,14 +14,8 @@
  */
 package io.ddd4j.web.micronaut;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.io.InvalidObjectException;
-
-import java.io.ObjectStreamException;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.subject.Subject;
 import io.ddd4j.web.core.context.WebContextScope;
@@ -29,6 +23,8 @@ import io.ddd4j.web.core.context.WebRequestContext;
 import io.micronaut.core.propagation.PropagatedContext;
 import io.micronaut.core.propagation.ThreadPropagatedContextElement;
 
+import java.io.InvalidObjectException;
+import java.io.ObjectStreamException;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -47,7 +43,7 @@ public final class Ddd4jMicronautContext implements ThreadPropagatedContextEleme
      * 构造可传播的请求上下文。
      *
      * @param requestContext Web 请求上下文
-     * @param subject 当前主体，可为空
+     * @param subject        当前主体，可为空
      */
     @JsonCreator()
     public Ddd4jMicronautContext(@JsonProperty("requestContext") WebRequestContext requestContext, @JsonProperty("subject") Optional<Subject> subject) {

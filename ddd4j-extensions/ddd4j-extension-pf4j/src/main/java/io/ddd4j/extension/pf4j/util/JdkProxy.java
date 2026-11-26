@@ -55,7 +55,7 @@ public class JdkProxy implements InvocationHandler {
     /**
      * 按目标类型实例化并创建 JDK 动态代理对象（要求目标类型实现接口）。
      *
-     * @param <T>         目标类型
+     * @param <T>       目标类型
      * @param className 目标类型
      * @return 目标类型的 JDK 动态代理对象
      */

@@ -30,9 +30,9 @@ public final class SpiRegistrationScope implements AutoCloseable {
     /**
      * 登记作用域启动时要安装的服务。
      *
-     * @param <T> 服务类型
-     * @param key 服务标识
-     * @param type 服务接口类型
+     * @param <T>     服务类型
+     * @param key     服务标识
+     * @param type    服务接口类型
      * @param service 服务实例
      * @return 当前登记作用域
      */

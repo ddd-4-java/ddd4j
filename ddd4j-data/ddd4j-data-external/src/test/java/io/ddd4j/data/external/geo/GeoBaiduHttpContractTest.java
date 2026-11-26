@@ -14,12 +14,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-/** 三线地理编码在各自 HTTP 客户端下的本地协议与结果契约。 */
+/**
+ * 三线地理编码在各自 HTTP 客户端下的本地协议与结果契约。
+ */
 class GeoBaiduHttpContractTest {
 
     @Test

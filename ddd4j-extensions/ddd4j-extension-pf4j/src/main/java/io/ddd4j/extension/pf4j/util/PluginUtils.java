@@ -35,11 +35,11 @@ public class PluginUtils {
     /**
      * 按插件 ID 与扩展点 ID 查询指定类型的扩展实例。
      *
-     * @param <T>          扩展点类型
+     * @param <T>           扩展点类型
      * @param pluginManager 插件管理器
-     * @param type         扩展点类型
-     * @param pluginId     插件 ID
-     * @param extensionId  扩展点 ID（{@link ExtensionMapping#id()}）
+     * @param type          扩展点类型
+     * @param pluginId      插件 ID
+     * @param extensionId   扩展点 ID（{@link ExtensionMapping#id()}）
      * @return 匹配的扩展实例，未匹配时返回 {@code null}
      * @throws PluginInvokeException 查询过程发生插件调用异常时抛出
      */

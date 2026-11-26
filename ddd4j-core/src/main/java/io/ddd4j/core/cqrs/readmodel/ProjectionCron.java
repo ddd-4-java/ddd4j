@@ -20,6 +20,7 @@ public final class ProjectionCron {
 
     /**
      * 校验并解析六段表达式。
+     *
      * @param expression 数值 CRON 表达式
      * @return 不可变表达式
      * @throws IllegalArgumentException 字段或数值不合法
@@ -43,32 +44,6 @@ public final class ProjectionCron {
             fields[5].set(0);
         }
         return new ProjectionCron(fields);
-    }
-
-    /**
-     * 求严格晚于指定时间的下一执行时间，保留传入时区并按时间线处理夏令时重叠。
-     * @param from 当前带时区时间
-     * @return 下一时间；未来八年无匹配（包括不可能的日期）返回 null
-     */
-    public ZonedDateTime next(ZonedDateTime from) {
-        Objects.requireNonNull(from, "from must not be null");
-        ZonedDateTime candidate = from.plusSeconds(1).withNano(0);
-        ZonedDateTime limit = from.plusYears(8);
-        while (candidate.isBefore(limit)) {
-            if (!fields[4].get(candidate.getMonthValue()) || !fields[3].get(candidate.getDayOfMonth())
-                    || !fields[5].get(candidate.getDayOfWeek().getValue() % 7)) {
-                candidate = candidate.toLocalDate().plusDays(1).atStartOfDay(candidate.getZone());
-            } else if (!fields[2].get(candidate.getHour())) {
-                candidate = candidate.plusHours(1).withMinute(0).withSecond(0);
-            } else if (!fields[1].get(candidate.getMinute())) {
-                candidate = candidate.plusMinutes(1).withSecond(0);
-            } else if (!fields[0].get(candidate.getSecond())) {
-                candidate = candidate.plusSeconds(1);
-            } else {
-                return candidate;
-            }
-        }
-        return null;
     }
 
     private static BitSet parseField(String field, int min, int max) {
@@ -102,5 +77,32 @@ public final class ProjectionCron {
             }
         }
         return values;
+    }
+
+    /**
+     * 求严格晚于指定时间的下一执行时间，保留传入时区并按时间线处理夏令时重叠。
+     *
+     * @param from 当前带时区时间
+     * @return 下一时间；未来八年无匹配（包括不可能的日期）返回 null
+     */
+    public ZonedDateTime next(ZonedDateTime from) {
+        Objects.requireNonNull(from, "from must not be null");
+        ZonedDateTime candidate = from.plusSeconds(1).withNano(0);
+        ZonedDateTime limit = from.plusYears(8);
+        while (candidate.isBefore(limit)) {
+            if (!fields[4].get(candidate.getMonthValue()) || !fields[3].get(candidate.getDayOfMonth())
+                    || !fields[5].get(candidate.getDayOfWeek().getValue() % 7)) {
+                candidate = candidate.toLocalDate().plusDays(1).atStartOfDay(candidate.getZone());
+            } else if (!fields[2].get(candidate.getHour())) {
+                candidate = candidate.plusHours(1).withMinute(0).withSecond(0);
+            } else if (!fields[1].get(candidate.getMinute())) {
+                candidate = candidate.plusMinutes(1).withSecond(0);
+            } else if (!fields[0].get(candidate.getSecond())) {
+                candidate = candidate.plusSeconds(1);
+            } else {
+                return candidate;
+            }
+        }
+        return null;
     }
 }

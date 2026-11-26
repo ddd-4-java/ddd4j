@@ -63,6 +63,7 @@ public class Ddd4jGuiceModule extends AbstractModule {
     /**
      * 创建基础运行时；仅安装核心 SPI 和空闲命令总线，不安装投影、存储或 ORM。
      * 命令执行器仍通过现有 Ddd4jCommandGuiceModule 规则发现。
+     *
      * @return 基础 Guice 模块
      */
     public static com.google.inject.Module basic() {

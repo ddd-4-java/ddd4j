@@ -14,10 +14,10 @@
  */
 package io.ddd4j.spring.projection.jpa;
 
-import io.ddd4j.data.projection.jpa.ProjectionPositionEntity;
 import io.ddd4j.core.cqrs.readmodel.DefaultProjectionPosition;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
+import io.ddd4j.data.projection.jpa.ProjectionPositionEntity;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -130,7 +130,7 @@ public class JpaProjectionPositionRepository implements ProjectionPositionReposi
      * @param delta    自增量（正数）
      * @return 自增后的最新位置计数
      * @throws IllegalArgumentException 流不存在时（须先 {@link #save(ProjectionPosition)} 落行）
-     * @throws IllegalStateException 更新成功后读回位置行失败
+     * @throws IllegalStateException    更新成功后读回位置行失败
      */
     @Transactional
     public long incrementBy(String streamId, long delta) {

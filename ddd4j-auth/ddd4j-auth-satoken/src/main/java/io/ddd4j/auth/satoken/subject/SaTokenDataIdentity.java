@@ -96,15 +96,10 @@ public final class SaTokenDataIdentity {
         return null;
     }
 
-    private boolean sameScope(SaTokenDataIdentity identity) {
-        return Objects.nonNull(identity) && tenantId.equals(identity.tenantId)
-                && appId.equals(identity.appId) && userId.equals(identity.userId);
-    }
-
     /**
      * 检查数据标识是否属于当前会话，仅允许 tenant、application 和 user 三种类型。
      *
-     * @param type 数据权限类型
+     * @param type  数据权限类型
      * @param value 待授权的标识
      * @return 当前请求具有对应权限时返回 true
      */
@@ -120,20 +115,6 @@ public final class SaTokenDataIdentity {
             case "user" -> identity.userId.equals(target);
             default -> false;
         };
-    }
-
-    /**
-     * 检查客户端声明的访问目标。请求头可省略，提供时必须与可信身份一致。
-     *
-     * @param headers 按名称返回请求头的所有值，缺失时返回空列表
-     * @throws AuthorizationException 请求目标与会话身份不一致
-     */
-    public void requireMatchingTargets(Function<String, List<String>> headers) {
-        if (!matches(headers.apply("X-Tenant-Id"), tenantId)
-                || !matches(headers.apply(XHeaders.X_APP_ID), appId)
-                || !matches(headers.apply("X-User-Id"), userId)) {
-            throw new AuthorizationException("Request target does not match the authenticated data scope");
-        }
     }
 
     private static boolean matches(List<String> values, String expected) {
@@ -165,6 +146,26 @@ public final class SaTokenDataIdentity {
         String text = value.toString();
         return StrKit.hasText(text) && text.chars().noneMatch(Character::isISOControl) ? text : null;
     }
+
+    private boolean sameScope(SaTokenDataIdentity identity) {
+        return Objects.nonNull(identity) && tenantId.equals(identity.tenantId)
+                && appId.equals(identity.appId) && userId.equals(identity.userId);
+    }
+
+    /**
+     * 检查客户端声明的访问目标。请求头可省略，提供时必须与可信身份一致。
+     *
+     * @param headers 按名称返回请求头的所有值，缺失时返回空列表
+     * @throws AuthorizationException 请求目标与会话身份不一致
+     */
+    public void requireMatchingTargets(Function<String, List<String>> headers) {
+        if (!matches(headers.apply("X-Tenant-Id"), tenantId)
+                || !matches(headers.apply(XHeaders.X_APP_ID), appId)
+                || !matches(headers.apply("X-User-Id"), userId)) {
+            throw new AuthorizationException("Request target does not match the authenticated data scope");
+        }
+    }
+
     private static final class RequestBinding {
 
         private final StpLogic logic;

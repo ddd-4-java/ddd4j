@@ -50,6 +50,7 @@ public interface ViewManager {
 
     /**
      * 判断是否已启动。
+     *
      * @return 已启动时为 true
      */
     boolean isRunning();

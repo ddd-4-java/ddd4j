@@ -43,24 +43,32 @@ import java.util.Objects;
 @Getter
 public final class AuthSucceededEvent {
 
-    /** 获取登录请求。 */
+    /**
+     * 获取登录请求。
+     */
     private final AuthRequest request;
 
-    /** 获取认证主体。 */
+    /**
+     * 获取认证主体。
+     */
     private final AuthPrincipal principal;
 
-    /** 获取会话凭证。 */
+    /**
+     * 获取会话凭证。
+     */
     private final String token;
 
-    /** 获取事件发生时间。 */
+    /**
+     * 获取事件发生时间。
+     */
     private final Instant occurredAt;
 
     /**
      * 创建AuthSucceededEvent事件。
      *
-     * @param request 登录请求
-     * @param principal 认证主体
-     * @param token 会话凭证
+     * @param request    登录请求
+     * @param principal  认证主体
+     * @param token      会话凭证
      * @param occurredAt 事件发生时间
      */
     @JsonCreator

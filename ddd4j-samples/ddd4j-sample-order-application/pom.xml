@@ -9,7 +9,7 @@
     </parent>
     <artifactId>ddd4j-sample-order-application</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>Framework-neutral Order use cases, CQRS ports and Outbox orchestration.</description>
+    <description>Catalog and trade commands, queries, handlers and projections.</description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
     <properties>
         <maven.deploy.skip>false</maven.deploy.skip>
@@ -19,11 +19,6 @@
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-sample-order-domain</artifactId>
             <version>${revision}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

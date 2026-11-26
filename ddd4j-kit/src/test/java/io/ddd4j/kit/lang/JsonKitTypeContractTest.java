@@ -9,7 +9,9 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/** 验证 Jackson 2/3 类型适配后的 JsonKit 公开类型与读取行为。 */
+/**
+ * 验证 Jackson 2/3 类型适配后的 JsonKit 公开类型与读取行为。
+ */
 class JsonKitTypeContractTest {
 
     @Test

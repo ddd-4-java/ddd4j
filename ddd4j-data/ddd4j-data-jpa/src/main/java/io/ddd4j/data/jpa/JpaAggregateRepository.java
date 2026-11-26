@@ -26,25 +26,13 @@ import io.ddd4j.core.ddd.repository.RepositoryRegistry;
 import io.ddd4j.kit.lang.BeanKit;
 import io.ddd4j.kit.lang.StrKit;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaDelete;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Order;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
 import jakarta.persistence.Tuple;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -64,18 +52,24 @@ import java.util.stream.Collectors;
 public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID extends Serializable>
         implements Repository<M, ID>, DomainObjectMapper<M, P>, Serializable {
 
-    /** JPA 实体管理器。 */
+    /**
+     * JPA 实体管理器。
+     */
     protected final EntityManager entityManager;
-    /** 领域模型类型。 */
+    /**
+     * 领域模型类型。
+     */
     protected final Class<M> modelClass;
-    /** 持久化对象类型。 */
+    /**
+     * 持久化对象类型。
+     */
     protected final Class<P> persistenceClass;
 
     /**
      * 创建聚合仓储并注册领域模型类型。
      *
-     * @param entityManager JPA 实体管理器
-     * @param modelClass 领域模型类型
+     * @param entityManager    JPA 实体管理器
+     * @param modelClass       领域模型类型
      * @param persistenceClass 持久化对象类型
      */
     protected JpaAggregateRepository(EntityManager entityManager, Class<M> modelClass, Class<P> persistenceClass) {
@@ -321,8 +315,8 @@ public abstract class JpaAggregateRepository<M extends AggregateRoot<?>, P, ID e
      * 构造租户、系统和查询条件对应的 JPA 谓词。
      *
      * @param criteriaBuilder JPA 条件构造器
-     * @param root 持久化对象查询根
-     * @param query 领域查询
+     * @param root            持久化对象查询根
+     * @param query           领域查询
      * @return JPA 谓词列表
      */
     protected List<Predicate> buildPredicates(CriteriaBuilder criteriaBuilder, Root<P> root, Query<M> query) {

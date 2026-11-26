@@ -42,7 +42,6 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.config.EnableWebFlux;
-import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
@@ -67,14 +66,6 @@ class ApiVersionWebFilterTest {
 
     private AnnotationConfigApplicationContext applicationContext;
 
-    @AfterEach
-    void tearDown() {
-        if (Objects.nonNull(applicationContext)) {
-            applicationContext.close();
-            applicationContext = null;
-        }
-    }
-
     private static WebFilterChain passThrough() {
         return exchange -> Mono.empty();
     }
@@ -88,6 +79,14 @@ class ApiVersionWebFilterTest {
             current = current.getCause();
         }
         return null;
+    }
+
+    @AfterEach
+    void tearDown() {
+        if (Objects.nonNull(applicationContext)) {
+            applicationContext.close();
+            applicationContext = null;
+        }
     }
 
     // ------------------------------ 过滤器单元测试 ------------------------------

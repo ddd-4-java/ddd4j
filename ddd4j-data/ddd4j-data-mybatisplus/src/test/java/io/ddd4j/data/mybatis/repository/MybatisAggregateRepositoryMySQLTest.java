@@ -14,22 +14,14 @@
  */
 package io.ddd4j.data.mybatis.repository;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.IdType;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.MybatisSqlSessionFactoryBuilder;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
-import io.ddd4j.annotation.orm.TenantId;
 import io.ddd4j.annotation.orm.DomainField;
-import io.ddd4j.kit.lang.BeanKit;
+import io.ddd4j.annotation.orm.TenantId;
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.context.ThreadContext;
@@ -37,17 +29,16 @@ import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
 import io.ddd4j.core.exception.BizRuntimeException;
+import io.ddd4j.kit.lang.BeanKit;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.ibatis.datasource.pooled.PooledDataSource;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -55,10 +46,10 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -133,6 +124,23 @@ class MybatisAggregateRepositoryMySQLTest {
         repository = new TestRepository(mapper);
     }
 
+    @AfterAll
+    static void closeSession() {
+        if (Objects.nonNull(session)) {
+            session.close();
+        }
+        RepositoryRegistry.unregister(Order.class);
+        RepositoryRegistry.unregisterQuery(OrderQuery.class);
+    }
+
+    private static IdentityOrder identityOrder(Long key, Long ordinaryId, String name) {
+        IdentityOrder model = new IdentityOrder();
+        model.setBusinessId(key);
+        model.setId(ordinaryId);
+        model.setName(name);
+        return model;
+    }
+
     @BeforeEach
     void cleanTable() {
         ThreadContext.clear();
@@ -143,15 +151,6 @@ class MybatisAggregateRepositoryMySQLTest {
     @AfterEach
     void clearContext() {
         ThreadContext.clear();
-    }
-
-    @AfterAll
-    static void closeSession() {
-        if (Objects.nonNull(session)) {
-            session.close();
-        }
-        RepositoryRegistry.unregister(Order.class);
-        RepositoryRegistry.unregisterQuery(OrderQuery.class);
     }
 
     @Test
@@ -327,174 +326,6 @@ class MybatisAggregateRepositoryMySQLTest {
         }
     }
 
-    interface BatchMapper extends BaseMapper<BatchPo> { }
-
-    static final class BatchRepository
-            extends MybatisAggregateRepository<BatchMapper, BatchModel, BatchPo, BatchQuery, Long> {
-        BatchRepository(BatchMapper mapper) { super(mapper); }
-    }
-
-    static final class BatchQuery extends Query<BatchModel> { }
-
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    public static class BatchModel extends AggregateRoot<Long> {
-        private Long id;
-        private String name;
-        private LocalDateTime createdAt;
-        private LocalDateTime updatedAt;
-        BatchModel(Long id, String name) { this.id = id; this.name = name; }
-        @Override
-        public Long id() { return id; }
-    }
-
-    @Getter
-    @Setter
-    public static class BatchIdentity {
-        @TableId(type = IdType.AUTO)
-        private Long id;
-    }
-
-    @Getter
-    @Setter
-    @TableName("order_batch")
-    public static class BatchPo extends BatchIdentity {
-        private String name;
-        @io.ddd4j.annotation.orm.OnCreate
-        private LocalDateTime createdAt;
-        @io.ddd4j.annotation.orm.OnUpdate
-        private LocalDateTime updatedAt;
-    }
-
-    // =================== 测试夹具 ===================
-
-    static final class TestRepository
-            extends MybatisAggregateRepository<OrderMapper, Order, OrderPO, OrderQuery, String> {
-
-        TestRepository(OrderMapper mapper) {
-            super(mapper, Order.class, OrderPO.class);
-        }
-
-        @Override
-        public void fill(Query<Order> query, List<Order> models) {
-            if (query.fill("statusLabel")) {
-                for (Order order : models) {
-                    if ("PAID".equals(order.getStatus())) {
-                        order.statusLabel = "已支付";
-                    }
-                }
-            }
-        }
-    }
-
-    interface OrderMapper extends BaseMapper<OrderPO> {
-    }
-
-    static final class OrderQuery extends Query<Order> {
-    }
-
-    static final class Order extends AggregateRoot<String> {
-
-        private String id;
-        private String status;
-        private LocalDateTime deletedAt;
-        private String statusLabel;
-
-        Order() {
-        }
-
-        Order(String id, String status, LocalDateTime deletedAt) {
-            this.id = id;
-            this.status = status;
-            this.deletedAt = deletedAt;
-        }
-
-        @Override
-        public String id() {
-            return id;
-        }
-
-        public String getId() {
-            return id;
-        }
-
-        public void setId(String id) {
-            this.id = id;
-        }
-
-        String getStatus() {
-            return status;
-        }
-
-        public void setStatus(String status) {
-            this.status = status;
-        }
-
-        LocalDateTime getDeletedAt() {
-            return deletedAt;
-        }
-
-        String getStatusLabel() {
-            return statusLabel;
-        }
-
-        public void setDeletedAt(LocalDateTime deletedAt) {
-            this.deletedAt = deletedAt;
-        }
-    }
-
-    @TableName("orders")
-    static final class OrderPO {
-
-        @TableId
-        private String id;
-
-        @TableField("order_status")
-        private String status;
-
-        @TableField("deleted_at")
-        private LocalDateTime deletedAt;
-
-        @TenantId
-        private String tenantId;
-
-        OrderPO() {
-        }
-
-        public String getId() {
-            return id;
-        }
-
-        public void setId(String id) {
-            this.id = id;
-        }
-
-        public String getStatus() {
-            return status;
-        }
-
-        public void setStatus(String status) {
-            this.status = status;
-        }
-
-        public LocalDateTime getDeletedAt() {
-            return deletedAt;
-        }
-
-        public void setDeletedAt(LocalDateTime deletedAt) {
-            this.deletedAt = deletedAt;
-        }
-
-        public String getTenantId() {
-            return tenantId;
-        }
-
-        public void setTenantId(String tenantId) {
-            this.tenantId = tenantId;
-        }
-    }
-
     @Test
     void namedInheritedKeyIsMappedBackToOriginalDomainObject() {
         IdentityRepository identities = identityRepository();
@@ -570,18 +401,192 @@ class MybatisAggregateRepositoryMySQLTest {
         assertThat(identities.findById(901L)).isPresent();
     }
 
+    // =================== 测试夹具 ===================
+
     private IdentityRepository identityRepository() {
         IdentityMapper identityMapper = session.getMapper(IdentityMapper.class);
         identityMapper.delete(null);
         return new IdentityRepository(identityMapper);
     }
 
-    private static IdentityOrder identityOrder(Long key, Long ordinaryId, String name) {
-        IdentityOrder model = new IdentityOrder();
-        model.setBusinessId(key);
-        model.setId(ordinaryId);
-        model.setName(name);
-        return model;
+    interface BatchMapper extends BaseMapper<BatchPo> {
+    }
+
+    interface OrderMapper extends BaseMapper<OrderPO> {
+    }
+
+    public interface IdentityMapper extends BaseMapper<IdentityPO> {
+    }
+
+    static final class BatchRepository
+            extends MybatisAggregateRepository<BatchMapper, BatchModel, BatchPo, BatchQuery, Long> {
+        BatchRepository(BatchMapper mapper) {
+            super(mapper);
+        }
+    }
+
+    static final class BatchQuery extends Query<BatchModel> {
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    public static class BatchModel extends AggregateRoot<Long> {
+        private Long id;
+        private String name;
+        private LocalDateTime createdAt;
+        private LocalDateTime updatedAt;
+
+        BatchModel(Long id, String name) {
+            this.id = id;
+            this.name = name;
+        }
+
+        @Override
+        public Long id() {
+            return id;
+        }
+    }
+
+    @Getter
+    @Setter
+    public static class BatchIdentity {
+        @TableId(type = IdType.AUTO)
+        private Long id;
+    }
+
+    @Getter
+    @Setter
+    @TableName("order_batch")
+    public static class BatchPo extends BatchIdentity {
+        private String name;
+        @io.ddd4j.annotation.orm.OnCreate
+        private LocalDateTime createdAt;
+        @io.ddd4j.annotation.orm.OnUpdate
+        private LocalDateTime updatedAt;
+    }
+
+    static final class TestRepository
+            extends MybatisAggregateRepository<OrderMapper, Order, OrderPO, OrderQuery, String> {
+
+        TestRepository(OrderMapper mapper) {
+            super(mapper, Order.class, OrderPO.class);
+        }
+
+        @Override
+        public void fill(Query<Order> query, List<Order> models) {
+            if (query.fill("statusLabel")) {
+                for (Order order : models) {
+                    if ("PAID".equals(order.getStatus())) {
+                        order.statusLabel = "已支付";
+                    }
+                }
+            }
+        }
+    }
+
+    static final class OrderQuery extends Query<Order> {
+    }
+
+    static final class Order extends AggregateRoot<String> {
+
+        private String id;
+        private String status;
+        private LocalDateTime deletedAt;
+        private String statusLabel;
+
+        Order() {
+        }
+
+        Order(String id, String status, LocalDateTime deletedAt) {
+            this.id = id;
+            this.status = status;
+            this.deletedAt = deletedAt;
+        }
+
+        @Override
+        public String id() {
+            return id;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
+        }
+
+        LocalDateTime getDeletedAt() {
+            return deletedAt;
+        }
+
+        public void setDeletedAt(LocalDateTime deletedAt) {
+            this.deletedAt = deletedAt;
+        }
+
+        String getStatusLabel() {
+            return statusLabel;
+        }
+    }
+
+    @TableName("orders")
+    static final class OrderPO {
+
+        @TableId
+        private String id;
+
+        @TableField("order_status")
+        private String status;
+
+        @TableField("deleted_at")
+        private LocalDateTime deletedAt;
+
+        @TenantId
+        private String tenantId;
+
+        OrderPO() {
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
+        }
+
+        public LocalDateTime getDeletedAt() {
+            return deletedAt;
+        }
+
+        public void setDeletedAt(LocalDateTime deletedAt) {
+            this.deletedAt = deletedAt;
+        }
+
+        public String getTenantId() {
+            return tenantId;
+        }
+
+        public void setTenantId(String tenantId) {
+            this.tenantId = tenantId;
+        }
     }
 
     @Getter
@@ -616,9 +621,6 @@ class MybatisAggregateRepositoryMySQLTest {
     public static class IdentityPO extends IdentityPoBase {
         private Long id;
         private String name;
-    }
-
-    public interface IdentityMapper extends BaseMapper<IdentityPO> {
     }
 
     public static class IdentityQuery extends Query<IdentityOrder> {

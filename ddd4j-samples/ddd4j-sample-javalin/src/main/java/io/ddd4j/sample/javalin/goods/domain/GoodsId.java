@@ -28,7 +28,9 @@ public class GoodsId implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    /** 正数商品标识值。 */
+    /**
+     * 正数商品标识值。
+     */
     private final Long value;
 
     private GoodsId(Long value) {

@@ -23,13 +23,22 @@ import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.*;
 
-/** 三线共同的模板流重读契约。 */
+/**
+ * 三线共同的模板流重读契约。
+ */
 class ExcelFillerTemplateStreamContractTest {
+
+    private static byte[] read(InputStream stream) throws Exception {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        byte[] chunk = new byte[4];
+        int count;
+        while ((count = stream.read(chunk)) != -1) {
+            output.write(chunk, 0, count);
+        }
+        return output.toByteArray();
+    }
 
     @Test
     void byteArrayStreamIsReusedAndOtherStreamsAreBufferedWithoutClosingSource() throws Exception {
@@ -54,15 +63,5 @@ class ExcelFillerTemplateStreamContractTest {
         assertArrayEquals(template, read(buffered));
         buffered.reset();
         assertArrayEquals(template, read(buffered));
-    }
-
-    private static byte[] read(InputStream stream) throws Exception {
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        byte[] chunk = new byte[4];
-        int count;
-        while ((count = stream.read(chunk)) != -1) {
-            output.write(chunk, 0, count);
-        }
-        return output.toByteArray();
     }
 }

@@ -10,6 +10,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class ProjectionStatusValueContractTest {
 
+    private static ProjectionStatus status() {
+        return new ProjectionStatus("orders", 42L, true, null, 7, null);
+    }
+
     @Test
     void jsonRoundTripPreservesSixComponents() throws Exception {
         ProjectionStatus status = status();
@@ -47,9 +51,5 @@ class ProjectionStatusValueContractTest {
         assertThat(status.toString()).isEqualTo(
                 "ProjectionStatus[streamId=orders, nextEventNumber=42, running=true, "
                         + "lastRunAt=null, lastEventCount=7, lastError=null]");
-    }
-
-    private static ProjectionStatus status() {
-        return new ProjectionStatus("orders", 42L, true, null, 7, null);
     }
 }

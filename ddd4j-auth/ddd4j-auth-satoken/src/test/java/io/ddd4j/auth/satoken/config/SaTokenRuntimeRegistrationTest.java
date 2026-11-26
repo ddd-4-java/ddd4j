@@ -24,13 +24,25 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class SaTokenRuntimeRegistrationTest {
+
+    private static ProbeDao failsFirstRestoration(IllegalStateException failure) {
+        return new ProbeDao() {
+            @Override
+            public void init() {
+                super.init();
+                if (inits == 2) {
+                    throw failure;
+                }
+            }
+        };
+    }
+
+    private static SaTokenDao currentDao() {
+        return (SaTokenDao) ReflectUtil.getStaticFieldValue(ReflectUtil.getField(SaManager.class, "saTokenDao"));
+    }
 
     @Test
     void sessionConfigOverridesDefaultsAndRestoresOwnedComponents() {
@@ -41,7 +53,8 @@ class SaTokenRuntimeRegistrationTest {
         SubjectDataProvider previousData = SubjectKit.dataProvider;
         SaTokenConfig config = new SaTokenConfig().setTokenName("native").setTokenPrefix("Bearer").setIsPrint(false);
         SaTokenContext context = new SaTokenContextForThreadLocal();
-        SubjectDataProvider provider = new SubjectDataProvider() { };
+        SubjectDataProvider provider = new SubjectDataProvider() {
+        };
         SaTokenSecurityProperties properties = new SaTokenSecurityProperties();
         properties.setLoginType("runtime-test");
         try {
@@ -591,22 +604,6 @@ class SaTokenRuntimeRegistrationTest {
             SaManager.setSaTokenContext(originalContext);
             SaManager.setSaTokenDao(original);
         }
-    }
-
-    private static ProbeDao failsFirstRestoration(IllegalStateException failure) {
-        return new ProbeDao() {
-            @Override
-            public void init() {
-                super.init();
-                if (inits == 2) {
-                    throw failure;
-                }
-            }
-        };
-    }
-
-    private static SaTokenDao currentDao() {
-        return (SaTokenDao) ReflectUtil.getStaticFieldValue(ReflectUtil.getField(SaManager.class, "saTokenDao"));
     }
 
     private static class ProbeDao extends SaTokenDaoDefaultImpl {

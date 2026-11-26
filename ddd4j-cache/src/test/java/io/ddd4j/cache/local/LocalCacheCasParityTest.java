@@ -10,7 +10,9 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-/** 验证三线本地缓存的回调式 CAS 可观察行为。 */
+/**
+ * 验证三线本地缓存的回调式 CAS 可观察行为。
+ */
 class LocalCacheCasParityTest {
 
     private static final CacheConfig CONFIG = CacheConfig.builder("local-cas-parity")

@@ -18,11 +18,11 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Locale;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
-/** 请求上下文构建与请求 ID 解析的兼容契约。 */
+/**
+ * 请求上下文构建与请求 ID 解析的兼容契约。
+ */
 class WebRequestContextFactoryTest {
 
     private static final RequestIdGenerator FIXED_ID = () -> "generated-request";

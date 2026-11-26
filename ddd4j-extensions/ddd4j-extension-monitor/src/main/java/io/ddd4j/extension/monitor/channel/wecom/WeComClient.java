@@ -68,7 +68,7 @@ public class WeComClient {
     /**
      * 可注入 baseUrl 的构造函数（用于测试或企业内代理场景）。
      *
-     * @param key 企业微信机器人 Webhook key
+     * @param key     企业微信机器人 Webhook key
      * @param baseUrl webhook 基础地址
      */
     public WeComClient(String key, String baseUrl) {

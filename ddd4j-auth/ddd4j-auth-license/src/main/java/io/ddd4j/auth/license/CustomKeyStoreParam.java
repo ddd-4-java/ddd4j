@@ -27,7 +27,9 @@ import java.util.Objects;
  */
 public class CustomKeyStoreParam {
 
-    /** 与已有许可证兼容的默认签名算法。 */
+    /**
+     * 与已有许可证兼容的默认签名算法。
+     */
     public static final String LEGACY_SIGNATURE_ALGORITHM = "SHA1withDSA";
 
     /**
@@ -42,11 +44,11 @@ public class CustomKeyStoreParam {
     /**
      * 使用兼容签名算法创建密钥库参数。
      *
-     * @param clazz 调用方类型
+     * @param clazz    调用方类型
      * @param resource 密钥库文件路径
-     * @param alias 密钥别名
+     * @param alias    密钥别名
      * @param storePwd 密钥库密码
-     * @param keyPwd 私钥密码，可为空
+     * @param keyPwd   私钥密码，可为空
      */
     public CustomKeyStoreParam(Class<?> clazz, String resource, String alias, String storePwd, String keyPwd) {
         this(clazz, resource, alias, storePwd, keyPwd, LEGACY_SIGNATURE_ALGORITHM);
@@ -55,11 +57,11 @@ public class CustomKeyStoreParam {
     /**
      * 使用指定签名算法创建密钥库参数。
      *
-     * @param clazz 调用方类型
-     * @param resource 密钥库文件路径
-     * @param alias 密钥别名
-     * @param storePwd 密钥库密码
-     * @param keyPwd 私钥密码，可为空
+     * @param clazz              调用方类型
+     * @param resource           密钥库文件路径
+     * @param alias              密钥别名
+     * @param storePwd           密钥库密码
+     * @param keyPwd             私钥密码，可为空
      * @param signatureAlgorithm 签名算法
      */
     public CustomKeyStoreParam(Class<?> clazz, String resource, String alias, String storePwd, String keyPwd,
@@ -76,22 +78,30 @@ public class CustomKeyStoreParam {
     }
 
 
-    /** @return 密钥别名 */
+    /**
+     * @return 密钥别名
+     */
     public String getAlias() {
         return alias;
     }
 
-    /** @return 密钥库密码 */
+    /**
+     * @return 密钥库密码
+     */
     public String getStorePwd() {
         return storePwd;
     }
 
-    /** @return 私钥密码，可为空 */
+    /**
+     * @return 私钥密码，可为空
+     */
     public String getKeyPwd() {
         return keyPwd;
     }
 
-    /** @return 签名算法 */
+    /**
+     * @return 签名算法
+     */
     public String getSignatureAlgorithm() {
         return signatureAlgorithm;
     }

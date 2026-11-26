@@ -14,8 +14,6 @@ import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.reflect.MethodSignature;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LogEvent;
@@ -23,8 +21,10 @@ import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.config.Property;
 import org.apache.logging.log4j.core.layout.PatternLayout;
-import org.junit.jupiter.api.BeforeEach;
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -35,17 +35,20 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-/** 日志 HTTP 桥接保留旧请求行为，并兼容原生 WebContextScope。 */
+/**
+ * 日志 HTTP 桥接保留旧请求行为，并兼容原生 WebContextScope。
+ */
 class ApiOperationLogHttpBridgeTest {
     private final Logger logger = (Logger) LogManager.getLogger(DefaultApiOperationLogProvider.class);
     private final List<LogEvent> events = new ArrayList<>();
@@ -57,7 +60,9 @@ class ApiOperationLogHttpBridgeTest {
         previous = logger.getLevel();
         appender = new AbstractAppender("r05-http", null, PatternLayout.createDefaultLayout(), false, Property.EMPTY_ARRAY) {
             @Override
-            public void append(LogEvent event) { events.add(event.toImmutable()); }
+            public void append(LogEvent event) {
+                events.add(event.toImmutable());
+            }
         };
         appender.start();
         logger.addAppender(appender);
@@ -76,7 +81,8 @@ class ApiOperationLogHttpBridgeTest {
     @Test
     void legacyRequestContextHolderKeepsParameterThenHeaderThenSnowflake() {
         MockHttpServletRequest request = bindRequest();
-        ApiOperationLogAspect aspect = new ApiOperationLogAspect(new Snowflake(1, 1), new ApiOperationLogProvider() { });
+        ApiOperationLogAspect aspect = new ApiOperationLogAspect(new Snowflake(1, 1), new ApiOperationLogProvider() {
+        });
         request.addHeader(XHeaders.X_REQUEST_ID, "header-id");
         request.setParameter("requestId", "parameter-id");
         assertEquals("parameter-id", aspect.getRequestId());
@@ -116,7 +122,8 @@ class ApiOperationLogHttpBridgeTest {
             assertEquals("/native/logs", context.requestUri());
             assertEquals("192.0.2.10", context.clientIp());
             assertEquals("native-id", new ApiOperationLogAspect(new Snowflake(1, 1),
-                    new ApiOperationLogProvider() { }).getRequestId());
+                    new ApiOperationLogProvider() {
+                    }).getRequestId());
         }
         assertNull(ApiOperationLogRequestContext.current().requestId());
     }
@@ -184,7 +191,9 @@ class ApiOperationLogHttpBridgeTest {
         Process process = new ProcessBuilder(System.getProperty("java.home") + "/bin/java", "-cp", classpath,
                 WebMvcWithoutLogsProbe.class.getName()).redirectErrorStream(true).start();
         boolean finished = process.waitFor(40, TimeUnit.SECONDS);
-        if (!finished) { process.destroyForcibly(); }
+        if (!finished) {
+            process.destroyForcibly();
+        }
         assertTrue(finished, "WebMVC startup probe timed out");
         String output = new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
         System.out.println("R05 WebMVC without logs classpath=" + classpath + "\n" + output);
@@ -204,11 +213,14 @@ class ApiOperationLogHttpBridgeTest {
                 Locale.ROOT, "192.0.2.10", "POST", "/native/logs"));
     }
 
-    /** 检查历史 protected saveLog 扩展入口。 */
+    /**
+     * 检查历史 protected saveLog 扩展入口。
+     */
     static class RecordingProvider extends DefaultApiOperationLogProvider {
         private Object result;
         private Throwable failure;
         private int saved;
+
         @Override
         protected void saveLog(JoinPoint point, Method method, Operation annotation,
                                Object returned, Throwable thrown, Stopwatch watch) {
@@ -218,11 +230,18 @@ class ApiOperationLogHttpBridgeTest {
         }
     }
 
-    /** 日志测试目标。 */
+    /**
+     * 日志测试目标。
+     */
     public static class Endpoint {
         @Operation(summary = "http")
-        public String handle(String input) { return input; }
+        public String handle(String input) {
+            return input;
+        }
+
         @Hidden
-        public String hidden() { return "hidden"; }
+        public String hidden() {
+            return "hidden";
+        }
     }
 }

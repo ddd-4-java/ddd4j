@@ -69,6 +69,7 @@ public interface View {
 
     /**
      * 视图名称。
+     *
      * @return 视图名称
      */
     String getName();

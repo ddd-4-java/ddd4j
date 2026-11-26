@@ -1,1 +1,1 @@
-io.ddd4j.sample.helidon.cqrs.FailureInjection
+io.ddd4j.sample.helidon.cqrs.HelidonCatalogCqrsHttpTest$TradeEventObserverExtension

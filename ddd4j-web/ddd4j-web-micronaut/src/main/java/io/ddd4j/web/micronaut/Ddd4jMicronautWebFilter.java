@@ -13,18 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.web.micronaut;
-import java.util.Optional;
-import java.util.Objects;
-import java.util.Map;
-import java.util.Locale;
-import java.util.HashMap;
-import io.ddd4j.web.core.context.WebRequestLifecycle;
-import io.ddd4j.web.core.context.WebRequestData;
-import io.ddd4j.web.core.context.WebRequestContextFactory;
-import io.ddd4j.web.core.context.WebRequestContext;
-import io.ddd4j.web.core.context.WebHeaders;
-import io.ddd4j.web.core.context.RequestIdGenerator;
-import io.ddd4j.web.core.context.ClientIpResolver;
 
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator.Authentication;
@@ -83,8 +71,8 @@ public final class Ddd4jMicronautWebFilter {
     /**
      * 使用指定上下文、认证及幂等组件创建过滤器。
      *
-     * @param contextFactory 请求上下文工厂
-     * @param requestLifecycle 请求生命周期
+     * @param contextFactory       请求上下文工厂
+     * @param requestLifecycle     请求生命周期
      * @param idempotencyLifecycle 幂等生命周期，可为空
      */
     public Ddd4jMicronautWebFilter(WebRequestContextFactory contextFactory, WebRequestLifecycle requestLifecycle,
@@ -114,8 +102,8 @@ public final class Ddd4jMicronautWebFilter {
     /**
      * 建立请求上下文并在响应或异常后结束会话与追踪。
      *
-     * @param request Micronaut 请求
-     * @param continuation 下游过滤链
+     * @param request           Micronaut 请求
+     * @param continuation      下游过滤链
      * @param propagatedContext 可传播上下文
      * @return 下游响应流
      */

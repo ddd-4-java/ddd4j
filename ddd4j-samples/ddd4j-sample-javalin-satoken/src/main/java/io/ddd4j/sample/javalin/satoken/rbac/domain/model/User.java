@@ -68,11 +68,11 @@ public class User extends AggregateRoot<String> {
     /**
      * 创建用户。
      *
-     * @param userId 用户标识
+     * @param userId   用户标识
      * @param username 用户名
      * @param password 密码
      * @param realName 真实姓名
-     * @param status 状态
+     * @param status   状态
      */
     public User(String userId, String username, String password, String realName, Status status) {
         if (StrKit.isBlank(userId)) {
@@ -167,6 +167,13 @@ public class User extends AggregateRoot<String> {
      * 用户状态。
      */
     public enum Status {
-        /** 启用状态。 */ ENABLED, /** 禁用状态。 */ DISABLED
+        /**
+         * 启用状态。
+         */
+        ENABLED,
+        /**
+         * 禁用状态。
+         */
+        DISABLED
     }
 }

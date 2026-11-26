@@ -31,11 +31,17 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class RedisStreamAcknowledgment implements Acknowledgment {
 
-    /** Redis Stream 名称请求头。 */
+    /**
+     * Redis Stream 名称请求头。
+     */
     public static final String HEADER_REDIS_STREAM = "ddd4j.redis.stream";
-    /** Redis 消费者组请求头。 */
+    /**
+     * Redis 消费者组请求头。
+     */
     public static final String HEADER_REDIS_GROUP = "ddd4j.redis.group";
-    /** Redis Stream 条目标识请求头。 */
+    /**
+     * Redis Stream 条目标识请求头。
+     */
     public static final String HEADER_REDIS_ENTRY_ID = "ddd4j.redis.entryId";
 
     private final RedisStreamOperations operations;
@@ -50,11 +56,11 @@ public class RedisStreamAcknowledgment implements Acknowledgment {
     /**
      * 使用 Jedis 创建 Redis Stream 消息确认句柄。
      *
-     * @param jedis Jedis 客户端
-     * @param stream Stream 名称
-     * @param group 消费者组
-     * @param entryId 条目标识
-     * @param messageId 消息标识
+     * @param jedis         Jedis 客户端
+     * @param stream        Stream 名称
+     * @param group         消费者组
+     * @param entryId       条目标识
+     * @param messageId     消息标识
      * @param correlationId 关联标识
      */
     public RedisStreamAcknowledgment(
@@ -70,12 +76,12 @@ public class RedisStreamAcknowledgment implements Acknowledgment {
     /**
      * 使用 Stream 操作适配器创建消息确认句柄。
      *
-     * @param operations Stream 操作适配器
-     * @param stream Stream 名称
-     * @param group 消费者组
-     * @param entryId 条目标识
+     * @param operations    Stream 操作适配器
+     * @param stream        Stream 名称
+     * @param group         消费者组
+     * @param entryId       条目标识
      * @param nativeEntryId 底层客户端条目标识
-     * @param messageId 消息标识
+     * @param messageId     消息标识
      * @param correlationId 关联标识
      */
     public RedisStreamAcknowledgment(

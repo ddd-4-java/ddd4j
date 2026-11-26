@@ -167,8 +167,8 @@ public class BaseContext {
     /**
      * 当前值与预期实例一致时，原子更新全局注册。
      *
-     * @param key 全局注册键，不能为空
-     * @param expected 预期实例，{@code null} 表示键尚未注册
+     * @param key         全局注册键，不能为空
+     * @param expected    预期实例，{@code null} 表示键尚未注册
      * @param replacement 替换实例，{@code null} 表示删除注册
      * @return 是否匹配并执行更新
      */
@@ -187,7 +187,7 @@ public class BaseContext {
     /**
      * 注册启动期间使用的值，并返回可提交或回滚的本次注册。
      *
-     * @param key 全局注册键，不能为空
+     * @param key   全局注册键，不能为空
      * @param value 注册值，不能为空
      * @return 仅控制本次写入的注册句柄
      */
@@ -203,63 +203,6 @@ public class BaseContext {
     private static Object contextValue(ContextEntry entry) {
         return Objects.isNull(entry) ? null : entry.value;
     }
-
-    private static final class ContextEntry {
-        private final Object value;
-        // 同一键的 compute 回调负责访问和修改回滚链。
-        private ContextEntry previous;
-        private boolean rolledBack;
-
-        private ContextEntry(Object value) {
-            this.value = Objects.requireNonNull(value);
-        }
-    }
-
-    /** 一次待提交的全局注册。查找方法继续返回原始注册值。 */
-    public static final class Registration {
-        private final String key;
-        private final ContextEntry entry;
-        private boolean pending = true;
-
-        private Registration(String key, ContextEntry entry) {
-            this.key = key;
-            this.entry = entry;
-        }
-
-        /** 确认本次写入并释放之前的注册。重复调用无效。 */
-        public void commit() {
-            GLOBAL.compute(key, (ignored, current) -> {
-                if (pending) {
-                    pending = false;
-                    entry.previous = null;
-                }
-                return current;
-            });
-        }
-
-        /** 撤销本次写入。存在较新的写入时，仅标记本次注册为已回滚。 */
-        public void rollback() {
-            GLOBAL.compute(key, (ignored, current) -> {
-                if (!pending) {
-                    return current;
-                }
-                pending = false;
-                entry.rolledBack = true;
-                if (current != entry) {
-                    return current;
-                }
-                ContextEntry previous = entry.previous;
-                while (Objects.nonNull(previous) && previous.rolledBack) {
-                    previous = previous.previous;
-                }
-                return previous;
-            });
-        }
-    }
-
-    // ============================================================
-    // 通用 KV API（无类型校验，兼容启动元数据等场景）
-    // ============================================================
 
     /**
      * 向全局上下文注入一个无类型校验的键值对。
@@ -299,6 +242,10 @@ public class BaseContext {
         return (V) contextValue(GLOBAL.get(String.valueOf(key)));
     }
 
+    // ============================================================
+    // 通用 KV API（无类型校验，兼容启动元数据等场景）
+    // ============================================================
+
     /**
      * 从全局上下文获取指定 key 对应的值，未找到返回默认值。
      *
@@ -327,10 +274,6 @@ public class BaseContext {
         return GLOBAL.containsKey(String.valueOf(key));
     }
 
-    // ============================================================
-    // 测试/调试 API：慎用
-    // ============================================================
-
     /**
      * 清空全局上下文（仅用于测试或重启场景）。
      * <p>
@@ -339,5 +282,68 @@ public class BaseContext {
      */
     public void clear() {
         GLOBAL.clear();
+    }
+
+    private static final class ContextEntry {
+        private final Object value;
+        // 同一键的 compute 回调负责访问和修改回滚链。
+        private ContextEntry previous;
+        private boolean rolledBack;
+
+        private ContextEntry(Object value) {
+            this.value = Objects.requireNonNull(value);
+        }
+    }
+
+    // ============================================================
+    // 测试/调试 API：慎用
+    // ============================================================
+
+    /**
+     * 一次待提交的全局注册。查找方法继续返回原始注册值。
+     */
+    public static final class Registration {
+        private final String key;
+        private final ContextEntry entry;
+        private boolean pending = true;
+
+        private Registration(String key, ContextEntry entry) {
+            this.key = key;
+            this.entry = entry;
+        }
+
+        /**
+         * 确认本次写入并释放之前的注册。重复调用无效。
+         */
+        public void commit() {
+            GLOBAL.compute(key, (ignored, current) -> {
+                if (pending) {
+                    pending = false;
+                    entry.previous = null;
+                }
+                return current;
+            });
+        }
+
+        /**
+         * 撤销本次写入。存在较新的写入时，仅标记本次注册为已回滚。
+         */
+        public void rollback() {
+            GLOBAL.compute(key, (ignored, current) -> {
+                if (!pending) {
+                    return current;
+                }
+                pending = false;
+                entry.rolledBack = true;
+                if (current != entry) {
+                    return current;
+                }
+                ContextEntry previous = entry.previous;
+                while (Objects.nonNull(previous) && previous.rolledBack) {
+                    previous = previous.previous;
+                }
+                return previous;
+            });
+        }
     }
 }

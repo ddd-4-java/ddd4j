@@ -2,12 +2,10 @@ package io.ddd4j.sample.javalin.shiro.goods.web.dto;
 
 import org.junit.jupiter.api.Test;
 
-import java.math.BigDecimal;
 import java.lang.reflect.Modifier;
+import java.math.BigDecimal;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class UpdateGoodsRequestContractTest {
 
@@ -25,7 +23,8 @@ class UpdateGoodsRequestContractTest {
 
         UpdateGoodsRequest same = new UpdateGoodsRequest("Coffee", new BigDecimal("12.50"));
         assertEquals(same, request);
-        UpdateGoodsRequest subtype = new UpdateGoodsRequest("Coffee", new BigDecimal("12.50")) { };
+        UpdateGoodsRequest subtype = new UpdateGoodsRequest("Coffee", new BigDecimal("12.50")) {
+        };
         assertEquals(request, subtype);
         assertEquals(subtype, request);
         assertEquals(-854612899, request.hashCode());

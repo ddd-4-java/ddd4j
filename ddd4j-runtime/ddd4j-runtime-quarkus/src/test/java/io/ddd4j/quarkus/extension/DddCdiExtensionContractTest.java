@@ -20,17 +20,16 @@ import jakarta.enterprise.inject.spi.AnnotatedType;
 import jakarta.enterprise.inject.spi.ProcessAnnotatedType;
 import jakarta.enterprise.inject.spi.configurator.AnnotatedTypeConfigurator;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 import java.lang.annotation.Annotation;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import org.mockito.ArgumentCaptor;
+import static org.mockito.Mockito.*;
 
-/** 三线共同的 DDD CDI 作用域注册契约。 */
+/**
+ * 三线共同的 DDD CDI 作用域注册契约。
+ */
 class DddCdiExtensionContractTest {
 
     @Test

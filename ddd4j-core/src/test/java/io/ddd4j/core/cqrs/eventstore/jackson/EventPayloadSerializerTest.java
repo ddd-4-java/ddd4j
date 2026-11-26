@@ -14,25 +14,17 @@
  */
 package io.ddd4j.core.cqrs.eventstore.jackson;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.util.Objects;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
-import io.ddd4j.core.ddd.event.AggregateRootId;
-import io.ddd4j.core.ddd.event.DomainEvent;
-import io.ddd4j.core.ddd.event.EntityIdPath;
-import io.ddd4j.core.ddd.event.EntityType;
-import io.ddd4j.core.ddd.event.Event;
-import io.ddd4j.core.ddd.event.StringEntityType;
+import io.ddd4j.core.ddd.event.*;
 import org.junit.jupiter.api.Test;
 
 import java.time.ZonedDateTime;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -195,10 +187,13 @@ class EventPayloadSerializerTest {
     final static class TestAggregateRootId implements AggregateRootId {
 
         private static final long serialVersionUID = 0L;
-
+        private static final EntityType TYPE = new StringEntityType("TestAggregate");
         private final String value;
 
-        private static final EntityType TYPE = new StringEntityType("TestAggregate");
+        @JsonCreator()
+        TestAggregateRootId(@JsonProperty("value") String value) {
+            this.value = value;
+        }
 
         @Override
         public EntityType getType() {
@@ -213,11 +208,6 @@ class EventPayloadSerializerTest {
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
-        }
-
-        @JsonCreator()
-        TestAggregateRootId(@JsonProperty("value") String value) {
-            this.value = value;
         }
 
         @JsonProperty("value")

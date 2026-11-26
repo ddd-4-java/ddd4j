@@ -14,7 +14,6 @@
  */
 package io.ddd4j.quarkus.cqrs;
 
-import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.readmodel.InMemoryProjectionPositionRepository;
@@ -24,11 +23,9 @@ import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
 import io.ddd4j.quarkus.command.QuarkusCommandBus;
 import io.ddd4j.runtime.testkit.AbstractCqrsRuntimeContractTest;
 import io.ddd4j.runtime.testkit.CqrsRuntimeContract;
-
 import jakarta.enterprise.inject.Instance;
 
 import java.lang.reflect.Field;
-import java.util.Map;
 
 /**
  * Quarkus 运行时 CQRS 契约测试。

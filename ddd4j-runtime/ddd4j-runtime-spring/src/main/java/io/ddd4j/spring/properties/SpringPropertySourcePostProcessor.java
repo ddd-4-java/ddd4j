@@ -31,7 +31,9 @@ import java.util.Objects;
  */
 public class SpringPropertySourcePostProcessor implements BeanFactoryPostProcessor, Ordered {
 
-    /** @param beanFactory 待处理的 Bean 工厂 */
+    /**
+     * @param beanFactory 待处理的 Bean 工厂
+     */
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
         // 将 ddd4j 配置属性源添加到 Spring Environment
@@ -57,7 +59,9 @@ public class SpringPropertySourcePostProcessor implements BeanFactoryPostProcess
         }
     }
 
-    /** @return 最低优先级 */
+    /**
+     * @return 最低优先级
+     */
     @Override
     public int getOrder() {
         return LOWEST_PRECEDENCE;

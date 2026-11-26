@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 package io.ddd4j.guice.cqrs;
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import io.ddd4j.core.cqrs.readmodel.*;
@@ -114,10 +115,11 @@ public class GuiceViewManager implements ViewManager, ViewScheduler, AutoCloseab
 
     /**
      * 显式视图装配；共享管理器驱动事件，平台保留线程池和已有间隔表达式。
+     *
      * @param threadPoolSize 调度线程数
-     * @param repository 位置仓储
-     * @param runner 真实事件运行器
-     * @param views 业务视图
+     * @param repository     位置仓储
+     * @param runner         真实事件运行器
+     * @param views          业务视图
      */
     public GuiceViewManager(int threadPoolSize, ProjectionPositionRepository repository,
                             ProjectionRunner<Object> runner,

@@ -7,13 +7,7 @@ package io.ddd4j.micronaut.cqrs;
 import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
 import org.junit.jupiter.api.Test;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Delayed;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -39,8 +33,8 @@ class MicronautProjectionSchedulerRaceTest {
     }
 
     private static final class ImmediateFirstExecutor extends ScheduledThreadPoolExecutor {
-        private int submissions;
         private final StubFuture pending = new StubFuture();
+        private int submissions;
 
         private ImmediateFirstExecutor() {
             super(1);

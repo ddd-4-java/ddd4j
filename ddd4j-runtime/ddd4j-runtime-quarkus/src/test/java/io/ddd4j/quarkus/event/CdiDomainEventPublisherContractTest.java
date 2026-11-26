@@ -26,7 +26,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-/** 三线共同的 CDI 领域事件分派契约。 */
+/**
+ * 三线共同的 CDI 领域事件分派契约。
+ */
 class CdiDomainEventPublisherContractTest {
 
     @Test
@@ -45,7 +47,8 @@ class CdiDomainEventPublisherContractTest {
                 });
         eventField.set(publisher, bus);
 
-        DomainEvent<EntityId> domainEvent = new DomainEvent<EntityId>() { };
+        DomainEvent<EntityId> domainEvent = new DomainEvent<EntityId>() {
+        };
         publisher.publish((Object) domainEvent);
         publisher.publish((Object) "plain");
         publisher.publish((Object) null);

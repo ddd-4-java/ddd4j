@@ -22,11 +22,14 @@ import io.ddd4j.core.cqrs.command.Result;
 import java.util.Collection;
 import java.util.Objects;
 
-/** Guice 执行器发现适配器；精确类型路由、缓存和执行均由共享总线拥有。 */
+/**
+ * Guice 执行器发现适配器；精确类型路由、缓存和执行均由共享总线拥有。
+ */
 public class GuiceCommandBus extends DefaultCommandBus {
 
     /**
      * 收集已有执行器并建立共享快照；初始没有路由的执行器不参加旧式动态补查。
+     *
      * @param executors Guice 已发现执行器
      */
     public GuiceCommandBus(Collection<CommandExecutor<?>> executors) {
@@ -43,7 +46,7 @@ public class GuiceCommandBus extends DefaultCommandBus {
 
     @Override
     protected CommandExecutor<?> resolveMissingExecutor(Class<? extends Command> commandType,
-                                                         Collection<CommandExecutor<?>> registeredExecutors) {
+                                                        Collection<CommandExecutor<?>> registeredExecutors) {
         for (CommandExecutor<?> candidate : registeredExecutors) {
             if (candidate.supportedCommands().contains(commandType)) {
                 return candidate;

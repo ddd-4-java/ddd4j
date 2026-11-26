@@ -1,5 +1,22 @@
 # Micronaut Sa-Token 订单样例
 
+## 当前商品交易入口
+
+此模块以 Sa-Token 方式运行共享商品交易。先按[示例总览](../README.md#启动默认订单示例)配置 MySQL。以下命令从仓库根目录运行，使用实际 Maven 版本替换 `<version>`。
+
+```bash
+module=ddd4j-samples/ddd4j-sample-micronaut-satoken
+./mvnw -pl "$module" -am -DskipTests -Dmaven.javadoc.skip=true -DincludeScope=runtime -Dmdep.outputFile=target/runtime-classpath.txt package dependency:build-classpath
+java -cp "$module/target/ddd4j-sample-micronaut-satoken-<version>.jar:$(cat "$module/target/runtime-classpath.txt")" io.ddd4j.sample.micronaut.satoken.MicronautSaTokenApplication
+```
+
+业务请求携带 `X-Tenant-Id`。商品地址为 `/orders/catalog/goods/{spuCode}`，订单地址为 `/orders/catalog/orders/{orderNo}`。支付、取消和履约分别使用订单子路径 `/payment`、`/cancel`、`/fulfill`。
+
+本地演示登录使用 `POST /auth/login`，请求体为 `{"username":"alice","password":"sample-password"}`。将令牌放入 `Authorization: Bearer <token>` 请求头。
+
+<details>
+<summary>商品交易迁移前的说明</summary>
+
 在仓库根目录使用当前分支对应的 JDK 和 Maven Wrapper。样例监听 `127.0.0.1`，默认 HTTP 端口为 `8085`。
 
 | 发布线 | JDK | Micronaut HTTP 运行时 |
@@ -39,3 +56,5 @@ java -Dmicronaut.server.host=127.0.0.1 -cp "$module/target/ddd4j-sample-micronau
 这里的线程上下文契约涵盖同步 JSON 路由。Micronaut 4 的生命周期测试也观察客户端断连后路由结束时的上下文恢复。
 
 关闭 ApplicationContext 时释放样例注册的会话存储，按所有权恢复配置及权限提供器。调用方已注册的 Sa-Token DAO 继续由调用方管理。Sa-Token 全局配置按单活动样例使用。样例沿用 `satoken` 令牌名和 `login` 登录域。借用 DAO 时，该会话命名空间应由样例独占；宿主使用同一组合时，为样例配置独立的 DAO 数据空间。借用 DAO 中的会话继续按登出与过期策略管理。
+
+</details>

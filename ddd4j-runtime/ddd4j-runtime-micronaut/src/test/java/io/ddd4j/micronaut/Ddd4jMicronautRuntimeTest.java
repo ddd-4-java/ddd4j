@@ -23,13 +23,11 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-/** Micronaut 生命周期和就绪状态的运行时契约。 */
+/**
+ * Micronaut 生命周期和就绪状态的运行时契约。
+ */
 class Ddd4jMicronautRuntimeTest extends AbstractRuntimeContractTest {
 
     @Test
@@ -46,7 +44,11 @@ class Ddd4jMicronautRuntimeTest extends AbstractRuntimeContractTest {
     void startupErrorStopsPartiallyStartedViewAndPreservesCleanupFailure() {
         LinkageError startup = new LinkageError("projection start failed");
         IllegalStateException cleanup = new IllegalStateException("projection stop failed");
-        FailingViewManager manager = new FailingViewManager(() -> { throw startup; }, () -> { throw cleanup; });
+        FailingViewManager manager = new FailingViewManager(() -> {
+            throw startup;
+        }, () -> {
+            throw cleanup;
+        });
 
         LinkageError failure = assertThrows(LinkageError.class, runtimeWithView(manager)::start);
 
@@ -60,7 +62,11 @@ class Ddd4jMicronautRuntimeTest extends AbstractRuntimeContractTest {
     @Test
     void startupAndCleanupThrowingSameExceptionPreservesItsIdentity() {
         IllegalStateException shared = new IllegalStateException("projection failed");
-        FailingViewManager manager = new FailingViewManager(() -> { throw shared; }, () -> { throw shared; });
+        FailingViewManager manager = new FailingViewManager(() -> {
+            throw shared;
+        }, () -> {
+            throw shared;
+        });
 
         IllegalStateException failure = assertThrows(IllegalStateException.class, runtimeWithView(manager)::start);
 
@@ -74,6 +80,15 @@ class Ddd4jMicronautRuntimeTest extends AbstractRuntimeContractTest {
         RuntimeFixtures fixtures = new RuntimeFixtures();
         return new Ddd4jMicronautRuntime(fixtures.publisher(), fixtures.subjectProvider(), fixtures.i18nProvider(),
                 fixtures.commandBus(), Collections.emptyList(), manager);
+    }
+
+    @Override
+    protected RuntimeContract createRuntime() {
+        RuntimeFixtures fixtures = new RuntimeFixtures();
+        Ddd4jMicronautRuntime runtime = new Ddd4jMicronautRuntime(fixtures.publisher(), fixtures.subjectProvider(),
+                fixtures.i18nProvider(), fixtures.commandBus(), fixtures.readinessContributors());
+        return new RuntimeContractAdapter(runtime::start, runtime::close, fixtures.services(),
+                () -> runtime.readiness().readiness());
     }
 
     private static final class FailingViewManager implements ViewManager {
@@ -108,14 +123,5 @@ class Ddd4jMicronautRuntimeTest extends AbstractRuntimeContractTest {
         @Override
         public void triggerOnce() {
         }
-    }
-
-    @Override
-    protected RuntimeContract createRuntime() {
-        RuntimeFixtures fixtures = new RuntimeFixtures();
-        Ddd4jMicronautRuntime runtime = new Ddd4jMicronautRuntime(fixtures.publisher(), fixtures.subjectProvider(),
-                fixtures.i18nProvider(), fixtures.commandBus(), fixtures.readinessContributors());
-        return new RuntimeContractAdapter(runtime::start, runtime::close, fixtures.services(),
-                () -> runtime.readiness().readiness());
     }
 }

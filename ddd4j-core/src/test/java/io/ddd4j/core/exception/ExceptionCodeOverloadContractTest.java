@@ -5,9 +5,7 @@ import io.ddd4j.core.api.CustomApiCode;
 import io.ddd4j.core.util.I18nKit;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * 公开异常构造器同时保留标准码和业务扩展码入口。
@@ -15,6 +13,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class ExceptionCodeOverloadContractTest {
 
     private static final String KEY = "ddd4j.exception.overload.contract";
+
+    private static void assertRuntime(BizRuntimeException exception, CustomApiCode code) {
+        assertEquals(code.getCode(), exception.getCode());
+        assertEquals(KEY, exception.getI18nCode());
+        assertEquals(I18nKit.get(KEY, code.getReason()), exception.getMessage());
+    }
 
     @Test
     void bothBinaryConstructorSignaturesArePublished() {
@@ -88,11 +92,5 @@ class ExceptionCodeOverloadContractTest {
         assertThrows(NullPointerException.class, () -> new PayException((CustomApiCode) null, KEY));
         assertThrows(NullPointerException.class, () -> new RedisOperationException((ApiCode) null, KEY));
         assertThrows(NullPointerException.class, () -> new RedisOperationException((CustomApiCode) null, KEY));
-    }
-
-    private static void assertRuntime(BizRuntimeException exception, CustomApiCode code) {
-        assertEquals(code.getCode(), exception.getCode());
-        assertEquals(KEY, exception.getI18nCode());
-        assertEquals(I18nKit.get(KEY, code.getReason()), exception.getMessage());
     }
 }

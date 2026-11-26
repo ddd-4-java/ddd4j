@@ -14,14 +14,15 @@
  */
 package io.ddd4j.sample.quarkus.shiro.config;
 
+import io.ddd4j.core.api.R;
 import io.ddd4j.kit.lang.StrKit;
+import io.ddd4j.sample.quarkus.shiro.CatalogTradeResource;
 import jakarta.annotation.Priority;
 import jakarta.ws.rs.Priorities;
-import jakarta.ws.rs.container.ContainerRequestContext;
-import jakarta.ws.rs.container.ContainerRequestFilter;
-import jakarta.ws.rs.container.ContainerResponseContext;
-import jakarta.ws.rs.container.ContainerResponseFilter;
+import jakarta.ws.rs.container.*;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.Provider;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
@@ -29,11 +30,6 @@ import org.apache.shiro.util.ThreadContext;
 
 import java.io.IOException;
 import java.util.Objects;
-import jakarta.ws.rs.container.ResourceInfo;
-import jakarta.ws.rs.core.Context;
-import jakarta.ws.rs.core.Response;
-import io.ddd4j.core.api.R;
-import io.ddd4j.sample.quarkus.shiro.order.web.OrderResource;
 
 /**
  * 将 RFC 6750 Bearer Token 作为 Shiro Session ID 恢复为当前请求 Subject。
@@ -42,14 +38,17 @@ import io.ddd4j.sample.quarkus.shiro.order.web.OrderResource;
 @Priority(Priorities.AUTHENTICATION)
 public class ShiroRequestFilter implements ContainerRequestFilter, ContainerResponseFilter {
 
-    @Context ResourceInfo resourceInfo;
     private static final String PREVIOUS = ShiroRequestFilter.class.getName() + ".previous";
     private static final String BEARER_PREFIX = "Bearer ";
+    @Context
+    ResourceInfo resourceInfo;
 
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
         Subject previous = ThreadContext.getSubject();
-        if (Objects.nonNull(previous)) { requestContext.setProperty(PREVIOUS, previous); }
+        if (Objects.nonNull(previous)) {
+            requestContext.setProperty(PREVIOUS, previous);
+        }
         String authorization = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
         Subject.Builder builder = new Subject.Builder(SecurityUtils.getSecurityManager());
         if (StrKit.isNotEmpty(authorization) && authorization.regionMatches(
@@ -64,20 +63,22 @@ public class ShiroRequestFilter implements ContainerRequestFilter, ContainerResp
         Runnable cleanup = () -> {
             if (ThreadContext.getSubject() == subject) {
                 ThreadContext.unbindSubject();
-                if (Objects.nonNull(previous)) { ThreadContext.bind(previous); }
+                if (Objects.nonNull(previous)) {
+                    ThreadContext.bind(previous);
+                }
             }
         };
         requestContext.setProperty(PREVIOUS + ".cleanup", cleanup);
         ((org.jboss.resteasy.reactive.server.spi.ResteasyReactiveContainerRequestContext) requestContext)
                 .getServerRequestContext().registerCompletionCallback(failure -> cleanup.run());
-        if (OrderResource.class.isAssignableFrom(resourceInfo.getResourceClass())
-                && !"listAll".equals(resourceInfo.getResourceMethod().getName())) {
+        if (Objects.nonNull(resourceInfo.getResourceClass())
+                && CatalogTradeResource.class.isAssignableFrom(resourceInfo.getResourceClass())) {
             if (!subject.isAuthenticated()) {
                 requestContext.abortWith(Response.status(401).entity(R.of(401, "unauthenticated")).build());
                 return;
             }
             String method = resourceInfo.getResourceMethod().getName();
-            String permission = "cancel".equals(method) ? "order:cancel" : "order:pay";
+            String permission = "cancelOrder".equals(method) ? "order:cancel" : "order:pay";
             if ("POST".equals(requestContext.getMethod()) && !subject.isPermitted(permission)) {
                 requestContext.abortWith(Response.status(403).entity(R.of(403, "required permission is missing")).build());
             }
@@ -87,6 +88,8 @@ public class ShiroRequestFilter implements ContainerRequestFilter, ContainerResp
     @Override
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
         Runnable cleanup = (Runnable) requestContext.getProperty(PREVIOUS + ".cleanup");
-        if (Objects.nonNull(cleanup)) { cleanup.run(); }
+        if (Objects.nonNull(cleanup)) {
+            cleanup.run();
+        }
     }
 }

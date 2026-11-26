@@ -21,7 +21,9 @@ import java.time.Duration;
  */
 public interface RegionCache {
 
-    /** 不执行缓存操作的实现。 */
+    /**
+     * 不执行缓存操作的实现。
+     */
     RegionCache NONE = new RegionCache() {
 
         @Override
@@ -54,9 +56,9 @@ public interface RegionCache {
     /**
      * 写入带有效期的缓存字符串。
      *
-     * @param key 缓存键
+     * @param key   缓存键
      * @param value 缓存值
-     * @param ttl 有效期
+     * @param ttl   有效期
      */
     void set(String key, String value, Duration ttl);
 }

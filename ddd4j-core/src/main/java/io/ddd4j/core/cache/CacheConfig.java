@@ -280,6 +280,7 @@ public final class CacheConfig {
 
         /**
          * 设置最大容量。
+         *
          * @param maximumSize 最大条目数
          * @return 当前构建器，供链式配置
          */
@@ -290,6 +291,7 @@ public final class CacheConfig {
 
         /**
          * 设置写后过期时间（秒）。
+         *
          * @param seconds 时长，单位为秒；0 表示禁用相应过期或刷新
          * @return 当前构建器，供链式配置
          */
@@ -300,6 +302,7 @@ public final class CacheConfig {
 
         /**
          * 设置访问后过期时间（秒）。
+         *
          * @param seconds 时长，单位为秒；0 表示禁用相应过期或刷新
          * @return 当前构建器，供链式配置
          */
@@ -310,6 +313,7 @@ public final class CacheConfig {
 
         /**
          * 设置写后刷新时间（秒）。
+         *
          * @param seconds 时长，单位为秒；0 表示禁用相应过期或刷新
          * @return 当前构建器，供链式配置
          */
@@ -320,6 +324,7 @@ public final class CacheConfig {
 
         /**
          * 设置初始容量。
+         *
          * @param initialCapacity 初始容量
          * @return 当前构建器，供链式配置
          */
@@ -330,6 +335,7 @@ public final class CacheConfig {
 
         /**
          * 设置是否记录统计信息。
+         *
          * @param recordStats 是否记录统计信息
          * @return 当前构建器，供链式配置
          */
@@ -340,6 +346,7 @@ public final class CacheConfig {
 
         /**
          * 设置缓存类型。
+         *
          * @param cacheType 缓存类型
          * @return 当前构建器，供链式配置
          */
@@ -350,6 +357,7 @@ public final class CacheConfig {
 
         /**
          * 设置本地缓存限制（多级缓存时本地缓存最大条目数）。
+         *
          * @param localLimit 本地缓存最大条目数
          * @return 当前构建器，供链式配置
          */
@@ -360,6 +368,7 @@ public final class CacheConfig {
 
         /**
          * 设置是否同步本地缓存（多级缓存时远程变更是否广播同步本地）。
+         *
          * @param syncLocal 是否广播同步本地缓存
          * @return 当前构建器，供链式配置
          */
@@ -370,6 +379,7 @@ public final class CacheConfig {
 
         /**
          * 设置移除监听器。
+         *
          * @param removalListener 键级移除监听器
          * @return 当前构建器，供链式配置
          */

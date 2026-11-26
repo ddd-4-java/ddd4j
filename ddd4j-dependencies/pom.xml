@@ -476,9 +476,11 @@
         <opensearch.version>3.9.0</opensearch.version>
         <opentelemetry-alpha.version>${opentelemetry.version}-alpha</opentelemetry-alpha.version>
         <opentelemetry-instrumentation.version>2.33.1</opentelemetry-instrumentation.version>
-        <opentelemetry-instrumentation-alpha.version>${opentelemetry-instrumentation.version}-alpha</opentelemetry-instrumentation-alpha.version>
+        <opentelemetry-instrumentation-alpha.version>${opentelemetry-instrumentation.version}-alpha
+        </opentelemetry-instrumentation-alpha.version>
         <opentelemetry-semconv.version>1.44.0</opentelemetry-semconv.version>
-        <opentelemetry-semconv-alpha.version>${opentelemetry-semconv.version}-alpha</opentelemetry-semconv-alpha.version>
+        <opentelemetry-semconv-alpha.version>${opentelemetry-semconv.version}-alpha
+        </opentelemetry-semconv-alpha.version>
         <opentelemetry-javaagent.version>2.33.1</opentelemetry-javaagent.version>
         <opentelemetry.version>1.67.0</opentelemetry.version>
         <opentest4j.version>1.3.0</opentest4j.version>
@@ -6866,10 +6868,26 @@
                 <version>${mybatis-plus-enhance.version}</version>
                 <type>pom</type>
             </dependency>
-            <dependency><groupId>io.github.easy4j</groupId><artifactId>mybatis-enhance-core</artifactId><version>${revision}</version></dependency>
-            <dependency><groupId>io.github.easy4j</groupId><artifactId>mybatis-enhance-extension</artifactId><version>${revision}</version></dependency>
-            <dependency><groupId>io.github.easy4j</groupId><artifactId>mybatis-enhance-annotation</artifactId><version>${revision}</version></dependency>
-            <dependency><groupId>io.github.easy4j</groupId><artifactId>mybatis-enhance-typehandler</artifactId><version>${revision}</version></dependency>
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>mybatis-enhance-core</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>mybatis-enhance-extension</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>mybatis-enhance-annotation</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.easy4j</groupId>
+                <artifactId>mybatis-enhance-typehandler</artifactId>
+                <version>${revision}</version>
+            </dependency>
             <dependency>
                 <groupId>io.github.easy4j</groupId>
                 <artifactId>mybatis-plus-enhance-core</artifactId>
@@ -10213,7 +10231,7 @@
                 <version>${openhtmltopdf.version}</version>
             </dependency>
         </dependencies>
-        </dependencyManagement>
+    </dependencyManagement>
 
     <dependencies>
         <!-- For Lombok -->

@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 package io.ddd4j.core.exception;
-import io.ddd4j.core.api.CustomApiCode;
-import io.ddd4j.core.api.ApiCode;
 
+import io.ddd4j.core.api.ApiCode;
+import io.ddd4j.core.api.CustomApiCode;
 import io.ddd4j.core.util.I18nKit;
 import lombok.Getter;
 
@@ -54,7 +54,7 @@ public class BizIOException extends IOException {
     /**
      * 创建可国际化的业务 IO 异常。
      *
-     * @param code 业务错误码
+     * @param code    业务错误码
      * @param message 错误消息或国际化资源键
      */
     public BizIOException(Integer code, String message) {
@@ -65,9 +65,9 @@ public class BizIOException extends IOException {
     /**
      * 创建可国际化的业务 IO 异常。
      *
-     * @param code 业务错误码
+     * @param code    业务错误码
      * @param message 错误消息或国际化资源键
-     * @param args 消息格式化参数
+     * @param args    消息格式化参数
      */
     public BizIOException(Integer code, String message, Object... args) {
         super(I18nKit.get(message, args));
@@ -78,9 +78,9 @@ public class BizIOException extends IOException {
     /**
      * 按业务码和国际化资源键创建业务 IO 异常。
      *
-     * @param code 业务错误码
+     * @param code     业务错误码
      * @param i18nCode 国际化资源键
-     * @param message 错误消息或国际化资源键
+     * @param message  错误消息或国际化资源键
      */
     public BizIOException(Integer code, String i18nCode, String message) {
         super(I18nKit.get(i18nCode, message));
@@ -91,10 +91,10 @@ public class BizIOException extends IOException {
     /**
      * 按业务码和国际化资源键创建业务 IO 异常。
      *
-     * @param code 业务错误码
+     * @param code     业务错误码
      * @param i18nCode 国际化资源键
-     * @param args 消息格式化参数
-     * @param message 错误消息或国际化资源键
+     * @param args     消息格式化参数
+     * @param message  错误消息或国际化资源键
      */
     public BizIOException(Integer code, String i18nCode, Object[] args, String message) {
         super(I18nKit.get(i18nCode, Objects.nonNull(args) ? args : new Object[]{message}));
@@ -116,7 +116,7 @@ public class BizIOException extends IOException {
      * 创建可国际化的业务 IO 异常。
      *
      * @param message 错误消息或国际化资源键
-     * @param args 消息格式化参数
+     * @param args    消息格式化参数
      */
     public BizIOException(String message, Object... args) {
         super(I18nKit.get(message, args));
@@ -127,7 +127,7 @@ public class BizIOException extends IOException {
      * 创建可国际化的业务 IO 异常。
      *
      * @param message 错误消息或国际化资源键
-     * @param cause 原始异常
+     * @param cause   原始异常
      */
     public BizIOException(String message, Throwable cause) {
         super(I18nKit.get(message), cause);
@@ -136,7 +136,7 @@ public class BizIOException extends IOException {
     /**
      * 按预定义业务码和国际化键创建业务 IO 异常。
      *
-     * @param code 业务错误码
+     * @param code     业务错误码
      * @param i18nCode 国际化资源键
      */
     public BizIOException(ApiCode code, String i18nCode) {
@@ -146,7 +146,7 @@ public class BizIOException extends IOException {
     /**
      * 按业务扩展码和国际化键创建异常。
      *
-     * @param code 业务扩展错误码
+     * @param code     业务扩展错误码
      * @param i18nCode 国际化资源键
      */
     public BizIOException(CustomApiCode code, String i18nCode) {
@@ -158,9 +158,9 @@ public class BizIOException extends IOException {
     /**
      * 创建可国际化的业务 IO 异常。
      *
-     * @param code 业务错误码
+     * @param code    业务错误码
      * @param message 错误消息或国际化资源键
-     * @param cause 原始异常
+     * @param cause   原始异常
      */
     public BizIOException(Integer code, String message, Throwable cause) {
         super(I18nKit.get(message), cause);
@@ -170,10 +170,10 @@ public class BizIOException extends IOException {
     /**
      * 按业务码和国际化资源键创建业务 IO 异常。
      *
-     * @param code 业务错误码
+     * @param code     业务错误码
      * @param i18nCode 国际化资源键
-     * @param defMsg 资源缺失时的默认消息
-     * @param cause 原始异常
+     * @param defMsg   资源缺失时的默认消息
+     * @param cause    原始异常
      */
     public BizIOException(Integer code, String i18nCode, String defMsg, Throwable cause) {
         super(I18nKit.get(i18nCode, defMsg), cause);
@@ -221,7 +221,7 @@ public class BizIOException extends IOException {
      * 按业务码和国际化资源键创建业务 IO 异常。
      *
      * @param i18nCode 国际化资源键
-     * @param message 错误消息或国际化资源键
+     * @param message  错误消息或国际化资源键
      * @return 新建的业务 IO 异常
      */
     public static BizIOException e(String i18nCode, String message) {

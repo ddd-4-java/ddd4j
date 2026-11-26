@@ -49,16 +49,6 @@ public final class SaTokenDataSubjectProvider extends SaTokenSubjectProvider {
     public SaTokenDataSubjectProvider() {
     }
 
-    @Override
-    public Subject getSubject() {
-        return new TokenSubject(null);
-    }
-
-    @Override
-    public Subject getSubject(String realm) {
-        return new TokenSubject(realm);
-    }
-
     static SaTokenDataIdentity identityForToken(StpLogic logic, String token) {
         Map<?, ?> context = verifiedTokenContext(logic, token);
         return Objects.nonNull(tokenPrincipal(context)) ? SaTokenDataIdentity.fromSession(context) : null;
@@ -108,6 +98,16 @@ public final class SaTokenDataSubjectProvider extends SaTokenSubjectProvider {
             }
             throw failure;
         }
+    }
+
+    @Override
+    public Subject getSubject() {
+        return new TokenSubject(null);
+    }
+
+    @Override
+    public Subject getSubject(String realm) {
+        return new TokenSubject(realm);
     }
 
     private static final class TokenSubject extends SaTokenSubject {

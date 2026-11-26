@@ -14,13 +14,11 @@
  */
 package io.ddd4j.core.cqrs.readmodel;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.util.Objects;
-
 import java.time.Instant;
+import java.util.Objects;
 
 /**
  * 投影最近一次运行的快照信息（由 {@link ProjectionMetrics} 实现方记录）。
@@ -40,7 +38,21 @@ public final class ProjectionRunInfo {
     private final String lastError;
 
     /**
+     * @param lastRunAt      上次运行完成时间
+     * @param lastEventCount 上次运行处理的事件数量
+     * @param lastError      上次运行失败的错误信息（成功时为 null）
+     */
+
+    @JsonCreator()
+    public ProjectionRunInfo(@JsonProperty("lastRunAt") Instant lastRunAt, @JsonProperty("lastEventCount") int lastEventCount, @JsonProperty("lastError") String lastError) {
+        this.lastRunAt = lastRunAt;
+        this.lastEventCount = lastEventCount;
+        this.lastError = lastError;
+    }
+
+    /**
      * 返回最近运行时间，兼容 bean 调用方。
+     *
      * @return 上次运行完成时间
      */
     public Instant getLastRunAt() {
@@ -63,19 +75,6 @@ public final class ProjectionRunInfo {
      */
     public String getLastError() {
         return lastError;
-    }
-
-    /**
- * @param lastRunAt 上次运行完成时间
- * @param lastEventCount 上次运行处理的事件数量
- * @param lastError 上次运行失败的错误信息（成功时为 null）
- */
-
-    @JsonCreator()
-    public ProjectionRunInfo(@JsonProperty("lastRunAt") Instant lastRunAt, @JsonProperty("lastEventCount") int lastEventCount, @JsonProperty("lastError") String lastError) {
-        this.lastRunAt = lastRunAt;
-        this.lastEventCount = lastEventCount;
-        this.lastError = lastError;
     }
 
     /**

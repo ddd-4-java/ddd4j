@@ -37,6 +37,7 @@ public interface GetsResponse<V> {
 
     /**
      * 缓存 key。
+     *
      * @return 缓存键
      */
     String key();
@@ -44,6 +45,7 @@ public interface GetsResponse<V> {
     /**
      * 缓存当前值。
      * <p>首次写入（key 不存在）时为 {@code null}。
+     *
      * @return 缓存当前值，首次写入时为 null
      */
     V value();

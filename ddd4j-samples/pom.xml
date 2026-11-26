@@ -25,11 +25,10 @@
         <!-- 跨运行时共享的生产型订单业务内核 -->
         <module>ddd4j-sample-order-domain</module>
         <module>ddd4j-sample-order-application</module>
-        <module>ddd4j-sample-order-local</module>
         <module>ddd4j-sample-order-testkit</module>
         <module>ddd4j-sample-order-jdbc</module>
-        <module>ddd4j-sample-order-kafka</module>
-        <module>ddd4j-sample-order-redis</module>
+        <module>ddd4j-sample-order-adapter</module>
+        <module>ddd4j-sample-order-start</module>
 
         <!-- Spring 四个独立入口，复用外部 Boot 装配与共享 Order。 -->
         <module>ddd4j-sample-spring</module>

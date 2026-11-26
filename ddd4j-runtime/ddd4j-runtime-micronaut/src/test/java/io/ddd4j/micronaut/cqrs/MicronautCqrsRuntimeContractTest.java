@@ -14,25 +14,10 @@
  */
 package io.ddd4j.micronaut.cqrs;
 
-import io.ddd4j.core.cqrs.command.Command;
-import io.ddd4j.core.cqrs.command.DefaultCommandBus;
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.BaseContext;
-import io.ddd4j.core.cqrs.command.CommandBus;
-import io.ddd4j.core.cqrs.command.CommandExecutor;
-import io.ddd4j.core.cqrs.command.CommandRegistry;
-import io.ddd4j.core.cqrs.command.Result;
-import io.ddd4j.core.cqrs.readmodel.DefaultProjectionService;
-import io.ddd4j.core.cqrs.readmodel.EventChunk;
-import io.ddd4j.core.cqrs.readmodel.EventChunkReader;
-import io.ddd4j.core.cqrs.readmodel.InMemoryProjectionPositionRepository;
-import io.ddd4j.core.cqrs.readmodel.NoopEventChunkReader;
-import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
-import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
-import io.ddd4j.core.cqrs.readmodel.ProjectionRunner;
-import io.ddd4j.core.cqrs.readmodel.ProjectionView;
-import io.ddd4j.core.cqrs.readmodel.ViewManager;
-import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
+import io.ddd4j.core.cqrs.command.*;
+import io.ddd4j.core.cqrs.readmodel.*;
 import io.ddd4j.micronaut.command.MicronautCommandBus;
 import io.ddd4j.runtime.testkit.AbstractCqrsRuntimeContractTest;
 import io.ddd4j.runtime.testkit.CqrsRuntimeContract;
@@ -43,28 +28,41 @@ import jakarta.inject.Singleton;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Map;
-import java.util.List;
-import java.util.Set;
-import java.util.TimeZone;
-
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-/** Micronaut 真实原生容器与共享命令、视图契约；持久恢复另以当前 JAR 探针验证。 */
+/**
+ * Micronaut 真实原生容器与共享命令、视图契约；持久恢复另以当前 JAR 探针验证。
+ */
 class MicronautCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
     private static final String PARTIAL_START = "r14.micronaut.partial-start";
+
+    private static ProjectionView<Object> unscheduledView(String name) {
+        return new ProjectionView<Object>() {
+            @Override
+            public String getName() {
+                return name;
+            }
+
+            @Override
+            public String getCron() {
+                return "0 0 0 * * *";
+            }
+
+            @Override
+            public Collection<String> getEventTypes() {
+                return Collections.singleton("event");
+            }
+
+            @Override
+            public void handleEvents(Collection<Object> events) {
+                throw new AssertionError("failed startup must not handle events");
+            }
+        };
+    }
 
     @Test
     void nativeBasicContextUsesSnapshotBusAndNoProjection() {
@@ -104,6 +102,7 @@ class MicronautCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
                 public Set<Class<? extends Command>> supportedCommands() {
                     return Set.of(LateCommand.class);
                 }
+
                 @Override
                 public Result execute(LateCommand command) {
                     return Result.ok();
@@ -234,26 +233,72 @@ class MicronautCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
-    private static ProjectionView<Object> unscheduledView(String name) {
-        return new ProjectionView<Object>() {
+    @Test
+    void sharedCronRetainsNumericGrammarAndFindsAnnualSchedule() {
+        LocalDateTime from = LocalDateTime.of(2026, 2, 1, 0, 0);
+        assertEquals(LocalDateTime.of(2027, 1, 1, 0, 0),
+                MicronautProjectionScheduler.CronExpression.parse("0 0 0 1 1 *").next(from));
+        assertThrows(IllegalArgumentException.class,
+                () -> MicronautProjectionScheduler.CronExpression.parse("0 0 0 ? * *"));
+        assertThrows(IllegalArgumentException.class,
+                () -> MicronautProjectionScheduler.CronExpression.parse("0/0 * * * * *"));
+    }
+
+    @Test
+    void cronRetainsLegacyLocalWallTimeAtDstGap() {
+        TimeZone original = TimeZone.getDefault();
+        try {
+            TimeZone.setDefault(TimeZone.getTimeZone("America/New_York"));
+            assertEquals(LocalDateTime.of(2026, 3, 8, 2, 0),
+                    MicronautProjectionScheduler.CronExpression.parse("0 0 2 * * *")
+                            .next(LocalDateTime.of(2026, 3, 8, 1, 59, 59)));
+        } finally {
+            TimeZone.setDefault(original);
+        }
+    }
+
+    @Override
+    protected CqrsRuntimeContract createContract() {
+        ApplicationContext context = ApplicationContext.builder().build();
+        context.registerSingleton(StubExecutorA.class, new StubExecutorA());
+        context.registerSingleton(StubExecutorB.class, new StubExecutorB());
+        context.start();
+        CommandBus commandBus = context.getBean(CommandBus.class);
+        InMemoryProjectionPositionRepository positions = new InMemoryProjectionPositionRepository();
+        MicronautProjectionScheduler scheduler = new MicronautProjectionScheduler();
+        MicronautProjectionViewManager manager = new MicronautProjectionViewManager(scheduler,
+                new ProjectionRunner<>(new DefaultProjectionService(positions), new NoopEventChunkReader<>()), context);
+        return new CqrsRuntimeContract() {
             @Override
-            public String getName() {
-                return name;
+            public String runtimeName() {
+                return "micronaut";
             }
 
             @Override
-            public String getCron() {
-                return "0 0 0 * * *";
+            public CommandBus commandBus() {
+                return commandBus;
             }
 
             @Override
-            public Collection<String> getEventTypes() {
-                return Collections.singleton("event");
+            public ViewManager viewManager() {
+                return manager;
             }
 
             @Override
-            public void handleEvents(Collection<Object> events) {
-                throw new AssertionError("failed startup must not handle events");
+            public ViewScheduler viewScheduler() {
+                return scheduler;
+            }
+
+            @Override
+            public ProjectionPositionRepository positionRepository() {
+                return positions;
+            }
+
+            @Override
+            public void close() {
+                manager.stop();
+                scheduler.shutdown();
+                context.close();
             }
         };
     }
@@ -298,73 +343,32 @@ class MicronautCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
-    @Test
-    void sharedCronRetainsNumericGrammarAndFindsAnnualSchedule() {
-        LocalDateTime from = LocalDateTime.of(2026, 2, 1, 0, 0);
-        assertEquals(LocalDateTime.of(2027, 1, 1, 0, 0),
-                MicronautProjectionScheduler.CronExpression.parse("0 0 0 1 1 *").next(from));
-        assertThrows(IllegalArgumentException.class,
-                () -> MicronautProjectionScheduler.CronExpression.parse("0 0 0 ? * *"));
-        assertThrows(IllegalArgumentException.class,
-                () -> MicronautProjectionScheduler.CronExpression.parse("0/0 * * * * *"));
+    /**
+     * 原生编译期发现使用的命令。
+     */
+    static final class NativeCommand implements Command {
     }
 
-    @Test
-    void cronRetainsLegacyLocalWallTimeAtDstGap() {
-        TimeZone original = TimeZone.getDefault();
-        try {
-            TimeZone.setDefault(TimeZone.getTimeZone("America/New_York"));
-            assertEquals(LocalDateTime.of(2026, 3, 8, 2, 0),
-                    MicronautProjectionScheduler.CronExpression.parse("0 0 2 * * *")
-                            .next(LocalDateTime.of(2026, 3, 8, 1, 59, 59)));
-        } finally {
-            TimeZone.setDefault(original);
-        }
+    /**
+     * 构造总线后才注册的命令。
+     */
+    static final class LateCommand implements Command {
     }
 
-    @Override
-    protected CqrsRuntimeContract createContract() {
-        ApplicationContext context = ApplicationContext.builder().build();
-        context.registerSingleton(StubExecutorA.class, new StubExecutorA());
-        context.registerSingleton(StubExecutorB.class, new StubExecutorB());
-        context.start();
-        CommandBus commandBus = context.getBean(CommandBus.class);
-        InMemoryProjectionPositionRepository positions = new InMemoryProjectionPositionRepository();
-        MicronautProjectionScheduler scheduler = new MicronautProjectionScheduler();
-        MicronautProjectionViewManager manager = new MicronautProjectionViewManager(scheduler,
-                new ProjectionRunner<>(new DefaultProjectionService(positions), new NoopEventChunkReader<>()), context);
-        return new CqrsRuntimeContract() {
-            @Override
-            public String runtimeName() { return "micronaut"; }
-            @Override
-            public CommandBus commandBus() { return commandBus; }
-            @Override
-            public ViewManager viewManager() { return manager; }
-            @Override
-            public ViewScheduler viewScheduler() { return scheduler; }
-            @Override
-            public ProjectionPositionRepository positionRepository() { return positions; }
-            @Override
-            public void close() {
-                manager.stop();
-                scheduler.shutdown();
-                context.close();
-            }
-        };
-    }
-
-    /** 原生编译期发现使用的命令。 */
-    static final class NativeCommand implements Command { }
-    /** 构造总线后才注册的命令。 */
-    static final class LateCommand implements Command { }
-    /** 原生 BeanDefinition 发现的执行器；保留异常对象身份。 */
+    /**
+     * 原生 BeanDefinition 发现的执行器；保留异常对象身份。
+     */
     @Singleton
     @Requires(property = "r09.command", value = "true")
     static class NativeExecutor implements CommandExecutor<NativeCommand> {
-        boolean fail;
         final IllegalArgumentException failure = new IllegalArgumentException("handler failure");
+        boolean fail;
+
         @Override
-        public Set<Class<? extends Command>> supportedCommands() { return Set.of(NativeCommand.class); }
+        public Set<Class<? extends Command>> supportedCommands() {
+            return Set.of(NativeCommand.class);
+        }
+
         @Override
         public Result execute(NativeCommand command) {
             if (fail) {

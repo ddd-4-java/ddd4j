@@ -13,30 +13,17 @@
  * limitations under the License.
  */
 package io.ddd4j.guice.cqrs;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import io.ddd4j.core.cqrs.readmodel.DefaultProjectionPosition;
-import io.ddd4j.core.cqrs.readmodel.DefaultProjectionService;
-import io.ddd4j.core.cqrs.readmodel.EventChunk;
-import io.ddd4j.core.cqrs.readmodel.ProjectionRunner;
-import io.ddd4j.core.cqrs.readmodel.ProjectionView;
-import io.ddd4j.core.cqrs.readmodel.ProjectionMetrics;
-import io.ddd4j.core.cqrs.readmodel.ProjectionRunInfo;
-import io.ddd4j.core.cqrs.readmodel.ProjectionStatus;
+import io.ddd4j.core.cqrs.readmodel.*;
 import io.ddd4j.core.cqrs.readmodel.ViewScheduler.ViewScheduleHandle;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
-import java.util.Optional;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -49,6 +36,34 @@ class GuiceViewManagerTest {
     private static final long CALLBACK_TIMEOUT_SECONDS = 5;
 
     private final GuiceViewManager manager = new GuiceViewManager();
+
+    private static ProjectionRunner<Object> emptyRunner(GuiceInMemoryProjectionPositionRepository repository) {
+        return new ProjectionRunner<>(new DefaultProjectionService(repository),
+                (streamId, position, size, types) -> EventChunk.empty(position));
+    }
+
+    private static ProjectionView<Object> view(String name) {
+        return new ProjectionView<Object>() {
+            @Override
+            public String getName() {
+                return name;
+            }
+
+            @Override
+            public String getCron() {
+                return "0/3600";
+            }
+
+            @Override
+            public Collection<String> getEventTypes() {
+                return Collections.emptyList();
+            }
+
+            @Override
+            public void handleEvents(Collection<Object> events) {
+            }
+        };
+    }
 
     @AfterEach
     void tearDown() {
@@ -165,10 +180,12 @@ class GuiceViewManagerTest {
 
     @Test
     void stopCancelsOutstandingHandlesAndSupportsFreshRestart() {
-        ViewScheduleHandle first = manager.scheduleAtFixedRate("owned", 3600, () -> { });
+        ViewScheduleHandle first = manager.scheduleAtFixedRate("owned", 3600, () -> {
+        });
         manager.stop();
         assertFalse(first.isActive());
-        ViewScheduleHandle second = manager.scheduleAtFixedRate("owned", 3600, () -> { });
+        ViewScheduleHandle second = manager.scheduleAtFixedRate("owned", 3600, () -> {
+        });
         assertTrue(second.isActive());
         manager.close();
         assertFalse(second.isActive());
@@ -191,7 +208,8 @@ class GuiceViewManagerTest {
                 }
                 ViewScheduleHandle first = super.schedule(viewName, cron, task);
                 scheduled.set(first);
-                owned.set(scheduleAtFixedRate("local", 3600, () -> { }));
+                owned.set(scheduleAtFixedRate("local", 3600, () -> {
+                }));
                 return first;
             }
         }) {
@@ -230,7 +248,8 @@ class GuiceViewManagerTest {
             }
         }) {
             managed.start();
-            ViewScheduleHandle owned = managed.scheduleAtFixedRate("local", 3600, () -> { });
+            ViewScheduleHandle owned = managed.scheduleAtFixedRate("local", 3600, () -> {
+            });
 
             assertSame(failure, assertThrows(LinkageError.class, managed::stop));
             assertFalse(managed.isRunning());
@@ -239,34 +258,6 @@ class GuiceViewManagerTest {
             managed.close();
             assertEquals(2, cancellationAttempts.get());
         }
-    }
-
-    private static ProjectionRunner<Object> emptyRunner(GuiceInMemoryProjectionPositionRepository repository) {
-        return new ProjectionRunner<>(new DefaultProjectionService(repository),
-                (streamId, position, size, types) -> EventChunk.empty(position));
-    }
-
-    private static ProjectionView<Object> view(String name) {
-        return new ProjectionView<Object>() {
-            @Override
-            public String getName() {
-                return name;
-            }
-
-            @Override
-            public String getCron() {
-                return "0/3600";
-            }
-
-            @Override
-            public Collection<String> getEventTypes() {
-                return Collections.emptyList();
-            }
-
-            @Override
-            public void handleEvents(Collection<Object> events) {
-            }
-        };
     }
 
     // --- getProjectionStatus tests ---

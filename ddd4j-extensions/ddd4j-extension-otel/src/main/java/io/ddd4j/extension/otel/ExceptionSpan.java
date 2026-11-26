@@ -63,7 +63,7 @@ public final class ExceptionSpan {
     /**
      * 在指定 Span 上记录异常。
      *
-     * @param span 追踪片段
+     * @param span      追踪片段
      * @param throwable 异常
      */
     public static void record(Span span, Throwable throwable) {

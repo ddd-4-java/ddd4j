@@ -56,7 +56,7 @@ public class KafkaMessageAcknowledgment implements Acknowledgment {
      * 创建 Kafka 消息确认句柄。
      *
      * @param consumer Kafka 消费者
-     * @param record 待确认的 Kafka 记录
+     * @param record   待确认的 Kafka 记录
      */
     public KafkaMessageAcknowledgment(Consumer<?, ?> consumer, ConsumerRecord<?, ?> record) {
         this.consumer = Objects.requireNonNull(consumer, "Kafka Consumer is required");

@@ -74,9 +74,10 @@ public class MicrometerProjectionMetrics implements ProjectionMetrics {
 
     /**
      * onRunCompleted() 方法。
-     * @param streamId 字符串参数。
-     * @param eventCount eventCount 参数。
-     * @param durationNanos durationNanos 参数。
+     *
+     * @param streamId        字符串参数。
+     * @param eventCount      eventCount 参数。
+     * @param durationNanos   durationNanos 参数。
      * @param positionAdvance positionAdvance 参数。
      */
     @Override
@@ -98,8 +99,9 @@ public class MicrometerProjectionMetrics implements ProjectionMetrics {
 
     /**
      * onRunFailed() 方法。
+     *
      * @param streamId 字符串参数。
-     * @param error 根因异常。
+     * @param error    根因异常。
      */
     @Override
     public void onRunFailed(String streamId, Throwable error) {

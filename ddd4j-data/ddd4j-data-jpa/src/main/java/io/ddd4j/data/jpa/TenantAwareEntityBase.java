@@ -34,11 +34,15 @@ import java.util.Objects;
 @MappedSuperclass
 public abstract class TenantAwareEntityBase {
 
-    /** 创建时间。 */
+    /**
+     * 创建时间。
+     */
     @Column(name = "created_time", updatable = false)
     protected LocalDateTime createdTime;
 
-    /** 最后更新时间。 */
+    /**
+     * 最后更新时间。
+     */
     @Column(name = "updated_time")
     protected LocalDateTime updatedTime;
 

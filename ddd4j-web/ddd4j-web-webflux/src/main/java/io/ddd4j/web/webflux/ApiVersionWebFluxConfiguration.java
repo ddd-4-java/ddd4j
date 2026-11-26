@@ -45,16 +45,24 @@ import org.springframework.core.env.Environment;
 @Configuration(proxyBeanMethods = false)
 public class ApiVersionWebFluxConfiguration {
 
-    /** 配置属性前缀（与 WebMVC 侧共享）。 */
+    /**
+     * 配置属性前缀（与 WebMVC 侧共享）。
+     */
     public static final String PROPERTY_PREFIX = "ddd4j.web.api-version";
 
-    /** 属性名：是否启用版本解析。 */
+    /**
+     * 属性名：是否启用版本解析。
+     */
     public static final String PROPERTY_ENABLED = PROPERTY_PREFIX + ".enabled";
 
-    /** 属性名：默认版本。 */
+    /**
+     * 属性名：默认版本。
+     */
     public static final String PROPERTY_DEFAULT_VERSION = PROPERTY_PREFIX + ".default-version";
 
-    /** 属性名：非法版本值处理模式。 */
+    /**
+     * 属性名：非法版本值处理模式。
+     */
     public static final String PROPERTY_MODE = PROPERTY_PREFIX + ".mode";
 
     /**
@@ -75,7 +83,7 @@ public class ApiVersionWebFluxConfiguration {
      * API 版本解析过滤器 Bean：按 {@code enabled} 属性携带启用状态；
      * 关闭时 {@code filter()} 完全旁路，等价于未注册。
      *
-     * @param resolver 版本解析器
+     * @param resolver    版本解析器
      * @param environment Spring 环境
      * @return 版本过滤器
      */

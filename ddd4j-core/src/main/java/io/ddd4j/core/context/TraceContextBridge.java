@@ -17,11 +17,7 @@ package io.ddd4j.core.context;
 import io.ddd4j.kit.lang.StrKit;
 import org.slf4j.MDC;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * traceId 写入 TTL {@link ThreadContext} 的桥接点（纯 Java，零 Spring 依赖）。

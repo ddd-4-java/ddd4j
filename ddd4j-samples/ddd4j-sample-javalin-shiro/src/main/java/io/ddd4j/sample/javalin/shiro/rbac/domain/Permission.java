@@ -50,7 +50,7 @@ public class Permission {
     /**
      * 创建权限。
      *
-     * @param code 编码
+     * @param code        编码
      * @param description 描述
      */
     public Permission(String code, String description) {

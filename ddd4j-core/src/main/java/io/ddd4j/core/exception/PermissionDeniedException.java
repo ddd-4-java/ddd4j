@@ -47,7 +47,7 @@ public class PermissionDeniedException extends AuthorizationException {
      * 使用错误消息创建权限不足异常。
      *
      * @param message 错误消息
-     * @param cause 原始异常
+     * @param cause   原始异常
      */
     public PermissionDeniedException(String message, Throwable cause) {
         super(message, cause);

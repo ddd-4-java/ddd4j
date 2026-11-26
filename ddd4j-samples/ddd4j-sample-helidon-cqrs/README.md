@@ -1,5 +1,22 @@
 # Helidon CQRS 订单样例
 
+## 当前商品交易入口
+
+此模块以 CQRS 方式运行共享商品交易。先按[示例总览](../README.md#启动默认订单示例)配置 MySQL。以下命令从仓库根目录运行，使用实际 Maven 版本替换 `<version>`。
+
+```bash
+module=ddd4j-samples/ddd4j-sample-helidon-cqrs
+./mvnw -pl "$module" -am -DskipTests -Dmaven.javadoc.skip=true -DincludeScope=runtime -Dmdep.outputFile=target/runtime-classpath.txt package dependency:build-classpath
+java -cp "$module/target/ddd4j-sample-helidon-cqrs-<version>.jar:$(cat "$module/target/runtime-classpath.txt")" io.ddd4j.sample.helidon.cqrs.HelidonCqrsApplication
+```
+
+业务请求携带 `X-Tenant-Id`。商品地址为 `/orders/catalog/goods/{spuCode}`，订单地址为 `/orders/catalog/orders/{orderNo}`。支付、取消和履约分别使用订单子路径 `/payment`、`/cancel`、`/fulfill`。
+
+写操作经命令总线执行。调用 `POST /orders/catalog/projections/orders/{orderNo}` 构建订单投影。
+
+<details>
+<summary>商品交易迁移前的说明</summary>
+
 使用当前发行线要求的 JDK、原生 Helidon MP/CDI/JAX-RS 和共享 Order domain/application。主入口与持久化 HTTP 测试使用同一 `start(int)` 装配；没有 test-only 服务器替代产品入口。`server.port` 默认为8080；停止时配对 `Server.stop()`。
 
 入口：`io.ddd4j.sample.helidon.cqrs.HelidonCqrsApplication`。
@@ -30,3 +47,5 @@ flowchart LR
 此入口使用专用 Outbox 和单实例串行中继。保持原消息 ID、订单 ID、事件类型和业务载荷。写库/Outbox 同一 JDBC 事务，EventStore、查询和 checkpoint 是独立 ResourceLocal/JDBC 事务，没有 JTA 假设。先 append 再确认；查询提交先于 checkpoint，靠原消息 ID 去重与查询 UPSERT 恢复。投影使用已持久写模型重建最新快照；HTTP 查询没有写仓储 fallback，不声称逐事件历史快照。原内存 CDI 类型用 `@Typed` 与 R10 默认 reader/view/manager 隔离。
 
 投影按事件库的全局位置读页，只处理 `Order` 聚合，检查点推进到已扫描页尾的下一位置。事件库会先解码整页；无法解码的事件、载荷类型错误的订单事件和缺失的订单写模型都会阻止本批检查点提交。修复数据后可从原位重试。
+
+</details>

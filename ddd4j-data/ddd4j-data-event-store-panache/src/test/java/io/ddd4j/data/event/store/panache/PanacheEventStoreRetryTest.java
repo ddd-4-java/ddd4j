@@ -14,19 +14,11 @@
  */
 package io.ddd4j.data.event.store.panache;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.util.Objects;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
-import io.ddd4j.core.ddd.event.AggregateRootId;
-import io.ddd4j.core.ddd.event.DomainEvent;
-import io.ddd4j.core.ddd.event.EntityIdPath;
-import io.ddd4j.core.ddd.event.EntityType;
-import io.ddd4j.core.ddd.event.StringEntityType;
+import io.ddd4j.core.ddd.event.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.PersistenceException;
@@ -38,6 +30,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -200,10 +193,13 @@ class PanacheEventStoreRetryTest {
     final static class TestAggregateRootId implements AggregateRootId {
 
         private static final long serialVersionUID = 0L;
-
+        private static final EntityType TYPE = new StringEntityType("Order");
         private final String value;
 
-        private static final EntityType TYPE = new StringEntityType("Order");
+        @JsonCreator()
+        TestAggregateRootId(@JsonProperty("value") String value) {
+            this.value = value;
+        }
 
         @Override
         public EntityType getType() {
@@ -218,11 +214,6 @@ class PanacheEventStoreRetryTest {
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
-        }
-
-        @JsonCreator()
-        TestAggregateRootId(@JsonProperty("value") String value) {
-            this.value = value;
         }
 
         @JsonProperty("value")

@@ -14,8 +14,8 @@
  */
 package io.ddd4j.quarkus.cqrs;
 
-import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
 import io.ddd4j.core.constant.ProjectionConstants;
+import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.Annotation;
@@ -29,6 +29,15 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 class QuarkusJpaProjectionPositionTest {
+
+    private static Annotation annotation(java.lang.reflect.AnnotatedElement element, String typeName) {
+        for (Annotation annotation : element.getAnnotations()) {
+            if (typeName.equals(annotation.annotationType().getName())) {
+                return annotation;
+            }
+        }
+        return null;
+    }
 
     @Test
     void usesTheJpaNamespaceAndColumnsSupportedByThisJdk() throws Exception {
@@ -49,15 +58,6 @@ class QuarkusJpaProjectionPositionTest {
                 .isEqualTo(ProjectionConstants.COLUMN_STREAM_ID);
         assertThat(nextEventColumn.annotationType().getMethod("name").invoke(nextEventColumn))
                 .isEqualTo(ProjectionConstants.COLUMN_NEXT_EVENT_NUMBER);
-    }
-
-    private static Annotation annotation(java.lang.reflect.AnnotatedElement element, String typeName) {
-        for (Annotation annotation : element.getAnnotations()) {
-            if (typeName.equals(annotation.annotationType().getName())) {
-                return annotation;
-            }
-        }
-        return null;
     }
 
     @Test

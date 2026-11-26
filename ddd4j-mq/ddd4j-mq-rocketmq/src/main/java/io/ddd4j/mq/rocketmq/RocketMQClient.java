@@ -127,7 +127,7 @@ public class RocketMQClient implements MQClient {
      * 构造方法 2'：自行根据 properties 构造 producer + 异步发送回调（lazy）。
      *
      * @param properties 驱动懒构造的配置，不可为空
-     * @param callback 异步发送回调，可为空（为空时仅记录发送结果日志）
+     * @param callback   异步发送回调，可为空（为空时仅记录发送结果日志）
      */
     public RocketMQClient(RocketMQProperties properties, SendCallback callback) {
         this.producer = null;

@@ -1,5 +1,22 @@
 # Javalin Shiro 示例
 
+## 当前商品交易入口
+
+此模块以 Shiro 方式运行共享商品交易。先按[示例总览](../README.md#启动默认订单示例)配置 MySQL。以下命令从仓库根目录运行，使用实际 Maven 版本替换 `<version>`。
+
+```bash
+module=ddd4j-samples/ddd4j-sample-javalin-shiro
+./mvnw -pl "$module" -am -DskipTests -Dmaven.javadoc.skip=true -DincludeScope=runtime -Dmdep.outputFile=target/runtime-classpath.txt package dependency:build-classpath
+java -cp "$module/target/ddd4j-sample-javalin-shiro-<version>.jar:$(cat "$module/target/runtime-classpath.txt")" io.ddd4j.sample.javalin.shiro.JavalinShiroApplication
+```
+
+业务请求携带 `X-Tenant-Id`。商品地址为 `/orders/catalog/goods/{spuCode}`，订单地址为 `/orders/catalog/orders/{orderNo}`。支付、取消和履约分别使用订单子路径 `/payment`、`/cancel`、`/fulfill`。
+
+本地演示登录使用 `POST /auth/login`，请求体为 `{"loginId":"zhangsan","password":"pass123"}`。将令牌放入 `ddd4j-token: <token>` 请求头。
+
+<details>
+<summary>商品交易迁移前的说明</summary>
+
 示例在 Guice 中装配 Shiro、`SubjectKit` 和共享订单服务。订单端点位于 `/orders`，支付和取消分别按 `order:pay`、`order:cancel` 检查权限。
 
 ## 构建和启动
@@ -28,6 +45,8 @@ curl -fsS -X POST "$base/auth/logout" -H "ddd4j-token: <token>"
 ```
 
 `GET /auth/me` 返回当前登录主体。退出后，用同一令牌请求 `/auth/me` 返回 401。
+
+启用商品交易时，`reader / sample-password` 可读取商品与订单，写入返回 403。
 
 ## 请求和资源生命周期
 
@@ -300,5 +319,7 @@ curl 'http://localhost:7000/api/goods/page?current=1&size=10&status=ON_SALE&orde
 - [ddd4j-auth 模块文档](https://github.com/ddd-4-java/ddd4j/tree/feature/2.0.x/ddd4j-auth)
 - [SubjectKit API 文档](https://github.com/ddd-4-java/ddd4j/blob/feature/2.0.x/ddd4j-core/src/main/java/io/ddd4j/core/util/SubjectKit.java)
 - [Apache Shiro 官方文档](https://shiro.apache.org/)
+
+</details>
 
 </details>

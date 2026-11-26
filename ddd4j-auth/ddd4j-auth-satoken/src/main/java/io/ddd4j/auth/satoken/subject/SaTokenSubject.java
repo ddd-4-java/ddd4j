@@ -30,11 +30,7 @@ import cn.dev33.satoken.stp.parameter.enums.SaLogoutMode;
 import cn.dev33.satoken.stp.parameter.enums.SaReplacedLoginExitMode;
 import cn.dev33.satoken.stp.parameter.enums.SaReplacedRange;
 import io.ddd4j.auth.satoken.config.Ddd4jStpLogicJwtForSimple;
-import io.ddd4j.core.auth.AuthLogoutMode;
-import io.ddd4j.core.auth.AuthPrincipal;
-import io.ddd4j.core.auth.AuthRequest;
-import io.ddd4j.core.auth.AuthReplacedLoginExitMode;
-import io.ddd4j.core.auth.AuthReplacedRange;
+import io.ddd4j.core.auth.*;
 import io.ddd4j.core.auth.session.AuthCookieConfig;
 import io.ddd4j.core.auth.session.AuthSessionConfig;
 import io.ddd4j.core.exception.AccountDisabledException;
@@ -68,7 +64,9 @@ public class SaTokenSubject implements Subject {
 
     private final String realm;
 
-    /** 创建使用默认账号体系的主体。 */
+    /**
+     * 创建使用默认账号体系的主体。
+     */
     public SaTokenSubject() {
         this(null);
     }
@@ -80,10 +78,6 @@ public class SaTokenSubject implements Subject {
      */
     public SaTokenSubject(String realm) {
         this.realm = realm;
-    }
-
-    private StpLogic currentLogic() {
-        return stpLogic(realm);
     }
 
     /**
@@ -103,8 +97,6 @@ public class SaTokenSubject implements Subject {
         }
     }
 
-    // ==================== 身份与会话读取 ====================
-
     private static SaCookieConfig toSaCookieConfig(AuthCookieConfig auth) {
         SaCookieConfig sa = new SaCookieConfig();
         if (Objects.nonNull(auth.getDomain())) {
@@ -123,6 +115,12 @@ public class SaTokenSubject implements Subject {
             sa.setSameSite(auth.getSameSite());
         }
         return sa;
+    }
+
+    // ==================== 身份与会话读取 ====================
+
+    private StpLogic currentLogic() {
+        return stpLogic(realm);
     }
 
     /**

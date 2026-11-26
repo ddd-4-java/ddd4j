@@ -14,9 +14,8 @@
  */
 package io.ddd4j.web.testkit;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 import java.util.Map;
@@ -37,6 +36,20 @@ public final class WebContractResponse {
     private final String body;
 
     /**
+     * 创建 Web 契约响应快照。
+     *
+     * @param status  HTTP 状态码
+     * @param headers 响应头
+     * @param body    响应体
+     */
+    @JsonCreator()
+    public WebContractResponse(@JsonProperty("status") int status, @JsonProperty("headers") Map<String, List<String>> headers, @JsonProperty("body") String body) {
+        this.status = status;
+        this.headers = headers;
+        this.body = body;
+    }
+
+    /**
      * 按名称查询首个响应头值，忽略名称大小写。
      *
      * @param name 响应头名称
@@ -47,48 +60,46 @@ public final class WebContractResponse {
         return headers.entrySet().stream().filter(entry -> entry.getKey().equalsIgnoreCase(name)).map(Map.Entry::getValue).filter(values -> Objects.nonNull(values) && !values.isEmpty()).map(values -> values.get(0)).findFirst();
     }
 
-    /** @return 响应体 */
+    /**
+     * @return 响应体
+     */
     public String getBody() {
         return body;
     }
 
-    /** @return 响应头 */
+    /**
+     * @return 响应头
+     */
     public Map<String, List<String>> getHeaders() {
         return headers;
     }
 
-    /** @return HTTP 状态码 */
+    /**
+     * @return HTTP 状态码
+     */
     public int getStatus() {
         return status;
     }
 
     /**
-     * 创建 Web 契约响应快照。
-     *
-     * @param status HTTP 状态码
-     * @param headers 响应头
-     * @param body 响应体
+     * @return HTTP 状态码
      */
-    @JsonCreator()
-    public WebContractResponse(@JsonProperty("status") int status, @JsonProperty("headers") Map<String, List<String>> headers, @JsonProperty("body") String body) {
-        this.status = status;
-        this.headers = headers;
-        this.body = body;
-    }
-
-    /** @return HTTP 状态码 */
     @JsonProperty("status")
     public int status() {
         return status;
     }
 
-    /** @return 响应头 */
+    /**
+     * @return 响应头
+     */
     @JsonProperty("headers")
     public Map<String, List<String>> headers() {
         return headers;
     }
 
-    /** @return 响应体 */
+    /**
+     * @return 响应体
+     */
     @JsonProperty("body")
     public String body() {
         return body;

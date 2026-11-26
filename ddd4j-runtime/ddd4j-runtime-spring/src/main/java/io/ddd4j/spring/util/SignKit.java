@@ -106,10 +106,10 @@ public class SignKit {
     /**
      * 对多值表单请求计算签名。
      *
-     * @param token 请求令牌
+     * @param token    请求令牌
      * @param formData 表单参数
-     * @param body 请求体
-     * @param salt 签名盐值
+     * @param body     请求体
+     * @param salt     签名盐值
      * @return 请求签名
      * @throws UnsupportedEncodingException 请求参数编码失败时抛出
      */
@@ -134,14 +134,14 @@ public class SignKit {
     /**
      * 校验多值表单请求的客户端签名。
      *
-     * @param token 请求令牌
-     * @param appId 应用标识
-     * @param appVersion 应用版本
-     * @param appChannel 应用渠道
+     * @param token       请求令牌
+     * @param appId       应用标识
+     * @param appVersion  应用版本
+     * @param appChannel  应用渠道
      * @param fixedSecret 固定密钥
-     * @param clientSign 客户端签名
-     * @param params 表单参数
-     * @param body 请求体
+     * @param clientSign  客户端签名
+     * @param params      表单参数
+     * @param body        请求体
      * @return 签名是否匹配
      * @throws UnsupportedEncodingException 请求参数编码失败时抛出
      */
@@ -206,10 +206,10 @@ public class SignKit {
     /**
      * 对数组值表单请求计算签名。
      *
-     * @param token 请求令牌
+     * @param token    请求令牌
      * @param formData 表单参数
-     * @param body 请求体
-     * @param salt 签名盐值
+     * @param body     请求体
+     * @param salt     签名盐值
      * @return 请求签名
      * @throws UnsupportedEncodingException 请求参数编码失败时抛出
      */
@@ -234,14 +234,14 @@ public class SignKit {
     /**
      * 校验数组值表单请求的客户端签名。
      *
-     * @param token 请求令牌
-     * @param appId 应用标识
-     * @param appVersion 应用版本
-     * @param appChannel 应用渠道
+     * @param token       请求令牌
+     * @param appId       应用标识
+     * @param appVersion  应用版本
+     * @param appChannel  应用渠道
      * @param fixedSecret 固定密钥
-     * @param clientSign 客户端签名
-     * @param formData 表单参数
-     * @param body 请求体
+     * @param clientSign  客户端签名
+     * @param formData    表单参数
+     * @param body        请求体
      * @return 签名是否匹配
      * @throws UnsupportedEncodingException 请求参数编码失败时抛出
      */

@@ -16,6 +16,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class CacheDefaultMapperContractTest {
 
+    @SuppressWarnings("unchecked")
+    private static <T> T client(Class<T> type) {
+        return (T) Proxy.newProxyInstance(type.getClassLoader(), new Class<?>[]{type},
+                (proxy, method, args) -> {
+                    throw new UnsupportedOperationException(method.getName());
+                });
+    }
+
     @Test
     void adapterDefaultMappersOmitNullProperties() throws Exception {
         CacheConfig config = CacheConfig.builder("mapper-contract").build();
@@ -34,14 +42,6 @@ class CacheDefaultMapperContractTest {
                     .invoke(mapper, new NullableValue());
             assertThat(json).contains("present").doesNotContain("missing");
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <T> T client(Class<T> type) {
-        return (T) Proxy.newProxyInstance(type.getClassLoader(), new Class<?>[]{type},
-                (proxy, method, args) -> {
-                    throw new UnsupportedOperationException(method.getName());
-                });
     }
 
     public static final class NullableValue {

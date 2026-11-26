@@ -1,5 +1,22 @@
 # Javalin Sa-Token 示例
 
+## 当前商品交易入口
+
+此模块以 Sa-Token 方式运行共享商品交易。先按[示例总览](../README.md#启动默认订单示例)配置 MySQL。以下命令从仓库根目录运行，使用实际 Maven 版本替换 `<version>`。
+
+```bash
+module=ddd4j-samples/ddd4j-sample-javalin-satoken
+./mvnw -pl "$module" -am -DskipTests -Dmaven.javadoc.skip=true -DincludeScope=runtime -Dmdep.outputFile=target/runtime-classpath.txt package dependency:build-classpath
+java -cp "$module/target/ddd4j-sample-javalin-satoken-<version>.jar:$(cat "$module/target/runtime-classpath.txt")" io.ddd4j.sample.javalin.satoken.JavalinSaTokenApplication
+```
+
+业务请求携带 `X-Tenant-Id`。商品地址为 `/orders/catalog/goods/{spuCode}`，订单地址为 `/orders/catalog/orders/{orderNo}`。支付、取消和履约分别使用订单子路径 `/payment`、`/cancel`、`/fulfill`。
+
+本地演示登录使用 `POST /auth/login`，请求体为 `{"username":"admin","password":"admin"}`。将令牌放入 `ddd4j-token: <token>` 请求头。
+
+<details>
+<summary>商品交易迁移前的说明</summary>
+
 示例在 Guice 中装配 Sa-Token、`SubjectKit` 和共享订单服务。订单端点位于 `/orders`，支付和取消分别按 `order:pay`、`order:cancel` 检查权限。
 
 ## 构建和启动
@@ -240,5 +257,7 @@ curl 'http://localhost:8085/api/goods/page?current=1&size=10&status=ON_SALE&orde
 - [ddd4j 主项目](https://github.com/redacted-legacy-family/ddd4j)
 - [ddd4j-auth 模块文档](https://github.com/ddd-4-java/ddd4j/tree/feature/2.0.x/ddd4j-auth)
 - [SubjectKit API 文档](https://github.com/ddd-4-java/ddd4j/blob/feature/2.0.x/ddd4j-core/src/main/java/io/ddd4j/core/util/SubjectKit.java)
+
+</details>
 
 </details>

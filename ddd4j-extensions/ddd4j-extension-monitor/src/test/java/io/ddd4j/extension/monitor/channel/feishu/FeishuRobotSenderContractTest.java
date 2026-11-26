@@ -25,7 +25,9 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/** Verifies the shared Feishu post-message contract across the three JDK lines. */
+/**
+ * Verifies the shared Feishu post-message contract across the three JDK lines.
+ */
 class FeishuRobotSenderContractTest {
 
     @Test

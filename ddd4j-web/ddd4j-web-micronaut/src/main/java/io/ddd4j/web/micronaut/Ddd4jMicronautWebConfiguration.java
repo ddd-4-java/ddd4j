@@ -42,6 +42,7 @@ public class Ddd4jMicronautWebConfiguration {
     private Duration idempotencyTtl = Duration.ofMinutes(5);
 
     // Micronaut 在 Lombok 之前分析配置元数据，因此 setter 必须显式存在于源码 AST 中。
+
     /**
      * 设置允许匿名访问的路径。
      *

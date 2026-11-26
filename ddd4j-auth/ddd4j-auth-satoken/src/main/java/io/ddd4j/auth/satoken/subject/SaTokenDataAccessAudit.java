@@ -47,11 +47,11 @@ public final class SaTokenDataAccessAudit {
     /**
      * 写入访问日志，并将脱敏投影交给应用审计接收器。
      *
-     * @param identity 已验证的会话数据身份
-     * @param method HTTP 请求方法
+     * @param identity  已验证的会话数据身份
+     * @param method    HTTP 请求方法
      * @param operation 注册的路由模板或固定处理方法名
-     * @param status 响应状态码
-     * @param sink 应用扩展，未配置时仅记录访问日志
+     * @param status    响应状态码
+     * @param sink      应用扩展，未配置时仅记录访问日志
      */
     public static void publish(SaTokenDataIdentity identity, String method, String operation, int status,
                                Consumer<SaTokenDataAccessAudit> sink) {

@@ -13,11 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.auth.security.handler;
-import org.springframework.security.authentication.LockedException;
-import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.AccountExpiredException;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 
 import io.ddd4j.core.api.R;
 import lombok.extern.slf4j.Slf4j;

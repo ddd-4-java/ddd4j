@@ -1,12 +1,6 @@
 package io.ddd4j.core.cqrs.readmodel;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 共享视图生命周期：提取轻量平台重复的注册、取消句柄和手动触发流程。
@@ -21,9 +15,10 @@ public final class DefaultViewManager<E> implements ViewManager {
 
     /**
      * 创建共享管理器，不启动任务。
+     *
      * @param scheduler 平台提供的调度器
-     * @param runner 共享运行器
-     * @param views 独立命名的视图集合
+     * @param runner    共享运行器
+     * @param views     独立命名的视图集合
      */
     public DefaultViewManager(ViewScheduler scheduler, ProjectionRunner<E> runner,
                               Collection<? extends ProjectionView<E>> views) {

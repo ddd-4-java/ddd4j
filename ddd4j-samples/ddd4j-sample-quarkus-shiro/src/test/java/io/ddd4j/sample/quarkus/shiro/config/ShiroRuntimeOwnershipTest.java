@@ -15,6 +15,21 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 
 class ShiroRuntimeOwnershipTest {
 
+    private static ShiroRuntimeConfig runtime() {
+        ShiroRuntimeConfig runtime = new ShiroRuntimeConfig();
+        runtime.userRepository = new InMemoryUserRepository();
+        runtime.roleRepository = new InMemoryRoleRepository();
+        return runtime;
+    }
+
+    private static SecurityManager processManager() {
+        try {
+            return SecurityUtils.getSecurityManager();
+        } catch (UnavailableSecurityManagerException absent) {
+            return null;
+        }
+    }
+
     @Test
     void restoresProcessManagerWithAnUnrelatedThreadBinding() {
         SecurityManager originalThread = ThreadContext.unbindSecurityManager();
@@ -65,21 +80,6 @@ class ShiroRuntimeOwnershipTest {
                 ThreadContext.bind(originalThread);
             }
             replacement.destroy();
-        }
-    }
-
-    private static ShiroRuntimeConfig runtime() {
-        ShiroRuntimeConfig runtime = new ShiroRuntimeConfig();
-        runtime.userRepository = new InMemoryUserRepository();
-        runtime.roleRepository = new InMemoryRoleRepository();
-        return runtime;
-    }
-
-    private static SecurityManager processManager() {
-        try {
-            return SecurityUtils.getSecurityManager();
-        } catch (UnavailableSecurityManagerException absent) {
-            return null;
         }
     }
 }

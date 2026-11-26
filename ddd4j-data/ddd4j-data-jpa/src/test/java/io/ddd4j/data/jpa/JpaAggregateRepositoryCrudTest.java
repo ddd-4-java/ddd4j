@@ -100,7 +100,8 @@ class JpaAggregateRepositoryCrudTest {
         TypedQuery<OrderPO> query = queryWithNoRows();
         when(entityManager.createQuery(criteria)).thenReturn(query);
 
-        assertEquals(Optional.empty(), repository.findFirst(new Query<Order>() { }));
+        assertEquals(Optional.empty(), repository.findFirst(new Query<Order>() {
+        }));
     }
 
     private TypedQuery<OrderPO> queryWithNoRows() {

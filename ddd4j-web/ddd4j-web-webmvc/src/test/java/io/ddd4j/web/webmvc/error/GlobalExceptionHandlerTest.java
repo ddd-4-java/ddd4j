@@ -13,23 +13,23 @@
  * limitations under the License.
  */
 package io.ddd4j.web.webmvc.error;
-import io.ddd4j.core.api.ApiCode;
 
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParseException;
+import io.ddd4j.core.api.ApiCode;
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.exception.BizCheckedException;
 import io.ddd4j.core.exception.BizIOException;
 import io.ddd4j.core.exception.BizRuntimeException;
 import io.ddd4j.core.exception.IdempotentException;
 import io.ddd4j.web.webmvc.config.ServerI18nProperties;
-import org.springframework.extension.context.NestedMessageSource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.extension.context.NestedMessageSource;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -51,6 +51,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class GlobalExceptionHandlerTest {
 
+    private GlobalExceptionHandler handler;
+    private ServerI18nProperties properties;
+
     @Test
     void noArgumentConstructorHandlesUnsupportedMethodWithoutSpringInjection() {
         GlobalExceptionHandler standaloneHandler = new GlobalExceptionHandler();
@@ -64,9 +67,6 @@ class GlobalExceptionHandlerTest {
         assertThat(response.getCode()).isEqualTo(ApiCode.METHOD_NOT_ALLOWED.getCode());
         assertThat(response.getMsg()).contains("POST", "GET");
     }
-
-    private GlobalExceptionHandler handler;
-    private ServerI18nProperties properties;
 
     @BeforeEach
     void setUp() {

@@ -15,9 +15,9 @@
 package io.ddd4j.mq.rabbitmq;
 
 import com.rabbitmq.client.*;
+import io.ddd4j.mq.delivery.MQDeliveryHeaders;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.event.MQEventSerialization;
-import io.ddd4j.mq.delivery.MQDeliveryHeaders;
 import io.ddd4j.mq.message.MessageHeaders;
 import org.junit.jupiter.api.Test;
 

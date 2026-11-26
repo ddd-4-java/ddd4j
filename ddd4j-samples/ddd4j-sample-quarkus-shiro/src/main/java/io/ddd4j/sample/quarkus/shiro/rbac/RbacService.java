@@ -14,16 +14,12 @@
  */
 package io.ddd4j.sample.quarkus.shiro.rbac;
 
-import io.ddd4j.kit.lang.CollKit;
-
-import io.ddd4j.kit.lang.StrKit;
-
-import java.util.Objects;
-
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.auth.AuthRequest;
 import io.ddd4j.core.util.SubjectKit;
+import io.ddd4j.kit.lang.CollKit;
+import io.ddd4j.kit.lang.StrKit;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.WebApplicationException;
@@ -192,7 +188,7 @@ public class RbacService {
     /**
      * 更新用户资料和角色。
      *
-     * @param id 标识
+     * @param id    标识
      * @param patch 待更新字段
      * @return 已更新的用户
      */
@@ -227,7 +223,7 @@ public class RbacService {
     /**
      * 为用户分配角色。
      *
-     * @param userId 用户标识
+     * @param userId   用户标识
      * @param roleCode 角色编码
      * @return 已更新的用户
      */
@@ -242,7 +238,7 @@ public class RbacService {
     /**
      * 撤销用户角色。
      *
-     * @param userId 用户标识
+     * @param userId   用户标识
      * @param roleCode 角色编码
      * @return 已更新的用户
      */
@@ -289,7 +285,7 @@ public class RbacService {
     /**
      * 更新角色资料。
      *
-     * @param code 业务编码
+     * @param code  业务编码
      * @param patch 待更新字段
      * @return 已更新的角色
      */
@@ -320,7 +316,7 @@ public class RbacService {
     /**
      * 为角色授予权限。
      *
-     * @param roleCode 角色编码
+     * @param roleCode       角色编码
      * @param permissionCode 权限编码
      * @return 已更新的角色
      */
@@ -335,7 +331,7 @@ public class RbacService {
     /**
      * 撤销角色权限。
      *
-     * @param roleCode 角色编码
+     * @param roleCode       角色编码
      * @param permissionCode 权限编码
      * @return 已更新的角色
      */
@@ -382,7 +378,7 @@ public class RbacService {
     /**
      * 更新权限资料。
      *
-     * @param code 业务编码
+     * @param code  业务编码
      * @param patch 待更新字段
      * @return 已更新的权限
      */
@@ -480,7 +476,7 @@ public class RbacService {
     /**
      * 要求当前用户同时拥有指定角色 + 权限码（AND 模式）。
      *
-     * @param role 角色
+     * @param role       角色
      * @param permission 权限
      */
     public void requireRoleAndPermission(String role, String permission) {

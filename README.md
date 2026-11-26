@@ -22,8 +22,11 @@
   <a href="docs/superpowers/plans/2026-09-10-mq-startup-lifecycle.md">MQ 启动生命周期</a>
 </p>
 
-> **Ddd4j** 是一个**不与任何具体容器框架强绑定**的 DDD 项目脚手架，为 [ddd4j-boot](https://github.com/ddd-4-java/ddd4j-boot)
-> （Spring Boot）、[ddd4j-quarkus](https://github.com/ddd-4-java/ddd4j-quarkus)、[ddd4j-javalin](https://github.com/ddd-4-java/ddd4j-javalin)
+> **Ddd4j** 是一个 **不与任何具体容器框架强绑定**的 DDD
+> 项目脚手架，为 [ddd4j-boot](https://github.com/ddd-4-java/ddd4j-boot)
+> （Spring
+>
+Boot）、[ddd4j-quarkus](https://github.com/ddd-4-java/ddd4j-quarkus)、[ddd4j-javalin](https://github.com/ddd-4-java/ddd4j-javalin)
 > 以及 Vert.x、Helidon、Dropwizard、Micronaut、Guice 等运行时提供 **同一套纯净、可复用的领域层基础**。
 >
 > 领域驱动设计、命令查询职责分离（CQRS）和事件溯源（Event Sourcing）的抽象层全部由 `ddd4j-core` **自研实现**，
@@ -97,7 +100,8 @@
   （统一领域仓储，对齐 BaseMapper）
 - ✅ **MQ 统一抽象**：保留 `ddd4j-mq-core` 纯 Java SPI + `ddd4j-mq-spring` 桥接，以及 Kafka / RabbitMQ / RocketMQ / Redis
   Stream / NATS / Pulsar / ActiveMQ / MQTT / ONS / SQS / TDMQ / Disruptor 等 12 个实现
-- ✅ **多框架运行时绑定**：`ddd4j-runtime` 聚合 Spring / Guice（配套 Javalin）/ Quarkus / Micronaut / Helidon / Vert.x / Dropwizard。
+- ✅ **多框架运行时绑定**：`ddd4j-runtime` 聚合 Spring / Guice（配套 Javalin）/ Quarkus / Micronaut / Helidon / Vert.x /
+  Dropwizard。
   `ddd4j-runtime-testkit` 提供共享测试支持，Web 接入由对应的 `ddd4j-web-*` 模块提供。
 - ✅ **ArchUnit 编译期守护**：9 条架构边界规则，CI 阶段强制执行分层纪律
 - ✅ **COLA / Clean Architecture 支持**：注解驱动的架构规范检查
@@ -133,10 +137,10 @@ ddd4j 当前 **三条主线并行演化**，HEAD 同步最新同语义提交：
 | `ddd4j-web`          | Web 层抽象          | WebMVC / WebFlux / Javalin / Quarkus / Vert.x / Micronaut / Helidon / Dropwizard 适配                                                 |
 | `ddd4j-auth`         | 认证授权抽象        | `Subject` SPI + Sa-Token / Security / Shiro 实现                                                                                      |
 | `ddd4j-cache`        | 缓存抽象            | 缓存 SPI 及实现                                                                                                                       |
-| `ddd4j-runtime`      | 多框架运行时绑定    | Spring / Guice / Quarkus / Micronaut / Helidon / Vert.x / Dropwizard，加共享测试支持 testkit                                                        |
-| `ddd4j-extensions`   | 跨领域扩展          | akka / excel / jackson / license / monitor / pf4j / qlexpress                                                            |
+| `ddd4j-runtime`      | 多框架运行时绑定    | Spring / Guice / Quarkus / Micronaut / Helidon / Vert.x / Dropwizard，加共享测试支持 testkit                                          |
+| `ddd4j-extensions`   | 跨领域扩展          | akka / excel / jackson / license / monitor / pf4j / qlexpress                                                                         |
 | `ddd4j-parent`       | Maven 父 POM        | 编译 / 打包 / 发布规则                                                                                                                |
-| `ddd4j-samples`      | 示例工程            | 共享 Order 业务内核，七个平台各有默认 DDD、CQRS、Sa-Token、Shiro 示例，共 28 项                                                                                                  |
+| `ddd4j-samples`      | 示例工程            | 共享 Order 业务内核，七个平台各有默认 DDD、CQRS、Sa-Token、Shiro 示例，共 28 项                                                       |
 
 ## 6. 模块结构树
 
@@ -193,7 +197,8 @@ ddd4j 当前 **三条主线并行演化**，HEAD 同步最新同语义提交：
 | Helidon     | `ddd4j-runtime-helidon`    | CDI / BeanManager    | CDI Event               | Helidon WebServer    |
 | Dropwizard  | `ddd4j-runtime-dropwizard` | 显式 Bundle          | Listener 集合           | Jersey               |
 
-需要 CQRS 时，使用上表对应的运行时。命令总线和投影装配由所选 runtime 提供，持久化实现按需从 `ddd4j-data` 引入。默认 DDD 示例直接使用业务仓储。各平台用法见[示例总览](ddd4j-samples/README.md)。
+需要 CQRS 时，使用上表对应的运行时。命令总线和投影装配由所选 runtime 提供，持久化实现按需从 `ddd4j-data` 引入。默认 DDD
+示例直接使用业务仓储。各平台用法见[示例总览](ddd4j-samples/README.md)。
 
 ## 8. ArchUnit 架构边界守护
 
@@ -432,14 +437,14 @@ order-service/
 
 | 文档                                                                                                                                                 | 说明                                                           |
 |:-----------------------------------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------------------|
-| [8、ddd4j-Architecture.zh_CN.md](./docs/8、ddd4j-Architecture.zh_CN.md)                                                                                   | 系统架构设计（分层、运行时、依赖、安全、部署）                 |
-| [5、ddd4j-技术方案与路线.md](./docs/5、ddd4j-技术方案与路线.md)                                                                                           | 当前进行中的 MQ 启动生命周期 + License Gate Hardening 技术方案 |
-| [6、ddd4j-产品与版本规划.md](./docs/6、ddd4j-产品与版本规划.md)                                                                                           | **三轨版本治理 · 升级路径 · 技术兼容性矩阵 · 支持窗口**        |
-| [7、ddd4j-领域模型设计.md](./docs/7、ddd4j-领域模型设计.md)                                                                                               | 限界上下文、聚合、事件契约                                     |
-| [1.0.x/8、ddd4j-1.0.x-Architecture.zh_CN.md](./docs/8、ddd4j-1.0.x-Architecture.zh_CN.md)                                                           | 1.0.x 版本级架构与三线差异表                                   |
+| [8、ddd4j-Architecture.zh_CN.md](./docs/8、ddd4j-Architecture.zh_CN.md)                                                                              | 系统架构设计（分层、运行时、依赖、安全、部署）                 |
+| [5、ddd4j-技术方案与路线.md](./docs/5、ddd4j-技术方案与路线.md)                                                                                      | 当前进行中的 MQ 启动生命周期 + License Gate Hardening 技术方案 |
+| [6、ddd4j-产品与版本规划.md](./docs/6、ddd4j-产品与版本规划.md)                                                                                      | **三轨版本治理 · 升级路径 · 技术兼容性矩阵 · 支持窗口**        |
+| [7、ddd4j-领域模型设计.md](./docs/7、ddd4j-领域模型设计.md)                                                                                          | 限界上下文、聚合、事件契约                                     |
+| [1.0.x/8、ddd4j-1.0.x-Architecture.zh_CN.md](./docs/8、ddd4j-1.0.x-Architecture.zh_CN.md)                                                            | 1.0.x 版本级架构与三线差异表                                   |
 | [docs/superpowers/specs/2026-07-15-current-source-architecture-design.md](./docs/superpowers/specs/2026-07-15-current-source-architecture-design.md) | 当前源码架构导览（CodeGraph）                                  |
 | [docs/superpowers/specs/2026-06-29-ddd4j-boundary-rules-design.md](./docs/superpowers/specs/2026-06-29-ddd4j-boundary-rules-design.md)               | 架构边界规范                                                   |
-| [docs/superpowers/reports/2026-09-09-three-line-source-parity-audit.md](./docs/superpowers/historical-evidence-index.md)     | 三线严格审计报告                                               |
+| [docs/superpowers/reports/2026-09-09-three-line-source-parity-audit.md](./docs/superpowers/historical-evidence-index.md)                             | 三线严格审计报告                                               |
 | [docs/ddd/DDD%20思维导图.md](./docs/ddd/DDD%20思维导图.md)                                                                                           | DDD 战略+战术设计知识体系                                      |
 | [docs/ddd/CQRS%20思维导图.md](./docs/ddd/CQRS%20思维导图.md)                                                                                         | CQRS 核心概念                                                  |
 

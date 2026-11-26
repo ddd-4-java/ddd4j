@@ -13,10 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.web.core.context;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import io.ddd4j.core.constant.ContextConstants;
 import org.junit.jupiter.api.AfterEach;

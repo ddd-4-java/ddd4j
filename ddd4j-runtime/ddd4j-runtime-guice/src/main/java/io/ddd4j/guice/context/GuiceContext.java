@@ -93,7 +93,7 @@ public class GuiceContext {
     /**
      * 按类型获取实例。
      *
-     * @param <T> 实例类型
+     * @param <T>   实例类型
      * @param clazz 实例类型
      * @return 容器中的实例
      */
@@ -104,8 +104,8 @@ public class GuiceContext {
     /**
      * 按名称获取实例。
      *
-     * @param <T> 实例类型
-     * @param name 绑定名称
+     * @param <T>   实例类型
+     * @param name  绑定名称
      * @param clazz 实例类型
      * @return 容器中的实例
      */
@@ -116,8 +116,8 @@ public class GuiceContext {
     /**
      * 按注解获取实例。
      *
-     * @param <T> 实例类型
-     * @param clazz 实例类型
+     * @param <T>            实例类型
+     * @param clazz          实例类型
      * @param annotationType 绑定注解类型
      * @return 容器中的实例
      */
@@ -128,7 +128,7 @@ public class GuiceContext {
     /**
      * 获取某类型的所有绑定实例。
      *
-     * @param <T> 实例类型
+     * @param <T>   实例类型
      * @param clazz 实例类型
      * @return 可实例化的绑定集合
      */
@@ -163,7 +163,7 @@ public class GuiceContext {
     /**
      * 获取环境属性（带默认值）。
      *
-     * @param key 属性名称
+     * @param key          属性名称
      * @param defaultValue 缺失时的默认值
      * @return 属性值或默认值
      */
@@ -189,7 +189,7 @@ public class GuiceContext {
     /**
      * 设置自定义属性。
      *
-     * @param key 属性名称
+     * @param key   属性名称
      * @param value 属性值
      */
     public static void setAttribute(String key, Object value) {

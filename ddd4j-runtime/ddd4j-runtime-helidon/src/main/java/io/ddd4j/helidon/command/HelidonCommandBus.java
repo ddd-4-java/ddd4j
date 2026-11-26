@@ -15,9 +15,9 @@
 package io.ddd4j.helidon.command;
 
 import io.ddd4j.core.cqrs.command.CommandExecutor;
-import io.ddd4j.core.cqrs.command.DefaultCommandBus;
 import io.ddd4j.core.cqrs.command.CommandHandler;
 import io.ddd4j.core.cqrs.command.CommandRegistry;
+import io.ddd4j.core.cqrs.command.DefaultCommandBus;
 import io.helidon.common.serviceloader.HelidonServiceLoader;
 
 import java.util.Collection;

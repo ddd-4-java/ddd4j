@@ -29,16 +29,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 class Ddd4jQuarkusWebFilterRemoteAddressTest {
 
-    @Test
-    void preservesUnresolvedPeerHost() throws Exception {
-        assertEquals("localhost", remoteAddress("localhost"));
-    }
-
-    @Test
-    void preservesPeerIpAddress() throws Exception {
-        assertEquals("192.0.2.10", remoteAddress("192.0.2.10"));
-    }
-
     private static String remoteAddress(String host) throws Exception {
         Ddd4jQuarkusWebFilter filter = new Ddd4jQuarkusWebFilter(new Ddd4jQuarkusWebConfiguration());
         SocketAddress address = SocketAddress.inetSocketAddress(8123, host);
@@ -53,5 +43,15 @@ class Ddd4jQuarkusWebFilterRemoteAddressTest {
         Method method = Ddd4jQuarkusWebFilter.class.getDeclaredMethod("remoteAddress");
         method.setAccessible(true);
         return (String) method.invoke(filter);
+    }
+
+    @Test
+    void preservesUnresolvedPeerHost() throws Exception {
+        assertEquals("localhost", remoteAddress("localhost"));
+    }
+
+    @Test
+    void preservesPeerIpAddress() throws Exception {
+        assertEquals("192.0.2.10", remoteAddress("192.0.2.10"));
     }
 }

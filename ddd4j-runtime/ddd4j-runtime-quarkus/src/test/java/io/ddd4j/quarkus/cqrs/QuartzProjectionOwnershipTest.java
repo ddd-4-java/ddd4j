@@ -18,11 +18,17 @@ class QuartzProjectionOwnershipTest {
 
     private static final String CRON = "0 0 0 1 1 ?";
 
+    private static Scheduler scheduler(InvocationHandler calls) {
+        return (Scheduler) Proxy.newProxyInstance(Scheduler.class.getClassLoader(),
+                new Class<?>[]{Scheduler.class}, calls);
+    }
+
     @Test
     void removesCallbackWhenSchedulerRejectsSubmissionWithUncheckedFailure() {
         RuntimeException rejection = new IllegalStateException("scheduler rejected");
         AtomicReference<String> identity = new AtomicReference<>();
-        Runnable callback = () -> { };
+        Runnable callback = () -> {
+        };
         Scheduler scheduler = scheduler((proxy, method, arguments) -> {
             JobDetail job = (JobDetail) arguments[0];
             identity.set(job.getJobDataMap().getString(QuarkusViewScheduler.TASK_KEY));
@@ -52,7 +58,8 @@ class QuartzProjectionOwnershipTest {
             throw rejection;
         });
 
-        assertThatThrownBy(() -> QuartzViewScheduleHandle.schedule(scheduler, "test", CRON, () -> { }))
+        assertThatThrownBy(() -> QuartzViewScheduleHandle.schedule(scheduler, "test", CRON, () -> {
+        }))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("Failed to schedule view 'test'")
                 .hasCause(rejection);
@@ -78,7 +85,8 @@ class QuartzProjectionOwnershipTest {
         });
         QuartzViewScheduleHandle handle = new QuartzViewScheduleHandle(scheduler, identity);
         scheduledHandle.set(handle);
-        RunnableHolder.put(identity, () -> { });
+        RunnableHolder.put(identity, () -> {
+        });
 
         try {
             assertThatThrownBy(handle::cancel).isInstanceOf(IllegalStateException.class)
@@ -93,10 +101,5 @@ class QuartzProjectionOwnershipTest {
         } finally {
             RunnableHolder.remove(identity);
         }
-    }
-
-    private static Scheduler scheduler(InvocationHandler calls) {
-        return (Scheduler) Proxy.newProxyInstance(Scheduler.class.getClassLoader(),
-                new Class<?>[]{Scheduler.class}, calls);
     }
 }

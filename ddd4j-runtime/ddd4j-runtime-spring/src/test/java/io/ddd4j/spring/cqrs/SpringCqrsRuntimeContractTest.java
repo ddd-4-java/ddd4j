@@ -48,6 +48,12 @@ import java.util.concurrent.Executors;
  */
 class SpringCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
 
+    private static io.ddd4j.core.cqrs.readmodel.ProjectionRunner<Object> emptyFixtureRunner() {
+        return new io.ddd4j.core.cqrs.readmodel.ProjectionRunner<>(
+                new io.ddd4j.core.cqrs.readmodel.DefaultProjectionService(new InMemoryProjectionPositionRepository()),
+                (stream, from, size, types) -> io.ddd4j.core.cqrs.readmodel.EventChunk.empty(from));
+    }
+
     @org.junit.jupiter.api.Test
     void basicContextDoesNotActivatePersistenceOrProjection() {
         try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(
@@ -68,7 +74,7 @@ class SpringCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
 
     @org.junit.jupiter.api.Test
     void explicitProjectionReusesExistingManagerWithoutAddingSchedulerOrRunner() {
-        for (boolean reverse : new boolean[] {false, true}) {
+        for (boolean reverse : new boolean[]{false, true}) {
             try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext()) {
                 context.register(reverse ? ExistingManager.class : ExplicitProjection.class,
                         reverse ? ExplicitProjection.class : ExistingManager.class);
@@ -83,7 +89,7 @@ class SpringCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
 
     @org.junit.jupiter.api.Test
     void explicitProjectionReusesPrototypeAndCustomScopedManagerWithoutEagerCreation() {
-        for (String scope : new String[] {"prototype", "requestLike"}) {
+        for (String scope : new String[]{"prototype", "requestLike"}) {
             try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext()) {
                 java.util.concurrent.atomic.AtomicInteger creations = new java.util.concurrent.atomic.AtomicInteger();
                 context.getBeanFactory().registerScope("requestLike", new org.springframework.context.support.SimpleThreadScope());
@@ -91,11 +97,13 @@ class SpringCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
                 context.registerBean("customScopedManager", ViewManager.class, () -> {
                     creations.incrementAndGet();
                     return new io.ddd4j.core.cqrs.readmodel.DefaultViewManager<Object>(
-                            (name, cron, task) -> { throw new AssertionError("No implicit scheduling"); },
+                            (name, cron, task) -> {
+                                throw new AssertionError("No implicit scheduling");
+                            },
                             emptyFixtureRunner(), java.util.List.of());
                 }, definition -> definition.setScope(scope));
                 context.refresh();
-                org.junit.jupiter.api.Assertions.assertArrayEquals(new String[] {"customScopedManager"},
+                org.junit.jupiter.api.Assertions.assertArrayEquals(new String[]{"customScopedManager"},
                         context.getBeanNamesForType(ViewManager.class));
                 org.junit.jupiter.api.Assertions.assertTrue(context.getBeansOfType(ViewScheduler.class).isEmpty());
                 org.junit.jupiter.api.Assertions.assertEquals(0, creations.get());
@@ -110,37 +118,23 @@ class SpringCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
 
     @org.junit.jupiter.api.Test
     void explicitProjectionReusesPrototypeAndCustomScopedScheduler() {
-        for (String scope : new String[] {"prototype", "requestLike"}) {
+        for (String scope : new String[]{"prototype", "requestLike"}) {
             try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext()) {
                 context.getBeanFactory().registerScope("requestLike", new org.springframework.context.support.SimpleThreadScope());
                 context.register(ExplicitProjection.class);
                 context.registerBean("customScopedScheduler", ViewScheduler.class,
-                        () -> (name, cron, task) -> { throw new AssertionError("Empty views must not schedule tasks"); },
+                        () -> (name, cron, task) -> {
+                            throw new AssertionError("Empty views must not schedule tasks");
+                        },
                         definition -> definition.setScope(scope));
                 context.registerBean("runner", io.ddd4j.core.cqrs.readmodel.ProjectionRunner.class,
                         SpringCqrsRuntimeContractTest::emptyFixtureRunner);
                 context.refresh();
-                org.junit.jupiter.api.Assertions.assertArrayEquals(new String[] {"customScopedScheduler"},
+                org.junit.jupiter.api.Assertions.assertArrayEquals(new String[]{"customScopedScheduler"},
                         context.getBeanNamesForType(ViewScheduler.class));
                 org.junit.jupiter.api.Assertions.assertEquals(1, context.getBeansOfType(ViewManager.class).size());
                 org.junit.jupiter.api.Assertions.assertTrue(context.getBean(ViewManager.class).isRunning());
             }
-        }
-    }
-
-    private static io.ddd4j.core.cqrs.readmodel.ProjectionRunner<Object> emptyFixtureRunner() {
-        return new io.ddd4j.core.cqrs.readmodel.ProjectionRunner<>(
-                new io.ddd4j.core.cqrs.readmodel.DefaultProjectionService(new InMemoryProjectionPositionRepository()),
-                (stream, from, size, types) -> io.ddd4j.core.cqrs.readmodel.EventChunk.empty(from));
-    }
-
-    @Configuration(proxyBeanMethods = false)
-    static class ExistingManager {
-        @Bean
-        SpringJpaViewManager manualManager() {
-            return new SpringJpaViewManager((name, cron, task) -> {
-                throw new AssertionError("No implicit schedule allowed");
-            });
         }
     }
 
@@ -166,9 +160,18 @@ class SpringCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
                                     : io.ddd4j.core.cqrs.readmodel.EventChunk.empty(from)));
             context.registerBean("view", io.ddd4j.core.cqrs.readmodel.ProjectionView.class, () ->
                     new io.ddd4j.core.cqrs.readmodel.ProjectionView<String>() {
-                        public String getName() { return "historical"; }
-                        public String getCron() { return "* * * * * *"; }
-                        public java.util.Collection<String> getEventTypes() { return java.util.List.of("OrderCreated"); }
+                        public String getName() {
+                            return "historical";
+                        }
+
+                        public String getCron() {
+                            return "* * * * * *";
+                        }
+
+                        public java.util.Collection<String> getEventTypes() {
+                            return java.util.List.of("OrderCreated");
+                        }
+
                         public void handleEvents(java.util.Collection<String> events) {
                             org.junit.jupiter.api.Assertions.assertEquals(java.util.List.of("persisted-event-41"), events);
                             deliveries.incrementAndGet();
@@ -181,7 +184,8 @@ class SpringCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
             org.junit.jupiter.api.Assertions.assertTrue(handled.await(5, java.util.concurrent.TimeUnit.SECONDS));
             manager.stop();
             // 取消后等待已进入的 cron 任务退出，再单独验证手动触发。
-            scheduler.getScheduledThreadPoolExecutor().submit(() -> { })
+            scheduler.getScheduledThreadPoolExecutor().submit(() -> {
+                    })
                     .get(2, java.util.concurrent.TimeUnit.SECONDS);
             org.junit.jupiter.api.Assertions.assertEquals(42, manager.getProjectionStatus("historical").nextEventNumber());
             manager.triggerOnce();
@@ -192,11 +196,6 @@ class SpringCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
         org.junit.jupiter.api.Assertions.assertFalse(manager.isRunning());
         org.junit.jupiter.api.Assertions.assertTrue(scheduler.getScheduledThreadPoolExecutor().isShutdown());
-    }
-
-    @Configuration(proxyBeanMethods = false)
-    @org.springframework.context.annotation.Import(io.ddd4j.spring.config.SpringProjectionConfig.class)
-    static class ExplicitProjection {
     }
 
     @Override
@@ -234,6 +233,21 @@ class SpringCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
                 context.close();
             }
         };
+    }
+
+    @Configuration(proxyBeanMethods = false)
+    static class ExistingManager {
+        @Bean
+        SpringJpaViewManager manualManager() {
+            return new SpringJpaViewManager((name, cron, task) -> {
+                throw new AssertionError("No implicit schedule allowed");
+            });
+        }
+    }
+
+    @Configuration(proxyBeanMethods = false)
+    @org.springframework.context.annotation.Import(io.ddd4j.spring.config.SpringProjectionConfig.class)
+    static class ExplicitProjection {
     }
 
     /**

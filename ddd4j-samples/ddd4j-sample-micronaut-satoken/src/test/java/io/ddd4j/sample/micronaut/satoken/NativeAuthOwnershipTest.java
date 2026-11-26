@@ -11,14 +11,23 @@ import cn.hutool.core.util.ReflectUtil;
 import io.ddd4j.core.subject.SubjectDataProvider;
 import io.ddd4j.core.util.SubjectKit;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
-/** 精确恢复可空前任权限源，且保留应用后来安装或清空的权限源。 */
+import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * 精确恢复可空前任权限源，且保留应用后来安装或清空的权限源。
+ */
 class NativeAuthOwnershipTest {
-    @Test void restoresRawNullPreviousProvider() {
+    private static SaTokenDao currentDao() {
+        return (SaTokenDao) ReflectUtil.getStaticFieldValue(ReflectUtil.getField(SaManager.class, "saTokenDao"));
+    }
+
+    private static StpInterface currentPermissions() {
+        return (StpInterface) ReflectUtil.getStaticFieldValue(ReflectUtil.getField(SaManager.class, "stpInterface"));
+    }
+
+    @Test
+    void restoresRawNullPreviousProvider() {
         SubjectDataProvider previous = SubjectKit.dataProvider;
         try {
             SubjectKit.setDataProvider(null);
@@ -29,11 +38,13 @@ class NativeAuthOwnershipTest {
         }
     }
 
-    @Test void preservesReplacementAndExplicitClear() {
+    @Test
+    void preservesReplacementAndExplicitClear() {
         SubjectDataProvider previous = SubjectKit.dataProvider;
         try {
             NativeAuth auth = new NativeAuth();
-            SubjectDataProvider replacement = new SubjectDataProvider() { };
+            SubjectDataProvider replacement = new SubjectDataProvider() {
+            };
             SubjectKit.setDataProvider(replacement);
             auth.close();
             assertSame(replacement, SubjectKit.dataProvider);
@@ -46,7 +57,8 @@ class NativeAuthOwnershipTest {
         }
     }
 
-    @Test void preservesCallerDaoAndItsData() {
+    @Test
+    void preservesCallerDaoAndItsData() {
         SaTokenDao previous = currentDao();
         TrackingDao caller = new TrackingDao();
         ReflectUtil.setFieldValue(SaManager.class, ReflectUtil.getField(SaManager.class, "saTokenDao"), caller);
@@ -69,14 +81,16 @@ class NativeAuthOwnershipTest {
         }
     }
 
-    @Test void rollsBackWhenNativeDaoRegistrationFails() {
+    @Test
+    void rollsBackWhenNativeDaoRegistrationFails() {
         assertNull(currentDao());
         SaTokenConfig config = SaManager.config;
         StpInterface permissions = currentPermissions();
         SubjectDataProvider provider = SubjectKit.dataProvider;
         IllegalStateException failure = new IllegalStateException("native DAO registration failed");
         SaTokenListenerForSimple listener = new SaTokenListenerForSimple() {
-            @Override public void doRegisterComponent(String name, Object registered) {
+            @Override
+            public void doRegisterComponent(String name, Object registered) {
                 if ("SaTokenDao".equals(name) && registered instanceof SaTokenDaoDefaultImpl) {
                     throw failure;
                 }
@@ -98,7 +112,8 @@ class NativeAuthOwnershipTest {
         }
     }
 
-    @Test void completesCleanupWhenPermissionListenerFailsOnClose() {
+    @Test
+    void completesCleanupWhenPermissionListenerFailsOnClose() {
         assertNull(currentDao());
         SaTokenConfig config = SaManager.config;
         StpInterface permissions = currentPermissions();
@@ -106,7 +121,8 @@ class NativeAuthOwnershipTest {
         NativeAuth auth = new NativeAuth();
         IllegalStateException failure = new IllegalStateException("native permission restoration failed");
         SaTokenListenerForSimple listener = new SaTokenListenerForSimple() {
-            @Override public void doRegisterComponent(String name, Object registered) {
+            @Override
+            public void doRegisterComponent(String name, Object registered) {
                 if ("StpInterface".equals(name)) {
                     throw failure;
                 }
@@ -129,23 +145,17 @@ class NativeAuthOwnershipTest {
         }
     }
 
-    private static SaTokenDao currentDao() {
-        return (SaTokenDao) ReflectUtil.getStaticFieldValue(ReflectUtil.getField(SaManager.class, "saTokenDao"));
-    }
-
-    private static StpInterface currentPermissions() {
-        return (StpInterface) ReflectUtil.getStaticFieldValue(ReflectUtil.getField(SaManager.class, "stpInterface"));
-    }
-
     private static final class TrackingDao extends SaTokenDaoDefaultImpl {
         private int initializations;
         private int destructions;
 
-        @Override public void init() {
+        @Override
+        public void init() {
             initializations++;
         }
 
-        @Override public void destroy() {
+        @Override
+        public void destroy() {
             destructions++;
             delete("caller-session");
             super.destroy();

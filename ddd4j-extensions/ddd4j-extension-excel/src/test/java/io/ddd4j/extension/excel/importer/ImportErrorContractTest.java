@@ -21,7 +21,9 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-/** 三线共同的导入错误值契约。 */
+/**
+ * 三线共同的导入错误值契约。
+ */
 class ImportErrorContractTest {
 
     @Test

@@ -25,7 +25,7 @@ public class ShiroConfiguration implements WebMvcConfigurer {
     @Bean(destroyMethod = "destroy")
     public DefaultWebSecurityManager securityManager() {
         Ini ini = new Ini();
-        ini.load("[users]\nalice = demo-password, reader\n[roles]\nreader = order:read\n");
+        ini.load("[users]\nalice = demo-password, reader\nwriter = demo-password, writer\n[roles]\nreader = order:read\nwriter = order:read, order:write\n");
         return new DefaultWebSecurityManager(new IniRealm(ini));
     }
     /**
@@ -51,7 +51,7 @@ public class ShiroConfiguration implements WebMvcConfigurer {
                 }
                 String path = ServletRequestPathUtils.getCachedPathValue(request);
                 if (path.startsWith("/orders")) {
-                    String permission = "DELETE".equals(request.getMethod()) ? "order:cancel"
+                    String permission = ("DELETE".equals(request.getMethod()) || path.endsWith("/cancel")) ? "order:cancel"
                             : ("GET".equals(request.getMethod()) || path.endsWith("/query"))
                             ? "order:read" : "order:write";
                     subject.checkPermission(permission);

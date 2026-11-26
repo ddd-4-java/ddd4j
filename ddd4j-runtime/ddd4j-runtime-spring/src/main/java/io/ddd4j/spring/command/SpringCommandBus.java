@@ -14,23 +14,14 @@
  */
 package io.ddd4j.spring.command;
 
-import io.ddd4j.core.cqrs.command.Command;
-import io.ddd4j.core.cqrs.command.CommandBus;
-import io.ddd4j.core.cqrs.command.CommandExecutor;
-import io.ddd4j.core.cqrs.command.Result;
-import io.ddd4j.core.cqrs.command.DefaultCommandBus;
+import io.ddd4j.core.cqrs.command.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Map;
-import java.util.Objects;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Set;
-import java.util.HashSet;
+import java.util.*;
 
 /**
  * Spring 命令总线。
@@ -63,23 +54,12 @@ import java.util.HashSet;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class SpringCommandBus implements CommandBus, SmartInitializingSingleton {
 
-    // 只在完整发现成功后发布快照；路由和执行完全归共享内核。
-    private volatile DiscoveredCommands discovered;
-
-    private static final class DiscoveredCommands {
-        private final DefaultCommandBus delegate;
-        private final Set<Class<? extends Command>> types;
-
-        private DiscoveredCommands(DefaultCommandBus delegate, Set<Class<? extends Command>> types) {
-            this.delegate = delegate;
-            this.types = Set.copyOf(types);
-        }
-    }
-
     /**
      * Spring 应用上下文
      */
     private final ApplicationContext applicationContext;
+    // 只在完整发现成功后发布快照；路由和执行完全归共享内核。
+    private volatile DiscoveredCommands discovered;
 
     /**
      * 创建通过 Spring 上下文查找执行器的命令总线。
@@ -148,5 +128,15 @@ public class SpringCommandBus implements CommandBus, SmartInitializingSingleton 
                             + "and its supportedCommands() includes this command type.");
         }
         return snapshot.delegate.execute(command);
+    }
+
+    private static final class DiscoveredCommands {
+        private final DefaultCommandBus delegate;
+        private final Set<Class<? extends Command>> types;
+
+        private DiscoveredCommands(DefaultCommandBus delegate, Set<Class<? extends Command>> types) {
+            this.delegate = delegate;
+            this.types = Set.copyOf(types);
+        }
     }
 }

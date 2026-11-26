@@ -19,41 +19,23 @@ import io.ddd4j.cache.subject.InMemorySubjectProvider;
 import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.DefaultCommandBus;
-import io.ddd4j.core.cqrs.readmodel.DefaultProjectionService;
-import io.ddd4j.core.cqrs.readmodel.EventChunkReader;
-import io.ddd4j.core.cqrs.readmodel.InMemoryProjectionPositionRepository;
-import io.ddd4j.core.cqrs.readmodel.NoopEventChunkReader;
-import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
-import io.ddd4j.core.cqrs.readmodel.ProjectionRunner;
-import io.ddd4j.core.cqrs.readmodel.ProjectionView;
-import io.ddd4j.core.cqrs.readmodel.ViewManager;
-import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
+import io.ddd4j.core.cqrs.readmodel.*;
+import io.ddd4j.core.health.ReadinessContributor;
+import io.ddd4j.core.health.RuntimeReadinessRegistry;
+import io.ddd4j.core.i18n.I18nProvider;
+import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.helidon.cqrs.HelidonProjectionScheduler;
 import io.ddd4j.helidon.cqrs.HelidonProjectionViewManager;
-import io.ddd4j.core.ddd.event.DomainEventPublisher;
-import io.ddd4j.core.i18n.I18nProvider;
-import io.ddd4j.core.health.ReadinessContributor;
-import io.ddd4j.core.subject.SubjectProvider;
-import io.ddd4j.core.health.RuntimeReadinessRegistry;
-import jakarta.inject.Singleton;
-import jakarta.enterprise.util.TypeLiteral;
-import java.lang.reflect.Type;
-import jakarta.enterprise.inject.spi.AfterBeanDiscovery;
-import jakarta.enterprise.context.spi.CreationalContext;
 import jakarta.enterprise.context.spi.Contextual;
+import jakarta.enterprise.context.spi.CreationalContext;
 import jakarta.enterprise.event.Observes;
-import jakarta.enterprise.inject.spi.AfterDeploymentValidation;
-import jakarta.enterprise.inject.spi.Bean;
-import jakarta.enterprise.inject.spi.BeanManager;
-import jakarta.enterprise.inject.spi.BeforeShutdown;
-import jakarta.enterprise.inject.spi.Extension;
+import jakarta.enterprise.inject.spi.*;
+import jakarta.enterprise.util.TypeLiteral;
+import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.LinkedHashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.lang.reflect.Type;
+import java.util.*;
 
 /**
  * Helidon MP 启动和关闭阶段的 ddd4j SPI CDI Extension。
@@ -62,10 +44,24 @@ import java.util.Set;
 public final class Ddd4jHelidonExtension implements Extension {
 
     private final RuntimeReadinessRegistry readinessRegistry = new RuntimeReadinessRegistry();
+    private final List<CreationalContext<?>> references = new ArrayList<>();
     private Ddd4jHelidonRuntime runtime;
     private HelidonProjectionViewManager projectionManager;
     private HelidonProjectionScheduler ownedScheduler;
-    private final List<CreationalContext<?>> references = new ArrayList<>();
+
+    private static Throwable cleanup(Throwable firstFailure, Runnable action) {
+        try {
+            action.run();
+        } catch (RuntimeException | Error failure) {
+            if (Objects.isNull(firstFailure)) {
+                return failure;
+            }
+            if (firstFailure != failure) {
+                firstFailure.addSuppressed(failure);
+            }
+        }
+        return firstFailure;
+    }
 
     void registerProjection(@Observes AfterBeanDiscovery event, BeanManager beanManager) {
         if (projectionEnabled()) {
@@ -80,7 +76,8 @@ public final class Ddd4jHelidonExtension implements Extension {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     private HelidonProjectionViewManager createProjection(BeanManager beanManager) {
-        EventChunkReader<Object> reader = projectionBean(beanManager, new TypeLiteral<EventChunkReader<?>>() { }.getType(),
+        EventChunkReader<Object> reader = projectionBean(beanManager, new TypeLiteral<EventChunkReader<?>>() {
+                }.getType(),
                 EventChunkReader.class, NoopEventChunkReader.class);
         ProjectionPositionRepository positions = projectionBean(beanManager, ProjectionPositionRepository.class,
                 ProjectionPositionRepository.class, InMemoryProjectionPositionRepository.class);
@@ -88,7 +85,8 @@ public final class Ddd4jHelidonExtension implements Extension {
             throw new IllegalStateException("Explicit Helidon projection requires EventChunkReader and ProjectionPositionRepository");
         }
         List<ProjectionView<?>> views = new ArrayList<>();
-        Type viewType = new TypeLiteral<ProjectionView<?>>() { }.getType();
+        Type viewType = new TypeLiteral<ProjectionView<?>>() {
+        }.getType();
         for (Bean<?> viewBean : projectionBeans(beanManager, ProjectionView.class, viewType)) {
             views.add(reference(beanManager, viewBean, viewType, ProjectionView.class));
         }
@@ -170,23 +168,10 @@ public final class Ddd4jHelidonExtension implements Extension {
         }
     }
 
-    private static Throwable cleanup(Throwable firstFailure, Runnable action) {
-        try {
-            action.run();
-        } catch (RuntimeException | Error failure) {
-            if (Objects.isNull(firstFailure)) {
-                return failure;
-            }
-            if (firstFailure != failure) {
-                firstFailure.addSuppressed(failure);
-            }
-        }
-        return firstFailure;
-    }
-
     private List<CommandExecutor<?>> commandExecutors(BeanManager beanManager) {
         List<CommandExecutor<?>> executors = new ArrayList<>();
-        Type executorType = new TypeLiteral<CommandExecutor<?>>() { }.getType();
+        Type executorType = new TypeLiteral<CommandExecutor<?>>() {
+        }.getType();
         for (Bean<?> bean : projectionBeans(beanManager, CommandExecutor.class, executorType)) {
             CommandExecutor<?> executor = reference(beanManager, bean, executorType, CommandExecutor.class);
             executors.add(executor);
@@ -211,7 +196,9 @@ public final class Ddd4jHelidonExtension implements Extension {
         return reference(beanManager, bean, type);
     }
 
-    /** 合并旧裸类型与具体业务泛型的 CDI 发现结果，同一个 Bean 只注册一次。 */
+    /**
+     * 合并旧裸类型与具体业务泛型的 CDI 发现结果，同一个 Bean 只注册一次。
+     */
     private Set<Bean<?>> projectionBeans(BeanManager beanManager, Class<?> rawType, Type genericType) {
         Set<Bean<?>> beans = new LinkedHashSet<>(beanManager.getBeans(rawType));
         if (!rawType.equals(genericType)) {
@@ -220,7 +207,9 @@ public final class Ddd4jHelidonExtension implements Extension {
         return beans;
     }
 
-    /** 仅在装配期检查 CDI 已管理的真实目标；运行时仍调用代理以保留拦截器语义。 */
+    /**
+     * 仅在装配期检查 CDI 已管理的真实目标；运行时仍调用代理以保留拦截器语义。
+     */
     @SuppressWarnings({"unchecked", "rawtypes"})
     private <T> T projectionBean(BeanManager beanManager, Type lookupType, Class<T> type,
                                  Class<?> rejectedImplementation) {

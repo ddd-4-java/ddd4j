@@ -19,14 +19,16 @@ package io.ddd4j.extension.qlexpress.exception;
  */
 public class QLExpressExecutionException extends RuntimeException {
 
-    /** 执行失败的表达式。 */
+    /**
+     * 执行失败的表达式。
+     */
     private final String expression;
 
     /**
      * 创建包含失败表达式的执行异常。
      *
      * @param expression 失败表达式
-     * @param cause 原始异常
+     * @param cause      原始异常
      */
     public QLExpressExecutionException(String expression, Throwable cause) {
         super("QLExpress 表达式执行失败: " + expression, cause);

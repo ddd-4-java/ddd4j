@@ -22,7 +22,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/** Helidon 生命周期和就绪状态的运行时契约。 */
+/**
+ * Helidon 生命周期和就绪状态的运行时契约。
+ */
 class Ddd4jHelidonRuntimeTest extends AbstractRuntimeContractTest {
 
     @Test

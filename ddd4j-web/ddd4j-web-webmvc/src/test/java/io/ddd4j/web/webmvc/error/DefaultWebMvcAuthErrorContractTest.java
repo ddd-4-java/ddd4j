@@ -41,6 +41,10 @@ class DefaultWebMvcAuthErrorContractTest {
             .setControllerAdvice(new Ddd4jWebMvcExceptionHandler(new DefaultWebExceptionTranslator()))
             .build();
 
+    private static WebError customError(Throwable failure) {
+        return new WebError(409, "custom-auth", failure.getClass().getSimpleName(), CUSTOM_DETAILS);
+    }
+
     @Test
     void expiredTokenUsesUnauthorizedHttpStatusAndKeepsMessage() throws Exception {
         assertAuthError("/authentication", ApiCode.UNAUTHORIZED, "Token expired");
@@ -72,10 +76,6 @@ class DefaultWebMvcAuthErrorContractTest {
             assertCustomAuthError(customized, "/authentication", "TokenExpiredException", CUSTOM_DETAILS);
             assertCustomAuthError(customized, "/authorization", "PermissionDeniedException", CUSTOM_DETAILS);
         }
-    }
-
-    private static WebError customError(Throwable failure) {
-        return new WebError(409, "custom-auth", failure.getClass().getSimpleName(), CUSTOM_DETAILS);
     }
 
     @Test

@@ -14,12 +14,12 @@
  */
 package io.ddd4j.sample.vertx;
 
-import io.ddd4j.sample.order.application.OrderApplicationService;
-import io.ddd4j.sample.order.local.InMemoryOrderAdapters;
 import io.ddd4j.vertx.Ddd4jVertxRuntime;
 import io.ddd4j.web.core.auth.AuthenticationMode;
 import io.ddd4j.web.core.error.WebStatusException;
 import io.ddd4j.web.vertx.Ddd4jVertxContext;
+import io.ddd4j.sample.order.adapter.http.CatalogEndpoints;
+import io.ddd4j.sample.order.start.CatalogRuntime;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
@@ -34,7 +34,7 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 
-/** 无外部基础设施的共享订单示例。 */
+/** 基于 MySQL 的商品交易示例。 */
 @Slf4j
 public final class VertxOrderApplication {
 
@@ -54,18 +54,17 @@ public final class VertxOrderApplication {
      * @return 已启动的原生应用
      */
     public static Future<VertxOrderApplication> start(int port) {
-        InMemoryOrderAdapters adapters = new InMemoryOrderAdapters();
-        return start(port, new OrderApplicationService(adapters, adapters, adapters, adapters, adapters));
+        return start(port, CatalogRuntime.start());
     }
 
-    static Future<VertxOrderApplication> start(int port, OrderApplicationService service) {
+    static Future<VertxOrderApplication> start(int port, CatalogEndpoints catalog) {
         VertxOrderApplication app = new VertxOrderApplication();
         Promise<VertxOrderApplication> started = Promise.promise();
         try {
             app.runtime = Ddd4jVertxRuntime.create(app.vertx, Collections.emptyList());
             app.runtime.start();
             app.server = app.vertx.createHttpServer().requestHandler(
-                    VertxOrderRoutes.router(app.vertx, service, AuthenticationMode.DISABLED, app));
+                    VertxOrderRoutes.router(app.vertx, catalog, AuthenticationMode.DISABLED, app));
             app.server.listen(port, "127.0.0.1").onComplete(result -> {
                 if (result.succeeded()) {
                     started.complete(app);
@@ -153,7 +152,7 @@ public final class VertxOrderApplication {
     public static void main(String[] args) throws Exception {
         VertxOrderApplication app = start(Integer.getInteger("sample.port", 8084))
                 .toCompletionStage().toCompletableFuture().get();
-        log.info("Vert.x default listening {} (demo-memory)", app.port());
+        log.info("Vert.x default listening {} (catalog-trade)", app.port());
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             app.close().toCompletionStage().toCompletableFuture().join();
             log.info("VERTX_DEFAULT_CLOSED");

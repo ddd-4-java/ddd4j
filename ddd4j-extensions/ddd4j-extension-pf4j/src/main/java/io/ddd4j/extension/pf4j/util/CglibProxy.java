@@ -62,7 +62,7 @@ public class CglibProxy implements MethodInterceptor {
     /**
      * 按目标类型实例化并创建 CGLIB 代理对象。
      *
-     * @param <T>         目标类型
+     * @param <T>       目标类型
      * @param className 目标类型
      * @return 目标类型的 CGLIB 代理对象
      */

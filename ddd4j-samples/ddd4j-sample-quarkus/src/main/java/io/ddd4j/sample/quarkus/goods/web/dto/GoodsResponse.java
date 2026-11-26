@@ -14,10 +14,8 @@
  */
 package io.ddd4j.sample.quarkus.goods.web.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.sample.quarkus.goods.domain.Goods;
 import io.ddd4j.sample.quarkus.goods.domain.GoodsStatus;
 
@@ -49,21 +47,12 @@ public final class GoodsResponse {
     private final LocalDateTime updateTime;
 
     /**
-     * @param goods 商品领域对象
-     * @return 商品 HTTP 响应
-     */
-    public static GoodsResponse from(Goods goods) {
-        Goods source = Objects.requireNonNull(goods, "goods must not be null");
-        return new GoodsResponse(source.id(), source.getCode(), source.getName(), source.getPrice(), source.getStock(), source.getStatus(), source.getCreateTime(), source.getUpdateTime());
-    }
-
-    /**
-     * @param id 商品标识
-     * @param code 商品编码
-     * @param name 商品名称
-     * @param price 商品价格
-     * @param stock 库存数量
-     * @param status 商品状态
+     * @param id         商品标识
+     * @param code       商品编码
+     * @param name       商品名称
+     * @param price      商品价格
+     * @param stock      库存数量
+     * @param status     商品状态
      * @param createTime 创建时间
      * @param updateTime 更新时间
      */
@@ -79,49 +68,74 @@ public final class GoodsResponse {
         this.updateTime = updateTime;
     }
 
-    /** @return 商品标识 */
+    /**
+     * @param goods 商品领域对象
+     * @return 商品 HTTP 响应
+     */
+    public static GoodsResponse from(Goods goods) {
+        Goods source = Objects.requireNonNull(goods, "goods must not be null");
+        return new GoodsResponse(source.id(), source.getCode(), source.getName(), source.getPrice(), source.getStock(), source.getStatus(), source.getCreateTime(), source.getUpdateTime());
+    }
+
+    /**
+     * @return 商品标识
+     */
     @JsonProperty("id")
     public Long id() {
         return id;
     }
 
-    /** @return 商品编码 */
+    /**
+     * @return 商品编码
+     */
     @JsonProperty("code")
     public String code() {
         return code;
     }
 
-    /** @return 商品名称 */
+    /**
+     * @return 商品名称
+     */
     @JsonProperty("name")
     public String name() {
         return name;
     }
 
-    /** @return 商品价格 */
+    /**
+     * @return 商品价格
+     */
     @JsonProperty("price")
     public BigDecimal price() {
         return price;
     }
 
-    /** @return 库存数量 */
+    /**
+     * @return 库存数量
+     */
     @JsonProperty("stock")
     public Integer stock() {
         return stock;
     }
 
-    /** @return 商品状态 */
+    /**
+     * @return 商品状态
+     */
     @JsonProperty("status")
     public GoodsStatus status() {
         return status;
     }
 
-    /** @return 创建时间 */
+    /**
+     * @return 创建时间
+     */
     @JsonProperty("createTime")
     public LocalDateTime createTime() {
         return createTime;
     }
 
-    /** @return 更新时间 */
+    /**
+     * @return 更新时间
+     */
     @JsonProperty("updateTime")
     public LocalDateTime updateTime() {
         return updateTime;

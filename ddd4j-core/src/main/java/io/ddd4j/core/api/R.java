@@ -14,8 +14,8 @@
  */
 package io.ddd4j.core.api;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -62,7 +62,7 @@ public class R<T> implements IR {
      * 创建响应对象。
      *
      * @param code 响应码
-     * @param msg 响应消息
+     * @param msg  响应消息
      */
     public R(Serializable code, String msg) {
         this(code, msg, null);
@@ -81,7 +81,7 @@ public class R<T> implements IR {
      * 创建响应对象。
      *
      * @param code 响应码
-     * @param msg 响应消息
+     * @param msg  响应消息
      * @param data 响应数据
      */
     public R(Serializable code, String msg, T data) {
@@ -91,9 +91,9 @@ public class R<T> implements IR {
     /**
      * 创建响应对象。
      *
-     * @param code 响应码
-     * @param msg 响应消息
-     * @param data 响应数据
+     * @param code  响应码
+     * @param msg   响应消息
+     * @param data  响应数据
      * @param error 校验失败信息
      */
     public R(Serializable code, String msg, T data, List<Map<String, String>> error) {
@@ -107,6 +107,7 @@ public class R<T> implements IR {
 
     /**
      * 请求/操作成功（code=0），不携带数据。
+     *
      * @param <T> 响应数据类型
      * @return 响应对象
      */
@@ -116,7 +117,8 @@ public class R<T> implements IR {
 
     /**
      * 请求/操作成功（code=0），携带数据。
-     * @param <T> 响应数据类型
+     *
+     * @param <T>     响应数据类型
      * @param payload 响应数据
      * @return 响应对象
      */
@@ -126,8 +128,9 @@ public class R<T> implements IR {
 
     /**
      * 请求/操作成功（code=0），携带自定义消息与数据。
-     * @param <T> 响应数据类型
-     * @param msg 响应消息
+     *
+     * @param <T>  响应数据类型
+     * @param msg  响应消息
      * @param data 响应数据
      * @return 响应对象
      */
@@ -139,6 +142,7 @@ public class R<T> implements IR {
 
     /**
      * 请求/操作成功（code=200），不携带数据。
+     *
      * @param <T> 响应数据类型
      * @return 响应对象
      */
@@ -148,7 +152,8 @@ public class R<T> implements IR {
 
     /**
      * 请求/操作成功（code=200），携带自定义消息。
-     * @param <T> 响应数据类型
+     *
+     * @param <T>     响应数据类型
      * @param message 响应消息
      * @return 响应对象
      */
@@ -158,7 +163,8 @@ public class R<T> implements IR {
 
     /**
      * 请求/操作成功（code=200），携带数据。
-     * @param <T> 响应数据类型
+     *
+     * @param <T>  响应数据类型
      * @param data 响应数据
      * @return 响应对象
      */
@@ -170,6 +176,7 @@ public class R<T> implements IR {
 
     /**
      * 请求/操作失败（code=400），不携带数据。
+     *
      * @param <T> 响应数据类型
      * @return 响应对象
      */
@@ -179,7 +186,8 @@ public class R<T> implements IR {
 
     /**
      * 请求/操作失败，使用指定响应码和默认失败消息。
-     * @param <T> 响应数据类型
+     *
+     * @param <T>  响应数据类型
      * @param code 响应码
      * @return 响应对象
      */
@@ -189,7 +197,8 @@ public class R<T> implements IR {
 
     /**
      * 请求/操作失败（code=400），携带自定义消息。
-     * @param <T> 响应数据类型
+     *
+     * @param <T>     响应数据类型
      * @param message 响应消息
      * @return 响应对象
      */
@@ -201,7 +210,8 @@ public class R<T> implements IR {
 
     /**
      * 错误响应（code=500），携带自定义消息。
-     * @param <T> 响应数据类型
+     *
+     * @param <T>     响应数据类型
      * @param message 响应消息
      * @return 响应对象
      */
@@ -211,7 +221,8 @@ public class R<T> implements IR {
 
     /**
      * 错误响应（code=500），携带数据。
-     * @param <T> 响应数据类型
+     *
+     * @param <T>  响应数据类型
      * @param data 响应数据
      * @return 响应对象
      */
@@ -223,7 +234,8 @@ public class R<T> implements IR {
 
     /**
      * 按 {@link CustomApiCode} 构建响应（code 与描述取自定义码）。
-     * @param <T> 响应数据类型
+     *
+     * @param <T>  响应数据类型
      * @param code 响应码
      * @return 响应对象
      */
@@ -233,8 +245,9 @@ public class R<T> implements IR {
 
     /**
      * 按 {@link CustomApiCode} 构建响应并携带自定义消息。
-     * @param <T> 响应数据类型
-     * @param code 响应码
+     *
+     * @param <T>     响应数据类型
+     * @param code    响应码
      * @param message 响应消息
      * @return 响应对象
      */
@@ -244,7 +257,8 @@ public class R<T> implements IR {
 
     /**
      * 按 {@link CustomApiCode} 构建响应，并携带数据。
-     * @param <T> 响应数据类型
+     *
+     * @param <T>  响应数据类型
      * @param code 响应码
      * @param data 响应数据
      * @return 响应对象
@@ -255,10 +269,11 @@ public class R<T> implements IR {
 
     /**
      * 按 {@link CustomApiCode} 构建响应，并携带自定义消息与校验失败信息。
-     * @param <T> 响应数据类型
-     * @param code 响应码
+     *
+     * @param <T>     响应数据类型
+     * @param code    响应码
      * @param message 响应消息
-     * @param error 校验失败信息
+     * @param error   校验失败信息
      * @return 响应对象
      */
     public static <T> R<T> of(CustomApiCode code, String message, List<Map<String, String>> error) {
@@ -267,8 +282,9 @@ public class R<T> implements IR {
 
     /**
      * 按字符串 code 构建响应（内部转数字）。
-     * @param <T> 响应数据类型
-     * @param code 响应码
+     *
+     * @param <T>     响应数据类型
+     * @param code    响应码
      * @param message 响应消息
      * @return 响应对象
      */
@@ -278,8 +294,9 @@ public class R<T> implements IR {
 
     /**
      * 按数字 code 构建响应。
-     * @param <T> 响应数据类型
-     * @param code 响应码
+     *
+     * @param <T>     响应数据类型
+     * @param code    响应码
      * @param message 响应消息
      * @return 响应对象
      */
@@ -289,10 +306,11 @@ public class R<T> implements IR {
 
     /**
      * 按指定响应码和消息构建带数据的响应。
-     * @param <T> 响应数据类型
-     * @param code 响应码
+     *
+     * @param <T>     响应数据类型
+     * @param code    响应码
      * @param message 响应消息
-     * @param data 响应数据
+     * @param data    响应数据
      * @return 响应对象
      */
     public static <T> R<T> of(Serializable code, String message, T data) {
@@ -312,7 +330,7 @@ public class R<T> implements IR {
     /**
      * 复制响应码和消息到新响应。
      *
-     * @param <T> 响应数据类型
+     * @param <T>    响应数据类型
      * @param source 待转换响应
      * @return 保留响应码和消息的新响应
      */
@@ -345,6 +363,7 @@ public class R<T> implements IR {
 
     /**
      * 是否成功（原 ApiRestResponse 语义：code == 200）。
+     *
      * @return 响应码为成功码时为 true
      */
     public boolean isSuccess() {
@@ -354,6 +373,7 @@ public class R<T> implements IR {
     /**
      * 原.ApiRestResponse#getMessage 兼容别名，等价于 {@link #getMsg()}。
      * <p>加 {@code @JsonIgnore} 是为了避免 Jackson 把同一字段序列化成 msg/message 两份。
+     *
      * @return 响应消息
      */
     @JsonIgnore
@@ -363,6 +383,7 @@ public class R<T> implements IR {
 
     /**
      * 转换为 Map（key：code / msg / data）。
+     *
      * @return 包含 code、msg、data 的映射
      */
     public Map<String, Object> toMap() {

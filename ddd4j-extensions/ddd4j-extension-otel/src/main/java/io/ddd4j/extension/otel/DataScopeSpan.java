@@ -34,9 +34,13 @@ import io.opentelemetry.context.Scope;
  */
 public final class DataScopeSpan {
 
-    /** Span 属性键 {@code ddd4j.datascope.type}。 */
+    /**
+     * Span 属性键 {@code ddd4j.datascope.type}。
+     */
     public static final AttributeKey<String> ATTR_DATA_SCOPE_TYPE = AttributeKey.stringKey("ddd4j.datascope.type");
-    /** Span 属性键 {@code ddd4j.datascope.decision}。 */
+    /**
+     * Span 属性键 {@code ddd4j.datascope.decision}。
+     */
     public static final AttributeKey<String> ATTR_DATA_SCOPE_DECISION = AttributeKey.stringKey("ddd4j.datascope.decision");
 
     private DataScopeSpan() {

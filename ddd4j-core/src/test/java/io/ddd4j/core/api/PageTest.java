@@ -142,6 +142,7 @@ class PageTest {
         assertThat(page.getCurrent()).isEqualTo(1L);
         assertThat(page.getSize()).isEqualTo(5L);
     }
+
     @Test
     void emptyPages_shouldSupportIterationAndStreams() {
         for (Page<String> page : Arrays.asList(new Page<String>(), Page.<String>empty())) {

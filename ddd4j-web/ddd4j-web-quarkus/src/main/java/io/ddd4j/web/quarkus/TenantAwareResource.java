@@ -167,7 +167,7 @@ public class TenantAwareResource {
     /**
      * HTTP 200 + R.of(code, message)。
      *
-     * @param code 业务错误码
+     * @param code    业务错误码
      * @param message 错误消息
      * @return 包含业务错误的 HTTP 响应
      */
@@ -230,8 +230,8 @@ public class TenantAwareResource {
     /**
      * 将分页记录映射转换，并保留分页元数据。
      *
-     * @param <T> 原记录类型
-     * @param <R> 目标记录类型
+     * @param <T>  原记录类型
+     * @param <R>  目标记录类型
      * @param page 原分页数据
      * @param func 记录映射函数
      * @return 映射后的分页数据

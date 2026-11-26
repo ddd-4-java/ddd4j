@@ -44,7 +44,7 @@ public class AuthenticationException extends BizRuntimeException {
      * 使用错误消息创建认证异常。
      *
      * @param message 错误消息
-     * @param cause 原始异常
+     * @param cause   原始异常
      */
     public AuthenticationException(String message, Throwable cause) {
         this(message);

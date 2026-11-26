@@ -80,10 +80,10 @@ public final class SqlSpan {
     /**
      * 包装带返回值的 SQL 执行。
      *
-     * @param <T> 返回值类型
-     * @param dbSystem 数据库系统
+     * @param <T>       返回值类型
+     * @param dbSystem  数据库系统
      * @param statement SQL 语句
-     * @param supplier 待追踪操作
+     * @param supplier  待追踪操作
      * @return 操作结果
      */
     public static <T> T execute(String dbSystem, String statement, java.util.function.Supplier<T> supplier) {

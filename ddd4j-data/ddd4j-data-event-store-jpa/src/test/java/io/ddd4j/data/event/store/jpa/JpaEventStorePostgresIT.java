@@ -14,52 +14,33 @@
  */
 package io.ddd4j.data.event.store.jpa;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
 import io.ddd4j.core.cqrs.eventstore.StoredEvent;
 import io.ddd4j.core.cqrs.eventstore.jackson.EventPayloadSerializer;
-import io.ddd4j.core.ddd.event.AggregateRootId;
-import io.ddd4j.core.ddd.event.DomainEvent;
-import io.ddd4j.core.ddd.event.EntityIdPath;
-import io.ddd4j.core.ddd.event.EntityType;
-import io.ddd4j.core.ddd.event.StringEntityType;
+import io.ddd4j.core.ddd.event.*;
 import io.ddd4j.data.event.store.jpa.fixture.TransactionBusinessEntity;
 import io.ddd4j.data.event.store.jpa.fixture.TransactionOutboxEntity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.RollbackException;
-
-import java.sql.Connection;
-import java.util.List;
-import java.util.Collections;
-import java.util.Objects;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-
 import org.hibernate.cfg.Configuration;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.sql.Connection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.*;
+
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * PostgreSQL 容器轨：验证 JPA EventStore 的真实 DDL 与 CLOB 读回。
@@ -73,6 +54,32 @@ class JpaEventStorePostgresIT {
             .withTmpFs(Collections.singletonMap("/var/lib/postgresql/data", "rw"));
 
     private static EntityManagerFactory entityManagerFactory;
+    private EntityManager entityManager;
+    private EventStore eventStore;
+
+    @BeforeAll
+    static void createEntityManagerFactory() {
+        Configuration configuration = new Configuration();
+        configuration.setProperty("hibernate.connection.driver_class", "org.postgresql.Driver");
+        configuration.setProperty("hibernate.connection.url", POSTGRES.getJdbcUrl());
+        configuration.setProperty("hibernate.connection.username", POSTGRES.getUsername());
+        configuration.setProperty("hibernate.connection.password", POSTGRES.getPassword());
+        configuration.setProperty("hibernate.connection.isolation",
+                String.valueOf(Connection.TRANSACTION_READ_COMMITTED));
+        configuration.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
+        configuration.setProperty("hibernate.hbm2ddl.auto", "create-drop");
+        configuration.addAnnotatedClass(StoredEventEntity.class);
+        configuration.addAnnotatedClass(TransactionBusinessEntity.class);
+        configuration.addAnnotatedClass(TransactionOutboxEntity.class);
+        entityManagerFactory = configuration.buildSessionFactory();
+    }
+
+    @AfterAll
+    static void closeEntityManagerFactory() {
+        if (entityManagerFactory != null && entityManagerFactory.isOpen()) {
+            entityManagerFactory.close();
+        }
+    }
 
     @Test
     void positionLookupMustLeaveCallerTransactionsActive() {
@@ -137,7 +144,7 @@ class JpaEventStorePostgresIT {
                 transaction.begin();
                 try {
                     JpaEventStore.participating(second, secondRepository,
-                            new EventPayloadSerializer(JsonMapper.builder().findAndAddModules().build()))
+                                    new EventPayloadSerializer(JsonMapper.builder().findAndAddModules().build()))
                             .append("Order", secondId, List.of(new OrderCreatedEvent(secondId)), 0);
                     transaction.commit();
                 } finally {
@@ -165,33 +172,6 @@ class JpaEventStorePostgresIT {
             executor.shutdownNow();
             first.close();
             second.close();
-        }
-    }
-
-    private EntityManager entityManager;
-    private EventStore eventStore;
-
-    @BeforeAll
-    static void createEntityManagerFactory() {
-        Configuration configuration = new Configuration();
-        configuration.setProperty("hibernate.connection.driver_class", "org.postgresql.Driver");
-        configuration.setProperty("hibernate.connection.url", POSTGRES.getJdbcUrl());
-        configuration.setProperty("hibernate.connection.username", POSTGRES.getUsername());
-        configuration.setProperty("hibernate.connection.password", POSTGRES.getPassword());
-        configuration.setProperty("hibernate.connection.isolation",
-                String.valueOf(Connection.TRANSACTION_READ_COMMITTED));
-        configuration.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
-        configuration.setProperty("hibernate.hbm2ddl.auto", "create-drop");
-        configuration.addAnnotatedClass(StoredEventEntity.class);
-        configuration.addAnnotatedClass(TransactionBusinessEntity.class);
-        configuration.addAnnotatedClass(TransactionOutboxEntity.class);
-        entityManagerFactory = configuration.buildSessionFactory();
-    }
-
-    @AfterAll
-    static void closeEntityManagerFactory() {
-        if (entityManagerFactory != null && entityManagerFactory.isOpen()) {
-            entityManagerFactory.close();
         }
     }
 
@@ -422,10 +402,13 @@ class JpaEventStorePostgresIT {
     private final static class TestAggregateRootId implements AggregateRootId {
 
         private static final long serialVersionUID = 0L;
-
+        private static final EntityType TYPE = new StringEntityType("Order");
         private final String value;
 
-        private static final EntityType TYPE = new StringEntityType("Order");
+        @JsonCreator()
+        private TestAggregateRootId(@JsonProperty("value") String value) {
+            this.value = value;
+        }
 
         @Override
         public EntityType getType() {
@@ -440,11 +423,6 @@ class JpaEventStorePostgresIT {
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
-        }
-
-        @JsonCreator()
-        private TestAggregateRootId(@JsonProperty("value") String value) {
-            this.value = value;
         }
 
         @JsonProperty("value")

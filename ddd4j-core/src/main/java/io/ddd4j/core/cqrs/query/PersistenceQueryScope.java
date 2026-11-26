@@ -13,16 +13,11 @@
  * limitations under the License.
  */
 package io.ddd4j.core.cqrs.query;
-import java.util.Optional;
-import java.util.Objects;
-import java.util.List;
-import java.util.Collection;
-import java.util.ArrayList;
-import io.ddd4j.kit.lang.SFunction;
 
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.kit.lang.CollKit;
+import io.ddd4j.kit.lang.SFunction;
 import io.ddd4j.kit.text.StrPool;
 
 import java.util.*;
@@ -52,7 +47,7 @@ public final class PersistenceQueryScope<M extends AggregateRoot<?>, P> {
      * 添加持久化对象属性的等于条件。
      *
      * @param property 持久化对象属性引用
-     * @param value 比较值
+     * @param value    比较值
      * @return 当前持久化查询作用域，供链式调用
      */
     public PersistenceQueryScope<M, P> eq(SFunction<P, ?> property, Object value) {
@@ -63,8 +58,8 @@ public final class PersistenceQueryScope<M extends AggregateRoot<?>, P> {
      * 按条件添加持久化对象属性的等于条件。
      *
      * @param condition 为 true 时才添加条件
-     * @param property 持久化对象属性引用
-     * @param value 比较值
+     * @param property  持久化对象属性引用
+     * @param value     比较值
      * @return 当前持久化查询作用域，供链式调用
      */
     public PersistenceQueryScope<M, P> eq(boolean condition, SFunction<P, ?> property, Object value) {
@@ -75,7 +70,7 @@ public final class PersistenceQueryScope<M extends AggregateRoot<?>, P> {
      * 添加持久化对象属性的不等于条件。
      *
      * @param property 持久化对象属性引用
-     * @param value 比较值
+     * @param value    比较值
      * @return 当前持久化查询作用域，供链式调用
      */
     public PersistenceQueryScope<M, P> ne(SFunction<P, ?> property, Object value) {
@@ -86,7 +81,7 @@ public final class PersistenceQueryScope<M extends AggregateRoot<?>, P> {
      * 添加持久化对象属性的模糊匹配条件。
      *
      * @param property 持久化对象属性引用
-     * @param value 比较值
+     * @param value    比较值
      * @return 当前持久化查询作用域，供链式调用
      */
     public PersistenceQueryScope<M, P> like(SFunction<P, ?> property, Object value) {
@@ -97,7 +92,7 @@ public final class PersistenceQueryScope<M extends AggregateRoot<?>, P> {
      * 添加持久化对象属性的左侧模糊匹配条件。
      *
      * @param property 持久化对象属性引用
-     * @param value 比较值
+     * @param value    比较值
      * @return 当前持久化查询作用域，供链式调用
      */
     public PersistenceQueryScope<M, P> likeLeft(SFunction<P, ?> property, Object value) {
@@ -108,7 +103,7 @@ public final class PersistenceQueryScope<M extends AggregateRoot<?>, P> {
      * 添加持久化对象属性的右侧模糊匹配条件。
      *
      * @param property 持久化对象属性引用
-     * @param value 比较值
+     * @param value    比较值
      * @return 当前持久化查询作用域，供链式调用
      */
     public PersistenceQueryScope<M, P> likeRight(SFunction<P, ?> property, Object value) {
@@ -119,7 +114,7 @@ public final class PersistenceQueryScope<M extends AggregateRoot<?>, P> {
      * 添加持久化对象属性的非模糊匹配条件。
      *
      * @param property 持久化对象属性引用
-     * @param value 比较值
+     * @param value    比较值
      * @return 当前持久化查询作用域，供链式调用
      */
     public PersistenceQueryScope<M, P> notLike(SFunction<P, ?> property, Object value) {
@@ -130,7 +125,7 @@ public final class PersistenceQueryScope<M extends AggregateRoot<?>, P> {
      * 添加持久化对象属性的大于条件。
      *
      * @param property 持久化对象属性引用
-     * @param value 比较值
+     * @param value    比较值
      * @return 当前持久化查询作用域，供链式调用
      */
     public PersistenceQueryScope<M, P> gt(SFunction<P, ?> property, Object value) {
@@ -141,7 +136,7 @@ public final class PersistenceQueryScope<M extends AggregateRoot<?>, P> {
      * 添加持久化对象属性的大于或等于条件。
      *
      * @param property 持久化对象属性引用
-     * @param value 比较值
+     * @param value    比较值
      * @return 当前持久化查询作用域，供链式调用
      */
     public PersistenceQueryScope<M, P> ge(SFunction<P, ?> property, Object value) {
@@ -152,7 +147,7 @@ public final class PersistenceQueryScope<M extends AggregateRoot<?>, P> {
      * 添加持久化对象属性的小于条件。
      *
      * @param property 持久化对象属性引用
-     * @param value 比较值
+     * @param value    比较值
      * @return 当前持久化查询作用域，供链式调用
      */
     public PersistenceQueryScope<M, P> lt(SFunction<P, ?> property, Object value) {
@@ -163,7 +158,7 @@ public final class PersistenceQueryScope<M extends AggregateRoot<?>, P> {
      * 添加持久化对象属性的小于或等于条件。
      *
      * @param property 持久化对象属性引用
-     * @param value 比较值
+     * @param value    比较值
      * @return 当前持久化查询作用域，供链式调用
      */
     public PersistenceQueryScope<M, P> le(SFunction<P, ?> property, Object value) {
@@ -174,8 +169,8 @@ public final class PersistenceQueryScope<M extends AggregateRoot<?>, P> {
      * 添加持久化对象属性的范围条件。
      *
      * @param property 持久化对象属性引用
-     * @param start 范围下界，null 时忽略
-     * @param end 范围上界，null 时忽略
+     * @param start    范围下界，null 时忽略
+     * @param end      范围上界，null 时忽略
      * @return 当前持久化查询作用域，供链式调用
      */
     public PersistenceQueryScope<M, P> between(SFunction<P, ?> property, Object start, Object end) {
@@ -187,7 +182,7 @@ public final class PersistenceQueryScope<M extends AggregateRoot<?>, P> {
      * 添加持久化对象属性的集合包含条件。
      *
      * @param property 持久化对象属性引用
-     * @param values 候选值集合；为空时忽略条件
+     * @param values   候选值集合；为空时忽略条件
      * @return 当前持久化查询作用域，供链式调用
      */
     public PersistenceQueryScope<M, P> in(SFunction<P, ?> property, Collection<?> values) {
@@ -199,7 +194,7 @@ public final class PersistenceQueryScope<M extends AggregateRoot<?>, P> {
      * 添加持久化对象属性的集合排除条件。
      *
      * @param property 持久化对象属性引用
-     * @param values 候选值集合；为空时忽略条件
+     * @param values   候选值集合；为空时忽略条件
      * @return 当前持久化查询作用域，供链式调用
      */
     public PersistenceQueryScope<M, P> notIn(SFunction<P, ?> property, Collection<?> values) {

@@ -13,13 +13,11 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * 类型说明。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 3.0.x
  */
@@ -67,7 +65,7 @@ class AuthEventValueContractTest {
         assertEquals(event.token(), event.getToken());
         assertEquals(event.occurredAt(), event.getOccurredAt());
         assertNotNull(AuthSucceededEvent.class.getConstructor(
-                AuthRequest.class, AuthPrincipal.class, String.class, Instant.class)
+                        AuthRequest.class, AuthPrincipal.class, String.class, Instant.class)
                 .getAnnotation(JsonCreator.class));
         assertEquals("token", AuthSucceededEvent.class.getMethod("token")
                 .getAnnotation(JsonProperty.class).value());

@@ -22,9 +22,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * {@link InMemoryEventStore} 测试（继承契约测试并验证内存实现特有行为）。
@@ -36,6 +34,7 @@ class InMemoryEventStoreTest extends EventStoreContractTest {
 
     /**
      * 创建内存事件存储实现供通用契约测试使用。
+     *
      * @return 内存事件存储
      */
     @Override

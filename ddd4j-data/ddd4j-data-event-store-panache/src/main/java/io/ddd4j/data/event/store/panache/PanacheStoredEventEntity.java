@@ -16,12 +16,7 @@ package io.ddd4j.data.event.store.panache;
 
 import io.ddd4j.core.constant.EventStoreConstants;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.IdClass;
-import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.*;
 
 import java.time.Instant;
 

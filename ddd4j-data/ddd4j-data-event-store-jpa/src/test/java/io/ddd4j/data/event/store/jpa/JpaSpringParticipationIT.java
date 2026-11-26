@@ -6,13 +6,11 @@
 package io.ddd4j.data.event.store.jpa;
 
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
-import io.ddd4j.core.ddd.event.AggregateRootId;
-import io.ddd4j.core.ddd.event.DomainEvent;
-import io.ddd4j.core.ddd.event.EntityIdPath;
-import io.ddd4j.core.ddd.event.EntityType;
-import io.ddd4j.core.ddd.event.StringEntityType;
+import io.ddd4j.core.ddd.event.*;
 import io.ddd4j.data.event.store.jpa.fixture.TransactionBusinessEntity;
 import io.ddd4j.data.event.store.jpa.fixture.TransactionOutboxEntity;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cfg.Configuration;
 import org.junit.jupiter.api.AfterAll;
@@ -22,19 +20,11 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.SharedEntityManagerCreator;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-
 import java.util.Collections;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * 使用真实 Spring JPA 事务验证 Managed 参与模式的数据库结果。
@@ -70,6 +60,50 @@ class JpaSpringParticipationIT {
         if (Objects.nonNull(entityManagerFactory) && entityManagerFactory.isOpen()) {
             entityManagerFactory.close();
         }
+    }
+
+    private static void persistBusinessAndOutbox(String id) {
+        sharedEntityManager.persist(new TransactionBusinessEntity(id, "created"));
+        sharedEntityManager.persist(new TransactionOutboxEntity(id, "pending"));
+    }
+
+    private static void assertCommitted(String id, String expectedBusinessValue) {
+        EntityManager verifier = entityManagerFactory.createEntityManager();
+        try {
+            TransactionBusinessEntity business = verifier.find(TransactionBusinessEntity.class, id);
+            TransactionOutboxEntity outbox = verifier.find(TransactionOutboxEntity.class, id);
+            long eventCount = eventCount(verifier, id);
+            assertEquals(expectedBusinessValue, business.getValue());
+            assertEquals("pending", outbox.getValue());
+            assertEquals(1L, eventCount);
+            log.info("SPRING_TX_STATE scenario={} businessValue={} outboxValue={} eventCount={}",
+                    id, business.getValue(), outbox.getValue(), eventCount);
+        } finally {
+            verifier.close();
+        }
+    }
+
+    private static void assertRolledBack(String id) {
+        EntityManager verifier = entityManagerFactory.createEntityManager();
+        try {
+            TransactionBusinessEntity business = verifier.find(TransactionBusinessEntity.class, id);
+            TransactionOutboxEntity outbox = verifier.find(TransactionOutboxEntity.class, id);
+            long eventCount = eventCount(verifier, id);
+            assertNull(business);
+            assertNull(outbox);
+            assertEquals(0L, eventCount);
+            log.info("SPRING_TX_STATE scenario={} business={} outbox={} eventCount={}",
+                    id, business, outbox, eventCount);
+        } finally {
+            verifier.close();
+        }
+    }
+
+    private static long eventCount(EntityManager verifier, String id) {
+        return verifier.createQuery(
+                        "select count(e) from StoredEventEntity e where e.aggregateId = :aggregateId", Long.class)
+                .setParameter("aggregateId", id)
+                .getSingleResult();
     }
 
     @Test
@@ -155,50 +189,6 @@ class JpaSpringParticipationIT {
         assertEquals(1, propagated.getSuppressed().length);
         assertSame(markerFailure, propagated.getSuppressed()[0]);
         assertRolledBack(id);
-    }
-
-    private static void persistBusinessAndOutbox(String id) {
-        sharedEntityManager.persist(new TransactionBusinessEntity(id, "created"));
-        sharedEntityManager.persist(new TransactionOutboxEntity(id, "pending"));
-    }
-
-    private static void assertCommitted(String id, String expectedBusinessValue) {
-        EntityManager verifier = entityManagerFactory.createEntityManager();
-        try {
-            TransactionBusinessEntity business = verifier.find(TransactionBusinessEntity.class, id);
-            TransactionOutboxEntity outbox = verifier.find(TransactionOutboxEntity.class, id);
-            long eventCount = eventCount(verifier, id);
-            assertEquals(expectedBusinessValue, business.getValue());
-            assertEquals("pending", outbox.getValue());
-            assertEquals(1L, eventCount);
-            log.info("SPRING_TX_STATE scenario={} businessValue={} outboxValue={} eventCount={}",
-                    id, business.getValue(), outbox.getValue(), eventCount);
-        } finally {
-            verifier.close();
-        }
-    }
-
-    private static void assertRolledBack(String id) {
-        EntityManager verifier = entityManagerFactory.createEntityManager();
-        try {
-            TransactionBusinessEntity business = verifier.find(TransactionBusinessEntity.class, id);
-            TransactionOutboxEntity outbox = verifier.find(TransactionOutboxEntity.class, id);
-            long eventCount = eventCount(verifier, id);
-            assertNull(business);
-            assertNull(outbox);
-            assertEquals(0L, eventCount);
-            log.info("SPRING_TX_STATE scenario={} business={} outbox={} eventCount={}",
-                    id, business, outbox, eventCount);
-        } finally {
-            verifier.close();
-        }
-    }
-
-    private static long eventCount(EntityManager verifier, String id) {
-        return verifier.createQuery(
-                        "select count(e) from StoredEventEntity e where e.aggregateId = :aggregateId", Long.class)
-                .setParameter("aggregateId", id)
-                .getSingleResult();
     }
 
     private static final class TestAggregateRootId implements AggregateRootId {

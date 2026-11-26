@@ -14,16 +14,13 @@
  */
 package io.ddd4j.sample.quarkus.satoken.goods.web;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import io.ddd4j.kit.lang.StrKit;
-
-import java.util.Objects;
-
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.api.R;
+import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.sample.quarkus.satoken.goods.application.GoodsApplicationService;
 import io.ddd4j.sample.quarkus.satoken.goods.domain.Goods;
 import io.ddd4j.sample.quarkus.satoken.goods.domain.GoodsQuery;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -33,6 +30,7 @@ import jakarta.ws.rs.core.MediaType;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 商品充血查询资源（读侧）。
@@ -41,9 +39,11 @@ import java.util.List;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+
 @Path("/api/goods")
 @Produces(MediaType.APPLICATION_JSON)
 @ApplicationScoped
+@io.quarkus.arc.properties.IfBuildProperty(name = "sample.goods.standalone", stringValue = "true")
 public class GoodsQueryResource {
 
     private final GoodsApplicationService applicationService;
@@ -61,11 +61,11 @@ public class GoodsQueryResource {
     /**
      * 充血分页查询。
      *
-     * @param current 当前页码
-     * @param size 每页数量
-     * @param code 商品编码
+     * @param current  当前页码
+     * @param size     每页数量
+     * @param code     商品编码
      * @param nameLike 名称模糊匹配条件
-     * @param status 商品状态
+     * @param status   商品状态
      * @param priceMin 最低价格
      * @param priceMax 最高价格
      * @param orderBys 排序字段
@@ -88,9 +88,9 @@ public class GoodsQueryResource {
     /**
      * 充血列表查询。
      *
-     * @param code 商品编码
+     * @param code     商品编码
      * @param nameLike 名称模糊匹配条件
-     * @param status 商品状态
+     * @param status   商品状态
      * @param priceMin 最低价格
      * @param priceMax 最高价格
      * @param orderBys 排序字段
@@ -111,9 +111,9 @@ public class GoodsQueryResource {
     /**
      * 充血计数。
      *
-     * @param code 商品编码
+     * @param code     商品编码
      * @param nameLike 名称模糊匹配条件
-     * @param status 商品状态
+     * @param status   商品状态
      * @param priceMin 最低价格
      * @param priceMax 最高价格
      * @return 商品数量响应

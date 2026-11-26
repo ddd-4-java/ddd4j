@@ -4,22 +4,13 @@
  */
 package io.ddd4j.data.event.store.jdbi;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.util.Objects;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.core.constant.EventStoreConstants;
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
 import io.ddd4j.core.cqrs.eventstore.StoredEvent;
-import io.ddd4j.core.ddd.event.AggregateRootId;
-import io.ddd4j.core.ddd.event.DomainEvent;
-import io.ddd4j.core.ddd.event.EntityIdPath;
-import io.ddd4j.core.ddd.event.EntityType;
-import io.ddd4j.core.ddd.event.EventId;
-import io.ddd4j.core.ddd.event.StringEntityType;
+import io.ddd4j.core.ddd.event.*;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.statement.SqlLogger;
 import org.jdbi.v3.core.statement.SqlStatements;
@@ -28,19 +19,16 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * 强类型 JDBI EventStore 的 position 冲突重试集成测试。
@@ -199,10 +187,13 @@ class JdbiEventStoreRetryTest {
     final static class TestAggregateRootId implements AggregateRootId {
 
         private static final long serialVersionUID = 0L;
-
+        private static final EntityType TYPE = new StringEntityType("Order");
         private final String value;
 
-        private static final EntityType TYPE = new StringEntityType("Order");
+        @JsonCreator()
+        TestAggregateRootId(@JsonProperty("value") String value) {
+            this.value = value;
+        }
 
         @Override
         public EntityType getType() {
@@ -217,11 +208,6 @@ class JdbiEventStoreRetryTest {
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
-        }
-
-        @JsonCreator()
-        TestAggregateRootId(@JsonProperty("value") String value) {
-            this.value = value;
         }
 
         @JsonProperty("value")

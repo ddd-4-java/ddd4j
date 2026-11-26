@@ -14,11 +14,7 @@
  */
 package io.ddd4j.core.auth;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.*;
 import io.ddd4j.core.auth.session.AuthSessionConfig;
 import io.ddd4j.core.subject.Subject;
 import lombok.Data;
@@ -163,7 +159,7 @@ public class AuthRequest {
     /**
      * 添加扩展信息。
      *
-     * @param key 扩展信息键，不可为 null
+     * @param key   扩展信息键，不可为 null
      * @param value 扩展信息值
      * @return 当前登录请求
      */

@@ -14,25 +14,20 @@
  */
 package io.ddd4j.dropwizard.cqrs;
 
-import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
+import io.ddd4j.core.cqrs.readmodel.ProjectionCron;
 import io.ddd4j.core.cqrs.readmodel.ProjectionRunner;
 import io.ddd4j.core.cqrs.readmodel.ProjectionView;
+import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
 import io.dropwizard.core.setup.Environment;
-import java.util.Collection;
-import java.util.concurrent.RejectedExecutionException;
-import io.ddd4j.core.cqrs.readmodel.ProjectionCron;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.util.Collection;
 import java.util.Objects;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.Set;
+import java.util.concurrent.*;
 
 /**
  * Dropwizard 数值 CRON 调度器；共享解析，本实例拥有 JDK 工作线程。
@@ -50,26 +45,32 @@ public class DropwizardProjectionScheduler implements ViewScheduler {
                 return t;
             });
 
-    /** 创建未启动线程的调度器，生命周期由使用者管理。 */
+    /**
+     * 创建未启动线程的调度器，生命周期由使用者管理。
+     */
     protected DropwizardProjectionScheduler() {
     }
 
-    /** 创建手动调度器，不向 Environment 注册 Managed。
-     * @param env 原生环境锚点
-     * @param views 视图候选
+    /**
+     * 创建手动调度器，不向 Environment 注册 Managed。
+     *
+     * @param env    原生环境锚点
+     * @param views  视图候选
      * @param runner 共享运行器
      * @return 未调度的实例
      */
     public static DropwizardProjectionScheduler create(Environment env,
-            Collection<ProjectionView<?>> views,
-            ProjectionRunner<?> runner) {
+                                                       Collection<ProjectionView<?>> views,
+                                                       ProjectionRunner<?> runner) {
         Objects.requireNonNull(env, "env must not be null");
         Objects.requireNonNull(views, "views must not be null");
         Objects.requireNonNull(runner, "runner must not be null");
         return new DropwizardProjectionScheduler();
     }
 
-    /** 取消调度并中断工作线程；等待最多五秒，未退出时明确报错而非虚报释放。 */
+    /**
+     * 取消调度并中断工作线程；等待最多五秒，未退出时明确报错而非虚报释放。
+     */
     public void shutdown() {
         synchronized (this) {
             handles.forEach(ReschedulingHandle::cancel);
@@ -86,7 +87,9 @@ public class DropwizardProjectionScheduler implements ViewScheduler {
         }
     }
 
-    /** @return 线程池是否完全停止 */
+    /**
+     * @return 线程池是否完全停止
+     */
     public boolean isTerminated() {
         return executor.isTerminated();
     }
@@ -104,6 +107,46 @@ public class DropwizardProjectionScheduler implements ViewScheduler {
         handle.scheduleNext();
         handles.add(handle);
         return handle;
+    }
+
+    /**
+     * 旧 Dropwizard 六段数字语法的薄桥；墙上时间算法交给共享解析器。
+     */
+    public static class CronExpression {
+        private final ProjectionCron delegate;
+
+        private CronExpression(ProjectionCron delegate) {
+            this.delegate = delegate;
+        }
+
+        /**
+         * 解析数字表达式，不接受旧接口未支持的问号和范围步长。
+         *
+         * @param expression 六段表达式
+         * @return 解析结果
+         */
+        public static CronExpression parse(String expression) {
+            Objects.requireNonNull(expression, "expression must not be null");
+            if (expression.contains("?") || expression.matches(".*[0-9]-[0-9]+/.*")) {
+                throw new IllegalArgumentException("Dropwizard legacy cron does not support this syntax: " + expression);
+            }
+            return new CronExpression(ProjectionCron.parse(expression));
+        }
+
+        /**
+         * 保持原 Dropwizard 的本地墙上时间及一百万秒搜索窗口。
+         *
+         * @param from 本地时间
+         * @return 下一执行时间，窗口内没有匹配返回 null
+         */
+        public LocalDateTime next(LocalDateTime from) {
+            ZonedDateTime next = delegate.next(from.atZone(ZoneOffset.UTC));
+            if (Objects.isNull(next)) {
+                return null;
+            }
+            LocalDateTime local = next.toLocalDateTime();
+            return local.isAfter(from.plusSeconds(1_000_000).withNano(0)) ? null : local;
+        }
     }
 
     /**
@@ -168,33 +211,6 @@ public class DropwizardProjectionScheduler implements ViewScheduler {
             }
             ScheduledFuture<?> f = future;
             return Objects.nonNull(f) && !f.isCancelled() && !f.isDone();
-        }
-    }
-
-    /** 旧 Dropwizard 六段数字语法的薄桥；墙上时间算法交给共享解析器。 */
-    public static class CronExpression {
-        private final ProjectionCron delegate;
-        private CronExpression(ProjectionCron delegate) { this.delegate = delegate; }
-        /** 解析数字表达式，不接受旧接口未支持的问号和范围步长。
-         * @param expression 六段表达式
-         * @return 解析结果
-         */
-        public static CronExpression parse(String expression) {
-            Objects.requireNonNull(expression, "expression must not be null");
-            if (expression.contains("?") || expression.matches(".*[0-9]-[0-9]+/.*")) {
-                throw new IllegalArgumentException("Dropwizard legacy cron does not support this syntax: " + expression);
-            }
-            return new CronExpression(ProjectionCron.parse(expression));
-        }
-        /** 保持原 Dropwizard 的本地墙上时间及一百万秒搜索窗口。
-         * @param from 本地时间
-         * @return 下一执行时间，窗口内没有匹配返回 null
-         */
-        public LocalDateTime next(LocalDateTime from) {
-            ZonedDateTime next = delegate.next(from.atZone(ZoneOffset.UTC));
-            if (Objects.isNull(next)) { return null; }
-            LocalDateTime local = next.toLocalDateTime();
-            return local.isAfter(from.plusSeconds(1_000_000).withNano(0)) ? null : local;
         }
     }
 }

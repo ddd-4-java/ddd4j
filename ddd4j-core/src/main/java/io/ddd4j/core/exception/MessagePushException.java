@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 package io.ddd4j.core.exception;
-import io.ddd4j.core.api.CustomApiCode;
-import io.ddd4j.core.api.ApiCode;
 
+import io.ddd4j.core.api.ApiCode;
+import io.ddd4j.core.api.CustomApiCode;
 
 
 /**
@@ -31,7 +31,7 @@ public class MessagePushException extends BizRuntimeException {
     /**
      * 创建可国际化的消息推送异常。
      *
-     * @param code 业务错误码
+     * @param code    业务错误码
      * @param message 错误消息或国际化资源键
      */
     public MessagePushException(Integer code, String message) {
@@ -41,9 +41,9 @@ public class MessagePushException extends BizRuntimeException {
     /**
      * 按国际化资源键创建消息推送异常。
      *
-     * @param code 业务错误码
+     * @param code     业务错误码
      * @param i18nCode 国际化资源键
-     * @param message 错误消息或国际化资源键
+     * @param message  错误消息或国际化资源键
      */
     public MessagePushException(Integer code, String i18nCode, String message) {
         super(code, i18nCode, message);
@@ -52,10 +52,10 @@ public class MessagePushException extends BizRuntimeException {
     /**
      * 按国际化资源键创建消息推送异常。
      *
-     * @param code 业务错误码
+     * @param code     业务错误码
      * @param i18nCode 国际化资源键
-     * @param args 消息格式化参数
-     * @param message 错误消息或国际化资源键
+     * @param args     消息格式化参数
+     * @param message  错误消息或国际化资源键
      */
     public MessagePushException(Integer code, String i18nCode, Object[] args, String message) {
         super(code, i18nCode, args, message);
@@ -74,7 +74,7 @@ public class MessagePushException extends BizRuntimeException {
      * 创建可国际化的消息推送异常。
      *
      * @param message 错误消息或国际化资源键
-     * @param cause 原始异常
+     * @param cause   原始异常
      */
     public MessagePushException(String message, Throwable cause) {
         super(message, cause);
@@ -83,7 +83,7 @@ public class MessagePushException extends BizRuntimeException {
     /**
      * 按预定义业务码和国际化键创建消息推送异常。
      *
-     * @param code 业务错误码
+     * @param code     业务错误码
      * @param i18nCode 国际化资源键
      */
     public MessagePushException(ApiCode code, String i18nCode) {
@@ -93,7 +93,7 @@ public class MessagePushException extends BizRuntimeException {
     /**
      * 按业务扩展码和国际化键创建异常。
      *
-     * @param code 业务扩展错误码
+     * @param code     业务扩展错误码
      * @param i18nCode 国际化资源键
      */
     public MessagePushException(CustomApiCode code, String i18nCode) {
@@ -103,9 +103,9 @@ public class MessagePushException extends BizRuntimeException {
     /**
      * 创建可国际化的消息推送异常。
      *
-     * @param code 业务错误码
+     * @param code    业务错误码
      * @param message 错误消息或国际化资源键
-     * @param cause 原始异常
+     * @param cause   原始异常
      */
     public MessagePushException(Integer code, String message, Throwable cause) {
         super(code, message, cause);
@@ -114,10 +114,10 @@ public class MessagePushException extends BizRuntimeException {
     /**
      * 按国际化资源键创建消息推送异常。
      *
-     * @param code 业务错误码
+     * @param code     业务错误码
      * @param i18nCode 国际化资源键
-     * @param defMsg 资源缺失时的默认消息
-     * @param cause 原始异常
+     * @param defMsg   资源缺失时的默认消息
+     * @param cause    原始异常
      */
     public MessagePushException(Integer code, String i18nCode, String defMsg, Throwable cause) {
         super(code, i18nCode, defMsg, cause);

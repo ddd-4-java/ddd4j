@@ -37,8 +37,8 @@ public final class ActivemqKit {
      * 支持 {@code queue:} / {@code topic:} 前缀强制类型。
      *
      * @param namespace 消息命名空间
-     * @param topic 主题名称
-     * @param tag 消息标签
+     * @param topic     主题名称
+     * @param tag       消息标签
      * @return 物理目的地名称
      */
     public static String resolvePhysical(String namespace, String topic, String tag) {
@@ -52,7 +52,7 @@ public final class ActivemqKit {
     /**
      * 根据物理地址前缀创建 JMS Destination。
      *
-     * @param session JMS 会话
+     * @param session  JMS 会话
      * @param physical 物理目的地名称
      * @return JMS 目的地
      * @throws JMSException 创建目的地失败时抛出
@@ -91,7 +91,7 @@ public final class ActivemqKit {
      * 安全读取 JMS String 属性（异常返回 null）。
      *
      * @param message JMS 消息
-     * @param key 属性名
+     * @param key     属性名
      * @return 属性值；读取失败时返回 {@code null}
      */
     public static String stringProperty(Message message, String key) {

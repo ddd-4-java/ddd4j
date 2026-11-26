@@ -14,28 +14,28 @@
  */
 package io.ddd4j.dropwizard;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.Collections;
-import io.ddd4j.dropwizard.cqrs.DropwizardProjectionViewManager;
-import io.ddd4j.core.cqrs.readmodel.ProjectionRunner;
-import io.ddd4j.core.cqrs.readmodel.NoopEventChunkReader;
-import io.ddd4j.core.cqrs.readmodel.InMemoryProjectionPositionRepository;
-import io.ddd4j.core.cqrs.readmodel.DefaultProjectionService;
-import io.ddd4j.core.cqrs.command.CommandBus;
-import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.constant.SpiKeys;
+import io.ddd4j.core.context.BaseContext;
+import io.ddd4j.core.cqrs.command.CommandBus;
+import io.ddd4j.core.cqrs.readmodel.DefaultProjectionService;
+import io.ddd4j.core.cqrs.readmodel.InMemoryProjectionPositionRepository;
+import io.ddd4j.core.cqrs.readmodel.NoopEventChunkReader;
+import io.ddd4j.core.cqrs.readmodel.ProjectionRunner;
+import io.ddd4j.dropwizard.cqrs.DropwizardProjectionViewManager;
 import io.ddd4j.runtime.testkit.AbstractRuntimeContractTest;
 import io.ddd4j.runtime.testkit.RuntimeContract;
 import io.ddd4j.runtime.testkit.RuntimeContractAdapter;
 import io.ddd4j.runtime.testkit.RuntimeFixtures;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.Collections;
+import java.util.concurrent.atomic.AtomicInteger;
 
-/** Dropwizard 生命周期和就绪状态的运行时契约。 */
+import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * Dropwizard 生命周期和就绪状态的运行时契约。
+ */
 class Ddd4jDropwizardRuntimeTest extends AbstractRuntimeContractTest {
 
     @Test
@@ -57,9 +57,16 @@ class Ddd4jDropwizardRuntimeTest extends AbstractRuntimeContractTest {
         ProjectionRunner<Object> runner = new ProjectionRunner<>(
                 new DefaultProjectionService(new InMemoryProjectionPositionRepository()), new NoopEventChunkReader<>());
         DropwizardProjectionViewManager manager = new DropwizardProjectionViewManager(
-                (name, cron, task) -> { throw new AssertionError("no task expected"); }, runner, Collections.emptyList()) {
-            @Override public void start() { throw failure; }
-            @Override public void stop() {
+                (name, cron, task) -> {
+                    throw new AssertionError("no task expected");
+                }, runner, Collections.emptyList()) {
+            @Override
+            public void start() {
+                throw failure;
+            }
+
+            @Override
+            public void stop() {
                 if (stopCalls.incrementAndGet() == 1) {
                     throw failure;
                 }

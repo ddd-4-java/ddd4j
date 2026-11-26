@@ -21,14 +21,23 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Constructor;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-/** 三线共享的事件载荷 JSON 契约；构造器参数由各线 Jackson 版本决定。 */
+/**
+ * 三线共享的事件载荷 JSON 契约；构造器参数由各线 Jackson 版本决定。
+ */
 class EventPayloadParityContractTest {
+
+    private static EventPayloadSerializer serializerForCurrentJacksonLine() throws Exception {
+        Object mapper = JsonKit.defaultObjectMapper();
+        try {
+            mapper.getClass().getMethod("findAndRegisterModules").invoke(mapper);
+        } catch (NoSuchMethodException ignored) {
+            // Jackson 3 内置 Java Time 支持，不提供 Jackson 2 的模块发现方法。
+        }
+        Constructor<?> constructor = EventPayloadSerializer.class.getConstructors()[0];
+        return (EventPayloadSerializer) constructor.newInstance(mapper);
+    }
 
     @Test
     void explicitEventTypeIgnoresUnknownAndUntrustedClassMarkers() throws Exception {
@@ -55,18 +64,9 @@ class EventPayloadParityContractTest {
         assertNotNull(failure.getCause());
     }
 
-    private static EventPayloadSerializer serializerForCurrentJacksonLine() throws Exception {
-        Object mapper = JsonKit.defaultObjectMapper();
-        try {
-            mapper.getClass().getMethod("findAndRegisterModules").invoke(mapper);
-        } catch (NoSuchMethodException ignored) {
-            // Jackson 3 内置 Java Time 支持，不提供 Jackson 2 的模块发现方法。
-        }
-        Constructor<?> constructor = EventPayloadSerializer.class.getConstructors()[0];
-        return (EventPayloadSerializer) constructor.newInstance(mapper);
-    }
-
-    /** 可通过 Jackson 无参构造器恢复的领域事件。 */
+    /**
+     * 可通过 Jackson 无参构造器恢复的领域事件。
+     */
     public static final class SampleEvent extends DomainEvent<StringEntityId> {
         private String fact;
 

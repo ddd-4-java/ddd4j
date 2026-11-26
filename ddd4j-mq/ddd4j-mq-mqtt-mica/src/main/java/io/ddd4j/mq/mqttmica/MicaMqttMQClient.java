@@ -18,8 +18,8 @@ import io.ddd4j.kit.lang.IdKit;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;
-import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.delivery.MQDeliveryHeaders;
+import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.lifecycle.MQClientLifecycle;
 import io.ddd4j.mq.lifecycle.MQStartupStatus;
 import io.ddd4j.mq.listener.MQListener;
@@ -112,6 +112,22 @@ public class MicaMqttMQClient implements MQClient {
         }));
     }
 
+    static void awaitConnected(BooleanSupplier connected) throws InterruptedException {
+        // connectSync 只等待 TCP 连接；CONNACK 未到时 mica 会将订阅留到下次重连。
+        long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(10);
+        while (!connected.getAsBoolean()) {
+            if (System.nanoTime() >= deadline) {
+                throw new IllegalStateException("Mica MQTT client did not become ready for subscription");
+            }
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+                throw ex;
+            }
+        }
+    }
+
     @Override
     public String impl() {
         return "mqtt-mica";
@@ -127,12 +143,14 @@ public class MicaMqttMQClient implements MQClient {
         return startupStatus;
     }
 
+    // ========================= 生产者 =========================
+
     @Override
     public String defaultConcat() {
         return "/";
     }
 
-    // ========================= 生产者 =========================
+    // ========================= 消费者 =========================
 
     /**
      * mica-mqtt 无原生 broker-side tag selector，仅 topic 通配 → 强制应用层 {@link TagMatcher} 过滤。
@@ -142,7 +160,7 @@ public class MicaMqttMQClient implements MQClient {
         return false;
     }
 
-    // ========================= 消费者 =========================
+    // ========================= 连接管理 =========================
 
     @Override
     public Consumer<MQEvent> initProducer(MQProperties mqProperties) {
@@ -168,24 +186,6 @@ public class MicaMqttMQClient implements MQClient {
             }
             log.info("Publish MQ [{}]: {}", topic, payload);
         };
-    }
-
-    // ========================= 连接管理 =========================
-
-    static void awaitConnected(BooleanSupplier connected) throws InterruptedException {
-        // connectSync 只等待 TCP 连接；CONNACK 未到时 mica 会将订阅留到下次重连。
-        long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(10);
-        while (!connected.getAsBoolean()) {
-            if (System.nanoTime() >= deadline) {
-                throw new IllegalStateException("Mica MQTT client did not become ready for subscription");
-            }
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException ex) {
-                Thread.currentThread().interrupt();
-                throw ex;
-            }
-        }
     }
 
     @Override

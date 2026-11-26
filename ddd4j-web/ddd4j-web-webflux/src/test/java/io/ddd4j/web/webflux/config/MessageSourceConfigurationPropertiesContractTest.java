@@ -20,12 +20,11 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-/** 三线共同的消息源配置值契约。 */
+/**
+ * 三线共同的消息源配置值契约。
+ */
 class MessageSourceConfigurationPropertiesContractTest {
 
     @Test

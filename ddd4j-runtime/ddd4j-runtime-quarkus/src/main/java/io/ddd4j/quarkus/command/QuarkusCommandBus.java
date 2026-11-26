@@ -14,11 +14,7 @@
  */
 package io.ddd4j.quarkus.command;
 
-import io.ddd4j.core.cqrs.command.Command;
-import io.ddd4j.core.cqrs.command.CommandBus;
-import io.ddd4j.core.cqrs.command.CommandExecutor;
-import io.ddd4j.core.cqrs.command.Result;
-import io.ddd4j.core.cqrs.command.DefaultCommandBus;
+import io.ddd4j.core.cqrs.command.*;
 import io.quarkus.arc.DefaultBean;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -62,7 +58,7 @@ public class QuarkusCommandBus implements CommandBus {
         return new DefaultCommandBus(snapshot) {
             @Override
             protected CommandExecutor<?> resolveMissingExecutor(Class<? extends Command> commandType,
-                    Collection<CommandExecutor<?>> registeredExecutors) {
+                                                                Collection<CommandExecutor<?>> registeredExecutors) {
                 // ArC 的 Instance 可发现启动后才支持该命令的执行器；缓存和执行仍由 core 负责。
                 if (Objects.nonNull(executors)) {
                     for (CommandExecutor<?> candidate : executors) {

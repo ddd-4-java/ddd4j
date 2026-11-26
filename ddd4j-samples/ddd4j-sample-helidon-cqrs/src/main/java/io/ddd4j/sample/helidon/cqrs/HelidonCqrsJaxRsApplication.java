@@ -14,8 +14,6 @@
  */
 package io.ddd4j.sample.helidon.cqrs;
 
-import io.ddd4j.sample.helidon.cqrs.shared.SharedOrderResource;
-import io.ddd4j.sample.helidon.cqrs.web.OrderResource;
 import io.ddd4j.web.helidon.Ddd4jHelidonExceptionMapper;
 import io.ddd4j.web.helidon.Ddd4jHelidonIllegalStateExceptionMapper;
 import jakarta.ws.rs.ApplicationPath;
@@ -29,13 +27,23 @@ import java.util.Set;
 @ApplicationPath("/")
 public class HelidonCqrsJaxRsApplication extends Application {
 
+    private final Set<Object> catalog;
+
+    public HelidonCqrsJaxRsApplication() {
+        this(new CatalogTradeResource());
+    }
+
+    HelidonCqrsJaxRsApplication(CatalogTradeResource resource) {
+        catalog = Set.of(resource);
+    }
+
+    @Override
+    public Set<Object> getSingletons() {
+        return catalog;
+    }
+
     @Override
     public Set<Class<?>> getClasses() {
-        if (!HelidonCqrsApplication.durableProjectionEnabled()) {
-            return Set.of(OrderResource.class, Ddd4jHelidonExceptionMapper.class,
-                    Ddd4jHelidonIllegalStateExceptionMapper.class);
-        }
-        return Set.of(OrderResource.class, SharedOrderResource.class, Ddd4jHelidonExceptionMapper.class,
-                Ddd4jHelidonIllegalStateExceptionMapper.class);
+        return Set.of(Ddd4jHelidonExceptionMapper.class, Ddd4jHelidonIllegalStateExceptionMapper.class);
     }
 }

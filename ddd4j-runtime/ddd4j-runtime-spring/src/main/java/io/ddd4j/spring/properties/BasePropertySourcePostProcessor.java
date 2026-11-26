@@ -30,7 +30,9 @@ import java.util.Objects;
  */
 public class BasePropertySourcePostProcessor implements BeanFactoryPostProcessor, Ordered {
 
-    /** @param beanFactory 待处理的 Bean 工厂 */
+    /**
+     * @param beanFactory 待处理的 Bean 工厂
+     */
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
         if (beanFactory instanceof ConfigurableEnvironment) {
@@ -54,7 +56,9 @@ public class BasePropertySourcePostProcessor implements BeanFactoryPostProcessor
         }
     }
 
-    /** @return 最低优先级 */
+    /**
+     * @return 最低优先级
+     */
     @Override
     public int getOrder() {
         return LOWEST_PRECEDENCE;

@@ -51,8 +51,8 @@ public class AESKit {
     /**
      * AES-cbc加密
      *
-     * @param key 密钥
-     * @param iv 初始化向量
+     * @param key      密钥
+     * @param iv       初始化向量
      * @param plainTxt 明文
      * @return Base64 编码的密文
      */
@@ -65,8 +65,8 @@ public class AESKit {
     /**
      * AES-cbc解密
      *
-     * @param key 密钥
-     * @param iv 初始化向量
+     * @param key       密钥
+     * @param iv        初始化向量
      * @param cipherTxt Base64 编码的密文
      * @return 解密后的明文
      */

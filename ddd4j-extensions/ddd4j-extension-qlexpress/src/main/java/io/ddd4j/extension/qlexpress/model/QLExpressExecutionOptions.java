@@ -32,9 +32,13 @@ import java.util.Objects;
 @Builder(toBuilder = true)
 public final class QLExpressExecutionOptions {
 
-    /** 默认执行超时时间（毫秒）。 */
+    /**
+     * 默认执行超时时间（毫秒）。
+     */
     public static final long DEFAULT_TIMEOUT_MILLIS = 3000L;
-    /** 默认数组长度上限。 */
+    /**
+     * 默认数组长度上限。
+     */
     public static final int DEFAULT_MAX_ARRAY_LENGTH = 10000;
 
     @Builder.Default

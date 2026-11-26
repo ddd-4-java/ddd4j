@@ -1,5 +1,22 @@
 # ddd4j-sample-quarkus-satoken
 
+## 当前商品交易入口
+
+此模块以 Sa-Token 方式运行共享商品交易。先按[示例总览](../README.md#启动默认订单示例)配置 MySQL。以下命令从仓库根目录运行，使用实际 Maven 版本替换 `<version>`。
+
+```bash
+module=ddd4j-samples/ddd4j-sample-quarkus-satoken
+./mvnw -pl "$module" -am -DskipTests -Dmaven.javadoc.skip=true package
+java -jar "$module/target/quarkus-app/quarkus-run.jar"
+```
+
+业务请求携带 `X-Tenant-Id`。商品地址为 `/orders/catalog/goods/{spuCode}`，订单地址为 `/orders/catalog/orders/{orderNo}`。支付、取消和履约分别使用订单子路径 `/payment`、`/cancel`、`/fulfill`。
+
+本地演示登录使用 `POST /auth/login`，请求体为 `{"username":"admin","password":"123456"}`。将令牌放入 `Authorization: Bearer <token>` 请求头。
+
+<details>
+<summary>商品交易迁移前的说明</summary>
+
 本示例在 Quarkus 中组合 ddd4j 的订单、商品和 RBAC 场景，鉴权实现为 Sa-Token。三条 ddd4j 线使用各自的 JDK、Quarkus 与第三方依赖；本页描述三线共同的 HTTP 和业务行为。实际依赖版本以本线 pom.xml 和根 BOM 为准。
 
 ## 运行与登录
@@ -121,3 +138,5 @@ curl 'http://localhost:8083/api/goods/page?current=1&size=10&status=ON_SALE&orde
 所有订单请求需要原生登录；写操作需要 `order:pay`，取消需要 `order:cancel`。权限基于原生已匹配资源方法，拒绝发生在业务写入前。`admin/123456` 有写/取消权限，`user/123456` 默认只读，演示账户仅用于本地样例。实际登录、角色/权限、退出令牌失效均由现有 native 引擎处理。
 
 Quarkus 1 使用 RESTEasy Classic 的请求完成回调，Quarkus 3 使用 Quarkus REST 的请求完成回调。响应过滤器和完成回调按请求所有权释放自身的 Sa-Token 上下文，并恢复请求前的上下文。各版本的同步 HTTP、鉴权拒绝、退出失效、断连及 JVM 启停验证见 [R14 实施计划](../../docs/superpowers/plans/2026-10-10-three-line-product-convergence.md#r14三线存储和多平台完整验收)。
+
+</details>

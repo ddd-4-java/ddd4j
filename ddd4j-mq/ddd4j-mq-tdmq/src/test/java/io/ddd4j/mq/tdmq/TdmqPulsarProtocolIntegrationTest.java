@@ -27,7 +27,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/** 验证 TDMQ 配置通过真实 Pulsar 协议跨客户端投递，并保留业务因果头。 */
+/**
+ * 验证 TDMQ 配置通过真实 Pulsar 协议跨客户端投递，并保留业务因果头。
+ */
 @Testcontainers
 class TdmqPulsarProtocolIntegrationTest {
 

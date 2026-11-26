@@ -39,8 +39,8 @@ public class ReflectKit extends ReflectUtil {
      *
      * @param clazz 待检查的类
      * @param index 泛型参数位置
+     * @param <T>   泛型类型
      * @return 对应泛型类型
-     * @param <T> 泛型类型
      */
     public <T> Class<T> getSuperClassGenericType(final Class<?> clazz, final int index) {
         Type genType = clazz.getGenericSuperclass();
@@ -64,6 +64,7 @@ public class ReflectKit extends ReflectUtil {
     }
 
     // 判断一个对象的所有字段是否为null
+
     /**
      * 判断对象的所有字段是否均为空。
      *

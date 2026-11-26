@@ -34,6 +34,7 @@ class RbacConfigContractTest {
         assertThrows(UnsupportedOperationException.class, () -> permissions.add("admin:*"));
         assertThrows(UnsupportedOperationException.class, () -> roleCodes.add("admin"));
     }
+
     @Test
     void preservesDirectPermissionInsertionOrder() {
         InMemoryUserRepository users = new InMemoryUserRepository();

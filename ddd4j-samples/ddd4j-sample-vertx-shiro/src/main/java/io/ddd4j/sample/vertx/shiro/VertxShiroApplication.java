@@ -2,10 +2,9 @@ package io.ddd4j.sample.vertx.shiro;
 
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.subject.Subject;
-import io.ddd4j.sample.order.application.OrderApplicationService;
-import io.ddd4j.sample.order.application.CreateOrderCommand;
-import io.ddd4j.sample.order.application.AddOrderLineCommand;
-import io.ddd4j.sample.order.local.InMemoryOrderAdapters;
+import io.ddd4j.sample.order.adapter.http.CatalogEndpoints;
+import io.ddd4j.sample.order.adapter.http.Reply;
+import io.ddd4j.sample.order.start.CatalogRuntime;
 import io.ddd4j.vertx.Ddd4jVertxRuntime;
 import io.ddd4j.web.core.auth.AuthenticationMode;
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
@@ -24,43 +23,49 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
-import java.math.BigDecimal;
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
-import lombok.extern.slf4j.Slf4j;
 
-/** 原生 Shiro 的小型 Order 示例；会话与订单仅用于单实例内存演示。 */
+/**
+ * 原生 Shiro 商品交易示例。
+ */
 @Slf4j
 public final class VertxShiroApplication {
     private final Vertx vertx = Vertx.vertx();
     private final Ddd4jVertxRuntime runtime = Ddd4jVertxRuntime.create(vertx, List.of());
-    private NativeAuth auth;
     private final io.ddd4j.core.util.SubjectKitRegistrationScope subjects = new io.ddd4j.core.util.SubjectKitRegistrationScope(
             new io.ddd4j.auth.shiro.subject.ShiroSubjectProvider());
-    private final OrderApplicationService orders;
+    private final CatalogEndpoints catalog;
     private final BiConsumer<String, Boolean> completed;
     private final Set<Future<?>> inFlight = ConcurrentHashMap.newKeySet();
+    private NativeAuth auth;
     private HttpServer server;
     private volatile boolean closing;
     private CompletableFuture<Void> closed;
-    private VertxShiroApplication(OrderApplicationService orders, BiConsumer<String, Boolean> completed) {
-        this.orders = orders; this.completed = completed;
+
+    private VertxShiroApplication(CatalogEndpoints catalog, BiConsumer<String, Boolean> completed) {
+        this.catalog = catalog;
+        this.completed = completed;
     }
+
     /**
- * @param port 监听端口
- * @return 已启动原生应用
- */
+     * @param port 监听端口
+     * @return 已启动原生应用
+     */
     public static Future<VertxShiroApplication> start(int port) {
-        var memory = new InMemoryOrderAdapters();
-        return start(port, new OrderApplicationService(memory, memory, memory, memory, memory), (id, clean) -> { });
+        return start(port, CatalogRuntime.start(), (id, clean) -> {
+        });
     }
+
     // 所有入口共用路由；包内观测器只观察工作线程恢复后的结果，不修改上下文。
-    static Future<VertxShiroApplication> start(int port, OrderApplicationService orders, BiConsumer<String, Boolean> completed) {
-        var app = new VertxShiroApplication(orders, completed);
+    static Future<VertxShiroApplication> start(int port, CatalogEndpoints catalog, BiConsumer<String, Boolean> completed) {
+        var app = new VertxShiroApplication(catalog, completed);
         var promise = io.vertx.core.Promise.<VertxShiroApplication>promise();
         try {
             app.runtime.start();
@@ -79,6 +84,20 @@ public final class VertxShiroApplication {
         }
         return promise.future();
     }
+
+    /**
+     * @param args 启动参数；端口来自 sample.port
+     * @throws Exception 原生监听失败
+     */
+    public static void main(String[] args) throws Exception {
+        var app = start(Integer.getInteger("sample.port", 8087)).toCompletionStage().toCompletableFuture().get();
+        log.info("Vert.x Shiro listening {} (demo-memory)", app.port());
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            app.close().toCompletionStage().toCompletableFuture().join();
+            log.info("VERTX_Shiro_CLOSED");
+        }, "vertx-shiro-close"));
+    }
+
     private void failStart(Throwable failure, io.vertx.core.Promise<VertxShiroApplication> promise) {
         close().onComplete(cleanup -> {
             if (cleanup.failed() && cleanup.cause() != failure) {
@@ -87,10 +106,14 @@ public final class VertxShiroApplication {
             promise.fail(failure);
         });
     }
+
     /**
- * @return 实际监听端口
- */
-    public int port() { return server.actualPort(); }
+     * @return 实际监听端口
+     */
+    public int port() {
+        return server.actualPort();
+    }
+
     private Router router() {
         Router router = Router.router(vertx);
         router.get("/health").handler(ctx -> ctx.response().end("UP"));
@@ -100,13 +123,21 @@ public final class VertxShiroApplication {
                 new DefaultWebExceptionTranslator(), null, Json::encode).install(router);
         router.post("/auth/login").handler(ctx -> execute(ctx, "login"));
         router.post("/auth/logout").handler(ctx -> execute(ctx, "logout"));
-        router.post("/orders").handler(ctx -> execute(ctx, "create"));
-        router.get("/orders/:id").handler(ctx -> execute(ctx, "read"));
-        router.post("/orders/:id/lines").handler(ctx -> execute(ctx, "line"));
+        router.post("/orders/catalog/goods/:code").handler(ctx -> execute(ctx, "catalog-createGoods"));
+        router.get("/orders/catalog/goods/:code").handler(ctx -> execute(ctx, "catalog-goods"));
+        router.post("/orders/catalog/orders/:code").handler(ctx -> execute(ctx, "catalog-placeOrder"));
+        router.post("/orders/catalog/orders/:code/payment").handler(ctx -> execute(ctx, "catalog-confirmPayment"));
+        router.post("/orders/catalog/orders/:code/cancel").handler(ctx -> execute(ctx, "catalog-cancelOrder"));
+        router.post("/orders/catalog/orders/:code/fulfill").handler(ctx -> execute(ctx, "catalog-fulfillOrder"));
+        router.get("/orders/catalog/orders/:code").handler(ctx -> execute(ctx, "catalog-order"));
         return router;
     }
+
     private void execute(RoutingContext ctx, String operation) {
-        if (closing) { ctx.fail(new WebStatusException(503, "application closing")); return; }
+        if (closing) {
+            ctx.fail(new WebStatusException(503, "application closing"));
+            return;
+        }
         String correlation = ctx.request().getHeader("X-Request-Id");
         var request = Ddd4jVertxContext.request(ctx).orElseThrow();
         Future<Object> task = vertx.executeBlocking(() -> {
@@ -122,20 +153,36 @@ public final class VertxShiroApplication {
                         return new JsonObject().put("token", auth.login(body.getString("username"), body.getString("password")));
                     }
                     // 原生引擎认证与 ddd4j Subject 读取同一会话，不使用测试主体。
-                    if (!subject.isAuthenticated()) { throw new WebStatusException(401, "authentication required"); }
-                    if ("logout".equals(operation)) { subject.logout(); return new JsonObject().put("success", true); }
-                    String permission = "read".equals(operation) ? "order:read" : "order:write";
-                    if (!subject.isPermitted(permission)) { throw new WebStatusException(403, "permission denied"); }
-                    if (subject.isPermitted(permission) != org.apache.shiro.SecurityUtils.getSubject().isPermitted(permission)) { throw new IllegalStateException("native permission mismatch"); }
-                    if ("read".equals(operation)) { return orders.find(ctx.pathParam("id")); }
-                    var body = body(ctx);
-                    if ("create".equals(operation)) {
-                        String id = orders.create(new CreateOrderCommand(body.getString("orderNo"), body.getString("buyerId"), body.getString("buyerName"))).id();
-                        return orders.find(id);
+                    if (!subject.isAuthenticated()) {
+                        throw new WebStatusException(401, "authentication required");
                     }
-                    orders.addLine(new AddOrderLineCommand(ctx.pathParam("id"), body.getString("goodsId"),
-                            body.getString("goodsName"), body.getInteger("quantity"), new BigDecimal(body.getValue("unitPrice").toString())));
-                    return orders.find(ctx.pathParam("id"));
+                    if ("logout".equals(operation)) {
+                        subject.logout();
+                        return new JsonObject().put("success", true);
+                    }
+                    String permission = switch (operation) {
+                        case "catalog-goods", "catalog-order" -> "order:read";
+                        case "catalog-cancelOrder" -> "order:cancel";
+                        default -> "order:write";
+                    };
+                    if (!subject.isPermitted(permission)) {
+                        throw new WebStatusException(403, "permission denied");
+                    }
+                    if (subject.isPermitted(permission) != org.apache.shiro.SecurityUtils.getSubject().isPermitted(permission)) {
+                        throw new IllegalStateException("native permission mismatch");
+                    }
+                    String tenant = ctx.request().getHeader("X-Tenant-Id");
+                    String code = ctx.pathParam("code");
+                    return switch (operation) {
+                        case "catalog-createGoods" -> catalog.createGoods(tenant, code, ctx.body().asString());
+                        case "catalog-goods" -> catalog.goods(tenant, code);
+                        case "catalog-confirmPayment" -> catalog.confirmPayment(tenant, code, ctx.body().asString());
+                        case "catalog-cancelOrder" -> catalog.cancelOrder(tenant, code);
+                        case "catalog-fulfillOrder" -> catalog.fulfillOrder(tenant, code);
+                        case "catalog-placeOrder" -> catalog.placeOrder(tenant, code, ctx.body().asString());
+                        case "catalog-order" -> catalog.order(tenant, code);
+                        default -> throw new IllegalArgumentException(operation);
+                    };
                 }
             } finally {
                 completed.accept(correlation, before.equals(ThreadContext.getResources()) && org.apache.shiro.util.ThreadContext.getSubject() == nativeBefore
@@ -145,20 +192,31 @@ public final class VertxShiroApplication {
         inFlight.add(task);
         task.onComplete(result -> {
             inFlight.remove(task);
-            if (ctx.response().closed()) { return; }
-            if (result.failed()) { ctx.fail(result.cause()); }
-            else { ctx.response().setStatusCode("create".equals(operation) ? 201 : 200)
-                    .putHeader("Content-Type", "application/json").end(Json.encode(result.result())); }
+            if (ctx.response().closed()) {
+                return;
+            }
+            if (result.failed()) {
+                ctx.fail(result.cause());
+            } else if (result.result() instanceof Reply reply) {
+                ctx.response().setStatusCode(reply.getStatus()).putHeader("content-type", "application/json").end(reply.getBody());
+            } else {
+                ctx.response().setStatusCode(200)
+                        .putHeader("Content-Type", "application/json").end(Json.encode(result.result()));
+            }
         });
     }
+
     private JsonObject body(RoutingContext ctx) {
         JsonObject body = ctx.body().asJsonObject();
-        if (Objects.isNull(body)) { throw new WebStatusException(400, "JSON body required"); }
+        if (Objects.isNull(body)) {
+            throw new WebStatusException(400, "JSON body required");
+        }
         return body;
     }
+
     /**
- * @return 停止接入，等待已进入业务的工作，再释放自身资源；不回滚已提交请求
- */
+     * @return 停止接入，等待已进入业务的工作，再释放自身资源；不回滚已提交请求
+     */
     public synchronized Future<Void> close() {
         if (Objects.isNull(closed)) {
             closing = true;
@@ -166,10 +224,15 @@ public final class VertxShiroApplication {
                 try (Ddd4jVertxRuntime runtimeScope = runtime;
                      io.ddd4j.core.util.SubjectKitRegistrationScope subjectScope = subjects;
                      NativeAuth nativeScope = auth) {
-                    if (Objects.nonNull(server)) { server.close().toCompletionStage().toCompletableFuture().join(); }
+                    if (Objects.nonNull(server)) {
+                        server.close().toCompletionStage().toCompletableFuture().join();
+                    }
                     for (Future<?> task : List.copyOf(inFlight)) {
-                        try { task.toCompletionStage().toCompletableFuture().join(); }
-                        catch (java.util.concurrent.CompletionException completedFailure) { log.debug("Request completed with failure", completedFailure); }
+                        try {
+                            task.toCompletionStage().toCompletableFuture().join();
+                        } catch (java.util.concurrent.CompletionException completedFailure) {
+                            log.debug("Request completed with failure", completedFailure);
+                        }
                     }
                 } finally {
                     vertx.close().toCompletionStage().toCompletableFuture().join();
@@ -177,16 +240,5 @@ public final class VertxShiroApplication {
             });
         }
         return Future.fromCompletionStage(closed);
-    }
-    /**
- * @param args 启动参数；端口来自 sample.port
- * @throws Exception 原生监听失败
- */
-    public static void main(String[] args) throws Exception {
-        var app = start(Integer.getInteger("sample.port", 8087)).toCompletionStage().toCompletableFuture().get();
-        log.info("Vert.x Shiro listening {} (demo-memory)", app.port());
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            app.close().toCompletionStage().toCompletableFuture().join(); log.info("VERTX_Shiro_CLOSED");
-        }, "vertx-shiro-close"));
     }
 }

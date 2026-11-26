@@ -166,13 +166,21 @@ public final class AuthConstants {
     public static final String FIELD_OTP = "otp";
 
     // ==================== JWT 载荷字段 ====================
-    /** JWT 租户 ID 的约定键。 */
+    /**
+     * JWT 租户 ID 的约定键。
+     */
     public static final String CLAIM_TENANT_ID = "tenant_id";
-    /** JWT 用户 ID 的约定键。 */
+    /**
+     * JWT 用户 ID 的约定键。
+     */
     public static final String CLAIM_USER_ID = "uid";
-    /** JWT 角色 ID 的约定键。 */
+    /**
+     * JWT 角色 ID 的约定键。
+     */
     public static final String CLAIM_ROLE_ID = "rid";
-    /** JWT 机构 ID 的约定键。 */
+    /**
+     * JWT 机构 ID 的约定键。
+     */
     public static final String CLAIM_ORG_ID = "org_id";
 
     // ==================== 验证码/状态 ====================

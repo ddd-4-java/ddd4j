@@ -17,11 +17,11 @@ package io.ddd4j.mq.mqttmica;
 import org.dromara.mica.mqtt.codec.MqttQoS;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-/** 验证三线 Mica MQTT 配置的可观察契约。 */
+/**
+ * 验证三线 Mica MQTT 配置的可观察契约。
+ */
 class MicaMqttPropertiesContractTest {
 
     @Test

@@ -1,10 +1,10 @@
 # ddd4j 示例工程
 
-本目录提供七个运行时的 28 个订单示例，每个平台各有默认 DDD、CQRS、Sa-Token 和 Shiro 四个入口。Guice 配套 Javalin，Spring 提供 WebMVC 和 WebFlux 两种接入。样例复用共享 Order 业务，Spring 的四个入口沿用外部 `ddd4j-boot` 自动配置。
+本目录提供七个运行时的 28 个订单示例，每个平台各有默认 DDD、CQRS、Sa-Token 和 Shiro 四个入口。Guice 配套 Javalin，Spring 提供 WebMVC 和 WebFlux 两种接入。28 个样例复用商品目录和订单交易模型，Spring 的四个入口沿用外部 `ddd4j-boot` 自动配置。
 
 ## 示例矩阵
 
-聚合 POM 管理 7 个共享 Order 模块和 28 个独立样例。点选对应模块查看代码与运行说明。逐平台验收记录见任务报告，三线完整验收由 R14 记录。
+聚合 POM 管理 6 个共享商品交易模块和 28 个独立样例。点选对应模块查看代码与运行说明。逐平台验收记录见任务报告，三线完整验收由 R14 记录。
 
 | Runtime | Web 接入 | 默认 | CQRS | Sa-Token | Shiro | 任务 |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -20,7 +20,36 @@
 
 ## 启动默认订单示例
 
-从仓库根目录执行命令，使用当前分支对应的 JDK 和 Maven Wrapper。七个默认入口都支持匿名创建和查询内存订单，启动无需配置数据库、消息队列或投影。CQRS、Sa-Token 和 Shiro 由上表各自的模块提供。
+七个现有默认启动类共用同一套商品交易流程。先在专用 MySQL 8.0.16+ 实例准备一个空数据库，再为应用进程设置连接环境变量。首次启动通过 MyBatis 执行仓库中的原始 DDL，仅创建四张业务表。再次启动只补建缺失的表并保留数据。数据库用户需要在该示例库内建表和读写的权限。
+
+```bash
+export CATALOG_JDBC_URL='jdbc:mysql://127.0.0.1:3306/catalog_demo'
+export CATALOG_DB_USER='catalog_demo'
+# 将此账号的密码通过运行环境的 CATALOG_DB_PASSWORD 传入
+```
+
+| HTTP 方法 | 路径 | 行为 |
+| --- | --- | --- |
+| POST | `/api/goods/{spuCode}` | 建立套餐商品和一个不限量规格，并绑定可售门店 |
+| GET | `/api/goods/{spuCode}` | 按商品编码读取商品及规格 |
+| POST | `/api/orders/{orderNo}` | 根据门店、SKU 和购买数量计算金额，并在同一事务保存订单和行快照 |
+| GET | `/api/orders/{orderNo}` | 按订单号读取下单时的名称、数量及单价 |
+| POST | `/api/orders/{orderNo}/payment` | 确认支付，JSON 请求使用整数 `paidAmountCent` |
+| POST | `/api/orders/{orderNo}/cancel` | 取消订单，已支付订单进入退款处理中 |
+| POST | `/api/orders/{orderNo}/fulfill` | 确认履约完成 |
+
+每次请求携带 `X-Tenant-Id`。默认入口按请求头演示租户数据隔离。商品和订单业务编码分别在租户内唯一。金额以分计。下面以 Vert.x 默认端口为例。
+
+```bash
+base=http://127.0.0.1:8084
+curl -i -X POST "$base/api/goods/LUNCH" -H 'X-Tenant-Id: shop-demo' -H 'Content-Type: application/json' \
+  -d '{"spuName":"午间套餐","skuCode":"LUNCH-1","skuName":"单人份","salePriceCent":1250,"shopId":7}'
+curl -i -X POST "$base/api/orders/T001" -H 'X-Tenant-Id: shop-demo' -H 'Content-Type: application/json' \
+  -d '{"shopId":7,"items":[{"skuCode":"LUNCH-1","quantity":2}]}'
+curl -s "$base/api/orders/T001" -H 'X-Tenant-Id: shop-demo'
+```
+
+最后一个请求返回 `grossAmountCent=2500`，第一条订单明细的 `unitPriceCent=1250`。从仓库根目录执行 `python3 ddd4j-samples/scripts/check_catalog_trade.py "$base"` 可验证完整 HTTP 流程，每次使用独立演示租户。
 
 用 `-am` 从根目录打包时，上游模块显式启用的测试仍会执行，例如 MyBatis 的 MySQL 用例。已有本线依赖构件时，可以去掉 `-am`，仅打包所选样例。
 
@@ -42,7 +71,7 @@ Spring 先按[本线依赖说明](ddd4j-sample-spring/README.md#源码依赖与�
   -Dmaven.test.skip=true -Dmaven.javadoc.skip=true package
 ```
 
-若配置的 Maven 仓库已能解析本线 Boot 构件，可省略 `-Dmaven.repo.local` 参数。用 `java -jar` 运行该模块 `target` 中的 `ddd4j-sample-spring-<version>.jar`。默认内存模式使用 `demo-memory`。
+若配置的 Maven 仓库已能解析本线 Boot 构件，可省略 `-Dmaven.repo.local` 参数。用 `java -jar` 运行该模块 `target` 中的 `ddd4j-sample-spring-<version>.jar`。默认业务 profile 为 `catalog-trade`。
 
 ### Javalin、Micronaut、Helidon、Vert.x 和 Dropwizard
 
@@ -56,30 +85,49 @@ module=ddd4j-samples/ddd4j-sample-vertx
 java -cp "$module/target/ddd4j-sample-vertx-<version>.jar:$(cat "$module/target/runtime-classpath.txt")" io.ddd4j.sample.vertx.VertxOrderApplication
 ```
 
-Vert.x 默认监听本机 8084。端口已占用时，可在 `java` 后添加 `-Dsample.port=0`，并从启动日志读取实际端口。用 `POST /api/orders` 创建订单，再用返回的 `data.id` 调用 `GET /api/orders/{id}`。
+Vert.x 默认监听本机 8084。端口已占用时，可在 `java` 后添加 `-Dsample.port=0`，并从启动日志读取实际端口。使用上方商品和订单接口验证。
 
 切换样例时换用对应目录、JAR 文件名和下表的主类。
 
 | 默认样例 | 启动主类或产物 | 默认端口 | 订单路径 |
 | --- | --- | --- | --- |
-| Spring | `ddd4j-sample-spring-<version>.jar` | `8080` | `/orders` |
-| Guice/Javalin | `io.ddd4j.sample.javalin.JavalinSample` | `7000` | `/api/orders` |
-| Quarkus | `target/quarkus-app/quarkus-run.jar` | `8080` | `/api/orders` |
-| Micronaut | `io.ddd4j.sample.micronaut.MicronautOrderApplication` | `8083` | `/api/orders` |
-| Helidon | `io.ddd4j.sample.helidon.HelidonOrderApplication` | `8080` | `/api/orders` |
-| Vert.x | `io.ddd4j.sample.vertx.VertxOrderApplication` | `8084` | `/api/orders` |
-| Dropwizard | `io.ddd4j.sample.dropwizard.DropwizardOrderApplication` | `8086` | `/api/orders` |
+| Spring | `ddd4j-sample-spring-<version>.jar` | `8080` | `/api/orders/{orderNo}` |
+| Guice/Javalin | `io.ddd4j.sample.javalin.JavalinSample` | `7000` | `/api/orders/{orderNo}` |
+| Quarkus | `target/quarkus-app/quarkus-run.jar` | `8080` | `/api/orders/{orderNo}` |
+| Micronaut | `io.ddd4j.sample.micronaut.MicronautOrderApplication` | `8083` | `/api/orders/{orderNo}` |
+| Helidon | `io.ddd4j.sample.helidon.HelidonOrderApplication` | `8080` | `/api/orders/{orderNo}` |
+| Vert.x | `io.ddd4j.sample.vertx.VertxOrderApplication` | `8084` | `/api/orders/{orderNo}` |
+| Dropwizard | `io.ddd4j.sample.dropwizard.DropwizardOrderApplication` | `8086` | `/api/orders/{orderNo}` |
 
 Dropwizard 在主类名后加 `server ddd4j-samples/ddd4j-sample-dropwizard/src/main/resources/dropwizard-order.yml`。
 
 ## 普通 DDD 示例
 
-七个框架的默认样例使用同一组 Order 业务概念，可对照各框架的装配和调用。
+COLA 包分布在已有的共享模块中。HTTP 适配器把输入转换成 Cmd 和 Query。应用服务通过领域仓储接口完成业务，MyBatis 在同一事务读写商品、规格、订单和明细。
 
-| 业务轨道      | 示例对象                                            | 设计重点                                                                     |
-|---------------|-----------------------------------------------------|------------------------------------------------------------------------------|
-| 充血聚合      | `Order` / `OrderLine` / `Money` / `OrderRepository` | 聚合根封装状态机、不变量和领域事件，领域层不依赖具体 Web/DI/ORM              |
-| 轻量 PO/Query | `Goods` / `GoodsQuery` / `GoodsRepository`          | 简单 CRUD 场景保留轻量数据对象，查询能力通过 `Query` + `RichRepository` 承接 |
+`domain.model.GoodsSpu`、`GoodsSku`、`TradeOrder`、`TradeOrderItem` 分别对应 `goods_spu`、`goods_sku`、`trade_order`、`trade_order_item`。四个模型使用表字段的业务名称，商品和订单额外携带各自的子项集合。 商品和订单继承 DDD4J 的 `AggregateRoot`，规格和订单明细实现 `Entity`。应用以 `Repository` 保存聚合，命令由 `CommandExecutor` 执行，查询由 `QueryHandler` 执行。
+
+| 现有模块 | 包及职责 |
+| --- | --- |
+| `ddd4j-sample-order-domain` | `domain.model` 保存商品、规格、可购报价、订单与明细，`domain.gateway` 声明仓储接口 |
+| `ddd4j-sample-order-application` | `client.command`、`client.query` 定义用例输入，`app.CatalogService` 编排建档、下单及查询 |
+| `ddd4j-sample-order-jdbc` | `infrastructure.persistence.po` 映射四表，`CatalogMapper` 和 `MybatisRepositories` 实现持久化，`db/catalog-trade` 保存原始 DDL |
+| `ddd4j-sample-order-adapter` | HTTP 协议适配、状态码映射和命令总线调用 |
+| `ddd4j-sample-order-start` | 组装应用、适配器、四表持久化和领域事件 |
+| `ddd4j-sample-order-testkit` | 共享 HTTP 测试传输和鉴权断言 |
+| 28 个框架样例 | 在原生启动生命周期初始化四表，并将原生 HTTP 请求交给共享应用 |
+
+```mermaid
+flowchart LR
+  FRAMEWORK[框架入口] --> START[启动装配]
+  START --> ADAPTER[HTTP 适配器]
+  START --> JDBC[MyBatis 四表持久化]
+  ADAPTER --> APP[应用服务与命令查询处理器]
+  APP --> DOMAIN[领域聚合与仓储契约]
+  JDBC --> DOMAIN
+  JDBC --> DB[(商品与交易四表)]
+  APP --> VIEW[可重建的订单查询快照]
+```
 
 推荐先阅读：
 
@@ -92,27 +140,29 @@ Dropwizard 在主类名后加 `server ddd4j-samples/ddd4j-sample-dropwizard/src/
 ./mvnw -pl ddd4j-samples/ddd4j-sample-dropwizard -am test -DskipTests=false
 ```
 
-Order JDBC 样例提供 `ReliableOrderOutboxPublisher` 作为可靠 Outbox 发布入口：`JdbcMQOutboxStore`
-短事务领取，`MQOutboxDispatcher` 在事务外调用 `IntegrationEventPublisher`，再条件确认。
-`JdbcOutboxPort.findById` 重建完整 `OutboxMessage`，因此 Kafka 的聚合 ID 键和事件封装沿用原格式。
-订单 JDBC 模块的 `JdbcOrderSampleRuntime.start(...)` 装配共享 JDBC 事务和订单服务，并启动可靠 Outbox 工作器。显式启用 JDBC 的样例在应用关闭时调用 `close()` 停止工作器。调用方管理传入的数据源、幂等端口和消息发布器。默认 HTTP 入口使用内存。也可以直接接入 `ReliableOrderOutboxWorker`。工作器在业务事务外定期调用 `publishPending(limit)`，该入口拒绝在订单事务中执行。每个运行实例使用稳定且唯一的 `leaseOwner`。
-旧 `TransactionalOutboxPublisher` 保留供兼容调用，但其 broker 发送期间持有数据库事务和行锁。
+## 商品交易专项入口
 
-## CQRS 示例
+CQRS、Sa-Token 和 Shiro 使用各自现有的启动类和配置。启动进程使用上方三个 `CATALOG_*` 数据库环境变量。业务端点使用 `/orders/catalog` 前缀，例如 `POST /orders/catalog/goods/LUNCH`。各模块的 README 提供原生入口、监听端口和其他运行参数。商品交易模式的旧订单创建路径返回 404，原生登录和退出仍按各框架说明调用。
 
-从上表选择 CQRS 模块，按对应 README 运行。
+CQRS 的写用例由各运行时的命令总线执行。订单创建后，读侧先返回 404。调用 `POST /orders/catalog/projections/orders/{orderNo}` 投影指定租户的订单后，GET 返回成交快照。此视图可从四表重新构建。重启后再次调用投影接口可恢复视图。交易事务提交后，通过各框架的 DDD4J 发布器分发进程内事件。同一订单的投影重建串行读取并发布独立查询快照。
 
-- Spring 和 Vert.x 的 CQRS 主入口需要专用 PostgreSQL 样例库。
-- Javalin、Micronaut、Helidon、Dropwizard 提供默认内存流程，可按模块说明启用 PostgreSQL 持久路径。
-- Quarkus 的 Java 8 分支默认运行内存流程，使用 `durable-order` 和 `durable` profile 构建持久入口。Java 17 和 21 的 CQRS 构件启用 PostgreSQL。
+```bash
+python3 ddd4j-samples/scripts/check_catalog_trade.py http://127.0.0.1:8081 --mode cqrs --check-legacy-routes
+```
 
-持久模式仍使用现有 Order JDBC 迁移和 JPA 事件、检查点表。接口路径见各模块说明。持久示例将命令写入和读模型查询拆开，可观察投影前后的读取变化。
+认证样例沿用各自的登录、角色权限和退出流程。认证后使用有写权限的演示账号运行商品交易。Spring 的写账号为 `writer`，只读账号为 `alice`。其他框架的请求头和现有账号见对应模块说明。
 
-各平台通过对应的 `ddd4j-runtime-*` 装配命令总线，并按需启用投影。Javalin 使用 `ddd4j-runtime-guice`。公共处理器注册和事件分发由 `ddd4j-core` 提供。需要持久化检查点时，按相应样例的 README 选择存储适配。
+## CQRS 命令总线
 
-Java 8、17、21 的源码和 Maven 构建已移除七个独立 CQRS 构件和十二个独立投影构件，旧坐标及兼容 JAR 一并退出。验收记录见 [R15 实施清单](../docs/superpowers/plans/2026-10-10-three-line-product-convergence.md#r15退出旧实现模块并保持可回退交付)。
-
-S01—S07 记录了分批持久化、失败重试和应用重开结果。当前三条发布线的整体验收见 [R14 实施清单](../docs/superpowers/plans/2026-10-10-three-line-product-convergence.md#r14三线存储和多平台完整验收)。
+| 框架 | 命令总线 |
+| --- | --- |
+| Spring | SpringCommandBus |
+| Guice / Javalin | GuiceCommandBus |
+| Quarkus | QuarkusCommandBus |
+| Micronaut | MicronautCommandBus |
+| Helidon | DefaultCommandBus，由 CDI 装配 |
+| Vert.x | VertxCommandBus |
+| Dropwizard | DropwizardCommandBus |
 
 ## Auth 示例
 
@@ -131,6 +181,11 @@ S01—S07 记录了分批持久化、失败重试和应用重开结果。当前�
 - Quarkus/Javalin 专属脚手架能力分别归外部 `ddd4j-quarkus`、`ddd4j-javalin`，本目录只保留可对照的业务样例。
 
 ## 历史验收记录
+
+以下记录对应商品交易迁移前的样例。
+
+<details>
+<summary>历史验收与旧接口</summary>
 
 已有默认模块命名为 `ddd4j-sample-<framework>`，其他三类带 `-cqrs`、`-satoken`、`-shiro` 后缀；Spring四项见[运行说明](ddd4j-sample-spring/README.md)，本批 S01 已通过独立审查。共享 order-* 不计入28。S01 在 Java 17 验证了 Spring 默认例的 WebMVC 和 WebFlux。两类认证例的 HTTP 证据覆盖 WebMVC。Javalin四项已通过S02审查：默认简单入口、持久CQRS、两原生认证及运行时依赖下的打包启动/关闭均有证据。认证按实际匹配路由判权，保留普通及尾斜杠URL。Quarkus四项已通过S03审查：默认沿用`/api/orders`且不强制Bearer，CQRS有独立持久查询与同库重开，两原生认证有真实请求完成清理。Shiro保留匿名`GET /orders`公开列表，其余受保护订单操作按原生权限控制。Micronaut运行时R09与四类样例S04均已通过审查：默认例支持直接业务调用，CQRS已验证持久失败恢复及数据库容器/应用重开，两认证例验证原生权限与线程传播清理；Helidon四入口S05也已通过审查，当前10项样例测试与46项实际main HTTP通过，持久CQRS有数据库容器/应用同库重开证据。两原生认证的聚合结束观察通过，断连请求的精确完成关联留R14强化。Vert.x运行时R11与四类样例S06已通过独立复审：真实持久投影和原生认证完成，应用等待已进入worker及定时投影后关闭资源。Dropwizard四类样例S07已完成本地实现与验证：26项样例测试、36次生产JAR/main HTTP和同库独立JVM恢复；独立审查已通过（C0/I0/M3），验证边界见任务报告。
 
@@ -162,3 +217,5 @@ R13 验收时，用户确认没有业务项目使用当时清单中的 14 个旧
 ### 2026-11-18 R13 兼容验收
 
 当时 Java 17 的旧、新、混合及单旧坐标构成的 35 个独立消费者均通过构建。验收覆盖冻结的旧客户端、当时的原生装配和七平台旧实现的续写与回退。独立审查 C0/I0/M2，核验了产物来源和冻结输入。当时共有七个 runtime 实现，另有一个 runtime-testkit。随后 R14 在投影坐标退役前完成了三线独立消费者复验。真实后端矩阵和远端 CI 的当前状态见 R14。此次历史验收详见活动计划 R13、`task-R13-report.md`、`task-R13-review.md` 和 `R13-evidence/controller-verification.json`。
+
+</details>

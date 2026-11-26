@@ -18,9 +18,9 @@ import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.context.ThreadContext;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.extension.context.NestedMessageSource;
 import org.springframework.extension.utils.SpringContextUtils;
-import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -72,7 +72,7 @@ public class I18nKit {
      * 获取并格式化当前语言环境下的消息。
      *
      * @param source 消息键或原文
-     * @param args 格式化参数
+     * @param args   格式化参数
      * @return 格式化后的本地化消息
      */
     public String get(String source, Object... args) {
@@ -272,7 +272,7 @@ public class I18nKit {
     /**
      * 从 Spring 消息源获取格式化消息。
      *
-     * @param key 消息键
+     * @param key  消息键
      * @param args 格式化参数
      * @return 本地化消息
      */
@@ -283,8 +283,8 @@ public class I18nKit {
     /**
      * 从 Spring 消息源获取消息，未命中时使用默认文案。
      *
-     * @param key 消息键
-     * @param args 格式化参数
+     * @param key        消息键
+     * @param args       格式化参数
      * @param defaultMsg 默认文案
      * @return 本地化消息
      */

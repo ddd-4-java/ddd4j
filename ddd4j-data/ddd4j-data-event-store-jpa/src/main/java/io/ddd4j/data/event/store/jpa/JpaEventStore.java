@@ -14,21 +14,15 @@
  */
 package io.ddd4j.data.event.store.jpa;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
 import io.ddd4j.core.cqrs.eventstore.StoredEvent;
 import io.ddd4j.core.cqrs.eventstore.jackson.EventPayloadSerializer;
-import io.ddd4j.core.ddd.event.AggregateRootId;
-import io.ddd4j.core.ddd.event.DomainEvent;
-import io.ddd4j.core.ddd.event.EntityType;
-import io.ddd4j.core.ddd.event.EventId;
-import io.ddd4j.core.ddd.event.StringEntityType;
+import io.ddd4j.core.ddd.event.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.LockModeType;
@@ -99,8 +93,8 @@ public class JpaEventStore implements EventStore {
      * 创建使用指定载荷序列化器的 JPA 事件存储。
      *
      * @param entityManager JPA 实体管理器
-     * @param repository 事件仓储实现
-     * @param serializer 事件载荷序列化器
+     * @param repository    事件仓储实现
+     * @param serializer    事件载荷序列化器
      */
     public JpaEventStore(EntityManager entityManager, JpaStoredEventRepository repository,
                          EventPayloadSerializer serializer) {
@@ -439,10 +433,13 @@ public class JpaEventStore implements EventStore {
     private final static class StringAggregateRootId implements AggregateRootId {
 
         private static final long serialVersionUID = 0L;
-
+        private static final StringEntityType TYPE = new StringEntityType("String");
         private final String value;
 
-        private static final StringEntityType TYPE = new StringEntityType("String");
+        @JsonCreator()
+        private StringAggregateRootId(@JsonProperty("value") String value) {
+            this.value = value;
+        }
 
         @Override
         public EntityType getType() {
@@ -458,11 +455,6 @@ public class JpaEventStore implements EventStore {
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
-        }
-
-        @JsonCreator()
-        private StringAggregateRootId(@JsonProperty("value") String value) {
-            this.value = value;
         }
 
         @JsonProperty("value")

@@ -50,7 +50,6 @@ import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.Objects;
 
 /**
  * 原生 MyBatis 轨道的聚合仓储基类（五泛型，对齐 mybatisplus 模块）。
@@ -71,22 +70,34 @@ import java.util.Objects;
 public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M extends AggregateRoot<?>, P, Q extends Query<M>, ID extends Serializable>
         implements Repository<M, ID>, DomainObjectMapper<M, P>, Serializable {
 
-    /** 聚合根模型类型。 */
+    /**
+     * 聚合根模型类型。
+     */
     protected final Class<M> modelClass;
-    /** 持久化对象类型。 */
+    /**
+     * 持久化对象类型。
+     */
     protected final Class<P> persistenceClass;
-    /** 查询对象类型。 */
+    /**
+     * 查询对象类型。
+     */
     protected final Class<? extends Query<M>> queryClass;
-    /** 领域模型的属性映射信息。 */
+    /**
+     * 领域模型的属性映射信息。
+     */
     protected final DomainModelInfo<M> domainModelInfo;
-    /** MyBatis 持久化映射器。 */
+    /**
+     * MyBatis 持久化映射器。
+     */
     @Getter
     @Setter
     protected MP baseMapper;
 
     // ========================= 构造器 =========================
 
-    /** 根据泛型参数推断模型与持久化对象类型。 */
+    /**
+     * 根据泛型参数推断模型与持久化对象类型。
+     */
     protected MybatisAggregateRepository() {
         this.modelClass = resolveClassArg(1);
         this.persistenceClass = resolveClassArg(2);
@@ -108,8 +119,8 @@ public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M 
     /**
      * 使用显式模型类型和 MyBatis 映射器创建仓库。
      *
-     * @param baseMapper MyBatis 映射器
-     * @param modelClass 聚合根模型类型
+     * @param baseMapper       MyBatis 映射器
+     * @param modelClass       聚合根模型类型
      * @param persistenceClass 持久化对象类型
      */
     protected MybatisAggregateRepository(MP baseMapper, Class<M> modelClass, Class<P> persistenceClass) {
@@ -335,15 +346,17 @@ public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M 
 
     /**
      * 执行业务 Mapper 的查询 SQL。实现须拒绝不能翻译的条件，并为分页指定稳定顺序。
-     * @param query 领域查询，null 表示无额外条件
+     *
+     * @param query  领域查询，null 表示无额外条件
      * @param offset 从零开始的偏移量
-     * @param limit 最大行数，负数表示不分页
+     * @param limit  最大行数，负数表示不分页
      * @return 满足条件的持久化对象
      */
     protected abstract List<P> selectRows(Query<M> query, long offset, long limit);
 
     /**
      * 用与 selectRows 相同的过滤条件统计可见记录，忽略分页参数。
+     *
      * @param query 领域查询，null 表示无额外条件
      * @return 数据库中的匹配记录数
      */
@@ -351,6 +364,7 @@ public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M 
 
     /**
      * 执行业务 Mapper 的单条删除 SQL。
+     *
      * @param id 非空主键
      * @return 受影响行数
      */
@@ -358,6 +372,7 @@ public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M 
 
     /**
      * 执行业务 Mapper 的批量删除 SQL。
+     *
      * @param ids 非空主键集合
      * @return 受影响行数
      */
@@ -570,7 +585,7 @@ public abstract class MybatisAggregateRepository<MP extends EnhanceMapper<P>, M 
     }
 
     private MappedStatement mappedStatement(Configuration configuration, Class<?> mapperType,
-                                             String methodName, Class<?> parameterType) {
+                                            String methodName, Class<?> parameterType) {
         try {
             // 由 MyBatis 自身处理继承 Mapper 的 statement 命名空间。
             MapperMethod.SqlCommand command = new MapperMethod.SqlCommand(configuration, mapperType,

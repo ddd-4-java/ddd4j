@@ -76,6 +76,40 @@ public class AuthSessionConfig {
      * 登录后立即创建 TokenSession（默认 false，第一次调用时懒创建）。
      */
     private boolean createTokenSessionNow;
+    /**
+     * 是否允许同一账号多地同时登录（true=允许，false=挤掉旧登录，默认 true）。
+     */
+    private boolean concurrent = true;
+    /**
+     * 同一账号多地登录时，是否共用一个 token（true=共用，false=每次新 token，默认 true）。
+     */
+    private boolean share = true;
+    /**
+     * 同一账号最大登录数量，-1 代表不限（仅当 concurrent=true 且 share=false 时有意义）。
+     */
+    private int maxLoginCount = -1;
+
+    // ==================== 多端登录策略 ====================
+    /**
+     * 在挤占发生时，决定由哪一端放弃会话（默认 NEW_DEVICE）。
+     */
+    private AuthReplacedLoginExitMode replacedLoginExitMode = AuthReplacedLoginExitMode.NEW_DEVICE;
+    /**
+     * 挤占会话的范围（默认 CURRENT_DEVICE_TYPE）。
+     */
+    private AuthReplacedRange replacedRange = AuthReplacedRange.CURRENT_DEVICE_TYPE;
+    /**
+     * 超过 maxLoginCount 的设备，下线处理方式（默认 LOGOUT）。
+     */
+    private AuthLogoutMode overflowLogoutMode = AuthLogoutMode.LOGOUT;
+    /**
+     * Token 是否写入响应头（默认 true）。
+     */
+    private boolean writeTokenToHeader = true;
+    /**
+     * 预定 Token 值（null 时由框架生成）。
+     */
+    private String presetToken;
 
     /**
      * 返回有效期，兼容以 -1 表示无限期的调用方。
@@ -87,6 +121,8 @@ public class AuthSessionConfig {
         Long configuredTimeout = timeout;
         return Objects.nonNull(configuredTimeout) ? configuredTimeout : -1L;
     }
+
+    // ==================== 输出配置 ====================
 
     /**
      * 指定本次登录的有效期。
@@ -107,48 +143,4 @@ public class AuthSessionConfig {
     public boolean hasTimeoutOverride() {
         return Objects.nonNull(timeout);
     }
-
-    // ==================== 多端登录策略 ====================
-
-    /**
-     * 是否允许同一账号多地同时登录（true=允许，false=挤掉旧登录，默认 true）。
-     */
-    private boolean concurrent = true;
-
-    /**
-     * 同一账号多地登录时，是否共用一个 token（true=共用，false=每次新 token，默认 true）。
-     */
-    private boolean share = true;
-
-    /**
-     * 同一账号最大登录数量，-1 代表不限（仅当 concurrent=true 且 share=false 时有意义）。
-     */
-    private int maxLoginCount = -1;
-
-    /**
-     * 在挤占发生时，决定由哪一端放弃会话（默认 NEW_DEVICE）。
-     */
-    private AuthReplacedLoginExitMode replacedLoginExitMode = AuthReplacedLoginExitMode.NEW_DEVICE;
-
-    /**
-     * 挤占会话的范围（默认 CURRENT_DEVICE_TYPE）。
-     */
-    private AuthReplacedRange replacedRange = AuthReplacedRange.CURRENT_DEVICE_TYPE;
-
-    /**
-     * 超过 maxLoginCount 的设备，下线处理方式（默认 LOGOUT）。
-     */
-    private AuthLogoutMode overflowLogoutMode = AuthLogoutMode.LOGOUT;
-
-    // ==================== 输出配置 ====================
-
-    /**
-     * Token 是否写入响应头（默认 true）。
-     */
-    private boolean writeTokenToHeader = true;
-
-    /**
-     * 预定 Token 值（null 时由框架生成）。
-     */
-    private String presetToken;
 }

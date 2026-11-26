@@ -13,11 +13,11 @@
  * limitations under the License.
  */
 package io.ddd4j.web.webmvc.error;
-import io.ddd4j.core.api.ApiCode;
 
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import hitool.core.format.ByteUnitFormat;
+import io.ddd4j.core.api.ApiCode;
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.exception.*;
 import io.ddd4j.kit.web.IpKit;
@@ -96,7 +96,7 @@ public class GlobalExceptionHandler {
     /**
      * 使用指定的消息源和服务端国际化配置创建异常处理器。
      *
-     * @param messageSource 用于解析本地化异常消息的消息源
+     * @param messageSource        用于解析本地化异常消息的消息源
      * @param serverI18NProperties 控制国际化和异常详情返回的服务端配置
      */
     public GlobalExceptionHandler(NestedMessageSource messageSource, ServerI18nProperties serverI18NProperties) {
@@ -108,8 +108,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 404 (Not Found)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler({NoHandlerFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -125,8 +126,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 405 (Method Not Allowed)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler({HttpRequestMethodNotSupportedException.class})
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
@@ -142,8 +144,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 406 (Not Acceptable)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler({HttpMediaTypeNotAcceptableException.class})
     @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
@@ -164,8 +167,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 415 (Unsupported Media Type)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler({HttpMediaTypeNotSupportedException.class})
     @ResponseStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
@@ -182,8 +186,9 @@ public class GlobalExceptionHandler {
     /**
      * 400 (Bad Request)
      * <a href="https://www.jianshu.com/p/4df0cac308dc">...</a>
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler({MissingMatrixVariableException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -199,8 +204,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler({MissingPathVariableException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -216,8 +222,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler({MissingRequestCookieException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -233,8 +240,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler({MissingRequestHeaderException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -250,8 +258,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler({MissingServletRequestParameterException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -267,8 +276,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler({MissingServletRequestPartException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -284,8 +294,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler({UnsatisfiedServletRequestParameterException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -300,8 +311,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler({ServletRequestBindingException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -316,8 +328,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler(JacksonException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -332,8 +345,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler({HttpMessageNotReadableException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -348,8 +362,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler({ConstraintViolationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -372,8 +387,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler({MethodArgumentNotValidException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -385,11 +401,11 @@ public class GlobalExceptionHandler {
     /**
      * 400 (Bad Request)
      *
+     * @param ex 捕获的异常
+     * @return 标准错误响应
      * @see jakarta.validation.Valid
      * @see org.springframework.validation.Validator
      * @see org.springframework.validation.DataBinder
-     * @return 标准错误响应
-     * @param ex 捕获的异常
      */
     @ExceptionHandler({BindException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -415,7 +431,7 @@ public class GlobalExceptionHandler {
     /**
      * 将绑定错误转换为标准错误响应。
      *
-     * @param ex 捕获的异常
+     * @param ex     捕获的异常
      * @param result 绑定错误详情
      * @return 标准错误响应
      */
@@ -441,8 +457,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler({InvalidFormatException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -459,8 +476,9 @@ public class GlobalExceptionHandler {
     /**
      * /**
      * 400 (Bad Request)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler({TypeMismatchException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -476,8 +494,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler({MethodArgumentTypeMismatchException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -493,8 +512,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler({MethodArgumentConversionNotSupportedException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -510,8 +530,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler({ValidationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -527,8 +548,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 413 (Payload Too Large)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     @ResponseStatus(HttpStatus.PAYLOAD_TOO_LARGE)
@@ -544,8 +566,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 413 (Payload Too Large)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler(MaxUploadSizePerFileExceededException.class)
     @ResponseStatus(HttpStatus.PAYLOAD_TOO_LARGE)
@@ -563,8 +586,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler({ConstraintDeclarationException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -580,8 +604,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 400 (Bad Request)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler({ConstraintDefinitionException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -597,8 +622,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler({GroupDefinitionException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -614,8 +640,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler({UnexpectedTypeException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -631,8 +658,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler({ConversionNotSupportedException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -647,8 +675,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler({HttpMessageConversionException.class, HttpMessageNotWritableException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -663,8 +692,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler(NullPointerException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -679,8 +709,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler(ClassCastException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -695,8 +726,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler(IOException.class)
     @ResponseStatus(HttpStatus.OK)
@@ -711,8 +743,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler(NoSuchMethodException.class)
     @ResponseStatus(HttpStatus.OK)
@@ -727,8 +760,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler(IndexOutOfBoundsException.class)
     @ResponseStatus(HttpStatus.OK)
@@ -743,8 +777,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.OK)
@@ -761,6 +796,7 @@ public class GlobalExceptionHandler {
 
     /**
      * 将认证失败映射为未认证响应。
+     *
      * @param exception 认证异常
      * @return 携带异常消息或默认说明的 401 响应
      */
@@ -773,6 +809,7 @@ public class GlobalExceptionHandler {
 
     /**
      * 将授权失败映射为禁止访问响应。
+     *
      * @param exception 授权异常
      * @return 携带异常消息或默认说明的 403 响应
      */
@@ -785,8 +822,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler(BizRuntimeException.class)
     @ResponseStatus(HttpStatus.OK)
@@ -801,8 +839,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler(BizCheckedException.class)
     @ResponseStatus(HttpStatus.OK)
@@ -817,8 +856,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler(BizIOException.class)
     @ResponseStatus(HttpStatus.OK)
@@ -833,8 +873,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler(IdempotentException.class)
     @ResponseStatus(HttpStatus.OK)
@@ -851,8 +892,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler(DataAccessException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -874,8 +916,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler(BatchUpdateException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -891,8 +934,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -908,8 +952,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler(SQLClientInfoException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -925,8 +970,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler(SQLRecoverableException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -942,8 +988,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler(SQLSyntaxErrorException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -959,8 +1006,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler(SQLTimeoutException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -976,8 +1024,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler(SQLTransactionRollbackException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -993,8 +1042,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler(SQLTransientConnectionException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -1012,8 +1062,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler(SQLTransientException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -1029,8 +1080,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler(DuplicateKeyException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -1046,8 +1098,9 @@ public class GlobalExceptionHandler {
 
     /**
      * 500 (Internal Server Error)
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
      */
     @ExceptionHandler(SQLException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -1066,9 +1119,10 @@ public class GlobalExceptionHandler {
     /**
      * 全局异常捕捉处理
      * 500 (Internal Server Error)
-     * @throws Exception 异常处理失败时抛出
-     * @return 标准错误响应
+     *
      * @param ex 捕获的异常
+     * @return 标准错误响应
+     * @throws Exception 异常处理失败时抛出
      */
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.OK)
@@ -1084,10 +1138,11 @@ public class GlobalExceptionHandler {
 
     /**
      * 异常信息国际化
-     * @return 标准错误响应
-     * @param message 默认错误消息
+     *
+     * @param message  默认错误消息
      * @param i18nCode 国际化消息键
-     * @param ex 捕获的异常
+     * @param ex       捕获的异常
+     * @return 标准错误响应
      */
     protected String getLocaleMessage(Exception ex, String i18nCode, String message) {
         Object[] args = null;

@@ -13,37 +13,30 @@
  * limitations under the License.
  */
 package io.ddd4j.mq.rabbitmq;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.GetResponse;
-import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.delivery.MQDeliveryHeaders;
-import io.ddd4j.mq.listener.MQListener;
-import io.ddd4j.mq.message.Acknowledgment;
+import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.lifecycle.MQInitializationException;
 import io.ddd4j.mq.lifecycle.MQStartupState;
+import io.ddd4j.mq.listener.MQListener;
+import io.ddd4j.mq.message.Acknowledgment;
 import io.ddd4j.mq.serialization.JsonMQEventSerialization;
 import org.junit.jupiter.api.Test;
+import org.testcontainers.containers.RabbitMQContainer;
+import org.testcontainers.images.builder.Transferable;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.images.builder.Transferable;
-import org.testcontainers.containers.RabbitMQContainer;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 

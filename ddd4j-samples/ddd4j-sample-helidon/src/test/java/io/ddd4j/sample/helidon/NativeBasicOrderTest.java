@@ -4,40 +4,78 @@
  */
 package io.ddd4j.sample.helidon;
 
-import io.ddd4j.core.cache.Cache;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.ddd4j.cache.CacheKit;
+import io.ddd4j.core.cache.Cache;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.core.util.SubjectKit;
-import io.ddd4j.sample.order.application.CreateOrderCommand;
-import io.ddd4j.sample.order.testkit.EnvelopeOrderHttpDriver;
-import io.ddd4j.sample.order.testkit.SampleContractAssertions;
+import io.ddd4j.sample.order.adapter.http.CatalogEndpoints;
+import io.ddd4j.sample.order.start.CatalogRuntime;
+import io.ddd4j.sample.order.testkit.SampleHttpTransport;
 import io.helidon.microprofile.server.Server;
+import org.apache.ibatis.datasource.unpooled.UnpooledDataSource;
 import org.junit.jupiter.api.Test;
+import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.io.IOException;
 import java.net.BindException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Collections;
+import java.util.Map;
 import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
-/** 验证原生 Helidon MP 配置、共享订单和监听器清理。 */
+/**
+ * 验证原生 Helidon MP 配置、共享订单和监听器清理。
+ */
+@Testcontainers
 class NativeBasicOrderTest {
+    @Container
+    static final MySQLContainer<?> MYSQL = new MySQLContainer<>("mysql:8.0.36");
+
+    static CatalogEndpoints catalog(MySQLContainer<?> database) {
+        return CatalogRuntime.start(new UnpooledDataSource(database.getDriverClassName(), database.getJdbcUrl(),
+                database.getUsername(), database.getPassword()));
+    }
+
+    private static void assertOrder(Server server, String tenant) throws Exception {
+        var goods = exchange(server, "POST", "/api/goods/BOOK",
+                Map.of("spuName", "Book", "skuCode", "S1", "skuName", "Hardcover",
+                        "shopId", 7, "salePriceCent", 500), "", tenant);
+        assertEquals(201, goods.statusCode(), goods.body());
+        var order = exchange(server, "POST", "/api/orders/BASIC",
+                Map.of("shopId", 7, "items", java.util.List.of(Map.of("skuCode", "S1", "quantity", 2))), "", tenant);
+        assertEquals(201, order.statusCode(), order.body());
+        var payment = exchange(server, "POST", "/api/orders/BASIC/payment", Map.of("paidAmountCent", 1000), "", tenant);
+        assertEquals(200, payment.statusCode(), payment.body());
+        var read = exchange(server, "GET", "/api/orders/BASIC", null, "", tenant);
+        assertEquals(200, read.statusCode(), read.body());
+        assertEquals("CONFIRMED", new ObjectMapper().readTree(read.body()).path("orderState").asText());
+    }
+
+    private static SampleHttpTransport.Response exchange(Server server, String method, String path, Object body,
+                                                         String token) throws Exception {
+        return exchange(server, method, path, body, token, "token-test");
+    }
+
+    private static SampleHttpTransport.Response exchange(Server server, String method, String path, Object body,
+                                                         String token, String tenant) throws Exception {
+        Map<String, String> credentials = token.isEmpty() ? Map.of() : Map.of("Authorization", "Bearer " + token);
+        return SampleHttpTransport.request("http://127.0.0.1:" + server.port() + path,
+                method, credentials, Map.of("X-Tenant-Id", tenant),
+                Objects.isNull(body) ? null : new ObjectMapper().writeValueAsString(body));
+    }
 
     @Test
-    void defaultsAllowAnonymousOrderAndFilteredQuery() {
-        Server server = HelidonOrderApplication.start(0);
+    void defaultsAllowAnonymousOrderAndFilteredQuery() throws Exception {
+        Server server = HelidonOrderApplication.start(0, NativeBasicOrderTest.catalog(MYSQL));
         int port = server.port();
         try {
-            SampleContractAssertions.defaultOrder(driver(server), "HELIDON-BASIC");
+            assertOrder(server, "HELIDON-BASIC");
         } finally {
             server.stop();
         }
@@ -50,23 +88,19 @@ class NativeBasicOrderTest {
     }
 
     @Test
-    void explicitRequiredPreservesBearerEntry() {
+    void explicitRequiredPreservesBearerEntry() throws Exception {
         String setting = "ddd4j.web.authentication-mode";
         String previous = System.getProperty(setting);
         System.setProperty(setting, "REQUIRED");
         try {
-            Server server = HelidonOrderApplication.start(0);
+            Server server = HelidonOrderApplication.start(0, NativeBasicOrderTest.catalog(MYSQL));
             try {
-                EnvelopeOrderHttpDriver http = driver(server);
-                SecurityException denied = assertThrows(SecurityException.class,
-                        () -> http.create(new CreateOrderCommand("DENIED", "buyer-1", "Alice")));
-                assertEquals("HTTP 401", denied.getMessage());
-                String token = http.request("POST", "/api/auth/tokens/helidon-legacy", null, Collections.emptyMap())
-                        .path("token").asText();
+                assertEquals(401, exchange(server, "GET", "/api/orders/DENIED", null, "").statusCode());
+                var login = exchange(server, "POST", "/api/auth/tokens/helidon-user", null, "");
+                assertEquals(200, login.statusCode(), login.body());
+                String token = new ObjectMapper().readTree(login.body()).path("data").path("token").asText();
                 assertFalse(token.isEmpty());
-                String id = http.request("POST", "/api/orders", new CreateOrderCommand("LEGACY", "buyer-1", "Alice"),
-                        Collections.singletonMap("Authorization", "Bearer " + token)).path("id").asText();
-                assertFalse(id.isEmpty());
+                assertEquals(404, exchange(server, "GET", "/api/orders/MISSING", null, token).statusCode());
             } finally {
                 server.stop();
             }
@@ -84,7 +118,7 @@ class NativeBasicOrderTest {
         SubjectProvider original = SubjectKit.subjectProvider;
         try (ServerSocket occupied = new ServerSocket(0)) {
             RuntimeException failure = assertThrows(RuntimeException.class,
-                    () -> HelidonOrderApplication.start(occupied.getLocalPort()));
+                    () -> HelidonOrderApplication.start(occupied.getLocalPort(), catalog(MYSQL)));
             Throwable cause = failure;
             while (Objects.nonNull(cause) && !(cause instanceof BindException)) {
                 cause = cause.getCause();
@@ -95,15 +129,15 @@ class NativeBasicOrderTest {
     }
 
     @Test
-    void callerKeepsItsRegisteredCacheAfterOrderAndShutdown() {
+    void callerKeepsItsRegisteredCacheAfterOrderAndShutdown() throws Exception {
         String cacheName = "ddd4j-web-idempotency";
         CacheKit.build(cacheName, 300L);
         Cache<String, Object> callerCache = CacheKit.getCache(cacheName);
         CacheKit.put(cacheName, "caller-entry", "untouched");
         try {
-            Server server = HelidonOrderApplication.start(0);
+            Server server = HelidonOrderApplication.start(0, NativeBasicOrderTest.catalog(MYSQL));
             try {
-                SampleContractAssertions.defaultOrder(driver(server), "HELIDON-BORROWED-CACHE");
+                assertOrder(server, "HELIDON-BORROWED-CACHE");
                 assertSame(callerCache, CacheKit.getCache(cacheName));
             } finally {
                 server.stop();
@@ -116,12 +150,12 @@ class NativeBasicOrderTest {
     }
 
     @Test
-    void callerKeepsLoadingCacheRegisteredDuringSampleShutdown() {
+    void callerKeepsLoadingCacheRegisteredDuringSampleShutdown() throws Exception {
         String cacheName = "ddd4j-web-idempotency";
         try {
-            Server server = HelidonOrderApplication.start(0);
+            Server server = HelidonOrderApplication.start(0, NativeBasicOrderTest.catalog(MYSQL));
             try {
-                SampleContractAssertions.defaultOrder(driver(server), "HELIDON-LOADING-CACHE");
+                assertOrder(server, "HELIDON-LOADING-CACHE");
                 CacheKit.buildWithLoader(cacheName, key -> "caller-loaded", builder -> builder);
             } finally {
                 server.stop();
@@ -130,9 +164,5 @@ class NativeBasicOrderTest {
         } finally {
             CacheKit.unregister(cacheName);
         }
-    }
-
-    private static EnvelopeOrderHttpDriver driver(Server server) {
-        return new EnvelopeOrderHttpDriver("http://127.0.0.1:" + server.port(), "/api/orders", Collections.emptyMap());
     }
 }

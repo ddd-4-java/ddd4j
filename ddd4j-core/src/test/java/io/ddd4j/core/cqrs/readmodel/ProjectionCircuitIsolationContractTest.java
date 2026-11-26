@@ -26,6 +26,33 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ProjectionCircuitIsolationContractTest {
 
+    private static ProjectionView<String> view(String name, boolean fail, AtomicInteger completed) {
+        return new ProjectionView<String>() {
+            @Override
+            public String getName() {
+                return name;
+            }
+
+            @Override
+            public String getCron() {
+                return "* * * * *";
+            }
+
+            @Override
+            public Collection<String> getEventTypes() {
+                return Collections.emptyList();
+            }
+
+            @Override
+            public void handleEvents(Collection<String> events) {
+                if (fail) {
+                    throw new IllegalStateException("projection failed");
+                }
+                completed.incrementAndGet();
+            }
+        };
+    }
+
     @Test
     void circuitCallbackFailureMustNotStopOtherViews() {
         ProjectionService service = new DefaultProjectionService(new InMemoryProjectionPositionRepository());
@@ -53,32 +80,5 @@ class ProjectionCircuitIsolationContractTest {
         assertEquals(ProjectionRunner.CONSECUTIVE_FAILURE_THRESHOLD,
                 service.readProjectionPosition("succeeding"));
         assertEquals(0L, service.readProjectionPosition("failing"));
-    }
-
-    private static ProjectionView<String> view(String name, boolean fail, AtomicInteger completed) {
-        return new ProjectionView<String>() {
-            @Override
-            public String getName() {
-                return name;
-            }
-
-            @Override
-            public String getCron() {
-                return "* * * * *";
-            }
-
-            @Override
-            public Collection<String> getEventTypes() {
-                return Collections.emptyList();
-            }
-
-            @Override
-            public void handleEvents(Collection<String> events) {
-                if (fail) {
-                    throw new IllegalStateException("projection failed");
-                }
-                completed.incrementAndGet();
-            }
-        };
     }
 }

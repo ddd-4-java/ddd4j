@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.mq.pulsar;
-import java.util.ArrayList;
 
 import io.ddd4j.mq.MQClient;
 import io.ddd4j.mq.MQProperties;

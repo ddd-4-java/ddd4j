@@ -23,15 +23,34 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-/** 验证不同 Javalin 版本均将 HTTP 方法写为相同的失败事件字符串。 */
+/**
+ * 验证不同 Javalin 版本均将 HTTP 方法写为相同的失败事件字符串。
+ */
 class BaseHandlerFailureEventTest {
+
+    private static String request(int port, String method, String path, String override) throws IOException {
+        HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port + path).openConnection();
+        try {
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(5000);
+            connection.setRequestMethod(method);
+            connection.setRequestProperty("X-Forwarded-For", "198.51.100.7, 198.51.100.8");
+            connection.setRequestProperty("X-Requested-With", "xmlhttprequest");
+            if (Objects.nonNull(override)) {
+                connection.setRequestProperty("X-HTTP-Method-Override", override);
+            }
+            int status = connection.getResponseCode();
+            InputStream response = status >= 400 ? connection.getErrorStream() : connection.getInputStream();
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(response, StandardCharsets.UTF_8))) {
+                return status + ":" + reader.readLine();
+            }
+        } finally {
+            connection.disconnect();
+        }
+    }
 
     @AfterEach
     void tearDown() {
@@ -68,7 +87,9 @@ class BaseHandlerFailureEventTest {
         IllegalStateException failure = new IllegalStateException("PUT route failed");
         Javalin app = Javalin.create(config -> {
             config.startup.showJavalinBanner = false;
-            config.routes.put("/orders", context -> { throw failure; });
+            config.routes.put("/orders", context -> {
+                throw failure;
+            });
             config.routes.get("/helpers", context -> context.result(handler.helpers(context)));
             config.routes.exception(IllegalStateException.class, (cause, context) -> {
                 handler.emit(context, cause);
@@ -97,27 +118,6 @@ class BaseHandlerFailureEventTest {
             assertSame(failure, event.getCause());
         } finally {
             app.stop();
-        }
-    }
-
-    private static String request(int port, String method, String path, String override) throws IOException {
-        HttpURLConnection connection = (HttpURLConnection) new URL("http://127.0.0.1:" + port + path).openConnection();
-        try {
-            connection.setConnectTimeout(5000);
-            connection.setReadTimeout(5000);
-            connection.setRequestMethod(method);
-            connection.setRequestProperty("X-Forwarded-For", "198.51.100.7, 198.51.100.8");
-            connection.setRequestProperty("X-Requested-With", "xmlhttprequest");
-            if (Objects.nonNull(override)) {
-                connection.setRequestProperty("X-HTTP-Method-Override", override);
-            }
-            int status = connection.getResponseCode();
-            InputStream response = status >= 400 ? connection.getErrorStream() : connection.getInputStream();
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(response, StandardCharsets.UTF_8))) {
-                return status + ":" + reader.readLine();
-            }
-        } finally {
-            connection.disconnect();
         }
     }
 

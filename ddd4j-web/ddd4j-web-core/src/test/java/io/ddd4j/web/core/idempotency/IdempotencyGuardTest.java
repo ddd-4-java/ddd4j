@@ -13,10 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.web.core.idempotency;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
@@ -27,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * 类型说明。
+ *
  * @author ddd4j
  * @since 1.0.x
  */
@@ -87,6 +84,7 @@ class IdempotencyGuardTest {
 
         /**
          * acquire() 方法。
+         *
          * @param key 幂等键。
          * @param ttl 锁的有效期。
          * @return 判断结果。
@@ -98,6 +96,7 @@ class IdempotencyGuardTest {
 
         /**
          * complete() 方法。
+         *
          * @param key 幂等键。
          */
         @Override
@@ -107,6 +106,7 @@ class IdempotencyGuardTest {
 
         /**
          * release() 方法。
+         *
          * @param key 幂等键。
          */
         @Override

@@ -21,11 +21,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.annotation.Order;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-/** 三线共同的 Spring 就绪检查项装配契约。 */
+/**
+ * 三线共同的 Spring 就绪检查项装配契约。
+ */
 class SpringCoreConfigReadinessContractTest {
 
     @Test

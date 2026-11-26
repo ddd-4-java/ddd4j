@@ -8,7 +8,9 @@ import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/** 真正 MP 启动必须拒绝显式启用但未提供来源和持久位置的配置。 */
+/**
+ * 真正 MP 启动必须拒绝显式启用但未提供来源和持久位置的配置。
+ */
 class HelidonExplicitProjectionTest {
     @Test
     void explicitProjectionWithoutStorageFailsNativeStartup() {

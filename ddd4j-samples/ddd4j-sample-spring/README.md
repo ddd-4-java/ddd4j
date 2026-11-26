@@ -1,15 +1,13 @@
-# Spring 四个独立 Order 入口
+# Spring 商品交易示例
 
-四个模块分别产出可执行 JAR，共用已有 `order-domain/application/local/jdbc`，没有新增业务对象副本或第五个支撑模块。
+四个入口共用领域模型和仓储，启动时由 Flyway 迁移专用 MySQL 的四张业务表。[数据库配置与接口](../README.md)
 
-| 模块 | 默认端口 | 装配及已设定验证范围 |
+| 模块 | 默认端口 | 运行方式 |
 | --- | --- | --- |
-| `ddd4j-sample-spring` | 8080 | `demo-memory` 支持 MVC 和 WebFlux，`postgres` 复用已有 JDBC 持久化 |
-| `ddd4j-sample-spring-cqrs` | 8081 | PostgreSQL；实际命令总线、Outbox 中继、JPA EventStore、独立查询投影及持久检查点 |
-| `ddd4j-sample-spring-satoken` | 8082 | MVC；原生 Sa-Token 令牌、权限校验和退出失效 |
-| `ddd4j-sample-spring-shiro` | 8083 | MVC；原生 Shiro Realm、Servlet 会话、权限校验和退出失效 |
-
-`demo-memory` 重启丢失数据，不能作为持久化方案。PostgreSQL 模式的订单、Outbox、查询行使用现有 JDBC 适配器；支付幂等键仍为演示用进程内存，未声明跨重启支付幂等。认证账号为只读演示账号 `alice / demo-password`，权限仅 `order:read`。认证测试覆盖 MVC；没有据此宣称认证 WebFlux 已通过。
+| `ddd4j-sample-spring` | 8080 | 默认 MVC，启动参数可选 WebFlux |
+| `ddd4j-sample-spring-cqrs` | 8081 | Spring 命令总线及独立订单快照投影 |
+| `ddd4j-sample-spring-satoken` | 8082 | Sa-Token 原生登录、权限和退出 |
+| `ddd4j-sample-spring-shiro` | 8083 | Shiro Realm、Servlet 会话和权限 |
 
 ## 源码依赖与构建
 
@@ -57,53 +55,8 @@
 
 ## 启动与调用
 
-从仓库根目录运行。常规启动采用 MVC 和 `demo-memory`。切换到 WebFlux 时同时显式指定 `demo-memory`。
+配置 `CATALOG_JDBC_URL`、`CATALOG_DB_USER`、`CATALOG_DB_PASSWORD` 后启动各模块的可执行 JAR。WebFlux 入口增加 `--spring.main.web-application-type=reactive --spring.profiles.active=catalog-trade`。
 
-```bash
-"$JAVA_HOME/bin/java" -jar "ddd4j-samples/ddd4j-sample-spring/target/ddd4j-sample-spring-${DDD4J_VERSION}.jar"
-"$JAVA_HOME/bin/java" -jar "ddd4j-samples/ddd4j-sample-spring/target/ddd4j-sample-spring-${DDD4J_VERSION}.jar" \
-  --spring.main.web-application-type=reactive --spring.profiles.active=demo-memory
-```
+CQRS 的写命令由容器中的 `SpringCommandBus` 分发。调用 `POST /orders/catalog/projections/orders/{orderNo}` 后，查询可读取当前的已提交订单快照。进程重启后可重新触发该操作重建视图。
 
-三线打包入口均已验证创建订单、添加明细、支付及查询。命令行切换 Web 应用类型时，Spring Boot 会转换环境并丢失配置阶段设置的默认 profile。仅传入 reactive 类型会选择 `default`，使订单应用服务缺失并中止启动。
-
-`POST /orders` 接收 `{"orderNo":"demo-1","buyerId":"buyer-1","buyerName":"Alice"}`；`POST /orders/lines` 接收共享 `AddOrderLineCommand`；`POST /orders/{id}/payment?key=unique-payment-key` 支付；`GET /orders/{id}` 查询；`POST /orders/query` 接收 `{"buyerId":"buyer-1","status":"PAID","page":1,"size":100}`。端点使用已有 `@RawResponse`，返回实际 DTO/标识，字符串可能由实际消息转换器输出为 JSON 字符串。
-
-默认业务直接调用共享应用服务，不要求执行器、EventStore、后台投影、MQ 或认证资源。真实外部 `Ddd4jRepositoryAutoConfiguration` 仍提供仓储注册及一个未使用的空 CommandBus，样例保留该配置，不能将其描述为“容器中没有 bus”。
-
-持久化模式以 `SAMPLE_JDBC_URL`、`SAMPLE_JDBC_USERNAME`、`SAMPLE_JDBC_PASSWORD` 指定独立样例数据库。default JAR 添加 `--spring.profiles.active=postgres`；CQRS JAR 默认即 PostgreSQL。数据库应先应用已有 order-jdbc 三个 SQL 夹具，CQRS 还需已有 `StoredEventEntity` / `ProjectionPositionEntity` 对应表。生产默认只校验 JPA 表，不自动新增字段。测试在隔离 PostgreSQL 中复用原 SQL，并以既有实体生成事件/检查点测试表，没有新增迁移脚本。
-
-```bash
-"$JAVA_HOME/bin/java" -jar ddd4j-samples/ddd4j-sample-spring-cqrs/target/ddd4j-sample-spring-cqrs-${DDD4J_VERSION}.jar
-"$JAVA_HOME/bin/java" -jar ddd4j-samples/ddd4j-sample-spring-satoken/target/ddd4j-sample-spring-satoken-${DDD4J_VERSION}.jar
-"$JAVA_HOME/bin/java" -jar ddd4j-samples/ddd4j-sample-spring-shiro/target/ddd4j-sample-spring-shiro-${DDD4J_VERSION}.jar
-```
-
-认证两个入口均为 `POST /auth/login`（表单 `username`、`password`）、`GET /auth/me`、`POST /auth/logout`。Sa-Token 后续使用原生 `satoken` 请求头；Shiro 使用原生 `JSESSIONID` cookie。只读账号可调用订单查询，写入/取消权限会拒绝。原生异常由样例最小状态映射优先返回 401/403；未使用自建 token/session 引擎。测试异常来自真实缺失订单查询，没有新增产品调试接口。
-
-## CQRS 一致性边界
-
-```mermaid
-flowchart LR
-  HTTP[HTTP 命令] --> Bus[实际 Spring 命令总线]
-  Bus --> App[共享 OrderApplicationService]
-  App --> JDBC[Order + Outbox 同一 JDBC 事务]
-  JDBC --> Relay[显式单实例中继 原 Outbox ID 去重]
-  Relay --> ES[JpaEventStore 全局 source position]
-  ES --> Runner[ProjectionRunner]
-  Runner --> Query[独立查询仓储 UPSERT]
-  Query --> Position[既有 JPA 检查点]
-  Position -. 失败不确认并重试 .-> Runner
-  Relay -. 写源成功 确认失败 幂等重试 .-> ES
-  Read[HTTP 查询] --> Query
-```
-
-`POST /projections/orders/run` 是绑定 localhost 的显式样例运维入口，执行有界中继和一批投影，不启动隐藏调度器。写侧的同步投影端口明确延后；查询直接读取独立表，不调用 `OrderApplicationService.find` 的写模型回退。
-
-本 CQRS 入口独占自己的 Outbox/事件/检查点表，不与 MQ 发布器或其他消费者共同确认消息。中继以原 Outbox ID 持久去重，仅承诺单实例串行执行；跨 JDBC/事件库采用至少一次、幂等重试，并未构造分布式事务。查询提交后检查点失败，可按订单主键 UPSERT 重放。验收注入上述两个窗口并检查真实源事件数、原消息 ID、查询行和持久游标，随后关闭并重开应用验证数据与位置。
-
-WebFlux 的 HTTP handler 使用按 `X-Language` 解析的 `localeContextResolver`。Java 8 提前导入 `DefaultWebFluxConfiguration`，保留 Boot 2 的原生 WebFlux 装配。Java 17/21 使用 `DelegatingWebFluxConfiguration`，把 Spring 原生备用解析器命名为 `nativeWebFluxLocaleContextResolver`，为外部装配保留既有 bean 名。三线的实际 HTTP 用例均验证 `X-Language: fr-CA` 被解析为 `fr-CA`。
-
-Java 8 的 DDD4J 请求过滤器使用 Reactor `contextWrite` 保存 exchange、request 和 response。直接调用外部 `spring-extension:1.0.x.20260630-SNAPSHOT` 的旧 `ReactiveRequestContextHolder` 访问器，还需要使用兼容当前 Reactor 的构件。
-
-默认 PostgreSQL 测试在隔离容器内使用 tmpfs 数据目录，并对同一数据库关闭和重开应用。该测试覆盖 SQL 持久化与连接重开，数据库宿主机耐久性需单独验证。
+鉴权入口的 `alice` 为只读账号，`writer` 有商品建档、下单及确认支付权限。两个演示账号的密码均为 `demo-password`。Sa-Token 使用原生会话令牌，Shiro 使用 Servlet Cookie。登录和退出继续使用 `/auth/login` 和 `/auth/logout`。

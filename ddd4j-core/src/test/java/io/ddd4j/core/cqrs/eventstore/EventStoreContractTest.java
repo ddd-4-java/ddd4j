@@ -4,21 +4,14 @@
  */
 package io.ddd4j.core.cqrs.eventstore;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.util.Objects;
-
-import io.ddd4j.core.ddd.event.AggregateRootId;
-import io.ddd4j.core.ddd.event.DomainEvent;
-import io.ddd4j.core.ddd.event.EntityIdPath;
-import io.ddd4j.core.ddd.event.EntityType;
-import io.ddd4j.core.ddd.event.StringEntityType;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.ddd4j.core.ddd.event.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -43,6 +36,7 @@ public abstract class EventStoreContractTest {
 
     /**
      * 创建对象。
+     *
      * @return 方法执行结果。
      */
     protected abstract EventStore createEventStore();
@@ -108,37 +102,8 @@ public abstract class EventStoreContractTest {
     protected final static class TestAggregateRootId implements AggregateRootId {
 
         private static final long serialVersionUID = 0L;
-
-        private final String value;
-
         private static final EntityType TYPE = new StringEntityType("Order");
-
-        /**
-         * 获取值。
-         * @return 方法执行结果。
-         */
-        @Override
-        public EntityType getType() {
-            return TYPE;
-        }
-
-        /**
-         * asString() 方法。
-         * @return 结果字符串。
-         */
-        @Override
-        public String asString() {
-            return value;
-        }
-
-        /**
-         * asTypedString() 方法。
-         * @return 结果字符串。
-         */
-        @Override
-        public String asTypedString() {
-            return TYPE.asString() + ":" + value;
-        }
+        private final String value;
 
         /**
          * 创建聚合根标识实例。
@@ -148,6 +113,36 @@ public abstract class EventStoreContractTest {
         @JsonCreator()
         protected TestAggregateRootId(@JsonProperty("value") String value) {
             this.value = value;
+        }
+
+        /**
+         * 获取值。
+         *
+         * @return 方法执行结果。
+         */
+        @Override
+        public EntityType getType() {
+            return TYPE;
+        }
+
+        /**
+         * asString() 方法。
+         *
+         * @return 结果字符串。
+         */
+        @Override
+        public String asString() {
+            return value;
+        }
+
+        /**
+         * asTypedString() 方法。
+         *
+         * @return 结果字符串。
+         */
+        @Override
+        public String asTypedString() {
+            return TYPE.asString() + ":" + value;
         }
 
         @JsonProperty("value")
@@ -182,6 +177,7 @@ public abstract class EventStoreContractTest {
 
     /**
      * 类型说明。
+     *
      * @author ddd4j
      * @since 1.0.x
      */

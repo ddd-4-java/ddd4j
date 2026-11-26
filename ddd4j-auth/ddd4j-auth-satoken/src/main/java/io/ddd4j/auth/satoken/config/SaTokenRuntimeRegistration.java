@@ -15,11 +15,7 @@ import io.ddd4j.core.subject.SubjectDataProvider;
 import io.ddd4j.core.util.SubjectKit;
 import lombok.Builder;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -56,6 +52,46 @@ public final class SaTokenRuntimeRegistration implements AutoCloseable {
         this.subjectData = subjectData;
         this.dao = dao;
         this.jsonTemplate = jsonTemplate;
+    }
+
+    private static void restoreDefaultLogic(StpLogic previous) {
+        String realm = previous.getLoginType();
+        StpLogic currentRealm = SaManager.stpLogicMap.get(realm);
+        try {
+            StpUtil.setStpLogic(previous);
+        } finally {
+            // 原生 setter 同时写入 realm，保留独立的 realm 所有权。
+            if (SaManager.stpLogicMap.get(realm) == previous) {
+                restoreRealm(realm, currentRealm);
+            }
+        }
+    }
+
+    private static void restoreRealm(String realm, StpLogic previous) {
+        if (Objects.isNull(previous)) {
+            SaManager.removeStpLogic(realm);
+        } else {
+            SaManager.putStpLogic(previous);
+        }
+    }
+
+    private static StpInterface currentPermissions() {
+        return component("stpInterface", StpInterface.class);
+    }
+
+    private static SaTokenDao currentDao() {
+        return component("saTokenDao", SaTokenDao.class);
+    }
+
+    private static <T> T component(String field, Class<T> type) {
+        return type.cast(ReflectUtil.getStaticFieldValue(Objects.requireNonNull(
+                ReflectUtil.getField(SaManager.class, field), "Missing Sa-Token component field: " + field)));
+    }
+
+    private static void checkNotChanging() {
+        if (changing) {
+            throw new IllegalStateException("Sa-Token registration is changing");
+        }
     }
 
     /**
@@ -248,40 +284,6 @@ public final class SaTokenRuntimeRegistration implements AutoCloseable {
         }
     }
 
-    private static void restoreDefaultLogic(StpLogic previous) {
-        String realm = previous.getLoginType();
-        StpLogic currentRealm = SaManager.stpLogicMap.get(realm);
-        try {
-            StpUtil.setStpLogic(previous);
-        } finally {
-            // 原生 setter 同时写入 realm，保留独立的 realm 所有权。
-            if (SaManager.stpLogicMap.get(realm) == previous) {
-                restoreRealm(realm, currentRealm);
-            }
-        }
-    }
-
-    private static void restoreRealm(String realm, StpLogic previous) {
-        if (Objects.isNull(previous)) {
-            SaManager.removeStpLogic(realm);
-        } else {
-            SaManager.putStpLogic(previous);
-        }
-    }
-
-    private static StpInterface currentPermissions() {
-        return component("stpInterface", StpInterface.class);
-    }
-
-    private static SaTokenDao currentDao() {
-        return component("saTokenDao", SaTokenDao.class);
-    }
-
-    private static <T> T component(String field, Class<T> type) {
-        return type.cast(ReflectUtil.getStaticFieldValue(Objects.requireNonNull(
-                ReflectUtil.getField(SaManager.class, field), "Missing Sa-Token component field: " + field)));
-    }
-
     private boolean dependsOn(SaTokenRuntimeRegistration previous) {
         for (Map.Entry<Change, Supplier<?>> borrow : borrowedComponents.entrySet()) {
             Change owner = borrow.getKey();
@@ -327,12 +329,6 @@ public final class SaTokenRuntimeRegistration implements AutoCloseable {
         }
         if (failure instanceof Error) {
             throw (Error) failure;
-        }
-    }
-
-    private static void checkNotChanging() {
-        if (changing) {
-            throw new IllegalStateException("Sa-Token registration is changing");
         }
     }
 

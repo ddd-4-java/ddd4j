@@ -13,15 +13,16 @@
  * limitations under the License.
  */
 package io.ddd4j.spring.cqrs;
+
 import io.ddd4j.core.cqrs.readmodel.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.ContextClosedEvent;
-import java.util.Map;
-import java.util.Objects;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.TaskScheduler;
 
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -177,8 +178,8 @@ public class SpringJpaViewManager implements ViewManager {
      * }</pre>
      *
      * @param viewName 视图名称
-     * @param cron 调度表达式
-     * @param task 更新视图的任务
+     * @param cron     调度表达式
+     * @param task     更新视图的任务
      * @return 可取消的调度句柄
      */
     public ViewScheduler.ViewScheduleHandle schedule(String viewName, String cron, Runnable task) {
@@ -194,7 +195,10 @@ public class SpringJpaViewManager implements ViewManager {
     public void onContextRefreshed() {
         start();
     }
-    /** Spring 上下文关闭时释放手工注册任务，保留子类的停止扩展点。 */
+
+    /**
+     * Spring 上下文关闭时释放手工注册任务，保留子类的停止扩展点。
+     */
     @EventListener(ContextClosedEvent.class)
     public void onContextClosed() {
         stop();

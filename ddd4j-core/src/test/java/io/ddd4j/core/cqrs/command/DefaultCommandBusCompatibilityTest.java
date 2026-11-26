@@ -16,13 +16,7 @@ package io.ddd4j.core.cqrs.command;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -243,7 +237,9 @@ class DefaultCommandBusCompatibilityTest {
                 () -> new DefaultCommandBus(Collections.singletonList(null)));
     }
 
-    /** 测试命令及其子类用于验证精确类型分发。 */
+    /**
+     * 测试命令及其子类用于验证精确类型分发。
+     */
     private static class CreateOrderCommand implements Command {
     }
 
@@ -256,7 +252,9 @@ class DefaultCommandBusCompatibilityTest {
     private static final class ShipOrderCommand implements Command {
     }
 
-    /** 可观测执行器记录输入，便于发现误路由、重复执行或错误结果转换。 */
+    /**
+     * 可观测执行器记录输入，便于发现误路由、重复执行或错误结果转换。
+     */
     private static final class FixtureExecutor implements CommandExecutor<Command> {
         private final Set<Class<? extends Command>> commandTypes;
         private final Result<?> result;

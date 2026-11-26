@@ -87,8 +87,8 @@ public class IdKit extends IdUtil {
      * 参考：<a href="http://www.cnblogs.com/relucent/p/4955340.html">...</a>
      *
      * @param workerId 工作机器节点id,数据范围为0~31
-     * @since 1.0.0
      * @return 雪花 ID 生成器实例
+     * @since 1.0.0
      */
     public static Snowflake getSnowflake(long workerId) {
         return Singleton.get(Snowflake.class, workerId);
@@ -114,8 +114,8 @@ public class IdKit extends IdUtil {
      *
      * @param workerId     工作机器节点id,数据范围为0~31
      * @param dataCenterId 数据中心id,数据范围为0~31
-     * @since 1.0.0
      * @return 雪花 ID 生成器实例
+     * @since 1.0.0
      */
     public static Snowflake getSnowflake(long workerId, long dataCenterId) {
         return Singleton.get(Snowflake.class, workerId, dataCenterId);
@@ -142,8 +142,8 @@ public class IdKit extends IdUtil {
      * @param workerId         工作机器节点id,数据范围为0~31
      * @param dataCenterId     数据中心id,数据范围为0~31
      * @param isUseSystemClock 是否使用{@link cn.hutool.core.date.SystemClock} 获取当前时间戳
-     * @since 1.0.0
      * @return 雪花 ID 生成器实例
+     * @since 1.0.0
      */
     public static Snowflake getSnowflake(long workerId, long dataCenterId, boolean isUseSystemClock) {
         return Singleton.get(Snowflake.class, workerId, dataCenterId, isUseSystemClock);
@@ -171,8 +171,8 @@ public class IdKit extends IdUtil {
      * @param dataCenterId     数据中心id,数据范围为0~31
      * @param isUseSystemClock 是否使用{@link cn.hutool.core.date.SystemClock} 获取当前时间戳
      * @param timeOffset       允许时间回拨的毫秒数
-     * @since 1.0.0
      * @return 雪花 ID 生成器实例
+     * @since 1.0.0
      */
     public static Snowflake getSnowflake(long workerId, long dataCenterId, boolean isUseSystemClock, long timeOffset) {
         SnowflakeOptions options = new SnowflakeOptions(workerId, dataCenterId, isUseSystemClock, timeOffset, 0L);

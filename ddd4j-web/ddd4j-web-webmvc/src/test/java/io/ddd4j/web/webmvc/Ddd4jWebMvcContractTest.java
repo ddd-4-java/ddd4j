@@ -14,12 +14,8 @@
  */
 package io.ddd4j.web.webmvc;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.util.Objects;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.auth.AuthPrincipal;
@@ -30,14 +26,14 @@ import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.subject.Subject;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
-import io.ddd4j.web.core.idempotency.CacheIdempotencyGuard;
-import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
 import io.ddd4j.web.core.auth.WebAccessPolicy;
 import io.ddd4j.web.core.context.WebContextScope;
-import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.web.core.context.WebRequestContextFactory;
 import io.ddd4j.web.core.context.WebRequestLifecycle;
+import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
 import io.ddd4j.web.core.error.WebStatusException;
+import io.ddd4j.web.core.idempotency.CacheIdempotencyGuard;
+import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.web.testkit.AbstractWebContractTest;
 import io.ddd4j.web.testkit.WebContractClient;
 import io.ddd4j.web.testkit.WebContractPaths;
@@ -59,10 +55,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -100,6 +93,15 @@ class Ddd4jWebMvcContractTest extends AbstractWebContractTest {
     @Override
     protected WebContractClient client() {
         return contractClient;
+    }
+
+    private SubjectProvider provider(Subject subject) {
+        return new SubjectProvider() {
+            @Override
+            public Subject getSubject() {
+                return subject;
+            }
+        };
     }
 
     @RestController
@@ -144,20 +146,16 @@ class Ddd4jWebMvcContractTest extends AbstractWebContractTest {
         }
     }
 
-    private SubjectProvider provider(Subject subject) {
-        return new SubjectProvider() {
-            @Override
-            public Subject getSubject() {
-                return subject;
-            }
-        };
-    }
-
     private final static class MockMvcContractClient implements WebContractClient {
 
         private static final long serialVersionUID = 0L;
 
         private final MockMvc mockMvc;
+
+        @JsonCreator()
+        private MockMvcContractClient(@JsonProperty("mockMvc") MockMvc mockMvc) {
+            this.mockMvc = mockMvc;
+        }
 
         @Override
         public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
@@ -179,11 +177,6 @@ class Ddd4jWebMvcContractTest extends AbstractWebContractTest {
                 builder.contentType(MediaType.APPLICATION_JSON).content(body);
             }
             return builder;
-        }
-
-        @JsonCreator()
-        private MockMvcContractClient(@JsonProperty("mockMvc") MockMvc mockMvc) {
-            this.mockMvc = mockMvc;
         }
 
         @JsonProperty("mockMvc")

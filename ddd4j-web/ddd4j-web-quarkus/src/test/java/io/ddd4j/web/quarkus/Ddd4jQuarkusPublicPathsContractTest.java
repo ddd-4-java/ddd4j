@@ -23,7 +23,9 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/** 公开路径配置的三线解析契约。 */
+/**
+ * 公开路径配置的三线解析契约。
+ */
 class Ddd4jQuarkusPublicPathsContractTest {
 
     @Test

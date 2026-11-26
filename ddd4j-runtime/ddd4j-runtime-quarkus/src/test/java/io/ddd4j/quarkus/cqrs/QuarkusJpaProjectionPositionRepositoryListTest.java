@@ -17,8 +17,8 @@ package io.ddd4j.quarkus.cqrs;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
 import jakarta.enterprise.inject.Instance;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
 import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -28,15 +28,12 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.never;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
-/** 验证投影位置查询返回可修改的独立结果快照。 */
+/**
+ * 验证投影位置查询返回可修改的独立结果快照。
+ */
 @ExtendWith(MockitoExtension.class)
 class QuarkusJpaProjectionPositionRepositoryListTest {
 
@@ -64,6 +61,7 @@ class QuarkusJpaProjectionPositionRepositoryListTest {
         assertThat(snapshot).isEmpty();
         assertThat(repository.findAll()).hasSize(1);
     }
+
     @Test
     void saveKeepsLegacyEntityIdentityAndMergeResult() {
         when(entityManagers.get()).thenReturn(manager);

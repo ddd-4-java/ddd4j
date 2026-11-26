@@ -57,9 +57,9 @@ public abstract class QuarkusAggregateController<M extends AggregateRoot<?>, Q e
     /**
      * 分页查询。
      *
-     * @param pageNum 页码
+     * @param pageNum  页码
      * @param pageSize 每页记录数
-     * @param query 查询条件
+     * @param query    查询条件
      * @return 分页查询结果
      */
     @GET
@@ -95,7 +95,7 @@ public abstract class QuarkusAggregateController<M extends AggregateRoot<?>, Q e
     /**
      * 修改聚合根。
      *
-     * @param id 聚合根主键
+     * @param id    聚合根主键
      * @param model 修改后的聚合根
      * @return 修改后的聚合根
      */
@@ -149,9 +149,9 @@ public abstract class QuarkusAggregateController<M extends AggregateRoot<?>, Q e
     /**
      * 分页查询（业务实现）。
      *
-     * @param pageNum 页码
+     * @param pageNum  页码
      * @param pageSize 每页记录数
-     * @param query 查询条件
+     * @param query    查询条件
      * @return 分页查询结果
      */
     protected abstract Page<M> listPage(int pageNum, int pageSize, Q query);
@@ -175,7 +175,7 @@ public abstract class QuarkusAggregateController<M extends AggregateRoot<?>, Q e
     /**
      * 修改（业务实现）。
      *
-     * @param id 聚合根主键
+     * @param id    聚合根主键
      * @param model 修改后的聚合根
      * @return 修改后的聚合根
      */

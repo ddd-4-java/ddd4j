@@ -1,23 +1,10 @@
 package io.ddd4j.vertx.cqrs;
 
-import java.util.Collections;
-import java.util.Arrays;
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.cqrs.command.CommandBus;
-import io.ddd4j.core.cqrs.readmodel.DefaultProjectionPosition;
-import io.ddd4j.core.cqrs.readmodel.DefaultProjectionService;
-import io.ddd4j.core.cqrs.readmodel.EventChunk;
-import io.ddd4j.core.cqrs.readmodel.EventChunkReader;
-import io.ddd4j.core.cqrs.readmodel.InMemoryProjectionPositionRepository;
-import io.ddd4j.core.cqrs.readmodel.NoopEventChunkReader;
-import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
-import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
-import io.ddd4j.core.cqrs.readmodel.ProjectionRunner;
-import io.ddd4j.core.cqrs.readmodel.ProjectionView;
-import io.ddd4j.core.cqrs.readmodel.ViewManager;
-import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
+import io.ddd4j.core.cqrs.readmodel.*;
 import io.ddd4j.runtime.testkit.AbstractCqrsRuntimeContractTest;
 import io.ddd4j.runtime.testkit.CqrsRuntimeContract;
 import io.ddd4j.vertx.Ddd4jVertxRuntime;
@@ -27,21 +14,50 @@ import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import org.junit.jupiter.api.Test;
+
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-/** 共享命令/位置契约与实际 Vert.x timer、worker、上下文、生命周期边界。 */
+/**
+ * 共享命令/位置契约与实际 Vert.x timer、worker、上下文、生命周期边界。
+ */
 class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
+    private static ProjectionView<Object> view(String name, String cron, Runnable handler) {
+        return new ProjectionView<>() {
+            public String getName() {
+                return name;
+            }
+
+            public String getCron() {
+                return cron;
+            }
+
+            public Collection<String> getEventTypes() {
+                return List.of("Order");
+            }
+
+            public void handleEvents(Collection<Object> events) {
+                handler.run();
+            }
+        };
+    }
+
+    private static <T> T await(Future<T> result) {
+        try {
+            return result.toCompletionStage().toCompletableFuture().get(8, TimeUnit.SECONDS);
+        } catch (Exception failure) {
+            throw new IllegalStateException(failure);
+        }
+    }
+
     @Override
     protected CqrsRuntimeContract createContract() {
         Vertx vertx = Vertx.vertx();
@@ -52,11 +68,26 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
                 new ProjectionRunner<>(new DefaultProjectionService(positions),
                         (stream, from, count, types) -> EventChunk.empty(from)), List.of());
         return new CqrsRuntimeContract() {
-            public String runtimeName() { return "vertx"; }
-            public CommandBus commandBus() { return bus; }
-            public ViewManager viewManager() { return manager; }
-            public ViewScheduler viewScheduler() { return scheduler; }
-            public ProjectionPositionRepository positionRepository() { return positions; }
+            public String runtimeName() {
+                return "vertx";
+            }
+
+            public CommandBus commandBus() {
+                return bus;
+            }
+
+            public ViewManager viewManager() {
+                return manager;
+            }
+
+            public ViewScheduler viewScheduler() {
+                return scheduler;
+            }
+
+            public ProjectionPositionRepository positionRepository() {
+                return positions;
+            }
+
             public void close() {
                 manager.close();
                 scheduler.close();
@@ -95,7 +126,8 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
             return EventChunk.empty(from);
         };
         Ddd4jVertxRuntime runtime = Ddd4jVertxRuntime.createWithProjection(vertx, List.of(),
-                new TestPositions(), reader, List.of(view("borrowed-factory", "* * * * * *", () -> { })), scheduler);
+                new TestPositions(), reader, List.of(view("borrowed-factory", "* * * * * *", () -> {
+                })), scheduler);
         try {
             assertThat(runtime.projectionManager().orElseThrow().isRunning()).isFalse();
             assertThatThrownBy(() -> Ddd4jVertxRuntime.createWithProjection(vertx, List.of(),
@@ -130,7 +162,10 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         CountDownLatch entered = new CountDownLatch(1), release = new CountDownLatch(1);
         CompletableFuture<Void> finished = new CompletableFuture<>();
         try {
-            await(vertx.executeBlocking(() -> { ThreadContext.put("worker", "previous"); return null; }));
+            await(vertx.executeBlocking(() -> {
+                ThreadContext.put("worker", "previous");
+                return null;
+            }));
             vertx.runOnContext(ignored -> {
                 try (ThreadContext.Scope scope = ThreadContext.open(Map.of("request", "r11"))) {
                     runtime.executeBlocking(() -> {
@@ -173,7 +208,11 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         VertxProjectionScheduler scheduler = new VertxProjectionScheduler(vertx);
         AtomicInteger calls = new AtomicInteger();
         try {
-            Future<Void> blocker = vertx.executeBlocking(() -> { entered.countDown(); release.await(5, TimeUnit.SECONDS); return null; });
+            Future<Void> blocker = vertx.executeBlocking(() -> {
+                entered.countDown();
+                release.await(5, TimeUnit.SECONDS);
+                return null;
+            });
             assertThat(entered.await(5, TimeUnit.SECONDS)).isTrue();
             ViewScheduler.ViewScheduleHandle handle = scheduler.schedule("queued", "* * * * * *", calls::incrementAndGet);
             CompletableFuture<Void> elapsed = new CompletableFuture<>();
@@ -186,7 +225,8 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
             await(blocker);
             await(vertx.executeBlocking(() -> null));
             assertThat(calls).hasValue(0);
-            assertThatThrownBy(() -> scheduler.schedule("closed", "* * * * * *", () -> { }))
+            assertThatThrownBy(() -> scheduler.schedule("closed", "* * * * * *", () -> {
+            }))
                     .isInstanceOf(IllegalStateException.class);
         } finally {
             release.countDown();
@@ -204,8 +244,11 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         try {
             ViewScheduler.ViewScheduleHandle handle = scheduler.schedule("inflight", "* * * * * *", () -> {
                 entered.countDown();
-                try { assertThat(release.await(5, TimeUnit.SECONDS)).isTrue(); }
-                catch (InterruptedException failure) { throw new IllegalStateException(failure); }
+                try {
+                    assertThat(release.await(5, TimeUnit.SECONDS)).isTrue();
+                } catch (InterruptedException failure) {
+                    throw new IllegalStateException(failure);
+                }
                 calls.incrementAndGet();
                 committed.countDown();
             });
@@ -231,10 +274,15 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         Vertx vertx = Vertx.vertx();
         AtomicInteger calls = new AtomicInteger();
         TestPositions positions = new TestPositions();
-        EventChunkReader<Object> reader = (stream, from, count, types) -> { calls.incrementAndGet(); return EventChunk.empty(from); };
+        EventChunkReader<Object> reader = (stream, from, count, types) -> {
+            calls.incrementAndGet();
+            return EventChunk.empty(from);
+        };
         Object before = BaseContext.get(SpiKeys.COMMAND_BUS, CommandBus.class);
         Ddd4jVertxRuntime runtime = Ddd4jVertxRuntime.createWithProjection(vertx, List.of(), positions, reader,
-                List.of(view("first", "* * * * * *", () -> { }), view("second", "bad", () -> { })));
+                List.of(view("first", "* * * * * *", () -> {
+                }), view("second", "bad", () -> {
+                })));
         try {
             assertThatThrownBy(runtime::start).isInstanceOf(IllegalArgumentException.class);
             assertThat(runtime.projectionManager().orElseThrow().isRunning()).isFalse();
@@ -249,7 +297,6 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
             await(vertx.close());
         }
     }
-
 
     @Test
     void linkageFailureClosesRuntimeAndRetriesFailedBorrowedHandle() {
@@ -269,14 +316,19 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
                     }
                     active.set(false);
                 }
-                public boolean isActive() { return active.get(); }
+
+                public boolean isActive() {
+                    return active.get();
+                }
             };
         };
         Object previous = BaseContext.get(SpiKeys.COMMAND_BUS, CommandBus.class);
         Ddd4jVertxRuntime runtime = Ddd4jVertxRuntime.createWithProjection(vertx, Collections.emptyList(),
                 new TestPositions(), (stream, from, size, types) -> EventChunk.empty(from),
-                Arrays.asList(view("first", "* * * * * *", () -> { }),
-                        view("second", "* * * * * *", () -> { })), borrowed);
+                Arrays.asList(view("first", "* * * * * *", () -> {
+                        }),
+                        view("second", "* * * * * *", () -> {
+                        })), borrowed);
         try {
             assertThatThrownBy(runtime::start).isSameAs(startupFailure);
             assertThat(cancellations).hasValue(2);
@@ -296,21 +348,32 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         VertxProjectionScheduler scheduler = new VertxProjectionScheduler(vertx);
         AtomicInteger calls = new AtomicInteger();
         ProjectionRunner<Object> runner = new ProjectionRunner<>(new DefaultProjectionService(new TestPositions()),
-                (stream, from, count, types) -> { calls.incrementAndGet(); return EventChunk.empty(from); });
+                (stream, from, count, types) -> {
+                    calls.incrementAndGet();
+                    return EventChunk.empty(from);
+                });
         VertxProjectionViewManager manager = new VertxProjectionViewManager(scheduler, runner,
-                List.of(view("manual", "* * * * * *", () -> { })));
+                List.of(view("manual", "* * * * * *", () -> {
+                })));
         try {
             assertThat(manager.isRunning()).isFalse();
             manager.triggerOnce();
             assertThat(calls).hasValue(1);
-            manager.start(); manager.start(); manager.stop(); manager.start(); manager.stop(); manager.close();
+            manager.start();
+            manager.start();
+            manager.stop();
+            manager.start();
+            manager.stop();
+            manager.close();
             assertThatThrownBy(manager::triggerOnce).isInstanceOf(IllegalStateException.class);
             CountDownLatch fired = new CountDownLatch(1);
             ViewScheduler.ViewScheduleHandle borrowed = scheduler.schedule("still-usable", "* * * * * *", fired::countDown);
             assertThat(fired.await(3, TimeUnit.SECONDS)).isTrue();
             borrowed.cancel();
         } finally {
-            manager.close(); scheduler.close(); await(vertx.close());
+            manager.close();
+            scheduler.close();
+            await(vertx.close());
         }
     }
 
@@ -327,7 +390,9 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         };
         Ddd4jVertxRuntime runtime = Ddd4jVertxRuntime.createWithProjection(vertx, List.of(), positions, reader,
                 List.of(view("history", "0 0 0 1 1 *", () -> {
-                    if (fail.getAndSet(false)) { throw new IllegalArgumentException("projection-failure"); }
+                    if (fail.getAndSet(false)) {
+                        throw new IllegalArgumentException("projection-failure");
+                    }
                 })));
         try {
             runtime.start();
@@ -338,7 +403,8 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
             assertThat(reads).containsExactly(10L, 10L, 20L);
             assertThat(positions.findByStreamId("history").orElseThrow().getNextEventNumber()).isEqualTo(20);
         } finally {
-            runtime.close(); await(vertx.close());
+            runtime.close();
+            await(vertx.close());
         }
     }
 
@@ -370,27 +436,30 @@ class VertxCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    private static ProjectionView<Object> view(String name, String cron, Runnable handler) {
-        return new ProjectionView<>() {
-            public String getName() { return name; }
-            public String getCron() { return cron; }
-            public Collection<String> getEventTypes() { return List.of("Order"); }
-            public void handleEvents(Collection<Object> events) { handler.run(); }
-        };
-    }
-
-    private static <T> T await(Future<T> result) {
-        try { return result.toCompletionStage().toCompletableFuture().get(8, TimeUnit.SECONDS); }
-        catch (Exception failure) { throw new IllegalStateException(failure); }
-    }
-
-    /** 仅测试显式装配的存储替身；真实历史 H2 持久化在独立 native 进程验证。 */
+    /**
+     * 仅测试显式装配的存储替身；真实历史 H2 持久化在独立 native 进程验证。
+     */
     private static final class TestPositions implements ProjectionPositionRepository {
         private final InMemoryProjectionPositionRepository delegate = new InMemoryProjectionPositionRepository();
-        public Optional<ProjectionPosition> findByStreamId(String stream) { return delegate.findByStreamId(stream); }
-        public List<ProjectionPosition> findAll() { return delegate.findAll(); }
-        public ProjectionPosition save(ProjectionPosition position) { return delegate.save(position); }
-        public void deleteByStreamId(String stream) { delegate.deleteByStreamId(stream); }
-        public void resetToZero(String stream) { delegate.resetToZero(stream); }
+
+        public Optional<ProjectionPosition> findByStreamId(String stream) {
+            return delegate.findByStreamId(stream);
+        }
+
+        public List<ProjectionPosition> findAll() {
+            return delegate.findAll();
+        }
+
+        public ProjectionPosition save(ProjectionPosition position) {
+            return delegate.save(position);
+        }
+
+        public void deleteByStreamId(String stream) {
+            delegate.deleteByStreamId(stream);
+        }
+
+        public void resetToZero(String stream) {
+            delegate.resetToZero(stream);
+        }
     }
 }

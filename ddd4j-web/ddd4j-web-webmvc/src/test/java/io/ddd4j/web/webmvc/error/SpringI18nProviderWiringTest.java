@@ -15,7 +15,9 @@ import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/** 三线 WebMVC 消息源与 Spring 运行时国际化提供者的装配契约。 */
+/**
+ * 三线 WebMVC 消息源与 Spring 运行时国际化提供者的装配契约。
+ */
 class SpringI18nProviderWiringTest {
 
     @Test

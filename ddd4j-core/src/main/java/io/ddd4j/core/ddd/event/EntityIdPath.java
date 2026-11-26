@@ -22,25 +22,18 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * 从聚合根到事件源实体的有序标识路径。
  */
 public final class EntityIdPath implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 1L;
-
     /**
      * 路径分隔符。
      */
     public static final String PATH_SEPARATOR = "/";
-
+    @Serial
+    private static final long serialVersionUID = 1L;
     /**
      * 段内类型与值的分隔符（与 {@link EntityId#asTypedString()} 的拼接约定一致）。
      */
@@ -73,78 +66,6 @@ public final class EntityIdPath implements Serializable {
             throw new IllegalArgumentException("Entity identifier path must not contain null");
         }
         this.entityIds = List.copyOf(entityIds);
-    }
-
-    /**
-     * 写出 Java 8 可读取的实体标识路径，包括从历史对象流读回的路径。
-     *
-     * @param output 对象输出流
-     * @throws IOException 写入序列化字段失败时
-     * @serialData 原 {@code entityIds} 字段按独立的不可修改列表快照写出。
-     */
-    @Serial
-    private void writeObject(ObjectOutputStream output) throws IOException {
-        ObjectOutputStream.PutField fields = output.putFields();
-        fields.put("entityIds", Collections.unmodifiableList(new ArrayList<>(entityIds)));
-        output.writeFields();
-    }
-
-    /**
-     * 返回独立迭代器，迭代器删除不会影响当前路径。
-     *
-     * @return 标识迭代器
-     */
-    public Iterator<EntityId> iterator() {
-        return new ArrayList<>(entityIds).iterator();
-    }
-
-    /**
-     * 返回路径第一个标识。
-     *
-     * @param <T> 标识类型
-     * @return 聚合根标识
-     */
-    @SuppressWarnings("unchecked")
-    public <T extends EntityId> T first() {
-        return (T) entityIds.get(0);
-    }
-
-    /**
-     * 返回路径最后一个标识。
-     *
-     * @param <T> 标识类型
-     * @return 事件源标识
-     */
-    @SuppressWarnings("unchecked")
-    public <T extends EntityId> T last() {
-        return (T) entityIds.get(entityIds.size() - 1);
-    }
-
-    /**
-     * 返回去掉第一个标识后的路径；单元素路径返回 {@code null}。
-     *
-     * @return 剩余路径或 {@code null}
-     */
-    public EntityIdPath rest() {
-        return subPath(1, entityIds.size());
-    }
-
-    /**
-     * 返回去掉最后一个标识后的路径；单元素路径返回 {@code null}。
-     *
-     * @return 父路径或 {@code null}
-     */
-    public EntityIdPath parent() {
-        return subPath(0, entityIds.size() - 1);
-    }
-
-    /**
-     * 返回路径长度。
-     *
-     * @return 标识数量
-     */
-    public int size() {
-        return entityIds.size();
     }
 
     /**
@@ -233,28 +154,6 @@ public final class EntityIdPath implements Serializable {
     }
 
     /**
-     * 返回稳定的类型化路径文本。
-     *
-     * <p>序列化时对每段做 {@link #escape(String)}，仅转义两个有歧义的字符：
-     * <ul>
-     *   <li>{@code /} → {@code \/} —— 段分隔符，必须转义以避免值内 {@code /} 与段分隔冲突</li>
-     *   <li>{@code \} → {@code \\} —— 转义字符本身</li>
-     * </ul>
-     *
-     * <p>段内的 {@code :} <b>不</b>转义（保持简单路径的视觉简洁），反序列化端通过
-     * 「首个 {@code :} 切分 type/value」约定，剩余的 {@code :} 全部归属 value。
-     *
-     * @return 类型化路径文本
-     */
-    @JsonValue
-    public String asString() {
-        return entityIds.stream()
-                .map(EntityId::asTypedString)
-                .map(EntityIdPath::escape)
-                .collect(java.util.stream.Collectors.joining(PATH_SEPARATOR));
-    }
-
-    /**
      * 转义段分隔符与反斜杠。
      *
      * <p>仅在字符串包含 {@code /} 或 {@code \} 时才插入转义符；简单值
@@ -296,6 +195,100 @@ public final class EntityIdPath implements Serializable {
             sb.append(c);
         }
         return sb.toString();
+    }
+
+    /**
+     * 写出 Java 8 可读取的实体标识路径，包括从历史对象流读回的路径。
+     *
+     * @param output 对象输出流
+     * @throws IOException 写入序列化字段失败时
+     * @serialData 原 {@code entityIds} 字段按独立的不可修改列表快照写出。
+     */
+    @Serial
+    private void writeObject(ObjectOutputStream output) throws IOException {
+        ObjectOutputStream.PutField fields = output.putFields();
+        fields.put("entityIds", Collections.unmodifiableList(new ArrayList<>(entityIds)));
+        output.writeFields();
+    }
+
+    /**
+     * 返回独立迭代器，迭代器删除不会影响当前路径。
+     *
+     * @return 标识迭代器
+     */
+    public Iterator<EntityId> iterator() {
+        return new ArrayList<>(entityIds).iterator();
+    }
+
+    /**
+     * 返回路径第一个标识。
+     *
+     * @param <T> 标识类型
+     * @return 聚合根标识
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends EntityId> T first() {
+        return (T) entityIds.get(0);
+    }
+
+    /**
+     * 返回路径最后一个标识。
+     *
+     * @param <T> 标识类型
+     * @return 事件源标识
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends EntityId> T last() {
+        return (T) entityIds.get(entityIds.size() - 1);
+    }
+
+    /**
+     * 返回去掉第一个标识后的路径；单元素路径返回 {@code null}。
+     *
+     * @return 剩余路径或 {@code null}
+     */
+    public EntityIdPath rest() {
+        return subPath(1, entityIds.size());
+    }
+
+    /**
+     * 返回去掉最后一个标识后的路径；单元素路径返回 {@code null}。
+     *
+     * @return 父路径或 {@code null}
+     */
+    public EntityIdPath parent() {
+        return subPath(0, entityIds.size() - 1);
+    }
+
+    /**
+     * 返回路径长度。
+     *
+     * @return 标识数量
+     */
+    public int size() {
+        return entityIds.size();
+    }
+
+    /**
+     * 返回稳定的类型化路径文本。
+     *
+     * <p>序列化时对每段做 {@link #escape(String)}，仅转义两个有歧义的字符：
+     * <ul>
+     *   <li>{@code /} → {@code \/} —— 段分隔符，必须转义以避免值内 {@code /} 与段分隔冲突</li>
+     *   <li>{@code \} → {@code \\} —— 转义字符本身</li>
+     * </ul>
+     *
+     * <p>段内的 {@code :} <b>不</b>转义（保持简单路径的视觉简洁），反序列化端通过
+     * 「首个 {@code :} 切分 type/value」约定，剩余的 {@code :} 全部归属 value。
+     *
+     * @return 类型化路径文本
+     */
+    @JsonValue
+    public String asString() {
+        return entityIds.stream()
+                .map(EntityId::asTypedString)
+                .map(EntityIdPath::escape)
+                .collect(java.util.stream.Collectors.joining(PATH_SEPARATOR));
     }
 
     private EntityIdPath subPath(int fromIndex, int toIndex) {

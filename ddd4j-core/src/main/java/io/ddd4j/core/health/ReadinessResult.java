@@ -19,8 +19,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.kit.lang.StrKit;
 
-import java.util.LinkedHashMap;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -90,6 +90,7 @@ public final class ReadinessResult {
 
     /**
      * 获取值。
+     *
      * @return 结果字符串。
      */
     public String getName() {
@@ -98,6 +99,7 @@ public final class ReadinessResult {
 
     /**
      * 判断布尔状态。
+     *
      * @return 判断结果。
      */
     public boolean isReady() {

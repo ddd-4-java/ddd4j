@@ -1,6 +1,25 @@
 # ddd4j-sample-quarkus
 
-Quarkus 默认样例。订单使用共享 Order 应用服务演示充血聚合、值对象和状态流转，商品使用 `GoodsQuery` 演示 Model/Query 查询。HTTP 端点由本线 Quarkus 的 JAX-RS 提供，应用服务和仓储由 CDI 装配。
+## 当前商品交易入口
+
+此模块以 普通 DDD 方式运行共享商品交易。先按[示例总览](../README.md#启动默认订单示例)配置 MySQL。以下命令从仓库根目录运行，使用实际 Maven 版本替换 `<version>`。
+
+```bash
+module=ddd4j-samples/ddd4j-sample-quarkus
+./mvnw -pl "$module" -am -DskipTests -Dmaven.javadoc.skip=true package
+java -jar "$module/target/quarkus-app/quarkus-run.jar"
+```
+
+业务请求携带 `X-Tenant-Id`。商品地址为 `/api/goods/{spuCode}`，订单地址为 `/api/orders/{orderNo}`。支付、取消和履约分别使用订单子路径 `/payment`、`/cancel`、`/fulfill`。
+
+<details>
+<summary>商品交易迁移前的说明</summary>
+
+Quarkus 通过 JAX-RS 暴露已有共享模块的商品及订单用例。
+
+## 默认商品交易入口
+
+默认启动原生应用时，Flyway 先迁移专用 MySQL 库。应用随后提供商品、规格、订单及成交明细的读写示例。[商品交易的数据库配置、四个接口与验证命令](../README.md#启动默认订单示例)。
 
 ## 运行
 
@@ -15,7 +34,7 @@ Quarkus 默认样例。订单使用共享 Order 应用服务演示充血聚合�
 ```bash
 ./mvnw -pl ddd4j-samples/ddd4j-sample-quarkus -am package
 java -jar ddd4j-samples/ddd4j-sample-quarkus/target/quarkus-app/quarkus-run.jar
-curl http://localhost:8080/api/orders
+python3 ddd4j-samples/scripts/check_catalog_trade.py http://localhost:8080
 ```
 
 Quarkus 在启动日志中记录实际监听地址。默认端口为 8080，可在 `-jar` 前加 `-Dquarkus.http.port=8082` 使用其他端口。
@@ -29,7 +48,9 @@ Quarkus 在启动日志中记录实际监听地址。默认端口为 8080，可�
 ./mvnw -pl ddd4j-samples/ddd4j-sample-quarkus quarkus:dev
 ```
 
-## 订单
+设置构建属性 `-Dsample.orders.legacy=true` 可运行以下兼容接口。
+
+## 原订单组件
 
 | 方法 | 路径 | 说明 |
 |------|------|------|
@@ -66,7 +87,7 @@ curl -X POST "http://localhost:8080/api/orders/$ORDER_ID/ship"
 
 默认 `ddd4j.quarkus.web.bearer-required=false`，可匿名使用。启动时可用 `-Dddd4j.quarkus.web.bearer-required=true` 启用 `/api/` 的 Bearer 策略。集成测试使用 `SampleSubjectProvider` 的演示令牌验证无凭证拒绝和授权访问。完整认证示例见 [Sa-Token](../ddd4j-sample-quarkus-satoken/README.md) 与 [Shiro](../ddd4j-sample-quarkus-shiro/README.md)，持久化查询示例见 [CQRS](../ddd4j-sample-quarkus-cqrs/README.md)。
 
-## 商品
+## 原商品组件
 
 | 方法 | 路径 | 说明 |
 |------|------|------|
@@ -117,3 +138,5 @@ curl -X DELETE "http://localhost:8080/goods/$GOODS_ID"
 - [Quarkus 运行时适配](../../ddd4j-runtime/ddd4j-runtime-quarkus)
 - [Quarkus Web 适配](../../ddd4j-web/ddd4j-web-quarkus)
 - [缓存组件](../../ddd4j-cache/README.md)
+
+</details>

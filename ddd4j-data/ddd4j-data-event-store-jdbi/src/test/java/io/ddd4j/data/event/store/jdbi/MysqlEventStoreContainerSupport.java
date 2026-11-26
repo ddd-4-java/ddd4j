@@ -14,10 +14,11 @@
  */
 package io.ddd4j.data.event.store.jdbi;
 
-import java.util.Collections;
 import org.testcontainers.DockerClientFactory;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.utility.DockerImageName;
+
+import java.util.Collections;
 
 /**
  * MySQL 容器进程级单例夹具（同一 JVM 内全部 IT 共享一个容器，仅启动一次）。

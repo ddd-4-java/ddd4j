@@ -73,12 +73,13 @@ public class DefaultCommandBus implements CommandBus {
     /**
      * 为已有动态发现平台提供缺失路由钩子；默认快照模式不发现新执行器。
      * 成功结果由共享总线缓存，异常不改变路由；本钩子不得执行命令。
-     * @param commandType 未缓存的命令精确类型
+     *
+     * @param commandType         未缓存的命令精确类型
      * @param registeredExecutors 当前路由中执行器的只读实时视图，禁止结构修改
      * @return 已发现执行器，未发现返回 null
      */
     protected CommandExecutor<?> resolveMissingExecutor(Class<? extends Command> commandType,
-                                                         Collection<CommandExecutor<?>> registeredExecutors) {
+                                                        Collection<CommandExecutor<?>> registeredExecutors) {
         return null;
     }
 

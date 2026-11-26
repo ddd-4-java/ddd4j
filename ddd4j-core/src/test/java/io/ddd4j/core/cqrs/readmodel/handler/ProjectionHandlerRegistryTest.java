@@ -13,20 +13,12 @@
  * limitations under the License.
  */
 package io.ddd4j.core.cqrs.readmodel.handler;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.core.ddd.event.StringEntityId;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -180,11 +172,13 @@ class ProjectionHandlerRegistryTest {
         assertThat(registry.all()).containsExactly(handler);
     }
 
-    /** 可变业务配置替身，用于验证登记快照与执行入口的一致性。 */
+    /**
+     * 可变业务配置替身，用于验证登记快照与执行入口的一致性。
+     */
     static final class MutableHandler implements ProjectionHandler {
-        String name = "first";
         final Set<Class<? extends DomainEvent<?>>> types = new LinkedHashSet<>(Set.of(OrderCreated.class));
         final List<DomainEvent<?>> handled = new java.util.ArrayList<>();
+        String name = "first";
 
         @Override
         public String getName() {

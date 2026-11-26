@@ -12,11 +12,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
-/** 三线天气查询的本地 HTTP、JSON 与缓存契约。 */
+/**
+ * 三线天气查询的本地 HTTP、JSON 与缓存契约。
+ */
 class WeatherTemplateHttpContractTest {
 
     @Test

@@ -1,10 +1,6 @@
 package io.ddd4j.spring.command;
 
-import io.ddd4j.core.cqrs.command.Command;
-import io.ddd4j.core.cqrs.command.CommandBus;
-import io.ddd4j.core.cqrs.command.CommandExecutor;
-import io.ddd4j.core.cqrs.command.CommandRegistry;
-import io.ddd4j.core.cqrs.command.Result;
+import io.ddd4j.core.cqrs.command.*;
 import org.h2.jdbcx.JdbcDataSource;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -23,7 +19,9 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/** 使用真实 H2 连接与 Spring 事务代理，验证两套公开入口的原有提交和回滚契约。 */
+/**
+ * 使用真实 H2 连接与 Spring 事务代理，验证两套公开入口的原有提交和回滚契约。
+ */
 class SpringCommandTransactionTest {
     @Test
     void currentTransactions() throws Exception {
@@ -49,6 +47,7 @@ class SpringCommandTransactionTest {
                 public Set<Class<? extends Command>> supportedCommands() {
                     return Collections.singleton(WriteCommand.class);
                 }
+
                 public Result execute(WriteCommand command) {
                     assertTrue(TransactionSynchronizationManager.isActualTransactionActive());
                     Connection connection = DataSourceUtils.getConnection(source);
@@ -94,6 +93,7 @@ class SpringCommandTransactionTest {
 
     static final class WriteCommand implements Command {
         private final int id;
+
         WriteCommand(int id) {
             this.id = id;
         }

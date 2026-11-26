@@ -27,7 +27,9 @@ public final class Ddd4jHelidonConfig {
 
     private final Config config;
 
-    /** 使用当前 MicroProfile 配置创建访问器。 */
+    /**
+     * 使用当前 MicroProfile 配置创建访问器。
+     */
     public Ddd4jHelidonConfig() {
         this(ConfigProvider.getConfig());
     }
@@ -44,7 +46,7 @@ public final class Ddd4jHelidonConfig {
     /**
      * 读取可选配置值。
      *
-     * @param <T> 配置值类型
+     * @param <T>  配置值类型
      * @param name 配置名称
      * @param type 配置值类型
      * @return 可选配置值

@@ -11,21 +11,22 @@
     </parent>
     <artifactId>ddd4j-sample-vertx-cqrs</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>Vert.x CQRS integration sample: write-side (Command -> Aggregate -> EventStore) + read-side (EventStore
-        -> Projection -> Query).
-    </description>
+    <description>Vert.x CQRS 商品交易与快照投影示例。</description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
     <dependencies>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>mysql</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency><groupId>io.ddd4j</groupId><artifactId>ddd4j-runtime-vertx</artifactId><version>${revision}</version></dependency>
-        <dependency><groupId>io.ddd4j</groupId><artifactId>ddd4j-sample-order-jdbc</artifactId><version>${revision}</version></dependency>
-        <dependency><groupId>io.ddd4j</groupId><artifactId>ddd4j-sample-order-local</artifactId><version>${revision}</version></dependency>
-        <dependency><groupId>io.ddd4j</groupId><artifactId>ddd4j-data-event-store-jpa</artifactId><version>${revision}</version></dependency>
-<dependency><groupId>org.hibernate.orm</groupId><artifactId>hibernate-core</artifactId></dependency>
-<dependency><groupId>org.postgresql</groupId><artifactId>postgresql</artifactId></dependency>
-<dependency><groupId>org.flywaydb</groupId><artifactId>flyway-core</artifactId><scope>test</scope></dependency>
-<dependency><groupId>org.flywaydb</groupId><artifactId>flyway-database-postgresql</artifactId><scope>test</scope></dependency>
-<dependency><groupId>org.testcontainers</groupId><artifactId>postgresql</artifactId><scope>test</scope></dependency>
+        <dependency><groupId>io.ddd4j</groupId><artifactId>ddd4j-sample-order-start</artifactId><version>${revision}</version></dependency>
 
         <!-- ======== 领域 + 核心 ======== -->
         <dependency>

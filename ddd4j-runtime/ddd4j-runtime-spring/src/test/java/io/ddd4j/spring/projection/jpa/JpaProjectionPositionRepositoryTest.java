@@ -1,7 +1,7 @@
 package io.ddd4j.spring.projection.jpa;
 
-import io.ddd4j.data.projection.jpa.ProjectionPositionEntity;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
+import io.ddd4j.data.projection.jpa.ProjectionPositionEntity;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;

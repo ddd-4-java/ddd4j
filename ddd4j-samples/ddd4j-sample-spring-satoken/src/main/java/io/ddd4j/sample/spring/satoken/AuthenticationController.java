@@ -28,7 +28,7 @@ public class AuthenticationController {
     @RawResponse
     @PostMapping("/auth/login")
     public String login(@RequestParam String username, @RequestParam String password) {
-        if (!"alice".equals(username) || !"demo-password".equals(password)) {
+        if (!("alice".equals(username) || "writer".equals(username)) || !"demo-password".equals(password)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "invalid demo credentials");
         }
         StpUtil.login(username);

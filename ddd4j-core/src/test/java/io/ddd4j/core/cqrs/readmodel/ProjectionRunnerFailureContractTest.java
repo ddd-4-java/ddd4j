@@ -5,24 +5,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
-import java.util.List;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ProjectionRunnerFailureContractTest {
@@ -35,6 +24,32 @@ class ProjectionRunnerFailureContractTest {
 
     @Mock
     private ProjectionMetrics metrics;
+
+    private static ProjectionView<String> view(RuntimeException failure) {
+        return new ProjectionView<String>() {
+            @Override
+            public String getName() {
+                return "orders";
+            }
+
+            @Override
+            public String getCron() {
+                return "0/5 * * * * ?";
+            }
+
+            @Override
+            public Collection<String> getEventTypes() {
+                return Collections.singletonList("OrderCreated");
+            }
+
+            @Override
+            public void handleEvents(Collection<String> events) {
+                if (Objects.nonNull(failure)) {
+                    throw failure;
+                }
+            }
+        };
+    }
 
     @Test
     void positionReadFailureReportsMetricWithoutAdvancing() {
@@ -111,31 +126,5 @@ class ProjectionRunnerFailureContractTest {
         assertThat(attempts).hasValue(2);
         assertThat(effects).hasSize(2); // 去重由业务消费者提供，不代表 exactly-once。
         assertThat(persisted.readProjectionPosition("orders")).isEqualTo(20);
-    }
-
-    private static ProjectionView<String> view(RuntimeException failure) {
-        return new ProjectionView<String>() {
-            @Override
-            public String getName() {
-                return "orders";
-            }
-
-            @Override
-            public String getCron() {
-                return "0/5 * * * * ?";
-            }
-
-            @Override
-            public Collection<String> getEventTypes() {
-                return Collections.singletonList("OrderCreated");
-            }
-
-            @Override
-            public void handleEvents(Collection<String> events) {
-                if (Objects.nonNull(failure)) {
-                    throw failure;
-                }
-            }
-        };
     }
 }

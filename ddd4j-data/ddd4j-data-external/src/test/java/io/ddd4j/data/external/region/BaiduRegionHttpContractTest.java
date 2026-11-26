@@ -14,12 +14,11 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-/** 三线百度区域查询在各自 HTTP 客户端下的本地结果与缓存契约。 */
+/**
+ * 三线百度区域查询在各自 HTTP 客户端下的本地结果与缓存契约。
+ */
 class BaiduRegionHttpContractTest {
 
     @Test

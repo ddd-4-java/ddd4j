@@ -37,7 +37,9 @@ import java.lang.annotation.*;
 @Inherited
 public @interface ApplicationService {
 
-    /** @return Spring 组件名称；空字符串表示使用默认名称 */
+    /**
+     * @return Spring 组件名称；空字符串表示使用默认名称
+     */
     @AliasFor(annotation = Service.class, attribute = "value")
     String value() default "";
 }

@@ -92,7 +92,7 @@ public final class WebOtelIntegration {
      * 记录异常。
      *
      * @param span 追踪片段
-     * @param t 异常
+     * @param t    异常
      */
     public static void recordError(Span span, Throwable t) {
         HttpSpan.recordError(span, t);
@@ -101,7 +101,7 @@ public final class WebOtelIntegration {
     /**
      * 结束 span 并记录 HTTP 状态码。
      *
-     * @param span 追踪片段
+     * @param span   追踪片段
      * @param status HTTP 状态码
      */
     public static void endServerSpan(Span span, int status) {

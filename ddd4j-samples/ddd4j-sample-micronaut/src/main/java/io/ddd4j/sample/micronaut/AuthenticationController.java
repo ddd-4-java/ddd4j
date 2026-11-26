@@ -14,10 +14,8 @@
  */
 package io.ddd4j.sample.micronaut;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.auth.AuthRequest;
 import io.ddd4j.core.subject.SubjectProvider;
@@ -34,7 +32,9 @@ public class AuthenticationController {
 
     private final SubjectProvider subjectProvider;
 
-    /** @param subjectProvider 主体访问端口 */
+    /**
+     * @param subjectProvider 主体访问端口
+     */
     public AuthenticationController(SubjectProvider subjectProvider) {
         this.subjectProvider = Objects.requireNonNull(subjectProvider, "subjectProvider must not be null");
     }
@@ -49,20 +49,26 @@ public class AuthenticationController {
         return R.ok(new TokenResponse(token));
     }
 
-    /** 登录令牌响应。 */
+    /**
+     * 登录令牌响应。
+     */
     public final static class TokenResponse {
 
         private static final long serialVersionUID = 0L;
 
         private final String token;
 
-        /** @param token 登录令牌 */
+        /**
+         * @param token 登录令牌
+         */
         @JsonCreator()
         public TokenResponse(@JsonProperty("token") String token) {
             this.token = token;
         }
 
-        /** @return 登录令牌 */
+        /**
+         * @return 登录令牌
+         */
         @JsonProperty("token")
         public String token() {
             return token;

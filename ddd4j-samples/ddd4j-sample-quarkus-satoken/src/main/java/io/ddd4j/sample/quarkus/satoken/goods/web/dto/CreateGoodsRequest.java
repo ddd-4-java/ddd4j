@@ -14,13 +14,11 @@
  */
 package io.ddd4j.sample.quarkus.satoken.goods.web.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.util.Objects;
-
 import java.math.BigDecimal;
+import java.util.Objects;
 
 /**
  * 创建商品 REST 请求。
@@ -42,8 +40,8 @@ public final class CreateGoodsRequest {
     /**
      * 创建商品请求。
      *
-     * @param code 商品编码
-     * @param name 商品名称
+     * @param code  商品编码
+     * @param name  商品名称
      * @param price 商品价格
      * @param stock 库存数量
      */

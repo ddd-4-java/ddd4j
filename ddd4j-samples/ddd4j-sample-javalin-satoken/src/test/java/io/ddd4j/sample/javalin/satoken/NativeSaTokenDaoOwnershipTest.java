@@ -7,8 +7,11 @@ import cn.dev33.satoken.listener.SaTokenEventCenter;
 import cn.dev33.satoken.listener.SaTokenListenerForSimple;
 import cn.dev33.satoken.stp.StpInterface;
 import cn.hutool.core.util.ReflectUtil;
-import io.ddd4j.sample.order.testkit.EnvelopeOrderHttpDriver;
+import io.ddd4j.sample.javalin.satoken.NativeAuthHttpTest.Driver;
 import org.junit.jupiter.api.Test;
+import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.lang.reflect.Field;
 import java.util.Collections;
@@ -16,13 +19,28 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
+@Testcontainers
 class NativeSaTokenDaoOwnershipTest {
+    @Container
+    static final MySQLContainer<?> MYSQL = new MySQLContainer<>("mysql:8.0.36");
+
+    private static Field rawDaoField() {
+        Field field = Objects.requireNonNull(ReflectUtil.getField(SaManager.class, "saTokenDao"));
+        field.setAccessible(true);
+        return field;
+    }
+
+    private static void restoreDao(Field field, Object prior) throws IllegalAccessException {
+        try {
+            if (Objects.nonNull(field.get(null))) {
+                SaManager.setSaTokenDao(null);
+            }
+        } finally {
+            field.set(null, prior);
+        }
+    }
 
     @Test
     void callerDaoServesLoginAndSurvivesClosingTheApplication() throws Exception {
@@ -34,11 +52,13 @@ class NativeSaTokenDaoOwnershipTest {
         try {
             SaManager.setSaTokenDao(store);
             store.setObject("caller-owned-key", "preserved", SaTokenDao.NEVER_EXPIRE);
-            try (JavalinSaTokenApplication.Application application = JavalinSaTokenApplication.start(0)) {
+            try (JavalinSaTokenApplication.Application application = JavalinSaTokenApplication.start(0, ignored -> {
+            }, config -> {
+            }, NativeAuthHttpTest.catalog(MYSQL))) {
                 assertEquals(0, store.destroyCalls, "sample start must not shut down the caller's DAO");
                 assertSame(store, SaManager.getSaTokenDao());
-                EnvelopeOrderHttpDriver http = new EnvelopeOrderHttpDriver(
-                        "http://127.0.0.1:" + application.app().port(), "/orders", Collections.emptyMap());
+                Driver http = new Driver(
+                        "http://127.0.0.1:" + application.app().port(), Collections.emptyMap());
                 Map<String, String> credentials = new HashMap<>();
                 credentials.put("username", "admin");
                 credentials.put("password", "admin");
@@ -79,7 +99,9 @@ class NativeSaTokenDaoOwnershipTest {
         };
         field.set(null, null);
         try {
-            try (JavalinSaTokenApplication.Application application = JavalinSaTokenApplication.start(0)) {
+            try (JavalinSaTokenApplication.Application application = JavalinSaTokenApplication.start(0, ignored -> {
+            }, config -> {
+            }, NativeAuthHttpTest.catalog(MYSQL))) {
                 assertNotNull(field.get(null), "the application must install an owned DAO");
                 SaTokenEventCenter.registerListener(listener);
                 RuntimeException observed = assertThrows(RuntimeException.class, application::close);
@@ -113,29 +135,15 @@ class NativeSaTokenDaoOwnershipTest {
         SaTokenEventCenter.registerListener(listener);
         try {
             RuntimeException observed = assertThrows(RuntimeException.class,
-                    () -> JavalinSaTokenApplication.start(0).close());
+                    () -> JavalinSaTokenApplication.start(0, ignored -> {
+                    }, config -> {
+                    }, NativeAuthHttpTest.catalog(MYSQL)).close());
             assertSame(expected, observed, "startup must preserve the original listener failure");
             assertSame(previousPermissions, SaManager.getStpInterface());
             assertNull(field.get(null), "startup rollback must detach its owned DAO");
         } finally {
             SaTokenEventCenter.removeListener(listener);
             restoreDao(field, prior);
-        }
-    }
-
-    private static Field rawDaoField() {
-        Field field = Objects.requireNonNull(ReflectUtil.getField(SaManager.class, "saTokenDao"));
-        field.setAccessible(true);
-        return field;
-    }
-
-    private static void restoreDao(Field field, Object prior) throws IllegalAccessException {
-        try {
-            if (Objects.nonNull(field.get(null))) {
-                SaManager.setSaTokenDao(null);
-            }
-        } finally {
-            field.set(null, prior);
         }
     }
 

@@ -9,18 +9,20 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.Objects;
 
-/** 使用原生 JDK HttpClient 的真实样例 HTTP 传输。 */
+/**
+ * 使用原生 JDK HttpClient 的真实样例 HTTP 传输。
+ */
 public final class SampleHttpTransport {
 
     private SampleHttpTransport() {
     }
 
     /**
-     * @param url 服务地址与请求路径
-     * @param method HTTP 方法
-     * @param headers 驱动的缺省请求头
+     * @param url        服务地址与请求路径
+     * @param method     HTTP 方法
+     * @param headers    驱动的缺省请求头
      * @param additional 单个请求的附加头
-     * @param body JSON 请求体，可为空
+     * @param body       JSON 请求体，可为空
      * @return 实际响应状态码和正文
      * @throws IOException 请求传输失败或调用线程被中断
      */
@@ -34,7 +36,9 @@ public final class SampleHttpTransport {
         }
     }
 
-    /** 复用驱动原有客户端配置，并将原生中断交给驱动原来的异常边界处理。 */
+    /**
+     * 复用驱动原有客户端配置，并将原生中断交给驱动原来的异常边界处理。
+     */
     static Response request(HttpClient client, String url, String method, Map<String, String> headers,
                             Map<String, String> additional, String body) throws IOException, InterruptedException {
         HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(url))
@@ -47,7 +51,9 @@ public final class SampleHttpTransport {
         return new Response(response.statusCode(), response.body());
     }
 
-    /** 实际 HTTP 响应的状态与正文。 */
+    /**
+     * 实际 HTTP 响应的状态与正文。
+     */
     public static final class Response {
         private final int statusCode;
         private final String body;
@@ -57,12 +63,16 @@ public final class SampleHttpTransport {
             this.body = body;
         }
 
-        /** @return HTTP 响应状态码 */
+        /**
+         * @return HTTP 响应状态码
+         */
         public int statusCode() {
             return statusCode;
         }
 
-        /** @return 按响应声明字符集解码的正文，缺省 UTF-8 */
+        /**
+         * @return 按响应声明字符集解码的正文，缺省 UTF-8
+         */
         public String body() {
             return body;
         }

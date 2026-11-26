@@ -35,9 +35,8 @@ public interface ViewScheduler {
      * 注册一个定时任务。
      *
      * @param viewName 视图名称（用于日志 / 调试）
-     * <p>轻量平台共用 {@link ProjectionCron} 的六段数值规则，使用平台既有时区计算下一时间。
-     * 原生平台额外方言由对应适配层显式校验，不得静默转换。线程和任务异常策略由平台负责。
-     *
+     *                 <p>轻量平台共用 {@link ProjectionCron} 的六段数值规则，使用平台既有时区计算下一时间。
+     *                 原生平台额外方言由对应适配层显式校验，不得静默转换。线程和任务异常策略由平台负责。
      * @param cron     CRON 表达式
      * @param task     要执行的任务
      * @return 任务句柄，可用于取消
@@ -55,7 +54,8 @@ public interface ViewScheduler {
 
         /**
          * 判断任务是否仍处于活跃状态。
-     * @return 调度器正在运行时为 true
+         *
+         * @return 调度器正在运行时为 true
          */
         boolean isActive();
     }

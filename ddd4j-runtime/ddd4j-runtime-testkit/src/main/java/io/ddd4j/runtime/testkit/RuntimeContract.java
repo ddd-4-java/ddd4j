@@ -23,13 +23,19 @@ import java.util.Map;
  */
 public interface RuntimeContract extends AutoCloseable {
 
-    /** 启动运行时。 */
+    /**
+     * 启动运行时。
+     */
     void start();
 
-    /** @return 运行时注册的服务键与接口类型 */
+    /**
+     * @return 运行时注册的服务键与接口类型
+     */
     Map<String, Class<?>> services();
 
-    /** @return 当前就绪状态 */
+    /**
+     * @return 当前就绪状态
+     */
     ReadinessReport readiness();
 
     @Override

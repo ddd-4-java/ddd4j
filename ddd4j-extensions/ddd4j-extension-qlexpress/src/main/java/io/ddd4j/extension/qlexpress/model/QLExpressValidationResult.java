@@ -29,6 +29,18 @@ public final class QLExpressValidationResult {
     private final String message;
 
     /**
+     * 创建语法校验结果。
+     *
+     * @param valid   是否有效
+     * @param message 校验消息
+     */
+    @JsonCreator()
+    public QLExpressValidationResult(@JsonProperty("valid") boolean valid, @JsonProperty("message") String message) {
+        this.valid = valid;
+        this.message = message;
+    }
+
+    /**
      * 创建语法校验成功结果。
      *
      * @return 成功结果
@@ -63,18 +75,6 @@ public final class QLExpressValidationResult {
      */
     public String getMessage() {
         return message;
-    }
-
-    /**
-     * 创建语法校验结果。
-     *
-     * @param valid 是否有效
-     * @param message 校验消息
-     */
-    @JsonCreator()
-    public QLExpressValidationResult(@JsonProperty("valid") boolean valid, @JsonProperty("message") String message) {
-        this.valid = valid;
-        this.message = message;
     }
 
     /**

@@ -1,16 +1,16 @@
 package io.ddd4j.mq.redisstream;
 
 import io.ddd4j.core.context.BaseContext;
+import io.ddd4j.mq.delivery.MQDeliveryHeaders;
 import io.ddd4j.mq.event.MQEvent;
 import io.ddd4j.mq.event.MQEventSerialization;
 import io.ddd4j.mq.listener.MQListener;
-import io.ddd4j.mq.delivery.MQDeliveryHeaders;
 import io.ddd4j.mq.message.Acknowledgment;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import redis.clients.jedis.UnifiedJedis;
-import redis.clients.jedis.resps.StreamEntry;
 import redis.clients.jedis.resps.StreamConsumersInfo;
+import redis.clients.jedis.resps.StreamEntry;
 
 import java.util.Collections;
 import java.util.List;
@@ -18,14 +18,14 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-/** 通过真实 Redis Stream 字段验证跨语言可读取的因果头；需显式指定 ddd4j.redis.native.url。 */
+/**
+ * 通过真实 Redis Stream 字段验证跨语言可读取的因果头；需显式指定 ddd4j.redis.native.url。
+ */
 class RedisStreamNativeCausalityIT {
 
     @AfterEach
@@ -139,16 +139,6 @@ class RedisStreamNativeCausalityIT {
         }
     }
 
-    public static final class Handler {
-        private final CountDownLatch received = new CountDownLatch(1);
-        private final AtomicReference<MQEvent> event = new AtomicReference<>();
-
-        public void handle(MQEvent value) {
-            event.set(value);
-            received.countDown();
-        }
-    }
-
     @Test
     @SuppressWarnings("unchecked")
     void failedDeliveryRemainsPendingUntilSuccessfulRetry() throws Exception {
@@ -198,18 +188,6 @@ class RedisStreamNativeCausalityIT {
         } finally {
             client.close();
             client.close();
-        }
-    }
-
-    public static final class RetryHandler {
-        private final CountDownLatch succeeded = new CountDownLatch(1);
-        private final AtomicInteger attempts = new AtomicInteger();
-
-        public void handle(MQEvent value) {
-            if (attempts.incrementAndGet() == 1) {
-                throw new IllegalStateException("fail first delivery");
-            }
-            succeeded.countDown();
         }
     }
 
@@ -337,6 +315,28 @@ class RedisStreamNativeCausalityIT {
         } finally {
             first.close();
             second.close();
+        }
+    }
+
+    public static final class Handler {
+        private final CountDownLatch received = new CountDownLatch(1);
+        private final AtomicReference<MQEvent> event = new AtomicReference<>();
+
+        public void handle(MQEvent value) {
+            event.set(value);
+            received.countDown();
+        }
+    }
+
+    public static final class RetryHandler {
+        private final CountDownLatch succeeded = new CountDownLatch(1);
+        private final AtomicInteger attempts = new AtomicInteger();
+
+        public void handle(MQEvent value) {
+            if (attempts.incrementAndGet() == 1) {
+                throw new IllegalStateException("fail first delivery");
+            }
+            succeeded.countDown();
         }
     }
 

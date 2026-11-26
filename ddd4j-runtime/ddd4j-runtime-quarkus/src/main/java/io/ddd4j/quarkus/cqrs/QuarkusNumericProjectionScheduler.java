@@ -14,8 +14,8 @@
  */
 package io.ddd4j.quarkus.cqrs;
 
-import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
 import io.ddd4j.core.cqrs.readmodel.ProjectionCron;
+import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
 import jakarta.annotation.PreDestroy;
 
 import java.time.Duration;
@@ -51,7 +51,9 @@ public class QuarkusNumericProjectionScheduler implements ViewScheduler {
                 return t;
             });
 
-    /** 关闭本适配器拥有的数值 cron 线程池。 */
+    /**
+     * 关闭本适配器拥有的数值 cron 线程池。
+     */
     @PreDestroy
     public void shutdown() {
         executor.shutdownNow();

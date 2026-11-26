@@ -34,12 +34,6 @@ import org.apache.rocketmq.client.producer.DefaultMQProducer;
 public class RocketMQProperties extends MQProperties {
 
     /**
-     * 构造 RocketMQ 配置（各字段带默认值，可经配置绑定覆盖）。
-     */
-    public RocketMQProperties() {
-    }
-
-    /**
      * NameServer 地址（例：{@code localhost:9876} 或 {@code 192.168.1.1:9876;192.168.1.2:9876}）。
      */
     private String nameServer = "localhost:9876";
@@ -70,6 +64,11 @@ public class RocketMQProperties extends MQProperties {
      * 硬失败，直接中断 consumer 启动。默认放大到 30s 以吞下冷建连。
      */
     private int mqClientApiTimeoutMillis = 30_000;
+    /**
+     * 构造 RocketMQ 配置（各字段带默认值，可经配置绑定覆盖）。
+     */
+    public RocketMQProperties() {
+    }
 
     /**
      * 基于本配置创建原生生产者（含 nameServer）。

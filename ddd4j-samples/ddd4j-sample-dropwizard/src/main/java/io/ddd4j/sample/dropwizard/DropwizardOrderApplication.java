@@ -17,8 +17,8 @@ package io.ddd4j.sample.dropwizard;
 import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.cache.Cache;
 import io.ddd4j.dropwizard.Ddd4jBundle;
-import io.ddd4j.sample.order.application.OrderApplicationService;
-import io.ddd4j.sample.order.local.InMemoryOrderAdapters;
+import io.ddd4j.kit.lang.StrKit;
+import io.ddd4j.sample.order.start.CatalogRuntime;
 import io.ddd4j.web.dropwizard.Ddd4jDropwizardWebBundle;
 import io.dropwizard.core.Application;
 import io.dropwizard.core.setup.Bootstrap;
@@ -32,12 +32,8 @@ import java.util.UUID;
  */
 public final class DropwizardOrderApplication extends Application<DropwizardOrderConfiguration> {
 
-    private final String cacheName = "dropwizard-order-" + UUID.randomUUID();
     private static final long IDEMPOTENCY_CACHE_TTL_SECONDS = 300L;
-
-    private final InMemoryOrderAdapters adapters = new InMemoryOrderAdapters();
-    private final OrderApplicationService applicationService = new OrderApplicationService(adapters, adapters, adapters,
-            adapters, adapters);
+    private final String cacheName = "dropwizard-order-" + UUID.randomUUID();
 
     /**
      * @param args 启动参数
@@ -74,6 +70,10 @@ public final class DropwizardOrderApplication extends Application<DropwizardOrde
                 }
             });
         }
-        environment.jersey().register(new DropwizardOrderResource(applicationService));
+        var api = StrKit.isBlank(configuration.getCatalogJdbcUrl()) ? CatalogRuntime.start()
+                : CatalogRuntime.start(configuration.getCatalogJdbcUrl(), configuration.getCatalogDbUser(),
+                configuration.getCatalogDbPassword());
+        environment.jersey().register(new CatalogTradeResource(api));
+        environment.jersey().register(new AuthenticationResource());
     }
 }

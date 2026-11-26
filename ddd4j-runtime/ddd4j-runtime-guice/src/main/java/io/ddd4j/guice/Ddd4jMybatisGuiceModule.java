@@ -18,25 +18,21 @@ import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.MybatisSqlSessionFactoryBuilder;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.enhance.plugins.MybatisPlusEnhanceInterceptor;
-import io.ddd4j.data.mybatis.config.Ddd4jMybatisConfigurer;
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import io.ddd4j.data.mybatis.config.Ddd4jMybatisConfigurer;
 import io.ddd4j.data.mybatis.repository.MybatisAggregateRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionManager;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionManager;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 
 import javax.sql.DataSource;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * ddd4j MyBatis 的 Guice 桥接模块。
@@ -54,7 +50,6 @@ public class Ddd4jMybatisGuiceModule extends AbstractModule {
      * 数据源
      */
     private final DataSource dataSource;
-    private Ddd4jMybatisConfigurer configurer = new Ddd4jMybatisConfigurer();
     /**
      * 注册的 Mapper 接口集
      */
@@ -63,6 +58,7 @@ public class Ddd4jMybatisGuiceModule extends AbstractModule {
      * Repository 实现类到 Mapper 接口的映射
      */
     private final Map<Class<?>, Class<?>> repositoryToMapper = new LinkedHashMap<>();
+    private Ddd4jMybatisConfigurer configurer = new Ddd4jMybatisConfigurer();
 
     /**
      * 创建 MyBatis Guice 桥接模块。

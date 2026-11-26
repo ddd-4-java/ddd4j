@@ -109,7 +109,9 @@ public class QuarkusEventHandlerRegistry {
         return handlerTable.get(eventType);
     }
 
-    /** @return 已注册的事件处理器映射副本 */
+    /**
+     * @return 已注册的事件处理器映射副本
+     */
     public Map<Class<?>, Method> getHandlerTable() {
         return new HashMap<>(handlerTable);
     }

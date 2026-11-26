@@ -54,8 +54,8 @@ public final class LambdaCondition implements Serializable {
 
     /**
      * @param propertyRef 类型安全属性引用
-     * @param operator 操作符（如 {@code "="}、{@code "LIKE"}、{@code ">"}）
-     * @param value 条件值
+     * @param operator    操作符（如 {@code "="}、{@code "LIKE"}、{@code ">"}）
+     * @param value       条件值
      */
     @JsonCreator
     public LambdaCondition(@JsonProperty("propertyRef") PropertyRef propertyRef,
@@ -66,15 +66,6 @@ public final class LambdaCondition implements Serializable {
         this.propertyRef = propertyRef;
         this.operator = operator;
         this.value = value;
-    }
-
-    /**
-     * 获取属性名。
-     *
-     * @return Java 属性名
-     */
-    public String property() {
-        return propertyRef.property();
     }
 
     /**
@@ -95,6 +86,15 @@ public final class LambdaCondition implements Serializable {
      */
     public static LambdaCondition desc(PropertyRef property) {
         return new LambdaCondition(property, StrPool.DESC, null);
+    }
+
+    /**
+     * 获取属性名。
+     *
+     * @return Java 属性名
+     */
+    public String property() {
+        return propertyRef.property();
     }
 
     /**

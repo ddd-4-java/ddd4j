@@ -57,7 +57,7 @@ public abstract class SpringDomainEvent<T> extends ApplicationEvent {
     /**
      * 领域事件构造器
      *
-     * @param source   事件内容
+     * @param source      事件内容
      * @param supportKeys 支持执行的条件，配合 supports 方法使用
      */
     public SpringDomainEvent(T source, Collection<?> supportKeys) {
@@ -71,7 +71,7 @@ public abstract class SpringDomainEvent<T> extends ApplicationEvent {
     /**
      * 领域事件构造器
      *
-     * @param source  事件内容
+     * @param source     事件内容
      * @param supportKey 支持执行的条件，配合 supports 方法使用
      */
     public SpringDomainEvent(T source, Object supportKey) {

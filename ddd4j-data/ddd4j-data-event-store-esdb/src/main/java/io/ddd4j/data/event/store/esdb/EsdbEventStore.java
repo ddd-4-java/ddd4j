@@ -4,46 +4,24 @@
  */
 package io.ddd4j.data.event.store.esdb;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
+import com.eventstore.dbclient.*;
 import com.fasterxml.jackson.annotation.JsonCreator;
-
-import com.eventstore.dbclient.AppendToStreamOptions;
-import com.eventstore.dbclient.EventData;
-import com.eventstore.dbclient.EventDataBuilder;
-import com.eventstore.dbclient.EventStoreDBClient;
-import com.eventstore.dbclient.ExpectedRevision;
-import com.eventstore.dbclient.Position;
-import com.eventstore.dbclient.ReadAllOptions;
-import com.eventstore.dbclient.ReadResult;
-import com.eventstore.dbclient.ReadStreamOptions;
-import com.eventstore.dbclient.RecordedEvent;
-import com.eventstore.dbclient.ResolvedEvent;
-import com.eventstore.dbclient.StreamNotFoundException;
-import com.eventstore.dbclient.WrongExpectedVersionException;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.ddd4j.core.constant.EventStoreConstants;
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
 import io.ddd4j.core.cqrs.eventstore.StoredEvent;
 import io.ddd4j.core.cqrs.eventstore.jackson.EventPayloadSerializer;
-import io.ddd4j.core.ddd.event.AggregateRootId;
-import io.ddd4j.core.ddd.event.DomainEvent;
-import io.ddd4j.core.ddd.event.EntityType;
-import io.ddd4j.core.ddd.event.EventId;
-import io.ddd4j.core.ddd.event.StringEntityType;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
+import io.ddd4j.core.ddd.event.*;
 
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.CompletionException;
 
 /**
@@ -68,7 +46,7 @@ public class EsdbEventStore implements EventStore {
     /**
      * 创建带流前缀的事件存储适配器。
      *
-     * @param client EventStoreDB 客户端
+     * @param client       EventStoreDB 客户端
      * @param streamPrefix 事件流名称前缀
      */
     public EsdbEventStore(EventStoreDBClient client, String streamPrefix) {
@@ -79,6 +57,14 @@ public class EsdbEventStore implements EventStore {
         this.client = Objects.requireNonNull(client, "client must not be null");
         this.streamPrefix = Objects.requireNonNull(streamPrefix, "streamPrefix must not be null");
         this.serializer = Objects.requireNonNull(serializer, "serializer must not be null");
+    }
+
+    static ExpectedRevision toExpectedRevision(long expectedVersion) {
+        return expectedVersion == 0 ? ExpectedRevision.noStream() : ExpectedRevision.expectedRevision(expectedVersion - 1);
+    }
+
+    private static long toEventCount(ExpectedRevision revision) {
+        return revision.toRawLong() < 0 ? 0L : revision.toRawLong() + 1L;
     }
 
     @Override
@@ -141,14 +127,6 @@ public class EsdbEventStore implements EventStore {
         }
     }
 
-    static ExpectedRevision toExpectedRevision(long expectedVersion) {
-        return expectedVersion == 0 ? ExpectedRevision.noStream() : ExpectedRevision.expectedRevision(expectedVersion - 1);
-    }
-
-    private static long toEventCount(ExpectedRevision revision) {
-        return revision.toRawLong() < 0 ? 0L : revision.toRawLong() + 1L;
-    }
-
     private String streamName(String aggregateType, AggregateRootId aggregateId) {
         return streamPrefix + aggregateType + "::" + aggregateId.asString();
     }
@@ -198,10 +176,13 @@ public class EsdbEventStore implements EventStore {
     private final static class StringAggregateRootId implements AggregateRootId {
 
         private static final long serialVersionUID = 0L;
-
+        private static final StringEntityType TYPE = new StringEntityType("String");
         private final String value;
 
-        private static final StringEntityType TYPE = new StringEntityType("String");
+        @JsonCreator()
+        private StringAggregateRootId(@JsonProperty("value") String value) {
+            this.value = value;
+        }
 
         @Override
         public EntityType getType() {
@@ -217,11 +198,6 @@ public class EsdbEventStore implements EventStore {
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
-        }
-
-        @JsonCreator()
-        private StringAggregateRootId(@JsonProperty("value") String value) {
-            this.value = value;
         }
 
         @JsonProperty("value")

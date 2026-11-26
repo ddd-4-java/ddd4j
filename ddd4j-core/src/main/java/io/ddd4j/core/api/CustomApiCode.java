@@ -62,7 +62,7 @@ public interface CustomApiCode {
     /**
      * 构建统一响应，覆盖消息。
      *
-     * @param <T> 响应数据类型
+     * @param <T>     响应数据类型
      * @param message 自定义响应消息
      * @return 使用自定义消息的响应
      */
@@ -73,7 +73,7 @@ public interface CustomApiCode {
     /**
      * 构建统一响应，携带数据。
      *
-     * @param <T> 响应数据类型
+     * @param <T>  响应数据类型
      * @param data 响应数据
      * @return 携带数据的响应
      */
@@ -84,9 +84,9 @@ public interface CustomApiCode {
     /**
      * 构建统一响应，覆盖消息并携带数据。
      *
-     * @param <T> 响应数据类型
+     * @param <T>     响应数据类型
      * @param message 自定义响应消息
-     * @param data 响应数据
+     * @param data    响应数据
      * @return 携带消息和数据的响应
      */
     default <T> R<T> toResponse(String message, T data) {

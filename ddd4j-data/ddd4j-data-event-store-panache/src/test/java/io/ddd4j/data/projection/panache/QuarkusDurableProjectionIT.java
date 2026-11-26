@@ -4,15 +4,11 @@ import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.Result;
-import io.ddd4j.core.cqrs.readmodel.DefaultProjectionPosition;
-import io.ddd4j.core.cqrs.readmodel.EventChunk;
-import io.ddd4j.core.cqrs.readmodel.EventChunkReader;
-import io.ddd4j.core.cqrs.readmodel.ProjectionView;
-import io.ddd4j.core.cqrs.readmodel.ViewManager;
+import io.ddd4j.core.cqrs.readmodel.*;
 import io.quarkus.arc.properties.IfBuildProperty;
 import io.quarkus.test.junit.QuarkusTest;
-import io.quarkus.test.junit.TestProfile;
 import io.quarkus.test.junit.QuarkusTestProfile;
+import io.quarkus.test.junit.TestProfile;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
@@ -31,24 +27,26 @@ import java.util.concurrent.atomic.AtomicLong;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-/** 原生 ArC + Narayana + Hibernate/Panache：共享执行、历史位置和同事务回滚。 */
+/**
+ * 原生 ArC + Narayana + Hibernate/Panache：共享执行、历史位置和同事务回滚。
+ */
 @QuarkusTest
 @TestProfile(QuarkusDurableProjectionIT.DurableProfile.class)
 class QuarkusDurableProjectionIT {
-    public static class DurableProfile implements QuarkusTestProfile {
-        @Override
-        public Map<String, String> getConfigOverrides() {
-            return Map.of("ddd4j.quarkus.cqrs.projection.mode", "durable");
-        }
-    }
-
-    @Inject ViewManager manager;
-    @Inject QuarkusProjectionPositionRepository positions;
-    @Inject ProjectionViewBean view;
-    @Inject CommandBus commands;
-    @Inject Scheduler scheduler;
-    @Inject jakarta.enterprise.event.Event<io.quarkus.runtime.StartupEvent> startups;
-    @Inject jakarta.persistence.EntityManager entityManager;
+    @Inject
+    ViewManager manager;
+    @Inject
+    QuarkusProjectionPositionRepository positions;
+    @Inject
+    ProjectionViewBean view;
+    @Inject
+    CommandBus commands;
+    @Inject
+    Scheduler scheduler;
+    @Inject
+    jakarta.enterprise.event.Event<io.quarkus.runtime.StartupEvent> startups;
+    @Inject
+    jakarta.persistence.EntityManager entityManager;
 
     @Test
     void historicalPositionFailureRollbackRetryAndSingleScheduler() throws Exception {
@@ -90,20 +88,39 @@ class QuarkusDurableProjectionIT {
         assertThat(positions.findByStreamId("r08-command").orElseThrow().getNextEventNumber()).isEqualTo(19L);
     }
 
+    public static class DurableProfile implements QuarkusTestProfile {
+        @Override
+        public Map<String, String> getConfigOverrides() {
+            return Map.of("ddd4j.quarkus.cqrs.projection.mode", "durable");
+        }
+    }
+
     public static class TxCommand implements Command {
         final boolean throwsException;
-        public TxCommand(boolean throwsException) { this.throwsException = throwsException; }
+
+        public TxCommand(boolean throwsException) {
+            this.throwsException = throwsException;
+        }
     }
 
     @ApplicationScoped
     @IfBuildProperty(name = "ddd4j.quarkus.cqrs.projection.mode", stringValue = "durable")
     public static class TxExecutor implements CommandExecutor<TxCommand> {
-        @Inject QuarkusProjectionPositionRepository positions;
-        @Override public Set<Class<? extends Command>> supportedCommands() { return Set.of(TxCommand.class); }
-        @Override @Transactional
+        @Inject
+        QuarkusProjectionPositionRepository positions;
+
+        @Override
+        public Set<Class<? extends Command>> supportedCommands() {
+            return Set.of(TxCommand.class);
+        }
+
+        @Override
+        @Transactional
         public Result<?> execute(TxCommand command) {
             positions.save(new DefaultProjectionPosition("r08-command", 19L));
-            if (command.throwsException) { throw new IllegalStateException("command failed"); }
+            if (command.throwsException) {
+                throw new IllegalStateException("command failed");
+            }
             return Result.fail("business failure");
         }
     }
@@ -112,7 +129,9 @@ class QuarkusDurableProjectionIT {
     @IfBuildProperty(name = "ddd4j.quarkus.cqrs.projection.mode", stringValue = "durable")
     public static class ProjectionBeans {
         static final AtomicLong readFrom = new AtomicLong(-1);
-        @Produces @Singleton
+
+        @Produces
+        @Singleton
         EventChunkReader<Object> reader() {
             return (stream, from, size, types) -> {
                 readFrom.set(from);
@@ -124,15 +143,35 @@ class QuarkusDurableProjectionIT {
     @ApplicationScoped
     @IfBuildProperty(name = "ddd4j.quarkus.cqrs.projection.mode", stringValue = "durable")
     public static class ProjectionViewBean implements ProjectionView<Object> {
-        @Inject QuarkusProjectionPositionRepository positions;
+        @Inject
+        QuarkusProjectionPositionRepository positions;
         volatile boolean fail;
-        public void setFail(boolean value) { fail = value; }
-        @Override public String getName() { return "r08-events"; }
-        @Override public String getCron() { return "0 0 0 1 JAN ? 2099"; }
-        @Override public Collection<String> getEventTypes() { return Set.of("PositionAdvanced"); }
-        @Override public void handleEvents(Collection<Object> events) {
+
+        public void setFail(boolean value) {
+            fail = value;
+        }
+
+        @Override
+        public String getName() {
+            return "r08-events";
+        }
+
+        @Override
+        public String getCron() {
+            return "0 0 0 1 JAN ? 2099";
+        }
+
+        @Override
+        public Collection<String> getEventTypes() {
+            return Set.of("PositionAdvanced");
+        }
+
+        @Override
+        public void handleEvents(Collection<Object> events) {
             positions.save(new DefaultProjectionPosition("r08-read-model", (Long) events.iterator().next()));
-            if (fail) { throw new IllegalStateException("projection failed"); }
+            if (fail) {
+                throw new IllegalStateException("projection failed");
+            }
         }
     }
 }

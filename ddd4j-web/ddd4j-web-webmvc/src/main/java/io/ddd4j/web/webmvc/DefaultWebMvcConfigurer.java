@@ -94,7 +94,7 @@ public class DefaultWebMvcConfigurer implements WebMvcConfigurer {
      *
      * @param localResourceProperteis 本地资源配置
      * @param localeChangeInterceptor 语言环境拦截器
-     * @param ddd4jWebMvcInterceptor DDD4J Web 拦截器
+     * @param ddd4jWebMvcInterceptor  DDD4J Web 拦截器
      */
     public DefaultWebMvcConfigurer(LocalResourceProperteis localResourceProperteis,
                                    LocaleChangeInterceptor localeChangeInterceptor,

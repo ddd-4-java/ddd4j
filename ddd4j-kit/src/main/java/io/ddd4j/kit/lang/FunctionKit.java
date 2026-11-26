@@ -29,7 +29,9 @@ import java.util.function.Function;
 @UtilityClass
 public class FunctionKit {
 
-    /** 将非空输入转换为 布尔值；输入为空时返回 null。 */
+    /**
+     * 将非空输入转换为 布尔值；输入为空时返回 null。
+     */
 
     public static final Function<Object, Boolean> TO_BOOLEAN = value -> {
         if (Objects.isNull(value)) {
@@ -38,7 +40,9 @@ public class FunctionKit {
         return value instanceof Boolean ? (Boolean) value : Boolean.valueOf(value.toString());
     };
 
-    /** 将非空输入转换为 BigDecimal 数值；输入为空时返回 null。 */
+    /**
+     * 将非空输入转换为 BigDecimal 数值；输入为空时返回 null。
+     */
 
     public static final Function<Object, BigDecimal> TO_BIGDECIMAL = member -> {
         if (Objects.isNull(member)) {
@@ -47,7 +51,9 @@ public class FunctionKit {
         return member instanceof BigDecimal ? (BigDecimal) member : new BigDecimal(member.toString());
     };
 
-    /** 将非空输入转换为 字节值；输入为空时返回 null。 */
+    /**
+     * 将非空输入转换为 字节值；输入为空时返回 null。
+     */
 
     public static final Function<Object, Byte> TO_BYTE = value -> {
         if (Objects.isNull(value)) {
@@ -56,7 +62,9 @@ public class FunctionKit {
         return value instanceof Byte ? (Byte) value : Byte.valueOf(value.toString());
     };
 
-    /** 将非空输入转换为 字符；输入为空时返回 null。 */
+    /**
+     * 将非空输入转换为 字符；输入为空时返回 null。
+     */
 
     public static final Function<Object, Character> TO_CHARACTER = value -> {
         if (Objects.isNull(value)) {
@@ -65,7 +73,9 @@ public class FunctionKit {
         return value instanceof Character ? (Character) value : Character.valueOf(value.toString().charAt(0));
     };
 
-    /** 将非空输入转换为 双精度数值；输入为空时返回 null。 */
+    /**
+     * 将非空输入转换为 双精度数值；输入为空时返回 null。
+     */
 
     public static final Function<Object, Double> TO_DOUBLE = value -> {
         if (Objects.isNull(value)) {
@@ -74,7 +84,9 @@ public class FunctionKit {
         return value instanceof Double ? (Double) value : Double.valueOf(value.toString());
     };
 
-    /** 将非空输入转换为 单精度数值；输入为空时返回 null。 */
+    /**
+     * 将非空输入转换为 单精度数值；输入为空时返回 null。
+     */
 
     public static final Function<Object, Float> TO_FLOAT = value -> {
         if (Objects.isNull(value)) {
@@ -83,7 +95,9 @@ public class FunctionKit {
         return value instanceof Float ? (Float) value : Float.valueOf(value.toString());
     };
 
-    /** 将非空输入转换为 整数；输入为空时返回 null。 */
+    /**
+     * 将非空输入转换为 整数；输入为空时返回 null。
+     */
 
     public static final Function<Object, Integer> TO_INTEGER = value -> {
         if (Objects.isNull(value)) {
@@ -92,7 +106,9 @@ public class FunctionKit {
         return value instanceof Integer ? (Integer) value : Integer.valueOf(value.toString());
     };
 
-    /** 将非空输入转换为 长整数；输入为空时返回 null。 */
+    /**
+     * 将非空输入转换为 长整数；输入为空时返回 null。
+     */
 
     public static final Function<Object, Long> TO_LONG = value -> {
         if (Objects.isNull(value)) {
@@ -101,7 +117,9 @@ public class FunctionKit {
         return value instanceof Long ? (Long) value : Long.valueOf(value.toString());
     };
 
-    /** 将非空输入转换为 短整数；输入为空时返回 null。 */
+    /**
+     * 将非空输入转换为 短整数；输入为空时返回 null。
+     */
 
     public static final Function<Object, Short> TO_SHORT = value -> {
         if (Objects.isNull(value)) {
@@ -110,7 +128,9 @@ public class FunctionKit {
         return value instanceof Short ? (Short) value : Short.valueOf(value.toString());
     };
 
-    /** 将非空输入转换为 字符串；输入为空时返回 null。 */
+    /**
+     * 将非空输入转换为 字符串；输入为空时返回 null。
+     */
 
     public static final Function<Object, String> TO_STRING = value -> Objects.toString(value, null);
 

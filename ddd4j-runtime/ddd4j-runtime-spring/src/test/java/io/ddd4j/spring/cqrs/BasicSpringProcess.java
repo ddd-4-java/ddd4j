@@ -7,7 +7,9 @@ import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
 import io.ddd4j.spring.config.SpringCoreConfig;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-/** 隔离 JVM 的基础 Spring 启动探针；类路径明确移除 JPA 与事件存储构件。 */
+/**
+ * 隔离 JVM 的基础 Spring 启动探针；类路径明确移除 JPA 与事件存储构件。
+ */
 public final class BasicSpringProcess {
     private BasicSpringProcess() {
     }
@@ -17,7 +19,7 @@ public final class BasicSpringProcess {
     }
 
     public static void verifyStartup(String expectedPackage) throws Exception {
-        for (String absent : new String[] {"javax.persistence.EntityManager", "jakarta.persistence.EntityManager",
+        for (String absent : new String[]{"javax.persistence.EntityManager", "jakarta.persistence.EntityManager",
                 "org.springframework.data.jpa.repository.JpaRepository",
                 "io.ddd4j.data.event.store.jpa.JpaEventStore"}) {
             try {

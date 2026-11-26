@@ -27,6 +27,7 @@ import io.ddd4j.web.core.version.ApiVersionMode;
 import io.ddd4j.web.core.version.ApiVersionRejectedException;
 import io.ddd4j.web.core.version.ApiVersionResolver;
 import io.ddd4j.web.webmvc.interceptor.ApiVersionWebInterceptor;
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.Ordered;
@@ -38,14 +39,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * {@link ApiVersionWebInterceptor} 单元测试与 WebMVC 运行时接线集成测试。

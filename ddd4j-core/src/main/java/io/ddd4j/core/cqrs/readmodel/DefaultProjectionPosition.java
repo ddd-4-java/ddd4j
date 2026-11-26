@@ -50,7 +50,7 @@ public final class DefaultProjectionPosition implements ProjectionPosition {
     /**
      * 创建投影位置，并校验流标识与事件号。
      *
-     * @param streamId 投影流标识
+     * @param streamId        投影流标识
      * @param nextEventNumber 下一个待处理事件号，不可为负数
      */
     public DefaultProjectionPosition(String streamId, long nextEventNumber) {

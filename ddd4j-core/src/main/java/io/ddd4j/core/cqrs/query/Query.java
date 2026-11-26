@@ -13,8 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.core.cqrs.query;
-import io.ddd4j.kit.lang.SFunction;
-import io.ddd4j.kit.lang.LambdaKit;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.ddd4j.core.api.Page;
@@ -23,6 +21,8 @@ import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
 import io.ddd4j.core.exception.BizRuntimeException;
 import io.ddd4j.kit.lang.CollKit;
+import io.ddd4j.kit.lang.LambdaKit;
+import io.ddd4j.kit.lang.SFunction;
 import io.ddd4j.kit.lang.StrKit;
 import lombok.*;
 
@@ -145,9 +145,9 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 添加等于查询条件。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>    具体查询子类型
      * @param column 领域模型属性引用
-     * @param value 比较值或更新值
+     * @param value  比较值或更新值
      * @return 当前查询对象，供链式调用
      */
     public <Q extends Query<M>> Q eq(SFunction<M, ?> column, Object value) {
@@ -157,10 +157,10 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 按条件添加等于查询条件。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>       具体查询子类型
      * @param condition 为 true 时才添加条件
-     * @param column 领域模型属性引用
-     * @param value 比较值或更新值
+     * @param column    领域模型属性引用
+     * @param value     比较值或更新值
      * @return 当前查询对象，供链式调用
      */
     public <Q extends Query<M>> Q eq(boolean condition, SFunction<M, ?> column, Object value) {
@@ -170,9 +170,9 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 添加不等于查询条件。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>    具体查询子类型
      * @param column 领域模型属性引用
-     * @param value 比较值或更新值
+     * @param value  比较值或更新值
      * @return 当前查询对象，供链式调用
      */
     public <Q extends Query<M>> Q ne(SFunction<M, ?> column, Object value) {
@@ -182,10 +182,10 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 按条件添加不等于查询条件。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>       具体查询子类型
      * @param condition 为 true 时才添加条件
-     * @param column 领域模型属性引用
-     * @param value 比较值或更新值
+     * @param column    领域模型属性引用
+     * @param value     比较值或更新值
      * @return 当前查询对象，供链式调用
      */
     public <Q extends Query<M>> Q ne(boolean condition, SFunction<M, ?> column, Object value) {
@@ -197,9 +197,9 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 添加模糊匹配查询条件。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>    具体查询子类型
      * @param column 领域模型属性引用
-     * @param value 比较值或更新值
+     * @param value  比较值或更新值
      * @return 当前查询对象，供链式调用
      */
     public <Q extends Query<M>> Q like(SFunction<M, ?> column, Object value) {
@@ -209,10 +209,10 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 按条件添加模糊匹配查询条件。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>       具体查询子类型
      * @param condition 为 true 时才添加条件
-     * @param column 领域模型属性引用
-     * @param value 比较值或更新值
+     * @param column    领域模型属性引用
+     * @param value     比较值或更新值
      * @return 当前查询对象，供链式调用
      */
     public <Q extends Query<M>> Q like(boolean condition, SFunction<M, ?> column, Object value) {
@@ -222,9 +222,9 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 添加左侧模糊匹配查询条件。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>    具体查询子类型
      * @param column 领域模型属性引用
-     * @param value 比较值或更新值
+     * @param value  比较值或更新值
      * @return 当前查询对象，供链式调用
      */
     public <Q extends Query<M>> Q likeLeft(SFunction<M, ?> column, Object value) {
@@ -234,10 +234,10 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 按条件添加左侧模糊匹配查询条件。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>       具体查询子类型
      * @param condition 为 true 时才添加条件
-     * @param column 领域模型属性引用
-     * @param value 比较值或更新值
+     * @param column    领域模型属性引用
+     * @param value     比较值或更新值
      * @return 当前查询对象，供链式调用
      */
     public <Q extends Query<M>> Q likeLeft(boolean condition, SFunction<M, ?> column, Object value) {
@@ -247,9 +247,9 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 添加右侧模糊匹配查询条件。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>    具体查询子类型
      * @param column 领域模型属性引用
-     * @param value 比较值或更新值
+     * @param value  比较值或更新值
      * @return 当前查询对象，供链式调用
      */
     public <Q extends Query<M>> Q likeRight(SFunction<M, ?> column, Object value) {
@@ -259,10 +259,10 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 按条件添加右侧模糊匹配查询条件。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>       具体查询子类型
      * @param condition 为 true 时才添加条件
-     * @param column 领域模型属性引用
-     * @param value 比较值或更新值
+     * @param column    领域模型属性引用
+     * @param value     比较值或更新值
      * @return 当前查询对象，供链式调用
      */
     public <Q extends Query<M>> Q likeRight(boolean condition, SFunction<M, ?> column, Object value) {
@@ -272,9 +272,9 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 添加非模糊匹配查询条件。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>    具体查询子类型
      * @param column 领域模型属性引用
-     * @param value 比较值或更新值
+     * @param value  比较值或更新值
      * @return 当前查询对象，供链式调用
      */
     public <Q extends Query<M>> Q notLike(SFunction<M, ?> column, Object value) {
@@ -284,10 +284,10 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 按条件添加非模糊匹配查询条件。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>       具体查询子类型
      * @param condition 为 true 时才添加条件
-     * @param column 领域模型属性引用
-     * @param value 比较值或更新值
+     * @param column    领域模型属性引用
+     * @param value     比较值或更新值
      * @return 当前查询对象，供链式调用
      */
     public <Q extends Query<M>> Q notLike(boolean condition, SFunction<M, ?> column, Object value) {
@@ -299,9 +299,9 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 添加大于查询条件。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>    具体查询子类型
      * @param column 领域模型属性引用
-     * @param value 比较值或更新值
+     * @param value  比较值或更新值
      * @return 当前查询对象，供链式调用
      */
     public <Q extends Query<M>> Q gt(SFunction<M, ?> column, Object value) {
@@ -311,10 +311,10 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 按条件添加大于查询条件。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>       具体查询子类型
      * @param condition 为 true 时才添加条件
-     * @param column 领域模型属性引用
-     * @param value 比较值或更新值
+     * @param column    领域模型属性引用
+     * @param value     比较值或更新值
      * @return 当前查询对象，供链式调用
      */
     public <Q extends Query<M>> Q gt(boolean condition, SFunction<M, ?> column, Object value) {
@@ -324,9 +324,9 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 添加大于或等于查询条件。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>    具体查询子类型
      * @param column 领域模型属性引用
-     * @param value 比较值或更新值
+     * @param value  比较值或更新值
      * @return 当前查询对象，供链式调用
      */
     public <Q extends Query<M>> Q ge(SFunction<M, ?> column, Object value) {
@@ -336,10 +336,10 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 按条件添加大于或等于查询条件。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>       具体查询子类型
      * @param condition 为 true 时才添加条件
-     * @param column 领域模型属性引用
-     * @param value 比较值或更新值
+     * @param column    领域模型属性引用
+     * @param value     比较值或更新值
      * @return 当前查询对象，供链式调用
      */
     public <Q extends Query<M>> Q ge(boolean condition, SFunction<M, ?> column, Object value) {
@@ -349,9 +349,9 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 添加小于查询条件。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>    具体查询子类型
      * @param column 领域模型属性引用
-     * @param value 比较值或更新值
+     * @param value  比较值或更新值
      * @return 当前查询对象，供链式调用
      */
     public <Q extends Query<M>> Q lt(SFunction<M, ?> column, Object value) {
@@ -361,10 +361,10 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 按条件添加小于查询条件。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>       具体查询子类型
      * @param condition 为 true 时才添加条件
-     * @param column 领域模型属性引用
-     * @param value 比较值或更新值
+     * @param column    领域模型属性引用
+     * @param value     比较值或更新值
      * @return 当前查询对象，供链式调用
      */
     public <Q extends Query<M>> Q lt(boolean condition, SFunction<M, ?> column, Object value) {
@@ -374,9 +374,9 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 添加小于或等于查询条件。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>    具体查询子类型
      * @param column 领域模型属性引用
-     * @param value 比较值或更新值
+     * @param value  比较值或更新值
      * @return 当前查询对象，供链式调用
      */
     public <Q extends Query<M>> Q le(SFunction<M, ?> column, Object value) {
@@ -386,10 +386,10 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 按条件添加小于或等于查询条件。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>       具体查询子类型
      * @param condition 为 true 时才添加条件
-     * @param column 领域模型属性引用
-     * @param value 比较值或更新值
+     * @param column    领域模型属性引用
+     * @param value     比较值或更新值
      * @return 当前查询对象，供链式调用
      */
     public <Q extends Query<M>> Q le(boolean condition, SFunction<M, ?> column, Object value) {
@@ -398,10 +398,11 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
 
     /**
      * 范围查询（BETWEEN 语义，展开为 ge + le）。
-     * @param <Q> 具体查询子类型
+     *
+     * @param <Q>    具体查询子类型
      * @param column 领域模型属性引用
-     * @param start 范围下界，null 时忽略
-     * @param end 范围上界，null 时忽略
+     * @param start  范围下界，null 时忽略
+     * @param end    范围上界，null 时忽略
      * @return 当前查询对象，供链式调用
      */
     public <Q extends Query<M>> Q between(SFunction<M, ?> column, Object start, Object end) {
@@ -411,11 +412,11 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 按条件添加范围查询条件。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>       具体查询子类型
      * @param condition 为 true 时才添加条件
-     * @param column 领域模型属性引用
-     * @param start 范围下界，null 时忽略
-     * @param end 范围上界，null 时忽略
+     * @param column    领域模型属性引用
+     * @param start     范围下界，null 时忽略
+     * @param end       范围上界，null 时忽略
      * @return 当前查询对象，供链式调用
      */
     public <Q extends Query<M>> Q between(boolean condition, SFunction<M, ?> column, Object start, Object end) {
@@ -435,7 +436,7 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 添加集合包含查询条件。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>    具体查询子类型
      * @param column 领域模型属性引用
      * @param values 候选值集合；为空时忽略条件
      * @return 当前查询对象，供链式调用
@@ -447,10 +448,10 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 按条件添加集合包含查询条件。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>       具体查询子类型
      * @param condition 为 true 时才添加条件
-     * @param column 领域模型属性引用
-     * @param values 候选值集合；为空时忽略条件
+     * @param column    领域模型属性引用
+     * @param values    候选值集合；为空时忽略条件
      * @return 当前查询对象，供链式调用
      */
     public <Q extends Query<M>> Q in(boolean condition, SFunction<M, ?> column, Collection<?> values) {
@@ -461,7 +462,7 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 添加集合排除查询条件。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>    具体查询子类型
      * @param column 领域模型属性引用
      * @param values 候选值集合；为空时忽略条件
      * @return 当前查询对象，供链式调用
@@ -473,10 +474,10 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 按条件添加集合排除查询条件。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>       具体查询子类型
      * @param condition 为 true 时才添加条件
-     * @param column 领域模型属性引用
-     * @param values 候选值集合；为空时忽略条件
+     * @param column    领域模型属性引用
+     * @param values    候选值集合；为空时忽略条件
      * @return 当前查询对象，供链式调用
      */
     public <Q extends Query<M>> Q notIn(boolean condition, SFunction<M, ?> column, Collection<?> values) {
@@ -489,7 +490,7 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 添加为空查询条件。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>    具体查询子类型
      * @param column 领域模型属性引用
      * @return 当前查询对象，供链式调用
      */
@@ -500,9 +501,9 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 按条件添加为空查询条件。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>       具体查询子类型
      * @param condition 为 true 时才添加条件
-     * @param column 领域模型属性引用
+     * @param column    领域模型属性引用
      * @return 当前查询对象，供链式调用
      */
     public <Q extends Query<M>> Q isNull(boolean condition, SFunction<M, ?> column) {
@@ -512,7 +513,7 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 添加非空查询条件。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>    具体查询子类型
      * @param column 领域模型属性引用
      * @return 当前查询对象，供链式调用
      */
@@ -523,9 +524,9 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 按条件添加非空查询条件。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>       具体查询子类型
      * @param condition 为 true 时才添加条件
-     * @param column 领域模型属性引用
+     * @param column    领域模型属性引用
      * @return 当前查询对象，供链式调用
      */
     public <Q extends Query<M>> Q isNotNull(boolean condition, SFunction<M, ?> column) {
@@ -537,7 +538,7 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 添加升序排序查询条件。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>    具体查询子类型
      * @param column 领域模型属性引用
      * @return 当前查询对象，供链式调用
      */
@@ -548,9 +549,9 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 按条件添加升序排序查询条件。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>       具体查询子类型
      * @param condition 为 true 时才添加条件
-     * @param column 领域模型属性引用
+     * @param column    领域模型属性引用
      * @return 当前查询对象，供链式调用
      */
     public <Q extends Query<M>> Q orderByAsc(boolean condition, SFunction<M, ?> column) {
@@ -563,7 +564,7 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 添加降序排序查询条件。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>    具体查询子类型
      * @param column 领域模型属性引用
      * @return 当前查询对象，供链式调用
      */
@@ -574,9 +575,9 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 按条件添加降序排序查询条件。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>       具体查询子类型
      * @param condition 为 true 时才添加条件
-     * @param column 领域模型属性引用
+     * @param column    领域模型属性引用
      * @return 当前查询对象，供链式调用
      */
     public <Q extends Query<M>> Q orderByDesc(boolean condition, SFunction<M, ?> column) {
@@ -591,9 +592,9 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 添加更新赋值查询条件。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>    具体查询子类型
      * @param column 领域模型属性引用
-     * @param value 比较值或更新值
+     * @param value  比较值或更新值
      * @return 当前查询对象，供链式调用
      */
     public <Q extends Query<M>> Q set(SFunction<M, ?> column, Object value) {
@@ -603,10 +604,10 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 按条件添加更新赋值查询条件。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>       具体查询子类型
      * @param condition 为 true 时才添加条件
-     * @param column 领域模型属性引用
-     * @param value 比较值或更新值
+     * @param column    领域模型属性引用
+     * @param value     比较值或更新值
      * @return 当前查询对象，供链式调用
      */
     public <Q extends Query<M>> Q set(boolean condition, SFunction<M, ?> column, Object value) {
@@ -621,7 +622,7 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 添加查询字段选择查询条件。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>     具体查询子类型
      * @param columns 领域模型属性引用集合
      * @return 当前查询对象，供链式调用
      */
@@ -633,9 +634,9 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 按条件添加查询字段选择查询条件。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>       具体查询子类型
      * @param condition 为 true 时才添加条件
-     * @param columns 领域模型属性引用集合
+     * @param columns   领域模型属性引用集合
      * @return 当前查询对象，供链式调用
      */
     @SafeVarargs
@@ -654,7 +655,7 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 添加分组查询条件。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>     具体查询子类型
      * @param columns 领域模型属性引用集合
      * @return 当前查询对象，供链式调用
      */
@@ -666,9 +667,9 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 按条件添加分组查询条件。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>       具体查询子类型
      * @param condition 为 true 时才添加条件
-     * @param columns 领域模型属性引用集合
+     * @param columns   领域模型属性引用集合
      * @return 当前查询对象，供链式调用
      */
     @SafeVarargs
@@ -686,7 +687,8 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
 
     /**
      * 原生 SQL HAVING（直接透传给 ORM，配合 GROUP BY 使用）。
-     * @param <Q> 具体查询子类型
+     *
+     * @param <Q>    具体查询子类型
      * @param having 原生 SQL HAVING 条件
      * @return 当前查询对象，供链式调用
      */
@@ -700,7 +702,7 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 设置当前页码。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>     具体查询子类型
      * @param current 当前页码，从 1 开始
      * @return 当前查询对象，供链式调用
      */
@@ -712,7 +714,7 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 设置每页条数。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>  具体查询子类型
      * @param size 每页条数，-1 表示不分页
      * @return 当前查询对象，供链式调用
      */
@@ -724,9 +726,9 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 设置每页条数。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>       具体查询子类型
      * @param condition 为 true 时才添加条件
-     * @param size 每页条数，-1 表示不分页
+     * @param size      每页条数，-1 表示不分页
      * @return 当前查询对象，供链式调用
      */
     public <Q extends Query<M>> Q size(boolean condition, long size) {
@@ -785,7 +787,7 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
     /**
      * 追加需要填充的关联字段。
      *
-     * @param <Q> 具体查询子类型
+     * @param <Q>   具体查询子类型
      * @param fills 需要填充的关联字段名
      * @return 当前查询对象，供链式调用
      */
@@ -972,7 +974,7 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
      * 执行列表查询；无结果时抛出业务异常。
      *
      * @param ifEmpty 查询为空时的错误消息
-     * @param params 用于格式化错误消息的参数
+     * @param params  用于格式化错误消息的参数
      * @return 匹配的聚合根列表
      */
     public List<M> list(String ifEmpty, Object... params) {
@@ -1001,7 +1003,7 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
      * 执行分页查询；无结果时抛出业务异常。
      *
      * @param ifEmpty 查询为空时的错误消息
-     * @param params 用于格式化错误消息的参数
+     * @param params  用于格式化错误消息的参数
      * @return 分页查询结果
      */
     public Page<M> page(String ifEmpty, Object... params) {
@@ -1120,7 +1122,7 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
      * 断言存在匹配记录；断言失败时抛出业务异常。
      *
      * @param ifNotExist 不存在匹配记录时的错误消息
-     * @param params 用于格式化错误消息的参数
+     * @param params     用于格式化错误消息的参数
      */
     public void exist(String ifNotExist, Object... params) {
         if (!exist()) {
@@ -1141,7 +1143,7 @@ public abstract class Query<M extends AggregateRoot<?>> implements Serializable 
      * 断言不存在匹配记录；断言失败时抛出业务异常。
      *
      * @param ifExist 存在匹配记录时的错误消息
-     * @param params 用于格式化错误消息的参数
+     * @param params  用于格式化错误消息的参数
      */
     public void notExist(String ifExist, Object... params) {
         if (exist()) {

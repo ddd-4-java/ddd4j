@@ -24,7 +24,9 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/** 许可证机器绑定在三条 JDK 线上的共同错误契约。 */
+/**
+ * 许可证机器绑定在三条 JDK 线上的共同错误契约。
+ */
 class CustomLicenseManagerContractTest {
 
     @Test

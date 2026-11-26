@@ -6,11 +6,11 @@ import org.junit.jupiter.api.Test;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-/** Covers the retry classification and interrupt contract shared by all three lines. */
+/**
+ * Covers the retry classification and interrupt contract shared by all three lines.
+ */
 class EventStoreRetryClassificationParityTest {
 
     @AfterEach

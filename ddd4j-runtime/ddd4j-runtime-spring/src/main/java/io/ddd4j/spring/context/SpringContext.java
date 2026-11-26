@@ -66,7 +66,9 @@ public class SpringContext implements ApplicationContextAware {
      */
     private static ApplicationContext APPLICATION_CONTEXT;
 
-    /** 初始化 Spring 上下文桥接器。 */
+    /**
+     * 初始化 Spring 上下文桥接器。
+     */
     public SpringContext() {
         log.debug("Loading SpringContext");
         StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
@@ -105,6 +107,7 @@ public class SpringContext implements ApplicationContextAware {
     }
 
     // 获取ApplicationContext，需等待ApplicationContext初始化完成
+
     /**
      * 等待并获取已初始化的应用上下文。
      *
@@ -129,7 +132,7 @@ public class SpringContext implements ApplicationContextAware {
      * 按名称获取 Bean。
      *
      * @param name Bean 名称
-     * @param <T> Bean 类型
+     * @param <T>  Bean 类型
      * @return 对应的 Bean
      */
     @SuppressWarnings("unchecked")
@@ -143,9 +146,9 @@ public class SpringContext implements ApplicationContextAware {
     /**
      * 按名称和类型获取 Bean。
      *
-     * @param name Bean 名称
+     * @param name  Bean 名称
      * @param clazz Bean 类型
-     * @param <T> Bean 类型
+     * @param <T>   Bean 类型
      * @return 对应的 Bean
      */
     public static <T> T getBean(@NonNull String name, @NonNull Class<T> clazz) {
@@ -159,7 +162,7 @@ public class SpringContext implements ApplicationContextAware {
      * 按类型获取 Bean。
      *
      * @param clazz Bean 类型
-     * @param <T> Bean 类型
+     * @param <T>   Bean 类型
      * @return 对应的 Bean
      */
     public static <T> T getBean(@NonNull Class<T> clazz) {
@@ -167,11 +170,12 @@ public class SpringContext implements ApplicationContextAware {
     }
 
     // 获取Bean，需等待应用完全启动
+
     /**
      * 等待应用启动后按类型获取 Bean。
      *
      * @param clazz Bean 类型
-     * @param <T> Bean 类型
+     * @param <T>   Bean 类型
      * @return 对应的 Bean
      */
     @SneakyThrows
@@ -181,12 +185,13 @@ public class SpringContext implements ApplicationContextAware {
     }
 
     // 获取Bean，需等待应用完全启动
+
     /**
      * 等待应用启动后将 Bean 传给回调。
      *
      * @param beanClazz Bean 类型
-     * @param then 接收 Bean 的回调
-     * @param <T> Bean 类型
+     * @param then      接收 Bean 的回调
+     * @param <T>       Bean 类型
      */
     public static <T> void getBean(@NonNull Class<T> beanClazz, Consumer<T> then) {
         then.accept(getBeanAwait(beanClazz));
@@ -196,7 +201,7 @@ public class SpringContext implements ApplicationContextAware {
      * 按类型获取全部 Bean。
      *
      * @param clazz Bean 类型
-     * @param <T> Bean 类型
+     * @param <T>   Bean 类型
      * @return 匹配的 Bean 集合
      */
     public static <T> Collection<T> getBeans(@NonNull Class<T> clazz) {

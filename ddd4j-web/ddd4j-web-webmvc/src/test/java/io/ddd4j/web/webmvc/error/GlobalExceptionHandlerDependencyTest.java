@@ -13,11 +13,11 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.extension.context.NestedMessageSource;
 import org.springframework.extension.web.multipart.MaxUploadSizePerFileExceededException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-/** 三线 Spring 扩展依赖装配与上传异常响应契约。 */
+/**
+ * 三线 Spring 扩展依赖装配与上传异常响应契约。
+ */
 class GlobalExceptionHandlerDependencyTest {
 
     @Test

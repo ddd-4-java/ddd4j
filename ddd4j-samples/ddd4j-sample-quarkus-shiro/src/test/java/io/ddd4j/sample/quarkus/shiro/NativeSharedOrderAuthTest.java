@@ -15,23 +15,25 @@
 package io.ddd4j.sample.quarkus.shiro;
 
 import io.ddd4j.kit.lang.MapKit;
-import io.ddd4j.sample.order.local.InMemoryOrderAdapters;
+import io.ddd4j.sample.order.adapter.http.CatalogApi;
+import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.common.http.TestHTTPResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.QuarkusTestProfile;
 import io.quarkus.test.junit.TestProfile;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
-import org.apache.shiro.util.ThreadContext;
-import org.jboss.resteasy.reactive.server.spi.ResteasyReactiveContainerRequestContext;
-import org.junit.jupiter.api.Test;
-
 import jakarta.annotation.Priority;
-import jakarta.enterprise.inject.spi.CDI;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.Priorities;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.ext.Provider;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
+import org.apache.shiro.util.ThreadContext;
+import org.jboss.resteasy.reactive.server.spi.ResteasyReactiveContainerRequestContext;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 import java.net.Socket;
 import java.net.URI;
@@ -43,18 +45,16 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static io.restassured.RestAssured.given;
+import static io.ddd4j.sample.quarkus.shiro.CatalogTradeFixture.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-/** 验证 Quarkus RESTEasy Reactive 在共享订单写入前执行原生 Shiro 鉴权。 */
+/**
+ * 验证 Quarkus RESTEasy Reactive 在共享订单写入前执行原生 Shiro 鉴权。
+ */
 @QuarkusTest
+@QuarkusTestResource(CatalogDatabaseResource.class)
 @TestProfile(NativeSharedOrderAuthTest.OrderAuthProfile.class)
 class NativeSharedOrderAuthTest {
 
@@ -63,43 +63,45 @@ class NativeSharedOrderAuthTest {
 
     @TestHTTPResource
     URI base;
+    @Inject
+    CatalogApi catalog;
 
-    public static class OrderAuthProfile implements QuarkusTestProfile {
+    private static String createOrder(String authorization, String id) {
+        return given().header("Authorization", authorization).contentType("application/json")
+                .body(ORDER).post(ORDERS + id).then().statusCode(201).extract().path("orderNo");
+    }
+
+    private static CompletionProbe probeFor(ContainerRequestContext request) {
+        CompletionProbe probe = PROBE.get();
+        return Objects.nonNull(probe) && probe.id.equals(request.getHeaderString(PROBE_HEADER)) ? probe : null;
+    }
+
+    @BeforeEach
+    void prepareGoods() {
+        seed(catalog);
     }
 
     @Test
     void anonymousAndReadOnlyRequestsDoNotCreateOrders() {
         String orderNo = "denied-" + UUID.randomUUID();
-        given().contentType("application/json").body(orderBody(orderNo))
-                .post("/orders").then().statusCode(401);
-        given().header("Authorization", login("user")).contentType("application/json").body(orderBody(orderNo))
-                .post("/orders").then().statusCode(403);
-        assertFalse(sharedStore().findByOrderNo(orderNo).isPresent());
-        given().get("/orders").then().statusCode(200);
+        given().contentType("application/json").body(ORDER).post(ORDERS + orderNo).then().statusCode(401);
+        given().header("Authorization", login("user")).contentType("application/json").body(ORDER)
+                .post(ORDERS + orderNo).then().statusCode(403);
+        assertEquals(404, catalog.order(TENANT, orderNo).getStatus());
+        given().get(ORDERS + orderNo).then().statusCode(401);
     }
 
     @Test
     void authorizedOrderUsesSharedStoreAndSessionLogoutRevokesAccess() {
         String token = login("admin");
-        String orderNo = "allowed-" + UUID.randomUUID();
-        String id = given().header("Authorization", token).contentType("application/json").body(orderBody(orderNo))
-                .post("/orders").then().statusCode(200).body("data.status", equalTo("DRAFT"))
-                .extract().path("data.id");
-        assertEquals(id, sharedStore().findByOrderNo(orderNo).get().id());
-
-        given().header("Authorization", token).contentType("application/json")
-                .body("{\"goodsId\":\"item-1\",\"goodsName\":\"Book\",\"quantity\":2,\"unitPrice\":12.50}")
-                .post("/orders/{id}/lines", id).then().statusCode(200).body("data.lines", hasSize(1));
-        given().header("Authorization", token).contentType("application/json").post("/orders/{id}/pay", id)
-                .then().statusCode(200).body("data.status", equalTo("PAID"));
-        given().header("Authorization", token).queryParam("orderNo", orderNo).get("/orders/by-order-no")
-                .then().statusCode(200).body("data.id", equalTo(id))
-                .body("data.currency", equalTo("CNY")).body("data.lines", hasSize(1));
-        assertEquals("PAID", sharedStore().findById(id).get().status().name());
-
-        given().header("Authorization", token).contentType("application/json")
-                .post("/auth/logout").then().statusCode(200);
-        given().header("Authorization", token).get("/orders/{id}", id).then().statusCode(401);
+        String id = createOrder(token, "authorized-" + UUID.randomUUID());
+        assertEquals(200, catalog.order(TENANT, id).getStatus());
+        given().header("Authorization", token).contentType("application/json").body(Map.of("paidAmountCent", 2500))
+                .post(ORDERS + id + "/payment").then().statusCode(200).body("orderState", equalTo("CONFIRMED"));
+        given().header("Authorization", token).get(ORDERS + id).then().statusCode(200)
+                .body("orderNo", equalTo(id)).body("paidAmountCent", equalTo(2500)).body("items", hasSize(1));
+        given().header("Authorization", token).post("/auth/logout").then().statusCode(200);
+        given().header("Authorization", token).get(ORDERS + id).then().statusCode(401);
     }
 
     @Test
@@ -119,16 +121,14 @@ class NativeSharedOrderAuthTest {
 
     private CompletionProbe disconnectAnAuthenticatedRead(String previousToken) throws Exception {
         String token = login("admin");
-        String orderId = given().header("Authorization", token).contentType("application/json")
-                .body(orderBody("disconnect-" + UUID.randomUUID())).post("/orders")
-                .then().statusCode(200).extract().path("data.id");
+        String orderId = createOrder(token, "disconnect-" + UUID.randomUUID());
         CompletionProbe probe = new CompletionProbe(previousToken);
         assertTrue(PROBE.compareAndSet(null, probe));
         try {
             try (Socket client = new Socket(base.getHost(), base.getPort())) {
                 client.setSoLinger(true, 0);
-                String request = "GET /orders/" + orderId + " HTTP/1.1\r\nHost: " + base.getHost()
-                        + "\r\nAuthorization: " + token + "\r\n" + PROBE_HEADER + ": " + probe.id
+                String request = "GET " + ORDERS + orderId + " HTTP/1.1\r\nHost: " + base.getHost()
+                        + "\r\nX-Tenant-Id: " + TENANT + "\r\nAuthorization: " + token + "\r\n" + PROBE_HEADER + ": " + probe.id
                         + "\r\nConnection: close\r\n\r\n";
                 client.getOutputStream().write(request.getBytes(StandardCharsets.US_ASCII));
                 client.getOutputStream().flush();
@@ -145,10 +145,6 @@ class NativeSharedOrderAuthTest {
         }
     }
 
-    private InMemoryOrderAdapters sharedStore() {
-        return CDI.current().select(InMemoryOrderAdapters.class).get();
-    }
-
     private String login(String user) {
         Map<String, String> credentials = MapKit.builder("username", user).put("password", "123456").build();
         String token = given().contentType("application/json").body(credentials)
@@ -156,13 +152,7 @@ class NativeSharedOrderAuthTest {
         return "Bearer " + token;
     }
 
-    private Map<String, String> orderBody(String orderNo) {
-        return MapKit.builder("orderNo", orderNo).put("buyerId", "buyer-1").put("buyerName", "Alice").build();
-    }
-
-    private static CompletionProbe probeFor(ContainerRequestContext request) {
-        CompletionProbe probe = PROBE.get();
-        return Objects.nonNull(probe) && probe.id.equals(request.getHeaderString(PROBE_HEADER)) ? probe : null;
+    public static class OrderAuthProfile implements QuarkusTestProfile {
     }
 
     private static final class CompletionProbe {
@@ -185,7 +175,9 @@ class NativeSharedOrderAuthTest {
         }
     }
 
-    /** Uses a separate, real Shiro session to represent an existing request-scope owner. */
+    /**
+     * Uses a separate, real Shiro session to represent an existing request-scope owner.
+     */
     @Provider
     @Priority(Priorities.AUTHENTICATION - 1)
     public static class PrecedingSubjectBinding implements ContainerRequestFilter {
@@ -205,7 +197,9 @@ class NativeSharedOrderAuthTest {
         }
     }
 
-    /** Holds only the designated request and observes the native completion after product cleanup. */
+    /**
+     * Holds only the designated request and observes the native completion after product cleanup.
+     */
     @Provider
     @Priority(Priorities.AUTHENTICATION + 1)
     public static class CompletionObserver implements ContainerRequestFilter {
@@ -220,17 +214,17 @@ class NativeSharedOrderAuthTest {
             probe.requestAuthenticated = Objects.nonNull(probe.requestSubject) && probe.requestSubject.isAuthenticated();
             ((ResteasyReactiveContainerRequestContext) request)
                     .getServerRequestContext().registerCompletionCallback(failure -> {
-                probe.completionThread = Thread.currentThread();
-                probe.completedSubject = ThreadContext.getSubject();
-                // Release only the test-owned Subject after observing the product's result.
-                if (Objects.nonNull(probe.preceding) && probe.completedSubject == probe.preceding) {
-                    ThreadContext.unbindSubject();
-                    if (Objects.nonNull(probe.original)) {
-                        ThreadContext.bind(probe.original);
-                    }
-                }
-                probe.completed.countDown();
-            });
+                        probe.completionThread = Thread.currentThread();
+                        probe.completedSubject = ThreadContext.getSubject();
+                        // Release only the test-owned Subject after observing the product's result.
+                        if (Objects.nonNull(probe.preceding) && probe.completedSubject == probe.preceding) {
+                            ThreadContext.unbindSubject();
+                            if (Objects.nonNull(probe.original)) {
+                                ThreadContext.bind(probe.original);
+                            }
+                        }
+                        probe.completed.countDown();
+                    });
             probe.entered.countDown();
             try {
                 if (!probe.release.await(10, TimeUnit.SECONDS)) {

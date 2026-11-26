@@ -18,11 +18,11 @@ import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.SpiRegistrationScope;
 import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
-import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.health.ReadinessContributor;
+import io.ddd4j.core.health.RuntimeReadinessRegistry;
+import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.core.util.SubjectKitRegistrationScope;
-import io.ddd4j.core.health.RuntimeReadinessRegistry;
 
 import java.util.Collection;
 import java.util.List;
@@ -40,10 +40,10 @@ public final class Ddd4jHelidonRuntime implements AutoCloseable {
     /**
      * 使用默认就绪检查集合创建运行时。
      *
-     * @param publisher 领域事件发布器
+     * @param publisher       领域事件发布器
      * @param subjectProvider 主体提供器
-     * @param i18nProvider 国际化提供器
-     * @param commandBus 命令总线
+     * @param i18nProvider    国际化提供器
+     * @param commandBus      命令总线
      */
     public Ddd4jHelidonRuntime(DomainEventPublisher publisher, SubjectProvider subjectProvider,
                                I18nProvider i18nProvider, CommandBus commandBus) {
@@ -53,10 +53,10 @@ public final class Ddd4jHelidonRuntime implements AutoCloseable {
     /**
      * 使用就绪检查贡献者创建运行时。
      *
-     * @param publisher 领域事件发布器
-     * @param subjectProvider 主体提供器
-     * @param i18nProvider 国际化提供器
-     * @param commandBus 命令总线
+     * @param publisher             领域事件发布器
+     * @param subjectProvider       主体提供器
+     * @param i18nProvider          国际化提供器
+     * @param commandBus            命令总线
      * @param readinessContributors 就绪检查贡献者
      */
     public Ddd4jHelidonRuntime(DomainEventPublisher publisher, SubjectProvider subjectProvider,
@@ -69,10 +69,10 @@ public final class Ddd4jHelidonRuntime implements AutoCloseable {
     /**
      * 使用指定就绪注册表创建运行时。
      *
-     * @param publisher 领域事件发布器
-     * @param subjectProvider 主体提供器
-     * @param i18nProvider 国际化提供器
-     * @param commandBus 命令总线
+     * @param publisher         领域事件发布器
+     * @param subjectProvider   主体提供器
+     * @param i18nProvider      国际化提供器
+     * @param commandBus        命令总线
      * @param readinessRegistry 就绪注册表
      */
     public Ddd4jHelidonRuntime(DomainEventPublisher publisher, SubjectProvider subjectProvider,
@@ -92,7 +92,9 @@ public final class Ddd4jHelidonRuntime implements AutoCloseable {
                 "readinessRegistry must not be null");
     }
 
-    /** 启动全局 SPI 与主体注册。 */
+    /**
+     * 启动全局 SPI 与主体注册。
+     */
     public void start() {
         registrations.start();
         subjectRegistration.start();

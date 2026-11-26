@@ -14,31 +14,29 @@
  */
 package io.ddd4j.web.javalin;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.api.R;
-import io.ddd4j.core.health.ReadinessResult;
-import io.ddd4j.core.health.RuntimeReadinessRegistry;
-import io.ddd4j.web.core.health.ReadinessEndpoint;
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.context.ThreadContext;
+import io.ddd4j.core.health.ReadinessResult;
+import io.ddd4j.core.health.RuntimeReadinessRegistry;
 import io.ddd4j.core.subject.Subject;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
-import io.ddd4j.web.core.idempotency.CacheIdempotencyGuard;
-import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
 import io.ddd4j.web.core.auth.WebAccessPolicy;
 import io.ddd4j.web.core.context.WebContextScope;
-import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.web.core.context.WebRequestContextFactory;
 import io.ddd4j.web.core.context.WebRequestLifecycle;
+import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
 import io.ddd4j.web.core.error.WebStatusException;
+import io.ddd4j.web.core.health.ReadinessEndpoint;
+import io.ddd4j.web.core.idempotency.CacheIdempotencyGuard;
+import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.web.testkit.AbstractWebContractTest;
 import io.ddd4j.web.testkit.WebContractClient;
 import io.ddd4j.web.testkit.WebContractPaths;
@@ -53,11 +51,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Objects;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -166,6 +160,12 @@ class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
 
         private final int port;
 
+        @JsonCreator()
+        private JavalinContractClient(@JsonProperty("httpClient") HttpClient httpClient, @JsonProperty("port") int port) {
+            this.httpClient = httpClient;
+            this.port = port;
+        }
+
         @Override
         public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
             try {
@@ -180,12 +180,6 @@ class Ddd4jJavalinWebContractTest extends AbstractWebContractTest {
             } catch (Exception exception) {
                 throw new IllegalStateException("Javalin contract request failed", exception);
             }
-        }
-
-        @JsonCreator()
-        private JavalinContractClient(@JsonProperty("httpClient") HttpClient httpClient, @JsonProperty("port") int port) {
-            this.httpClient = httpClient;
-            this.port = port;
         }
 
         @JsonProperty("httpClient")

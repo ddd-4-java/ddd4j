@@ -38,7 +38,7 @@ public class EventChunk<E> {
     /**
      * 创建不可变事件块。
      *
-     * @param events 事件列表
+     * @param events          事件列表
      * @param nextEventNumber 下一待处理事件号，不可为负数
      */
     public EventChunk(List<E> events, long nextEventNumber) {
@@ -56,7 +56,7 @@ public class EventChunk<E> {
     /**
      * 创建不含事件的事件块。
      *
-     * @param <E> 事件类型
+     * @param <E>             事件类型
      * @param nextEventNumber 下一待处理事件号
      * @return 空事件块
      */

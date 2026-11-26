@@ -31,10 +31,13 @@ import java.util.Objects;
 @UtilityClass
 public class NumKit extends NumberUtil {
 
-    /** 数值零常量（保留两位小数）。 */
+    /**
+     * 数值零常量（保留两位小数）。
+     */
     public final BigDecimal ZERO = new BigDecimal("0.00");
 
     // 是否是正数
+
     /**
      * 判断数值是否大于零。
      *
@@ -47,6 +50,7 @@ public class NumKit extends NumberUtil {
 
 
     // 是否是负数
+
     /**
      * 判断数值是否小于零。
      *
@@ -59,6 +63,7 @@ public class NumKit extends NumberUtil {
 
 
     // 是否为0
+
     /**
      * 判断数值是否等于零。
      *
@@ -71,6 +76,7 @@ public class NumKit extends NumberUtil {
 
 
     // 是否为 0 或 null
+
     /**
      * 判断数值是否为空或等于零。
      *
@@ -117,8 +123,8 @@ public class NumKit extends NumberUtil {
     /**
      * 四舍五入（保留两位小数）
      *
+     * @param value 待四舍五入的数值
      * @return 新值（如果 value 为空返回 BigDecimal.ZERO）
-          * @param value 待四舍五入的数值
      */
     public BigDecimal round2(BigDecimal value) {
         return round(value, 2);
@@ -126,6 +132,7 @@ public class NumKit extends NumberUtil {
 
 
     // 四舍五入（保留两位小数）
+
     /**
      * 将数值四舍五入到两位小数并转为字符串。
      *
@@ -138,6 +145,7 @@ public class NumKit extends NumberUtil {
 
 
     // 绝对值
+
     /**
      * 返回数值绝对值。
      *
@@ -150,6 +158,7 @@ public class NumKit extends NumberUtil {
 
 
     // 负绝对值
+
     /**
      * 返回数值绝对值的负值。
      *
@@ -161,6 +170,7 @@ public class NumKit extends NumberUtil {
     }
 
     // 求和
+
     /**
      * 求集合中数值之和。
      *
@@ -192,6 +202,7 @@ public class NumKit extends NumberUtil {
 
 
     // 清除末尾多余的0（如: 1.010 -> 1.01）
+
     /**
      * 移除数字文本末尾多余的零。
      *
@@ -250,6 +261,7 @@ public class NumKit extends NumberUtil {
     }
 
     // 求和
+
     /**
      * 将两个数值相加，空值按零处理。
      *
@@ -264,6 +276,7 @@ public class NumKit extends NumberUtil {
     }
 
     // 减法
+
     /**
      * 将两个数值相减，空值按零处理。
      *
@@ -279,6 +292,7 @@ public class NumKit extends NumberUtil {
 
 
     // 加法（保留2位小数）
+
     /**
      * 相加后四舍五入到两位小数。
      *
@@ -292,6 +306,7 @@ public class NumKit extends NumberUtil {
 
 
     // 减法（保留2位小数）
+
     /**
      * 相减后四舍五入到两位小数。
      *
@@ -305,6 +320,7 @@ public class NumKit extends NumberUtil {
 
 
     // 除法（保留2位小数4舍5入）
+
     /**
      * 相除后四舍五入到两位小数。
      *
@@ -318,6 +334,7 @@ public class NumKit extends NumberUtil {
 
 
     // 除法（保留2位小数4舍5入）
+
     /**
      * 相除后四舍五入到两位小数。
      *

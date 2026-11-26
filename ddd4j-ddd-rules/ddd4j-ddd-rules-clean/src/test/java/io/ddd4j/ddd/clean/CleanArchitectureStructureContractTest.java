@@ -26,7 +26,9 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/** 三线共同的架构目录说明文本契约。 */
+/**
+ * 三线共同的架构目录说明文本契约。
+ */
 class CleanArchitectureStructureContractTest {
 
     @TempDir

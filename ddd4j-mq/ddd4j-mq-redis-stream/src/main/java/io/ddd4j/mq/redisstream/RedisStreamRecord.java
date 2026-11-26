@@ -28,6 +28,7 @@ import java.util.Objects;
  * <p>{@code id} — 消息条目 ID
  * <p>{@code fields} — 消息字段
  * <p>{@code nativeMessage} — 底层原生消息对象
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 public final class RedisStreamRecord {

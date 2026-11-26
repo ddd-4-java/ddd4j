@@ -14,10 +14,10 @@
  */
 package io.ddd4j.extension.pf4j.point.web;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.pf4j.ExtensionPoint;
 import org.springframework.http.ResponseEntity;
 
-import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 /**

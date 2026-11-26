@@ -38,6 +38,7 @@ import java.util.Objects;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@io.quarkus.arc.properties.IfBuildProperty(name = "sample.goods.standalone", stringValue = "true")
 @ApplicationScoped
 @Slf4j
 public class NoOpDomainEventPublisher implements DomainEventPublisher {

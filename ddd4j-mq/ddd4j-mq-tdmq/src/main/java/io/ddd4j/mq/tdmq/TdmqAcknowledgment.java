@@ -42,10 +42,10 @@ public final class TdmqAcknowledgment implements Acknowledgment {
     /**
      * 创建 TDMQ 消息确认句柄。
      *
-     * @param messageId 消息标识
+     * @param messageId     消息标识
      * @param correlationId 关联标识
-     * @param deliveryTag 投递标签
-     * @param ackCallback 确认结果回调
+     * @param deliveryTag   投递标签
+     * @param ackCallback   确认结果回调
      */
     public TdmqAcknowledgment(String messageId,
                               String correlationId,

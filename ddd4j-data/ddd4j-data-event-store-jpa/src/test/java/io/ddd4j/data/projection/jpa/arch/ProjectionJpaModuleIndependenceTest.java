@@ -36,7 +36,9 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 @AnalyzeClasses(packages = "io.ddd4j.data.projection.jpa", importOptions = {ImportOption.DoNotIncludeTests.class})
 class ProjectionJpaModuleIndependenceTest {
 
-    /** 中立入口和公共存储只使用 JDK、核心契约和 JPA API；兼容桥单独保留。 */
+    /**
+     * 中立入口和公共存储只使用 JDK、核心契约和 JPA API；兼容桥单独保留。
+     */
     @ArchTest
     static final ArchRule neutral_jpa_has_no_platform_dependency =
             noClasses().that().haveSimpleName("EntityManagerProjectionPositionRepository")

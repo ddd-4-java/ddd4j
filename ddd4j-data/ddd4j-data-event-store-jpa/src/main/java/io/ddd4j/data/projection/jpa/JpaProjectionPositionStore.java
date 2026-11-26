@@ -19,9 +19,10 @@ public final class JpaProjectionPositionStore<E> {
 
     /**
      * 创建共享持久化操作。
+     *
      * @param entityManager 调用方管理的实体管理器
-     * @param entityType 已注册的实体类型
-     * @param entityName 可信映射中的 JPQL 实体名，不接收用户输入
+     * @param entityType    已注册的实体类型
+     * @param entityName    可信映射中的 JPQL 实体名，不接收用户输入
      */
     public JpaProjectionPositionStore(EntityManager entityManager, Class<E> entityType, String entityName) {
         this.entityManager = Objects.requireNonNull(entityManager, "entityManager must not be null");
@@ -37,14 +38,16 @@ public final class JpaProjectionPositionStore<E> {
         return Optional.ofNullable(entityManager.find(entityType, streamId));
     }
 
-    /** @return JPA 查询得到的实体列表，快照策略由接入层决定 */
+    /**
+     * @return JPA 查询得到的实体列表，快照策略由接入层决定
+     */
     public List<E> findAll() {
         return entityManager.createQuery("select p from " + entityName + " p", entityType).getResultList();
     }
 
     /**
      * @param streamId 实体主键
-     * @param entity 待保存实体
+     * @param entity   待保存实体
      * @return 保存后的受管实体
      */
     public E save(String streamId, E entity) {
@@ -55,13 +58,16 @@ public final class JpaProjectionPositionStore<E> {
         return entityManager.merge(entity);
     }
 
-    /** @param streamId 流标识；不存在时不执行删除 */
+    /**
+     * @param streamId 流标识；不存在时不执行删除
+     */
     public void deleteByStreamId(String streamId) {
         findByStreamId(streamId).ifPresent(entityManager::remove);
     }
 
     /**
      * 原位重置已有行，不创建缺失行，也不清空调用方持久化上下文。
+     *
      * @param streamId 流标识
      * @return 更新行数；调用方负责处理已加载实体及缺行语义
      */

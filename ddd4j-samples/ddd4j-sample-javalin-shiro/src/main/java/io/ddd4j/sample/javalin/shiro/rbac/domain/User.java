@@ -57,7 +57,7 @@ public class User {
     /**
      * 创建用户。
      *
-     * @param loginId 登录标识
+     * @param loginId  登录标识
      * @param password 密码
      */
     public User(String loginId, String password) {
@@ -67,10 +67,10 @@ public class User {
     /**
      * 创建用户。
      *
-     * @param loginId 登录标识
-     * @param password 密码
+     * @param loginId     登录标识
+     * @param password    密码
      * @param displayName 显示名称
-     * @param roles 角色编码集合
+     * @param roles       角色编码集合
      * @param permissions 权限编码集合
      */
     public User(String loginId, String password, String displayName, Set<String> roles, Set<String> permissions) {

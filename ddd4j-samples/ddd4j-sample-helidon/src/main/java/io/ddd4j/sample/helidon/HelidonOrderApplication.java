@@ -14,6 +14,8 @@
  */
 package io.ddd4j.sample.helidon;
 
+import io.ddd4j.sample.order.adapter.http.CatalogEndpoints;
+import io.ddd4j.sample.order.start.CatalogRuntime;
 import io.ddd4j.web.helidon.Ddd4jHelidonExceptionMapper;
 import io.ddd4j.web.helidon.Ddd4jHelidonIllegalStateExceptionMapper;
 import io.ddd4j.web.helidon.Ddd4jHelidonRequestFilter;
@@ -23,14 +25,22 @@ import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.core.Application;
 
 import java.util.Set;
-import java.util.Arrays;
-import java.util.HashSet;
 
 /**
  * 共享 Order 业务内核的 Helidon MP JAX-RS 应用声明。
  */
 @ApplicationPath("/")
 public class HelidonOrderApplication extends Application {
+
+    private final Set<Object> resources;
+
+    public HelidonOrderApplication() {
+        this(CatalogRuntime.start());
+    }
+
+    private HelidonOrderApplication(CatalogEndpoints catalog) {
+        resources = Set.of(new CatalogTradeResource(catalog));
+    }
 
     /**
      * 启动共享订单样例。
@@ -39,7 +49,15 @@ public class HelidonOrderApplication extends Application {
      * @return 已启动的原生服务
      */
     public static Server start(int port) {
-        Server server = Server.builder().port(port).addApplication(new HelidonOrderApplication()).build();
+        return start(port, new HelidonOrderApplication());
+    }
+
+    static Server start(int port, CatalogEndpoints catalog) {
+        return start(port, new HelidonOrderApplication(catalog));
+    }
+
+    private static Server start(int port, HelidonOrderApplication application) {
+        Server server = Server.builder().port(port).addApplication(application).build();
         try {
             return server.start();
         } catch (RuntimeException | Error failure) {
@@ -65,11 +83,14 @@ public class HelidonOrderApplication extends Application {
     }
 
     @Override
+    public Set<Object> getSingletons() {
+        return resources;
+    }
+
+    @Override
     public Set<Class<?>> getClasses() {
-        return new HashSet<>(Arrays.<Class<?>>asList(HelidonOrderResource.class,
-                Ddd4jHelidonRequestFilter.class,
-                Ddd4jHelidonResponseFilter.class,
-                Ddd4jHelidonExceptionMapper.class,
-                Ddd4jHelidonIllegalStateExceptionMapper.class));
+        return Set.of(HelidonTokenResource.class, Ddd4jHelidonRequestFilter.class,
+                Ddd4jHelidonResponseFilter.class, Ddd4jHelidonExceptionMapper.class,
+                Ddd4jHelidonIllegalStateExceptionMapper.class);
     }
 }

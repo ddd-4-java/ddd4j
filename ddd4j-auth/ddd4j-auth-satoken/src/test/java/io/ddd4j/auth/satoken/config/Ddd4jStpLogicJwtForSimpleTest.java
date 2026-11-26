@@ -25,11 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class Ddd4jStpLogicJwtForSimpleTest {
 
@@ -42,6 +38,27 @@ class Ddd4jStpLogicJwtForSimpleTest {
 
     private SaTokenConfig previousConfig;
     private StpLogic previousLogic;
+
+    private static SaTokenSecurityProperties properties(String key) {
+        SaTokenSecurityProperties properties = new SaTokenSecurityProperties();
+        properties.setAuthenticationMode(SaTokenAuthenticationMode.JWT_SIMPLE);
+        properties.setLoginType(LOGIN_TYPE);
+        properties.setJwtSecretKey(key);
+        properties.setJwtIssuer(ISSUER);
+        properties.setJwtAudience(AUDIENCE);
+        return properties;
+    }
+
+    private static Map<String, Object> claims(String issuer, String audience) {
+        Map<String, Object> claims = new LinkedHashMap<>();
+        claims.put("iss", issuer);
+        claims.put("aud", audience);
+        return claims;
+    }
+
+    private static String sdkToken(String loginType, String issuer, String audience, String key) {
+        return SaJwtUtil.createToken(loginType, "sdk-user", "web", 60L, claims(issuer, audience), key);
+    }
 
     @BeforeEach
     void setUp() {
@@ -102,26 +119,5 @@ class Ddd4jStpLogicJwtForSimpleTest {
         assertFalse(logic.hasExpectedClaims(sdkToken(LOGIN_TYPE, "other-issuer", AUDIENCE, FIRST_KEY)));
         assertFalse(logic.hasExpectedClaims(sdkToken(LOGIN_TYPE, ISSUER, "other-audience", FIRST_KEY)));
         assertFalse(logic.hasExpectedClaims(sdkToken("other-realm", ISSUER, AUDIENCE, FIRST_KEY)));
-    }
-
-    private static SaTokenSecurityProperties properties(String key) {
-        SaTokenSecurityProperties properties = new SaTokenSecurityProperties();
-        properties.setAuthenticationMode(SaTokenAuthenticationMode.JWT_SIMPLE);
-        properties.setLoginType(LOGIN_TYPE);
-        properties.setJwtSecretKey(key);
-        properties.setJwtIssuer(ISSUER);
-        properties.setJwtAudience(AUDIENCE);
-        return properties;
-    }
-
-    private static Map<String, Object> claims(String issuer, String audience) {
-        Map<String, Object> claims = new LinkedHashMap<>();
-        claims.put("iss", issuer);
-        claims.put("aud", audience);
-        return claims;
-    }
-
-    private static String sdkToken(String loginType, String issuer, String audience, String key) {
-        return SaJwtUtil.createToken(loginType, "sdk-user", "web", 60L, claims(issuer, audience), key);
     }
 }

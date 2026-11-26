@@ -17,11 +17,7 @@ package io.ddd4j.core.cqrs.readmodel;
 import io.ddd4j.kit.lang.CollKit;
 import io.ddd4j.kit.lang.StrKit;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * 轻量类型事件分发器。
@@ -78,7 +74,7 @@ public class TypedEventDispatcher {
      * 将事件交给匹配类型的处理器。
      *
      * @param eventType 事件类型
-     * @param event 事件载荷
+     * @param event     事件载荷
      * @return 找到并调用处理器时为 true
      */
     public boolean dispatch(String eventType, Object event) {

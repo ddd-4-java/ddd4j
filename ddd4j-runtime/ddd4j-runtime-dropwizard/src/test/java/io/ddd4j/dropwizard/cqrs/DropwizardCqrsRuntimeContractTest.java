@@ -1,41 +1,51 @@
 package io.ddd4j.dropwizard.cqrs;
 
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.Collections;
-import java.util.Arrays;
-import java.lang.reflect.Field;
 import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.Result;
-import io.ddd4j.core.cqrs.readmodel.DefaultProjectionPosition;
-import io.ddd4j.core.cqrs.readmodel.DefaultProjectionService;
-import io.ddd4j.core.cqrs.readmodel.EventChunk;
-import io.ddd4j.core.cqrs.readmodel.InMemoryProjectionPositionRepository;
-import io.ddd4j.core.cqrs.readmodel.NoopEventChunkReader;
-import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
-import io.ddd4j.core.cqrs.readmodel.ProjectionRunner;
-import io.ddd4j.core.cqrs.readmodel.ProjectionView;
-import io.ddd4j.core.cqrs.readmodel.ViewManager;
-import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
+import io.ddd4j.core.cqrs.readmodel.*;
 import io.ddd4j.dropwizard.command.DropwizardCommandBus;
 import io.ddd4j.runtime.testkit.AbstractCqrsRuntimeContractTest;
 import io.ddd4j.runtime.testkit.CqrsRuntimeContract;
 import io.dropwizard.core.setup.Environment;
 import org.junit.jupiter.api.Test;
+
+import java.lang.reflect.Field;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-/** 真实 runtime 命令/调度适配器的契约；内存仓储仅是隔离测试夹具。 */
+/**
+ * 真实 runtime 命令/调度适配器的契约；内存仓储仅是隔离测试夹具。
+ */
 class DropwizardCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
+    private static ProjectionView<Object> view(String name, String cron, Runnable handler) {
+        return new ProjectionView<>() {
+            public String getName() {
+                return name;
+            }
+
+            public String getCron() {
+                return cron;
+            }
+
+            public Collection<String> getEventTypes() {
+                return List.of("Order");
+            }
+
+            public void handleEvents(Collection<Object> events) {
+                handler.run();
+            }
+        };
+    }
+
     @Override
     protected CqrsRuntimeContract createContract() {
         DropwizardCommandBus bus = new DropwizardCommandBus(List.of(new StubExecutorA(), new StubExecutorB()));
@@ -44,12 +54,30 @@ class DropwizardCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest 
         DropwizardProjectionScheduler scheduler = DropwizardProjectionScheduler.create(new Environment("contract"), List.of(), runner);
         DropwizardProjectionViewManager manager = new DropwizardProjectionViewManager(scheduler, runner, List.of());
         return new CqrsRuntimeContract() {
-            public String runtimeName() { return "dropwizard"; }
-            public CommandBus commandBus() { return bus; }
-            public ViewManager viewManager() { return manager; }
-            public ViewScheduler viewScheduler() { return scheduler; }
-            public ProjectionPositionRepository positionRepository() { return positions; }
-            public void close() { manager.stop(); scheduler.shutdown(); }
+            public String runtimeName() {
+                return "dropwizard";
+            }
+
+            public CommandBus commandBus() {
+                return bus;
+            }
+
+            public ViewManager viewManager() {
+                return manager;
+            }
+
+            public ViewScheduler viewScheduler() {
+                return scheduler;
+            }
+
+            public ProjectionPositionRepository positionRepository() {
+                return positions;
+            }
+
+            public void close() {
+                manager.stop();
+                scheduler.shutdown();
+            }
         };
     }
 
@@ -62,8 +90,13 @@ class DropwizardCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest 
         assertThrows(IllegalStateException.class, () -> new DropwizardCommandBus(List.of(new StubExecutorA(), new StubExecutorA())));
         IllegalArgumentException failure = new IllegalArgumentException("application transaction failure");
         CommandExecutor<CmdA> executor = new CommandExecutor<>() {
-            public Set<Class<? extends io.ddd4j.core.cqrs.command.Command>> supportedCommands() { return Set.of(CmdA.class); }
-            public Result execute(CmdA command) { throw failure; }
+            public Set<Class<? extends io.ddd4j.core.cqrs.command.Command>> supportedCommands() {
+                return Set.of(CmdA.class);
+            }
+
+            public Result execute(CmdA command) {
+                throw failure;
+            }
         };
         assertSame(failure, assertThrows(IllegalArgumentException.class,
                 () -> new DropwizardCommandBus(List.of(executor)).execute(new CmdA("x"))));
@@ -77,21 +110,33 @@ class DropwizardCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest 
         AtomicBoolean fail = new AtomicBoolean(true);
         AtomicInteger applied = new AtomicInteger();
         ProjectionView<Object> view = view("orders", "0 0 0 1 1 *", () -> {
-            if (fail.getAndSet(false)) { throw new IllegalArgumentException("retry"); }
+            if (fail.getAndSet(false)) {
+                throw new IllegalArgumentException("retry");
+            }
             applied.incrementAndGet();
         });
         ProjectionRunner<Object> runner = new ProjectionRunner<>(new DefaultProjectionService(positions),
-                (stream, from, count, types) -> { reads.add(from); return from < 20 ? new EventChunk<>(List.of(11L, 19L), 20) : EventChunk.empty(from); });
+                (stream, from, count, types) -> {
+                    reads.add(from);
+                    return from < 20 ? new EventChunk<>(List.of(11L, 19L), 20) : EventChunk.empty(from);
+                });
         DropwizardProjectionViewManager manager = DropwizardProjectionViewManager.create(new Environment("retry"), List.of(view), runner);
         try {
-            assertFalse(manager.isRunning()); manager.start(); manager.start();
+            assertFalse(manager.isRunning());
+            manager.start();
+            manager.start();
             assertThrows(IllegalArgumentException.class, manager::triggerOnce);
             assertEquals(10, positions.findByStreamId("orders").orElseThrow().getNextEventNumber());
-            manager.triggerOnce(); manager.stop(); manager.start(); manager.triggerOnce();
+            manager.triggerOnce();
+            manager.stop();
+            manager.start();
+            manager.triggerOnce();
             assertEquals(List.of(10L, 10L, 20L), reads);
             assertEquals(1, applied.get());
             assertEquals(20, manager.getProjectionStatus("orders").nextEventNumber());
-        } finally { manager.stop(); }
+        } finally {
+            manager.stop();
+        }
     }
 
     @Test
@@ -99,7 +144,9 @@ class DropwizardCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest 
         AtomicInteger second = new AtomicInteger();
         ProjectionRunner<Object> runner = new ProjectionRunner<>(new DefaultProjectionService(new InMemoryProjectionPositionRepository()),
                 (s, f, n, t) -> new EventChunk<>(List.of("event"), f + 1));
-        ProjectionView<Object> first = view("first", "0 0 0 1 1 *", () -> { throw new IllegalArgumentException("first"); });
+        ProjectionView<Object> first = view("first", "0 0 0 1 1 *", () -> {
+            throw new IllegalArgumentException("first");
+        });
         ProjectionView<Object> last = view("last", "0 0 0 1 1 *", second::incrementAndGet);
         DropwizardProjectionViewManager manager = DropwizardProjectionViewManager.create(new Environment("aggregate"), List.of(first, last), runner);
         assertThrows(IllegalArgumentException.class, manager::triggerOnce);
@@ -131,27 +178,41 @@ class DropwizardCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest 
                 entered.countDown();
                 try {
                     while (release.getCount() > 0) {
-                        try { release.await(); } catch (InterruptedException expected) { interrupted.countDown(); }
+                        try {
+                            release.await();
+                        } catch (InterruptedException expected) {
+                            interrupted.countDown();
+                        }
                     }
-                } finally { finished.countDown(); }
+                } finally {
+                    finished.countDown();
+                }
             });
             assertTrue(entered.await(3, TimeUnit.SECONDS));
             shutdown = CompletableFuture.runAsync(scheduler::shutdown);
             assertTrue(interrupted.await(3, TimeUnit.SECONDS));
             assertFalse(shutdown.isDone());
-            release.countDown(); shutdown.get(3, TimeUnit.SECONDS);
-            assertEquals(0, finished.getCount()); assertTrue(scheduler.isTerminated());
-        } finally { release.countDown(); scheduler.shutdown(); }
+            release.countDown();
+            shutdown.get(3, TimeUnit.SECONDS);
+            assertEquals(0, finished.getCount());
+            assertTrue(scheduler.isTerminated());
+        } finally {
+            release.countDown();
+            scheduler.shutdown();
+        }
         DropwizardProjectionScheduler borrowed = DropwizardProjectionScheduler.create(new Environment("borrowed"), List.of(), runner);
         try {
-            DropwizardProjectionViewManager manager = new DropwizardProjectionViewManager(borrowed, runner, List.of(view("borrowed", "* * * * * *", () -> {})));
-            manager.start(); manager.stop();
+            DropwizardProjectionViewManager manager = new DropwizardProjectionViewManager(borrowed, runner, List.of(view("borrowed", "* * * * * *", () -> {
+            })));
+            manager.start();
+            manager.stop();
             CountDownLatch callback = new CountDownLatch(1);
             borrowed.schedule("still-usable", "* * * * * *", callback::countDown);
             assertTrue(callback.await(3, TimeUnit.SECONDS));
-        } finally { borrowed.shutdown(); }
+        } finally {
+            borrowed.shutdown();
+        }
     }
-
 
     @Test
     void ownedSchedulerTerminatesAfterSecondViewThrowsLinkageError() throws Exception {
@@ -161,7 +222,10 @@ class DropwizardCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest 
         AtomicReference<DropwizardProjectionViewManager> managerRef = new AtomicReference<>();
         AtomicReference<DropwizardProjectionScheduler> created = new AtomicReference<>();
         ProjectionView<Object> invalid = new ProjectionView<Object>() {
-            public String getName() { return "broken"; }
+            public String getName() {
+                return "broken";
+            }
+
             public String getCron() {
                 try {
                     created.set((DropwizardProjectionScheduler) scheduler.get(managerRef.get()));
@@ -170,13 +234,19 @@ class DropwizardCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest 
                 }
                 throw failure;
             }
-            public Collection<String> getEventTypes() { return Collections.emptyList(); }
-            public void handleEvents(Collection<Object> events) { }
+
+            public Collection<String> getEventTypes() {
+                return Collections.emptyList();
+            }
+
+            public void handleEvents(Collection<Object> events) {
+            }
         };
         ProjectionRunner<Object> runner = new ProjectionRunner<>(
                 new DefaultProjectionService(new InMemoryProjectionPositionRepository()), new NoopEventChunkReader<>());
         DropwizardProjectionViewManager manager = DropwizardProjectionViewManager.create(new Environment("linkage-rollback"),
-                Arrays.asList(view("first", "* * * * * *", () -> { }), invalid), runner);
+                Arrays.asList(view("first", "* * * * * *", () -> {
+                }), invalid), runner);
         managerRef.set(manager);
         try {
             assertSame(failure, assertThrows(LinkageError.class, manager::start));
@@ -186,14 +256,5 @@ class DropwizardCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest 
         } finally {
             manager.close();
         }
-    }
-
-    private static ProjectionView<Object> view(String name, String cron, Runnable handler) {
-        return new ProjectionView<>() {
-            public String getName() { return name; }
-            public String getCron() { return cron; }
-            public Collection<String> getEventTypes() { return List.of("Order"); }
-            public void handleEvents(Collection<Object> events) { handler.run(); }
-        };
     }
 }

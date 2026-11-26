@@ -48,10 +48,10 @@ public class MapKit extends MapUtil {
     /**
      * 根据键读取映射中的值，缺失时返回默认值。
      *
-     * @param map 待查询的映射
-     * @param key 键
+     * @param map          待查询的映射
+     * @param key          键
      * @param defaultValue 默认值
-     * @param <T> 值类型
+     * @param <T>          值类型
      * @return 对应值或默认值
      */
     public <T> T get(Map map, String key, T defaultValue) {
@@ -65,9 +65,9 @@ public class MapKit extends MapUtil {
     /**
      * 根据点分隔路径读取嵌套映射中的值。
      *
-     * @param map 待检索的映射数据
+     * @param map  待检索的映射数据
      * @param path 点分隔的属性路径，如 a.b.c
-     * @param <T> 属性值的目标类型
+     * @param <T>  属性值的目标类型
      * @return 路径命中的值，未命中时返回 null
      */
     public <T> T search(Map map, String path) {
@@ -96,10 +96,10 @@ public class MapKit extends MapUtil {
     /**
      * 根据点分隔路径读取嵌套映射中的值，并提供默认值。
      *
-     * @param map 待检索的映射数据
-     * @param keyword 点分隔的属性路径，如 a.b.c
+     * @param map          待检索的映射数据
+     * @param keyword      点分隔的属性路径，如 a.b.c
      * @param defaultValue 未命中时使用的默认值
-     * @param <T> 返回值类型
+     * @param <T>          返回值类型
      * @return 路径命中的值，未命中时返回默认值
      */
     public <T> T search(Map map, String keyword, T defaultValue) {
@@ -113,7 +113,7 @@ public class MapKit extends MapUtil {
     /**
      * 判断指定路径是否对应非空值。
      *
-     * @param map 待查询的映射
+     * @param map     待查询的映射
      * @param keyword 点分隔的属性路径
      * @return 对应值非空时返回 true
      */

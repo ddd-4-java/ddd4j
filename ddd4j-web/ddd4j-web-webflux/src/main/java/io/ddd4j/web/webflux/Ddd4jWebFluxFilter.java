@@ -13,17 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.web.webflux;
-import java.util.Optional;
-import java.util.Objects;
-import java.util.Map;
-import java.util.Locale;
-import java.util.List;
-import java.util.HashMap;
-import io.ddd4j.web.core.context.WebRequestLifecycle;
-import io.ddd4j.web.core.context.WebRequestData;
-import io.ddd4j.web.core.context.WebRequestContextFactory;
-import io.ddd4j.web.core.context.WebRequestContext;
-import io.ddd4j.web.core.context.WebHeaders;
 
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator.Authentication;
@@ -42,9 +31,9 @@ import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
 import java.net.InetSocketAddress;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.*;
 import java.util.function.Predicate;
 
 /**
@@ -74,7 +63,7 @@ public final class Ddd4jWebFluxFilter implements WebFilter {
      * 使用指定公开路径策略创建过滤器。
      *
      * @param authenticator Bearer 主体认证器
-     * @param publicPath 公开路径判定器
+     * @param publicPath    公开路径判定器
      */
     public Ddd4jWebFluxFilter(BearerSubjectAuthenticator authenticator, Predicate<String> publicPath) {
         this(new WebRequestContextFactory(), new WebRequestLifecycle(authenticator,
@@ -84,8 +73,8 @@ public final class Ddd4jWebFluxFilter implements WebFilter {
     /**
      * 使用默认阻塞任务调度器创建过滤器。
      *
-     * @param contextFactory 请求上下文工厂
-     * @param requestLifecycle 请求生命周期
+     * @param contextFactory       请求上下文工厂
+     * @param requestLifecycle     请求生命周期
      * @param idempotencyLifecycle 幂等生命周期，可为空
      */
     public Ddd4jWebFluxFilter(WebRequestContextFactory contextFactory, WebRequestLifecycle requestLifecycle,
@@ -96,10 +85,10 @@ public final class Ddd4jWebFluxFilter implements WebFilter {
     /**
      * 使用指定阻塞任务调度器创建过滤器。
      *
-     * @param contextFactory 请求上下文工厂
-     * @param requestLifecycle 请求生命周期
+     * @param contextFactory       请求上下文工厂
+     * @param requestLifecycle     请求生命周期
      * @param idempotencyLifecycle 幂等生命周期，可为空
-     * @param blockingScheduler 阻塞任务调度器
+     * @param blockingScheduler    阻塞任务调度器
      */
     public Ddd4jWebFluxFilter(WebRequestContextFactory contextFactory, WebRequestLifecycle requestLifecycle,
                               WebIdempotencyLifecycle idempotencyLifecycle, Scheduler blockingScheduler) {
@@ -191,7 +180,7 @@ public final class Ddd4jWebFluxFilter implements WebFilter {
     }
 
     private Mono<Optional<WebIdempotencyLifecycle.Scope>> acquireIdempotency(WebRequestContext context,
-                                                                              ServerWebExchange exchange) {
+                                                                             ServerWebExchange exchange) {
         return Mono.defer(() -> {
             AtomicBoolean cancelled = new AtomicBoolean();
             AtomicReference<WebIdempotencyLifecycle.Scope> pending = new AtomicReference<>();

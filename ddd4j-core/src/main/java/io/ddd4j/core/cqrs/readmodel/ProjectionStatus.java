@@ -14,9 +14,8 @@
  */
 package io.ddd4j.core.cqrs.readmodel;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.Instant;
 import java.util.Objects;
@@ -51,15 +50,15 @@ public final class ProjectionStatus {
     private final String lastError;
 
     /**
- * 紧凑构造器，校验参数合法性。
- *
- * @param streamId 投影流 ID
- * @param nextEventNumber 下一个待处理事件号（0-based）
- * @param running 视图管理器是否处于运行状态
- * @param lastRunAt 上次运行完成时间（nullable，首次未运行时为 null）
- * @param lastEventCount 上次运行处理的事件数量（0 表示空或未运行）
- * @param lastError 上次运行失败的错误信息（nullable，成功时为 null）
- */
+     * 紧凑构造器，校验参数合法性。
+     *
+     * @param streamId        投影流 ID
+     * @param nextEventNumber 下一个待处理事件号（0-based）
+     * @param running         视图管理器是否处于运行状态
+     * @param lastRunAt       上次运行完成时间（nullable，首次未运行时为 null）
+     * @param lastEventCount  上次运行处理的事件数量（0 表示空或未运行）
+     * @param lastError       上次运行失败的错误信息（nullable，成功时为 null）
+     */
 
     @JsonCreator()
     public ProjectionStatus(@JsonProperty("streamId") String streamId, @JsonProperty("nextEventNumber") long nextEventNumber, @JsonProperty("running") boolean running, @JsonProperty("lastRunAt") Instant lastRunAt, @JsonProperty("lastEventCount") int lastEventCount, @JsonProperty("lastError") String lastError) {

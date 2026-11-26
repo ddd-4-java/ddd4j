@@ -34,11 +34,6 @@ import io.ddd4j.sample.javalin.satoken.goods.domain.GoodsRepository;
 import io.ddd4j.sample.javalin.satoken.goods.infrastructure.InMemoryGoodsRepository;
 import io.ddd4j.sample.javalin.satoken.goods.web.GoodsQueryResource;
 import io.ddd4j.sample.javalin.satoken.goods.web.GoodsResource;
-import io.ddd4j.sample.javalin.satoken.order.application.OrderApplicationService;
-import io.ddd4j.sample.javalin.satoken.order.domain.repository.OrderRepository;
-import io.ddd4j.sample.javalin.satoken.order.domain.service.OrderDomainService;
-import io.ddd4j.sample.javalin.satoken.order.infrastructure.InMemoryOrderRepository;
-import io.ddd4j.sample.javalin.satoken.order.web.OrderResource;
 import io.ddd4j.sample.javalin.satoken.rbac.RbacConfig;
 import io.ddd4j.sample.javalin.satoken.rbac.application.RbacService;
 import io.ddd4j.sample.javalin.satoken.rbac.domain.repository.PermissionRepository;
@@ -67,7 +62,7 @@ public final class TestSupport {
     // ============================ 测试用 SPI 实现 ============================
 
     /**
-     * 启动 Javalin 应用：注册 RBAC 种子数据 + Goods/Order 仓储 + SubjectKit SPI + 路由。
+     * 启动 Javalin 应用：注册 RBAC 种子数据 + Goods 仓储 + SubjectKit SPI + 路由。
      *
      * @return 已启动的 Javalin 实例（绑定端口随机）
      */
@@ -96,11 +91,6 @@ public final class TestSupport {
         GoodsResource goodsResource = new GoodsResource(goodsApplicationService);
         GoodsQueryResource goodsQueryResource = new GoodsQueryResource(goodsApplicationService);
 
-        // 4) Order 仓储与业务服务
-        InMemoryOrderRepository orderRepository = new InMemoryOrderRepository();
-        OrderDomainService orderDomainService = new OrderDomainService(orderRepository);
-        OrderApplicationService orderApplicationService = new OrderApplicationService(orderRepository, orderDomainService);
-        OrderResource orderResource = new OrderResource(orderApplicationService);
 
         // 5) RBAC 控制器
         AuthenticationController authController = new AuthenticationController(rbacService);
@@ -122,7 +112,6 @@ public final class TestSupport {
             cfg.routes.apiBuilder(() -> {
                 authController.routes().addEndpoints();
                 ApiBuilder.path("rbac", authzController.routes());
-                orderResource.routes().addEndpoints();
                 goodsQueryResource.routes().addEndpoints();
                 goodsResource.routes().addEndpoints();
             });
@@ -145,7 +134,6 @@ public final class TestSupport {
                 bind(PermissionRepository.class).toInstance(new InMemoryPermissionRepository());
                 InMemoryGoodsRepository goodsRepository = new InMemoryGoodsRepository();
                 bind(GoodsRepository.class).toInstance(goodsRepository);
-                bind(OrderRepository.class).to(InMemoryOrderRepository.class);
             }
         });
     }

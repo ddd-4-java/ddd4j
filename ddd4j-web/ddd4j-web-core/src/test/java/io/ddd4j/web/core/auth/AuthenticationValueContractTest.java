@@ -16,11 +16,11 @@ package io.ddd4j.web.core.auth;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
-/** 认证结果的值语义与双访问器契约。 */
+/**
+ * 认证结果的值语义与双访问器契约。
+ */
 class AuthenticationValueContractTest {
 
     @Test

@@ -4,9 +4,7 @@ import io.ddd4j.sample.javalin.shiro.rbac.controller.AuthorizationController.Cre
 import io.ddd4j.sample.javalin.shiro.rbac.controller.AuthorizationController.UpdateUserRequest;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 class UserRequestContractTest {
 
@@ -31,7 +29,8 @@ class UserRequestContractTest {
         assertEquals(same.hashCode(), request.hashCode());
         assertFalse(request.toString().contains("secret"));
         assertEquals(request, new CreateUserRequest("alice", "secret", "Alice",
-                new String[]{"admin"}, new String[]{"goods:read"}) { });
+                new String[]{"admin"}, new String[]{"goods:read"}) {
+        });
     }
 
     @Test
@@ -53,6 +52,7 @@ class UserRequestContractTest {
         assertEquals(same.hashCode(), request.hashCode());
         assertFalse(request.toString().contains("secret"));
         assertEquals(request, new UpdateUserRequest("Alice", "secret",
-                new String[]{"admin"}, new String[]{"goods:read"}) { });
+                new String[]{"admin"}, new String[]{"goods:read"}) {
+        });
     }
 }

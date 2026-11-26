@@ -13,9 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.guice.command;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -120,8 +117,13 @@ class GuiceCommandBusTest {
         types.add(TestCommand.class);
         Result<?> expected = Result.ok("dynamic");
         CommandExecutor<Command> executor = new CommandExecutor<>() {
-            public Set<Class<? extends Command>> supportedCommands() { return types; }
-            public Result execute(Command command) { return expected; }
+            public Set<Class<? extends Command>> supportedCommands() {
+                return types;
+            }
+
+            public Result execute(Command command) {
+                return expected;
+            }
         };
         GuiceCommandBus bus = new GuiceCommandBus(java.util.List.of(executor));
         types.add(AnotherCommand.class);
@@ -140,16 +142,26 @@ class GuiceCommandBusTest {
     void initiallyEmptyExecutorsStayUndiscoverableAndExceptionsAreUnchanged() {
         Set<Class<? extends Command>> empty = new java.util.HashSet<>();
         CommandExecutor<Command> absent = new CommandExecutor<>() {
-            public Set<Class<? extends Command>> supportedCommands() { return empty; }
-            public Result execute(Command command) { throw new AssertionError("must stay undiscovered"); }
+            public Set<Class<? extends Command>> supportedCommands() {
+                return empty;
+            }
+
+            public Result execute(Command command) {
+                throw new AssertionError("must stay undiscovered");
+            }
         };
         GuiceCommandBus bus = new GuiceCommandBus(java.util.List.of(absent));
         empty.add(TestCommand.class);
         assertThrows(IllegalStateException.class, () -> bus.execute(new TestCommand()));
         IllegalStateException failure = new IllegalStateException("business failure");
         CommandExecutor<TestCommand> throwing = new CommandExecutor<>() {
-            public Set<Class<? extends Command>> supportedCommands() { return Set.of(TestCommand.class); }
-            public Result execute(TestCommand command) { throw failure; }
+            public Set<Class<? extends Command>> supportedCommands() {
+                return Set.of(TestCommand.class);
+            }
+
+            public Result execute(TestCommand command) {
+                throw failure;
+            }
         };
         assertSame(failure, assertThrows(IllegalStateException.class,
                 () -> new GuiceCommandBus(java.util.List.of(throwing)).execute(new TestCommand())));
@@ -162,7 +174,10 @@ class GuiceCommandBusTest {
             public Set<Class<? extends Command>> supportedCommands() {
                 return calls.incrementAndGet() == 1 ? Set.of(TestCommand.class) : Set.of(AnotherCommand.class);
             }
-            public Result execute(Command command) { return Result.ok(); }
+
+            public Result execute(Command command) {
+                return Result.ok();
+            }
         };
         GuiceCommandBus bus = new GuiceCommandBus(java.util.List.of(executor));
         assertEquals(1, calls.get());

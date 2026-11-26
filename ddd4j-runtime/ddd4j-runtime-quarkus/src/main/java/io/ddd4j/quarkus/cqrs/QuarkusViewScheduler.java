@@ -19,9 +19,10 @@ import io.quarkus.arc.DefaultBean;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.spi.CDI;
-import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.Scheduler;
+
+import java.util.Objects;
 
 
 /**

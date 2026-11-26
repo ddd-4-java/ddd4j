@@ -14,15 +14,15 @@
  */
 package io.ddd4j.data.projection.javalin;
 
-import io.ddd4j.core.cqrs.readmodel.ProjectionRunner;
 import io.ddd4j.core.cqrs.readmodel.ProjectionCron;
-import java.time.ZoneId;
+import io.ddd4j.core.cqrs.readmodel.ProjectionRunner;
 import io.ddd4j.core.cqrs.readmodel.ProjectionView;
 import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
 import io.javalin.Javalin;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.concurrent.Executors;
@@ -189,7 +189,9 @@ public class JavalinProjectionScheduler implements ViewScheduler {
         }
     }
 
-    /** 旧包内测试入口保留，解析和下次时间计算委托共享规则。 */
+    /**
+     * 旧包内测试入口保留，解析和下次时间计算委托共享规则。
+     */
     static class CronExpression {
         private final ProjectionCron delegate;
 

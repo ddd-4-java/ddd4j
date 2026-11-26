@@ -7,11 +7,11 @@ import org.junit.jupiter.api.Test;
 import java.util.Locale;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-/** 三线 Micronaut 请求状态的读取与值方法契约。 */
+/**
+ * 三线 Micronaut 请求状态的读取与值方法契约。
+ */
 class Ddd4jMicronautContextValueContractTest {
 
     @Test

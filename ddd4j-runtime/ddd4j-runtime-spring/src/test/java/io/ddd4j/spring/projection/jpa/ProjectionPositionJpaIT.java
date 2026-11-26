@@ -14,9 +14,9 @@
  */
 package io.ddd4j.spring.projection.jpa;
 
-import io.ddd4j.data.projection.jpa.ProjectionPositionEntity;
 import io.ddd4j.core.cqrs.readmodel.DefaultProjectionPosition;
 import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
+import io.ddd4j.data.projection.jpa.ProjectionPositionEntity;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.BeforeEach;

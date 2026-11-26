@@ -29,30 +29,35 @@ import io.ddd4j.sample.javalin.shiro.rbac.service.RbacService;
 import io.javalin.Javalin;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.DefaultSessionManager;
 import org.apache.shiro.session.mgt.eis.MemorySessionDAO;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.lang.reflect.Proxy;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class NativeAuthLifecycleTest {
+    private static <T> T servletProxy(Class<T> type) {
+        return servletProxy(type, null);
+    }
+
+    private static <T> T servletProxy(Class<T> type, String token) {
+        return type.cast(Proxy.newProxyInstance(type.getClassLoader(), new Class<?>[]{type},
+                (proxy, method, args) -> {
+                    if ("getHeader".equals(method.getName()) && "ddd4j-token".equals(args[0])) {
+                        return token;
+                    }
+                    return fail("unexpected servlet call: " + method);
+                }));
+    }
+
     @Test
     void restoresCallerBindingsWhenSubjectProviderThrows() throws Exception {
         List<Optional<String>> observations = new ArrayList<>();
@@ -116,8 +121,10 @@ class NativeAuthLifecycleTest {
         Map<Object, Object> originalShiroResources = org.apache.shiro.util.ThreadContext.getResources();
 
         Injector callerInjector = Guice.createInjector();
-        SubjectProvider callerProvider = new SubjectProvider() { };
-        SubjectDataProvider callerData = new SubjectDataProvider() { };
+        SubjectProvider callerProvider = new SubjectProvider() {
+        };
+        SubjectDataProvider callerData = new SubjectDataProvider() {
+        };
         SubjectStrategy callerStrategy = new SubjectStrategy();
         InMemoryGoodsRepository callerRepository = new InMemoryGoodsRepository();
         String repositoryKey = RepositoryRegistry.key(Goods.class);
@@ -131,7 +138,8 @@ class NativeAuthLifecycleTest {
                     .register(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class, callerProvider)
                     .start();
 
-            try (NativeAuthLifecycle lifecycle = new NativeAuthLifecycle(manager, ignored -> { })) {
+            try (NativeAuthLifecycle lifecycle = new NativeAuthLifecycle(manager, ignored -> {
+            })) {
                 InMemoryUserRepository users = new InMemoryUserRepository();
                 InMemoryRoleRepository roles = new InMemoryRoleRepository();
                 InMemoryPermissionRepository permissions = new InMemoryPermissionRepository();
@@ -269,19 +277,5 @@ class NativeAuthLifecycleTest {
             org.apache.shiro.util.ThreadContext.setResources(originalShiroResources);
             callerManager.destroy();
         }
-    }
-
-    private static <T> T servletProxy(Class<T> type) {
-        return servletProxy(type, null);
-    }
-
-    private static <T> T servletProxy(Class<T> type, String token) {
-        return type.cast(Proxy.newProxyInstance(type.getClassLoader(), new Class<?>[]{type},
-                (proxy, method, args) -> {
-                    if ("getHeader".equals(method.getName()) && "ddd4j-token".equals(args[0])) {
-                        return token;
-                    }
-                    return fail("unexpected servlet call: " + method);
-                }));
     }
 }

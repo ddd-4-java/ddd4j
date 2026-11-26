@@ -135,6 +135,7 @@ public class ProjectionRunner<E> {
 
     /**
      * 查询共享执行状态，运行标志仅表示本运行器中该流正在执行。
+     *
      * @param streamId 检查点标识
      * @return 包含当前持久位置的状态快照；不是分布式锁状态
      */

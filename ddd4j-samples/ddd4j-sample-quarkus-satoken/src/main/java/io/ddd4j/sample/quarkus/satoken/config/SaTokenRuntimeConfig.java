@@ -16,7 +16,9 @@ import jakarta.enterprise.event.Observes;
 
 import java.util.Objects;
 
-/** 装配原生会话和权限，并在退出时恢复本样例仍占有的组件。 */
+/**
+ * 装配原生会话和权限，并在退出时恢复本样例仍占有的组件。
+ */
 @ApplicationScoped
 public class SaTokenRuntimeConfig {
 
@@ -25,6 +27,38 @@ public class SaTokenRuntimeConfig {
     private SaTokenConfig previousConfig;
     private SaTokenConfig ownedConfig;
     private SaTokenDao ownedDao;
+
+    private static void restoreComponents(Runnable... restorations) {
+        Throwable failure = null;
+        for (Runnable restoration : restorations) {
+            try {
+                restoration.run();
+            } catch (RuntimeException | Error cleanupFailure) {
+                if (Objects.isNull(failure)) {
+                    failure = cleanupFailure;
+                } else if (failure != cleanupFailure) {
+                    failure.addSuppressed(cleanupFailure);
+                }
+            }
+        }
+        if (failure instanceof RuntimeException) {
+            throw (RuntimeException) failure;
+        }
+        if (failure instanceof Error) {
+            throw (Error) failure;
+        }
+    }
+
+    // 1.45.0 的公开 getter 会初始化组件，按原值保存或比较可空槽位。
+    private static StpInterface currentPermissions() {
+        return (StpInterface) ReflectUtil.getStaticFieldValue(Objects.requireNonNull(
+                ReflectUtil.getField(SaManager.class, "stpInterface")));
+    }
+
+    private static SaTokenDao currentDao() {
+        return (SaTokenDao) ReflectUtil.getStaticFieldValue(Objects.requireNonNull(
+                ReflectUtil.getField(SaManager.class, "saTokenDao")));
+    }
 
     void start(@Observes @Priority(1) StartupEvent event) {
         previousPermissions = currentPermissions();
@@ -81,37 +115,5 @@ public class SaTokenRuntimeConfig {
                         SaManager.setSaTokenDao(null);
                     }
                 });
-    }
-
-    private static void restoreComponents(Runnable... restorations) {
-        Throwable failure = null;
-        for (Runnable restoration : restorations) {
-            try {
-                restoration.run();
-            } catch (RuntimeException | Error cleanupFailure) {
-                if (Objects.isNull(failure)) {
-                    failure = cleanupFailure;
-                } else if (failure != cleanupFailure) {
-                    failure.addSuppressed(cleanupFailure);
-                }
-            }
-        }
-        if (failure instanceof RuntimeException) {
-            throw (RuntimeException) failure;
-        }
-        if (failure instanceof Error) {
-            throw (Error) failure;
-        }
-    }
-
-    // 1.45.0 的公开 getter 会初始化组件，按原值保存或比较可空槽位。
-    private static StpInterface currentPermissions() {
-        return (StpInterface) ReflectUtil.getStaticFieldValue(Objects.requireNonNull(
-                ReflectUtil.getField(SaManager.class, "stpInterface")));
-    }
-
-    private static SaTokenDao currentDao() {
-        return (SaTokenDao) ReflectUtil.getStaticFieldValue(Objects.requireNonNull(
-                ReflectUtil.getField(SaManager.class, "saTokenDao")));
     }
 }

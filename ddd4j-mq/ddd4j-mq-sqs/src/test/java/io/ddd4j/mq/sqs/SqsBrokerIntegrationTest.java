@@ -49,6 +49,25 @@ class SqsBrokerIntegrationTest {
             .waitingFor(Wait.forListeningPort())
             .withStartupTimeout(Duration.ofMinutes(2));
 
+    private static void awaitQueueEmpty(SqsClient nativeClient, String queueUrl) throws Exception {
+        long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(5);
+        int outstanding;
+        do {
+            Map<QueueAttributeName, String> counts = nativeClient.getQueueAttributes(r ->
+                            r.queueUrl(queueUrl).attributeNames(
+                                    QueueAttributeName.APPROXIMATE_NUMBER_OF_MESSAGES,
+                                    QueueAttributeName.APPROXIMATE_NUMBER_OF_MESSAGES_NOT_VISIBLE))
+                    .attributes();
+            outstanding = Integer.parseInt(counts.get(QueueAttributeName.APPROXIMATE_NUMBER_OF_MESSAGES))
+                    + Integer.parseInt(counts.get(QueueAttributeName.APPROXIMATE_NUMBER_OF_MESSAGES_NOT_VISIBLE));
+            if (outstanding == 0) {
+                break;
+            }
+            Thread.sleep(50L);
+        } while (System.nanoTime() < deadline);
+        assertEquals(0, outstanding);
+    }
+
     @Test
     void publishesConsumesAndDeletesMessageThroughSqsProtocol() throws Exception {
         SqsProperties properties = new SqsProperties();
@@ -134,32 +153,17 @@ class SqsBrokerIntegrationTest {
         }
     }
 
-    private static void awaitQueueEmpty(SqsClient nativeClient, String queueUrl) throws Exception {
-        long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(5);
-        int outstanding;
-        do {
-            Map<QueueAttributeName, String> counts = nativeClient.getQueueAttributes(r ->
-                            r.queueUrl(queueUrl).attributeNames(
-                                    QueueAttributeName.APPROXIMATE_NUMBER_OF_MESSAGES,
-                                    QueueAttributeName.APPROXIMATE_NUMBER_OF_MESSAGES_NOT_VISIBLE))
-                    .attributes();
-            outstanding = Integer.parseInt(counts.get(QueueAttributeName.APPROXIMATE_NUMBER_OF_MESSAGES))
-                    + Integer.parseInt(counts.get(QueueAttributeName.APPROXIMATE_NUMBER_OF_MESSAGES_NOT_VISIBLE));
-            if (outstanding == 0) {
-                break;
-            }
-            Thread.sleep(50L);
-        } while (System.nanoTime() < deadline);
-        assertEquals(0, outstanding);
-    }
-
-    /** 记录实际消费到的消息值。 */
+    /**
+     * 记录实际消费到的消息值。
+     */
     public static final class RecordingListener {
         private final CountDownLatch received = new CountDownLatch(1);
         private volatile String messageId;
         private volatile String correlationId;
 
-        /** @param event 实际消费的消息 */
+        /**
+         * @param event 实际消费的消息
+         */
         public void handle(MQEvent event) {
             messageId = event.getMsgId();
             correlationId = event.getCorrelationId();
@@ -167,14 +171,18 @@ class SqsBrokerIntegrationTest {
         }
     }
 
-    /** 第一次消费失败，第二次记录实际重投。 */
+    /**
+     * 第一次消费失败，第二次记录实际重投。
+     */
     public static final class FailOnceListener {
         private final AtomicInteger attempts = new AtomicInteger();
         private final CountDownLatch receivedTwice = new CountDownLatch(1);
         private volatile String messageId;
         private volatile String correlationId;
 
-        /** @param event 实际消费的消息 */
+        /**
+         * @param event 实际消费的消息
+         */
         public void handle(MQEvent event) {
             if (attempts.incrementAndGet() == 1) {
                 throw new IllegalStateException("first delivery fails");

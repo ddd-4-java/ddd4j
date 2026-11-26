@@ -113,7 +113,8 @@ public final class DomainModelHelper {
 
     /**
      * 仅用 Domain Model 构建（PO provider 不传，列名全部走 fallback）。
-     * @param <M> 领域模型类型
+     *
+     * @param <M>        领域模型类型
      * @param modelClass 领域模型类型
      * @return 领域模型元数据
      */
@@ -123,6 +124,7 @@ public final class DomainModelHelper {
 
     /**
      * 移除 Domain Model 缓存（用于测试或热加载）。
+     *
      * @param modelClass 领域模型类型
      */
     public static void remove(Class<?> modelClass) {

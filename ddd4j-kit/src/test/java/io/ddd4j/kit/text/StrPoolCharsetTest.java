@@ -1,15 +1,17 @@
 package io.ddd4j.kit.text;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/** 验证公共字节常量不依赖进程默认字符集。 */
+/**
+ * 验证公共字节常量不依赖进程默认字符集。
+ */
 class StrPoolCharsetTest {
 
     @Test

@@ -44,16 +44,15 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
-import org.apache.ibatis.executor.BatchResult;
 import org.apache.ibatis.exceptions.PersistenceException;
+import org.apache.ibatis.executor.BatchResult;
 
 import java.io.Serializable;
-import java.sql.Statement;
 import java.lang.reflect.Field;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -65,9 +64,9 @@ import java.util.stream.Collectors;
  * 批量会话及事务行为遵循组件实现，本类不声明自动加入调用方事务。</p>
  *
  * @param <MP> Mapper 类型
- * @param <M> 聚合根类型，必须使用同一个 ID 类型
- * @param <P> 持久化对象类型
- * @param <Q> 领域查询类型
+ * @param <M>  聚合根类型，必须使用同一个 ID 类型
+ * @param <P>  持久化对象类型
+ * @param <Q>  领域查询类型
  * @param <ID> 聚合根标识类型
  */
 @Slf4j
@@ -120,8 +119,8 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
     /**
      * 创建 MyBatis-Plus 聚合仓库。
      *
-     * @param baseMapper MyBatis-Plus 映射器
-     * @param modelClass 聚合根模型类型
+     * @param baseMapper             MyBatis-Plus 映射器
+     * @param modelClass             聚合根模型类型
      * @param persistenceObjectClass 持久化对象类型
      */
     protected MybatisAggregateRepository(MP baseMapper, Class<M> modelClass, Class<P> persistenceObjectClass) {
@@ -147,6 +146,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
 
     /**
      * 解析聚合根类型（泛型参数 M，索引 1；索引 0 是 Mapper 类型）。
+     *
      * @return 聚合根模型类型
      */
     protected Class<M> resolveModelClass() {
@@ -155,6 +155,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
 
     /**
      * 解析持久化对象类型（泛型参数 P，索引 2）。
+     *
      * @return 持久化对象类型
      */
     protected Class<P> resolvePersistenceObjectClass() {
@@ -163,6 +164,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
 
     /**
      * 解析查询对象类型（泛型参数 Q，索引 3）。
+     *
      * @return 查询对象类型
      */
     protected Class<? extends Query<M>> resolveQueryClass() {
@@ -172,9 +174,9 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
     /**
      * 配置聚合根和持久化对象类型。
      *
-     * @param modelClass 聚合根模型类型
+     * @param modelClass             聚合根模型类型
      * @param persistenceObjectClass 持久化对象类型
-     * @param queryClass 查询对象类型
+     * @param queryClass             查询对象类型
      */
     protected final void configureTypes(Class<M> modelClass, Class<P> persistenceObjectClass, Class<? extends Query<M>> queryClass) {
         this.modelClass = modelClass;
@@ -248,6 +250,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
 
     /**
      * 返回当前仓储持有的 Mapper；原生 PO 操作直接使用该组件。
+     *
      * @return MyBatis-Plus Mapper
      */
     public MP getBaseMapper() {
@@ -261,6 +264,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
     /**
      * Domain Model 元数据访问器（充血查询翻译：Domain 字段 → PO 列名）。
      * 缓存于 {@link DomainModelHelper}。
+     *
      * @return 领域模型属性映射信息
      */
     protected DomainModelInfo<M> domainModelInfo() {
@@ -269,6 +273,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
 
     /**
      * PO 元数据访问器（委托 MP {@code TableInfoHelper}），用于 auto-fill、bizKey、tenantId、tableLogic 等。
+     *
      * @return MyBatis-Plus 表元信息
      */
     protected TableInfo tableInfo() {
@@ -283,8 +288,9 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
      *   <li>查 {@link DomainModelInfo}（{@code @DomainField} 注解 + 默认约定）→ 用列名</li>
      *   <li>fallback：直接驼峰转下划线（保持向后兼容）</li>
      * </ol>
-     * @return 持久化字段或列名
+     *
      * @param property 领域属性或持久化属性
+     * @return 持久化字段或列名
      */
     protected String translateProperty(String property) {
         if (StrKit.isEmpty(property)) {
@@ -299,8 +305,9 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
 
     /**
      * 按属性空间翻译查询条件，并校验 Query 绑定的 Domain/PO 类型。
-     * @return 持久化字段或列名
+     *
      * @param condition 查询条件
+     * @return 持久化字段或列名
      */
     protected String translateProperty(LambdaCondition condition) {
         Objects.requireNonNull(condition, "condition must not be null");
@@ -376,6 +383,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
 
     /**
      * 批量插入聚合根，并将生成的主键和填充字段回写到原对象。
+     *
      * @param aggregates 聚合根集合；null 或空集合不执行 SQL
      * @return 按输入顺序排列的原聚合根
      */
@@ -394,6 +402,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
 
     /**
      * 批量按 ID 更新；不存在的记录不插入。
+     *
      * @param aggregates 待更新聚合根
      * @return JDBC 影响行数；SUCCESS_NO_INFO 按一条成功语句计数
      */
@@ -412,6 +421,7 @@ public abstract class MybatisAggregateRepository<MP extends BaseMapper<P>, M ext
 
     /**
      * 批量保存或更新；主键识别与批量执行由 Mapper 负责。
+     *
      * @param aggregates 待保存聚合根
      * @return JDBC 影响行数；SUCCESS_NO_INFO 按一条成功语句计数
      */

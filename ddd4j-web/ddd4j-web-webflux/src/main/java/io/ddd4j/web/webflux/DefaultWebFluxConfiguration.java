@@ -160,8 +160,8 @@ public class DefaultWebFluxConfiguration {
     /**
      * 注册 ddd4j WebFlux 核心过滤器（串联上下文、生命周期与幂等）。
      *
-     * @param contextFactory     请求上下文工厂
-     * @param requestLifecycle   请求生命周期管理器
+     * @param contextFactory       请求上下文工厂
+     * @param requestLifecycle     请求生命周期管理器
      * @param idempotencyLifecycle 幂等生命周期管理器
      * @return 核心过滤器实例
      */

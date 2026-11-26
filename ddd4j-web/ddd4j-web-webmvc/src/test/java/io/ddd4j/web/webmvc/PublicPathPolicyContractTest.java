@@ -30,6 +30,10 @@ import static org.mockito.Mockito.when;
 
 class PublicPathPolicyContractTest {
 
+    private static WebRequestContext request(String path) {
+        return new WebRequestContext("request", "trace", null, null, Locale.ROOT, null, "GET", path);
+    }
+
     @Test
     void nullAndBlankConfiguredPathsAreFilteredBeforeMatching() {
         Environment environment = mock(Environment.class);
@@ -41,9 +45,5 @@ class PublicPathPolicyContractTest {
         assertEquals(AuthenticationMode.DISABLED, policy.authenticationMode(request("/health")));
         assertEquals(AuthenticationMode.DISABLED, policy.authenticationMode(request("/assets/file.js")));
         assertEquals(AuthenticationMode.REQUIRED, policy.authenticationMode(request("/private")));
-    }
-
-    private static WebRequestContext request(String path) {
-        return new WebRequestContext("request", "trace", null, null, Locale.ROOT, null, "GET", path);
     }
 }

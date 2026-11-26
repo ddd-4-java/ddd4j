@@ -147,7 +147,9 @@ public class GoodsQuery extends Query<Goods> {
         return RepositoryRegistry.repository(Goods.class);
     }
 
-    /** @return 商品编码 */
+    /**
+     * @return 商品编码
+     */
     public String getCode() {
         return code;
     }
@@ -161,7 +163,9 @@ public class GoodsQuery extends Query<Goods> {
         return this;
     }
 
-    /** @return 模糊匹配的商品名称 */
+    /**
+     * @return 模糊匹配的商品名称
+     */
     public String getNameLike() {
         return nameLike;
     }
@@ -175,7 +179,9 @@ public class GoodsQuery extends Query<Goods> {
         return this;
     }
 
-    /** @return 商品状态 */
+    /**
+     * @return 商品状态
+     */
     public GoodsStatus getStatus() {
         return status;
     }
@@ -189,7 +195,9 @@ public class GoodsQuery extends Query<Goods> {
         return this;
     }
 
-    /** @return 最低价格 */
+    /**
+     * @return 最低价格
+     */
     public BigDecimal getPriceMin() {
         return priceMin;
     }
@@ -203,7 +211,9 @@ public class GoodsQuery extends Query<Goods> {
         return this;
     }
 
-    /** @return 最高价格 */
+    /**
+     * @return 最高价格
+     */
     public BigDecimal getPriceMax() {
         return priceMax;
     }

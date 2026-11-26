@@ -22,11 +22,6 @@ import io.ddd4j.sample.javalin.shiro.goods.domain.GoodsRepository;
 import io.ddd4j.sample.javalin.shiro.goods.infrastructure.InMemoryGoodsRepository;
 import io.ddd4j.sample.javalin.shiro.goods.web.GoodsQueryResource;
 import io.ddd4j.sample.javalin.shiro.goods.web.GoodsResource;
-import io.ddd4j.sample.javalin.shiro.order.application.OrderApplicationService;
-import io.ddd4j.sample.javalin.shiro.order.domain.repository.OrderRepository;
-import io.ddd4j.sample.javalin.shiro.order.domain.service.OrderDomainService;
-import io.ddd4j.sample.javalin.shiro.order.infrastructure.InMemoryOrderRepository;
-import io.ddd4j.sample.javalin.shiro.order.web.OrderResource;
 import io.ddd4j.sample.javalin.shiro.rbac.RbacConfig;
 import io.ddd4j.sample.javalin.shiro.rbac.controller.AuthenticationController;
 import io.ddd4j.sample.javalin.shiro.rbac.controller.AuthorizationController;
@@ -54,10 +49,10 @@ public class AuthModule extends AbstractModule {
     /**
      * 创建认证模块。
      *
-     * @param userRepository 用户仓储
-     * @param roleRepository 角色仓储
+     * @param userRepository       用户仓储
+     * @param roleRepository       角色仓储
      * @param permissionRepository 权限仓储
-     * @param rbacService RBAC 服务
+     * @param rbacService          RBAC 服务
      */
     public AuthModule(InMemoryUserRepository userRepository,
                       InMemoryRoleRepository roleRepository,
@@ -105,11 +100,6 @@ public class AuthModule extends AbstractModule {
         bind(AuthenticationController.class);
         bind(AuthorizationController.class);
 
-        // ========================= Order 模块 =========================
-        bind(OrderRepository.class).to(InMemoryOrderRepository.class);
-        bind(OrderDomainService.class);
-        bind(OrderApplicationService.class);
-        bind(OrderResource.class);
 
         // ========================= Goods 模块 =========================
         bind(GoodsRepository.class).to(InMemoryGoodsRepository.class).in(Singleton.class);

@@ -9,7 +9,9 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-/** 验证三线默认国际化提供者的资源与纯文本格式化契约。 */
+/**
+ * 验证三线默认国际化提供者的资源与纯文本格式化契约。
+ */
 class I18nProviderDefaultContractTest {
 
     @Test

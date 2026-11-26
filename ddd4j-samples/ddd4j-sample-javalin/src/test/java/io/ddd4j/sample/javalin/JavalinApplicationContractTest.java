@@ -4,11 +4,11 @@ import io.ddd4j.core.context.SpiRegistrationScope;
 import io.javalin.Javalin;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
-/** 三线 Javalin 应用句柄的值方法与 token 日志契约。 */
+/**
+ * 三线 Javalin 应用句柄的值方法与 token 日志契约。
+ */
 class JavalinApplicationContractTest {
 
     @Test

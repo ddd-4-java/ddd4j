@@ -1,8 +1,9 @@
 package io.ddd4j.sample.spring.shiro;
 
-import io.ddd4j.sample.order.testkit.AuthSampleDriver;
-import io.ddd4j.sample.order.testkit.SampleContractAssertions;
 import org.junit.jupiter.api.Test;
+import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.web.context.WebServerApplicationContext;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -24,7 +25,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /** 原生引擎通过真实 Servlet/HTTP/DI 执行鉴权；外层测试过滤器只观察，不清理上下文。 */
+@Testcontainers
 class SpringShiroHttpTest {
+    @Container
+    static final MySQLContainer<?> MYSQL = new MySQLContainer<>("mysql:8.0.36");
+
     @Test
     void nativeAuthAndRequestCleanup() {
         verify("");
@@ -37,7 +42,8 @@ class SpringShiroHttpTest {
 
     private void verify(String contextPath) {
         var context = SpringApplication.run(SpringShiroSampleApplication.class, "--server.port=0", "--server.tomcat.threads.max=1", "--server.tomcat.threads.min-spare=1",
-                "--server.servlet.context-path=" + contextPath);
+                "--server.servlet.context-path=" + contextPath, "--CATALOG_JDBC_URL=" + MYSQL.getJdbcUrl(),
+                "--CATALOG_DB_USER=" + MYSQL.getUsername(), "--CATALOG_DB_PASSWORD=" + MYSQL.getPassword());
         try (context) {
             int port = ((WebServerApplicationContext) context).getWebServer().getPort();
             var observations = context.getBean(Observation.class);
@@ -46,17 +52,36 @@ class SpringShiroHttpTest {
             driver.contextPrincipal();
             assertThrows(SecurityException.class, () -> driver.login("alice", "wrong"));
             driver.contextPrincipal();
+            String writer = driver.login("writer", "demo-password");
+            assertEquals(Optional.empty(), driver.contextPrincipal());
+            assertEquals("writer", driver.authenticatedPrincipal(writer));
+            assertEquals(Optional.empty(), driver.contextPrincipal());
+            driver.call("POST", "/orders/catalog/goods/LUNCH", writer, """
+                    {"spuName":"Lunch","skuCode":"S1","skuName":"Weekday","salePriceCent":1250,"shopId":7}
+                    """);
+            assertEquals(201, driver.lastStatus);
+            assertEquals(Optional.empty(), driver.contextPrincipal());
+            driver.call("POST", "/orders/catalog/orders/T001", writer, """
+                    {"shopId":7,"items":[{"skuCode":"S1","quantity":2}]}
+                    """);
+            assertEquals(201, driver.lastStatus);
+            assertEquals(Optional.empty(), driver.contextPrincipal());
+            driver.logout(writer);
+            assertEquals(Optional.empty(), driver.contextPrincipal());
+            assertThrows(SecurityException.class, () -> driver.authenticatedPrincipal(writer));
+            assertEquals(Optional.empty(), driver.contextPrincipal());
+
             String reader = driver.login("alice", "demo-password");
             assertEquals(Optional.empty(), driver.contextPrincipal());
-            org.junit.jupiter.api.Assertions.assertAll(
-                    () -> assertForbidden(driver, "POST", "/orders", reader,
-                            "{\"orderNo\":\"readonly-denied\",\"buyerId\":\"buyer-1\",\"buyerName\":\"Alice\"}"),
-                    () -> assertForbidden(driver, "DELETE", "/orders/missing", reader, ""));
+            assertForbidden(driver, "POST", "/orders/catalog/orders/T001/payment", reader, "{\"paidAmountCent\":2500}");
+            String order = driver.call("GET", "/orders/catalog/orders/T001", reader, "");
+            org.junit.jupiter.api.Assertions.assertTrue(order.contains("\"grossAmountCent\":2500"), order);
+            assertEquals(Optional.empty(), driver.contextPrincipal());
+            assertThrows(IllegalStateException.class, () -> driver.call("GET", "/orders/catalog/orders/missing", reader, ""));
+            assertEquals(404, driver.lastStatus);
+            assertEquals(Optional.empty(), driver.contextPrincipal());
             driver.logout(reader);
             assertEquals(Optional.empty(), driver.contextPrincipal());
-            SampleContractAssertions.authentication("shiro", driver, "alice", "demo-password",
-                    "alice", "order:read", "order:cancel", "[]");
-            verifyAuthorizedWrite(driver, context);
             org.junit.jupiter.api.Assertions.assertEquals(1, observations.workers.size(), "same actual worker reused");
         }
         assertFalse(context.isActive());
@@ -68,41 +93,6 @@ class SpringShiroHttpTest {
             assertEquals(403, driver.lastStatus);
         } finally {
             assertEquals(Optional.empty(), driver.contextPrincipal(), "denied request server cleanup");
-        }
-    }
-
-    private static void createAndRead(AuthDriver driver) {
-        String token = driver.login("alice", "demo-password");
-        assertEquals(Optional.empty(), driver.contextPrincipal());
-        String id = driver.call("POST", "/orders", token,
-                "{\"orderNo\":\"authorized-write\",\"buyerId\":\"buyer-1\",\"buyerName\":\"Alice\"}");
-        assertEquals(200, driver.lastStatus);
-        assertEquals(Optional.empty(), driver.contextPrincipal());
-        String row = driver.call("GET", "/orders/" + id, token, "");
-        assertEquals(200, driver.lastStatus);
-        try {
-            assertEquals(id, new com.fasterxml.jackson.databind.ObjectMapper().readTree(row).get("id").asText());
-        } catch (java.io.IOException exception) {
-            throw new AssertionError(exception);
-        }
-        assertEquals(Optional.empty(), driver.contextPrincipal());
-        driver.logout(token);
-        assertEquals(Optional.empty(), driver.contextPrincipal());
-    }
-
-    private static void verifyAuthorizedWrite(AuthDriver driver, org.springframework.context.ConfigurableApplicationContext context) {
-        // 仅测试临时使用原生 Realm 授予写权限；凭据匹配和会话仍走真实引擎。
-        var manager = context.getBean(org.apache.shiro.web.mgt.DefaultWebSecurityManager.class);
-        var original = manager.getRealms();
-        var ini = new org.apache.shiro.config.Ini();
-        ini.load("[users]\nalice = demo-password, writer\n[roles]\nwriter = order:read, order:write\n");
-        var realm = new org.apache.shiro.realm.text.IniRealm(ini);
-        realm.init();
-        manager.setRealm(realm);
-        try {
-            createAndRead(driver);
-        } finally {
-            manager.setRealms(original);
         }
     }
 
@@ -132,9 +122,10 @@ class SpringShiroHttpTest {
         }
     }
 
-    private static class AuthDriver implements AuthSampleDriver {
+    private static class AuthDriver {
         private final String base;
         private final Observation observation;
+        private final String tenant = java.util.UUID.randomUUID().toString().substring(0, 20);
         private final HttpClient client = HttpClient.newHttpClient();
         private int pending;
         private int lastStatus;
@@ -142,24 +133,16 @@ class SpringShiroHttpTest {
             this.base = base;
             this.observation = observation;
         }
-        @Override public String login(String username, String password) {
+        public String login(String username, String password) {
             return call("POST", "/auth/login?username=" + username + "&password=" + password, "", "");
         }
-        @Override public String authenticatedPrincipal(String token) {
+        public String authenticatedPrincipal(String token) {
             return call("GET", "/auth/me", token, "");
         }
-        @Override public String authorizedResource(String token, String permission) {
-            return "order:read".equals(permission)
-                    ? call("POST", "/orders/query", token, "{\"page\":1,\"size\":100}")
-                    : call("DELETE", "/orders/missing", token, "");
-        }
-        @Override public void logout(String token) {
+        public void logout(String token) {
             call("POST", "/auth/logout", token, "");
         }
-        @Override public void failingRequest(String token) {
-            call("GET", "/orders/missing", token, "");
-        }
-        @Override public Optional<String> contextPrincipal() {
+        public Optional<String> contextPrincipal() {
             if (pending == 0) {
                 return Optional.ofNullable(org.apache.shiro.util.ThreadContext.getSubject()).map(Object::toString);
             }
@@ -173,7 +156,7 @@ class SpringShiroHttpTest {
         }
         private String call(String method, String path, String token, String body) {
             try {
-                var builder = HttpRequest.newBuilder(URI.create(base + path)).header("Content-Type", "application/json")
+                var builder = HttpRequest.newBuilder(URI.create(base + path)).header("Content-Type", "application/json").header("X-Tenant-Id", tenant)
                         .method(method, HttpRequest.BodyPublishers.ofString(body));
                 if (!token.isEmpty()) {
                     builder.header("Cookie", "JSESSIONID=" + token);

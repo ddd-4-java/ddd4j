@@ -15,10 +15,9 @@
 package io.ddd4j.guice;
 
 import com.google.inject.Binding;
-import com.google.inject.Key;
 import com.google.inject.Inject;
-import io.ddd4j.guice.cqrs.GuiceViewManager;
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.SpiRegistrationScope;
 import io.ddd4j.core.cqrs.command.CommandBus;
@@ -28,6 +27,7 @@ import io.ddd4j.core.health.RuntimeReadinessRegistry;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.guice.context.GuiceContext;
+import io.ddd4j.guice.cqrs.GuiceViewManager;
 
 import java.util.Collection;
 import java.util.List;
@@ -45,11 +45,11 @@ public final class Ddd4jGuiceRuntime implements AutoCloseable {
     /**
      * 使用默认就绪检查集合创建 Guice 运行时。
      *
-     * @param injector Guice 注入器
-     * @param publisher 领域事件发布器
+     * @param injector        Guice 注入器
+     * @param publisher       领域事件发布器
      * @param subjectProvider 主体提供器
-     * @param i18nProvider 国际化提供器
-     * @param commandBus 命令总线
+     * @param i18nProvider    国际化提供器
+     * @param commandBus      命令总线
      */
     @Inject
     public Ddd4jGuiceRuntime(Injector injector, DomainEventPublisher publisher, SubjectProvider subjectProvider,
@@ -60,11 +60,11 @@ public final class Ddd4jGuiceRuntime implements AutoCloseable {
     /**
      * 使用指定就绪检查集合创建 Guice 运行时。
      *
-     * @param injector Guice 注入器
-     * @param publisher 领域事件发布器
-     * @param subjectProvider 主体提供器
-     * @param i18nProvider 国际化提供器
-     * @param commandBus 命令总线
+     * @param injector              Guice 注入器
+     * @param publisher             领域事件发布器
+     * @param subjectProvider       主体提供器
+     * @param i18nProvider          国际化提供器
+     * @param commandBus            命令总线
      * @param readinessContributors 就绪检查贡献者
      */
     public Ddd4jGuiceRuntime(Injector injector, DomainEventPublisher publisher, SubjectProvider subjectProvider,
@@ -91,7 +91,9 @@ public final class Ddd4jGuiceRuntime implements AutoCloseable {
         GuiceContext.setInjector(this.injector);
     }
 
-    /** 启动 ddd4j 全局 SPI 注册。 */
+    /**
+     * 启动 ddd4j 全局 SPI 注册。
+     */
     public void start() {
         registrations.start();
     }

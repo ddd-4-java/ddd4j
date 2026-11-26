@@ -13,15 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.auth.license.manager;
-import global.namespace.truelicense.api.VendorLicenseManagerBuilder;
-import global.namespace.truelicense.api.VendorLicenseManager;
-import global.namespace.truelicense.api.LicenseValidationException;
-import global.namespace.truelicense.api.LicenseManagementException;
-import global.namespace.truelicense.api.LicenseManagementContext;
-import global.namespace.truelicense.api.LicenseFunctionComposition;
-import global.namespace.truelicense.api.License;
-import global.namespace.truelicense.api.ConsumerLicenseManagerBuilder;
-import global.namespace.truelicense.api.ConsumerLicenseManager;
 
 import global.namespace.fun.io.api.Source;
 import global.namespace.truelicense.api.*;
@@ -57,9 +48,9 @@ public class CustomLicenseManager {
     /**
      * 使用许可证主题、密钥库和存储节点创建管理器。
      *
-     * @param subject 许可证主题
+     * @param subject       许可证主题
      * @param keyStoreParam 密钥库参数
-     * @param preferences 许可证存储节点
+     * @param preferences   许可证存储节点
      */
     public CustomLicenseManager(String subject, CustomKeyStoreParam keyStoreParam, Preferences preferences) {
         requireText(subject, "subject");
@@ -110,7 +101,7 @@ public class CustomLicenseManager {
      * 生成许可证并写入指定文件。
      *
      * @param content 许可证正文
-     * @param target 输出文件
+     * @param target  输出文件
      * @throws LicenseManagementException 生成或写入失败时
      */
     public synchronized void store(License content, File target) throws LicenseManagementException {

@@ -13,25 +13,9 @@
  * limitations under the License.
  */
 package io.ddd4j.core.cqrs.readmodel.handler;
-import java.util.Set;
-import java.util.Queue;
-import java.util.List;
-import java.util.Collection;
-import java.util.ArrayList;
-import java.util.ArrayDeque;
-import io.ddd4j.core.cqrs.readmodel.ProjectionService;
-import io.ddd4j.core.cqrs.readmodel.InMemoryProjectionPositionRepository;
-import io.ddd4j.core.cqrs.readmodel.EventChunkReader;
-import io.ddd4j.core.cqrs.readmodel.EventChunk;
-import io.ddd4j.core.cqrs.readmodel.DefaultProjectionService;
-import io.ddd4j.core.cqrs.readmodel.DefaultProjectionPosition;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.util.Objects;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.core.cqrs.readmodel.*;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import org.junit.jupiter.api.Test;

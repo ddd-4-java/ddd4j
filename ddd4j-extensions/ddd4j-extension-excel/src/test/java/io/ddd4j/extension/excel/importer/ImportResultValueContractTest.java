@@ -20,11 +20,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
-/** 三线共同的导入结果防御性拷贝契约。 */
+/**
+ * 三线共同的导入结果防御性拷贝契约。
+ */
 class ImportResultValueContractTest {
 
     @Test

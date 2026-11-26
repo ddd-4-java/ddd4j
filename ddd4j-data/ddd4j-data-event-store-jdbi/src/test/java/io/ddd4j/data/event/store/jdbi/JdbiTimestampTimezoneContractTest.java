@@ -18,11 +18,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.core.constant.EventStoreConstants;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
-import io.ddd4j.core.ddd.event.AggregateRootId;
-import io.ddd4j.core.ddd.event.DomainEvent;
-import io.ddd4j.core.ddd.event.EntityIdPath;
-import io.ddd4j.core.ddd.event.EntityType;
-import io.ddd4j.core.ddd.event.StringEntityType;
+import io.ddd4j.core.ddd.event.*;
 import org.jdbi.v3.core.Jdbi;
 import org.junit.jupiter.api.Test;
 
@@ -37,15 +33,10 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/** 检查事件存储时间戳在不同进程默认时区下保持同一 UTC 瞬间。 */
+/**
+ * 检查事件存储时间戳在不同进程默认时区下保持同一 UTC 瞬间。
+ */
 class JdbiTimestampTimezoneContractTest {
-
-    @Test
-    void persistedTimestampIsUtcIndependentOfWriterAndReaderTimezones() throws Exception {
-        String database = "jdbi_timezone_" + UUID.randomUUID().toString().replace("-", "");
-        Jdbi jdbi = Jdbi.create("jdbc:h2:mem:" + database + ";DB_CLOSE_DELAY=-1", "sa", "");
-        assertUtcRoundTrip(jdbi);
-    }
 
     static void assertUtcRoundTrip(Jdbi jdbi) throws Exception {
         TimeZone original = TimeZone.getDefault();
@@ -74,6 +65,13 @@ class JdbiTimestampTimezoneContractTest {
         } finally {
             TimeZone.setDefault(original);
         }
+    }
+
+    @Test
+    void persistedTimestampIsUtcIndependentOfWriterAndReaderTimezones() throws Exception {
+        String database = "jdbi_timezone_" + UUID.randomUUID().toString().replace("-", "");
+        Jdbi jdbi = Jdbi.create("jdbc:h2:mem:" + database + ";DB_CLOSE_DELAY=-1", "sa", "");
+        assertUtcRoundTrip(jdbi);
     }
 
     private static final class TestAggregateRootId implements AggregateRootId {
@@ -108,7 +106,9 @@ class JdbiTimestampTimezoneContractTest {
         }
     }
 
-    /** 测试事件载荷。 */
+    /**
+     * 测试事件载荷。
+     */
     public static final class TimeEvent extends DomainEvent<TestAggregateRootId> {
 
         public TimeEvent() {

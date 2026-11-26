@@ -27,12 +27,7 @@ import io.ddd4j.extension.qlexpress.model.QLExpressExecutionResult;
 import io.ddd4j.extension.qlexpress.model.QLExpressValidationResult;
 import io.ddd4j.kit.lang.StrKit;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 基于 Runner 快照的默认表达式引擎。
@@ -50,9 +45,9 @@ public final class DefaultQLExpressEngine implements QLExpressEngine {
     /**
      * 根据初始化选项和函数快照创建表达式引擎。
      *
-     * @param initOptions 引擎初始化选项
+     * @param initOptions             引擎初始化选项
      * @param defaultExecutionOptions 默认执行选项
-     * @param initialFunctions 初始函数集合
+     * @param initialFunctions        初始函数集合
      */
     public DefaultQLExpressEngine(InitOptions initOptions,
                                   QLExpressExecutionOptions defaultExecutionOptions,

@@ -21,8 +21,11 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 
-/** 商品查询 HTTP 路由在三条平台线的共同契约。 */
+/**
+ * 商品查询 HTTP 路由在三条平台线的共同契约。
+ */
 @QuarkusTest
+@io.quarkus.test.junit.TestProfile(io.ddd4j.sample.quarkus.satoken.GoodsStandaloneProfile.class)
 class GoodsQueryHttpContractTest {
 
     @Test

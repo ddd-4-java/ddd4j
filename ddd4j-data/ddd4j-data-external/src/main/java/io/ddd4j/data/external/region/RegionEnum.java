@@ -26,15 +26,25 @@ import java.util.*;
  */
 public final class RegionEnum implements Comparable<RegionEnum> {
 
-    /** 中国地区。 */
+    /**
+     * 中国地区。
+     */
     public static final RegionEnum CN;
-    /** 中国香港地区。 */
+    /**
+     * 中国香港地区。
+     */
     public static final RegionEnum HK;
-    /** 中国澳门地区。 */
+    /**
+     * 中国澳门地区。
+     */
     public static final RegionEnum MO;
-    /** 中国台湾地区。 */
+    /**
+     * 中国台湾地区。
+     */
     public static final RegionEnum TW;
-    /** 未知地区地区。 */
+    /**
+     * 未知地区地区。
+     */
     public static final RegionEnum UK;
     private static final Map<String, RegionEnum> BY_NAME = new LinkedHashMap<>();
     private static final Map<String, RegionEnum> BY_CODE2 = new LinkedHashMap<>();

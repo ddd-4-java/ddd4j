@@ -8,22 +8,19 @@ package io.ddd4j.web.webmvc.error;
 import io.ddd4j.core.api.ApiCode;
 import io.ddd4j.core.api.R;
 import io.ddd4j.web.webmvc.config.ServerI18nProperties;
-import org.springframework.extension.context.NestedMessageSource;
+import jakarta.validation.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import jakarta.validation.ConstraintDeclarationException;
-import jakarta.validation.ConstraintDefinitionException;
-import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.GroupDefinitionException;
-import jakarta.validation.UnexpectedTypeException;
-import jakarta.validation.ValidationException;
+import org.springframework.extension.context.NestedMessageSource;
 
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/** 不同 Bean Validation API 下相同的异常响应契约。 */
+/**
+ * 不同 Bean Validation API 下相同的异常响应契约。
+ */
 class ValidationExceptionParityTest {
 
     private GlobalExceptionHandler handler;

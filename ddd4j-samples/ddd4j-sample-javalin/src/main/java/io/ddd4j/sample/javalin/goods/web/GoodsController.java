@@ -13,14 +13,12 @@
  * limitations under the License.
  */
 package io.ddd4j.sample.javalin.goods.web;
-import io.ddd4j.kit.lang.SFunction;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.exception.BizRuntimeException;
+import io.ddd4j.kit.lang.SFunction;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.sample.javalin.goods.application.GoodsApplicationService;
 import io.ddd4j.sample.javalin.goods.domain.Goods;
@@ -64,7 +62,9 @@ public class GoodsController {
 
     private final GoodsApplicationService applicationService;
 
-    /** @param applicationService 商品应用服务 */
+    /**
+     * @param applicationService 商品应用服务
+     */
     public GoodsController(GoodsApplicationService applicationService) {
         this.applicationService = Objects.requireNonNull(applicationService, "applicationService must not be null");
     }
@@ -234,13 +234,15 @@ public class GoodsController {
 
         private Integer stock;
 
-        /** 创建空请求，供反序列化使用。 */
+        /**
+         * 创建空请求，供反序列化使用。
+         */
         public CreateGoodsRequest() {
         }
 
         /**
-         * @param code 商品编码
-         * @param name 商品名称
+         * @param code  商品编码
+         * @param name  商品名称
          * @param price 商品价格
          * @param stock 库存数量
          */
@@ -252,72 +254,97 @@ public class GoodsController {
             this.stock = stock;
         }
 
-        /** @return 商品编码 */
+        /**
+         * @return 商品编码
+         */
         @JsonProperty("code")
         public String code() {
             return code;
         }
 
-        /** @return 商品名称 */
+        /**
+         * @return 商品名称
+         */
         @JsonProperty("name")
         public String name() {
             return name;
         }
 
-        /** @return 商品价格 */
+        /**
+         * @return 商品价格
+         */
         @JsonProperty("price")
         public BigDecimal price() {
             return price;
         }
 
-        /** @return 库存数量 */
+        /**
+         * @return 库存数量
+         */
         @JsonProperty("stock")
         public Integer stock() {
             return stock;
         }
 
-        /** @return 商品编码 */
+        /**
+         * @return 商品编码
+         */
         public String getCode() {
             return code;
         }
 
-        /** @param code 商品编码 */
+        /**
+         * @param code 商品编码
+         */
         public void setCode(String code) {
             this.code = code;
         }
 
-        /** @return 商品名称 */
+        /**
+         * @return 商品名称
+         */
         public String getName() {
             return name;
         }
 
-        /** @param name 商品名称 */
+        /**
+         * @param name 商品名称
+         */
         public void setName(String name) {
             this.name = name;
         }
 
-        /** @return 商品价格 */
+        /**
+         * @return 商品价格
+         */
         public BigDecimal getPrice() {
             return price;
         }
 
-        /** @param price 商品价格 */
+        /**
+         * @param price 商品价格
+         */
         public void setPrice(BigDecimal price) {
             this.price = price;
         }
 
-        /** @return 库存数量 */
+        /**
+         * @return 库存数量
+         */
         public Integer getStock() {
             return stock;
         }
 
-        /** @param stock 库存数量 */
+        /**
+         * @param stock 库存数量
+         */
         public void setStock(Integer stock) {
             this.stock = stock;
         }
 
         /**
          * 判断另一对象是否可以参与相等比较。
+         *
          * @param other 待比较对象
          * @return 是否为同类请求或响应
          */
@@ -370,12 +397,14 @@ public class GoodsController {
 
         private BigDecimal price;
 
-        /** 创建空请求，供反序列化使用。 */
+        /**
+         * 创建空请求，供反序列化使用。
+         */
         public UpdateGoodsRequest() {
         }
 
         /**
-         * @param name 新商品名称
+         * @param name  新商品名称
          * @param price 新商品价格
          */
         @JsonCreator()
@@ -384,40 +413,53 @@ public class GoodsController {
             this.price = price;
         }
 
-        /** @return 新商品名称 */
+        /**
+         * @return 新商品名称
+         */
         @JsonProperty("name")
         public String name() {
             return name;
         }
 
-        /** @return 新商品价格 */
+        /**
+         * @return 新商品价格
+         */
         @JsonProperty("price")
         public BigDecimal price() {
             return price;
         }
 
-        /** @return 商品名称 */
+        /**
+         * @return 商品名称
+         */
         public String getName() {
             return name;
         }
 
-        /** @param name 商品名称 */
+        /**
+         * @param name 商品名称
+         */
         public void setName(String name) {
             this.name = name;
         }
 
-        /** @return 商品价格 */
+        /**
+         * @return 商品价格
+         */
         public BigDecimal getPrice() {
             return price;
         }
 
-        /** @param price 商品价格 */
+        /**
+         * @param price 商品价格
+         */
         public void setPrice(BigDecimal price) {
             this.price = price;
         }
 
         /**
          * 判断另一对象是否可以参与相等比较。
+         *
          * @param other 待比较对象
          * @return 是否为同类请求或响应
          */

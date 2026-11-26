@@ -13,13 +13,15 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.Field;
 import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class SaTokenRuntimeOwnershipTest {
+
+    private static Field daoField() {
+        Field field = Objects.requireNonNull(ReflectUtil.getField(SaManager.class, "saTokenDao"));
+        ReflectUtil.setAccessible(field);
+        return field;
+    }
 
     @Test
     void borrowedNativeStoreSurvivesCloseWithItsData() throws IllegalAccessException {
@@ -153,12 +155,6 @@ class SaTokenRuntimeOwnershipTest {
                 SaManager.setStpInterface(previousPermissions);
             }
         }
-    }
-
-    private static Field daoField() {
-        Field field = Objects.requireNonNull(ReflectUtil.getField(SaManager.class, "saTokenDao"));
-        ReflectUtil.setAccessible(field);
-        return field;
     }
 
     private static final class TrackingDao extends SaTokenDaoDefaultImpl {

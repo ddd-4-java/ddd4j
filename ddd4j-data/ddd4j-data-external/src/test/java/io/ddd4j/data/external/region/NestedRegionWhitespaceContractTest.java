@@ -6,7 +6,9 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/** 三线地区解析输入空白处理契约。 */
+/**
+ * 三线地区解析输入空白处理契约。
+ */
 class NestedRegionWhitespaceContractTest {
 
     @Test

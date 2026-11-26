@@ -2,18 +2,12 @@ package io.ddd4j.sample.javalin;
 
 import io.ddd4j.sample.javalin.goods.web.GoodsController.CreateGoodsRequest;
 import io.ddd4j.sample.javalin.goods.web.GoodsController.UpdateGoodsRequest;
-import io.ddd4j.sample.javalin.order.web.OrderController.AddOrderLineRequest;
-import io.ddd4j.sample.javalin.order.web.OrderController.CreateOrderRequest;
-import io.ddd4j.sample.javalin.order.web.OrderController.OrderResponse;
-import io.ddd4j.sample.order.domain.OrderStatus;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class PlainJavalinDtoContractTest {
 
@@ -34,7 +28,8 @@ class PlainJavalinDtoContractTest {
         assertFalse(Modifier.isFinal(CreateGoodsRequest.class.getModifiers()));
         assertTrue(create.toString().contains("CreateGoodsRequest("));
 
-        CreateGoodsRequest derived = new CreateGoodsRequest() { };
+        CreateGoodsRequest derived = new CreateGoodsRequest() {
+        };
         derived.setCode("SKU-1");
         derived.setName("Coffee");
         derived.setPrice(new BigDecimal("12.50"));
@@ -53,57 +48,5 @@ class PlainJavalinDtoContractTest {
         assertEquals(sameUpdate.hashCode(), update.hashCode());
         assertFalse(Modifier.isFinal(UpdateGoodsRequest.class.getModifiers()));
         assertTrue(update.toString().contains("UpdateGoodsRequest("));
-    }
-
-    @Test
-    void orderRequestsSupportBeanAndComponentAccess() {
-        CreateOrderRequest create = new CreateOrderRequest();
-        create.setOrderNo("O-1");
-        create.setBuyerId("B-1");
-        create.setBuyerName("Alice");
-        assertEquals(create.getOrderNo(), create.orderNo());
-        assertEquals(create.getBuyerId(), create.buyerId());
-        assertEquals(create.getBuyerName(), create.buyerName());
-        CreateOrderRequest same = new CreateOrderRequest("O-1", "B-1", "Alice");
-        assertEquals(same, create);
-        assertEquals(same.hashCode(), create.hashCode());
-        assertFalse(Modifier.isFinal(CreateOrderRequest.class.getModifiers()));
-        assertTrue(create.toString().contains("CreateOrderRequest("));
-
-        AddOrderLineRequest line = new AddOrderLineRequest();
-        line.setGoodsId("G-1");
-        line.setGoodsName("Coffee");
-        line.setQuantity(2);
-        line.setUnitPrice(new BigDecimal("12.50"));
-        assertEquals(line.getGoodsId(), line.goodsId());
-        assertEquals(line.getGoodsName(), line.goodsName());
-        assertEquals(line.getQuantity(), line.quantity());
-        assertEquals(line.getUnitPrice(), line.unitPrice());
-        AddOrderLineRequest sameLine = new AddOrderLineRequest("G-1", "Coffee", 2,
-                new BigDecimal("12.50"));
-        assertEquals(sameLine, line);
-        assertEquals(sameLine.hashCode(), line.hashCode());
-        assertFalse(Modifier.isFinal(AddOrderLineRequest.class.getModifiers()));
-        assertTrue(line.toString().contains("AddOrderLineRequest("));
-    }
-
-    @Test
-    void orderResponseRetainsBeanAndComponentReadAccess() {
-        OrderResponse response = new OrderResponse("id-1", "O-1", "B-1", "Alice",
-                OrderStatus.DRAFT, new BigDecimal("25.00"), "CNY", 2);
-        assertEquals(response.getId(), response.id());
-        assertEquals(response.getOrderNo(), response.orderNo());
-        assertEquals(response.getBuyerId(), response.buyerId());
-        assertEquals(response.getBuyerName(), response.buyerName());
-        assertEquals(response.getStatus(), response.status());
-        assertEquals(response.getTotalAmount(), response.totalAmount());
-        assertEquals(response.getCurrency(), response.currency());
-        assertEquals(response.getLineCount(), response.lineCount());
-        OrderResponse same = new OrderResponse("id-1", "O-1", "B-1", "Alice",
-                OrderStatus.DRAFT, new BigDecimal("25.00"), "CNY", 2);
-        assertEquals(same, response);
-        assertEquals(same.hashCode(), response.hashCode());
-        assertFalse(Modifier.isFinal(OrderResponse.class.getModifiers()));
-        assertTrue(response.toString().contains("OrderResponse("));
     }
 }

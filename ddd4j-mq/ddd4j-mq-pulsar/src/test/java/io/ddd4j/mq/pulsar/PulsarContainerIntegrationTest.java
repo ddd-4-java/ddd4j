@@ -32,13 +32,15 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/** 使用真实 Pulsar Broker 验证带 tag 的事件能到达同一逻辑 topic 的订阅者。 */
+/**
+ * 使用真实 Pulsar Broker 验证带 tag 的事件能到达同一逻辑 topic 的订阅者。
+ */
 @Testcontainers(disabledWithoutDocker = true)
 class PulsarContainerIntegrationTest {
 

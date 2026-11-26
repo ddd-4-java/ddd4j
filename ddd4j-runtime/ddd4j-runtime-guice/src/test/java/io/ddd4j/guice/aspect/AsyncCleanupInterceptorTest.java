@@ -13,9 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.guice.aspect;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;

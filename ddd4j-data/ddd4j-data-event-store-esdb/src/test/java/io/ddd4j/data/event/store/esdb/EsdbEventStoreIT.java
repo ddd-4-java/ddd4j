@@ -14,22 +14,14 @@
  */
 package io.ddd4j.data.event.store.esdb;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.util.Objects;
-
 import com.eventstore.dbclient.EventStoreDBClient;
 import com.eventstore.dbclient.EventStoreDBConnectionString;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
 import io.ddd4j.core.cqrs.eventstore.StoredEvent;
-import io.ddd4j.core.ddd.event.AggregateRootId;
-import io.ddd4j.core.ddd.event.DomainEvent;
-import io.ddd4j.core.ddd.event.EntityIdPath;
-import io.ddd4j.core.ddd.event.EntityType;
-import io.ddd4j.core.ddd.event.StringEntityType;
+import io.ddd4j.core.ddd.event.*;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,6 +35,7 @@ import org.testcontainers.utility.DockerImageName;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -52,7 +45,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 @Testcontainers(disabledWithoutDocker = true)
 class EsdbEventStoreIT {
-    private static final String ORDER_TYPE = "Order";
     @Container
     static final GenericContainer<?> ESDB = new GenericContainer<>(DockerImageName.parse("eventstore/eventstore:24.10.0-bookworm-slim"))
             .withExposedPorts(2113)
@@ -67,6 +59,7 @@ class EsdbEventStoreIT {
             .waitingFor(Wait.forHttp("/health/live").forPort(2113)
                     .forStatusCodeMatching(status -> status >= 200 && status < 300))
             .withStartupTimeout(Duration.ofMinutes(2));
+    private static final String ORDER_TYPE = "Order";
     private static EventStoreDBClient client;
     private EventStore store;
 
@@ -134,37 +127,8 @@ class EsdbEventStoreIT {
     final static class TestId implements AggregateRootId {
 
         private static final long serialVersionUID = 0L;
-
-        private final String value;
-
         private static final EntityType TYPE = new StringEntityType("Order");
-
-        /**
-         * 获取值。
-         * @return 方法执行结果。
-         */
-        @Override
-        public EntityType getType() {
-            return TYPE;
-        }
-
-        /**
-         * asString() 方法。
-         * @return 结果字符串。
-         */
-        @Override
-        public String asString() {
-            return value;
-        }
-
-        /**
-         * asTypedString() 方法。
-         * @return 结果字符串。
-         */
-        @Override
-        public String asTypedString() {
-            return TYPE.asString() + ":" + value;
-        }
+        private final String value;
 
         /**
          * 创建聚合根标识实例。
@@ -174,6 +138,36 @@ class EsdbEventStoreIT {
         @JsonCreator()
         TestId(@JsonProperty("value") String value) {
             this.value = value;
+        }
+
+        /**
+         * 获取值。
+         *
+         * @return 方法执行结果。
+         */
+        @Override
+        public EntityType getType() {
+            return TYPE;
+        }
+
+        /**
+         * asString() 方法。
+         *
+         * @return 结果字符串。
+         */
+        @Override
+        public String asString() {
+            return value;
+        }
+
+        /**
+         * asTypedString() 方法。
+         *
+         * @return 结果字符串。
+         */
+        @Override
+        public String asTypedString() {
+            return TYPE.asString() + ":" + value;
         }
 
         @JsonProperty("value")
@@ -208,6 +202,7 @@ class EsdbEventStoreIT {
 
     /**
      * 类型说明。
+     *
      * @author ddd4j
      * @since 3.0.x
      */

@@ -1,15 +1,20 @@
 package io.ddd4j.spring.cqrs;
 
 import org.junit.jupiter.api.Test;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import static org.junit.jupiter.api.Assertions.*;
 
-/** 基础模式在真正缺失 ORM、持久化 API 和事件源的独立进程中启动。 */
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+/**
+ * 基础模式在真正缺失 ORM、持久化 API 和事件源的独立进程中启动。
+ */
 class SpringOptionalClasspathTest {
     @Test
     void startsWithoutJpaAndEventStoreClasses() throws Exception {

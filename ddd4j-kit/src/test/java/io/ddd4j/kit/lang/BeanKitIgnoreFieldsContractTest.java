@@ -11,7 +11,9 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/** 验证三线 Bean 属性忽略列表的共同契约。 */
+/**
+ * 验证三线 Bean 属性忽略列表的共同契约。
+ */
 class BeanKitIgnoreFieldsContractTest {
 
     @Test

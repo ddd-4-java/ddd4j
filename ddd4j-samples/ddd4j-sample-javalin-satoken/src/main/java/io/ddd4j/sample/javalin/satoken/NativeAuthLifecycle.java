@@ -1,10 +1,9 @@
 package io.ddd4j.sample.javalin.satoken;
 
 import cn.dev33.satoken.SaManager;
-import cn.hutool.core.util.ReflectUtil;
+import cn.dev33.satoken.config.SaTokenConfig;
 import cn.dev33.satoken.context.SaTokenContext;
 import cn.dev33.satoken.context.SaTokenContextForThreadLocal;
-import cn.dev33.satoken.config.SaTokenConfig;
 import cn.dev33.satoken.dao.SaTokenDao;
 import cn.dev33.satoken.dao.SaTokenDaoDefaultImpl;
 import cn.dev33.satoken.servlet.model.SaRequestForServlet;
@@ -12,53 +11,62 @@ import cn.dev33.satoken.servlet.model.SaResponseForServlet;
 import cn.dev33.satoken.servlet.model.SaStorageForServlet;
 import cn.dev33.satoken.stp.StpInterface;
 import cn.dev33.satoken.stp.StpUtil;
-import io.ddd4j.auth.satoken.subject.SaTokenSubjectDataBridge;
-import io.ddd4j.core.subject.SubjectProvider;
-import io.ddd4j.core.subject.SubjectDataProvider;
-import io.ddd4j.core.subject.SubjectStrategy;
-import io.ddd4j.core.util.SubjectKit;
-import io.ddd4j.guice.context.GuiceContext;
-import io.ddd4j.guice.Ddd4jGuiceRuntime;
+import cn.hutool.core.util.ReflectUtil;
 import com.google.inject.Injector;
+import io.ddd4j.auth.satoken.subject.SaTokenSubjectDataBridge;
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.context.SpiRegistrationScope;
+import io.ddd4j.core.subject.SubjectDataProvider;
+import io.ddd4j.core.subject.SubjectProvider;
+import io.ddd4j.core.subject.SubjectStrategy;
+import io.ddd4j.core.util.SubjectKit;
+import io.ddd4j.guice.Ddd4jGuiceRuntime;
+import io.ddd4j.guice.context.GuiceContext;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
-import jakarta.servlet.Filter;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
-import jakarta.servlet.ServletException;
+import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-/** 原生认证请求作用域及本实例资源所有权；观察钩子只读，不参与清理。 */
+/**
+ * 原生认证请求作用域及本实例资源所有权；观察钩子只读，不参与清理。
+ */
 final class NativeAuthLifecycle implements Filter, AutoCloseable {
+    final SpiRegistrationScope repositories = new SpiRegistrationScope();
     private final SubjectProvider previousProvider = SubjectKit.subjectProvider;
     private final SubjectDataProvider previousData = SubjectKit.dataProvider;
     private final SubjectStrategy previousStrategy = SubjectKit.strategy;
     private final Injector previousInjector = GuiceContext.isInitialized() ? GuiceContext.getInjector() : null;
     private final Consumer<Optional<String>> observer;
-    private SubjectProvider provider;
-    private SubjectDataProvider data;
-    private Injector injector;
-    private Javalin app;
-    private boolean closed;
-    final SpiRegistrationScope repositories = new SpiRegistrationScope();
     private final SaTokenContext previousContext = SaManager.getSaTokenContext();
     private final SaTokenConfig previousConfig = SaManager.getConfig();
     private final StpInterface previousPermissions = SaManager.getStpInterface();
     private final SaTokenContext context = new SaTokenContextForThreadLocal();
     private final SaTokenConfig config = new SaTokenConfig().setTokenName("ddd4j-token").setIsPrint(false).setDataRefreshPeriod(-1);
-    private SaTokenDao ownedDao;
     private final StpInterface permissions = new SaTokenSubjectDataBridge();
+    private SubjectProvider provider;
+    private SubjectDataProvider data;
+    private Injector injector;
+    private Javalin app;
+    private boolean closed;
+    private SaTokenDao ownedDao;
 
     NativeAuthLifecycle(Consumer<Optional<String>> observer) {
         this.observer = observer;
+    }
+
+    /**
+     * getter 会创建并启动默认 DAO；只读快照保留原本未初始化的状态。
+     */
+    private static SaTokenDao currentDao() {
+        var field = Objects.requireNonNull(ReflectUtil.getField(SaManager.class, "saTokenDao"),
+                "Sa-Token 1.45.0 nullable saTokenDao field is required for lifecycle ownership");
+        return (SaTokenDao) ReflectUtil.getStaticFieldValue(field);
     }
 
     void initializeSaToken() {
@@ -81,8 +89,14 @@ final class NativeAuthLifecycle implements Filter, AutoCloseable {
         SubjectKit.setDataProvider(data);
         SubjectKit.setStrategy(SubjectStrategy.instance);
     }
-    void attach(Javalin app) { this.app = app; }
-    Javalin app() { return app; }
+
+    void attach(Javalin app) {
+        this.app = app;
+    }
+
+    Javalin app() {
+        return app;
+    }
 
     @Override
     public void doFilter(ServletRequest rawRequest, ServletResponse rawResponse, FilterChain chain)
@@ -115,7 +129,9 @@ final class NativeAuthLifecycle implements Filter, AutoCloseable {
         }
     }
 
-    /** 在业务处理前检查订单登录状态，沿用未匹配 URL 的旧 Servlet 响应。 */
+    /**
+     * 在业务处理前检查订单登录状态，沿用未匹配 URL 的旧 Servlet 响应。
+     */
     void authenticateOrder(Context ctx) throws IOException {
         if (ctx.req().getRequestURI().startsWith("/orders") && !StpUtil.isLogin()) {
             var endpoint = ctx.endpoints().matchedHttpEndpoint();
@@ -128,11 +144,16 @@ final class NativeAuthLifecycle implements Filter, AutoCloseable {
         }
     }
 
-    /** 在 Javalin 确定 HTTP 路由后选择权限，保留该路由支持的尾斜杠语义。 */
+    /**
+     * 在 Javalin 确定 HTTP 路由后选择权限，保留该路由支持的尾斜杠语义。
+     */
     void authorizeMatchedOrder(Context ctx) throws IOException {
         var endpoint = ctx.endpoints().matchedHttpEndpoint();
         if (Objects.nonNull(endpoint) && endpoint.path.startsWith("/orders")) {
-            String permission = "/orders/{id}/cancel".equals(endpoint.path) ? "order:cancel" : "order:pay";
+            if (endpoint.path.startsWith("/orders/catalog/") && "GET".equals(ctx.method().name())) {
+                return;
+            }
+            String permission = "/orders/catalog/orders/{orderNo}/cancel".equals(endpoint.path) ? "order:cancel" : "order:pay";
             if (!StpUtil.hasPermission(permission)) {
                 ctx.status(403).json(R.of(403, "required permission is missing"));
                 ctx.skipRemainingHandlers();
@@ -145,13 +166,6 @@ final class NativeAuthLifecycle implements Filter, AutoCloseable {
             return Optional.of("framework-context-present");
         }
         return context.isValid() ? Optional.of("native-context-present") : Optional.empty();
-    }
-
-    /** getter 会创建并启动默认 DAO；只读快照保留原本未初始化的状态。 */
-    private static SaTokenDao currentDao() {
-        var field = Objects.requireNonNull(ReflectUtil.getField(SaManager.class, "saTokenDao"),
-                "Sa-Token 1.45.0 nullable saTokenDao field is required for lifecycle ownership");
-        return (SaTokenDao) ReflectUtil.getStaticFieldValue(field);
     }
 
     @Override

@@ -14,31 +14,20 @@
  */
 package io.ddd4j.core.ddd.model;
 
-import io.ddd4j.core.ddd.event.AggregateRootId;
-import io.ddd4j.core.ddd.event.DomainEvent;
-import io.ddd4j.core.ddd.event.DomainEventPublisher;
-import io.ddd4j.core.ddd.event.EntityId;
-import io.ddd4j.core.ddd.event.EntityIdPath;
-import io.ddd4j.core.ddd.event.EntityType;
-import io.ddd4j.core.ddd.event.EventHandler;
-import io.ddd4j.core.ddd.event.StringEntityId;
-import io.ddd4j.core.ddd.event.StringEntityType;
-import io.ddd4j.core.ddd.repository.Repository;
-import io.ddd4j.core.ddd.repository.RepositoryRegistry;
 import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.ThreadContext;
+import io.ddd4j.core.ddd.event.*;
+import io.ddd4j.core.ddd.repository.Repository;
+import io.ddd4j.core.ddd.repository.RepositoryRegistry;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class AggregateRootTest {
     @Test
@@ -79,6 +68,7 @@ class AggregateRootTest {
         aggregate.loadFromHistory(Collections.<DomainEvent<?>>singletonList(new TestEvent()));
         assertEquals(0, aggregate.pullDomainEvents().size());
     }
+
     @Test
     void shouldDispatchApplyAndReplayToEventHandler() {
         HandlingAggregate aggregate = new HandlingAggregate();
@@ -87,9 +77,13 @@ class AggregateRootTest {
         aggregate.loadFromHistory(Collections.<DomainEvent<?>>singletonList(new TestEvent()));
         assertEquals(2, aggregate.handled);
         assertThrows(IllegalStateException.class, () -> new AggregateRoot<StringEntityId>() {
-            @Override public StringEntityId id() { return new StringEntityId("missing"); }
+            @Override
+            public StringEntityId id() {
+                return new StringEntityId("missing");
+            }
         }.apply(new TestEvent()));
     }
+
     @Test
     void shouldExposeDomainIdentityAndCompareEntitiesById() {
         IdentityAggregate first = new IdentityAggregate(new StringEntityId("same"));
@@ -97,6 +91,7 @@ class AggregateRootTest {
         assertEquals(first.id(), second.id());
         assertEquals(true, first.sameIdentityAs(second));
     }
+
     @Test
     void shouldPersistThroughRegisteredRepository() {
         PersistentAggregate aggregate = new PersistentAggregate(new StringEntityId("persisted"));
@@ -109,43 +104,7 @@ class AggregateRootTest {
         assertEquals(1, repository.deletes);
         RepositoryRegistry.unregister(PersistentAggregate.class);
     }
-    private static final class AppliedAggregate extends AggregateRoot<StringEntityId> {
-        void record(TestEvent event) { apply(event); }
-        @EventHandler private void on(TestEvent event) { }
-        @Override public StringEntityId id() { return new StringEntityId("order-1"); }
-    }
-    private static final class TestEvent extends DomainEvent<TestRootId> {
-        TestEvent() { super(new EntityIdPath(new TestRootId("order-1"))); }
-    }
-    private static final class TestRootId implements AggregateRootId {
-        private static final EntityType TYPE = new StringEntityType("Order");
-        private final String value;
-        private TestRootId(String value) { this.value = value; }
-        @Override public EntityType getType() { return TYPE; }
-        @Override public String asString() { return value; }
-        @Override public String asTypedString() { return TYPE.asString() + ":" + value; }
-    }
-    private static final class HandlingAggregate extends AggregateRoot<StringEntityId> {
-        private int handled;
-        void record(TestEvent event) { apply(event); }
-        @EventHandler private void on(TestEvent event) { handled++; }
-        @Override public StringEntityId id() { return new StringEntityId("order-1"); }
-    }
-    private static final class IdentityAggregate extends AggregateRoot<StringEntityId> {
-        private final StringEntityId id;
-        private IdentityAggregate(StringEntityId id) { this.id = id; }
-        @Override public StringEntityId id() { return id; }
-    }
-    private static final class PersistentAggregate extends AggregateRoot<StringEntityId> {
-        private final StringEntityId id; private PersistentAggregate(StringEntityId id) { this.id = id; }
-        @Override public StringEntityId id() { return id; }
-    }
-    private static final class RecordingRepository implements Repository<PersistentAggregate, StringEntityId> {
-        private int saves; private int deletes;
-        @Override public Optional<PersistentAggregate> findById(StringEntityId id) { return Optional.empty(); }
-        @Override public PersistentAggregate save(PersistentAggregate aggregate) { saves++; return aggregate; }
-        @Override public void deleteById(StringEntityId id) { deletes++; }
-    }
+
     @Test
     void shouldBufferPullAndClearDomainEvents() {
         TestAggregate aggregate = new TestAggregate("order-1");
@@ -168,6 +127,116 @@ class AggregateRootTest {
         TestAggregate aggregate = new TestAggregate("order-1");
 
         assertThrows(NullPointerException.class, aggregate::raiseNullEvent);
+    }
+
+    private static final class AppliedAggregate extends AggregateRoot<StringEntityId> {
+        void record(TestEvent event) {
+            apply(event);
+        }
+
+        @EventHandler
+        private void on(TestEvent event) {
+        }
+
+        @Override
+        public StringEntityId id() {
+            return new StringEntityId("order-1");
+        }
+    }
+
+    private static final class TestEvent extends DomainEvent<TestRootId> {
+        TestEvent() {
+            super(new EntityIdPath(new TestRootId("order-1")));
+        }
+    }
+
+    private static final class TestRootId implements AggregateRootId {
+        private static final EntityType TYPE = new StringEntityType("Order");
+        private final String value;
+
+        private TestRootId(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public EntityType getType() {
+            return TYPE;
+        }
+
+        @Override
+        public String asString() {
+            return value;
+        }
+
+        @Override
+        public String asTypedString() {
+            return TYPE.asString() + ":" + value;
+        }
+    }
+
+    private static final class HandlingAggregate extends AggregateRoot<StringEntityId> {
+        private int handled;
+
+        void record(TestEvent event) {
+            apply(event);
+        }
+
+        @EventHandler
+        private void on(TestEvent event) {
+            handled++;
+        }
+
+        @Override
+        public StringEntityId id() {
+            return new StringEntityId("order-1");
+        }
+    }
+
+    private static final class IdentityAggregate extends AggregateRoot<StringEntityId> {
+        private final StringEntityId id;
+
+        private IdentityAggregate(StringEntityId id) {
+            this.id = id;
+        }
+
+        @Override
+        public StringEntityId id() {
+            return id;
+        }
+    }
+
+    private static final class PersistentAggregate extends AggregateRoot<StringEntityId> {
+        private final StringEntityId id;
+
+        private PersistentAggregate(StringEntityId id) {
+            this.id = id;
+        }
+
+        @Override
+        public StringEntityId id() {
+            return id;
+        }
+    }
+
+    private static final class RecordingRepository implements Repository<PersistentAggregate, StringEntityId> {
+        private int saves;
+        private int deletes;
+
+        @Override
+        public Optional<PersistentAggregate> findById(StringEntityId id) {
+            return Optional.empty();
+        }
+
+        @Override
+        public PersistentAggregate save(PersistentAggregate aggregate) {
+            saves++;
+            return aggregate;
+        }
+
+        @Override
+        public void deleteById(StringEntityId id) {
+            deletes++;
+        }
     }
 
     private static final class TestAggregate extends AggregateRoot<String> {

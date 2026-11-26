@@ -49,7 +49,9 @@ public class QuarkusJpaProjectionService {
         runOnce();
     }
 
-    /** 在事务中执行一次待处理投影拉取。 */
+    /**
+     * 在事务中执行一次待处理投影拉取。
+     */
     @Transactional
     public void runOnce() {
         if (projectionPositionRepository.isUnsatisfied()) {

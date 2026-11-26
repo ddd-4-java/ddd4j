@@ -14,8 +14,8 @@
  */
 package io.ddd4j.micronaut.cqrs;
 
-import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
 import io.ddd4j.core.cqrs.readmodel.ProjectionCron;
+import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -42,7 +42,9 @@ public class MicronautProjectionScheduler implements ViewScheduler {
 
     private final ScheduledExecutorService executor;
 
-    /** 创建由框架管理的调度器。 */
+    /**
+     * 创建由框架管理的调度器。
+     */
     public MicronautProjectionScheduler() {
         this(Executors.newScheduledThreadPool(
                 Runtime.getRuntime().availableProcessors(),
@@ -53,14 +55,18 @@ public class MicronautProjectionScheduler implements ViewScheduler {
                 }));
     }
 
-    /** 使用指定执行器，关闭时终止该执行器。
+    /**
+     * 使用指定执行器，关闭时终止该执行器。
+     *
      * @param executor 调度执行器
      */
     protected MicronautProjectionScheduler(ScheduledExecutorService executor) {
         this.executor = Objects.requireNonNull(executor, "executor");
     }
 
-    /** 关闭本调度器拥有的执行器。 */
+    /**
+     * 关闭本调度器拥有的执行器。
+     */
     public void shutdown() {
         executor.shutdownNow();
     }
@@ -146,13 +152,19 @@ public class MicronautProjectionScheduler implements ViewScheduler {
         }
     }
 
-    /** 保留六段数值语法，时间搜索复用 core；保留本地时区语义。 */
+    /**
+     * 保留六段数值语法，时间搜索复用 core；保留本地时区语义。
+     */
     public static class CronExpression {
         private final ProjectionCron delegate;
+
         private CronExpression(ProjectionCron delegate) {
             this.delegate = delegate;
         }
-        /** 解析旧入口的表达式。
+
+        /**
+         * 解析旧入口的表达式。
+         *
          * @param expression 六段数值表达式
          * @return 已解析对象
          */
@@ -162,7 +174,10 @@ public class MicronautProjectionScheduler implements ViewScheduler {
             }
             return new CronExpression(ProjectionCron.parse(expression));
         }
-        /** 从本地时间查找下一时间。
+
+        /**
+         * 从本地时间查找下一时间。
+         *
          * @param from 起始本地时间
          * @return 下一时间，未来八年无匹配返回 null
          */

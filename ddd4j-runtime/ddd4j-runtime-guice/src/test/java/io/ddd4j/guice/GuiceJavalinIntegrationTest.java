@@ -21,11 +21,11 @@ import java.sql.Connection;
 import java.sql.Statement;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
-/** 真实 Javalin HTTP 到 Guice 命令路由；事务由执行器拥有。 */
+/**
+ * 真实 Javalin HTTP 到 Guice 命令路由；事务由执行器拥有。
+ */
 class GuiceJavalinIntegrationTest {
     @Test
     void httpDispatchAndExecutorOwnedTransactions() throws Exception {
@@ -36,7 +36,9 @@ class GuiceJavalinIntegrationTest {
         TxExecutor executor = new TxExecutor(source);
         Injector injector = Guice.createInjector(Ddd4jGuiceModule.basic(), new AbstractModule() {
             @Override
-            protected void configure() { bind(TxExecutor.class).toInstance(executor); }
+            protected void configure() {
+                bind(TxExecutor.class).toInstance(executor);
+            }
         });
         CommandBus bus = injector.getInstance(CommandBus.class);
         Javalin app = Javalin.create(config -> {
@@ -60,27 +62,43 @@ class GuiceJavalinIntegrationTest {
         }
     }
 
-    /** 事务测试命令，不改变总线事务边界。 */
+    /**
+     * 事务测试命令，不改变总线事务边界。
+     */
     static final class TxCommand implements Command {
         private final String mode;
-        TxCommand(String mode) { this.mode = mode; }
+
+        TxCommand(String mode) {
+            this.mode = mode;
+        }
     }
 
-    /** 模拟应用既有事务拥有者，失败 Result 和异常均由执行器回滚。 */
+    /**
+     * 模拟应用既有事务拥有者，失败 Result 和异常均由执行器回滚。
+     */
     static final class TxExecutor implements CommandExecutor<TxCommand> {
         private final JdbcDataSource source;
         private final Result<String> failed = Result.fail("rejected");
         private final IllegalStateException failure = new IllegalStateException("executor failure");
-        TxExecutor(JdbcDataSource source) { this.source = source; }
+
+        TxExecutor(JdbcDataSource source) {
+            this.source = source;
+        }
+
         @Override
-        public Set<Class<? extends Command>> supportedCommands() { return Set.of(TxCommand.class); }
+        public Set<Class<? extends Command>> supportedCommands() {
+            return Set.of(TxCommand.class);
+        }
+
         @Override
         public Result<String> execute(TxCommand command) {
             try (Connection connection = source.getConnection()) {
                 connection.setAutoCommit(false);
                 try (Statement statement = connection.createStatement()) {
                     statement.executeUpdate("UPDATE DDD4J_PROJECTION_POSITION SET next_event_number = next_event_number + 1 WHERE stream_id = 'r07-tx'");
-                    if ("throw".equals(command.mode)) { throw failure; }
+                    if ("throw".equals(command.mode)) {
+                        throw failure;
+                    }
                     if ("fail".equals(command.mode)) {
                         connection.rollback();
                         return failed;

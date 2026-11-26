@@ -52,7 +52,7 @@ public final class MappingKit {
      * 查询源类型对应的目标类型。
      *
      * @param source 源类型
-     * @param <T> 目标类型
+     * @param <T>    目标类型
      * @return 已注册的目标类型
      */
     public <T> Class<T> get(Class source) {
@@ -63,8 +63,8 @@ public final class MappingKit {
      * 按已注册的类型映射转换对象。
      *
      * @param source 源对象
-     * @param <T> 目标类型
-     * @param <S> 源类型
+     * @param <T>    目标类型
+     * @param <S>    源类型
      * @return 转换后的目标对象
      */
     public <T, S> T convert(S source) {
@@ -79,8 +79,8 @@ public final class MappingKit {
      * 按已注册的类型映射逐项转换列表。
      *
      * @param source 源对象列表
-     * @param <T> 目标类型
-     * @param <S> 源类型
+     * @param <T>    目标类型
+     * @param <S>    源类型
      * @return 转换后的目标对象列表
      */
     public <T, S> List<T> convert(List<S> source) {

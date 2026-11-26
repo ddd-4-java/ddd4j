@@ -16,9 +16,9 @@ package io.ddd4j.spring.i18n;
 
 import io.ddd4j.core.i18n.I18nProvider;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.extension.context.NestedMessageSource;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.extension.context.NestedMessageSource;
 import org.springframework.stereotype.Component;
 
 import java.util.Locale;
@@ -34,7 +34,9 @@ import java.util.Locale;
 @Component
 public class SpringI18nProvider implements I18nProvider {
 
-    /** Spring 消息源接口；构造器仍要求本线 Easy4J 嵌套消息源。 */
+    /**
+     * Spring 消息源接口；构造器仍要求本线 Easy4J 嵌套消息源。
+     */
     private final MessageSource messageSource;
 
     /**
@@ -49,7 +51,7 @@ public class SpringI18nProvider implements I18nProvider {
     /**
      * 使用当前线程的 Locale 解析国际化消息。
      *
-     * @param key 消息代码
+     * @param key  消息代码
      * @param args 消息占位符参数
      * @return 当前 Locale 对应的消息文本
      */

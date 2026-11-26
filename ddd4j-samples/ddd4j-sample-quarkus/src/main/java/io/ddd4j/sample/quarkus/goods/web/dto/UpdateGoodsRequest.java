@@ -14,13 +14,11 @@
  */
 package io.ddd4j.sample.quarkus.goods.web.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.util.Objects;
-
 import java.math.BigDecimal;
+import java.util.Objects;
 
 /**
  * 更新商品请求 DTO。
@@ -39,7 +37,7 @@ public final class UpdateGoodsRequest {
     private final BigDecimal price;
 
     /**
-     * @param name 新商品名称
+     * @param name  新商品名称
      * @param price 新商品价格
      */
     @JsonCreator()
@@ -48,13 +46,17 @@ public final class UpdateGoodsRequest {
         this.price = price;
     }
 
-    /** @return 新商品名称 */
+    /**
+     * @return 新商品名称
+     */
     @JsonProperty("name")
     public String name() {
         return name;
     }
 
-    /** @return 新商品价格 */
+    /**
+     * @return 新商品价格
+     */
     @JsonProperty("price")
     public BigDecimal price() {
         return price;

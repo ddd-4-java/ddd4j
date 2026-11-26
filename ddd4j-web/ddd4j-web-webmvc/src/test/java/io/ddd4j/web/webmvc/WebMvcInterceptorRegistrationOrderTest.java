@@ -24,8 +24,8 @@ import io.ddd4j.web.core.version.ApiVersionResolver;
 import io.ddd4j.web.webmvc.interceptor.ApiVersionWebInterceptor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.support.StaticListableBeanFactory;
-import org.springframework.web.servlet.handler.MappedInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.handler.MappedInterceptor;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 
 import java.util.List;

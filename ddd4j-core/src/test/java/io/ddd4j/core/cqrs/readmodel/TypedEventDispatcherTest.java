@@ -14,15 +14,12 @@
  */
 package io.ddd4j.core.cqrs.readmodel;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.util.Objects;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -66,14 +63,14 @@ class TypedEventDispatcherTest {
 
         private final String id;
 
-        @Override
-        public String getEventType() {
-            return "person.created";
-        }
-
         @JsonCreator()
         PersonCreatedEvent(@JsonProperty("id") String id) {
             this.id = id;
+        }
+
+        @Override
+        public String getEventType() {
+            return "person.created";
         }
 
         @JsonProperty("id")

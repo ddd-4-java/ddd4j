@@ -14,25 +14,22 @@
  */
 package io.ddd4j.sample.quarkus.satoken.config;
 
+import cn.dev33.satoken.SaManager;
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.annotation.SaMode;
 import cn.dev33.satoken.context.SaHolder;
-import cn.dev33.satoken.SaManager;
-import cn.dev33.satoken.context.model.SaTokenContextModelBox;
 import cn.dev33.satoken.context.mock.SaRequestForMock;
 import cn.dev33.satoken.context.mock.SaTokenContextMockUtil;
+import cn.dev33.satoken.context.model.SaTokenContextModelBox;
 import cn.dev33.satoken.stp.StpUtil;
 import io.ddd4j.core.api.R;
 import io.ddd4j.kit.lang.StrKit;
+import io.ddd4j.sample.quarkus.satoken.CatalogTradeResource;
 import jakarta.annotation.Priority;
 import jakarta.ws.rs.Priorities;
-import jakarta.ws.rs.container.ContainerRequestContext;
-import jakarta.ws.rs.container.ContainerRequestFilter;
-import jakarta.ws.rs.container.ContainerResponseContext;
-import jakarta.ws.rs.container.ContainerResponseFilter;
-import jakarta.ws.rs.container.ResourceInfo;
+import jakarta.ws.rs.container.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
@@ -76,14 +73,18 @@ public class SaTokenRequestFilter implements ContainerRequestFilter, ContainerRe
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
         var context = SaManager.getSaTokenContext();
-        if (context.isValid()) { requestContext.setProperty(PREVIOUS, context.getModelBox()); }
+        if (context.isValid()) {
+            requestContext.setProperty(PREVIOUS, context.getModelBox());
+        }
         SaTokenContextMockUtil.setMockContext();
         SaTokenContextModelBox owned = context.getModelBox();
         Runnable cleanup = () -> {
             if (context.isValid() && context.getModelBox() == owned) {
                 context.clearContext();
                 SaTokenContextModelBox previous = (SaTokenContextModelBox) requestContext.getProperty(PREVIOUS);
-                if (Objects.nonNull(previous)) { context.setContext(previous.getRequest(), previous.getResponse(), previous.getStorage()); }
+                if (Objects.nonNull(previous)) {
+                    context.setContext(previous.getRequest(), previous.getResponse(), previous.getStorage());
+                }
             }
         };
         requestContext.setProperty(PREVIOUS + ".cleanup", cleanup);
@@ -122,10 +123,26 @@ public class SaTokenRequestFilter implements ContainerRequestFilter, ContainerRe
     @Override
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
         Runnable cleanup = (Runnable) requestContext.getProperty(PREVIOUS + ".cleanup");
-        if (Objects.nonNull(cleanup)) { cleanup.run(); }
+        if (Objects.nonNull(cleanup)) {
+            cleanup.run();
+        }
     }
 
     private Response authorize() {
+        Class<?> resourceClass = resourceInfo.getResourceClass();
+        if (Objects.nonNull(resourceClass) && CatalogTradeResource.class.isAssignableFrom(resourceClass)) {
+            if (!StpUtil.isLogin()) {
+                return failure(Response.Status.UNAUTHORIZED, "unauthenticated");
+            }
+            String operation = resourceInfo.getResourceMethod().getName();
+            if ("goods".equals(operation) || "order".equals(operation)) {
+                return null;
+            }
+            String permission = "cancelOrder".equals(operation) ? "order:cancel" : "order:pay";
+            return StpUtil.hasPermission(permission) ? null
+                    : failure(Response.Status.FORBIDDEN, "required permission is missing");
+        }
+
         SaCheckLogin login = findAnnotation(SaCheckLogin.class);
         SaCheckRole role = findAnnotation(SaCheckRole.class);
         SaCheckPermission permission = findAnnotation(SaCheckPermission.class);

@@ -31,7 +31,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public final class VertxDomainEventPublisher implements DomainEventPublisher {
 
-    /** 本地领域事件总线地址。 */
+    /**
+     * 本地领域事件总线地址。
+     */
     public static final String ADDRESS = "ddd4j.domain.events";
     private static final String CODEC_PREFIX = "ddd4j.local-event.";
     private final Vertx vertx;

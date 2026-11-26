@@ -50,9 +50,8 @@ public final class CacheSpan {
      * @param backend   后端标识（如 "redis"、"caffeine"）
      * @param supplier  缓存读操作
      * @param missCheck 未命中检查（true 表示 cache miss）
+     * @param <T>       返回值类型
      * @return supplier 的返回值
-     *
-     * @param <T> 返回值类型
      */
     public static <T> T instrument(String biz, String backend, Supplier<T> supplier, Supplier<Boolean> missCheck) {
         if (!Ddd4jOtel.isAvailable()) {

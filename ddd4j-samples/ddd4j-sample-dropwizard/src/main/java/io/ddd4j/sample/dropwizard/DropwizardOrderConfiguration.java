@@ -14,8 +14,8 @@
  */
 package io.ddd4j.sample.dropwizard;
 
-import io.ddd4j.web.dropwizard.Ddd4jDropwizardWebConfiguration;
 import io.ddd4j.web.core.auth.AuthenticationMode;
+import io.ddd4j.web.dropwizard.Ddd4jDropwizardWebConfiguration;
 import io.dropwizard.core.Configuration;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,6 +29,9 @@ import java.util.Arrays;
 @Setter
 public class DropwizardOrderConfiguration extends Configuration {
 
+    private String catalogJdbcUrl;
+    private String catalogDbUser;
+    private String catalogDbPassword;
     private Ddd4jDropwizardWebConfiguration ddd4jWeb = defaultWebConfiguration();
 
     private static Ddd4jDropwizardWebConfiguration defaultWebConfiguration() {

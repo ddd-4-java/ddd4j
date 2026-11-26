@@ -14,13 +14,11 @@
  */
 package io.ddd4j.sample.quarkus.shiro.goods.web.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.util.Objects;
-
 import java.math.BigDecimal;
+import java.util.Objects;
 
 /**
  * 更新商品 REST 请求。
@@ -38,7 +36,7 @@ public final class UpdateGoodsRequest {
     /**
      * 创建商品更新请求。
      *
-     * @param name 商品名称
+     * @param name  商品名称
      * @param price 商品价格
      */
     @JsonCreator()

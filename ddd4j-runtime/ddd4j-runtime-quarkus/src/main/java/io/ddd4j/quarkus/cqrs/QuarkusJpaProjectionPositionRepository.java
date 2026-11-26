@@ -49,7 +49,7 @@ public class QuarkusJpaProjectionPositionRepository implements ProjectionPositio
     @Override
     public List<ProjectionPosition> findAll() {
         return manager().createQuery("select p from QuarkusJpaProjectionPosition p",
-                QuarkusJpaProjectionPosition.class).getResultList().stream()
+                        QuarkusJpaProjectionPosition.class).getResultList().stream()
                 .map(position -> (ProjectionPosition) position)
                 .collect(java.util.stream.Collectors.toList());
     }

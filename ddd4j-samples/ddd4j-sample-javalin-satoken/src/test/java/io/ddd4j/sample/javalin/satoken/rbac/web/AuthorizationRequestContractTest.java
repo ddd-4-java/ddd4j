@@ -15,6 +15,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class AuthorizationRequestContractTest {
 
+    private static void valueContract(Object bean, Object constructed) {
+        assertEquals(constructed, bean);
+        assertEquals(constructed.hashCode(), bean.hashCode());
+        assertFalse(Modifier.isFinal(bean.getClass().getModifiers()));
+    }
+
     @Test
     void createUserRequestRetainsJsonFieldContract() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
@@ -27,12 +33,6 @@ class AuthorizationRequestContractTest {
         assertEquals("Alice", request.realName());
         assertEquals(request, mapper.readValue(mapper.writeValueAsString(request),
                 AuthorizationController.CreateUserRequest.class));
-    }
-
-    private static void valueContract(Object bean, Object constructed) {
-        assertEquals(constructed, bean);
-        assertEquals(constructed.hashCode(), bean.hashCode());
-        assertFalse(Modifier.isFinal(bean.getClass().getModifiers()));
     }
 
     @Test

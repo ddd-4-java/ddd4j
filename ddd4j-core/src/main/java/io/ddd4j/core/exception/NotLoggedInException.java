@@ -47,7 +47,7 @@ public class NotLoggedInException extends AuthenticationException {
      * 使用错误消息创建未登录异常。
      *
      * @param message 错误消息
-     * @param cause 原始异常
+     * @param cause   原始异常
      */
     public NotLoggedInException(String message, Throwable cause) {
         super(message, cause);

@@ -14,23 +14,13 @@
  */
 package io.ddd4j.web.core.error;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import io.ddd4j.core.exception.BizRuntimeException;
 import io.ddd4j.core.api.ApiCode;
-import io.ddd4j.core.exception.AuthenticationException;
-import io.ddd4j.core.exception.AuthorizationException;
-import io.ddd4j.core.exception.PermissionDeniedException;
-import io.ddd4j.core.exception.TokenExpiredException;
-import io.ddd4j.core.exception.IdempotentException;
-import io.ddd4j.core.exception.ParamException;
-import io.ddd4j.core.exception.ValidateException;
+import io.ddd4j.core.exception.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.NoSuchElementException;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class DefaultWebExceptionTranslatorTest {
 

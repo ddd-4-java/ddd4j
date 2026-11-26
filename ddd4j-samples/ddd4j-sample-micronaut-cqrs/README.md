@@ -1,5 +1,22 @@
 # ddd4j-sample-micronaut-cqrs
 
+## 当前商品交易入口
+
+此模块以 CQRS 方式运行共享商品交易。先按[示例总览](../README.md#启动默认订单示例)配置 MySQL。以下命令从仓库根目录运行，使用实际 Maven 版本替换 `<version>`。
+
+```bash
+module=ddd4j-samples/ddd4j-sample-micronaut-cqrs
+./mvnw -pl "$module" -am -DskipTests -Dmaven.javadoc.skip=true -DincludeScope=runtime -Dmdep.outputFile=target/runtime-classpath.txt package dependency:build-classpath
+java -cp "$module/target/ddd4j-sample-micronaut-cqrs-<version>.jar:$(cat "$module/target/runtime-classpath.txt")" io.ddd4j.sample.micronaut.cqrs.MicronautCqrsApplication
+```
+
+业务请求携带 `X-Tenant-Id`。商品地址为 `/orders/catalog/goods/{spuCode}`，订单地址为 `/orders/catalog/orders/{orderNo}`。支付、取消和履约分别使用订单子路径 `/payment`、`/cancel`、`/fulfill`。
+
+写操作经命令总线执行。调用 `POST /orders/catalog/projections/orders/{orderNo}` 构建订单投影。
+
+<details>
+<summary>商品交易迁移前的说明</summary>
+
 Micronaut CQRS 样例提供默认内存流程和显式 PostgreSQL 流程。
 
 ## 启动
@@ -29,3 +46,5 @@ Micronaut CQRS 样例提供默认内存流程和显式 PostgreSQL 流程。
 ```bash
 ./mvnw -pl ddd4j-samples/ddd4j-sample-micronaut-cqrs -am test
 ```
+
+</details>

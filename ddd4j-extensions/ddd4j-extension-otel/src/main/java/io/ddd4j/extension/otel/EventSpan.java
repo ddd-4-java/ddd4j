@@ -36,10 +36,10 @@ public final class EventSpan {
     /**
      * 包装领域事件发布。
      *
-     * @param eventType 事件类型
+     * @param eventType     事件类型
      * @param aggregateType 聚合类型
-     * @param aggregateId 聚合标识
-     * @param runnable 待追踪操作
+     * @param aggregateId   聚合标识
+     * @param runnable      待追踪操作
      */
     public static void publish(String eventType, String aggregateType, String aggregateId, Runnable runnable) {
         if (!Ddd4jOtel.isAvailable()) {
@@ -68,9 +68,9 @@ public final class EventSpan {
     /**
      * 包装 CQRS 查询执行。
      *
-     * @param <T> 返回值类型
+     * @param <T>       返回值类型
      * @param queryType 查询类型
-     * @param supplier 待追踪操作
+     * @param supplier  待追踪操作
      * @return 查询结果
      */
     public static <T> T query(String queryType, java.util.function.Supplier<T> supplier) {
@@ -97,9 +97,9 @@ public final class EventSpan {
     /**
      * 包装投影执行。
      *
-     * @param <T> 返回值类型
+     * @param <T>            返回值类型
      * @param projectionName 投影名称
-     * @param supplier 待追踪操作
+     * @param supplier       待追踪操作
      * @return 投影结果
      */
     public static <T> T projection(String projectionName, java.util.function.Supplier<T> supplier) {

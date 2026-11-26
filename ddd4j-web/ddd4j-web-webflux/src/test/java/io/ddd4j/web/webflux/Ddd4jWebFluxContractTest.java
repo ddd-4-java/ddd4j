@@ -13,45 +13,38 @@
  * limitations under the License.
  */
 package io.ddd4j.web.webflux;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.mock;
-import java.util.concurrent.atomic.AtomicInteger;
-import io.ddd4j.web.core.error.WebStatusException;
-import io.ddd4j.core.subject.SubjectProvider;
-import io.ddd4j.core.subject.Subject;
-import io.ddd4j.core.context.BaseContext;
-import io.ddd4j.core.constant.SpiKeys;
-import io.ddd4j.core.auth.AuthPrincipal;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.ddd4j.core.auth.AuthPrincipal;
+import io.ddd4j.core.constant.SpiKeys;
+import io.ddd4j.core.context.BaseContext;
+import io.ddd4j.core.subject.Subject;
+import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.extension.otel.Ddd4jOtel;
+import io.ddd4j.extension.otel.HttpSpan;
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
 import io.ddd4j.web.core.auth.WebAccessPolicy;
 import io.ddd4j.web.core.context.WebHeaders;
 import io.ddd4j.web.core.context.WebRequestContext;
 import io.ddd4j.web.core.context.WebRequestContextFactory;
 import io.ddd4j.web.core.context.WebRequestLifecycle;
-import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
-import io.ddd4j.web.core.idempotency.IdempotencyGuard;
 import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
 import io.ddd4j.web.core.error.WebError;
-import io.ddd4j.extension.otel.HttpSpan;
+import io.ddd4j.web.core.error.WebStatusException;
+import io.ddd4j.web.core.idempotency.IdempotencyGuard;
+import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.web.webflux.error.GlobalErrorAttributes;
 import io.ddd4j.web.webflux.error.GlobalErrorWebExceptionHandler;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
-import io.opentelemetry.context.propagation.ContextPropagators;
 import io.opentelemetry.context.Context;
+import io.opentelemetry.context.propagation.ContextPropagators;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
-import io.opentelemetry.sdk.trace.SdkTracerProvider;
 import io.opentelemetry.sdk.trace.ReadWriteSpan;
 import io.opentelemetry.sdk.trace.ReadableSpan;
+import io.opentelemetry.sdk.trace.SdkTracerProvider;
 import io.opentelemetry.sdk.trace.SpanProcessor;
 import io.opentelemetry.sdk.trace.data.SpanData;
 import org.junit.jupiter.api.AfterEach;
@@ -61,27 +54,30 @@ import org.springframework.http.HttpStatus;
 import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 import org.springframework.mock.web.server.MockServerWebExchange;
 import org.springframework.web.server.handler.ExceptionHandlingWebHandler;
-import reactor.core.publisher.Mono;
 import reactor.core.Disposable;
+import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.Collections;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.CountDownLatch;
 import java.time.Duration;
+import java.util.Collections;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class Ddd4jWebFluxContractTest {
 
-    private SdkTracerProvider tracerProvider;
     private final CompletableFuture<SpanData> endedSpan = new CompletableFuture<>();
+    private SdkTracerProvider tracerProvider;
 
     private static void resetOpenTelemetry() throws Exception {
         GlobalOpenTelemetry.resetForTest();
@@ -228,6 +224,7 @@ class Ddd4jWebFluxContractTest {
         assertTrue(chainObservedValidSpan.get());
         assertFalse(Span.current().getSpanContext().isValid());
     }
+
     @Test
     void shouldReleaseIdempotencyLeaseAndRequestContextOnCancellation() throws InterruptedException {
         AtomicInteger completed = new AtomicInteger();

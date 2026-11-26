@@ -61,24 +61,42 @@ import java.util.Objects;
  */
 public final class HttpSpan {
 
-    /** Span 属性键 {@code http.request.method}。 */
+    /**
+     * Span 属性键 {@code http.request.method}。
+     */
     public static final AttributeKey<String> ATTR_HTTP_METHOD = AttributeKey.stringKey("http.request.method");
-    /** Span 属性键 {@code http.route}。 */
+    /**
+     * Span 属性键 {@code http.route}。
+     */
     public static final AttributeKey<String> ATTR_HTTP_ROUTE = AttributeKey.stringKey("http.route");
-    /** Span 属性键 {@code http.response.status_code}。 */
+    /**
+     * Span 属性键 {@code http.response.status_code}。
+     */
     public static final AttributeKey<String> ATTR_HTTP_STATUS = AttributeKey.stringKey("http.response.status_code");
-    /** Span 属性键 {@code url.path}。 */
+    /**
+     * Span 属性键 {@code url.path}。
+     */
     public static final AttributeKey<String> ATTR_URL_PATH = AttributeKey.stringKey("url.path");
-    /** Span 属性键 {@code url.scheme}。 */
+    /**
+     * Span 属性键 {@code url.scheme}。
+     */
     public static final AttributeKey<String> ATTR_URL_SCHEME = AttributeKey.stringKey("url.scheme");
-    /** Span 属性键 {@code user_agent.original}。 */
+    /**
+     * Span 属性键 {@code user_agent.original}。
+     */
     public static final AttributeKey<String> ATTR_USER_AGENT = AttributeKey.stringKey("user_agent.original");
-    /** Span 属性键 {@code client.address}。 */
+    /**
+     * Span 属性键 {@code client.address}。
+     */
     public static final AttributeKey<String> ATTR_CLIENT_IP = AttributeKey.stringKey("client.address");
 
-    /** Span 属性键 {@code ddd4j.request.id}。 */
+    /**
+     * Span 属性键 {@code ddd4j.request.id}。
+     */
     public static final AttributeKey<String> ATTR_DDD4J_REQUEST_ID = AttributeKey.stringKey("ddd4j.request.id");
-    /** Span 属性键 {@code ddd4j.tenant.id}。 */
+    /**
+     * Span 属性键 {@code ddd4j.tenant.id}。
+     */
     public static final AttributeKey<String> ATTR_DDD4J_TENANT_ID = AttributeKey.stringKey("ddd4j.tenant.id");
     private static final TextMapSetter<Map<String, String>> SETTER = new TextMapSetter<Map<String, String>>() {
         @Override
@@ -181,7 +199,7 @@ public final class HttpSpan {
      * 在 span 上记录异常并标记 ERROR。
      *
      * @param span 追踪片段
-     * @param t 异常
+     * @param t    异常
      */
     public static void recordError(Span span, Throwable t) {
         if (Objects.isNull(span) || Objects.isNull(t)) {

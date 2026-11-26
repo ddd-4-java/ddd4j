@@ -98,6 +98,7 @@ public final class SubjectKit {
 
     /**
      * 获取权限数据源（默认空实现兜底）。
+     *
      * @return 当前数据提供者
      */
     public static SubjectDataProvider getDataProvider() {
@@ -122,6 +123,7 @@ public final class SubjectKit {
 
     /**
      * 获取策略集（默认单例兜底）。
+     *
      * @return 当前策略集
      */
     public static SubjectStrategy getStrategy() {
@@ -159,7 +161,7 @@ public final class SubjectKit {
     /**
      * 读取当前会话的认证主体。
      *
-     * @param <T> 认证主体类型
+     * @param <T>   认证主体类型
      * @param clazz 要求的认证主体类型；类型不匹配时返回 null
      * @return 认证主体，未获取到或类型不匹配时为 null
      */
@@ -174,7 +176,7 @@ public final class SubjectKit {
     /**
      * 按登录标识读取认证主体。
      *
-     * @param <T> 认证主体类型
+     * @param <T>     认证主体类型
      * @param loginId 登录标识
      * @return 认证主体，未获取到或类型不匹配时为 null
      */
@@ -185,9 +187,9 @@ public final class SubjectKit {
     /**
      * 按登录标识读取认证主体。
      *
-     * @param <T> 认证主体类型
+     * @param <T>     认证主体类型
      * @param loginId 登录标识
-     * @param clazz 要求的认证主体类型；类型不匹配时返回 null
+     * @param clazz   要求的认证主体类型；类型不匹配时返回 null
      * @return 认证主体，未获取到或类型不匹配时为 null
      */
     public static <T extends AuthPrincipal> T getPrincipalByLoginId(Object loginId, Class<T> clazz) {
@@ -201,7 +203,7 @@ public final class SubjectKit {
     /**
      * 按凭证读取认证主体。
      *
-     * @param <T> 认证主体类型
+     * @param <T>        认证主体类型
      * @param tokenValue 会话凭证
      * @return 认证主体，未获取到或类型不匹配时为 null
      */
@@ -212,9 +214,9 @@ public final class SubjectKit {
     /**
      * 按凭证读取认证主体。
      *
-     * @param <T> 认证主体类型
+     * @param <T>        认证主体类型
      * @param tokenValue 会话凭证
-     * @param clazz 要求的认证主体类型；类型不匹配时返回 null
+     * @param clazz      要求的认证主体类型；类型不匹配时返回 null
      * @return 认证主体，未获取到或类型不匹配时为 null
      */
     public static <T extends AuthPrincipal> T getPrincipalByToken(String tokenValue, Class<T> clazz) {
@@ -356,8 +358,8 @@ public final class SubjectKit {
      * 校验凭证（仅校验，不建会话）。
      *
      * @param token 凭证
+     * @param <T>   认证主体类型
      * @return 认证主体，校验失败返回 null
-     * @param <T> 认证主体类型
      */
     public static <T extends AuthPrincipal> T verify(String token) {
         return getSubject().verify(token);
@@ -378,7 +380,7 @@ public final class SubjectKit {
     /**
      * 判断指定会话是否拥有权限。
      *
-     * @param loginId 登录标识
+     * @param loginId    登录标识
      * @param permission 权限标识
      * @return 拥有权限时为 true
      */
@@ -399,7 +401,7 @@ public final class SubjectKit {
     /**
      * 判断指定会话是否拥有角色。
      *
-     * @param loginId 登录标识
+     * @param loginId        登录标识
      * @param roleIdentifier 角色标识
      * @return 拥有角色时为 true
      */
@@ -432,7 +434,7 @@ public final class SubjectKit {
     /**
      * 设置当前会话属性。
      *
-     * @param key 会话属性键
+     * @param key   会话属性键
      * @param value 会话属性值
      */
     public static void setAttribute(String key, Object value) {

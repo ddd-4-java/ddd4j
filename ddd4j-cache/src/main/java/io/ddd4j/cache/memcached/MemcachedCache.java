@@ -77,9 +77,9 @@ public class MemcachedCache<K, V> implements Cache<K, V> {
     /**
      * 使用指定 ObjectMapper 工厂创建 Memcached 缓存。
      *
-     * @param memcachedClient Memcached 客户端
-     * @param config 缓存配置
-     * @param valueType 缓存值类型
+     * @param memcachedClient     Memcached 客户端
+     * @param config              缓存配置
+     * @param valueType           缓存值类型
      * @param objectMapperFactory ObjectMapper 工厂
      */
     public MemcachedCache(MemcachedClient memcachedClient, CacheConfig config, Class<V> valueType, Function<String, ObjectMapper> objectMapperFactory) {

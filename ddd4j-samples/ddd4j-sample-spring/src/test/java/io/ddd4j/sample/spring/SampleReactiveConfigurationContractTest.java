@@ -13,13 +13,23 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Locale;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-/** 原生回退API与实际Boot两种Web上下文中的解析器命名契约。 */
+/**
+ * 原生回退API与实际Boot两种Web上下文中的解析器命名契约。
+ */
 class SampleReactiveConfigurationContractTest {
+    private static ConfigurableApplicationContext start(WebApplicationType type) {
+        SpringApplication application = new SpringApplication(SpringSampleApplication.class);
+        application.setWebApplicationType(type);
+        return application.run("--spring.profiles.active=locale-contract", "--server.port=0");
+    }
+
+    private static MockServerWebExchange exchange() {
+        return MockServerWebExchange.from(MockServerHttpRequest.get("/locale-contract")
+                .header("Accept-Language", "de-DE").header("X-Language", "fr-CA").build());
+    }
+
     @Test
     void publicApiExposesTheSameNativeAcceptHeaderDefault() throws Exception {
         assertTrue(Modifier.isPublic(SampleReactiveConfiguration.class.getModifiers()));
@@ -57,16 +67,5 @@ class SampleReactiveConfigurationContractTest {
             assertFalse(context.containsBean("nativeWebFluxLocaleContextResolver"));
             assertFalse(context.containsBean("sampleReactiveConfiguration"));
         }
-    }
-
-    private static ConfigurableApplicationContext start(WebApplicationType type) {
-        SpringApplication application = new SpringApplication(SpringSampleApplication.class);
-        application.setWebApplicationType(type);
-        return application.run("--server.port=0");
-    }
-
-    private static MockServerWebExchange exchange() {
-        return MockServerWebExchange.from(MockServerHttpRequest.get("/locale-contract")
-                .header("Accept-Language", "de-DE").header("X-Language", "fr-CA").build());
     }
 }

@@ -50,8 +50,10 @@
 </p>
 
 > A basic DDD application can use application services, aggregates, and repositories directly.
-> Applications that opt into event sourcing and separate read models can use `Command → Aggregate → Event Store → Projection / Query View`.
-> For reliable messaging, an outbox records events in the business transaction and a dispatcher publishes them to the selected broker.
+> Applications that opt into event sourcing and separate read models can use
+> `Command → Aggregate → Event Store → Projection / Query View`.
+> For reliable messaging, an outbox records events in the business transaction and a dispatcher publishes them to the
+> selected broker.
 
 ### 2.1 Three-layer architecture
 
@@ -111,10 +113,10 @@ ddd4j evolves along **three active lines** in parallel; HEADs always push the sa
 | `ddd4j-web`          | web abstractions                   | WebMVC / WebFlux / Javalin / Quarkus / Vert.x / Micronaut / Helidon / Dropwizard                                                                        |
 | `ddd4j-auth`         | auth abstractions                  | `Subject` SPI + Sa-Token / Security / Shiro                                                                                                             |
 | `ddd4j-cache`        | cache abstractions                 | cache SPI and implementations                                                                                                                           |
-| `ddd4j-runtime`      | multi-framework runtime binders    | Spring / Guice / Quarkus / Micronaut / Helidon / Vert.x / Dropwizard with shared test support in testkit                                                                          |
+| `ddd4j-runtime`      | multi-framework runtime binders    | Spring / Guice / Quarkus / Micronaut / Helidon / Vert.x / Dropwizard with shared test support in testkit                                                |
 | `ddd4j-extensions`   | cross-domain extensions            | akka / excel / jackson / license / monitor / pf4j / qlexpress / qrcode / validation / otel                                                              |
 | `ddd4j-parent`       | Maven parent POM                   | build / package / release rules                                                                                                                         |
-| `ddd4j-samples`      | sample applications                | shared Order domain with 28 samples across seven runtimes, covering default DDD, CQRS, Sa-Token, and Shiro                                                                                                        |
+| `ddd4j-samples`      | sample applications                | shared Order domain with 28 samples across seven runtimes, covering default DDD, CQRS, Sa-Token, and Shiro                                              |
 
 ## 5. Multi-runtime binding
 
@@ -128,7 +130,9 @@ ddd4j evolves along **three active lines** in parallel; HEADs always push the sa
 | Helidon     | `ddd4j-runtime-helidon`    | CDI / BeanManager    | CDI Event               | Helidon WebServer    |
 | Dropwizard  | `ddd4j-runtime-dropwizard` | explicit Bundle      | Listener collection     | Jersey               |
 
-To use CQRS, select the runtime for your framework from the table above. The runtime provides command bus and projection wiring. Choose persistence adapters from `ddd4j-data` as needed. The default DDD samples use application repositories directly. See the [sample guide](ddd4j-samples/README.md) for each framework.
+To use CQRS, select the runtime for your framework from the table above. The runtime provides command bus and projection
+wiring. Choose persistence adapters from `ddd4j-data` as needed. The default DDD samples use application repositories
+directly. See the [sample guide](ddd4j-samples/README.md) for each framework.
 
 ## 6. ArchUnit boundary enforcement
 
@@ -310,14 +314,14 @@ Dependency direction: `adapter → app → domain ← infrastructure`.
 
 | Document                                                                                                                                             | Description                                                                                  |
 |:-----------------------------------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------------------------------------------------|
-| [8、ddd4j-Architecture.zh_CN.md](./docs/8、ddd4j-Architecture.zh_CN.md)                                                                                   | System architecture (layers, runtime, deps, security, deployment)                            |
-| [5、ddd4j-技术方案与路线.md](./docs/5、ddd4j-技术方案与路线.md)                                                                                           | Current technical plan: MQ startup lifecycle + License Gate Hardening + three-line alignment |
-| [6、ddd4j-产品与版本规划.md](./docs/6、ddd4j-产品与版本规划.md)                                                                                           | **Three-line governance · upgrade paths · tech compatibility matrix · support window**       |
-| [7、ddd4j-领域模型设计.md](./docs/7、ddd4j-领域模型设计.md)                                                                                               | Bounded contexts, aggregates, event contracts                                                |
-| [1.0.x/8、ddd4j-1.0.x-Architecture.zh_CN.md](./docs/8、ddd4j-1.0.x-Architecture.zh_CN.md)                                                           | 1.0.x version-level architecture with three-line diff table                                  |
+| [8、ddd4j-Architecture.zh_CN.md](./docs/8、ddd4j-Architecture.zh_CN.md)                                                                              | System architecture (layers, runtime, deps, security, deployment)                            |
+| [5、ddd4j-技术方案与路线.md](./docs/5、ddd4j-技术方案与路线.md)                                                                                      | Current technical plan: MQ startup lifecycle + License Gate Hardening + three-line alignment |
+| [6、ddd4j-产品与版本规划.md](./docs/6、ddd4j-产品与版本规划.md)                                                                                      | **Three-line governance · upgrade paths · tech compatibility matrix · support window**       |
+| [7、ddd4j-领域模型设计.md](./docs/7、ddd4j-领域模型设计.md)                                                                                          | Bounded contexts, aggregates, event contracts                                                |
+| [1.0.x/8、ddd4j-1.0.x-Architecture.zh_CN.md](./docs/8、ddd4j-1.0.x-Architecture.zh_CN.md)                                                            | 1.0.x version-level architecture with three-line diff table                                  |
 | [docs/superpowers/specs/2026-07-15-current-source-architecture-design.md](./docs/superpowers/specs/2026-07-15-current-source-architecture-design.md) | Current source-code architecture tour (CodeGraph)                                            |
 | [docs/superpowers/specs/2026-06-29-ddd4j-boundary-rules-design.md](./docs/superpowers/specs/2026-06-29-ddd4j-boundary-rules-design.md)               | Architecture boundary rules                                                                  |
-| [docs/superpowers/reports/2026-09-09-three-line-source-parity-audit.md](./docs/superpowers/historical-evidence-index.md)     | Three-line strict-parity audit report                                                        |
+| [docs/superpowers/reports/2026-09-09-three-line-source-parity-audit.md](./docs/superpowers/historical-evidence-index.md)                             | Three-line strict-parity audit report                                                        |
 
 ---
 

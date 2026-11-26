@@ -15,12 +15,8 @@
 
 package io.ddd4j.core.ddd.event;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.util.Objects;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.ElementType;
@@ -28,15 +24,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
+import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * 类型说明。
+ *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 1.0.x
  */
@@ -80,6 +74,7 @@ class EventHandlerTest {
 
         /**
          * onOrderCreated() 方法。
+         *
          * @param event 事件消息。
          */
         @EventHandler
@@ -88,6 +83,7 @@ class EventHandlerTest {
 
         /**
          * onOrderDiscarded() 方法。
+         *
          * @param event 事件消息。
          */
         @EventHandler(ignoreOnReplay = true)
@@ -107,13 +103,17 @@ class EventHandlerTest {
         final static class OrderId implements EntityId {
 
             private static final long serialVersionUID = 0L;
-
+            private static final EntityType TYPE = new StringEntityType("Order");
             private final String value;
 
-            private static final EntityType TYPE = new StringEntityType("Order");
+            @JsonCreator()
+            OrderId(@JsonProperty("value") String value) {
+                this.value = value;
+            }
 
             /**
              * 获取值。
+             *
              * @return 方法执行结果。
              */
             @Override
@@ -123,6 +123,7 @@ class EventHandlerTest {
 
             /**
              * asString() 方法。
+             *
              * @return 结果字符串。
              */
             @Override
@@ -132,16 +133,12 @@ class EventHandlerTest {
 
             /**
              * asTypedString() 方法。
+             *
              * @return 结果字符串。
              */
             @Override
             public String asTypedString() {
                 return TYPE.asString() + ":" + value;
-            }
-
-            @JsonCreator()
-            OrderId(@JsonProperty("value") String value) {
-                this.value = value;
             }
 
             @JsonProperty("value")

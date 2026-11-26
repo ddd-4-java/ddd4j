@@ -7,7 +7,9 @@ import java.util.Arrays;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
-/** 三线共用的 EntityIdPath 文本校验契约。 */
+/**
+ * 三线共用的 EntityIdPath 文本校验契约。
+ */
 class EntityIdPathValidationTest {
 
     @Test

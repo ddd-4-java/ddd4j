@@ -18,12 +18,13 @@ import io.ddd4j.kit.lang.JsonKit;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-/** Redis Stream 记录在各线的 JSON 往返契约。 */
+/**
+ * Redis Stream 记录在各线的 JSON 往返契约。
+ */
 class RedisStreamRecordJsonContractTest {
 
     @Test

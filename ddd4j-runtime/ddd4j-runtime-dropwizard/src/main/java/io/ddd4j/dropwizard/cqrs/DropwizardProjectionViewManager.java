@@ -1,17 +1,15 @@
 package io.ddd4j.dropwizard.cqrs;
 
-import io.ddd4j.core.cqrs.readmodel.DefaultViewManager;
-import io.ddd4j.core.cqrs.readmodel.ProjectionRunner;
-import io.ddd4j.core.cqrs.readmodel.ProjectionStatus;
-import io.ddd4j.core.cqrs.readmodel.ProjectionView;
-import io.ddd4j.core.cqrs.readmodel.ViewManager;
-import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
+import io.ddd4j.core.cqrs.readmodel.*;
 import io.dropwizard.core.setup.Environment;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-/** Dropwizard 视图生命周期；共享管理器持有句柄，平台仅管理自有调度资源。 */
+/**
+ * Dropwizard 视图生命周期；共享管理器持有句柄，平台仅管理自有调度资源。
+ */
 public class DropwizardProjectionViewManager implements ViewManager, AutoCloseable {
     private final DefaultViewManager<Object> delegate;
     private final Environment environment;
@@ -19,14 +17,16 @@ public class DropwizardProjectionViewManager implements ViewManager, AutoCloseab
     private final Collection<ProjectionView<?>> views;
     private DropwizardProjectionScheduler ownedScheduler;
 
-    /** 使用借用调度器，不取得调度器、reader 或仓储所有权。
+    /**
+     * 使用借用调度器，不取得调度器、reader 或仓储所有权。
+     *
      * @param scheduler 调用方调度器
-     * @param runner 共享运行器
-     * @param views 视图快照
+     * @param runner    共享运行器
+     * @param views     视图快照
      */
     @SuppressWarnings("unchecked")
     public DropwizardProjectionViewManager(ViewScheduler scheduler, ProjectionRunner<?> runner,
-            Collection<ProjectionView<?>> views) {
+                                           Collection<ProjectionView<?>> views) {
         this.environment = null;
         this.runner = Objects.requireNonNull(runner, "runner must not be null");
         this.views = List.copyOf(views);
@@ -34,14 +34,16 @@ public class DropwizardProjectionViewManager implements ViewManager, AutoCloseab
                 (Collection<ProjectionView<Object>>) (Collection<?>) this.views);
     }
 
-    /** 创建自有调度器的手动管理器，线程延迟到 start 创建。
+    /**
+     * 创建自有调度器的手动管理器，线程延迟到 start 创建。
+     *
      * @param environment 原生环境
-     * @param runner 共享运行器
-     * @param views 视图快照
+     * @param runner      共享运行器
+     * @param views       视图快照
      */
     @SuppressWarnings("unchecked")
     protected DropwizardProjectionViewManager(Environment environment, ProjectionRunner<?> runner,
-            Collection<ProjectionView<?>> views) {
+                                              Collection<ProjectionView<?>> views) {
         this.environment = Objects.requireNonNull(environment, "env must not be null");
         this.runner = Objects.requireNonNull(runner, "runner must not be null");
         this.views = List.copyOf(views);
@@ -50,14 +52,16 @@ public class DropwizardProjectionViewManager implements ViewManager, AutoCloseab
                 (Collection<ProjectionView<Object>>) (Collection<?>) this.views);
     }
 
-    /** 保留静态手动工厂；不会自行注册 Managed 或自动启动。
-     * @param env 原生环境锚点
-     * @param views 视图快照
+    /**
+     * 保留静态手动工厂；不会自行注册 Managed 或自动启动。
+     *
+     * @param env    原生环境锚点
+     * @param views  视图快照
      * @param runner 共享运行器
      * @return 未启动管理器
      */
     public static DropwizardProjectionViewManager create(Environment env,
-            Collection<ProjectionView<?>> views, ProjectionRunner<?> runner) {
+                                                         Collection<ProjectionView<?>> views, ProjectionRunner<?> runner) {
         return new DropwizardProjectionViewManager(env, runner, views);
     }
 

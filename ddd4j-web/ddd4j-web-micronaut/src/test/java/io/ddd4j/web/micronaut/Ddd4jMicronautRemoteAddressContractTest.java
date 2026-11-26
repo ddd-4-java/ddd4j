@@ -19,7 +19,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-/** 三线 Micronaut 请求地址缺失及未解析时的共同上下文契约。 */
+/**
+ * 三线 Micronaut 请求地址缺失及未解析时的共同上下文契约。
+ */
 class Ddd4jMicronautRemoteAddressContractTest {
 
     private WebRequestContext contextFor(InetSocketAddress remoteAddress) throws Exception {

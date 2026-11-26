@@ -30,10 +30,6 @@ import io.ddd4j.sample.javalin.shiro.goods.domain.Goods;
 import io.ddd4j.sample.javalin.shiro.goods.infrastructure.InMemoryGoodsRepository;
 import io.ddd4j.sample.javalin.shiro.goods.web.GoodsQueryResource;
 import io.ddd4j.sample.javalin.shiro.goods.web.GoodsResource;
-import io.ddd4j.sample.javalin.shiro.order.application.OrderApplicationService;
-import io.ddd4j.sample.javalin.shiro.order.domain.service.OrderDomainService;
-import io.ddd4j.sample.javalin.shiro.order.infrastructure.InMemoryOrderRepository;
-import io.ddd4j.sample.javalin.shiro.order.web.OrderResource;
 import io.ddd4j.sample.javalin.shiro.rbac.RbacConfig;
 import io.ddd4j.sample.javalin.shiro.rbac.controller.AuthenticationController;
 import io.ddd4j.sample.javalin.shiro.rbac.controller.AuthorizationController;
@@ -94,11 +90,6 @@ public final class TestSupport {
         GoodsResource goodsResource = new GoodsResource(goodsApp);
         GoodsQueryResource goodsQueryResource = new GoodsQueryResource(goodsApp);
 
-        // 4) Order
-        InMemoryOrderRepository orderRepository = new InMemoryOrderRepository();
-        OrderDomainService orderDomainService = new OrderDomainService(orderRepository);
-        OrderApplicationService orderApp = new OrderApplicationService(orderRepository, orderDomainService);
-        OrderResource orderResource = new OrderResource(orderApp);
 
         // 5) RBAC 控制器
         AuthenticationController authController = new AuthenticationController(rbacService);
@@ -180,7 +171,6 @@ public final class TestSupport {
                             "byUser", String.valueOf(SubjectKit.getLoginId()))));
                 });
 
-                orderResource.routes().addEndpoints();
                 goodsQueryResource.routes().addEndpoints();
                 goodsResource.routes().addEndpoints();
             });

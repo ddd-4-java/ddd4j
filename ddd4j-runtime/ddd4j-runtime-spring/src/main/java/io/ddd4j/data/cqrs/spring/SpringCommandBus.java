@@ -14,12 +14,7 @@
  */
 package io.ddd4j.data.cqrs.spring;
 
-import io.ddd4j.core.cqrs.command.Command;
-import io.ddd4j.core.cqrs.command.CommandExecutor;
-import io.ddd4j.core.cqrs.command.DefaultCommandBus;
-import io.ddd4j.core.cqrs.command.Result;
-import io.ddd4j.core.cqrs.command.CommandHandler;
-import io.ddd4j.core.cqrs.command.CommandRegistry;
+import io.ddd4j.core.cqrs.command.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -101,6 +96,15 @@ public class SpringCommandBus extends DefaultCommandBus {
         super(collect(context, registry));
     }
 
+    private static Collection<CommandExecutor<?>> collect(ApplicationContext context, CommandRegistry registry) {
+        Objects.requireNonNull(context, "context must not be null");
+        Objects.requireNonNull(registry, "registry must not be null");
+        for (CommandExecutor<?> executor : context.getBeansOfType(CommandExecutor.class).values()) {
+            registry.register(executor);
+        }
+        return registry.executors();
+    }
+
     /**
      * 事务化分发（<b>纯委托</b>，路由逻辑全在 {@link DefaultCommandBus}）。
      * <p>
@@ -116,14 +120,5 @@ public class SpringCommandBus extends DefaultCommandBus {
     @Transactional
     public <R> Result<R> execute(Command command) {
         return super.execute(command);
-    }
-
-    private static Collection<CommandExecutor<?>> collect(ApplicationContext context, CommandRegistry registry) {
-        Objects.requireNonNull(context, "context must not be null");
-        Objects.requireNonNull(registry, "registry must not be null");
-        for (CommandExecutor<?> executor : context.getBeansOfType(CommandExecutor.class).values()) {
-            registry.register(executor);
-        }
-        return registry.executors();
     }
 }

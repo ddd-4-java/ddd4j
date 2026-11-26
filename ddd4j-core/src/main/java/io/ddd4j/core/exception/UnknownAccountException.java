@@ -47,7 +47,7 @@ public class UnknownAccountException extends AuthenticationException {
      * 使用错误消息创建未知账号异常。
      *
      * @param message 错误消息
-     * @param cause 原始异常
+     * @param cause   原始异常
      */
     public UnknownAccountException(String message, Throwable cause) {
         super(message, cause);

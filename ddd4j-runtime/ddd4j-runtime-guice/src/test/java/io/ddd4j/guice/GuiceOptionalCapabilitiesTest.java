@@ -24,8 +24,8 @@ import java.io.File;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -33,8 +33,40 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/** 验证显式日志装配及没有 WebMVC/Servlet 的真实 JVM 日志调用。 */
+/**
+ * 验证显式日志装配及没有 WebMVC/Servlet 的真实 JVM 日志调用。
+ */
 class GuiceOptionalCapabilitiesTest {
+    static ProceedingJoinPoint point(Object result, Throwable failure) throws Exception {
+        Method method = Endpoint.class.getMethod("handle", String.class);
+        MethodSignature signature = (MethodSignature) Proxy.newProxyInstance(MethodSignature.class.getClassLoader(),
+                new Class<?>[]{MethodSignature.class}, (proxy, invoked, args) -> {
+                    if ("getMethod".equals(invoked.getName())) {
+                        return method;
+                    }
+                    if ("getName".equals(invoked.getName())) {
+                        return method.getName();
+                    }
+                    throw new IllegalStateException(invoked.getName());
+                });
+        return (ProceedingJoinPoint) Proxy.newProxyInstance(ProceedingJoinPoint.class.getClassLoader(),
+                new Class<?>[]{ProceedingJoinPoint.class}, (proxy, invoked, args) -> {
+                    if ("getSignature".equals(invoked.getName())) {
+                        return signature;
+                    }
+                    if ("getArgs".equals(invoked.getName())) {
+                        return new Object[]{"probe-input"};
+                    }
+                    if ("proceed".equals(invoked.getName())) {
+                        if (Objects.nonNull(failure)) {
+                            throw failure;
+                        }
+                        return result;
+                    }
+                    throw new IllegalStateException(invoked.getName());
+                });
+    }
+
     @Test
     void basicStartsInJvmWithoutUnselectedCapabilities() throws Exception {
         String classpath = Arrays.stream(System.getProperty("surefire.test.class.path", System.getProperty("java.class.path")).split(File.pathSeparator))
@@ -47,35 +79,14 @@ class GuiceOptionalCapabilitiesTest {
         Process process = new ProcessBuilder(System.getProperty("java.home") + "/bin/java", "-cp", classpath,
                 BasicProbe.class.getName()).redirectErrorStream(true).start();
         boolean finished = process.waitFor(40, TimeUnit.SECONDS);
-        if (!finished) { process.destroyForcibly(); }
+        if (!finished) {
+            process.destroyForcibly();
+        }
         assertTrue(finished, "basic probe timed out");
         String output = new String(process.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
         System.out.println("R07 basic classpath=" + classpath + "\n" + output);
         assertEquals(0, process.exitValue(), output);
         assertTrue(output.contains("R07_BASIC_OK"), output);
-    }
-
-    /** 验证实际剥离能力依赖后的核心运行时生命周期。 */
-    public static class BasicProbe {
-        public static void main(String[] args) throws Exception {
-            for (String type : new String[]{"org.springframework.web.servlet.DispatcherServlet",
-                    "org.apache.ibatis.session.SqlSession", "com.baomidou.mybatisplus.core.mapper.BaseMapper",
-                    "org.hibernate.Session",
-                    "io.javalin.Javalin", "io.ddd4j.data.event.store.jpa.JpaEventStore"}) {
-                try {
-                    Class.forName(type);
-                    throw new AssertionError("Unexpected capability: " + type);
-                } catch (ClassNotFoundException expected) { }
-            }
-            com.google.inject.Injector injector = Guice.createInjector(Ddd4jGuiceModule.basic());
-            try (Ddd4jGuiceRuntime runtime = injector.getInstance(Ddd4jGuiceRuntime.class)) {
-                if (Objects.nonNull(injector.getExistingBinding(com.google.inject.Key.get(
-                        io.ddd4j.core.cqrs.readmodel.ViewManager.class)))) {
-                    throw new AssertionError("Unselected projection binding");
-                }
-                System.out.println("R07_BASIC_OK");
-            }
-        }
     }
 
     @Test
@@ -109,18 +120,21 @@ class GuiceOptionalCapabilitiesTest {
             public void doBefore(org.aspectj.lang.JoinPoint point, Operation annotation) {
                 throw new IllegalStateException("before-callback");
             }
+
             @Override
             public void afterReturing(org.aspectj.lang.JoinPoint point, Operation annotation, Object result, Stopwatch watch) {
                 assertEquals("result", result);
                 assertFalse(watch.isRunning());
                 throw new IllegalStateException("returning-callback");
             }
+
             @Override
             public Object wrapThrowing(org.aspectj.lang.JoinPoint point, Operation annotation, Throwable error, Stopwatch watch) {
                 assertEquals("business-failure", error.getMessage());
                 assertFalse(watch.isRunning());
                 return "wrapped";
             }
+
             @Override
             public void afterThrowing(org.aspectj.lang.JoinPoint point, Operation annotation, Throwable error, Stopwatch watch) {
                 throw new IllegalStateException("throwing-callback");
@@ -133,34 +147,43 @@ class GuiceOptionalCapabilitiesTest {
         MDC.put("r05", "cleanup");
         assertEquals("wrapped", aspect.aroundMethod(point(null, new IllegalStateException("business-failure")), operation));
         assertNull(MDC.get("r05"));
-        ApiOperationLogAspect rethrow = new ApiOperationLogAspect(new Snowflake(1, 1), new ApiOperationLogProvider() { });
+        ApiOperationLogAspect rethrow = new ApiOperationLogAspect(new Snowflake(1, 1), new ApiOperationLogProvider() {
+        });
         IllegalArgumentException failure = new IllegalArgumentException("original");
         assertSame(failure, assertThrows(IllegalArgumentException.class,
                 () -> rethrow.aroundMethod(point(null, failure), operation)));
         assertTrue(Objects.isNull(MDC.getCopyOfContextMap()) || MDC.getCopyOfContextMap().isEmpty());
     }
 
-    static ProceedingJoinPoint point(Object result, Throwable failure) throws Exception {
-        Method method = Endpoint.class.getMethod("handle", String.class);
-        MethodSignature signature = (MethodSignature) Proxy.newProxyInstance(MethodSignature.class.getClassLoader(),
-                new Class<?>[]{MethodSignature.class}, (proxy, invoked, args) -> {
-                    if ("getMethod".equals(invoked.getName())) { return method; }
-                    if ("getName".equals(invoked.getName())) { return method.getName(); }
-                    throw new IllegalStateException(invoked.getName());
-                });
-        return (ProceedingJoinPoint) Proxy.newProxyInstance(ProceedingJoinPoint.class.getClassLoader(),
-                new Class<?>[]{ProceedingJoinPoint.class}, (proxy, invoked, args) -> {
-                    if ("getSignature".equals(invoked.getName())) { return signature; }
-                    if ("getArgs".equals(invoked.getName())) { return new Object[]{"probe-input"}; }
-                    if ("proceed".equals(invoked.getName())) {
-                        if (Objects.nonNull(failure)) { throw failure; }
-                        return result;
-                    }
-                    throw new IllegalStateException(invoked.getName());
-                });
+    /**
+     * 验证实际剥离能力依赖后的核心运行时生命周期。
+     */
+    public static class BasicProbe {
+        public static void main(String[] args) throws Exception {
+            for (String type : new String[]{"org.springframework.web.servlet.DispatcherServlet",
+                    "org.apache.ibatis.session.SqlSession", "com.baomidou.mybatisplus.core.mapper.BaseMapper",
+                    "org.hibernate.Session",
+                    "io.javalin.Javalin", "io.ddd4j.data.event.store.jpa.JpaEventStore"}) {
+                try {
+                    Class.forName(type);
+                    throw new AssertionError("Unexpected capability: " + type);
+                } catch (ClassNotFoundException expected) {
+                }
+            }
+            com.google.inject.Injector injector = Guice.createInjector(Ddd4jGuiceModule.basic());
+            try (Ddd4jGuiceRuntime runtime = injector.getInstance(Ddd4jGuiceRuntime.class)) {
+                if (Objects.nonNull(injector.getExistingBinding(com.google.inject.Key.get(
+                        io.ddd4j.core.cqrs.readmodel.ViewManager.class)))) {
+                    throw new AssertionError("Unselected projection binding");
+                }
+                System.out.println("R07_BASIC_OK");
+            }
+        }
     }
 
-    /** 独立进程入口，先证实缺少 HTTP 类型，再执行 Guice 默认日志和扩展回调。 */
+    /**
+     * 独立进程入口，先证实缺少 HTTP 类型，再执行 Guice 默认日志和扩展回调。
+     */
     public static class LoggingProbe {
         public static void main(String[] args) throws Throwable {
             for (String type : new String[]{"org.springframework.web.servlet.DispatcherServlet",
@@ -174,7 +197,9 @@ class GuiceOptionalCapabilitiesTest {
             AbstractAppender appender = new AbstractAppender("r05-native", null,
                     PatternLayout.createDefaultLayout(), false, Property.EMPTY_ARRAY) {
                 @Override
-                public void append(LogEvent event) { events.add(event.toImmutable()); }
+                public void append(LogEvent event) {
+                    events.add(event.toImmutable());
+                }
             };
             appender.start();
             logger.addAppender(appender);
@@ -221,9 +246,13 @@ class GuiceOptionalCapabilitiesTest {
         }
     }
 
-    /** 日志目标方法。 */
+    /**
+     * 日志目标方法。
+     */
     public static class Endpoint {
         @Operation(summary = "R05 logging")
-        public String handle(String input) { return input; }
+        public String handle(String input) {
+            return input;
+        }
     }
 }

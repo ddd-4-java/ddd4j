@@ -3,9 +3,12 @@ package io.ddd4j.data.mybatis.context;
 import com.baomidou.mybatisplus.enhance.context.TenantContext;
 import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.context.ThreadContext;
+
 import java.util.Objects;
 
-/** 复用增强组件的租户作用域，将唯一租户来源桥接到 DDD4J 请求上下文。 */
+/**
+ * 复用增强组件的租户作用域，将唯一租户来源桥接到 DDD4J 请求上下文。
+ */
 public class Ddd4jTenantContext {
 
     private final TenantContext delegate = new TenantContext() {
@@ -13,10 +16,12 @@ public class Ddd4jTenantContext {
         public Object getCurrentTenantId() {
             return Ddd4jTenantContext.this.getCurrentTenantId();
         }
+
         @Override
         public void setCurrentTenantId(Object tenantId) {
             Ddd4jTenantContext.this.setCurrentTenantId(tenantId);
         }
+
         @Override
         public void clear() {
             Ddd4jTenantContext.this.clear();
@@ -45,10 +50,13 @@ public class Ddd4jTenantContext {
         }
     }
 
-    /** 从当前请求上下文清除租户。 */
+    /**
+     * 从当前请求上下文清除租户。
+     */
     public void clear() {
         ThreadContext.remove(ContextConstants.TENANT_ID);
     }
+
     /**
      * 提供与 DDD4J 共享租户状态的增强组件上下文。
      * 该适配器的作用域与 {@link #open(Object)} 均由增强组件执行创建线程校验。

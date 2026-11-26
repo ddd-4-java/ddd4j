@@ -14,17 +14,15 @@
  */
 package io.ddd4j.data.projection.javalin;
 
-import io.ddd4j.core.cqrs.readmodel.DefaultViewManager;
-import io.ddd4j.core.cqrs.readmodel.ProjectionRunner;
-import io.ddd4j.core.cqrs.readmodel.ProjectionView;
-import io.ddd4j.core.cqrs.readmodel.ProjectionStatus;
-import io.ddd4j.core.cqrs.readmodel.ViewManager;
+import io.ddd4j.core.cqrs.readmodel.*;
 import io.javalin.Javalin;
 
 import java.util.Collection;
 import java.util.Objects;
 
-/** 旧 Javalin 工厂入口，视图生命周期委托共享管理器，线程池由本适配器拥有。 */
+/**
+ * 旧 Javalin 工厂入口，视图生命周期委托共享管理器，线程池由本适配器拥有。
+ */
 public class JavalinProjectionViewManager implements ViewManager, AutoCloseable {
     private final JavalinProjectionScheduler scheduler;
     private final DefaultViewManager<Object> delegate;
@@ -39,8 +37,9 @@ public class JavalinProjectionViewManager implements ViewManager, AutoCloseable 
 
     /**
      * 创建兼容管理器，不自动启动。应用关闭时应调用 close，stop 仍允许重新启动。
-     * @param app Javalin 装配锚点
-     * @param views 投影视图
+     *
+     * @param app    Javalin 装配锚点
+     * @param views  投影视图
      * @param runner 共享投影运行器
      * @return 管理器
      */
@@ -55,19 +54,29 @@ public class JavalinProjectionViewManager implements ViewManager, AutoCloseable 
     }
 
     @Override
-    public void start() { delegate.start(); }
+    public void start() {
+        delegate.start();
+    }
 
     @Override
-    public void stop() { delegate.stop(); }
+    public void stop() {
+        delegate.stop();
+    }
 
     @Override
-    public boolean isRunning() { return delegate.isRunning(); }
+    public boolean isRunning() {
+        return delegate.isRunning();
+    }
 
     @Override
-    public void triggerOnce() { delegate.triggerOnce(); }
+    public void triggerOnce() {
+        delegate.triggerOnce();
+    }
 
     @Override
-    public ProjectionStatus getProjectionStatus(String streamId) { return delegate.getProjectionStatus(streamId); }
+    public ProjectionStatus getProjectionStatus(String streamId) {
+        return delegate.getProjectionStatus(streamId);
+    }
 
     @Override
     public void close() {

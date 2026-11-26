@@ -26,25 +26,39 @@ import io.ddd4j.core.constant.AuthConstants;
  */
 public final class SaConstants {
 
-    /** 租户 ID。 */
+    /**
+     * 租户 ID。
+     */
     public static final String PAYLOAD_TENANT_ID = AuthConstants.CLAIM_TENANT_ID;
 
-    /** 应用 ID。 */
+    /**
+     * 应用 ID。
+     */
     public static final String PAYLOAD_APP_ID = AuthConstants.FIELD_APP_ID;
 
-    /** 角色 ID。 */
+    /**
+     * 角色 ID。
+     */
     public static final String PAYLOAD_ROLE_ID = AuthConstants.CLAIM_ROLE_ID;
 
-    /** 角色编码。 */
+    /**
+     * 角色编码。
+     */
     public static final String PAYLOAD_ROLE_CODE = AuthConstants.FIELD_ROLE_CODE;
 
-    /** 角色类型。 */
+    /**
+     * 角色类型。
+     */
     public static final String PAYLOAD_ROLE_TYPE = AuthConstants.FIELD_ROLE_TYPE;
 
-    /** 用户 ID。 */
+    /**
+     * 用户 ID。
+     */
     public static final String PAYLOAD_USER_ID = AuthConstants.CLAIM_USER_ID;
 
-    /** 机构 ID。 */
+    /**
+     * 机构 ID。
+     */
     public static final String PAYLOAD_ORG_ID = AuthConstants.CLAIM_ORG_ID;
 
     /**

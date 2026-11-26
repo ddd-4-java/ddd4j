@@ -1,14 +1,15 @@
 package io.ddd4j.runtime.testkit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import io.ddd4j.core.health.ReadinessContributor;
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
+import io.ddd4j.core.health.ReadinessContributor;
+import org.junit.jupiter.api.Test;
+
 import java.util.List;
 import java.util.Map;
-import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class RuntimeFixturesContractTest {
 

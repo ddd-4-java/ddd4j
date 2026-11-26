@@ -26,16 +26,18 @@ import java.util.Objects;
  */
 public class AuthUserDetails extends User {
 
-    /** 框架无关的认证主体。 */
+    /**
+     * 框架无关的认证主体。
+     */
     private final AuthPrincipal authPrincipal;
 
     /**
      * 使用认证主体及 Spring Security 账号属性创建用户详情。
      *
-     * @param username 用户名
-     * @param password 密码
-     * @param enabled 账号是否启用
-     * @param authorities 已授予权限
+     * @param username      用户名
+     * @param password      密码
+     * @param enabled       账号是否启用
+     * @param authorities   已授予权限
      * @param authPrincipal ddd4j 认证主体
      */
     public AuthUserDetails(String username,

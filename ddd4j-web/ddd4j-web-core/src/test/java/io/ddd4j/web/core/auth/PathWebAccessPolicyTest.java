@@ -24,7 +24,9 @@ import java.util.Locale;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/** 路径免认证、前缀匹配与默认认证模式契约。 */
+/**
+ * 路径免认证、前缀匹配与默认认证模式契约。
+ */
 class PathWebAccessPolicyTest {
 
     private static WebRequestContext request(String path) {

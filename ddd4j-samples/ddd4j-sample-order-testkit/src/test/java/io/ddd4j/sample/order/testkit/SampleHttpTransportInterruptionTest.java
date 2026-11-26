@@ -5,25 +5,21 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.SocketException;
+import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-/** 真实 HTTP 调用在中断前后保持原生异常与线程标记。 */
+/**
+ * 真实 HTTP 调用在中断前后保持原生异常与线程标记。
+ */
 class SampleHttpTransportInterruptionTest {
     private HttpServer server;
     private String url;
@@ -42,26 +38,6 @@ class SampleHttpTransportInterruptionTest {
     @AfterEach
     void stopServer() {
         server.stop(0);
-    }
-
-    @Test
-    void nativeDriversRestoreInterruptAndKeepTheOriginalCause() {
-        EnvelopeOrderHttpDriver envelope = new EnvelopeOrderHttpDriver(url, "/orders", Collections.emptyMap());
-        HttpOrderSampleDriver bare = new HttpOrderSampleDriver(url);
-        Runnable[] calls = {
-                () -> envelope.request("GET", "/orders", null, Collections.emptyMap()),
-                () -> bare.request("GET", "/orders", null, String.class)
-        };
-        for (Runnable call : calls) {
-            Thread.currentThread().interrupt();
-            try {
-                IllegalStateException failure = assertThrows(IllegalStateException.class, call::run);
-                assertTrue(failure.getCause() instanceof InterruptedException);
-                assertTrue(Thread.currentThread().isInterrupted());
-            } finally {
-                Thread.interrupted();
-            }
-        }
     }
 
     @Test

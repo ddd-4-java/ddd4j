@@ -14,7 +14,6 @@
  */
 package io.ddd4j.sample.javalin.shiro.goods.web;
 
-import jakarta.inject.Inject;
 import io.ddd4j.core.api.R;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.sample.javalin.shiro.goods.application.GoodsApplicationService;
@@ -22,6 +21,7 @@ import io.ddd4j.sample.javalin.shiro.goods.domain.Goods;
 import io.ddd4j.sample.javalin.shiro.goods.domain.GoodsQuery;
 import io.ddd4j.sample.javalin.shiro.goods.domain.GoodsStatus;
 import io.javalin.apibuilder.EndpointGroup;
+import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
 import java.util.List;

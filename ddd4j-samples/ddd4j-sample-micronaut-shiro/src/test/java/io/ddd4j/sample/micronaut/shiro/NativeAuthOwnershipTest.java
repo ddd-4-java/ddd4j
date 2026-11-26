@@ -8,12 +8,16 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
 import org.apache.shiro.util.ThreadState;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/** 验证 Shiro 请求引擎和调用方引擎的所有权边界。 */
+/**
+ * 验证 Shiro 请求引擎和调用方引擎的所有权边界。
+ */
 class NativeAuthOwnershipTest {
-    @Test void applicationKeepsCallerVmManager() {
+    @Test
+    void applicationKeepsCallerVmManager() {
         SecurityManager previous = (SecurityManager) ReflectUtil.getStaticFieldValue(
                 ReflectUtil.getField(SecurityUtils.class, "securityManager"));
         DefaultSecurityManager caller = new DefaultSecurityManager();
@@ -32,7 +36,8 @@ class NativeAuthOwnershipTest {
         }
     }
 
-    @Test void routeRestoresCallerThreadAfterFailure() {
+    @Test
+    void routeRestoresCallerThreadAfterFailure() {
         NativeAuth auth = new NativeAuth();
         DefaultSecurityManager caller = new DefaultSecurityManager();
         Subject originalSubject = ThreadContext.getSubject();

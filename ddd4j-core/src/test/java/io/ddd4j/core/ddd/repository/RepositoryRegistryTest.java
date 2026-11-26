@@ -31,9 +31,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * 仓储注册表的聚合、查询、上下文优先级及清理契约测试。
@@ -161,6 +159,18 @@ class RepositoryRegistryTest {
 
     // ========================= Fixtures =========================
 
+    @Test
+    void shouldRegisterResolveAndUnregisterRepository() {
+        InMemoryRepository repository = new InMemoryRepository();
+        RepositoryRegistry.register(TestAggregate.class, repository);
+        assertSame(repository, RepositoryRegistry.repository(TestAggregate.class));
+        TestAggregate aggregate = new TestAggregate(new StringEntityId("a-1"));
+        repository.save(aggregate);
+        assertEquals(aggregate, RepositoryRegistry.repository(TestAggregate.class).findById(aggregate.id()).get());
+        RepositoryRegistry.unregister(TestAggregate.class);
+        assertThrows(BizRuntimeException.class, () -> RepositoryRegistry.repository(TestAggregate.class));
+    }
+
     static final class Order extends AggregateRoot<String> {
         private final String id;
 
@@ -198,18 +208,6 @@ class RepositoryRegistryTest {
         public void delete(Order aggregate) {
             // no-op
         }
-    }
-
-    @Test
-    void shouldRegisterResolveAndUnregisterRepository() {
-        InMemoryRepository repository = new InMemoryRepository();
-        RepositoryRegistry.register(TestAggregate.class, repository);
-        assertSame(repository, RepositoryRegistry.repository(TestAggregate.class));
-        TestAggregate aggregate = new TestAggregate(new StringEntityId("a-1"));
-        repository.save(aggregate);
-        assertEquals(aggregate, RepositoryRegistry.repository(TestAggregate.class).findById(aggregate.id()).get());
-        RepositoryRegistry.unregister(TestAggregate.class);
-        assertThrows(BizRuntimeException.class, () -> RepositoryRegistry.repository(TestAggregate.class));
     }
 
     private static final class TestAggregate extends AggregateRoot<StringEntityId> {

@@ -24,8 +24,15 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/** 权限数据提供者在三线上的共同契约。 */
+/**
+ * 权限数据提供者在三线上的共同契约。
+ */
 class AuthConfigContractTest {
+
+    private static void assertReadOnly(List<String> expected, List<String> actual) {
+        assertEquals(expected, actual);
+        assertThrows(UnsupportedOperationException.class, () -> actual.set(0, "changed"));
+    }
 
     @Test
     void permissionAndRoleSnapshotsCannotBeChangedByCallers() {
@@ -38,10 +45,5 @@ class AuthConfigContractTest {
         assertReadOnly(Arrays.asList("admin", "user"), provider.getRoleList(admin));
         assertReadOnly(Arrays.asList("user:list"), provider.getPermissionList(user));
         assertReadOnly(Arrays.asList("user"), provider.getRoleList(user));
-    }
-
-    private static void assertReadOnly(List<String> expected, List<String> actual) {
-        assertEquals(expected, actual);
-        assertThrows(UnsupportedOperationException.class, () -> actual.set(0, "changed"));
     }
 }

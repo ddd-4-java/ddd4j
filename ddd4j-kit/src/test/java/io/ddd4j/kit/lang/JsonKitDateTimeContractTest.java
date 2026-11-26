@@ -9,7 +9,9 @@ import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/** 验证 Jackson 版本适配后公开日期时间 JSON 契约在三线一致。 */
+/**
+ * 验证 Jackson 版本适配后公开日期时间 JSON 契约在三线一致。
+ */
 class JsonKitDateTimeContractTest {
 
     @Test

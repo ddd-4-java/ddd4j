@@ -14,20 +14,16 @@
  */
 package io.ddd4j.micronaut.cqrs;
 
-import io.ddd4j.core.cqrs.readmodel.DefaultProjectionService;
-import io.ddd4j.core.cqrs.readmodel.EventChunkReader;
-import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
-import io.ddd4j.core.cqrs.readmodel.ProjectionRunner;
-import io.ddd4j.core.cqrs.readmodel.ProjectionService;
-import io.ddd4j.core.cqrs.readmodel.ViewManager;
-import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
+import io.ddd4j.core.cqrs.readmodel.*;
 import io.micronaut.context.BeanContext;
 import io.micronaut.context.annotation.Bean;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Requires;
 import jakarta.inject.Singleton;
 
-/** 显式持久投影接线；不在基础模式装配事件源、存储或后台任务。 */
+/**
+ * 显式持久投影接线；不在基础模式装配事件源、存储或后台任务。
+ */
 @Factory
 @Requires(property = MicronautProjectionViewManager.ENABLED, value = "true")
 public class MicronautProjectionFactory {
@@ -36,17 +32,20 @@ public class MicronautProjectionFactory {
     ProjectionService service(ProjectionPositionRepository repository) {
         return new DefaultProjectionService(repository);
     }
+
     @Singleton
     @Requires(missingBeans = ProjectionRunner.class)
     ProjectionRunner<Object> runner(ProjectionService service, EventChunkReader<Object> reader) {
         return new ProjectionRunner<>(service, reader);
     }
+
     @Singleton
     @Bean(preDestroy = "shutdown")
     @Requires(missingBeans = ViewScheduler.class)
     MicronautProjectionScheduler scheduler() {
         return new MicronautProjectionScheduler();
     }
+
     @Singleton
     @Bean(preDestroy = "stop")
     @Requires(missingBeans = ViewManager.class)

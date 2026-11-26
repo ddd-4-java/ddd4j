@@ -14,10 +14,10 @@
  */
 package io.ddd4j.core.api;
 
-import org.junit.jupiter.api.Test;
-import io.ddd4j.core.exception.ValidateException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.ddd4j.core.exception.ValidateException;
+import org.junit.jupiter.api.Test;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -164,6 +164,7 @@ class RTest {
         assertThat(response.getMsg()).isEqualTo(ApiCode.SUCCESS.getReason());
         assertThat(response.getData()).isEqualTo("payload");
     }
+
     @Test
     void of_withStringCode_shouldPreserveExplicitSerializableCode() {
         R<Object> response = R.of((Serializable) "404", "missing");
@@ -190,6 +191,7 @@ class RTest {
         assertThat(okJson.get("data").asText()).isEqualTo("payload");
         assertThat(okJson.has("error")).isFalse();
     }
+
     @Test
     void customApiCode_shouldBuildResponseWithMessageAndPayload() {
         CustomApiCode customCode = new CustomApiCode() {

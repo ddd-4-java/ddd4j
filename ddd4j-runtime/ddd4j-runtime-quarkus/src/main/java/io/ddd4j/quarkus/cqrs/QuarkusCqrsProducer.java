@@ -14,20 +14,14 @@
  */
 package io.ddd4j.quarkus.cqrs;
 
-import io.ddd4j.core.cqrs.readmodel.DefaultProjectionService;
-import io.ddd4j.core.cqrs.readmodel.EventChunkReader;
-import io.ddd4j.core.cqrs.readmodel.InMemoryProjectionPositionRepository;
-import io.ddd4j.core.cqrs.readmodel.NoopEventChunkReader;
-import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
-import io.ddd4j.core.cqrs.readmodel.ProjectionRunner;
-import io.ddd4j.core.cqrs.readmodel.ProjectionService;
-import jakarta.persistence.EntityManager;
-import org.eclipse.microprofile.config.ConfigProvider;
+import io.ddd4j.core.cqrs.readmodel.*;
 import io.quarkus.arc.DefaultBean;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Singleton;
+import jakarta.persistence.EntityManager;
+import org.eclipse.microprofile.config.ConfigProvider;
 
 /**
  * Quarkus CQRS 默认 CDI 生产者。
@@ -55,8 +49,10 @@ public class QuarkusCqrsProducer {
         return new InMemoryProjectionPositionRepository();
     }
 
-    /** 按真实 ORM 选择旧 JPA 或内存默认；durable 禁止无持久仓储的回退。
-     * @param entityManagers 当前 ORM 实体管理器
+    /**
+     * 按真实 ORM 选择旧 JPA 或内存默认；durable 禁止无持久仓储的回退。
+     *
+     * @param entityManagers  当前 ORM 实体管理器
      * @param jpaRepositories 旧公开 JPA 适配器
      * @return 当前唯一位置仓储
      */
@@ -64,7 +60,7 @@ public class QuarkusCqrsProducer {
     @DefaultBean
     @Singleton
     public ProjectionPositionRepository selectedPositionRepository(Instance<EntityManager> entityManagers,
-            Instance<QuarkusJpaProjectionPositionRepository> jpaRepositories) {
+                                                                   Instance<QuarkusJpaProjectionPositionRepository> jpaRepositories) {
         if (entityManagers.isAmbiguous()) {
             throw new IllegalStateException("Multiple EntityManager beans are available for projection storage");
         }
@@ -95,7 +91,7 @@ public class QuarkusCqrsProducer {
      * 创建投影执行器。
      *
      * @param projectionService 投影服务
-     * @param chunkReaders 事件块读取器
+     * @param chunkReaders      事件块读取器
      * @return 投影执行器
      */
     @Produces

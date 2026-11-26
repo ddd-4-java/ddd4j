@@ -1,50 +1,92 @@
 package io.ddd4j.sample.dropwizard.satoken;
+
+import cn.dev33.satoken.SaManager;
 import cn.dev33.satoken.config.SaTokenConfig;
 import cn.dev33.satoken.dao.SaTokenDao;
 import cn.dev33.satoken.dao.SaTokenDaoDefaultImpl;
 import cn.dev33.satoken.listener.SaTokenEventCenter;
 import cn.dev33.satoken.listener.SaTokenListenerForSimple;
 import cn.dev33.satoken.stp.StpInterface;
-import io.ddd4j.core.subject.SubjectDataProvider;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import cn.dev33.satoken.SaManager;
 import cn.hutool.core.util.ReflectUtil;
+import io.ddd4j.core.subject.SubjectDataProvider;
 import io.ddd4j.core.util.SubjectKit;
 import org.junit.jupiter.api.Test;
+
 import java.util.Objects;
-import static org.junit.jupiter.api.Assertions.assertSame;
-/** 全局前任可为 null；关闭不能偷偷创建默认提供器，也不能覆盖后任。 */
+
+import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * 全局前任可为 null；关闭不能偷偷创建默认提供器，也不能覆盖后任。
+ */
 class NativeAuthOwnershipTest {
- @Test void nestedWorkerScopesRestoreTheExactEnclosingRequest() {
-  NativeAuth app = new NativeAuth();
-  try (NativeScope outer = new NativeScope(null, null)) {
-   Object before = SaManager.getSaTokenContext().getModelBox();
-   try (NativeScope inner = new NativeScope(null, null)) {
-    org.junit.jupiter.api.Assertions.assertNotSame(before, SaManager.getSaTokenContext().getModelBox());
-   }
-   assertSame(before, SaManager.getSaTokenContext().getModelBox());
-  } finally {
-   SaManager.getSaTokenContext().clearContext();
-   app.close();
-  }
- }
- private Object field(String name){return ReflectUtil.getStaticFieldValue(Objects.requireNonNull(ReflectUtil.getField(SaManager.class,name)));}
- @Test void restoresExactNullableOwners(){
-  var config=SaManager.config;var permissions=field("stpInterface");var context=field("saTokenContext");var dao=field("saTokenDao");var data=SubjectKit.dataProvider;
-  var auth=new NativeAuth();auth.close();
-  assertSame(config,SaManager.config);assertSame(permissions,field("stpInterface"));assertSame(context,field("saTokenContext"));assertSame(dao,field("saTokenDao"));assertSame(data,SubjectKit.dataProvider);
- }
- @Test void preservesReplacementOwner(){
-  var originalConfig=SaManager.config;var originalData=SubjectKit.dataProvider;
-  var auth=new NativeAuth();
-  var replacement=new cn.dev33.satoken.config.SaTokenConfig().setIsPrint(false);
-  SaManager.setConfig(replacement);SaManager.setStpInterface(null);SaManager.setSaTokenContext(null);SubjectKit.dataProvider=null;
-  try{auth.close();assertSame(replacement,SaManager.config);assertSame(null,field("stpInterface"));assertSame(null,field("saTokenContext"));assertSame(null,SubjectKit.dataProvider);}
-  finally{SaManager.config=originalConfig;SubjectKit.dataProvider=originalData;}
- }
-    @Test void preservesCallerDaoAndItsData() {
+    private static SaTokenDao currentDao() {
+        return (SaTokenDao) ReflectUtil.getStaticFieldValue(ReflectUtil.getField(SaManager.class, "saTokenDao"));
+    }
+
+    private static StpInterface currentPermissions() {
+        return (StpInterface) ReflectUtil.getStaticFieldValue(ReflectUtil.getField(SaManager.class, "stpInterface"));
+    }
+
+    @Test
+    void nestedWorkerScopesRestoreTheExactEnclosingRequest() {
+        NativeAuth app = new NativeAuth();
+        try (NativeScope outer = new NativeScope(null, null)) {
+            Object before = SaManager.getSaTokenContext().getModelBox();
+            try (NativeScope inner = new NativeScope(null, null)) {
+                org.junit.jupiter.api.Assertions.assertNotSame(before, SaManager.getSaTokenContext().getModelBox());
+            }
+            assertSame(before, SaManager.getSaTokenContext().getModelBox());
+        } finally {
+            SaManager.getSaTokenContext().clearContext();
+            app.close();
+        }
+    }
+
+    private Object field(String name) {
+        return ReflectUtil.getStaticFieldValue(Objects.requireNonNull(ReflectUtil.getField(SaManager.class, name)));
+    }
+
+    @Test
+    void restoresExactNullableOwners() {
+        var config = SaManager.config;
+        var permissions = field("stpInterface");
+        var context = field("saTokenContext");
+        var dao = field("saTokenDao");
+        var data = SubjectKit.dataProvider;
+        var auth = new NativeAuth();
+        auth.close();
+        assertSame(config, SaManager.config);
+        assertSame(permissions, field("stpInterface"));
+        assertSame(context, field("saTokenContext"));
+        assertSame(dao, field("saTokenDao"));
+        assertSame(data, SubjectKit.dataProvider);
+    }
+
+    @Test
+    void preservesReplacementOwner() {
+        var originalConfig = SaManager.config;
+        var originalData = SubjectKit.dataProvider;
+        var auth = new NativeAuth();
+        var replacement = new cn.dev33.satoken.config.SaTokenConfig().setIsPrint(false);
+        SaManager.setConfig(replacement);
+        SaManager.setStpInterface(null);
+        SaManager.setSaTokenContext(null);
+        SubjectKit.dataProvider = null;
+        try {
+            auth.close();
+            assertSame(replacement, SaManager.config);
+            assertSame(null, field("stpInterface"));
+            assertSame(null, field("saTokenContext"));
+            assertSame(null, SubjectKit.dataProvider);
+        } finally {
+            SaManager.config = originalConfig;
+            SubjectKit.dataProvider = originalData;
+        }
+    }
+
+    @Test
+    void preservesCallerDaoAndItsData() {
         SaTokenDao previous = currentDao();
         TrackingDao caller = new TrackingDao();
         ReflectUtil.setFieldValue(SaManager.class, ReflectUtil.getField(SaManager.class, "saTokenDao"), caller);
@@ -67,7 +109,8 @@ class NativeAuthOwnershipTest {
         }
     }
 
-    @Test void rollsBackWhenNativeDaoRegistrationFails() {
+    @Test
+    void rollsBackWhenNativeDaoRegistrationFails() {
         assertNull(currentDao());
         Object context = field("saTokenContext");
         SaTokenConfig config = SaManager.config;
@@ -75,7 +118,8 @@ class NativeAuthOwnershipTest {
         SubjectDataProvider provider = SubjectKit.dataProvider;
         IllegalStateException failure = new IllegalStateException("native DAO registration failed");
         SaTokenListenerForSimple listener = new SaTokenListenerForSimple() {
-            @Override public void doRegisterComponent(String name, Object registered) {
+            @Override
+            public void doRegisterComponent(String name, Object registered) {
                 if ("SaTokenDao".equals(name) && registered instanceof SaTokenDaoDefaultImpl) {
                     throw failure;
                 }
@@ -98,7 +142,8 @@ class NativeAuthOwnershipTest {
         }
     }
 
-    @Test void completesCleanupWhenPermissionListenerFailsOnClose() {
+    @Test
+    void completesCleanupWhenPermissionListenerFailsOnClose() {
         assertNull(currentDao());
         Object context = field("saTokenContext");
         SaTokenConfig config = SaManager.config;
@@ -107,7 +152,8 @@ class NativeAuthOwnershipTest {
         NativeAuth auth = new NativeAuth();
         IllegalStateException failure = new IllegalStateException("native permission restoration failed");
         SaTokenListenerForSimple listener = new SaTokenListenerForSimple() {
-            @Override public void doRegisterComponent(String name, Object registered) {
+            @Override
+            public void doRegisterComponent(String name, Object registered) {
                 if ("StpInterface".equals(name)) {
                     throw failure;
                 }
@@ -131,23 +177,17 @@ class NativeAuthOwnershipTest {
         }
     }
 
-    private static SaTokenDao currentDao() {
-        return (SaTokenDao) ReflectUtil.getStaticFieldValue(ReflectUtil.getField(SaManager.class, "saTokenDao"));
-    }
-
-    private static StpInterface currentPermissions() {
-        return (StpInterface) ReflectUtil.getStaticFieldValue(ReflectUtil.getField(SaManager.class, "stpInterface"));
-    }
-
     private static final class TrackingDao extends SaTokenDaoDefaultImpl {
         private int initializations;
         private int destructions;
 
-        @Override public void init() {
+        @Override
+        public void init() {
             initializations++;
         }
 
-        @Override public void destroy() {
+        @Override
+        public void destroy() {
             destructions++;
             delete("caller-session");
             super.destroy();

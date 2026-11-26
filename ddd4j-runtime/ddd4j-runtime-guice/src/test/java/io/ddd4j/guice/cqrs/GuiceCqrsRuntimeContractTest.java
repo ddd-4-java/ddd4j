@@ -43,6 +43,25 @@ import java.util.Objects;
  */
 class GuiceCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
 
+    private static io.ddd4j.core.cqrs.readmodel.ProjectionView<Object> startupView(String name, String cron) {
+        return new io.ddd4j.core.cqrs.readmodel.ProjectionView<>() {
+            public String getName() {
+                return name;
+            }
+
+            public String getCron() {
+                return cron;
+            }
+
+            public java.util.Collection<String> getEventTypes() {
+                return java.util.List.of();
+            }
+
+            public void handleEvents(java.util.Collection<Object> events) {
+            }
+        };
+    }
+
     @org.junit.jupiter.params.ParameterizedTest
     @org.junit.jupiter.params.provider.CsvSource({"empty,false", "empty,true", "registrations,false", "registrations,true", "runtime,false", "runtime,true"})
     void failedProjectionStartupPreservesGlobalsAndReleasesOwnedResources(String prior, boolean projectionFirst) throws Exception {
@@ -57,7 +76,8 @@ class GuiceCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         if (!"empty".equals(prior)) {
             previous = com.google.inject.Guice.createInjector(new io.ddd4j.guice.Ddd4jGuiceModule());
             priorRuntime = previous.getInstance(io.ddd4j.guice.Ddd4jGuiceRuntime.class);
-            priorHandle = previous.getInstance(GuiceViewManager.class).scheduleAtFixedRate("prior-runtime", 3600, () -> { });
+            priorHandle = previous.getInstance(GuiceViewManager.class).scheduleAtFixedRate("prior-runtime", 3600, () -> {
+            });
         }
         java.util.Map<String, Object> before = new java.util.HashMap<>();
         for (String key : keys) {
@@ -100,7 +120,8 @@ class GuiceCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
             protected void configure() {
                 bind(GuiceViewManager.class).toInstance(manager);
                 bind(ProjectionPositionRepository.class).toInstance(repository);
-                bind(new com.google.inject.TypeLiteral<io.ddd4j.core.cqrs.readmodel.EventChunkReader<Object>>() { }).toInstance(reader);
+                bind(new com.google.inject.TypeLiteral<io.ddd4j.core.cqrs.readmodel.EventChunkReader<Object>>() {
+                }).toInstance(reader);
             }
         });
         com.google.inject.Injector expectedPrevious = previous;
@@ -145,15 +166,6 @@ class GuiceCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
     }
 
-    private static io.ddd4j.core.cqrs.readmodel.ProjectionView<Object> startupView(String name, String cron) {
-        return new io.ddd4j.core.cqrs.readmodel.ProjectionView<>() {
-            public String getName() { return name; }
-            public String getCron() { return cron; }
-            public java.util.Collection<String> getEventTypes() { return java.util.List.of(); }
-            public void handleEvents(java.util.Collection<Object> events) { }
-        };
-    }
-
     @org.junit.jupiter.api.Test
     void basicHasNoProjectionAndLegacyKeepsMemoryDefault() {
         com.google.inject.Injector basic = com.google.inject.Guice.createInjector(io.ddd4j.guice.Ddd4jGuiceModule.basic());
@@ -167,7 +179,8 @@ class GuiceCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
             org.junit.jupiter.api.Assertions.assertInstanceOf(io.ddd4j.core.cqrs.readmodel.InMemoryProjectionPositionRepository.class,
                     legacy.getInstance(ProjectionPositionRepository.class));
             org.junit.jupiter.api.Assertions.assertNotNull(legacy.getInstance(com.google.inject.Key.get(
-                    new com.google.inject.TypeLiteral<io.ddd4j.core.cqrs.readmodel.ProjectionRunner<Object>>() { })));
+                    new com.google.inject.TypeLiteral<io.ddd4j.core.cqrs.readmodel.ProjectionRunner<Object>>() {
+                    })));
         }
     }
 
@@ -182,7 +195,8 @@ class GuiceCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
                                     if (supplyRepository) {
                                         bind(ProjectionPositionRepository.class).toInstance(new GuiceInMemoryProjectionPositionRepository());
                                     } else {
-                                        bind(new com.google.inject.TypeLiteral<io.ddd4j.core.cqrs.readmodel.EventChunkReader<Object>>() { })
+                                        bind(new com.google.inject.TypeLiteral<io.ddd4j.core.cqrs.readmodel.EventChunkReader<Object>>() {
+                                        })
                                                 .toInstance((stream, from, size, types) -> io.ddd4j.core.cqrs.readmodel.EventChunk.empty(from));
                                     }
                                 }
@@ -204,16 +218,28 @@ class GuiceCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         }
         java.util.concurrent.atomic.AtomicInteger delivered = new java.util.concurrent.atomic.AtomicInteger();
         io.ddd4j.core.cqrs.readmodel.ProjectionView<Object> view = new io.ddd4j.core.cqrs.readmodel.ProjectionView<>() {
-            public String getName() { return "order-summary"; }
-            public String getCron() { return "0/3600"; }
-            public java.util.Collection<String> getEventTypes() { return java.util.List.of("Order"); }
-            public void handleEvents(java.util.Collection<Object> events) { delivered.addAndGet(events.size()); }
+            public String getName() {
+                return "order-summary";
+            }
+
+            public String getCron() {
+                return "0/3600";
+            }
+
+            public java.util.Collection<String> getEventTypes() {
+                return java.util.List.of("Order");
+            }
+
+            public void handleEvents(java.util.Collection<Object> events) {
+                delivered.addAndGet(events.size());
+            }
         };
         com.google.inject.Injector injector = com.google.inject.Guice.createInjector(io.ddd4j.guice.Ddd4jGuiceModule.basic(),
                 new io.ddd4j.guice.Ddd4jProjectionGuiceModule(java.util.List.of(view)), new com.google.inject.AbstractModule() {
                     protected void configure() {
                         bind(ProjectionPositionRepository.class).toInstance(repository);
-                        bind(new com.google.inject.TypeLiteral<io.ddd4j.core.cqrs.readmodel.EventChunkReader<Object>>() { })
+                        bind(new com.google.inject.TypeLiteral<io.ddd4j.core.cqrs.readmodel.EventChunkReader<Object>>() {
+                        })
                                 .toInstance((stream, from, size, types) -> from == 10L
                                         ? new io.ddd4j.core.cqrs.readmodel.EventChunk<>(java.util.List.of("event-11", "event-19"), 20L)
                                         : io.ddd4j.core.cqrs.readmodel.EventChunk.empty(from));
@@ -228,7 +254,8 @@ class GuiceCqrsRuntimeContractTest extends AbstractCqrsRuntimeContractTest {
         org.junit.jupiter.api.Assertions.assertEquals(2, delivered.get());
         org.junit.jupiter.api.Assertions.assertEquals(20L, new GuiceJdbcProjectionPositionRepository(source)
                 .findByStreamId("order-summary").orElseThrow().getNextEventNumber());
-        io.ddd4j.core.cqrs.readmodel.ViewScheduler.ViewScheduleHandle handle = manager.scheduleAtFixedRate("close-check", 3600, () -> { });
+        io.ddd4j.core.cqrs.readmodel.ViewScheduler.ViewScheduleHandle handle = manager.scheduleAtFixedRate("close-check", 3600, () -> {
+        });
         injector.getInstance(io.ddd4j.guice.Ddd4jGuiceRuntime.class).close();
         org.junit.jupiter.api.Assertions.assertFalse(manager.isRunning());
         org.junit.jupiter.api.Assertions.assertFalse(handle.isActive());

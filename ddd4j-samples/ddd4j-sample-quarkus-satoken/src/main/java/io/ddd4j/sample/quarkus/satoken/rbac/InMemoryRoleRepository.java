@@ -14,8 +14,6 @@
  */
 package io.ddd4j.sample.quarkus.satoken.rbac;
 
-import java.util.Objects;
-
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.*;
@@ -77,7 +75,7 @@ public class InMemoryRoleRepository {
     /**
      * 为角色绑定权限编码。
      *
-     * @param roleCode 角色编码
+     * @param roleCode       角色编码
      * @param permissionCode 权限编码
      * @return 已更新的角色
      */
@@ -96,7 +94,7 @@ public class InMemoryRoleRepository {
     /**
      * 为角色解除权限。
      *
-     * @param roleCode 角色编码
+     * @param roleCode       角色编码
      * @param permissionCode 权限编码
      * @return 已更新的角色
      */

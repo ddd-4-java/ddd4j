@@ -75,7 +75,9 @@ public class GuiceInMemoryProjectionPositionRepository implements ProjectionPosi
         return store.size();
     }
 
-    /** 清空内存中的投影位置。 */
+    /**
+     * 清空内存中的投影位置。
+     */
     public void clear() {
         store.clear();
     }

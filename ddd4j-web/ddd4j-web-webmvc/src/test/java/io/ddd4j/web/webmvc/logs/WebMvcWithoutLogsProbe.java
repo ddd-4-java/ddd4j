@@ -1,6 +1,7 @@
 package io.ddd4j.web.webmvc.logs;
 
 import io.ddd4j.web.webmvc.util.WebUtils;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletConfig;
@@ -9,9 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.context.annotation.Configuration;
 
-/** 没有日志依赖的真实 Spring MVC 初始化与请求分派入口。 */
+/**
+ * 没有日志依赖的真实 Spring MVC 初始化与请求分派入口。
+ */
 public class WebMvcWithoutLogsProbe {
     public static void main(String[] args) throws Exception {
         try {
@@ -36,16 +38,23 @@ public class WebMvcWithoutLogsProbe {
         }
     }
 
-    /** 标准 MVC 配置，包含可选桥接所在包的组件扫描。 */
+    /**
+     * 标准 MVC 配置，包含可选桥接所在包的组件扫描。
+     */
     @Configuration(proxyBeanMethods = false)
     @EnableWebMvc
     @org.springframework.context.annotation.ComponentScan(basePackages = "io.ddd4j.web.webmvc.logs")
-    static class MvcConfiguration { }
+    static class MvcConfiguration {
+    }
 
-    /** 实际请求分派目标。 */
+    /**
+     * 实际请求分派目标。
+     */
     @RestController
     public static class Endpoint {
         @GetMapping("/r05-no-logs")
-        public String handle() { return "webmvc-ok"; }
+        public String handle() {
+            return "webmvc-ok";
+        }
     }
 }

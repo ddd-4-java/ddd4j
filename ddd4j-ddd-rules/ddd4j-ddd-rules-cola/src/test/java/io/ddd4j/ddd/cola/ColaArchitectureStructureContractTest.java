@@ -26,7 +26,9 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/** 三线共同的 COLA 架构目录说明文本契约。 */
+/**
+ * 三线共同的 COLA 架构目录说明文本契约。
+ */
 class ColaArchitectureStructureContractTest {
 
     @TempDir

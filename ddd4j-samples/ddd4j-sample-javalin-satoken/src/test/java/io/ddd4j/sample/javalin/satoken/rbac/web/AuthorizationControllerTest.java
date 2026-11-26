@@ -14,11 +14,9 @@
  */
 package io.ddd4j.sample.javalin.satoken.rbac.web;
 
-import lombok.extern.slf4j.Slf4j;
-import static org.junit.jupiter.api.Assertions.*;
-
 import io.ddd4j.sample.javalin.satoken.TestSupport;
 import io.javalin.Javalin;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 
 import java.net.URI;

@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.extension.otel;
-import io.opentelemetry.api.trace.Tracer;
 
 import io.opentelemetry.api.OpenTelemetry;
 import org.junit.jupiter.api.AfterEach;

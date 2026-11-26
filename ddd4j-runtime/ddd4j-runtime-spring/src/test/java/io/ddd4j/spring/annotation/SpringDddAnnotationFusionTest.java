@@ -29,7 +29,9 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/** 验证 DDD 注解的 Spring 组合注解及聚合根标记契约。 */
+/**
+ * 验证 DDD 注解的 Spring 组合注解及聚合根标记契约。
+ */
 @DisplayName("ddd4j-runtime-spring DDD 注解与 Spring 元注解融合验收")
 class SpringDddAnnotationFusionTest {
 

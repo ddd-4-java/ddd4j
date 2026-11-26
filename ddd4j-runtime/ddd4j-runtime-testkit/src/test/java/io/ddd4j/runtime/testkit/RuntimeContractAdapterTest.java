@@ -33,6 +33,8 @@ class RuntimeContractAdapterTest {
     }
 
     private RuntimeContractAdapter adapter(Map<String, Class<?>> services) {
-        return new RuntimeContractAdapter(() -> { }, () -> { }, services, () -> null);
+        return new RuntimeContractAdapter(() -> {
+        }, () -> {
+        }, services, () -> null);
     }
 }

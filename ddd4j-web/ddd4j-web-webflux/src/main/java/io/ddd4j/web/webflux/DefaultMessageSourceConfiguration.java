@@ -71,7 +71,7 @@ public class DefaultMessageSourceConfiguration {
     /**
      * 主 MessageSource：支持多 bundle 与 basename 动态解析。
      *
-     * @param properties 国际化配置属性
+     * @param properties              国际化配置属性
      * @param resourceBasenameHandler 资源基名解析器
      * @return 主消息源
      */

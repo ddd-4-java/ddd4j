@@ -63,6 +63,7 @@ public interface CASOperation<R, V> {
      *   <li>-1 = 使用引擎默认（16 次）</li>
      *   <li>N = 最多重试 N 次</li>
      * </ul>
+     *
      * @return 最大重试次数，-1 表示使用引擎默认值
      */
     default int maxRetries() {

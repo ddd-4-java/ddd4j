@@ -14,8 +14,6 @@
  */
 package io.ddd4j.sample.quarkus.shiro.rbac;
 
-import java.util.Objects;
-
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.*;
@@ -92,7 +90,7 @@ public class InMemoryUserRepository {
     /**
      * 为用户绑定角色编码。
      *
-     * @param userId 用户标识
+     * @param userId   用户标识
      * @param roleCode 角色编码
      * @return 已更新的用户
      */
@@ -111,7 +109,7 @@ public class InMemoryUserRepository {
     /**
      * 为用户解除角色。
      *
-     * @param userId 用户标识
+     * @param userId   用户标识
      * @param roleCode 角色编码
      * @return 已更新的用户
      */

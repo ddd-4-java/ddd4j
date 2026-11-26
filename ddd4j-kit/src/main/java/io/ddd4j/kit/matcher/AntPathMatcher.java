@@ -111,6 +111,7 @@ public class AntPathMatcher implements PathMatcher {
     /**
      * Set the path separator to use for pattern parsing.
      * <p>Default is "/", as in Ant.
+     *
      * @param pathSeparator 路径分隔符；为 null 时回退到默认分隔符
      */
     public void setPathSeparator(String pathSeparator) {
@@ -122,8 +123,8 @@ public class AntPathMatcher implements PathMatcher {
      * Specify whether to perform pattern matching in a case-sensitive fashion.
      * <p>Default is {@code true}. Switch this to {@code false} for case-insensitive matching.
      *
-     * @since 4.2
      * @param caseSensitive 是否区分大小写
+     * @since 4.2
      */
     public void setCaseSensitive(boolean caseSensitive) {
         this.caseSensitive = caseSensitive;
@@ -132,6 +133,7 @@ public class AntPathMatcher implements PathMatcher {
     /**
      * Specify whether to trim tokenized paths and patterns.
      * <p>Default is {@code false}.
+     *
      * @param trimTokens 是否修剪路径令牌两端空白
      */
     public void setTrimTokens(boolean trimTokens) {
@@ -148,9 +150,9 @@ public class AntPathMatcher implements PathMatcher {
      * (the threshold is 65536), assuming that arbitrary permutations of patterns
      * are coming in, with little chance for encountering a recurring pattern.
      *
+     * @param cachePatterns 是否缓存字符串匹配器
      * @see #getStringMatcher(String)
      * @since 4.0.1
-     * @param cachePatterns 是否缓存字符串匹配器
      */
     public void setCachePatterns(boolean cachePatterns) {
         this.cachePatterns = cachePatterns;
@@ -198,12 +200,12 @@ public class AntPathMatcher implements PathMatcher {
     /**
      * Actually match the given {@code path} against the given {@code pattern}.
      *
-     * @param pattern   the pattern to match against
-     * @param path      the path to test
-     * @param fullMatch whether a full pattern match is required (else a pattern match
-     *                  as far as the given base path goes is sufficient)
-     * @return {@code true} if the supplied {@code path} matched, {@code false} if it didn't
+     * @param pattern              the pattern to match against
+     * @param path                 the path to test
+     * @param fullMatch            whether a full pattern match is required (else a pattern match
+     *                             as far as the given base path goes is sufficient)
      * @param uriTemplateVariables URI 模板变量映射，用于承接模式中捕获的变量值
+     * @return {@code true} if the supplied {@code path} matched, {@code false} if it didn't
      */
     protected boolean doMatch(String pattern, String path, boolean fullMatch,
                               Map<String, String> uriTemplateVariables) {
@@ -662,7 +664,7 @@ public class AntPathMatcher implements PathMatcher {
         /**
          * 创建路径片段匹配器。
          *
-         * @param pattern Ant 风格模式
+         * @param pattern       Ant 风格模式
          * @param pathSeparator 路径分隔符
          * @param caseSensitive 是否区分大小写
          */
@@ -686,7 +688,7 @@ public class AntPathMatcher implements PathMatcher {
                         this.variableNames.add(matcher.group(1));
                     } else {
                         String variablePattern = match.substring(colonIdx + 1, match.length() - 1);
-patternBuilder.append('(');
+                        patternBuilder.append('(');
                         patternBuilder.append(variablePattern);
                         patternBuilder.append(')');
                         String variableName = match.substring(1, colonIdx);
@@ -722,9 +724,9 @@ patternBuilder.append('(');
         /**
          * Main entry point.
          *
+         * @param str                  待匹配的字符串
+         * @param uriTemplateVariables URI 模板变量映射
          * @return {@code true} if the string matches against the pattern, or {@code false} otherwise.
-     * @param str                  待匹配的字符串
-     * @param uriTemplateVariables URI 模板变量映射
          */
         public boolean matchStrings(String str, Map<String, String> uriTemplateVariables) {
             if (this.exactMatch) {
@@ -789,7 +791,7 @@ patternBuilder.append('(');
         /**
          * 创建模式比较器。
          *
-         * @param path 待匹配路径
+         * @param path          待匹配路径
          * @param pathSeparator 路径分隔符
          */
         public AntPatternComparator(String path, String pathSeparator) {

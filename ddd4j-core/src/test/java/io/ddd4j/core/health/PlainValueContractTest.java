@@ -1,24 +1,14 @@
 package io.ddd4j.core.health;
 
-import io.ddd4j.core.cqrs.query.PropertyRef;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.ddd4j.core.cqrs.query.LambdaCondition;
+import io.ddd4j.core.cqrs.query.PropertyRef;
 import io.ddd4j.core.cqrs.query.PropertySpace;
 import org.junit.jupiter.api.Test;
-import com.fasterxml.jackson.databind.json.JsonMapper;
 
-import java.io.ObjectStreamClass;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.InvalidObjectException;
+import java.io.*;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

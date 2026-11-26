@@ -29,7 +29,7 @@ class Pf4jServletContractTest {
         ServletResponseExtensionPoint.class.getMethod("dewrap", HttpServletResponse.class, Map.class);
 
         HttpServletRequest request = (HttpServletRequest) Proxy.newProxyInstance(
-                HttpServletRequest.class.getClassLoader(), new Class<?>[] {HttpServletRequest.class},
+                HttpServletRequest.class.getClassLoader(), new Class<?>[]{HttpServletRequest.class},
                 (proxy, method, args) -> "getHeader".equals(method.getName()) ? "Bearer token-123" : null);
         assertEquals("token-123", new AuthcExtensionPointAdapter().getToken(request, new HashMap<>()));
     }

@@ -45,7 +45,7 @@ public class SM3Kit {
     /**
      * SM3-摘要
      *
-     * @param salt 盐值
+     * @param salt     盐值
      * @param plainTxt 待摘要的明文
      * @return 十六进制摘要
      */

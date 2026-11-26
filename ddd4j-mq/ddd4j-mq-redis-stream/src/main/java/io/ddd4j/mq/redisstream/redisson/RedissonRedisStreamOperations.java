@@ -60,7 +60,7 @@ public class RedissonRedisStreamOperations implements RedisStreamOperations {
     /**
      * 指定客户端生命周期归属后创建操作适配器。
      *
-     * @param redisson Redisson 客户端
+     * @param redisson    Redisson 客户端
      * @param closeClient 关闭适配器时是否关闭客户端
      */
     public RedissonRedisStreamOperations(RedissonClient redisson, boolean closeClient) {

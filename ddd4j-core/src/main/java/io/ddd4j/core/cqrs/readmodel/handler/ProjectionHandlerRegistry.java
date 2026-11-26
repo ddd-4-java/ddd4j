@@ -17,15 +17,7 @@ package io.ddd4j.core.cqrs.readmodel.handler;
 import io.ddd4j.core.ddd.event.DomainEvent;
 import io.ddd4j.kit.lang.StrKit;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -40,6 +32,7 @@ public class ProjectionHandlerRegistry {
 
     /**
      * 注册处理器。不同名称可订阅相同事件，同名不能覆盖已有注册。
+     *
      * @param handler 处理器及完整订阅声明
      * @throws IllegalStateException 视图名已注册
      */
@@ -79,6 +72,7 @@ public class ProjectionHandlerRegistry {
 
     /**
      * 返回按注册顺序排列的不可变快照，每个视图出现一次。
+     *
      * @return 全部已注册视图
      */
     public synchronized Collection<ProjectionHandler> all() {
@@ -87,8 +81,9 @@ public class ProjectionHandlerRegistry {
 
     /**
      * 兼容旧单视图调用；多订阅时返回最先注册者，不执行扇出。
+     *
      * @param eventType 事件类型
-     * @param <E> 事件类型
+     * @param <E>       事件类型
      * @return 第一个订阅者，未注册时为空
      */
     public <E extends DomainEvent<?>> Optional<ProjectionHandler> findHandler(Class<E> eventType) {
@@ -97,8 +92,9 @@ public class ProjectionHandlerRegistry {
 
     /**
      * 查找全部独立订阅视图，按注册顺序返回不可变快照。
+     *
      * @param eventType 事件类型
-     * @param <E> 事件类型
+     * @param <E>       事件类型
      * @return 订阅该类型的全部处理器
      */
     public synchronized <E extends DomainEvent<?>> List<ProjectionHandler> findHandlers(Class<E> eventType) {

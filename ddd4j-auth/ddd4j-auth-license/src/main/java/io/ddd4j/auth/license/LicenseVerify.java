@@ -42,10 +42,10 @@ public class LicenseVerify {
     /**
      * 使用兼容签名算法创建许可证校验器。
      *
-     * @param subject 许可证主题
-     * @param publicAlias 公钥别名
-     * @param storePass 密钥库密码
-     * @param licensePath 许可证路径
+     * @param subject             许可证主题
+     * @param publicAlias         公钥别名
+     * @param storePass           密钥库密码
+     * @param licensePath         许可证路径
      * @param publicKeysStorePath 公钥库路径
      */
     public LicenseVerify(String subject, String publicAlias, String storePass, String licensePath,
@@ -57,12 +57,12 @@ public class LicenseVerify {
     /**
      * 使用指定签名算法创建许可证校验器。
      *
-     * @param subject 许可证主题
-     * @param publicAlias 公钥别名
-     * @param storePass 密钥库密码
-     * @param licensePath 许可证路径
+     * @param subject             许可证主题
+     * @param publicAlias         公钥别名
+     * @param storePass           密钥库密码
+     * @param licensePath         许可证路径
      * @param publicKeysStorePath 公钥库路径
-     * @param signatureAlgorithm 签名算法
+     * @param signatureAlgorithm  签名算法
      */
     public LicenseVerify(String subject, String publicAlias, String storePass, String licensePath,
                          String publicKeysStorePath, String signatureAlgorithm) {

@@ -15,10 +15,17 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-/** 无 Spring 容器、文件数据库关闭重开及失败事务的持久化契约。 */
+/**
+ * 无 Spring 容器、文件数据库关闭重开及失败事务的持久化契约。
+ */
 class EntityManagerProjectionPositionRepositoryTest {
     @TempDir
     Path directory;
+
+    private static void assertPosition(ProjectionPositionRepository repository, String stream, long expected) {
+        assertThat(repository.findByStreamId(stream)).hasValueSatisfying(
+                position -> assertThat(position.getNextEventNumber()).isEqualTo(expected));
+    }
 
     @Test
     void commitsSnapshotsAndResetAcrossFactoryRestart() throws Exception {
@@ -125,10 +132,5 @@ class EntityManagerProjectionPositionRepositoryTest {
 
     private ProjectionPositionRepository repository(EntityManager em) throws Exception {
         return new EntityManagerProjectionPositionRepository(em);
-    }
-
-    private static void assertPosition(ProjectionPositionRepository repository, String stream, long expected) {
-        assertThat(repository.findByStreamId(stream)).hasValueSatisfying(
-                position -> assertThat(position.getNextEventNumber()).isEqualTo(expected));
     }
 }

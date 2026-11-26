@@ -1,16 +1,29 @@
 package io.ddd4j.data.mybatis.context;
 
 import io.ddd4j.core.constant.ContextConstants;
-import io.ddd4j.core.context.Contexts;
 import io.ddd4j.core.context.ThreadContext;
+
 import java.util.Objects;
 
-/** 复用增强组件的租户作用域，将唯一租户来源桥接到 DDD4J 请求上下文。 */
+/**
+ * 复用增强组件的租户作用域，将唯一租户来源桥接到 DDD4J 请求上下文。
+ */
 public class Ddd4jTenantContext {
     private final org.apache.ibatis.enhance.context.TenantContext delegate = new org.apache.ibatis.enhance.context.TenantContext() {
-        @Override public Object getCurrentTenantId() { return Ddd4jTenantContext.this.getCurrentTenantId(); }
-        @Override public void setCurrentTenantId(Object tenantId) { Ddd4jTenantContext.this.setCurrentTenantId(tenantId); }
-        @Override public void clear() { Ddd4jTenantContext.this.clear(); }
+        @Override
+        public Object getCurrentTenantId() {
+            return Ddd4jTenantContext.this.getCurrentTenantId();
+        }
+
+        @Override
+        public void setCurrentTenantId(Object tenantId) {
+            Ddd4jTenantContext.this.setCurrentTenantId(tenantId);
+        }
+
+        @Override
+        public void clear() {
+            Ddd4jTenantContext.this.clear();
+        }
     };
 
     /**
@@ -35,7 +48,9 @@ public class Ddd4jTenantContext {
         }
     }
 
-    /** 从当前请求上下文清除租户。 */
+    /**
+     * 从当前请求上下文清除租户。
+     */
     public void clear() {
         ThreadContext.remove(ContextConstants.TENANT_ID);
     }
@@ -59,7 +74,9 @@ public class Ddd4jTenantContext {
         return new Scope(delegate.open(tenantId));
     }
 
-    /** 兼容既有 Ddd4jTenantContext.Scope 的薄包装。 */
+    /**
+     * 兼容既有 Ddd4jTenantContext.Scope 的薄包装。
+     */
     public static final class Scope implements AutoCloseable {
         private final org.apache.ibatis.enhance.context.TenantContext.Scope delegateScope;
 

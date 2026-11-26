@@ -118,7 +118,7 @@ public final class AuthConfig {
          *
          * @param userRepository 用户仓储
          * @param roleRepository 角色仓储
-         * @param rbacService RBAC 服务
+         * @param rbacService    RBAC 服务
          */
         public RbacRealm(InMemoryUserRepository userRepository,
                          InMemoryRoleRepository roleRepository,

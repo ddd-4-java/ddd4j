@@ -14,10 +14,8 @@
  */
 package io.ddd4j.web.webflux;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.api.R;
@@ -27,13 +25,13 @@ import io.ddd4j.core.context.BaseContext;
 import io.ddd4j.core.subject.Subject;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
-import io.ddd4j.web.core.idempotency.CacheIdempotencyGuard;
-import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
 import io.ddd4j.web.core.auth.WebAccessPolicy;
-import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.web.core.context.WebRequestContextFactory;
 import io.ddd4j.web.core.context.WebRequestLifecycle;
+import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
 import io.ddd4j.web.core.error.WebStatusException;
+import io.ddd4j.web.core.idempotency.CacheIdempotencyGuard;
+import io.ddd4j.web.core.idempotency.WebIdempotencyLifecycle;
 import io.ddd4j.web.testkit.AbstractWebContractTest;
 import io.ddd4j.web.testkit.WebContractClient;
 import io.ddd4j.web.testkit.WebContractPaths;
@@ -60,11 +58,7 @@ import org.springframework.web.reactive.config.EnableWebFlux;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Objects;
+import java.util.*;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -184,6 +178,11 @@ class Ddd4jWebFluxHttpContractTest extends AbstractWebContractTest {
 
         private final WebTestClient webTestClient;
 
+        @JsonCreator()
+        private WebFluxContractClient(@JsonProperty("webTestClient") WebTestClient webTestClient) {
+            this.webTestClient = webTestClient;
+        }
+
         @Override
         public WebContractResponse request(String method, String path, Map<String, String> headers, String body) {
             WebTestClient.RequestBodySpec request = webTestClient.method(HttpMethod.valueOf(method)).uri(path);
@@ -197,11 +196,6 @@ class Ddd4jWebFluxHttpContractTest extends AbstractWebContractTest {
             byte[] responseBody = result.getResponseBody();
             String responseText = Objects.isNull(responseBody) ? "" : new String(responseBody, StandardCharsets.UTF_8);
             return new WebContractResponse(result.getStatus().value(), responseHeaders, responseText);
-        }
-
-        @JsonCreator()
-        private WebFluxContractClient(@JsonProperty("webTestClient") WebTestClient webTestClient) {
-            this.webTestClient = webTestClient;
         }
 
         @JsonProperty("webTestClient")

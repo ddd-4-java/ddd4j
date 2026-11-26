@@ -13,13 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.auth.satoken.subject;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 import cn.dev33.satoken.SaManager;
 import cn.dev33.satoken.config.SaTokenConfig;
@@ -32,11 +25,7 @@ import cn.dev33.satoken.stp.parameter.SaLoginParameter;
 import io.ddd4j.auth.satoken.config.SaTokenAuthenticationMode;
 import io.ddd4j.auth.satoken.config.SaTokenSecurityConfigurer;
 import io.ddd4j.auth.satoken.config.SaTokenSecurityProperties;
-import io.ddd4j.core.auth.AuthLogoutMode;
-import io.ddd4j.core.auth.AuthPrincipal;
-import io.ddd4j.core.auth.AuthRequest;
-import io.ddd4j.core.auth.AuthReplacedLoginExitMode;
-import io.ddd4j.core.auth.AuthReplacedRange;
+import io.ddd4j.core.auth.*;
 import io.ddd4j.core.auth.session.AuthCookieConfig;
 import io.ddd4j.core.auth.session.AuthSessionConfig;
 import io.ddd4j.core.exception.AccountDisabledException;

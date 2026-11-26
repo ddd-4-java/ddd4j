@@ -18,19 +18,12 @@ import io.ddd4j.cache.subject.InMemorySubject;
 import io.ddd4j.cache.subject.InMemorySubjectProvider;
 import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
-import io.ddd4j.dropwizard.command.DropwizardCommandBus;
-import io.ddd4j.core.cqrs.readmodel.DefaultProjectionService;
-import io.ddd4j.core.cqrs.readmodel.EventChunkReader;
-import io.ddd4j.core.cqrs.readmodel.InMemoryProjectionPositionRepository;
-import io.ddd4j.core.cqrs.readmodel.NoopEventChunkReader;
-import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
-import io.ddd4j.core.cqrs.readmodel.ProjectionRunner;
-import io.ddd4j.core.cqrs.readmodel.ProjectionView;
-import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
-import io.ddd4j.dropwizard.cqrs.DropwizardProjectionViewManager;
+import io.ddd4j.core.cqrs.readmodel.*;
 import io.ddd4j.core.health.ReadinessContributor;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectProvider;
+import io.ddd4j.dropwizard.command.DropwizardCommandBus;
+import io.ddd4j.dropwizard.cqrs.DropwizardProjectionViewManager;
 import io.dropwizard.core.Configuration;
 import io.dropwizard.core.ConfiguredBundle;
 import io.dropwizard.core.setup.Bootstrap;
@@ -40,8 +33,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 /**
  * Dropwizard 应用通过 bootstrap.addBundle(new Ddd4jBundle&lt;&gt;()) 接入 ddd4j。
@@ -56,7 +49,9 @@ public final class Ddd4jBundle<C extends Configuration> implements ConfiguredBun
     private final Function<Environment, DropwizardProjectionViewManager> projectionFactory;
     private Ddd4jDropwizardRuntime runtime;
 
-    /** 使用默认服务集合创建 Dropwizard Bundle。 */
+    /**
+     * 使用默认服务集合创建 Dropwizard Bundle。
+     */
     public Ddd4jBundle() {
         this(List.of(), List.of(), null, I18nProvider.DEFAULT, List.of());
     }
@@ -64,10 +59,10 @@ public final class Ddd4jBundle<C extends Configuration> implements ConfiguredBun
     /**
      * 使用指定服务集合创建 Bundle。
      *
-     * @param executors 命令执行器
-     * @param listeners 事件监听器
+     * @param executors       命令执行器
+     * @param listeners       事件监听器
      * @param subjectProvider 主体提供器，可为空
-     * @param i18nProvider 国际化提供器
+     * @param i18nProvider    国际化提供器
      */
     public Ddd4jBundle(Collection<CommandExecutor<?>> executors, Collection<Consumer<Object>> listeners,
                        SubjectProvider subjectProvider, I18nProvider i18nProvider) {
@@ -77,10 +72,10 @@ public final class Ddd4jBundle<C extends Configuration> implements ConfiguredBun
     /**
      * 使用指定服务与就绪检查创建 Bundle。
      *
-     * @param executors 命令执行器
-     * @param listeners 事件监听器
-     * @param subjectProvider 主体提供器，可为空
-     * @param i18nProvider 国际化提供器
+     * @param executors             命令执行器
+     * @param listeners             事件监听器
+     * @param subjectProvider       主体提供器，可为空
+     * @param i18nProvider          国际化提供器
      * @param readinessContributors 就绪检查贡献者
      */
     public Ddd4jBundle(Collection<CommandExecutor<?>> executors, Collection<Consumer<Object>> listeners,
@@ -90,9 +85,9 @@ public final class Ddd4jBundle<C extends Configuration> implements ConfiguredBun
     }
 
     private Ddd4jBundle(Collection<CommandExecutor<?>> executors, Collection<Consumer<Object>> listeners,
-            SubjectProvider subjectProvider, I18nProvider i18nProvider,
-            Collection<? extends ReadinessContributor> readinessContributors,
-            Function<Environment, DropwizardProjectionViewManager> projectionFactory) {
+                        SubjectProvider subjectProvider, I18nProvider i18nProvider,
+                        Collection<? extends ReadinessContributor> readinessContributors,
+                        Function<Environment, DropwizardProjectionViewManager> projectionFactory) {
         this.projectionFactory = projectionFactory;
         this.executors = List.copyOf(Objects.requireNonNull(executors, "executors must not be null"));
         this.listeners = List.copyOf(Objects.requireNonNull(listeners, "listeners must not be null"));
@@ -104,33 +99,36 @@ public final class Ddd4jBundle<C extends Configuration> implements ConfiguredBun
 
     /**
      * 显式启用持久投影，返回保留当前服务快照的新 Bundle。
-     * @param <E> 事件类型
+     *
+     * @param <E>        事件类型
      * @param repository 调用方持久位置仓储
-     * @param reader 实际事件读取器
-     * @param views 视图快照
+     * @param reader     实际事件读取器
+     * @param views      视图快照
      * @return 使用自有调度线程的 Bundle
      */
     public <E> Ddd4jBundle<C> withProjection(ProjectionPositionRepository repository,
-            EventChunkReader<E> reader, Collection<? extends ProjectionView<E>> views) {
+                                             EventChunkReader<E> reader, Collection<? extends ProjectionView<E>> views) {
         return projected(repository, reader, views, null);
     }
 
-    /** 使用借用调度器启用持久投影；停止只取消本 Bundle 的 handles。
+    /**
+     * 使用借用调度器启用持久投影；停止只取消本 Bundle 的 handles。
      * 调用方继续负责借用调度器、reader 和仓储生命周期。
-     * @param <E> 事件类型
+     *
+     * @param <E>        事件类型
      * @param repository 调用方持久位置仓储
-     * @param reader 实际事件读取器
-     * @param views 视图快照
-     * @param scheduler 调用方调度器
+     * @param reader     实际事件读取器
+     * @param views      视图快照
+     * @param scheduler  调用方调度器
      * @return 显式投影 Bundle
      */
     public <E> Ddd4jBundle<C> withProjection(ProjectionPositionRepository repository,
-            EventChunkReader<E> reader, Collection<? extends ProjectionView<E>> views, ViewScheduler scheduler) {
+                                             EventChunkReader<E> reader, Collection<? extends ProjectionView<E>> views, ViewScheduler scheduler) {
         return projected(repository, reader, views, Objects.requireNonNull(scheduler, "scheduler must not be null"));
     }
 
     private <E> Ddd4jBundle<C> projected(ProjectionPositionRepository repository,
-            EventChunkReader<E> reader, Collection<? extends ProjectionView<E>> views, ViewScheduler scheduler) {
+                                         EventChunkReader<E> reader, Collection<? extends ProjectionView<E>> views, ViewScheduler scheduler) {
         Objects.requireNonNull(repository, "Explicit projection requires a position repository");
         Objects.requireNonNull(reader, "Explicit projection requires an event reader");
         if (repository instanceof InMemoryProjectionPositionRepository || reader instanceof NoopEventChunkReader<?>) {
@@ -145,7 +143,9 @@ public final class Ddd4jBundle<C extends Configuration> implements ConfiguredBun
         });
     }
 
-    /** @return run 装配后的 Managed 实例，尚未装配时为空 */
+    /**
+     * @return run 装配后的 Managed 实例，尚未装配时为空
+     */
     public Optional<Ddd4jDropwizardRuntime> runtime() {
         return Optional.ofNullable(runtime);
     }

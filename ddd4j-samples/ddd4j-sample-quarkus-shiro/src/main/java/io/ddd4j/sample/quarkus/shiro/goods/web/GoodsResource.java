@@ -22,13 +22,13 @@ import io.ddd4j.sample.quarkus.shiro.goods.domain.GoodsId;
 import io.ddd4j.sample.quarkus.shiro.goods.domain.GoodsStatus;
 import io.ddd4j.sample.quarkus.shiro.goods.web.dto.CreateGoodsRequest;
 import io.ddd4j.sample.quarkus.shiro.goods.web.dto.UpdateGoodsRequest;
-import java.math.BigDecimal;
-import java.util.List;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * 商品 JAX-RS 资源（读写 HTTP 入口）。
@@ -36,9 +36,11 @@ import jakarta.ws.rs.core.MediaType;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @ApplicationScoped
+
 @Path("/api/goods")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@io.quarkus.arc.properties.IfBuildProperty(name = "sample.goods.standalone", stringValue = "true")
 public class GoodsResource {
 
     private final GoodsApplicationService applicationService;
@@ -57,7 +59,7 @@ public class GoodsResource {
      * 创建商品写入资源。
      *
      * @param applicationService 商品应用服务
-     * @param queryResource 商品查询逻辑
+     * @param queryResource      商品查询逻辑
      */
     @Inject
     public GoodsResource(GoodsApplicationService applicationService, GoodsQueryResource queryResource) {
@@ -81,7 +83,7 @@ public class GoodsResource {
     /**
      * 更新商品。
      *
-     * @param id 商品标识
+     * @param id      商品标识
      * @param request 请求数据
      * @return 更新后的商品
      */
@@ -96,7 +98,7 @@ public class GoodsResource {
     /**
      * 调整商品状态。
      *
-     * @param id 商品标识
+     * @param id     商品标识
      * @param status 商品状态
      * @return 更新后的商品
      */
@@ -147,11 +149,11 @@ public class GoodsResource {
     /**
      * 按条件分页查询商品。
      *
-     * @param current 当前页码
-     * @param size 每页数量
-     * @param code 商品编码
+     * @param current  当前页码
+     * @param size     每页数量
+     * @param code     商品编码
      * @param nameLike 名称模糊匹配条件
-     * @param status 商品状态
+     * @param status   商品状态
      * @param priceMin 最低价格
      * @param priceMax 最高价格
      * @param orderBys 排序字段
@@ -174,9 +176,9 @@ public class GoodsResource {
     /**
      * 按条件列出商品。
      *
-     * @param code 商品编码
+     * @param code     商品编码
      * @param nameLike 名称模糊匹配条件
-     * @param status 商品状态
+     * @param status   商品状态
      * @param priceMin 最低价格
      * @param priceMax 最高价格
      * @param orderBys 排序字段
@@ -197,9 +199,9 @@ public class GoodsResource {
     /**
      * 按条件统计商品。
      *
-     * @param code 商品编码
+     * @param code     商品编码
      * @param nameLike 名称模糊匹配条件
-     * @param status 商品状态
+     * @param status   商品状态
      * @param priceMin 最低价格
      * @param priceMax 最高价格
      * @return 商品数量响应

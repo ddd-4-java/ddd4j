@@ -9,14 +9,11 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.TimeZone;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-/** Logback 升级后默认访问日志、禁用配置与自定义扩展仍保持原有契约。 */
+/**
+ * Logback 升级后默认访问日志、禁用配置与自定义扩展仍保持原有契约。
+ */
 class Ddd4jLogbackAccessRequestLogFactoryTest {
 
     @Test
@@ -53,7 +50,8 @@ class Ddd4jLogbackAccessRequestLogFactoryTest {
     void preservesCustomRequestLogFactory() {
         Configuration configuration = new Configuration();
         DefaultServerFactory server = (DefaultServerFactory) configuration.getServerFactory();
-        LogbackAccessRequestLogFactory custom = new LogbackAccessRequestLogFactory() { };
+        LogbackAccessRequestLogFactory custom = new LogbackAccessRequestLogFactory() {
+        };
         server.setRequestLogFactory(custom);
 
         Ddd4jLogbackAccessRequestLogFactory.configure(configuration);

@@ -8,26 +8,49 @@ import io.quarkus.runtime.StartupEvent;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.junit.QuarkusTestProfile;
 import io.quarkus.test.junit.TestProfile;
-import org.junit.jupiter.api.Test;
-
 import jakarta.enterprise.inject.spi.CDI;
 import jakarta.enterprise.inject.spi.EventContext;
 import jakarta.enterprise.inject.spi.EventMetadata;
 import jakarta.enterprise.inject.spi.ObserverMethod;
 import jakarta.inject.Inject;
+import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-/** 通过 Arc 注册的原生观察器复验权限数据源的生命周期。 */
+/**
+ * 通过 Arc 注册的原生观察器复验权限数据源的生命周期。
+ */
 @QuarkusTest
 @TestProfile(RbacProviderOwnershipTest.OwnershipProfile.class)
 class RbacProviderOwnershipTest {
 
     @Inject
     RbacConfig rbac;
+
+    private static <T> ObserverMethod<? super T> observer(T event) {
+        return CDI.current().getBeanManager().resolveObserverMethods(event).stream()
+                .filter(observer -> observer.getBeanClass() == RbacConfig.class)
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Arc must register the RBAC "
+                        + event.getClass().getSimpleName() + " lifecycle observer"));
+    }
+
+    private static <T> void notifyObserver(ObserverMethod<T> observer, T event) {
+        observer.notify(new EventContext<T>() {
+            @Override
+            public T getEvent() {
+                return event;
+            }
+
+            @Override
+            public EventMetadata getMetadata() {
+                return null;
+            }
+        });
+    }
 
     @Test
     void shutdownRestoresPreviousProviderAndPreservesAReplacement() {
@@ -37,7 +60,8 @@ class RbacProviderOwnershipTest {
         ObserverMethod<? super ShutdownEvent> stop = observer(shutdown);
         SubjectDataProvider surrounding = SubjectKit.dataProvider;
         SubjectDataProvider caller = SubjectDataProvider.DEFAULT;
-        SubjectDataProvider replacement = new SubjectDataProvider() {};
+        SubjectDataProvider replacement = new SubjectDataProvider() {
+        };
         try {
             SubjectKit.setDataProvider(caller);
             notifyObserver(start, startup);
@@ -60,28 +84,6 @@ class RbacProviderOwnershipTest {
         } finally {
             SubjectKit.setDataProvider(surrounding);
         }
-    }
-
-    private static <T> ObserverMethod<? super T> observer(T event) {
-        return CDI.current().getBeanManager().resolveObserverMethods(event).stream()
-                .filter(observer -> observer.getBeanClass() == RbacConfig.class)
-                .findFirst()
-                .orElseThrow(() -> new AssertionError("Arc must register the RBAC "
-                        + event.getClass().getSimpleName() + " lifecycle observer"));
-    }
-
-    private static <T> void notifyObserver(ObserverMethod<T> observer, T event) {
-        observer.notify(new EventContext<T>() {
-            @Override
-            public T getEvent() {
-                return event;
-            }
-
-            @Override
-            public EventMetadata getMetadata() {
-                return null;
-            }
-        });
     }
 
     public static final class OwnershipProfile implements QuarkusTestProfile {

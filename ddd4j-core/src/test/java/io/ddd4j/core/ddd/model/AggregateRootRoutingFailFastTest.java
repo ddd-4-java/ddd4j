@@ -14,22 +14,13 @@
  */
 package io.ddd4j.core.ddd.model;
 
+import io.ddd4j.core.ddd.event.*;
+import org.junit.jupiter.api.Test;
+
 import java.util.Arrays;
 import java.util.Objects;
 
-import io.ddd4j.core.ddd.event.AggregateRootId;
-import io.ddd4j.core.ddd.event.DomainEvent;
-import io.ddd4j.core.ddd.event.EntityId;
-import io.ddd4j.core.ddd.event.EntityIdPath;
-import io.ddd4j.core.ddd.event.EntityType;
-import io.ddd4j.core.ddd.event.EventHandler;
-import io.ddd4j.core.ddd.event.StringEntityId;
-import io.ddd4j.core.ddd.event.StringEntityType;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * {@link AggregateRoot#apply(DomainEvent)} 子实体路由首段断言（fail-fast）测试。

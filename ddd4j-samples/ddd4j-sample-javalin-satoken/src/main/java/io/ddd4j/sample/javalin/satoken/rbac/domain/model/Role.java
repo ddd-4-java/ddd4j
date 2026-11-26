@@ -68,11 +68,11 @@ public class Role extends AggregateRoot<String> {
     /**
      * 创建角色。
      *
-     * @param roleId 角色标识
-     * @param roleCode 角色编码
-     * @param roleName 角色名称
+     * @param roleId      角色标识
+     * @param roleCode    角色编码
+     * @param roleName    角色名称
      * @param description 描述
-     * @param status 状态
+     * @param status      状态
      */
     public Role(String roleId, String roleCode, String roleName, String description, Status status) {
         if (StrKit.isBlank(roleId)) {
@@ -92,7 +92,7 @@ public class Role extends AggregateRoot<String> {
     /**
      * 重命名/描述修改。
      *
-     * @param roleName 角色名称
+     * @param roleName    角色名称
      * @param description 描述
      */
     public void rename(String roleName, String description) {
@@ -159,6 +159,13 @@ public class Role extends AggregateRoot<String> {
      * 角色状态。
      */
     public enum Status {
-        /** 启用状态。 */ ENABLED, /** 禁用状态。 */ DISABLED
+        /**
+         * 启用状态。
+         */
+        ENABLED,
+        /**
+         * 禁用状态。
+         */
+        DISABLED
     }
 }

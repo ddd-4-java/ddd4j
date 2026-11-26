@@ -52,9 +52,9 @@ public final class PropertyRef implements Serializable {
     private final String property;
 
     /**
-     * @param space 属性空间
+     * @param space     属性空间
      * @param ownerType 声明属性方法的类型
-     * @param property Java 属性名
+     * @param property  Java 属性名
      */
     @JsonCreator
     public PropertyRef(@JsonProperty("space") PropertySpace space,
@@ -73,7 +73,7 @@ public final class PropertyRef implements Serializable {
     /**
      * 从领域模型属性方法引用创建属性标识。
      *
-     * @param <M> 领域模型类型
+     * @param <M>      领域模型类型
      * @param function 领域模型属性方法引用
      * @return 领域属性标识
      */
@@ -85,9 +85,9 @@ public final class PropertyRef implements Serializable {
     /**
      * 从持久化对象属性方法引用创建属性标识，并验证声明类型。
      *
-     * @param <P> 持久化对象类型
+     * @param <P>             持久化对象类型
      * @param persistenceType 持久化对象类型
-     * @param function 持久化对象属性方法引用
+     * @param function        持久化对象属性方法引用
      * @return 持久化属性标识
      */
     public static <P> PropertyRef persistence(Class<P> persistenceType, SFunction<P, ?> function) {
@@ -100,10 +100,16 @@ public final class PropertyRef implements Serializable {
         return new PropertyRef(PropertySpace.PERSISTENCE, ownerType, LambdaKit.resolve(function));
     }
 
+    private static IllegalArgumentException incompatible(PropertySpace space, Class<?> ownerType,
+                                                         Class<?> expectedType) {
+        return new IllegalArgumentException("Query " + space + " property owner " + ownerType.getName()
+                + " is incompatible with repository type " + expectedType.getName());
+    }
+
     /**
      * 验证属性引用与当前 Repository 的 Domain/PO 类型一致。
      *
-     * @param domainType 仓储的领域模型类型
+     * @param domainType      仓储的领域模型类型
      * @param persistenceType 仓储的持久化对象类型
      */
     public void requireCompatible(Class<?> domainType, Class<?> persistenceType) {
@@ -133,12 +139,6 @@ public final class PropertyRef implements Serializable {
     @JsonIgnore
     public boolean isPersistence() {
         return Objects.equals(PropertySpace.PERSISTENCE, space);
-    }
-
-    private static IllegalArgumentException incompatible(PropertySpace space, Class<?> ownerType,
-                                                         Class<?> expectedType) {
-        return new IllegalArgumentException("Query " + space + " property owner " + ownerType.getName()
-                + " is incompatible with repository type " + expectedType.getName());
     }
 
     /**

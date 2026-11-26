@@ -13,12 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.core.cqrs.command;
-import java.util.Set;
-import java.util.Objects;
-import java.util.Map;
-import java.util.LinkedHashSet;
-import java.util.Collections;
-import java.util.Collection;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

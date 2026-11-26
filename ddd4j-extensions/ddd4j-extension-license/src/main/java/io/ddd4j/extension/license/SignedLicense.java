@@ -39,7 +39,7 @@ public final class SignedLicense {
      * 创建签名许可证。
      *
      * @param algorithm 签名算法
-     * @param payload 许可证负载
+     * @param payload   许可证负载
      * @param signature 签名字节
      */
     public SignedLicense(String algorithm, byte[] payload, byte[] signature) {

@@ -23,12 +23,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.List;
-import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -61,55 +57,6 @@ class ProjectionRunnerTest {
     @BeforeEach
     void setUp() {
         runner = new ProjectionRunner<>(projectionService, chunkReader);
-    }
-
-    /**
-     * 真实可记录的 view 实现：记录被 handle 的事件，便于断言交互契约。
-     */
-    static class TestView implements ProjectionView<String> {
-
-        final String name;
-        final String streamId;
-        final int chunkSize;
-        final List<String> eventTypes;
-        final List<String> handled = new java.util.ArrayList<>();
-
-        TestView(String name, String streamId, int chunkSize, List<String> eventTypes) {
-            this.name = name;
-            this.streamId = streamId;
-            this.chunkSize = chunkSize;
-            this.eventTypes = eventTypes;
-        }
-
-        @Override
-        public String getName() {
-            return name;
-        }
-
-        @Override
-        public String getStreamId() {
-            return Objects.nonNull(streamId) ? streamId : name;
-        }
-
-        @Override
-        public String getCron() {
-            return "0/5 * * * * ?";
-        }
-
-        @Override
-        public int getChunkSize() {
-            return chunkSize;
-        }
-
-        @Override
-        public Collection<String> getEventTypes() {
-            return eventTypes;
-        }
-
-        @Override
-        public void handleEvents(Collection<String> events) {
-            handled.addAll(events);
-        }
     }
 
     @Test
@@ -188,6 +135,130 @@ class ProjectionRunnerTest {
         } finally {
             release.countDown();
             executor.shutdownNow();
+        }
+    }
+
+    @Test
+    void shouldRunChunkAndAdvancePosition() {
+        ProjectionService service = new DefaultProjectionService(new InMemoryProjectionPositionRepository());
+        ProjectionRunner<String> runner = new ProjectionRunner<String>(service, new FixedReader());
+        RecordingView view = new RecordingView("orders", false);
+        runner.runOnce(view);
+        assertEquals(1, view.handled.get());
+        assertEquals(1L, service.readProjectionPosition("orders"));
+    }
+
+    @Test
+    void shouldPropagateRunAllFailureButIsolateRunAllIsolatedFailures() {
+        ProjectionService service = new DefaultProjectionService(new InMemoryProjectionPositionRepository());
+        RecordingMetrics metrics = new RecordingMetrics();
+        ProjectionRunner<String> runner = new ProjectionRunner<String>(service, new FixedReader(), metrics);
+        RecordingView failing = new RecordingView("failing", true);
+        RecordingView succeeding = new RecordingView("succeeding", false);
+        assertThrows(IllegalStateException.class, () -> runner.runAll(Arrays.asList(failing, succeeding)));
+        for (int i = 0; i < ProjectionRunner.CONSECUTIVE_FAILURE_THRESHOLD; i++) {
+            runner.runAllIsolated(Arrays.asList(failing, succeeding));
+        }
+        assertEquals(ProjectionRunner.CONSECUTIVE_FAILURE_THRESHOLD, metrics.circuitOpened.get());
+        assertEquals(ProjectionRunner.CONSECUTIVE_FAILURE_THRESHOLD, succeeding.handled.get());
+    }
+
+    /**
+     * 真实可记录的 view 实现：记录被 handle 的事件，便于断言交互契约。
+     */
+    static class TestView implements ProjectionView<String> {
+
+        final String name;
+        final String streamId;
+        final int chunkSize;
+        final List<String> eventTypes;
+        final List<String> handled = new java.util.ArrayList<>();
+
+        TestView(String name, String streamId, int chunkSize, List<String> eventTypes) {
+            this.name = name;
+            this.streamId = streamId;
+            this.chunkSize = chunkSize;
+            this.eventTypes = eventTypes;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public String getStreamId() {
+            return Objects.nonNull(streamId) ? streamId : name;
+        }
+
+        @Override
+        public String getCron() {
+            return "0/5 * * * * ?";
+        }
+
+        @Override
+        public int getChunkSize() {
+            return chunkSize;
+        }
+
+        @Override
+        public Collection<String> getEventTypes() {
+            return eventTypes;
+        }
+
+        @Override
+        public void handleEvents(Collection<String> events) {
+            handled.addAll(events);
+        }
+    }
+
+    private static final class FixedReader implements EventChunkReader<String> {
+        @Override
+        public EventChunk<String> read(String streamId, long from, int size, Collection<String> types) {
+            return new EventChunk<String>(Collections.singletonList(streamId), from + 1L);
+        }
+    }
+
+    private static final class RecordingView implements ProjectionView<String> {
+        private final String name;
+        private final boolean fail;
+        private final AtomicInteger handled = new AtomicInteger();
+
+        private RecordingView(String name, boolean fail) {
+            this.name = name;
+            this.fail = fail;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
+        @Override
+        public String getCron() {
+            return "* * * * *";
+        }
+
+        @Override
+        public Collection<String> getEventTypes() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public void handleEvents(Collection<String> events) {
+            if (fail) {
+                throw new IllegalStateException("expected");
+            }
+            handled.incrementAndGet();
+        }
+    }
+
+    private static final class RecordingMetrics implements ProjectionMetrics {
+        private final AtomicInteger circuitOpened = new AtomicInteger();
+
+        @Override
+        public void onCircuitOpened(String viewName, int consecutiveFailures) {
+            circuitOpened.set(consecutiveFailures);
         }
     }
 
@@ -511,80 +582,6 @@ class ProjectionRunnerTest {
 
             assertThat(view.handled).containsExactly("e1");
             verify(projectionService).updateProjectionPosition("person-list", 1L);
-        }
-    }
-    @Test
-    void shouldRunChunkAndAdvancePosition() {
-        ProjectionService service = new DefaultProjectionService(new InMemoryProjectionPositionRepository());
-        ProjectionRunner<String> runner = new ProjectionRunner<String>(service, new FixedReader());
-        RecordingView view = new RecordingView("orders", false);
-        runner.runOnce(view);
-        assertEquals(1, view.handled.get());
-        assertEquals(1L, service.readProjectionPosition("orders"));
-    }
-
-    @Test
-    void shouldPropagateRunAllFailureButIsolateRunAllIsolatedFailures() {
-        ProjectionService service = new DefaultProjectionService(new InMemoryProjectionPositionRepository());
-        RecordingMetrics metrics = new RecordingMetrics();
-        ProjectionRunner<String> runner = new ProjectionRunner<String>(service, new FixedReader(), metrics);
-        RecordingView failing = new RecordingView("failing", true);
-        RecordingView succeeding = new RecordingView("succeeding", false);
-        assertThrows(IllegalStateException.class, () -> runner.runAll(Arrays.asList(failing, succeeding)));
-        for (int i = 0; i < ProjectionRunner.CONSECUTIVE_FAILURE_THRESHOLD; i++) {
-            runner.runAllIsolated(Arrays.asList(failing, succeeding));
-        }
-        assertEquals(ProjectionRunner.CONSECUTIVE_FAILURE_THRESHOLD, metrics.circuitOpened.get());
-        assertEquals(ProjectionRunner.CONSECUTIVE_FAILURE_THRESHOLD, succeeding.handled.get());
-    }
-
-    private static final class FixedReader implements EventChunkReader<String> {
-        @Override
-        public EventChunk<String> read(String streamId, long from, int size, Collection<String> types) {
-            return new EventChunk<String>(Collections.singletonList(streamId), from + 1L);
-        }
-    }
-
-    private static final class RecordingView implements ProjectionView<String> {
-        private final String name;
-        private final boolean fail;
-        private final AtomicInteger handled = new AtomicInteger();
-
-        private RecordingView(String name, boolean fail) {
-            this.name = name;
-            this.fail = fail;
-        }
-
-        @Override
-        public String getName() {
-            return name;
-        }
-
-        @Override
-        public String getCron() {
-            return "* * * * *";
-        }
-
-        @Override
-        public Collection<String> getEventTypes() {
-            return Collections.emptyList();
-        }
-
-        @Override
-        public void handleEvents(Collection<String> events) {
-            if (fail) {
-                throw new IllegalStateException("expected");
-            }
-            handled.incrementAndGet();
-        }
-    }
-
-    private static final class RecordingMetrics implements ProjectionMetrics {
-        private final AtomicInteger circuitOpened = new AtomicInteger();
-
-        @Override
-        public void onCircuitOpened(String viewName, int consecutiveFailures) {
-            circuitOpened.set(consecutiveFailures);
         }
     }
 }

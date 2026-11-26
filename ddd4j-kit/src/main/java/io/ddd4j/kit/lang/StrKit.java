@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.kit.lang;
-import java.util.Objects;
 
 import cn.hutool.core.util.StrUtil;
 import lombok.experimental.UtilityClass;
@@ -30,7 +29,9 @@ import java.util.*;
 @UtilityClass
 public class StrKit extends StrUtil {
 
-    /** 无法匹配首字母时使用的占位字符。 */
+    /**
+     * 无法匹配首字母时使用的占位字符。
+     */
     public static final char unknowChar = '*';
     private static final String FOLDER_SEPARATOR = "/";
     private static final String WINDOWS_FOLDER_SEPARATOR = "\\";
@@ -48,7 +49,9 @@ public class StrKit extends StrUtil {
      * Any number of these characters are considered delimiters between
      * multiple context config paths in a single String value.
      */
-    /** 配置位置列表使用的分隔符集合。 */
+    /**
+     * 配置位置列表使用的分隔符集合。
+     */
     public static String CONFIG_LOCATION_DELIMITERS = ",; \t\n";
 
     /*
@@ -57,6 +60,7 @@ public class StrKit extends StrUtil {
      * @param str
      * @return
      */
+
     /**
      * 判断输入是否为空。
      *
@@ -77,6 +81,7 @@ public class StrKit extends StrUtil {
     /*
      * 该方法不能被删除；可能引起调用者代码报错
      */
+
     /**
      * 判断输入是否非空。
      *
@@ -94,6 +99,7 @@ public class StrKit extends StrUtil {
      * @param str
      * @return
      */
+
     /**
      * 判断字符串是否为空或仅含空白。
      *
@@ -119,6 +125,7 @@ public class StrKit extends StrUtil {
      * @param str the candidate String
      * @since 3.2.1
      */
+
     /**
      * 判断输入是否为空。
      *
@@ -142,6 +149,7 @@ public class StrKit extends StrUtil {
      * @return {@code true} if the CharSequence is not null and has length
      * @see #hasText(String)
      */
+
     /**
      * 判断输入是否有字符。
      *
@@ -159,6 +167,7 @@ public class StrKit extends StrUtil {
      * @return {@code true} if the String is not null and has length
      * @see #hasLength(CharSequence)
      */
+
     /**
      * 判断输入是否有字符。
      *
@@ -185,6 +194,7 @@ public class StrKit extends StrUtil {
      * its length is greater than 0, and it does not contain whitespace only
      * @see Character#isWhitespace
      */
+
     /**
      * 判断输入是否有非空白字符。
      *
@@ -213,6 +223,7 @@ public class StrKit extends StrUtil {
      * greater than 0, and it does not contain whitespace only
      * @see #hasText(CharSequence)
      */
+
     /**
      * 判断输入是否有非空白字符。
      *
@@ -230,6 +241,7 @@ public class StrKit extends StrUtil {
      * contains at least 1 whitespace character
      * @see Character#isWhitespace
      */
+
     /**
      * 判断输入是否包含空白字符。
      *
@@ -256,6 +268,7 @@ public class StrKit extends StrUtil {
      * contains at least 1 whitespace character
      * @see #containsWhitespace(CharSequence)
      */
+
     /**
      * 判断输入是否包含空白字符。
      *
@@ -272,6 +285,7 @@ public class StrKit extends StrUtil {
      * @return the trimmed String
      * @see java.lang.Character#isWhitespace
      */
+
     /**
      * 执行 trim whitespace 字符串处理。
      *
@@ -299,6 +313,7 @@ public class StrKit extends StrUtil {
      * @return the trimmed String
      * @see java.lang.Character#isWhitespace
      */
+
     /**
      * 执行 trim all whitespace 字符串处理。
      *
@@ -326,6 +341,7 @@ public class StrKit extends StrUtil {
      * @return the trimmed String
      * @see java.lang.Character#isWhitespace
      */
+
     /**
      * 执行 trim leading whitespace 字符串处理。
      *
@@ -349,6 +365,7 @@ public class StrKit extends StrUtil {
      * @return the trimmed String
      * @see java.lang.Character#isWhitespace
      */
+
     /**
      * 执行 trim trailing whitespace 字符串处理。
      *
@@ -372,10 +389,11 @@ public class StrKit extends StrUtil {
      * @param leadingCharacter the leading character to be trimmed
      * @return the trimmed String
      */
+
     /**
      * 执行 trim leading character 字符串处理。
      *
-     * @param str 待处理字符串
+     * @param str              待处理字符串
      * @param leadingCharacter 前导字符
      * @return 处理后的字符串
      */
@@ -396,10 +414,11 @@ public class StrKit extends StrUtil {
      * @param trailingCharacter the trailing character to be trimmed
      * @return the trimmed String
      */
+
     /**
      * 执行 trim trailing character 字符串处理。
      *
-     * @param str 待处理字符串
+     * @param str               待处理字符串
      * @param trailingCharacter 尾随字符
      * @return 处理后的字符串
      */
@@ -422,10 +441,11 @@ public class StrKit extends StrUtil {
      * @param prefix the prefix to look for
      * @see java.lang.String#startsWith
      */
+
     /**
      * 执行 starts with ignore case 字符串处理。
      *
-     * @param str 待处理字符串
+     * @param str    待处理字符串
      * @param prefix 前缀
      * @return 满足条件时返回 true
      */
@@ -451,10 +471,11 @@ public class StrKit extends StrUtil {
      * @param suffix the suffix to look for
      * @see java.lang.String#endsWith
      */
+
     /**
      * 执行 ends with ignore case 字符串处理。
      *
-     * @param str 待处理字符串
+     * @param str    待处理字符串
      * @param suffix 后缀
      * @return 满足条件时返回 true
      */
@@ -481,11 +502,12 @@ public class StrKit extends StrUtil {
      * @param index the index in the original string to start matching against
      * @param substring the substring to match at the given index
      */
+
     /**
      * 执行 substring match 字符串处理。
      *
-     * @param str 待处理字符串
-     * @param index 起始位置
+     * @param str       待处理字符串
+     * @param index     起始位置
      * @param substring 待匹配子串
      * @return 满足条件时返回 true
      */
@@ -504,6 +526,7 @@ public class StrKit extends StrUtil {
      * @param str string to search in. Return 0 if this is null.
      * @param sub string to search for. Return 0 if this is null.
      */
+
     /**
      * 执行 count occurrences of 字符串处理。
      *
@@ -533,10 +556,11 @@ public class StrKit extends StrUtil {
      * @param newPattern String to insert
      * @return a String with the replacements
      */
+
     /**
      * 执行 replace 字符串处理。
      *
-     * @param inString 源字符串
+     * @param inString   源字符串
      * @param oldPattern 待替换模式
      * @param newPattern 替换文本
      * @return 处理后的字符串
@@ -567,11 +591,12 @@ public class StrKit extends StrUtil {
      * @param pattern the pattern to delete all occurrences of
      * @return the resulting String
      */
+
     /**
      * 执行 delete 字符串处理。
      *
      * @param inString 源字符串
-     * @param pattern 匹配模式
+     * @param pattern  匹配模式
      * @return 处理后的字符串
      */
     public static String delete(String inString, String pattern) {
@@ -585,10 +610,11 @@ public class StrKit extends StrUtil {
      * E.g. "az\n" will delete 'a's, 'z's and new lines.
      * @return the resulting String
      */
+
     /**
      * 执行 delete any 字符串处理。
      *
-     * @param inString 源字符串
+     * @param inString      源字符串
      * @param charsToDelete 待删除字符
      * @return 处理后的字符串
      */
@@ -617,6 +643,7 @@ public class StrKit extends StrUtil {
      * "this.name.is.qualified", returns "qualified".
      * @param qualifiedName the qualified name
      */
+
     /**
      * 执行 unqualify 字符串处理。
      *
@@ -633,11 +660,12 @@ public class StrKit extends StrUtil {
      * @param qualifiedName the qualified name
      * @param separator the separator
      */
+
     /**
      * 执行 unqualify 字符串处理。
      *
      * @param qualifiedName 限定名称
-     * @param separator 分隔符
+     * @param separator     分隔符
      * @return 处理后的字符串
      */
     public static String unqualify(String qualifiedName, char separator) {
@@ -651,6 +679,7 @@ public class StrKit extends StrUtil {
      * @param str the String to capitalize, may be {@code null}
      * @return the capitalized String, {@code null} if null
      */
+
     /**
      * 执行 capitalize 字符串处理。
      *
@@ -668,6 +697,7 @@ public class StrKit extends StrUtil {
      * @param str the String to uncapitalize, may be {@code null}
      * @return the uncapitalized String, {@code null} if null
      */
+
     /**
      * 执行 uncapitalize 字符串处理。
      *
@@ -698,6 +728,7 @@ public class StrKit extends StrUtil {
      * @param path the file path (may be {@code null})
      * @return the extracted filename, or {@code null} if none
      */
+
     /**
      * 执行 get filename 字符串处理。
      *
@@ -718,6 +749,7 @@ public class StrKit extends StrUtil {
      * @param path the file path (may be {@code null})
      * @return the extracted filename extension, or {@code null} if none
      */
+
     /**
      * 执行 get filename extension 字符串处理。
      *
@@ -746,6 +778,7 @@ public class StrKit extends StrUtil {
      * @return the path with stripped filename extension,
      * or {@code null} if none
      */
+
     /**
      * 执行 strip filename extension 字符串处理。
      *
@@ -775,10 +808,11 @@ public class StrKit extends StrUtil {
      * (relative to the full file path above)
      * @return the full file path that results from applying the relative path
      */
+
     /**
      * 执行 apply relative path 字符串处理。
      *
-     * @param path 路径
+     * @param path         路径
      * @param relativePath 相对路径
      * @return 处理后的字符串
      */
@@ -803,6 +837,7 @@ public class StrKit extends StrUtil {
      * @param path the original path
      * @return the normalized path
      */
+
     /**
      * 执行 clean path 字符串处理。
      *
@@ -870,6 +905,7 @@ public class StrKit extends StrUtil {
      * @param path2 second path for comparison
      * @return whether the two paths are equivalent after normalization
      */
+
     /**
      * 执行 path equals 字符串处理。
      *
@@ -890,6 +926,7 @@ public class StrKit extends StrUtil {
      * @return a corresponding {@code Locale} instance
      * @throws IllegalArgumentException in case of an invalid locale specification
      */
+
     /**
      * 执行 parse locale string 字符串处理。
      *
@@ -932,6 +969,7 @@ public class StrKit extends StrUtil {
      * @param locale the Locale to transform to a language tag
      * @return the RFC 3066 compliant language tag as String
      */
+
     /**
      * 执行 to language tag 字符串处理。
      *
@@ -949,6 +987,7 @@ public class StrKit extends StrUtil {
      * @return a corresponding {@link TimeZone} instance
      * @throws IllegalArgumentException in case of an invalid time zone specification
      */
+
     /**
      * 执行 parse time zone string 字符串处理。
      *
@@ -976,11 +1015,12 @@ public class StrKit extends StrUtil {
      * @param str the String to append
      * @return the new array (never {@code null})
      */
+
     /**
      * 执行 add string to array 字符串处理。
      *
      * @param array 源数组
-     * @param str 待处理字符串
+     * @param str   待处理字符串
      * @return 处理后的字符串数组
      */
     public static String[] addStringToArray(String[] array, String str) {
@@ -1001,6 +1041,7 @@ public class StrKit extends StrUtil {
      * @param array2 the second array (can be {@code null})
      * @return the new array ({@code null} if both given arrays were {@code null})
      */
+
     /**
      * 执行 concatenate string arrays 字符串处理。
      *
@@ -1031,6 +1072,7 @@ public class StrKit extends StrUtil {
      * @param array2 the second array (can be {@code null})
      * @return the new array ({@code null} if both given arrays were {@code null})
      */
+
     /**
      * 执行 merge string arrays 字符串处理。
      *
@@ -1060,6 +1102,7 @@ public class StrKit extends StrUtil {
      * @param array the source array
      * @return the sorted array (never {@code null})
      */
+
     /**
      * 执行 sort string array 字符串处理。
      *
@@ -1081,6 +1124,7 @@ public class StrKit extends StrUtil {
      * @return the String array ({@code null} if the passed-in
      * Collection was {@code null})
      */
+
     /**
      * 执行 to string array 字符串处理。
      *
@@ -1101,6 +1145,7 @@ public class StrKit extends StrUtil {
      * @return the String array ({@code null} if the passed-in
      * Enumeration was {@code null})
      */
+
     /**
      * 执行 to string array 字符串处理。
      *
@@ -1121,6 +1166,7 @@ public class StrKit extends StrUtil {
      * @param array the original String array
      * @return the resulting array (of the same size) with trimmed elements
      */
+
     /**
      * 执行 trim array elements 字符串处理。
      *
@@ -1145,6 +1191,7 @@ public class StrKit extends StrUtil {
      * @param array the String array
      * @return an array without duplicates, in natural sort order
      */
+
     /**
      * 执行 remove duplicate strings 字符串处理。
      *
@@ -1173,10 +1220,11 @@ public class StrKit extends StrUtil {
      * @return a {@code Properties} instance representing the array contents,
      * or {@code null} if the array to process was null or empty
      */
+
     /**
      * 执行 split array elements into properties 字符串处理。
      *
-     * @param array 源数组
+     * @param array     源数组
      * @param delimiter 分隔符
      * @return 拆分后的属性集合
      */
@@ -1198,11 +1246,12 @@ public class StrKit extends StrUtil {
      * @return a {@code Properties} instance representing the array contents,
      * or {@code null} if the array to process was {@code null} or empty
      */
+
     /**
      * 执行 split array elements into properties 字符串处理。
      *
-     * @param array 源数组
-     * @param delimiter 分隔符
+     * @param array         源数组
+     * @param delimiter     分隔符
      * @param charsToDelete 待删除字符
      * @return 拆分后的属性集合
      */
@@ -1234,6 +1283,7 @@ public class StrKit extends StrUtil {
      * @param str
      * @return
      */
+
     /**
      * 执行 tokenize to string array 字符串处理。
      *
@@ -1259,10 +1309,11 @@ public class StrKit extends StrUtil {
      * @see String#trim()
      * @see #delimitedListToStringArray
      */
+
     /**
      * 执行 tokenize to string array 字符串处理。
      *
-     * @param str 待处理字符串
+     * @param str        待处理字符串
      * @param delimiters 分隔符集合
      * @return 处理后的字符串数组
      */
@@ -1289,12 +1340,13 @@ public class StrKit extends StrUtil {
      * @see String#trim()
      * @see #delimitedListToStringArray
      */
+
     /**
      * 执行 tokenize to string array 字符串处理。
      *
-     * @param str 待处理字符串
-     * @param delimiters 分隔符集合
-     * @param trimTokens 方法参数
+     * @param str               待处理字符串
+     * @param delimiters        分隔符集合
+     * @param trimTokens        方法参数
      * @param ignoreEmptyTokens 方法参数
      * @return 处理后的字符串数组
      */
@@ -1329,10 +1381,11 @@ public class StrKit extends StrUtil {
      * @return an array of the tokens in the list
      * @see #tokenizeToStringArray
      */
+
     /**
      * 执行 delimited list to string array 字符串处理。
      *
-     * @param str 待处理字符串
+     * @param str       待处理字符串
      * @param delimiter 分隔符
      * @return 处理后的字符串数组
      */
@@ -1353,11 +1406,12 @@ public class StrKit extends StrUtil {
      * @return an array of the tokens in the list
      * @see #tokenizeToStringArray
      */
+
     /**
      * 执行 delimited list to string array 字符串处理。
      *
-     * @param str 待处理字符串
-     * @param delimiter 分隔符
+     * @param str           待处理字符串
+     * @param delimiter     分隔符
      * @param charsToDelete 待删除字符
      * @return 处理后的字符串数组
      */
@@ -1393,6 +1447,7 @@ public class StrKit extends StrUtil {
      * @param str the input String
      * @return an array of Strings, or the empty array in case of empty input
      */
+
     /**
      * 执行 comma delimited list to string array 字符串处理。
      *
@@ -1409,6 +1464,7 @@ public class StrKit extends StrUtil {
      * @param str the input String
      * @return a Set of String entries in the list
      */
+
     /**
      * 执行 comma delimited list to set 字符串处理。
      *
@@ -1433,11 +1489,12 @@ public class StrKit extends StrUtil {
      * @param suffix the String to end each element with
      * @return the delimited String
      */
+
     /**
      * 执行 collection to delimited string 字符串处理。
      *
-     * @param coll 源集合
-     * @param delim 分隔符
+     * @param coll   源集合
+     * @param delim  分隔符
      * @param prefix 前缀
      * @param suffix 后缀
      * @return 处理后的字符串
@@ -1464,10 +1521,11 @@ public class StrKit extends StrUtil {
      * @param delim the delimiter to use (probably a ",")
      * @return the delimited String
      */
+
     /**
      * 执行 collection to delimited string 字符串处理。
      *
-     * @param coll 源集合
+     * @param coll  源集合
      * @param delim 分隔符
      * @return 处理后的字符串
      */
@@ -1481,6 +1539,7 @@ public class StrKit extends StrUtil {
      * @param coll the Collection to display
      * @return the delimited String
      */
+
     /**
      * 执行 collection to comma delimited string 字符串处理。
      *
@@ -1498,10 +1557,11 @@ public class StrKit extends StrUtil {
      * @param delim the delimiter to use (probably a ",")
      * @return the delimited String
      */
+
     /**
      * 执行 array to delimited string 字符串处理。
      *
-     * @param arr 源数组
+     * @param arr   源数组
      * @param delim 分隔符
      * @return 处理后的字符串
      */
@@ -1528,6 +1588,7 @@ public class StrKit extends StrUtil {
      * @param arr the array to display
      * @return the delimited String
      */
+
     /**
      * 执行 array to comma delimited string 字符串处理。
      *
@@ -1544,6 +1605,7 @@ public class StrKit extends StrUtil {
      * @param str
      * @return
      */
+
     /**
      * 执行 get map from query param string 字符串处理。
      *
@@ -1570,6 +1632,7 @@ public class StrKit extends StrUtil {
      *            主字串
      * @return
      */
+
     /**
      * 执行 replace all 字符串处理。
      *
@@ -1588,6 +1651,7 @@ public class StrKit extends StrUtil {
      * @param str
      * @return
      */
+
     /**
      * 取得中文词语的拼音首字母。
      *
@@ -1630,10 +1694,11 @@ public class StrKit extends StrUtil {
      * @param letter
      * @return
      */
+
     /**
      * 执行 split 字符串处理。
      *
-     * @param src 源字符串
+     * @param src    源字符串
      * @param letter 分隔字符
      * @return 处理后的字符串数组
      */
@@ -1662,10 +1727,11 @@ public class StrKit extends StrUtil {
      * index 1 being after the delimiter (neither element includes the delimiter);
      * or {@code null} if the delimiter wasn't found in the given input String
      */
+
     /**
      * 执行 split 字符串处理。
      *
-     * @param toSplit 待拆分字符串
+     * @param toSplit   待拆分字符串
      * @param delimiter 分隔符
      * @return 处理后的字符串数组
      */
@@ -1686,7 +1752,7 @@ public class StrKit extends StrUtil {
      * 执行 splits 字符串处理。
      *
      * @param toSplit 待拆分字符串
-     * @param regex 正则表达式
+     * @param regex   正则表达式
      * @return 处理后的字符串数组
      */
     public static String[] splits(String toSplit, String regex) {
@@ -1702,6 +1768,7 @@ public class StrKit extends StrUtil {
      * @param str
      * @return
      */
+
     /**
      * 执行 remove last 字符串处理。
      *
@@ -1722,6 +1789,7 @@ public class StrKit extends StrUtil {
      * @param str
      * @return
      */
+
     /**
      * 执行 add quotation 字符串处理。
      *
@@ -1750,6 +1818,7 @@ public class StrKit extends StrUtil {
      * @param list
      * @return String[]
      */
+
     /**
      * 执行 list to array 字符串处理。
      *
@@ -1768,10 +1837,11 @@ public class StrKit extends StrUtil {
      * @param separator
      * @return String
      */
+
     /**
      * 执行 list to string 字符串处理。
      *
-     * @param list 源列表
+     * @param list      源列表
      * @param separator 分隔符
      * @return 处理后的字符串
      */
@@ -1787,6 +1857,7 @@ public class StrKit extends StrUtil {
      *            生成的密码的总长度
      * @return 密码的字符串
      */
+
     /**
      * 生成指定长度的随机字符串。
      *
@@ -1821,6 +1892,7 @@ public class StrKit extends StrUtil {
      * @param str
      * @return 传入NULL,返回空"".
      */
+
     /**
      * 执行 kill null 字符串处理。
      *
@@ -1843,6 +1915,7 @@ public class StrKit extends StrUtil {
      * @param source
      * @return
      */
+
     /**
      * 执行 parentheses 字符串处理。
      *
@@ -1862,6 +1935,7 @@ public class StrKit extends StrUtil {
      * @param source
      * @return
      */
+
     /**
      * 执行 brackets 字符串处理。
      *
@@ -1890,6 +1964,7 @@ public class StrKit extends StrUtil {
      * @return the quoted String (e.g. "'myString'"), or
      *         <code>null<code> if the input was <code>null</code>
      */
+
     /**
      * 执行 quote 字符串处理。
      *
@@ -1910,10 +1985,11 @@ public class StrKit extends StrUtil {
      * @param separator
      * @return
      */
+
     /**
      * 执行 quote 字符串处理。
      *
-     * @param array 源数组
+     * @param array     源数组
      * @param separator 分隔符
      * @return 处理后的字符串
      */
@@ -1939,6 +2015,7 @@ public class StrKit extends StrUtil {
      * @return the quoted String (e.g. "'myString'"), or the input object as-is
      *         if not a String
      */
+
     /**
      * 执行 quote if string 字符串处理。
      *
@@ -1959,6 +2036,7 @@ public class StrKit extends StrUtil {
      * @author: redacted-legacy-family
      * @version: 2010-12-15 下午09:06:02
      */
+
     /**
      * 执行 trim to alpha string 字符串处理。
      *
@@ -1984,6 +2062,7 @@ public class StrKit extends StrUtil {
      * @author: redacted-legacy-family
      * @version: 2010-12-15 下午09:06:31
      */
+
     /**
      * 执行 trim to alpha strings 字符串处理。
      *

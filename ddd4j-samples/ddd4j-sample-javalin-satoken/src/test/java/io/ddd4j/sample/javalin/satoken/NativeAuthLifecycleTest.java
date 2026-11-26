@@ -9,19 +9,21 @@ import io.ddd4j.core.subject.Subject;
 import io.ddd4j.core.subject.SubjectProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.junit.jupiter.api.Test;
+
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 class NativeAuthLifecycleTest {
+    private static <T> T servletProxy(Class<T> type) {
+        return type.cast(Proxy.newProxyInstance(type.getClassLoader(), new Class<?>[]{type},
+                (proxy, method, args) -> fail("unexpected servlet call: " + method)));
+    }
+
     @Test
     void restoresCallerBindingsWhenSubjectProviderThrows() throws Exception {
         List<Optional<String>> observations = new ArrayList<>();
@@ -69,10 +71,5 @@ class NativeAuthLifecycleTest {
                 context.clearContext();
             }
         }
-    }
-
-    private static <T> T servletProxy(Class<T> type) {
-        return type.cast(Proxy.newProxyInstance(type.getClassLoader(), new Class<?>[]{type},
-                (proxy, method, args) -> fail("unexpected servlet call: " + method)));
     }
 }

@@ -14,13 +14,10 @@
  */
 package io.ddd4j.sample.quarkus.satoken.rbac;
 
-import io.ddd4j.kit.lang.CollKit;
-
-import java.util.Objects;
-
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.subject.SubjectDataProvider;
 import io.ddd4j.core.util.SubjectKit;
+import io.ddd4j.kit.lang.CollKit;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
@@ -28,10 +25,7 @@ import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * RBAC 配置：初始化内存数据 + 注册 SubjectDataProvider。
@@ -108,7 +102,9 @@ public class RbacConfig {
     }
 
     void onStop(@Observes io.quarkus.runtime.ShutdownEvent event) {
-        if (SubjectKit.dataProvider == ownedData) { SubjectKit.setDataProvider(previousData); }
+        if (SubjectKit.dataProvider == ownedData) {
+            SubjectKit.setDataProvider(previousData);
+        }
     }
 
     /**

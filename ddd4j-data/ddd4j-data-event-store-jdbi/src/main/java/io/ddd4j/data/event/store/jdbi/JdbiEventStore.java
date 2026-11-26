@@ -14,23 +14,16 @@
  */
 package io.ddd4j.data.event.store.jdbi;
 
-import com.fasterxml.jackson.databind.json.JsonMapper;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.ddd4j.core.constant.EventStoreConstants;
 import io.ddd4j.core.cqrs.eventstore.AggregateVersionConflictException;
 import io.ddd4j.core.cqrs.eventstore.EventStore;
 import io.ddd4j.core.cqrs.eventstore.StoredEvent;
 import io.ddd4j.core.cqrs.eventstore.jackson.EventPayloadSerializer;
-import io.ddd4j.core.ddd.event.AggregateRootId;
-import io.ddd4j.core.ddd.event.DomainEvent;
-import io.ddd4j.core.ddd.event.EntityType;
-import io.ddd4j.core.ddd.event.EventId;
-import io.ddd4j.core.ddd.event.StringEntityType;
+import io.ddd4j.core.ddd.event.*;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.argument.Argument;
 
@@ -179,8 +172,8 @@ public class JdbiEventStore implements EventStore {
     /**
      * 创建使用指定重试策略和载荷序列化器的事件存储。
      *
-     * @param jdbi JDBI 实例
-     * @param retry 重试策略
+     * @param jdbi       JDBI 实例
+     * @param retry      重试策略
      * @param serializer 事件载荷序列化器
      */
     public JdbiEventStore(Jdbi jdbi, EventStoreRetry retry, EventPayloadSerializer serializer) {
@@ -370,10 +363,13 @@ public class JdbiEventStore implements EventStore {
     private final static class StringAggregateRootId implements AggregateRootId {
 
         private static final long serialVersionUID = 6652084670470061437L;
-
+        private static final StringEntityType TYPE = new StringEntityType("String");
         private final String value;
 
-        private static final StringEntityType TYPE = new StringEntityType("String");
+        @JsonCreator()
+        private StringAggregateRootId(@JsonProperty("value") String value) {
+            this.value = value;
+        }
 
         @Override
         public EntityType getType() {
@@ -389,11 +385,6 @@ public class JdbiEventStore implements EventStore {
         @Override
         public String asTypedString() {
             return TYPE.asString() + ":" + value;
-        }
-
-        @JsonCreator()
-        private StringAggregateRootId(@JsonProperty("value") String value) {
-            this.value = value;
         }
 
         @JsonProperty("value")

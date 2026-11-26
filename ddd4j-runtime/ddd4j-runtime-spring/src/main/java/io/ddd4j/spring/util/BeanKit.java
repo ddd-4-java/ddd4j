@@ -98,8 +98,8 @@ public class BeanKit {
     /**
      * 按空值和忽略字段设置将对象转换为 Map。
      *
-     * @param obj 待转换或检查的对象
-     * @param withNull 是否包含空值
+     * @param obj          待转换或检查的对象
+     * @param withNull     是否包含空值
      * @param ignoreFields 要忽略的字段名
      * @return 转换后的属性 Map；源对象为空时返回 {@code null}
      */
@@ -120,9 +120,9 @@ public class BeanKit {
     /**
      * 将属性 Map 列表转换并追加到目标对象列表。
      *
-     * @param mapList 属性 Map 列表
+     * @param mapList    属性 Map 列表
      * @param objectList 接收转换结果的列表
-     * @param clazz 待实例化的类型
+     * @param clazz      待实例化的类型
      */
     public void mapsToObjects(List<Map<String, Object>> mapList, List objectList, Class clazz) {
         if (Objects.nonNull(mapList) && !mapList.isEmpty() && Objects.nonNull(objectList)) {
@@ -141,8 +141,8 @@ public class BeanKit {
     /**
      * 将源对象列表复制并追加到目标对象列表。
      *
-     * @param sourceList 源对象集合
-     * @param targetList 接收复制结果的列表
+     * @param sourceList  源对象集合
+     * @param targetList  接收复制结果的列表
      * @param targetClass 目标类型
      */
     public void objectsToObjects(List sourceList, List targetList, Class targetClass) {
@@ -172,7 +172,7 @@ public class BeanKit {
     /**
      * 使用指定分隔符连接字符串列表。
      *
-     * @param list 待连接的字符串列表
+     * @param list      待连接的字符串列表
      * @param separator 元素分隔符
      * @return 转换后的字符串
      */
@@ -183,9 +183,9 @@ public class BeanKit {
     /**
      * 使用分隔符和包围字符连接字符串列表。
      *
-     * @param list 待连接的字符串列表
+     * @param list      待连接的字符串列表
      * @param separator 元素分隔符
-     * @param surround 每个元素的包围字符串
+     * @param surround  每个元素的包围字符串
      * @return 转换后的字符串
      */
     public String listToString(List<String> list, String separator, String surround) {
@@ -247,8 +247,8 @@ public class BeanKit {
     /**
      * 按空值策略复制对象属性。
      *
-     * @param source 源对象
-     * @param target 目标对象或目标类型
+     * @param source     源对象
+     * @param target     目标对象或目标类型
      * @param ignoreNull 是否跳过源对象的空属性
      */
     public void objectToObject(Object source, Object target, boolean ignoreNull) {
@@ -258,9 +258,9 @@ public class BeanKit {
     /**
      * 按空值及审计字段策略复制对象属性。
      *
-     * @param source 源对象
-     * @param target 目标对象或目标类型
-     * @param ignoreNull 是否跳过源对象的空属性
+     * @param source         源对象
+     * @param target         目标对象或目标类型
+     * @param ignoreNull     是否跳过源对象的空属性
      * @param withCreateInfo 是否复制创建审计字段
      * @param withUpdateInfo 是否复制更新审计字段
      */
@@ -311,10 +311,10 @@ public class BeanKit {
     /**
      * 按更新模式和空值策略复制对象属性。
      *
-     * @param source 源对象
-     * @param target 目标对象或目标类型
+     * @param source     源对象
+     * @param target     目标对象或目标类型
      * @param ignoreNull 是否跳过源对象的空属性
-     * @param isUpdate 是否按更新模式复制
+     * @param isUpdate   是否按更新模式复制
      */
     public void objectToObject(Object source, Object target, boolean ignoreNull, boolean isUpdate) {
         objectToObject(source, target, ignoreNull, !isUpdate, true);
@@ -352,9 +352,9 @@ public class BeanKit {
     /**
      * 将对象转换为指定类型，忽略源对象的空属性。
      *
-     * @param <T> 类型参数
-     * @param <Q> 类型参数
-     * @param q 待转换的源对象
+     * @param <T>         类型参数
+     * @param <Q>         类型参数
+     * @param q           待转换的源对象
      * @param targetClass 目标类型
      * @return 转换或复制后的目标对象；源对象为空时返回 {@code null}
      */
@@ -389,9 +389,9 @@ public class BeanKit {
     /**
      * 将源对象列表转换为目标类型列表。
      *
-     * @param <T> 类型参数
-     * @param <Q> 类型参数
-     * @param sources 待转换的源列表
+     * @param <T>         类型参数
+     * @param <Q>         类型参数
+     * @param sources     待转换的源列表
      * @param targetClass 目标类型
      * @return 转换或复制后的目标对象列表；源集合为空时遵循对应方法的返回约定
      */
@@ -408,8 +408,8 @@ public class BeanKit {
     /**
      * 将属性 Map 列表转换为目标类型列表。
      *
-     * @param <T> 类型参数
-     * @param sources 待转换的源列表
+     * @param <T>         类型参数
+     * @param sources     待转换的源列表
      * @param targetClass 目标类型
      * @return 转换或复制后的目标对象列表；源集合为空时遵循对应方法的返回约定
      */
@@ -474,7 +474,7 @@ public class BeanKit {
     /**
      * 复制源对象并创建目标类型实例。
      *
-     * @param <T> 类型参数
+     * @param <T>    类型参数
      * @param source 源对象
      * @param target 目标对象或目标类型
      * @return 转换或复制后的目标对象；源对象为空时返回 {@code null}
@@ -486,9 +486,9 @@ public class BeanKit {
     /**
      * 复制源对象并在指定父类型边界停止属性复制。
      *
-     * @param <T> 类型参数
-     * @param source 源对象
-     * @param target 目标对象或目标类型
+     * @param <T>         类型参数
+     * @param source      源对象
+     * @param target      目标对象或目标类型
      * @param targetSuper 属性复制停止的父类型
      * @return 转换或复制后的目标对象；源对象为空时返回 {@code null}
      */
@@ -512,9 +512,9 @@ public class BeanKit {
     /**
      * 逐项复制集合并创建目标类型实例。
      *
-     * @param <T> 类型参数
+     * @param <T>        类型参数
      * @param sourceList 源对象集合
-     * @param target 目标对象或目标类型
+     * @param target     目标对象或目标类型
      * @return 转换或复制后的目标对象列表；源集合为空时遵循对应方法的返回约定
      */
     public <T> List<T> copy(Collection<?> sourceList, Class<T> target) {
@@ -543,9 +543,9 @@ public class BeanKit {
     /**
      * 复制源对象并忽略指定属性。
      *
-     * @param <T> 类型参数
-     * @param source 源对象
-     * @param target 目标对象或目标类型
+     * @param <T>              类型参数
+     * @param source           源对象
+     * @param target           目标对象或目标类型
      * @param ignoreProperties 要忽略的属性名
      * @return 转换或复制后的目标对象；源对象为空时返回 {@code null}
      */
@@ -569,9 +569,9 @@ public class BeanKit {
     /**
      * 逐项复制集合并忽略指定属性。
      *
-     * @param <T> 类型参数
-     * @param sourceList 源对象集合
-     * @param target 目标对象或目标类型
+     * @param <T>              类型参数
+     * @param sourceList       源对象集合
+     * @param target           目标对象或目标类型
      * @param ignoreProperties 要忽略的属性名
      * @return 转换或复制后的目标对象列表；源集合为空时遵循对应方法的返回约定
      */
@@ -599,9 +599,9 @@ public class BeanKit {
     /**
      * 将源对象属性写入目标 Map。
      *
-     * @param source 源对象
-     * @param target 目标对象或目标类型
-     * @param withNull 是否包含空值
+     * @param source          源对象
+     * @param target          目标对象或目标类型
+     * @param withNull        是否包含空值
      * @param ignoredFieldCol 要忽略的字段名
      */
     public void toMap(Object source, Map target, boolean withNull, String... ignoredFieldCol) {

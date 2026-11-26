@@ -93,20 +93,6 @@ class GoodsControllerTest {
         }
     }
 
-    private JsonNode queryData(HttpResponse<String> response) throws Exception {
-        assertEquals(200, response.statusCode(), response.body());
-        JsonNode body = JSON.readTree(response.body());
-        assertEquals(0, body.path("code").asInt(-1), response.body());
-        return body.path("data");
-    }
-
-    private String createFixture(String code, String name, String price) throws Exception {
-        HttpResponse<String> created = postJson("/api/goods",
-                "{\"code\":\"" + code + "\",\"name\":\"" + name + "\",\"price\":" + price + ",\"stock\":1}");
-        assertEquals(201, created.statusCode(), created.body());
-        return extractId(created.body());
-    }
-
     private static String extractId(String body) {
         int idx = body.indexOf("\"id\":");
         if (idx < 0) {
@@ -122,6 +108,20 @@ class GoodsControllerTest {
             end++;
         }
         return body.substring(start, end);
+    }
+
+    private JsonNode queryData(HttpResponse<String> response) throws Exception {
+        assertEquals(200, response.statusCode(), response.body());
+        JsonNode body = JSON.readTree(response.body());
+        assertEquals(0, body.path("code").asInt(-1), response.body());
+        return body.path("data");
+    }
+
+    private String createFixture(String code, String name, String price) throws Exception {
+        HttpResponse<String> created = postJson("/api/goods",
+                "{\"code\":\"" + code + "\",\"name\":\"" + name + "\",\"price\":" + price + ",\"stock\":1}");
+        assertEquals(201, created.statusCode(), created.body());
+        return extractId(created.body());
     }
 
     private HttpResponse<String> postJson(String path, String body) throws Exception {

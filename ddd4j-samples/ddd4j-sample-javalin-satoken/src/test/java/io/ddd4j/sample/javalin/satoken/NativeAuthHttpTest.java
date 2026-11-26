@@ -1,62 +1,75 @@
 package io.ddd4j.sample.javalin.satoken;
 
 import cn.dev33.satoken.SaManager;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import cn.dev33.satoken.fun.strategy.SaCreateSaRequestFunction;
 import cn.dev33.satoken.fun.strategy.SaCreateSaResponseFunction;
 import cn.dev33.satoken.fun.strategy.SaCreateSaStorageFunction;
 import cn.dev33.satoken.strategy.SaStrategy;
 import cn.hutool.core.util.ReflectUtil;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.ddd4j.kit.lang.StrKit;
+import io.ddd4j.sample.order.adapter.http.CatalogEndpoints;
+import io.ddd4j.sample.order.start.CatalogRuntime;
 import io.ddd4j.sample.order.testkit.AuthSampleDriver;
-import io.ddd4j.sample.order.testkit.EnvelopeOrderHttpDriver;
 import io.ddd4j.sample.order.testkit.SampleContractAssertions;
 import io.ddd4j.sample.order.testkit.SampleHttpTransport;
-import io.ddd4j.sample.order.application.CreateOrderCommand;
-import io.ddd4j.sample.order.application.AddOrderLineCommand;
-import io.ddd4j.kit.lang.StrKit;
+import org.apache.ibatis.datasource.unpooled.UnpooledDataSource;
 import org.junit.jupiter.api.Test;
+import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
 import java.io.IOException;
-import java.util.Objects;
-import java.time.Duration;
-import java.net.http.HttpResponse;
-import java.net.http.HttpRequest;
-import java.net.http.HttpClient;
 import java.net.URI;
-import java.util.Map;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Optional;
-import java.util.UUID;
-import java.math.BigDecimal;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
+import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-/** 实际 main/start 装配、原生认证和共享订单 HTTP 验收。 */
+/**
+ * 实际 main/start 装配、原生认证和共享订单 HTTP 验收。
+ */
+@Testcontainers
 class NativeAuthHttpTest {
-    @Test
-    void orderAuthorizationDenialsUseTheOrderEnvelope() throws Exception {
-        try (JavalinSaTokenApplication.Application application = JavalinSaTokenApplication.start(0)) {
-            String base = "http://127.0.0.1:" + application.app().port();
-            EnvelopeOrderHttpDriver http = new EnvelopeOrderHttpDriver(base, "/orders", Map.of());
-            var credentials = Map.of("username", "admin", "password", "admin");
-            String writer = http.request("POST", "/auth/login", credentials, Map.of()).path("token").asText();
-            assertTrue(StrKit.hasText(writer), "native authentication returns a real token");
-            Map<String, String> headers = Map.of("ddd4j-token", writer);
-            CreateOrderCommand order = new CreateOrderCommand("DENIAL-" + UUID.randomUUID(), "buyer-1", "Alice");
-            String id = http.request("POST", "/orders", order, headers).path("id").asText();
-            ObjectMapper mapper = new ObjectMapper();
-            String anonymousBody = mapper.writeValueAsString(
-                    new CreateOrderCommand("ANON-" + UUID.randomUUID(), "buyer-1", "Alice"));
+    @Container
+    static final MySQLContainer<?> MYSQL = new MySQLContainer<>("mysql:8.0.36");
+    private static final String ORDERS = "/orders/catalog/orders/";
+    private static final String GOODS = "/orders/catalog/goods/";
+    private static final String TENANT = "javalin-auth";
+    private static final Map<String, Object> ORDER = Map.of("shopId", 7,
+            "items", List.of(Map.of("skuCode", "SKU-1", "quantity", 2)));
 
-            assertAll(
-                    () -> assertOrderDenial(base, "/orders", Map.of(), anonymousBody,
-                            401, "not login", mapper),
-                    () -> assertOrderDenial(base, "/orders/" + id + "/cancel", headers, null,
-                            403, "required permission is missing", mapper),
-                    () -> assertEquals("DRAFT", http.request("GET", "/orders/" + id, null, headers).path("status").asText()));
-        }
+    static CatalogEndpoints catalog(MySQLContainer<?> database) {
+        var api = CatalogRuntime.start(new UnpooledDataSource(database.getDriverClassName(),
+                database.getJdbcUrl(), database.getUsername(), database.getPassword()));
+        int status = api.createGoods(TENANT, "BOOK", """
+                {"spuName":"Book","skuCode":"SKU-1","skuName":"Edition","shopId":7,"salePriceCent":500}
+                """).getStatus();
+        assertTrue(status == 201 || status == 409);
+        return api;
+    }
+
+    private static JavalinSaTokenApplication.Application start(int port) {
+        return start(port, ignored -> {
+        });
+    }
+
+    private static JavalinSaTokenApplication.Application start(int port,
+                                                               java.util.function.Consumer<Optional<String>> observer) {
+        return start(port, observer, config -> {
+        });
+    }
+
+    private static JavalinSaTokenApplication.Application start(int port,
+                                                               java.util.function.Consumer<Optional<String>> observer,
+                                                               java.util.function.Consumer<io.javalin.config.JavalinConfig> configure) {
+        return JavalinSaTokenApplication.start(port, observer, configure, catalog(MYSQL));
     }
 
     private static void assertOrderDenial(String base, String path, Map<String, String> headers, String body,
@@ -77,31 +90,49 @@ class NativeAuthHttpTest {
         assertEquals(expected, mapper.readTree(response.body()), path);
     }
 
+    private static void assertMissingOrder(String base, String path, Map<String, String> headers,
+                                           ObjectMapper mapper, JsonNode expected) throws IOException {
+        SampleHttpTransport.Response response = SampleHttpTransport.request(
+                base + path, "GET", headers, Map.of("X-Tenant-Id", TENANT), null);
+        assertEquals(404, response.statusCode(), path + " " + response.body());
+        assertEquals(expected, mapper.readTree(response.body()), path);
+    }
+
+    @Test
+    void orderAuthorizationDenialsUseTheOrderEnvelope() throws Exception {
+        try (JavalinSaTokenApplication.Application application = start(0)) {
+            String base = "http://127.0.0.1:" + application.app().port();
+            Driver http = new Driver(base, Map.of());
+            var credentials = Map.of("username", "admin", "password", "admin");
+            String writer = http.request("POST", "/auth/login", credentials, Map.of()).path("token").asText();
+            assertTrue(StrKit.hasText(writer), "native authentication returns a real token");
+            Map<String, String> headers = Map.of("ddd4j-token", writer);
+            String id = http.create("DENIAL-" + UUID.randomUUID(), headers);
+            ObjectMapper mapper = new ObjectMapper();
+            String anonymousBody = mapper.writeValueAsString(ORDER);
+
+            assertAll(
+                    () -> assertOrderDenial(base, ORDERS + "ANONYMOUS", Map.of(), anonymousBody,
+                            401, "not login", mapper),
+                    () -> assertOrderDenial(base, ORDERS + id + "/cancel", headers, null,
+                            403, "required permission is missing", mapper),
+                    () -> assertEquals("AWAITING_PAYMENT", http.request("GET", ORDERS + id, null, headers).path("orderState").asText()));
+        }
+    }
+
     @Test
     void missingSharedOrderReturnsTheOrderDiagnostic() throws IOException {
-        try (JavalinSaTokenApplication.Application application = JavalinSaTokenApplication.start(0)) {
+        try (JavalinSaTokenApplication.Application application = start(0)) {
             String base = "http://127.0.0.1:" + application.app().port();
-            EnvelopeOrderHttpDriver http = new EnvelopeOrderHttpDriver(base, "/orders", Map.of());
+            Driver http = new Driver(base, Map.of());
             String token = http.request("POST", "/auth/login", Map.of("username", "admin", "password", "admin"),
                     Map.of()).path("token").asText();
             assertFalse(token.isEmpty(), "native authentication returns a real token");
             Map<String, String> headers = Map.of("ddd4j-token", token);
             ObjectMapper mapper = new ObjectMapper();
-            JsonNode expected = mapper.readTree("{\"code\":500,\"msg\":\"order not found\",\"data\":null,\"success\":false,\"ok\":false,\"empty\":true}");
-
-            assertAll(
-                    () -> assertMissingOrder(base, "/orders/missing-order", headers, mapper, expected),
-                    () -> assertMissingOrder(base, "/orders/by-order-no?orderNo=MISSING-ORDER", headers, mapper, expected),
-                    () -> assertMissingOrder(base, "/orders/missing-order/discount", headers, mapper, expected));
+            JsonNode expected = mapper.createObjectNode().put("error", "记录不存在或规格在此门店不可售");
+            assertMissingOrder(base, ORDERS + "missing-order", headers, mapper, expected);
         }
-    }
-
-    private static void assertMissingOrder(String base, String path, Map<String, String> headers,
-                                           ObjectMapper mapper, JsonNode expected) throws IOException {
-        SampleHttpTransport.Response response = SampleHttpTransport.request(
-                base + path, "GET", headers, Map.of(), null);
-        assertEquals(500, response.statusCode(), path + " " + response.body());
-        assertEquals(expected, mapper.readTree(response.body()), path);
     }
 
     @Test
@@ -115,11 +146,11 @@ class NativeAuthHttpTest {
         SaCreateSaStorageFunction callerStorage = source -> fail("caller owns the storage factory");
         strategy.setCreateSaRequest(callerRequest).setCreateSaResponse(callerResponse).setCreateSaStorage(callerStorage);
         try {
-            try (var application = JavalinSaTokenApplication.start(0)) {
+            try (var application = start(0)) {
                 assertSame(callerRequest, strategy.createSaRequest);
                 assertSame(callerResponse, strategy.createSaResponse);
                 assertSame(callerStorage, strategy.createSaStorage);
-                var http = new EnvelopeOrderHttpDriver("http://127.0.0.1:" + application.app().port(), "/orders", Map.of());
+                var http = new Driver("http://127.0.0.1:" + application.app().port(), Map.of());
                 String token = http.request("POST", "/auth/login", Map.of("username", "admin", "password", "admin"), Map.of())
                         .path("token").asText();
                 assertEquals("10001", http.request("GET", "/auth/me", null, Map.of("ddd4j-token", token))
@@ -136,8 +167,8 @@ class NativeAuthHttpTest {
     @Test
     void cancellationAuthorizationUsesMatchedRouteForBothSlashForms() throws Exception {
         LinkedBlockingQueue<Optional<String>> completed = new LinkedBlockingQueue<>();
-        try (var application = JavalinSaTokenApplication.start(0, completed::add)) {
-            var http = new EnvelopeOrderHttpDriver("http://127.0.0.1:" + application.app().port(), "/orders", Map.of());
+        try (var application = start(0, completed::add)) {
+            var http = new Driver("http://127.0.0.1:" + application.app().port(), Map.of());
             String token = http.request("POST", "/auth/login", Map.of("username", "admin", "password", "admin"), Map.of()).path("token").asText();
             var headers = Map.of("ddd4j-token", token);
             assertEquals(Optional.empty(), completed.poll(10, TimeUnit.SECONDS)); // startup
@@ -145,12 +176,12 @@ class NativeAuthHttpTest {
             List<String> suffixes = List.of("/cancel", "/cancel/");
             List<String> ids = new ArrayList<>();
             for (String suffix : suffixes) {
-                String id = http.request("POST", "/orders", new CreateOrderCommand("CANCEL-" + UUID.randomUUID(), "buyer-1", "Alice"), headers).path("id").asText();
+                String id = http.create("CANCEL-" + UUID.randomUUID(), headers);
                 ids.add(id);
                 SecurityException denied = assertThrows(SecurityException.class,
-                        () -> http.request("POST", "/orders/" + id + suffix, null, headers));
+                        () -> http.request("POST", ORDERS + id + suffix, null, headers));
                 assertEquals("HTTP 403", denied.getMessage());
-                assertEquals("DRAFT", http.request("GET", "/orders/" + id, null, headers).path("status").asText());
+                assertEquals("AWAITING_PAYMENT", http.request("GET", ORDERS + id, null, headers).path("orderState").asText());
                 for (int request = 0; request < 3; request++) {
                     assertEquals(Optional.empty(), completed.poll(10, TimeUnit.SECONDS));
                 }
@@ -167,8 +198,8 @@ class NativeAuthHttpTest {
             assertEquals(Optional.empty(), completed.poll(10, TimeUnit.SECONDS));
             for (int index = 0; index < suffixes.size(); index++) {
                 String id = ids.get(index);
-                assertEquals("CANCELLED", http.request("POST", "/orders/" + id + suffixes.get(index), null, allowedHeaders).path("status").asText());
-                assertEquals("CANCELLED", http.request("GET", "/orders/" + id, null, allowedHeaders).path("status").asText());
+                assertEquals("CANCELLED", http.request("POST", ORDERS + id + suffixes.get(index), null, allowedHeaders).path("orderState").asText());
+                assertEquals("CANCELLED", http.request("GET", ORDERS + id, null, allowedHeaders).path("orderState").asText());
                 for (int request = 0; request < 2; request++) {
                     assertEquals(Optional.empty(), completed.poll(10, TimeUnit.SECONDS));
                 }
@@ -179,40 +210,51 @@ class NativeAuthHttpTest {
     @Test
     void nativeAuthenticationAndBusinessCleanup() throws Exception {
         LinkedBlockingQueue<Optional<String>> completed = new LinkedBlockingQueue<>();
-        try (var application = JavalinSaTokenApplication.start(0, completed::add)) {
-            var http = new EnvelopeOrderHttpDriver("http://127.0.0.1:" + application.app().port(), "/orders", Map.of());
+        try (var application = start(0, completed::add)) {
+            var http = new Driver("http://127.0.0.1:" + application.app().port(), Map.of());
             SampleContractAssertions.authentication("satoken", new AuthSampleDriver() {
                 private String orderId;
                 private int pendingCompletions = 1; // startup observation
-                @Override public String login(String username, String password) {
+
+                @Override
+                public String login(String username, String password) {
                     pendingCompletions++;
                     return http.request("POST", "/auth/login", Map.of("username", username, "password", password), Map.of()).path("token").asText();
                 }
-                @Override public String authenticatedPrincipal(String token) {
+
+                @Override
+                public String authenticatedPrincipal(String token) {
                     pendingCompletions++;
                     return http.request("GET", "/auth/me", null, Map.of("ddd4j-token", token)).path("loginId").asText();
                 }
-                @Override public String authorizedResource(String token, String permission) {
+
+                @Override
+                public String authorizedResource(String token, String permission) {
                     if ("order:cancel".equals(permission)) {
                         pendingCompletions++;
-                        http.request("POST", "/orders/" + orderId + "/cancel", null, Map.of("ddd4j-token", token));
+                        http.request("POST", ORDERS + orderId + "/cancel", null, Map.of("ddd4j-token", token));
                         return "unexpected";
                     }
                     pendingCompletions += 2;
-                    orderId = http.request("POST", "/orders", new CreateOrderCommand("AUTH-" + UUID.randomUUID(), "buyer-1", "Alice"),
-                            Map.of("ddd4j-token", token)).path("id").asText();
-                    return http.request("GET", "/orders/" + orderId, null, Map.of("ddd4j-token", token)).path("buyerName").asText();
+                    orderId = http.create("AUTH-" + UUID.randomUUID(), Map.of("ddd4j-token", token));
+                    return http.request("GET", ORDERS + orderId, null, Map.of("ddd4j-token", token)).path("orderState").asText();
                 }
-                @Override public void failingRequest(String token) {
+
+                @Override
+                public void failingRequest(String token) {
                     pendingCompletions++;
-                    // 已认证的真实业务失败：空订单支付被共享领域拒绝。
-                    http.request("POST", "/orders/" + orderId + "/pay", null, Map.of("ddd4j-token", token));
+                    // 已认证的真实业务失败：金额不匹配被交易领域拒绝。
+                    http.request("POST", ORDERS + orderId + "/payment", Map.of("paidAmountCent", 1), Map.of("ddd4j-token", token));
                 }
-                @Override public void logout(String token) {
+
+                @Override
+                public void logout(String token) {
                     pendingCompletions++;
                     http.request("POST", "/auth/logout", null, Map.of("ddd4j-token", token));
                 }
-                @Override public Optional<String> contextPrincipal() {
+
+                @Override
+                public Optional<String> contextPrincipal() {
                     try {
                         Optional<String> value = null;
                         while (pendingCompletions > 0) {
@@ -222,68 +264,77 @@ class NativeAuthHttpTest {
                             pendingCompletions--;
                         }
                         return value;
-                    } catch (InterruptedException failure) { Thread.currentThread().interrupt(); throw new IllegalStateException(failure); }
+                    } catch (InterruptedException failure) {
+                        Thread.currentThread().interrupt();
+                        throw new IllegalStateException(failure);
+                    }
                 }
-            }, "admin", "admin", "10001", "order:pay", "order:cancel", "Alice");
+            }, "admin", "admin", "10001", "order:pay", "order:cancel", "AWAITING_PAYMENT");
         }
     }
 
     @Test
     void originalOrderRoutesUseSharedOrderAndMutateBusiness() {
-        try (var application = JavalinSaTokenApplication.start(0)) {
+        try (var application = start(0)) {
             String base = "http://127.0.0.1:" + application.app().port();
-            var anonymous = new EnvelopeOrderHttpDriver(base, "/orders", Map.of());
+            var anonymous = new Driver(base, Map.of());
             String token = anonymous.request("POST", "/auth/login", Map.of("username", "admin", "password", "admin"), Map.of()).path("token").asText();
-            var driver = new EnvelopeOrderHttpDriver(base, "/orders", Map.of("ddd4j-token", token));
-            SampleContractAssertions.defaultOrder(driver, "AUTH-ORDER-" + UUID.randomUUID());
-            assertThrows(SecurityException.class, () -> anonymous.create(new CreateOrderCommand("NOAUTH", "b", "n")));
-            driver.request("POST", "/api/goods", Map.of("code", "native-goods", "name", "Native goods", "price", 10, "stock", 4), Map.of());
-            assertTrue(driver.request("GET", "/api/goods/list", null, Map.of()).toString().contains("native-goods"),
-                    "main Goods write/query must share the same repository");
+            var driver = new Driver(base, Map.of("ddd4j-token", token));
+            String id = driver.create("AUTH-ORDER-" + UUID.randomUUID(), Map.of());
+            var paid = driver.request("POST", ORDERS + id + "/payment", Map.of("paidAmountCent", 1000), Map.of());
+            assertEquals("CONFIRMED", paid.path("orderState").asText());
+            assertEquals(1000, driver.request("GET", ORDERS + id, null, Map.of()).path("paidAmountCent").asLong());
+            assertThrows(SecurityException.class, () -> anonymous.create("NOAUTH", Map.of()));
+            assertEquals("BOOK", driver.request("GET", GOODS + "BOOK", null, Map.of()).path("spuCode").asText());
         }
     }
+
     @Test
     void clientCancellationStillClosesNativeWorkerScope() throws Exception {
         var entered = new java.util.concurrent.CountDownLatch(1);
         var release = new java.util.concurrent.CountDownLatch(1);
         LinkedBlockingQueue<Optional<String>> finished = new LinkedBlockingQueue<>();
-        try (var app = JavalinSaTokenApplication.start(0, finished::add, config -> config.routes.before(ctx -> {
-            if (ctx.path().equals("/orders") && ctx.method() == io.javalin.http.HandlerType.GET) {
+        try (var app = start(0, finished::add, config -> config.routes.before(ctx -> {
+            if (ctx.path().equals(ORDERS + "disconnect") && ctx.method() == io.javalin.http.HandlerType.GET) {
                 entered.countDown();
                 assertTrue(release.await(10, TimeUnit.SECONDS));
             }
         }))) {
             String base = "http://127.0.0.1:" + app.app().port();
-            var http = new EnvelopeOrderHttpDriver(base, "/orders", Map.of());
+            var http = new Driver(base, Map.of());
             String token = http.request("POST", "/auth/login", Map.of("username", "admin", "password", "admin"), Map.of()).path("token").asText();
             assertTrue(finished.poll(10, TimeUnit.SECONDS).isEmpty()); // startup native thread
             assertTrue(finished.poll(10, TimeUnit.SECONDS).isEmpty()); // login worker
-            var request = java.net.http.HttpRequest.newBuilder(java.net.URI.create(base + "/orders"))
+            var request = java.net.http.HttpRequest.newBuilder(java.net.URI.create(base + ORDERS + "disconnect"))
                     .header("ddd4j-token", token).GET().build();
             var future = java.net.http.HttpClient.newHttpClient().sendAsync(request, java.net.http.HttpResponse.BodyHandlers.ofString());
             try {
                 assertTrue(entered.await(10, TimeUnit.SECONDS));
                 future.cancel(true);
-            } finally { release.countDown(); }
+            } finally {
+                release.countDown();
+            }
             Optional<String> observed = finished.poll(10, TimeUnit.SECONDS);
             assertNotNull(observed, "disconnect must finish the actual servlet scope");
             assertTrue(observed.isEmpty());
             assertEquals("10001", http.request("GET", "/auth/me", null, Map.of("ddd4j-token", token)).path("loginId").asText());
             assertTrue(finished.poll(10, TimeUnit.SECONDS).isEmpty());
-        } finally { release.countDown(); }
+        } finally {
+            release.countDown();
+        }
     }
 
     @Test
     void failedStartRestoresLiveApplicationAndClosingRestoresPriorSpi() {
         var previous = io.ddd4j.core.util.SubjectKit.subjectProvider;
-        try (var live = JavalinSaTokenApplication.start(0)) {
+        try (var live = start(0)) {
             var owner = io.ddd4j.core.util.SubjectKit.subjectProvider;
             var injector = io.ddd4j.guice.context.GuiceContext.getInjector();
             Object nativeDao = ReflectUtil.getStaticFieldValue(ReflectUtil.getField(SaManager.class, "saTokenDao"));
             String base = "http://127.0.0.1:" + live.app().port();
-            var http = new EnvelopeOrderHttpDriver(base, "/orders", Map.of());
+            var http = new Driver(base, Map.of());
             String token = http.request("POST", "/auth/login", Map.of("username", "admin", "password", "admin"), Map.of()).path("token").asText();
-            assertThrows(RuntimeException.class, () -> JavalinSaTokenApplication.start(live.app().port()));
+            assertThrows(RuntimeException.class, () -> start(live.app().port()));
             assertSame(nativeDao, ReflectUtil.getStaticFieldValue(ReflectUtil.getField(SaManager.class, "saTokenDao")));
             assertEquals("10001", http.request("GET", "/auth/me", null, Map.of("ddd4j-token", token)).path("loginId").asText());
             assertSame(owner, io.ddd4j.core.util.SubjectKit.subjectProvider);
@@ -299,9 +350,43 @@ class NativeAuthHttpTest {
             io.ddd4j.core.context.ThreadContext.put(new Object(), new Object());
             io.ddd4j.core.context.ThreadContext.set("caller-value", "preserved");
             var expected = io.ddd4j.core.context.ThreadContext.getResources();
-            JavalinSaTokenApplication.start(0).close();
+            start(0).close();
             assertEquals(expected, io.ddd4j.core.context.ThreadContext.getResources());
             assertEquals(expected, io.ddd4j.core.context.ThreadContext.getValues());
+        }
+    }
+
+    static final class Driver {
+        private final ObjectMapper json = new ObjectMapper();
+        private final String base;
+        private final Map<String, String> credentials;
+
+        Driver(String base, Map<String, String> credentials) {
+            this.base = base;
+            this.credentials = credentials;
+        }
+
+        String create(String id, Map<String, String> headers) {
+            return request("POST", ORDERS + id, ORDER, headers).path("orderNo").asText();
+        }
+
+        JsonNode request(String method, String path, Object body, Map<String, String> headers) {
+            var actualHeaders = new java.util.HashMap<>(credentials);
+            actualHeaders.putAll(headers);
+            try {
+                var response = SampleHttpTransport.request(base + path, method, actualHeaders,
+                        Map.of("X-Tenant-Id", TENANT), Objects.isNull(body) ? null : json.writeValueAsString(body));
+                if (response.statusCode() == 401 || response.statusCode() == 403) {
+                    throw new SecurityException("HTTP " + response.statusCode());
+                }
+                if (response.statusCode() >= 400) {
+                    throw new IllegalStateException("HTTP " + response.statusCode() + " " + response.body());
+                }
+                var result = json.readTree(response.body());
+                return result.has("data") ? result.path("data") : result;
+            } catch (IOException failure) {
+                throw new IllegalStateException(failure);
+            }
         }
     }
 

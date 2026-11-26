@@ -64,7 +64,7 @@ public class MqttAcknowledgment implements Acknowledgment {
      * 创建 MQTT 消息确认句柄。
      *
      * @param message MQTT 消息
-     * @param topic 消息主题
+     * @param topic   消息主题
      */
     public MqttAcknowledgment(MqttMessage message, String topic) {
         this.message = message;

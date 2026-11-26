@@ -36,9 +36,13 @@ import java.util.Objects;
 @Getter
 public class Ddd4jStpLogicJwtForSimple extends StpLogicJwtForSimple {
 
-    /** JWT 签发方声明名称。 */
+    /**
+     * JWT 签发方声明名称。
+     */
     public static final String ISSUER_CLAIM = "iss";
-    /** JWT 受众声明名称。 */
+    /**
+     * JWT 受众声明名称。
+     */
     public static final String AUDIENCE_CLAIM = "aud";
 
     private final String signingSecret;

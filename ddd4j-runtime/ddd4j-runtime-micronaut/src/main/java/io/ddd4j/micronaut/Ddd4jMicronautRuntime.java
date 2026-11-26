@@ -44,10 +44,10 @@ public final class Ddd4jMicronautRuntime implements AutoCloseable {
     /**
      * 使用默认的就绪检查集合创建运行时桥梁。
      *
-     * @param publisher 领域事件发布器
+     * @param publisher       领域事件发布器
      * @param subjectProvider 主体提供器
-     * @param i18nProvider 国际化提供器
-     * @param commandBus 命令总线
+     * @param i18nProvider    国际化提供器
+     * @param commandBus      命令总线
      */
     public Ddd4jMicronautRuntime(DomainEventPublisher publisher, SubjectProvider subjectProvider,
                                  I18nProvider i18nProvider, CommandBus commandBus) {
@@ -57,10 +57,10 @@ public final class Ddd4jMicronautRuntime implements AutoCloseable {
     /**
      * 注册 Micronaut 提供的 ddd4j 服务与就绪检查。
      *
-     * @param publisher 领域事件发布器
-     * @param subjectProvider 主体提供器
-     * @param i18nProvider 国际化提供器
-     * @param commandBus 命令总线
+     * @param publisher             领域事件发布器
+     * @param subjectProvider       主体提供器
+     * @param i18nProvider          国际化提供器
+     * @param commandBus            命令总线
      * @param readinessContributors 就绪检查贡献者
      */
     public Ddd4jMicronautRuntime(DomainEventPublisher publisher, SubjectProvider subjectProvider,
@@ -69,10 +69,12 @@ public final class Ddd4jMicronautRuntime implements AutoCloseable {
         this(publisher, subjectProvider, i18nProvider, commandBus, readinessContributors, null);
     }
 
-    /** 平台工厂在依赖验证后接入唯一视图生命周期。 */
+    /**
+     * 平台工厂在依赖验证后接入唯一视图生命周期。
+     */
     Ddd4jMicronautRuntime(DomainEventPublisher publisher, SubjectProvider subjectProvider,
-                         I18nProvider i18nProvider, CommandBus commandBus,
-                         Collection<? extends ReadinessContributor> readinessContributors, ViewManager viewManager) {
+                          I18nProvider i18nProvider, CommandBus commandBus,
+                          Collection<? extends ReadinessContributor> readinessContributors, ViewManager viewManager) {
         this.viewManager = viewManager;
         this.registrations = new SpiRegistrationScope()
                 .register(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class,

@@ -47,7 +47,7 @@ public class AccountExpiredException extends AuthenticationException {
      * 使用错误消息创建账号过期异常。
      *
      * @param message 错误消息
-     * @param cause 原始异常
+     * @param cause   原始异常
      */
     public AccountExpiredException(String message, Throwable cause) {
         super(message, cause);

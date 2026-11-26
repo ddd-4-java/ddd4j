@@ -3,11 +3,7 @@ package io.ddd4j.spring.config;
 import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.spring.command.SpringCommandBus;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ConditionContext;
-import org.springframework.context.annotation.Conditional;
-import org.springframework.context.annotation.ConfigurationCondition;
-import org.springframework.context.annotation.DeferredImportSelector;
+import org.springframework.context.annotation.*;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.core.type.AnnotationMetadata;
 
@@ -18,13 +14,16 @@ import org.springframework.core.type.AnnotationMetadata;
 public final class SpringCommandConfig implements DeferredImportSelector {
     @Override
     public String[] selectImports(AnnotationMetadata metadata) {
-        return new String[] {CommandConfiguration.class.getName()};
+        return new String[]{CommandConfiguration.class.getName()};
     }
 
-    /** 延迟装配使既有扫描和用户的 Bean 定义优先。 */
+    /**
+     * 延迟装配使既有扫描和用户的 Bean 定义优先。
+     */
     public static class CommandConfiguration {
         /**
          * 创建命令总线，保持既有 Bean 名。
+         *
          * @param context 容器上下文
          * @return 延迟发现执行器的总线
          */
@@ -35,7 +34,9 @@ public final class SpringCommandConfig implements DeferredImportSelector {
         }
     }
 
-    /** 只判断已声明的 Bean 类型，不实例化总线或执行器。 */
+    /**
+     * 只判断已声明的 Bean 类型，不实例化总线或执行器。
+     */
     public static final class MissingCommandBus implements ConfigurationCondition {
         @Override
         public ConfigurationPhase getConfigurationPhase() {

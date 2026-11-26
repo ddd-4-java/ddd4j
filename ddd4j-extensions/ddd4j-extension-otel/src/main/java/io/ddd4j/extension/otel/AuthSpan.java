@@ -51,17 +51,29 @@ import java.util.Objects;
  */
 public final class AuthSpan {
 
-    /** Span 属性键 {@code auth.framework}。 */
+    /**
+     * Span 属性键 {@code auth.framework}。
+     */
     public static final AttributeKey<String> ATTR_AUTH_FRAMEWORK = AttributeKey.stringKey("auth.framework");
-    /** Span 属性键 {@code auth.login_id}。 */
+    /**
+     * Span 属性键 {@code auth.login_id}。
+     */
     public static final AttributeKey<String> ATTR_AUTH_LOGIN_ID = AttributeKey.stringKey("auth.login_id");
-    /** Span 属性键 {@code auth.success}。 */
+    /**
+     * Span 属性键 {@code auth.success}。
+     */
     public static final AttributeKey<Boolean> ATTR_AUTH_SUCCESS = AttributeKey.booleanKey("auth.success");
-    /** Span 属性键 {@code auth.operation}。 */
+    /**
+     * Span 属性键 {@code auth.operation}。
+     */
     public static final AttributeKey<String> ATTR_AUTH_OPERATION = AttributeKey.stringKey("auth.operation");
-    /** Span 属性键 {@code auth.role}。 */
+    /**
+     * Span 属性键 {@code auth.role}。
+     */
     public static final AttributeKey<String> ATTR_AUTH_ROLE = AttributeKey.stringKey("auth.role");
-    /** Span 属性键 {@code auth.permission}。 */
+    /**
+     * Span 属性键 {@code auth.permission}。
+     */
     public static final AttributeKey<String> ATTR_AUTH_PERMISSION = AttributeKey.stringKey("auth.permission");
 
     private static final String DEFAULT_FRAMEWORK = "ddd4j";
@@ -170,7 +182,7 @@ public final class AuthSpan {
     /**
      * 包装 {@link SubjectKit#verify(String)}。
      *
-     * @param <T> 返回值类型
+     * @param <T>   返回值类型
      * @param token 身份令牌
      * @return 已验证身份主体
      */

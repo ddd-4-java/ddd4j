@@ -32,7 +32,7 @@ public interface QLExpressEngine {
      * 执行表达式。
      *
      * @param expression 表达式
-     * @param context 输入上下文
+     * @param context    输入上下文
      * @return 表达式结果
      */
     Object execute(String expression, Map<String, Object> context);
@@ -41,8 +41,8 @@ public interface QLExpressEngine {
      * 使用指定选项执行表达式。
      *
      * @param expression 表达式
-     * @param context 输入上下文
-     * @param options 执行选项
+     * @param context    输入上下文
+     * @param options    执行选项
      * @return 表达式结果
      */
     Object execute(String expression, Map<String, Object> context, QLExpressExecutionOptions options);
@@ -50,9 +50,9 @@ public interface QLExpressEngine {
     /**
      * 执行表达式并转换结果类型。
      *
-     * @param <T> 结果类型
+     * @param <T>        结果类型
      * @param expression 表达式
-     * @param context 输入上下文
+     * @param context    输入上下文
      * @param resultType 目标类型
      * @return 转换后的结果
      */
@@ -61,10 +61,10 @@ public interface QLExpressEngine {
     /**
      * 使用指定选项执行表达式并转换结果类型。
      *
-     * @param <T> 结果类型
+     * @param <T>        结果类型
      * @param expression 表达式
-     * @param context 输入上下文
-     * @param options 执行选项
+     * @param context    输入上下文
+     * @param options    执行选项
      * @param resultType 目标类型
      * @return 转换后的结果
      */
@@ -75,7 +75,7 @@ public interface QLExpressEngine {
      * 执行表达式并将异常封装为结果。
      *
      * @param expression 表达式
-     * @param context 输入上下文
+     * @param context    输入上下文
      * @return 包含成功或失败信息的执行结果
      */
     QLExpressExecutionResult<Object> executeSafely(String expression, Map<String, Object> context);
@@ -84,8 +84,8 @@ public interface QLExpressEngine {
      * 使用指定选项执行表达式并封装异常。
      *
      * @param expression 表达式
-     * @param context 输入上下文
-     * @param options 执行选项
+     * @param context    输入上下文
+     * @param options    执行选项
      * @return 包含成功或失败信息的执行结果
      */
     QLExpressExecutionResult<Object> executeSafely(String expression, Map<String, Object> context,

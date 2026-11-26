@@ -4,15 +4,9 @@ import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.Result;
-import io.ddd4j.core.cqrs.readmodel.DefaultProjectionPosition;
-import io.ddd4j.core.cqrs.readmodel.DefaultProjectionService;
-import io.ddd4j.core.cqrs.readmodel.EventChunk;
-import io.ddd4j.core.cqrs.readmodel.InMemoryProjectionPositionRepository;
-import io.ddd4j.core.cqrs.readmodel.ProjectionRunner;
-import io.ddd4j.core.cqrs.readmodel.ProjectionView;
-import io.ddd4j.core.cqrs.readmodel.ViewManager;
-import io.ddd4j.spring.config.SpringCoreConfig;
+import io.ddd4j.core.cqrs.readmodel.*;
 import io.ddd4j.spring.config.SpringCommandConfig;
+import io.ddd4j.spring.config.SpringCoreConfig;
 import io.ddd4j.spring.config.SpringProjectionConfig;
 import org.apache.catalina.startup.Tomcat;
 import org.junit.jupiter.api.Test;
@@ -34,13 +28,16 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
-/** 真实 Tomcat 端口与 Spring HTTP 管线验证基础模式及显式投影模式。 */
+/**
+ * 真实 Tomcat 端口与 Spring HTTP 管线验证基础模式及显式投影模式。
+ */
 class SpringRuntimeHttpIntegrationTest {
     @Test
     void realHttpWithBasicAndExplicitProjectionModes() throws Exception {
-        for (boolean projection : new boolean[] {false, true}) {
+        for (boolean projection : new boolean[]{false, true}) {
             Tomcat server = new Tomcat();
             server.setBaseDir(Files.createTempDirectory("r06-webmvc").toString());
             server.setPort(0);
@@ -87,10 +84,16 @@ class SpringRuntimeHttpIntegrationTest {
         @Bean
         CommandExecutor<Ping> executor() {
             return new CommandExecutor<Ping>() {
-                public Set<Class<? extends Command>> supportedCommands() { return Set.of(Ping.class); }
-                public Result execute(Ping command) { return Result.ok("accepted"); }
+                public Set<Class<? extends Command>> supportedCommands() {
+                    return Set.of(Ping.class);
+                }
+
+                public Result execute(Ping command) {
+                    return Result.ok("accepted");
+                }
             };
         }
+
         @Bean
         Endpoint endpoint(CommandBus bus, ObjectProvider<ViewManager> manager, ObjectProvider<AtomicInteger> deliveries) {
             return new Endpoint(bus, manager, deliveries);
@@ -101,9 +104,15 @@ class SpringRuntimeHttpIntegrationTest {
     @Import(SpringProjectionConfig.class)
     static class ProjectionConfiguration {
         @Bean
-        ThreadPoolTaskScheduler taskScheduler() { return new ThreadPoolTaskScheduler(); }
+        ThreadPoolTaskScheduler taskScheduler() {
+            return new ThreadPoolTaskScheduler();
+        }
+
         @Bean
-        AtomicInteger deliveries() { return new AtomicInteger(); }
+        AtomicInteger deliveries() {
+            return new AtomicInteger();
+        }
+
         @Bean
         ProjectionRunner<String> runner() {
             InMemoryProjectionPositionRepository positions = new InMemoryProjectionPositionRepository();
@@ -111,13 +120,25 @@ class SpringRuntimeHttpIntegrationTest {
             return new ProjectionRunner<>(new DefaultProjectionService(positions), (stream, from, size, types) ->
                     from == 41 ? new EventChunk<>(List.of("order-created"), 42) : EventChunk.empty(from));
         }
+
         @Bean
         ProjectionView<String> view(AtomicInteger deliveries) {
             return new ProjectionView<String>() {
-                public String getName() { return "http-view"; }
-                public String getCron() { return "0 0 0 1 JAN *"; }
-                public Collection<String> getEventTypes() { return List.of("OrderCreated"); }
-                public void handleEvents(Collection<String> events) { deliveries.addAndGet(events.size()); }
+                public String getName() {
+                    return "http-view";
+                }
+
+                public String getCron() {
+                    return "0 0 0 1 JAN *";
+                }
+
+                public Collection<String> getEventTypes() {
+                    return List.of("OrderCreated");
+                }
+
+                public void handleEvents(Collection<String> events) {
+                    deliveries.addAndGet(events.size());
+                }
             };
         }
     }
@@ -130,13 +151,18 @@ class SpringRuntimeHttpIntegrationTest {
         private final CommandBus bus;
         private final ObjectProvider<ViewManager> manager;
         private final ObjectProvider<AtomicInteger> deliveries;
+
         Endpoint(CommandBus bus, ObjectProvider<ViewManager> manager, ObjectProvider<AtomicInteger> deliveries) {
             this.bus = bus;
             this.manager = manager;
             this.deliveries = deliveries;
         }
+
         @GetMapping("/r06/command")
-        String command() { return bus.<String>execute(new Ping()).getData(); }
+        String command() {
+            return bus.<String>execute(new Ping()).getData();
+        }
+
         @GetMapping("/r06/projection")
         String projection() {
             ViewManager active = manager.getIfAvailable();

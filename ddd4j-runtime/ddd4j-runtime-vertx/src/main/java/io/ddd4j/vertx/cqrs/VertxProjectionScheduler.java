@@ -5,6 +5,7 @@ import io.ddd4j.core.cqrs.readmodel.ProjectionCron;
 import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
 import io.vertx.core.Vertx;
 import lombok.extern.slf4j.Slf4j;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -25,7 +26,9 @@ public class VertxProjectionScheduler implements ViewScheduler, AutoCloseable {
     private final Set<Handle> handles = ConcurrentHashMap.newKeySet();
     private volatile boolean closed;
 
-    /** 创建未调度的适配器。
+    /**
+     * 创建未调度的适配器。
+     *
      * @param vertx 调用方拥有的原生实例
      */
     public VertxProjectionScheduler(Vertx vertx) {
@@ -50,7 +53,9 @@ public class VertxProjectionScheduler implements ViewScheduler, AutoCloseable {
         }
     }
 
-    /** 取消全部自有 timer；已经执行的业务由调用方事务负责。 */
+    /**
+     * 取消全部自有 timer；已经执行的业务由调用方事务负责。
+     */
     public synchronized void shutdown() {
         closed = true;
         handles.forEach(Handle::cancel);
@@ -60,6 +65,46 @@ public class VertxProjectionScheduler implements ViewScheduler, AutoCloseable {
     @Override
     public void close() {
         shutdown();
+    }
+
+    /**
+     * 旧 Vert.x 数字方言与搜索窗口的兼容桥。
+     */
+    public static final class CronExpression {
+        private final ProjectionCron delegate;
+
+        private CronExpression(ProjectionCron delegate) {
+            this.delegate = delegate;
+        }
+
+        /**
+         * 解析旧六段数字表达式。
+         *
+         * @param expression 表达式
+         * @return 共享解析器的兼容视图
+         */
+        public static CronExpression parse(String expression) {
+            Objects.requireNonNull(expression, "expression must not be null");
+            if (expression.contains("?") || expression.matches(".*[0-9]-[0-9]+/.*")) {
+                throw new IllegalArgumentException("Vert.x legacy cron does not support this syntax: " + expression);
+            }
+            return new CronExpression(ProjectionCron.parse(expression));
+        }
+
+        /**
+         * 保持本地墙上时间和原一百万秒搜索窗口。
+         *
+         * @param from 当前本地时间
+         * @return 下一时间；窗口内无匹配返回 null
+         */
+        public LocalDateTime next(LocalDateTime from) {
+            ZonedDateTime next = delegate.next(from.atZone(ZoneOffset.UTC));
+            if (Objects.isNull(next)) {
+                return null;
+            }
+            LocalDateTime local = next.toLocalDateTime();
+            return local.isAfter(from.plusSeconds(1_000_000).withNano(0)) ? null : local;
+        }
     }
 
     private final class Handle implements ViewScheduleHandle {
@@ -123,37 +168,6 @@ public class VertxProjectionScheduler implements ViewScheduler, AutoCloseable {
         @Override
         public boolean isActive() {
             return !cancelled && !closed;
-        }
-    }
-
-    /** 旧 Vert.x 数字方言与搜索窗口的兼容桥。 */
-    public static final class CronExpression {
-        private final ProjectionCron delegate;
-        private CronExpression(ProjectionCron delegate) {
-            this.delegate = delegate;
-        }
-        /** 解析旧六段数字表达式。
-         * @param expression 表达式
-         * @return 共享解析器的兼容视图
-         */
-        public static CronExpression parse(String expression) {
-            Objects.requireNonNull(expression, "expression must not be null");
-            if (expression.contains("?") || expression.matches(".*[0-9]-[0-9]+/.*")) {
-                throw new IllegalArgumentException("Vert.x legacy cron does not support this syntax: " + expression);
-            }
-            return new CronExpression(ProjectionCron.parse(expression));
-        }
-        /** 保持本地墙上时间和原一百万秒搜索窗口。
-         * @param from 当前本地时间
-         * @return 下一时间；窗口内无匹配返回 null
-         */
-        public LocalDateTime next(LocalDateTime from) {
-            ZonedDateTime next = delegate.next(from.atZone(ZoneOffset.UTC));
-            if (Objects.isNull(next)) {
-                return null;
-            }
-            LocalDateTime local = next.toLocalDateTime();
-            return local.isAfter(from.plusSeconds(1_000_000).withNano(0)) ? null : local;
         }
     }
 }

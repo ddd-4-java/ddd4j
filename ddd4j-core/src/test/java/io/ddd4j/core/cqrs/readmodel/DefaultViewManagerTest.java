@@ -80,17 +80,18 @@ class DefaultViewManagerTest {
         Handle other = new Handle();
         ViewScheduler scheduler = (name, cron, task) -> "first".equals(name)
                 ? new ViewScheduler.ViewScheduleHandle() {
-                    @Override
-                    public void cancel() {
-                        if (failCancel.getAndSet(false)) {
-                            throw new IllegalStateException("cancel failed");
-                        }
-                    }
-                    @Override
-                    public boolean isActive() {
-                        return failCancel.get();
-                    }
-                } : other;
+            @Override
+            public void cancel() {
+                if (failCancel.getAndSet(false)) {
+                    throw new IllegalStateException("cancel failed");
+                }
+            }
+
+            @Override
+            public boolean isActive() {
+                return failCancel.get();
+            }
+        } : other;
         ProjectionRunner<String> runner = new ProjectionRunner<>(
                 new DefaultProjectionService(new InMemoryProjectionPositionRepository()),
                 (id, from, size, types) -> EventChunk.empty(from));
@@ -170,10 +171,12 @@ class DefaultViewManagerTest {
 
     private static final class Handle implements ViewScheduler.ViewScheduleHandle {
         private int cancels;
+
         @Override
         public void cancel() {
             cancels++;
         }
+
         @Override
         public boolean isActive() {
             return cancels == 0;

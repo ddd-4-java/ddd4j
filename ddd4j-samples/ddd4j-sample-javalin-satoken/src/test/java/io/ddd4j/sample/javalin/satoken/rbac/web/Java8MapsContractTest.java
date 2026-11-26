@@ -7,7 +7,9 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/** Java 8 响应 Map 与高线 Map.of 的共同输入及不可变性契约。 */
+/**
+ * Java 8 响应 Map 与高线 Map.of 的共同输入及不可变性契约。
+ */
 class Java8MapsContractTest {
 
     @Test

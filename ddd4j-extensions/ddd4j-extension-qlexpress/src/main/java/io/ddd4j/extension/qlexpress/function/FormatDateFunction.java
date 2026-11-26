@@ -43,7 +43,7 @@ public final class FormatDateFunction implements NamedQLFunction {
     /**
      * 将 Date 或 java.time 日期按指定格式转为字符串。
      *
-     * @param qContext 表达式上下文
+     * @param qContext   表达式上下文
      * @param parameters 日期对象和格式
      * @return 格式化结果；日期为 null 时返回 null
      */

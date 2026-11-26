@@ -13,8 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.mq.activemq;
-import java.lang.IllegalStateException;
-import jakarta.jms.*;
 
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.mq.MQClient;
@@ -26,9 +24,11 @@ import io.ddd4j.mq.lifecycle.MQClientLifecycle;
 import io.ddd4j.mq.lifecycle.MQStartupStatus;
 import io.ddd4j.mq.listener.MQListener;
 import io.ddd4j.mq.message.MessageHeaders;
+import jakarta.jms.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 
+import java.lang.IllegalStateException;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;

@@ -14,23 +14,12 @@
  */
 package io.ddd4j.quarkus.cqrs;
 
-import io.ddd4j.core.cqrs.readmodel.DefaultViewManager;
-import io.ddd4j.core.cqrs.readmodel.EventChunkReader;
-import io.ddd4j.core.cqrs.readmodel.NoopEventChunkReader;
-import io.ddd4j.core.cqrs.readmodel.InMemoryProjectionPositionRepository;
-import io.ddd4j.core.cqrs.readmodel.ProjectionMetrics;
-import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
-import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
-import io.ddd4j.core.cqrs.readmodel.ProjectionRunner;
-import io.ddd4j.core.cqrs.readmodel.ProjectionStatus;
-import io.ddd4j.core.cqrs.readmodel.ProjectionView;
-import io.ddd4j.core.cqrs.readmodel.ViewManager;
-import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
-import io.quarkus.arc.DefaultBean;
+import io.ddd4j.core.cqrs.readmodel.*;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.ClientProxy;
-import io.quarkus.runtime.StartupEvent;
+import io.quarkus.arc.DefaultBean;
 import io.quarkus.runtime.ShutdownEvent;
+import io.quarkus.runtime.StartupEvent;
 import io.quarkus.scheduler.common.runtime.util.SchedulerUtils;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
@@ -39,6 +28,7 @@ import jakarta.inject.Inject;
 import jakarta.transaction.TransactionManager;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.Config;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -62,6 +52,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @DefaultBean
 public class QuarkusJpaViewManager implements ViewManager {
 
+    static final String MODE_KEY = "ddd4j.quarkus.cqrs.projection.mode";
+    static final String CRON_KEY = "ddd4j.quarkus.cqrs.projection.cron";
+    static final String DEFAULT_CRON = "*/30 * * * * ?";
     /**
      * 运行状态标志
      */
@@ -76,22 +69,32 @@ public class QuarkusJpaViewManager implements ViewManager {
      */
     @Inject
     Instance<ProjectionMetrics> projectionMetricsInstances;
-
-    static final String MODE_KEY = "ddd4j.quarkus.cqrs.projection.mode";
-    static final String CRON_KEY = "ddd4j.quarkus.cqrs.projection.cron";
-    static final String DEFAULT_CRON = "*/30 * * * * ?";
-
-    @Inject Config config;
-    @Inject Instance<QuarkusJpaProjectionService> legacyServices;
-    @Inject Instance<ProjectionRunner<Object>> runners;
-    @Inject Instance<ProjectionView<Object>> views;
-    @Inject Instance<ViewScheduler> schedulers;
-    @Inject Instance<ViewManager> managers;
-    @Inject Instance<EventChunkReader<Object>> readers;
-    @Inject Instance<TransactionManager> transactionManagers;
+    @Inject
+    Config config;
+    @Inject
+    Instance<QuarkusJpaProjectionService> legacyServices;
+    @Inject
+    Instance<ProjectionRunner<Object>> runners;
+    @Inject
+    Instance<ProjectionView<Object>> views;
+    @Inject
+    Instance<ViewScheduler> schedulers;
+    @Inject
+    Instance<ViewManager> managers;
+    @Inject
+    Instance<EventChunkReader<Object>> readers;
+    @Inject
+    Instance<TransactionManager> transactionManagers;
     private DefaultViewManager<Object> delegate;
     private ViewScheduler.ViewScheduleHandle legacyHandle;
     private QuarkusJpaProjectionService legacyService;
+
+    private static <T> T unique(Instance<T> candidates, String name) {
+        if (!candidates.isResolvable()) {
+            throw new IllegalStateException("A unique " + name + " is required for projection");
+        }
+        return candidates.get();
+    }
 
     synchronized void onStart(@Observes @jakarta.annotation.Priority(1000) StartupEvent event) {
         if (running.get()) {
@@ -144,20 +147,17 @@ public class QuarkusJpaViewManager implements ViewManager {
         }
     }
 
-    void onStop(@Observes ShutdownEvent event) { stop(); }
+    void onStop(@Observes ShutdownEvent event) {
+        stop();
+    }
 
     @jakarta.annotation.PreDestroy
-    void destroy() { stop(); }
+    void destroy() {
+        stop();
+    }
 
     private boolean ownsLifecycle() {
         return ClientProxy.unwrap(unique(managers, "ViewManager")) == this;
-    }
-
-    private static <T> T unique(Instance<T> candidates, String name) {
-        if (!candidates.isResolvable()) {
-            throw new IllegalStateException("A unique " + name + " is required for projection");
-        }
-        return candidates.get();
     }
 
     @Override
@@ -214,7 +214,9 @@ public class QuarkusJpaViewManager implements ViewManager {
     }
 
     @Override
-    public boolean isRunning() { return running.get(); }
+    public boolean isRunning() {
+        return running.get();
+    }
 
     @Override
     public void triggerOnce() {

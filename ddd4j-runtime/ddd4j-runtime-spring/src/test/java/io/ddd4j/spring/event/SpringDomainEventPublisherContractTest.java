@@ -9,9 +9,7 @@ import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class SpringDomainEventPublisherContractTest {
 
@@ -29,7 +27,8 @@ class SpringDomainEventPublisherContractTest {
                     throw new UnsupportedOperationException(method.getName());
                 });
         SpringDomainEventPublisher publisher = new SpringDomainEventPublisher(delegate);
-        DomainEvent<StringEntityId> event = new DomainEvent<StringEntityId>("order-1") { };
+        DomainEvent<StringEntityId> event = new DomainEvent<StringEntityId>("order-1") {
+        };
 
         publisher.publish(event);
         publisher.publish((Object) event);

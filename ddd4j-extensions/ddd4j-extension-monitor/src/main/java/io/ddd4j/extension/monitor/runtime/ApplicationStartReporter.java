@@ -49,7 +49,7 @@ public class ApplicationStartReporter {
     /**
      * 创建应用启动通告器。
      *
-     * @param sender 消息发送器
+     * @param sender  消息发送器
      * @param appName 应用名称
      */
     public ApplicationStartReporter(Sender sender, String appName) {

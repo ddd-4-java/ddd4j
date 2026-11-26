@@ -15,8 +15,6 @@
 package io.ddd4j.vertx;
 
 
-
-
 import io.vertx.core.Vertx;
 import org.junit.jupiter.api.Test;
 

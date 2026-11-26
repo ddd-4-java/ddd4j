@@ -48,13 +48,19 @@ import java.util.Objects;
  */
 public final class ApiVersionWebFilter implements WebFilter, Ordered {
 
-    /** 解析出的 API 版本在 exchange 属性中的挂载键，供 {@code Ddd4jWebFluxFilter} 读取。 */
+    /**
+     * 解析出的 API 版本在 exchange 属性中的挂载键，供 {@code Ddd4jWebFluxFilter} 读取。
+     */
     public static final String API_VERSION_ATTRIBUTE = ApiVersionWebFilter.class.getName() + ".apiVersion";
 
-    /** 版本解析器。 */
+    /**
+     * 版本解析器。
+     */
     private final ApiVersionResolver resolver;
 
-    /** 是否启用；false 时完全旁路解析逻辑。 */
+    /**
+     * 是否启用；false 时完全旁路解析逻辑。
+     */
     private final boolean enabled;
 
     /**
@@ -70,7 +76,7 @@ public final class ApiVersionWebFilter implements WebFilter, Ordered {
      * 创建过滤器。
      *
      * @param resolver 版本解析器（非 null）
-     * @param enabled 是否启用；false 时直接放行且不挂载任何属性
+     * @param enabled  是否启用；false 时直接放行且不挂载任何属性
      */
     public ApiVersionWebFilter(ApiVersionResolver resolver, boolean enabled) {
         this.resolver = Objects.requireNonNull(resolver, "resolver must not be null");
@@ -100,7 +106,7 @@ public final class ApiVersionWebFilter implements WebFilter, Ordered {
      * 解析 API 版本并挂载 exchange 属性。
      *
      * @param exchange 当前交换对象
-     * @param chain 后续过滤链
+     * @param chain    后续过滤链
      * @return 解析完成后继续放行的 {@code Mono}；严格模式非法值为 {@code Mono.error}
      */
     @Override

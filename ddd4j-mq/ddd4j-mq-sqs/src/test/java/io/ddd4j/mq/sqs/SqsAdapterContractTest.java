@@ -34,17 +34,33 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentCaptor.forClass;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class SqsAdapterContractTest {
+
+    private static MessageAttributeValue attribute(String value) {
+        return MessageAttributeValue.builder().dataType("String").stringValue(value).build();
+    }
+
+    private static MQEventSerialization serialization(MQEvent payload) {
+        return new MQEventSerialization() {
+            @Override
+            @SuppressWarnings("unchecked")
+            public <S, T> T deserialize(S src, Class<T> dist) {
+                return (T) payload;
+            }
+
+            @Override
+            @SuppressWarnings("unchecked")
+            public <T> T serialize(Object src) {
+                return (T) "{}";
+            }
+        };
+    }
 
     @AfterEach
     void clearContext() {
@@ -142,34 +158,6 @@ class SqsAdapterContractTest {
         assertEquals("native-causation", probe.event.getCausationId());
     }
 
-    private static MessageAttributeValue attribute(String value) {
-        return MessageAttributeValue.builder().dataType("String").stringValue(value).build();
-    }
-
-    private static MQEventSerialization serialization(MQEvent payload) {
-        return new MQEventSerialization() {
-            @Override
-            @SuppressWarnings("unchecked")
-            public <S, T> T deserialize(S src, Class<T> dist) {
-                return (T) payload;
-            }
-
-            @Override
-            @SuppressWarnings("unchecked")
-            public <T> T serialize(Object src) {
-                return (T) "{}";
-            }
-        };
-    }
-
-    public static class Probe {
-        private MQEvent event;
-
-        public void onEvent(MQEvent event) {
-            this.event = event;
-        }
-    }
-
     @Test
     void shouldPreferStableMessageIdAndResetVisibilityForRedelivery() {
         Map<String, MessageAttributeValue> attributes = new HashMap<>();
@@ -219,5 +207,13 @@ class SqsAdapterContractTest {
         adapter.close();
 
         verify(client, never()).close();
+    }
+
+    public static class Probe {
+        private MQEvent event;
+
+        public void onEvent(MQEvent event) {
+            this.event = event;
+        }
     }
 }

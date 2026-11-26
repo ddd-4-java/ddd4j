@@ -13,11 +13,7 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static io.restassured.RestAssured.given;
@@ -26,14 +22,22 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/** 旧商品 Java 入口复用真实 CDI 查询资源，同时保持每个 GET 路径只有一个绑定。 */
+/**
+ * 旧商品 Java 入口复用真实 CDI 查询资源，同时保持每个 GET 路径只有一个绑定。
+ */
 @QuarkusTest
+@io.quarkus.test.junit.TestProfile(io.ddd4j.sample.quarkus.satoken.GoodsStandaloneProfile.class)
 class GoodsResourceCompatibilityContractTest {
     private final List<Goods> seeded = new ArrayList<>();
     private GoodsApplicationService applicationService;
     private GoodsQueryResource queryResource;
     private InMemoryGoodsRepository repository;
     private String prefix;
+
+    private static void assertNames(Method method, String... expected) {
+        assertArrayEquals(expected, Arrays.stream(method.getParameters())
+                .map(parameter -> parameter.getName()).toArray(String[]::new));
+    }
 
     @BeforeEach
     void seedActualRepository() {
@@ -80,7 +84,7 @@ class GoodsResourceCompatibilityContractTest {
         assertEquals(Long.valueOf(2L), resource.count(null, prefix, "draft",
                 new BigDecimal("15"), new BigDecimal("30")).getData());
         assertEquals(prefix + "-middle", resource.page(2L, 1L, null, prefix, "draft",
-                new BigDecimal("15"), new BigDecimal("30"), "price_DESC")
+                        new BigDecimal("15"), new BigDecimal("30"), "price_DESC")
                 .getData().getRecords().get(0).getCode());
         assertEquals(2, resource.list(null, prefix, "draft", new BigDecimal("15"),
                 new BigDecimal("30"), "price_DESC").getData().size());
@@ -104,7 +108,7 @@ class GoodsResourceCompatibilityContractTest {
     void constructorParameterNamesAndHttpBindingOwnershipRemainExact() throws Exception {
         Constructor<GoodsResource> constructor = GoodsResource.class.getConstructor(
                 GoodsApplicationService.class, GoodsQueryResource.class);
-        assertArrayEquals(new String[] {"applicationService", "queryResource"},
+        assertArrayEquals(new String[]{"applicationService", "queryResource"},
                 Arrays.stream(constructor.getParameters()).map(parameter -> parameter.getName()).toArray(String[]::new));
         int injected = 0;
         for (Constructor<?> candidate : GoodsResource.class.getDeclaredConstructors()) {
@@ -123,10 +127,10 @@ class GoodsResourceCompatibilityContractTest {
                         BigDecimal.class, BigDecimal.class, String.class),
                 "code", "nameLike", "status", "priceMin", "priceMax", "orderBys");
         assertNames(GoodsResource.class.getMethod("count", String.class, String.class, String.class,
-                        BigDecimal.class, BigDecimal.class), "code", "nameLike", "status", "priceMin", "priceMax");
-        for (String name : new String[] {"page", "list", "count"}) {
+                BigDecimal.class, BigDecimal.class), "code", "nameLike", "status", "priceMin", "priceMax");
+        for (String name : new String[]{"page", "list", "count"}) {
             int bindings = 0;
-            for (Class<?> resource : new Class<?>[] {GoodsResource.class, GoodsQueryResource.class}) {
+            for (Class<?> resource : new Class<?>[]{GoodsResource.class, GoodsQueryResource.class}) {
                 for (Method method : resource.getDeclaredMethods()) {
                     if (method.getName().equals(name) && Arrays.stream(method.getAnnotations())
                             .anyMatch(annotation -> annotation.annotationType().getSimpleName().equals("GET"))) {
@@ -136,10 +140,5 @@ class GoodsResourceCompatibilityContractTest {
             }
             assertEquals(1, bindings, name);
         }
-    }
-
-    private static void assertNames(Method method, String... expected) {
-        assertArrayEquals(expected, Arrays.stream(method.getParameters())
-                .map(parameter -> parameter.getName()).toArray(String[]::new));
     }
 }

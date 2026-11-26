@@ -23,6 +23,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class AuthConstantsTest {
 
+    private static void assertKey(String name, String literal) throws ReflectiveOperationException {
+        Field field = AuthConstants.class.getField(name);
+        assertEquals(String.class, field.getType(), name);
+        assertEquals(Modifier.PUBLIC | Modifier.STATIC | Modifier.FINAL, field.getModifiers(), name);
+        assertEquals(literal, field.get(null), name);
+    }
+
     @Test
     void publishedFieldKeysKeepTheirLiteralValues() throws ReflectiveOperationException {
         assertKey("FIELD_USER_ID", "uid");
@@ -42,12 +49,5 @@ class AuthConstantsTest {
         assertKey("CLAIM_USER_ID", "uid");
         assertKey("CLAIM_ROLE_ID", "rid");
         assertKey("CLAIM_ORG_ID", "org_id");
-    }
-
-    private static void assertKey(String name, String literal) throws ReflectiveOperationException {
-        Field field = AuthConstants.class.getField(name);
-        assertEquals(String.class, field.getType(), name);
-        assertEquals(Modifier.PUBLIC | Modifier.STATIC | Modifier.FINAL, field.getModifiers(), name);
-        assertEquals(literal, field.get(null), name);
     }
 }

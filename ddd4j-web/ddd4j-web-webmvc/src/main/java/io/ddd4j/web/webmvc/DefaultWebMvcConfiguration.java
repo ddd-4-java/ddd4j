@@ -57,8 +57,9 @@ public class DefaultWebMvcConfiguration {
 
     /**
      * Profile 管理器：根据活跃环境配置切换。
-     * @return 配置或处理后的组件
+     *
      * @param environment Spring 环境
+     * @return 配置或处理后的组件
      */
     @Bean
     public ProfileManager profileManager(Environment environment) {
@@ -67,6 +68,7 @@ public class DefaultWebMvcConfiguration {
 
     /**
      * 请求上下文过滤器（线程上下文可继承）。
+     *
      * @return 配置或处理后的组件
      */
     @Bean(name = "ddd4jRequestContextFilter")
@@ -85,6 +87,7 @@ public class DefaultWebMvcConfiguration {
 
     /**
      * 语言切换拦截器。
+     *
      * @return 配置或处理后的组件
      */
     @Bean
@@ -96,6 +99,7 @@ public class DefaultWebMvcConfiguration {
 
     /**
      * 区域解析器（基于请求头 X-Locale）。
+     *
      * @return 配置或处理后的组件
      */
     @Bean
@@ -109,8 +113,9 @@ public class DefaultWebMvcConfiguration {
 
     /**
      * MVC 验证器（集成国际化消息源）。
-     * @return 配置或处理后的组件
+     *
      * @param messageSource 消息源
+     * @return 配置或处理后的组件
      */
     @Bean
     @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
@@ -185,7 +190,7 @@ public class DefaultWebMvcConfiguration {
      * 创建或配置 webRequestLifecycle 组件。
      *
      * @param authenticator Bearer 认证器
-     * @param accessPolicy 方法参数
+     * @param accessPolicy  方法参数
      * @return 配置或处理后的结果
      */
     @Bean
@@ -207,8 +212,8 @@ public class DefaultWebMvcConfiguration {
     /**
      * 创建或配置 ddd4jWebMvcInterceptor 组件。
      *
-     * @param contextFactory 请求上下文工厂
-     * @param requestLifecycle 请求生命周期
+     * @param contextFactory       请求上下文工厂
+     * @param requestLifecycle     请求生命周期
      * @param idempotencyLifecycle 方法参数
      * @return 配置或处理后的结果
      */
@@ -221,8 +226,9 @@ public class DefaultWebMvcConfiguration {
 
     /**
      * 注册不依赖 Spring Boot Actuator 的显式 readiness 端点。
-     * @return 配置或处理后的组件
+     *
      * @param readinessRegistry 就绪状态注册表
+     * @return 配置或处理后的组件
      */
     @Bean
     public Ddd4jWebMvcReadinessController ddd4jWebMvcReadinessController(
@@ -232,10 +238,11 @@ public class DefaultWebMvcConfiguration {
 
     /**
      * 自定义 WebMVC 配置器。
-     * @return 配置或处理后的组件
+     *
      * @param localeChangeInterceptor 语言环境切换拦截器
      * @param localResourceProperteis 本地资源配置
-     * @param ddd4jWebMvcInterceptor DDD4J Web 拦截器
+     * @param ddd4jWebMvcInterceptor  DDD4J Web 拦截器
+     * @return 配置或处理后的组件
      */
     @Bean
     public DefaultWebMvcConfigurer defaultWebMvcConfigurer(LocalResourceProperteis localResourceProperteis,

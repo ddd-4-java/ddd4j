@@ -168,7 +168,7 @@ public final class CacheKit {
     /**
      * 仅在没有同名普通或加载缓存时，注册默认类型的本地缓存。
      *
-     * @param biz 业务标识
+     * @param biz            业务标识
      * @param expiredSeconds 写后过期时间（秒）
      * @return 本次新注册的实例；借用已有缓存时返回 null
      */
@@ -191,7 +191,7 @@ public final class CacheKit {
     /**
      * 仅当普通缓存仍为调用方持有的实例时移除注册，同时保留同名加载缓存。
      *
-     * @param biz 业务标识
+     * @param biz   业务标识
      * @param owned 本次注册获得的实例；借用缓存时可传入 null
      */
     public void unregisterLocalIfOwned(String biz, Cache<String, Object> owned) {

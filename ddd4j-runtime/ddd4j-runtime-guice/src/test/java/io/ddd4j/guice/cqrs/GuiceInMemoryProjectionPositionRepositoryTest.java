@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 package io.ddd4j.guice.cqrs;
+
 import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
 import org.junit.jupiter.api.Test;
 

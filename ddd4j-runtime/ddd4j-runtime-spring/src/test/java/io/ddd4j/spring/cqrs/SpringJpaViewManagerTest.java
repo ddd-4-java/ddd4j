@@ -14,12 +14,7 @@
  */
 package io.ddd4j.spring.cqrs;
 
-import io.ddd4j.core.cqrs.readmodel.DefaultProjectionPosition;
-import io.ddd4j.core.cqrs.readmodel.ProjectionMetrics;
-import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
-import io.ddd4j.core.cqrs.readmodel.ProjectionRunInfo;
-import io.ddd4j.core.cqrs.readmodel.ProjectionStatus;
-import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
+import io.ddd4j.core.cqrs.readmodel.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -32,11 +27,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * {@link SpringJpaViewManager#getProjectionStatus(String)} 测试。
@@ -61,12 +52,19 @@ class SpringJpaViewManagerTest {
         java.util.concurrent.atomic.AtomicBoolean cancelled = new java.util.concurrent.atomic.AtomicBoolean();
         java.util.concurrent.atomic.AtomicInteger triggered = new java.util.concurrent.atomic.AtomicInteger();
         ViewScheduler ownedScheduler = (name, cron, task) -> new ViewScheduler.ViewScheduleHandle() {
-            public void cancel() { cancelled.set(true); }
-            public boolean isActive() { return !cancelled.get(); }
+            public void cancel() {
+                cancelled.set(true);
+            }
+
+            public boolean isActive() {
+                return !cancelled.get();
+            }
         };
         SpringJpaViewManager manager = new SpringJpaViewManager(ownedScheduler) {
             @Override
-            public void triggerOnce() { triggered.incrementAndGet(); }
+            public void triggerOnce() {
+                triggered.incrementAndGet();
+            }
         };
         try (org.springframework.context.annotation.AnnotationConfigApplicationContext context =
                      new org.springframework.context.annotation.AnnotationConfigApplicationContext()) {
@@ -85,7 +83,8 @@ class SpringJpaViewManagerTest {
     @Test
     void stopCancelsHandleRegisteredBeforeStart() {
         ViewScheduler.ViewScheduleHandle handle = mock(ViewScheduler.ViewScheduleHandle.class);
-        Runnable task = () -> { };
+        Runnable task = () -> {
+        };
         when(scheduler.schedule("early", "0 0 0 * * *", task)).thenReturn(handle);
         SpringJpaViewManager manager = new SpringJpaViewManager(scheduler);
         manager.schedule("early", "0 0 0 * * *", task);
@@ -101,7 +100,8 @@ class SpringJpaViewManagerTest {
     void stopCleansOtherHandlesAndCanRetryFailedCancellation() {
         ViewScheduler.ViewScheduleHandle bad = mock(ViewScheduler.ViewScheduleHandle.class);
         ViewScheduler.ViewScheduleHandle good = mock(ViewScheduler.ViewScheduleHandle.class);
-        Runnable task = () -> { };
+        Runnable task = () -> {
+        };
         LinkageError failure = new LinkageError("schedule transport unavailable");
         doThrow(failure).doNothing().when(bad).cancel();
 
@@ -123,7 +123,9 @@ class SpringJpaViewManagerTest {
         verify(good).cancel();
     }
 
-    /** 针对 {@code getProjectionStatus} 投影状态查询行为的嵌套测试组。 */
+    /**
+     * 针对 {@code getProjectionStatus} 投影状态查询行为的嵌套测试组。
+     */
     @Nested
     @DisplayName("getProjectionStatus")
     class GetProjectionStatusTests {

@@ -1,19 +1,7 @@
 package io.ddd4j.guice;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Inject;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
-import com.google.inject.Key;
-import com.google.inject.TypeLiteral;
-import io.ddd4j.core.cqrs.readmodel.DefaultProjectionService;
-import io.ddd4j.core.cqrs.readmodel.EventChunkReader;
-import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
-import io.ddd4j.core.cqrs.readmodel.ProjectionRunner;
-import io.ddd4j.core.cqrs.readmodel.ProjectionService;
-import io.ddd4j.core.cqrs.readmodel.ProjectionView;
-import io.ddd4j.core.cqrs.readmodel.ViewManager;
-import io.ddd4j.core.cqrs.readmodel.ViewScheduler;
+import com.google.inject.*;
+import io.ddd4j.core.cqrs.readmodel.*;
 import io.ddd4j.guice.cqrs.GuiceViewManager;
 
 import java.util.Collection;
@@ -29,6 +17,7 @@ public final class Ddd4jProjectionGuiceModule extends AbstractModule {
 
     /**
      * 选择需要运行的视图。
+     *
      * @param views 业务投影视图
      */
     public Ddd4jProjectionGuiceModule(Collection<? extends ProjectionView<Object>> views) {
@@ -38,7 +27,8 @@ public final class Ddd4jProjectionGuiceModule extends AbstractModule {
     @Override
     protected void configure() {
         requireBinding(ProjectionPositionRepository.class);
-        requireBinding(Key.get(new TypeLiteral<EventChunkReader<Object>>() { }));
+        requireBinding(Key.get(new TypeLiteral<EventChunkReader<Object>>() {
+        }));
         bind(ViewManager.class).to(GuiceViewManager.class);
         bind(ViewScheduler.class).to(GuiceViewManager.class);
         bind(Startup.class).asEagerSingleton();
@@ -62,7 +52,9 @@ public final class Ddd4jProjectionGuiceModule extends AbstractModule {
         return new GuiceViewManager(GuiceConstants.DEFAULT_THREAD_POOL_SIZE, repository, runner, views);
     }
 
-    /** Injector 完成绑定后启动；关闭由 Ddd4jGuiceRuntime 统一释放。 */
+    /**
+     * Injector 完成绑定后启动；关闭由 Ddd4jGuiceRuntime 统一释放。
+     */
     static final class Startup {
         @Inject
         Startup(GuiceViewManager manager) {

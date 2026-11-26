@@ -1,19 +1,38 @@
 package io.ddd4j.spring.util;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.extension.context.SpringContext;
-import org.springframework.extension.context.SpringContextAwareContext;
-import org.springframework.extension.utils.SpringContextUtils;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.StaticMessageSource;
 import org.springframework.extension.context.NestedMessageSource;
+import org.springframework.extension.context.SpringContext;
+import org.springframework.extension.context.SpringContextAwareContext;
+import org.springframework.extension.utils.SpringContextUtils;
 
 import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/** 静态国际化入口与本线 Easy4J 消息源的共同契约。 */
+/**
+ * 静态国际化入口与本线 Easy4J 消息源的共同契约。
+ */
 class SpringI18nKitMessageSourceTest {
+
+    private static NestedMessageSource extensionSource(String message) {
+        StaticMessageSource delegate = new StaticMessageSource();
+        delegate.addMessage("welcome", Locale.getDefault(), message);
+        return new NestedMessageSource(delegate);
+    }
+
+    private static void withContext(AnnotationConfigApplicationContext context, Runnable assertion) {
+        SpringContext previous = SpringContextUtils.getContext();
+        SpringContextAwareContext current = new SpringContextAwareContext();
+        current.setApplicationContext(context);
+        try {
+            assertion.run();
+        } finally {
+            SpringContextUtils.setContext(previous);
+        }
+    }
 
     @Test
     void resolvesExtensionSourceWithoutLegacyBean() {
@@ -33,23 +52,6 @@ class SpringI18nKitMessageSourceTest {
                 assertEquals("新版", I18nKit.getMessage("welcome"));
                 assertEquals("缺省", I18nKit.getMessage("missing", null, "缺省"));
             });
-        }
-    }
-
-    private static NestedMessageSource extensionSource(String message) {
-        StaticMessageSource delegate = new StaticMessageSource();
-        delegate.addMessage("welcome", Locale.getDefault(), message);
-        return new NestedMessageSource(delegate);
-    }
-
-    private static void withContext(AnnotationConfigApplicationContext context, Runnable assertion) {
-        SpringContext previous = SpringContextUtils.getContext();
-        SpringContextAwareContext current = new SpringContextAwareContext();
-        current.setApplicationContext(context);
-        try {
-            assertion.run();
-        } finally {
-            SpringContextUtils.setContext(previous);
         }
     }
 }

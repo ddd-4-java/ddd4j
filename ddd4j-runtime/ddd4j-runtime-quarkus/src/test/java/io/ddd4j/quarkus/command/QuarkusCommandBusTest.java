@@ -14,12 +14,8 @@
  */
 package io.ddd4j.quarkus.command;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.util.Objects;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
 import io.ddd4j.core.cqrs.command.Result;
@@ -27,6 +23,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,9 +37,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class QuarkusCommandBusTest {
 
-    private QuarkusCommandBus commandBus;
-
     private final java.util.List<CommandExecutor<?>> discovered = new java.util.ArrayList<>();
+    private QuarkusCommandBus commandBus;
 
     @BeforeEach
     void setUp() {

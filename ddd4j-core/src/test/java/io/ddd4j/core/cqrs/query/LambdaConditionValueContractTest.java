@@ -3,17 +3,27 @@ package io.ddd4j.core.cqrs.query;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InvalidObjectException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.lang.reflect.Field;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class LambdaConditionValueContractTest {
+
+    private static LambdaCondition condition() {
+        return new LambdaCondition(new PropertyRef(PropertySpace.DOMAIN, String.class, "status"), "=", "ACTIVE");
+    }
+
+    private static Object roundTrip(Object value) throws Exception {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        try (ObjectOutputStream output = new ObjectOutputStream(bytes)) {
+            output.writeObject(value);
+        }
+        try (ObjectInputStream input = new ObjectInputStream(new ByteArrayInputStream(bytes.toByteArray()))) {
+            return input.readObject();
+        }
+    }
 
     @Test
     void jsonRoundTripPreservesComponents() throws Exception {
@@ -64,19 +74,5 @@ class LambdaConditionValueContractTest {
     void propertyReferenceDescriptionIsStableAcrossLines() {
         assertThat(condition().propertyRef().toString()).isEqualTo(
                 "PropertyRef[space=DOMAIN, ownerType=class java.lang.String, property=status]");
-    }
-
-    private static LambdaCondition condition() {
-        return new LambdaCondition(new PropertyRef(PropertySpace.DOMAIN, String.class, "status"), "=", "ACTIVE");
-    }
-
-    private static Object roundTrip(Object value) throws Exception {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        try (ObjectOutputStream output = new ObjectOutputStream(bytes)) {
-            output.writeObject(value);
-        }
-        try (ObjectInputStream input = new ObjectInputStream(new ByteArrayInputStream(bytes.toByteArray()))) {
-            return input.readObject();
-        }
     }
 }

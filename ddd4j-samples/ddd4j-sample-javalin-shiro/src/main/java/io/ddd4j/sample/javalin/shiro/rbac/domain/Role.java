@@ -67,8 +67,8 @@ public class Role {
     /**
      * 创建角色。
      *
-     * @param code 编码
-     * @param name 名称
+     * @param code        编码
+     * @param name        名称
      * @param permissions 权限编码集合
      */
     public Role(String code, String name, Set<String> permissions) {

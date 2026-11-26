@@ -19,12 +19,7 @@ import io.ddd4j.core.constant.ContextConstants;
 import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.web.core.context.WebContextScope;
 import io.ddd4j.web.core.error.WebStatusException;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -83,14 +78,22 @@ public class Ddd4jQuarkusContractResource {
     @Path("/errors/{type}")
     public R<Void> error(@PathParam("type") String type) {
         switch (type) {
-            case "bad-request": throw new IllegalArgumentException("bad request");
-            case "forbidden": throw new SecurityException("forbidden");
-            case "not-found": throw new NoSuchElementException("not found");
-            case "conflict": throw new IllegalStateException("conflict");
-            case "unsupported-media-type": throw new WebStatusException(415, "unsupported media type");
-            case "unprocessable-entity": throw new WebStatusException(422, "unprocessable entity");
-            case "too-many-requests": throw new WebStatusException(429, "too many requests");
-            default: throw new RuntimeException("internal failure");
+            case "bad-request":
+                throw new IllegalArgumentException("bad request");
+            case "forbidden":
+                throw new SecurityException("forbidden");
+            case "not-found":
+                throw new NoSuchElementException("not found");
+            case "conflict":
+                throw new IllegalStateException("conflict");
+            case "unsupported-media-type":
+                throw new WebStatusException(415, "unsupported media type");
+            case "unprocessable-entity":
+                throw new WebStatusException(422, "unprocessable entity");
+            case "too-many-requests":
+                throw new WebStatusException(429, "too many requests");
+            default:
+                throw new RuntimeException("internal failure");
         }
     }
 }
