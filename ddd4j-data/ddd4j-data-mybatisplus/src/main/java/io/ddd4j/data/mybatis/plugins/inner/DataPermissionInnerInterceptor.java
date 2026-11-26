@@ -37,7 +37,7 @@ import java.sql.Connection;
 import java.util.Objects;
 
 /**
- * P1-4: 数据权限拦截器（对接 ddd4j-auth-datascope）
+ * MyBatis-Plus SQL 数据权限拦截器。
  * <p>
  * 在 SQL 解析阶段拦截 SELECT 语句，注入数据范围条件（如 dept_id IN (...)）。
  * 业务方可通过 {@code @InterceptorIgnore(dataPermission = "true")} 跳过。

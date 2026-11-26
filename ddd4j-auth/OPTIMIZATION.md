@@ -74,17 +74,16 @@ public static Subject getSubject() {
 
 | 模块                      | 自动配置注册方式                                       | 状态                              |
 |---------------------------|--------------------------------------------------------|-----------------------------------|
-| `ddd4j-auth-datascope`    | `spring/...AutoConfiguration.imports`（新机制）        | ✅                                |
 | `ddd4j-auth-satoken`      | `spring-autoconfigure-metadata.properties`（仅元数据） | ❌ **未注册到 imports**           |
 | `ddd4j-auth-security`     | `spring-autoconfigure-metadata.properties`（仅元数据） | ❌ **未注册到 imports**           |
 | `ddd4j-auth-shiro`        | 无任何注册                                             | ❌ **完全缺失**                   |
 | `ddd4j-extension-license` | 已迁出 auth 聚合，归属 `ddd4j-extensions`              | ✅ **不再纳入 auth 自动配置审查** |
 
-**结果**：除了 datascope，其余 4 个模块的 `@Configuration` 类 **根本不会被 Spring Boot 自动装配**。
+**结果**：鉴权模块的 `@Configuration` 类 **根本不会被 Spring Boot 自动装配**。
 
 ### 1.6 功能错位（datascope / license 不属于 auth）
 
-- `ddd4j-auth-datascope`：数据权限（DataScope），是 **查询层**关注的能力，应归 `ddd4j-data` 或独立的 `ddd4j-security` 聚合
+- Bean Validation 数据权限由 Easy4j 提供，应用注册业务数据权限策略。
 - `ddd4j-extension-license`：TrueLicense 证书，是 **软件授权**，与用户鉴权无关，已迁入
   `ddd4j-extensions/ddd4j-extension-license`
 
@@ -141,7 +140,6 @@ ddd4j-auth/（重构后）
     └── subject/ShiroSubject        ← 已完整，补全 login/logout
 
 【移出 auth 聚合】
-├── ddd4j-auth-datascope → 迁移到 ddd4j-data/ddd4j-data-datascope
 └── ddd4j-extension-license → 已迁到 ddd4j-extensions/ddd4j-extension-license
 ```
 
@@ -453,7 +451,7 @@ public <T extends AuthPrincipal> T getPrincipal() {
 |---|-----------------------------------------------------|--------------------------------------------------------------------------|
 | 6 | 新增 `ddd4j-auth-core` 纯 Java SPI 模块             | 从 ddd4j-core 迁入 Subject/SubjectKit/SubjectProvider 体系（含会话能力） |
 | 7 | 新增 `ddd4j-auth-spring` Spring 桥接模块            | `SubjectRegistrar` + 自动装配                                            |
-| 8 | `ddd4j-auth-datascope` 迁移到 `ddd4j-data`          | 数据权限不属于鉴权                                                       |
+| 8 | Bean Validation 数据权限已迁入 Easy4j | 应用注册业务 Provider |
 | 9 | `ddd4j-extension-license` 迁移到 `ddd4j-extensions` | 软件授权不属于鉴权                                                       |
 
 ### P2：能力增强（借鉴 Sa-Token）
@@ -561,7 +559,7 @@ static final ArchRule auth_core_no_sa_token =
 **完整达标路径（1 周可完成）**：
 
 1. 拆分 `ddd4j-auth-core`（纯 Java SPI）+ `ddd4j-auth-spring`（桥接）
-2. 迁出 `datascope` / `license`
+2. 将数据权限约束交给 Easy4j，迁出 `license`
 3. 扩展 `Subject` 接口会话能力（login/logout/refresh/verify）+ 新增 `AuthRequest`
 4. 三鉴权实现完整化 + 互斥自动装配
 
@@ -818,7 +816,7 @@ ddd4j-javalin/.../ddd4j-javalin-auth-satoken/← Javalin + sa-token 整合
 
 | #  | 任务                                               | 说明               |
 |----|----------------------------------------------------|--------------------|
-| 16 | **`ddd4j-auth-datascope` → `ddd4j-data`**          | 数据权限不属于鉴权 |
+| 16 | Bean Validation 数据权限已迁入 Easy4j | 应用注册业务 Provider |
 | 17 | **`ddd4j-extension-license` → `ddd4j-extensions`** | 软件授权不属于鉴权 |
 
 ### 8.8 修订后的验收标准
