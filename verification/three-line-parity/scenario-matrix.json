@@ -124,26 +124,24 @@
     },
     {
       "id": "AUTH-DATASCOPE-VALIDATION-DISCOVERY",
-      "description": "各线 Bean Validation 提供者能发现数据权限注解约束；JDK 8 适配 javax，JDK 17/21 适配 jakarta，不混同实际权限判定",
-      "lastEvidence": "/Users/redacted-legacy-family/workspaces/workspace-ddd4j/workspace-ddd4j-boot/three-line-convergence-evidence/2026-10-12-datascope-validation-aligned/report.json",
-      "lastEvidenceSha256": "8d00312f3ccb4792e0a77847c924ac40513e1ad3d76663a1668a5b50b9d69494",
+      "description": "各线经 Spring 原生工厂验证 Easy4j 权限约束与 Provider 隔离；JDK 8 使用 javax，JDK 17/21 使用 jakarta",
       "lines": {
         "1.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-auth/ddd4j-auth-datascope/src/test/java/io/ddd4j/auth/datascope/RequiresDataPermissionsValidationTest.java"
+            "ddd4j-web/ddd4j-web-testkit/src/test/java/io/ddd4j/web/testkit/validation/DataPermissionSpringIntegrationTest.java"
           ]
         },
         "2.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-auth/ddd4j-auth-datascope/src/test/java/io/ddd4j/auth/datascope/RequiresDataPermissionsValidationTest.java"
+            "ddd4j-web/ddd4j-web-testkit/src/test/java/io/ddd4j/web/testkit/validation/DataPermissionSpringIntegrationTest.java"
           ]
         },
         "3.0.x": {
           "status": "supported",
           "tests": [
-            "ddd4j-auth/ddd4j-auth-datascope/src/test/java/io/ddd4j/auth/datascope/RequiresDataPermissionsValidationTest.java"
+            "ddd4j-web/ddd4j-web-testkit/src/test/java/io/ddd4j/web/testkit/validation/DataPermissionSpringIntegrationTest.java"
           ]
         }
       }

@@ -46,7 +46,7 @@ flowchart LR
 # validation-api-extension
 bash mvnw -o clean install
 # DDD4J
-bash mvnw -o -pl :ddd4j-extension-validation,:ddd4j-auth-datascope,:ddd4j-extension-otel -am clean verify
+bash mvnw -o -pl :ddd4j-web-testkit,:ddd4j-extension-otel -am clean verify
 python3 scripts/check_no_records.py
 python3 -m unittest discover -s scripts -p test_check_no_records.py
 ```

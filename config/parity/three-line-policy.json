@@ -822,49 +822,15 @@
       "reason": "三线 Artemis 原生容器测试断言相同，仅 javax.jms 与 jakarta.jms 导入不同"
     },
     {
-      "path": "ddd4j-auth/ddd4j-auth-datascope/src/main/java/io/ddd4j/auth/datascope/RequiresDataPermissionsValidator.java",
+      "path": "ddd4j-web/ddd4j-web-testkit/src/test/java/io/ddd4j/web/testkit/validation/DataPermissionSpringIntegrationTest.java",
       "replacements": [
         {
-          "from": "import javax.validation.ConstraintValidator;",
-          "to": "import jakarta.validation.ConstraintValidator;"
-        },
-        {
-          "from": "import javax.validation.ConstraintValidatorContext;",
-          "to": "import jakarta.validation.ConstraintValidatorContext;"
+          "from": "import javax.validation.constraints.NotBlank;",
+          "to": "import jakarta.validation.constraints.NotBlank;"
         }
       ],
-      "evidence": "ddd4j-auth/ddd4j-auth-datascope/src/test/java/io/ddd4j/auth/datascope/RequiresDataPermissionsValidationTest.java",
-      "reason": "三线保留相同数据权限校验逻辑；JDK 8 使用 javax.validation，高两线使用 jakarta.validation，仅允许两个 import 精确替换"
-    },
-    {
-      "path": "ddd4j-auth/ddd4j-auth-datascope/src/main/java/io/ddd4j/auth/datascope/annotation/RequiresDataPermissions.java",
-      "replacements": [
-        {
-          "from": "import javax.validation.Constraint;",
-          "to": "import jakarta.validation.Constraint;"
-        },
-        {
-          "from": "import javax.validation.Payload;",
-          "to": "import jakarta.validation.Payload;"
-        }
-      ],
-      "evidence": "ddd4j-auth/ddd4j-auth-datascope/src/test/java/io/ddd4j/auth/datascope/RequiresDataPermissionsValidationTest.java",
-      "reason": "三线保留相同数据权限注解和发现契约；JDK 8 使用 javax.validation，高两线使用 jakarta.validation，仅允许两个 import 精确替换"
-    },
-    {
-      "path": "ddd4j-auth/ddd4j-auth-datascope/src/test/java/io/ddd4j/auth/datascope/RequiresDataPermissionsValidationTest.java",
-      "replacements": [
-        {
-          "from": "import javax.validation.Validation;",
-          "to": "import jakarta.validation.Validation;"
-        },
-        {
-          "from": "import javax.validation.ValidatorFactory;",
-          "to": "import jakarta.validation.ValidatorFactory;"
-        }
-      ],
-      "evidence": "ddd4j-auth/ddd4j-auth-datascope/src/test/java/io/ddd4j/auth/datascope/RequiresDataPermissionsValidationTest.java",
-      "reason": "三线相同 Bean Validation 注解发现断言；JDK 8 使用 javax.validation，高两线使用 jakarta.validation，仅允许两个 import 精确替换"
+      "evidence": "ddd4j-web/ddd4j-web-testkit/src/test/java/io/ddd4j/web/testkit/validation/DataPermissionSpringIntegrationTest.java",
+      "reason": "三线共用 Spring 数据权限与 Provider 隔离断言，按 Bean Validation 平台替换 import"
     },
     {
       "path": "ddd4j-mq/ddd4j-mq-pulsar/src/test/java/io/ddd4j/mq/pulsar/PulsarContainerIntegrationTest.java",
