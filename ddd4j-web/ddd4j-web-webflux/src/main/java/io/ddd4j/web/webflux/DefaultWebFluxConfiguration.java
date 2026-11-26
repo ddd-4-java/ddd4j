@@ -34,6 +34,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.extension.web.server.ReactiveRequestContextFilter;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpResponse;
+import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.WebFilterChain;
+import reactor.core.publisher.Mono;
 import org.springframework.extension.web.server.i18n.XHeaderLocaleContextResolver;
 import org.springframework.web.server.i18n.LocaleContextResolver;
 
@@ -68,7 +73,15 @@ public class DefaultWebFluxConfiguration {
      */
     @Bean(name = "ddd4jReactiveRequestContextFilter")
     public ReactiveRequestContextFilter requestContextFilter() {
-        return new ReactiveRequestContextFilter();
+        return new ReactiveRequestContextFilter() {
+            @Override
+            public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+                return chain.filter(exchange).contextWrite(context -> context
+                        .put(ServerWebExchange.class, exchange)
+                        .put(ServerHttpRequest.class, exchange.getRequest())
+                        .put(ServerHttpResponse.class, exchange.getResponse()));
+            }
+        };
     }
 
     /**

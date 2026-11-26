@@ -1,92 +1,54 @@
-/*
- * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.ddd4j.sample.dropwizard.cqrs;
 
-import io.ddd4j.core.cqrs.command.CommandBus;
-import io.ddd4j.core.cqrs.command.DefaultCommandBus;
-import io.ddd4j.core.cqrs.eventstore.InMemoryEventStore;
-import io.ddd4j.sample.dropwizard.cqrs.command.CreateOrderCommandHandler;
-import io.ddd4j.sample.dropwizard.cqrs.readmodel.InMemoryEventChunkReader;
-import io.ddd4j.sample.dropwizard.cqrs.readmodel.InMemoryViewManager;
-import io.ddd4j.sample.dropwizard.cqrs.readmodel.OrderSummaryView;
-import io.ddd4j.sample.dropwizard.cqrs.repository.EventSourcingOrderRepository;
-import io.ddd4j.sample.dropwizard.cqrs.web.OrderResource;
+import io.ddd4j.sample.order.adapter.http.CatalogApi;
+import io.ddd4j.core.i18n.I18nProvider;
+import io.ddd4j.dropwizard.Ddd4jBundle;
+import io.ddd4j.kit.lang.StrKit;
+import io.ddd4j.sample.order.start.CatalogRuntime;
+import io.ddd4j.web.core.auth.AuthenticationMode;
+import io.ddd4j.web.dropwizard.Ddd4jDropwizardWebBundle;
+import io.ddd4j.web.dropwizard.Ddd4jDropwizardWebConfiguration;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.function.Consumer;
 
 /**
- * Dropwizard CQRS 集成示例启动入口。
+ * Dropwizard 四表商品交易及快照投影。
  */
-public class DropwizardCqrsApplication extends Application<DropwizardCqrsConfiguration> {
+public final class DropwizardCqrsApplication extends Application<DropwizardCqrsConfiguration> {
+    private final List<Consumer<Object>> listeners;
 
-    // 共享组件（手动装配，使用 core SPI）
-    /**
-     * 事件存储。
-     */
-    public static final InMemoryEventStore EVENT_STORE = new InMemoryEventStore();
-    /**
-     * 订单仓储。
-     */
-    public static final EventSourcingOrderRepository ORDER_REPO = new EventSourcingOrderRepository(EVENT_STORE);
-    /**
-     * 创建订单命令处理器。
-     */
-    public static final CreateOrderCommandHandler COMMAND_HANDLER = new CreateOrderCommandHandler(ORDER_REPO);
-    /**
-     * 命令总线。
-     */
-    public static final CommandBus COMMAND_BUS = new DefaultCommandBus(Collections.singletonList(COMMAND_HANDLER));
-    /**
-     * 订单读取视图。
-     */
-    public static final OrderSummaryView READ_VIEW = new OrderSummaryView(ORDER_REPO);
-    /**
-     * 事件块读取器。
-     */
-    public static final InMemoryEventChunkReader CHUNK_READER = new InMemoryEventChunkReader(EVENT_STORE);
-    /**
-     * 投影视图管理器。
-     */
-    public static final InMemoryViewManager VIEW_MANAGER = createViewManager();
-
-    private static InMemoryViewManager createViewManager() {
-        InMemoryViewManager mgr = new InMemoryViewManager(CHUNK_READER);
-        mgr.register(READ_VIEW);
-        return mgr;
+    public DropwizardCqrsApplication() {
+        this.listeners = Collections.emptyList();
     }
 
-    /**
-     * 启动 Dropwizard CQRS 示例应用。
-     *
-     * @param args 命令行参数
-     * @throws Exception 应用启动失败时
-     */
+    DropwizardCqrsApplication(Consumer<Object> listener) {
+        this.listeners = Collections.singletonList(listener);
+    }
+
     public static void main(String[] args) throws Exception {
         new DropwizardCqrsApplication().run(args);
     }
 
     @Override
     public void initialize(Bootstrap<DropwizardCqrsConfiguration> bootstrap) {
+        bootstrap.addBundle(new Ddd4jBundle<>(Collections.emptyList(), listeners, null, I18nProvider.DEFAULT));
+        bootstrap.addBundle(new Ddd4jDropwizardWebBundle<DropwizardCqrsConfiguration>(configuration -> {
+            Ddd4jDropwizardWebConfiguration web = new Ddd4jDropwizardWebConfiguration();
+            web.setDefaultAuthenticationMode(AuthenticationMode.DISABLED);
+            web.setIdempotencyEnabled(false);
+            return web;
+        }));
     }
 
     @Override
-    public void run(DropwizardCqrsConfiguration configuration, Environment environment) {
-        environment.jersey().register(new OrderResource());
-        VIEW_MANAGER.start();
+    public void run(DropwizardCqrsConfiguration config, Environment environment) {
+        CatalogApi api = StrKit.isBlank(config.getCatalogJdbcUrl()) ? CatalogRuntime.start()
+                : CatalogRuntime.start(config.getCatalogJdbcUrl(), config.getCatalogDbUser(), config.getCatalogDbPassword());
+        environment.jersey().register(new CatalogTradeResource(api));
     }
 }

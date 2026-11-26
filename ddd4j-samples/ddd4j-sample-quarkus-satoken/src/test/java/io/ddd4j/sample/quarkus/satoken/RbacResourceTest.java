@@ -14,8 +14,8 @@
  */
 package io.ddd4j.sample.quarkus.satoken;
 
-import io.quarkus.test.junit.QuarkusTest;
 import io.ddd4j.sample.quarkus.satoken.rbac.RbacConfig;
+import io.quarkus.test.junit.QuarkusTest;
 import javax.inject.Inject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

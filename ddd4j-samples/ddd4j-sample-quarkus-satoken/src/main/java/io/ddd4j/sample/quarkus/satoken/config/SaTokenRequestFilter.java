@@ -14,6 +14,7 @@
  */
 package io.ddd4j.sample.quarkus.satoken.config;
 
+import cn.dev33.satoken.SaManager;
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaCheckRole;
@@ -21,17 +22,16 @@ import cn.dev33.satoken.annotation.SaMode;
 import cn.dev33.satoken.context.SaHolder;
 import cn.dev33.satoken.context.mock.SaRequestForMock;
 import cn.dev33.satoken.context.mock.SaTokenContextMockUtil;
+import cn.dev33.satoken.context.model.SaTokenContextModelBox;
 import cn.dev33.satoken.stp.StpUtil;
 import io.ddd4j.core.api.R;
-import io.ddd4j.core.util.SubjectKit;
 import io.ddd4j.kit.lang.StrKit;
+import io.ddd4j.sample.quarkus.satoken.CatalogTradeResource;
+import org.jboss.resteasy.core.ResteasyContext;
+import org.jboss.resteasy.plugins.server.Cleanables;
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.container.ContainerRequestFilter;
-import javax.ws.rs.container.ContainerResponseContext;
-import javax.ws.rs.container.ContainerResponseFilter;
-import javax.ws.rs.container.ResourceInfo;
+import javax.ws.rs.container.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -55,6 +55,7 @@ import java.util.Objects;
 @Priority(Priorities.AUTHENTICATION)
 public class SaTokenRequestFilter implements ContainerRequestFilter, ContainerResponseFilter {
 
+    private static final String PREVIOUS = SaTokenRequestFilter.class.getName() + ".previous";
     private static final String BEARER_PREFIX = "Bearer ";
 
     @Context
@@ -73,8 +74,27 @@ public class SaTokenRequestFilter implements ContainerRequestFilter, ContainerRe
 
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
-        SaTokenContextMockUtil.clearContext();
+        cn.dev33.satoken.context.SaTokenContext context = SaManager.getSaTokenContext();
+        if (context.isValid()) {
+            requestContext.setProperty(PREVIOUS, context.getModelBox());
+        }
         SaTokenContextMockUtil.setMockContext();
+        SaTokenContextModelBox owned = context.getModelBox();
+        Runnable cleanup = () -> {
+            if (context.isValid() && context.getModelBox() == owned) {
+                context.clearContext();
+                SaTokenContextModelBox previous = (SaTokenContextModelBox) requestContext.getProperty(PREVIOUS);
+                if (Objects.nonNull(previous)) {
+                    context.setContext(previous.getRequest(), previous.getResponse(), previous.getStorage());
+                }
+            }
+        };
+        requestContext.setProperty(PREVIOUS + ".cleanup", cleanup);
+        // RESTEasy Classic runs these callbacks even when it skips response filters on an exception.
+        Cleanables cleanables = ResteasyContext.getContextData(Cleanables.class);
+        if (Objects.nonNull(cleanables)) {
+            cleanables.addCleanable(cleanup::run);
+        }
 
         SaRequestForMock request = (SaRequestForMock) SaHolder.getRequest();
         request.requestPath = requestContext.getUriInfo().getPath();
@@ -94,8 +114,9 @@ public class SaTokenRequestFilter implements ContainerRequestFilter, ContainerRe
         requestContext.getCookies().forEach((name, cookie) -> request.cookieMap.put(name, cookie.getValue()));
 
         String authorization = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
-        if (StrKit.isNotEmpty(authorization) && authorization.startsWith(BEARER_PREFIX)) {
-            request.headerMap.put(StpUtil.getTokenName(), authorization.substring(BEARER_PREFIX.length()));
+        if (StrKit.isNotEmpty(authorization) && authorization.regionMatches(
+                true, 0, BEARER_PREFIX, 0, BEARER_PREFIX.length())) {
+            request.headerMap.put(StpUtil.getTokenName(), authorization.substring(BEARER_PREFIX.length()).trim());
         }
 
         Response denied = authorize();
@@ -106,17 +127,34 @@ public class SaTokenRequestFilter implements ContainerRequestFilter, ContainerRe
 
     @Override
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
-        SaTokenContextMockUtil.clearContext();
+        Runnable cleanup = (Runnable) requestContext.getProperty(PREVIOUS + ".cleanup");
+        if (Objects.nonNull(cleanup)) {
+            cleanup.run();
+        }
     }
 
     private Response authorize() {
+        Class<?> resourceClass = resourceInfo.getResourceClass();
+        if (Objects.nonNull(resourceClass) && CatalogTradeResource.class.isAssignableFrom(resourceClass)) {
+            if (!StpUtil.isLogin()) {
+                return failure(Response.Status.UNAUTHORIZED, "unauthenticated");
+            }
+            String operation = resourceInfo.getResourceMethod().getName();
+            if ("goods".equals(operation) || "order".equals(operation)) {
+                return null;
+            }
+            String permission = "cancelOrder".equals(operation) ? "order:cancel" : "order:pay";
+            return StpUtil.hasPermission(permission) ? null
+                    : failure(Response.Status.FORBIDDEN, "required permission is missing");
+        }
+
         SaCheckLogin login = findAnnotation(SaCheckLogin.class);
         SaCheckRole role = findAnnotation(SaCheckRole.class);
         SaCheckPermission permission = findAnnotation(SaCheckPermission.class);
         if (Objects.isNull(login) && Objects.isNull(role) && Objects.isNull(permission)) {
             return null;
         }
-        if (!SubjectKit.isLogin()) {
+        if (!StpUtil.isLogin()) {
             return failure(Response.Status.UNAUTHORIZED, "unauthenticated");
         }
         if (Objects.nonNull(role) && !matchesRoles(role)) {
@@ -134,8 +172,8 @@ public class SaTokenRequestFilter implements ContainerRequestFilter, ContainerRe
             return true;
         }
         return check.mode() == SaMode.AND
-                ? roles.stream().allMatch(SubjectKit::hasRole)
-                : roles.stream().anyMatch(SubjectKit::hasRole);
+                ? roles.stream().allMatch(StpUtil::hasRole)
+                : roles.stream().anyMatch(StpUtil::hasRole);
     }
 
     private boolean matchesPermissions(SaCheckPermission check) {
@@ -144,8 +182,8 @@ public class SaTokenRequestFilter implements ContainerRequestFilter, ContainerRe
             return true;
         }
         return check.mode() == SaMode.AND
-                ? permissions.stream().allMatch(SubjectKit::hasPermission)
-                : permissions.stream().anyMatch(SubjectKit::hasPermission);
+                ? permissions.stream().allMatch(StpUtil::hasPermission)
+                : permissions.stream().anyMatch(StpUtil::hasPermission);
     }
 
     private <A extends java.lang.annotation.Annotation> A findAnnotation(Class<A> type) {

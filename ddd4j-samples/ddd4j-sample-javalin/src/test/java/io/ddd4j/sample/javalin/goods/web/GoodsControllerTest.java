@@ -14,6 +14,8 @@
  */
 package io.ddd4j.sample.javalin.goods.web;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.BaseContext;
@@ -21,8 +23,6 @@ import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectProvider;
-import io.ddd4j.sample.javalin.TestHttpClient;
-import io.ddd4j.sample.javalin.TestHttpClient.HttpResponse;
 import io.ddd4j.sample.javalin.goods.application.GoodsApplicationService;
 import io.ddd4j.sample.javalin.goods.domain.Goods;
 import io.ddd4j.sample.javalin.goods.infrastructure.InMemoryGoodsRepository;
@@ -36,7 +36,13 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
+import java.net.URI;
+import io.ddd4j.sample.order.testkit.http.HttpClient;
+import io.ddd4j.sample.order.testkit.http.HttpRequest;
+import io.ddd4j.sample.order.testkit.http.HttpResponse;
+import java.time.Duration;
 import java.util.Objects;
+import java.util.stream.StreamSupport;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -52,8 +58,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class GoodsControllerTest {
 
+    private static final ObjectMapper JSON = new ObjectMapper();
+
     private static Javalin app;
-    private static TestHttpClient httpClient;
+    private static HttpClient httpClient;
     private static String baseUrl;
 
     @BeforeAll
@@ -75,7 +83,7 @@ class GoodsControllerTest {
         app.routes(goodsController::routes);
         app.start(0);
         baseUrl = "http://localhost:" + app.port();
-        httpClient = new TestHttpClient();
+        httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
     }
 
     @AfterAll
@@ -102,26 +110,49 @@ class GoodsControllerTest {
         return body.substring(start, end);
     }
 
+    private JsonNode queryData(HttpResponse<String> response) throws Exception {
+        assertEquals(200, response.statusCode(), response.body());
+        JsonNode body = JSON.readTree(response.body());
+        assertEquals(0, body.path("code").asInt(-1), response.body());
+        return body.path("data");
+    }
+
+    private String createFixture(String code, String name, String price) throws Exception {
+        HttpResponse<String> created = postJson("/api/goods",
+                "{\"code\":\"" + code + "\",\"name\":\"" + name + "\",\"price\":" + price + ",\"stock\":1}");
+        assertEquals(201, created.statusCode(), created.body());
+        return extractId(created.body());
+    }
+
     private HttpResponse<String> postJson(String path, String body) throws Exception {
-        return httpClient.postJson(baseUrl + path, body, TestHttpClient.noHeaders());
+        return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
+                        .header("Content-Type", "application/json")
+                        .POST(HttpRequest.BodyPublishers.ofString(body)).build(),
+                HttpResponse.BodyHandlers.ofString());
     }
 
     private HttpResponse<String> putJson(String path, String body) throws Exception {
-        return httpClient.putJson(baseUrl + path, body, TestHttpClient.noHeaders());
+        return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
+                        .header("Content-Type", "application/json")
+                        .PUT(HttpRequest.BodyPublishers.ofString(body)).build(),
+                HttpResponse.BodyHandlers.ofString());
     }
 
     private HttpResponse<String> put(String path) throws Exception {
-        return httpClient.put(baseUrl + path, TestHttpClient.noHeaders());
+        return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).PUT(HttpRequest.BodyPublishers.noBody()).build(),
+                HttpResponse.BodyHandlers.ofString());
     }
 
     private HttpResponse<String> delete(String path) throws Exception {
-        return httpClient.delete(baseUrl + path, TestHttpClient.noHeaders());
+        return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).DELETE().build(),
+                HttpResponse.BodyHandlers.ofString());
     }
 
     // ---------- 1) create ----------
 
     private HttpResponse<String> get(String path) throws Exception {
-        return httpClient.get(baseUrl + path, TestHttpClient.noHeaders());
+        return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).GET().build(),
+                HttpResponse.BodyHandlers.ofString());
     }
 
     @Test
@@ -257,13 +288,11 @@ class GoodsControllerTest {
 
     @Test
     void deleteGoods_thenGetByCode_shouldReturnDeletedStatus() throws Exception {
-        HttpResponse<String> create = postJson("/api/goods",
-                "{\"code\":\"SKU-SOFT\",\"name\":\"x\",\"price\":1.00,\"stock\":1}");
-        String id = extractId(create.body());
-        delete("/api/goods/" + id);
-        HttpResponse<String> resp = get("/api/goods/by-code?code=SKU-SOFT");
-        assertTrue(resp.statusCode() >= 400,
-                "expected /by-code shadowed by /{id} (>=400), actual=" + resp.statusCode());
+        String id = createFixture("SKU-SOFT", "x", "1.00");
+        assertEquals(200, delete("/api/goods/" + id).statusCode());
+        JsonNode goods = queryData(get("/api/goods/by-code?code=SKU-SOFT"));
+        assertEquals("SKU-SOFT", goods.path("code").asText());
+        assertEquals("DELETED", goods.path("status").asText());
     }
 
     @Test
@@ -277,8 +306,6 @@ class GoodsControllerTest {
     }
 
     // ---------- 6) getByCode ----------
-    // 注：/api/goods/{id} 在 /api/goods/by-code 之前注册，导致 /by-code 被 /{id} 拦截并返回 400。
-    // 这是预存在的路由顺序问题（不允许修改业务代码），以下测试断言当前行为。
 
     @Test
     void getById_unknownId_shouldReturn4xxOr5xx() throws Exception {
@@ -288,98 +315,116 @@ class GoodsControllerTest {
 
     @Test
     void getByCode_shouldReturnGoods() throws Exception {
-        postJson("/api/goods", "{\"code\":\"SKU-BC\",\"name\":\"x\",\"price\":1.00,\"stock\":1}");
-        HttpResponse<String> resp = get("/api/goods/by-code?code=SKU-BC");
-        assertTrue(resp.statusCode() >= 400,
-                "expected /by-code shadowed by /{id} (>=400), actual=" + resp.statusCode());
+        String id = createFixture("SKU-BC", "x", "1.00");
+        JsonNode goods = queryData(get("/api/goods/by-code?code=SKU-BC"));
+        assertEquals(id, goods.path("id").asText());
+        assertEquals("SKU-BC", goods.path("code").asText());
     }
 
     @Test
     void getByCode_missingParam_shouldHandle() throws Exception {
         HttpResponse<String> resp = get("/api/goods/by-code");
-        assertTrue(resp.statusCode() >= 400 || resp.statusCode() == 200);
+        assertEquals(400, resp.statusCode(), resp.body());
     }
 
     // ---------- 7) page / list / count 充血查询 ----------
-    // 注：GoodsController 中 /api/goods/{id} 在 /api/goods/page|list|count 之前注册，
-    // 因此这些路由会被 /{id} 捕获并返回 400（pathParamAsClass Long 转换失败）。
-    // 这是预存在的路由顺序问题（不允许修改业务代码），以下测试断言当前行为。
 
     @Test
     void getByCode_unknownCode_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> resp = get("/api/goods/by-code?code=missing");
-        assertTrue(resp.statusCode() >= 400);
+        assertEquals(400, resp.statusCode(), resp.body());
     }
 
     @Test
     void pageQuery_defaultPage_shouldReturnOk() throws Exception {
-        // 先灌一些数据
-        for (int i = 0; i < 5; i++) {
-            postJson("/api/goods",
-                    "{\"code\":\"SKU-P" + i + "\",\"name\":\"N" + i + "\",\"price\":1.00,\"stock\":1}");
-        }
-        HttpResponse<String> resp = get("/api/goods/page?current=1&size=10");
-        assertTrue(resp.statusCode() >= 400,
-                "expected /page shadowed by /{id} (>=400), actual=" + resp.statusCode());
+        createFixture("SKU-P0", "FirstPage", "1.00");
+        JsonNode page = queryData(get("/api/goods/page?current=1&size=10&nameLike=FirstPage"));
+        assertEquals(1, page.path("current").asInt(-1));
+        assertEquals(10, page.path("size").asInt(-1));
+        assertEquals(1, page.path("total").asInt(-1));
+        JsonNode rows = page.path("records");
+        assertEquals(1, rows.size());
+        assertEquals("SKU-P0", rows.path(0).path("code").asText());
     }
 
     @Test
     void pageQuery_byStatus_shouldReturnOk() throws Exception {
-        HttpResponse<String> create = postJson("/api/goods",
-                "{\"code\":\"SKU-PS\",\"name\":\"x\",\"price\":1.00,\"stock\":1}");
-        String id = extractId(create.body());
-        put("/api/goods/" + id + "/status?status=ON_SALE");
+        createFixture("SKU-PS", "PageStatus", "1.00");
+        String deletedId = createFixture("SKU-PS-DEL", "PageStatus", "1.00");
+        assertEquals(200, delete("/api/goods/" + deletedId).statusCode());
 
-        HttpResponse<String> resp = get("/api/goods/page?status=ON_SALE&current=1&size=10");
-        assertTrue(resp.statusCode() >= 400);
+        JsonNode rows = queryData(get("/api/goods/page?status=DRAFT&nameLike=PageStatus&current=1&size=10")).path("records");
+        assertEquals(1, rows.size());
+        assertEquals("SKU-PS", rows.path(0).path("code").asText());
+        assertEquals("DRAFT", rows.path(0).path("status").asText());
     }
 
     @Test
     void pageQuery_byPriceRange_shouldReturnOk() throws Exception {
-        postJson("/api/goods", "{\"code\":\"SKU-PR\",\"name\":\"x\",\"price\":50.00,\"stock\":1}");
-        HttpResponse<String> resp = get("/api/goods/page?priceMin=10&priceMax=100&current=1&size=10");
-        assertTrue(resp.statusCode() >= 400);
+        createFixture("SKU-PR", "PagePrice", "50.00");
+        createFixture("SKU-PR-LOW", "PagePrice", "9.00");
+        createFixture("SKU-PR-HIGH", "PagePrice", "101.00");
+        JsonNode rows = queryData(get("/api/goods/page?nameLike=PagePrice&priceMin=10&priceMax=100&current=1&size=10")).path("records");
+        assertEquals(1, rows.size());
+        assertEquals("SKU-PR", rows.path(0).path("code").asText());
     }
 
     @Test
     void pageQuery_byNameLike_shouldReturnOk() throws Exception {
-        postJson("/api/goods", "{\"code\":\"SKU-NL\",\"name\":\"iPhoneX\",\"price\":1.00,\"stock\":1}");
-        HttpResponse<String> resp = get("/api/goods/page?nameLike=iPhone&current=1&size=10");
-        assertTrue(resp.statusCode() >= 400);
+        createFixture("SKU-NL", "ProCameraX", "1.00");
+        createFixture("SKU-NL-OTHER", "Android", "1.00");
+        JsonNode rows = queryData(get("/api/goods/page?nameLike=Camera&current=1&size=10")).path("records");
+        assertEquals(1, rows.size());
+        assertEquals("SKU-NL", rows.path(0).path("code").asText());
     }
 
     @Test
     void pageQuery_byCodeExact_shouldReturnOk() throws Exception {
-        postJson("/api/goods", "{\"code\":\"SKU-EX\",\"name\":\"x\",\"price\":1.00,\"stock\":1}");
-        HttpResponse<String> resp = get("/api/goods/page?code=SKU-EX&current=1&size=10");
-        assertTrue(resp.statusCode() >= 400);
+        createFixture("SKU-EX", "Exact", "1.00");
+        createFixture("SKU-EX-OTHER", "Exact", "1.00");
+        JsonNode rows = queryData(get("/api/goods/page?code=SKU-EX&current=1&size=10")).path("records");
+        assertEquals(1, rows.size());
+        assertEquals("SKU-EX", rows.path(0).path("code").asText());
     }
 
     @Test
     void listQuery_shouldReturnOk() throws Exception {
-        HttpResponse<String> resp = get("/api/goods/list");
-        assertTrue(resp.statusCode() >= 400,
-                "expected /list shadowed by /{id} (>=400), actual=" + resp.statusCode());
+        createFixture("SKU-LS", "List", "1.00");
+        JsonNode goods = queryData(get("/api/goods/list"));
+        assertTrue(goods.isArray());
+        assertTrue(StreamSupport.stream(goods.spliterator(), false)
+                .anyMatch(goodsItem -> "SKU-LS".equals(goodsItem.path("code").asText())));
     }
 
     @Test
     void listQuery_byStatus_shouldReturnOk() throws Exception {
-        HttpResponse<String> resp = get("/api/goods/list?status=ON_SALE");
-        assertTrue(resp.statusCode() >= 400);
+        createFixture("SKU-LS-DRAFT", "ListStatus", "1.00");
+        String deletedId = createFixture("SKU-LS-DEL", "ListStatus", "1.00");
+        assertEquals(200, delete("/api/goods/" + deletedId).statusCode());
+
+        JsonNode goods = queryData(get("/api/goods/list?status=DRAFT&nameLike=ListStatus"));
+        assertEquals(1, goods.size());
+        assertEquals("SKU-LS-DRAFT", goods.path(0).path("code").asText());
     }
 
     @Test
     void countQuery_shouldReturnOk() throws Exception {
-        HttpResponse<String> resp = get("/api/goods/count");
-        assertTrue(resp.statusCode() >= 400);
+        String path = "/api/goods/count";
+        long count = queryData(get(path)).asLong(-1);
+        assertTrue(count >= 0);
+        createFixture("SKU-CT", "Count", "1.00");
+        assertEquals(count + 1, queryData(get(path)).asLong(-1));
     }
 
     // ---------- 综合 ----------
 
     @Test
     void countQuery_byStatus_shouldReturnOk() throws Exception {
-        HttpResponse<String> resp = get("/api/goods/count?status=DRAFT");
-        assertTrue(resp.statusCode() >= 400);
+        createFixture("SKU-CT-DRAFT", "CountStatus", "1.00");
+        String deletedId = createFixture("SKU-CT-DEL", "CountStatus", "1.00");
+        assertEquals(200, delete("/api/goods/" + deletedId).statusCode());
+        assertEquals(2, queryData(get("/api/goods/count?nameLike=CountStatus")).asLong(-1));
+        assertEquals(1, queryData(get("/api/goods/count?nameLike=CountStatus&status=DRAFT")).asLong(-1));
     }
 
     @Test
@@ -408,9 +453,9 @@ class GoodsControllerTest {
         HttpResponse<String> del = delete("/api/goods/" + id);
         assertEquals(200, del.statusCode());
 
-        // by-code 被 /{id} 拦截（业务路由顺序 bug）→ 400
-        HttpResponse<String> bc = get("/api/goods/by-code?code=SKU-LC");
-        assertTrue(bc.statusCode() >= 400);
+        JsonNode goods = queryData(get("/api/goods/by-code?code=SKU-LC"));
+        assertEquals("LifeCycle", goods.path("name").asText());
+        assertEquals("DELETED", goods.path("status").asText());
     }
 
     @Test
@@ -425,13 +470,21 @@ class GoodsControllerTest {
     @Test
     void pageQuery_withPagination_shouldReturnOk() throws Exception {
         for (int i = 0; i < 15; i++) {
-            postJson("/api/goods",
-                    "{\"code\":\"SKU-PG" + i + "\",\"name\":\"P\",\"price\":1.00,\"stock\":1}");
+            createFixture("SKU-PG" + i, "PageWindow", "1.00");
         }
-        HttpResponse<String> p1 = get("/api/goods/page?current=1&size=5");
-        assertTrue(p1.statusCode() >= 400);
-        HttpResponse<String> p3 = get("/api/goods/page?current=3&size=5");
-        assertTrue(p3.statusCode() >= 400);
+        String path = "/api/goods/page?nameLike=PageWindow&orderBys=id_ASC&size=5&current=";
+        JsonNode firstPage = queryData(get(path + "1"));
+        JsonNode thirdPage = queryData(get(path + "3"));
+        assertEquals(1, firstPage.path("current").asInt(-1));
+        assertEquals(3, thirdPage.path("current").asInt(-1));
+        assertEquals(5, thirdPage.path("size").asInt(-1));
+        assertEquals(15, thirdPage.path("total").asInt(-1));
+        JsonNode firstRows = firstPage.path("records");
+        JsonNode thirdRows = thirdPage.path("records");
+        assertEquals(5, firstRows.size());
+        assertEquals(5, thirdRows.size());
+        assertEquals("SKU-PG0", firstRows.path(0).path("code").asText());
+        assertEquals("SKU-PG10", thirdRows.path(0).path("code").asText());
     }
 
     @Test
@@ -453,16 +506,28 @@ class GoodsControllerTest {
 
     @Test
     void pageQuery_withOrderBys_shouldReturnOk() throws Exception {
-        HttpResponse<String> resp = get("/api/goods/page?orderBys=price_DESC&current=1&size=10");
-        assertTrue(resp.statusCode() >= 400);
+        createFixture("SKU-ORDER-LOW", "PageOrder", "1.00");
+        createFixture("SKU-ORDER-HIGH", "PageOrder", "2.00");
+        JsonNode rows = queryData(get("/api/goods/page?nameLike=PageOrder&orderBys=price_DESC&current=1&size=10")).path("records");
+        assertEquals(2, rows.size());
+        assertEquals("SKU-ORDER-HIGH", rows.path(0).path("code").asText());
+        assertEquals("SKU-ORDER-LOW", rows.path(1).path("code").asText());
     }
 
-    // =========================== 辅助 ===========================
+    @Test
+    void queryInvalidNumber_shouldReturnBadRequest() throws Exception {
+        HttpResponse<String> page = get("/api/goods/page?current=bad");
+        assertEquals(400, page.statusCode(), page.body());
+        HttpResponse<String> list = get("/api/goods/list?priceMin=bad");
+        assertEquals(400, list.statusCode(), list.body());
+        HttpResponse<String> count = get("/api/goods/count?size=bad");
+        assertEquals(400, count.statusCode(), count.body());
+    }
 
     @Test
     void pageQuery_invalidStatusEnum_shouldReturn4xxOr5xx() throws Exception {
         HttpResponse<String> resp = get("/api/goods/page?status=BAD&current=1&size=10");
-        assertTrue(resp.statusCode() >= 400 || resp.statusCode() == 200);
+        assertEquals(400, resp.statusCode(), resp.body());
     }
 
 }

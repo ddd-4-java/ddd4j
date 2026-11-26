@@ -19,12 +19,15 @@ import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/** 商品查询 HTTP 路由在三条平台线的共同契约。 */
+/**
+ * 商品查询 HTTP 路由在三条平台线的共同契约。
+ */
 @QuarkusTest
+@io.quarkus.test.junit.TestProfile(io.ddd4j.sample.quarkus.shiro.GoodsStandaloneProfile.class)
 class GoodsQueryResourceContractTest {
 
     @Test

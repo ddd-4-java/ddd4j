@@ -80,6 +80,25 @@
 
     <dependencies>
         <dependency>
+            <groupId>jakarta.inject</groupId>
+            <artifactId>jakarta.inject-api</artifactId>
+            <version>1.0.5</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-sample-order-start</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-sample-order-adapter</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-sample-order-application</artifactId>
             <version>${revision}</version>
@@ -122,6 +141,12 @@
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-runtime-quarkus</artifactId>
             <version>${revision}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.quarkus</groupId>
+                    <artifactId>quarkus-quartz</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Quarkus Web 适配：TenantAwareResource、DefaultExceptionHandler、JAX-RS 异常映射 -->
@@ -129,6 +154,12 @@
             <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-web-quarkus</artifactId>
             <version>${revision}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.quarkus</groupId>
+                    <artifactId>quarkus-quartz</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- ================= Quarkus 扩展 ================= -->
@@ -142,12 +173,6 @@
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-arc</artifactId>
-        </dependency>
-
-        <!-- CQRS read-model scheduling is an application-selected infrastructure concern. -->
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-quartz</artifactId>
         </dependency>
 
         <!-- ================= 测试依赖 ================= -->
@@ -167,6 +192,17 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-sample-order-testkit</artifactId>
+            <version>${revision}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>mysql</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

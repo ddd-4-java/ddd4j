@@ -15,13 +15,14 @@
 package io.ddd4j.sample.javalin.satoken.rbac.web;
 
 import io.ddd4j.sample.javalin.satoken.TestSupport;
-import io.ddd4j.sample.javalin.satoken.http.HttpClient;
-import io.ddd4j.sample.javalin.satoken.http.HttpRequest;
-import io.ddd4j.sample.javalin.satoken.http.HttpResponse;
 import io.javalin.Javalin;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 
 import java.net.URI;
+import io.ddd4j.sample.order.testkit.http.HttpClient;
+import io.ddd4j.sample.order.testkit.http.HttpRequest;
+import io.ddd4j.sample.order.testkit.http.HttpResponse;
 import java.time.Duration;
 import java.util.Objects;
 
@@ -43,6 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@Slf4j
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @org.junit.jupiter.api.parallel.Execution(org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD)
 class AuthorizationControllerTest {
@@ -70,32 +72,48 @@ class AuthorizationControllerTest {
         app.stop();
         app = TestSupport.start();
         baseUrl = "http://localhost:" + app.port();
+        // 新服务器实例使用独立连接池，不跨重启复用旧 HTTP 连接。
+        httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
     }
 
     // ------------------- HTTP 助手 -------------------
 
     private HttpResponse<String> postJson(String path, String body) throws Exception {
-        return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
+        HttpResponse<String> response = httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
                         .header("Content-Type", "application/json")
                         .POST(HttpRequest.BodyPublishers.ofString(body)).build(),
                 HttpResponse.BodyHandlers.ofString());
+        recordResponse("POST", response);
+        return response;
     }
 
     private HttpResponse<String> putJson(String path, String body) throws Exception {
-        return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
+        HttpResponse<String> response = httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
                         .header("Content-Type", "application/json")
                         .PUT(HttpRequest.BodyPublishers.ofString(body)).build(),
                 HttpResponse.BodyHandlers.ofString());
+        recordResponse("PUT", response);
+        return response;
     }
 
     private HttpResponse<String> delete(String path) throws Exception {
-        return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).DELETE().build(),
+        HttpResponse<String> response = httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).DELETE().build(),
                 HttpResponse.BodyHandlers.ofString());
+        recordResponse("DELETE", response);
+        return response;
     }
 
     private HttpResponse<String> get(String path) throws Exception {
-        return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).GET().build(),
+        HttpResponse<String> response = httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).GET().build(),
                 HttpResponse.BodyHandlers.ofString());
+        recordResponse("GET", response);
+        return response;
+    }
+
+    private void recordResponse(String method, HttpResponse<String> response) {
+        log.info("RBAC HTTP diagnostic method={} uri={} status={} version={} headers={} body={} serverPort={}",
+                method, response.uri(), response.statusCode(), response.version(), response.headers().map(),
+                response.body(), app.port());
     }
 
     // =================== 用户管理 ===================

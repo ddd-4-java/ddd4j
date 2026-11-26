@@ -22,8 +22,15 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-/** 商品排序解析在三线上的共同契约。 */
+/**
+ * 商品排序解析在三线上的共同契约。
+ */
 class GoodsQueryContractTest {
+
+    private static void assertOrder(LambdaCondition condition, String property, String direction) {
+        assertEquals(property, condition.property());
+        assertEquals(direction, condition.getOperator());
+    }
 
     @Test
     void supportsAllWhitelistedSortPropertiesAndIgnoresInvalidClauses() {
@@ -46,10 +53,5 @@ class GoodsQueryContractTest {
 
         assertSame(query, query.setOrderBys("  "));
         assertEquals(0, query.getOrderByConditions().size());
-    }
-
-    private static void assertOrder(LambdaCondition condition, String property, String direction) {
-        assertEquals(property, condition.property());
-        assertEquals(direction, condition.getOperator());
     }
 }

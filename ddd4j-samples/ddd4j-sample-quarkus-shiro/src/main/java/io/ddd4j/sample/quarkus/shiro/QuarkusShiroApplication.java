@@ -28,6 +28,11 @@ import io.quarkus.runtime.annotations.QuarkusMain;
 @QuarkusMain
 public class QuarkusShiroApplication {
 
+    /**
+     * 启动 Quarkus Shiro 示例。
+     *
+     * @param args 命令行参数
+     */
     public static void main(String[] args) {
         Quarkus.run(args);
     }

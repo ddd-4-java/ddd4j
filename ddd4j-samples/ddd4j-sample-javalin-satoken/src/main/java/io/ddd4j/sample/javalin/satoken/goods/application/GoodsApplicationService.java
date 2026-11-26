@@ -18,6 +18,7 @@ import io.ddd4j.core.api.Page;
 import io.ddd4j.core.exception.BizRuntimeException;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.sample.javalin.satoken.goods.domain.*;
+import javax.inject.Inject;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -40,6 +41,7 @@ public class GoodsApplicationService {
      *
      * @param repository 商品仓储
      */
+    @Inject
     public GoodsApplicationService(GoodsRepository repository) {
         this.repository = Objects.requireNonNull(repository, "repository must not be null");
     }
@@ -47,8 +49,8 @@ public class GoodsApplicationService {
     /**
      * 创建商品。
      *
-     * @param code 商品编码
-     * @param name 商品名称
+     * @param code  商品编码
+     * @param name  商品名称
      * @param price 商品价格
      * @param stock 库存数量
      * @return 创建后的商品
@@ -81,8 +83,8 @@ public class GoodsApplicationService {
     /**
      * 更新商品基本信息。
      *
-     * @param id 商品标识
-     * @param name 商品名称
+     * @param id    商品标识
+     * @param name  商品名称
      * @param price 商品价格
      * @return 更新后的商品
      */
@@ -103,7 +105,7 @@ public class GoodsApplicationService {
     /**
      * 调整商品状态。
      *
-     * @param id 商品标识
+     * @param id     商品标识
      * @param status 商品状态
      * @return 更新后的商品
      */

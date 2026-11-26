@@ -1,11 +1,10 @@
 package io.ddd4j.sample.quarkus.satoken;
 
-import javax.enterprise.context.ApplicationScoped;
 import io.ddd4j.sample.quarkus.satoken.goods.web.GoodsQueryResource;
 import io.ddd4j.sample.quarkus.satoken.goods.web.GoodsResource;
-import io.ddd4j.sample.quarkus.satoken.order.web.OrderResource;
 import io.ddd4j.sample.quarkus.satoken.rbac.AuthenticationResource;
 import io.ddd4j.sample.quarkus.satoken.rbac.AuthorizationResource;
+import javax.enterprise.context.ApplicationScoped;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -17,10 +16,10 @@ class ResourceScopeContractTest {
 
     @Test
     void resourcesAreApplicationScoped() {
+        assertTrue(CatalogTradeResource.class.isAnnotationPresent(ApplicationScoped.class));
         for (Class<?> resource : new Class<?>[]{
                 GoodsQueryResource.class,
                 GoodsResource.class,
-                OrderResource.class,
                 AuthenticationResource.class,
                 AuthorizationResource.class}) {
             assertTrue(resource.isAnnotationPresent(ApplicationScoped.class), resource.getName());

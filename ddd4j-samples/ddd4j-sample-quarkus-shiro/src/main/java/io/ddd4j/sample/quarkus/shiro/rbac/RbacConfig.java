@@ -14,12 +14,11 @@
  */
 package io.ddd4j.sample.quarkus.shiro.rbac;
 
-import io.ddd4j.kit.lang.CollKit;
-
-import java.util.Objects;
-
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableList;
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.subject.SubjectDataProvider;
+import io.ddd4j.kit.lang.CollKit;
 import io.quarkus.runtime.StartupEvent;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
@@ -27,10 +26,7 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * RBAC 配置：初始化内存数据 + 注册 SubjectDataProvider。
@@ -82,21 +78,21 @@ public class RbacConfig {
         permissionRepository.save(new Permission("admin:dashboard", "管理面板", "访问管理面板"));
 
         // 2. 角色（绑定权限）
-        Role admin = new Role("admin", "管理员", "拥有全部权限", new HashSet<>(java.util.Arrays.asList(
+        Role admin = new Role("admin", "管理员", "拥有全部权限", new HashSet<>(ImmutableList.of(
                 "user:list", "user:add", "user:delete",
                 "order:pay", "order:cancel", "admin:dashboard")));
         roleRepository.save(admin);
 
-        Role user = new Role("user", "普通用户", "基础用户", new HashSet<>(java.util.Arrays.asList("user:list")));
+        Role user = new Role("user", "普通用户", "基础用户", new HashSet<>(ImmutableList.of("user:list")));
         roleRepository.save(user);
 
         // 3. 用户（绑定角色）
         userRepository.save(new User("u-admin", "admin", "管理员", "123456",
-                new HashSet<>(java.util.Arrays.asList("admin", "user")), false));
+                new HashSet<>(ImmutableSet.of("admin", "user")), false));
         userRepository.save(new User("u-user", "user", "普通用户", "123456",
-                new HashSet<>(java.util.Arrays.asList("user")), false));
+                new HashSet<>(ImmutableSet.of("user")), false));
         userRepository.save(new User("u-disabled", "disabled", "已禁用用户", "123456",
-                new HashSet<>(java.util.Arrays.asList("user")), true));
+                new HashSet<>(ImmutableSet.of("user")), true));
     }
 
     /**
@@ -111,23 +107,23 @@ public class RbacConfig {
             @Override
             public List<String> getPermissionList(AuthPrincipal principal) {
                 if (Objects.isNull(principal) || Objects.isNull(principal.getUserId())) {
-                    return java.util.Collections.emptyList();
+                    return ImmutableList.of();
                 }
                 String userId = String.valueOf(principal.getUserId());
                 return userRepository.findById(userId)
                         .map(user -> aggregatePermissions(user.getRoleCodes()))
-                        .orElse(java.util.Collections.emptyList());
+                        .orElse(ImmutableList.of());
             }
 
             @Override
             public List<String> getRoleList(AuthPrincipal principal) {
                 if (Objects.isNull(principal) || Objects.isNull(principal.getUserId())) {
-                    return java.util.Collections.emptyList();
+                    return ImmutableList.of();
                 }
                 String userId = String.valueOf(principal.getUserId());
                 return userRepository.findById(userId)
-                        .map(user -> java.util.Collections.unmodifiableList(new java.util.ArrayList<>(user.getRoleCodes())))
-                        .orElse(java.util.Collections.emptyList());
+                        .map(user -> ImmutableList.copyOf(user.getRoleCodes()))
+                        .orElse(ImmutableList.of());
             }
         };
     }
@@ -137,7 +133,7 @@ public class RbacConfig {
      */
     private List<String> aggregatePermissions(Set<String> roleCodes) {
         if (CollKit.isEmpty(roleCodes)) {
-            return java.util.Collections.emptyList();
+            return ImmutableList.of();
         }
         Set<String> aggregated = new HashSet<>();
         for (String roleCode : roleCodes) {

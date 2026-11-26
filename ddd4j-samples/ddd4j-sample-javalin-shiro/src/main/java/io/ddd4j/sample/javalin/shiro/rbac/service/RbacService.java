@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 package io.ddd4j.sample.javalin.shiro.rbac.service;
-import java.util.Objects;
 
 import io.ddd4j.sample.javalin.shiro.rbac.domain.Permission;
 import io.ddd4j.sample.javalin.shiro.rbac.domain.Role;
@@ -45,8 +44,8 @@ public class RbacService {
     /**
      * 创建 RBAC 服务。
      *
-     * @param userRepository 用户仓储
-     * @param roleRepository 角色仓储
+     * @param userRepository       用户仓储
+     * @param roleRepository       角色仓储
      * @param permissionRepository 权限仓储
      */
     public RbacService(InMemoryUserRepository userRepository,
@@ -72,10 +71,10 @@ public class RbacService {
     /**
      * 创建用户。
      *
-     * @param loginId 登录标识
-     * @param password 密码
+     * @param loginId     登录标识
+     * @param password    密码
      * @param displayName 显示名称
-     * @param roleCodes 角色编码集合
+     * @param roleCodes   角色编码集合
      * @param permissions 权限编码集合
      * @return 已创建的用户
      */
@@ -102,10 +101,10 @@ public class RbacService {
     /**
      * 更新用户。
      *
-     * @param loginId 登录标识
+     * @param loginId     登录标识
      * @param displayName 显示名称
-     * @param password 密码
-     * @param roleCodes 角色编码集合
+     * @param password    密码
+     * @param roleCodes   角色编码集合
      * @param permissions 权限编码集合
      * @return 已更新的用户
      */
@@ -158,8 +157,8 @@ public class RbacService {
     /**
      * 创建角色。
      *
-     * @param code 编码
-     * @param name 名称
+     * @param code            编码
+     * @param name            名称
      * @param permissionCodes 权限编码集合
      * @return 已创建的角色
      */
@@ -183,8 +182,8 @@ public class RbacService {
     /**
      * 更新角色。
      *
-     * @param code 编码
-     * @param name 名称
+     * @param code            编码
+     * @param name            名称
      * @param permissionCodes 权限编码集合
      * @return 已更新的角色
      */
@@ -234,7 +233,7 @@ public class RbacService {
     /**
      * 创建权限。
      *
-     * @param code 编码
+     * @param code        编码
      * @param description 描述
      * @return 已创建的权限
      */
@@ -319,7 +318,7 @@ public class RbacService {
     /**
      * 校验账号密码（明文比对，仅供演示）。
      *
-     * @param loginId 登录标识
+     * @param loginId  登录标识
      * @param password 密码
      * @return 已认证的用户
      */

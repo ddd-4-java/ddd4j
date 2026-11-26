@@ -14,20 +14,42 @@
  */
 package io.ddd4j.sample.helidon.cqrs;
 
+import io.ddd4j.sample.order.adapter.http.CatalogApi;
 import io.helidon.microprofile.server.Server;
 
 /**
- * Helidon MP CQRS 集成示例启动入口。
- *
- * <p>CQRS 组件通过 {@link HelidonCqrsBeans} 以 CDI 方式装配，
- * {@code OrderResource} 通过 {@code @Inject} 获取依赖。
+ * Helidon MP 四表商品交易和快照投影。
  */
-public class HelidonCqrsApplication {
+public final class HelidonCqrsApplication {
+    private HelidonCqrsApplication() {
+    }
+
+    static Server start(int port, CatalogApi api) {
+        return start(port, new HelidonCqrsJaxRsApplication(new CatalogTradeResource(api)));
+    }
+
+    public static Server start(int port) {
+        return start(port, new HelidonCqrsJaxRsApplication());
+    }
+
+    private static Server start(int port, HelidonCqrsJaxRsApplication application) {
+        Server server = Server.builder().port(port).addApplication(application).build();
+        try {
+            return server.start();
+        } catch (RuntimeException | Error failure) {
+            try {
+                server.stop();
+            } catch (RuntimeException | Error cleanupFailure) {
+                if (cleanupFailure != failure) {
+                    failure.addSuppressed(cleanupFailure);
+                }
+            }
+            throw failure;
+        }
+    }
 
     public static void main(String[] args) {
-        Server.builder()
-                .addApplication(new HelidonCqrsJaxRsApplication())
-                .build()
-                .start();
+        Server server = start(Integer.getInteger("server.port", 8080));
+        Runtime.getRuntime().addShutdownHook(new Thread(server::stop, "helidon-catalog-cqrs-close"));
     }
 }

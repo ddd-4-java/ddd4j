@@ -14,12 +14,12 @@
  */
 package io.ddd4j.sample.quarkus.satoken.rbac;
 
-import javax.enterprise.context.ApplicationScoped;
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.annotation.SaMode;
 import io.ddd4j.core.api.R;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -66,6 +66,11 @@ public class AuthorizationResource {
 
     // ============ User CRUD ============
 
+    /**
+     * 列出全部用户。
+     *
+     * @return 用户列表
+     */
     @GET
     @Path("/users")
     @SaCheckLogin
@@ -74,6 +79,12 @@ public class AuthorizationResource {
         return R.ok(rbacService.listUsers());
     }
 
+    /**
+     * 按标识查找用户。
+     *
+     * @param id 资源标识
+     * @return 用户
+     */
     @GET
     @Path("/users/{id}")
     @SaCheckLogin
@@ -81,6 +92,12 @@ public class AuthorizationResource {
         return R.ok(rbacService.findUser(id));
     }
 
+    /**
+     * 创建用户。
+     *
+     * @param user 用户
+     * @return 已创建的用户
+     */
     @POST
     @Path("/users")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -89,6 +106,13 @@ public class AuthorizationResource {
         return R.ok("user created", rbacService.createUser(user));
     }
 
+    /**
+     * 更新用户。
+     *
+     * @param id    资源标识
+     * @param patch 待更新字段
+     * @return 已更新的用户
+     */
     @PUT
     @Path("/users/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -97,6 +121,12 @@ public class AuthorizationResource {
         return R.ok("user updated", rbacService.updateUser(id, patch));
     }
 
+    /**
+     * 删除用户。
+     *
+     * @param id 资源标识
+     * @return 删除结果
+     */
     @DELETE
     @Path("/users/{id}")
     @SaCheckRole(value = "admin", mode = SaMode.AND)
@@ -105,6 +135,13 @@ public class AuthorizationResource {
         return R.ok("user deleted", rbacService.deleteUser(id));
     }
 
+    /**
+     * 为用户分配角色。
+     *
+     * @param id   资源标识
+     * @param code 资源编码
+     * @return 已更新的用户
+     */
     @POST
     @Path("/users/{id}/roles/{code}")
     @SaCheckRole("admin")
@@ -112,6 +149,13 @@ public class AuthorizationResource {
         return R.ok("role assigned", rbacService.assignRole(id, code));
     }
 
+    /**
+     * 撤销用户角色。
+     *
+     * @param id   资源标识
+     * @param code 资源编码
+     * @return 已更新的用户
+     */
     @DELETE
     @Path("/users/{id}/roles/{code}")
     @SaCheckRole("admin")
@@ -121,6 +165,11 @@ public class AuthorizationResource {
 
     // ============ Role CRUD ============
 
+    /**
+     * 列出全部角色。
+     *
+     * @return 角色列表
+     */
     @GET
     @Path("/roles")
     @SaCheckLogin
@@ -128,6 +177,12 @@ public class AuthorizationResource {
         return R.ok(rbacService.listRoles());
     }
 
+    /**
+     * 按编码查找角色。
+     *
+     * @param code 资源编码
+     * @return 角色
+     */
     @GET
     @Path("/roles/{code}")
     @SaCheckLogin
@@ -135,6 +190,12 @@ public class AuthorizationResource {
         return R.ok(rbacService.findRole(code));
     }
 
+    /**
+     * 创建角色。
+     *
+     * @param role 角色编码
+     * @return 已创建的角色
+     */
     @POST
     @Path("/roles")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -143,6 +204,13 @@ public class AuthorizationResource {
         return R.ok("role created", rbacService.createRole(role));
     }
 
+    /**
+     * 更新角色。
+     *
+     * @param code  资源编码
+     * @param patch 待更新字段
+     * @return 已更新的角色
+     */
     @PUT
     @Path("/roles/{code}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -151,6 +219,12 @@ public class AuthorizationResource {
         return R.ok("role updated", rbacService.updateRole(code, patch));
     }
 
+    /**
+     * 删除角色。
+     *
+     * @param code 资源编码
+     * @return 删除结果
+     */
     @DELETE
     @Path("/roles/{code}")
     @SaCheckRole("admin")
@@ -158,6 +232,13 @@ public class AuthorizationResource {
         return R.ok("role deleted", rbacService.deleteRole(code));
     }
 
+    /**
+     * 为角色授予权限。
+     *
+     * @param code  资源编码
+     * @param pcode 权限编码
+     * @return 已更新的角色
+     */
     @POST
     @Path("/roles/{code}/permissions/{pcode}")
     @SaCheckRole("admin")
@@ -165,6 +246,13 @@ public class AuthorizationResource {
         return R.ok("permission granted", rbacService.grantPermission(code, pcode));
     }
 
+    /**
+     * 撤销角色权限。
+     *
+     * @param code  资源编码
+     * @param pcode 权限编码
+     * @return 已更新的角色
+     */
     @DELETE
     @Path("/roles/{code}/permissions/{pcode}")
     @SaCheckRole("admin")
@@ -174,6 +262,11 @@ public class AuthorizationResource {
 
     // ============ Permission CRUD ============
 
+    /**
+     * 列出全部权限。
+     *
+     * @return 权限列表
+     */
     @GET
     @Path("/permissions")
     @SaCheckLogin
@@ -181,6 +274,12 @@ public class AuthorizationResource {
         return R.ok(rbacService.listPermissions());
     }
 
+    /**
+     * 创建权限。
+     *
+     * @param permission 权限编码
+     * @return 已创建的权限
+     */
     @POST
     @Path("/permissions")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -189,6 +288,12 @@ public class AuthorizationResource {
         return R.ok("permission created", rbacService.createPermission(permission));
     }
 
+    /**
+     * 删除权限。
+     *
+     * @param code 资源编码
+     * @return 删除结果
+     */
     @DELETE
     @Path("/permissions/{code}")
     @SaCheckRole("admin")

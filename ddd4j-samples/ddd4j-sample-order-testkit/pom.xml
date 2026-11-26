@@ -9,7 +9,7 @@
     </parent>
     <artifactId>ddd4j-sample-order-testkit</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>Reusable Order contract fixtures for every runtime sample.</description>
+    <description>Reusable HTTP transport and authentication assertions for runtime samples.</description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
     <properties>
         <maven.deploy.skip>false</maven.deploy.skip>
@@ -17,8 +17,17 @@
     <dependencies>
         <dependency>
             <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-sample-order-local</artifactId>
+            <artifactId>ddd4j-kit</artifactId>
             <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
         </dependency>
     </dependencies>
 </project>

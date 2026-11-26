@@ -14,21 +14,18 @@
  */
 package io.ddd4j.sample.javalin.satoken.rbac.web;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
+import com.google.common.collect.ImmutableMap;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-
-import java.util.Objects;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.core.api.R;
 import io.ddd4j.sample.javalin.satoken.rbac.application.RbacService;
 import io.ddd4j.sample.javalin.satoken.rbac.domain.model.Permission;
 import io.ddd4j.sample.javalin.satoken.rbac.domain.model.Role;
 import io.ddd4j.sample.javalin.satoken.rbac.domain.model.User;
 import io.javalin.apibuilder.EndpointGroup;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.*;
 
@@ -59,6 +56,7 @@ public class AuthorizationController {
      *
      * @param rbacService RBAC 服务
      */
+    @com.google.inject.Inject
     public AuthorizationController(RbacService rbacService) {
         this.rbacService = Objects.requireNonNull(rbacService, "rbacService must not be null");
     }
@@ -76,7 +74,7 @@ public class AuthorizationController {
             post("/admin/users", ctx -> {
                 CreateUserRequest req = ctx.bodyAsClass(CreateUserRequest.class);
                 User user = rbacService.createUser(req.userId(), req.username(), req.password(), req.realName());
-                ctx.status(201).json(R.ok(Java8Maps.of("userId", user.id())));
+                ctx.status(201).json(R.ok(ImmutableMap.of("userId", user.id())));
             });
 
             // GET /admin/users —— 用户列表
@@ -89,14 +87,14 @@ public class AuthorizationController {
             put("/admin/users/{id}", ctx -> {
                 UpdateUserRequest req = ctx.bodyAsClass(UpdateUserRequest.class);
                 User updated = rbacService.updateUser(ctx.pathParam("id"), req.realName(), req.password(), req.status());
-                ctx.json(R.ok(Java8Maps.of("userId", updated.id())));
+                ctx.json(R.ok(ImmutableMap.of("userId", updated.id())));
             });
 
             // DELETE /admin/users/{id} —— 删除用户
             delete("/admin/users/{id}", ctx -> {
                 String id = ctx.pathParam("id");
                 rbacService.deleteUser(id);
-                ctx.json(R.ok(Java8Maps.of("deleted", id)));
+                ctx.json(R.ok(ImmutableMap.of("deleted", id)));
             });
 
             // POST /admin/users/{id}/roles —— 给用户分配角色（全量替换）
@@ -104,7 +102,7 @@ public class AuthorizationController {
                 String id = ctx.pathParam("id");
                 AssignRolesRequest req = ctx.bodyAsClass(AssignRolesRequest.class);
                 User user = rbacService.assignRolesToUser(id, new HashSet<>(req.roleIds()));
-                ctx.json(R.ok(Java8Maps.of("userId", user.id(), "roleIds", user.getRoleIds())));
+                ctx.json(R.ok(ImmutableMap.of("userId", user.id(), "roleIds", user.getRoleIds())));
             });
 
             // GET /admin/users/{id}/permissions —— 获取用户所有权限（含角色继承）
@@ -112,7 +110,7 @@ public class AuthorizationController {
                 String id = ctx.pathParam("id");
                 Set<String> roleCodes = rbacService.listRoleCodesOfUser(id);
                 Set<String> permissionCodes = rbacService.listPermissionCodesOfUser(id);
-                ctx.json(R.ok(Java8Maps.of("userId", id, "roles", roleCodes, "permissions", permissionCodes)));
+                ctx.json(R.ok(ImmutableMap.of("userId", id, "roles", roleCodes, "permissions", permissionCodes)));
             });
 
             // ============================ 角色管理 ============================
@@ -121,7 +119,7 @@ public class AuthorizationController {
             post("/admin/roles", ctx -> {
                 CreateRoleRequest req = ctx.bodyAsClass(CreateRoleRequest.class);
                 Role role = rbacService.createRole(req.roleId(), req.roleCode(), req.roleName(), req.description());
-                ctx.status(201).json(R.ok(Java8Maps.of("roleId", role.id())));
+                ctx.status(201).json(R.ok(ImmutableMap.of("roleId", role.id())));
             });
 
             // GET /admin/roles —— 角色列表
@@ -134,14 +132,14 @@ public class AuthorizationController {
             put("/admin/roles/{id}", ctx -> {
                 UpdateRoleRequest req = ctx.bodyAsClass(UpdateRoleRequest.class);
                 Role updated = rbacService.updateRole(ctx.pathParam("id"), req.roleName(), req.description(), req.status());
-                ctx.json(R.ok(Java8Maps.of("roleId", updated.id())));
+                ctx.json(R.ok(ImmutableMap.of("roleId", updated.id())));
             });
 
             // DELETE /admin/roles/{id} —— 删除角色
             delete("/admin/roles/{id}", ctx -> {
                 String id = ctx.pathParam("id");
                 rbacService.deleteRole(id);
-                ctx.json(R.ok(Java8Maps.of("deleted", id)));
+                ctx.json(R.ok(ImmutableMap.of("deleted", id)));
             });
 
             // POST /admin/roles/{id}/permissions —— 给角色分配权限（全量替换）
@@ -149,14 +147,14 @@ public class AuthorizationController {
                 String id = ctx.pathParam("id");
                 AssignPermissionsRequest req = ctx.bodyAsClass(AssignPermissionsRequest.class);
                 Role role = rbacService.assignPermissionsToRole(id, new HashSet<>(req.permissionIds()));
-                ctx.json(R.ok(Java8Maps.of("roleId", role.id(), "permissionIds", role.getPermissionIds())));
+                ctx.json(R.ok(ImmutableMap.of("roleId", role.id(), "permissionIds", role.getPermissionIds())));
             });
 
             // GET /admin/roles/{id}/permissions —— 获取角色的权限编码集合
             get("/admin/roles/{id}/permissions", ctx -> {
                 String id = ctx.pathParam("id");
                 Set<String> codes = rbacService.listPermissionCodesOfRole(id);
-                ctx.json(R.ok(Java8Maps.of("roleId", id, "permissions", codes)));
+                ctx.json(R.ok(ImmutableMap.of("roleId", id, "permissions", codes)));
             });
 
             // ============================ 权限管理 ============================
@@ -166,7 +164,7 @@ public class AuthorizationController {
                 CreatePermissionRequest req = ctx.bodyAsClass(CreatePermissionRequest.class);
                 Permission permission = rbacService.createPermission(req.permissionId(), req.permissionCode(),
                         req.permissionName(), req.module());
-                ctx.status(201).json(R.ok(Java8Maps.of("permissionId", permission.id())));
+                ctx.status(201).json(R.ok(ImmutableMap.of("permissionId", permission.id())));
             });
 
             // GET /admin/permissions —— 权限列表
@@ -179,14 +177,14 @@ public class AuthorizationController {
             put("/admin/permissions/{id}", ctx -> {
                 UpdatePermissionRequest req = ctx.bodyAsClass(UpdatePermissionRequest.class);
                 Permission updated = rbacService.updatePermission(ctx.pathParam("id"), req.permissionName(), req.module(), req.status());
-                ctx.json(R.ok(Java8Maps.of("permissionId", updated.id())));
+                ctx.json(R.ok(ImmutableMap.of("permissionId", updated.id())));
             });
 
             // DELETE /admin/permissions/{id} —— 删除权限
             delete("/admin/permissions/{id}", ctx -> {
                 String id = ctx.pathParam("id");
                 rbacService.deletePermission(id);
-                ctx.json(R.ok(Java8Maps.of("deleted", id)));
+                ctx.json(R.ok(ImmutableMap.of("deleted", id)));
             });
         };
     }
@@ -214,7 +212,7 @@ public class AuthorizationController {
         /**
          * 创建创建用户请求。
          *
-         * @param userId 用户标识
+         * @param userId   用户标识
          * @param username 用户名
          * @param password 密码
          * @param realName 真实姓名
@@ -290,7 +288,7 @@ public class AuthorizationController {
          *
          * @param realName 真实姓名
          * @param password 密码
-         * @param status 状态
+         * @param status   状态
          */
         @JsonCreator()
         public UpdateUserRequest(@JsonProperty("realName") String realName, @JsonProperty("password") String password, @JsonProperty("status") User.Status status) {
@@ -384,9 +382,9 @@ public class AuthorizationController {
         /**
          * 创建创建角色请求。
          *
-         * @param roleId 角色标识
-         * @param roleCode 角色编码
-         * @param roleName 角色名称
+         * @param roleId      角色标识
+         * @param roleCode    角色编码
+         * @param roleName    角色名称
          * @param description 描述
          */
         @JsonCreator()
@@ -457,9 +455,9 @@ public class AuthorizationController {
         /**
          * 创建更新角色请求。
          *
-         * @param roleName 角色名称
+         * @param roleName    角色名称
          * @param description 描述
-         * @param status 状态
+         * @param status      状态
          */
         @JsonCreator()
         public UpdateRoleRequest(@JsonProperty("roleName") String roleName, @JsonProperty("description") String description, @JsonProperty("status") Role.Status status) {
@@ -553,10 +551,10 @@ public class AuthorizationController {
         /**
          * 创建创建权限请求。
          *
-         * @param permissionId 权限标识
+         * @param permissionId   权限标识
          * @param permissionCode 权限编码
          * @param permissionName 权限名称
-         * @param module 所属模块
+         * @param module         所属模块
          */
         @JsonCreator()
         public CreatePermissionRequest(@JsonProperty("permissionId") String permissionId, @JsonProperty("permissionCode") String permissionCode, @JsonProperty("permissionName") String permissionName, @JsonProperty("module") String module) {
@@ -627,8 +625,8 @@ public class AuthorizationController {
          * 创建更新权限请求。
          *
          * @param permissionName 权限名称
-         * @param module 所属模块
-         * @param status 状态
+         * @param module         所属模块
+         * @param status         状态
          */
         @JsonCreator()
         public UpdatePermissionRequest(@JsonProperty("permissionName") String permissionName, @JsonProperty("module") String module, @JsonProperty("status") Permission.Status status) {

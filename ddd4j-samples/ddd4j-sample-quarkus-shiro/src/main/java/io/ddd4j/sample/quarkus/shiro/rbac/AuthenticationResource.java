@@ -14,21 +14,15 @@
  */
 package io.ddd4j.sample.quarkus.shiro.rbac;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.util.Objects;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.core.api.R;
+import io.ddd4j.kit.lang.StrKit;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 鉴权业务资源（JAX-RS）：登录、登出、当前用户、权限 / 角色校验。
@@ -54,7 +48,6 @@ import java.util.Map;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-@javax.enterprise.context.ApplicationScoped
 @Path("/auth")
 @Produces(MediaType.APPLICATION_JSON)
 public class AuthenticationResource {
@@ -133,7 +126,7 @@ public class AuthenticationResource {
         rbacService.requireLogin();
         Map<String, Object> result = new HashMap<>();
         result.put("permission", permission);
-        result.put("has", rbacService.hasPermission(permission));
+        result.put("has", StrKit.isNotBlank(permission) && rbacService.hasPermission(permission));
         return R.ok(result);
     }
 

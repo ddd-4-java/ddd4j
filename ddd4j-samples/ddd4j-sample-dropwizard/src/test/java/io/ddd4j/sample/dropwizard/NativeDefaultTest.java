@@ -1,0 +1,245 @@
+package io.ddd4j.sample.dropwizard;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.ddd4j.cache.CacheKit;
+import io.ddd4j.core.cache.Cache;
+import io.ddd4j.web.core.auth.AuthenticationMode;
+import io.dropwizard.server.DefaultServerFactory;
+import io.dropwizard.jetty.HttpConnectorFactory;
+import io.dropwizard.testing.ConfigOverride;
+import io.dropwizard.testing.DropwizardTestSupport;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import org.junit.jupiter.api.Test;
+import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
+import java.net.ServerSocket;
+import java.util.Objects;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * 使用 Dropwizard 2 原生服务器验证默认订单入口和本实例缓存生命周期。
+ */
+@Testcontainers
+class NativeDefaultTest {
+
+    @Container
+    static final MySQLContainer<?> MYSQL = new MySQLContainer<>("mysql:8.0.36");
+    private static final String GOODS = "{\"spuName\":\"Lunch\",\"skuCode\":\"S1\",\"skuName\":\"Weekday\",\"salePriceCent\":1250,\"shopId\":7}\n";
+    private static final String ORDER = "{\"shopId\":7,\"items\":[{\"skuCode\":\"S1\",\"quantity\":2}]}\n";
+
+    private static final ObjectMapper JSON = new ObjectMapper();
+
+    private static String runAndClose() throws Exception {
+        DropwizardOrderConfiguration configuration = configuration(0);
+        DropwizardTestSupport<DropwizardOrderConfiguration> app = application(configuration);
+        try {
+            app.before();
+            assertNotNull(CacheKit.getCache(configuration.getDdd4jWeb().getIdempotencyCacheName()));
+        } finally {
+            app.after();
+        }
+        String name = configuration.getDdd4jWeb().getIdempotencyCacheName();
+        assertNull(CacheKit.getCache(name));
+        return name;
+    }
+
+    private static DropwizardOrderConfiguration configuration(int port) {
+        DropwizardOrderConfiguration configuration = new DropwizardOrderConfiguration();
+        configuration.setCatalogJdbcUrl(MYSQL.getJdbcUrl());
+        configuration.setCatalogDbUser(MYSQL.getUsername());
+        configuration.setCatalogDbPassword(MYSQL.getPassword());
+        DefaultServerFactory server = (DefaultServerFactory) configuration.getServerFactory();
+        ((HttpConnectorFactory) server.getApplicationConnectors().get(0)).setPort(port);
+        ((HttpConnectorFactory) server.getAdminConnectors().get(0)).setPort(0);
+        return configuration;
+    }
+
+    private static DropwizardTestSupport<DropwizardOrderConfiguration> application(DropwizardOrderConfiguration configuration) {
+        return new DropwizardTestSupport<>(DropwizardOrderApplication.class, configuration);
+    }
+
+    private static JsonNode request(Client client, String base, String method, String path, String token,
+                                    String key, String body, int status) throws Exception {
+        Invocation.Builder request = client.target(base + path).request()
+                .header("X-Tenant-Id", "dw-" + Integer.toUnsignedString(base.hashCode()));
+        if (Objects.nonNull(token)) {
+            request.header("Authorization", "Bearer " + token);
+        }
+        if (Objects.nonNull(key)) {
+            request.header("Idempotency-Key", key);
+        }
+        try (Response response = "GET".equals(method) ? request.get()
+                : request.post(Entity.entity(Objects.isNull(body) ? "" : body, MediaType.APPLICATION_JSON_TYPE))) {
+            String actual = response.readEntity(String.class);
+            assertEquals(status, response.getStatus(), actual);
+            return JSON.readTree(actual);
+        }
+    }
+
+    @Test
+    void stockYamlRunsAnonymousOrderThroughNativeHttp() throws Exception {
+        DropwizardTestSupport<DropwizardOrderConfiguration> app = new DropwizardTestSupport<>(
+                DropwizardOrderApplication.class, "src/main/resources/dropwizard-order.yml",
+                ConfigOverride.config("catalogJdbcUrl", MYSQL.getJdbcUrl()),
+                ConfigOverride.config("catalogDbUser", MYSQL.getUsername()),
+                ConfigOverride.config("catalogDbPassword", MYSQL.getPassword()),
+                ConfigOverride.config("server.applicationConnectors[0].port", "0"),
+                ConfigOverride.config("server.adminConnectors[0].port", "0"));
+        try {
+            app.before();
+            Client client = ClientBuilder.newClient();
+            try {
+                request(client, "http://127.0.0.1:" + app.getLocalPort(), "POST", "/api/goods/LUNCH", null,
+                        "yaml-create", GOODS, 201);
+            } finally {
+                client.close();
+            }
+        } finally {
+            app.after();
+        }
+    }
+
+    @Test
+    void anonymousDefaultRunsCreateAddPayAndFind() throws Exception {
+        DropwizardOrderConfiguration configuration = configuration(0);
+        DropwizardTestSupport<DropwizardOrderConfiguration> app = application(configuration);
+        try {
+            app.before();
+            Client client = ClientBuilder.newClient();
+            try {
+                String base = "http://127.0.0.1:" + app.getLocalPort();
+                request(client, base, "POST", "/api/goods/LUNCH", null, "goods", GOODS, 201);
+                JsonNode created = request(client, base, "POST", "/api/orders/T001", null, "order", ORDER, 201);
+                assertEquals(2500, created.path("grossAmountCent").asLong());
+                request(client, base, "POST", "/api/orders/T001/payment", null, "invalid",
+                        "{\"paidAmountCent\":2400}", 409);
+                JsonNode paid = request(client, base, "POST", "/api/orders/T001/payment", null, "paid",
+                        "{\"paidAmountCent\":2500}", 200);
+                assertEquals("CONFIRMED", paid.path("orderState").asText());
+                JsonNode found = request(client, base, "GET", "/api/orders/T001", null, null, null, 200);
+                assertEquals(1250, found.at("/items/0/unitPriceCent").asLong());
+                assertEquals(2500, found.path("paidAmountCent").asLong());
+            } finally {
+                client.close();
+            }
+            assertNotNull(CacheKit.getCache(configuration.getDdd4jWeb().getIdempotencyCacheName()));
+        } finally {
+            app.after();
+        }
+        assertNull(CacheKit.getCache(configuration.getDdd4jWeb().getIdempotencyCacheName()));
+    }
+
+    @Test
+    void explicitLegacyAuthenticationStillRequiresAndAcceptsBearer() throws Exception {
+        DropwizardOrderConfiguration configuration = configuration(0);
+        configuration.getDdd4jWeb().setDefaultAuthenticationMode(AuthenticationMode.REQUIRED);
+        DropwizardTestSupport<DropwizardOrderConfiguration> app = application(configuration);
+        try {
+            app.before();
+            Client client = ClientBuilder.newClient();
+            try {
+                String base = "http://127.0.0.1:" + app.getLocalPort();
+                String body = GOODS;
+                request(client, base, "POST", "/api/goods/LUNCH", null, "legacy-denied", body, 401);
+                String token = request(client, base, "POST", "/api/auth/tokens/legacy-user", null, null, null, 200)
+                        .path("data").path("token").asText();
+                request(client, base, "POST", "/api/goods/LUNCH", token, "legacy-allowed", body, 201);
+            } finally {
+                client.close();
+            }
+        } finally {
+            app.after();
+        }
+    }
+
+    @Test
+    void managedCachesAreUniqueAndPreserveAnExistingCache() throws Exception {
+        String existingName = "ddd4j-web-idempotency";
+        Object previous = CacheKit.getCache(existingName);
+        if (Objects.isNull(previous)) {
+            CacheKit.build(existingName, 300);
+        }
+        Object existing = CacheKit.getCache(existingName);
+        try {
+            String first = runAndClose();
+            String second = runAndClose();
+            assertNotEquals(first, second);
+            assertNotEquals(existingName, first);
+            assertSame(existing, CacheKit.getCache(existingName));
+        } finally {
+            if (Objects.isNull(previous)) {
+                CacheKit.unregister(existingName);
+            }
+        }
+    }
+
+    @Test
+    void failedNativeBootReleasesItsManagedCache() throws Exception {
+        try (ServerSocket occupied = new ServerSocket(0)) {
+            DropwizardOrderConfiguration configuration = configuration(occupied.getLocalPort());
+            DropwizardTestSupport<DropwizardOrderConfiguration> app = application(configuration);
+            try {
+                assertThrows(Exception.class, app::before);
+                assertNull(CacheKit.getCache(configuration.getDdd4jWeb().getIdempotencyCacheName()),
+                        "failed server bind must stop its started managed cache");
+            } finally {
+                app.after();
+            }
+        }
+    }
+
+    @Test
+    void shutdownPreservesCallerReplacementAndLoadingCache() throws Exception {
+        DropwizardOrderConfiguration configuration = configuration(0);
+        DropwizardTestSupport<DropwizardOrderConfiguration> app = application(configuration);
+        String name;
+        Cache<String, Object> callerCache;
+        try {
+            app.before();
+            name = configuration.getDdd4jWeb().getIdempotencyCacheName();
+            CacheKit.build(name, 300L);
+            callerCache = CacheKit.getCache(name);
+            CacheKit.put(name, "caller-entry", "untouched");
+            CacheKit.buildWithLoader(name, key -> "caller-loaded", builder -> builder);
+        } finally {
+            app.after();
+        }
+        try {
+            assertSame(callerCache, CacheKit.getCache(name));
+            assertEquals("untouched", CacheKit.get(name, "caller-entry"));
+            CacheKit.unregisterLocalIfOwned(name, callerCache);
+            assertEquals("caller-loaded", CacheKit.get(name, "caller-entry"));
+        } finally {
+            CacheKit.unregister(name);
+        }
+    }
+
+    @Test
+    void disabledIdempotencyDoesNotAllocateItsManagedCache() throws Exception {
+        DropwizardOrderConfiguration configuration = configuration(0);
+        configuration.getDdd4jWeb().setIdempotencyEnabled(false);
+        DropwizardTestSupport<DropwizardOrderConfiguration> app = application(configuration);
+        try {
+            app.before();
+            assertNull(CacheKit.getCache(configuration.getDdd4jWeb().getIdempotencyCacheName()));
+            Client client = ClientBuilder.newClient();
+            try {
+                request(client, "http://127.0.0.1:" + app.getLocalPort(), "POST", "/api/goods/LUNCH", null,
+                        "disabled-cache", GOODS, 201);
+            } finally {
+                client.close();
+            }
+        } finally {
+            app.after();
+        }
+    }
+}

@@ -18,10 +18,14 @@ import io.ddd4j.web.core.error.WebError;
 import io.ddd4j.web.core.error.WebExceptionTranslator;
 import io.ddd4j.web.error.BaseErrorConfiguration;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
+
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Helidon MP 全局异常映射。
@@ -32,7 +36,9 @@ import javax.ws.rs.ext.Provider;
 @Provider
 public final class Ddd4jHelidonExceptionMapper extends BaseErrorConfiguration implements ExceptionMapper<RuntimeException> {
 
-    /** 使用默认异常翻译器创建映射器。 */
+    /**
+     * 使用默认异常翻译器创建映射器。
+     */
     public Ddd4jHelidonExceptionMapper() {
         super();
     }
@@ -69,7 +75,17 @@ public final class Ddd4jHelidonExceptionMapper extends BaseErrorConfiguration im
     public Response toResponse(RuntimeException exception) {
         WebError error = translate(exception);
         logUnhandled(exception, error);
-        return Response.status(error.status()).type(MediaType.APPLICATION_JSON_TYPE)
-                .entity(toResponse(error)).build();
+        Response.ResponseBuilder response = Response.status(error.status())
+                .type(MediaType.APPLICATION_JSON_TYPE).entity(toResponse(error));
+        if (error.status() == Response.Status.METHOD_NOT_ALLOWED.getStatusCode()
+                && exception instanceof WebApplicationException) {
+            WebApplicationException webException = (WebApplicationException) exception;
+            // 保留 Jersey 路由器给出的允许方法。
+            List<Object> allowedMethods = webException.getResponse().getHeaders().get(HttpHeaders.ALLOW);
+            if (Objects.nonNull(allowedMethods)) {
+                allowedMethods.forEach(value -> response.header(HttpHeaders.ALLOW, value));
+            }
+        }
+        return response.build();
     }
 }

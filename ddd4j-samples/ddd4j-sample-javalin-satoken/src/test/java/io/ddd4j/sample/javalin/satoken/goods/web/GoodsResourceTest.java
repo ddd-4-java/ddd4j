@@ -15,13 +15,13 @@
 package io.ddd4j.sample.javalin.satoken.goods.web;
 
 import io.ddd4j.sample.javalin.satoken.TestSupport;
-import io.ddd4j.sample.javalin.satoken.http.HttpClient;
-import io.ddd4j.sample.javalin.satoken.http.HttpRequest;
-import io.ddd4j.sample.javalin.satoken.http.HttpResponse;
 import io.javalin.Javalin;
 import org.junit.jupiter.api.*;
 
 import java.net.URI;
+import io.ddd4j.sample.order.testkit.http.HttpClient;
+import io.ddd4j.sample.order.testkit.http.HttpRequest;
+import io.ddd4j.sample.order.testkit.http.HttpResponse;
 import java.time.Duration;
 import java.util.Objects;
 
@@ -84,6 +84,8 @@ class GoodsResourceTest {
         app.stop();
         app = TestSupport.start();
         baseUrl = "http://localhost:" + app.port();
+        // 新服务器实例使用独立连接池，不跨重启复用旧 HTTP 连接。
+        httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
     }
 
     private HttpResponse<String> postJson(String path, String body) throws Exception {

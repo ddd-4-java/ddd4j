@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 package io.ddd4j.sample.javalin.satoken.rbac.application;
-import java.util.Objects;
 
+import com.google.common.collect.ImmutableList;
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.auth.AuthRequest;
 import io.ddd4j.core.subject.SubjectDataProvider;
@@ -54,8 +54,8 @@ public class RbacService implements SubjectDataProvider {
     /**
      * 创建 RBAC 服务。
      *
-     * @param userRepository 用户仓储
-     * @param roleRepository 角色仓储
+     * @param userRepository       用户仓储
+     * @param roleRepository       角色仓储
      * @param permissionRepository 权限仓储
      */
     public RbacService(UserRepository userRepository,
@@ -163,7 +163,7 @@ public class RbacService implements SubjectDataProvider {
     /**
      * 创建用户。
      *
-     * @param userId 用户标识
+     * @param userId   用户标识
      * @param username 用户名
      * @param password 密码
      * @param realName 真实姓名
@@ -177,10 +177,10 @@ public class RbacService implements SubjectDataProvider {
     /**
      * 更新用户资料。
      *
-     * @param userId 用户标识
+     * @param userId   用户标识
      * @param realName 真实姓名
      * @param password 密码
-     * @param status 状态
+     * @param status   状态
      * @return 已更新的用户
      */
     public User updateUser(String userId, String realName, String password, User.Status status) {
@@ -214,7 +214,7 @@ public class RbacService implements SubjectDataProvider {
     /**
      * 给用户分配角色（按角色 ID 全量替换）。
      *
-     * @param userId 用户标识
+     * @param userId  用户标识
      * @param roleIds 角色标识集合
      * @return 已更新的用户
      */
@@ -291,9 +291,9 @@ public class RbacService implements SubjectDataProvider {
     /**
      * 创建角色。
      *
-     * @param roleId 角色标识
-     * @param roleCode 角色编码
-     * @param roleName 角色名称
+     * @param roleId      角色标识
+     * @param roleCode    角色编码
+     * @param roleName    角色名称
      * @param description 描述
      * @return 新角色
      */
@@ -305,10 +305,10 @@ public class RbacService implements SubjectDataProvider {
     /**
      * 更新角色资料。
      *
-     * @param roleId 角色标识
-     * @param roleName 角色名称
+     * @param roleId      角色标识
+     * @param roleName    角色名称
      * @param description 描述
-     * @param status 状态
+     * @param status      状态
      * @return 已更新的角色
      */
     public Role updateRole(String roleId, String roleName, String description, Role.Status status) {
@@ -337,7 +337,7 @@ public class RbacService implements SubjectDataProvider {
     /**
      * 给角色分配权限（按权限 ID 全量替换）。
      *
-     * @param roleId 角色标识
+     * @param roleId        角色标识
      * @param permissionIds 权限标识集合
      * @return 已更新的角色
      */
@@ -390,10 +390,10 @@ public class RbacService implements SubjectDataProvider {
     /**
      * 创建权限。
      *
-     * @param permissionId 权限标识
+     * @param permissionId   权限标识
      * @param permissionCode 权限编码
      * @param permissionName 权限名称
-     * @param module 所属模块
+     * @param module         所属模块
      * @return 新权限
      */
     public Permission createPermission(String permissionId, String permissionCode, String permissionName, String module) {
@@ -404,10 +404,10 @@ public class RbacService implements SubjectDataProvider {
     /**
      * 更新权限资料。
      *
-     * @param permissionId 权限标识
+     * @param permissionId   权限标识
      * @param permissionName 权限名称
-     * @param module 所属模块
-     * @param status 状态
+     * @param module         所属模块
+     * @param status         状态
      * @return 已更新的权限
      */
     public Permission updatePermission(String permissionId, String permissionName, String module, Permission.Status status) {
@@ -472,7 +472,7 @@ public class RbacService implements SubjectDataProvider {
         Objects.requireNonNull(principal, "principal must not be null");
         Object userId = principal.getUserId();
         if (Objects.isNull(userId)) {
-            return Collections.emptyList();
+            return ImmutableList.of();
         }
         return new ArrayList<>(listPermissionCodesOfUser(String.valueOf(userId)));
     }
@@ -482,7 +482,7 @@ public class RbacService implements SubjectDataProvider {
         Objects.requireNonNull(principal, "principal must not be null");
         Object userId = principal.getUserId();
         if (Objects.isNull(userId)) {
-            return Collections.emptyList();
+            return ImmutableList.of();
         }
         return new ArrayList<>(listRoleCodesOfUser(String.valueOf(userId)));
     }

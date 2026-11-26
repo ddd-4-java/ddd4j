@@ -34,11 +34,6 @@ import io.ddd4j.sample.javalin.satoken.goods.domain.GoodsRepository;
 import io.ddd4j.sample.javalin.satoken.goods.infrastructure.InMemoryGoodsRepository;
 import io.ddd4j.sample.javalin.satoken.goods.web.GoodsQueryResource;
 import io.ddd4j.sample.javalin.satoken.goods.web.GoodsResource;
-import io.ddd4j.sample.javalin.satoken.order.application.OrderApplicationService;
-import io.ddd4j.sample.javalin.satoken.order.domain.repository.OrderRepository;
-import io.ddd4j.sample.javalin.satoken.order.domain.service.OrderDomainService;
-import io.ddd4j.sample.javalin.satoken.order.infrastructure.InMemoryOrderRepository;
-import io.ddd4j.sample.javalin.satoken.order.web.OrderResource;
 import io.ddd4j.sample.javalin.satoken.rbac.RbacConfig;
 import io.ddd4j.sample.javalin.satoken.rbac.application.RbacService;
 import io.ddd4j.sample.javalin.satoken.rbac.domain.repository.PermissionRepository;
@@ -67,7 +62,7 @@ public final class TestSupport {
     // ============================ 测试用 SPI 实现 ============================
 
     /**
-     * 启动 Javalin 应用：注册 RBAC 种子数据 + Goods/Order 仓储 + SubjectKit SPI + 路由。
+     * 启动 Javalin 应用：注册 RBAC 种子数据 + Goods 仓储 + SubjectKit SPI + 路由。
      *
      * @return 已启动的 Javalin 实例（绑定端口随机）
      */
@@ -96,11 +91,6 @@ public final class TestSupport {
         GoodsResource goodsResource = new GoodsResource(goodsApplicationService);
         GoodsQueryResource goodsQueryResource = new GoodsQueryResource(goodsApplicationService);
 
-        // 4) Order 仓储与业务服务
-        InMemoryOrderRepository orderRepository = new InMemoryOrderRepository();
-        OrderDomainService orderDomainService = new OrderDomainService(orderRepository);
-        OrderApplicationService orderApplicationService = new OrderApplicationService(orderRepository, orderDomainService);
-        OrderResource orderResource = new OrderResource(orderApplicationService);
 
         // 5) RBAC 控制器
         AuthenticationController authController = new AuthenticationController(rbacService);
@@ -111,19 +101,20 @@ public final class TestSupport {
             cfg.showJavalinBanner = false;
             cfg.jsonMapper(new JavalinJackson());
         });
+            // sa-token 需要在线程中维护 SaTokenContext 才能读写 token；
+            // 测试侧在每个请求前后初始化/清理 mock 上下文，并把 Javalin 的 header/cookie 拷贝到 mock request 中。
         app.before(ctx -> {
-            SaTokenContextMockUtil.setMockContext();
-            SaRequestForMock req = (SaRequestForMock) SaHolder.getRequest();
-            ctx.headerMap().forEach(req.headerMap::put);
-            ctx.cookieMap().forEach((key, value) -> req.cookieMap.put(key, value));
-        });
+                SaTokenContextMockUtil.setMockContext();
+                SaRequestForMock req = (SaRequestForMock) SaHolder.getRequest();
+                ctx.headerMap().forEach(req.headerMap::put);
+                ctx.cookieMap().forEach((k, v) -> req.cookieMap.put(k, v));
+            });
         app.after(ctx -> SaTokenContextMockUtil.clearContext());
         app.routes(() -> {
-            authController.routes().addEndpoints();
-            ApiBuilder.path("rbac", authzController.routes());
-            orderResource.routes().addEndpoints();
-            goodsQueryResource.routes().addEndpoints();
-            goodsResource.routes().addEndpoints();
+                authController.routes().addEndpoints();
+                ApiBuilder.path("rbac", authzController.routes());
+                goodsQueryResource.routes().addEndpoints();
+                goodsResource.routes().addEndpoints();
         });
         app.start(0);
         return app;
@@ -143,7 +134,6 @@ public final class TestSupport {
                 bind(PermissionRepository.class).toInstance(new InMemoryPermissionRepository());
                 InMemoryGoodsRepository goodsRepository = new InMemoryGoodsRepository();
                 bind(GoodsRepository.class).toInstance(goodsRepository);
-                bind(OrderRepository.class).to(InMemoryOrderRepository.class);
             }
         });
     }

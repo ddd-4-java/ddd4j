@@ -6,9 +6,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class AuthorizationRolePermissionContractTest {
 
@@ -17,24 +15,24 @@ class AuthorizationRolePermissionContractTest {
         AuthorizationController.CreateRoleRequest create = new AuthorizationController.CreateRoleRequest();
         create.setCode("admin");
         create.setName("Administrator");
-        create.setPermissions(new String[] {"user:list", "order:pay"});
+        create.setPermissions(new String[]{"user:list", "order:pay"});
         assertEquals(create.getCode(), create.code());
         assertEquals(create.getName(), create.name());
         assertArrayEquals(create.getPermissions(), create.permissions());
         AuthorizationController.CreateRoleRequest sameCreate =
                 new AuthorizationController.CreateRoleRequest("admin", "Administrator",
-                        new String[] {"user:list", "order:pay"});
+                        new String[]{"user:list", "order:pay"});
         assertEquals(sameCreate, create);
         assertEquals(sameCreate.hashCode(), create.hashCode());
         assertTrue(create.toString().contains("permissions=[user:list, order:pay]"));
 
         AuthorizationController.UpdateRoleRequest update = new AuthorizationController.UpdateRoleRequest();
         update.setName("Manager");
-        update.setPermissions(new String[] {"order:pay"});
+        update.setPermissions(new String[]{"order:pay"});
         assertEquals(update.getName(), update.name());
         assertArrayEquals(update.getPermissions(), update.permissions());
         AuthorizationController.UpdateRoleRequest sameUpdate =
-                new AuthorizationController.UpdateRoleRequest("Manager", new String[] {"order:pay"});
+                new AuthorizationController.UpdateRoleRequest("Manager", new String[]{"order:pay"});
         assertEquals(sameUpdate, update);
         assertEquals(sameUpdate.hashCode(), update.hashCode());
     }

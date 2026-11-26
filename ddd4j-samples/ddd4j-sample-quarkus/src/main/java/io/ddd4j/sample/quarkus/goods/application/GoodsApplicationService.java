@@ -14,10 +14,9 @@
  */
 package io.ddd4j.sample.quarkus.goods.application;
 
-import io.ddd4j.kit.lang.StrKit;
-
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.exception.BizRuntimeException;
+import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.sample.quarkus.goods.domain.*;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;

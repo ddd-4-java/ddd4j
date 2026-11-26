@@ -1,0 +1,44 @@
+package io.ddd4j.sample.order.app.executor;
+
+import java.util.HashSet;
+import java.util.Arrays;
+import java.util.Collections;
+import io.ddd4j.core.cqrs.command.Command;
+import io.ddd4j.core.cqrs.command.CommandExecutor;
+import io.ddd4j.core.cqrs.command.Result;
+import io.ddd4j.sample.order.app.CatalogService;
+import io.ddd4j.sample.order.client.command.ConfirmTradePaymentCmd;
+import io.ddd4j.sample.order.client.command.ChangeTradeOrderCmd;
+import io.ddd4j.sample.order.client.command.CreateGoodsSpuCmd;
+import io.ddd4j.sample.order.client.command.PlaceTradeOrderCmd;
+import java.util.Set;
+import lombok.RequiredArgsConstructor;
+
+/** 商品建档和下单的应用执行器，供各框架命令总线注册。 */
+@RequiredArgsConstructor
+public final class CatalogCommands implements CommandExecutor<Command> {
+    private final CatalogService service;
+
+    @Override
+    public Set<Class<? extends Command>> supportedCommands() {
+        return Collections.unmodifiableSet(new HashSet<>(Arrays.asList(CreateGoodsSpuCmd.class, PlaceTradeOrderCmd.class,
+                ConfirmTradePaymentCmd.class, ChangeTradeOrderCmd.class)));
+    }
+
+    @Override
+    public Result<Object> execute(Command command) {
+        if (command instanceof CreateGoodsSpuCmd) {
+            return Result.ok(service.create((CreateGoodsSpuCmd) command));
+        }
+        if (command instanceof PlaceTradeOrderCmd) {
+            return Result.ok(service.place((PlaceTradeOrderCmd) command));
+        }
+        if (command instanceof ConfirmTradePaymentCmd) {
+            return Result.ok(service.confirmPayment((ConfirmTradePaymentCmd) command));
+        }
+        if (command instanceof ChangeTradeOrderCmd) {
+            return Result.ok(service.change((ChangeTradeOrderCmd) command));
+        }
+        throw new IllegalArgumentException("不支持的商品交易命令");
+    }
+}

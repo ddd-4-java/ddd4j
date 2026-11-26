@@ -14,12 +14,13 @@
  */
 package io.ddd4j.sample.helidon.cqrs;
 
-import io.ddd4j.sample.helidon.cqrs.web.OrderResource;
+import com.google.common.collect.ImmutableSet;
+import io.ddd4j.web.helidon.Ddd4jHelidonExceptionMapper;
+import io.ddd4j.web.helidon.Ddd4jHelidonIllegalStateExceptionMapper;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
 import java.util.Set;
-import java.util.Collections;
 
 /**
  * Helidon JAX-RS 应用声明。
@@ -27,8 +28,23 @@ import java.util.Collections;
 @ApplicationPath("/")
 public class HelidonCqrsJaxRsApplication extends Application {
 
+    private final Set<Object> catalog;
+
+    public HelidonCqrsJaxRsApplication() {
+        this(new CatalogTradeResource());
+    }
+
+    HelidonCqrsJaxRsApplication(CatalogTradeResource resource) {
+        catalog = ImmutableSet.of(resource);
+    }
+
+    @Override
+    public Set<Object> getSingletons() {
+        return catalog;
+    }
+
     @Override
     public Set<Class<?>> getClasses() {
-        return Collections.<Class<?>>singleton(OrderResource.class);
+        return ImmutableSet.of(Ddd4jHelidonExceptionMapper.class, Ddd4jHelidonIllegalStateExceptionMapper.class);
     }
 }

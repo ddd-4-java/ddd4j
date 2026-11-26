@@ -15,13 +15,9 @@
 package io.ddd4j.sample.helidon;
 
 import io.ddd4j.cache.CacheKit;
-import io.ddd4j.sample.order.application.OrderApplicationService;
-import io.ddd4j.sample.order.local.InMemoryOrderAdapters;
-import javax.annotation.PostConstruct;
+import io.ddd4j.core.cache.Cache;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.Dependent;
-import javax.enterprise.inject.Produces;
 
 /**
  * Helidon CDI 中共享 Order 端口的本地示例装配。
@@ -32,25 +28,15 @@ public class HelidonOrderBeans {
     private static final String IDEMPOTENCY_CACHE_NAME = "ddd4j-web-idempotency";
     private static final long IDEMPOTENCY_CACHE_TTL_SECONDS = 300L;
 
-    @PostConstruct
-    void initializeIdempotencyCache() {
-        CacheKit.build(IDEMPOTENCY_CACHE_NAME, IDEMPOTENCY_CACHE_TTL_SECONDS);
+    private Cache<String, Object> ownedIdempotencyCache;
+
+    void initializeIdempotencyCache(@javax.enterprise.event.Observes
+                                    @javax.enterprise.context.Initialized(ApplicationScoped.class) Object startup) {
+        ownedIdempotencyCache = CacheKit.buildLocalIfAbsent(IDEMPOTENCY_CACHE_NAME, IDEMPOTENCY_CACHE_TTL_SECONDS);
     }
 
     @PreDestroy
     void destroyIdempotencyCache() {
-        CacheKit.unregister(IDEMPOTENCY_CACHE_NAME);
-    }
-
-    @Produces
-    @Dependent
-    InMemoryOrderAdapters orderAdapters() {
-        return new InMemoryOrderAdapters();
-    }
-
-    @Produces
-    @ApplicationScoped
-    OrderApplicationService orderApplicationService(InMemoryOrderAdapters adapters) {
-        return new OrderApplicationService(adapters, adapters, adapters, adapters, adapters);
+        CacheKit.unregisterLocalIfOwned(IDEMPOTENCY_CACHE_NAME, ownedIdempotencyCache);
     }
 }

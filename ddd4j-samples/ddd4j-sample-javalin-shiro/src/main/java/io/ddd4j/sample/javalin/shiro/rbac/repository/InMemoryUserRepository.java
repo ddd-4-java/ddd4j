@@ -39,8 +39,9 @@ public class InMemoryUserRepository {
 
     /**
      * 新增或更新用户。
-     * @param user 用户对象
-     * @return 保存后的User
+     *
+     * @param user 用户
+     * @return 已保存的用户
      */
     public User save(User user) {
         store.put(user.loginId(), user);
@@ -49,8 +50,9 @@ public class InMemoryUserRepository {
 
     /**
      * 按 loginId 查询用户。
-     * @param loginId 登录用户标识
-     * @return 查找的Optional
+     *
+     * @param loginId 登录标识
+     * @return 匹配的用户，不存在时为空
      */
     public Optional<User> findByLoginId(String loginId) {
         return Optional.ofNullable(store.get(loginId));
@@ -58,8 +60,9 @@ public class InMemoryUserRepository {
 
     /**
      * 按 loginId 删除用户。
-     * @param loginId 登录用户标识
-     * @return 操作成功返回 true，否则返回 false
+     *
+     * @param loginId 登录标识
+     * @return 删除成功时为 true
      */
     public boolean deleteByLoginId(String loginId) {
         return Objects.nonNull(store.remove(loginId));
@@ -67,7 +70,8 @@ public class InMemoryUserRepository {
 
     /**
      * 查询全部用户。
-     * @return 查找的Collection
+     *
+     * @return 用户集合
      */
     public Collection<User> findAll() {
         return Collections.unmodifiableCollection(store.values());
@@ -75,7 +79,8 @@ public class InMemoryUserRepository {
 
     /**
      * 当前用户数量。
-     * @return 统计的整型数值
+     *
+     * @return 用户数量
      */
     public int count() {
         return store.size();

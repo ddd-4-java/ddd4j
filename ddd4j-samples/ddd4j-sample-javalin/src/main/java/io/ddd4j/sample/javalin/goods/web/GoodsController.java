@@ -13,13 +13,12 @@
  * limitations under the License.
  */
 package io.ddd4j.sample.javalin.goods.web;
-import io.ddd4j.kit.lang.SFunction;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.core.api.R;
+import io.ddd4j.core.exception.BizRuntimeException;
+import io.ddd4j.kit.lang.SFunction;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.sample.javalin.goods.application.GoodsApplicationService;
 import io.ddd4j.sample.javalin.goods.domain.Goods;
@@ -27,6 +26,7 @@ import io.ddd4j.sample.javalin.goods.domain.GoodsId;
 import io.ddd4j.sample.javalin.goods.domain.GoodsQuery;
 import io.ddd4j.sample.javalin.goods.domain.GoodsStatus;
 import io.javalin.apibuilder.EndpointGroup;
+import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 
 import java.math.BigDecimal;
@@ -62,7 +62,9 @@ public class GoodsController {
 
     private final GoodsApplicationService applicationService;
 
-    /** @param applicationService 商品应用服务 */
+    /**
+     * @param applicationService 商品应用服务
+     */
     public GoodsController(GoodsApplicationService applicationService) {
         this.applicationService = Objects.requireNonNull(applicationService, "applicationService must not be null");
     }
@@ -78,20 +80,24 @@ public class GoodsController {
         if (Objects.nonNull(ctx.queryParam("nameLike"))) {
             query.setNameLike(ctx.queryParam("nameLike"));
         }
-        if (Objects.nonNull(ctx.queryParam("status"))) {
-            query.setStatus(GoodsStatus.valueOf(ctx.queryParam("status")));
-        }
-        if (Objects.nonNull(ctx.queryParam("priceMin"))) {
-            query.setPriceMin(new BigDecimal(ctx.queryParam("priceMin")));
-        }
-        if (Objects.nonNull(ctx.queryParam("priceMax"))) {
-            query.setPriceMax(new BigDecimal(ctx.queryParam("priceMax")));
+        try {
+            if (Objects.nonNull(ctx.queryParam("status"))) {
+                query.setStatus(GoodsStatus.valueOf(ctx.queryParam("status")));
+            }
+            if (Objects.nonNull(ctx.queryParam("priceMin"))) {
+                query.setPriceMin(new BigDecimal(ctx.queryParam("priceMin")));
+            }
+            if (Objects.nonNull(ctx.queryParam("priceMax"))) {
+                query.setPriceMax(new BigDecimal(ctx.queryParam("priceMax")));
+            }
+        } catch (IllegalArgumentException invalidFilter) {
+            throw new BadRequestResponse("invalid goods status or price filter");
         }
         if (Objects.nonNull(ctx.queryParam("current"))) {
-            query.setCurrent(Long.parseLong(ctx.queryParam("current")));
+            query.setCurrent(ctx.queryParamAsClass("current", Long.class).get());
         }
         if (Objects.nonNull(ctx.queryParam("size"))) {
-            query.setSize(Long.parseLong(ctx.queryParam("size")));
+            query.setSize(ctx.queryParamAsClass("size", Long.class).get());
         }
         String orderBys = ctx.queryParam("orderBys");
         if (StrKit.isNotBlank(orderBys)) {
@@ -171,16 +177,18 @@ public class GoodsController {
             ctx.json(R.ok());
         });
 
-        // GET /api/goods/{id} —— 按 ID 查询
-        get("/api/goods/{id}", ctx -> {
-            Long id = ctx.pathParamAsClass("id", Long.class).get();
-            ctx.json(R.ok(applicationService.getById(GoodsId.of(id))));
-        });
-
+        // 固定查询路径先于 /api/goods/{id} 注册，避免被当作商品 ID。
         // GET /api/goods/by-code?code=xxx —— 按编码查询
         get("/api/goods/by-code", ctx -> {
-            String code = ctx.queryParam("code");
-            ctx.json(R.ok(applicationService.getByCode(code)));
+            String code = ctx.queryParamAsClass("code", String.class)
+                    .check(StrKit::isNotBlank, "goods code must not be blank").get();
+            Goods goods;
+            try {
+                goods = applicationService.getByCode(code);
+            } catch (BizRuntimeException missingGoods) {
+                throw new BadRequestResponse("goods code not found");
+            }
+            ctx.json(R.ok(goods));
         });
 
         // GET /api/goods/page —— 充血分页查询
@@ -201,6 +209,12 @@ public class GoodsController {
             GoodsQuery query = bindQuery(ctx);
             ctx.json(R.ok(applicationService.countQuery(query)));
         });
+
+        // GET /api/goods/{id} —— 按 ID 查询
+        get("/api/goods/{id}", ctx -> {
+            Long id = ctx.pathParamAsClass("id", Long.class).get();
+            ctx.json(R.ok(applicationService.getById(GoodsId.of(id))));
+        });
     }
 
     // ========================= 请求 DTO =========================
@@ -220,13 +234,15 @@ public class GoodsController {
 
         private Integer stock;
 
-        /** 创建空请求，供反序列化使用。 */
+        /**
+         * 创建空请求，供反序列化使用。
+         */
         public CreateGoodsRequest() {
         }
 
         /**
-         * @param code 商品编码
-         * @param name 商品名称
+         * @param code  商品编码
+         * @param name  商品名称
          * @param price 商品价格
          * @param stock 库存数量
          */
@@ -238,72 +254,97 @@ public class GoodsController {
             this.stock = stock;
         }
 
-        /** @return 商品编码 */
+        /**
+         * @return 商品编码
+         */
         @JsonProperty("code")
         public String code() {
             return code;
         }
 
-        /** @return 商品名称 */
+        /**
+         * @return 商品名称
+         */
         @JsonProperty("name")
         public String name() {
             return name;
         }
 
-        /** @return 商品价格 */
+        /**
+         * @return 商品价格
+         */
         @JsonProperty("price")
         public BigDecimal price() {
             return price;
         }
 
-        /** @return 库存数量 */
+        /**
+         * @return 库存数量
+         */
         @JsonProperty("stock")
         public Integer stock() {
             return stock;
         }
 
-        /** @return 商品编码 */
+        /**
+         * @return 商品编码
+         */
         public String getCode() {
             return code;
         }
 
-        /** @param code 商品编码 */
+        /**
+         * @param code 商品编码
+         */
         public void setCode(String code) {
             this.code = code;
         }
 
-        /** @return 商品名称 */
+        /**
+         * @return 商品名称
+         */
         public String getName() {
             return name;
         }
 
-        /** @param name 商品名称 */
+        /**
+         * @param name 商品名称
+         */
         public void setName(String name) {
             this.name = name;
         }
 
-        /** @return 商品价格 */
+        /**
+         * @return 商品价格
+         */
         public BigDecimal getPrice() {
             return price;
         }
 
-        /** @param price 商品价格 */
+        /**
+         * @param price 商品价格
+         */
         public void setPrice(BigDecimal price) {
             this.price = price;
         }
 
-        /** @return 库存数量 */
+        /**
+         * @return 库存数量
+         */
         public Integer getStock() {
             return stock;
         }
 
-        /** @param stock 库存数量 */
+        /**
+         * @param stock 库存数量
+         */
         public void setStock(Integer stock) {
             this.stock = stock;
         }
 
         /**
          * 判断另一对象是否可以参与相等比较。
+         *
          * @param other 待比较对象
          * @return 是否为同类请求或响应
          */
@@ -356,12 +397,14 @@ public class GoodsController {
 
         private BigDecimal price;
 
-        /** 创建空请求，供反序列化使用。 */
+        /**
+         * 创建空请求，供反序列化使用。
+         */
         public UpdateGoodsRequest() {
         }
 
         /**
-         * @param name 新商品名称
+         * @param name  新商品名称
          * @param price 新商品价格
          */
         @JsonCreator()
@@ -370,40 +413,53 @@ public class GoodsController {
             this.price = price;
         }
 
-        /** @return 新商品名称 */
+        /**
+         * @return 新商品名称
+         */
         @JsonProperty("name")
         public String name() {
             return name;
         }
 
-        /** @return 新商品价格 */
+        /**
+         * @return 新商品价格
+         */
         @JsonProperty("price")
         public BigDecimal price() {
             return price;
         }
 
-        /** @return 商品名称 */
+        /**
+         * @return 商品名称
+         */
         public String getName() {
             return name;
         }
 
-        /** @param name 商品名称 */
+        /**
+         * @param name 商品名称
+         */
         public void setName(String name) {
             this.name = name;
         }
 
-        /** @return 商品价格 */
+        /**
+         * @return 商品价格
+         */
         public BigDecimal getPrice() {
             return price;
         }
 
-        /** @param price 商品价格 */
+        /**
+         * @param price 商品价格
+         */
         public void setPrice(BigDecimal price) {
             this.price = price;
         }
 
         /**
          * 判断另一对象是否可以参与相等比较。
+         *
          * @param other 待比较对象
          * @return 是否为同类请求或响应
          */

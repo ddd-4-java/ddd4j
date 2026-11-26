@@ -46,6 +46,7 @@ import static org.hamcrest.Matchers.*;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @QuarkusTest
+@io.quarkus.test.junit.TestProfile(io.ddd4j.sample.quarkus.GoodsStandaloneProfile.class)
 class GoodsResourceTest {
 
     @Inject

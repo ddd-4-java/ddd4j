@@ -14,16 +14,14 @@
  */
 package io.ddd4j.sample.quarkus.config;
 
+import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectProvider;
-import io.ddd4j.sample.order.application.OrderApplicationService;
-import io.ddd4j.sample.quarkus.order.infrastructure.QuarkusOrderAdapters;
 import io.quarkus.runtime.StartupEvent;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 
@@ -44,12 +42,12 @@ import java.util.Optional;
  * <h2>运行效果</h2>
  * <p>应用启动后日志中会输出类似：
  * <pre>
- * [Ddd4jSampleConfig] DomainEventPublisher = NoOpDomainEventPublisher
+ * [Ddd4jSampleConfig] DomainEventPublisher = QuarkusDomainEventPublisher
  * [Ddd4jSampleConfig] SubjectProvider        = SampleSubjectProvider
  * [Ddd4jSampleConfig] I18nProvider           = DefaultI18nProvider
  * </pre>
  *
- * <h3>扩展建议</h3>
+ * <h2>扩展建议</h2>
  * <p>真实项目可在本类中加入：
  * <ul>
  *   <li>Quarkus 配置项绑定（{@code @ConfigProperty}）</li>
@@ -73,12 +71,6 @@ public class Ddd4jSampleConfig {
     @Inject
     Instance<I18nProvider> i18nProvider;
 
-    @Produces
-    @ApplicationScoped
-    OrderApplicationService orderApplicationService(QuarkusOrderAdapters adapters) {
-        return new OrderApplicationService(adapters, adapters, adapters, adapters);
-    }
-
     /**
      * Quarkus 启动完成后回调：校验核心 SPI 是否成功注入，并打印日志。
      *
@@ -89,14 +81,15 @@ public class Ddd4jSampleConfig {
      * @param event 启动事件
      */
     void onStart(@Observes StartupEvent event) {
+        CacheKit.build("ddd4j-web-idempotency",
+                builder -> builder.maximumSize(10000).expireAfterWriteSeconds(300));
         log.info("[Ddd4jSampleConfig] Quarkus started, verifying ddd4j SPI services...");
 
         logSPI("DomainEventPublisher", domainEventPublisher);
         logSPI("SubjectProvider", subjectProvider);
         logSPI("I18nProvider", i18nProvider);
 
-        log.info("[Ddd4jSampleConfig] Sample application is ready at http://localhost:8080");
-        log.info("[Ddd4jSampleConfig] Try: curl http://localhost:8080/orders/health");
+        log.info("[Ddd4jSampleConfig] Sample application is ready. Try GET /api/orders/{orderNo}");
     }
 
     /**

@@ -22,37 +22,71 @@
         <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers</artifactId>
+                <version>${testcontainers-jdk8.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>jdbc</artifactId>
+                <version>${testcontainers-jdk8.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>database-commons</artifactId>
+                <version>${testcontainers-jdk8.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>${testcontainers-jdk8.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>mysql</artifactId>
+                <version>${testcontainers-jdk8.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <modules>
-        <!-- Shared production-style order business kernel across runtimes -->
         <module>ddd4j-sample-order-domain</module>
         <module>ddd4j-sample-order-application</module>
-        <module>ddd4j-sample-order-local</module>
         <module>ddd4j-sample-order-testkit</module>
         <module>ddd4j-sample-order-jdbc</module>
-        <module>ddd4j-sample-order-kafka</module>
-        <module>ddd4j-sample-order-redis</module>
-
-        <!-- Non-Boot runtime examples: aggregate, CQRS, caching, messaging -->
-        <module>ddd4j-sample-javalin</module>
-        <module>ddd4j-sample-vertx</module>
-        <module>ddd4j-sample-dropwizard</module>
-        <module>ddd4j-sample-micronaut</module>
+        <module>ddd4j-sample-order-adapter</module>
+        <module>ddd4j-sample-order-start</module>
+        <module>ddd4j-sample-spring</module>
+        <module>ddd4j-sample-spring-cqrs</module>
+        <module>ddd4j-sample-spring-satoken</module>
+        <module>ddd4j-sample-spring-shiro</module>
         <module>ddd4j-sample-quarkus</module>
-
-        <!-- CQRS/ES examples: read-write separation + caching -->
-        <module>ddd4j-sample-javalin-cqrs</module>
-        <module>ddd4j-sample-vertx-cqrs</module>
-        <module>ddd4j-sample-dropwizard-cqrs</module>
-        <module>ddd4j-sample-micronaut-cqrs</module>
-        <module>ddd4j-sample-helidon-cqrs</module>
-        <module>ddd4j-sample-quarkus-cqrs</module>
+        <module>ddd4j-sample-javalin</module>
+        <module>ddd4j-sample-micronaut</module>
+        <module>ddd4j-sample-vertx</module>
         <module>ddd4j-sample-helidon</module>
-
-        <!-- Auth examples: satoken/shiro integrations -->
+        <module>ddd4j-sample-dropwizard</module>
+        <module>ddd4j-sample-quarkus-cqrs</module>
+        <module>ddd4j-sample-javalin-cqrs</module>
+        <module>ddd4j-sample-dropwizard-cqrs</module>
+        <module>ddd4j-sample-dropwizard-satoken</module>
+        <module>ddd4j-sample-dropwizard-shiro</module>
+        <module>ddd4j-sample-helidon-cqrs</module>
+        <module>ddd4j-sample-helidon-satoken</module>
+        <module>ddd4j-sample-helidon-shiro</module>
+        <module>ddd4j-sample-micronaut-cqrs</module>
+        <module>ddd4j-sample-vertx-cqrs</module>
+        <module>ddd4j-sample-vertx-satoken</module>
+        <module>ddd4j-sample-vertx-shiro</module>
         <module>ddd4j-sample-quarkus-satoken</module>
         <module>ddd4j-sample-quarkus-shiro</module>
         <module>ddd4j-sample-javalin-satoken</module>
         <module>ddd4j-sample-javalin-shiro</module>
+        <module>ddd4j-sample-micronaut-satoken</module>
+        <module>ddd4j-sample-micronaut-shiro</module>
     </modules>
 
 </project>

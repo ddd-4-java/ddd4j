@@ -14,32 +14,42 @@
  */
 package io.ddd4j.sample.javalin.order.web;
 
+import java.util.NoSuchElementException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.ddd4j.kit.lang.StrKit;
+import io.ddd4j.sample.javalin.JavalinEntryContractTest;
 import io.ddd4j.sample.javalin.JavalinSample;
-import io.ddd4j.sample.javalin.TestHttpClient;
-import io.ddd4j.sample.javalin.TestHttpClient.HttpResponse;
 import io.ddd4j.web.core.context.WebHeaders;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.net.URI;
+import io.ddd4j.sample.order.testkit.http.HttpClient;
+import io.ddd4j.sample.order.testkit.http.HttpRequest;
+import io.ddd4j.sample.order.testkit.http.HttpResponse;
+import java.time.Duration;
 import java.util.Objects;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Testcontainers
 class OrderControllerTest {
+    @Container
+    static final MySQLContainer<?> MYSQL = new MySQLContainer<>("mysql:8.0.36");
+    private static final ObjectMapper JSON = new ObjectMapper();
 
     private static JavalinSample.JavalinApplication application;
-    private static TestHttpClient client;
+    private static HttpClient client;
     private static String baseUrl;
 
     @BeforeAll
     static void start() {
-        application = JavalinSample.start(0);
-        client = new TestHttpClient();
+        application = JavalinSample.start(0, JavalinEntryContractTest.catalog(MYSQL), true);
+        client = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
         baseUrl = "http://localhost:" + application.app().port();
     }
 
@@ -51,80 +61,53 @@ class OrderControllerTest {
     }
 
     private static HttpResponse<String> get(String path) throws Exception {
-        Map<String, String> headers = new HashMap<>();
-        headers.put(WebHeaders.AUTHORIZATION, "Bearer " + application.token());
-        return client.get(baseUrl + path, headers);
+        HttpRequest request = HttpRequest.newBuilder(URI.create(baseUrl + path))
+                .header(WebHeaders.AUTHORIZATION, "Bearer " + application.token()).header("X-Tenant-Id", "bearer")
+                .GET().build();
+        return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 
     private static HttpResponse<String> post(String path, String body, String idempotencyKey) throws Exception {
-        Map<String, String> headers = new HashMap<>();
-        headers.put(WebHeaders.AUTHORIZATION, "Bearer " + application.token());
+        HttpRequest.Builder request = HttpRequest.newBuilder(URI.create(baseUrl + path))
+                .header("Content-Type", "application/json")
+                .header(WebHeaders.AUTHORIZATION, "Bearer " + application.token()).header("X-Tenant-Id", "bearer");
         if (Objects.nonNull(idempotencyKey)) {
-            headers.put(WebHeaders.IDEMPOTENCY_KEY, idempotencyKey);
+            request.header(WebHeaders.IDEMPOTENCY_KEY, idempotencyKey);
         }
-        return client.postJson(baseUrl + path, body, headers);
-    }
-
-    private static String extract(String json, String field) {
-        String prefix = "\"" + field + "\":\"";
-        int start = json.indexOf(prefix);
-        if (start < 0) {
-            throw new IllegalArgumentException("field not found: " + field);
-        }
-        int valueStart = start + prefix.length();
-        return json.substring(valueStart, json.indexOf('"', valueStart));
+        return client.send(request.POST(HttpRequest.BodyPublishers.ofString(body)).build(),
+                HttpResponse.BodyHandlers.ofString());
     }
 
     @Test
     void protectedRouteRequiresBearerToken() throws Exception {
-        HttpResponse<String> response = client.get(baseUrl + "/api/orders", TestHttpClient.noHeaders());
+        HttpResponse<String> response = client.send(HttpRequest.newBuilder(URI.create(baseUrl + "/api/orders/DENIED"))
+                .GET().build(), HttpResponse.BodyHandlers.ofString());
         assertEquals(401, response.statusCode());
     }
 
     @Test
-    void createQueryAndLookupUseSharedOrderKernel() throws Exception {
-        String orderNo = "J-" + UUID.randomUUID();
-        HttpResponse<String> created = post("/api/orders", "{\"orderNo\":\"" + orderNo
-                + "\",\"buyerId\":\"buyer-1\",\"buyerName\":\"Alice\"}", null);
-        assertEquals(201, created.statusCode());
-        String orderId = extract(created.body(), "id");
-
-        HttpResponse<String> byId = get("/api/orders/" + orderId);
-        HttpResponse<String> byNo = get("/api/orders/by-no?orderNo=" + orderNo);
-        HttpResponse<String> page = get("/api/orders?buyerId=buyer-1&page=1&size=10");
-
-        assertEquals(200, byId.statusCode());
-        assertEquals(200, byNo.statusCode());
-        assertEquals(200, page.statusCode());
-        assertTrue(byNo.body().contains(orderNo));
-        assertTrue(page.body().contains(orderNo));
-    }
-
-    @Test
-    void paymentRequiresIdempotencyKeyAndOnlyTransitionsOnce() throws Exception {
-        String orderNo = "J-" + UUID.randomUUID();
-        HttpResponse<String> created = post("/api/orders", "{\"orderNo\":\"" + orderNo
-                + "\",\"buyerId\":\"buyer-2\",\"buyerName\":\"Bob\"}", null);
-        String orderId = extract(created.body(), "id");
-        post("/api/orders/" + orderId + "/lines",
-                "{\"goodsId\":\"sku-1\",\"goodsName\":\"Book\",\"quantity\":2,\"unitPrice\":19.90}", null);
-
-        assertEquals(400, post("/api/orders/" + orderId + "/pay", "", null).statusCode());
-        HttpResponse<String> first = post("/api/orders/" + orderId + "/pay", "", "payment-" + orderId);
-        HttpResponse<String> repeated = post("/api/orders/" + orderId + "/pay", "", "payment-" + orderId);
-
-        assertEquals(200, first.statusCode());
-        assertEquals(200, repeated.statusCode());
-        assertTrue(first.body().contains("\"status\":\"PAID\""));
-        assertTrue(repeated.body().contains("\"status\":\"PAID\""));
+    void createQueryAndPaymentUseSharedTradeAggregate() throws Exception {
+        assertEquals(201, post("/api/goods/BOOK", JavalinEntryContractTest.GOODS, null).statusCode());
+        String path = "/api/orders/J-001";
+        HttpResponse<java.lang.String> created = post(path, JavalinEntryContractTest.ORDER, null);
+        assertEquals(201, created.statusCode(), created.body());
+        assertEquals(3980, JSON.readTree(created.body()).path("grossAmountCent").asLong());
+        assertEquals(200, get(path).statusCode());
+        assertEquals(400, post(path + "/payment", "{}", null).statusCode());
+        HttpResponse<java.lang.String> first = post(path + "/payment", "{\"paidAmountCent\":3980}", null);
+        HttpResponse<java.lang.String> repeated = post(path + "/payment", "{\"paidAmountCent\":3980}", null);
+        assertEquals(200, first.statusCode(), first.body());
+        assertEquals(200, repeated.statusCode(), repeated.body());
+        assertEquals("CONFIRMED", JSON.readTree(first.body()).path("orderState").asText());
+        assertEquals(JSON.readTree(first.body()), JSON.readTree(repeated.body()));
     }
 
     @Test
     void requestIdIsReturnedAndContextDoesNotLeak() throws Exception {
-        HttpResponse<String> first = get("/api/orders");
-        HttpResponse<String> second = get("/api/orders");
-        String firstRequestId = first.header(WebHeaders.REQUEST_ID);
-        String secondRequestId = second.header(WebHeaders.REQUEST_ID);
+        HttpResponse<String> first = get("/api/orders/MISSING");
+        HttpResponse<String> second = get("/api/orders/MISSING");
+        String firstRequestId = first.headers().firstValue(WebHeaders.REQUEST_ID).orElseThrow(NoSuchElementException::new);
+        String secondRequestId = second.headers().firstValue(WebHeaders.REQUEST_ID).orElseThrow(NoSuchElementException::new);
         assertTrue(StrKit.isNotBlank(firstRequestId));
         assertTrue(StrKit.isNotBlank(secondRequestId));
         assertNotEquals(firstRequestId, secondRequestId);

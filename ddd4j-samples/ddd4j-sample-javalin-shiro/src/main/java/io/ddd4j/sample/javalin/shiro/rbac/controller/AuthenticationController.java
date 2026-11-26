@@ -14,15 +14,10 @@
  */
 package io.ddd4j.sample.javalin.shiro.rbac.controller;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-
-import java.util.Objects;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.inject.Inject;
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.auth.AuthPrincipal;
@@ -31,6 +26,9 @@ import io.ddd4j.core.util.SubjectKit;
 import io.ddd4j.sample.javalin.shiro.rbac.domain.User;
 import io.ddd4j.sample.javalin.shiro.rbac.service.RbacService;
 import io.javalin.http.Context;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.*;
 
@@ -89,9 +87,10 @@ public class AuthenticationController {
         // 3. 通过 SubjectKit 登录
         AuthRequest request = AuthRequest.of(user.loginId()).setTimeout(7200);
         request.setPrincipal(principal);
+        request.extra("credential", req.password());
         String token = SubjectKit.login(request);
 
-        Map<String, Object> result = Java8Maps.of(
+        Map<String, Object> result = ImmutableMap.of(
                 "token", token,
                 "principal", principal,
                 "roles", user.roles(),
@@ -106,7 +105,7 @@ public class AuthenticationController {
      */
     public void logout(Context ctx) {
         SubjectKit.logout();
-        ctx.json(R.ok(Java8Maps.of("success", true)));
+        ctx.json(R.ok(ImmutableMap.of("success", true)));
     }
 
     /**
@@ -117,7 +116,7 @@ public class AuthenticationController {
     public void me(Context ctx) {
         AuthPrincipal principal = SubjectKit.getPrincipal();
         if (Objects.isNull(principal)) {
-            ctx.json(R.ok(Java8Maps.of("authenticated", false)));
+            ctx.json(R.ok(ImmutableMap.of("authenticated", false)));
             return;
         }
 
@@ -131,11 +130,11 @@ public class AuthenticationController {
             permissions = rbacService.computeEffectivePermissions(user);
         } catch (NoSuchElementException e) {
             // 已登录但 RBAC 中不存在（数据漂移场景），使用 Principal 中的信息兜底
-            roles = Collections.emptySet();
+            roles = ImmutableSet.of();
             permissions = principal.getPerms();
         }
 
-        Map<String, Object> result = Java8Maps.of(
+        Map<String, Object> result = ImmutableMap.of(
                 "authenticated", true,
                 "loginId", principal.getLoginId(),
                 "userId", principal.getUserId(),
@@ -152,7 +151,7 @@ public class AuthenticationController {
     public void checkPermission(Context ctx) {
         String permission = ctx.queryParam("permission");
         boolean has = SubjectKit.hasPermission(permission);
-        ctx.json(R.ok(Java8Maps.of("permission", permission, "has", has)));
+        ctx.json(R.ok(ImmutableMap.of("permission", permission, "has", has)));
     }
 
     /**
@@ -163,7 +162,7 @@ public class AuthenticationController {
     public void checkRole(Context ctx) {
         String role = ctx.queryParam("role");
         boolean has = SubjectKit.hasRole(role);
-        ctx.json(R.ok(Java8Maps.of("role", role, "has", has)));
+        ctx.json(R.ok(ImmutableMap.of("role", role, "has", has)));
     }
 
     /**
@@ -174,7 +173,7 @@ public class AuthenticationController {
     public void kickout(Context ctx) {
         String userId = ctx.formParam("userId");
         SubjectKit.kickout(userId);
-        ctx.json(R.ok(Java8Maps.of("kicked", userId)));
+        ctx.json(R.ok(ImmutableMap.of("kicked", userId)));
     }
 
     /**
@@ -183,7 +182,7 @@ public class AuthenticationController {
      * @param ctx Javalin 请求上下文
      */
     public void status(Context ctx) {
-        ctx.json(R.ok(Java8Maps.of("login", SubjectKit.isLogin())));
+        ctx.json(R.ok(ImmutableMap.of("login", SubjectKit.isLogin())));
     }
 
     // ============================ DTO ============================
@@ -205,7 +204,7 @@ public class AuthenticationController {
         /**
          * 创建登录请求。
          *
-         * @param loginId 登录标识
+         * @param loginId  登录标识
          * @param password 密码
          */
         @JsonCreator()

@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
 /**
@@ -162,6 +163,42 @@ public final class CacheKit {
      */
     public void build(String biz, long expiredSeconds) {
         build(biz, builder -> builder.expireAfterWriteSeconds(expiredSeconds), defaultType);
+    }
+
+    /**
+     * 仅在没有同名普通或加载缓存时，注册默认类型的本地缓存。
+     *
+     * @param biz            业务标识
+     * @param expiredSeconds 写后过期时间（秒）
+     * @return 本次新注册的实例；借用已有缓存时返回 null
+     */
+    public Cache<String, Object> buildLocalIfAbsent(String biz, long expiredSeconds) {
+        Objects.requireNonNull(biz, "业务标识不能为空");
+        AtomicReference<Cache<String, Object>> owned = new AtomicReference<>();
+        caches.computeIfAbsent(biz, key -> {
+            if (loadingCaches.containsKey(key)) {
+                return null;
+            }
+            CacheConfig config = CacheConfig.builder(key).expireAfterWriteSeconds(expiredSeconds)
+                    .cacheType(CacheType.LOCAL).build();
+            Cache<String, Object> cache = createLocalCache(defaultType, config);
+            owned.set(cache);
+            return cache;
+        });
+        return owned.get();
+    }
+
+    /**
+     * 仅当普通缓存仍为调用方持有的实例时移除注册，同时保留同名加载缓存。
+     *
+     * @param biz   业务标识
+     * @param owned 本次注册获得的实例；借用缓存时可传入 null
+     */
+    public void unregisterLocalIfOwned(String biz, Cache<String, Object> owned) {
+        Objects.requireNonNull(biz, "业务标识不能为空");
+        if (Objects.nonNull(owned)) {
+            caches.computeIfPresent(biz, (key, current) -> current == owned ? null : current);
+        }
     }
 
     // ==================== 构建本地缓存 ====================

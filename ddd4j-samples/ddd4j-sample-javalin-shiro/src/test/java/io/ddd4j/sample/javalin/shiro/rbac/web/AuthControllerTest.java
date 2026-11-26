@@ -15,13 +15,13 @@
 package io.ddd4j.sample.javalin.shiro.rbac.web;
 
 import io.ddd4j.sample.javalin.shiro.TestSupport;
-import io.ddd4j.sample.javalin.shiro.http.HttpClient;
-import io.ddd4j.sample.javalin.shiro.http.HttpRequest;
-import io.ddd4j.sample.javalin.shiro.http.HttpResponse;
 import io.javalin.Javalin;
 import org.junit.jupiter.api.*;
 
 import java.net.URI;
+import io.ddd4j.sample.order.testkit.http.HttpClient;
+import io.ddd4j.sample.order.testkit.http.HttpRequest;
+import io.ddd4j.sample.order.testkit.http.HttpResponse;
 import java.time.Duration;
 import java.util.Objects;
 

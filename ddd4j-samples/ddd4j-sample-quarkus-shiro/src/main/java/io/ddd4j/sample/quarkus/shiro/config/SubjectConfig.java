@@ -34,7 +34,8 @@ public class SubjectConfig {
 
     /**
      * Shiro 实现的 ddd4j {@link Subject}。
-     * @return 操作结果
+     *
+     * @return Shiro 主体实例
      */
     @Produces
     @ApplicationScoped

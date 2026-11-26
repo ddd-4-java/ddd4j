@@ -56,7 +56,6 @@ import java.util.List;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
-@javax.enterprise.context.ApplicationScoped
 @Path("/admin")
 @Produces(MediaType.APPLICATION_JSON)
 public class AuthorizationResource {
@@ -123,7 +122,7 @@ public class AuthorizationResource {
     /**
      * 更新用户。
      *
-     * @param id 资源标识
+     * @param id    资源标识
      * @param patch 待更新字段
      * @return 已更新的用户
      */
@@ -155,7 +154,7 @@ public class AuthorizationResource {
     /**
      * 为用户分配角色。
      *
-     * @param id 资源标识
+     * @param id   资源标识
      * @param code 资源编码
      * @return 已更新的用户
      */
@@ -170,7 +169,7 @@ public class AuthorizationResource {
     /**
      * 撤销用户角色。
      *
-     * @param id 资源标识
+     * @param id   资源标识
      * @param code 资源编码
      * @return 已更新的用户
      */
@@ -225,7 +224,7 @@ public class AuthorizationResource {
     /**
      * 更新角色。
      *
-     * @param code 资源编码
+     * @param code  资源编码
      * @param patch 待更新字段
      * @return 已更新的角色
      */
@@ -257,7 +256,7 @@ public class AuthorizationResource {
     /**
      * 为角色授予权限。
      *
-     * @param code 资源编码
+     * @param code  资源编码
      * @param pcode 权限编码
      * @return 已更新的角色
      */
@@ -272,7 +271,7 @@ public class AuthorizationResource {
     /**
      * 撤销角色权限。
      *
-     * @param code 资源编码
+     * @param code  资源编码
      * @param pcode 权限编码
      * @return 已更新的角色
      */

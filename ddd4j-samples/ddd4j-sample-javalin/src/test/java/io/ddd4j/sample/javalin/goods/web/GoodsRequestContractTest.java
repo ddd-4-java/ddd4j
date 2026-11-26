@@ -11,7 +11,9 @@ import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/** 商品请求 DTO 的三线公开方法与 JSON 契约。 */
+/**
+ * 商品请求 DTO 的三线公开方法与 JSON 契约。
+ */
 class GoodsRequestContractTest {
 
     @Test

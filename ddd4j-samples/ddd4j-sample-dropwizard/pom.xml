@@ -33,14 +33,16 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency><groupId>org.testcontainers</groupId><artifactId>mysql</artifactId><scope>test</scope></dependency>
+        <dependency><groupId>org.testcontainers</groupId><artifactId>junit-jupiter</artifactId><scope>test</scope></dependency>
         <dependency>
             <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-sample-order-application</artifactId>
+            <artifactId>ddd4j-sample-order-start</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-sample-order-local</artifactId>
+            <artifactId>ddd4j-sample-order-application</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
@@ -68,27 +70,14 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.assertj</groupId>
-            <artifactId>assertj-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.inject</groupId>
-            <artifactId>javax.inject</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!-- Dropwizard 2 使用 SLF4J 1.7 SPI，测试后端必须保留 Logback 1.2。 -->
-        <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>${logback-legacy.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
             <version>${logback-legacy.version}</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

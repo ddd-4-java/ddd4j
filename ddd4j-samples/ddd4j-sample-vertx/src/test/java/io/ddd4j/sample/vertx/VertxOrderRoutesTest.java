@@ -14,10 +14,14 @@
  */
 package io.ddd4j.sample.vertx;
 
+import com.google.common.collect.ImmutableList;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.ddd4j.sample.order.application.OrderApplicationService;
-import io.ddd4j.sample.order.local.InMemoryOrderAdapters;
+import io.ddd4j.sample.order.adapter.http.CatalogEndpoints;
+import io.ddd4j.web.core.auth.AuthenticationMode;
+import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 import io.ddd4j.vertx.Ddd4jVertxRuntime;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
@@ -26,20 +30,23 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
+import java.net.URI;
+import io.ddd4j.sample.order.testkit.http.HttpClient;
+import io.ddd4j.sample.order.testkit.http.HttpRequest;
+import io.ddd4j.sample.order.testkit.http.HttpResponse;
+import java.time.Duration;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+@Testcontainers
 class VertxOrderRoutesTest {
+    @Container
+    static final MySQLContainer<?> MYSQL = new MySQLContainer<>("mysql:8.0.36");
+    private CatalogEndpoints api;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
     private Vertx vertx;
@@ -49,13 +56,11 @@ class VertxOrderRoutesTest {
     @BeforeEach
     void setUp() throws Exception {
         vertx = Vertx.vertx();
-        runtime = Ddd4jVertxRuntime.create(vertx, Collections.emptyList());
+        runtime = Ddd4jVertxRuntime.create(vertx, ImmutableList.of());
         runtime.start();
-        InMemoryOrderAdapters adapters = new InMemoryOrderAdapters();
-        OrderApplicationService applicationService = new OrderApplicationService(adapters, adapters, adapters,
-                adapters, adapters);
+        api = VertxBasicMainTest.catalog(MYSQL);
         server = await(vertx.createHttpServer()
-                .requestHandler(VertxOrderRoutes.router(vertx, applicationService)).listen(0, "127.0.0.1"));
+                .requestHandler(VertxOrderRoutes.router(vertx, api, AuthenticationMode.REQUIRED)).listen(0, "127.0.0.1"));
     }
 
     @AfterEach
@@ -72,32 +77,34 @@ class VertxOrderRoutesTest {
     }
 
     @Test
-    void shouldRunSharedOrderUseCasesThroughVertxHttp() throws Exception {
-        String baseUrl = "http://127.0.0.1:" + server.actualPort();
-        String token = issueToken(baseUrl);
-        HttpResponse<String> create = request(baseUrl, "POST", "/api/orders", token,
-                "{\"orderNo\":\"VERTX-001\",\"buyerId\":\"buyer-1\",\"buyerName\":\"Alice\"}");
-        assertThat(create.statusCode()).withFailMessage(create.body()).isEqualTo(201);
-        String orderId = objectMapper.readTree(create.body()).path("data").path("id").asText();
-
-        HttpResponse<String> line = request(baseUrl, "POST", "/api/orders/" + orderId + "/lines", token,
-                "{\"goodsId\":\"goods-1\",\"goodsName\":\"DDD Book\",\"quantity\":2,\"unitPrice\":59.90}");
-        assertThat(line.statusCode()).withFailMessage(line.body()).isEqualTo(200);
-        assertThat(objectMapper.readTree(line.body()).path("data").path("totalAmount").decimalValue())
-                .isEqualByComparingTo("119.80");
-
-        HttpResponse<String> missingKey = request(baseUrl, "POST", "/api/orders/" + orderId + "/pay", token,
-                null);
-        assertThat(missingKey.statusCode()).withFailMessage(missingKey.body()).isEqualTo(400);
-
-        HttpResponse<String> paid = request(baseUrl, "POST", "/api/orders/" + orderId + "/pay", token,
-                null, "vertx-payment-001");
-        assertThat(paid.statusCode()).withFailMessage(paid.body()).isEqualTo(200);
-        assertThat(objectMapper.readTree(paid.body()).path("data").path("status").asText()).isEqualTo("PAID");
+    void shouldRejectNullAuthenticationModeWithStableMessage() {
+        assertThatThrownBy(() -> VertxOrderRoutes.router(vertx, api, null))
+                .isInstanceOf(NullPointerException.class)
+                .hasMessage("mode must not be null");
     }
 
-    private String issueToken(String baseUrl) throws Exception {
-        HttpResponse<String> response = request(baseUrl, "POST", "/api/auth/tokens/vertx-user", null, null);
+    @Test
+    void shouldRunSharedOrderUseCasesThroughVertxHttp() throws Exception {
+        HttpClient client = HttpClient.newHttpClient();
+        String baseUrl = "http://127.0.0.1:" + server.actualPort();
+        String token = issueToken(client, baseUrl);
+        assertThat(request(client, baseUrl, "GET", "/api/orders/VERTX-001", null, null).statusCode())
+                .isEqualTo(401);
+        assertThat(request(client, baseUrl, "POST", "/api/goods/BOOK", token, VertxBasicMainTest.GOODS)
+                .statusCode()).isEqualTo(201);
+        String orderPath = "/api/orders/VERTX-001";
+        HttpResponse<java.lang.String> create = request(client, baseUrl, "POST", orderPath, token, VertxBasicMainTest.ORDER);
+        assertThat(create.statusCode()).withFailMessage(create.body()).isEqualTo(201);
+        assertThat(objectMapper.readTree(create.body()).path("grossAmountCent").asLong()).isEqualTo(1000);
+        assertThat(request(client, baseUrl, "POST", orderPath + "/payment", token, "{}").statusCode())
+                .isEqualTo(400);
+        HttpResponse<java.lang.String> paid = request(client, baseUrl, "POST", orderPath + "/payment", token, "{\"paidAmountCent\":1000}");
+        assertThat(paid.statusCode()).withFailMessage(paid.body()).isEqualTo(200);
+        assertThat(objectMapper.readTree(paid.body()).path("orderState").asText()).isEqualTo("CONFIRMED");
+    }
+
+    private String issueToken(HttpClient client, String baseUrl) throws Exception {
+        HttpResponse<String> response = request(client, baseUrl, "POST", "/api/auth/tokens/vertx-user", null, null);
         JsonNode body = objectMapper.readTree(response.body());
         assertThat(response.statusCode()).withFailMessage(response.body()).isEqualTo(200);
         String token = body.path("data").path("token").asText();
@@ -105,66 +112,23 @@ class VertxOrderRoutesTest {
         return token;
     }
 
-    private HttpResponse<String> request(String baseUrl, String method, String path, String token,
+    private HttpResponse<String> request(HttpClient client, String baseUrl, String method, String path, String token,
                                          String body) throws Exception {
-        return request(baseUrl, method, path, token, body, null);
-    }
-
-    private HttpResponse<String> request(String baseUrl, String method, String path, String token,
-                                         String body, String idempotencyKey) throws Exception {
-        HttpURLConnection connection = (HttpURLConnection) new URL(baseUrl + path).openConnection();
-        connection.setRequestMethod(method);
-        connection.setConnectTimeout(10000);
-        connection.setReadTimeout(10000);
+        HttpRequest.Builder builder = HttpRequest.newBuilder(URI.create(baseUrl + path))
+                .timeout(Duration.ofSeconds(10)).header("X-Tenant-Id", "route-test");
         if (Objects.nonNull(token)) {
-            connection.setRequestProperty("Authorization", "Bearer " + token);
-        }
-        if (Objects.nonNull(idempotencyKey)) {
-            connection.setRequestProperty("Idempotency-Key", idempotencyKey);
+            builder.header("Authorization", "Bearer " + token);
         }
         if (Objects.nonNull(body)) {
-            byte[] payload = body.getBytes(StandardCharsets.UTF_8);
-            connection.setDoOutput(true);
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.setFixedLengthStreamingMode(payload.length);
-            try (OutputStream output = connection.getOutputStream()) {
-                output.write(payload);
-            }
+            builder.header("Content-Type", "application/json");
+            builder.method(method, HttpRequest.BodyPublishers.ofString(body));
+        } else {
+            builder.method(method, HttpRequest.BodyPublishers.noBody());
         }
-        int statusCode = connection.getResponseCode();
-        InputStream input = statusCode >= 400 ? connection.getErrorStream() : connection.getInputStream();
-        StringBuilder responseBody = new StringBuilder();
-        if (Objects.nonNull(input)) {
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8))) {
-                String line;
-                while (Objects.nonNull(line = reader.readLine())) {
-                    responseBody.append(line);
-                }
-            }
-        }
-        return new HttpResponse<>(statusCode, responseBody.toString());
+        return client.send(builder.build(), HttpResponse.BodyHandlers.ofString());
     }
 
     private <T> T await(Future<T> future) throws Exception {
         return future.toCompletionStage().toCompletableFuture().get(10, TimeUnit.SECONDS);
-    }
-
-    private static final class HttpResponse<T> {
-
-        private final int statusCode;
-        private final T body;
-
-        private HttpResponse(int statusCode, T body) {
-            this.statusCode = statusCode;
-            this.body = body;
-        }
-
-        private int statusCode() {
-            return statusCode;
-        }
-
-        private T body() {
-            return body;
-        }
     }
 }

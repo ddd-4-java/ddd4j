@@ -1,8 +1,7 @@
 package io.ddd4j.sample.quarkus;
 
-import javax.enterprise.context.ApplicationScoped;
 import io.ddd4j.sample.quarkus.goods.web.GoodsQueryResource;
-import io.ddd4j.sample.quarkus.order.web.OrderResource;
+import javax.enterprise.context.ApplicationScoped;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -14,10 +13,7 @@ class ResourceScopeContractTest {
 
     @Test
     void resourcesAreApplicationScoped() {
-        for (Class<?> resource : new Class<?>[]{
-                GoodsQueryResource.class,
-                OrderResource.class}) {
-            assertTrue(resource.isAnnotationPresent(ApplicationScoped.class), resource.getName());
-        }
+        assertTrue(GoodsQueryResource.class.isAnnotationPresent(ApplicationScoped.class));
+        assertTrue(CatalogTradeResource.class.isAnnotationPresent(ApplicationScoped.class));
     }
 }

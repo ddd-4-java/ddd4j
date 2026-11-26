@@ -37,13 +37,37 @@ public class Goods extends AggregateRoot<Long> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * 商品标识。
+     */
     private Long id;
+    /**
+     * 商品编码。
+     */
     private String code;
+    /**
+     * 商品名称。
+     */
     private String name;
+    /**
+     * 商品价格。
+     */
     private BigDecimal price;
+    /**
+     * 库存数量。
+     */
     private Integer stock;
+    /**
+     * 商品状态。
+     */
     private GoodsStatus status;
+    /**
+     * 创建时间。
+     */
     private LocalDateTime createTime;
+    /**
+     * 更新时间。
+     */
     private LocalDateTime updateTime;
 
     @Override

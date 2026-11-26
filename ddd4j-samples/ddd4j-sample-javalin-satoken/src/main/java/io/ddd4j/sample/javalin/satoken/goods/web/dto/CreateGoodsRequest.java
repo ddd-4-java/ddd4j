@@ -14,13 +14,11 @@
  */
 package io.ddd4j.sample.javalin.satoken.goods.web.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.util.Objects;
-
 import java.math.BigDecimal;
+import java.util.Objects;
 
 /**
  * 创建商品 REST 请求。
@@ -47,8 +45,9 @@ public class CreateGoodsRequest {
 
     /**
      * 创建请求。
-     * @param code 商品编码
-     * @param name 商品名称
+     *
+     * @param code  商品编码
+     * @param name  商品名称
      * @param price 价格
      * @param stock 库存
      */
@@ -62,6 +61,7 @@ public class CreateGoodsRequest {
 
     /**
      * 读取商品编码。
+     *
      * @return 商品编码
      */
     @JsonProperty("code")
@@ -71,6 +71,7 @@ public class CreateGoodsRequest {
 
     /**
      * 读取商品名称。
+     *
      * @return 商品名称
      */
     @JsonProperty("name")
@@ -80,6 +81,7 @@ public class CreateGoodsRequest {
 
     /**
      * 读取价格。
+     *
      * @return 价格
      */
     @JsonProperty("price")
@@ -89,6 +91,7 @@ public class CreateGoodsRequest {
 
     /**
      * 读取库存。
+     *
      * @return 库存
      */
     @JsonProperty("stock")
@@ -98,6 +101,7 @@ public class CreateGoodsRequest {
 
     /**
      * 读取商品编码。
+     *
      * @return 商品编码
      */
     public String getCode() {
@@ -106,6 +110,7 @@ public class CreateGoodsRequest {
 
     /**
      * 设置商品编码。
+     *
      * @param code 商品编码
      */
     public void setCode(String code) {
@@ -114,6 +119,7 @@ public class CreateGoodsRequest {
 
     /**
      * 读取商品名称。
+     *
      * @return 商品名称
      */
     public String getName() {
@@ -122,6 +128,7 @@ public class CreateGoodsRequest {
 
     /**
      * 设置商品名称。
+     *
      * @param name 商品名称
      */
     public void setName(String name) {
@@ -130,6 +137,7 @@ public class CreateGoodsRequest {
 
     /**
      * 读取价格。
+     *
      * @return 价格
      */
     public BigDecimal getPrice() {
@@ -138,6 +146,7 @@ public class CreateGoodsRequest {
 
     /**
      * 设置价格。
+     *
      * @param price 价格
      */
     public void setPrice(BigDecimal price) {
@@ -146,6 +155,7 @@ public class CreateGoodsRequest {
 
     /**
      * 读取库存。
+     *
      * @return 库存
      */
     public Integer getStock() {
@@ -154,6 +164,7 @@ public class CreateGoodsRequest {
 
     /**
      * 设置库存。
+     *
      * @param stock 库存
      */
     public void setStock(Integer stock) {
@@ -162,6 +173,7 @@ public class CreateGoodsRequest {
 
     /**
      * 判断对象是否可参与值比较。
+     *
      * @param other 待比较对象
      * @return 是否为同类请求
      */

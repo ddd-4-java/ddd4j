@@ -50,8 +50,8 @@ public final class RbacConfig {
     /**
      * 预置 RBAC 演示数据。
      *
-     * @param userRepository 用户仓储
-     * @param roleRepository 角色仓储
+     * @param userRepository       用户仓储
+     * @param roleRepository       角色仓储
      * @param permissionRepository 权限仓储
      */
     public static void initRbacData(UserRepository userRepository,

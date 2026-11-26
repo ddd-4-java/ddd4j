@@ -1,0 +1,9 @@
+micronaut:
+  application:
+    name: ddd4j-sample-micronaut-satoken
+  server:
+    port: 8085
+ddd4j:
+  web:
+    default-authentication-mode: DISABLED
+    idempotency-enabled: false

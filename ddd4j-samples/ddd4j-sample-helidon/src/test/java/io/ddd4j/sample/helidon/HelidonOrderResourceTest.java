@@ -16,78 +16,71 @@ package io.ddd4j.sample.helidon;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.helidon.microprofile.server.Server;
 import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.AfterAll;
+import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Testcontainers
 class HelidonOrderResourceTest {
-
+    @Container
+    static final MySQLContainer<?> MYSQL = new MySQLContainer<>("mysql:8.0.36");
+    private static WebTarget target;
+    private static io.helidon.microprofile.server.Server server;
+    private static javax.ws.rs.client.Client client;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private static Server server;
-    private static Client httpClient;
-    private static WebTarget target;
-
-    @BeforeAll
-    static void startServer() {
-        System.setProperty("ddd4j.web.public-paths", "/api/auth/**");
-        server = Server.builder().host("127.0.0.1").port(0)
-                .addApplication(new HelidonOrderApplication()).build().start();
-        httpClient = ClientBuilder.newClient();
-        target = httpClient.target("http://127.0.0.1:" + server.port());
+    @org.junit.jupiter.api.BeforeAll
+    static void startRequiredProduct() {
+        System.setProperty("ddd4j.web.authentication-mode", "REQUIRED");
+        server = HelidonOrderApplication.start(0, NativeBasicOrderTest.catalog(MYSQL));
+        client = javax.ws.rs.client.ClientBuilder.newClient();
+        target = client.target("http://127.0.0.1:" + server.port());
     }
 
-    @AfterAll
-    static void stopServer() {
-        if (httpClient != null) {
-            httpClient.close();
+    @org.junit.jupiter.api.AfterAll
+    static void stopRequiredProduct() {
+        if (Objects.nonNull(client)) {
+            client.close();
         }
-        if (server != null) {
+        if (Objects.nonNull(server)) {
             server.stop();
         }
-        System.clearProperty("ddd4j.web.public-paths");
+        System.clearProperty("ddd4j.web.authentication-mode");
     }
 
     @Test
     void shouldRunSharedOrderUseCasesThroughHelidonHttp() throws Exception {
+        try (Response anonymous = request("GET", "/api/orders/HELIDON-001", null, null)) {
+            assertThat(anonymous.getStatus()).isEqualTo(401);
+        }
         String token = issueToken();
-        Response create = request("POST", "/api/orders", token,
-                "{\"orderNo\":\"HELIDON-001\",\"buyerId\":\"buyer-1\",\"buyerName\":\"Alice\"}");
-        String createBody = readAndClose(create);
-        assertThat(create.getStatus()).withFailMessage(createBody).isEqualTo(201);
-        String orderId = objectMapper.readTree(createBody).path("data").path("id").asText();
-        assertThat(orderId).withFailMessage(createBody).isNotBlank();
-
-        Response line = request("POST", "/api/orders/" + orderId + "/lines", token,
-                "{\"goodsId\":\"goods-1\",\"goodsName\":\"DDD Book\",\"quantity\":2,\"unitPrice\":59.90}");
-        String lineBody = readAndClose(line);
-        assertThat(line.getStatus()).withFailMessage(lineBody).isEqualTo(200);
-        assertThat(objectMapper.readTree(lineBody).path("data").path("totalAmount").decimalValue())
-                .isEqualByComparingTo("119.80");
-
-        Response missingKey = request("POST", "/api/orders/" + orderId + "/pay", token, null);
-        String missingKeyBody = readAndClose(missingKey);
-        assertThat(missingKey.getStatus()).withFailMessage(missingKeyBody).isEqualTo(400);
-
-        Invocation.Builder payment = target.path("/api/orders/" + orderId + "/pay").request()
-                .header("Authorization", "Bearer " + token)
-                .header("Idempotency-Key", "helidon-payment-001");
-        Response paid = payment.post(Entity.entity("", MediaType.APPLICATION_JSON_TYPE));
-        String paidBody = readAndClose(paid);
-        assertThat(paid.getStatus()).withFailMessage(paidBody).isEqualTo(200);
-        assertThat(objectMapper.readTree(paidBody).path("data").path("status").asText()).isEqualTo("PAID");
+        try (Response goods = request("POST", "/api/goods/BOOK", token, "{\"spuName\":\"Book\",\"skuCode\":\"S1\",\"skuName\":\"Edition\",\"shopId\":7,\"salePriceCent\":5990}\n")) {
+            assertThat(goods.getStatus()).isEqualTo(201);
+        }
+        String orderPath = "/api/orders/HELIDON-001";
+        try (Response order = request("POST", orderPath, token, "{\"shopId\":7,\"items\":[{\"skuCode\":\"S1\",\"quantity\":2}]}\n")) {
+            assertThat(order.getStatus()).isEqualTo(201);
+            assertThat(objectMapper.readTree(order.readEntity(String.class)).path("grossAmountCent").asLong())
+                    .isEqualTo(11980);
+        }
+        try (Response missing = request("POST", orderPath + "/payment", token, "{}")) {
+            assertThat(missing.getStatus()).isEqualTo(400);
+        }
+        try (Response paid = request("POST", orderPath + "/payment", token, "{\"paidAmountCent\":11980}")) {
+            assertThat(paid.getStatus()).isEqualTo(200);
+            assertThat(objectMapper.readTree(paid.readEntity(String.class)).path("orderState").asText())
+                    .isEqualTo("CONFIRMED");
+        }
     }
 
     private String issueToken() throws Exception {
@@ -101,7 +94,7 @@ class HelidonOrderResourceTest {
     }
 
     private Response request(String method, String path, String token, String body) {
-        Invocation.Builder builder = target.path(path).request();
+        Invocation.Builder builder = target.path(path).request().header("X-Tenant-Id", "helidon-auth");
         if (Objects.nonNull(token)) {
             builder.header("Authorization", "Bearer " + token);
         }
@@ -111,7 +104,7 @@ class HelidonOrderResourceTest {
     }
 
     private String readAndClose(Response response) {
-        try (Response closeable = response) {
+        try (Response active = response) {
             return response.readEntity(String.class);
         }
     }

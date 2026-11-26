@@ -49,6 +49,9 @@ public class GoodsQueryParameters {
     @QueryParam("orderBys")
     private String orderBys;
 
+    /**
+     * @return 根据 HTTP 参数构造的商品查询对象
+     */
     public GoodsQuery toQuery() {
         GoodsQuery query = new GoodsQuery()
                 .setCode(code)

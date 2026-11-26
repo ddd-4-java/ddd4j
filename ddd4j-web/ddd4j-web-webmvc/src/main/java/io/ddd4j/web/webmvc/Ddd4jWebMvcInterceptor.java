@@ -27,6 +27,7 @@ import io.ddd4j.web.core.context.WebRequestData;
 import io.ddd4j.web.core.context.WebRequestLifecycle;
 import io.ddd4j.web.core.version.ApiVersion;
 import io.ddd4j.web.webmvc.interceptor.ApiVersionWebInterceptor;
+import javax.servlet.DispatcherType;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -87,6 +88,9 @@ public final class Ddd4jWebMvcInterceptor implements HandlerInterceptor {
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        if (request.getDispatcherType() == DispatcherType.ASYNC) {
+            return true;
+        }
         // OTel: 提取上游 TraceContext 并开启 SERVER span
         Map<String, String> headers = extractHeaders(request);
         Object span = WebOtelSupport.startServerSpan(request.getMethod(), request.getRequestURI(), headers);

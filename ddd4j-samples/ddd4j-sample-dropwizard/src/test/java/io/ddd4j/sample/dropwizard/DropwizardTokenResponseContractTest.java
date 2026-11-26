@@ -5,14 +5,14 @@
  */
 package io.ddd4j.sample.dropwizard;
 
-import io.ddd4j.sample.dropwizard.DropwizardOrderResource.TokenResponse;
+import io.ddd4j.sample.dropwizard.AuthenticationResource.TokenResponse;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-/** 三线令牌响应对象的公开 Bean 与值语义契约。 */
+/**
+ * 三线令牌响应对象的公开 Bean 与值语义契约。
+ */
 class DropwizardTokenResponseContractTest {
 
     @Test

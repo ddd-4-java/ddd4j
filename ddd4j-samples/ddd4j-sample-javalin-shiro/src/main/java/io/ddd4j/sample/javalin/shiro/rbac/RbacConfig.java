@@ -14,6 +14,8 @@
  */
 package io.ddd4j.sample.javalin.shiro.rbac;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableList;
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.subject.SubjectDataProvider;
 import io.ddd4j.sample.javalin.shiro.rbac.domain.Role;
@@ -22,7 +24,10 @@ import io.ddd4j.sample.javalin.shiro.rbac.repository.InMemoryRoleRepository;
 import io.ddd4j.sample.javalin.shiro.rbac.repository.InMemoryUserRepository;
 import io.ddd4j.sample.javalin.shiro.rbac.service.RbacService;
 
-import java.util.*;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * RBAC 初始化配置：演示账号/角色/权限种子数据 + 注册 SubjectDataProvider。
@@ -57,23 +62,28 @@ public final class RbacConfig {
         // ==================== 种子角色 ====================
         // admin：拥有全部权限
         rbacService.saveRole(new Role("admin", "管理员",
-                new LinkedHashSet<>(Arrays.asList("user:list", "user:add", "user:update", "user:delete",
+                new LinkedHashSet<>(ImmutableList.of("user:list", "user:add", "user:update", "user:delete",
                         "order:create", "order:pay", "order:ship", "order:cancel",
                         "permission:list", "role:list"))));
         // user：拥有基本业务权限
         rbacService.saveRole(new Role("user", "普通用户",
-                new LinkedHashSet<>(Arrays.asList("user:list", "order:create", "order:pay"))));
+                new LinkedHashSet<>(ImmutableList.of("user:list", "order:create", "order:pay"))));
+
+        rbacService.saveRole(new Role("reader", "只读用户",
+                new LinkedHashSet<>(ImmutableList.of("order:read"))));
 
         // ==================== 种子用户 ====================
         // admin：admin 角色
         rbacService.saveUser(new User("admin", "admin123", "管理员",
-                Collections.singleton("admin"), Collections.emptySet()));
+                ImmutableSet.of("admin"), ImmutableSet.of()));
         // zhangsan：user 角色（业务授权：直接拥有 order:pay）
         rbacService.saveUser(new User("zhangsan", "pass123", "张三",
-                Collections.singleton("user"), Collections.singleton("order:pay")));
+                ImmutableSet.of("user"), ImmutableSet.of("order:pay")));
         // lisi：user 角色（无额外权限）
         rbacService.saveUser(new User("lisi", "pass123", "李四",
-                Collections.singleton("user"), Collections.emptySet()));
+                ImmutableSet.of("user"), ImmutableSet.of()));
+        rbacService.saveUser(new User("reader", "sample-password", "订单只读用户",
+                ImmutableSet.of("reader"), ImmutableSet.of()));
     }
 
     /**
@@ -93,30 +103,30 @@ public final class RbacConfig {
             @Override
             public List<String> getPermissionList(AuthPrincipal principal) {
                 if (Objects.isNull(principal)) {
-                    return Collections.emptyList();
+                    return ImmutableList.of();
                 }
                 Object loginId = principal.getLoginId();
                 if (Objects.isNull(loginId)) {
-                    return Collections.emptyList();
+                    return ImmutableList.of();
                 }
                 return userRepository.findByLoginId(String.valueOf(loginId))
                         .map(rbacServicePerms(roleRepository))
-                        .orElse(Collections.emptyList());
+                        .orElse(ImmutableList.of());
             }
 
             @Override
             public List<String> getRoleList(AuthPrincipal principal) {
                 if (Objects.isNull(principal)) {
-                    return Collections.emptyList();
+                    return ImmutableList.of();
                 }
                 Object loginId = principal.getLoginId();
                 if (Objects.isNull(loginId)) {
-                    return Collections.emptyList();
+                    return ImmutableList.of();
                 }
                 return userRepository.findByLoginId(String.valueOf(loginId))
                         .map(User::roles)
-                        .map(roles -> (List<String>) Collections.unmodifiableList(new ArrayList<>(roles)))
-                        .orElse(Collections.emptyList());
+                        .map(roles -> (List<String>) ImmutableList.copyOf(roles))
+                        .orElse(ImmutableList.of());
             }
         };
     }
@@ -131,7 +141,7 @@ public final class RbacConfig {
                 roleRepository.findByCode(roleCode)
                         .ifPresent(role -> allPerms.addAll(role.permissions()));
             }
-            return Collections.unmodifiableList(new ArrayList<>(allPerms));
+            return ImmutableList.copyOf(allPerms);
         };
     }
 
