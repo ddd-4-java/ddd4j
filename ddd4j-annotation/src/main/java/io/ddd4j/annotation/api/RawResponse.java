@@ -19,7 +19,10 @@ import io.ddd4j.annotation.Contract;
 import java.lang.annotation.*;
 
 /**
- * 原生响应，注解了的Controller方法将不受BaseRestControllerAdvice控制，即不会在外自动包装R对象
+ * 标记控制器方法跳过统一的 {@code R} 响应包装。
+ *
+ * <p>由 Spring MVC 适配层的 {@code GlobalResponseRAdvice} 识别，仅跳过该处理器的响应包装；
+ * 返回值仍由框架正常序列化，不影响其他响应处理器或异常处理逻辑。</p>
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
