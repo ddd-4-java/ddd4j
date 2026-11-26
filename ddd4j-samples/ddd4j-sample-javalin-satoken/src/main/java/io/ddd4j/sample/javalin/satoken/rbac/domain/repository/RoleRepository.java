@@ -34,6 +34,9 @@ public interface RoleRepository extends Repository<Role, String> {
 
     /**
      * 按角色编码查找。
+     *
+     * @param roleCode 角色编码
+     * @return 匹配的角色，不存在时为空
      */
     Optional<Role> findByRoleCode(String roleCode);
 }

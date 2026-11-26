@@ -14,13 +14,11 @@
  */
 package io.ddd4j.sample.javalin.shiro.goods.web.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.util.Objects;
-
 import java.math.BigDecimal;
+import java.util.Objects;
 
 /**
  * 更新商品 REST 请求。
@@ -43,7 +41,8 @@ public class UpdateGoodsRequest {
 
     /**
      * 创建请求。
-     * @param name 商品名称
+     *
+     * @param name  商品名称
      * @param price 价格
      */
     @JsonCreator()
@@ -54,6 +53,7 @@ public class UpdateGoodsRequest {
 
     /**
      * 读取商品名称。
+     *
      * @return 商品名称
      */
     @JsonProperty("name")
@@ -63,6 +63,7 @@ public class UpdateGoodsRequest {
 
     /**
      * 读取价格。
+     *
      * @return 价格
      */
     @JsonProperty("price")
@@ -72,6 +73,7 @@ public class UpdateGoodsRequest {
 
     /**
      * 读取商品名称。
+     *
      * @return 商品名称
      */
     public String getName() {
@@ -80,6 +82,7 @@ public class UpdateGoodsRequest {
 
     /**
      * 设置商品名称。
+     *
      * @param name 商品名称
      */
     public void setName(String name) {
@@ -88,6 +91,7 @@ public class UpdateGoodsRequest {
 
     /**
      * 读取价格。
+     *
      * @return 价格
      */
     public BigDecimal getPrice() {
@@ -96,6 +100,7 @@ public class UpdateGoodsRequest {
 
     /**
      * 设置价格。
+     *
      * @param price 价格
      */
     public void setPrice(BigDecimal price) {
@@ -104,6 +109,7 @@ public class UpdateGoodsRequest {
 
     /**
      * 判断对象是否可参与值比较。
+     *
      * @param other 待比较对象
      * @return 是否为同类请求
      */

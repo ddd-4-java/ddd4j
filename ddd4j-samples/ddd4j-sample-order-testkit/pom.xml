@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.1.0">
+<project xmlns="http://maven.apache.org/POM/4.0.0">
     <modelVersion>4.1.0</modelVersion>
     <parent>
         <groupId>io.ddd4j</groupId>
         <artifactId>ddd4j-samples</artifactId>
         <version>3.0.x.20260630-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>ddd4j-sample-order-testkit</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>Reusable Order contract fixtures for every runtime sample.</description>
+    <description>Reusable HTTP transport and authentication assertions for runtime samples.</description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
     <properties>
         <maven.deploy.skip>false</maven.deploy.skip>
@@ -16,7 +17,7 @@
     <dependencies>
         <dependency>
             <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-sample-order-local</artifactId>
+            <artifactId>ddd4j-kit</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>

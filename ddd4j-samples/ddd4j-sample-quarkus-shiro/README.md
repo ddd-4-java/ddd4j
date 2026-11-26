@@ -1,16 +1,40 @@
 # ddd4j-sample-quarkus-shiro
 
+## 当前商品交易入口
+
+此模块以 Shiro 方式运行共享商品交易。先按[示例总览](../README.md#启动默认订单示例)配置 MySQL。以下命令从仓库根目录运行，使用实际 Maven 版本替换 `<version>`。
+
+```bash
+module=ddd4j-samples/ddd4j-sample-quarkus-shiro
+./mvnw -pl "$module" -am -DskipTests -Dmaven.javadoc.skip=true package
+java -jar "$module/target/quarkus-app/quarkus-run.jar"
+```
+
+业务请求携带 `X-Tenant-Id`。商品地址为 `/orders/catalog/goods/{spuCode}`，订单地址为 `/orders/catalog/orders/{orderNo}`。支付、取消和履约分别使用订单子路径 `/payment`、`/cancel`、`/fulfill`。
+
+本地演示登录使用 `POST /auth/login`，请求体为 `{"username":"admin","password":"123456"}`。将令牌放入 `Authorization: Bearer <token>` 请求头。
+
+<details>
+<summary>商品交易迁移前的说明</summary>
+
 本示例在 Quarkus 中组合 ddd4j 的订单、商品和 RBAC 场景，鉴权实现为 Shiro。三条 ddd4j 线使用各自的 JDK、Quarkus 与第三方依赖；本页描述三线共同的 HTTP 和业务行为。实际依赖版本以本线 pom.xml 和根 BOM 为准。
 
 ## 运行与登录
 
-从仓库根目录，使用该分支对应的 JDK 运行 HTTP/RBAC 测试：
+从仓库根目录，使用本线 JDK 运行 HTTP 和 RBAC 测试。
 
 ~~~bash
 ./mvnw -pl ddd4j-samples/ddd4j-sample-quarkus-shiro -am test
 ~~~
 
-应用配置端口为 8084。应用启动后，可使用 RbacConfig 创建的样例账号 admin/123456 登录；POST /auth/login 接受 JSON 用户名和密码，响应顶层包含 token：
+构建并启动本地示例：
+
+~~~bash
+./mvnw -pl ddd4j-samples/ddd4j-sample-quarkus-shiro -am package
+java -jar ddd4j-samples/ddd4j-sample-quarkus-shiro/target/quarkus-app/quarkus-run.jar
+~~~
+
+应用配置端口为 8084。应用启动后，可使用 RbacConfig 创建的样例账号 admin/123456 登录；POST /auth/login 接受 JSON 用户名和密码，响应顶层含有 `token`。
 
 ~~~bash
 curl -s -X POST http://localhost:8084/auth/login \
@@ -56,6 +80,8 @@ Shiro 资源显式调用 RbacService 的登录、角色和权限校验；两种�
 
 **curl 示例**
 
+将登录响应中的令牌赋给 `TOKEN`，用创建订单返回的 `data.id` 替换 `{id}`。
+
 ```bash
 # 1) 创建商品
 curl -X POST 'http://localhost:8084/api/goods' \
@@ -64,21 +90,25 @@ curl -X POST 'http://localhost:8084/api/goods' \
 
 # 2) 创建草稿订单
 curl -X POST 'http://localhost:8084/orders' \
+  -H "Authorization: Bearer $TOKEN" \
   -H 'Content-Type: application/json' \
   -d '{"orderNo":"O-2026-0001","buyerId":"10001","buyerName":"Alice"}'
 
 # 3) 添加订单行
 curl -X POST 'http://localhost:8084/orders/{id}/lines' \
+  -H "Authorization: Bearer $TOKEN" \
   -H 'Content-Type: application/json' \
   -d '{"goodsId":"1001","goodsName":"iPhone 15","quantity":1,"unitPrice":5999.00}'
 
 # 4) 支付 → 发货；取消使用另一笔未发货订单
-curl -X POST 'http://localhost:8084/orders/{id}/pay'
-curl -X POST 'http://localhost:8084/orders/{id}/ship'
+curl -X POST 'http://localhost:8084/orders/{id}/pay' \
+  -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json'
+curl -X POST 'http://localhost:8084/orders/{id}/ship' \
+  -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json'
 # 另一笔未发货订单可调用 POST /orders/{id}/cancel
 
 # 5) 折扣预览
-curl 'http://localhost:8084/orders/{id}/discount'
+curl 'http://localhost:8084/orders/{id}/discount' -H "Authorization: Bearer $TOKEN"
 
 # 6) 商品分页查询
 curl 'http://localhost:8084/api/goods/page?current=1&size=10&status=ON_SALE&orderBys=price_DESC'
@@ -98,3 +128,13 @@ curl 'http://localhost:8084/api/goods/page?current=1&size=10&status=ON_SALE&orde
 - [ddd4j 主项目](https://github.com/ddd-4-java/ddd4j)
 - [ddd4j-auth 模块](../../ddd4j-auth/pom.xml)
 - [SubjectKit 源码](../../ddd4j-core/src/main/java/io/ddd4j/core/util/SubjectKit.java)
+
+## S03 原生共享订单入口
+
+原 `/orders`、Goods、RBAC 路由和 JSON DTO 保留。实际 CDI 入口复用 `ddd4j-sample-order-application` 与 `ddd4j-sample-order-local`，订单内存存储仅供演示，不证明持久化；旧直接构造器保留供既有消费者/测试使用。查询仍返回原完整明细和币种，折扣规则沿用原领域服务。
+
+匿名 `GET /orders` 列表可直接访问，其余订单请求需要原生登录；写操作需要 `order:pay`，取消需要 `order:cancel`。权限基于原生已匹配资源方法，拒绝发生在业务写入前。`admin/123456` 有写/取消权限，`user/123456` 默认只读，演示账户仅用于本地样例。实际登录、角色/权限、退出令牌失效均由现有 native 引擎处理。
+
+Quarkus 1 使用 RESTEasy Classic 的请求完成回调，Quarkus 3 使用 Quarkus REST 的请求完成回调。两线的响应过滤器及完成回调按请求所有权释放自身绑定的 Subject，并恢复请求前的上下文。现有验证覆盖同步 HTTP、鉴权拒绝、退出失效和应用关闭。各版本的断连与运行验证记录见 [R14 实施计划](../../docs/superpowers/plans/2026-10-10-three-line-product-convergence.md#r14三线存储和多平台完整验收)。
+
+</details>

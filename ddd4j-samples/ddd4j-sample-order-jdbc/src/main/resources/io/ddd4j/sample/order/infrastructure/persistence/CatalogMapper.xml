@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.ddd4j.sample.order.infrastructure.persistence.CatalogMapper">
+    <resultMap id="offer" type="io.ddd4j.sample.order.domain.model.GoodsSkuOffer">
+        <constructor>
+            <idArg column="sku_id" javaType="java.lang.Long"/>
+            <arg column="spu_name" javaType="java.lang.String"/>
+            <arg column="sku_name" javaType="java.lang.String"/>
+            <arg column="sale_price_cent" javaType="java.lang.Long"/>
+        </constructor>
+    </resultMap>
+
+    <select id="offer" resultMap="offer">
+        SELECT s.id AS sku_id, g.spu_name, s.sku_name, s.sale_price_cent
+        FROM goods_sku s JOIN goods_spu g ON g.tenant_id=s.tenant_id AND g.id=s.spu_id
+        WHERE s.tenant_id=#{tenant} AND s.sku_code=#{skuCode} AND s.deleted=0 AND g.deleted=0
+          AND g.is_on_sale=1 AND s.stock_mode='UNLIMITED' AND s.sale_price_cent IS NOT NULL
+          AND JSON_CONTAINS(g.applicable_shop_ids, JSON_QUOTE(CAST(#{shopId} AS CHAR)))
+        FOR SHARE
+    </select>
+</mapper>

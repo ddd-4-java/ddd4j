@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.1.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.1.0 http://maven.apache.org/xsd/maven-4.1.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.1.0</modelVersion>
 
     <parent>
         <groupId>io.ddd4j</groupId>
         <artifactId>ddd4j-samples</artifactId>
         <version>3.0.x.20260630-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>ddd4j-sample-javalin</artifactId>
@@ -18,12 +19,13 @@
     <dependencies>
         <dependency>
             <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-sample-order-application</artifactId>
+            <artifactId>ddd4j-runtime-guice</artifactId>
             <version>${revision}</version>
         </dependency>
+        <dependency><groupId>io.ddd4j</groupId><artifactId>ddd4j-sample-order-testkit</artifactId><version>${revision}</version><scope>test</scope></dependency>
         <dependency>
             <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-sample-order-jdbc</artifactId>
+            <artifactId>ddd4j-sample-order-start</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
@@ -41,6 +43,10 @@
             <artifactId>slf4j-simple</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
         <!-- Javalin 7 的 JavalinJackson3 依赖 Jackson 3（tools.jackson）：2.0.x 线整体为
          Jackson 2（com.fasterxml，DDD 事件序列化走 core EventPayloadSerializer），
          仅 Javalin HTTP 层的 JSON 编解码用 J3，双 Jackson 共存是本线既定形态。
@@ -49,30 +55,6 @@
             <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
-        <!-- jackson-annotations 是 Jackson 2/3 共用的注解包（com.fasterxml.jackson.annotation）：
-             tools.jackson jackson-bom 3.2.1 要求 2.22（新增 @JsonApplyView，序列化时按需加载），
-             而上游若干 BOM 会把 annotations 压到 2.21，导致 JavalinJackson3 运行期
-             ClassNotFoundException: com.fasterxml.jackson.annotation.JsonApplyView。
-             显式声明直依赖（版本优先于 dependencyManagement），Jackson 2 向后兼容新 annotations。 -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-database-postgresql</artifactId>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -80,7 +62,7 @@
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>postgresql</artifactId>
+            <artifactId>mysql</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

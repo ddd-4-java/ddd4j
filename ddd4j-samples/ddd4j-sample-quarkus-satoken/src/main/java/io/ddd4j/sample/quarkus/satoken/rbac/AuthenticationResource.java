@@ -14,24 +14,21 @@
  */
 package io.ddd4j.sample.quarkus.satoken.rbac;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.util.Objects;
-
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.annotation.SaMode;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.core.api.R;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 鉴权业务资源（JAX-RS）：登录、登出、当前用户、权限 / 角色校验。
@@ -64,6 +61,9 @@ public class AuthenticationResource {
 
     /**
      * 登录：用户名 + 密码，签发 Token 并返回 Principal。
+     *
+     * @param request 请求数据
+     * @return 令牌与当前主体信息
      */
     @POST
     @Path("/login")
@@ -80,6 +80,8 @@ public class AuthenticationResource {
 
     /**
      * 登出。
+     *
+     * @return 退出结果
      */
     @POST
     @Path("/logout")
@@ -91,6 +93,8 @@ public class AuthenticationResource {
 
     /**
      * 当前登录用户信息。
+     *
+     * @return 当前主体信息
      */
     @GET
     @Path("/me")
@@ -101,6 +105,8 @@ public class AuthenticationResource {
 
     /**
      * 登录状态。
+     *
+     * @return 认证状态信息
      */
     @GET
     @Path("/status")
@@ -112,6 +118,9 @@ public class AuthenticationResource {
 
     /**
      * 运行时权限校验（手动调用 SubjectKit.hasPermission）。
+     *
+     * @param permission 权限编码
+     * @return 权限检查结果
      */
     @GET
     @Path("/check/permission")
@@ -125,6 +134,9 @@ public class AuthenticationResource {
 
     /**
      * 运行时角色校验（手动调用 SubjectKit.hasRole）。
+     *
+     * @param role 角色编码
+     * @return 角色检查结果
      */
     @GET
     @Path("/check/role")
@@ -140,6 +152,8 @@ public class AuthenticationResource {
 
     /**
      * 业务侧 - 查询用户列表：需要登录 + {@code user:list} 权限。
+     *
+     * @return 用户列表
      */
     @GET
     @Path("/users")
@@ -151,6 +165,9 @@ public class AuthenticationResource {
 
     /**
      * 业务侧 - 支付订单：需要登录 + {@code order:pay} 权限。
+     *
+     * @param id 资源标识
+     * @return 支付结果
      */
     @POST
     @Path("/orders/{id}/pay")
@@ -165,6 +182,9 @@ public class AuthenticationResource {
 
     /**
      * 业务侧 - 删除用户：需要登录 + {@code admin} 角色 + {@code user:delete} 权限（AND 模式）。
+     *
+     * @param id 资源标识
+     * @return 删除结果
      */
     @DELETE
     @Path("/users/{id}")
@@ -187,17 +207,33 @@ public class AuthenticationResource {
 
         private final String password;
 
+        /**
+         * 创建登录请求。
+         *
+         * @param username 用户名
+         * @param password 密码
+         */
         @JsonCreator()
         public LoginRequest(@JsonProperty("username") String username, @JsonProperty("password") String password) {
             this.username = username;
             this.password = password;
         }
 
+        /**
+         * 读取用户名。
+         *
+         * @return 用户名
+         */
         @JsonProperty("username")
         public String username() {
             return username;
         }
 
+        /**
+         * 读取密码。
+         *
+         * @return 密码
+         */
         @JsonProperty("password")
         public String password() {
             return password;

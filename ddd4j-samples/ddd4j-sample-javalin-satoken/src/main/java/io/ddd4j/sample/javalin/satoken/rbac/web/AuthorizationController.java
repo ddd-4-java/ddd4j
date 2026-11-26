@@ -14,21 +14,17 @@
  */
 package io.ddd4j.sample.javalin.satoken.rbac.web;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-
-import java.util.Objects;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.core.api.R;
 import io.ddd4j.sample.javalin.satoken.rbac.application.RbacService;
 import io.ddd4j.sample.javalin.satoken.rbac.domain.model.Permission;
 import io.ddd4j.sample.javalin.satoken.rbac.domain.model.Role;
 import io.ddd4j.sample.javalin.satoken.rbac.domain.model.User;
 import io.javalin.apibuilder.EndpointGroup;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.*;
 
@@ -59,6 +55,7 @@ public class AuthorizationController {
      *
      * @param rbacService RBAC 服务
      */
+    @com.google.inject.Inject
     public AuthorizationController(RbacService rbacService) {
         this.rbacService = Objects.requireNonNull(rbacService, "rbacService must not be null");
     }
@@ -214,7 +211,7 @@ public class AuthorizationController {
         /**
          * 创建创建用户请求。
          *
-         * @param userId 用户标识
+         * @param userId   用户标识
          * @param username 用户名
          * @param password 密码
          * @param realName 真实姓名
@@ -290,7 +287,7 @@ public class AuthorizationController {
          *
          * @param realName 真实姓名
          * @param password 密码
-         * @param status 状态
+         * @param status   状态
          */
         @JsonCreator()
         public UpdateUserRequest(@JsonProperty("realName") String realName, @JsonProperty("password") String password, @JsonProperty("status") User.Status status) {
@@ -384,9 +381,9 @@ public class AuthorizationController {
         /**
          * 创建创建角色请求。
          *
-         * @param roleId 角色标识
-         * @param roleCode 角色编码
-         * @param roleName 角色名称
+         * @param roleId      角色标识
+         * @param roleCode    角色编码
+         * @param roleName    角色名称
          * @param description 描述
          */
         @JsonCreator()
@@ -457,9 +454,9 @@ public class AuthorizationController {
         /**
          * 创建更新角色请求。
          *
-         * @param roleName 角色名称
+         * @param roleName    角色名称
          * @param description 描述
-         * @param status 状态
+         * @param status      状态
          */
         @JsonCreator()
         public UpdateRoleRequest(@JsonProperty("roleName") String roleName, @JsonProperty("description") String description, @JsonProperty("status") Role.Status status) {
@@ -553,10 +550,10 @@ public class AuthorizationController {
         /**
          * 创建创建权限请求。
          *
-         * @param permissionId 权限标识
+         * @param permissionId   权限标识
          * @param permissionCode 权限编码
          * @param permissionName 权限名称
-         * @param module 所属模块
+         * @param module         所属模块
          */
         @JsonCreator()
         public CreatePermissionRequest(@JsonProperty("permissionId") String permissionId, @JsonProperty("permissionCode") String permissionCode, @JsonProperty("permissionName") String permissionName, @JsonProperty("module") String module) {
@@ -627,8 +624,8 @@ public class AuthorizationController {
          * 创建更新权限请求。
          *
          * @param permissionName 权限名称
-         * @param module 所属模块
-         * @param status 状态
+         * @param module         所属模块
+         * @param status         状态
          */
         @JsonCreator()
         public UpdatePermissionRequest(@JsonProperty("permissionName") String permissionName, @JsonProperty("module") String module, @JsonProperty("status") Permission.Status status) {

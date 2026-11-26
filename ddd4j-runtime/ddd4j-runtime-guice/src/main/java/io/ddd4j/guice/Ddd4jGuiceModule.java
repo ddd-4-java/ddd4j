@@ -60,6 +60,26 @@ import java.util.Objects;
 @Slf4j
 public class Ddd4jGuiceModule extends AbstractModule {
 
+    /**
+     * 创建基础运行时；仅安装核心 SPI 和空闲命令总线，不安装投影、存储或 ORM。
+     * 命令执行器仍通过现有 Ddd4jCommandGuiceModule 规则发现。
+     *
+     * @return 基础 Guice 模块
+     */
+    public static com.google.inject.Module basic() {
+        return new AbstractModule() {
+            @Override
+            protected void configure() {
+                bind(Ddd4jGuiceRuntime.class).asEagerSingleton();
+                bind(DomainEventPublisher.class).to(GuiceDomainEventPublisher.class).in(Singleton.class);
+                bind(SubjectProvider.class).to(GuiceSubjectProvider.class).in(Singleton.class);
+                bind(I18nProvider.class).to(GuiceI18nProvider.class).in(Singleton.class);
+                bind(EventBus.class).toInstance(new EventBus());
+                install(new Ddd4jCommandGuiceModule());
+            }
+        };
+    }
+
     @Override
     protected void configure() {
         // 启动期注册并托管全局 SPI；应用关闭时可从 Injector 获取后调用 close()。

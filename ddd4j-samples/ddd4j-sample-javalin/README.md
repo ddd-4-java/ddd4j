@@ -1,8 +1,31 @@
 # ddd4j-sample-javalin
 
-ddd4j 在 **Javalin 框架**下的完整业务示例：在最小 SPI 注入演示之上， **额外**集成 **第二轨（Order 充血模型）** 与
-**第三轨（Goods Model/Query）** 两条 DDD 业务线，
-方便业务方在同一进程内对比两种建模风格。
+## 当前商品交易入口
+
+此模块以 普通 DDD 方式运行共享商品交易。先按[示例总览](../README.md#启动默认订单示例)配置 MySQL。以下命令从仓库根目录运行，使用实际 Maven 版本替换 `<version>`。
+
+```bash
+module=ddd4j-samples/ddd4j-sample-javalin
+./mvnw -pl "$module" -am -DskipTests -Dmaven.javadoc.skip=true -DincludeScope=runtime -Dmdep.outputFile=target/runtime-classpath.txt package dependency:build-classpath
+java -cp "$module/target/ddd4j-sample-javalin-<version>.jar:$(cat "$module/target/runtime-classpath.txt")" io.ddd4j.sample.javalin.JavalinSample
+```
+
+业务请求携带 `X-Tenant-Id`。商品地址为 `/api/goods/{spuCode}`，订单地址为 `/api/orders/{orderNo}`。支付、取消和履约分别使用订单子路径 `/payment`、`/cancel`、`/fulfill`。
+
+<details>
+<summary>商品交易迁移前的说明</summary>
+
+## 默认商品交易入口
+
+默认启动原生应用时，Flyway 先迁移专用 MySQL 库。应用随后提供商品、规格、订单及成交明细的读写示例。[商品交易的数据库配置、四个接口与验证命令](../README.md#启动默认订单示例)。
+
+## 兼容订单入口与组件示例
+
+显式调用 `JavalinSample.startBasic(port)`，装配共享 Order，并关闭认证。该入口使用内存存储，无需登录、CommandBus、事件存储、投影调度或 MQ。历史 `start(int)` 入口提供演示 Bearer 认证。`startJdbc(int, JdbcOrderSampleRuntime)` 接收已启动的 JDBC 运行实例，关闭应用句柄时一并停止 Outbox 工作器。
+
+`JavalinBasicContractTest` 通过真实匿名 HTTP 请求验证订单创建、添加订单行、支付和查询。`JavalinJdbcOrderIntegrationTest` 使用 PostgreSQL 验证持久化、发布重试和支付幂等。
+
+本模块包含两种 DDD 建模示例。兼容入口运行 **Order 充血模型**。单独装配 `GoodsController` 和商品仓储即可运行 **Goods Model/Query**，现有 `GoodsControllerTest` 演示了这组装配。
 
 ## 🎯 示例目标
 
@@ -15,20 +38,18 @@ ddd4j 在 **Javalin 框架**下的完整业务示例：在最小 SPI 注入演�
 ## 🚀 启动方式
 
 ```bash
-mvn exec:java
+mvn compile exec:java -Dexec.mainClass=io.ddd4j.sample.javalin.JavalinSample
 ```
 
-Javalin 监听端口 **7000**，启动后会打印：
+默认应用监听端口 **7000**。从仓库根目录运行商品交易验收。
 
-```
-[Bootstrap] DomainEventPublisher = NoOpDomainEventPublisher
-Javalin started on http://localhost:7000
-Try: curl http://localhost:7000/api/goods/page?current=1&size=10
+```bash
+python3 ddd4j-samples/scripts/check_catalog_trade.py http://localhost:7000
 ```
 
 ## 🔑 SPI 注入机制
 
-启动类 `JavalinSample` 演示了 **手动注入 4 个核心 SPI**：
+自行装配商品控制器时，可以参考下方的 SPI 注入和仓储注册片段。
 
 ```java
 public static void main(String[] args) {
@@ -81,7 +102,7 @@ DomainEventPublisher publisher = Contexts.injectOrThrow(
 Spring / Quarkus / Guice 需要独立 runtime 模块，因为它们要在容器启动期 **反射拿 SPI Bean**；
 Javalin 不存在容器抽象，所以也省掉了这一层。
 
-## 🚦 路由速查
+## 旧组件的路由速查
 
 ### 第二轨：Order 充血模型（`/api/orders`）
 
@@ -96,6 +117,8 @@ Javalin 不存在容器抽象，所以也省掉了这一层。
 | `GET`  | `/api/orders/by-no?orderNo=xxx` | 按订单编号查询 |
 
 ### 第三轨：Goods Model/Query（`/api/goods`）
+
+以下路由由单独装配的 `GoodsController` 提供。在本模块执行 `mvn -Dtest=GoodsControllerTest test` 可运行其 HTTP 用例。
 
 | HTTP     | 路径                                                | 用途         |
 |----------|-----------------------------------------------------|--------------|
@@ -125,7 +148,8 @@ curl -X POST http://localhost:7000/api/orders/{orderId}/lines \
      -d '{"goodsId":"P-001","goodsName":"iPhone 15","quantity":2,"unitPrice":5999.00}'
 
 # 3. 支付订单（状态机迁移 DRAFT → PAID；自动发布 OrderPaidEvent）
-curl -X POST http://localhost:7000/api/orders/{orderId}/pay
+curl -X POST http://localhost:7000/api/orders/{orderId}/pay \
+     -H "Idempotency-Key: sample-order-payment"
 
 # 4. 发货订单（状态机迁移 PAID → SHIPPED）
 curl -X POST http://localhost:7000/api/orders/{orderId}/ship
@@ -263,3 +287,5 @@ ddd4j-sample-javalin/
 - [`Contexts` 门面查找文档](../../ddd4j-core/src/main/java/io/ddd4j/core/context/Contexts.java)
 - [`SpiKeys` SPI 约定 key](../../ddd4j-core/src/main/java/io/ddd4j/core/constant/SpiKeys.java)
 - [`RepositoryRegistry` 仓储注册表](../../ddd4j-core/src/main/java/io/ddd4j/core/ddd/repository/RepositoryRegistry.java)
+
+</details>

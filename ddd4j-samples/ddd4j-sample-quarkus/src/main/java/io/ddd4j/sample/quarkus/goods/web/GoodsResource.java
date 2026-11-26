@@ -26,15 +26,7 @@ import io.ddd4j.sample.quarkus.goods.web.dto.UpdateGoodsRequest;
 import io.ddd4j.web.quarkus.TenantAwareResource;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -66,6 +58,7 @@ import java.util.Locale;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@io.quarkus.arc.properties.IfBuildProperty(name = "sample.goods.standalone", stringValue = "true")
 @Path("/goods")
 @Produces(MediaType.APPLICATION_JSON)
 @ApplicationScoped
@@ -73,7 +66,9 @@ public class GoodsResource extends TenantAwareResource {
 
     private final GoodsApplicationService applicationService;
 
-    /** @param applicationService 商品应用服务 */
+    /**
+     * @param applicationService 商品应用服务
+     */
     @Inject
     public GoodsResource(GoodsApplicationService applicationService) {
         this.applicationService = applicationService;

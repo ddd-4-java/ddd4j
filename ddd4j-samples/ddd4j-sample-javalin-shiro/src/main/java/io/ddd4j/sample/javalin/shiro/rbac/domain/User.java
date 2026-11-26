@@ -14,8 +14,6 @@
  */
 package io.ddd4j.sample.javalin.shiro.rbac.domain;
 
-import io.ddd4j.sample.javalin.shiro.rbac.service.RbacService;
-
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Objects;
@@ -25,7 +23,7 @@ import java.util.Set;
  * RBAC 用户聚合根。
  *
  * <p>用户通过 {@link #roles()} 持有的角色集合间接获得权限码集合（{@link #permissions()}）。
- * 权限码集合是 {@link RbacService} 派生计算的缓存视图，便于 {@link io.ddd4j.core.subject.SubjectDataProvider}
+ * 权限码集合是 {@code RbacService} 派生计算的缓存视图，便于 {@code SubjectDataProvider}
  * 直接读取。
  *
  * <p>本类在所有 7 个示例（Spring/Quarkus/Javalin × Sa-Token/Shiro/Security）中<b>完全一致</b>，
@@ -56,10 +54,25 @@ public class User {
      */
     private final Set<String> permissions;
 
+    /**
+     * 创建用户。
+     *
+     * @param loginId  登录标识
+     * @param password 密码
+     */
     public User(String loginId, String password) {
         this(loginId, password, null, Collections.emptySet(), Collections.emptySet());
     }
 
+    /**
+     * 创建用户。
+     *
+     * @param loginId     登录标识
+     * @param password    密码
+     * @param displayName 显示名称
+     * @param roles       角色编码集合
+     * @param permissions 权限编码集合
+     */
     public User(String loginId, String password, String displayName, Set<String> roles, Set<String> permissions) {
         this.loginId = Objects.requireNonNull(loginId, "loginId must not be null");
         this.password = Objects.requireNonNull(password, "password must not be null");
@@ -83,42 +96,50 @@ public class User {
     }
 
     /**
-     * loginId() 方法。
-     * @return 结果字符串。
+     * 读取登录标识。
+     *
+     * @return 登录标识
      */
     public String loginId() {
         return loginId;
     }
 
     /**
-     * password() 方法。
-     * @return 结果字符串。
+     * 读取密码。
+     *
+     * @return 密码
      */
     public String password() {
         return password;
     }
 
     /**
-     * displayName() 方法。
-     * @return 结果字符串。
+     * 读取显示名称。
+     *
+     * @return 显示名称
      */
     public String displayName() {
         return displayName;
     }
 
+    /**
+     * 读取角色编码集合。
+     *
+     * @return 角色编码集合
+     */
     public Set<String> roles() {
         return roles;
     }
 
+    /**
+     * 读取权限编码集合。
+     *
+     * @return 权限编码集合
+     */
     public Set<String> permissions() {
         return permissions;
     }
 
-    /**
-     * 判断与另一对象是否相等。
-     * @param o 比较对象。
-     * @return 相等返回 {@code true}，否则返回 {@code false}。
-     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -131,19 +152,11 @@ public class User {
         return Objects.equals(loginId, user.loginId);
     }
 
-    /**
-     * 返回对象哈希码。
-     * @return 哈希码。
-     */
     @Override
     public int hashCode() {
         return Objects.hash(loginId);
     }
 
-    /**
-     * 返回对象的字符串表示。
-     * @return 对象的字符串表示。
-     */
     @Override
     public String toString() {
         return "User{" + loginId + ", roles=" + roles + "}";

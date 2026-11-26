@@ -13,20 +13,9 @@
  * limitations under the License.
  */
 package io.ddd4j.sample.javalin.shiro.rbac.controller;
-import java.util.Set;
-import java.util.Map;
-import java.util.LinkedHashSet;
-import java.util.Collection;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-
-import java.util.Objects;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.inject.Inject;
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.util.SubjectKit;
@@ -35,6 +24,9 @@ import io.ddd4j.sample.javalin.shiro.rbac.domain.Role;
 import io.ddd4j.sample.javalin.shiro.rbac.domain.User;
 import io.ddd4j.sample.javalin.shiro.rbac.service.RbacService;
 import io.javalin.http.Context;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -327,10 +319,10 @@ public class AuthorizationController {
         /**
          * 创建创建用户请求。
          *
-         * @param loginId 登录标识
-         * @param password 密码
+         * @param loginId     登录标识
+         * @param password    密码
          * @param displayName 显示名称
-         * @param roles 角色编码集合
+         * @param roles       角色编码集合
          * @param permissions 权限编码集合
          */
         @JsonCreator()
@@ -416,8 +408,8 @@ public class AuthorizationController {
          * 创建更新用户请求。
          *
          * @param displayName 显示名称
-         * @param password 密码
-         * @param roles 角色编码集合
+         * @param password    密码
+         * @param roles       角色编码集合
          * @param permissions 权限编码集合
          */
         @JsonCreator()
@@ -488,8 +480,8 @@ public class AuthorizationController {
         /**
          * 创建创建角色请求。
          *
-         * @param code 编码
-         * @param name 名称
+         * @param code        编码
+         * @param name        名称
          * @param permissions 权限编码集合
          */
         @JsonCreator()
@@ -547,7 +539,7 @@ public class AuthorizationController {
         /**
          * 创建更新角色请求。
          *
-         * @param name 名称
+         * @param name        名称
          * @param permissions 权限编码集合
          */
         @JsonCreator()
@@ -594,7 +586,7 @@ public class AuthorizationController {
         /**
          * 创建创建权限请求。
          *
-         * @param code 编码
+         * @param code        编码
          * @param description 描述
          */
         @JsonCreator()
@@ -643,9 +635,9 @@ public class AuthorizationController {
         /**
          * 创建用户视图。
          *
-         * @param loginId 登录标识
+         * @param loginId     登录标识
          * @param displayName 显示名称
-         * @param roles 角色编码集合
+         * @param roles       角色编码集合
          * @param permissions 权限编码集合
          */
         @JsonCreator()
@@ -656,22 +648,30 @@ public class AuthorizationController {
             this.permissions = permissions;
         }
 
-        /** @return 登录标识 */
+        /**
+         * @return 登录标识
+         */
         public String getLoginId() {
             return loginId;
         }
 
-        /** @return 显示名称 */
+        /**
+         * @return 显示名称
+         */
         public String getDisplayName() {
             return displayName;
         }
 
-        /** @return 角色编码集合 */
+        /**
+         * @return 角色编码集合
+         */
         public Set<String> getRoles() {
             return roles;
         }
 
-        /** @return 权限编码集合 */
+        /**
+         * @return 权限编码集合
+         */
         public Set<String> getPermissions() {
             return permissions;
         }
@@ -760,8 +760,8 @@ public class AuthorizationController {
         /**
          * 创建角色视图。
          *
-         * @param code 编码
-         * @param name 名称
+         * @param code        编码
+         * @param name        名称
          * @param permissions 权限编码集合
          */
         @JsonCreator()
@@ -771,17 +771,23 @@ public class AuthorizationController {
             this.permissions = permissions;
         }
 
-        /** @return 角色编码 */
+        /**
+         * @return 角色编码
+         */
         public String getCode() {
             return code;
         }
 
-        /** @return 角色名称 */
+        /**
+         * @return 角色名称
+         */
         public String getName() {
             return name;
         }
 
-        /** @return 权限编码集合 */
+        /**
+         * @return 权限编码集合
+         */
         public Set<String> getPermissions() {
             return permissions;
         }
@@ -857,7 +863,7 @@ public class AuthorizationController {
         /**
          * 创建权限视图。
          *
-         * @param code 编码
+         * @param code        编码
          * @param description 描述
          */
         @JsonCreator()
@@ -866,12 +872,16 @@ public class AuthorizationController {
             this.description = description;
         }
 
-        /** @return 权限编码 */
+        /**
+         * @return 权限编码
+         */
         public String getCode() {
             return code;
         }
 
-        /** @return 权限描述 */
+        /**
+         * @return 权限描述
+         */
         public String getDescription() {
             return description;
         }

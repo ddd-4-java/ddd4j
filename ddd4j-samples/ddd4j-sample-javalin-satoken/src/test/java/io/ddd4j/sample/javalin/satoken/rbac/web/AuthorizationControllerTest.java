@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 package io.ddd4j.sample.javalin.satoken.rbac.web;
-import static org.junit.jupiter.api.Assertions.*;
 
 import io.ddd4j.sample.javalin.satoken.TestSupport;
 import io.javalin.Javalin;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 
 import java.net.URI;
@@ -44,6 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@Slf4j
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @org.junit.jupiter.api.parallel.Execution(org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD)
 class AuthorizationControllerTest {
@@ -52,11 +53,15 @@ class AuthorizationControllerTest {
     private static HttpClient httpClient;
     private static String baseUrl;
 
-    @AfterEach
+    @BeforeAll
+    void startServer() {
+        app = TestSupport.start();
+        baseUrl = "http://localhost:" + app.port();
+        httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
+    }
+
+    @AfterAll
     void stopServer() {
-        if (Objects.nonNull(httpClient)) {
-            httpClient.close();
-        }
         if (Objects.nonNull(app)) {
             app.stop();
         }
@@ -64,36 +69,51 @@ class AuthorizationControllerTest {
 
     @BeforeEach
     void resetServerState() {
+        app.stop();
         app = TestSupport.start();
-        baseUrl = "http://127.0.0.1:" + app.port();
-        // 每个用例独立创建并关闭客户端，避免跨服务器重启保留连接与工作线程。
+        baseUrl = "http://localhost:" + app.port();
+        // 新服务器实例使用独立连接池，不跨重启复用旧 HTTP 连接。
         httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
     }
 
     // ------------------- HTTP 助手 -------------------
 
     private HttpResponse<String> postJson(String path, String body) throws Exception {
-        return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
+        HttpResponse<String> response = httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
                         .header("Content-Type", "application/json")
                         .POST(HttpRequest.BodyPublishers.ofString(body)).build(),
                 HttpResponse.BodyHandlers.ofString());
+        recordResponse("POST", response);
+        return response;
     }
 
     private HttpResponse<String> putJson(String path, String body) throws Exception {
-        return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
+        HttpResponse<String> response = httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path))
                         .header("Content-Type", "application/json")
                         .PUT(HttpRequest.BodyPublishers.ofString(body)).build(),
                 HttpResponse.BodyHandlers.ofString());
+        recordResponse("PUT", response);
+        return response;
     }
 
     private HttpResponse<String> delete(String path) throws Exception {
-        return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).DELETE().build(),
+        HttpResponse<String> response = httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).DELETE().build(),
                 HttpResponse.BodyHandlers.ofString());
+        recordResponse("DELETE", response);
+        return response;
     }
 
     private HttpResponse<String> get(String path) throws Exception {
-        return httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).GET().build(),
+        HttpResponse<String> response = httpClient.send(HttpRequest.newBuilder(URI.create(baseUrl + path)).GET().build(),
                 HttpResponse.BodyHandlers.ofString());
+        recordResponse("GET", response);
+        return response;
+    }
+
+    private void recordResponse(String method, HttpResponse<String> response) {
+        log.info("RBAC HTTP diagnostic method={} uri={} status={} version={} headers={} body={} serverPort={}",
+                method, response.uri(), response.statusCode(), response.version(), response.headers().map(),
+                response.body(), app.port());
     }
 
     // =================== 用户管理 ===================

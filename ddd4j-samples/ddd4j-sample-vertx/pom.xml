@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.1.0"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.1.0 https://maven.apache.org/xsd/maven-4.1.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.1.0</modelVersion>
     <parent>
         <groupId>io.ddd4j</groupId>
         <artifactId>ddd4j-samples</artifactId>
         <version>3.0.x.20260630-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>ddd4j-sample-vertx</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
@@ -14,13 +15,18 @@
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
     <dependencies>
         <dependency>
-            <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-sample-order-application</artifactId>
-            <version>${revision}</version>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>mysql</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-sample-order-local</artifactId>
+            <artifactId>ddd4j-sample-order-start</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
@@ -40,6 +46,12 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-sample-order-testkit</artifactId>
+            <version>${revision}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

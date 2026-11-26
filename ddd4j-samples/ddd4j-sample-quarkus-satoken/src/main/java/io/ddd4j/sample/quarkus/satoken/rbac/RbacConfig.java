@@ -14,13 +14,10 @@
  */
 package io.ddd4j.sample.quarkus.satoken.rbac;
 
-import io.ddd4j.kit.lang.CollKit;
-
-import java.util.Objects;
-
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.subject.SubjectDataProvider;
 import io.ddd4j.core.util.SubjectKit;
+import io.ddd4j.kit.lang.CollKit;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
@@ -28,10 +25,7 @@ import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * RBAC 配置：初始化内存数据 + 注册 SubjectDataProvider。
@@ -62,7 +56,11 @@ public class RbacConfig {
     /**
      * 应用启动时初始化演示数据。
      */
+    private SubjectDataProvider previousData;
+    private SubjectDataProvider ownedData;
+
     void onStart(@Observes StartupEvent event) {
+        previousData = SubjectKit.dataProvider;
         reset();
     }
 
@@ -99,7 +97,14 @@ public class RbacConfig {
         userRepository.save(new User("u-disabled", "disabled", "已禁用用户", "123456",
                 new HashSet<>(java.util.Arrays.asList("user")), true));
 
-        SubjectKit.setDataProvider(subjectDataProvider());
+        ownedData = subjectDataProvider();
+        SubjectKit.setDataProvider(ownedData);
+    }
+
+    void onStop(@Observes io.quarkus.runtime.ShutdownEvent event) {
+        if (SubjectKit.dataProvider == ownedData) {
+            SubjectKit.setDataProvider(previousData);
+        }
     }
 
     /**

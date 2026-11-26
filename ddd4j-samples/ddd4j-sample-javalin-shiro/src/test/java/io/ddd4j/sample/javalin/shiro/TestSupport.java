@@ -30,10 +30,6 @@ import io.ddd4j.sample.javalin.shiro.goods.domain.Goods;
 import io.ddd4j.sample.javalin.shiro.goods.infrastructure.InMemoryGoodsRepository;
 import io.ddd4j.sample.javalin.shiro.goods.web.GoodsQueryResource;
 import io.ddd4j.sample.javalin.shiro.goods.web.GoodsResource;
-import io.ddd4j.sample.javalin.shiro.order.application.OrderApplicationService;
-import io.ddd4j.sample.javalin.shiro.order.domain.service.OrderDomainService;
-import io.ddd4j.sample.javalin.shiro.order.infrastructure.InMemoryOrderRepository;
-import io.ddd4j.sample.javalin.shiro.order.web.OrderResource;
 import io.ddd4j.sample.javalin.shiro.rbac.RbacConfig;
 import io.ddd4j.sample.javalin.shiro.rbac.controller.AuthenticationController;
 import io.ddd4j.sample.javalin.shiro.rbac.controller.AuthorizationController;
@@ -43,7 +39,7 @@ import io.ddd4j.sample.javalin.shiro.rbac.repository.InMemoryUserRepository;
 import io.ddd4j.sample.javalin.shiro.rbac.service.RbacService;
 import io.javalin.Javalin;
 import io.javalin.apibuilder.ApiBuilder;
-import io.javalin.json.JavalinJackson3;
+import io.javalin.json.JavalinJackson;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
@@ -63,10 +59,6 @@ public final class TestSupport {
     private TestSupport() {
     }
 
-    /**
-     * 启动。
-     * @return 方法执行结果。
-     */
     public static Javalin start() {
         // 0) 注入 SPI
         BaseContext.inject(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class, new NoopDomainEventPublisher());
@@ -98,11 +90,6 @@ public final class TestSupport {
         GoodsResource goodsResource = new GoodsResource(goodsApp);
         GoodsQueryResource goodsQueryResource = new GoodsQueryResource(goodsApp);
 
-        // 4) Order
-        InMemoryOrderRepository orderRepository = new InMemoryOrderRepository();
-        OrderDomainService orderDomainService = new OrderDomainService(orderRepository);
-        OrderApplicationService orderApp = new OrderApplicationService(orderRepository, orderDomainService);
-        OrderResource orderResource = new OrderResource(orderApp);
 
         // 5) RBAC 控制器
         AuthenticationController authController = new AuthenticationController(rbacService);
@@ -111,7 +98,7 @@ public final class TestSupport {
         // 6) 启动 Javalin
         Javalin app = Javalin.create(cfg -> {
             cfg.startup.showJavalinBanner = false;
-            cfg.jsonMapper(new JavalinJackson3());
+            cfg.jsonMapper(new JavalinJackson());
 
             // Shiro 是线程级 Subject；
             // 每个请求进入前，根据请求头中的 token（即 sessionId）从 SessionManager 取出会话，
@@ -184,7 +171,6 @@ public final class TestSupport {
                             "byUser", String.valueOf(SubjectKit.getLoginId()))));
                 });
 
-                orderResource.routes().addEndpoints();
                 goodsQueryResource.routes().addEndpoints();
                 goodsResource.routes().addEndpoints();
             });
@@ -201,34 +187,17 @@ public final class TestSupport {
         } catch (Exception ignored) {
         }
 
-        app.start("127.0.0.1", 0);
+        app.start(0);
         return app;
     }
 
-    /**
-     * 空实现的领域事件发布器：丢弃所有事件，避免测试对外部消息通道产生依赖。
-     */
     private static final class NoopDomainEventPublisher implements DomainEventPublisher {
-        /**
-         * 发布数据。
-         * @param <ID> 类型参数。
-         * @param event 事件消息。
-         */
         @Override
         public <ID extends EntityId> void publish(io.ddd4j.core.ddd.event.DomainEvent<ID> event) {
         }
     }
 
-    /**
-     * 空实现的国际化提供者：直接返回消息键本身，测试中不依赖真实文案资源。
-     */
     private static final class NoopI18nProvider implements I18nProvider {
-        /**
-         * 获取值。
-         * @param key 幂等键。
-         * @param args 命令行参数。
-         * @return 结果字符串。
-         */
         @Override
         public String getMessage(String key, Object... args) {
             return key;

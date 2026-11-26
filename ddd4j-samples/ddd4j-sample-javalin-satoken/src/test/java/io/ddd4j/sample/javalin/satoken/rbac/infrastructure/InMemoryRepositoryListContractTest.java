@@ -5,8 +5,8 @@
  */
 package io.ddd4j.sample.javalin.satoken.rbac.infrastructure;
 
-import io.ddd4j.sample.javalin.satoken.rbac.domain.model.Role;
 import io.ddd4j.sample.javalin.satoken.rbac.domain.model.Permission;
+import io.ddd4j.sample.javalin.satoken.rbac.domain.model.Role;
 import io.ddd4j.sample.javalin.satoken.rbac.domain.model.User;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +14,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/** 三线内存仓储查询列表的快照与可修改契约。 */
+/**
+ * 三线内存仓储查询列表的快照与可修改契约。
+ */
 class InMemoryRepositoryListContractTest {
 
     @Test

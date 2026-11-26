@@ -33,6 +33,9 @@ public class SampleSubjectProvider implements SubjectProvider {
     private final InMemorySubject subject;
     private final String token;
 
+    /**
+     * 创建演示用主体并完成登录。
+     */
     public SampleSubjectProvider() {
         subject = new InMemorySubject(event -> log.debug("Authentication event: {}", event));
         token = subject.login(AuthRequest.of("sample-user").setPrincipal(new AuthPrincipal()
@@ -41,18 +44,13 @@ public class SampleSubjectProvider implements SubjectProvider {
                 .setPerms(new java.util.HashSet<>(java.util.Arrays.asList("order:read", "order:write")))));
     }
 
-    /**
-     * 获取值。
-     * @return 方法执行结果。
-     */
     @Override
     public Subject getSubject() {
         return subject;
     }
 
     /**
-     * token() 方法。
-     * @return 结果字符串。
+     * @return 演示主体的登录令牌
      */
     public String token() {
         return token;

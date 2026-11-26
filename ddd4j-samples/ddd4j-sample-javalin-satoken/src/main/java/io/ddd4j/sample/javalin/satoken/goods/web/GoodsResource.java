@@ -36,13 +36,20 @@ public class GoodsResource {
 
     private final GoodsApplicationService applicationService;
 
+    /**
+     * 创建商品写入资源。
+     *
+     * @param applicationService 商品应用服务
+     */
+    @com.google.inject.Inject
     public GoodsResource(GoodsApplicationService applicationService) {
         this.applicationService = Objects.requireNonNull(applicationService, "applicationService must not be null");
     }
 
     /**
-     * routes() 方法。
-     * @return 方法执行结果。
+     * 构建商品 HTTP 路由。
+     *
+     * @return 商品路由组
      */
     public EndpointGroup routes() {
         return () -> {

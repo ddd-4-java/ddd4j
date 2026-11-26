@@ -53,7 +53,7 @@ class AuthControllerTest {
     @BeforeAll
     void startServer() {
         app = TestSupport.start();
-        baseUrl = "http://127.0.0.1:" + app.port();
+        baseUrl = "http://localhost:" + app.port();
         httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
     }
 
@@ -71,7 +71,7 @@ class AuthControllerTest {
     void resetServerState() {
         app.stop();
         app = TestSupport.start();
-        baseUrl = "http://127.0.0.1:" + app.port();
+        baseUrl = "http://localhost:" + app.port();
         // 新服务器实例使用独立连接池，不跨重启复用旧 HTTP 连接。
         httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
     }

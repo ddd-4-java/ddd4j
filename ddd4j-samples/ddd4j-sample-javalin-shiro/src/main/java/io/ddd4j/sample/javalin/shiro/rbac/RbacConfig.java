@@ -67,6 +67,9 @@ public final class RbacConfig {
         rbacService.saveRole(new Role("user", "普通用户",
                 new LinkedHashSet<>(List.of("user:list", "order:create", "order:pay"))));
 
+        rbacService.saveRole(new Role("reader", "只读用户",
+                new LinkedHashSet<>(List.of("order:read"))));
+
         // ==================== 种子用户 ====================
         // admin：admin 角色
         rbacService.saveUser(new User("admin", "admin123", "管理员",
@@ -77,6 +80,8 @@ public final class RbacConfig {
         // lisi：user 角色（无额外权限）
         rbacService.saveUser(new User("lisi", "pass123", "李四",
                 Set.of("user"), Set.of()));
+        rbacService.saveUser(new User("reader", "sample-password", "订单只读用户",
+                Set.of("reader"), Set.of()));
     }
 
     /**

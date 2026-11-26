@@ -14,7 +14,6 @@
  */
 package io.ddd4j.sample.javalin.shiro.goods.web;
 
-import jakarta.inject.Inject;
 import io.ddd4j.core.api.R;
 import io.ddd4j.sample.javalin.shiro.goods.application.GoodsApplicationService;
 import io.ddd4j.sample.javalin.shiro.goods.domain.Goods;
@@ -23,6 +22,7 @@ import io.ddd4j.sample.javalin.shiro.goods.domain.GoodsStatus;
 import io.ddd4j.sample.javalin.shiro.goods.web.dto.CreateGoodsRequest;
 import io.ddd4j.sample.javalin.shiro.goods.web.dto.UpdateGoodsRequest;
 import io.javalin.apibuilder.EndpointGroup;
+import jakarta.inject.Inject;
 
 import java.util.Objects;
 
@@ -37,14 +37,20 @@ public class GoodsResource {
 
     private final GoodsApplicationService applicationService;
 
+    /**
+     * 创建商品写入资源。
+     *
+     * @param applicationService 商品应用服务
+     */
     @Inject
     public GoodsResource(GoodsApplicationService applicationService) {
         this.applicationService = Objects.requireNonNull(applicationService, "applicationService must not be null");
     }
 
     /**
-     * routes() 方法。
-     * @return 方法执行结果。
+     * 构建商品 HTTP 路由。
+     *
+     * @return 商品路由组
      */
     public EndpointGroup routes() {
         return () -> {

@@ -14,18 +14,16 @@
  */
 package io.ddd4j.sample.quarkus.goods.web.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.util.Objects;
-
 import java.math.BigDecimal;
+import java.util.Objects;
 
 /**
  * 更新商品请求 DTO。
  *
- * <p>轻量 record：与 Spring MVC 的 record 参数绑定风格一致，
+ * <p>轻量不可变对象：与 Spring MVC 的 record 参数绑定风格一致，
  * 同时被 JAX-RS / Quarkus REST 原生支持。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
@@ -38,17 +36,27 @@ public final class UpdateGoodsRequest {
 
     private final BigDecimal price;
 
+    /**
+     * @param name  新商品名称
+     * @param price 新商品价格
+     */
     @JsonCreator()
     public UpdateGoodsRequest(@JsonProperty("name") String name, @JsonProperty("price") BigDecimal price) {
         this.name = name;
         this.price = price;
     }
 
+    /**
+     * @return 新商品名称
+     */
     @JsonProperty("name")
     public String name() {
         return name;
     }
 
+    /**
+     * @return 新商品价格
+     */
     @JsonProperty("price")
     public BigDecimal price() {
         return price;

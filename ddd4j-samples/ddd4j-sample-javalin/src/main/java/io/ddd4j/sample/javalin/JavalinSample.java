@@ -14,24 +14,31 @@
  */
 package io.ddd4j.sample.javalin;
 
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.ddd4j.cache.subject.InMemorySubject;
 import io.ddd4j.cache.subject.InMemorySubjectProvider;
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.auth.AuthRequest;
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.SpiRegistrationScope;
+import io.ddd4j.core.context.ThreadContext;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectProvider;
-import io.ddd4j.sample.javalin.order.infrastructure.JavalinOrderAdapters;
-import io.ddd4j.sample.javalin.order.web.OrderController;
 import io.ddd4j.sample.javalin.spi.DefaultI18nProvider;
-import io.ddd4j.sample.javalin.spi.NoOpDomainEventPublisher;
-import io.ddd4j.sample.order.application.OrderApplicationService;
-import io.ddd4j.sample.order.jdbc.JdbcOrderSampleRuntime;
+import com.google.common.eventbus.EventBus;
+import io.ddd4j.guice.event.GuiceDomainEventPublisher;
+import io.ddd4j.sample.order.adapter.http.CatalogEndpoints;
+import io.ddd4j.sample.order.start.CatalogRuntime;
+import io.ddd4j.web.core.auth.AuthenticationMode;
+import io.ddd4j.web.core.auth.BearerSubjectAuthenticator;
+import io.ddd4j.web.core.auth.PathWebAccessPolicy;
+import io.ddd4j.web.core.context.WebRequestContextFactory;
+import io.ddd4j.web.core.context.WebRequestLifecycle;
+import io.ddd4j.web.core.error.DefaultWebExceptionTranslator;
 import io.ddd4j.web.javalin.Ddd4jJavalinWeb;
 import io.javalin.Javalin;
-import io.javalin.json.JavalinJackson3;
+import io.javalin.json.JavalinJackson;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
@@ -46,13 +53,81 @@ public final class JavalinSample {
     }
 
     /**
-     * 已启动的 Javalin 应用句柄：持有 HTTP 实例、演示用 Bearer 令牌与 SPI 注册作用域。
+     * @param args 启动参数
+     */
+    public static void main(String[] args) {
+        JavalinApplication application = startBasic(Integer.getInteger("sample.port", 7000));
+        log.info("Javalin catalog trade started at http://localhost:{}", application.app().port());
+    }
+
+    /**
+     * @param port HTTP 监听端口
+     * @return 已启动的 Javalin 应用
+     */
+    public static JavalinApplication start(int port) {
+        return start(port, CatalogRuntime.start(), true);
+    }
+
+    /**
+     * 启动匿名商品交易示例。
      *
-     * <p>实现 {@link AutoCloseable}，关闭时先停止 HTTP 服务，再关闭 SPI 作用域。
-     *
-     * 字段 {@code app}：已启动的 Javalin HTTP 实例
-     * 字段 {@code token}：演示登录后返回的 Bearer 令牌
-     * 字段 {@code spiScope}：本次启动注册的 SPI 作用域
+     * @param port HTTP 监听端口
+     * @return 可关闭应用
+     */
+    public static JavalinApplication startBasic(int port) {
+        return start(port, CatalogRuntime.start(), false);
+    }
+
+    public static JavalinApplication start(int port, CatalogEndpoints catalog, boolean demoAuth) {
+        DomainEventPublisher eventPublisher = new GuiceDomainEventPublisher(new EventBus("catalog-trade"));
+        String token = "";
+
+        SpiRegistrationScope spiScope = new SpiRegistrationScope()
+                .register(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class, eventPublisher)
+                .register(SpiKeys.I18N_PROVIDER, I18nProvider.class, new DefaultI18nProvider());
+        if (demoAuth) {
+            InMemorySubject subject = new InMemorySubject(event -> log.debug("Authentication event: {}", event));
+            token = subject.login(AuthRequest.of("sample-user").setPrincipal(new AuthPrincipal()
+                    .setLoginId("sample-user").setUserId("sample-user")
+                    .setPerms(java.util.Set.of("order:read", "order:write"))));
+            spiScope.register(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class, new InMemorySubjectProvider(subject));
+        }
+        Javalin app = null;
+        try {
+            spiScope.start();
+            app = Javalin.create(config -> {
+                config.startup.showJavalinBanner = false;
+                config.jsonMapper(new JavalinJackson(JsonMapper.builder().findAndAddModules().build(), false));
+                Ddd4jJavalinWeb web = demoAuth ? new Ddd4jJavalinWeb()
+                        : new Ddd4jJavalinWeb(new WebRequestContextFactory(), new WebRequestLifecycle(
+                        new BearerSubjectAuthenticator(), new PathWebAccessPolicy(java.util.List.of(),
+                        AuthenticationMode.DISABLED)), new DefaultWebExceptionTranslator(), null);
+                web.configure(config);
+                config.routes.apiBuilder(() -> CatalogTradeRoutes.register(catalog));
+            });
+            app.start(port);
+            return new JavalinApplication(app, token, spiScope);
+        } catch (RuntimeException | Error failure) {
+            try {
+                stop(app, spiScope);
+            } catch (RuntimeException | Error cleanupFailure) {
+                failure.addSuppressed(cleanupFailure);
+            }
+            throw failure;
+        }
+    }
+
+    private static void stop(Javalin app, SpiRegistrationScope spiScope) {
+        try (ThreadContext.Scope callerContext = ThreadContext.open();
+             SpiRegistrationScope registrations = spiScope) {
+            if (Objects.nonNull(app)) {
+                app.stop();
+            }
+        }
+    }
+
+    /**
+     * 可关闭的 Javalin 示例运行实例。
      */
     public final static class JavalinApplication implements AutoCloseable {
 
@@ -62,49 +137,42 @@ public final class JavalinSample {
 
         private final SpiRegistrationScope spiScope;
 
-        private final JdbcOrderSampleRuntime jdbcRuntime;
-
+        /**
+         * @param app      Javalin 服务实例
+         * @param token    演示登录令牌
+         * @param spiScope SPI 注册作用域
+         */
         public JavalinApplication(Javalin app, String token, SpiRegistrationScope spiScope) {
-            this(app, token, spiScope, null);
-        }
-
-        private JavalinApplication(Javalin app, String token, SpiRegistrationScope spiScope,
-                                   JdbcOrderSampleRuntime jdbcRuntime) {
             Objects.requireNonNull(app, "app must not be null");
             Objects.requireNonNull(token, "token must not be null");
             Objects.requireNonNull(spiScope, "spiScope must not be null");
             this.app = app;
             this.token = token;
             this.spiScope = spiScope;
-            this.jdbcRuntime = jdbcRuntime;
+        }
+
+        @Override
+        public void close() {
+            stop(app, spiScope);
         }
 
         /**
-         * 关闭并释放资源。
+         * @return Javalin 服务实例
          */
-        @Override
-        public void close() {
-            try {
-                app.stop();
-            } finally {
-                try {
-                    if (Objects.nonNull(jdbcRuntime)) {
-                        jdbcRuntime.close();
-                    }
-                } finally {
-                    spiScope.close();
-                }
-            }
-        }
-
         public Javalin app() {
             return app;
         }
 
+        /**
+         * @return 演示登录令牌
+         */
         public String token() {
             return token;
         }
 
+        /**
+         * @return SPI 注册作用域
+         */
         public SpiRegistrationScope spiScope() {
             return spiScope;
         }
@@ -133,80 +201,6 @@ public final class JavalinSample {
         @Override
         public String toString() {
             return "JavalinApplication[app=" + app + ", token=[REDACTED], spiScope=" + spiScope + "]";
-        }
-    }
-
-    /**
-     * main() 方法。
-     * @param args 命令行参数。
-     */
-    public static void main(String[] args) {
-        JavalinApplication application = start(7000);
-        /**
-         * log.info() 方法。
-         * @param {}" {}" 参数。
-         * @param application.app().port() application.app().port() 参数。
-         * @param application.token() application.token() 参数。
-         */
-        log.info("Javalin Order sample started at http://localhost:{}; demo Bearer token: {}",
-                application.app().port(), application.token());
-    }
-
-    /**
-     * 启动。
-     * @param port port 参数。
-     * @return 方法执行结果。
-     */
-    public static JavalinApplication start(int port) {
-        JavalinOrderAdapters adapters = new JavalinOrderAdapters();
-        OrderApplicationService service = new OrderApplicationService(adapters, adapters, adapters, adapters);
-        return start(port, service, null);
-    }
-
-    /**
-     * 使用已启动的 JDBC 订单运行实例提供 HTTP 服务；关闭返回句柄时一并停止 Outbox 工作器。
-     * @param port HTTP 监听端口
-     * @param runtime 已启动且所有权交给返回句柄的 JDBC 运行实例
-     * @return 已启动的 Javalin 应用
-     */
-    public static JavalinApplication startJdbc(int port, JdbcOrderSampleRuntime runtime) {
-        Objects.requireNonNull(runtime, "runtime must not be null");
-        return start(port, runtime.applicationService(), runtime);
-    }
-
-    private static JavalinApplication start(int port, OrderApplicationService service,
-                                            JdbcOrderSampleRuntime jdbcRuntime) {
-        DomainEventPublisher eventPublisher = new NoOpDomainEventPublisher();
-        InMemorySubject subject = new InMemorySubject(event -> log.debug("Authentication event: {}", event));
-        String token = subject.login(AuthRequest.of("sample-user").setPrincipal(new AuthPrincipal()
-                .setLoginId("sample-user")
-                .setUserId("sample-user")
-                .setPerms(java.util.Set.of("order:read", "order:write"))));
-
-        SpiRegistrationScope spiScope = new SpiRegistrationScope()
-                .register(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class, eventPublisher)
-                .register(SpiKeys.SUBJECT_PROVIDER, SubjectProvider.class, new InMemorySubjectProvider(subject))
-                .register(SpiKeys.I18N_PROVIDER, I18nProvider.class, new DefaultI18nProvider());
-        try {
-            spiScope.start();
-            OrderController controller = new OrderController(service);
-            Javalin app = Javalin.create(config -> {
-                config.startup.showJavalinBanner = false;
-                config.jsonMapper(new JavalinJackson3());
-                new Ddd4jJavalinWeb().configure(config);
-                config.routes.apiBuilder(controller::routes);
-            });
-            app.start(port);
-            return new JavalinApplication(app, token, spiScope, jdbcRuntime);
-        } catch (RuntimeException exception) {
-            try {
-                if (Objects.nonNull(jdbcRuntime)) {
-                    jdbcRuntime.close();
-                }
-            } finally {
-                spiScope.close();
-            }
-            throw exception;
         }
     }
 }

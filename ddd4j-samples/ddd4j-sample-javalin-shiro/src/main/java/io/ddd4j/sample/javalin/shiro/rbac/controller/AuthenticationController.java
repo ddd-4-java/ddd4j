@@ -14,15 +14,8 @@
  */
 package io.ddd4j.sample.javalin.shiro.rbac.controller;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-
-import java.util.Objects;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.inject.Inject;
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.auth.AuthPrincipal;
@@ -31,6 +24,9 @@ import io.ddd4j.core.util.SubjectKit;
 import io.ddd4j.sample.javalin.shiro.rbac.domain.User;
 import io.ddd4j.sample.javalin.shiro.rbac.service.RbacService;
 import io.javalin.http.Context;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.*;
 
@@ -89,6 +85,7 @@ public class AuthenticationController {
         // 3. 通过 SubjectKit 登录
         AuthRequest request = AuthRequest.of(user.loginId()).setTimeout(7200);
         request.setPrincipal(principal);
+        request.extra("credential", req.password());
         String token = SubjectKit.login(request);
 
         Map<String, Object> result = Map.of(
@@ -205,7 +202,7 @@ public class AuthenticationController {
         /**
          * 创建登录请求。
          *
-         * @param loginId 登录标识
+         * @param loginId  登录标识
          * @param password 密码
          */
         @JsonCreator()

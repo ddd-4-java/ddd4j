@@ -19,5 +19,10 @@ import io.dropwizard.core.Configuration;
 /**
  * Dropwizard CQRS 配置。
  */
+@lombok.Getter
+@lombok.Setter
 public class DropwizardCqrsConfiguration extends Configuration {
+    private String catalogJdbcUrl;
+    private String catalogDbUser;
+    private String catalogDbPassword;
 }

@@ -39,6 +39,9 @@ public class InMemoryPermissionRepository {
 
     /**
      * 新增或更新权限。
+     *
+     * @param permission 权限
+     * @return 已保存的权限
      */
     public Permission save(Permission permission) {
         store.put(permission.code(), permission);
@@ -47,6 +50,9 @@ public class InMemoryPermissionRepository {
 
     /**
      * 按编码查询权限。
+     *
+     * @param code 编码
+     * @return 匹配的权限，不存在时为空
      */
     public Optional<Permission> findByCode(String code) {
         return Optional.ofNullable(store.get(code));
@@ -54,6 +60,9 @@ public class InMemoryPermissionRepository {
 
     /**
      * 删除权限。
+     *
+     * @param code 编码
+     * @return 删除成功时为 true
      */
     public boolean deleteByCode(String code) {
         return Objects.nonNull(store.remove(code));
@@ -61,6 +70,8 @@ public class InMemoryPermissionRepository {
 
     /**
      * 查询全部权限。
+     *
+     * @return 权限集合
      */
     public Collection<Permission> findAll() {
         return Collections.unmodifiableCollection(store.values());
@@ -68,6 +79,8 @@ public class InMemoryPermissionRepository {
 
     /**
      * 当前权限数量。
+     *
+     * @return 权限数量
      */
     public int count() {
         return store.size();

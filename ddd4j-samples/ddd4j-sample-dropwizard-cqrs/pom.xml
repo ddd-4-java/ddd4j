@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.1.0"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.1.0 https://maven.apache.org/xsd/maven-4.1.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.1.0</modelVersion>
     <parent>
         <groupId>io.ddd4j</groupId>
         <artifactId>ddd4j-samples</artifactId>
         <version>3.0.x.20260630-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>ddd4j-sample-dropwizard-cqrs</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
@@ -15,27 +16,22 @@
     </description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
 
-    <dependencyManagement>
-        <dependencies>
-            <!-- Dropwizard 5 需要 Jersey 3.1，覆盖父 BOM 中的旧 Jersey 管理。 -->
-            <dependency>
-                <groupId>io.dropwizard</groupId>
-                <artifactId>dropwizard-bom</artifactId>
-                <version>${dropwizard-bom.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.glassfish.jersey</groupId>
-                <artifactId>jersey-bom</artifactId>
-                <version>${jersey.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <dependencies>
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-data-cqrs-dropwizard</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency><groupId>org.testcontainers</groupId><artifactId>mysql</artifactId><scope>test</scope></dependency>
+        <dependency><groupId>org.testcontainers</groupId><artifactId>junit-jupiter</artifactId><scope>test</scope></dependency>
+<dependency><groupId>io.ddd4j</groupId><artifactId>ddd4j-sample-order-start</artifactId><version>${revision}</version></dependency>
+<dependency><groupId>io.ddd4j</groupId><artifactId>ddd4j-web-dropwizard</artifactId><version>${revision}</version></dependency>
+
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-runtime-dropwizard</artifactId>
+            <version>${revision}</version>
+        </dependency>
         <!-- ======== 领域 + 核心 ======== -->
         <dependency>
             <groupId>io.ddd4j</groupId>

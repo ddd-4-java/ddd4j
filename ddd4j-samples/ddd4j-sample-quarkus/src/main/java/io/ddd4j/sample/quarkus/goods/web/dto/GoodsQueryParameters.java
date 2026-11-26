@@ -50,8 +50,7 @@ public class GoodsQueryParameters {
     private String orderBys;
 
     /**
-     * 转换表示形式。
-     * @return 方法执行结果。
+     * @return 根据 HTTP 参数构造的商品查询对象
      */
     public GoodsQuery toQuery() {
         GoodsQuery query = new GoodsQuery()

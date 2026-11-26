@@ -14,7 +14,6 @@
  */
 package io.ddd4j.sample.quarkus.goods.web;
 
-import jakarta.enterprise.context.ApplicationScoped;
 import io.ddd4j.core.api.Page;
 import io.ddd4j.sample.quarkus.goods.application.GoodsApplicationService;
 import io.ddd4j.sample.quarkus.goods.domain.Goods;
@@ -22,6 +21,7 @@ import io.ddd4j.sample.quarkus.goods.domain.GoodsQuery;
 import io.ddd4j.sample.quarkus.goods.web.dto.GoodsQueryParameters;
 import io.ddd4j.sample.quarkus.goods.web.dto.GoodsResponse;
 import io.ddd4j.web.quarkus.TenantAwareResource;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.BeanParam;
 import jakarta.ws.rs.GET;
@@ -49,13 +49,14 @@ import java.util.stream.Collectors;
  *   <li>{@code GET /query/goods/count} - 充血计数查询</li>
  * </ul>
  *
- * <h3>设计原则</h3>
+ * <h2>设计原则</h2>
  * <p>查询端不修改商品状态，只读取数据。通过 {@link GoodsQuery} 的充血方法
  * （{@code page()} / {@code list()} / {@code count()}）实现无模板 CRUD 查询，
  * 展示 ddd4j Query 在 Quarkus JAX-RS 下的集成方式。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@io.quarkus.arc.properties.IfBuildProperty(name = "sample.goods.standalone", stringValue = "true")
 @Path("/query/goods")
 @Produces(MediaType.APPLICATION_JSON)
 @ApplicationScoped
@@ -63,6 +64,9 @@ public class GoodsQueryResource extends TenantAwareResource {
 
     private final GoodsApplicationService applicationService;
 
+    /**
+     * @param applicationService 商品应用服务
+     */
     @Inject
     public GoodsQueryResource(GoodsApplicationService applicationService) {
         this.applicationService = applicationService;
@@ -80,7 +84,7 @@ public class GoodsQueryResource extends TenantAwareResource {
      * GET /query/goods/page?status=ON_SALE&amp;current=1&amp;size=20&amp;orderBys=createTime_DESC
      * </pre>
      *
-     * @param parameters 商品查询对象（由 JAX-RS 自动绑定）
+     * @param parameters 由 JAX-RS 绑定的查询参数
      * @return 分页结果
      */
     @GET
@@ -97,7 +101,7 @@ public class GoodsQueryResource extends TenantAwareResource {
      * GET /query/goods/list?nameLike=iPhone
      * </pre>
      *
-     * @param parameters 商品查询对象
+     * @param parameters 由 JAX-RS 绑定的查询参数
      * @return 商品列表
      */
     @GET
@@ -116,7 +120,7 @@ public class GoodsQueryResource extends TenantAwareResource {
      * GET /query/goods/count?status=ON_SALE
      * </pre>
      *
-     * @param parameters 商品查询对象
+     * @param parameters 由 JAX-RS 绑定的查询参数
      * @return 总数
      */
     @GET

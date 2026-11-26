@@ -45,7 +45,7 @@ class GoodsResourceTest {
     @BeforeAll
     static void startApp() {
         app = TestSupport.start();
-        baseUrl = "http://127.0.0.1:" + app.port();
+        baseUrl = "http://localhost:" + app.port();
         httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
     }
 
@@ -77,7 +77,7 @@ class GoodsResourceTest {
     void resetServerState() {
         app.stop();
         app = TestSupport.start();
-        baseUrl = "http://127.0.0.1:" + app.port();
+        baseUrl = "http://localhost:" + app.port();
     }
 
     private HttpResponse<String> postJson(String path, String body) throws Exception {

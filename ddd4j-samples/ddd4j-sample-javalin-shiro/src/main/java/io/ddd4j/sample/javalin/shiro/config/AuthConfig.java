@@ -79,6 +79,8 @@ public final class AuthConfig {
 
     /**
      * 创建简单凭据匹配器（明文密码比对，仅供演示）。
+     *
+     * @return 凭据匹配器
      */
     public static CredentialsMatcher createSimpleCredentialsMatcher() {
         return new SimpleCredentialsMatcher();
@@ -86,6 +88,8 @@ public final class AuthConfig {
 
     /**
      * 获取当前线程的 Shiro Subject（辅助方法）。
+     *
+     * @return 当前主体
      */
     public static Subject currentSubject() {
         return SecurityUtils.getSubject();
@@ -109,6 +113,13 @@ public final class AuthConfig {
         private final InMemoryRoleRepository roleRepository;
         private final RbacService rbacService;
 
+        /**
+         * 创建 RBAC Realm。
+         *
+         * @param userRepository 用户仓储
+         * @param roleRepository 角色仓储
+         * @param rbacService    RBAC 服务
+         */
         public RbacRealm(InMemoryUserRepository userRepository,
                          InMemoryRoleRepository roleRepository,
                          RbacService rbacService) {
@@ -119,12 +130,6 @@ public final class AuthConfig {
             setCredentialsMatcher(new SimpleCredentialsMatcher());
         }
 
-        /**
-         * 执行处理逻辑。
-         * @param token 访问令牌。
-         * @return 方法执行结果。
-         * @throws AuthenticationException 出现异常时抛出。
-         */
         @Override
         protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
             UsernamePasswordToken upt = (UsernamePasswordToken) token;
@@ -140,11 +145,6 @@ public final class AuthConfig {
             return new SimpleAuthenticationInfo(user, user.password().toCharArray(), getName());
         }
 
-        /**
-         * 执行处理逻辑。
-         * @param principals principals 参数。
-         * @return 方法执行结果。
-         */
         @Override
         protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
             Object primary = principals.getPrimaryPrincipal();

@@ -14,18 +14,16 @@
  */
 package io.ddd4j.sample.javalin.satoken.rbac.web;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.core.api.R;
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.util.SubjectKit;
 import io.ddd4j.sample.javalin.satoken.rbac.application.RbacService;
 import io.javalin.apibuilder.EndpointGroup;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -62,6 +60,7 @@ public class AuthenticationController {
      *
      * @param rbacService RBAC 服务
      */
+    @com.google.inject.Inject
     public AuthenticationController(RbacService rbacService) {
         this.rbacService = Objects.requireNonNull(rbacService, "rbacService must not be null");
     }

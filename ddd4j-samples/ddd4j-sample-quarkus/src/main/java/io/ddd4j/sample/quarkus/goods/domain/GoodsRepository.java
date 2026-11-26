@@ -26,7 +26,7 @@ import java.util.Optional;
  * 第三方实现（如 {@code InMemoryGoodsRepository}、MyBatis-Plus 适配等）需提供：
  * <ul>
  *   <li>{@code findById(id)} - 按主键查询</li>
- *   <li>{@code save(aggregate)} - 保存或更新</li>
+ *   <li>{@code save(goods)} - 保存或更新</li>
  *   <li>{@code deleteById(id)} - 按主键删除（继承自默认方法）</li>
  *   <li>{@code existsById(id)} - 判断存在（继承自默认方法）</li>
  * </ul>

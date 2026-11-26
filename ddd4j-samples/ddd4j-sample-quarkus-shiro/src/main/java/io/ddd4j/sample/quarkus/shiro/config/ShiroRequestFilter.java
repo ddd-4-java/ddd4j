@@ -14,20 +14,22 @@
  */
 package io.ddd4j.sample.quarkus.shiro.config;
 
+import io.ddd4j.core.api.R;
 import io.ddd4j.kit.lang.StrKit;
+import io.ddd4j.sample.quarkus.shiro.CatalogTradeResource;
 import jakarta.annotation.Priority;
 import jakarta.ws.rs.Priorities;
-import jakarta.ws.rs.container.ContainerRequestContext;
-import jakarta.ws.rs.container.ContainerRequestFilter;
-import jakarta.ws.rs.container.ContainerResponseContext;
-import jakarta.ws.rs.container.ContainerResponseFilter;
+import jakarta.ws.rs.container.*;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.Provider;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
 
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * 将 RFC 6750 Bearer Token 作为 Shiro Session ID 恢复为当前请求 Subject。
@@ -36,16 +38,17 @@ import java.io.IOException;
 @Priority(Priorities.AUTHENTICATION)
 public class ShiroRequestFilter implements ContainerRequestFilter, ContainerResponseFilter {
 
+    private static final String PREVIOUS = ShiroRequestFilter.class.getName() + ".previous";
     private static final String BEARER_PREFIX = "Bearer ";
+    @Context
+    ResourceInfo resourceInfo;
 
-    /**
-     * 过滤数据。
-     * @param requestContext requestContext 参数。
-     * @throws IOException 打开文件流失败时抛出。
-     */
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
-        ThreadContext.unbindSubject();
+        Subject previous = ThreadContext.getSubject();
+        if (Objects.nonNull(previous)) {
+            requestContext.setProperty(PREVIOUS, previous);
+        }
         String authorization = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
         Subject.Builder builder = new Subject.Builder(SecurityUtils.getSecurityManager());
         if (StrKit.isNotEmpty(authorization) && authorization.regionMatches(
@@ -55,17 +58,38 @@ public class ShiroRequestFilter implements ContainerRequestFilter, ContainerResp
                 builder.sessionId(token);
             }
         }
-        ThreadContext.bind(builder.buildSubject());
+        Subject subject = builder.buildSubject();
+        ThreadContext.bind(subject);
+        Runnable cleanup = () -> {
+            if (ThreadContext.getSubject() == subject) {
+                ThreadContext.unbindSubject();
+                if (Objects.nonNull(previous)) {
+                    ThreadContext.bind(previous);
+                }
+            }
+        };
+        requestContext.setProperty(PREVIOUS + ".cleanup", cleanup);
+        ((org.jboss.resteasy.reactive.server.spi.ResteasyReactiveContainerRequestContext) requestContext)
+                .getServerRequestContext().registerCompletionCallback(failure -> cleanup.run());
+        if (Objects.nonNull(resourceInfo.getResourceClass())
+                && CatalogTradeResource.class.isAssignableFrom(resourceInfo.getResourceClass())) {
+            if (!subject.isAuthenticated()) {
+                requestContext.abortWith(Response.status(401).entity(R.of(401, "unauthenticated")).build());
+                return;
+            }
+            String method = resourceInfo.getResourceMethod().getName();
+            String permission = "cancelOrder".equals(method) ? "order:cancel" : "order:pay";
+            if ("POST".equals(requestContext.getMethod()) && !subject.isPermitted(permission)) {
+                requestContext.abortWith(Response.status(403).entity(R.of(403, "required permission is missing")).build());
+            }
+        }
     }
 
-    /**
-     * 过滤数据。
-     * @param requestContext requestContext 参数。
-     * @param responseContext responseContext 参数。
-     * @throws IOException 打开文件流失败时抛出。
-     */
     @Override
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
-        ThreadContext.unbindSubject();
+        Runnable cleanup = (Runnable) requestContext.getProperty(PREVIOUS + ".cleanup");
+        if (Objects.nonNull(cleanup)) {
+            cleanup.run();
+        }
     }
 }

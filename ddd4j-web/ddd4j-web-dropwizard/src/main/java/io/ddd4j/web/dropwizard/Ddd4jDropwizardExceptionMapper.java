@@ -18,9 +18,13 @@ import io.ddd4j.web.core.error.WebError;
 import io.ddd4j.web.core.error.WebExceptionTranslator;
 import io.ddd4j.web.error.BaseErrorConfiguration;
 import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
+
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Dropwizard Jersey 全局异常映射。
@@ -66,7 +70,16 @@ public final class Ddd4jDropwizardExceptionMapper extends BaseErrorConfiguration
     public Response toResponse(Throwable exception) {
         WebError error = translate(exception);
         logUnhandled(exception, error);
-        return Response.status(error.status()).type(MediaType.APPLICATION_JSON_TYPE)
-                .entity(toResponse(error)).build();
+        Response.ResponseBuilder response = Response.status(error.status())
+                .type(MediaType.APPLICATION_JSON_TYPE).entity(toResponse(error));
+        if (error.status() == Response.Status.METHOD_NOT_ALLOWED.getStatusCode()
+                && exception instanceof WebApplicationException webException) {
+            // 保留 Jersey 路由器给出的 Allow 响应头。
+            List<Object> allowedMethods = webException.getResponse().getHeaders().get(HttpHeaders.ALLOW);
+            if (Objects.nonNull(allowedMethods)) {
+                allowedMethods.forEach(value -> response.header(HttpHeaders.ALLOW, value));
+            }
+        }
+        return response.build();
     }
 }

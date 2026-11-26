@@ -13,11 +13,11 @@
  * limitations under the License.
  */
 package io.ddd4j.sample.quarkus.goods.domain;
-import io.ddd4j.kit.lang.SFunction;
 
 import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.repository.Repository;
 import io.ddd4j.core.ddd.repository.RepositoryRegistry;
+import io.ddd4j.kit.lang.SFunction;
 import io.ddd4j.kit.lang.StrKit;
 
 import java.math.BigDecimal;
@@ -109,12 +109,20 @@ public class GoodsQuery extends Query<Goods> {
         }
         boolean descending = "DESC".equalsIgnoreCase(tokens[1]);
         switch (tokens[0]) {
-            case "id" -> applyOrder(descending, Goods::id);
-            case "createTime" -> applyOrder(descending, Goods::getCreateTime);
-            case "updateTime" -> applyOrder(descending, Goods::getUpdateTime);
-            case "price" -> applyOrder(descending, Goods::getPrice);
-            default -> {
-            }
+            case "id":
+                applyOrder(descending, Goods::id);
+                break;
+            case "createTime":
+                applyOrder(descending, Goods::getCreateTime);
+                break;
+            case "updateTime":
+                applyOrder(descending, Goods::getUpdateTime);
+                break;
+            case "price":
+                applyOrder(descending, Goods::getPrice);
+                break;
+            default:
+                break;
         }
     }
 
@@ -139,7 +147,9 @@ public class GoodsQuery extends Query<Goods> {
         return RepositoryRegistry.repository(Goods.class);
     }
 
-    /** @return 商品编码 */
+    /**
+     * @return 商品编码
+     */
     public String getCode() {
         return code;
     }
@@ -153,7 +163,9 @@ public class GoodsQuery extends Query<Goods> {
         return this;
     }
 
-    /** @return 模糊匹配的商品名称 */
+    /**
+     * @return 模糊匹配的商品名称
+     */
     public String getNameLike() {
         return nameLike;
     }
@@ -167,7 +179,9 @@ public class GoodsQuery extends Query<Goods> {
         return this;
     }
 
-    /** @return 商品状态 */
+    /**
+     * @return 商品状态
+     */
     public GoodsStatus getStatus() {
         return status;
     }
@@ -181,7 +195,9 @@ public class GoodsQuery extends Query<Goods> {
         return this;
     }
 
-    /** @return 最低价格 */
+    /**
+     * @return 最低价格
+     */
     public BigDecimal getPriceMin() {
         return priceMin;
     }
@@ -195,7 +211,9 @@ public class GoodsQuery extends Query<Goods> {
         return this;
     }
 
-    /** @return 最高价格 */
+    /**
+     * @return 最高价格
+     */
     public BigDecimal getPriceMax() {
         return priceMax;
     }

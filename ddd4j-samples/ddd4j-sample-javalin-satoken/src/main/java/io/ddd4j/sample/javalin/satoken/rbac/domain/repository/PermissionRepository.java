@@ -34,11 +34,17 @@ public interface PermissionRepository extends Repository<Permission, String> {
 
     /**
      * 按权限编码查找。
+     *
+     * @param permissionCode 权限编码
+     * @return 匹配的权限，不存在时为空
      */
     Optional<Permission> findByPermissionCode(String permissionCode);
 
     /**
      * 按模块查询权限列表。
+     *
+     * @param module 所属模块
+     * @return 权限列表
      */
     List<Permission> findByModule(String module);
 }
