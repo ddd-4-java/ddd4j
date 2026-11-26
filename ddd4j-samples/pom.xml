@@ -19,35 +19,55 @@
     <properties>
         <!-- 示例模块仅用于演示与测试，不发布到远程仓库 -->
         <maven.deploy.skip>true</maven.deploy.skip>
+        <spring-boot4-it.version>4.0.8</spring-boot4-it.version>
+        <quarkus-hibernate-orm.version>7.3.6.Final</quarkus-hibernate-orm.version>
+        <quarkus-agroal.version>3.2.1</quarkus-agroal.version>
+        <quarkus-failsafe-plugin.version>3.2.5</quarkus-failsafe-plugin.version>
+        <quarkus-surefire-plugin.version>3.2.5</quarkus-surefire-plugin.version>
+        <vertx-compat4.version>4.5.35</vertx-compat4.version>
+        <helidon-jersey.version>3.0.18</helidon-jersey.version>
+        <helidon-jakarta-ws-rs.version>3.0.0</helidon-jakarta-ws-rs.version>
+        <helidon-jakarta-interceptor.version>2.0.0</helidon-jakarta-interceptor.version>
+        <helidon-jakarta-inject.version>2.0.0</helidon-jakarta-inject.version>
+        <helidon-jakarta-cdi.version>3.0.0</helidon-jakarta-cdi.version>
+        <helidon-jakarta-annotation.version>2.0.0</helidon-jakarta-annotation.version>
     </properties>
 
     <modules>
-        <!-- 跨运行时共享的生产型订单业务内核 -->
         <module>ddd4j-sample-order-domain</module>
         <module>ddd4j-sample-order-application</module>
-        <module>ddd4j-sample-order-local</module>
         <module>ddd4j-sample-order-testkit</module>
         <module>ddd4j-sample-order-jdbc</module>
-        <module>ddd4j-sample-order-kafka</module>
-        <module>ddd4j-sample-order-redis</module>
-
-        <!-- 非 Boot 运行时示例：Order 充血模型、CQRS、缓存与消息边界。 -->
+        <module>ddd4j-sample-order-adapter</module>
+        <module>ddd4j-sample-order-start</module>
+        <module>ddd4j-sample-spring</module>
+        <module>ddd4j-sample-spring-cqrs</module>
+        <module>ddd4j-sample-spring-satoken</module>
+        <module>ddd4j-sample-spring-shiro</module>
         <module>ddd4j-sample-quarkus</module>
         <module>ddd4j-sample-javalin</module>
         <module>ddd4j-sample-micronaut</module>
         <module>ddd4j-sample-vertx</module>
         <module>ddd4j-sample-helidon</module>
         <module>ddd4j-sample-dropwizard</module>
-
-        <!-- CQRS/ES 示例：演示 Order + Goods 读写分离 + 缓存。 -->
         <module>ddd4j-sample-quarkus-cqrs</module>
         <module>ddd4j-sample-javalin-cqrs</module>
-
-        <!-- Auth 鉴权矩阵：Boot 专属实现位于外部 ddd4j-boot。 -->
+        <module>ddd4j-sample-dropwizard-cqrs</module>
+        <module>ddd4j-sample-dropwizard-satoken</module>
+        <module>ddd4j-sample-dropwizard-shiro</module>
+        <module>ddd4j-sample-helidon-cqrs</module>
+        <module>ddd4j-sample-helidon-satoken</module>
+        <module>ddd4j-sample-helidon-shiro</module>
+        <module>ddd4j-sample-micronaut-cqrs</module>
+        <module>ddd4j-sample-vertx-cqrs</module>
+        <module>ddd4j-sample-vertx-satoken</module>
+        <module>ddd4j-sample-vertx-shiro</module>
         <module>ddd4j-sample-quarkus-satoken</module>
         <module>ddd4j-sample-quarkus-shiro</module>
         <module>ddd4j-sample-javalin-satoken</module>
         <module>ddd4j-sample-javalin-shiro</module>
+        <module>ddd4j-sample-micronaut-satoken</module>
+        <module>ddd4j-sample-micronaut-shiro</module>
     </modules>
 
 </project>

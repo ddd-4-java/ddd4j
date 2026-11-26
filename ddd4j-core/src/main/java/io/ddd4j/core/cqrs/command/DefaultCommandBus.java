@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 基于显式执行器集合的默认命令路由实现。
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
-public final class DefaultCommandBus implements CommandBus {
+public class DefaultCommandBus implements CommandBus {
 
     private final Map<Class<? extends Command>, CommandExecutor<?>> executors = new ConcurrentHashMap<>();
 

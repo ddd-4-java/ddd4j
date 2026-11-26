@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.sample.quarkus.goods;
 
 import io.ddd4j.core.api.Page;
@@ -32,6 +46,7 @@ import static org.hamcrest.Matchers.*;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @QuarkusTest
+@io.quarkus.test.junit.TestProfile(io.ddd4j.sample.quarkus.GoodsStandaloneProfile.class)
 class GoodsResourceTest {
 
     @Inject
@@ -58,7 +73,7 @@ class GoodsResourceTest {
         assertThat(onSale.getStatus()).isEqualTo(GoodsStatus.ON_SALE);
 
         applicationService.delete(GoodsId.of(created.id()));
-        Goods afterDelete = repository.findById(created.id()).orElseThrow();
+        Goods afterDelete = repository.findById(created.id()).orElseThrow(IllegalStateException::new);
         assertThat(afterDelete.getStatus()).isEqualTo(GoodsStatus.DELETED);
     }
 
@@ -287,7 +302,7 @@ class GoodsResourceTest {
                 .statusCode(200)
                 .body("code", equalTo(0));
 
-        Goods afterDelete = repository.findById(created.id()).orElseThrow();
+        Goods afterDelete = repository.findById(created.id()).orElseThrow(IllegalStateException::new);
         assertThat(afterDelete.getStatus()).isEqualTo(GoodsStatus.DELETED);
     }
 

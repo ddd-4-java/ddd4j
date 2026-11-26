@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.sample.javalin.goods.domain;
 
 import io.ddd4j.core.ddd.model.AggregateRoot;
@@ -12,7 +26,7 @@ import java.time.LocalDateTime;
  *
  * <p>本示例刻意保持商品的"轻量 PO"形态：仅包含数据字段（{@code @Data}），
  * 没有复杂的状态机、不维护聚合内集合、不发布领域事件。
- * 与 {@code order} 包中的 {@link io.ddd4j.sample.javalin.order.domain.model.Order}
+ * 与 {@code order} 包中的 {@code Order}
  * 充血聚合形成对比。
  *
  * <p>实体仍继承 {@link AggregateRoot}，因为 ddd4j 的 {@code Repository<M, ID>}

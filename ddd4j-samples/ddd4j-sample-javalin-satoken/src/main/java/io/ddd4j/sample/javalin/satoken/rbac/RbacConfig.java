@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.sample.javalin.satoken.rbac;
 
 import io.ddd4j.sample.javalin.satoken.rbac.application.RbacService;
@@ -8,8 +22,9 @@ import io.ddd4j.sample.javalin.satoken.rbac.domain.repository.PermissionReposito
 import io.ddd4j.sample.javalin.satoken.rbac.domain.repository.RoleRepository;
 import io.ddd4j.sample.javalin.satoken.rbac.domain.repository.UserRepository;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 
 /**
  * RBAC 演示数据初始化：与外部 Boot 示例 {@code ddd4j-boot-sample-auth-satoken} 使用同一 Subject 鉴权语义。
@@ -34,6 +49,10 @@ public final class RbacConfig {
 
     /**
      * 预置 RBAC 演示数据。
+     *
+     * @param userRepository       用户仓储
+     * @param roleRepository       角色仓储
+     * @param permissionRepository 权限仓储
      */
     public static void initRbacData(UserRepository userRepository,
                                     RoleRepository roleRepository,
@@ -55,13 +74,13 @@ public final class RbacConfig {
 
         // 2) 创建角色并分配权限
         Role adminRole = new Role("R001", "admin", "超级管理员", "拥有全部权限", Role.Status.ENABLED);
-        adminRole.assignPermissions(new HashSet<>(List.of("P001", "P002", "P003", "P004", "P005", "P006")));
+        adminRole.assignPermissions(new HashSet<>(Arrays.asList("P001", "P002", "P003", "P004", "P005", "P006")));
 
         Role userRole = new Role("R002", "user", "普通用户", "基础用户角色", Role.Status.ENABLED);
-        userRole.assignPermissions(new HashSet<>(List.of("P003", "P005")));
+        userRole.assignPermissions(new HashSet<>(Arrays.asList("P003", "P005")));
 
         Role managerRole = new Role("R003", "manager", "业务管理员", "管理商品和订单", Role.Status.ENABLED);
-        managerRole.assignPermissions(new HashSet<>(List.of("P003", "P005", "P006")));
+        managerRole.assignPermissions(new HashSet<>(Arrays.asList("P003", "P005", "P006")));
 
         roleRepository.save(adminRole);
         roleRepository.save(userRole);
@@ -69,13 +88,13 @@ public final class RbacConfig {
 
         // 3) 创建用户并分配角色
         User admin = new User("10001", "admin", "admin", "管理员", User.Status.ENABLED);
-        admin.assignRoles(new HashSet<>(List.of("R001")));
+        admin.assignRoles(new HashSet<>(Collections.singletonList("R001")));
 
         User user = new User("10002", "user", "user", "张三", User.Status.ENABLED);
-        user.assignRoles(new HashSet<>(List.of("R002")));
+        user.assignRoles(new HashSet<>(Collections.singletonList("R002")));
 
         User disabled = new User("10003", "disabled", "disabled", "李四（已禁用）", User.Status.DISABLED);
-        disabled.assignRoles(new HashSet<>(List.of("R002")));
+        disabled.assignRoles(new HashSet<>(Collections.singletonList("R002")));
 
         userRepository.save(admin);
         userRepository.save(user);
@@ -85,6 +104,9 @@ public final class RbacConfig {
     /**
      * 注册权限数据源：直接使用 {@link RbacService}（其自身实现了
      * {@link io.ddd4j.core.subject.SubjectDataProvider}）。
+     *
+     * @param rbacService RBAC 服务
+     * @return RBAC 服务实例
      */
     public static RbacService subjectDataProvider(RbacService rbacService) {
         return rbacService;

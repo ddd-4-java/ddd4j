@@ -1,6 +1,18 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.sample.quarkus.shiro.rbac;
-
-import java.util.Objects;
 
 import jakarta.enterprise.context.ApplicationScoped;
 
@@ -21,6 +33,9 @@ public class InMemoryUserRepository {
 
     /**
      * 保存或覆盖用户。
+     *
+     * @param user 用户
+     * @return 已保存的用户
      */
     public User save(User user) {
         Objects.requireNonNull(user, "user");
@@ -30,6 +45,9 @@ public class InMemoryUserRepository {
 
     /**
      * 按 ID 查询。
+     *
+     * @param id 标识
+     * @return 匹配的用户，不存在时为空
      */
     public Optional<User> findById(String id) {
         return Optional.ofNullable(store.get(id));
@@ -37,6 +55,9 @@ public class InMemoryUserRepository {
 
     /**
      * 按登录名查询。
+     *
+     * @param username 用户名
+     * @return 匹配的用户，不存在时为空
      */
     public Optional<User> findByUsername(String username) {
         if (Objects.isNull(username)) {
@@ -49,6 +70,8 @@ public class InMemoryUserRepository {
 
     /**
      * 查询全部。
+     *
+     * @return 用户列表
      */
     public List<User> findAll() {
         return new ArrayList<>(store.values());
@@ -56,6 +79,9 @@ public class InMemoryUserRepository {
 
     /**
      * 删除用户。
+     *
+     * @param id 标识
+     * @return 删除成功时为 true
      */
     public boolean deleteById(String id) {
         return Objects.nonNull(store.remove(id));
@@ -63,6 +89,10 @@ public class InMemoryUserRepository {
 
     /**
      * 为用户绑定角色编码。
+     *
+     * @param userId   用户标识
+     * @param roleCode 角色编码
+     * @return 已更新的用户
      */
     public User addRole(String userId, String roleCode) {
         User user = store.get(userId);
@@ -78,6 +108,10 @@ public class InMemoryUserRepository {
 
     /**
      * 为用户解除角色。
+     *
+     * @param userId   用户标识
+     * @param roleCode 角色编码
+     * @return 已更新的用户
      */
     public User removeRole(String userId, String roleCode) {
         User user = store.get(userId);
@@ -92,6 +126,9 @@ public class InMemoryUserRepository {
 
     /**
      * 批量查询：根据角色编码聚合用户。
+     *
+     * @param roleCode 角色编码
+     * @return 用户列表
      */
     public List<User> findByRoleCode(String roleCode) {
         List<User> result = new ArrayList<>();
@@ -106,6 +143,8 @@ public class InMemoryUserRepository {
 
     /**
      * 当前存储的用户数量。
+     *
+     * @return 用户数量
      */
     public int size() {
         return store.size();
@@ -113,11 +152,16 @@ public class InMemoryUserRepository {
 
     /**
      * 当前存储的全部用户（只读视图）。
+     *
+     * @return 用户集合
      */
     public Collection<User> values() {
         return store.values();
     }
 
+    /**
+     * 清空内存用户仓储。
+     */
     public void clear() {
         store.clear();
     }

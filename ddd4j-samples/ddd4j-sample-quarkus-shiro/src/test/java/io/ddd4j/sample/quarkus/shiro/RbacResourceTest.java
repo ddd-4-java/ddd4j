@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.sample.quarkus.shiro;
 
 import io.ddd4j.sample.quarkus.shiro.rbac.RbacConfig;
@@ -9,11 +23,11 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.hasKey;
 
 /**
  * RBAC 集成测试（Quarkus + Shiro + JAX-RS）。完整 RBAC 流：
@@ -33,13 +47,6 @@ class RbacResourceTest {
     @Inject
     RbacConfig rbacConfig;
 
-    @BeforeEach
-    void resetRbacData() {
-        rbacConfig.reset();
-    }
-
-    // ========== 登录 / 认证 ==========
-
     private static String loginAs(String username, String password) {
         Map<String, String> body = new HashMap<>();
         body.put("username", username);
@@ -50,14 +57,21 @@ class RbacResourceTest {
                 .extract().path("token");
     }
 
+    // ========== 登录 / 认证 ==========
+
     private static Map<String, Object> createUserBody(String id, String username, String displayName, Object role) {
         Map<String, Object> newUser = new HashMap<>();
         newUser.put("id", id);
         newUser.put("username", username);
         newUser.put("displayName", displayName);
         newUser.put("password", "123456");
-        newUser.put("roleCodes", role instanceof String roleCode ? new HashSet<>(Set.of(roleCode)) : role);
+        newUser.put("roleCodes", role instanceof String ? new HashSet<>(java.util.Arrays.asList((String) role)) : role);
         return newUser;
+    }
+
+    @BeforeEach
+    void resetRbacData() {
+        rbacConfig.reset();
     }
 
     @Test
@@ -188,6 +202,32 @@ class RbacResourceTest {
     }
 
     @Test
+    void shouldTreatMissingRuntimePermissionAsNotGranted() {
+        String token = loginAs("admin", "123456");
+        given().header("Authorization", "Bearer " + token)
+                .when().get("/auth/check/permission")
+                .then()
+                .statusCode(200)
+                .body("code", is(0))
+                .body("data", hasKey("permission"))
+                .body("data.permission", nullValue())
+                .body("data.has", is(false));
+    }
+
+    @Test
+    void shouldTreatBlankRuntimePermissionAsNotGranted() {
+        String token = loginAs("user", "123456");
+        given().header("Authorization", "Bearer " + token)
+                .queryParam("permission", " ")
+                .when().get("/auth/check/permission")
+                .then()
+                .statusCode(200)
+                .body("code", is(0))
+                .body("data.permission", equalTo(" "))
+                .body("data.has", is(false));
+    }
+
+    @Test
     void shouldCheckRoleAtRuntime() {
         String token = loginAs("admin", "123456");
         given().header("Authorization", "Bearer " + token)
@@ -225,6 +265,10 @@ class RbacResourceTest {
 
     @Test
     void shouldDenyAccessToCheckPermissionWithoutLogin() {
+        given().when().get("/auth/check/permission")
+                .then().statusCode(401);
+        given().queryParam("permission", " ").when().get("/auth/check/permission")
+                .then().statusCode(401);
         given().when().get("/auth/check/permission?permission=anything")
                 .then().statusCode(401);
     }

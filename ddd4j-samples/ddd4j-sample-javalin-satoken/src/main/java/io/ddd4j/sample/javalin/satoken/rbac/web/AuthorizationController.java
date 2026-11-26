@@ -1,17 +1,30 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.sample.javalin.satoken.rbac.web;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.util.Objects;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.core.api.R;
 import io.ddd4j.sample.javalin.satoken.rbac.application.RbacService;
 import io.ddd4j.sample.javalin.satoken.rbac.domain.model.Permission;
 import io.ddd4j.sample.javalin.satoken.rbac.domain.model.Role;
 import io.ddd4j.sample.javalin.satoken.rbac.domain.model.User;
 import io.javalin.apibuilder.EndpointGroup;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.*;
 
@@ -37,12 +50,20 @@ public class AuthorizationController {
 
     private final RbacService rbacService;
 
+    /**
+     * 创建授权控制器。
+     *
+     * @param rbacService RBAC 服务
+     */
+    @com.google.inject.Inject
     public AuthorizationController(RbacService rbacService) {
         this.rbacService = Objects.requireNonNull(rbacService, "rbacService must not be null");
     }
 
     /**
      * 注册 RBAC 授权管理路由（建议在 {@code path("rbac", ...)} 内调用，使路径变为 {@code /rbac/admin/*}）。
+     *
+     * @return 路由组
      */
     public EndpointGroup routes() {
         return () -> {
@@ -169,18 +190,32 @@ public class AuthorizationController {
 
     // ============================ 请求/响应 DTO ============================
 
-    public final static class CreateUserRequest {
+    /**
+     * 创建用户请求。
+     */
+    @Data
+    @NoArgsConstructor
+    public static class CreateUserRequest {
 
         private static final long serialVersionUID = 0L;
 
-        private final String userId;
+        private String userId;
 
-        private final String username;
+        private String username;
 
-        private final String password;
+        @ToString.Exclude
+        private String password;
 
-        private final String realName;
+        private String realName;
 
+        /**
+         * 创建创建用户请求。
+         *
+         * @param userId   用户标识
+         * @param username 用户名
+         * @param password 密码
+         * @param realName 真实姓名
+         */
         @JsonCreator()
         public CreateUserRequest(@JsonProperty("userId") String userId, @JsonProperty("username") String username, @JsonProperty("password") String password, @JsonProperty("realName") String realName) {
             this.userId = userId;
@@ -189,64 +224,71 @@ public class AuthorizationController {
             this.realName = realName;
         }
 
+        /**
+         * 读取用户标识。
+         *
+         * @return 用户标识
+         */
         @JsonProperty("userId")
         public String userId() {
             return userId;
         }
 
+        /**
+         * 读取用户名。
+         *
+         * @return 用户名
+         */
         @JsonProperty("username")
         public String username() {
             return username;
         }
 
+        /**
+         * 读取密码。
+         *
+         * @return 密码
+         */
         @JsonProperty("password")
         public String password() {
             return password;
         }
 
+        /**
+         * 读取真实姓名。
+         *
+         * @return 真实姓名
+         */
         @JsonProperty("realName")
         public String realName() {
             return realName;
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            CreateUserRequest other = (CreateUserRequest) obj;
-            return Objects.equals(this.userId, other.userId) && Objects.equals(this.username, other.username) && Objects.equals(this.password, other.password) && Objects.equals(this.realName, other.realName);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(userId);
-            result = 31 * result + Objects.hashCode(username);
-            result = 31 * result + Objects.hashCode(password);
-            result = 31 * result + Objects.hashCode(realName);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "CreateUserRequest[userId=" + userId + ", username=" + username + ", password=" + password + ", realName=" + realName + "]";
-        }
     }
 
-    public final static class UpdateUserRequest {
+    /**
+     * 更新用户请求。
+     */
+    @Data
+    @NoArgsConstructor
+    public static class UpdateUserRequest {
 
         private static final long serialVersionUID = 0L;
 
-        private final String realName;
+        private String realName;
 
-        private final String password;
+        @ToString.Exclude
+        private String password;
 
-        private final User.Status status;
+        private User.Status status;
 
+        /**
+         * 创建更新用户请求。
+         *
+         * @param realName 真实姓名
+         * @param password 密码
+         * @param status   状态
+         */
         @JsonCreator()
         public UpdateUserRequest(@JsonProperty("realName") String realName, @JsonProperty("password") String password, @JsonProperty("status") User.Status status) {
             this.realName = realName;
@@ -254,101 +296,96 @@ public class AuthorizationController {
             this.status = status;
         }
 
+        /**
+         * 读取真实姓名。
+         *
+         * @return 真实姓名
+         */
         @JsonProperty("realName")
         public String realName() {
             return realName;
         }
 
+        /**
+         * 读取密码。
+         *
+         * @return 密码
+         */
         @JsonProperty("password")
         public String password() {
             return password;
         }
 
+        /**
+         * 读取状态。
+         *
+         * @return 状态
+         */
         @JsonProperty("status")
         public User.Status status() {
             return status;
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            UpdateUserRequest other = (UpdateUserRequest) obj;
-            return Objects.equals(this.realName, other.realName) && Objects.equals(this.password, other.password) && Objects.equals(this.status, other.status);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(realName);
-            result = 31 * result + Objects.hashCode(password);
-            result = 31 * result + Objects.hashCode(status);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "UpdateUserRequest[realName=" + realName + ", password=" + password + ", status=" + status + "]";
-        }
     }
 
-    public final static class AssignRolesRequest {
+    /**
+     * 分配角色请求。
+     */
+    @Data
+    @NoArgsConstructor
+    public static class AssignRolesRequest {
 
         private static final long serialVersionUID = 0L;
 
-        private final List<String> roleIds;
+        private List<String> roleIds;
 
+        /**
+         * 创建分配角色请求。
+         *
+         * @param roleIds 角色标识集合
+         */
         @JsonCreator()
         public AssignRolesRequest(@JsonProperty("roleIds") List<String> roleIds) {
             this.roleIds = roleIds;
         }
 
+        /**
+         * 读取角色标识集合。
+         *
+         * @return 角色标识集合
+         */
         @JsonProperty("roleIds")
         public List<String> roleIds() {
             return roleIds;
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            AssignRolesRequest other = (AssignRolesRequest) obj;
-            return Objects.equals(this.roleIds, other.roleIds);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(roleIds);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "AssignRolesRequest[roleIds=" + roleIds + "]";
-        }
     }
 
-    public final static class CreateRoleRequest {
+    /**
+     * 创建角色请求。
+     */
+    @Data
+    @NoArgsConstructor
+    public static class CreateRoleRequest {
 
         private static final long serialVersionUID = 0L;
 
-        private final String roleId;
+        private String roleId;
 
-        private final String roleCode;
+        private String roleCode;
 
-        private final String roleName;
+        private String roleName;
 
-        private final String description;
+        private String description;
 
+        /**
+         * 创建创建角色请求。
+         *
+         * @param roleId      角色标识
+         * @param roleCode    角色编码
+         * @param roleName    角色名称
+         * @param description 描述
+         */
         @JsonCreator()
         public CreateRoleRequest(@JsonProperty("roleId") String roleId, @JsonProperty("roleCode") String roleCode, @JsonProperty("roleName") String roleName, @JsonProperty("description") String description) {
             this.roleId = roleId;
@@ -357,64 +394,70 @@ public class AuthorizationController {
             this.description = description;
         }
 
+        /**
+         * 读取角色标识。
+         *
+         * @return 角色标识
+         */
         @JsonProperty("roleId")
         public String roleId() {
             return roleId;
         }
 
+        /**
+         * 读取角色编码。
+         *
+         * @return 角色编码
+         */
         @JsonProperty("roleCode")
         public String roleCode() {
             return roleCode;
         }
 
+        /**
+         * 读取角色名称。
+         *
+         * @return 角色名称
+         */
         @JsonProperty("roleName")
         public String roleName() {
             return roleName;
         }
 
+        /**
+         * 读取描述。
+         *
+         * @return 描述
+         */
         @JsonProperty("description")
         public String description() {
             return description;
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            CreateRoleRequest other = (CreateRoleRequest) obj;
-            return Objects.equals(this.roleId, other.roleId) && Objects.equals(this.roleCode, other.roleCode) && Objects.equals(this.roleName, other.roleName) && Objects.equals(this.description, other.description);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(roleId);
-            result = 31 * result + Objects.hashCode(roleCode);
-            result = 31 * result + Objects.hashCode(roleName);
-            result = 31 * result + Objects.hashCode(description);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "CreateRoleRequest[roleId=" + roleId + ", roleCode=" + roleCode + ", roleName=" + roleName + ", description=" + description + "]";
-        }
     }
 
-    public final static class UpdateRoleRequest {
+    /**
+     * 更新角色请求。
+     */
+    @Data
+    @NoArgsConstructor
+    public static class UpdateRoleRequest {
 
         private static final long serialVersionUID = 0L;
 
-        private final String roleName;
+        private String roleName;
 
-        private final String description;
+        private String description;
 
-        private final Role.Status status;
+        private Role.Status status;
 
+        /**
+         * 创建更新角色请求。
+         *
+         * @param roleName    角色名称
+         * @param description 描述
+         * @param status      状态
+         */
         @JsonCreator()
         public UpdateRoleRequest(@JsonProperty("roleName") String roleName, @JsonProperty("description") String description, @JsonProperty("status") Role.Status status) {
             this.roleName = roleName;
@@ -422,101 +465,96 @@ public class AuthorizationController {
             this.status = status;
         }
 
+        /**
+         * 读取角色名称。
+         *
+         * @return 角色名称
+         */
         @JsonProperty("roleName")
         public String roleName() {
             return roleName;
         }
 
+        /**
+         * 读取描述。
+         *
+         * @return 描述
+         */
         @JsonProperty("description")
         public String description() {
             return description;
         }
 
+        /**
+         * 读取状态。
+         *
+         * @return 状态
+         */
         @JsonProperty("status")
         public Role.Status status() {
             return status;
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            UpdateRoleRequest other = (UpdateRoleRequest) obj;
-            return Objects.equals(this.roleName, other.roleName) && Objects.equals(this.description, other.description) && Objects.equals(this.status, other.status);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(roleName);
-            result = 31 * result + Objects.hashCode(description);
-            result = 31 * result + Objects.hashCode(status);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "UpdateRoleRequest[roleName=" + roleName + ", description=" + description + ", status=" + status + "]";
-        }
     }
 
-    public final static class AssignPermissionsRequest {
+    /**
+     * 分配权限请求。
+     */
+    @Data
+    @NoArgsConstructor
+    public static class AssignPermissionsRequest {
 
         private static final long serialVersionUID = 0L;
 
-        private final List<String> permissionIds;
+        private List<String> permissionIds;
 
+        /**
+         * 创建分配权限请求。
+         *
+         * @param permissionIds 权限标识集合
+         */
         @JsonCreator()
         public AssignPermissionsRequest(@JsonProperty("permissionIds") List<String> permissionIds) {
             this.permissionIds = permissionIds;
         }
 
+        /**
+         * 读取权限标识集合。
+         *
+         * @return 权限标识集合
+         */
         @JsonProperty("permissionIds")
         public List<String> permissionIds() {
             return permissionIds;
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            AssignPermissionsRequest other = (AssignPermissionsRequest) obj;
-            return Objects.equals(this.permissionIds, other.permissionIds);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(permissionIds);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "AssignPermissionsRequest[permissionIds=" + permissionIds + "]";
-        }
     }
 
-    public final static class CreatePermissionRequest {
+    /**
+     * 创建权限请求。
+     */
+    @Data
+    @NoArgsConstructor
+    public static class CreatePermissionRequest {
 
         private static final long serialVersionUID = 0L;
 
-        private final String permissionId;
+        private String permissionId;
 
-        private final String permissionCode;
+        private String permissionCode;
 
-        private final String permissionName;
+        private String permissionName;
 
-        private final String module;
+        private String module;
 
+        /**
+         * 创建创建权限请求。
+         *
+         * @param permissionId   权限标识
+         * @param permissionCode 权限编码
+         * @param permissionName 权限名称
+         * @param module         所属模块
+         */
         @JsonCreator()
         public CreatePermissionRequest(@JsonProperty("permissionId") String permissionId, @JsonProperty("permissionCode") String permissionCode, @JsonProperty("permissionName") String permissionName, @JsonProperty("module") String module) {
             this.permissionId = permissionId;
@@ -525,64 +563,70 @@ public class AuthorizationController {
             this.module = module;
         }
 
+        /**
+         * 读取权限标识。
+         *
+         * @return 权限标识
+         */
         @JsonProperty("permissionId")
         public String permissionId() {
             return permissionId;
         }
 
+        /**
+         * 读取权限编码。
+         *
+         * @return 权限编码
+         */
         @JsonProperty("permissionCode")
         public String permissionCode() {
             return permissionCode;
         }
 
+        /**
+         * 读取权限名称。
+         *
+         * @return 权限名称
+         */
         @JsonProperty("permissionName")
         public String permissionName() {
             return permissionName;
         }
 
+        /**
+         * 读取所属模块。
+         *
+         * @return 所属模块
+         */
         @JsonProperty("module")
         public String module() {
             return module;
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            CreatePermissionRequest other = (CreatePermissionRequest) obj;
-            return Objects.equals(this.permissionId, other.permissionId) && Objects.equals(this.permissionCode, other.permissionCode) && Objects.equals(this.permissionName, other.permissionName) && Objects.equals(this.module, other.module);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(permissionId);
-            result = 31 * result + Objects.hashCode(permissionCode);
-            result = 31 * result + Objects.hashCode(permissionName);
-            result = 31 * result + Objects.hashCode(module);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "CreatePermissionRequest[permissionId=" + permissionId + ", permissionCode=" + permissionCode + ", permissionName=" + permissionName + ", module=" + module + "]";
-        }
     }
 
-    public final static class UpdatePermissionRequest {
+    /**
+     * 更新权限请求。
+     */
+    @Data
+    @NoArgsConstructor
+    public static class UpdatePermissionRequest {
 
         private static final long serialVersionUID = 0L;
 
-        private final String permissionName;
+        private String permissionName;
 
-        private final String module;
+        private String module;
 
-        private final Permission.Status status;
+        private Permission.Status status;
 
+        /**
+         * 创建更新权限请求。
+         *
+         * @param permissionName 权限名称
+         * @param module         所属模块
+         * @param status         状态
+         */
         @JsonCreator()
         public UpdatePermissionRequest(@JsonProperty("permissionName") String permissionName, @JsonProperty("module") String module, @JsonProperty("status") Permission.Status status) {
             this.permissionName = permissionName;
@@ -590,46 +634,36 @@ public class AuthorizationController {
             this.status = status;
         }
 
+        /**
+         * 读取权限名称。
+         *
+         * @return 权限名称
+         */
         @JsonProperty("permissionName")
         public String permissionName() {
             return permissionName;
         }
 
+        /**
+         * 读取所属模块。
+         *
+         * @return 所属模块
+         */
         @JsonProperty("module")
         public String module() {
             return module;
         }
 
+        /**
+         * 读取状态。
+         *
+         * @return 状态
+         */
         @JsonProperty("status")
         public Permission.Status status() {
             return status;
         }
 
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (Objects.isNull(obj) || getClass() != obj.getClass()) {
-                return false;
-            }
-            UpdatePermissionRequest other = (UpdatePermissionRequest) obj;
-            return Objects.equals(this.permissionName, other.permissionName) && Objects.equals(this.module, other.module) && Objects.equals(this.status, other.status);
-        }
-
-        @Override
-        public int hashCode() {
-            int result = 0;
-            result = 31 * result + Objects.hashCode(permissionName);
-            result = 31 * result + Objects.hashCode(module);
-            result = 31 * result + Objects.hashCode(status);
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "UpdatePermissionRequest[permissionName=" + permissionName + ", module=" + module + ", status=" + status + "]";
-        }
     }
 
 }

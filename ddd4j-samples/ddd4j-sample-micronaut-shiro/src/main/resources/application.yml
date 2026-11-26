@@ -1,0 +1,9 @@
+micronaut:
+  application:
+    name: ddd4j-sample-micronaut-shiro
+  server:
+    port: 8086
+ddd4j:
+  web:
+    default-authentication-mode: DISABLED
+    idempotency-enabled: false

@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.sample.quarkus.goods.web;
 
 import io.ddd4j.core.api.R;
@@ -10,6 +24,7 @@ import io.ddd4j.sample.quarkus.goods.web.dto.CreateGoodsRequest;
 import io.ddd4j.sample.quarkus.goods.web.dto.GoodsResponse;
 import io.ddd4j.sample.quarkus.goods.web.dto.UpdateGoodsRequest;
 import io.ddd4j.web.quarkus.TenantAwareResource;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -27,7 +42,7 @@ import java.util.Locale;
  * {@code getLang()} / {@code ok(data)} / {@code fail(msg)} 等辅助方法，
  * 同时复用 ddd4j 的统一响应包装 {@link R}。
  *
- * <h3>端点</h3>
+ * <h2>端点</h2>
  * <ul>
  *   <li>{@code POST   /goods}                 - 创建商品</li>
  *   <li>{@code PUT    /goods/{id}}             - 更新商品</li>
@@ -37,18 +52,23 @@ import java.util.Locale;
  *   <li>{@code GET    /goods/by-code}          - 按编码查询</li>
  * </ul>
  *
- * <h3>设计原则</h3>
+ * <h2>设计原则</h2>
  * <p>Resource 层只做协议适配（HTTP ↔ 应用服务入参 / 响应），不包含业务规则。
  * 所有业务方法都委托给 {@link GoodsApplicationService}。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@io.quarkus.arc.properties.IfBuildProperty(name = "sample.goods.standalone", stringValue = "true")
 @Path("/goods")
 @Produces(MediaType.APPLICATION_JSON)
+@ApplicationScoped
 public class GoodsResource extends TenantAwareResource {
 
     private final GoodsApplicationService applicationService;
 
+    /**
+     * @param applicationService 商品应用服务
+     */
     @Inject
     public GoodsResource(GoodsApplicationService applicationService) {
         this.applicationService = applicationService;

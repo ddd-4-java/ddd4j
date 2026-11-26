@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.sample.javalin.satoken.rbac.domain.model;
 
 import io.ddd4j.core.ddd.model.AggregateRoot;
@@ -51,6 +65,15 @@ public class Role extends AggregateRoot<String> {
      */
     private Status status;
 
+    /**
+     * 创建角色。
+     *
+     * @param roleId      角色标识
+     * @param roleCode    角色编码
+     * @param roleName    角色名称
+     * @param description 描述
+     * @param status      状态
+     */
     public Role(String roleId, String roleCode, String roleName, String description, Status status) {
         if (StrKit.isBlank(roleId)) {
             throw new IllegalArgumentException("roleId must not be blank");
@@ -62,12 +85,15 @@ public class Role extends AggregateRoot<String> {
         this.roleCode = roleCode;
         this.roleName = roleName;
         this.description = description;
-        this.status = Objects.requireNonNullElse(status, Status.ENABLED);
+        this.status = Objects.nonNull(status) ? status : Status.ENABLED;
         this.createdAt = Instant.now();
     }
 
     /**
      * 重命名/描述修改。
+     *
+     * @param roleName    角色名称
+     * @param description 描述
      */
     public void rename(String roleName, String description) {
         if (StrKit.isNotBlank(roleName)) {
@@ -94,6 +120,8 @@ public class Role extends AggregateRoot<String> {
 
     /**
      * 分配权限给角色。
+     *
+     * @param newPermissionIds 新的权限标识集合
      */
     public void assignPermissions(Set<String> newPermissionIds) {
         if (Objects.nonNull(newPermissionIds)) {
@@ -104,6 +132,8 @@ public class Role extends AggregateRoot<String> {
 
     /**
      * 添加单个权限。
+     *
+     * @param permissionId 权限标识
      */
     public void addPermission(String permissionId) {
         if (StrKit.isNotBlank(permissionId)) {
@@ -113,6 +143,8 @@ public class Role extends AggregateRoot<String> {
 
     /**
      * 移除权限。
+     *
+     * @param permissionId 权限标识
      */
     public void removePermission(String permissionId) {
         this.permissionIds.remove(permissionId);
@@ -127,6 +159,13 @@ public class Role extends AggregateRoot<String> {
      * 角色状态。
      */
     public enum Status {
-        ENABLED, DISABLED
+        /**
+         * 启用状态。
+         */
+        ENABLED,
+        /**
+         * 禁用状态。
+         */
+        DISABLED
     }
 }

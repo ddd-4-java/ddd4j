@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.sample.quarkus.satoken.rbac;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -22,6 +36,9 @@ public class InMemoryPermissionRepository {
 
     /**
      * 保存或覆盖权限。
+     *
+     * @param permission 权限
+     * @return 已保存的权限
      */
     public Permission save(Permission permission) {
         Objects.requireNonNull(permission, "permission");
@@ -31,6 +48,9 @@ public class InMemoryPermissionRepository {
 
     /**
      * 按编码查询。
+     *
+     * @param code 业务编码
+     * @return 匹配的权限，不存在时为空
      */
     public Optional<Permission> findByCode(String code) {
         return Optional.ofNullable(store.get(code));
@@ -38,6 +58,8 @@ public class InMemoryPermissionRepository {
 
     /**
      * 查询全部。
+     *
+     * @return 权限列表
      */
     public List<Permission> findAll() {
         return new ArrayList<>(store.values());
@@ -45,6 +67,9 @@ public class InMemoryPermissionRepository {
 
     /**
      * 删除权限。
+     *
+     * @param code 业务编码
+     * @return 删除成功时为 true
      */
     public boolean deleteByCode(String code) {
         return Objects.nonNull(store.remove(code));
@@ -52,6 +77,8 @@ public class InMemoryPermissionRepository {
 
     /**
      * 当前存储的权限数量。
+     *
+     * @return 权限数量
      */
     public int size() {
         return store.size();

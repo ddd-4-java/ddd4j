@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.sample.javalin.satoken.rbac.domain.model;
 
 import io.ddd4j.core.ddd.model.AggregateRoot;
@@ -51,6 +65,15 @@ public class User extends AggregateRoot<String> {
      */
     private Status status;
 
+    /**
+     * 创建用户。
+     *
+     * @param userId   用户标识
+     * @param username 用户名
+     * @param password 密码
+     * @param realName 真实姓名
+     * @param status   状态
+     */
     public User(String userId, String username, String password, String realName, Status status) {
         if (StrKit.isBlank(userId)) {
             throw new IllegalArgumentException("userId must not be blank");
@@ -65,12 +88,14 @@ public class User extends AggregateRoot<String> {
         this.username = username;
         this.password = password;
         this.realName = realName;
-        this.status = Objects.requireNonNullElse(status, Status.ENABLED);
+        this.status = Objects.nonNull(status) ? status : Status.ENABLED;
         this.createdAt = Instant.now();
     }
 
     /**
      * 修改密码。
+     *
+     * @param newPassword 新密码
      */
     public void changePassword(String newPassword) {
         if (StrKit.isNotBlank(newPassword)) {
@@ -80,6 +105,8 @@ public class User extends AggregateRoot<String> {
 
     /**
      * 修改真实姓名。
+     *
+     * @param realName 真实姓名
      */
     public void rename(String realName) {
         this.realName = realName;
@@ -101,6 +128,8 @@ public class User extends AggregateRoot<String> {
 
     /**
      * 分配角色（替换）。
+     *
+     * @param newRoleIds 新的角色标识集合
      */
     public void assignRoles(Set<String> newRoleIds) {
         if (Objects.nonNull(newRoleIds)) {
@@ -111,6 +140,8 @@ public class User extends AggregateRoot<String> {
 
     /**
      * 添加单个角色。
+     *
+     * @param roleId 角色标识
      */
     public void addRole(String roleId) {
         if (StrKit.isNotBlank(roleId)) {
@@ -120,6 +151,8 @@ public class User extends AggregateRoot<String> {
 
     /**
      * 移除角色。
+     *
+     * @param roleId 角色标识
      */
     public void removeRole(String roleId) {
         this.roleIds.remove(roleId);
@@ -134,6 +167,13 @@ public class User extends AggregateRoot<String> {
      * 用户状态。
      */
     public enum Status {
-        ENABLED, DISABLED
+        /**
+         * 启用状态。
+         */
+        ENABLED,
+        /**
+         * 禁用状态。
+         */
+        DISABLED
     }
 }

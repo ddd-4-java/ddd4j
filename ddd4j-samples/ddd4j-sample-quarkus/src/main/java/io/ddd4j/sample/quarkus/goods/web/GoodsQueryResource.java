@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.sample.quarkus.goods.web;
 
 import io.ddd4j.core.api.Page;
@@ -7,6 +21,7 @@ import io.ddd4j.sample.quarkus.goods.domain.GoodsQuery;
 import io.ddd4j.sample.quarkus.goods.web.dto.GoodsQueryParameters;
 import io.ddd4j.sample.quarkus.goods.web.dto.GoodsResponse;
 import io.ddd4j.web.quarkus.TenantAwareResource;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.BeanParam;
 import jakarta.ws.rs.GET;
@@ -16,6 +31,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 商品 CQRS 查询端点（第三轨：Model/Query 快速 CRUD 模式，查询侧）。
@@ -26,26 +42,31 @@ import java.util.List;
  *   <li>查询端（本类）：基于 {@link GoodsQuery} 充血查询做分页/列表/统计</li>
  * </ul>
  *
- * <h3>端点</h3>
+ * <h2>端点</h2>
  * <ul>
  *   <li>{@code GET /query/goods/page}  - 充血分页查询（绑定 GoodsQuery 字段）</li>
  *   <li>{@code GET /query/goods/list}  - 充血列表查询</li>
  *   <li>{@code GET /query/goods/count} - 充血计数查询</li>
  * </ul>
  *
- * <h3>设计原则</h3>
+ * <h2>设计原则</h2>
  * <p>查询端不修改商品状态，只读取数据。通过 {@link GoodsQuery} 的充血方法
  * （{@code page()} / {@code list()} / {@code count()}）实现无模板 CRUD 查询，
  * 展示 ddd4j Query 在 Quarkus JAX-RS 下的集成方式。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
+@io.quarkus.arc.properties.IfBuildProperty(name = "sample.goods.standalone", stringValue = "true")
 @Path("/query/goods")
 @Produces(MediaType.APPLICATION_JSON)
+@ApplicationScoped
 public class GoodsQueryResource extends TenantAwareResource {
 
     private final GoodsApplicationService applicationService;
 
+    /**
+     * @param applicationService 商品应用服务
+     */
     @Inject
     public GoodsQueryResource(GoodsApplicationService applicationService) {
         this.applicationService = applicationService;
@@ -60,10 +81,10 @@ public class GoodsQueryResource extends TenantAwareResource {
      * {@code size} / {@code orderBys} 等条件。
      *
      * <pre>
-     * GET /query/goods/page?status=ON_SALE&current=1&size=20&orderBys=createTime_DESC
+     * GET /query/goods/page?status=ON_SALE&amp;current=1&amp;size=20&amp;orderBys=createTime_DESC
      * </pre>
      *
-     * @param query 商品查询对象（由 JAX-RS 自动绑定）
+     * @param parameters 由 JAX-RS 绑定的查询参数
      * @return 分页结果
      */
     @GET
@@ -80,7 +101,7 @@ public class GoodsQueryResource extends TenantAwareResource {
      * GET /query/goods/list?nameLike=iPhone
      * </pre>
      *
-     * @param query 商品查询对象
+     * @param parameters 由 JAX-RS 绑定的查询参数
      * @return 商品列表
      */
     @GET
@@ -88,7 +109,7 @@ public class GoodsQueryResource extends TenantAwareResource {
     public Response list(@BeanParam GoodsQueryParameters parameters) {
         List<GoodsResponse> products = applicationService.listQuery(parameters.toQuery()).stream()
                 .map(GoodsResponse::from)
-                .toList();
+                .collect(Collectors.toList());
         return ok(products);
     }
 
@@ -99,7 +120,7 @@ public class GoodsQueryResource extends TenantAwareResource {
      * GET /query/goods/count?status=ON_SALE
      * </pre>
      *
-     * @param query 商品查询对象
+     * @param parameters 由 JAX-RS 绑定的查询参数
      * @return 总数
      */
     @GET

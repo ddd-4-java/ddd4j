@@ -72,7 +72,9 @@ public final class Ddd4jWebFluxFilter implements WebFilter {
                 exchange.getRequest().getMethod().name(),
                 exchange.getRequest().getPath().value(),
                 headers);
-        exchange.getAttributes().put(OTEL_SPAN_KEY, span);
+        if (Objects.nonNull(span)) {
+            exchange.getAttributes().put(OTEL_SPAN_KEY, span);
+        }
         AutoCloseable scope = WebOtelSupport.activate(span);
         exchange.getAttributes().put(OTEL_SPAN_KEY + ".scope", scope);
 

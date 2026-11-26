@@ -1,8 +1,23 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.sample.javalin.shiro.config;
 
 import io.ddd4j.sample.javalin.shiro.rbac.repository.InMemoryRoleRepository;
 import io.ddd4j.sample.javalin.shiro.rbac.repository.InMemoryUserRepository;
 import io.ddd4j.sample.javalin.shiro.rbac.service.RbacService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
@@ -14,7 +29,6 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.Subject;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -65,6 +79,8 @@ public final class AuthConfig {
 
     /**
      * 创建简单凭据匹配器（明文密码比对，仅供演示）。
+     *
+     * @return 凭据匹配器
      */
     public static CredentialsMatcher createSimpleCredentialsMatcher() {
         return new SimpleCredentialsMatcher();
@@ -72,6 +88,8 @@ public final class AuthConfig {
 
     /**
      * 获取当前线程的 Shiro Subject（辅助方法）。
+     *
+     * @return 当前主体
      */
     public static Subject currentSubject() {
         return SecurityUtils.getSubject();
@@ -95,6 +113,13 @@ public final class AuthConfig {
         private final InMemoryRoleRepository roleRepository;
         private final RbacService rbacService;
 
+        /**
+         * 创建 RBAC Realm。
+         *
+         * @param userRepository 用户仓储
+         * @param roleRepository 角色仓储
+         * @param rbacService    RBAC 服务
+         */
         public RbacRealm(InMemoryUserRepository userRepository,
                          InMemoryRoleRepository roleRepository,
                          RbacService rbacService) {

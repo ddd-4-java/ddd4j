@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.sample.quarkus.goods.domain;
 
 import io.ddd4j.core.cqrs.query.Query;
@@ -26,7 +40,7 @@ import java.math.BigDecimal;
  * 即可享受充血查询。所有条件通过显式 getter/setter 暴露，
  * 业务侧可直接以链式或传统方式构造查询条件。
  *
- * <h3>使用示例</h3>
+ * <h2>使用示例</h2>
  * <pre>{@code
  * // 1. 链式构建
  * Page<Goods> page = new GoodsQuery()
@@ -74,6 +88,9 @@ public class GoodsQuery extends Query<Goods> {
 
     /**
      * Applies comma-separated, whitelisted sort expressions such as {@code price_DESC}.
+     *
+     * @param orderBys 逗号分隔的排序表达式
+     * @return 当前查询对象
      */
     public GoodsQuery setOrderBys(String orderBys) {
         if (StrKit.isBlank(orderBys)) {
@@ -92,12 +109,20 @@ public class GoodsQuery extends Query<Goods> {
         }
         boolean descending = "DESC".equalsIgnoreCase(tokens[1]);
         switch (tokens[0]) {
-            case "id" -> applyOrder(descending, Goods::id);
-            case "createTime" -> applyOrder(descending, Goods::getCreateTime);
-            case "updateTime" -> applyOrder(descending, Goods::getUpdateTime);
-            case "price" -> applyOrder(descending, Goods::getPrice);
-            default -> {
-            }
+            case "id":
+                applyOrder(descending, Goods::id);
+                break;
+            case "createTime":
+                applyOrder(descending, Goods::getCreateTime);
+                break;
+            case "updateTime":
+                applyOrder(descending, Goods::getUpdateTime);
+                break;
+            case "price":
+                applyOrder(descending, Goods::getPrice);
+                break;
+            default:
+                break;
         }
     }
 
@@ -122,46 +147,81 @@ public class GoodsQuery extends Query<Goods> {
         return RepositoryRegistry.repository(Goods.class);
     }
 
+    /**
+     * @return 商品编码
+     */
     public String getCode() {
         return code;
     }
 
+    /**
+     * @param code 商品编码
+     * @return 当前查询对象
+     */
     public GoodsQuery setCode(String code) {
         this.code = code;
         return this;
     }
 
+    /**
+     * @return 模糊匹配的商品名称
+     */
     public String getNameLike() {
         return nameLike;
     }
 
+    /**
+     * @param nameLike 模糊匹配的商品名称
+     * @return 当前查询对象
+     */
     public GoodsQuery setNameLike(String nameLike) {
         this.nameLike = nameLike;
         return this;
     }
 
+    /**
+     * @return 商品状态
+     */
     public GoodsStatus getStatus() {
         return status;
     }
 
+    /**
+     * @param status 商品状态
+     * @return 当前查询对象
+     */
     public GoodsQuery setStatus(GoodsStatus status) {
         this.status = status;
         return this;
     }
 
+    /**
+     * @return 最低价格
+     */
     public BigDecimal getPriceMin() {
         return priceMin;
     }
 
+    /**
+     * @param priceMin 最低价格
+     * @return 当前查询对象
+     */
     public GoodsQuery setPriceMin(BigDecimal priceMin) {
         this.priceMin = priceMin;
         return this;
     }
 
+    /**
+     * @return 最高价格
+     */
     public BigDecimal getPriceMax() {
         return priceMax;
     }
 
+    /**
+     * @param priceMax 最高价格
+     * @return 当前查询对象
+     */
     public GoodsQuery setPriceMax(BigDecimal priceMax) {
         this.priceMax = priceMax;
         return this;

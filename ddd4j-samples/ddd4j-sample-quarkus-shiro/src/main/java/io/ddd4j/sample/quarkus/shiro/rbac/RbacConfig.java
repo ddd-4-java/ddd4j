@@ -1,11 +1,22 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.sample.quarkus.shiro.rbac;
-
-import io.ddd4j.kit.lang.CollKit;
-
-import java.util.Objects;
 
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.subject.SubjectDataProvider;
+import io.ddd4j.kit.lang.CollKit;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
@@ -13,10 +24,7 @@ import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * RBAC 配置：初始化内存数据 + 注册 SubjectDataProvider。
@@ -86,7 +94,9 @@ public class RbacConfig {
     }
 
     /**
-     * RBAC 权限数据源：从 User -> Role -> Permission 实时聚合。
+     * RBAC 权限数据源：从 User → Role → Permission 实时聚合。
+     *
+     * @return 主体数据提供者
      */
     @Produces
     @Singleton

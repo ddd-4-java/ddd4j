@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.sample.javalin.satoken.rbac.domain.model;
 
 import io.ddd4j.core.ddd.model.AggregateRoot;
@@ -45,6 +59,15 @@ public class Permission extends AggregateRoot<String> {
      */
     private Status status;
 
+    /**
+     * 创建权限。
+     *
+     * @param permissionId   权限标识
+     * @param permissionCode 权限编码
+     * @param permissionName 权限名称
+     * @param module         所属模块
+     * @param status         状态
+     */
     public Permission(String permissionId, String permissionCode, String permissionName, String module, Status status) {
         if (StrKit.isBlank(permissionId)) {
             throw new IllegalArgumentException("permissionId must not be blank");
@@ -56,12 +79,15 @@ public class Permission extends AggregateRoot<String> {
         this.permissionCode = permissionCode;
         this.permissionName = permissionName;
         this.module = module;
-        this.status = Objects.requireNonNullElse(status, Status.ENABLED);
+        this.status = Objects.nonNull(status) ? status : Status.ENABLED;
         this.createdAt = Instant.now();
     }
 
     /**
      * 重命名。
+     *
+     * @param permissionName 权限名称
+     * @param module         所属模块
      */
     public void rename(String permissionName, String module) {
         if (StrKit.isNotBlank(permissionName)) {
@@ -95,6 +121,13 @@ public class Permission extends AggregateRoot<String> {
      * 权限状态。
      */
     public enum Status {
-        ENABLED, DISABLED
+        /**
+         * 启用状态。
+         */
+        ENABLED,
+        /**
+         * 禁用状态。
+         */
+        DISABLED
     }
 }

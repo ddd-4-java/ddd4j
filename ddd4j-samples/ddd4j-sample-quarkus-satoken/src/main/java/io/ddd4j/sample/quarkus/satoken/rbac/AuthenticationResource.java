@@ -1,22 +1,34 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.sample.quarkus.satoken.rbac;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.util.Objects;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.annotation.SaMode;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.ddd4j.core.api.R;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 鉴权业务资源（JAX-RS）：登录、登出、当前用户、权限 / 角色校验。
@@ -39,6 +51,7 @@ import java.util.Map;
  */
 @Path("/auth")
 @Produces(MediaType.APPLICATION_JSON)
+@ApplicationScoped
 public class AuthenticationResource {
 
     @Inject
@@ -48,6 +61,9 @@ public class AuthenticationResource {
 
     /**
      * 登录：用户名 + 密码，签发 Token 并返回 Principal。
+     *
+     * @param request 请求数据
+     * @return 令牌与当前主体信息
      */
     @POST
     @Path("/login")
@@ -64,17 +80,21 @@ public class AuthenticationResource {
 
     /**
      * 登出。
+     *
+     * @return 退出结果
      */
     @POST
     @Path("/logout")
     @SaCheckLogin
     public R<Map<String, Object>> logout() {
         rbacService.logout();
-        return R.ok(Map.of("success", true));
+        return R.ok(java.util.Collections.<String, Object>singletonMap("success", true));
     }
 
     /**
      * 当前登录用户信息。
+     *
+     * @return 当前主体信息
      */
     @GET
     @Path("/me")
@@ -85,17 +105,22 @@ public class AuthenticationResource {
 
     /**
      * 登录状态。
+     *
+     * @return 认证状态信息
      */
     @GET
     @Path("/status")
     public R<Map<String, Object>> status() {
-        return R.ok(Map.of("login", rbacService.isLogin()));
+        return R.ok(java.util.Collections.<String, Object>singletonMap("login", rbacService.isLogin()));
     }
 
     // ============ 运行时权限 / 角色校验 ============
 
     /**
      * 运行时权限校验（手动调用 SubjectKit.hasPermission）。
+     *
+     * @param permission 权限编码
+     * @return 权限检查结果
      */
     @GET
     @Path("/check/permission")
@@ -109,6 +134,9 @@ public class AuthenticationResource {
 
     /**
      * 运行时角色校验（手动调用 SubjectKit.hasRole）。
+     *
+     * @param role 角色编码
+     * @return 角色检查结果
      */
     @GET
     @Path("/check/role")
@@ -124,28 +152,39 @@ public class AuthenticationResource {
 
     /**
      * 业务侧 - 查询用户列表：需要登录 + {@code user:list} 权限。
+     *
+     * @return 用户列表
      */
     @GET
     @Path("/users")
     @SaCheckLogin
     @SaCheckPermission("user:list")
     public R<Object> businessListUsers() {
-        return R.ok(Map.of("items", rbacService.listUsers()));
+        return R.ok(java.util.Collections.singletonMap("items", rbacService.listUsers()));
     }
 
     /**
      * 业务侧 - 支付订单：需要登录 + {@code order:pay} 权限。
+     *
+     * @param id 资源标识
+     * @return 支付结果
      */
     @POST
     @Path("/orders/{id}/pay")
     @SaCheckLogin
     @SaCheckPermission("order:pay")
     public R<Map<String, Object>> businessPayOrder(@PathParam("id") String id) {
-        return R.ok(Map.of("orderId", id, "paid", true));
+        Map<String, Object> result = new java.util.LinkedHashMap<>();
+        result.put("orderId", id);
+        result.put("paid", true);
+        return R.ok(result);
     }
 
     /**
      * 业务侧 - 删除用户：需要登录 + {@code admin} 角色 + {@code user:delete} 权限（AND 模式）。
+     *
+     * @param id 资源标识
+     * @return 删除结果
      */
     @DELETE
     @Path("/users/{id}")
@@ -168,17 +207,33 @@ public class AuthenticationResource {
 
         private final String password;
 
+        /**
+         * 创建登录请求。
+         *
+         * @param username 用户名
+         * @param password 密码
+         */
         @JsonCreator()
         public LoginRequest(@JsonProperty("username") String username, @JsonProperty("password") String password) {
             this.username = username;
             this.password = password;
         }
 
+        /**
+         * 读取用户名。
+         *
+         * @return 用户名
+         */
         @JsonProperty("username")
         public String username() {
             return username;
         }
 
+        /**
+         * 读取密码。
+         *
+         * @return 密码
+         */
         @JsonProperty("password")
         public String password() {
             return password;

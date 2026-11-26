@@ -1,15 +1,27 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.sample.quarkus.config;
 
+import io.ddd4j.cache.CacheKit;
 import io.ddd4j.core.ddd.event.DomainEventPublisher;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.subject.SubjectProvider;
-import io.ddd4j.sample.order.application.OrderApplicationService;
-import io.ddd4j.sample.quarkus.order.infrastructure.QuarkusOrderAdapters;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.Instance;
-import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 
@@ -27,15 +39,15 @@ import java.util.Optional;
  *   <li>如何利用 {@link ApplicationScoped} Bean 暴露给其他业务 Bean 注入</li>
  * </ol>
  *
- * <h3>运行效果</h3>
+ * <h2>运行效果</h2>
  * <p>应用启动后日志中会输出类似：
  * <pre>
- * [Ddd4jSampleConfig] DomainEventPublisher = NoOpDomainEventPublisher
+ * [Ddd4jSampleConfig] DomainEventPublisher = QuarkusDomainEventPublisher
  * [Ddd4jSampleConfig] SubjectProvider        = SampleSubjectProvider
  * [Ddd4jSampleConfig] I18nProvider           = DefaultI18nProvider
  * </pre>
  *
- * <h3>扩展建议</h3>
+ * <h2>扩展建议</h2>
  * <p>真实项目可在本类中加入：
  * <ul>
  *   <li>Quarkus 配置项绑定（{@code @ConfigProperty}）</li>
@@ -49,21 +61,13 @@ import java.util.Optional;
 @ApplicationScoped
 public class Ddd4jSampleConfig {
 
-    @Produces
-    @ApplicationScoped
-    OrderApplicationService orderApplicationService(QuarkusOrderAdapters adapters) {
-        return new OrderApplicationService(adapters, adapters, adapters, adapters);
-    }
-
     /**
      * 核心 SPI Bean 引用（启动期注入）
      */
     @Inject
     Instance<DomainEventPublisher> domainEventPublisher;
-
     @Inject
     Instance<SubjectProvider> subjectProvider;
-
     @Inject
     Instance<I18nProvider> i18nProvider;
 
@@ -77,14 +81,15 @@ public class Ddd4jSampleConfig {
      * @param event 启动事件
      */
     void onStart(@Observes StartupEvent event) {
+        CacheKit.build("ddd4j-web-idempotency",
+                builder -> builder.maximumSize(10000).expireAfterWriteSeconds(300));
         log.info("[Ddd4jSampleConfig] Quarkus started, verifying ddd4j SPI services...");
 
         logSPI("DomainEventPublisher", domainEventPublisher);
         logSPI("SubjectProvider", subjectProvider);
         logSPI("I18nProvider", i18nProvider);
 
-        log.info("[Ddd4jSampleConfig] Sample application is ready at http://localhost:8080");
-        log.info("[Ddd4jSampleConfig] Try: curl http://localhost:8080/orders/health");
+        log.info("[Ddd4jSampleConfig] Sample application is ready. Try GET /api/orders/{orderNo}");
     }
 
     /**

@@ -1,12 +1,23 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.sample.quarkus.satoken.rbac;
-
-import io.ddd4j.kit.lang.CollKit;
-
-import java.util.Objects;
 
 import io.ddd4j.core.auth.AuthPrincipal;
 import io.ddd4j.core.subject.SubjectDataProvider;
 import io.ddd4j.core.util.SubjectKit;
+import io.ddd4j.kit.lang.CollKit;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
@@ -14,10 +25,7 @@ import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * RBAC 配置：初始化内存数据 + 注册 SubjectDataProvider。
@@ -48,7 +56,11 @@ public class RbacConfig {
     /**
      * 应用启动时初始化演示数据。
      */
+    private SubjectDataProvider previousData;
+    private SubjectDataProvider ownedData;
+
     void onStart(@Observes StartupEvent event) {
+        previousData = SubjectKit.dataProvider;
         reset();
     }
 
@@ -69,27 +81,36 @@ public class RbacConfig {
         permissionRepository.save(new Permission("admin:dashboard", "管理面板", "访问管理面板"));
 
         // 2. 角色（绑定权限）
-        Role admin = new Role("admin", "管理员", "拥有全部权限", new HashSet<>(List.of(
+        Role admin = new Role("admin", "管理员", "拥有全部权限", new HashSet<>(java.util.Arrays.asList(
                 "user:list", "user:add", "user:delete",
                 "order:pay", "order:cancel", "admin:dashboard")));
         roleRepository.save(admin);
 
-        Role user = new Role("user", "普通用户", "基础用户", new HashSet<>(List.of("user:list")));
+        Role user = new Role("user", "普通用户", "基础用户", new HashSet<>(java.util.Arrays.asList("user:list")));
         roleRepository.save(user);
 
         // 3. 用户（绑定角色）
         userRepository.save(new User("u-admin", "admin", "管理员", "123456",
-                new HashSet<>(Set.of("admin", "user")), false));
+                new HashSet<>(java.util.Arrays.asList("admin", "user")), false));
         userRepository.save(new User("u-user", "user", "普通用户", "123456",
-                new HashSet<>(Set.of("user")), false));
+                new HashSet<>(java.util.Arrays.asList("user")), false));
         userRepository.save(new User("u-disabled", "disabled", "已禁用用户", "123456",
-                new HashSet<>(Set.of("user")), true));
+                new HashSet<>(java.util.Arrays.asList("user")), true));
 
-        SubjectKit.setDataProvider(subjectDataProvider());
+        ownedData = subjectDataProvider();
+        SubjectKit.setDataProvider(ownedData);
+    }
+
+    void onStop(@Observes io.quarkus.runtime.ShutdownEvent event) {
+        if (SubjectKit.dataProvider == ownedData) {
+            SubjectKit.setDataProvider(previousData);
+        }
     }
 
     /**
-     * RBAC 权限数据源：从 User -> Role -> Permission 实时聚合。
+     * RBAC 权限数据源：从 User 到 Role 再到 Permission 实时聚合。
+     *
+     * @return 主体数据提供者
      */
     @Produces
     @Singleton
@@ -98,23 +119,23 @@ public class RbacConfig {
             @Override
             public List<String> getPermissionList(AuthPrincipal principal) {
                 if (Objects.isNull(principal) || Objects.isNull(principal.getUserId())) {
-                    return List.of();
+                    return java.util.Collections.emptyList();
                 }
                 String userId = String.valueOf(principal.getUserId());
                 return userRepository.findById(userId)
                         .map(user -> aggregatePermissions(user.getRoleCodes()))
-                        .orElse(List.of());
+                        .orElse(java.util.Collections.emptyList());
             }
 
             @Override
             public List<String> getRoleList(AuthPrincipal principal) {
                 if (Objects.isNull(principal) || Objects.isNull(principal.getUserId())) {
-                    return List.of();
+                    return java.util.Collections.emptyList();
                 }
                 String userId = String.valueOf(principal.getUserId());
                 return userRepository.findById(userId)
-                        .map(user -> List.copyOf(user.getRoleCodes()))
-                        .orElse(List.of());
+                        .map(user -> java.util.Collections.unmodifiableList(new java.util.ArrayList<>(user.getRoleCodes())))
+                        .orElse(java.util.Collections.emptyList());
             }
         };
     }
@@ -124,7 +145,7 @@ public class RbacConfig {
      */
     private List<String> aggregatePermissions(Set<String> roleCodes) {
         if (CollKit.isEmpty(roleCodes)) {
-            return List.of();
+            return java.util.Collections.emptyList();
         }
         Set<String> aggregated = new HashSet<>();
         for (String roleCode : roleCodes) {

@@ -1,6 +1,18 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.sample.javalin.satoken.goods.web;
-
-import java.util.Objects;
 
 import io.ddd4j.sample.javalin.satoken.TestSupport;
 import io.javalin.Javalin;
@@ -11,6 +23,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -23,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@org.junit.jupiter.api.parallel.Execution(org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD)
 class GoodsResourceTest {
 
     private static final String PREFIX = "/api/goods";
@@ -70,6 +84,8 @@ class GoodsResourceTest {
         app.stop();
         app = TestSupport.start();
         baseUrl = "http://localhost:" + app.port();
+        // 新服务器实例使用独立连接池，不跨重启复用旧 HTTP 连接。
+        httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();
     }
 
     private HttpResponse<String> postJson(String path, String body) throws Exception {

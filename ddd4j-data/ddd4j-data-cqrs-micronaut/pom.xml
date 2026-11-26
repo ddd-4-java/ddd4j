@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.ddd4j</groupId>
+        <artifactId>ddd4j-data</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <artifactId>ddd4j-data-cqrs-micronaut</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>ddd4j CQRS Micronaut 适配：MicronautCommandBus 以 @Singleton 继承 ddd4j-core
+        DefaultCommandBus（ADR-0004：命令分发唯一入口，零新框架抽象）， 构造期经 BeanContext.getBeansOfType 收集
+        CommandExecutor Bean 注册 CommandRegistry。 事务刻意不引入（micronaut-data 的
+        io.micronaut.transaction.annotation.Transactional 由集成方标注在 service bean 上，总线只做纯分发路由）。
+    </description>
+    <url>https://github.com/ddd-4-java/${project.artifactId}</url>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- 仅在模块内对齐 Micronaut 核心，Spring 版本由 DDD4J BOM 统一管理。 -->
+            <dependency>
+                <groupId>io.micronaut</groupId>
+                <artifactId>micronaut-core-bom</artifactId>
+                <version>${micronaut.core.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-core</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <!-- For DDD4j -->
+        <!-- Micronaut Core（核心工具/Environment；核心 BOM 管理版本 = ${micronaut.core.version} 线） -->
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-core</artifactId>
+        </dependency>
+        <!-- Micronaut DI（BeanContext/@Singleton 构造型容器 API，jakarta.inject-api 随其传递；
+             核心 BOM 管理版本） -->
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-inject</artifactId>
+        </dependency>
+        <!-- Micronaut Runtime（运行时装配件：micronaut-context/context-propagation/aop 等随其传递，
+             核心 BOM 管理版本；适配器运行时栈整链对齐用） -->
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-runtime</artifactId>
+        </dependency>
+
+        <!-- ======== Test ======== -->
+        <!-- Micronaut JUnit 5 集成（@MicronautTest 真实 BeanContext 引导；io.micronaut.test 组，
+             测试扩展版本由父 BOM 管理） -->
+        <dependency>
+            <groupId>io.micronaut.test</groupId>
+            <artifactId>micronaut-test-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Micronaut 的 Bean 定义在编译期由注解处理器生成（micronaut-inject-java 产出
+                 $Definition 类 + META-INF/services 的 BeanDefinitionReference 注册），
+                 没有它 @Singleton 类对运行期 BeanContext 不可见（与 Spring/CDI 的运行期反射
+                 发现机制的根本差异）。插件级配置同时作用于 main 与 test 编译（IT 的样例执行器/
+                 @Factory 也需要生成 Bean 定义）。lombok 与根 pom:249 保持一致；
+                 micronaut-inject-java 版本由上方模块级核心 BOM 管理。 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                        <path>
+                            <groupId>io.micronaut</groupId>
+                            <artifactId>micronaut-inject-java</artifactId>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+            <!-- surefire 默认不含 *IT.java；本模块的 @MicronautTest 集成测试随 test
+                 阶段执行，需在父配置（**/*Test.java 之外）追加 IT 模式。 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                        <include>**/*IT.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

@@ -1,6 +1,18 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.sample.javalin.shiro;
-
-import java.util.Objects;
 
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.BaseContext;
@@ -18,10 +30,6 @@ import io.ddd4j.sample.javalin.shiro.goods.domain.Goods;
 import io.ddd4j.sample.javalin.shiro.goods.infrastructure.InMemoryGoodsRepository;
 import io.ddd4j.sample.javalin.shiro.goods.web.GoodsQueryResource;
 import io.ddd4j.sample.javalin.shiro.goods.web.GoodsResource;
-import io.ddd4j.sample.javalin.shiro.order.application.OrderApplicationService;
-import io.ddd4j.sample.javalin.shiro.order.domain.service.OrderDomainService;
-import io.ddd4j.sample.javalin.shiro.order.infrastructure.InMemoryOrderRepository;
-import io.ddd4j.sample.javalin.shiro.order.web.OrderResource;
 import io.ddd4j.sample.javalin.shiro.rbac.RbacConfig;
 import io.ddd4j.sample.javalin.shiro.rbac.controller.AuthenticationController;
 import io.ddd4j.sample.javalin.shiro.rbac.controller.AuthorizationController;
@@ -36,6 +44,8 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.ThreadContext;
+
+import java.util.Objects;
 
 /**
  * 测试基础设施：手动构造 Shiro SecurityManager + Javalin 应用。
@@ -80,11 +90,6 @@ public final class TestSupport {
         GoodsResource goodsResource = new GoodsResource(goodsApp);
         GoodsQueryResource goodsQueryResource = new GoodsQueryResource(goodsApp);
 
-        // 4) Order
-        InMemoryOrderRepository orderRepository = new InMemoryOrderRepository();
-        OrderDomainService orderDomainService = new OrderDomainService(orderRepository);
-        OrderApplicationService orderApp = new OrderApplicationService(orderRepository, orderDomainService);
-        OrderResource orderResource = new OrderResource(orderApp);
 
         // 5) RBAC 控制器
         AuthenticationController authController = new AuthenticationController(rbacService);
@@ -166,7 +171,6 @@ public final class TestSupport {
                             "byUser", String.valueOf(SubjectKit.getLoginId()))));
                 });
 
-                orderResource.routes().addEndpoints();
                 goodsQueryResource.routes().addEndpoints();
                 goodsResource.routes().addEndpoints();
             });

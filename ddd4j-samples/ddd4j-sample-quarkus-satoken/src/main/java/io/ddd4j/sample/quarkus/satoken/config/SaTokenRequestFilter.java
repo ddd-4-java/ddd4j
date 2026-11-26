@@ -1,5 +1,20 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.sample.quarkus.satoken.config;
 
+import cn.dev33.satoken.SaManager;
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaCheckRole;
@@ -7,17 +22,14 @@ import cn.dev33.satoken.annotation.SaMode;
 import cn.dev33.satoken.context.SaHolder;
 import cn.dev33.satoken.context.mock.SaRequestForMock;
 import cn.dev33.satoken.context.mock.SaTokenContextMockUtil;
+import cn.dev33.satoken.context.model.SaTokenContextModelBox;
 import cn.dev33.satoken.stp.StpUtil;
 import io.ddd4j.core.api.R;
-import io.ddd4j.core.util.SubjectKit;
 import io.ddd4j.kit.lang.StrKit;
+import io.ddd4j.sample.quarkus.satoken.CatalogTradeResource;
 import jakarta.annotation.Priority;
 import jakarta.ws.rs.Priorities;
-import jakarta.ws.rs.container.ContainerRequestContext;
-import jakarta.ws.rs.container.ContainerRequestFilter;
-import jakarta.ws.rs.container.ContainerResponseContext;
-import jakarta.ws.rs.container.ContainerResponseFilter;
-import jakarta.ws.rs.container.ResourceInfo;
+import jakarta.ws.rs.container.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
@@ -41,15 +53,43 @@ import java.util.Objects;
 @Priority(Priorities.AUTHENTICATION)
 public class SaTokenRequestFilter implements ContainerRequestFilter, ContainerResponseFilter {
 
+    private static final String PREVIOUS = SaTokenRequestFilter.class.getName() + ".previous";
     private static final String BEARER_PREFIX = "Bearer ";
 
     @Context
     ResourceInfo resourceInfo;
 
+    private static <A extends java.lang.annotation.Annotation> A getAnnotation(AnnotatedElement element, Class<A> type) {
+        return Objects.nonNull(element) ? element.getAnnotation(type) : null;
+    }
+
+    private static Response failure(Response.Status status, String message) {
+        return Response.status(status)
+                .type(MediaType.APPLICATION_JSON_TYPE)
+                .entity(R.fail(status.getStatusCode(), message))
+                .build();
+    }
+
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
-        SaTokenContextMockUtil.clearContext();
+        var context = SaManager.getSaTokenContext();
+        if (context.isValid()) {
+            requestContext.setProperty(PREVIOUS, context.getModelBox());
+        }
         SaTokenContextMockUtil.setMockContext();
+        SaTokenContextModelBox owned = context.getModelBox();
+        Runnable cleanup = () -> {
+            if (context.isValid() && context.getModelBox() == owned) {
+                context.clearContext();
+                SaTokenContextModelBox previous = (SaTokenContextModelBox) requestContext.getProperty(PREVIOUS);
+                if (Objects.nonNull(previous)) {
+                    context.setContext(previous.getRequest(), previous.getResponse(), previous.getStorage());
+                }
+            }
+        };
+        requestContext.setProperty(PREVIOUS + ".cleanup", cleanup);
+        ((org.jboss.resteasy.reactive.server.spi.ResteasyReactiveContainerRequestContext) requestContext)
+                .getServerRequestContext().registerCompletionCallback(failure -> cleanup.run());
 
         SaRequestForMock request = (SaRequestForMock) SaHolder.getRequest();
         request.requestPath = requestContext.getUriInfo().getPath();
@@ -69,8 +109,9 @@ public class SaTokenRequestFilter implements ContainerRequestFilter, ContainerRe
         requestContext.getCookies().forEach((name, cookie) -> request.cookieMap.put(name, cookie.getValue()));
 
         String authorization = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
-        if (StrKit.isNotEmpty(authorization) && authorization.startsWith(BEARER_PREFIX)) {
-            request.headerMap.put(StpUtil.getTokenName(), authorization.substring(BEARER_PREFIX.length()));
+        if (StrKit.isNotEmpty(authorization) && authorization.regionMatches(
+                true, 0, BEARER_PREFIX, 0, BEARER_PREFIX.length())) {
+            request.headerMap.put(StpUtil.getTokenName(), authorization.substring(BEARER_PREFIX.length()).trim());
         }
 
         Response denied = authorize();
@@ -81,17 +122,34 @@ public class SaTokenRequestFilter implements ContainerRequestFilter, ContainerRe
 
     @Override
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
-        SaTokenContextMockUtil.clearContext();
+        Runnable cleanup = (Runnable) requestContext.getProperty(PREVIOUS + ".cleanup");
+        if (Objects.nonNull(cleanup)) {
+            cleanup.run();
+        }
     }
 
     private Response authorize() {
+        Class<?> resourceClass = resourceInfo.getResourceClass();
+        if (Objects.nonNull(resourceClass) && CatalogTradeResource.class.isAssignableFrom(resourceClass)) {
+            if (!StpUtil.isLogin()) {
+                return failure(Response.Status.UNAUTHORIZED, "unauthenticated");
+            }
+            String operation = resourceInfo.getResourceMethod().getName();
+            if ("goods".equals(operation) || "order".equals(operation)) {
+                return null;
+            }
+            String permission = "cancelOrder".equals(operation) ? "order:cancel" : "order:pay";
+            return StpUtil.hasPermission(permission) ? null
+                    : failure(Response.Status.FORBIDDEN, "required permission is missing");
+        }
+
         SaCheckLogin login = findAnnotation(SaCheckLogin.class);
         SaCheckRole role = findAnnotation(SaCheckRole.class);
         SaCheckPermission permission = findAnnotation(SaCheckPermission.class);
         if (Objects.isNull(login) && Objects.isNull(role) && Objects.isNull(permission)) {
             return null;
         }
-        if (!SubjectKit.isLogin()) {
+        if (!StpUtil.isLogin()) {
             return failure(Response.Status.UNAUTHORIZED, "unauthenticated");
         }
         if (Objects.nonNull(role) && !matchesRoles(role)) {
@@ -109,8 +167,8 @@ public class SaTokenRequestFilter implements ContainerRequestFilter, ContainerRe
             return true;
         }
         return check.mode() == SaMode.AND
-                ? roles.stream().allMatch(SubjectKit::hasRole)
-                : roles.stream().anyMatch(SubjectKit::hasRole);
+                ? roles.stream().allMatch(StpUtil::hasRole)
+                : roles.stream().anyMatch(StpUtil::hasRole);
     }
 
     private boolean matchesPermissions(SaCheckPermission check) {
@@ -119,8 +177,8 @@ public class SaTokenRequestFilter implements ContainerRequestFilter, ContainerRe
             return true;
         }
         return check.mode() == SaMode.AND
-                ? permissions.stream().allMatch(SubjectKit::hasPermission)
-                : permissions.stream().anyMatch(SubjectKit::hasPermission);
+                ? permissions.stream().allMatch(StpUtil::hasPermission)
+                : permissions.stream().anyMatch(StpUtil::hasPermission);
     }
 
     private <A extends java.lang.annotation.Annotation> A findAnnotation(Class<A> type) {
@@ -128,16 +186,5 @@ public class SaTokenRequestFilter implements ContainerRequestFilter, ContainerRe
         return Objects.nonNull(methodAnnotation)
                 ? methodAnnotation
                 : getAnnotation(resourceInfo.getResourceClass(), type);
-    }
-
-    private static <A extends java.lang.annotation.Annotation> A getAnnotation(AnnotatedElement element, Class<A> type) {
-        return Objects.nonNull(element) ? element.getAnnotation(type) : null;
-    }
-
-    private static Response failure(Response.Status status, String message) {
-        return Response.status(status)
-                .type(MediaType.APPLICATION_JSON_TYPE)
-                .entity(R.fail(status.getStatusCode(), message))
-                .build();
     }
 }

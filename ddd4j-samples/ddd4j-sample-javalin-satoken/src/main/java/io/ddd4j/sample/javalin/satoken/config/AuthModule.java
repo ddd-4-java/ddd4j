@@ -1,17 +1,27 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.sample.javalin.satoken.config;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Singleton;
 import io.ddd4j.core.subject.SubjectDataProvider;
 import io.ddd4j.sample.javalin.satoken.goods.application.GoodsApplicationService;
 import io.ddd4j.sample.javalin.satoken.goods.domain.GoodsRepository;
 import io.ddd4j.sample.javalin.satoken.goods.infrastructure.InMemoryGoodsRepository;
 import io.ddd4j.sample.javalin.satoken.goods.web.GoodsQueryResource;
 import io.ddd4j.sample.javalin.satoken.goods.web.GoodsResource;
-import io.ddd4j.sample.javalin.satoken.order.application.OrderApplicationService;
-import io.ddd4j.sample.javalin.satoken.order.domain.repository.OrderRepository;
-import io.ddd4j.sample.javalin.satoken.order.domain.service.OrderDomainService;
-import io.ddd4j.sample.javalin.satoken.order.infrastructure.InMemoryOrderRepository;
-import io.ddd4j.sample.javalin.satoken.order.web.OrderResource;
 import io.ddd4j.sample.javalin.satoken.rbac.RbacConfig;
 import io.ddd4j.sample.javalin.satoken.rbac.application.RbacService;
 import io.ddd4j.sample.javalin.satoken.rbac.domain.repository.PermissionRepository;
@@ -57,14 +67,9 @@ public class AuthModule extends AbstractModule {
         bind(AuthenticationController.class);
         bind(AuthorizationController.class);
 
-        // ========================= Order 模块 =========================
-        bind(OrderRepository.class).to(InMemoryOrderRepository.class);
-        bind(OrderDomainService.class);
-        bind(OrderApplicationService.class);
-        bind(OrderResource.class);
 
         // ========================= Goods 模块 =========================
-        bind(GoodsRepository.class).to(InMemoryGoodsRepository.class);
+        bind(GoodsRepository.class).to(InMemoryGoodsRepository.class).in(Singleton.class);
         bind(GoodsApplicationService.class);
         bind(GoodsResource.class);
         bind(GoodsQueryResource.class);

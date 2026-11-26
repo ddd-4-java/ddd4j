@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.sample.quarkus.shiro.rbac;
 
 import io.ddd4j.core.api.R;
@@ -64,6 +78,11 @@ public class AuthorizationResource {
                 .entity(R.fail(403, reason)).build());
     }
 
+    /**
+     * 列出全部用户。
+     *
+     * @return 用户列表
+     */
     @GET
     @Path("/users")
     public R<List<User>> listUsers() {
@@ -72,6 +91,12 @@ public class AuthorizationResource {
         return R.ok(rbacService.listUsers());
     }
 
+    /**
+     * 按标识查找用户。
+     *
+     * @param id 资源标识
+     * @return 用户
+     */
     @GET
     @Path("/users/{id}")
     public R<User> findUser(@PathParam("id") String id) {
@@ -79,6 +104,12 @@ public class AuthorizationResource {
         return R.ok(rbacService.findUser(id));
     }
 
+    /**
+     * 创建用户。
+     *
+     * @param user 用户
+     * @return 已创建的用户
+     */
     @POST
     @Path("/users")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -88,6 +119,13 @@ public class AuthorizationResource {
         return R.ok("user created", rbacService.createUser(user));
     }
 
+    /**
+     * 更新用户。
+     *
+     * @param id    资源标识
+     * @param patch 待更新字段
+     * @return 已更新的用户
+     */
     @PUT
     @Path("/users/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -97,6 +135,12 @@ public class AuthorizationResource {
         return R.ok("user updated", rbacService.updateUser(id, patch));
     }
 
+    /**
+     * 删除用户。
+     *
+     * @param id 资源标识
+     * @return 删除结果
+     */
     @DELETE
     @Path("/users/{id}")
     public R<Boolean> deleteUser(@PathParam("id") String id) {
@@ -107,6 +151,13 @@ public class AuthorizationResource {
 
     // ============ Role CRUD ============
 
+    /**
+     * 为用户分配角色。
+     *
+     * @param id   资源标识
+     * @param code 资源编码
+     * @return 已更新的用户
+     */
     @POST
     @Path("/users/{id}/roles/{code}")
     public R<User> assignRole(@PathParam("id") String id, @PathParam("code") String code) {
@@ -115,6 +166,13 @@ public class AuthorizationResource {
         return R.ok("role assigned", rbacService.assignRole(id, code));
     }
 
+    /**
+     * 撤销用户角色。
+     *
+     * @param id   资源标识
+     * @param code 资源编码
+     * @return 已更新的用户
+     */
     @DELETE
     @Path("/users/{id}/roles/{code}")
     public R<User> revokeRole(@PathParam("id") String id, @PathParam("code") String code) {
@@ -123,6 +181,11 @@ public class AuthorizationResource {
         return R.ok("role revoked", rbacService.revokeRole(id, code));
     }
 
+    /**
+     * 列出全部角色。
+     *
+     * @return 角色列表
+     */
     @GET
     @Path("/roles")
     public R<List<Role>> listRoles() {
@@ -130,6 +193,12 @@ public class AuthorizationResource {
         return R.ok(rbacService.listRoles());
     }
 
+    /**
+     * 按编码查找角色。
+     *
+     * @param code 资源编码
+     * @return 角色
+     */
     @GET
     @Path("/roles/{code}")
     public R<Role> findRole(@PathParam("code") String code) {
@@ -137,6 +206,12 @@ public class AuthorizationResource {
         return R.ok(rbacService.findRole(code));
     }
 
+    /**
+     * 创建角色。
+     *
+     * @param role 角色编码
+     * @return 已创建的角色
+     */
     @POST
     @Path("/roles")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -146,6 +221,13 @@ public class AuthorizationResource {
         return R.ok("role created", rbacService.createRole(role));
     }
 
+    /**
+     * 更新角色。
+     *
+     * @param code  资源编码
+     * @param patch 待更新字段
+     * @return 已更新的角色
+     */
     @PUT
     @Path("/roles/{code}")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -155,6 +237,12 @@ public class AuthorizationResource {
         return R.ok("role updated", rbacService.updateRole(code, patch));
     }
 
+    /**
+     * 删除角色。
+     *
+     * @param code 资源编码
+     * @return 删除结果
+     */
     @DELETE
     @Path("/roles/{code}")
     public R<Boolean> deleteRole(@PathParam("code") String code) {
@@ -165,6 +253,13 @@ public class AuthorizationResource {
 
     // ============ Permission CRUD ============
 
+    /**
+     * 为角色授予权限。
+     *
+     * @param code  资源编码
+     * @param pcode 权限编码
+     * @return 已更新的角色
+     */
     @POST
     @Path("/roles/{code}/permissions/{pcode}")
     public R<Role> grantPermission(@PathParam("code") String code, @PathParam("pcode") String pcode) {
@@ -173,6 +268,13 @@ public class AuthorizationResource {
         return R.ok("permission granted", rbacService.grantPermission(code, pcode));
     }
 
+    /**
+     * 撤销角色权限。
+     *
+     * @param code  资源编码
+     * @param pcode 权限编码
+     * @return 已更新的角色
+     */
     @DELETE
     @Path("/roles/{code}/permissions/{pcode}")
     public R<Role> revokePermission(@PathParam("code") String code, @PathParam("pcode") String pcode) {
@@ -181,6 +283,11 @@ public class AuthorizationResource {
         return R.ok("permission revoked", rbacService.revokePermission(code, pcode));
     }
 
+    /**
+     * 列出全部权限。
+     *
+     * @return 权限列表
+     */
     @GET
     @Path("/permissions")
     public R<List<Permission>> listPermissions() {
@@ -188,6 +295,12 @@ public class AuthorizationResource {
         return R.ok(rbacService.listPermissions());
     }
 
+    /**
+     * 创建权限。
+     *
+     * @param permission 权限编码
+     * @return 已创建的权限
+     */
     @POST
     @Path("/permissions")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -197,6 +310,12 @@ public class AuthorizationResource {
         return R.ok("permission created", rbacService.createPermission(permission));
     }
 
+    /**
+     * 删除权限。
+     *
+     * @param code 资源编码
+     * @return 删除结果
+     */
     @DELETE
     @Path("/permissions/{code}")
     public R<Boolean> deletePermission(@PathParam("code") String code) {

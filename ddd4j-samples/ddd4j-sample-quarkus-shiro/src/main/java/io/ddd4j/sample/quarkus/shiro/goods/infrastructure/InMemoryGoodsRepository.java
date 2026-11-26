@@ -1,18 +1,33 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.sample.quarkus.shiro.goods.infrastructure;
-
-import java.util.Objects;
 
 import io.ddd4j.core.api.Page;
 import io.ddd4j.core.cqrs.query.LambdaCondition;
 import io.ddd4j.core.cqrs.query.Query;
 import io.ddd4j.core.ddd.model.AggregateRoot;
 import io.ddd4j.core.ddd.repository.Repository;
+import io.ddd4j.core.ddd.repository.RepositoryRegistry;
 import io.ddd4j.kit.lang.StrKit;
 import io.ddd4j.sample.quarkus.shiro.goods.domain.Goods;
 import io.ddd4j.sample.quarkus.shiro.goods.domain.GoodsQuery;
 import io.ddd4j.sample.quarkus.shiro.goods.domain.GoodsRepository;
 import io.ddd4j.sample.quarkus.shiro.goods.domain.GoodsStatus;
+import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.Observes;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,6 +45,13 @@ import java.util.stream.Collectors;
 public class InMemoryGoodsRepository implements GoodsRepository, Repository<Goods, Long> {
 
     private final ConcurrentMap<Long, Goods> rows = new ConcurrentHashMap<>();
+
+    /**
+     * 启动时注册查询仓储，避免 CDI 延迟创建使首次查询找不到仓储。
+     */
+    void registerQueryRepository(@Observes StartupEvent event) {
+        RepositoryRegistry.register(Goods.class, this);
+    }
 
     @Override
     public Optional<Goods> findById(Long id) {
@@ -68,7 +90,7 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
     @Override
     public List<Goods> findByStatus(GoodsStatus status) {
         if (Objects.isNull(status)) {
-            return List.of();
+            return java.util.Collections.emptyList();
         }
         return rows.values().stream()
                 .filter(p -> status.equals(p.getStatus()))
@@ -186,16 +208,27 @@ public class InMemoryGoodsRepository implements GoodsRepository, Repository<Good
         for (LambdaCondition orderBy : orderByConditions) {
             String field = orderBy.property();
             boolean desc = "DESC".equalsIgnoreCase(orderBy.operator());
-            Comparator<Goods> current = switch (field) {
-                case "id" -> Comparator.comparing(Goods::id);
-                case "createTime" -> Comparator.comparing(Goods::getCreateTime,
-                        Comparator.nullsLast(Comparator.naturalOrder()));
-                case "updateTime" -> Comparator.comparing(Goods::getUpdateTime,
-                        Comparator.nullsLast(Comparator.naturalOrder()));
-                case "price" -> Comparator.comparing(Goods::getPrice,
-                        Comparator.nullsLast(Comparator.naturalOrder()));
-                default -> null;
-            };
+            Comparator<Goods> current;
+            switch (field) {
+                case "id":
+                    current = Comparator.comparing(Goods::id);
+                    break;
+                case "createTime":
+                    current = Comparator.comparing(Goods::getCreateTime,
+                            Comparator.nullsLast(Comparator.naturalOrder()));
+                    break;
+                case "updateTime":
+                    current = Comparator.comparing(Goods::getUpdateTime,
+                            Comparator.nullsLast(Comparator.naturalOrder()));
+                    break;
+                case "price":
+                    current = Comparator.comparing(Goods::getPrice,
+                            Comparator.nullsLast(Comparator.naturalOrder()));
+                    break;
+                default:
+                    current = null;
+                    break;
+            }
             if (Objects.isNull(current)) {
                 continue;
             }

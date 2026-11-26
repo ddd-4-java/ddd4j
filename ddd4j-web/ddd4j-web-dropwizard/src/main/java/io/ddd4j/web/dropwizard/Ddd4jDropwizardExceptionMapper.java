@@ -5,6 +5,7 @@ import io.ddd4j.web.core.error.WebError;
 import io.ddd4j.web.core.error.WebExceptionTranslator;
 import io.ddd4j.kit.lang.StrKit;
 import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
@@ -34,8 +35,16 @@ public final class Ddd4jDropwizardExceptionMapper implements ExceptionMapper<Thr
         if (error.status() >= 500) {
             log.error("Unhandled Dropwizard HTTP request failure", exception);
         }
-        return Response.status(error.status()).type(MediaType.APPLICATION_JSON_TYPE)
-                .entity(error.toResponse()).build();
+        Response.ResponseBuilder response = Response.status(error.status())
+                .type(MediaType.APPLICATION_JSON_TYPE).entity(error.toResponse());
+        if (error.status() == Response.Status.METHOD_NOT_ALLOWED.getStatusCode()
+                && exception instanceof WebApplicationException webException) {
+            var allowedMethods = webException.getResponse().getHeaders().get(HttpHeaders.ALLOW);
+            if (Objects.nonNull(allowedMethods)) {
+                allowedMethods.forEach(value -> response.header(HttpHeaders.ALLOW, value));
+            }
+        }
+        return response.build();
     }
 
     private WebError translate(Throwable exception) {

@@ -1,12 +1,24 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.sample.quarkus.shiro.goods.web.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.util.Objects;
-
 import java.math.BigDecimal;
+import java.util.Objects;
 
 /**
  * 创建商品 REST 请求。
@@ -25,6 +37,14 @@ public final class CreateGoodsRequest {
 
     private final Integer stock;
 
+    /**
+     * 创建商品请求。
+     *
+     * @param code  商品编码
+     * @param name  商品名称
+     * @param price 商品价格
+     * @param stock 库存数量
+     */
     @JsonCreator()
     public CreateGoodsRequest(@JsonProperty("code") String code, @JsonProperty("name") String name, @JsonProperty("price") BigDecimal price, @JsonProperty("stock") Integer stock) {
         this.code = code;
@@ -33,21 +53,41 @@ public final class CreateGoodsRequest {
         this.stock = stock;
     }
 
+    /**
+     * 读取商品编码。
+     *
+     * @return 商品编码
+     */
     @JsonProperty("code")
     public String code() {
         return code;
     }
 
+    /**
+     * 读取商品名称。
+     *
+     * @return 商品名称
+     */
     @JsonProperty("name")
     public String name() {
         return name;
     }
 
+    /**
+     * 读取商品价格。
+     *
+     * @return 商品价格
+     */
     @JsonProperty("price")
     public BigDecimal price() {
         return price;
     }
 
+    /**
+     * 读取库存数量。
+     *
+     * @return 库存数量
+     */
     @JsonProperty("stock")
     public Integer stock() {
         return stock;

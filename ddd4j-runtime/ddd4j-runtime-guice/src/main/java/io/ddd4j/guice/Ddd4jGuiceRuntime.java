@@ -1,6 +1,8 @@
 package io.ddd4j.guice;
 
+import com.google.inject.Binding;
 import com.google.inject.Inject;
+import com.google.inject.Key;
 import com.google.inject.Injector;
 import io.ddd4j.core.constant.SpiKeys;
 import io.ddd4j.core.context.SpiRegistrationScope;
@@ -10,6 +12,7 @@ import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.core.health.ReadinessContributor;
 import io.ddd4j.core.subject.SubjectProvider;
 import io.ddd4j.guice.context.GuiceContext;
+import io.ddd4j.guice.cqrs.GuiceViewManager;
 import io.ddd4j.runtime.health.RuntimeReadinessRegistry;
 
 import java.util.Collection;
@@ -21,6 +24,7 @@ import java.util.Objects;
  */
 public final class Ddd4jGuiceRuntime implements AutoCloseable {
 
+    private final Injector injector;
     private final SpiRegistrationScope registrations;
     private final RuntimeReadinessRegistry readinessRegistry;
 
@@ -33,7 +37,7 @@ public final class Ddd4jGuiceRuntime implements AutoCloseable {
     public Ddd4jGuiceRuntime(Injector injector, DomainEventPublisher publisher, SubjectProvider subjectProvider,
                              I18nProvider i18nProvider, CommandBus commandBus,
                              Collection<? extends ReadinessContributor> readinessContributors) {
-        GuiceContext.setInjector(Objects.requireNonNull(injector, "injector must not be null"));
+        this.injector = Objects.requireNonNull(injector, "injector must not be null");
         registrations = new SpiRegistrationScope()
                 .register(SpiKeys.DOMAIN_EVENT_PUBLISHER, DomainEventPublisher.class,
                         Objects.requireNonNull(publisher, "publisher must not be null"))
@@ -45,6 +49,7 @@ public final class Ddd4jGuiceRuntime implements AutoCloseable {
                         Objects.requireNonNull(commandBus, "commandBus must not be null"));
         readinessRegistry = new RuntimeReadinessRegistry(readinessContributors);
         start();
+        GuiceContext.setInjector(this.injector);
     }
 
     public void start() {
@@ -57,7 +62,14 @@ public final class Ddd4jGuiceRuntime implements AutoCloseable {
 
     @Override
     public void close() {
-        registrations.close();
-        GuiceContext.clear();
+        try {
+            Binding<GuiceViewManager> binding = injector.getExistingBinding(Key.get(GuiceViewManager.class));
+            if (Objects.nonNull(binding)) {
+                binding.getProvider().get().close();
+            }
+        } finally {
+            registrations.close();
+            GuiceContext.clear();
+        }
     }
 }

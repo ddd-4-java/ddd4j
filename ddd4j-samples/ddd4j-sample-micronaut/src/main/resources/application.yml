@@ -6,5 +6,6 @@ micronaut:
 
 ddd4j:
   web:
+    default-authentication-mode: OPTIONAL
     public-paths:
       - /api/auth/**

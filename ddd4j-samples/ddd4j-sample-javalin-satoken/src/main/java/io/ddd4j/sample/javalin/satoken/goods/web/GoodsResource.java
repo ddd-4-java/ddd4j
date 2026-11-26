@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.sample.javalin.satoken.goods.web;
 
 import io.ddd4j.core.api.R;
@@ -22,10 +36,21 @@ public class GoodsResource {
 
     private final GoodsApplicationService applicationService;
 
+    /**
+     * 创建商品写入资源。
+     *
+     * @param applicationService 商品应用服务
+     */
+    @com.google.inject.Inject
     public GoodsResource(GoodsApplicationService applicationService) {
         this.applicationService = Objects.requireNonNull(applicationService, "applicationService must not be null");
     }
 
+    /**
+     * 构建商品 HTTP 路由。
+     *
+     * @return 商品路由组
+     */
     public EndpointGroup routes() {
         return () -> {
             // POST /api/goods —— 创建商品

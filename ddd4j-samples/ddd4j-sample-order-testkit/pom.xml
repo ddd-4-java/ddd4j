@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.1.0">
-    <modelVersion>4.1.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+    <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>io.ddd4j</groupId>
         <artifactId>ddd4j-samples</artifactId>
@@ -9,13 +9,21 @@
     </parent>
     <artifactId>ddd4j-sample-order-testkit</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>Reusable Order contract fixtures for every runtime sample.</description>
+    <description>Reusable HTTP transport and authentication assertions for runtime samples.</description>
     <url>https://github.com/ddd-4-java/${project.artifactId}</url>
+    <properties>
+        <maven.deploy.skip>false</maven.deploy.skip>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>io.ddd4j</groupId>
-            <artifactId>ddd4j-sample-order-local</artifactId>
+            <artifactId>ddd4j-kit</artifactId>
             <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

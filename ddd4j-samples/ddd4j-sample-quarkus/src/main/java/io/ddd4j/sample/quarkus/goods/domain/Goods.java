@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2024-2026 ddd4j project. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package io.ddd4j.sample.quarkus.goods.domain;
 
 import io.ddd4j.core.ddd.model.AggregateRoot;
@@ -72,6 +86,15 @@ public class Goods extends AggregateRoot<Long> implements Serializable {
 
     /**
      * 全参构造器。
+     *
+     * @param id         商品标识
+     * @param code       商品编码
+     * @param name       商品名称
+     * @param price      商品价格
+     * @param stock      库存数量
+     * @param status     商品状态
+     * @param createTime 创建时间
+     * @param updateTime 更新时间
      */
     public Goods(Long id, String code, String name, BigDecimal price, Integer stock,
                  GoodsStatus status, LocalDateTime createTime, LocalDateTime updateTime) {
@@ -90,62 +113,107 @@ public class Goods extends AggregateRoot<Long> implements Serializable {
         return id;
     }
 
+    /**
+     * @param id 商品标识
+     */
     public void setId(Long id) {
         this.id = id;
     }
 
+    /**
+     * @return 商品编码
+     */
     public String getCode() {
         return code;
     }
 
+    /**
+     * @param code 商品编码
+     */
     public void setCode(String code) {
         this.code = code;
     }
 
+    /**
+     * @return 商品名称
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * @param name 商品名称
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * @return 商品价格
+     */
     public BigDecimal getPrice() {
         return price;
     }
 
+    /**
+     * @param price 商品价格
+     */
     public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
+    /**
+     * @return 库存数量
+     */
     public Integer getStock() {
         return stock;
     }
 
+    /**
+     * @param stock 库存数量
+     */
     public void setStock(Integer stock) {
         this.stock = stock;
     }
 
+    /**
+     * @return 商品状态
+     */
     public GoodsStatus getStatus() {
         return status;
     }
 
+    /**
+     * @param status 商品状态
+     */
     public void setStatus(GoodsStatus status) {
         this.status = status;
     }
 
+    /**
+     * @return 创建时间
+     */
     public LocalDateTime getCreateTime() {
         return createTime;
     }
 
+    /**
+     * @param createTime 创建时间
+     */
     public void setCreateTime(LocalDateTime createTime) {
         this.createTime = createTime;
     }
 
+    /**
+     * @return 更新时间
+     */
     public LocalDateTime getUpdateTime() {
         return updateTime;
     }
 
+    /**
+     * @param updateTime 更新时间
+     */
     public void setUpdateTime(LocalDateTime updateTime) {
         this.updateTime = updateTime;
     }
