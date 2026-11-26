@@ -25,26 +25,67 @@ public final class CatalogRuntime {
     private CatalogRuntime() {
     }
 
+    /**
+     * 读取环境中的数据库配置并装配商品交易入口。
+     *
+     * @return 商品交易入口
+     */
     public static CatalogApi start() {
         return start(FRAMEWORK_EVENTS);
     }
 
+    /**
+     * 读取环境中的数据库配置并装配商品交易入口。
+     *
+     * @param publisher 框架原生领域事件发布器
+     * @return 商品交易入口
+     */
     public static CatalogApi start(DomainEventPublisher publisher) {
         return start(required("CATALOG_JDBC_URL"), required("CATALOG_DB_USER"), required("CATALOG_DB_PASSWORD"), publisher);
     }
 
+    /**
+     * 初始化商品交易四表并装配示例入口。
+     *
+     * @param url 四表所在的 MySQL JDBC URL
+     * @param username 数据库用户名
+     * @param password 数据库密码
+     * @return 商品交易入口
+     */
     public static CatalogApi start(String url, String username, String password) {
         return start(url, username, password, FRAMEWORK_EVENTS);
     }
 
+    /**
+     * 初始化商品交易四表并装配示例入口。
+     *
+     * @param url 四表所在的 MySQL JDBC URL
+     * @param username 数据库用户名
+     * @param password 数据库密码
+     * @param publisher 框架原生领域事件发布器
+     * @return 商品交易入口
+     */
     public static CatalogApi start(String url, String username, String password, DomainEventPublisher publisher) {
         return assemble(CatalogDatabase.open(url, username, password), publisher);
     }
 
+    /**
+     * 初始化商品交易四表并装配示例入口。
+     *
+     * @param source 用于初始化和事务的数据源
+     * @return 商品交易入口
+     */
     public static CatalogApi start(DataSource source) {
         return start(source, FRAMEWORK_EVENTS);
     }
 
+    /**
+     * 初始化商品交易四表并装配示例入口。
+     *
+     * @param source 用于初始化和事务的数据源
+     * @param publisher 框架原生领域事件发布器
+     * @return 商品交易入口
+     */
     public static CatalogApi start(DataSource source, DomainEventPublisher publisher) {
         return assemble(CatalogDatabase.open(source), publisher);
     }
