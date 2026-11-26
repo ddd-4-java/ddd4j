@@ -28,7 +28,7 @@ jobs:
           fail_level: error
 
   unit-and-contract:
-    name: Java 17 unit and contract
+    name: Java 21 unit and contract
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -37,6 +37,19 @@ jobs:
           distribution: temurin
           java-version: '21'
           cache: maven
+      - name: Configure Maven repositories
+        env:
+          MAVEN_SETTINGS_XML: ${{ secrets.MAVEN_SETTINGS_XML }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "$MAVEN_SETTINGS_XML" ]]; then
+            echo "MAVEN_SETTINGS_XML is required to resolve the build dependencies" >&2
+            exit 1
+          fi
+          install -d -m 700 "$HOME/.m2"
+          umask 077
+          printf '%s' "$MAVEN_SETTINGS_XML" | base64 --decode > "$HOME/.m2/settings.xml"
       - name: Verify BOM publication contract
         run: ./scripts/check-bom-alignment.sh
       - name: Verify Java style guardrails
@@ -65,6 +78,19 @@ jobs:
           distribution: temurin
           java-version: '21'
           cache: maven
+      - name: Configure Maven repositories
+        env:
+          MAVEN_SETTINGS_XML: ${{ secrets.MAVEN_SETTINGS_XML }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "$MAVEN_SETTINGS_XML" ]]; then
+            echo "MAVEN_SETTINGS_XML is required to resolve the build dependencies" >&2
+            exit 1
+          fi
+          install -d -m 700 "$HOME/.m2"
+          umask 077
+          printf '%s' "$MAVEN_SETTINGS_XML" | base64 --decode > "$HOME/.m2/settings.xml"
       # 两步法：先全 reactor 安装依赖（不激活 coverage，避免未达标依赖模块触发 check），
       # 再对白名单模块强制 -Pcoverage verify。模块达标（LINE >= 90%）后加入白名单。
       - name: Install reactor dependencies without coverage enforcement
@@ -84,6 +110,19 @@ jobs:
           distribution: temurin
           java-version: '21'
           cache: maven
+      - name: Configure Maven repositories
+        env:
+          MAVEN_SETTINGS_XML: ${{ secrets.MAVEN_SETTINGS_XML }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "$MAVEN_SETTINGS_XML" ]]; then
+            echo "MAVEN_SETTINGS_XML is required to resolve the build dependencies" >&2
+            exit 1
+          fi
+          install -d -m 700 "$HOME/.m2"
+          umask 077
+          printf '%s' "$MAVEN_SETTINGS_XML" | base64 --decode > "$HOME/.m2/settings.xml"
       - name: Generate CycloneDX SBOM
         run: ./scripts/generate-sbom.sh
       - name: Generate third-party license inventory
@@ -123,6 +162,19 @@ jobs:
           distribution: temurin
           java-version: '21'
           cache: maven
+      - name: Configure Maven repositories
+        env:
+          MAVEN_SETTINGS_XML: ${{ secrets.MAVEN_SETTINGS_XML }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "$MAVEN_SETTINGS_XML" ]]; then
+            echo "MAVEN_SETTINGS_XML is required to resolve the build dependencies" >&2
+            exit 1
+          fi
+          install -d -m 700 "$HOME/.m2"
+          umask 077
+          printf '%s' "$MAVEN_SETTINGS_XML" | base64 --decode > "$HOME/.m2/settings.xml"
       - name: Verify Docker daemon
         run: docker info
       # 容器化集成：Redis/MySQL/PostgreSQL/Kafka（testcontainers）。
