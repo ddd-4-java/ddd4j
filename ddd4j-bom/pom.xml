@@ -281,11 +281,6 @@
             <!-- Ddd4j Auth Extensions -->
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-auth-datascope</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
                 <artifactId>ddd4j-auth-license</artifactId>
                 <version>${revision}</version>
             </dependency>

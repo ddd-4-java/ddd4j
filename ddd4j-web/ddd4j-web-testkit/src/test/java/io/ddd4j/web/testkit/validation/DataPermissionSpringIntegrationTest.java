@@ -1,4 +1,4 @@
-package io.ddd4j.auth.datascope;
+package io.ddd4j.web.testkit.validation;
 
 import io.github.easy4j.validation.constraints.RequiresDataPermissions;
 import io.github.easy4j.validation.provider.DataScopeProvider;
@@ -13,7 +13,7 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-/** auth 直接复用 Spring 原生工厂与 Easy4j 权限契约，不注册默认放行策略。 */
+/** 通过 Spring 原生工厂验证 Easy4j 数据权限约束及 Provider 隔离。 */
 class DataPermissionSpringIntegrationTest {
     @Test
     void nativeSpringFactoryInjectsApplicationProviderAndKeepsStandardConstraints() {

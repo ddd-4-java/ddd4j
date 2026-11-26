@@ -29,7 +29,7 @@
 
 
 本地验收证据：上游 Corretto 17 / Maven 3.9.16 `mvn -o clean install` 131 项测试通过；
-DDD4J `./mvnw -o -pl :ddd4j-extension-validation,:ddd4j-auth-datascope,:ddd4j-extension-otel -am clean verify`
+DDD4J `./mvnw -o -pl :ddd4j-web-testkit,:ddd4j-extension-otel -am clean verify`
 12 项 reactor、903 项测试通过，均无失败、错误或跳过。无 record 检查及其 7 项自测通过。
 CodeGraph 上游索引在用户授权后创建并检查为最新，72 文件、958 节点、1,638 关系。
 具体契约、产物哈希、覆盖率告警及范围限制见 [整合报告](../../reports/2026-11-24-validation-integration.md)。
