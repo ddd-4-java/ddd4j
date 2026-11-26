@@ -17,6 +17,49 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- Ddd4j Core -->
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-annotation</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-cache</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-core</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-ddd-rules</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-ddd-rules-clean</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-ddd-rules-cola</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-kit</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-metrics</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <!-- Ddd4j Auth Extensions -->
             <dependency>
                 <groupId>io.ddd4j</groupId>
                 <artifactId>ddd4j-auth-license</artifactId>
@@ -24,9 +67,26 @@
             </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-auth-satoken</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-auth-security</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-auth-shiro</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
                 <artifactId>ddd4j-auth-spring</artifactId>
                 <version>${revision}</version>
             </dependency>
+
+            <!-- Ddd4j Data Extensions -->
             <dependency>
                 <groupId>io.ddd4j</groupId>
                 <artifactId>ddd4j-data-cqrs-dropwizard</artifactId>
@@ -64,6 +124,11 @@
             </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-data-crypto</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
                 <artifactId>ddd4j-data-event-store-esdb</artifactId>
                 <version>${revision}</version>
             </dependency>
@@ -85,6 +150,36 @@
             <dependency>
                 <groupId>io.ddd4j</groupId>
                 <artifactId>ddd4j-data-event-store-r2dbc</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-data-external</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-data-jpa</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-data-logs</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-data-mybatis</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-data-mybatisplus</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-data-projection</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
@@ -142,14 +237,21 @@
                 <artifactId>ddd4j-data-projection-vertx</artifactId>
                 <version>${revision}</version>
             </dependency>
+
+            <!-- Ddd4j General Extensions -->
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-ddd-rules-clean</artifactId>
+                <artifactId>ddd4j-extension-excel</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-ddd-rules-cola</artifactId>
+                <artifactId>ddd4j-extension-license</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-extension-monitor</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
@@ -164,108 +266,6 @@
             </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-metrics</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-runtime-testkit</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-web-testkit</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-projection</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <!-- Ddd4j Core -->
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-annotation</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-core</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-kit</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-cache</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-ddd-rules</artifactId>
-                <version>${revision}</version>
-            </dependency>
-
-            <!-- Ddd4j Auth Extensions -->
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-auth-satoken</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-auth-security</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-auth-shiro</artifactId>
-                <version>${revision}</version>
-            </dependency>
-
-            <!-- Ddd4j Data Extensions -->
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-crypto</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-external</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-jpa</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-logs</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-mybatis</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-data-mybatisplus</artifactId>
-                <version>${revision}</version>
-            </dependency>
-
-            <!-- Ddd4j General Extensions -->
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-extension-excel</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
                 <artifactId>ddd4j-extension-qlexpress</artifactId>
                 <version>${revision}</version>
             </dependency>
@@ -274,26 +274,16 @@
                 <artifactId>ddd4j-extension-qrcode</artifactId>
                 <version>${revision}</version>
             </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-extension-license</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-extension-monitor</artifactId>
-                <version>${revision}</version>
-            </dependency>
 
             <!-- Ddd4j MQ Extensions -->
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-mq-core</artifactId>
+                <artifactId>ddd4j-mq-activemq</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-mq-activemq</artifactId>
+                <artifactId>ddd4j-mq-core</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
@@ -365,7 +355,7 @@
             <!-- Ddd4j Runtime Bindings -->
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-runtime-quarkus</artifactId>
+                <artifactId>ddd4j-runtime-dropwizard</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
@@ -375,7 +365,7 @@
             </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-runtime-spring</artifactId>
+                <artifactId>ddd4j-runtime-helidon</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
@@ -385,17 +375,22 @@
             </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-runtime-quarkus</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-runtime-spring</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-runtime-testkit</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
                 <artifactId>ddd4j-runtime-vertx</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-runtime-helidon</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-runtime-dropwizard</artifactId>
                 <version>${revision}</version>
             </dependency>
 
@@ -407,17 +402,12 @@
             </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-web-webflux</artifactId>
+                <artifactId>ddd4j-web-dropwizard</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-web-quarkus</artifactId>
-                <version>${revision}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-web-webmvc</artifactId>
+                <artifactId>ddd4j-web-helidon</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
@@ -432,20 +422,61 @@
             </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-web-quarkus</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-web-testkit</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
                 <artifactId>ddd4j-web-vertx</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-web-helidon</artifactId>
+                <artifactId>ddd4j-web-webflux</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>io.ddd4j</groupId>
-                <artifactId>ddd4j-web-dropwizard</artifactId>
+                <artifactId>ddd4j-web-webmvc</artifactId>
                 <version>${revision}</version>
             </dependency>
 
+            <!-- 商品交易共享示例组件（可发布） -->
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-sample-order-adapter</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-sample-order-application</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-sample-order-domain</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-sample-order-jdbc</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-sample-order-start</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.ddd4j</groupId>
+                <artifactId>ddd4j-sample-order-testkit</artifactId>
+                <version>${revision}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
