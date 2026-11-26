@@ -159,8 +159,17 @@ public class GoodsResource {
      * @param orderBys 排序字段
      * @return 商品分页响应
      */
-    public R<Page<Goods>> page(Long current, Long size, String code, String nameLike, String status,
-                               BigDecimal priceMin, BigDecimal priceMax, String orderBys) {
+    @GET
+    @Path("/page")
+    public R<Page<Goods>> page(
+            @QueryParam("current") Long current,
+            @QueryParam("size") Long size,
+            @QueryParam("code") String code,
+            @QueryParam("nameLike") String nameLike,
+            @QueryParam("status") String status,
+            @QueryParam("priceMin") BigDecimal priceMin,
+            @QueryParam("priceMax") BigDecimal priceMax,
+            @QueryParam("orderBys") String orderBys) {
         return queryResource.page(current, size, code, nameLike, status, priceMin, priceMax, orderBys);
     }
 
@@ -175,8 +184,15 @@ public class GoodsResource {
      * @param orderBys 排序字段
      * @return 商品列表响应
      */
-    public R<List<Goods>> list(String code, String nameLike, String status, BigDecimal priceMin,
-                               BigDecimal priceMax, String orderBys) {
+    @GET
+    @Path("/list")
+    public R<List<Goods>> list(
+            @QueryParam("code") String code,
+            @QueryParam("nameLike") String nameLike,
+            @QueryParam("status") String status,
+            @QueryParam("priceMin") BigDecimal priceMin,
+            @QueryParam("priceMax") BigDecimal priceMax,
+            @QueryParam("orderBys") String orderBys) {
         return queryResource.list(code, nameLike, status, priceMin, priceMax, orderBys);
     }
 
@@ -190,7 +206,14 @@ public class GoodsResource {
      * @param priceMax 最高价格
      * @return 商品数量响应
      */
-    public R<Long> count(String code, String nameLike, String status, BigDecimal priceMin, BigDecimal priceMax) {
+    @GET
+    @Path("/count")
+    public R<Long> count(
+            @QueryParam("code") String code,
+            @QueryParam("nameLike") String nameLike,
+            @QueryParam("status") String status,
+            @QueryParam("priceMin") BigDecimal priceMin,
+            @QueryParam("priceMax") BigDecimal priceMax) {
         return queryResource.count(code, nameLike, status, priceMin, priceMax);
     }
 

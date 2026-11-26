@@ -22,11 +22,6 @@ import io.ddd4j.sample.quarkus.satoken.goods.domain.Goods;
 import io.ddd4j.sample.quarkus.satoken.goods.domain.GoodsQuery;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.MediaType;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -40,8 +35,6 @@ import java.util.Objects;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  */
 
-@Path("/api/goods")
-@Produces(MediaType.APPLICATION_JSON)
 @ApplicationScoped
 @io.quarkus.arc.properties.IfBuildProperty(name = "sample.goods.standalone", stringValue = "true")
 public class GoodsQueryResource {
@@ -71,17 +64,15 @@ public class GoodsQueryResource {
      * @param orderBys 排序字段
      * @return 商品分页响应
      */
-    @GET
-    @Path("/page")
     public R<Page<Goods>> page(
-            @QueryParam("current") Long current,
-            @QueryParam("size") Long size,
-            @QueryParam("code") String code,
-            @QueryParam("nameLike") String nameLike,
-            @QueryParam("status") String status,
-            @QueryParam("priceMin") BigDecimal priceMin,
-            @QueryParam("priceMax") BigDecimal priceMax,
-            @QueryParam("orderBys") String orderBys) {
+            Long current,
+            Long size,
+            String code,
+            String nameLike,
+            String status,
+            BigDecimal priceMin,
+            BigDecimal priceMax,
+            String orderBys) {
         return R.ok(applicationService.pageQuery(buildQuery(current, size, code, nameLike, status, priceMin, priceMax, orderBys)));
     }
 
@@ -96,15 +87,13 @@ public class GoodsQueryResource {
      * @param orderBys 排序字段
      * @return 商品列表响应
      */
-    @GET
-    @Path("/list")
     public R<List<Goods>> list(
-            @QueryParam("code") String code,
-            @QueryParam("nameLike") String nameLike,
-            @QueryParam("status") String status,
-            @QueryParam("priceMin") BigDecimal priceMin,
-            @QueryParam("priceMax") BigDecimal priceMax,
-            @QueryParam("orderBys") String orderBys) {
+            String code,
+            String nameLike,
+            String status,
+            BigDecimal priceMin,
+            BigDecimal priceMax,
+            String orderBys) {
         return R.ok(applicationService.listQuery(buildQuery(1L, 0L, code, nameLike, status, priceMin, priceMax, orderBys)));
     }
 
@@ -118,14 +107,12 @@ public class GoodsQueryResource {
      * @param priceMax 最高价格
      * @return 商品数量响应
      */
-    @GET
-    @Path("/count")
     public R<Long> count(
-            @QueryParam("code") String code,
-            @QueryParam("nameLike") String nameLike,
-            @QueryParam("status") String status,
-            @QueryParam("priceMin") BigDecimal priceMin,
-            @QueryParam("priceMax") BigDecimal priceMax) {
+            String code,
+            String nameLike,
+            String status,
+            BigDecimal priceMin,
+            BigDecimal priceMax) {
         return R.ok(applicationService.countQuery(buildQuery(1L, 0L, code, nameLike, status, priceMin, priceMax, null)));
     }
 
