@@ -9,6 +9,8 @@ import lombok.EqualsAndHashCode;
 @Value
 @EqualsAndHashCode(callSuper = false)
 public class GoodsSpuQuery extends Query<GoodsSpu> {
+    /** 租户编号。 */
     private String tenantId;
+    /** 租户内商品编号。 */
     private String spuCode;
 }

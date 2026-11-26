@@ -12,8 +12,11 @@ public class ChangeTradeOrderCmd implements Command {
     String orderNo;
     Action action;
 
+    /** 允许执行的订单状态迁移。 */
     public enum Action {
+        /** 取消尚未支付的订单。 */
         CANCEL,
+        /** 完成已确认订单的履约。 */
         FULFILL
     }
 }
