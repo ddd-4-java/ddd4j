@@ -6,7 +6,7 @@ import io.ddd4j.core.cache.Cache;
 import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.dropwizard.Ddd4jBundle;
 import io.ddd4j.sample.order.adapter.http.CatalogEndpoints;
-import io.ddd4j.sample.order.infrastructure.CatalogRuntime;
+import io.ddd4j.sample.order.start.CatalogRuntime;
 import io.ddd4j.web.dropwizard.Ddd4jDropwizardWebBundle;
 import io.dropwizard.core.Application;
 import io.dropwizard.core.ConfiguredBundle;

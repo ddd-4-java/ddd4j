@@ -1,5 +1,6 @@
 package io.ddd4j.sample.dropwizard.cqrs;
 
+import io.ddd4j.core.i18n.I18nProvider;
 import io.ddd4j.dropwizard.Ddd4jBundle;
 import io.ddd4j.dropwizard.Ddd4jLogbackAccessRequestLogFactory;
 import io.ddd4j.kit.lang.StrKit;
@@ -11,17 +12,31 @@ import io.dropwizard.core.Application;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Consumer;
+
 /**
  * Dropwizard 四表商品交易及快照投影。
  */
 public final class DropwizardCqrsApplication extends Application<DropwizardCqrsConfiguration> {
+    private final List<Consumer<Object>> listeners;
+
+    public DropwizardCqrsApplication() {
+        this.listeners = Collections.emptyList();
+    }
+
+    DropwizardCqrsApplication(Consumer<Object> listener) {
+        this.listeners = Collections.singletonList(listener);
+    }
+
     public static void main(String[] args) throws Exception {
         new DropwizardCqrsApplication().run(args);
     }
 
     @Override
     public void initialize(Bootstrap<DropwizardCqrsConfiguration> bootstrap) {
-        bootstrap.addBundle(new Ddd4jBundle<>());
+        bootstrap.addBundle(new Ddd4jBundle<>(Collections.emptyList(), listeners, null, I18nProvider.DEFAULT));
         bootstrap.addBundle(new Ddd4jDropwizardWebBundle<DropwizardCqrsConfiguration>(configuration -> {
             var web = new Ddd4jDropwizardWebConfiguration();
             web.setDefaultAuthenticationMode(AuthenticationMode.DISABLED);
