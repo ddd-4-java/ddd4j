@@ -16,10 +16,7 @@ package io.ddd4j.quarkus.cqrs;
 
 import io.ddd4j.core.cqrs.readmodel.*;
 import io.quarkus.test.junit.QuarkusTest;
-import io.quarkus.runtime.StartupEvent;
-import io.quarkus.runtime.ShutdownEvent;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.event.Event;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.DisplayName;
@@ -30,58 +27,52 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * {@link QuarkusNumericProjectionScheduler} + {@link QuarkusProjectionViewManager}
- * 真实 ArC 容器集成测试。
- *
- * <p>真实 Quarkus 容器（{@code @QuarkusTest}，零配置引导——ArC 自带启动容器，
- * 不用 H2/数据源）＋真实 {@code @ApplicationScoped} 调度器 Bean（零 mock）——
- * 完整验证 ViewScheduler 的 schedule/cancel/isActive 契约与 ViewManager
- * 的 start/stop/isRunning/triggerOnce 生命周期。
- *
- * <ol>
- *   <li>register + start + assert handle isActive + stop + assert inactive</li>
- *   <li>多 view 同时注册 + start + stop 隔离</li>
- *   <li>triggerOnce 立即执行一个 view 的 runOnce</li>
- * </ol>
- *
- * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
- * @since 2.0.x
- */
-@DisplayName("QuarkusNumericProjectionScheduler + ViewManager 真实 ArC 容器 IT")
+/** 在真实 ArC 容器中验证应用显式组装的数值调度器及其生命周期。 */
+@DisplayName("显式数值投影调度")
 @QuarkusTest
+@io.quarkus.test.junit.TestProfile(QuarkusNumericProjectionSchedulerIT.Profile.class)
 class QuarkusNumericProjectionSchedulerIT {
 
-    /** 注册任务和取消任务所用的视图调度器。 */
-    @Inject
-    QuarkusNumericProjectionScheduler scheduler;
-
-    /** 保存 <code>view Manager</code> 对应的 <code>QuarkusProjectionViewManager</code> 数据。 */
-    @Inject
-    QuarkusProjectionViewManager viewManager;
-
-    /** 保存 <code>startup Events</code> 对应的 <code>Event&lt;StartupEvent&gt;</code> 数据。 */
-    @Inject
-    Event<StartupEvent> startupEvents;
-
-    /** 保存 <code>shutdown Events</code> 对应的 <code>Event&lt;ShutdownEvent&gt;</code> 数据。 */
-    @Inject
-    Event<ShutdownEvent> shutdownEvents;
-
-    /** 验证<code>viewManager.isRunning()</code>为真。 */
-    @Test
-    void startupEvent_应启动视图管理器() {
-        viewManager.stop();
-        startupEvents.fire(new StartupEvent());
-        assertThat(viewManager.isRunning()).isTrue();
-        viewManager.stop();
+    /** 只在当前测试应用注册视图及其事件读取器。 */
+    public static class Profile implements io.quarkus.test.junit.QuarkusTestProfile {
+        /** @return 激活当前投影夹具的构建配置 */
+        @Override
+        public java.util.Map<String, String> getConfigOverrides() {
+            return java.util.Collections.singletonMap("ddd4j.test.numeric-projection", "true");
+        }
     }
 
-    /** 验证<code>viewManager.isRunning()</code>为假。 */
+    /** 容器选定的投影执行器。 */
+    @Inject
+    ProjectionRunner<Object> runner;
+
+    /** 应用注册的视图。 */
+    @Inject
+    jakarta.enterprise.inject.Instance<ProjectionView<?>> views;
+
+    /** 当前测试拥有的调度器。 */
+    private final QuarkusNumericProjectionScheduler scheduler = new QuarkusNumericProjectionScheduler();
+
+    /** 应用手动管理其生命周期的视图管理器。 */
+    private QuarkusProjectionViewManager viewManager;
+
+    /** 用真实容器提供的视图和执行器组装调度。 */
+    @org.junit.jupiter.api.BeforeEach
+    void setUp() {
+        viewManager = new QuarkusProjectionViewManager(scheduler, runner, views);
+    }
+
+    /** 停止视图并释放测试拥有的调度线程。 */
+    @org.junit.jupiter.api.AfterEach
+    void tearDown() {
+        viewManager.stop();
+        scheduler.shutdown();
+    }
+
+    /** 即使容器已启动，手动管理的视图仍等待应用显式启动。 */
     @Test
-    void shutdownEvent_应停止视图管理器() {
-        viewManager.start();
-        shutdownEvents.fire(new ShutdownEvent());
+    void explicitManagerWaitsForStart() {
+        assertThat(views.isUnsatisfied()).isFalse();
         assertThat(viewManager.isRunning()).isFalse();
     }
 
@@ -127,33 +118,10 @@ class QuarkusNumericProjectionSchedulerIT {
     // ======== CDI 测试替身（@Produces 注册为 ArC Bean） ========
 
     /** 集中保存 <code>TestProducer</code> 的声明，供当前模块使用。 */
+    @io.quarkus.arc.properties.IfBuildProperty(name = "ddd4j.test.numeric-projection", stringValue = "true")
     @ApplicationScoped
     static class TestProducer {
 
-        /**
-         * 读取<code>null</code> 的当前值。
-         *
-         * @return 返回表达式 <code>null</code>
-         */
-        @Produces
-        @ApplicationScoped
-        ProjectionService projectionService() {
-            return new ProjectionService() {
-                @Override
-                public void resetProjectionPosition(String streamId) {
-                }
-
-                @Override
-                public long readProjectionPosition(String streamId) {
-                    return 0;
-                }
-
-                @Override
-                public ProjectionPosition updateProjectionPosition(String streamId, long nextEventNumber) {
-                    return null;
-                }
-            };
-        }
 
         /**
          * 执行 <code>chunk Reader</code>，调用 <code>EventChunk.empty</code>。
@@ -168,19 +136,7 @@ class QuarkusNumericProjectionSchedulerIT {
                     EventChunk.empty(fromEventNumber);
         }
 
-        /**
-         * 按 <code>projection Runner</code> 的契约计算并返回结果。
-         *
-         * @param service 传入此操作的 <code>ProjectionService</code> 类型 <code>service</code>
-         * @param reader 传入此操作的 <code>EventChunkReader&lt;Object&gt;</code> 类型 <code>reader</code>
-         * @return 当前操作得到的 <code>ProjectionRunner&lt;Object&gt;</code> 结果
-         */
-        @Produces
-        @ApplicationScoped
-        @SuppressWarnings("unchecked")
-        ProjectionRunner<Object> projectionRunner(ProjectionService service, EventChunkReader<Object> reader) {
-            return new ProjectionRunner<>(service, reader);
-        }
+
 
         /**
          * 按 <code>test View</code> 的契约计算并返回结果。

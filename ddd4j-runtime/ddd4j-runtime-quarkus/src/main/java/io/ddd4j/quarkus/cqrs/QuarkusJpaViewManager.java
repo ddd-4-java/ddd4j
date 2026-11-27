@@ -14,32 +14,35 @@
  */
 package io.ddd4j.quarkus.cqrs;
 
+import io.ddd4j.core.cqrs.readmodel.*;
+import io.quarkus.arc.Arc;
+import io.quarkus.arc.ClientProxy;
 import io.quarkus.arc.DefaultBean;
-import io.ddd4j.core.cqrs.readmodel.ProjectionMetrics;
-import io.ddd4j.core.cqrs.readmodel.ProjectionPosition;
-import io.ddd4j.core.cqrs.readmodel.ProjectionPositionRepository;
-import io.ddd4j.core.cqrs.readmodel.ProjectionRunInfo;
-import io.ddd4j.core.cqrs.readmodel.ProjectionStatus;
-import io.ddd4j.core.cqrs.readmodel.ViewManager;
-import io.quarkus.runtime.StartupEvent;
 import io.quarkus.runtime.ShutdownEvent;
+import io.quarkus.runtime.StartupEvent;
+import io.quarkus.scheduler.common.runtime.util.SchedulerUtils;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
+import jakarta.transaction.TransactionManager;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.microprofile.config.Config;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Quarkus CQRS 读侧视图管理器（基于 {@code @Scheduled}）。
+ * Quarkus CQRS 原生生命周期与可选能力装配。
  *
  * <p>实现 ddd4j-core 的 {@link ViewManager} SPI。Quarkus 通过 CDI 事件
  * （{@link StartupEvent} / {@link ShutdownEvent}）自动触发 start/stop。
  *
- * <p>实际视图拉取由 {@code QuarkusJpaProjectionService}（{@code @Scheduled}）
- * 负责，本类仅负责生命周期管理。
+ * <p>durable 模式委托共享视图管理器；旧业务子类或原 cron 配置启用旧拉取钩子。
+ * 基础模式不创建投影任务，旧 GAV 的具体管理器通过原生 DefaultBean 规则优先。
  *
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
@@ -49,6 +52,18 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @DefaultBean
 public class QuarkusJpaViewManager implements ViewManager {
 
+    /**
+     * 选择 Quarkus 投影运行模式的配置项。
+     */
+    static final String MODE_KEY = "ddd4j.quarkus.cqrs.projection.mode";
+    /**
+     * 读取 Quarkus 投影调度 Cron 表达式的配置项。
+     */
+    static final String CRON_KEY = "ddd4j.quarkus.cqrs.projection.cron";
+    /**
+     * 配置未给定时采用的默认投影 Cron 表达式。
+     */
+    static final String DEFAULT_CRON = "*/30 * * * * ?";
     /**
      * 运行状态标志
      */
@@ -63,44 +78,226 @@ public class QuarkusJpaViewManager implements ViewManager {
      */
     @Inject
     Instance<ProjectionMetrics> projectionMetricsInstances;
+    /**
+     * 用于读取投影运行模式和调度配置的 MicroProfile 配置。
+     */
+    @Inject
+    Config config;
+    /**
+     * 兼容调度路径可使用的投影服务候选集合。
+     */
+    @Inject
+    Instance<QuarkusJpaProjectionService> legacyServices;
+    /**
+     * CDI 容器提供的投影事件运行器候选集合。
+     */
+    @Inject
+    Instance<ProjectionRunner<Object>> runners;
+    /**
+     * 由当前运行环境管理和调度的投影视图。
+     */
+    @Inject
+    Instance<ProjectionView<Object>> views;
+    /**
+     * CDI 容器提供的调度器候选集合。
+     */
+    @Inject
+    Instance<ViewScheduler> schedulers;
+    /**
+     * CDI 容器提供的视图管理器候选集合。
+     */
+    @Inject
+    Instance<ViewManager> managers;
+    /**
+     * CDI 容器提供的事件读取器候选集合。
+     */
+    @Inject
+    Instance<EventChunkReader<Object>> readers;
+    /**
+     * CDI 容器提供的事务管理器候选集合。
+     */
+    @Inject
+    Instance<TransactionManager> transactionManagers;
+    /**
+     * 采用显式投影视图配置时使用的管理器。
+     */
+    private DefaultViewManager<Object> delegate;
+    /**
+     * 用于取消兼容投影调度任务的句柄。
+     */
+    private ViewScheduler.ViewScheduleHandle legacyHandle;
+    /**
+     * 当前兼容调度路径实际使用的投影服务。
+     */
+    private QuarkusJpaProjectionService legacyService;
 
     /**
-     * \u5728 Quarkus \u542f\u52a8\u540e\u9009\u62e9\u5e76\u542f\u52a8\u6295\u5f71\u8fd0\u884c\u6a21\u5f0f\u3002
-     * @param event \u5f53\u524d\u6846\u67b6\u751f\u547d\u5468\u671f\u6216\u5bb9\u5668\u542f\u52a8\u4e8b\u4ef6
+     * 从 CDI 候选中解析唯一的投影组件。
+     *
+     * @param <T>        当前容器处理的组件或事件类型
+     * @param candidates CDI 容器可提供的候选组件
+     * @param name       当前组件、指标、任务或 Bean 使用的名称
+     * @return 找到的唯一候选，未配置时为空
      */
-    void onStart(@Observes StartupEvent event) {
-        start();
+    private static <T> T unique(Instance<T> candidates, String name) {
+        if (!candidates.isResolvable()) {
+            throw new IllegalStateException("A unique " + name + " is required for projection");
+        }
+        return candidates.get();
     }
 
     /**
-     * \u5728\u505c\u6b62\u4e8b\u4ef6\u4e2d\u6e05\u7406\u5f53\u524d\u7ba1\u7406\u5668\u542f\u52a8\u7684\u6295\u5f71\u4efb\u52a1\u3002
-     * @param event \u5f53\u524d\u6846\u67b6\u751f\u547d\u5468\u671f\u6216\u5bb9\u5668\u542f\u52a8\u4e8b\u4ef6
+     * 在 Quarkus 启动后选择并启动投影运行模式。
+     *
+     * @param event 当前框架生命周期或容器启动事件
+     */
+    synchronized void onStart(@Observes @jakarta.annotation.Priority(1000) StartupEvent event) {
+        if (running.get()) {
+            return;
+        }
+        String mode = config.getOptionalValue(MODE_KEY, String.class).orElse("off");
+        if (!List.of("off", "legacy", "durable").contains(mode)) {
+            throw new IllegalStateException("Unknown projection mode: " + mode);
+        }
+        boolean customLegacy = false;
+        for (Instance.Handle<QuarkusJpaProjectionService> handle : legacyServices.handles()) {
+            customLegacy |= handle.getBean().getBeanClass() != QuarkusJpaProjectionService.class;
+        }
+        if ("durable".equals(mode)) {
+            if (customLegacy) {
+                throw new IllegalStateException("Choose either durable views or the custom legacy projection service");
+            }
+            EventChunkReader<Object> reader = unique(readers, "EventChunkReader");
+            if (reader instanceof NoopEventChunkReader<?>) {
+                throw new IllegalStateException("Durable projection cannot use NoopEventChunkReader");
+            }
+            ProjectionPositionRepository repository = unique(positionRepositories, "ProjectionPositionRepository");
+            if (repository instanceof InMemoryProjectionPositionRepository) {
+                throw new IllegalStateException("Durable projection cannot use in-memory positions");
+            }
+            unique(transactionManagers, "JTA TransactionManager (quarkus-narayana-jta)");
+            ProjectionRunner<Object> runner = unique(runners, "ProjectionRunner");
+            if (!(runner instanceof QuarkusProjectionRunner)) {
+                throw new IllegalStateException("Enable durable projection mode during Quarkus augmentation to install its JTA runner");
+            }
+            // @DefaultBean 被覆盖时其观察者仍会运行：保留能力校验，但仅由 CDI 实际选中的实例装配任务。
+            if (ownsLifecycle()) {
+                List<ProjectionView<Object>> snapshot = new ArrayList<>();
+                views.forEach(snapshot::add);
+                delegate = new DefaultViewManager<>(unique(schedulers, "ViewScheduler"), runner, snapshot);
+            }
+        } else if ("legacy".equals(mode)) {
+            QuarkusJpaProjectionService service = unique(legacyServices, "QuarkusJpaProjectionService");
+            unique(positionRepositories, "ProjectionPositionRepository");
+            if (ownsLifecycle()) {
+                legacyService = service;
+            }
+        }
+    }
+
+    // 先完成能力装配，再由默认优先级初始化器发布 SPI，最后才允许业务任务执行。
+
+    /**
+     * 按显式或兼容投影配置装配调度任务。
+     *
+     * @param event 当前框架生命周期或容器启动事件
+     */
+    void launch(@Observes @jakarta.annotation.Priority(4000) StartupEvent event) {
+        if (Objects.nonNull(delegate) || Objects.nonNull(legacyService)) {
+            start();
+        }
+    }
+
+    /**
+     * 在停止事件中清理当前管理器启动的投影任务。
+     *
+     * @param event 当前框架生命周期或容器启动事件
      */
     void onStop(@Observes ShutdownEvent event) {
         stop();
     }
 
     /**
+     * 关闭由本管理器拥有的显式或兼容投影视图。
+     */
+    @jakarta.annotation.PreDestroy
+    void destroy() {
+        stop();
+    }
+
+    /**
+     * 判断当前管理器是否负责管理投影运行状态。
+     *
+     * @return 当前实例拥有投影启停职责时返回 true
+     */
+    private boolean ownsLifecycle() {
+        return ClientProxy.unwrap(unique(managers, "ViewManager")) == this;
+    }
+
+    /**
      * 启动当前组件并准备其运行资源。
      *
-     * <p>JPA 实现调用 <code>running.compareAndSet(false, true)</code>。</p>
+     * <p>JPA 实现调用 <code>running.get()</code>。</p>
      */
     @Override
-    public void start() {
-        if (running.compareAndSet(false, true)) {
-            log.info("QuarkusJpaViewManager started");
+    public synchronized void start() {
+        if (running.get()) {
+            return;
+        }
+        if (Objects.nonNull(delegate)) {
+            delegate.start();
+        } else if (Objects.nonNull(legacyService)) {
+            // 与原 @Scheduled 共用平台表达式展开和 off/disabled 规则；不把 Quartz 方言交给数值解析器。
+            String cron;
+            try {
+                cron = SchedulerUtils.lookUpPropertyValue(config.getOptionalValue(CRON_KEY, String.class)
+                        .orElse(DEFAULT_CRON));
+            } catch (NoClassDefFoundError missingQuartz) {
+                throw new IllegalStateException("Legacy projection scheduling requires the quarkus-quartz extension", missingQuartz);
+            }
+            if (SchedulerUtils.isOff(cron) || !config.getOptionalValue("quarkus.scheduler.enabled", Boolean.class).orElse(true)) {
+                return;
+            }
+            legacyHandle = unique(schedulers, "ViewScheduler").schedule("ddd4j-legacy-projection", cron,
+                    this::runLegacyWithRequestContext);
+        }
+        running.set(true);
+    }
+
+    // 普通 Quartz Job 不经过 @Scheduled invoker，需在真实定时边界恢复其原请求作用域。
+
+    /**
+     * 在已激活的 CDI 请求上下文中执行兼容投影任务。
+     */
+    private void runLegacyWithRequestContext() {
+        var requestContext = Arc.container().requestContext();
+        boolean owner = !requestContext.isActive();
+        if (owner) {
+            requestContext.activate();
+        }
+        try {
+            legacyService.runOnce();
+        } finally {
+            if (owner) {
+                requestContext.terminate();
+            }
         }
     }
 
     /**
      * 停止当前组件并清理已登记的运行资源。
      *
-     * <p>JPA 实现调用 <code>running.compareAndSet(true, false)</code>。</p>
+     * <p>JPA 实现调用 <code>running.set(false)</code>。</p>
      */
     @Override
-    public void stop() {
-        if (running.compareAndSet(true, false)) {
-            log.info("QuarkusJpaViewManager stopped");
+    public synchronized void stop() {
+        running.set(false);
+        if (Objects.nonNull(delegate)) {
+            delegate.stop();
+        }
+        if (Objects.nonNull(legacyHandle)) {
+            legacyHandle.cancel();
+            legacyHandle = null;
         }
     }
 
@@ -119,11 +316,15 @@ public class QuarkusJpaViewManager implements ViewManager {
     /**
      * 请求立即执行指定投影视图的一轮更新。
      *
-     * <p>JPA 实现调用 <code>log.info("triggerOnce() - \u4e1a\u52a1\u65b9\u5e94\u5728 QuarkusJpaProjectionService override")</code>。</p>
+     * <p>JPA 实现调用 <code>delegate.triggerOnce()</code>。</p>
      */
     @Override
     public void triggerOnce() {
-        log.info("triggerOnce() - 业务方应在 QuarkusJpaProjectionService override");
+        if (Objects.nonNull(delegate)) {
+            delegate.triggerOnce();
+        } else if (Objects.nonNull(legacyService)) {
+            legacyService.runOnce();
+        }
     }
 
     /**
@@ -139,13 +340,16 @@ public class QuarkusJpaViewManager implements ViewManager {
      */
     @Override
     public ProjectionStatus getProjectionStatus(String streamId) {
-        if (positionRepositories.isUnsatisfied()) {
+        if (Objects.nonNull(delegate)) {
+            return delegate.getProjectionStatus(streamId);
+        }
+        if (Objects.isNull(positionRepositories) || positionRepositories.isUnsatisfied()) {
             return ProjectionStatus.baseline(streamId, isRunning());
         }
         ProjectionPositionRepository repository = positionRepositories.get();
         Optional<ProjectionPosition> position = repository.findByStreamId(streamId);
         long nextEventNumber = position.map(ProjectionPosition::getNextEventNumber).orElse(0L);
-        if (projectionMetricsInstances != null && !projectionMetricsInstances.isUnsatisfied()) {
+        if (Objects.nonNull(projectionMetricsInstances) && !projectionMetricsInstances.isUnsatisfied()) {
             ProjectionMetrics metrics = projectionMetricsInstances.get();
             return metrics.getLastRunInfo(streamId)
                     .map(info -> new ProjectionStatus(streamId, nextEventNumber, isRunning(),

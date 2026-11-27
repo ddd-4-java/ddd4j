@@ -70,6 +70,17 @@
     <dependencies>
         <dependency>
             <groupId>io.ddd4j</groupId>
+            <artifactId>ddd4j-runtime-quarkus</artifactId>
+            <version>${revision}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-quartz</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.ddd4j</groupId>
             <artifactId>ddd4j-core</artifactId>
             <version>${revision}</version>
         </dependency>

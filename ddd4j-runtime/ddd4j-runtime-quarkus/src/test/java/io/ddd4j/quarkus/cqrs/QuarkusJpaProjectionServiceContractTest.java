@@ -43,22 +43,8 @@ class QuarkusJpaProjectionServiceContractTest {
      */
     @Test
     void usesThirtySecondDefaultCron() throws Exception {
-        Scheduled scheduled = QuarkusJpaProjectionService.class.getDeclaredMethod("scheduled")
-                .getAnnotation(Scheduled.class);
-        String expression = scheduled.cron();
-        String defaultCron;
-        if (expression.startsWith("${")) {
-            defaultCron = expression.substring(expression.indexOf(':') + 1, expression.length() - 1);
-        } else {
-            String property = expression.substring(1, expression.length() - 1);
-            try (InputStream stream = getClass().getResourceAsStream("/application.properties")) {
-                assertNotNull(stream);
-                Properties properties = new Properties();
-                properties.load(stream);
-                defaultCron = properties.getProperty(property);
-            }
-        }
-        assertEquals("*/30 * * * * ?", defaultCron);
+        assertEquals("*/30 * * * * ?", QuarkusJpaViewManager.DEFAULT_CRON);
+        assertEquals("ddd4j.quarkus.cqrs.projection.cron", QuarkusJpaViewManager.CRON_KEY);
     }
 
     /** \u9a8c\u8bc1<code>service.streams</code> \u7b49\u4e8e <code>Collections.emptyList()</code>\u3002 */

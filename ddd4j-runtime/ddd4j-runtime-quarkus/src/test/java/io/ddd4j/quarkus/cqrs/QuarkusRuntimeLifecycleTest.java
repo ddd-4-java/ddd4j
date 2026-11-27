@@ -13,6 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * 在真实 Quarkus 容器中验证读侧管理器的启动和停止事件。
  */
 @QuarkusTest
+@io.quarkus.test.junit.TestProfile(QuarkusExplicitCronTest.Profile.class)
 class QuarkusRuntimeLifecycleTest {
 
     /** \u7ba1\u7406\u67e5\u8be2\u89c6\u56fe\u53ca\u5176\u6295\u5f71\u6267\u884c\u7684\u7ec4\u4ef6\u3002 */

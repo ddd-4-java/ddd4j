@@ -68,6 +68,7 @@ class ProjectionQuarkusModuleIndependenceTest {
                             "jakarta..",
                             "io.quarkus..",
                             "lombok..",
+                            "org.eclipse.microprofile.config..",
                             "org.quartz..",
                             "org.slf4j..",
                             "io.micrometer.core.instrument.."

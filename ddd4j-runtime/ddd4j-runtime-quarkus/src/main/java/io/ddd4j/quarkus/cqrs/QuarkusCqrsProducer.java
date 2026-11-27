@@ -20,6 +20,8 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Singleton;
+import jakarta.persistence.EntityManager;
+import org.eclipse.microprofile.config.ConfigProvider;
 
 /**
  * Quarkus CQRS 默认 CDI 生产者。
@@ -29,22 +31,59 @@ import jakarta.inject.Singleton;
  */
 @ApplicationScoped
 public class QuarkusCqrsProducer {
+    /**
+     * 在启动事件中验证当前容器的 CQRS 组件装配。
+     *
+     * @param event 当前框架生命周期或容器启动事件
+     */
+    void validateBootstrap(@jakarta.enterprise.event.Observes @jakarta.annotation.Priority(800) io.quarkus.runtime.StartupEvent event) {
+        String bootstrap = ConfigProvider.getConfig().getOptionalValue(
+                "ddd4j.quarkus.cqrs.projection.bootstrap-cron", String.class).orElse("off").stripLeading();
+        if (!"off".equalsIgnoreCase(bootstrap) && !"disabled".equalsIgnoreCase(bootstrap)) {
+            throw new IllegalStateException("projection.bootstrap-cron is reserved and must remain off or disabled");
+        }
+    }
+
 
     /**
-     * projectionPositionRepository() 方法。
-     * @return 方法执行结果。
+     * 创建默认的内存投影位置仓库。
+     *
+     * @return 投影位置仓库
      */
-    @Produces
-    @DefaultBean
-    @Singleton
     public ProjectionPositionRepository projectionPositionRepository() {
         return new InMemoryProjectionPositionRepository();
     }
 
     /**
-     * projectionService() 方法。
-     * @param repository 仓储实例。
-     * @return 方法执行结果。
+     * 按真实 ORM 选择旧 JPA 或内存默认；durable 禁止无持久仓储的回退。
+     *
+     * @param entityManagers  当前 ORM 实体管理器
+     * @param jpaRepositories 旧公开 JPA 适配器
+     * @return 当前唯一位置仓储
+     */
+    @Produces
+    @DefaultBean
+    @Singleton
+    public ProjectionPositionRepository selectedPositionRepository(Instance<EntityManager> entityManagers,
+                                                                   Instance<QuarkusJpaProjectionPositionRepository> jpaRepositories) {
+        if (entityManagers.isAmbiguous()) {
+            throw new IllegalStateException("Multiple EntityManager beans are available for projection storage");
+        }
+        if (entityManagers.isResolvable()) {
+            return jpaRepositories.get();
+        }
+        if ("durable".equals(ConfigProvider.getConfig().getOptionalValue(
+                "ddd4j.quarkus.cqrs.projection.mode", String.class).orElse("off"))) {
+            throw new IllegalStateException("Durable projection requires a persistent ProjectionPositionRepository or EntityManager");
+        }
+        return projectionPositionRepository();
+    }
+
+    /**
+     * 创建投影服务。
+     *
+     * @param repository 投影位置仓库
+     * @return 投影服务
      */
     @Produces
     @DefaultBean
@@ -54,10 +93,11 @@ public class QuarkusCqrsProducer {
     }
 
     /**
-     * \u521b\u5efa\u6295\u5f71\u6267\u884c\u5668\u3002
-     * @param projectionService \u6295\u5f71\u670d\u52a1
-     * @param chunkReaders \u4e8b\u4ef6\u5757\u8bfb\u53d6\u5668
-     * @return \u6295\u5f71\u6267\u884c\u5668
+     * 创建投影执行器。
+     *
+     * @param projectionService 投影服务
+     * @param chunkReaders      事件块读取器
+     * @return 投影执行器
      */
     @Produces
     @DefaultBean
