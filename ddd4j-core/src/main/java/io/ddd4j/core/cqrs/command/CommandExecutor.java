@@ -14,6 +14,8 @@
  */
 package io.ddd4j.core.cqrs.command;
 
+import io.ddd4j.core.api.R;
+
 import java.util.Set;
 
 /**
@@ -24,7 +26,7 @@ import java.util.Set;
  * <h2>执行器契约</h2>
  * <ul>
  *   <li><b>{@code supportedCommands}</b>：返回本执行器支持的命令类型集合，用于命令路由</li>
- *   <li><b>{@code execute}</b>：执行命令，返回 {@link Result}</li>
+ *   <li><b>{@code execute}</b>：执行命令，返回 {@link R}</li>
  *   <li><b>线程模型</b>：执行器本身无状态，多实例可并行执行</li>
  * </ul>
  *
@@ -44,10 +46,10 @@ import java.util.Set;
  *     }
  *
  *     &#64;Override
- *     public Result execute(CreateOrderCommand cmd) {
+ *     public R<?> execute(CreateOrderCommand cmd) {
  *         Order order = new Order(cmd.getOrderId(), cmd.getTotal());
  *         orderRepository.save(order);
- *         return Result.ok();
+ *         return R.ok();
  *     }
  * }
  *
@@ -74,5 +76,5 @@ public interface CommandExecutor<C extends Command> {
      * @param command 命令对象
      * @return 执行结果
      */
-    Result execute(C command);
+    R<?> execute(C command);
 }

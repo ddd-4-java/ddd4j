@@ -441,3 +441,9 @@ order-service/
 ---
 
 **文档版本**：V1.0.0 · **最后更新**：2026-09-18 · **文档状态**：✅ 待评审 · **对齐代码 HEAD**：`41f690b7`
+
+## CQRS 命令调用迁移
+
+`CommandBus.execute(command)` 返回 `io.ddd4j.core.api.R<T>`。成功时从 `getData()` 取得数据，业务失败时通过 `getCode()` 和 `getMsg()` 读取原因。升级调用方需重新编译。
+
+原 `ddd4j-data-cqrs-*` 和框架投影适配器由相应的 `ddd4j-runtime-*` 工件提供。Javalin 使用 `ddd4j-runtime-guice`。持久化投影检查点由对应的 `ddd4j-data-event-store-*` 工件提供，Spring Data JPA 仓储由 `ddd4j-runtime-spring` 提供。

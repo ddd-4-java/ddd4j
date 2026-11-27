@@ -16,7 +16,7 @@ package io.ddd4j.spring.command;
 
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
-import io.ddd4j.core.cqrs.command.Result;
+import io.ddd4j.core.api.R;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -71,8 +71,8 @@ class SpringCommandBusTest {
     @DisplayName("路由：execute 应正确路由到对应执行器")
     void shouldRouteCommandToCorrectExecutor() {
         SpringCommandBus commandBus = context.getBean(SpringCommandBus.class);
-        Result<String> result = commandBus.execute(new TestCommand("hello"));
-        assertTrue(result.isSuccess());
+        R<String> result = commandBus.execute(new TestCommand("hello"));
+        assertTrue(result.isOk());
         assertEquals("executed: hello", result.getData());
     }
 
@@ -104,8 +104,8 @@ class SpringCommandBusTest {
     @DisplayName("路由：多个执行器应各自路由到正确的命令类型")
     void shouldRouteMultipleExecutorsCorrectly() {
         SpringCommandBus commandBus = context.getBean(SpringCommandBus.class);
-        Result<String> r1 = commandBus.execute(new TestCommand("a"));
-        Result<String> r2 = commandBus.execute(new AnotherCommand("b"));
+        R<String> r1 = commandBus.execute(new TestCommand("a"));
+        R<String> r2 = commandBus.execute(new AnotherCommand("b"));
         assertEquals("executed: a", r1.getData());
         assertEquals("another: b", r2.getData());
     }
@@ -186,14 +186,14 @@ class SpringCommandBusTest {
         /**
          * 用当前处理器执行传入命令或操作。
          *
-         * <p>测试夹具会调用 <code>Result.ok("executed: " + command.getValue())</code>、<code>command.getValue()</code>。</p>
+         * <p>测试夹具会调用 <code>R.ok("executed: " + command.getValue())</code>、<code>command.getValue()</code>。</p>
          *
          * @param command 命令对象
-         * @return 实际返回<code>Result.ok("executed: " + command.getValue())</code>
+         * @return 实际返回<code>R.ok("executed: " + command.getValue())</code>
          */
         @Override
-        public Result execute(TestCommand command) {
-            return Result.ok("executed: " + command.getValue());
+        public R<?> execute(TestCommand command) {
+            return R.ok("executed: " + command.getValue());
         }
     }
 
@@ -217,14 +217,14 @@ class SpringCommandBusTest {
         /**
          * 用当前处理器执行传入命令或操作。
          *
-         * <p>测试夹具会调用 <code>Result.ok("another: " + command.getValue())</code>、<code>command.getValue()</code>。</p>
+         * <p>测试夹具会调用 <code>R.ok("another: " + command.getValue())</code>、<code>command.getValue()</code>。</p>
          *
          * @param command 命令对象
-         * @return 实际返回<code>Result.ok("another: " + command.getValue())</code>
+         * @return 实际返回<code>R.ok("another: " + command.getValue())</code>
          */
         @Override
-        public Result execute(AnotherCommand command) {
-            return Result.ok("another: " + command.getValue());
+        public R<?> execute(AnotherCommand command) {
+            return R.ok("another: " + command.getValue());
         }
     }
 

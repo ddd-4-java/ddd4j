@@ -2,7 +2,7 @@ package io.ddd4j.sample.order.app.executor;
 
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
-import io.ddd4j.core.cqrs.command.Result;
+import io.ddd4j.core.api.R;
 import io.ddd4j.sample.order.app.CatalogService;
 import io.ddd4j.sample.order.client.command.ConfirmTradePaymentCmd;
 import io.ddd4j.sample.order.client.command.ChangeTradeOrderCmd;
@@ -30,24 +30,24 @@ public final class CatalogCommands implements CommandExecutor<Command> {
     /**
      * 用当前处理器执行传入命令或操作。
      *
-     * <p>此实现调用 <code>Result.ok(service.create(create))</code>。</p>
+     * <p>此实现调用 <code>R.ok(service.create(create))</code>。</p>
      *
      * @param command 命令对象
-     * @return 根据执行路径返回<code>Result.ok(service.create(create))</code>、<code>Result.ok(service.place(place))</code>、<code>Result.ok(service.confirmPayment(payment))</code>
+     * @return 根据执行路径返回<code>R.ok(service.create(create))</code>、<code>R.ok(service.place(place))</code>、<code>R.ok(service.confirmPayment(payment))</code>
      */
     @Override
-    public Result<Object> execute(Command command) {
+    public R<Object> execute(Command command) {
         if (command instanceof CreateGoodsSpuCmd create) {
-            return Result.ok(service.create(create));
+            return R.ok(service.create(create));
         }
         if (command instanceof PlaceTradeOrderCmd place) {
-            return Result.ok(service.place(place));
+            return R.ok(service.place(place));
         }
         if (command instanceof ConfirmTradePaymentCmd payment) {
-            return Result.ok(service.confirmPayment(payment));
+            return R.ok(service.confirmPayment(payment));
         }
         if (command instanceof ChangeTradeOrderCmd change) {
-            return Result.ok(service.change(change));
+            return R.ok(service.change(change));
         }
         throw new IllegalArgumentException("不支持的商品交易命令");
     }

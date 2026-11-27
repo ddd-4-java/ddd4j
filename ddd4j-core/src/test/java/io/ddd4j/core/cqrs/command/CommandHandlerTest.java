@@ -14,6 +14,8 @@
  */
 package io.ddd4j.core.cqrs.command;
 
+import io.ddd4j.core.api.R;
+
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.ElementType;
@@ -94,8 +96,8 @@ class CommandHandlerTest {
          * @return 方法执行结果。
          */
         @Override
-        public Result execute(CreateOrderCommand command) {
-            return Result.ok();
+        public R<?> execute(CreateOrderCommand command) {
+            return R.ok();
         }
     }
 }

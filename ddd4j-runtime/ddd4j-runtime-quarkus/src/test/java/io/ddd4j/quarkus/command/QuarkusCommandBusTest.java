@@ -14,21 +14,16 @@
  */
 package io.ddd4j.quarkus.command;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-
-import java.util.Objects;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.ddd4j.core.api.R;
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
-import io.ddd4j.core.cqrs.command.Result;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.lang.reflect.Field;
 import java.util.Collections;
-import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,37 +37,79 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class QuarkusCommandBusTest {
 
-    /** \u6267\u884c\u7528\u4f8b\u547d\u4ee4\u5e76\u66b4\u9732\u8def\u7531\u7ed3\u679c\u7684\u547d\u4ee4\u603b\u7ebf\u3002 */
+    /**
+     * 测试从框架环境发现的注册项或执行器。
+     */
+    private final java.util.List<CommandExecutor<?>> discovered = new java.util.ArrayList<>();
+    /**
+     * 执行用例命令并暴露路由结果的命令总线。
+     */
     private QuarkusCommandBus commandBus;
 
     /**
-     * 初始化测试资源，调用 <code>class.getDeclaredField</code>、<code>mapField.setAccessible</code>、<code>mapField.get</code>。
-     *
-     * @throws Exception 反射访问被测成员时失败
+     * 测试执行前执行 <code>discovered.add()</code>、<code>org.mockito.Mockito.mock()</code>、<code>commandBus.executors.iterator()</code>、<code>discovered.iterator()</code> 完成资源准备。
      */
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         commandBus = new QuarkusCommandBus();
-        // 通过反射注入 executorMap，绕过 CDI Instance 依赖
-        Field mapField = QuarkusCommandBus.class.getDeclaredField("executorMap");
-        mapField.setAccessible(true);
-        @SuppressWarnings("unchecked")
-        Map<Class<? extends Command>, CommandExecutor<?>> executorMap =
-                (Map<Class<? extends Command>, CommandExecutor<?>>) mapField.get(commandBus);
-        executorMap.put(TestCommand.class, new TestCommandExecutor());
+        discovered.add(new TestCommandExecutor());
+        commandBus.executors = org.mockito.Mockito.mock(jakarta.enterprise.inject.Instance.class);
+        org.mockito.Mockito.when(commandBus.executors.iterator()).thenAnswer(ignored -> discovered.iterator());
+        org.mockito.Mockito.doCallRealMethod().when(commandBus.executors).forEach(org.mockito.ArgumentMatchers.any());
+        commandBus.onStart(new io.quarkus.runtime.StartupEvent());
     }
 
-    /** \u9a8c\u8bc1<code>result</code>\u975e\u7a7a\uff0c<code>result.isSuccess()</code>\u4e3a\u771f\uff0c<code>result.getData()</code> \u7b49\u4e8e <code>"executed: hello"</code>\u3002 */
+    /**
+     * 验证<code>commandBus.onStart(new io.quarkus.runtime.StartupEvent())</code> 抛出 <code>IllegalStateException.class</code>。
+     */
+    @Test
+    void startupRejectsDuplicateExecutors() {
+        discovered.add(new TestCommandExecutor());
+        assertThatThrownBy(() -> commandBus.onStart(new io.quarkus.runtime.StartupEvent()))
+                .isInstanceOf(IllegalStateException.class).hasMessageContaining(TestCommand.class.getName());
+    }
+
+    /**
+     * 验证<code>commandBus.execute(new FailCommand()).getMessage()</code> 等于 <code>first.getMessage()</code>。
+     */
+    @Test
+    void discoversLateCdiExecutorAndCachesItsRoute() {
+        discovered.add(new FailCommandExecutor());
+        R<?> first = commandBus.execute(new FailCommand());
+        discovered.clear();
+        assertThat(commandBus.execute(new FailCommand()).getMessage()).isEqualTo(first.getMessage());
+    }
+
+    /**
+     * 在测试框架中执行 <code>discovered.add()</code>、<code>commandBus.execute()</code>，验证该场景。
+     */
+    @Test
+    void propagatesExecutorExceptionWithoutWrapping() {
+        IllegalStateException failure = new IllegalStateException("application failure");
+        discovered.add(new FailCommandExecutor() {
+            @Override
+            public R<String> execute(FailCommand command) {
+                throw failure;
+            }
+        });
+        assertThatThrownBy(() -> commandBus.execute(new FailCommand())).isSameAs(failure);
+    }
+
+    /**
+     * 验证<code>result</code>非空，<code>result.isOk()</code>为真，<code>result.getData()</code> 等于 <code>"executed: hello"</code>。
+     */
     @Test
     void executeShouldRouteToRegisteredExecutor() {
-        Result<String> result = commandBus.execute(new TestCommand("hello"));
+        R<String> result = commandBus.execute(new TestCommand("hello"));
 
         assertThat(result).isNotNull();
-        assertThat(result.isSuccess()).isTrue();
+        assertThat(result.isOk()).isTrue();
         assertThat(result.getData()).isEqualTo("executed: hello");
     }
 
-    /** \u9a8c\u8bc1<code>commandBus.execute(null)</code> \u629b\u51fa <code>IllegalArgumentException.class</code>\u3002 */
+    /**
+     * 验证<code>commandBus.execute(null)</code> 抛出 <code>IllegalArgumentException.class</code>。
+     */
     @Test
     void executeShouldThrowWhenCommandIsNull() {
         assertThatThrownBy(() -> commandBus.execute(null))
@@ -80,7 +117,9 @@ class QuarkusCommandBusTest {
                 .hasMessageContaining("Command cannot be null");
     }
 
-    /** \u9a8c\u8bc1<code>commandBus.execute(new UnregisteredCommand())</code> \u629b\u51fa <code>IllegalStateException.class</code>\u3002 */
+    /**
+     * 验证<code>commandBus.execute(new UnregisteredCommand())</code> 抛出 <code>IllegalStateException.class</code>。
+     */
     @Test
     void executeShouldThrowWhenNoExecutorRegistered() {
         assertThatThrownBy(() -> commandBus.execute(new UnregisteredCommand()))
@@ -88,52 +127,53 @@ class QuarkusCommandBusTest {
                 .hasMessageContaining("No executor found for command:");
     }
 
-    /** \u9a8c\u8bc1<code>result</code>\u975e\u7a7a\uff0c<code>result.isSuccess()</code>\u4e3a\u771f\uff0c<code>result.getData()</code> \u7b49\u4e8e <code>"executed: test"</code>\u3002 */
+    /**
+     * 验证<code>result</code>非空，<code>result.isOk()</code>为真，<code>result.getData()</code> 等于 <code>"executed: test"</code>。
+     */
     @Test
     void executeVoidShouldDelegateToExecute() {
-        Result<?> result = commandBus.executeVoid(new TestCommand("test"));
+        R<?> result = commandBus.executeVoid(new TestCommand("test"));
 
         assertThat(result).isNotNull();
-        assertThat(result.isSuccess()).isTrue();
+        assertThat(result.isOk()).isTrue();
         assertThat(result.getData()).isEqualTo("executed: test");
     }
 
-    /** \u9a8c\u8bc1<code>result</code>\u975e\u7a7a\uff0c<code>result.isSuccess()</code>\u4e3a\u5047\uff0c<code>result.getMessage()</code> \u7b49\u4e8e <code>"intentional failure"</code>\u3002 */
+    /**
+     * 验证<code>result</code>非空，<code>result.isOk()</code>为假，<code>result.getMsg()</code> 等于 <code>"intentional failure"</code>。
+     */
     @Test
     void executeShouldReturnFailureResultWhenExecutorReturnsFail() {
-        // 注册一个返回失败结果的执行器
-        try {
-            Field mapField = QuarkusCommandBus.class.getDeclaredField("executorMap");
-            mapField.setAccessible(true);
-            @SuppressWarnings("unchecked")
-            Map<Class<? extends Command>, CommandExecutor<?>> executorMap =
-                    (Map<Class<? extends Command>, CommandExecutor<?>>) mapField.get(commandBus);
-            executorMap.put(FailCommand.class, new FailCommandExecutor());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        discovered.add(new FailCommandExecutor());
 
-        Result<String> result = commandBus.execute(new FailCommand());
+        R<String> result = commandBus.execute(new FailCommand());
 
         assertThat(result).isNotNull();
-        assertThat(result.isSuccess()).isFalse();
-        assertThat(result.getMessage()).isEqualTo("intentional failure");
+        assertThat(result.isOk()).isFalse();
+        assertThat(result.getMsg()).isEqualTo("intentional failure");
     }
 
     // --- 测试用命令和执行器 ---
 
-    /** \u643a\u5e26\u5b57\u7b26\u4e32\u8d1f\u8f7d\u7684\u6d4b\u8bd5\u547d\u4ee4\uff0c\u7531\u5df2\u6ce8\u518c\u7684\u6267\u884c\u5668\u5904\u7406\uff0c\u7528\u4e8e\u9a8c\u8bc1\u6b63\u5e38\u8def\u7531\u3002 */
+    /**
+     * 携带字符串负载的测试命令，由已注册的执行器处理，用于验证正常路由。
+     */
     final static class TestCommand implements Command {
 
-        /** Java \u5e8f\u5217\u5316\u4f7f\u7528\u7684\u7248\u672c\u6807\u8bc6\u3002 */
+        /**
+         * Java 序列化使用的版本标识。
+         */
         private static final long serialVersionUID = 0L;
 
-        /** \u5f53\u524d\u4e8b\u4ef6\u6216\u8bf7\u6c42\u5939\u5177\u643a\u5e26\u7684\u8d1f\u8f7d\u3002 */
+        /**
+         * 当前事件或请求夹具携带的负载。
+         */
         private final String payload;
 
         /**
-         * \u8bbe\u7f6e <code>payload</code>\uff0c\u7528\u4e8e\u6784\u9020 <code>TestCommand</code> \u6d4b\u8bd5\u5b9e\u4f8b\u3002
-         * @param payload \u5f53\u524d\u4e8b\u4ef6\u6216\u8bf7\u6c42\u5939\u5177\u643a\u5e26\u7684\u8d1f\u8f7d
+         * 设置 <code>payload</code>，用于构造 <code>TestCommand</code> 测试实例。
+         *
+         * @param payload 当前事件或请求夹具携带的负载
          */
         @JsonCreator()
         TestCommand(@JsonProperty("payload") String payload) {
@@ -141,8 +181,9 @@ class QuarkusCommandBusTest {
         }
 
         /**
-         * \u8bfb\u53d6<code>payload</code> \u5b57\u6bb5\u3002
-         * @return <code>payload</code> \u5b57\u6bb5
+         * 读取<code>payload</code> 字段。
+         *
+         * @return <code>payload</code> 字段
          */
         @JsonProperty("payload")
         public String payload() {
@@ -197,10 +238,14 @@ class QuarkusCommandBusTest {
      */
     final static class UnregisteredCommand implements Command {
 
-        /** Java \u5e8f\u5217\u5316\u4f7f\u7528\u7684\u7248\u672c\u6807\u8bc6\u3002 */
+        /**
+         * Java 序列化使用的版本标识。
+         */
         private static final long serialVersionUID = 0L;
 
-        /** \u521b\u5efa\u5b57\u6bb5\u4f7f\u7528\u9ed8\u8ba4\u521d\u59cb\u503c\u7684 <code>UnregisteredCommand</code> \u6d4b\u8bd5\u5bf9\u8c61\u3002 */
+        /**
+         * 创建字段使用默认初始值的 <code>UnregisteredCommand</code> 测试对象。
+         */
         @JsonCreator()
         UnregisteredCommand() {
         }
@@ -252,10 +297,14 @@ class QuarkusCommandBusTest {
      */
     final static class FailCommand implements Command {
 
-        /** Java \u5e8f\u5217\u5316\u4f7f\u7528\u7684\u7248\u672c\u6807\u8bc6\u3002 */
+        /**
+         * Java 序列化使用的版本标识。
+         */
         private static final long serialVersionUID = 0L;
 
-        /** \u521b\u5efa\u5b57\u6bb5\u4f7f\u7528\u9ed8\u8ba4\u521d\u59cb\u503c\u7684 <code>FailCommand</code> \u6d4b\u8bd5\u5bf9\u8c61\u3002 */
+        /**
+         * 创建字段使用默认初始值的 <code>FailCommand</code> 测试对象。
+         */
         @JsonCreator()
         FailCommand() {
         }
@@ -310,14 +359,14 @@ class QuarkusCommandBusTest {
         /**
          * 用当前处理器执行传入命令或操作。
          *
-         * <p>测试夹具会调用 <code>Result.ok("executed: " + command.payload())</code>、<code>command.payload()</code>。</p>
+         * <p>测试夹具会调用 <code>R.ok("executed: " + command.payload())</code>、<code>command.payload()</code>。</p>
          *
          * @param command 命令对象
-         * @return 实际返回<code>Result.ok("executed: " + command.payload())</code>
+         * @return 实际返回<code>R.ok("executed: " + command.payload())</code>
          */
         @Override
-        public Result<String> execute(TestCommand command) {
-            return Result.ok("executed: " + command.payload());
+        public R<String> execute(TestCommand command) {
+            return R.ok("executed: " + command.payload());
         }
 
         /**
@@ -341,14 +390,14 @@ class QuarkusCommandBusTest {
         /**
          * 用当前处理器执行传入命令或操作。
          *
-         * <p>测试夹具会调用 <code>Result.fail("intentional failure")</code>。</p>
+         * <p>测试夹具会调用 <code>R.fail("intentional failure")</code>。</p>
          *
          * @param command 命令对象
-         * @return 实际返回<code>Result.fail("intentional failure")</code>
+         * @return 实际返回<code>R.fail("intentional failure")</code>
          */
         @Override
-        public Result<String> execute(FailCommand command) {
-            return Result.fail("intentional failure");
+        public R<String> execute(FailCommand command) {
+            return R.fail("intentional failure");
         }
 
         /**

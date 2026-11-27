@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Optional;
 import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.core.cqrs.command.DefaultCommandBus;
 import io.ddd4j.core.cqrs.query.QueryBus;
@@ -107,7 +108,7 @@ public class CatalogApi implements CatalogEndpoints {
         }
         command.setTenantId(tenant);
         command.setSpuCode(code);
-        return bus.execute(command).data().orElseThrow();
+        return Optional.ofNullable(bus.execute(command).getData()).orElseThrow();
     }
 
     /**
@@ -161,7 +162,7 @@ public class CatalogApi implements CatalogEndpoints {
         }
         command.setTenantId(tenant);
         command.setOrderNo(code);
-        return bus.execute(command).data().orElseThrow();
+        return Optional.ofNullable(bus.execute(command).getData()).orElseThrow();
     }
 
     /**
@@ -191,7 +192,7 @@ public class CatalogApi implements CatalogEndpoints {
             if (!field.isIntegralNumber() || !field.canConvertToLong()) {
                 throw new IllegalArgumentException("支付金额须为分值整数");
             }
-            return bus.execute(new ConfirmTradePaymentCmd(tenant, orderNo, field.longValue())).data().orElseThrow();
+            return Optional.ofNullable(bus.execute(new ConfirmTradePaymentCmd(tenant, orderNo, field.longValue())).getData()).orElseThrow();
         });
     }
 
@@ -216,7 +217,7 @@ public class CatalogApi implements CatalogEndpoints {
      * @return HTTP \u72b6\u6001\u7801\u53ca\u54cd\u5e94\u6b63\u6587
      */
     Reply confirmPayment(CommandBus bus, String tenant, String orderNo, Long amountCent) {
-        return invoke(200, () -> bus.execute(new ConfirmTradePaymentCmd(tenant, orderNo, amountCent)).data().orElseThrow());
+        return invoke(200, () -> Optional.ofNullable(bus.execute(new ConfirmTradePaymentCmd(tenant, orderNo, amountCent)).getData()).orElseThrow());
     }
 
     /**
@@ -250,7 +251,7 @@ public class CatalogApi implements CatalogEndpoints {
      * @return HTTP \u72b6\u6001\u7801\u53ca\u54cd\u5e94\u6b63\u6587
      */
     Reply changeOrder(CommandBus bus, String tenant, String orderNo, ChangeTradeOrderCmd.Action action) {
-        return invoke(200, () -> bus.execute(new ChangeTradeOrderCmd(tenant, orderNo, action)).data().orElseThrow());
+        return invoke(200, () -> Optional.ofNullable(bus.execute(new ChangeTradeOrderCmd(tenant, orderNo, action)).getData()).orElseThrow());
     }
 
     /**

@@ -13,6 +13,8 @@
  * limitations under the License.
  */
 package io.ddd4j.core.cqrs.command;
+
+import io.ddd4j.core.api.R;
 import java.lang.annotation.Target;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Retention;
@@ -42,9 +44,9 @@ import java.lang.annotation.*;
  *     }
  *
  *     &#64;Override
- *     public Result execute(CreateOrderCommand cmd) {
+ *     public R<?> execute(CreateOrderCommand cmd) {
  *         // ...
- *         return Result.ok();
+ *         return R.ok();
  *     }
  * }
  * }</pre>

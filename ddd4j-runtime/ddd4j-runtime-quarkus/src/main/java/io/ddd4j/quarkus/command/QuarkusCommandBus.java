@@ -14,20 +14,19 @@
  */
 package io.ddd4j.quarkus.command;
 
-import io.ddd4j.core.cqrs.command.Command;
-import io.ddd4j.core.cqrs.command.CommandBus;
-import io.ddd4j.core.cqrs.command.CommandExecutor;
-import io.ddd4j.core.cqrs.command.Result;
+import io.ddd4j.core.api.R;
+import io.ddd4j.core.cqrs.command.*;
+import io.quarkus.arc.DefaultBean;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.control.ActivateRequestContext;
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
-import lombok.extern.slf4j.Slf4j;
 
-import java.util.Map;
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Quarkus 命令总线。
@@ -38,37 +37,55 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author <a href="https://github.com/partme-ai">PartMe.AI</a>
  * @since 2.0.x
  */
-@Slf4j
 @ApplicationScoped
+@DefaultBean
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class QuarkusCommandBus implements CommandBus {
 
     /**
-     * 命令类型到执行器的路由映射
-     */
-    private final Map<Class<? extends Command>, CommandExecutor<?>> executorMap = new ConcurrentHashMap<>();
-
-    /**
-     * CDI 命令执行器实例集
+     * 框架容器中需要登记到命令总线的执行器。
      */
     @Inject
     Instance<CommandExecutor<?>> executors;
 
     /**
-     * \u5728\u5e94\u7528\u542f\u52a8\u540e\u6536\u96c6 CDI \u6267\u884c\u5668\uff0c\u5e76\u521b\u5efa\u5171\u4eab\u547d\u4ee4\u603b\u7ebf\u3002
-     * @param event \u5f53\u524d\u6846\u67b6\u751f\u547d\u5468\u671f\u6216\u5bb9\u5668\u542f\u52a8\u4e8b\u4ef6
+     * 用 CDI 收集的执行器装配的共享命令总线。
      */
-    void onStart(@Observes StartupEvent event) {
-        for (CommandExecutor<?> executor : executors) {
-            for (Class<? extends Command> commandType : executor.supportedCommands()) {
-                CommandExecutor<?> previous = executorMap.putIfAbsent(commandType, executor);
-                if (Objects.nonNull(previous)) {
-                    throw new IllegalStateException("Multiple executors found for command: " + commandType.getName());
+    private volatile DefaultCommandBus delegate = createDelegate(List.of());
+
+    /**
+     * 在应用启动后收集 CDI 执行器，并创建共享命令总线。
+     *
+     * @param event 当前框架生命周期或容器启动事件
+     */
+    void onStart(@Observes @jakarta.annotation.Priority(900) StartupEvent event) {
+        List<CommandExecutor<?>> snapshot = new java.util.ArrayList<>();
+        executors.forEach(snapshot::add);
+        delegate = createDelegate(snapshot);
+    }
+
+    /**
+     * 根据 CDI 快照装配共享命令总线。
+     *
+     * @param snapshot 从 CDI 容器取得的执行器快照
+     * @return 绑定当前执行器的共享命令总线
+     */
+    private DefaultCommandBus createDelegate(Collection<CommandExecutor<?>> snapshot) {
+        return new DefaultCommandBus(snapshot) {
+            @Override
+            protected CommandExecutor<?> resolveMissingExecutor(Class<? extends Command> commandType,
+                                                                Collection<CommandExecutor<?>> registeredExecutors) {
+                // ArC 的 Instance 可发现启动后才支持该命令的执行器；缓存和执行仍由 core 负责。
+                if (Objects.nonNull(executors)) {
+                    for (CommandExecutor<?> candidate : executors) {
+                        if (candidate.supportedCommands().contains(commandType)) {
+                            return candidate;
+                        }
+                    }
                 }
-                log.info("Registered command executor: {} -> {}", commandType.getName(), executor.getClass().getSimpleName());
+                return null;
             }
-        }
-        log.info("QuarkusCommandBus initialized with {} command types", executorMap.size());
+        };
     }
 
     /**
@@ -77,52 +94,25 @@ public class QuarkusCommandBus implements CommandBus {
      * @param command 命令对象
      * @return 执行结果
      */
-    public Result<?> executeVoid(Command command) {
+    @ActivateRequestContext
+    public R<?> executeVoid(Command command) {
         return execute(command);
     }
 
     /**
-     * 执行命令并返回结果。
+     * 在 CDI 请求上下文中执行命令并返回结果。
      *
      * @param command 命令对象
-     * @param <R>     结果类型
+     * @param <T>     结果类型
      * @return 执行结果
      */
     @Override
-    public <R> Result<R> execute(Command command) {
+    @ActivateRequestContext
+    public <T> R<T> execute(Command command) {
         if (Objects.isNull(command)) {
             throw new IllegalArgumentException("Command cannot be null");
         }
 
-        CommandExecutor executor = findExecutor(command);
-        if (Objects.isNull(executor)) {
-            throw new IllegalStateException("No executor found for command: " + command.getClass().getName());
-        }
-        return (Result<R>) executor.execute(command);
-    }
-
-    /**
-     * 执行 <code>find Executor</code>，调用 <code>executorMap.get</code>、<code>command.getClass</code>、<code>candidate.supportedCommands</code>。
-     *
-     * @param command 传入此操作的 <code>Command</code> 类型 <code>command</code>
-     * @return 按条件返回 <code>executor</code>、<code>null</code>、<code>candidate</code>
-     */
-    private CommandExecutor<?> findExecutor(Command command) {
-        CommandExecutor<?> executor = executorMap.get(command.getClass());
-        if (Objects.nonNull(executor)) {
-            return executor;
-        }
-        if (Objects.isNull(executors)) {
-            return null;
-        }
-        for (CommandExecutor<?> candidate : executors) {
-            for (Class<? extends Command> commandType : candidate.supportedCommands()) {
-                if (commandType.equals(command.getClass())) {
-                    executorMap.put(commandType, candidate);
-                    return candidate;
-                }
-            }
-        }
-        return null;
+        return delegate.execute(command);
     }
 }

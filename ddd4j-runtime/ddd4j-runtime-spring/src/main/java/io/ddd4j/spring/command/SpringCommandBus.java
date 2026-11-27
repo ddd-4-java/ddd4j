@@ -17,7 +17,7 @@ package io.ddd4j.spring.command;
 import io.ddd4j.core.cqrs.command.Command;
 import io.ddd4j.core.cqrs.command.CommandBus;
 import io.ddd4j.core.cqrs.command.CommandExecutor;
-import io.ddd4j.core.cqrs.command.Result;
+import io.ddd4j.core.api.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.context.ApplicationContext;
@@ -109,14 +109,14 @@ public class SpringCommandBus implements CommandBus, SmartInitializingSingleton 
      * 类级注解对本类的继承方法不生效（见类 javadoc「事务策略」）。
      *
      * @param command 命令对象，非空
-     * @param <R>     结果载荷类型
+     * @param <T>     结果载荷类型
      * @return 执行结果
      * @throws IllegalArgumentException command 为 null
      * @throws IllegalStateException    未找到对应执行器
      */
     @Override
     @Transactional
-    public <R> Result<R> execute(Command command) {
+    public <T> R<T> execute(Command command) {
         if (Objects.isNull(command)) {
             throw new IllegalArgumentException("Command cannot be null");
         }
@@ -128,6 +128,6 @@ public class SpringCommandBus implements CommandBus, SmartInitializingSingleton 
                             + ". Ensure the executor bean implements CommandExecutor interface "
                             + "and its supportedCommands() includes this command type.");
         }
-        return (Result<R>) executor.execute(command);
+        return (R<T>) executor.execute(command);
     }
 }
