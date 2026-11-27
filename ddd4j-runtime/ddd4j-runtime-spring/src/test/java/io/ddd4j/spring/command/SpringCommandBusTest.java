@@ -110,6 +110,166 @@ class SpringCommandBusTest {
         assertEquals("another: b", r2.getData());
     }
 
+    /**
+     * 验证被测调用 抛出 <code>IllegalStateException.class</code>，<code>bus.execute(new TestCommand("partial"))</code> 抛出 <code>IllegalStateException.class</code>。
+     */
+    @Test
+    void failedDiscoveryMustNotPublishPartialRoutes() {
+        try (AnnotationConfigApplicationContext isolated = new AnnotationConfigApplicationContext()) {
+            isolated.registerBean("first", TestCommandExecutor.class);
+            isolated.registerBean("duplicate", TestCommandExecutor.class);
+            isolated.refresh();
+            SpringCommandBus bus = new SpringCommandBus(isolated);
+            assertThrows(IllegalStateException.class, bus::afterSingletonsInstantiated);
+            assertThrows(IllegalStateException.class, () -> bus.execute(new TestCommand("partial")));
+        }
+    }
+
+    /**
+     * 验证<code>bus.execute(new TestCommand("late"))</code> 抛出 <code>IllegalStateException.class</code>。
+     */
+    @Test
+    void discoversAtLifecycleCallbackAndPreservesHandlerExceptionIdentity() {
+        try (AnnotationConfigApplicationContext isolated = new AnnotationConfigApplicationContext()) {
+            SpringCommandBus bus = new SpringCommandBus(isolated);
+            IllegalStateException failure = new IllegalStateException("No executor found for command: business");
+            isolated.registerBean("late", CommandExecutor.class, () -> new CommandExecutor<TestCommand>() {
+                public Set<Class<? extends Command>> supportedCommands() {
+                    return java.util.Collections.singleton(TestCommand.class);
+                }
+
+                public R<?> execute(TestCommand command) {
+                    throw failure;
+                }
+            });
+            isolated.refresh();
+            bus.afterSingletonsInstantiated();
+            assertSame(failure, assertThrows(IllegalStateException.class,
+                    () -> bus.execute(new TestCommand("late"))));
+        }
+    }
+
+    /**
+     * 验证<code>isolated.getBeansOfType(io.ddd4j.core.cqrs.command.CommandBus.class).size()</code> 等于 <code>1</code>。
+     */
+    @Test
+    void explicitEntryReusesLegacyOrCustomBusRegardlessOfRegistrationOrder() {
+        for (Class<?> existing : new Class<?>[]{LegacyConfig.class, CustomConfig.class}) {
+            for (boolean reverse : new boolean[]{false, true}) {
+                try (AnnotationConfigApplicationContext isolated = new AnnotationConfigApplicationContext()) {
+                    isolated.register(reverse ? existing : ExplicitConfig.class,
+                            reverse ? ExplicitConfig.class : existing);
+                    isolated.refresh();
+                    assertEquals(1, isolated.getBeansOfType(io.ddd4j.core.cqrs.command.CommandBus.class).size());
+                    assertEquals("executed: explicit", isolated.getBean(io.ddd4j.core.cqrs.command.CommandBus.class)
+                            .execute(new TestCommand("explicit")).getData());
+                }
+            }
+        }
+        try (AnnotationConfigApplicationContext isolated = new AnnotationConfigApplicationContext(ExplicitConfig.class)) {
+            assertEquals(1, isolated.getBeansOfType(io.ddd4j.core.cqrs.command.CommandBus.class).size());
+            assertInstanceOf(SpringCommandBus.class, isolated.getBean("springCommandBus"));
+        }
+    }
+
+    /**
+     * 验证<code>isolated.getBeansOfType(io.ddd4j.core.cqrs.command.CommandBus.class).size()</code> 等于 <code>1</code>，<code>isolated.getBean("springCommandBus").getClass()</code> 等于 <code>type</code>。
+     */
+    @Test
+    void eachHistoricalComponentScanWorksAlongsideExplicitEntry() {
+        for (Class<?> type : new Class<?>[]{SpringCommandBus.class, io.ddd4j.data.cqrs.spring.SpringCommandBus.class}) {
+            try (AnnotationConfigApplicationContext isolated = new AnnotationConfigApplicationContext()) {
+                isolated.registerBean(io.ddd4j.core.cqrs.command.CommandRegistry.class);
+                isolated.registerBean(TestCommandExecutor.class);
+                isolated.register(ExplicitConfig.class);
+                org.springframework.context.annotation.ClassPathBeanDefinitionScanner scanner =
+                        new org.springframework.context.annotation.ClassPathBeanDefinitionScanner(isolated, false);
+                scanner.addIncludeFilter(new org.springframework.core.type.filter.AssignableTypeFilter(type));
+                scanner.scan(type.getPackage().getName());
+                isolated.refresh();
+                assertEquals(1, isolated.getBeansOfType(io.ddd4j.core.cqrs.command.CommandBus.class).size());
+                assertEquals(type, isolated.getBean("springCommandBus").getClass());
+            }
+        }
+    }
+
+    /**
+     * 验证<code>creations.get()</code> 等于 <code>0</code>，<code>creations.get()</code> 等于 <code>1</code>。
+     */
+    @Test
+    void explicitEntryReusesPrototypeAndCustomScopedBusWithoutEagerCreation() {
+        for (String scope : new String[]{"prototype", "requestLike"}) {
+            try (AnnotationConfigApplicationContext isolated = new AnnotationConfigApplicationContext()) {
+                java.util.concurrent.atomic.AtomicInteger creations = new java.util.concurrent.atomic.AtomicInteger();
+                isolated.getBeanFactory().registerScope("requestLike", new org.springframework.context.support.SimpleThreadScope());
+                isolated.register(ExplicitConfig.class);
+                isolated.registerBean("customScopedBus", io.ddd4j.core.cqrs.command.CommandBus.class, () -> {
+                    creations.incrementAndGet();
+                    return new io.ddd4j.core.cqrs.command.DefaultCommandBus(java.util.Collections.singletonList(new TestCommandExecutor()));
+                }, definition -> definition.setScope(scope));
+                isolated.refresh();
+                assertArrayEquals(new String[]{"customScopedBus"},
+                        isolated.getBeanNamesForType(io.ddd4j.core.cqrs.command.CommandBus.class));
+                assertEquals(0, creations.get(), "Bean existence checks must not eagerly instantiate custom scopes");
+                assertEquals("executed: scoped", isolated.getBean(io.ddd4j.core.cqrs.command.CommandBus.class)
+                        .execute(new TestCommand("scoped")).getData());
+                assertEquals(1, creations.get());
+            }
+        }
+    }
+
+    /**
+     * 向测试容器显式导入 Spring 命令总线配置。
+     */
+    @Configuration(proxyBeanMethods = false)
+    @org.springframework.context.annotation.Import(io.ddd4j.spring.config.SpringCommandConfig.class)
+    static class ExplicitConfig {
+    }
+
+    /**
+     * 向测试容器注册 <code>executor()</code>、<code>springCommandBus()</code> 等测试入口或组件。
+     */
+    @Configuration(proxyBeanMethods = false)
+    static class LegacyConfig {
+        /**
+         * 创建 <code>new TestCommandExecutor</code> 供当前测试路径调用。
+         *
+         * @return 当前测试使用的结果，取自 <code>new TestCommandExecutor()</code>
+         */
+        @Bean
+        TestCommandExecutor executor() {
+            return new TestCommandExecutor();
+        }
+
+        /**
+         * 创建 <code>new io.ddd4j.data.cqrs.spring.SpringCommandBus</code> 供当前测试路径调用。
+         *
+         * @param context 当前框架保存请求或运行时状态的上下文
+         * @return 当前测试使用的结果，取自 <code>new io.ddd4j.data.cqrs.spring.SpringCommandBus(context, new io.ddd4j.core.cqrs.command.CommandRegistry())</code>
+         */
+        @Bean
+        io.ddd4j.data.cqrs.spring.SpringCommandBus springCommandBus(org.springframework.context.ApplicationContext context) {
+            return new io.ddd4j.data.cqrs.spring.SpringCommandBus(context,
+                    new io.ddd4j.core.cqrs.command.CommandRegistry());
+        }
+    }
+
+    /**
+     * 向测试容器注册 <code>customBus()</code> 等测试入口或组件。
+     */
+    @Configuration(proxyBeanMethods = false)
+    static class CustomConfig {
+        /**
+         * 创建 <code>new io.ddd4j.core.cqrs.command.DefaultCommandBus</code> 供当前测试路径调用。
+         *
+         * @return 当前测试使用的结果，取自 <code>new io.ddd4j.core.cqrs.command.DefaultCommandBus(java.util.Collections.singletonList(new TestCommandExecutor()))</code>
+         */
+        @Bean
+        io.ddd4j.core.cqrs.command.CommandBus customBus() {
+            return new io.ddd4j.core.cqrs.command.DefaultCommandBus(java.util.Collections.singletonList(new TestCommandExecutor()));
+        }
+    }
+
     // ========== 测试用命令和执行器 ==========
 
     /**
