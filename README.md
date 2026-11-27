@@ -453,3 +453,7 @@ order-service/
 `CommandBus.execute(command)` 返回 `io.ddd4j.core.api.R<T>`。成功时从 `getData()` 取得数据，业务失败时通过 `getCode()` 和 `getMsg()` 读取原因。升级调用方需重新编译。
 
 原 `ddd4j-data-cqrs-*` 和框架投影适配器由相应的 `ddd4j-runtime-*` 工件提供。Javalin 使用 `ddd4j-runtime-guice`。持久化投影检查点由对应的 `ddd4j-data-event-store-*` 工件提供，Spring Data JPA 仓储由 `ddd4j-runtime-spring` 提供。
+
+### Micronaut 投影迁移
+
+从自动启动投影的版本升级时，在 `application.properties` 设置 `ddd4j.cqrs.projection.enabled=true`，并各注册一个真实事件读取器 `EventChunkReader` 和持久位置仓储 `ProjectionPositionRepository`。默认配置只启用基础运行时和命令总线。

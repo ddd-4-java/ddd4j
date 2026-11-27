@@ -16,6 +16,8 @@ package io.ddd4j.micronaut.cqrs;
 
 import io.ddd4j.core.cqrs.readmodel.*;
 import io.micronaut.context.annotation.Factory;
+import io.micronaut.context.annotation.Requires;
+import org.mockito.Mockito;
 import jakarta.inject.Singleton;
 
 import java.util.Collection;
@@ -31,7 +33,18 @@ import java.util.Collections;
  * @since 2.0.x
  */
 @Factory
+@Requires(property = "test.micronaut.scheduler-fixture", value = "true")
 class TestFactory {
+
+    /**
+     * 调度生命周期测试的仓储探针。此套件的空事件读取不应产生检查点写入。
+     *
+     * @return 本次测试容器专用的仓储探针
+     */
+    @Singleton
+    ProjectionPositionRepository positions() {
+        return Mockito.mock(ProjectionPositionRepository.class);
+    }
 
     /**
      * 读取<code>null</code> 的当前值。
