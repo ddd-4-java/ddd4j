@@ -19,8 +19,6 @@ import io.ddd4j.core.cqrs.command.CommandHandler;
 import io.ddd4j.core.cqrs.command.CommandRegistry;
 import io.ddd4j.core.cqrs.command.DefaultCommandBus;
 import io.micronaut.context.BeanContext;
-import jakarta.inject.Inject;
-import jakarta.inject.Singleton;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -81,7 +79,6 @@ import java.util.Objects;
  * @see CommandHandler
  * @since 2.0.x
  */
-@Singleton
 public class MicronautCommandBus extends DefaultCommandBus {
 
     /**
@@ -91,7 +88,6 @@ public class MicronautCommandBus extends DefaultCommandBus {
      * @param context  Micronaut Bean 上下文（Micronaut 4 推荐注入类型），非空
      * @param registry 命令注册中心（集成方经 @Factory 注册的共享 Bean），非空
      */
-    @Inject
     public MicronautCommandBus(BeanContext context, CommandRegistry registry) {
         super(collect(context, registry));
     }
