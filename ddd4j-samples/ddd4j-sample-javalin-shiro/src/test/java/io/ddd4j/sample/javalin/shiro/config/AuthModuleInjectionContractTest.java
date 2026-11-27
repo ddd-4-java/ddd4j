@@ -30,8 +30,12 @@ class AuthModuleInjectionContractTest {
         SubjectDataProvider subjectData = injector.getInstance(SubjectDataProvider.class);
         AuthPrincipal principal = new AuthPrincipal().setLoginId("lisi");
 
-        assertEquals(3, users.count());
-        assertEquals(2, roles.count());
+        assertEquals(4, users.count());
+        assertEquals(3, roles.count());
+        assertTrue(users.findByLoginId("reader").isPresent());
+        AuthPrincipal reader = new AuthPrincipal().setLoginId("reader");
+        assertEquals(Collections.singletonList("reader"), subjectData.getRoleList(reader));
+        assertEquals(Collections.singletonList("order:read"), subjectData.getPermissionList(reader));
         assertSame(rbac.findUser("lisi"), users.findByLoginId("lisi").orElseThrow(AssertionError::new));
         assertSame(rbac.findRole("user"), roles.findByCode("user").orElseThrow(AssertionError::new));
         assertEquals(Collections.singletonList("user"), subjectData.getRoleList(principal));
