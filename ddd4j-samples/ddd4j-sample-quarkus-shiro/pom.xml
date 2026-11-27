@@ -21,6 +21,7 @@
         <quarkus.platform.version>${quarkus.version}</quarkus.platform.version>
         <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
         <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
+        <surefire.maxMetaspace>512M</surefire.maxMetaspace>
         <surefire-plugin.version>${quarkus-surefire-plugin.version}</surefire-plugin.version>
     </properties>
 
