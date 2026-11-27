@@ -40,6 +40,10 @@ checkout_dependency() {
 checkout_dependency mybatis-enhance "$annotation_sha" "$source_dir/annotation"
 checkout_dependency mybatis-plus-enhance "$enhance_sha" "$source_dir/plus"
 checkout_dependency validation-api-extension "$validation_sha" "$source_dir/validation"
+if [[ "$line" == 2.0.x ]]; then
+  # This revision uses Reactor's contextWrite, required by the Spring 6 runtime.
+  checkout_dependency spring-extension 8386dec0e00ed6b23a853188db2028c3eb92bedc "$source_dir/spring-extension"
+fi
 
 cd "$project_root"
 maven=(sh ./mvnw -B --no-transfer-progress -DskipTests -Djacoco.skip=true -Dgpg.skip=true)
@@ -64,3 +68,6 @@ install_dependency -f "$source_dir/annotation/pom.xml" -pl mybatis-enhance-annot
 install_dependency -f "$source_dir/plus/pom.xml" -pl mybatis-plus-enhance-extension -am install
 install_dependency -f "$source_dir/validation/pom.xml" install
 echo "Installed MyBatis-Plus Enhance and Validation API Extension for $line"
+if [[ "$line" == 2.0.x ]]; then
+  install_dependency -f "$source_dir/spring-extension/pom.xml" install
+fi
